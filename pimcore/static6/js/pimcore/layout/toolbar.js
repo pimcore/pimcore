@@ -17,834 +17,967 @@ pimcore.layout.toolbar = Class.create({
         var user = pimcore.globalmanager.get("user");
         this.toolbar = Ext.getCmp("pimcore_panel_toolbar");
 
-        var fileItems = [];
+        var perspectiveCfg = pimcore.globalmanager.get("perspective");
 
-        if (pimcore.settings.availablePerspectives.length > 1) {
+        if (perspectiveCfg.inToolbar("file")) {
+            var fileItems = [];
 
-            var items = [];
-            for (var i = 0; i < pimcore.settings.availablePerspectives.length; i++) {
-                var perspective = pimcore.settings.availablePerspectives[i];
-                var itemCfg = {
-                    text: perspective.name,
-                    disabled: perspective.active,
-                    handler: this.openPerspective.bind(this, perspective.name)
+            if (perspectiveCfg.inToolbar("file.perspectives")) {
+
+                if (pimcore.settings.availablePerspectives.length > 1) {
+
+                    var items = [];
+                    for (var i = 0; i < pimcore.settings.availablePerspectives.length; i++) {
+                        var perspective = pimcore.settings.availablePerspectives[i];
+                        var itemCfg = {
+                            text: perspective.name,
+                            disabled: perspective.active,
+                            handler: this.openPerspective.bind(this, perspective.name)
+                        }
+
+                        if (perspective.icon) {
+                            itemCfg.icon = perspective.icon;
+                        } else if (perspective.iconCls) {
+                            itemCfg.iconCls = perspective.iconCls;
+                        }
+
+                        items.push(itemCfg);
+                    }
+
+                    this.perspectivesMenu = new Ext.menu.Item({
+                        text: t("perspectives"),
+                        iconCls: "pimcore_icon_perspective",
+                        hideOnClick: false,
+                        menu: {
+                            cls: "pimcore_navigation_flyout",
+                            shadow: false,
+                            items: items
+                        }
+                    });
+                    fileItems.push(this.perspectivesMenu);
                 }
-
-                if (perspective.icon) {
-                    itemCfg.icon = perspective.icon;
-                } else  if (perspective.iconCls) {
-                    itemCfg.iconCls = perspective.iconCls;
-                }
-
-                items.push(itemCfg);
             }
 
-            this.perspectivesMenu = new Ext.menu.Item({
-                text: t("perspectives"),
-                iconCls: "pimcore_icon_perspective",
-                hideOnClick: false,
-                menu: {
-                    cls: "pimcore_navigation_flyout",
-                    shadow: false,
-                    items: items
-                }
+
+            if (user.isAllowed("dashboards") && perspectiveCfg.inToolbar("file.dashboards")) {
+                this.dashboardMenu = new Ext.menu.Item({
+                    text: t("dashboards"),
+                    iconCls: "pimcore_icon_welcome",
+                    hideOnClick: false,
+                    menu: {
+                        cls: "pimcore_navigation_flyout",
+                        shadow: false,
+                        items: [{
+                            text: t("welcome"),
+                            iconCls: "pimcore_icon_welcome",
+                            handler: pimcore.helpers.openWelcomePage.bind(this)
+                        }]
+                    }
+                });
+
+                Ext.Ajax.request({
+                    url: "/admin/portal/dashboard-list",
+                    success: function (response) {
+                        var data = Ext.decode(response.responseText);
+                        for (var i = 0; i < data.length; i++) {
+                            this.dashboardMenu.menu.add(new Ext.menu.Item({
+                                text: data[i],
+                                iconCls: "pimcore_icon_welcome",
+                                handler: function (key) {
+                                    try {
+                                        pimcore.globalmanager.get("layout_portal_" + key).activate();
+                                    }
+                                    catch (e) {
+                                        pimcore.globalmanager.add("layout_portal_" + key, new pimcore.layout.portal(key));
+                                    }
+                                }.bind(this, data[i])
+                            }));
+                        }
+
+                        this.dashboardMenu.menu.add(new Ext.menu.Separator({}));
+                        this.dashboardMenu.menu.add({
+                            text: t("add_dashboard"),
+                            iconCls: "pimcore_icon_add",
+                            handler: function () {
+                                Ext.MessageBox.prompt(t('create_new_dashboard'), t('please_enter_the_name_of_the_new_dashboard'),
+                                    function (button, value, object) {
+                                        if (button == "ok") {
+                                            Ext.Ajax.request({
+                                                url: "/admin/portal/create-dashboard",
+                                                params: {
+                                                    key: value
+                                                },
+                                                success: function (response) {
+                                                    var response = Ext.decode(response.responseText);
+                                                    if (response.success) {
+                                                        Ext.MessageBox.confirm(t("info"), t("reload_pimcore_changes"), function (buttonValue) {
+                                                            if (buttonValue == "yes") {
+                                                                window.location.reload();
+                                                            }
+                                                        });
+                                                        try {
+                                                            pimcore.globalmanager.get("layout_portal_" + value).activate();
+                                                        }
+                                                        catch (e) {
+                                                            pimcore.globalmanager.add("layout_portal_" + value, new pimcore.layout.portal(value));
+                                                        }
+                                                    } else {
+                                                        Ext.Msg.show({
+                                                            title: t("error"),
+                                                            msg: t(response.message),
+                                                            buttons: Ext.Msg.OK,
+                                                            animEl: 'elId',
+                                                            icon: Ext.MessageBox.ERROR
+                                                        });
+                                                    }
+                                                }
+                                            });
+                                        }
+                                    }
+                                );
+                            }.bind(this)
+                        });
+                    }.bind(this)
+                });
+
+                fileItems.push(this.dashboardMenu);
+            }
+
+
+            if (user.isAllowed("documents") && perspectiveCfg.inToolbar("file.openDocument")) {
+                fileItems.push({
+                    text: t("open_document_by_id"),
+                    iconCls: "pimcore_icon_document pimcore_icon_overlay_go",
+                    handler: pimcore.helpers.openElementByIdDialog.bind(this, "document")
+                });
+            }
+
+            if (user.isAllowed("assets") && perspectiveCfg.inToolbar("file.openAsset")) {
+                fileItems.push({
+                    text: t("open_asset_by_id"),
+                    iconCls: "pimcore_icon_asset pimcore_icon_overlay_go",
+                    handler: pimcore.helpers.openElementByIdDialog.bind(this, "asset")
+                });
+            }
+
+            if (user.isAllowed("objects") && perspectiveCfg.inToolbar("file.openObject")) {
+                fileItems.push({
+                    text: t("open_object_by_id"),
+                    iconCls: "pimcore_icon_object pimcore_icon_overlay_go",
+                    handler: pimcore.helpers.openElementByIdDialog.bind(this, "object")
+                });
+            }
+
+            if (perspectiveCfg.inToolbar("file.searchReplace") && (user.isAllowed("objects") || user.isAllowed("documents") || user.isAllowed("assets"))) {
+                fileItems.push({
+                    text: t("search_replace_assignments"),
+                    iconCls: "pimcore_icon_search pimcore_icon_overlay_go",
+                    handler: function () {
+                        new pimcore.element.replace_assignments();
+                    }
+                });
+            }
+
+            if (perspectiveCfg.inToolbar("file.schedule") && (user.isAllowed("objects") || user.isAllowed("documents") || user.isAllowed("assets"))) {
+                fileItems.push({
+                    text: t('element_history'),
+                    iconCls: "pimcore_icon_schedule",
+                    cls: "pimcore_main_menu",
+                    handler: this.showElementHistory.bind(this)
+                });
+            }
+
+            if (user.isAllowed("seemode") && perspectiveCfg.inToolbar("file.seemode")) {
+                fileItems.push({
+                    text: t("seemode"),
+                    iconCls: "pimcore_icon_seemode",
+                    cls: "pimcore_main_menu",
+                    handler: pimcore.helpers.openSeemode
+                });
+            }
+
+            if (perspectiveCfg.inToolbar("file.closeAll")) {
+                fileItems.push({
+                    text: t("close_all_tabs"),
+                    iconCls: "pimcore_icon_tabs pimcore_icon_overlay_delete",
+                    handler: this.closeAllTabs
+                });
+            }
+
+            if (perspectiveCfg.inToolbar("file.help")) {
+                fileItems.push({
+                    text: t('help'),
+                    iconCls: "pimcore_icon_help",
+                    cls: "pimcore_main_menu",
+                    hideOnClick: false,
+                    menu: {
+                        cls: "pimcore_navigation_flyout",
+                        shadow: false,
+                        items: [{
+                            text: t("documentation"),
+                            iconCls: "pimcore_icon_documentation",
+                            handler: function () {
+                                window.open("http://www.pimcore.org/wiki/");
+                            }
+                        },
+                            {
+                                text: t("report_bugs"),
+                                iconCls: "pimcore_icon_bugs",
+                                handler: function () {
+                                    window.open("http://www.pimcore.org/issues");
+                                }
+                            }
+                        ]
+                    }
+                });
+            }
+
+
+            if (perspectiveCfg.inToolbar("file.about")) {
+                fileItems.push({
+                    text: "ABOUT PIMCORE &reg;",
+                    iconCls: "pimcore_icon_pimcore",
+                    handler: function () {
+                        pimcore.helpers.showAbout();
+                    }
+                });
+            }
+
+            this.fileMenu = new Ext.menu.Menu({
+                items: fileItems,
+                shadow: false,
+                cls: "pimcore_navigation_flyout"
             });
-            fileItems.push(this.perspectivesMenu);
+        }
+
+        if (perspectiveCfg.inToolbar("extras")) {
+
+            var extrasItems = [];
+
+            if (user.isAllowed("glossary") && perspectiveCfg.inToolbar("extras.glossary")) {
+                extrasItems.push({
+                    text: t("glossary"),
+                    iconCls: "pimcore_icon_glossary",
+                    handler: this.editGlossary
+                });
+            }
+
+            if (user.isAllowed("redirects") && perspectiveCfg.inToolbar("extras.redirects")) {
+                extrasItems.push({
+                    text: t("redirects"),
+                    iconCls: "pimcore_icon_redirects",
+                    handler: this.editRedirects
+                });
+            }
+
+            if (user.isAllowed("translations") && perspectiveCfg.inToolbar("extras.translations")) {
+                extrasItems.push({
+                    text: t("translation"),
+                    iconCls: "pimcore_icon_translations",
+                    hideOnClick: false,
+                    menu: {
+                        cls: "pimcore_navigation_flyout",
+                        shadow: false,
+                        items: [{
+                            text: t("shared_translations"),
+                            iconCls: "pimcore_icon_translations",
+                            handler: this.editTranslations
+                        }, {
+                            text: "XLIFF " + t("export") + "/" + t("import"),
+                            iconCls: "pimcore_icon_translations",
+                            handler: this.xliffImportExport
+                        }, {
+                            text: "MS Word " + t("export"),
+                            iconCls: "pimcore_icon_translations",
+                            handler: this.wordExport
+                        }]
+                    }
+                });
+            }
+
+            if (user.isAllowed("recyclebin") && perspectiveCfg.inToolbar("extras.recyclebin")) {
+                extrasItems.push({
+                    text: t("recyclebin"),
+                    iconCls: "pimcore_icon_recyclebin",
+                    handler: this.recyclebin
+                });
+            }
+
+            if (user.isAllowed("plugins") && perspectiveCfg.inToolbar("extras.plugins")) {
+                extrasItems.push({
+                    text: t("extensions"),
+                    iconCls: "pimcore_icon_plugin",
+                    handler: this.extensionAdmin
+                });
+            }
+
+            if (user.isAllowed("notes_events") && perspectiveCfg.inToolbar("extras.notesEvents")) {
+                extrasItems.push({
+                    text: t('notes_events'),
+                    iconCls: "pimcore_icon_notes",
+                    handler: this.notes
+                });
+            }
+
+            if (user.isAllowed("application_logging")&& perspectiveCfg.inToolbar("extras.applicationlog")) {
+                extrasItems.push({
+                    text: t("log_applicationlog"),
+                    iconCls: "pimcore_icon_log_admin",
+                    handler: this.logAdmin
+                });
+            }
+
+            if (extrasItems.length > 0) {
+                extrasItems.push("-");
+            }
+
+            if (user.isAllowed("backup") && perspectiveCfg.inToolbar("extras.backup")) {
+                extrasItems.push({
+                    text: t("backup"),
+                    iconCls: "pimcore_icon_backup",
+                    handler: this.backup
+                });
+            }
+
+            if (user.isAllowed("emails") && perspectiveCfg.inToolbar("extras.emails")) {
+                extrasItems.push({
+                    text: t("email"),
+                    iconCls: "pimcore_icon_email",
+                    hideOnClick: false,
+                    menu: {
+                        cls: "pimcore_navigation_flyout",
+                        shadow: false,
+                        items: [{
+                            text: t("email_logs") + " (" + t("global") + ")",
+                            iconCls: "pimcore_icon_email",
+                            handler: this.sentEmailsLog
+                        }, {
+                            text: t("email_blacklist"),
+                            iconCls: "pimcore_icon_email pimcore_icon_overlay_delete",
+                            handler: this.emailBlacklist
+                        }, {
+                            text: t("bounce_mail_inbox"),
+                            iconCls: "pimcore_icon_email pimcore_icon_overlay_error",
+                            handler: this.showBounceMailInbox
+                        }, {
+                            text: t("send_test_email"),
+                            iconCls: "pimcore_icon_email",
+                            handler: this.sendTestEmail
+                        }]
+                    }
+                });
+            }
+
+            if (user.admin) {
+                if (perspectiveCfg.inToolbar("extras.update")) {
+                    extrasItems.push({
+                        text: t("update"),
+                        iconCls: "pimcore_icon_update",
+                        handler: function () {
+                            var update = new pimcore.settings.update();
+                        }
+                    });
+                }
+
+                if (perspectiveCfg.inToolbar("extras.maintenance")) {
+                    extrasItems.push({
+                        text: t("maintenance_mode"),
+                        iconCls: "pimcore_icon_maintenance",
+                        handler: this.showMaintenance
+                    });
+                }
+
+                if (perspectiveCfg.inToolbar("extras.systemtools")) {
+                    var systemItems = [];
+
+                    if (perspectiveCfg.inToolbar("extras.systemtools.phpinfo")) {
+                        systemItems.push(
+                            {
+                                text: "PHP Info",
+                                iconCls: "pimcore_icon_php",
+                                handler: this.showPhpInfo
+                            }
+                        );
+                    }
+
+                    if (perspectiveCfg.inToolbar("extras.systemtools.opcache")) {
+                        systemItems.push(
+                            {
+                                text: "PHP OPcache Status",
+                                iconCls: "pimcore_icon_reports",
+                                handler: this.showOpcacheStatus
+                            }
+                        );
+                    }
+
+                    if (perspectiveCfg.inToolbar("extras.systemtools.requirements")) {
+                        systemItems.push(
+                            {
+                                text: "System-Requirements Check",
+                                iconCls: "pimcore_icon_systemrequirements",
+                                handler: this.showSystemRequirementsCheck
+                            }
+                        );
+                    }
+
+                    if (perspectiveCfg.inToolbar("extras.systemtools.serverinfo")) {
+                        systemItems.push(
+                            {
+                                text: "Server Info",
+                                iconCls: "pimcore_icon_server_info",
+                                handler: this.showServerInfo
+                            }
+                        );
+                    }
+
+                    if (perspectiveCfg.inToolbar("extras.systemtools.database")) {
+                        systemItems.push(
+                            {
+                                text: "Database Administration",
+                                iconCls: "pimcore_icon_mysql",
+                                handler: this.showAdminer
+                            }
+                        );
+                    }
+
+                    if (perspectiveCfg.inToolbar("extras.systemtools.fileexplorer")) {
+                        systemItems.push(
+                            {
+                                text: t("server_fileexplorer"),
+                                iconCls: "pimcore_icon_folder pimcore_icon_overlay_search",
+                                handler: this.showFilexplorer
+                            }
+                        );
+                    }
+
+                    extrasItems.push({
+                        text: t("system_infos_and_tools"),
+                        iconCls: "pimcore_icon_info",
+                        hideOnClick: false,
+                        menu: {
+                            cls: "pimcore_navigation_flyout",
+                            shadow: false,
+                            items: systemItems
+                        }
+                    });
+                }
+            }
+
+
+            if (extrasItems.length > 0) {
+                this.extrasMenu = new Ext.menu.Menu({
+                    items: extrasItems,
+                    shadow: false,
+                    cls: "pimcore_navigation_flyout"
+                });
+            }
+        }
+
+        if (perspectiveCfg.inToolbar("marketing")) {
+            // marketing menu
+            var marketingItems = [];
+
+            if (user.isAllowed("reports") && perspectiveCfg.inToolbar("marketing.reports")) {
+                marketingItems.push({
+                    text: t("reports"),
+                    iconCls: "pimcore_icon_reports",
+                    handler: this.showReports.bind(this, null)
+                });
+            }
+
+            if (user.isAllowed("tag_snippet_management") && perspectiveCfg.inToolbar("marketing.tagmanagement")) {
+                marketingItems.push({
+                    text: t("tag_snippet_management"),
+                    iconCls: "pimcore_icon_tag",
+                    handler: this.showTagManagement
+                });
+            }
+
+            if (user.isAllowed("qr_codes")) {
+                marketingItems.push({
+                    text: t("qr_codes"),
+                    iconCls: "pimcore_icon_qrcode",
+                    handler: this.showQRCode
+                });
+            }
+
+            if (user.isAllowed("targeting") && perspectiveCfg.inToolbar("marketing.targeting")) {
+                marketingItems.push({
+                    text: t("personalization") + " / " + t("targeting"),
+                    iconCls: "pimcore_icon_usergroup",
+                    hideOnClick: false,
+                    menu: {
+                        cls: "pimcore_navigation_flyout",
+                        shadow: false,
+                        items: [{
+                            text: t("global_targeting_rules"),
+                            iconCls: "pimcore_icon_targeting",
+                            handler: this.showTargeting
+                        }, {
+                            text: t('target_group') + " (" + t("personas") + ")",
+                            iconCls: "pimcore_icon_personas",
+                            handler: this.showPersonas
+                        }]
+                    }
+                });
+            }
+
+            if (user.isAllowed("newsletter") && perspectiveCfg.inToolbar("marketing.newsletter")) {
+                marketingItems.push({
+                    text: t("newsletter"),
+                    iconCls: "pimcore_icon_newsletter",
+                    handler: this.showNewsletter
+                });
+            }
+
+            if (perspectiveCfg.inToolbar("marketing.seo")) {
+                var seoMenu = [];
+
+                if (user.isAllowed("documents") && user.isAllowed("seo_document_editor") && perspectiveCfg.inToolbar("marketing.seo.documents")) {
+                    seoMenu.push({
+                        text: t("seo_document_editor"),
+                        iconCls: "pimcore_icon_document pimcore_icon_overlay_search",
+                        handler: this.showDocumentSeo
+                    });
+                }
+
+                if (user.isAllowed("robots.txt") && perspectiveCfg.inToolbar("marketing.seo.robots")) {
+                    seoMenu.push({
+                        text: "robots.txt",
+                        iconCls: "pimcore_icon_robots",
+                        handler: this.showRobotsTxt
+                    });
+                }
+
+                if (user.isAllowed("http_errors") && perspectiveCfg.inToolbar("marketing.seo.httperrors")) {
+                    seoMenu.push({
+                        text: t("http_errors"),
+                        iconCls: "pimcore_icon_httperrorlog",
+                        handler: this.showHttpErrorLog
+                    });
+                }
+
+                if (user.isAllowed("reports") && perspectiveCfg.inToolbar("marketing.seo.reports")) {
+                    seoMenu.push({
+                        text: t("reports"),
+                        iconCls: "pimcore_icon_reports",
+                        handler: this.showReports.bind(this, null)
+                    });
+                }
+
+                if (seoMenu.length > 0) {
+                    marketingItems.push({
+                        text: t("search_engine_optimization"),
+                        iconCls: "pimcore_icon_seo",
+                        hideOnClick: false,
+                        menu: {
+                            cls: "pimcore_navigation_flyout",
+                            shadow: false,
+                            items: seoMenu
+                        }
+                    });
+                }
+            }
+
+            if (marketingItems.length > 0) {
+                this.marketingMenu = new Ext.menu.Menu({
+                    items: marketingItems,
+                    shadow: false,
+                    cls: "pimcore_navigation_flyout"
+                });
+            }
         }
 
 
-        if(user.isAllowed("dashboards")) {
-            this.dashboardMenu = new Ext.menu.Item({
-                text: t("dashboards"),
-                iconCls: "pimcore_icon_welcome",
-                hideOnClick: false,
-                menu: {
-                    cls: "pimcore_navigation_flyout",
-                    shadow: false,
-                    items: [{
-                        text: t("welcome"),
-                        iconCls: "pimcore_icon_welcome",
-                        handler: pimcore.helpers.openWelcomePage.bind(this)
-                    }]
-                }
-            });
+        if (perspectiveCfg.inToolbar("settings")) {
+            // settings menu
+            var settingsItems = [];
 
-            Ext.Ajax.request({
-                url: "/admin/portal/dashboard-list",
-                success: function (response) {
-                    var data = Ext.decode(response.responseText);
-                    for(var i = 0; i < data.length; i++) {
-                        this.dashboardMenu.menu.add(new Ext.menu.Item({
-                            text: data[i],
-                            iconCls: "pimcore_icon_welcome",
-                            handler: function (key) {
+            if (user.isAllowed("document_types") && perspectiveCfg.inToolbar("settings.documentTypes")) {
+                settingsItems.push({
+                    text: t("document_types"),
+                    iconCls: "pimcore_icon_doctypes",
+                    handler: this.editDocumentTypes
+                });
+            }
+            if (user.isAllowed("predefined_properties") && perspectiveCfg.inToolbar("settings.predefinedProperties")) {
+                settingsItems.push({
+                    text: t("predefined_properties"),
+                    iconCls: "pimcore_icon_properties",
+                    handler: this.editProperties
+                });
+            }
+
+            if (user.isAllowed("predefined_properties") && perspectiveCfg.inToolbar("settings.predefinedMetadata")) {
+                settingsItems.push({
+                    text: t("predefined_asset_metadata"),
+                    iconCls: "pimcore_icon_metadata",
+                    handler: this.editPredefinedMetadata
+                });
+            }
+
+            if (user.isAllowed("system_settings") && perspectiveCfg.inToolbar("settings.system")) {
+                settingsItems.push({
+                    text: t("system"),
+                    iconCls: "pimcore_icon_system",
+                    handler: this.systemSettings
+                });
+            }
+
+            if (user.isAllowed("website_settings") && perspectiveCfg.inToolbar("settings.website")) {
+                settingsItems.push({
+                    text: t("website"),
+                    iconCls: "pimcore_icon_website",
+                    handler: this.websiteSettings
+                });
+            }
+
+            if (user.isAllowed("users") && perspectiveCfg.inToolbar("settings.users")) {
+                var userItems = [];
+
+                if (perspectiveCfg.inToolbar("settings.users.users")) {
+                    userItems.push(
+                        {
+                            text: t("users"),
+                            handler: this.editUsers,
+                            iconCls: "pimcore_icon_user"
+                        }
+                    );
+                }
+
+                if (perspectiveCfg.inToolbar("settings.users.roles")) {
+                    userItems.push(
+                        {
+                            text: t("roles"),
+                            handler: this.editRoles,
+                            iconCls: "pimcore_icon_roles"
+                        }
+                    );
+                }
+
+                if (userItems.length > 0) {
+                    settingsItems.push({
+                        text: t("users") + " / " + t("roles"),
+                        iconCls: "pimcore_icon_user",
+                        hideOnClick: false,
+                        menu: {
+                            cls: "pimcore_navigation_flyout",
+                            shadow: false,
+                            items: userItems
+                        }
+                    });
+                }
+            } else {
+                if (perspectiveCfg.inToolbar("settings.users.myprofile")) {
+                    settingsItems.push({
+                        text: t("my_profile"),
+                        iconCls: "pimcore_icon_user",
+                        handler: this.editProfile
+                    });
+                }
+            }
+
+            if (user.isAllowed("thumbnails") && perspectiveCfg.inToolbar("settings.thumbnails")) {
+                settingsItems.push({
+                    text: t("thumbnails"),
+                    iconCls: "pimcore_icon_thumbnails",
+                    hideOnClick: false,
+                    menu: {
+                        cls: "pimcore_navigation_flyout",
+                        shadow: false,
+                        items: [{
+                            text: t("image_thumbnails"),
+                            iconCls: "pimcore_icon_thumbnails",
+                            handler: this.editThumbnails
+                        }, {
+                            text: t("video_thumbnails"),
+                            iconCls: "pimcore_icon_videothumbnails",
+                            handler: this.editVideoThumbnails
+                        }]
+                    }
+                });
+            }
+
+            if (user.isAllowed("objects") && perspectiveCfg.inToolbar("settings.objects")) {
+
+                var objectMenu = {
+                    text: t("object"),
+                    iconCls: "pimcore_icon_object",
+                    hideOnClick: false,
+                    menu: {
+                        cls: "pimcore_navigation_flyout",
+                        shadow: false,
+                        items: []
+                    }
+                };
+
+                if (user.isAllowed("classes")) {
+                    if (perspectiveCfg.inToolbar("settings.objects.classes")) {
+                        objectMenu.menu.items.push({
+                            text: t("classes"),
+                            iconCls: "pimcore_icon_class",
+                            handler: this.editClasses
+                        });
+                    }
+
+                    if (perspectiveCfg.inToolbar("settings.objects.fieldcollections")) {
+                        objectMenu.menu.items.push({
+                            text: t("field_collections"),
+                            iconCls: "pimcore_icon_fieldcollection",
+                            handler: this.editFieldcollections
+                        });
+                    }
+
+                    if (perspectiveCfg.inToolbar("settings.objects.objectbricks")) {
+                        objectMenu.menu.items.push({
+                            text: t("objectbricks"),
+                            iconCls: "pimcore_icon_objectbricks",
+                            handler: this.editObjectBricks
+                        });
+                    }
+
+                    if (perspectiveCfg.inToolbar("settings.objects.quantityValue")) {
+                        objectMenu.menu.items.push({
+                            text: t("quantityValue_field"),
+                            iconCls: "pimcore_icon_quantityValue",
+                            cls: "pimcore_main_menu",
+                            handler: function () {
                                 try {
-                                    pimcore.globalmanager.get("layout_portal_" + key).activate();
+                                    pimcore.globalmanager.get("quantityValue_units").activate();
                                 }
                                 catch (e) {
-                                    pimcore.globalmanager.add("layout_portal_" + key, new pimcore.layout.portal(key));
+                                    pimcore.globalmanager.add("quantityValue_units", new pimcore.object.quantityValue.unitsettings());
                                 }
-                            }.bind(this, data[i])
-                        }));
+                            }
+                        });
                     }
 
-                    this.dashboardMenu.menu.add(new Ext.menu.Separator({}));
-                    this.dashboardMenu.menu.add({
-                        text: t("add_dashboard"),
-                        iconCls: "pimcore_icon_add",
-                        handler: function () {
-                            Ext.MessageBox.prompt(t('create_new_dashboard'), t('please_enter_the_name_of_the_new_dashboard'),
-                                function (button, value, object) {
-                                    if(button == "ok") {
-                                        Ext.Ajax.request({
-                                            url: "/admin/portal/create-dashboard",
-                                            params: {
-                                                key: value
-                                            },
-                                            success: function(response) {
-                                                var response = Ext.decode(response.responseText);
-                                                if(response.success) {
-                                                    Ext.MessageBox.confirm(t("info"), t("reload_pimcore_changes"), function (buttonValue) {
-                                                        if (buttonValue == "yes") {
-                                                            window.location.reload();
-                                                        }
-                                                    });
-                                                    try {
-                                                        pimcore.globalmanager.get("layout_portal_" + value).activate();
-                                                    }
-                                                    catch (e) {
-                                                        pimcore.globalmanager.add("layout_portal_" + value, new pimcore.layout.portal(value));
-                                                    }
-                                                } else {
-                                                    Ext.Msg.show({
-                                                        title: t("error"),
-                                                        msg: t(response.message),
-                                                        buttons: Ext.Msg.OK,
-                                                        animEl: 'elId',
-                                                        icon: Ext.MessageBox.ERROR
-                                                    });
-                                                }
-                                            }
-                                        });
-                                    }
-                                }
-                            );
-                        }.bind(this)
+                    if (perspectiveCfg.inToolbar("settings.objects.keyValue")) {
+                        objectMenu.menu.items.push({
+                            text: t("keyvalue_menu_config"),
+                            iconCls: "pimcore_icon_key",
+                            handler: this.keyValueSettings
+                        });
+                    }
+
+                    if (perspectiveCfg.inToolbar("settings.objects.classificationstore")) {
+                        objectMenu.menu.items.push({
+                            text: t("classificationstore_menu_config"),
+                            iconCls: "pimcore_icon_classificationstore",
+                            handler: this.editClassificationStoreConfig
+                        });
+                    }
+
+                    if (perspectiveCfg.inToolbar("settings.objects.customViews")) {
+                        objectMenu.menu.items.push({
+                            text: t("custom_views"),
+                            iconCls: "pimcore_icon_custom_views",
+                            handler: this.editCustomViews
+                        });
+                    }
+
+                    if (perspectiveCfg.inToolbar("settings.objects.bulkExport")) {
+                        objectMenu.menu.items.push({
+                            text: t("bulk_export"),
+                            iconCls: "pimcore_icon_export",
+                            handler: this.bulkExport
+                        });
+                    }
+
+                    if (perspectiveCfg.inToolbar("settings.objects.bulkImport")) {
+                        objectMenu.menu.items.push({
+                            text: t("bulk_import"),
+                            iconCls: "pimcore_icon_import",
+                            handler: this.bulkImport.bind(this)
+                        });
+                    }
+
+
+                    if (objectMenu.menu.items.length > 0) {
+                        settingsItems.push(objectMenu);
+                    }
+                }
+            }
+
+            if (user.isAllowed("routes") && perspectiveCfg.inToolbar("settings.routes")) {
+                settingsItems.push({
+                    text: t("static_routes"),
+                    iconCls: "pimcore_icon_routes",
+                    handler: this.editRoutes
+                });
+            }
+
+            if (perspectiveCfg.inToolbar("settings.cache") && (user.isAllowed("clear_cache") || user.isAllowed("clear_temp_files"))) {
+
+                var cacheItems = [];
+
+                if (perspectiveCfg.inToolbar("settings.cache.clearOutput")) {
+                    if (user.isAllowed("clear_cache")) {
+                        cacheItems.push({
+                            text: t("clear_only_output_cache"),
+                            iconCls: "pimcore_icon_clear_cache",
+                            handler: this.clearOutputCache
+                        });
+                    }
+                }
+
+                if (perspectiveCfg.inToolbar("settings.cache.clearAll")) {
+                    if (user.isAllowed("clear_cache")) {
+                        cacheItems.push({
+                            text: t("clear_cache"),
+                            iconCls: "pimcore_icon_clear_cache",
+                            handler: this.clearCache
+                        });
+                    }
+                }
+
+                if (perspectiveCfg.inToolbar("settings.cache.clearTemp")) {
+                    if (user.isAllowed("clear_temp_files")) {
+                        cacheItems.push({
+                            text: t("clear_temporary_files"),
+                            iconCls: "pimcore_icon_clear_cache",
+                            handler: this.clearTemporaryFiles
+                        });
+                    }
+                }
+
+                if (perspectiveCfg.inToolbar("settings.cache.generatePreviews")) {
+                    if (pimcore.settings.document_generatepreviews && pimcore.settings.htmltoimage) {
+                        cacheItems.push({
+                            text: t("generate_page_previews"),
+                            iconCls: "pimcore_icon_page",
+                            handler: this.generatePagePreviews
+                        });
+                    }
+                }
+
+
+                if (cacheItems.length > 0) {
+                    var cacheMenu = {
+                        text: t("cache"),
+                        iconCls: "pimcore_icon_clear_cache",
+                        hideOnClick: false,
+                        menu: {
+                            cls: "pimcore_navigation_flyout",
+                            shadow: false,
+                            items: cacheItems
+                        }
+                    };
+
+                    settingsItems.push(cacheMenu);
+                }
+            }
+
+            // admin translations only for admins
+            if (user.admin) {
+                if (perspectiveCfg.inToolbar("settings.adminTranslations")) {
+                    settingsItems.push({
+                        text: t("translations_admin"),
+                        iconCls: "pimcore_icon_translations",
+                        handler: this.editTranslationsSpecific
                     });
-                }.bind(this)
-            });
-
-            fileItems.push(this.dashboardMenu);
-        }
-
-        if (user.isAllowed("documents")) {
-            fileItems.push({
-                text: t("open_document_by_id"),
-                iconCls: "pimcore_icon_document pimcore_icon_overlay_go",
-                handler: pimcore.helpers.openElementByIdDialog.bind(this, "document")
-            });
-        }
-
-        if (user.isAllowed("assets")) {
-            fileItems.push({
-                text: t("open_asset_by_id"),
-                iconCls: "pimcore_icon_asset pimcore_icon_overlay_go",
-                handler: pimcore.helpers.openElementByIdDialog.bind(this, "asset")
-            });
-        }
-
-        if (user.isAllowed("objects")) {
-            fileItems.push({
-                text: t("open_object_by_id"),
-                iconCls: "pimcore_icon_object pimcore_icon_overlay_go",
-                handler: pimcore.helpers.openElementByIdDialog.bind(this, "object")
-            });
-        }
-
-        if (user.isAllowed("objects") || user.isAllowed("documents") || user.isAllowed("assets")) {
-            fileItems.push({
-                text: t("search_replace_assignments"),
-                iconCls: "pimcore_icon_search pimcore_icon_overlay_go",
-                handler: function () {
-                    new pimcore.element.replace_assignments();
                 }
-            });
-        }
-
-        if (user.isAllowed("objects") || user.isAllowed("documents") || user.isAllowed("assets")) {
-            fileItems.push({
-                text: t('element_history'),
-                iconCls: "pimcore_icon_schedule",
-                cls: "pimcore_main_menu",
-                handler: this.showElementHistory.bind(this)
-            });
-        }
-
-        if (user.isAllowed("seemode")) {
-            fileItems.push({
-                text: t("seemode"),
-                iconCls: "pimcore_icon_seemode",
-                cls: "pimcore_main_menu",
-                handler: pimcore.helpers.openSeemode
-            });
-        }
-
-        fileItems.push({
-            text: t("close_all_tabs"),
-            iconCls: "pimcore_icon_tabs pimcore_icon_overlay_delete",
-            handler: this.closeAllTabs
-        });
-
-        fileItems.push({
-            text: t('help'),
-            iconCls: "pimcore_icon_help",
-            cls: "pimcore_main_menu",
-            hideOnClick: false,
-            menu: {
-                cls: "pimcore_navigation_flyout",
-                shadow: false,
-                items: [{
-                    text: t("documentation"),
-                    iconCls: "pimcore_icon_documentation",
-                    handler: function () {
-                        window.open("http://www.pimcore.org/wiki/");
-                    }
-                },
-                    {
-                        text: t("report_bugs"),
-                        iconCls: "pimcore_icon_bugs",
-                        handler: function () {
-                            window.open("http://www.pimcore.org/issues");
-                        }
-                    }
-                ]
             }
-        });
 
-        fileItems.push({
-            text: "ABOUT PIMCORE &reg;",
-            iconCls: "pimcore_icon_pimcore",
-            handler: function () {
-                pimcore.helpers.showAbout();
-            }
-        });
-
-        this.fileMenu = new Ext.menu.Menu({
-            items: fileItems,
-            shadow: false,
-            cls: "pimcore_navigation_flyout"
-        });
-
-
-        var extrasItems = [];
-
-        if (user.isAllowed("glossary")) {
-            extrasItems.push({
-                text: t("glossary"),
-                iconCls: "pimcore_icon_glossary",
-                handler: this.editGlossary
-            });
-        }
-
-        if (user.isAllowed("redirects")) {
-            extrasItems.push({
-                text: t("redirects"),
-                iconCls: "pimcore_icon_redirects",
-                handler: this.editRedirects
-            });
-        }
-
-        if (user.isAllowed("translations")) {
-            extrasItems.push({
-                text: t("translation"),
-                iconCls: "pimcore_icon_translations",
-                hideOnClick: false,
-                menu: {
-                    cls: "pimcore_navigation_flyout",
-                    shadow: false,
-                    items: [{
-                        text: t("shared_translations"),
-                        iconCls: "pimcore_icon_translations",
-                        handler: this.editTranslations
-                    }, {
-                        text: "XLIFF " + t("export") + "/" + t("import"),
-                        iconCls: "pimcore_icon_translations",
-                        handler: this.xliffImportExport
-                    }, {
-                        text: "MS Word " + t("export"),
-                        iconCls: "pimcore_icon_translations",
-                        handler: this.wordExport
-                    }]
-                }
-            });
-        }
-
-        if (user.isAllowed("recyclebin")) {
-            extrasItems.push({
-                text: t("recyclebin"),
-                iconCls: "pimcore_icon_recyclebin",
-                handler: this.recyclebin
-            });
-        }
-
-        if (user.isAllowed("plugins")) {
-            extrasItems.push({
-                text: t("extensions"),
-                iconCls: "pimcore_icon_plugin",
-                handler: this.extensionAdmin
-            });
-        }
-
-        if (user.isAllowed("notes_events")) {
-            extrasItems.push({
-                text: t('notes_events'),
-                iconCls: "pimcore_icon_notes",
-                handler: this.notes
-            });
-        }
-
-        if (user.isAllowed("application_logging")) {
-            extrasItems.push({
-                text: t("log_applicationlog"),
-                iconCls: "pimcore_icon_log_admin",
-                handler: this.logAdmin
-            });
-        }
-
-        if (extrasItems.length > 0) {
-            extrasItems.push("-");
-        }
-
-        if (user.isAllowed("backup")) {
-            extrasItems.push({
-                text: t("backup"),
-                iconCls: "pimcore_icon_backup",
-                handler: this.backup
-            });
-        }
-
-        if (user.isAllowed("emails")) {
-            extrasItems.push({
-                text: t("email"),
-                iconCls: "pimcore_icon_email",
-                hideOnClick: false,
-                menu: {
-                    cls: "pimcore_navigation_flyout",
-                    shadow: false,
-                    items: [{
-                        text: t("email_logs") + " (" + t("global") + ")",
-                        iconCls: "pimcore_icon_email",
-                        handler: this.sentEmailsLog
-                    },{
-                        text: t("email_blacklist"),
-                        iconCls: "pimcore_icon_email pimcore_icon_overlay_delete",
-                        handler: this.emailBlacklist
-                    },{
-                        text: t("bounce_mail_inbox"),
-                        iconCls: "pimcore_icon_email pimcore_icon_overlay_error",
-                        handler: this.showBounceMailInbox
-                    }, {
-                        text: t("send_test_email"),
-                        iconCls: "pimcore_icon_email",
-                        handler: this.sendTestEmail
-                    }]
-                }
-            });
-        }
-
-        if (user.admin) {
-            extrasItems.push({
-                text: t("update"),
-                iconCls: "pimcore_icon_update",
-                handler: function () {
-                    var update = new pimcore.settings.update();
-                }
-            });
-
-            extrasItems.push({
-                text: t("maintenance_mode"),
-                iconCls: "pimcore_icon_maintenance",
-                handler: this.showMaintenance
-            });
-
-            extrasItems.push({
-                text: t("system_infos_and_tools"),
-                iconCls: "pimcore_icon_info",
-                hideOnClick: false,
-                menu: {
-                    cls: "pimcore_navigation_flyout",
-                    shadow: false,
-                    items: [{
-                        text: "PHP Info",
-                        iconCls: "pimcore_icon_php",
-                        handler: this.showPhpInfo
-                    },{
-                        text: "PHP OPcache Status",
+            if (user.isAllowed("reports") && user.isAllowed("system_settings")) {
+                if (perspectiveCfg.inToolbar("settings.marketingReports")) {
+                    settingsItems.push({
+                        text: t("reports_and_marketing"),
                         iconCls: "pimcore_icon_reports",
-                        handler: this.showOpcacheStatus
-                    },{
-                        text: "System-Requirements Check",
-                        iconCls: "pimcore_icon_systemrequirements",
-                        handler: this.showSystemRequirementsCheck
-                    },{
-                        text: "Server Info",
-                        iconCls: "pimcore_icon_server_info",
-                        handler: this.showServerInfo
-                    },{
-                        text: "Database Administration",
-                        iconCls: "pimcore_icon_mysql",
-                        handler: this.showAdminer
-                    },{
-                        text: t("server_fileexplorer"),
-                        iconCls: "pimcore_icon_folder pimcore_icon_overlay_search",
-                        handler: this.showFilexplorer
-                    }]
+                        handler: this.reportSettings
+                    });
                 }
-            });
-        }
-
-
-        if (extrasItems.length > 0) {
-            this.extrasMenu = new Ext.menu.Menu({
-                items: extrasItems,
-                shadow: false,
-                cls: "pimcore_navigation_flyout"
-            });
-        }
-
-        // marketing menu
-        var marketingItems = [];
-
-        if (user.isAllowed("reports")) {
-            marketingItems.push({
-                text: t("reports"),
-                iconCls: "pimcore_icon_reports",
-                handler: this.showReports.bind(this, null)
-            });
-        }
-
-        if (user.isAllowed("tag_snippet_management")) {
-            marketingItems.push({
-                text: t("tag_snippet_management"),
-                iconCls: "pimcore_icon_tag",
-                handler: this.showTagManagement
-            });
-        }
-
-        if (user.isAllowed("qr_codes")) {
-            marketingItems.push({
-                text: t("qr_codes"),
-                iconCls: "pimcore_icon_qrcode",
-                handler: this.showQRCode
-            });
-        }
-
-        if (user.isAllowed("targeting")) {
-            marketingItems.push({
-                text: t("personalization") + " / " + t("targeting"),
-                iconCls: "pimcore_icon_usergroup",
-                hideOnClick: false,
-                menu: {
-                    cls: "pimcore_navigation_flyout",
-                    shadow: false,
-                    items: [{
-                        text: t("global_targeting_rules"),
-                        iconCls: "pimcore_icon_targeting",
-                        handler: this.showTargeting
-                    },{
-                        text: t('target_group') + " (" + t("personas") + ")",
-                        iconCls: "pimcore_icon_personas",
-                        handler: this.showPersonas
-                    }]
-                }
-            });
-        }
-
-        if (user.isAllowed("newsletter")) {
-            marketingItems.push({
-                text: t("newsletter"),
-                iconCls: "pimcore_icon_newsletter",
-                handler: this.showNewsletter
-            });
-        }
-
-        var seoMenu = [];
-
-        if(user.isAllowed("documents") && user.isAllowed("seo_document_editor")) {
-            seoMenu.push({
-                text: t("seo_document_editor"),
-                iconCls: "pimcore_icon_document pimcore_icon_overlay_search",
-                handler: this.showDocumentSeo
-            });
-        }
-
-        if(user.isAllowed("robots.txt")) {
-            seoMenu.push({
-                text: "robots.txt",
-                iconCls: "pimcore_icon_robots",
-                handler: this.showRobotsTxt
-            });
-        }
-
-        if(user.isAllowed("http_errors")) {
-            seoMenu.push({
-                text: t("http_errors"),
-                iconCls: "pimcore_icon_httperrorlog",
-                handler: this.showHttpErrorLog
-            });
-        }
-
-        if(user.isAllowed("reports")) {
-            seoMenu.push({
-                text: t("reports"),
-                iconCls: "pimcore_icon_reports",
-                handler: this.showReports.bind(this, null)
-            });
-        }
-
-        if (seoMenu.length > 0) {
-            marketingItems.push({
-                text: t("search_engine_optimization"),
-                iconCls: "pimcore_icon_seo",
-                hideOnClick: false,
-                menu: {
-                    cls: "pimcore_navigation_flyout",
-                    shadow: false,
-                    items: seoMenu
-                }
-            });
-        }
-
-        if (marketingItems.length > 0) {
-            this.marketingMenu = new Ext.menu.Menu({
-                items: marketingItems,
-                shadow: false,
-                cls: "pimcore_navigation_flyout"
-            });
-        }
-
-
-
-        // settings menu
-        var settingsItems = [];
-
-        if (user.isAllowed("document_types")) {
-            settingsItems.push({
-                text: t("document_types"),
-                iconCls: "pimcore_icon_doctypes",
-                handler: this.editDocumentTypes
-            });
-        }
-        if (user.isAllowed("predefined_properties")) {
-            settingsItems.push({
-                text: t("predefined_properties"),
-                iconCls: "pimcore_icon_properties",
-                handler: this.editProperties
-            });
-        }
-
-        if (user.isAllowed("predefined_properties")) {
-            settingsItems.push({
-                text: t("predefined_asset_metadata"),
-                iconCls: "pimcore_icon_metadata",
-                handler: this.editPredefinedMetadata
-            });
-        }
-
-        if (user.isAllowed("system_settings")) {
-            settingsItems.push({
-                text: t("system"),
-                iconCls: "pimcore_icon_system",
-                handler: this.systemSettings
-            });
-        }
-
-        if (user.isAllowed("website_settings")) {
-            settingsItems.push({
-                text: t("website"),
-                iconCls: "pimcore_icon_website",
-                handler: this.websiteSettings
-            });
-        }
-
-        if (user.isAllowed("users")) {
-            settingsItems.push({
-                text: t("users") + " / " + t("roles"),
-                iconCls: "pimcore_icon_user",
-                hideOnClick: false,
-                menu: {
-                    cls: "pimcore_navigation_flyout",
-                    shadow: false,
-                    items: [{
-                        text: t("users"),
-                        handler: this.editUsers,
-                        iconCls: "pimcore_icon_user"
-                    }, {
-                        text: t("roles"),
-                        handler: this.editRoles,
-                        iconCls: "pimcore_icon_roles"
-                    }]
-                }
-            });
-        } else {
-            settingsItems.push({
-                text: t("my_profile"),
-                iconCls: "pimcore_icon_user",
-                handler: this.editProfile
-            });
-        }
-
-        if (user.isAllowed("thumbnails")) {
-            settingsItems.push({
-                text: t("thumbnails"),
-                iconCls: "pimcore_icon_thumbnails",
-                hideOnClick: false,
-                menu: {
-                    cls: "pimcore_navigation_flyout",
-                    shadow: false,
-                    items: [{
-                        text: t("image_thumbnails"),
-                        iconCls: "pimcore_icon_thumbnails",
-                        handler: this.editThumbnails
-                    },{
-                        text: t("video_thumbnails"),
-                        iconCls: "pimcore_icon_videothumbnails",
-                        handler: this.editVideoThumbnails
-                    }]
-                }
-            });
-        }
-
-        if (user.isAllowed("objects")) {
-
-            var objectMenu = {
-                text: t("object"),
-                iconCls: "pimcore_icon_object",
-                hideOnClick: false,
-                menu: {
-                    cls: "pimcore_navigation_flyout",
-                    shadow: false,
-                    items: []
-                }
-            };
-
-            if (user.isAllowed("classes")) {
-                objectMenu.menu.items.push({
-                    text: t("classes"),
-                    iconCls: "pimcore_icon_class",
-                    handler: this.editClasses
-                });
-
-                objectMenu.menu.items.push({
-                    text: t("field_collections"),
-                    iconCls: "pimcore_icon_fieldcollection",
-                    handler: this.editFieldcollections
-                });
-
-                objectMenu.menu.items.push({
-                    text: t("objectbricks"),
-                    iconCls: "pimcore_icon_objectbricks",
-                    handler: this.editObjectBricks
-                });
-
-                objectMenu.menu.items.push({
-                    text: t("quantityValue_field"),
-                    iconCls: "pimcore_icon_quantityValue",
-                    cls: "pimcore_main_menu",
-                    handler: function () {
-                        try {
-                            pimcore.globalmanager.get("quantityValue_units").activate();
-                        }
-                        catch (e) {
-                            pimcore.globalmanager.add("quantityValue_units", new pimcore.object.quantityValue.unitsettings());
-                        }
-                    }
-                });
-
-                objectMenu.menu.items.push({
-                    text: t("keyvalue_menu_config"),
-                    iconCls: "pimcore_icon_key",
-                    handler: this.keyValueSettings
-                });
-
-                objectMenu.menu.items.push({
-                    text: t("classificationstore_menu_config"),
-                    iconCls: "pimcore_icon_classificationstore",
-                    handler: this.editClassificationStoreConfig
-                });
-
-
-                objectMenu.menu.items.push({
-                    text: t("custom_views"),
-                    iconCls: "pimcore_icon_custom_views",
-                    handler: this.editCustomViews
-                });
-
-
-                objectMenu.menu.items.push({
-                    text: t("bulk_export"),
-                    iconCls: "pimcore_icon_export",
-                    handler: this.bulkExport
-                });
-
-                objectMenu.menu.items.push({
-                    text: t("bulk_import"),
-                    iconCls: "pimcore_icon_import",
-                    handler: this.bulkImport.bind(this)
-                });
-
-
-                settingsItems.push(objectMenu);
             }
-        }
 
-        if (user.isAllowed("routes")) {
-            settingsItems.push({
-                text: t("static_routes"),
-                iconCls: "pimcore_icon_routes",
-                handler: this.editRoutes
-            });
-        }
-
-        if (user.isAllowed("clear_cache") || user.isAllowed("clear_temp_files")) {
-
-            var cacheMenu = {
-                text: t("cache"),
-                iconCls: "pimcore_icon_clear_cache",
-                hideOnClick: false,
-                menu: {
-                    cls: "pimcore_navigation_flyout",
-                    shadow: false,
-                    items: []
+            if (user.isAllowed("reports") && user.isAllowed("system_settings")) {
+                if (perspectiveCfg.inToolbar("settings.customReports")) {
+                    settingsItems.push({
+                        text: t("custom_reports"),
+                        iconCls: "pimcore_icon_reports",
+                        handler: this.showCustomReports
+                    });
                 }
-            };
+            }
 
-            if (user.isAllowed("clear_cache")) {
-                cacheMenu.menu.items.push({
-                    text: t("clear_only_output_cache"),
-                    iconCls: "pimcore_icon_clear_cache",
-                    handler: this.clearOutputCache
+            // tags for elements
+            if (user.isAllowed("tags_config") && perspectiveCfg.inToolbar("settings.tagConfiguration")) {
+                settingsItems.push({
+                    text: t("element_tag_configuration"),
+                    iconCls: "pimcore_icon_element_tags",
+                    handler: this.showTagConfiguration
                 });
             }
 
-            if (user.isAllowed("clear_cache")) {
-                cacheMenu.menu.items.push({
-                    text: t("clear_cache"),
-                    iconCls: "pimcore_icon_clear_cache",
-                    handler: this.clearCache
+            // help menu
+            if (settingsItems.length > 0) {
+                this.settingsMenu = new Ext.menu.Menu({
+                    items: settingsItems,
+                    shadow: false,
+                    cls: "pimcore_navigation_flyout"
                 });
             }
-
-            if (user.isAllowed("clear_temp_files")) {
-                cacheMenu.menu.items.push({
-                    text: t("clear_temporary_files"),
-                    iconCls: "pimcore_icon_clear_cache",
-                    handler: this.clearTemporaryFiles
-                });
-            }
-
-            if(pimcore.settings.document_generatepreviews && pimcore.settings.htmltoimage) {
-                cacheMenu.menu.items.push({
-                    text: t("generate_page_previews"),
-                    iconCls: "pimcore_icon_page",
-                    handler: this.generatePagePreviews
-                });
-            }
-
-            settingsItems.push(cacheMenu);
-        }
-
-        // admin translations only for admins
-        if(user.admin) {
-            settingsItems.push({
-                text: t("translations_admin"),
-                iconCls: "pimcore_icon_translations",
-                handler: this.editTranslationsSpecific
-            });
-        }
-
-        if (user.isAllowed("reports") && user.isAllowed("system_settings")) {
-            settingsItems.push({
-                text: t("reports_and_marketing"),
-                iconCls: "pimcore_icon_reports",
-                handler: this.reportSettings
-            });
-        }
-
-        if (user.isAllowed("reports") && user.isAllowed("system_settings")) {
-            settingsItems.push({
-                text: t("custom_reports"),
-                iconCls: "pimcore_icon_reports",
-                handler: this.showCustomReports
-            });
-        }
-
-        // tags for elements
-        if(user.isAllowed("tags_config")) {
-            settingsItems.push({
-                text: t("element_tag_configuration"),
-                iconCls: "pimcore_icon_element_tags",
-                handler: this.showTagConfiguration
-            });
-        }
-
-        // help menu
-        if (settingsItems.length > 0) {
-            this.settingsMenu = new Ext.menu.Menu({
-                items: settingsItems,
-                shadow: false,
-                cls: "pimcore_navigation_flyout"
-            });
         }
 
 
         // search menu
 
-        var searchItems = [];
-        var searchAction = function (type) {
-            pimcore.helpers.itemselector(false, function (selection) {
-                pimcore.helpers.openElement(selection.id,selection.type, selection.subtype);
-            }, {type: [type]}, {moveToTab: true} );
-        };
+        if (perspectiveCfg.inToolbar("search")) {
+            var searchItems = [];
+            var searchAction = function (type) {
+                pimcore.helpers.itemselector(false, function (selection) {
+                    pimcore.helpers.openElement(selection.id, selection.type, selection.subtype);
+                }, {type: [type]}, {moveToTab: true});
+            };
 
-        if (user.isAllowed("documents")) {
-            searchItems.push({
-                text: t("documents"),
-                iconCls: "pimcore_icon_document",
-                handler: searchAction.bind(this, "document")
-            });
+            if (user.isAllowed("documents") && perspectiveCfg.inToolbar("search.documents")) {
+                searchItems.push({
+                    text: t("documents"),
+                    iconCls: "pimcore_icon_document",
+                    handler: searchAction.bind(this, "document")
+                });
+            }
+
+            if (user.isAllowed("assets") && perspectiveCfg.inToolbar("search.assets")) {
+                searchItems.push({
+                    text: t("assets"),
+                    iconCls: "pimcore_icon_asset",
+                    handler: searchAction.bind(this, "asset")
+                });
+            }
+
+            if (user.isAllowed("objects") && perspectiveCfg.inToolbar("search.objects")) {
+                searchItems.push({
+                    text: t("objects"),
+                    iconCls: "pimcore_icon_object",
+                    handler: searchAction.bind(this, "object")
+                });
+            }
+
+            if (searchItems.length > 0) {
+                this.searchMenu = new Ext.menu.Menu({
+                    items: searchItems,
+                    shadow: false,
+                    cls: "pimcore_navigation_flyout"
+                });
+            }
         }
 
-        if (user.isAllowed("assets")) {
-            searchItems.push({
-                text: t("assets"),
-                iconCls: "pimcore_icon_asset",
-                handler: searchAction.bind(this, "asset")
-            });
+
+        if (this.fileMenu) {
+            Ext.get("pimcore_menu_file").on("mousedown", this.showSubMenu.bind(this.fileMenu));
         }
-
-        if (user.isAllowed("objects")) {
-            searchItems.push({
-                text: t("objects"),
-                iconCls: "pimcore_icon_object",
-                handler: searchAction.bind(this, "object")
-            });
+        if (this.extrasMenu) {
+            Ext.get("pimcore_menu_extras").on("mousedown", this.showSubMenu.bind(this.extrasMenu));
         }
-
-        if (searchItems.length > 0) {
-            this.searchMenu = new Ext.menu.Menu({
-                items: searchItems,
-                shadow: false,
-                cls: "pimcore_navigation_flyout"
-            });
+        if (this.marketingMenu) {
+            Ext.get("pimcore_menu_marketing").on("mousedown", this.showSubMenu.bind(this.marketingMenu));
         }
-
-
-        Ext.get("pimcore_menu_file").on("mousedown", this.showSubMenu.bind(this.fileMenu));
-        Ext.get("pimcore_menu_extras").on("mousedown", this.showSubMenu.bind(this.extrasMenu));
-        Ext.get("pimcore_menu_marketing").on("mousedown", this.showSubMenu.bind(this.marketingMenu));
-        Ext.get("pimcore_menu_settings").on("mousedown", this.showSubMenu.bind(this.settingsMenu));
-        Ext.get("pimcore_menu_search").on("mousedown", this.showSubMenu.bind(this.searchMenu));
+        if (this.settingsMenu) {
+            Ext.get("pimcore_menu_settings").on("mousedown", this.showSubMenu.bind(this.settingsMenu));
+        }
+        if (this.searchMenu) {
+            Ext.get("pimcore_menu_search").on("mousedown", this.showSubMenu.bind(this.searchMenu));
+        }
 
         Ext.each(Ext.query(".pimcore_menu_item"), function (el) {
             el = Ext.get(el);
