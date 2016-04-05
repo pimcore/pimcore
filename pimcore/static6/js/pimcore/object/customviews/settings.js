@@ -98,6 +98,13 @@ pimcore.object.customviews.settings = Class.create({
             };
         }
 
+        var sorterField = new Ext.form.NumberField({
+            fieldLabel: t("sort"),
+            name: "sort_" + this.entryCount,
+            width: 300,
+            value: data.sort
+        });
+
         this.panel.add({
             xtype: 'panel',
             border: true,
@@ -171,7 +178,21 @@ pimcore.object.customviews.settings = Class.create({
                         value: data.classes,
                         valueField: 'id',
                         displayField: 'text'
-                    }
+                    },
+                    {
+                        xtype: "combobox",
+                        fieldLabel: t("position"),
+                        name: "position_" + this.entryCount,
+                        width: 300,
+                        value: data.position,
+                        store: Ext.create('Ext.data.ArrayStore', {
+                            fields: ['id', 'text'],
+                            data: [["left", t("left")],["right" , t("right")]]
+                        }),
+                        valueField: "id",
+                        displayField: "text"
+                    },
+                    sorterField
                 ]
             }
             ],

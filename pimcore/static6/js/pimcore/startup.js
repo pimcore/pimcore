@@ -42,9 +42,6 @@ if (typeof console == "undefined") {
     };
 }
 
-var layoutDocumentTree = null;
-var layoutAssetTree = null;
-var layoutObjectTree = null;
 var xhrActive = 0; // number of active xhr requests
 
 Ext.Loader.setConfig({
@@ -321,7 +318,7 @@ Ext.onReady(function () {
     pimcore.globalmanager.add("document_types_store", store);
     pimcore.globalmanager.add("document_documenttype_store", ["page","snippet","email"]);
 
-    //tranlsation admin keys
+    //translation admin keys
     pimcore.globalmanager.add("translations_admin_missing", new Array());
     pimcore.globalmanager.add("translations_admin_added", new Array());
     pimcore.globalmanager.add("translations_admin_translated_values", new Array());
@@ -378,6 +375,8 @@ Ext.onReady(function () {
     storeoc.load();
 
     pimcore.globalmanager.add("object_types_store_create", storeoc);
+
+    pimcore.globalmanager.add("perspective", new pimcore.perspective(pimcore.settings.perspective));
 
     // current user
     pimcore.globalmanager.add("user", new pimcore.user(pimcore.currentuser));
@@ -510,6 +509,7 @@ Ext.onReady(function () {
                                 layoutConfig:{
                                     animate:false
                                 },
+                                hidden: true,
                                 forceLayout:true,
                                 hideMode:"offsets",
                                 items:[]
@@ -601,46 +601,70 @@ Ext.onReady(function () {
         }
 
 
-        var treepanel = Ext.getCmp("pimcore_panel_tree_left");
+        var perspective = pimcore.globalmanager.get("perspective");
+        var elementTree = perspective.getElementTree();
 
-        //TODO comment in again
-        if (user.isAllowed("documents")) {
-            layoutDocumentTree = new pimcore.document.tree();
-            pimcore.globalmanager.add("layout_document_tree", layoutDocumentTree);
-        }
-        if (user.isAllowed("assets")) {
-            layoutAssetTree = new pimcore.asset.tree();
-            pimcore.globalmanager.add("layout_asset_tree", layoutAssetTree);
-        }
-        if (user.isAllowed("objects")) {
-            layoutObjectTree = new pimcore.object.tree();
-            pimcore.globalmanager.add("layout_object_tree", layoutObjectTree);
+        for(var i = 0; i < elementTree.length; i++) {
 
-            // add custom views
-            if (pimcore.settings.customviews) {
-                if (pimcore.settings.customviews.length > 0) {
-                    var cv;
-                    var cvTree;
-                    for (var cvs = 0; cvs < pimcore.settings.customviews.length; cvs++) {
-                        cv = pimcore.settings.customviews[cvs];
+            var treeConfig = elementTree[i];
+            var type = treeConfig["type"];
+            var side = treeConfig["position"] ? treeConfig["position"] : "left";
+            var expanded = treeConfig["expanded"];
+            var treepanel = null;
+            var tree = null;
 
-                        cvTree = new pimcore.object.customviews.tree({
-                            allowedClasses:cv.allowedClasses,
-                            rootId:cv.rootId,
-                            rootVisible:cv.showroot,
-                            treeId:"pimcore_panel_tree_customviews_" + cv.id,
-                            treeIconCls:"pimcore_object_customviews_icon_" + cv.id,
-                            treeTitle:ts(cv.name),
-                            parentPanel:Ext.getCmp("pimcore_panel_tree_left"),
-                            index:(cvs + 10),
-                            loaderBaseParams:{}
-                        });
-                        pimcore.globalmanager.add("layout_customviews_tree" + cv.id, cvTree);
+            switch (type) {
+                case "documents":
+                    if (user.isAllowed("documents") && !treeConfig.hidden) {
+                        tree = new pimcore.document.tree(null, treeConfig);
+                        pimcore.globalmanager.add("layout_document_tree", tree);
+                        treepanel = Ext.getCmp("pimcore_panel_tree_" + side);
+                        treepanel.setHidden(false);
                     }
-                }
+                    break;
+                case "assets":
+                    if (user.isAllowed("assets") && !treeConfig.hidden) {
+                        tree = new pimcore.asset.tree(null, treeConfig);
+                        pimcore.globalmanager.add("layout_asset_tree", tree);
+                        treepanel = Ext.getCmp("pimcore_panel_tree_" + side);
+                        treepanel.setHidden(false);
+                    }
+                    break;
+                case "objects":
+                    if (user.isAllowed("objects")) {
+                        if (!treeConfig.hidden) {
+                            treepanel = Ext.getCmp("pimcore_panel_tree_" + side);
+                            tree = new pimcore.object.tree(null, treeConfig);
+                            pimcore.globalmanager.add("layout_object_tree", tree);
+                            treepanel.setHidden(false);
+                        }
+                    }
+                    break;
+                case "customview":
+                    if (user.isAllowed("objects")) {
+                        if (!treeConfig.hidden) {
+                            treepanel = Ext.getCmp("pimcore_panel_tree_" + side);
+
+                            var treepanel = Ext.getCmp("pimcore_panel_tree_" + side);
+
+                            tree = new pimcore.object.customviews.tree({
+                                allowedClasses: treeConfig.allowedClasses,
+                                rootId: treeConfig.rootId,
+                                rootVisible: treeConfig.showroot,
+                                treeId: "pimcore_panel_tree_customviews_" + treeConfig.id,
+                                treeIconCls: "pimcore_object_customviews_icon_" + treeConfig.id,
+                                treeTitle: ts(treeConfig.name),
+                                parentPanel: treepanel,
+                                loaderBaseParams: {}
+                            }, treeConfig);
+                            pimcore.globalmanager.add("layout_customviews_tree" + treeConfig.id, tree);
+
+                            treepanel.setHidden(false);
+                        }
+                    }
+                    break;
             }
         }
-
     }
     catch (e) {
         console.log(e);
@@ -735,7 +759,6 @@ pimcore["intervals"]["ping"] = window.setInterval(function () {
     });
 }, 60000);
 
-
 // refreshes the layout
 pimcore.registerNS("pimcore.layout.refresh");
 pimcore.layout.refresh = function () {
@@ -745,7 +768,6 @@ pimcore.layout.refresh = function () {
     catch (e) {
     }
 };
-
 
 // garbage collector
 pimcore.helpers.unload = function () {

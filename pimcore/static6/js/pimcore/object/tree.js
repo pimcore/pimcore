@@ -14,22 +14,28 @@ pimcore.object.tree = Class.create({
 
     treeDataUrl: "/admin/object/tree-get-childs-by-id/",
 
-    initialize: function (config) {
+    initialize: function (config, perspectiveCfg) {
 
-        this.position = "left";
+        this.perspectiveCfg = perspectiveCfg;
+        if (!perspectiveCfg) {
+            this.perspectiveCfg = {
+                position: "left"
+            };
+        }
+
+        this.position = this.perspectiveCfg.position ? this.perspectiveCfg.position : "left";
+
+        var parentPanel = Ext.getCmp("pimcore_panel_tree_" + this.position);
 
         if (!config) {
             this.config = {
-                //rootId: 1,
                 rootVisible: true,
                 allowedClasses: "all",
                 loaderBaseParams: {},
                 treeId: "pimcore_panel_tree_objects",
                 treeIconCls: "pimcore_icon_object",
                 treeTitle: t('objects'),
-                parentPanel: Ext.getCmp("pimcore_panel_tree_left")
-                //,
-                //index: 3
+                parentPanel: parentPanel
             };
         }
         else {
@@ -92,7 +98,6 @@ pimcore.object.tree = Class.create({
         // objects
         this.tree = Ext.create('pimcore.tree.Panel', {
             store: store,
-            border: true,
             region: "center",
             autoLoad: false,
             iconCls: this.config.treeIconCls,
@@ -147,6 +152,13 @@ pimcore.object.tree = Class.create({
 
         this.config.parentPanel.insert(this.config.index, this.tree);
         this.config.parentPanel.updateLayout();
+
+
+        if (!this.config.parentPanel.alreadyExpanded && this.perspectiveCfg.expanded) {
+            this.config.parentPanel.alreadyExpanded = true;
+            this.tree.expand();
+        }
+
     },
 
     getTreeNodeListeners: function () {

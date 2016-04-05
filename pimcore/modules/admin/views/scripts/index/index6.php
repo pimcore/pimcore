@@ -191,6 +191,7 @@ $scripts = array(
     "pimcore/helpers/quantityValue.js",
     "pimcore/overrides.js",
 
+    "pimcore/perspective.js",
     "pimcore/user.js",
 
     // tools
@@ -540,7 +541,6 @@ $googleMapsApiKey = $this->config->services->google->browserapikey;
         devmode: <?= PIMCORE_DEVMODE ? "true" : "false"; ?>,
         google_analytics_enabled: <?= \Zend_Json::encode((bool) \Pimcore\Google\Analytics::isConfigured()) ?>,
         google_webmastertools_enabled: <?= \Zend_Json::encode((bool) \Pimcore\Google\Webmastertools::isConfigured()) ?>,
-        customviews: <?= \Zend_Json::encode($this->customview_config) ?>,
         language: '<?= $this->language; ?>',
         websiteLanguages: <?= \Zend_Json::encode(explode(",", \Pimcore\Tool\Admin::reorderWebsiteLanguages(\Pimcore\Tool\Admin::getCurrentUser(), $this->config->general->validLanguages))); ?>,
         google_maps_api_key: "<?= $googleMapsApiKey ?>",
@@ -549,7 +549,8 @@ $googleMapsApiKey = $this->config->services->google->browserapikey;
         document_generatepreviews: <?= \Zend_Json::encode((bool) $this->config->documents->generatepreview) ?>,
         htmltoimage: <?= \Zend_Json::encode(\Pimcore\Image\HtmlToImage::isSupported()) ?>,
         videoconverter: <?= \Zend_Json::encode(\Pimcore\Video::isAvailable()) ?>,
-        asset_hide_edit: <?= $this->config->assets->hide_edit_image ? "true" : "false" ?>
+        asset_hide_edit: <?= $this->config->assets->hide_edit_image ? "true" : "false" ?>,
+        perspective: <?= \Zend_Json::encode(\Pimcore\Config::getRuntimePerspective()) ?>
     };
 </script>
 

@@ -59,33 +59,31 @@ class Admin_IndexController extends \Pimcore\Controller\Action\Admin
         }
         $this->view->mail_settings_complete =  \Zend_Json::encode(!$mailIncomplete);
 
-
-
-
         // report configuration
         $this->view->report_config = Config::getReportConfig();
 
-        // customviews config
-        $cvConfig = Tool::getCustomViewConfig();
-        $cvData = array();
+        // pre ExtJS6 customviews config, ExtJS6 takes it from the active perspective
+        if (!\Pimcore\Tool\Admin::isExtJS6()) {
+            $cvConfig = Tool::getCustomViewConfig();
+            $cvData = array();
 
-        if ($cvConfig) {
-            foreach ($cvConfig as $node) {
-                $tmpData = $node;
-                $rootNode = Model\Object::getByPath($tmpData["rootfolder"]);
+            if ($cvConfig) {
+                foreach ($cvConfig as $node) {
+                    $tmpData = $node;
+                    $rootNode = Model\Object::getByPath($tmpData["rootfolder"]);
 
-                if ($rootNode) {
-                    $tmpData["rootId"] = $rootNode->getId();
-                    $tmpData["allowedClasses"] = explode(",", $tmpData["classes"]);
-                    $tmpData["showroot"] = (bool) $tmpData["showroot"];
+                    if ($rootNode) {
+                        $tmpData["rootId"] = $rootNode->getId();
+                        $tmpData["allowedClasses"] = explode(",", $tmpData["classes"]);
+                        $tmpData["showroot"] = (bool)$tmpData["showroot"];
 
-                    $cvData[] = $tmpData;
+                        $cvData[] = $tmpData;
+                    }
                 }
             }
+
+            $this->view->customview_config = $cvData;
         }
-
-        $this->view->customview_config = $cvData;
-
 
         // upload limit
         $max_upload = filesize2bytes(ini_get("upload_max_filesize") . "B");

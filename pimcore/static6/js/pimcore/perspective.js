@@ -9,11 +9,16 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
-pimcore.registerNS("pimcore.object.customviews.tree");
-pimcore.object.customviews.tree = Class.create(pimcore.object.tree, {
+pimcore.registerNS("pimcore.perspective");
 
-    initialize: function($super, initConfig, perspectiveCfg) {
-        $super(initConfig, perspectiveCfg);
+pimcore.perspective = Class.create({
+
+    initialize: function(perspective) {
+        Object.extend(this, perspective);
+    },
+
+    getElementTree: function() {
+        return this.elementTree;
     }
 
 });

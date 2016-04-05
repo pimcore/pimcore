@@ -27,9 +27,16 @@ pimcore.document.tree = Class.create({
 
     treeDataUrl: "/admin/document/tree-get-childs-by-id/",
 
-    initialize: function(config) {
+    initialize: function(config, perspectiveCfg) {
 
-        this.position = "left";
+        this.perspectiveCfg = perspectiveCfg;
+        if (!perspectiveCfg) {
+            this.perspectiveCfg = {
+                position: "left"
+            };
+        }
+
+        this.position = this.perspectiveCfg.position ? this.perspectiveCfg.position : "left";
 
         if (!config) {
             this.config = {
@@ -39,8 +46,7 @@ pimcore.document.tree = Class.create({
                 treeId: "pimcore_panel_tree_documents",
                 treeIconCls: "pimcore_icon_document",
                 treeTitle: t('documents'),
-                parentPanel: Ext.getCmp("pimcore_panel_tree_left"),
-                index: 1
+                parentPanel: Ext.getCmp("pimcore_panel_tree_" + this.position)
             };
         }
         else {
@@ -159,6 +165,13 @@ pimcore.document.tree = Class.create({
 
         this.config.parentPanel.insert(this.config.index, this.tree);
         this.config.parentPanel.updateLayout();
+
+        if (!this.config.parentPanel.alreadyExpanded && this.perspectiveCfg.expanded) {
+            this.config.parentPanel.alreadyExpanded = true;
+            this.tree.expand();
+        }
+
+
     },
 
     getTreeNodeListeners: function () {

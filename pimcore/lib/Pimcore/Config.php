@@ -304,4 +304,128 @@ class Config
         $configFile = \Pimcore\Config::locateConfigFile("system.php");
         File::putPhpFile($configFile, to_php_data_file_format($settings));
     }
+
+    /**
+     * @static
+     * @return mixed|\Zend_Config
+     */
+    public static function getPerspectivesConfig()
+    {
+        if (\Zend_Registry::isRegistered("pimcore_config_perspectives")) {
+            $config = \Zend_Registry::get("pimcore_config_perspectives");
+        } else {
+            try {
+                $file = self::locateConfigFile("perspectives.php");
+                if (file_exists($file)) {
+                    $config = new \Zend_Config(include($file));
+                } else {
+                    throw new \Exception($file . " doesn't exist");
+                }
+                self::setPerspectivesConfig($config);
+            } catch (\Exception $e) {
+                \Logger::info("Cannot find perspectives configuration, should be located at: " . $file);
+                if (is_file($file)) {
+                    $m = "Your perspectives.php located at " . $file . " is invalid, please check and correct it manually!";
+                    Tool::exitWithError($m);
+                }
+                $config = new \Zend_Config(self::getStandardPerspective());
+                self::setPerspectivesConfig($config);
+            }
+        }
+
+        return $config;
+    }
+
+    /** Returns the standard perspective settings
+     * @return array
+     */
+    public static function getStandardPerspective() {
+        return [
+            "default" => [
+                "elementTree" => [
+                    [
+                        "type" => "documents",
+                        "position" => "left",
+                        "expanded" => false,
+                        "hidden" => false,
+                        "sort" => -3
+                    ],
+                    [
+                        "type" => "assets",
+                        "position" => "left",
+                        "expanded" => false,
+                        "hidden" => false,
+                        "sort" => -2
+                    ],
+                    [
+                        "type" => "objects",
+                        "position" => "left",
+                        "expanded" => false,
+                        "hidden" => false,
+                        "sort" => -1
+                    ],
+                ]
+            ]
+        ];
+    }
+
+    public static function getRuntimePerspective() {
+        //TODO make
+        $name = "default";
+
+        $result = array();
+        $result["elementTree"] = self::getElementTreeConfig($name);
+        return $result;
+    }
+
+
+    public static function getElementTreeConfig($name = "default") {
+        $config = self::getPerspectivesConfig()->toArray();
+
+        $result = $config[$name]["elementTree"];
+
+        $cvConfig = Tool::getCustomViewConfig();
+
+        if ($cvConfig) {
+            foreach ($cvConfig as $node) {
+                $tmpData = $node;
+                $rootNode = Model\Object::getByPath($tmpData["rootfolder"]);
+
+                if ($rootNode) {
+                    $tmpData["type"] = "customview";
+                    $tmpData["rootId"] = $rootNode->getId();
+                    $tmpData["allowedClasses"] = explode(",", $tmpData["classes"]);
+                    $tmpData["showroot"] = (bool)$tmpData["showroot"];
+                    $result[] = $tmpData;
+                }
+            }
+        }
+
+        usort($result, function($treeA, $treeB) {
+            $a = $treeA["sort"] ? $treeA["sort"] : 0;
+            $b = $treeB["sort"] ? $treeB["sort"] : 0;
+
+            if ($a > $b) {
+                return 1;
+            } else if ($a < $b) {
+                return -1;
+            } else {
+                return 0;
+            }
+        });
+
+        return $result;
+    }
+
+
+    /**
+     * @static
+     * @param \Zend_Config $config
+     * @return void
+     */
+    public static function setPerspectivesConfig(\Zend_Config $config)
+    {
+        \Zend_Registry::set("pimcore_config_perspectives", $config);
+    }
+
 }
