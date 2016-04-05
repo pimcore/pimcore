@@ -47,9 +47,10 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Zend_Pa
                 $this->addConditionParam("token LIKE ?", "%" . $filter['token'] . "%");
             }
 
-            if ($filter['usages']) {
-                $this->addConditionParam("usages = ?", $filter['usages']);
+            if (isset($filter['usages']) && $filter['usages'] !== '') {
+                $this->addConditionParam("usages = ?", (int) $filter['usages']);
             }
+
             if (!empty($filter['length'])) {
                 $this->addConditionParam("length = ?", $filter['length']);
             }
