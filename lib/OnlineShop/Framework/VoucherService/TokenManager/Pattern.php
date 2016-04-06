@@ -11,8 +11,8 @@
  */
 
 namespace OnlineShop\Framework\VoucherService\TokenManager;
+
 use OnlineShop\Framework\VoucherService\Token;
-use Pimcore\View\Helper\TranslateAdmin;
 
 /**
  * Class Pattern
@@ -542,96 +542,34 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
     }
 
     /**
-     * Export tokens to CSV
-     *
-     * @param $params
-     * @return mixed
-     */
-    public function exportCsv(array $params)
-    {
-        $translator = new TranslateAdmin();
-
-        $stream = fopen('php://temp', 'w+');
-        fputcsv($stream, [
-            $translator->translateAdmin('plugin_onlineshop_voucherservice_table-token'),
-            $translator->translateAdmin('plugin_onlineshop_voucherservice_table-usages'),
-            $translator->translateAdmin('plugin_onlineshop_voucherservice_table-length'),
-            $translator->translateAdmin('plugin_onlineshop_voucherservice_table-date'),
-        ]);
-
-        $paginator = null;
-
-        try {
-            $paginator = $this->getExportPaginator($params);
-        } catch (\Exception $e) {
-            fputcsv($stream, [$e->getMessage()]);
-            fputcsv($stream, '');
-        }
-
-        if (null !== $paginator) {
-            /** @var Token $token */
-            foreach ($paginator as $token) {
-                fputcsv($stream, [
-                    $token->getToken(),
-                    (int) $token->getUsages(),
-                    (int) $token->getLength(),
-                    $token->getTimestamp()
-                ]);
-            }
-        }
-
-        rewind($stream);
-        $result = stream_get_contents($stream);
-        fclose($stream);
-
-        return $result;
-    }
-
-    /**
-     * Export tokens to plain text list
-     *
-     * @param $params
-     * @return mixed
-     */
-    public function exportPlain(array $params)
-    {
-        $result    = [];
-        $paginator = null;
-
-        try {
-            $paginator = $this->getExportPaginator($params);
-        } catch (\Exception $e) {
-            $result[] = $e->getMessage();
-            $result[] = '';
-        }
-
-        if (null !== $paginator) {
-            /** @var Token $token */
-            foreach ($paginator as $token) {
-                $result[] = $token->getToken();
-            }
-        }
-
-        return implode(PHP_EOL, $result) . PHP_EOL;
-    }
-
-    /**
-     * Get paginator for export
+     * Get data for export
      *
      * @param array $params
-     * @return \Zend_Paginator
+     * @return array
      * @throws \Exception
      * @throws \Zend_Paginator_Exception
      */
-    protected function getExportPaginator(array $params)
+    protected function getExportData(array $params)
     {
-        $tokens = new \OnlineShop\Framework\VoucherService\Token\Listing();
+        $tokens = new Token\Listing();
         $tokens->setFilterConditions($params['id'], $params);
 
         $paginator = \Zend_Paginator::factory($tokens);
         $paginator->setItemCountPerPage(-1);
 
-        return $paginator;
+        $data = [];
+
+        /** @var Token $token */
+        foreach ($paginator as $token) {
+            $data[] = [
+                'token'     => $token->getToken(),
+                'usages'    => $token->getUsages(),
+                'length'    => $token->getLength(),
+                'timestamp' => $token->getTimestamp()
+            ];
+        }
+
+        return $data;
     }
 
     /**
