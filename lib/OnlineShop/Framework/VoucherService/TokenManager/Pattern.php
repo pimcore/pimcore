@@ -11,11 +11,12 @@
  */
 
 namespace OnlineShop\Framework\VoucherService\TokenManager;
+use OnlineShop\Framework\VoucherService\Token;
 
 /**
  * Class Pattern
  */
-class Pattern extends AbstractTokenManager
+class Pattern extends AbstractTokenManager implements IExportableTokenManager
 {
     /* @var float Max probability to hit a duplicate entry on insertion e.g. to guess a code  */
 
@@ -537,6 +538,54 @@ class Pattern extends AbstractTokenManager
         $view->statistics = $this->getStatistics($statisticUsagePeriod);
 
         return $this->template;
+    }
+
+    /**
+     * Export tokens
+     *
+     * @param \Zend_View $view
+     * @param array $params
+     * @param string $format
+     * @return mixed
+     */
+    public function exportTokens(\Zend_View $view, $params, $format = self::FORMAT_CSV)
+    {
+        $stream = fopen('php://temp', 'w+');
+        fputcsv($stream, [
+            $view->translateAdmin('plugin_onlineshop_voucherservice_table-token'),
+            $view->translateAdmin('plugin_onlineshop_voucherservice_table-usages'),
+            $view->translateAdmin('plugin_onlineshop_voucherservice_table-length'),
+            $view->translateAdmin('plugin_onlineshop_voucherservice_table-date'),
+        ]);
+
+        $tokens    = new \OnlineShop\Framework\VoucherService\Token\Listing();
+        $paginator = null;
+
+        try {
+            $tokens->setFilterConditions($params['id'], $params);
+            $paginator = \Zend_Paginator::factory($tokens);
+            $paginator->setItemCountPerPage(-1);
+        } catch (\Exception $e) {
+            fputcsv($stream, [$e->getMessage()]);
+        }
+
+        if (null !== $paginator) {
+            /** @var Token $token */
+            foreach ($paginator as $token) {
+                fputcsv($stream, [
+                    $token->getToken(),
+                    (int) $token->getUsages(),
+                    (int) $token->getLength(),
+                    $token->getTimestamp()
+                ]);
+            }
+        }
+
+        rewind($stream);
+        $contents = stream_get_contents($stream);
+        fclose($stream);
+
+        return $contents;
     }
 
     /**
