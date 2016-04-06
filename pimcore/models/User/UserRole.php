@@ -49,6 +49,8 @@ class UserRole extends AbstractUser
      */
     public $docTypes = array();
 
+    public $perspectives;
+
     /**
      *
      */
@@ -253,4 +255,35 @@ class UserRole extends AbstractUser
     {
         return $this->docTypes;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getPerspectives()
+    {
+        return $this->perspectives;
+    }
+
+    /**
+     * @param mixed $perspectives
+     */
+    public function setPerspectives($perspectives)
+    {
+        if (is_string($perspectives)) {
+            if (strlen($perspectives)) {
+                $perspectives = explode(",", $perspectives);
+            }
+        }
+
+        if (empty($perspectives)) {
+            $perspectives = array();
+        }
+
+
+        $this->perspectives = $perspectives;
+    }
+
+
+
+
 }

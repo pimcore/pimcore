@@ -28,6 +28,26 @@ pimcore.settings.user.role.settings = Class.create({
             value: this.data.role.id
         });
 
+        var perspectivesStore = Ext.create('Ext.data.JsonStore', {
+            data: this.data.availablePerspectives
+        });
+
+        this.perspectivesField = Ext.create('Ext.ux.form.MultiSelect', {
+            name:"perspectives",
+            triggerAction:"all",
+            editable:false,
+            fieldLabel:t("perspectives"),
+            width:400,
+            minHeight: 100,
+            store: perspectivesStore,
+            displayField: "name",
+            valueField: "name",
+            value:this.data.role.perspectives ? this.data.role.perspectives.join(",") : null
+        });
+
+        generalItems.push(this.perspectivesField);
+
+
         this.generalSet = new Ext.form.FieldSet({
             collapsible: true,
             title:t("general"),

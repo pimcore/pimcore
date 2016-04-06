@@ -95,7 +95,6 @@ class User extends User\UserRole
      */
     public $activePerspective;
 
-
     /**
      * @return string
      */
@@ -519,6 +518,7 @@ class User extends User\UserRole
     {
         $this->activePerspective = $activePerspective;
     }
+
 
 
 }

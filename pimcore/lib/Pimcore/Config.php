@@ -342,6 +342,7 @@ class Config
     public static function getStandardPerspective() {
         return [
             "default" => [
+                "iconCls" => "pimcore_icon_perspective",
                 "elementTree" => [
                     [
                         "type" => "documents",
@@ -377,11 +378,30 @@ class Config
         $currentConfigName = $currentUser->getActivePerspective() ? $currentUser->getActivePerspective() : "default";
 
         $config = self::getPerspectivesConfig()->toArray();
-        //TODO fallback
+
         if ($config[$currentConfigName]) {
             $result = $config[$currentConfigName];
         } else {
-            $result = self::getStandardPerspective();
+            if ($currentUser->isAdmin()) {
+                if ($config["default"]) {
+                    $result = $config["default"];
+                } else {
+                    $result = reset($config);
+                }
+            } else {
+                $availablePerspectives = self::getAvailablePerspectives($currentUser);
+                if ($availablePerspectives) {
+                    $currentPerspective = reset($availablePerspectives);
+                    $currentConfigName = $currentPerspective["name"];
+                    if ($currentConfigName && $config[$currentConfigName]) {
+                        $result = $config[$currentConfigName];
+                    }
+                }
+                if ($result && $currentConfigName != $currentUser->getActivePerspective()) {
+                    $currentUser->setActivePerspective($currentConfigName);
+                    $currentUser->save();
+                }
+            }
         }
 
         $result["elementTree"] = self::getRuntimeElementTreeConfig($currentConfigName);
@@ -389,10 +409,25 @@ class Config
     }
 
 
+    /** Returns the element tree config for the given config name
+     * @param $name
+     * @return array
+     */
     protected static function getRuntimeElementTreeConfig($name) {
-        $config = self::getPerspectivesConfig()->toArray();
+        $currentUser = Tool\Admin::getCurrentUser();
+        $masterConfig = self::getPerspectivesConfig()->toArray();
 
-        $result = $config[$name]["elementTree"];
+        $config = $masterConfig[$name];
+        if ($config) {
+            $currentUser = Tool\Admin::getCurrentUser();
+            if ($currentUser->isAdmin()) {
+                $config = self::getStandardPerspective();
+            }
+        } else if ($currentUser->isAdmin()) {
+            $config = reset($masterConfig);
+        }
+
+        $result = $config["elementTree"];
 
         $cvConfig = Tool::getCustomViewConfig();
 
@@ -443,21 +478,70 @@ class Config
      * @param Model\User $user
      * @return array
      */
-    public static function getAvailablePerspectives(Model\User $user) {
-        $config = self::getPerspectivesConfig()->toArray();
+    public static function getAvailablePerspectives($user) {
 
-        $currentUser = Tool\Admin::getCurrentUser();
+        $correntConfigName = null;
 
-        $correntConfigName = $currentUser->getActivePerspective() ? $currentUser->getActivePerspective() : "default";
+        if ($user instanceof  Model\User && !$user->isAdmin()) {
+            //TODO restrict to user settings
+            $masterConfig = self::getPerspectivesConfig()->toArray();
+
+            $config = array();
+            $roleIds = $user->getRoles();
+            $userIds = array($user->getId());
+            $userIds = array_merge($userIds, $roleIds);
+
+            foreach ($userIds as $userId) {
+                if (in_array($userId, $roleIds)) {
+                    $userOrRoleToCheck = Model\User\Role::getById($userId);
+                } else {
+                    $userOrRoleToCheck = Model\User::getById($userId);
+                }
+                $perspectives = $userOrRoleToCheck->getPerspectives();
+                if ($perspectives) {
+                    foreach ($perspectives as $perspectiveName) {
+                        $masterDef = $masterConfig[$perspectiveName];
+                        if ($masterDef) {
+                            $config[$perspectiveName] = $masterDef;
+                        }
+                    }
+                }
+            }
+
+            if (!$config) {
+                $config = self::getPerspectivesConfig()->toArray();
+            } else {
+                $tmpConfig = array();
+                $validPerspectiveNames = array_keys($config);
+
+                // sort the stuff
+                foreach ($masterConfig as $masterConfigName => $masterConfiguration) {
+                    if (in_array($masterConfigName, $validPerspectiveNames)) {
+                        $tmpConfig[$masterConfigName] = $masterConfiguration;
+                    }
+                }
+                $config = $tmpConfig;
+            }
+
+            $correntConfigName = $user->getActivePerspective() ? $user->getActivePerspective() : "default";
+        } else {
+            $config = self::getPerspectivesConfig()->toArray();
+        }
+
 
         $result = array();
-        foreach ($config as $configName => $config) {
-            $result[] = array(
+
+        foreach ($config as $configName => $configItem) {
+            $item = array(
                 "name" => $configName,
-                "active" => $configName == $correntConfigName,
-                "icon" => $config["icon"],
-                "iconCls" => $config["iconCls"]
+                "icon" => $configItem["icon"],
+                "iconCls" => $configItem["iconCls"]
             );
+            if ($user) {
+                $item["active"] = $configName == $correntConfigName;
+            }
+
+            $result[] = $item;
         }
 
         return $result;

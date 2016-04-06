@@ -122,11 +122,12 @@ pimcore.asset.tree = Class.create({
             },
             tools: [{
                 type: "right",
-                handler: pimcore.layout.treepanelmanager.toRight.bind(this)
+                handler: pimcore.layout.treepanelmanager.toRight.bind(this),
+                hidden: this.position == "right"
             },{
                 type: "left",
                 handler: pimcore.layout.treepanelmanager.toLeft.bind(this),
-                hidden: true
+                hidden: this.position == "left"
             }],
             root: rootNodeConfig,
             listeners: this.getTreeNodeListeners()
@@ -228,7 +229,6 @@ pimcore.asset.tree = Class.create({
             autoScroll: true
         });
         win.show();
-
 
         var doFileUpload = function (file, path) {
 

@@ -132,11 +132,12 @@ pimcore.document.tree = Class.create({
             },
             tools: [{
                 type: "right",
-                handler: pimcore.layout.treepanelmanager.toRight.bind(this)
+                handler: pimcore.layout.treepanelmanager.toRight.bind(this),
+                hidden: this.position == "right"
             },{
                 type: "left",
                 handler: pimcore.layout.treepanelmanager.toLeft.bind(this),
-                hidden: true
+                hidden: this.position == "left"
             }],
             root: rootNodeConfig,
             store: store,

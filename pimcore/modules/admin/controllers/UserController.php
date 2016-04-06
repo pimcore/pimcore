@@ -356,6 +356,8 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
         $userData["contentLanguages"] = $contentLanguages;
         unset($userData["password"]);
 
+        $availablePerspectives = \Pimcore\Config::getAvailablePerspectives(null);
+
         $conf = \Pimcore\Config::getSystemConfig();
         $this->_helper->json(array(
             "success" => true,
@@ -364,6 +366,7 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
             "roles" => $roles,
             "permissions" => $user->generatePermissionList(),
             "availablePermissions" => $availableUserPermissions,
+            "availablePerspectives" => $availablePerspectives,
             "objectDependencies" => array(
                 "hasHidden" => $hasHidden,
                 "dependencies" => $userObjectData
@@ -551,13 +554,16 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
         $availableUserPermissionsList = new User\Permission\Definition\Listing();
         $availableUserPermissions = $availableUserPermissionsList->load();
 
+        $availablePerspectives = \Pimcore\Config::getAvailablePerspectives(null);
+
         $this->_helper->json(array(
             "success" => true,
             "role" => $role,
             "permissions" => $role->generatePermissionList(),
             "classes" => $role->getClasses(),
             "docTypes" => $role->getDocTypes(),
-            "availablePermissions" => $availableUserPermissions
+            "availablePermissions" => $availableUserPermissions,
+            "availablePerspectives" => $availablePerspectives
         ));
     }
 
