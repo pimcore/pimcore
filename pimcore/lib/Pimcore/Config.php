@@ -384,7 +384,8 @@ class Config
         } else {
             if ($currentUser->isAdmin()) {
                 if ($config["default"]) {
-                    $result = $config["default"];
+                    $currentConfigName = "default";
+                    $result = $config[$currentConfigName];
                 } else {
                     $result = reset($config);
                 }
@@ -397,12 +398,14 @@ class Config
                         $result = $config[$currentConfigName];
                     }
                 }
-                if ($result && $currentConfigName != $currentUser->getActivePerspective()) {
-                    $currentUser->setActivePerspective($currentConfigName);
-                    $currentUser->save();
-                }
             }
         }
+
+        if ($result && $currentConfigName != $currentUser->getActivePerspective()) {
+            $currentUser->setActivePerspective($currentConfigName);
+            $currentUser->save();
+        }
+
 
         $result["elementTree"] = self::getRuntimeElementTreeConfig($currentConfigName);
         return $result;
@@ -414,27 +417,24 @@ class Config
      * @return array
      */
     protected static function getRuntimeElementTreeConfig($name) {
-        $currentUser = Tool\Admin::getCurrentUser();
         $masterConfig = self::getPerspectivesConfig()->toArray();
 
         $config = $masterConfig[$name];
-        if ($config) {
-            $currentUser = Tool\Admin::getCurrentUser();
-            if ($currentUser->isAdmin()) {
-                $config = self::getStandardPerspective();
-            }
-        } else if ($currentUser->isAdmin()) {
-            $config = reset($masterConfig);
+        if (!$config) {
+            $config = array();
         }
 
         $tmpResult = $config["elementTree"];
+        if (is_null($tmpResult)) {
+            $tmpResult = array();
+        }
         $result = array();
 
         $hiddenCustomViews = array();
 
         foreach ($tmpResult as $resultItem) {
 
-            if ($resultItem["type"] == "customView") {
+            if ($resultItem["type"] == "customview") {
                 if ($resultItem["hidden"]) {
                     $name = $resultItem["name"];
                     $hiddenCustomViews[$name] = 1;
@@ -450,6 +450,10 @@ class Config
 
         if ($cvConfig) {
             foreach ($cvConfig as $node) {
+                if (in_array($node["name"], array_keys($hiddenCustomViews))) {
+                    continue;
+                }
+
                 $tmpData = $node;
                 $rootNode = Model\Object::getByPath($tmpData["rootfolder"]);
 
@@ -498,36 +502,39 @@ class Config
     public static function getAvailablePerspectives($user) {
 
         $currentConfigName = null;
+        $masterConfig = self::getPerspectivesConfig()->toArray();
 
-        if ($user instanceof  Model\User && !$user->isAdmin()) {
-            //TODO restrict to user settings
-            $masterConfig = self::getPerspectivesConfig()->toArray();
+        if ($user instanceof  Model\User) {
+            if ($user->isAdmin()) {
+                $config = self::getPerspectivesConfig()->toArray();
+            } else {
+                $config = array();
+                $roleIds = $user->getRoles();
+                $userIds = array($user->getId());
+                $userIds = array_merge($userIds, $roleIds);
 
-            $config = array();
-            $roleIds = $user->getRoles();
-            $userIds = array($user->getId());
-            $userIds = array_merge($userIds, $roleIds);
-
-            foreach ($userIds as $userId) {
-                if (in_array($userId, $roleIds)) {
-                    $userOrRoleToCheck = Model\User\Role::getById($userId);
-                } else {
-                    $userOrRoleToCheck = Model\User::getById($userId);
-                }
-                $perspectives = $userOrRoleToCheck->getPerspectives();
-                if ($perspectives) {
-                    foreach ($perspectives as $perspectiveName) {
-                        $masterDef = $masterConfig[$perspectiveName];
-                        if ($masterDef) {
-                            $config[$perspectiveName] = $masterDef;
+                foreach ($userIds as $userId) {
+                    if (in_array($userId, $roleIds)) {
+                        $userOrRoleToCheck = Model\User\Role::getById($userId);
+                    } else {
+                        $userOrRoleToCheck = Model\User::getById($userId);
+                    }
+                    $perspectives = $userOrRoleToCheck->getPerspectives();
+                    if ($perspectives) {
+                        foreach ($perspectives as $perspectiveName) {
+                            $masterDef = $masterConfig[$perspectiveName];
+                            if ($masterDef) {
+                                $config[$perspectiveName] = $masterDef;
+                            }
                         }
                     }
                 }
+                if (!$config) {
+                    $config = self::getPerspectivesConfig()->toArray();
+                }
             }
 
-            if (!$config) {
-                $config = self::getPerspectivesConfig()->toArray();
-            } else {
+            if ($config) {
                 $tmpConfig = array();
                 $validPerspectiveNames = array_keys($config);
 
@@ -549,7 +556,6 @@ class Config
             $config = self::getPerspectivesConfig()->toArray();
         }
 
-
         $result = array();
 
         foreach ($config as $configName => $configItem) {
@@ -566,6 +572,41 @@ class Config
         }
 
         return $result;
+    }
+
+    public static function inPerspective($runtimeConfig, $key) {
+        if (!$runtimeConfig["toolbar"]) {
+            return true;
+        }
+        $parts = explode(".", $key);
+        $menuItems = $runtimeConfig["toolbar"];
+
+        for ($i = 0; $i < count($parts); $i++) {
+            $part = $parts[$i];
+
+            if (!isset($menuItems[$part])) {
+                break;
+            }
+
+            $menuItem = $menuItems[$part];
+
+            if (is_array($menuItem)) {
+
+                if ($menuItem["hidden"]) {
+                    return false;
+                }
+
+                if (!$menuItem["items"]) {
+                    break;
+                }
+                $menuItems = $menuItem["items"];
+            } else {
+                return $menuItem;
+            }
+
+        }
+        return true;
+
     }
 
 }

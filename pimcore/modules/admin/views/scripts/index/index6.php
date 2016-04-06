@@ -86,14 +86,28 @@
 
 <a id="pimcore_logout" href="/admin/login/logout/" style="display: none"></a>
 
+<?php
+$runtimePerspective = \Pimcore\Config::getRuntimePerspective();
+?>
+
 <div id="pimcore_navigation" style="display:none;">
     <ul>
-        <li id="pimcore_menu_file" data-menu-tooltip="<?= $this->translate("file") ?>" class="pimcore_menu_item"></li>
-        <li id="pimcore_menu_extras" data-menu-tooltip="<?= $this->translate("tools") ?>" class="pimcore_menu_item pimcore_menu_needs_children"></li>
-        <li id="pimcore_menu_marketing" data-menu-tooltip="<?= $this->translate("marketing") ?>" class="pimcore_menu_item pimcore_menu_needs_children"></li>
-        <li id="pimcore_menu_settings" data-menu-tooltip="<?= $this->translate("settings") ?>" class="pimcore_menu_item pimcore_menu_needs_children"></li>
+        <?php if (\Pimcore\Config::inPerspective($runtimePerspective, "file")) { ?>
+            <li id="pimcore_menu_file" data-menu-tooltip="<?= $this->translate("file") ?>" class="pimcore_menu_item"></li>
+        <?php } ?>
+        <?php if (\Pimcore\Config::inPerspective($runtimePerspective, "extras")) { ?>
+            <li id="pimcore_menu_extras" data-menu-tooltip="<?= $this->translate("tools") ?>" class="pimcore_menu_item pimcore_menu_needs_children"></li>
+        <?php } ?>
+        <?php if (\Pimcore\Config::inPerspective($runtimePerspective, "marketing")) { ?>
+            <li id="pimcore_menu_marketing" data-menu-tooltip="<?= $this->translate("marketing") ?>" class="pimcore_menu_item pimcore_menu_needs_children"></li>
+        <?php } ?>
+        <?php if (\Pimcore\Config::inPerspective($runtimePerspective, "settings")) { ?>
+            <li id="pimcore_menu_settings" data-menu-tooltip="<?= $this->translate("settings") ?>" class="pimcore_menu_item pimcore_menu_needs_children"></li>
+        <?php } ?>
         <li id="pimcore_menu_maintenance" data-menu-tooltip="<?= $this->translate("deactivate_maintenance") ?>" class="pimcore_menu_item " style="display:none;"></li>
-        <li id="pimcore_menu_search" data-menu-tooltip="<?= $this->translate("search") ?>" class="pimcore_menu_item pimcore_menu_needs_children"></li>
+        <?php if (\Pimcore\Config::inPerspective($runtimePerspective, "search")) { ?>
+            <li id="pimcore_menu_search" data-menu-tooltip="<?= $this->translate("search") ?>" class="pimcore_menu_item pimcore_menu_needs_children"></li>
+        <?php } ?>
     </ul>
 </div>
 
@@ -115,7 +129,6 @@
 <?php // define stylesheets ?>
 <?php
 
-$runtimePerspective = \Pimcore\Config::getRuntimePerspective();
 $extjsDev = $runtimePerspective["extjsDev"];
 
 $styles = array(
