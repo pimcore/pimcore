@@ -121,7 +121,9 @@ class Dao extends Model\Dao\AbstractDao
                         $value = (int) $value;
                     } elseif (in_array($key, ["permissions", "roles", "docTypes", "classes", "perspectives"])) {
                         // permission and roles are stored as csv
-                        $value = implode(",", $value);
+                        if (is_array($value)) {
+                            $value = implode(",", $value);
+                        }
                     }
                     $data[$key] = $value;
                 }
