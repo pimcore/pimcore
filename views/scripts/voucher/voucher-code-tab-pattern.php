@@ -92,7 +92,7 @@ if ($this->paginator) {
                                 ]), 'plugin', false);
                                 ?>
 
-                                <a class="btn btn-default" href="<?= $exportUrl ?>">
+                                <a class="btn btn-default" href="<?= $exportUrl ?>" target="_blank">
                                     <span class="glyphicon glyphicon-export"></span>
                                     <?= $this->ts('plugin_onlineshop_voucherservice_export-button') ?>
                                 </a>
