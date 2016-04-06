@@ -45,7 +45,7 @@ pimcore.plugin.OnlineShop.plugin = Class.create(pimcore.plugin.admin,{
         var config = pimcore.plugin.OnlineShop.plugin.config;
 
         // pricing rules
-        if(user.isAllowed("plugin_onlineshop_pricing_rules") && config.menu.pricingRules.disabled == 0) {
+        if(user.isAllowed("plugin_onlineshop_pricing_rules") && (!config.menu || config.menu.pricingRules.disabled == 0)) {
             // add pricing rules to menu
             // create item
             var pricingPanelId = "plugin_onlineshop_pricing_config";
@@ -67,7 +67,7 @@ pimcore.plugin.OnlineShop.plugin = Class.create(pimcore.plugin.admin,{
 
 
         // order backend
-        if(user.isAllowed("plugin_onlineshop_back-office_order") && config.menu.orderlist.disabled == 0) {
+        if(user.isAllowed("plugin_onlineshop_back-office_order") && (!config.menu || config.menu.orderlist.disabled == 0)) {
             // create item
             var orderPanelId = "plugin_onlineshop_back-office_order";
             var item = {

@@ -25,9 +25,13 @@
 }
 
 .plugin_onlineshop_clear_config_cache {
-    background: url(/pimcore/static/img/icon/lightning.png) no-repeat !important;
+    background: url("/pimcore/static6/img/flat-color-icons/flash_on.svg") center center no-repeat !important;
 }
 
 .plugin_onlineshop_back-office_order {
-    background: url("/pimcore/static/img/icon/cart_full.png") no-repeat scroll left center transparent !important;
+    background: url("/pimcore/static6/img/flat-color-icons/news.svg") center center no-repeat !important;
+}
+
+#pimcore_menu_onlineshop {
+    background-image: url("/pimcore/static6/img/flat-color-icons/paid.svg") !important;
 }
