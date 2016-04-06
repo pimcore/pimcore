@@ -268,8 +268,9 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                 }
 
                 if (record.data.dataType == "keyValue") {
+                    var ownerTree = this.selectionPanel;
                     var ccd = new pimcore.object.keyvalue.columnConfigDialog();
-                    ccd.getConfigDialog(copy, this.selectionPanel);
+                    ccd.getConfigDialog(ownerTree, copy, this.selectionPanel);
                 }
             }
         }.bind(this));
