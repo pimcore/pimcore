@@ -28,7 +28,9 @@ pimcore.object.keyvalue.columnConfigDialog = Class.create({
     handleSelectionWindowClosed: function() {
         if (this.keysAdded == 0 && !this.requestIsPending) {
             // no keys added, remove the node
-            this.node.remove();
+            var store = this.ownerTree.getStore();
+            var targetNode = store.getById(this.node.id);
+            targetNode.remove();
         }
     },
 

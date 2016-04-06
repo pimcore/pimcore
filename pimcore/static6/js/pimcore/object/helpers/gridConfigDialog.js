@@ -264,6 +264,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                 var copy = Ext.apply({}, record.data);
 
                 if(this.selectionPanel && !this.selectionPanel.getRootNode().findChild("key", record.data.key)) {
+                    delete copy.id;
                     this.selectionPanel.getRootNode().appendChild(copy);
                 }
 
