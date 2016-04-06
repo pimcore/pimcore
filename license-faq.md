@@ -1,8 +1,17 @@
 # pimcore - Licensing FAQ
 
 ## What is the license for pimcore?
-Pimcore and all contributed files hosted on pimcore.org or in the official Git repository are licensed under the 
-GNU General Public License, version 3 or later. That means you are free to download, reuse, modify, and distribute 
+Pimcore and all contributed files hosted on pimcore.org or in the official Git repository are available under two different licenses: 
+* GNU General Public License version 3 (GPLv3)
+* Pimcore Enterprise License (PEL)
+If you don't have a separate written licensing agreement between you and pimcore GmbH then always GPLv3 applies to you.  
+
+The following FAQ covers only GPLv3. 
+
+# GPLv3 FAQ
+
+## What does licensed under the GPLv3 actually mean? 
+That means you are free to download, reuse, modify, and distribute 
 any files hosted in pimcore.org's Git repositories under the terms of the GPL version 3, and to run pimcore in 
 combination with any code with any license that is compatible with GPL version 3, such as the 
 Affero General Public License (AGPL) version 3.
