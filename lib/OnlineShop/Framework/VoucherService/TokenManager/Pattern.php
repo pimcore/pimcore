@@ -12,6 +12,7 @@
 
 namespace OnlineShop\Framework\VoucherService\TokenManager;
 use OnlineShop\Framework\VoucherService\Token;
+use Pimcore\View\Helper\TranslateAdmin;
 
 /**
  * Class Pattern
@@ -541,32 +542,30 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
     }
 
     /**
-     * Export tokens
+     * Export tokens to CSV
      *
-     * @param \Zend_View $view
-     * @param array $params
-     * @param string $format
+     * @param $params
      * @return mixed
      */
-    public function exportTokens(\Zend_View $view, $params, $format = self::FORMAT_CSV)
+    public function exportCsv(array $params)
     {
+        $translator = new TranslateAdmin();
+
         $stream = fopen('php://temp', 'w+');
         fputcsv($stream, [
-            $view->translateAdmin('plugin_onlineshop_voucherservice_table-token'),
-            $view->translateAdmin('plugin_onlineshop_voucherservice_table-usages'),
-            $view->translateAdmin('plugin_onlineshop_voucherservice_table-length'),
-            $view->translateAdmin('plugin_onlineshop_voucherservice_table-date'),
+            $translator->translateAdmin('plugin_onlineshop_voucherservice_table-token'),
+            $translator->translateAdmin('plugin_onlineshop_voucherservice_table-usages'),
+            $translator->translateAdmin('plugin_onlineshop_voucherservice_table-length'),
+            $translator->translateAdmin('plugin_onlineshop_voucherservice_table-date'),
         ]);
 
-        $tokens    = new \OnlineShop\Framework\VoucherService\Token\Listing();
         $paginator = null;
 
         try {
-            $tokens->setFilterConditions($params['id'], $params);
-            $paginator = \Zend_Paginator::factory($tokens);
-            $paginator->setItemCountPerPage(-1);
+            $paginator = $this->getExportPaginator($params);
         } catch (\Exception $e) {
             fputcsv($stream, [$e->getMessage()]);
+            fputcsv($stream, '');
         }
 
         if (null !== $paginator) {
@@ -582,10 +581,57 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
         }
 
         rewind($stream);
-        $contents = stream_get_contents($stream);
+        $result = stream_get_contents($stream);
         fclose($stream);
 
-        return $contents;
+        return $result;
+    }
+
+    /**
+     * Export tokens to plain text list
+     *
+     * @param $params
+     * @return mixed
+     */
+    public function exportPlain(array $params)
+    {
+        $result    = [];
+        $paginator = null;
+
+        try {
+            $paginator = $this->getExportPaginator($params);
+        } catch (\Exception $e) {
+            $result[] = $e->getMessage();
+            $result[] = '';
+        }
+
+        if (null !== $paginator) {
+            /** @var Token $token */
+            foreach ($paginator as $token) {
+                $result[] = $token->getToken();
+            }
+        }
+
+        return implode(PHP_EOL, $result) . PHP_EOL;
+    }
+
+    /**
+     * Get paginator for export
+     *
+     * @param array $params
+     * @return \Zend_Paginator
+     * @throws \Exception
+     * @throws \Zend_Paginator_Exception
+     */
+    protected function getExportPaginator(array $params)
+    {
+        $tokens = new \OnlineShop\Framework\VoucherService\Token\Listing();
+        $tokens->setFilterConditions($params['id'], $params);
+
+        $paginator = \Zend_Paginator::factory($tokens);
+        $paginator->setItemCountPerPage(-1);
+
+        return $paginator;
     }
 
     /**

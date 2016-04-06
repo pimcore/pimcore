@@ -40,7 +40,7 @@ class EcommerceFramework_VoucherController extends Pimcore\Controller\Action\Adm
     }
 
     /**
-     * Export tokens to file. Currently only supports CSV exports but can easily be extended for further formats.
+     * Export tokens to file. The action should implement all export formats defined in IExportableTokenManager.
      */
     public function exportTokensAction()
     {
@@ -63,19 +63,24 @@ class EcommerceFramework_VoucherController extends Pimcore\Controller\Action\Adm
         $suffix      = null;
         $download    = true;
 
+        $result = '';
         switch ($format) {
             case IExportableTokenManager::FORMAT_CSV:
+                $result      = $tokenManager->exportCsv($this->getAllParams());
                 $contentType = 'text/csv';
                 $suffix      = 'csv';
                 break;
-        }
 
-        if (null === $contentType || null === $suffix) {
-            throw new InvalidArgumentException('Invalid format');
-        }
+            case IExportableTokenManager::FORMAT_PLAIN:
+                $result      = $tokenManager->exportPlain($this->getAllParams());
+                $contentType = 'text/plain';
+                $suffix      = 'txt';
+                $download    = false;
+                break;
 
-        $filename = sprintf('voucher-export.%s', $suffix);
-        $result   = $tokenManager->exportTokens($this->view, $this->getAllParams(), $format);
+            default:
+                throw new InvalidArgumentException('Invalid format');
+        }
 
         $response = $this->getResponse();
         $response
@@ -83,8 +88,8 @@ class EcommerceFramework_VoucherController extends Pimcore\Controller\Action\Adm
             ->setHeader('Content-Type', $contentType)
             ->setHeader('Content-Length', strlen($result));
 
-        if ($download) {
-            $response->setHeader('Content-Disposition', sprintf('attachment; filename="%s"', $filename));
+        if ($download && null !== $suffix) {
+            $response->setHeader('Content-Disposition', sprintf('attachment; filename="voucher-export.%s"', $suffix));
         }
     }
 

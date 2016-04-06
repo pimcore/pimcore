@@ -4,15 +4,22 @@ namespace OnlineShop\Framework\VoucherService\TokenManager;
 
 interface IExportableTokenManager
 {
-    const FORMAT_CSV = 'csv';
+    const FORMAT_CSV   = 'csv';
+    const FORMAT_PLAIN = 'plain';
 
     /**
-     * Export tokens
+     * Export tokens to CSV
      *
-     * @param \Zend_View $view
      * @param array $params
-     * @param string $format
-     * @return mixed
+     * @return string
      */
-    public function exportTokens(\Zend_View $view, $params, $format = self::FORMAT_CSV);
+    public function exportCsv(array $params);
+
+    /**
+     * Export tokens to plain text list
+     *
+     * @param array $params
+     * @return string
+     */
+    public function exportPlain(array $params);
 }
