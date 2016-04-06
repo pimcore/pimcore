@@ -427,7 +427,24 @@ class Config
             $config = reset($masterConfig);
         }
 
-        $result = $config["elementTree"];
+        $tmpResult = $config["elementTree"];
+        $result = array();
+
+        $hiddenCustomViews = array();
+
+        foreach ($tmpResult as $resultItem) {
+
+            if ($resultItem["type"] == "customView") {
+                if ($resultItem["hidden"]) {
+                    $name = $resultItem["name"];
+                    $hiddenCustomViews[$name] = 1;
+                    continue;
+                }
+            }
+            $result[] = $resultItem;
+        }
+
+        $result = $tmpResult;
 
         $cvConfig = Tool::getCustomViewConfig();
 
@@ -480,7 +497,7 @@ class Config
      */
     public static function getAvailablePerspectives($user) {
 
-        $correntConfigName = null;
+        $currentConfigName = null;
 
         if ($user instanceof  Model\User && !$user->isAdmin()) {
             //TODO restrict to user settings
@@ -523,7 +540,11 @@ class Config
                 $config = $tmpConfig;
             }
 
-            $correntConfigName = $user->getActivePerspective() ? $user->getActivePerspective() : "default";
+            $currentConfigName = $user->getActivePerspective();
+            if ($config && !in_array($currentConfigName, array_keys($config))) {
+                $currentConfigName = reset(array_keys($config));
+            }
+
         } else {
             $config = self::getPerspectivesConfig()->toArray();
         }
@@ -538,7 +559,7 @@ class Config
                 "iconCls" => $configItem["iconCls"]
             );
             if ($user) {
-                $item["active"] = $configName == $correntConfigName;
+                $item["active"] = $configName == $currentConfigName;
             }
 
             $result[] = $item;

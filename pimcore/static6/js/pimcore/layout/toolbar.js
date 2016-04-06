@@ -24,7 +24,7 @@ pimcore.layout.toolbar = Class.create({
 
             if (perspectiveCfg.inToolbar("file.perspectives")) {
 
-                if (pimcore.settings.availablePerspectives.length >= 0) {
+                if (pimcore.settings.availablePerspectives.length > 1) {
 
                     var items = [];
                     for (var i = 0; i < pimcore.settings.availablePerspectives.length; i++) {
