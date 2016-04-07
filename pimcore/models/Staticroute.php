@@ -456,9 +456,20 @@ class Staticroute extends AbstractModel
         $forbiddenCharacters = array("#",":","?");
 
         // check for named variables
+        uksort($urlParams, function ($a, $b) {
+            // order by key length, longer key have priority
+            // (%abcd prior %ab, so that %ab doesn't replace %ab in [%ab]cd)
+            return strlen($b) - strlen($a);
+        });
+
+        $tmpReversePattern = $this->getReverse();
         foreach ($urlParams as $key => $param) {
-            if (strpos($this->getReverse(), "%" . $key) !== false) {
+            if (strpos($tmpReversePattern, "%" . $key) !== false) {
                 $parametersInReversePattern[$key] = $param;
+
+                // we need to replace the found variable to that it cannot match again a placeholder
+                // eg. %abcd prior %ab if %abcd matches already %ab shouldn't match again on the same placeholder
+                $tmpReversePattern = str_replace("%" . $key, "---", $tmpReversePattern);
             } else {
                 // only append the get parameters if there are defined in $urlOptions
                 // or if they are defined in $_GET an $reset is false
