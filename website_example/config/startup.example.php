@@ -32,10 +32,6 @@ $front->setRouter($router);
 $front = \Zend_Controller_Front::getInstance();
 $front->addModuleDirectory(PIMCORE_DOCUMENT_ROOT . "/customModuleDirectory");
 
-//init the autoloader
-Pimcore::initAutoloader();
-
-
 // add some custom events
 \Pimcore::getEventManager()->attach("object.postUpdate", function (\Zend_EventManager_Event $event) {
     $object = $event->getTarget();
