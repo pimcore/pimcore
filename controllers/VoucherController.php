@@ -1,4 +1,6 @@
 <?php
+use OnlineShop\Framework\VoucherService\TokenManager\IExportableTokenManager;
+
 /**
  * Pimcore
  *
@@ -23,12 +25,71 @@ class EcommerceFramework_VoucherController extends Pimcore\Controller\Action\Adm
         if ($onlineShopVoucherSeries instanceof \Pimcore\Model\Object\OnlineShopVoucherSeries) {
             if ($tokenManager = $onlineShopVoucherSeries->getTokenManager()) {
                 $this->view->series = $onlineShopVoucherSeries;
+
+                if ($tokenManager instanceof IExportableTokenManager) {
+                    $this->view->supportsExport = true;
+                }
+
                 $renderScript = $tokenManager->prepareConfigurationView($this->view, $this->getAllParams());
                 $this->renderScript($renderScript);
             } else {
                 $this->view->errors = array($this->view->ts('plugin_onlineshop_voucherservice_msg-error-config-missing'));
                 $this->renderScript('voucher/voucher-code-tab-error.php');
             }
+        }
+    }
+
+    /**
+     * Export tokens to file. The action should implement all export formats defined in IExportableTokenManager.
+     */
+    public function exportTokensAction()
+    {
+        $this->disableLayout();
+        $this->disableViewAutoRender();
+
+        $onlineShopVoucherSeries = \Pimcore\Model\Object\AbstractObject::getById($this->getParam('id'));
+        if (!($onlineShopVoucherSeries instanceof \Pimcore\Model\Object\OnlineShopVoucherSeries)) {
+            throw new InvalidArgumentException('Voucher series not found');
+        }
+
+        /** @var \Pimcore\Model\Object\OnlineShopVoucherSeries $onlineShopVoucherSeries */
+        $tokenManager = $onlineShopVoucherSeries->getTokenManager();
+        if (!(null !== $tokenManager && $tokenManager instanceof IExportableTokenManager)) {
+            throw new InvalidArgumentException('Token manager does not support exporting');
+        }
+
+        $format      = $this->getParam('format', IExportableTokenManager::FORMAT_CSV);
+        $contentType = null;
+        $suffix      = null;
+        $download    = true;
+
+        $result = '';
+        switch ($format) {
+            case IExportableTokenManager::FORMAT_CSV:
+                $result      = $tokenManager->exportCsv($this->getAllParams());
+                $contentType = 'text/csv';
+                $suffix      = 'csv';
+                break;
+
+            case IExportableTokenManager::FORMAT_PLAIN:
+                $result      = $tokenManager->exportPlain($this->getAllParams());
+                $contentType = 'text/plain';
+                $suffix      = 'txt';
+                $download    = false;
+                break;
+
+            default:
+                throw new InvalidArgumentException('Invalid format');
+        }
+
+        $response = $this->getResponse();
+        $response
+            ->setBody($result)
+            ->setHeader('Content-Type', $contentType)
+            ->setHeader('Content-Length', strlen($result));
+
+        if ($download && null !== $suffix) {
+            $response->setHeader('Content-Disposition', sprintf('attachment; filename="voucher-export.%s"', $suffix));
         }
     }
 

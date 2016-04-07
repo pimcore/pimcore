@@ -12,10 +12,12 @@
 
 namespace OnlineShop\Framework\VoucherService\TokenManager;
 
+use OnlineShop\Framework\VoucherService\Token;
+
 /**
  * Class Pattern
  */
-class Pattern extends AbstractTokenManager
+class Pattern extends AbstractTokenManager implements IExportableTokenManager
 {
     /* @var float Max probability to hit a duplicate entry on insertion e.g. to guess a code  */
 
@@ -537,6 +539,37 @@ class Pattern extends AbstractTokenManager
         $view->statistics = $this->getStatistics($statisticUsagePeriod);
 
         return $this->template;
+    }
+
+    /**
+     * Get data for export
+     *
+     * @param array $params
+     * @return array
+     * @throws \Exception
+     * @throws \Zend_Paginator_Exception
+     */
+    protected function getExportData(array $params)
+    {
+        $tokens = new Token\Listing();
+        $tokens->setFilterConditions($params['id'], $params);
+
+        $paginator = \Zend_Paginator::factory($tokens);
+        $paginator->setItemCountPerPage(-1);
+
+        $data = [];
+
+        /** @var Token $token */
+        foreach ($paginator as $token) {
+            $data[] = [
+                'token'     => $token->getToken(),
+                'usages'    => $token->getUsages(),
+                'length'    => $token->getLength(),
+                'timestamp' => $token->getTimestamp()
+            ];
+        }
+
+        return $data;
     }
 
     /**
