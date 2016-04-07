@@ -86,7 +86,7 @@ pimcore.object.classes.data.nonownerobjects = Class.create(pimcore.object.classe
             value: this.datax.ownerClassName,
             disabled: this.isInCustomLayoutEditor(),
             forceSelection:true,
-            editable: false,
+            editable: true,
             listeners: {
                 change: function(field, classNamevalue, oldValue) {
                     this.datax.ownerClassName=classNamevalue;
