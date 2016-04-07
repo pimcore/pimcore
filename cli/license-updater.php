@@ -2,12 +2,16 @@
 /**
  * Pimcore
  *
- * This source file is subject to the GNU General Public License version 3 (GPLv3)
- * For the full copyright and license information, please view the LICENSE.md and gpl-3.0.txt
- * files that are distributed with this source code.
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Enterprise License (PEL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) 2009-2015 pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
+ * @category   Pimcore
+ * @package    EcommerceFramework
+ * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 
@@ -82,7 +86,7 @@ $excludedDirectories = [
     '../uml',
     '../vendor',
     '../frontend-samples/ajax-reload-grid/js/lib',
-    '../'
+    //'../'
 ];
 
 $license =
@@ -107,7 +111,7 @@ foreach($excludedDirectories as $dir) {
     $excludePatterns[] = "(^" . str_replace('/', '\/', $dir) . ")";
 }
 $excludePatterns_flattened = '/'. implode('|', $excludePatterns) .'/';
-
+echo $excludePatterns_flattened;
 
 $files = [];
 
@@ -119,9 +123,9 @@ foreach ( $iterator as $path ) {
      * @var $path SplFileInfo
      */
     if (preg_match($excludePatterns_flattened, $path, $matches) === 1) {
-        //print($path->__toString() . " -> exclude" . PHP_EOL);
+        print($path->__toString() . " -> exclude" . PHP_EOL);
     } else {
-        //print($path->__toString() . " -> include" . PHP_EOL);
+        print($path->__toString() . " -> include" . PHP_EOL);
         if (!$path->isDir()) {
             $files[$path->getExtension()][] = $path->getPath() . "/" . $path->getFilename();
         }

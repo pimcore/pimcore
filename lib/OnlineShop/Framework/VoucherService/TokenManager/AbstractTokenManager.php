@@ -2,18 +2,20 @@
 /**
  * Pimcore
  *
- * This source file is subject to the GNU General Public License version 3 (GPLv3)
- * For the full copyright and license information, please view the LICENSE.md and gpl-3.0.txt
- * files that are distributed with this source code.
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Enterprise License (PEL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) 2009-2015 pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
+ * @category   Pimcore
+ * @package    EcommerceFramework
+ * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace OnlineShop\Framework\VoucherService\TokenManager;
 
-use OnlineShop\Framework\VoucherService\Token;
-use Pimcore\View\Helper\TranslateAdmin;
+namespace OnlineShop\Framework\VoucherService\TokenManager;
 
 abstract class AbstractTokenManager implements ITokenManager
 {
@@ -107,94 +109,6 @@ abstract class AbstractTokenManager implements ITokenManager
                 throw new \OnlineShop\Framework\Exception\VoucherServiceException("OnlyTokenPerCart: There is a token of type onlyToken in your this cart already.", 7);
             }
         }
-    }
-
-    /**
-     * Export tokens to CSV
-     *
-     * @param $params
-     * @return mixed
-     * @implements IExportableTokenManager
-     */
-    public function exportCsv(array $params)
-    {
-        $translator = new TranslateAdmin();
-
-        $stream = fopen('php://temp', 'w+');
-        fputcsv($stream, [
-            $translator->translateAdmin('plugin_onlineshop_voucherservice_table-token'),
-            $translator->translateAdmin('plugin_onlineshop_voucherservice_table-usages'),
-            $translator->translateAdmin('plugin_onlineshop_voucherservice_table-length'),
-            $translator->translateAdmin('plugin_onlineshop_voucherservice_table-date'),
-        ]);
-
-        $data = null;
-
-        try {
-            $data = $this->getExportData($params);
-        } catch (\Exception $e) {
-            fputcsv($stream, [$e->getMessage()]);
-            fputcsv($stream, '');
-        }
-
-        if (null !== $data && is_array($data)) {
-            foreach ($data as $tokenInfo) {
-                fputcsv($stream, [
-                    $tokenInfo['token'],
-                    (int) $tokenInfo['usages'],
-                    (int) $tokenInfo['length'],
-                    $tokenInfo['timestamp']
-                ]);
-            }
-        }
-
-        rewind($stream);
-        $result = stream_get_contents($stream);
-        fclose($stream);
-
-        return $result;
-    }
-
-    /**
-     * Export tokens to plain text list
-     *
-     * @param $params
-     * @return mixed
-     * @implements IExportableTokenManager
-     */
-    public function exportPlain(array $params)
-    {
-        $result = [];
-        $data   = null;
-
-        try {
-            $data = $this->getExportData($params);
-        } catch (\Exception $e) {
-            $result[] = $e->getMessage();
-            $result[] = '';
-        }
-
-        if (null !== $data && is_array($data)) {
-            /** @var Token $token */
-            foreach ($data as $tokenInfo) {
-                $result[] = $tokenInfo['token'];
-            }
-        }
-
-        return implode(PHP_EOL, $result) . PHP_EOL;
-    }
-
-    /**
-     * Get data for export - to be overridden in child classes
-     *
-     * @param array $params
-     * @return array
-     * @throws \Exception
-     * @throws \Zend_Paginator_Exception
-     */
-    protected function getExportData(array $params)
-    {
-        return [];
     }
 
     /**

@@ -2,13 +2,18 @@
 /**
  * Pimcore
  *
- * This source file is subject to the GNU General Public License version 3 (GPLv3)
- * For the full copyright and license information, please view the LICENSE.md and gpl-3.0.txt
- * files that are distributed with this source code.
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Enterprise License (PEL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) 2009-2015 pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
+ * @category   Pimcore
+ * @package    EcommerceFramework
+ * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
+
 
 namespace OnlineShop\Framework;
 
@@ -59,7 +64,7 @@ class Environment implements IEnvironment {
     protected function loadFromSession() {
         // when $_SESSION[self::SESSION_NAMESPACE] is set, always load environment from session (also within cli scripts)
         if(php_sapi_name() != "cli" || $_SESSION[$this->sessionNamespace]) {
-            $this->session = $this->buildSession();
+            $this->session = new \Zend_Session_Namespace($this->sessionNamespace);
 
             $key = self::SESSION_KEY_CUSTOM_ITEMS;
             $this->customItems = $this->session->$key;
@@ -315,14 +320,6 @@ class Environment implements IEnvironment {
     public function getCurrentCheckoutTenant()
     {
         return $this->currentCheckoutTenant;
-    }
-
-    /**
-     * @return \Zend_Session_Namespace
-     */
-    protected function buildSession()
-    {
-        return new \Zend_Session_Namespace($this->sessionNamespace);
     }
 
     /**

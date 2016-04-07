@@ -2,12 +2,16 @@
 /**
  * Pimcore
  *
- * This source file is subject to the GNU General Public License version 3 (GPLv3)
- * For the full copyright and license information, please view the LICENSE.md and gpl-3.0.txt
- * files that are distributed with this source code.
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Enterprise License (PEL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) 2009-2015 pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
+ * @category   Pimcore
+ * @package    EcommerceFramework
+ * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 
@@ -65,24 +69,6 @@ $urlParams = $this->getAllParams();
                         <?php } elseif ($this->msg['result']) { ?>
                             <div class="alert alert-info js-fadeout"> <?= $this->msg['result'] ?>  </div>
                         <?php } ?>
-                    </div>
-
-                    <div class="col col-sm-4 text-right">
-                        <div class="btn-group">
-                            <?php if ($this->supportsExport): ?>
-                                <?php
-                                $exportUrl = $this->url(array_merge($this->getAllParams(), [
-                                    'action' => 'export-tokens',
-                                    'format' => 'csv'
-                                ]), 'plugin', false);
-                                ?>
-
-                                <a class="btn btn-default" href="<?= $exportUrl ?>" target="_blank">
-                                    <span class="glyphicon glyphicon-export"></span>
-                                    <?= $this->ts('plugin_onlineshop_voucherservice_export-button') ?>
-                                </a>
-                            <?php endif; ?>
-                        </div>
                     </div>
                 </div>
 

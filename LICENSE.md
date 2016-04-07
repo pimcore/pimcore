@@ -28,5 +28,5 @@ contained in a separate written agreement between you and pimcore GmbH.
 
 
 Please see also (files in this directory):
-[Licensing FAQ - license-faq.md](https://github.com/pimcore/pimcore/blob/master/license-faq.md)
-[GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007 - gpl-3.0.txt](gpl-3.0.txt)
+- [Licensing FAQ - license-faq.md](https://github.com/pimcore/pimcore/blob/master/license-faq.md)
+- [GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007 - gpl-3.0.txt](gpl-3.0.txt)

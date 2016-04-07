@@ -2,13 +2,18 @@
 /**
  * Pimcore
  *
- * This source file is subject to the GNU General Public License version 3 (GPLv3)
- * For the full copyright and license information, please view the LICENSE.md and gpl-3.0.txt
- * files that are distributed with this source code.
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Enterprise License (PEL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) 2009-2015 pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
+ * @category   Pimcore
+ * @package    EcommerceFramework
+ * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
+
 
 namespace OnlineShop\Framework\CartManager;
 
@@ -31,7 +36,7 @@ class SessionCart extends AbstractCart implements ICart {
     }
 
     protected static function getSession() {
-        $session = new \Zend_Session_Namespace(static::$sessionNamespace);
+        $session = new \Zend_Session_Namespace(self::$sessionNamespace);
         if(empty($session->carts)) {
             $session->carts = array();
         }
@@ -41,7 +46,7 @@ class SessionCart extends AbstractCart implements ICart {
 
 
     public function save() {
-        $session = static::getSession();
+        $session = self::getSession();
 
         if(!$this->getId()) {
             $this->setId(uniqid("sesscart_"));
@@ -56,7 +61,7 @@ class SessionCart extends AbstractCart implements ICart {
     public function delete() {
         $this->setIgnoreReadonly();
 
-        $session = static::getSession();
+        $session = self::getSession();
 
         if(!$this->getId()) {
             throw new \Exception("Cart saved not yes.");
@@ -88,7 +93,7 @@ class SessionCart extends AbstractCart implements ICart {
      * @return \OnlineShop\Framework\CartManager\SessionCart
      */
     public static function getById($id) {
-        $carts = static::getAllCartsForUser(-1);
+        $carts = self::getAllCartsForUser(-1);
         return $carts[$id];
     }
 
@@ -98,13 +103,13 @@ class SessionCart extends AbstractCart implements ICart {
      * @return array
      */
     public static function getAllCartsForUser($userId) {
-        if(static::$unserializedCarts == null) {
-            foreach(static::getSession()->carts as $serializedCart) {
+        if(self::$unserializedCarts == null) {
+            foreach(self::getSession()->carts as $serializedCart) {
                 $cart = unserialize($serializedCart);
-                static::$unserializedCarts[$cart->getId()] = $cart;
+                self::$unserializedCarts[$cart->getId()] = $cart;
             }
         }
-        return static::$unserializedCarts;
+        return self::$unserializedCarts;
     }
 
     /**
@@ -112,7 +117,7 @@ class SessionCart extends AbstractCart implements ICart {
      */
     public static function getSessionNamespace()
     {
-        return static::$sessionNamespace;
+        return self::$sessionNamespace;
     }
 
     /**
@@ -120,7 +125,7 @@ class SessionCart extends AbstractCart implements ICart {
      */
     public static function setSessionNamespace($sessionNamespace)
     {
-        static::$sessionNamespace = $sessionNamespace;
+        self::$sessionNamespace = $sessionNamespace;
     }
 
 

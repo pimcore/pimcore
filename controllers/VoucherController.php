@@ -1,15 +1,17 @@
 <?php
-use OnlineShop\Framework\VoucherService\TokenManager\IExportableTokenManager;
-
 /**
  * Pimcore
  *
- * This source file is subject to the GNU General Public License version 3 (GPLv3)
- * For the full copyright and license information, please view the LICENSE.md and gpl-3.0.txt
- * files that are distributed with this source code.
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Enterprise License (PEL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) 2009-2015 pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
+ * @category   Pimcore
+ * @package    EcommerceFramework
+ * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 
@@ -25,71 +27,12 @@ class EcommerceFramework_VoucherController extends Pimcore\Controller\Action\Adm
         if ($onlineShopVoucherSeries instanceof \Pimcore\Model\Object\OnlineShopVoucherSeries) {
             if ($tokenManager = $onlineShopVoucherSeries->getTokenManager()) {
                 $this->view->series = $onlineShopVoucherSeries;
-
-                if ($tokenManager instanceof IExportableTokenManager) {
-                    $this->view->supportsExport = true;
-                }
-
                 $renderScript = $tokenManager->prepareConfigurationView($this->view, $this->getAllParams());
                 $this->renderScript($renderScript);
             } else {
                 $this->view->errors = array($this->view->ts('plugin_onlineshop_voucherservice_msg-error-config-missing'));
                 $this->renderScript('voucher/voucher-code-tab-error.php');
             }
-        }
-    }
-
-    /**
-     * Export tokens to file. The action should implement all export formats defined in IExportableTokenManager.
-     */
-    public function exportTokensAction()
-    {
-        $this->disableLayout();
-        $this->disableViewAutoRender();
-
-        $onlineShopVoucherSeries = \Pimcore\Model\Object\AbstractObject::getById($this->getParam('id'));
-        if (!($onlineShopVoucherSeries instanceof \Pimcore\Model\Object\OnlineShopVoucherSeries)) {
-            throw new InvalidArgumentException('Voucher series not found');
-        }
-
-        /** @var \Pimcore\Model\Object\OnlineShopVoucherSeries $onlineShopVoucherSeries */
-        $tokenManager = $onlineShopVoucherSeries->getTokenManager();
-        if (!(null !== $tokenManager && $tokenManager instanceof IExportableTokenManager)) {
-            throw new InvalidArgumentException('Token manager does not support exporting');
-        }
-
-        $format      = $this->getParam('format', IExportableTokenManager::FORMAT_CSV);
-        $contentType = null;
-        $suffix      = null;
-        $download    = true;
-
-        $result = '';
-        switch ($format) {
-            case IExportableTokenManager::FORMAT_CSV:
-                $result      = $tokenManager->exportCsv($this->getAllParams());
-                $contentType = 'text/csv';
-                $suffix      = 'csv';
-                break;
-
-            case IExportableTokenManager::FORMAT_PLAIN:
-                $result      = $tokenManager->exportPlain($this->getAllParams());
-                $contentType = 'text/plain';
-                $suffix      = 'txt';
-                $download    = false;
-                break;
-
-            default:
-                throw new InvalidArgumentException('Invalid format');
-        }
-
-        $response = $this->getResponse();
-        $response
-            ->setBody($result)
-            ->setHeader('Content-Type', $contentType)
-            ->setHeader('Content-Length', strlen($result));
-
-        if ($download && null !== $suffix) {
-            $response->setHeader('Content-Disposition', sprintf('attachment; filename="voucher-export.%s"', $suffix));
         }
     }
 
