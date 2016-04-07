@@ -5,7 +5,7 @@
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
  * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in 
+ * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @category   Pimcore
@@ -554,6 +554,13 @@ class Staticroute extends AbstractModel
             // check for dynamic controller / action / module
             $dynamicRouteReplace = function ($item, $params) {
                 if (strpos($item, "%") !== false) {
+
+                    uksort($params, function ($a, $b) {
+                        // order by key length, longer key have priority
+                        // (%abcd prior %ab, so that %ab doesn't replace %ab in [%ab]cd)
+                        return strlen($b) - strlen($a);
+                    });
+
                     foreach ($params as $key => $value) {
                         $dynKey = "%" . $key;
                         if (strpos($item, $dynKey) !== false) {
