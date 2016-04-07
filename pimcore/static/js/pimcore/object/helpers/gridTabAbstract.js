@@ -390,8 +390,8 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             }
         }
 
-        var path = "/admin/object-helper/export/classId/" + this.classId + "/folderId/" + this.element.id ;
-        path = path + "/?" + Ext.urlEncode({
+        var path = "/admin/object-helper/export/classId/" + this.classId + "/folderId/" + this.element.id;
+        path = path + "/?extjs3=1&" + Ext.urlEncode({
             filter: filters,
             condition: condition,
             objecttype: this.objecttype

@@ -362,7 +362,7 @@ pimcore.settings.translations = Class.create({
             Ext.MessageBox.confirm("", t("filter_active_message"), function (buttonValue) {
                 if (buttonValue == "yes") {
                     var queryString = "searchString=" + this.filterField.getValue();
-                    queryString += "&" + Ext.urlEncode(this.gridFilters.buildQuery(this.gridFilters.getFilterData()));
+                    queryString += "&extjs3=1&" + Ext.urlEncode(this.gridFilters.buildQuery(this.gridFilters.getFilterData()));
                     pimcore.helpers.download(Ext.urlAppend(this.exportUrl, queryString));
                 } else {
                     pimcore.helpers.download(this.exportUrl);

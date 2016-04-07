@@ -180,7 +180,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                     query = "filter=";
                 }
 
-                query += "&name=" + this.config.name;
+                query += "&extjs3=1&name=" + this.config.name;
 
                 if(this.drillDownFilters) {
                     var fieldnames = Object.getOwnPropertyNames(this.drillDownFilters);

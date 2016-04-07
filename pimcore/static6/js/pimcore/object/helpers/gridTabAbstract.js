@@ -417,13 +417,12 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                 var filterItem = filterData.getAt(i);
 
                 var fieldname = filterItem.getProperty();
-                console.log(fieldname);
                 var type = this.gridfilters[fieldname];
                 if (typeof type == 'object') {
                     type = type.type;
                 }
                 filters.push({
-                    field: fieldname,
+                    property: fieldname,
                     type: type,
                     comparison: filterItem.getOperator(),
                     value: filterItem.getValue()
@@ -434,7 +433,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
         }
 
         var path = "/admin/object-helper/export/classId/" + this.classId + "/folderId/" + this.element.id ;
-        path = path + "/?" + Ext.urlEncode({
+        path = path + "/?extjs6=1&" + Ext.urlEncode({
             language: this.gridLanguage,
             filter: filters,
             condition: condition,
