@@ -52,28 +52,14 @@ class Pimcore
      */
     public static function run()
     {
-        self::setSystemRequirements();
-
         // detect frontend (website)
         $frontend = Tool::isFrontend();
 
         // enable the output-buffer, why? see in self::outputBufferStart()
-        //if($frontend) {
         self::outputBufferStart();
-        //}
-
-        self::initConfiguration();
-        self::setupFramework();
-
-        // config is loaded now init the real logger
-        self::initLogger();
 
         // initialize cache
         Cache::init();
-
-        // load plugins and modules (=core plugins)
-        self::initModules();
-        self::initPlugins();
 
         // init front controller
         $front = \Zend_Controller_Front::getInstance();

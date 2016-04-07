@@ -147,7 +147,14 @@ foreach ($autoloaderClassMapFiles as $autoloaderClassMapFile) {
     }
 }
 
+// generic pimcore startup
+\Pimcore::setSystemRequirements();
 \Pimcore::initAutoloader();
+\Pimcore::initConfiguration();
+\Pimcore::setupFramework();
+\Pimcore::initLogger();
+\Pimcore::initModules();
+\Pimcore::initPlugins();
 
 // do some general stuff
 // this is just for compatibility reasons, pimcore itself doesn't use this constant anymore

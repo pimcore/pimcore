@@ -35,14 +35,6 @@ $request->setActionName("default");
 $front->setRequest($request);
 $front->setResponse(new \Zend_Controller_Response_Cli());
 
-// generic pimcore setup
-\Pimcore::setSystemRequirements();
-\Pimcore::initConfiguration();
-\Pimcore::setupFramework();
-\Pimcore::initLogger();
-\Pimcore::initModules();
-\Pimcore::initPlugins();
-
 //Activate Inheritance for cli-scripts
 \Pimcore::unsetAdminMode();
 Document::setHideUnpublished(true);
