@@ -5,6 +5,9 @@
  * or some other things which should be done before the initialization of pimcore is completed, below are some examples.
  * IMPORTANT: Please rename this file to startup.php to use it!
  */
+ 
+ //init the autoloader
+ //Pimcore::initAutoloader();
 
 /*
 // register a custom ZF controller plugin
@@ -32,8 +35,7 @@ $front->setRouter($router);
 $front = \Zend_Controller_Front::getInstance();
 $front->addModuleDirectory(PIMCORE_DOCUMENT_ROOT . "/customModuleDirectory");
 
-//init the autoloader
-Pimcore::initAutoloader();
+
 
 
 // add some custom events
