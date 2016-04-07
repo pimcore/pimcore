@@ -11,78 +11,95 @@
 
 
 /** Main Menu **/
-.plugin_onlineshop_icon_mainmenu {
-    background: url("/plugins/EcommerceFramework/static/img/icon/onlineshop.png") no-repeat left center transparent !important;
-    padding-left: 24px !important;
-}
 .plugin_onlineshop_pricing_rules {
-    background: url("/pimcore/static6/img/flat-color-icons/calculator.svg") no-repeat center center !important;
+    background: url("/pimcore/static6/img/flat-color-icons/percent.svg") no-repeat center center !important;
 }
 
 /** Tree **/
 .plugin_onlineshop_pricing_icon_rule_additiv {
-    background: url("/plugins/EcommerceFramework/static/img/icon/price_tag_plus.png") no-repeat scroll left center transparent !important;
+    position: relative;
+    background: url("/pimcore/static6/img/flat-color-icons/percent.svg") no-repeat center center !important;
 }
-.plugin_onlineshop_pricing_icon_rule_stopExecute {
-    background: url("/plugins/EcommerceFramework/static/img/icon/price-tag--exclamation.png") no-repeat scroll left center transparent !important;
-}
-.plugin_onlineshop_pricing_icon_rule_disabled {
-    background: url("/pimcore/static/img/icon/tag_red.png") no-repeat scroll left center transparent !important;
+.plugin_onlineshop_pricing_icon_rule_additiv:before {
+    position: absolute;
+    width: 9px;
+    height: 9px;
+    bottom: 4px;
+    right: 0;
+    content: "";
+    background: url(/pimcore/static6/img/flat-color-icons/plus-circle.svg) center center no-repeat !important;
 }
 
-/** Config Tabs **/
-.plugin_onlineshop_pricing_icon_rule_settings {
-    background: url("/pimcore/static/img/icon/wrench.png") no-repeat scroll left center transparent !important;
+
+.plugin_onlineshop_pricing_icon_rule_stopExecute {
+    position: relative;
+    background: url("/pimcore/static6/img/flat-color-icons/percent.svg") no-repeat center center !important;
 }
-.plugin_onlineshop_pricing_icon_rule_conditions {
-    background: url("/pimcore/static/img/icon/magnifier.png") no-repeat scroll left center transparent !important;
+.plugin_onlineshop_pricing_icon_rule_stopExecute:before {
+    position: absolute;
+    width: 9px;
+    height: 9px;
+    bottom: 4px;
+    right: 0;
+    content: "";
+    background: url(/pimcore/static6/img/flat-color-icons/stop-circle.svg) center center no-repeat !important;
 }
-.plugin_onlineshop_pricing_icon_rule_actions {
-    background: url("/pimcore/static/img/icon/lightning.png") no-repeat scroll left center transparent !important;
+
+.plugin_onlineshop_pricing_icon_rule_disabled {
+    background: url("/pimcore/static6/img/flat-color-icons/percent.svg") no-repeat center center !important;
+    -webkit-filter: grayscale(100%) brightness(200%);
+    filter: grayscale(100%) brightness(200%);
+
 }
 
 /** Condition **/
 .plugin_onlineshop_pricing_icon_condition_bracket {
-    margin: 0px 20px !important;
+    margin: 0 20px !important;
 }
 .plugin_onlineshop_pricing_icon_conditionCartAmount {
-    background: url("/pimcore/static/img/icon/cart.png") no-repeat scroll left center transparent !important;
+    background: url("/pimcore/static6/img/flat-color-icons/shopping-cart.svg") no-repeat center center !important;
 }
 .plugin_onlineshop_pricing_icon_conditionDateRange {
-    background: url("/pimcore/static/img/icon/calendar.png") no-repeat scroll left center transparent !important;
+    background: url("/pimcore/static6/img/flat-color-icons/calendar.svg") no-repeat center center !important;
 }
 .plugin_onlineshop_pricing_icon_conditionCatalogProduct {
-    background: url("/pimcore/static/img/icon/camera.png") no-repeat scroll left center transparent !important;
+    background: url("/pimcore/static6/img/flat-color-icons/camera.svg") no-repeat center center !important;
 }
 .plugin_onlineshop_pricing_icon_conditionCatalogCategory {
-    background: url("/pimcore/static/img/icon/folder_camera.png") no-repeat scroll left center transparent !important;
+    background: url("/pimcore/static6/img/flat-color-icons/folder.svg") no-repeat center center !important;
+}
+.plugin_onlineshop_pricing_icon_conditionCatalogCategory:before {
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    top: 4px;
+    right: 0;
+    content: "";
+    background: url(/pimcore/static6/img/flat-color-icons/camera.svg) center center no-repeat !important;
 }
 .plugin_onlineshop_pricing_icon_conditionToken {
-    background: url(/pimcore/static/img/icon/award_star_silver_3.png) left center no-repeat !important;
+    background: url("/pimcore/static6/img/flat-color-icons/sms.svg") no-repeat center center !important;
 }
 .plugin_onlineshop_pricing_icon_conditionSold,
 .plugin_onlineshop_pricing_icon_conditionSales {
-    background: url("/pimcore/static/img/icon/money.png") left center no-repeat !important;
+    background: url("/pimcore/static6/img/flat-color-icons/sales_performance.svg") no-repeat center center !important;;
 }
 .plugin_onlineshop_pricing_icon_conditionClientIp {
-    background: url("/pimcore/static/img/icon/computer.png") left center no-repeat !important;
+    background: url("/pimcore/static6/img/flat-color-icons/laptop.svg") no-repeat center center !important;
 }
 .plugin_onlineshop_pricing_icon_conditionVoucherToken {
-    background: url("/pimcore/static/img/icon/medal_gold_3.png") left center no-repeat !important;
+    background: url("/pimcore/static6/img/flat-color-icons/diamond.svg") no-repeat center center !important;
 }
 
 
 /** Actions **/
-.plugin_onlineshop_pricing_icon_action {
-    background: url("/pimcore/static/img/icon/lightning.png") no-repeat scroll left center transparent !important;
-}
 .plugin_onlineshop_pricing_icon_actionGift {
-    background: url("/plugins/EcommerceFramework/static/img/icon/gift.png") no-repeat scroll left center transparent !important;
+    background: url("/pimcore/static6/img/flat-color-icons/gift.svg") no-repeat center center !important;
 }
 .plugin_onlineshop_pricing_icon_actionCartDiscount,
 .plugin_onlineshop_pricing_icon_actionProductDiscount {
-    background: url("/pimcore/static/img/icon/money.png") no-repeat scroll left center transparent !important;
+    background: url("/pimcore/static6/img/flat-color-icons/donate.svg") no-repeat center center !important;
 }
 .plugin_onlineshop_pricing_icon_actionFreeShipping {
-    background: url("/pimcore/static/img/icon/lorry.png") no-repeat scroll left center transparent !important;
+    background: url("/pimcore/static6/img/flat-color-icons/in_transit.svg") no-repeat center center !important;
 }

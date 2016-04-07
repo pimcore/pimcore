@@ -109,9 +109,13 @@ pimcore.object.tags.indexFieldSelectionCombo = Class.create(pimcore.object.tags.
             });
 
             this.component = Ext.create('Ext.form.Panel', {
-                layout: 'hbox',
+                layout: {
+                    type: 'hbox',
+                    align: "middle"
+                },
                 margin: '0 0 10 0',
                 combineErrors: false,
+
                 items: [tenantCombobox, this.fieldsCombobox],
                 cls: "object_field",
                 isDirty: function() {

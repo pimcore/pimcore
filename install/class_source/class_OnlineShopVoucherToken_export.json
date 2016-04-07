@@ -23,20 +23,39 @@
 		"childs":[
 			{
 				"fieldtype":"panel",
-				"labelWidth":100,
+				"labelWidth":150,
 				"layout":"",
 				"name":"Layout",
 				"type":null,
 				"region":"",
 				"title":"",
-				"width":"",
-				"height":"",
+				"width":null,
+				"height":null,
 				"collapsible":false,
 				"collapsed":false,
 				"bodyStyle":"",
 				"datatype":"layout",
 				"permissions":null,
 				"childs":[
+					{
+						"fieldtype":"text",
+						"html":"<b>VoucherToken <\/b>that are actually used with orders.&nbsp;",
+						"name":"Layout",
+						"type":null,
+						"region":null,
+						"title":"",
+						"width":null,
+						"height":null,
+						"collapsible":false,
+						"collapsed":false,
+						"bodyStyle":"padding: 10px; background-color: #d9edf7; border-color: #bce8f1 !important; color: #31708f;",
+						"datatype":"layout",
+						"permissions":null,
+						"childs":[
+
+						],
+						"locked":null
+					},
 					{
 						"fieldtype":"numeric",
 						"width":500,
@@ -46,9 +65,9 @@
 						"phpdocType":"float",
 						"integer":false,
 						"unsigned":false,
-						"minValue":"",
-						"maxValue":"",
-						"decimalPrecision":"",
+						"minValue":null,
+						"maxValue":null,
+						"decimalPrecision":null,
 						"name":"tokenId",
 						"title":"Token ID",
 						"tooltip":"",
@@ -99,9 +118,17 @@
 						"phpdocType":"\\Pimcore\\Model\\Document\\Page | \\Pimcore\\Model\\Document\\Snippet | \\Pimcore\\Model\\Document | \\Pimcore\\Model\\Asset | \\Pimcore\\Model\\Object\\AbstractObject",
 						"objectsAllowed":true,
 						"assetsAllowed":false,
-						"assetTypes":"",
+						"assetTypes":[
+							{
+								"assetTypes":""
+							}
+						],
 						"documentsAllowed":false,
-						"documentTypes":"",
+						"documentTypes":[
+							{
+								"documentTypes":""
+							}
+						],
 						"lazyLoading":false,
 						"classes":[
 							{
@@ -114,7 +141,7 @@
 						"mandatory":true,
 						"noteditable":true,
 						"index":false,
-						"locked":null,
+						"locked":false,
 						"style":"",
 						"permissions":null,
 						"datatype":"data",

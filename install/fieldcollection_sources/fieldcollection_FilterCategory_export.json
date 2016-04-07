@@ -23,21 +23,40 @@
 				"name":"Layout",
 				"type":"",
 				"region":"",
-				"title":"Filter Category",
-				"width":"",
-				"height":"",
+				"title":"",
+				"width":null,
+				"height":null,
 				"collapsible":false,
-				"collapsed":"",
+				"collapsed":false,
 				"bodyStyle":"",
 				"datatype":"layout",
 				"permissions":"",
 				"childs":[
 					{
+						"fieldtype":"text",
+						"html":"<div style=\"color: rgb(0, 0, 0); font-family: 'Open Sans', 'Helvetica Neue', helvetica, arial, verdana, sans-serif; font-size: 13px;\"><b>Filter Category<\/b><\/div><div><font face=\"Open Sans, Helvetica Neue, helvetica, arial, verdana, sans-serif\"><span style=\"font-size: 13px;\">- RootCategory: can be used as root category when building up category tree.&nbsp;<\/span><\/font><\/div><div><font face=\"Open Sans, Helvetica Neue, helvetica, arial, verdana, sans-serif\"><span style=\"font-size: 13px;\">- Include SubCategories: when active, filter returns product with subcategories assigned too.<\/span><\/font><\/div>",
+						"name":"Layout",
+						"type":null,
+						"region":null,
+						"title":"",
+						"width":null,
+						"height":null,
+						"collapsible":false,
+						"collapsed":false,
+						"bodyStyle":"padding: 10px; background-color: #d9edf7; border-color: #bce8f1 !important; color: #31708f;",
+						"datatype":"layout",
+						"permissions":null,
+						"childs":[
+
+						],
+						"locked":false
+					},
+					{
 						"fieldtype":"input",
-						"width":"300",
+						"width":400,
 						"queryColumnType":"varchar",
 						"columnType":"varchar",
-						"columnLength":"255",
+						"columnLength":255,
 						"phpdocType":"string",
 						"regex":"",
 						"name":"label",
@@ -45,7 +64,7 @@
 						"tooltip":"",
 						"mandatory":false,
 						"noteditable":false,
-						"index":"",
+						"index":false,
 						"locked":false,
 						"style":"",
 						"permissions":"",
@@ -57,7 +76,7 @@
 					},
 					{
 						"fieldtype":"href",
-						"width":300,
+						"width":400,
 						"assetUploadPath":"",
 						"relationType":true,
 						"queryColumnType":{
@@ -67,10 +86,18 @@
 						"phpdocType":"\\Pimcore\\Model\\Document\\Page | \\Pimcore\\Model\\Document\\Snippet | \\Pimcore\\Model\\Document | \\Pimcore\\Model\\Asset | \\Pimcore\\Model\\Object\\AbstractObject",
 						"objectsAllowed":true,
 						"assetsAllowed":false,
-						"assetTypes":"",
+						"assetTypes":[
+							{
+								"assetTypes":""
+							}
+						],
 						"documentsAllowed":false,
-						"documentTypes":"",
-						"lazyLoading":false,
+						"documentTypes":[
+							{
+								"documentTypes":""
+							}
+						],
+						"lazyLoading":true,
 						"classes":[
 							{
 								"classes":"ProductCategory"
@@ -93,7 +120,7 @@
 					},
 					{
 						"fieldtype":"href",
-						"width":300,
+						"width":400,
 						"assetUploadPath":"",
 						"relationType":true,
 						"queryColumnType":{
@@ -114,9 +141,11 @@
 								"documentTypes":null
 							}
 						],
-						"lazyLoading":false,
+						"lazyLoading":true,
 						"classes":[
-
+							{
+								"classes":"ProductCategory"
+							}
 						],
 						"name":"rootCategory",
 						"title":"Root Category",
@@ -124,7 +153,7 @@
 						"mandatory":false,
 						"noteditable":false,
 						"index":false,
-						"locked":null,
+						"locked":false,
 						"style":"",
 						"permissions":null,
 						"datatype":"data",
@@ -144,7 +173,7 @@
 						"tooltip":"",
 						"mandatory":false,
 						"noteditable":false,
-						"index":"",
+						"index":false,
 						"locked":false,
 						"style":"",
 						"permissions":"",
@@ -156,10 +185,10 @@
 					},
 					{
 						"fieldtype":"input",
-						"width":"300",
+						"width":400,
 						"queryColumnType":"varchar",
 						"columnType":"varchar",
-						"columnLength":"255",
+						"columnLength":255,
 						"phpdocType":"string",
 						"regex":"",
 						"name":"scriptPath",
@@ -167,7 +196,7 @@
 						"tooltip":"",
 						"mandatory":false,
 						"noteditable":false,
-						"index":"",
+						"index":false,
 						"locked":false,
 						"style":"",
 						"permissions":"",
@@ -179,22 +208,24 @@
 					},
 					{
 						"fieldtype":"objects",
-						"width":500,
-						"height":197,
+						"width":"",
+						"height":"",
 						"maxItems":"",
 						"queryColumnType":"text",
 						"phpdocType":"array",
 						"relationType":true,
-						"lazyLoading":"",
+						"lazyLoading":true,
 						"classes":[
-
+							{
+								"classes":"ProductCategory"
+							}
 						],
 						"name":"availableCategories",
 						"title":"Available Categories",
 						"tooltip":"",
 						"mandatory":false,
 						"noteditable":false,
-						"index":"",
+						"index":false,
 						"locked":false,
 						"style":"",
 						"permissions":"",

@@ -29,6 +29,11 @@ pimcore.plugin.OnlineShop.pricing.config.panel = Class.create({
      */
     action: [],
 
+    /**
+     * panels of open pricing rules
+     */
+    panels: {},
+
 
     /**
      * constructor
@@ -170,7 +175,7 @@ pimcore.plugin.OnlineShop.pricing.config.panel = Class.create({
                 viewConfig: {
                     plugins: {
                         ptype: 'treeviewdragdrop'
-                    },
+                    }
                 },
                 listeners: {
                     itemclick: this.openRule.bind(this),
@@ -252,7 +257,7 @@ pimcore.plugin.OnlineShop.pricing.config.panel = Class.create({
                     if(!data || !data.success) {
                         Ext.Msg.alert(t('add_target'), t('problem_creating_new_target'));
                     } else {
-                        this.openRule(intval(data.id));
+                        this.openRule(null, intval(data.id));
                     }
                 }.bind(this)
             });
@@ -281,7 +286,7 @@ pimcore.plugin.OnlineShop.pricing.config.panel = Class.create({
                 id: record.id
             },
             success: function () {
-                this.refresh(record);
+                this.refresh(this.tree.getRootNode());
             }.bind(this)
         });
     },
@@ -297,17 +302,29 @@ pimcore.plugin.OnlineShop.pricing.config.panel = Class.create({
             record = record.id;
         }
 
-        // load defined rules
-        Ext.Ajax.request({
-            url: "/plugin/EcommerceFramework/Pricing/get",
-            params: {
-                id: record
-            },
-            success: function (response) {
-                var res = Ext.decode(response.responseText);
-                var item = new pimcore.plugin.OnlineShop.pricing.config.item(this, res);
-            }.bind(this)
-        });
+        //try {
+            var pricingRuleKey = "pricingrule_" + record;
+            if (this.panels[pricingRuleKey]) {
+                this.panels[pricingRuleKey].activate();
+            } else {
+                // load defined rules
+                Ext.Ajax.request({
+                    url: "/plugin/EcommerceFramework/Pricing/get",
+                    params: {
+                        id: record
+                    },
+                    success: function (response) {
+                        var res = Ext.decode(response.responseText);
+                        var item = new pimcore.plugin.OnlineShop.pricing.config.item(this, res);
+                        this.panels[pricingRuleKey] = item;
+                    }.bind(this)
+                });
+            }
+        //} catch (e) {
+        //    console.log(e);
+        //}
+
+
 
     },
 

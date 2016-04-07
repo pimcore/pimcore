@@ -157,11 +157,11 @@ pimcore.plugin.OnlineShop.pricing.config.objects = Class.create(pimcore.object.t
 
         columns.push({
             xtype: 'actioncolumn',
-            width: 30,
+            width: 40,
             items: [
                 {
                     tooltip: t('open'),
-                    icon: "/pimcore/static/img/icon/pencil_go.png",
+                    icon: "/pimcore/static6/img/flat-color-icons/cursor.svg",
                     handler: function (grid, rowIndex) {
                         var data = grid.getStore().getAt(rowIndex);
                         pimcore.helpers.openObject(data.data.id, "object");
@@ -173,11 +173,11 @@ pimcore.plugin.OnlineShop.pricing.config.objects = Class.create(pimcore.object.t
         if(!readOnly) {
             columns.push({
                 xtype: 'actioncolumn',
-                width: 30,
+                width: 40,
                 items: [
                     {
                         tooltip: t('remove'),
-                        icon: "/pimcore/static/img/icon/cross.png",
+                        icon: "/pimcore/static6/img/flat-color-icons/delete.svg",
                         handler: function (grid, rowIndex) {
                             grid.getStore().removeAt(rowIndex);
                         }.bind(this)
@@ -200,11 +200,11 @@ pimcore.plugin.OnlineShop.pricing.config.objects = Class.create(pimcore.object.t
                 {dataIndex: "path", header: t("path"), flex: 200},
                 {
                     xtype: 'actioncolumn',
-                    width: 30,
+                    width: 40,
                     items: [
                         {
                             tooltip: t('open'),
-                            icon: "/pimcore/static/img/icon/pencil_go.png",
+                            icon: "/pimcore/static6/img/flat-color-icons/cursor.svg",
                             handler: function (grid, rowIndex) {
                                 var data = grid.getStore().getAt(rowIndex);
                                 pimcore.helpers.openObject(data.data.id, "object");
@@ -214,11 +214,11 @@ pimcore.plugin.OnlineShop.pricing.config.objects = Class.create(pimcore.object.t
                 },
                 {
                     xtype: 'actioncolumn',
-                    width: 30,
+                    width: 40,
                     items: [
                         {
                             tooltip: t('remove'),
-                            icon: "/pimcore/static/img/icon/cross.png",
+                            icon: "/pimcore/static6/img/flat-color-icons/delete.svg",
                             handler: function (grid, rowIndex) {
                                 grid.getStore().removeAt(rowIndex);
                             }.bind(this)

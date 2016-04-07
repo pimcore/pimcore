@@ -15,6 +15,8 @@ namespace OnlineShop\Framework\FilterService\FilterType;
 class NumberRangeSelection extends AbstractFilterType {
 
     public function getFilterFrontend(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList, $currentFilter) {
+
+        $field = $this->getField($filterDefinition);
         if ($filterDefinition->getScriptPath()) {
             $script = $filterDefinition->getScriptPath();
         } else {
@@ -23,13 +25,12 @@ class NumberRangeSelection extends AbstractFilterType {
 
         $ranges = $filterDefinition->getRanges();
 
-        $groupByValues = $productList->getGroupByValues($filterDefinition->getField(), true);
+        $groupByValues = $productList->getGroupByValues($field, true);
 
         $counts = array();
         foreach($ranges->getData() as $row) {
             $counts[$row['from'] . "_" . $row['to']] = 0;
         }
-
 
         foreach($groupByValues as $groupByValue) {
             if($groupByValue['value'] !== null) {
@@ -39,7 +40,7 @@ class NumberRangeSelection extends AbstractFilterType {
                     $value = 0;
                 }
                 foreach($ranges->getData() as $row) {
-                    if((empty($row['from']) || ($row['from'] <= $value)) && (empty($row['to']) || $row['to'] >= $value)) {
+                    if((empty($row['from']) || (floatval($row['from']) <= $value)) && (empty($row['to']) || floatval($row['to']) > $value)) {
                         $counts[$row['from'] . "_" . $row['to']] += $groupByValue['count'];
                         break;
                     }
@@ -54,8 +55,8 @@ class NumberRangeSelection extends AbstractFilterType {
         }
 
         $currentValue = "";
-        if($currentFilter[$filterDefinition->getField()]['from'] || $currentFilter[$filterDefinition->getField()]['to']) {
-            $currentValue = implode($currentFilter[$filterDefinition->getField()], "-");
+        if($currentFilter[$field]['from'] || $currentFilter[$field]['to']) {
+            $currentValue = implode($currentFilter[$field], "-");
         }
 
 
@@ -63,11 +64,11 @@ class NumberRangeSelection extends AbstractFilterType {
             "hideFilter" => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
             "label" => $filterDefinition->getLabel(),
             "currentValue" => $currentValue,
-            "currentNiceValue" => $this->createLabel($currentFilter[$filterDefinition->getField()]),
+            "currentNiceValue" => $this->createLabel($currentFilter[$field]),
             "unit" => $filterDefinition->getUnit(),
             "values" => $values,
             "definition" => $filterDefinition,
-            "fieldname" => $filterDefinition->getField(),
+            "fieldname" => $field,
             "metaData" => $filterDefinition->getMetaData()
         ));
     }
@@ -89,7 +90,8 @@ class NumberRangeSelection extends AbstractFilterType {
     }
 
     public function addCondition(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList, $currentFilter, $params, $isPrecondition = false) {
-        $rawValue = $params[$filterDefinition->getField()];
+        $field = $this->getField($filterDefinition);
+        $rawValue = $params[$field];
 
         if(!empty($rawValue) && $rawValue != AbstractFilterType::EMPTY_STRING && is_string($rawValue)) {
             $values = explode("-", $rawValue);
@@ -102,25 +104,25 @@ class NumberRangeSelection extends AbstractFilterType {
             $value['to'] = $filterDefinition->getPreSelectTo();
         }
 
-        $currentFilter[$filterDefinition->getField()] = $value;
+        $currentFilter[$field] = $value;
 
 
         if(!empty($value)) {
             if(!empty($value['from'])) {
 
                 if($isPrecondition) {
-                    $productList->addCondition($filterDefinition->getField() . " >= " . $productList->quote($value['from']), "PRECONDITION_" . $filterDefinition->getField());
+                    $productList->addCondition($field . " >= " . $productList->quote($value['from']), "PRECONDITION_" . $field);
                 } else {
-                    $productList->addCondition($filterDefinition->getField() . " >= " . $productList->quote($value['from']), $filterDefinition->getField());
+                    $productList->addCondition($field . " >= " . $productList->quote($value['from']), $field);
                 }
 
             }
             if(!empty($value['to'])) {
 
                 if($isPrecondition) {
-                    $productList->addCondition($filterDefinition->getField() . " <= " . $productList->quote($value['to']), "PRECONDITION_" . $filterDefinition->getField());
+                    $productList->addCondition($field . " <= " . $productList->quote($value['to']), "PRECONDITION_" . $field);
                 } else {
-                    $productList->addCondition($filterDefinition->getField() . " <= " . $productList->quote($value['to']), $filterDefinition->getField());
+                    $productList->addCondition($field . " < " . $productList->quote($value['to']), $field);
                 }
 
             }

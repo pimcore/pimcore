@@ -34,7 +34,7 @@ pimcore.object.classes.data.indexFieldSelectionField = Class.create(pimcore.obje
     },
 
     getTypeName: function () {
-        return t("indexFieldSelectionField");
+        return t("indexFieldSelectionFieldMulti");
     },
 
     getGroup: function () {

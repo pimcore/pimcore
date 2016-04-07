@@ -23,22 +23,42 @@
 				"name":"Layout",
 				"type":null,
 				"region":null,
-				"title":"Filter Multi Select from Multi Select",
+				"title":"",
 				"width":null,
 				"height":null,
 				"collapsible":false,
-				"collapsed":null,
-				"bodyStyle":null,
+				"collapsed":false,
+				"bodyStyle":"",
 				"datatype":"layout",
 				"permissions":null,
 				"childs":[
 					{
+						"fieldtype":"text",
+						"html":"<b>\u200bFilter Multi Select from Multi Select<\/b><div>Multi selection filter for multi select fields.&nbsp;<\/div><div>- Use And Condition: Uses AND condition instead of OR.&nbsp;<br><\/div>",
+						"name":"Layout",
+						"type":null,
+						"region":null,
+						"title":"",
+						"width":null,
+						"height":null,
+						"collapsible":false,
+						"collapsed":false,
+						"bodyStyle":"padding: 10px; background-color: #d9edf7; border-color: #bce8f1 !important; color: #31708f;",
+						"datatype":"layout",
+						"permissions":null,
+						"childs":[
+
+						],
+						"locked":false
+					},
+					{
 						"fieldtype":"input",
-						"width":"",
+						"width":400,
 						"queryColumnType":"varchar",
 						"columnType":"varchar",
 						"columnLength":255,
 						"phpdocType":"string",
+						"regex":"",
 						"name":"label",
 						"title":"Label",
 						"tooltip":"",
@@ -67,9 +87,12 @@
 							"preSelect":"text"
 						},
 						"phpdocType":"Object_Data_IndexFieldSelection",
-						"considerTenants":false,
+						"width":400,
+						"considerTenants":true,
 						"multiPreSelect":"remote_multi",
-						"filterGroups":"multiselect",
+						"filterGroups":[
+							"multiselect"
+						],
 						"predefinedPreSelectOptions":[
 							{
 								"key":"test",
@@ -97,11 +120,12 @@
 					},
 					{
 						"fieldtype":"input",
-						"width":"",
+						"width":400,
 						"queryColumnType":"varchar",
 						"columnType":"varchar",
 						"columnLength":255,
 						"phpdocType":"string",
+						"regex":"",
 						"name":"scriptPath",
 						"title":"Script Path",
 						"tooltip":"",

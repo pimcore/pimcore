@@ -183,7 +183,10 @@ pimcore.object.tags.indexFieldSelection = Class.create(pimcore.object.tags.selec
             });
 
             panel.add(Ext.create('Ext.form.Panel', {
-                layout: 'hbox',
+                layout: {
+                    type: 'hbox',
+                    align: "middle"
+                },
                 margin: '0 0 10 0',
                 combineErrors: false,
                 cls: "object_field",

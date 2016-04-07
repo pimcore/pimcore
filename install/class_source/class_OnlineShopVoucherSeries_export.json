@@ -23,23 +23,42 @@
 		"childs":[
 			{
 				"fieldtype":"panel",
-				"labelWidth":100,
+				"labelWidth":150,
 				"layout":null,
 				"name":"Layout",
 				"type":null,
 				"region":null,
-				"title":null,
+				"title":"",
 				"width":null,
 				"height":null,
 				"collapsible":false,
-				"collapsed":null,
-				"bodyStyle":null,
+				"collapsed":false,
+				"bodyStyle":"",
 				"datatype":"layout",
 				"permissions":null,
 				"childs":[
 					{
+						"fieldtype":"text",
+						"html":"<b>VoucherSeries <\/b>to set up valid voucher tokens.&nbsp;<div>- Name: Specify a name for this voucher series. Just for finding it again ;-)&nbsp;<\/div><div>-&nbsp;Token Settings: Specify a token calculation type and define specific settings for token generation.&nbsp;<\/div><div>Actual tokens are available in additional tab 'Voucher Service'&nbsp;<\/div>",
+						"name":"Layout",
+						"type":null,
+						"region":null,
+						"title":"",
+						"width":null,
+						"height":null,
+						"collapsible":false,
+						"collapsed":false,
+						"bodyStyle":"padding: 10px; background-color: #d9edf7; border-color: #bce8f1 !important; color: #31708f;",
+						"datatype":"layout",
+						"permissions":null,
+						"childs":[
+
+						],
+						"locked":false
+					},
+					{
 						"fieldtype":"input",
-						"width":"",
+						"width":400,
 						"queryColumnType":"varchar",
 						"columnType":"varchar",
 						"columnLength":255,

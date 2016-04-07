@@ -46,6 +46,9 @@ pimcore.plugin.OnlineShop.pricing.config.item = Class.create({
                 this.getActions()
             ]
         });
+        this.tabPanel.on("beforedestroy", function () {
+            delete this.parent.panels["pricingrule_" + this.data.id];
+        }.bind(this));
 
 
         // add saved conditions
@@ -105,6 +108,12 @@ pimcore.plugin.OnlineShop.pricing.config.item = Class.create({
         panel.updateLayout();
     },
 
+    activate: function () {
+        var panel = this.parent.getTabPanel();
+        panel.setActiveTab(this.tabPanel);
+        panel.updateLayout();
+    },
+
     /**
      * Basic rule Settings
      * @returns Ext.form.FormPanel
@@ -117,7 +126,6 @@ pimcore.plugin.OnlineShop.pricing.config.item = Class.create({
         Ext.each(pimcore.settings.websiteLanguages, function(lang){
             var tab = {
                 title: pimcore.available_languages[ lang ],
-                //xtype: "panel",
                 items: [{
                     xtype: "textfield",
                     name: "label." + lang,
@@ -132,14 +140,13 @@ pimcore.plugin.OnlineShop.pricing.config.item = Class.create({
                     height: 100,
                     value: data.description[ lang ]
                 }]
-            }
+            };
 
             langTabs.push( tab );
         });
 
         // ...
         this.settingsForm = new Ext.form.FormPanel({
-            iconCls: "plugin_onlineshop_pricing_icon_rule_settings",
             title: t("settings"),
             bodyStyle: "padding:10px;",
             autoScroll: true,
@@ -150,10 +157,7 @@ pimcore.plugin.OnlineShop.pricing.config.item = Class.create({
                 cls: "object_localizedfields_panel",
                 xtype: 'panel',
                 items: [{
-                    xtype: "tabpanel"
-                    ,
-                    //activeTab: 0,
-
+                    xtype: "tabpanel",
                     defaults: {
                         autoHeight:true
                         ,
@@ -162,9 +166,6 @@ pimcore.plugin.OnlineShop.pricing.config.item = Class.create({
                     items: langTabs
                 }]
                 }, {
-            //    xtype: "spacer",
-            //    height: 15
-            //}, {
                 name: "behavior",
                 fieldLabel: t("plugin_onlineshop_pricing_config_behavior"),
                 xtype: "combo",
@@ -212,7 +213,6 @@ pimcore.plugin.OnlineShop.pricing.config.item = Class.create({
 
 
         this.conditionsContainer = new Ext.Panel({
-            iconCls: "plugin_onlineshop_pricing_icon_rule_conditions",
             title: t("conditions"),
             autoScroll: true,
             forceLayout: true,
@@ -252,7 +252,6 @@ pimcore.plugin.OnlineShop.pricing.config.item = Class.create({
 
 
         this.actionsContainer = new Ext.Panel({
-            iconCls: "plugin_onlineshop_pricing_icon_rule_actions",
             title: t("actions"),
             autoScroll: true,
             forceLayout: true,
@@ -354,7 +353,6 @@ pimcore.plugin.OnlineShop.pricing.config.item = Class.create({
             var condition = {};
 
             // collect condition settings
-//            condition = conditions[i].getForm().getFieldValues();
             for(var c=0; c<conditions[i].items.length; c++)
             {
                 var item = conditions[i].items.getAt(c);

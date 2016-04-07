@@ -167,13 +167,12 @@
 						"visibleSearch":false
 					},
 					{
-						"fieldtype":"input",
+						"fieldtype":"textarea",
 						"width":500,
-						"queryColumnType":"varchar",
-						"columnType":"varchar",
-						"columnLength":255,
+						"height":100,
+						"queryColumnType":"longtext",
+						"columnType":"longtext",
 						"phpdocType":"string",
-						"regex":"",
 						"name":"message",
 						"title":"Message",
 						"tooltip":"",

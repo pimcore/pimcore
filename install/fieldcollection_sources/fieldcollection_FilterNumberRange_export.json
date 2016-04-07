@@ -23,9 +23,9 @@
 				"name":"Layout",
 				"type":"",
 				"region":"",
-				"title":"Filter Numberrange",
-				"width":"",
-				"height":"",
+				"title":"",
+				"width":null,
+				"height":null,
 				"collapsible":false,
 				"collapsed":false,
 				"bodyStyle":"",
@@ -33,18 +33,38 @@
 				"permissions":"",
 				"childs":[
 					{
+						"fieldtype":"text",
+						"html":"<b>Filter Numberrange<\/b><div>Filter for number ranges.&nbsp;<\/div><div>- rangeFrom\/rangeTo: Optionally max and min values for range. Needs to be implemented in frontend.&nbsp;<\/div>",
+						"name":"Layout",
+						"type":null,
+						"region":null,
+						"title":"",
+						"width":null,
+						"height":null,
+						"collapsible":false,
+						"collapsed":false,
+						"bodyStyle":"padding: 10px; background-color: #d9edf7; border-color: #bce8f1 !important; color: #31708f;",
+						"datatype":"layout",
+						"permissions":null,
+						"childs":[
+
+						],
+						"locked":false
+					},
+					{
 						"fieldtype":"input",
-						"width":"",
+						"width":400,
 						"queryColumnType":"varchar",
 						"columnType":"varchar",
-						"columnLength":"255",
+						"columnLength":255,
 						"phpdocType":"string",
+						"regex":"",
 						"name":"label",
 						"title":"Label",
 						"tooltip":"",
 						"mandatory":false,
 						"noteditable":false,
-						"index":"",
+						"index":false,
 						"locked":false,
 						"style":"",
 						"permissions":"",
@@ -55,81 +75,36 @@
 						"visibleSearch":false
 					},
 					{
-						"fieldtype":"indexFieldSelectionCombo",
-						"specificPriceField":"",
-						"showAllFields":"",
-						"considerTenants":false,
-						"options":[
-							{
-								"key":"name",
-								"value":"name"
-							},
-							{
-								"key":"shortDescription",
-								"value":"shortDescription"
-							},
-							{
-								"key":"supplierRemoteId",
-								"value":"supplierRemoteId"
-							},
-							{
-								"key":"mainImage",
-								"value":"mainImage"
-							},
-							{
-								"key":"weight",
-								"value":"weight"
-							},
-							{
-								"key":"specialFeatures",
-								"value":"specialFeatures"
-							},
-							{
-								"key":"bundledSoftware",
-								"value":"bundledSoftware"
-							},
-							{
-								"key":"warranty",
-								"value":"warranty"
-							},
-							{
-								"key":"totalStorageCapacity",
-								"value":"totalStorageCapacity"
-							},
-							{
-								"key":"processorClockSpeed",
-								"value":"processorClockSpeed"
-							},
-							{
-								"key":"compatibleOperatingSystems",
-								"value":"compatibleOperatingSystems"
-							},
-							{
-								"key":"hardDiskRotationalSpeed",
-								"value":"hardDiskRotationalSpeed"
-							},
-							{
-								"key":"hardDiskDriveCapacity",
-								"value":"hardDiskDriveCapacity"
-							},
-							{
-								"key":"accessories",
-								"value":"accessories"
-							}
+						"fieldtype":"indexFieldSelection",
+						"queryColumnType":{
+							"tenant":"varchar(100)",
+							"field":"varchar(200)",
+							"preSelect":"text"
+						},
+						"columnType":{
+							"tenant":"varchar(100)",
+							"field":"varchar(200)",
+							"preSelect":"text"
+						},
+						"phpdocType":"Object_Data_IndexFieldSelection",
+						"width":400,
+						"considerTenants":true,
+						"multiPreSelect":"none",
+						"filterGroups":[
+							"double"
 						],
-						"width":"",
-						"queryColumnType":"varchar(255)",
-						"columnType":"varchar(255)",
-						"phpdocType":"string",
+						"predefinedPreSelectOptions":[
+
+						],
 						"name":"field",
 						"title":"Field",
 						"tooltip":"",
 						"mandatory":false,
 						"noteditable":false,
-						"index":"",
+						"index":false,
 						"locked":false,
 						"style":"",
-						"permissions":"",
+						"permissions":null,
 						"datatype":"data",
 						"relationType":false,
 						"invisible":false,
@@ -138,17 +113,22 @@
 					},
 					{
 						"fieldtype":"numeric",
-						"width":"",
+						"width":400,
 						"defaultValue":null,
 						"queryColumnType":"double",
 						"columnType":"double",
 						"phpdocType":"float",
+						"integer":false,
+						"unsigned":false,
+						"minValue":null,
+						"maxValue":null,
+						"decimalPrecision":null,
 						"name":"rangeFrom",
 						"title":"Range From",
 						"tooltip":"",
 						"mandatory":false,
 						"noteditable":false,
-						"index":"",
+						"index":false,
 						"locked":false,
 						"style":"",
 						"permissions":"",
@@ -160,17 +140,22 @@
 					},
 					{
 						"fieldtype":"numeric",
-						"width":"",
+						"width":400,
 						"defaultValue":null,
 						"queryColumnType":"double",
 						"columnType":"double",
 						"phpdocType":"float",
+						"integer":false,
+						"unsigned":false,
+						"minValue":null,
+						"maxValue":null,
+						"decimalPrecision":null,
 						"name":"rangeTo",
 						"title":"Range To",
 						"tooltip":"",
 						"mandatory":false,
 						"noteditable":false,
-						"index":"",
+						"index":false,
 						"locked":false,
 						"style":"",
 						"permissions":"",
@@ -182,17 +167,22 @@
 					},
 					{
 						"fieldtype":"numeric",
-						"width":"",
+						"width":400,
 						"defaultValue":null,
 						"queryColumnType":"double",
 						"columnType":"double",
 						"phpdocType":"float",
+						"integer":false,
+						"unsigned":false,
+						"minValue":null,
+						"maxValue":null,
+						"decimalPrecision":null,
 						"name":"preSelectFrom",
 						"title":"Pre Select From",
 						"tooltip":"",
 						"mandatory":false,
 						"noteditable":false,
-						"index":"",
+						"index":false,
 						"locked":false,
 						"style":"",
 						"permissions":"",
@@ -204,17 +194,22 @@
 					},
 					{
 						"fieldtype":"numeric",
-						"width":"",
+						"width":400,
 						"defaultValue":null,
 						"queryColumnType":"double",
 						"columnType":"double",
 						"phpdocType":"float",
+						"integer":false,
+						"unsigned":false,
+						"minValue":null,
+						"maxValue":null,
+						"decimalPrecision":null,
 						"name":"preSelectTo",
 						"title":"Pre Select To",
 						"tooltip":"",
 						"mandatory":false,
 						"noteditable":false,
-						"index":"",
+						"index":false,
 						"locked":false,
 						"style":"",
 						"permissions":"",
@@ -226,17 +221,18 @@
 					},
 					{
 						"fieldtype":"input",
-						"width":"",
+						"width":400,
 						"queryColumnType":"varchar",
 						"columnType":"varchar",
-						"columnLength":"255",
+						"columnLength":255,
 						"phpdocType":"string",
+						"regex":"",
 						"name":"scriptPath",
 						"title":"Script Path",
 						"tooltip":"",
 						"mandatory":false,
 						"noteditable":false,
-						"index":"",
+						"index":false,
 						"locked":false,
 						"style":"",
 						"permissions":"",

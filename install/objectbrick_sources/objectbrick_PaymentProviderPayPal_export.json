@@ -24,23 +24,23 @@
 		"childs":[
 			{
 				"fieldtype":"panel",
-				"labelWidth":100,
+				"labelWidth":150,
 				"layout":null,
 				"name":"Layout",
 				"type":null,
 				"region":null,
-				"title":null,
+				"title":"",
 				"width":null,
 				"height":null,
 				"collapsible":false,
-				"collapsed":null,
-				"bodyStyle":null,
+				"collapsed":false,
+				"bodyStyle":"",
 				"datatype":"layout",
 				"permissions":null,
 				"childs":[
 					{
 						"fieldtype":"input",
-						"width":null,
+						"width":400,
 						"queryColumnType":"varchar",
 						"columnType":"varchar",
 						"columnLength":255,
@@ -63,7 +63,7 @@
 					},
 					{
 						"fieldtype":"input",
-						"width":null,
+						"width":400,
 						"queryColumnType":"varchar",
 						"columnType":"varchar",
 						"columnLength":255,

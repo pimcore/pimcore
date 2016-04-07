@@ -34,9 +34,9 @@
 				"childs":[
 					{
 						"fieldtype":"indexFieldSelectionCombo",
-						"specificPriceField":"",
-						"showAllFields":"1",
-						"considerTenants":false,
+						"specificPriceField":false,
+						"showAllFields":true,
+						"considerTenants":true,
 						"options":[
 							{
 								"key":"categoryIds",
@@ -115,7 +115,8 @@
 								"value":"technologies"
 							}
 						],
-						"width":"",
+						"width":300,
+						"defaultValue":null,
 						"queryColumnType":"varchar(255)",
 						"columnType":"varchar(255)",
 						"phpdocType":"string",
@@ -124,7 +125,7 @@
 						"tooltip":"",
 						"mandatory":false,
 						"noteditable":false,
-						"index":"",
+						"index":false,
 						"locked":false,
 						"style":"",
 						"permissions":"",
@@ -136,17 +137,22 @@
 					},
 					{
 						"fieldtype":"numeric",
-						"width":"",
-						"defaultValue":"1",
+						"width":300,
+						"defaultValue":1,
 						"queryColumnType":"double",
 						"columnType":"double",
 						"phpdocType":"float",
+						"integer":false,
+						"unsigned":false,
+						"minValue":null,
+						"maxValue":null,
+						"decimalPrecision":null,
 						"name":"weight",
 						"title":"Weight",
 						"tooltip":"",
 						"mandatory":false,
 						"noteditable":false,
-						"index":"",
+						"index":false,
 						"locked":false,
 						"style":"",
 						"permissions":"",

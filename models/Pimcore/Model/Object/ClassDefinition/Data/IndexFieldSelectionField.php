@@ -68,7 +68,7 @@ class IndexFieldSelectionField extends Textarea {
     /**
      * @see Model\Object\ClassDefinition\Data::getDataFromEditmode
      * @param string $data
-     * @param null|Model\Object\AbstractObject $object
+     * @param null|\Pimcore\Model\Object\AbstractObject $object
      * @param mixed $params
      * @return string
      */
@@ -79,6 +79,5 @@ class IndexFieldSelectionField extends Textarea {
 
         return $data;
     }
-
 
 }

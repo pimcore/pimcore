@@ -107,7 +107,7 @@ pimcore.object.tags.indexFieldSelectionField = Class.create(pimcore.object.tags.
             width: this.fieldConfig.width,
             height: this.fieldConfig.height,
             fieldLabel: this.fieldConfig.title,
-            itemCls: "object_field",
+            itemCls: "object_field hugo",
             queryDelay: 0,
             triggerAction: 'all',
             resizable: true,
@@ -148,10 +148,16 @@ pimcore.object.tags.indexFieldSelectionField = Class.create(pimcore.object.tags.
             });
 
             this.component = Ext.create('Ext.form.Panel', {
-                layout: 'hbox',
+                layout: {
+                    type: 'hbox',
+                    align: "middle"
+                },
                 margin: '0 0 10 0',
                 combineErrors: false,
-                items: [tenantCombobox, this.fieldsCombobox],
+                items: [
+                    tenantCombobox,
+                    this.fieldsCombobox
+                ],
                 cls: "object_field",
                 isDirty: function() {
                     return tenantCombobox.isDirty() || this.fieldsCombobox.isDirty()

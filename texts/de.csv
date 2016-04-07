@@ -1,6 +1,7 @@
 index_field_selection_field,"Indexfeldauswahl"
 indexFieldSelectionField,"IndexFeldauswahl"
-indexFieldSelectionField_settings,"Einstellungen (Indexfeldauswahlfeld)"
+indexFieldSelectionField_settings,"Einstellungen (Mehrfach-Indexfeldauswahlfeld)"
+indexFieldSelectionFieldMulti,Mehrfach-Indexfeldauswahl
 index_field_selection_combo,"Indexfeldcombo"
 indexFieldSelectionCombo,"Indexfeldcombo"
 indexFieldSelectionCombo_settings,"Einstellungen (Indexfeldcombo)"

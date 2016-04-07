@@ -3,18 +3,18 @@
 	"layoutDefinitions":{
 		"fieldtype":"panel",
 		"labelWidth":100,
-		"layout":"",
-		"name":"",
-		"type":"",
-		"region":"",
-		"title":"",
-		"width":"",
-		"height":"",
-		"collapsible":false,
-		"collapsed":"",
-		"bodyStyle":"",
+		"layout":null,
+		"name":null,
+		"type":null,
+		"region":null,
+		"title":null,
+		"width":null,
+		"height":null,
+		"collapsible":null,
+		"collapsed":null,
+		"bodyStyle":null,
 		"datatype":"layout",
-		"permissions":"",
+		"permissions":null,
 		"childs":[
 			{
 				"fieldtype":"panel",
@@ -34,9 +34,9 @@
 				"childs":[
 					{
 						"fieldtype":"indexFieldSelectionCombo",
-						"specificPriceField":"",
-						"showAllFields":"",
-						"considerTenants":false,
+						"specificPriceField":false,
+						"showAllFields":false,
+						"considerTenants":true,
 						"options":[
 							{
 								"key":"categoryIds",
@@ -116,6 +116,7 @@
 							}
 						],
 						"width":300,
+						"defaultValue":null,
 						"queryColumnType":"varchar(255)",
 						"columnType":"varchar(255)",
 						"phpdocType":"string",
@@ -124,7 +125,7 @@
 						"tooltip":"",
 						"mandatory":false,
 						"noteditable":false,
-						"index":"",
+						"index":false,
 						"locked":false,
 						"style":"",
 						"permissions":"",
@@ -146,7 +147,8 @@
 								"value":"desc"
 							}
 						],
-						"width":300,
+						"width":500,
+						"defaultValue":"",
 						"queryColumnType":"varchar(255)",
 						"columnType":"varchar(255)",
 						"phpdocType":"string",
@@ -155,7 +157,7 @@
 						"tooltip":"",
 						"mandatory":false,
 						"noteditable":false,
-						"index":"",
+						"index":false,
 						"locked":false,
 						"style":"",
 						"permissions":"",
@@ -169,6 +171,6 @@
 				"locked":false
 			}
 		],
-		"locked":false
+		"locked":null
 	}
 }

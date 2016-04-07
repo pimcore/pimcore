@@ -118,7 +118,7 @@ class IndexFieldSelection extends \Pimcore\Model\Object\ClassDefinition\Data {
     /**
      * @see Object_Class_Data::getDataForResource
      * @param float $data
-     * @param null|Model\Object\AbstractObject $object
+     * @param null|\Pimcore\Model\Object\AbstractObject $object
      * @param mixed $params
      * @return float
      */
@@ -141,7 +141,7 @@ class IndexFieldSelection extends \Pimcore\Model\Object\ClassDefinition\Data {
     /**
      * @see Object_Class_Data::getDataFromResource
      * @param float $data
-     * @param null|Model\Object\AbstractObject $object
+     * @param null|\Pimcore\Model\Object\AbstractObject $object
      * @param mixed $params
      * @return mixed
      */
@@ -155,7 +155,7 @@ class IndexFieldSelection extends \Pimcore\Model\Object\ClassDefinition\Data {
     /**
      * @see Object_Class_Data::getDataForQueryResource
      * @param float $data
-     * @param null|Model\Object\AbstractObject $object
+     * @param null|\Pimcore\Model\Object\AbstractObject $object
      * @param mixed $params
      * @return float
      */
@@ -166,7 +166,7 @@ class IndexFieldSelection extends \Pimcore\Model\Object\ClassDefinition\Data {
     /**
      * @see Object_Class_Data::getDataForEditmode
      * @param float $data
-     * @param null|Model\Object\AbstractObject $object
+     * @param null|\Pimcore\Model\Object\AbstractObject $object
      * @param mixed $params
      * @return mixed
      */
@@ -185,7 +185,7 @@ class IndexFieldSelection extends \Pimcore\Model\Object\ClassDefinition\Data {
     /**
      * @see Object_Class_Data::getDataFromEditmode
      * @param float $data
-     * @param null|Object\AbstractObject $object
+     * @param null|\Pimcore\Model\Object\AbstractObject $object
      * @param mixed $params
      * @return mixed
      */
@@ -204,7 +204,7 @@ class IndexFieldSelection extends \Pimcore\Model\Object\ClassDefinition\Data {
     /**
      * @see Object_Class_Data::getVersionPreview
      * @param float $data
-     * @param null|Model\Object\AbstractObject $object
+     * @param null|\Pimcore\Model\Object\AbstractObject $object
      * @param mixed $params
      * @return float
      */
@@ -255,7 +255,7 @@ class IndexFieldSelection extends \Pimcore\Model\Object\ClassDefinition\Data {
     /**
      * fills object field data values from CSV Import String
      * @param string $importValue
-     * @param null|Model\Object\AbstractObject $object
+     * @param null|\Pimcore\Model\Object\AbstractObject $object
      * @param mixed $params
      * @return double
      */

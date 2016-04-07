@@ -20,6 +20,7 @@ class NumberRange extends AbstractFilterType {
         } else {
             $script = $this->script;
         }
+
         return $this->view->partial($script, array(
                                                   "hideFilter" => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
                                                   "label" => $filterDefinition->getLabel(),
