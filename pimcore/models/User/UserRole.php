@@ -284,8 +284,4 @@ class UserRole extends AbstractUser
 
         $this->perspectives = $perspectives;
     }
-
-
-
-
 }

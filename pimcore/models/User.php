@@ -520,7 +520,4 @@ class User extends User\UserRole
     {
         $this->activePerspective = $activePerspective;
     }
-
-
-
 }

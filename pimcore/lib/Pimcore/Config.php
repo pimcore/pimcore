@@ -341,7 +341,8 @@ class Config
     /** Returns the standard perspective settings
      * @return array
      */
-    public static function getStandardPerspective() {
+    public static function getStandardPerspective()
+    {
         return [
             "default" => [
                 "iconCls" => "pimcore_icon_perspective",
@@ -375,7 +376,8 @@ class Config
     /** Gets the active perspective for the current user
      * @return array
      */
-    public static function getRuntimePerspective() {
+    public static function getRuntimePerspective()
+    {
         $currentUser = Tool\Admin::getCurrentUser();
         $currentConfigName = $currentUser->getActivePerspective() ? $currentUser->getActivePerspective() : "default";
 
@@ -418,7 +420,8 @@ class Config
      * @param $name
      * @return array
      */
-    protected static function getRuntimeElementTreeConfig($name) {
+    protected static function getRuntimeElementTreeConfig($name)
+    {
         $masterConfig = self::getPerspectivesConfig()->toArray();
 
         $config = $masterConfig[$name];
@@ -435,7 +438,6 @@ class Config
         $hiddenCustomViews = array();
 
         foreach ($tmpResult as $resultItem) {
-
             if ($resultItem["type"] == "customview") {
                 if ($resultItem["hidden"]) {
                     $name = $resultItem["name"];
@@ -469,13 +471,13 @@ class Config
             }
         }
 
-        usort($result, function($treeA, $treeB) {
+        usort($result, function ($treeA, $treeB) {
             $a = $treeA["sort"] ? $treeA["sort"] : 0;
             $b = $treeB["sort"] ? $treeB["sort"] : 0;
 
             if ($a > $b) {
                 return 1;
-            } else if ($a < $b) {
+            } elseif ($a < $b) {
                 return -1;
             } else {
                 return 0;
@@ -501,8 +503,8 @@ class Config
      * @param Model\User $user
      * @return array
      */
-    public static function getAvailablePerspectives($user) {
-
+    public static function getAvailablePerspectives($user)
+    {
         $currentConfigName = null;
         $masterConfig = self::getPerspectivesConfig()->toArray();
 
@@ -553,7 +555,6 @@ class Config
             if ($config && !in_array($currentConfigName, array_keys($config))) {
                 $currentConfigName = reset(array_keys($config));
             }
-
         } else {
             $config = self::getPerspectivesConfig()->toArray();
         }
@@ -576,7 +577,8 @@ class Config
         return $result;
     }
 
-    public static function inPerspective($runtimeConfig, $key) {
+    public static function inPerspective($runtimeConfig, $key)
+    {
         if (!$runtimeConfig["toolbar"]) {
             return true;
         }
@@ -593,7 +595,6 @@ class Config
             $menuItem = $menuItems[$part];
 
             if (is_array($menuItem)) {
-
                 if ($menuItem["hidden"]) {
                     return false;
                 }
@@ -605,10 +606,7 @@ class Config
             } else {
                 return $menuItem;
             }
-
         }
         return true;
-
     }
-
 }
