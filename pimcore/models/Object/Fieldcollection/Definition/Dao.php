@@ -5,7 +5,7 @@
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
  * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in 
+ * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @category   Pimcore
@@ -56,7 +56,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->query("CREATE TABLE IF NOT EXISTS `" . $table . "` (
 		  `o_id` int(11) NOT NULL default '0',
 		  `index` int(11) default '0',
-          `fieldname` varchar(255) default NULL,
+          `fieldname` varchar(255) default '',
           PRIMARY KEY (`o_id`,`index`,`fieldname`(255)),
           INDEX `o_id` (`o_id`),
           INDEX `index` (`index`),

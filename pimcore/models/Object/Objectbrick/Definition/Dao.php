@@ -5,7 +5,7 @@
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
  * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in 
+ * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @category   Pimcore
@@ -58,7 +58,7 @@ class Dao extends Model\Object\Fieldcollection\Definition\Dao
 
         $this->db->query("CREATE TABLE IF NOT EXISTS `" . $tableStore . "` (
 		  `o_id` int(11) NOT NULL default '0',
-          `fieldname` varchar(255) default NULL,
+          `fieldname` varchar(255) default '',
           PRIMARY KEY (`o_id`,`fieldname`),
           INDEX `o_id` (`o_id`),
           INDEX `fieldname` (`fieldname`)
@@ -66,7 +66,7 @@ class Dao extends Model\Object\Fieldcollection\Definition\Dao
 
         $this->db->query("CREATE TABLE IF NOT EXISTS `" . $tableQuery . "` (
 		  `o_id` int(11) NOT NULL default '0',
-          `fieldname` varchar(255) default NULL,
+          `fieldname` varchar(255) default '',
           PRIMARY KEY (`o_id`,`fieldname`),
           INDEX `o_id` (`o_id`),
           INDEX `fieldname` (`fieldname`)
