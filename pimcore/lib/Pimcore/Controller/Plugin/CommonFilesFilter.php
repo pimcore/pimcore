@@ -1,11 +1,11 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
  * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in 
+ * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
@@ -64,14 +64,19 @@ class CommonFilesFilter extends \Zend_Controller_Plugin_Abstract
                     $siteSuffix = "-" . $site->getId();
                 }
 
+                // send correct headers
+                header("Content-Type: text/plain; charset=utf8");
+                while (@ob_end_flush()) ;
+
                 // check for configured robots.txt in pimcore
                 $robotsPath = PIMCORE_CONFIGURATION_DIRECTORY . "/robots" . $siteSuffix . ".txt";
                 if (is_file($robotsPath)) {
-                    header("Content-Type: text/plain; charset=utf8");
-                    while (@ob_end_flush()) ;
                     readfile($robotsPath);
-                    exit;
+                } else {
+                    echo "User-agent: *\nDisallow:"; // default behavior
                 }
+
+                exit;
             }
 
             // if no other rule matches, exit anyway with a 404, to prevent the error page to be shown
