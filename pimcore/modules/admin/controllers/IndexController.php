@@ -64,28 +64,27 @@ class Admin_IndexController extends \Pimcore\Controller\Action\Admin
         // report configuration
         $this->view->report_config = Config::getReportConfig();
 
-        // pre ExtJS6 customviews config, ExtJS6 takes it from the active perspective
-        if (!\Pimcore\Tool\Admin::isExtJS6()) {
-            $cvConfig = Tool::getCustomViewConfig();
-            $cvData = array();
+        $cvData = array();
 
-            if ($cvConfig) {
-                foreach ($cvConfig as $node) {
-                    $tmpData = $node;
-                    $rootNode = Model\Object::getByPath($tmpData["rootfolder"]);
+        // still needed when publishing objects
+        $cvConfig = Tool::getCustomViewConfig();
 
-                    if ($rootNode) {
-                        $tmpData["rootId"] = $rootNode->getId();
-                        $tmpData["allowedClasses"] = explode(",", $tmpData["classes"]);
-                        $tmpData["showroot"] = (bool)$tmpData["showroot"];
+        if ($cvConfig) {
+            foreach ($cvConfig as $node) {
+                $tmpData = $node;
+                $rootNode = Model\Object::getByPath($tmpData["rootfolder"]);
 
-                        $cvData[] = $tmpData;
-                    }
+                if ($rootNode) {
+                    $tmpData["rootId"] = $rootNode->getId();
+                    $tmpData["allowedClasses"] = explode(",", $tmpData["classes"]);
+                    $tmpData["showroot"] = (bool)$tmpData["showroot"];
+
+                    $cvData[] = $tmpData;
                 }
             }
-
-            $this->view->customview_config = $cvData;
         }
+
+        $this->view->customview_config = $cvData;
 
         // upload limit
         $max_upload = filesize2bytes(ini_get("upload_max_filesize") . "B");

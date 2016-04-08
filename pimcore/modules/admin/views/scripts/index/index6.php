@@ -533,7 +533,8 @@ $scripts = array(
     "pimcore/object/classificationstore/keyDefinitionWindow.js",
     "pimcore/object/classificationstore/keySelectionWindow.js",
     "pimcore/object/classificationstore/storeConfiguration.js",
-    "pimcore/object/classificationstore/storeTree.js"
+    "pimcore/object/classificationstore/storeTree.js",
+    "pimcore/object/classificationstore/columnConfigDialog.js",
 
 );
 
@@ -569,6 +570,7 @@ $googleMapsApiKey = $this->config->services->google->browserapikey;
         asset_hide_edit: <?= $this->config->assets->hide_edit_image ? "true" : "false" ?>,
         perspective: <?= \Zend_Json::encode($runtimePerspective) ?>,
         availablePerspectives: <?= \Zend_Json::encode(\Pimcore\Config::getAvailablePerspectives(\Pimcore\Tool\Admin::getCurrentUser())) ?>,
+        customviews: <?= \Zend_Json::encode($this->customview_config) ?>
     };
 </script>
 
