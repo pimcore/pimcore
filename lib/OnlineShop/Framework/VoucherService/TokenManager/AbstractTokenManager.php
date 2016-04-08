@@ -17,6 +17,8 @@
 
 namespace OnlineShop\Framework\VoucherService\TokenManager;
 
+use Pimcore\Model\Object\OnlineShopVoucherSeries;
+
 abstract class AbstractTokenManager implements ITokenManager
 {
 
@@ -104,7 +106,7 @@ abstract class AbstractTokenManager implements ITokenManager
             }
 
             $cartToken = \OnlineShop\Framework\VoucherService\Token::getByCode($cartCodes[0]);
-            $cartTokenSettings = Object_OnlineShopVoucherSeries::getById($cartToken->getVoucherSeriesId())->getTokenSettings()->getItems()[0];
+            $cartTokenSettings = OnlineShopVoucherSeries::getById($cartToken->getVoucherSeriesId())->getTokenSettings()->getItems()[0];
             if ($cartTokenSettings->getOnlyTokenPerCart()) {
                 throw new \OnlineShop\Framework\Exception\VoucherServiceException("OnlyTokenPerCart: There is a token of type onlyToken in your this cart already.", 7);
             }
