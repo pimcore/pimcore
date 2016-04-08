@@ -29,7 +29,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
     /**
      * @var \OnlineShop\Framework\CartManager\ICartItem[]
      */
-    protected $items = array();
+    protected $items = null;
 
     /**
      * @var array
