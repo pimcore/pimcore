@@ -1367,3 +1367,7 @@ span.warning {
 .x-portlet .x-panel-header-default-framed-top {
     padding: 5px 14px 5px 14px !important;
 }
+
+.pimcore-panel-header-no-border > .x-panel-header-default {
+    border: none !important;
+}

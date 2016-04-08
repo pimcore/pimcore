@@ -59,7 +59,8 @@ pimcore.object.classificationstore.storeTree = Class.create({
     getEditContainer: function() {
         this.editContainer = new Ext.TabPanel({
             region: 'center',
-            layout: 'fit'
+            layout: 'fit',
+            cls: "pimcore-panel-header-no-border",
         });
 
 
