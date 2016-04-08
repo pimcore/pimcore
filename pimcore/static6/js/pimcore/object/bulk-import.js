@@ -25,7 +25,6 @@ pimcore.object.bulkimport = Class.create({
     },
 
 
-
     upload: function() {
 
         pimcore.helpers.uploadDialog(this.getUploadUrl(), "Filedata", function(response) {
@@ -46,40 +45,35 @@ pimcore.object.bulkimport = Class.create({
     getLayout: function () {
 
         if (this.window == null) {
-            var store = new Ext.data.GroupingStore({
+            var store = new Ext.data.Store({
                 autoDestroy: true,
-                data: this,
+                data: this.data,
                 sortInfo:{field: 'name', direction: "ASC"},
-                reader: new Ext.data.JsonReader({
-                    root: 'data',
-                    fields: [
-                        {name: "icon", allowBlank: true},
-                        {name: "checked", allowBlank: true},
-                        {name: "type", allowBlank: true},
-                        {name: "name", allowBlank: true},
-                        {name: "displayName", allowBlank: true}
-                    ]
-                }),
+                fields: [
+                    {name: "icon", allowBlank: true},
+                    {name: "checked", allowBlank: true},
+                    {name: "type", allowBlank: true},
+                    {name: "name", allowBlank: true},
+                    {name: "displayName", allowBlank: true}
+                ],
                 groupField: 'type'
             });
 
-            var checkColumn = new Ext.grid.CheckColumn({
+            var checkColumn = Ext.create('Ext.grid.column.Check', {
                 header: t("import"),
                 dataIndex: 'checked',
                 width: 30
             });
 
-            this.gridPanel = new Ext.grid.EditorGridPanel({
+            this.gridPanel = new Ext.grid.Panel({
                 autoScroll: true,
-                reference: this,
                 trackMouseOver: true,
                 store: store,
-                plugins: checkColumn,
-                clicksToEdit: 1,
-                sm: checkColumn,
-                view: new Ext.grid.GroupingView({
-                    groupTextTpl: '{text}'
-                }),
+                features: [
+                    Ext.create('Ext.grid.feature.Grouping', {
+                        groupHeaderTpl: t("type") + " " + '{name}'
+                    })
+                ],
                 autoExpandColumn: "bulk_import_defintion_name",
                 columnLines: true,
                 stripeRows: true,
@@ -119,11 +113,14 @@ pimcore.object.bulkimport = Class.create({
                         dataIndex: 'displayName',
                         id: "bulk_import_defintion_name",
                         editable: false,
-//                        hidden: true,
+                        flex: 1,
                         sortable: true
                     }
 
-                ]
+                ],
+                viewConfig: {
+                    forceFit: true
+                }
             });
 
 
@@ -160,7 +157,6 @@ pimcore.object.bulkimport = Class.create({
     },
 
     getTypeRenderer: function (value, metaData, record, rowIndex, colIndex, store) {
-
         return '<div class="pimcore_icon_' + value + '" style="min-height: 16px;" name="' + record.data.name + '">&nbsp;</div>';
     },
 
@@ -246,7 +242,6 @@ pimcore.object.bulkimport = Class.create({
                             this.commitData(idx);
                             return;
                         } else {
-//                            this.window.close();
                             pimcore.helpers.showNotification(t("success"), t("definitions_saved"));
                         }
                     } else {
@@ -287,9 +282,4 @@ pimcore.object.bulkimport = Class.create({
             currentData.set("checked", value);
         }
     }
-
-
-
-
-
 });

@@ -911,7 +911,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
 
                 if ($groupName == "class") {
                     $name = $groupItem["name"];
-                    $icon = "database_gear";
+                    $icon = \Pimcore\Tool\Admin::isExtJS6() ? "class" : "database_gear";
                 } elseif ($groupName == "customlayout") {
                     $className = $groupItem["className"];
 
@@ -921,9 +921,9 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
                     $icon = "database_lightning";
                 } else {
                     if ($groupName == "objectbrick") {
-                        $icon = "bricks";
+                        $icon = \Pimcore\Tool\Admin::isExtJS6() ? "objectbricks" : "bricks";
                     } elseif ($groupName == "fieldcollection") {
-                        $icon = "table_multiple";
+                        $icon = \Pimcore\Tool\Admin::isExtJS6() ? "fieldcollection" : "table_multiple";
                     }
                     $name = $groupItem["key"];
                 }
