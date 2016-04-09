@@ -58,7 +58,8 @@ class SelectCategory extends AbstractFilterType {
             "values" => array_values($values),
             "fieldname" => $filterDefinition->getField(),
             "metaData" => $filterDefinition->getMetaData(),
-            "rootCategory" => $filterDefinition->getRootCategory()
+            "rootCategory" => $filterDefinition->getRootCategory(),
+            "document" => $this->view->document
         ));
     }
 

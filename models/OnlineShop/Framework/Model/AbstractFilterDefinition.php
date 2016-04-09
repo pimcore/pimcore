@@ -83,7 +83,8 @@ abstract class AbstractFilterDefinition extends \Pimcore\Model\Object\Concrete {
      * @param string $key
      * @return mixed|\Pimcore\Model\Object\Fieldcollection
      */
-    public function preGetValue($key) {
+    public function preGetValue($key)
+    {
 
         if ($this->getClass()->getAllowInherit()
             && \Pimcore\Model\Object\AbstractObject::doGetInheritedValues()
@@ -92,12 +93,12 @@ abstract class AbstractFilterDefinition extends \Pimcore\Model\Object\Concrete {
 
             $checkInheritanceKey = $key . "Inheritance";
             if ($this->{
-                    'get' . $checkInheritanceKey
-                    }() == "true"
+                'get' . $checkInheritanceKey
+                }() == "true"
             ) {
                 $parentValue = $this->getValueFromParent($key);
                 $data = $this->$key;
-                if(!$data) {
+                if (!$data) {
                     $data = $this->getClass()->getFieldDefinition($key)->preGetData($this);;
                 }
                 if (!$data) {
