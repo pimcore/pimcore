@@ -97,7 +97,7 @@ class Token extends \Pimcore\Model\AbstractModel
     public function check($maxUsages = null, $isCheckout = false)
     {
         if (isset($maxUsages)) {
-            if ($this->getUsages() + \OnlineShop\Framework\VoucherService\Reservation::getReservationCount($this->getToken()) - (int)$isCheckout < $maxUsages) {
+            if ($this->getUsages() + \OnlineShop\Framework\VoucherService\Reservation::getReservationCount($this->getToken()) - (int)$isCheckout <= $maxUsages) {
                 return true;
             }
             return false;
