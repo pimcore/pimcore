@@ -24,7 +24,7 @@ class ObjectIdSum implements IInterpreter {
         $sum = 0;
         if(is_array($value)) {
             foreach($value as $object) {
-                if($object instanceof Element_Interface) {
+                if($object instanceof \Pimcore\Model\Element\ElementInterface) {
                     $sum += $object->getId();
                 }
             }
