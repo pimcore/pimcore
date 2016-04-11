@@ -41,7 +41,7 @@ class QueryParams
                     $groupKeyId = explode("-", $groupKeyId);
                     $groupId = $groupKeyId[0];
                     $keyid = $groupKeyId[1];
-                    return ['groupId' => $groupId, "keyid"=> $keyid, "order" => $order, "isFeature" => 1];
+                    return ['groupId' => $groupId, "keyId"=> $keyid, "order" => $order, "isFeature" => 1];
                 }
             }
         } else {
