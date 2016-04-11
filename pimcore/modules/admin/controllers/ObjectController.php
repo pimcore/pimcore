@@ -1322,7 +1322,6 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                             $keyid = $parts[3];
 
                             if ($type == "classificationstore") {
-
                                 $groupKeyId = explode("-", $keyid);
                                 $groupId = $groupKeyId[0];
                                 $keyid = $groupKeyId[1];
@@ -1333,9 +1332,6 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                                     $classificationStoreData = $object->$getter();
                                     $classificationStoreData->setLocalizedKeyValue($groupId, $keyid, $value, $requestedLanguage);
                                 }
-
-
-
                             } else {
                                 $getter = "get" . ucfirst($field);
                                 $setter = "set" . ucfirst($field);
@@ -1461,7 +1457,6 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                     $orderKey = null;
                     $order = null;
                 }
-
             }
 
             $listClass = "\\Pimcore\\Model\\Object\\" . ucfirst($className) . "\\Listing";

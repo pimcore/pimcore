@@ -771,7 +771,6 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
             $data = array();
             /** @var  $config Classificationstore\KeyGroupRelation */
             foreach ($listItems as $config) {
-
                 $type = $config->getType();
                 $definition = json_decode($config->getDefinition());
                 $definition = \Pimcore\Model\Object\Classificationstore\Service::getFieldDefinitionFromJson($definition, $type);

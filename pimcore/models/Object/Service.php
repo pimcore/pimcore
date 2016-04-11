@@ -250,8 +250,7 @@ class Service extends Model\Element\Service
                             }
                             $data[$key] = $fielddata;
                         }
-
-                    } else  if ($type == "keyvalue") {
+                    } elseif ($type == "keyvalue") {
                         $field = $keyParts[2];
                         $keyid = $keyParts[3];
 
@@ -289,7 +288,6 @@ class Service extends Model\Element\Service
                                         if ($pair["inherited"]) {
                                             $data['inheritedFields'][$dataKey] = array("inherited" => $pair["inherited"], "objectid" => $pair["source"]);
                                         }
-
                                     }
                                 }
                             }
