@@ -28,11 +28,11 @@
 
 /* pimcore editables */
 
-.pimcore_tag_image .x-panel-body {
-    overflow: hidden;
+.pimcore_tag_image {
+    position: relative;
 }
 
-.pimcore_tag_image .x-panel-body img {
+.pimcore_tag_image img {
     max-width: 100%;
     max-height: 100%;
 }
@@ -167,7 +167,7 @@
 .pimcore_tag_image_empty {
 	border: 1px solid #d0d0d0 !important;
 	background:url(/pimcore/static6/img/flat-color-icons/target.svg) center center/45px no-repeat #f9fbfb !important;
-    height: 100px;
+    min-height: 50px;
 }
 
 .pimcore_tag_video_empty {
