@@ -20,7 +20,8 @@
                                     "width" => 30,
                                     "store" => $iconStore,
                                     "reload" => true,
-                                    "listClass" => "glyphicon-selection"
+                                    "listClass" => "glyphicon-selection", // Ext 3.4
+                                    "listConfig" => ["cls" => "glyphicon-selection"], // Ext 6
                                 ]); ?>
                             <?php } ?>
                         </div>
@@ -39,4 +40,4 @@
             </div>
         <?php } ?>
     </div>
-</section> 
+</section>

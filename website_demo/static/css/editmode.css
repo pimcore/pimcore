@@ -70,7 +70,7 @@
     visibility: hidden;
 }
 
-.glyphicon-selection .x-combo-list-item {
+.glyphicon-selection .x-combo-list-item, .glyphicon-selection .x-boundlist-item {
     font-family: 'Glyphicons Halflings' !important;
     font-size: 25px !important;
 }

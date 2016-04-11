@@ -15,7 +15,7 @@
                 <?= $this->select("slides",[
                     "store" => $selectStore,
                     "reload" => true,
-                    "width" => 60
+                    "width" => 70
                 ]); ?>
             </div>
             <div class="col-xs-6">

@@ -33,7 +33,7 @@
         <h3>How many blog articles should be listed (set 0 to hide the box):</h3>
         <br />
         <?= $this->select("blogArticles", [
-            "width" => 60,
+            "width" => 70,
             "store" => [[1,1],[2,2],[3,3]]
         ]); ?>
     </div>

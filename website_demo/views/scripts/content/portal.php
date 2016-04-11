@@ -12,7 +12,7 @@
             $count = 1;
         }
         for($i=0; $i<$count; $i++) { ?>
-            <div class="item<?php if(!$i) { ?> active<?php } ?>">
+            <div class="item<?php if(!$i) { ?> active<?php } ?> portal-slide-<?= $i+1 ?>">
                 <?= $this->image("cImage_".$i, ["thumbnail" => "portalCarousel"])->frontend(); ?>
                 <div class="container">
                     <div class="carousel-caption">
@@ -24,7 +24,8 @@
                                 "hidetext" => true,
                                 "title" => "Drag Image Here",
                                 "width" => 150,
-                                "height" => 70
+                                "height" => 70,
+                                "dropClass" => "portal-slide-" . ($i+1)
                             ]);
                             echo "<br /><br />";
                         }
@@ -45,7 +46,7 @@
 <?php if($this->editmode) { ?>
     <div class="container" style="padding-bottom: 40px">
         Number of Slides: <?= $this->select("carouselSlides", [
-            "width" => 60,
+            "width" => 70,
             "reload" => true,
             "store" => [[1,1],[2,2],[3,3],[4,4]]
         ]); ?>
