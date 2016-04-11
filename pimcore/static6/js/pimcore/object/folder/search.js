@@ -192,7 +192,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             this.gridfilters = gridHelper.getGridFilters();
 
             this.languageInfo = new Ext.Toolbar.TextItem({
-                text: t("grid_current_language") + ": " + pimcore.available_languages[this.gridLanguage]
+                text: t("grid_current_language") + ": " + (this.gridLanguage == "default" ? t("default") : pimcore.available_languages[this.gridLanguage])
             });
 
             this.toolbarFilterInfo = new Ext.Toolbar.TextItem({

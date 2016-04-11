@@ -79,7 +79,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
 
     getLanguageSelection: function () {
 
-        var storedata = [];
+        var storedata = [["default", t("default")]];
         for (var i=0; i<pimcore.settings.websiteLanguages.length; i++) {
             storedata.push([pimcore.settings.websiteLanguages[i],
                 pimcore.available_languages[pimcore.settings.websiteLanguages[i]]]);
@@ -182,6 +182,10 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                                         var ccd = new pimcore.object.keyvalue.columnConfigDialog();
                                         ccd.getConfigDialog(copy, this.selectionPanel);
                                         return;
+                                    } else if (record.data.dataType == "classificationstore") {
+                                        var ownerTree = this.selectionPanel;
+                                        var ccd = new pimcore.object.classificationstore.columnConfigDialog();
+                                        ccd.getConfigDialog(ownerTree, copy, this.selectionPanel);
                                     }
 
                                     data.records = [copy]; // assign the copy as the new dropNode
@@ -273,6 +277,10 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                 if (record.data.dataType == "keyValue") {
                     var ownerTree = this.selectionPanel;
                     var ccd = new pimcore.object.keyvalue.columnConfigDialog();
+                    ccd.getConfigDialog(ownerTree, copy, this.selectionPanel);
+                } else if (record.data.dataType == "classificationstore") {
+                    var ownerTree = this.selectionPanel;
+                    var ccd = new pimcore.object.classificationstore.columnConfigDialog();
                     ccd.getConfigDialog(ownerTree, copy, this.selectionPanel);
                 }
             }

@@ -209,20 +209,26 @@ pimcore.object.helpers.grid = Class.create({
                         return Ext.Date.format(d, "Y-m-d H:i:s");
                     }/*, hidden: !propertyVisibility.modificationDate*/});
             } else {
-                var fc = pimcore.object.tags[field.type].prototype.getGridColumnConfig(field);
-                fc.width = this.getColumnWidth(field, 100);
+                var fieldType = fields[i].type;
+                var tag = pimcore.object.tags[fieldType];
+                if (tag) {
+                    var fc = tag.prototype.getGridColumnConfig(field);
+                    fc.width = this.getColumnWidth(field, 100);
 
-                if (typeof gridFilters[field.key] !== 'undefined') {
-                    fc.filter = gridFilters[field.key];
+                    if (typeof gridFilters[field.key] !== 'undefined') {
+                        fc.filter = gridFilters[field.key];
+                    }
+
+                    if (this.isSearch) {
+                        fc.sortable = false;
+                    }
+
+                    gridColumns.push(fc);
+                    gridColumns[gridColumns.length-1].hidden = false;
+                    gridColumns[gridColumns.length-1].layout = fields[i];
+                } else {
+                    console.log("could not resolve field type: " + fieldType);
                 }
-
-                if (this.isSearch) {
-                    fc.sortable = false;
-                }
-
-                gridColumns.push(fc);
-                gridColumns[gridColumns.length-1].hidden = false;
-                gridColumns[gridColumns.length-1].layout = fields[i];
             }
         }
 
@@ -256,9 +262,16 @@ pimcore.object.helpers.grid = Class.create({
                         type: "string"
                     };
                 } else {
-                    var filter = pimcore.object.tags[fields[i].type].prototype.getGridColumnFilter(fields[i]);
-                    if (filter) {
-                        configuredFilters[filter.dataIndex] = filter;
+                    var fieldType = fields[i].type;
+                    var tag = pimcore.object.tags[fieldType];
+                    if (tag) {
+                        var filter = tag.prototype.getGridColumnFilter(fields[i]);
+                        if (filter) {
+                            configuredFilters[filter.dataIndex] = filter;
+                        }
+                    } else {
+                        console.log("could not resolve fieldType: " + fieldType);
+
                     }
                 }
             }
@@ -278,8 +291,13 @@ pimcore.object.helpers.grid = Class.create({
                 && fields[i].key != "filename" && fields[i].key != "classname"
                 && fields[i].key != "creationDate" && fields[i].key != "modificationDate") {
 
-
-                pimcore.object.tags[fields[i].type].prototype.applyGridEvents(grid, fields[i]);
+                var fieldType = fields[i].type;
+                var tag = pimcore.object.tags[fieldType];
+                if (tag) {
+                    tag.prototype.applyGridEvents(grid, fields[i]);
+                } else {
+                    console.log("could not resolve field type " + fieldType);
+                }
             }
 
         }

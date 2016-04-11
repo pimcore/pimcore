@@ -261,34 +261,25 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
             }
 
             $conditionParts[] = " (storeId = " . $this->getParam("storeId") . ")";
-            $condition = implode(" AND ", $conditionParts);
 
             if ($this->getParam("filter")) {
                 $filterString = $this->getParam("filter");
                 $filters = json_decode($filterString);
 
-                $count = 0;
-
                 foreach ($filters as $f) {
-                    if ($count > 0) {
-                        $condition .= " AND ";
-                    }
-                    $count++;
-
                     if (\Pimcore\Tool\Admin::isExtJS6()) {
-                        $condition .= $db->getQuoteIdentifierSymbol() . $f->property . $db->getQuoteIdentifierSymbol() . " LIKE " . $db->quote("%" . $f->value . "%");
+                        $conditionParts[]= $db->getQuoteIdentifierSymbol() . $f->property . $db->getQuoteIdentifierSymbol() . " LIKE " . $db->quote("%" . $f->value . "%");
                     } else {
-                        $condition .= $db->getQuoteIdentifierSymbol() . $f->field . $db->getQuoteIdentifierSymbol() . " LIKE " . $db->quote("%" . $f->value . "%");
+                        $conditionParts[]= $db->getQuoteIdentifierSymbol() . $f->field . $db->getQuoteIdentifierSymbol() . " LIKE " . $db->quote("%" . $f->value . "%");
                     }
                 }
             }
 
             if ($allowedCollectionIds) {
-                if ($condition) {
-                    $condition .= " AND ";
-                }
-                $condition .= " id in (" . implode(",", $allowedCollectionIds) . ")";
+                $conditionParts[]= " id in (" . implode(",", $allowedCollectionIds) . ")";
             }
+
+            $condition = implode(" AND ", $conditionParts);
 
             $list->setCondition($condition);
 
@@ -399,25 +390,16 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
                 $conditionParts[] = "(storeId = " . $this->getParam("storeId") . ")";
             }
 
-            $condition = implode(" AND ", $conditionParts);
-
 
             if ($this->getParam("filter")) {
                 $filterString = $this->getParam("filter");
                 $filters = json_decode($filterString);
 
-                $count = 0;
-
                 foreach ($filters as $f) {
-                    if ($count > 0) {
-                        $condition .= " AND ";
-                    }
-                    $count++;
-
                     if (\Pimcore\Tool\Admin::isExtJS6()) {
-                        $condition .= $db->getQuoteIdentifierSymbol() . $f->property . $db->getQuoteIdentifierSymbol() . " LIKE " . $db->quote("%" . $f->value . "%");
+                        $conditionParts[]= $db->getQuoteIdentifierSymbol() . $f->property . $db->getQuoteIdentifierSymbol() . " LIKE " . $db->quote("%" . $f->value . "%");
                     } else {
-                        $condition .= $db->getQuoteIdentifierSymbol() . $f->field . $db->getQuoteIdentifierSymbol() . " LIKE " . $db->quote("%" . $f->value . "%");
+                        $conditionParts[]= $db->getQuoteIdentifierSymbol() . $f->field . $db->getQuoteIdentifierSymbol() . " LIKE " . $db->quote("%" . $f->value . "%");
                     }
                 }
             }
@@ -429,13 +411,11 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
                 $allowedGroupIds = $fd->getAllowedGroupIds();
 
                 if ($allowedGroupIds) {
-                    if ($condition) {
-                        $condition = "(" . $condition . ") AND ";
-                    }
-                    $condition .= "ID in (" . implode(",", $allowedGroupIds) . ")";
+                    $conditionParts[]= "ID in (" . implode(",", $allowedGroupIds) . ")";
                 }
             }
 
+            $condition = implode(" AND ", $conditionParts);
             $list->setCondition($condition);
 
             $list->load();
@@ -588,6 +568,107 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
     }
 
 
+    public function searchRelationsAction()
+    {
+        $db = Db::get();
+
+        $storeId = $this->getParam("storeId");
+
+        $mapping = array("keyName" => "name", "keyDescription" => "description");
+
+        $start = 0;
+        $limit = 15;
+        $orderKey = "name";
+        $order = "ASC";
+
+        if ($this->getParam("dir")) {
+            $order = $this->getParam("dir");
+        }
+
+        $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($this->getAllParams());
+        if ($sortingSettings['orderKey'] && $sortingSettings['order']) {
+            $orderKey = $sortingSettings['orderKey'];
+            $order = $sortingSettings['order'];
+        }
+
+        if ($this->getParam("overrideSort") == "true") {
+            $orderKey = "id";
+            $order = "DESC";
+        }
+
+        if ($this->getParam("limit")) {
+            $limit = $this->getParam("limit");
+        }
+        if ($this->getParam("start")) {
+            $start = $this->getParam("start");
+        }
+
+        $list = new Classificationstore\KeyGroupRelation\Listing();
+
+        if ($limit > 0) {
+            $list->setLimit($limit);
+        }
+        $list->setOffset($start);
+        $list->setOrder($order);
+        $list->setOrderKey($orderKey);
+
+        $condition = "1 = 1 ";
+
+        if ($this->getParam("filter")) {
+            $db = Db::get();
+            $condition = "";
+            $filterString = $this->getParam("filter");
+            $filters = json_decode($filterString);
+
+            $count = 0;
+
+            foreach ($filters as $f) {
+                $count++;
+                $fieldname = $mapping[$f->field];
+                $condition .= " AND " .$db->getQuoteIdentifierSymbol() . $fieldname . $db->getQuoteIdentifierSymbol() . " LIKE " . $db->quote("%" . $f->value . "%");
+            }
+        }
+
+
+        if ($condition) {
+            $condition = "( " . $condition . " )";
+        }
+
+        $condition .= " AND groupId IN (select id from classificationstore_groups where storeId = " . $db->quote($storeId) . ")";
+
+        $list->setCondition($condition);
+
+        $listItems = $list->load();
+
+        $rootElement = array();
+
+        $data = array();
+        foreach ($listItems as $config) {
+            $item = array(
+                "keyId" => $config->getKeyId(),
+                "groupId" => $config->getGroupId(),
+                "keyName" => $config->getName(),
+                "keyDescription" => $config->getDescription(),
+                "id" => $config->getGroupId() . "-" . $config->getKeyId(),
+                "sorter" => $config->getSorter()
+            );
+
+
+            $groupConfig = Classificationstore\GroupConfig::getById($config->getGroupId());
+            if ($groupConfig) {
+                $item["groupName"] = $groupConfig->getName();
+            }
+
+            $data[] = $item;
+        }
+        $rootElement["data"] = $data;
+        $rootElement["success"] = true;
+        $rootElement["total"] = $list->getTotalCount();
+        return $this->_helper->json($rootElement);
+    }
+
+
+
 
     public function relationsAction()
     {
@@ -649,27 +730,37 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
 
             if ($this->getParam("filter")) {
                 $db = Db::get();
-                $condition = "";
+                $conditionParts = array();
                 $filterString = $this->getParam("filter");
                 $filters = json_decode($filterString);
 
                 $count = 0;
 
                 foreach ($filters as $f) {
-                    if ($count > 0) {
-                        $condition .= " AND ";
-                    }
                     $count++;
                     $fieldname = $mapping[$f->field];
-                    $condition .= $db->getQuoteIdentifierSymbol() . $fieldname . $db->getQuoteIdentifierSymbol() . " LIKE " . $db->quote("%" . $f->value . "%");
+                    $conditionParts[]= $db->getQuoteIdentifierSymbol() . $fieldname . $db->getQuoteIdentifierSymbol() . " LIKE " . $db->quote("%" . $f->value . "%");
                 }
             }
 
-            $groupId = $this->getParam("groupId");
-            if ($condition) {
-                $condition = "( " . $condition . " ) AND";
+            if (!$this->getParam("relationIds")) {
+                $groupId = $this->getParam("groupId");
+                $conditionParts[]= " groupId = " . $list->quote($groupId);
             }
-            $condition .= " groupId = " . $list->quote($groupId);
+
+            $relationIds = $this->getParam("relationIds");
+            if ($relationIds) {
+                $relationIds = json_decode($relationIds, true);
+                $relationParts = array();
+                foreach ($relationIds as $relationId) {
+                    $keyId = $relationId["keyId"];
+                    $groupId = $relationId["groupId"];
+                    $relationParts[] = "(keyId = " . $keyId . " and groupId = " . $groupId . ")";
+                }
+                $conditionParts[] = "(" . implode(" OR ", $relationParts) . ")";
+            }
+
+            $condition = implode(" AND ", $conditionParts);
 
             $list->setCondition($condition);
 
@@ -678,15 +769,23 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
             $rootElement = array();
 
             $data = array();
+            /** @var  $config Classificationstore\KeyGroupRelation */
             foreach ($listItems as $config) {
+
+                $type = $config->getType();
+                $definition = json_decode($config->getDefinition());
+                $definition = \Pimcore\Model\Object\Classificationstore\Service::getFieldDefinitionFromJson($definition, $type);
+
                 $item = array(
                     "keyId" => $config->getKeyId(),
                     "groupId" => $config->getGroupId(),
                     "keyName" => $config->getName(),
                     "keyDescription" => $config->getDescription(),
-                    "id" => $config->getGroupId() . "-" . $config->getKeyId(),
-                    "sorter" => $config->getSorter()
+                    "niceId" => $config->getGroupId() . "-" . $config->getKeyId(),
+                    "sorter" => $config->getSorter(),
+                    "layout" => $definition
                 );
+
                 $data[] = $item;
             }
             $rootElement["data"] = $data;
@@ -901,28 +1000,20 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
                 $conditionParts[] = "(storeId = " . $this->getParam("storeId") . ")";
             }
 
-            $condition = implode(" AND ", $conditionParts);
-
             if ($this->getParam("filter")) {
                 $filterString = $this->getParam("filter");
                 $filters = json_decode($filterString);
 
-                $count = 0;
-
                 foreach ($filters as $f) {
-                    if ($count > 0) {
-                        $condition .= " AND ";
-                    }
-                    $count++;
-
                     if (\Pimcore\Tool\Admin::isExtJS6()) {
-                        $condition .= $db->getQuoteIdentifierSymbol() . $f->property . $db->getQuoteIdentifierSymbol() . " LIKE " . $db->quote("%" . $f->value . "%");
+                        $conditionParts[]= $db->getQuoteIdentifierSymbol() . $f->property . $db->getQuoteIdentifierSymbol() . " LIKE " . $db->quote("%" . $f->value . "%");
                     } else {
-                        $condition .= $db->getQuoteIdentifierSymbol() . $f->field . $db->getQuoteIdentifierSymbol() . " LIKE " . $db->quote("%" . $f->value . "%");
+                        $conditionParts[]= $db->getQuoteIdentifierSymbol() . $f->field . $db->getQuoteIdentifierSymbol() . " LIKE " . $db->quote("%" . $f->value . "%");
                     }
                 }
             }
 
+            $condition = implode(" AND ", $conditionParts);
             $list->setCondition($condition);
 
             if ($this->getParam("groupIds") || $this->getParam("keyIds")) {

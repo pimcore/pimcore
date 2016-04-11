@@ -185,9 +185,25 @@ class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
 
                         if (substr($key, 0, 1) == "~") {
                             // not needed for now
-//                            $type = $keyParts[1];
+                            $type = $keyParts[1];
 //                            $field = $keyParts[2];
-//                            $keyid = $keyParts[3];
+                            $keyId = $keyParts[3];
+
+                            if ($type == "classificationstore") {
+                                $keyDef = Object\Classificationstore\KeyConfig::getById($keyId);
+                                if ($keyDef) {
+                                    $keyFieldDef = json_decode($keyDef->getDefinition(), true);
+                                    if ($keyFieldDef) {
+                                        $keyFieldDef = \Pimcore\Model\Object\Classificationstore\Service::getFieldDefinitionFromJson($keyFieldDef, $keyDef->getType());
+                                        $fieldConfig = $this->getFieldGridConfig($keyFieldDef, $gridType, $sc['position'], true);
+                                        if ($fieldConfig) {
+                                            $fieldConfig["key"] = $key;
+                                            $fieldConfig["label"] = "#" . $keyFieldDef->getTitle();
+                                            $availableFields[] = $fieldConfig;
+                                        }
+                                    }
+                                }
+                            }
                         } elseif (count($keyParts) > 1) {
                             $brick = $keyParts[0];
                             $key = $keyParts[1];

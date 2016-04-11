@@ -1284,8 +1284,13 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 
     public function gridProxyAction()
     {
-        if ($this->getParam("language")) {
-            $this->setLanguage($this->getParam("language"), true);
+        $requestedLanguage = $this->getParam("language");
+        if ($requestedLanguage) {
+            if ($requestedLanguage != "default") {
+                $this->setLanguage($requestedLanguage, true);
+            }
+        } else {
+            $requestedLanguage = $this->getLanguage();
         }
 
         if ($this->getParam("data")) {
@@ -1316,18 +1321,35 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                             $field = $parts[2];
                             $keyid = $parts[3];
 
-                            $getter = "get" . ucfirst($field);
-                            $setter = "set" . ucfirst($field);
-                            $keyValuePairs = $object->$getter();
+                            if ($type == "classificationstore") {
 
-                            if (!$keyValuePairs) {
-                                $keyValuePairs = new Object\Data\KeyValue();
-                                $keyValuePairs->setObjectId($object->getId());
-                                $keyValuePairs->setClass($object->getClass());
+                                $groupKeyId = explode("-", $keyid);
+                                $groupId = $groupKeyId[0];
+                                $keyid = $groupKeyId[1];
+
+                                $getter = "get" . ucfirst($field);
+                                if (method_exists($object, $getter)) {
+                                    /** @var  $classificationStoreData Object\Classificationstore */
+                                    $classificationStoreData = $object->$getter();
+                                    $classificationStoreData->setLocalizedKeyValue($groupId, $keyid, $value, $requestedLanguage);
+                                }
+
+
+
+                            } else {
+                                $getter = "get" . ucfirst($field);
+                                $setter = "set" . ucfirst($field);
+                                $keyValuePairs = $object->$getter();
+
+                                if (!$keyValuePairs) {
+                                    $keyValuePairs = new Object\Data\KeyValue();
+                                    $keyValuePairs->setObjectId($object->getId());
+                                    $keyValuePairs->setClass($object->getClass());
+                                }
+
+                                $keyValuePairs->setPropertyWithId($keyid, $value, true);
+                                $object->$setter($keyValuePairs);
                             }
-
-                            $keyValuePairs->setPropertyWithId($keyid, $value, true);
-                            $object->$setter($keyValuePairs);
                         } elseif (count($parts) > 1) {
                             $brickType = $parts[0];
                             $brickKey = $parts[1];
@@ -1371,7 +1393,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 
 
                     $object->save();
-                    $this->_helper->json(array("data" => Object\Service::gridObjectData($object, $this->getParam("fields")), "success" => true));
+                    $this->_helper->json(array("data" => Object\Service::gridObjectData($object, $this->getParam("fields"), $requestedLanguage), "success" => true));
                 } catch (\Exception $e) {
                     $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
                 }
@@ -1434,7 +1456,12 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                     if (array_key_exists($orderKey, $colMappings)) {
                         $orderKey = $colMappings[$orderKey];
                     }
+                } else {
+                    //TODO classification store!
+                    $orderKey = null;
+                    $order = null;
                 }
+
             }
 
             $listClass = "\\Pimcore\\Model\\Object\\" . ucfirst($className) . "\\Listing";
@@ -1474,7 +1501,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 
             $objects = array();
             foreach ($list->getObjects() as $object) {
-                $o = Object\Service::gridObjectData($object, $fields);
+                $o = Object\Service::gridObjectData($object, $fields, $requestedLanguage);
                 $objects[] = $o;
             }
             $this->_helper->json(array("data" => $objects, "success" => true, "total" => $list->getTotalCount()));

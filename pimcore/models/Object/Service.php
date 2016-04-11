@@ -199,11 +199,11 @@ class Service extends Model\Element\Service
     }
 
 
-    /**
+    /** Language only user for classification store !!!
      * @param  AbstractObject $object
      * @return array
      */
-    public static function gridObjectData($object, $fields = null)
+    public static function gridObjectData($object, $fields = null, $requestedLanguage = null)
     {
         $localizedPermissionsResolved = false;
         $data = Element\Service::gridElementData($object);
@@ -234,7 +234,24 @@ class Service extends Model\Element\Service
 
                 if (substr($key, 0, 1) == "~") {
                     $type = $keyParts[1];
-                    if ($type == "keyvalue") {
+                    if ($type == "classificationstore") {
+                        $field = $keyParts[2];
+                        $groupKeyId = explode("-", $keyParts[3]);
+
+                        $groupId = $groupKeyId[0];
+                        $keyid = $groupKeyId[1];
+                        $getter = "get" . ucfirst($field);
+                        if (method_exists($object, $getter)) {
+                            /** @var  $classificationStoreData Classificationstore */
+                            $classificationStoreData = $object->$getter();
+                            $fielddata = $classificationStoreData->getLocalizedKeyValue($groupId, $keyid, $requestedLanguage, true, true);
+                            if (method_exists($def, "getDataForGrid")) {
+                                $fielddata = $def->getDataForGrid($fielddata, $object);
+                            }
+                            $data[$key] = $fielddata;
+                        }
+
+                    } else  if ($type == "keyvalue") {
                         $field = $keyParts[2];
                         $keyid = $keyParts[3];
 
@@ -273,8 +290,6 @@ class Service extends Model\Element\Service
                                             $data['inheritedFields'][$dataKey] = array("inherited" => $pair["inherited"], "objectid" => $pair["source"]);
                                         }
 
-
-//                                   break;
                                     }
                                 }
                             }
