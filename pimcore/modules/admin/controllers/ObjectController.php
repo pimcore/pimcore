@@ -1492,6 +1492,13 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                 $list->setObjectTypes([Object\AbstractObject::OBJECT_TYPE_OBJECT, Object\AbstractObject::OBJECT_TYPE_VARIANT]);
             }
 
+            if ($sortingSettings["isFeature"]) {
+                $list->onCreateQuery(function (Zend_Db_Select $select) use ($sortingSettings, $class) {
+                    \Logger::debug("add filtering");
+                    // TBD
+                });
+            }
+
             $list->load();
 
             $objects = array();

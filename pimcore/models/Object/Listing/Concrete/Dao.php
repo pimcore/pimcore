@@ -38,6 +38,9 @@ class Dao extends Model\Object\Listing\Dao
      */
     protected $totalCount = 0;
 
+    /** @var  Callback function */
+    protected $onCreateQueryCallback;
+
 
     /**
      * get select query
@@ -75,6 +78,12 @@ class Dao extends Model\Object\Listing\Dao
 
         // limit
         $this->addLimit($select);
+
+        if ($this->onCreateQueryCallback) {
+            $closure = $this->onCreateQueryCallback;
+            $closure->call($this, $select);
+
+        }
 
         return $select;
     }
@@ -242,5 +251,10 @@ CONDITION
 
 
         return $this;
+    }
+
+    public function onCreateQuery($callback) {
+        $this->onCreateQueryCallback = $callback;
+
     }
 }

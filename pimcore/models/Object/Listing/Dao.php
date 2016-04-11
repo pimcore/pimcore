@@ -21,7 +21,8 @@ use Pimcore\Model\Object;
 
 class Dao extends Model\Listing\Dao\AbstractDao
 {
-
+    /** @var  Callback function */
+    protected $onCreateQueryCallback;
 
     /**
      * get select query
@@ -56,6 +57,13 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
         // limit
         $this->addLimit($select);
+
+        if ($this->onCreateQueryCallback) {
+            $closure = $this->onCreateQueryCallback;
+            $closure->call($this, $select);
+
+        }
+
 
         return $select;
     }
@@ -214,5 +222,10 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $this->totalCount = 0;
 
         return $this;
+    }
+
+    public function onCreateQuery($callback) {
+        $this->onCreateQueryCallback = $callback;
+
     }
 }

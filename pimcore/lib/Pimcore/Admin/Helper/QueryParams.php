@@ -2,14 +2,12 @@
 /**
  * Pimcore
  *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in 
- * LICENSE.md which is distributed with this source code.
+ * This source file is subject to the GNU General Public License version 3 (GPLv3)
+ * For the full copyright and license information, please view the LICENSE.md and gpl-3.0.txt
+ * files that are distributed with this source code.
  *
  * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
 namespace Pimcore\Admin\Helper;
@@ -25,14 +23,26 @@ class QueryParams
     {
         $orderKey = null;
         $order = null;
+        $orderByFeature = null;
 
         if (\Pimcore\Tool\Admin::isExtJS6()) {
             $sortParam = $params["sort"];
             if ($sortParam) {
                 $sortParam = json_decode($sortParam, true);
                 $sortParam = $sortParam[0];
-                $orderKey = $sortParam["property"];
-                $order = $sortParam["direction"];
+
+                if (substr($sortParam["property"], 0, 1) != "~") {
+                    $orderKey = $sortParam["property"];
+                    $order = $sortParam["direction"];
+                } else {
+                    $orderKey = $sortParam["property"];
+                    $parts = explode("~", $orderKey);
+                    $groupKeyId = $parts[3];
+                    $groupKeyId = explode("-", $groupKeyId);
+                    $groupId = $groupKeyId[0];
+                    $keyid = $groupKeyId[1];
+                    return ['groupId' => $groupId, "keyid"=> $keyid, "order" => $order, "isFeature" => 1];
+                }
             }
         } else {
             if ($params["dir"]) {
