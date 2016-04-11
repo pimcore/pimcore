@@ -31,9 +31,15 @@ pimcore.document.tags.textarea = Class.create(pimcore.document.tag, {
 
         // set min height for IE, as he isn't able to update :after css selector
         this.element.update("|"); // dummy content to get appropriate height
-        this.element.applyStyles({
-            "min-height": this.element.getHeight() + "px"
-        });
+        if(this.element.getHeight()) {
+            this.element.applyStyles({
+                "min-height": this.element.getHeight() + "px"
+            });
+        } else {
+            this.element.applyStyles({
+                "min-height": this.element.getStyle("font-size")
+            });
+        }
 
         this.element.update(data);
 
