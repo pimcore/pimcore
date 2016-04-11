@@ -48,10 +48,6 @@
                             "thumbnail" => "featurerette"
                         ];
 
-                        if($this->editmode) {
-                            $imgConfig["width"] = 300;
-                        }
-
                         echo $this->image("image", $imgConfig);
                     }
                 ?>
