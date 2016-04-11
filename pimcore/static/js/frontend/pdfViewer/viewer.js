@@ -268,9 +268,9 @@ pimcore.pdf.prototype.calculateDimensions = function () {
     this.pdfArrowLeft.style.marginLeft = Math.round(buttonWidth/3) + "px";
 
     // check fullscreen
-    if(document.mozFullScreenElement || document.webkitFullScreenElement || document.msFullScreenElement
+    if(document.mozFullScreenElement || document.webkitFullScreenElement || document.msFullscreenElement
         || document.fullScreenElement || document.webkitCurrentFullScreenElement || document.currentFullScreenElement
-        || document.mozCurrentFullScreenElement || document.msCurrentFullScreenElement) {
+        || document.mozCurrentFullScreenElement) {
 
     } else if(this.containerEl.classList && (this.containerEl.requestFullscreen
         || this.containerEl.mozRequestFullScreen || this.containerEl.webkitRequestFullscreen
@@ -364,8 +364,8 @@ pimcore.pdf.prototype.closeFullScreen = function (page) {
         document.mozCancelFullScreen();
     } else if (document.webkitCancelFullScreen) {
         document.webkitCancelFullScreen();
-    }  else if (document.msCancelFullScreen) {
-        document.msCancelFullScreen();
+    }  else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
     }
 };
 
