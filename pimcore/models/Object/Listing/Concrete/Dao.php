@@ -82,7 +82,6 @@ class Dao extends Model\Object\Listing\Dao
         if ($this->onCreateQueryCallback) {
             $closure = $this->onCreateQueryCallback;
             $closure->call($this, $select);
-
         }
 
         return $select;
@@ -254,8 +253,8 @@ CONDITION
     }
 
 
-    public function onCreateQuery(Callable $callback) {
+    public function onCreateQuery(callable $callback)
+    {
         $this->onCreateQueryCallback = $callback;
-
     }
 }
