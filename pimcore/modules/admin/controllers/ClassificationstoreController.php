@@ -5,7 +5,7 @@
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
  * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in 
+ * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
@@ -612,7 +612,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
         $list->setOrder($order);
         $list->setOrderKey($orderKey);
 
-        $condition = "1 = 1 ";
+        $conditionParts = array();
 
         if ($this->getParam("filter")) {
             $db = Db::get();
@@ -625,17 +625,17 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
             foreach ($filters as $f) {
                 $count++;
                 $fieldname = $mapping[$f->field];
-                $condition .= " AND " .$db->getQuoteIdentifierSymbol() . $fieldname . $db->getQuoteIdentifierSymbol() . " LIKE " . $db->quote("%" . $f->value . "%");
+                $conditionParts[]= " AND " .$db->getQuoteIdentifierSymbol() . $fieldname . $db->getQuoteIdentifierSymbol() . " LIKE " . $db->quote("%" . $f->value . "%");
             }
         }
 
+        $conditionParts[] = "  groupId IN (select id from classificationstore_groups where storeId = " . $db->quote($storeId) . ")";
 
-        if ($condition) {
-            $condition = "( " . $condition . " )";
+        $searchfilter = $this->getParam("searchfilter");
+        if ($searchfilter) {
+            $conditionParts[] = "(name LIKE " . $db->quote("%" . $searchfilter . "%") . " OR description LIKE " . $db->quote("%" . $searchfilter . "%") . ")";
         }
-
-        $condition .= " AND groupId IN (select id from classificationstore_groups where storeId = " . $db->quote($storeId) . ")";
-
+        $condition = implode(" AND ", $conditionParts);
         $list->setCondition($condition);
 
         $listItems = $list->load();
