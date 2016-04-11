@@ -22,7 +22,8 @@ pimcore.object.classes.data.email = Class.create(pimcore.object.classes.data.dat
         object: true,
         objectbrick: true,
         fieldcollection: true,
-        localizedfield: false
+        localizedfield: false,
+        classificationstore : false
     },
 
     initialize: function (treeNode, initData) {

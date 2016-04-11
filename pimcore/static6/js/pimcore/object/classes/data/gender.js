@@ -22,7 +22,8 @@ pimcore.object.classes.data.gender = Class.create(pimcore.object.classes.data.da
         object: true,
         objectbrick: true,
         fieldcollection: true,
-        localizedfield: false
+        localizedfield: false,
+        classificationstore : false
     },
 
     initialize: function (treeNode, initData) {

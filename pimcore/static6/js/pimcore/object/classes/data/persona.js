@@ -22,7 +22,8 @@ pimcore.object.classes.data.persona = Class.create(pimcore.object.classes.data.d
         object: true, 
         objectbrick: true,
         fieldcollection: true,
-        localizedfield: false
+        localizedfield: false,
+        classificationstore : false
     },        
 
     initialize: function (treeNode, initData) {

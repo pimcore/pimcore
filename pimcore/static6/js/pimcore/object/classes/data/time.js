@@ -22,7 +22,8 @@ pimcore.object.classes.data.time = Class.create(pimcore.object.classes.data.data
         object: true,
         objectbrick: true,
         fieldcollection: true,
-        localizedfield: true
+        localizedfield: true,
+        classificationstore : true
     },
 
     initialize: function (treeNode, initData) {

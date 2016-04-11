@@ -22,7 +22,8 @@ pimcore.object.classes.data.textarea = Class.create(pimcore.object.classes.data.
         object: true,
         objectbrick: true,
         fieldcollection: true,
-        localizedfield: true
+        localizedfield: true,
+        classificationstore : true
     },
 
     initialize: function (treeNode, initData) {

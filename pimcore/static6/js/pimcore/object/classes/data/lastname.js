@@ -22,7 +22,8 @@ pimcore.object.classes.data.lastname = Class.create(pimcore.object.classes.data.
         object: true,
         objectbrick: true,
         fieldcollection: true,
-        localizedfield: false
+        localizedfield: false,
+        classificationstore : false
     },
 
     initialize: function (treeNode, initData) {
