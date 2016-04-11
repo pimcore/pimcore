@@ -253,7 +253,8 @@ CONDITION
         return $this;
     }
 
-    public function onCreateQuery($callback) {
+
+    public function onCreateQuery(Callable $callback) {
         $this->onCreateQueryCallback = $callback;
 
     }

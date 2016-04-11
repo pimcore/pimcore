@@ -18,6 +18,7 @@ namespace Pimcore\Model\Object\Listing;
 
 use Pimcore\Model;
 use Pimcore\Model\Object;
+use Prophecy\Comparator\ClosureComparator;
 
 class Dao extends Model\Listing\Dao\AbstractDao
 {
@@ -224,7 +225,10 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $this;
     }
 
-    public function onCreateQuery($callback) {
+    /**
+     * @param $callback Callable
+     */
+    public function onCreateQuery(Callable $callback) {
         $this->onCreateQueryCallback = $callback;
 
     }
