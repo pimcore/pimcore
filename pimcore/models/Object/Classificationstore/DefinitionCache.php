@@ -30,7 +30,6 @@ class DefinitionCache
         $key = $type . $id;
         $config = self::$cache[$key];
         if ($config) {
-            \Logger::debug("#### matched " . $key);
             return $config;
         }
 
