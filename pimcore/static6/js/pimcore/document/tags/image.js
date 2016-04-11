@@ -56,6 +56,16 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
             dndManager.addDropTarget(this.element, this.onNodeOver.bind(this), this.onNodeDrop.bind(this));
         }
 
+        // tooltip
+        if(this.options["title"]) {
+            new Ext.ToolTip({
+                target: this.element,
+                showDelay: 100,
+                hideDelay: 0,
+                trackMouse: true,
+                html: this.options["title"]
+            });
+        }
 
         // alt / title
         this.altBar = document.createElement("div");
