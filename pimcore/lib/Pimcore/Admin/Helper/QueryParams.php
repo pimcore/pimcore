@@ -36,6 +36,7 @@ class QueryParams
                     $order = $sortParam["direction"];
                 } else {
                     $orderKey = $sortParam["property"];
+                    $order = $sortParam["direction"];
                     $parts = explode("~", $orderKey);
                     $groupKeyId = $parts[3];
                     $groupKeyId = explode("-", $groupKeyId);

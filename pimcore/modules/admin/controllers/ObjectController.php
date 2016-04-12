@@ -1486,16 +1486,38 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             $list->setCondition(implode(" AND ", $conditionFilters));
             $list->setLimit($limit);
             $list->setOffset($start);
+
+            if ($sortingSettings["isFeature"]) {
+                $orderKey = "cskey_" . $sortingSettings["keyId"];
+                $sortingSettings["language"] = $requestedLanguage;
+                $list->setOrderKey($orderKey);
+                $list->setGroupBy("o_id");
+            } else {
+                $list->setOrderKey($orderKey);
+            }
             $list->setOrder($order);
-            $list->setOrderKey($orderKey);
+
             if ($class->getShowVariants()) {
                 $list->setObjectTypes([Object\AbstractObject::OBJECT_TYPE_OBJECT, Object\AbstractObject::OBJECT_TYPE_VARIANT]);
             }
 
             if ($sortingSettings["isFeature"]) {
                 $list->onCreateQuery(function (Zend_Db_Select $select) use ($sortingSettings, $class) {
-                    \Logger::debug("add filtering");
-                    // TBD
+                    $db = \Pimcore\Db::get();
+
+                    $orderKey = "cskey_" . $sortingSettings["keyId"];
+                    $table = $this->getTablename();
+                    $select->joinLeft(
+                        array($orderKey => "object_classificationstore_data_" . $class->getId()),
+                        "("
+                        . $orderKey . ".o_id = " . $table . ".o_id"
+                        . " and " . $orderKey . ".keyId=" . $sortingSettings["keyId"]
+                        . " and " . $orderKey . ".language = " . $db->quote($sortingSettings["language"])
+                        . ")",
+                        array(
+                            $orderKey => "value"
+                        )
+                    );
                 });
             }
 
