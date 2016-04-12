@@ -399,10 +399,14 @@ class Data extends \Pimcore\Model\AbstractModel
 
             if ($element instanceof Asset\Document && \Pimcore\Document::isAvailable()) {
                 if (\Pimcore\Document::isFileTypeSupported($element->getFilename())) {
-                    $contentText = $element->getText();
-                    $contentText = str_replace(["\r\n", "\r", "\n", "\t", "\f"], " ", $contentText);
-                    $contentText = preg_replace("/[ ]+/", " ", $contentText);
-                    $this->data .= " " . $contentText;
+                    try {
+                      $contentText = $element->getText();
+                      $contentText = str_replace(["\r\n", "\r", "\n", "\t", "\f"], " ", $contentText);
+                      $contentText = preg_replace("/[ ]+/", " ", $contentText);
+                      $this->data .= " " . $contentText;
+                    } catch (\Exception $e) {
+                      \Logger::error($e);
+                    }  
                 }
             }
 
