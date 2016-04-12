@@ -1451,11 +1451,10 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                 if (!(substr($orderKey, 0, 1) == "~")) {
                     if (array_key_exists($orderKey, $colMappings)) {
                         $orderKey = $colMappings[$orderKey];
+                    } else if ($class->getFieldDefinition($orderKey) instanceof  Object\ClassDefinition\Data\QuantityValue) {
+                        $orderKey = "concat(" . $orderKey . "__unit, " . $orderKey . "__value)";
+                        $doNotQuote = true;
                     }
-                } else {
-                    //TODO classification store!
-                    $orderKey = null;
-                    $order = null;
                 }
             }
 
@@ -1493,7 +1492,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                 $list->setOrderKey($orderKey);
                 $list->setGroupBy("o_id");
             } else {
-                $list->setOrderKey($orderKey);
+                $list->setOrderKey($orderKey, !$doNotQuote);
             }
             $list->setOrder($order);
 
