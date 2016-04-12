@@ -797,6 +797,7 @@ class Pimcore
 
         // close mysql-connection
         Db::close();
+        Cache\Runtime::clear();
 
         $protectedItems = array(
             "Zend_Locale",
