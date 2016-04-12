@@ -182,5 +182,4 @@ class KeyGroupRelation extends Model\AbstractModel
     {
         $this->sorter = $sorter;
     }
-
 }

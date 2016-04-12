@@ -75,6 +75,4 @@ class Listing extends Model\Listing\AbstractListing
     {
         $this->resolveGroupName = $resolveGroupName;
     }
-
-
 }
