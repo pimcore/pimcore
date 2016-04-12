@@ -283,6 +283,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
 
             $list->setCondition($condition);
 
+
             $list->load();
             $configList = $list->getList();
 
@@ -633,10 +634,14 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
 
         $searchfilter = $this->getParam("searchfilter");
         if ($searchfilter) {
-            $conditionParts[] = "(name LIKE " . $db->quote("%" . $searchfilter . "%") . " OR description LIKE " . $db->quote("%" . $searchfilter . "%") . ")";
+            $conditionParts[] = "("
+                . Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS . ".name LIKE " . $db->quote("%" . $searchfilter . "%")
+                . " OR " . Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS . ".name LIKE " . $db->quote("%" . $searchfilter . "%")
+                . " OR " . Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS . ".description LIKE " . $db->quote("%" . $searchfilter . "%") . ")";
         }
         $condition = implode(" AND ", $conditionParts);
         $list->setCondition($condition);
+        $list->setResolveGroupName(1);
 
         $listItems = $list->load();
 
@@ -780,7 +785,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
                     "groupId" => $config->getGroupId(),
                     "keyName" => $config->getName(),
                     "keyDescription" => $config->getDescription(),
-                    "niceId" => $config->getGroupId() . "-" . $config->getKeyId(),
+                    "id" => $config->getGroupId() . "-" . $config->getKeyId(),
                     "sorter" => $config->getSorter(),
                     "layout" => $definition
                 );

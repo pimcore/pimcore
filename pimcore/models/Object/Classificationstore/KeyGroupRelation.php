@@ -55,6 +55,11 @@ class KeyGroupRelation extends Model\AbstractModel
     /** @var  int */
     public $sorter;
 
+    /** The group name
+     * @var string
+     */
+    public $groupName;
+
     /**
      * @return Model\Object\Classificationstore\KeyGroupRelation
      */
@@ -177,4 +182,5 @@ class KeyGroupRelation extends Model\AbstractModel
     {
         $this->sorter = $sorter;
     }
+
 }

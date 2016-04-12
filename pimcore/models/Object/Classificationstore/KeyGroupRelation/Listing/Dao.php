@@ -38,9 +38,26 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $condition .= Object\Classificationstore\KeyGroupRelation\Dao::TABLE_NAME_RELATIONS
             . ".keyId = " . Object\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS . ".id";
 
-        $sql = "SELECT * FROM " . Object\Classificationstore\KeyGroupRelation\Dao::TABLE_NAME_RELATIONS
-            . "," . Object\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS
-            . $condition . $this->getOrder() . $this->getOffsetLimit();
+        $sql = "SELECT " . Object\Classificationstore\KeyGroupRelation\Dao::TABLE_NAME_RELATIONS . ".*,"
+            . Object\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS . ".*";
+
+        $resourceGroupName = $this->model->getResolveGroupName();
+        if ($resourceGroupName) {
+            $sql .= ", " . Object\Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS . ".name as groupName";
+        }
+
+
+        $sql .=  " FROM " . Object\Classificationstore\KeyGroupRelation\Dao::TABLE_NAME_RELATIONS
+            . "," . Object\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS;
+
+        if ($resourceGroupName) {
+            $sql .= ", " . Object\Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS;
+        }
+
+
+
+        $sql .= $condition;
+        $sql .= $this->getOrder() . $this->getOffsetLimit();
         $data = $this->db->fetchAll($sql, $this->model->getConditionVariables());
 
         $configData = array();

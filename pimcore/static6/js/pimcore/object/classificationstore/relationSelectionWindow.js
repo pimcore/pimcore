@@ -206,10 +206,10 @@ pimcore.object.classificationstore.relationSelectionWindow = Class.create({
 
 
         var gridColumns = [];
-        gridColumns.push({header: "ID", width: 40, sortable: true, dataIndex: 'id'});
-        gridColumns.push({header: t("group"), flex: 1, sortable: true, dataIndex: 'groupName'});
-        gridColumns.push({header: t("name"), flex: 1, sortable: true, dataIndex: 'keyName'});
-        gridColumns.push({header: t("description"), flex: 1, sortable: true, dataIndex: 'keyDescription'});
+        gridColumns.push({header: "ID", width: 60, sortable: true, dataIndex: 'id'});
+        gridColumns.push({header: t("group"), flex: 1, sortable: true, dataIndex: 'groupName', filter: 'string'});
+        gridColumns.push({header: t("name"), flex: 1, sortable: true, dataIndex: 'keyName', filter: 'string'});
+        gridColumns.push({header: t("description"), flex: 1, sortable: true, dataIndex: 'keyDescription', filter: 'string'});
 
 
         var proxy = {
@@ -256,6 +256,7 @@ pimcore.object.classificationstore.relationSelectionWindow = Class.create({
             columnLines: true,
             bodyCls: "pimcore_editable_grid",
             stripeRows: true,
+            remoteFilter: true,
             selModel: Ext.create('Ext.selection.RowModel', {
                 mode: 'MULTI'
             }),
@@ -272,6 +273,9 @@ pimcore.object.classificationstore.relationSelectionWindow = Class.create({
                     this.searchWindow.close();
                 }.bind(this)
             },
+            plugins: [
+                "gridfilters"
+            ],
             viewConfig: {
                 forcefit: true
             }

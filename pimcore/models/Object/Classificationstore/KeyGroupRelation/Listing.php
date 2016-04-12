@@ -28,6 +28,9 @@ class Listing extends Model\Listing\AbstractListing
      */
     public $list = array();
 
+    /** @var  boolean */
+    public $resolveGroupName;
+
     /**
      * Tests if the given key is an valid order key to sort the results
      *
@@ -56,4 +59,22 @@ class Listing extends Model\Listing\AbstractListing
         $this->list = $theList;
         return $this;
     }
+
+    /**
+     * @return boolean
+     */
+    public function getResolveGroupName()
+    {
+        return $this->resolveGroupName;
+    }
+
+    /**
+     * @param boolean $resolveGroupName
+     */
+    public function setResolveGroupName($resolveGroupName)
+    {
+        $this->resolveGroupName = $resolveGroupName;
+    }
+
+
 }
