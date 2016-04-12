@@ -682,48 +682,51 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 }
             }
 
+            pimcore.plugin.broker.fireEvent("preSaveObject", this, task, only);
+
             Ext.Ajax.request({
                 url: '/admin/object/save/task/' + task,
                 method: "post",
                 params: saveData,
                 success: function (response) {
-                        if (task != "session") {
-                            try {
-                                var rdata = Ext.decode(response.responseText);
-                                if (rdata && rdata.success) {
-                                    pimcore.helpers.showNotification(t("success"), t("your_object_has_been_saved"),
-                                        "success");
-                                    this.resetChanges();
-                                    Ext.apply(this.data.general,rdata.general);
+                    if (task != "session") {
+                        try {
+                            var rdata = Ext.decode(response.responseText);
+                            if (rdata && rdata.success) {
+                                pimcore.helpers.showNotification(t("success"), t("your_object_has_been_saved"),
+                                    "success");
+                                this.resetChanges();
+                                Ext.apply(this.data.general,rdata.general);
 
-                                    pimcore.helpers.updateObjectQTip(this.id, rdata.treeData);
-                                }
-                                else {
-                                    pimcore.helpers.showPrettyError(rdata.type, t("error"), t("error_saving_object"),
-                                        rdata.message, rdata.stack, rdata.code);
-                                }
-                            } catch (e) {
-                                pimcore.helpers.showNotification(t("error"), t("error_saving_object"), "error");
+                                pimcore.helpers.updateObjectQTip(this.id, rdata.treeData);
+                                pimcore.plugin.broker.fireEvent("postSaveObject", this, task, only);
                             }
-                            // reload versions
-                            if (this.isAllowed("versions")) {
-                                if (typeof this.versions.reload == "function") {
-                                    try {
-                                        //TODO remove this as soon as it works
-                                        this.versions.reload();
-                                    } catch (e) {
-                                        console.log(e);
-                                    }
+                            else {
+                                pimcore.helpers.showPrettyError(rdata.type, t("error"), t("error_saving_object"),
+                                    rdata.message, rdata.stack, rdata.code);
+                            }
+                        } catch (e) {
+                            pimcore.helpers.showNotification(t("error"), t("error_saving_object"), "error");
+                        }
+                        // reload versions
+                        if (this.isAllowed("versions")) {
+                            if (typeof this.versions.reload == "function") {
+                                try {
+                                    //TODO remove this as soon as it works
+                                    this.versions.reload();
+                                } catch (e) {
+                                    console.log(e);
                                 }
                             }
                         }
+                    }
 
 
                     this.tab.unmask();
 
-                        if (typeof callback == "function") {
-                            callback();
-                        }
+                    if (typeof callback == "function") {
+                        callback();
+                    }
 
                 }.bind(this),
                 failure: function (response) {

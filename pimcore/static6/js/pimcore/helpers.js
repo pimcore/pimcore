@@ -969,6 +969,9 @@ pimcore.helpers.deleteDocumentCheckDependencyComplete = function (id, callback, 
 pimcore.helpers.deleteDocumentFromServer = function (id, r, callback, button) {
 
     if (button == "ok" && r.deletejobs) {
+
+        pimcore.plugin.broker.fireEvent("preDeleteDocument", id);
+
         var tree = pimcore.globalmanager.get("layout_document_tree").tree;
         var view = tree.getView();
         var store = tree.getStore();
@@ -1011,6 +1014,8 @@ pimcore.helpers.deleteDocumentFromServer = function (id, r, callback, button) {
 
         var pj = new pimcore.tool.paralleljobs({
             success: function (id, callback) {
+
+                pimcore.plugin.broker.fireEvent("postDeleteDocument", id);
 
                 //var node = pimcore.globalmanager.get("layout_document_tree").tree.getNodeById(id);
                 try {
@@ -1108,6 +1113,8 @@ pimcore.helpers.deleteObjectFromServer = function (id, r, callback, button) {
 
     if (button == "ok" && r.deletejobs) {
 
+        pimcore.plugin.broker.fireEvent("preDeleteObject", id);
+
         var tree = pimcore.globalmanager.get("layout_object_tree").tree;
         var view = tree.getView();
         var store = tree.getStore();
@@ -1149,6 +1156,8 @@ pimcore.helpers.deleteObjectFromServer = function (id, r, callback, button) {
 
         var pj = new pimcore.tool.paralleljobs({
             success: function (id, callback) {
+
+                pimcore.plugin.broker.fireEvent("postDeleteObject", id);
 
                 //var node = pimcore.globalmanager.get("layout_object_tree").tree.getNodeById(id);
                 try {
