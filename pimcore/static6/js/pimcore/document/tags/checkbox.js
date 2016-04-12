@@ -31,7 +31,11 @@ pimcore.document.tags.checkbox = Class.create(pimcore.document.tag, {
             checked = ' checked="checked"';
         }
 
-        $("#" + id).html('<input name="' + this.htmlId + '" type="checkbox" value="true" id="' + this.htmlId + '" ' + checked + ' />');
+        $("#" + id).append('<input name="' + this.htmlId + '" type="checkbox" value="true" id="' + this.htmlId + '" ' + checked + ' />');
+
+        if(options["label"]) {
+            $("#" + id).append('<label for="' + this.htmlId + '">' + options["label"] + '</label>');
+        }
 
         // onchange event
         if (options.onchange) {
