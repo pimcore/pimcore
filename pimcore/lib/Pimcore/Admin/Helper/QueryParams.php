@@ -37,12 +37,15 @@ class QueryParams
                 } else {
                     $orderKey = $sortParam["property"];
                     $order = $sortParam["direction"];
+
                     $parts = explode("~", $orderKey);
+
+                    $fieldname = $parts[2];
                     $groupKeyId = $parts[3];
                     $groupKeyId = explode("-", $groupKeyId);
                     $groupId = $groupKeyId[0];
                     $keyid = $groupKeyId[1];
-                    return ['groupId' => $groupId, "keyId"=> $keyid, "order" => $order, "isFeature" => 1];
+                    return ['fieldname' => $fieldname, 'groupId' => $groupId, "keyId"=> $keyid, "order" => $order, "isFeature" => 1];
                 }
             }
         } else {

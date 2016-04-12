@@ -1423,10 +1423,13 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                     $parts = explode("~", $f);
                     $sub = substr($f, 0, 1);
                     if (substr($f, 0, 1) == "~") {
-                        //                        $type = $parts[1];
+                        $type = $parts[1];
 //                        $field = $parts[2];
 //                        $keyid = $parts[3];
                         // key value, ignore for now
+                        if ($type == "classificationstore") {
+
+                        }
                     } elseif (count($parts) > 1) {
                         $bricks[$parts[0]] = $parts[0];
                     }
@@ -1505,11 +1508,14 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                     $db = \Pimcore\Db::get();
 
                     $orderKey = "cskey_" . $sortingSettings["keyId"];
+                    $fieldname = $sortingSettings["fieldname"];
+
                     $table = $this->getTablename();
                     $select->joinLeft(
                         array($orderKey => "object_classificationstore_data_" . $class->getId()),
                         "("
                         . $orderKey . ".o_id = " . $table . ".o_id"
+                        . " and fieldname = " . $db->quote($fieldname)
                         . " and " . $orderKey . ".keyId=" . $sortingSettings["keyId"]
                         . " and " . $orderKey . ".language = " . $db->quote($sortingSettings["language"])
                         . ")",
