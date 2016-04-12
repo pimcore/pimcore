@@ -46,7 +46,7 @@ pimcore.object.classificationstore.columnConfigDialog = Class.create({
         var originalKey =  this.node.key;
 
         var store = this.ownerTree.getStore();
-        var targetNode = store.getById(this.node.id);
+        this.node = store.getById(this.node.id);
 
         if(data && data.success) {
             for (var i=0; i < data.data.length; i++) {
@@ -60,29 +60,28 @@ pimcore.object.classificationstore.columnConfigDialog = Class.create({
                 }
 
                 if (this.keysAdded > 0) {
-                    var configEncoded = Ext.encode(this.node);
+                    var configEncoded = Ext.encode(this.node.data);
                     var configDecoded = Ext.decode(configEncoded);
+                    delete configDecoded.id;
+                    delete configDecoded.options;
+                    delete configDecoded.layout.gridType;
 
-                    var copy = new Ext.tree.TreeNode( // copy it
-                        Ext.apply({}, configDecoded)
-                    );
-                    this.node = copy;
-                    delete this.node.layout.options;
-                    delete this.node.layout.gridType;
+                    var copy = Ext.apply({}, configDecoded); // copy it
+
+                    this.node = this.selectionPanel.getRootNode().createNode(copy);
                 }
 
 
-                this.node.key = encodedKey;
-                this.node.layout.gridType = keyDef.type;
+                this.node.set("key", encodedKey);
+                this.node.data.layout.gridType = keyDef.type;
 
-                //TODo  implement all subtypes
                 if (keyDef.type == "select") {
-                    this.node.layout.options = Ext.decode(keyDef.possiblevalues);
+                    this.node.data.layout.options = Ext.decode(keyDef.possiblevalues);
                 }
 
-                targetNode.set("text", "#" + keyDef.keyName);
-                targetNode.set("layout", keyDef.layout);
-                targetNode.set("dataType", keyDef.layout.fieldtype);
+                this.node.set("text", "#" + keyDef.keyName);
+                this.node.set("layout", keyDef.layout);
+                this.node.set("dataType", keyDef.layout.fieldtype);
 
                 if (this.keysAdded > 0) {
                     this.selectionPanel.getRootNode().appendChild(this.node);

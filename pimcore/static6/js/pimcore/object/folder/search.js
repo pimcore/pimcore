@@ -196,7 +196,9 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             });
 
             this.toolbarFilterInfo = new Ext.Toolbar.TextItem({
-                text: ""
+                text: "",
+                maxWidth: 300,
+                scrollable: 'horizontal'
             });
 
             this.createSqlEditor();
