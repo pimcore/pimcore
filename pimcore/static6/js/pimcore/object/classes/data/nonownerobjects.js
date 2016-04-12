@@ -22,7 +22,9 @@ pimcore.object.classes.data.nonownerobjects = Class.create(pimcore.object.classe
         object: true,
         objectbrick: false,
         fieldcollection: false,
-        localizedfield: false
+        localizedfield: false,
+        classificationstore : false,
+        classificationstore : false
     },
 
     initialize: function (treeNode, initData) {

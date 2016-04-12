@@ -30,7 +30,8 @@ pimcore.object.classes.data.data = Class.create({
         object: false,
         objectbrick: false,
         fieldcollection: false,
-        localizedfield: false
+        localizedfield: false,
+        classificationstore : false
     },
 
 

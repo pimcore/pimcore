@@ -22,7 +22,8 @@ pimcore.object.classes.data.classificationstore = Class.create(pimcore.object.cl
         object: true,
         objectbrick: false,
         fieldcollection: false,
-        localizedfield: false
+        localizedfield: false,
+        classificationstore : false
     },
 
     initialize: function (treeNode, initData) {

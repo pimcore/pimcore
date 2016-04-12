@@ -22,7 +22,8 @@ pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classe
         object: true,
         objectbrick: true,
         fieldcollection: true,
-        localizedfield: true
+        localizedfield: true,
+        classificationstore : false
     },
 
     initialize: function (treeNode, initData) {

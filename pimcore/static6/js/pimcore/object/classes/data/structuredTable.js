@@ -22,7 +22,8 @@ pimcore.object.classes.data.structuredTable = Class.create(pimcore.object.classe
         object: true,
         objectbrick: true,
         fieldcollection: true,
-        localizedfield: true
+        localizedfield: true,
+        classificationstore : false
     },
 
     initialize: function (treeNode, initData) {

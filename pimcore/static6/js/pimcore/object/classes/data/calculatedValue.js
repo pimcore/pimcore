@@ -12,7 +12,8 @@ pimcore.object.classes.data.calculatedValue = Class.create(pimcore.object.classe
         object: true,
         objectbrick: true,
         fieldcollection: true,
-        localizedfield: true
+        localizedfield: true,
+        classificationstore : true
     },
 
     initialize: function (treeNode, initData) {

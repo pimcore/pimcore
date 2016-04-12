@@ -801,7 +801,7 @@ CREATE TABLE `classificationstore_keys` (
 	`name` VARCHAR(255) NOT NULL DEFAULT '',
 	`title` VARCHAR(255) NOT NULL DEFAULT '',
 	`description` TEXT NULL,
-	`type` ENUM('input','textarea','wysiwyg','checkbox','numeric','slider','select','multiselect','date','datetime','language','languagemultiselect','country','countrymultiselect','table','quantityValue','calculatedValue') NULL DEFAULT NULL,
+	`type` VARCHAR(255) NULL DEFAULT NULL,
 	`creationDate` BIGINT(20) UNSIGNED NULL DEFAULT '0',
 	`modificationDate` BIGINT(20) UNSIGNED NULL DEFAULT '0',
 	`definition` LONGTEXT NULL,

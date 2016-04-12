@@ -23,7 +23,8 @@ pimcore.object.classes.data.newsletterConfirmed = Class.create(pimcore.object.cl
         object: true,
         objectbrick: true,
         fieldcollection: true,
-        localizedfield: true
+        localizedfield: true,
+        classificationstore : false
     },
 
     initialize: function (treeNode, initData) {

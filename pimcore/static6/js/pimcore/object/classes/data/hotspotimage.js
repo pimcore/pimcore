@@ -22,7 +22,8 @@ pimcore.object.classes.data.hotspotimage = Class.create(pimcore.object.classes.d
         object: true,
         objectbrick: true,
         fieldcollection: true,
-        localizedfield: true
+        localizedfield: true,
+        classificationstore : false
     },
 
     initialize: function (treeNode, initData) {

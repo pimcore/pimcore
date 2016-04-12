@@ -22,7 +22,8 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
         object: true,
         objectbrick: true,
         fieldcollection: true,
-        localizedfield: true
+        localizedfield: true,
+        classificationstore : false
     },
 
     initialize: function (treeNode, initData) {

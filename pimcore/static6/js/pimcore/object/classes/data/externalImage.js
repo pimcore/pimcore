@@ -22,7 +22,8 @@ pimcore.object.classes.data.externalImage = Class.create(pimcore.object.classes.
         object: true,
         objectbrick: true,
         fieldcollection: true,
-        localizedfield: true
+        localizedfield: true,
+        classificationstore : false
     },
 
     initialize: function (treeNode, initData) {

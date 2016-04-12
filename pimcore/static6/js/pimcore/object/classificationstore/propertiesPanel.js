@@ -50,6 +50,26 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
         for (var i = 0; i < this.fields.length; i++) {
             readerFields.push({name: this.fields[i], allowBlank: true});
         }
+        
+        var dataComps = Object.keys(pimcore.object.classes.data);
+        var allowedDataTypes = [];
+
+        for (var i = 0; i < dataComps.length; i++) {
+            var dataComp = pimcore.object.classes.data[dataComps[i]];
+
+            var allowed = false;
+
+            if('object' !== typeof dataComp) {
+                var tt = typeof dataComp;
+                if (dataComp.prototype.allowIn['classificationstore']) {
+                    allowed = true;
+                }
+            }
+
+            if (allowed) {
+                allowedDataTypes.push(dataComps[i]);
+            }
+        }
 
         var url = "/admin/classificationstore/properties?";
         var proxy = {
@@ -108,16 +128,18 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
                 editor: new Ext.form.TextField({})
             }
 
-        );gridColumns.push({header: t("title"), width: 200, sortable: false, dataIndex: 'title',editor: new Ext.form.TextField({}), filter: 'string'});
+        );
+        
+        gridColumns.push({header: t("title"), width: 200, sortable: false, dataIndex: 'title',editor: new Ext.form.TextField({}), filter: 'string'});
         gridColumns.push({header: t("description"), width: 300, sortable: true, dataIndex: 'description',editor: new Ext.form.TextField({}), filter: 'string'});
         gridColumns.push({header: t("definition"), width: 300, sortable: true, hidden: true, dataIndex: 'definition',editor: new Ext.form.TextField({})});
         gridColumns.push({header: t("type"), width: 150, sortable: true, dataIndex: 'type', filter: 'string',
             editor: new Ext.form.ComboBox({
                 triggerAction: 'all',
                 editable: false,
-                store: ['input','textarea','wysiwyg','checkbox','numeric','slider', 'select','multiselect',
-                    'date','datetime','language','languagemultiselect','country','countrymultiselect','table','quantityValue','calculatedValue']
-            })});
+                store: allowedDataTypes
+            })
+        });
 
 
         gridColumns.push({

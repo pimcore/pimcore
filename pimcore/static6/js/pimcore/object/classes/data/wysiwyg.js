@@ -22,7 +22,8 @@ pimcore.object.classes.data.wysiwyg = Class.create(pimcore.object.classes.data.d
         object: true,
         objectbrick: true,
         fieldcollection: true,
-        localizedfield: true
+        localizedfield: true,
+        classificationstore : true
     },
 
     initialize: function (treeNode, initData) {
