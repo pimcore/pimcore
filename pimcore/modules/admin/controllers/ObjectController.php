@@ -1489,11 +1489,15 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             $list->setLimit($limit);
             $list->setOffset($start);
 
+            $featureJoins = array();
+
             if ($sortingSettings["isFeature"]) {
                 $orderKey = "cskey_" . $sortingSettings["keyId"];
                 $sortingSettings["language"] = $requestedLanguage;
                 $list->setOrderKey($orderKey);
                 $list->setGroupBy("o_id");
+
+                $featureJoins[] = $sortingSettings;
             } else {
                 $list->setOrderKey($orderKey, !$doNotQuote);
             }
@@ -1503,26 +1507,28 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                 $list->setObjectTypes([Object\AbstractObject::OBJECT_TYPE_OBJECT, Object\AbstractObject::OBJECT_TYPE_VARIANT]);
             }
 
-            if ($sortingSettings["isFeature"]) {
-                $list->onCreateQuery(function (Zend_Db_Select $select) use ($sortingSettings, $class) {
+            if ($featureJoins) {
+                $list->onCreateQuery(function (Zend_Db_Select $select) use ($featureJoins, $class) {
                     $db = \Pimcore\Db::get();
 
-                    $orderKey = "cskey_" . $sortingSettings["keyId"];
-                    $fieldname = $sortingSettings["fieldname"];
+                    foreach ($featureJoins as $featureJoin) {
+                        $orderKey = "cskey_" . $featureJoin["keyId"];
+                        $fieldname = $featureJoin["fieldname"];
 
-                    $table = $this->getTablename();
-                    $select->joinLeft(
-                        array($orderKey => "object_classificationstore_data_" . $class->getId()),
-                        "("
-                        . $orderKey . ".o_id = " . $table . ".o_id"
-                        . " and fieldname = " . $db->quote($fieldname)
-                        . " and " . $orderKey . ".keyId=" . $sortingSettings["keyId"]
-                        . " and " . $orderKey . ".language = " . $db->quote($sortingSettings["language"])
-                        . ")",
-                        array(
-                            $orderKey => "value"
-                        )
-                    );
+                        $table = $this->getTablename();
+                        $select->joinLeft(
+                            array($orderKey => "object_classificationstore_data_" . $class->getId()),
+                            "("
+                            . $orderKey . ".o_id = " . $table . ".o_id"
+                            . " and fieldname = " . $db->quote($fieldname)
+                            . " and " . $orderKey . ".keyId=" . $featureJoin["keyId"]
+                            . " and " . $orderKey . ".language = " . $db->quote($featureJoin["language"])
+                            . ")",
+                            array(
+                                $orderKey => "value"
+                            )
+                        );
+                    }
                 });
             }
 

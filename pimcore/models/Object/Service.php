@@ -245,8 +245,14 @@ class Service extends Model\Element\Service
                             /** @var  $classificationStoreData Classificationstore */
                             $classificationStoreData = $object->$getter();
                             $fielddata = $classificationStoreData->getLocalizedKeyValue($groupId, $keyid, $requestedLanguage, true, true);
-                            if (method_exists($def, "getDataForGrid")) {
-                                $fielddata = $def->getDataForGrid($fielddata, $object);
+
+                            $keyConfig = Model\Object\Classificationstore\KeyConfig::getById($keyid);
+                            $type = $keyConfig->getType();
+                            $definition = json_decode($keyConfig->getDefinition());
+                            $definition = \Pimcore\Model\Object\Classificationstore\Service::getFieldDefinitionFromJson($definition, $type);
+
+                            if (method_exists($definition, "getDataForGrid")) {
+                                $fielddata = $definition->getDataForGrid($fielddata, $object);
                             }
                             $data[$key] = $fielddata;
                         }

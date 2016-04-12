@@ -914,7 +914,6 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
             $keyList = $data[$groupId]["keys"];
             $type = $keyData->getType();
             $definition = json_decode($keyData->getDefinition());
-
             $definition = \Pimcore\Model\Object\Classificationstore\Service::getFieldDefinitionFromJson($definition, $type);
 
             if (method_exists($definition, "__wakeup")) {
