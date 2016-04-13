@@ -5,7 +5,7 @@
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
  * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in 
+ * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @category   Pimcore
@@ -192,6 +192,11 @@ class Dao extends Model\Dao\AbstractDao
                                 foreach ($columnNames as $columnName) {
                                     if (array_key_exists($columnName, $parentData)) {
                                         $data[$columnName] = $parentData[$columnName];
+                                        if (is_array($insertData)) {
+                                            $insertData[$columnName] = $parentData[$columnName];
+                                        } else {
+                                            $insertData = $parentData[$columnName];
+                                        }
                                     }
                                 }
                             }

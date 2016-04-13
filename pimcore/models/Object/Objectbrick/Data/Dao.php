@@ -5,7 +5,7 @@
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
  * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in 
+ * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @category   Pimcore
@@ -62,7 +62,7 @@ class Dao extends Model\Dao\AbstractDao
 
         foreach ($fieldDefinitions as $key => $fd) {
             $getter = "get" . ucfirst($fd->getName());
-            
+
             if (method_exists($fd, "save")) {
                 // for fieldtypes which have their own save algorithm eg. objects, multihref, ...
                 $fd->save($this->model);
@@ -80,7 +80,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->insertOrUpdate($storetable, $data);
 
 
-        // get data for query table 
+        // get data for query table
         // $tableName = $this->model->getDefinition()->getTableName($object->getClass(), true);
         // this is special because we have to call each getter to get the inherited values from a possible parent object
 
@@ -127,6 +127,11 @@ class Dao extends Model\Dao\AbstractDao
                     foreach ($columnNames as $columnName) {
                         if (array_key_exists($columnName, $parentData)) {
                             $data[$columnName] = $parentData[$columnName];
+                            if (is_array($insertData)) {
+                                $insertData[$columnName] = $parentData[$columnName];
+                            } else {
+                                $insertData = $parentData[$columnName];
+                            }
                         }
                     }
                 }
