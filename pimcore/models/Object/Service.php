@@ -1410,7 +1410,8 @@ class Service extends Model\Element\Service
      * @param $featureFilters
      * @param $requestedLanguage
      */
-    public static function addGridFeatureJoins($list, $featureJoins, $class, $featureFilters, $requestedLanguage) {
+    public static function addGridFeatureJoins($list, $featureJoins, $class, $featureFilters, $requestedLanguage)
+    {
         if ($featureJoins) {
             $me = $list;
             $list->onCreateQuery(function (\Zend_Db_Select $select) use ($list, $featureJoins, $class, $featureFilters, $requestedLanguage, $me) {
@@ -1449,6 +1450,5 @@ class Service extends Model\Element\Service
                 }
             });
         }
-
     }
 }

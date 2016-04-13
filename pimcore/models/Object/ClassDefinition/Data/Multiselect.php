@@ -278,7 +278,8 @@ class Multiselect extends Model\Object\ClassDefinition\Data
      * @param  $params optional params used to change the behavior
      * @return string
      */
-    public function getFilterConditionExt($value, $operator, $params = array()) {
+    public function getFilterConditionExt($value, $operator, $params = array())
+    {
         if ($operator == "=") {
             $name = $params["name"] ? $params["name"] : $this->name;
             $value = "'%".$value."%'";

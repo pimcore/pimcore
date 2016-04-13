@@ -782,7 +782,8 @@ class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         exit;
     }
 
-    protected function mapFieldname($field) {
+    protected function mapFieldname($field)
+    {
         if (substr($field, 0, 1) == "~") {
             $fieldParts = explode("~", $field);
             $type = $fieldParts[1];
@@ -853,7 +854,6 @@ class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
                                     "language" => $requestedLanguage
                                 ))
                             );
-
                         }
                     }
                     //key value store - ignore for now

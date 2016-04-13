@@ -1428,7 +1428,6 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 //                        $keyid = $parts[3];
                         // key value, ignore for now
                         if ($type == "classificationstore") {
-
                         }
                     } elseif (count($parts) > 1) {
                         $bricks[$parts[0]] = $parts[0];
@@ -1454,7 +1453,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                 if (!(substr($orderKey, 0, 1) == "~")) {
                     if (array_key_exists($orderKey, $colMappings)) {
                         $orderKey = $colMappings[$orderKey];
-                    } else if ($class->getFieldDefinition($orderKey) instanceof  Object\ClassDefinition\Data\QuantityValue) {
+                    } elseif ($class->getFieldDefinition($orderKey) instanceof  Object\ClassDefinition\Data\QuantityValue) {
                         $orderKey = "concat(" . $orderKey . "__unit, " . $orderKey . "__value)";
                         $doNotQuote = true;
                     }

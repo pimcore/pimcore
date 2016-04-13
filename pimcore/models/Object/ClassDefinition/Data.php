@@ -624,7 +624,8 @@ abstract class Data
      * @param  $params optional params used to change the behavior
      * @return string
      */
-    public function getFilterConditionExt($value, $operator, $params = array()) {
+    public function getFilterConditionExt($value, $operator, $params = array())
+    {
         $db = \Pimcore\Db::get();
         $name = $params["name"] ? $params["name"] : $this->name;
         $key = $db->quoteIdentifier($name);
@@ -648,7 +649,6 @@ abstract class Data
         } else {
             return "";
         }
-
     }
 
 
@@ -1079,12 +1079,10 @@ abstract class Data
                         $data = $object->getLocalizedValue($this->getName(), $params["language"], true);
                     }
                 }
-
-            } else if ($context["containerType"] == "classificationstore") {
+            } elseif ($context["containerType"] == "classificationstore") {
                 $fieldname = $context["fieldname"];
                 $getter = "get" . ucfirst($fieldname);
                 if (method_exists($object, $getter)) {
-
                     $groupId = $context["groupId"];
                     $keyId = $context["keyId"];
                     $language = $context["language"];
@@ -1095,7 +1093,6 @@ abstract class Data
                     return $data;
                 }
             }
-
         }
 
         if (!$resolved) {

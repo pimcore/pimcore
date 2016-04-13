@@ -261,12 +261,12 @@ class Checkbox extends Model\Object\ClassDefinition\Data
      * @param  $params optional params used to change the behavior
      * @return string
      */
-    public function getFilterConditionExt($value, $operator, $params = array()) {
+    public function getFilterConditionExt($value, $operator, $params = array())
+    {
         $db = \Pimcore\Db::get();
         $name = $params["name"] ? $params["name"] : $this->name;
         $value = $db->quote($value);
         $key = $db->quoteIdentifier($this->name, $name);
         return "IFNULL(" . $key . ", 0) = " . $value . " ";
-
     }
 }
