@@ -721,44 +721,45 @@ pimcore["intervals"]["translations_admin_missing"] = window.setInterval(function
 
 // session renew
 pimcore["intervals"]["ping"] = window.setInterval(function () {
-return;
-    Ext.Ajax.request({
-        url:"/admin/misc/ping",
-        success:function (response) {
+    if (!pimcore.settings.devmode) {
+        Ext.Ajax.request({
+            url: "/admin/misc/ping",
+            success: function (response) {
 
-            var data;
+                var data;
 
-            try {
-                data = Ext.decode(response.responseText);
+                try {
+                    data = Ext.decode(response.responseText);
 
-                if (data.success != true) {
-                    throw "session seems to be expired";
+                    if (data.success != true) {
+                        throw "session seems to be expired";
+                    }
+                } catch (e) {
+                    data = false;
+                    pimcore.settings.showCloseConfirmation = false;
+                    window.location.href = "/admin/login/?session_expired=true";
                 }
-            } catch (e) {
-                data = false;
-                pimcore.settings.showCloseConfirmation = false;
-                window.location.href = "/admin/login/?session_expired=true";
-            }
 
-            if (pimcore.maintenanceWindow) {
-                pimcore.maintenanceWindow.close();
-                window.setTimeout(function () {
-                    delete pimcore.maintenanceWindow;
-                }, 2000);
-                pimcore.viewport.updateLayout();
-            }
+                if (pimcore.maintenanceWindow) {
+                    pimcore.maintenanceWindow.close();
+                    window.setTimeout(function () {
+                        delete pimcore.maintenanceWindow;
+                    }, 2000);
+                    pimcore.viewport.updateLayout();
+                }
 
-            if (data) {
-                // here comes the check for maintenance mode, ...
+                if (data) {
+                    // here comes the check for maintenance mode, ...
+                }
+            },
+            failure: function (response) {
+                if (response.status != 503) {
+                    pimcore.settings.showCloseConfirmation = false;
+                    window.location.href = "/admin/login/?session_expired=true&server_error=true";
+                }
             }
-        },
-        failure:function (response) {
-            if (response.status != 503) {
-                pimcore.settings.showCloseConfirmation = false;
-                window.location.href = "/admin/login/?session_expired=true&server_error=true";
-            }
-        }
-    });
+        });
+    }
 }, 60000);
 
 // refreshes the layout
