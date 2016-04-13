@@ -365,7 +365,7 @@ class Numeric extends Model\Object\ClassDefinition\Data
      */
     public function getForCsvExport($object, $params = array())
     {
-        $data = $this->getDataFromObjectParam($object);
+        $data = $this->getDataFromObjectParam($object, $params);
         return strval($data);
     }
 

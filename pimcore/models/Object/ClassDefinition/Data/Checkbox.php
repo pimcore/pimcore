@@ -186,7 +186,7 @@ class Checkbox extends Model\Object\ClassDefinition\Data
      */
     public function getForCsvExport($object, $params = array())
     {
-        $data = $this->getDataFromObjectParam($object);
+        $data = $this->getDataFromObjectParam($object, $params);
         return strval($data);
     }
 
@@ -249,9 +249,24 @@ class Checkbox extends Model\Object\ClassDefinition\Data
      */
     public function getFilterCondition($value, $operator)
     {
+        return $this->getFilterConditionExt($value, $operator, array(
+                "name" => $this->name)
+        );
+    }
+
+    /**
+     * returns sql query statement to filter according to this data types value(s)
+     * @param  $value
+     * @param  $operator
+     * @param  $params optional params used to change the behavior
+     * @return string
+     */
+    public function getFilterConditionExt($value, $operator, $params = array()) {
         $db = \Pimcore\Db::get();
+        $name = $params["name"] ? $params["name"] : $this->name;
         $value = $db->quote($value);
-        $key = $db->quoteIdentifier($this->name, $this->name);
+        $key = $db->quoteIdentifier($this->name, $name);
         return "IFNULL(" . $key . ", 0) = " . $value . " ";
+
     }
 }

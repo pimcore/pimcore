@@ -151,7 +151,7 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
      */
     public function getForCsvExport($object, $params = array())
     {
-        $data = $this->getDataFromObjectParam($object);
+        $data = $this->getDataFromObjectParam($object, $params);
         if (!empty($data)) {
             $dataArray = $this->getDataForEditmode($data, $object, $params);
             $rows = array();

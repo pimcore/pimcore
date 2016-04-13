@@ -186,7 +186,7 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
      */
     public function getForCsvExport($object, $params = array())
     {
-        $data = $this->getDataFromObjectParam($object);
+        $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof Object\Data\Geobounds) {
             return  $data->getNorthEast()->getLongitude().",".$data->getNorthEast()->getLatitude()."|".$data->getSouthWest()->getLongitude().",".$data->getSouthWest()->getLatitude();
         } else {

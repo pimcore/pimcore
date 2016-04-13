@@ -563,6 +563,100 @@ class Service extends Model\Element\Service
         }
     }
 
+
+    /**
+     *
+     * @param string $filterJson
+     * @param ClassDefinition $class
+     * @return string
+     */
+    public static function getFeatureFilters($filterJson, $class)
+    {
+        $joins = array();
+        $conditions = array();
+
+        // create filter condition
+        $conditionPartsFilters = array();
+
+        if ($filterJson) {
+            $db = \Pimcore\Db::get();
+            $filters = \Zend_Json::decode($filterJson);
+            foreach ($filters as $filter) {
+                $operator = "=";
+
+                $filterField = $filter["property"];
+                $filterOperator = $filter["operator"];
+
+                if ($filter["type"] == "string") {
+                    $operator = "LIKE";
+                } elseif ($filter["type"] == "numeric") {
+                    if ($filterOperator == "lt") {
+                        $operator = "<";
+                    } elseif ($filterOperator == "gt") {
+                        $operator = ">";
+                    } elseif ($filterOperator == "eq") {
+                        $operator = "=";
+                    }
+                } elseif ($filter["type"] == "date") {
+                    if ($filterOperator == "lt") {
+                        $operator = "<";
+                    } elseif ($filterOperator == "gt") {
+                        $operator = ">";
+                    } elseif ($filterOperator == "eq") {
+                        $operator = "=";
+                    }
+                    $filter["value"] = strtotime($filter["value"]);
+                } elseif ($filter["type"] == "list") {
+                    $operator = "=";
+                } elseif ($filter["type"] == "boolean") {
+                    $operator = "=";
+                    $filter["value"] = (int) $filter["value"];
+                }
+
+                $keyParts = explode("~", $filterField);
+
+                if (substr($filterField, 0, 1) != "~") {
+                    continue;
+                }
+
+                $type = $keyParts[1];
+                if ($type != "classificationstore") {
+                    continue;
+                }
+
+                $fieldName = $keyParts[2];
+                $groupKeyId = explode("-", $keyParts[3]);
+
+                $groupId = $groupKeyId[0];
+                $keyid = $groupKeyId[1];
+
+                $keyConfig = Model\Object\Classificationstore\KeyConfig::getById($keyid);
+                $type = $keyConfig->getType();
+                $definition = json_decode($keyConfig->getDefinition());
+                $field = \Pimcore\Model\Object\Classificationstore\Service::getFieldDefinitionFromJson($definition, $type);
+
+                if ($field instanceof ClassDefinition\Data) {
+                    $mappedKey = "cskey_" . $fieldName . "_" . $groupId . "_" . $keyid;
+                    $joins[] =  array('fieldname' => $fieldName, 'groupId' => $groupId, "keyId"=> $keyid);
+                    $condition = $field->getFilterConditionExt($filter["value"], $operator,
+                        array(
+                            "name" => $mappedKey)
+                    );
+
+                    $conditions[$mappedKey] = $condition;
+                }
+            }
+        }
+
+        $result = array(
+            "joins" => $joins,
+            "conditions" => $conditions
+        );
+
+
+        return $result;
+    }
+
     /**
      *
      * @param string $filterJson
@@ -1307,5 +1401,54 @@ class Service extends Model\Element\Service
         }
 
         return null;
+    }
+
+    /** Adds all the query stuff that is needed for displaying, filtering and exporting the feature grid data.
+     * @param $list list
+     * @param $featureJoins
+     * @param $class
+     * @param $featureFilters
+     * @param $requestedLanguage
+     */
+    public static function addGridFeatureJoins($list, $featureJoins, $class, $featureFilters, $requestedLanguage) {
+        if ($featureJoins) {
+            $me = $list;
+            $list->onCreateQuery(function (\Zend_Db_Select $select) use ($list, $featureJoins, $class, $featureFilters, $requestedLanguage, $me) {
+
+                $db = \Pimcore\Db::get();
+
+                $alreadyJoined = array();
+
+                foreach ($featureJoins as $featureJoin) {
+                    $fieldname = $featureJoin["fieldname"];
+                    $mappedKey = "cskey_" . $fieldname . "_" . $featureJoin["groupId"] . "_" . $featureJoin["keyId"];
+                    if ($alreadyJoined[$mappedKey]) {
+                        continue;
+                    }
+                    $alreadyJoined[$mappedKey] = 1;
+
+                    $table = $me->getTablename();
+                    $select->joinLeft(
+                        array($mappedKey => "object_classificationstore_data_" . $class->getId()),
+                        "("
+                        . $mappedKey . ".o_id = " . $table . ".o_id"
+                        . " and " . $mappedKey . ".fieldname = " . $db->quote($fieldname)
+                        . " and " . $mappedKey . ".keyId=" . $featureJoin["keyId"]
+                        . " and " . $mappedKey . ".language = " . $db->quote($requestedLanguage)
+                        . ")",
+                        array(
+                            $mappedKey => "value"
+                        )
+                    );
+                }
+
+                $havings = $featureFilters["conditions"];
+                if ($havings) {
+                    $havings = implode(" AND ", $havings);
+                    $select->having($havings);
+                }
+            });
+        }
+
     }
 }

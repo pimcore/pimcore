@@ -165,7 +165,7 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
      */
     public function getForCsvExport($object, $params = array())
     {
-        $data = $this->getDataFromObjectParam($object);
+        $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof Object\Data\Geopoint) {
             //TODO latitude and longitude should be switched - but doing this we will loose compatitbilty to old export files
             return $data->getLatitude() . "," . $data->getLongitude();

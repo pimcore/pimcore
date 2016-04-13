@@ -654,6 +654,15 @@ class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
 
     public function exportAction()
     {
+        $requestedLanguage = $this->getParam("language");
+        if ($requestedLanguage) {
+            if ($requestedLanguage != "default") {
+                $this->setLanguage($requestedLanguage, true);
+            }
+        } else {
+            $requestedLanguage = $this->getLanguage();
+        }
+
         $folder = Object::getById($this->getParam("folderId"));
         $class = Object\ClassDefinition::getById($this->getParam("classId"));
 
@@ -666,8 +675,15 @@ class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         } else {
             $conditionFilters = array();
         }
+
+        $featureJoins = array();
+
         if ($this->getParam("filter")) {
             $conditionFilters[] = Object\Service::getFilterCondition($this->getParam("filter"), $class);
+            $featureFilters = Object\Service::getFeatureFilters($this->getParam("filter"), $class);
+            if ($featureFilters) {
+                $featureJoins = array_merge($featureJoins, $featureFilters["joins"]);
+            }
         }
         if ($this->getParam("condition")) {
             $conditionFilters[] = "(" . $this->getParam("condition") . ")";
@@ -708,7 +724,10 @@ class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
             }
         }
 
+        Object\Service::addGridFeatureJoins($list, $featureJoins, $class, $featureFilters, $requestedLanguage);
         $list->load();
+
+        $mappedFieldnames = array();
 
         $objects = array();
         \Logger::debug("objects in list:" . count($list->getObjects()));
@@ -716,8 +735,12 @@ class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
             if ($fields) {
                 $objectData = [];
                 foreach ($fields as $field) {
-                    $fieldData = $this->getCsvFieldData($field, $object);
-                    $objectData[$field] = $fieldData;
+                    $fieldData = $this->getCsvFieldData($field, $object, $requestedLanguage);
+                    if (!$mappedFieldnames[$field]) {
+                        $mappedFieldnames[$field] = $this->mapFieldname($field);
+                    }
+
+                    $objectData[$mappedFieldnames[$field]] = $fieldData;
                 }
                 $objects[] = $objectData;
             } else {
@@ -759,8 +782,29 @@ class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         exit;
     }
 
+    protected function mapFieldname($field) {
+        if (substr($field, 0, 1) == "~") {
+            $fieldParts = explode("~", $field);
+            $type = $fieldParts[1];
 
-    protected function getCsvFieldData($field, $object)
+            if ($type == "classificationstore") {
+                $fieldname = $fieldParts[2];
+                $groupKeyId = explode("-", $fieldParts[3]);
+                $groupId = $groupKeyId[0];
+                $keyId = $groupKeyId[1];
+
+                $groupConfig = Object\Classificationstore\GroupConfig::getById($groupId);
+                $keyConfig = Object\Classificationstore\KeyConfig::getById($keyId);
+
+                $field = $fieldname . "~" . $groupConfig->getName() . "~" . $keyConfig->getName();
+            }
+        }
+        return $field;
+    }
+
+
+
+    protected function getCsvFieldData($field, $object, $requestedLanguage)
     {
 
         //check if field is systemfield
@@ -785,6 +829,33 @@ class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
 
                 // check for objects bricks and localized fields
                 if (substr($field, 0, 1) == "~") {
+                    $type = $fieldParts[1];
+
+                    if ($type == "classificationstore") {
+                        $fieldname = $fieldParts[2];
+                        $groupKeyId = explode("-", $fieldParts[3]);
+                        $groupId = $groupKeyId[0];
+                        $keyId = $groupKeyId[1];
+                        $getter = "get" . ucfirst($fieldname);
+                        if (method_exists($object, $getter)) {
+                            /** @var  $classificationStoreData Classificationstore */
+                            $keyConfig = Pimcore\Model\Object\Classificationstore\KeyConfig::getById($keyId);
+                            $type = $keyConfig->getType();
+                            $definition = json_decode($keyConfig->getDefinition());
+                            $fieldDefinition = \Pimcore\Model\Object\Classificationstore\Service::getFieldDefinitionFromJson($definition, $type);
+
+                            return $fieldDefinition->getForCsvExport($object,
+                                array("context" => array(
+                                    "containerType" => "classificationstore",
+                                    "fieldname" => $fieldname,
+                                    "groupId" => $groupId,
+                                    "keyId" => $keyId,
+                                    "language" => $requestedLanguage
+                                ))
+                            );
+
+                        }
+                    }
                     //key value store - ignore for now
                 } elseif (count($fieldParts) > 1) {
                     // brick

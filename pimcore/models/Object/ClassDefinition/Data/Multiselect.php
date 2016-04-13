@@ -239,7 +239,7 @@ class Multiselect extends Model\Object\ClassDefinition\Data
      */
     public function getForCsvExport($object, $params = array())
     {
-        $data = $this->getDataFromObjectParam($object);
+        $data = $this->getDataFromObjectParam($object, $params);
         if (is_array($data)) {
             return implode(",", $data);
         } else {
@@ -263,13 +263,26 @@ class Multiselect extends Model\Object\ClassDefinition\Data
      * @param  $value
      * @param  $operator
      * @return string
-     *
      */
     public function getFilterCondition($value, $operator)
     {
+        return $this->getFilterConditionExt($value, $operator, array(
+                "name" => $this->name)
+        );
+    }
+
+    /**
+     * returns sql query statement to filter according to this data types value(s)
+     * @param  $value
+     * @param  $operator
+     * @param  $params optional params used to change the behavior
+     * @return string
+     */
+    public function getFilterConditionExt($value, $operator, $params = array()) {
         if ($operator == "=") {
+            $name = $params["name"] ? $params["name"] : $this->name;
             $value = "'%".$value."%'";
-            return "`".$this->name."` LIKE ".$value." ";
+            return "`".$name."` LIKE ".$value." ";
         }
     }
 

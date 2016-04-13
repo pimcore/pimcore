@@ -299,7 +299,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
      */
     public function getForCsvExport($object, $params = array())
     {
-        $data = $this->getDataFromObjectParam($object);
+        $data = $this->getDataFromObjectParam($object, $params);
         if (is_array($data)) {
             $paths = array();
             foreach ($data as $metaObject) {

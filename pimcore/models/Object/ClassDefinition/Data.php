@@ -612,8 +612,22 @@ abstract class Data
      */
     public function getFilterCondition($value, $operator)
     {
+        return $this->getFilterConditionExt($value, $operator, array(
+            "name" => $this->name)
+        );
+    }
+
+    /**
+     * returns sql query statement to filter according to this data types value(s)
+     * @param  $value
+     * @param  $operator
+     * @param  $params optional params used to change the behavior
+     * @return string
+     */
+    public function getFilterConditionExt($value, $operator, $params = array()) {
         $db = \Pimcore\Db::get();
-        $key = $db->quoteIdentifier($this->name);
+        $name = $params["name"] ? $params["name"] : $this->name;
+        $key = $db->quoteIdentifier($name);
 
         if ($value === "NULL") {
             if ($operator == '=') {
@@ -634,7 +648,9 @@ abstract class Data
         } else {
             return "";
         }
+
     }
+
 
     /**
      * Creates getter code which is used for generation of php file for object classes using this data type
@@ -1063,7 +1079,23 @@ abstract class Data
                         $data = $object->getLocalizedValue($this->getName(), $params["language"], true);
                     }
                 }
+
+            } else if ($context["containerType"] == "classificationstore") {
+                $fieldname = $context["fieldname"];
+                $getter = "get" . ucfirst($fieldname);
+                if (method_exists($object, $getter)) {
+
+                    $groupId = $context["groupId"];
+                    $keyId = $context["keyId"];
+                    $language = $context["language"];
+
+                    /** @var  $classificationStoreData Object\Classificationstore */
+                    $classificationStoreData = $object->$getter();
+                    $data = $classificationStoreData->getLocalizedKeyValue($groupId, $keyId, $language, true, true);
+                    return $data;
+                }
             }
+
         }
 
         if (!$resolved) {

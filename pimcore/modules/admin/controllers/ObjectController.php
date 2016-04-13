@@ -5,7 +5,7 @@
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
  * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in 
+ * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
@@ -1428,6 +1428,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 //                        $keyid = $parts[3];
                         // key value, ignore for now
                         if ($type == "classificationstore") {
+
                         }
                     } elseif (count($parts) > 1) {
                         $bricks[$parts[0]] = $parts[0];
@@ -1453,7 +1454,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                 if (!(substr($orderKey, 0, 1) == "~")) {
                     if (array_key_exists($orderKey, $colMappings)) {
                         $orderKey = $colMappings[$orderKey];
-                    } elseif ($class->getFieldDefinition($orderKey) instanceof  Object\ClassDefinition\Data\QuantityValue) {
+                    } else if ($class->getFieldDefinition($orderKey) instanceof  Object\ClassDefinition\Data\QuantityValue) {
                         $orderKey = "concat(" . $orderKey . "__unit, " . $orderKey . "__value)";
                         $doNotQuote = true;
                     }
@@ -1469,9 +1470,15 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                 $conditionFilters[] = "(o_path = '" . $folder->getFullPath() . "' OR o_path LIKE '" . str_replace("//", "/", $folder->getFullPath() . "/") . "%')";
             }
 
+            $featureJoins = array();
+
             // create filter condition
             if ($this->getParam("filter")) {
                 $conditionFilters[] = Object\Service::getFilterCondition($this->getParam("filter"), $class);
+                $featureFilters = Object\Service::getFeatureFilters($this->getParam("filter"), $class);
+                if ($featureFilters) {
+                    $featureJoins = array_merge($featureJoins, $featureFilters["joins"]);
+                }
             }
             if ($this->getParam("condition")) {
                 $conditionFilters[] = "(" . $this->getParam("condition") . ")";
@@ -1488,11 +1495,9 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             $list->setLimit($limit);
             $list->setOffset($start);
 
-            $featureJoins = array();
 
             if ($sortingSettings["isFeature"]) {
-                $orderKey = "cskey_" . $sortingSettings["keyId"];
-                $sortingSettings["language"] = $requestedLanguage;
+                $orderKey = "cskey_" . $sortingSettings["fieldname"] . "_" . $sortingSettings["groupId"]. "_" . $sortingSettings["keyId"];
                 $list->setOrderKey($orderKey);
                 $list->setGroupBy("o_id");
 
@@ -1506,30 +1511,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                 $list->setObjectTypes([Object\AbstractObject::OBJECT_TYPE_OBJECT, Object\AbstractObject::OBJECT_TYPE_VARIANT]);
             }
 
-            if ($featureJoins) {
-                $list->onCreateQuery(function (Zend_Db_Select $select) use ($featureJoins, $class) {
-                    $db = \Pimcore\Db::get();
-
-                    foreach ($featureJoins as $featureJoin) {
-                        $orderKey = "cskey_" . $featureJoin["keyId"];
-                        $fieldname = $featureJoin["fieldname"];
-
-                        $table = $this->getTablename();
-                        $select->joinLeft(
-                            array($orderKey => "object_classificationstore_data_" . $class->getId()),
-                            "("
-                            . $orderKey . ".o_id = " . $table . ".o_id"
-                            . " and fieldname = " . $db->quote($fieldname)
-                            . " and " . $orderKey . ".keyId=" . $featureJoin["keyId"]
-                            . " and " . $orderKey . ".language = " . $db->quote($featureJoin["language"])
-                            . ")",
-                            array(
-                                $orderKey => "value"
-                            )
-                        );
-                    }
-                });
-            }
+            Object\Service::addGridFeatureJoins($list, $featureJoins, $class, $featureFilters, $requestedLanguage);
 
             $list->load();
 

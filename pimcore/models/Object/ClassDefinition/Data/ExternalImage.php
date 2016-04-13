@@ -209,7 +209,7 @@ class ExternalImage extends Model\Object\ClassDefinition\Data
      */
     public function getForCsvExport($object, $params = array())
     {
-        $data = $this->getDataFromObjectParam($object);
+        $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof Model\Object\Data\ExternalImage) {
             return $data->getUrl();
         }

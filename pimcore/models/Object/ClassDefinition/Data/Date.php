@@ -220,7 +220,7 @@ class Date extends Model\Object\ClassDefinition\Data
      */
     public function getForCsvExport($object, $params = array())
     {
-        $data = $this->getDataFromObjectParam($object);
+        $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof \Zend_Date) {
             return $data->toString("Y-m-d", "php");
         } elseif ($data instanceof \DateTime) {

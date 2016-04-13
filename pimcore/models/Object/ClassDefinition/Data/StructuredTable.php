@@ -400,7 +400,7 @@ class StructuredTable extends Model\Object\ClassDefinition\Data
      */
     public function getForCsvExport($object, $params = array())
     {
-        $value = $this->getDataFromObjectParam($object);
+        $value = $this->getDataFromObjectParam($object, $params);
 
         if ($value instanceof Object\Data\StructuredTable) {
             $string = "";

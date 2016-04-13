@@ -399,7 +399,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
      */
     public function getForCsvExport($object, $params = array())
     {
-        $data = $this->getDataFromObjectParam($object);
+        $data = $this->getDataFromObjectParam($object,$params);
         if ($data instanceof Element\ElementInterface) {
             return Element\Service::getType($data).":".$data->getFullPath();
         } else {

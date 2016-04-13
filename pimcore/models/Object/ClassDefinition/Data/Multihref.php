@@ -506,7 +506,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
      */
     public function getForCsvExport($object, $params = array())
     {
-        $data = $this->getDataFromObjectParam($object);
+        $data = $this->getDataFromObjectParam($object, $params);
         if (is_array($data)) {
             $paths = array();
             foreach ($data as $eo) {
