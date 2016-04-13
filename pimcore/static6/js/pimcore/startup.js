@@ -721,7 +721,7 @@ pimcore["intervals"]["translations_admin_missing"] = window.setInterval(function
 
 // session renew
 pimcore["intervals"]["ping"] = window.setInterval(function () {
-
+return;
     Ext.Ajax.request({
         url:"/admin/misc/ping",
         success:function (response) {

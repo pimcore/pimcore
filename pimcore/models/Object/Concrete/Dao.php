@@ -5,7 +5,7 @@
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
  * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in 
+ * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @category   Pimcore
@@ -181,7 +181,7 @@ class Dao extends Model\Object\AbstractObject\Dao
                 }
             }
         }
-        
+
         // empty relation table except the untouchable fields (eg. lazy loading fields)
         if (count($untouchable) > 0) {
             $untouchables = "'" . implode("','", $untouchable) . "'";
@@ -190,7 +190,7 @@ class Dao extends Model\Object\AbstractObject\Dao
             $this->db->delete("object_relations_" . $this->model->getClassId(), $this->db->quoteInto("src_id = ? AND ownertype = 'object'",  $this->model->getId()));
         }
 
-        
+
         $inheritedValues = Object\AbstractObject::doGetInheritedValues();
         Object\AbstractObject::setGetInheritedValues(false);
 
@@ -260,6 +260,11 @@ class Dao extends Model\Object\AbstractObject\Dao
                         foreach ($columnNames as $columnName) {
                             if (array_key_exists($columnName, $parentData)) {
                                 $data[$columnName] = $parentData[$columnName];
+                                if (is_array($insertData)) {
+                                    $insertData[$columnName] = $parentData[$columnName];
+                                } else {
+                                    $insertData = $parentData[$columnName];
+                                }
                             }
                         }
                     }
