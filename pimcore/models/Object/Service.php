@@ -1427,7 +1427,7 @@ class Service extends Model\Element\Service
                     }
                     $alreadyJoined[$mappedKey] = 1;
 
-                    $table = $me->getTablename();
+                    $table = $me->getDao()->getTableName();
                     $select->joinLeft(
                         array($mappedKey => "object_classificationstore_data_" . $class->getId()),
                         "("
