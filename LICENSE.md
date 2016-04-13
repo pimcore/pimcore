@@ -2,7 +2,7 @@
 Copyright (C) 2016  pimcore GmbH
 
 This software is available under two different licenses: 
-* GNU General Public License version 3 (GPLv3)
+* GNU General Public License version 3 (GPLv3) as Pimcore Community Edition
 * Pimcore Enterprise License (PEL)
 
 The default pimcore license, without a valid Pimcore Enterprise License agreement, is the Open-Source GPLv3 license.
