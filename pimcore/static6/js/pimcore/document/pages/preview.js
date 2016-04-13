@@ -17,6 +17,8 @@ pimcore.document.pages.preview = Class.create({
     initialize: function(page) {
         this.page = page;
         this.mode = "full";
+
+        this.availableHeight = null;
     },
 
 
@@ -30,65 +32,22 @@ pimcore.document.pages.preview = Class.create({
             var tbar = [];
             if(this.page.getType() == "page") {
 
-                var previewModes = [
-                    {type: "desktop", name: '10" Netbook', width: 1024, height: 600, icon: ""},
-                    {type: "desktop", name: '12" Netbook', width: 1024, height: 768, icon: ""},
-                    {type: "desktop", name: '13" Netbook', width: 1280, height: 800, icon: ""},
-                    {type: "desktop", name: '15" Netbook', width: 1366, height: 768, icon: ""},
-                    {type: "desktop", name: '19" Desktop', width: 1440, height: 900, icon: ""},
-                    {type: "desktop", name: '20" Desktop', width: 1600, height: 900, icon: ""},
-                    {type: "desktop", name: '22" Desktop', width: 1680, height: 1050, icon: ""},
-                    {type: "desktop", name: '23" Desktop', width: 1920, height: 1080, icon: ""},
-                    {type: "desktop", name: '24" Desktop', width: 1920, height: 1200, icon: ""},
-                    {type: "tablet", name: 'Velocity Cruz', width: 800, height: 600, icon: ""},
-                    {type: "tablet", name: 'Samsung Galaxy', width: 1024, height: 600, icon: ""},
-                    {type: "tablet", name: 'Apple iPad (mini)', width: 1024, height: 768, icon: ""},
-                    {type: "tablet", name: 'Google Nexus 10', width: 1280, height: 800, icon: ""},
-                    {type: "tablet", name: 'Google Nexus 7', width: 960, height: 600, icon: ""},
-                    {type: "mobile", name: 'Apple iPhone 3/4', width: 320, height: 480, icon: ""},
-                    {type: "mobile", name: 'Apple iPhone 5 (c/s)', width: 320, height: 568, icon: ""},
-                    {type: "mobile", name: 'Apple iPhone 6', width: 375, height: 667, icon: ""},
-                    {type: "mobile", name: 'Apple iPhone 6 Plus', width: 414, height: 736, icon: ""},
-                    {type: "mobile", name: 'LG Optimus S', width: 320, height: 480, icon: ""},
-                    {type: "mobile", name: 'Google Nexus S', width: 480, height: 800, icon: ""},
-                    {type: "mobile", name: 'Google Nexus 5 (five)', width: 360, height: 598, icon: ""},
-                    {type: "tv", name: '480p TV', width: 640, height: 480, icon: ""},
-                    {type: "tv", name: '720p TV', width: 1280, height: 720, icon: ""},
-                    {type: "tv", name: '1080p TV', width: 1920, height: 1080, icon: ""}
-                ];
-
-                var menues = {
-                    desktop: [],
-                    tablet: [],
-                    mobile: [],
-                    tv: []
-                };
-
-
-                for(var i=0; i<previewModes.length; i++) {
-                    menues[previewModes[i]["type"]].push({
-                        text: previewModes[i]["name"] + " (" + previewModes[i]["width"] + "x"
-                                                                            + previewModes[i]["height"] + ")",
-                        handler: this.setMode.bind(this, previewModes[i])
-                    });
-                }
-
                 tbar = [{
                     text: "Desktop",
                     iconCls: "pimcore_icon_desktop",
-                    menu: menues["desktop"]
+                    handler: this.setFullMode.bind(this)
                 }, {
                     text: "Tablet",
                     iconCls: "pimcore_icon_tablet",
-                    menu: menues["tablet"]
+                    handler: this.setMode.bind(this, {width: 1024, height: 768})
                 }, {
-                    text: "Mobile",
+                    text: "Phone",
                     iconCls: "pimcore_icon_mobile",
-                    menu: menues["mobile"]
-                }, {
-                    text: "Smart TV",
+                    handler: this.setMode.bind(this, {width: 375, height: 667})
+                },{
+                    text: "Phone",
                     iconCls: "pimcore_icon_tv",
-                    menu: menues["tv"]
+                    handler: this.setMode.bind(this, {width: 667, height: 375})
                 }, "-", {
                     text: t("qr_codes"),
                     iconCls: "pimcore_icon_qrcode",
@@ -168,14 +127,29 @@ pimcore.document.pages.preview = Class.create({
         return this.layout;
     },
 
+    setFullMode: function () {
+        this.getIframe().applyStyles({
+            position: "relative",
+            border: "0",
+            width: "100%",
+            height: (this.availableHeight-7) + "px",
+            top: "initial",
+            left: "initial"
+        });
+    },
+
     setMode: function (mode) {
         var iframe = this.getIframe();
-        var availableWidth = this.framePanel.getWidth()-50;
-        var availableHeight = this.framePanel.getHeight()-50;
+        var availableWidth = this.framePanel.getWidth()-10;
+        var availableHeight = this.framePanel.getHeight()-10;
 
-        if(availableWidth < mode["width"] || availableHeight < mode["height"]) {
+        if(availableWidth < mode["width"]) {
             Ext.MessageBox.alert(t("error"), t("screen_size_to_small"));
             return;
+        }
+
+        if(availableHeight < mode["height"]) {
+            mode["height"] = availableHeight;
         }
 
         var top = Math.floor((availableHeight - mode["height"])/2);
@@ -195,11 +169,13 @@ pimcore.document.pages.preview = Class.create({
         if(this.mode == "full") {
             this.setLayoutFrameDimensions(width, height);
         }
+
+        this.availableHeight = height;
     },
 
     setLayoutFrameDimensions: function (width, height) {
         this.getIframe().setStyle({
-            height: (height) + "px"
+            height: (height-7) + "px"
         });
     },
 
