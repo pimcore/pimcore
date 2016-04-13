@@ -1757,7 +1757,7 @@
 								"columnLength":255,
 								"phpdocType":"string",
 								"regex":"",
-								"name":"deliveryFirnstname",
+								"name":"deliveryFirstname",
 								"title":"Firstname",
 								"tooltip":"",
 								"mandatory":false,

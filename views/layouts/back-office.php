@@ -67,7 +67,7 @@
                 foreach($arrActions as $controller => $actions):
                     foreach($actions as $action): ?>
                     <li class="<?= $currentController == 'admin-' . $controller && $currentAction == $action ? 'active' : '' ?>">
-                        <a href="<?= $this->url(['action' => $action, 'controller' => 'admin-' . $controller, 'module' => 'OnlineShop'], null, true); ?>"><?= $this->translate('online-shop.back-office.' . $controller.'-'.$action) ?></a>
+                        <a href="<?= $this->url(['action' => $action, 'controller' => 'admin-' . $controller, 'module' => 'EcommerceFramework'], null, true); ?>"><?= $this->translate('online-shop.back-office.' . $controller.'-'.$action) ?></a>
                     </li>
                     <?php endforeach; ?>
                 <?php endforeach; ?>

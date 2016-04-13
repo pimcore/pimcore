@@ -368,7 +368,7 @@ class EcommerceFramework_AdminOrderController extends Pimcore\Controller\Action\
 
 
             // redir
-            $url = $this->view->url(['action' => 'detail', 'controller' => 'admin-order', 'module' => 'OnlineShop', 'id' => $order->getId()], 'plugin', true);
+            $url = $this->view->url(['action' => 'detail', 'controller' => 'admin-order', 'module' => 'EcommerceFramework', 'id' => $order->getId()], 'plugin', true);
             $this->redirect( $url );
         }
     }
@@ -397,7 +397,7 @@ class EcommerceFramework_AdminOrderController extends Pimcore\Controller\Action\
 
 
             // redir
-            $url = $this->view->url(['action' => 'detail', 'controller' => 'admin-order', 'module' => 'OnlineShop', 'id' => $order->getId()], 'plugin', true);
+            $url = $this->view->url(['action' => 'detail', 'controller' => 'admin-order', 'module' => 'EcommerceFramework', 'id' => $order->getId()], 'plugin', true);
             $this->redirect( $url );
         }
     }
@@ -426,7 +426,7 @@ class EcommerceFramework_AdminOrderController extends Pimcore\Controller\Action\
 
 
             // redir
-            $url = $this->view->url(['action' => 'detail', 'controller' => 'admin-order', 'module' => 'OnlineShop', 'id' => $order->getId()], 'plugin', true);
+            $url = $this->view->url(['action' => 'detail', 'controller' => 'admin-order', 'module' => 'EcommerceFramework', 'id' => $order->getId()], 'plugin', true);
             $this->redirect( $url );
         }
     }

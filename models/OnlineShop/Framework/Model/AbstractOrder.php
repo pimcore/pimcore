@@ -318,17 +318,36 @@ class AbstractOrder extends \Pimcore\Model\Object\Concrete {
     /**
      * @return string
      */
-    public function getCustomerName()
+    public function getCustomerFirstname()
     {
         throw new \OnlineShop\Framework\Exception\UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
     }
 
     /**
-     * @param string $customerName
+     * @param string $customerFirstame
      *
      * @return $this
      */
-    public function setCustomerName($customerName)
+    public function setCustomerFirstname($customerFirstname)
+    {
+        throw new \OnlineShop\Framework\Exception\UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
+    }
+
+
+    /**
+     * @return string
+     */
+    public function getCustomerLastname()
+    {
+        throw new \OnlineShop\Framework\Exception\UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
+    }
+
+    /**
+     * @param string $customerLastame
+     *
+     * @return $this
+     */
+    public function setCustomerLastname($customerLastname)
     {
         throw new \OnlineShop\Framework\Exception\UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
     }
@@ -444,17 +463,35 @@ class AbstractOrder extends \Pimcore\Model\Object\Concrete {
     /**
      * @return string
      */
-    public function getDeliveryName()
+    public function getDeliveryFirstname()
     {
         throw new \OnlineShop\Framework\Exception\UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
     }
 
     /**
-     * @param string $deliveryName
+     * @param string $deliveryFirstname
      *
      * @return $this
      */
-    public function setDeliveryName($deliveryName)
+    public function setDeliveryFirstname($deliveryFirstname)
+    {
+        throw new \OnlineShop\Framework\Exception\UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
+    }
+
+    /**
+     * @return string
+     */
+    public function getDeliveryLastname()
+    {
+        throw new \OnlineShop\Framework\Exception\UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
+    }
+
+    /**
+     * @param string $deliveryLastname
+     *
+     * @return $this
+     */
+    public function setDeliveryLastname($deliveryLastname)
     {
         throw new \OnlineShop\Framework\Exception\UnsupportedException(__FUNCTION__ . " is not implemented for " . get_class($this));
     }
@@ -467,7 +504,7 @@ class AbstractOrder extends \Pimcore\Model\Object\Concrete {
     public function hasDeliveryAddress()
     {
         return
-            $this->getDeliveryName() != ''
+            ($this->getDeliveryFirstname() != '' || $this->getDeliveryLastname())
             && $this->getDeliveryStreet()
             && $this->getDeliveryCity()
             && $this->getDeliveryZip()

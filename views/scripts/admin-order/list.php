@@ -114,7 +114,7 @@ $this->headScript()->appendFile('/plugins/EcommerceFramework/static/vendor/picke
         <tr>
             <td>
                 <?php
-                $urlDetail = $this->url(['action' => 'detail', 'controller' => 'admin-order', 'module' => 'OnlineShop', 'id' => $item->getOrderId()], null, true);
+                $urlDetail = $this->url(['action' => 'detail', 'controller' => 'admin-order', 'module' => 'EcommerceFramework', 'id' => $item->getOrderId()], null, true);
                 ?>
                 <a href="<?= $urlDetail ?>"><?= $item->getOrderNumber() ?></a>
             </td>

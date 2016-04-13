@@ -26,7 +26,7 @@ $currency = $orderAgent->getCurrency();
             <div class="panel-heading">
                 <div class="panel-title row" style="font-weight: bold;">
                     <?php
-                    $urlList = $this->url(['action' => 'list', 'controller' => 'admin-order', 'module' => 'OnlineShop'], null);
+                    $urlList = $this->url(['action' => 'list', 'controller' => 'admin-order', 'module' => 'EcommerceFramework'], null);
                     ?>
                     <div class="col-sm-6">
                         <a href="<?= $urlList ?>"><?= $this->translate('online-shop.back-office.order-list') ?></a>
@@ -137,7 +137,7 @@ $currency = $orderAgent->getCurrency();
                                 $urlEdit = $this->url([
                                     'action' => 'item-edit'
                                     , 'controller' => 'admin-order'
-                                    , 'module' => 'OnlineShop'
+                                    , 'module' => 'EcommerceFramework'
                                     , 'id' => $item->getId()
                                 ]);
                                 ?>
@@ -153,7 +153,7 @@ $currency = $orderAgent->getCurrency();
                                                 $urlCancel = $this->url([
                                                     'action' => 'item-cancel'
                                                     , 'controller' => 'admin-order'
-                                                    , 'module' => 'OnlineShop'
+                                                    , 'module' => 'EcommerceFramework'
                                                     , 'id' => $item->getId()
                                                 ]);
                                                 ?>
@@ -166,7 +166,7 @@ $currency = $orderAgent->getCurrency();
                                                 $urlComplaint = $this->url([
                                                     'action' => 'item-complaint'
                                                     , 'controller' => 'admin-order'
-                                                    , 'module' => 'OnlineShop'
+                                                    , 'module' => 'EcommerceFramework'
                                                     , 'id' => $item->getId()
                                                 ]);
                                                 ?>
@@ -307,9 +307,9 @@ $currency = $orderAgent->getCurrency();
                                 {
                                     echo sprintf('<h4>%1$s</h4>', nl2br($order->getCustomerCompany()));
                                 }
-                                if($order->getCustomerName())
+                                if($order->getCustomerFirstname() || $order->getCustomerLastname())
                                 {
-                                    echo sprintf('%1$s<br/>', $order->getCustomerName());
+                                    echo sprintf('%1$s %2$s<br/>', $order->getCustomerFirstname(), $order->getCustomerLastname());
                                 }
                                 ?>
                                 <?= $order->getCustomerStreet() ?><br/>
@@ -336,9 +336,9 @@ $currency = $orderAgent->getCurrency();
                                 {
                                     echo sprintf('<h4>%1$s</h4>', nl2br($order->getDeliveryCompany()));
                                 }
-                                if($order->getDeliveryName())
+                                if($order->getDeliveryFirstname() || $order->getDeliveryLastname())
                                 {
-                                    echo sprintf('%1$s<br/>', $order->getDeliveryName());
+                                    echo sprintf('%1$s %2$s<br/>', $order->getDeliveryFirstname(), $order->getDeliveryLastname());
                                 }
                                 ?>
                                 <?= $order->getDeliveryStreet() ?><br/>

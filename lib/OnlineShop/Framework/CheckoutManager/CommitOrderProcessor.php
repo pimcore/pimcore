@@ -169,7 +169,7 @@ class CommitOrderProcessor implements ICommitOrderProcessor {
         try {
             $this->sendConfirmationMail($order);
         } catch(\Exception $e) {
-            \Logger::err("Error during sending confirmation e-mail", $e);
+            \Logger::err("Error during sending confirmation e-mail: " . $e);
         }
         return $order;
     }

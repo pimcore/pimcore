@@ -153,7 +153,7 @@ if ($this->paginator) {
                     <div class="col col-sm-4 filter">
                         <h3><i class="glyphicon glyphicon-search"></i> &nbsp;<?=$this->ts('plugin_onlineshop_voucherservice_filter-headline')?></h3>
 
-                        <form class="form-horizontal js-filter-form" action="<?= $this->url(['action' => 'voucher-code-tab', 'id' => $seriesId, 'module' => 'OnlineShop', 'controller' => 'voucher'], 'plugin', true) ?>">
+                        <form class="form-horizontal js-filter-form" action="<?= $this->url(['action' => 'voucher-code-tab', 'id' => $seriesId, 'module' => 'EcommerceFramework', 'controller' => 'voucher'], 'plugin', true) ?>">
                             <div class="form-group">
                                 <div class=" col col-sm-12">
                                     <label><?=$this->ts('plugin_onlineshop_voucherservice_filter-token')?></label>
