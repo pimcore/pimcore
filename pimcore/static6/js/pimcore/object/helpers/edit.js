@@ -262,7 +262,7 @@ pimcore.object.helpers.edit = {
 
 
                 try {
-                    dLayout.on("render", function (metaData) {
+                    dLayout.on("afterrender", function (metaData) {
                         if(metaData && metaData.inherited) {
                             this.markInherited(metaData);
                         }
