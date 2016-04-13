@@ -5,6 +5,8 @@ This software is available under two different licenses:
 * GNU General Public License version 3 (GPLv3)
 * Pimcore Enterprise License (PEL)
 
+The default pimcore license, without a valid Pimcore Enterprise License agreement, is the Open-Source GPLv3 license.
+
 ## GNU General Public License version 3 (GPLv3)
 If you decide to choose the GPLv3 license, you must comply with the following terms: 
 
