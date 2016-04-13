@@ -13574,5 +13574,13 @@
     "term_plural": "",
     "reference": "",
     "comment": ""
+  },
+  {
+    "term": "filter_active",
+    "definition": "Filter active",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
   }
 ]

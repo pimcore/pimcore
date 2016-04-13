@@ -195,11 +195,16 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                 text: t("grid_current_language") + ": " + (this.gridLanguage == "default" ? t("default") : pimcore.available_languages[this.gridLanguage])
             });
 
-            this.toolbarFilterInfo = new Ext.Toolbar.TextItem({
-                text: "",
-                maxWidth: 300,
-                scrollable: 'horizontal'
+            this.toolbarFilterInfo =  new Ext.Button({
+                iconCls: "pimcore_icon_filter_condition",
+                hidden: true,
+                text: '<b>' + t("filter_active") + '</b>',
+                tooltip: t("filter_condition"),
+                handler: function (button) {
+                    Ext.MessageBox.alert(t("filter_condition"), button.pimcore_filter_condition);
+                }.bind(this)
             });
+
 
             this.createSqlEditor();
 

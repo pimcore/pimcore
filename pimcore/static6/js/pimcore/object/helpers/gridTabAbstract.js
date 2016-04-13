@@ -17,11 +17,14 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
     objecttype: 'object',
 
     filterUpdateFunction: function(grid, toolbarFilterInfo) {
+
+
+
         var filterStringConfig = [];
         var filterData = grid.getStore().getFilters().items;
 
         // reset
-        toolbarFilterInfo.setText(" ");
+        toolbarFilterInfo.setTooltip(" ");
 
         if(filterData.length > 0) {
 
@@ -43,7 +46,6 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                 }
 
                 if(value && typeof value == "object") {
-                    console.log(value);
                     filterStringConfig.push(filterData[i].getProperty() + " " + operator + " ("
                     + value.join(" OR ") + ")");
                 } else {
@@ -51,8 +53,12 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                 }
             }
 
-            toolbarFilterInfo.setText("<b>" + t("filter_condition") + ": " + filterStringConfig.join(" AND ") + "</b>");
+            var filterCondition = filterStringConfig.join(" AND ") + "</b>";
+            toolbarFilterInfo.setTooltip("<b>" + t("filter_condition") + ": " + filterCondition);
+            toolbarFilterInfo.pimcore_filter_condition = filterCondition;
+            toolbarFilterInfo.setHidden(false);
         }
+        toolbarFilterInfo.setHidden(filterData.length == 0);
     },
 
 
