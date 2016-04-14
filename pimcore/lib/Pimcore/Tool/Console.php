@@ -115,7 +115,7 @@ class Console
         }
 
         $env = getenv("PIMCORE_ENVIRONMENT") ?: (getenv("REDIRECT_PIMCORE_ENVIRONMENT") ?: false);
-        $cmd = $env ? "PIMCORE_ENVIRONMENT=" . $env . " " . $cmd : "";
+        $cmd = $env ? "PIMCORE_ENVIRONMENT=" . $env . " " . $cmd : $cmd;
 
         \Logger::debug("Executing command `" . $cmd . "` on the current shell");
         $return = shell_exec($cmd);
