@@ -130,12 +130,6 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
                     urlField.getParent().getParent().getParent().show();
                 }
             });
-
-            // HACK - clean all pasted html
-            this.ckeditor.on('paste', function(evt) {
-                evt.data.dataValue = '<!--class="Mso"-->' + evt.data.dataValue;
-            }, null, null, 1);
-
         }
         catch (e) {
             console.log(e);
