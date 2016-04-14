@@ -223,9 +223,10 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
             if ($this->getParam("translationsBaseDocument")) {
                 $translationsBaseDocument = Document::getById($this->getParam("translationsBaseDocument"));
 
-                $document->setProperties($translationsBaseDocument->getProperties());
+                $properties = $translationsBaseDocument->getProperties();
+                $properties = array_merge($properties, $document->getProperties());
+                $document->setProperties($properties);
                 $document->setProperty("language", "text", $this->getParam("language"));
-
                 $document->save();
 
                 $service = new Document\Service();
