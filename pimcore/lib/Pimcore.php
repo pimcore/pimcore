@@ -279,6 +279,11 @@ class Pimcore
         // disable build-in error handler
         $front->setParam('noErrorHandler', true);
 
+        // add Pimple Dependency Injection Container if not set
+        if (null === $front->getParam('container')) {
+            $front->setParam('container', new \Pimple\Container());
+        }
+
         // for admin an other modules directly in the core
         $front->addModuleDirectory(PIMCORE_PATH . "/modules");
         // for plugins

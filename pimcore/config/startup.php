@@ -148,6 +148,10 @@ foreach ($autoloaderClassMapFiles as $autoloaderClassMapFile) {
     }
 }
 
+// add Pimple Dependency Injection Container
+\Zend_Controller_Front::getInstance()
+    ->setParam('container', new Pimple\Container());
+
 // generic pimcore startup
 \Pimcore::setSystemRequirements();
 \Pimcore::initAutoloader();
