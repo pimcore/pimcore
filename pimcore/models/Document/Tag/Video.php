@@ -364,7 +364,7 @@ class Video extends Model\Document\Tag
                 if ($inAdmin && isset($options["editmodeImagePreview"]) && $options["editmodeImagePreview"]) {
                     $code = '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video">';
                     $code .= '<img width="' . $this->getWidth() . '" src="' . $image . '" />';
-                    $code .= '</div';
+                    $code .= '</div>';
                     return $code;
                 }
 
