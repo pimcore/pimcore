@@ -136,7 +136,8 @@ $autoloader->registerNamespace('Pimcore');
 // register class map loader => speed
 $autoloaderClassMapFiles = array(
     PIMCORE_CONFIGURATION_DIRECTORY . "/autoload-classmap.php",
-    PIMCORE_PATH . "/config/autoload-classmap.php"
+    PIMCORE_PATH . "/config/autoload-classmap.php",
+    PIMCORE_WEBSITE_PATH . "/config/autoload-classmap.php"
 );
 
 foreach ($autoloaderClassMapFiles as $autoloaderClassMapFile) {
