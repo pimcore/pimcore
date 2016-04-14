@@ -61,7 +61,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
         if ($this->onCreateQueryCallback) {
             $closure = $this->onCreateQueryCallback;
-            $closure->call($this, $select);
+            $closure($select);
         }
 
 

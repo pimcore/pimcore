@@ -5,7 +5,7 @@
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
  * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in 
+ * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @category   Pimcore
@@ -38,10 +38,17 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $condition .= Object\Classificationstore\KeyGroupRelation\Dao::TABLE_NAME_RELATIONS
             . ".keyId = " . Object\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS . ".id";
 
+        $resourceGroupName = $this->model->getResolveGroupName();
+
+        if ($resourceGroupName) {
+            $condition .= " and " . Object\Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS . ".id = "
+                . Object\Classificationstore\KeyGroupRelation\Dao::TABLE_NAME_RELATIONS . ".groupId";
+        }
+
         $sql = "SELECT " . Object\Classificationstore\KeyGroupRelation\Dao::TABLE_NAME_RELATIONS . ".*,"
             . Object\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS . ".*";
 
-        $resourceGroupName = $this->model->getResolveGroupName();
+
         if ($resourceGroupName) {
             $sql .= ", " . Object\Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS . ".name as groupName";
         }

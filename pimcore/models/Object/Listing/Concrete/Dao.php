@@ -81,7 +81,7 @@ class Dao extends Model\Object\Listing\Dao
 
         if ($this->onCreateQueryCallback) {
             $closure = $this->onCreateQueryCallback;
-            $closure->call($this, $select);
+            $closure($select);
         }
 
         return $select;
@@ -131,7 +131,7 @@ class Dao extends Model\Object\Listing\Dao
      * @throws \Exception
      * @throws \Zend_Exception
      */
-    protected function getTableName()
+    public function getTableName()
     {
         if (empty($this->tableName)) {
 

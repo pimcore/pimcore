@@ -231,6 +231,7 @@ pimcore.object.classificationstore.relationSelectionWindow = Class.create({
 
         this.store = new Ext.data.Store({
             remoteSort: true,
+            remoteFilter: true,
             proxy: proxy,
             fields: readerFields
         });
@@ -256,7 +257,6 @@ pimcore.object.classificationstore.relationSelectionWindow = Class.create({
             columnLines: true,
             bodyCls: "pimcore_editable_grid",
             stripeRows: true,
-            remoteFilter: true,
             selModel: Ext.create('Ext.selection.RowModel', {
                 mode: 'MULTI'
             }),

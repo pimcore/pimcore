@@ -575,7 +575,10 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
 
         $storeId = $this->getParam("storeId");
 
-        $mapping = array("keyName" => "name", "keyDescription" => "description");
+        $mapping = array(
+            "groupName" => Object\Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS .".name",
+            "keyName" => Object\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS .".name",
+            "keyDescription" => Object\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS. ".description");
 
         $start = 0;
         $limit = 15;
@@ -617,7 +620,6 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
 
         if ($this->getParam("filter")) {
             $db = Db::get();
-            $condition = "";
             $filterString = $this->getParam("filter");
             $filters = json_decode($filterString);
 
@@ -625,8 +627,8 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
 
             foreach ($filters as $f) {
                 $count++;
-                $fieldname = $mapping[$f->field];
-                $conditionParts[]= " AND " .$db->getQuoteIdentifierSymbol() . $fieldname . $db->getQuoteIdentifierSymbol() . " LIKE " . $db->quote("%" . $f->value . "%");
+                $fieldname = $mapping[$f->property];
+                $conditionParts[]= $fieldname . " LIKE " . $db->quote("%" . $f->value . "%");
             }
         }
 
