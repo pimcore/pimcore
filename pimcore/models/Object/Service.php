@@ -1434,6 +1434,7 @@ class Service extends Model\Element\Service
                         "("
                         . $mappedKey . ".o_id = " . $table . ".o_id"
                         . " and " . $mappedKey . ".fieldname = " . $db->quote($fieldname)
+                        . " and " . $mappedKey . ".groupId=" . $featureJoin["groupId"]
                         . " and " . $mappedKey . ".keyId=" . $featureJoin["keyId"]
                         . " and " . $mappedKey . ".language = " . $db->quote($requestedLanguage)
                         . ")",
