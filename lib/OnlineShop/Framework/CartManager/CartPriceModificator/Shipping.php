@@ -17,6 +17,7 @@
 
 namespace OnlineShop\Framework\CartManager\CartPriceModificator;
 use OnlineShop\Framework\CartManager\ICart;
+use OnlineShop\Framework\PriceSystem\IModificatedPrice;
 
 /**
  * Class Shipping
@@ -49,9 +50,8 @@ class Shipping implements IShipping
 
     /**
      * @param \OnlineShop\Framework\PriceSystem\IPrice $currentSubTotal
-     * @param ICart  $cart
-     *
-     * @return \OnlineShop_Framework_IModificatedPrice
+     * @param ICart $cart
+     * @return IModificatedPrice
      */
     public function modify(\OnlineShop\Framework\PriceSystem\IPrice $currentSubTotal, ICart $cart)
     {
