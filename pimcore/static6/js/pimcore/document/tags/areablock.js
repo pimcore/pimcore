@@ -782,6 +782,28 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                 x = Ext.getBody().getWidth()-areaBlockToolbarSettings["x"]-areaBlockToolbarSettings["width"];
             }
 
+            var tbId = this.toolbarGlobalVar,
+                toolbarPosition = localStorage.getItem("pimcore_toolbar_position");
+
+            if(!toolbarPosition) {
+                toolbarPosition = {};
+            } else {
+                toolbarPosition = JSON.parse(toolbarPosition);
+            }
+
+            if( !toolbarPosition[tbId] ) {
+                toolbarPosition[tbId] = { x : x, y : areaBlockToolbarSettings["y"], closed : false }
+            }
+
+            //now check if xPos is not out of view.
+            if( toolbarPosition[tbId].x > Ext.getBody().getWidth() ) {
+                toolbarPosition[tbId].x =  Ext.getBody().getWidth()-areaBlockToolbarSettings["width"] - 20
+            }
+
+            var storeToolbarState = function() {
+                localStorage.setItem("pimcore_toolbar_position", JSON.stringify(toolbarPosition));
+            };
+
             var toolbar = new Ext.Window({
                 title: areaBlockToolbarSettings.title,
                 width: areaBlockToolbarSettings.width,
@@ -791,12 +813,31 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                 autoHeight: true,
                 style: "position:fixed;",
                 collapsible: true,
+                expandOnShow : !toolbarPosition[tbId].closed,
+                collapsed: toolbarPosition[tbId].closed,
                 cls: "pimcore_areablock_toolbar",
                 closable: false,
-                x: x,
-                y: areaBlockToolbarSettings["y"],
-                items: buttons
+                x: toolbarPosition[tbId].x,
+                y: toolbarPosition[tbId].y,
+                items: buttons,
+                listeners: {
+                    collapse: function(p, eOpts) {
+                        toolbarPosition[tbId].closed = true;
+                        storeToolbarState();
+                    },
+                    expand: function(p, eOpts) {
+                        toolbarPosition[tbId].closed = false;
+                        storeToolbarState();
+                    },
+                    move: function (win, x, y) {
+                        toolbarPosition[tbId].x = Math.max( 20, x );
+                        toolbarPosition[tbId].y = Math.max( 20, y );
+                        storeToolbarState();
+                    }
+                }
             });
+
+            storeToolbarState();
 
             toolbar.show();
 
