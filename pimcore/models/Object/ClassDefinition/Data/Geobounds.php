@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -92,14 +92,14 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
      * @param array $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
-     * @return string 
+     * @return string
      */
     public function getDataFromResource($data, $object = null, $params = array())
     {
         if ($data[$this->getName() . "__NElongitude"] && $data[$this->getName() . "__NElatitude"] && $data[$this->getName() . "__SWlongitude"] && $data[$this->getName() . "__SWlatitude"]) {
             $ne = new Object\Data\Geopoint($data[$this->getName() . "__NElongitude"], $data[$this->getName() . "__NElatitude"]);
             $sw = new Object\Data\Geopoint($data[$this->getName() . "__SWlongitude"], $data[$this->getName() . "__SWlatitude"]);
-            
+
             return new Object\Data\Geobounds($ne, $sw);
         }
         return;
@@ -154,7 +154,7 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
         if ($data["NElongitude"] !== null && $data["NElatitude"] !== null && $data["SWlongitude"] !== null && $data["SWlatitude"] !== null) {
             $ne = new Object\Data\Geopoint($data["NElongitude"], $data["NElatitude"]);
             $sw = new Object\Data\Geopoint($data["SWlongitude"], $data["SWlatitude"]);
-            
+
             return new Object\Data\Geobounds($ne, $sw);
         }
         return;
@@ -245,7 +245,7 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
      * @return mixed|void
      * @throws \Exception
      */
-    public function getFromWebserviceImport($value, $object = null, $idMapper = null)
+    public function getFromWebserviceImport($value, $object = null, $params = array(), $idMapper = null)
     {
         if (empty($value)) {
             return null;
