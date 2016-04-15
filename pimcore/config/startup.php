@@ -156,8 +156,8 @@ foreach ($autoloaderClassMapFiles as $autoloaderClassMapFile) {
 \Pimcore::initLogger();
 \Pimcore::initModules();
 
-if (!\Pimcore\Tool::isInstaller()) {
-    // we do not initialize plugins for the installer
+if (\Pimcore\Config::getSystemConfig()) {
+    // we do not initialize plugins if pimcore isn't installed properly
     // reason: it can be the case that plugins use the database in isInstalled() witch isn't available at this time
     \Pimcore::initPlugins();
 }
