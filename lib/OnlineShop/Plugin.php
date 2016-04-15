@@ -485,6 +485,15 @@ class Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \Pimcore\API\
         $res->setModel( $permission );
         $res->save();
 
+        $key = 'plugin_onlineshop_back-office_order';
+        $permission = new \Pimcore\Model\User\Permission\Definition();
+        $permission->setKey( $key );
+
+        $res = new \Pimcore\Model\User\Permission\Definition\Dao();
+        $res->configure( \Pimcore\Db::get() );
+        $res->setModel( $permission );
+        $res->save();
+
         return true;
     }
 
