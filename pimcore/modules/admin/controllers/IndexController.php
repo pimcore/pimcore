@@ -93,6 +93,12 @@ class Admin_IndexController extends \Pimcore\Controller\Action\Admin
 
         $this->view->upload_max_filesize = $upload_mb;
 
+        // session lifetime (gc)
+        $session_gc_maxlifetime = ini_get("session.gc_maxlifetime");
+        if(empty($session_gc_maxlifetime)) {
+            $session_gc_maxlifetime = 120;
+        }
+        $this->view->session_gc_maxlifetime = $session_gc_maxlifetime;
 
         // csrf token
         $user = $this->getUser();

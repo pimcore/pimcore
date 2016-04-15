@@ -44,7 +44,6 @@ class Session
      */
     protected static $options = [
         "throw_startup_exceptions" => false,
-        "gc_maxlifetime" => 7200,
         "name" => "pimcore_admin_sid",
         "strict" => false,
         "use_trans_sid" => false,

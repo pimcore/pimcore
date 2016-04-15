@@ -721,46 +721,44 @@ pimcore["intervals"]["translations_admin_missing"] = window.setInterval(function
 
 // session renew
 pimcore["intervals"]["ping"] = window.setInterval(function () {
-    if (!pimcore.settings.devmode) {
-        Ext.Ajax.request({
-            url: "/admin/misc/ping",
-            success: function (response) {
+    Ext.Ajax.request({
+        url: "/admin/misc/ping",
+        success: function (response) {
 
-                var data;
+            var data;
 
-                try {
-                    data = Ext.decode(response.responseText);
+            try {
+                data = Ext.decode(response.responseText);
 
-                    if (data.success != true) {
-                        throw "session seems to be expired";
-                    }
-                } catch (e) {
-                    data = false;
-                    pimcore.settings.showCloseConfirmation = false;
-                    window.location.href = "/admin/login/?session_expired=true";
+                if (data.success != true) {
+                    throw "session seems to be expired";
                 }
-
-                if (pimcore.maintenanceWindow) {
-                    pimcore.maintenanceWindow.close();
-                    window.setTimeout(function () {
-                        delete pimcore.maintenanceWindow;
-                    }, 2000);
-                    pimcore.viewport.updateLayout();
-                }
-
-                if (data) {
-                    // here comes the check for maintenance mode, ...
-                }
-            },
-            failure: function (response) {
-                if (response.status != 503) {
-                    pimcore.settings.showCloseConfirmation = false;
-                    window.location.href = "/admin/login/?session_expired=true&server_error=true";
-                }
+            } catch (e) {
+                data = false;
+                pimcore.settings.showCloseConfirmation = false;
+                window.location.href = "/admin/login/?session_expired=true";
             }
-        });
-    }
-}, 60000);
+
+            if (pimcore.maintenanceWindow) {
+                pimcore.maintenanceWindow.close();
+                window.setTimeout(function () {
+                    delete pimcore.maintenanceWindow;
+                }, 2000);
+                pimcore.viewport.updateLayout();
+            }
+
+            if (data) {
+                // here comes the check for maintenance mode, ...
+            }
+        },
+        failure: function (response) {
+            if (response.status != 503) {
+                pimcore.settings.showCloseConfirmation = false;
+                window.location.href = "/admin/login/?session_expired=true&server_error=true";
+            }
+        }
+    });
+}, (pimcore.settings.session_gc_maxlifetime-60)*1000);
 
 // refreshes the layout
 pimcore.registerNS("pimcore.layout.refresh");
