@@ -95,7 +95,7 @@ class Admin_IndexController extends \Pimcore\Controller\Action\Admin
 
         // session lifetime (gc)
         $session_gc_maxlifetime = ini_get("session.gc_maxlifetime");
-        if(empty($session_gc_maxlifetime)) {
+        if (empty($session_gc_maxlifetime)) {
             $session_gc_maxlifetime = 120;
         }
         $this->view->session_gc_maxlifetime = $session_gc_maxlifetime;
