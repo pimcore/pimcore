@@ -146,7 +146,9 @@ class Area extends Model\Document\Tag
 
                 $actionClassFound = true;
 
-                $actionClassname = "\\Pimcore\\Model\\Document\\Tag\\Area\\" . ucfirst($options["type"]);
+                $delimiters = ['-','_'];
+                $actionClassname = "\\Pimcore\\Model\\Document\\Tag\\Area\\" . str_replace($delimiters, '', ucwords($options["type"], implode('', $delimiters)));
+
                 if (!Tool::classExists($actionClassname, false)) {
                     // also check the legacy prefixed class name, as this is used by some plugins
                     $actionClassname = "\\Document_Tag_Area_" . ucfirst($options["type"]);
@@ -222,11 +224,11 @@ class Area extends Model\Document\Tag
             }
         }
 
-        
+
         $suffixes = \Zend_Registry::get("pimcore_tag_block_numeration");
         array_pop($suffixes);
         \Zend_Registry::set("pimcore_tag_block_numeration", $suffixes);
-        
+
         $suffixes = \Zend_Registry::get("pimcore_tag_block_current");
         array_pop($suffixes);
         \Zend_Registry::set("pimcore_tag_block_current", $suffixes);
