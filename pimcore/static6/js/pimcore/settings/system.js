@@ -340,7 +340,7 @@ pimcore.settings.system = Class.create({
                                 xtype: "textfield",
                                 id: "system_settings_general_debug_ip",
                                 name: "general.debug_ip",
-                                width: 500,
+                                width: 600,
                                 value: this.getValue("general.debug_ip")
                             },
                             {
