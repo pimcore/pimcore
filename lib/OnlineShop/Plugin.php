@@ -17,6 +17,8 @@
 
 namespace OnlineShop;
 
+use Pimcore\Config;
+
 class Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \Pimcore\API\Plugin\PluginInterface {
 
     public static $configFile = "/EcommerceFramework/config/plugin_config.xml";
@@ -212,7 +214,9 @@ class Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \Pimcore\API\
     public static function isInstalled() {
         $result = null;
         try{
-            $result = \Pimcore\Db::get()->describeTable("plugin_onlineshop_cartitem");
+            if(Config::getSystemConfig()) {
+                $result = \Pimcore\Db::get()->describeTable("plugin_onlineshop_cartitem");
+            }
         } catch(\Exception $e){}
         return !empty($result);
     }
@@ -327,7 +331,7 @@ class Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \Pimcore\API\
 
             // check for big logfile, empty it if it's bigger than about 200M
             $logfilename = PIMCORE_WEBSITE_PATH . '/var/log/online-shop-sql.log';
-            if (filesize($logfilename) > 200000000) {
+            if (is_file($logfilename) && filesize($logfilename) > 200000000) {
                 file_put_contents($logfilename, "");
             }
 
