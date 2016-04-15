@@ -52,6 +52,8 @@ class Pimcore
      */
     public static function run()
     {
+        $throwExceptions = false;
+
         // detect frontend (website)
         $frontend = Tool::isFrontend();
 
@@ -67,10 +69,13 @@ class Pimcore
         $conf = Config::getSystemConfig();
         if (!$conf) {
             // redirect to installer if configuration isn't present
-            if (!preg_match("/^\/install.*/", $_SERVER["REQUEST_URI"])) {
+            if (!Tool::isInstaller()) {
                 header("Location: /install/");
                 exit;
             }
+
+            // not installed, we display all error messages
+            $throwExceptions = true;
         }
 
         if (self::inDebugMode() && $frontend && !$conf->general->disable_whoops && !defined("HHVM_VERSION")) {
@@ -231,7 +236,6 @@ class Pimcore
         self::getEventManager()->trigger("system.startup", $front);
 
         // throw exceptions also when in preview or in editmode (documents) to see it immediately when there's a problem with this page
-        $throwExceptions = false;
         if (Tool::isFrontentRequestByAdmin()) {
             $user = \Pimcore\Tool\Authentication::authenticateSession();
             if ($user instanceof User) {

@@ -155,7 +155,12 @@ foreach ($autoloaderClassMapFiles as $autoloaderClassMapFile) {
 \Pimcore::setupFramework();
 \Pimcore::initLogger();
 \Pimcore::initModules();
-\Pimcore::initPlugins();
+
+if (!\Pimcore\Tool::isInstaller()) {
+    // we do not initialize plugins for the installer
+    // reason: it can be the case that plugins use the database in isInstalled() witch isn't available at this time
+    \Pimcore::initPlugins();
+}
 
 // do some general stuff
 // this is just for compatibility reasons, pimcore itself doesn't use this constant anymore

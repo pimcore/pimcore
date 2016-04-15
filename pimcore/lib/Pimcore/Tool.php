@@ -312,6 +312,17 @@ class Tool
     }
 
     /**
+     * @return bool
+     */
+    public static function isInstaller()
+    {
+        if (preg_match("@^/install@", $_SERVER["REQUEST_URI"])) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * eg. editmode, preview, version preview, always when it is a "frontend-request", but called out of the admin
      */
     public static function isFrontentRequestByAdmin()
