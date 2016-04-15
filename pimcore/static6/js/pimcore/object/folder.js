@@ -27,7 +27,7 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
 
     init: function () {
 
-        this.search = new pimcore.object.search(this);
+        this.search = new pimcore.object.search(this, "folder");
 
         if (this.isAllowed("properties")) {
             this.properties = new pimcore.element.properties(this, "object");
@@ -278,13 +278,6 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
         catch (e2) {
             //console.log(e2);
         }
-
-        try {
-            data.gridconfig = Ext.encode(this.search.getGridConfig());
-        } catch (e3) {
-            //console.log(e3);
-        }
-
         return data;
     },
 

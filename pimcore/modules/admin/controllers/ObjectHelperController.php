@@ -65,8 +65,11 @@ class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         // grid config
         $gridConfig = array();
         if ($objectId) {
-            $configFiles["configFileClassUser"] = PIMCORE_CONFIGURATION_DIRECTORY . "/object/grid/" . $this->getParam("objectId") . "_" . $class->getId() . "-user_" . $this->getUser()->getId() . ".psf";
-            $configFiles["configFileUser"] = PIMCORE_CONFIGURATION_DIRECTORY . "/object/grid/" . $this->getParam("objectId") . "-user_" . $this->getUser()->getId() . ".psf";
+            $searchType = $this->getParam("searchType");
+            $postfix =  $searchType && $searchType != "folder" ? "_" . $this->getParam("searchType") : "";
+
+            $configFiles["configFileClassUser"] = PIMCORE_CONFIGURATION_DIRECTORY . "/object/grid/" . $this->getParam("objectId") . "_" . $class->getId() . $postfix . "-user_" . $this->getUser()->getId() . ".psf";
+            $configFiles["configFileUser"] = PIMCORE_CONFIGURATION_DIRECTORY . "/object/grid/" . $this->getParam("objectId") . $postfix . "-user_" . $this->getUser()->getId() . ".psf";
 
             foreach ($configFiles as $configFile) {
                 if (is_file($configFile)) {
@@ -278,6 +281,74 @@ class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
             "onlyDirectChildren" => $gridConfig['onlyDirectChildren'],
             "pageSize" => $gridConfig['pageSize']
         ));
+    }
+
+
+    public function gridDeleteColumnConfigAction()
+    {
+        $object = Object::getById($this->getParam("id"));
+
+
+        if ($object->isAllowed("publish")) {
+            try {
+                $classId = $this->getParam("class_id");
+
+                $searchType = $this->getParam("searchType");
+                $postfix =  $searchType && $searchType != "folder" ? "_" . $this->getParam("searchType") : "";
+
+                if ($classId) {
+                    $configFile = PIMCORE_CONFIGURATION_DIRECTORY . "/object/grid/" . $object->getId() . "_" . $classId . $postfix . "-user_" . $this->getUser()->getId() . ".psf";
+                } else {
+                    $configFile = PIMCORE_CONFIGURATION_DIRECTORY . "/object/grid/" . $object->getId() . $postfix . "-user_" . $this->getUser()->getId() . ".psf";
+                }
+
+                $configDir = dirname($configFile);
+                if (is_dir($configDir)) {
+                    @unlink($configFile);
+                }
+
+                $this->_helper->json(array("success" => true));
+            } catch (\Exception $e) {
+                $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
+            }
+        }
+
+        $this->_helper->json(array("success" => false, "message" => "missing_permission"));
+    }
+
+    public function gridSaveColumnConfigAction()
+    {
+        $object = Object::getById($this->getParam("id"));
+
+
+        if ($object->isAllowed("publish")) {
+            try {
+                $classId = $this->getParam("class_id");
+
+                $searchType = $this->getParam("searchType");
+                $postfix =  $searchType && $searchType != "folder" ? "_" . $this->getParam("searchType") : "";
+
+                // grid config
+                $gridConfig = \Zend_Json::decode($this->getParam("gridconfig"));
+                if ($classId) {
+                    $configFile = PIMCORE_CONFIGURATION_DIRECTORY . "/object/grid/" . $object->getId() . "_" . $classId . $postfix . "-user_" . $this->getUser()->getId() . ".psf";
+                } else {
+                    $configFile = PIMCORE_CONFIGURATION_DIRECTORY . "/object/grid/" . $object->getId() . $postfix . "-user_" . $this->getUser()->getId() . ".psf";
+                }
+
+                $configDir = dirname($configFile);
+                if (!is_dir($configDir)) {
+                    File::mkdir($configDir);
+                }
+                File::put($configFile, Tool\Serialize::serialize($gridConfig));
+
+                $this->_helper->json(array("success" => true));
+            } catch (\Exception $e) {
+                $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
+            }
+        }
+
+        $this->_helper->json(array("success" => false, "message" => "missing_permission"));
     }
 
 

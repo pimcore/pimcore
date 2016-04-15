@@ -270,7 +270,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         //
         if(this.data.childdata.data.classes.length > 0) {
             try {
-                this.search = new pimcore.object.search(this.data.childdata);
+                this.search = new pimcore.object.search(this.data.childdata, "children");
                 this.search.title = t('children_grid');
                 this.search.onlyDirectChildren = true;
                 items.push(this.search.getLayout());

@@ -34,7 +34,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
             Ext.Ajax.request({
                 url: "/admin/object-helper/grid-get-column-config",
                 params: {name: this.selectedClass, gridtype: "grid"},
-                success: this.createGrid.bind(this)
+                success: this.createGrid.bind(this, false)
             });
 
             this.layout = new Ext.Panel({
@@ -48,7 +48,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
         return this.layout;
     },
 
-    createGrid: function(response) {
+    createGrid: function(fromConfig, response) {
         var fields = [];
         if(response.responseText) {
             response = Ext.decode(response.responseText);

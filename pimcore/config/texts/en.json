@@ -13582,5 +13582,53 @@
     "term_plural": "",
     "reference": "",
     "comment": ""
+  },
+  {
+    "term": "save_column_configuration",
+    "definition": "Save column configuration",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "error_saving_configuration",
+    "definition": "Error saving configuration",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "your_configuration_has_been_saved",
+    "definition": "Your configuration has been saved",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "reset_config",
+    "definition": "Reset to default",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "reset_config_tooltip",
+    "definition": "This will reset (and save) the grid column configuration for this element to its default",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "error_resetting_config",
+    "definition": "Error resetting configuration",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
   }
 ]
