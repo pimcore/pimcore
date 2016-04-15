@@ -150,10 +150,10 @@ pimcore.object.versions = Class.create({
         }
 
         if (selModel.getCount() > 1) {
-            this.compareVersions(grid, rowIndex, event);
+            this.compareVersions(grid, rowIndex, e);
         }
         else {
-            this.showVersionPreview(grid, rowIndex, event);
+            this.showVersionPreview(grid, rowIndex, e);
         }
     },
 
