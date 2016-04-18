@@ -353,11 +353,7 @@ class Video extends Model\Document\Tag
                     if ($asset->getCustomSetting("image_thumbnail_asset")) {
                         $image = $asset->getImageThumbnail($imageThumbnailConf);
                     } else {
-                        if ($thumbnail["status"] == "finished" && (array_key_exists("animatedGifPreview", $options) && $options["animatedGifPreview"] !== false)) {
-                            $image = $asset->getPreviewAnimatedGif(null, null, $imageThumbnailConf);
-                        } else {
-                            $image = $asset->getImageThumbnail($imageThumbnailConf);
-                        }
+                        $image = $asset->getImageThumbnail($imageThumbnailConf);
                     }
                 }
 
@@ -723,16 +719,6 @@ class Video extends Model\Document\Tag
         </div>';
 
         $options = $this->getOptions();
-
-        if (!$this->editmode && !$options['disableProgressReload']) {
-            $code .= '
-                <script type="text/javascript">
-                    window.setTimeout(function() {
-                        location.reload();
-                    },6000);
-                </script>
-            ';
-        }
 
         return $code;
     }
