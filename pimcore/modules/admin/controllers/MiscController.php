@@ -324,10 +324,12 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
 
         if ($this->getParam("activate")) {
             Tool\Admin::activateMaintenanceMode();
+            \Pimcore::getEventManager()->trigger("system.maintenance.activate", $this);
         }
 
         if ($this->getParam("deactivate")) {
             Tool\Admin::deactivateMaintenanceMode();
+            \Pimcore::getEventManager()->trigger("system.maintenance.deactivate", $this);
         }
 
         $this->_helper->json(array(
