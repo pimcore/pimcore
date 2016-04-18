@@ -581,6 +581,26 @@ pimcore.layout.toolbar = Class.create({
                 }
             }
 
+            if (user.isAllowed("reports") && user.isAllowed("system_settings")) {
+                if (perspectiveCfg.inToolbar("settings.customReports")) {
+                    marketingItems.push({
+                        text: t("custom_reports"),
+                        iconCls: "pimcore_icon_reports",
+                        handler: this.showCustomReports
+                    });
+                }
+            }
+
+            if (user.isAllowed("reports") && user.isAllowed("system_settings")) {
+                if (perspectiveCfg.inToolbar("settings.marketingReports")) {
+                    marketingItems.push({
+                        text: t("marketing_settings"),
+                        iconCls: "pimcore_icon_system",
+                        handler: this.reportSettings
+                    });
+                }
+            }
+
             if (marketingItems.length > 0) {
                 this.marketingMenu = new Ext.menu.Menu({
                     items: marketingItems,
@@ -620,7 +640,7 @@ pimcore.layout.toolbar = Class.create({
 
             if (user.isAllowed("system_settings") && perspectiveCfg.inToolbar("settings.system")) {
                 settingsItems.push({
-                    text: t("system"),
+                    text: t("system_settings"),
                     iconCls: "pimcore_icon_system",
                     handler: this.systemSettings
                 });
@@ -877,26 +897,6 @@ pimcore.layout.toolbar = Class.create({
                         text: t("translations_admin"),
                         iconCls: "pimcore_icon_translations",
                         handler: this.editTranslationsSpecific
-                    });
-                }
-            }
-
-            if (user.isAllowed("reports") && user.isAllowed("system_settings")) {
-                if (perspectiveCfg.inToolbar("settings.marketingReports")) {
-                    settingsItems.push({
-                        text: t("reports_and_marketing"),
-                        iconCls: "pimcore_icon_reports",
-                        handler: this.reportSettings
-                    });
-                }
-            }
-
-            if (user.isAllowed("reports") && user.isAllowed("system_settings")) {
-                if (perspectiveCfg.inToolbar("settings.customReports")) {
-                    settingsItems.push({
-                        text: t("custom_reports"),
-                        iconCls: "pimcore_icon_reports",
-                        handler: this.showCustomReports
                     });
                 }
             }
