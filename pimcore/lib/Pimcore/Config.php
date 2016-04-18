@@ -368,6 +368,36 @@ class Config
                         "hidden" => false,
                         "sort" => -1
                     ],
+                ],
+                "dashboards" => [
+                    "welcome" => array(
+                        "positions" => array(
+                            array(
+                                array(
+                                    "id" => 1,
+                                    "type" => "pimcore.layout.portlets.modificationStatistic",
+                                    "config" => null
+                                ),
+                                array(
+                                    "id" => 2,
+                                    "type" => "pimcore.layout.portlets.modifiedAssets",
+                                    "config" => null
+                                )
+                            ),
+                            array(
+                                array(
+                                    "id" => 3,
+                                    "type" => "pimcore.layout.portlets.modifiedObjects",
+                                    "config" => null
+                                ),
+                                array(
+                                    "id" => 4,
+                                    "type" => "pimcore.layout.portlets.modifiedDocuments",
+                                    "config" => null
+                                )
+                            )
+                        )
+                    )
                 ]
             ]
         ];

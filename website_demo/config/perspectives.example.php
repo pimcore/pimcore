@@ -30,7 +30,31 @@ return [
                 "sort" => -1
             ],
         ],
-
+        "dashboards" => [
+            "welcome" => array(
+                "positions" => array(
+                    array(
+                        array(
+                            "id" => 1,
+                            "type" => "pimcore.layout.portlets.modificationStatistic",
+                            "config" => null
+                        )
+                    ),
+                    array(
+                        array(
+                            "id" => 3,
+                            "type" => "pimcore.layout.portlets.modifiedObjects",
+                            "config" => null
+                        ),
+                        array(
+                            "id" => 4,
+                            "type" => "pimcore.layout.portlets.modifiedDocuments",
+                            "config" => null
+                        )
+                    )
+                )
+            )
+        ]
     ],
     "first alternative" => [
         "icon" => "/pimcore/static6/img/flat-color-icons/biohazard.svg",
