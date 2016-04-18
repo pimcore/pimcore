@@ -19,7 +19,7 @@ namespace OnlineShop\Framework\IndexService\Worker;
 
 use \Pimcore\Model\Tool;
 
-class ElasticSearch extends AbstractWorker implements IBatchProcessingWorker {
+class DefaultElasticSearch extends AbstractWorker implements IBatchProcessingWorker {
     use \OnlineShop\Framework\IndexService\Worker\WorkerTraits\BatchProcessing {
         \OnlineShop\Framework\IndexService\Worker\WorkerTraits\BatchProcessing::processUpdateIndexQueue as traitProcessUpdateIndexQueue;
     }
@@ -29,7 +29,11 @@ class ElasticSearch extends AbstractWorker implements IBatchProcessingWorker {
     const MOCKUP_CACHE_PREFIX = "ecommerce_mockup_elastic";
     const REINDEX_LOCK_KEY = "plugin_onlineshop_productindex_elastic_reindex";
 
-
+    /**
+     * Default value for the mapping of custom attributes
+     * @var bool
+     */
+    protected $storeCustomAttributes = true;
 
     /**
      * @var \Elasticsearch\Client
@@ -64,6 +68,25 @@ class ElasticSearch extends AbstractWorker implements IBatchProcessingWorker {
             $this->indexName = strtolower($this->name);
         }
         $this->determineAndSetCurrentIndexVersion();
+    }
+
+    /**
+     * should custom attributes be stored separately
+     * @return boolean
+     */
+    public function getStoreCustomAttributes()
+    {
+        return $this->storeCustomAttributes;
+    }
+
+    /**
+     * Do store custom attributes
+     *
+     * @param boolean $storeCustomAttributes
+     */
+    public function setStoreCustomAttributes($storeCustomAttributes)
+    {
+        $this->storeCustomAttributes = $storeCustomAttributes;
     }
 
     protected function getVersionFile(){
@@ -140,9 +163,6 @@ class ElasticSearch extends AbstractWorker implements IBatchProcessingWorker {
                 'type'  => \OnlineShop\Framework\IndexService\ProductList\IProductList::PRODUCT_TYPE_OBJECT,
                 'body'  => [
                     \OnlineShop\Framework\IndexService\ProductList\IProductList::PRODUCT_TYPE_OBJECT => [
-                        '_routing'   => ['path' => 'system.o_virtualProductId'],
-                        'dynamic'    => false,
-                        //'_source' => ['enabled' => false ],
                         'properties' => $this->createMappingAttributes()
                     ]
                 ]
@@ -155,9 +175,6 @@ class ElasticSearch extends AbstractWorker implements IBatchProcessingWorker {
                 'body'  => [
                     \OnlineShop\Framework\IndexService\ProductList\IProductList::PRODUCT_TYPE_VARIANT => [
                         '_parent'    => ['type' => \OnlineShop\Framework\IndexService\ProductList\IProductList::PRODUCT_TYPE_OBJECT],
-                        '_routing'   => ['path' => 'system.o_virtualProductId'],
-                        'dynamic'    => false,
-                        //'_source' => ['enabled' => false ],
                         'properties' => $this->createMappingAttributes()
                     ]
                 ]
@@ -218,7 +235,6 @@ class ElasticSearch extends AbstractWorker implements IBatchProcessingWorker {
      */
     protected function createMappingAttributes() {
         $mappingAttributes = array();
-
         //add system attributes
         $systemAttributesMapping = array();
         foreach($this->getSystemAttributes(true) as $name => $type) {
@@ -245,6 +261,7 @@ class ElasticSearch extends AbstractWorker implements IBatchProcessingWorker {
                     $isRelation = false;
                     $type = $attribute->type;
 
+
                     //check, if interpreter is set and if this interpreter is instance of relation interpreter
                     // -> then set type to long
                     if(!empty($attribute->interpreter)) {
@@ -256,23 +273,41 @@ class ElasticSearch extends AbstractWorker implements IBatchProcessingWorker {
                         }
                     }
 
+                    if($attribute->mapper){
+                        $mapper = new $attribute->mapper();
+                        $mapping = $mapper->getMapping();
+                    }else{
+                        $mapping = ["type" => $type, "store" => $this->getStoreCustomAttributes(), "index" => 'not_analyzed'];
+                        if($attribute->analyzer){
+                            $mapping['index'] = 'analyzed';
+                            $mapping['analyzer'] = $attribute->analyzer;
+                        }
+                    }
+
+                    if($type == 'object'){ //object doesn't support index or store
+                        $mapping = ["type" => $type];
+                    }
+
+                    if($attribute->store == 'false' || $attribute->store == '0'){
+                        $mapping['store'] = false;
+                    }
+
                     if($isRelation) {
-                        $relationAttributesMapping[$attribute->name] = ["type" => $type, "store" => true, "index" => "not_analyzed"];
+                        $relationAttributesMapping[$attribute->name] = $mapping;
                     } else {
-                        $customAttributesMapping[$attribute->name] = ["type" => $type, "store" => true, "index" => "not_analyzed"];
+                        $customAttributesMapping[$attribute->name] = $mapping;
                     }
                 }
 
             }
         }
 
-        $mappingAttributes['attributes'] = ['type' => 'object', 'dynamic' => false, 'properties' => $customAttributesMapping];
+        $mappingAttributes['attributes'] = ['type' => 'object', 'dynamic' => true, 'properties' => $customAttributesMapping];
         $mappingAttributes['relations'] = ['type' => 'object', 'dynamic' => false, 'properties' => $relationAttributesMapping];
         $mappingAttributes['subtenants'] = ['type' => 'object', 'dynamic' => true];
-
-
         return $mappingAttributes;
     }
+
 
     public function getSystemAttributes($includeTypes = false) {
         $systemAttributes = array(
@@ -283,6 +318,7 @@ class ElasticSearch extends AbstractWorker implements IBatchProcessingWorker {
             "o_virtualProductActive" => "boolean",
             "o_type" => "string",
             "categoryIds" => "long",
+            "categoryPaths" => "string",
             "parentCategoryIds" => "long",
             "priceSystemName" => "string",
             "active" => "boolean",
@@ -384,7 +420,7 @@ class ElasticSearch extends AbstractWorker implements IBatchProcessingWorker {
     protected function doUpdateIndex($objectId, $data = null) {
 
         if(empty($data)) {
-            $data = $this->db->fetchOne("SELECT data FROM " . $this->getStoreTableName() . " WHERE id = ? AND tenant = ?", array($objectId, $this->name));
+            $data = $this->db->fetchOne("SELECT data FROM " . $this->getStoreTableName() . " WHERE o_id = ? AND tenant = ?", array($objectId, $this->name));
             $data = json_decode($data, true);
         }
 
@@ -416,19 +452,32 @@ class ElasticSearch extends AbstractWorker implements IBatchProcessingWorker {
                 $indexRelationData[$relation['fieldname']][] = $relation['dest'];
             }
 
+            $data = $this->doPreIndexDataModification($data);
+
             //check if parent should exist and if so, consider parent relation at indexing
             if(!empty($indexSystemData['o_virtualProductId']) && $indexSystemData['o_id'] != $indexSystemData['o_virtualProductId']) {
                 $this->bulkIndexData[] = ['index' => ['_index' => $this->getIndexNameVersion(), '_type' => $indexSystemData['o_type'], '_id' => $objectId, '_parent' => $indexSystemData['o_virtualProductId']]];
             } else {
                 $this->bulkIndexData[] = ['index' => ['_index' => $this->getIndexNameVersion(), '_type' => $indexSystemData['o_type'], '_id' => $objectId]];
             }
-            \Logger::info('Added to Bulk index:  ' . $objectId);
+            #\Logger::info('Added to Bulk index:  ' . $objectId);
             $this->bulkIndexData[] = array_filter(['system' => array_filter($indexSystemData),'type' => $indexSystemData['o_type'], 'attributes' => array_filter($indexAttributeData), 'relations' => $indexRelationData, 'subtenants' => $data['subtenants']]);
-            
+
             //save new indexed element to mockup cache
             $this->saveToMockupCache($objectId, $data);
         }
 
+    }
+
+    /**
+     * override this method if you need to add custom data
+     * which should not be stored in the store data
+     *
+     * @param $data
+     * @return mixed
+     */
+    protected function doPreIndexDataModification($data){
+        return $data;
     }
 
 
@@ -447,25 +496,19 @@ class ElasticSearch extends AbstractWorker implements IBatchProcessingWorker {
             // save update status
             \Logger::error('commitUpdateIndex partial failed');
 
-            $this->db->beginTransaction();
             foreach($responses['items'] as $response)
             {
-                if($response['index']['status'] >= 200 && $response['index']['status'] < 300)
+                if($response['index']['error'])
                 {
                     $query = <<<SQL
 UPDATE {$this->getStoreTableName()}
-SET update_status = :status, update_error = :error, crc_index = 0
-WHERE id = :id
+SET update_status = ?, update_error = ?, crc_index = 0
+WHERE o_id = ?
 SQL;
-                    $this->db->query( $query, [
-                        'status' => $response['index']['status']
-                        , 'error' => $response['index']['error']
-                        , 'id' => $response['index']['_id']
-                    ]);
+                    $this->db->query( $query, [$response['index']['status'],\Zend_Json::encode($response['index']['error']), $response['index']['_id']]);
                     \Logger::error('Faild to Index Object with Id:' . $response['index']['_id']);
                 }
             }
-            $this->db->commit();
         }
 
 
@@ -550,7 +593,7 @@ SQL;
      * resets the store table to initiate a re-indexing
      */
     public function resetIndexingQueue() {
-        \Logger::info('IN reset index que');
+        \Logger::info('resetting index queue');
         $query = 'UPDATE '. $this->getStoreTableName() .' SET worker_timestamp = null,
                         worker_id = null,
                         preparation_worker_timestamp = 0,

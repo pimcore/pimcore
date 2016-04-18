@@ -159,4 +159,19 @@ abstract class AbstractConfig implements IConfig {
         return $this->getObjectById($objectId);
     }
 
+
+    /**
+     * returns column type for id
+     *
+     * @param $isPrimary
+     * @return string
+     */
+    public function getIdColumnType($isPrimary)
+    {
+        if($isPrimary) {
+            return "int(11) NOT NULL default '0'";
+        } else {
+            return "int(11) NOT NULL";
+        }
+    }
 }

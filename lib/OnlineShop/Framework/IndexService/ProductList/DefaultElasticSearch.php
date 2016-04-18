@@ -22,10 +22,24 @@ namespace OnlineShop\Framework\IndexService\ProductList;
  */
 class DefaultElasticSearch implements IProductList {
 
+    const LIMIT_UNLIMITED = 'unlimited';
     /**
      * @var null|\OnlineShop\Framework\Model\IIndexable[]
      */
     protected $products = null;
+
+    /**
+     * Timeout for a request in seconds
+     * @var int
+     */
+    protected $timeout = 10;
+
+    /**
+     * Name of the index
+     *
+     * @var string
+     */
+    protected $indexName = '';
 
     /**
      * @var string
@@ -123,10 +137,57 @@ class DefaultElasticSearch implements IProductList {
      */
     protected $preparedGroupByValuesLoaded = false;
 
+    /**
+     * @var array
+     */
+    protected $searchAggregation = [];
+
+    /**
+     * contains a mapping from productId => array Index
+     * useful when you have to merge child products to there parent and you don't want to iterate each time over the list
+     *
+     * @var array
+     */
+    protected $productPositionMap = [];
+
+
+    protected $doScrollRequest = false;
+
+    protected $scrollRequestKeepAlive = '30s';
+
+    /**
+     * @return array
+     */
+    public function getSearchAggregation()
+    {
+        return $this->searchAggregation;
+    }
+
+
+
 
     public function __construct(\OnlineShop\Framework\IndexService\Config\IElasticSearchConfig $tenantConfig) {
         $this->tenantName = $tenantConfig->getTenantName();
         $this->tenantConfig = $tenantConfig;
+    }
+
+    /**
+     * @return int
+     */
+    public function getTimeout()
+    {
+        return $this->timeout;
+    }
+
+    /**
+     * @param int $timeout
+     *
+     * @return $this
+     */
+    public function setTimeout($timeout)
+    {
+        $this->timeout = $timeout;
+        return $this;
     }
 
     /**
@@ -140,6 +201,27 @@ class DefaultElasticSearch implements IProductList {
             $this->load();
         }
         return $this->products;
+    }
+
+    /**
+     * Returns the Mapping of the productId => position
+     *
+     * @return array
+     */
+    public function getProductPositionMap()
+    {
+        return $this->productPositionMap;
+    }
+
+    /**
+     * @param array $productPositionMap
+     *
+     * @return $this
+     */
+    public function setProductPositionMap($productPositionMap)
+    {
+        $this->productPositionMap = $productPositionMap;
+        return $this;
     }
 
     /**
@@ -256,7 +338,7 @@ class DefaultElasticSearch implements IProductList {
      * @return void
      */
     public function setOrder($order) {
-        $this->order = $order;
+        $this->order = strtolower($order);
         $this->products = null;
     }
 
@@ -294,12 +376,21 @@ class DefaultElasticSearch implements IProductList {
     }
 
     /**
+     * Pass "unlimited" to do da Scroll Request
+     *
      * @param $limit int
      * @return void
      */
     public function setLimit($limit) {
-        $this->products = null;
-        $this->limit = $limit;
+        if($limit == static::LIMIT_UNLIMITED) {
+            $this->products = null;
+            $this->limit = 100;
+            $this->doScrollRequest = true;
+        } else {
+            $this->doScrollRequest = false;
+            $this->products = null;
+            $this->limit = $limit;
+        }
     }
 
     /**
@@ -394,11 +485,14 @@ class DefaultElasticSearch implements IProductList {
 
 
         // load elements
-        $this->products = array();
+        $this->products = $this->productPositionMap = [];
+        $i = 0;
         foreach($objectRaws as $raw) {
             $product = $this->loadElementById($raw);
             if($product) {
                 $this->products[] = $product;
+                $this->productPositionMap[$product->getId()] = $i;
+                $i++;
             }
         }
 
@@ -411,17 +505,16 @@ class DefaultElasticSearch implements IProductList {
         }elseif($this->getVariantMode() == self::VARIANT_MODE_HIDE){
             return self::PRODUCT_TYPE_VARIANT;
         }else{
-            return self::PRODUCT_TYPE_OBJECT . ','.self::PRODUCT_TYPE_VARIANT;
+            return self::PRODUCT_TYPE_OBJECT . ','. self::PRODUCT_TYPE_VARIANT;
         }
     }
 
     /**
-     * First case: no price filtering and no price sorting
+     * Returns the Elasticsearch query parameters
      *
      * @return array
      */
-    protected function loadWithoutPriceFilterWithoutPriceSorting()
-    {
+    public function getQuery(){
         $boolFilters = array();
         $queryFilters = array();
 
@@ -455,17 +548,29 @@ class DefaultElasticSearch implements IProductList {
             } else {
                 $params['body']['sort'][] = [$this->orderKey => ($this->order ?: "asc")];
             }
-
         }
 
+        if($aggs = $this->getSearchAggregation()){
+            foreach($aggs as $name => $type){
+                $params['body']['aggs'][$name] = $type;
+            }
+        }
 
         // build query for request
         $params = $this->buildQuery($params, $boolFilters, $queryFilters);
+        return $params;
+    }
 
+    /**
+     * First case: no price filtering and no price sorting
+     *
+     * @return array
+     */
+    protected function loadWithoutPriceFilterWithoutPriceSorting()
+    {
+        $params = $this->getQuery();
         // send request
         $result = $this->sendRequest( $params );
-
-
 
         $objectRaws = array();
         if($result['hits']) {
@@ -474,7 +579,6 @@ class DefaultElasticSearch implements IProductList {
                 $objectRaws[] = $hit['_id'];
             }
         }
-
 
         return $objectRaws;
     }
@@ -533,13 +637,13 @@ class DefaultElasticSearch implements IProductList {
      */
     protected function buildQuery(array $params, array $boolFilters, array $queryFilters)
     {
-        // create query
         if($this->getVariantMode() == \OnlineShop\Framework\IndexService\ProductList\IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT)
         {
-            $params['body']['query']['filtered']['query']['has_child']['type'] = 'product';
+            $params['body']['query']['filtered']['query']['has_child']['type'] = self::PRODUCT_TYPE_VARIANT;
+            $params['body']['query']['filtered']['query']['has_child']['score_mode'] = 'avg';
             $params['body']['query']['filtered']['query']['has_child']['query']['bool']['must'] = $queryFilters;
 
-            $params['body']['query']['filtered']['filter']['has_child']['type'] = 'product';
+            $params['body']['query']['filtered']['filter']['has_child']['type'] = self::PRODUCT_TYPE_VARIANT;
             $params['body']['query']['filtered']['filter']['has_child']['filter']['bool']['must'] = $boolFilters;
         }
         else
@@ -573,13 +677,6 @@ class DefaultElasticSearch implements IProductList {
 
         if($this->getCategory()) {
             $boolFilters[] = ['term' => ['system.parentCategoryIds' => $this->getCategory()->getId()]];
-        }
-
-
-        //variant handling
-        $variantMode = $this->getVariantMode();
-        if($variantMode == \OnlineShop\Framework\IndexService\ProductList\IProductList::VARIANT_MODE_HIDE) {
-            $boolFilters[] = ['term' => ['system.o_type' => 'object']];
         }
 
         return $boolFilters;
@@ -879,7 +976,6 @@ class DefaultElasticSearch implements IProductList {
             $params = array();
             $params['index'] = $this->getIndexName();
             $params['type'] = $this->getQueryType();
-            //$params['type'] = "product";
             $params['search_type'] = "count";
             $params['body']['_source'] = false;
             $params['body']['size'] = $this->getLimit();
@@ -934,34 +1030,82 @@ class DefaultElasticSearch implements IProductList {
          */
 
         // ElasticSearch Client
-//        $esClient = $this->tenantConfig->getTenantWorker()->getElasticSearchClient();
-
+        $esClient = $this->tenantConfig->getTenantWorker()->getElasticSearchClient();
 
         // Zend HTTP Client
         $config =  $this->tenantConfig->getElasticSearchClientParams();
-        $esClient = new \Zend_Http_Client(sprintf('http://%s:9200/%s/%s/_search?%s'
+        /*$esClient = new Zend_Http_Client(sprintf('http://%s:9200/%s/%s/_search?%s'
             , $config['hosts'][0]
             , $params['index']
             , $params['type']
             , $params['search_type'] ?: ''
-        ));
+            , $params['timeout'] = $this->getTimeout()
+        ));*/
+
 
 
         if($esClient instanceof \Elasticsearch\Client)
         {
+            if($this->doScrollRequest) {
+                $params = array_merge(['scroll' => $this->scrollRequestKeepAlive], $params);
+                //kind of dirty hack :/
+                unset($params['search_type']);
+            }
 
             $result = $esClient->search($params);
+
+            if($this->doScrollRequest) {
+                $additionalHits = [];
+                $scrollId = $result['_scroll_id'];
+
+                while(true) {
+                    $additionalResult = $esClient->scroll(['scroll_id' => $scrollId, 'scroll' => $this->scrollRequestKeepAlive]);
+
+                    if(count($additionalResult['hits']['hits'])) {
+                        $additionalHits = array_merge($additionalHits, $additionalResult['hits']['hits']);
+                        $scrollId = $additionalResult['_scroll_id'];
+                    } else {
+                        break;
+                    }
+                }
+                $result['hits']['hits'] = array_merge($result['hits']['hits'], $additionalHits);
+            }
         }
         else if($esClient instanceof \Zend_Http_Client)
         {
+            if($this->doScrollRequest) {
+                $esClient->setParameterGet('scroll', $this->scrollRequestKeepAlive);
+            }
 
             $esClient->setMethod( \Zend_Http_Client::GET );
             $esClient->setRawData( json_encode($params['body']) );
 
             $result = $esClient->request();
             $result = json_decode($result->getBody(), true);
-        }
 
+            if($this->doScrollRequest) {
+
+                $additionalHits = [];
+                $scrollId = $result['_scroll_id'];
+
+                while(true) {
+                    $scrollClient = new \Zend_Http_Client(sprintf('http://%s:9200/_search/scroll', $config['hosts'][0]));
+                    $scrollClient->setMethod( \Zend_Http_Client::GET );
+                    $scrollClient->setRawData(json_encode(['scroll' => $this->scrollRequestKeepAlive, 'scroll_id' => $scrollId]));
+
+                    $additionalResult = $scrollClient->request();
+                    $additionalResult = json_decode($additionalResult->getBody(), true);
+
+                    if(count($additionalResult['hits']['hits'])) {
+                        $additionalHits = array_merge($additionalHits, $additionalResult['hits']['hits']);
+                        $scrollId = $additionalResult['_scroll_id'];
+                    } else {
+                        break;
+                    }
+                }
+                $result['hits']['hits'] = array_merge($result['hits']['hits'], $additionalHits);
+            }
+        }
         return $result;
     }
 
@@ -971,14 +1115,16 @@ class DefaultElasticSearch implements IProductList {
      */
     protected function getIndexName()
     {
-        $generalSettings = $this->tenantConfig->getGeneralSettings();
-        if($generalSettings['indexName']){
-            $index = $generalSettings['indexName'];
-        }else{
-            $index = strtolower($this->tenantConfig->getTenantName());
+        if(!$this->indexName){
+            $generalSettings = $this->tenantConfig->getGeneralSettings();
+            if($generalSettings['indexName']){
+                $index = $generalSettings['indexName'];
+            }else{
+                $index = strtolower($this->tenantConfig->getTenantName());
+            }
+            $this->indexName = $index;
         }
-
-        return $index;
+        return $this->indexName;
     }
 
 
@@ -998,13 +1144,9 @@ class DefaultElasticSearch implements IProductList {
      * The return value is cast to an integer.
      */
     public function count() {
-
-        if($this->totalCount === null) {
-            $this->load();
-        }
+        $this->getProducts();
         return $this->totalCount;
     }
-
     /**
      * (PHP 5 &gt;= 5.1.0)<br/>
      * Return the current element

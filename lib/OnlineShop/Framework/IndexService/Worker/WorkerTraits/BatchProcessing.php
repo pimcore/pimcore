@@ -28,8 +28,12 @@ trait BatchProcessing {
      * creates store table
      */
     protected function createOrUpdateStoreTable() {
+        $primaryIdColumnType = $this->tenantConfig->getIdColumnType(true);
+        $idColumnType = $this->tenantConfig->getIdColumnType(false);
+
         $this->db->query("CREATE TABLE IF NOT EXISTS `" . $this->getStoreTableName() . "` (
-          `id` bigint(20) NOT NULL DEFAULT '0',
+          `o_id` $primaryIdColumnType,
+          `o_virtualProductId` $idColumnType,
           `tenant` varchar(50) NOT NULL DEFAULT '',
           `data` text CHARACTER SET latin1,
           `crc_current` bigint(11) DEFAULT NULL,
@@ -41,7 +45,7 @@ trait BatchProcessing {
           `preparation_worker_id` varchar(20) DEFAULT NULL,
           `update_status` SMALLINT(5) UNSIGNED NULL DEFAULT NULL,
           `update_error` CHAR(255) NULL DEFAULT NULL,
-          PRIMARY KEY (`id`,`tenant`)
+          PRIMARY KEY (`o_id`,`tenant`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8;");
     }
 
@@ -51,9 +55,85 @@ trait BatchProcessing {
      * @param $objectId
      */
     protected function deleteFromStoreTable($objectId) {
-        $this->db->delete($this->getStoreTableName(), "id = " . $this->db->quote((string)$objectId) . " AND tenant = " . $this->db->quote($this->name));
+        $this->db->delete($this->getStoreTableName(), "o_id = " . $this->db->quote((string)$objectId) . " AND tenant = " . $this->db->quote($this->name));
     }
 
+    protected function getDefaultDataForIndex($object,$subObjectId){
+        $categories = $object->getCategories();
+        $categoryIds = array();
+        $parentCategoryIds = array();
+        if($categories) {
+            foreach($categories as $c) {
+                $parent = $c;
+
+                if ($parent != null) {
+                    if($parent->getOSProductsInParentCategoryVisible()) {
+                        $tmpIds[] = $parent->getId();
+                        while($parent && $parent instanceof \OnlineShop\Framework\Model\AbstractCategory) {
+                            $parentCategoryIds[$parent->getId()] = $parent->getId();
+                            $parent = $parent->getParent();
+                        }
+                    } else {
+                        $tmpIds[] = $c->getId();
+
+                        $parentCategoryIds[$parent->getId()] = $parent->getId();
+                    }
+
+                    $categoryIds[$c->getId()] = $c->getId();
+                }
+            }
+        }
+        $categoryPaths = [];
+        foreach ($categories as $category) {
+            $tmpIds = [];
+            while ($category) {
+                $tmpIds[] = $category->getId();
+                $category = $category->getParent();
+                if (!$category instanceof  \OnlineShop\Framework\Model\AbstractCategory) {
+                    break;
+                }
+            }
+            $tmpIds = array_reverse($tmpIds);
+            $s = '';
+            foreach($tmpIds as $id){
+                $s.= '/'.$id;
+                $categoryPaths[] = $s;
+            }
+        }
+        $categoryPaths = (array)array_unique($categoryPaths);
+        sort($categoryPaths);
+        ksort($categoryIds);
+
+        $virtualProductId = $subObjectId;
+        $virtualProductActive = $object->isActive();
+        if($object->getOSIndexType() == "variant") {
+            $virtualProductId = $this->tenantConfig->createVirtualParentIdForSubId($object, $subObjectId);
+        }
+
+        $virtualProduct = \Pimcore\Model\Object\AbstractObject::getById($virtualProductId);
+        if($virtualProduct && method_exists($virtualProduct, "isActive")) {
+            $virtualProductActive = $virtualProduct->isActive();
+        }
+
+        $data = array(
+            "o_id" => $subObjectId,
+            "o_classId" => $object->getClassId(),
+            "o_virtualProductId" => $virtualProductId,
+            "o_virtualProductActive" => $virtualProductActive,
+            "o_parentId" => $object->getOSParentId(),
+            "o_type" => $object->getOSIndexType(),
+            "categoryIds" => ',' . implode(",", $categoryIds) . ",",
+            "parentCategoryIds" => ',' . implode(",", $parentCategoryIds) . ",",
+            "categoryPaths" => (array)$categoryPaths,
+            "priceSystemName" => $object->getPriceSystemName(),
+            "active" => $object->isActive(),
+            "inProductList" => $object->isActive(true),
+            "tenant" => $this->name,
+        );
+
+
+        return $data;
+    }
 
     /**
      * prepare data for index creation and store is in store table
@@ -74,55 +154,8 @@ trait BatchProcessing {
                 \Pimcore\Model\Object\AbstractObject::setGetInheritedValues(true);
                 $hidePublishedMemory = \Pimcore\Model\Object\AbstractObject::doHideUnpublished();
                 \Pimcore\Model\Object\AbstractObject::setHideUnpublished(false);
-                $categories = $this->tenantConfig->getCategories($object);
-                $categoryIds = array();
-                $parentCategoryIds = array();
-                if($categories) {
-                    foreach($categories as $c) {
-                        $parent = $c;
 
-                        if ($parent != null) {
-                            if($parent->getOSProductsInParentCategoryVisible()) {
-                                while($parent && $parent instanceof \OnlineShop\Framework\Model\AbstractCategory) {
-                                    $parentCategoryIds[$parent->getId()] = $parent->getId();
-                                    $parent = $parent->getParent();
-                                }
-                            } else {
-                                $parentCategoryIds[$parent->getId()] = $parent->getId();
-                            }
-
-                            $categoryIds[$c->getId()] = $c->getId();
-                        }
-                    }
-                }
-
-                ksort($categoryIds);
-
-                $virtualProductId = $subObjectId;
-                $virtualProductActive = $object->isActive();
-                if($object->getOSIndexType() == "variant") {
-                    $virtualProductId = $this->tenantConfig->createVirtualParentIdForSubId($object, $subObjectId);
-                }
-
-                $virtualProduct = \Pimcore\Model\Object\AbstractObject::getById($virtualProductId);
-                if($virtualProduct && method_exists($virtualProduct, "isActive")) {
-                    $virtualProductActive = $virtualProduct->isActive();
-                }
-
-                $data = array(
-                    "o_id" => $subObjectId,
-                    "o_classId" => $object->getClassId(),
-                    "o_virtualProductId" => $virtualProductId,
-                    "o_virtualProductActive" => $virtualProductActive,
-                    "o_parentId" => $object->getOSParentId(),
-                    "o_type" => $object->getOSIndexType(),
-                    "categoryIds" => ',' . implode(",", $categoryIds) . ",",
-                    "parentCategoryIds" => ',' . implode(",", $parentCategoryIds) . ",",
-                    "priceSystemName" => $object->getPriceSystemName(),
-                    "active" => $object->isActive(),
-                    "inProductList" => $object->isActive(true)
-                );
-
+                $data = $this->getDefaultDataForIndex($object,$subObjectId);
                 $relationData = array();
 
                 $columnConfig = $this->columnConfig->column;
@@ -160,7 +193,7 @@ trait BatchProcessing {
                                 foreach($value as $v) {
                                     $relData = array();
                                     $relData['src'] = $subObjectId;
-                                    $relData['src_virtualProductId'] = $virtualProductId;
+                                    $relData['src_virtualProductId'] = $data['o_virtualProductId'];
                                     $relData['dest'] = $v['dest'];
                                     $relData['fieldname'] = $column->name;
                                     $relData['type'] = $v['type'];
@@ -174,7 +207,12 @@ trait BatchProcessing {
                         }
 
                         if(is_array($data[$column->name])) {
-                            $data[$column->name] = \OnlineShop\Framework\IndexService\Worker\IWorker::MULTISELECT_DELIMITER . implode($data[$column->name], \OnlineShop\Framework\IndexService\Worker\IWorker::MULTISELECT_DELIMITER) . \OnlineShop\Framework\IndexService\Worker\IWorker::MULTISELECT_DELIMITER;
+                            if($this instanceof \OnlineShop\Framework\IndexService\Worker\DefaultElasticSearch){
+                                $sorted = $data[$column->name];
+                                $data[$column->name] = $sorted;
+                            }else{
+                                $data[$column->name] = \OnlineShop\Framework\IndexService\Worker\IWorker::MULTISELECT_DELIMITER . implode($data[$column->name], \OnlineShop\Framework\IndexService\Worker\IWorker::MULTISELECT_DELIMITER) . \OnlineShop\Framework\IndexService\Worker\IWorker::MULTISELECT_DELIMITER;
+                            }
                         }
 
                     } catch(\Exception $e) {
@@ -198,7 +236,8 @@ trait BatchProcessing {
 
                 $crc = crc32($jsonData);
                 $insertData = array(
-                    "id" => $subObjectId,
+                    "o_id" => $subObjectId,
+                    "o_virtualProductId" => $data['o_virtualProductId'],
                     "tenant" => $this->name,
                     "data" => $jsonData,
                     "crc_current" => $crc,
@@ -207,15 +246,7 @@ trait BatchProcessing {
                     "in_preparation_queue" => 0
                 );
 
-                $currentEntry = $this->db->fetchRow("SELECT crc_current, in_preparation_queue FROM " . $this->getStoreTableName() . " WHERE id = ? AND tenant = ?", array($subObjectId, $this->name));
-                if(!$currentEntry) {
-                    $this->db->insert($this->getStoreTableName(), $insertData);
-                } else if($currentEntry['crc_current'] != $crc) {
-                    $this->db->update($this->getStoreTableName(), $insertData, "id = " . $this->db->quote((string)$subObjectId) . " AND tenant = " . $this->db->quote($this->name));
-                } else if($currentEntry['in_preparation_queue']) {
-                    $this->db->query("UPDATE " . $this->getStoreTableName() . " SET in_preparation_queue = 0, preparation_worker_timestamp = 0, preparation_worker_id = null WHERE id = ? AND tenant = ?", array($subObjectId, $this->name));
-                }
-
+                $this->insertDataToIndex($insertData,$subObjectId);
             } else {
                 \Logger::info("Don't adding product " . $subObjectId . " to index " . $this->name . ".");
                 $this->doDeleteFromIndex($subObjectId, $object);
@@ -225,6 +256,23 @@ trait BatchProcessing {
         //cleans up all old zombie data
         $this->doCleanupOldZombieData($object, $subObjectIds);
 
+    }
+
+    /**
+     * Inserts the data do the store table
+     *
+     * @param $data
+     * @param $subObjectId
+     */
+    protected function insertDataToIndex($data,$subObjectId){
+        $currentEntry = $this->db->fetchRow("SELECT crc_current, in_preparation_queue FROM " . $this->getStoreTableName() . " WHERE o_id = ? AND tenant = ?", array($subObjectId, $this->name));
+        if(!$currentEntry) {
+            $this->db->insert($this->getStoreTableName(), $data);
+        } else if($currentEntry['crc_current'] != $data['crc_current']) {
+            $this->db->update($this->getStoreTableName(), $data, "o_id = " . $this->db->quote((string)$subObjectId) . " AND tenant = " . $this->db->quote($this->name));
+        } else if($currentEntry['in_preparation_queue']) {
+            $this->db->query("UPDATE " . $this->getStoreTableName() . " SET in_preparation_queue = 0, preparation_worker_timestamp = 0, preparation_worker_id = null WHERE o_id = ? AND tenant = ?", array($subObjectId, $this->name));
+        }
     }
 
 
@@ -247,7 +295,7 @@ trait BatchProcessing {
             //need check, if there are sub objects because update on empty result set is too slow
             $objects = $this->db->fetchCol("SELECT o_id FROM objects WHERE o_path LIKE ?", array($object->getFullPath() . "/%"));
             if($objects) {
-                $updateStatement = "UPDATE " . $this->getStoreTableName() . " SET in_preparation_queue = 1 WHERE tenant = ? AND id IN (".implode(',',$objects).")";
+                $updateStatement = "UPDATE " . $this->getStoreTableName() . " SET in_preparation_queue = 1 WHERE tenant = ? AND o_id IN (".implode(',',$objects).")";
                 $this->db->query($updateStatement, array($this->name));
             }
 
@@ -268,7 +316,7 @@ trait BatchProcessing {
         $this->db->query("UPDATE " . $this->getStoreTableName() . " SET preparation_worker_id = ?, preparation_worker_timestamp = ? WHERE tenant = ? AND in_preparation_queue = 1 AND (ISNULL(preparation_worker_timestamp) OR preparation_worker_timestamp < ?) LIMIT " . intval($limit),
             array($workerId, $workerTimestamp, $this->name, $workerTimestamp - $this->getWorkerTimeout()));
 
-        $entries = $this->db->fetchCol("SELECT id FROM " . $this->getStoreTableName() . " WHERE preparation_worker_id = ?",
+        $entries = $this->db->fetchCol("SELECT o_id FROM " . $this->getStoreTableName() . " WHERE preparation_worker_id = ?",
             array($workerId));
 
         if($entries) {
@@ -304,13 +352,13 @@ trait BatchProcessing {
         $this->db->query("UPDATE " . $this->getStoreTableName() . " SET worker_id = ?, worker_timestamp = ? WHERE (crc_current != crc_index OR ISNULL(crc_index)) AND tenant = ? AND (ISNULL(worker_timestamp) OR worker_timestamp < ?) LIMIT " . intval($limit),
             array($workerId, $workerTimestamp, $this->name, $workerTimestamp - $this->getWorkerTimeout()));
 
-        $entries = $this->db->fetchAll("SELECT id, data FROM " . $this->getStoreTableName() . " WHERE worker_id = ?", array($workerId));
+        $entries = $this->db->fetchAll("SELECT o_id, data FROM " . $this->getStoreTableName() . " WHERE worker_id = ?", array($workerId));
 
         if($entries) {
             foreach($entries as $entry) {
                 \Logger::info("Worker $workerId updating index for element " . $entry['id']);
                 $data = json_decode($entry['data'], true);
-                $this->doUpdateIndex($entry['id'], $data);
+                $this->doUpdateIndex($entry['o_id'], $data);
             }
             return count($entries);
         } else {

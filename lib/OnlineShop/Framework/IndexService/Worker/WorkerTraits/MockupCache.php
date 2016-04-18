@@ -54,7 +54,7 @@ trait MockupCache {
      */
     public function saveToMockupCache($objectId, $data = null) {
         if(empty($data)) {
-            $data = $this->db->fetchOne("SELECT data FROM " . $this->getStoreTableName() . " WHERE id = ? AND tenant = ?", array($objectId, $this->name));
+            $data = $this->db->fetchOne("SELECT data FROM " . $this->getStoreTableName() . " WHERE o_id = ? AND tenant = ?", array($objectId, $this->name));
             $data = json_decode($data, true);
         }
 
@@ -66,7 +66,7 @@ trait MockupCache {
         $success = $cache->save(serialize($mockup), \Pimcore\Model\Cache::$cachePrefix . $key, [$this->getMockupCachePrefix()], null);
         $result = \Pimcore\Model\Cache::load($key);
         if($success && $result) {
-            $this->db->query("UPDATE " . $this->getStoreTableName() . " SET crc_index = crc_current WHERE id = ? and tenant = ?", array($objectId, $this->name));
+            $this->db->query("UPDATE " . $this->getStoreTableName() . " SET crc_index = crc_current WHERE o_id = ? and tenant = ?", array($objectId, $this->name));
         } else {
             \Logger::err("Element with ID $objectId could not be added to mockup-cache");
         }

@@ -30,6 +30,19 @@ class DefaultFactFinder implements IProductList
     protected $tenantName;
 
     /**
+     * @var bool
+     */
+    protected $transmitSessionId = true;
+
+    /**
+     * contains a mapping from productId => array Index
+     * useful when you have to merge child products to there parent and you don't want to iterate each time over the list
+     *
+     * @var array
+     */
+    protected $productPositionMap = [];
+
+    /**
      * @var \OnlineShop\Framework\IndexService\Config\IFactFinderConfig
      */
     protected $tenantConfig;
@@ -39,6 +52,15 @@ class DefaultFactFinder implements IProductList
      */
     protected $useAsn = true;
 
+    /**
+     * @var null
+     */
+    protected $followSearchParam = null;
+
+    /**
+     * @var array
+     */
+    protected $defaultParams = [];
 
     /**
      * @var null|int
@@ -120,6 +142,25 @@ class DefaultFactFinder implements IProductList
     /**
      * @return boolean
      */
+    public function getTransmitSessionId()
+    {
+        return $this->transmitSessionId;
+    }
+
+    /**
+     * @param boolean $transmitSessionId
+     *
+     * @return $this
+     */
+    public function setTransmitSessionId($transmitSessionId)
+    {
+        $this->transmitSessionId = $transmitSessionId;
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
     public function getUseAsn()
     {
         return $this->useAsn;
@@ -133,6 +174,44 @@ class DefaultFactFinder implements IProductList
     public function setUseAsn($useAsn)
     {
         $this->useAsn = $useAsn;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getProductPositionMap()
+    {
+        return $this->productPositionMap;
+    }
+
+    /**
+     * @return array
+     */
+    public function getDefaultParams()
+    {
+        return $this->defaultParams;
+    }
+
+    /**
+     * @param array $defaultParams
+     *
+     * @return $this
+     */
+    public function setDefaultParams($defaultParams)
+    {
+        $this->defaultParams = $defaultParams;
+        return $this;
+    }
+
+    /**
+     * @param array $productPositionMap
+     *
+     * @return $this
+     */
+    public function setProductPositionMap($productPositionMap)
+    {
+        $this->productPositionMap = $productPositionMap;
         return $this;
     }
 
@@ -348,37 +427,23 @@ class DefaultFactFinder implements IProductList
      */
     public function load()
     {
-        // init
-        $params = [
-            'query' => '*'
-        ];
-
-
-        // add conditions
-        $params = $this->buildSystemConditions( $params );
-        $params = $this->buildFilterConditions( $params );
-        $params = $this->buildQueryConditions( $params );
-        $params = $this->buildSorting( $params );
-
-
-        // add paging
-        $params['page'] = ceil($this->getOffset() / $this->getLimit())+1;
-        $params['productsPerPage'] = $this->getLimit();
-        $params['idsOnly'] = 'true';
-        $params['useAsn'] = $this->getUseAsn() ? 'true' : 'false';
-
-
         // send request
-        $data = $this->sendRequest( $params );
+        $data = $this->sendRequest();
+
+        if(!is_array($data)){
+            throw new \Exception("Got no data from Factfinder " .print_r($data,true));
+        }
+
         if(array_key_exists('error', $data))
         {
-            throw new \Exception($data['error']);
+            throw new Exception($data['error']);
         }
         $searchResult = $data['searchResult'];
 
 
         // load products found
-        $this->products = [];
+        $this->products = $this->productPositionMap= [];
+        $i = 0;
         foreach($searchResult['records'] as $item)
         {
             $id = null;
@@ -402,11 +467,13 @@ class DefaultFactFinder implements IProductList
                 if($product)
                 {
                     $this->products[] = $product;
+                    $this->productPositionMap[$product->getId()] = $i;
+                    $i++;
                 }
             }
             else
             {
-                $this->getLogger()->log(sprintf('object "%s" not found', $id), \Zend_Log::ERR);
+                $this->getLogger()->log(sprintf('object "%s" not found', $id), Zend_Log::ERR);
             }
         }
 
@@ -465,7 +532,7 @@ class DefaultFactFinder implements IProductList
         switch($this->getVariantMode())
         {
             case self::VARIANT_MODE_HIDE:
-                // nothing todo, default factfinder
+                $filter['duplicateFilter'] = 'NONE';
                 break;
 
             case self::VARIANT_MODE_INCLUDE:
@@ -553,7 +620,11 @@ class DefaultFactFinder implements IProductList
             ;
         }
 
-        $params['query'] = $query ?: '*';
+        if($query){
+            $params['query'] = $query;
+        }else{
+            $params['navigation'] = 'true';
+        }
 
         return $params;
     }
@@ -709,43 +780,87 @@ class DefaultFactFinder implements IProductList
      * @throws \Zend_Http_Client_Exception
      */
     protected function doRequest($url,$trys = 0){
-         // start request
-        $this->getLogger()->log('Request: ' . $url, \Zend_Log::INFO);
+        // start request
+        $this->getLogger()->log('Request: ' . $url, Zend_Log::INFO);
         $client = new \Zend_Http_Client( $url );
         $client->setMethod(\Zend_Http_Client::GET);
         $response = $client->request();
 
+
         $factFinderTimeout = $response->getHeader('X-FF-Timeout');
         if($factFinderTimeout === 'true'){
-            $errorMessage = "FactFinder Read timeout:" . $url.' X-FF-RefKey: ' . $response->getHeader('X-FF-RefKey');
-            \Logger::emergency($errorMessage);
+            $errorMessage = "FactFinder Read timeout:" . $url.' X-FF-RefKey: ' . $response->getHeader('X-FF-RefKey').' Tried: ' . ($trys+1);
+            $this->getLogger()->log($errorMessage, Zend_Log::ERR);
             $trys++;
-            if($trys > 3){
-                throw new \Exception($errorMessage . ' Max tries of 4 reached.');
+            if($trys > 2){
+                $this->getLogger()->log('FactFinder Read timeout: Max tries of 3 reached. Gave up.',Zend_Log::ERR);
+                return $response;
             }
-            usleep(250000);
-            $this->doRequest($url,$trys);
-            $response = $client->request();
+            sleep(1);
+            $response = $this->doRequest($url,$trys);
         }
-
         return $response;
     }
 
-
     /**
-     * @param $params
+     * returns the search url
      *
-     * @return array
-     * @throws \Zend_Http_Client_Exception
-     * @throws \Zend_Log_Exception
+     * @return string
      */
-    protected function sendRequest($params)
-    {
-        // create url
-        $url = sprintf('http://%s/%s/Search.ff?'
+    protected function getSearchUrl(){
+        return sprintf('http://%s/%s/Search.ff?'
             , $this->tenantConfig->getClientConfig('host')
             , $this->tenantConfig->getClientConfig('customer')
         );
+    }
+
+    public function getSearchParams(){
+        $params = [];
+        if($data = $this->getLastResultData()){
+            $url = str_replace('/FACT-Finder/Search.ff?','',$data['searchResult']['searchParams']);
+            parse_str($url,$params);
+        }
+        return $params;
+    }
+
+    /**
+     * returns the Fact-Finder query
+     * @return string
+     */
+    public function getQuery(){
+        // init
+        $params = $this->getDefaultParams();
+
+
+        // add conditions
+        $params = $this->buildSystemConditions( $params );
+
+        $params = $this->buildFilterConditions( $params );
+
+        $params = $this->buildQueryConditions( $params );
+
+        $params = $this->buildSorting( $params );
+
+
+        // add paging
+        if($this->getOffset() == 0){
+            $params['page']=1;
+        }else{
+            $params['page'] = ceil($this->getOffset() / $this->getLimit())+1;
+
+        }
+        $params['productsPerPage'] = $this->getLimit();
+        $params['idsOnly'] = 'true';
+        # $params['navigation'] = 'true';
+        $params['useAsn'] = $this->getUseAsn() ? 'true' : 'false';
+        if($this->getFollowSearchParam()){
+            $params['followSearch'] = $this->getFollowSearchParam();
+        }
+
+        if($this->getTransmitSessionId()){
+            $params['sid'] = session_id();
+        }
+        $url = $this->getSearchUrl().'?';
         $url .= http_build_query($params);
         $url .= '&format=json';
 
@@ -756,14 +871,56 @@ class DefaultFactFinder implements IProductList
             }
         }
 
+        return $url;
+    }
+
+
+    /**
+     * @return null
+     */
+    public function getFollowSearchParam()
+    {
+        return $this->followSearchParam;
+    }
+
+    /**
+     * @param null $followSearchParam
+     *
+     * @return $this
+     */
+    public function setFollowSearchParam($followSearchParam)
+    {
+        $this->followSearchParam = $followSearchParam;
+        return $this;
+    }
+
+    /**
+     * @param $params
+     *
+     * @return array
+     * @throws Zend_Http_Client_Exception
+     * @throws Zend_Log_Exception
+     */
+    protected function sendRequest()
+    {
+
+        $url  = $this->getQuery();
+        $this->requestUrl = $url;
         $response = $this->doRequest($url);
         $data = json_decode($response->getBody(), true);
 
-        if($data == null) {
+        if(!$data) {
             throw new \Exception('Request didn\'t return anything');
         }
+
+        if($data['searchResult']['timedOut']){
+            throw new \Exception('FactFinder Read timeout in response JSON: ' . $url);
+        }
+        $this->resultData = $data;
+
         return $data;
     }
+
 
 
     /**

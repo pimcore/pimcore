@@ -147,7 +147,7 @@ class ElasticSearch extends AbstractConfig implements IMockupConfig, IElasticSea
      */
     public function getTenantWorker() {
         if(empty($this->tenantWorker)) {
-            $this->tenantWorker = new \OnlineShop\Framework\IndexService\Worker\ElasticSearch($this);
+            $this->tenantWorker = new \OnlineShop\Framework\IndexService\Worker\DefaultElasticSearch($this);
         }
         return $this->tenantWorker;
     }
