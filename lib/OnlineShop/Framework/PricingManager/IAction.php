@@ -41,7 +41,7 @@ interface IAction
     /**
      * @param string $string
      *
-     * @return ICondition
+     * @return IAction
      */
     public function fromJSON($string);
 }

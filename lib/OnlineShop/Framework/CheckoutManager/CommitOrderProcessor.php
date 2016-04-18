@@ -16,6 +16,8 @@
 
 
 namespace OnlineShop\Framework\CheckoutManager;
+use OnlineShop\Framework\Factory;
+use OnlineShop\Plugin;
 
 /**
  * Class \OnlineShop\Framework\CheckoutManager\CommitOrderProcessor
@@ -202,7 +204,10 @@ class CommitOrderProcessor implements ICommitOrderProcessor {
      * @throws \Exception
      */
     public function cleanUpPendingOrders() {
-        $orderListClass = $this->orderClass . "_List";
+        $config = Factory::getInstance()->getConfig();
+
+        $orderListClass = ((string) $config->onlineshop->ordermanager->config->orderstorage->orderClass) . "\\Listing";
+
         if(!class_exists($orderListClass)) {
             throw new \Exception("Class $orderListClass does not exist.");
         }
