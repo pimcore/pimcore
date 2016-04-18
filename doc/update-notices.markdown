@@ -1,6 +1,11 @@
 #Update Notices
 Please consider following update notices when updating the e-commerce framework.
  
+## next Version
+- Default Elasticserach worker has been renamed from Elasticsearch to DefaultElasticSearch (to be consistent) + Updates for Elasticserach 2.x
+- The id field of the store tables has been renamed to o_id instead of id (consistency). In Addition o_virtualProductId has been added.
+- FactFinder Adapter has been refactored. The data is now stored in separate columns -> export can be done witch one single sql-query.
+ 
 ## 0.9.0 - 0.9.1
 This version contains some significant refactorings concerning committing orders. These refactorings made some changes necessary 
  that need to be addressed during an update:  
