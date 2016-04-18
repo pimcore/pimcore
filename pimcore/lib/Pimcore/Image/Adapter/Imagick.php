@@ -190,27 +190,6 @@ class Imagick extends Adapter
     }
 
     /**
-     * @return $this
-     */
-    // @TODO: Needs further testing => speed improvement especially with bigger images
-    /*protected function reinitializeImage() {
-
-        $i = $this->resource;
-
-        $i->writeImage("mpr:temp");
-        $this->destroy();
-
-        $i = new \Imagick();
-        $i->readImage("mpr:temp");
-
-        $this->resource = $i;
-
-        $this->modified = false;
-
-        return $this;
-    }*/
-
-    /**
      * @return  void
      */
     protected function destroy()
