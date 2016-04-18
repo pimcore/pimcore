@@ -120,6 +120,40 @@ pimcore.layout.portal = Class.create({
                         text: t("add_portlet"),
                         iconCls: "pimcore_icon_add",
                         menu: portletMenu
+                    },
+                    {
+                        text: t("delete_dashboard"),
+                        iconCls: "pimcore_icon_delete",
+                        hidden: (this.key == "welcome"),
+                        handler: function() {
+                            Ext.Msg.show({
+                                title:t('delete_dashboard'),
+                                msg: t('really_delete_dashboard'),
+                                buttons: Ext.Msg.YESNO,
+                                fn: function(btn) {
+                                    if(btn == "yes") {
+                                        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+                                        tabPanel.remove("pimcore_portal_" + this.key);
+
+                                        Ext.Ajax.request({
+                                            url: "/admin/portal/delete-dashboard",
+                                            params: {
+                                                key: this.key
+                                            },
+                                            success: function() {
+                                                Ext.MessageBox.confirm(t("info"), t("reload_pimcore_changes"), function (buttonValue) {
+                                                    if (buttonValue == "yes") {
+                                                        window.location.reload();
+                                                    }
+                                                });
+                                            }
+                                        });
+
+                                    }
+                                }.bind(this),
+                                icon: Ext.MessageBox.QUESTION
+                            });
+                        }.bind(this)
                     }
                 ]
                 ,
