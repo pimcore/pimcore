@@ -106,7 +106,28 @@ class Dashboard
     public function getDashboard($key = "welcome")
     {
         $dashboards = $this->loadFile();
-        return $dashboards[$key];
+        $dashboard = $dashboards[$key];
+
+
+        if ($dashboard) {
+            $disabledPortlets = array_keys($this->getDisabledPortlets());
+            $positions = $dashboard["positions"];
+            if (is_array($positions)) {
+                foreach ($positions as $columnKey => $column) {
+                    if ($column) {
+                        foreach ($column as $portletKey => $portletCfg) {
+                            $type = $portletCfg["type"];
+                            if (in_array($type, $disabledPortlets)) {
+                                unset($dashboard["positions"][$columnKey][$portletKey]);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return $dashboard;
+
     }
 
     /**
@@ -133,5 +154,15 @@ class Dashboard
         $this->loadFile();
         unset($this->dashboards[$key]);
         File::put($this->getConfigFile(), Serialize::serialize($this->dashboards));
+    }
+
+
+    /**
+     * @return array
+     */
+    public function getDisabledPortlets() {
+        $perspectiveCfg = Config::getRuntimePerspective();
+        $dasboardCfg = $perspectiveCfg["dashboards"] ? $perspectiveCfg["dashboards"] : array();
+        return $dasboardCfg["disabledPortlets"] ? $dasboardCfg["disabledPortlets"] : array();
     }
 }

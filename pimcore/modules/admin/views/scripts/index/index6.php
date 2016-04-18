@@ -572,7 +572,8 @@ $googleMapsApiKey = $this->config->services->google->browserapikey;
         asset_hide_edit: <?= $this->config->assets->hide_edit_image ? "true" : "false" ?>,
         perspective: <?= \Zend_Json::encode($runtimePerspective) ?>,
         availablePerspectives: <?= \Zend_Json::encode(\Pimcore\Config::getAvailablePerspectives(\Pimcore\Tool\Admin::getCurrentUser())) ?>,
-        customviews: <?= \Zend_Json::encode($this->customview_config) ?>
+        customviews: <?= \Zend_Json::encode($this->customview_config) ?>,
+        disabledPortlets: <?= \Zend_Json::encode((new \Pimcore\Helper\Dashboard(\Pimcore\Tool\Admin::getCurrentUser()))->getDisabledPortlets()) ?>
     };
 </script>
 

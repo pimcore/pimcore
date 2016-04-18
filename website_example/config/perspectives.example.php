@@ -31,6 +31,11 @@ return [
             ],
         ],
         "dashboards" => [
+            // allows you disable portlets by name
+//            "disabledPortlets" => array(
+//                "pimcore.layout.portlets.modificationStatistic" => 1,
+//                "pimcore.layout.portlets.feed" => 1
+//            ),
             "predefined" => array(
                 "welcome" => array(
                     "positions" => array(
