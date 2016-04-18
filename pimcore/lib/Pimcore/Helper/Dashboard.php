@@ -84,38 +84,8 @@ class Dashboard
             if (empty($this->dashboards)) {
 
                 $perspectiveCfg = Config::getRuntimePerspective();
-                $this->dashboards = $perspectiveCfg["dashboards"] ? $perspectiveCfg["dashboards"] : array();
-                // if no configuration exists, return the base config
-//                $this->dashboards = array(
-//                    "welcome" => array(
-//                        "positions" => array(
-//                            array(
-//                                array(
-//                                    "id" => 1,
-//                                    "type" => "pimcore.layout.portlets.modificationStatistic",
-//                                    "config" => null
-//                                ),
-//                                array(
-//                                    "id" => 2,
-//                                    "type" => "pimcore.layout.portlets.modifiedAssets",
-//                                    "config" => null
-//                                )
-//                            ),
-//                            array(
-//                                array(
-//                                    "id" => 3,
-//                                    "type" => "pimcore.layout.portlets.modifiedObjects",
-//                                    "config" => null
-//                                ),
-//                                array(
-//                                    "id" => 4,
-//                                    "type" => "pimcore.layout.portlets.modifiedDocuments",
-//                                    "config" => null
-//                                )
-//                            )
-//                        )
-//                    )
-//                );
+                $dasboardCfg = $perspectiveCfg["dashboards"] ? $perspectiveCfg["dashboards"] : array();
+                $this->dashboards = $dasboardCfg["predefined"] ? $dasboardCfg["predefined"] : array();
             }
         }
         return $this->dashboards;
