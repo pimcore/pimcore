@@ -657,8 +657,6 @@ pimcore.helpers.handleF5 = function (keyCode, e) {
 
     var date = new Date();
     location.href = "/admin/?_dc=" + date.getTime();
-
-    mapF5.stopEvent = false;
 };
 
 pimcore.helpers.lockManager = function (cid, ctype, csubtype, data) {
