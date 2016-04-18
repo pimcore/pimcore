@@ -541,12 +541,23 @@ class DefaultElasticSearch implements IProductList {
 
         if($this->orderKey) {
 
+            $systemAttributes = $this->tenantConfig->getTenantWorker()->getSystemAttributes(true);
             if(is_array($this->orderKey)) {
                 foreach($this->orderKey as $orderKey) {
-                    $params['body']['sort'][] = [$orderKey[0] => ($orderKey[1] ?: "asc")];
+                    if(in_array($this->orderKey,$systemAttributes)){
+                        $key = 'system.'.$orderKey[0];
+                    }else{
+                        $key = 'attributes.'.$orderKey[0];
+                    }
+                    $params['body']['sort'][] = [$key => ($orderKey[1] ?: "asc")];
                 }
             } else {
-                $params['body']['sort'][] = [$this->orderKey => ($this->order ?: "asc")];
+                if(in_array($this->orderKey,$systemAttributes)){
+                    $key = 'system.'.$this->orderKey;
+                }else{
+                    $key = 'attributes.'.$this->orderKey;
+                }
+                $params['body']['sort'][] = [$key => ($this->order ?: "asc")];
             }
         }
 
