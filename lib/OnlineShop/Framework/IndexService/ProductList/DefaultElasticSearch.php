@@ -543,6 +543,7 @@ class DefaultElasticSearch implements IProductList {
 
             $systemAttributes = $this->tenantConfig->getTenantWorker()->getSystemAttributes(true);
             if(is_array($this->orderKey)) {
+
                 foreach($this->orderKey as $orderKey) {
                     if(in_array($this->orderKey,$systemAttributes)){
                         $key = 'system.'.$orderKey[0];
