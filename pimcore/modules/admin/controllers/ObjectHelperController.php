@@ -423,6 +423,7 @@ class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
                 }
 
                 $settings["views"][] = array(
+                    "treetype" => $this->getParam("treetype_" . $i),
                     "name" => $this->getParam("name_" . $i),
                     "condition" => $this->getParam("condition_" . $i),
                     "icon" => $this->getParam("icon_" . $i),

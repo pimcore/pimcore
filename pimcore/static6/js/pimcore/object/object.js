@@ -565,7 +565,9 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             if (pimcore.settings.customviews.length > 0) {
                 for (var cvs = 0; cvs < pimcore.settings.customviews.length; cvs++) {
                     var cv = pimcore.settings.customviews[cvs];
-                    treeNames.push("layout_customviews_tree" + cv.id);
+                    if (!cv.treetype || cv.treetype == "object") {
+                        treeNames.push("layout_object_tree_" + cv.id);
+                    }
                 }
             }
 
@@ -611,7 +613,9 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             if (pimcore.settings.customviews.length > 0) {
                 for (var cvs = 0; cvs < pimcore.settings.customviews.length; cvs++) {
                     var cv = pimcore.settings.customviews[cvs];
-                    treeNames.push("layout_customviews_tree" + cv.id);
+                    if (!cv.treetype || cv.treetype == "object") {
+                        treeNames.push("layout_object_tree_" + cv.id);
+                    }
                 }
             }
 

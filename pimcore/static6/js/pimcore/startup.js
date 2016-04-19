@@ -643,23 +643,25 @@ Ext.onReady(function () {
                     }
                     break;
                 case "customview":
-                    if (user.isAllowed("objects")) {
-                        if (!treeConfig.hidden) {
+                    if (!treeConfig.hidden) {
+                        var treetype = treeConfig.treetype ? treeConfig.treetype : "object";
+                        if (user.isAllowed(treetype + "s")) {
                             treepanel = Ext.getCmp("pimcore_panel_tree_" + side);
 
                             var treepanel = Ext.getCmp("pimcore_panel_tree_" + side);
+                            var treeCls = window.pimcore[treetype].customviews.tree;
 
-                            tree = new pimcore.object.customviews.tree({
+                            tree = new treeCls({
                                 allowedClasses: treeConfig.allowedClasses,
                                 rootId: treeConfig.rootId,
                                 rootVisible: treeConfig.showroot,
-                                treeId: "pimcore_panel_tree_customviews_" + treeConfig.id,
-                                treeIconCls: "pimcore_object_customviews_icon_" + treeConfig.id,
+                                treeId: "pimcore_panel_tree_" + treetype + "_" + treeConfig.id,
+                                treeIconCls: "pimcore_" + treetype + "_customview_icon_" + treeConfig.id,
                                 treeTitle: ts(treeConfig.name),
                                 parentPanel: treepanel,
                                 loaderBaseParams: {}
                             }, treeConfig);
-                            pimcore.globalmanager.add("layout_customviews_tree" + treeConfig.id, tree);
+                            pimcore.globalmanager.add("layout_" + treetype + "_tree_" + treeConfig.id, tree);
 
                             treepanel.setHidden(false);
                         }

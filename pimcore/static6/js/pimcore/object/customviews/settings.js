@@ -14,7 +14,7 @@
 pimcore.registerNS("pimcore.object.customviews.settings");
 pimcore.object.customviews.settings = Class.create({
 
-    initialize: function() {
+    initialize: function () {
 
         this.entryCount = 0;
 
@@ -37,7 +37,7 @@ pimcore.object.customviews.settings = Class.create({
                 autoScroll: true,
                 iconCls: "pimcore_icon_custom_views",
                 border: false,
-                closable:true,
+                closable: true,
                 buttons: [
                     {
                         text: t("add"),
@@ -74,7 +74,7 @@ pimcore.object.customviews.settings = Class.create({
     },
 
     loadDataComplete: function (response) {
-        
+
         var rdata = Ext.decode(response.responseText);
         if (rdata) {
             if (rdata.success) {
@@ -107,99 +107,145 @@ pimcore.object.customviews.settings = Class.create({
             value: data.sort
         });
 
+        var typedata = [
+            ["asset", t("asset")],
+            ["document", t("document")],
+            ["object", t("object")]
+        ];
+
+        var treetype = data.treetype ? data.treetype : "object";
+
+        var allowedClasses = new Ext.ux.form.MultiSelect({
+            fieldLabel: t("allowed_classes"),
+            name: "classes_" + this.entryCount + "[]",
+            width: 500,
+            height: 100,
+            store: pimcore.globalmanager.get("object_types_store"),
+            editable: false,
+            value: data.classes,
+            valueField: 'id',
+            displayField: 'text',
+            hidden: treetype != "object"
+        });
+
+        var typeCombo = new Ext.form.ComboBox({
+            name: "treetype_" + this.entryCount,
+            fieldLabel: t('tree_type'),
+            width: 300,
+            mode: 'local',
+            autoSelect: true,
+            editable: false,
+            value: treetype,
+            store: new Ext.data.ArrayStore({
+                id: 0,
+                fields: [
+                    'id',
+                    'label'
+                ],
+                data: typedata
+            }),
+            triggerAction: 'all',
+            valueField: 'id',
+            displayField: 'label',
+            listeners: {
+                select: function (field, fieldname) {
+                    allowedClasses.setHidden(field.value != "object");
+                }
+            }
+        });
+
         this.panel.add({
             xtype: 'panel',
             border: true,
             style: "margin-bottom: 10px",
             bodyStyle: "padding: 10px",
             id: "customviews_fieldset_" + this.entryCount,
+            defaults: {
+                labelWidth: 150
+            },
             items: [
-            {
-                xtype: "panel",
-                items: [
-                    {
-                        xtype: "textfield",
-                        fieldLabel: t("name"),
-                        name: "name_" + this.entryCount,
-                        width: 300,
-                        value: data.name
+                typeCombo,
+                {
+                    xtype: "panel",
+                    defaults: {
+                        labelWidth: 150
                     },
-                    {
-                        xtype: "textfield",
-                        fieldLabel: t("icon"),
-                        name: "icon_" + this.entryCount,
-                        width: 500,
-                        value: data.icon
-                    },
-                    {
-                        xtype: "textfield",
-                        fieldLabel: t("root_folder"),
-                        name: "rootfolder_" + this.entryCount,
-                        width: 500,
-                        cls: "input_drop_target",
-                        value: data.rootfolder,
-                        listeners: {
-                            "render": function (el) {
-                                new Ext.dd.DropZone(el.getEl(), {
-                                    reference: this,
-                                    ddGroup: "element",
-                                    getTargetFromEvent: function (e) {
-                                        return this.getEl();
-                                    }.bind(el),
+                    items: [
+                        {
+                            xtype: "textfield",
+                            fieldLabel: t("name"),
+                            name: "name_" + this.entryCount,
+                            width: 300,
+                            value: data.name
+                        },
+                        {
+                            xtype: "textfield",
+                            fieldLabel: t("icon"),
+                            name: "icon_" + this.entryCount,
+                            width: 500,
+                            value: data.icon
+                        },
+                        {
+                            xtype: "textfield",
+                            fieldLabel: t("root_folder"),
+                            name: "rootfolder_" + this.entryCount,
+                            width: 500,
+                            cls: "input_drop_target",
+                            value: data.rootfolder,
+                            listeners: {
+                                "render": function (el) {
+                                    new Ext.dd.DropZone(el.getEl(), {
+                                        reference: this,
+                                        ddGroup: "element",
+                                        getTargetFromEvent: function (e) {
+                                            return this.getEl();
+                                        }.bind(el),
 
-                                    onNodeOver: function (target, dd, e, data) {
-                                        return Ext.dd.DropZone.prototype.dropAllowed;
-                                    },
+                                        onNodeOver: function (typeCombo, target, dd, e, data) {
+                                            data = data.records[0].data;
+                                            if (data.elementType == typeCombo.getValue()) {
+                                                return Ext.dd.DropZone.prototype.dropAllowed;
+                                            }
+                                        }.bind(el, typeCombo),
 
-                                    onNodeDrop: function (target, dd, e, data) {
-                                        data = data.records[0].data;
-                                        if (data.elementType == "object") {
-                                            this.setValue(data.path);
-                                            return true;
-                                        }
-                                        return false;
-                                    }.bind(el)
-                                });
+                                        onNodeDrop: function (typeCombo, target, dd, e, data) {
+                                            data = data.records[0].data;
+                                            if (data.elementType == typeCombo.getValue()) {
+                                                this.setValue(data.path);
+                                                return true;
+                                            }
+                                            return false;
+                                        }.bind(el, typeCombo)
+                                    });
+                                }
                             }
-                        }
-                    },
-                    {
-                        xtype: "checkbox",
-                        name: "showroot_" + this.entryCount,
-                        checked: data.showroot,
-                        fieldLabel: t("show_root_node")
-                    },
-                    {
-                        xtype: "multiselect",
-                        fieldLabel: t("allowed_classes"),
-                        name: "classes_" + this.entryCount + "[]",
-                        width: 500,
-                        height: 100,
-                        store: pimcore.globalmanager.get("object_types_store"),
-                        editable: false,
-                        value: data.classes,
-                        valueField: 'id',
-                        displayField: 'text'
-                    },
-                    {
-                        xtype: "combobox",
-                        fieldLabel: t("position"),
-                        name: "position_" + this.entryCount,
-                        width: 300,
-                        value: data.position,
-                        store: Ext.create('Ext.data.ArrayStore', {
-                            fields: ['id', 'text'],
-                            data: [["left", t("left")],["right" , t("right")]]
-                        }),
-                        valueField: "id",
-                        displayField: "text"
-                    },
-                    sorterField
-                ]
-            }
+                        },
+                        {
+                            xtype: "checkbox",
+                            name: "showroot_" + this.entryCount,
+                            checked: data.showroot,
+                            fieldLabel: t("show_root_node")
+                        },
+                        allowedClasses,
+                        {
+                            xtype: "combobox",
+                            fieldLabel: t("position"),
+                            name: "position_" + this.entryCount,
+                            width: 300,
+                            value: data.position,
+                            store: Ext.create('Ext.data.ArrayStore', {
+                                fields: ['id', 'text'],
+                                data: [["left", t("left")], ["right", t("right")]]
+                            }),
+                            valueField: "id",
+                            displayField: "text"
+                        },
+                        sorterField
+                    ]
+                }
             ],
 
-            bbar: [ '->',
+            bbar: ['->',
                 {
                     text: t("remove"),
                     iconCls: "pimcore_icon_delete",
@@ -211,7 +257,7 @@ pimcore.object.customviews.settings = Class.create({
             ]
         });
 
-        Ext.QuickTips.register({target:  sorterField.getEl(), text: t("lower_sortvalues_first")});
+        Ext.QuickTips.register({target: sorterField.getEl(), text: t("lower_sortvalues_first")});
 
         this.panel.updateLayout();
 

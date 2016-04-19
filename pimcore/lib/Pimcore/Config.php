@@ -491,7 +491,7 @@ class Config
                 }
 
                 $tmpData = $node;
-                $rootNode = Model\Object::getByPath($tmpData["rootfolder"]);
+                $rootNode = Model\Element\Service::getElementByPath($tmpData["treetype"], $tmpData["rootfolder"]);
 
                 if ($rootNode) {
                     $tmpData["type"] = "customview";

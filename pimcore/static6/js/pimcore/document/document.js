@@ -171,25 +171,40 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
             this.toolbarButtons.save.hide();
         }
 
-        // remove class in tree panel
-        try {
-            var tree = pimcore.globalmanager.get("layout_document_tree").tree;
-            var store = tree.getStore();
-            var record = store.getById(this.data.id);
-            if (record) {
-                var view = tree.getView();
-                var nodeEl = Ext.fly(view.getNodeByRecord(record));
-                if (nodeEl) {
-                    var nodeElInner = nodeEl.down(".x-grid-td");
-                    if (nodeElInner) {
-                        nodeElInner.removeCls("pimcore_unpublished");
-                    }
+        var treeNames = ["layout_document_tree"]
+        if (pimcore.settings.customviews.length > 0) {
+            for (var cvs = 0; cvs < pimcore.settings.customviews.length; cvs++) {
+                var cv = pimcore.settings.customviews[cvs];
+                if (cv.treetype == "document") {
+                    treeNames.push("layout_document_tree_" + cv.id);
                 }
-                delete record.data.cls;
-                record.data.published = true;
             }
-        } catch (e) {
-            console.log(e);
+        }
+
+        var index;
+        for (index = 0; index < treeNames.length; index++) {
+            var treeName = treeNames[index];
+
+            // remove class in tree panel
+            try {
+                var tree = pimcore.globalmanager.get(treeName).tree;
+                var store = tree.getStore();
+                var record = store.getById(this.data.id);
+                if (record) {
+                    var view = tree.getView();
+                    var nodeEl = Ext.fly(view.getNodeByRecord(record));
+                    if (nodeEl) {
+                        var nodeElInner = nodeEl.down(".x-grid-td");
+                        if (nodeElInner) {
+                            nodeElInner.removeCls("pimcore_unpublished");
+                        }
+                    }
+                    delete record.data.cls;
+                    record.data.published = true;
+                }
+            } catch (e) {
+                console.log(e);
+            }
         }
 
 
@@ -206,25 +221,40 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
             this.toolbarButtons.save.show();
         }
 
-        // set class in tree panel
-        try {
-            var tree = pimcore.globalmanager.get("layout_document_tree").tree;
-            var store = tree.getStore();
-            var record = store.getById(this.data.id);
-            if (record) {
-                var view = tree.getView();
-                var nodeEl = Ext.fly(view.getNodeByRecord(record));
-                if (nodeEl) {
-                    var nodeElInner = nodeEl.down(".x-grid-td");
-                    if (nodeElInner) {
-                        nodeElInner.addCls("pimcore_unpublished");
-                    }
+        var treeNames = ["layout_document_tree"]
+        if (pimcore.settings.customviews.length > 0) {
+            for (var cvs = 0; cvs < pimcore.settings.customviews.length; cvs++) {
+                var cv = pimcore.settings.customviews[cvs];
+                if (cv.treetype == "document") {
+                    treeNames.push("layout_document_tree_" + cv.id);
                 }
-                record.data.cls = "pimcore_unpublished";
-                record.data.published = false;
             }
-        } catch (e) {
-            console.log(e);
+        }
+
+        var index;
+        for (index = 0; index < treeNames.length; index++) {
+            var treeName = treeNames[index];
+
+            // remove class in tree panel
+            try {
+                var tree = pimcore.globalmanager.get(treeName).tree;
+                var store = tree.getStore();
+                var record = store.getById(this.data.id);
+                if (record) {
+                    var view = tree.getView();
+                    var nodeEl = Ext.fly(view.getNodeByRecord(record));
+                    if (nodeEl) {
+                        var nodeElInner = nodeEl.down(".x-grid-td");
+                        if (nodeElInner) {
+                            nodeElInner.addCls("pimcore_unpublished");
+                        }
+                    }
+                    record.data.cls = "pimcore_unpublished";
+                    record.data.published = false;
+                }
+            } catch (e) {
+                console.log(e);
+            }
         }
 
         this.save("unpublish");

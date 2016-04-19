@@ -314,6 +314,7 @@ $scripts = array(
     "pimcore/document/email.js",
     "pimcore/document/page.js",
     "pimcore/document/seopanel.js",
+    "pimcore/document/customviews/tree.js",
 
     // assets
     "pimcore/asset/asset.js",
@@ -327,6 +328,7 @@ $scripts = array(
     "pimcore/asset/versions.js",
     "pimcore/asset/metadata.js",
     "pimcore/asset/tree.js",
+    "pimcore/asset/customviews/tree.js",
 
     // object
     "pimcore/object/helpers/edit.js",

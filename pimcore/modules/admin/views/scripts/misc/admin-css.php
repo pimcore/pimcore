@@ -19,8 +19,10 @@
 <?php if (is_array($this->customviews)) { ?>
     <?php foreach ($this->customviews as $cv) { ?>
 
-    <?php if ($cv["icon"]) { ?>
-    .pimcore_object_customviews_icon_<?= $cv["id"]; ?> {
+    <?php if ($cv["icon"]) {
+            $treetype = $cv["treetype"] ? $cv["treetype"] : "object";
+            ?>
+    .pimcore_<?= $treetype ?>_customview_icon_<?= $cv["id"]; ?> {
         background: url(<?= $cv["icon"]; ?>) left center no-repeat !important;
     }
     <?php } ?>

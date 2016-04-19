@@ -72,7 +72,7 @@ class Admin_IndexController extends \Pimcore\Controller\Action\Admin
         if ($cvConfig) {
             foreach ($cvConfig as $node) {
                 $tmpData = $node;
-                $rootNode = Model\Object::getByPath($tmpData["rootfolder"]);
+                $rootNode = Model\Element\Service::getElementByPath($tmpData["treetype"], $tmpData["rootfolder"]);
 
                 if ($rootNode) {
                     $tmpData["rootId"] = $rootNode->getId();
