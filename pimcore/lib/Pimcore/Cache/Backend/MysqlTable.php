@@ -76,6 +76,9 @@ class MysqlTable extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Exte
     public function save($data, $id, $tags = array(), $specificLifetime = false)
     {
         $lifetime = $this->getLifetime($specificLifetime);
+        if (is_null($lifetime)) {
+          $lifetime = (86400*365);
+        }
 
         $this->getDb()->beginTransaction();
 
