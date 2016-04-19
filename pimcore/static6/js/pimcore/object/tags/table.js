@@ -90,6 +90,9 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
         options.style = "margin-bottom: 10px";
         options.title = this.fieldConfig.title;
         options.componentCls = "object_field";
+        if (this.fieldConfig.width) {
+            options.width = this.fieldConfig.width;
+        }
 
         if (!this.component) {
             this.component = new Ext.Panel(options);
@@ -129,7 +132,8 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
                     editor: new Ext.form.TextField({
                         allowBlank: true
                     }),
-                    sortable: false
+                    sortable: false,
+                    flex: 1
                 });
             }
         }
@@ -169,7 +173,10 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
                     iconCls: "pimcore_icon_empty",
                     handler: this.emptyStore.bind(this)
                 }
-            ]
+            ],
+            viewConfig: {
+                forceFit: true
+            }
         });
         this.component.add(this.grid);
         this.component.updateLayout();
