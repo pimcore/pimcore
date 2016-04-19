@@ -432,7 +432,8 @@ class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
                     "showroot" => ($this->getParam("showroot_" . $i) == "true") ? true : false,
                     "classes" => $classes,
                     "position" => $this->getParam("position_" . $i),
-                    "sort" => $this->getParam("sort_" . $i)
+                    "sort" => $this->getParam("sort_" . $i),
+                    "expanded" => ($this->getParam("expanded_" . $i) == "true") ? true : false
                 );
             }
         }

@@ -240,7 +240,13 @@ pimcore.object.customviews.settings = Class.create({
                             valueField: "id",
                             displayField: "text"
                         },
-                        sorterField
+                        sorterField,
+                        {
+                            xtype: "checkbox",
+                            name: "expanded_" + this.entryCount,
+                            checked: data.expanded,
+                            fieldLabel: t("expanded")
+                        }
                     ]
                 }
             ],
