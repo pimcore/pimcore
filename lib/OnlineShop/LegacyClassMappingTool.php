@@ -136,7 +136,7 @@ class LegacyClassMappingTool {
         'OnlineShop\Framework\IndexService\Worker\DefaultFactFinder' => 'OnlineShop_Framework_IndexService_Tenant_Worker_DefaultFactFinder',
         'OnlineShop\Framework\IndexService\Worker\DefaultFindologic' => 'OnlineShop_Framework_IndexService_Tenant_Worker_DefaultFindologic',
         'OnlineShop\Framework\IndexService\Worker\DefaultMysql' => 'OnlineShop_Framework_IndexService_Tenant_Worker_DefaultMysql',
-        'OnlineShop\Framework\IndexService\Worker\ElasticSearch' => 'OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch',
+        'OnlineShop\Framework\IndexService\Worker\DefaultElasticSearch' => 'OnlineShop_Framework_IndexService_Tenant_Worker_ElasticSearch',
         'OnlineShop\Framework\IndexService\Worker\OptimizedMysql' => 'OnlineShop_Framework_IndexService_Tenant_Worker_OptimizedMysql',
         'OnlineShop\Framework\IndexService\Worker\WorkerTraits\BatchProcessing' => 'OnlineShop_Framework_IndexService_Tenant_Worker_Traits_BatchProcessing',
         'OnlineShop\Framework\IndexService\Worker\WorkerTraits\MockupCache' => 'OnlineShop_Framework_IndexService_Tenant_Worker_Traits_MockupCache',
