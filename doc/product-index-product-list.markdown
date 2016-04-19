@@ -128,8 +128,14 @@ The Environment provides following methods to set the current tenant:
     public function getCurrentAssortmentSubTenant();
 ```
 
-The current tenants have to be set in the application controllers, e.g. after the login of a specific customer. The index service provides the corresponding product list implementation based on the current tenant. 
+The current tenants have to be set in the application controllers, e.g. after the login of a specific customer. The index service provides the corresponding product list implementation based on the current tenant.
 
+Example:
+```php
+<?php
+      $environment = \OnlineShop\Framework\Factory::getInstance()->getEnvironment();
+      $environment->setCurrentAssortmentTenant("elasticsearch");
+```
 
 ## 4 - Data architecture and indexing
 Depending on the product index implementation, there are two different product index data architectures and ways for indexing. For indexing itself the helper class ```\OnlineShop\Framework\IndexService\Tool\IndexUpdater``` can be used. 
