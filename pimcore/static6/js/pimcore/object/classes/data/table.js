@@ -86,7 +86,7 @@ pimcore.object.classes.data.table = Class.create(pimcore.object.classes.data.dat
                 xtype: "textarea",
                 fieldLabel: t("data"),
                 name: "data",
-                width: 300,
+                width: 500,
                 height: 300,
                 value: this.datax.data,
                 disabled: this.isInCustomLayoutEditor()
