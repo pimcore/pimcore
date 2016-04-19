@@ -102,7 +102,7 @@ class OptimizedMysql extends DefaultMysql implements IBatchProcessingWorker {
     public function doUpdateIndex($objectId, $data = null) {
 
         if(empty($data)) {
-            $data = $this->db->fetchOne("SELECT data FROM " . self::STORE_TABLE_NAME . " WHERE id = ? AND tenant = ?", array($objectId, $this->name));
+            $data = $this->db->fetchOne("SELECT data FROM " . self::STORE_TABLE_NAME . " WHERE o_id = ? AND tenant = ?", array($objectId, $this->name));
             $data = json_decode($data, true);
         }
 
