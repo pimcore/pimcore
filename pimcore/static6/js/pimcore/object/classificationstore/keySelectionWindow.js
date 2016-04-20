@@ -41,7 +41,15 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
         this.searchfield = new Ext.form.TextField({
             width: 300,
             style: "float: left;",
-            fieldLabel: t("search")
+            fieldLabel: t("search"),
+            enableKeyEvents: true,
+            listeners: {
+                keypress: function(searchField, e, eOpts) {
+                    if (e.getKey() == 13) {
+                        this.applySearchFilter();
+                    }
+                }.bind(this)
+            }
         });
 
         var resultPanel = this.getResultPanel();
@@ -231,20 +239,7 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
             xtype: "button",
             text: t("search"),
             iconCls: "pimcore_icon_search",
-            handler: function () {
-                var formValue = this.searchfield.getValue();
-
-                this.store.getProxy().setExtraParam("searchfilter", formValue);
-
-
-                var lastOptions = this.store.lastOptions;
-                Ext.apply(lastOptions.params, {
-                    filter: this.encodedFilter
-                });
-                this.store.reload();
-
-                this.gridPanel.getView().refresh();
-            }.bind(this)
+            handler: this.applySearchFilter.bind(this)
         });
 
         if(items.length > 1) {
@@ -254,6 +249,21 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
         }
 
         return toolbar;
+    },
+    
+    applySearchFilter: function() {
+        var formValue = this.searchfield.getValue();
+
+        this.store.getProxy().setExtraParam("searchfilter", formValue);
+
+
+        var lastOptions = this.store.lastOptions;
+        Ext.apply(lastOptions.params, {
+            filter: this.encodedFilter
+        });
+        this.store.reload();
+
+        this.gridPanel.getView().refresh();
     },
 
     resetToolbarButtons: function () {
