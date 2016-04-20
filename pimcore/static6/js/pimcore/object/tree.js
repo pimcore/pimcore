@@ -1086,8 +1086,8 @@ pimcore.object.tree = Class.create({
                         if (pimcore.settings.customviews.length > 0) {
                             for (var cvs = 0; cvs < pimcore.settings.customviews.length; cvs++) {
                                 var cv = pimcore.settings.customviews[cvs];
-                                if (!cv.treetype || cv == "objects") {
-                                    treeNames.push("layout_objects_tree_" + cv.id);
+                                if (cv.treetype == "object") {
+                                    treeNames.push("layout_object_tree_" + cv.id);
                                 }
                             }
                         }
@@ -1099,12 +1099,18 @@ pimcore.object.tree = Class.create({
                             // remove class in tree panel
                             try {
                                 var tree = pimcore.globalmanager.get(treeName).tree;
+                                if (!tree) {
+                                    continue;
+                                }
                                 var store = tree.getStore();
                                 // record of sister store
-                                var record = store.getById(record.id);
+                                var sisterRecord = store.getById(record.data.id);
+                                if (!sisterRecord) {
+                                    continue;
+                                }
 
                                 var view = tree.getView();
-                                var nodeEl = Ext.fly(view.getNodeByRecord(record));
+                                var nodeEl = Ext.fly(view.getNodeByRecord(sisterRecord));
 
                                 if (nodeEl) {
                                     var nodeElInner = nodeEl.down(".x-grid-td");
@@ -1114,22 +1120,22 @@ pimcore.object.tree = Class.create({
                                     if (nodeElInner) {
                                         nodeElInner.addCls('pimcore_unpublished');
                                     }
-                                    record.data.published = false;
-                                    record.data.cls = "pimcore_unpublished";
+                                    sisterRecord.data.published = false;
+                                    sisterRecord.data.cls = "pimcore_unpublished";
 
-                                    if (pimcore.globalmanager.exists("object_" + record.data.id)) {
-                                        pimcore.globalmanager.get("object_" + record.data.id).toolbarButtons.unpublish.hide();
+                                    if (pimcore.globalmanager.exists("object_" + sisterRecord.data.id)) {
+                                        pimcore.globalmanager.get("object_" + sisterRecord.data.id).toolbarButtons.unpublish.hide();
                                     }
 
                                 } else {
                                     if (nodeElInner) {
                                         nodeElInner.removeCls('pimcore_unpublished');
                                     }
-                                    delete record.data.cls;
+                                    delete sisterRecord.data.cls;
 
-                                    record.data.published = true;
-                                    if (pimcore.globalmanager.exists("object_" + record.data.id)) {
-                                        pimcore.globalmanager.get("object_" + record.data.id).toolbarButtons.unpublish.show();
+                                    sisterRecord.data.published = true;
+                                    if (pimcore.globalmanager.exists("object_" + sisterRecord.data.id)) {
+                                        pimcore.globalmanager.get("object_" + sisterRecord.data.id).toolbarButtons.unpublish.show();
                                     }
                                 }
                             } catch (e) {
