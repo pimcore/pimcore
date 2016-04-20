@@ -640,8 +640,15 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
             $object = $container;
             if ($container instanceof  Object\Fieldcollection\Data\AbstractData) {
                 $object = $container->getObject();
+
+                $context = array(
+                    "containerType" => "fieldcollection",
+                    "containerKey" => $container->getType()
+                );
+                $lf->setContext($context);
             }
             $lf->setObject($object);
+
 
             $container->localizedfields = $lf;
         }
