@@ -24,10 +24,7 @@ namespace OnlineShop\Framework\IndexService\Config;
  */
 class ElasticSearch extends AbstractConfig implements IMockupConfig, IElasticSearchConfig {
 
-    /**
-     *
-     */
-    protected $generalSettings = [];
+    protected $clientConfig = [];
 
     /**
      * @var array
@@ -47,34 +44,13 @@ class ElasticSearch extends AbstractConfig implements IMockupConfig, IElasticSea
     public function __construct($tenantName, $tenantConfigXml, $totalConfigXml = null) {
         parent::__construct($tenantName, $tenantConfigXml, $totalConfigXml);
 
-        if($tenantConfigXml->generalSettings){
-            $this->setGeneralSettings($tenantConfigXml->generalSettings->toArray());
-        }
-
         $this->indexSettings = json_decode($tenantConfigXml->indexSettingsJson, true);
         $this->elasticSearchClientParams = json_decode($tenantConfigXml->elasticSearchClientParamsJson, true);
+
+        if($tenantConfigXml->clientConfig){
+            $this->clientConfig = $tenantConfigXml->clientConfig->toArray();
+        }
     }
-
-    /**
-     * @return mixed
-     */
-    public function getGeneralSettings()
-    {
-        return $this->generalSettings;
-    }
-
-    /**
-     * @param mixed $generalSettings
-     *
-     * @return $this
-     */
-    public function setGeneralSettings($generalSettings)
-    {
-        $this->generalSettings = $generalSettings;
-        return $this;
-    }
-
-
 
     /**
      * @return array

@@ -61,12 +61,7 @@ class DefaultElasticSearch extends AbstractWorker implements IBatchProcessingWor
 
     public function __construct(\OnlineShop\Framework\IndexService\Config\ElasticSearch $tenantConfig) {
         parent::__construct($tenantConfig);
-        $generalSettings = $tenantConfig->getGeneralSettings();
-        if($generalSettings['indexName']){
-            $this->indexName = $generalSettings['indexName'];
-        }else{
-            $this->indexName = strtolower($this->name);
-        }
+        $this->indexName = ($tenantConfig->getClientConfig('indexName')) ? strtolower($tenantConfig->getClientConfig('indexName')) : strtolower($this->name);
         $this->determineAndSetCurrentIndexVersion();
     }
 
@@ -138,7 +133,13 @@ class DefaultElasticSearch extends AbstractWorker implements IBatchProcessingWor
      */
     public function getElasticSearchClient() {
         if(empty($this->elasticSearchClient)) {
-            $this->elasticSearchClient = new \Elasticsearch\Client($this->tenantConfig->getElasticSearchClientParams());
+            $builder =  \Elasticsearch\ClientBuilder::create();
+            if($this->tenantConfig->getClientConfig('logging')){
+                $logger = \Elasticsearch\ClientBuilder::defaultLogger(PIMCORE_LOG_DIRECTORY . '/elasticsearch.log', \Monolog\Logger::DEBUG);
+                $builder->setLogger($logger);
+            }
+            $builder->setHosts($this->tenantConfig->getElasticSearchClientParams()['hosts']);
+            $this->elasticSearchClient = $builder->build();
         }
         return $this->elasticSearchClient;
     }
