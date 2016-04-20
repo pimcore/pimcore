@@ -203,13 +203,14 @@ class DefaultElasticSearch extends AbstractWorker implements IBatchProcessingWor
         }
 
         $reIndex = false;
-        foreach([\OnlineShop\Framework\IndexService\ProductList\IProductList::PRODUCT_TYPE_OBJECT,\OnlineShop\Framework\IndexService\ProductList\IProductList::PRODUCT_TYPE_VARIANT] as $mappingType){
+        foreach([\OnlineShop\Framework\IndexService\ProductList\IProductList::PRODUCT_TYPE_VARIANT,\OnlineShop\Framework\IndexService\ProductList\IProductList::PRODUCT_TYPE_OBJECT] as $mappingType){
             $params = $this->getMappingParams($mappingType);
 
             try {
                 $result = $esClient->indices()->putMapping($params);
                 \Logger::info('Updated Mapping for Index: ' . $this->getIndexNameVersion());
             } catch(\Exception $e) {
+                \Logger::info($e->getMessage());
                 if($exceptionOnFailure){
                     throw new \Exception("Can't create Mapping - Exiting to prevent infinit loop");
                 } else {
@@ -618,8 +619,6 @@ SQL;
             $result = $this->db->fetchOne($query, array($this->name));
 
             \Logger::info('in completeReindexMode - Result: ' . $result);
-
-            echo "\n\nresult: " . $result;
 
             if($result == 0) {
                 //no entries left --> re-index is finished
