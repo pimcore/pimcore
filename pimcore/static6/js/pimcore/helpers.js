@@ -36,12 +36,14 @@ pimcore.helpers.registerKeyBindings = function (bindEl, ExtJS) {
             key:"sa",
             fn: top.pimcore.helpers.openElementByIdDialog.bind(this, "asset"),
             ctrl:true,
-            shift:true
+            shift:true,
+            alt: false
         }, {
             key:"of",
             fn: top.pimcore.helpers.openElementByIdDialog.bind(this, "object"),
             ctrl:true,
-            shift:true
+            shift:true,
+            alt: false
         },  {
             key:"c",
             fn: top.pimcore.helpers.openClassEditor,
