@@ -1128,13 +1128,7 @@ class DefaultElasticSearch implements IProductList {
     protected function getIndexName()
     {
         if(!$this->indexName){
-            $generalSettings = $this->tenantConfig->getGeneralSettings();
-            if($generalSettings['indexName']){
-                $index = $generalSettings['indexName'];
-            }else{
-                $index = strtolower($this->tenantConfig->getTenantName());
-            }
-            $this->indexName = $index;
+            $this->indexName = ($this->tenantConfig->getClientConfig('indexName')) ? strtolower($this->tenantConfig->getClientConfig('indexName')) : strtolower($this->tenantConfig->getTenantName());
         }
         return $this->indexName;
     }
