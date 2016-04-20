@@ -1086,7 +1086,7 @@ pimcore.object.tree = Class.create({
                         if (pimcore.settings.customviews.length > 0) {
                             for (var cvs = 0; cvs < pimcore.settings.customviews.length; cvs++) {
                                 var cv = pimcore.settings.customviews[cvs];
-                                if (cv.treetype == "object") {
+                                if (!cv.treetype || cv.treetype == "object") {
                                     treeNames.push("layout_object_tree_" + cv.id);
                                 }
                             }
