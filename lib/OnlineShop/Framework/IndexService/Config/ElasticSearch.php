@@ -27,6 +27,26 @@ class ElasticSearch extends AbstractConfig implements IMockupConfig, IElasticSea
     protected $clientConfig = [];
 
     /**
+     * contains the mapping for the fields in Elasticsearch
+     *
+     * @var array
+     */
+    protected $fieldMapping = [
+        'o_id' => 'system.o_id',
+        'o_classId' => 'system.o_classId',
+        'o_virtualProductId'=> 'system.o_virtualProductId',
+        'o_virtualProductActive'=> 'system.o_virtualProductActive',
+        'o_parentId'=> 'system.o_parentId',
+        'o_type'=> 'system.o_type',
+        'categoryIds'=> 'system.categoryIds',
+        'parentCategoryIds'=> 'system.parentCategoryIds',
+        'categoryPaths'=> 'system.categoryPaths',
+        'priceSystemName'=> 'system.priceSystemName',
+        'active'=> 'system.active',
+        'inProductList'=> 'system.inProductList',
+    ];
+
+    /**
      * @var array
      */
     protected $indexSettings = null;
@@ -50,6 +70,29 @@ class ElasticSearch extends AbstractConfig implements IMockupConfig, IElasticSea
         if($tenantConfigXml->clientConfig){
             $this->clientConfig = $tenantConfigXml->clientConfig->toArray();
         }
+
+        $config = $tenantConfigXml->toArray();
+        foreach($config['columns']['column'] as $col){
+            $attributeType = 'attributes';
+            if($col['interpreter']){
+                $class = $col['interpreter'];
+                $tmp = new $class;
+                if($tmp instanceof \OnlineShop\Framework\IndexService\Interpreter\IRelationInterpreter){
+                    $attributeType = 'relations';
+                }
+            }
+            $this->fieldMapping[$col['name']] = $attributeType.'.'.$col['name'];
+        }
+    }
+
+    /**
+     * returns the full field name
+     *
+     * @param $fieldName
+     * @return string
+     */
+    public function getFieldNameMapped($fieldName){
+        return $this->fieldMapping[$fieldName] ?: $fieldName;
     }
 
     /**

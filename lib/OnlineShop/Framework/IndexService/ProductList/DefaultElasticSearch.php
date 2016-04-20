@@ -540,25 +540,12 @@ class DefaultElasticSearch implements IProductList {
         $params['body']['from'] = $this->getOffset();
 
         if($this->orderKey) {
-
-            $systemAttributes = $this->tenantConfig->getTenantWorker()->getSystemAttributes(true);
             if(is_array($this->orderKey)) {
-
                 foreach($this->orderKey as $orderKey) {
-                    if(in_array($this->orderKey,$systemAttributes)){
-                        $key = 'system.'.$orderKey[0];
-                    }else{
-                        $key = 'attributes.'.$orderKey[0];
-                    }
-                    $params['body']['sort'][] = [$key => ($orderKey[1] ?: "asc")];
+                    $params['body']['sort'][] = [$this->tenantConfig->getFieldNameMapped($orderKey[0]) => ($orderKey[1] ?: "asc")];
                 }
             } else {
-                if(in_array($this->orderKey,$systemAttributes)){
-                    $key = 'system.'.$this->orderKey;
-                }else{
-                    $key = 'attributes.'.$this->orderKey;
-                }
-                $params['body']['sort'][] = [$key => ($this->order ?: "asc")];
+                $params['body']['sort'][] = [$this->tenantConfig->getFieldNameMapped($this->orderKey) => ($this->order ?: "asc")];
             }
         }
 
@@ -725,19 +712,13 @@ class DefaultElasticSearch implements IProductList {
      * @return array
      */
     protected function buildFilterConditions($boolFilters, $excludedFieldnames) {
-        $systemAttributes = $this->tenantConfig->getTenantWorker()->getSystemAttributes(true);
         foreach ($this->filterConditions as $fieldname => $filterConditionArray) {
-
             if(!array_key_exists($fieldname, $excludedFieldnames)) {
                 foreach($filterConditionArray as $filterCondition) {
                     if(is_array($filterCondition)) {
                         $boolFilters[] = $filterCondition;
                     } else {
-                        if(array_key_exists($fieldname, $systemAttributes)) {
-                            $boolFilters[] = ['term' => ['system.' . $fieldname => $filterCondition]];
-                        } else {
-                            $boolFilters[] = ['term' => ['attributes.' . $fieldname => $filterCondition]];
-                        }
+                        $boolFilters[] = ['term' => [$this->tenantConfig->getFieldNameMapped($fieldname) => $filterCondition]];
                     }
                 }
             }
@@ -745,6 +726,7 @@ class DefaultElasticSearch implements IProductList {
 
         return $boolFilters;
     }
+
 
     /**
      * builds query condition of query filters
@@ -754,18 +736,13 @@ class DefaultElasticSearch implements IProductList {
      * @return array
      */
     protected function buildQueryConditions($queryFilters, $excludedFieldnames) {
-        $systemAttributes = $this->tenantConfig->getTenantWorker()->getSystemAttributes(true);
         foreach ($this->queryConditions as $fieldname => $queryConditionArray) {
             if(!array_key_exists($fieldname, $excludedFieldnames)) {
                 foreach($queryConditionArray as $queryCondition) {
                     if (is_array($queryCondition)) {
                         $queryFilters[] = $queryCondition;
                     } else {
-                        if (array_key_exists($fieldname, $systemAttributes)) {
-                            $queryFilters[] = ['match' => ['system.' . $fieldname => $queryCondition]];
-                        } else {
-                            $queryFilters[] = ['match' => ['attributes.' . $fieldname => $queryCondition]];
-                        }
+                        $queryFilters[] = ['match' => [$this->tenantConfig->getFieldNameMapped($fieldname) => $queryCondition]];
                     }
                 }
             }
@@ -792,7 +769,7 @@ class DefaultElasticSearch implements IProductList {
      * @return void
      */
     public function prepareGroupByValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true) {
-        $this->preparedGroupByValues['attributes.' . $fieldname] = ["countValues" => $countValues, "fieldnameShouldBeExcluded" => $fieldnameShouldBeExcluded];
+        $this->preparedGroupByValues[$this->tenantConfig->getFieldNameMapped($fieldname)] = ["countValues" => $countValues, "fieldnameShouldBeExcluded" => $fieldnameShouldBeExcluded];
         $this->preparedGroupByValuesLoaded = false;
     }
 
@@ -805,7 +782,7 @@ class DefaultElasticSearch implements IProductList {
      * @return void
      */
     public function prepareGroupByRelationValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true) {
-        $this->preparedGroupByValues['relations.' . $fieldname] = ["countValues" => $countValues, "fieldnameShouldBeExcluded" => $fieldnameShouldBeExcluded];
+        $this->preparedGroupByValues[$this->tenantConfig->getFieldNameMapped($fieldname)] = ["countValues" => $countValues, "fieldnameShouldBeExcluded" => $fieldnameShouldBeExcluded];
         $this->preparedGroupByValuesLoaded = false;
     }
 
@@ -818,7 +795,7 @@ class DefaultElasticSearch implements IProductList {
      * @return void
      */
     public function prepareGroupBySystemValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true) {
-        $this->preparedGroupByValues['system.' . $fieldname] = ["countValues" => $countValues, "fieldnameShouldBeExcluded" => $fieldnameShouldBeExcluded];
+        $this->preparedGroupByValues[$this->tenantConfig->getFieldNameMapped($fieldname)] = ["countValues" => $countValues, "fieldnameShouldBeExcluded" => $fieldnameShouldBeExcluded];
         $this->preparedGroupByValuesLoaded = false;
     }
 
@@ -845,7 +822,7 @@ class DefaultElasticSearch implements IProductList {
      * @throws \Exception
      */
     public function getGroupBySystemValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true) {
-        return $this->doGetGroupByValues('system.' . $fieldname, $countValues, $fieldnameShouldBeExcluded);
+        return $this->doGetGroupByValues($this->tenantConfig->getFieldNameMapped($fieldname), $countValues, $fieldnameShouldBeExcluded);
     }
 
     /**
@@ -859,7 +836,7 @@ class DefaultElasticSearch implements IProductList {
      * @throws \Exception
      */
     public function getGroupByValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true) {
-        return $this->doGetGroupByValues('attributes.' . $fieldname, $countValues, $fieldnameShouldBeExcluded);
+        return $this->doGetGroupByValues($this->tenantConfig->getFieldNameMapped($fieldname), $countValues, $fieldnameShouldBeExcluded);
     }
 
     /**
@@ -873,7 +850,7 @@ class DefaultElasticSearch implements IProductList {
      * @throws \Exception
      */
     public function getGroupByRelationValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true) {
-        return $this->doGetGroupByValues('relations.' . $fieldname, $countValues, $fieldnameShouldBeExcluded);
+        return $this->doGetGroupByValues($this->tenantConfig->getFieldNameMapped($fieldname), $countValues, $fieldnameShouldBeExcluded);
     }
 
     /**
