@@ -3,10 +3,10 @@
     <tenant>
 
         <!-- configure general settings -->
-        <generalSettings>
+        <clientConfig>
             <!-- name of the index (alias). the index itself is versioned in the format "indexName-versionnumber" -->
             <indexName>products</indexName>
-        </generalSettings>
+        </clientConfig>
 
         <!-- configure all settings for index creation -->
         <indexSettingsJson>

@@ -96,6 +96,19 @@ class ElasticSearch extends AbstractConfig implements IMockupConfig, IElasticSea
     }
 
     /**
+     * @param string $property
+     *
+     * @return array|string
+     */
+    public function getClientConfig($property = null)
+    {
+        return $property
+            ? $this->clientConfig[$property]
+            : $this->clientConfig
+            ;
+    }
+
+    /**
      * @return array
      */
     public function getIndexSettings() {
