@@ -162,7 +162,7 @@ class Admin
 
         @chmod(self::getMaintenanceModeFile(), 0777); // so it can be removed also via FTP, ...
 
-        \Pimcore::getEventManager()->trigger("admin.activateMaintenanceMode");
+        \Pimcore::getEventManager()->trigger("system.maintenance.activate");
     }
 
     /**
@@ -173,7 +173,7 @@ class Admin
     {
         @unlink(self::getMaintenanceModeFile());
 
-        \Pimcore::getEventManager()->trigger("admin.deactivateMaintenanceMode");
+        \Pimcore::getEventManager()->trigger("system.maintenance.deactivate");
     }
 
     /**
