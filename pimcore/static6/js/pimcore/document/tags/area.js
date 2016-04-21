@@ -31,8 +31,6 @@ pimcore.document.tags.area = Class.create(pimcore.document.tag, {
             });
             if (editDiv) {
                 editButton.render(editDiv);
-            } else {
-                console.log(e);
             }
         } catch (e) {
             console.log(e);
