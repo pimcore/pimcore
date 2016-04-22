@@ -182,7 +182,6 @@ pimcore.settings.translations = Class.create({
                     },
                     listeners: {
                         exception: function(proxy, response, operation){
-                            console.log("test");
                             Ext.MessageBox.show({
                                 title: 'REMOTE EXCEPTION',
                                 msg: operation.getError(),
