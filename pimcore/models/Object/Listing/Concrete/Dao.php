@@ -60,8 +60,7 @@ class Dao extends Model\Object\Listing\Dao
         $select->from(
             [ $this->getTableName() ], [
                 new \Zend_Db_Expr(
-                    sprintf('SQL_CALC_FOUND_ROWS %s as o_id', $this->getSelectPart($field, $field)))
-                , 'o_type'
+                    sprintf('SQL_CALC_FOUND_ROWS %s as o_id', $this->getSelectPart($field, $field))), 'o_type'
             ]
         );
 

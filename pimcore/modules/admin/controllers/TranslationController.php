@@ -352,8 +352,8 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
         }
     }
 
-    protected function extendTranslationQuery($joins, $list, $tableName, $filters) {
-
+    protected function extendTranslationQuery($joins, $list, $tableName, $filters)
+    {
         if ($joins) {
             $list->onCreateQuery(function (\Zend_Db_Select $select) use ($list, $joins, $tableName, $filters) {
                 $db = \Pimcore\Db::get();
@@ -388,9 +388,6 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
             }
             );
         }
-
-
-
     }
 
 
@@ -435,7 +432,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
                     $operator = "LIKE";
                     $field = $fieldname;
                     $value = "%" . $filter["value"] . "%";
-                } else if ($filter["type"] == "date" ||
+                } elseif ($filter["type"] == "date" ||
                     ($isExtJs6 && in_array($fieldname, array("modificationDate", "creationdate")))) {
                     if ($filter[$operatorField] == "lt") {
                         $operator = "<";
