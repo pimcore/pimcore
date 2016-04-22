@@ -315,7 +315,8 @@ pimcore.settings.translations = Class.create({
             tbar: toolbar,
             viewConfig: {
                 forceFit: true,
-                loadingText: t('loading_texts')
+                loadingText: t('loading_texts'),
+                enableTextSelection: true
             }
         });
 
