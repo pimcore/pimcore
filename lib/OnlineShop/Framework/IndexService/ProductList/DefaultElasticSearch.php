@@ -1005,6 +1005,12 @@ class DefaultElasticSearch implements IProductList {
         $this->preparedGroupByValuesLoaded = true;
     }
 
+    /**
+     * @return \OnlineShop\Framework\IndexService\Config\IElasticSearchConfig
+     */
+    public function getTenantConfig(){
+        return $this->tenantConfig;
+    }
 
     /**
      * send a request to elasticsearch
