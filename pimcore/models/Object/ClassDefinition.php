@@ -268,7 +268,12 @@ class ClassDefinition extends Model\AbstractModel
         if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
             foreach ($this->getFieldDefinitions() as $key => $def) {
                 if (!(method_exists($def, "isRemoteOwner") and $def->isRemoteOwner())) {
-                    $cd .= "* @method static \\Pimcore\\Model\\Object\\" . ucfirst($this->getName()) . '\Listing getBy' . ucfirst($def->getName()) . ' ($value, $limit = 0) ' ."\n";
+                    if($def instanceof Object\ClassDefinition\Data\Localizedfields) {
+                        $cd .= "* @method static \\Pimcore\\Model\\Object\\" . ucfirst($this->getName()) . '\Listing getBy' . ucfirst($def->getName()) . ' ($field, $value, $locale = null, $limit = 0) ' . "\n";
+                    }
+                    else {
+                        $cd .= "* @method static \\Pimcore\\Model\\Object\\" . ucfirst($this->getName()) . '\Listing getBy' . ucfirst($def->getName()) . ' ($value, $limit = 0) ' . "\n";
+                    }
                 }
             }
         }
