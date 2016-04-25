@@ -1456,6 +1456,18 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                 $conditionFilters[] = "(o_path = '" . $folder->getFullPath() . "' OR o_path LIKE '" . str_replace("//", "/", $folder->getFullPath() . "/") . "%')";
             }
 
+            if (!$this->getUser()->isAdmin()) {
+                $userIds = $this->getUser()->getRoles();
+                $userIds[] = $this->getUser()->getId();
+                $conditionFilters[] .= " (
+                                                    (select list from users_workspaces_object where userId in (" . implode(',', $userIds) . ") and LOCATE(CONCAT(o_path,o_key),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                    OR
+                                                    (select list from users_workspaces_object where userId in (" . implode(',', $userIds) . ") and LOCATE(cpath,CONCAT(o_path,o_key))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                 )";
+            }
+
+
+
             $featureJoins = array();
 
             // create filter condition
