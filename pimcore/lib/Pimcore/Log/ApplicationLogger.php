@@ -238,7 +238,7 @@ class ApplicationLogger /*implements LoggerInterface*/
             }
         }
 
-        $normalizeFile = function($filename) {
+        $normalizeFile = function ($filename) {
             return str_replace(PIMCORE_DOCUMENT_ROOT . '/', '', $filename);
         };
 
