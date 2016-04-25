@@ -42,8 +42,28 @@ class Maintenance extends \Zend_Controller_Plugin_Abstract
 
         if ($maintenance && !in_array(\Pimcore\Tool::getClientIp(), $serverIps)) {
             header("HTTP/1.1 503 Service Temporarily Unavailable", 503);
-            echo file_get_contents(PIMCORE_PATH . "/static/html/maintenance.html");
+
+            $pathToMaintenanceFile = $this->getPathToMaintenanceFile();
+            echo file_get_contents($pathToMaintenanceFile);
             exit;
         }
+    }
+
+    /**
+     * Checks if there is a maintenance file under the website folder, fallback on the file in the pimcore folder.
+     *
+     * @return string
+     */
+    protected function getPathToMaintenanceFile()
+    {
+        $maintenancePageFilePath = '/static/html/maintenance.html';
+        $maintenancePageFileFullPath = PIMCORE_PATH . $maintenancePageFilePath;
+
+        // check if there is a maintenance.html file under the website folder
+        if (is_readable(PIMCORE_WEBSITE_PATH . $maintenancePageFilePath)) {
+            $maintenancePageFileFullPath = PIMCORE_WEBSITE_PATH . $maintenancePageFilePath;
+        }
+
+        return $maintenancePageFileFullPath;
     }
 }
