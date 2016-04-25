@@ -1784,7 +1784,7 @@ INSERT INTO `documents_elements` VALUES ('73','socialContentcontent_contents_2co
 
 
 
-INSERT INTO `documents_email` VALUES ('38','','default','default','/advanced/email.php','pimcore@byom.de','webserver@pimcore.org','','','Contact Form');
+INSERT INTO `documents_email` VALUES ('38','','default','default','/advanced/email.php','pimcore@byom.de','pimcore@byom.de','','','Contact Form');
 INSERT INTO `documents_email` VALUES ('66','','newsletter','standard-mail','','','','','','');
 INSERT INTO `documents_email` VALUES ('67','','newsletter','standard-mail','','','','','','Example Newsletter');
 
