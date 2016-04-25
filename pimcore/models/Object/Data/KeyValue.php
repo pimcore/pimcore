@@ -402,6 +402,21 @@ class KeyValue extends Model\AbstractModel
     }
 
     /**
+     * deletes an entry with the given keyId if the entry exists
+     *
+     * @param $keyId
+     */
+    public function deleteEntryByKeyId($keyId) {
+
+        foreach($this->arr as $i => $entry) {
+            if($entry['key'] == $keyId) {
+                unset($this->arr[$i]);
+                break;
+            }
+        }
+    }
+
+    /**
      * @param $keyId
      * @param $value
      */
