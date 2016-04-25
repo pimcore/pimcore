@@ -273,7 +273,9 @@ class Localizedfield extends Model\AbstractModel
             foreach (Tool::getFallbackLanguagesFor($language) as $l) {
                 if ($this->languageExists($l)) {
                     if (array_key_exists($name, $this->items[$l])) {
-                        $data = $this->getLocalizedValue($name, $l);
+                        if($data = $this->getLocalizedValue($name, $l)) {
+                            break;
+                        }
                     }
                 }
             }
