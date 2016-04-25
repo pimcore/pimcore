@@ -194,16 +194,7 @@ class ApplicationLogger /*implements LoggerInterface*/
             }
         }
 
-
-        $backtrace = debug_backtrace();
-        $call = $backtrace[1];
-
-        if ($call["class"] == "Pimcore\\Log\\ApplicationLogger") {
-            $call = $backtrace[2];
-        }
-
-        $call["line"] = $backtrace[0]["line"];
-        $context['source'] = $call["class"] . $call["type"] . $call["function"] . "() :" . $call["line"];
+        $context['source'] = $this->resolveLoggingSource();
 
         foreach ($this->loggers as $logger) {
             if ($logger instanceof \Psr\Log\LoggerInterface) {
@@ -217,6 +208,74 @@ class ApplicationLogger /*implements LoggerInterface*/
         }
 
         return null;
+    }
+
+    /**
+     * Resolve logging source
+     *
+     * @return string
+     */
+    protected function resolveLoggingSource()
+    {
+        $validMethods = [
+            'log', 'logException', 'emergency', 'critical', 'error',
+            'alert', 'warning', 'notice', 'info', 'debug'
+        ];
+
+        $previousCall = null;
+        $logCall      = null;
+
+        // look for the first call to this class calling one of the logging methods
+        $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+        for ($i = count($backtrace) - 1; $i >= 0; $i--) {
+            $previousCall = $logCall;
+            $logCall      = $backtrace[$i];
+
+            if (!empty($logCall['class']) && $logCall['class'] === __CLASS__) {
+                if (in_array($logCall['function'], $validMethods)) {
+                    break;
+                }
+            }
+        }
+
+        $normalizeFile = function($filename) {
+            return str_replace(PIMCORE_DOCUMENT_ROOT . '/', '', $filename);
+        };
+
+        $source = '';
+        if (null !== $previousCall) {
+            if (isset($previousCall['class'])) {
+                // called from a class method
+                // ClassName->methodName():line
+                $source = sprintf(
+                    '%s%s%s():%d',
+                    $previousCall['class'],
+                    $previousCall['type'],
+                    $previousCall['function'],
+                    $logCall['line']
+                );
+            } else {
+                // called from a function
+                // filename.php::functionName():line
+                $source = sprintf(
+                    '%s::%s():%d',
+                    $normalizeFile($previousCall['file']),
+                    $previousCall['function'],
+                    $logCall['line']
+                );
+            }
+        } else {
+            // we don't have a previous call when the logger was directly called
+            // from a standalone PHP file (e.g. from a CLI script)
+            // filename.php:line
+            $source = sprintf(
+                '%s:%d',
+                $normalizeFile($logCall['file']),
+                $logCall['line']
+            );
+        }
+
+        return $source;
     }
 
     /**
