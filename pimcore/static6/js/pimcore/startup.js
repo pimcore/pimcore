@@ -652,6 +652,8 @@ Ext.onReady(function () {
                             var treeCls = window.pimcore[treetype].customviews.tree;
 
                             tree = new treeCls({
+                                isCustomView: true,
+                                customViewId: treeConfig.id,
                                 allowedClasses: treeConfig.allowedClasses,
                                 rootId: treeConfig.rootId,
                                 rootVisible: treeConfig.showroot,

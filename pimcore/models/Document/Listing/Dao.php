@@ -22,6 +22,9 @@ use Pimcore\Model\Document;
 class Dao extends Model\Listing\Dao\AbstractDao
 {
 
+    /** @var  Callback function */
+    protected $onCreateQueryCallback;
+
     /**
      * Loads a list of objects (all are an instance of Document) for the given parameters an return them
      *
@@ -30,7 +33,9 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function load()
     {
         $documents = array();
-        $documentsData = $this->db->fetchAll("SELECT id,type FROM documents" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $select = (string) $this->getQuery(array('id', "type"));
+
+        $documentsData = $this->db->fetchAll($select,  $this->model->getConditionVariables());
 
         foreach ($documentsData as $documentData) {
             if ($documentData["type"]) {
@@ -44,6 +49,24 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $documents;
     }
 
+    public function getQuery($columns) {
+        $select = $this->db->select();
+        $select->from(
+            [ "documents" ], $columns
+        );
+        $this->addConditions($select);
+        $this->addOrder($select);
+        $this->addLimit($select);
+        $this->addGroupBy($select);
+
+        if ($this->onCreateQueryCallback) {
+            $closure = $this->onCreateQueryCallback;
+            $closure($select);
+        }
+
+        return $select;
+    }
+
     /**
      * Loads a list of document ids for the specicifies parameters, returns an array of ids
      *
@@ -51,13 +74,15 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function loadIdList()
     {
-        $documentIds = $this->db->fetchCol("SELECT id FROM documents" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $select = (string) $this->getQuery(array('id'));
+        $documentIds = $this->db->fetchCol($select);
         return $documentIds;
     }
 
     public function loadIdPathList()
     {
-        $documentIds = $this->db->fetchAll("SELECT id, CONCAT(path,`key`) as path FROM documents" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $select = (string) $this->getQuery(array('id', "CONCAT(path,`key`)"));
+        $documentIds = $this->db->fetchAll($select, $this->model->getConditionVariables());
         return $documentIds;
     }
 
@@ -76,13 +101,24 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
     public function getCount()
     {
-        $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM documents" . $this->getCondition() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $select = $this->getQuery(array(new \Zend_Db_Expr('COUNT(*)')));
+        $amount = (int)$this->db->fetchOne($select, $this->model->getConditionVariables());
+
         return $amount;
     }
 
     public function getTotalCount()
     {
-        $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM documents" . $this->getCondition(), $this->model->getConditionVariables());
+
+        $select = $this->getQuery(array(new \Zend_Db_Expr('COUNT(*)')));
+        $select->reset(\Zend_Db_Select::LIMIT_COUNT);
+        $select = (string) $select;         
+        $amount = (int) $this->db->fetchOne($select, $this->model->getConditionVariables());
         return $amount;
+    }
+
+    public function onCreateQuery(callable $callback)
+    {
+        $this->onCreateQueryCallback = $callback;
     }
 }

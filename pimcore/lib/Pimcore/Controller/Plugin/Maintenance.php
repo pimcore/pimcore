@@ -45,7 +45,7 @@ class Maintenance extends \Zend_Controller_Plugin_Abstract
 
             $file = PIMCORE_PATH . "/static/html/maintenance.html";
 
-            $customFile = PIMCORE_WEBSITE_PATH . "/config/maintenance.html";
+            $customFile = PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . "/maintenance.html";
             if (file_exists($customFile)) {
                 $file = $customFile;
             }

@@ -63,7 +63,13 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
             if (!$this->getParam("limit")) {
                 $limit = 100000000;
             }
+
             $offset = intval($this->getParam("start"));
+
+            if ($this->getParam("view")) {
+                $cvConfig = Tool::getCustomViewConfig();
+                $cv = $cvConfig[($this->getParam("view") - 1)];
+            }
 
             $list = new Document\Listing();
             if ($this->getUser()->isAdmin()) {
@@ -85,8 +91,9 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
             $list->setLimit($limit);
             $list->setOffset($offset);
 
+            \Pimcore\Model\Element\Service::addTreeFilterJoins($cv, $list);
             $childsList = $list->load();
-
+            
             foreach ($childsList as $childDocument) {
                 // only display document if listing is allowed for the current user
                 if ($childDocument->isAllowed("list")) {

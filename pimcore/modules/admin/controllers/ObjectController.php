@@ -68,6 +68,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 
             // custom views start
             if ($this->getParam("view")) {
+
                 $cvConfig = Tool::getCustomViewConfig();
                 $cv = $cvConfig[($this->getParam("view") - 1)];
 
@@ -103,6 +104,8 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             $childsList->setOffset($offset);
             $childsList->setOrderKey("FIELD(o_type, 'folder') DESC, o_key ASC", false);
             $childsList->setObjectTypes($objectTypes);
+
+            Element\Service::addTreeFilterJoins($cv, $childsList);
 
             $childs = $childsList->load();
 

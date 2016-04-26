@@ -34,7 +34,7 @@ class Config
     {
         if (!isset(self::$configFileCache[$name])) {
             $pathsToCheck = [
-                PIMCORE_WEBSITE_PATH . "/config",
+                PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY,
                 PIMCORE_CONFIGURATION_DIRECTORY,
             ];
             $file = null;
@@ -491,7 +491,9 @@ class Config
                 }
 
                 $tmpData = $node;
-                $rootNode = Model\Element\Service::getElementByPath($tmpData["treetype"], $tmpData["rootfolder"]);
+                // backwards compatibility
+                $treeType = $tmpData["treetype"] ? $tmpData["treetype"] : "object";
+                $rootNode = Model\Element\Service::getElementByPath($treeType, $tmpData["rootfolder"]);
 
                 if ($rootNode) {
                     $tmpData["type"] = "customview";

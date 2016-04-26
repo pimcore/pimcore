@@ -399,64 +399,7 @@ class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
             return null;
         }
     }
-
-
-    /**
-     * CUSTOM VIEWS
-     */
-    public function saveCustomviewsAction()
-    {
-        $success = true;
-
-        $settings = ["views" => []];
-
-        for ($i = 0; $i < 1000; $i++) {
-            if ($this->getParam("name_" . $i)) {
-                $classes = $this->getParam("classes_" . $i);
-                if (is_array($classes) || \Pimcore\Tool\Admin::isExtJS6()) {
-                    $classes = implode(',', $classes);
-                }
-                // check for root-folder
-                $rootfolder = "/";
-                if ($this->getParam("rootfolder_" . $i)) {
-                    $rootfolder = $this->getParam("rootfolder_" . $i);
-                }
-
-                $settings["views"][] = array(
-                    "treetype" => $this->getParam("treetype_" . $i),
-                    "name" => $this->getParam("name_" . $i),
-                    "condition" => $this->getParam("condition_" . $i),
-                    "icon" => $this->getParam("icon_" . $i),
-                    "id" => ($i + 1),
-                    "rootfolder" => $rootfolder,
-                    "showroot" => ($this->getParam("showroot_" . $i) == "true") ? true : false,
-                    "classes" => $classes,
-                    "position" => $this->getParam("position_" . $i),
-                    "sort" => $this->getParam("sort_" . $i),
-                    "expanded" => ($this->getParam("expanded_" . $i) == "true") ? true : false
-                );
-            }
-        }
-
-        $configFile = \Pimcore\Config::locateConfigFile("customviews.php");
-        File::putPhpFile($configFile, to_php_data_file_format($settings));
-
-
-        $this->_helper->json(array("success" => $success));
-    }
-
-    public function getCustomviewsAction()
-    {
-        $data = Tool::getCustomViewConfig();
-
-        $this->_helper->json(array(
-            "success" => true,
-            "data" => $data
-        ));
-    }
-
-
-
+    
     /**
      * IMPORTER
      */

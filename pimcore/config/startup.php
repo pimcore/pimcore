@@ -51,6 +51,10 @@ if (is_array($_SERVER)
     }
 }
 
+if (!defined("PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY")) {
+    define("PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY", PIMCORE_WEBSITE_PATH . "/config");
+}
+
 if (!defined("PIMCORE_CONFIGURATION_DIRECTORY")) {
     define("PIMCORE_CONFIGURATION_DIRECTORY", PIMCORE_WEBSITE_VAR . "/config");
 }
@@ -137,7 +141,7 @@ $autoloader->registerNamespace('Pimcore');
 $autoloaderClassMapFiles = array(
     PIMCORE_CONFIGURATION_DIRECTORY . "/autoload-classmap.php",
     PIMCORE_PATH . "/config/autoload-classmap.php",
-    PIMCORE_WEBSITE_PATH . "/config/autoload-classmap.php"
+    PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . "/autoload-classmap.php"
 );
 
 foreach ($autoloaderClassMapFiles as $autoloaderClassMapFile) {

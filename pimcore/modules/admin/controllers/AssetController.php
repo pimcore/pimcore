@@ -122,6 +122,11 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
             $offset = intval($this->getParam("start"));
 
 
+            if ($this->getParam("view")) {
+                $cvConfig = Tool::getCustomViewConfig();
+                $cv = $cvConfig[($this->getParam("view") - 1)];
+            }
+
             // get assets
             $childsList = new Asset\Listing();
             if ($this->getUser()->isAdmin()) {
@@ -138,8 +143,9 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
             }
             $childsList->setLimit($limit);
             $childsList->setOffset($offset);
-            $childsList->setOrderKey("FIELD(type, 'folder') DESC, filename ASC", false);
+            $childsList->setOrderKey("FIELD(assets.type, 'folder') DESC, assets.filename ASC", false);
 
+            \Pimcore\Model\Element\Service::addTreeFilterJoins($cv, $childsList);
             $childs = $childsList->load();
 
             foreach ($childs as $childAsset) {

@@ -61,7 +61,8 @@ pimcore.document.tree = Class.create({
         Ext.Ajax.request({
             url: "/admin/document/tree-get-root",
             params: {
-                id: this.config.rootId
+                id: this.config.rootId,
+                view: this.config.customViewId
             },
             success: function (response) {
                 var res = Ext.decode(response.responseText);
@@ -100,7 +101,8 @@ pimcore.document.tree = Class.create({
 
                 },
                 extraParams: {
-                    limit: itemsPerPage
+                    limit: itemsPerPage,
+                    view: this.config.customViewId
                 }
             },
             pageSize: itemsPerPage,

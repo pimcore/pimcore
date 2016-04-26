@@ -720,4 +720,37 @@ class Service extends Model\AbstractModel
         }
         return $lastFolder;
     }
+
+    /** Changes the query according to the custom view config
+     * @param $cv array
+     * @param $childsList
+     */
+    public static function addTreeFilterJoins($cv, $childsList)
+    {
+        if ($cv) {
+            $childsList->onCreateQuery(function (\Zend_Db_Select $select) use ($cv, $childsList) {
+                $where = $cv["where"];
+                if ($where) {
+                    $select->where($where);
+                    $select->where($where);
+                }
+
+                $customViewJoins = $cv["joins"];
+                if ($customViewJoins) {
+                    foreach ($customViewJoins as $joinConfig) {
+                        $type = $joinConfig["type"];
+                        $method = $type == "left" || $type == "right" ? $method = "join" . ucfirst($type) : "join";
+                        $name = $joinConfig["name"];
+                        $condition = $joinConfig["condition"];
+                        $columns = $joinConfig["columns"];
+                        $select->$method($name, $condition, $columns);
+                    }
+                }
+
+                if ($cv["having"]) {
+                    $select->having($cv["having"]);
+                };
+            });
+        }
+    }
 }
