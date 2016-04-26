@@ -182,7 +182,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
                             buttons: Ext.Msg.OKCANCEL ,
                             fn: function(btn){
                                 if (btn == 'ok'){
-                                    this.startCsvExport();
+                                    this.exportPrepare();
                                 }
                             }.bind(this),
                             icon: Ext.MessageBox.WARNING

@@ -670,6 +670,18 @@ class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
 
     public function exportAction()
     {
+        list($list, $fields, $requestedLanguage) = $this->prepareExportList();
+
+        $list->load();
+        $csv = $this->getCsvData($list, $fields);
+
+        header("Content-type: text/csv");
+        header("Content-Disposition: attachment; filename=\"export.csv\"");
+        echo $csv;
+        exit;
+    }
+
+    protected function extractLanguage() {
         $requestedLanguage = $this->getParam("language");
         if ($requestedLanguage) {
             if ($requestedLanguage != "default") {
@@ -678,8 +690,32 @@ class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         } else {
             $requestedLanguage = $this->getLanguage();
         }
+        return $requestedLanguage;
+    }
 
-        $folder = Object::getById($this->getParam("folderId"));
+    protected function extractFieldsAndBricks() {
+        $fields = array();
+        $bricks = array();
+        if ($this->getParam("fields")) {
+            $fields = $this->getParam("fields");
+
+            foreach ($fields as $f) {
+                $parts = explode("~", $f);
+                if (substr($f, 0, 1) == "~") {
+                    // key value, ignore for now
+                } elseif (count($parts) > 1) {
+                    $bricks[$parts[0]] = $parts[0];
+                }
+            }
+        }
+        return [$fields, $bricks];
+    }
+
+    protected function prepareExportList() {
+
+        $requestedLanguage = $this->extractLanguage();
+
+        $folder = Pimcore\Model\Object::getById($this->getParam("folderId"));
         $class = Object\ClassDefinition::getById($this->getParam("classId"));
 
         $className = $class->getName();
@@ -719,30 +755,106 @@ class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
             }
         }
 
+        list($fields, $bricks) = $this->extractFieldsAndBricks();
 
-        $fields = array();
-        $bricks = array();
-        if ($this->getParam("fields")) {
-            $fields = $this->getParam("fields");
-
-            foreach ($fields as $f) {
-                $parts = explode("~", $f);
-                if (substr($f, 0, 1) == "~") {
-                    // key value, ignore for now
-                } elseif (count($parts) > 1) {
-                    $bricks[$parts[0]] = $parts[0];
-                }
-            }
-        }
         if (!empty($bricks)) {
             foreach ($bricks as $b) {
                 $list->addObjectbrick($b);
             }
         }
 
+        $list->setLocale($requestedLanguage);
         Object\Service::addGridFeatureJoins($list, $featureJoins, $class, $featureFilters, $requestedLanguage);
-        $list->load();
 
+        return [$list, $fields, $requestedLanguage];
+
+    }
+
+    protected function getCsvFile($fileHandle) {
+        return PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . $fileHandle . ".csv";
+    }
+
+    public function getExportJobsAction() {
+        list($list, $fields, $requestedLanguage) = $this->prepareExportList();
+
+        $ids = $list->loadIdList();
+
+        $jobs = array_chunk($ids, 20);
+
+        $fileHandle = uniqid("export-");
+        file_put_contents($this->getCsvFile($fileHandle), "");
+
+        $this->_helper->json(array("success"=>true, "jobs"=> $jobs, "fileHandle" => $fileHandle));
+    }
+
+    public function doExportAction() {
+
+        $fileHandle = Pimcore\File::getValidFilename($this->getParam("fileHandle"));
+        $ids = $this->getParam("ids");
+
+        $class = Object\ClassDefinition::getById($this->getParam("classId"));
+        $className = $class->getName();
+        $listClass = "\\Pimcore\\Model\\Object\\" . ucfirst($className) . "\\Listing";
+
+        /**
+         * @var $list \Pimcore\Model\Object\Listing
+         */
+        $list = new $listClass();
+        $list->setCondition("o_id IN (" . implode(",", $ids) . ")");
+        $list->setOrderKey(" FIELD(o_id, " . implode(",", $ids) . ")", false);
+
+        list($fields, $bricks) = $this->extractFieldsAndBricks();
+
+        $csv = $this->getCsvData($list, $fields, $this->getParam("initial"));
+
+        file_put_contents($this->getCsvFile($fileHandle), $csv, FILE_APPEND);
+
+        $this->_helper->json(array("success" => true));
+    }
+
+    public function downloadCsvFileAction() {
+        $fileHandle = Pimcore\File::getValidFilename($this->getParam("fileHandle"));
+        $csvFile = $this->getCsvFile($fileHandle);
+        if(file_exists($csvFile)) {
+            header("Content-Type: application/csv");
+            header("Content-Length: " . filesize($csvFile));
+            header('Content-Disposition: attachment; filename="export.csv"');
+
+            while (@ob_end_flush()) ;
+            flush();
+
+            readfile($csvFile);
+            unlink($csvFile);
+        } else {
+            exit();
+        }
+
+    }
+
+    protected function mapFieldname($field)
+    {
+        if (substr($field, 0, 1) == "~") {
+            $fieldParts = explode("~", $field);
+            $type = $fieldParts[1];
+
+            if ($type == "classificationstore") {
+                $fieldname = $fieldParts[2];
+                $groupKeyId = explode("-", $fieldParts[3]);
+                $groupId = $groupKeyId[0];
+                $keyId = $groupKeyId[1];
+
+                $groupConfig = Object\Classificationstore\GroupConfig::getById($groupId);
+                $keyConfig = Object\Classificationstore\KeyConfig::getById($keyId);
+
+                $field = $fieldname . "~" . $groupConfig->getName() . "~" . $keyConfig->getName();
+            }
+        }
+        return $field;
+    }
+
+
+    protected function getCsvData($list, $fields, $addTitles = true) {
+        $requestedLanguage = $this->extractLanguage();
         $mappedFieldnames = array();
 
         $objects = array();
@@ -770,12 +882,15 @@ class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
             }
         }
         //create csv
+        $csv = "";
         if (!empty($objects)) {
-            $columns = array_keys($objects[0]);
-            foreach ($columns as $key => $value) {
-                $columns[$key] = '"' . $value . '"';
+            if($addTitles) {
+                $columns = array_keys($objects[0]);
+                foreach ($columns as $key => $value) {
+                    $columns[$key] = '"' . $value . '"';
+                }
+                $csv = implode(";", $columns) . "\r\n";
             }
-            $csv = implode(";", $columns) . "\r\n";
             foreach ($objects as $o) {
                 foreach ($o as $key => $value) {
 
@@ -792,34 +907,8 @@ class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
                 $csv .= implode(";", $o) . "\r\n";
             }
         }
-        header("Content-type: text/csv");
-        header("Content-Disposition: attachment; filename=\"export.csv\"");
-        echo $csv;
-        exit;
+        return $csv;
     }
-
-    protected function mapFieldname($field)
-    {
-        if (substr($field, 0, 1) == "~") {
-            $fieldParts = explode("~", $field);
-            $type = $fieldParts[1];
-
-            if ($type == "classificationstore") {
-                $fieldname = $fieldParts[2];
-                $groupKeyId = explode("-", $fieldParts[3]);
-                $groupId = $groupKeyId[0];
-                $keyId = $groupKeyId[1];
-
-                $groupConfig = Object\Classificationstore\GroupConfig::getById($groupId);
-                $keyConfig = Object\Classificationstore\KeyConfig::getById($keyId);
-
-                $field = $fieldname . "~" . $groupConfig->getName() . "~" . $keyConfig->getName();
-            }
-        }
-        return $field;
-    }
-
-
 
     protected function getCsvFieldData($field, $object, $requestedLanguage)
     {
