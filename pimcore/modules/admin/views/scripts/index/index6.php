@@ -460,7 +460,6 @@ $scripts = array(
     "pimcore/object/folder.js",
     "pimcore/object/variant.js",
     "pimcore/object/tree.js",
-    "pimcore/object/customviews/settings.js",
     "pimcore/object/customviews/tree.js",
     "pimcore/object/quantityvalue/unitsettings.js",
 

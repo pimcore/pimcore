@@ -790,14 +790,6 @@ pimcore.layout.toolbar = Class.create({
                         });
                     }
 
-                    if (perspectiveCfg.inToolbar("settings.objects.customViews")) {
-                        objectMenu.menu.items.push({
-                            text: t("custom_views"),
-                            iconCls: "pimcore_icon_custom_views",
-                            handler: this.editCustomViews
-                        });
-                    }
-
                     if (perspectiveCfg.inToolbar("settings.objects.bulkExport")) {
                         objectMenu.menu.items.push({
                             text: t("bulk_export"),
@@ -1413,16 +1405,7 @@ pimcore.layout.toolbar = Class.create({
             pimcore.globalmanager.add("objectbricks", new pimcore.object.objectbrick());
         }
     },
-
-    editCustomViews: function () {
-        try {
-            pimcore.globalmanager.get("customviews").activate();
-        }
-        catch (e) {
-            pimcore.globalmanager.add("customviews", new pimcore.object.customviews.settings());
-        }
-    },
-
+    
     showDocumentSeo: function () {
         try {
             pimcore.globalmanager.get("document_seopanel").activate();

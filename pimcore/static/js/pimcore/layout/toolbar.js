@@ -610,13 +610,6 @@ pimcore.layout.toolbar = Class.create({
                 });
 
                 objectMenu.menu.items.push({
-                    text: t("custom_views"),
-                    iconCls: "pimcore_icon_custom_views",
-                    handler: this.editCustomViews
-                });
-
-
-                objectMenu.menu.items.push({
                     text: t("bulk_export"),
                     iconCls: "pimcore_icon_export",
                     handler: this.bulkExport
@@ -1352,16 +1345,7 @@ pimcore.layout.toolbar = Class.create({
             pimcore.globalmanager.add("objectbricks", new pimcore.object.objectbrick());
         }
     },
-
-    editCustomViews: function () {
-        try {
-            pimcore.globalmanager.get("customviews").activate();
-        }
-        catch (e) {
-            pimcore.globalmanager.add("customviews", new pimcore.object.customviews.settings());
-        }
-    },
-
+    
     showDocumentSeo: function () {
         try {
             pimcore.globalmanager.get("document_seopanel").activate();
