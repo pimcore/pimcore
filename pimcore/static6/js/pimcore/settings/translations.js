@@ -4,7 +4,7 @@
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
  * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in 
+ * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
@@ -84,15 +84,18 @@ pimcore.settings.translations = Class.create({
         ];
 
         var typesColumns = [
-            {header: t("key"), sortable: true, dataIndex: 'key', editable: false}
-
+            {header: t("key"), sortable: true, dataIndex: 'key', editable: false, filter: 'string'}
         ];
 
         for (var i = 0; i < languages.length; i++) {
-
             readerFields.push({name: languages[i]});
             //TODO do we really need the id attribute?
-            var columnConfig = {cls: "x-column-header_" + languages[i].toLowerCase() , header: pimcore.available_languages[languages[i]], sortable: false, dataIndex: languages[i],
+            var columnConfig = {
+                cls: "x-column-header_" + languages[i].toLowerCase(),
+                header: pimcore.available_languages[languages[i]],
+                sortable: true,
+                dataIndex: languages[i],
+                filter: 'string',
                 editor: new Ext.form.TextField({}), id: "translation_column_" + this.translationType + "_" + languages[i].toLowerCase()};
             if (applyInitialSettings) {
                 var hidden = i >= maxLanguages;
@@ -266,12 +269,6 @@ pimcore.settings.translations = Class.create({
                     handler: this.doMerge.bind(this),
                     iconCls: "pimcore_icon_merge"
                 },
-                //"-",
-                //{
-                //    text: t('import_csv'),
-                //    handler: this.doImport.bind(this),
-                //    iconCls: "pimcore_icon_import"
-                //},
                 '-',
                 {
                     text: t('export_csv'),
@@ -305,17 +302,14 @@ pimcore.settings.translations = Class.create({
             stateEvents: ['columnmove', 'columnresize', 'sortchange', 'groupchange'],
             selModel: Ext.create('Ext.selection.RowModel', {}),
             plugins: [
-                "gridfilters",
-                this.cellEditing,
-                {
-                    ptype: 'datatip',
-                    tpl: t('click_to_edit')
-                }
+                "pimcore.gridfilters",
+                this.cellEditing
             ],
             tbar: toolbar,
             viewConfig: {
                 forceFit: true,
-                loadingText: t('loading_texts')
+                loadingText: t('loading_texts'),
+                enableTextSelection: true
             }
         });
 

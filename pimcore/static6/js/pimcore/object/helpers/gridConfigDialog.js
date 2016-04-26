@@ -4,7 +4,7 @@
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
  * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in 
+ * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
@@ -17,10 +17,11 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
     data: {},
     brickKeys: [],
 
-    initialize: function (columnConfig, callback) {
+    initialize: function (columnConfig, callback, resetCallback) {
 
         this.config = columnConfig;
         this.callback = callback;
+        this.resetCallback = resetCallback;
 
         if(!this.callback) {
             this.callback = function () {};
@@ -44,6 +45,16 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
         this.window.show();
     },
 
+
+
+    resetToDefault: function() {
+        if (this.resetCallback) {
+            this.resetCallback();
+        } else {
+            console.log("not supported");
+        }
+        this.window.close();
+    },
 
     commitData: function () {
         var data = this.getData();
@@ -123,6 +134,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                 items: [compositeConfig]
             });
         }
+
 
         return this.languagePanel;
     },
@@ -207,7 +219,20 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                 listeners:{
                     itemcontextmenu: this.onTreeNodeContextmenu.bind(this)
                 },
-                buttons: [{
+                buttons: [
+                    {
+                        xtype: "button",
+                        text: t("reset_config"),
+                        iconCls: "pimcore_icon_cancel",
+                        tooltip: t('reset_config_tooltip'),
+                        style: {
+                            marginLeft: 100
+                        },
+                        handler: function () {
+                            this.resetToDefault();
+                        }.bind(this)
+                    },
+                    {
                     text: t("apply"),
                     iconCls: "pimcore_icon_apply",
                     handler: function () {

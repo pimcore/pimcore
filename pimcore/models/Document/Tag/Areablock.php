@@ -5,7 +5,7 @@
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
  * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in 
+ * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @category   Pimcore
@@ -205,7 +205,9 @@ class Areablock extends Model\Document\Tag
 
                 $actionClassFound = true;
 
-                $actionClassname = "\\Pimcore\\Model\\Document\\Tag\\Area\\" . ucfirst($this->currentIndex["type"]);
+                $delimiters = ['-','_'];
+                $actionClassname = "\\Pimcore\\Model\\Document\\Tag\\Area\\" . str_replace($delimiters, '', ucwords($this->currentIndex["type"], implode('', $delimiters)));
+
                 if (!class_exists($actionClassname, false)) {
                     // also check the legacy prefixed class name, as this is used by some plugins
                     $actionClassname = "\\Document_Tag_Area_" . ucfirst($this->currentIndex["type"]);

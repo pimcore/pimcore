@@ -5,7 +5,7 @@
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
  * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in 
+ * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
@@ -69,6 +69,14 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
         $this->checkPermission("translations");
         $admin = $this->getParam("admin");
 
+        if ($admin) {
+            $class = "\\Pimcore\\Model\\Translation\\Admin";
+        } else {
+            $class = "\\Pimcore\\Model\\Translation\\Website";
+        }
+
+        $tableName = call_user_func($class . "\\Dao::getTableName");
+
         // clear translation cache
         Translation\AbstractTranslation::clearDependentCache();
 
@@ -78,14 +86,24 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
             $list = new Translation\Website\Listing();
         }
 
-        $list->setOrder("asc");
-        $list->setOrderKey("key");
+        $joins = array();
 
-        $condition = $this->getGridFilterCondition();
+
+        $list->setOrder("asc");
+        $list->setOrderKey($tableName . ".key", false);
+
+        $condition = $this->getGridFilterCondition($tableName);
         if ($condition) {
             $list->setCondition($condition);
         }
 
+        $filters = $this->getGridFilterCondition($tableName, true);
+
+        if ($filters) {
+            $joins = array_merge($joins, $filters["joins"]);
+        }
+
+        $this->extendTranslationQuery($joins, $list, $tableName, $filters);
         $list->load();
 
         $translations = array();
@@ -212,6 +230,8 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
             $this->checkPermission("translations");
         }
 
+        $tableName = call_user_func($class . "\\Dao::getTableName");
+
         // clear translation cache
         Translation\Website::clearDependentCache();
 
@@ -281,12 +301,24 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
                 $list = new Translation\Website\Listing();
             }
 
+            $validLanguages = Tool::getValidLanguages();
+
             $list->setOrder("asc");
-            $list->setOrderKey("key");
+            $list->setOrderKey($tableName . ".key", false);
 
             $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($this->getAllParams());
+
+            $joins = array();
+
             if ($sortingSettings['orderKey']) {
-                $list->setOrderKey($sortingSettings['orderKey']);
+                if (in_array($sortingSettings['orderKey'], $validLanguages)) {
+                    $joins[] = array(
+                        "language" => $sortingSettings['orderKey']
+                    );
+                    $list->setOrderKey($sortingSettings['orderKey']);
+                } else {
+                    $list->setOrderKey($tableName . "." . $sortingSettings['orderKey'], false);
+                }
             }
             if ($sortingSettings['order']) {
                 $list->setOrder($sortingSettings['order']);
@@ -295,10 +327,17 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
             $list->setLimit($this->getParam("limit"));
             $list->setOffset($this->getParam("start"));
 
-            $condition = $this->getGridFilterCondition();
+            $condition = $this->getGridFilterCondition($tableName);
+            $filters = $this->getGridFilterCondition($tableName, true);
+
+            if ($filters) {
+                $joins = array_merge($joins, $filters["joins"]);
+            }
             if ($condition) {
                 $list->setCondition($condition);
             }
+
+            $this->extendTranslationQuery($joins, $list, $tableName, $filters);
 
             $list->load();
 
@@ -313,8 +352,51 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
         }
     }
 
-    protected function getGridFilterCondition()
+    protected function extendTranslationQuery($joins, $list, $tableName, $filters)
     {
+        if ($joins) {
+            $list->onCreateQuery(function (\Zend_Db_Select $select) use ($list, $joins, $tableName, $filters) {
+                $db = \Pimcore\Db::get();
+
+                $alreadyJoined = array();
+
+                foreach ($joins as $join) {
+                    $fieldname = $join["language"];
+
+                    if ($alreadyJoined[$fieldname]) {
+                        continue;
+                    }
+                    $alreadyJoined[$fieldname] = 1;
+
+                    $select->joinLeft(
+                        array($fieldname => $tableName),
+                        "("
+                        . $fieldname . ".key = " . $tableName . ".key"
+                        . " and " . $fieldname . ".language = ". $db->quote($fieldname)
+                        . ")",
+                        array(
+                            $fieldname => "text"
+                        )
+                    );
+                }
+
+                $havings = $filters["conditions"];
+                if ($havings) {
+                    $havings = implode(" AND ", $havings);
+                    $select->having($havings);
+                }
+            }
+            );
+        }
+    }
+
+
+    protected function getGridFilterCondition($tableName, $languageMode = false)
+    {
+        $joins = array();
+        $conditions = array();
+        $validLanguages = Tool::getValidLanguages();
+
         $db = \Pimcore\Db::get();
         $conditionFilters = [];
 
@@ -335,9 +417,22 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
                 $field = null;
                 $value = null;
 
-                $fieldname = $filter[$propertyField];
+                if (!$languageMode && in_array($filter[$propertyField], $validLanguages)
+                    || $languageMode && !in_array($filter[$propertyField], $validLanguages)) {
+                    continue;
+                }
 
-                if ($filter["type"] == "date" ||
+                if ($languageMode) {
+                    $fieldname = $filter[$propertyField];
+                } else {
+                    $fieldname = $tableName . "." . $filter[$propertyField];
+                }
+
+                if ($filter["type"] == "string") {
+                    $operator = "LIKE";
+                    $field = $fieldname;
+                    $value = "%" . $filter["value"] . "%";
+                } elseif ($filter["type"] == "date" ||
                     ($isExtJs6 && in_array($fieldname, array("modificationDate", "creationdate")))) {
                     if ($filter[$operatorField] == "lt") {
                         $operator = "<";
@@ -347,26 +442,43 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
                         $operator = "=";
                     }
                     $filter["value"] = strtotime($filter["value"]);
-                    $field = "`" . $fieldname . "` ";
+                    $field = $fieldname;
                     $value = $filter["value"];
                 }
 
                 if ($field && $value) {
-                    $conditionFilters[] =  $field . $operator . " " . $db->quote($value);
+                    $condition = $field . " " . $operator . " " . $db->quote($value);
+
+                    if ($languageMode) {
+                        $conditions[$filter[$propertyField]] = $condition;
+                        $joins[] =  array(
+                            "language" => $filter[$propertyField]
+                        );
+                    } else {
+                        $conditionFilters[] = $condition;
+                    }
                 }
             }
         }
 
         if ($this->getParam("searchString")) {
             $filterTerm = $db->quote("%".mb_strtolower($this->getParam("searchString"))."%");
-            $conditionFilters[] = "(lower(`key`) LIKE " . $filterTerm . " OR lower(`text`) LIKE " . $filterTerm.")";
+            $conditionFilters[] = "(lower(" .$tableName . ".key) LIKE " . $filterTerm . " OR lower(" . $tableName . ".text) LIKE " . $filterTerm.")";
         }
 
-        if (!empty($conditionFilters)) {
-            return implode(" AND ", $conditionFilters);
-        }
+        if ($languageMode) {
+            $result = array(
+                "joins" => $joins,
+                "conditions" => $conditions
+            );
+            return $result;
+        } else {
+            if (!empty($conditionFilters)) {
+                return implode(" AND ", $conditionFilters);
+            }
 
-        return null;
+            return null;
+        }
     }
 
     public function cleanupAction()

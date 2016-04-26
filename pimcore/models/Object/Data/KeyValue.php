@@ -5,7 +5,7 @@
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
  * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in 
+ * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @category   Pimcore
@@ -398,6 +398,21 @@ class KeyValue extends Model\AbstractModel
             return $result[0];
         } else {
             return $result;
+        }
+    }
+
+    /**
+     * deletes an entry with the given keyId if the entry exists
+     *
+     * @param $keyId
+     */
+    public function deleteEntryByKeyId($keyId) {
+
+        foreach($this->arr as $i => $entry) {
+            if($entry['key'] == $keyId) {
+                unset($this->arr[$i]);
+                break;
+            }
         }
     }
 

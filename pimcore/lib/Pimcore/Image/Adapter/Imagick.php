@@ -5,7 +5,7 @@
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
  * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in 
+ * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
@@ -188,27 +188,6 @@ class Imagick extends Adapter
 
         return $this;
     }
-
-    /**
-     * @return $this
-     */
-    // @TODO: Needs further testing => speed improvement especially with bigger images
-    /*protected function reinitializeImage() {
-
-        $i = $this->resource;
-
-        $i->writeImage("mpr:temp");
-        $this->destroy();
-
-        $i = new \Imagick();
-        $i->readImage("mpr:temp");
-
-        $this->resource = $i;
-
-        $this->modified = false;
-
-        return $this;
-    }*/
 
     /**
      * @return  void

@@ -5,7 +5,7 @@
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
  * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in 
+ * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @category   Pimcore
@@ -204,66 +204,6 @@ class Video extends Model\Asset
         $path = preg_replace("@^" . preg_quote(PIMCORE_DOCUMENT_ROOT, "@") . "@", "", $path);
 
         return $path;
-    }
-
-    /**
-     * how many frames, delay in seconds between frames, pimcore thumbnail configuration
-     *
-     * @param int $frames
-     * @param int $delay
-     * @param null $thumbnail
-     * @return string
-     */
-    public function getPreviewAnimatedGif($frames = 10, $delay = 200, $thumbnail = null)
-    {
-        if (!$frames) {
-            $frames = 10;
-        }
-        if (!$delay) {
-            $delay = 200; // no clue which unit this has ;-)
-        }
-
-        $thumbnailUniqueId = md5(serialize([$thumbnail, $frames, $delay]));
-        $animGifPath = PIMCORE_TEMPORARY_DIRECTORY . "/video-image-cache/video_" . $this->getId() . "_" . $thumbnailUniqueId . ".gif";
-
-        if (!is_file($animGifPath)) {
-            $duration = $this->getDuration();
-            $sampleRate = floor($duration / $frames);
-
-            $thumbnails = [];
-            $delays = [];
-
-            $thumbnailConfig = $this->getImageThumbnailConfig($thumbnail);
-            if (!$thumbnailConfig) {
-                $thumbnailConfig = new Image\Thumbnail\Config();
-            }
-            $thumbnailConfig->setFormat("GIF");
-
-            for ($i=0; $i<=$frames; $i++) {
-                $frameImage = $this->getImageThumbnail($thumbnailConfig, $i*$sampleRate);
-                $frameImage = PIMCORE_DOCUMENT_ROOT . $frameImage;
-
-                if (preg_match("/\.gif$/", $frameImage) && filesize($frameImage) > 10) {
-                    // check if the image is correct and not a "not supported" placeholder
-                    $thumbnails[] = $frameImage;
-                    $delays[] = $delay;
-                }
-            }
-
-            try {
-                $animator = new \Pimcore\Image\GifAnimator($thumbnails, $delays, 0, 2, 255, 255, 255, "url");
-                $animGifContent = $animator->GetAnimation();
-            } catch (\Exception $e) {
-                \Logger::error($e);
-                $animGifContent = file_get_contents($thumbnails[0]);
-            }
-
-            File::put($animGifPath, $animGifContent);
-        }
-
-        $animGifPath = preg_replace("@^" . preg_quote(PIMCORE_DOCUMENT_ROOT, "@") . "@", "", $animGifPath);
-
-        return $animGifPath;
     }
 
     /**

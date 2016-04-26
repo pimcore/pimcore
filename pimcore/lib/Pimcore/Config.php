@@ -5,7 +5,7 @@
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
  * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in 
+ * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
@@ -368,7 +368,39 @@ class Config
                         "hidden" => false,
                         "sort" => -1
                     ],
-                ]
+                ],
+                "dashboards" => array(
+                    "predefined" => [
+                        "welcome" => array(
+                            "positions" => array(
+                                array(
+                                    array(
+                                        "id" => 1,
+                                        "type" => "pimcore.layout.portlets.modificationStatistic",
+                                        "config" => null
+                                    ),
+                                    array(
+                                        "id" => 2,
+                                        "type" => "pimcore.layout.portlets.modifiedAssets",
+                                        "config" => null
+                                    )
+                                ),
+                                array(
+                                    array(
+                                        "id" => 3,
+                                        "type" => "pimcore.layout.portlets.modifiedObjects",
+                                        "config" => null
+                                    ),
+                                    array(
+                                        "id" => 4,
+                                        "type" => "pimcore.layout.portlets.modifiedDocuments",
+                                        "config" => null
+                                    )
+                                )
+                            )
+                        )
+                    ]
+                )
             ]
         ];
     }
@@ -459,7 +491,7 @@ class Config
                 }
 
                 $tmpData = $node;
-                $rootNode = Model\Object::getByPath($tmpData["rootfolder"]);
+                $rootNode = Model\Element\Service::getElementByPath($tmpData["treetype"], $tmpData["rootfolder"]);
 
                 if ($rootNode) {
                     $tmpData["type"] = "customview";

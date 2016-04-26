@@ -4,7 +4,7 @@
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
  * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in 
+ * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
@@ -234,13 +234,13 @@ pimcore.element.notes = Class.create({
             store: keyValueStore,
             title: t("details_for_selected_event") + " (" + rec.get("id") + ")",
             columns: [
-                {header: t("name"), sortable: true, dataIndex: 'name', width: 60},
-                {header: t("type"), sortable: true, dataIndex: 'type',
+                {header: t("name"), sortable: true, dataIndex: 'name', flex: 60},
+                {header: t("type"), sortable: true, dataIndex: 'type', flex: 30,
                     renderer: function(value, metaData, record, rowIndex, colIndex, store) {
                         return t(value);
                     }
                 },
-                {header: t("value"), sortable: true, dataIndex: 'data',
+                {header: t("value"), sortable: true, dataIndex: 'data', flex: 60,
                     renderer: function(value, metaData, record, rowIndex, colIndex, store) {
                         if(record.get("type") == "document" || record.get("type") == "asset"
                             || record.get("type") == "object") {

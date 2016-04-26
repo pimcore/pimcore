@@ -5,7 +5,7 @@
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
  * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in 
+ * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @category   Pimcore
@@ -353,18 +353,14 @@ class Video extends Model\Document\Tag
                     if ($asset->getCustomSetting("image_thumbnail_asset")) {
                         $image = $asset->getImageThumbnail($imageThumbnailConf);
                     } else {
-                        if ($thumbnail["status"] == "finished" && (array_key_exists("animatedGifPreview", $options) && $options["animatedGifPreview"] !== false)) {
-                            $image = $asset->getPreviewAnimatedGif(null, null, $imageThumbnailConf);
-                        } else {
-                            $image = $asset->getImageThumbnail($imageThumbnailConf);
-                        }
+                        $image = $asset->getImageThumbnail($imageThumbnailConf);
                     }
                 }
 
                 if ($inAdmin && isset($options["editmodeImagePreview"]) && $options["editmodeImagePreview"]) {
                     $code = '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video">';
                     $code .= '<img width="' . $this->getWidth() . '" src="' . $image . '" />';
-                    $code .= '</div';
+                    $code .= '</div>';
                     return $code;
                 }
 
@@ -723,16 +719,6 @@ class Video extends Model\Document\Tag
         </div>';
 
         $options = $this->getOptions();
-
-        if (!$this->editmode && !$options['disableProgressReload']) {
-            $code .= '
-                <script type="text/javascript">
-                    window.setTimeout(function() {
-                        location.reload();
-                    },6000);
-                </script>
-            ';
-        }
 
         return $code;
     }

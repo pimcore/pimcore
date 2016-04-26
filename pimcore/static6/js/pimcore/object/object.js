@@ -4,7 +4,7 @@
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
  * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in 
+ * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
@@ -270,7 +270,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         //
         if(this.data.childdata.data.classes.length > 0) {
             try {
-                this.search = new pimcore.object.search(this.data.childdata);
+                this.search = new pimcore.object.search(this.data.childdata, "children");
                 this.search.title = t('children_grid');
                 this.search.onlyDirectChildren = true;
                 items.push(this.search.getLayout());
@@ -565,7 +565,9 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             if (pimcore.settings.customviews.length > 0) {
                 for (var cvs = 0; cvs < pimcore.settings.customviews.length; cvs++) {
                     var cv = pimcore.settings.customviews[cvs];
-                    treeNames.push("layout_customviews_tree" + cv.id);
+                    if (!cv.treetype || cv.treetype == "object") {
+                        treeNames.push("layout_object_tree_" + cv.id);
+                    }
                 }
             }
 
@@ -611,7 +613,9 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             if (pimcore.settings.customviews.length > 0) {
                 for (var cvs = 0; cvs < pimcore.settings.customviews.length; cvs++) {
                     var cv = pimcore.settings.customviews[cvs];
-                    treeNames.push("layout_customviews_tree" + cv.id);
+                    if (!cv.treetype || cv.treetype == "object") {
+                        treeNames.push("layout_object_tree_" + cv.id);
+                    }
                 }
             }
 

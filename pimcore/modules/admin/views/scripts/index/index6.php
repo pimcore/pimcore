@@ -314,6 +314,7 @@ $scripts = array(
     "pimcore/document/email.js",
     "pimcore/document/page.js",
     "pimcore/document/seopanel.js",
+    "pimcore/document/customviews/tree.js",
 
     // assets
     "pimcore/asset/asset.js",
@@ -327,6 +328,7 @@ $scripts = array(
     "pimcore/asset/versions.js",
     "pimcore/asset/metadata.js",
     "pimcore/asset/tree.js",
+    "pimcore/asset/customviews/tree.js",
 
     // object
     "pimcore/object/helpers/edit.js",
@@ -458,7 +460,6 @@ $scripts = array(
     "pimcore/object/folder.js",
     "pimcore/object/variant.js",
     "pimcore/object/tree.js",
-    "pimcore/object/customviews/settings.js",
     "pimcore/object/customviews/tree.js",
     "pimcore/object/quantityvalue/unitsettings.js",
 
@@ -549,6 +550,7 @@ $googleMapsApiKey = $this->config->services->google->browserapikey;
 <script type="text/javascript">
     pimcore.settings = {
         upload_max_filesize: <?= $this->upload_max_filesize; ?>,
+        session_gc_maxlifetime: <?= $this->session_gc_maxlifetime ?>,
         sessionId: "<?= htmlentities($_COOKIE["pimcore_admin_sid"], ENT_QUOTES, 'UTF-8') ?>",
         csrfToken: "<?= $this->csrfToken ?>",
         version: "<?= \Pimcore\Version::getVersion() ?>",
@@ -571,7 +573,8 @@ $googleMapsApiKey = $this->config->services->google->browserapikey;
         asset_hide_edit: <?= $this->config->assets->hide_edit_image ? "true" : "false" ?>,
         perspective: <?= \Zend_Json::encode($runtimePerspective) ?>,
         availablePerspectives: <?= \Zend_Json::encode(\Pimcore\Config::getAvailablePerspectives(\Pimcore\Tool\Admin::getCurrentUser())) ?>,
-        customviews: <?= \Zend_Json::encode($this->customview_config) ?>
+        customviews: <?= \Zend_Json::encode($this->customview_config) ?>,
+        disabledPortlets: <?= \Zend_Json::encode((new \Pimcore\Helper\Dashboard(\Pimcore\Tool\Admin::getCurrentUser()))->getDisabledPortlets()) ?>
     };
 </script>
 

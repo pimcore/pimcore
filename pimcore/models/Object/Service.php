@@ -5,7 +5,7 @@
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
  * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in 
+ * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @category   Pimcore
@@ -1434,6 +1434,7 @@ class Service extends Model\Element\Service
                         "("
                         . $mappedKey . ".o_id = " . $table . ".o_id"
                         . " and " . $mappedKey . ".fieldname = " . $db->quote($fieldname)
+                        . " and " . $mappedKey . ".groupId=" . $featureJoin["groupId"]
                         . " and " . $mappedKey . ".keyId=" . $featureJoin["keyId"]
                         . " and " . $mappedKey . ".language = " . $db->quote($requestedLanguage)
                         . ")",

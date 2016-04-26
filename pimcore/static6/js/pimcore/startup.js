@@ -4,7 +4,7 @@
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
  * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in 
+ * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
@@ -643,23 +643,25 @@ Ext.onReady(function () {
                     }
                     break;
                 case "customview":
-                    if (user.isAllowed("objects")) {
-                        if (!treeConfig.hidden) {
+                    if (!treeConfig.hidden) {
+                        var treetype = treeConfig.treetype ? treeConfig.treetype : "object";
+                        if (user.isAllowed(treetype + "s")) {
                             treepanel = Ext.getCmp("pimcore_panel_tree_" + side);
 
                             var treepanel = Ext.getCmp("pimcore_panel_tree_" + side);
+                            var treeCls = window.pimcore[treetype].customviews.tree;
 
-                            tree = new pimcore.object.customviews.tree({
+                            tree = new treeCls({
                                 allowedClasses: treeConfig.allowedClasses,
                                 rootId: treeConfig.rootId,
                                 rootVisible: treeConfig.showroot,
-                                treeId: "pimcore_panel_tree_customviews_" + treeConfig.id,
-                                treeIconCls: "pimcore_object_customviews_icon_" + treeConfig.id,
+                                treeId: "pimcore_panel_tree_" + treetype + "_" + treeConfig.id,
+                                treeIconCls: "pimcore_" + treetype + "_customview_icon_" + treeConfig.id,
                                 treeTitle: ts(treeConfig.name),
                                 parentPanel: treepanel,
                                 loaderBaseParams: {}
                             }, treeConfig);
-                            pimcore.globalmanager.add("layout_customviews_tree" + treeConfig.id, tree);
+                            pimcore.globalmanager.add("layout_" + treetype + "_tree_" + treeConfig.id, tree);
 
                             treepanel.setHidden(false);
                         }
@@ -721,46 +723,44 @@ pimcore["intervals"]["translations_admin_missing"] = window.setInterval(function
 
 // session renew
 pimcore["intervals"]["ping"] = window.setInterval(function () {
-    if (!pimcore.settings.devmode) {
-        Ext.Ajax.request({
-            url: "/admin/misc/ping",
-            success: function (response) {
+    Ext.Ajax.request({
+        url: "/admin/misc/ping",
+        success: function (response) {
 
-                var data;
+            var data;
 
-                try {
-                    data = Ext.decode(response.responseText);
+            try {
+                data = Ext.decode(response.responseText);
 
-                    if (data.success != true) {
-                        throw "session seems to be expired";
-                    }
-                } catch (e) {
-                    data = false;
-                    pimcore.settings.showCloseConfirmation = false;
-                    window.location.href = "/admin/login/?session_expired=true";
+                if (data.success != true) {
+                    throw "session seems to be expired";
                 }
-
-                if (pimcore.maintenanceWindow) {
-                    pimcore.maintenanceWindow.close();
-                    window.setTimeout(function () {
-                        delete pimcore.maintenanceWindow;
-                    }, 2000);
-                    pimcore.viewport.updateLayout();
-                }
-
-                if (data) {
-                    // here comes the check for maintenance mode, ...
-                }
-            },
-            failure: function (response) {
-                if (response.status != 503) {
-                    pimcore.settings.showCloseConfirmation = false;
-                    window.location.href = "/admin/login/?session_expired=true&server_error=true";
-                }
+            } catch (e) {
+                data = false;
+                pimcore.settings.showCloseConfirmation = false;
+                window.location.href = "/admin/login/?session_expired=true";
             }
-        });
-    }
-}, 60000);
+
+            if (pimcore.maintenanceWindow) {
+                pimcore.maintenanceWindow.close();
+                window.setTimeout(function () {
+                    delete pimcore.maintenanceWindow;
+                }, 2000);
+                pimcore.viewport.updateLayout();
+            }
+
+            if (data) {
+                // here comes the check for maintenance mode, ...
+            }
+        },
+        failure: function (response) {
+            if (response.status != 503) {
+                pimcore.settings.showCloseConfirmation = false;
+                window.location.href = "/admin/login/?session_expired=true&server_error=true";
+            }
+        }
+    });
+}, (pimcore.settings.session_gc_maxlifetime-60)*1000);
 
 // refreshes the layout
 pimcore.registerNS("pimcore.layout.refresh");

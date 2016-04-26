@@ -4,7 +4,7 @@
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
  * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in 
+ * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
@@ -581,6 +581,26 @@ pimcore.layout.toolbar = Class.create({
                 }
             }
 
+            if (user.isAllowed("reports") && user.isAllowed("system_settings")) {
+                if (perspectiveCfg.inToolbar("settings.customReports")) {
+                    marketingItems.push({
+                        text: t("custom_reports"),
+                        iconCls: "pimcore_icon_reports",
+                        handler: this.showCustomReports
+                    });
+                }
+            }
+
+            if (user.isAllowed("reports") && user.isAllowed("system_settings")) {
+                if (perspectiveCfg.inToolbar("settings.marketingReports")) {
+                    marketingItems.push({
+                        text: t("marketing_settings"),
+                        iconCls: "pimcore_icon_system",
+                        handler: this.reportSettings
+                    });
+                }
+            }
+
             if (marketingItems.length > 0) {
                 this.marketingMenu = new Ext.menu.Menu({
                     items: marketingItems,
@@ -620,7 +640,7 @@ pimcore.layout.toolbar = Class.create({
 
             if (user.isAllowed("system_settings") && perspectiveCfg.inToolbar("settings.system")) {
                 settingsItems.push({
-                    text: t("system"),
+                    text: t("system_settings"),
                     iconCls: "pimcore_icon_system",
                     handler: this.systemSettings
                 });
@@ -770,14 +790,6 @@ pimcore.layout.toolbar = Class.create({
                         });
                     }
 
-                    if (perspectiveCfg.inToolbar("settings.objects.customViews")) {
-                        objectMenu.menu.items.push({
-                            text: t("custom_views"),
-                            iconCls: "pimcore_icon_custom_views",
-                            handler: this.editCustomViews
-                        });
-                    }
-
                     if (perspectiveCfg.inToolbar("settings.objects.bulkExport")) {
                         objectMenu.menu.items.push({
                             text: t("bulk_export"),
@@ -877,26 +889,6 @@ pimcore.layout.toolbar = Class.create({
                         text: t("translations_admin"),
                         iconCls: "pimcore_icon_translations",
                         handler: this.editTranslationsSpecific
-                    });
-                }
-            }
-
-            if (user.isAllowed("reports") && user.isAllowed("system_settings")) {
-                if (perspectiveCfg.inToolbar("settings.marketingReports")) {
-                    settingsItems.push({
-                        text: t("reports_and_marketing"),
-                        iconCls: "pimcore_icon_reports",
-                        handler: this.reportSettings
-                    });
-                }
-            }
-
-            if (user.isAllowed("reports") && user.isAllowed("system_settings")) {
-                if (perspectiveCfg.inToolbar("settings.customReports")) {
-                    settingsItems.push({
-                        text: t("custom_reports"),
-                        iconCls: "pimcore_icon_reports",
-                        handler: this.showCustomReports
                     });
                 }
             }
@@ -1413,16 +1405,7 @@ pimcore.layout.toolbar = Class.create({
             pimcore.globalmanager.add("objectbricks", new pimcore.object.objectbrick());
         }
     },
-
-    editCustomViews: function () {
-        try {
-            pimcore.globalmanager.get("customviews").activate();
-        }
-        catch (e) {
-            pimcore.globalmanager.add("customviews", new pimcore.object.customviews.settings());
-        }
-    },
-
+    
     showDocumentSeo: function () {
         try {
             pimcore.globalmanager.get("document_seopanel").activate();

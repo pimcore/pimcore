@@ -4,7 +4,7 @@
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
  * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in 
+ * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
@@ -177,12 +177,6 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
                     urlField.getParent().getParent().getParent().show();
                 }
             });
-
-            // HACK - clean all pasted html
-            this.ckeditor.on('paste', function(evt) {
-                evt.data.dataValue = '<!--class="Mso"-->' + evt.data.dataValue;
-            }, null, null, 1);
-
         } catch (e) {
             console.log(e);
         }

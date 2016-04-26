@@ -5,7 +5,7 @@
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
  * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in 
+ * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @category   Pimcore
@@ -59,10 +59,10 @@ class Dao extends Model\Object\Listing\Dao
         $field = $this->getTableName() . ".o_id";
         $select->from(
             [ $this->getTableName() ], [
-                new \Zend_Db_Expr(sprintf('SQL_CALC_FOUND_ROWS %s as o_id', $this->getSelectPart($field, $field))), 'o_type'
+                new \Zend_Db_Expr(
+                    sprintf('SQL_CALC_FOUND_ROWS %s as o_id', $this->getSelectPart($field, $field))), 'o_type'
             ]
         );
-
 
         // add joins
         $this->addJoins($select);
@@ -81,7 +81,7 @@ class Dao extends Model\Object\Listing\Dao
 
         if ($this->onCreateQueryCallback) {
             $closure = $this->onCreateQueryCallback;
-            $closure->call($this, $select);
+            $closure($select);
         }
 
         return $select;
@@ -131,7 +131,7 @@ class Dao extends Model\Object\Listing\Dao
      * @throws \Exception
      * @throws \Zend_Exception
      */
-    protected function getTableName()
+    public function getTableName()
     {
         if (empty($this->tableName)) {
 

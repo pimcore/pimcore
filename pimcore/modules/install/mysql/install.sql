@@ -57,7 +57,7 @@ CREATE TABLE `assets_metadata` (
 DROP TABLE IF EXISTS `cache`;
 CREATE TABLE `cache` (
   `id` varchar(165) NOT NULL DEFAULT '',
-  `data` longtext,
+  `data` longblob,
   `mtime` bigint(20) DEFAULT NULL,
   `expire` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`)
@@ -200,7 +200,6 @@ CREATE TABLE `documents_page` (
   `metaData` text,
   `prettyUrl` varchar(255) DEFAULT NULL,
   `contentMasterDocumentId` int(11) DEFAULT NULL,
-  `css` longtext,
   `personas` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `prettyUrl` (`prettyUrl`)

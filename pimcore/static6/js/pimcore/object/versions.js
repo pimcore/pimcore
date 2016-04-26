@@ -4,7 +4,7 @@
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
  * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in 
+ * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
@@ -150,10 +150,10 @@ pimcore.object.versions = Class.create({
         }
 
         if (selModel.getCount() > 1) {
-            this.compareVersions(grid, rowIndex, event);
+            this.compareVersions(grid, rowIndex, e);
         }
         else {
-            this.showVersionPreview(grid, rowIndex, event);
+            this.showVersionPreview(grid, rowIndex, e);
         }
     },
 

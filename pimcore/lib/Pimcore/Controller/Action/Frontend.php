@@ -5,7 +5,7 @@
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
  * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in 
+ * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
@@ -491,7 +491,7 @@ abstract class Frontend extends Action
             \Zend_Registry::set("pimcore_tag_block_numeration", $this->parentBlockNumeration);
         }
 
-        // restore the previois set locale if available
+        // restore the previous set locale if available
         // for a detailed description on this, please have a look at $this->setLocaleFromDocument()
         if ($this->previousLocale) {
             $this->forceRender();

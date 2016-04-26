@@ -5,7 +5,7 @@
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
  * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in 
+ * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @category   Pimcore
@@ -615,7 +615,9 @@ class Asset extends Element\AbstractElement
         }
 
         // create foldertree
-        $destinationPath = $this->getFileSystemPath();
+        // use current file name in order to prevent problems when filename has changed
+        // (otherwise binary data would be overwritten with old binary data with rename() in save method)  
+        $destinationPath = PIMCORE_ASSET_DIRECTORY . $this->getDao()->getCurrentFullPath();
 
         $dirPath = dirname($destinationPath);
         if (!is_dir($dirPath)) {
@@ -653,7 +655,7 @@ class Asset extends Element\AbstractElement
 
                 // set mime type
 
-                $mimetype = Mime::detect($this->getFileSystemPath());
+                $mimetype = Mime::detect($destinationPath);
                 $this->setMimetype($mimetype);
 
                 // set type

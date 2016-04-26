@@ -5,7 +5,7 @@
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
  * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in 
+ * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
@@ -42,7 +42,15 @@ class Maintenance extends \Zend_Controller_Plugin_Abstract
 
         if ($maintenance && !in_array(\Pimcore\Tool::getClientIp(), $serverIps)) {
             header("HTTP/1.1 503 Service Temporarily Unavailable", 503);
-            echo file_get_contents(PIMCORE_PATH . "/static/html/maintenance.html");
+
+            $file = PIMCORE_PATH . "/static/html/maintenance.html";
+
+            $customFile = PIMCORE_WEBSITE_PATH . "/config/maintenance.html";
+            if (file_exists($customFile)) {
+                $file = $customFile;
+            }
+
+            echo file_get_contents($file);
             exit;
         }
     }

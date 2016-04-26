@@ -4,7 +4,7 @@
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
  * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in 
+ * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
@@ -73,7 +73,7 @@ pimcore.settings.system = Class.create({
         });
     },
 
-    getValue: function (key) {
+    getValue: function (key, ignoreCheck) {
 
         var nk = key.split("\.");
         var current = this.data.values;
@@ -87,7 +87,7 @@ pimcore.settings.system = Class.create({
             }
         }
 
-        if (typeof current != "object" && typeof current != "array" && typeof current != "function") {
+        if (ignoreCheck || (typeof current != "object" && typeof current != "array" && typeof current != "function")) {
             return current;
         }
 
@@ -340,7 +340,7 @@ pimcore.settings.system = Class.create({
                                 xtype: "textfield",
                                 id: "system_settings_general_debug_ip",
                                 name: "general.debug_ip",
-                                width: 500,
+                                width: 600,
                                 value: this.getValue("general.debug_ip")
                             },
                             {
@@ -1181,11 +1181,12 @@ pimcore.settings.system = Class.create({
                                 width: "100%",
                                 resizable: true,
                                 minChars: 2,
-                                store: Ext.create('Ext.data.Store', {
+                                store: Ext.create('Ext.data.JsonStore', {
                                     proxy: {
                                         type: 'memory'
                                     },
-                                    fields: ['value']
+                                    fields: ['value'],
+                                    data: this.getValue("cache.excludePatternsArray", true)
                                 }),
                                 fieldLabel: t('exclude_patterns'),
                                 name: 'cache.excludePatterns',

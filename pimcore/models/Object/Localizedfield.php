@@ -5,7 +5,7 @@
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
  * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in 
+ * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @category   Pimcore
@@ -273,7 +273,9 @@ class Localizedfield extends Model\AbstractModel
             foreach (Tool::getFallbackLanguagesFor($language) as $l) {
                 if ($this->languageExists($l)) {
                     if (array_key_exists($name, $this->items[$l])) {
-                        $data = $this->getLocalizedValue($name, $l);
+                        if ($data = $this->getLocalizedValue($name, $l)) {
+                            break;
+                        }
                     }
                 }
             }

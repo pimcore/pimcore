@@ -136,7 +136,8 @@ $autoloader->registerNamespace('Pimcore');
 // register class map loader => speed
 $autoloaderClassMapFiles = array(
     PIMCORE_CONFIGURATION_DIRECTORY . "/autoload-classmap.php",
-    PIMCORE_PATH . "/config/autoload-classmap.php"
+    PIMCORE_PATH . "/config/autoload-classmap.php",
+    PIMCORE_WEBSITE_PATH . "/config/autoload-classmap.php"
 );
 
 foreach ($autoloaderClassMapFiles as $autoloaderClassMapFile) {
@@ -154,7 +155,12 @@ foreach ($autoloaderClassMapFiles as $autoloaderClassMapFile) {
 \Pimcore::setupFramework();
 \Pimcore::initLogger();
 \Pimcore::initModules();
-\Pimcore::initPlugins();
+
+if (\Pimcore\Config::getSystemConfig()) {
+    // we do not initialize plugins if pimcore isn't installed properly
+    // reason: it can be the case that plugins use the database in isInstalled() witch isn't available at this time
+    \Pimcore::initPlugins();
+}
 
 // do some general stuff
 // this is just for compatibility reasons, pimcore itself doesn't use this constant anymore

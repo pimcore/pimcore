@@ -5,7 +5,7 @@
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
  * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in 
+ * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @category   Pimcore
@@ -57,7 +57,10 @@ class Dao extends Model\Dao\AbstractDao
     public function insertDump($file)
     {
         $sql = file_get_contents($file);
-        
+
+        //replace document root placeholder with current document root
+        $sql = str_replace("~~DOCUMENTROOT~~", PIMCORE_DOCUMENT_ROOT, $sql);
+
         // we have to use the raw connection here otherwise \Zend_Db uses prepared statements, which causes problems with inserts (: placeholders)
         // and mysqli causes troubles because it doesn't support multiple queries
         if ($this->db->getResource() instanceof \Zend_Db_Adapter_Mysqli) {

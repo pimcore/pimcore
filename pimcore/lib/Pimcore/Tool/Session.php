@@ -5,7 +5,7 @@
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
  * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in 
+ * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
@@ -44,7 +44,6 @@ class Session
      */
     protected static $options = [
         "throw_startup_exceptions" => false,
-        "gc_maxlifetime" => 7200,
         "name" => "pimcore_admin_sid",
         "strict" => false,
         "use_trans_sid" => false,

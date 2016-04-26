@@ -1784,7 +1784,7 @@ INSERT INTO `documents_elements` VALUES ('73','socialContentcontent_contents_2co
 
 
 
-INSERT INTO `documents_email` VALUES ('38','','default','default','/advanced/email.php','pimcore@byom.de','webserver@pimcore.org','','','Contact Form');
+INSERT INTO `documents_email` VALUES ('38','','default','default','/advanced/email.php','pimcore@byom.de','pimcore@byom.de','','','Contact Form');
 INSERT INTO `documents_email` VALUES ('66','','newsletter','standard-mail','','','','','','');
 INSERT INTO `documents_email` VALUES ('67','','newsletter','standard-mail','','','','','','Example Newsletter');
 
@@ -1802,47 +1802,47 @@ INSERT INTO `documents_link` VALUES ('40','document','1','','internal');
 
 
 
-INSERT INTO `documents_page` VALUES ('1','','content','portal','','','','','a:0:{}','','0','','');
-INSERT INTO `documents_page` VALUES ('3','','content','default','','','','','a:0:{}','','0','','');
-INSERT INTO `documents_page` VALUES ('4','','content','default','','','','','a:0:{}','','0','','');
-INSERT INTO `documents_page` VALUES ('5','','advanced','index','','','','','a:0:{}','','0','','');
-INSERT INTO `documents_page` VALUES ('6','','content','default','','','','','a:0:{}','','0','','');
-INSERT INTO `documents_page` VALUES ('7','','content','default','','','','','a:0:{}','','0','','');
-INSERT INTO `documents_page` VALUES ('9','','advanced','object-form','','','','','a:0:{}','','0','','');
-INSERT INTO `documents_page` VALUES ('18','','content','default','','','','','a:0:{}','','0','','');
-INSERT INTO `documents_page` VALUES ('19','','content','default','','','','','a:0:{}','','0','','');
-INSERT INTO `documents_page` VALUES ('20','','content','default','','','','','a:0:{}','','0','','');
-INSERT INTO `documents_page` VALUES ('21','','content','thumbnails','','','','','a:0:{}','','0','','');
-INSERT INTO `documents_page` VALUES ('22','','content','website-translations','','','','','a:0:{}','','0','','');
-INSERT INTO `documents_page` VALUES ('23','','content','website-translations','','','','','a:0:{}','','0','','');
-INSERT INTO `documents_page` VALUES ('24','','content','default','','','','','a:0:{}',NULL,'0','','');
-INSERT INTO `documents_page` VALUES ('25','','content','editable-roundup','','','','','a:0:{}','','0','','');
-INSERT INTO `documents_page` VALUES ('26','','content','simple-form','','','','','a:0:{}','','0','','');
-INSERT INTO `documents_page` VALUES ('27','','news','index','','','','','a:0:{}','','0','','');
-INSERT INTO `documents_page` VALUES ('28','','content','default','','','','','a:0:{}','','0','','');
-INSERT INTO `documents_page` VALUES ('29','','content','default','','','','','a:0:{}','','0','','');
-INSERT INTO `documents_page` VALUES ('30','','content','default','','','','','a:0:{}','','0','','');
-INSERT INTO `documents_page` VALUES ('31','','content','default','','','','','a:0:{}','','30','','');
-INSERT INTO `documents_page` VALUES ('34','','content','default','','','','','a:0:{}','','0','','');
-INSERT INTO `documents_page` VALUES ('35','','content','default','','','','','a:0:{}','','0','','');
-INSERT INTO `documents_page` VALUES ('36','','advanced','search','','','','','a:0:{}','','0','','');
-INSERT INTO `documents_page` VALUES ('37','','advanced','contact-form','','','','','a:0:{}','','0','','');
-INSERT INTO `documents_page` VALUES ('39','','content','default','','','','','a:0:{}','','0','','');
-INSERT INTO `documents_page` VALUES ('41','','content','portal','','','','','a:0:{}','','0','','');
-INSERT INTO `documents_page` VALUES ('50','','content','default','','','','','a:0:{}','','0','','');
-INSERT INTO `documents_page` VALUES ('51','','content','default','','Einfache Beispiele','','','a:0:{}','','0','','');
-INSERT INTO `documents_page` VALUES ('52','','content','default','','Beispiele für Fortgeschrittene','','','a:0:{}','','0','','');
-INSERT INTO `documents_page` VALUES ('53','','news','index','','','','','a:0:{}','','0','','');
-INSERT INTO `documents_page` VALUES ('60','','blog','index','','Blog','','','a:0:{}','','0','','');
-INSERT INTO `documents_page` VALUES ('61','','advanced','sitemap','','Sitemap','','','a:0:{}','','0','','');
-INSERT INTO `documents_page` VALUES ('63','','newsletter','subscribe','','Newsletter','','','a:0:{}','','0','','');
-INSERT INTO `documents_page` VALUES ('64','','newsletter','confirm','','','','','a:0:{}','','0','','');
-INSERT INTO `documents_page` VALUES ('65','','newsletter','unsubscribe','','Unsubscribe','','','a:0:{}','','0','','');
-INSERT INTO `documents_page` VALUES ('68','','advanced','asset-thumbnail-list','','Asset Thumbnail List','','','a:0:{}','','0','','');
-INSERT INTO `documents_page` VALUES ('70','','content','default','','Product Information Management','','','a:0:{}','','0','','');
-INSERT INTO `documents_page` VALUES ('71','','content','default','','E-Commerce','','','a:0:{}','','0','','');
-INSERT INTO `documents_page` VALUES ('72','','category_example','test','','','','','a:0:{}',NULL,NULL,'','');
-INSERT INTO `documents_page` VALUES ('73',NULL,'content','default',NULL,'Social Contents','','','a:0:{}',NULL,NULL,NULL,'');
+INSERT INTO `documents_page` VALUES ('1','','content','portal','','','','','a:0:{}','','0','');
+INSERT INTO `documents_page` VALUES ('3','','content','default','','','','','a:0:{}','','0','');
+INSERT INTO `documents_page` VALUES ('4','','content','default','','','','','a:0:{}','','0','');
+INSERT INTO `documents_page` VALUES ('5','','advanced','index','','','','','a:0:{}','','0','');
+INSERT INTO `documents_page` VALUES ('6','','content','default','','','','','a:0:{}','','0','');
+INSERT INTO `documents_page` VALUES ('7','','content','default','','','','','a:0:{}','','0','');
+INSERT INTO `documents_page` VALUES ('9','','advanced','object-form','','','','','a:0:{}','','0','');
+INSERT INTO `documents_page` VALUES ('18','','content','default','','','','','a:0:{}','','0','');
+INSERT INTO `documents_page` VALUES ('19','','content','default','','','','','a:0:{}','','0','');
+INSERT INTO `documents_page` VALUES ('20','','content','default','','','','','a:0:{}','','0','');
+INSERT INTO `documents_page` VALUES ('21','','content','thumbnails','','','','','a:0:{}','','0','');
+INSERT INTO `documents_page` VALUES ('22','','content','website-translations','','','','','a:0:{}','','0','');
+INSERT INTO `documents_page` VALUES ('23','','content','website-translations','','','','','a:0:{}','','0','');
+INSERT INTO `documents_page` VALUES ('24','','content','default','','','','','a:0:{}',NULL,'0','');
+INSERT INTO `documents_page` VALUES ('25','','content','editable-roundup','','','','','a:0:{}','','0','');
+INSERT INTO `documents_page` VALUES ('26','','content','simple-form','','','','','a:0:{}','','0','');
+INSERT INTO `documents_page` VALUES ('27','','news','index','','','','','a:0:{}','','0','');
+INSERT INTO `documents_page` VALUES ('28','','content','default','','','','','a:0:{}','','0','');
+INSERT INTO `documents_page` VALUES ('29','','content','default','','','','','a:0:{}','','0','');
+INSERT INTO `documents_page` VALUES ('30','','content','default','','','','','a:0:{}','','0','');
+INSERT INTO `documents_page` VALUES ('31','','content','default','','','','','a:0:{}','','30','');
+INSERT INTO `documents_page` VALUES ('34','','content','default','','','','','a:0:{}','','0','');
+INSERT INTO `documents_page` VALUES ('35','','content','default','','','','','a:0:{}','','0','');
+INSERT INTO `documents_page` VALUES ('36','','advanced','search','','','','','a:0:{}','','0','');
+INSERT INTO `documents_page` VALUES ('37','','advanced','contact-form','','','','','a:0:{}','','0','');
+INSERT INTO `documents_page` VALUES ('39','','content','default','','','','','a:0:{}','','0','');
+INSERT INTO `documents_page` VALUES ('41','','content','portal','','','','','a:0:{}','','0','');
+INSERT INTO `documents_page` VALUES ('50','','content','default','','','','','a:0:{}','','0','');
+INSERT INTO `documents_page` VALUES ('51','','content','default','','Einfache Beispiele','','','a:0:{}','','0','');
+INSERT INTO `documents_page` VALUES ('52','','content','default','','Beispiele für Fortgeschrittene','','','a:0:{}','','0','');
+INSERT INTO `documents_page` VALUES ('53','','news','index','','','','','a:0:{}','','0','');
+INSERT INTO `documents_page` VALUES ('60','','blog','index','','Blog','','','a:0:{}','','0','');
+INSERT INTO `documents_page` VALUES ('61','','advanced','sitemap','','Sitemap','','','a:0:{}','','0','');
+INSERT INTO `documents_page` VALUES ('63','','newsletter','subscribe','','Newsletter','','','a:0:{}','','0','');
+INSERT INTO `documents_page` VALUES ('64','','newsletter','confirm','','','','','a:0:{}','','0','');
+INSERT INTO `documents_page` VALUES ('65','','newsletter','unsubscribe','','Unsubscribe','','','a:0:{}','','0','');
+INSERT INTO `documents_page` VALUES ('68','','advanced','asset-thumbnail-list','','Asset Thumbnail List','','','a:0:{}','','0','');
+INSERT INTO `documents_page` VALUES ('70','','content','default','','Product Information Management','','','a:0:{}','','0','');
+INSERT INTO `documents_page` VALUES ('71','','content','default','','E-Commerce','','','a:0:{}','','0','');
+INSERT INTO `documents_page` VALUES ('72','','category_example','test','','','','','a:0:{}',NULL,NULL,'');
+INSERT INTO `documents_page` VALUES ('73',NULL,'content','default',NULL,'Social Contents','','','a:0:{}',NULL,NULL,'');
 
 
 
@@ -2188,17 +2188,17 @@ INSERT INTO `properties` VALUES ('41','document','/de','navigation_name','text',
 INSERT INTO `properties` VALUES ('41','document','/de','sidebar','document','58','1');
 INSERT INTO `properties` VALUES ('47','object','/crm/newsletter/pimcore-byom.de~7a3','token','text','YTozOntzOjQ6InNhbHQiO3M6MzI6IjNlMGRkYTk3MWU1YTY5MWViYmM0OGVkNGQ5NzA4MDFmIjtzOjU6ImVtYWlsIjtzOjE1OiJwaW1jb3JlQGJ5b20uZGUiO3M6MjoiaWQiO2k6NDc7fQ==','0');
 INSERT INTO `properties` VALUES ('50','document','/de/einfuehrung','navigation_name','text','Einführung','0');
-INSERT INTO `properties` VALUES ('51','document','/de/einfache-beispiele','navigation_name','text','Einfache Beispiele','1');
-INSERT INTO `properties` VALUES ('52','document','/de/beispiele-fur-fortgeschrittene','navigation_name','text','Beispiele für Fortgeschrittene','1');
+INSERT INTO `properties` VALUES ('51','document','/de/einfache-beispiele','navigation_name','text','Einfache Beispiele','0');
+INSERT INTO `properties` VALUES ('52','document','/de/beispiele-fur-fortgeschrittene','navigation_name','text','Beispiele für Fortgeschrittene','0');
 INSERT INTO `properties` VALUES ('53','document','/de/einfache-beispiele/neuigkeiten','navigation_name','text','Neuigkeiten','0');
 INSERT INTO `properties` VALUES ('60','document','/en/advanced-examples/blog','navigation_name','text','Blog','0');
-INSERT INTO `properties` VALUES ('61','document','/en/advanced-examples/sitemap','navigation_name','text','Sitemap','1');
-INSERT INTO `properties` VALUES ('63','document','/en/advanced-examples/newsletter','navigation_name','text','Newsletter','1');
-INSERT INTO `properties` VALUES ('64','document','/en/advanced-examples/newsletter/confirm','navigation_name','text','','1');
-INSERT INTO `properties` VALUES ('65','document','/en/advanced-examples/newsletter/unsubscribe','navigation_name','text','Unsubscribe','1');
-INSERT INTO `properties` VALUES ('68','document','/en/advanced-examples/asset-thumbnail-list','navigation_name','text','Asset Thumbnail List','1');
+INSERT INTO `properties` VALUES ('61','document','/en/advanced-examples/sitemap','navigation_name','text','Sitemap','0');
+INSERT INTO `properties` VALUES ('63','document','/en/advanced-examples/newsletter','navigation_name','text','Newsletter','0');
+INSERT INTO `properties` VALUES ('64','document','/en/advanced-examples/newsletter/confirm','navigation_name','text','','0');
+INSERT INTO `properties` VALUES ('65','document','/en/advanced-examples/newsletter/unsubscribe','navigation_name','text','Unsubscribe','0');
+INSERT INTO `properties` VALUES ('68','document','/en/advanced-examples/asset-thumbnail-list','navigation_name','text','Asset Thumbnail List','0');
 INSERT INTO `properties` VALUES ('70','document','/en/advanced-examples/product-information-management','navigation_name','text','Product Information Management','0');
-INSERT INTO `properties` VALUES ('71','document','/en/advanced-examples/e-commerce','navigation_name','text','E-Commerce','1');
+INSERT INTO `properties` VALUES ('71','document','/en/advanced-examples/e-commerce','navigation_name','text','E-Commerce','0');
 INSERT INTO `properties` VALUES ('72','document','/en/advanced-examples/sub-modules','navigation_exclude','text','','0');
 INSERT INTO `properties` VALUES ('72','document','/en/advanced-examples/sub-modules','navigation_name','text','Sub-Modules','0');
 INSERT INTO `properties` VALUES ('72','document','/en/advanced-examples/sub-modules','navigation_target','text','','0');

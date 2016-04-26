@@ -4,7 +4,7 @@
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
  * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in 
+ * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
@@ -608,13 +608,6 @@ pimcore.layout.toolbar = Class.create({
                     iconCls: "pimcore_icon_key",
                     handler: this.keyValueSettings
                 });
-
-                objectMenu.menu.items.push({
-                    text: t("custom_views"),
-                    iconCls: "pimcore_icon_custom_views",
-                    handler: this.editCustomViews
-                });
-
 
                 objectMenu.menu.items.push({
                     text: t("bulk_export"),
@@ -1352,16 +1345,7 @@ pimcore.layout.toolbar = Class.create({
             pimcore.globalmanager.add("objectbricks", new pimcore.object.objectbrick());
         }
     },
-
-    editCustomViews: function () {
-        try {
-            pimcore.globalmanager.get("customviews").activate();
-        }
-        catch (e) {
-            pimcore.globalmanager.add("customviews", new pimcore.object.customviews.settings());
-        }
-    },
-
+    
     showDocumentSeo: function () {
         try {
             pimcore.globalmanager.get("document_seopanel").activate();

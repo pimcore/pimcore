@@ -4,7 +4,7 @@
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
  * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in 
+ * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
@@ -17,9 +17,6 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
     objecttype: 'object',
 
     filterUpdateFunction: function(grid, toolbarFilterInfo) {
-
-
-
         var filterStringConfig = [];
         var filterData = grid.getStore().getFilters().items;
 
@@ -130,7 +127,6 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
 
             var filters = "";
             var condition = "";
-
 
             if(this.sqlButton.pressed) {
                 condition = this.sqlEditor.getValue();
@@ -368,9 +364,48 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             selectedGridColumns: visibleColumns
         };
         var dialog = new pimcore.object.helpers.gridConfigDialog(columnConfig, function(data) {
-            this.gridLanguage = data.language;
-            this.createGrid(data.columns);
-        }.bind(this) );
+                this.gridLanguage = data.language;
+                this.createGrid(true, data.columns);
+            }.bind(this),
+            function() {
+                Ext.Ajax.request({
+                    url: "/admin/object-helper/grid-delete-column-config",
+                    params: {
+                        id: objectId,
+                        class_id: this.classId,
+                        searchType: this.searchType
+                    },
+                    success: function() {
+                        Ext.Ajax.request({
+                            url: "/admin/object-helper/grid-get-column-config",
+                            params: {
+                                id: this.classId,
+                                objectId: this.object.id,
+                                gridtype: "grid",
+                                searchType: this.searchType
+                            },
+                            success: function(response) {
+                                response = Ext.decode(response.responseText);
+                                if (response) {
+                                    fields = response.availableFields;
+                                    this.createGrid(false, fields);
+                                    if (typeof this.saveColumnConfigButton !== "undefined") {
+                                        this.saveColumnConfigButton.hide();
+                                    }
+                                } else {
+                                    pimcore.helpers.showNotification(t("error"), t("error_resetting_config"),
+                                        "error",t(rdata.message));
+                                }
+                            }.bind(this),
+                            failure: function () {
+                                pimcore.helpers.showNotification(t("error"), t("error_resetting_config"), "error");
+                            }
+                        });
+                    }.bind(this)
+                });
+            }.bind(this)
+        )
+
     },
 
     createGrid: function(columnConfig) {
@@ -496,9 +531,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                 }
             }.bind(this)
         });
-
     }
-
 
 
 });

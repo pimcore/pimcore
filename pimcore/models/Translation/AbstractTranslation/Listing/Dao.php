@@ -5,7 +5,7 @@
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
  * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in 
+ * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @category   Pimcore
@@ -22,14 +22,34 @@ use Pimcore\Cache;
 abstract class Dao extends Model\Listing\Dao\AbstractDao implements Dao\DaoInterface
 {
 
+
+    /** @var  Callback function */
+    protected $onCreateQueryCallback;
+
     /**
      * @return int
      */
     public function getTotalCount()
     {
-        $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM (SELECT `key` FROM " . static::getTableName() . $this->getCondition() . $this->getGroupBy() . ") AS a", $this->model->getConditionVariables());
+        $select = $this->db->select();
+        $select->from(
+            [ static::getTableName()], static::getTableName() . ".key"
+        );
+        $this->addConditions($select);
+        $this->addGroupBy($select);
+
+        if ($this->onCreateQueryCallback) {
+            $closure = $this->onCreateQueryCallback;
+            $closure($select);
+        }
+
+        $query = "SELECT COUNT(*) as amount FROM ($select) AS a";
+        $amount = (int) $this->db->fetchOne($query, $this->model->getConditionVariables());
         return $amount;
     }
+
+
+
 
     /**
      * @return int
@@ -40,7 +60,22 @@ abstract class Dao extends Model\Listing\Dao\AbstractDao implements Dao\DaoInter
             return count($this->model->getObjects());
         }
 
-        $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM (SELECT `key` FROM " . static::getTableName() . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit() . ") AS a", $this->model->getConditionVariables());
+        $select = $this->db->select();
+        $select->from(
+            [ static::getTableName()], static::getTableName() . ".key"
+        );
+        $this->addConditions($select);
+        $this->addGroupBy($select);
+        $this->addOrder($select);
+        $this->addLimit($select);
+
+        if ($this->onCreateQueryCallback) {
+            $closure = $this->onCreateQueryCallback;
+            $closure($select);
+        }
+
+        $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM (" . $select . ") AS a", $this->model->getConditionVariables());
+
         return $amount;
     }
 
@@ -53,7 +88,21 @@ abstract class Dao extends Model\Listing\Dao\AbstractDao implements Dao\DaoInter
         if (!$translations = Cache::load($cacheKey)) {
             $itemClass = static::getItemClass();
             $translations = array();
-            $translationsData = $this->db->fetchAll("SELECT * FROM " . static::getTableName());
+
+
+            $select = $this->db->select();
+
+            // create base
+            $select->from(
+                [ static::getTableName()]
+            );
+
+            if ($this->onCreateQueryCallback) {
+                $closure = $this->onCreateQueryCallback;
+                $closure($select);
+            }
+
+            $translationsData = $this->db->fetchAll($select);
 
             foreach ($translationsData as $t) {
                 if (!$translations[$t["key"]]) {
@@ -84,7 +133,23 @@ abstract class Dao extends Model\Listing\Dao\AbstractDao implements Dao\DaoInter
      */
     public function loadRaw()
     {
-        $translationsData = $this->db->fetchAll("SELECT * FROM " . static::getTableName() . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $select = $this->db->select();
+        $select->from(
+            [ static::getTableName()]
+        );
+        $this->addConditions($select);
+        $this->addGroupBy($select);
+        $this->addOrder($select);
+        $this->addLimit($select);
+
+        if ($this->onCreateQueryCallback) {
+            $closure = $this->onCreateQueryCallback;
+            $closure($select);
+        }
+
+        $select = (string) $select;
+
+        $translationsData = $this->db->fetchAll($select, $this->model->getConditionVariables());
         return $translationsData;
     }
 
@@ -95,8 +160,23 @@ abstract class Dao extends Model\Listing\Dao\AbstractDao implements Dao\DaoInter
     {
         $allTranslations = $this->getAllTranslations();
         $translations = array();
-        $this->model->setGroupBy("key");
-        $translationsData = $this->db->fetchAll("SELECT `key` FROM " . static::getTableName() . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $this->model->setGroupBy(static::getTableName() . ".key", false);
+
+        $select = $this->db->select();
+        $select->from(
+            [ static::getTableName()], static::getTableName() . ".key"
+        );
+        $this->addConditions($select);
+        $this->addGroupBy($select);
+        $this->addOrder($select);
+        $this->addLimit($select);
+
+        if ($this->onCreateQueryCallback) {
+            $closure = $this->onCreateQueryCallback;
+            $closure($select);
+        }
+
+        $translationsData = $this->db->fetchAll($select, $this->model->getConditionVariables());
 
         foreach ($translationsData as $t) {
             $translations[] = $allTranslations[$t["key"]];
@@ -139,5 +219,10 @@ abstract class Dao extends Model\Listing\Dao\AbstractDao implements Dao\DaoInter
                 $this->db->delete(static::getTableName(), "`key` IN (" . implode(",", $preparedKeys) . ")");
             }
         }
+    }
+
+    public function onCreateQuery(callable $callback)
+    {
+        $this->onCreateQueryCallback = $callback;
     }
 }

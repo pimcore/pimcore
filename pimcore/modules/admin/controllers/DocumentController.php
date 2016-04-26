@@ -5,7 +5,7 @@
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
  * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in 
+ * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
@@ -223,10 +223,11 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
             if ($this->getParam("translationsBaseDocument")) {
                 $translationsBaseDocument = Document::getById($this->getParam("translationsBaseDocument"));
 
-                if ($document->getProperty("language") != $this->getParam("language")) {
-                    $document->setProperty("language", "text", $this->getParam("language"));
-                    $document->save();
-                }
+                $properties = $translationsBaseDocument->getProperties();
+                $properties = array_merge($properties, $document->getProperties());
+                $document->setProperties($properties);
+                $document->setProperty("language", "text", $this->getParam("language"));
+                $document->save();
 
                 $service = new Document\Service();
                 $service->addTranslation($translationsBaseDocument, $document);

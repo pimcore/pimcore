@@ -61,7 +61,7 @@ class Mongodb extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Extende
      */
     public function __construct($options)
     {
-        if (!extension_loaded('mongo')) {
+        if (!extension_loaded('mongo') && !extension_loaded('mongodb')) {
             \Zend_Cache::throwException('The MongoDB extension must be loaded for using this backend !');
         }
         parent::__construct($options);

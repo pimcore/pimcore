@@ -4,7 +4,7 @@
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
  * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in 
+ * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
@@ -19,8 +19,10 @@
 <?php if (is_array($this->customviews)) { ?>
     <?php foreach ($this->customviews as $cv) { ?>
 
-    <?php if ($cv["icon"]) { ?>
-    .pimcore_object_customviews_icon_<?= $cv["id"]; ?> {
+    <?php if ($cv["icon"]) {
+            $treetype = $cv["treetype"] ? $cv["treetype"] : "object";
+            ?>
+    .pimcore_<?= $treetype ?>_customview_icon_<?= $cv["id"]; ?> {
         background: url(<?= $cv["icon"]; ?>) left center no-repeat !important;
     }
     <?php } ?>

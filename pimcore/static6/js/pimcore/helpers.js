@@ -4,7 +4,7 @@
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
  * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in 
+ * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
@@ -36,12 +36,14 @@ pimcore.helpers.registerKeyBindings = function (bindEl, ExtJS) {
             key:"sa",
             fn: top.pimcore.helpers.openElementByIdDialog.bind(this, "asset"),
             ctrl:true,
-            shift:true
+            shift:true,
+            alt: false
         }, {
             key:"of",
             fn: top.pimcore.helpers.openElementByIdDialog.bind(this, "object"),
             ctrl:true,
-            shift:true
+            shift:true,
+            alt: false
         },  {
             key:"c",
             fn: top.pimcore.helpers.openClassEditor,
@@ -657,8 +659,6 @@ pimcore.helpers.handleF5 = function (keyCode, e) {
 
     var date = new Date();
     location.href = "/admin/?_dc=" + date.getTime();
-
-    mapF5.stopEvent = false;
 };
 
 pimcore.helpers.lockManager = function (cid, ctype, csubtype, data) {
@@ -3031,4 +3031,49 @@ pimcore.helpers.showAbout = function () {
 
     win.show();
 };
+
+pimcore.helpers.saveColumnConfig = function(objectId, classId, configuration, searchType, button) {
+
+
+    try {
+        var data = {
+            id: objectId,
+            class_id: classId,
+            gridconfig: Ext.encode(configuration),
+            searchType: searchType
+        }
+
+        Ext.Ajax.request({
+            url: '/admin/object-helper/grid-save-column-config',
+            method: "post",
+            params: data,
+            success: function (response) {
+                try{
+                    var rdata = Ext.decode(response.responseText);
+                    if (rdata && rdata.success) {
+                        if (button) {
+                            button.hide();
+                        }
+                        pimcore.helpers.showNotification(t("success"), t("your_configuration_has_been_saved"), "success");
+                    }
+                    else {
+                        pimcore.helpers.showNotification(t("error"), t("error_saving_configuration"),
+                            "error",t(rdata.message));
+                    }
+                } catch(e){
+                    pimcore.helpers.showNotification(t("error"), t("error_saving_configuration"), "error");
+                }
+            }.bind(this),
+            failure: function () {
+                pimcore.helpers.showNotification(t("error"), t("error_saving_configuration"), "error");
+            }
+        });
+
+    } catch (e3) {
+        pimcore.helpers.showNotification(t("error"), t("error_saving_configuration"), "error");
+    }
+
+
+
+}
 

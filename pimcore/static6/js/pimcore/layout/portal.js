@@ -4,7 +4,7 @@
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
  * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in 
+ * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
@@ -94,11 +94,17 @@ pimcore.layout.portal = Class.create({
         var portlets = Object.keys(pimcore.layout.portlets);
 
         for (var i = 0; i < portlets.length; i++) {
-            if (portlets[i] != "abstract") {
+            var portletType = portlets[i];
+
+            if (pimcore.settings.disabledPortlets["pimcore.layout.portlets." + portletType]) {
+                continue;
+            }
+
+            if (portletType != "abstract") {
                 portletMenu.push({
-                    text: pimcore.layout.portlets[portlets[i]].prototype.getName(),
-                    iconCls: pimcore.layout.portlets[portlets[i]].prototype.getIcon(),
-                    handler: this.addPortlet.bind(this, pimcore.layout.portlets[portlets[i]].prototype.getType())
+                    text: pimcore.layout.portlets[portletType].prototype.getName(),
+                    iconCls: pimcore.layout.portlets[portletType].prototype.getIcon(),
+                    handler: this.addPortlet.bind(this, pimcore.layout.portlets[portletType].prototype.getType())
                 });
             }
         }
@@ -120,6 +126,40 @@ pimcore.layout.portal = Class.create({
                         text: t("add_portlet"),
                         iconCls: "pimcore_icon_add",
                         menu: portletMenu
+                    },
+                    {
+                        text: t("delete_dashboard"),
+                        iconCls: "pimcore_icon_delete",
+                        hidden: (this.key == "welcome"),
+                        handler: function() {
+                            Ext.Msg.show({
+                                title:t('delete_dashboard'),
+                                msg: t('really_delete_dashboard'),
+                                buttons: Ext.Msg.YESNO,
+                                fn: function(btn) {
+                                    if(btn == "yes") {
+                                        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+                                        tabPanel.remove("pimcore_portal_" + this.key);
+
+                                        Ext.Ajax.request({
+                                            url: "/admin/portal/delete-dashboard",
+                                            params: {
+                                                key: this.key
+                                            },
+                                            success: function() {
+                                                Ext.MessageBox.confirm(t("info"), t("reload_pimcore_changes"), function (buttonValue) {
+                                                    if (buttonValue == "yes") {
+                                                        window.location.reload();
+                                                    }
+                                                });
+                                            }
+                                        });
+
+                                    }
+                                }.bind(this),
+                                icon: Ext.MessageBox.QUESTION
+                            });
+                        }.bind(this)
                     }
                 ]
                 ,

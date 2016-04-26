@@ -1131,34 +1131,21 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
         }
     }
 
+
     public function saveFolderAction()
     {
         $object = Object::getById($this->getParam("id"));
-        $classId = $this->getParam("class_id");
-
-        // general settings
-        $general = \Zend_Json::decode($this->getParam("general"));
-        $object->setValues($general);
-        $object->setUserModification($this->getUser()->getId());
-
-        $object = $this->assignPropertiesFromEditmode($object);
 
         if ($object->isAllowed("publish")) {
             try {
+                $classId = $this->getParam("class_id");
 
-                // grid config
-                $gridConfig = \Zend_Json::decode($this->getParam("gridconfig"));
-                if ($classId) {
-                    $configFile = PIMCORE_CONFIGURATION_DIRECTORY . "/object/grid/" . $object->getId() . "_" . $classId . "-user_" . $this->getUser()->getId() . ".psf";
-                } else {
-                    $configFile = PIMCORE_CONFIGURATION_DIRECTORY . "/object/grid/" . $object->getId() . "-user_" . $this->getUser()->getId() . ".psf";
-                }
+                // general settings
+                $general = \Zend_Json::decode($this->getParam("general"));
+                $object->setValues($general);
+                $object->setUserModification($this->getUser()->getId());
 
-                $configDir = dirname($configFile);
-                if (!is_dir($configDir)) {
-                    File::mkdir($configDir);
-                }
-                File::put($configFile, Tool\Serialize::serialize($gridConfig));
+                $object = $this->assignPropertiesFromEditmode($object);
 
                 $object->save();
                 $this->_helper->json(array("success" => true));
@@ -1468,6 +1455,18 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             } else {
                 $conditionFilters[] = "(o_path = '" . $folder->getFullPath() . "' OR o_path LIKE '" . str_replace("//", "/", $folder->getFullPath() . "/") . "%')";
             }
+
+            if (!$this->getUser()->isAdmin()) {
+                $userIds = $this->getUser()->getRoles();
+                $userIds[] = $this->getUser()->getId();
+                $conditionFilters[] .= " (
+                                                    (select list from users_workspaces_object where userId in (" . implode(',', $userIds) . ") and LOCATE(CONCAT(o_path,o_key),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                    OR
+                                                    (select list from users_workspaces_object where userId in (" . implode(',', $userIds) . ") and LOCATE(cpath,CONCAT(o_path,o_key))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                 )";
+            }
+
+
 
             $featureJoins = array();
 

@@ -4,7 +4,7 @@
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
  * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in 
+ * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
  * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
@@ -400,10 +400,12 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
             classid: classId,
             selectedGridColumns: visibleColumns
         };
-        var dialog = new pimcore.object.helpers.gridConfigDialog(columnConfig, function(data) {
-            this.gridLanguage = data.language;
-            this.initClassStore(selectedClass, data.columns);
-        }.bind(this) );
+        var dialog = new pimcore.object.helpers.gridConfigDialog(columnConfig,
+            function(data) {
+                this.gridLanguage = data.language;
+                this.initClassStore(selectedClass, data.columns);
+            }.bind(this), null
+        );
     },
 
     getGridConfig : function () {
