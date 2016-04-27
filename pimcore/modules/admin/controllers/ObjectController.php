@@ -68,8 +68,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 
             // custom views start
             if ($this->getParam("view")) {
-                $cvConfig = Tool::getCustomViewConfig();
-                $cv = $cvConfig[($this->getParam("view") - 1)];
+                $cv = \Pimcore\Model\Element\Service::getCustomViewById($this->getParam("view"));
 
                 if ($cv["classes"]) {
                     $cvConditions = array();

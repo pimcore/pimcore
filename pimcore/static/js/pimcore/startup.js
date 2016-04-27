@@ -474,19 +474,22 @@ Ext.onReady(function () {
                     var cv;
                     var cvTree;
                     for (var cvs = 0; cvs < pimcore.settings.customviews.length; cvs++) {
-                        cv = pimcore.settings.customviews[cvs];
 
-                        cvTree = new pimcore.object.customviews.tree({
-                            allowedClasses:cv.allowedClasses,
-                            rootId:cv.rootId,
-                            rootVisible:cv.showroot,
-                            treeId:"pimcore_panel_tree_customviews_" + cv.id,
-                            treeIconCls:"pimcore_object_customviews_icon_" + cv.id,
-                            treeTitle:ts(cv.name),
-                            parentPanel:Ext.getCmp("pimcore_panel_tree_left"),
-                            index:(cvs + 10),
-                            loaderBaseParams:{}
-                        });
+                        cv = pimcore.settings.customviews[cvs];
+                        if (!cv.treetype || cv.treetype == "object")
+                        {
+                            cvTree = new pimcore.object.customviews.tree({
+                                allowedClasses: cv.allowedClasses,
+                                rootId: cv.rootId,
+                                rootVisible: cv.showroot,
+                                treeId: "pimcore_panel_tree_customviews_" + cv.id,
+                                treeIconCls: "pimcore_object_customviews_icon_" + cv.id,
+                                treeTitle: ts(cv.name),
+                                parentPanel: Ext.getCmp("pimcore_panel_tree_left"),
+                                index: (cvs + 10),
+                                loaderBaseParams: {}
+                            });
+                        }
                     }
                 }
             }
