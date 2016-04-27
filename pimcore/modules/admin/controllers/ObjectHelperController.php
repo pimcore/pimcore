@@ -803,6 +803,7 @@ class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
          * @var $list \Pimcore\Model\Object\Listing
          */
         $list = new $listClass();
+        $list->setObjectTypes(["object", "folder", "variant"]);
         $list->setCondition("o_id IN (" . implode(",", $ids) . ")");
         $list->setOrderKey(" FIELD(o_id, " . implode(",", $ids) . ")", false);
 
