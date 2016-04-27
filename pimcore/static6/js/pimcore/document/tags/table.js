@@ -23,12 +23,12 @@ pimcore.document.tags.table = Class.create(pimcore.document.tag, {
 
         if (!data) {
             data = [
-                [" "]
+                [""]
             ];
             if (options.defaults) {
                 if (options.defaults.cols) {
                     for (var i = 0; i < (options.defaults.cols - 1); i++) {
-                        data[0].push(" ");
+                        data[0].push("");
                     }
                 }
                 if (options.defaults.rows) {
@@ -81,7 +81,8 @@ pimcore.document.tags.table = Class.create(pimcore.document.tag, {
                     editor: new Ext.form.TextField({
                         allowBlank: true
                     }),
-                    sortable: false
+                    sortable: false,
+                    flex: 1
                 });
             }
         }
@@ -92,13 +93,13 @@ pimcore.document.tags.table = Class.create(pimcore.document.tag, {
 
         this.grid = Ext.create('Ext.grid.Panel', {
             store: this.store,
-            width: 700,
             border: false,
             columns:columns,
             stripeRows: true,
             columnLines: true,
             selModel: Ext.create('Ext.selection.CellModel'),
             autoHeight: true,
+            hideHeaders: true,
             plugins: [
                 this.cellEditing
             ],
@@ -120,15 +121,20 @@ pimcore.document.tags.table = Class.create(pimcore.document.tag, {
                     handler: this.deleteRow.bind(this)
                 },
                 {
-                    iconCls: "pimcore_icon_empty",
-                    handler: this.initStore.bind(this, [
-                        [" "]
-                    ])
+                    iconCls: "pimcore_icon_table pimcore_icon_overlay_edit",
+                    handler: this.optionsClickhandler.bind(this)
                 }
-            ]
+            ],
+            viewConfig: {
+                forceFit: true
+            }
         });
         this.panel.add(this.grid);
         this.panel.updateLayout();
+    },
+
+    emptyStore: function() {
+        this.initStore([[""]]);
     },
 
     initStore: function (data) {
@@ -145,7 +151,7 @@ pimcore.document.tags.table = Class.create(pimcore.document.tag, {
             fields: storeFields
         });
 
-        this.store.loadData(data);
+        this.store.loadRawData(data);
         this.initGrid();
     },
 
@@ -154,7 +160,7 @@ pimcore.document.tags.table = Class.create(pimcore.document.tag, {
         var currentData = this.getValue();
 
         for (var i = 0; i < currentData.length; i++) {
-            currentData[i].push(" ");
+            currentData[i].push("");
         }
 
         this.initStore(currentData);
@@ -167,7 +173,7 @@ pimcore.document.tags.table = Class.create(pimcore.document.tag, {
         var columns = columnnManager.getColumns();
 
         for (var o = 0; o < columns.length; o++) {
-            initData["col_" + o] = " ";
+            initData["col_" + o] = "";
         }
 
         this.store.add(initData);
@@ -216,6 +222,58 @@ pimcore.document.tags.table = Class.create(pimcore.document.tag, {
 
         return storedData;
     },
+
+    optionsClickhandler: function (btn, e) {
+        var menu = new Ext.menu.Menu();
+
+        menu.add(new Ext.menu.Item({
+            text: t('copy'),
+            iconCls: "pimcore_icon_copy",
+            handler: function (item) {
+                item.parentMenu.destroy();
+                this.copyToClipboard();
+            }.bind(this)
+        }));
+
+        menu.add(new Ext.menu.Item({
+            text: t('cut'),
+            iconCls: "pimcore_icon_cut",
+            handler: function (item) {
+                item.parentMenu.destroy();
+                this.copyToClipboard();
+                this.emptyStore();
+            }.bind(this)
+        }));
+
+        if(pimcore.globalmanager.exists("table_clipboard")) {
+            menu.add(new Ext.menu.Item({
+                text: t('paste'),
+                iconCls: "pimcore_icon_paste",
+                handler: function (item) {
+                    item.parentMenu.destroy();
+                    this.initStore(pimcore.globalmanager.get("table_clipboard"));
+                }.bind(this)
+            }));
+        }
+
+        menu.add(new Ext.menu.Item({
+            text: t('empty'),
+            iconCls: "pimcore_icon_empty",
+            handler: function (item) {
+                item.parentMenu.destroy();
+                this.emptyStore();
+            }.bind(this)
+        }));
+
+        menu.showAt(e.getXY());
+
+        e.stopEvent();
+    },
+
+    copyToClipboard: function () {
+        pimcore.globalmanager.add("table_clipboard", this.getValue());
+    },
+
 
     getType: function () {
         return "table";
