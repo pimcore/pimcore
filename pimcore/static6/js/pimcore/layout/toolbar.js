@@ -35,7 +35,7 @@ pimcore.layout.toolbar = Class.create({
                             text: perspective.name,
                             disabled: perspective.active,
                             handler: this.openPerspective.bind(this, perspective.name)
-                        }
+                        };
 
                         if (perspective.icon) {
                             itemCfg.icon = perspective.icon;
