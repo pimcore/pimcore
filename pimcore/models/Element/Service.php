@@ -754,7 +754,8 @@ class Service extends Model\AbstractModel
         }
     }
 
-    public static function getCustomViewById($id) {
+    public static function getCustomViewById($id)
+    {
         $customViews = Tool::getCustomViewConfig();
         if ($customViews) {
             foreach ($customViews as $customView) {
