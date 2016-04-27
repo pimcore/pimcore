@@ -174,9 +174,12 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
         }
 
         $suffix = $admin ? "admin" : "website";
+        header('Content-Encoding: UTF-8');
         header('Content-type: text/csv; charset=UTF-8');
         header("Content-Disposition: attachment; filename=\"export_ " . $suffix . "_translations.csv\"");
         ini_set('display_errors', false); //to prevent warning messages in csv
+        $csv = mb_convert_encoding($csv, 'UTF-16LE', 'UTF-8');
+        echo "\xEF\xBB\xBF";
         echo $csv;
         die();
     }
