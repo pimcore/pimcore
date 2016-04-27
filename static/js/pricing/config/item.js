@@ -396,8 +396,9 @@ pimcore.plugin.OnlineShop.pricing.config.item = Class.create({
         var actionData = [];
         var actions = this.actionsContainer.items.getRange();
 
-        for (var i=0; i<actions.length; i++) {
+        for (var i = 0; i < actions.length; i++) {
             var action = {};
+
             // collect action settings
             for (var c = 0; c < actions[i].items.length; c++) {
                 var item = actions[i].items.item(c);
@@ -411,10 +412,10 @@ pimcore.plugin.OnlineShop.pricing.config.item = Class.create({
                     }
                 } catch (e) {
                 }
+            }
 
-                action['type'] = actions[i].type;
+            action['type'] = actions[i].type;
             actionData.push(action);
-        }
         }
 
         saveData["actions"] = actionData;
