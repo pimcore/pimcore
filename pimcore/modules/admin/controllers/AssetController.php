@@ -123,8 +123,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
 
 
             if ($this->getParam("view")) {
-                $cvConfig = Tool::getCustomViewConfig();
-                $cv = $cvConfig[($this->getParam("view") - 1)];
+                $cv = \Pimcore\Model\Element\Service::getCustomViewById($this->getParam("view"));
             }
 
             // get assets

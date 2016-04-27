@@ -22,6 +22,7 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\Object;
 use Pimcore\Model\Dependency;
 use Pimcore\File;
+use Pimcore\Tool;
 
 class Service extends Model\AbstractModel
 {
@@ -732,7 +733,6 @@ class Service extends Model\AbstractModel
                 $where = $cv["where"];
                 if ($where) {
                     $select->where($where);
-                    $select->where($where);
                 }
 
                 $customViewJoins = $cv["joins"];
@@ -751,6 +751,17 @@ class Service extends Model\AbstractModel
                     $select->having($cv["having"]);
                 };
             });
+        }
+    }
+
+    public static function getCustomViewById($id) {
+        $customViews = Tool::getCustomViewConfig();
+        if ($customViews) {
+            foreach ($customViews as $customView) {
+                if ($customView["id"] == $id) {
+                    return $customView;
+                }
+            }
         }
     }
 }

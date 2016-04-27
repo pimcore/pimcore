@@ -67,8 +67,7 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
             $offset = intval($this->getParam("start"));
 
             if ($this->getParam("view")) {
-                $cvConfig = Tool::getCustomViewConfig();
-                $cv = $cvConfig[($this->getParam("view") - 1)];
+                $cv = \Pimcore\Model\Element\Service::getCustomViewById($this->getParam("view"));
             }
 
             $list = new Document\Listing();
