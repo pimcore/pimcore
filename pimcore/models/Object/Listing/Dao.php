@@ -39,7 +39,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         // create base
         $select->from(
             [ 'objects' ], [
-                new \Zend_Db_Expr('SQL_CALC_FOUND_ROWS o_id'), 'o_type'
+                new \Zend_Db_Expr('SQL_CALC_FOUND_ROWS objects.o_id'), 'objects.o_type'
             ]
         );
 
@@ -154,16 +154,16 @@ class Dao extends Model\Listing\Dao\AbstractDao
             if (!empty($condition)) {
                 $condition .= " AND ";
             }
-            $condition .= " o_type IN ('" . implode("','", $objectTypes) . "')";
+            $condition .= " objects.o_type IN ('" . implode("','", $objectTypes) . "')";
         }
 
         if ($condition) {
             if (Object\AbstractObject::doHideUnpublished() && !$this->model->getUnpublished()) {
-                return " WHERE (" . $condition . ") AND o_published = 1";
+                return " WHERE (" . $condition . ") AND objects.o_published = 1";
             }
             return " WHERE " . $condition . " ";
         } elseif (Object\AbstractObject::doHideUnpublished() && !$this->model->getUnpublished()) {
-            return " WHERE o_published = 1";
+            return " WHERE objects.o_published = 1";
         }
         return "";
     }
@@ -195,15 +195,15 @@ class Dao extends Model\Listing\Dao\AbstractDao
             if (!empty($condition)) {
                 $condition .= " AND ";
             }
-            $condition .= " o_type IN ('" . implode("','", $objectTypes) . "')";
+            $condition .= " objects.o_type IN ('" . implode("','", $objectTypes) . "')";
         }
 
         if ($condition) {
             if (Object\AbstractObject::doHideUnpublished() && !$this->model->getUnpublished()) {
-                $condition = "(" . $condition . ") AND o_published = 1";
+                $condition = "(" . $condition . ") AND objects.o_published = 1";
             }
         } elseif (Object\AbstractObject::doHideUnpublished() && !$this->model->getUnpublished()) {
-            $condition = "o_published = 1";
+            $condition = "objects.o_published = 1";
         }
 
 
