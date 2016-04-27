@@ -49,7 +49,8 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $assets;
     }
 
-    public function getQuery($columns) {
+    public function getQuery($columns)
+    {
         $select = $this->db->select();
         $select->from(
             [ "assets" ], $columns
@@ -74,7 +75,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function loadIdList()
     {
-
         $select = (string) $this->getQuery(array('id', "type"));
         $assetIds = $this->db->fetchCol($select, $this->model->getConditionVariables());
 

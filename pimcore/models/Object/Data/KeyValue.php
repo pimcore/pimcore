@@ -406,10 +406,10 @@ class KeyValue extends Model\AbstractModel
      *
      * @param $keyId
      */
-    public function deleteEntryByKeyId($keyId) {
-
-        foreach($this->arr as $i => $entry) {
-            if($entry['key'] == $keyId) {
+    public function deleteEntryByKeyId($keyId)
+    {
+        foreach ($this->arr as $i => $entry) {
+            if ($entry['key'] == $keyId) {
                 unset($this->arr[$i]);
                 break;
             }

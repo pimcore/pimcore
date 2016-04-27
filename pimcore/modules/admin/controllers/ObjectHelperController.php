@@ -681,7 +681,8 @@ class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         exit;
     }
 
-    protected function extractLanguage() {
+    protected function extractLanguage()
+    {
         $requestedLanguage = $this->getParam("language");
         if ($requestedLanguage) {
             if ($requestedLanguage != "default") {
@@ -693,7 +694,8 @@ class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         return $requestedLanguage;
     }
 
-    protected function extractFieldsAndBricks() {
+    protected function extractFieldsAndBricks()
+    {
         $fields = array();
         $bricks = array();
         if ($this->getParam("fields")) {
@@ -711,8 +713,8 @@ class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         return [$fields, $bricks];
     }
 
-    protected function prepareExportList() {
-
+    protected function prepareExportList()
+    {
         $requestedLanguage = $this->extractLanguage();
 
         $folder = Pimcore\Model\Object::getById($this->getParam("folderId"));
@@ -767,14 +769,15 @@ class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         Object\Service::addGridFeatureJoins($list, $featureJoins, $class, $featureFilters, $requestedLanguage);
 
         return [$list, $fields, $requestedLanguage];
-
     }
 
-    protected function getCsvFile($fileHandle) {
+    protected function getCsvFile($fileHandle)
+    {
         return PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . $fileHandle . ".csv";
     }
 
-    public function getExportJobsAction() {
+    public function getExportJobsAction()
+    {
         list($list, $fields, $requestedLanguage) = $this->prepareExportList();
 
         $ids = $list->loadIdList();
@@ -787,8 +790,8 @@ class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         $this->_helper->json(array("success"=>true, "jobs"=> $jobs, "fileHandle" => $fileHandle));
     }
 
-    public function doExportAction() {
-
+    public function doExportAction()
+    {
         $fileHandle = Pimcore\File::getValidFilename($this->getParam("fileHandle"));
         $ids = $this->getParam("ids");
 
@@ -812,10 +815,11 @@ class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         $this->_helper->json(array("success" => true));
     }
 
-    public function downloadCsvFileAction() {
+    public function downloadCsvFileAction()
+    {
         $fileHandle = Pimcore\File::getValidFilename($this->getParam("fileHandle"));
         $csvFile = $this->getCsvFile($fileHandle);
-        if(file_exists($csvFile)) {
+        if (file_exists($csvFile)) {
             header("Content-Type: application/csv");
             header("Content-Length: " . filesize($csvFile));
             header('Content-Disposition: attachment; filename="export.csv"');
@@ -828,7 +832,6 @@ class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         } else {
             exit();
         }
-
     }
 
     protected function mapFieldname($field)
@@ -853,7 +856,8 @@ class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
     }
 
 
-    protected function getCsvData($list, $fields, $addTitles = true) {
+    protected function getCsvData($list, $fields, $addTitles = true)
+    {
         $requestedLanguage = $this->extractLanguage();
         $mappedFieldnames = array();
 
@@ -884,7 +888,7 @@ class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         //create csv
         $csv = "";
         if (!empty($objects)) {
-            if($addTitles) {
+            if ($addTitles) {
                 $columns = array_keys($objects[0]);
                 foreach ($columns as $key => $value) {
                     $columns[$key] = '"' . $value . '"';

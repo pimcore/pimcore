@@ -577,19 +577,19 @@ class Concrete extends AbstractObject
                 throw new \Exception("Static getter '::getBy".ucfirst($propertyName)."' is not allowed for fieldtype '" . $field->getFieldType() . "', it's only allowed for the following fieldtypes: " . implode(",", $allowedDataTypes));
             }
 
-            if($field instanceof Model\Object\ClassDefinition\Data\Localizedfields) {
+            if ($field instanceof Model\Object\ClassDefinition\Data\Localizedfields) {
                 $arguments = array_pad($arguments, 5, 0);
 
                 list($localizedPropertyName, $value, $locale, $limit, $offset) = $arguments;
 
                 $localizedField = $field->getFielddefinition($localizedPropertyName);
 
-                if(!$localizedField instanceof Model\Object\ClassDefinition\Data) {
+                if (!$localizedField instanceof Model\Object\ClassDefinition\Data) {
                     \Logger::error("Class: Object\\Concrete => call to undefined static method " . $method);
                     throw new \Exception("Call to undefined static method " . $method . " in class Object\\Concrete");
                 }
 
-                if(!in_array($localizedField->getFieldType(), $allowedDataTypes)) {
+                if (!in_array($localizedField->getFieldType(), $allowedDataTypes)) {
                     throw new \Exception("Static getter '::getBy".ucfirst($propertyName)."' is not allowed for fieldtype '" . $localizedField->getFieldType() . "', it's only allowed for the following fieldtypes: " . implode(",", $allowedDataTypes));
                 }
 
@@ -598,12 +598,10 @@ class Concrete extends AbstractObject
                     "condition" => $defaultCondition
                 );
 
-                if($locale) {
+                if ($locale) {
                     $listConfig["locale"] = $locale;
                 }
-            }
-            else {
-
+            } else {
                 $arguments = array_pad($arguments, 3, 0);
                 list($value, $limit, $offset) = $arguments;
 
