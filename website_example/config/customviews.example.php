@@ -5,15 +5,15 @@ return [
         [
             "treetype" => "object",
             "name" => "Articles",
-            "condition" => NULL,
+            "condition" => null,
             "icon" => "/pimcore/static6/img/flat-color-icons/reading.svg",
             "id" => 1,
             "rootfolder" => "/blog",
-            "showroot" => FALSE,
+            "showroot" => false,
             "classes" => "",
             "position" => "right",
             "sort" => "1",
-            "expanded" => TRUE,
+            "expanded" => true,
             "having" => "o_type = \"folder\" || o5.title NOT LIKE '%magnis%'",
             "joins" => [
                 array(
