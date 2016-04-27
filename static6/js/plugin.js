@@ -36,90 +36,97 @@ pimcore.plugin.OnlineShop.plugin = Class.create(pimcore.plugin.admin,{
 
         var toolbar = pimcore.globalmanager.get("layout_toolbar");
 
-        // init
-        var menuItems = toolbar.ecommerceMenu;
-        if(!menuItems) {
-            menuItems = new Ext.menu.Menu({cls: "pimcore_navigation_flyout"});
-            toolbar.ecommerceMenu = menuItems;
-        }
-        var user = pimcore.globalmanager.get("user");
+        var perspectiveCfg = pimcore.globalmanager.get("perspective");
 
-        var searchButton = Ext.get("pimcore_menu_settings");
+        if(true || perspectiveCfg.inToolbar("ecommerce")) {
 
-        var config = pimcore.plugin.OnlineShop.plugin.config;
-
-        // pricing rules
-        if(user.isAllowed("plugin_onlineshop_pricing_rules") && (!config.menu || config.menu.pricingRules.disabled == 0)) {
-            // add pricing rules to menu
-            // create item
-            var pricingPanelId = "plugin_onlineshop_pricing_config";
-            var item = {
-                text: t("plugin_onlineshop_pricing_rules"),
-                iconCls: "plugin_onlineshop_pricing_rules",
-                handler: function () {
-                    try {
-                        pimcore.globalmanager.get(pricingPanelId).activate();
-                    }
-                    catch (e) {
-                        pimcore.globalmanager.add(pricingPanelId, new pimcore.plugin.OnlineShop.pricing.config.panel(pricingPanelId));
-                    }
-                }
+            // init
+            var menuItems = toolbar.ecommerceMenu;
+            if (!menuItems) {
+                menuItems = new Ext.menu.Menu({cls: "pimcore_navigation_flyout"});
+                toolbar.ecommerceMenu = menuItems;
             }
-            // add to menu
-            menuItems.add(item);
-        }
+            var user = pimcore.globalmanager.get("user");
 
-
-        // order backend
-        if(user.isAllowed("plugin_onlineshop_back-office_order") && (!config.menu || config.menu.orderlist.disabled == 0)) {
-            // create item
-            var orderPanelId = "plugin_onlineshop_back-office_order";
-            var item = {
-                text: t("plugin_onlineshop_back-office_order"),
-                iconCls: "plugin_onlineshop_back-office_order",
-                handler: function () {
-                    try {
-                        pimcore.globalmanager.get(orderPanelId).activate();
-                    }
-                    catch (e) {
-                        pimcore.globalmanager.add(orderPanelId, new pimcore.tool.genericiframewindow(orderPanelId, config.menu.orderlist.route, "plugin_onlineshop_back-office_order", t('plugin_onlineshop_back-office_order')));
-                    }
-                }
-            };
-
-            // add to menu
-            menuItems.add(item);
-        }
-
-
-
-
-        if(user.admin) {
-
-            var item = {
-                text: t("plugin_onlineshop_clear_config_cache"),
-                iconCls: "plugin_onlineshop_clear_config_cache",
-                handler: function () {
-                    Ext.Ajax.request({
-                        url: '/plugin/EcommerceFramework/admin/clear-cache'
-                    });
-                }
+            var insertPoint = Ext.get("pimcore_menu_settings");
+            if(!insertPoint) {
+                var dom = Ext.dom.Query.select('#pimcore_navigation ul li:last');
+                var insertPoint = Ext.get(dom[0]);
             }
-            // add to menu
-            menuItems.add(item);
-        }
 
-        // add onlineshop main menu
-        if(menuItems.items.length > 0)
-        {
-            this.navEl = Ext.get(
-                searchButton.insertHtml(
-                    "afterEnd",
-                    '<li id="pimcore_menu_onlineshop" class="pimcore_menu_item icon-basket">' + t('plugin_onlineshop_mainmenu') + '</li>'
-                )
-            );
+            var config = pimcore.plugin.OnlineShop.plugin.config;
 
-            this.navEl.on("mousedown", toolbar.showSubMenu.bind(menuItems));
+            // pricing rules
+            if (perspectiveCfg.inToolbar("ecommerce.rules") && user.isAllowed("plugin_onlineshop_pricing_rules") && (!config.menu || config.menu.pricingRules.disabled == 0)) {
+                // add pricing rules to menu
+                // create item
+                var pricingPanelId = "plugin_onlineshop_pricing_config";
+                var item = {
+                    text: t("plugin_onlineshop_pricing_rules"),
+                    iconCls: "plugin_onlineshop_pricing_rules",
+                    handler: function () {
+                        try {
+                            pimcore.globalmanager.get(pricingPanelId).activate();
+                        }
+                        catch (e) {
+                            pimcore.globalmanager.add(pricingPanelId, new pimcore.plugin.OnlineShop.pricing.config.panel(pricingPanelId));
+                        }
+                    }
+                };
+
+                // add to menu
+                menuItems.add(item);
+            }
+
+
+            // order backend
+            if (perspectiveCfg.inToolbar("ecommerce.orderbackend") && user.isAllowed("plugin_onlineshop_back-office_order") && (!config.menu || config.menu.orderlist.disabled == 0)) {
+                // create item
+                var orderPanelId = "plugin_onlineshop_back-office_order";
+                var item = {
+                    text: t("plugin_onlineshop_back-office_order"),
+                    iconCls: "plugin_onlineshop_back-office_order",
+                    handler: function () {
+                        try {
+                            pimcore.globalmanager.get(orderPanelId).activate();
+                        }
+                        catch (e) {
+                            pimcore.globalmanager.add(orderPanelId, new pimcore.tool.genericiframewindow(orderPanelId, config.menu.orderlist.route, "plugin_onlineshop_back-office_order", t('plugin_onlineshop_back-office_order')));
+                        }
+                    }
+                };
+
+                // add to menu
+                menuItems.add(item);
+            }
+
+
+            if (user.admin) {
+
+                var item = {
+                    text: t("plugin_onlineshop_clear_config_cache"),
+                    iconCls: "plugin_onlineshop_clear_config_cache",
+                    handler: function () {
+                        Ext.Ajax.request({
+                            url: '/plugin/EcommerceFramework/admin/clear-cache'
+                        });
+                    }
+                }
+                // add to menu
+                menuItems.add(item);
+            }
+
+            // add onlineshop main menu
+            if (menuItems.items.length > 0) {
+                this.navEl = Ext.get(
+                    insertPoint.insertHtml(
+                        "afterEnd",
+                        '<li id="pimcore_menu_onlineshop" class="pimcore_menu_item icon-basket">' + t('plugin_onlineshop_mainmenu') + '</li>'
+                    )
+                );
+
+                this.navEl.on("mousedown", toolbar.showSubMenu.bind(menuItems));
+            }
         }
 
     },
