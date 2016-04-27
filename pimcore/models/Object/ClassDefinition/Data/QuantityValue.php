@@ -323,7 +323,7 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
             return array(
                 "value" => $object->$getter()->getValue(),
                 "unit" => $object->$getter()->getUnitId(),
-                "unitAbbreviation" => $object->$getter()->getUnit()->getAbbreviation()
+                "unitAbbreviation" => is_object($object->$getter()->getUnit()) ? $object->$getter()->getUnit()->getAbbreviation() : ""
             );
         } else {
             return null;
