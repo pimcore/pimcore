@@ -5,7 +5,7 @@ $destinationDir = PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY;
 
 $destinationFile = $destinationDir . "/customviews.php";
 
-if (is_file($sourceFile) && !is_file($destinationFile)) {
+if (is_file($sourceFile) && !is_file($destinationFile) && is_writable(PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY)) {
     if (!is_dir($destinationDir)) {
         mkdir($destinationDir, 0777, true);
     }
