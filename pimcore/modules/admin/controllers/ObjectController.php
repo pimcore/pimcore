@@ -64,7 +64,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 
 
             $childsList = new Object\Listing();
-            $condition = "o_parentId = '" . $object->getId() . "'";
+            $condition = "objects.o_parentId = '" . $object->getId() . "'";
 
             // custom views start
             if ($this->getParam("view")) {
@@ -75,10 +75,10 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                     $cvConditions = array();
                     $cvClasses = explode(",", $cv["classes"]);
                     foreach ($cvClasses as $cvClass) {
-                        $cvConditions[] = "o_classId = '" . $cvClass . "'";
+                        $cvConditions[] = "objects.o_classId = '" . $cvClass . "'";
                     }
 
-                    $cvConditions[] = "o_type = 'folder'";
+                    $cvConditions[] = "objects.o_type = 'folder'";
 
                     if (count($cvConditions) > 0) {
                         $condition .= " AND (" . implode(" OR ", $cvConditions) . ")";
@@ -101,7 +101,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             $childsList->setCondition($condition);
             $childsList->setLimit($limit);
             $childsList->setOffset($offset);
-            $childsList->setOrderKey("FIELD(o_type, 'folder') DESC, o_key ASC", false);
+            $childsList->setOrderKey("FIELD(objects.o_type, 'folder') DESC, objects.o_key ASC", false);
             $childsList->setObjectTypes($objectTypes);
 
             Element\Service::addTreeFilterJoins($cv, $childsList);
