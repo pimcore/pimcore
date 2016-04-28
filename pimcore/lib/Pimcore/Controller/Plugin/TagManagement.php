@@ -53,7 +53,7 @@ class TagManagement extends \Zend_Controller_Plugin_Abstract
                 if (Site::getCurrentSite()->getId() != $tag->getSiteId()) {
                     continue;
                 }
-            } elseif (!Site::isSiteRequest() && $tag->getSiteId()) {
+            } elseif (!Site::isSiteRequest() && $tag->getSiteId() && $tag->getSiteId() != "default") {
                 continue;
             }
 
