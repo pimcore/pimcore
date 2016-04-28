@@ -343,32 +343,43 @@ class Config
      */
     public static function getStandardPerspective()
     {
+
+        $elementTree = [
+            [
+                "type" => "documents",
+                "position" => "left",
+                "expanded" => false,
+                "hidden" => false,
+                "sort" => -3
+            ],
+            [
+                "type" => "assets",
+                "position" => "left",
+                "expanded" => false,
+                "hidden" => false,
+                "sort" => -2
+            ],
+            [
+                "type" => "objects",
+                "position" => "left",
+                "expanded" => false,
+                "hidden" => false,
+                "sort" => -1
+            ],
+        ];
+
+        $cvConfigs = Tool::getCustomViewConfig();
+        if ($cvConfigs) {
+            foreach ($cvConfigs as $cvConfig){
+                $cvConfig["type"] = "customview";
+                $elementTree[] = $cvConfig;
+            }
+        }
+
         return [
             "default" => [
                 "iconCls" => "pimcore_icon_perspective",
-                "elementTree" => [
-                    [
-                        "type" => "documents",
-                        "position" => "left",
-                        "expanded" => false,
-                        "hidden" => false,
-                        "sort" => -3
-                    ],
-                    [
-                        "type" => "assets",
-                        "position" => "left",
-                        "expanded" => false,
-                        "hidden" => false,
-                        "sort" => -2
-                    ],
-                    [
-                        "type" => "objects",
-                        "position" => "left",
-                        "expanded" => false,
-                        "hidden" => false,
-                        "sort" => -1
-                    ],
-                ],
+                "elementTree" => $elementTree,
                 "dashboards" => array(
                     "predefined" => [
                         "welcome" => array(
@@ -467,30 +478,22 @@ class Config
         }
         $result = array();
 
-        $hiddenCustomViews = array();
+        $cfConfigMapping = array();
 
-        foreach ($tmpResult as $resultItem) {
-            if ($resultItem["type"] == "customview") {
-                if ($resultItem["hidden"]) {
-                    $name = $resultItem["name"];
-                    $hiddenCustomViews[$name] = 1;
-                    continue;
-                }
-            }
-            $result[] = $resultItem;
-        }
+        $cvConfigs = Tool::getCustomViewConfig();
 
-        $result = $tmpResult;
-
-        $cvConfig = Tool::getCustomViewConfig();
-
-        if ($cvConfig) {
-            foreach ($cvConfig as $node) {
-                if (in_array($node["name"], array_keys($hiddenCustomViews))) {
-                    continue;
-                }
-
+        if ($cvConfigs) {
+            foreach ($cvConfigs as $node) {
                 $tmpData = $node;
+                if (!isset($tmpData["id"])) {
+                    \Logger::error("custom view ID is missing " . var_export($tmpData, true));
+                    continue;
+                }
+
+                if ($tmpData["hidden"]) {
+                    continue;
+                }
+
                 // backwards compatibility
                 $treeType = $tmpData["treetype"] ? $tmpData["treetype"] : "object";
                 $rootNode = Model\Element\Service::getElementByPath($treeType, $tmpData["rootfolder"]);
@@ -500,8 +503,37 @@ class Config
                     $tmpData["rootId"] = $rootNode->getId();
                     $tmpData["allowedClasses"] = explode(",", $tmpData["classes"]);
                     $tmpData["showroot"] = (bool)$tmpData["showroot"];
-                    $result[] = $tmpData;
+                    $customViewId = $tmpData["id"];
+                    $cfConfigMapping[$customViewId]= $tmpData;
                 }
+            }
+        }
+
+
+        foreach ($tmpResult as $resultItem) {
+            if ($resultItem["hidden"]) {
+                continue;
+            }
+
+            if ($resultItem["type"] == "customview") {
+                $customViewId = $resultItem["id"];
+                if (!$customViewId){
+                    \Logger::error("custom view id missing " . var_export($resultItem, true));
+                    continue;
+                }
+                $customViewCfg = $cfConfigMapping[$customViewId];
+                if (!$customViewId){
+                    \Logger::error("no custom view config for id  " . $customViewId);
+                    continue;
+                }
+
+
+                foreach ($resultItem as $specificConfigKey => $specificConfigValue) {
+                    $customViewCfg[$specificConfigKey] = $specificConfigValue;
+                }
+                $result[] = $customViewCfg;
+            } else {
+                $result[] = $resultItem;
             }
         }
 
