@@ -1108,19 +1108,37 @@ pimcore.helpers.deleteObjectFromServer = function (id, r, callback, button) {
 
     if (button == "ok" && r.deletejobs) {
 
-        var tree = pimcore.globalmanager.get("layout_object_tree").tree;
-        var view = tree.getView();
-        var store = tree.getStore();
-        var node = store.getNodeById(id);
-        pimcore.helpers.addTreeNodeLoadingIndicator("object", id);
-
-        if(node) {
-            var nodeEl = Ext.fly(view.getNodeByRecord(node));
-            nodeEl.addCls("pimcore_delete");
+        var treeNames = ["layout_object_tree"]
+        if (pimcore.settings.customviews.length > 0) {
+            for (var cvs = 0; cvs < pimcore.settings.customviews.length; cvs++) {
+                var cv = pimcore.settings.customviews[cvs];
+                if (!cv.treetype || cv.treetype == "object") {
+                    treeNames.push("layout_object_tree_" + cv.id);
+                }
+            }
         }
-        /*this.originalClass = Ext.get(this.getUI().getIconEl()).getAttribute("class");
-         Ext.get(this.getUI().getIconEl()).dom.setAttribute("class", "x-tree-node-icon pimcore_icon_loading");*/
 
+        var affectedNodes = [];
+
+        for (index = 0; index < treeNames.length; index++) {
+            var treeName = treeNames[index];
+            var tree = pimcore.globalmanager.get(treeName);
+            if (!tree) {
+                continue;
+            }
+            tree = tree.tree;
+            var view = tree.getView();
+            var store = tree.getStore();
+            var node = store.getNodeById(id);
+            pimcore.helpers.addTreeNodeLoadingIndicator("object", id);
+
+            if (node) {
+                var nodeEl = Ext.fly(view.getNodeByRecord(node));
+                nodeEl.addCls("pimcore_delete");
+
+                affectedNodes.push(node);
+            }
+        }
 
         if (pimcore.globalmanager.exists("object_" + id)) {
             var tabPanel = Ext.getCmp("pimcore_panel_tabs");
@@ -1150,24 +1168,28 @@ pimcore.helpers.deleteObjectFromServer = function (id, r, callback, button) {
         var pj = new pimcore.tool.paralleljobs({
             success: function (id, callback) {
 
-                //var node = pimcore.globalmanager.get("layout_object_tree").tree.getNodeById(id);
-                try {
-                    if(nodeEl) {
-                        nodeEl.removeCls("pimcore_delete");
-                    }
-                    //Ext.get(this.getUI().getIconEl()).dom.setAttribute("class", this.originalClass);
-                    pimcore.helpers.removeTreeNodeLoadingIndicator("object", id);
+                for (index = 0; index < affectedNodes.length; index++) {
+                    try {
+                        var node = affectedNodes[i];
+                        var nodeEl = Ext.fly(view.getNodeByRecord(node));
 
-                    if(node) {
-                        node.remove();
-                    }
-                } catch(e) {
-                    console.log(e);
-                    pimcore.helpers.showNotification(t("error"), t("error_deleting_object"), "error");
-                    if(node) {
-                        tree.getStore().load( {
-                            node: node.parentNode
-                        });
+                        if (nodeEl) {
+                            nodeEl.removeCls("pimcore_delete");
+                        }
+                        //Ext.get(this.getUI().getIconEl()).dom.setAttribute("class", this.originalClass);
+                        pimcore.helpers.removeTreeNodeLoadingIndicator("object", id);
+
+                        if (node) {
+                            node.remove();
+                        }
+                    } catch (e) {
+                        console.log(e);
+                        pimcore.helpers.showNotification(t("error"), t("error_deleting_object"), "error");
+                        if (node) {
+                            tree.getStore().load({
+                                node: node.parentNode
+                            });
+                        }
                     }
                 }
 
@@ -1192,12 +1214,17 @@ pimcore.helpers.deleteObjectFromServer = function (id, r, callback, button) {
                 this.deleteWindow.close();
 
                 pimcore.helpers.showNotification(t("error"), t("error_deleting_object"), "error", t(message));
-
-                var node = pimcore.globalmanager.get("layout_object_tree").tree.getNodeById(id);
-                if(node) {
-                    tree.getStore().load( {
-                        node: node.parentNode
-                    });
+                for (index = 0; index < affectedNodes.length; index++) {
+                    try {
+                        var node = affectedNodes[i];
+                        if (node) {
+                            tree.getStore().load({
+                                node: node.parentNode
+                            });
+                        }
+                    } catch (e) {
+                        console.log(e);
+                    }
                 }
             }.bind(this, id),
             jobs: r.deletejobs
