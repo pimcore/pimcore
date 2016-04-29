@@ -765,4 +765,21 @@ class Service extends Model\AbstractModel
             }
         }
     }
+
+    /**
+     * returns a unique key for an element
+     *
+     * @param $element
+     * @return string
+     */
+    public static function getUniqueKey($element)
+    {
+        if ($element instanceof Object\AbstractObject) {
+            return Object\Service::getUniqueKey($element);
+        } else if ($element instanceof Document) {
+            return Document\Service::getUniqueKey($element);
+        } else if ($element instanceof Asset) {
+            return Asset\Service::getUniqueKey($element);
+        }
+    }
 }

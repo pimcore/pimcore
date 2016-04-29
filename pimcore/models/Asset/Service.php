@@ -297,4 +297,40 @@ class Service extends Model\Element\Service
         }
         return $result;
     }
+
+    /**
+     * @param $item \Pimcore\Model\Asset
+     * @param int $nr
+     * @return string
+     * @throws \Exception
+     */
+    public static function getUniqueKey($item,$nr = 0){
+        $list = new Listing();
+        $key = \Pimcore\File::getValidFilename($item->getKey());
+        if(!$key){
+            throw new \Exception("No item key set.");
+        }
+        if($nr){
+            $keypart  = substr($key,0,strrpos($key,'.'));
+            $extension = str_replace($keypart,'',$key);
+            $key = $keypart . '_' . $nr . $extension;
+        }
+
+        $parent = $item->getParent();
+        if(!$parent){
+            throw new \Exception("You have to set a parent folder to determine a unique Key");
+        }
+
+        if(!$item->getId()){
+            $list->setCondition('parentId = ? AND `filename` = ? ',array($parent->getId(),$key));
+        }else{
+            $list->setCondition('parentId = ? AND `filename` = ? AND id != ? ',array($parent->getId(),$key,$item->getId()));
+        }
+        $check = $list->loadIdList();
+        if(!empty($check)){
+            $nr++;
+            $key = self::getUniqueKey($item,$nr);
+        }
+        return $key;
+    }
 }

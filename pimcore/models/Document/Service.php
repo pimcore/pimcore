@@ -509,4 +509,33 @@ class Service extends Model\Element\Service
 
         return $document;
     }
+
+    public static function getUniqueKey($item,$nr = 0){
+        $list = new Listing();
+        $list->setUnpublished(true);
+        $key = \Pimcore\File::getValidFilename($item->getKey());
+        if(!$key){
+            throw new \Exception("No item key set.");
+        }
+        if($nr){
+            $key = $key . '_' . $nr;
+        }
+
+        $parent = $item->getParent();
+        if(!$parent){
+            throw new \Exception("You have to set a parent document to determine a unique Key");
+        }
+
+        if(!$item->getId()){
+            $list->setCondition('parentId = ? AND `key` = ? ',array($parent->getId(),$key));
+        }else{
+            $list->setCondition('parentId = ? AND `key` = ? AND id != ? ',array($parent->getId(),$key,$item->getId()));
+        }
+        $check = $list->loadIdList();
+        if(!empty($check)){
+            $nr++;
+            $key = self::getUniqueKey($item,$nr);
+        }
+        return $key;
+    }
 }
