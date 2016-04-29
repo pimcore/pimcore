@@ -114,11 +114,8 @@ class Console
             }
         }
 
-        $cmdEv = \Pimcore::getEventManager()->trigger("system.exec.cmd", $cmd);
-
-        if ($cmdEv->stopped() ) {
-            $cmd = $cmdEv->last();
-        }
+        $env = getenv("PIMCORE_ENVIRONMENT") ?: (getenv("REDIRECT_PIMCORE_ENVIRONMENT") ?: false);
+        $cmd = $env ? "PIMCORE_ENVIRONMENT=" . $env . " " . $cmd : $cmd;
 
         \Logger::debug("Executing command `" . $cmd . "` on the current shell");
         $return = shell_exec($cmd);
@@ -160,14 +157,10 @@ class Console
             $nice = "/usr/bin/nice -n 19 ";
         }
 
-        $commandWrapped = "/usr/bin/nohup " . $nice . $cmd . " > ". $outputFile ." 2>&1 & echo $!";
+        $env = getenv("PIMCORE_ENVIRONMENT") ?: (getenv("REDIRECT_PIMCORE_ENVIRONMENT") ?: false);
+        $envStr = $env ? "PIMCORE_ENVIRONMENT=" . $env . " " : "";
 
-        $cmdEv = \Pimcore::getEventManager()->trigger("system.exec.cmd", $commandWrapped);
-
-        if ($cmdEv->stopped() ) {
-            $commandWrapped = $cmdEv->last();
-        }
-
+        $commandWrapped = $envStr . "/usr/bin/nohup " . $nice . $cmd . " > ". $outputFile ." 2>&1 & echo $!";
         \Logger::debug("Executing command `" . $commandWrapped . "´ on the current shell in background");
         $pid = shell_exec($commandWrapped);
 
