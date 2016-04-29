@@ -181,7 +181,10 @@ class Console
             $outputFile = "NUL";
         }
 
-        $commandWrapped = "cmd /c " . $cmd . " > ". $outputFile . " 2>&1";
+        $env = getenv("PIMCORE_ENVIRONMENT") ?: (getenv("REDIRECT_PIMCORE_ENVIRONMENT") ?: false);
+        $envStr = $env ? " " . escapeshellarg($env) : "";
+
+        $commandWrapped = "cmd /c " . $cmd . $envStr . " > ". $outputFile . " 2>&1";
         \Logger::debug("Executing command `" . $commandWrapped . "´ on the current shell in background");
 
         $WshShell = new \COM("WScript.Shell");
