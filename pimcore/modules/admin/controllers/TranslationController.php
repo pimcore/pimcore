@@ -178,7 +178,6 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
         header('Content-type: text/csv; charset=UTF-8');
         header("Content-Disposition: attachment; filename=\"export_ " . $suffix . "_translations.csv\"");
         ini_set('display_errors', false); //to prevent warning messages in csv
-        $csv = mb_convert_encoding($csv, 'UTF-16LE', 'UTF-8');
         echo "\xEF\xBB\xBF";
         echo $csv;
         die();
@@ -267,8 +266,8 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
                 $t->save();
 
                 $return = array_merge(array("key" => $t->getKey(),
-                        "creationDate" => $t->getCreationDate(),
-                        "modificationDate" => $t->getModificationDate()),
+                    "creationDate" => $t->getCreationDate(),
+                    "modificationDate" => $t->getModificationDate()),
                     $t->getTranslations());
 
                 $this->_helper->json(array("data" => $return, "success" => true));
