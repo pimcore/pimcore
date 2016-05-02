@@ -135,7 +135,7 @@ class Localizedfield extends Model\AbstractModel
      */
     public function setObject($object)
     {
-        if (!$object instanceof Concrete) {
+        if ($object && !$object instanceof Concrete) {
             throw new \Exception("must be instance of object concrete");
         }
         $this->object = $object;
