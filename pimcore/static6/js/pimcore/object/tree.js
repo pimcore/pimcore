@@ -214,7 +214,7 @@ pimcore.object.tree = Class.create({
     },
 
     onTreeNodeMove: function (node, oldParent, newParent, index, eOpts ) {
-        var tree = node.getOwnerTree();
+        var tree = oldParent.getOwnerTree();
 
         this.updateObject(tree, node, {
             parentId: newParent.data.id
