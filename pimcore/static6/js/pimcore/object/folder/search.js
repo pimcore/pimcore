@@ -449,7 +449,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                     var options = {
                         "elementType" : "object",
                         "id": ids,
-                        "successHandler": function() {
+                        "success": function() {
                             this.getStore().reload();
                             var tree = pimcore.globalmanager.get("layout_object_tree");
                             var treePanel = tree.tree;

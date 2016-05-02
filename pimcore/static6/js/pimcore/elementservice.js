@@ -56,7 +56,7 @@ pimcore.elementservice.deleteElementCheckDependencyComplete = function (options,
 pimcore.elementservice.deleteElementFromServer = function (r, options, button) {
 
     if (button == "ok" && r.deletejobs) {
-        var successHandler = options.success;
+        var successHandler = options["success"];
         var elementType = options.elementType;
         var id = options.id;
 
