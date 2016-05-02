@@ -290,4 +290,16 @@ class ExternalImage extends Model\Object\ClassDefinition\Data
         $this->previewWidth = $masterDefinition->previewWidth;
         $this->inputWidth = $masterDefinition->inputWidth;
     }
+
+    /**
+     * @param Object\Data\ExternalImage $data
+     * @return bool
+     */
+    public function isEmpty($data)
+    {
+        if ($data instanceof Object\Data\ExternalImage and $data->getUrl()) {
+            return false;
+        }
+        return true;
+    }
 }
