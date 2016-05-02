@@ -145,7 +145,11 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
     },
 
     remove: function () {
-        pimcore.helpers.deleteDocument(this.id);
+        var options = {
+            "elementType" : "document",
+            "id": this.id
+        };
+        pimcore.elementservice.deleteElement(options);
     },
 
     saveClose: function(only){

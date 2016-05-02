@@ -183,14 +183,16 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
             text: t('delete'),
             iconCls: "pimcore_icon_delete",
             handler: function () {
-                pimcore.helpers.deleteAsset(id, function() {
-                    this.store.reload();
 
-                    var tree = pimcore.globalmanager.get("layout_asset_tree").tree;
-                    tree.getStore().load({
-                        node: tree.getRootNode()
-                    });
-                }.bind(this));
+                var options = {
+                    "elementType" : "asset",
+                    "id": id,
+                    "success": function() {
+                        this.store.reload();
+                    }.bind(this)
+                };
+
+                pimcore.elementservice.deleteElement(options);
             }.bind(this, id)
         }));
         menu.showAt(event.pageX, event.pageY);

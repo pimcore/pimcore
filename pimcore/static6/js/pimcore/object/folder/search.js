@@ -415,7 +415,12 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                 iconCls: "pimcore_icon_delete",
                 handler: function (data) {
                     var store = this.getStore();
-                    pimcore.helpers.deleteObject(data.data.id, store.reload.bind(this.getStore()));
+                    var options = {
+                        "elementType" : "object",
+                        "id": data.data.id,
+                        "success": store.reload.bind(this.getStore())
+                    };
+                    pimcore.elementservice.deleteElement(options);
                 }.bind(grid, data)
             }));
         } else {
@@ -441,13 +446,17 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                     }
                     ids = ids.join(',');
 
-                    pimcore.helpers.deleteObject(ids, function() {
+                    var options = {
+                        "elementType" : "object",
+                        "id": ids,
+                        "successHandler": function() {
                             this.getStore().reload();
                             var tree = pimcore.globalmanager.get("layout_object_tree");
                             var treePanel = tree.tree;
                             tree.refresh(treePanel.getRootNode());
                         }.bind(this)
-                    );
+                    };
+                    pimcore.elementservice.deleteElement(options);
                 }.bind(grid, data)
             }));
         }

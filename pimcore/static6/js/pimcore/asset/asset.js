@@ -345,7 +345,11 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
     },
 
     remove: function () {
-        pimcore.helpers.deleteAsset(this.id);
+        var options = {
+            "elementType" : "asset",
+            "id": this.id
+        };
+        pimcore.elementservice.deleteElement(options);
     },
 
     upload: function () {

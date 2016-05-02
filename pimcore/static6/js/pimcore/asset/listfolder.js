@@ -230,12 +230,17 @@ pimcore.asset.listfolder = Class.create({
                 iconCls: "pimcore_icon_delete",
                 handler: function (data) {
                     var store = this.getStore();
-                    pimcore.helpers.deleteAsset(data.data.id, function() {
-                        this.getStore().reload();
-                        var tree = pimcore.globalmanager.get("layout_asset_tree");
-                        var treePanel = tree.tree;
-                        tree.refresh(treePanel.getRootNode());
-                    }.bind(this));
+
+                    var options = {
+                        "elementType" : "asset",
+                        "id": data.data.id,
+                        "success": function() {
+                            this.getStore().reload();
+                        }.bind(this)
+                    };
+
+                    pimcore.elementservice.deleteElement(options);
+
                 }.bind(grid, data)
             }));
         } else {
@@ -262,15 +267,16 @@ pimcore.asset.listfolder = Class.create({
                     }
                     ids = ids.join(',');
 
-                    pimcore.helpers.deleteAsset(ids, function() {
-                        this.getStore().reload();
+                    var options = {
+                        "elementType" : "asset",
+                        "id": ids,
+                        "success": function() {
+                            this.store.reload();
+                        }.bind(this)
+                    };
 
-                        var tree = pimcore.globalmanager.get("layout_asset_tree").tree;
-                        tree.getStore().load({
-                            node: tree.getRootNode()
-                        });
-                    }.bind(this)
-                    );
+                    pimcore.elementservice.deleteElement(options);
+
                 }.bind(grid, data)
             }));
         }

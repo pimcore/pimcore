@@ -319,7 +319,11 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
 
 
     remove: function () {
-        pimcore.helpers.deleteObject(this.id);
+        var options = {
+            "elementType" : "object",
+            "id": this.id
+        };
+        pimcore.elementservice.deleteElement(options);
     },
 
     isAllowed : function (key) {

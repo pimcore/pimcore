@@ -1294,7 +1294,11 @@ pimcore.document.tree = Class.create({
     },
 
     deleteDocument : function (tree, record) {
-        pimcore.helpers.deleteDocument(record.data.id);
+        var options = {
+            "elementType" : "document",
+            "id": record.data.id
+        };
+        pimcore.elementservice.deleteElement(options);
     },
 
     convert: function (tree, record, type) {

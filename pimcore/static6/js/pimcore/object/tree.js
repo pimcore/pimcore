@@ -1019,7 +1019,11 @@ pimcore.object.tree = Class.create({
     },
 
     remove: function (tree, record) {
-        pimcore.helpers.deleteObject(record.data.id);
+        var options = {
+            "elementType" : "object",
+            "id": record.data.id
+        };
+        pimcore.elementservice.deleteElement(options);
     },
 
     editKey: function (tree, record) {

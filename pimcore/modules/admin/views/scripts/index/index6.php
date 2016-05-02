@@ -202,7 +202,9 @@ $scripts = array(
     "pimcore/namespace.js",
     "pimcore/functions.js",
     "pimcore/globalmanager.js",
+    "pimcore/elementservice.js",
     "pimcore/helpers.js",
+
     "pimcore/treenodelocator.js",
     "pimcore/helpers/generic-grid.js",
     "pimcore/helpers/quantityValue.js",

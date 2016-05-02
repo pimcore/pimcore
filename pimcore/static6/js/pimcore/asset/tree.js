@@ -1215,6 +1215,11 @@ pimcore.asset.tree = Class.create({
 
 
     deleteAsset : function (tree, record) {
-        pimcore.helpers.deleteAsset(record.data.id);
+        var options = {
+            "elementType" : "asset",
+            "id": record.data.id
+        };
+
+        pimcore.elementservice.deleteElement(options);
     }
 });
