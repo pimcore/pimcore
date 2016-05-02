@@ -1683,7 +1683,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
 
                 /** @var $asset Asset */
                 $filename = PIMCORE_ASSET_DIRECTORY . "/" . $asset->getFullPath();
-                $size = filesize($filename);
+                $size = @filesize($filename);
 
                 $assets[] = array(
                     "id" => $asset->getid(),
