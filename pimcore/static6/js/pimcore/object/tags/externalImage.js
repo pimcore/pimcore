@@ -43,6 +43,11 @@ pimcore.object.tags.externalImage = Class.create(pimcore.object.tags.abstract, {
             }.bind(this, field.key)};
     },
 
+    getWrappingEl:function () {
+        return this.inputField.getEl();
+
+    },
+
     getLayoutEdit: function () {
 
         if (intval(this.fieldConfig.previewWidth) < 1) {
@@ -62,8 +67,6 @@ pimcore.object.tags.externalImage = Class.create(pimcore.object.tags.abstract, {
             height: intval(this.fieldConfig.previewHeight),
             border: true,
             style: "padding-bottom: 10px",
-
-            componentCls: "object_field",
             bodyCls: "pimcore_droptarget_image pimcore_externalimage_container pimcore_image_container"
         };
 
@@ -113,7 +116,6 @@ pimcore.object.tags.externalImage = Class.create(pimcore.object.tags.abstract, {
             border: true,
             style: "margin-bottom: 20px",
             title:  this.fieldConfig.title,
-            //width: 800,
             viewConfig: {
                 forceFit: true
             },
