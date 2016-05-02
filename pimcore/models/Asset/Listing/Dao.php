@@ -92,6 +92,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     {
         $select = $this->getQuery(array(new \Zend_Db_Expr('COUNT(*)')));
         $select->reset(\Zend_Db_Select::LIMIT_COUNT);
+        $select->reset(\Zend_Db_Select::LIMIT_OFFSET);
         $select = (string) $select;
         $amount = (int) $this->db->fetchOne($select, $this->model->getConditionVariables());
 
