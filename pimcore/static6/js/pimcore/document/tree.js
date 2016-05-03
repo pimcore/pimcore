@@ -264,6 +264,7 @@ pimcore.document.tree = Class.create({
                     } else {
                         delete node.data.cls;
                     }
+                    pimcore.elementservice.nodeMoved("document", oldParent, newParent);
                 }
                 else {
                     tree.loadMask.hide();
@@ -1172,37 +1173,14 @@ pimcore.document.tree = Class.create({
                 return;
             }
 
+            params["sourceTree"] = tree;
+            params["elementType"] = "document";
             params["key"] = pimcore.helpers.getValidFilename(params["key"]);
             params["index"] = record.childNodes.length;
             params["parentId"] = record.id;
-
-            Ext.Ajax.request({
-                url: "/admin/document/add/",
-                params: params,
-                success: this.addDocumentComplete.bind(this, tree, record)
-            });
+            params["url"] = "/admin/document/add/";
+            pimcore.elementservice.addDocument(params);
         }
-    },
-
-
-    addDocumentComplete: function (tree, record, response) {
-        try {
-            response = Ext.decode(response.responseText);
-            if (response && response.success) {
-                record.data.leaf = false;
-                record.expand();
-                if(pimcore.globalmanager.get("document_documenttype_store").indexOf(response.type) >= 0) {
-                    pimcore.helpers.openDocument(response.id, response.type);
-                }
-            }
-            else {
-                pimcore.helpers.showNotification(t("error"), t("error_creating_document"), "error",
-                    t(response.message));
-            }
-        } catch(e) {
-            pimcore.helpers.showNotification(t("error"), t("error_creating_document"), "error");
-        }
-        pimcore.elementservice.refreshNode(record);
     },
 
     editDocumentKey: function (tree, record) {

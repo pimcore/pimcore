@@ -565,31 +565,65 @@ pimcore.elementservice.addObject = function(options) {
     Ext.Ajax.request({
         url: url,
         params: options,
-        success: this.addObjectComplete.bind(this, options)
+        success: pimcore.elementservice.addObjectComplete.bind(this, options)
     });
+};
+
+pimcore.elementservice.addDocument = function(options) {
+
+    var url = options.url;
+    delete options.url;
+
+    Ext.Ajax.request({
+        url: url,
+        params: options,
+        success: pimcore.elementservice.addDocumentComplete.bind(this, options)
+    });
+};
+
+
+pimcore.elementservice.refreshNodeAllTrees = function(elementType, id) {
+    var treeNames = pimcore.elementservice.getElementTreeNames(elementType);
+    for (var index = 0; index < treeNames.length; index++) {
+        var treeName = treeNames[index];
+        var tree = pimcore.globalmanager.get(treeName);
+        if (!tree) {
+            continue;
+        }
+        tree = tree.tree;
+        var store = tree.getStore();
+        var parentRecord = store.getById(id);
+        if (parentRecord) {
+            parentRecord.data.leaf = false;
+            parentRecord.expand();
+            pimcore.elementservice.refreshNode(parentRecord);
+        }
+    }
+};
+
+pimcore.elementservice.addDocumentComplete = function (options, response) {
+    try {
+        response = Ext.decode(response.responseText);
+        if (response && response.success) {
+            pimcore.elementservice.refreshNodeAllTrees(options.elementType, options.parentId);
+
+            if(pimcore.globalmanager.get("document_documenttype_store").indexOf(response.type) >= 0) {
+                pimcore.helpers.openDocument(response.id, response.type);
+            }
+        }  else {
+            pimcore.helpers.showNotification(t("error"), t("error_creating_document"), "error",
+                t(response.message));
+        }
+    } catch(e) {
+        pimcore.helpers.showNotification(t("error"), t("error_creating_document"), "error");
+    }
 };
 
 pimcore.elementservice.addObjectComplete = function(options, response) {
     try {
         var rdata = Ext.decode(response.responseText);
         if (rdata && rdata.success) {
-            var treeNames = pimcore.elementservice.getElementTreeNames(options.elementType);
-
-            for (var index = 0; index < treeNames.length; index++) {
-                var treeName = treeNames[index];
-                var tree = pimcore.globalmanager.get(treeName);
-                if (!tree) {
-                    continue;
-                }
-                tree = tree.tree;
-                var store = tree.getStore();
-                var parentRecord = store.getById(options.parentId);
-                if (parentRecord) {
-                    parentRecord.data.leaf = false;
-                    tree.expand(parentRecord);
-                    pimcore.elementservice.refreshNode(parentRecord);
-                }
-            }
+            pimcore.elementservice.refreshNodeAllTrees(options.elementType, options.parentId);
 
             if (rdata.id && rdata.type) {
                 if (rdata.type == "object") {
