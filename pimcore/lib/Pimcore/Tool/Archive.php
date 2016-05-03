@@ -54,7 +54,11 @@ class Archive
         }
 
         $zip = new \ZipArchive();
-        $zip->open($destinationFile, $mode);
+        $opened = $zip->open($destinationFile, $mode);
+
+        if($opened !== true){
+            throw new \Exception("Couldn't open archive file. Error: " . $opened);
+        }
         foreach ($items as $item) {
             $zipPath = str_replace($sourceDir, '', $item);
 
