@@ -507,7 +507,7 @@ class Video extends Model\Document\Tag
         }
 
         $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video">
-            <iframe width="' . $width . '" height="' . $height . '" src="//www.youtube.com/embed/' . $youtubeId . '?wmode=transparent' . $additional_params .'" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+            <iframe width="' . $width . '" height="' . $height . '" src="//www.youtube-nocookie.com/embed/' . $youtubeId . '?wmode=transparent' . $additional_params .'" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
         </div>';
 
         return $code;
