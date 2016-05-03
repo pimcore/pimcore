@@ -63,6 +63,15 @@ class Mail
         } else {
             //generating text debug info
             $debugInformation = "\r\n  \r\nDebug Information:  \r\n  \r\n";
+            if ($mail->getFrom()) {
+                $debugInformation .= 'From: ' . $mail->getFrom(). "\r\n";
+            } else {
+                $defaultFrom = $mail->getDefaultFrom();
+                $debugInformation .= 'From: ' . $defaultFrom["email"] . ' (Info: No "from" email address given so the default "from" email address is used from "Settings" -> "System" -> "Email Settings" )'. "\r\n";
+            }
+
+            //generating text debug info
+            $debugInformation = "\r\n  \r\nDebug Information:  \r\n  \r\n";
             foreach (array('To', 'Cc', 'Bcc') as $key) {
                 if (isset($temporaryStorage[$key]) && is_array($temporaryStorage[$key])) {
                     $debugInformation .= "$key: " . self::formatDebugReceivers($temporaryStorage[$key]) . "\r\n";
