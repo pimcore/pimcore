@@ -969,7 +969,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
         } else {
             \Logger::debug("prevented update object because of missing permissions.");
         }
-
+        
         $this->_helper->json(array("success" => $success));
     }
 

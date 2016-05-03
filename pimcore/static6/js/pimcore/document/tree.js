@@ -238,7 +238,7 @@ pimcore.document.tree = Class.create({
             index += newParent.pagingData.offset;
         }
 
-        this.updateDocument(node.data.id, {
+        pimcore.elementservice.updateDocument(node.data.id, {
             parentId: newParent.data.id,
             index: index
         }, function (newParent, oldParent, tree, response) {
@@ -269,14 +269,14 @@ pimcore.document.tree = Class.create({
                     tree.loadMask.hide();
                     pimcore.helpers.showNotification(t("error"), t("cant_move_node_to_target"),
                         "error",t(rdata.message));
-                    this.refresh(oldParent);
-                    this.refresh(newParent);
+                    pimcore.elementservice.refreshNode(oldParent);
+                    pimcore.elementservice.refreshNode(newParent);
                 }
             } catch(e){
                 tree.loadMask.hide();
                 pimcore.helpers.showNotification(t("error"), t("cant_move_node_to_target"), "error");
-                this.refresh(oldParent);
-                this.refresh(newParent);
+                pimcore.elementservice.refreshNode(oldParent);
+                pimcore.elementservice.refreshNode(newParent);
             }
             tree.loadMask.hide();
 
@@ -299,7 +299,7 @@ pimcore.document.tree = Class.create({
             return false;
         }
 
-        if(this.isDisallowedKey(newParent.id, node.data.text)) {
+        if(pimcore.elementservice.isDisallowedDocumentKey(newParent.id, node.data.text)) {
             return false;
         }
 
@@ -636,8 +636,8 @@ pimcore.document.tree = Class.create({
                     text: t('unlock'),
                     iconCls: "pimcore_icon_lock pimcore_icon_overlay_delete",
                     handler: function () {
-                        this.updateDocument(record.data.id, {locked: null}, function () {
-                            this.refresh(this.tree.getRootNode());
+                        pimcore.elementservice.updateDocument(record.data.id, {locked: null}, function () {
+                            pimcore.elementservice.refreshNode(this.tree.getRootNode());
                         }.bind(this));
                     }.bind(this)
                 });
@@ -646,8 +646,8 @@ pimcore.document.tree = Class.create({
                     text: t('lock'),
                     iconCls: "pimcore_icon_lock pimcore_icon_overlay_add",
                     handler: function () {
-                        this.updateDocument(record.data.id, {locked: "self"}, function () {
-                            this.refresh(this.tree.getRootNode());
+                        pimcore.elementservice.updateDocument(record.data.id, {locked: "self"}, function () {
+                            pimcore.elementservice.refreshNode(this.tree.getRootNode());
                         }.bind(this));
                     }.bind(this)
                 });
@@ -657,9 +657,9 @@ pimcore.document.tree = Class.create({
                         text: t('lock_and_propagate_to_childs'),
                         iconCls: "pimcore_icon_lock pimcore_icon_overlay_go",
                         handler: function () {
-                            this.updateDocument(this, tree, record, {locked: "propagate"},
+                            pimcore.elementservice.updateDocument(this, tree, record, {locked: "propagate"},
                                 function () {
-                                    this.refresh(this.tree.getRootNode());
+                                    pimcore.elementservice.refreshNode(this.tree.getRootNode());
                                 }.bind(this));
                         }.bind(this)
                     });
@@ -679,7 +679,7 @@ pimcore.document.tree = Class.create({
                                 type: "document"
                             },
                             success: function () {
-                                this.refresh(this.parentNode);
+                                pimcore.elementservice.refreshNode(this.parentNode);
                             }.bind(this)
                         });
                     }.bind(this)
@@ -709,7 +709,7 @@ pimcore.document.tree = Class.create({
             menu.add(new Ext.menu.Item({
                 text: t('refresh'),
                 iconCls: "pimcore_icon_reload",
-                handler: this.refresh.bind(this, record)
+                handler: pimcore.elementservice.refreshNode.bind(this, record)
             }));
         }
 
@@ -726,7 +726,7 @@ pimcore.document.tree = Class.create({
     },
 
     pasteCutDocument: function(document, oldParent, newParent, tree) {
-        this.updateDocument(document.id, {
+        pimcore.elementservice.updateDocument(document.id, {
             parentId: newParent.id
         }, function (document, newParent, oldParent, tree, response) {
             try {
@@ -749,8 +749,8 @@ pimcore.document.tree = Class.create({
                 pimcore.helpers.showNotification(t("error"), t("error_moving_document"), "error");
             }
 
-            this.refresh(oldParent);
-            this.refresh(newParent);
+            pimcore.elementservice.refreshNode(oldParent);
+            pimcore.elementservice.refreshNode(newParent);
 
             this.tree.loadMask.hide();
 
@@ -810,7 +810,7 @@ pimcore.document.tree = Class.create({
                         } catch(e) {
                             console.log(e);
                             pimcore.helpers.showNotification(t("error"), t("error_pasting_document"), "error");
-                            this.refresh(record);
+                            pimcore.elementservice.refreshNode(record);
                         }
                     }.bind(this),
                     update: function (currentStep, steps, percent) {
@@ -824,7 +824,7 @@ pimcore.document.tree = Class.create({
                         record.pasteProgressBar = null;
 
                         pimcore.helpers.showNotification(t("error"), t("error_pasting_document"), "error", t(message));
-                        this.refresh(record);
+                        pimcore.elementservice.refreshNode(record);
                     }.bind(this),
                     jobs: res.pastejobs
                 });
@@ -847,7 +847,7 @@ pimcore.document.tree = Class.create({
 
         //this.tree.loadMask.hide();
         pimcore.helpers.removeTreeNodeLoadingIndicator("document", node.id);
-        this.refresh(node);
+        pimcore.elementservice.refreshNode(node);
     },
 
     removeSite: function (tree, record) {
@@ -858,7 +858,7 @@ pimcore.document.tree = Class.create({
             },
             success: function () {
                 pimcore.globalmanager.get("sites").reload();
-                this.refresh(record.parentNode);
+                pimcore.elementservice.refreshNode(record.parentNode);
             }.bind(this)
         });
 
@@ -1158,11 +1158,11 @@ pimcore.document.tree = Class.create({
 
         if(params["key"]) {
             // check for ident filename in current level
-            if(this.isExistingKeyInLevel(record, params["key"])) {
+            if(pimcore.elementservice.isKeyExistingInLevel(record, params["key"])) {
                 return;
             }
 
-            if(this.isDisallowedKey(record.id, params["key"])) {
+            if(pimcore.elementservice.isDisallowedDocumentKey(record.id, params["key"])) {
                 return;
             }
 
@@ -1196,101 +1196,18 @@ pimcore.document.tree = Class.create({
         } catch(e) {
             pimcore.helpers.showNotification(t("error"), t("error_creating_document"), "error");
         }
-        this.refresh(record);
+        pimcore.elementservice.refreshNode(record);
     },
 
-    editDocumentKey : function (tree, record) {
-        Ext.MessageBox.prompt(t('edit_key'), t('please_enter_the_new_key'),
-            this.editDocumentKeyComplete.bind(this, tree, record), null, null, record.data.text);
-    },
-
-    editDocumentKeyComplete: function (tree, record, button, value, object) {
-        if (button == "ok") {
-
-            // check for ident filename in current level
-            if(this.isExistingKeyInLevel(record.parentNode, value, this)) {
-                return;
-            }
-
-            if(this.isDisallowedKey(record.parentNode.id, value)) {
-                return;
-            }
-
-            value = pimcore.helpers.getValidFilename(value);
-
-            record.set("text", value);
-            record.data.path = record.data.basePath + value;
-
-            this.tree.loadMask.show();
-
-            this.updateDocument(record.id, {key: value}, function (response) {
-
-                this.tree.loadMask.hide();
-                this.refresh(record);
-
-                try {
-                    var rdata = Ext.decode(response.responseText);
-                    if (rdata && rdata.success) {
-                        if (pimcore.globalmanager.exists("document_" + record.data.id)) {
-                            pimcore.helpers.closeDocument(record.data.id);
-                            pimcore.helpers.openDocument(record.id, record.data.type);
-                        }
-                    }
-                    else {
-                        pimcore.helpers.showNotification(t("error"), t("error_renaming_document"), "error",
-                            t(rdata.message));
-                        this.refresh(record.parentNode);
-                    }
-                } catch(e) {
-                    pimcore.helpers.showNotification(t("error"), t("error_renaming_document"), "error");
-                    this.refresh(record.parentNode);
-                }
-            }.bind(this));
+    editDocumentKey: function (tree, record) {
+        var options = {
+            sourceTree: tree,
+            elementType: "document",
+            elementSubType: record.data.type,
+            id: record.data.id,
+            default: record.data.text
         }
-    },
-
-    isExistingKeyInLevel: function (parentNode, key, node) {
-
-        key = pimcore.helpers.getValidFilename(key);
-        var parentChilds = parentNode.childNodes;
-        for (var i = 0; i < parentChilds.length; i++) {
-            if (parentChilds[i].data.text == key && node != parentChilds[i]) {
-                Ext.MessageBox.alert(t('edit_key'),
-                    t('the_key_is_already_in_use_in_this_level_please_choose_an_other_key'));
-                return true;
-            }
-        }
-        return false;
-    },
-
-    isDisallowedKey: function (parentNodeId, key) {
-
-        if(parentNodeId === 1) {
-            var disallowedKeys = ["admin","install","webservice","plugin"];
-            if(in_arrayi(key, disallowedKeys)) {
-                Ext.MessageBox.alert(t('name_is_not_allowed'),
-                    t('name_is_not_allowed'));
-                return true;
-            }
-        }
-        return false;
-    },
-
-    updateDocument: function (id, data, callback) {
-
-        if (!callback) {
-            callback = function() {
-            };
-        }
-
-        data.id = id;
-
-        Ext.Ajax.request({
-            url: "/admin/document/update/",
-            method: "post",
-            params: data,
-            success: callback
-        });
+        pimcore.elementservice.editElementKey(options);
     },
 
     deleteDocument : function (tree, record) {
@@ -1323,7 +1240,7 @@ pimcore.document.tree = Class.create({
                             type: type
                         },
                         success: function () {
-                            this.refresh(record.parentNode);
+                            pimcore.elementservice.refreshNode(record.parentNode);
                         }.bind(this)
                     });
                 }
@@ -1345,16 +1262,5 @@ pimcore.document.tree = Class.create({
         if (key.length < 1 && key.length > 30) {
             return false;
         }
-    },
-
-    refresh: function (record) {
-        var ownerTree = record.getOwnerTree();
-        record.data.expanded = true;
-        ownerTree.getStore().load({
-            node: record
-        });
     }
-
-
-
 });

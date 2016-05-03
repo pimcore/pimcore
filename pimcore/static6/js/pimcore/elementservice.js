@@ -77,7 +77,7 @@ pimcore.elementservice.deleteElementFromServer = function (r, options, button) {
         var treeNames = pimcore.elementservice.getElementTreeNames(elementType);
         var affectedNodes = [];
 
-        for (index = 0; index < treeNames.length; index++) {
+        for (var index = 0; index < treeNames.length; index++) {
             var treeName = treeNames[index];
             var tree = pimcore.globalmanager.get(treeName);
             if (!tree) {
@@ -123,7 +123,7 @@ pimcore.elementservice.deleteElementFromServer = function (r, options, button) {
         var pj = new pimcore.tool.paralleljobs({
             success: function (id, successHandler) {
 
-                for (index = 0; index < affectedNodes.length; index++) {
+                for (var index = 0; index < affectedNodes.length; index++) {
                     var node = affectedNodes[index];
                     var tree = node.getOwnerTree();
                     try {
@@ -172,7 +172,7 @@ pimcore.elementservice.deleteElementFromServer = function (r, options, button) {
                 this.deleteWindow.close();
 
                 pimcore.helpers.showNotification(t("error"), t("error_deleting_" + elementType), "error", t(message));
-                for (index = 0; index < affectedNodes.length; index++) {
+                for (var index = 0; index < affectedNodes.length; index++) {
                     try {
                         var node = affectedNodes[i];
                         if (node) {
@@ -188,4 +188,314 @@ pimcore.elementservice.deleteElementFromServer = function (r, options, button) {
             jobs: r.deletejobs
         });
     }
+};
+
+pimcore.elementservice.updateAsset = function (id, data, callback) {
+
+    if (!callback) {
+        callback = function() {
+        };
+    }
+
+    data.id = id;
+
+    Ext.Ajax.request({
+        url: "/admin/asset/update/",
+        method: "post",
+        params: data,
+        success: callback
+    });
+};
+
+pimcore.elementservice.updateDocument = function (id, data, callback) {
+
+    if (!callback) {
+        callback = function() {
+        };
+    }
+
+    data.id = id;
+
+    Ext.Ajax.request({
+        url: "/admin/document/update/",
+        method: "post",
+        params: data,
+        success: callback
+    });
+};
+
+pimcore.elementservice.updateObject = function (id, values, callback) {
+
+    if (!callback) {
+        callback = function () {
+        };
+    }
+
+    Ext.Ajax.request({
+        url: "/admin/object/update",
+        method: "post",
+        params: {
+            id: id,
+            values: Ext.encode(values)
+        },
+        success: callback
+    });
+};
+
+
+pimcore.elementservice.applyNewKey = function(elementType, id, value) {
+    var treeNames = pimcore.elementservice.getElementTreeNames(elementType);
+    var affectedNodes = [];
+    for (var index = 0; index < treeNames.length; index++) {
+        var treeName = treeNames[index];
+        var tree = pimcore.globalmanager.get(treeName);
+        if (!tree) {
+            continue;
+        }
+        tree = tree.tree;
+        var view = tree.getView();
+        var store = tree.getStore();
+        var record = store.getNodeById(id);
+        pimcore.helpers.addTreeNodeLoadingIndicator(elementType, id);
+
+        if (record) {
+            var originalText = record.get("text");
+            var originalPath = record.get("path");
+
+            record.set("text", value);
+            record.set("path", record.data.basePath + value);
+            affectedNodes.push(record);
+        }
+    }
+    return affectedNodes;
+};
+
+pimcore.elementservice.editDocumentKeyComplete =  function (options, button, value, object) {
+    if (button == "ok") {
+
+        var id = options.id;
+        var elementType = options.elementType;
+        value = pimcore.helpers.getValidFilename(value);
+
+        if (options.sourceTree) {
+            var tree = options.sourceTree;
+            var store = tree.getStore();
+            var record = store.getById(id);
+            if(pimcore.elementservice.isKeyExistingInLevel(record.parentNode, value, record)) {
+                return;
+            }
+            if(pimcore.elementservice.isDisallowedDocumentKey(record.parentNode.id, value)) {
+                return;
+            }
+        }
+
+        var affectedNodes = pimcore.elementservice.applyNewKey(elementType, id, value);
+
+        pimcore.elementservice.updateDocument(id, {key: value}, function (response) {
+            var rdata = Ext.decode(response.responseText);
+            if (!rdata || !rdata.success) {
+                for (var index = 0; index < affectedNodes.length; index++) {
+                    var record = affectedNodes[index];
+                    record.set("text", originalText);
+                    record.set("path", originalPath);
+                }
+                pimcore.helpers.showNotification(t("error"), t("error_renaming_element"),
+                    "error");
+                return;
+            }
+
+            for (var index = 0; index < affectedNodes.length; index++) {
+                var record = affectedNodes[index];
+                pimcore.elementservice.refreshNode(record);
+            }
+
+            if (pimcore.globalmanager.exists("document_" + id)) {
+                try {
+                    if (rdata && rdata.success) {
+                        pimcore.helpers.closeDocument(id);
+                        pimcore.helpers.openDocument(id, options.elementSubType);
+                    }  else {
+                        pimcore.helpers.showNotification(t("error"), t("error_renaming_document"), "error",
+                            t(rdata.message));
+                    }
+                } catch (e) {
+                    pimcore.helpers.showNotification(t("error"), t("error_renaming_document"), "error");
+                }
+            }
+        }.bind(this));
+    }
+};
+
+pimcore.elementservice.editObjectKeyComplete = function (options, button, value, object) {
+    if (button == "ok") {
+
+        var id = options.id;
+        var elementType = options.elementType;
+        value = pimcore.helpers.getValidFilename(value);
+
+        if (options.sourceTree) {
+            var tree = options.sourceTree;
+            var store = tree.getStore();
+            var record = store.getById(id);
+            if(pimcore.elementservice.isKeyExistingInLevel(record.parentNode, value, record)) {
+                return;
+            }
+        }
+
+        var affectedNodes = pimcore.elementservice.applyNewKey(elementType, id, value);
+
+        pimcore.elementservice.updateObject(id, {key: value},
+            function (response) {
+                for (var index = 0; index < affectedNodes.length; index++) {
+                    var record = affectedNodes[index];
+                    pimcore.elementservice.refreshNode(record);
+                }
+
+                try {
+                    var rdata = Ext.decode(response.responseText);
+                    if (rdata && rdata.success) {
+                        if (pimcore.globalmanager.exists("object_" + id)) {
+                            pimcore.helpers.closeObject(id);
+                            pimcore.helpers.openObject(id, options.elementSubType);
+                        }
+                    }
+                    else {
+                        pimcore.helpers.showNotification(t("error"), t("error_renaming_object"), "error",
+                            t(rdata.message));
+                        for (var index = 0; index < affectedNodes.length; index++) {
+                            var record = affectedNodes[index];
+                            pimcore.elementservice.refreshNode(record.parentNode);
+                        }
+                    }
+                } catch (e) {
+                    pimcore.helpers.showNotification(t("error"), t("error_renaming_object"), "error");
+                    for (var index = 0; index < affectedNodes.length; index++) {
+                        var record = affectedNodes[index];
+                        pimcore.elementservice.refreshNode(record.parentNode);
+                    }
+                }
+            }.bind(this))
+        ;
+    }
+};
+
+
+pimcore.elementservice.editAssetKeyComplete = function (options, button, value, object) {
+    try {
+        if (button == "ok") {
+            var id = options.id;
+            var elementType = options.elementType;
+
+            value = pimcore.helpers.getValidFilename(value);
+
+            if (options.sourceTree) {
+                var tree = options.sourceTree;
+                var store = tree.getStore();
+                var record = store.getById(id);
+                // check for ident filename in current level
+
+                var parentChilds = record.parentNode.childNodes;
+                for (var i = 0; i < parentChilds.length; i++) {
+                    if (parentChilds[i].data.text == value && this != parentChilds[i].data.text) {
+                        Ext.MessageBox.alert(t('rename'), t('the_filename_is_already_in_use'));
+                        return;
+                    }
+                }
+            }
+
+            var affectedNodes = pimcore.elementservice.applyNewKey(elementType, id, value);
+
+            pimcore.elementservice.updateAsset(id, {filename: value},
+                function (response) {
+                    var rdata = Ext.decode(response.responseText);
+                    if (!rdata || !rdata.success) {
+                        for (var index = 0; index < affectedNodes.length; index++) {
+                            var record = affectedNodes[index];
+                            record.set("text", originalText);
+                            record.set("path", originalPath);
+                        }
+                        pimcore.helpers.showNotification(t("error"), t("error_renaming_element"),
+                            "error");
+                        return;
+                    }
+
+                    for (var index = 0; index < affectedNodes.length; index++) {
+                        var record = affectedNodes[index];
+                        pimcore.elementservice.refreshNode(record);
+                    }
+
+                    if (pimcore.globalmanager.exists("asset_" + id)) {
+                        try {
+                            if (rdata && rdata.success) {
+                                pimcore.helpers.closeAsset(id);
+                                pimcore.helpers.openAsset(id, options.elementSubType);
+                            }
+                            else {
+                                pimcore.helpers.showNotification(t("error"), t("error_renaming_element"),
+                                    "error", t(rdata.message));
+                            }
+                        } catch (e) {
+                            pimcore.helpers.showNotification(t("error"), t("error_renaming_element"),
+                                "error");
+                        }
+                    }
+                }.bind(this))
+            ;
+        }
+    } catch (e) {
+        console.log(e);
+    }
+};
+
+pimcore.elementservice.editElementKey = function(options) {
+    if (options.elementType == "asset") {
+        completeCallback = pimcore.elementservice.editAssetKeyComplete.bind(this, options);
+    } else if (options.elementType == "document") {
+        completeCallback = pimcore.elementservice.editDocumentKeyComplete.bind(this, options);
+    } else if (options.elementType == "object") {
+        completeCallback = pimcore.elementservice.editObjectKeyComplete.bind(this, options);
+    } else {
+        throw new Error("type " + options.elementType + " not supported!");
+    }
+
+    Ext.MessageBox.prompt(t('rename'), t('please_enter_the_new_name'), completeCallback, window, false, options.default);
+
+};
+
+
+pimcore.elementservice.refreshNode = function (node) {
+    var ownerTree = node.getOwnerTree();
+
+    node.data.expanded = true;
+    ownerTree.getStore().load({
+        node: node
+    });
+};
+
+
+pimcore.elementservice.isDisallowedDocumentKey = function (parentNodeId, key) {
+
+    if(parentNodeId == 1) {
+        var disallowedKeys = ["admin","install","webservice","plugin"];
+        if(in_arrayi(key, disallowedKeys)) {
+            Ext.MessageBox.alert(t('name_is_not_allowed'),
+                t('name_is_not_allowed'));
+            return true;
+        }
+    }
+    return false;
+};
+
+pimcore.elementservice.isKeyExistingInLevel = function(parentNode, key, node) {
+
+    key = pimcore.helpers.getValidFilename(key);
+    var parentChilds = parentNode.childNodes;
+    for (var i = 0; i < parentChilds.length; i++) {
+        if (parentChilds[i].data.text == key && node != parentChilds[i]) {
+            Ext.MessageBox.alert(t('edit_key'),
+                t('the_key_is_already_in_use_in_this_level_please_choose_an_other_key'));
+            return true;
+        }
+    }
+    return false;
 };

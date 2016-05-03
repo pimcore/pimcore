@@ -670,7 +670,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
         } else {
             \Logger::debug("prevented update asset because of missing permissions ");
         }
-
+        
         $this->_helper->json(array("success" => $success));
     }
 

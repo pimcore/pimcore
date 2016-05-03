@@ -343,23 +343,37 @@ pimcore.helpers.getElementTypeByObject = function (object) {
     return type;
 };
 
-pimcore.helpers.getTreeNodeLoadingIndicatorElement = function (type, id) {
+pimcore.helpers.getTreeNodeLoadingIndicatorElements = function (type, id) {
     // display loading indicator on treenode
-    try {
-        var tree = pimcore.globalmanager.get("layout_" + type + "_tree").tree;
-        var store = tree.getStore();
-        var node = store.getNodeById(id);
-        if (node) {
-            var view = tree.getView();
-            var nodeEl = Ext.fly(view.getNodeByRecord(node));
-            var icon = nodeEl.query(".x-tree-icon")[0];
+    var elements = [];
+    var treeNames = pimcore.elementservice.getElementTreeNames(type);
 
-            var iconEl = Ext.get(icon);
-            return iconEl;
+    for (index = 0; index < treeNames.length; index++) {
+        var treeName = treeNames[index];
+        var tree = pimcore.globalmanager.get(treeName);
+        if (!tree) {
+            continue;
         }
-    } catch (e) {
-        //console.log(e);
+        tree = tree.tree;
+
+        try {
+            var store = tree.getStore();
+            var node = store.getNodeById(id);
+            if (node) {
+                var view = tree.getView();
+                var nodeEl = Ext.fly(view.getNodeByRecord(node));
+                var icon = nodeEl.query(".x-tree-icon")[0];
+
+                var iconEl = Ext.get(icon);
+                if (iconEl) {
+                    elements.push(iconEl);
+                }
+            }
+        } catch (e) {
+            //console.log(e);
+        }
     }
+    return elements;
 };
 
 pimcore.helpers.treeNodeLoadingIndicatorTimeouts = {};
@@ -368,9 +382,12 @@ pimcore.helpers.addTreeNodeLoadingIndicator = function (type, id) {
 
     pimcore.helpers.treeNodeLoadingIndicatorTimeouts[type + id] = window.setTimeout(function () {
         // display loading indicator on treenode
-        var iconEl = pimcore.helpers.getTreeNodeLoadingIndicatorElement(type, id);
-        if(iconEl) {
-            iconEl.addCls("pimcore_tree_node_loading_indicator");
+        var iconEls = pimcore.helpers.getTreeNodeLoadingIndicatorElements(type, id);
+        for (index = 0; index < iconEls.length; index++) {
+            var iconEl = iconEls[index];
+            if (iconEl) {
+                iconEl.addCls("pimcore_tree_node_loading_indicator");
+            }
         }
     }, 200);
 };
@@ -380,9 +397,12 @@ pimcore.helpers.removeTreeNodeLoadingIndicator = function (type, id) {
     clearTimeout(pimcore.helpers.treeNodeLoadingIndicatorTimeouts[type + id]);
 
     // display loading indicator on treenode
-    var iconEl = pimcore.helpers.getTreeNodeLoadingIndicatorElement(type, id);
-    if(iconEl) {
-        iconEl.removeCls("pimcore_tree_node_loading_indicator");
+    var iconEls = pimcore.helpers.getTreeNodeLoadingIndicatorElements(type, id);
+    for (index = 0; index < iconEls.length; index++) {
+        var iconEl = iconEls[index];
+        if (iconEl) {
+            iconEl.removeCls("pimcore_tree_node_loading_indicator");
+        }
     }
 };
 

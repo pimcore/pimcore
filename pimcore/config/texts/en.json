@@ -13654,5 +13654,13 @@
     "term_plural": "",
     "reference": "",
     "comment": ""
+  },
+  {
+    "term": "error_renaming_element",
+    "definition": "There was an error while renaming the element.",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
   }
 ]
