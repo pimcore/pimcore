@@ -383,7 +383,7 @@ pimcore.helpers.addTreeNodeLoadingIndicator = function (type, id) {
     pimcore.helpers.treeNodeLoadingIndicatorTimeouts[type + id] = window.setTimeout(function () {
         // display loading indicator on treenode
         var iconEls = pimcore.helpers.getTreeNodeLoadingIndicatorElements(type, id);
-        for (index = 0; index < iconEls.length; index++) {
+        for (var index = 0; index < iconEls.length; index++) {
             var iconEl = iconEls[index];
             if (iconEl) {
                 iconEl.addCls("pimcore_tree_node_loading_indicator");
@@ -398,7 +398,7 @@ pimcore.helpers.removeTreeNodeLoadingIndicator = function (type, id) {
 
     // display loading indicator on treenode
     var iconEls = pimcore.helpers.getTreeNodeLoadingIndicatorElements(type, id);
-    for (index = 0; index < iconEls.length; index++) {
+    for (var index = 0; index < iconEls.length; index++) {
         var iconEl = iconEls[index];
         if (iconEl) {
             iconEl.removeCls("pimcore_tree_node_loading_indicator");
