@@ -447,6 +447,9 @@ class Tool
             foreach ($confArray["views"] as $tmp) {
                 if (isset($tmp["name"])) {
                     $tmp["showroot"] = (bool) $tmp["showroot"];
+                    if ((bool) $tmp["hidden"]) {
+                        continue;
+                    }
                     $cvData[] = $tmp;
                 }
             }
