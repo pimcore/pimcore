@@ -1109,7 +1109,7 @@ pimcore.asset.tree = Class.create({
 
     addAssetComplete: function (tree, record, config, file, response) {
 
-        this.leaf = false;
+        record.data.leaf = false;
         record.expand();
         pimcore.elementservice.refreshNode(record);
     },
