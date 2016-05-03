@@ -528,4 +528,57 @@ pimcore.elementservice.isKeyExistingInLevel = function(parentNode, key, node) {
     return false;
 };
 
+pimcore.elementservice.addObject = function(options) {
+
+    var params = {
+        parentId: options.parentId,
+        key: options.key,
+        className: options.className,
+        classId: options.classId,
+        variantViaTree: options.variantViaTree,
+        objecttype: options.objecttype
+    };
+
+    Ext.Ajax.request({
+        url: options.url,
+        params: params,
+        success: this.addObjectComplete.bind(this, options)
+    });
+};
+
+pimcore.elementservice.addObjectComplete = function(options, response) {
+    try {
+        var rdata = Ext.decode(response.responseText);
+        if (rdata && rdata.success) {
+            var treeNames = pimcore.elementservice.getElementTreeNames(options.elementType);
+
+            for (var index = 0; index < treeNames.length; index++) {
+                var treeName = treeNames[index];
+                var tree = pimcore.globalmanager.get(treeName);
+                if (!tree) {
+                    continue;
+                }
+                tree = tree.tree;
+                var store = tree.getStore();
+                var parentRecord = store.getById(options.parentId);
+                if (parentRecord) {
+                    parentRecord.data.leaf = false;
+                    tree.expand(parentRecord);
+                    pimcore.elementservice.refreshNode(parentRecord);
+                }
+            }
+
+            if (rdata.id && rdata.type) {
+                if (rdata.type == "object") {
+                    pimcore.helpers.openObject(rdata.id, rdata.type);
+                }
+            }
+        }  else {
+            pimcore.helpers.showNotification(t("error"), t("error_creating_object"), "error", t(rdata.message));
+        }
+    } catch (e) {
+        pimcore.helpers.showNotification(t("error"), t("error_creating_object"), "error");
+    }
+
+};
 

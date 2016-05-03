@@ -766,18 +766,16 @@ pimcore.object.tree = Class.create({
         }
 
         if (button == "ok") {
-
-            Ext.Ajax.request({
+            var options =  {
                 url: "/admin/object/add-folder",
-                params: {
-                    parentId: record.data.id,
-                    key: pimcore.helpers.getValidFilename(value)
-                },
-                success: this.addObjectComplete.bind(this, tree, record)
-            });
+                elementType : "object",
+                sourceTree: tree,
+                parentId: record.data.id,
+                key: pimcore.helpers.getValidFilename(value)
+            };
+            pimcore.elementservice.addObject(options);
         }
     },
-
 
     addObjectCreate: function (classId, className, tree, record, button, value, object) {
 
@@ -787,19 +785,19 @@ pimcore.object.tree = Class.create({
                 return;
             }
 
-            Ext.Ajax.request({
+            var options = {
                 url: "/admin/object/add",
-                params: {
-                    className: className,
-                    classId: classId,
-                    parentId: record.data.id,
-                    key: pimcore.helpers.getValidFilename(value)
-                },
-                success: this.addObjectComplete.bind(this, tree, record)
-            });
+                elementType: "object",
+                sourceTree: tree,
+                parentId: record.data.id,
+                className: className,
+                classId: classId,
+                key: pimcore.helpers.getValidFilename(value)
+            };
+            pimcore.elementservice.addObject(options);
         }
-    },
 
+    },
 
     addVariantCreate: function (tree, record, button, value, object) {
 
@@ -809,18 +807,18 @@ pimcore.object.tree = Class.create({
             if (pimcore.elementservice.isKeyExistingInLevel(record, value)) {
                 return;
             }
-            Ext.Ajax.request({
-                url: "/admin/object/add",
-                params: {
-                    className: record.data.className,
-                    variantViaTree: true,
-                    parentId: record.data.id,
-                    objecttype: "variant",
-                    key: pimcore.helpers.getValidFilename(value)
-                },
-                success: this.addVariantComplete.bind(this, tree, record)
-            });
 
+            var options = {
+                url: "/admin/object/add",
+                elementType: "object",
+                sourceTree: tree,
+                className: record.data.className,
+                parentId: record.data.id,
+                variantViaTree: true,
+                objecttype: "variant",
+                key: pimcore.helpers.getValidFilename(value)
+            };
+            pimcore.elementservice.addObject(options);
         }
     },
 
@@ -982,28 +980,6 @@ pimcore.object.tree = Class.create({
     addFolder: function (tree, record) {
         Ext.MessageBox.prompt(t('add_folder'), t('please_enter_the_name_of_the_new_folder'),
             this.addFolderCreate.bind(this, tree, record));
-    },
-
-    addObjectComplete: function (tree, record, response) {
-        try {
-            var rdata = Ext.decode(response.responseText);
-            if (rdata && rdata.success) {
-                this.leaf = false;
-                tree.expand(record);
-
-                if (rdata.id && rdata.type) {
-                    if (rdata.type == "object") {
-                        pimcore.helpers.openObject(rdata.id, rdata.type);
-                    }
-                }
-            }
-            else {
-                pimcore.helpers.showNotification(t("error"), t("error_creating_object"), "error", t(rdata.message));
-            }
-        } catch (e) {
-            pimcore.helpers.showNotification(t("error"), t("error_creating_object"), "error");
-        }
-        this.reloadNode(tree, record);
     },
 
     remove: function (tree, record) {
