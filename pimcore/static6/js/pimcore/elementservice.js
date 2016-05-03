@@ -53,6 +53,20 @@ pimcore.elementservice.deleteElementCheckDependencyComplete = function (options,
     }
 };
 
+
+pimcore.elementservice.getElementTreeNames = function(elementType) {
+    var treeNames = ["layout_" + elementType + "_tree"]
+    if (pimcore.settings.customviews.length > 0) {
+        for (var cvs = 0; cvs < pimcore.settings.customviews.length; cvs++) {
+            var cv = pimcore.settings.customviews[cvs];
+            if (!cv.treetype && elementType == "object" || cv.treetype == elementType) {
+                treeNames.push("layout_" + elementType + "_tree_" + cv.id);
+            }
+        }
+    }
+    return treeNames;
+}
+
 pimcore.elementservice.deleteElementFromServer = function (r, options, button) {
 
     if (button == "ok" && r.deletejobs) {
@@ -60,16 +74,7 @@ pimcore.elementservice.deleteElementFromServer = function (r, options, button) {
         var elementType = options.elementType;
         var id = options.id;
 
-        var treeNames = ["layout_" + elementType + "_tree"]
-        if (pimcore.settings.customviews.length > 0) {
-            for (var cvs = 0; cvs < pimcore.settings.customviews.length; cvs++) {
-                var cv = pimcore.settings.customviews[cvs];
-                if (!cv.treetype || cv.treetype == elementType) {
-                    treeNames.push("layout_" + elementType + "_tree_" + cv.id);
-                }
-            }
-        }
-
+        var treeNames = pimcore.elementservice.getElementTreeNames(elementType);
         var affectedNodes = [];
 
         for (index = 0; index < treeNames.length; index++) {
@@ -129,7 +134,7 @@ pimcore.elementservice.deleteElementFromServer = function (r, options, button) {
                         if (nodeEl) {
                             nodeEl.removeCls("pimcore_delete");
                         }
-                        //Ext.get(this.getUI().getIconEl()).dom.setAttribute("class", this.originalClass);
+
                         pimcore.helpers.removeTreeNodeLoadingIndicator(elementType, id);
 
                         if (node) {
