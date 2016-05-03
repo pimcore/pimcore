@@ -451,10 +451,7 @@ class Tool
                     if ((bool) $tmp["hidden"]) {
                         continue;
                     }
-                    // temporary workaround, needs refactoring in object tree
-                    if (isset($tmp["classes"]) && !$tmp["classes"]) {
-                        $tmp["classes"] = "all";
-                    }
+
                     $cvData[] = $tmp;
                 }
             }
