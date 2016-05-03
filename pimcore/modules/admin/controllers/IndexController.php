@@ -78,7 +78,7 @@ class Admin_IndexController extends \Pimcore\Controller\Action\Admin
 
                 if ($rootNode) {
                     $tmpData["rootId"] = $rootNode->getId();
-                    $tmpData["allowedClasses"] = explode(",", $tmpData["classes"]);
+                    $tmpData["allowedClasses"] = $tmpData["classes"] ? explode(",", $tmpData["classes"]) : null;
                     $tmpData["showroot"] = (bool)$tmpData["showroot"];
 
                     $cvData[] = $tmpData;

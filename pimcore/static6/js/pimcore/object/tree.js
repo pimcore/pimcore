@@ -32,7 +32,7 @@ pimcore.object.tree = Class.create({
         if (!config) {
             this.config = {
                 rootVisible: true,
-                allowedClasses: "all",
+                allowedClasses: null,
                 loaderBaseParams: {},
                 treeId: "pimcore_panel_tree_objects",
                 treeIconCls: "pimcore_icon_object",
@@ -407,7 +407,7 @@ pimcore.object.tree = Class.create({
                 // add items
                 for (var i = 0; i < classGroups[groupName].length; i++) {
                     classGroupRecord = classGroups[groupName][i];
-                    if (this.config.allowedClasses == "all" || in_array(classGroupRecord.get("id"),  this.config.allowedClasses)) {
+                    if (!this.config.allowedClasses || in_array(classGroupRecord.get("id"),  this.config.allowedClasses)) {
 
                         /* == menu entry: create new object == */
 
@@ -451,7 +451,7 @@ pimcore.object.tree = Class.create({
             }  else {
                 classGroupRecord = classGroups[groupName][0];
 
-                if (this.config.allowedClasses == "all" || in_array(classGroupRecord.get("id"),
+                if (!this.config.allowedClasses || in_array(classGroupRecord.get("id"),
                         this.config.allowedClasses)) {
 
                     /* == menu entry: create new object == */

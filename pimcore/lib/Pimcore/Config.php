@@ -501,7 +501,7 @@ class Config
                 if ($rootNode) {
                     $tmpData["type"] = "customview";
                     $tmpData["rootId"] = $rootNode->getId();
-                    $tmpData["allowedClasses"] = explode(",", $tmpData["classes"]);
+                    $tmpData["allowedClasses"] = $tmpData["classes"] ? explode(",", $tmpData["classes"]) : null;
                     $tmpData["showroot"] = (bool)$tmpData["showroot"];
                     $customViewId = $tmpData["id"];
                     $cfConfigMapping[$customViewId]= $tmpData;
