@@ -242,8 +242,7 @@ pimcore.elementservice.updateObject = function (id, values, callback) {
     });
 };
 
-
-pimcore.elementservice.applyNewKey = function(elementType, id, value) {
+pimcore.elementservice.getAffectedNodes = function(elementType, id) {
     var treeNames = pimcore.elementservice.getElementTreeNames(elementType);
     var affectedNodes = [];
     for (var index = 0; index < treeNames.length; index++) {
@@ -256,17 +255,25 @@ pimcore.elementservice.applyNewKey = function(elementType, id, value) {
         var view = tree.getView();
         var store = tree.getStore();
         var record = store.getNodeById(id);
-        pimcore.helpers.addTreeNodeLoadingIndicator(elementType, id);
 
         if (record) {
-            var originalText = record.get("text");
-            var originalPath = record.get("path");
-
-            record.set("text", value);
-            record.set("path", record.data.basePath + value);
             affectedNodes.push(record);
         }
     }
+    return affectedNodes;
+
+};
+
+
+pimcore.elementservice.applyNewKey = function(affectedNodes, elementType, id, value) {
+
+    for (var index = 0; index < affectedNodes.length; index++) {
+        var record = affectedNodes[index];
+        record.set("text", value);
+        record.set("path", record.data.basePath + value);
+    }
+    pimcore.helpers.addTreeNodeLoadingIndicator(elementType, id);
+
     return affectedNodes;
 };
 
@@ -289,7 +296,15 @@ pimcore.elementservice.editDocumentKeyComplete =  function (options, button, val
             }
         }
 
-        var affectedNodes = pimcore.elementservice.applyNewKey(elementType, id, value);
+        var originalText;
+        var originalPath;
+        var affectedNodes = pimcore.elementservice.getAffectedNodes(elementType, id);
+        if (affectedNodes) {
+            var record = affectedNodes[0];
+            originalText = record.get("text");
+            originalPath = record.get("path");
+        }
+        pimcore.elementservice.applyNewKey(affectedNodes, elementType, id, value);
 
         pimcore.elementservice.updateDocument(id, {key: value}, function (response) {
             var rdata = Ext.decode(response.responseText);
@@ -312,8 +327,7 @@ pimcore.elementservice.editDocumentKeyComplete =  function (options, button, val
             if (pimcore.globalmanager.exists("document_" + id)) {
                 try {
                     if (rdata && rdata.success) {
-                        pimcore.helpers.closeDocument(id);
-                        pimcore.helpers.openDocument(id, options.elementSubType);
+                        pimcore.elementservice.reopenElement(options);
                     }  else {
                         pimcore.helpers.showNotification(t("error"), t("error_renaming_document"), "error",
                             t(rdata.message));
@@ -342,7 +356,13 @@ pimcore.elementservice.editObjectKeyComplete = function (options, button, value,
             }
         }
 
-        var affectedNodes = pimcore.elementservice.applyNewKey(elementType, id, value);
+        var affectedNodes = pimcore.elementservice.getAffectedNodes(elementType, id);
+        if (affectedNodes) {
+            var record = affectedNodes[0];
+            originalText = record.get("text");
+            originalPath = record.get("path");
+        }
+        pimcore.elementservice.applyNewKey(affectedNodes, elementType, id, value);
 
         pimcore.elementservice.updateObject(id, {key: value},
             function (response) {
@@ -354,12 +374,8 @@ pimcore.elementservice.editObjectKeyComplete = function (options, button, value,
                 try {
                     var rdata = Ext.decode(response.responseText);
                     if (rdata && rdata.success) {
-                        if (pimcore.globalmanager.exists("object_" + id)) {
-                            pimcore.helpers.closeObject(id);
-                            pimcore.helpers.openObject(id, options.elementSubType);
-                        }
-                    }
-                    else {
+                        pimcore.elementservice.reopenElement(options);
+                    }  else {
                         pimcore.helpers.showNotification(t("error"), t("error_renaming_object"), "error",
                             t(rdata.message));
                         for (var index = 0; index < affectedNodes.length; index++) {
@@ -379,6 +395,14 @@ pimcore.elementservice.editObjectKeyComplete = function (options, button, value,
     }
 };
 
+pimcore.elementservice.reopenElement = function(options) {
+    var elementType = options.elementType;
+    if (pimcore.globalmanager.exists(elementType + "_" + options.id)) {
+        pimcore.helpers["close"  + ucfirst(elementType)](options.id);
+        pimcore.helpers["open" + ucfirst(elementType)](options.id, options.elementSubType);
+    }
+
+};
 
 pimcore.elementservice.editAssetKeyComplete = function (options, button, value, object) {
     try {
@@ -403,7 +427,13 @@ pimcore.elementservice.editAssetKeyComplete = function (options, button, value, 
                 }
             }
 
-            var affectedNodes = pimcore.elementservice.applyNewKey(elementType, id, value);
+            var affectedNodes = pimcore.elementservice.getAffectedNodes(elementType, id);
+            if (affectedNodes) {
+                var record = affectedNodes[0];
+                originalText = record.get("text");
+                originalPath = record.get("path");
+            }
+            pimcore.elementservice.applyNewKey(affectedNodes, elementType, id, value);
 
             pimcore.elementservice.updateAsset(id, {filename: value},
                 function (response) {
@@ -427,10 +457,8 @@ pimcore.elementservice.editAssetKeyComplete = function (options, button, value, 
                     if (pimcore.globalmanager.exists("asset_" + id)) {
                         try {
                             if (rdata && rdata.success) {
-                                pimcore.helpers.closeAsset(id);
-                                pimcore.helpers.openAsset(id, options.elementSubType);
-                            }
-                            else {
+                                pimcore.elementservice.reopenElement(options);
+                            }  else {
                                 pimcore.helpers.showNotification(t("error"), t("error_renaming_element"),
                                     "error", t(rdata.message));
                             }
@@ -499,3 +527,5 @@ pimcore.elementservice.isKeyExistingInLevel = function(parentNode, key, node) {
     }
     return false;
 };
+
+
