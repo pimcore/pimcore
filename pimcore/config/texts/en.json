@@ -13662,5 +13662,13 @@
     "term_plural": "",
     "reference": "",
     "comment": ""
+  },
+  {
+    "term": "cross_tree_moves_not_supported",
+    "definition": "Cross tree moves not yet supported",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
   }
 ]

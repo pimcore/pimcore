@@ -426,6 +426,11 @@ pimcore.asset.tree = Class.create({
     },
 
     onTreeNodeBeforeMove: function (node, oldParent, newParent, index, eOpts ) {
+        if (oldParent.getOwnerTree().getId() != newParent.getOwnerTree().getId()) {
+            Ext.MessageBox.alert(t('error'), t('cross_tree_moves_not_supported'));
+            return false;
+        }
+
         // check for locks
         if (node.data.locked) {
             Ext.MessageBox.alert(t('locked'), t('element_cannot_be_move_because_it_is_locked'));
