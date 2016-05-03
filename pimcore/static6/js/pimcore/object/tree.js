@@ -757,20 +757,63 @@ pimcore.object.tree = Class.create({
             this.addVariantCreate.bind(this, tree, record));
     },
 
-    addVariantCreate: function (tree, record, button, value, object) {
 
-        // check for identical filename in current level
-        if (this.isExistingKeyInLevel(record, value)) {
+    addFolderCreate: function (tree, record, button, value, object) {
+
+        // check for ident filename in current level
+        if (pimcore.elementservice.isKeyExistingInLevel(record, value)) {
             return;
         }
 
         if (button == "ok") {
+
+            Ext.Ajax.request({
+                url: "/admin/object/add-folder",
+                params: {
+                    parentId: record.data.id,
+                    key: pimcore.helpers.getValidFilename(value)
+                },
+                success: this.addObjectComplete.bind(this, tree, record)
+            });
+        }
+    },
+
+
+    addObjectCreate: function (classId, className, tree, record, button, value, object) {
+
+        if (button == "ok") {
+            // check for identical filename in current level
+            if (pimcore.elementservice.isKeyExistingInLevel(record, value)) {
+                return;
+            }
+
+            Ext.Ajax.request({
+                url: "/admin/object/add",
+                params: {
+                    className: className,
+                    classId: classId,
+                    parentId: record.data.id,
+                    key: pimcore.helpers.getValidFilename(value)
+                },
+                success: this.addObjectComplete.bind(this, tree, record)
+            });
+        }
+    },
+
+
+    addVariantCreate: function (tree, record, button, value, object) {
+
+        if (button == "ok") {
+            // check for identical filename in current level
+
+            if (pimcore.elementservice.isKeyExistingInLevel(record, value)) {
+                return;
+            }
             Ext.Ajax.request({
                 url: "/admin/object/add",
                 params: {
                     className: record.data.className,
                     variantViaTree: true,
-//                    classId: this.element.data.general.o_classId,
                     parentId: record.data.id,
                     objecttype: "variant",
                     key: pimcore.helpers.getValidFilename(value)
@@ -935,50 +978,10 @@ pimcore.object.tree = Class.create({
             this.addObjectCreate.bind(this, classId, className, tree, record));
     },
 
-    addObjectCreate: function (classId, className, tree, record, button, value, object) {
-
-        if (button == "ok") {
-            // check for identical filename in current level
-            if (this.isExistingKeyInLevel(record, value)) {
-                return;
-            }
-
-            Ext.Ajax.request({
-                url: "/admin/object/add",
-                params: {
-                    className: className,
-                    classId: classId,
-                    parentId: record.data.id,
-                    key: pimcore.helpers.getValidFilename(value)
-                },
-                success: this.addObjectComplete.bind(this, tree, record)
-            });
-        }
-    },
 
     addFolder: function (tree, record) {
         Ext.MessageBox.prompt(t('add_folder'), t('please_enter_the_name_of_the_new_folder'),
             this.addFolderCreate.bind(this, tree, record));
-    },
-
-    addFolderCreate: function (tree, record, button, value, object) {
-
-        // check for ident filename in current level
-        if (this.isExistingKeyInLevel(record, value)) {
-            return;
-        }
-
-        if (button == "ok") {
-
-            Ext.Ajax.request({
-                url: "/admin/object/add-folder",
-                params: {
-                    parentId: record.data.id,
-                    key: pimcore.helpers.getValidFilename(value)
-                },
-                success: this.addObjectComplete.bind(this, tree, record)
-            });
-        }
     },
 
     addObjectComplete: function (tree, record, response) {
@@ -1001,21 +1004,6 @@ pimcore.object.tree = Class.create({
             pimcore.helpers.showNotification(t("error"), t("error_creating_object"), "error");
         }
         this.reloadNode(tree, record);
-    },
-
-
-    isExistingKeyInLevel: function (parentNode, key, node) {
-
-        key = pimcore.helpers.getValidFilename(key);
-        var parentChilds = parentNode.childNodes;
-        for (var i = 0; i < parentChilds.length; i++) {
-            if (parentChilds[i].data.text == key && node != parentChilds[i]) {
-                Ext.MessageBox.alert(t('edit_key'),
-                    t('the_key_is_already_in_use_in_this_level_please_choose_an_other_key'));
-                return true;
-            }
-        }
-        return false;
     },
 
     remove: function (tree, record) {

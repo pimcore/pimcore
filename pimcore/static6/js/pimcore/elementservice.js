@@ -488,7 +488,7 @@ pimcore.elementservice.isDisallowedDocumentKey = function (parentNodeId, key) {
 
 pimcore.elementservice.isKeyExistingInLevel = function(parentNode, key, node) {
 
-    key = pimcore.helpers.getValidFilename(key);
+    var key = pimcore.helpers.getValidFilename(key);
     var parentChilds = parentNode.childNodes;
     for (var i = 0; i < parentChilds.length; i++) {
         if (parentChilds[i].data.text == key && node != parentChilds[i]) {

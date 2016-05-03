@@ -869,7 +869,7 @@ pimcore.helpers.openMemorizedTabs = function () {
     var openTabs = pimcore.helpers.getOpenTab();
     var openedTabs = [];
 
-    for(var i=0; i<openTabs.length; i++) {
+    for(var i=0; i < openTabs.length; i++) {
         if(!empty(openTabs[i])) {
             if(!in_array(openTabs[i], openedTabs)) {
                 var parts = openTabs[i].split("_");
