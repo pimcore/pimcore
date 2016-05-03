@@ -528,20 +528,43 @@ pimcore.elementservice.isKeyExistingInLevel = function(parentNode, key, node) {
     return false;
 };
 
+pimcore.elementservice.nodeMoved = function(elementType, oldParent, newParent) {
+    // disabled for now
+    return;
+
+    var oldParentId = oldParent.getId();
+    var newParentId = newParent.getId();
+    var newParentTreeId = newParent.getOwnerTree().getId();
+
+    var affectedNodes = pimcore.elementservice.getAffectedNodes(elementType, newParentId);
+    for (var index = 0; index < affectedNodes.length; index++) {
+        var node = affectedNodes[index];
+        var nodeTreeId = node.getOwnerTree().getId();
+        if (nodeTreeId != newParentTreeId) {
+            pimcore.elementservice.refreshNode(node);
+        }
+    }
+
+    if (oldParentId != newParentId) {
+        var affectedNodes = pimcore.elementservice.getAffectedNodes(elementType, oldParentId);
+        for (var index = 0; index < affectedNodes.length; index++) {
+            var node = affectedNodes[index];
+            var nodeTreeId = node.getOwnerTree().getId();
+            if (nodeTreeId != newParentTreeId) {
+                pimcore.elementservice.refreshNode(node);
+            }
+        }
+    }
+};
+
 pimcore.elementservice.addObject = function(options) {
 
-    var params = {
-        parentId: options.parentId,
-        key: options.key,
-        className: options.className,
-        classId: options.classId,
-        variantViaTree: options.variantViaTree,
-        objecttype: options.objecttype
-    };
+    var url = options.url;
+    delete options.url;
 
     Ext.Ajax.request({
-        url: options.url,
-        params: params,
+        url: url,
+        params: options,
         success: this.addObjectComplete.bind(this, options)
     });
 };
