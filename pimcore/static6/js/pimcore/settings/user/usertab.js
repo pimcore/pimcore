@@ -78,7 +78,7 @@ pimcore.settings.user.usertab = Class.create({
 
     save: function () {
 
-        var active = false;
+        var active = null;
         var data = {
             id: this.id
         };
@@ -86,7 +86,10 @@ pimcore.settings.user.usertab = Class.create({
 
         try {
             var values = this.settings.getValues();
-            active = values.active;
+            if(values.hasOwnProperty("active")) {
+                // only if "active" is available (if not available, the checkbox is disabled, eg. when modifying the logged in user)
+                active = values["active"];
+            }
             contentLanguages = values.contentLanguages;
             data.data = Ext.encode(values);
         } catch (e) {
@@ -122,9 +125,9 @@ pimcore.settings.user.usertab = Class.create({
                             if (nodeEl) {
                                 var nodeElInner = nodeEl.down(".x-grid-td");
                                 if (nodeElInner) {
-                                    if (active) {
+                                    if (active === true) {
                                         nodeElInner.removeCls("pimcore_unpublished");
-                                    } else {
+                                    } else if (active === false) {
                                         nodeElInner.addCls("pimcore_unpublished");
                                     }
                                 }
