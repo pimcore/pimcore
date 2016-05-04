@@ -363,8 +363,6 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                 var me = this,
                     store = me.getStore();
 
-                console.log("hello");
-
                 if (store) {
                     var items = store.getData().items,
                         labelField = data.pieLabelColumn,
