@@ -11,7 +11,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-/*global localStorage */
 pimcore.registerNS("pimcore.elementservice.x");
 
 pimcore.elementservice.deleteElement = function (options) {
@@ -65,7 +64,7 @@ pimcore.elementservice.getElementTreeNames = function(elementType) {
         }
     }
     return treeNames;
-}
+};
 
 pimcore.elementservice.deleteElementFromServer = function (r, options, button) {
 
