@@ -535,9 +535,7 @@ pimcore.elementservice.isKeyExistingInLevel = function(parentNode, key, node) {
 
 pimcore.elementservice.nodeMoved = function(elementType, oldParent, newParent) {
     // disabled for now
-    return;
-
-    var oldParentId = oldParent.getId();
+    /*var oldParentId = oldParent.getId();
     var newParentId = newParent.getId();
     var newParentTreeId = newParent.getOwnerTree().getId();
 
@@ -559,7 +557,7 @@ pimcore.elementservice.nodeMoved = function(elementType, oldParent, newParent) {
                 pimcore.elementservice.refreshNode(node);
             }
         }
-    }
+    }*/
 };
 
 pimcore.elementservice.addObject = function(options) {
