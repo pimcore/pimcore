@@ -74,6 +74,7 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
                     items: [
                         {
                             xtype:"combo",
+                            width: 500,
                             id: "pimcore_portlet_selected_custom_report",
                             autoSelect: true,
                             valueField: "id",
