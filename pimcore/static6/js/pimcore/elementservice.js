@@ -560,22 +560,47 @@ pimcore.elementservice.addDocument = function(options) {
     });
 };
 
+pimcore.elementservice.refreshRootNodeAllTrees = function(elementType) {
+    var treeNames = pimcore.elementservice.getElementTreeNames(elementType);
+    for (var index = 0; index < treeNames.length; index++) {
+        try {
+            var treeName = treeNames[index];
+            var tree = pimcore.globalmanager.get(treeName);
+            if (!tree) {
+                continue;
+            }
+            tree = tree.tree;
+            var rootNode = tree.getRootNode();
+            if (rootNode) {
+                pimcore.elementservice.refreshNode(rootNode);
+            }
+        } catch (e) {
+            console.log(e);
+        }
+    }
+};
+
+
 
 pimcore.elementservice.refreshNodeAllTrees = function(elementType, id) {
     var treeNames = pimcore.elementservice.getElementTreeNames(elementType);
     for (var index = 0; index < treeNames.length; index++) {
-        var treeName = treeNames[index];
-        var tree = pimcore.globalmanager.get(treeName);
-        if (!tree) {
-            continue;
-        }
-        tree = tree.tree;
-        var store = tree.getStore();
-        var parentRecord = store.getById(id);
-        if (parentRecord) {
-            parentRecord.data.leaf = false;
-            parentRecord.expand();
-            pimcore.elementservice.refreshNode(parentRecord);
+        try {
+            var treeName = treeNames[index];
+            var tree = pimcore.globalmanager.get(treeName);
+            if (!tree) {
+                continue;
+            }
+            tree = tree.tree;
+            var store = tree.getStore();
+            var parentRecord = store.getById(id);
+            if (parentRecord) {
+                parentRecord.data.leaf = false;
+                parentRecord.expand();
+                pimcore.elementservice.refreshNode(parentRecord);
+            }
+        } catch (e) {
+            console.log(e);
         }
     }
 };
@@ -616,5 +641,39 @@ pimcore.elementservice.addObjectComplete = function(options, response) {
         pimcore.helpers.showNotification(t("error"), t("error_creating_object"), "error");
     }
 
+};
+
+
+pimcore.elementservice.lockElement = function(options) {
+    try {
+        var updateMethod = pimcore.elementservice["update" + ucfirst(options.elementType)];
+        updateMethod(options.id,
+            {
+                locked: options.mode
+            },
+            function() {
+                pimcore.elementservice.refreshRootNodeAllTrees(options.elementType);
+            }
+        );
+    } catch (e) {
+        console.log(e);
+    }
+};
+
+pimcore.elementservice.unlockElement = function(options) {
+    try {
+        Ext.Ajax.request({
+            url: "/admin/element/unlock-propagate",
+            params: {
+                id: options.id,
+                type: options.elementType
+            },
+            success: function () {
+                pimcore.elementservice.refreshRootNodeAllTrees(options.elementType);
+            }.bind(this)
+        });
+    } catch (e) {
+        console.log(e);
+    }
 };
 

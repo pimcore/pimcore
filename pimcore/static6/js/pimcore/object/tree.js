@@ -660,9 +660,11 @@ pimcore.object.tree = Class.create({
                     text: t('unlock'),
                     iconCls: "pimcore_icon_lock pimcore_icon_overlay_delete",
                     handler: function () {
-                        pimcore.elementservice.updateObject(record.data.id, {locked: null}, function () {
-                            pimcore.elementservice.refreshNode(this.tree.getRootNode());
-                        }.bind(this));
+                        pimcore.elementservice.lockElement({
+                            elementType: "object",
+                            id: record.data.id,
+                            mode: "null"
+                        });
                     }.bind(this)
                 });
             } else {
@@ -670,13 +672,11 @@ pimcore.object.tree = Class.create({
                     text: t('lock'),
                     iconCls: "pimcore_icon_lock pimcore_icon_overlay_add",
                     handler: function () {
-                        try {
-                            pimcore.elementservice.updateObject(record.data.id, {locked: "self"}, function () {
-                                pimcore.elementservice.refreshNode(this.tree.getRootNode());
-                            }.bind(this));
-                        } catch (e) {
-                            console.log(e);
-                        }
+                        pimcore.elementservice.lockElement({
+                            elementType: "object",
+                            id: record.data.id,
+                            mode: "self"
+                        });
                     }.bind(this)
                 });
 
@@ -684,14 +684,11 @@ pimcore.object.tree = Class.create({
                     text: t('lock_and_propagate_to_childs'),
                     iconCls: "pimcore_icon_lock pimcore_icon_overlay_go",
                     handler: function () {
-                        try {
-                            pimcore.elementservice.updateObject(record.data.id, {locked: "propagate"},
-                                function () {
-                                    pimcore.elementservice.refreshNode(this.tree.getRootNode());
-                                }.bind(this));
-                        } catch (e) {
-                            console.log(e);
-                        }
+                            pimcore.elementservice.lockElement({
+                                elementType: "object",
+                                id: record.data.id,
+                                mode: "propagate"
+                            });
                     }.bind(this)
                 });
             }
@@ -702,15 +699,9 @@ pimcore.object.tree = Class.create({
                     text: t('unlock_and_propagate_to_children'),
                     iconCls: "pimcore_icon_lock pimcore_icon_overlay_delete",
                     handler: function () {
-                        Ext.Ajax.request({
-                            url: "/admin/element/unlock-propagate",
-                            params: {
-                                id: record.data.id,
-                                type: "object"
-                            },
-                            success: function () {
-                                pimcore.elementservice.refreshNode(record.parentNode);
-                            }.bind(this)
+                        pimcore.elementservice.unlockElement({
+                            elementType: "object",
+                            id: record.data.id
                         });
                     }.bind(this)
                 });

@@ -195,7 +195,6 @@ pimcore.asset.tree = Class.create({
         this.tree.on("itemmouseenter", pimcore.helpers.treeNodeThumbnailPreview.bind(this));
         this.tree.on("itemmouseleave", pimcore.helpers.treeNodeThumbnailPreviewHide.bind(this));
 
-
         store.on("nodebeforeexpand", function (node) {
             pimcore.helpers.addTreeNodeLoadingIndicator("asset", node.data.id);
         });
@@ -211,11 +210,9 @@ pimcore.asset.tree = Class.create({
             this.config.parentPanel.alreadyExpanded = true;
             this.tree.expand();
         }
-
     },
 
     uploadFileList: function (files, parentNode) {
-
         var file;
         this.activeUploads = 0;
 
@@ -584,9 +581,11 @@ pimcore.asset.tree = Class.create({
                     text: t('unlock'),
                     iconCls: "pimcore_icon_lock pimcore_icon_overlay_delete",
                     handler: function () {
-                        pimcore.elementservice.updateAsset(record.data.id, {locked: null}, function () {
-                            pimcore.elementservice.refreshNode(this.tree.getRootNode());
-                        }.bind(this));
+                        pimcore.elementservice.lockElement({
+                            elementType: "asset",
+                            id: record.data.id,
+                            mode: null
+                        });
                     }.bind(this)
                 });
             } else {
@@ -594,9 +593,11 @@ pimcore.asset.tree = Class.create({
                     text: t('lock'),
                     iconCls: "pimcore_icon_lock pimcore_icon_overlay_add",
                     handler: function () {
-                        pimcore.elementservice.updateAsset(record.data.id, {locked: "self"}, function () {
-                            pimcore.elementservice.refreshNode(this.tree.getRootNode());
-                        }.bind(this));
+                        pimcore.elementservice.lockElement({
+                            elementType: "asset",
+                            id: record.data.id,
+                            mode: "self"
+                        });
                     }.bind(this)
                 });
 
@@ -605,10 +606,11 @@ pimcore.asset.tree = Class.create({
                         text: t('lock_and_propagate_to_childs'),
                         iconCls: "pimcore_icon_lock pimcore_icon_overlay_go",
                         handler: function () {
-                            pimcore.elementservice.updateAsset(tree, record, {locked: "propagate"},
-                                function () {
-                                    pimcore.elementservice.refreshNode(this.tree.getRootNode());
-                                }.bind(this));
+                            pimcore.elementservice.lockElement({
+                                elementType: "asset",
+                                id: record.data.id,
+                                mode: "propagate"
+                            });
                         }.bind(this)
                     });
                 }
@@ -620,15 +622,9 @@ pimcore.asset.tree = Class.create({
                     text: t('unlock_and_propagate_to_children'),
                     iconCls: "pimcore_icon_lock pimcore_icon_overlay_delete",
                     handler: function () {
-                        Ext.Ajax.request({
-                            url: "/admin/element/unlock-propagate",
-                            params: {
-                                id: record.data.id,
-                                type: "asset"
-                            },
-                            success: function () {
-                                pimcore.elementservice.refreshNode(this.tree.getRootNode());
-                            }.bind(this)
+                        pimcore.elementservice.unlockElement({
+                            elementType: "asset",
+                            id: record.data.id
                         });
                     }.bind(this)
                 });
