@@ -279,6 +279,7 @@ pimcore.elementservice.applyNewKey = function(affectedNodes, elementType, id, va
 pimcore.elementservice.editDocumentKeyComplete =  function (options, button, value, object) {
     if (button == "ok") {
 
+        var record;
         var id = options.id;
         var elementType = options.elementType;
         value = pimcore.helpers.getValidFilename(value);
@@ -286,7 +287,7 @@ pimcore.elementservice.editDocumentKeyComplete =  function (options, button, val
         if (options.sourceTree) {
             var tree = options.sourceTree;
             var store = tree.getStore();
-            var record = store.getById(id);
+            record = store.getById(id);
             if(pimcore.elementservice.isKeyExistingInLevel(record.parentNode, value, record)) {
                 return;
             }
@@ -299,17 +300,18 @@ pimcore.elementservice.editDocumentKeyComplete =  function (options, button, val
         var originalPath;
         var affectedNodes = pimcore.elementservice.getAffectedNodes(elementType, id);
         if (affectedNodes) {
-            var record = affectedNodes[0];
+            record = affectedNodes[0];
             originalText = record.get("text");
             originalPath = record.get("path");
         }
         pimcore.elementservice.applyNewKey(affectedNodes, elementType, id, value);
 
         pimcore.elementservice.updateDocument(id, {key: value}, function (response) {
+            var record, index;
             var rdata = Ext.decode(response.responseText);
             if (!rdata || !rdata.success) {
-                for (var index = 0; index < affectedNodes.length; index++) {
-                    var record = affectedNodes[index];
+                for (index = 0; index < affectedNodes.length; index++) {
+                    record = affectedNodes[index];
                     record.set("text", originalText);
                     record.set("path", originalPath);
                 }
@@ -318,8 +320,8 @@ pimcore.elementservice.editDocumentKeyComplete =  function (options, button, val
                 return;
             }
 
-            for (var index = 0; index < affectedNodes.length; index++) {
-                var record = affectedNodes[index];
+            for (index = 0; index < affectedNodes.length; index++) {
+                record = affectedNodes[index];
                 pimcore.elementservice.refreshNode(record.parentNode);
             }
 
@@ -342,6 +344,7 @@ pimcore.elementservice.editDocumentKeyComplete =  function (options, button, val
 pimcore.elementservice.editObjectKeyComplete = function (options, button, value, object) {
     if (button == "ok") {
 
+        var record;
         var id = options.id;
         var elementType = options.elementType;
         value = pimcore.helpers.getValidFilename(value);
@@ -349,7 +352,7 @@ pimcore.elementservice.editObjectKeyComplete = function (options, button, value,
         if (options.sourceTree) {
             var tree = options.sourceTree;
             var store = tree.getStore();
-            var record = store.getById(id);
+            record = store.getById(id);
             if(pimcore.elementservice.isKeyExistingInLevel(record.parentNode, value, record)) {
                 return;
             }
@@ -357,7 +360,7 @@ pimcore.elementservice.editObjectKeyComplete = function (options, button, value,
 
         var affectedNodes = pimcore.elementservice.getAffectedNodes(elementType, id);
         if (affectedNodes) {
-            var record = affectedNodes[0];
+            record = affectedNodes[0];
             originalText = record.get("text");
             originalPath = record.get("path");
         }
@@ -365,8 +368,9 @@ pimcore.elementservice.editObjectKeyComplete = function (options, button, value,
 
         pimcore.elementservice.updateObject(id, {key: value},
             function (response) {
-                for (var index = 0; index < affectedNodes.length; index++) {
-                    var record = affectedNodes[index];
+                var index, record;
+                for (index = 0; index < affectedNodes.length; index++) {
+                    record = affectedNodes[index];
                     pimcore.elementservice.refreshNode(record);
                 }
 
@@ -377,15 +381,15 @@ pimcore.elementservice.editObjectKeyComplete = function (options, button, value,
                     }  else {
                         pimcore.helpers.showNotification(t("error"), t("error_renaming_object"), "error",
                             t(rdata.message));
-                        for (var index = 0; index < affectedNodes.length; index++) {
-                            var record = affectedNodes[index];
+                        for (index = 0; index < affectedNodes.length; index++) {
+                            record = affectedNodes[index];
                             pimcore.elementservice.refreshNode(record.parentNode);
                         }
                     }
                 } catch (e) {
                     pimcore.helpers.showNotification(t("error"), t("error_renaming_object"), "error");
-                    for (var index = 0; index < affectedNodes.length; index++) {
-                        var record = affectedNodes[index];
+                    for (index = 0; index < affectedNodes.length; index++) {
+                        record = affectedNodes[index];
                         pimcore.elementservice.refreshNode(record.parentNode);
                     }
                 }
@@ -406,6 +410,7 @@ pimcore.elementservice.reopenElement = function(options) {
 pimcore.elementservice.editAssetKeyComplete = function (options, button, value, object) {
     try {
         if (button == "ok") {
+            var record;
             var id = options.id;
             var elementType = options.elementType;
 
@@ -414,7 +419,7 @@ pimcore.elementservice.editAssetKeyComplete = function (options, button, value, 
             if (options.sourceTree) {
                 var tree = options.sourceTree;
                 var store = tree.getStore();
-                var record = store.getById(id);
+                record = store.getById(id);
                 // check for ident filename in current level
 
                 var parentChilds = record.parentNode.childNodes;
@@ -428,7 +433,7 @@ pimcore.elementservice.editAssetKeyComplete = function (options, button, value, 
 
             var affectedNodes = pimcore.elementservice.getAffectedNodes(elementType, id);
             if (affectedNodes) {
-                var record = affectedNodes[0];
+                record = affectedNodes[0];
                 originalText = record.get("text");
                 originalPath = record.get("path");
             }
@@ -436,10 +441,11 @@ pimcore.elementservice.editAssetKeyComplete = function (options, button, value, 
 
             pimcore.elementservice.updateAsset(id, {filename: value},
                 function (response) {
+                    var index, record;
                     var rdata = Ext.decode(response.responseText);
                     if (!rdata || !rdata.success) {
-                        for (var index = 0; index < affectedNodes.length; index++) {
-                            var record = affectedNodes[index];
+                        for (index = 0; index < affectedNodes.length; index++) {
+                            record = affectedNodes[index];
                             record.set("text", originalText);
                             record.set("path", originalPath);
                         }
@@ -448,8 +454,8 @@ pimcore.elementservice.editAssetKeyComplete = function (options, button, value, 
                         return;
                     }
 
-                    for (var index = 0; index < affectedNodes.length; index++) {
-                        var record = affectedNodes[index];
+                    for (index = 0; index < affectedNodes.length; index++) {
+                        record = affectedNodes[index];
                         pimcore.elementservice.refreshNode(record);
                     }
 
@@ -515,7 +521,7 @@ pimcore.elementservice.isDisallowedDocumentKey = function (parentNodeId, key) {
 
 pimcore.elementservice.isKeyExistingInLevel = function(parentNode, key, node) {
 
-    var key = pimcore.helpers.getValidFilename(key);
+    key = pimcore.helpers.getValidFilename(key);
     var parentChilds = parentNode.childNodes;
     for (var i = 0; i < parentChilds.length; i++) {
         if (parentChilds[i].data.text == key && node != parentChilds[i]) {
