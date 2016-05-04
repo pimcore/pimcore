@@ -61,6 +61,39 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
     },
 
     editSettings: function () {
+        this.configSelectionCombo = new Ext.form.ComboBox({
+            xtype:"combo",
+            width: 500,
+            id: "pimcore_portlet_selected_custom_report",
+            autoSelect: true,
+            valueField: "id",
+            displayField: "text",
+            value: this.config,
+            fieldLabel: t("portlet_customreport"),
+            store: new Ext.data.Store({
+                autoDestroy: true,
+                autoLoad: true,
+                proxy: {
+                    type: 'ajax',
+                    url: '/admin/reports/custom-report/tree',
+                    extraParams: {
+                        portlet: 1
+                    },
+                    reader: {
+                        type: 'json',
+                        rootProperty: 'data'
+                    }
+                },
+                listeners: {
+                    load: function() {
+                        this.configSelectionCombo.setValue(this.config);
+                    }.bind(this)
+                },
+                fields: ['id','text']
+            }),
+            triggerAction: "all"
+        });
+
         var win = new Ext.Window({
             width: 600,
             height: 150,
@@ -72,32 +105,7 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
                     xtype: "form",
                     bodyStyle: "padding: 10px",
                     items: [
-                        {
-                            xtype:"combo",
-                            width: 500,
-                            id: "pimcore_portlet_selected_custom_report",
-                            autoSelect: true,
-                            valueField: "id",
-                            displayField: "text",
-                            value: this.config,
-                            fieldLabel: t("portlet_customreport"),
-                            store: new Ext.data.Store({
-                                autoDestroy: true,
-                                proxy: {
-                                    type: 'ajax',
-                                    url: '/admin/reports/custom-report/tree',
-                                    extraParams: {
-                                        portlet: 1
-                                    },
-                                    reader: {
-                                        type: 'json',
-                                        rootProperty: 'data'
-                                    }
-                                },
-                                fields: ['id','text']
-                            }),
-                            triggerAction: "all"
-                        },
+                        this.configSelectionCombo,
                         {
                             xtype: "button",
                             text: t("save"),
