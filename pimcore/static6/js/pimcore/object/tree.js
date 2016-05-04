@@ -994,7 +994,7 @@ pimcore.object.tree = Class.create({
             elementSubType: record.data.type,
             id: record.data.id,
             default: record.data.text
-        }
+        };
         pimcore.elementservice.editElementKey(options);
     },
 
@@ -1010,81 +1010,21 @@ pimcore.object.tree = Class.create({
             success: function (tree, record, task, response) {
                 try {
                     var rdata = Ext.decode(response.responseText);
+                    var id = record.data.id;
+
                     if (rdata && rdata.success) {
-                        var treeNames = ["layout_object_tree"]
-                        if (pimcore.settings.customviews.length > 0) {
-                            for (var cvs = 0; cvs < pimcore.settings.customviews.length; cvs++) {
-                                var cv = pimcore.settings.customviews[cvs];
-                                if (!cv.treetype || cv.treetype == "object") {
-                                    treeNames.push("layout_object_tree_" + cv.id);
-                                }
-                            }
-                        }
+                        var options = {
+                            elementType: "object",
+                            id: record.data.id,
+                            published: task != "unpublish"
+                        };
 
-                        var index;
-                        for (index = 0; index < treeNames.length; index++) {
-                            var treeName = treeNames[index];
-
-                            // remove class in tree panel
-                            try {
-                                var tree = pimcore.globalmanager.get(treeName).tree;
-                                if (!tree) {
-                                    continue;
-                                }
-                                var store = tree.getStore();
-                                // record of sister store
-                                var sisterRecord = store.getById(record.data.id);
-                                if (!sisterRecord) {
-                                    continue;
-                                }
-
-                                var view = tree.getView();
-                                var nodeEl = Ext.fly(view.getNodeByRecord(sisterRecord));
-
-                                if (nodeEl) {
-                                    var nodeElInner = nodeEl.down(".x-grid-td");
-                                }
-
-                                if (task == 'unpublish') {
-                                    if (nodeElInner) {
-                                        nodeElInner.addCls('pimcore_unpublished');
-                                    }
-                                    sisterRecord.data.published = false;
-                                    sisterRecord.data.cls = "pimcore_unpublished";
-
-                                    if (pimcore.globalmanager.exists("object_" + sisterRecord.data.id)) {
-                                        pimcore.globalmanager.get("object_" + sisterRecord.data.id).toolbarButtons.unpublish.hide();
-                                    }
-
-                                } else {
-                                    if (nodeElInner) {
-                                        nodeElInner.removeCls('pimcore_unpublished');
-                                    }
-                                    delete sisterRecord.data.cls;
-
-                                    sisterRecord.data.published = true;
-                                    if (pimcore.globalmanager.exists("object_" + sisterRecord.data.id)) {
-                                        pimcore.globalmanager.get("object_" + sisterRecord.data.id).toolbarButtons.unpublish.show();
-                                    }
-                                }
-                            } catch (e) {
-                                console.log(e);
-                            }
-                        }
-
-                        if (pimcore.globalmanager.exists("object_" + record.data.id)) {
-                            // reload versions
-                            if (pimcore.globalmanager.get("object_" + record.data.id).versions) {
-                                if (typeof pimcore.globalmanager.get("object_" + record.data.id).versions.reload
-                                    == "function") {
-                                    pimcore.globalmanager.get("object_" + record.data.id).versions.reload();
-                                }
-                            }
-                        }
+                        pimcore.elementservice.setElementPublishedState(options);
+                        pimcore.elementservice.setElementToolbarButtons(options);
+                        pimcore.elementservice.reloadVersions(options);
 
                         pimcore.helpers.showNotification(t("success"), t("successful_" + task + "_object"), "success");
-                    }
-                    else {
+                    }  else {
                         pimcore.helpers.showNotification(t("error"), t("error_" + task + "_object"), "error",
                             t(rdata.message));
                     }

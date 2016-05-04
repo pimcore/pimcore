@@ -677,3 +677,66 @@ pimcore.elementservice.unlockElement = function(options) {
     }
 };
 
+pimcore.elementservice.setElementPublishedState = function(options) {
+    var elementType = options.elementType;
+    var id = options.id;
+    var published = options.published;
+
+    var affectedNodes = pimcore.elementservice.getAffectedNodes(elementType, id);
+    for (var index = 0; index < affectedNodes.length; index++) {
+        try {
+            var node = affectedNodes[index];
+            if (node) {
+                var tree = node.getOwnerTree();
+                var view = tree.getView();
+                var nodeEl = Ext.fly(view.getNodeByRecord(node));
+                if (nodeEl) {
+                    var nodeElInner = nodeEl.down(".x-grid-td");
+                    if (nodeElInner) {
+                        if (published) {
+                            nodeElInner.removeCls("pimcore_unpublished");
+                        } else {
+                            nodeElInner.addCls("pimcore_unpublished");
+                        }
+                    }
+                }
+                if (published) {
+                    delete node.data.cls;
+                } else {
+                    node.data.cls = "pimcore_unpublished";
+                }
+                node.data.published = published;
+            }
+        } catch (e) {
+            console.log(e);
+        }
+    }
+};
+
+pimcore.elementservice.setElementToolbarButtons = function(options) {
+    var elementType = options.elementType;
+    var id = options.id;
+    var key = elementType + "_" + id;
+    if (pimcore.globalmanager.exists(key)) {
+        if (options.published) {
+            pimcore.globalmanager.get(key).toolbarButtons.unpublish.show();
+        } else {
+            pimcore.globalmanager.get(key).toolbarButtons.unpublish.hide();
+        }
+    }
+};
+
+pimcore.elementservice.reloadVersions = function(options) {
+    var elementType = options.elementType;
+    var id = options.id;
+    var key = elementType + "_" + id;
+
+    if (pimcore.globalmanager.exists(key)) {
+        // reload versions
+        if (pimcore.globalmanager.get(key).versions) {
+            if (typeof pimcore.globalmanager.get(key).versions.reload  == "function") {
+                pimcore.globalmanager.get(key).versions.reload();
+            }
+        }
+    }
+};

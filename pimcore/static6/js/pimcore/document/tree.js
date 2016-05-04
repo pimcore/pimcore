@@ -1107,43 +1107,15 @@ pimcore.document.tree = Class.create({
                 try {
                     var rdata = Ext.decode(response.responseText);
                     if (rdata && rdata.success) {
-                        var view = tree;
-                        var nodeEl = Ext.fly(view.getNodeByRecord(record));
-
-                        if (task == 'unpublish') {
-                            record.data.cls = "pimcore_unpublished";
-                            var nodeElInner = nodeEl.down(".x-grid-td");
-                            if (nodeElInner) {
-                                nodeElInner.addCls("pimcore_unpublished");
-                            }
-
-                            record.data.published = false;
-                            if (pimcore.globalmanager.exists("document_" + record.data.id)) {
-                                pimcore.globalmanager.get("document_" + record.data.id).toolbarButtons.unpublish.hide();
-                            }
-
-                        } else {
-                            var nodeElInner = nodeEl.down(".x-grid-td");
-                            if (nodeElInner) {
-                                nodeElInner.removeCls('pimcore_unpublished');
-                            }
-                            delete record.data.cls;
-                            record.data.published = true;
-                            if (pimcore.globalmanager.exists("document_" + record.data.id)) {
-                                pimcore.globalmanager.get("document_" + record.data.id).toolbarButtons.unpublish.show();
-                            }
-                        }
-
-                        if (pimcore.globalmanager.exists("document_" + record.data.id)) {
-                            // reload versions
-                            if (pimcore.globalmanager.get("document_" + record.data.id).versions) {
-                                if (typeof pimcore.globalmanager.get("document_" + record.data.id).versions.reload
-                                    == "function") {
-                                    pimcore.globalmanager.get("document_" + record.data.id).versions.reload();
-                                }
-                            }
-                        }
-
+                        var options = {
+                            elementType: "document",
+                                id: record.data.id,
+                            published: task != "unpublish"
+                        };
+                        pimcore.elementservice.setElementPublishedState(options);
+                        pimcore.elementservice.setElementToolbarButtons(options);
+                        pimcore.elementservice.reloadVersions(options);
+                        
                         pimcore.helpers.showNotification(t("success"), t("successful_" + task + "_document"),
                             "success");
                     }
