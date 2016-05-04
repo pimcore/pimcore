@@ -259,7 +259,7 @@ pimcore.asset.tree = Class.create({
 
                 if(this.activeUploads < 1) {
                     win.close();
-                    pimcore.elementservice.refreshNode(parentNode);
+                    pimcore.elementservice.refreshNodeAllTrees("asset", parentNode.get("id"));
                 }
             }.bind(this);
 
@@ -826,7 +826,7 @@ pimcore.asset.tree = Class.create({
         } catch(e){
             pimcore.helpers.showNotification(t("error"), t("there_was_a_problem_creating_a_folder"), "error");
         }
-        pimcore.elementservice.refreshNode(record);
+        pimcore.elementservice.refreshNodeAllTrees("asset", record.get("id"));
     },
 
     addSingleAsset: function (tree, record) {
@@ -888,7 +888,7 @@ pimcore.asset.tree = Class.create({
                     this.downloadProgressBar = null;
                     this.downloadProgressWin = null;
 
-                    pimcore.elementservice.refreshNode(record);
+                    pimcore.elementservice.refreshNodeAllTrees("asset", record.get("id"));
                 }.bind(this, res.jobId),
                 update: function (currentStep, steps, percent) {
                     if(this.downloadProgressBar) {
@@ -904,9 +904,8 @@ pimcore.asset.tree = Class.create({
                 jobs: res.jobs
             });
         }.bind(this), function (res) {
-            // failed
-            pimcore.elementservice.refreshNode(record.parentNode);
             console.log("failed");
+            pimcore.elementservice.refreshNodeAllTrees("asset", record.parentNode.get("id"));
         }.bind(this));
     },
 
@@ -1052,7 +1051,7 @@ pimcore.asset.tree = Class.create({
                                         this.downloadProgressBar = null;
                                         this.downloadProgressWin = null;
 
-                                        pimcore.elementservice.refreshNode(record);
+                                        pimcore.elementservice.refreshNodeAllTrees("asset", record.get("id"));
                                     }.bind(this),
                                     update: function (currentStep, steps, percent) {
                                         if(this.downloadProgressBar) {
@@ -1101,12 +1100,12 @@ pimcore.asset.tree = Class.create({
                     },
                     success: function () {
                         win.close();
-                        pimcore.elementservice.refreshNode(record);
+                        pimcore.elementservice.refreshNodeAllTrees("asset", record.get("id"));
 
                     }.bind(this),
                     failure: function() {
                         win.close();
-                        pimcore.elementservice.refreshNode(record);
+                        pimcore.elementservice.refreshNodeAllTrees("asset", record.get("id"));
                     }
                 });
             }
@@ -1117,7 +1116,7 @@ pimcore.asset.tree = Class.create({
 
         record.data.leaf = false;
         record.expand();
-        pimcore.elementservice.refreshNode(record);
+        pimcore.elementservice.refreshNodeAllTrees("asset", record.get("id"));
     },
 
     editAssetKey: function (tree, record) {
