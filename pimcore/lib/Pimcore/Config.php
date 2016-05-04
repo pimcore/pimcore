@@ -343,7 +343,6 @@ class Config
      */
     public static function getStandardPerspective()
     {
-
         $elementTree = [
             [
                 "type" => "documents",
@@ -370,7 +369,7 @@ class Config
 
         $cvConfigs = Tool::getCustomViewConfig();
         if ($cvConfigs) {
-            foreach ($cvConfigs as $cvConfig){
+            foreach ($cvConfigs as $cvConfig) {
                 $cvConfig["type"] = "customview";
                 $elementTree[] = $cvConfig;
             }
@@ -517,12 +516,12 @@ class Config
 
             if ($resultItem["type"] == "customview") {
                 $customViewId = $resultItem["id"];
-                if (!$customViewId){
+                if (!$customViewId) {
                     \Logger::error("custom view id missing " . var_export($resultItem, true));
                     continue;
                 }
                 $customViewCfg = $cfConfigMapping[$customViewId];
-                if (!$customViewId){
+                if (!$customViewId) {
                     \Logger::error("no custom view config for id  " . $customViewId);
                     continue;
                 }

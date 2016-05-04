@@ -776,9 +776,9 @@ class Service extends Model\AbstractModel
     {
         if ($element instanceof Object\AbstractObject) {
             return Object\Service::getUniqueKey($element);
-        } else if ($element instanceof Document) {
+        } elseif ($element instanceof Document) {
             return Document\Service::getUniqueKey($element);
-        } else if ($element instanceof Asset) {
+        } elseif ($element instanceof Asset) {
             return Asset\Service::getUniqueKey($element);
         }
     }

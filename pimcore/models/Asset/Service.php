@@ -304,36 +304,37 @@ class Service extends Model\Element\Service
      * @return string
      * @throws \Exception
      */
-    public static function getUniqueKey($item,$nr = 0){
+    public static function getUniqueKey($item, $nr = 0)
+    {
         $list = new Listing();
         $key = \Pimcore\File::getValidFilename($item->getKey());
-        if(!$key){
+        if (!$key) {
             throw new \Exception("No item key set.");
         }
-        if($nr){
-            if($item->getType() == 'folder'){
+        if ($nr) {
+            if ($item->getType() == 'folder') {
                 $key = $key . '_' . $nr;
-            }else{
-                $keypart  = substr($key,0,strrpos($key,'.'));
-                $extension = str_replace($keypart,'',$key);
+            } else {
+                $keypart  = substr($key, 0, strrpos($key, '.'));
+                $extension = str_replace($keypart, '', $key);
                 $key = $keypart . '_' . $nr . $extension;
             }
         }
 
         $parent = $item->getParent();
-        if(!$parent){
+        if (!$parent) {
             throw new \Exception("You have to set a parent folder to determine a unique Key");
         }
 
-        if(!$item->getId()){
-            $list->setCondition('parentId = ? AND `filename` = ? ',array($parent->getId(),$key));
-        }else{
-            $list->setCondition('parentId = ? AND `filename` = ? AND id != ? ',array($parent->getId(),$key,$item->getId()));
+        if (!$item->getId()) {
+            $list->setCondition('parentId = ? AND `filename` = ? ', array($parent->getId(), $key));
+        } else {
+            $list->setCondition('parentId = ? AND `filename` = ? AND id != ? ', array($parent->getId(), $key, $item->getId()));
         }
         $check = $list->loadIdList();
-        if(!empty($check)){
+        if (!empty($check)) {
             $nr++;
-            $key = self::getUniqueKey($item,$nr);
+            $key = self::getUniqueKey($item, $nr);
         }
         return $key;
     }

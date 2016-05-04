@@ -56,7 +56,7 @@ class Archive
         $zip = new \ZipArchive();
         $opened = $zip->open($destinationFile, $mode);
 
-        if($opened !== true){
+        if ($opened !== true) {
             throw new \Exception("Couldn't open archive file. Error: " . $opened);
         }
         foreach ($items as $item) {
