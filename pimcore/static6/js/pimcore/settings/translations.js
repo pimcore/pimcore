@@ -32,7 +32,9 @@ pimcore.settings.translations = Class.create({
                         var input = field;
                         var proxy = this.store.getProxy();
                         proxy.extraParams.searchString = input.getValue();
-                        this.store.load();
+                        this.store.load({
+                            page: 1
+                        });
                     }
                 }.bind(this)
             }
@@ -196,13 +198,13 @@ pimcore.settings.translations = Class.create({
 
 
         this.store = new Ext.data.Store({
-            id: 'translation_store',
             model: this.modelName,
             remoteSort: true,
             remoteFilter: true,
             autoSync: true,
             pageSize: itemsPerPage
         });
+        this.store.getProxy().extraParams.searchString = "";
 
         this.pagingtoolbar = Ext.create('Ext.toolbar.Paging', {
             pageSize: itemsPerPage,
