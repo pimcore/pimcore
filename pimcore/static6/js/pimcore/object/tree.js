@@ -534,7 +534,7 @@ pimcore.object.tree = Class.create({
                 //paste
                 var pasteMenu = [];
 
-                if (this.cacheObjectId && record.data.permissions.create) {
+                if (pimcore.cachedObjectId && record.data.permissions.create) {
                     pasteMenu.push({
                         text: t("paste_recursive_as_childs"),
                         iconCls: "pimcore_icon_paste",
@@ -741,7 +741,7 @@ pimcore.object.tree = Class.create({
     },
 
     copy: function (tree, record) {
-        this.cacheObjectId = record.data.id;
+        pimcore.cachedObjectId = record.data.id;
     },
 
     cut: function (tree, record) {
@@ -865,8 +865,8 @@ pimcore.object.tree = Class.create({
                 tree.loadMask.hide();
                 pimcore.helpers.showNotification(t("error"), t("error_moving_object"), "error");
             }
-            pimcore.elementservice.refreshNode(oldParent);
-            pimcore.elementservice.refreshNode(newParent);
+            pimcore.elementservice.refreshNodeAllTrees("object", oldParent.id);
+            pimcore.elementservice.refreshNodeAllTrees("object", newParent.id);
 
             tree.loadMask.hide();
         }.bind(this, record, newParent, oldParent, tree));
@@ -881,7 +881,7 @@ pimcore.object.tree = Class.create({
             url: "/admin/object/copy-info/",
             params: {
                 targetId: record.data.id,
-                sourceId: this.cacheObjectId,
+                sourceId: pimcore.cachedObjectId,
                 type: type
             },
             success: this.paste.bind(this, tree, record)
@@ -921,7 +921,7 @@ pimcore.object.tree = Class.create({
                         } catch (e) {
                             console.log(e);
                             pimcore.helpers.showNotification(t("error"), t("error_pasting_object"), "error");
-                            pimcore.elementservice.refreshNode(record);
+                            pimcore.elementservice.refreshNodeAllTrees("object", record.id);
                         }
                     }.bind(this),
                     update: function (currentStep, steps, percent) {
@@ -936,8 +936,7 @@ pimcore.object.tree = Class.create({
 
                         pimcore.helpers.showNotification(t("error"), t("error_pasting_object"), "error", t(message));
 
-                        pimcore.elementservice.refreshNode(record.parentNode);
-
+                        pimcore.elementservice.refreshNodeAllTrees("object", record.parentNode.id);
                     }.bind(this),
                     jobs: res.pastejobs
                 });
@@ -961,7 +960,7 @@ pimcore.object.tree = Class.create({
 
         //this.tree.loadMask.hide();
         pimcore.helpers.removeTreeNodeLoadingIndicator("object", record.id);
-        pimcore.elementservice.refreshNode(record);
+        pimcore.elementservice.refreshNodeAllTrees("object", record.id);
     },
 
     importObjects: function (classId, className, tree, record) {

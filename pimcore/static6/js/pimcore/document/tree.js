@@ -429,7 +429,7 @@ pimcore.document.tree = Class.create({
             menu.add("-");
 
             //paste
-            if (this.cacheDocumentId && record.data.permissions.create) {
+            if (pimcore.cachedDocumentId && record.data.permissions.create) {
                 pasteMenu.push({
                     text: t("paste_recursive_as_childs"),
                     iconCls: "pimcore_icon_paste",
@@ -478,7 +478,7 @@ pimcore.document.tree = Class.create({
                 }.bind(this)
             });
         }
-        if (this.cacheDocumentId && record.data.permissions.create) {
+        if (pimcore.cachedDocumentId && record.data.permissions.create) {
 
             if (record.data.type != "folder") {
                 pasteMenu.push({
@@ -723,7 +723,7 @@ pimcore.document.tree = Class.create({
     },
 
     copy: function (tree, record) {
-        this.cacheDocumentId = record.data.id;
+        pimcore.cachedDocumentId = record.data.id;
     },
 
     cut: function (tree, record) {
@@ -775,7 +775,7 @@ pimcore.document.tree = Class.create({
             url: "/admin/document/copy-info/",
             params: {
                 targetId: record.data.id,
-                sourceId: this.cacheDocumentId,
+                sourceId: pimcore.cachedDocumentId,
                 type: type,
                 enableInheritance: enableInheritance
             },
@@ -816,7 +816,7 @@ pimcore.document.tree = Class.create({
                         } catch(e) {
                             console.log(e);
                             pimcore.helpers.showNotification(t("error"), t("error_pasting_document"), "error");
-                            pimcore.elementservice.refreshNode(record);
+                            pimcore.elementservice.refreshNodeAllTrees("document", record.id);
                         }
                     }.bind(this),
                     update: function (currentStep, steps, percent) {
@@ -830,7 +830,7 @@ pimcore.document.tree = Class.create({
                         record.pasteProgressBar = null;
 
                         pimcore.helpers.showNotification(t("error"), t("error_pasting_document"), "error", t(message));
-                        pimcore.elementservice.refreshNode(record);
+                        pimcore.elementservice.refreshNodeAllTrees("document", record.id);
                     }.bind(this),
                     jobs: res.pastejobs
                 });
@@ -853,7 +853,7 @@ pimcore.document.tree = Class.create({
 
         //this.tree.loadMask.hide();
         pimcore.helpers.removeTreeNodeLoadingIndicator("document", node.id);
-        pimcore.elementservice.refreshNode(node);
+        pimcore.elementservice.refreshNodeAllTrees("document", node.id);
     },
 
     removeSite: function (tree, record) {

@@ -520,7 +520,7 @@ pimcore.asset.tree = Class.create({
 
 
         //paste
-        if (this.cacheDocumentId
+        if (pimcore.cachedAssetId
             && (record.data.permissions.create ||record.data.permissions.publish)) {
             var pasteMenu = [];
 
@@ -662,7 +662,7 @@ pimcore.asset.tree = Class.create({
 
 
     copy: function (tree, record) {
-        this.cacheDocumentId = record.id;
+        pimcore.cachedAssetId = record.id;
     },
 
     cut: function (tree, record) {
@@ -708,7 +708,7 @@ pimcore.asset.tree = Class.create({
             url: "/admin/asset/copy-info/",
             params: {
                 targetId: record.id,
-                sourceId: this.cacheDocumentId,
+                sourceId: pimcore.cachedAssetId,
                 type: type
             },
             success: this.paste.bind(this, tree, record)
@@ -748,7 +748,7 @@ pimcore.asset.tree = Class.create({
                         } catch(e) {
                             console.log(e);
                             pimcore.helpers.showNotification(t("error"), t("error_pasting_asset"), "error");
-                            pimcore.elementservice.refreshNode(record.parentNode);
+                            pimcore.elementservice.refreshNodeAllTrees("asset", record.parentNode.id);
                         }
                     }.bind(this),
                     update: function (currentStep, steps, percent) {
@@ -762,7 +762,7 @@ pimcore.asset.tree = Class.create({
                         record.pasteProgressBar = null;
 
                         pimcore.helpers.showNotification(t("error"), t("error_pasting_asset"), "error", t(message));
-                        pimcore.elementservice.refreshNode(record.parentNode);
+                        pimcore.elementservice.refreshNodeAllTrees("asset", record.parentNode.id);
                     }.bind(this),
                     jobs: res.pastejobs
                 });
@@ -784,8 +784,7 @@ pimcore.asset.tree = Class.create({
         record.pasteProgressBar = null;
         record.pasteWindow = null;
 
-        //this.tree.loadMask.hide();
-        pimcore.elementservice.refreshNode(record);
+        pimcore.elementservice.refreshNodeAllTrees("asset", record.id);
     },
 
     addFolder : function (tree, record) {

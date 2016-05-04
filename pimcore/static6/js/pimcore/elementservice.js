@@ -592,6 +592,7 @@ pimcore.elementservice.refreshNodeAllTrees = function(elementType, id) {
                 continue;
             }
             tree = tree.tree;
+            console.log("refresh " + tree.getId() + " " + id);
             var store = tree.getStore();
             var parentRecord = store.getById(id);
             if (parentRecord) {
