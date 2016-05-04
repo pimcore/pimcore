@@ -540,16 +540,16 @@ pimcore.asset.tree = Class.create({
             }
         }
 
-        if (record.data.type == "folder" && this.cutAsset
+        if (record.data.type == "folder" && pimcore.cutAsset
             && (record.data.permissions.create || record.data.permissions.publish)) {
             menu.add(new Ext.menu.Item({
                 text: t('paste_cut_element'),
                 iconCls: "pimcore_icon_paste",
                 handler: function() {
-                    this.pasteCutAsset(this.cutAsset,
-                        this.cutParentNode, record, this.tree);
-                    this.cutParentNode = null;
-                    this.cutAsset = null;
+                    this.pasteCutAsset(pimcore.cutAsset,
+                        pimcore.cutAssetParentNode, record, this.tree);
+                    pimcore.cutAssetParentNode = null;
+                    pimcore.cutAsset = null;
                 }.bind(this)
             }));
         }
@@ -666,8 +666,8 @@ pimcore.asset.tree = Class.create({
     },
 
     cut: function (tree, record) {
-        this.cutAsset = record;
-        this.cutParentNode = record.parentNode;
+        pimcore.cutAsset = record;
+        pimcore.cutAssetParentNode = record.parentNode;
     },
 
     pasteCutAsset: function(asset, oldParent, newParent, tree) {
@@ -695,8 +695,9 @@ pimcore.asset.tree = Class.create({
                 pimcore.helpers.showNotification(t("error"), t("cant_move_node_to_target"), "error");
             }
             this.tree.loadMask.hide();
-            pimcore.elementservice.refreshNode(oldParent);
-            pimcore.elementservice.refreshNode(newParent);
+            pimcore.elementservice.refreshNodeAllTrees("asset", oldParent.id);
+            pimcore.elementservice.refreshNodeAllTrees("asset", newParent.id);
+            newParent.expand();
         }.bind(this, asset, newParent, oldParent, tree));
 
     },
@@ -738,7 +739,6 @@ pimcore.asset.tree = Class.create({
                 });
 
                 record.pasteWindow.show();
-
 
                 var pj = new pimcore.tool.paralleljobs({
                     success: function () {

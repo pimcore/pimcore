@@ -563,15 +563,15 @@ pimcore.object.tree = Class.create({
             }
 
             if (!isVariant) {
-                if (this.cutObject && record.data.permissions.create) {
+                if (pimcore.cutObject && record.data.permissions.create) {
                     pasteMenu.push({
                         text: t("paste_cut_element"),
                         iconCls: "pimcore_icon_paste",
                         handler: function () {
-                            this.pasteCutObject(this.cutObject,
-                                       this.cutParentNode, record, this.tree);
-                     this.cutParentNode = null;
-                            this.cutObject = null;
+                            this.pasteCutObject(pimcore.cutObject,
+                                pimcore.cutObjectParentNode, record, this.tree);
+                            pimcore.cutObjectParentNode = null;
+                            pimcore.cutObject = null;
                         }.bind(this)
                     });
                 }
@@ -745,15 +745,14 @@ pimcore.object.tree = Class.create({
     },
 
     cut: function (tree, record) {
-        this.cutObject = record;
-        this.cutParentNode = record.parentNode;
+        pimcore.cutObject = record;
+        pimcore.cutObjectParentNode = record.parentNode;
     },
 
     createVariant: function (tree, record) {
         Ext.MessageBox.prompt(t('add_variant'), t('please_enter_the_name_of_the_new_variant'),
             this.addVariantCreate.bind(this, tree, record));
     },
-
 
     addFolderCreate: function (tree, record, button, value, object) {
 
@@ -867,7 +866,7 @@ pimcore.object.tree = Class.create({
             }
             pimcore.elementservice.refreshNodeAllTrees("object", oldParent.id);
             pimcore.elementservice.refreshNodeAllTrees("object", newParent.id);
-
+            newParent.expand();
             tree.loadMask.hide();
         }.bind(this, record, newParent, oldParent, tree));
     },

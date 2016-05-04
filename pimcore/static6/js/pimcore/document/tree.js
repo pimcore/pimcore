@@ -466,15 +466,15 @@ pimcore.document.tree = Class.create({
 
 
         //paste
-        if (this.cutDocument && record.data.permissions.create) {
+        if (pimcore.cutDocument && record.data.permissions.create) {
             pasteMenu.push({
                 text: t("paste_cut_element"),
                 iconCls: "pimcore_icon_paste",
                 handler: function() {
-                    this.pasteCutDocument(this.cutDocument,
-                        this.cutParentNode, record, this.tree);
-                    this.cutParentNode = null;
-                    this.cutDocument = null;
+                    this.pasteCutDocument(pimcore.cutDocument,
+                        pimcore.cutDocumentParentNode, record, this.tree);
+                    pimcore.cutDocumentParentNode = null;
+                    pimcore.cutDocument = null;
                 }.bind(this)
             });
         }
@@ -727,8 +727,8 @@ pimcore.document.tree = Class.create({
     },
 
     cut: function (tree, record) {
-        this.cutDocument = record;
-        this.cutParentNode = record.parentNode;
+        pimcore.cutDocument = record;
+        pimcore.cutDocumentParentNode = record.parentNode;
     },
 
     pasteCutDocument: function(document, oldParent, newParent, tree) {
@@ -755,9 +755,9 @@ pimcore.document.tree = Class.create({
                 pimcore.helpers.showNotification(t("error"), t("error_moving_document"), "error");
             }
 
-            pimcore.elementservice.refreshNode(oldParent);
-            pimcore.elementservice.refreshNode(newParent);
-
+            pimcore.elementservice.refreshNodeAllTrees("document", oldParent.id);
+            pimcore.elementservice.refreshNodeAllTrees("document", newParent.id);
+            newParent.expand();
             this.tree.loadMask.hide();
 
         }.bind(this, document, newParent, oldParent, tree));
