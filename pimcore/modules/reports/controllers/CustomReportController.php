@@ -72,6 +72,12 @@ class Reports_CustomReportController extends \Pimcore\Controller\Action\Admin\Re
     {
         $report = CustomReport\Config::getByName($this->getParam("name"));
         $data = \Zend_Json::decode($this->getParam("configuration"));
+
+        if (\Pimcore\Tool\Admin::isExtJS6() && !is_array($data["yAxis"])) {
+            $data["yAxis"] = strlen($data["yAxis"]) ? array($data["yAxis"]) : array();
+        }
+
+
         foreach ($data as $key => $value) {
             $setter = "set" . ucfirst($key);
             if (method_exists($report, $setter)) {
