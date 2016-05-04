@@ -73,25 +73,12 @@ pimcore.elementservice.deleteElementFromServer = function (r, options, button) {
         var elementType = options.elementType;
         var id = options.id;
 
-        var treeNames = pimcore.elementservice.getElementTreeNames(elementType);
-        var affectedNodes = [];
-
-        for (var index = 0; index < treeNames.length; index++) {
-            var treeName = treeNames[index];
-            var tree = pimcore.globalmanager.get(treeName);
-            if (!tree) {
-                continue;
-            }
-            tree = tree.tree;
-            var view = tree.getView();
-            var store = tree.getStore();
-            var node = store.getNodeById(id);
-            pimcore.helpers.addTreeNodeLoadingIndicator(elementType, id);
-
+        var affectedNodes = pimcore.elementservice.getAffectedNodes(elementType, id);
+        for (var index = 0; index < affectedNodes.length; index++) {
+            var node = affectedNodes[index];
             if (node) {
-                var nodeEl = Ext.fly(view.getNodeByRecord(node));
+                var nodeEl = Ext.fly(node.getOwnerTree().getView().getNodeByRecord(node));
                 nodeEl.addCls("pimcore_delete");
-                affectedNodes.push(node);
             }
         }
 
@@ -124,18 +111,7 @@ pimcore.elementservice.deleteElementFromServer = function (r, options, button) {
 
                 for (var index = 0; index < affectedNodes.length; index++) {
                     var node = affectedNodes[index];
-                    var tree = node.getOwnerTree();
                     try {
-
-                        var view = tree.getView();
-                        var nodeEl = Ext.fly(view.getNodeByRecord(node));
-
-                        if (nodeEl) {
-                            nodeEl.removeCls("pimcore_delete");
-                        }
-
-                        pimcore.helpers.removeTreeNodeLoadingIndicator(elementType, id);
-
                         if (node) {
                             node.remove();
                         }
