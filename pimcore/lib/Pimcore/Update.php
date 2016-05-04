@@ -67,9 +67,9 @@ class Update
         self::cleanup();
 
         if (PIMCORE_DEVMODE) {
-            $xmlRaw = Tool::getHttpData("http://" . self::$updateHost . "/v2/getUpdateInfo.php?devmode=1&revision=" . $currentRev);
+            $xmlRaw = Tool::getHttpData("https://" . self::$updateHost . "/v2/getUpdateInfo.php?devmode=1&revision=" . $currentRev);
         } else {
-            $xmlRaw = Tool::getHttpData("http://" . self::$updateHost . "/v2/getUpdateInfo.php?revision=" . $currentRev);
+            $xmlRaw = Tool::getHttpData("https://" . self::$updateHost . "/v2/getUpdateInfo.php?revision=" . $currentRev);
         }
 
         $xml = simplexml_load_string($xmlRaw, null, LIBXML_NOCDATA);
@@ -99,7 +99,7 @@ class Update
                 }
             }
         } else {
-            throw new \Exception("Unable to retrieve response from update server. Please ensure that your server is allowed to connect to update.pimcore.org:80");
+            throw new \Exception("Unable to retrieve response from update server. Please ensure that your server is allowed to connect to update.pimcore.org:443");
         }
 
         return array(
@@ -119,7 +119,7 @@ class Update
             $currentRev = Version::$revision;
         }
 
-        $xmlRaw = Tool::getHttpData("http://" . self::$updateHost . "/v2/getDownloads.php?from=" . $currentRev . "&to=" . $toRevision);
+        $xmlRaw = Tool::getHttpData("https://" . self::$updateHost . "/v2/getDownloads.php?from=" . $currentRev . "&to=" . $toRevision);
         $xml = simplexml_load_string($xmlRaw, null, LIBXML_NOCDATA);
 
         $jobs = array();
