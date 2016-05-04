@@ -182,12 +182,14 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
                 handler: this.reload.bind(this)
             });
 
-            buttons.push({
-                tooltip: t('show_in_tree'),
-                iconCls: "pimcore_icon_show_in_tree",
-                scale: "medium",
-                handler: this.selectInTree.bind(this, "folder")
-            });
+            if (pimcore.elementservice.showLocateInTreeButton("object")) {
+                buttons.push({
+                    tooltip: t('show_in_tree'),
+                    iconCls: "pimcore_icon_show_in_tree",
+                    scale: "medium",
+                    handler: this.selectInTree.bind(this, "folder")
+                });
+            }
 
             buttons.push({
                 tooltip: t("show_metainfo"),

@@ -224,14 +224,16 @@ pimcore.document.tags.href = Class.create(pimcore.document.tag, {
                 }.bind(this)
             }));
 
-            menu.add(new Ext.menu.Item({
-                text: t('show_in_tree'),
-                iconCls: "pimcore_icon_folder pimcore_icon_overlay_search",
-                handler: function (item) {
-                    item.parentMenu.destroy();
-                    pimcore.treenodelocator.showInTree(this.data.id, "document");
-                }.bind(this)
-            }));
+            if (pimcore.elementservice.showLocateInTreeButton("document")) {
+                menu.add(new Ext.menu.Item({
+                    text: t('show_in_tree'),
+                    iconCls: "pimcore_icon_show_in_tree",
+                    handler: function (item) {
+                        item.parentMenu.destroy();
+                        pimcore.treenodelocator.showInTree(this.data.id, "document");
+                    }.bind(this)
+                }));
+            }
         }
 
         menu.add(new Ext.menu.Item({

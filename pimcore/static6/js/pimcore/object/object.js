@@ -399,13 +399,15 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
             buttons.push(reloadConfig);
 
-            if(this.data.general.o_type != "variant" || this.data.general.showVariants) {
-                buttons.push({
-                    tooltip: t('show_in_tree'),
-                    iconCls: "pimcore_icon_show_in_tree",
-                    scale: "medium",
-                    handler: this.selectInTree.bind(this, this.data.general.o_type)
-                });
+            if (pimcore.elementservice.showLocateInTreeButton("object")) {
+                if (this.data.general.o_type != "variant" || this.data.general.showVariants) {
+                    buttons.push({
+                        tooltip: t('show_in_tree'),
+                        iconCls: "pimcore_icon_show_in_tree",
+                        scale: "medium",
+                        handler: this.selectInTree.bind(this, this.data.general.o_type)
+                    });
+                }
             }
 
             buttons.push({

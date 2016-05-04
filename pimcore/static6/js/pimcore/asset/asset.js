@@ -187,12 +187,14 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                 handler: this.reload.bind(this)
             });
 
-            buttons.push({
-                tooltip: t('show_in_tree'),
-                iconCls: "pimcore_icon_show_in_tree",
-                scale: "medium",
-                handler: this.selectInTree.bind(this)
-            });
+            if (pimcore.elementservice.showLocateInTreeButton("asset")) {
+                buttons.push({
+                    tooltip: t('show_in_tree'),
+                    iconCls: "pimcore_icon_show_in_tree",
+                    scale: "medium",
+                    handler: this.selectInTree.bind(this)
+                });
+            }
 
             buttons.push({
                 tooltip: t("show_metainfo"),

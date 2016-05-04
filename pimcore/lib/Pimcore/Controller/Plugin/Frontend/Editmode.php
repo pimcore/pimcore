@@ -58,6 +58,7 @@ class Editmode extends \Zend_Controller_Plugin_Abstract
                 "/pimcore/static6/js/pimcore/element/tag/imagehotspotmarkereditor.js",
                 "/pimcore/static6/js/pimcore/element/tag/imagecropper.js",
                 "/pimcore/static6/js/pimcore/document/edit/helper.js",
+                "/pimcore/static6/js/pimcore/elementservice.js",
                 "/pimcore/static6/js/pimcore/document/edit/dnd.js",
                 "/pimcore/static6/js/pimcore/document/tag.js",
                 "/pimcore/static6/js/pimcore/document/tags/block.js",

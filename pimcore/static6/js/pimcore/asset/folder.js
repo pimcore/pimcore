@@ -165,20 +165,26 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
                 pimcore.helpers.openAsset(id, type);
             }.bind(this, id, type)
         }));
-        menu.add(new Ext.menu.Item({
-            text: t('show_in_tree'),
-            iconCls: "pimcore_icon_show_in_tree",
-            handler: function () {
-                try {
-                    try {
-                        pimcore.treenodelocator.showInTree(node.id, "asset", this);
-                    } catch (e) {
-                        console.log(e);
-                    }
 
-                } catch (e2) { console.log(e2); }
-            }
-        }));
+        if (pimcore.elementservice.showLocateInTreeButton("asset")) {
+            menu.add(new Ext.menu.Item({
+                text: t('show_in_tree'),
+                iconCls: "pimcore_icon_show_in_tree",
+                handler: function () {
+                    try {
+                        try {
+                            pimcore.treenodelocator.showInTree(node.id, "asset", this);
+                        } catch (e) {
+                            console.log(e);
+                        }
+
+                    } catch (e2) {
+                        console.log(e2);
+                    }
+                }
+            }));
+        }
+
         menu.add(new Ext.menu.Item({
             text: t('delete'),
             iconCls: "pimcore_icon_delete",
@@ -244,12 +250,14 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
                 handler: this.reload.bind(this)
             });
 
-            buttons.push({
-                tooltip: t('show_in_tree'),
-                iconCls: "pimcore_icon_show_in_tree",
-                scale: "medium",
-                handler: this.selectInTree.bind(this)
-            });
+            if (pimcore.elementservice.showLocateInTreeButton("asset")) {
+                buttons.push({
+                    tooltip: t('show_in_tree'),
+                    iconCls: "pimcore_icon_show_in_tree",
+                    scale: "medium",
+                    handler: this.selectInTree.bind(this)
+                });
+            }
 
             var user = pimcore.globalmanager.get("user");
             if (user.admin) {

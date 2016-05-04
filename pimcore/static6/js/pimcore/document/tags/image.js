@@ -20,8 +20,6 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
         this.datax = {};
         this.options = this.parseOptions(options);
 
-        this.options = options;
-
         this.originalDimensions = {
             width: this.options.width,
             height: this.options.height
@@ -32,7 +30,6 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
         }
 
         this.setupWrapper();
-
 
         this.element = Ext.get(id);
 
@@ -161,14 +158,16 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
                 }.bind(this)
             }));
 
-            menu.add(new Ext.menu.Item({
-                text: t('show_in_tree'),
-                iconCls: "pimcore_icon_folder pimcore_icon_overlay_search",
-                handler: function (item) {
-                    item.parentMenu.destroy();
-                    pimcore.treenodelocator.showInTree(this.datax.id, "asset");
-                }.bind(this)
-            }));
+            if (pimcore.elementservice.showLocateInTreeButton("document")) {
+                menu.add(new Ext.menu.Item({
+                    text: t('show_in_tree'),
+                    iconCls: "pimcore_icon_show_in_tree",
+                    handler: function (item) {
+                        item.parentMenu.destroy();
+                        pimcore.treenodelocator.showInTree(this.datax.id, "asset");
+                    }.bind(this)
+                }));
+            }
         }
 
         menu.add(new Ext.menu.Item({
