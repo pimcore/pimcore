@@ -1195,7 +1195,7 @@ pimcore.document.tree = Class.create({
                             type: type
                         },
                         success: function () {
-                            pimcore.elementservice.refreshNode(record.parentNode);
+                            pimcore.elementservice.refreshNodeAllTrees("document", record.parentNode.id);
                         }.bind(this)
                     });
                 }
