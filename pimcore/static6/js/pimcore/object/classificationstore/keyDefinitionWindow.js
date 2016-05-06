@@ -37,7 +37,7 @@ pimcore.object.classificationstore.keyDefinitionWindow = Class.create({
             width: 800,
             height: 600,
             resizable: true,
-            scrollable: true,
+            scrollable: "y",
             title: t("classificationstore_detailed_config"),
             items: [layout],
             bbar: [
