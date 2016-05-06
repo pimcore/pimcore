@@ -141,21 +141,28 @@ class Admin_VariantsController extends \Pimcore\Controller\Action\Admin
                 if ($this->getParam("start")) {
                     $start = $this->getParam("start");
                 }
-                if ($this->getParam("sort")) {
-                    if ($this->getParam("sort") == "fullpath") {
-                        $orderKey = array("o_path", "o_key");
-                    } elseif ($this->getParam("sort") == "id") {
-                        $orderKey = "o_id";
-                    } elseif ($this->getParam("sort") == "published") {
-                        $orderKey = "o_published";
-                    } elseif ($this->getParam("sort") == "modificationDate") {
-                        $orderKey = "o_modificationDate";
-                    } elseif ($this->getParam("sort") == "creationDate") {
-                        $orderKey = "o_creationDate";
-                    } else {
-                        $orderKey = $this->getParam("sort");
+
+                $orderKey = "o_id";
+                $order = "ASC";
+
+                $colMappings = array(
+                    "filename" => "o_key",
+                    "fullpath" => array("o_path", "o_key"),
+                    "id" => "o_id",
+                    "published" => "o_published",
+                    "modificationDate" => "o_modificationDate",
+                    "creationDate" => "o_creationDate"
+                );
+
+                $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($this->getAllParams());
+                if ($sortingSettings['orderKey'] && $sortingSettings['order']) {
+                    $orderKey = $sortingSettings['orderKey'];
+                    if (array_key_exists($orderKey, $colMappings)) {
+                        $orderKey = $colMappings[$orderKey];
                     }
+                    $order = $sortingSettings['order'];
                 }
+
                 if ($this->getParam("dir")) {
                     $order = $this->getParam("dir");
                 }
