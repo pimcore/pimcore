@@ -616,7 +616,7 @@ class Asset extends Element\AbstractElement
 
         // create foldertree
         // use current file name in order to prevent problems when filename has changed
-        // (otherwise binary data would be overwritten with old binary data with rename() in save method)  
+        // (otherwise binary data would be overwritten with old binary data with rename() in save method)
         $destinationPath = PIMCORE_ASSET_DIRECTORY . $this->getDao()->getCurrentFullPath();
 
         $dirPath = dirname($destinationPath);
@@ -667,6 +667,12 @@ class Asset extends Element\AbstractElement
             }
 
             // scheduled tasks are saved in $this->saveVersion();
+        } else {
+            if (!is_dir($this->getFileSystemPath())) {
+                if (!File::mkdir($this->getFileSystemPath())) {
+                    throw new \Exception("Unable to create directory: ". $this->getFileSystemPath() . " for asset :" . $this->getId());
+                }
+            }
         }
 
 
