@@ -88,7 +88,7 @@ class Admin_LinkController extends \Pimcore\Controller\Action\Admin\Document
     {
 
         // data
-        if($this->getParam("data")) {
+        if ($this->getParam("data")) {
             $data = \Zend_Json::decode($this->getParam("data"));
 
             if (!empty($data["path"])) {

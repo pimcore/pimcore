@@ -90,7 +90,7 @@ class Admin_HardlinkController extends \Pimcore\Controller\Action\Admin\Document
     {
 
         // data
-        if($this->getParam("data")) {
+        if ($this->getParam("data")) {
             $data = \Zend_Json::decode($this->getParam("data"));
 
             $sourceId = null;
