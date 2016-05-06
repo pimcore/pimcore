@@ -118,17 +118,20 @@ pimcore.object.classificationstore.storeTree = Class.create({
 
     openStore: function(storeConfig) {
         try {
+            var panel;
+
             if (storeConfig.id != this.activeStoreId) {
                 this.editContainer.removeAll();
                 //this.editPanel = null;
 
                 this.editContainer.setTitle(storeConfig.text + " (ID: " + storeConfig.id + ")");
-                var panel = new pimcore.object.classificationstore.collectionsPanel(storeConfig).getPanel();
+                panel = new pimcore.object.classificationstore.collectionsPanel(storeConfig).getPanel();
                 this.editContainer.add(panel);
+                this.editContainer.setActiveTab(panel);
 
-                var panel = new pimcore.object.classificationstore.groupsPanel(storeConfig).getPanel();
+                panel = new pimcore.object.classificationstore.groupsPanel(storeConfig).getPanel();
                 this.editContainer.add(panel);
-                var panel = new pimcore.object.classificationstore.propertiespanel(storeConfig).getPanel();
+                panel = new pimcore.object.classificationstore.propertiespanel(storeConfig).getPanel();
                 this.editContainer.add(panel);
                 this.editContainer.updateLayout();
                 this.activeStoreId = storeConfig.id;
