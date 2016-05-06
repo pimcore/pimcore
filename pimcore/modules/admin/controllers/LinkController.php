@@ -88,26 +88,29 @@ class Admin_LinkController extends \Pimcore\Controller\Action\Admin\Document
     {
 
         // data
-        $data = \Zend_Json::decode($this->getParam("data"));
+        if($this->getParam("data")) {
+            $data = \Zend_Json::decode($this->getParam("data"));
 
-        if (!empty($data["path"])) {
-            if ($document = Document::getByPath($data["path"])) {
-                $data["linktype"] = "internal";
-                $data["internalType"] = "document";
-                $data["internal"] = $document->getId();
-            } elseif ($asset = Asset::getByPath($data["path"])) {
-                $data["linktype"] = "internal";
-                $data["internalType"] = "asset";
-                $data["internal"] = $asset->getId();
-            } else {
-                $data["linktype"] = "direct";
-                $data["direct"] = $data["path"];
+            if (!empty($data["path"])) {
+                if ($document = Document::getByPath($data["path"])) {
+                    $data["linktype"] = "internal";
+                    $data["internalType"] = "document";
+                    $data["internal"] = $document->getId();
+                } elseif ($asset = Asset::getByPath($data["path"])) {
+                    $data["linktype"] = "internal";
+                    $data["internalType"] = "asset";
+                    $data["internal"] = $asset->getId();
+                } else {
+                    $data["linktype"] = "direct";
+                    $data["direct"] = $data["path"];
+                }
             }
+
+            unset($data["path"]);
+
+            $link->setValues($data);
         }
 
-        unset($data["path"]);
-
-        $link->setValues($data);
         $this->addPropertiesToDocument($link);
     }
 }

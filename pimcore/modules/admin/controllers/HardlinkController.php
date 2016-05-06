@@ -90,15 +90,17 @@ class Admin_HardlinkController extends \Pimcore\Controller\Action\Admin\Document
     {
 
         // data
-        $data = \Zend_Json::decode($this->getParam("data"));
+        if($this->getParam("data")) {
+            $data = \Zend_Json::decode($this->getParam("data"));
 
-        $sourceId = null;
-        if ($sourceDocument = Document::getByPath($data["sourcePath"])) {
-            $sourceId = $sourceDocument->getId();
+            $sourceId = null;
+            if ($sourceDocument = Document::getByPath($data["sourcePath"])) {
+                $sourceId = $sourceDocument->getId();
+            }
+            $link->setSourceId($sourceId);
+            $link->setValues($data);
         }
-        $link->setSourceId($sourceId);
 
-        $link->setValues($data);
         $this->addPropertiesToDocument($link);
     }
 }
