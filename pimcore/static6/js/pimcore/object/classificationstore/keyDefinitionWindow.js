@@ -30,7 +30,17 @@ pimcore.object.classificationstore.keyDefinitionWindow = Class.create({
 
         var fieldtype = this.data.fieldtype;
         this.editor = new pimcore.object.classes.data[fieldtype](null, this.data);
+        this.editor.setInClassificationStoreEditor(true);
         var layout = this.editor.getLayout();
+
+        var invisibleFields = ["mandatory","noteditable","invisible","visibleGridView","visibleSearch","index"];
+        var invisibleField;
+        for(var f=0; f<invisibleFields.length; f++) {
+            invisibleField = layout.getComponent("standardSettings").getComponent(invisibleFields[f]);
+            if(invisibleField) {
+                invisibleField.hide();
+            }
+        }
 
         this.window = new Ext.Window({
             modal: true,

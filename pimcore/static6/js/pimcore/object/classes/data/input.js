@@ -60,7 +60,7 @@ pimcore.object.classes.data.input = Class.create(pimcore.object.classes.data.dat
             }
         ]);
 
-        if (!this.isInCustomLayoutEditor()) {
+        if (!this.isInCustomLayoutEditor() && !this.isInClassificationStoreEditor()) {
             this.specificPanel.add([{
                     xtype: "numberfield",
                     fieldLabel: t("columnlength"),
