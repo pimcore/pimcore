@@ -135,76 +135,19 @@ pimcore.settings.translations = Class.create({
             }]
         });
 
-        this.modelName = 'pimcore.model.translations.' + this.translationType;
-
         var itemsPerPage = 20;
 
-        if (!Ext.ClassManager.get(this.modelName)) {
-
-            var url = this.dataUrl;
-            if(url.indexOf('?') === -1) {
-                url = url + "?";
-            } else {
-                url = url + "&";
+        this.store = pimcore.helpers.grid.buildDefaultStore(
+            this.dataUrl,
+            readerFields,
+            itemsPerPage, {
+                idProperty: 'key'
             }
+        );
 
-            Ext.define(this.modelName, {
-                extend: 'Ext.data.Model',
-                idProperty: 'key',
-                fields: readerFields,
-
-                proxy: {
-                    type: 'ajax',
-                    api: {
-                        create  : url + "xaction=create",
-                        read    : url + "xaction=read",
-                        update  : url + "xaction=update",
-                        destroy : url + "xaction=destroy"
-                    },
-                    actionMethods: {
-                        create : 'POST',
-                        read   : 'POST',
-                        update : 'POST',
-                        destroy: 'POST'
-                    },
-                    extraParams: {
-                        searchString: this.preconfiguredFilter
-                    },
-
-                    // Reader is now on the proxy, as the message was explaining
-                    reader: {
-                        type: 'json',
-                        rootProperty: 'data'
-                    },                                     // default
-                    writer: {
-                        type: 'json',
-                        writeAllFields: true,
-                        rootProperty: 'data',
-                        encode: 'true'
-                    },
-                    listeners: {
-                        exception: function(proxy, response, operation){
-                            Ext.MessageBox.show({
-                                title: 'REMOTE EXCEPTION',
-                                msg: operation.getError(),
-                                icon: Ext.MessageBox.ERROR,
-                                buttons: Ext.Msg.OK
-                            });
-                        }
-                    }
-                }
-            });
+        if(this.preconfiguredFilter) {
+            this.store.getProxy().extraParams.searchString = this.preconfiguredFilter;
         }
-
-
-        this.store = new Ext.data.Store({
-            model: this.modelName,
-            remoteSort: true,
-            remoteFilter: true,
-            autoSync: true,
-            pageSize: itemsPerPage
-        });
-        this.store.getProxy().extraParams.searchString = "";
 
         this.pagingtoolbar = Ext.create('Ext.toolbar.Paging', {
             pageSize: itemsPerPage,
@@ -374,9 +317,9 @@ pimcore.settings.translations = Class.create({
             if(button == "ok") {
                 this.cellEditing.cancelEdit();
 
-                var u = Ext.create(this.modelName);
-                u.set("key", value);
-                this.grid.store.insert(0, [u]);
+                this.grid.store.insert(0, {
+                    key: value
+                });
 
                 this.cellEditing.startEditByPosition({
                     row: 0,

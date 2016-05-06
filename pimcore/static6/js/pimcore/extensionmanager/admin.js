@@ -63,24 +63,16 @@ pimcore.extensionmanager.admin = Class.create({
                 proxy: {
                     type: 'ajax',
                     url: '/admin/extensionmanager/admin/get-extensions',
-                    // Reader is now on the proxy, as the message was explaining
                     reader: {
                         type: 'json',
                         rootProperty: "extensions"
-                        //totalProperty:'total',            // default
-                        //successProperty:'success'         // default
                     }
-                    //,                                     // default
-                    //writer: {
-                    //    type: 'json'
-                    //}
                 }
             });
         }
 
         this.store = new Ext.data.Store({
-            model: 'pimcore.model.extensions.admin',
-            id: 'redirects_store'
+            model: 'pimcore.model.extensions.admin'
         });
 
         this.store.load();

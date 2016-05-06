@@ -15,9 +15,14 @@ pimcore.helpers.grid = {};
 
 pimcore.helpers.grid.buildDefaultStore = function(url, fields, itemsPerPage, customConfig) {
 
+    if(url.indexOf('?') === -1) {
+        url = url + "?";
+    } else {
+        url = url + "&";
+    }
+
     var proxy = new Ext.data.proxy.Ajax({
         type: 'ajax',
-
         reader: {
             type: 'json',
             rootProperty: 'data'
@@ -39,24 +44,18 @@ pimcore.helpers.grid.buildDefaultStore = function(url, fields, itemsPerPage, cus
             read   : 'POST',
             update : 'POST',
             destroy: 'POST'
-        }
+        }/*,
+        listeners: {
+            exception: function(proxy, response, operation){
+                Ext.MessageBox.show({
+                    title: 'REMOTE EXCEPTION',
+                    msg: operation.getError(),
+                    icon: Ext.MessageBox.ERROR,
+                    buttons: Ext.Msg.OK
+                });
+            }
+        }*/
     });
-    //
-    //Ext.override(proxy, {
-    //
-    //    encodeFilters: function(filters) {
-    //        console.log("gaga");
-    //        var out = [],
-    //            length = filters.length,
-    //            i, op;
-    //        for (i = 0; i < length; i++) {
-    //            out[i] = filters[i].serialize();
-    //        }
-    //        return this.applyEncoding(out);
-    //    }.bind(proxy)
-    //});
-    //
-
 
     var config =  {
         proxy: proxy,
