@@ -2676,8 +2676,13 @@ pimcore.helpers.saveColumnConfig = function(objectId, classId, configuration, se
     } catch (e3) {
         pimcore.helpers.showNotification(t("error"), t("error_saving_configuration"), "error");
     }
-
-
-
 }
 
+pimcore.helpers.openGenericIframeWindow = function (id, src, iconCls, title) {
+    try {
+        pimcore.globalmanager.get(id).activate();
+    }
+    catch (e) {
+        pimcore.globalmanager.add(id, new pimcore.tool.genericiframewindow(id, src, iconCls, title));
+    }
+};

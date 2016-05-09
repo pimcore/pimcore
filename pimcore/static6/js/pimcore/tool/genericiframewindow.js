@@ -55,12 +55,12 @@ pimcore.tool.genericiframewindow = Class.create({
                 layout: "fit",
                 closable:true,
                 bodyCls: "pimcore_overflow_scrolling",
-                html: '<iframe src="about:blank" frameborder="0" width="100%" id="pimcore_iframe_frame_'
+                html: '<iframe src="about:blank" frameborder="0" style="width:100%;" id="pimcore_iframe_frame_'
                                     + this.id + '"></iframe>',
                 tbar: toolbar
             });
 
-            this.panel.on("resize", this.onLayoutResize.bind(this));
+            this.panel.on("resize", this.setLayoutFrameDimensions.bind(this));
             this.panel.on("afterrender", this.reload.bind(this));
 
             var tabPanel = Ext.getCmp("pimcore_panel_tabs");
@@ -77,13 +77,9 @@ pimcore.tool.genericiframewindow = Class.create({
         return this.panel;
     },
 
-    onLayoutResize: function (el, width, height, rWidth, rHeight) {
-        this.setLayoutFrameDimensions(width, height);
-    },
-
-    setLayoutFrameDimensions: function (width, height) {
+    setLayoutFrameDimensions: function (el, width, height, rWidth, rHeight) {
         Ext.get("pimcore_iframe_frame_" + this.id).setStyle({
-            height: (height - 50) + "px"
+            height: (height - 55) + "px"
         });
     },
 

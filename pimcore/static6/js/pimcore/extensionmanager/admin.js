@@ -211,17 +211,15 @@ pimcore.extensionmanager.admin = Class.create({
                                                                         + pimcore.globalmanager.get("user").language;
                         var xmlEditorFile =  rec.get("xmlEditorFile");
 
-                        try {
-                            pimcore.globalmanager.get("extension_settings_" + id + "_" + type).activate();
-                        }
-                        catch (e) {
-                            if(xmlEditorFile){
-                                pimcore.globalmanager.add("extension_settings_" + id + "_" + type,
-                                                new pimcore.extensionmanager.xmlEditor(id, type, xmlEditorFile));
-                            }else{
-                                pimcore.globalmanager.add("extension_settings_" + id + "_" + type,
-                                                new pimcore.extensionmanager.settings(id, type, iframeSrc));
+                        if(xmlEditorFile){
+                            try {
+                                pimcore.globalmanager.get("extension_settings_" + id + "_" + type).activate();
                             }
+                            catch (e) {
+                                pimcore.globalmanager.add("extension_settings_" + id + "_" + type, new pimcore.extensionmanager.xmlEditor(id, type, xmlEditorFile));
+                            }
+                        } else {
+                            pimcore.helpers.openGenericIframeWindow("extension_settings_" + id + "_" + type, iframeSrc, "pimcore_icon_plugin", id);
                         }
                     }.bind(this)
                 }]

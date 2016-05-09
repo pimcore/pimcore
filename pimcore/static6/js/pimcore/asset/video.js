@@ -83,12 +83,11 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
                 bodyCls: "pimcore_overflow_scrolling",
                 html: '<iframe src="/admin/asset/get-preview-video/id/'
                                             + this.id + '/" frameborder="0" id="asset_video_edit_'
-                                            + this.id + '" name="asset_video_edit_' + this.id + '"></iframe>'
+                                            + this.id + '" name="asset_video_edit_' + this.id + '" style="width:100%;"></iframe>'
             });
             this.previewPanel.on("resize", function (el, width, height, rWidth, rHeight) {
                 Ext.get("asset_video_edit_" + this.id).setStyle({
-                    width: width + "px",
-                    height: (height) + "px"
+                    height: (height-7) + "px"
                 });
             }.bind(this));
 

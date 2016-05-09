@@ -37,7 +37,7 @@ pimcore.document.edit = Class.create({
             this.reloadInProgress = true;
             this.iframeName = 'document_iframe_' + this.document.id;
 
-            var html = '<iframe id="' + this.iframeName + '" width="100%" name="' + this.iframeName
+            var html = '<iframe id="' + this.iframeName + '" style="width: 100%;" name="' + this.iframeName
                                                     + '" src="' + this.getEditLink() + '" frameborder="0"></iframe>';
 
 
@@ -154,7 +154,7 @@ pimcore.document.edit = Class.create({
             }
 
             this.layout = new Ext.Panel(config);
-            this.layout.on("resize", this.onLayoutResize.bind(this));
+            this.layout.on("resize", this.setLayoutFrameDimensions.bind(this));
 
             this.layout.on("afterrender", function () {
 
@@ -179,12 +179,8 @@ pimcore.document.edit = Class.create({
         return this.layout;
 
     },
-    
-    onLayoutResize: function (el, width, height, rWidth, rHeight) {
-        this.setLayoutFrameDimensions(width, height);
-    },
 
-    setLayoutFrameDimensions: function (width, height) {
+    setLayoutFrameDimensions: function (el, width, height, rWidth, rHeight) {
         Ext.get(this.iframeName).setStyle({
             height: (height-7) + "px"
         });

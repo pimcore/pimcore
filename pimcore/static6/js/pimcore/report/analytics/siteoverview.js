@@ -92,7 +92,7 @@ pimcore.report.analytics.overview = Class.create(pimcore.report.abstract, {
                     "resize": this.framePanelResize.bind(this)
                 },
                 bodyCls: "pimcore_overflow_scrolling",
-                html: '<iframe src="about:blank" frameborder="0" id="' + this.iframeId + '" width="100%"></iframe>',
+                html: '<iframe src="about:blank" frameborder="0" id="' + this.iframeId + '" style="width: 100%;"></iframe>',
                 region: "center"
             });
 

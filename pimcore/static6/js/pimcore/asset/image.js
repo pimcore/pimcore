@@ -102,14 +102,13 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                         }.bind(this)
                     }
                 ],
-                html: '<iframe src="' + this.getEditUrlPixlr("express") + '" frameborder="0" id="asset_image_edit_'
+                html: '<iframe src="' + this.getEditUrlPixlr("express") + '" frameborder="0" style="width: 100%;" id="asset_image_edit_'
                                                                             + this.id + '"></iframe>',
                 iconCls: "pimcore_icon_edit"
             });
             this.editPanel.on("resize", function (el, width, height, rWidth, rHeight) {
                 Ext.get("asset_image_edit_" + this.id).setStyle({
-                    width: width + "px",
-                    height: (height - 25) + "px"
+                    height: (height - 7) + "px"
                 });
             }.bind(this));
         }

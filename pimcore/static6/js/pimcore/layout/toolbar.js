@@ -1509,73 +1509,23 @@ pimcore.layout.toolbar = Class.create({
     },
 
     showPhpInfo: function () {
-
-        var id = "phpinfo";
-
-        try {
-            pimcore.globalmanager.get(id).activate();
-        }
-        catch (e) {
-            pimcore.globalmanager.add(id, new pimcore.tool.genericiframewindow(id, "/admin/misc/phpinfo",
-                "pimcore_icon_php", "PHP Info"));
-        }
-
+        pimcore.helpers.openGenericIframeWindow("phpinfo", "/admin/misc/phpinfo", "pimcore_icon_php", "PHP Info");
     },
 
     showServerInfo: function () {
-
-        var id = "serverinfo";
-
-        try {
-            pimcore.globalmanager.get(id).activate();
-        }
-        catch (e) {
-            pimcore.globalmanager.add(id, new pimcore.tool.genericiframewindow(id,
-                "/admin/external_linfo/", "pimcore_icon_server_info", "Server Info"));
-        }
-
+        pimcore.helpers.openGenericIframeWindow("serverinfo", "/admin/external_linfo/", "pimcore_icon_server_info", "Server Info");
     },
 
     showOpcacheStatus: function () {
-
-        var id = "opcachestatus";
-
-        try {
-            pimcore.globalmanager.get(id).activate();
-        }
-        catch (e) {
-            pimcore.globalmanager.add(id, new pimcore.tool.genericiframewindow(id,
-                "/admin/external_opcache/", "pimcore_icon_reports", "PHP OPcache Status"));
-        }
-
+        pimcore.helpers.openGenericIframeWindow("opcachestatus", "/admin/external_opcache/", "pimcore_icon_reports", "PHP OPcache Status");
     },
 
     showSystemRequirementsCheck: function () {
-
-        var id = "systemrequirementscheck";
-
-        try {
-            pimcore.globalmanager.get(id).activate();
-        }
-        catch (e) {
-            pimcore.globalmanager.add(id, new pimcore.tool.genericiframewindow(id, "/install/check/",
-                "pimcore_icon_systemrequirements", "System-Requirements Check"));
-        }
-
+        pimcore.helpers.openGenericIframeWindow("systemrequirementscheck", "/install/check/", "pimcore_icon_systemrequirements", "System-Requirements Check");
     },
 
     showAdminer: function () {
-
-        var id = "adminer";
-
-        try {
-            pimcore.globalmanager.get(id).activate();
-        }
-        catch (e) {
-            pimcore.globalmanager.add(id, new pimcore.tool.genericiframewindow(id,
-                "/admin/external_adminer/adminer/", "pimcore_icon_mysql", "Database Admin"));
-        }
-
+        pimcore.helpers.openGenericIframeWindow("adminer", "/admin/external_adminer/adminer/", "pimcore_icon_mysql", "Database Admin");
     },
 
     showElementHistory: function() {
