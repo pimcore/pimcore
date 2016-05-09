@@ -17,12 +17,19 @@
 
 namespace OnlineShop\Framework\PricingManager\Condition;
 
-class CatalogCategory implements ICategory
+class CatalogCategory extends AbstractObjectListCondition implements ICategory
 {
     /**
      * @var \OnlineShop\Framework\Model\AbstractCategory[]
      */
     protected $categories = array();
+
+    /**
+     * Serialized category IDs
+     *
+     * @var array
+     */
+    protected $categoryIds = array();
 
     /**
      * @param \OnlineShop\Framework\Model\AbstractCategory[] $categories
@@ -79,7 +86,7 @@ class CatalogCategory implements ICategory
         $categories = array();
         foreach($json->categories as $cat)
         {
-            $category = $this->loadCategory($cat->id);
+            $category = $this->loadObject($cat->id);
             if($category)
             {
                 $categories[] = $category;
@@ -91,33 +98,21 @@ class CatalogCategory implements ICategory
     }
 
     /**
-     * don't cache the entire category object
+     * Don't cache the entire category object
+     *
      * @return array
      */
     public function __sleep()
     {
-        foreach($this->categories as $key => $cat)
-        {
-            /* @var \OnlineShop\Framework\Model\AbstractCategory $cat */
-            $this->categories[ $key ] = $cat->getId();
-        }
-
-        return array('categories');
+        $this->handleSleep('categories', 'categoryIds');
     }
 
     /**
-     * restore category
+     * Restore categories from serialized ID list
      */
     public function __wakeup()
     {
-        foreach($this->categories as $key => $cat_id)
-        {
-            $category = $this->loadCategory($cat_id);
-            if($category)
-            {
-                $this->categories[ $key ] = $category;
-            }
-        }
+        $this->handleWakeup('categories', 'categoryIds');
     }
 
     /**
@@ -140,16 +135,5 @@ class CatalogCategory implements ICategory
         }
 
         return false;
-    }
-
-
-    /**
-     * @param $id
-     *
-     * @return \Pimcore\Model\Object\Concrete|null
-     */
-    protected function loadCategory($id)
-    {
-        return \Pimcore\Model\Object\Concrete::getById($id);
     }
 }

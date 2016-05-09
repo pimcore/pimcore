@@ -17,12 +17,19 @@
 
 namespace OnlineShop\Framework\PricingManager\Condition;
 
-class CatalogProduct implements ICatalogProduct
+class CatalogProduct extends AbstractObjectListCondition implements ICatalogProduct
 {
     /**
      * @var \OnlineShop\Framework\Model\AbstractProduct[]
      */
-    protected $products;
+    protected $products = [];
+
+    /**
+     * Serialized product IDs
+     *
+     * @var array
+     */
+    protected $productIds = [];
 
     /**
      * @param \OnlineShop\Framework\PricingManager\IEnvironment $environment
@@ -108,7 +115,7 @@ class CatalogProduct implements ICatalogProduct
         $products = array();
         foreach($json->products as $cat)
         {
-            $product = $this->loadProduct($cat->id);
+            $product = $this->loadObject($cat->id);
             if($product)
             {
                 $products[] = $product;
@@ -120,33 +127,21 @@ class CatalogProduct implements ICatalogProduct
     }
 
     /**
-     * dont cache the entire product object
+     * Don't cache the entire product object
+     *
      * @return array
      */
     public function __sleep()
     {
-        foreach($this->products as $key => $product)
-        {
-            /* @var \OnlineShop\Framework\Model\AbstractProduct $product */
-            $this->products[ $key ] = $product->getId();
-        }
-
-        return array('products');
+        return $this->handleSleep('products', 'productIds');
     }
 
     /**
-     * restore product
+     * Restore products from serialized ID list
      */
     public function __wakeup()
     {
-        foreach($this->products as $key => $product_id)
-        {
-            $product = $this->loadProduct($product_id);
-            if($product)
-            {
-                $this->products[ $key ] = $this->loadProduct($product_id);
-            }
-        }
+        $this->handleWakeup('products', 'productIds');
     }
 
     /**
@@ -166,16 +161,5 @@ class CatalogProduct implements ICatalogProduct
     public function getProducts()
     {
         return $this->products;
-    }
-
-
-    /**
-     * @param $id
-     *
-     * @return \Pimcore\Model\Object\Concrete|null
-     */
-    protected function loadProduct($id)
-    {
-        return \Pimcore\Model\Object\Concrete::getById($id);
     }
 }
