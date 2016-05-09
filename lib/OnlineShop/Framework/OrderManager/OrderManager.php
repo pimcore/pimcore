@@ -365,7 +365,6 @@ class OrderManager implements IOrderManager
         return new $orderItemClassName();
     }
 
-
     /**
      * @param \OnlineShop\Framework\CartManager\ICartItem $item
      * @param \OnlineShop\Framework\Model\AbstractOrder | \OnlineShop\Framework\Model\AbstractOrderItem $parent
@@ -374,26 +373,17 @@ class OrderManager implements IOrderManager
      * @throws \Exception
      * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */
-    protected function createOrderItem(\OnlineShop\Framework\CartManager\ICartItem $item,  $parent) {
+    protected function createOrderItem(\OnlineShop\Framework\CartManager\ICartItem $item, $parent) {
 
-        $orderItemListClass = $this->getOrderItemClassName() . "\\Listing";
-        if(!\Pimcore\Tool::classExists($orderItemListClass)) {
-            $orderItemListClass = $this->getOrderItemClassName() . "_List";
-            if(!\Pimcore\Tool::classExists($orderItemListClass)) {
-                throw new \Exception("Class $orderItemListClass does not exist.");
-            }
-        }
+        $key = $this->buildOrderItemKey($item);
 
-        $key = \Pimcore\File::getValidFilename($item->getProduct()->getId() . "_" . $item->getItemKey());
-
-        $orderItemList = new $orderItemListClass;
+        $orderItemList = $this->buildOrderItemList();
         $orderItemList->setCondition("o_parentId = ? AND o_key = ?", array($parent->getId(), $key));
 
         $orderItems = $orderItemList->load();
         if(count($orderItems) > 1) {
             throw new \Exception("No unique order item found for $key.");
         }
-
 
         if(count($orderItems) == 1) {
             $orderItem = $orderItems[0];
@@ -440,6 +430,43 @@ class OrderManager implements IOrderManager
 
 
         return $orderItem;
+    }
+
+    /**
+     * Build order item key from cart item
+     *
+     * @param \OnlineShop\Framework\CartManager\ICartItem $item
+     * @return string
+     */
+    protected function buildOrderItemKey(\OnlineShop\Framework\CartManager\ICartItem $item)
+    {
+        $key = \Pimcore\File::getValidFilename(sprintf(
+            '%s_%s',
+            $item->getProduct()->getId(),
+            $item->getItemKey()
+        ));
+
+        return $key;
+    }
+
+    /**
+     * Build order item listing
+     *
+     * @return \Pimcore\Model\Object\Listing\Concrete
+     * @throws \Exception
+     */
+    protected function buildOrderItemList() {
+        $orderItemListClass = $this->getOrderItemClassName() . "\\Listing";
+        if (!\Pimcore\Tool::classExists($orderItemListClass)) {
+            $orderItemListClass = $this->getOrderItemClassName() . "_List";
+            if (!\Pimcore\Tool::classExists($orderItemListClass)) {
+                throw new \Exception("Class $orderItemListClass does not exist.");
+            }
+        }
+
+        $orderItemList = new $orderItemListClass;
+
+        return $orderItemList;
     }
 
     /**
