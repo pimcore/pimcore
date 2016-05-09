@@ -160,6 +160,9 @@ class Console
             }
         }
 
+        $env = getenv("PIMCORE_ENVIRONMENT") ?: (getenv("REDIRECT_PIMCORE_ENVIRONMENT") ?: false);
+        $cmd = $env ? "PIMCORE_ENVIRONMENT=" . $env . " " . $cmd : $cmd;
+
         \Logger::debug("Executing command `" . $cmd . "` on the current shell");
         $return = shell_exec($cmd);
 
@@ -200,7 +203,10 @@ class Console
             $nice = "/usr/bin/nice -n 19 ";
         }
 
-        $commandWrapped = "/usr/bin/nohup " . $nice . $cmd . " > ". $outputFile ." 2>&1 & echo $!";
+        $env = getenv("PIMCORE_ENVIRONMENT") ?: (getenv("REDIRECT_PIMCORE_ENVIRONMENT") ?: false);
+        $envStr = $env ? "PIMCORE_ENVIRONMENT=" . $env . " " : "";
+
+        $commandWrapped = $envStr . "/usr/bin/nohup " . $nice . $cmd . " > ". $outputFile ." 2>&1 & echo $!";
         \Logger::debug("Executing command `" . $commandWrapped . "´ on the current shell in background");
         $pid = shell_exec($commandWrapped);
 
@@ -221,7 +227,10 @@ class Console
             $outputFile = "NUL";
         }
 
-        $commandWrapped = "cmd /c " . $cmd . " > ". $outputFile . " 2>&1";
+        $env = getenv("PIMCORE_ENVIRONMENT") ?: (getenv("REDIRECT_PIMCORE_ENVIRONMENT") ?: false);
+        $envStr = $env ? " " . escapeshellarg($env) : "";
+
+        $commandWrapped = "cmd /c " . $cmd . $envStr . " > ". $outputFile . " 2>&1";
         \Logger::debug("Executing command `" . $commandWrapped . "´ on the current shell in background");
 
         $WshShell = new \COM("WScript.Shell");
