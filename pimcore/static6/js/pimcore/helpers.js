@@ -224,17 +224,24 @@ pimcore.helpers.closeObject = function (id) {
 
 pimcore.helpers.updateObjectQTip = function (id, treeData) {
     if (treeData) {
-        var tree = pimcore.globalmanager.get("layout_object_tree").tree;
-        var store = tree.getStore();
-        var record = store.getById(id);
-        if (record) {
-            record.set("qtitle", treeData.qtipCfg.title);
-            record.set("qtip", treeData.qtipCfg.text);
+        var treeNames = pimcore.elementservice.getElementTreeNames("object");
+        var affectedNodes = [];
+        for (var index = 0; index < treeNames.length; index++) {
+            var treeName = treeNames[index];
+            var tree = pimcore.globalmanager.get(treeName);
+            if (!tree) {
+                continue;
+            }
+            tree = tree.tree;
+            var store = tree.getStore();
+            var record = store.getById(id);
+            if (record) {
+                record.set("qtitle", treeData.qtipCfg.title);
+                record.set("qtip", treeData.qtipCfg.text);
+            }
         }
     }
 };
-
-
 
 pimcore.helpers.getHistory = function() {
     var history = localStorage.getItem("pimcore_element_history");
