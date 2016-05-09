@@ -84,6 +84,52 @@ class Console
     }
 
     /**
+     * @param $script
+     * @param $arguments
+     * @return string
+     */
+    protected static function buildPhpScriptCmd($script, $arguments) {
+        $phpCli = Console::getPhpCli();
+
+        $cmd = $phpCli . " " . $script;
+
+        if(Config::getEnvironment()) {
+            $cmd .= " --environment=" . Config::getEnvironment();
+        }
+
+        if(!empty($arguments)) {
+            $cmd .= " " . $arguments;
+        }
+
+        return $cmd;
+    }
+
+    /**
+     * @param $script
+     * @param $arguments
+     * @param $outputFile
+     * @param $timeout
+     * @return string
+     */
+    public static function runPhpScript($script, $arguments = "", $outputFile = null, $timeout = null) {
+        $cmd = self::buildPhpScriptCmd($script, $arguments);
+        $return = Console::exec($cmd, $outputFile, $timeout);
+        return $return;
+    }
+
+    /**
+     * @param $script
+     * @param $arguments
+     * @param $outputFile
+     * @return string
+     */
+    public static function runPhpScriptInBackground($script, $arguments = "", $outputFile = null) {
+        $cmd = self::buildPhpScriptCmd($script, $arguments);
+        $return = Console::execInBackground($cmd, $outputFile);
+        return $return;
+    }
+
+    /**
      * @param $cmd
      * @param null $outputFile
      * @param null $timeout

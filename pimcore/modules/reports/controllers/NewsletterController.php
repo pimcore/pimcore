@@ -180,8 +180,7 @@ class Reports_NewsletterController extends \Pimcore\Controller\Action\Admin\Repo
     {
         $letter = Newsletter\Config::getByName($this->getParam("name"));
         if ($letter) {
-            $cmd = Tool\Console::getPhpCli() . " " . realpath(PIMCORE_PATH . DIRECTORY_SEPARATOR . "cli" . DIRECTORY_SEPARATOR . "console.php"). " internal:newsletter-send " . escapeshellarg($letter->getName()) . " " . escapeshellarg(Tool::getHostUrl());
-            Tool\Console::execInBackground($cmd, PIMCORE_LOG_DIRECTORY . "/newsletter--" . $letter->getName() . ".log");
+            Tool\Console::runPhpScriptInBackground(realpath(PIMCORE_PATH . DIRECTORY_SEPARATOR . "cli" . DIRECTORY_SEPARATOR . "console.php"), "internal:newsletter-send " . escapeshellarg($letter->getName()) . " " . escapeshellarg(Tool::getHostUrl()));
         }
 
         $this->_helper->json(array("success" => true));

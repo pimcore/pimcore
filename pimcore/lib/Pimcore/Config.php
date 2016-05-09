@@ -27,6 +27,11 @@ class Config
     protected static $configFileCache = [];
 
     /**
+     * @var string
+     */
+    protected static $environment = null;
+
+    /**
      * @param $name - name of configuration file. slash is allowed for subdirectories.
      * @return mixed
      */
@@ -40,7 +45,7 @@ class Config
             $file = null;
 
             // check for environment configuration
-            $env = getenv("PIMCORE_ENVIRONMENT") ?: (getenv("REDIRECT_PIMCORE_ENVIRONMENT") ?: false);
+            $env = self::getEnvironment();
             if ($env) {
                 $fileExt = File::getFileExtension($name);
                 $pureName = str_replace("." . $fileExt, "", $name);
@@ -673,5 +678,37 @@ class Config
             }
         }
         return true;
+    }
+
+    /**
+     * @return string
+     */
+    public static function getEnvironment()
+    {
+        // null means that it wasn't checked, false means it was checked already, but not environment available
+        if(self::$environment === null) {
+            // check environment variables
+            self::$environment = getenv("PIMCORE_ENVIRONMENT") ?: (getenv("REDIRECT_PIMCORE_ENVIRONMENT") ?: false);
+
+            if(!self::$environment && isset($_SERVER["argv"]) && is_array($_SERVER["argv"])) {
+                // check CLI option: --environment[=ENVIRONMENT]
+                foreach($_SERVER["argv"] as $argument) {
+                    if(preg_match("@\-\-environment=(.*)@", $argument, $matches)) {
+                        self::$environment = $matches[1];
+                        break;
+                    }
+                }
+            }
+        }
+
+        return self::$environment;
+    }
+
+    /**
+     * @param string $environment
+     */
+    public static function setEnvironment($environment)
+    {
+        self::$environment = $environment;
     }
 }
