@@ -74,7 +74,7 @@ pimcore.settings.glossary = Class.create({
 
     getRowEditor: function () {
 
-        var itemsPerPage = 20;
+        var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
         this.store = pimcore.helpers.grid.buildDefaultStore(
             '/admin/settings/glossary?',
             [
@@ -109,7 +109,7 @@ pimcore.settings.glossary = Class.create({
             }
         });
 
-        this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, itemsPerPage);
+        this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store);
 
         var casesensitiveCheck = new Ext.grid.column.Check({
             header: t("casesensitive"),

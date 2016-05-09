@@ -56,7 +56,7 @@ pimcore.settings.website = Class.create({
     getRowEditor:function () {
 
 
-        var itemsPerPage = 20;
+        var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
         var url = '/admin/settings/website-settings?';
 
         this.store = pimcore.helpers.grid.buildDefaultStore(
@@ -99,7 +99,7 @@ pimcore.settings.website = Class.create({
             }
         });
 
-        this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, itemsPerPage);
+        this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store);
 
         var typesColumns = [
             {

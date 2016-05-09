@@ -128,13 +128,9 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
         });
 
 
-        this.relationsPagingtoolbar = new Ext.PagingToolbar({
-            pageSize: 15,
-            store: this.relationsStore,
-            displayInfo: true,
-            displayMsg: '{0} - {1} / {2}',
-            emptyMsg: t("classificationstore_collection_empty")
-        });
+        var pageSize = pimcore.helpers.grid.getDefaultPageSize(-1);
+        this.relationsPagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.relationsStore, {pageSize: pageSize});
+
 
         var cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
             clicksToEdit: 2
@@ -301,24 +297,17 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
             ]
         });
 
-        this.collectionsPagingtoolbar = new Ext.PagingToolbar({
-            pageSize: 15,
-            store: this.collectionsStore,
-            displayInfo: true,
-            displayMsg: '{0} - {1} / {2}',
-            emptyMsg: t("classificationstore_no_collections")
-        });
+        var pageSize = pimcore.helpers.grid.getDefaultPageSize(-1);
+        this.collectionsPagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.collectionsStore, {pageSize: pageSize});
 
-        var cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
-            //clicksToEdit: 2
-        });
+
+        var cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {});
 
         var plugins = ['gridfilters', cellEditing];
 
         var gridConfig = {
             frame: false,
             store: this.collectionsStore,
-            //border: true,
             columns: gridColumns,
             loadMask: true,
             columnLines: true,
@@ -335,7 +324,6 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
             selModel: Ext.create('Ext.selection.RowModel', {}),
             bbar: this.collectionsPagingtoolbar,
             tbar: [
-
                 {
                     text: t('add'),
                     handler: this.onAdd.bind(this),
@@ -343,7 +331,6 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
                 }
             ],
             listeners: {
-
                 selectionchange: function(rowModel, selected, eOpts ) {
                     if (selected.length > 0) {
                         var record = selected[0];

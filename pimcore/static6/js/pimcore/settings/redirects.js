@@ -54,7 +54,7 @@ pimcore.settings.redirects = Class.create({
 
     getRowEditor: function () {
 
-        var itemsPerPage = 20;
+        var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
         var url = '/admin/settings/redirects?';
 
         this.store = pimcore.helpers.grid.buildDefaultStore(
@@ -82,7 +82,7 @@ pimcore.settings.redirects = Class.create({
             ],
             itemsPerPage
         );
-        this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, itemsPerPage);
+        this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store);
 
         this.filterField = new Ext.form.TextField({
             xtype: "textfield",

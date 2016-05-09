@@ -54,7 +54,7 @@ pimcore.settings.bouncemailinbox = Class.create({
 
     getGrid: function () {
 
-        var itemsPerPage = 20;
+        var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
         this.store = pimcore.helpers.grid.buildDefaultStore(
             '/admin/email/bounce-mail-inbox-list?',
             ["id","subject", "to", "from","date"],
@@ -80,7 +80,7 @@ pimcore.settings.bouncemailinbox = Class.create({
             }
         ];
 
-        this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, itemsPerPage);
+        this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store);
 
         var toolbar = Ext.create('Ext.Toolbar', {
             cls: 'main-toolbar',

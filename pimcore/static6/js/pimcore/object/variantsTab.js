@@ -127,44 +127,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
 
         this.gridfilters = gridHelper.getGridFilters();
 
-        this.pagingtoolbar = new Ext.PagingToolbar({
-            pageSize: itemsPerPage,
-            store: this.store,
-            displayInfo: true,
-            displayMsg: '{0} - {1} / {2}',
-            emptyMsg: t("no_objects_found")
-        });
-
-        this.pagingtoolbar.add("-");
-
-        this.pagingtoolbar.add(new Ext.Toolbar.TextItem({
-            text: t("items_per_page")
-        }));
-        this.pagingtoolbar.add(new Ext.form.ComboBox({
-            store: [
-                [10, "10"],
-                [20, "20"],
-                [40, "40"],
-                [60, "60"],
-                [80, "80"],
-                [100, "100"]
-            ],
-            mode: "local",
-            width: 80,
-            value: itemsPerPage,
-            triggerAction: "all",
-            editable: false,
-            listeners: {
-                select: function (box, rec, index) {
-                    this.store.setPageSize(intval(rec.data.field1));
-                    this.store.getProxy().extraParams.limit = rec.data.field1;
-                    this.pagingtoolbar.pageSize = intval(rec.data.field1);
-                    this.pagingtoolbar.moveFirst();
-
-                }.bind(this)
-            }
-        }));
-
+        this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store);
 
         this.languageInfo = new Ext.Toolbar.TextItem({
             text: t("grid_current_language") + ": " + pimcore.available_languages[this.gridLanguage]

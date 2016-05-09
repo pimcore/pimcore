@@ -53,7 +53,7 @@ pimcore.settings.recyclebin = Class.create({
 
     getGrid: function () {
 
-        var itemsPerPage = 20;
+        var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
         this.store = pimcore.helpers.grid.buildDefaultStore(
             '/admin/recyclebin/list?',
             [
@@ -92,7 +92,7 @@ pimcore.settings.recyclebin = Class.create({
             }
         });
 
-        this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, itemsPerPage);
+        this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store);
 
         var typesColumns = [
             {header: t("type"), width: 50, sortable: true, dataIndex: 'subtype', renderer: function(d) {

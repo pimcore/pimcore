@@ -204,13 +204,8 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
         });
 
 
-        this.pagingtoolbar = new Ext.PagingToolbar({
-            pageSize: 15,
-            store: this.store,
-            displayInfo: true,
-            displayMsg: '{0} - {1} / {2}',
-            emptyMsg: t("classificationstore_no_keys")
-        });
+        var pageSize = pimcore.helpers.grid.getDefaultPageSize(-1);
+        this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, {pageSize: pageSize});
 
         var cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
             listeners: {

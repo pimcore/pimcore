@@ -82,6 +82,8 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
             '<div class="x-clear"></div>'
         );
 
+        var pageSize = pimcore.helpers.grid.getDefaultPageSize(-1);
+
         this.dataview = new Ext.Panel({
             layout:'fit',
             bodyCls: "asset_folder_preview",
@@ -108,13 +110,7 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
                     }.bind(this)
                 }
             }),
-            bbar: new Ext.PagingToolbar({
-                pageSize: 10,
-                store: this.store,
-                displayInfo: true,
-                displayMsg: '{0} - {1} / {2}',
-                emptyMsg: t("no_assets_found")
-            })
+            bbar: pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, {pageSize: pageSize})
         });
 
         items.push(this.dataview);

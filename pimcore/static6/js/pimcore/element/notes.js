@@ -46,7 +46,7 @@ pimcore.element.notes = Class.create({
 
         if (this.layout == null) {
 
-            var itemsPerPage = 20;
+            var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
             this.store = pimcore.helpers.grid.buildDefaultStore(
                 '/admin/element/note-list?',
                 ['id', 'type', 'title', 'description',"user","date","data","cpath","cid","ctype"],
@@ -80,7 +80,7 @@ pimcore.element.notes = Class.create({
                 }
             });
 
-            this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, itemsPerPage);
+            this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store);
 
 
             var tbarItems = [

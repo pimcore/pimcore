@@ -87,7 +87,7 @@ pimcore.settings.email.log = Class.create({
 
         var iFrameSettings = { width : 700, height : 500};
 
-        var itemsPerPage = 20;
+        var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
 
         var gridColumns = [{
             header: "ID",
@@ -367,7 +367,7 @@ pimcore.settings.email.log = Class.create({
             proxy.extraParams["documentId"] = this.document.id;
         }
 
-        this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, itemsPerPage);
+        this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store);
 
         var toolbar = Ext.create('Ext.Toolbar', {
             cls: 'main-toolbar',

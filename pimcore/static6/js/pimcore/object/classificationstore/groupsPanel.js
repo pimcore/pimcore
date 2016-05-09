@@ -128,13 +128,8 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
         });
 
 
-        this.relationsPagingtoolbar = new Ext.PagingToolbar({
-            pageSize: 15,
-            store: this.relationsStore,
-            displayInfo: true,
-            displayMsg: '{0} - {1} / {2}',
-            emptyMsg: t("classificationstore_group_empty")
-        });
+        var pageSize = pimcore.helpers.grid.getDefaultPageSize(-1);
+        this.relationsPagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.relationsStore, {pageSize: pageSize});
 
 
         var cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
@@ -163,7 +158,6 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
             selModel: Ext.create('Ext.selection.RowModel', {}),
             bbar: this.relationsPagingtoolbar,
             tbar: [
-
                 {
                     text: t('add'),
                     handler: this.onAddKey.bind(this),
@@ -223,7 +217,6 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
             extraParams: {
                 storeId: this.storeConfig.id
             }
-
         };
 
         var listeners = {};
@@ -244,8 +237,6 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
             remoteFilter: true,
             remoteSort: true
         });
-
-
 
         var gridColumns = [];
 
@@ -307,18 +298,10 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
             ]
         });
 
-        this.groupsPagingtoolbar = new Ext.PagingToolbar({
-            pageSize: 15,
-            store: this.groupsStore,
-            displayInfo: true,
-            displayMsg: '{0} - {1} / {2}',
-            emptyMsg: t("classificationstore_no_groups")
-        });
+        var pageSize = pimcore.helpers.grid.getDefaultPageSize(-1);
+        this.groupsPagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.groupsStore, {pageSize: pageSize});
 
-
-        var cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
-            //clicksToEdit: 2
-        });
+        var cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {});
 
         var plugins = ['gridfilters', cellEditing];
 
@@ -342,7 +325,6 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
             selModel: Ext.create('Ext.selection.RowModel', {}),
             bbar: this.groupsPagingtoolbar,
             tbar: [
-
                 {
                     text: t('add'),
                     handler: this.onAdd.bind(this),

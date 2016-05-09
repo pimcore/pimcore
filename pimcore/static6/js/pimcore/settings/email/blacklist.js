@@ -54,7 +54,7 @@ pimcore.settings.email.blacklist = Class.create({
 
     getRowEditor:function () {
 
-        var itemsPerPage = 20;
+        var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
         var url ='/admin/email/blacklist?';
 
         this.store = pimcore.helpers.grid.buildDefaultStore(
@@ -85,7 +85,7 @@ pimcore.settings.email.blacklist = Class.create({
             }
         });
 
-        this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, itemsPerPage);
+        this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store);
 
         var typesColumns = [
             {header:t("email_address"), flex:50, sortable:true, dataIndex:'address', editable: false},

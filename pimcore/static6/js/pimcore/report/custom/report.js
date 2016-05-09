@@ -79,12 +79,12 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
 
         }
 
-        var itemsPerPage = 40;
+        var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
         var url = '/admin/reports/custom-report/data?';
         this.store = pimcore.helpers.grid.buildDefaultStore(
             url, storeFields, itemsPerPage
         );
-        this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, itemsPerPage);
+        this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store);
 
         var proxy = this.store.getProxy();
         proxy.extraParams.name = this.config["name"];

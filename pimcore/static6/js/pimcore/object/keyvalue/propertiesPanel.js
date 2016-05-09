@@ -49,7 +49,7 @@ pimcore.object.keyvalue.propertiespanel = Class.create({
             readerFields.push({name: this.fields[i]});
         }
 
-        var itemsPerPage = 20;
+        var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize(-1);
         var url = "/admin/key-value/properties?";
 
         this.store = pimcore.helpers.grid.buildDefaultStore(
@@ -57,7 +57,10 @@ pimcore.object.keyvalue.propertiespanel = Class.create({
             readerFields,
             itemsPerPage
         );
-        this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, itemsPerPage);
+        this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store,
+            {
+                pageSize: itemsPerPage
+            });
 
 
         var listeners = {};
@@ -332,10 +335,10 @@ pimcore.object.keyvalue.propertiespanel = Class.create({
                         var formValue = this.searchfield.getValue();
 
                         var filter = [{
-                            "field": "description",
+                            "property": "description",
                             "value" :formValue},
                             {
-                                "field": "name",
+                                "property": "name",
                                 "value" :formValue}
                         ];
                         this.groupStore.baseparams = {};
@@ -408,8 +411,6 @@ pimcore.object.keyvalue.propertiespanel = Class.create({
         gridColumns.push({header: t("name"), width: 200, sortable: true, dataIndex: 'name'});
         gridColumns.push({header: t("description"), width: 340, sortable: true, dataIndex: 'description'});
 
-
-
         var proxy = {
             type: 'ajax',
             url: "/admin/key-value/groups",
@@ -427,13 +428,7 @@ pimcore.object.keyvalue.propertiespanel = Class.create({
             fields: readerFields
         });
 
-        this.groupPagingtoolbar = new Ext.PagingToolbar({
-            pageSize: 50,
-            store: this.groupStore,
-            displayInfo: true,
-            displayMsg: '{0} - {1} / {2}',
-            emptyMsg: t("keyvalue_no_groups")
-        });
+        this.groupPagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.groupStore, { hideSelection: true });
 
         this.groupGridPanel = new Ext.grid.GridPanel({
             store: this.groupStore,

@@ -54,7 +54,7 @@ pimcore.settings.httpErrorLog = Class.create({
 
     getGrid: function () {
 
-        var itemsPerPage = 20;
+        var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
         var url = '/admin/misc/http-error-log?';
 
         this.store = pimcore.helpers.grid.buildDefaultStore(
@@ -67,7 +67,7 @@ pimcore.settings.httpErrorLog = Class.create({
         proxy.extraParams["group"] = 1;
         proxy.getReader().setRootProperty('items');
 
-        this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, itemsPerPage);
+        this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store);
 
         var typesColumns = [
             {header: "ID", width: 50, sortable: true, hidden: true, dataIndex: 'id'},

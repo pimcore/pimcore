@@ -44,7 +44,7 @@ pimcore.log.admin = Class.create({
                 pimcore.globalmanager.remove("pimcore_applicationlog_admin");
             }.bind(this));
 
-            var itemsPerPage = 20;
+            var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
             this.store = pimcore.helpers.grid.buildDefaultStore(
                 '/admin/log/show?',
                 [
@@ -56,7 +56,7 @@ pimcore.log.admin = Class.create({
             reader.setRootProperty('p_results');
             reader.setTotalProperty('p_totalCount');
 
-            this.pagingToolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, itemsPerPage);
+            this.pagingToolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store);
 
             this.resultpanel = new Ext.grid.GridPanel({
                     store: this.store,

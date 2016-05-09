@@ -41,7 +41,7 @@ pimcore.object.keyvalue.groupspanel = Class.create({
             readerFields.push({name: this.fields[i], allowBlank: true});
         }
 
-        var itemsPerPage = 20;
+        var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize(-1);
         var url =  "/admin/key-value/groups?";
 
         this.store = pimcore.helpers.grid.buildDefaultStore(
@@ -49,7 +49,10 @@ pimcore.object.keyvalue.groupspanel = Class.create({
             readerFields,
             itemsPerPage
         );
-        this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, itemsPerPage);
+        this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store,
+            {
+                pageSize: itemsPerPage
+            });
 
 
         this.store.addListener("exception", function (conn, mode, action, request, response, store) {
@@ -189,8 +192,7 @@ pimcore.object.keyvalue.groupspanel = Class.create({
                              params: {
                                 "overrideSort": "true"
                             }
-                            }
-                        );
+                        });
                     }
                 }.bind(this)
             });

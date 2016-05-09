@@ -305,13 +305,8 @@ pimcore.object.keyvalue.selectionwindow = Class.create({
             emptyMsg = "keyvalue_no_keys";
         }
 
-        this.pagingtoolbar = new Ext.PagingToolbar({
-            pageSize: 15,
-            store: this.store,
-            displayInfo: true,
-            displayMsg: '{0} - {1} / {2}',
-            emptyMsg: t(emptyMsg)
-        });
+        var pageSize = pimcore.helpers.grid.getDefaultPageSize(-1);
+        this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, {pageSize: pageSize});
 
         this.gridPanel = new Ext.grid.GridPanel({
             store: this.store,
