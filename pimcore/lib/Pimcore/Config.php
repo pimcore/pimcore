@@ -686,14 +686,14 @@ class Config
     public static function getEnvironment()
     {
         // null means that it wasn't checked, false means it was checked already, but not environment available
-        if(self::$environment === null) {
+        if (self::$environment === null) {
             // check environment variables
             self::$environment = getenv("PIMCORE_ENVIRONMENT") ?: (getenv("REDIRECT_PIMCORE_ENVIRONMENT") ?: false);
 
-            if(!self::$environment && isset($_SERVER["argv"]) && is_array($_SERVER["argv"])) {
+            if (!self::$environment && isset($_SERVER["argv"]) && is_array($_SERVER["argv"])) {
                 // check CLI option: --environment[=ENVIRONMENT]
-                foreach($_SERVER["argv"] as $argument) {
-                    if(preg_match("@\-\-environment=(.*)@", $argument, $matches)) {
+                foreach ($_SERVER["argv"] as $argument) {
+                    if (preg_match("@\-\-environment=(.*)@", $argument, $matches)) {
                         self::$environment = $matches[1];
                         break;
                     }

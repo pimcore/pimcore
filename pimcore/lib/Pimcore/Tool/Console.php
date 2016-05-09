@@ -88,16 +88,17 @@ class Console
      * @param $arguments
      * @return string
      */
-    protected static function buildPhpScriptCmd($script, $arguments) {
+    protected static function buildPhpScriptCmd($script, $arguments)
+    {
         $phpCli = Console::getPhpCli();
 
         $cmd = $phpCli . " " . $script;
 
-        if(Config::getEnvironment()) {
+        if (Config::getEnvironment()) {
             $cmd .= " --environment=" . Config::getEnvironment();
         }
 
-        if(!empty($arguments)) {
+        if (!empty($arguments)) {
             $cmd .= " " . $arguments;
         }
 
@@ -111,7 +112,8 @@ class Console
      * @param $timeout
      * @return string
      */
-    public static function runPhpScript($script, $arguments = "", $outputFile = null, $timeout = null) {
+    public static function runPhpScript($script, $arguments = "", $outputFile = null, $timeout = null)
+    {
         $cmd = self::buildPhpScriptCmd($script, $arguments);
         $return = Console::exec($cmd, $outputFile, $timeout);
         return $return;
@@ -123,7 +125,8 @@ class Console
      * @param $outputFile
      * @return string
      */
-    public static function runPhpScriptInBackground($script, $arguments = "", $outputFile = null) {
+    public static function runPhpScriptInBackground($script, $arguments = "", $outputFile = null)
+    {
         $cmd = self::buildPhpScriptCmd($script, $arguments);
         $return = Console::execInBackground($cmd, $outputFile);
         return $return;
