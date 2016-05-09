@@ -105,8 +105,8 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
         return {
             type: 'list',
             dataIndex: field.key,
-            labelField: "value",
-            idField: "key",
+            labelField: "key",
+            idField: "value",
             options: store
         };
     },
