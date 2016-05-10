@@ -186,7 +186,7 @@ pimcore.document.folder = Class.create(pimcore.document.document, {
                 border: false,
                 cls: "main-toolbar",
                 items: buttons,
-                overflowHandler: 'menu'
+                overflowHandler: 'scroller'
             });
         }
 

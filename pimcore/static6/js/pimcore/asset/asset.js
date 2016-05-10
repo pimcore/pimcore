@@ -234,7 +234,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                 border: false,
                 cls: "main-toolbar",
                 items: buttons,
-                overflowHandler: 'menu'
+                overflowHandler: 'scroller'
             });
         }
 

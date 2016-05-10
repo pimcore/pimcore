@@ -455,7 +455,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 border: false,
                 cls: "main-toolbar",
                 items: buttons,
-                overflowHandler: 'menu'
+                overflowHandler: 'scroller'
             });
 
             this.toolbar.on("afterrender", function () {

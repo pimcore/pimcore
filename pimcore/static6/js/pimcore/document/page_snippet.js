@@ -253,7 +253,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                 border: false,
                 cls: "main-toolbar",
                 items: buttons,
-                overflowHandler: 'menu'
+                overflowHandler: 'scroller'
             });
 
             this.toolbar.on("afterrender", function () {

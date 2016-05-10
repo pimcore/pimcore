@@ -278,7 +278,7 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
                 border: false,
                 cls: "main-toolbar",
                 items: buttons,
-                overflowHandler: 'menu'
+                overflowHandler: 'scroller'
             });
         }
 
