@@ -496,7 +496,6 @@ $scripts = array(
     "pimcore/report/newsletter/item.js",
 
     // extension manager
-    "pimcore/extensionmanager/settings.js",
     "pimcore/extensionmanager/xmlEditor.js",
     "pimcore/extensionmanager/admin.js",
 
