@@ -35,7 +35,7 @@ class ThumbnailsOptimizeImagesCommand extends AbstractCommand
 
         $savedBytesTotal = 0;
 
-        foreach($files as $file) {
+        foreach ($files as $file) {
             if (file_exists($file)) {
                 $originalFilesize = filesize($file);
                 \Pimcore\Image\Optimizer::optimize($file);

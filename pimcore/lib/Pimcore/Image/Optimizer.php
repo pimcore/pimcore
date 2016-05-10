@@ -47,7 +47,7 @@ class Optimizer
                             rename($newFile, $path);
                             @chmod($path, File::getDefaultMode());
                         }
-                    } else if ($optimizer["type"] == "zopflipng") {
+                    } elseif ($optimizer["type"] == "zopflipng") {
                         $newFile = $path . ".xxxoptimized";
                         Console::exec($optimizer["path"] . " " . $path . " " . $newFile, null, 60);
                         if (file_exists($newFile)) {
