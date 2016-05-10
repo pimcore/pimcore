@@ -24,6 +24,11 @@ class Console
     private static $systemEnvironment;
 
     /**
+     * @var null|bool
+     */
+    protected static $timeoutKillAfterSupport = null;
+
+    /**
      * @static
      * @return string "windows" or "unix"
      */
@@ -143,13 +148,21 @@ class Console
         if ($timeout && self::getTimeoutBinary()) {
 
             // check if --kill-after flag is supported in timeout
-            $killafter = "";
-            $out = self::exec(self::getTimeoutBinary() . " --help");
-            if (strpos($out, "--kill-after")) {
-                $killafter = " -k 1m";
+            if(self::$timeoutKillAfterSupport === null) {
+                $out = self::exec(self::getTimeoutBinary() . " --help");
+                if (strpos($out, "--kill-after")) {
+                    self::$timeoutKillAfterSupport = true;
+                } else {
+                    self::$timeoutKillAfterSupport = false;
+                }
             }
 
-            $cmd = self::getTimeoutBinary() . $killafter . " " . $timeout . "s " . $cmd;
+            $killAfter = "";
+            if(self::$timeoutKillAfterSupport) {
+                $killAfter = " -k 1m";
+            }
+
+            $cmd = self::getTimeoutBinary() . $killAfter . " " . $timeout . "s " . $cmd;
         } elseif ($timeout) {
             \Logger::warn("timeout binary not found, executing command without timeout");
         }
