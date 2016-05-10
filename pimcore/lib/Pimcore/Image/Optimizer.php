@@ -39,17 +39,15 @@ class Optimizer
             if ($format == "png") {
                 $optimizer = self::getPngOptimizerCli();
                 if ($optimizer) {
-                    /*if($optimizer["type"] == "pngquant") {
-                        Console::exec($optimizer["path"] . " --ext xxxoptimized.png " . $path, null, 60);
-                        $newFile = preg_replace("/\.png$/", "", $path);
-                        $newFile .= "xxxoptimized.png";
-
-                        if(file_exists($newFile)) {
+                    if ($optimizer["type"] == "pngcrush") {
+                        $newFile = $path . ".xxxoptimized";
+                        Console::exec($optimizer["path"] . " " . $path . " " . $newFile, null, 60);
+                        if (file_exists($newFile)) {
                             unlink($path);
                             rename($newFile, $path);
+                            @chmod($path, File::getDefaultMode());
                         }
-                    } else */
-                    if ($optimizer["type"] == "pngcrush") {
+                    } else if ($optimizer["type"] == "zopflipng") {
                         $newFile = $path . ".xxxoptimized";
                         Console::exec($optimizer["path"] . " " . $path . " " . $newFile, null, 60);
                         if (file_exists($newFile)) {
@@ -103,16 +101,16 @@ class Optimizer
                     "type" => "pngcrush"
                 );
 
-                return $configPath;
+                return self::$optimizerBinaries["pngOptimizer"];
             } else {
                 \Logger::critical("Binary: " . $configPath . " is not executable");
             }
         }
 
         $paths = array(
-            /*"/usr/local/bin/pngquant",
-            "/usr/bin/pngquant",
-            "/bin/pngquant",*/
+            "/usr/local/bin/zopflipng",
+            "/usr/bin/zopflipng",
+            "/bin/zopflipng",
             "/usr/local/bin/pngcrush",
             "/usr/bin/pngcrush",
             "/bin/pngcrush",
@@ -154,7 +152,7 @@ class Optimizer
                         "type" => $type
                     );
 
-                    return $configPath;
+                    return self::$optimizerBinaries["jpegOptimizer"];
                 } else {
                     \Logger::critical("Binary: " . $configPath . " is not executable");
                 }
