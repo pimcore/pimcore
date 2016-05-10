@@ -30,7 +30,7 @@ class MaintenanceCommand extends AbstractCommand
             ->addOption(
                 'job', 'j',
                 InputOption::VALUE_OPTIONAL,
-                'call just a specific job(s), use "," (comma) to execute more than one job (valid options: scheduledtasks, cleanupcache, logmaintenance, sanitycheck, cleanuplogfiles, versioncleanup, versioncompress, redirectcleanup, cleanupbrokenviews, usagestatistics, downloadmaxminddb, tmpstorecleanup and plugin classes if you want to call a plugin maintenance)'
+                'call just a specific job(s), use "," (comma) to execute more than one job (valid options: scheduledtasks, cleanupcache, logmaintenance, sanitycheck, cleanuplogfiles, versioncleanup, versioncompress, redirectcleanup, cleanupbrokenviews, usagestatistics, downloadmaxminddb, tmpstorecleanup, imageoptimize and plugin classes if you want to call a plugin maintenance)'
             )
             ->addOption(
                 'force', 'f',
