@@ -16,7 +16,7 @@ use Pimcore\Tool;
 use Pimcore\File;
 use Pimcore\Model\Object;
 
-class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
+class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
 {
 
     public function loadObjectDataAction()
@@ -296,15 +296,18 @@ class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
                 $searchType = $this->getParam("searchType");
                 $postfix =  $searchType && $searchType != "folder" ? "_" . $this->getParam("searchType") : "";
 
-                if ($classId) {
-                    $configFile = PIMCORE_CONFIGURATION_DIRECTORY . "/object/grid/" . $object->getId() . "_" . $classId . $postfix . "-user_" . $this->getUser()->getId() . ".psf";
-                } else {
-                    $configFile = PIMCORE_CONFIGURATION_DIRECTORY . "/object/grid/" . $object->getId() . $postfix . "-user_" . $this->getUser()->getId() . ".psf";
-                }
+                $configFiles = array();
+                $configFiles[]= PIMCORE_CONFIGURATION_DIRECTORY . "/object/grid/" . $object->getId() . "_" . $classId . $postfix . "-user_" . $this->getUser()->getId() . ".psf";
+                $configFiles[] = PIMCORE_CONFIGURATION_DIRECTORY . "/object/grid/" . $object->getId() . $postfix . "-user_" . $this->getUser()->getId() . ".psf";
 
-                $configDir = dirname($configFile);
-                if (is_dir($configDir)) {
-                    @unlink($configFile);
+
+                foreach ($configFiles as $configFile) {
+                    $configDir = dirname($configFile);
+                    if (is_dir($configDir)) {
+                        if (is_file($configFile)) {
+                            @unlink($configFile);
+                        }
+                    }
                 }
 
                 $this->_helper->json(array("success" => true));
@@ -399,7 +402,7 @@ class   Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
             return null;
         }
     }
-    
+
     /**
      * IMPORTER
      */
