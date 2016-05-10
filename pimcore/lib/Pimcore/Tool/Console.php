@@ -148,7 +148,7 @@ class Console
         if ($timeout && self::getTimeoutBinary()) {
 
             // check if --kill-after flag is supported in timeout
-            if(self::$timeoutKillAfterSupport === null) {
+            if (self::$timeoutKillAfterSupport === null) {
                 $out = self::exec(self::getTimeoutBinary() . " --help");
                 if (strpos($out, "--kill-after")) {
                     self::$timeoutKillAfterSupport = true;
@@ -158,7 +158,7 @@ class Console
             }
 
             $killAfter = "";
-            if(self::$timeoutKillAfterSupport) {
+            if (self::$timeoutKillAfterSupport) {
                 $killAfter = " -k 1m";
             }
 
