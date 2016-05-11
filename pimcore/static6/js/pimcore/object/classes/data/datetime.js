@@ -94,7 +94,7 @@ pimcore.object.classes.data.datetime = Class.create(pimcore.object.classes.data.
 
         this.component = new Ext.form.FieldSet({
             layout: 'hbox',
-            fieldLabel:t("default_value"),
+            title: t("default_value"),
             style: "border: none !important",
             combineErrors:false,
             items:[this.datefield, this.timefield],
@@ -110,11 +110,10 @@ pimcore.object.classes.data.datetime = Class.create(pimcore.object.classes.data.
                 xtype:"checkbox",
                 fieldLabel:t("use_current_date"),
                 name:"useCurrentDate",
-                value:this.datax.defaultValue,
                 checked:this.datax.useCurrentDate,
                 disabled: this.isInCustomLayoutEditor(),
                 listeners:{
-                    check:this.toggleDefaultDate.bind(this)
+                    change:this.toggleDefaultDate.bind(this)
                 }
             }, {
                 xtype: "displayfield",

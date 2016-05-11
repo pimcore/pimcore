@@ -80,10 +80,9 @@ pimcore.object.classes.data.date = Class.create(pimcore.object.classes.data.data
                 xtype:"checkbox",
                 fieldLabel:t("use_current_date"),
                 name:"useCurrentDate",
-                value:this.datax.defaultValue,
                 checked: this.datax.useCurrentDate,
                 listeners:{
-                    check:this.toggleDefaultDate.bind(this)
+                    change:this.toggleDefaultDate.bind(this)
                 },
                 disabled: this.isInCustomLayoutEditor()
             }, {
