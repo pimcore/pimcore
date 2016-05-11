@@ -118,10 +118,10 @@
 #pimcore_logout {
     position: absolute;
     z-index: 2;
-    bottom: -5px;
+    bottom: 1px;
     left: 8px;
     width: 44px;
-    height:44px;
+    height:38px;
     background: url(/pimcore/static6/img/flat-color-icons/logout.svg) center center/20px no-repeat;
 
     filter: grayscale(100%) brightness(200%);
