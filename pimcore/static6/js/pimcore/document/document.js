@@ -515,20 +515,25 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
             menu: [{
                 text: t("new_document"),
                 hidden: !in_array(this.getType(), ["page","snippet","email"]),
+                iconCls: "pimcore_icon_page pimcore_icon_overlay_add",
                 menu: [{
                     text: t("using_inheritance"),
-                    handler: this.createTranslation.bind(this, true)
+                    handler: this.createTranslation.bind(this, true),
+                    iconCls: "pimcore_icon_clone"
                 },{
                     text: t("empty_document"),
-                    handler: this.createTranslation.bind(this, false)
+                    handler: this.createTranslation.bind(this, false),
+                    iconCls: "pimcore_icon_file_plain"
                 }]
             }, {
                 text: t("link_existing_document"),
-                handler: this.linkTranslation.bind(this)
+                handler: this.linkTranslation.bind(this),
+                iconCls: "pimcore_icon_page pimcore_icon_overlay_reading"
             }, {
                 text: t("open_translation"),
                 menu: translationsMenu,
-                hidden: !translationsMenu.length
+                hidden: !translationsMenu.length,
+                iconCls: "pimcore_icon_open"
             }]
         };
     }

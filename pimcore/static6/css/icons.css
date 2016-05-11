@@ -105,6 +105,16 @@
     background: url(/pimcore/static6/img/flat-color-icons/high_priority.svg) center center no-repeat !important;
 }
 
+.pimcore_icon_overlay_reading:before {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    bottom: 0px;
+    right: 0px;
+    content: "";
+    background: url(/pimcore/static6/img/flat-color-icons/reading.svg) center center no-repeat !important;
+}
+
 .pimcore_icon_home, .pimcore_icon_site {
     background: url(/pimcore/static6/img/flat-color-icons/home.svg) center center no-repeat !important;
 }
@@ -557,6 +567,10 @@
 
 .pimcore_icon_file {
     background: url(/pimcore/static6/img/flat-color-icons/file-border.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_file_plain {
+    background: url(/pimcore/static6/img/flat-color-icons/file.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_import_server {
