@@ -104,28 +104,18 @@ pimcore.layout.treepanelmanager = {
             target.expand();
         }
 
-        tree.collapse();
-
-        //target.items.each(function (item, index, length) {
-        //    item.collapse();
-        //});
-
         target.suspendLayouts();
         source.remove(tree, false);
         target.add(tree);
-        var layout = target.getLayout();
+        tree.expand(false);
         target.resumeLayouts();
-        tree.expand();
 
         if(source.items.getCount() < 1) {
             source.collapse();
             source.hide();
-        } else if(!source.getLayout().activeItem) {
-            //source.items.first().expand();
         }
         source.updateLayout();
 
-        //target.updateLayout();
         pimcore.layout.refresh();
     }
 };
