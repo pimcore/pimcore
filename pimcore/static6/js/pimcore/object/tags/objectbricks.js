@@ -139,11 +139,6 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
                 iconCls: "pimcore_icon_plus",
                 menu: collectionMenu
             });
-        } else {
-            // items.push({
-            //     xtype: "tbtext",
-            //     text: t("no_further_objectbricks_allowed")
-            // });
         }
 
         var toolbar = new Ext.Toolbar({
