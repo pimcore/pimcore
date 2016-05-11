@@ -434,6 +434,8 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
             }
         });
         optionsButton.render(optionsEl);
+
+        Ext.get(this.id).addCls("pimcore_block_buttons");
     },
     
     getTypeMenu: function (scope, element) {

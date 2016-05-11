@@ -175,7 +175,7 @@ pimcore.document.tags.block = Class.create(pimcore.document.tag, {
         });
         plusButton.render(plusEl);
 
-        Ext.get(this.id).addCls("pimcore_block_limitnotreached");
+        Ext.get(this.id).addCls("pimcore_block_limitnotreached pimcore_block_buttons");
     },
 
     addBlock : function (element, amountbox) {
