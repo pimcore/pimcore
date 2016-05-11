@@ -2,6 +2,9 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="icon" type="image/png" href="/pimcore/static6/img/favicon/favicon-32x32.png" />
+
     <title><?= htmlentities($this->getRequest()->getHttpHost(), ENT_QUOTES, 'UTF-8') ?> :: Pimcore</title>
 
     <link rel="stylesheet" type="text/css" href="/pimcore/static6/js/lib/ext/classic/theme-triton/resources/theme-triton-all.css"/>
@@ -24,7 +27,7 @@
             background: url(/pimcore/static6/img/icon/cog.png) center center no-repeat !important;
         }
     </style>
-    
+
 </head>
 
 <body>
@@ -167,7 +170,7 @@ $scripts = array(
                     border: false,
                     manageHeight: false,
                     bodyStyle: "padding: 20px 10px 5px 10px",
-                    html: '<div align="center"><img width="200" src="/pimcore/static6/img/logo.svg" align="center" /></div>'
+                    html: '<div align="center"><img width="200" src="/pimcore/static6/img/logo-gray.svg" align="center" /></div>'
                 },
                 {
                     xtype: "panel",

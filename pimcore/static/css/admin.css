@@ -176,7 +176,7 @@ body {
 }
 
 #pimcore_panel_tabs > .x-tab-panel-bwrap > .x-tab-panel-body {
-    background-image: url(/pimcore/static6/img/logo.svg);
+    background-image: url(/pimcore/static6/img/logo-gray.svg);
     background-repeat: no-repeat;
     background-position: center center;
     background-size: 300px auto;

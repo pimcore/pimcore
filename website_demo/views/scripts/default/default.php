@@ -78,7 +78,7 @@
 
 <div id="site">
     <div id="logo">
-        <a href="http://www.pimcore.org/"><img src="/pimcore/static6/img/logo.svg" style="width: 200px;" /></a>
+        <a href="http://www.pimcore.org/"><img src="/pimcore/static6/img/logo-gray.svg" style="width: 200px;" /></a>
         <hr />
         <div class="claim">
             THE OPEN-SOURCE ENTERPRISE PLATFORM FOR PIM, CMS, DAM & COMMERCE

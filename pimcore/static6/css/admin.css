@@ -519,12 +519,12 @@
 
 .asset_folder_preview .x-view-over{
     border:1px solid #dddddd;
-    background: #efefef url(../../resources/images/default/grid/row-over.gif) repeat-x left top;
+    background: #efefef;
     padding: 4px;
 }
 
 .asset_folder_preview .x-view-selected{
-    background: #eff5fb url(images/selected.gif) no-repeat right bottom;
+    background: #eff5fb;
     border:1px solid #99bbe8;
     padding: 4px;
 }
@@ -535,9 +535,6 @@
 
 .asset_folder_preview .loading-indicator {
     font-size:11px;
-    background-image:url('../../resources/images/default/grid/loading.gif');
-    background-repeat: no-repeat;
-    background-position: left;
     padding-left:20px;
     margin:10px;
 }

@@ -147,6 +147,10 @@ a, a:hover, a:visited, a:active {
     text-align: center;
 }
 
+#browserinfo .links img {
+    height: 50px;
+}
+
 #footer {
     width: 100%;
     position: absolute;

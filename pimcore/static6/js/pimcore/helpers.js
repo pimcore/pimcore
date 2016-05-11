@@ -2620,7 +2620,7 @@ pimcore.helpers.editmode.openPdfEditPanel = function () {
 pimcore.helpers.showAbout = function () {
 
     var html = '<div class="pimcore_about_window">';
-    html += '<br><img src="/pimcore/static6/img/logo.svg" style="width: 300px;"><br>';
+    html += '<br><img src="/pimcore/static6/img/logo-gray.svg" style="width: 300px;"><br>';
     html += '<br><b>Version: ' + pimcore.settings.version + '</b>';
     html += '<br><b>Build: ' + pimcore.settings.build + '</b>';
     html += '<br><br>&copy; by pimcore GmbH, Salzburg, Austria (<a href="http://www.pimcore.org/" target="_blank">pimcore.org</a>)';
