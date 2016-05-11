@@ -293,7 +293,7 @@ class Thumbnail
         $pictureAttribs = []; // this is used for the html5 <picture> element
 
         // re-add support for disableWidthHeightAttributes
-        if ((isset($attributes['disableWidthHeightAttributes']) && $attributes['disableWidthHeightAttributes'])) {
+        if (isset($attributes['disableWidthHeightAttributes']) && $attributes['disableWidthHeightAttributes']) {
             // make sure the attributes are removed
             $removeAttributes = array_merge($removeAttributes, ['width', 'height']);
         } else {
