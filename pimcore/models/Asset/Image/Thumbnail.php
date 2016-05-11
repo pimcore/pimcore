@@ -292,11 +292,18 @@ class Thumbnail
         $attr = array();
         $pictureAttribs = []; // this is used for the html5 <picture> element
 
-        if ($this->getWidth()) {
-            $attr['width'] = 'width="'.$this->getWidth().'"';
-        }
-        if ($this->getHeight()) {
-            $attr['height'] = 'height="'.$this->getHeight().'"';
+        // re-add support for disableWidthHeightAttributes
+        if ((isset($attributes['disableWidthHeightAttributes']) && $attributes['disableWidthHeightAttributes'])) {
+            // make sure the attributes are removed
+            $removeAttributes = array_merge($removeAttributes, ['width', 'height']);
+        } else {
+            if ($this->getWidth()) {
+                $attr['width'] = 'width="'.$this->getWidth().'"';
+            }
+
+            if ($this->getHeight()) {
+                $attr['height'] = 'height="'.$this->getHeight().'"';
+            }
         }
 
         $altText = "";
