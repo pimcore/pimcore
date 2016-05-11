@@ -57,9 +57,14 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
 
     getLayout: function () {
 
+        var iconCls = null;
+        if(this.fieldConfig.noteditable == false) {
+            iconCls = "pimcore_icon_droptarget";
+        }
+
         var html = '<div class="pimcore_tag_wysiwyg" id="' + this.editableDivId + '" contenteditable="true">' + this.data + '</div>';
         var pConf = {
-            iconCls: "pimcore_icon_droptarget",
+            iconCls: iconCls,
             title: this.fieldConfig.title,
             html: html,
             border: true,
@@ -88,6 +93,7 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
         this.component.on("afterrender", function() {
             Ext.get(this.editableDivId).dom.setAttribute("contenteditable", "false");
         }.bind(this));
+        this.component.disable();
         return this.component;
     },
 
