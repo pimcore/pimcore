@@ -43,7 +43,6 @@ pimcore.object.classes.layout.text = Class.create(pimcore.object.classes.layout.
             items: [
                 {
                     xtype: "htmleditor",
-                    width: 600,
                     height: 300,
                     value: this.datax.html,
                     name: "html",
