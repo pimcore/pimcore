@@ -22,7 +22,7 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
 
         // we need some space for the surrounding area (button, dialog frame, etc...)
         this.width = Math.min(1000, window.innerWidth - 100);
-        this.height = Math.min(800, window.innerHeight - 100);
+        this.height = Math.min(800, window.innerHeight - 180);
 
     },
 
