@@ -1368,3 +1368,9 @@ span.warning {
 .pimcore-panel-header-no-border > .x-panel-header-default {
     border: none !important;
 }
+
+/* fixes combobox line-height - see issue #531  */
+.x-boundlist-item {
+    padding: 5px 10px;
+    line-height: 23px;
+}
