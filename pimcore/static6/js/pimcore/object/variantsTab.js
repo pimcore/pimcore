@@ -77,7 +77,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
             false
         );
 
-        var itemsPerPage = 20;
+        var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize(-1);
 
 
         gridHelper.showSubtype = false;
@@ -87,8 +87,6 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
 
         this.store = gridHelper.getStore();
         this.store.setPageSize(itemsPerPage);
-        this.store.getProxy().extraParams.limit = itemsPerPage;
-        // this.store.setAutoLoad(1);
 
         var gridColumns = gridHelper.getGridColumns();
 
@@ -127,7 +125,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
 
         this.gridfilters = gridHelper.getGridFilters();
 
-        this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store);
+        this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, {pageSize: itemsPerPage});
 
         this.languageInfo = new Ext.Toolbar.TextItem({
             text: t("grid_current_language") + ": " + pimcore.available_languages[this.gridLanguage]

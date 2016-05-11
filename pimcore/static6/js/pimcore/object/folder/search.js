@@ -131,108 +131,105 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
     },
 
     createGrid: function (fromConfig, response) {
-        //try {
+        var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize(-1);
 
-            var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize(-1);
+        var fields = [];
+        if (response.responseText) {
+            response = Ext.decode(response.responseText);
 
-            var fields = [];
-            if (response.responseText) {
-                response = Ext.decode(response.responseText);
-
-                if (response.pageSize) {
-                    itemsPerPage = response.pageSize;
-                }
-
-                fields = response.availableFields;
-                this.gridLanguage = response.language;
-                this.sortinfo = response.sortinfo;
-                if (response.onlyDirectChildren) {
-                    this.onlyDirectChildren = response.onlyDirectChildren;
-                }
-            } else {
-                fields = response;
+            if (response.pageSize) {
+                itemsPerPage = response.pageSize;
             }
 
-            this.fieldObject = {};
-            for (var i = 0; i < fields.length; i++) {
-                this.fieldObject[fields[i].key] = fields[i];
+            fields = response.availableFields;
+            this.gridLanguage = response.language;
+            this.sortinfo = response.sortinfo;
+            if (response.onlyDirectChildren) {
+                this.onlyDirectChildren = response.onlyDirectChildren;
             }
+        } else {
+            fields = response;
+        }
 
-            this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
-                clicksToEdit: 1
-            });
+        this.fieldObject = {};
+        for (var i = 0; i < fields.length; i++) {
+            this.fieldObject[fields[i].key] = fields[i];
+        }
 
-            var plugins = [this.cellEditing, 'pimcore.gridfilters'];
+        this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
+            clicksToEdit: 1
+        });
 
-            // get current class
-            var classStore = pimcore.globalmanager.get("object_types_store");
-            var klass = classStore.getById(this.classId);
+        var plugins = [this.cellEditing, 'pimcore.gridfilters'];
 
-            var gridHelper = new pimcore.object.helpers.grid(
-                klass.data.text,
-                fields,
-                "/admin/object/grid-proxy/classId/" + this.classId + "/folderId/" + this.object.id,
-                {
-                    language: this.gridLanguage,
-                    limit: itemsPerPage
-                },
-                false
-            );
+        // get current class
+        var classStore = pimcore.globalmanager.get("object_types_store");
+        var klass = classStore.getById(this.classId);
 
-            gridHelper.showSubtype = false;
-            gridHelper.enableEditor = true;
-            gridHelper.limit = itemsPerPage;
+        var gridHelper = new pimcore.object.helpers.grid(
+            klass.data.text,
+            fields,
+            "/admin/object/grid-proxy/classId/" + this.classId + "/folderId/" + this.object.id,
+            {
+                language: this.gridLanguage,
+                // limit: itemsPerPage
+            },
+            false
+        );
 
-
-            var propertyVisibility = klass.get("propertyVisibility");
-
-            this.store = gridHelper.getStore();
-            if (this.sortinfo) {
-                this.store.sort(this.sortinfo.field, this.sortinfo.direction);
-            }
-            this.store.getProxy().setExtraParam("only_direct_children", this.onlyDirectChildren);
-            this.store.load();
-
-            var gridColumns = gridHelper.getGridColumns();
-
-            // add filters
-            this.gridfilters = gridHelper.getGridFilters();
-
-            this.languageInfo = new Ext.Toolbar.TextItem({
-                text: t("grid_current_language") + ": " + (this.gridLanguage == "default" ? t("default") : pimcore.available_languages[this.gridLanguage])
-            });
-
-            this.toolbarFilterInfo =  new Ext.Button({
-                iconCls: "pimcore_icon_filter_condition",
-                hidden: true,
-                text: '<b>' + t("filter_active") + '</b>',
-                tooltip: t("filter_condition"),
-                handler: function (button) {
-                    Ext.MessageBox.alert(t("filter_condition"), button.pimcore_filter_condition);
-                }.bind(this)
-            });
+        gridHelper.showSubtype = false;
+        gridHelper.enableEditor = true;
+        gridHelper.limit = itemsPerPage;
 
 
-            this.createSqlEditor();
+        var propertyVisibility = klass.get("propertyVisibility");
 
-            this.checkboxOnlyDirectChildren = new Ext.form.Checkbox({
-                name: "onlyDirectChildren",
-                style: "margin-bottom: 5px; margin-left: 5px",
-                checked: this.onlyDirectChildren,
-                boxLabel: t("only_children"),
-                listeners: {
-                    "change": function (field, checked) {
-                        this.grid.filters.clearFilters();
-
-                        this.store.getProxy().setExtraParam("only_direct_children", checked);
-
-                        this.onlyDirectChildren = checked;
-                        this.pagingtoolbar.moveFirst();
-                    }.bind(this)
-                }
-            });
-
+        this.store = gridHelper.getStore();
+        if (this.sortinfo) {
+            this.store.sort(this.sortinfo.field, this.sortinfo.direction);
+        }
+        this.store.getProxy().setExtraParam("only_direct_children", this.onlyDirectChildren);
         this.store.setPageSize(itemsPerPage);
+        this.store.load();
+
+        var gridColumns = gridHelper.getGridColumns();
+
+        // add filters
+        this.gridfilters = gridHelper.getGridFilters();
+
+        this.languageInfo = new Ext.Toolbar.TextItem({
+            text: t("grid_current_language") + ": " + (this.gridLanguage == "default" ? t("default") : pimcore.available_languages[this.gridLanguage])
+        });
+
+        this.toolbarFilterInfo =  new Ext.Button({
+            iconCls: "pimcore_icon_filter_condition",
+            hidden: true,
+            text: '<b>' + t("filter_active") + '</b>',
+            tooltip: t("filter_condition"),
+            handler: function (button) {
+                Ext.MessageBox.alert(t("filter_condition"), button.pimcore_filter_condition);
+            }.bind(this)
+        });
+
+
+        this.createSqlEditor();
+
+        this.checkboxOnlyDirectChildren = new Ext.form.Checkbox({
+            name: "onlyDirectChildren",
+            style: "margin-bottom: 5px; margin-left: 5px",
+            checked: this.onlyDirectChildren,
+            boxLabel: t("only_children"),
+            listeners: {
+                "change": function (field, checked) {
+                    this.grid.filters.clearFilters();
+
+                    this.store.getProxy().setExtraParam("only_direct_children", checked);
+
+                    this.onlyDirectChildren = checked;
+                    this.pagingtoolbar.moveFirst();
+                }.bind(this)
+            }
+        });
 
         var hideSaveColumnConfig = !fromConfig;
 
@@ -317,7 +314,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
 
         gridHelper.applyGridEvents(this.grid);
 
-        this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store);
+        this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, {pageSize: itemsPerPage});
 
         this.editor = new Ext.Panel({
             layout: "border",

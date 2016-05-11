@@ -120,7 +120,7 @@ pimcore.helpers.grid.buildDefaultPagingToolbar = function(store, options) {
             listeners: {
                 change: function (box, newValue, oldValue) {
                     var store = this.getStore();
-                    newValue = intval(newValue)
+                    newValue = intval(newValue);
                     if (!newValue) {
                         newValue = options.pageSize;
                     }

@@ -20,7 +20,6 @@
 pimcore.registerNS("pimcore.object.helpers.grid");
 pimcore.object.helpers.grid = Class.create({
 
-    limit: 20,
     baseParams: {},
     showSubtype: true,
     showKey: true,
@@ -38,9 +37,6 @@ pimcore.object.helpers.grid = Class.create({
             this.baseParams = {};
         }
 
-        if(!this.baseParams.limit) {
-            this.baseParams.limit = this.limit;
-        }
         if(!this.baseParams["class"]) {
             this.baseParams["class"] = this.selectedClass;
         }
