@@ -40,7 +40,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 
     public function treeGetChildsByIdAction()
     {
-        $object = Object::getById($this->getParam("node"));
+        $object = Object\AbstractObject::getById($this->getParam("node"));
         $objectTypes = null;
         $objects = [];
 

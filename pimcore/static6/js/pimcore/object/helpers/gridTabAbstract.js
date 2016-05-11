@@ -454,6 +454,10 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             }
         }
 
+
+        var fields = this.getGridConfig().columns;
+        var fieldKeys = Object.keys(fields);
+
         var params = {
             extjs6: true,
             filter: filters,
@@ -461,7 +465,8 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             classId: this.classId,
             folderId: this.element.id,
             objecttype: this.objecttype,
-            language: this.gridLanguage
+            language: this.gridLanguage,
+            "fields[]": fieldKeys
         };
 
 
@@ -470,9 +475,6 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             params: params,
             success: function (response) {
                 var rdata = Ext.decode(response.responseText);
-
-                var fields = this.getGridConfig().columns;
-                var fieldKeys = Object.keys(fields);
 
                 if (rdata.success && rdata.jobs) {
                     this.exportProcess(rdata.jobs, rdata.fileHandle, fieldKeys, true);

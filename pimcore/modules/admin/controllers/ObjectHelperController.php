@@ -21,7 +21,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
 
     public function loadObjectDataAction()
     {
-        $object = Object::getById($this->getParam("id"));
+        $object = Object\AbstractObject::getById($this->getParam("id"));
         $result = array();
         if ($object) {
             $result['success'] = true;
@@ -720,7 +720,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
     {
         $requestedLanguage = $this->extractLanguage();
 
-        $folder = Pimcore\Model\Object::getById($this->getParam("folderId"));
+        $folder = Pimcore\Model\Object\AbstractObject::getById($this->getParam("folderId"));
         $class = Object\ClassDefinition::getById($this->getParam("classId"));
 
         $className = $class->getName();
