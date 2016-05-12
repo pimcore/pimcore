@@ -118,7 +118,7 @@ class Reports_CustomReportController extends \Pimcore\Controller\Action\Admin\Re
                 $name = $item["name"];
                 if (in_array($name, $columns)) {
                     $result[] = $name;
-                    array_splice($columns, array_search($name, $columns ), 1);
+                    array_splice($columns, array_search($name, $columns), 1);
                 }
             }
             foreach ($columns as $remainingColumn) {
