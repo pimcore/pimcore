@@ -37,13 +37,13 @@ pimcore.report.panel = Class.create({
     },
 
     getLayout: function () {
-        
+
         var user = pimcore.globalmanager.get("user");
-        
+
         if(!user.isAllowed("reports")) {
             return;
         }
-        
+
         if (this.layout == null) {
 
             if (this.getReportCount() < 1 && this.type != "global") {
@@ -161,6 +161,17 @@ pimcore.report.panel = Class.create({
         }
 
         return this.layout;
+    },
+
+    openReportViaToolbar: function (reportClass, reportConfig) {
+        var report = new reportClass(this, this.type, null, reportConfig);
+
+        var store = this.tree.getStore();
+        var record = store.findRecord('text', reportConfig.name);
+        if (record) {
+            var selModel = this.tree.getSelectionModel();
+            selModel.select(record);
+        }
     },
 
     openReport: function (tree, record, item, index, e, eOpts ) {

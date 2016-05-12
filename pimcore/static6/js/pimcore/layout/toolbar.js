@@ -1229,10 +1229,10 @@ pimcore.layout.toolbar = Class.create({
         // this is for generated/configured reports like the SQL Report
         try {
             if(reportClass) {
-                pimcore.globalmanager.get("reports").openReport(reportClass, reportConfig);
+                pimcore.globalmanager.get("reports").openReportViaToolbar(reportClass, reportConfig);
             }
         } catch (e) {
-
+            console.log(e);
         }
     },
 
@@ -1405,7 +1405,7 @@ pimcore.layout.toolbar = Class.create({
             pimcore.globalmanager.add("objectbricks", new pimcore.object.objectbrick());
         }
     },
-    
+
     showDocumentSeo: function () {
         try {
             pimcore.globalmanager.get("document_seopanel").activate();
@@ -1572,7 +1572,7 @@ pimcore.layout.toolbar = Class.create({
                 this.doBulkImport();
             }
         }.bind(this));
-   },
+    },
 
 
     doBulkImport: function() {
