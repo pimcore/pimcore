@@ -29,8 +29,7 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.geo.abstract, 
             border: true,
             style: "margin-bottom: 10px",
             componentCls: 'object_field object_geo_field',
-            html: '<div id="google_maps_container_' + this.mapImageID + '" align="center">'
-                        + '<img align="center" width="300" height="300" src="' + this.getMapUrl(this.fieldConfig, this.data) + '" /></div>',
+            html: '<div id="google_maps_container_' + this.mapImageID + '" align="center"></div>',
             bbar: [{
                 xtype: 'button',
                 text: t('empty'),
