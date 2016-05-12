@@ -286,6 +286,10 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
 
             //read import data
             $tmpData = file_get_contents($file);
+
+            //replace magic excel bytes
+            $tmpData = str_replace("\xEF\xBB\xBF", "", $tmpData);
+
             //convert to utf-8 if needed
             $tmpData = Tool\Text::convertToUTF8($tmpData);
 
