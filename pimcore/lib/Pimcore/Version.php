@@ -20,12 +20,12 @@ class Version
     /**
      * @var string
      */
-    public static $version = "4.0.0-RC2";
+    public static $version = "4.0.0";
 
     /**
      * @var int
      */
-    public static $revision = 3776;
+    public static $revision = 3777;
 
 
     /**
