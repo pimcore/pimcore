@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ## Pimcore Enterprise License (PEL)
 Alternatively, commercial and supported versions of the program - also known as
 Enterprise Distributions - must be used in accordance with the terms and conditions
-contained in a separate written agreement between you and pimcore GmbH. 
+contained in a separate written agreement between you and pimcore GmbH. For more information about the Pimcore Enterprise License (PEL) please contact info@pimcore.com.
 
 
 Please see also (files in this directory):  
