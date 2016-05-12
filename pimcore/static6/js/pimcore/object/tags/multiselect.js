@@ -75,7 +75,7 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
                     }
                 }
 
-                storeData.push([value, this.fieldConfig.options[i].key]);
+                storeData.push([value, ts(this.fieldConfig.options[i].key)]);
                 validValues.push(value);
             }
         }
