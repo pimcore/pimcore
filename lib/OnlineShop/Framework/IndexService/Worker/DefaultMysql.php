@@ -17,6 +17,8 @@
 
 namespace OnlineShop\Framework\IndexService\Worker;
 
+use Pimcore\Cache;
+
 class DefaultMysql extends AbstractWorker implements IWorker {
     protected $_sqlChangeLog = array();
 
@@ -334,23 +336,33 @@ class DefaultMysql extends AbstractWorker implements IWorker {
     }
 
     protected function doInsertData($data) {
-        //insert index data
-        $dataKeys = [];
-        $updateData = [];
-        $insertData = [];
-        $insertStatement = [];
 
-        foreach($data as $key => $d) {
-            $dataKeys[$this->db->quoteIdentifier($key)] = '?';
-            $updateData[] = $d;
-            $insertStatement[] = $this->db->quoteIdentifier($key) . " = ?";
-            $insertData[] = $d;
+        $validColumns = self::getValidTableColumns($this->tenantConfig->getTablename());
+        foreach($data as $column => $value) {
+            if(!in_array($column, $validColumns)) {
+                unset($data[$column]);
+            }
         }
 
-        $insert = "INSERT INTO " . $this->tenantConfig->getTablename() . " (" . implode(",", array_keys($dataKeys)) . ") VALUES (" . implode("," , $dataKeys) . ")"
-            . " ON DUPLICATE KEY UPDATE " . implode(",", $insertStatement);
+        $this->db->insertOrUpdate($this->tenantConfig->getTablename(), $data);
+    }
 
-        $this->db->query($insert, array_merge($updateData, $insertData));
+    protected function getValidTableColumns($table)
+    {
+        $cacheKey = "plugin_ecommerce_productindex_columns_" . $table;
+
+        if (!$columns = Cache\Runtime::load($cacheKey)) {
+
+            $columns = array();
+            $data = $this->db->fetchAll("SHOW COLUMNS FROM " . $table);
+            foreach ($data as $d) {
+                $columns[] = $d["Field"];
+            }
+
+            Cache\Runtime::save($columns, $cacheKey);
+        }
+
+        return $columns;
     }
 
     protected function getSystemAttributes() {
