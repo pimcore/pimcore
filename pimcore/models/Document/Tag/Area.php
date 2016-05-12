@@ -146,8 +146,12 @@ class Area extends Model\Document\Tag
 
                 $actionClassFound = true;
 
-                $delimiters = ['-','_'];
-                $actionClassname = "\\Pimcore\\Model\\Document\\Tag\\Area\\" . str_replace($delimiters, '', ucwords($options["type"], implode('', $delimiters)));
+                $actionClass = preg_replace_callback("/[\-_][a-z]/", function ($matches) {
+                    $replacement = str_replace(["-","_"],"",$matches[0]);
+                    return strtoupper($replacement);
+                }, ucfirst($this->currentIndex["type"]));
+
+                $actionClassname = "\\Pimcore\\Model\\Document\\Tag\\Area\\" . $actionClass;
 
                 if (!Tool::classExists($actionClassname, false)) {
                     // also check the legacy prefixed class name, as this is used by some plugins
