@@ -38,6 +38,7 @@ needed components:
 \packages\build\charts\classic\ => packages\charts\classic (only JS)
 \packages\build\charts\classic\triton\ copy over ext\classic\theme-triton
 
++ Use OpenSans from the old installation, since they need the 'embed' flag for IE11
 
 # styling
 
