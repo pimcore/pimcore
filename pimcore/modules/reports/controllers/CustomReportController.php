@@ -92,6 +92,12 @@ class Reports_CustomReportController extends \Pimcore\Controller\Action\Admin\Re
 
     public function columnConfigAction()
     {
+        $report = CustomReport\Config::getByName($this->getParam("name"));
+        $columnConfiguration = $report->getColumnConfiguration();
+        if (!is_array($columnConfiguration)) {
+            $columnConfiguration = array();
+        }
+
         $configuration = json_decode($this->getParam("configuration"));
         $configuration = $configuration[0];
 
@@ -99,19 +105,36 @@ class Reports_CustomReportController extends \Pimcore\Controller\Action\Admin\Re
         $columns = null;
         $errorMessage = null;
 
+        $result = array();
+
         try {
             $adapter = CustomReport\Config::getAdapter($configuration);
             $columns = $adapter->getColumns($configuration);
+            if (!is_array($columns)) {
+                $columns = array();
+            }
+
+            foreach ($columnConfiguration as $item) {
+                $name = $item["name"];
+                if (in_array($name, $columns)) {
+                    $result[] = $name;
+                    array_splice($columns, array_search($name, $columns ), 1);
+                }
+            }
+            foreach ($columns as $remainingColumn) {
+                $result[] = $remainingColumn;
+            }
+
             $success = true;
         } catch (\Exception $e) {
             $errorMessage = $e->getMessage();
         }
 
         $this->_helper->json(array(
-                                  "success" => $success,
-                                  "columns" => $columns,
-                                  "errorMessage" => $errorMessage
-                             ));
+            "success" => $success,
+            "columns" => $result,
+            "errorMessage" => $errorMessage
+        ));
     }
 
 
@@ -163,10 +186,10 @@ class Reports_CustomReportController extends \Pimcore\Controller\Action\Admin\Re
 
 
         $this->_helper->json(array(
-                                  "success" => true,
-                                  "data" => $result['data'],
-                                  "total" => $result['total']
-                             ));
+            "success" => true,
+            "data" => $result['data'],
+            "total" => $result['total']
+        ));
     }
 
     public function drillDownOptionsAction()
@@ -203,10 +226,10 @@ class Reports_CustomReportController extends \Pimcore\Controller\Action\Admin\Re
         $result = $adapter->getData($filters, $sort, $dir, null, null, null, $drillDownFilters);
 
         $this->_helper->json(array(
-                                  "success" => true,
-                                  "data" => $result['data'],
-                                  "total" => $result['total']
-                             ));
+            "success" => true,
+            "data" => $result['data'],
+            "total" => $result['total']
+        ));
     }
 
     public function downloadCsvAction()

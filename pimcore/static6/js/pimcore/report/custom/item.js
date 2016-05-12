@@ -546,7 +546,10 @@ pimcore.report.custom.item = Class.create({
         Ext.Ajax.request({
             url: "/admin/reports/custom-report/column-config",
             method: "post",
-            params: {configuration: Ext.encode(m.dataSourceConfig)},
+            params: {
+                configuration: Ext.encode(m.dataSourceConfig),
+                name: this.data.name
+            },
             success: function (response) {
                 var res = Ext.decode(response.responseText);
 
