@@ -668,7 +668,7 @@ class DefaultFindologic implements IProductList
             $field = $this->groupedValues[ $fieldname ];
 
             // special handling for nested category filters
-            if($this->getCategory() && $fieldname === 'cat') {
+            if($this->getCategory() && $fieldname === \OnlineShop\Framework\FilterService\FilterType\Findologic\SelectCategory::FIELDNAME) {
                 $catTree = $this->buildCategoryTree($this->getCategory());
 
                 $categories = explode('_', $catTree);
@@ -678,7 +678,7 @@ class DefaultFindologic implements IProductList
                 }
 
             }
-            else if($fieldname === 'cat')
+            else if($fieldname === \OnlineShop\Framework\FilterService\FilterType\Findologic\SelectCategory::FIELDNAME)
             {
                 $rec = function (array $items) use (&$rec, &$groups) {
 
@@ -813,9 +813,17 @@ class DefaultFindologic implements IProductList
         ] + $params;
 
 
+        // we have different end points for search and navigation
+        $endpoint = array_key_exists('query', $params)
+            ? 'index.php'
+            : 'selector.php'
+        ;
+
+
         // create url
-        $url = sprintf('http://%s/ps/xml_2.0/index.php?'
+        $url = sprintf('http://%1$s/ps/xml_2.0/%2$s?'
             , $this->tenantConfig->getClientConfig('serviceUrl')
+            , $endpoint
         );
         $url .= http_build_query($params);
 
