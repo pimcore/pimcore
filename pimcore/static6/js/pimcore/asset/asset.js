@@ -302,6 +302,9 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
         }
 
         this.tab.mask();
+
+        pimcore.plugin.broker.fireEvent("preSaveAsset", this.id);
+
         Ext.Ajax.request({
             url: '/admin/asset/save/',
             method: "post",
@@ -311,6 +314,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                     if (rdata && rdata.success) {
                         pimcore.helpers.showNotification(t("save"), t("successful_saved_asset"), "success");
                         this.resetChanges();
+                        pimcore.plugin.broker.fireEvent("postSaveAsset", this.id);
                     }
                     else {
                         pimcore.helpers.showPrettyError(rdata.type, t("error"), t("error_saving_asset"),

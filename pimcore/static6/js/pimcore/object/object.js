@@ -75,9 +75,9 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
     inheritedFields: {},
     setupInheritanceDetector: function() {
         this.tab.on("deactivate", this.stopInheritanceDetector.bind(this));
-          this.tab.on("activate", this.startInheritanceDetector.bind(this));
-          this.tab.on("destroy", this.stopInheritanceDetector.bind(this));
-          this.startInheritanceDetector();
+        this.tab.on("activate", this.startInheritanceDetector.bind(this));
+        this.tab.on("destroy", this.stopInheritanceDetector.bind(this));
+        this.startInheritanceDetector();
     },
 
     startInheritanceDetector: function () {
@@ -435,7 +435,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             this.newerVersionNotification = new Ext.Toolbar.TextItem({
                 xtype: 'tbtext',
                 text: '&nbsp;&nbsp;<img src="/pimcore/static6/img/flat-color-icons/medium_priority.svg" style="height: 16px;" align="absbottom" />&nbsp;&nbsp;'
-                    + t("this_is_a_newer_not_published_version"),
+                + t("this_is_a_newer_not_published_version"),
                 scale: "medium",
                 hidden: true
             });
@@ -627,48 +627,51 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 }
             }
 
+            pimcore.plugin.broker.fireEvent("preSaveObject", this.id);
+
             Ext.Ajax.request({
                 url: '/admin/object/save/task/' + task,
                 method: "post",
                 params: saveData,
                 success: function (response) {
-                        if (task != "session") {
-                            try {
-                                var rdata = Ext.decode(response.responseText);
-                                if (rdata && rdata.success) {
-                                    pimcore.helpers.showNotification(t("success"), t("your_object_has_been_saved"),
-                                        "success");
-                                    this.resetChanges();
-                                    Ext.apply(this.data.general,rdata.general);
+                    if (task != "session") {
+                        try {
+                            var rdata = Ext.decode(response.responseText);
+                            if (rdata && rdata.success) {
+                                pimcore.helpers.showNotification(t("success"), t("your_object_has_been_saved"),
+                                    "success");
+                                this.resetChanges();
+                                Ext.apply(this.data.general,rdata.general);
 
-                                    pimcore.helpers.updateObjectQTip(this.id, rdata.treeData);
-                                }
-                                else {
-                                    pimcore.helpers.showPrettyError(rdata.type, t("error"), t("error_saving_object"),
-                                        rdata.message, rdata.stack, rdata.code);
-                                }
-                            } catch (e) {
-                                pimcore.helpers.showNotification(t("error"), t("error_saving_object"), "error");
+                                pimcore.helpers.updateObjectQTip(this.id, rdata.treeData);
+                                pimcore.plugin.broker.fireEvent("postSaveObject", this.id);
                             }
-                            // reload versions
-                            if (this.isAllowed("versions")) {
-                                if (typeof this.versions.reload == "function") {
-                                    try {
-                                        //TODO remove this as soon as it works
-                                        this.versions.reload();
-                                    } catch (e) {
-                                        console.log(e);
-                                    }
+                            else {
+                                pimcore.helpers.showPrettyError(rdata.type, t("error"), t("error_saving_object"),
+                                    rdata.message, rdata.stack, rdata.code);
+                            }
+                        } catch (e) {
+                            pimcore.helpers.showNotification(t("error"), t("error_saving_object"), "error");
+                        }
+                        // reload versions
+                        if (this.isAllowed("versions")) {
+                            if (typeof this.versions.reload == "function") {
+                                try {
+                                    //TODO remove this as soon as it works
+                                    this.versions.reload();
+                                } catch (e) {
+                                    console.log(e);
                                 }
                             }
                         }
+                    }
 
 
                     this.tab.unmask();
 
-                        if (typeof callback == "function") {
-                            callback();
-                        }
+                    if (typeof callback == "function") {
+                        callback();
+                    }
 
                 }.bind(this),
                 failure: function (response) {
