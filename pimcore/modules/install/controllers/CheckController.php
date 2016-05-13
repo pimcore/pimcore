@@ -13,6 +13,7 @@
  */
 
 use Pimcore\Model\User;
+use Pimcore\Update;
 
 class Install_CheckController extends \Pimcore\Controller\Action
 {
@@ -499,6 +500,12 @@ class Install_CheckController extends \Pimcore\Controller\Action
         $checksApps[] = array(
             "name" => "PHP CLI Binary",
             "state" => $phpCliBin ? "ok" : "error"
+        );
+
+        // Composer
+        $checksApps[] = array(
+            "name" => "Composer",
+            "state" => Update::isComposerAvailable() ? "ok" : "error"
         );
 
 

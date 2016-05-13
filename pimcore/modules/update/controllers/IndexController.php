@@ -27,44 +27,45 @@ class Update_IndexController extends \Pimcore\Controller\Action\Admin
         $this->checkPermission("update");
     }
 
-    public function checkFilePermissionsAction()
-    {
-        $success = false;
-        if (Update::isWriteable()) {
-            $success = true;
-        }
-
+    public function checkComposerInstalledAction() {
         $this->_helper->json(array(
-            "success" => $success
+            "success" => Update::isComposerAvailable()
         ));
     }
-    
+
+    public function checkFilePermissionsAction()
+    {
+        $this->_helper->json(array(
+            "success" => Update::isWriteable()
+        ));
+    }
+
     public function getAvailableUpdatesAction()
     {
         $availableUpdates = Update::getAvailableUpdates();
         $this->_helper->json($availableUpdates);
     }
-    
+
     public function getJobsAction()
     {
         $jobs = Update::getJobs($this->getParam("toRevision"));
-        
+
         $this->_helper->json($jobs);
     }
-    
+
     public function jobParallelAction()
     {
         if ($this->getParam("type") == "download") {
             Update::downloadData($this->getParam("revision"), $this->getParam("url"));
         }
-        
+
         $this->_helper->json(array("success" => true));
     }
-    
+
     public function jobProceduralAction()
     {
         $status = array("success" => true);
-        
+
         if ($this->getParam("type") == "files") {
             Update::installData($this->getParam("revision"));
         } elseif ($this->getParam("type") == "clearcache") {
@@ -75,6 +76,8 @@ class Update_IndexController extends \Pimcore\Controller\Action\Admin
             $status = Update::executeScript($this->getParam("revision"), "postupdate");
         } elseif ($this->getParam("type") == "cleanup") {
             Update::cleanup();
+        } else if ($this->getParam("type") == "composer-dump-autoload") {
+            Update::composerDumpAutoload();
         }
 
         // we use pure PHP here, otherwise this can cause issues with dependencies that changed during the update

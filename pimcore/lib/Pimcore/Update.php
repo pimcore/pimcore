@@ -14,6 +14,9 @@
 
 namespace Pimcore;
 
+use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\Process;
+
 class Update
 {
 
@@ -178,6 +181,10 @@ class Update
 
         $jobs["procedural"][] = array(
             "type" => "cleanup"
+        );
+
+        $jobs["procedural"][] = array(
+            "type" => "composer-dump-autoload"
         );
 
         return $jobs;
@@ -380,6 +387,27 @@ class Update
         recursiveDelete(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/update", true);
     }
 
+    /**
+     *
+     */
+    public static function composerDumpAutoload() {
+        $process = new Process('composer dump-autoload -o -d ' . PIMCORE_DOCUMENT_ROOT);
+        $process->mustRun();
+    }
+
+    /**
+     * @return bool
+     */
+    public static function isComposerAvailable() {
+        $process = new Process('composer list');
+        $process->run();
+
+        return $process->isSuccessful();
+    }
+
+    /**
+     *
+     */
     public static function updateMaxmindDb()
     {
         $downloadUrl = "http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz";

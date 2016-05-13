@@ -106,6 +106,16 @@ class UpdateCommand extends AbstractCommand
                 exit;
             }
 
+            if(!Update::isWriteable()) {
+                $this->writeError(PIMCORE_PATH . " is not recursivly writable, please check!");
+                exit;
+            }
+
+            if(!Update::isComposerAvailable()) {
+                $this->writeError("Composer is not installed properly, please ensure composer is in your PATH variable.");
+                exit;
+            }
+
             $helper = $this->getHelper('question');
             $question = new ConfirmationQuestion("You are going to update to build $build! Continue with this action? (y/n)", false);
 
@@ -167,6 +177,8 @@ class UpdateCommand extends AbstractCommand
             }
 
             $progress->finish();
+
+            Update::composerDumpAutoload();
 
             Admin::deactivateMaintenanceMode();
 

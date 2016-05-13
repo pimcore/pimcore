@@ -64,7 +64,7 @@ pimcore.settings.update = Class.create({
             success: function (response) {
                 var res = Ext.decode(response.responseText);
                 if(res && res.success) {
-                    this.checkForAvailableUpdates();
+                    this.checkComposer();
                 } else {
                     this.window.removeAll();
                     this.window.add(new Ext.Panel({
@@ -78,7 +78,36 @@ pimcore.settings.update = Class.create({
             }.bind(this)
         });
     },
-    
+
+    checkComposer: function () {
+        this.window.removeAll();
+        this.window.add(new Ext.Panel({
+            title: "Liveupdate",
+            bodyStyle: "padding: 20px;",
+            html: "<b>Checking composer</b><br /><br />"
+        }));
+        this.window.doLayout();
+
+        Ext.Ajax.request({
+            url: "/admin/update/index/check-composer-installed",
+            success: function (response) {
+                var res = Ext.decode(response.responseText);
+                if(res && res.success) {
+                    this.checkForAvailableUpdates();
+                } else {
+                    this.window.removeAll();
+                    this.window.add(new Ext.Panel({
+                        title: 'ERROR',
+                        bodyStyle: "padding: 20px;",
+                        html: '<div class="pimcore_error"><b>Composer is not installed properly!</b> <br />'
+                        + 'Please ensure that composer is in your PATH variable.</div>'
+                    }));
+                    this.window.doLayout();
+                }
+            }.bind(this)
+        });
+    },
+
     checkForAvailableUpdates: function () {
         this.window.removeAll();
         this.window.add(new Ext.Panel({
