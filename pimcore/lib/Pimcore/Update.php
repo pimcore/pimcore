@@ -390,7 +390,8 @@ class Update
     /**
      *
      */
-    public static function composerDumpAutoload() {
+    public static function composerDumpAutoload()
+    {
         $process = new Process('composer dump-autoload -o -d ' . PIMCORE_DOCUMENT_ROOT);
         $process->mustRun();
     }
@@ -398,7 +399,8 @@ class Update
     /**
      * @return bool
      */
-    public static function isComposerAvailable() {
+    public static function isComposerAvailable()
+    {
         $process = new Process('composer list');
         $process->run();
 

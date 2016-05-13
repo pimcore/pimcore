@@ -27,7 +27,8 @@ class Update_IndexController extends \Pimcore\Controller\Action\Admin
         $this->checkPermission("update");
     }
 
-    public function checkComposerInstalledAction() {
+    public function checkComposerInstalledAction()
+    {
         $this->_helper->json(array(
             "success" => Update::isComposerAvailable()
         ));
@@ -76,7 +77,7 @@ class Update_IndexController extends \Pimcore\Controller\Action\Admin
             $status = Update::executeScript($this->getParam("revision"), "postupdate");
         } elseif ($this->getParam("type") == "cleanup") {
             Update::cleanup();
-        } else if ($this->getParam("type") == "composer-dump-autoload") {
+        } elseif ($this->getParam("type") == "composer-dump-autoload") {
             Update::composerDumpAutoload();
         }
 
