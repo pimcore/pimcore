@@ -122,6 +122,7 @@ class Version extends AbstractModel
      */
     public function save()
     {
+        \Pimcore::getEventManager()->trigger("version.preSave", $this);
 
         // check if versioning is disabled for this process
         if (self::$disabled) {
@@ -178,6 +179,7 @@ class Version extends AbstractModel
                 fclose($handle);
             }
         }
+        \Pimcore::getEventManager()->trigger("version.postSave", $this);
     }
 
     /**
@@ -185,6 +187,8 @@ class Version extends AbstractModel
      */
     public function delete()
     {
+        \Pimcore::getEventManager()->trigger("version.preDelete", $this);
+
         foreach ([$this->getFilePath(), $this->getLegacyFilePath()] as $path) {
             if (is_file($path)) {
                 @unlink($path);
@@ -201,6 +205,7 @@ class Version extends AbstractModel
         }
 
         $this->getDao()->delete();
+        \Pimcore::getEventManager()->trigger("version.postDelete", $this);
     }
 
     /**
@@ -256,7 +261,7 @@ class Version extends AbstractModel
 
         return $data;
     }
-    
+
 
     /**
      * Returns the path on the file system
@@ -507,7 +512,7 @@ class Version extends AbstractModel
     {
         return $this->public;
     }
-    
+
     /**
      * @return bool
      */
