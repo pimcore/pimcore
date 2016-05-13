@@ -408,12 +408,13 @@ class DefaultElasticSearch extends AbstractWorker implements IBatchProcessingWor
 
         $this->prepareDataForIndex($object);
 
-        //cannot write directy to elastic search here, because
-        //  - on object save pimcore cache is locked (due to race condition possibilities)
-        //  - therefore saving element to mockup cache fails
-        //  - therefore store table crc sums are not updated
-        //  - therefore element would be written to elastic search twice
-        //  --> and that would result in fragmentation of elastic search index
+        //updates data for all subentries
+        $subObjectIds = $this->tenantConfig->createSubIdsForObject($object);
+        foreach($subObjectIds as $subObjectId => $object) {
+            $this->doUpdateIndex($subObjectId);
+        }
+
+        $this->commitUpdateIndex();
 
         $this->fillupPreparationQueue($object);
     }
