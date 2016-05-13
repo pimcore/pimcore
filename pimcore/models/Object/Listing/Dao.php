@@ -144,33 +144,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
 
     /**
-     * @return string
-     */
-    protected function getCondition()
-    {
-        $condition = $this->model->getCondition();
-        $objectTypes = $this->model->getObjectTypes();
-        if (!empty($objectTypes)) {
-            if (!empty($condition)) {
-                $condition .= " AND ";
-            }
-            $condition .= " objects.o_type IN ('" . implode("','", $objectTypes) . "')";
-        }
-
-        if ($condition) {
-            if (Object\AbstractObject::doHideUnpublished() && !$this->model->getUnpublished()) {
-                return " WHERE (" . $condition . ") AND objects.o_published = 1";
-            }
-            return " WHERE " . $condition . " ";
-        } elseif (Object\AbstractObject::doHideUnpublished() && !$this->model->getUnpublished()) {
-            return " WHERE objects.o_published = 1";
-        }
-        return "";
-    }
-
-
-
-    /**
      * @param \Zend_DB_Select $select
      *
      * @return $this

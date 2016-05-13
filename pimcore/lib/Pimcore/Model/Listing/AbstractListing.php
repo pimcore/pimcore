@@ -263,7 +263,10 @@ abstract class AbstractListing extends AbstractModel
             $this->setConditionVariables($params);
         }
 
-        return $this->condition . $conditionString;
+
+        $condition = $this->condition . $conditionString;
+
+        return $condition;
     }
 
     /**

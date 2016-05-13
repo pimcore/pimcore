@@ -17,6 +17,7 @@
 namespace Pimcore\Model\Document;
 
 use Pimcore\Model;
+use Pimcore\Model\Document;
 
 class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterAggregate, \Iterator
 {
@@ -34,12 +35,12 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
      * @var array
      */
     public $documents = null;
-    
+
     /**
      * @var boolean
      */
     public $unpublished = false;
-    
+
     /**
      * Valid order keys
      *
@@ -83,7 +84,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
         $this->documents = $documents;
         return $this;
     }
-    
+
     /**
      * @return bool
      */
@@ -91,7 +92,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     {
         return $this->unpublished;
     }
-    
+
     /**
      * @return bool
      */
@@ -100,7 +101,22 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
         $this->unpublished = (bool) $unpublished;
         return $this;
     }
-    
+
+    public function getCondition()
+    {
+        $condition = parent::getCondition();
+
+        if ($condition) {
+            if (Document::doHideUnpublished() && !$this->getUnpublished()) {
+                $condition = " (" . $condition . ") AND published = 1";
+            }
+        } elseif (Document::doHideUnpublished() && !$this->getUnpublished()) {
+            $condition = "published = 1";
+        }
+
+        return $condition;
+    }
+
     /**
      *
      * Methods for \Zend_Paginator_Adapter_Interface
@@ -122,7 +138,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     {
         return $this;
     }
-    
+
 
     /**
      * Methods for Iterator

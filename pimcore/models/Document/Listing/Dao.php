@@ -87,19 +87,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $documentIds;
     }
 
-    protected function getCondition()
-    {
-        if ($cond = $this->model->getCondition()) {
-            if (Document::doHideUnpublished() && !$this->model->getUnpublished()) {
-                return " WHERE (" . $cond . ") AND published = 1";
-            }
-            return " WHERE " . $cond . " ";
-        } elseif (Document::doHideUnpublished() && !$this->model->getUnpublished()) {
-            return " WHERE published = 1";
-        }
-        return "";
-    }
-
     public function getCount()
     {
         $select = $this->getQuery(array(new \Zend_Db_Expr('COUNT(*)')));
