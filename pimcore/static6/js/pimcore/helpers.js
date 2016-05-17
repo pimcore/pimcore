@@ -2660,7 +2660,7 @@ pimcore.helpers.saveColumnConfig = function(objectId, classId, configuration, se
             class_id: classId,
             gridconfig: Ext.encode(configuration),
             searchType: searchType
-        }
+        };
 
         Ext.Ajax.request({
             url: '/admin/object-helper/grid-save-column-config',
@@ -2691,7 +2691,7 @@ pimcore.helpers.saveColumnConfig = function(objectId, classId, configuration, se
     } catch (e3) {
         pimcore.helpers.showNotification(t("error"), t("error_saving_configuration"), "error");
     }
-}
+};
 
 pimcore.helpers.openGenericIframeWindow = function (id, src, iconCls, title) {
     try {
