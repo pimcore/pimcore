@@ -59,14 +59,6 @@ class Install_CheckController extends \Pimcore\Controller\Action
             "state" => $state
         );
 
-
-        // mcrypt
-        $checksPHP[] = array(
-            "name" => "mcrypt",
-            "link" => "http://www.php.net/mcrypt",
-            "state" => function_exists("mcrypt_encrypt") ? "ok" : "error"
-        );
-
         // pdo_mysql
         $checksPHP[] = array(
             "name" => "PDO_Mysql",
