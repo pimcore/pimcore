@@ -272,7 +272,10 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
                 chartFields.push(data.pieLabelColumn);
             };
             if (data.pieColumn) {
-                chartFields.push(data.pieColumn);
+                chartFields.push({
+                    name: data.pieColumn,
+                    type: "int"
+                });
             }
 
             var chartStore = pimcore.helpers.grid.buildDefaultStore(
@@ -301,8 +304,14 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
                     tooltip: {
                         trackMouse: true,
                         renderer: function (tooltip, record, item) {
-                            tooltip.setHtml(record.get(data.pieLabelColumn) + ': ' + record.get(data.pieColumn) + '%');
-                        }
+                            var count = chartStore.getCount();
+                            var value = record.get(data.pieColumn);
+
+
+                            var sum = chartStore.sum(data.pieColumn);
+                            var percentage = sum > 0 ? " (" + Math.round((value * 100 / sum)) + ' %)' : "";
+                            tooltip.setHtml(record.get(data.pieLabelColumn) + ': ' + value + percentage);
+                        }.bind(this)
                     }
                 }]
             });

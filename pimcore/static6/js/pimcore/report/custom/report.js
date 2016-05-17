@@ -348,7 +348,10 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                 chartFields.push(data.pieLabelColumn);
             };
             if (data.pieColumn) {
-                chartFields.push(data.pieColumn);
+                chartFields.push({
+                    name: data.pieColumn,
+                    type: "int"
+                });
             }
 
             this.chartStore = pimcore.helpers.grid.buildDefaultStore(
@@ -377,8 +380,14 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                     tooltip: {
                         trackMouse: true,
                         renderer: function (tooltip, record, item) {
-                            tooltip.setHtml(record.get(data.pieLabelColumn) + ': ' + record.get(data.pieColumn) + '%');
-                        }
+                            var count = this.chartStore.getCount();
+                            var value = record.get(data.pieColumn);
+
+
+                            var sum = this.chartStore.sum(data.pieColumn);
+                            var percentage = sum > 0 ? " (" + Math.round((value * 100 / sum)) + ' %)' : "";
+                            tooltip.setHtml(record.get(data.pieLabelColumn) + ': ' + value + percentage);
+                        }.bind(this)
                     }
                 }]
             });
