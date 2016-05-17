@@ -497,31 +497,32 @@ class DefaultElasticSearch extends AbstractWorker implements IBatchProcessingWor
      */
     protected function commitUpdateIndex() {
         \Logger::info('in commitUpdateIndex');
-        $esClient = $this->getElasticSearchClient();
-        $responses = $esClient->bulk([
-            "body" => $this->bulkIndexData
-        ]);
-
-        if($responses['errors'])
-        {
-            // save update status
-            \Logger::error('commitUpdateIndex partial failed');
-
-            foreach($responses['items'] as $response)
+        if(sizeof($this->bulkIndexData)) {
+            $esClient = $this->getElasticSearchClient();
+            $responses = $esClient->bulk([
+                "body" => $this->bulkIndexData
+            ]);
+    
+            if($responses['errors'])
             {
-                if($response['index']['error'])
+                // save update status
+                \Logger::error('commitUpdateIndex partial failed');
+    
+                foreach($responses['items'] as $response)
                 {
-                    $query = <<<SQL
+                    if($response['index']['error'])
+                    {
+                        $query = <<<SQL
 UPDATE {$this->getStoreTableName()}
 SET update_status = ?, update_error = ?, crc_index = 0
 WHERE o_id = ?
 SQL;
-                    $this->db->query( $query, [$response['index']['status'],\Zend_Json::encode($response['index']['error']), $response['index']['_id']]);
-                    \Logger::error('Faild to Index Object with Id:' . $response['index']['_id']);
+                        $this->db->query( $query, [$response['index']['status'],\Zend_Json::encode($response['index']['error']), $response['index']['_id']]);
+                        \Logger::error('Faild to Index Object with Id:' . $response['index']['_id']);
+                    }
                 }
             }
         }
-
 
         // reset
         $this->bulkIndexData = [];
