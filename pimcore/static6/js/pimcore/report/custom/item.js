@@ -39,7 +39,7 @@ pimcore.report.custom.item = Class.create({
                 type: 'memory'
             },
             data: [],
-            fields: ["name", "filter", "filter_drilldown", "display", "export", "order", "width", "label"]
+            fields: ["name", "filter", "filter_drilldown", "display", "export", "order", "width", "label", "columnAction"]
         });
 
         var checkDisplay = new Ext.grid.column.Check({
@@ -63,6 +63,15 @@ pimcore.report.custom.item = Class.create({
         this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
             clicksToEdit: 1
         });
+
+        var actionStore = new Ext.data.SimpleStore({
+            fields: ['key', 'name'],
+            data: [
+                ["", t("none")],
+                ["openDocument", t("open_document_by_id")],
+                ["openAsset", t("open_asset_by_id")],
+                ["openObject", t("open_object_by_id")]
+            ]});
 
         this.columnGrid = Ext.create('Ext.grid.Panel', {
             store: this.columnStore,
@@ -105,7 +114,32 @@ pimcore.report.custom.item = Class.create({
                     decimalPrecision: 0
                 })},
                 {header: t("label"), sortable: false, dataIndex: 'label', editable: true, width: 150, editor: new Ext.form.TextField({})},
-                {
+                {header: t("action"), width: 160, sortable: true, dataIndex: 'columnAction',
+                    editor: new Ext.form.ComboBox({
+                        store: actionStore,
+                        valueField: "key",
+                        displayField:'name',
+                        queryMode: 'local',
+                        typeAhead: false,
+                        editable: false,
+                        forceSelection: true,
+                        triggerAction: "all",
+                    })
+                    ,
+                    renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {
+                        try {
+                            var rec = actionStore.findRecord("key", value);
+                            if (rec) {
+                                return rec.get("name");
+                            }
+                        }
+                        catch (e) {
+                        }
+                    
+                        return value;
+                    },
+                    filter: 'string'
+                }, {
                     xtype:'actioncolumn',
                     width:30,
                     items:[
@@ -604,6 +638,7 @@ pimcore.report.custom.item = Class.create({
                                 insertData["filter_drilldown"] = cc[o]["filter_drilldown"];
                                 insertData["width"] = cc[o]["width"];
                                 insertData["label"] = cc[o]["label"];
+                                insertData["columnAction"] = cc[o]["columnAction"];
                                 break;
                             }
                         }

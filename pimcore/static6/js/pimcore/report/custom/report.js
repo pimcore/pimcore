@@ -47,7 +47,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
         this.gridfilters = {};
 
         for(var f=0; f<data.columnConfiguration.length; f++) {
-            colConfig = data.columnConfiguration[f];
+            var colConfig = data.columnConfiguration[f];
             storeFields.push(colConfig["name"]);
 
             this.columnLabels[colConfig["name"]] = colConfig["label"] ? ts(colConfig["label"]) : ts(colConfig["name"]);
@@ -75,6 +75,33 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
 
             if(colConfig["filter_drilldown"] != 'only_filter') {
                 gridColums.push(gridColConfig);
+            }
+
+            if (colConfig["columnAction"]) {
+                gridColums.push({
+                        header: t("open"),
+                        xtype: 'actioncolumn',
+                        width: 40,
+                        items: [
+                        {
+                            tooltip: t("open") + " " + (colConfig["label"] ? ts(colConfig["label"]) : ts(colConfig["name"])),
+                            icon: "/pimcore/static6/img/flat-color-icons/cursor.svg",
+                            handler: function (colConfig, grid, rowIndex) {
+                                var data = grid.getStore().getAt(rowIndex).getData();
+                                var columnName = colConfig["name"];
+                                var id = data[columnName];
+                                var action = colConfig["columnAction"]
+                                if (action == "openDocument") {
+                                    pimcore.helpers.openElement(id, "document");
+                                } else if (action == "openAsset") {
+                                    pimcore.helpers.openElement(id, "asset");
+                                } else if (action == "openObject") {
+                                    pimcore.helpers.openElement(id, "object");
+                                }
+                            }.bind(this, colConfig)
+                        }
+                    ]
+                });
             }
 
         }
