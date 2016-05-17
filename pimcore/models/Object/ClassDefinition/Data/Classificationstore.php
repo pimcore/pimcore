@@ -1080,7 +1080,8 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
         $this->storeId = $storeId ? $storeId : 1;
     }
 
-    public function getValidLanguages() {
+    public function getValidLanguages()
+    {
         if ($this->localized) {
             $validLanguages = Tool::getValidLanguages();
         } else {
@@ -1088,6 +1089,5 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
         }
         array_unshift($validLanguages, "default");
         return $validLanguages;
-
     }
 }

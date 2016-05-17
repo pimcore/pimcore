@@ -207,7 +207,8 @@ class KeyGroupRelation extends Model\AbstractModel
      * @param $keyId
      * @return KeyGroupRelation
      */
-    public static function getByGroupAndKeyId($groupId, $keyId) {
+    public static function getByGroupAndKeyId($groupId, $keyId)
+    {
         $relation = new KeyGroupRelation\Listing();
         $relation->setCondition("groupId = " . $relation->quote($groupId) . " and keyId = " . $relation->quote($keyId));
         $relation->setLimit(1);
