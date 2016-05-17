@@ -1074,8 +1074,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                 }
 
                 $object->save();
-                $treeData = array();
-                $treeData["qtipCfg"] = $object->getElementAdminStyle()->getElementQtipConfig();
+                $treeData = $this->getTreeNodeConfig($object);
 
                 $this->_helper->json(array(
                     "success" => true,
@@ -1094,7 +1093,12 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             } else {
                 if ($object->isAllowed("save")) {
                     $object->saveVersion();
-                    $this->_helper->json(array("success" => true));
+                    $treeData = $this->getTreeNodeConfig($object);
+
+                    $this->_helper->json(array(
+                        "success" => true,
+                        "general" => array("o_modificationDate" => $object->getModificationDate()),
+                        "treeData" => $treeData));
                 }
             }
         } catch (\Exception $e) {

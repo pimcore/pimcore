@@ -817,9 +817,11 @@ CREATE TABLE `classificationstore_relations` (
 	`groupId` BIGINT(20) NOT NULL,
 	`keyId` BIGINT(20) NOT NULL,
 	`sorter` INT(11) NULL DEFAULT NULL,
+	`mandatory` TINYINT(1) NULL DEFAULT NULL,
 	PRIMARY KEY (`groupId`, `keyId`),
 	INDEX `FK_classificationstore_relations_classificationstore_keys` (`keyId`),
 	INDEX `groupId` (`groupId`),
+	INDEX `mandatory` (`mandatory`),
 	CONSTRAINT `FK_classificationstore_relations_classificationstore_groups` FOREIGN KEY (`groupId`) REFERENCES `classificationstore_groups` (`id`) ON DELETE CASCADE,
 	CONSTRAINT `FK_classificationstore_relations_classificationstore_keys` FOREIGN KEY (`keyId`) REFERENCES `classificationstore_keys` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8;

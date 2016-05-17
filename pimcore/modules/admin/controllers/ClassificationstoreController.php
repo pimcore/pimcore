@@ -686,11 +686,13 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
             $keyId = $data["keyId"];
             $groupId = $data["groupId"];
             $sorter = $data["sorter"];
+            $mandatory = $data["mandatory"];
 
             $config = new Classificationstore\KeyGroupRelation();
             $config->setGroupId($groupId);
             $config->setKeyId($keyId);
             $config->setSorter($sorter);
+            $config->setMandatory($mandatory);
 
             $config->save();
             $data["id"] = $config->getGroupId() . "-" . $config->getKeyId();
@@ -789,7 +791,8 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
                     "keyDescription" => $config->getDescription(),
                     "id" => $config->getGroupId() . "-" . $config->getKeyId(),
                     "sorter" => $config->getSorter(),
-                    "layout" => $definition
+                    "layout" => $definition,
+                    "mandatory" => $config->isMandatory()
                 );
 
                 $data[] = $item;

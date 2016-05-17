@@ -225,7 +225,7 @@ pimcore.helpers.closeObject = function (id) {
 pimcore.helpers.updateObjectQTip = function (id, treeData) {
     if (treeData) {
         var treeNames = pimcore.elementservice.getElementTreeNames("object");
-        var affectedNodes = [];
+
         for (var index = 0; index < treeNames.length; index++) {
             var treeName = treeNames[index];
             var tree = pimcore.globalmanager.get(treeName);
@@ -238,6 +238,14 @@ pimcore.helpers.updateObjectQTip = function (id, treeData) {
             if (record) {
                 record.set("qtitle", treeData.qtipCfg.title);
                 record.set("qtip", treeData.qtipCfg.text);
+                if (typeof treeData.icon !== "undefined") {
+                    record.set("icon", treeData.icon);
+                }
+
+                if (typeof treeData.iconCls !== "undefined") {
+                    record.set("iconCls", treeData.iconCls);
+                }
+
             }
         }
     }

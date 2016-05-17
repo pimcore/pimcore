@@ -41,7 +41,7 @@ class Classificationstore extends Model\AbstractModel
     public $fieldname;
 
     /** @var  array */
-    public $activeGroups;
+    public $activeGroups = array();
 
     /** @var  array */
     public $groupCollectionMapping;

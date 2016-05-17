@@ -60,6 +60,9 @@ class KeyGroupRelation extends Model\AbstractModel
      */
     public $groupName;
 
+    /** @var  bool */
+    public $mandatory;
+
     /**
      * @return Model\Object\Classificationstore\KeyGroupRelation
      */
@@ -181,5 +184,36 @@ class KeyGroupRelation extends Model\AbstractModel
     public function setSorter($sorter)
     {
         $this->sorter = $sorter;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isMandatory()
+    {
+        return $this->mandatory;
+    }
+
+    /**
+     * @param boolean $mandatory
+     */
+    public function setMandatory($mandatory)
+    {
+        $this->mandatory = intval($mandatory);
+    }
+
+    /**
+     * @param $groupId
+     * @param $keyId
+     * @return KeyGroupRelation
+     */
+    public static function getByGroupAndKeyId($groupId, $keyId) {
+        $relation = new KeyGroupRelation\Listing();
+        $relation->setCondition("groupId = " . $relation->quote($groupId) . " and keyId = " . $relation->quote($keyId));
+        $relation->setLimit(1);
+        $relation = $relation->load();
+        if ($relation) {
+            return $relation[0];
+        }
     }
 }

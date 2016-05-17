@@ -45,6 +45,8 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
             readerFields.push({name: this.relationsFields[i], allowBlank: true, type: 'string'});
         }
 
+        readerFields.push({name: 'mandatory', allowBlank: true, type: 'bool'});
+
         var url = "/admin/classificationstore/relations?";
         var proxy = {
             type: 'ajax',
@@ -90,10 +92,17 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
 
         var gridColumns = [];
 
+        var mandatoryCheck = new Ext.grid.column.Check({
+            header: t("mandatory"),
+            dataIndex: "mandatory",
+            width: 50
+        });
+
         gridColumns.push({header: t("key_id"), flex: 60, sortable: true, dataIndex: 'keyId', filter: 'string'});
         gridColumns.push({header: t("name"), flex: 200, sortable: true, dataIndex: 'keyName', filter: 'string'});
         gridColumns.push({header: t("description"), flex: 200, sortable: true, dataIndex: 'keyDescription', filter: 'string'});
 
+        gridColumns.push(mandatoryCheck);
         gridColumns.push({header: t('sorter'), width: 150, sortable: true, dataIndex: 'sorter',
             tooltip: t("classificationstore_tooltip_sorter"),
             editor: new Ext.form.NumberField()

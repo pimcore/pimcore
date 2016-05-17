@@ -381,11 +381,16 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
 
             for (var s=0; s<this.languageElements[currentLanguage].length; s++) {
                 if(this.languageElements[currentLanguage][s].isMandatory()) {
-                    if(this.languageElements[currentLanguage][s].isInvalidMandatory()) {
-                        invalidMandatoryFields.push(this.languageElements[currentLanguage][s].getTitle() + " - "
-                            + currentLanguage.toUpperCase() + " ("
-                            + this.languageElements[currentLanguage][s].getName() + ")");
-                        isInvalid = true;
+                    var languageElement = this.languageElements[currentLanguage][s];
+                    try {
+                        if (languageElement.isInvalidMandatory()) {
+                            invalidMandatoryFields.push(this.languageElements[currentLanguage][s].getTitle() + " - "
+                                + currentLanguage.toUpperCase() + " ("
+                                + this.languageElements[currentLanguage][s].getName() + ")");
+                            isInvalid = true;
+                        }
+                    } catch (e) {
+                        console.log(e);
                     }
                 }
             }

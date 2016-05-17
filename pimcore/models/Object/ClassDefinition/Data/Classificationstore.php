@@ -139,12 +139,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
 
         $activeGroupIds = $this->recursiveGetActiveGroupsIds($object);
 
-        if ($this->localized) {
-            $validLanguages = Tool::getValidLanguages();
-        } else {
-            $validLanguages = array();
-        }
-        array_unshift($validLanguages, "default");
+        $validLanguages = $this->getValidLanguages();
 
         foreach ($validLanguages as $language) {
             foreach ($activeGroupIds as $groupId => $enabled) {
@@ -743,22 +738,53 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
      */
     public function checkValidity($data, $omitMandatoryCheck = false)
     {
-        $groups = $data->getItems();
-//        $conf = \Pimcore\Config::getSystemConfig();
-//        if($conf->general->validLanguages) {
-//            $languages = explode(",",$conf->general->validLanguages);
-//        }
+        $activeGroups = $data->getActiveGroups();
+        if (!$activeGroups) {
+            return;
+        }
+        $items = $data->getItems();
+        $validLanguages = $this->getValidLanguages();
+        $errors = array();
 
         if (!$omitMandatoryCheck) {
-            foreach ($groups as $groupId => $group) {
-                foreach ($group as $keyId => $keyData) {
-                    foreach ($keyData as $language => $value) {
-                        $keyConfig = $this->getKeyConfiguration($keyId);
-                        $fieldDefinition = Object\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
-                        $fieldDefinition->checkValidity($value);
+            foreach ($activeGroups as $activeGroupId => $enabled) {
+                if ($enabled) {
+                    $groupDefinition = Object\Classificationstore\GroupConfig::getById($activeGroupId);
+                    if (!$groupDefinition) {
+                        continue;
+                    }
+
+                    /** @var $keyGroupRelation Object\Classificationstore\KeyGroupRelation */
+                    $keyGroupRelations = $groupDefinition->getRelations();
+
+                    foreach ($keyGroupRelations as $keyGroupRelation) {
+                        foreach ($validLanguages as $validLanguage) {
+                            $keyId = $keyGroupRelation->getKeyId();
+                            $value = $items[$activeGroupId][$keyId][$validLanguage];
+
+                            $keyDef = Object\Classificationstore\Service::getFieldDefinitionFromJson(json_decode($keyGroupRelation->getDefinition()), $keyGroupRelation->getType());
+
+                            if ($keyGroupRelation->isMandatory()) {
+                                $keyDef->setMandatory(1);
+                            }
+                            try {
+                                $keyDef->checkValidity($value);
+                            } catch (\Exception $e) {
+                                $errors[] = $e;
+                            }
+                        }
                     }
                 }
             }
+        }
+        if ($errors) {
+            $messages = array();
+            foreach ($errors as $e) {
+                $messages[]= $e->getMessage() . " (" . $validLanguage . ")";
+            }
+            $validationException = new Model\Element\ValidationException(implode(", ", $messages));
+            $validationException->setSubItems($errors);
+            throw $validationException;
         }
     }
 
@@ -959,11 +985,16 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
             $relation->setOrderKey(array("sorter", "id"));
             $relation->setOrder(array("ASC", "ASC"));
             $relation = $relation->load();
+            /** @var  $key Object\Classificationstore\KeyGroupRelation */
             foreach ($relation as $key) {
                 $definition = \Pimcore\Model\Object\Classificationstore\Service::getFieldDefinitionFromKeyConfig($key);
 
                 if (method_exists($definition, "__wakeup")) {
                     $definition->__wakeup();
+                }
+
+                if ($definition) {
+                    $definition->setMandatory($definition->getMandatory() || $key->isMandatory());
                 }
 
                 $keyList[] = array(
@@ -1047,5 +1078,16 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
     public function setStoreId($storeId)
     {
         $this->storeId = $storeId ? $storeId : 1;
+    }
+
+    public function getValidLanguages() {
+        if ($this->localized) {
+            $validLanguages = Tool::getValidLanguages();
+        } else {
+            $validLanguages = array();
+        }
+        array_unshift($validLanguages, "default");
+        return $validLanguages;
+
     }
 }
