@@ -125,7 +125,7 @@ class Dashboard
             }
         }
 
-        return $dashboard;
+        return $dashboard ? $dashboard : array("positions" => array([], []));
     }
 
     /**
