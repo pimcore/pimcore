@@ -222,8 +222,23 @@ pimcore.helpers.closeObject = function (id) {
     }
 };
 
-pimcore.helpers.updateObjectQTip = function (id, treeData) {
+pimcore.helpers.updateObjectStyle = function (id, treeData) {
     if (treeData) {
+
+        var key = "object_" + id;
+        if (pimcore.globalmanager.exists(key)) {
+            var editMask = pimcore.globalmanager.get(key);
+            if (editMask.tab) {
+                if (typeof treeData.icon !== "undefined") {
+                    editMask.tab.setIcon(treeData.icon);
+                }
+
+                if (typeof treeData.iconCls !== "undefined") {
+                    editMask.tab.setIconCls(treeData.iconCls);
+                }
+            }
+        }
+
         var treeNames = pimcore.elementservice.getElementTreeNames("object");
 
         for (var index = 0; index < treeNames.length; index++) {
@@ -245,7 +260,6 @@ pimcore.helpers.updateObjectQTip = function (id, treeData) {
                 if (typeof treeData.iconCls !== "undefined") {
                     record.set("iconCls", treeData.iconCls);
                 }
-
             }
         }
     }

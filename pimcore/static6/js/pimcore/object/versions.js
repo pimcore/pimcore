@@ -227,7 +227,7 @@ pimcore.object.versions = Class.create({
 
                 var rdata = Ext.decode(response.responseText);
                 if (rdata && rdata.success) {
-                    pimcore.helpers.updateObjectQTip(this.object.id, rdata.treeData);
+                    pimcore.helpers.updateObjectStyle(this.object.id, rdata.treeData);
                 }
 
             }.bind(this)

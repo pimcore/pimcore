@@ -643,7 +643,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                                     this.resetChanges();
                                     Ext.apply(this.data.general,rdata.general);
 
-                                    pimcore.helpers.updateObjectQTip(this.id, rdata.treeData);
+                                    pimcore.helpers.updateObjectStyle(this.id, rdata.treeData);
                                     pimcore.plugin.broker.fireEvent("postSaveObject", this);
                                 }
                                 else {
