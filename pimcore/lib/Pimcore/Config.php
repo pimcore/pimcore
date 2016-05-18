@@ -509,6 +509,7 @@ class Config
                     $tmpData["showroot"] = (bool)$tmpData["showroot"];
                     $customViewId = $tmpData["id"];
                     $cfConfigMapping[$customViewId]= $tmpData;
+                    $tmpResult[] = $tmpData;
                 }
             }
         }
