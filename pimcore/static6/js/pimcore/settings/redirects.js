@@ -69,6 +69,7 @@ pimcore.settings.redirects = Class.create({
                 {name: 'targetSite'},
                 {name: 'statusCode'},
                 {name: 'priority', type:'int'},
+                {name: 'active'},
                 {name: 'expiry', type: "date", convert: function (v, r) {
                     if(v && !(v instanceof Date)) {
                         var d = new Date(intval(v) * 1000);
@@ -104,6 +105,12 @@ pimcore.settings.redirects = Class.create({
         var sourceEntireUrlCheck = new Ext.grid.column.Check({
             header: t("source_entire_url"),
             dataIndex: "sourceEntireUrl",
+            width: 70
+        });
+
+        var activeCheck = new Ext.grid.column.Check({
+            header: t("active"),
+            dataIndex: "active",
             width: 70
         });
 
@@ -184,7 +191,9 @@ pimcore.settings.redirects = Class.create({
                 editable: false,
                 forceSelection: true,
                 triggerAction: "all"
-            })}, {
+            })},
+            activeCheck,
+            {
                 header: t("expiry"),
                 width: 150, sortable:true, dataIndex: "expiry",
                 editor: {
@@ -434,6 +443,7 @@ pimcore.settings.redirects = Class.create({
         var u = {
             source: source,
             sourceEntireUrl: sourceEntireUrl,
+            active: true,
             priority: priority
         };
         this.grid.store.insert(0, u);

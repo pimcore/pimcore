@@ -433,6 +433,7 @@ CREATE TABLE `redirects` (
   `targetSite` int(11) DEFAULT NULL,
   `statusCode` varchar(3) DEFAULT NULL,
   `priority` int(2) DEFAULT '0',
+  `active` tinyint(1) DEFAULT NULL,
   `expiry` bigint(20) DEFAULT NULL,
   `creationDate` bigint(20) unsigned DEFAULT '0',
   `modificationDate` bigint(20) unsigned DEFAULT '0',

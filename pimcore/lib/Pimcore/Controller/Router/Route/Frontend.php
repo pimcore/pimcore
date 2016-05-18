@@ -473,6 +473,7 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
             $cacheKey = "system_route_redirect";
             if (empty($this->redirects) && !($this->redirects = Cache::load($cacheKey))) {
                 $list = new Redirect\Listing();
+                $list->setCondition("active = 1");
                 $list->setOrder("DESC");
                 $list->setOrderKey("priority");
                 $this->redirects = $list->load();
