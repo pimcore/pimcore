@@ -540,7 +540,7 @@ pimcore.elementservice.addObject = function(options) {
 
     var url = options.url;
     delete options.url;
-    delete options.sourceTree;
+    delete options["sourceTree"];
 
     Ext.Ajax.request({
         url: url,
@@ -553,7 +553,7 @@ pimcore.elementservice.addDocument = function(options) {
 
     var url = options.url;
     delete options.url;
-    delete options.sourceTree;
+    delete options["sourceTree"];
 
     Ext.Ajax.request({
         url: url,
