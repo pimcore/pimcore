@@ -627,7 +627,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 }
             }
 
-            pimcore.plugin.broker.fireEvent("preSaveObject", this.id);
+            pimcore.plugin.broker.fireEvent("preSaveObject", this);
 
             Ext.Ajax.request({
                 url: '/admin/object/save/task/' + task,
@@ -644,7 +644,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                                     Ext.apply(this.data.general,rdata.general);
 
                                     pimcore.helpers.updateObjectQTip(this.id, rdata.treeData);
-                                    pimcore.plugin.broker.fireEvent("postSaveObject", this.id);
+                                    pimcore.plugin.broker.fireEvent("postSaveObject", this);
                                 }
                                 else {
                                     pimcore.helpers.showPrettyError(rdata.type, t("error"), t("error_saving_object"),
