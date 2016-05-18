@@ -35,7 +35,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $documents = array();
         $select = (string) $this->getQuery(array('id', "type"));
 
-        $documentsData = $this->db->fetchAll($select,  $this->model->getConditionVariables());
+        $documentsData = $this->db->fetchAll($select, $this->model->getConditionVariables());
 
         foreach ($documentsData as $documentData) {
             if ($documentData["type"]) {
@@ -76,7 +76,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function loadIdList()
     {
         $select = (string) $this->getQuery(array('id'));
-        $documentIds = $this->db->fetchCol($select);
+        $documentIds = $this->db->fetchCol($select, $this->model->getConditionVariables());
         return $documentIds;
     }
 
