@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -16,7 +16,6 @@ namespace Pimcore\Document\Adapter;
 
 use Pimcore\Document\Adapter\Ghostscript;
 use Pimcore\Tool\Console;
-use Pimcore\Config;
 use Pimcore\File;
 use Pimcore\Model;
 
@@ -66,28 +65,7 @@ class LibreOffice extends Ghostscript
      */
     public static function getLibreOfficeCli()
     {
-        $loPath = Config::getSystemConfig()->assets->libreoffice;
-        if ($loPath) {
-            if (@is_executable($loPath)) {
-                return $loPath;
-            } else {
-                \Logger::critical("LibreOffice binary: " . $loPath . " is not executable");
-            }
-        }
-
-        $paths = array(
-            "/usr/local/bin/soffice",
-            "/usr/bin/soffice",
-            "/bin/soffice"
-        );
-
-        foreach ($paths as $path) {
-            if (@is_executable($path)) {
-                return $path;
-            }
-        }
-
-        throw new \Exception("No LibreOffice executable found, please configure the correct path in the system settings");
+        return \Pimcore\Tool\Console::getExecutable("soffice", true);
     }
 
     /**

@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -60,29 +60,7 @@ class Ffmpeg extends Adapter
      */
     public static function getFfmpegCli()
     {
-        $ffmpegPath = \Pimcore\Config::getSystemConfig()->assets->ffmpeg;
-        if ($ffmpegPath) {
-            if (@is_executable($ffmpegPath)) {
-                return $ffmpegPath;
-            } else {
-                \Logger::critical("FFMPEG binary: " . $ffmpegPath . " is not executable");
-            }
-        }
-
-        $paths = array(
-            "/usr/local/bin/ffmpeg",
-            "/usr/bin/ffmpeg",
-            "/bin/ffmpeg",
-            realpath(PIMCORE_DOCUMENT_ROOT . "/../ffmpeg/bin/ffmpeg.exe") // for windows sample package (XAMPP)
-        );
-
-        foreach ($paths as $path) {
-            if (@is_executable($path)) {
-                return $path;
-            }
-        }
-
-        throw new \Exception("No ffmpeg executable found, please configure the correct path in the system settings");
+        return \Pimcore\Tool\Console::getExecutable("ffmpeg", true);
     }
 
     /**

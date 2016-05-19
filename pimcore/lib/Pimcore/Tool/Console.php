@@ -15,6 +15,8 @@
 namespace Pimcore\Tool;
 
 use Pimcore\Config;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\Process;
 
 class Console
 {
@@ -27,6 +29,11 @@ class Console
      * @var null|bool
      */
     protected static $timeoutKillAfterSupport = null;
+
+    /**
+     * @var array
+     */
+    protected static $executableCache = [];
 
     /**
      * @static
@@ -45,47 +52,72 @@ class Console
     }
 
     /**
+     * @param $name
+     * @param bool $throwException
+     * @return bool|mixed|string
+     * @throws \Exception
+     */
+    public static function getExecutable($name, $throwException = false) {
+
+        if(isset(self::$executableCache[$name])) {
+            return self::$executableCache[$name];
+        }
+
+        $pathVariable = Config::getSystemConfig()->general->path_variable;
+
+        $paths = [];
+        if($pathVariable) {
+            $paths = explode(":", $pathVariable);
+        }
+
+        array_unshift($paths, "");
+
+        foreach($paths as $path) {
+            foreach (["--help", "-h"] as $option) {
+                try {
+                    $path = rtrim($path, "/\\ ");
+                    if($path) {
+                        $executablePath = $path . DIRECTORY_SEPARATOR . $name;
+                    } else {
+                        $executablePath = $name;
+                    }
+
+                    $process = new Process($executablePath . " " . $option);
+                    $process->mustRun();
+
+                    self::$executableCache[$name] = $executablePath;
+
+                    return $executablePath;
+                } catch (\Exception $e) {
+
+                }
+            }
+        }
+
+        self::$executableCache[$name] = false;
+
+        if($throwException) {
+            throw new \Exception("No '$name' executable found, please install the application or add it to the PATH (in system settings or to your PATH environment variable");
+        }
+
+        return false;
+    }
+
+    /**
      * @return mixed
      * @throws \Exception
      */
     public static function getPhpCli()
     {
-        if (Config::getSystemConfig()->general->php_cli) {
-            if (@is_executable(Config::getSystemConfig()->general->php_cli)) {
-                return (string) Config::getSystemConfig()->general->php_cli;
-            } else {
-                \Logger::critical("PHP-CLI binary: " . Config::getSystemConfig()->general->php_cli . " is not executable");
-            }
-        }
-
-        $paths = array(
-            "/usr/bin/php",
-            "/usr/local/bin/php",
-            "/usr/local/zend/bin/php",
-            "/bin/php",
-            realpath(PIMCORE_DOCUMENT_ROOT . "/../php/php.exe") // for windows sample package (XAMPP)
-        );
-
-        foreach ($paths as $path) {
-            if (@is_executable($path)) {
-                return $path;
-            }
-        }
-
-        throw new \Exception("No php executable found, please configure the correct path in the system settings");
+        return self::getExecutable("php", true);
     }
 
+    /**
+     * @return bool|string
+     */
     public static function getTimeoutBinary()
     {
-        $paths = array("/usr/bin/timeout","/usr/local/bin/timeout","/bin/timeout");
-
-        foreach ($paths as $path) {
-            if (@is_executable($path)) {
-                return $path;
-            }
-        }
-
-        return false;
+        return self::getExecutable("timeout");
     }
 
     /**
@@ -211,12 +243,17 @@ class Console
             $outputFile = "/dev/null";
         }
 
-        $nice = "";
-        if (@is_executable("/usr/bin/nice")) {
-            $nice = "/usr/bin/nice -n 19 ";
+        $nice = (string) self::getExecutable("nice");
+        if ($nice) {
+            $nice .= " -n 19 ";
         }
 
-        $commandWrapped = "/usr/bin/nohup " . $nice . $cmd . " > ". $outputFile ." 2>&1 & echo $!";
+        $nohup = (string) self::getExecutable("nohup");
+        if ($nohup) {
+            $nohup .= " ";
+        }
+
+        $commandWrapped = $nohup . $nice . $cmd . " > ". $outputFile ." 2>&1 & echo $!";
         \Logger::debug("Executing command `" . $commandWrapped . "´ on the current shell in background");
         $pid = shell_exec($commandWrapped);
 

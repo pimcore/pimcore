@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -65,28 +65,7 @@ class Ghostscript extends Adapter
      */
     public static function getGhostscriptCli()
     {
-        $gsPath = Config::getSystemConfig()->assets->ghostscript;
-        if ($gsPath) {
-            if (@is_executable($gsPath)) {
-                return $gsPath;
-            } else {
-                \Logger::critical("Ghostscript binary: " . $gsPath . " is not executable");
-            }
-        }
-
-        $paths = array(
-            "/usr/local/bin/gs",
-            "/usr/bin/gs",
-            "/bin/gs"
-        );
-
-        foreach ($paths as $path) {
-            if (@is_executable($path)) {
-                return $path;
-            }
-        }
-
-        throw new \Exception("No Ghostscript executable found, please configure the correct path in the system settings");
+        return \Pimcore\Tool\Console::getExecutable("gs", true);
     }
 
 
@@ -96,30 +75,7 @@ class Ghostscript extends Adapter
      */
     public static function getPdftotextCli()
     {
-
-        // check the system-config for a path
-        $configPath = Config::getSystemConfig()->assets->pdftotext;
-        if ($configPath) {
-            if (@is_executable($configPath)) {
-                return $configPath;
-            } else {
-                \Logger::critical("Binary: " . $configPath . " is not executable");
-            }
-        }
-
-        $paths = array(
-            "/usr/local/bin/pdftotext",
-            "/usr/bin/pdftotext",
-            "/bin/pdftotext"
-        );
-
-        foreach ($paths as $path) {
-            if (@is_executable($path)) {
-                return $path;
-            }
-        }
-
-        throw new \Exception("No pdftotext executable found, please configure the correct path in the system settings");
+        return \Pimcore\Tool\Console::getExecutable("pdftotext", true);
     }
 
     /**

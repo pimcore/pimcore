@@ -349,7 +349,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
         $settings = array(
             "general" => array(
                 "timezone" => $values["general.timezone"],
-                "php_cli" => $values["general.php_cli"],
+                "path_variable" => $values["general.path_variable"],
                 "domain" => $values["general.domain"],
                 "redirect_to_maindomain" => $values["general.redirect_to_maindomain"],
                 "language" => $values["general.language"],
@@ -404,13 +404,6 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
                     "days" => $values["assets.versions.days"],
                     "steps" => $values["assets.versions.steps"]
                 ),
-                "ffmpeg" => $values["assets.ffmpeg"],
-                "ghostscript" => $values["assets.ghostscript"],
-                "libreoffice" => $values["assets.libreoffice"],
-                "pngcrush" => $values["assets.pngcrush"],
-                "imgmin" => $values["assets.imgmin"],
-                "jpegoptim" => $values["assets.jpegoptim"],
-                "pdftotext" => $values["assets.pdftotext"],
                 "icc_rgb_profile" => $values["assets.icc_rgb_profile"],
                 "icc_cmyk_profile" => $values["assets.icc_cmyk_profile"],
                 "hide_edit_image" => $values["assets.hide_edit_image"]

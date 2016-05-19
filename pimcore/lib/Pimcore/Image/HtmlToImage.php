@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -33,27 +33,10 @@ class HtmlToImage
      */
     public static function getWkhtmltoimageBinary()
     {
-        if (Config::getSystemConfig()->documents->wkhtmltoimage) {
-            if (@is_executable(Config::getSystemConfig()->documents->wkhtmltoimage)) {
-                return (string) Config::getSystemConfig()->documents->wkhtmltoimage;
-            } else {
-                \Logger::critical("wkhtmltoimage binary: " . Config::getSystemConfig()->documents->wkhtmltoimage . " is not executable");
-            }
-        }
-
-        $paths = array(
-            "/usr/bin/wkhtmltoimage-amd64",
-            "/usr/local/bin/wkhtmltoimage-amd64",
-            "/bin/wkhtmltoimage-amd64",
-            "/usr/bin/wkhtmltoimage",
-            "/usr/local/bin/wkhtmltoimage",
-            "/bin/wkhtmltoimage",
-            realpath(PIMCORE_DOCUMENT_ROOT . "/../wkhtmltox/wkhtmltoimage.exe") // for windows sample package (XAMPP)
-        );
-
-        foreach ($paths as $path) {
-            if (@is_executable($path)) {
-                return $path;
+        foreach(["wkhtmltoimage","wkhtmltoimage-amd64"] as $app) {
+            $wk2img = \Pimcore\Tool\Console::getExecutable($app);
+            if($wk2img) {
+                return $wk2img;
             }
         }
 
@@ -65,15 +48,7 @@ class HtmlToImage
      */
     public static function getXvfbBinary()
     {
-        $paths = array("/usr/bin/xvfb-run","/usr/local/bin/xvfb-run","/bin/xvfb-run");
-
-        foreach ($paths as $path) {
-            if (@is_executable($path)) {
-                return $path;
-            }
-        }
-
-        return false;
+        return \Pimcore\Tool\Console::getExecutable("xvfb-run");
     }
 
     /**

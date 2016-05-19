@@ -275,19 +275,11 @@ class Mail extends \Zend_Mail
      * and uses it to automatically create a text version of the html email
      *
      * @static
-     * @return void
+     * @return bool
      */
     public static function determineHtml2TextIsInstalled()
     {
-        self::$html2textInstalled = false;
-        $paths = array("/usr/bin/html2text","/usr/local/bin/html2text", "/bin/html2text");
-
-        foreach ($paths as $path) {
-            if (@is_executable($path)) {
-                self::$html2textInstalled = true;
-                return true;
-            }
-        }
+        return (bool) \Pimcore\Tool\Console::getExecutable("html2text");
     }
 
     /**
