@@ -39,8 +39,10 @@ pimcore.perspective = Class.create({
             return true;
         }
 
-        if (typeof this.cache[key] !== "undefined") {
-            return this.cache[key];
+        var cacheKey = configName + "." + key;
+
+        if (typeof this.cache[cacheKey] !== "undefined") {
+            return this.cache[cacheKey];
         }
 
         var parts = key.split(".");
@@ -58,7 +60,7 @@ pimcore.perspective = Class.create({
             if (typeof menuItem == "object") {
 
                 if (menuItem.hidden) {
-                    this.cache[key] = false;
+                    this.cache[cacheKey] = false;
                     return false;
                 }
 
@@ -67,12 +69,12 @@ pimcore.perspective = Class.create({
                 }
                 menuItems = menuItem.items;
             } else {
-                this.cache[key] = menuItem;
+                this.cache[cacheKey] = menuItem;
                 return menuItem;
             }
 
         }
-        this.cache[key] = true;
+        this.cache[cacheKey] = true;
         return true;
     }
 

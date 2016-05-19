@@ -488,7 +488,7 @@ pimcore.asset.tree = Class.create({
                         });
                     }
 
-                    if (perspectiveCfg.inTreeContextMenu("asset.add.uploadFromServer")) {
+                    if (perspectiveCfg.inTreeContextMenu("asset.add.importFromServer")) {
                         menuItems.push({
                             text: t("import_from_server"),
                             handler: this.importFromServer.bind(this, tree, record),
