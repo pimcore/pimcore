@@ -358,7 +358,7 @@ class Update
         if ($existingContents && $newContents) {
             $mergeResult = array_replace_recursive($existingContents, $newContents);
             $newJson = json_encode($mergeResult);
-            $newJson = \Zend_Json::prettyPrint($newJson);
+            $newJson = \Pimcore\Helper\JsonFormatter::format($newJson, true, true);
             File::put($oldFile, $newJson);
         }
     }
@@ -392,7 +392,13 @@ class Update
      */
     public static function composerDumpAutoload()
     {
-        $process = new Process('composer dump-autoload -o -d ' . PIMCORE_DOCUMENT_ROOT);
+        $composerLock = PIMCORE_DOCUMENT_ROOT . "/composer.lock";
+        if(file_exists($composerLock)) {
+            @unlink($composerLock);
+        }
+
+        // dump autoload and regenerate composer.lock
+        $process = new Process('composer update nothing -d ' . PIMCORE_DOCUMENT_ROOT);
         $process->mustRun();
     }
 
