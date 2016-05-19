@@ -72,6 +72,12 @@ class Console
 
         array_unshift($paths, "");
 
+        // allow custom setup routines for certain programs
+        $customSetupMethod = "setup" . ucfirst($name);
+        if(method_exists(__CLASS__, $customSetupMethod)) {
+            self::$customSetupMethod();
+        }
+
         foreach ($paths as $path) {
             foreach (["--help", "-h"] as $option) {
                 try {
@@ -100,6 +106,20 @@ class Console
         }
 
         return false;
+    }
+
+    /**
+     *
+     */
+    protected static function setupComposer() {
+        // composer needs either COMPOSER_HOME or HOME to be set
+        if(!getenv("COMPOSER_HOME") && !getenv("HOME")) {
+            $composerHome = PIMCORE_WEBSITE_VAR . "/composer";
+            if (!is_dir($composerHome)) {
+                mkdir($composerHome, 0777, true);
+            }
+            putenv("COMPOSER_HOME=" . $composerHome);
+        }
     }
 
     /**
