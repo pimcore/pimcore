@@ -25,7 +25,6 @@
     },
     "require": {
         "php": ">=5.5.0",
-        "ext-mcrypt" : "*",
         "ext-iconv" : "*",
         "ext-dom" : "*",
         "ext-SimpleXML" : "*",
