@@ -398,7 +398,8 @@ class Update
         }
 
         // dump autoload and regenerate composer.lock
-        $process = new Process('composer update nothing -d ' . PIMCORE_DOCUMENT_ROOT);
+        $composerPath = \Pimcore\Tool\Console::getExecutable("composer");
+        $process = new Process($composerPath . ' update nothing -d ' . PIMCORE_DOCUMENT_ROOT);
         $process->mustRun();
     }
 
@@ -407,10 +408,7 @@ class Update
      */
     public static function isComposerAvailable()
     {
-        $process = new Process('composer list');
-        $process->run();
-
-        return $process->isSuccessful();
+        return (bool) \Pimcore\Tool\Console::getExecutable("composer");
     }
 
     /**
