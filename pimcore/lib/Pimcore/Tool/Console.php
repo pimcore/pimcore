@@ -74,7 +74,7 @@ class Console
 
         // allow custom setup routines for certain programs
         $customSetupMethod = "setup" . ucfirst($name);
-        if(method_exists(__CLASS__, $customSetupMethod)) {
+        if (method_exists(__CLASS__, $customSetupMethod)) {
             self::$customSetupMethod();
         }
 
@@ -111,9 +111,10 @@ class Console
     /**
      *
      */
-    protected static function setupComposer() {
+    protected static function setupComposer()
+    {
         // composer needs either COMPOSER_HOME or HOME to be set
-        if(!getenv("COMPOSER_HOME") && !getenv("HOME")) {
+        if (!getenv("COMPOSER_HOME") && !getenv("HOME")) {
             $composerHome = PIMCORE_WEBSITE_VAR . "/composer";
             if (!is_dir($composerHome)) {
                 mkdir($composerHome, 0777, true);
