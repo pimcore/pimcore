@@ -1041,7 +1041,6 @@ abstract class Data
     protected function getDataFromObjectParam($object, $params = array())
     {
         $data = null;
-        $resolved = false;
 
         $context = $params && $params["context"] ? $params["context"] : null;
 
@@ -1069,7 +1068,7 @@ abstract class Data
                                         $data = $data->getLocalizedValue($this->getName(), $params["language"], true);
                                     }
 
-                                    $resolved = true;
+                                    return $data;
                                 } else {
                                     throw new \Exception("object seems to be modified, item with orginal index " . $originalndex . " not found, new index: " . $index);
                                 }
@@ -1077,6 +1076,7 @@ abstract class Data
                         }
                     } elseif ($object instanceof Object\Localizedfield) {
                         $data = $object->getLocalizedValue($this->getName(), $params["language"], true);
+                        return $data;
                     }
                 }
             } elseif ($context["containerType"] == "classificationstore") {
@@ -1095,15 +1095,14 @@ abstract class Data
             }
         }
 
-        if (!$resolved) {
-            $container = $object;
 
-            $getter = "get" . ucfirst($this->getName());
-            if (method_exists($container, $getter)) { // for Object\Concrete, Object\Fieldcollection\Data\AbstractData, Object\Objectbrick\Data\AbstractData
-                $data = $container->$getter();
-            } elseif ($object instanceof Object\Localizedfield) {
-                $data = $object->getLocalizedValue($this->getName(), $params["language"], true);
-            }
+        $container = $object;
+
+        $getter = "get" . ucfirst($this->getName());
+        if (method_exists($container, $getter)) { // for Object\Concrete, Object\Fieldcollection\Data\AbstractData, Object\Objectbrick\Data\AbstractData
+            $data = $container->$getter();
+        } elseif ($object instanceof Object\Localizedfield) {
+            $data = $object->getLocalizedValue($this->getName(), $params["language"], true);
         }
 
         return $data;

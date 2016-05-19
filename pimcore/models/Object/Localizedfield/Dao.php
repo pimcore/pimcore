@@ -266,8 +266,9 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function delete($deleteQuery = true)
     {
+        $object = $this->model->getObject();
+
         try {
-            $object = $this->model->getObject();
 
             $context = $this->model->getContext();
             if ($context && $context["containerType"] == "fieldcollection") {
@@ -312,7 +313,20 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         // remove relations
-        $this->db->delete("object_relations_" . $this->model->getObject()->getClassId(), $this->db->quoteInto("ownertype = 'localizedfield' AND ownername = 'localizedfield' AND src_id = ?", $this->model->getObject()->getId()));
+        if ($container instanceof Object\Fieldcollection\Definition) {
+
+            $objectId = $object->getId();
+            $index = $context["index"];
+            $containerName = $context["fieldname"];
+
+            $sql = $this->db->quoteInto("src_id = ?", $objectId) . " AND ownertype = 'localizedfield' AND "
+                . $this->db->quoteInto("ownername LIKE ?", "/fieldcollection~" . $containerName . "/" . $index . "/%");
+
+
+            $this->db->delete("object_relations_" . $object->getClassId(), $sql);
+        } else {
+            $this->db->delete("object_relations_" . $this->model->getObject()->getClassId(), $this->db->quoteInto("ownertype = 'localizedfield' AND ownername = 'localizedfield' AND src_id = ?", $this->model->getObject()->getId()));
+        }
     }
 
     /**

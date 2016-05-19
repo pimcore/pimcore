@@ -20,6 +20,7 @@ use Pimcore\Model;
 use Pimcore\Model\Object;
 use Pimcore\Model\Element;
 use Pimcore\Db;
+use Pimcore\Tool\Admin;
 
 abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
 {
@@ -175,6 +176,7 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
     protected function allowAssetRelation($asset)
     {
         $allowedAssetTypes = $this->getAssetTypes();
+        $allowedTypes = array();
         $allowed = true;
         if (!$this->getAssetsAllowed()) {
             $allowed = false;
@@ -185,8 +187,22 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
                     $t = $t["assetTypes"];
                 }
 
-                if ($t && is_string($t)) {
-                    $allowedTypes[] = $t;
+                if ($t) {
+                    if (Admin::isExtJS6()) {
+                        if (is_string($t)) {
+                            $allowedTypes[] = $t;
+                        } else if (is_array($t) && count($t) > 0) {
+                            if (isset($t["assetTypes"])) {
+                                $allowedTypes []= $t["assetTypes"];
+                            } else {
+                                $allowedTypes[]= $t;
+                            }
+                        }
+                    } else {
+                        if (is_string($t)) {
+                            $allowedTypes[] = $t;
+                        }
+                    }
                 }
             }
             if (!in_array($asset->getType(), $allowedTypes)) {
