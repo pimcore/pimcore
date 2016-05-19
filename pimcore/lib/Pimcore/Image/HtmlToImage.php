@@ -33,9 +33,9 @@ class HtmlToImage
      */
     public static function getWkhtmltoimageBinary()
     {
-        foreach(["wkhtmltoimage","wkhtmltoimage-amd64"] as $app) {
+        foreach (["wkhtmltoimage", "wkhtmltoimage-amd64"] as $app) {
             $wk2img = \Pimcore\Tool\Console::getExecutable($app);
-            if($wk2img) {
+            if ($wk2img) {
                 return $wk2img;
             }
         }

@@ -393,7 +393,7 @@ class Update
     public static function composerDumpAutoload()
     {
         $composerLock = PIMCORE_DOCUMENT_ROOT . "/composer.lock";
-        if(file_exists($composerLock)) {
+        if (file_exists($composerLock)) {
             @unlink($composerLock);
         }
 

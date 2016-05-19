@@ -57,26 +57,26 @@ class Console
      * @return bool|mixed|string
      * @throws \Exception
      */
-    public static function getExecutable($name, $throwException = false) {
-
-        if(isset(self::$executableCache[$name])) {
+    public static function getExecutable($name, $throwException = false)
+    {
+        if (isset(self::$executableCache[$name])) {
             return self::$executableCache[$name];
         }
 
         $pathVariable = Config::getSystemConfig()->general->path_variable;
 
         $paths = [];
-        if($pathVariable) {
+        if ($pathVariable) {
             $paths = explode(":", $pathVariable);
         }
 
         array_unshift($paths, "");
 
-        foreach($paths as $path) {
+        foreach ($paths as $path) {
             foreach (["--help", "-h"] as $option) {
                 try {
                     $path = rtrim($path, "/\\ ");
-                    if($path) {
+                    if ($path) {
                         $executablePath = $path . DIRECTORY_SEPARATOR . $name;
                     } else {
                         $executablePath = $name;
@@ -89,14 +89,13 @@ class Console
 
                     return $executablePath;
                 } catch (\Exception $e) {
-
                 }
             }
         }
 
         self::$executableCache[$name] = false;
 
-        if($throwException) {
+        if ($throwException) {
             throw new \Exception("No '$name' executable found, please install the application or add it to the PATH (in system settings or to your PATH environment variable");
         }
 

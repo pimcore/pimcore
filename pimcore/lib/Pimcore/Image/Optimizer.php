@@ -91,7 +91,7 @@ class Optimizer
             return self::$optimizerBinaries["pngOptimizer"];
         }
 
-        foreach (["zopflipng","pngcrush"] as $app) {
+        foreach (["zopflipng", "pngcrush"] as $app) {
             $path = \Pimcore\Tool\Console::getExecutable($app);
             if ($path) {
                 self::$optimizerBinaries["pngOptimizer"] = array(
@@ -118,7 +118,7 @@ class Optimizer
             return self::$optimizerBinaries["jpegOptimizer"];
         }
 
-        foreach (["jpegoptim","imgmin"] as $app) {
+        foreach (["jpegoptim", "imgmin"] as $app) {
             $path = \Pimcore\Tool\Console::getExecutable($app);
             if ($path) {
                 self::$optimizerBinaries["jpegOptimizer"] = array(

@@ -269,7 +269,6 @@ class Dao extends Model\Dao\AbstractDao
         $object = $this->model->getObject();
 
         try {
-
             $context = $this->model->getContext();
             if ($context && $context["containerType"] == "fieldcollection") {
                 $containerKey = $context["containerKey"];
@@ -314,7 +313,6 @@ class Dao extends Model\Dao\AbstractDao
 
         // remove relations
         if ($container instanceof Object\Fieldcollection\Definition) {
-
             $objectId = $object->getId();
             $index = $context["index"];
             $containerName = $context["fieldname"];
