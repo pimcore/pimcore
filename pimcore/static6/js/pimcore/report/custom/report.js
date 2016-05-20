@@ -38,7 +38,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
         this.drillDownStores = [];
 
         var storeFields = [];
-        var gridColums = [];
+        var gridColumns = [];
         var colConfig;
         var gridColConfig = {};
         var filters = [];
@@ -74,11 +74,11 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
             }
 
             if(colConfig["filter_drilldown"] != 'only_filter') {
-                gridColums.push(gridColConfig);
+                gridColumns.push(gridColConfig);
             }
 
             if (colConfig["columnAction"]) {
-                gridColums.push({
+                gridColumns.push({
                         header: t("open"),
                         xtype: 'actioncolumn',
                         width: 40,
@@ -182,7 +182,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
             region: "center",
             store: this.store,
             bbar: this.pagingtoolbar,
-            columns: gridColums,
+            columns: gridColumns,
             columnLines: true,
             plugins: ['gridfilters'],
             stripeRows: true,
