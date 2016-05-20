@@ -20,7 +20,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
 {
 
     /**
-     * Loads a list of static routes for the specifies parameters, returns an array of Staticroute elements
+     * Loads a list of static routes for the specified parameters, returns an array of Staticroute elements
      *
      * @return array
      */
