@@ -332,10 +332,8 @@ pimcore.document.tree = Class.create({
         if ((record.data.type == "page" || record.data.type == "email" || record.data.type == "folder"
             || record.data.type == "link" || record.data.type == "hardlink")
             && record.data.permissions.create) {
-            var showSeparator = false;
 
             if (perspectiveCfg.inTreeContextMenu("document.add")) {
-                showSeparator = true;
                 var document_types = pimcore.globalmanager.get("document_types_store");
 
                 var documentMenu = {
@@ -429,7 +427,6 @@ pimcore.document.tree = Class.create({
             }
 
             if (perspectiveCfg.inTreeContextMenu("document.addFolder")) {
-                showSeparator = true;
 
                 menu.add(new Ext.menu.Item({
                     text: t('add_folder'),
@@ -438,9 +435,8 @@ pimcore.document.tree = Class.create({
                 }));
             }
 
-            if (showSeparator) {
-                menu.add("-");
-            }
+            menu.add("-");
+
 
             //paste
             if (pimcore.cachedDocumentId && record.data.permissions.create && perspectiveCfg.inTreeContextMenu("document.paste")) {
@@ -538,7 +534,7 @@ pimcore.document.tree = Class.create({
             }));
         }
 
-        if (record.data.permissions.rename && record.data.id != 1 && !record.data.locked) {
+        if (record.data.permissions.rename && record.data.id != 1 && !record.data.locked && perspectiveCfg.inTreeContextMenu("document.rename")) {
             menu.add(new Ext.menu.Item({
                 text: t('rename'),
                 iconCls: "pimcore_icon_key pimcore_icon_overlay_go",
@@ -749,6 +745,7 @@ pimcore.document.tree = Class.create({
             }));
         }
 
+        pimcore.helpers.hideRedundantSeparators(menu);
         menu.showAt(e.pageX+1, e.pageY+1);
     },
 

@@ -461,7 +461,6 @@ pimcore.asset.tree = Class.create({
             if (record.data.permissions.create) {
 
                 var menuItems = [];
-                var showSeparator = false;
 
                 if (perspectiveCfg.inTreeContextMenu("asset.add")) {
                     if (perspectiveCfg.inTreeContextMenu("asset.add.upload")) {
@@ -505,7 +504,6 @@ pimcore.asset.tree = Class.create({
                     }
 
                     if (menuItems.length > 0) {
-                        showSeparator = true;
                         menu.add(new Ext.menu.Item({
                             text: t('add_assets'),
                             iconCls: "pimcore_icon_asset pimcore_icon_overlay_add",
@@ -516,7 +514,6 @@ pimcore.asset.tree = Class.create({
                 }
 
                 if (perspectiveCfg.inTreeContextMenu("asset.addFolder")) {
-                    showSeparator = true;
                     menu.add(new Ext.menu.Item({
                         text: t('add_folder'),
                         iconCls: "pimcore_icon_folder pimcore_icon_overlay_add",
@@ -524,9 +521,8 @@ pimcore.asset.tree = Class.create({
                     }));
                 }
 
-                if (showSeparator) {
-                    menu.add("-");
-                }
+                menu.add("-");
+
             }
         }
 
@@ -703,6 +699,8 @@ pimcore.asset.tree = Class.create({
                 handler: pimcore.elementservice.refreshNode.bind(this, record)
             }));
         }
+
+        pimcore.helpers.hideRedundantSeparators(menu);
 
         menu.showAt(e.pageX+1, e.pageY+1);
     },

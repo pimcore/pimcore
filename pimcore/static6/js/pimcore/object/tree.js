@@ -751,6 +751,7 @@ pimcore.object.tree = Class.create({
             });
         }
 
+        pimcore.helpers.hideRedundantSeparators(menu);
         menu.showAt(e.pageX+1, e.pageY+1);
     },
 

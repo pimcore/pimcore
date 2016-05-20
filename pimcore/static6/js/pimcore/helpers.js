@@ -2715,3 +2715,27 @@ pimcore.helpers.openGenericIframeWindow = function (id, src, iconCls, title) {
         pimcore.globalmanager.add(id, new pimcore.tool.genericiframewindow(id, src, iconCls, title));
     }
 };
+
+pimcore.helpers.hideRedundantSeparators = function(menu) {
+    var showSeparator = false;
+
+    for (var i = 0; i < menu.items.length; i++) {
+        var item = menu.items.getAt(i);
+
+        if (item instanceof Ext.menu.Separator) {
+            if (!showSeparator || i == menu.items.length - 1) {
+                item.hide();
+            }
+            showSeparator = false;
+        } else {
+            showSeparator = true;
+        }
+    }
+
+    menu.items.each(function(item) {
+        if (item instanceof Ext.menu.Separator) {
+
+        }
+    });
+}
+
