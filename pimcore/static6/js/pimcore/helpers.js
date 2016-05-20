@@ -2731,11 +2731,5 @@ pimcore.helpers.hideRedundantSeparators = function(menu) {
             showSeparator = true;
         }
     }
-
-    menu.items.each(function(item) {
-        if (item instanceof Ext.menu.Separator) {
-
-        }
-    });
 }
 
