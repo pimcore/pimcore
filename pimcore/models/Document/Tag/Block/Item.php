@@ -36,11 +36,11 @@ class Item
     protected $suffixes = array();
 
     /**
-     * @param Model\Document\Page $doc
-     * @param int           $index
-     * @param array         $suffixes
+     * @param Model\Document\PageSnippet $doc
+     * @param int                        $index
+     * @param array                      $suffixes
      */
-    public function __construct(Model\Document\Page $doc, $index, array $suffixes)
+    public function __construct(Model\Document\PageSnippet $doc, $index, array $suffixes)
     {
         $this->doc = $doc;
         $this->index = $index;

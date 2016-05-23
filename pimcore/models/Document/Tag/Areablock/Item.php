@@ -36,11 +36,11 @@ class Item
     protected $index;
 
     /**
-     * @param Model\Document\Page $doc
-     * @param               $name
-     * @param               $index
+     * @param Model\Document\PageSnippet $doc
+     * @param string                     $name
+     * @param int                        $index
      */
-    public function __construct(Model\Document\Page $doc, $name, $index)
+    public function __construct(Model\Document\PageSnippet $doc, $name, $index)
     {
         $this->doc = $doc;
         $this->name = $name;
