@@ -320,6 +320,9 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
     createDropZones: function () {
 
+        if(this.inherited) {
+            return;
+        }
         //Ext.get(this.id).addClass("pimcore_tag_areablock_hide_buttons");
 
         if(this.elements.length > 0) {
