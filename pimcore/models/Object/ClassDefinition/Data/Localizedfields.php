@@ -128,7 +128,6 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
         self::collectCalculatedValueItems($this, $calculatedChilds);
 
         if ($calculatedChilds) {
-
             $validLanguages = Tool::getValidLanguages();
 
             foreach ($calculatedChilds as $childDef) {
