@@ -14,7 +14,8 @@
 pimcore.registerNS("pimcore.object.classificationstore.collectionsPanel");
 pimcore.object.classificationstore.collectionsPanel = Class.create({
 
-    initialize: function (storeConfig) {
+    initialize: function (storeConfig, groupsPanel) {
+        this.groupsPanel = groupsPanel;
         this.storeConfig = storeConfig;
     },
 
@@ -89,6 +90,24 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
         });
 
         var gridColumns = [];
+
+        gridColumns.push({
+            header: t("open"),
+            xtype: 'actioncolumn',
+            width: 40,
+            items: [
+                {
+                    tooltip: t("open"),
+                    iconCls: "pimcore_icon_open",
+                    handler: function (grid, rowIndex) {
+                        var store = grid.getStore();
+                        var data = store.getAt(rowIndex).getData();
+                        var groupId = data.groupId;
+                        this.groupsPanel.openConfig(groupId);
+                    }.bind(this)
+                }
+            ]
+        });
 
         gridColumns.push({header: t("group_id"), flex: 60, sortable: true, dataIndex: 'groupId', filter: 'string'});
         gridColumns.push({header: t("name"), flex: 200, sortable: true, dataIndex: 'groupName', filter: 'string'});

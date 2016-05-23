@@ -71,9 +71,6 @@ pimcore.object.classificationstore.storeTree = Class.create({
         var treeNodeListeners = {
             'itemclick' : this.onTreeNodeClick.bind(this),
             'itemcontextmenu': this.onTreeNodeContextmenu.bind(this)
-            //'beforeitemappend': function (thisNode, newChildNode, index, eOpts) {
-            //    newChildNode.data.qtip = t('id') +  ": " + newChildNode.data.id;
-            //}
         };
 
         return treeNodeListeners;
@@ -125,14 +122,17 @@ pimcore.object.classificationstore.storeTree = Class.create({
                 //this.editPanel = null;
 
                 this.editContainer.setTitle(storeConfig.text + " (ID: " + storeConfig.id + ")");
-                panel = new pimcore.object.classificationstore.collectionsPanel(storeConfig).getPanel();
-                this.editContainer.add(panel);
-                this.editContainer.setActiveTab(panel);
+                var propertiesPanel = new pimcore.object.classificationstore.propertiespanel(storeConfig, this.editContainer);
+                var groupsPanel = new pimcore.object.classificationstore.groupsPanel(storeConfig, this.editContainer, propertiesPanel);
+                var collectionsPanel = new pimcore.object.classificationstore.collectionsPanel(storeConfig, groupsPanel).getPanel();
 
-                panel = new pimcore.object.classificationstore.groupsPanel(storeConfig).getPanel();
-                this.editContainer.add(panel);
-                panel = new pimcore.object.classificationstore.propertiespanel(storeConfig).getPanel();
-                this.editContainer.add(panel);
+
+                this.editContainer.add(collectionsPanel);
+                this.editContainer.add(groupsPanel.getPanel());
+                this.editContainer.add(propertiesPanel.getPanel());
+
+                this.editContainer.setActiveTab(collectionsPanel);
+
                 this.editContainer.updateLayout();
                 this.activeStoreId = storeConfig.id;
             }

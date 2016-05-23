@@ -1193,4 +1193,51 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
 
         return $this->_helper->json($result);
     }
+
+
+
+    public function getPageAction() {
+        $table = "classificationstore_" . $this->getParam("table");
+        $db = \Pimcore\Db::get();
+        $id = $this->getParam("id");
+        $storeId = $this->getParam("storeId");
+        $pageSize = $this->getParam("pageSize");
+
+
+        if ($this->getParam("sortKey")) {
+            $sortKey = $this->getParam("sortKey");
+            $sortDir = $this->getParam("sortDir");
+        } else {
+            $sortKey = "name";
+            $sortDir = "ASC";
+        }
+        $sorter = " order by `" . $sortKey .  "` " . $sortDir;
+
+        if ($table == "keys") {
+            $query = "
+                select *, (item.pos - 1)/ " . $pageSize . " + 1  as page from (
+                    select * from (
+                        select @rownum := @rownum + 1 as pos,  id, name, `type`
+                        from `" . $table . "`
+                        where enabled = 1 and storeId = " . $storeId . $sorter . "
+                      ) all_rows) item where id = " . $id . ";";
+        } else {
+            $query = "
+            select *, (item.pos - 1)/ " . $pageSize . " + 1  as page from (
+                select * from (
+                    select @rownum := @rownum + 1 as pos,  id, name
+                    from `" . $table . "`
+                    where storeId = " . $storeId . $sorter . "
+                  ) all_rows) item where id = " .  $id . ";";
+        }
+
+
+        $db->query("select @rownum := 0;");
+        $result= $db->fetchAll($query);
+
+
+        $page = (int) $result[0]["page"] ;
+
+        $this->_helper->json(array("success" => true, "page" => $page));
+    }
 }

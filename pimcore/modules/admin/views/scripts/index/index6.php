@@ -147,7 +147,7 @@ $styles = array(
     // see also: http://blogs.telerik.com/blogs/posts/10-05-03/internet-explorer-css-limits.aspx
     // @import bypasses this problem in an elegant way
     foreach ($styles as $style) { ?>
-        @import url(<?= $style ?>?_dc=<?= \Pimcore\Version::$revision ?>);
+    @import url(<?= $style ?>?_dc=<?= \Pimcore\Version::$revision ?>);
     <?php } ?>
 </style>
 
@@ -528,7 +528,6 @@ $scripts = array(
     "pimcore/object/keyvalue/translatorConfigWindow.js",
 
     // classification store
-    "pimcore/object/classificationstore/configPanel.js",
     "pimcore/object/classificationstore/groupsPanel.js",
     "pimcore/object/classificationstore/propertiesPanel.js",
     "pimcore/object/classificationstore/collectionsPanel.js",

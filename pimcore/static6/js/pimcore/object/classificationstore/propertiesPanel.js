@@ -14,7 +14,8 @@
 pimcore.registerNS("pimcore.object.classificationstore.propertiespanel");
 pimcore.object.classificationstore.propertiespanel = Class.create({
 
-    initialize: function (storeConfig) {
+    initialize: function (storeConfig, container) {
+        this.container = container;
         this.storeConfig = storeConfig;
     },
 
@@ -118,7 +119,7 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
         var gridColumns = [];
 
         //gridColumns.push({header: t("store"), width: 40, sortable: true, dataIndex: 'storeId'});
-        gridColumns.push({header: "ID", width: 40, sortable: true, dataIndex: 'id'});
+        gridColumns.push({header: "ID", width: 100, sortable: true, dataIndex: 'id'});
         gridColumns.push({
                 header: t("name"),
                 width: 200,
@@ -245,7 +246,7 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
             store: this.store,
             border: false,
             columns: gridColumns,
-            loadMask: true,
+            loadMask: false,
             columnLines: true,
             plugins: plugins,
             bodyCls: "pimcore_editable_grid",
@@ -373,5 +374,69 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
             return selected.data;
         }
         return null;
+    },
+
+   openConfig: function(id) {
+
+       var sorters = this.store.getSorters();
+       var pageSize = pimcore.helpers.grid.getDefaultPageSize(-1);
+
+       var params = {
+           storeId: this.storeConfig.id,
+           id: id,
+           pageSize: pageSize,
+           table: "keys"
+       };
+
+       var sorters = this.store.getSorters();
+       if (sorters.length > 0) {
+           var sorter = sorters.getAt(0);
+           params.sortKey = sorter.getProperty();
+           params.sortDir = sorter.getDirection();
+       }
+
+       var noreload = function() {
+           return false;
+       }
+       this.store.addListener("beforeload", noreload);
+
+       this.container.setActiveTab(this.layout);
+       this.store.clearFilter(true);
+
+       Ext.Ajax.request({
+           url: "/admin/classificationstore/get-page",
+           params: params,
+           success: function(response) {
+               try {
+                   this.store.removeListener("beforeload", noreload);
+
+                   var data = Ext.decode(response.responseText);
+                   if (data.success) {
+                       this.store.removeListener("beforeload", noreload);
+                       this.store.loadPage(data.page, {
+                           callback: function() {
+                               var selModel = this.grid.getSelectionModel();
+                               var record = this.store.getById(id);
+                               if (record) {
+                                   selModel.select(record);
+                                   this.showDetailedConfig(this.grid, this.store.indexOf(record));
+                               } 
+                           }.bind(this)
+                       });
+                   } else {
+                       this.store.reload();
+                   }
+               } catch (e) {
+                   console.log(e);
+               }
+           }.bind(this),
+           failure: function(response) {
+               this.store.removeListener("beforeload", noreload);
+               this.store.reload();
+           }.bind(this)
+       });
+
+
     }
+
 });

@@ -14,8 +14,10 @@
 pimcore.registerNS("pimcore.object.classificationstore.groupsPanel");
 pimcore.object.classificationstore.groupsPanel = Class.create({
 
-    initialize: function (storeConfig) {
+    initialize: function (storeConfig, container, propertiesPanel) {
         this.storeConfig = storeConfig;
+        this.propertiesPanel = propertiesPanel;
+        this.container = container;
     },
 
     getPanel: function () {
@@ -97,6 +99,25 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
             dataIndex: "mandatory",
             width: 50
         });
+
+        gridColumns.push({
+            header: t("open"),
+            xtype: 'actioncolumn',
+            width: 40,
+            items: [
+                {
+                    tooltip: t("open"),
+                    iconCls: "pimcore_icon_open",
+                    handler: function (grid, rowIndex) {
+                        var store = grid.getStore();
+                        var data = store.getAt(rowIndex).getData();
+                        var keyId = data.keyId;
+                        this.propertiesPanel.openConfig(keyId);
+                    }.bind(this)
+                }
+            ]
+        });
+
 
         gridColumns.push({header: t("key_id"), flex: 60, sortable: true, dataIndex: 'keyId', filter: 'string'});
         gridColumns.push({header: t("name"), flex: 200, sortable: true, dataIndex: 'keyName', filter: 'string'});
@@ -187,7 +208,7 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
             disabled: true,
             items: [
                 this.relationsGrid
-                ]
+            ]
 
         });
 
@@ -454,6 +475,68 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
 
     requestPending: function() {
         // nothing to do
+    },
+
+    openConfig: function(id) {
+
+        var sorters = this.groupsStore.getSorters();
+        var pageSize = pimcore.helpers.grid.getDefaultPageSize(-1);
+
+        var params = {
+            storeId: this.storeConfig.id,
+            id: id,
+            pageSize: pageSize,
+            table: "groups"
+        };
+
+        var sorters = this.groupsStore.getSorters();
+        if (sorters.length > 0) {
+            var sorter = sorters.getAt(0);
+            params.sortKey = sorter.getProperty();
+            params.sortDir = sorter.getDirection();
+        }
+
+        var noreload = function() {
+            return false;
+        }
+        this.groupsStore.addListener("beforeload", noreload);
+
+        this.container.setActiveTab(this.layout);
+        this.groupsStore.clearFilter(true);
+
+        Ext.Ajax.request({
+            url: "/admin/classificationstore/get-page",
+            params: params,
+            success: function(response) {
+                try {
+                    this.groupsStore.removeListener("beforeload", noreload);
+
+                    var data = Ext.decode(response.responseText);
+                    if (data.success) {
+                        this.groupsStore.removeListener("beforeload", noreload);
+                        this.groupsStore.loadPage(data.page, {
+                            callback: function() {
+                                var selModel = this.grid.getSelectionModel();
+                                var record = this.groupsStore.getById(id);
+                                if (record) {
+                                    selModel.select(record);
+                                }
+                            }.bind(this)
+                        });
+                    } else {
+                        this.groupsStore.reload();
+                    }
+                } catch (e) {
+                    console.log(e);
+                }
+            }.bind(this),
+            failure: function(response) {
+                this.groupsStore.removeListener("beforeload", noreload);
+                this.groupsStore.reload();
+            }.bind(this)
+        });
+
+
     }
 
 });
