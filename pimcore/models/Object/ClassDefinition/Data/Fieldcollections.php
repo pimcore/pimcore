@@ -120,15 +120,23 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
                 $collectionData = array();
 
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                    if ($fd instanceof CalculatedValue) {
-                        $data = new Object\Data\CalculatedValue($fd->getName());
-                        $data->setContextualData("fieldcollection", $this->getName(), $idx, null,  null, null, $fd);
-                        $data = $fd->getDataForEditmode($data, $object, $params);
-                        $collectionData[$fd->getName()] = $data;
-                    } else {
+                    if (!$fd instanceof CalculatedValue) {
                         $collectionData[$fd->getName()] = $fd->getDataForEditmode($item->{$fd->getName()}, $object, $params);
                     }
                 }
+                
+                $calculatedChilds = array();
+                self::collectCalculatedValueItems($collectionDef->getFieldDefinitions(), $calculatedChilds);
+                
+                if ($calculatedChilds) {
+                    foreach ($calculatedChilds as $fd) {
+                        $data = new Object\Data\CalculatedValue($fd->getName());
+                        $data->setContextualData("fieldcollection", $this->getName(), $idx, null, null, null, $fd);
+                        $data = $fd->getDataForEditmode($data, $object, $params);
+                        $collectionData[$fd->getName()] = $data;
+                    }
+                }
+
 
                 $editmodeData[] = array(
                     "data" => $collectionData,
@@ -863,5 +871,21 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     public function setCollapsible($collapsible)
     {
         $this->collapsible = $collapsible;
+    }
+
+    public static function collectCalculatedValueItems($container, &$list = array())
+    {
+        if (is_array($container)) {
+            /** @var  $childDef Object\ClassDefinition\Data */
+            foreach ($container as $childDef) {
+                if ($childDef instanceof Model\Object\ClassDefinition\Data\CalculatedValue) {
+                    $list[] = $childDef;
+                } else {
+                    if (method_exists($childDef, "getFieldDefinitions")) {
+                        self::collectCalculatedValueItems($childDef->getFieldDefinitions(), $list);
+                    }
+                }
+            }
+        }
     }
 }

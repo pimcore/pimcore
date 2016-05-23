@@ -97,12 +97,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
 
         $inherited = false;
         foreach ($collectionDef->getFieldDefinitions() as $fd) {
-            if ($fd instanceof CalculatedValue) {
-                $fieldData = new Object\Data\CalculatedValue($fd->getName());
-                $fieldData->setContextualData("objectbrick", $this->getName(), $allowedBrickType, $fd->getName(), null, null, $fd);
-                $fieldData = $fd->getDataForEditmode($fieldData, $data->getObject(), $params);
-                $brickData[$fd->getName()] = $fieldData;
-            } else {
+            if (!$fd instanceof CalculatedValue) {
                 $fieldData = $this->getDataForField($item, $fd->getName(), $fd, $level, $data->getObject(), $getter, $objectFromVersion); //$fd->getDataForEditmode($item->{$fd->getName()});
                 $brickData[$fd->getName()] = $fieldData->objectData;
             }
@@ -110,6 +105,18 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
             $brickMetaData[$fd->getName()] = $fieldData->metaData;
             if ($fieldData->metaData['inherited'] == true) {
                 $inherited = true;
+            }
+        }
+
+        $calculatedChilds = array();
+        self::collectCalculatedValueItems($collectionDef->getFieldDefinitions(), $calculatedChilds);
+
+        if ($calculatedChilds) {
+            foreach ($calculatedChilds as $fd) {
+                $fieldData = new Object\Data\CalculatedValue($fd->getName());
+                $fieldData->setContextualData("objectbrick", $this->getName(), $allowedBrickType, $fd->getName(), null, null, $fd);
+                $fieldData = $fd->getDataForEditmode($fieldData, $data->getObject(), $params);
+                $brickData[$fd->getName()] = $fieldData;
             }
         }
 
@@ -907,6 +914,22 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
                         if (method_exists($fd, "classSaved")) {
                             $fd->classSaved($class);
                         }
+                    }
+                }
+            }
+        }
+    }
+
+    public static function collectCalculatedValueItems($container, &$list = array())
+    {
+        if (is_array($container)) {
+            /** @var  $childDef Object\ClassDefinition\Data */
+            foreach ($container as $childDef) {
+                if ($childDef instanceof Model\Object\ClassDefinition\Data\CalculatedValue) {
+                    $list[] = $childDef;
+                } else {
+                    if (method_exists($childDef, "getFieldDefinitions")) {
+                        self::collectCalculatedValueItems($childDef->getFieldDefinitions(), $list);
                     }
                 }
             }

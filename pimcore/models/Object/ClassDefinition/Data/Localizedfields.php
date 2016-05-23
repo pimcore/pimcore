@@ -124,19 +124,19 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
             }
         }
 
-        if ($this->hasChilds()) {
-            $childs = $this->getChilds();
+        $calculatedChilds = array();
+        self::collectCalculatedValueItems($this, $calculatedChilds);
+
+        if ($calculatedChilds) {
 
             $validLanguages = Tool::getValidLanguages();
 
-            foreach ($childs as $childDef) {
-                if ($childDef instanceof CalculatedValue) {
-                    foreach ($validLanguages as $language) {
-                        $childData = new Object\Data\CalculatedValue($childDef->getName());
-                        $childData->setContextualData("localizedfield", $this->getName(), null, $language);
-                        $childData = $childDef->getDataForEditmode($childData, $object, $params);
-                        $result["data"][$language][$childDef->getName()] = $childData;
-                    }
+            foreach ($calculatedChilds as $childDef) {
+                foreach ($validLanguages as $language) {
+                    $childData = new Object\Data\CalculatedValue($childDef->getName());
+                    $childData->setContextualData("localizedfield", $this->getName(), null, $language);
+                    $childData = $childDef->getDataForEditmode($childData, $object, $params);
+                    $result["data"][$language][$childDef->getName()] = $childData;
                 }
             }
         }
@@ -1126,5 +1126,23 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     public function getLabelWidth()
     {
         return $this->labelWidth;
+    }
+
+
+    public static function collectCalculatedValueItems($owner, &$list = array())
+    {
+        if (method_exists($owner, "hasChilds")) {
+            if ($owner->hasChilds()) {
+                $childs = $owner->getChilds();
+
+                foreach ($childs as $childDef) {
+                    if ($childDef instanceof Model\Object\ClassDefinition\Data\CalculatedValue) {
+                        $list[] = $childDef;
+                    } else {
+                        self::collectCalculatedValueItems($childDef, $list);
+                    }
+                }
+            }
+        }
     }
 }
