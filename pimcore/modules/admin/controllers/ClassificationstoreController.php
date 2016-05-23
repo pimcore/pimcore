@@ -1196,7 +1196,8 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
 
 
 
-    public function getPageAction() {
+    public function getPageAction()
+    {
         $table = "classificationstore_" . $this->getParam("table");
         $db = \Pimcore\Db::get();
         $id = $this->getParam("id");

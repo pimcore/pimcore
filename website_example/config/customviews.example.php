@@ -5,15 +5,15 @@ return [
         [
             "treetype" => "object",                                             // element type is "object"
             "name" => "Articles",                                               // display name
-            "condition" => NULL,                                                // SQL condition
+            "condition" => null,                                                // SQL condition
             "icon" => "/pimcore/static6/img/flat-color-icons/reading.svg",      // tree icon
             "id" => 1,                                                          // unique (!!!) custom view ID
             "rootfolder" => "/blog",                                            // root node
-            "showroot" => FALSE,                                                // show root node or just children?
+            "showroot" => false,                                                // show root node or just children?
             "classes" => "",                                                    // allowed classes to add
             "position" => "right",                                              // left or right accordion
             "sort" => "1",                                                      // sort priority. lower values are shown first (prio for standard trees is -3 docs,-2 assets,-1 objects)
-            "expanded" => TRUE,                                                 // tree is expanded by default (there can be only one expanded tree on each side)
+            "expanded" => true,                                                 // tree is expanded by default (there can be only one expanded tree on each side)
             "having" => "o_type = \"folder\" || o5.title NOT LIKE '%magnis%'",  // SQL having clause
             "joins" => [                                                        // Joins in Zend_DB_Select-like syntax
                 array(
