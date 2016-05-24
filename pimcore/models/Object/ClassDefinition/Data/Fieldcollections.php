@@ -124,10 +124,10 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
                         $collectionData[$fd->getName()] = $fd->getDataForEditmode($item->{$fd->getName()}, $object, $params);
                     }
                 }
-                
+
                 $calculatedChilds = array();
                 self::collectCalculatedValueItems($collectionDef->getFieldDefinitions(), $calculatedChilds);
-                
+
                 if ($calculatedChilds) {
                     foreach ($calculatedChilds as $fd) {
                         $data = new Object\Data\CalculatedValue($fd->getName());
@@ -296,7 +296,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
      */
     public function load($object, $params = array())
     {
-        if (!$this->getLazyLoading() or $params["force"]) {
+        if (!$this->getLazyLoading() || (isset($params["force"]) && $params["force"])) {
             $container = new Object\Fieldcollection(null, $this->getName());
             $container->load($object);
 
