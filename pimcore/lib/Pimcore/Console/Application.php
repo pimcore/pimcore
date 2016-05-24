@@ -152,7 +152,7 @@ class Application extends \Symfony\Component\Console\Application
 
         /** @var SplFileInfo $file */
         foreach ($finder as $file) {
-            $subNamespace = trim(str_replace($directory, '', $file->getPath()), '/');
+            $subNamespace = trim(str_replace($directory, '', $file->getPath()), DIRECTORY_SEPARATOR);
             if (!empty($subNamespace)) {
                 $subNamespace = str_replace('/', '\\', $subNamespace);
                 $subNamespace = '\\' . $subNamespace;
