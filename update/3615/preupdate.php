@@ -15,6 +15,8 @@ foreach($files as $fileName) {
                 continue;
             }
 
+            $contents = $config->toArray();
+
             if(!is_writable(dirname($phpFile))) {
                 throw new \Exception($phpFile . " is not writable");
             }
@@ -30,6 +32,10 @@ foreach($files as $fileName) {
                 $contents = [
                     "views" => $cvData
                 ];
+            }
+
+            if(!$contents) {
+                throw new \Exception("Something went wrong during the migration of " . $xmlFile . " to " . $phpFile . " - Please check the contents of the XML and try it again");
             }
 
             $contents = var_export_pretty($contents);
