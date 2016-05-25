@@ -27,7 +27,7 @@ return [
         "debugloglevel" => "error",
         "disable_whoops" => FALSE,
         "debug_admin_translations" => FALSE,
-        "devmode" => TRUE,
+        "devmode" => FALSE,
         "logrecipient" => NULL,
         "viewSuffix" => "",
         "instanceIdentifier" => "",
