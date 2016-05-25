@@ -158,23 +158,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
      */
     public function setDocumentTypes($documentTypes)
     {
-        // this is the new method with Ext.form.MultiSelect
-        if ((is_string($documentTypes) && !empty($documentTypes)) || (\Pimcore\Tool\Admin::isExtJS6() && is_array($documentTypes))) {
-            if (!\Pimcore\Tool\Admin::isExtJS6()) {
-                $parts = explode(",", $documentTypes);
-            } else {
-                $parts = $documentTypes;
-            }
-
-            $documentTypes = array();
-            foreach ($parts as $type) {
-                if ($type) {
-                    $documentTypes[] = array("documentTypes" => $type);
-                }
-            }
-        }
-
-        $this->documentTypes = $documentTypes;
+        $this->documentTypes = Element\Service::fixAllowedTypes($documentTypes, "documentTypes");
         return $this;
     }
 
@@ -212,22 +196,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
      */
     public function setAssetTypes($assetTypes)
     {
-        // this is the new method with Ext.form.MultiSelect
-        if ((is_string($assetTypes) && !empty($assetTypes)) || (\Pimcore\Tool\Admin::isExtJS6() && is_array($assetTypes))) {
-            if (!\Pimcore\Tool\Admin::isExtJS6()) {
-                $parts = explode(",", $assetTypes);
-            } else {
-                $parts = $assetTypes;
-            }
-            $assetTypes = array();
-            foreach ($parts as $type) {
-                if ($type) {
-                    $assetTypes[] = array("assetTypes" => $type);
-                }
-            }
-        }
-
-        $this->assetTypes = $assetTypes ?: [];
+        $this->assetTypes = Element\Service::fixAllowedTypes($assetTypes, "assetTypes");
         return $this;
     }
 

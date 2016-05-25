@@ -48,7 +48,6 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
      */
     public function getClasses()
     {
-        $this->classes = $this->correctClasses($this->classes);
         return $this->classes;
     }
 
@@ -58,50 +57,10 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
      */
     public function setClasses($classes)
     {
-        $this->classes = $this->correctClasses($classes);
+        $this->classes = Element\Service::fixAllowedTypes($classes, "classes");
         return $this;
     }
 
-    /**
-     * this is a hack for import see: http://www.pimcore.org/issues/browse/PIMCORE-790
-     * @param array
-     * @return array
-     */
-    protected function correctClasses($classes)
-    {
-
-        // this is the new method with Ext.form.MultiSelect
-        /**
-         * @extjs6
-         * @todo this need to be refactored when extjs3 support is removed
-         */
-        if ((is_string($classes) && !empty($classes)) || (\Pimcore\Tool\Admin::isExtJS6() && is_array($classes))) {
-            if (!\Pimcore\Tool\Admin::isExtJS6()) {
-                $classParts = explode(",", $classes);
-            } else {
-                $classParts = $classes;
-            }
-            $classes = array();
-            foreach ($classParts as $class) {
-                if (is_array($class)) {
-                    $classes[] = $class;
-                } elseif ($class) {
-                    $classes[] = array("classes" => $class);
-                }
-            }
-        }
-
-        // this was the legacy method with Ext.SuperField
-        if (is_array($classes) && array_key_exists("classes", $classes)) {
-            $classes = array($classes);
-        }
-
-        if (!is_array($classes)) {
-            $classes = array();
-        }
-
-        return $classes;
-    }
 
     /**
      * @return boolean

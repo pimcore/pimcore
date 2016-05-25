@@ -782,4 +782,29 @@ class Service extends Model\AbstractModel
             return Asset\Service::getUniqueKey($element);
         }
     }
+
+    static function fixAllowedTypes($data, $type) {
+        // this is the new method with Ext.form.MultiSelect
+        if ((is_string($data) && !empty($data)) || (\Pimcore\Tool\Admin::isExtJS6() && is_array($data) && count($data))) {
+            if (!\Pimcore\Tool\Admin::isExtJS6()) {
+                $parts = explode(",", $data);
+                $data = array();
+                foreach ($parts as $elementType) {
+                    $data[] = array($type => $elementType);
+                }
+            } else {
+
+                $first = reset($data);
+                if (!is_array($first)) {
+                    $parts = $data;
+                    $data = array();
+                    foreach ($parts as $elementType) {
+                        $data[] = array($type => $elementType);
+                    }
+                }
+            }
+        }
+        return $data ? $data : [];
+    }
+
 }
