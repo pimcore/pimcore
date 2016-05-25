@@ -566,19 +566,7 @@ Ext.onReady(function () {
                     Ext.get("pimcore_avatar").show();
                     Ext.get("pimcore_logout").show();
 
-                    $("[data-menu-tooltip]").mouseenter(function (e) {
-                        $("#pimcore_menu_tooltip").show();
-                        $("#pimcore_menu_tooltip").html($(this).data("menu-tooltip"));
-
-                        var offset = $(e.target).offset();
-                        var top = offset.top;
-                        top = top + ($(e.target).height() / 2);
-
-                        $("#pimcore_menu_tooltip").css({top: top});
-                    });
-                    $("[data-menu-tooltip]").mouseleave(function () {
-                        $("#pimcore_menu_tooltip").hide();
-                    });
+                    pimcore.helpers.initMenuTooltips();
 
                     var loadMask = new Ext.LoadMask(
                         {
