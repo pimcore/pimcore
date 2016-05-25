@@ -783,7 +783,8 @@ class Service extends Model\AbstractModel
         }
     }
 
-    static function fixAllowedTypes($data, $type) {
+    public static function fixAllowedTypes($data, $type)
+    {
         // this is the new method with Ext.form.MultiSelect
         if ((is_string($data) && !empty($data)) || (\Pimcore\Tool\Admin::isExtJS6() && is_array($data) && count($data))) {
             if (!\Pimcore\Tool\Admin::isExtJS6()) {
@@ -793,7 +794,6 @@ class Service extends Model\AbstractModel
                     $data[] = array($type => $elementType);
                 }
             } else {
-
                 $first = reset($data);
                 if (!is_array($first)) {
                     $parts = $data;
@@ -806,5 +806,4 @@ class Service extends Model\AbstractModel
         }
         return $data ? $data : [];
     }
-
 }
