@@ -1,11 +1,11 @@
-<?php 
+<?php
 
 return [
     "general" => [
         "timezone" => "Europe/Berlin",
         "php_cli" => "",
         "domain" => "",
-        "redirect_to_maindomain" => "",
+        "redirect_to_maindomain" => FALSE,
         "language" => "en",
         "validLanguages" => "en,de",
         "fallbackLanguages" => [
@@ -15,22 +15,22 @@ return [
         "theme" => "",
         "contactemail" => "",
         "loginscreencustomimage" => "",
-        "disableusagestatistics" => "",
-        "debug" => "",
+        "disableusagestatistics" => FALSE,
+        "debug" => FALSE,
         "debug_ip" => "",
         "http_auth" => [
             "username" => "",
             "password" => ""
         ],
-        "custom_php_logfile" => "1",
+        "custom_php_logfile" => TRUE,
         "debugloglevel" => "error",
-        "debug_admin_translations" => "",
-        "devmode" => "",
-        "logrecipient" => "",
+        "disable_whoops" => FALSE,
+        "debug_admin_translations" => FALSE,
+        "devmode" => TRUE,
+        "logrecipient" => NULL,
         "viewSuffix" => "",
         "instanceIdentifier" => "",
-        "show_cookie_notice" => "",
-        "extjs6" => "1"
+        "show_cookie_notice" => FALSE
     ],
     "database" => [
         "adapter" => "Mysqli",
@@ -44,45 +44,37 @@ return [
     ],
     "documents" => [
         "versions" => [
-            "days" => "",
-            "steps" => "10"
+            "days" => NULL,
+            "steps" => 10
         ],
         "default_controller" => "default",
         "default_action" => "default",
         "error_pages" => [
             "default" => "/error"
         ],
-        "createredirectwhenmoved" => "",
+        "createredirectwhenmoved" => FALSE,
         "allowtrailingslash" => "no",
         "allowcapitals" => "no",
-        "generatepreview" => "1",
+        "generatepreview" => TRUE,
         "wkhtmltoimage" => "",
         "wkhtmltopdf" => ""
     ],
     "objects" => [
         "versions" => [
-            "days" => "",
-            "steps" => "10"
+            "days" => NULL,
+            "steps" => 10
         ]
     ],
     "assets" => [
-        "webdav" => [
-            "hostname" => ""
-        ],
         "versions" => [
-            "days" => "",
-            "steps" => "10"
+            "days" => NULL,
+            "steps" => 10
         ],
-        "ffmpeg" => "",
-        "ghostscript" => "",
-        "libreoffice" => "",
         "icc_rgb_profile" => "",
-        "icc_cmyk_profile" => ""
+        "icc_cmyk_profile" => "",
+        "hide_edit_image" => FALSE
     ],
     "services" => [
-        "translate" => [
-            "apikey" => ""
-        ],
         "google" => [
             "client_id" => "655439141282-tic94n6q3j7ca5c5as132sspeftu5pli.apps.googleusercontent.com",
             "email" => "655439141282-tic94n6q3j7ca5c5as132sspeftu5pli@developer.gserviceaccount.com",
@@ -91,17 +83,17 @@ return [
         ]
     ],
     "cache" => [
-        "enabled" => "",
-        "lifetime" => "",
+        "enabled" => FALSE,
+        "lifetime" => NULL,
         "excludePatterns" => "",
         "excludeCookie" => ""
     ],
     "outputfilters" => [
-        "less" => "",
+        "less" => FALSE,
         "lesscpath" => ""
     ],
     "webservice" => [
-        "enabled" => ""
+        "enabled" => TRUE
     ],
     "httpclient" => [
         "adapter" => "Zend_Http_Client_Adapter_Socket",
