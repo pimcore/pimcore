@@ -81,7 +81,7 @@
 </div>
 
 <div id="pimcore_avatar" style="display:none;">
-    <img src="/admin/user/get-image" />
+    <img src="/admin/user/get-image" data-menu-tooltip="<?= \Pimcore\Tool\Admin::getCurrentUser()->getName() ?>" />
 </div>
 
 <a id="pimcore_logout" href="/admin/login/logout/" style="display: none"></a>
