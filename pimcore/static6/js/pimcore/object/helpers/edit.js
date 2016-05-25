@@ -92,6 +92,7 @@ pimcore.object.helpers.edit = {
                 xtype: "tabpanel",
                 activeTab: 0,
                 deferredRender: true,
+                border: false,
                 forceLayout: true,
                 hideMode: "offsets",
                 enableTabScroll: true,
