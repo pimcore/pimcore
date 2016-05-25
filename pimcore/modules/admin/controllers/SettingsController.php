@@ -356,7 +356,6 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
                 "validLanguages" => implode(",", $filteredLanguages),
                 "fallbackLanguages" => $fallbackLanguages,
                 "defaultLanguage" => $values["general.defaultLanguage"],
-                "theme" => $values["general.theme"],
                 "extjs6" => $values["general.extjs6"],
                 "loginscreencustomimage" => $values["general.loginscreencustomimage"],
                 "disableusagestatistics" => $values["general.disableusagestatistics"],
