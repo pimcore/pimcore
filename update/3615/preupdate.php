@@ -9,8 +9,11 @@ foreach($files as $fileName) {
         $phpFile = \Pimcore\Config::locateConfigFile($fileName . ".php");
 
         try {
-            $config = new \Zend_Config_Xml($xmlFile);
-            $contents = $config->toArray();
+            try {
+                $config = new \Zend_Config_Xml($xmlFile);
+            } catch(\Exception $e) {
+                continue;
+            }
 
             if(!is_writable(dirname($phpFile))) {
                 throw new \Exception($phpFile . " is not writable");
