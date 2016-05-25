@@ -27,6 +27,16 @@ class Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \Pimcore\API\
         parent::init();
 
         LegacyClassMappingTool::loadMapping();
+
+        \Pimcore::getEventManager()->attach('system.console.init', function (\Zend_EventManager_Event $e) {
+            /** @var \Pimcore\Console\Application $application */
+            $application = $e->getTarget();
+
+            // add a namespace to autoload commands from
+            $application->addAutoloadNamespace(
+                'OnlineShop\\Framework\\Console\\Command', __DIR__ . '/Framework/Console/Command'
+            );
+        });
     }
 
     public static function getConfig($readonly = true) {
