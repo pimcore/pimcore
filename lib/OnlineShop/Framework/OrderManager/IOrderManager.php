@@ -75,4 +75,20 @@ interface IOrderManager
      * @return \OnlineShop\Framework\Model\AbstractOrder
      */
     public function getOrderByPaymentStatus(\OnlineShop\Framework\PaymentManager\IStatus $paymentStatus);
+
+    /**
+     * Build order listing
+     *
+     * @return \Pimcore\Model\Object\Listing\Concrete
+     * @throws \Exception
+     */
+    public function buildOrderList();
+
+    /**
+     * Build order item listing
+     *
+     * @return \Pimcore\Model\Object\Listing\Concrete
+     * @throws \Exception
+     */
+    public function buildOrderItemList();
 }

@@ -154,17 +154,9 @@ class OrderManager implements IOrderManager
      * @throws \Exception
      */
     public function getOrderFromCart(\OnlineShop\Framework\CartManager\ICart $cart) {
-        $orderListClass = $this->getOrderClassName() . "\\Listing";
-        if(!\Pimcore\Tool::classExists($orderListClass)) {
-            $orderListClass = $this->getOrderClassName() . "_List";
-            if(!\Pimcore\Tool::classExists($orderListClass)) {
-                throw new \Exception("Class $orderListClass does not exist.");
-            }
-        }
-
         $cartId = $this->createCartId($cart);
 
-        $orderList = new $orderListClass;
+        $orderList = $this->buildOrderList();
         $orderList->setCondition("cartId = ?", array($cartId));
 
         $orders = $orderList->load();
@@ -450,21 +442,71 @@ class OrderManager implements IOrderManager
     }
 
     /**
+     * Build list class name, try namespaced first and fall back to legacy naming
+     *
+     * @param $className
+     * @return mixed
+     * @throws \Exception
+     */
+    protected function buildListClassName($className)
+    {
+        $listClassName = sprintf('%s\\Listing', $className);
+        if (!\Pimcore\Tool::classExists($listClassName)) {
+            $listClassName = sprintf('%s_List', $className);
+            if (!\Pimcore\Tool::classExists($listClassName)) {
+                throw new \Exception(sprintf('Class %s does not exist.', $listClassName));
+            }
+        }
+
+        return $listClassName;
+    }
+
+    /**
+     * Build class name for order list
+     *
+     * @return string
+     * @throws \Exception
+     */
+    protected function buildOrderListClassName()
+    {
+        return $this->buildListClassName($this->getOrderClassName());
+    }
+
+    /**
+     * Build class name for order item list
+     *
+     * @return string
+     * @throws \Exception
+     */
+    protected function buildOrderItemListClassName()
+    {
+        return $this->buildListClassName($this->getOrderItemClassName());
+    }
+
+    /**
+     * Build order listing
+     *
+     * @return \Pimcore\Model\Object\Listing\Concrete
+     * @throws \Exception
+     */
+    public function buildOrderList()
+    {
+        $orderListClass = $this->buildOrderListClassName();
+        $orderList      = new $orderListClass;
+
+        return $orderList;
+    }
+
+    /**
      * Build order item listing
      *
      * @return \Pimcore\Model\Object\Listing\Concrete
      * @throws \Exception
      */
-    protected function buildOrderItemList() {
-        $orderItemListClass = $this->getOrderItemClassName() . "\\Listing";
-        if (!\Pimcore\Tool::classExists($orderItemListClass)) {
-            $orderItemListClass = $this->getOrderItemClassName() . "_List";
-            if (!\Pimcore\Tool::classExists($orderItemListClass)) {
-                throw new \Exception("Class $orderItemListClass does not exist.");
-            }
-        }
-
-        $orderItemList = new $orderItemListClass;
+    public function buildOrderItemList()
+    {
+        $orderItemListClass = $this->buildOrderItemListClassName();
+        $orderItemList      = new $orderItemListClass;
 
         return $orderItemList;
     }
