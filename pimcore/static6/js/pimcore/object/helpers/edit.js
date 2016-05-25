@@ -73,7 +73,7 @@ pimcore.object.helpers.edit = {
                 forceLayout: true,
                 monitorResize: true,
                 bodyStyle: "padding: 10px",
-                border: false,
+                border: true,
                 defaults: {
                     width: "auto"
                 },
