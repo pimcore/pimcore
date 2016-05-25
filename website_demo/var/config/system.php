@@ -12,6 +12,7 @@ return [
             "en" => "",
             "de" => ""
         ],
+        "extjs6" => "1",
         "theme" => "",
         "contactemail" => "",
         "loginscreencustomimage" => "",
