@@ -1014,7 +1014,7 @@ span.warning {
     border-left-color: #d0d0d0 !important;
 }
 
-.object_localizedfields_panel .x-panel-default-outer-border-trbl {
+.pimcore_object_panel_edit .x-panel-default-outer-border-trbl {
     border-color: #d0d0d0 !important;
 }
 

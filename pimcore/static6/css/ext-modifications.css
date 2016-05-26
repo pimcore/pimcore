@@ -196,6 +196,7 @@ body > .x-mask {
 
 .x-panel > .x-panel-default-outer-border-trl {
     border-color: #d0d0d0 !important;
+    border-style: solid;
 }
 
 .x-panel > .x-panel-default-outer-border-rbl {
