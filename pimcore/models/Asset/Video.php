@@ -113,7 +113,7 @@ class Video extends Model\Asset
                 if (is_array($customSetting) && array_key_exists($thumbnail->getName(), $customSetting)) {
 
                     foreach($customSetting[$thumbnail->getName()]["formats"] as &$path) {
-                        $fullPath = $this->getVideoThumbnailSavePath() . "/" . $path;
+                        $fullPath = $this->getVideoThumbnailSavePath() . $path;
                         $path = str_replace(PIMCORE_DOCUMENT_ROOT, "", $fullPath);
 
                         $results = \Pimcore::getEventManager()->trigger("frontend.path.asset.video.thumbnail", $this, [
