@@ -91,6 +91,16 @@ class Console
                     $process = new Process($executablePath . " " . $option);
                     $process->mustRun();
 
+                    if(empty($path) && self::getSystemEnvironment() == "unix") {
+                        // get the full qualified path, seems to solve a lot of problems :)
+                        // if not using the full path, timeout, nohup and nice will fail
+                        $fullQualifiedPath = shell_exec("which " . $executablePath);
+                        $fullQualifiedPath = trim($fullQualifiedPath);
+                        if($fullQualifiedPath) {
+                            $executablePath = $fullQualifiedPath;
+                        }
+                    }
+
                     self::$executableCache[$name] = $executablePath;
 
                     return $executablePath;
@@ -197,7 +207,6 @@ class Console
      */
     public static function exec($cmd, $outputFile = null, $timeout = null)
     {
-        /*
         if ($timeout && self::getTimeoutBinary()) {
 
             // check if --kill-after flag is supported in timeout
@@ -219,7 +228,6 @@ class Console
         } elseif ($timeout) {
             \Logger::warn("timeout binary not found, executing command without timeout");
         }
-        */
 
         if ($outputFile) {
             $cmd = $cmd . " > ". $outputFile ." 2>&1";
