@@ -27,7 +27,7 @@ class Thumbnail
     /**
      * @var mixed|string
      */
-    protected $path;
+    protected $filesystemPath;
 
     /**
      * @var int
@@ -88,20 +88,41 @@ class Thumbnail
 
     /**
      * @param bool $deferredAllowed
+     * @return mixed|string
+     */
+    public function getPath($deferredAllowed = true)
+    {
+        $fsPath = $this->getFileSystemPath($deferredAllowed);
+        $path = str_replace(PIMCORE_DOCUMENT_ROOT, "", $fsPath);
+        return $path;
+    }
+
+    /**
+     * @param bool $deferredAllowed
+     * @return mixed|string
+     */
+    public function getFileSystemPath($deferredAllowed = false)
+    {
+        $this->generate($deferredAllowed);
+        return $this->filesystemPath;
+    }
+
+    /**
+     * @param bool $deferredAllowed
      */
     public function generate($deferredAllowed = true)
     {
-        if (!$this->path) {
+        if (!$this->filesystemPath) {
             // if no correct thumbnail config is given use the original image as thumbnail
             if (!$this->config) {
                 $fsPath = $this->asset->getFileSystemPath();
-                $this->path = str_replace(PIMCORE_DOCUMENT_ROOT, "", $fsPath);
+                $this->filesystemPath = str_replace(PIMCORE_DOCUMENT_ROOT, "", $fsPath);
             } else {
                 try {
                     $deferred = ($deferredAllowed && $this->deferred) ? true : false;
-                    $this->path = Thumbnail\Processor::process($this->asset, $this->config, null, $deferred);
+                    $this->filesystemPath = Thumbnail\Processor::process($this->asset, $this->config, null, $deferred, true);
                 } catch (\Exception $e) {
-                    $this->path = '/pimcore/static/img/filetype-not-supported.png';
+                    $this->filesystemPath = PIMCORE_DOCUMENT_ROOT . '/static/img/filetype-not-supported.png';
                     \Logger::error("Couldn't create thumbnail of image " . $this->asset->getFullPath());
                     \Logger::error($e);
                 }
@@ -114,7 +135,7 @@ class Thumbnail
      */
     public function reset()
     {
-        $this->path = null;
+        $this->filesystemPath = null;
         $this->width = null;
         $this->height = null;
         $this->realHeight = null;
@@ -130,16 +151,6 @@ class Thumbnail
     public function __toString()
     {
         return $this->getPath(true);
-    }
-
-    /**
-     * @param bool $deferredAllowed
-     * @return mixed|string
-     */
-    public function getPath($deferredAllowed = true)
-    {
-        $this->generate($deferredAllowed);
-        return $this->path;
     }
 
     /**
@@ -514,14 +525,6 @@ class Thumbnail
         }
 
         return null;
-    }
-
-    /**
-     * @return string
-     */
-    public function getFileSystemPath()
-    {
-        return PIMCORE_DOCUMENT_ROOT . $this->getPath(false);
     }
 
     /**

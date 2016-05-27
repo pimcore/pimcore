@@ -81,10 +81,12 @@ class Processor
      * @param Config $config
      * @param null $fileSystemPath
      * @param bool $deferred deferred means that the image will be generated on-the-fly (details see below)
+     * @param bool $returnAbsolutePath
      * @return mixed|string
      */
-    public static function process($asset, Config $config, $fileSystemPath = null, $deferred = false)
+    public static function process($asset, Config $config, $fileSystemPath = null, $deferred = false, $returnAbsolutePath = false)
     {
+        $errorImage = PIMCORE_PATH . "/static/img/filetype-not-supported.png";
         $format = strtolower($config->getFormat());
         $contentOptimizedFormat = false;
 
@@ -99,7 +101,7 @@ class Processor
         }
 
         if (!file_exists($fileSystemPath)) {
-            return "/pimcore/static/img/filetype-not-supported.png";
+            return self::returnPath($errorImage, $returnAbsolutePath);
         }
 
         $modificationDate = filemtime($fileSystemPath);
@@ -124,13 +126,13 @@ class Processor
                     foreach ($transformations as $transformation) {
                         if (!empty($transformation)) {
                             if ($transformation["method"] == "tifforiginal") {
-                                return str_replace(PIMCORE_DOCUMENT_ROOT, "", $fileSystemPath);
+                                return self::returnPath($fileSystemPath, $returnAbsolutePath);
                             }
                         }
                     }
                 }
             } elseif ($format == "svg") {
-                return str_replace(PIMCORE_DOCUMENT_ROOT, "", $fileSystemPath);
+                return self::returnPath($fileSystemPath, $returnAbsolutePath);
             }
         }
 
@@ -153,11 +155,12 @@ class Processor
         if (!is_dir(dirname($fsPath))) {
             File::mkdir(dirname($fsPath));
         }
-        $path = str_replace(PIMCORE_DOCUMENT_ROOT, "", $fsPath);
+
+        $path = self::returnPath($fsPath, false);
 
         // check for existing and still valid thumbnail
         if (is_file($fsPath) and filemtime($fsPath) >= $modificationDate) {
-            return $path;
+            return self::returnPath($fsPath, $returnAbsolutePath);
         }
 
         // deferred means that the image will be generated on-the-fly (when requested by the browser)
@@ -167,13 +170,13 @@ class Processor
             $configId = "thumb_" . $id . "__" . md5($path);
             TmpStore::add($configId, $config, "thumbnail_deferred");
 
-            return $path;
+            return self::returnPath($fsPath, $returnAbsolutePath);
         }
 
         // transform image
         $image = Asset\Image::getImageTransformInstance();
         if (!$image->load($fileSystemPath)) {
-            return "/pimcore/static/img/filetype-not-supported.png";
+            return self::returnPath($errorImage, $returnAbsolutePath);
         }
 
         $image->setUseContentOptimizedFormat($contentOptimizedFormat);
@@ -280,6 +283,19 @@ class Processor
         // if the file is corrupted the file will be created on the fly when requested by the browser (because it's deleted here)
         if (is_file($fsPath) && filesize($fsPath) < 50) {
             unlink($fsPath);
+        }
+
+        return self::returnPath($fsPath, $returnAbsolutePath);
+    }
+
+    /**
+     * @param $path
+     * @param $absolute
+     * @return mixed
+     */
+    protected static function returnPath($path, $absolute) {
+        if(!$absolute) {
+            $path = str_replace(PIMCORE_DOCUMENT_ROOT, "", $path);
         }
 
         return $path;
