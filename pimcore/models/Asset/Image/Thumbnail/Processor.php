@@ -264,14 +264,7 @@ class Processor
             }
         }
 
-        $fsTempPath = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . uniqid() . "-" . $filename;
-        $image->save($fsTempPath, $format, $config->getQuality());
-
-        if(file_exists($fsTempPath)) {
-            File::rename($fsTempPath, $fsPath);
-        } else {
-            return self::returnPath($errorImage, $returnAbsolutePath);
-        }
+        $image->save($fsPath, $format, $config->getQuality());
 
         if ($contentOptimizedFormat) {
             $tmpStoreKey = str_replace(PIMCORE_TEMPORARY_DIRECTORY . "/", "", $fsPath);

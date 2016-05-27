@@ -64,7 +64,7 @@ class Imagick extends Adapter
         if(!stream_is_local($imagePath)) {
             // imagick is only able to deal with local files
             // if your're using custom stream wrappers this wouldn't work, so we create a temp. local copy
-            $tmpFilePath = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/imagick-tmp-" . uniqid();
+            $tmpFilePath = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/imagick-tmp-" . uniqid() . "." . File::getFileExtension($imagePath);
             copy($imagePath, $tmpFilePath);
             $imagePath = $tmpFilePath;
             $this->tmpFiles[] = $imagePath;
@@ -185,6 +185,13 @@ class Imagick extends Adapter
             }
         }
 
+        // Imagick isn't able to work with custom stream wrappers, so we make a workaround
+        $realTargetPath = null;
+        if(!stream_is_local($path)) {
+            $realTargetPath = $path;
+            $path = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/imagick-tmp-" . uniqid() . "." . File::getFileExtension($path);
+        }
+
         if (defined("HHVM_VERSION")) {
             $success = $i->writeImage($path);
         } else {
@@ -193,6 +200,10 @@ class Imagick extends Adapter
 
         if (!$success) {
             throw new \Exception("Unable to write image: ", $path);
+        }
+
+        if($realTargetPath) {
+            File::rename($path, $realTargetPath);
         }
 
         return $this;
