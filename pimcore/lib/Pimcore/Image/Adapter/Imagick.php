@@ -61,6 +61,15 @@ class Imagick extends Adapter
             $imagePath = $tmpFilePath;
         }
 
+        if(!stream_is_local($imagePath)) {
+            // imagick is only able to deal with local files
+            // if your're using custom stream wrappers this wouldn't work, so we create a temp. local copy
+            $tmpFilePath = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/imagick-tmp-" . uniqid();
+            copy($imagePath, $tmpFilePath);
+            $imagePath = $tmpFilePath;
+            $this->tmpFiles[] = $imagePath;
+        }
+
         if ($this->resource) {
             unset($this->resource);
             $this->resource = null;
