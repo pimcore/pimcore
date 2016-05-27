@@ -54,7 +54,7 @@ class ImageThumbnail
     protected $realHeight;
 
     /**
-     * @var Thumbnail\Config
+     * @var Image\Thumbnail\Config
      */
     protected $config;
 
@@ -302,7 +302,7 @@ class ImageThumbnail
 
     /**
      * Get thumbnail image configuration.
-     * @return Thumbnail\Config
+     * @return Image\Thumbnail\Config
      */
     public function getConfig()
     {
