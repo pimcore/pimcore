@@ -900,7 +900,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
         $tmpName = $_FILES["Filedata"]["tmp_name"];
         $json = file_get_contents($tmpName);
 
-        $tmpName = PIMCORE_TEMPORARY_DIRECTORY . "/bulk-import.tmp";
+        $tmpName = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/bulk-import.tmp";
         file_put_contents($tmpName, $json);
 
         $json = json_decode($json, true);

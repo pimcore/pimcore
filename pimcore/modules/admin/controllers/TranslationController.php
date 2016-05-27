@@ -1212,11 +1212,11 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
             $lockKey = "soffice";
             Model\Tool\Lock::acquire($lockKey); // avoid parallel conversions of the same document
 
-            $out = Tool\Console::exec(\Pimcore\Document\Adapter\LibreOffice::getLibreOfficeCli() . ' --headless --convert-to docx:"Office Open XML Text" --outdir ' . PIMCORE_TEMPORARY_DIRECTORY . " " . $exportFile);
+            $out = Tool\Console::exec(\Pimcore\Document\Adapter\LibreOffice::getLibreOfficeCli() . ' --headless --convert-to docx:"Office Open XML Text" --outdir ' . PIMCORE_SYSTEM_TEMP_DIRECTORY . " " . $exportFile);
 
             \Logger::debug("LibreOffice Output was: " . $out);
 
-            $tmpName = PIMCORE_TEMPORARY_DIRECTORY . "/" . preg_replace("/\." . File::getFileExtension($exportFile) . "$/", ".docx", basename($exportFile));
+            $tmpName = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . preg_replace("/\." . File::getFileExtension($exportFile) . "$/", ".docx", basename($exportFile));
 
             Model\Tool\Lock::release($lockKey);
             // end what should be done in Pimcore_Document

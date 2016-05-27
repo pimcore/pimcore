@@ -76,7 +76,6 @@ class Admin
         $scriptPath = PIMCORE_TEMPORARY_DIRECTORY."/minified_javascript_core_".md5($scriptContent).".js";
 
         if (!is_file($scriptPath)) {
-            //$scriptContent = JSMin::minify($scriptContent); // temp. disabled until we have a better library - just combine for now
             File::put($scriptPath, $scriptContent);
         }
 
@@ -92,9 +91,6 @@ class Admin
         $stylesheetPath = PIMCORE_TEMPORARY_DIRECTORY."/minified_css_core_".md5($stylesheetContent).".css";
 
         if (!is_file($stylesheetPath)) {
-            //$stylesheetContent = Minify_CSS::minify($stylesheetContent); // temp. disabled until we have a better library - just combine for now
-
-            // put minified contents into one single file
             File::put($stylesheetPath, $stylesheetContent);
         }
 
