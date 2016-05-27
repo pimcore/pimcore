@@ -36,7 +36,8 @@ class Dao extends Model\Dao\AbstractDao
 
         if ($data["id"]) {
             $data["conditions"] = Serialize::unserialize($data["conditions"]);
-            $data["actions"] = Serialize::unserialize($data["actions"]);
+            $data["actions"] = (isset($data["actions"]) ? Serialize::unserialize($data["actions"]) : []);
+
             $this->assignVariablesToModel($data);
         } else {
             throw new \Exception("persona with id " . $this->model->getId() . " doesn't exist");
