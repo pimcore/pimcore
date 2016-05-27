@@ -351,9 +351,9 @@ class Video extends Model\Document\Tag
                     $image = $poster->getThumbnail($imageThumbnailConf);
                 } else {
                     if ($asset->getCustomSetting("image_thumbnail_asset")) {
-                        $image = $asset->getImageThumbnail($imageThumbnailConf);
+                        $image = (string) $asset->getImageThumbnail($imageThumbnailConf);
                     } else {
-                        $image = $asset->getImageThumbnail($imageThumbnailConf);
+                        $image = (string) $asset->getImageThumbnail($imageThumbnailConf);
                     }
                 }
 
@@ -629,7 +629,7 @@ class Video extends Model\Document\Tag
                 //"interactionCount" => "1234",
             ];
 
-            if ($thumbnail) {
+            if ($thumbnail && !preg_match("@https?://@", $thumbnail)) {
                 $jsonLd["thumbnailUrl"] = Tool::getHostUrl() . $thumbnail;
             }
 

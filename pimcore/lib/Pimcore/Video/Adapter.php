@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -36,6 +36,11 @@ abstract class Adapter
      * @var string
      */
     public $destinationFile;
+
+    /**
+     * @var string
+     */
+    public $storageFile;
 
     /**
      * length in seconds
@@ -165,5 +170,21 @@ abstract class Adapter
     public function getLength()
     {
         return $this->length;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStorageFile()
+    {
+        return $this->storageFile;
+    }
+
+    /**
+     * @param string $storageFile
+     */
+    public function setStorageFile($storageFile)
+    {
+        $this->storageFile = $storageFile;
     }
 }

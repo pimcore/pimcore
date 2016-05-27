@@ -933,13 +933,8 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
         } elseif ($this->getParam("path")) {
             $video = Asset::getByPath($this->getParam("path"));
         }
-        $thumbnail = $video->getImageThumbnailConfig($this->getAllParams());
 
-        $format = strtolower($thumbnail->getFormat());
-        if ($format == "source") {
-            $thumbnail->setFormat("PNG");
-            $format = "png";
-        }
+        $thumbnail = $this->getAllParams();
 
         if ($this->getParam("treepreview")) {
             $thumbnail = Asset\Image\Thumbnail\Config::getPreviewConfig();
@@ -967,9 +962,10 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
             $video->save();
         }
 
-        $thumbnailFile = PIMCORE_DOCUMENT_ROOT . $video->getImageThumbnail($thumbnail, $time, $image);
+        $thumb = $video->getImageThumbnail($thumbnail, $time, $image);
+        $thumbnailFile = $thumb->getFileSystemPath();
 
-        header("Content-type: image/" . $format, true);
+        header("Content-type: image/" . File::getFileExtension($thumbnailFile), true);
         header("Content-Length: " . filesize($thumbnailFile), true);
         $this->sendThumbnailCacheHeaders();
 
@@ -1000,7 +996,8 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
         }
 
 
-        $thumbnailFile = PIMCORE_DOCUMENT_ROOT . $document->getImageThumbnail($thumbnail, $page);
+        $thumb = $document->getImageThumbnail($thumbnail, $page);
+        $thumbnailFile = $thumb->getFileSystemPath();
 
         $format = "png";
         header("Content-type: image/" . $format, true);

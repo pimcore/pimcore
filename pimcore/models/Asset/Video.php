@@ -111,6 +111,21 @@ class Video extends Model\Asset
                 // check for existing videos
                 $customSetting = $this->getCustomSetting("thumbnails");
                 if (is_array($customSetting) && array_key_exists($thumbnail->getName(), $customSetting)) {
+
+                    foreach($customSetting[$thumbnail->getName()]["formats"] as &$path) {
+                        $fullPath = $this->getVideoThumbnailSavePath() . "/" . $path;
+                        $path = str_replace(PIMCORE_DOCUMENT_ROOT, "", $fullPath);
+
+                        $results = \Pimcore::getEventManager()->trigger("frontend.path.asset.video.thumbnail", $this, [
+                            "filesystemPath" => $fullPath,
+                            "frontendPath" => $path
+                        ]);
+
+                        if($results->count()) {
+                            $path = $results->last();
+                        }
+                    }
+
                     return $customSetting[$thumbnail->getName()];
                 }
             } catch (\Exception $e) {
@@ -120,16 +135,6 @@ class Video extends Model\Asset
         }
 
         return null;
-    }
-
-
-    /**
-     * @param  $config
-     * @return Image\Thumbnail\Config|bool|Thumbnail
-     */
-    public function getImageThumbnailConfig($config)
-    {
-        return Image\Thumbnail\Config::getByAutoDetect($config);
     }
 
     /**
@@ -146,64 +151,7 @@ class Video extends Model\Asset
             return "/pimcore/static/img/filetype-not-supported.png";
         }
 
-        $cs = $this->getCustomSetting("image_thumbnail_time");
-        $im = $this->getCustomSetting("image_thumbnail_asset");
-
-        if ($im || $imageAsset) {
-            if ($im) {
-                $imageAsset = Model\Asset::getById($im);
-            }
-
-            if ($imageAsset instanceof Image) {
-                return $imageAsset->getThumbnail($thumbnailName);
-            }
-        }
-
-        if (!$timeOffset && $cs) {
-            $timeOffset = $cs;
-        }
-
-        // fallback
-        if (!$timeOffset) {
-            $timeOffset = ceil($this->getDuration() / 3);
-        }
-
-        $converter = \Pimcore\Video::getInstance();
-        $converter->load($this->getFileSystemPath());
-        $path = PIMCORE_TEMPORARY_DIRECTORY . "/video-image-cache/video_" . $this->getId() . "__thumbnail_" .  $timeOffset . ".png";
-        if (!is_dir(dirname($path))) {
-            File::mkdir(dirname($path));
-        }
-
-        if (!is_file($path)) {
-            $lockKey = "video_image_thumbnail_" . $this->getId() . "_" . $timeOffset;
-            Model\Tool\Lock::acquire($lockKey);
-
-            // after we got the lock, check again if the image exists in the meantime - if not - generate it
-            if (!is_file($path)) {
-                $converter->saveImage($path, $timeOffset);
-            }
-
-            Model\Tool\Lock::release($lockKey);
-        }
-
-        $thumbnail = $this->getImageThumbnailConfig($thumbnailName);
-
-        if ($thumbnail) {
-            $thumbnail->setFilenameSuffix("time-" . $timeOffset);
-
-            try {
-                $path = Image\Thumbnail\Processor::process($this, $thumbnail, $path);
-            } catch (\Exception $e) {
-                \Logger::error("Couldn't create image-thumbnail of video " . $this->getFullPath());
-                \Logger::error($e);
-                return "/pimcore/static/img/filetype-not-supported.png";
-            }
-        }
-
-        $path = preg_replace("@^" . preg_quote(PIMCORE_DOCUMENT_ROOT, "@") . "@", "", $path);
-
-        return $path;
+        return new Video\ImageThumbnail($this, $thumbnailName, $timeOffset, $imageAsset);
     }
 
     /**

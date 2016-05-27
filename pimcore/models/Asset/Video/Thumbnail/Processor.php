@@ -87,9 +87,10 @@ class Processor
                 // check if the files are there
                 $formatsToConvert = array();
                 foreach ($formats as $f) {
-                    if (!is_file(PIMCORE_DOCUMENT_ROOT . $customSetting[$config->getName()]["formats"][$f])) {
+                    if (!is_file($asset->getVideoThumbnailSavePath() . $customSetting[$config->getName()]["formats"][$f])) {
                         $formatsToConvert[] = $f;
                     } else {
+                        $existingFormats[$f] = $customSetting[$config->getName()]["formats"][$f];
                         $existingFormats[$f] = $customSetting[$config->getName()]["formats"][$f];
                     }
                 }
@@ -108,6 +109,7 @@ class Processor
             $thumbDir = $asset->getVideoThumbnailSavePath() . "/thumb__" . $config->getName();
             $filename = preg_replace("/\." . preg_quote(File::getFileExtension($asset->getFilename())) . "/", "", $asset->getFilename()) . "." . $format;
             $fsPath = $thumbDir . "/" . $filename;
+            $tmpPath = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . $filename;
 
             if (!is_dir(dirname($fsPath))) {
                 File::mkdir(dirname($fsPath));
@@ -122,7 +124,8 @@ class Processor
             $converter->setAudioBitrate($config->getAudioBitrate());
             $converter->setVideoBitrate($config->getVideoBitrate());
             $converter->setFormat($format);
-            $converter->setDestinationFile($fsPath);
+            $converter->setDestinationFile($tmpPath);
+            $converter->setStorageFile($fsPath);
 
             $transformations = $config->getItems();
             if (is_array($transformations) && count($transformations) > 0) {
@@ -192,6 +195,8 @@ class Processor
         // check if there is already a transcoding process running, wait if so ...
         Model\Tool\Lock::acquire("video-transcoding", 7200, 10); // expires after 2 hrs, refreshes every 10 secs
 
+        $asset = Model\Asset::getById($instance->getAssetId());
+
         // start converting
         foreach ($instance->queue as $converter) {
             try {
@@ -212,11 +217,13 @@ class Processor
                 }
                 \Logger::info("finished video " . $converter->getFormat() . " to " . $converter->getDestinationFile());
 
+                File::rename($converter->getDestinationFile(), $converter->getStorageFile());
+
                 // set proper permissions
-                @chmod($converter->getDestinationFile(), File::getDefaultMode());
+                @chmod($converter->getStorageFile(), File::getDefaultMode());
 
                 if ($converter->getConversionStatus() !== "error") {
-                    $formats[$converter->getFormat()] = str_replace(PIMCORE_DOCUMENT_ROOT, "", $converter->getDestinationFile());
+                    $formats[$converter->getFormat()] = str_replace($asset->getVideoThumbnailSavePath(), "", $converter->getStorageFile());
                 } else {
                     $conversionStatus = "error";
                 }
@@ -229,7 +236,6 @@ class Processor
 
         Model\Tool\Lock::release("video-transcoding");
 
-        $asset = Model\Asset::getById($instance->getAssetId());
         if ($asset) {
             $customSetting = $asset->getCustomSetting("thumbnails");
             $customSetting = is_array($customSetting) ? $customSetting : array();
