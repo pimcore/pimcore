@@ -197,6 +197,7 @@ class Console
      */
     public static function exec($cmd, $outputFile = null, $timeout = null)
     {
+        /*
         if ($timeout && self::getTimeoutBinary()) {
 
             // check if --kill-after flag is supported in timeout
@@ -218,6 +219,7 @@ class Console
         } elseif ($timeout) {
             \Logger::warn("timeout binary not found, executing command without timeout");
         }
+        */
 
         if ($outputFile) {
             $cmd = $cmd . " > ". $outputFile ." 2>&1";
