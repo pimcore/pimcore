@@ -159,4 +159,24 @@ class File
         @chmod($path, $mode);
         return $return;
     }
+
+    /**
+     * @param $oldPath
+     * @param $newPath
+     * @return bool
+     */
+    public static function rename($oldPath, $newPath) {
+
+        if(stream_is_local($oldPath) && stream_is_local($newPath)) {
+            // rename is only possible if both stream wrapper are the same
+            // unfortunately it seems that there's no other alternative for stream_is_local() although it isn't
+            // absolutely correct it solves the problem temporary
+            $return = rename($oldPath, $newPath);
+        } else {
+            $return = copy($oldPath, $newPath);
+            unlink($oldPath);
+        }
+
+        return $return;
+    }
 }

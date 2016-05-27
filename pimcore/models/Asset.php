@@ -491,7 +491,7 @@ class Asset extends Element\AbstractElement
                 if ($oldPath && $oldPath != $this->getFullPath()) {
                     $oldFullPath = PIMCORE_ASSET_DIRECTORY . $oldPath;
                     if (is_file($oldFullPath) || is_dir($oldFullPath)) {
-                        if (!@rename(PIMCORE_ASSET_DIRECTORY . $oldPath, $this->getFileSystemPath())) {
+                        if (!@File::rename(PIMCORE_ASSET_DIRECTORY . $oldPath, $this->getFileSystemPath())) {
                             throw new \Exception("Unable to rename asset " . $this->getId() . " on the filesystem: " . $oldFullPath);
                         }
                         $this->getDao()->updateWorkspaces();
