@@ -38,7 +38,7 @@ class Thumbnail extends \Zend_Controller_Plugin_Abstract
                     $page = 1;
                     $thumbnailFile = null;
                     $thumbnailConfig = null;
-                    $deferredConfigId = "thumb_" . $assetId . "__" . md5($request->getPathInfo());
+                    $deferredConfigId = "thumb_" . $assetId . "__" . md5($matches[0]);
                     if ($thumbnailConfigItem = TmpStore::get($deferredConfigId)) {
                         $thumbnailConfig = $thumbnailConfigItem->getData();
                         TmpStore::delete($deferredConfigId);

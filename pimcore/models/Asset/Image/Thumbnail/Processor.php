@@ -167,7 +167,7 @@ class Processor
         // the configuration is saved for later use in Pimcore\Controller\Plugin\Thumbnail::routeStartup()
         // so that it can be used also with dynamic configurations
         if ($deferred) {
-            $configId = "thumb_" . $id . "__" . md5($path);
+            $configId = "thumb_" . $id . "__" . md5(str_replace(PIMCORE_TEMPORARY_DIRECTORY, "", $path));
             TmpStore::add($configId, $config, "thumbnail_deferred");
 
             return self::returnPath($fsPath, $returnAbsolutePath);
