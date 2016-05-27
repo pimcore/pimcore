@@ -37,7 +37,7 @@ class Image extends Model\Asset
             try {
                 // save the current data into a tmp file to calculate the dimensions, otherwise updates wouldn't be updated
                 // because the file is written in parent::update();
-                $tmpFile = $this->getTemporaryFile(true);
+                $tmpFile = $this->getTemporaryFile();
                 $dimensions = $this->getDimensions($tmpFile, true);
                 unlink($tmpFile);
 

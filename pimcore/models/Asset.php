@@ -1359,12 +1359,11 @@ class Asset extends Element\AbstractElement
 
     /**
      * returns the path to a temp file
-     *
      * @return string
      */
-    public function getTemporaryFile($fullPath = false)
+    public function getTemporaryFile()
     {
-        $destinationPath = PIMCORE_TEMPORARY_DIRECTORY . "/asset-temporary/asset_" . $this->getId() . "_" . md5(microtime()) . "__" . $this->getFilename();
+        $destinationPath = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/asset-temporary/asset_" . $this->getId() . "_" . md5(microtime()) . "__" . $this->getFilename();
         if (!is_dir(dirname($destinationPath))) {
             File::mkdir(dirname($destinationPath));
         }
@@ -1376,11 +1375,7 @@ class Asset extends Element\AbstractElement
 
         @chmod($destinationPath, File::getDefaultMode());
 
-        if ($fullPath) {
-            return $destinationPath;
-        }
-
-        return str_replace(PIMCORE_DOCUMENT_ROOT, "", $destinationPath);
+        return $destinationPath;
     }
 
     /**

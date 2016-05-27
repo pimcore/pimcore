@@ -30,7 +30,7 @@
 <?php
     $thumbnail = $this->asset->getImageThumbnailSavePath() . "/asset-version-preview-" . $this->asset->getId() . "-" . time() . ".png";
     $convert = \Pimcore\Image::getInstance();
-    $convert->load($this->asset->getTemporaryFile(true));
+    $convert->load($this->asset->getTemporaryFile());
     $convert->contain(500,500);
     $convert->save($thumbnail, "png");
     $thumbnail = str_replace(PIMCORE_DOCUMENT_ROOT, "", $thumbnail);

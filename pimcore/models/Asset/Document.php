@@ -33,7 +33,7 @@ class Document extends Model\Asset
         $this->clearThumbnails();
 
         if ($this->getDataChanged()) {
-            $tmpFile = $this->getTemporaryFile(true);
+            $tmpFile = $this->getTemporaryFile();
 
             try {
                 $pageCount = $this->readPageCount($tmpFile);

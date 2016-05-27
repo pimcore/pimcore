@@ -94,6 +94,16 @@ class Thumbnail
     {
         $fsPath = $this->getFileSystemPath($deferredAllowed);
         $path = str_replace(PIMCORE_DOCUMENT_ROOT, "", $fsPath);
+
+        $results = \Pimcore::getEventManager()->trigger("frontend.path.asset.image.thumbnail", $this, [
+            "filesystemPath" => $fsPath,
+            "frontendPath" => $path
+        ]);
+
+        if($results->count()) {
+            $path = $results->last();
+        }
+
         return $path;
     }
 
