@@ -426,13 +426,13 @@ class Pdf extends Model\Document\Tag
 
             for ($i=1; $i <=$pageCount; $i++) {
                 $pageData = array(
-                    "thumbnail" => $asset->getImageThumbnail(array(
+                    "thumbnail" => (string) $asset->getImageThumbnail(array(
                         "width" => 200,
                         "height" => 200,
                         "contain" => true,
                         "format" => "pjpeg"
                     ), $i, true),
-                    "detail" => $asset->getImageThumbnail(array(
+                    "detail" => (string) $asset->getImageThumbnail(array(
                         "width" => 1500,
                         "height" => 1500,
                         "contain" => true,
@@ -500,7 +500,7 @@ HTML;
 
         $code = '
         <div id="pimcore_pdf_' . $this->getName() . '" class="pimcore_tag_pdf">
-            <div class="pimcore_tag_video_error" style="text-align:center; width: ' . $width . '; height: ' . ($this->getHeight()-1) . 'px; border:1px solid #000; background: url(/pimcore/static/img/filetype-not-supported.png) no-repeat center center #fff;">
+            <div class="pimcore_tag_video_error" style="text-align:center; width: ' . $width . '; height: ' . ($this->getHeight()-1) . 'px; border:1px solid #000; background: url(/pimcore/static6/img/filetype-not-supported.png) no-repeat center center #fff;">
                 ' . $message . '
             </div>
         </div>';

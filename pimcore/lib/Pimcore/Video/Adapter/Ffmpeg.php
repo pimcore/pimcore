@@ -16,6 +16,7 @@ namespace Pimcore\Video\Adapter;
 
 use Pimcore\Video\Adapter;
 use Pimcore\Tool\Console;
+use Pimcore\File;
 
 class Ffmpeg extends Adapter
 {
@@ -133,8 +134,18 @@ class Ffmpeg extends Adapter
             $timeOffset = 5;
         }
 
+        $realTargetPath = null;
+        if(!stream_is_local($file)) {
+            $realTargetPath = $file;
+            $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/ghostscript-tmp-" . uniqid() . "." . File::getFileExtension($file);
+        }
+
         $cmd = self::getFfmpegCli() . " -i " . realpath($this->file) . " -vcodec png -vframes 1 -vf scale=iw*sar:ih -ss " . $timeOffset . " " . str_replace("/", DIRECTORY_SEPARATOR, $file);
         Console::exec($cmd, null, 60);
+
+        if($realTargetPath) {
+            File::rename($file, $realTargetPath);
+        }
     }
 
     /**

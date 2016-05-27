@@ -122,7 +122,11 @@ class Thumbnail
      */
     public function generate($deferredAllowed = true)
     {
-        if (!$this->filesystemPath) {
+        $errorImage = PIMCORE_PATH . '/static6/img/filetype-not-supported.png';
+
+        if(!$this->asset) {
+            $this->filesystemPath = $errorImage;
+        } elseif (!$this->filesystemPath) {
             // if no correct thumbnail config is given use the original image as thumbnail
             if (!$this->config) {
                 $fsPath = $this->asset->getFileSystemPath();
@@ -132,7 +136,7 @@ class Thumbnail
                     $deferred = ($deferredAllowed && $this->deferred) ? true : false;
                     $this->filesystemPath = Thumbnail\Processor::process($this->asset, $this->config, null, $deferred, true);
                 } catch (\Exception $e) {
-                    $this->filesystemPath = PIMCORE_DOCUMENT_ROOT . '/static/img/filetype-not-supported.png';
+                    $this->filesystemPath = $errorImage;
                     \Logger::error("Couldn't create thumbnail of image " . $this->asset->getFullPath());
                     \Logger::error($e);
                 }

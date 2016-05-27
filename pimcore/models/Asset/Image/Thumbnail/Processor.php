@@ -86,7 +86,7 @@ class Processor
      */
     public static function process($asset, Config $config, $fileSystemPath = null, $deferred = false, $returnAbsolutePath = false)
     {
-        $errorImage = PIMCORE_PATH . "/static/img/filetype-not-supported.png";
+        $errorImage = PIMCORE_PATH . "/static6/img/filetype-not-supported.png";
         $format = strtolower($config->getFormat());
         $contentOptimizedFormat = false;
 
@@ -167,7 +167,7 @@ class Processor
         // the configuration is saved for later use in Pimcore\Controller\Plugin\Thumbnail::routeStartup()
         // so that it can be used also with dynamic configurations
         if ($deferred) {
-            $configId = "thumb_" . $id . "__" . md5(str_replace(PIMCORE_TEMPORARY_DIRECTORY, "", $path));
+            $configId = "thumb_" . $id . "__" . md5(str_replace(PIMCORE_TEMPORARY_DIRECTORY, "", $fsPath));
             TmpStore::add($configId, $config, "thumbnail_deferred");
 
             return self::returnPath($fsPath, $returnAbsolutePath);

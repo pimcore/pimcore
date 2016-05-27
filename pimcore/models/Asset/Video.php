@@ -148,7 +148,7 @@ class Video extends Model\Asset
     {
         if (!\Pimcore\Video::isAvailable()) {
             \Logger::error("Couldn't create image-thumbnail of video " . $this->getFullPath() . " no video adapter is available");
-            return "/pimcore/static/img/filetype-not-supported.png";
+            return new Video\ImageThumbnail(null); // returns error image
         }
 
         return new Video\ImageThumbnail($this, $thumbnailName, $timeOffset, $imageAsset);

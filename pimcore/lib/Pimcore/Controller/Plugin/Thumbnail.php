@@ -68,7 +68,7 @@ class Thumbnail extends \Zend_Controller_Plugin_Abstract
                         $thumbnailConfig->setName(preg_replace("/\-[\d]+/", "", $thumbnailConfig->getName()));
                         $thumbnailConfig->setName(str_replace("document_", "", $thumbnailConfig->getName()));
 
-                        $thumbnailFile = PIMCORE_DOCUMENT_ROOT . $asset->getImageThumbnail($thumbnailConfig, $page);
+                        $thumbnailFile = $asset->getImageThumbnail($thumbnailConfig, $page)->getFileSystemPath();
                     } elseif ($asset instanceof Asset\Image) {
                         //check if high res image is called
                         if (array_key_exists(5, $matches)) {

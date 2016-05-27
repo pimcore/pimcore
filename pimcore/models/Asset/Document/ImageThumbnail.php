@@ -14,7 +14,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Model\Asset\Video;
+namespace Pimcore\Model\Asset\Document;
 
 use Pimcore\Model\Asset\Image;
 use Pimcore\Model;
@@ -59,28 +59,28 @@ class ImageThumbnail
     protected $config;
 
     /**
-     * @var
+     * @var bool
      */
-    protected $timeOffset;
+    protected $deferred = true;
 
     /**
-     * @var
+     * @var int
      */
-    protected $imageAsset;
+    protected $page = 1;
 
     /**
      * ImageThumbnail constructor.
      * @param $asset
-     * @param null $config
-     * @param null $timeOffset
-     * @param null $imageAsset
+     * @param $config
+     * @param int $page
+     * @param bool $deferred
      */
-    public function __construct($asset, $config = null, $timeOffset = null, $imageAsset = null)
+    public function __construct($asset, $config = null, $page = 1, $deferred = true)
     {
         $this->asset = $asset;
-        $this->timeOffset = $timeOffset;
-        $this->imageAsset = $imageAsset;
         $this->config = $this->createConfig($config);
+        $this->page = $page;
+        $this->deferred = $deferred;
     }
 
     /**
@@ -91,7 +91,7 @@ class ImageThumbnail
         $fsPath = $this->getFileSystemPath();
         $path = str_replace(PIMCORE_DOCUMENT_ROOT, "", $fsPath);
 
-        $results = \Pimcore::getEventManager()->trigger("frontend.path.asset.video.image-thumbnail", $this, [
+        $results = \Pimcore::getEventManager()->trigger("frontend.path.asset.document.image-thumbnail", $this, [
             "filesystemPath" => $fsPath,
             "frontendPath" => $path
         ]);
@@ -122,63 +122,39 @@ class ImageThumbnail
         if(!$this->asset) {
             $this->filesystemPath = $errorImage;
         } elseif (!$this->filesystemPath) {
+            $config = $this->getConfig();
+            $config->setName("document_" . $config->getName()."-".$this->page);
 
-            $cs = $this->asset->getCustomSetting("image_thumbnail_time");
-            $im = $this->asset->getCustomSetting("image_thumbnail_asset");
+            try {
+                if (!$this->deferred) {
+                    $converter = \Pimcore\Document::getInstance();
+                    $converter->load($this->asset->getFileSystemPath());
+                    $path = PIMCORE_TEMPORARY_DIRECTORY . "/document-image-cache/document_" . $this->asset->getId() . "__thumbnail_" .  $this->page . ".png";
+                    if (!is_dir(dirname($path))) {
+                        \Pimcore\File::mkdir(dirname($path));
+                    }
 
-            if ($im || $this->imageAsset) {
-                if ($this->imageAsset) {
-                    $im = Model\Asset::getById($im);
+                    $lockKey = "document-thumbnail-" . $this->asset->getId() . "-" . $this->page;
+
+                    if (!is_file($path) && !Model\Tool\Lock::isLocked($lockKey)) {
+                        Model\Tool\Lock::lock($lockKey);
+                        $converter->saveImage($path, $this->page);
+                        Model\Tool\Lock::release($lockKey);
+                    } elseif (Model\Tool\Lock::isLocked($lockKey)) {
+                        return "/pimcore/static6/img/please-wait.png";
+                    }
                 }
 
-                if ($im instanceof Image) {
-                    return $im->getThumbnail($this->getConfig());
-                }
-            }
-
-            $timeOffset = $this->timeOffset;
-            if (!$this->timeOffset && $cs) {
-                $timeOffset = $cs;
-            }
-
-            // fallback
-            if (!$timeOffset) {
-                $timeOffset = ceil($this->asset->getDuration() / 3);
-            }
-
-            $converter = \Pimcore\Video::getInstance();
-            $converter->load($this->asset->getFileSystemPath());
-            $path = PIMCORE_TEMPORARY_DIRECTORY . "/video-image-cache/video_" . $this->asset->getId() . "__thumbnail_" .  $timeOffset . ".png";
-
-            if (!is_dir(dirname($path))) {
-                File::mkdir(dirname($path));
-            }
-
-            if (!is_file($path)) {
-                $lockKey = "video_image_thumbnail_" . $this->asset->getId() . "_" . $timeOffset;
-                Model\Tool\Lock::acquire($lockKey);
-
-                // after we got the lock, check again if the image exists in the meantime - if not - generate it
-                if (!is_file($path)) {
-                    $converter->saveImage($path, $timeOffset);
+                if ($config) {
+                    $path = Image\Thumbnail\Processor::process($this->asset, $config, $path, $this->deferred, true);
                 }
 
-                Model\Tool\Lock::release($lockKey);
+                $this->filesystemPath = $path;
+            } catch (\Exception $e) {
+                \Logger::error("Couldn't create image-thumbnail of document " . $this->asset->getFullPath());
+                \Logger::error($e);
+                $this->filesystemPath = $errorImage;
             }
-
-            if ($this->getConfig()) {
-                $this->getConfig()->setFilenameSuffix("time-" . $timeOffset);
-
-                try {
-                    $path = Image\Thumbnail\Processor::process($this->asset, $this->getConfig(), $path, false, true);
-                } catch (\Exception $e) {
-                    \Logger::error("Couldn't create image-thumbnail of video " . $this->asset->getFullPath());
-                    \Logger::error($e);
-                    $path = $errorImage;
-                }
-            }
-
-            $this->filesystemPath = $path;
         }
     }
 

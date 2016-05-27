@@ -4,8 +4,18 @@
 if(\Pimcore\Document::isAvailable() && \Pimcore\Document::isFileTypeSupported($this->asset->getFilename())) {
     $document = \Pimcore\Document::getInstance();
     try {
-        $pdfPath = $document->getPdf($this->asset->getFileSystemPath());
-        $pdfPath = str_replace(PIMCORE_DOCUMENT_ROOT, "", $pdfPath);
+        $pdfFsPath = $document->getPdf($this->asset->getFileSystemPath());
+        $pdfPath = str_replace(PIMCORE_DOCUMENT_ROOT, "", $pdfFsPath);
+
+        $results = \Pimcore::getEventManager()->trigger("frontend.path.asset.document.image-thumbnail", $this, [
+            "filesystemPath" => $pdfFsPath,
+            "frontendPath" => $pdfPath
+        ]);
+
+        if($results->count()) {
+            $pdfPath = $results->last();
+        }
+
     } catch (\Exception $e) {
         // nothing to do
     }
