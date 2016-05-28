@@ -59,7 +59,7 @@ pimcore.settings.httpErrorLog = Class.create({
 
         this.store = pimcore.helpers.grid.buildDefaultStore(
             url,
-            ["id","uri", "code", "date","count"],
+            ["uri", "code", "date","count"],
             itemsPerPage
         );
 
@@ -70,7 +70,6 @@ pimcore.settings.httpErrorLog = Class.create({
         this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store);
 
         var typesColumns = [
-            {header: "ID", width: 50, sortable: true, hidden: true, dataIndex: 'id'},
             {header: "Code", width: 60, sortable: true, dataIndex: 'code'},
             {header: t("path"), width: 400, sortable: true, dataIndex: 'uri'},
             {header: t("amount"), width: 60, sortable: true, dataIndex: 'count'},
@@ -87,7 +86,7 @@ pimcore.settings.httpErrorLog = Class.create({
                     icon: "/pimcore/static6/img/flat-color-icons/cursor.svg",
                     handler: function (grid, rowIndex) {
                         var data = grid.getStore().getAt(rowIndex);
-                        window.open(data.get("path"));
+                        window.open(data.get("uri"));
                     }.bind(this)
                 }]
             }
@@ -132,8 +131,8 @@ pimcore.settings.httpErrorLog = Class.create({
                         height: 430,
                         modal: true,
                         bodyStyle: "background:#fff;",
-                        html: '<iframe src="/admin/misc/http-error-log-detail?id=' + data.get("id")
-                                            + '" frameborder="0" width="100%" height="390"></iframe>'
+                        html: '<iframe src="/admin/misc/http-error-log-detail?uri=' + encodeURIComponent(data.get("uri"))
+                                + '" frameborder="0" width="100%" height="390"></iframe>'
                     });
                     win.show();
                 }
