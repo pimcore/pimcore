@@ -787,7 +787,8 @@ class Document extends Element\AbstractElement
                 $site = Site::getCurrentSite();
                 if ($site instanceof Site) {
                     if ($site->getRootDocument()->getId() == $this->getId()) {
-                        return "/";
+                        $link = $this->prepareFrontendPath("/");
+                        return $link;
                     }
                 }
             }
@@ -815,8 +816,9 @@ class Document extends Element\AbstractElement
                         $siteRootPath = preg_quote($siteRootPath);
                         $hardlinkPath = preg_replace("@^" . $siteRootPath . "@", "", $hardlink->getRealFullPath());
 
-                        return preg_replace("@^" . preg_quote($parent->getRealFullPath()) . "@", $hardlinkPath, $this->getRealFullPath());
-                        break;
+                        $link = preg_replace("@^" . preg_quote($parent->getRealFullPath()) . "@", $hardlinkPath, $this->getRealFullPath());
+                        $link = $this->prepareFrontendPath($link);
+                        return $link;
                     }
                 }
                 $parent = $parent->getParent();
@@ -829,18 +831,41 @@ class Document extends Element\AbstractElement
                 if ($site->getMainDomain()) {
                     // check if current document is the root of the different site, if so, preg_replace below doesn't work, so just return /
                     if ($site->getRootDocument()->getId() == $this->getId()) {
-                        return $scheme . $site->getMainDomain() . "/";
+                        $link = $scheme . $site->getMainDomain() . "/";
+                        $link = $this->prepareFrontendPath($link);
+                        return $link;
                     }
-                    return $scheme . $site->getMainDomain() . preg_replace("@^" . $site->getRootPath() . "/@", "/", $this->getRealFullPath());
+                    $link = $scheme . $site->getMainDomain() . preg_replace("@^" . $site->getRootPath() . "/@", "/", $this->getRealFullPath());
+                    $link = $this->prepareFrontendPath($link);
+                    return $link;
                 }
             }
 
             if ($config->general->domain) {
-                return $scheme . $config->general->domain . $this->getRealFullPath();
+                $link = $scheme . $config->general->domain . $this->getRealFullPath();
+                $link = $this->prepareFrontendPath($link);
+                return $link;
             }
         }
 
         $path = $this->getPath() . $this->getKey();
+        $path = $this->prepareFrontendPath($path);
+
+        return $path;
+    }
+
+    /**
+     * @param $path
+     * @return mixed
+     */
+    protected function prepareFrontendPath($path) {
+        if (!\Pimcore::inAdmin()) {
+            $results = \Pimcore::getEventManager()->trigger("frontend.path.document", $this);
+            if($results->count()) {
+                $path = $results->last();
+            }
+        }
+
         return $path;
     }
 
@@ -898,7 +923,9 @@ class Document extends Element\AbstractElement
                     if ($site->getRootDocument() instanceof Document\Page && $site->getRootDocument() !== $this) {
                         $rootPath = $site->getRootPath();
                         $rootPath = preg_quote($rootPath);
-                        return preg_replace("@^" . $rootPath . "@", "", $this->path);
+                        $link = preg_replace("@^" . $rootPath . "@", "", $this->path);
+                        $link = $this->prepareFrontendPath($link);
+                        return $link;
                     }
                 }
             }
@@ -906,7 +933,7 @@ class Document extends Element\AbstractElement
             \Logger::error($e);
         }
 
-        return $this->path;
+        return $this->prepareFrontendPath($this->path);
     }
 
     /**
