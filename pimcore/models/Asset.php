@@ -321,7 +321,7 @@ class Asset extends Element\AbstractElement
                     } else {
                         // write a tmp file because the stream isn't a pointer to the local filesystem
                         rewind($data["stream"]);
-                        $dest = fopen($tmpFile, "w+");
+                        $dest = fopen($tmpFile, "w+", false, File::getContext());
                         stream_copy_to_stream($data["stream"], $dest);
                         fclose($dest);
                     }
@@ -331,7 +331,7 @@ class Asset extends Element\AbstractElement
             } else {
                 $mimeType = Mime::detect($data["sourcePath"], $data["filename"]);
                 if (is_file($data["sourcePath"])) {
-                    $data["stream"] = fopen($data["sourcePath"], "r+");
+                    $data["stream"] = fopen($data["sourcePath"], "r+", false, File::getContext());
                 }
 
                 unset($data["sourcePath"]);
@@ -492,7 +492,8 @@ class Asset extends Element\AbstractElement
                     $oldFullPath = PIMCORE_ASSET_DIRECTORY . $oldPath;
                     if (is_file($oldFullPath) || is_dir($oldFullPath)) {
                         if (!@File::rename(PIMCORE_ASSET_DIRECTORY . $oldPath, $this->getFileSystemPath())) {
-                            throw new \Exception("Unable to rename asset " . $this->getId() . " on the filesystem: " . $oldFullPath);
+                            $error = error_get_last();
+                            throw new \Exception("Unable to rename asset " . $this->getId() . " on the filesystem: " . $oldFullPath . " - Reason: " . $error["message"]);
                         }
                         $this->getDao()->updateWorkspaces();
                         $updatedChildren = $this->getDao()->updateChildsPaths($oldPath);
@@ -617,7 +618,12 @@ class Asset extends Element\AbstractElement
         // create foldertree
         // use current file name in order to prevent problems when filename has changed
         // (otherwise binary data would be overwritten with old binary data with rename() in save method)
-        $destinationPath = PIMCORE_ASSET_DIRECTORY . $this->getDao()->getCurrentFullPath();
+        $destinationPathRelative = $this->getDao()->getCurrentFullPath();
+        if(!$destinationPathRelative) {
+            // this is happen during a restore from the recycle bin
+            $destinationPathRelative = $this->getFullPath();
+        }
+        $destinationPath = PIMCORE_ASSET_DIRECTORY . $destinationPathRelative;
 
         $dirPath = dirname($destinationPath);
         if (!is_dir($dirPath)) {
@@ -633,7 +639,7 @@ class Asset extends Element\AbstractElement
                 $src = $this->getStream();
                 $streamMeta = stream_get_meta_data($src);
                 if ($destinationPath != $streamMeta["uri"]) {
-                    $dest = fopen($destinationPath, "w+");
+                    $dest = fopen($destinationPath, "w", false, File::getContext());
                     if ($dest) {
                         stream_copy_to_stream($src, $dest);
                         if (!fclose($dest)) {
@@ -1163,7 +1169,7 @@ class Asset extends Element\AbstractElement
 
         if (!$this->stream && $this->getType() != "folder") {
             if (file_exists($this->getFileSystemPath())) {
-                $this->stream = fopen($this->getFileSystemPath(), "r+");
+                $this->stream = fopen($this->getFileSystemPath(), "r", false, File::getContext());
             } else {
                 $this->stream = tmpfile();
             }
@@ -1369,7 +1375,7 @@ class Asset extends Element\AbstractElement
         }
 
         $src = $this->getStream();
-        $dest = fopen($destinationPath, "w+");
+        $dest = fopen($destinationPath, "w+", false, File::getContext());
         stream_copy_to_stream($src, $dest);
         fclose($dest);
 

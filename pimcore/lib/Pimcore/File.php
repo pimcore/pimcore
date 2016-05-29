@@ -28,6 +28,11 @@ class File
     private static $isIncludeableCache = array();
 
     /**
+     * @var null|resource
+     */
+    protected static $context = null;
+
+    /**
      * @static
      * @param  $name
      * @return string
@@ -125,7 +130,7 @@ class File
             self::mkdir(dirname($path));
         }
 
-        $return = file_put_contents($path, $data);
+        $return = file_put_contents($path, $data, null, File::getContext());
         @chmod($path, self::$defaultMode);
         return $return;
     }
@@ -155,8 +160,7 @@ class File
             $mode = self::$defaultMode;
         }
 
-        $return = @mkdir($path, 0777, $recursive);
-        @chmod($path, $mode);
+        $return = @mkdir($path, $mode, $recursive);
         return $return;
     }
 
@@ -173,10 +177,30 @@ class File
             // absolutely correct it solves the problem temporary
             $return = rename($oldPath, $newPath);
         } else {
-            $return = copy($oldPath, $newPath);
-            unlink($oldPath);
+            $return = recursiveCopy($oldPath, $newPath);
+            recursiveDelete($oldPath);
         }
 
         return $return;
+    }
+
+    /**
+     * @return null|resource
+     */
+    public static function getContext()
+    {
+        if(!self::$context) {
+            self::$context = stream_context_create([]);
+        }
+        
+        return self::$context;
+    }
+
+    /**
+     * @param resource $context
+     */
+    public static function setContext($context)
+    {
+        self::$context = $context;
     }
 }

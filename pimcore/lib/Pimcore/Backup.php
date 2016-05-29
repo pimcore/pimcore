@@ -415,7 +415,7 @@ class Backup
         $dumpData .= "\n\n";
 
 
-        $h = fopen(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/backup-dump.sql", "a+");
+        $h = fopen(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/backup-dump.sql", "a+", false, File::getContext());
         fwrite($h, $dumpData);
         fclose($h);
 
@@ -472,7 +472,7 @@ class Backup
 
         $dumpData .= "\n\n";
 
-        $h = fopen(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/backup-dump.sql", "a+");
+        $h = fopen(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/backup-dump.sql", "a+", false, File::getContext());
         fwrite($h, $dumpData);
         fclose($h);
 

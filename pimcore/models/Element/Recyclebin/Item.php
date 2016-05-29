@@ -165,7 +165,7 @@ class Item extends Model\AbstractModel
             // assets are kina special because they can contain massive amount of binary data which isn't serialized, we create separate files for them
             if ($element instanceof Asset) {
                 if ($element->getType() != "folder") {
-                    $handle = fopen($scope->getStorageFileBinary($element), "w+");
+                    $handle = fopen($scope->getStorageFileBinary($element), "w", false, File::getContext());
                     $src = $element->getStream();
                     stream_copy_to_stream($src, $handle);
                     fclose($handle);
@@ -246,7 +246,7 @@ class Item extends Model\AbstractModel
             if ($element instanceof Asset) {
                 $binFile = $scope->getStorageFileBinary($element);
                 if (file_exists($binFile)) {
-                    $binaryHandle = fopen($binFile, "r+");
+                    $binaryHandle = fopen($binFile, "r", false, File::getContext());
                     $element->setStream($binaryHandle);
                 }
             }

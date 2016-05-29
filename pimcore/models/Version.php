@@ -173,7 +173,7 @@ class Version extends AbstractModel
             // assets are kina special because they can contain massive amount of binary data which isn't serialized, we append it to the data file
             if ($data instanceof Asset && $data->getType() != "folder") {
                 // append binary data to version file
-                $handle = fopen($this->getBinaryFilePath(), "w+");
+                $handle = fopen($this->getBinaryFilePath(), "w", false, File::getContext());
                 $src = $data->getStream();
                 stream_copy_to_stream($src, $handle);
                 fclose($handle);
@@ -249,7 +249,7 @@ class Version extends AbstractModel
         }
 
         if ($data instanceof Asset && file_exists($this->getBinaryFilePath())) {
-            $binaryHandle = fopen($this->getBinaryFilePath(), "r+");
+            $binaryHandle = fopen($this->getBinaryFilePath(), "r+", false, File::getContext());
             $data->setStream($binaryHandle);
         } elseif ($data instanceof Asset && $data->data) {
             // this is for backward compatibility
