@@ -233,7 +233,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
             foreach ($data as $metaObject) {
                 $eo = $metaObject->getObject();
                 if ($eo instanceof Element\ElementInterface) {
-                    $pathes[] = $eo->getFullPath();
+                    $pathes[] = $eo->getRealFullPath();
                 }
             }
             return $pathes;
@@ -252,7 +252,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $metaObject) {
                 $o = $metaObject->getObject();
-                $pathes[] = $o->getFullPath();
+                $pathes[] = $o->getRealFullPath();
             }
             return implode("<br />", $pathes);
         }
@@ -305,7 +305,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
             foreach ($data as $metaObject) {
                 $eo = $metaObject->getObject();
                 if ($eo instanceof Element\ElementInterface) {
-                    $paths[] = $eo->getFullPath();
+                    $paths[] = $eo->getRealFullPath();
                 }
             }
             return implode(",", $paths);

@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -171,8 +171,8 @@ class Targeting extends \Zend_Controller_Plugin_Abstract
                 foreach ($list->load() as $target) {
                     $redirectUrl = $target->getActions()->getRedirectUrl();
                     if (is_numeric($redirectUrl)) {
-                        $doc = \Document::getById($redirectUrl);
-                        if ($doc instanceof \Document) {
+                        $doc = Document::getById($redirectUrl);
+                        if ($doc instanceof Document) {
                             $target->getActions()->redirectUrl = $doc->getFullPath();
                         }
                     }

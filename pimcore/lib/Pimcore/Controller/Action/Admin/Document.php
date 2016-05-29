@@ -73,7 +73,7 @@ abstract class Document extends Admin
 
                         $properties[$propertyName] = $property;
                     } catch (\Exception $e) {
-                        \Logger::warning("Can't add " . $propertyName . " to document " . $document->getFullPath());
+                        \Logger::warning("Can't add " . $propertyName . " to document " . $document->getRealFullPath());
                     }
                 }
             }

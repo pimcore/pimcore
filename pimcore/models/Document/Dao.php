@@ -362,7 +362,7 @@ class Dao extends Model\Element\Dao
         // check for an locked element below this element
         $belowLocks = $this->db->fetchOne("SELECT tree_locks.id FROM tree_locks
             INNER JOIN documents ON tree_locks.id = documents.id
-                WHERE documents.path LIKE ? AND tree_locks.type = 'document' AND tree_locks.locked IS NOT NULL AND tree_locks.locked != '' LIMIT 1", $this->model->getFullpath() . "/%");
+                WHERE documents.path LIKE ? AND tree_locks.type = 'document' AND tree_locks.locked IS NOT NULL AND tree_locks.locked != '' LIMIT 1", $this->model->getRealFullPath() . "/%");
 
         if ($belowLocks > 0) {
             return true;
@@ -400,7 +400,7 @@ class Dao extends Model\Element\Dao
      */
     public function unlockPropagate()
     {
-        $lockIds = $this->db->fetchCol("SELECT id from documents WHERE path LIKE " . $this->db->quote($this->model->getFullPath() . "/%") . " OR id = " . $this->model->getId());
+        $lockIds = $this->db->fetchCol("SELECT id from documents WHERE path LIKE " . $this->db->quote($this->model->getRealFullPath() . "/%") . " OR id = " . $this->model->getId());
         $this->db->delete("tree_locks", "type = 'document' AND id IN (" . implode(",", $lockIds) . ")");
         return $lockIds;
     }
@@ -437,7 +437,7 @@ class Dao extends Model\Element\Dao
             // exception for list permission
             if (empty($permissionsParent) && $type == "list") {
                 // check for childs with permissions
-                $path = $this->model->getFullPath() . "/";
+                $path = $this->model->getRealFullPath() . "/";
                 if ($this->model->getId() == 1) {
                     $path = "/";
                 }

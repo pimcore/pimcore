@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -197,7 +197,7 @@ class Hardlink extends Document
                 foreach ($sourceChilds as &$c) {
                     $c = Document\Hardlink\Service::wrap($c);
                     $c->setHardLinkSource($this);
-                    $c->setPath(preg_replace("@^" . preg_quote($this->getSourceDocument()->getFullpath()) . "@", $this->getFullpath(), $c->getPath()));
+                    $c->setPath(preg_replace("@^" . preg_quote($this->getSourceDocument()->getRealFullPath()) . "@", $this->getRealFullPath(), $c->getRealPath()));
                 }
             }
 
@@ -254,7 +254,7 @@ class Hardlink extends Document
         parent::update();
 
         $config = \Pimcore\Config::getSystemConfig();
-        if ($oldPath && $config->documents->createredirectwhenmoved && $oldPath != $this->getFullPath()) {
+        if ($oldPath && $config->documents->createredirectwhenmoved && $oldPath != $this->getRealFullPath()) {
             // create redirect for old path
             $redirect = new Redirect();
             $redirect->setTarget($this->getId());

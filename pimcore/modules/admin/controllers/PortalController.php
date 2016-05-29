@@ -252,7 +252,7 @@ class Admin_PortalController extends \Pimcore\Controller\Action\Admin
             $response["documents"][] = array(
                 "id" => $doc->getId(),
                 "type" => $doc->getType(),
-                "path" => $doc->getFullPath(),
+                "path" => $doc->getRealFullPath(),
                 "date" => $doc->getModificationDate(),
                 "condition" => "userModification = '".$this->getUser()->getId()."'"
             );
@@ -277,7 +277,7 @@ class Admin_PortalController extends \Pimcore\Controller\Action\Admin
             $response["assets"][] = array(
                 "id" => $doc->getId(),
                 "type" => $doc->getType(),
-                "path" => $doc->getFullPath(),
+                "path" => $doc->getRealFullPath(),
                 "date" => $doc->getModificationDate(),
                 "condition" => "userModification = '".$this->getUser()->getId()."'"
             );
@@ -303,7 +303,7 @@ class Admin_PortalController extends \Pimcore\Controller\Action\Admin
             $response["objects"][] = array(
                 "id" => $object->getId(),
                 "type" => $object->getType(),
-                "path" => $object->getFullPath(),
+                "path" => $object->getRealFullPath(),
                 "date" => $object->getModificationDate()
             );
         }

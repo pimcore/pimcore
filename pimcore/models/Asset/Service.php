@@ -276,7 +276,7 @@ class Service extends Model\Element\Service
                         $element = Element\Service::getElementById($type, $item["data"]);
                     }
                     if ($element instanceof Element\ElementInterface) {
-                        $item["data"] = $element->getFullPath();
+                        $item["data"] = $element->getRealFullPath();
                     } else {
                         $item["data"] = "";
                     }

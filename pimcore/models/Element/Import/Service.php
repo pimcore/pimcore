@@ -80,7 +80,7 @@ class Service
 
         //correct relative path
         if (strpos($path, "/") !== 0) {
-            $path = $rootElement->getFullPath() . "/" . $path;
+            $path = $rootElement->getRealFullPath() . "/" . $path;
         }
 
         $type = $apiElement->type;
@@ -152,7 +152,7 @@ class Service
         if (Element\Service::getType($rootElement) == $maintype and $parent) {
             $element->setParentId($parent->getId());
             $apiElement->parentId = $parent->getId();
-            $existingElement = $parentClassName::getByPath($parent->getFullPath() . "/" . $element->getKey());
+            $existingElement = $parentClassName::getByPath($parent->getRealFullPath() . "/" . $element->getKey());
             if ($existingElement) {
                 //set dummy key to avoid duplicate paths
                 if ($element instanceof Asset) {
@@ -175,7 +175,7 @@ class Service
             if ($potentialParent) {
                 $element->setParentId($potentialParent->getId());
                 //set actual id and path for second run
-                $apiElements[$apiKey]["path"] = $potentialParent->getFullPath();
+                $apiElements[$apiKey]["path"] = $potentialParent->getRealFullPath();
                 $apiElement->parentId = $potentialParent->getId();
             } else {
                 $element->setParentId(1);
@@ -186,7 +186,7 @@ class Service
         } else {
             $element->setParentId($rootElement->getId());
             //set actual id and path for second run
-            $apiElements[$apiKey]["path"] = $rootElement->getFullPath();
+            $apiElements[$apiKey]["path"] = $rootElement->getRealFullPath();
             $apiElement->parentId = $rootElement->getId();
 
             //set dummy key to avoid duplicate paths
@@ -209,7 +209,7 @@ class Service
         $element->save();
 
         //todo save type and id for later rollback
-        $this->importInfo[Element\Service::getType($element) . "_" . $element->getId()] = array("id" => $element->getId(), "type" => Element\Service::getType($element), "fullpath" => $element->getFullPath());
+        $this->importInfo[Element\Service::getType($element) . "_" . $element->getId()] = array("id" => $element->getId(), "type" => Element\Service::getType($element), "fullpath" => $element->getRealFullPath());
 
 
         return $element;

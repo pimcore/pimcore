@@ -552,7 +552,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
                         // inlcude variants
                         $list->setObjectTypes(array(Object\AbstractObject::OBJECT_TYPE_VARIANT, Object\AbstractObject::OBJECT_TYPE_OBJECT, Object\AbstractObject::OBJECT_TYPE_FOLDER));
                     }
-                    $list->setCondition(($el instanceof Object\AbstractObject ? "o_" : "") . "path LIKE ?", array($el->getFullPath() . ($el->getFullPath() != "/" ? "/" : "") . "%"));
+                    $list->setCondition(($el instanceof Object\AbstractObject ? "o_" : "") . "path LIKE ?", array($el->getRealFullPath() . ($el->getRealFullPath() != "/" ? "/" : "") . "%"));
                     $idList = $list->loadIdList();
 
                     foreach ($idList as $id) {
@@ -998,7 +998,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
                 }
 
                 if ($element instanceof Element\ElementInterface) {
-                    $output .= '<h1 class="element-headline">' . ucfirst($element->getType()) . " - " . $element->getFullPath() . ' (ID: ' . $element->getId() . ')</h1>';
+                    $output .= '<h1 class="element-headline">' . ucfirst($element->getType()) . " - " . $element->getRealFullPath() . ' (ID: ' . $element->getId() . ')</h1>';
                 }
 
                 if ($element instanceof Document\PageSnippet) {

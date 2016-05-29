@@ -351,7 +351,7 @@ class Predefined extends Model\AbstractModel
                     $element = Element\Service::getElementById($this->type, $this->data);
                 }
                 if ($element) {
-                    $this->data = $element->getFullPath();
+                    $this->data = $element->getRealFullPath();
                 } else {
                     $this->data = "";
                 }

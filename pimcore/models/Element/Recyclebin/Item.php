@@ -102,17 +102,17 @@ class Item extends Model\AbstractModel
 
         // check for element with the same name
         if ($element instanceof Document) {
-            $indentElement = Document::getByPath($element->getFullpath());
+            $indentElement = Document::getByPath($element->getRealFullPath());
             if ($indentElement) {
                 $element->setKey($element->getKey()."_restore");
             }
         } elseif ($element instanceof Asset) {
-            $indentElement = Asset::getByPath($element->getFullpath());
+            $indentElement = Asset::getByPath($element->getRealFullPath());
             if ($indentElement) {
                 $element->setFilename($element->getFilename()."_restore");
             }
         } elseif ($element instanceof Object\AbstractObject) {
-            $indentElement = Object::getByPath($element->getFullpath());
+            $indentElement = Object::getByPath($element->getRealFullPath());
             if ($indentElement) {
                 $element->setKey($element->getKey()."_restore");
             }
@@ -140,7 +140,7 @@ class Item extends Model\AbstractModel
         }
 
         $this->setSubtype($this->getElement()->getType());
-        $this->setPath($this->getElement()->getFullPath());
+        $this->setPath($this->getElement()->getRealFullPath());
         $this->setDate(time());
 
         $this->loadChilds($this->getElement());

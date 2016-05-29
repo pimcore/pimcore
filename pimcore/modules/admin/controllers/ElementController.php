@@ -125,7 +125,7 @@ class Admin_ElementController extends \Pimcore\Controller\Action\Admin
             $cpath = "";
             if ($note->getCid() && $note->getCtype()) {
                 if ($element = Element\Service::getElementById($note->getCtype(), $note->getCid())) {
-                    $cpath = $element->getFullpath();
+                    $cpath = $element->getRealFullPath();
                 }
             }
 
@@ -151,7 +151,7 @@ class Admin_ElementController extends \Pimcore\Controller\Action\Admin
                         if ($d["data"] instanceof Element\ElementInterface) {
                             $data = array(
                                 "id" => $d["data"]->getId(),
-                                "path" => $d["data"]->getFullpath(),
+                                "path" => $d["data"]->getRealFullPath(),
                                 "type" => $d["data"]->getType()
                             );
                         }
@@ -231,7 +231,7 @@ class Admin_ElementController extends \Pimcore\Controller\Action\Admin
             foreach ($elements as $el) {
                 $item = Element\Service::getElementById($el["type"], $el["id"]);
                 if ($item instanceof Element\ElementInterface) {
-                    $el["path"] = $item->getFullpath();
+                    $el["path"] = $item->getRealFullPath();
                     $results[] = $el;
                 }
             }
@@ -318,7 +318,7 @@ class Admin_ElementController extends \Pimcore\Controller\Action\Admin
         $data["success"] = true;
         $data["idPath"] = Element\Service::getIdPath($element);
         $data["typePath"] = $typePath;
-        $data["fullpath"] = $element->getFullPath();
+        $data["fullpath"] = $element->getRealFullPath();
 
 
         $this->_helper->json($data);

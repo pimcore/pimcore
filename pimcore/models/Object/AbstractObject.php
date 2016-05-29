@@ -579,7 +579,7 @@ class AbstractObject extends Model\Element\AbstractElement
                 // we need to do the update of the children's path before $this->update() because the
                 // inheritance helper needs the correct paths of the children in InheritanceHelper::buildTree()
                 $updatedChildren = array();
-                if ($oldPath && $oldPath != $this->getFullPath()) {
+                if ($oldPath && $oldPath != $this->getRealFullPath()) {
                     $this->getDao()->updateWorkspaces();
                     $updatedChildren = $this->getDao()->updateChildsPaths($oldPath);
                 }
@@ -675,14 +675,14 @@ class AbstractObject extends Model\Element\AbstractElement
             $this->setType("folder");
         }
 
-        if (Service::pathExists($this->getFullPath())) {
-            $duplicate = AbstractObject::getByPath($this->getFullPath());
+        if (Service::pathExists($this->getRealFullPath())) {
+            $duplicate = AbstractObject::getByPath($this->getRealFullPath());
             if ($duplicate instanceof self and $duplicate->getId() != $this->getId()) {
-                throw new \Exception("Duplicate full path [ ".$this->getFullPath()." ] - cannot save object");
+                throw new \Exception("Duplicate full path [ ".$this->getRealFullPath()." ] - cannot save object");
             }
         }
 
-        if (strlen($this->getFullPath()) > 765) {
+        if (strlen($this->getRealFullPath()) > 765) {
             throw new \Exception("Full path is limited to 765 characters, reduce the length of your parent's path");
         }
     }
@@ -710,7 +710,7 @@ class AbstractObject extends Model\Element\AbstractElement
                     $property->setDao(null);
                     $property->setCid($this->getId());
                     $property->setCtype("object");
-                    $property->setCpath($this->getPath() . $this->getKey());
+                    $property->setCpath($this->getRealFullPath());
                     $property->save();
                 }
             }
@@ -768,6 +768,22 @@ class AbstractObject extends Model\Element\AbstractElement
     {
         $path = $this->getPath() . $this->getKey();
         return $path;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRealPath()
+    {
+        return $this->getPath();
+    }
+
+    /**
+     * @return string
+     */
+    public function getRealFullPath()
+    {
+        return $this->getFullPath();
     }
 
     /**
@@ -1097,7 +1113,7 @@ class AbstractObject extends Model\Element\AbstractElement
             $originalElement = AbstractObject::getById($this->getId());
             if ($originalElement) {
                 $this->setKey($originalElement->getKey());
-                $this->setPath($originalElement->getPath());
+                $this->setPath($originalElement->getRealPath());
             }
         }
 

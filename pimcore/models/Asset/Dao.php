@@ -82,7 +82,7 @@ class Dao extends Model\Element\Dao
         try {
             $this->db->insert("assets", array(
                 "filename" => $this->model->getFilename(),
-                "path" => $this->model->getPath(),
+                "path" => $this->model->getRealPath(),
                 "parentId" => $this->model->getParentId()
             ));
 
@@ -167,7 +167,7 @@ class Dao extends Model\Element\Dao
     public function updateWorkspaces()
     {
         $this->db->update("users_workspaces_asset", array(
-            "cpath" => $this->model->getFullPath()
+            "cpath" => $this->model->getRealFullPath()
         ), "cid = " . $this->model->getId());
     }
 
@@ -182,13 +182,13 @@ class Dao extends Model\Element\Dao
         }
 
         //update assets child paths
-        $this->db->query("update assets set path = replace(path," . $this->db->quote($oldPath . "/") . "," . $this->db->quote($this->model->getFullPath() . "/") . "), modificationDate = '" . time() . "', userModification = '" . $userId . "' where path like " . $this->db->quote($oldPath . "/%") . ";");
+        $this->db->query("update assets set path = replace(path," . $this->db->quote($oldPath . "/") . "," . $this->db->quote($this->model->getRealFullPath() . "/") . "), modificationDate = '" . time() . "', userModification = '" . $userId . "' where path like " . $this->db->quote($oldPath . "/%") . ";");
 
         //update assets child permission paths
-        $this->db->query("update users_workspaces_asset set cpath = replace(cpath," . $this->db->quote($oldPath . "/") . "," . $this->db->quote($this->model->getFullPath() . "/") . ") where cpath like " . $this->db->quote($oldPath . "/%") . ";");
+        $this->db->query("update users_workspaces_asset set cpath = replace(cpath," . $this->db->quote($oldPath . "/") . "," . $this->db->quote($this->model->getRealFullPath() . "/") . ") where cpath like " . $this->db->quote($oldPath . "/%") . ";");
 
         //update assets child properties paths
-        $this->db->query("update properties set cpath = replace(cpath," . $this->db->quote($oldPath . "/") . "," . $this->db->quote($this->model->getFullPath() . "/") . ") where cpath like " . $this->db->quote($oldPath . "/%") . ";");
+        $this->db->query("update properties set cpath = replace(cpath," . $this->db->quote($oldPath . "/") . "," . $this->db->quote($this->model->getRealFullPath() . "/") . ") where cpath like " . $this->db->quote($oldPath . "/%") . ";");
 
 
         return $assets;
@@ -235,7 +235,7 @@ class Dao extends Model\Element\Dao
 
                 $properties[$propertyRaw["name"]] = $property;
             } catch (\Exception $e) {
-                \Logger::error("can't add property " . $propertyRaw["name"] . " to asset " . $this->model->getFullPath());
+                \Logger::error("can't add property " . $propertyRaw["name"] . " to asset " . $this->model->getRealFullPath());
             }
         }
 
@@ -371,7 +371,7 @@ class Dao extends Model\Element\Dao
     {
 
         // check for an locked element below this element
-        $belowLocks = $this->db->fetchOne("SELECT tree_locks.id FROM tree_locks INNER JOIN assets ON tree_locks.id = assets.id WHERE assets.path LIKE ? AND tree_locks.type = 'asset' AND tree_locks.locked IS NOT NULL AND tree_locks.locked != '' LIMIT 1", $this->model->getFullpath() . "/%");
+        $belowLocks = $this->db->fetchOne("SELECT tree_locks.id FROM tree_locks INNER JOIN assets ON tree_locks.id = assets.id WHERE assets.path LIKE ? AND tree_locks.type = 'asset' AND tree_locks.locked IS NOT NULL AND tree_locks.locked != '' LIMIT 1", $this->model->getRealFullPath() . "/%");
 
         if ($belowLocks > 0) {
             return true;
@@ -393,7 +393,7 @@ class Dao extends Model\Element\Dao
      */
     public function unlockPropagate()
     {
-        $lockIds = $this->db->fetchCol("SELECT id from assets WHERE path LIKE " . $this->db->quote($this->model->getFullPath() . "/%") . " OR id = " . $this->model->getId());
+        $lockIds = $this->db->fetchCol("SELECT id from assets WHERE path LIKE " . $this->db->quote($this->model->getRealFullPath() . "/%") . " OR id = " . $this->model->getId());
         $this->db->delete("tree_locks", "type = 'asset' AND id IN (" . implode(",", $lockIds) . ")");
         return $lockIds;
     }
@@ -444,7 +444,7 @@ class Dao extends Model\Element\Dao
             // exception for list permission
             if (empty($permissionsParent) && $type == "list") {
                 // check for childs with permissions
-                $path = $this->model->getFullPath() . "/";
+                $path = $this->model->getRealFullPath() . "/";
                 if ($this->model->getId() == 1) {
                     $path = "/";
                 }

@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -130,7 +130,7 @@ class Link extends Model\Object\ClassDefinition\Data
         if (!$data instanceof Object\Data\Link) {
             return false;
         }
-        $data->path = $data->getPath();
+        $data->path = $data->getRealPath();
         return $data;
     }
 

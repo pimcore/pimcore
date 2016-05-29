@@ -310,13 +310,13 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $element) {
                 if ($element instanceof Object\Concrete) {
-                    $return[] = array($element->getId(), $element->getFullPath(), "object", $element->getClassName());
+                    $return[] = array($element->getId(), $element->getRealFullPath(), "object", $element->getClassName());
                 } elseif ($element instanceof Object\AbstractObject) {
-                    $return[] = array($element->getId(), $element->getFullPath(), "object", "folder");
+                    $return[] = array($element->getId(), $element->getRealFullPath(), "object", "folder");
                 } elseif ($element instanceof Asset) {
-                    $return[] = array($element->getId(), $element->getFullPath(), "asset", $element->getType());
+                    $return[] = array($element->getId(), $element->getRealFullPath(), "asset", $element->getType());
                 } elseif ($element instanceof Document) {
-                    $return[] = array($element->getId(), $element->getFullPath(), "document", $element->getType());
+                    $return[] = array($element->getId(), $element->getRealFullPath(), "document", $element->getType());
                 }
             }
             if (empty($return)) {
@@ -369,7 +369,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
             $pathes = array();
             foreach ($data as $eo) {
                 if ($eo instanceof Element\ElementInterface) {
-                    $pathes[] = $eo->getFullPath();
+                    $pathes[] = $eo->getRealFullPath();
                 }
             }
             return $pathes;
@@ -388,7 +388,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $e) {
                 if ($e instanceof Element\ElementInterface) {
-                    $pathes[] = get_class($e) . $e->getFullPath();
+                    $pathes[] = get_class($e) . $e->getRealFullPath();
                 }
             }
             return implode("<br />", $pathes);
@@ -480,7 +480,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
             $paths = array();
             foreach ($data as $eo) {
                 if ($eo instanceof Element\ElementInterface) {
-                    $paths[] = Element\Service::getType($eo) . ":" . $eo->getFullPath();
+                    $paths[] = Element\Service::getType($eo) . ":" . $eo->getRealFullPath();
                 }
             }
             return implode(",", $paths);

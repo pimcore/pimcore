@@ -699,7 +699,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
                 $redirectTarget = $redirect->getTarget();
                 if (is_numeric($redirectTarget)) {
                     if ($doc = Document::getById(intval($redirectTarget))) {
-                        $redirect->setTarget($doc->getFullPath());
+                        $redirect->setTarget($doc->getRealFullPath());
                     }
                 }
                 $this->_helper->json(array("data" => $redirect, "success" => true));
@@ -723,7 +723,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
                 $redirectTarget = $redirect->getTarget();
                 if (is_numeric($redirectTarget)) {
                     if ($doc = Document::getById(intval($redirectTarget))) {
-                        $redirect->setTarget($doc->getFullPath());
+                        $redirect->setTarget($doc->getRealFullPath());
                     }
                 }
                 $this->_helper->json(array("data" => $redirect, "success" => true));
@@ -753,7 +753,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
                 if ($link = $redirect->getTarget()) {
                     if (is_numeric($link)) {
                         if ($doc = Document::getById(intval($link))) {
-                            $redirect->setTarget($doc->getFullPath());
+                            $redirect->setTarget($doc->getRealFullPath());
                         }
                     }
                 }
@@ -808,7 +808,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
                 if ($link = $glossary->getLink()) {
                     if (intval($link) > 0) {
                         if ($doc = Document::getById(intval($link))) {
-                            $glossary->setLink($doc->getFullPath());
+                            $glossary->setLink($doc->getRealFullPath());
                         }
                     }
                 }
@@ -835,7 +835,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
                 if ($link = $glossary->getLink()) {
                     if (intval($link) > 0) {
                         if ($doc = Document::getById(intval($link))) {
-                            $glossary->setLink($doc->getFullPath());
+                            $glossary->setLink($doc->getRealFullPath());
                         }
                     }
                 }
@@ -866,7 +866,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
                 if ($link = $glossary->getLink()) {
                     if (intval($link) > 0) {
                         if ($doc = Document::getById(intval($link))) {
-                            $glossary->setLink($doc->getFullPath());
+                            $glossary->setLink($doc->getRealFullPath());
                         }
                     }
                 }
@@ -1402,7 +1402,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
             case "object":
                 $element = Element\Service::getElementById($item->getType(), $item->getData());
                 if ($element) {
-                    $resultItem["data"] = $element->getFullPath();
+                    $resultItem["data"] = $element->getRealFullPath();
                 }
                 break;
             default:

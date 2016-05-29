@@ -33,8 +33,8 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
     <tr class="system">
         <td>Path</td>
         <td>o_path</td>
-        <td><?= $this->object1->getFullpath(); ?></td>
-        <td><?= $this->object2->getFullpath(); ?></td>
+        <td><?= $this->object1->getRealFullPath(); ?></td>
+        <td><?= $this->object2->getRealFullPath(); ?></td>
     </tr>
     <tr class="system">
         <td>Published</td>

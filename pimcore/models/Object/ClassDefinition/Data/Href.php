@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -48,7 +48,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
      * @var bool
      */
     public $relationType = true;
-    
+
     /**
      * Type for the column to query
      *
@@ -65,7 +65,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
      * @var string
      */
     public $phpdocType = "\\Pimcore\\Model\\Document\\Page | \\Pimcore\\Model\\Document\\Snippet | \\Pimcore\\Model\\Document | \\Pimcore\\Model\\Asset | \\Pimcore\\Model\\Object\\AbstractObject";
-    
+
     /**
      *
      * @var boolean
@@ -116,7 +116,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
         $this->objectsAllowed = $objectsAllowed;
         return $this;
     }
-    
+
     /**
      * @return boolean
      */
@@ -265,7 +265,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
         if ($data instanceof Element\ElementInterface) {
             $r = array(
                 "id" => $data->getId(),
-                "path" => $data->getFullPath(),
+                "path" => $data->getRealFullPath(),
                 "subtype" => $data->getType(),
                 "type" => Element\Service::getElementType($data)
             );
@@ -294,7 +294,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     public function getDataForGrid($data, $object = null, $params = array())
     {
         if ($data instanceof Element\ElementInterface) {
-            return $data->getFullPath();
+            return $data->getRealFullPath();
         }
     }
 
@@ -308,7 +308,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     public function getVersionPreview($data, $object = null, $params = array())
     {
         if ($data instanceof Element\ElementInterface) {
-            return $data->getFullPath();
+            return $data->getRealFullPath();
         }
     }
 
@@ -343,7 +343,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
             throw new Element\ValidationException("Empty mandatory field [ ".$this->getName()." ]");
         }
 
-        
+
         if ($data instanceof Document) {
             $allow = $this->allowDocumentRelation($data);
         } elseif ($data instanceof Asset) {
@@ -373,7 +373,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof Element\ElementInterface) {
-            return Element\Service::getType($data).":".$data->getFullPath();
+            return Element\Service::getType($data).":".$data->getRealFullPath();
         } else {
             return null;
         }
@@ -435,7 +435,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     public function resolveDependencies($data)
     {
         $dependencies = array();
-        
+
         if ($data instanceof Element\ElementInterface) {
             $elementType = Element\Service::getElementType($data);
             $dependencies[$elementType . "_" . $data->getId()] = array(
@@ -443,7 +443,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
                 "type" => $elementType
             );
         }
-        
+
         return $dependencies;
     }
 

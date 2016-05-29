@@ -334,7 +334,7 @@ class Data extends \Pimcore\Model\AbstractModel
         $this->data = null;
 
         $this->id = new Data\Id($element);
-        $this->fullPath = $element->getFullPath();
+        $this->fullPath = $element->getRealFullPath();
         $this->creationDate=$element->getCreationDate();
         $this->modificationDate=$element->getModificationDate();
         $this->userModification = $element->getUserModification();

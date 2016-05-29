@@ -185,7 +185,7 @@ class Service extends Model\Element\Service
         $new = clone $source;
         $new->setChilds($target->getChilds());
         $new->setId($target->getId());
-        $new->setPath($target->getPath());
+        $new->setPath($target->getRealPath());
         $new->setKey($target->getKey());
         $new->setParentId($target->getParentId());
         $new->setScheduledTasks($source->getScheduledTasks());

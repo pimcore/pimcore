@@ -598,7 +598,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         }
 
         if ($parent->isAllowed("create")) {
-            $intendedPath = $parent->getFullPath() . "/" . $objectKey;
+            $intendedPath = $parent->getRealFullPath() . "/" . $objectKey;
 
             if ($overwrite) {
                 $object = Object::getByPath($intendedPath);
@@ -620,7 +620,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
                 $counter = 1;
                 while (Object::getByPath($intendedPath) != null) {
                     $objectKey .= "_" . $counter;
-                    $intendedPath = $parent->getFullPath() . "/" . $objectKey;
+                    $intendedPath = $parent->getRealFullPath() . "/" . $objectKey;
                     $counter++;
                 }
                 $object = new $className();
@@ -728,7 +728,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         $listClass = "\\Pimcore\\Model\\Object\\" . ucfirst($className) . "\\Listing";
 
         if (!empty($folder)) {
-            $conditionFilters = array("o_path LIKE '" . $folder->getFullPath() . "%'");
+            $conditionFilters = array("o_path LIKE '" . $folder->getRealFullPath() . "%'");
         } else {
             $conditionFilters = array();
         }
@@ -924,7 +924,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         //check if field is systemfield
         $systemFieldMap = [
             'id' => "getId",
-            'fullpath' => "getFullPath",
+            'fullpath' => "getRealFullPath",
             'published' => "getPublished",
             'creationDate' => "getCreationDate",
             'modificationDate' => "getModificationDate",
@@ -1023,7 +1023,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
 
         $o["id (system)"] = $object->getId();
         $o["key (system)"] = $object->getKey();
-        $o["fullpath (system)"] = $object->getFullPath();
+        $o["fullpath (system)"] = $object->getRealFullPath();
         $o["published (system)"] = $object->isPublished();
         $o["type (system)"] = $object->getType();
 
@@ -1041,7 +1041,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         $folder = Object::getById($this->getParam("folderId"));
         $class = Object\ClassDefinition::getById($this->getParam("classId"));
 
-        $conditionFilters = array("o_path = ? OR o_path LIKE '" . str_replace("//", "/", $folder->getFullPath() . "/") . "%'");
+        $conditionFilters = array("o_path = ? OR o_path LIKE '" . str_replace("//", "/", $folder->getRealFullPath() . "/") . "%'");
 
         if ($this->getParam("filter")) {
             $conditionFilters[] = Object\Service::getFilterCondition($this->getParam("filter"), $class);
@@ -1053,7 +1053,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         $className = $class->getName();
         $listClass = "\\Pimcore\\Model\\Object\\" . ucfirst($className) . "\\Listing";
         $list = new $listClass();
-        $list->setCondition(implode(" AND ", $conditionFilters), array($folder->getFullPath()));
+        $list->setCondition(implode(" AND ", $conditionFilters), array($folder->getRealFullPath()));
         $list->setOrder("ASC");
         $list->setOrderKey("o_id");
 

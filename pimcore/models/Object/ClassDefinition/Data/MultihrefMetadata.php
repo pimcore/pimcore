@@ -178,13 +178,13 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
                 $itemData = null;
 
                 if ($element instanceof Object\Concrete) {
-                    $itemData = array("id" => $element->getId(), "path" => $element->getFullPath(), "type" => "object", "subtype" => $element->getClassName());
+                    $itemData = array("id" => $element->getId(), "path" => $element->getRealFullPath(), "type" => "object", "subtype" => $element->getClassName());
                 } elseif ($element instanceof Object\AbstractObject) {
-                    $itemData = array("id" => $element->getId(), "path" => $element->getFullPath(), "type" => "object",  "subtype" => "folder");
+                    $itemData = array("id" => $element->getId(), "path" => $element->getRealFullPath(), "type" => "object",  "subtype" => "folder");
                 } elseif ($element instanceof Asset) {
-                    $itemData = array("id" => $element->getId(), "path" => $element->getFullPath(), "type" => "asset",  "subtype" => $element->getType());
+                    $itemData = array("id" => $element->getId(), "path" => $element->getRealFullPath(), "type" => "asset",  "subtype" => $element->getType());
                 } elseif ($element instanceof Document) {
-                    $itemData= array("id" => $element->getId(), "path" => $element->getFullPath(), "type" => "document", "subtype" => $element->getType());
+                    $itemData= array("id" => $element->getId(), "path" => $element->getRealFullPath(), "type" => "document", "subtype" => $element->getType());
                 }
 
                 if (!$itemData) {
@@ -263,7 +263,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
             foreach ($data as $metaObject) {
                 $eo = $metaObject->getElement();
                 if ($eo instanceof Element\ElementInterface) {
-                    $pathes[] = $eo->getFullPath();
+                    $pathes[] = $eo->getRealFullPath();
                 }
             }
             return $pathes;
@@ -282,7 +282,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $metaObject) {
                 $o = $metaObject->getElement();
-                $pathes[] = Element\Service::getElementType($o) . " " . $o->getFullPath();
+                $pathes[] = Element\Service::getElementType($o) . " " . $o->getRealFullPath();
             }
             return implode("<br />", $pathes);
         }
@@ -342,7 +342,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
             foreach ($data as $metaObject) {
                 $eo = $metaObject->getElement();
                 if ($eo instanceof Element\ElementInterface) {
-                    $paths[] = Element\Service::getType($eo) . ":" . $eo->getFullPath();
+                    $paths[] = Element\Service::getType($eo) . ":" . $eo->getRealFullPath();
                 }
             }
             return implode(",", $paths);

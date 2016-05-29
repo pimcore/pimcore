@@ -89,7 +89,7 @@ class Href extends Model\Document\Tag
         if ($this->element instanceof Element\ElementInterface) {
             return array(
                 "id" => $this->id,
-                "path" => $this->element->getFullPath(),
+                "path" => $this->element->getRealFullPath(),
                 "elementType" => $this->type,
                 "subtype" => $this->subtype
             );

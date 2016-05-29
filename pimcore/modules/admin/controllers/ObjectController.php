@@ -147,8 +147,8 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             "id" => $child->getId(),
             "text" => $child->getKey(),
             "type" => $child->getType(),
-            "path" => $child->getFullPath(),
-            "basePath" => $child->getPath(),
+            "path" => $child->getRealFullPath(),
+            "basePath" => $child->getRealPath(),
             "elementType" => "object",
             "locked" => $child->isLocked(),
             "lockOwner" => $child->getLocked() ? true : false
@@ -327,7 +327,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             $objectData["scheduledTasks"] = $object->getScheduledTasks();
             $objectData["general"]["allowVariants"] = $object->getClass()->getAllowVariants();
             $objectData["general"]["showVariants"] = $object->getClass()->getShowVariants();
-            $objectData["general"]["fullpath"] = $object->getFullPath();
+            $objectData["general"]["fullpath"] = $object->getRealFullPath();
 
             if ($object->getElementAdminStyle()->getElementIcon()) {
                 $objectData["general"]["icon"] = $object->getElementAdminStyle()->getElementIcon();
@@ -628,7 +628,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                     $objectData["general"][$key] = $value;
                 }
             }
-            $objectData["general"]["fullpath"] = $object->getFullPath();
+            $objectData["general"]["fullpath"] = $object->getRealFullPath();
 
             $objectData["general"]["o_locked"] = $object->isLocked();
 
@@ -672,7 +672,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 
         $message = "";
         if ($parent->isAllowed("create")) {
-            $intendedPath = $parent->getFullPath() . "/" . $this->getParam("key");
+            $intendedPath = $parent->getRealFullPath() . "/" . $this->getParam("key");
 
             if (!Object\Service::pathExists($intendedPath) || true) {
                 $object = new $className();
@@ -737,7 +737,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 
         $parent = Object::getById($this->getParam("parentId"));
         if ($parent->isAllowed("create")) {
-            if (!Object\Service::pathExists($parent->getFullPath() . "/" . $this->getParam("key"))) {
+            if (!Object\Service::pathExists($parent->getRealFullPath() . "/" . $this->getParam("key"))) {
                 $folder = Object\Folder::create(array(
                     "o_parentId" => $this->getParam("parentId"),
                     "o_creationDate" => time(),
@@ -771,7 +771,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             $parentObject = Object::getById($this->getParam("id"));
 
             $list = new Object\Listing();
-            $list->setCondition("o_path LIKE '" . $parentObject->getFullPath() . "/%'");
+            $list->setCondition("o_path LIKE '" . $parentObject->getRealFullPath() . "/%'");
             $list->setLimit(intval($this->getParam("amount")));
             $list->setOrderKey("LENGTH(o_path)", false);
             $list->setOrder("DESC");
@@ -780,7 +780,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 
             $deletedItems = array();
             foreach ($objects as $object) {
-                $deletedItems[] = $object->getFullPath();
+                $deletedItems[] = $object->getRealFullPath();
                 if ($object->isAllowed("delete")) {
                     $object->delete();
                 }
@@ -845,7 +845,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                 if ($hasChilds) {
                     // get amount of childs
                     $list = new Object\Listing();
-                    $list->setCondition("o_path LIKE '" . $object->getFullPath() . "/%'");
+                    $list->setCondition("o_path LIKE '" . $object->getRealFullPath() . "/%'");
                     $childs = $list->getTotalCount();
 
                     $totalChilds += $childs;
@@ -923,7 +923,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                         throw new \Exception("Prevented moving object - no create permission on new parent ");
                     }
 
-                    $objectWithSamePath = Object::getByPath($parent->getFullPath() . "/" . $object->getKey());
+                    $objectWithSamePath = Object::getByPath($parent->getRealFullPath() . "/" . $object->getKey());
 
                     if ($objectWithSamePath != null) {
                         $allowUpdate = false;
@@ -969,7 +969,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
         } else {
             \Logger::debug("prevented update object because of missing permissions.");
         }
-        
+
         $this->_helper->json(array("success" => $success));
     }
 
@@ -1190,7 +1190,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 
                         $properties[$propertyName] = $property;
                     } catch (\Exception $e) {
-                        \Logger::err("Can't add " . $propertyName . " to object " . $object->getFullPath());
+                        \Logger::err("Can't add " . $propertyName . " to object " . $object->getRealFullPath());
                     }
                 }
             }
@@ -1458,7 +1458,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             if ($this->getParam("only_direct_children") == "true") {
                 $conditionFilters[] = "o_parentId = " . $folder->getId();
             } else {
-                $conditionFilters[] = "(o_path = '" . $folder->getFullPath() . "' OR o_path LIKE '" . str_replace("//", "/", $folder->getFullPath() . "/") . "%')";
+                $conditionFilters[] = "(o_path = '" . $folder->getRealFullPath() . "' OR o_path LIKE '" . str_replace("//", "/", $folder->getRealFullPath() . "/") . "%')";
             }
 
             if (!$this->getUser()->isAdmin()) {
@@ -1554,7 +1554,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             if ($object->hasChilds(array(Object\AbstractObject::OBJECT_TYPE_OBJECT, Object\AbstractObject::OBJECT_TYPE_FOLDER, Object\AbstractObject::OBJECT_TYPE_VARIANT))) {
                 // get amount of childs
                 $list = new Object\Listing();
-                $list->setCondition("o_path LIKE '" . $object->getFullPath() . "/%'");
+                $list->setCondition("o_path LIKE '" . $object->getRealFullPath() . "/%'");
                 $list->setOrderKey("LENGTH(o_path)", false);
                 $list->setOrder("ASC");
                 $list->setObjectTypes(array(Object\AbstractObject::OBJECT_TYPE_OBJECT, Object\AbstractObject::OBJECT_TYPE_FOLDER, Object\AbstractObject::OBJECT_TYPE_VARIANT));
@@ -1661,7 +1661,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                 $targetParent = Object::getById($this->getParam("targetParentId"));
             }
 
-            $targetPath = preg_replace("@^" . $sourceParent->getFullPath() . "@", $targetParent . "/", $source->getPath());
+            $targetPath = preg_replace("@^" . $sourceParent->getRealFullPath() . "@", $targetParent . "/", $source->getRealPath());
             $target = Object::getByPath($targetPath);
         } else {
             $target = Object::getById($targetId);
@@ -1689,7 +1689,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                 } catch (\Exception $e) {
                     \Logger::err($e);
                     $success = false;
-                    $message = $e->getMessage() . " in object " . $source->getFullPath() . " [id: " . $source->getId() . "]";
+                    $message = $e->getMessage() . " in object " . $source->getRealFullPath() . " [id: " . $source->getId() . "]";
                 }
             } else {
                 \Logger::error("could not execute copy/paste, source object with id [ $sourceId ] not found");

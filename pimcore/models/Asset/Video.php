@@ -129,7 +129,7 @@ class Video extends Model\Asset
                     return $customSetting[$thumbnail->getName()];
                 }
             } catch (\Exception $e) {
-                \Logger::error("Couldn't create thumbnail of video " . $this->getFullPath());
+                \Logger::error("Couldn't create thumbnail of video " . $this->getRealFullPath());
                 \Logger::error($e);
             }
         }
@@ -147,7 +147,7 @@ class Video extends Model\Asset
     public function getImageThumbnail($thumbnailName, $timeOffset = null, $imageAsset = null)
     {
         if (!\Pimcore\Video::isAvailable()) {
-            \Logger::error("Couldn't create image-thumbnail of video " . $this->getFullPath() . " no video adapter is available");
+            \Logger::error("Couldn't create image-thumbnail of video " . $this->getRealFullPath() . " no video adapter is available");
             return new Video\ImageThumbnail(null); // returns error image
         }
 

@@ -71,7 +71,7 @@ class ThumbnailsVideoCommand extends AbstractCommand
         if ($input->getOption("parent")) {
             $parent = Asset::getById($input->getOption("parent"));
             if ($parent instanceof Asset\Folder) {
-                $conditions[] = "path LIKE '" . $parent->getFullPath() . "/%'";
+                $conditions[] = "path LIKE '" . $parent->getRealFullPath() . "/%'";
             } else {
                 $this->writeError($input->getOption("parent") . " is not a valid asset folder ID!");
                 exit;
@@ -91,14 +91,14 @@ class ThumbnailsVideoCommand extends AbstractCommand
             foreach ($videos as $video) {
                 foreach ($thumbnails as $thumbnail) {
                     if ((empty($allowedThumbs) && !$input->getOption("system")) || in_array($thumbnail, $allowedThumbs)) {
-                        $this->output->writeln("generating thumbnail for video: " . $video->getFullpath() . " | " . $video->getId() . " | Thumbnail: " . $thumbnail . " : " . formatBytes(memory_get_usage()));
+                        $this->output->writeln("generating thumbnail for video: " . $video->getRealFullPath() . " | " . $video->getId() . " | Thumbnail: " . $thumbnail . " : " . formatBytes(memory_get_usage()));
                         $video->getThumbnail($thumbnail);
                         $this->waitTillFinished($video->getId(), $thumbnail);
                     }
                 }
 
                 if ($input->getOption("system")) {
-                    $this->output->writeln("generating thumbnail for video: " . $video->getFullpath() . " | " . $video->getId() . " | Thumbnail: System Preview : " . formatBytes(memory_get_usage()));
+                    $this->output->writeln("generating thumbnail for video: " . $video->getRealFullPath() . " | " . $video->getId() . " | Thumbnail: System Preview : " . formatBytes(memory_get_usage()));
                     $thumbnail = Asset\Video\Thumbnail\Config::getPreviewConfig();
                     $video->getThumbnail($thumbnail);
                     $this->waitTillFinished($video->getId(), $thumbnail);

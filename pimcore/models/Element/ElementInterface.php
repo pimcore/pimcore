@@ -37,6 +37,21 @@ interface ElementInterface
     /**
      * @return string
      */
+    public function getRealPath();
+
+    /**
+     * @return string
+     */
+    public function getFullPath();
+
+    /**
+     * @return string
+     */
+    public function getRealFullPath();
+
+    /**
+     * @return string
+     */
     public function getType();
 
     /**
@@ -91,7 +106,7 @@ interface ElementInterface
     public static function getById($id);
 
     /**
-     * get possible types 
+     * get possible types
      * @return array
      */
     public static function getTypes();

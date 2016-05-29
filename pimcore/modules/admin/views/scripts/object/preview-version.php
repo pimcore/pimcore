@@ -32,7 +32,7 @@
     <tr class="system">
         <td>Path</td>
         <td>o_path</td>
-        <td><?= $this->object->getFullpath(); ?></td>
+        <td><?= $this->object->getRealFullPath(); ?></td>
     </tr>
     <tr class="system">
         <td>Published</td>

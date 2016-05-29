@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -103,7 +103,7 @@ class Page extends Model\Document\PageSnippet
         parent::update();
 
         $config = \Pimcore\Config::getSystemConfig();
-        if ($oldPath && $config->documents->createredirectwhenmoved && $oldPath != $this->getFullPath()) {
+        if ($oldPath && $config->documents->createredirectwhenmoved && $oldPath != $this->getRealFullPath()) {
             // create redirect for old path
             $redirect = new Redirect();
             $redirect->setTarget($this->getId());

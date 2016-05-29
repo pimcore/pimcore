@@ -39,7 +39,7 @@ class Dao extends Model\Dao\AbstractDao
         // add elements path
         $element = Model\Element\Service::getElementById($ctype, $cid);
         if ($element) {
-            $this->model->setCpath($element->getFullpath());
+            $this->model->setCpath($element->getRealFullPath());
         }
     }
 

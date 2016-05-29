@@ -228,7 +228,7 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
             if (is_null($obj)) {
                 $data['objectPath'] = '';
             } else {
-                $data['objectPath'] = $obj->getFullPath();
+                $data['objectPath'] = $obj->getRealFullPath();
             }
             $niceClassName = str_replace("\\Pimcore\\Model\\", "", $data['objectClass']);
             $niceClassName = str_replace("_", "\\", $niceClassName);

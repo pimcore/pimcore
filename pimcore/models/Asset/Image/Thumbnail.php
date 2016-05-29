@@ -137,7 +137,7 @@ class Thumbnail
                     $this->filesystemPath = Thumbnail\Processor::process($this->asset, $this->config, null, $deferred, true);
                 } catch (\Exception $e) {
                     $this->filesystemPath = $errorImage;
-                    \Logger::error("Couldn't create thumbnail of image " . $this->asset->getFullPath());
+                    \Logger::error("Couldn't create thumbnail of image " . $this->asset->getRealFullPath());
                     \Logger::error($e);
                 }
             }

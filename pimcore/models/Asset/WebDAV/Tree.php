@@ -35,11 +35,11 @@ class Tree extends DAV\Tree
         $nameParts = explode("/", $sourcePath);
         $nameParts[count($nameParts)-1] = File::getValidFilename($nameParts[count($nameParts)-1]);
         $sourcePath = implode("/", $nameParts);
-        
+
         $nameParts = explode("/", $destinationPath);
         $nameParts[count($nameParts)-1] = File::getValidFilename($nameParts[count($nameParts)-1]);
         $destinationPath = implode("/", $nameParts);
-  
+
         try {
             if (dirname($sourcePath) == dirname($destinationPath)) {
                 $asset = null;
@@ -70,7 +70,7 @@ class Tree extends DAV\Tree
                 $asset = Asset::getByPath("/" . $sourcePath);
                 $parent = Asset::getByPath("/" . dirname($destinationPath));
 
-                $asset->setPath($parent->getFullPath() . "/");
+                $asset->setPath($parent->getRealFullPath() . "/");
                 $asset->setParentId($parent->getId());
             }
 

@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -198,7 +198,7 @@ class Image extends Model\Object\ClassDefinition\Data
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof Element\ElementInterface) {
-            return $data->getFullPath();
+            return $data->getRealFullPath();
         } else {
             return null;
         }

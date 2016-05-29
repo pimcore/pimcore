@@ -68,7 +68,7 @@ class Image extends Model\Asset
                 // so that the thumbnail check doesn't fail in Asset\Image\Thumbnail\Processor::process();
                 touch($path, $this->getModificationDate());
             } catch (\Exception $e) {
-                \Logger::error("Problem while creating system-thumbnails for image " . $this->getFullPath());
+                \Logger::error("Problem while creating system-thumbnails for image " . $this->getRealFullPath());
                 \Logger::error($e);
             }
         }

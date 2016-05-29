@@ -71,11 +71,11 @@ class Folder extends DAV\Collection
     {
         $nameParts = explode("/", $name);
         $name = File::getValidFilename($nameParts[count($nameParts)-1]);
-        
+
         //$name = implode("/",$nameParts);
 
         if (is_string($name)) {
-            $parentPath = $this->asset->getFullPath();
+            $parentPath = $this->asset->getRealFullPath();
             if ($parentPath == "/") {
                 $parentPath = "";
             }

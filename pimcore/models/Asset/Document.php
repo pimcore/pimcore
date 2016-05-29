@@ -57,7 +57,7 @@ class Document extends Model\Asset
         }
 
         if (!\Pimcore\Document::isAvailable()) {
-            \Logger::error("Couldn't create image-thumbnail of document " . $this->getFullPath() . " no document adapter is available");
+            \Logger::error("Couldn't create image-thumbnail of document " . $this->getRealFullPath() . " no document adapter is available");
             return null;
         }
 
@@ -92,7 +92,7 @@ class Document extends Model\Asset
     public function getImageThumbnail($thumbnailName, $page = 1, $deferred = false)
     {
         if (!\Pimcore\Document::isAvailable()) {
-            \Logger::error("Couldn't create image-thumbnail of document " . $this->getFullPath() . " no document adapter is available");
+            \Logger::error("Couldn't create image-thumbnail of document " . $this->getRealFullPath() . " no document adapter is available");
             return new Document\ImageThumbnail(null);
         }
 
@@ -110,7 +110,7 @@ class Document extends Model\Asset
             }
             return $text;
         } else {
-            \Logger::error("Couldn't get text out of document " . $this->getFullPath() . " no document adapter is available");
+            \Logger::error("Couldn't get text out of document " . $this->getRealFullPath() . " no document adapter is available");
         }
 
         return null;

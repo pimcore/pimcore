@@ -188,7 +188,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
             "success" => $res["success"],
             "msg" => $res["success"] ? "Success" : "Error",
             "id" => $res["asset"] ? $res["asset"]->getId() : null,
-            "fullpath" => $res["asset"] ? $res["asset"]->getFullPath() : null,
+            "fullpath" => $res["asset"] ? $res["asset"]->getRealFullPath() : null,
             "type" => $res["asset"] ? $res["asset"]->getType() : null
         ));
     }
@@ -211,7 +211,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
             // this is for uploading folders with Drag&Drop
             // param "dir" contains the relative path of the file
             $parent = Asset::getById($this->getParam("parentId"));
-            $newPath = $parent->getFullPath() . "/" . trim($this->getParam("dir"), "/ ");
+            $newPath = $parent->getRealFullPath() . "/" . trim($this->getParam("dir"), "/ ");
 
             // check if the path is outside of the asset directory
             $newRealPath = PIMCORE_ASSET_DIRECTORY . $newPath;
@@ -257,7 +257,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
         $parentAsset = Asset::getById(intval($this->getParam("parentId")));
 
         // check for duplicate filename
-        $filename = $this->getSafeFilename($parentAsset->getFullPath(), $filename);
+        $filename = $this->getSafeFilename($parentAsset->getRealFullPath(), $filename);
 
         if ($parentAsset->isAllowed("create")) {
             if (!is_file($sourcePath) || filesize($sourcePath) < 1) {
@@ -274,7 +274,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
 
             @unlink($sourcePath);
         } else {
-            \Logger::debug("prevented creating asset because of missing permissions, parent asset is " . $parentAsset->getFullPath());
+            \Logger::debug("prevented creating asset because of missing permissions, parent asset is " . $parentAsset->getRealFullPath());
         }
 
         return array(
@@ -316,7 +316,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
 
             $this->_helper->json(array(
                 "id" => $asset->getId(),
-                "path" => $asset->getPath() . $asset->getFilename(),
+                "path" => $asset->getRealFullPath(),
                 "success" => true
             ), false);
 
@@ -332,7 +332,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
     {
         $success = false;
         $parentAsset = Asset::getById(intval($this->getParam("parentId")));
-        $equalAsset = Asset::getByPath($parentAsset->getFullPath() . "/" . $this->getParam("name"));
+        $equalAsset = Asset::getByPath($parentAsset->getRealFullPath() . "/" . $this->getParam("name"));
 
         if ($parentAsset->isAllowed("create")) {
             if (!$equalAsset) {
@@ -357,7 +357,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
             $parentAsset = Asset::getById($this->getParam("id"));
 
             $list = new Asset\Listing();
-            $list->setCondition("path LIKE '" . $parentAsset->getFullPath() . "/%'");
+            $list->setCondition("path LIKE '" . $parentAsset->getRealFullPath() . "/%'");
             $list->setLimit(intval($this->getParam("amount")));
             $list->setOrderKey("LENGTH(path)", false);
             $list->setOrder("DESC");
@@ -366,7 +366,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
 
             $deletedItems = array();
             foreach ($assets as $asset) {
-                $deletedItems[] = $asset->getFullPath();
+                $deletedItems[] = $asset->getRealFullPath();
                 if ($asset->isAllowed("delete")) {
                     $asset->delete();
                 }
@@ -430,7 +430,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
                 if ($hasChilds) {
                     // get amount of childs
                     $list = new Asset\Listing();
-                    $list->setCondition("path LIKE '" . $asset->getFullPath() . "/%'");
+                    $list->setCondition("path LIKE '" . $asset->getRealFullPath() . "/%'");
                     $childs = $list->getTotalCount();
                     $totalChilds += $childs;
 
@@ -481,8 +481,8 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
             "id" => $asset->getId(),
             "text" => $asset->getFilename(),
             "type" => $asset->getType(),
-            "path" => $asset->getFullPath(),
-            "basePath" => $asset->getPath(),
+            "path" => $asset->getRealFullPath(),
+            "basePath" => $asset->getRealPath(),
             "locked" => $asset->isLocked(),
             "lockOwner" => $asset->getLocked() ? true : false,
             "elementType" => "asset",
@@ -505,7 +505,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
 
             $folderThumbs = array();
             $children = new Asset\Listing();
-            $children->setCondition("path LIKE ?", [$asset->getFullPath() . "/%"]);
+            $children->setCondition("path LIKE ?", [$asset->getRealFullPath() . "/%"]);
             $children->setLimit(35);
 
             foreach ($children as $child) {
@@ -616,7 +616,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
                         throw new \Exception("Prevented moving asset - no create permission on new parent ");
                     }
 
-                    $intendedPath = $parentAsset->getPath();
+                    $intendedPath = $parentAsset->getRealPath();
                     $pKey = $parentAsset->getKey();
                     if (!empty($pKey)) {
                         $intendedPath .= $parentAsset->getKey() . "/";
@@ -740,7 +740,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
 
                                     $properties[$propertyName] = $property;
                                 } catch (\Exception $e) {
-                                    \Logger::err("Can't add " . $propertyName . " to asset " . $asset->getFullPath());
+                                    \Logger::err("Can't add " . $propertyName . " to asset " . $asset->getRealFullPath());
                                 }
                             }
 
@@ -1080,7 +1080,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
             $start = $this->getParam("start");
         }
 
-        $condition = "path LIKE '" . ($folder->getFullPath() == "/" ? "/%'" : $folder->getFullPath() . "/%'") ." AND type != 'folder'";
+        $condition = "path LIKE '" . ($folder->getRealFullPath() == "/" ? "/%'" : $folder->getRealFullPath() . "/%'") ." AND type != 'folder'";
 
         $list = Asset::getList(array(
             "condition" => $condition,
@@ -1149,7 +1149,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
             if ($asset->hasChilds()) {
                 // get amount of childs
                 $list = new Asset\Listing();
-                $list->setCondition("path LIKE '" . $asset->getFullPath() . "/%'");
+                $list->setCondition("path LIKE '" . $asset->getRealFullPath() . "/%'");
                 $list->setOrderKey("LENGTH(path)", false);
                 $list->setOrder("ASC");
                 $childIds = $list->loadIdList();
@@ -1207,7 +1207,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
                 $targetParent = Asset::getById($this->getParam("targetParentId"));
             }
 
-            $targetPath = preg_replace("@^" . $sourceParent->getFullPath() . "@", $targetParent . "/", $source->getPath());
+            $targetPath = preg_replace("@^" . $sourceParent->getRealFullPath() . "@", $targetParent . "/", $source->getRealPath());
             $target = Asset::getByPath($targetPath);
         } else {
             $target = Asset::getById($targetId);
@@ -1250,7 +1250,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
         $asset = Asset::getById($this->getParam("id"));
 
         if ($asset->isAllowed("view")) {
-            $parentPath = $asset->getFullPath();
+            $parentPath = $asset->getRealFullPath();
             if ($asset->getId() == 1) {
                 $parentPath = "";
             }
@@ -1296,7 +1296,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
             }
 
             if ($zipState === true) {
-                $parentPath = $asset->getFullPath();
+                $parentPath = $asset->getRealFullPath();
                 if ($asset->getId() == 1) {
                     $parentPath = "";
                 }
@@ -1311,7 +1311,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
                     if ($a->isAllowed("view")) {
                         if (!$a instanceof Asset\Folder) {
                             // add the file with the relative path to the parent directory
-                            $zip->addFile($a->getFileSystemPath(), preg_replace("@^" . preg_quote($asset->getPath(), "@") . "@i", "", $a->getFullPath()));
+                            $zip->addFile($a->getFileSystemPath(), preg_replace("@^" . preg_quote($asset->getRealPath(), "@") . "@i", "", $a->getRealFullPath()));
                         }
                     }
                 }
@@ -1420,11 +1420,11 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
                             $relativePath = dirname($path);
                         }
 
-                        $parentPath = $importAsset->getFullPath() . "/" . preg_replace("@^/@", "", $relativePath);
+                        $parentPath = $importAsset->getRealFullPath() . "/" . preg_replace("@^/@", "", $relativePath);
                         $parent = Asset\Service::createFolderByPath($parentPath);
 
                         // check for duplicate filename
-                        $filename = $this->getSafeFilename($parent->getFullPath(), $filename);
+                        $filename = $this->getSafeFilename($parent->getRealFullPath(), $filename);
 
                         if ($parent->isAllowed("create")) {
                             $asset = Asset::create($parent->getId(), array(
@@ -1501,12 +1501,12 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
             $absolutePath = $serverPath . $file;
             if (is_file($absolutePath)) {
                 $relFolderPath = str_replace('\\', '/', dirname($file));
-                $folder = Asset\Service::createFolderByPath($assetFolder->getFullPath() . $relFolderPath);
+                $folder = Asset\Service::createFolderByPath($assetFolder->getRealFullPath() . $relFolderPath);
                 $filename = basename($file);
 
                 // check for duplicate filename
                 $filename = File::getValidFilename($filename);
-                $filename = $this->getSafeFilename($folder->getFullPath(), $filename);
+                $filename = $this->getSafeFilename($folder->getRealFullPath(), $filename);
 
                 if ($assetFolder->isAllowed("create")) {
                     $asset = Asset::create($folder->getId(), array(
@@ -1536,14 +1536,14 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
         $parentAsset = Asset::getById(intval($parentId));
 
         $filename = File::getValidFilename($filename);
-        $filename = $this->getSafeFilename($parentAsset->getFullPath(), $filename);
+        $filename = $this->getSafeFilename($parentAsset->getRealFullPath(), $filename);
 
         if (empty($filename)) {
             throw new \Exception("The filename of the asset is empty");
         }
 
         // check for duplicate filename
-        $filename = $this->getSafeFilename($parentAsset->getFullPath(), $filename);
+        $filename = $this->getSafeFilename($parentAsset->getRealFullPath(), $filename);
 
         if ($parentAsset->isAllowed("create")) {
             $asset = Asset::create($parentId, array(
@@ -1615,7 +1615,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
             if ($this->getParam("only_direct_children") == "true") {
                 $conditionFilters[] = "parentId = " . $folder->getId();
             } else {
-                $conditionFilters[] = "path LIKE '" . ($folder->getFullPath() == "/" ? "/%'" : $folder->getFullPath() . "/%'");
+                $conditionFilters[] = "path LIKE '" . ($folder->getRealFullPath() == "/" ? "/%'" : $folder->getRealFullPath() . "/%'");
             }
 
             $conditionFilters[] = "type != 'folder'";
@@ -1679,13 +1679,13 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
             foreach ($list->getAssets() as $asset) {
 
                 /** @var $asset Asset */
-                $filename = PIMCORE_ASSET_DIRECTORY . "/" . $asset->getFullPath();
+                $filename = PIMCORE_ASSET_DIRECTORY . "/" . $asset->getRealFullPath();
                 $size = @filesize($filename);
 
                 $assets[] = array(
                     "id" => $asset->getid(),
                     "type" => $asset->getType(),
-                    "fullpath" => $asset->getFullPath(),
+                    "fullpath" => $asset->getRealFullPath(),
                     "creationDate" => $asset->getCreationDate(),
                     "modificationDate" => $asset->getModificationDate(),
                     "size" => formatBytes($size),

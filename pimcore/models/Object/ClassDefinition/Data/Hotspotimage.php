@@ -224,7 +224,7 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
                     if (array_key_exists("data", $element) && is_array($element["data"]) && count($element["data"]) > 0) {
                         foreach ($element["data"] as &$metaData) {
                             if ($metaData["value"] instanceof Element\ElementInterface) {
-                                $metaData["value"] = $metaData["value"]->getFullPath();
+                                $metaData["value"] = $metaData["value"]->getRealFullPath();
                             }
                         }
                     }

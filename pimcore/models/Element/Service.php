@@ -172,7 +172,7 @@ class Service extends Model\AbstractModel
         if ($element instanceof ElementInterface) {
             return array(
                 "id" => $element->getId(),
-                "path" => $element->getFullPath(),
+                "path" => $element->getRealFullPath(),
                 "type" => self::getElementType($element),
                 "subtype" => $element->getType()
             );
@@ -245,7 +245,7 @@ class Service extends Model\AbstractModel
      */
     public static function getSaveCopyName($type, $sourceKey, $target)
     {
-        if (self::pathExists($target->getFullPath() . "/" . $sourceKey, $type)) {
+        if (self::pathExists($target->getRealFullPath() . "/" . $sourceKey, $type)) {
             // only for assets: add the prefix _copy before the file extension (if exist) not after to that source.jpg will be source_copy.jpg and not source.jpg_copy
             if ($type == "asset" && $fileExtension = File::getFileExtension($sourceKey)) {
                 $sourceKey = str_replace("." . $fileExtension, "_copy." . $fileExtension, $sourceKey);
@@ -483,7 +483,7 @@ class Service extends Model\AbstractModel
     {
         $data = array(
             "id" => $element->getId(),
-            "fullpath" => $element->getFullPath(),
+            "fullpath" => $element->getRealFullPath(),
             "type" => self::getType($element),
             "subtype" => $element->getType(),
             "filename" => self::getFilename($element),
@@ -576,7 +576,7 @@ class Service extends Model\AbstractModel
                         }
 
                         if (!Object\AbstractObject::doNotRestoreKeyAndPath()) {
-                            $data->setPath($originalElement->getPath());
+                            $data->setPath($originalElement->getRealPath());
                         }
                     }
                 }

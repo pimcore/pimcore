@@ -68,7 +68,7 @@ class ThumbnailsImageCommand extends AbstractCommand
         if ($input->getOption("parent")) {
             $parent = Asset::getById($input->getOption("parent"));
             if ($parent instanceof Asset\Folder) {
-                $conditions[] = "path LIKE '" . $parent->getFullPath() . "/%'";
+                $conditions[] = "path LIKE '" . $parent->getRealFullPath() . "/%'";
             } else {
                 $this->writeError($input->getOption("parent") . " is not a valid asset folder ID!");
                 exit;
@@ -92,7 +92,7 @@ class ThumbnailsImageCommand extends AbstractCommand
                             $image->clearThumbnail($thumbnail);
                         }
 
-                        $this->output->writeln("generating thumbnail for image: " . $image->getFullpath() . " | " . $image->getId() . " | Thumbnail: " . $thumbnail . " : " . formatBytes(memory_get_usage()));
+                        $this->output->writeln("generating thumbnail for image: " . $image->getRealFullPath() . " | " . $image->getId() . " | Thumbnail: " . $thumbnail . " : " . formatBytes(memory_get_usage()));
                         $this->output->writeln("generated thumbnail: " . $image->getThumbnail($thumbnail)->getFilesystemPath());
                     }
                 }
@@ -103,7 +103,7 @@ class ThumbnailsImageCommand extends AbstractCommand
                         $image->clearThumbnail($thumbnail->getName());
                     }
 
-                    $this->output->writeln("generating thumbnail for image: " . $image->getFullpath() . " | " . $image->getId() . " | Thumbnail: System Preview (tree) : " . formatBytes(memory_get_usage()));
+                    $this->output->writeln("generating thumbnail for image: " . $image->getRealFullPath() . " | " . $image->getId() . " | Thumbnail: System Preview (tree) : " . formatBytes(memory_get_usage()));
                     $this->output->writeln("generated thumbnail: " . $image->getThumbnail($thumbnail)->getFilesystemPath());
                 }
             }

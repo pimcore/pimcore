@@ -447,7 +447,7 @@ class Asset extends Element\AbstractElement
      */
     public function getFileSystemPath()
     {
-        return PIMCORE_ASSET_DIRECTORY . $this->getFullPath();
+        return PIMCORE_ASSET_DIRECTORY . $this->getRealFullPath();
     }
 
     /**
@@ -488,7 +488,7 @@ class Asset extends Element\AbstractElement
 
                 // if the old path is different from the new path, update all children
                 $updatedChildren = array();
-                if ($oldPath && $oldPath != $this->getFullPath()) {
+                if ($oldPath && $oldPath != $this->getRealFullPath()) {
                     $oldFullPath = PIMCORE_ASSET_DIRECTORY . $oldPath;
                     if (is_file($oldFullPath) || is_dir($oldFullPath)) {
                         if (!@File::rename(PIMCORE_ASSET_DIRECTORY . $oldPath, $this->getFileSystemPath())) {
@@ -590,14 +590,14 @@ class Asset extends Element\AbstractElement
             $this->setFilename($this->getFilename() . ".txt");
         }
 
-        if (Asset\Service::pathExists($this->getFullPath())) {
-            $duplicate = Asset::getByPath($this->getFullPath());
+        if (Asset\Service::pathExists($this->getRealFullPath())) {
+            $duplicate = Asset::getByPath($this->getRealFullPath());
             if ($duplicate instanceof Asset  and $duplicate->getId() != $this->getId()) {
-                throw new \Exception("Duplicate full path [ " . $this->getFullPath() . " ] - cannot save asset");
+                throw new \Exception("Duplicate full path [ " . $this->getRealFullPath() . " ] - cannot save asset");
             }
         }
 
-        if (strlen($this->getFullPath()) > 765) {
+        if (strlen($this->getRealFullPath()) > 765) {
             throw new \Exception("Full path is limited to 765 characters, reduce the length of your parent's path");
         }
     }
@@ -621,7 +621,7 @@ class Asset extends Element\AbstractElement
         $destinationPathRelative = $this->getDao()->getCurrentFullPath();
         if(!$destinationPathRelative) {
             // this is happen during a restore from the recycle bin
-            $destinationPathRelative = $this->getFullPath();
+            $destinationPathRelative = $this->getRealFullPath();
         }
         $destinationPath = PIMCORE_ASSET_DIRECTORY . $destinationPathRelative;
 
@@ -691,7 +691,7 @@ class Asset extends Element\AbstractElement
                     $property->setDao(null);
                     $property->setCid($this->getId());
                     $property->setCtype("asset");
-                    $property->setCpath($this->getPath() . $this->getKey());
+                    $property->setCpath($this->getRealFullPath());
                     $property->save();
                 }
             }
@@ -792,9 +792,32 @@ class Asset extends Element\AbstractElement
     {
         $path = $this->getPath() . $this->getFilename();
 
+        if (!\Pimcore::inAdmin()) {
+            $results = \Pimcore::getEventManager()->trigger("frontend.path.asset", $this);
+            if($results->count()) {
+                $path = $results->last();
+            }
+        }
+
         return $path;
     }
 
+    /**
+     * @return string
+     */
+    public function getRealPath()
+    {
+        return $this->path;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRealFullPath()
+    {
+        $path = $this->getRealPath() . $this->getFilename();
+        return $path;
+    }
 
     /**
      * @return array
@@ -891,7 +914,7 @@ class Asset extends Element\AbstractElement
      */
     protected function deletePhysicalFile()
     {
-        $fsPath = PIMCORE_ASSET_DIRECTORY . $this->getPath() . $this->getFilename();
+        $fsPath = $this->getFileSystemPath();
 
         if ($this->getType() != "folder") {
             if (is_file($fsPath) && is_writable($fsPath)) {
@@ -925,7 +948,7 @@ class Asset extends Element\AbstractElement
         }
 
         // remove file on filesystem
-        $fullPath = $this->getFullPath();
+        $fullPath = $this->getRealFullPath();
         if ($fullPath != "/.." && !strpos($fullPath, '/../') && $this->getKey() !== "." && $this->getKey() !== "..") {
             $this->deletePhysicalFile();
         }
@@ -1742,7 +1765,7 @@ class Asset extends Element\AbstractElement
             $originalElement = Asset::getById($this->getId());
             if ($originalElement) {
                 $this->setFilename($originalElement->getFilename());
-                $this->setPath($originalElement->getPath());
+                $this->setPath($originalElement->getRealPath());
             }
         }
 

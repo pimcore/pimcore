@@ -151,7 +151,7 @@ class ImageThumbnail
 
                 $this->filesystemPath = $path;
             } catch (\Exception $e) {
-                \Logger::error("Couldn't create image-thumbnail of document " . $this->asset->getFullPath());
+                \Logger::error("Couldn't create image-thumbnail of document " . $this->asset->getRealFullPath());
                 \Logger::error($e);
                 $this->filesystemPath = $errorImage;
             }

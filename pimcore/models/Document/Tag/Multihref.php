@@ -92,13 +92,13 @@ class Multihref extends Model\Document\Tag implements \Iterator
         if (is_array($this->elements) && count($this->elements) > 0) {
             foreach ($this->elements as $element) {
                 if ($element instanceof Object\Concrete) {
-                    $return[] = array($element->getId(), $element->getFullPath(), "object", $element->getClassName());
+                    $return[] = array($element->getId(), $element->getRealFullPath(), "object", $element->getClassName());
                 } elseif ($element instanceof Object\AbstractObject) {
-                    $return[] = array($element->getId(), $element->getFullPath(), "object", "folder");
+                    $return[] = array($element->getId(), $element->getRealFullPath(), "object", "folder");
                 } elseif ($element instanceof Asset) {
-                    $return[] = array($element->getId(), $element->getFullPath(), "asset", $element->getType());
+                    $return[] = array($element->getId(), $element->getRealFullPath(), "asset", $element->getType());
                 } elseif ($element instanceof Document) {
-                    $return[] = array($element->getId(), $element->getFullPath(), "document", $element->getType());
+                    $return[] = array($element->getId(), $element->getRealFullPath(), "document", $element->getType());
                 }
             }
         }

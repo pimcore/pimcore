@@ -172,7 +172,7 @@ class ImageThumbnail
                 try {
                     $path = Image\Thumbnail\Processor::process($this->asset, $this->getConfig(), $path, false, true);
                 } catch (\Exception $e) {
-                    \Logger::error("Couldn't create image-thumbnail of video " . $this->asset->getFullPath());
+                    \Logger::error("Couldn't create image-thumbnail of video " . $this->asset->getRealFullPath());
                     \Logger::error($e);
                     $path = $errorImage;
                 }

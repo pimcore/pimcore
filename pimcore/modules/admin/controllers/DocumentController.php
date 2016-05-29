@@ -92,7 +92,7 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
 
             \Pimcore\Model\Element\Service::addTreeFilterJoins($cv, $list);
             $childsList = $list->load();
-            
+
             foreach ($childsList as $childDocument) {
                 // only display document if listing is allowed for the current user
                 if ($childDocument->isAllowed("list")) {
@@ -123,7 +123,7 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
         // check for permission
         $parentDocument = Document::getById(intval($this->getParam("parentId")));
         if ($parentDocument->isAllowed("create")) {
-            $intendedPath = $parentDocument->getFullPath() . "/" . $this->getParam("key");
+            $intendedPath = $parentDocument->getRealFullPath() . "/" . $this->getParam("key");
 
             if (!Document\Service::pathExists($intendedPath)) {
                 $createValues = array(
@@ -258,7 +258,7 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
             $parentDocument = Document::getById($this->getParam("id"));
 
             $list = new Document\Listing();
-            $list->setCondition("path LIKE '" . $parentDocument->getFullPath() . "/%'");
+            $list->setCondition("path LIKE '" . $parentDocument->getRealFullPath() . "/%'");
             $list->setLimit(intval($this->getParam("amount")));
             $list->setOrderKey("LENGTH(path)", false);
             $list->setOrder("DESC");
@@ -267,7 +267,7 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
 
             $deletedItems = array();
             foreach ($documents as $document) {
-                $deletedItems[] = $document->getFullPath();
+                $deletedItems[] = $document->getRealFullPath();
                 if ($document->isAllowed("delete")) {
                     $document->delete();
                 }
@@ -322,7 +322,7 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
             if ($hasChilds) {
                 // get amount of childs
                 $list = new Document\Listing();
-                $list->setCondition("path LIKE '" . $document->getFullPath() . "/%'");
+                $list->setCondition("path LIKE '" . $document->getRealFullPath() . "/%'");
                 $childs = $list->getTotalCount();
 
                 if ($childs > 0) {
@@ -385,7 +385,7 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
                         throw new \Exception("Prevented moving document - no create permission on new parent ");
                     }
 
-                    $intendedPath = $parentDocument->getPath();
+                    $intendedPath = $parentDocument->getRealPath();
                     $pKey = $parentDocument->getKey();
                     if (!empty($pKey)) {
                         $intendedPath .= $parentDocument->getKey() . "/";
@@ -549,7 +549,7 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
     public function getPathForIdAction()
     {
         $document = Document::getById($this->getParam("id"));
-        die($document->getPath() . $document->getKey());
+        die($document->getRealFullPath());
     }
 
     public function versionToSessionAction()
@@ -577,7 +577,7 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
             $document->setPublished(true);
             try {
                 $document->setKey($currentDocument->getKey());
-                $document->setPath($currentDocument->getPath());
+                $document->setPath($currentDocument->getRealPath());
                 $document->setUserModification($this->getUser()->getId());
 
                 $document->save();
@@ -652,7 +652,7 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
             if ($document->hasChilds()) {
                 // get amount of childs
                 $list = new Document\Listing();
-                $list->setCondition("path LIKE '" . $document->getFullPath() . "/%'");
+                $list->setCondition("path LIKE '" . $document->getRealFullPath() . "/%'");
                 $list->setOrderKey("LENGTH(path)", false);
                 $list->setOrder("ASC");
                 $childIds = $list->loadIdList();
@@ -766,7 +766,7 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
             }
 
 
-            $targetPath = preg_replace("@^" . $sourceParent->getFullPath() . "@", $targetParent . "/", $source->getPath());
+            $targetPath = preg_replace("@^" . $sourceParent->getRealFullPath() . "@", $targetParent . "/", $source->getRealPath());
             $target = Document::getByPath($targetPath);
         } else {
             $target = Document::getById($targetId);
@@ -813,7 +813,7 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
         $request = $this->getRequest();
 
         $sessionName = Tool\Session::getOption("name");
-        $prefix = $request->getScheme() . "://" . $request->getHttpHost() . $docFrom->getFullPath() . "?pimcore_version=";
+        $prefix = $request->getScheme() . "://" . $request->getHttpHost() . $docFrom->getRealFullPath() . "?pimcore_version=";
         $fromUrl = $prefix . $this->getParam("from") . "&" . $sessionName . "=" . $_COOKIE[$sessionName];
         $toUrl = $prefix . $this->getParam("to") . "&" . $sessionName . "=" . $_COOKIE[$sessionName];
 
@@ -869,8 +869,8 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
             "idx" => intval($childDocument->getIndex()),
             "text" => $childDocument->getKey(),
             "type" => $childDocument->getType(),
-            "path" => $childDocument->getFullPath(),
-            "basePath" => $childDocument->getPath(),
+            "path" => $childDocument->getRealFullPath(),
+            "basePath" => $childDocument->getRealPath(),
             "locked" => $childDocument->isLocked(),
             "lockOwner" => $childDocument->getLocked() ? true : false,
             "published" => $childDocument->isPublished(),
@@ -1007,7 +1007,7 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
                 // only display document if listing is allowed for the current user
                 if ($childDocument->isAllowed("list")) {
                     $list = new Document\Listing();
-                    $list->setCondition("path LIKE ? and type = ?", array($childDocument->getFullPath() . "/%", "page"));
+                    $list->setCondition("path LIKE ? and type = ?", array($childDocument->getRealFullPath() . "/%", "page"));
 
                     if ($childDocument instanceof Document\Page || $list->getTotalCount() > 0) {
                         $nodeConfig = $this->getTreeNodeConfig($childDocument);
@@ -1033,7 +1033,7 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
 
                                 $request = $this->getRequest();
 
-                                $contentUrl = $request->getScheme() . "://" . $request->getHttpHost() . $childDocument->getFullPath();
+                                $contentUrl = $request->getScheme() . "://" . $request->getHttpHost() . $childDocument->getRealFullPath();
                                 $content = Tool::getHttpData($contentUrl, array(
                                     "pimcore_preview" => true,
                                     "pimcore_admin" => true,
@@ -1164,7 +1164,7 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
             $translations = $service->getTranslations($document->getParent());
             if (isset($translations[$this->getParam("language")])) {
                 $targetDocument = Document::getById($translations[$this->getParam("language")]);
-                $targetPath = $targetDocument->getFullPath();
+                $targetPath = $targetDocument->getRealFullPath();
                 $success = true;
             }
         }

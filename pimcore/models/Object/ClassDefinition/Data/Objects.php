@@ -177,7 +177,7 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $object) {
                 if ($object instanceof Object\Concrete) {
-                    $return[] = array($object->getId(), $object->getFullPath(), $object->getClassName());
+                    $return[] = array($object->getId(), $object->getRealFullPath(), $object->getClassName());
                 }
             }
             if (empty($return)) {
@@ -228,7 +228,7 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
             $pathes = array();
             foreach ($data as $eo) {
                 if ($eo instanceof Element\ElementInterface) {
-                    $pathes[] = $eo->getFullPath();
+                    $pathes[] = $eo->getRealFullPath();
                 }
             }
             return $pathes;
@@ -247,7 +247,7 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $o) {
                 if ($o instanceof Element\ElementInterface) {
-                    $pathes[] = $o->getFullPath();
+                    $pathes[] = $o->getRealFullPath();
                 }
             }
             return implode("<br />", $pathes);
@@ -336,7 +336,7 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
             $paths = array();
             foreach ($data as $eo) {
                 if ($eo instanceof Element\ElementInterface) {
-                    $paths[] = $eo->getFullPath();
+                    $paths[] = $eo->getRealFullPath();
                 }
             }
             return implode(",", $paths);

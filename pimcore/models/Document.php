@@ -430,7 +430,7 @@ class Document extends Element\AbstractElement
 
                 // if the old path is different from the new path, update all children
                 $updatedChildren = array();
-                if ($oldPath && $oldPath != $this->getFullPath()) {
+                if ($oldPath && $oldPath != $this->getRealFullPath()) {
                     $this->getDao()->updateWorkspaces();
                     $updatedChildren = $this->getDao()->updateChildsPaths($oldPath);
                 }
@@ -1208,7 +1208,7 @@ class Document extends Element\AbstractElement
             $originalElement = Document::getById($this->getId());
             if ($originalElement) {
                 $this->setKey($originalElement->getKey());
-                $this->setPath($originalElement->getPath());
+                $this->setPath($originalElement->getRealPath());
             }
         }
 

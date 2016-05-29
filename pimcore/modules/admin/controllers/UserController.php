@@ -277,7 +277,7 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
                             $workspace->setValues($space);
 
                             $workspace->setCid($element->getId());
-                            $workspace->setCpath($element->getFullPath());
+                            $workspace->setCpath($element->getRealFullPath());
                             $workspace->setUserId($user->getId());
 
                             $newWorkspaces[] = $workspace;
@@ -313,7 +313,7 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
                 $el = Element\Service::getElementById($type, $workspace->getCid());
                 if ($el) {
                     // direct injection => not nice but in this case ok ;-)
-                    $workspace->path = $el->getFullPath();
+                    $workspace->path = $el->getRealFullPath();
                 }
             }
         }
@@ -326,7 +326,7 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
             $hasHidden = false;
             if ($o->isAllowed("list")) {
                 $userObjectData[] = array(
-                    "path" => $o->getFullPath(),
+                    "path" => $o->getRealFullPath(),
                     "id" => $o->getId(),
                     "subtype" => $o->getClass()->getName()
                 );
@@ -547,7 +547,7 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
                 $el = Element\Service::getElementById($type, $workspace->getCid());
                 if ($el) {
                     // direct injection => not nice but in this case ok ;-)
-                    $workspace->path = $el->getFullPath();
+                    $workspace->path = $el->getRealFullPath();
                 }
             }
         }

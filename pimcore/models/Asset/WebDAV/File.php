@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -81,7 +81,7 @@ class File extends DAV\File
             $log = Asset\WebDAV\Service::getDeleteLog();
 
             $this->asset->_fulldump = true;
-            $log[$this->asset->getFullpath()] = array(
+            $log[$this->asset->getRealFullPath()] = array(
                 "id" => $this->asset->getId(),
                 "timestamp" => time(),
                 "data" => \Pimcore\Tool\Serialize::serialize($this->asset)
