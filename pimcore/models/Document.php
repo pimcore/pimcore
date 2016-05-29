@@ -926,7 +926,6 @@ class Document extends Element\AbstractElement
                         $rootPath = $site->getRootPath();
                         $rootPath = preg_quote($rootPath);
                         $link = preg_replace("@^" . $rootPath . "@", "", $this->path);
-                        $link = $this->prepareFrontendPath($link);
                         return $link;
                     }
                 }
@@ -935,7 +934,7 @@ class Document extends Element\AbstractElement
             \Logger::error($e);
         }
 
-        return $this->prepareFrontendPath($this->path);
+        return $this->path;
     }
 
     /**
