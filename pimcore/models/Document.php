@@ -860,7 +860,9 @@ class Document extends Element\AbstractElement
      */
     protected function prepareFrontendPath($path) {
         if (!\Pimcore::inAdmin()) {
-            $results = \Pimcore::getEventManager()->trigger("frontend.path.document", $this);
+            $results = \Pimcore::getEventManager()->trigger("frontend.path.document", $this, [
+                "frontendPath" => $path
+            ]);
             if($results->count()) {
                 $path = $results->last();
             }
