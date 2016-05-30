@@ -190,6 +190,8 @@ Depending on the product index implementation, there are two different product i
 
 - Used for optimized mysql, elastic search, ...
 
+![productindex-optimized](images/productindex-optimized.png)
+
 #### Special aspects with elastic search
 It is possible that elastic search cannot update the mapping if e.g. datatypes attributes change. For this case, a reindex is necessary. 
  If it is necessary, the ecommerce framework automatically switches into a reindex mode. When in reindex mode, all queries go to the current index 
@@ -199,7 +201,7 @@ It is possible that elastic search cannot update the mapping if e.g. datatypes a
 As soon the reindex is finished, the current index is switched to the newly created index and the old index is deleted.  
 
 
-![productindex-optimized](images/productindex-optimized.png)
+
 
 
 ## 5 - Usage of product list
