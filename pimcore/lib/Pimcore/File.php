@@ -160,7 +160,7 @@ class File
             $mode = self::$defaultMode;
         }
 
-        $return = @mkdir($path, $mode, $recursive);
+        $return = @mkdir($path, $mode, $recursive, self::getContext());
         return $return;
     }
 
@@ -175,7 +175,7 @@ class File
             // rename is only possible if both stream wrapper are the same
             // unfortunately it seems that there's no other alternative for stream_is_local() although it isn't
             // absolutely correct it solves the problem temporary
-            $return = rename($oldPath, $newPath);
+            $return = rename($oldPath, $newPath, self::getContext());
         } else {
             $return = recursiveCopy($oldPath, $newPath);
             recursiveDelete($oldPath);
@@ -192,7 +192,7 @@ class File
         if(!self::$context) {
             self::$context = stream_context_create([]);
         }
-        
+
         return self::$context;
     }
 
