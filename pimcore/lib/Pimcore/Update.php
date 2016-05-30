@@ -400,6 +400,7 @@ class Update
         // dump autoload and regenerate composer.lock
         $composerPath = \Pimcore\Tool\Console::getExecutable("composer");
         $process = new Process($composerPath . ' update nothing -d ' . PIMCORE_DOCUMENT_ROOT);
+        $process->setTimeout(null); 
         $process->mustRun();
     }
 
