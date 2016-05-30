@@ -529,7 +529,7 @@ pimcore.asset.tree = Class.create({
         if (record.data.permissions.rename && record.data.id != 1 && !record.data.locked) {
             if (perspectiveCfg.inTreeContextMenu("asset.rename")) {
                 menu.add(new Ext.menu.Item({
-                    text: t('edit_filename'),
+                    text: t('rename'),
                     iconCls: "pimcore_icon_key pimcore_icon_overlay_go",
                     handler: this.editAssetKey.bind(this, tree, record)
                 }));

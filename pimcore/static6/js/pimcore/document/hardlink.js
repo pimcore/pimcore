@@ -138,6 +138,20 @@ pimcore.document.hardlink = Class.create(pimcore.document.document, {
                 handler: this.remove.bind(this)
             });
 
+            this.toolbarButtons.rename = new Ext.Button({
+                tooltip: t('rename'),
+                iconCls: "pimcore_icon_key pimcore_icon_overlay_go",
+                scale: "medium",
+                handler: function () {
+                    var options = {
+                        elementType: "document",
+                        elementSubType: this.getType(),
+                        id: this.id,
+                        default: this.data.key
+                    }
+                    pimcore.elementservice.editElementKey(options);
+                }.bind(this)
+            });
 
             var buttons = [];
 
@@ -152,6 +166,9 @@ pimcore.document.hardlink = Class.create(pimcore.document.document, {
 
             if(this.isAllowed("delete") && !this.data.locked) {
                 buttons.push(this.toolbarButtons.remove);
+            }
+            if(this.isAllowed("rename") && !this.data.locked) {
+                buttons.push(this.toolbarButtons.rename);
             }
 
             buttons.push({

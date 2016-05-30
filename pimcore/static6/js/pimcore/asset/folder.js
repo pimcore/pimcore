@@ -226,10 +226,28 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
                 handler: this.remove.bind(this)
             });
 
+            this.toolbarButtons.rename = new Ext.Button({
+                tooltip: t('rename'),
+                iconCls: "pimcore_icon_key pimcore_icon_overlay_go",
+                scale: "medium",
+                handler: function () {
+                    var options = {
+                        elementType: "asset",
+                        elementSubType: this.getType(),
+                        id: this.id,
+                        default: this.data.filename
+                    }
+                    pimcore.elementservice.editElementKey(options);
+                }.bind(this)
+            });
+
             buttons.push("-");
 
             if (this.isAllowed("delete") && !this.data.locked && this.data.id != 1) {
                 buttons.push(this.toolbarButtons.remove);
+            }
+            if (this.isAllowed("rename") && !this.data.locked && this.data.id != 1) {
+                buttons.push(this.toolbarButtons.rename);
             }
             
             buttons.push({

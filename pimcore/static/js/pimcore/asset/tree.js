@@ -473,7 +473,7 @@ pimcore.asset.tree = Class.create({
 
         if (this.attributes.permissions.rename && this.id != 1 && !this.attributes.locked) {
             menu.add(new Ext.menu.Item({
-                text: t('edit_filename'),
+                text: t('rename'),
                 iconCls: "pimcore_icon_edit_key",
                 handler: this.attributes.reference.editAssetFilename.bind(this)
             }));

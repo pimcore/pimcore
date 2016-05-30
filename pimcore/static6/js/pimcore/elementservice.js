@@ -277,8 +277,10 @@ pimcore.elementservice.editDocumentKeyComplete =  function (options, button, val
         var affectedNodes = pimcore.elementservice.getAffectedNodes(elementType, id);
         if (affectedNodes) {
             record = affectedNodes[0];
-            originalText = record.get("text");
-            originalPath = record.get("path");
+            if(record) {
+                originalText = record.get("text");
+                originalPath = record.get("path");
+            }
         }
         pimcore.elementservice.applyNewKey(affectedNodes, elementType, id, value);
 
@@ -337,8 +339,10 @@ pimcore.elementservice.editObjectKeyComplete = function (options, button, value,
         var affectedNodes = pimcore.elementservice.getAffectedNodes(elementType, id);
         if (affectedNodes) {
             record = affectedNodes[0];
-            originalText = record.get("text");
-            originalPath = record.get("path");
+            if(record) {
+                originalText = record.get("text");
+                originalPath = record.get("path");
+            }
         }
         pimcore.elementservice.applyNewKey(affectedNodes, elementType, id, value);
 
@@ -410,8 +414,10 @@ pimcore.elementservice.editAssetKeyComplete = function (options, button, value, 
             var affectedNodes = pimcore.elementservice.getAffectedNodes(elementType, id);
             if (affectedNodes) {
                 record = affectedNodes[0];
-                originalText = record.get("text");
-                originalPath = record.get("path");
+                if(record) {
+                    originalText = record.get("text");
+                    originalPath = record.get("path");
+                }
             }
             pimcore.elementservice.applyNewKey(affectedNodes, elementType, id, value);
 
