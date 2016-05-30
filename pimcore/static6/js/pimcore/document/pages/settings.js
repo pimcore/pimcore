@@ -300,20 +300,6 @@ pimcore.document.pages.settings = Class.create({
                                     }
                                 }
                             },
-                            {
-                                fieldLabel: t('keywords')  + " (" + this.page.data.keywords.length + ")",
-                                name: 'keywords',
-                                maxLength: 255,
-                                height: 51,
-                                width: 700,
-                                value: this.page.data.keywords,
-                                enableKeyEvents: true,
-                                listeners: {
-                                    "keyup": function (el) {
-                                        el.labelEl.update(t("keywords") + " (" + el.getValue().length + "):");
-                                    }
-                                }
-                            },
                             this.metaDataPanel
                         ]
                     },{

@@ -27,7 +27,7 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
                     rootProperty: 'data'
                 }
             },
-            fields: ["id","fullpath","type","subtype","published","title","description","keywords","name","filename"]
+            fields: ["id","fullpath","type","subtype","published","title","description","name","filename"]
         });
     },
 
@@ -199,7 +199,6 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
                 {header: t("path"), flex: 200, sortable: true, dataIndex: 'fullpath'},
                 {header: t("title"), flex: 200, sortable: false, dataIndex: 'title', hidden: false},
                 {header: t("description"), width: 200, sortable: false, dataIndex: 'description', hidden: true},
-                {header: t("keywords"), width: 200, sortable: false, dataIndex: 'keywords', hidden: true},
                 {header: t("filename"), width: 200, sortable: false, dataIndex: 'filename', hidden: true}
             ];
 

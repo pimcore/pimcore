@@ -668,8 +668,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
                 if ($element instanceof Document\Page) {
                     $data = array(
                         "title" => $element->getTitle(),
-                        "description" => $element->getDescription(),
-                        "keywords" => $element->getKeywords()
+                        "description" => $element->getDescription()
                     );
 
                     foreach ($data as $key => $content) {
@@ -1023,14 +1022,6 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
                             $structuredData .= '<tr>
                                     <td><span style="color:#cc2929;">Description</span></td>
                                     <td>' . $element->getDescription() . '&nbsp;</td>
-                                </tr>';
-                            $structuredDataEmpty = false;
-                        }
-
-                        if ($element->getKeywords()) {
-                            $structuredData .= '<tr>
-                                    <td><span style="color:#cc2929;">Keywords</span></td>
-                                    <td>' . $element->getKeywords() . '&nbsp;</td>
                                 </tr>';
                             $structuredDataEmpty = false;
                         }

@@ -60,7 +60,7 @@ class Service extends Model\Element\Service
             $existingActionHelper = \Zend_Controller_Action_HelperBroker::getExistingHelper("layout");
         }
         $layoutInCurrentAction = (\Zend_Layout::getMvcInstance() instanceof \Zend_Layout) ? \Zend_Layout::getMvcInstance()->getLayout() : false;
-        
+
         $viewHelper = \Zend_Controller_Action_HelperBroker::getExistingHelper("ViewRenderer");
         if ($viewHelper) {
             if ($viewHelper->view === null) {
@@ -316,7 +316,6 @@ class Service extends Model\Element\Service
             if ($source instanceof Document\Page) {
                 $target->setTitle($source->getTitle());
                 $target->setDescription($source->getDescription());
-                $target->setKeywords($source->getKeywords());
             }
         } elseif ($source instanceof Document\Link) {
             $target->setInternalType($source->getInternalType());
@@ -350,11 +349,9 @@ class Service extends Model\Element\Service
         if ($document instanceof Document\Page) {
             $data["title"] = $document->getTitle();
             $data["description"] = $document->getDescription();
-            $data["keywords"] = $document->getKeywords();
         } else {
             $data["title"] = "";
             $data["description"] = "";
-            $data["keywords"] = "";
             $data["name"] = "";
         }
 

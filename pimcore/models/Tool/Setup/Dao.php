@@ -66,7 +66,7 @@ class Dao extends Model\Dao\AbstractDao
         if ($this->db->getResource() instanceof \Zend_Db_Adapter_Mysqli) {
             $mysqli = $this->db->getConnection();
             $mysqli->multi_query($sql);
-            
+
             // loop through results, because ->multi_query() is asynchronous
             do {
                 if ($result = $mysqli->store_result()) {
@@ -76,7 +76,7 @@ class Dao extends Model\Dao\AbstractDao
         } elseif ($this->db->getResource() instanceof \Zend_Db_Adapter_Pdo_Mysql) {
             $this->db->getConnection()->exec($sql);
         }
-                
+
         \Pimcore\Db::reset();
 
         // set the id of the system user to 0
@@ -118,8 +118,7 @@ class Dao extends Model\Dao\AbstractDao
             "action" => "",
             "template" => "",
             "title" => "",
-            "description" => "",
-            "keywords" => ""
+            "description" => ""
         ));
         $this->db->insert("objects", array(
             "o_id" => 1,

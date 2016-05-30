@@ -20,7 +20,7 @@ use Pimcore\Model;
 
 class Page extends Model\Webservice\Data\Document\PageSnippet
 {
-    
+
     /**
      * @var string
      */
@@ -35,9 +35,4 @@ class Page extends Model\Webservice\Data\Document\PageSnippet
      * @var string
      */
     public $description;
-
-    /**
-     * @var string
-     */
-    public $keywords;
 }

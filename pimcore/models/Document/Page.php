@@ -38,13 +38,6 @@ class Page extends Model\Document\PageSnippet
     public $description = "";
 
     /**
-     * Contains the keywords of the page (meta-keywords)
-     *
-     * @var string
-     */
-    public $keywords = "";
-
-    /**
      * @var array
      */
     public $metaData = array();
@@ -147,11 +140,14 @@ class Page extends Model\Document\PageSnippet
     }
 
     /**
+     * @deprecated
      * @return string
      */
     public function getKeywords()
     {
-        return $this->keywords;
+        // keywords are not supported anymore
+        \Logger::info("getKeywords() is deprecated and will be removed in the future!");
+        return "";
     }
 
     /**
@@ -173,12 +169,14 @@ class Page extends Model\Document\PageSnippet
     }
 
     /**
+     * @deprecated
      * @param string $keywords
      * @return void
      */
     public function setKeywords($keywords)
     {
-        $this->keywords = str_replace("\n", " ", $keywords);
+        // keywords are not supported anymore
+        \Logger::info("setKeywords() is deprecated and will be removed in the future!");
         return $this;
     }
 

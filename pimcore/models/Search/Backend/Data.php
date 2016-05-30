@@ -382,7 +382,7 @@ class Data extends \Pimcore\Model\AbstractModel
                 }
                 if ($element instanceof Document\Page) {
                     $this->published = $element->isPublished();
-                    $this->data .= " ".$element->getTitle()." ".$element->getDescription()." ".$element->getKeywords() . " " . $element->getPrettyUrl();
+                    $this->data .= " ".$element->getTitle()." ".$element->getDescription()." " . $element->getPrettyUrl();
                 }
             }
         } elseif ($element instanceof Asset) {
