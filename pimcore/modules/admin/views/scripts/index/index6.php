@@ -2,13 +2,14 @@
 <html>
 <head>
 
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta charset="utf-8">
     <meta name="robots" content="noindex, nofollow" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
 
     <link rel="icon" type="image/png" href="/pimcore/static6/img/favicon/favicon-32x32.png" />
+    <meta name="google" value="notranslate">
 
     <style type="text/css">
         body {

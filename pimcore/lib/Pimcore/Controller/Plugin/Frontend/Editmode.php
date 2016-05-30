@@ -222,6 +222,8 @@ class Editmode extends \Zend_Controller_Plugin_Abstract
         }
 
         $editmodeHeadHtml = "\n\n\n<!-- pimcore editmode -->\n";
+        $editmodeHeadHtml .= '<meta name="google" value="notranslate">';
+        $editmodeHeadHtml .= "\n\n";
 
         // include stylesheets
         foreach ($editmodeStylesheets as $sheet) {
@@ -311,9 +313,6 @@ class Editmode extends \Zend_Controller_Plugin_Abstract
                 }
             }
         }
-
-        // IE compatibility
-        //$this->getResponse()->setHeader("X-UA-Compatible", "IE=8; IE=9", true);
     }
 
     /**

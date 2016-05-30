@@ -23,11 +23,7 @@ class Admin_LoginController extends \Pimcore\Controller\Action\Admin
     {
         parent::init();
         $this->protect();
-
-        // IE compatibility
-        //$this->getResponse()->setHeader("X-UA-Compatible", "IE=8; IE=9", true);
     }
-
 
     public function lostpasswordAction()
     {
