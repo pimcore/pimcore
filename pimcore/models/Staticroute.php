@@ -517,6 +517,14 @@ class Staticroute extends AbstractModel
         // convert tmp urlencode escape char back to real escape char
         $url = str_replace($urlEncodeEscapeCharacters, "%", $url);
 
+
+        $results = \Pimcore::getEventManager()->trigger("frontend.path.staticroute", $this, [
+            "frontendPath" => $url
+        ]);
+        if($results->count()) {
+            $url = $results->last();
+        }
+
         return $url;
     }
 
