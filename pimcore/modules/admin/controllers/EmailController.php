@@ -322,6 +322,8 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
         if ($emailLog instanceof Tool\Email\Log) {
             $mail = new Mail();
             $mail->preventDebugInformationAppending();
+            $mail->disableLogging();
+            $mail->setIgnoreDebugMode(true);
 
             if ($html = $emailLog->getHtmlLog()) {
                 $mail->setBodyHtml($html);
