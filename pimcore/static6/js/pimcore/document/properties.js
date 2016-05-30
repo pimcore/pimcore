@@ -199,7 +199,7 @@ pimcore.document.properties = Class.create(pimcore.element.properties,{
     getValues : function ($super) {
 
         var values = $super();
-
+        var record;
 
         var languageValues = this.languagesPanel.getForm().getFieldValues();
         var navigationValues = this.navigationPanel.getForm().getFieldValues();
@@ -213,20 +213,12 @@ pimcore.document.properties = Class.create(pimcore.element.properties,{
             var addProperty = false;
             var unchanged = false;
             if(typeof systemValues[name] != "undefined") {
-
-                var record;
-                var recordIndex = this.propertyGrid.getStore().findBy(function (name,rec, id) {
-                    if(rec.get("name") == name) {
-                        return true;
-                    }
-                }.bind(this,name));
-
-                if(recordIndex >= 0) {
-                    record = this.propertyGrid.getStore().getAt(recordIndex);
-                    if(record.get("data")) {
-                        if(record.get("data") != systemValues[name]) {
+                if(this.element.data.properties[name]) {
+                    record = this.element.data.properties[name];
+                    if(record["data"]) {
+                        if(record["data"] != systemValues[name]) {
                             addProperty = true;
-                        } else if(record.get("data") == systemValues[name]) {
+                        } else if(record["data"] == systemValues[name]) {
                             unchanged=true;
                         }
                     } else if (systemValues[name]) {
