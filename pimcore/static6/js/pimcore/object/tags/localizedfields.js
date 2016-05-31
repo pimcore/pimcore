@@ -165,9 +165,8 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
 
                 var panelConf = {
                     height: "auto",
-                    border: true,
+                    border: false,
                     padding: "10px",
-                    title: pimcore.available_languages[this.frontendLanguages[i]],
                     items: items,
                     hidden: (i > 0)     //TODO default language
                 };
