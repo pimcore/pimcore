@@ -105,6 +105,11 @@ class Dao extends Model\Element\Dao
         $checkColumns = ["o_type","o_classId","o_className"];
         $existingData = $this->db->fetchRow("SELECT " . implode(",", $checkColumns) . " FROM objects WHERE o_id = ?", [$this->model->getId()]);
         foreach ($checkColumns as $column) {
+            if($column == "o_type" && in_array($data[$column], ["variant","object"]) && in_array($existingData[$column], ["variant","object"])) {
+                // type conversion variant <=> object should be possible
+                continue;
+            }
+
             if (!empty($existingData[$column]) && $data[$column] != $existingData[$column]) {
                 throw new \Exception("Unable to save object: type, classId or className mismatch");
             }
