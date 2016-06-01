@@ -28,7 +28,7 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
     /**
      * @var array
      */
-    public static $directRouteTypes = array("page", "snippet", "email");
+    public static $directRouteTypes = array("page", "snippet", "email", "printpage", "printcontainer");
 
     /**
      * @param $type

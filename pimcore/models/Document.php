@@ -27,7 +27,7 @@ class Document extends Element\AbstractElement
      * possible types of a document
      * @var array
      */
-    public static $types = array("folder", "page", "snippet", "link", "hardlink", "email");  //ck added "email"
+    public static $types = array("folder", "page", "snippet", "link", "hardlink", "email", "printpage", "printcontainer");
 
     /**
      * @param $type

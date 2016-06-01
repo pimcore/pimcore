@@ -13662,5 +13662,205 @@
     "term_plural": "",
     "reference": "",
     "comment": ""
+  },
+  {
+    "term": "add_printpage",
+    "definition": "Add PrintPage",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "add_printcontainer",
+    "definition": "Add PrintContainer",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_preview_pdf",
+    "definition": "Generate & Preview PDF",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_pdf-details",
+    "definition": "PDF Details",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_cancel_pdf_creation",
+    "definition": "Cancel PDF Creation",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_generate_pdf",
+    "definition": "Generate PDF",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_download_pdf",
+    "definition": "Download PDF",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_last-generated",
+    "definition": "Last Generated",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_last-generate-message",
+    "definition": "Last Generate Message",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_ENABLED",
+    "definition": "ENABLED",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_DISABLED",
+    "definition": "DISABLED",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_ENABLED_NO_LAYOUT",
+    "definition": "ENABLED_NO_LAYOUT",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_PAGE_LAYOUT_SINGLE_PAGE",
+    "definition": "SINGLE_PAGE",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_PAGE_LAYOUT_TWO_COLUMN_LEFT",
+    "definition": "TWO_COLUMN_LEFT",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_PAGE_LAYOUT_TWO_COLUMN_RIGHT",
+    "definition": "TWO_COLUMN_RIGHT",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_CMYK",
+    "definition": "CMYK",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_RGB",
+    "definition": "RGB",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_NONE",
+    "definition": "NONE",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_TYPE_40",
+    "definition": "TYPE_40",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_TYPE_128",
+    "definition": "TYPE_128",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_FATAL",
+    "definition": "FATAL",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_WARN",
+    "definition": "WARN",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_INFO",
+    "definition": "INFO",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_DEBUG",
+    "definition": "DEBUG",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_PERFORMANCE",
+    "definition": "PERFORMANCE",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
   }
 ]

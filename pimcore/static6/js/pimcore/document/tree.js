@@ -212,6 +212,7 @@ pimcore.document.tree = Class.create({
     onTreeNodeClick: function (tree, record, item, index, e, eOpts ) {
         if (record.data.permissions.view) {
             pimcore.helpers.treeNodeThumbnailPreviewHide();
+            console.log(record.data.type);
             pimcore.helpers.openDocument(record.data.id, record.data.type);
         }
     },
@@ -330,7 +331,8 @@ pimcore.document.tree = Class.create({
         var perspectiveCfg = this.perspectiveCfg;
 
         if ((record.data.type == "page" || record.data.type == "email" || record.data.type == "folder"
-            || record.data.type == "link" || record.data.type == "hardlink")
+            || record.data.type == "link" || record.data.type == "hardlink"
+            || record.data.type == "printpage" || record.data.type == "printcontainer")
             && record.data.permissions.create) {
 
             if (perspectiveCfg.inTreeContextMenu("document.add")) {
@@ -340,6 +342,7 @@ pimcore.document.tree = Class.create({
                     page: [],
                     snippet: [],
                     email: [],
+                    printPage: [],
                     ref: this
                 };
 
@@ -366,6 +369,18 @@ pimcore.document.tree = Class.create({
                             iconCls: "pimcore_icon_email pimcore_icon_overlay_add",
                             handler: this.addDocument.bind(this, tree, record, "email", typeRecord.get("id"))
                         });
+                    } else if (record.get("type") == "printpage") {
+                        this.page.push({
+                            text: ts(typeRecord.get("name")),
+                            iconCls: "pimcore_icon_printpage_add",
+                            handler: this.addDocument.bind(this, tree, record, "printpage", typeRecord.get("id"))
+                        });
+                    } else if (record.get("type") == "printcontainer") {
+                        this.page.push({
+                            text: ts(typeRecord.get("name")),
+                            iconCls: "pimcore_icon_printcontainer_add",
+                            handler: this.addDocument.bind(this, tree, record, "printcontainer", typeRecord.get("id"))
+                        });
                     }
                 }.bind(this, documentMenu), documentMenu);
 
@@ -384,7 +399,7 @@ pimcore.document.tree = Class.create({
                     handler: this.addDocument.bind(this, tree, record, "snippet")
                 });
 
-                // empty email  //ckogler
+                // empty email
                 documentMenu.email.push({
                     text: "&gt; " + t("empty_email"),
                     iconCls: "pimcore_icon_email pimcore_icon_overlay_add",
@@ -394,7 +409,6 @@ pimcore.document.tree = Class.create({
                 menu.add(new Ext.menu.Item({
                     text: t('add_page'),
                     iconCls: "pimcore_icon_page pimcore_icon_overlay_add",
-                    /*handler: this.attributes.reference.addDocument.bind(this, "page"),*/
                     menu: documentMenu.page,
                     hideOnClick: false
                 }));
@@ -402,7 +416,6 @@ pimcore.document.tree = Class.create({
                 menu.add(new Ext.menu.Item({
                     text: t('add_snippet'),
                     iconCls: "pimcore_icon_snippet pimcore_icon_overlay_add",
-                    /*handler: this.attributes.reference.addDocument.bind(this, "snippet"),*/
                     menu: documentMenu.snippet,
                     hideOnClick: false
                 }));
@@ -411,6 +424,26 @@ pimcore.document.tree = Class.create({
                     text: t('add_email'),
                     iconCls: "pimcore_icon_email pimcore_icon_overlay_add",
                     menu: documentMenu.email,
+                    hideOnClick: false
+                }));
+
+
+                //print pages
+                documentMenu.printPage.push({
+                    text: "&gt; " + t("add_printpage"),
+                    iconCls: "pimcore_icon_printpage pimcore_icon_overlay_add",
+                    handler: this.addDocument.bind(this, tree, record, "printpage")
+                });
+                documentMenu.printPage.push({
+                    text: "&gt; " + t("add_printcontainer"),
+                    iconCls: "pimcore_icon_printcontainer pimcore_icon_overlay_add",
+                    handler: this.addDocument.bind(this, tree, record, "printcontainer")
+                });
+
+                menu.add(new Ext.menu.Item({
+                    text: t('add_printpage'),
+                    iconCls: "pimcore_icon_printpage pimcore_icon_overlay_add",
+                    menu: documentMenu.printPage,
                     hideOnClick: false
                 }));
 
@@ -1188,7 +1221,7 @@ pimcore.document.tree = Class.create({
             elementSubType: record.data.type,
             id: record.data.id,
             default: record.data.text
-        }
+        };
         pimcore.elementservice.editElementKey(options);
     },
 

@@ -241,6 +241,43 @@ class Config
     }
 
 
+
+    /**
+     * @static
+     * @return \Zend_Config
+     */
+    public static function getWeb2PrintConfig()
+    {
+        if (\Zend_Registry::isRegistered("pimcore_config_web2print")) {
+            $config = \Zend_Registry::get("pimcore_config_web2print");
+        } else {
+            try {
+                $file = self::locateConfigFile("web2print.php");
+                if (file_exists($file)) {
+                    $config = new \Zend_Config(include($file));
+                } else {
+                    throw new \Exception("Config-file " . $file . " doesn't exist.");
+                }
+            } catch (\Exception $e) {
+                $config = new \Zend_Config(array());
+            }
+
+            self::setWeb2PrintConfig($config);
+        }
+        return $config;
+    }
+
+    /**
+     * @static
+     * @param \Zend_Config $config
+     * @return void
+     */
+    public static function setWeb2PrintConfig(\Zend_Config $config)
+    {
+        \Zend_Registry::set("pimcore_config_web2print", $config);
+    }
+
+
     /**
      * @static
      * @return \Zend_Config_Xml

@@ -316,6 +316,10 @@ $scripts = array(
     "pimcore/document/snippet.js",
     "pimcore/document/email.js",
     "pimcore/document/page.js",
+    "pimcore/document/printpages/pdf_preview.js",
+    "pimcore/document/printabstract.js",
+    "pimcore/document/printpage.js",
+    "pimcore/document/printcontainer.js",
     "pimcore/document/seopanel.js",
     "pimcore/document/customviews/tree.js",
 

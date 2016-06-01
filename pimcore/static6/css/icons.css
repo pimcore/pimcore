@@ -994,3 +994,15 @@
 }
 
 
+.pimcore_icon_pdf {
+    background: url(/pimcore/static6/img/flat-color-icons/pdf.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_printpage {
+    background: url(/pimcore/static6/img/flat-color-icons/news.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_printcontainer {
+    background: url(/pimcore/static6/img/flat-color-icons/multiple_inputs.svg) center center no-repeat !important;
+}
+
