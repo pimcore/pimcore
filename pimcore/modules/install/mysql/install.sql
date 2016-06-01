@@ -437,7 +437,8 @@ CREATE TABLE `redirects` (
   `creationDate` bigint(20) unsigned DEFAULT '0',
   `modificationDate` bigint(20) unsigned DEFAULT '0',
   PRIMARY KEY (`id`),
-  KEY `priority` (`priority`)
+  KEY `priority` (`priority`),
+  KEY `active` (`active`)
 ) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `sanitycheck`;
