@@ -1,6 +1,6 @@
 <?php
 $pdr = PIMCORE_DOCUMENT_ROOT;
-return array(
+return array (
   'simple_html_dom_node' => $pdr . '/pimcore/lib/simple_html_dom.php',
   'simple_html_dom' => $pdr . '/pimcore/lib/simple_html_dom.php',
   'Pimcore\\Video\\Adapter\\Ffmpeg' => $pdr . '/pimcore/lib/Pimcore/Video/Adapter/Ffmpeg.php',
@@ -16,6 +16,7 @@ return array(
   'Pimcore\\Helper\\RobotsTxt' => $pdr . '/pimcore/lib/Pimcore/Helper/RobotsTxt.php',
   'Pimcore\\Helper\\Auth\\Adapter\\Http\\ResolverStatic' => $pdr . '/pimcore/lib/Pimcore/Helper/Auth/Adapter/Http/ResolverStatic.php',
   'Pimcore\\Helper\\Mail' => $pdr . '/pimcore/lib/Pimcore/Helper/Mail.php',
+  'Pimcore\\Helper\\JsonFormatter' => $pdr . '/pimcore/lib/Pimcore/Helper/JsonFormatter.php',
   'Pimcore\\Helper\\ImageChart' => $pdr . '/pimcore/lib/Pimcore/Helper/ImageChart.php',
   'Pimcore\\Helper\\Dashboard' => $pdr . '/pimcore/lib/Pimcore/Helper/Dashboard.php',
   'Pimcore\\Version' => $pdr . '/pimcore/lib/Pimcore/Version.php',
@@ -303,6 +304,7 @@ return array(
   'Pimcore\\Model\\Document\\Page' => $pdr . '/pimcore/models/Document/Page.php',
   'Pimcore\\Model\\Document\\Dao' => $pdr . '/pimcore/models/Document/Dao.php',
   'Pimcore\\Model\\Document\\Folder' => $pdr . '/pimcore/models/Document/Folder.php',
+  'Pimcore\\Model\\Asset\\Video\\ImageThumbnail' => $pdr . '/pimcore/models/Asset/Video/ImageThumbnail.php',
   'Pimcore\\Model\\Asset\\Video\\Thumbnail\\Processor' => $pdr . '/pimcore/models/Asset/Video/Thumbnail/Processor.php',
   'Pimcore\\Model\\Asset\\Video\\Thumbnail\\Config' => $pdr . '/pimcore/models/Asset/Video/Thumbnail/Config.php',
   'Pimcore\\Model\\Asset\\Video\\Thumbnail\\Config\\Listing' => $pdr . '/pimcore/models/Asset/Video/Thumbnail/Config/Listing.php',
@@ -310,6 +312,7 @@ return array(
   'Pimcore\\Model\\Asset\\Video\\Thumbnail\\Config\\Dao' => $pdr . '/pimcore/models/Asset/Video/Thumbnail/Config/Dao.php',
   'Pimcore\\Model\\Asset\\Unknown' => $pdr . '/pimcore/models/Asset/Unknown.php',
   'Pimcore\\Model\\Asset\\Document' => $pdr . '/pimcore/models/Asset/Document.php',
+  'Pimcore\\Model\\Asset\\Document\\ImageThumbnail' => $pdr . '/pimcore/models/Asset/Document/ImageThumbnail.php',
   'Pimcore\\Model\\Asset\\WebDAV\\File' => $pdr . '/pimcore/models/Asset/WebDAV/File.php',
   'Pimcore\\Model\\Asset\\WebDAV\\Tree' => $pdr . '/pimcore/models/Asset/WebDAV/Tree.php',
   'Pimcore\\Model\\Asset\\WebDAV\\Service' => $pdr . '/pimcore/models/Asset/WebDAV/Service.php',
