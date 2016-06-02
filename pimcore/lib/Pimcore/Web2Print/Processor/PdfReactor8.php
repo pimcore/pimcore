@@ -47,8 +47,8 @@ class PdfReactor8 extends Processor
         $filePath = str_replace(PIMCORE_DOCUMENT_ROOT, "", $filePath);
 
         $reactorConfig = [
-            "document" => (string) $web2PrintConfig->pdfreactorHostname . $filePath,
-            "baseURL" => (string) $web2PrintConfig->pdfreactorHostname,
+            "document" => (string) $web2PrintConfig->pdfreactorBaseUrl . $filePath,
+            "baseURL" => (string) $web2PrintConfig->pdfreactorBaseUrl,
             "author" => $config->author ? $config->author : "",
             "title" => $config->title ? $config->title : "",
             "addLinks" => $config->links == "true",

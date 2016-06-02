@@ -115,6 +115,17 @@
     background: url(/pimcore/static6/img/flat-color-icons/reading.svg) center center no-repeat !important;
 }
 
+.pimcore_icon_overlay_setting:before {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    bottom: 0px;
+    right: 0px;
+    content: "";
+    background: url(/pimcore/static6/img/flat-color-icons/engineering.svg) center center no-repeat !important;
+}
+
+
 .pimcore_icon_home, .pimcore_icon_site {
     background: url(/pimcore/static6/img/flat-color-icons/home.svg) center center no-repeat !important;
 }

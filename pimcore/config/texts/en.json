@@ -13862,5 +13862,165 @@
     "term_plural": "",
     "reference": "",
     "comment": ""
+  },
+  {
+    "term": "web2print",
+    "definition": "Web2Print",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_enable_in_default_view",
+    "definition": "Enable Web2Print documents in default documents view",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_enable_in_default_view_txt",
+    "definition": "Enables Web2Print documents in default documents view in default perspective. Either activate this or create custom views and perspectives for managing Web2Print documents.",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_tool",
+    "definition": "Tool",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_save_mode",
+    "definition": "Document Save Mode",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_save_mode_txt",
+    "definition": "Document Save Mode = cleanup deletes all not used document elements for current document. This might be necessary for useage reports in print documents.",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_pdfreactor_settings",
+    "definition": "PDFreactor Settings",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_version",
+    "definition": "Version",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_server",
+    "definition": "Server",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_port",
+    "definition": "Port",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_baseURL",
+    "definition": "BaseURL",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_baseURL_txt",
+    "definition": "BaseURL for PDFreactor. This is prefixed to each relative url in print templates when creating PDFs.",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_licence",
+    "definition": "Licence",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_wkhtmltopdf_settings",
+    "definition": "Wkhtmltopdf Settings",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_wkhtmltopdf_binary",
+    "definition": "wkhtmltopdf Binary",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_wkhtmltopdf_options",
+    "definition": "Options",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_wkhtmltopdf_options_txt",
+    "definition": "One per line with '--' and whitespace between key and value (e.g. --key value)",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_hostname",
+    "definition": "Hostname",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_settings",
+    "definition": "Web2Print Settings",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },{
+    "term": "web2print_settings_save_error",
+    "definition": "Web2Print settings could not be saved.",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
   }
+
 ]

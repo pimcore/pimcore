@@ -318,7 +318,7 @@ Ext.onReady(function () {
     });
 
     pimcore.globalmanager.add("document_types_store", store);
-    pimcore.globalmanager.add("document_documenttype_store", ["page","snippet","email"]);
+    pimcore.globalmanager.add("document_documenttype_store", ["page","snippet","email","printpage","printcontainer"]);
 
     //translation admin keys
     pimcore.globalmanager.add("translations_admin_missing", new Array());

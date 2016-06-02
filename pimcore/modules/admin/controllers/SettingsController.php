@@ -501,6 +501,31 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
         $this->_helper->json(["success" => true]);
     }
 
+    public function getWeb2printAction()
+    {
+        $this->checkPermission("web2print_settings");
+
+        $values = Config::getWeb2PrintConfig();
+        $valueArray = $values->toArray();
+        $response = [
+            "values" => $valueArray
+        ];
+
+        $this->_helper->json($response);
+    }
+
+    public function setWeb2printAction()
+    {
+        $this->checkPermission("web2print_settings");
+
+        $values = \Zend_Json::decode($this->getParam("data"));
+
+        $configFile = \Pimcore\Config::locateConfigFile("web2print.php");
+        File::putPhpFile($configFile, to_php_data_file_format($values));
+
+        $this->_helper->json(["success" => true]);
+    }
+
     public function clearCacheAction()
     {
         $this->checkPermission("clear_cache");

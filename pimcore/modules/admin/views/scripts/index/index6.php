@@ -251,6 +251,7 @@ $scripts = array(
     "pimcore/settings/properties/predefined.js",
     "pimcore/settings/docTypes.js",
     "pimcore/settings/system.js",
+    "pimcore/settings/web2print.js",
     "pimcore/settings/website.js",
     "pimcore/settings/staticroutes.js",
     "pimcore/settings/update.js",

@@ -1149,7 +1149,7 @@ pimcore.document.tree = Class.create({
         } else {
 
             if (type == "folder") {
-                textKeyTitle = "add_folder"
+                textKeyTitle = "add_folder";
                 textKeyMessage = "please_enter_the_name_of_the_new_folder";
             } else {
                 textKeyTitle = "add_document";
