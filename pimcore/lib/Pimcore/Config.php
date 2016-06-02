@@ -391,7 +391,14 @@ class Config
                 "position" => "left",
                 "expanded" => false,
                 "hidden" => false,
-                "sort" => -3
+                "sort" => -3,
+                "treeContextMenu" => [
+                    "document" => [
+                        "items" => [
+                            "addPrintPage" => 0 // hide add print documents by default
+                        ]
+                    ]
+                ]
             ],
             [
                 "type" => "assets",
