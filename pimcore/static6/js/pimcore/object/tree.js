@@ -329,11 +329,10 @@ pimcore.object.tree = Class.create({
                 }
             }
 
-
             if (str1[count] == " " || (typeof str1[count] == 'undefined')) {
-                return count;
-            } else {
                 return 0;
+            } else {
+                return count;                
             }
         };
 
@@ -349,7 +348,7 @@ pimcore.object.tree = Class.create({
 
             // check last group
             count = getEqual(lastGroup, currentClass.get("translatedText"));
-            if (count <= matchCount) {
+            if (count <= matchCount || lastGroup.length != count) {
                 // check new class to group with
                 if (!nextClass) {
                     // this is the last class
