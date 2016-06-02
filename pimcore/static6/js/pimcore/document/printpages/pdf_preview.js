@@ -22,42 +22,31 @@ pimcore.document.printpages.pdfpreview = Class.create({
 
         if (this.layout == null) {
 
-            var iframeOnLoad = "pimcore.globalmanager.get('document_" + this.page.id + "').pdfpreview.iFrameLoaded()";
-
             var details = [];
 
+            // Generate PDF Panel
             this.generateButton = new Ext.Button({
                 text: t("web2print_generate_pdf"),
                 iconCls: "pimcore_icon_pdf",
+                style: "float: right;",
                 handler: this.generatePdf.bind(this)
             });
-
-            // var checkoxPrinterMarks = new Ext.form.Checkbox({
-            //     fieldLabel: t("web2print_include_printermarks"),
-            //     name: "printermarks",
-            //     itemCls: "object_field"
-            // });
-
             this.generateForm = new Ext.form.FormPanel({
-                // bodyStyle: "padding: 10px;",
                 autoHeight: true,
                 border: false,
-                // layout: "pimcoreform",
-                items: [this.getProcessingOptionsGrid()],
-                buttons: [this.generateButton]
+                items: [this.getProcessingOptionsGrid(), this.generateButton]
             });
 
-
             this.progressBar = Ext.create('Ext.ProgressBar', {
-                text:'Initializing...'
+                style: "margin-bottom: 10px"
             });
             this.statusUpdateBox = Ext.create('Ext.Panel', {
                 autoHeight: true,
                 border: false,
                 hidden: true,
-                items: [this.progressBar],
-                buttons: [{
+                items: [this.progressBar, {
                     xtype: 'button',
+                    style: "float: right;",
                     text: t("web2print_cancel_pdf_creation"),
                     iconCls: "pimcore_icon_cancel",
                     handler: function() {
@@ -74,32 +63,26 @@ pimcore.document.printpages.pdfpreview = Class.create({
                     }.bind(this)
                 }]
             });
-
-
-
-            var generateBox = new Ext.Panel({
+            details.push({
                 title: t("web2print_generate_pdf"),
-                expandable: true
+                expandable: true,
+                bodyStyle: "padding: 10px;",
+                border: true,
+                items: [
+                    this.generateForm, this.statusUpdateBox
+                ]
             });
 
-            generateBox.add(this.generateForm);
-            generateBox.add(this.statusUpdateBox);
-
-            details.push(generateBox);
-
+            //Download PDF Panel
             this.downloadButton = new Ext.Button({
                 text: t("web2print_download_pdf"),
                 iconCls: "pimcore_icon_download",
+                style: "float: right; margin-top: 10px",
                 handler: function () {
                     var date = new Date();
                     pimcore.helpers.download("/admin/printpage/pdf-download/download/1/id/" + this.page.id + "?time=" + date.getTime());
                 }.bind(this)
             });
-
-            var downloadBox = new Ext.Panel({
-                title: t("web2print_download_pdf")
-            });
-
             this.generatedDateField = new Ext.form.TextField({
                 readOnly: true,
                 width: "100%",
@@ -120,28 +103,14 @@ pimcore.document.printpages.pdfpreview = Class.create({
                 style: "color: red",
                 hidden: true
             });
-            downloadBox.add(new Ext.form.FormPanel({
+            details.push(new Ext.form.FormPanel({
+                title: t("web2print_download_pdf"),
                 bodyStyle: "padding: 10px;",
-                border: false,
-                // layout: "pimcoreform",
-                items: [this.generatedDateField, this.generateMessageField, this.dirtyLabel],
-                buttons: [this.downloadButton]
+                style: "padding-top: 10px",
+                border: true,
+                items: [this.generatedDateField, this.generateMessageField, this.dirtyLabel, this.downloadButton]
             }));
-            details.push(downloadBox);
 
-            this.detailsPanel = new Ext.Panel({
-                title: t("web2print_pdf-details"),
-                region: "west",
-                width: 350,
-                items: details,
-                autoScroll: true
-            });
-            // this.detailsPanel.getTopToolbar().hide();
-
-            this.detailsPanel.on("afterrender", function () {
-                // this.loadMaskDetails = new Ext.LoadMask(generateBox.getEl(), {msg: t("please_wait")});
-                // this.loadMaskDetails.enable();
-            }.bind(this));
 
             this.iframeName = 'document_pdfpreview_iframe_' + this.page.id;
 
@@ -159,7 +128,14 @@ pimcore.document.printpages.pdfpreview = Class.create({
                     border: false,
                     scrollable: false,
                     html: '<iframe src="about:blank" width="100%" frameborder="0" id="' + this.iframeName + '" name="' + this.iframeName + '"></iframe>'
-                },this.detailsPanel]
+                },{
+                    region: "west",
+                    width: 350,
+                    items: details,
+                    style: "padding-right: 10px",
+                    bodyStyle: "padding: 10px",
+                    autoScroll: true
+                }]
             });
 
             this.layout.on("resize", this.onLayoutResize.bind(this));
@@ -221,10 +197,10 @@ pimcore.document.printpages.pdfpreview = Class.create({
 
 
         this.processingOptionsGrid = Ext.create('Ext.grid.Panel', {
+            style: "padding-bottom: 10px",
             autoScroll: true,
             autoHeight: true,
             trackMouseOver: true,
-            bodyCls: "pimcore_editable_grid",
             store: this.processingOptionsStore,
             clicksToEdit: 1,
             viewConfig: {
@@ -241,6 +217,9 @@ pimcore.document.printpages.pdfpreview = Class.create({
                     dataIndex: 'label',
                     editable: false,
                     width: 120,
+                    renderer: function(value) {
+                        return t("web2print_" + value);
+                    },
                     sortable: true
                 },
                 {
@@ -384,7 +363,6 @@ pimcore.document.printpages.pdfpreview = Class.create({
 
     refresh: function () {
         if(!this.loaded)  {
-//            this.loadMask.show();
             this.checkPdfDirtyState();
             this.checkForActiveGenerateProcess();
             this.loaded = true;
@@ -402,11 +380,10 @@ pimcore.document.printpages.pdfpreview = Class.create({
                     this.statusUpdateBox.show();
 
                     if(result.statusUpdate) {
-                        this.progressBar.updateProgress(result.statusUpdate.status / 100, result.statusUpdate.statusUpdate);
+                        var text = result.statusUpdate.status + "% (" + t("web2print_" + result.statusUpdate.statusUpdate) + ")";
+                        this.progressBar.updateProgress(result.statusUpdate.status / 100, text);
                     }
 
-                    // this.detailsPanel.getTopToolbar().show();
-                    // this.loadMaskDetails.show();
                     window.setTimeout(function() {
                         this.checkForActiveGenerateProcess();
                     }.bind(this), 2000);
@@ -416,8 +393,6 @@ pimcore.document.printpages.pdfpreview = Class.create({
 
                     this.downloadButton.setDisabled(!result.downloadAvailable);
 
-                    // this.detailsPanel.getTopToolbar().hide();
-                    // this.loadMaskDetails.hide();
                     this.generatedDateField.setValue(result.date);
                     this.generateMessageField.setValue(result.message);
 

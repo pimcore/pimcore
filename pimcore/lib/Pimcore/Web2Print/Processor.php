@@ -169,6 +169,10 @@ abstract class Processor
         $this->saveJobConfigObjectFile($jobConfig);
     }
 
+    /**
+     * @param $documentId
+     * @return array
+     */
     public function getStatusUpdate($documentId) {
         $jobConfig = $this->loadJobConfigObject($documentId);
         if($jobConfig) {
@@ -177,6 +181,19 @@ abstract class Processor
                 "statusUpdate" => $jobConfig->statusUpdate
             ];
         }
+    }
+
+    /**
+     * @param $documentId
+     * @throws \Exception
+     */
+    public function cancelGeneration($documentId) {
+        $document = Document\Printpage::getById($documentId);
+        if (empty($document)) {
+            throw new \Exception("Document with id " . $documentId . " not found.");
+        }
+        Model\Tool\Lock::release($document->getLockKey());
+        Model\Tool\TmpStore::delete($document->getLockKey());
     }
 
 }

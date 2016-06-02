@@ -248,13 +248,7 @@ class Printpage extends \Pimcore\Controller\Action\Admin\Document
 
     public function cancelGenerationAction()
     {
-        $document = Document\Printpage::getById(intval($this->getParam("id")));
-        if (empty($document)) {
-            throw new \Exception("Document with id " . $this->getParam("id") . " not found.");
-        }
-
-        \Pimcore\Model\Tool\Lock::release($document->getLockKey());
-
+        Processor::getInstance()->cancelGeneration(intval($this->getParam("id")));
         $this->_helper->json(["success" => true]);
     }
 }

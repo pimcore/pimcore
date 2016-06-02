@@ -15,7 +15,7 @@
     "reference": "",
     "comment": ""
   },
-   {
+  {
     "term": "saturation",
     "definition": "Saturation",
     "context": "",
@@ -13688,14 +13688,6 @@
     "comment": ""
   },
   {
-    "term": "web2print_pdf-details",
-    "definition": "PDF Details",
-    "context": "",
-    "term_plural": "",
-    "reference": "",
-    "comment": ""
-  },
-  {
     "term": "web2print_cancel_pdf_creation",
     "definition": "Cancel PDF Creation",
     "context": "",
@@ -14014,13 +14006,149 @@
     "term_plural": "",
     "reference": "",
     "comment": ""
-  },{
+  },
+  {
     "term": "web2print_settings_save_error",
     "definition": "Web2Print settings could not be saved.",
     "context": "",
     "term_plural": "",
     "reference": "",
     "comment": ""
+  },
+  {
+    "term": "web2print_prepare_pdf_generation",
+    "definition": "Prepare PDF Generation",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_start_html_rendering",
+    "definition": "Start HTML Rendering",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_finished_html_rendering",
+    "definition": "Finished HTML Rendering",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_saved_html_file",
+    "definition": "Saved HTML File",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_pdf_conversion",
+    "definition": "PDF Conversion",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_saving_pdf_document",
+    "definition": "Save PDF Document",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_author",
+    "definition": "Author",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_title",
+    "definition": "Title",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_printermarks",
+    "definition": "Printermarks",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_links",
+    "definition": "Links",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_bookmarks",
+    "definition": "Bookmarks",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_tags",
+    "definition": "Tags",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_javaScriptMode",
+    "definition": "JavaScriptMode",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_viewerPreference",
+    "definition": "ViewerPreference",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_colorspace",
+    "definition": "Colorspace",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_encryption",
+    "definition": "Encryption",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
+  },
+  {
+    "term": "web2print_loglevel",
+    "definition": "LogLevel",
+    "context": "",
+    "term_plural": "",
+    "reference": "",
+    "comment": ""
   }
-
 ]

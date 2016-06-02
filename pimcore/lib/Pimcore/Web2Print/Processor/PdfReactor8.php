@@ -78,13 +78,10 @@ class PdfReactor8 extends Processor
 
             $processId = $pdfreactor->convertAsync($reactorConfig);
 
-            $this->updateStatus($document->getId(), 50, "started_pdf_conversion");
-
             while(!$progress->finished) {
                 $progress = $pdfreactor->getProgress($processId);
                 $this->updateStatus($document->getId(), 50 + ($progress->progress / 2), "pdf_conversion");
 
-                \Logger::info(print_r($progress, true) . " ... ");
                 \Logger::info("PDF converting progress: " . $progress->progress . "%");
                 sleep(2);
             }
@@ -111,40 +108,40 @@ class PdfReactor8 extends Processor
         $options[] = ["name" => "author", "type" => "text", "default" => ""];
         $options[] = ["name" => "title", "type" => "text", "default" => ""];
         $options[] = ["name" => "printermarks", "type" => "bool", "default" => ""];
-        $options[] = ["name" => "screenResolutionImages", "type" => "bool", "default" => false];
+        //$options[] = ["name" => "screenResolutionImages", "type" => "bool", "default" => false];
         $options[] = ["name" => "links", "type" => "bool", "default" => true];
         $options[] = ["name" => "bookmarks", "type" => "bool", "default" => true];
         $options[] = ["name" => "tags", "type" => "bool", "default" => true];
         $options[] = [
-            "name" => "prJavaScriptMode",
+            "name" => "javaScriptMode",
             "type" => "select",
             "values" => [\JavaScriptMode::ENABLED, \JavaScriptMode::DISABLED, \JavaScriptMode::ENABLED_NO_LAYOUT],
             "default" => \JavaScriptMode::ENABLED
         ];
 
         $options[] = [
-            "name" => "prViewerPreference",
+            "name" => "viewerPreference",
             "type" => "select",
             "values" => [\ViewerPreferences::PAGE_LAYOUT_SINGLE_PAGE, \ViewerPreferences::PAGE_LAYOUT_TWO_COLUMN_LEFT, \ViewerPreferences::PAGE_LAYOUT_TWO_COLUMN_RIGHT],
             "default" => \ViewerPreferences::PAGE_LAYOUT_SINGLE_PAGE
         ];
 
         $options[] = [
-            "name" => "prColorspace",
+            "name" => "colorspace",
             "type" => "select",
             "values" => [\ColorSpace::CMYK, \ColorSpace::RGB],
             "default" => \ColorSpace::CMYK
         ];
 
         $options[] = [
-            "name" => "prEncryption",
+            "name" => "encryption",
             "type" => "select",
             "values" => [\Encryption::NONE, \Encryption::TYPE_40, \Encryption::TYPE_128],
             "default" => \Encryption::NONE
         ];
 
         $options[] = [
-            "name" => "prLoglevel",
+            "name" => "loglevel",
             "type" => "select",
             "values" => [\LogLevel::FATAL, \LogLevel::WARN, \LogLevel::INFO, \LogLevel::DEBUG, \LogLevel::PERFORMANCE],
             "default" => \LogLevel::FATAL

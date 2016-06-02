@@ -67,13 +67,30 @@ class WkHtmlToPdf extends Processor
     protected function buildPdf(Document\PrintAbstract $document, $config)
     {
         $params = [];
+        $this->updateStatus($document->getId(), 10, "start_html_rendering");
         $html = $document->renderDocument($params);
         $placeholder = new \Pimcore\Placeholder();
         $html = $placeholder->replacePlaceholders($html);
 
-        file_put_contents(PIMCORE_TEMPORARY_DIRECTORY . DIRECTORY_SEPARATOR . "wkhtmltorpdf-input.html", $html);
-        $pdf = $this->fromStringToStream($html);
+        $this->updateStatus($document->getId(), 40, "finished_html_rendering");
 
+        file_put_contents(PIMCORE_TEMPORARY_DIRECTORY . DIRECTORY_SEPARATOR . "wkhtmltorpdf-input.html", $html);
+
+        $this->updateStatus($document->getId(), 45, "saved_html_file");
+
+        try {
+            $this->updateStatus($document->getId(), 50, "pdf_conversion");
+
+            $pdf = $this->fromStringToStream($html);
+
+            $this->updateStatus($document->getId(), 100, "saving_pdf_document");
+        } catch (\Exception $e) {
+            \Logger::error($e);
+            $document->setLastGenerateMessage($e->getMessage());
+            throw new \Exception("Error during REST-Request:" . $e->getMessage());
+        }
+
+        $document->setLastGenerateMessage("");
         return $pdf;
     }
 
@@ -91,9 +108,9 @@ class WkHtmlToPdf extends Processor
     public function fromStringToFile($htmlString, $dstFile = null)
     {
         $id = uniqid();
-        $tmpHtmlFile = WEB2PRINT_WKHTMLTOPDF_TEMP_PATH . "/" . $id . ".htm";
+        $tmpHtmlFile = PIMCORE_TEMPORARY_DIRECTORY . DIRECTORY_SEPARATOR . $id . ".htm";
         file_put_contents($tmpHtmlFile, $htmlString);
-        $srcUrl = $this->getTempFileUrl() . "?id=" . $id;
+        $srcUrl = $this->getTempFileUrl() . basename($tmpHtmlFile);
 
         $pdfFile = $this->convert($srcUrl, $dstFile);
 
@@ -123,9 +140,9 @@ class WkHtmlToPdf extends Processor
      */
     protected function convert($srcUrl, $dstFile = null)
     {
-        $outputFile = WEB2PRINT_WKHTMLTOPDF_TEMP_PATH . "/wkhtmltopdf.out";
+        $outputFile = PIMCORE_TEMPORARY_DIRECTORY . DIRECTORY_SEPARATOR . "wkhtmltopdf.out";
         if (empty($dstFile)) {
-            $dstFile = WEB2PRINT_WKHTMLTOPDF_TEMP_PATH . "/" . uniqid() . ".pdf";
+            $dstFile = PIMCORE_TEMPORARY_DIRECTORY . DIRECTORY_SEPARATOR . uniqid() . ".pdf";
         }
 
         if (empty($srcUrl) || empty($dstFile) || empty($this->wkhtmltopdfBin)) {
@@ -138,7 +155,7 @@ class WkHtmlToPdf extends Processor
         $output = file_get_contents($outputFile);
         @unlink($outputFile);
 
-        if ($retVal != 0 && $retVal != 2) {
+        if ($retVal != 0 && $retVal != 1) {
             throw new \Exception("wkhtmltopdf reported error (" . $retVal . "): \n" . $output . "\ncommand was:" . $cmd);
         }
 
@@ -148,8 +165,8 @@ class WkHtmlToPdf extends Processor
     public static function getTempFileUrl()
     {
         $web2printConfig = Config::getWeb2PrintConfig();
-        if ($web2printConfig->hostname) {
-            $hostname = $web2printConfig->wkhtml2pdfHostname;
+        if ($web2printConfig->wkhtml2pdfHostname) {
+            return $web2printConfig->wkhtml2pdfHostname . "/website/var/tmp/";
         } elseif (\Pimcore\Config::getSystemConfig()->general->domain) {
             $hostname = \Pimcore\Config::getSystemConfig()->general->domain;
         } else {
@@ -157,6 +174,6 @@ class WkHtmlToPdf extends Processor
         }
 
         $protocol = $_SERVER['HTTPS'] == 'on' ? 'https' : 'http';
-        return $protocol . "://" . $hostname . "/plugin/Web2Print/temp-file/get";
+        return $protocol . "://" . $hostname . "/website/var/tmp/";
     }
 }
