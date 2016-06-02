@@ -131,6 +131,8 @@ class Console
             }
             putenv("COMPOSER_HOME=" . $composerHome);
         }
+
+        putenv("COMPOSER_DISABLE_XDEBUG_WARN=true");
     }
 
     /**
