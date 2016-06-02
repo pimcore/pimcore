@@ -50,7 +50,7 @@ class Service extends Model\Element\Service
 
         // avoid recursion
         if (!$this->_copyRecursiveIds) {
-            $this->_copyRecursiveIds = array();
+            $this->_copyRecursiveIds = [];
         }
         if (in_array($source->getId(), $this->_copyRecursiveIds)) {
             return;
@@ -228,7 +228,7 @@ class Service extends Model\Element\Service
             return $metadata;
         }
 
-        $result = array();
+        $result = [];
         foreach ($metadata as $item) {
             $type = $item["type"];
             switch ($type) {
@@ -263,7 +263,7 @@ class Service extends Model\Element\Service
             return $metadata;
         }
 
-        $result = array();
+        $result = [];
         foreach ($metadata as $item) {
             $type = $item["type"];
             switch ($type) {
@@ -327,9 +327,9 @@ class Service extends Model\Element\Service
         }
 
         if (!$item->getId()) {
-            $list->setCondition('parentId = ? AND `filename` = ? ', array($parent->getId(), $key));
+            $list->setCondition('parentId = ? AND `filename` = ? ', [$parent->getId(), $key]);
         } else {
-            $list->setCondition('parentId = ? AND `filename` = ? AND id != ? ', array($parent->getId(), $key, $item->getId()));
+            $list->setCondition('parentId = ? AND `filename` = ? AND id != ? ', [$parent->getId(), $key, $item->getId()]);
         }
         $check = $list->loadIdList();
         if (!empty($check)) {

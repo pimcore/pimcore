@@ -30,7 +30,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     {
         $redirectsData = $this->db->fetchCol("SELECT id FROM redirects" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
-        $redirects = array();
+        $redirects = [];
         foreach ($redirectsData as $redirectData) {
             $redirects[] = Model\Redirect::getById($redirectData);
         }

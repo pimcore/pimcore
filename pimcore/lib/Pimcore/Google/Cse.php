@@ -30,7 +30,7 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
      * @param null $facet
      * @return Cse
      */
-    public static function search($query, $offset = 0, $perPage = 10, array $config = array(), $facet = null)
+    public static function search($query, $offset = 0, $perPage = 10, array $config = [], $facet = null)
     {
         $list = new self();
         $list->setConfig($config);
@@ -93,7 +93,7 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
                 } else {
                     if (!$result = Cache::load($cacheKey)) {
                         $result = $search->cse->listCse($query, $config);
-                        Cache::save($result, $cacheKey, array("google_cse"), 3600, 999);
+                        Cache::save($result, $cacheKey, ["google_cse"], 3600, 999);
                         \Zend_Registry::set($cacheKey, $result);
                     }
                 }
@@ -103,7 +103,7 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
                 return $this->getResults(false);
             }
 
-            return array();
+            return [];
         } else {
             throw new \Exception("Google Simple API Key is not configured in System-Settings.");
         }
@@ -112,7 +112,7 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
     /**
      * @var array
      */
-    public $results = array();
+    public $results = [];
 
     /**
      * @var int
@@ -132,7 +132,7 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
     /**
      * @var array
      */
-    public $config = array();
+    public $config = [];
 
     /**
      * @var string
@@ -142,12 +142,12 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
     /**
      * @var array
      */
-    public $raw = array();
+    public $raw = [];
 
     /**
      * @var array
      */
-    public $facets = array();
+    public $facets = [];
 
 
     /**
@@ -171,7 +171,7 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
         // available factes
         if (array_key_exists("context", $googleResponse) && is_array($googleResponse["context"])) {
             if (array_key_exists("facets", $googleResponse["context"]) && is_array($googleResponse["context"]["facets"])) {
-                $facets = array();
+                $facets = [];
                 foreach ($googleResponse["context"]["facets"] as $facet) {
                     $facets[$facet[0]["label"]] = $facet[0]["anchor"];
                 }
@@ -180,7 +180,7 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
         }
 
         // results incl. promotions, search results, ...
-        $items = array();
+        $items = [];
 
         // set promotions
         if (array_key_exists("promotions", $googleResponse) && is_array($googleResponse["promotions"])) {

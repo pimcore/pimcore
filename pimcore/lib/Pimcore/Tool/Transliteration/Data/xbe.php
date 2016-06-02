@@ -1,6 +1,6 @@
 <?php
 
-$base = array(
+$base = [
   0x00 => 'byum', 'byub', 'byubs', 'byus', 'byuss', 'byung', 'byuj', 'byuc', 'byuk', 'byut', 'byup', 'byuh', 'beu', 'beug', 'beugg', 'beugs',
   0x10 => 'beun', 'beunj', 'beunh', 'beud', 'beul', 'beulg', 'beulm', 'beulb', 'beuls', 'beult', 'beulp', 'beulh', 'beum', 'beub', 'beubs', 'beus',
   0x20 => 'beuss', 'beung', 'beuj', 'beuc', 'beuk', 'beut', 'beup', 'beuh', 'byi', 'byig', 'byigg', 'byigs', 'byin', 'byinj', 'byinh', 'byid',
@@ -17,4 +17,4 @@ $base = array(
   0xD0 => 'bbeo', 'bbeog', 'bbeogg', 'bbeogs', 'bbeon', 'bbeonj', 'bbeonh', 'bbeod', 'bbeol', 'bbeolg', 'bbeolm', 'bbeolb', 'bbeols', 'bbeolt', 'bbeolp', 'bbeolh',
   0xE0 => 'bbeom', 'bbeob', 'bbeobs', 'bbeos', 'bbeoss', 'bbeong', 'bbeoj', 'bbeoc', 'bbeok', 'bbeot', 'bbeop', 'bbeoh', 'bbe', 'bbeg', 'bbegg', 'bbegs',
   0xF0 => 'bben', 'bbenj', 'bbenh', 'bbed', 'bbel', 'bbelg', 'bbelm', 'bbelb', 'bbels', 'bbelt', 'bbelp', 'bbelh', 'bbem', 'bbeb', 'bbebs', 'bbes',
-);
+];

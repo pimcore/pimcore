@@ -98,7 +98,7 @@ class Cache extends \Zend_Controller_Plugin_Abstract
     public function routeStartup(\Zend_Controller_Request_Abstract $request)
     {
         $requestUri = $request->getRequestUri();
-        $excludePatterns = array();
+        $excludePatterns = [];
 
         // only enable GET method
         if (!$request->isGet()) {
@@ -246,12 +246,12 @@ class Cache extends \Zend_Controller_Plugin_Abstract
                 }
 
                 $now = new \DateTime("now");
-                $cacheItem = array(
+                $cacheItem = [
                     "headers" => $this->getResponse()->getHeaders(),
                     "rawHeaders" => $this->getResponse()->getRawHeaders(),
                     "content" => $this->getResponse()->getBody(),
                     "date" => $now->format(\DateTime::ISO8601)
-                );
+                ];
 
                 $cacheKey = $this->defaultCacheKey;
                 $deviceDetector = Tool\DeviceDetector::getInstance();
@@ -259,7 +259,7 @@ class Cache extends \Zend_Controller_Plugin_Abstract
                     $cacheKey .= "_" . $deviceDetector->getDevice();
                 }
 
-                CacheManager::save($cacheItem, $cacheKey, array("output"), $this->lifetime, 1000);
+                CacheManager::save($cacheItem, $cacheKey, ["output"], $this->lifetime, 1000);
             } catch (\Exception $e) {
                 \Logger::error($e);
                 return;

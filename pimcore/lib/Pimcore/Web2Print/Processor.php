@@ -21,22 +21,23 @@ use \Pimcore\Model\Document;
 use Pimcore\Web2Print\Processor\PdfReactor8;
 use Pimcore\Web2Print\Processor\WkHtmlToPdf;
 
-abstract class Processor {
-
+abstract class Processor
+{
     public $documentId = -1;
-    public $config = array();
+    public $config = [];
     public $processId = "";
 
     /**
      * @return PdfReactor8|WkHtmlToPdf
      * @throws \Exception
      */
-    public static function getInstance() {
+    public static function getInstance()
+    {
         $config = Config::getWeb2PrintConfig();
 
-        if($config->generalTool == "pdfreactor") {
+        if ($config->generalTool == "pdfreactor") {
             return new PdfReactor8();
-        } else if($config->generalTool == "wkhtmltopdf") {
+        } elseif ($config->generalTool == "wkhtmltopdf") {
             return new WkHtmlToPdf();
         } else {
             throw new \Exception("Invalid Configuation");
@@ -48,7 +49,8 @@ abstract class Processor {
      * @param $config
      * @throws \Exception
      */
-    public function preparePdfGeneration($documentId, $config) {
+    public function preparePdfGeneration($documentId, $config)
+    {
         $this->documentId = $documentId;
         $this->config = $config;
         $this->processId = uniqid();
@@ -58,7 +60,7 @@ abstract class Processor {
 
         \Logger::info($cmd);
 
-        if(!$config['disableBackgroundExecution']){
+        if (!$config['disableBackgroundExecution']) {
             Tool\Console::execInBackground($cmd, PIMCORE_LOG_DIRECTORY . DIRECTORY_SEPARATOR . "web2print-output.log");
         } else {
             Processor::getInstance()->startPdfGeneration($this->processId);
@@ -69,7 +71,8 @@ abstract class Processor {
      * @param $processId
      * @throws \Exception
      */
-    public function startPdfGeneration($processId) {
+    public function startPdfGeneration($processId)
+    {
         $this->loadJobConfigObject($processId);
 
         $document = $this->getPrintDocument();
@@ -83,8 +86,7 @@ abstract class Processor {
             $creationDate = \Zend_Date::now();
             $document->setLastGenerated(($creationDate->get() + 1));
             $document->save();
-
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $document->save();
             \Logger::err($e);
         }
@@ -99,13 +101,14 @@ abstract class Processor {
      * @param $config
      * @return mixed
      */
-    protected abstract function buildPdf(Document\PrintAbstract $document, $config);
+    abstract protected function buildPdf(Document\PrintAbstract $document, $config);
 
 
     /**
      * @return bool
      */
-    protected function saveJobConfigObjectFile() {
+    protected function saveJobConfigObjectFile()
+    {
         file_put_contents($this->getJobConfigFile($this->processId), json_encode($this->getJobConfigObject()));
         return true;
     }
@@ -113,7 +116,8 @@ abstract class Processor {
     /**
      * @return \stdClass
      */
-    protected function getJobConfigObject() {
+    protected function getJobConfigObject()
+    {
         $config = new \stdClass();
         $config->documentId = $this->documentId;
         $config->config = $this->config;
@@ -125,7 +129,8 @@ abstract class Processor {
     /**
      * @param $config
      */
-    protected function loadJobConfigObject($processId) {
+    protected function loadJobConfigObject($processId)
+    {
         $config = json_decode(file_get_contents($this->getJobConfigFile($processId)));
         $this->documentId = $config->documentId;
         $this->config = $config->config;
@@ -136,9 +141,10 @@ abstract class Processor {
      * @return Document\PrintAbstract
      * @throws \Exception
      */
-    protected function getPrintDocument() {
+    protected function getPrintDocument()
+    {
         $document = Document\Printpage::getById($this->documentId);
-        if(empty($document)) {
+        if (empty($document)) {
             throw new \Exception("PrintDocument with " . $this->documentId . " not found.");
         }
         return $document;
@@ -148,13 +154,13 @@ abstract class Processor {
      * @param $processId
      * @return string
      */
-    public static function getJobConfigFile ($processId) {
+    public static function getJobConfigFile($processId)
+    {
         return PIMCORE_SYSTEM_TEMP_DIRECTORY . DIRECTORY_SEPARATOR . "pdf-creation-job-" . $processId . ".json";
     }
 
     /**
      * @return array
      */
-    public abstract function getProcessingOptions();
-
+    abstract public function getProcessingOptions();
 }

@@ -49,7 +49,7 @@ class Dao extends Model\Dao\AbstractDao
 
         $fieldDefinitions = $this->model->getDefinition()->getFieldDefinitions();
 
-        $data = array();
+        $data = [];
         $data["o_id"] = $object->getId();
         $data["fieldname"] = $this->model->getFieldname();
 
@@ -84,7 +84,7 @@ class Dao extends Model\Dao\AbstractDao
         // $tableName = $this->model->getDefinition()->getTableName($object->getClass(), true);
         // this is special because we have to call each getter to get the inherited values from a possible parent object
 
-        $data = array();
+        $data = [];
         $data["o_id"] = $object->getId();
         $data["fieldname"] = $this->model->getFieldname();
 
@@ -260,7 +260,7 @@ class Dao extends Model\Dao\AbstractDao
         }
 
 
-        $params = array($field, $id, $field, $id, $field, $id);
+        $params = [$field, $id, $field, $id, $field, $id];
 
         $dest = "dest_id";
         $src = "src_id";
@@ -298,7 +298,7 @@ class Dao extends Model\Dao\AbstractDao
         if (is_array($relations) and count($relations) > 0) {
             return $relations;
         } else {
-            return array();
+            return [];
         }
     }
 }

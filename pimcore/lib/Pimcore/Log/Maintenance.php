@@ -48,7 +48,7 @@ class Maintenance
                                     $fileModified = filemtime(PIMCORE_LOG_MAIL_TEMP."/".$file);
                                     \Logger::debug(get_class($this).": file is writeable and was last modified: ".$fileModified);
                                     if ($fileModified!==false and $fileModified<($now-$threshold)) {
-                                        $mail = Tool::getMail(array($email), "pimcore log notification - ".$file);
+                                        $mail = Tool::getMail([$email], "pimcore log notification - ".$file);
                                         $mail->setIgnoreDebugMode(true);
                                         $mail->setBodyText(file_get_contents(PIMCORE_LOG_MAIL_TEMP."/".$file));
                                         $mail->send();
@@ -98,7 +98,7 @@ class Maintenance
         $logFile = PIMCORE_LOG_DIRECTORY . "/usagelog.log";
         if (is_file($logFile) && filesize($logFile) > 200000) {
             $data = gzencode(file_get_contents($logFile));
-            $response = Tool::getHttpData("https://www.pimcore.org/usage-statistics/", array(), array("data" => $data));
+            $response = Tool::getHttpData("https://www.pimcore.org/usage-statistics/", [], ["data" => $data]);
             if (strpos($response, "true") !== false) {
                 @unlink($logFile);
                 \Logger::debug("Usage statistics are transmitted and logfile was cleaned");
@@ -151,7 +151,7 @@ class Maintenance
             $rowCount = count($rows);
             if ($rowCount) {
                 while ($rowsProcessed < $rowCount) {
-                    $entries = array();
+                    $entries = [];
 
                     if ($rowCount <= $limit) {
                         $entries = $rows;

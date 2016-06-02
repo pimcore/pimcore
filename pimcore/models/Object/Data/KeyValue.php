@@ -35,7 +35,7 @@ class KeyValue extends Model\AbstractModel
     /**
      * @var array
      */
-    public $arr = array();
+    public $arr = [];
 
     /** Whether multivalent values are allowed.
      * @var
@@ -107,7 +107,7 @@ class KeyValue extends Model\AbstractModel
      */
     public function setProperties($arr)
     {
-        $newProperties = array();
+        $newProperties = [];
         foreach ($arr as $key => $pair) {
             if (!$pair["inherited"]) {
                 $newProperties[] = $pair;
@@ -132,7 +132,7 @@ class KeyValue extends Model\AbstractModel
      */
     public function getKeyvaluepairsByGroup($groupName)
     {
-        $data = array();
+        $data = [];
         $group = Object\KeyValue\GroupConfig::getByName($groupName);
         if (!empty($group)) {
             $properties = $this->getProperties();
@@ -151,14 +151,14 @@ class KeyValue extends Model\AbstractModel
      */
     public function getProperties($forEditMode = false)
     {
-        $result = array();
+        $result = [];
         $object = Object::getById($this->objectId);
         if (!$object) {
             throw new \Exception('Object with Id '. $this->objectId .' not found');
         }
         $objectName = $object->getKey();
 
-        $internalKeys = array();
+        $internalKeys = [];
         foreach ($this->arr as $pair) {
             $pair["inherited"] = false;
             $pair["source"] = $object->getId();
@@ -174,7 +174,7 @@ class KeyValue extends Model\AbstractModel
             $kv = $parent->getKeyvaluepairs();
             $parentProperties = $kv ? $kv->getInternalProperties() : [];
 
-            $addedKeys = array();
+            $addedKeys = [];
 
             foreach ($parentProperties as $parentPair) {
                 $parentKeyId = $parentPair["key"];
@@ -269,7 +269,7 @@ class KeyValue extends Model\AbstractModel
     {
         $keyId =  $this->getKeyId($propName, $groupId);
 
-        $result = array();
+        $result = [];
         // the key name is valid, now iterate over the object's pairs
         $propsWithInheritance = $this->getProperties();
         foreach ($propsWithInheritance as $pair) {
@@ -311,7 +311,7 @@ class KeyValue extends Model\AbstractModel
             }
         }
 
-        $pair = array();
+        $pair = [];
         $pair["key"] = $keyId;
         $pair["value"] = $value;
         $this->arr[] = $pair;
@@ -384,7 +384,7 @@ class KeyValue extends Model\AbstractModel
      */
     public function getEntryByKeyId($keyId)
     {
-        $result = array();
+        $result = [];
         foreach ($this->getProperties() as $property) {
             if ($property['key'] == $keyId) {
                 $result[] = new Object\Data\KeyValue\Entry($property["value"], $property["translated"], $property["metadata"]);
@@ -422,7 +422,7 @@ class KeyValue extends Model\AbstractModel
      */
     public function setValueWithKeyId($keyId, $value)
     {
-        $cleanedUpValues = array();
+        $cleanedUpValues = [];
         foreach ($this->arr as $entry) {
             if ($entry['key'] != $keyId) {
                 $cleanedUpValues[] = $entry;
@@ -431,11 +431,11 @@ class KeyValue extends Model\AbstractModel
         $this->arr = $cleanedUpValues;
 
         if (!is_array($value)) {
-            $value = array($value);
+            $value = [$value];
         }
 
         foreach ($value as $v) {
-            $pair = array();
+            $pair = [];
             $pair["key"] = $keyId;
             $pair["value"] = $v;
             $pair["translated"] = $this->getTranslatedValue($keyId, $v);

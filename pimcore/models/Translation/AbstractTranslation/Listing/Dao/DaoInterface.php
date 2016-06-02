@@ -18,7 +18,6 @@ namespace Pimcore\Model\Translation\AbstractTranslation\Listing\Dao;
 
 interface DaoInterface
 {
-
     public static function getTableName();
 
     public static function getItemClass();

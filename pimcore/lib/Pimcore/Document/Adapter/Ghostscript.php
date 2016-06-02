@@ -112,7 +112,7 @@ class Ghostscript extends Adapter
      */
     public function getPdf($path = null)
     {
-        if($path) {
+        if ($path) {
             $path = $this->preparePath($path);
         }
 
@@ -154,14 +154,14 @@ class Ghostscript extends Adapter
     {
         try {
             $realTargetPath = null;
-            if(!stream_is_local($path)) {
+            if (!stream_is_local($path)) {
                 $realTargetPath = $path;
                 $path = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/ghostscript-tmp-" . uniqid() . "." . File::getFileExtension($path);
             }
 
             Console::exec(self::getGhostscriptCli() . " -sDEVICE=png16m -dFirstPage=" . $page . " -dLastPage=" . $page . " -r" . $resolution . " -o " . $path . " " . $this->path, null, 240);
 
-            if($realTargetPath) {
+            if ($realTargetPath) {
                 File::rename($path, $realTargetPath);
             }
 

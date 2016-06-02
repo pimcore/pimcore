@@ -61,7 +61,7 @@ class Video
      */
     public static function getDefaultAdapter()
     {
-        $adapters = array("Ffmpeg");
+        $adapters = ["Ffmpeg"];
 
         foreach ($adapters as $adapter) {
             $adapterClass = "\\Pimcore\\Video\\Adapter\\" . $adapter;

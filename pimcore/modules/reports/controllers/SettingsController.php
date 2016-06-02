@@ -16,17 +16,16 @@ use Pimcore\File;
 
 class Reports_SettingsController extends \Pimcore\Controller\Action\Admin\Reports
 {
-
     public function getAction()
     {
         $this->checkPermission("system_settings");
 
         $conf = $this->getConfig();
 
-        $response = array(
+        $response = [
             "values" => $conf->toArray(),
-            "config" => array()
-        );
+            "config" => []
+        ];
 
         $this->_helper->json($response);
     }
@@ -40,6 +39,6 @@ class Reports_SettingsController extends \Pimcore\Controller\Action\Admin\Report
         $configFile = \Pimcore\Config::locateConfigFile("reports.php");
         File::putPhpFile($configFile, to_php_data_file_format($values));
 
-        $this->_helper->json(array("success" => true));
+        $this->_helper->json(["success" => true]);
     }
 }

@@ -31,7 +31,7 @@ class Dao extends Model\Dao\AbstractDao
         $name = $this->model->getName();
         $raw = null;
         if ($cid) {
-            $data = $this->db->fetchRow("SELECT * FROM properties WHERE type=? AND cid = ? AND name=?", array($type, $cid, $name));
+            $data = $this->db->fetchRow("SELECT * FROM properties WHERE type=? AND cid = ? AND name=?", [$type, $cid, $name]);
             $raw = $data['data'];
         }
         return $raw;
@@ -59,7 +59,7 @@ class Dao extends Model\Dao\AbstractDao
             $data = \Pimcore\Tool\Serialize::serialize($data);
         }
 
-        $saveData = array(
+        $saveData = [
             "cid" => $this->model->getCid(),
             "ctype" => $this->model->getCtype(),
             "cpath" => $this->model->getCpath(),
@@ -67,7 +67,7 @@ class Dao extends Model\Dao\AbstractDao
             "type" => $this->model->getType(),
             "inheritable" => (int)$this->model->getInheritable(),
             "data" => $data
-        );
+        ];
 
         $this->db->insertOrUpdate("properties", $saveData);
     }

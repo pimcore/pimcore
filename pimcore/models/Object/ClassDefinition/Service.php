@@ -202,7 +202,7 @@ class Service
 
                 if (method_exists($item, "addChild")) { // allows childs
 
-                    $item->setValues($array, array("childs"));
+                    $item->setValues($array, ["childs"]);
 
                     if (is_array($array) && is_array($array["childs"]) && $array["childs"]["datatype"]) {
                         $childO = self::generateLayoutTreeFromArray($array["childs"], $throwException);
@@ -240,11 +240,11 @@ class Service
     public static function updateTableDefinitions(&$tableDefinitions, $tableNames)
     {
         if (!is_array($tableDefinitions)) {
-            $tableDefinitions = array();
+            $tableDefinitions = [];
         }
 
         $db = \Pimcore\Db::get();
-        $tmp = array();
+        $tmp = [];
         foreach ($tableNames as $tableName) {
             $tmp[$tableName] = $db->fetchAll("show columns from " . $tableName);
         }

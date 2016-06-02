@@ -229,7 +229,7 @@ class Slider extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return float
      */
-    public function getDataForResource($data, $object = null, $params = array())
+    public function getDataForResource($data, $object = null, $params = [])
     {
         return (float) $data;
     }
@@ -241,7 +241,7 @@ class Slider extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return float
      */
-    public function getDataFromResource($data, $object = null, $params = array())
+    public function getDataFromResource($data, $object = null, $params = [])
     {
         return (float) $data;
     }
@@ -253,7 +253,7 @@ class Slider extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return float
      */
-    public function getDataForQueryResource($data, $object = null, $params = array())
+    public function getDataForQueryResource($data, $object = null, $params = [])
     {
         return $data;
     }
@@ -265,7 +265,7 @@ class Slider extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return float
      */
-    public function getDataForEditmode($data, $object = null, $params = array())
+    public function getDataForEditmode($data, $object = null, $params = [])
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -277,7 +277,7 @@ class Slider extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return float
      */
-    public function getDataFromEditmode($data, $object = null, $params = array())
+    public function getDataFromEditmode($data, $object = null, $params = [])
     {
         return $this->getDataFromResource($data, $object, $params);
     }
@@ -289,7 +289,7 @@ class Slider extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return float
      */
-    public function getVersionPreview($data, $object = null, $params = array())
+    public function getVersionPreview($data, $object = null, $params = [])
     {
         return $data;
     }
@@ -318,7 +318,7 @@ class Slider extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return bool
      */
-    public function isDiffChangeAllowed($object, $params = array())
+    public function isDiffChangeAllowed($object, $params = [])
     {
         return true;
     }

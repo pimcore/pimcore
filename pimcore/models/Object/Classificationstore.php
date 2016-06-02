@@ -25,7 +25,7 @@ class Classificationstore extends Model\AbstractModel
     /**
      * @var array
      */
-    public $items = array();
+    public $items = [];
 
     /**
      * @var Model\Object\Concrete
@@ -41,7 +41,7 @@ class Classificationstore extends Model\AbstractModel
     public $fieldname;
 
     /** @var  array */
-    public $activeGroups = array();
+    public $activeGroups = [];
 
     /** @var  array */
     public $groupCollectionMapping;
@@ -253,7 +253,7 @@ class Classificationstore extends Model\AbstractModel
             $data = new Model\Object\Data\CalculatedValue($this->getFieldname());
             $childDef = Model\Object\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
             $data->setContextualData("classificationstore", $this->getFieldname(), null, $language, $groupId, $keyId, $childDef);
-            $data = Model\Object\Service::getCalculatedFieldValueForEditMode($this->getObject(), array(), $data);
+            $data = Model\Object\Service::getCalculatedFieldValueForEditMode($this->getObject(), [], $data);
             return $data;
         }
 
@@ -312,11 +312,11 @@ class Classificationstore extends Model\AbstractModel
 
 
         if ($fieldDefinition && method_exists($fieldDefinition, "preGetData")) {
-            $data =  $fieldDefinition->preGetData($this, array(
+            $data =  $fieldDefinition->preGetData($this, [
                 "data" => $data,
                 "language" => $language,
                 "name" => $groupId . "-" . $keyId
-            ));
+            ]);
         }
 
         return $data;

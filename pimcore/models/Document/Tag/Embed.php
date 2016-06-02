@@ -43,9 +43,9 @@ class Embed extends Model\Document\Tag
      */
     public function getData()
     {
-        return array(
+        return [
             "url" => $this->url
-        );
+        ];
     }
 
     /**
@@ -53,9 +53,9 @@ class Embed extends Model\Document\Tag
      */
     public function getDataForResource()
     {
-        return array(
+        return [
             "url" => $this->url
-        );
+        ];
     }
 
     /**
@@ -152,7 +152,7 @@ class Embed extends Model\Document\Tag
      * @param null $idMapper
      * @throws \Exception
      */
-    public function getFromWebserviceImport($wsElement, $document = null, $params = array(), $idMapper = null)
+    public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
     {
         $data = $wsElement->value;
         if ($data->url) {

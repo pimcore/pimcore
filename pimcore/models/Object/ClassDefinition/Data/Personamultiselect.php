@@ -40,12 +40,12 @@ class Personamultiselect extends Model\Object\ClassDefinition\Data\Multiselect
         $list->setOrderKey("name");
         $personas = $list->load();
 
-        $options = array();
+        $options = [];
         foreach ($personas as $persona) {
-            $options[] = array(
+            $options[] = [
                 "value" => $persona->getId(),
                 "key" => $persona->getName()
-            );
+            ];
         }
 
         $this->setOptions($options);

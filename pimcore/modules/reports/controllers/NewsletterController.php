@@ -19,7 +19,6 @@ use Pimcore\Model\Object;
 
 class Reports_NewsletterController extends \Pimcore\Controller\Action\Admin\Reports
 {
-
     public function init()
     {
         parent::init();
@@ -35,10 +34,10 @@ class Reports_NewsletterController extends \Pimcore\Controller\Action\Admin\Repo
         $items = $list->load();
 
         foreach ($items as $item) {
-            $letters[] = array(
+            $letters[] = [
                 "id" => $item->getName(),
                 "text" => $item->getName()
-            );
+            ];
         }
 
         $this->_helper->json($letters);
@@ -58,7 +57,7 @@ class Reports_NewsletterController extends \Pimcore\Controller\Action\Admin\Repo
             $success = true;
         }
 
-        $this->_helper->json(array("success" => $success, "id" => $letter->getName()));
+        $this->_helper->json(["success" => $success, "id" => $letter->getName()]);
     }
 
     public function deleteAction()
@@ -66,7 +65,7 @@ class Reports_NewsletterController extends \Pimcore\Controller\Action\Admin\Repo
         $letter = Newsletter\Config::getByName($this->getParam("name"));
         $letter->delete();
 
-        $this->_helper->json(array("success" => true));
+        $this->_helper->json(["success" => true]);
     }
 
 
@@ -81,7 +80,7 @@ class Reports_NewsletterController extends \Pimcore\Controller\Action\Admin\Repo
         // get available classes
         $classList = new Object\ClassDefinition\Listing();
 
-        $availableClasses = array();
+        $availableClasses = [];
         foreach ($classList->load() as $class) {
             $fieldCount = 0;
             foreach ($class->getFieldDefinitions() as $fd) {
@@ -93,7 +92,7 @@ class Reports_NewsletterController extends \Pimcore\Controller\Action\Admin\Repo
             }
 
             if ($fieldCount >= 3) {
-                $availableClasses[] = array($class->getName(), $class->getName());
+                $availableClasses[] = [$class->getName(), $class->getName()];
             }
         }
 
@@ -122,7 +121,7 @@ class Reports_NewsletterController extends \Pimcore\Controller\Action\Admin\Repo
 
         $letter->save();
 
-        $this->_helper->json(array("success" => true));
+        $this->_helper->json(["success" => true]);
     }
 
     public function checksqlAction()
@@ -133,7 +132,7 @@ class Reports_NewsletterController extends \Pimcore\Controller\Action\Admin\Repo
             $className = "\\Pimcore\\Model\\Object\\" . ucfirst($this->getParam("class")) . "\\Listing";
             $list = new $className();
 
-            $conditions = array("(newsletterActive = 1 AND newsletterConfirmed = 1)");
+            $conditions = ["(newsletterActive = 1 AND newsletterConfirmed = 1)"];
             if ($this->getParam("objectFilterSQL")) {
                 $conditions[] = $this->getParam("objectFilterSQL");
             }
@@ -144,10 +143,10 @@ class Reports_NewsletterController extends \Pimcore\Controller\Action\Admin\Repo
         } catch (\Exception $e) {
         }
 
-        $this->_helper->json(array(
+        $this->_helper->json([
             "count" => $count,
             "success" => $success
-        ));
+        ]);
     }
 
     public function getSendStatusAction()
@@ -158,10 +157,10 @@ class Reports_NewsletterController extends \Pimcore\Controller\Action\Admin\Repo
             $data = Tool\Serialize::unserialize(file_get_contents($letter->getPidFile()));
         }
 
-        $this->_helper->json(array(
+        $this->_helper->json([
             "data" => $data,
             "success" => true
-        ));
+        ]);
     }
 
     public function stopSendAction()
@@ -171,9 +170,9 @@ class Reports_NewsletterController extends \Pimcore\Controller\Action\Admin\Repo
             @unlink($letter->getPidFile());
         }
 
-        $this->_helper->json(array(
+        $this->_helper->json([
             "success" => true
-        ));
+        ]);
     }
 
     public function sendAction()
@@ -183,7 +182,7 @@ class Reports_NewsletterController extends \Pimcore\Controller\Action\Admin\Repo
             Tool\Console::runPhpScriptInBackground(realpath(PIMCORE_PATH . DIRECTORY_SEPARATOR . "cli" . DIRECTORY_SEPARATOR . "console.php"), "internal:newsletter-send " . escapeshellarg($letter->getName()) . " " . escapeshellarg(Tool::getHostUrl()));
         }
 
-        $this->_helper->json(array("success" => true));
+        $this->_helper->json(["success" => true]);
     }
 
     public function sendTestAction()
@@ -213,6 +212,6 @@ class Reports_NewsletterController extends \Pimcore\Controller\Action\Admin\Repo
 
         Tool\Newsletter::sendMail($letter, $object, $letter->getTestEmailAddress());
 
-        $this->_helper->json(array("success" => true));
+        $this->_helper->json(["success" => true]);
     }
 }

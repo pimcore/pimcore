@@ -7,7 +7,6 @@
  */
 class Test_BaseRest extends Test_Base
 {
-
     protected static $testConfig;
 
     public static function getRestClient()

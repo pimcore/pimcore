@@ -18,11 +18,10 @@ namespace Pimcore\Model\Webservice;
 
 class JsonEncoder
 {
-
     public function encode($data, $returnData = false)
     {
         $data = \Pimcore\Tool\Serialize::removeReferenceLoops($data);
-        $data = \Zend_Json::encode($data, null, array());
+        $data = \Zend_Json::encode($data, null, []);
 
         if ($returnData) {
             return $data;

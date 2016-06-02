@@ -111,7 +111,7 @@ class Image extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return integer|null
      */
-    public function getDataForResource($data, $object = null, $params = array())
+    public function getDataForResource($data, $object = null, $params = [])
     {
         if ($data instanceof Asset) {
             return $data->getId();
@@ -126,7 +126,7 @@ class Image extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return Asset
      */
-    public function getDataFromResource($data, $object = null, $params = array())
+    public function getDataFromResource($data, $object = null, $params = [])
     {
         if (intval($data) > 0) {
             return Asset\Image::getById($data);
@@ -141,7 +141,7 @@ class Image extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return integer|null
      */
-    public function getDataForQueryResource($data, $object = null, $params = array())
+    public function getDataForQueryResource($data, $object = null, $params = [])
     {
         if ($data instanceof Asset) {
             return $data->getId();
@@ -156,7 +156,7 @@ class Image extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return integer
      */
-    public function getDataForEditmode($data, $object = null, $params = array())
+    public function getDataForEditmode($data, $object = null, $params = [])
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -168,7 +168,7 @@ class Image extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return Asset
      */
-    public function getDataFromEditmode($data, $object = null, $params = array())
+    public function getDataFromEditmode($data, $object = null, $params = [])
     {
         return $this->getDataFromResource($data, $object, $params);
     }
@@ -180,7 +180,7 @@ class Image extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getVersionPreview($data, $object = null, $params = array())
+    public function getVersionPreview($data, $object = null, $params = [])
     {
         if ($data instanceof Asset\Image) {
             return '<img src="/admin/asset/get-image-thumbnail/id/' . $data->getId() . '/width/100/height/100/aspectratio/true" />';
@@ -194,7 +194,7 @@ class Image extends Model\Object\ClassDefinition\Data
      * @param array $params
      * @return string
      */
-    public function getForCsvExport($object, $params = array())
+    public function getForCsvExport($object, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof Element\ElementInterface) {
@@ -210,7 +210,7 @@ class Image extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return mixed|null|Asset
      */
-    public function getFromCsvImport($importValue, $object = null, $params = array())
+    public function getFromCsvImport($importValue, $object = null, $params = [])
     {
         $value = null;
         if ($el = Asset::getByPath($importValue)) {
@@ -228,9 +228,9 @@ class Image extends Model\Object\ClassDefinition\Data
      * @param array $tags
      * @return array
      */
-    public function getCacheTags($data, $tags = array())
+    public function getCacheTags($data, $tags = [])
     {
-        $tags = is_array($tags) ? $tags : array();
+        $tags = is_array($tags) ? $tags : [];
 
         if ($data instanceof Asset\Image) {
             if (!array_key_exists($data->getCacheTag(), $tags)) {
@@ -246,13 +246,13 @@ class Image extends Model\Object\ClassDefinition\Data
      */
     public function resolveDependencies($data)
     {
-        $dependencies = array();
+        $dependencies = [];
 
         if ($data instanceof Asset) {
-            $dependencies["asset_" . $data->getId()] = array(
+            $dependencies["asset_" . $data->getId()] = [
                 "id" => $data->getId(),
                 "type" => "asset"
-            );
+            ];
         }
 
         return $dependencies;
@@ -265,7 +265,7 @@ class Image extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return mixed
      */
-    public function getForWebserviceExport($object, $params = array())
+    public function getForWebserviceExport($object, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof Asset) {
@@ -282,7 +282,7 @@ class Image extends Model\Object\ClassDefinition\Data
      * @return mixed|void
      * @throws \Exception
      */
-    public function getFromWebserviceImport($value, $relatedObject = null, $params = array(), $idMapper = null)
+    public function getFromWebserviceImport($value, $relatedObject = null, $params = [], $idMapper = null)
     {
         $id = $value;
 
@@ -328,7 +328,7 @@ class Image extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return bool
      */
-    public function isDiffChangeAllowed($object, $params = array())
+    public function isDiffChangeAllowed($object, $params = [])
     {
         return true;
     }
@@ -340,7 +340,7 @@ class Image extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return array|string
      */
-    public function getDiffVersionPreview($data, $object = null, $params = array())
+    public function getDiffVersionPreview($data, $object = null, $params = [])
     {
         $versionPreview = null;
         if ($data instanceof Asset\Image) {
@@ -348,7 +348,7 @@ class Image extends Model\Object\ClassDefinition\Data
         }
 
         if ($versionPreview) {
-            $value = array();
+            $value = [];
             $value["src"] = $versionPreview;
             $value["type"] = "img";
             return $value;
@@ -372,7 +372,7 @@ class Image extends Model\Object\ClassDefinition\Data
      * @param array $params
      * @return Element\ElementInterface
      */
-    public function rewriteIds($object, $idMapping, $params = array())
+    public function rewriteIds($object, $idMapping, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof Asset\Image) {

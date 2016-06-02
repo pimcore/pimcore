@@ -24,7 +24,6 @@ use Pimcore\Model\AbstractModel;
  */
 abstract class JsonListing extends AbstractModel
 {
-
     protected $filter;
     protected $order;
 

@@ -82,7 +82,7 @@ class Checkbox extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return int
      */
-    public function getDataForResource($data, $object = null, $params = array())
+    public function getDataForResource($data, $object = null, $params = [])
     {
         if (is_bool($data)) {
             $data = (int)$data;
@@ -99,7 +99,7 @@ class Checkbox extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return boolean
      */
-    public function getDataFromResource($data, $object = null, $params = array())
+    public function getDataFromResource($data, $object = null, $params = [])
     {
         if (!is_null($data)) {
             $data = (bool) $data;
@@ -114,7 +114,7 @@ class Checkbox extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return boolean
      */
-    public function getDataForQueryResource($data, $object = null, $params = array())
+    public function getDataForQueryResource($data, $object = null, $params = [])
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -126,7 +126,7 @@ class Checkbox extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return boolean
      */
-    public function getDataForEditmode($data, $object = null, $params = array())
+    public function getDataForEditmode($data, $object = null, $params = [])
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -138,7 +138,7 @@ class Checkbox extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return boolean
      */
-    public function getDataFromEditmode($data, $object = null, $params = array())
+    public function getDataFromEditmode($data, $object = null, $params = [])
     {
         if ($data === "false") {
             return false;
@@ -153,7 +153,7 @@ class Checkbox extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return boolean
      */
-    public function getVersionPreview($data, $object = null, $params = array())
+    public function getVersionPreview($data, $object = null, $params = [])
     {
         return $data;
     }
@@ -184,7 +184,7 @@ class Checkbox extends Model\Object\ClassDefinition\Data
      * @param array $params
      * @return string
      */
-    public function getForCsvExport($object, $params = array())
+    public function getForCsvExport($object, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
         return strval($data);
@@ -198,12 +198,12 @@ class Checkbox extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return Object\ClassDefinition\Data
      */
-    public function getFromCsvImport($importValue, $object = null, $params = array())
+    public function getFromCsvImport($importValue, $object = null, $params = [])
     {
         return (bool)$importValue;
     }
 
-    public function getForWebserviceExport($object, $params = array())
+    public function getForWebserviceExport($object, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
         return (bool) $data;
@@ -216,7 +216,7 @@ class Checkbox extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return mixed
      */
-    public function getFromWebserviceImport($value, $object = null, $params = array(), $idMapper = null)
+    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
     {
         return (bool)$value;
     }
@@ -227,7 +227,7 @@ class Checkbox extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return bool
      */
-    public function isDiffChangeAllowed($object, $params = array())
+    public function isDiffChangeAllowed($object, $params = [])
     {
         return true;
     }
@@ -249,8 +249,8 @@ class Checkbox extends Model\Object\ClassDefinition\Data
      */
     public function getFilterCondition($value, $operator)
     {
-        return $this->getFilterConditionExt($value, $operator, array(
-                "name" => $this->name)
+        return $this->getFilterConditionExt($value, $operator, [
+                "name" => $this->name]
         );
     }
 
@@ -261,7 +261,7 @@ class Checkbox extends Model\Object\ClassDefinition\Data
      * @param  $params optional params used to change the behavior
      * @return string
      */
-    public function getFilterConditionExt($value, $operator, $params = array())
+    public function getFilterConditionExt($value, $operator, $params = [])
     {
         $db = \Pimcore\Db::get();
         $name = $params["name"] ? $params["name"] : $this->name;

@@ -30,7 +30,7 @@ class Asset extends Element\AbstractElement
      * possible types of an asset
      * @var array
      */
-    public static $types = array("folder", "image", "text", "audio", "video", "document", "archive", "unknown");
+    public static $types = ["folder", "image", "text", "audio", "video", "document", "archive", "unknown"];
 
     /**
      * Unique ID
@@ -129,7 +129,7 @@ class Asset extends Element\AbstractElement
     /**
      * @var array
      */
-    public $metadata = array();
+    public $metadata = [];
 
     /**
      * enum('self','propagate') nullable
@@ -143,7 +143,7 @@ class Asset extends Element\AbstractElement
      *
      * @var array
      */
-    public $customSettings = array();
+    public $customSettings = [];
 
     /**
      * @var bool
@@ -302,7 +302,7 @@ class Asset extends Element\AbstractElement
      * @param array $data
      * @return Asset
      */
-    public static function create($parentId, $data = array(), $save = true)
+    public static function create($parentId, $data = [], $save = true)
     {
 
         // create already the real class for the asset type, this is especially for images, because a system-thumbnail
@@ -362,7 +362,7 @@ class Asset extends Element\AbstractElement
      * @return mixed
      * @throws \Exception
      */
-    public static function getList($config = array())
+    public static function getList($config = [])
     {
         if (is_array($config)) {
             $listClass = "\\Pimcore\\Model\\Asset\\Listing";
@@ -385,7 +385,7 @@ class Asset extends Element\AbstractElement
      * @param array $config
      * @return total count
      */
-    public static function getTotalCount($config = array())
+    public static function getTotalCount($config = [])
     {
         if (is_array($config)) {
             $listClass = "\\Pimcore\\Model\\Asset\\Listing";
@@ -414,14 +414,14 @@ class Asset extends Element\AbstractElement
 
         $type = "unknown";
 
-        $mappings = array(
-            "image" => array("/image/", "/\.eps$/", "/\.ai$/", "/\.svgz$/", "/\.pcx$/", "/\.iff$/", "/\.pct$/", "/\.wmf$/"),
-            "text" => array("/text/","/xml$/"),
-            "audio" => array("/audio/"),
-            "video" => array("/video/"),
-            "document" => array("/msword/","/pdf/","/powerpoint/","/office/","/excel/","/opendocument/"),
-            "archive" => array("/zip/","/tar/")
-        );
+        $mappings = [
+            "image" => ["/image/", "/\.eps$/", "/\.ai$/", "/\.svgz$/", "/\.pcx$/", "/\.iff$/", "/\.pct$/", "/\.wmf$/"],
+            "text" => ["/text/","/xml$/"],
+            "audio" => ["/audio/"],
+            "video" => ["/video/"],
+            "document" => ["/msword/","/pdf/","/powerpoint/","/office/","/excel/","/opendocument/"],
+            "archive" => ["/zip/","/tar/"]
+        ];
 
         foreach ($mappings as $assetType => $patterns) {
             foreach ($patterns as $pattern) {
@@ -487,7 +487,7 @@ class Asset extends Element\AbstractElement
                 $this->update();
 
                 // if the old path is different from the new path, update all children
-                $updatedChildren = array();
+                $updatedChildren = [];
                 if ($oldPath && $oldPath != $this->getRealFullPath()) {
                     $oldFullPath = PIMCORE_ASSET_DIRECTORY . $oldPath;
                     if (is_file($oldFullPath) || is_dir($oldFullPath)) {
@@ -525,7 +525,7 @@ class Asset extends Element\AbstractElement
             }
         }
 
-        $additionalTags = array();
+        $additionalTags = [];
         if (isset($updatedChildren) && is_array($updatedChildren)) {
             foreach ($updatedChildren as $assetId) {
                 $tag = "asset_" . $assetId;
@@ -619,7 +619,7 @@ class Asset extends Element\AbstractElement
         // use current file name in order to prevent problems when filename has changed
         // (otherwise binary data would be overwritten with old binary data with rename() in save method)
         $destinationPathRelative = $this->getDao()->getCurrentFullPath();
-        if(!$destinationPathRelative) {
+        if (!$destinationPathRelative) {
             // this is happen during a restore from the recycle bin
             $destinationPathRelative = $this->getRealFullPath();
         }
@@ -794,7 +794,7 @@ class Asset extends Element\AbstractElement
 
         if (!\Pimcore::inAdmin()) {
             $results = \Pimcore::getEventManager()->trigger("frontend.path.asset", $this);
-            if($results->count()) {
+            if ($results->count()) {
                 $path = $results->last();
             }
         }
@@ -991,10 +991,10 @@ class Asset extends Element\AbstractElement
     /**
      * @param array $additionalTags
      */
-    public function clearDependentCache($additionalTags = array())
+    public function clearDependentCache($additionalTags = [])
     {
         try {
-            $tags = array("asset_" . $this->getId(), "asset_properties", "output");
+            $tags = ["asset_" . $this->getId(), "asset_properties", "output"];
             $tags = array_merge($tags, $additionalTags);
 
             \Pimcore\Cache::clearTags($tags);
@@ -1285,7 +1285,7 @@ class Asset extends Element\AbstractElement
             if (!is_array($properties)) {
                 $properties = $this->getDao()->getProperties();
                 $elementCacheTag = $this->getCacheTag();
-                $cacheTags = array("asset_properties" => "asset_properties", $elementCacheTag => $elementCacheTag);
+                $cacheTags = ["asset_properties" => "asset_properties", $elementCacheTag => $elementCacheTag];
                 \Pimcore\Cache::save($properties, $cacheKey, $cacheTags);
             }
 
@@ -1463,7 +1463,7 @@ class Asset extends Element\AbstractElement
         }
 
         if (!is_array($customSettings)) {
-            $customSettings = array();
+            $customSettings = [];
         }
 
         $this->customSettings = $customSettings;
@@ -1525,9 +1525,9 @@ class Asset extends Element\AbstractElement
     public function addMetadata($name, $type, $data = null, $language = null)
     {
         if ($name && $type) {
-            $tmp = array();
+            $tmp = [];
             if (!is_array($this->metadata)) {
-                $this->metadata = array();
+                $this->metadata = [];
             }
 
             foreach ($this->metadata as $item) {
@@ -1535,12 +1535,12 @@ class Asset extends Element\AbstractElement
                     $tmp[] = $item;
                 }
             }
-            $tmp[] = array(
+            $tmp[] = [
                 "name" => $name,
                 "type" => $type,
                 "data" => $data,
                 "language" => $language
-            );
+            ];
             $this->metadata = $tmp;
 
             $this->setHasMetaData(true);
@@ -1732,17 +1732,17 @@ class Asset extends Element\AbstractElement
      */
     public function __sleep()
     {
-        $finalVars = array();
+        $finalVars = [];
         $parentVars = parent::__sleep();
 
         if (isset($this->_fulldump)) {
             // this is if we want to make a full dump of the object (eg. for a new version), including childs for recyclebin
-            $blockedVars = array("scheduledTasks", "dependencies", "userPermissions", "hasChilds", "versions", "parent", "stream");
+            $blockedVars = ["scheduledTasks", "dependencies", "userPermissions", "hasChilds", "versions", "parent", "stream"];
             $finalVars[] = "_fulldump";
             $this->removeInheritedProperties();
         } else {
             // this is if we want to cache the object
-            $blockedVars = array("scheduledTasks", "dependencies", "userPermissions", "hasChilds", "versions", "childs", "properties", "stream", "parent");
+            $blockedVars = ["scheduledTasks", "dependencies", "userPermissions", "hasChilds", "versions", "childs", "properties", "stream", "parent"];
         }
 
 

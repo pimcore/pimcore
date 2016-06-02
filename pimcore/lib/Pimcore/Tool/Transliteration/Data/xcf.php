@@ -1,6 +1,6 @@
 <?php
 
-$base = array(
+$base = [
   0x00 => 'ke', 'keg', 'kegg', 'kegs', 'ken', 'kenj', 'kenh', 'ked', 'kel', 'kelg', 'kelm', 'kelb', 'kels', 'kelt', 'kelp', 'kelh',
   0x10 => 'kem', 'keb', 'kebs', 'kes', 'kess', 'keng', 'kej', 'kec', 'kek', 'ket', 'kep', 'keh', 'kyeo', 'kyeog', 'kyeogg', 'kyeogs',
   0x20 => 'kyeon', 'kyeonj', 'kyeonh', 'kyeod', 'kyeol', 'kyeolg', 'kyeolm', 'kyeolb', 'kyeols', 'kyeolt', 'kyeolp', 'kyeolh', 'kyeom', 'kyeob', 'kyeobs', 'kyeos',
@@ -17,4 +17,4 @@ $base = array(
   0xD0 => 'kyols', 'kyolt', 'kyolp', 'kyolh', 'kyom', 'kyob', 'kyobs', 'kyos', 'kyoss', 'kyong', 'kyoj', 'kyoc', 'kyok', 'kyot', 'kyop', 'kyoh',
   0xE0 => 'ku', 'kug', 'kugg', 'kugs', 'kun', 'kunj', 'kunh', 'kud', 'kul', 'kulg', 'kulm', 'kulb', 'kuls', 'kult', 'kulp', 'kulh',
   0xF0 => 'kum', 'kub', 'kubs', 'kus', 'kuss', 'kung', 'kuj', 'kuc', 'kuk', 'kut', 'kup', 'kuh', 'kweo', 'kweog', 'kweogg', 'kweogs',
-);
+];

@@ -24,7 +24,7 @@ class Objectbrick extends Model\AbstractModel
     /**
      * @var array
      */
-    public $items = array();
+    public $items = [];
 
     /**
      * @var string
@@ -39,7 +39,7 @@ class Objectbrick extends Model\AbstractModel
     /**
      * @var array
      */
-    protected $brickGetters = array();
+    protected $brickGetters = [];
 
     /**
      * @param Concrete $object
@@ -60,7 +60,7 @@ class Objectbrick extends Model\AbstractModel
     {
         if ($withInheritedValues) {
             $getters = $this->getBrickGetters();
-            $values = array();
+            $values = [];
             foreach ($getters as $getter) {
                 $value = $this->$getter();
                 if (!empty($value)) {
@@ -114,7 +114,7 @@ class Objectbrick extends Model\AbstractModel
      */
     public function getBrickGetters()
     {
-        $getters = array();
+        $getters = [];
         foreach ($this->brickGetters as $bg) {
             $getters[] = "get" . ucfirst($bg);
         }
@@ -126,7 +126,7 @@ class Objectbrick extends Model\AbstractModel
      */
     public function getAllowedBrickTypes()
     {
-        return is_array($this->brickGetters) ? $this->brickGetters : array();
+        return is_array($this->brickGetters) ? $this->brickGetters : [];
     }
 
     /**
@@ -134,7 +134,7 @@ class Objectbrick extends Model\AbstractModel
      */
     public function getItemDefinitions()
     {
-        $definitions = array();
+        $definitions = [];
         foreach ($this->getItems() as $item) {
             $definitions[$item->getType()] = $item->getDefinition();
         }

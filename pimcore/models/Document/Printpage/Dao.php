@@ -4,6 +4,6 @@ namespace Pimcore\Model\Document\Printpage;
 
 use \Pimcore\Model\Document;
 
-class Dao extends Document\PrintAbstract\Dao {
-
+class Dao extends Document\PrintAbstract\Dao
+{
 }

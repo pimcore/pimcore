@@ -39,7 +39,7 @@ abstract class AbstractArea
     /**
      * @var array
      */
-    protected $params = array();
+    protected $params = [];
 
     /**
      * @param $view

@@ -91,7 +91,7 @@ class Definition extends Model\AbstractModel
     {
         $this->layoutDefinitions = $layoutDefinitions;
         
-        $this->fieldDefinitions = array();
+        $this->fieldDefinitions = [];
         $this->extractDataDefinitions($this->layoutDefinitions);
         return $this;
     }
@@ -256,7 +256,7 @@ class Definition extends Model\AbstractModel
         $cd .= "\n\n";
 
         if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
-            $relationTypes = array();
+            $relationTypes = [];
             foreach ($this->getFieldDefinitions() as $key => $def) {
 
                 /**

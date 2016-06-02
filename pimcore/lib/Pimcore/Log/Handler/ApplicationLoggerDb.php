@@ -103,8 +103,8 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
      */
     public static function getPriorities()
     {
-        $priorities = array();
-        $priorityNames = array(
+        $priorities = [];
+        $priorityNames = [
             "debug" => "DEBUG",
             "info" => "INFO",
             "notice" => "NOTICE",
@@ -113,7 +113,7 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
             "critical" => "CRIT",
             "alert" => "ALERT",
             "emergency" => "EMERG"
-        );
+        ];
 
         $db = Database::get();
 

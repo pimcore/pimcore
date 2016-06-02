@@ -18,7 +18,8 @@ use Pimcore\Config;
 use \Pimcore\Model\Document;
 use Pimcore\Web2Print\Processor;
 
-class WkHtmlToPdf extends Processor {
+class WkHtmlToPdf extends Processor
+{
 
     /**
      * @var string
@@ -35,7 +36,8 @@ class WkHtmlToPdf extends Processor {
      * @param string $wkhtmltopdfBin
      * @param array $options key => value
      */
-    public function __construct($wkhtmltopdfBin = null, $options = null) {
+    public function __construct($wkhtmltopdfBin = null, $options = null)
+    {
         $web2printConfig = Config::getWeb2PrintConfig();
 
         if (empty($wkhtmltopdfBin)) {
@@ -60,12 +62,11 @@ class WkHtmlToPdf extends Processor {
         } else {
             $this->options = "";
         }
-
     }
 
     protected function buildPdf(Document\PrintAbstract $document, $config)
     {
-        $params = array();
+        $params = [];
         $html = $document->renderDocument($params);
         $placeholder = new \Pimcore\Placeholder();
         $html = $placeholder->replacePlaceholders($html);
@@ -78,7 +79,7 @@ class WkHtmlToPdf extends Processor {
 
     public function getProcessingOptions()
     {
-        return array();
+        return [];
     }
 
 
@@ -87,7 +88,8 @@ class WkHtmlToPdf extends Processor {
      * @param string $dstFile
      * @return string
      */
-    public function fromStringToFile($htmlString, $dstFile = null) {
+    public function fromStringToFile($htmlString, $dstFile = null)
+    {
         $id = uniqid();
         $tmpHtmlFile = WEB2PRINT_WKHTMLTOPDF_TEMP_PATH . "/" . $id . ".htm";
         file_put_contents($tmpHtmlFile, $htmlString);
@@ -104,7 +106,8 @@ class WkHtmlToPdf extends Processor {
      * @param string $htmlString
      * @return string
      */
-    public function fromStringToStream($htmlString) {
+    public function fromStringToStream($htmlString)
+    {
         $tmpFile = $this->fromStringToFile($htmlString);
         $stream = file_get_contents($tmpFile);
         @unlink($tmpFile);
@@ -118,7 +121,8 @@ class WkHtmlToPdf extends Processor {
      * @param string $dstFile
      * @return string
      */
-    protected function convert($srcUrl, $dstFile = null) {
+    protected function convert($srcUrl, $dstFile = null)
+    {
         $outputFile = WEB2PRINT_WKHTMLTOPDF_TEMP_PATH . "/wkhtmltopdf.out";
         if (empty($dstFile)) {
             $dstFile = WEB2PRINT_WKHTMLTOPDF_TEMP_PATH . "/" . uniqid() . ".pdf";
@@ -141,7 +145,8 @@ class WkHtmlToPdf extends Processor {
         return $dstFile;
     }
 
-    public static function getTempFileUrl() {
+    public static function getTempFileUrl()
+    {
         $web2printConfig = Config::getWeb2PrintConfig();
         if ($web2printConfig->hostname) {
             $hostname = $web2printConfig->wkhtml2pdfHostname;
@@ -154,7 +159,4 @@ class WkHtmlToPdf extends Processor {
         $protocol = $_SERVER['HTTPS'] == 'on' ? 'https' : 'http';
         return $protocol . "://" . $hostname . "/plugin/Web2Print/temp-file/get";
     }
-
-
-
 }

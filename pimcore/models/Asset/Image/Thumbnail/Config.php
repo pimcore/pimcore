@@ -37,12 +37,12 @@ class Config extends Model\AbstractModel
      *
      * @var array
      */
-    public $items = array();
+    public $items = [];
 
     /**
      * @var array
      */
-    public $medias = array();
+    public $medias = [];
 
     /**
      * @var string
@@ -152,12 +152,12 @@ class Config extends Model\AbstractModel
     {
         $thumbnail = new self();
         $thumbnail->setName("pimcore-system-treepreview");
-        $thumbnail->addItem("scaleByWidth", array(
+        $thumbnail->addItem("scaleByWidth", [
             "width" => 400
-        ));
-        $thumbnail->addItem("setBackgroundColor", array(
+        ]);
+        $thumbnail->addItem("setBackgroundColor", [
             "color" => "#323232"
-        ));
+        ]);
         $thumbnail->setQuality(60);
         $thumbnail->setFormat("PJPEG");
 
@@ -192,10 +192,10 @@ class Config extends Model\AbstractModel
      */
     public function addItem($name, $parameters, $media = null)
     {
-        $item = array(
+        $item = [
             "method" => $name,
             "arguments" => $parameters
-        );
+        ];
 
         // default is added to $this->items for compatibility reasons
         if (!$media || $media == "default") {
@@ -222,10 +222,10 @@ class Config extends Model\AbstractModel
             $itemContainer = &$this->medias[$media];
         }
 
-        array_splice($itemContainer, $position, 0, array(array(
+        array_splice($itemContainer, $position, 0, [[
             "method" => $name,
             "arguments" => $parameters
-        )));
+        ]]);
 
         return true;
     }
@@ -453,50 +453,50 @@ class Config extends Model\AbstractModel
         }
 
         if (isset($config["cover"])) {
-            $pipe->addItem("cover", array(
+            $pipe->addItem("cover", [
                 "width" => $config["width"],
                 "height" => $config["height"],
                 "positioning" => "center"
-            ));
+            ]);
         } elseif (isset($config["contain"])) {
-            $pipe->addItem("contain", array(
+            $pipe->addItem("contain", [
                 "width" => $config["width"],
                 "height" => $config["height"]
-            ));
+            ]);
         } elseif (isset($config["frame"])) {
-            $pipe->addItem("frame", array(
+            $pipe->addItem("frame", [
                 "width" => $config["width"],
                 "height" => $config["height"]
-            ));
+            ]);
         } elseif (isset($config["aspectratio"]) && $config["aspectratio"]) {
             if (isset($config["height"]) && isset($config["width"]) && $config["height"] > 0 && $config["width"] > 0) {
-                $pipe->addItem("contain", array(
+                $pipe->addItem("contain", [
                     "width" => $config["width"],
                     "height" => $config["height"]
-                ));
+                ]);
             } elseif (isset($config["height"]) && $config["height"] > 0) {
-                $pipe->addItem("scaleByHeight", array(
+                $pipe->addItem("scaleByHeight", [
                     "height" => $config["height"]
-                ));
+                ]);
             } else {
-                $pipe->addItem("scaleByWidth", array(
+                $pipe->addItem("scaleByWidth", [
                     "width" => $config["width"]
-                ));
+                ]);
             }
         } else {
             if (!isset($config["width"]) && isset($config["height"])) {
-                $pipe->addItem("scaleByHeight", array(
+                $pipe->addItem("scaleByHeight", [
                     "height" => $config["height"]
-                ));
+                ]);
             } elseif (isset($config["width"]) && !isset($config["height"])) {
-                $pipe->addItem("scaleByWidth", array(
+                $pipe->addItem("scaleByWidth", [
                     "width" => $config["width"]
-                ));
+                ]);
             } elseif (isset($config["width"]) && isset($config["height"])) {
-                $pipe->addItem("resize", array(
+                $pipe->addItem("resize", [
                     "width" => $config["width"],
                     "height" => $config["height"]
-                ));
+                ]);
             }
         }
 
@@ -513,7 +513,7 @@ class Config extends Model\AbstractModel
 
     public function getEstimatedDimensions($originalWidth = null, $originalHeight = null)
     {
-        $dimensions = array();
+        $dimensions = [];
         $transformations = $this->getItems();
         if (is_array($transformations) && count($transformations) > 0) {
             if ($originalWidth && $originalHeight) {

@@ -37,7 +37,7 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         // requires
-        $data = $this->db->fetchAll("SELECT * FROM dependencies WHERE sourceid = ? AND sourcetype = ?", array($this->model->getSourceId(), $this->model->getSourceType()));
+        $data = $this->db->fetchAll("SELECT * FROM dependencies WHERE sourceid = ? AND sourcetype = ?", [$this->model->getSourceId(), $this->model->getSourceType()]);
 
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $d) {
@@ -46,15 +46,15 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         // required by
-        $data = array();
-        $data = $this->db->fetchAll("SELECT * FROM dependencies WHERE targetid = ? AND targettype = ?", array($this->model->getSourceId(), $this->model->getSourceType()));
+        $data = [];
+        $data = $this->db->fetchAll("SELECT * FROM dependencies WHERE targetid = ? AND targettype = ?", [$this->model->getSourceId(), $this->model->getSourceType()]);
 
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $d) {
-                $this->model->requiredBy[] = array(
+                $this->model->requiredBy[] = [
                     "id" => $d["sourceid"],
                     "type" => $d["sourcetype"]
-                );
+                ];
             }
         }
     }
@@ -70,7 +70,7 @@ class Dao extends Model\Dao\AbstractDao
             $type = Element\Service::getElementType($element);
 
             //schedule for sanity check
-            $data = $this->db->fetchAll("SELECT * FROM dependencies WHERE targetid = ? AND targettype = ?", array($id, $type));
+            $data = $this->db->fetchAll("SELECT * FROM dependencies WHERE targetid = ? AND targettype = ?", [$id, $type]);
             if (is_array($data)) {
                 foreach ($data as $row) {
                     $sanityCheck = new Element\Sanitycheck();
@@ -111,12 +111,12 @@ class Dao extends Model\Dao\AbstractDao
     {
         foreach ($this->model->getRequires() as $r) {
             if ($r["id"] && $r["type"]) {
-                $this->db->insert("dependencies", array(
+                $this->db->insert("dependencies", [
                     "sourceid" => $this->model->getSourceId(),
                     "sourcetype" => $this->model->getSourceType(),
                     "targetid" => $r["id"],
                     "targettype" => $r["type"]
-                ));
+                ]);
             }
         }
     }

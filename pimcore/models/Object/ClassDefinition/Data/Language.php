@@ -41,7 +41,7 @@ class Language extends Model\Object\ClassDefinition\Data\Select
     {
         $validLanguages = (array) Tool::getValidLanguages();
         $locales = Tool::getSupportedLocales();
-        $options = array();
+        $options = [];
 
         foreach ($locales as $short => $translation) {
             if ($this->getOnlySystemLanguages()) {
@@ -50,10 +50,10 @@ class Language extends Model\Object\ClassDefinition\Data\Select
                 }
             }
 
-            $options[] = array(
+            $options[] = [
                 "key" => $translation,
                 "value" => $short
-            );
+            ];
         }
 
         $this->setOptions($options);

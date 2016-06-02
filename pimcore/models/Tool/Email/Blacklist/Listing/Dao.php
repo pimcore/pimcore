@@ -30,7 +30,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     {
         $addressData = $this->db->fetchCol("SELECT address FROM email_blacklist" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
-        $addresses = array();
+        $addresses = [];
         foreach ($addressData as $data) {
             if ($address = Model\Tool\Email\Blacklist::getByAddress($data)) {
                 $addresses[] = $address;

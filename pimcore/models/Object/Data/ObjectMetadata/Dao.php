@@ -34,13 +34,13 @@ class Dao extends Model\Dao\AbstractDao
     {
         $table = $this->getTablename($object);
 
-        $dataTemplate = array("o_id" => $object->getId(),
+        $dataTemplate = ["o_id" => $object->getId(),
             "dest_id" => $this->model->getElement()->getId(),
             "fieldname" => $this->model->getFieldname(),
             "ownertype" => $ownertype,
             "ownername" => $ownername ? $ownername : "",
             "position" => $position ?  $position : "0",
-            "type" => $type ?  $type : "object");
+            "type" => $type ?  $type : "object"];
 
         foreach ($this->model->getColumns() as $column) {
             $getter = "get" . ucfirst($column);
@@ -78,7 +78,7 @@ class Dao extends Model\Dao\AbstractDao
             $typeQuery = " AND type = " . $this->db->quote($type);
         }
 
-        $dataRaw = $this->db->fetchAll("SELECT * FROM " . $this->getTablename($source) . " WHERE o_id = ? AND dest_id = ? AND fieldname = ? AND ownertype = ? AND ownername = ? and position = ? " . $typeQuery, array($source->getId(), $destination->getId(), $fieldname, $ownertype, $ownername, $position));
+        $dataRaw = $this->db->fetchAll("SELECT * FROM " . $this->getTablename($source) . " WHERE o_id = ? AND dest_id = ? AND fieldname = ? AND ownertype = ? AND ownername = ? and position = ? " . $typeQuery, [$source->getId(), $destination->getId(), $fieldname, $ownertype, $ownername, $position]);
         if (!empty($dataRaw)) {
             $this->model->setElement($destination);
             $this->model->setFieldname($fieldname);

@@ -18,7 +18,6 @@ use Pimcore\Model\User;
 
 class Admin_LoginController extends \Pimcore\Controller\Action\Admin
 {
-
     public function init()
     {
         parent::init();
@@ -40,7 +39,7 @@ class Admin_LoginController extends \Pimcore\Controller\Action\Admin
                         $loginUrl = $uri . "/admin/login/login/?username=" . $username . "&token=" . $token . "&reset=true";
 
                         try {
-                            $mail = Tool::getMail(array($user->getEmail()), "Pimcore lost password service");
+                            $mail = Tool::getMail([$user->getEmail()], "Pimcore lost password service");
                             $mail->setIgnoreDebugMode(true);
                             $mail->setBodyText("Login to pimcore and change your password using the following link. This temporary login link will expire in 30 minutes: \r\n\r\n" . $loginUrl);
                             $mail->send();
@@ -258,7 +257,7 @@ class Admin_LoginController extends \Pimcore\Controller\Action\Admin
     {
         $data = $this->getLogFile();
         $lines = explode("\n", $data);
-        $entries = array();
+        $entries = [];
 
         if (is_array($lines) && count($lines) > 0) {
             foreach ($lines as $line) {
@@ -276,13 +275,13 @@ class Admin_LoginController extends \Pimcore\Controller\Action\Admin
 
         $remoteHost = Tool::getAnonymizedClientIp();
 
-        $data[] = array(
+        $data[] = [
             time(),
             $remoteHost,
             $username
-        );
+        ];
 
-        $lines = array();
+        $lines = [];
 
 
         foreach ($data as $item) {

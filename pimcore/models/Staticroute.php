@@ -96,7 +96,7 @@ class Staticroute extends AbstractModel
      *
      * @var array
      */
-    protected static $nameIdMappingCache = array();
+    protected static $nameIdMappingCache = [];
 
     /**
      * contains the static route which the current request matches (it he does), this is used in the view to get the current route
@@ -201,7 +201,7 @@ class Staticroute extends AbstractModel
      */
     public function getDefaultsArray()
     {
-        $defaults = array();
+        $defaults = [];
 
         $t = explode("|", $this->getDefaults());
         foreach ($t as $v) {
@@ -419,15 +419,15 @@ class Staticroute extends AbstractModel
      * @param bool $encode
      * @return mixed|string
      */
-    public function assemble(array $urlOptions = array(), $reset=false, $encode=true)
+    public function assemble(array $urlOptions = [], $reset=false, $encode=true)
     {
 
         // get request parameters
-        $blockedRequestParams = array("controller","action","module","document");
+        $blockedRequestParams = ["controller","action","module","document"];
         $front = \Zend_Controller_Front::getInstance();
 
         if ($reset) {
-            $requestParameters = array();
+            $requestParameters = [];
         } else {
             $requestParameters = $front->getRequest()->getParams();
             // remove blocked parameters from request
@@ -450,10 +450,10 @@ class Staticroute extends AbstractModel
         // merge with defaults
         $urlParams = array_merge($defaultValues, $requestParameters, $urlOptions);
 
-        $parametersInReversePattern = array();
-        $parametersGet = array();
+        $parametersInReversePattern = [];
+        $parametersGet = [];
         $url = $this->getReverse();
-        $forbiddenCharacters = array("#",":","?");
+        $forbiddenCharacters = ["#",":","?"];
 
         // check for named variables
         uksort($urlParams, function ($a, $b) {
@@ -502,7 +502,7 @@ class Staticroute extends AbstractModel
 
         // remove optional parts
         $url = preg_replace("/\{([^\}]+)?%[^\}]+\}/", "", $url);
-        $url = str_replace(array("{", "}"), "", $url);
+        $url = str_replace(["{", "}"], "", $url);
 
         // optional get parameters
         if (!empty($parametersGet)) {
@@ -521,7 +521,7 @@ class Staticroute extends AbstractModel
         $results = \Pimcore::getEventManager()->trigger("frontend.path.staticroute", $this, [
             "frontendPath" => $url
         ]);
-        if($results->count()) {
+        if ($results->count()) {
             $url = $results->last();
         }
 
@@ -534,7 +534,7 @@ class Staticroute extends AbstractModel
      * @return array
      * @throws \Exception
      */
-    public function match($path, $params = array())
+    public function match($path, $params = [])
     {
         if (@preg_match($this->getPattern(), $path)) {
 

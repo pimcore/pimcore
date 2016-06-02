@@ -1,6 +1,6 @@
 <?php
 
-$base = array(
+$base = [
   0x00 => 'moen', 'moenj', 'moenh', 'moed', 'moel', 'moelg', 'moelm', 'moelb', 'moels', 'moelt', 'moelp', 'moelh', 'moem', 'moeb', 'moebs', 'moes',
   0x10 => 'moess', 'moeng', 'moej', 'moec', 'moek', 'moet', 'moep', 'moeh', 'myo', 'myog', 'myogg', 'myogs', 'myon', 'myonj', 'myonh', 'myod',
   0x20 => 'myol', 'myolg', 'myolm', 'myolb', 'myols', 'myolt', 'myolp', 'myolh', 'myom', 'myob', 'myobs', 'myos', 'myoss', 'myong', 'myoj', 'myoc',
@@ -17,4 +17,4 @@ $base = array(
   0xD0 => 'meum', 'meub', 'meubs', 'meus', 'meuss', 'meung', 'meuj', 'meuc', 'meuk', 'meut', 'meup', 'meuh', 'myi', 'myig', 'myigg', 'myigs',
   0xE0 => 'myin', 'myinj', 'myinh', 'myid', 'myil', 'myilg', 'myilm', 'myilb', 'myils', 'myilt', 'myilp', 'myilh', 'myim', 'myib', 'myibs', 'myis',
   0xF0 => 'myiss', 'mying', 'myij', 'myic', 'myik', 'myit', 'myip', 'myih', 'mi', 'mig', 'migg', 'migs', 'min', 'minj', 'minh', 'mid',
-);
+];

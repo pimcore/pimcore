@@ -73,7 +73,7 @@ class AbstractUser extends Model\AbstractModel
      * @param array $values
      * @return self
      */
-    public static function create($values = array())
+    public static function create($values = [])
     {
         $user = new static();
         $user->setValues($values);

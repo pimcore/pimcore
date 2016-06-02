@@ -27,7 +27,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function load()
     {
-        $units = array();
+        $units = [];
 
         $unitIds = $this->db->fetchCol("SELECT id FROM " . Object\QuantityValue\Unit\Dao::TABLE_NAME .
                                                  $this->getCondition() . $this->getOrder() . $this->getOffsetLimit());

@@ -5,13 +5,13 @@ include("../../cli/startup.php");
 $iconPath = '/pimcore/static6/img/flags/';
 
 $locales = \Pimcore\Tool::getSupportedLocales();
-$languageOptions = array();
+$languageOptions = [];
 foreach ($locales as $short => $translation) {
     if (!empty($short)) {
-        $languageOptions[] = array(
+        $languageOptions[] = [
             "language" => $short,
             "display" => $translation . " ($short)"
-        );
+        ];
     }
 }
 

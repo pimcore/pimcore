@@ -50,17 +50,17 @@ class Service extends Model\Element\Service
      */
     public static function getObjectsReferencingUser($userId)
     {
-        $userObjects = array();
+        $userObjects = [];
         $classesList = new ClassDefinition\Listing();
         $classesList->setOrderKey("name");
         $classesList->setOrder("asc");
         $classes = $classesList->load();
 
-        $classesToCheck = array();
+        $classesToCheck = [];
         if (is_array($classes)) {
             foreach ($classes as $class) {
                 $fieldDefinitions = $class->getFieldDefinitions();
-                $dataKeys = array();
+                $dataKeys = [];
                 if (is_array($fieldDefinitions)) {
                     foreach ($fieldDefinitions as $tag) {
                         if ($tag instanceof ClassDefinition\Data\User) {
@@ -77,7 +77,7 @@ class Service extends Model\Element\Service
         foreach ($classesToCheck as $classname => $fields) {
             $listName = "\\Pimcore\\Model\\Object\\" . ucfirst($classname) . "\\Listing";
             $list = new $listName();
-            $conditionParts = array();
+            $conditionParts = [];
             foreach ($fields as $field) {
                 $conditionParts[] = $field . "='" . $userId . "'";
             }
@@ -98,7 +98,7 @@ class Service extends Model\Element\Service
 
         // avoid recursion
         if (!$this->_copyRecursiveIds) {
-            $this->_copyRecursiveIds = array();
+            $this->_copyRecursiveIds = [];
         }
         if (in_array($source->getId(), $this->_copyRecursiveIds)) {
             return;
@@ -211,7 +211,7 @@ class Service extends Model\Element\Service
         if ($object instanceof Concrete) {
             $data["classname"] = $object->getClassName();
             $data["idPath"] = Element\Service::getIdPath($object);
-            $data['inheritedFields'] = array();
+            $data['inheritedFields'] = [];
 
             $user = AdminTool::getCurrentUser();
 
@@ -272,7 +272,7 @@ class Service extends Model\Element\Service
                                         if (isset($pair["translated"])) {
                                             if (isset($data['#kv-tr'][$dataKey])) {
                                                 if (!is_array($data['#kv-tr'][$dataKey])) {
-                                                    $arr = array($data['#kv-tr'][$dataKey]);
+                                                    $arr = [$data['#kv-tr'][$dataKey]];
                                                     $data['#kv-tr'][$dataKey] = $arr;
                                                 }
                                                 $data['#kv-tr'][$dataKey][] = $pair["translated"];
@@ -283,7 +283,7 @@ class Service extends Model\Element\Service
 
                                         if (isset($data[$dataKey])) {
                                             if (!is_array($data[$dataKey])) {
-                                                $arr = array($data[$dataKey]);
+                                                $arr = [$data[$dataKey]];
                                                 $data[$dataKey] = $arr;
                                             }
                                             $data[$dataKey][] = $pair["value"];
@@ -292,7 +292,7 @@ class Service extends Model\Element\Service
                                         }
 
                                         if ($pair["inherited"]) {
-                                            $data['inheritedFields'][$dataKey] = array("inherited" => $pair["inherited"], "objectid" => $pair["source"]);
+                                            $data['inheritedFields'][$dataKey] = ["inherited" => $pair["inherited"], "objectid" => $pair["source"]];
                                         }
                                     }
                                 }
@@ -339,7 +339,7 @@ class Service extends Model\Element\Service
                             $data[$dataKey] = $object->$getter();
                         } else {
                             $valueObject = self::getValueForObject($object, $key, $brickType, $brickKey, $def);
-                            $data['inheritedFields'][$dataKey] = array("inherited" => $valueObject->objectid != $object->getId(), "objectid" => $valueObject->objectid);
+                            $data['inheritedFields'][$dataKey] = ["inherited" => $valueObject->objectid != $object->getId(), "objectid" => $valueObject->objectid];
 
                             if (method_exists($def, "getDataForGrid")) {
                                 $tempData = $def->getDataForGrid($valueObject->value, $object);
@@ -363,7 +363,7 @@ class Service extends Model\Element\Service
                             /** @var  $locale \Zend_Locale */
                             $locale = (string) \Zend_Registry::get("Zend_Locale");
 
-                            $permissionTypes = array("View", "Edit");
+                            $permissionTypes = ["View", "Edit"];
                             foreach ($permissionTypes as $permissionType) {
                                 //TODO, this needs refactoring! Ideally, call it only once!
                                 $languagesAllowed = self::getLanguagePermissions($object, $user, "l" . $permissionType);
@@ -407,7 +407,7 @@ class Service extends Model\Element\Service
             if ($permission) {
                 $permission = explode(",", $permission);
                 if (is_null($languageAllowed)) {
-                    $languageAllowed = array();
+                    $languageAllowed = [];
                 }
 
                 foreach ($permission as $language) {
@@ -437,7 +437,7 @@ class Service extends Model\Element\Service
             if ($permission) {
                 $permission = explode(",", $permission);
                 if (is_null($layoutPermissions)) {
-                    $layoutPermissions = array();
+                    $layoutPermissions = [];
                 }
 
                 foreach ($permission as $p) {
@@ -448,7 +448,7 @@ class Service extends Model\Element\Service
                         $l = $setting[1];
 
                         if (is_null($layoutPermissions)) {
-                            $layoutPermissions = array();
+                            $layoutPermissions = [];
                         }
                         $layoutPermissions[$l] = $l;
                     }
@@ -572,11 +572,11 @@ class Service extends Model\Element\Service
      */
     public static function getFeatureFilters($filterJson, $class)
     {
-        $joins = array();
-        $conditions = array();
+        $joins = [];
+        $conditions = [];
 
         // create filter condition
-        $conditionPartsFilters = array();
+        $conditionPartsFilters = [];
 
         if ($filterJson) {
             $db = \Pimcore\Db::get();
@@ -637,10 +637,10 @@ class Service extends Model\Element\Service
 
                 if ($field instanceof ClassDefinition\Data) {
                     $mappedKey = "cskey_" . $fieldName . "_" . $groupId . "_" . $keyid;
-                    $joins[] =  array('fieldname' => $fieldName, 'groupId' => $groupId, "keyId"=> $keyid);
+                    $joins[] =  ['fieldname' => $fieldName, 'groupId' => $groupId, "keyId"=> $keyid];
                     $condition = $field->getFilterConditionExt($filter["value"], $operator,
-                        array(
-                            "name" => $mappedKey)
+                        [
+                            "name" => $mappedKey]
                     );
 
                     $conditions[$mappedKey] = $condition;
@@ -648,10 +648,10 @@ class Service extends Model\Element\Service
             }
         }
 
-        $result = array(
+        $result = [
             "joins" => $joins,
             "conditions" => $conditions
-        );
+        ];
 
 
         return $result;
@@ -665,10 +665,10 @@ class Service extends Model\Element\Service
      */
     public static function getFilterCondition($filterJson, $class)
     {
-        $systemFields = array("o_path", "o_key", "o_id", "o_published","o_creationDate","o_modificationDate", "o_fullpath");
+        $systemFields = ["o_path", "o_key", "o_id", "o_published","o_creationDate","o_modificationDate", "o_fullpath"];
 
         // create filter condition
-        $conditionPartsFilters = array();
+        $conditionPartsFilters = [];
 
         if ($filterJson) {
             $db = \Pimcore\Db::get();
@@ -747,7 +747,7 @@ class Service extends Model\Element\Service
                     // custom field
                     $db = \Pimcore\Db::get();
                     if (is_array($filter["value"])) {
-                        $fieldConditions = array();
+                        $fieldConditions = [];
                         foreach ($filter["value"] as $filterValue) {
                             $fieldConditions[] = $db->getQuoteIdentifierSymbol() . $brickType . $db->getQuoteIdentifierSymbol() . "." . $brickField->getFilterCondition($filterValue, $operator);
                         }
@@ -758,7 +758,7 @@ class Service extends Model\Element\Service
                 } elseif ($field instanceof ClassDefinition\Data) {
                     // custom field
                     if (is_array($filter["value"])) {
-                        $fieldConditions = array();
+                        $fieldConditions = [];
                         foreach ($filter["value"] as $filterValue) {
                             $fieldConditions[] = $field->getFilterCondition($filterValue, $operator);
                         }
@@ -794,7 +794,7 @@ class Service extends Model\Element\Service
     public static function getOptionsForSelectField($object, $fieldname)
     {
         $class = null;
-        $options = array();
+        $options = [];
 
         if (is_object($object) && method_exists($object, "getClass")) {
             $class = $object->getClass();
@@ -903,7 +903,7 @@ class Service extends Model\Element\Service
     {
         $user = AdminTool::getCurrentUser();
 
-        $resultList = array();
+        $resultList = [];
         $isMasterAllowed = $user->getAdmin();
 
         $permissionSet = $object->getPermissions("layouts", $user);
@@ -938,7 +938,7 @@ class Service extends Model\Element\Service
         $list = $list->load();
 
         if ((!count($resultList) && !count($list)) || (count($resultList) == 1 && !count($list))) {
-            return array();
+            return [];
         }
 
         foreach ($list as $customLayout) {
@@ -1050,7 +1050,7 @@ class Service extends Model\Element\Service
         if ($class && ($class->getModificationDate() > $customLayout->getModificationDate())) {
             $masterDefinition = $class->getFieldDefinitions();
             $customLayoutDefinition = $customLayout->getLayoutDefinitions();
-            $targetList = self::extractLocalizedFieldDefinitions($class->getLayoutDefinitions(), array(), false);
+            $targetList = self::extractLocalizedFieldDefinitions($class->getLayoutDefinitions(), [], false);
             $masterDefinition = array_merge($masterDefinition, $targetList);
 
             self::synchronizeCustomLayoutFieldWithMaster($masterDefinition, $customLayoutDefinition);
@@ -1074,7 +1074,7 @@ class Service extends Model\Element\Service
             return null;
         }
 
-        $permissionList = array();
+        $permissionList = [];
 
         $parentPermissionSet = $object->getPermissions(null, $user, true);
         if ($parentPermissionSet) {
@@ -1085,7 +1085,7 @@ class Service extends Model\Element\Service
         $permissionList = array_merge($permissionList, $childPermissions);
 
 
-        $layoutDefinitions = array();
+        $layoutDefinitions = [];
 
         foreach ($permissionList as $permissionSet) {
             $allowedLayoutIds = self::getLayoutPermissions($classId, $permissionSet);
@@ -1229,9 +1229,9 @@ class Service extends Model\Element\Service
     {
         $layoutDefinitions = $class->getLayoutDefinitions();
 
-        $result = array(
+        $result = [
             "layoutDefinition" => $layoutDefinitions
-        );
+        ];
 
         if (!$objectId) {
             return $result;
@@ -1282,9 +1282,9 @@ class Service extends Model\Element\Service
         }
 
         if (!$item->getId()) {
-            $list->setCondition('o_parentId = ? AND `o_key` = ? ', array($parent->getId(), $key));
+            $list->setCondition('o_parentId = ? AND `o_key` = ? ', [$parent->getId(), $key]);
         } else {
-            $list->setCondition('o_parentId = ? AND `o_key` = ? AND o_id != ? ', array($parent->getId(), $key, $item->getId()));
+            $list->setCondition('o_parentId = ? AND `o_key` = ? AND o_id != ? ', [$parent->getId(), $key, $item->getId()]);
         }
         $check = $list->loadIdList();
         if (!empty($check)) {
@@ -1319,7 +1319,7 @@ class Service extends Model\Element\Service
      * @param $data Model\Object\Data\CalculatedValue
      * @return mixed|null
      */
-    public static function getCalculatedFieldValueForEditMode($object, $params = array(), $data)
+    public static function getCalculatedFieldValueForEditMode($object, $params = [], $data)
     {
         if (!$data) {
             return;
@@ -1415,10 +1415,9 @@ class Service extends Model\Element\Service
         if ($featureJoins) {
             $me = $list;
             $list->onCreateQuery(function (\Zend_Db_Select $select) use ($list, $featureJoins, $class, $featureFilters, $requestedLanguage, $me) {
-
                 $db = \Pimcore\Db::get();
 
-                $alreadyJoined = array();
+                $alreadyJoined = [];
 
                 foreach ($featureJoins as $featureJoin) {
                     $fieldname = $featureJoin["fieldname"];
@@ -1430,7 +1429,7 @@ class Service extends Model\Element\Service
 
                     $table = $me->getDao()->getTableName();
                     $select->joinLeft(
-                        array($mappedKey => "object_classificationstore_data_" . $class->getId()),
+                        [$mappedKey => "object_classificationstore_data_" . $class->getId()],
                         "("
                         . $mappedKey . ".o_id = " . $table . ".o_id"
                         . " and " . $mappedKey . ".fieldname = " . $db->quote($fieldname)
@@ -1438,9 +1437,9 @@ class Service extends Model\Element\Service
                         . " and " . $mappedKey . ".keyId=" . $featureJoin["keyId"]
                         . " and " . $mappedKey . ".language = " . $db->quote($requestedLanguage)
                         . ")",
-                        array(
+                        [
                             $mappedKey => "value"
-                        )
+                        ]
                     );
                 }
 

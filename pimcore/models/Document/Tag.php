@@ -119,15 +119,15 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
             $data = $this->getData();
         }
 
-        $options = array(
+        $options = [
             "options" => $this->getOptions(),
             "data" => $data,
             "name" => $this->getName(),
             "id" => "pimcore_editable_" . $this->getName(),
             "type" => $this->getType(),
             "inherited" => $this->getInherited()
-        );
-        $options = @\Zend_Json::encode($options, false, array('enableJsonExprFinder' => true));
+        ];
+        $options = @\Zend_Json::encode($options, false, ['enableJsonExprFinder' => true]);
 
         return '
             <script type="text/javascript">
@@ -187,7 +187,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      */
     public function getOptions()
     {
-        return is_array($this->options) ? $this->options : array();
+        return is_array($this->options) ? $this->options : [];
     }
 
     /**
@@ -261,7 +261,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     {
 
         // here the "normal" task of __sleep ;-)
-        $blockedVars = array("dao", "controller", "view", "editmode", "options");
+        $blockedVars = ["dao", "controller", "view", "editmode", "options"];
         $vars = get_object_vars($this);
         foreach ($vars as $key => $value) {
             if (!in_array($key, $blockedVars)) {
@@ -332,7 +332,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      * @param array $tags
      * @return array
      */
-    public function getCacheTags($ownerDocument, $tags = array())
+    public function getCacheTags($ownerDocument, $tags = [])
     {
         return $tags;
     }
@@ -342,7 +342,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      */
     public function resolveDependencies()
     {
-        return array();
+        return [];
     }
 
 
@@ -354,7 +354,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      * @param mixed $params
      * @return void
      */
-    public function getFromWebserviceImport($wsElement, $document = null, $params = array(), $idMapper = null)
+    public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
     {
         return $wsElement;
     }
@@ -366,11 +366,11 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      * @abstract
      * @return array
      */
-    public function getForWebserviceExport($document = null, $params = array())
+    public function getForWebserviceExport($document = null, $params = [])
     {
         $keys = get_object_vars($this);
 
-        $el = array();
+        $el = [];
         foreach ($keys as $key => $value) {
             if ($value instanceof Model\Element\ElementInterface) {
                 $value = $value->getId();

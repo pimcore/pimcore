@@ -20,7 +20,6 @@ use Pimcore\Model;
 
 class UUID extends Model\AbstractModel
 {
-
     public $itemId;
     public $type;
     public $uuid;

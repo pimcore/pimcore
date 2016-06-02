@@ -28,7 +28,7 @@ abstract class Dao extends Model\Dao\AbstractDao
     public function getParentIds()
     {
         // collect properties via parent - ids
-        $parentIds = array(1);
+        $parentIds = [1];
         $obj = $this->model->getParent();
 
         if ($obj) {

@@ -47,7 +47,7 @@ class ViewRenderer extends \Zend_Controller_Action_Helper_ViewRenderer
      * @param null $prefix
      * @param array $options
      */
-    public function initView($path = null, $prefix = null, array $options = array())
+    public function initView($path = null, $prefix = null, array $options = [])
     {
         if (null === $this->view) {
             $view = new View();

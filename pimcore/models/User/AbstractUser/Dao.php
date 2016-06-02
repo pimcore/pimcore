@@ -28,7 +28,7 @@ class Dao extends Model\Dao\AbstractDao
     public function getById($id)
     {
         if ($this->model->getType()) {
-            $data = $this->db->fetchRow("SELECT * FROM users WHERE `type` = ? AND id = ?", array($this->model->getType(), $id));
+            $data = $this->db->fetchRow("SELECT * FROM users WHERE `type` = ? AND id = ?", [$this->model->getType(), $id]);
         } else {
             $data = $this->db->fetchRow("SELECT * FROM users WHERE `id` = ?", $id);
         }
@@ -47,7 +47,7 @@ class Dao extends Model\Dao\AbstractDao
     public function getByName($name)
     {
         try {
-            $data = $this->db->fetchRow("SELECT * FROM users WHERE `type` = ? AND `name` = ?", array($this->model->getType(), $name));
+            $data = $this->db->fetchRow("SELECT * FROM users WHERE `type` = ? AND `name` = ?", [$this->model->getType(), $name]);
 
             if ($data["id"]) {
                 $this->assignVariablesToModel($data);
@@ -78,10 +78,10 @@ class Dao extends Model\Dao\AbstractDao
     public function create()
     {
         try {
-            $this->db->insert("users", array(
+            $this->db->insert("users", [
                 "name" => $this->model->getName(),
                 "type" => $this->model->getType()
-            ));
+            ]);
 
             $this->model->setId($this->db->lastInsertId());
 
@@ -98,7 +98,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function hasChilds()
     {
-        $c = $this->db->fetchOne("SELECT id FROM users WHERE parentId = ?",  $this->model->getId());
+        $c = $this->db->fetchOne("SELECT id FROM users WHERE parentId = ?", $this->model->getId());
         return (bool) $c;
     }
 
@@ -113,7 +113,7 @@ class Dao extends Model\Dao\AbstractDao
                 throw new \Exception("Name of user/role must be at least 2 characters long");
             }
 
-            $data = array();
+            $data = [];
             $dataRaw = get_object_vars($this->model);
             foreach ($dataRaw as $key => $value) {
                 if (in_array($key, $this->getValidTableColumns("users"))) {

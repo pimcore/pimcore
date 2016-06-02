@@ -25,7 +25,7 @@ class Config extends Model\AbstractModel
     /**
      * @var array
      */
-    public $items = array();
+    public $items = [];
 
     /**
      * @var string
@@ -60,13 +60,13 @@ class Config extends Model\AbstractModel
     /**
      * @var array
      */
-    public $params = array(
-        array("name" => "", "value" => ""),
-        array("name" => "", "value" => ""),
-        array("name" => "", "value" => ""),
-        array("name" => "", "value" => ""),
-        array("name" => "", "value" => ""),
-    );
+    public $params = [
+        ["name" => "", "value" => ""],
+        ["name" => "", "value" => ""],
+        ["name" => "", "value" => ""],
+        ["name" => "", "value" => ""],
+        ["name" => "", "value" => ""],
+    ];
 
     /**
      * @var int
@@ -105,7 +105,7 @@ class Config extends Model\AbstractModel
         $this->getDao()->delete();
 
         // clear cache tags
-        Cache::clearTags(array("tagmanagement", "output"));
+        Cache::clearTags(["tagmanagement", "output"]);
     }
 
     /**
@@ -126,7 +126,7 @@ class Config extends Model\AbstractModel
      */
     public function addItemAt($position, $parameters)
     {
-        array_splice($this->items, $position, 0, array($parameters));
+        array_splice($this->items, $position, 0, [$parameters]);
 
         return true;
     }
@@ -137,7 +137,7 @@ class Config extends Model\AbstractModel
      */
     public function resetItems()
     {
-        $this->items = array();
+        $this->items = [];
     }
 
     /**

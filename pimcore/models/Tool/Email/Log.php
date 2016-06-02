@@ -579,15 +579,15 @@ class Log extends Model\AbstractModel
      */
     protected function buildArray($data)
     {
-        $dataArray = array();
+        $dataArray = [];
         $tmp = explode(',', trim($data));
 
         foreach ($tmp as $entry) {
             $entry  = trim($entry);
             $tmp2   = explode(' ', $entry);
-            $dataArray[] = array('email' => trim($tmp2[0]),
-                                 'name' => str_replace(array('(', ')'), '', $tmp2[1])
-            );
+            $dataArray[] = ['email' => trim($tmp2[0]),
+                                 'name' => str_replace(['(', ')'], '', $tmp2[1])
+            ];
         }
         return $dataArray;
     }

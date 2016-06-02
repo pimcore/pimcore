@@ -1,6 +1,6 @@
 <?php
 
-$base = array(
+$base = [
   0x00 => 'Dao ', 'Diao ', 'Dao ', 'Ren ', 'Ren ', 'Chuang ', 'Fen ', 'Qie ', 'Yi ', 'Ji ', 'Kan ', 'Qian ', 'Cun ', 'Chu ', 'Wen ', 'Ji ',
   0x10 => 'Dan ', 'Xing ', 'Hua ', 'Wan ', 'Jue ', 'Li ', 'Yue ', 'Lie ', 'Liu ', 'Ze ', 'Gang ', 'Chuang ', 'Fu ', 'Chu ', 'Qu ', 'Ju ',
   0x20 => 'Shan ', 'Min ', 'Ling ', 'Zhong ', 'Pan ', 'Bie ', 'Jie ', 'Jie ', 'Bao ', 'Li ', 'Shan ', 'Bie ', 'Chan ', 'Jing ', 'Gua ', 'Gen ',
@@ -17,4 +17,4 @@ $base = array(
   0xD0 => 'Meng ', 'Lai ', 'Le ', 'Kai ', 'Mian ', 'Dong ', 'Xu ', 'Xu ', 'Kan ', 'Wu ', 'Yi ', 'Xun ', 'Weng ', 'Sheng ', 'Lao ', 'Mu ',
   0xE0 => 'Lu ', 'Piao ', 'Shi ', 'Ji ', 'Qin ', 'Qiang ', 'Jiao ', 'Quan ', 'Yang ', 'Yi ', 'Jue ', 'Fan ', 'Juan ', 'Tong ', 'Ju ', 'Dan ',
   0xF0 => 'Xie ', 'Mai ', 'Xun ', 'Xun ', 'Lu ', 'Li ', 'Che ', 'Rang ', 'Quan ', 'Bao ', 'Shao ', 'Yun ', 'Jiu ', 'Bao ', 'Gou ', 'Wu ',
-);
+];

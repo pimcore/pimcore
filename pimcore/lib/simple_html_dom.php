@@ -41,20 +41,20 @@
  */
 define('HDOM_TYPE_ELEMENT', 1);
 define('HDOM_TYPE_COMMENT', 2);
-define('HDOM_TYPE_TEXT',    3);
-define('HDOM_TYPE_ENDTAG',  4);
-define('HDOM_TYPE_ROOT',    5);
+define('HDOM_TYPE_TEXT', 3);
+define('HDOM_TYPE_ENDTAG', 4);
+define('HDOM_TYPE_ROOT', 5);
 define('HDOM_TYPE_UNKNOWN', 6);
 define('HDOM_QUOTE_DOUBLE', 0);
 define('HDOM_QUOTE_SINGLE', 1);
-define('HDOM_QUOTE_NO',     3);
-define('HDOM_INFO_BEGIN',   0);
-define('HDOM_INFO_END',     1);
-define('HDOM_INFO_QUOTE',   2);
-define('HDOM_INFO_SPACE',   3);
-define('HDOM_INFO_TEXT',    4);
-define('HDOM_INFO_INNER',   5);
-define('HDOM_INFO_OUTER',   6);
+define('HDOM_QUOTE_NO', 3);
+define('HDOM_INFO_BEGIN', 0);
+define('HDOM_INFO_END', 1);
+define('HDOM_INFO_QUOTE', 2);
+define('HDOM_INFO_SPACE', 3);
+define('HDOM_INFO_TEXT', 4);
+define('HDOM_INFO_INNER', 5);
+define('HDOM_INFO_OUTER', 6);
 define('HDOM_INFO_ENDSPACE', 7);
 define('DEFAULT_TARGET_CHARSET', 'UTF-8');
 define('DEFAULT_BR_TEXT', "\r\n");
@@ -107,11 +107,11 @@ class simple_html_dom_node
 {
     public $nodetype = HDOM_TYPE_TEXT;
     public $tag = 'text';
-    public $attr = array();
-    public $children = array();
-    public $nodes = array();
+    public $attr = [];
+    public $children = [];
+    public $nodes = [];
     public $parent = null;
-    public $_ = array();
+    public $_ = [];
     public $tag_start = 0;
     private $dom = null;
 
@@ -329,7 +329,7 @@ class simple_html_dom_node
 
         // trigger callback
         if ($this->dom && $this->dom->callback!==null) {
-            call_user_func_array($this->dom->callback, array($this));
+            call_user_func_array($this->dom->callback, [$this]);
         }
 
         if (isset($this->_[HDOM_INFO_OUTER])) {
@@ -447,26 +447,26 @@ class simple_html_dom_node
     {
         $selectors = $this->parse_selector($selector);
         if (($count=count($selectors))===0) {
-            return array();
+            return [];
         }
-        $found_keys = array();
+        $found_keys = [];
 
         // find each selector
         for ($c=0; $c<$count; ++$c) {
             // The change on the below line was documented on the sourceforge code tracker id 2788009
             // used to be: if (($levle=count($selectors[0]))===0) return array();
             if (($levle=count($selectors[$c]))===0) {
-                return array();
+                return [];
             }
             if (!isset($this->_[HDOM_INFO_BEGIN])) {
-                return array();
+                return [];
             }
 
-            $head = array($this->_[HDOM_INFO_BEGIN]=>1);
+            $head = [$this->_[HDOM_INFO_BEGIN]=>1];
 
             // handle descendant selectors, no recursive!
             for ($l=0; $l<$levle; ++$l) {
-                $ret = array();
+                $ret = [];
                 foreach ($head as $k=>$v) {
                     $n = ($k===-1) ? $this->dom->root : $this->dom->nodes[$k];
                     //PaperG - Pass this optional parameter on to the seek function.
@@ -485,7 +485,7 @@ class simple_html_dom_node
         // sort keys
         ksort($found_keys);
 
-        $found = array();
+        $found = [];
         foreach ($found_keys as $k=>$v) {
             $found[] = $this->dom->nodes[$k];
         }
@@ -662,8 +662,8 @@ class simple_html_dom_node
             $debugObject->debugLog(2, "Matches Array: ", $matches);
         }
 
-        $selectors = array();
-        $result = array();
+        $selectors = [];
+        $result = [];
         //print_r($matches);
 
         foreach ($matches as $m) {
@@ -676,7 +676,7 @@ class simple_html_dom_node
                 continue;
             }
 
-            list($tag, $key, $val, $exp, $no_key) = array($m[1], null, null, '=', false);
+            list($tag, $key, $val, $exp, $no_key) = [$m[1], null, null, '=', false];
             if (!empty($m[2])) {
                 $key='id';
                 $val=$m[2];
@@ -706,10 +706,10 @@ class simple_html_dom_node
                 $no_key=true;
             }
 
-            $result[] = array($tag, $key, $val, $exp, $no_key);
+            $result[] = [$tag, $key, $val, $exp, $no_key];
             if (trim($m[7])===',') {
                 $selectors[] = $result;
-                $result = array();
+                $result = [];
             }
         }
         if (count($result)>0) {
@@ -743,7 +743,7 @@ class simple_html_dom_node
                 return $this->_[HDOM_INFO_INNER] = $value;
         }
         if (!isset($this->attr[$name])) {
-            $this->_[HDOM_INFO_SPACE][] = array(' ', '', '');
+            $this->_[HDOM_INFO_SPACE][] = [' ', '', ''];
             $this->_[HDOM_INFO_QUOTE][] = HDOM_QUOTE_DOUBLE;
         }
         $this->attr[$name] = $value;
@@ -878,7 +878,7 @@ class simple_html_dom_node
 class simple_html_dom
 {
     public $root = null;
-    public $nodes = array();
+    public $nodes = [];
     public $callback = null;
     public $lowercase = false;
     public $size;
@@ -887,7 +887,7 @@ class simple_html_dom
     protected $char;
     protected $cursor;
     protected $parent;
-    protected $noise = array();
+    protected $noise = [];
     protected $token_blank = " \t\r\n";
     protected $token_equal = ' =/>';
     protected $token_slash = " />\r\n\t";
@@ -897,22 +897,22 @@ class simple_html_dom
     protected $default_br_text = "";
 
     // use isset instead of in_array, performance boost about 30%...
-    protected $self_closing_tags = array('img'=>1, 'br'=>1, 'input'=>1, 'meta'=>1, 'link'=>1, 'hr'=>1, 'base'=>1, 'embed'=>1, 'spacer'=>1);
-    protected $block_tags = array('root'=>1, 'body'=>1, 'form'=>1, 'div'=>1, 'span'=>1, 'table'=>1);
+    protected $self_closing_tags = ['img'=>1, 'br'=>1, 'input'=>1, 'meta'=>1, 'link'=>1, 'hr'=>1, 'base'=>1, 'embed'=>1, 'spacer'=>1];
+    protected $block_tags = ['root'=>1, 'body'=>1, 'form'=>1, 'div'=>1, 'span'=>1, 'table'=>1];
     // Known sourceforge issue #2977341
     // B tags that are not closed cause us to return everything to the end of the document.
-    protected $optional_closing_tags = array(
-        'tr'=>array('tr'=>1, 'td'=>1, 'th'=>1),
-        'th'=>array('th'=>1),
-        'td'=>array('td'=>1),
-        'li'=>array('li'=>1),
-        'dt'=>array('dt'=>1, 'dd'=>1),
-        'dd'=>array('dd'=>1, 'dt'=>1),
-        'dl'=>array('dd'=>1, 'dt'=>1),
-        'p'=>array('p'=>1),
-        'nobr'=>array('nobr'=>1),
-        'b'=>array('b'=>1),
-    );
+    protected $optional_closing_tags = [
+        'tr'=>['tr'=>1, 'td'=>1, 'th'=>1],
+        'th'=>['th'=>1],
+        'td'=>['td'=>1],
+        'li'=>['li'=>1],
+        'dt'=>['dt'=>1, 'dd'=>1],
+        'dd'=>['dd'=>1, 'dt'=>1],
+        'dl'=>['dd'=>1, 'dt'=>1],
+        'p'=>['p'=>1],
+        'nobr'=>['nobr'=>1],
+        'b'=>['b'=>1],
+    ];
 
     public function __construct($str=null, $lowercase=true, $forceTagsClosed=true, $target_charset=DEFAULT_TARGET_CHARSET, $stripRN=true, $defaultBRText=DEFAULT_BR_TEXT)
     {
@@ -925,7 +925,7 @@ class simple_html_dom
         }
         // Forcing tags to be closed implies that we don't trust the html, but it can lead to parsing errors if we SHOULD trust the html.
         if (!$forceTagsClosed) {
-            $this->optional_closing_array=array();
+            $this->optional_closing_array=[];
         }
         $this->_target_charset = $target_charset;
     }
@@ -1058,8 +1058,8 @@ class simple_html_dom
         $this->doc = $str;
         $this->pos = 0;
         $this->cursor = 1;
-        $this->noise = array();
-        $this->nodes = array();
+        $this->noise = [];
+        $this->nodes = [];
         $this->lowercase = $lowercase;
         $this->default_br_text = $defaultBRText;
         $this->root = new simple_html_dom_node($this);
@@ -1133,7 +1133,7 @@ class simple_html_dom
         // If we couldn't find a charset above, then lets try to detect one based on the text we got...
         if (empty($charset)) {
             // Have php try to detect the encoding from the text given to us.
-            $charset = mb_detect_encoding($this->root->plaintext . "ascii", $encoding_list = array( "UTF-8", "CP1252" ));
+            $charset = mb_detect_encoding($this->root->plaintext . "ascii", $encoding_list = [ "UTF-8", "CP1252" ]);
             if (is_object($debugObject)) {
                 $debugObject->debugLog(2, 'mb_detect found: ' . $charset);
             }
@@ -1299,7 +1299,7 @@ class simple_html_dom
         }
 
         $guard = 0; // prevent infinity loop
-        $space = array($this->copy_skip($this->token_blank), '', '');
+        $space = [$this->copy_skip($this->token_blank), '', ''];
 
         // attributes
         do {
@@ -1327,7 +1327,7 @@ class simple_html_dom
             if ($this->doc[$this->pos-1]=='<') {
                 $node->nodetype = HDOM_TYPE_TEXT;
                 $node->tag = 'text';
-                $node->attr = array();
+                $node->attr = [];
                 $node->_[HDOM_INFO_END] = 0;
                 $node->_[HDOM_INFO_TEXT] = substr($this->doc, $begin_tag_pos, $this->pos-$begin_tag_pos-1);
                 $this->pos -= 2;
@@ -1354,7 +1354,7 @@ class simple_html_dom
                     } // prev
                 }
                 $node->_[HDOM_INFO_SPACE][] = $space;
-                $space = array($this->copy_skip($this->token_blank), '', '');
+                $space = [$this->copy_skip($this->token_blank), '', ''];
             } else {
                 break;
             }

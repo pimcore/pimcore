@@ -35,7 +35,7 @@ abstract class Adapter
     /**
      * @var array
      */
-    protected $tmpFiles = array();
+    protected $tmpFiles = [];
 
     /**
      * @var bool
@@ -114,7 +114,7 @@ abstract class Adapter
         $r = hexdec(substr($colorhex, 1, 2));
         $g = hexdec(substr($colorhex, 3, 2));
         $b = hexdec(substr($colorhex, 5, 2));
-        return array($r, $g, $b, 'type' => 'RGB');
+        return [$r, $g, $b, 'type' => 'RGB'];
     }
 
 
@@ -475,7 +475,7 @@ abstract class Adapter
     }
 
     /**
-     * 
+     *
      */
     public function __destruct()
     {

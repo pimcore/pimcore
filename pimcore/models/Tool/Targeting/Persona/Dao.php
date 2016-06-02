@@ -100,7 +100,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function create()
     {
-        $this->db->insert("targeting_personas", array());
+        $this->db->insert("targeting_personas", []);
 
         $this->model->setId($this->db->lastInsertId());
 

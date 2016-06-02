@@ -49,7 +49,7 @@ trait Text
      * @param mixed $params
      * @return bool
      */
-    public function isDiffChangeAllowed($object, $params = array())
+    public function isDiffChangeAllowed($object, $params = [])
     {
         return true;
     }
@@ -61,7 +61,7 @@ trait Text
      * @param mixed $params
      * @return string
      */
-    public function getVersionPreview($data, $object = null, $params = array())
+    public function getVersionPreview($data, $object = null, $params = [])
     {
         // remove all <script> tags, to prevent XSS in the version preview
         // this should normally be filtered in the project specific controllers/action (/website folder) but just to be sure

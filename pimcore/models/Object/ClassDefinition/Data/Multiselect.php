@@ -128,7 +128,7 @@ class Multiselect extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getDataForResource($data, $object = null, $params = array())
+    public function getDataForResource($data, $object = null, $params = [])
     {
         if (is_array($data)) {
             return implode(",", $data);
@@ -142,7 +142,7 @@ class Multiselect extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getDataFromResource($data, $object = null, $params = array())
+    public function getDataFromResource($data, $object = null, $params = [])
     {
         if (strlen($data)) {
             return explode(",", $data);
@@ -158,7 +158,7 @@ class Multiselect extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getDataForQueryResource($data, $object = null, $params = array())
+    public function getDataForQueryResource($data, $object = null, $params = [])
     {
         if (!empty($data) && is_array($data)) {
             return ",".implode(",", $data).",";
@@ -174,7 +174,7 @@ class Multiselect extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getDataForEditmode($data, $object = null, $params = array())
+    public function getDataForEditmode($data, $object = null, $params = [])
     {
         if (is_array($data)) {
             return implode(",", $data);
@@ -188,7 +188,7 @@ class Multiselect extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getDataFromEditmode($data, $object = null, $params = array())
+    public function getDataFromEditmode($data, $object = null, $params = [])
     {
         if (\Pimcore\Tool\Admin::isExtJS6()) {
             return $data;
@@ -205,7 +205,7 @@ class Multiselect extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getVersionPreview($data, $object = null, $params = array())
+    public function getVersionPreview($data, $object = null, $params = [])
     {
         if (is_array($data)) {
             return implode(",", $data);
@@ -237,7 +237,7 @@ class Multiselect extends Model\Object\ClassDefinition\Data
      * @param array $params
      * @return string
      */
-    public function getForCsvExport($object, $params = array())
+    public function getForCsvExport($object, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if (is_array($data)) {
@@ -253,7 +253,7 @@ class Multiselect extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return array|mixed
      */
-    public function getFromCsvImport($importValue, $object = null, $params = array())
+    public function getFromCsvImport($importValue, $object = null, $params = [])
     {
         return explode(",", $importValue);
     }
@@ -266,8 +266,8 @@ class Multiselect extends Model\Object\ClassDefinition\Data
      */
     public function getFilterCondition($value, $operator)
     {
-        return $this->getFilterConditionExt($value, $operator, array(
-                "name" => $this->name)
+        return $this->getFilterConditionExt($value, $operator, [
+                "name" => $this->name]
         );
     }
 
@@ -278,7 +278,7 @@ class Multiselect extends Model\Object\ClassDefinition\Data
      * @param  $params optional params used to change the behavior
      * @return string
      */
-    public function getFilterConditionExt($value, $operator, $params = array())
+    public function getFilterConditionExt($value, $operator, $params = [])
     {
         if ($operator == "=") {
             $name = $params["name"] ? $params["name"] : $this->name;
@@ -292,7 +292,7 @@ class Multiselect extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return bool
      */
-    public function isDiffChangeAllowed($object, $params = array())
+    public function isDiffChangeAllowed($object, $params = [])
     {
         return true;
     }
@@ -304,10 +304,10 @@ class Multiselect extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return array|string
      */
-    public function getDiffVersionPreview($data, $object = null, $params = array())
+    public function getDiffVersionPreview($data, $object = null, $params = [])
     {
         if ($data) {
-            $map = array();
+            $map = [];
             foreach ($data as $value) {
                 $map[$value] = $value;
             }
@@ -323,7 +323,7 @@ class Multiselect extends Model\Object\ClassDefinition\Data
 
             $html .= "</ul>";
 
-            $value = array();
+            $value = [];
             $value["html"] = $html;
             $value["type"] = "html";
             return $value;

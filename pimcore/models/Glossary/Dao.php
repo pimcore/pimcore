@@ -97,7 +97,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->model->setModificationDate($ts);
         $this->model->setCreationDate($ts);
 
-        $this->db->insert("glossary", array());
+        $this->db->insert("glossary", []);
 
         $this->model->setId($this->db->lastInsertId());
 

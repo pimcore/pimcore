@@ -20,7 +20,6 @@ use Pimcore\Model;
 
 class Listing extends Model\Listing\AbstractListing
 {
-
     public function isValidOrderKey($key)
     {
         $resource = new Model\Tool\UUID\Dao();

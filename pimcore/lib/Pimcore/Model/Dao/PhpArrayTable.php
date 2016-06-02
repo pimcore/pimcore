@@ -20,7 +20,6 @@ use \Pimcore\Db\PhpArrayFileTable;
 
 abstract class PhpArrayTable implements DaoInterface
 {
-
     use DaoTrait;
 
     /**

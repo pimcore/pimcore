@@ -23,7 +23,7 @@ class CommonFilesFilter extends \Zend_Controller_Plugin_Abstract
     /**
      * @var array
      */
-    public static $files = array(
+    public static $files = [
         "@^/robots.txt$@",
         "@^/crossdomain.xml$@",
         "@^/favicon.ico$@",
@@ -31,7 +31,7 @@ class CommonFilesFilter extends \Zend_Controller_Plugin_Abstract
         "@^/browserconfig.xml$@",
         "@^/wpad.dat$@",
         "@^/.crl$@",
-    );
+    ];
 
     /**
      * @param \Zend_Controller_Request_Abstract $request
@@ -65,8 +65,7 @@ class CommonFilesFilter extends \Zend_Controller_Plugin_Abstract
                 }
 
                 // send correct headers
-                header("Content-Type: text/plain; charset=utf8");
-                while (@ob_end_flush()) ;
+                header("Content-Type: text/plain; charset=utf8"); while (@ob_end_flush()) ;
 
                 // check for configured robots.txt in pimcore
                 $robotsPath = PIMCORE_CONFIGURATION_DIRECTORY . "/robots" . $siteSuffix . ".txt";

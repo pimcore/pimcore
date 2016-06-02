@@ -25,7 +25,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
     /**
      * @var array
      */
-    public $validOrderKeys = array(
+    public $validOrderKeys = [
         "id",
         "fullpath",
         "maintype",
@@ -36,7 +36,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
         "modificationDate",
         "userOwner",
         "userModification"
-    );
+    ];
 
     /**
      * @return array

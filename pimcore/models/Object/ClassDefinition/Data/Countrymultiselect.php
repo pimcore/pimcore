@@ -38,14 +38,14 @@ class Countrymultiselect extends Model\Object\ClassDefinition\Data\Multiselect
     {
         $countries = \Zend_Locale::getTranslationList('territory');
         asort($countries);
-        $options = array();
+        $options = [];
 
         foreach ($countries as $short => $translation) {
             if (strlen($short) == 2) {
-                $options[] = array(
+                $options[] = [
                     "key" => $translation,
                     "value" => $short
-                );
+                ];
             }
         }
 

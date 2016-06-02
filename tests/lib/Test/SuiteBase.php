@@ -8,7 +8,6 @@
  */
 class Test_SuiteBase extends PHPUnit_Framework_TestSuite
 {
-
     protected function setUp()
     {
         // turn off frontend mode by default
@@ -100,12 +99,12 @@ class Test_SuiteBase extends PHPUnit_Framework_TestSuite
             $layout = Object_Class_Service::generateLayoutTreeFromArray($importData["layoutDefinitions"]);
             $objectBrick->setLayoutDefinitions($layout);
             $clDef = $importData["classDefinitions"];
-            $newClassDef = array("classname" => $unittestClass->getId(),
-                            "fieldname" => $clDef["fieldname"]);
+            $newClassDef = ["classname" => $unittestClass->getId(),
+                            "fieldname" => $clDef["fieldname"]];
 
 
-            $objectBrick->setClassDefinitions(array(
-                    $newClassDef)
+            $objectBrick->setClassDefinitions([
+                    $newClassDef]
 
             );
             try {

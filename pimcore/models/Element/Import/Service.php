@@ -46,7 +46,7 @@ class Service
     public function __construct($user)
     {
         $this->webService = new Webservice\Service();
-        $this->importInfo = array();
+        $this->importInfo = [];
         $this->user = $user;
     }
 
@@ -209,7 +209,7 @@ class Service
         $element->save();
 
         //todo save type and id for later rollback
-        $this->importInfo[Element\Service::getType($element) . "_" . $element->getId()] = array("id" => $element->getId(), "type" => Element\Service::getType($element), "fullpath" => $element->getRealFullPath());
+        $this->importInfo[Element\Service::getType($element) . "_" . $element->getId()] = ["id" => $element->getId(), "type" => Element\Service::getType($element), "fullpath" => $element->getRealFullPath()];
 
 
         return $element;
@@ -230,7 +230,7 @@ class Service
         //correct properties
         if ($apiElement->properties) {
             foreach ($apiElement->properties as $property) {
-                if (in_array($property->type, array("asset", "object", "document"))) {
+                if (in_array($property->type, ["asset", "object", "document"])) {
                     $property->data = $idMapping[$property->type][$property->data];
                 }
             }

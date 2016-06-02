@@ -39,7 +39,7 @@ class Dao extends Model\Dao\AbstractDao
 
         // get key-value data
         $keyValues = $this->db->fetchAll("SELECT * FROM notes_data WHERE id = ?", $id);
-        $preparedData = array();
+        $preparedData = [];
 
         foreach ($keyValues as $keyValue) {
             $data = $keyValue["data"];
@@ -68,10 +68,10 @@ class Dao extends Model\Dao\AbstractDao
                 $data = (bool) $data;
             }
 
-            $preparedData[$name] = array(
+            $preparedData[$name] = [
                 "data" => $data,
                 "type" => $type
-            );
+            ];
         }
 
         $this->model->setData($preparedData);
@@ -126,12 +126,12 @@ class Dao extends Model\Dao\AbstractDao
                 $data = (bool) $data;
             }
 
-            $this->db->insert("notes_data", array(
+            $this->db->insert("notes_data", [
                 "id" => $this->model->getId(),
                 "name" => $name,
                 "type" => $type,
                 "data" => $data
-            ));
+            ]);
         }
 
         return true;

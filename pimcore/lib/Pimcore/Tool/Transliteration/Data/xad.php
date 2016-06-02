@@ -1,6 +1,6 @@
 <?php
 
-$base = array(
+$base = [
   0x00 => 'gwan', 'gwanj', 'gwanh', 'gwad', 'gwal', 'gwalg', 'gwalm', 'gwalb', 'gwals', 'gwalt', 'gwalp', 'gwalh', 'gwam', 'gwab', 'gwabs', 'gwas',
   0x10 => 'gwass', 'gwang', 'gwaj', 'gwac', 'gwak', 'gwat', 'gwap', 'gwah', 'gwae', 'gwaeg', 'gwaegg', 'gwaegs', 'gwaen', 'gwaenj', 'gwaenh', 'gwaed',
   0x20 => 'gwael', 'gwaelg', 'gwaelm', 'gwaelb', 'gwaels', 'gwaelt', 'gwaelp', 'gwaelh', 'gwaem', 'gwaeb', 'gwaebs', 'gwaes', 'gwaess', 'gwaeng', 'gwaej', 'gwaec',
@@ -17,4 +17,4 @@ $base = array(
   0xD0 => 'gwim', 'gwib', 'gwibs', 'gwis', 'gwiss', 'gwing', 'gwij', 'gwic', 'gwik', 'gwit', 'gwip', 'gwih', 'gyu', 'gyug', 'gyugg', 'gyugs',
   0xE0 => 'gyun', 'gyunj', 'gyunh', 'gyud', 'gyul', 'gyulg', 'gyulm', 'gyulb', 'gyuls', 'gyult', 'gyulp', 'gyulh', 'gyum', 'gyub', 'gyubs', 'gyus',
   0xF0 => 'gyuss', 'gyung', 'gyuj', 'gyuc', 'gyuk', 'gyut', 'gyup', 'gyuh', 'geu', 'geug', 'geugg', 'geugs', 'geun', 'geunj', 'geunh', 'geud',
-);
+];

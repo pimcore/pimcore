@@ -77,8 +77,8 @@ class Update
 
         $xml = simplexml_load_string($xmlRaw, null, LIBXML_NOCDATA);
 
-        $revisions = array();
-        $releases = array();
+        $revisions = [];
+        $releases = [];
         if ($xml instanceof \SimpleXMLElement) {
             if (isset($xml->revision)) {
                 foreach ($xml->revision as $r) {
@@ -86,18 +86,18 @@ class Update
                     $date->setTimestamp((int) $r->date);
 
                     if (strlen(strval($r->version)) > 0) {
-                        $releases[] = array(
+                        $releases[] = [
                             "id" => strval($r->id),
                             "date" => strval($r->date),
                             "version" => strval($r->version),
                             "text" => strval($r->id) . " - " . $date->format("Y-m-d H:i")
-                        );
+                        ];
                     } else {
-                        $revisions[] = array(
+                        $revisions[] = [
                             "id" => strval($r->id),
                             "date" => strval($r->date),
                             "text" => strval($r->id) . " - " . $date->format("Y-m-d H:i")
-                        );
+                        ];
                     }
                 }
             }
@@ -105,10 +105,10 @@ class Update
             throw new \Exception("Unable to retrieve response from update server. Please ensure that your server is allowed to connect to update.pimcore.org:443");
         }
 
-        return array(
+        return [
             "revisions" => $revisions,
             "releases" => $releases
-        );
+        ];
     }
 
     /**
@@ -125,21 +125,21 @@ class Update
         $xmlRaw = Tool::getHttpData("https://" . self::$updateHost . "/v2/getDownloads.php?from=" . $currentRev . "&to=" . $toRevision);
         $xml = simplexml_load_string($xmlRaw, null, LIBXML_NOCDATA);
 
-        $jobs = array();
-        $updateScripts = array();
-        $revisions = array();
+        $jobs = [];
+        $updateScripts = [];
+        $revisions = [];
 
         if (isset($xml->download)) {
             foreach ($xml->download as $download) {
                 if ($download->type == "script") {
-                    $updateScripts[(string) $download->revision]["preupdate"] = array(
+                    $updateScripts[(string) $download->revision]["preupdate"] = [
                         "type" => "preupdate",
                         "revision" => (string) $download->revision
-                    );
-                    $updateScripts[(string) $download->revision]["postupdate"] = array(
+                    ];
+                    $updateScripts[(string) $download->revision]["postupdate"] = [
                         "type" => "postupdate",
                         "revision" => (string) $download->revision
-                    );
+                    ];
                 }
             }
         }
@@ -147,11 +147,11 @@ class Update
 
         if (isset($xml->download)) {
             foreach ($xml->download as $download) {
-                $jobs["parallel"][] = array(
+                $jobs["parallel"][] = [
                     "type" => "download",
                     "revision" => (string) $download->revision,
                     "url" => (string) $download->url
-                );
+                ];
 
                 $revisions[] = (int) $download->revision;
             }
@@ -164,10 +164,10 @@ class Update
                 $jobs["procedural"][] = $updateScripts[$revision]["preupdate"];
             }
 
-            $jobs["procedural"][] = array(
+            $jobs["procedural"][] = [
                 "type" => "files",
                 "revision" => $revision
-            );
+            ];
 
 
             if ($updateScripts[$revision]["postupdate"]) {
@@ -175,17 +175,17 @@ class Update
             }
         }
 
-        $jobs["procedural"][] = array(
+        $jobs["procedural"][] = [
             "type" => "clearcache"
-        );
+        ];
 
-        $jobs["procedural"][] = array(
+        $jobs["procedural"][] = [
             "type" => "cleanup"
-        );
+        ];
 
-        $jobs["procedural"][] = array(
+        $jobs["procedural"][] = [
             "type" => "composer-dump-autoload"
-        );
+        ];
 
         return $jobs;
     }
@@ -237,12 +237,12 @@ class Update
                         File::put($newFile, base64_decode((string) $file->content));
                     }
 
-                    $db->insert(self::$tmpTable, array(
+                    $db->insert(self::$tmpTable, [
                         "id" => $file->id,
                         "revision" => $revision,
                         "path" => (string) $file->path,
                         "action" => (string)$file->action
-                    ));
+                    ]);
                 } elseif ($file->type == "script") {
                     $newScript = $scriptsDir. $file->path;
                     File::put($newScript, base64_decode((string) $file->content));
@@ -337,10 +337,10 @@ class Update
 
         self::clearOPCaches();
 
-        return array(
+        return [
             "message" => $outputMessage,
             "success" => true
-        );
+        ];
     }
 
     /**
@@ -400,7 +400,7 @@ class Update
         // dump autoload and regenerate composer.lock
         $composerPath = \Pimcore\Tool\Console::getExecutable("composer");
         $process = new Process($composerPath . ' update nothing -d ' . PIMCORE_DOCUMENT_ROOT);
-        $process->setTimeout(null); 
+        $process->setTimeout(null);
         $process->mustRun();
     }
 

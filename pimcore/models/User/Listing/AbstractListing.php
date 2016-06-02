@@ -32,7 +32,7 @@ class AbstractListing extends Model\Listing\AbstractListing
      *
      * @var array
      */
-    public $items = array();
+    public $items = [];
 
     /**
      * Tests if the given key is an valid order key to sort the results

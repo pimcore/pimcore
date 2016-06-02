@@ -69,7 +69,7 @@ class Datetime extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return integer
      */
-    public function getDataForResource($data, $object = null, $params = array())
+    public function getDataForResource($data, $object = null, $params = [])
     {
         if ($data) {
             return $data->getTimestamp();
@@ -83,7 +83,7 @@ class Datetime extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return \Zend_Date|\DateTime
      */
-    public function getDataFromResource($data, $object = null, $params = array())
+    public function getDataFromResource($data, $object = null, $params = [])
     {
         if ($data) {
             return $this->getDateFromTimestamp($data);
@@ -97,7 +97,7 @@ class Datetime extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return integer
      */
-    public function getDataForQueryResource($data, $object = null, $params = array())
+    public function getDataForQueryResource($data, $object = null, $params = [])
     {
         if ($data) {
             return $data->getTimestamp();
@@ -111,7 +111,7 @@ class Datetime extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getDataForEditmode($data, $object = null, $params = array())
+    public function getDataForEditmode($data, $object = null, $params = [])
     {
         if ($data) {
             return $data->getTimestamp();
@@ -141,7 +141,7 @@ class Datetime extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return \Zend_Date|\DateTime
      */
-    public function getDataFromEditmode($data, $object = null, $params = array())
+    public function getDataFromEditmode($data, $object = null, $params = [])
     {
         if ($data) {
             return $this->getDateFromTimestamp($data / 1000);
@@ -155,7 +155,7 @@ class Datetime extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return null
      */
-    public function getDataForGrid($data, $object = null, $params = array())
+    public function getDataForGrid($data, $object = null, $params = [])
     {
         if ($data) {
             return $data->getTimestamp();
@@ -171,7 +171,7 @@ class Datetime extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getVersionPreview($data, $object = null, $params = array())
+    public function getVersionPreview($data, $object = null, $params = [])
     {
         if ($data instanceof \Zend_Date) {
             return $data->toString("Y-m-d H:i", "php");
@@ -188,7 +188,7 @@ class Datetime extends Model\Object\ClassDefinition\Data
      * @param array $params
      * @return string
      */
-    public function getForCsvExport($object, $params = array())
+    public function getForCsvExport($object, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof \Zend_Date) {
@@ -205,7 +205,7 @@ class Datetime extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return null|Date|Model\Object\ClassDefinition\Data
      */
-    public function getFromCsvImport($importValue, $object = null, $params = array())
+    public function getFromCsvImport($importValue, $object = null, $params = [])
     {
         $timestamp = strtotime($importValue);
         if ($timestamp) {
@@ -222,7 +222,7 @@ class Datetime extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return mixed
      */
-    public function getForWebserviceExport($object, $params = array())
+    public function getForWebserviceExport($object, $params = [])
     {
         return $this->getForCsvExport($object, $params);
     }
@@ -235,7 +235,7 @@ class Datetime extends Model\Object\ClassDefinition\Data
      * @return mixed|void
      * @throws \Exception
      */
-    public function getFromWebserviceImport($value, $object = null, $params = array(), $idMapper = null)
+    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
     {
         $timestamp = strtotime($value);
         if (empty($value)) {
@@ -292,7 +292,7 @@ class Datetime extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return bool
      */
-    public function isDiffChangeAllowed($object, $params = array())
+    public function isDiffChangeAllowed($object, $params = [])
     {
         return true;
     }
@@ -304,7 +304,7 @@ class Datetime extends Model\Object\ClassDefinition\Data
      * @return null|Date
      */
 
-    public function getDiffDataFromEditmode($data, $object = null, $params = array())
+    public function getDiffDataFromEditmode($data, $object = null, $params = [])
     {
         $thedata = $data[0]["data"];
         if ($thedata) {
@@ -320,15 +320,15 @@ class Datetime extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return array|null
      */
-    public function getDiffDataForEditMode($data, $object = null, $params = array())
+    public function getDiffDataForEditMode($data, $object = null, $params = [])
     {
-        $result = array();
+        $result = [];
 
         $thedata = null;
         if ($data) {
             $thedata = $data->getTimestamp();
         };
-        $diffdata = array();
+        $diffdata = [];
         $diffdata["field"] = $this->getName();
         $diffdata["key"] = $this->getName();
         $diffdata["type"] = $this->fieldtype;

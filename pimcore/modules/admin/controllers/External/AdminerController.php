@@ -94,7 +94,7 @@ function adminer_object()
         include_once $filename;
     }
 
-    $plugins = array(
+    $plugins = [
         new AdminerFrames(),
         new AdminerDumpDate,
         new AdminerDumpJson,
@@ -102,11 +102,10 @@ function adminer_object()
         new AdminerDumpZip,
         new AdminerDumpXml,
         new AdminerDumpAlter,
-    );
+    ];
 
     class AdminerPimcore extends AdminerPlugin
     {
-
         public function name()
         {
             return "";
@@ -133,9 +132,9 @@ function adminer_object()
             }
 
             // server, username and password for connecting to database
-            return array(
+            return [
                 $host, $conf->username, $conf->password
-            );
+            ];
         }
 
         public function database()

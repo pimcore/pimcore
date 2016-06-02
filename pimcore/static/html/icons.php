@@ -2,7 +2,7 @@
 $icons = scandir(dirname(dirname(__FILE__)).'/img/icon/');
 $iconPath = dirname(dirname($_SERVER['SCRIPT_NAME'])) . '/img/icon/';
 
-$pimcoreIconClasses = array();
+$pimcoreIconClasses = [];
 
 //get pimcore css classes for icons
 $handle = @fopen(dirname(dirname(__FILE__)) . '/css/icons.css', "r");
@@ -21,10 +21,10 @@ if ($handle) {
     fclose($handle);
 }
 
-$iconsGrouped = array();
+$iconsGrouped = [];
 function getIconData($icon, $iconCss, $pimcoreIconClasses)
 {
-    $data = array();
+    $data = [];
     $data['name'] = str_replace('.png', '', $icon);
     $data['path'] = dirname(dirname($_SERVER['SCRIPT_NAME'])) . '/img/icon/'.$icon;
     $data['id'] = str_replace('.', '', $icon);
@@ -100,7 +100,7 @@ foreach ($icons as $icon) {
             <td colspan="4"><?=ucfirst($group)?></td>
         </tr>
         <?php foreach ($icons as $icon) {
-    ?>
+        ?>
             <tr>
                 <td width="100"><img src="<?=$icon['path']?>" title="<?=$icon['path']?>" als="<?=$icon['path']?>" id="<?=$icon['id']?>"/></td>
                 <td><?=$icon['name']?></td>
@@ -109,7 +109,7 @@ foreach ($icons as $icon) {
             </tr>
         <?php
 
-}
+    }
     ?>
 
     <?php

@@ -222,7 +222,7 @@ function return_bytes($val)
  */
 function formatBytes($bytes, $precision = 2)
 {
-    $units = array('B', 'KB', 'MB', 'GB', 'TB');
+    $units = ['B', 'KB', 'MB', 'GB', 'TB'];
 
     $bytes = max($bytes, 0);
     $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
@@ -242,13 +242,13 @@ function filesize2bytes($str)
 {
     $bytes = 0;
 
-    $bytes_array = array(
+    $bytes_array = [
         'K' => 1024,
         'M' => 1024 * 1024,
         'G' => 1024 * 1024 * 1024,
         'T' => 1024 * 1024 * 1024 * 1024,
         'P' => 1024 * 1024 * 1024 * 1024 * 1024,
-    );
+    ];
 
     $bytes = floatval($str);
 
@@ -266,13 +266,13 @@ function filesize2bytes($str)
  * @param array $data
  * @return array
  */
-function rscandir($base = '', &$data = array())
+function rscandir($base = '', &$data = [])
 {
     if (substr($base, -1, 1) != DIRECTORY_SEPARATOR) { //add trailing slash if it doesn't exists
         $base .= DIRECTORY_SEPARATOR;
     }
 
-    $array = array_diff(scandir($base), array('.', '..', '.svn'));
+    $array = array_diff(scandir($base), ['.', '..', '.svn']);
     foreach ($array as $value) {
         if (is_dir($base . $value)) {
             $data[] = $base . $value . DIRECTORY_SEPARATOR;
@@ -362,9 +362,9 @@ function recursiveDelete($directory, $empty = true)
  * @param $destination
  * @return bool
  */
-function recursiveCopy($source, $destination) {
-
-    if(is_dir($source)) {
+function recursiveCopy($source, $destination)
+{
+    if (is_dir($source)) {
         if (!is_dir($destination)) {
             \Pimcore\File::mkdir($destination);
         }
@@ -380,7 +380,7 @@ function recursiveCopy($source, $destination) {
             }
         }
     } elseif (is_file($source)) {
-        if(is_dir(dirname($destination))) {
+        if (is_dir(dirname($destination))) {
             \Pimcore\File::mkdir(dirname($destination));
         }
         copy($source, $destination);
@@ -444,14 +444,14 @@ function isAssocArray(array $arr)
 function resolvePath($filename)
 {
     $protocol = "";
-    if(!stream_is_local($filename)) {
+    if (!stream_is_local($filename)) {
         $protocol = parse_url($filename, PHP_URL_SCHEME) . "://";
         $filename = str_replace($protocol, "", $filename);
     }
 
     $filename = str_replace('//', '/', $filename);
     $parts = explode('/', $filename);
-    $out = array();
+    $out = [];
     foreach ($parts as $part) {
         if ($part == '.') {
             continue;
@@ -483,10 +483,10 @@ function closureHash(Closure $closure)
         $file->next();
     }
 
-    $hash = md5(json_encode(array(
+    $hash = md5(json_encode([
         $content,
         $ref->getStaticVariables()
-    )));
+    ]));
 
     return $hash;
 }

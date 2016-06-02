@@ -96,7 +96,7 @@ class ImageThumbnail
             "frontendPath" => $path
         ]);
 
-        if($results->count()) {
+        if ($results->count()) {
             $path = $results->last();
         }
 
@@ -119,10 +119,9 @@ class ImageThumbnail
     {
         $errorImage = PIMCORE_PATH . '/static6/img/filetype-not-supported.png';
 
-        if(!$this->asset) {
+        if (!$this->asset) {
             $this->filesystemPath = $errorImage;
         } elseif (!$this->filesystemPath) {
-
             $cs = $this->asset->getCustomSetting("image_thumbnail_time");
             $im = $this->asset->getCustomSetting("image_thumbnail_asset");
 
@@ -312,7 +311,7 @@ class ImageThumbnail
     protected function createConfig($selector)
     {
         $config = Image\Thumbnail\Config::getByAutoDetect($selector);
-        if($config) {
+        if ($config) {
             $format = strtolower($config->getFormat());
             if ($format == "source") {
                 $config->setFormat("PNG");

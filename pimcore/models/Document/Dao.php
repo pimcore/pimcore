@@ -76,12 +76,12 @@ class Dao extends Model\Element\Dao
     public function create()
     {
         try {
-            $this->db->insert("documents", array(
+            $this->db->insert("documents", [
                 "key" => $this->model->getKey(),
                 "path" => $this->model->getRealPath(),
                 "parentId" => $this->model->getParentId(),
                 "index" => 0
-            ));
+            ]);
 
             $date = time();
             $this->model->setId($this->db->lastInsertId());
@@ -178,9 +178,9 @@ class Dao extends Model\Element\Dao
      */
     public function updateWorkspaces()
     {
-        $this->db->update("users_workspaces_document", array(
+        $this->db->update("users_workspaces_document", [
             "cpath" => $this->model->getRealFullPath()
-        ), "cid = " . $this->model->getId());
+        ], "cid = " . $this->model->getId());
     }
 
     /**
@@ -232,7 +232,7 @@ class Dao extends Model\Element\Dao
      */
     public function getProperties($onlyInherited = false, $onlyDirect = false)
     {
-        $properties = array();
+        $properties = [];
 
         if ($onlyDirect) {
             $propertiesRaw = $this->db->fetchAll("SELECT * FROM properties WHERE cid = ? AND ctype='document'", $this->model->getId());
@@ -387,11 +387,11 @@ class Dao extends Model\Element\Dao
         // tree_locks
         $this->db->delete("tree_locks", "id = " . $this->model->getId() . " AND type = 'document'");
         if ($this->model->getLocked()) {
-            $this->db->insert("tree_locks", array(
+            $this->db->insert("tree_locks", [
                 "id" => $this->model->getId(),
                 "type" => "document",
                 "locked" => $this->model->getLocked()
-            ));
+            ]);
         }
     }
 
@@ -413,7 +413,7 @@ class Dao extends Model\Element\Dao
     public function isAllowed($type, $user)
     {
         // collect properties via parent - ids
-        $parentIds = array(1);
+        $parentIds = [1];
 
         $obj = $this->model->getParent();
         if ($obj) {
@@ -460,7 +460,7 @@ class Dao extends Model\Element\Dao
      */
     public function saveIndex($index)
     {
-        $this->db->update("documents", array("index" => $index), $this->db->quoteInto("id = ?", $this->model->getId()));
+        $this->db->update("documents", ["index" => $index], $this->db->quoteInto("id = ?", $this->model->getId()));
     }
 
     /**
@@ -468,7 +468,7 @@ class Dao extends Model\Element\Dao
      */
     public function getNextIndex()
     {
-        $index = $this->db->fetchOne("SELECT MAX(`index`) FROM documents WHERE parentId = ?", array($this->model->getParentId()));
+        $index = $this->db->fetchOne("SELECT MAX(`index`) FROM documents WHERE parentId = ?", [$this->model->getParentId()]);
         $index++;
         return $index;
     }

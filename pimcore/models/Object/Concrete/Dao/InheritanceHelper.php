@@ -124,10 +124,10 @@ class InheritanceHelper
      */
     public function resetFieldsToCheck()
     {
-        $this->fields = array();
-        $this->relations = array();
-        $this->fieldIds = array();
-        $this->deletionFieldIds = array();
+        $this->fields = [];
+        $this->relations = [];
+        $this->fieldIds = [];
+        $this->deletionFieldIds = [];
         $this->fieldDefinitions = [];
     }
 
@@ -137,7 +137,7 @@ class InheritanceHelper
     public function addFieldToCheck($fieldname, $fieldDefinition)
     {
         $this->fields[$fieldname] = $fieldname;
-        $this->fieldIds[$fieldname] = array();
+        $this->fieldIds[$fieldname] = [];
         $this->fieldDefinitions[$fieldname] = $fieldDefinition;
     }
 
@@ -153,7 +153,7 @@ class InheritanceHelper
             $this->relations[$fieldname] = $queryfields;
         }
 
-        $this->fieldIds[$fieldname] = array();
+        $this->fieldIds[$fieldname] = [];
         $this->fieldDefinitions[$fieldname] = $fieldDefinition;
     }
 
@@ -168,7 +168,7 @@ class InheritanceHelper
             return;
         }
 
-        $this->idTree = array();
+        $this->idTree = [];
 
 
         $fields = implode("`,`", $this->fields);
@@ -247,7 +247,7 @@ class InheritanceHelper
 
         $o = new \stdClass();
         $o->id = $objectId;
-        $o->values = array();
+        $o->values = [];
         $o->childs = $this->buildTree($objectId, $fields);
 
         if (!empty($this->fields)) {
@@ -268,7 +268,7 @@ class InheritanceHelper
             }
         }
 
-        $affectedIds = array();
+        $affectedIds = [];
 
         foreach ($this->deletionFieldIds as $fieldname => $ids) {
             foreach ($ids as $id) {
@@ -276,15 +276,15 @@ class InheritanceHelper
             }
         }
 
-        $systemFields = array("o_id", "fieldname");
+        $systemFields = ["o_id", "fieldname"];
 
-        $toBeRemovedItemIds = array();
+        $toBeRemovedItemIds = [];
 
 
         // now iterate over all affected elements and check if the object even has a brick. If it doesn't, then
         // remove the query row entirely ...
         if ($affectedIds) {
-            $objectsWithBrickIds = array();
+            $objectsWithBrickIds = [];
             $objectsWithBricks = $this->db->fetchAll("SELECT " . $this->idField . " FROM " . $this->storetable . " WHERE " . $this->idField . " IN (" . implode(",", $affectedIds) . ")");
             foreach ($objectsWithBricks as $item) {
                 $objectsWithBrickIds[] = $item["id"];
@@ -327,7 +327,7 @@ class InheritanceHelper
 
             $result = $this->db->fetchAll("SELECT b.o_id AS id $fields, b.o_type AS type, b.o_classId AS classId, b.o_parentId AS parentId, CONCAT(o_path,o_key) as fullpath FROM objects b LEFT JOIN " . $this->storetable . " a ON b.o_id = a." . $this->idField . " WHERE o_path LIKE ? GROUP BY b.o_id ORDER BY LENGTH(o_path) ASC", $object->getRealFullPath() . "/%");
 
-            $objects = array();
+            $objects = [];
 
             // group the results together based on the parent id's
             $parentIdGroups = [];
@@ -370,7 +370,7 @@ class InheritanceHelper
 
         $objectRelationsResult =  $this->db->fetchAll("SELECT fieldname, count(*) as COUNT FROM " . $this->relationtable . " WHERE src_id = ? AND fieldname IN('" . implode("','", array_keys($this->relations)) . "') GROUP BY fieldname;", $node->id);
 
-        $objectRelations = array();
+        $objectRelations = [];
         if (!empty($objectRelationsResult)) {
             foreach ($objectRelationsResult as $orr) {
                 if ($orr['COUNT'] > 0) {
@@ -490,7 +490,7 @@ class InheritanceHelper
     {
         if (!empty($ids)) {
             $value = $this->db->fetchOne("SELECT `$fieldname` FROM " . $this->querytable . " WHERE " . $this->idField . " = ?", $oo_id);
-            $this->db->update($this->querytable, array($fieldname => $value), $this->idField . " IN (" . implode(",", $ids) . ")");
+            $this->db->update($this->querytable, [$fieldname => $value], $this->idField . " IN (" . implode(",", $ids) . ")");
         }
     }
 
@@ -499,7 +499,7 @@ class InheritanceHelper
     {
         if (!empty($ids)) {
             $value = null;
-            $this->db->update($this->querytable, array($fieldname => $value), $this->idField . " IN (" . implode(",", $ids) . ")");
+            $this->db->update($this->querytable, [$fieldname => $value], $this->idField . " IN (" . implode(",", $ids) . ")");
         }
     }
 }

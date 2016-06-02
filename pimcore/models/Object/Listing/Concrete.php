@@ -150,7 +150,7 @@ abstract class Concrete extends Model\Object\Listing
      * field collection queries
      * @var array
      */
-    private $fieldCollectionConfigs = array();
+    private $fieldCollectionConfigs = [];
 
     /**
      * @param $type
@@ -164,7 +164,7 @@ abstract class Concrete extends Model\Object\Listing
         }
 
         Object\Fieldcollection\Definition::getByKey($type);
-        $this->fieldCollectionConfigs[] = array("type" => $type, "fieldname" => $fieldname);
+        $this->fieldCollectionConfigs[] = ["type" => $type, "fieldname" => $fieldname];
         ;
     }
 
@@ -194,7 +194,7 @@ abstract class Concrete extends Model\Object\Listing
      * object brick queries
      * @var array
      */
-    private $objectBrickConfigs = array();
+    private $objectBrickConfigs = [];
 
     /**
      * @param $type

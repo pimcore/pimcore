@@ -36,7 +36,7 @@ abstract class AbstractDao extends Model\Dao\AbstractDao
         if (!empty($order) || !empty($orderKey)) {
             $c = 0;
             $lastOrder = $order[0];
-            $parts = array();
+            $parts = [];
 
             if (is_array($orderKey)) {
                 foreach ($orderKey as $key) {
@@ -109,7 +109,7 @@ abstract class AbstractDao extends Model\Dao\AbstractDao
         if (!empty($order) || !empty($orderKey)) {
             $c = 0;
             $lastOrder = $order[0];
-            $parts = array();
+            $parts = [];
 
             if (is_array($orderKey)) {
                 foreach ($orderKey as $key) {

@@ -27,10 +27,10 @@ class EditmodeTooltip extends \Zend_View_Helper_Abstract
      */
     protected function getDefaultEditmodeTooltipOptions()
     {
-        return array("autoHide" => true,
+        return ["autoHide" => true,
                      "title" => null,
                      "icon" => "/pimcore/static/img/icon/information.png"
-        );
+        ];
     }
 
     /**
@@ -50,7 +50,7 @@ class EditmodeTooltip extends \Zend_View_Helper_Abstract
      * @param array $options
      * @return string
      */
-    public function editmodeTooltip($html, $title = null, $options = array())
+    public function editmodeTooltip($html, $title = null, $options = [])
     {
         if ($html) {
             $options = array_merge($this->getDefaultEditmodeTooltipOptions(), $options);

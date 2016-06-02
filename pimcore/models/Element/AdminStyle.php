@@ -20,7 +20,6 @@ use Pimcore\Model;
 
 class AdminStyle
 {
-
     protected $elementCssClass;
     protected $elementIcon;
     protected $elementIconClass;
@@ -30,9 +29,9 @@ class AdminStyle
     {
         if ($element->getType() == "folder") {
             $this->elementIconClass = "pimcore_icon_folder";
-            $this->elementQtipConfig = array(
+            $this->elementQtipConfig = [
                 "title" => "ID: " . $element->getId()
-            );
+            ];
         } else {
             if ($element->getClass()->getIcon()) {
                 $this->elementIcon = $element->getClass()->getIcon();
@@ -40,10 +39,10 @@ class AdminStyle
                 $this->elementIconClass = "pimcore_icon_object";
             }
 
-            $this->elementQtipConfig = array(
+            $this->elementQtipConfig = [
                 "title" => "ID: " . $element->getId(),
                 "text" => 'Type: ' . $element->getClass()->getName()
-            );
+            ];
         }
     }
 

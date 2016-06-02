@@ -84,7 +84,7 @@ class Dao extends Model\Dao\AbstractDao
     {
         $deadline = time() - (intval($days) * 86400);
 
-        $versionIds = $this->db->fetchCol("SELECT id FROM versions WHERE cid = ? and ctype = ? AND date < ?", array($this->model->getCid(), $this->model->getCtype(), $deadline));
+        $versionIds = $this->db->fetchCol("SELECT id FROM versions WHERE cid = ? and ctype = ? AND date < ?", [$this->model->getCid(), $this->model->getCtype(), $deadline]);
         return $versionIds;
     }
 
@@ -94,7 +94,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getOutdatedVersionsSteps($steps)
     {
-        $versionIds = $this->db->fetchCol("SELECT id FROM versions WHERE cid = ? and ctype = ? ORDER BY date DESC LIMIT " . intval($steps) . ",1000000", array($this->model->getCid(), $this->model->getCtype()));
+        $versionIds = $this->db->fetchCol("SELECT id FROM versions WHERE cid = ? and ctype = ? ORDER BY date DESC LIMIT " . intval($steps) . ",1000000", [$this->model->getCid(), $this->model->getCtype()]);
         return $versionIds;
     }
 
@@ -102,13 +102,13 @@ class Dao extends Model\Dao\AbstractDao
      * @param $elementTypes
      * @return array
      */
-    public function maintenanceGetOutdatedVersions($elementTypes, $ignoreIds = array())
+    public function maintenanceGetOutdatedVersions($elementTypes, $ignoreIds = [])
     {
         $ignoreIdsList = implode(",", $ignoreIds);
         if (!$ignoreIdsList) {
             $ignoreIdsList = "0"; // set a default to avoid SQL errors (there's no version with ID 0)
         }
-        $versionIds = array();
+        $versionIds = [];
 
         \Logger::debug("ignore ID's: " . $ignoreIdsList);
 
@@ -119,15 +119,15 @@ class Dao extends Model\Dao\AbstractDao
                 if ($elementType["days"] > 0) {
                     // by days
                     $deadline = time() - ($elementType["days"] * 86400);
-                    $tmpVersionIds = $this->db->fetchCol("SELECT id FROM versions as a WHERE (ctype = ? AND date < ?) AND NOT public AND id NOT IN (" . $ignoreIdsList . ")", array($elementType["elementType"], $deadline));
+                    $tmpVersionIds = $this->db->fetchCol("SELECT id FROM versions as a WHERE (ctype = ? AND date < ?) AND NOT public AND id NOT IN (" . $ignoreIdsList . ")", [$elementType["elementType"], $deadline]);
                     $versionIds = array_merge($versionIds, $tmpVersionIds);
                 } else {
                     // by steps
-                    $elementIds = $this->db->fetchCol("SELECT cid,count(*) as amount FROM versions WHERE ctype = ? AND NOT public AND id NOT IN (" . $ignoreIdsList . ") GROUP BY cid HAVING amount > ?", array($elementType["elementType"], $elementType["steps"]));
+                    $elementIds = $this->db->fetchCol("SELECT cid,count(*) as amount FROM versions WHERE ctype = ? AND NOT public AND id NOT IN (" . $ignoreIdsList . ") GROUP BY cid HAVING amount > ?", [$elementType["elementType"], $elementType["steps"]]);
                     foreach ($elementIds as $elementId) {
                         $count++;
                         \Logger::info($elementId . "(object " . $count . ") Vcount " . count($versionIds));
-                        $elementVersions = $this->db->fetchCol("SELECT id FROM versions WHERE cid = ? and ctype = ? ORDER BY date DESC LIMIT " . $elementType["steps"] . ",1000000", array($elementId, $elementType["elementType"]));
+                        $elementVersions = $this->db->fetchCol("SELECT id FROM versions WHERE cid = ? and ctype = ? ORDER BY date DESC LIMIT " . $elementType["steps"] . ",1000000", [$elementId, $elementType["elementType"]]);
 
                         $versionIds = array_merge($versionIds, $elementVersions);
 

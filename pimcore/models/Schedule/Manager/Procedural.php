@@ -24,12 +24,12 @@ class Procedural
     /**
      * @var array
      */
-    public $jobs = array();
+    public $jobs = [];
 
     /**
      * @var array
      */
-    protected $validJobs = array();
+    protected $validJobs = [];
 
     /**
      * @var

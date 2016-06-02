@@ -16,8 +16,6 @@ use Pimcore\Update;
 
 class Update_IndexController extends \Pimcore\Controller\Action\Admin
 {
-
-
     public function init()
     {
         parent::init();
@@ -29,16 +27,16 @@ class Update_IndexController extends \Pimcore\Controller\Action\Admin
 
     public function checkComposerInstalledAction()
     {
-        $this->_helper->json(array(
+        $this->_helper->json([
             "success" => Update::isComposerAvailable()
-        ));
+        ]);
     }
 
     public function checkFilePermissionsAction()
     {
-        $this->_helper->json(array(
+        $this->_helper->json([
             "success" => Update::isWriteable()
-        ));
+        ]);
     }
 
     public function getAvailableUpdatesAction()
@@ -60,12 +58,12 @@ class Update_IndexController extends \Pimcore\Controller\Action\Admin
             Update::downloadData($this->getParam("revision"), $this->getParam("url"));
         }
 
-        $this->_helper->json(array("success" => true));
+        $this->_helper->json(["success" => true]);
     }
 
     public function jobProceduralAction()
     {
-        $status = array("success" => true);
+        $status = ["success" => true];
 
         if ($this->getParam("type") == "files") {
             Update::installData($this->getParam("revision"));

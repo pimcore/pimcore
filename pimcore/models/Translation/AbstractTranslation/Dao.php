@@ -50,13 +50,13 @@ abstract class Dao extends Model\Dao\AbstractDao implements Dao\DaoInterface
     {
         if ($this->model->getKey() !== '') {
             foreach ($this->model->getTranslations() as $language => $text) {
-                $data = array(
+                $data = [
                     "key" => $this->model->getKey(),
                     "language" => $language,
                     "text" => $text,
                     "modificationDate" => $this->model->getModificationDate(),
                     "creationDate" => $this->model->getCreationDate()
-                );
+                ];
                 $this->db->insertOrUpdate(static::getTableName(), $data);
             }
         }

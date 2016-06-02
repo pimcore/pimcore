@@ -20,7 +20,6 @@ use Pimcore\Model;
 
 class In extends Model\Webservice\Data\Document\Link
 {
-
     public function reverseMap($object, $disableMappingExceptions = false, $idMapper = null)
     {
         $sourceId = $this->sourceId;

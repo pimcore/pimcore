@@ -43,14 +43,14 @@ class Country extends Model\Object\ClassDefinition\Data\Select
     {
         $countries = \Zend_Locale::getTranslationList('territory');
         asort($countries);
-        $options = array();
+        $options = [];
 
         foreach ($countries as $short => $translation) {
             if (strlen($short) == 2) {
-                $options[] = array(
+                $options[] = [
                     "key" => $translation,
                     "value" => $short
-                );
+                ];
             }
         }
 
@@ -62,7 +62,7 @@ class Country extends Model\Object\ClassDefinition\Data\Select
      * @param mixed $params
      * @return bool
      */
-    public function isDiffChangeAllowed($object, $params = array())
+    public function isDiffChangeAllowed($object, $params = [])
     {
         return true;
     }

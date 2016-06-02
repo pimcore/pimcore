@@ -9,7 +9,6 @@
 
 class TestSuite_Rest_DataTypeTestIn extends Test_BaseRest
 {
-
     public static $seed;
 
     public static $localObject;

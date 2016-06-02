@@ -18,7 +18,6 @@ use Pimcore\File;
 
 class Ftp extends \Zend_File_Transfer_Adapter_Abstract
 {
-
     use \Pimcore\File\Transfer\Adapter\AdapterTrait;
 
     /**

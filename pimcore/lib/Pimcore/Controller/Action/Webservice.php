@@ -43,7 +43,7 @@ class Webservice extends Action
             $apikey = $this->getParam("apikey");
 
             $userList = new User\Listing();
-            $userList->setCondition("apiKey = ? AND type = ? AND active = 1", array($apikey, "user"));
+            $userList->setCondition("apiKey = ? AND type = ? AND active = 1", [$apikey, "user"]);
             $users = $userList->load();
 
             if (!is_array($users) or count($users)!==1) {

@@ -30,7 +30,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     protected $model;
 
-    protected $_sqlChangeLog = array();
+    protected $_sqlChangeLog = [];
 
     protected $tableDefinitions = null;
 
@@ -111,7 +111,7 @@ class Dao extends Model\Dao\AbstractDao
     public function update()
     {
         $class = get_object_vars($this->model);
-        $data = array();
+        $data = [];
 
         foreach ($class as $key => $value) {
             if (in_array($key, $this->getValidTableColumns("classes"))) {
@@ -140,8 +140,8 @@ class Dao extends Model\Dao\AbstractDao
         $objectView = "object_" . $this->model->getId();
 
         // create object table if not exists
-        $protectedColums = array("oo_id", "oo_classId", "oo_className");
-        $protectedDatastoreColumns = array("oo_id");
+        $protectedColums = ["oo_id", "oo_classId", "oo_className"];
+        $protectedDatastoreColumns = ["oo_id"];
 
         $this->db->query("CREATE TABLE IF NOT EXISTS `" . $objectTable . "` (
 			  `oo_id` int(11) NOT NULL default '0',
@@ -186,7 +186,7 @@ class Dao extends Model\Dao\AbstractDao
         $columnsToRemove = $existingColumns;
         $datastoreColumnsToRemove = $existingDatastoreColumns;
 
-        Object\ClassDefinition\Service::updateTableDefinitions($this->tableDefinitions, array($objectTable, $objectDatastoreTable));
+        Object\ClassDefinition\Service::updateTableDefinitions($this->tableDefinitions, [$objectTable, $objectDatastoreTable]);
 
         // add non existing columns in the table
         if (is_array($this->model->getFieldDefinitions()) && count($this->model->getFieldDefinitions())) {
@@ -262,7 +262,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function create()
     {
-        $this->db->insert("classes", array("name" => $this->model->getName()));
+        $this->db->insert("classes", ["name" => $this->model->getName()]);
 
         $this->model->setId($this->db->lastInsertId());
         $this->model->setCreationDate(time());
@@ -335,12 +335,12 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function updateClassNameInObjects($newName)
     {
-        $this->db->update("objects", array(
+        $this->db->update("objects", [
             "o_className" => $newName
-        ), $this->db->quoteInto("o_classId = ?", $this->model->getId()));
+        ], $this->db->quoteInto("o_classId = ?", $this->model->getId()));
 
-        $this->db->update("object_query_" . $this->model->getId(), array(
+        $this->db->update("object_query_" . $this->model->getId(), [
             "oo_className" => $newName
-        ));
+        ]);
     }
 }

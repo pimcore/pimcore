@@ -182,17 +182,17 @@ class Service
     public function getDocumentList($condition = null, $order = null, $orderKey = null, $offset = null, $limit = null, $groupBy = null)
     {
         try {
-            $list = Document::getList(array(
+            $list = Document::getList([
                 "condition" => $condition,
                 "order" => $order,
                 "orderKey" => $orderKey,
                 "offset" => $offset,
                 "limit" => $limit,
                 "groupBy" => $groupBy
-            ));
+            ]);
             $list->setUnpublished(1);
 
-            $items = array();
+            $items = [];
             /** @var  $doc Document */
             foreach ($list as $doc) {
                 $item = new Webservice\Data\Document\Listing\Item();
@@ -706,7 +706,7 @@ class Service
     public function getAssetList($condition = null, $order = null, $orderKey = null, $offset = null, $limit = null, $groupBy = null)
     {
         try {
-            $params = array();
+            $params = [];
 
             if (!empty($condition)) {
                 $params["condition"] = $condition;
@@ -730,7 +730,7 @@ class Service
 
             $list = Asset::getList($params);
 
-            $items = array();
+            $items = [];
             foreach ($list as $asset) {
                 $item = new Webservice\Data\Asset\Listing\Item();
                 $item->id = $asset->getId();
@@ -822,7 +822,7 @@ class Service
     public function getObjectList($condition = null, $order = null, $orderKey = null, $offset = null, $limit = null, $groupBy = null, $objectClass = null)
     {
         try {
-            $params = array("objectTypes" => array(Object\AbstractObject::OBJECT_TYPE_FOLDER, Object\AbstractObject::OBJECT_TYPE_OBJECT, Object\AbstractObject::OBJECT_TYPE_VARIANT));
+            $params = ["objectTypes" => [Object\AbstractObject::OBJECT_TYPE_FOLDER, Object\AbstractObject::OBJECT_TYPE_OBJECT, Object\AbstractObject::OBJECT_TYPE_VARIANT]];
 
             if (!empty($condition)) {
                 $params["condition"] = $condition;
@@ -854,7 +854,7 @@ class Service
             $list = $listClassName::getList($params);
             $list->setUnpublished(1);
 
-            $items = array();
+            $items = [];
             foreach ($list as $object) {
                 $item = new Webservice\Data\Object\Listing\Item();
                 $item->id = $object->getId();
@@ -1099,7 +1099,7 @@ class Service
 
     public function getTranslations($type, $params)
     {
-        if (in_array($type, array('website', 'admin'))) {
+        if (in_array($type, ['website', 'admin'])) {
             $listClass = '\\Pimcore\\Model\\Translation\\' . ucfirst($type) .'\\Listing';
             /**
              * @var $list \Pimcore\Model\Translation\Website\Listing
@@ -1116,7 +1116,7 @@ class Service
             $list->addConditionParam(" `modificationDate` <= ? ", $params['modificationDateTill']);
             $data = $list->load();
 
-            $result = array();
+            $result = [];
             foreach ($data as $obj) {
                 $result[] = $obj->getForWebserviceExport();
             }

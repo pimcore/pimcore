@@ -1,6 +1,6 @@
 <?php
 
-$base = array(
+$base = [
   0x00 => 'cyess', 'cyeng', 'cyej', 'cyec', 'cyek', 'cyet', 'cyep', 'cyeh', 'co', 'cog', 'cogg', 'cogs', 'con', 'conj', 'conh', 'cod',
   0x10 => 'col', 'colg', 'colm', 'colb', 'cols', 'colt', 'colp', 'colh', 'com', 'cob', 'cobs', 'cos', 'coss', 'cong', 'coj', 'coc',
   0x20 => 'cok', 'cot', 'cop', 'coh', 'cwa', 'cwag', 'cwagg', 'cwags', 'cwan', 'cwanj', 'cwanh', 'cwad', 'cwal', 'cwalg', 'cwalm', 'cwalb',
@@ -17,4 +17,4 @@ $base = array(
   0xD0 => 'cwen', 'cwenj', 'cwenh', 'cwed', 'cwel', 'cwelg', 'cwelm', 'cwelb', 'cwels', 'cwelt', 'cwelp', 'cwelh', 'cwem', 'cweb', 'cwebs', 'cwes',
   0xE0 => 'cwess', 'cweng', 'cwej', 'cwec', 'cwek', 'cwet', 'cwep', 'cweh', 'cwi', 'cwig', 'cwigg', 'cwigs', 'cwin', 'cwinj', 'cwinh', 'cwid',
   0xF0 => 'cwil', 'cwilg', 'cwilm', 'cwilb', 'cwils', 'cwilt', 'cwilp', 'cwilh', 'cwim', 'cwib', 'cwibs', 'cwis', 'cwiss', 'cwing', 'cwij', 'cwic',
-);
+];

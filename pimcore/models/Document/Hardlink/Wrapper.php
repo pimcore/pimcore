@@ -54,7 +54,7 @@ trait Wrapper
             if ($this->getHardLinkSource()->getPropertiesFromSource()) {
                 $sourceProperties = $this->getDao()->getProperties();
             } else {
-                $sourceProperties = array();
+                $sourceProperties = [];
             }
 
             if ($this->getSourceDocument()) {
@@ -65,7 +65,7 @@ trait Wrapper
                 $sourceProperties = $this->getSourceDocument()->getProperties();
             }
 
-            $hardLinkProperties = array();
+            $hardLinkProperties = [];
             $hardLinkSourceProperties = $this->getHardLinkSource()->getProperties();
             foreach ($hardLinkSourceProperties as $key => $prop) {
                 $prop = clone $prop;
@@ -94,7 +94,7 @@ trait Wrapper
     {
         if ($this->childs === null) {
             $hardLink = $this->getHardLinkSource();
-            $childs = array();
+            $childs = [];
 
             if ($hardLink->getChildsFromSource() && $hardLink->getSourceDocument() && !\Pimcore::inAdmin()) {
                 foreach (parent::getChilds() as $c) {

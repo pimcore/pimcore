@@ -91,7 +91,7 @@ class Item
      * @param array $data
      * @return $this
      */
-    public function setValues($data = array())
+    public function setValues($data = [])
     {
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $key => $value) {

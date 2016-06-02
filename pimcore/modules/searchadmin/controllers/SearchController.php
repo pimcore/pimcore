@@ -41,7 +41,7 @@ class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin
         $classnames = explode(",", $this->getParam("class"));
 
         if ($this->getParam("type") == "object" && is_array($classnames) && empty($classnames[0])) {
-            $subtypes = array("object","variant","folder");
+            $subtypes = ["object","variant","folder"];
         }
 
         $offset = intval($this->getParam("start"));
@@ -51,7 +51,7 @@ class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin
         $limit = $limit ? $limit : 50;
 
         $searcherList = new Data\Listing();
-        $conditionParts = array();
+        $conditionParts = [];
         $db = \Pimcore\Db::get();
 
         //exclude forbidden assets
@@ -119,8 +119,8 @@ class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin
 
 
         //For objects - handling of bricks
-        $fields = array();
-        $bricks = array();
+        $fields = [];
+        $bricks = [];
         if ($this->getParam("fields")) {
             $fields = $this->getParam("fields");
 
@@ -234,7 +234,7 @@ class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin
 
         $hits = $searcherList->load();
 
-        $elements=array();
+        $elements=[];
         foreach ($hits as $hit) {
             $element = Element\Service::getElementById($hit->getId()->getType(), $hit->getId()->getId());
             if ($element->isAllowed("list")) {
@@ -260,7 +260,7 @@ class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin
             $totalMatches = count($elements);
         }
 
-        $this->_helper->json(array("data" => $elements, "success" => true, "total" => $totalMatches));
+        $this->_helper->json(["data" => $elements, "success" => true, "total" => $totalMatches]);
 
         $this->removeViewRenderer();
     }

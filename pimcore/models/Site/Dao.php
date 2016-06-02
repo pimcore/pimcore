@@ -53,7 +53,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getByDomain($domain)
     {
-        $data = $this->db->fetchRow("SELECT * FROM sites WHERE mainDomain = ? OR domains LIKE ?", array($domain, "%\"" . $domain . "\"%"));
+        $data = $this->db->fetchRow("SELECT * FROM sites WHERE mainDomain = ? OR domains LIKE ?", [$domain, "%\"" . $domain . "\"%"]);
         if (!$data["id"]) {
 
             // check for wildcards
@@ -75,7 +75,7 @@ class Dao extends Model\Dao\AbstractDao
 
             foreach ($wildcardDomains as $wildcardDomain => $siteId) {
                 if (preg_match("#^" . $wildcardDomain . "$#", $domain)) {
-                    $data = $this->db->fetchRow("SELECT * FROM sites WHERE id = ?", array($siteId));
+                    $data = $this->db->fetchRow("SELECT * FROM sites WHERE id = ?", [$siteId]);
                 }
             }
 
@@ -109,7 +109,7 @@ class Dao extends Model\Dao\AbstractDao
         $ts = time();
         $this->model->setCreationDate($ts);
         $this->model->setModificationDate($ts);
-        $this->db->insert("sites", array("rootId" => $this->model->getRootId()));
+        $this->db->insert("sites", ["rootId" => $this->model->getRootId()]);
         $this->model->setId($this->db->lastInsertId());
 
         $this->save();

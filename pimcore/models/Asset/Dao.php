@@ -35,8 +35,8 @@ class Dao extends Model\Element\Dao
             $this->assignVariablesToModel($data);
 
             if ($data["hasMetaData"]) {
-                $metadataRaw = $this->db->fetchAll("SELECT * FROM assets_metadata WHERE cid = ?", array($data["id"]));
-                $metadata = array();
+                $metadataRaw = $this->db->fetchAll("SELECT * FROM assets_metadata WHERE cid = ?", [$data["id"]]);
+                $metadata = [];
                 foreach ($metadataRaw as $md) {
                     unset($md["cid"]);
                     $metadata[] = $md;
@@ -80,11 +80,11 @@ class Dao extends Model\Element\Dao
     public function create()
     {
         try {
-            $this->db->insert("assets", array(
+            $this->db->insert("assets", [
                 "filename" => $this->model->getFilename(),
                 "path" => $this->model->getRealPath(),
                 "parentId" => $this->model->getParentId()
-            ));
+            ]);
 
             $date = time();
             $this->model->setId($this->db->lastInsertId());
@@ -139,11 +139,11 @@ class Dao extends Model\Element\Dao
             // tree_locks
             $this->db->delete("tree_locks", "id = " . $this->model->getId() . " AND type = 'asset'");
             if ($this->model->getLocked()) {
-                $this->db->insert("tree_locks", array(
+                $this->db->insert("tree_locks", [
                     "id" => $this->model->getId(),
                     "type" => "asset",
                     "locked" => $this->model->getLocked()
-                ));
+                ]);
             }
         } catch (\Exception $e) {
             throw $e;
@@ -166,9 +166,9 @@ class Dao extends Model\Element\Dao
 
     public function updateWorkspaces()
     {
-        $this->db->update("users_workspaces_asset", array(
+        $this->db->update("users_workspaces_asset", [
             "cpath" => $this->model->getRealFullPath()
-        ), "cid = " . $this->model->getId());
+        ], "cid = " . $this->model->getId());
     }
 
     public function updateChildsPaths($oldPath)
@@ -201,7 +201,7 @@ class Dao extends Model\Element\Dao
      */
     public function getProperties($onlyInherited = false)
     {
-        $properties = array();
+        $properties = [];
 
         // collect properties via parent - ids
         $parentIds = $this->getParentIds();
@@ -278,7 +278,7 @@ class Dao extends Model\Element\Dao
     {
         $versionIds = $this->db->fetchAll("SELECT id FROM versions WHERE cid = ? AND ctype='asset' ORDER BY `id` DESC", $this->model->getId());
 
-        $versions = array();
+        $versions = [];
         foreach ($versionIds as $versionId) {
             $versions[] = Model\Version::getById($versionId["id"]);
         }
@@ -420,7 +420,7 @@ class Dao extends Model\Element\Dao
     {
 
         // collect properties via parent - ids
-        $parentIds = array(1);
+        $parentIds = [1];
 
         $obj = $this->model->getParent();
         if ($obj) {

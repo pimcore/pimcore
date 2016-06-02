@@ -64,7 +64,7 @@ class Note extends Model\AbstractModel
     /**
      * @var array
      */
-    public $data = array();
+    public $data = [];
 
     /**
      * @static
@@ -91,10 +91,10 @@ class Note extends Model\AbstractModel
      */
     public function addData($name, $type, $data)
     {
-        $this->data[$name] = array(
+        $this->data[$name] = [
             "type" => $type,
             "data" => $data
-        );
+        ];
     }
 
     /**

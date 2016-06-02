@@ -92,10 +92,10 @@ class Concrete extends Model\Webservice\Data\Object
                     $tag = $class->getFieldDefinition($element->name);
                     if ($tag) {
                         if ($class instanceof Model\Object\ClassDefinition\Data\Fieldcollections) {
-                            $object->$setter($tag->getFromWebserviceImport($element->fieldcollection, $object, array(),
+                            $object->$setter($tag->getFromWebserviceImport($element->fieldcollection, $object, [],
                                 $idMapper));
                         } else {
-                            $object->$setter($tag->getFromWebserviceImport($element->value, $object, array(), $idMapper));
+                            $object->$setter($tag->getFromWebserviceImport($element->value, $object, [], $idMapper));
                         }
                     } else {
                         \Logger::error("tag for field " . $element->name . " not found");

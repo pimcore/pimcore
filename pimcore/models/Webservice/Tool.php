@@ -27,9 +27,9 @@ class Tool
     {
         $modelsDir = PIMCORE_PATH."/models/";
         $files = rscandir($modelsDir);
-        $includePatterns = array(
+        $includePatterns = [
             "/Webservice\/Data/"
-        );
+        ];
 
         foreach ($files as $file) {
             if (is_file($file)) {
@@ -64,17 +64,17 @@ class Tool
     public static function keyValueReverseMapping($data)
     {
         if (is_array($data)) {
-            $values = array();
+            $values = [];
             foreach ($data as $k=>$d) {
                 $values[$k] = self::keyValueReverseMapping($d);
             }
             return $values;
         } elseif ($data instanceof \stdClass) {
             if ($data->key) {
-                return array($data->key => self::keyValueReverseMapping($data->value));
+                return [$data->key => self::keyValueReverseMapping($data->value)];
             }
             if ($data->item) {
-                $values = array();
+                $values = [];
                 foreach ($data->item as $item) {
                     $values = array_merge($values, self::keyValueReverseMapping($item));
                 }

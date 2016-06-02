@@ -26,7 +26,7 @@ class Listing extends Model\Listing\JsonListing
      *
      * @var array
      */
-    public $routes = array();
+    public $routes = [];
 
     /**
      * @return array

@@ -27,11 +27,11 @@ interface DataInterface
      * @param array $params
      * @return string
      */
-    public function getForCsvExport($object, $params = array());
+    public function getForCsvExport($object, $params = []);
 
     /**
      * @param $importValue
      * @return mixed
      */
-    public function getFromCsvImport($importValue, $object = null, $params = array());
+    public function getFromCsvImport($importValue, $object = null, $params = []);
 }

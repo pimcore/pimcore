@@ -20,7 +20,6 @@ use Pimcore\Model;
 
 class Input extends Model\Object\ClassDefinition\Data
 {
-
     use Model\Object\ClassDefinition\Data\Extension\Text;
 
     /**
@@ -93,7 +92,7 @@ class Input extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getDataForResource($data, $object = null, $params = array())
+    public function getDataForResource($data, $object = null, $params = [])
     {
         return $data;
     }
@@ -105,7 +104,7 @@ class Input extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getDataFromResource($data, $object = null, $params = array())
+    public function getDataFromResource($data, $object = null, $params = [])
     {
         return $data;
     }
@@ -117,7 +116,7 @@ class Input extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getDataForQueryResource($data, $object = null, $params = array())
+    public function getDataForQueryResource($data, $object = null, $params = [])
     {
         return $data;
     }
@@ -129,7 +128,7 @@ class Input extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getDataForEditmode($data, $object = null, $params = array())
+    public function getDataForEditmode($data, $object = null, $params = [])
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -141,7 +140,7 @@ class Input extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getDataFromEditmode($data, $object = null, $params = array())
+    public function getDataFromEditmode($data, $object = null, $params = [])
     {
         return $this->getDataFromResource($data, $object, $params);
     }

@@ -20,6 +20,5 @@ use Pimcore\Model;
 
 class Folder extends Model\Document\Folder implements Model\Document\Hardlink\Wrapper\WrapperInterface
 {
-
     use Model\Document\Hardlink\Wrapper;
 }

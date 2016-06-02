@@ -26,7 +26,7 @@ class Listing extends Model\Listing\AbstractListing
      *
      * @var array
      */
-    public $list = array();
+    public $list = [];
 
     /** @var  boolean */
     public $resolveGroupName;

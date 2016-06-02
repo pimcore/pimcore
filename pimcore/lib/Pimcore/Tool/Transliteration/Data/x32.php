@@ -1,6 +1,6 @@
 <?php
 
-$base = array(
+$base = [
   0x00 => '(g)', '(n)', '(d)', '(r)', '(m)', '(b)', '(s)', '()', '(j)', '(c)', '(k)', '(t)', '(p)', '(h)', '(ga)', '(na)',
   0x10 => '(da)', '(ra)', '(ma)', '(ba)', '(sa)', '(a)', '(ja)', '(ca)', '(ka)', '(ta)', '(pa)', '(ha)', '(ju)', null, null, null,
   0x20 => '(1) ', '(2) ', '(3) ', '(4) ', '(5) ', '(6) ', '(7) ', '(8) ', '(9) ', '(10) ', '(Yue) ', '(Huo) ', '(Shui) ', '(Mu) ', '(Jin) ', '(Tu) ',
@@ -17,4 +17,4 @@ $base = array(
   0xD0 => 'a', 'i', 'u', 'u', 'o', 'ka', 'ki', 'ku', 'ke', 'ko', 'sa', 'si', 'su', 'se', 'so', 'ta',
   0xE0 => 'ti', 'tu', 'te', 'to', 'na', 'ni', 'nu', 'ne', 'no', 'ha', 'hi', 'hu', 'he', 'ho', 'ma', 'mi',
   0xF0 => 'mu', 'me', 'mo', 'ya', 'yu', 'yo', 'ra', 'ri', 'ru', 're', 'ro', 'wa', 'wi', 'we', 'wo', null,
-);
+];

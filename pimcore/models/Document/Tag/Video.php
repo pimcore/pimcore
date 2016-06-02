@@ -117,14 +117,14 @@ class Video extends Model\Document\Tag
 
         $poster = Asset::getById($this->poster);
 
-        return array(
+        return [
             "id" => $this->id,
             "type" => $this->type,
             "title" => $this->title,
             "description" => $this->description,
             "path" => $path,
             "poster" => $poster ? $poster->getFullPath() : ""
-        );
+        ];
     }
 
     /**
@@ -132,13 +132,13 @@ class Video extends Model\Document\Tag
      */
     public function getDataForResource()
     {
-        return array(
+        return [
             "id" => $this->id,
             "type" => $this->type,
             "title" => $this->title,
             "description" => $this->description,
             "poster" => $this->poster
-        );
+        ];
     }
 
     /**
@@ -174,25 +174,25 @@ class Video extends Model\Document\Tag
      */
     public function resolveDependencies()
     {
-        $dependencies = array();
+        $dependencies = [];
 
         if ($this->type == "asset") {
             $asset = Asset::getById($this->id);
             if ($asset instanceof Asset) {
                 $key = "asset_" . $asset->getId();
-                $dependencies[$key] = array(
+                $dependencies[$key] = [
                     "id" => $asset->getId(),
                     "type" => "asset"
-                );
+                ];
             }
         }
 
         if ($poster = Asset::getById($this->poster)) {
             $key = "asset_" . $poster->getId();
-            $dependencies[$key] = array(
+            $dependencies[$key] = [
                 "id" => $poster->getId(),
                 "type" => "asset"
-            );
+            ];
         }
 
         return $dependencies;
@@ -325,7 +325,7 @@ class Video extends Model\Document\Tag
         // compatibility mode when FFMPEG is not present or no thumbnail config is given
         if (!\Pimcore\Video::isAvailable() || !$options["thumbnail"]) {
             if ($asset instanceof Asset && preg_match("/\.(f4v|flv|mp4)/", $asset->getFullPath())) {
-                return $this->getHtml5Code(array("mp4" => (string) $asset));
+                return $this->getHtml5Code(["mp4" => (string) $asset]);
             }
 
             return $this->getErrorCode("Asset is not a video, or missing thumbnail configuration");
@@ -386,7 +386,7 @@ class Video extends Model\Document\Tag
 
     public function getUrlCode()
     {
-        return $this->getHtml5Code(array("mp4" => (string) $this->id));
+        return $this->getHtml5Code(["mp4" => (string) $this->id]);
     }
 
     public function getErrorCode($message = "")
@@ -456,7 +456,7 @@ class Video extends Model\Document\Tag
             $height = $options["height"];
         }
 
-        $valid_youtube_prams=array( "autohide",
+        $valid_youtube_prams=[ "autohide",
             "autoplay",
             "cc_load_policy",
             "color",
@@ -476,10 +476,10 @@ class Video extends Model\Document\Tag
             "rel",
             "showinfo",
             "start",
-            "theme");
+            "theme"];
         $additional_params="";
 
-        $clipConfig = array();
+        $clipConfig = [];
         if (is_array($options["config"]["clip"])) {
             $clipConfig = $options["config"]["clip"];
         }
@@ -542,13 +542,13 @@ class Video extends Model\Document\Tag
                 $height = $options["height"];
             }
 
-            $valid_vimeo_prams=array(
+            $valid_vimeo_prams=[
                 "autoplay",
-                "loop");
+                "loop"];
 
             $additional_params="";
 
-            $clipConfig = array();
+            $clipConfig = [];
             if (is_array($options["config"]["clip"])) {
                 $clipConfig = $options["config"]["clip"];
             }
@@ -586,14 +586,14 @@ class Video extends Model\Document\Tag
         return $this->getEmptyCode();
     }
 
-    public function getHtml5Code($urls = array(), $thumbnail = null)
+    public function getHtml5Code($urls = [], $thumbnail = null)
     {
         $code = "";
         $video = $this->getVideoAsset();
         if ($video) {
             $duration = ceil($video->getDuration());
 
-            $durationParts = array("PT");
+            $durationParts = ["PT"];
 
             // hours
             if ($duration/3600 >= 1) {
@@ -637,13 +637,13 @@ class Video extends Model\Document\Tag
 
             // default attributes
             $attributesString = "";
-            $attributes = array(
+            $attributes = [
                 "width" => $this->getWidth(),
                 "height" => $this->getHeight(),
                 "poster" => $thumbnail,
                 "controls" => "controls",
                 "class" => "pimcore_video"
-            );
+            ];
 
             if (array_key_exists("attributes", $this->getOptions())) {
                 $attributes = array_merge($attributes, $this->getOptions()["attributes"]);
@@ -746,7 +746,7 @@ class Video extends Model\Document\Tag
      * @param null $idMapper
      * @throws \Exception
      */
-    public function getFromWebserviceImport($wsElement, $document = null, $params = array(), $idMapper = null)
+    public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
     {
         $data = $wsElement->value;
         if ($data->id) {
@@ -757,7 +757,7 @@ class Video extends Model\Document\Tag
                     throw new \Exception("Referencing unknown asset with id [ ".$data->id." ] in webservice import field [ ".$data->name." ]");
                 }
                 $this->type = $data->type;
-            } elseif (in_array($data->type, array("vimeo", "youtube", "url"))) {
+            } elseif (in_array($data->type, ["vimeo", "youtube", "url"])) {
                 $this->id = $data->id;
                 $this->type = $data->type;
             } else {
@@ -818,7 +818,7 @@ class Video extends Model\Document\Tag
         if ($this->getVideoAsset()) {
             return $this->getVideoAsset()->getThumbnail($config);
         }
-        return array();
+        return [];
     }
 
     /**

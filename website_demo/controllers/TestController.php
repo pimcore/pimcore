@@ -8,7 +8,6 @@ use Pimcore\Model;
 
 class TestController extends Action
 {
-
     public function testAction()
     {
     }
@@ -19,9 +18,7 @@ class TestController extends Action
         $a->clearThumbnails(true);
         $t = $a->getThumbnail("content");
 
-        header("Content-Type: image/jpeg");
-
-        while (@ob_end_flush()) ;
+        header("Content-Type: image/jpeg"); while (@ob_end_flush()) ;
         flush();
 
 

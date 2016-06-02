@@ -32,12 +32,12 @@ class Dao extends Model\Dao\AbstractDao
             $data = \Pimcore\Tool\Serialize::serialize($data);
         }
 
-        $element = array(
+        $element = [
             "data" => $data,
             "documentId" => $this->model->getDocumentId(),
             "name" => $this->model->getName(),
             "type" => $this->model->getType()
-        );
+        ];
 
         $this->db->insertOrUpdate("documents_elements", $element);
     }

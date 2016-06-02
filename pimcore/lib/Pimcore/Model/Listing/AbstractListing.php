@@ -54,7 +54,7 @@ abstract class AbstractListing extends AbstractModel
     /**
      * @var array
      */
-    protected $conditionVariables = array();
+    protected $conditionVariables = [];
 
     /**
      * @var string
@@ -64,15 +64,15 @@ abstract class AbstractListing extends AbstractModel
     /**
      * @var array
      */
-    protected $validOrders = array(
+    protected $validOrders = [
         "ASC",
         "DESC"
-    );
+    ];
 
     /**
      * @var array
      */
-    protected $conditionParams = array();
+    protected $conditionParams = [];
 
     /**
      * @abstract
@@ -135,7 +135,7 @@ abstract class AbstractListing extends AbstractModel
      */
     public function setOrder($order)
     {
-        $this->order = array();
+        $this->order = [];
 
         if (is_string($order) && !empty($order)) {
             $order = strtoupper($order);
@@ -143,7 +143,7 @@ abstract class AbstractListing extends AbstractModel
                 $this->order[] = $order;
             }
         } elseif (is_array($order) && !empty($order)) {
-            $this->order = array();
+            $this->order = [];
             foreach ($order as $o) {
                 $o = strtoupper($o);
                 if (in_array($o, $this->validOrders)) {
@@ -169,14 +169,14 @@ abstract class AbstractListing extends AbstractModel
      */
     public function setOrderKey($orderKey, $quote = true)
     {
-        $this->orderKey = array();
+        $this->orderKey = [];
 
         if (is_string($orderKey) && !empty($orderKey)) {
             if ($this->isValidOrderKey($orderKey)) {
                 $this->orderKey[] = $orderKey;
             }
         } elseif (is_array($orderKey) && !empty($orderKey)) {
-            $this->orderKey = array();
+            $this->orderKey = [];
             foreach ($orderKey as $o) {
                 if ($this->isValidOrderKey($o)) {
                     $this->orderKey[] = $o;
@@ -226,7 +226,7 @@ abstract class AbstractListing extends AbstractModel
      */
     public function resetConditionParams()
     {
-        $this->conditionParams = array();
+        $this->conditionParams = [];
         return $this;
     }
 
@@ -239,7 +239,7 @@ abstract class AbstractListing extends AbstractModel
         $conditionPrams = $this->getConditionParams();
 
         if (!empty($conditionPrams)) {
-            $params = array();
+            $params = [];
             $i = 0;
             foreach ($conditionPrams as $key => $value) {
                 if (!$this->condition && $i == 0) {
@@ -281,7 +281,7 @@ abstract class AbstractListing extends AbstractModel
         if (is_array($conditionVariables)) {
             $this->setConditionVariables($conditionVariables);
         } elseif ($conditionVariables !== null) {
-            $this->setConditionVariables(array($conditionVariables));
+            $this->setConditionVariables([$conditionVariables]);
         }
         return $this;
     }

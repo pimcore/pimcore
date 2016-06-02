@@ -42,10 +42,10 @@ class ClassmapGeneratorCommand extends AbstractCommand
     {
         $excludePatterns = [];
         if ($input->getOption("core")) {
-            $paths = array(
+            $paths = [
                 PIMCORE_PATH . "/lib",
                 PIMCORE_PATH . "/models",
-            );
+            ];
             $output = PIMCORE_PATH . "/config/autoload-classmap.php";
 
             $excludePatterns = [
@@ -56,7 +56,7 @@ class ClassmapGeneratorCommand extends AbstractCommand
             $output = PIMCORE_CONFIGURATION_DIRECTORY . "/autoload-classmap.php";
         }
 
-        $globalMap = array();
+        $globalMap = [];
         $map = new \stdClass();
 
         foreach ($paths as $path) {

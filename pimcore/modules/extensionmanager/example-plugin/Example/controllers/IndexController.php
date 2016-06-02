@@ -3,7 +3,6 @@
 
 class Example_IndexController extends \Pimcore\Controller\Action\Admin
 {
-    
     public function indexAction()
     {
 

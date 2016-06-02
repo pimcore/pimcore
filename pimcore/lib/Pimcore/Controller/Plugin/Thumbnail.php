@@ -72,7 +72,7 @@ class Thumbnail extends \Zend_Controller_Plugin_Abstract
                     } elseif ($asset instanceof Asset\Image) {
                         //check if high res image is called
                         if (array_key_exists(5, $matches)) {
-                            $highResFactor = (float) str_replace(array("@", "x"), "", $matches[5]);
+                            $highResFactor = (float) str_replace(["@", "x"], "", $matches[5]);
                             $thumbnailConfig->setHighResolution($highResFactor);
                         }
 
@@ -81,14 +81,13 @@ class Thumbnail extends \Zend_Controller_Plugin_Abstract
 
                     if ($thumbnailFile && file_exists($thumbnailFile)) {
                         $fileExtension = \Pimcore\File::getFileExtension($thumbnailFile);
-                        if (in_array($fileExtension, array("gif", "jpeg", "jpeg", "png", "pjpeg"))) {
+                        if (in_array($fileExtension, ["gif", "jpeg", "jpeg", "png", "pjpeg"])) {
                             header("Content-Type: image/".$fileExtension, true);
                         } else {
                             header("Content-Type: " . $asset->getMimetype(), true);
                         }
 
-                        header("Content-Length: " . filesize($thumbnailFile), true);
-                        while (@ob_end_flush()) ;
+                        header("Content-Length: " . filesize($thumbnailFile), true); while (@ob_end_flush()) ;
                         flush();
 
                         readfile($thumbnailFile);

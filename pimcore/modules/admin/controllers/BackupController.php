@@ -14,8 +14,6 @@
 
 class Admin_BackupController extends \Pimcore\Controller\Action\Admin
 {
-
-
     public function init()
     {
         parent::init();
@@ -90,9 +88,7 @@ class Admin_BackupController extends \Pimcore\Controller\Action\Admin
         $backup = $this->session->backup;
         
         header("Content-Type: application/zip");
-        header('Content-Disposition: attachment; filename="' . basename($backup->getBackupFile()) . '"');
-
-        while (@ob_end_flush());
+        header('Content-Disposition: attachment; filename="' . basename($backup->getBackupFile()) . '"'); while (@ob_end_flush());
         flush();
 
         readfile($backup->getBackupFile());

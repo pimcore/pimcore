@@ -30,7 +30,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function load()
     {
         $items = $this->db->fetchCol("SELECT uuid FROM " . Resource::TABLE_NAME ." ". $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
-        $result = array();
+        $result = [];
         foreach ($items as $uuid) {
             $result[] = UUID::getByUuid($uuid);
         }

@@ -1,6 +1,6 @@
 <?php
 
-$base = array(
+$base = [
   0x00 => 'pyuk', 'pyut', 'pyup', 'pyuh', 'peu', 'peug', 'peugg', 'peugs', 'peun', 'peunj', 'peunh', 'peud', 'peul', 'peulg', 'peulm', 'peulb',
   0x10 => 'peuls', 'peult', 'peulp', 'peulh', 'peum', 'peub', 'peubs', 'peus', 'peuss', 'peung', 'peuj', 'peuc', 'peuk', 'peut', 'peup', 'peuh',
   0x20 => 'pyi', 'pyig', 'pyigg', 'pyigs', 'pyin', 'pyinj', 'pyinh', 'pyid', 'pyil', 'pyilg', 'pyilm', 'pyilb', 'pyils', 'pyilt', 'pyilp', 'pyilh',
@@ -17,4 +17,4 @@ $base = array(
   0xD0 => 'heol', 'heolg', 'heolm', 'heolb', 'heols', 'heolt', 'heolp', 'heolh', 'heom', 'heob', 'heobs', 'heos', 'heoss', 'heong', 'heoj', 'heoc',
   0xE0 => 'heok', 'heot', 'heop', 'heoh', 'he', 'heg', 'hegg', 'hegs', 'hen', 'henj', 'henh', 'hed', 'hel', 'helg', 'helm', 'helb',
   0xF0 => 'hels', 'helt', 'help', 'helh', 'hem', 'heb', 'hebs', 'hes', 'hess', 'heng', 'hej', 'hec', 'hek', 'het', 'hep', 'heh',
-);
+];

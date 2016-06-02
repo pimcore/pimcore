@@ -35,7 +35,7 @@ class Ffmpeg extends Adapter
     /**
      * @var string
      */
-    protected $arguments = array();
+    protected $arguments = [];
 
     /**
      * @return bool
@@ -135,7 +135,7 @@ class Ffmpeg extends Adapter
         }
 
         $realTargetPath = null;
-        if(!stream_is_local($file)) {
+        if (!stream_is_local($file)) {
             $realTargetPath = $file;
             $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/ghostscript-tmp-" . uniqid() . "." . File::getFileExtension($file);
         }
@@ -143,7 +143,7 @@ class Ffmpeg extends Adapter
         $cmd = self::getFfmpegCli() . " -i " . realpath($this->file) . " -vcodec png -vframes 1 -vf scale=iw*sar:ih -ss " . $timeOffset . " " . str_replace("/", DIRECTORY_SEPARATOR, $file);
         Console::exec($cmd, null, 60);
 
-        if($realTargetPath) {
+        if ($realTargetPath) {
             File::rename($file, $realTargetPath);
         }
     }

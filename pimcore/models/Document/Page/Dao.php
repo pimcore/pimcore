@@ -61,9 +61,9 @@ class Dao extends Model\Document\PageSnippet\Dao
         try {
             parent::create();
 
-            $this->db->insert("documents_page", array(
+            $this->db->insert("documents_page", [
                 "id" => $this->model->getId()
-            ));
+            ]);
         } catch (\Exception $e) {
             throw $e;
         }

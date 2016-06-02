@@ -26,7 +26,7 @@ class Listing
      */
     public function load()
     {
-        $fields = array();
+        $fields = [];
         $fieldCollectionFolder = PIMCORE_CLASS_DIRECTORY . "/fieldcollections";
         
         if (is_dir($fieldCollectionFolder)) {

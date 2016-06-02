@@ -37,7 +37,7 @@ class Persona extends Model\Object\ClassDefinition\Data\Select
      * @param mixed $params
      * @return string
      */
-    public function getDataFromResource($data, $object = null, $params = array())
+    public function getDataFromResource($data, $object = null, $params = [])
     {
         if (!empty($data)) {
             try {
@@ -56,7 +56,7 @@ class Persona extends Model\Object\ClassDefinition\Data\Select
      * @param mixed $params
      * @return null|string
      */
-    public function getDataForResource($data, $object = null, $params = array())
+    public function getDataForResource($data, $object = null, $params = [])
     {
         if (!empty($data)) {
             try {
@@ -80,12 +80,12 @@ class Persona extends Model\Object\ClassDefinition\Data\Select
         $list->setOrderKey("name");
         $personas = $list->load();
 
-        $options = array();
+        $options = [];
         foreach ($personas as $persona) {
-            $options[] = array(
+            $options[] = [
                 "value" => $persona->getId(),
                 "key" => $persona->getName()
-            );
+            ];
         }
 
         $this->setOptions($options);

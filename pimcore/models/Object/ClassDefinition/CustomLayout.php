@@ -112,7 +112,7 @@ class CustomLayout extends Model\AbstractModel
      * @param array $values
      * @return CustomLayout
      */
-    public static function create($values = array())
+    public static function create($values = [])
     {
         $class = new self();
         $class->setValues($values);

@@ -27,38 +27,38 @@ return [
             ]
 
         ],
-        "dashboards" => array(                                  // this is the standard setting for the welcome screen
+        "dashboards" => [                                  // this is the standard setting for the welcome screen
             "predefined" => [
-                "welcome" => array(                             // internal key of the dashboard
-                    "positions" => array(
-                        array(                                  // left column
-                            array(
+                "welcome" => [                             // internal key of the dashboard
+                    "positions" => [
+                        [                                  // left column
+                            [
                                 "id" => 1,
                                 "type" => "pimcore.layout.portlets.modificationStatistic",
                                 "config" => null                // additional config
-                            ),
-                            array(
+                            ],
+                            [
                                 "id" => 2,
                                 "type" => "pimcore.layout.portlets.modifiedAssets",
                                 "config" => null
-                            )
-                        ),
-                        array(
-                            array(
+                            ]
+                        ],
+                        [
+                            [
                                 "id" => 3,
                                 "type" => "pimcore.layout.portlets.modifiedObjects",
                                 "config" => null
-                            ),
-                            array(
+                            ],
+                            [
                                 "id" => 4,
                                 "type" => "pimcore.layout.portlets.modifiedDocuments",
                                 "config" => null
-                            )
-                        )
-                    )
-                )
+                            ]
+                        ]
+                    ]
+                ]
             ]
-        )
+        ]
 
     ],
     "Alternative view" => [
@@ -136,27 +136,27 @@ return [
                 ]
             ],
         ],
-        "dashboards" => array(                                  // this is the standard setting for the welcome screen
-            "disabledPortlets" => array(                        // disallows access to the given portlets
+        "dashboards" => [                                  // this is the standard setting for the welcome screen
+            "disabledPortlets" => [                        // disallows access to the given portlets
                 "pimcore.layout.portlets.modificationStatistic" => 1,
                 "pimcore.layout.portlets.feed" => 1
-            ),
+            ],
             "predefined" => [
-                "welcome" => array(                             // internal key of the dashboard
-                    "positions" => array(
-                        array(                                  // left column
-                        ),
-                        array(                                  // only show modified objects in the right column
-                            array(
+                "welcome" => [                             // internal key of the dashboard
+                    "positions" => [
+                        [                                  // left column
+                        ],
+                        [                                  // only show modified objects in the right column
+                            [
                                 "id" => 3,
                                 "type" => "pimcore.layout.portlets.modifiedObjects",
                                 "config" => null
-                            )
-                        )
-                    )
-                )
+                            ]
+                        ]
+                    ]
+                ]
             ]
-        )
+        ]
     ],
     "Assets only" => [
         "icon" => "/pimcore/static6/img/flat-color-icons/webcam.svg",

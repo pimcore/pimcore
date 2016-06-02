@@ -23,7 +23,7 @@ class Optimizer
     /**
      * @var array
      */
-    protected static $optimizerBinaries = array();
+    protected static $optimizerBinaries = [];
 
     /**
      * @param $path
@@ -94,10 +94,10 @@ class Optimizer
         foreach (["zopflipng", "pngcrush"] as $app) {
             $path = \Pimcore\Tool\Console::getExecutable($app);
             if ($path) {
-                self::$optimizerBinaries["pngOptimizer"] = array(
+                self::$optimizerBinaries["pngOptimizer"] = [
                     "path" => $path,
                     "type" => $app
-                );
+                ];
                 return self::$optimizerBinaries["pngOptimizer"];
             }
         }
@@ -121,10 +121,10 @@ class Optimizer
         foreach (["jpegoptim", "imgmin"] as $app) {
             $path = \Pimcore\Tool\Console::getExecutable($app);
             if ($path) {
-                self::$optimizerBinaries["jpegOptimizer"] = array(
+                self::$optimizerBinaries["jpegOptimizer"] = [
                     "path" => $path,
                     "type" => $app
-                );
+                ];
                 return self::$optimizerBinaries["jpegOptimizer"];
             }
         }

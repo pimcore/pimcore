@@ -20,7 +20,6 @@ use Pimcore\Model;
 
 class Recyclebin extends Model\AbstractModel
 {
-    
     public function flush()
     {
         $this->getDao()->flush();

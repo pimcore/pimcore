@@ -20,7 +20,6 @@ use Pimcore\Model;
 
 class Dao extends Model\Dao\AbstractDao
 {
-
     const TABLE_NAME_RELATIONS = "classificationstore_relations";
 
 
@@ -98,7 +97,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function create()
     {
-        $this->db->insert(self::TABLE_NAME_RELATIONS, array());
+        $this->db->insert(self::TABLE_NAME_RELATIONS, []);
         return $this->save();
     }
 }

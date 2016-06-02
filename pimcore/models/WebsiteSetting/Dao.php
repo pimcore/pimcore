@@ -49,7 +49,7 @@ class Dao extends Model\Dao\AbstractDao
         if ($name != null) {
             $this->model->setName($name);
         }
-        $data = $this->db->fetchRow("SELECT * FROM website_settings WHERE name = ? AND (siteId IS NULL OR siteId = '' OR siteId = ?) ORDER BY siteId DESC", array($this->model->getName(), $siteId));
+        $data = $this->db->fetchRow("SELECT * FROM website_settings WHERE name = ? AND (siteId IS NULL OR siteId = '' OR siteId = ?) ORDER BY siteId DESC", [$this->model->getName(), $siteId]);
         
         if (!empty($data["id"])) {
             $this->assignVariablesToModel($data);
@@ -120,7 +120,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->model->setModificationDate($ts);
         $this->model->setCreationDate($ts);
 
-        $this->db->insert("website_settings", array("name" => $this->model->getName(), "siteId" => $this->model->getSiteId()));
+        $this->db->insert("website_settings", ["name" => $this->model->getName(), "siteId" => $this->model->getSiteId()]);
 
         $this->model->setId($this->db->lastInsertId());
 

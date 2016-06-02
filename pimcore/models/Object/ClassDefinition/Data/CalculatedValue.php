@@ -126,7 +126,7 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return float
      */
-    public function getDataForResource($data, $object = null, $params = array())
+    public function getDataForResource($data, $object = null, $params = [])
     {
         // nothing to do
     }
@@ -138,7 +138,7 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return float
      */
-    public function getDataFromResource($data, $object = null, $params = array())
+    public function getDataFromResource($data, $object = null, $params = [])
     {
         // nothing to do
     }
@@ -150,7 +150,7 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return float
      */
-    public function getDataForQueryResource($data, $object = null, $params = array())
+    public function getDataForQueryResource($data, $object = null, $params = [])
     {
         return $data;
     }
@@ -162,10 +162,10 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return float
      */
-    public function getDataForEditmode($data, $object = null, $params = array())
+    public function getDataForEditmode($data, $object = null, $params = [])
     {
         if ($data instanceof Model\Object\Data\CalculatedValue) {
-            $data = Model\Object\Service::getCalculatedFieldValueForEditMode($object, array(), $data);
+            $data = Model\Object\Service::getCalculatedFieldValueForEditMode($object, [], $data);
         }
         return $data;
     }
@@ -177,7 +177,7 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return float
      */
-    public function getDataFromEditmode($data, $object = null, $params = array())
+    public function getDataFromEditmode($data, $object = null, $params = [])
     {
     }
 
@@ -188,7 +188,7 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return float
      */
-    public function getVersionPreview($data, $object = null, $params = array())
+    public function getVersionPreview($data, $object = null, $params = [])
     {
         return $data;
     }
@@ -212,7 +212,7 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data
      * @param array $params
      * @return string
      */
-    public function getForCsvExport($object, $params = array())
+    public function getForCsvExport($object, $params = [])
     {
         \Logger::debug("csv not supported");
         //TODO
@@ -226,7 +226,7 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return double
      */
-    public function getFromCsvImport($importValue, $object = null, $params = array())
+    public function getFromCsvImport($importValue, $object = null, $params = [])
     {
         // nothing to do
     }
@@ -238,7 +238,7 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data
         * @param mixed $params
      * @return mixed
      */
-    public function getForWebserviceExport($object, $params = array())
+    public function getForWebserviceExport($object, $params = [])
     {
         //TODO
     }
@@ -250,7 +250,7 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return mixed
      */
-    public function getFromWebserviceImport($value, $object = null, $params = array(), $idMapper = null)
+    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
     {
         // nothing to do
     }
@@ -287,7 +287,7 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data
         $code = "";
 
         $code .= '/**' . "\n";
-        $code .= '* Get ' . str_replace(array("/**", "*/", "//"), "", $this->getName()) . " - " . str_replace(array("/**", "*/", "//"), "", $this->getTitle()) . "\n";
+        $code .= '* Get ' . str_replace(["/**", "*/", "//"], "", $this->getName()) . " - " . str_replace(["/**", "*/", "//"], "", $this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocType() . "\n";
         $code .= '*/' . "\n";
         $code .= "public function get" . ucfirst($key) . " () {\n";
@@ -311,7 +311,7 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data
     {
         $key = $this->getName();
         $code  = '/**' . "\n";
-        $code .= '* Get ' . str_replace(array("/**", "*/", "//"), "", $this->getName()) . " - " . str_replace(array("/**", "*/", "//"), "", $this->getTitle()) . "\n";
+        $code .= '* Get ' . str_replace(["/**", "*/", "//"], "", $this->getName()) . " - " . str_replace(["/**", "*/", "//"], "", $this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocType() . "\n";
         $code .= '*/' . "\n";
         $code .= "public function get" . ucfirst($key) . ' ($language = null) {' . "\n";
@@ -336,7 +336,7 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data
         $key = $this->getName();
         $code = "";
         $code .= '/**' . "\n";
-        $code .= '* Set ' . str_replace(array("/**", "*/", "//"), "", $this->getName()) . " - " . str_replace(array("/**", "*/", "//"), "", $this->getTitle()) . "\n";
+        $code .= '* Set ' . str_replace(["/**", "*/", "//"], "", $this->getName()) . " - " . str_replace(["/**", "*/", "//"], "", $this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocType() . "\n";
         $code .= '*/' . "\n";
         $code .= "public function get" . ucfirst($key) . ' ($language = null) {' . "\n";
@@ -367,7 +367,7 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data
 
         $code = "";
         $code .= '/**' . "\n";
-        $code .= '* Get ' . str_replace(array("/**", "*/", "//"), "", $this->getName()) . " - " . str_replace(array("/**", "*/", "//"), "", $this->getTitle()) . "\n";
+        $code .= '* Get ' . str_replace(["/**", "*/", "//"], "", $this->getName()) . " - " . str_replace(["/**", "*/", "//"], "", $this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocType() . "\n";
         $code .= '*/' . "\n";
         $code .= "public function get" . ucfirst($key) . " () {\n";
@@ -393,7 +393,7 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data
         $code = "";
 
         $code .= '/**' . "\n";
-        $code .= '* Set ' . str_replace(array("/**", "*/", "//"), "", $this->getName()) . " - " . str_replace(array("/**", "*/", "//"), "", $this->getTitle()) . "\n";
+        $code .= '* Set ' . str_replace(["/**", "*/", "//"], "", $this->getName()) . " - " . str_replace(["/**", "*/", "//"], "", $this->getTitle()) . "\n";
         $code .= '* @param ' . $this->getPhpdocType() . ' $' . $key . "\n";
         $code .= "* @return \\Pimcore\\Model\\Object\\" . ucfirst($class->getName()) . "\n";
         $code .= '*/' . "\n";
@@ -417,7 +417,7 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data
 
         $code = "";
         $code .= '/**' . "\n";
-        $code .= '* Set ' . str_replace(array("/**", "*/", "//"), "", $this->getName()) . " - " . str_replace(array("/**", "*/", "//"), "", $this->getTitle()) . "\n";
+        $code .= '* Set ' . str_replace(["/**", "*/", "//"], "", $this->getName()) . " - " . str_replace(["/**", "*/", "//"], "", $this->getTitle()) . "\n";
         $code .= '* @param ' . $this->getPhpdocType() . ' $' . $key . "\n";
         $code .= "* @return \\Pimcore\\Model\\Object\\" . ucfirst($brickClass->getKey()) . "\n";
         $code .= '*/' . "\n";
@@ -441,7 +441,7 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data
         $code = "";
 
         $code .= '/**' . "\n";
-        $code .= '* Get ' . str_replace(array("/**", "*/", "//"), "", $this->getName()) . " - " . str_replace(array("/**", "*/", "//"), "", $this->getTitle()) . "\n";
+        $code .= '* Get ' . str_replace(["/**", "*/", "//"], "", $this->getName()) . " - " . str_replace(["/**", "*/", "//"], "", $this->getTitle()) . "\n";
         $code .= '* @param ' . $this->getPhpdocType() . ' $' . $key . "\n";
         $code .= "* @return \\Pimcore\\Model\\Object\\" . ucfirst($fieldcollectionDefinition->getKey()) . "\n";
         $code .= '*/' . "\n";
@@ -463,7 +463,7 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data
         $key = $this->getName();
 
         $code  = '/**' . "\n";
-        $code .= '* Set ' . str_replace(array("/**", "*/", "//"), "", $this->getName()) . " - " . str_replace(array("/**", "*/", "//"), "", $this->getTitle()) . "\n";
+        $code .= '* Set ' . str_replace(["/**", "*/", "//"], "", $this->getName()) . " - " . str_replace(["/**", "*/", "//"], "", $this->getTitle()) . "\n";
         $code .= '* @param ' . $this->getPhpdocType() . ' $' . $key . "\n";
         $code .= "* @return \\Pimcore\\Model\\Object\\" . ucfirst($class->getName()) . "\n";
         $code .= '*/' . "\n";

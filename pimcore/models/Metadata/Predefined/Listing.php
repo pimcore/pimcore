@@ -24,7 +24,7 @@ class Listing extends \Pimcore\Model\Listing\JsonListing
      *
      * @var array
      */
-    public $definitions = array();
+    public $definitions = [];
 
     /**
      * @return array
@@ -59,7 +59,7 @@ class Listing extends \Pimcore\Model\Listing\JsonListing
         $list = new self();
 
         if ($subTypes && !is_array($subTypes)) {
-            $subTypes = array($subTypes);
+            $subTypes = [$subTypes];
         }
 
         if (is_array($subTypes)) {

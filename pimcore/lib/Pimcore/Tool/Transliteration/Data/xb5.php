@@ -1,6 +1,6 @@
 <?php
 
-$base = array(
+$base = [
   0x00 => 'dyil', 'dyilg', 'dyilm', 'dyilb', 'dyils', 'dyilt', 'dyilp', 'dyilh', 'dyim', 'dyib', 'dyibs', 'dyis', 'dyiss', 'dying', 'dyij', 'dyic',
   0x10 => 'dyik', 'dyit', 'dyip', 'dyih', 'di', 'dig', 'digg', 'digs', 'din', 'dinj', 'dinh', 'did', 'dil', 'dilg', 'dilm', 'dilb',
   0x20 => 'dils', 'dilt', 'dilp', 'dilh', 'dim', 'dib', 'dibs', 'dis', 'diss', 'ding', 'dij', 'dic', 'dik', 'dit', 'dip', 'dih',
@@ -17,4 +17,4 @@ $base = array(
   0xD0 => 'ddess', 'ddeng', 'ddej', 'ddec', 'ddek', 'ddet', 'ddep', 'ddeh', 'ddyeo', 'ddyeog', 'ddyeogg', 'ddyeogs', 'ddyeon', 'ddyeonj', 'ddyeonh', 'ddyeod',
   0xE0 => 'ddyeol', 'ddyeolg', 'ddyeolm', 'ddyeolb', 'ddyeols', 'ddyeolt', 'ddyeolp', 'ddyeolh', 'ddyeom', 'ddyeob', 'ddyeobs', 'ddyeos', 'ddyeoss', 'ddyeong', 'ddyeoj', 'ddyeoc',
   0xF0 => 'ddyeok', 'ddyeot', 'ddyeop', 'ddyeoh', 'ddye', 'ddyeg', 'ddyegg', 'ddyegs', 'ddyen', 'ddyenj', 'ddyenh', 'ddyed', 'ddyel', 'ddyelg', 'ddyelm', 'ddyelb',
-);
+];

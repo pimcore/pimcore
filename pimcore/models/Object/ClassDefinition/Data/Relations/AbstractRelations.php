@@ -135,7 +135,7 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
     protected function allowAssetRelation($asset)
     {
         $allowedAssetTypes = $this->getAssetTypes();
-        $allowedTypes = array();
+        $allowedTypes = [];
         $allowed = true;
         if (!$this->getAssetsAllowed()) {
             $allowed = false;
@@ -210,10 +210,10 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
      * @param $classId
      * @param array $relation
      */
-    protected function enrichRelation($object, $params, &$classId, &$relation = array())
+    protected function enrichRelation($object, $params, &$classId, &$relation = [])
     {
         if (!$relation) {
-            $relation = array();
+            $relation = [];
         }
 
         if ($object instanceof Object\Concrete) {
@@ -257,7 +257,7 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
      * @param array $params
      * @throws \Exception
      */
-    public function save($object, $params = array())
+    public function save($object, $params = [])
     {
         $db = Db::get();
 
@@ -291,19 +291,19 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
      * @param array $params
      * @return null
      */
-    public function load($object, $params = array())
+    public function load($object, $params = [])
     {
         $db = Db::get();
         $data = null;
 
         if ($object instanceof Object\Concrete) {
             if (!method_exists($this, "getLazyLoading") or !$this->getLazyLoading() or (array_key_exists("force", $params) && $params["force"])) {
-                $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'object'", array($object->getId(), $this->getName()));
+                $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'object'", [$object->getId(), $this->getName()]);
             } else {
                 return null;
             }
         } elseif ($object instanceof Object\Fieldcollection\Data\AbstractData) {
-            $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'fieldcollection' AND ownername = ? AND position = ?", array($object->getObject()->getId(), $this->getName(), $object->getFieldname(), $object->getIndex()));
+            $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'fieldcollection' AND ownername = ? AND position = ?", [$object->getObject()->getId(), $this->getName(), $object->getFieldname(), $object->getIndex()]);
         } elseif ($object instanceof Object\Localizedfield) {
             if (isset($params["context"])&& $params["context"]["containerType"] == "fieldcollection") {
                 $context = $params["context"];
@@ -311,16 +311,16 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
                 $index = $context["index"];
                 $filter = "/fieldcollection~" . $fieldname . "/" . $index . "/%";
                 $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'localizedfield'  AND position = ? AND ownername LIKE ?",
-                    array($object->getObject()->getId(), $this->getName(), $params["language"], $filter));
+                    [$object->getObject()->getId(), $this->getName(), $params["language"], $filter]);
             } else {
-                $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'localizedfield' AND ownername = 'localizedfield' AND position = ?", array($object->getObject()->getId(), $this->getName(), $params["language"]));
+                $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'localizedfield' AND ownername = 'localizedfield' AND position = ?", [$object->getObject()->getId(), $this->getName(), $params["language"]]);
             }
         } elseif ($object instanceof Object\Objectbrick\Data\AbstractData) {
-            $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'objectbrick' AND ownername = ? AND position = ?", array($object->getObject()->getId(), $this->getName(), $object->getFieldname(), $object->getType()));
+            $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'objectbrick' AND ownername = ? AND position = ?", [$object->getObject()->getId(), $this->getName(), $object->getFieldname(), $object->getType()]);
 
             // THIS IS KIND A HACK: it's necessary because of this bug PIMCORE-1454 and therefore cannot be removed
             if (count($relations) < 1) {
-                $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'objectbrick' AND ownername = ? AND (position IS NULL OR position = '')", array($object->getObject()->getId(), $this->getName(), $object->getFieldname()));
+                $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'objectbrick' AND ownername = ? AND (position IS NULL OR position = '')", [$object->getObject()->getId(), $this->getName(), $object->getFieldname()]);
             }
             // HACK END
         }

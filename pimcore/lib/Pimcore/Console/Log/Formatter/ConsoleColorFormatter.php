@@ -36,13 +36,13 @@ class ConsoleColorFormatter extends LineFormatter
         if (null === $this->outputFormatter) {
             $formatter = new OutputFormatter(true);
             $formatter->setStyle(LogLevel::EMERGENCY, new OutputFormatterStyle('white', 'red'));
-            $formatter->setStyle(LogLevel::ALERT,     new OutputFormatterStyle('white', 'red'));
-            $formatter->setStyle(LogLevel::CRITICAL,  new OutputFormatterStyle('red'));
-            $formatter->setStyle(LogLevel::ERROR,     new OutputFormatterStyle('red'));
-            $formatter->setStyle(LogLevel::WARNING,   new OutputFormatterStyle('yellow'));
-            $formatter->setStyle(LogLevel::NOTICE,    new OutputFormatterStyle());
-            $formatter->setStyle(LogLevel::INFO,      new OutputFormatterStyle());
-            $formatter->setStyle(LogLevel::DEBUG,     new OutputFormatterStyle('cyan'));
+            $formatter->setStyle(LogLevel::ALERT, new OutputFormatterStyle('white', 'red'));
+            $formatter->setStyle(LogLevel::CRITICAL, new OutputFormatterStyle('red'));
+            $formatter->setStyle(LogLevel::ERROR, new OutputFormatterStyle('red'));
+            $formatter->setStyle(LogLevel::WARNING, new OutputFormatterStyle('yellow'));
+            $formatter->setStyle(LogLevel::NOTICE, new OutputFormatterStyle());
+            $formatter->setStyle(LogLevel::INFO, new OutputFormatterStyle());
+            $formatter->setStyle(LogLevel::DEBUG, new OutputFormatterStyle('cyan'));
 
             $this->outputFormatter = $formatter;
         }

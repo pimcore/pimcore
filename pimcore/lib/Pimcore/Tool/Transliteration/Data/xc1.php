@@ -1,6 +1,6 @@
 <?php
 
-$base = array(
+$base = [
   0x00 => 'syae', 'syaeg', 'syaegg', 'syaegs', 'syaen', 'syaenj', 'syaenh', 'syaed', 'syael', 'syaelg', 'syaelm', 'syaelb', 'syaels', 'syaelt', 'syaelp', 'syaelh',
   0x10 => 'syaem', 'syaeb', 'syaebs', 'syaes', 'syaess', 'syaeng', 'syaej', 'syaec', 'syaek', 'syaet', 'syaep', 'syaeh', 'seo', 'seog', 'seogg', 'seogs',
   0x20 => 'seon', 'seonj', 'seonh', 'seod', 'seol', 'seolg', 'seolm', 'seolb', 'seols', 'seolt', 'seolp', 'seolh', 'seom', 'seob', 'seobs', 'seos',
@@ -17,4 +17,4 @@ $base = array(
   0xD0 => 'swaels', 'swaelt', 'swaelp', 'swaelh', 'swaem', 'swaeb', 'swaebs', 'swaes', 'swaess', 'swaeng', 'swaej', 'swaec', 'swaek', 'swaet', 'swaep', 'swaeh',
   0xE0 => 'soe', 'soeg', 'soegg', 'soegs', 'soen', 'soenj', 'soenh', 'soed', 'soel', 'soelg', 'soelm', 'soelb', 'soels', 'soelt', 'soelp', 'soelh',
   0xF0 => 'soem', 'soeb', 'soebs', 'soes', 'soess', 'soeng', 'soej', 'soec', 'soek', 'soet', 'soep', 'soeh', 'syo', 'syog', 'syogg', 'syogs',
-);
+];

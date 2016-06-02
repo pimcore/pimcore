@@ -27,9 +27,9 @@ class Dao extends Model\Dao\AbstractDao
     public function save()
     {
         try {
-            $this->db->insert("users_permission_definitions", array(
+            $this->db->insert("users_permission_definitions", [
                 "key" => $this->model->getKey()
-            ));
+            ]);
         } catch (\Exception $e) {
             \Logger::warn($e);
         }

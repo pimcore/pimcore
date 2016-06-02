@@ -31,7 +31,7 @@ class View extends \Zend_View
      * @param array $options
      * @return Model\Document\Tag
      */
-    public function tag($type, $realName, $options = array())
+    public function tag($type, $realName, $options = [])
     {
         $type = strtolower($type);
         $document = $this->document;
@@ -90,7 +90,7 @@ class View extends \Zend_View
      * @param bool $capture
      * @return string
      */
-    public function template($scriptPath, $params = array(), $resetPassedParams = false, $capture = false)
+    public function template($scriptPath, $params = [], $resetPassedParams = false, $capture = false)
     {
         foreach ($params as $key => $value) {
             $this->assign($key, $value);
@@ -196,7 +196,7 @@ class View extends \Zend_View
             }
         }
 
-        $params = array_merge($params, array("document" => $include));
+        $params = array_merge($params, ["document" => $include]);
         $content = "";
 
         if ($include instanceof Model\Document\PageSnippet && $include->isPublished()) {
@@ -240,7 +240,7 @@ class View extends \Zend_View
 
         // write contents to the cache, if output-cache is enabled
         if ($cacheConfig) {
-            Cache::save($content, $cacheKey, array("output", "output_inline"), $cacheConfig["lifetime"]);
+            Cache::save($content, $cacheKey, ["output", "output_inline"], $cacheConfig["lifetime"]);
         }
 
         return $content;
@@ -311,7 +311,7 @@ class View extends \Zend_View
      */
     public function t()
     {
-        return call_user_func_array(array($this, "translate"), func_get_args());
+        return call_user_func_array([$this, "translate"], func_get_args());
     }
 
     /**
@@ -319,7 +319,7 @@ class View extends \Zend_View
      */
     public function ts()
     {
-        return call_user_func_array(array($this, "translateAdmin"), func_get_args());
+        return call_user_func_array([$this, "translateAdmin"], func_get_args());
     }
 
     /**
@@ -347,14 +347,14 @@ class View extends \Zend_View
 
             // set default if there is no editable configuration provided
             if (!isset($arguments[1])) {
-                $arguments[1] = array();
+                $arguments[1] = [];
             }
             return $this->tag($method, $arguments[0], $arguments[1]);
         }
 
         if ($this->document instanceof Model\Document) {
             if (method_exists($this->document, $method)) {
-                return call_user_func_array(array($this->document, $method), $arguments);
+                return call_user_func_array([$this->document, $method], $arguments);
             }
         }
 

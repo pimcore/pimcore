@@ -144,7 +144,7 @@ class Password extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getDataForResource($data, $object = null, $params = array())
+    public function getDataForResource($data, $object = null, $params = [])
     {
         if (empty($data)) {
             return null;
@@ -252,7 +252,7 @@ class Password extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getDataFromResource($data, $object = null, $params = array())
+    public function getDataFromResource($data, $object = null, $params = [])
     {
         return $data;
     }
@@ -264,7 +264,7 @@ class Password extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getDataForQueryResource($data, $object = null, $params = array())
+    public function getDataForQueryResource($data, $object = null, $params = [])
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -276,7 +276,7 @@ class Password extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getDataForEditmode($data, $object = null, $params = array())
+    public function getDataForEditmode($data, $object = null, $params = [])
     {
         return $data;
     }
@@ -288,7 +288,7 @@ class Password extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getDataFromEditmode($data, $object = null, $params = array())
+    public function getDataFromEditmode($data, $object = null, $params = [])
     {
         return $data;
     }
@@ -300,12 +300,12 @@ class Password extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getVersionPreview($data, $object = null, $params = array())
+    public function getVersionPreview($data, $object = null, $params = [])
     {
         return "******";
     }
 
-    public function getDataForGrid($data, $object, $params = array())
+    public function getDataForGrid($data, $object, $params = [])
     {
         return "******";
     }
@@ -321,7 +321,7 @@ class Password extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return Object\ClassDefinition\Data
      */
-    public function getFromCsvImport($importValue, $object = null, $params = array())
+    public function getFromCsvImport($importValue, $object = null, $params = [])
     {
         return $this->getDataFromEditmode($importValue, $object, $params);
     }
@@ -332,7 +332,7 @@ class Password extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return mixed
      */
-    public function getForWebserviceExport($object, $params = array())
+    public function getForWebserviceExport($object, $params = [])
     {
         //neither hash nor password is exported via WS
         return null;
@@ -343,7 +343,7 @@ class Password extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return bool
      */
-    public function isDiffChangeAllowed($object, $params = array())
+    public function isDiffChangeAllowed($object, $params = [])
     {
         return true;
     }
@@ -355,7 +355,7 @@ class Password extends Model\Object\ClassDefinition\Data
      * @return null|Pimcore_Date
      */
 
-    public function getDiffDataFromEditmode($data, $object = null, $params = array())
+    public function getDiffDataFromEditmode($data, $object = null, $params = [])
     {
         return $data[0]["data"];
     }
@@ -367,9 +367,9 @@ class Password extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return array|null
      */
-    public function getDiffDataForEditMode($data, $object = null, $params = array())
+    public function getDiffDataForEditMode($data, $object = null, $params = [])
     {
-        $diffdata = array();
+        $diffdata = [];
         $diffdata["data"] = $data;
         $diffdata["disabled"] = !($this->isDiffChangeAllowed($object, $params));
         $diffdata["field"] = $this->getName();
@@ -383,7 +383,7 @@ class Password extends Model\Object\ClassDefinition\Data
 
         $diffdata["title"] = !empty($this->title) ? $this->title : $this->name;
 
-        $result = array();
+        $result = [];
         $result[] = $diffdata;
         return $result;
     }

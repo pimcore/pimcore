@@ -23,7 +23,6 @@ use Pimcore\Model\Element;
 
 class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
 {
-
     const ELEMENT_DOES_NOT_EXIST = -1;
     /**
      * the webservice
@@ -65,22 +64,22 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
         if ($category == "get") {
             if (!$element->isAllowed("view")) {
                 $this->getResponse()->setHttpResponseCode(403);
-                $this->encoder->encode(array("success" => false, "msg" => "not allowed, permission view is needed"));
+                $this->encoder->encode(["success" => false, "msg" => "not allowed, permission view is needed"]);
             }
         } elseif ($category == "delete") {
             if (!$element->isAllowed("delete")) {
                 $this->getResponse()->setHttpResponseCode(403);
-                $this->encoder->encode(array("success" => false, "msg" => "not allowed, permission delete is needed"));
+                $this->encoder->encode(["success" => false, "msg" => "not allowed, permission delete is needed"]);
             }
         } elseif ($category == "update") {
             if (!$element->isAllowed("publish")) {
                 $this->getResponse()->setHttpResponseCode(403);
-                $this->encoder->encode(array("success" => false, "msg" => "not allowed, permission save is needed"));
+                $this->encoder->encode(["success" => false, "msg" => "not allowed, permission save is needed"]);
             }
         } elseif ($category == "create") {
             if (!$element->isAllowed("create")) {
                 $this->getResponse()->setHttpResponseCode(403);
-                $this->encoder->encode(array("success" => false, "msg" => "not allowed, permission create is needed"));
+                $this->encoder->encode(["success" => false, "msg" => "not allowed, permission create is needed"]);
             }
         }
     }
@@ -93,7 +92,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
             }
         }
         $this->getResponse()->setHttpResponseCode(403);
-        $this->encoder->encode(array("success" => false, "msg" => "not allowed"));
+        $this->encoder->encode(["success" => false, "msg" => "not allowed"]);
     }
 
 
@@ -130,9 +129,9 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
 
                     $object = Object::getById($id);
                     if (!$object) {
-                        $this->encoder->encode(array(  "success" => false,
+                        $this->encoder->encode([  "success" => false,
                             "msg" => "Object does not exist",
-                            "code" => self::ELEMENT_DOES_NOT_EXIST));
+                            "code" => self::ELEMENT_DOES_NOT_EXIST]);
                         return;
                     }
 
@@ -159,14 +158,14 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                     }
 
                     if ($profile) {
-                        $profiling = array();
+                        $profiling = [];
                         $profiling["get"] = $timeConsumedGet;
                         $profiling["perm"] = $timeConsumedPerm;
                         $profiling["ws"] = $timeConsumedGetWebservice;
                         $profiling["init"] = $this->timeConsumedInit;
-                        $result = array("success" => true, "profiling" => $profiling, "data" => $object);
+                        $result = ["success" => true, "profiling" => $profiling, "data" => $object];
                     } else {
-                        $result = array("success" => true, "data" => $object);
+                        $result = ["success" => true, "data" => $object];
                     }
 
 
@@ -180,7 +179,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                 }
 
                 $success = $this->service->deleteObject($id);
-                $this->encoder->encode(array("success" => $success));
+                $this->encoder->encode(["success" => $success]);
                 return;
             } elseif ($this->isPost() || $this->isPut()) {
                 $data = file_get_contents("php://input");
@@ -225,7 +224,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                 }
 
 
-                $result = array("success" => $success);
+                $result = ["success" => $success];
                 if ($success && !$isUpdate) {
                     $result["id"] = $id;
                 }
@@ -235,7 +234,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
             }
         } catch (\Exception $e) {
             \Logger::error($e);
-            $this->encoder->encode(array("success" => false, "msg" => (string) $e));
+            $this->encoder->encode(["success" => false, "msg" => (string) $e]);
         }
 
         throw new \Exception("not implemented");
@@ -256,15 +255,15 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
         try {
             if ($id) {
                 $class = $this->service->getObjectMetadataById($id);
-                $this->encoder->encode(array("success" => true, "data" => $class));
+                $this->encoder->encode(["success" => true, "data" => $class]);
                 return;
             }
         } catch (\Exception $e) {
-            $this->encoder->encode(array("success" => false, "message" => (string) $e));
+            $this->encoder->encode(["success" => false, "message" => (string) $e]);
             \Logger::error($e);
         }
 
-        $this->encoder->encode(array("success" => false));
+        $this->encoder->encode(["success" => false]);
     }
 
 
@@ -281,14 +280,14 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
             $id = $this->getParam("id");
             if ($id) {
                 $class = $this->service->getClassById($id);
-                $this->encoder->encode(array("success" => true, "data" => $class));
+                $this->encoder->encode(["success" => true, "data" => $class]);
                 return;
             }
         } catch (\Exception $e) {
             \Logger::error($e);
-            $this->encoder->encode(array("success" => false, "msg" => (string) $e));
+            $this->encoder->encode(["success" => false, "msg" => (string) $e]);
         }
-        $this->encoder->encode(array("success" => false));
+        $this->encoder->encode(["success" => false]);
     }
 
     /**
@@ -305,14 +304,14 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                     throw new \Exception("Thumbnail '" . $id . "' file doesn't exists");
                 }
 
-                $this->encoder->encode(array("success" => true, "data" => $config->getForWebserviceExport()));
+                $this->encoder->encode(["success" => true, "data" => $config->getForWebserviceExport()]);
                 return;
             }
         } catch (\Exception $e) {
             \Logger::error($e);
-            $this->encoder->encode(array("success" => false, "msg" => (string) $e));
+            $this->encoder->encode(["success" => false, "msg" => (string) $e]);
         }
-        $this->encoder->encode(array("success" => false));
+        $this->encoder->encode(["success" => false]);
     }
 
     /**
@@ -328,13 +327,13 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
         $items = $list->load();
 
         foreach ($items as $item) {
-            $thumbnails[] = array(
+            $thumbnails[] = [
                 "id" => $item->getName(),
                 "text" => $item->getName()
-            );
+            ];
         }
 
-        $this->encoder->encode(array("success" => true, "data" => $thumbnails));
+        $this->encoder->encode(["success" => true, "data" => $thumbnails]);
     }
 
 
@@ -348,12 +347,12 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
         $this->checkUserPermission("classes");
         try {
             $fc = Object\Objectbrick\Definition::getByKey($this->getParam("id"));
-            $this->_helper->json(array("success" => true, "data" => $fc));
+            $this->_helper->json(["success" => true, "data" => $fc]);
         } catch (\Exception $e) {
             \Logger::error($e);
-            $this->encoder->encode(array("success" => false, "msg" => (string) $e));
+            $this->encoder->encode(["success" => false, "msg" => (string) $e]);
         }
-        $this->encoder->encode(array("success" => false));
+        $this->encoder->encode(["success" => false]);
     }
 
     /** end point for the field collection definition
@@ -366,12 +365,12 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
         $this->checkUserPermission("classes");
         try {
             $fc = Object\Fieldcollection\Definition::getByKey($this->getParam("id"));
-            $this->_helper->json(array("success" => true, "data" => $fc));
+            $this->_helper->json(["success" => true, "data" => $fc]);
         } catch (\Exception $e) {
             \Logger::error($e);
-            $this->encoder->encode(array("success" => false, "msg" => (string) $e));
+            $this->encoder->encode(["success" => false, "msg" => (string) $e]);
         }
-        $this->encoder->encode(array("success" => false));
+        $this->encoder->encode(["success" => false]);
     }
 
 
@@ -384,11 +383,11 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
     {
         try {
             $object = $this->service->getuser();
-            $this->encoder->encode(array("success" => true, "data" => $object));
+            $this->encoder->encode(["success" => true, "data" => $object]);
         } catch (\Exception $e) {
             \Logger::error($e);
         }
-        $this->encoder->encode(array("success" => false));
+        $this->encoder->encode(["success" => false]);
     }
 
     /** end point for asset related data.
@@ -418,9 +417,9 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
             if ($this->isGet()) {
                 $asset = Asset::getById($id);
                 if (!$asset) {
-                    $this->encoder->encode(array(  "success" => false,
+                    $this->encoder->encode([  "success" => false,
                         "msg" => "Asset does not exist",
-                        "code" => self::ELEMENT_DOES_NOT_EXIST));
+                        "code" => self::ELEMENT_DOES_NOT_EXIST]);
                     return;
                 }
 
@@ -430,7 +429,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                     $object = $this->service->getAssetFolderById($id);
                 } else {
                     $light = $this->getParam("light");
-                    $options = array("LIGHT" => $light ? 1 : 0);
+                    $options = ["LIGHT" => $light ? 1 : 0];
                     $object = $this->service->getAssetFileById($id, $options);
                     $algo = "sha1";
 
@@ -442,16 +441,16 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                         $checksum = $asset->getChecksum($algo);
                     }
 
-                    $object->checksum = array(
+                    $object->checksum = [
                         "algo" => $algo,
                         "value" => $checksum
-                    );
+                    ];
 
                     if ($light) {
                         unset($object->data);
                     }
                 }
-                $this->encoder->encode(array("success" => true, "data" => $object));
+                $this->encoder->encode(["success" => true, "data" => $object]);
                 return;
             } elseif ($this->isDelete()) {
                 $asset = Asset::getById($id);
@@ -460,7 +459,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                 }
 
                 $success = $this->service->deleteAsset($id);
-                $this->encoder->encode(array("success" => $success));
+                $this->encoder->encode(["success" => $success]);
                 return;
             } elseif ($this->isPost() || $this->isPut()) {
                 $data = file_get_contents("php://input");
@@ -506,17 +505,17 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                 }
 
                 if ($success && !$isUpdate) {
-                    $this->encoder->encode(array("success" => $success, "data" => array("id" => $id)));
+                    $this->encoder->encode(["success" => $success, "data" => ["id" => $id]]);
                 } else {
-                    $this->encoder->encode(array("success" => $success));
+                    $this->encoder->encode(["success" => $success]);
                 }
                 return;
             }
         } catch (\Exception $e) {
             \Logger::error($e);
-            $this->encoder->encode(array("success" => false, "msg" => (string) $e));
+            $this->encoder->encode(["success" => false, "msg" => (string) $e]);
         }
-        $this->encoder->encode(array("success" => false));
+        $this->encoder->encode(["success" => false]);
     }
 
     /** Returns the group/key config as JSON.
@@ -530,7 +529,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
             if ($this->isGet()) {
                 $condition = urldecode($this->getParam("condition"));
 
-                $definition = array();
+                $definition = [];
 
                 $list = new Object\KeyValue\GroupConfig\Listing();
                 if ($condition) {
@@ -539,7 +538,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                 $list->load();
                 $items = $list->getList();
 
-                $groups = array();
+                $groups = [];
 
                 foreach ($items as $item) {
                     $groups[] = $item->getObjectVars();
@@ -553,19 +552,19 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                 $list->load();
                 $items = $list->getList();
 
-                $keys = array();
+                $keys = [];
 
                 foreach ($items as $item) {
                     /** @var  $item Object\KeyValue\KeyConfig */
                     $keys[] = $item->getObjectVars();
                 }
                 $definition["keys"] = $keys;
-                $this->encoder->encode(array("success" => true, "data" => $definition));
+                $this->encoder->encode(["success" => true, "data" => $definition]);
             }
         } catch (\Exception $e) {
-            $this->encoder->encode(array("success" => false, "msg" => (string) $e));
+            $this->encoder->encode(["success" => false, "msg" => (string) $e]);
         }
-        $this->encoder->encode(array("success" => false));
+        $this->encoder->encode(["success" => false]);
     }
 
     /** end point for document related data.
@@ -595,9 +594,9 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
             if ($this->isGet()) {
                 $doc = Document::getById($id);
                 if (!$doc) {
-                    $this->encoder->encode(array(  "success" => false,
+                    $this->encoder->encode([  "success" => false,
                         "msg" => "Document does not exist",
-                        "code" => self::ELEMENT_DOES_NOT_EXIST));
+                        "code" => self::ELEMENT_DOES_NOT_EXIST]);
                     return;
                 }
 
@@ -624,7 +623,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                 if (!$object) {
                     throw new \Exception("could not find document");
                 }
-                @$this->encoder->encode(array("success" => true, "data" => $object));
+                @$this->encoder->encode(["success" => true, "data" => $object]);
                 return;
             } elseif ($this->isDelete()) {
                 $doc = Document::getById($id);
@@ -632,7 +631,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                     $this->checkPermission($doc, "delete");
                 }
                 $success = $this->service->deleteDocument($id);
-                $this->encoder->encode(array("success" => $success));
+                $this->encoder->encode(["success" => $success]);
                 return;
             } elseif ($this->isPost() || $this->isPut()) {
                 $data = file_get_contents("php://input");
@@ -674,16 +673,16 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                 }
 
                 if ($success && !$isUpdate) {
-                    $this->encoder->encode(array("success" => $success, "id" => $id));
+                    $this->encoder->encode(["success" => $success, "id" => $id]);
                 } else {
-                    $this->encoder->encode(array("success" => $success));
+                    $this->encoder->encode(["success" => $success]);
                 }
                 return;
             }
         } catch (\Exception $e) {
-            $this->encoder->encode(array("success" => false, "msg" => (string) $e));
+            $this->encoder->encode(["success" => false, "msg" => (string) $e]);
         }
-        $this->encoder->encode(array("success" => false));
+        $this->encoder->encode(["success" => false]);
     }
 
 
@@ -710,7 +709,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
         $limit = $this->getParam("limit");
         $groupBy = $this->getParam("groupBy");
         $result = $this->service->getAssetList($condition, $order, $orderKey, $offset, $limit, $groupBy);
-        $this->encoder->encode(array("success" => true, "data" => $result));
+        $this->encoder->encode(["success" => true, "data" => $result]);
     }
 
     /** Returns a list of document id/type pairs matching the given criteria.
@@ -736,7 +735,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
         $limit = $this->getParam("limit");
         $groupBy = $this->getParam("groupBy");
         $result = $this->service->getDocumentList($condition, $order, $orderKey, $offset, $limit, $groupBy);
-        $this->encoder->encode(array("success" => true, "data" => $result));
+        $this->encoder->encode(["success" => true, "data" => $result]);
     }
 
     /** Returns a list of object id/type pairs matching the given criteria.
@@ -765,7 +764,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
         $groupBy = $this->getParam("groupBy");
         $objectClass = $this->getParam("objectClass");
         $result = $this->service->getObjectList($condition, $order, $orderKey, $offset, $limit, $groupBy, $objectClass);
-        $this->encoder->encode(array("success" => true, "data" => $result));
+        $this->encoder->encode(["success" => true, "data" => $result]);
     }
 
     /** Returns the total number of objects matching the given condition
@@ -784,7 +783,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
         $condition = urldecode($this->getParam("condition"));
         $groupBy = $this->getParam("groupBy");
         $objectClass = $this->getParam("objectClass");
-        $params = array("objectTypes" => array(Object\AbstractObject::OBJECT_TYPE_FOLDER, Object\AbstractObject::OBJECT_TYPE_OBJECT, Object\AbstractObject::OBJECT_TYPE_VARIANT));
+        $params = ["objectTypes" => [Object\AbstractObject::OBJECT_TYPE_FOLDER, Object\AbstractObject::OBJECT_TYPE_OBJECT, Object\AbstractObject::OBJECT_TYPE_VARIANT]];
 
         if (!empty($condition)) {
             $params["condition"] = $condition;
@@ -803,7 +802,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
 
         $count = $listClassName::getTotalCount($params);
 
-        $this->encoder->encode(array("success" => true, "data" => array("totalCount" => $count)));
+        $this->encoder->encode(["success" => true, "data" => ["totalCount" => $count]]);
     }
 
 
@@ -820,7 +819,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
 
         $condition = urldecode($this->getParam("condition"));
         $groupBy = $this->getParam("groupBy");
-        $params = array();
+        $params = [];
 
         if (!empty($condition)) {
             $params["condition"] = $condition;
@@ -832,7 +831,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
 
         $count = Asset::getTotalCount($params);
 
-        $this->encoder->encode(array("success" => true, "data" => array("totalCount" => $count)));
+        $this->encoder->encode(["success" => true, "data" => ["totalCount" => $count]]);
     }
 
     /** Returns the total number of documents matching the given condition
@@ -848,7 +847,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
 
         $condition = urldecode($this->getParam("condition"));
         $groupBy = $this->getParam("groupBy");
-        $params = array();
+        $params = [];
 
         if (!empty($condition)) {
             $params["condition"] = $condition;
@@ -860,7 +859,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
 
         $count = Document::getTotalCount($params);
 
-        $this->encoder->encode(array("success" => true, "data" => array("totalCount" => $count)));
+        $this->encoder->encode(["success" => true, "data" => ["totalCount" => $count]]);
     }
 
     /**
@@ -872,17 +871,17 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
 
         $list = new Object\ClassDefinition\Listing();
         $classes = $list->load();
-        $result = array();
+        $result = [];
 
         foreach ($classes as $class) {
-            $item = array(
+            $item = [
                 "id" => $class->getId(),
                 "name" => $class->getName()
-            );
+            ];
             $result[] = $item;
         }
 
-        $this->encoder->encode(array("success" => true, "data" => $result));
+        $this->encoder->encode(["success" => true, "data" => $result]);
     }
 
     private function inquire($type)
@@ -896,14 +895,14 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
             } elseif ($this->getParam("ids")) {
                 $idList = explode(',', $this->getParam("ids"));
             } else {
-                $idList = array();
+                $idList = [];
             }
 
             if ($this->getParam("id")) {
                 $idList[] = $this->getParam("id");
             }
 
-            $resultData = array();
+            $resultData = [];
 
             foreach ($idList as $id) {
                 $resultData[$id] = 0;
@@ -925,9 +924,9 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                     $resultData[$id] = 1;
                 }
             }
-            $this->encoder->encode(array("success" => true, "data" => $resultData));
+            $this->encoder->encode(["success" => true, "data" => $resultData]);
         } catch (\Exception $e) {
-            $this->encoder->encode(array("success" => false, "msg" => $e->getMessage()));
+            $this->encoder->encode(["success" => false, "msg" => $e->getMessage()]);
         }
     }
 
@@ -982,16 +981,16 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
         $list = new Object\Objectbrick\Definition\Listing();
         $bricks = $list->load();
 
-        $result = array();
+        $result = [];
 
         foreach ($bricks as $brick) {
-            $item = array(
+            $item = [
                 "name" => $brick->getKey()
-            );
+            ];
             $result[] = $item;
         }
 
-        $this->encoder->encode(array("success" => true, "data" => $result));
+        $this->encoder->encode(["success" => true, "data" => $result]);
     }
 
     /**
@@ -1004,16 +1003,16 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
         $list = new Object\Fieldcollection\Definition\Listing();
         $fieldCollections = $list->load();
 
-        $result = array();
+        $result = [];
 
         foreach ($fieldCollections as $fc) {
-            $item = array(
+            $item = [
                 "name" => $fc->getKey()
-            );
+            ];
             $result[] = $item;
         }
 
-        $this->encoder->encode(array("success" => true, "data" => $result));
+        $this->encoder->encode(["success" => true, "data" => $result]);
     }
 
 
@@ -1021,7 +1020,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
     {
         foreach ($data as $key => $value) {
             if (is_array($value)) {
-                $tmp = array();
+                $tmp = [];
 
                 foreach ($value as $subkey => $subvalue) {
                     if (is_array($subvalue)) {
@@ -1108,8 +1107,8 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
      */
     public function systemClockAction()
     {
-        $this->encoder->encode(array("success" => true,
-            "data" => array("currentTime" => time())));
+        $this->encoder->encode(["success" => true,
+            "data" => ["currentTime" => time()]]);
     }
 
     /**
@@ -1123,10 +1122,10 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
         try {
             $params = $this->getRequest()->getQuery();
             $result = $this->service->getTranslations($params['type'], $params);
-            $this->encoder->encode(array("success" => true, "data" => $result));
+            $this->encoder->encode(["success" => true, "data" => $result]);
         } catch (\Exception $e) {
             \Logger::error($e);
-            $this->encoder->encode(array("success" => false, "msg" => (string) $e));
+            $this->encoder->encode(["success" => false, "msg" => (string) $e]);
         }
     }
 
@@ -1138,23 +1137,23 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
     {
         $this->checkUserPermission("system_settings");
         $systemSettings = \Pimcore\Config::getSystemConfig()->toArray();
-        $system = array("currentTime" => time(),
+        $system = ["currentTime" => time(),
             "phpCli" => Tool\Console::getPhpCli(),
-        );
+        ];
 
-        $pimcoreConstants = array(); //only Pimcore_ constants -> others might break the \Zend_Encode functionality
+        $pimcoreConstants = []; //only Pimcore_ constants -> others might break the \Zend_Encode functionality
         foreach ((array)get_defined_constants() as $constant => $value) {
             if (strpos($constant, 'PIMCORE_') === 0) {
                 $pimcoreConstants[$constant] = $value;
             }
         }
 
-        $pimcore = array("version" => \Pimcore\Version::getVersion(),
+        $pimcore = ["version" => \Pimcore\Version::getVersion(),
             "revision" => \Pimcore\Version::getRevision(),
             "instanceIdentifier" => $systemSettings["general"]["instanceIdentifier"],
-            "modules" => array(),
+            "modules" => [],
             "constants" => $pimcoreConstants,
-        );
+        ];
 
 
 
@@ -1165,10 +1164,10 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
         $plugins = \Pimcore\ExtensionManager::getPluginConfigs();
 
 
-        $this->encoder->encode(array("success" => true, "system" => $system,
+        $this->encoder->encode(["success" => true, "system" => $system,
             "pimcore" => $pimcore,
             "plugins" => $plugins,
-        ));
+        ]);
     }
 
 
@@ -1179,29 +1178,29 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
         phpinfo(-1);
 
         $pi = preg_replace(
-            array(
+            [
                 '#^.*<body>(.*)</body>.*$#ms', '#<h2>PHP License</h2>.*$#ms',
                 '#<h1>Configuration</h1>#',  "#\r?\n#", "#</(h1|h2|h3|tr)>#", '# +<#',
                 "#[ \t]+#", '#&nbsp;#', '#  +#', '# class=".*?"#', '%&#039;%',
                 '#<tr>(?:.*?)" src="(?:.*?)=(.*?)" alt="PHP Logo" /></a><h1>PHP Version (.*?)</h1>(?:\n+?)</td></tr>#',
                 '#<h1><a href="(?:.*?)\?=(.*?)">PHP Credits</a></h1>#',
                 '#<tr>(?:.*?)" src="(?:.*?)=(.*?)"(?:.*?)Zend Engine (.*?),(?:.*?)</tr>#',
-                "# +#", '#<tr>#', '#</tr>#'),
-            array(
+                "# +#", '#<tr>#', '#</tr>#'],
+            [
                 '$1', '', '', '', '</$1>' . "\n", '<', ' ', ' ', ' ', '', ' ',
                 '<h2>PHP Configuration</h2>'."\n".'<tr><td>PHP Version</td><td>$2</td></tr>'.
                 "\n".'<tr><td>PHP Egg</td><td>$1</td></tr>',
                 '<tr><td>PHP Credits Egg</td><td>$1</td></tr>',
                 '<tr><td>Zend Engine</td><td>$2</td></tr>' . "\n" .
                 '<tr><td>Zend Egg</td><td>$1</td></tr>', ' ', '%S%', '%E%'
-            ),
+            ],
             ob_get_clean()
         );
 
         $sections = explode('<h2>', strip_tags($pi, '<h2><th><td>'));
         unset($sections[0]);
 
-        $pi = array();
+        $pi = [];
         foreach ($sections as $section) {
             $n = substr($section, 0, strpos($section, '</h2>'));
             preg_match_all('#%S%(?:<td>(.*?)</td>)?(?:<td>(.*?)</td>)?(?:<td>(.*?)</td>)?%E%#', $section, $askapache, PREG_SET_ORDER);

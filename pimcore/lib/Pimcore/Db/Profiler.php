@@ -58,7 +58,7 @@ class Profiler extends \Zend_Db_Profiler
     /**
      * @var array
      */
-    protected $queries = array();
+    protected $queries = [];
 
     /**
      * @param null $label
@@ -110,14 +110,14 @@ class Profiler extends \Zend_Db_Profiler
             "time" => (string)round($profile->getElapsedSecs(), 5)
         ]);
 
-        $this->queries[] = array(
+        $this->queries[] = [
             "time" => $profile->getElapsedSecs(),
             "query" => $profile->getQuery() . " | " . implode(",", $profile->getQueryParams())
-        );
+        ];
     }
 
     /**
-     * 
+     *
      */
     public function __destruct()
     {
@@ -169,12 +169,12 @@ class Profiler extends \Zend_Db_Profiler
         if (!$this->_message) {
             return;
         }
-        $this->_message->setLabel(str_replace(array('%label%',
+        $this->_message->setLabel(str_replace(['%label%',
                                                     '%totalCount%',
-                                                    '%totalDuration%'),
-                                              array($this->_label,
+                                                    '%totalDuration%'],
+                                              [$this->_label,
                                                     $this->getTotalNumQueries(),
-                                                    (string)round($this->_totalElapsedTime, 5)),
+                                                    (string)round($this->_totalElapsedTime, 5)],
                                               $this->_label_template));
     }
 

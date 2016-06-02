@@ -52,7 +52,7 @@ abstract class AbstractPlaceholder
      *
      * @var array
      */
-    protected $params = array();
+    protected $params = [];
 
     /**
      * The Content as string

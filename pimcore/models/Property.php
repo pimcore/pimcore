@@ -72,7 +72,7 @@ class Property extends AbstractModel
     {
         // IMPORTANT: if you use this method be sure that the type of the property is already set
 
-        if (in_array($this->getType(), array("document", "asset", "object"))) {
+        if (in_array($this->getType(), ["document", "asset", "object"])) {
             $el = Element\Service::getElementByPath($this->getType(), $data);
             $this->data = null;
             if ($el) {
@@ -137,7 +137,7 @@ class Property extends AbstractModel
     {
 
         // lazy-load data of type asset, document, object
-        if (in_array($this->getType(), array("document", "asset", "object")) && !$this->data instanceof ElementInterface && is_numeric($this->data)) {
+        if (in_array($this->getType(), ["document", "asset", "object"]) && !$this->data instanceof ElementInterface && is_numeric($this->data)) {
             return Element\Service::getElementById($this->getType(), $this->data);
         }
 
@@ -284,15 +284,15 @@ class Property extends AbstractModel
      */
     public function resolveDependencies()
     {
-        $dependencies = array();
+        $dependencies = [];
 
         if ($this->getData() instanceof ElementInterface) {
             $elementType = Element\Service::getElementType($this->getData());
             $key = $elementType . "_" . $this->getData()->getId();
-            $dependencies[$key] = array(
+            $dependencies[$key] = [
                 "id" => $this->getData()->getId(),
                 "type" => $elementType
-            );
+            ];
         }
 
         return $dependencies;

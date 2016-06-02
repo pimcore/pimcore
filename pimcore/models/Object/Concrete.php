@@ -21,8 +21,7 @@ use Pimcore\Config;
 
 class Concrete extends AbstractObject
 {
-
-    public static $systemColumnNames = array("id", "fullpath", "published", "creationDate", "modificationDate", "filename", "classname");
+    public static $systemColumnNames = ["id", "fullpath", "published", "creationDate", "modificationDate", "filename", "classname"];
 
     /**
      * @var boolean
@@ -52,12 +51,12 @@ class Concrete extends AbstractObject
     /**
      * @var array
      */
-    public $lazyLoadedFields = array();
+    public $lazyLoadedFields = [];
 
     /**
      * @var array
      */
-    public $o___loadedLazyFields = array();
+    public $o___loadedLazyFields = [];
 
     /**
      * Contains all scheduled tasks
@@ -331,9 +330,9 @@ class Concrete extends AbstractObject
     /**
      * @return array
      */
-    public function getCacheTags($tags = array())
+    public function getCacheTags($tags = [])
     {
-        $tags = is_array($tags) ? $tags : array();
+        $tags = is_array($tags) ? $tags : [];
 
         $tags = parent::getCacheTags($tags);
 
@@ -495,7 +494,7 @@ class Concrete extends AbstractObject
             $method = "get" . $key;
             if (method_exists($parent, $method)) {
                 if (method_exists($parent, $method)) {
-                    return call_user_func(array($parent, $method), $params);
+                    return call_user_func([$parent, $method], $params);
                 }
             }
         }
@@ -562,7 +561,7 @@ class Concrete extends AbstractObject
         $tmpObj = new static();
 
         // get real fieldname (case sensitive)
-        $fieldnames = array();
+        $fieldnames = [];
         foreach ($tmpObj->getClass()->getFieldDefinitions() as $fd) {
             $fieldnames[] = $fd->getName();
         }
@@ -570,7 +569,7 @@ class Concrete extends AbstractObject
 
         if (property_exists($tmpObj, $propertyName)) {
             // check if the given fieldtype is valid for this shorthand
-            $allowedDataTypes = array("input","numeric","checkbox","country","date","datetime","image","language","multihref","multiselect","select","slider","time","user","email","firstname","lastname","localizedfields");
+            $allowedDataTypes = ["input","numeric","checkbox","country","date","datetime","image","language","multihref","multiselect","select","slider","time","user","email","firstname","lastname","localizedfields"];
 
             $field = $tmpObj->getClass()->getFieldDefinition($propertyName);
             if (!in_array($field->getFieldType(), $allowedDataTypes)) {
@@ -594,9 +593,9 @@ class Concrete extends AbstractObject
                 }
 
                 $defaultCondition = $localizedPropertyName . " = " . \Pimcore\Db::get()->quote($value) . " ";
-                $listConfig = array(
+                $listConfig = [
                     "condition" => $defaultCondition
-                );
+                ];
 
                 if ($locale) {
                     $listConfig["locale"] = $locale;
@@ -606,9 +605,9 @@ class Concrete extends AbstractObject
                 list($value, $limit, $offset) = $arguments;
 
                 $defaultCondition = $propertyName . " = " . \Pimcore\Db::get()->quote($value) . " ";
-                $listConfig = array(
+                $listConfig = [
                     "condition" => $defaultCondition
-                );
+                ];
             }
 
             if (!is_array($limit)) {
@@ -646,7 +645,7 @@ class Concrete extends AbstractObject
     {
         $parentVars = parent::__sleep();
 
-        $finalVars = array();
+        $finalVars = [];
         $lazyLoadedFields = $this->getLazyLoadedFields();
 
         foreach ($parentVars as $key) {

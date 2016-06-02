@@ -109,7 +109,7 @@ class Table extends Model\Document\Tag
      * @param null $idMapper
      * @throws \Exception
      */
-    public function getFromWebserviceImport($wsElement, $document = null, $params = array(), $idMapper = null)
+    public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
     {
         $data = $wsElement->value;
         if ($data->data === null or is_array($data->data)) {

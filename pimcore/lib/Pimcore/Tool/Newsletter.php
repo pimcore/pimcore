@@ -34,14 +34,14 @@ class Newsletter
      */
     public static function sendMail($newsletter, $object, $emailAddress = null, $hostUrl = null)
     {
-        $params = array(
+        $params = [
             "gender" => $object->getGender(),
             'firstname' => $object->getFirstname(),
             'lastname' => $object->getLastname(),
             "email" => $object->getEmail(),
             'token' => $object->getProperty("token"),
             "object" => $object
-        );
+        ];
 
         $mail = new Mail();
         $mail->setIgnoreDebugMode(true);
@@ -183,11 +183,11 @@ class Newsletter
         }
 
         // generate token
-        $token = base64_encode(\Zend_Json::encode(array(
+        $token = base64_encode(\Zend_Json::encode([
             "salt" => md5(microtime()),
             "email" => $object->getEmail(),
             "id" => $object->getId()
-        )));
+        ]));
         $token = str_replace("=", "~", $token); // base64 can contain = which isn't safe in URL's
         $object->setProperty("token", "text", $token);
 
@@ -208,16 +208,16 @@ class Newsletter
      * @param array $params
      * @throws \Exception
      */
-    public function sendConfirmationMail($object, $mailDocument, $params = array())
+    public function sendConfirmationMail($object, $mailDocument, $params = [])
     {
-        $defaultParameters = array(
+        $defaultParameters = [
             "gender" => $object->getGender(),
             'firstname' => $object->getFirstname(),
             'lastname' => $object->getLastname(),
             "email" => $object->getEmail(),
             'token' => $object->getProperty("token"),
             "object" => $object
-        );
+        ];
 
         $params = array_merge($defaultParameters, $params);
 
@@ -341,12 +341,12 @@ class Newsletter
         $note->setType("newsletter");
         $note->setTitle($title);
         $note->setUser(0);
-        $note->setData(array(
-            "ip" => array(
+        $note->setData([
+            "ip" => [
                 "type" => "text",
                 "data" => Tool::getClientIp()
-            )
-        ));
+            ]
+        ]);
         $note->save();
     }
 

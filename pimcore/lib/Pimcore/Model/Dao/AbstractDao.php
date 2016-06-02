@@ -19,7 +19,6 @@ use Pimcore\Db;
 
 abstract class AbstractDao implements DaoInterface
 {
-
     use DaoTrait;
 
     const CACHEKEY = "system_resource_columns_";
@@ -76,12 +75,12 @@ abstract class AbstractDao implements DaoInterface
             $columns = Cache::load($cacheKey);
 
             if (!$columns || !$cache) {
-                $columns = array();
+                $columns = [];
                 $data = $this->db->fetchAll("SHOW COLUMNS FROM " . $table);
                 foreach ($data as $d) {
                     $columns[] = $d["Field"];
                 }
-                Cache::save($columns, $cacheKey, array("system", "resource"), null, 997);
+                Cache::save($columns, $cacheKey, ["system", "resource"], null, 997);
             }
 
             \Zend_Registry::set($cacheKey, $columns);
@@ -97,6 +96,6 @@ abstract class AbstractDao implements DaoInterface
     {
         $cacheKey = self::CACHEKEY . $table;
         \Zend_Registry::getInstance()->offsetUnset($cacheKey);
-        Cache::clearTags(array("system", "resource"));
+        Cache::clearTags(["system", "resource"]);
     }
 }

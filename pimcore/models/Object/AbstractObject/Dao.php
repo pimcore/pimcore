@@ -91,7 +91,7 @@ class Dao extends Model\Element\Dao
     {
         $object = get_object_vars($this->model);
 
-        $data = array();
+        $data = [];
         foreach ($object as $key => $value) {
             if (in_array($key, $this->getValidTableColumns("objects"))) {
                 if (is_bool($value)) {
@@ -105,7 +105,7 @@ class Dao extends Model\Element\Dao
         $checkColumns = ["o_type","o_classId","o_className"];
         $existingData = $this->db->fetchRow("SELECT " . implode(",", $checkColumns) . " FROM objects WHERE o_id = ?", [$this->model->getId()]);
         foreach ($checkColumns as $column) {
-            if($column == "o_type" && in_array($data[$column], ["variant","object"]) && in_array($existingData[$column], ["variant","object"])) {
+            if ($column == "o_type" && in_array($data[$column], ["variant","object"]) && in_array($existingData[$column], ["variant","object"])) {
                 // type conversion variant <=> object should be possible
                 continue;
             }
@@ -120,11 +120,11 @@ class Dao extends Model\Element\Dao
         // tree_locks
         $this->db->delete("tree_locks", "id = " . $this->model->getId() . " AND type = 'object'");
         if ($this->model->getLocked()) {
-            $this->db->insert("tree_locks", array(
+            $this->db->insert("tree_locks", [
                 "id" => $this->model->getId(),
                 "type" => "object",
                 "locked" => $this->model->getLocked()
-            ));
+            ]);
         }
     }
 
@@ -141,9 +141,9 @@ class Dao extends Model\Element\Dao
 
     public function updateWorkspaces()
     {
-        $this->db->update("users_workspaces_object", array(
+        $this->db->update("users_workspaces_object", [
             "cpath" => $this->model->getRealFullPath()
-        ), "cid = " . $this->model->getId());
+        ], "cid = " . $this->model->getId());
     }
 
     /**
@@ -210,7 +210,7 @@ class Dao extends Model\Element\Dao
      */
     public function getProperties($onlyInherited = false)
     {
-        $properties = array();
+        $properties = [];
 
         // collect properties via parent - ids
         $parentIds = $this->getParentIds();
@@ -272,7 +272,7 @@ class Dao extends Model\Element\Dao
      *
      * @return boolean
      */
-    public function hasChilds($objectTypes = array(Object::OBJECT_TYPE_OBJECT, Object::OBJECT_TYPE_FOLDER))
+    public function hasChilds($objectTypes = [Object::OBJECT_TYPE_OBJECT, Object::OBJECT_TYPE_FOLDER])
     {
         $c = $this->db->fetchOne("SELECT o_id FROM objects WHERE o_parentId = ? AND o_type IN ('" . implode("','", $objectTypes) . "')", $this->model->getId());
         return (bool)$c;
@@ -284,7 +284,7 @@ class Dao extends Model\Element\Dao
      * @param array $objectTypes
      * @return boolean
      */
-    public function hasSiblings($objectTypes = array(Object::OBJECT_TYPE_OBJECT, Object::OBJECT_TYPE_FOLDER))
+    public function hasSiblings($objectTypes = [Object::OBJECT_TYPE_OBJECT, Object::OBJECT_TYPE_FOLDER])
     {
         $c = $this->db->fetchOne("SELECT o_id FROM objects WHERE o_parentId = ? and o_id != ? AND o_type IN ('" . implode("','", $objectTypes) . "')", [$this->model->getParentId(), $this->model->getId()]);
         return (bool)$c;
@@ -296,7 +296,7 @@ class Dao extends Model\Element\Dao
      * @param User $user
      * @return integer
      */
-    public function getChildAmount($objectTypes = array(Object::OBJECT_TYPE_OBJECT, Object::OBJECT_TYPE_FOLDER), $user = null)
+    public function getChildAmount($objectTypes = [Object::OBJECT_TYPE_OBJECT, Object::OBJECT_TYPE_FOLDER], $user = null)
     {
         if ($user and !$user->isAdmin()) {
             $userIds = $user->getRoles();
@@ -360,21 +360,21 @@ class Dao extends Model\Element\Dao
             }
             $classIds = $this->db->fetchCol("SELECT o_classId FROM objects WHERE o_path LIKE ? AND o_type = 'object' GROUP BY o_classId", $path . "/%");
 
-            $classes = array();
+            $classes = [];
             foreach ($classIds as $classId) {
                 $classes[] = Object\ClassDefinition::getById($classId);
             }
 
             return $classes;
         } else {
-            return array();
+            return [];
         }
     }
 
     protected function collectParentIds()
     {
         // collect properties via parent - ids
-        $parentIds = array(1);
+        $parentIds = [1];
 
         $obj = $this->model->getParent();
         if ($obj) {
@@ -435,7 +435,7 @@ class Dao extends Model\Element\Dao
                 $queryType = "*";
             }
 
-            $commaSeparated = in_array($type, array("lView", "lEdit", "layouts"));
+            $commaSeparated = in_array($type, ["lView", "lEdit", "layouts"]);
 
             if ($commaSeparated) {
                 $allPermissions = $this->db->fetchAll("SELECT " . $queryType . ",cid,cpath FROM users_workspaces_object WHERE cid IN (" . implode(",", $parentIds) . ") AND userId IN (" . implode(",", $userIds) . ") ORDER BY LENGTH(cpath) DESC");
@@ -446,7 +446,7 @@ class Dao extends Model\Element\Dao
                 } else {
                     $firstPermission = $allPermissions[0];
                     $firstPermissionCid = $firstPermission["cid"];
-                    $mergedPermissions = array();
+                    $mergedPermissions = [];
 
                     foreach ($allPermissions as $permission) {
                         $cid = $permission["cid"];

@@ -44,7 +44,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
         $data = $this->db->fetchAll($sql, $this->model->getConditionVariables());
 
-        $configData = array();
+        $configData = [];
         foreach ($data as $dataItem) {
             $entry = new Object\Classificationstore\CollectionGroupRelation();
             $resource = $entry->getDao();

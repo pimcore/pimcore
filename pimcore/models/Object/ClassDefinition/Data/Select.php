@@ -110,7 +110,7 @@ class Select extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getDataForResource($data, $object = null, $params = array())
+    public function getDataForResource($data, $object = null, $params = [])
     {
         return $data;
     }
@@ -122,7 +122,7 @@ class Select extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getDataFromResource($data, $object = null, $params = array())
+    public function getDataFromResource($data, $object = null, $params = [])
     {
         return $data;
     }
@@ -134,7 +134,7 @@ class Select extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getDataForQueryResource($data, $object = null, $params = array())
+    public function getDataForQueryResource($data, $object = null, $params = [])
     {
         return $data;
     }
@@ -147,7 +147,7 @@ class Select extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getDataForEditmode($data, $object = null, $params = array())
+    public function getDataForEditmode($data, $object = null, $params = [])
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -159,7 +159,7 @@ class Select extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getDataFromEditmode($data, $object = null, $params = array())
+    public function getDataFromEditmode($data, $object = null, $params = [])
     {
         return $this->getDataFromResource($data, $object, $params);
     }
@@ -171,7 +171,7 @@ class Select extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getVersionPreview($data, $object = null, $params = array())
+    public function getVersionPreview($data, $object = null, $params = [])
     {
         return $data;
     }
@@ -181,7 +181,7 @@ class Select extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return bool
      */
-    public function isDiffChangeAllowed($object, $params = array())
+    public function isDiffChangeAllowed($object, $params = [])
     {
         return true;
     }
@@ -192,11 +192,11 @@ class Select extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return array|null
      */
-    public function getDiffDataForEditMode($data, $object = null, $params = array())
+    public function getDiffDataForEditMode($data, $object = null, $params = [])
     {
-        $result = array();
+        $result = [];
 
-        $diffdata = array();
+        $diffdata = [];
         $diffdata["data"] = $data;
         $diffdata["disabled"] = false;
         $diffdata["field"] = $this->getName();

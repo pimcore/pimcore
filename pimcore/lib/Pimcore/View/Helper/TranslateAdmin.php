@@ -50,7 +50,7 @@ class TranslateAdmin extends \Zend_View_Helper_Translate
                 }
                 $this->setLocale($locale);
 
-                return call_user_func_array(array($this, "translate"), func_get_args());
+                return call_user_func_array([$this, "translate"], func_get_args());
             }
         }
 

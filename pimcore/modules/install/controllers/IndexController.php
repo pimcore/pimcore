@@ -16,8 +16,6 @@ use Pimcore\Model\Tool;
 
 class Install_IndexController extends \Pimcore\Controller\Action
 {
-
-
     public function init()
     {
         parent::init();
@@ -40,7 +38,7 @@ class Install_IndexController extends \Pimcore\Controller\Action
 
     public function indexAction()
     {
-        $errors = array();
+        $errors = [];
 
         // check permissions
         $files = rscandir(PIMCORE_WEBSITE_VAR . "/");
@@ -108,20 +106,20 @@ class Install_IndexController extends \Pimcore\Controller\Action
                 }
             }
 
-            $setup->config(array(
-                "database" => array(
+            $setup->config([
+                "database" => [
                     "adapter" => $this->getParam("mysql_adapter"),
                     "params" => $dbConfig
-                ),
-            ));
+                ],
+            ]);
 
             // look for a template dump
             // eg. for use with demo installer
             $dbDataFile = PIMCORE_WEBSITE_PATH . "/dump/data.sql";
-            $contentConfig = array(
+            $contentConfig = [
                 "username" => $this->getParam("admin_username"),
                 "password" => $this->getParam("admin_password")
-            );
+            ];
 
             if (!file_exists($dbDataFile)) {
                 $setup->database();
@@ -134,9 +132,9 @@ class Install_IndexController extends \Pimcore\Controller\Action
                 $setup->createOrUpdateUser($contentConfig);
             }
 
-            $this->_helper->json(array(
+            $this->_helper->json([
                 "success" => true
-            ));
+            ]);
         } else {
             echo implode("<br />", $errors);
             die();

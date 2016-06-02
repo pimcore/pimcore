@@ -20,7 +20,6 @@ use Pimcore\Model;
 
 class Dao extends Model\Dao\AbstractDao
 {
-
     const TABLE_NAME = "quantityvalue_units";
 
     /**
@@ -28,7 +27,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @var array
      */
-    protected $validColumns = array();
+    protected $validColumns = [];
 
     /**
      * Get the valid columns from the database
@@ -87,7 +86,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function create()
     {
-        $this->db->insert(self::TABLE_NAME, array());
+        $this->db->insert(self::TABLE_NAME, []);
         $this->model->setId($this->db->lastInsertId());
 
         $this->save();

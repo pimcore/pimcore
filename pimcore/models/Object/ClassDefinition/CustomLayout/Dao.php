@@ -31,7 +31,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @var array
      */
-    protected $_sqlChangeLog = array();
+    protected $_sqlChangeLog = [];
 
     /**
      * @param null $id
@@ -91,7 +91,7 @@ class Dao extends Model\Dao\AbstractDao
     public function update()
     {
         $class = get_object_vars($this->model);
-        $data = array();
+        $data = [];
 
         foreach ($class as $key => $value) {
             if (in_array($key, $this->getValidTableColumns("custom_layouts"))) {
@@ -121,7 +121,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function create()
     {
-        $this->db->insert("custom_layouts", array("name" => $this->model->getName(), "classId" => $this->model->getClassId()));
+        $this->db->insert("custom_layouts", ["name" => $this->model->getName(), "classId" => $this->model->getClassId()]);
 
         $this->model->setId($this->db->lastInsertId());
         $this->model->setCreationDate(time());

@@ -69,7 +69,7 @@ class RestClient
      * @param array $data
      * @return void
      */
-    public function setValues($data = array())
+    public function setValues($data = [])
     {
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $key => $value) {
@@ -201,14 +201,14 @@ class RestClient
 
             if (!$user) {
                 $apikey = md5(time()) . md5($username);
-                $user = User::create(array(
+                $user = User::create([
                     "parentId" => 0,
                     "username" => "rest",
                     "password" => \Pimcore\Tool\Authentication::getPasswordHash($username, $username),
                     "active" => true,
                     "apiKey" => $apikey,
                     "admin" => true
-                ));
+                ]);
             }
             $apikey = $user->getApiKey();
             $this->setApiKey($apikey);
@@ -274,7 +274,7 @@ class RestClient
      * @param array $options
      * @throws \Exception
      */
-    public function __construct($options = array())
+    public function __construct($options = [])
     {
         $this->client = Tool::getHttpClient();
         $this->setValues($options);
@@ -294,7 +294,7 @@ class RestClient
 
         foreach ($data as $key => $value) {
             if (is_array($value)) {
-                $tmp = array();
+                $tmp = [];
 
                 foreach ($value as $subkey => $subvalue) {
                     if (is_array($subvalue)) {
@@ -454,7 +454,7 @@ class RestClient
         if (!is_array($response)) {
             throw new Exception("response is empty");
         }
-        $result = array();
+        $result = [];
         foreach ($response as $item) {
             $wsDocument = $this->fillWebserviceData("\\Pimcore\\Model\\Webservice\\Data\\Object\\Listing\\Item", $item);
             if (!$decode) {
@@ -490,7 +490,7 @@ class RestClient
             throw new Exception("response is empty");
         }
 
-        $result = array();
+        $result = [];
         foreach ($response as $item) {
             $wsDocument = $this->fillWebserviceData("\\Pimcore\\Model\\Webservice\\Data\\Asset\\Listing\\Item", $item);
             if (!$decode) {
@@ -528,7 +528,7 @@ class RestClient
             throw new Exception("response is empty");
         }
 
-        $result = array();
+        $result = [];
         foreach ($response as $item) {
             $wsDocument = $this->fillWebserviceData("\\Pimcore\\Model\\Webservice\\Data\\Document\\Listing\\Item", $item);
             if (!$decode) {
@@ -993,7 +993,7 @@ class RestClient
     public function getUser()
     {
         $response = $this->doRequest($this->buildEndpointUrl("user"), "GET");
-        $response = array("success" => true, "data" => $response->data);
+        $response = ["success" => true, "data" => $response->data];
         return $response;
     }
 
@@ -1095,7 +1095,7 @@ class RestClient
      * @param array $params
      * @return string
      */
-    public function buildEndpointUrl($customUrlPath, $params = array())
+    public function buildEndpointUrl($customUrlPath, $params = [])
     {
         $url = $this->getBaseUrl() . $customUrlPath . "?apikey=" . $this->getApiKey();
         if (!empty($params)) {

@@ -188,10 +188,10 @@ class Image extends Model\Asset
             return;
         }
 
-        $dimensions = array(
+        $dimensions = [
             "width" => $image->getWidth(),
             "height" => $image->getHeight()
-        );
+        ];
 
         return $dimensions;
     }

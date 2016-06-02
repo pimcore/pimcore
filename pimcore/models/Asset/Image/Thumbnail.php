@@ -100,7 +100,7 @@ class Thumbnail
             "frontendPath" => $path
         ]);
 
-        if($results->count()) {
+        if ($results->count()) {
             $path = $results->last();
         }
 
@@ -124,7 +124,7 @@ class Thumbnail
     {
         $errorImage = PIMCORE_PATH . '/static6/img/filetype-not-supported.png';
 
-        if(!$this->asset) {
+        if (!$this->asset) {
             $this->filesystemPath = $errorImage;
         } elseif (!$this->filesystemPath) {
             // if no correct thumbnail config is given use the original image as thumbnail
@@ -311,10 +311,10 @@ class Thumbnail
     * @param array $removeAttributes Listof key-value pairs of HTML attributes that should be removed
     * @return string IMG-element with at least the attributes src, width, height, alt.
     */
-    public function getHTML($attributes = array(), $removeAttributes = [])
+    public function getHTML($attributes = [], $removeAttributes = [])
     {
         $image = $this->getAsset();
-        $attr = array();
+        $attr = [];
         $pictureAttribs = []; // this is used for the html5 <picture> element
 
         // re-add support for disableWidthHeightAttributes

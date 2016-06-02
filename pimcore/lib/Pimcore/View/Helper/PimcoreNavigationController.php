@@ -211,7 +211,7 @@ class PimcoreNavigationController
      */
     protected function buildNextLevel($parentDocument, $isRoot = false, $pageCallback = null)
     {
-        $pages = array();
+        $pages = [];
 
         $childs = $this->getChilds($parentDocument);
         if (is_array($childs)) {

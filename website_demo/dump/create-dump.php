@@ -20,7 +20,7 @@ if (empty($initInfo["errors"])) {
 
     foreach ($initInfo["steps"] as $step) {
         if (!is_array($step[1])) {
-            $step[1] = array();
+            $step[1] = [];
         }
 
         if (array_key_exists($step[0], $stepMethodMapping)) {

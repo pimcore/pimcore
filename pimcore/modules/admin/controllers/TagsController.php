@@ -16,7 +16,6 @@ use Pimcore\Model\Element\Tag;
 
 class Admin_TagsController extends \Pimcore\Controller\Action\Admin
 {
-
     public function addAction()
     {
         $tag = new Pimcore\Model\Element\Tag();

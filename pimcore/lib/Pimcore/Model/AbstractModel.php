@@ -29,7 +29,7 @@ abstract class AbstractModel
     /**
      * @var array
      */
-    private static $daoClassCache = array();
+    private static $daoClassCache = [];
 
     /**
      * @return \Pimcore\Model\Dao\AbstractDao
@@ -180,7 +180,7 @@ abstract class AbstractModel
      */
     protected function getParentClasses($class)
     {
-        $classes = array();
+        $classes = [];
         $classes[] = $class;
 
         $parentClass = get_parent_class($class);
@@ -195,7 +195,7 @@ abstract class AbstractModel
      * @param array $data
      * @return $this
      */
-    public function setValues($data = array())
+    public function setValues($data = [])
     {
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $key => $value) {
@@ -227,8 +227,8 @@ abstract class AbstractModel
      */
     public function __sleep()
     {
-        $finalVars = array();
-        $blockedVars = array("dao","_fulldump"); // _fulldump is a temp var which is used to trigger a full serialized dump in __sleep eg. in Document, \Object_Abstract
+        $finalVars = [];
+        $blockedVars = ["dao","_fulldump"]; // _fulldump is a temp var which is used to trigger a full serialized dump in __sleep eg. in Document, \Object_Abstract
         $vars = get_object_vars($this);
         foreach ($vars as $key => $value) {
             if (!in_array($key, $blockedVars)) {
@@ -255,7 +255,7 @@ abstract class AbstractModel
         // check if the method is defined in ´dao
         if (method_exists($this->getDao(), $method)) {
             try {
-                $r = call_user_func_array(array($this->getDao(), $method), $args);
+                $r = call_user_func_array([$this->getDao(), $method], $args);
                 return $r;
             } catch (\Exception $e) {
                 \Logger::emergency($e);

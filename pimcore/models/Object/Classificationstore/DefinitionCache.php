@@ -22,8 +22,7 @@ use Pimcore\Tool;
 
 class DefinitionCache
 {
-
-    public static $cache = array();
+    public static $cache = [];
 
     public static function get($id, $type = "key")
     {
@@ -62,7 +61,7 @@ class DefinitionCache
 
             unset(self::$cache[$key]);
         } else {
-            self::$cache = array();
+            self::$cache = [];
         }
     }
 

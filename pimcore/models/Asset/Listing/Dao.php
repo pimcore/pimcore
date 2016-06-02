@@ -32,9 +32,9 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function load()
     {
-        $assets = array();
+        $assets = [];
 
-        $select = (string) $this->getQuery(array('id', "type"));
+        $select = (string) $this->getQuery(['id', "type"]);
         $assetsData = $this->db->fetchAll($select, $this->model->getConditionVariables());
 
         foreach ($assetsData as $assetData) {
@@ -75,7 +75,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function loadIdList()
     {
-        $select = (string) $this->getQuery(array('id', "type"));
+        $select = (string) $this->getQuery(['id', "type"]);
         $assetIds = $this->db->fetchCol($select, $this->model->getConditionVariables());
 
         return $assetIds;
@@ -83,14 +83,14 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
     public function getCount()
     {
-        $select = (string) $this->getQuery(array(new \Zend_Db_Expr('COUNT(*)')));
+        $select = (string) $this->getQuery([new \Zend_Db_Expr('COUNT(*)')]);
         $amount = (int) $this->db->fetchOne($select, $this->model->getConditionVariables());
         return $amount;
     }
 
     public function getTotalCount()
     {
-        $select = $this->getQuery(array(new \Zend_Db_Expr('COUNT(*)')));
+        $select = $this->getQuery([new \Zend_Db_Expr('COUNT(*)')]);
         $select->reset(\Zend_Db_Select::LIMIT_COUNT);
         $select->reset(\Zend_Db_Select::LIMIT_OFFSET);
         $select = (string) $select;

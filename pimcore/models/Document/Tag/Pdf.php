@@ -31,17 +31,17 @@ class Pdf extends Model\Document\Tag
     /**
      * @var array
      */
-    public $hotspots = array();
+    public $hotspots = [];
 
     /**
      * @var array
      */
-    public $texts = array();
+    public $texts = [];
 
     /**
      * @var array
      */
-    public $chapters = array();
+    public $chapters = [];
 
     /**
      * @see Document\Tag\TagInterface::getType
@@ -58,20 +58,19 @@ class Pdf extends Model\Document\Tag
      */
     public function getData()
     {
-        return array(
+        return [
             "id" => $this->id,
             "hotspots" => $this->hotspots,
             "texts" => $this->texts,
             "chapters" => $this->chapters
-        );
+        ];
     }
 
     public function getDataForResource()
     {
         $rewritePath = function ($data) {
-
             if (!is_array($data)) {
-                return array();
+                return [];
             }
 
             foreach ($data as &$page) {
@@ -91,20 +90,19 @@ class Pdf extends Model\Document\Tag
 
         $hotspots = $rewritePath($this->hotspots);
 
-        return array(
+        return [
             "id" => $this->id,
             "hotspots" => $hotspots,
             "texts" => $this->getTexts(),
             "chapters" => $this->getChapters()
-        );
+        ];
     }
 
     public function getDataEditmode()
     {
         $rewritePath = function ($data) {
-
             if (!is_array($data)) {
-                return array();
+                return [];
             }
 
             foreach ($data as &$page) {
@@ -132,18 +130,18 @@ class Pdf extends Model\Document\Tag
         // force an object when converting to JSON
         $texts["__dummy"] = "__dummy";
 
-        return array(
+        return [
             "id" => $this->id,
             "pageCount" => $pages,
             "hotspots" => empty($hotspots) ? null : $hotspots,
             "texts" => $texts,
             "chapters" => $this->chapters
-        );
+        ];
     }
 
-    public function getCacheTags($ownerDocument, $tags = array())
+    public function getCacheTags($ownerDocument, $tags = [])
     {
-        $tags = is_array($tags) ? $tags : array();
+        $tags = is_array($tags) ? $tags : [];
 
         $asset = Asset::getById($this->id);
         if ($asset instanceof Asset) {
@@ -152,7 +150,6 @@ class Pdf extends Model\Document\Tag
             }
 
             $getMetaDataCacheTags = function ($data, $tags) {
-
                 if (!is_array($data)) {
                     return $tags;
                 }
@@ -184,19 +181,18 @@ class Pdf extends Model\Document\Tag
      */
     public function resolveDependencies()
     {
-        $dependencies = array();
+        $dependencies = [];
 
         $asset = Asset::getById($this->id);
         if ($asset instanceof Asset) {
             $key = "asset_" . $asset->getId();
-            $dependencies[$key] = array(
+            $dependencies[$key] = [
                 "id" => $asset->getId(),
                 "type" => "asset"
-            );
+            ];
         }
 
         $getMetaDataDependencies = function ($data, $dependencies) {
-
             if (!is_array($data)) {
                 return $dependencies;
             }
@@ -211,10 +207,10 @@ class Pdf extends Model\Document\Tag
                                     $elTtype = "document";
                                 }
 
-                                $dependencies[$elTtype . "_" . $metaData["value"]->getId()] = array(
+                                $dependencies[$elTtype . "_" . $metaData["value"]->getId()] = [
                                     "id" => $metaData["value"]->getId(),
                                     "type" => $elTtype
-                                );
+                                ];
                             }
                         }
                     }
@@ -258,16 +254,15 @@ class Pdf extends Model\Document\Tag
         }
 
         $rewritePath = function ($data) {
-
             if (!is_array($data)) {
-                return array();
+                return [];
             }
 
             foreach ($data as &$page) {
                 foreach ($page as &$element) {
                     if (array_key_exists("data", $element) && is_array($element["data"]) && count($element["data"]) > 0) {
                         foreach ($element["data"] as &$metaData) {
-                            if (in_array($metaData["type"], array("object", "asset", "document", "link"))) {
+                            if (in_array($metaData["type"], ["object", "asset", "document", "link"])) {
                                 $elTtype = $metaData["type"];
                                 if ($metaData["type"] == "link") {
                                     $elTtype = "document";
@@ -317,16 +312,15 @@ class Pdf extends Model\Document\Tag
             $this->id = $pdf->getId();
             if (array_key_exists("hotspots", $data) && !empty($data["hotspots"])) {
                 $rewritePath = function ($data) {
-
                     if (!is_array($data)) {
-                        return array();
+                        return [];
                     }
 
                     foreach ($data as &$page) {
                         foreach ($page as &$element) {
                             if (array_key_exists("data", $element) && is_array($element["data"]) && count($element["data"]) > 0) {
                                 foreach ($element["data"] as &$metaData) {
-                                    if (in_array($metaData["type"], array("object", "asset", "document", "link"))) {
+                                    if (in_array($metaData["type"], ["object", "asset", "document", "link"])) {
                                         $elTtype = $metaData["type"];
                                         if ($metaData["type"] == "link") {
                                             $elTtype = "document";
@@ -388,9 +382,8 @@ class Pdf extends Model\Document\Tag
             $pageCount = $asset->getPageCount();
             $hotspots = $this->getHotspots();
             $rewritePath = function ($data) use ($options) {
-
                 if (!is_array($data)) {
-                    return array();
+                    return [];
                 }
 
                 foreach ($data as &$element) {
@@ -425,21 +418,21 @@ class Pdf extends Model\Document\Tag
             };
 
             for ($i=1; $i <=$pageCount; $i++) {
-                $pageData = array(
-                    "thumbnail" => (string) $asset->getImageThumbnail(array(
+                $pageData = [
+                    "thumbnail" => (string) $asset->getImageThumbnail([
                         "width" => 200,
                         "height" => 200,
                         "contain" => true,
                         "format" => "pjpeg"
-                    ), $i, true),
-                    "detail" => (string) $asset->getImageThumbnail(array(
+                    ], $i, true),
+                    "detail" => (string) $asset->getImageThumbnail([
                         "width" => 1500,
                         "height" => 1500,
                         "contain" => true,
                         "quality" => "85",
                         "format" => "pjpeg"
-                    ), $i, true)
-                );
+                    ], $i, true)
+                ];
 
                 if (is_array($hotspots) && $hotspots[$i]) {
                     $pageData["hotspots"] = $rewritePath($hotspots[$i]);
@@ -525,7 +518,7 @@ HTML;
      * @param null $idMapper
      * @throws \Exception
      */
-    public function getFromWebserviceImport($wsElement, $document = null, $params = array(), $idMapper = null)
+    public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
     {
         $data = $wsElement->value;
         if ($data->id) {

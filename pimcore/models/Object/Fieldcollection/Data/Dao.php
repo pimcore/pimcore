@@ -28,11 +28,11 @@ class Dao extends Model\Dao\AbstractDao
     public function save(Model\Object\Concrete $object)
     {
         $tableName = $this->model->getDefinition()->getTableName($object->getClass());
-        $data = array(
+        $data = [
             "o_id" => $object->getId(),
             "index" => $this->model->getIndex(),
             "fieldname" => $this->model->getFieldname()
-        );
+        ];
         
         try {
             foreach ($this->model->getDefinition()->getFieldDefinitions() as $fd) {
@@ -42,14 +42,14 @@ class Dao extends Model\Dao\AbstractDao
                     // for fieldtypes which have their own save algorithm eg. objects, multihref, ...
                     $index = $this->model->getIndex();
                     $fd->save($this->model,
-                        array(
-                            "context" => array(
+                        [
+                            "context" => [
                                 "containerType" => "fieldcollection",
                                 "containerKey" => $this->model->getType(),
                                 "fieldname" =>  $this->model->getFieldname(),
                                 "index" => $index
-                            )
-                        )
+                            ]
+                        ]
                     );
                 } elseif ($fd->getColumnType()) {
                     if (is_array($fd->getColumnType())) {

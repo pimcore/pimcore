@@ -39,7 +39,7 @@ class Dao extends Model\Dao\PhpArrayTable
     {
         $docTypesData = $this->db->fetchAll($this->model->getFilter(), $this->model->getOrder());
 
-        $docTypes = array();
+        $docTypes = [];
         foreach ($docTypesData as $docTypeData) {
             $docTypes[] = Model\Document\DocType::getById($docTypeData["id"]);
         }

@@ -1,6 +1,6 @@
 <?php
 
-$base = array(
+$base = [
   0x00 => 'jjwaels', 'jjwaelt', 'jjwaelp', 'jjwaelh', 'jjwaem', 'jjwaeb', 'jjwaebs', 'jjwaes', 'jjwaess', 'jjwaeng', 'jjwaej', 'jjwaec', 'jjwaek', 'jjwaet', 'jjwaep', 'jjwaeh',
   0x10 => 'jjoe', 'jjoeg', 'jjoegg', 'jjoegs', 'jjoen', 'jjoenj', 'jjoenh', 'jjoed', 'jjoel', 'jjoelg', 'jjoelm', 'jjoelb', 'jjoels', 'jjoelt', 'jjoelp', 'jjoelh',
   0x20 => 'jjoem', 'jjoeb', 'jjoebs', 'jjoes', 'jjoess', 'jjoeng', 'jjoej', 'jjoec', 'jjoek', 'jjoet', 'jjoep', 'jjoeh', 'jjyo', 'jjyog', 'jjyogg', 'jjyogs',
@@ -17,4 +17,4 @@ $base = array(
   0xD0 => 'jjyuk', 'jjyut', 'jjyup', 'jjyuh', 'jjeu', 'jjeug', 'jjeugg', 'jjeugs', 'jjeun', 'jjeunj', 'jjeunh', 'jjeud', 'jjeul', 'jjeulg', 'jjeulm', 'jjeulb',
   0xE0 => 'jjeuls', 'jjeult', 'jjeulp', 'jjeulh', 'jjeum', 'jjeub', 'jjeubs', 'jjeus', 'jjeuss', 'jjeung', 'jjeuj', 'jjeuc', 'jjeuk', 'jjeut', 'jjeup', 'jjeuh',
   0xF0 => 'jjyi', 'jjyig', 'jjyigg', 'jjyigs', 'jjyin', 'jjyinj', 'jjyinh', 'jjyid', 'jjyil', 'jjyilg', 'jjyilm', 'jjyilb', 'jjyils', 'jjyilt', 'jjyilp', 'jjyilh',
-);
+];

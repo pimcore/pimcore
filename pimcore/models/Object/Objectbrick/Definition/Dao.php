@@ -77,10 +77,10 @@ class Dao extends Model\Object\Fieldcollection\Definition\Dao
         $existingColumnsQuery = $this->getValidTableColumns($tableQuery, false); // no caching of table definition
         $columnsToRemoveQuery = $existingColumnsQuery;
 
-        $protectedColumnsStore = array("o_id", "fieldname");
-        $protectedColumnsQuery = array("o_id", "fieldname");
+        $protectedColumnsStore = ["o_id", "fieldname"];
+        $protectedColumnsQuery = ["o_id", "fieldname"];
 
-        Object\ClassDefinition\Service::updateTableDefinitions($this->tableDefinitions, (array($tableStore, $tableQuery)));
+        Object\ClassDefinition\Service::updateTableDefinitions($this->tableDefinitions, ([$tableStore, $tableQuery]));
 
         foreach ($this->model->getFieldDefinitions() as $value) {
             $key = $value->getName();

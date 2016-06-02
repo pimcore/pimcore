@@ -1,6 +1,6 @@
 <?php
 
-$base = array(
+$base = [
   0x00 => 'ggwem', 'ggweb', 'ggwebs', 'ggwes', 'ggwess', 'ggweng', 'ggwej', 'ggwec', 'ggwek', 'ggwet', 'ggwep', 'ggweh', 'ggwi', 'ggwig', 'ggwigg', 'ggwigs',
   0x10 => 'ggwin', 'ggwinj', 'ggwinh', 'ggwid', 'ggwil', 'ggwilg', 'ggwilm', 'ggwilb', 'ggwils', 'ggwilt', 'ggwilp', 'ggwilh', 'ggwim', 'ggwib', 'ggwibs', 'ggwis',
   0x20 => 'ggwiss', 'ggwing', 'ggwij', 'ggwic', 'ggwik', 'ggwit', 'ggwip', 'ggwih', 'ggyu', 'ggyug', 'ggyugg', 'ggyugs', 'ggyun', 'ggyunj', 'ggyunh', 'ggyud',
@@ -17,4 +17,4 @@ $base = array(
   0xD0 => 'nya', 'nyag', 'nyagg', 'nyags', 'nyan', 'nyanj', 'nyanh', 'nyad', 'nyal', 'nyalg', 'nyalm', 'nyalb', 'nyals', 'nyalt', 'nyalp', 'nyalh',
   0xE0 => 'nyam', 'nyab', 'nyabs', 'nyas', 'nyass', 'nyang', 'nyaj', 'nyac', 'nyak', 'nyat', 'nyap', 'nyah', 'nyae', 'nyaeg', 'nyaegg', 'nyaegs',
   0xF0 => 'nyaen', 'nyaenj', 'nyaenh', 'nyaed', 'nyael', 'nyaelg', 'nyaelm', 'nyaelb', 'nyaels', 'nyaelt', 'nyaelp', 'nyaelh', 'nyaem', 'nyaeb', 'nyaebs', 'nyaes',
-);
+];

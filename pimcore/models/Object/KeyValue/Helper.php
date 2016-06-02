@@ -71,9 +71,9 @@ class Helper
         if (is_array($config["groups"])) {
             $groups = $config["groups"]["group"];
             if (!isset($groups[0])) {
-                $groups = array($groups);
+                $groups = [$groups];
             }
-            $groupIdMapping = array();
+            $groupIdMapping = [];
 
             foreach ($groups as $groupConfig) {
                 $name = $groupConfig["name"];
@@ -92,7 +92,7 @@ class Helper
         if (is_array($config["keys"])) {
             $keys = $config["keys"]["key"];
             if (!isset($keys[0])) {
-                $keys = array($keys);
+                $keys = [$keys];
             }
             foreach ($keys as $keyConfig) {
                 $name = $keyConfig["name"];

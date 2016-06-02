@@ -35,25 +35,25 @@ class Dao extends UserRole\Dao
         // cleanup system
 
         // assets
-        $this->db->update("assets", array("userOwner" => null), $this->db->quoteInto("userOwner = ?", $userId));
-        $this->db->update("assets", array("userModification" => null), $this->db->quoteInto("userModification = ?", $userId));
+        $this->db->update("assets", ["userOwner" => null], $this->db->quoteInto("userOwner = ?", $userId));
+        $this->db->update("assets", ["userModification" => null], $this->db->quoteInto("userModification = ?", $userId));
         $this->db->delete("users_workspaces_asset", $this->db->quoteInto("userId = ?", $userId));
 
         // classes
-        $this->db->update("classes", array("userOwner" => null), $this->db->quoteInto("userOwner = ?", $userId));
-        $this->db->update("classes", array("userModification" => null), $this->db->quoteInto("userModification = ?", $userId));
+        $this->db->update("classes", ["userOwner" => null], $this->db->quoteInto("userOwner = ?", $userId));
+        $this->db->update("classes", ["userModification" => null], $this->db->quoteInto("userModification = ?", $userId));
 
         // documents
-        $this->db->update("documents", array("userOwner" => null), $this->db->quoteInto("userOwner = ?", $userId));
-        $this->db->update("documents", array("userModification" => null), $this->db->quoteInto("userModification = ?", $userId));
+        $this->db->update("documents", ["userOwner" => null], $this->db->quoteInto("userOwner = ?", $userId));
+        $this->db->update("documents", ["userModification" => null], $this->db->quoteInto("userModification = ?", $userId));
         $this->db->delete("users_workspaces_document", $this->db->quoteInto("userId = ?", $userId));
 
         // objects
-        $this->db->update("objects", array("o_userOwner" => null), $this->db->quoteInto("o_userOwner = ?", $userId));
-        $this->db->update("objects", array("o_userModification" => null), $this->db->quoteInto("o_userModification = ?", $userId));
+        $this->db->update("objects", ["o_userOwner" => null], $this->db->quoteInto("o_userOwner = ?", $userId));
+        $this->db->update("objects", ["o_userModification" => null], $this->db->quoteInto("o_userModification = ?", $userId));
         $this->db->delete("users_workspaces_object", $this->db->quoteInto("userId= ?", $userId));
 
         // versions
-        $this->db->update("versions", array("userId" => null), $this->db->quoteInto("userId = ?", $userId));
+        $this->db->update("versions", ["userId" => null], $this->db->quoteInto("userId = ?", $userId));
     }
 }

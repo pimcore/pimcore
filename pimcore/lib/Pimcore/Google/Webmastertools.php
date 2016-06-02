@@ -23,7 +23,7 @@ class Webmastertools
     /**
      * @var array
      */
-    public static $stack = array();
+    public static $stack = [];
 
     /**
      * @param Site $site

@@ -45,7 +45,7 @@ class Admin_PortalController extends \Pimcore\Controller\Action\Admin
     {
         $dashboards = $this->dashboardHelper->getAllDashboards();
 
-        $data = array();
+        $data = [];
         foreach ($dashboards as $key => $config) {
             if ($key != "welcome") {
                 $data[] = $key;
@@ -63,12 +63,12 @@ class Admin_PortalController extends \Pimcore\Controller\Action\Admin
         $key = trim($this->getParam("key"));
 
         if ($dashboards[$key]) {
-            $this->_helper->json(array("success" => false, "message" => "dashboard_already_exists"));
+            $this->_helper->json(["success" => false, "message" => "dashboard_already_exists"]);
         } elseif (!empty($key)) {
             $this->dashboardHelper->saveDashboard($key);
-            $this->_helper->json(array("success" => true));
+            $this->_helper->json(["success" => true]);
         } else {
-            $this->_helper->json(array("success" => false, "message" => "empty"));
+            $this->_helper->json(["success" => false, "message" => "empty"]);
         }
     }
 
@@ -76,7 +76,7 @@ class Admin_PortalController extends \Pimcore\Controller\Action\Admin
     {
         $key = $this->getParam("key");
         $this->dashboardHelper->deleteDashboard($key);
-        $this->_helper->json(array("success" => true));
+        $this->_helper->json(["success" => true]);
     }
 
     public function getConfigurationAction()
@@ -87,7 +87,7 @@ class Admin_PortalController extends \Pimcore\Controller\Action\Admin
     public function removeWidgetAction()
     {
         $config = $this->getCurrentConfiguration();
-        $newConfig = array(array(),array());
+        $newConfig = [[],[]];
         $colCount = 0;
 
         foreach ($config["positions"] as $col) {
@@ -102,7 +102,7 @@ class Admin_PortalController extends \Pimcore\Controller\Action\Admin
         $config["positions"] = $newConfig;
         $this->saveConfiguration($config);
 
-        $this->_helper->json(array("success" => true));
+        $this->_helper->json(["success" => true]);
     }
 
     public function addWidgetAction()
@@ -117,17 +117,17 @@ class Admin_PortalController extends \Pimcore\Controller\Action\Admin
         }
 
         $nextId = $nextId+1;
-        $config["positions"][0][] = array("id" => $nextId, "type" => $this->getParam("type"), "config" => null);
+        $config["positions"][0][] = ["id" => $nextId, "type" => $this->getParam("type"), "config" => null];
 
         $this->saveConfiguration($config);
 
-        $this->_helper->json(array("success" => true, "id" => $nextId));
+        $this->_helper->json(["success" => true, "id" => $nextId]);
     }
 
     public function reorderWidgetAction()
     {
         $config = $this->getCurrentConfiguration();
-        $newConfig = array(array(),array());
+        $newConfig = [[],[]];
         $colCount = 0;
 
         foreach ($config["positions"] as $col) {
@@ -141,12 +141,12 @@ class Admin_PortalController extends \Pimcore\Controller\Action\Admin
             $colCount++;
         }
 
-        array_splice($newConfig[$this->getParam("column")], $this->getParam("row"), 0, array($toMove));
+        array_splice($newConfig[$this->getParam("column")], $this->getParam("row"), 0, [$toMove]);
 
         $config["positions"] = $newConfig;
         $this->saveConfiguration($config);
 
-        $this->_helper->json(array("success" => true));
+        $this->_helper->json(["success" => true]);
     }
 
 
@@ -167,7 +167,7 @@ class Admin_PortalController extends \Pimcore\Controller\Action\Admin
         }
         $this->dashboardHelper->saveDashboard($key, $dashboard);
 
-        $this->_helper->json(array("success" => true));
+        $this->_helper->json(["success" => true]);
     }
 
 
@@ -182,7 +182,7 @@ class Admin_PortalController extends \Pimcore\Controller\Action\Admin
             \Zend_Feed_Reader::setCache($cache);
         }
 
-        $portlet = array();
+        $portlet = [];
         foreach ($dashboard["positions"] as $col) {
             foreach ($col as $row) {
                 if ($row['id'] == $id) {
@@ -203,7 +203,7 @@ class Admin_PortalController extends \Pimcore\Controller\Action\Admin
         }
 
         $count = 0;
-        $entries = array();
+        $entries = [];
 
         if ($feed) {
             foreach ($feed as $entry) {
@@ -214,13 +214,13 @@ class Admin_PortalController extends \Pimcore\Controller\Action\Admin
                     break;
                 }
 
-                $entry = array(
+                $entry = [
                     "title" => $entry->getTitle(),
                     "description" => $entry->getDescription(),
                     'authors' => $entry->getAuthors(),
                     'link' => $entry->getLink(),
                     'content' => $entry->getContent()
-                );
+                ];
 
                 foreach ($entry as &$content) {
                     $content = strip_tags($content, "<h1><h2><h3><h4><h5><p><br><a><img><div><b><strong><i>");
@@ -231,31 +231,31 @@ class Admin_PortalController extends \Pimcore\Controller\Action\Admin
             }
         }
 
-        $this->_helper->json(array(
+        $this->_helper->json([
             "entries" => $entries
-        ));
+        ]);
     }
 
     public function portletModifiedDocumentsAction()
     {
-        $list = Document::getList(array(
+        $list = Document::getList([
             "limit" => 10,
             "order" => "DESC",
             "orderKey" => "modificationDate"
-        ));
+        ]);
 
 
-        $response = array();
-        $response["documents"] = array();
+        $response = [];
+        $response["documents"] = [];
 
         foreach ($list as $doc) {
-            $response["documents"][] = array(
+            $response["documents"][] = [
                 "id" => $doc->getId(),
                 "type" => $doc->getType(),
                 "path" => $doc->getRealFullPath(),
                 "date" => $doc->getModificationDate(),
                 "condition" => "userModification = '".$this->getUser()->getId()."'"
-            );
+            ];
         }
 
         $this->_helper->json($response);
@@ -263,24 +263,24 @@ class Admin_PortalController extends \Pimcore\Controller\Action\Admin
 
     public function portletModifiedAssetsAction()
     {
-        $list = Asset::getList(array(
+        $list = Asset::getList([
             "limit" => 10,
             "order" => "DESC",
             "orderKey" => "modificationDate"
-        ));
+        ]);
 
 
-        $response = array();
-        $response["assets"] = array();
+        $response = [];
+        $response["assets"] = [];
 
         foreach ($list as $doc) {
-            $response["assets"][] = array(
+            $response["assets"][] = [
                 "id" => $doc->getId(),
                 "type" => $doc->getType(),
                 "path" => $doc->getRealFullPath(),
                 "date" => $doc->getModificationDate(),
                 "condition" => "userModification = '".$this->getUser()->getId()."'"
-            );
+            ];
         }
 
         $this->_helper->json($response);
@@ -288,24 +288,24 @@ class Admin_PortalController extends \Pimcore\Controller\Action\Admin
 
     public function portletModifiedObjectsAction()
     {
-        $list = Object::getList(array(
+        $list = Object::getList([
             "limit" => 10,
             "order" => "DESC",
             "orderKey" => "o_modificationDate",
             "condition" => "o_userModification = '".$this->getUser()->getId()."'"
-        ));
+        ]);
 
 
-        $response = array();
-        $response["objects"] = array();
+        $response = [];
+        $response["objects"] = [];
 
         foreach ($list as $object) {
-            $response["objects"][] = array(
+            $response["objects"][] = [
                 "id" => $object->getId(),
                 "type" => $object->getType(),
                 "path" => $object->getRealFullPath(),
                 "date" => $object->getModificationDate()
-            );
+            ];
         }
 
         $this->_helper->json($response);
@@ -319,7 +319,7 @@ class Admin_PortalController extends \Pimcore\Controller\Action\Admin
         $startDate = mktime(23, 59, 59, date("m"), date("d"), date("Y"));
         $currentDate = $startDate;
 
-        $data = array();
+        $data = [];
 
         for ($i=0; $i<$days; $i++) {
             // documents
@@ -333,18 +333,18 @@ class Admin_PortalController extends \Pimcore\Controller\Action\Admin
             $date = new \DateTime();
             $date->setTimestamp($start);
 
-            $data[] = array(
+            $data[] = [
                 "timestamp" => $start,
                 "datetext" => $date->format("Y-m-d"),
                 "objects" => (int) $o,
                 "documents" => (int) $d,
                 "assets" => (int) $a
-            );
+            ];
         }
 
         $data = array_reverse($data);
 
-        $this->_helper->json(array("data" => $data));
+        $this->_helper->json(["data" => $data]);
     }
 
     public function portletAnalyticsSitesAction()
@@ -352,22 +352,22 @@ class Admin_PortalController extends \Pimcore\Controller\Action\Admin
         $t = \Zend_Registry::get("Zend_Translate");
 
         $sites = new Site\Listing();
-        $data = array(
-            array(
+        $data = [
+            [
                 "id" => 0,
                 "site" => $t->translate("main_site")
-            )
-        );
+            ]
+        ];
 
         foreach ($sites->load() as $site) {
             if (\Pimcore\Google\Analytics::isConfigured($site)) {
-                $data[] = array(
+                $data[] = [
                     "id" => $site->getId(),
                     "site" => $site->getMainDomain()
-                );
+                ];
             }
         }
 
-        $this->_helper->json(array("data" => $data));
+        $this->_helper->json(["data" => $data]);
     }
 }

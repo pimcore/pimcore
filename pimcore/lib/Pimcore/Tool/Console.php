@@ -91,12 +91,12 @@ class Console
                     $process = new Process($executablePath . " " . $option);
                     $process->mustRun();
 
-                    if(empty($path) && self::getSystemEnvironment() == "unix") {
+                    if (empty($path) && self::getSystemEnvironment() == "unix") {
                         // get the full qualified path, seems to solve a lot of problems :)
                         // if not using the full path, timeout, nohup and nice will fail
                         $fullQualifiedPath = shell_exec("which " . $executablePath);
                         $fullQualifiedPath = trim($fullQualifiedPath);
-                        if($fullQualifiedPath) {
+                        if ($fullQualifiedPath) {
                             $executablePath = $fullQualifiedPath;
                         }
                     }
@@ -322,7 +322,7 @@ class Console
     public static function getOptions($onlyFullNotationArgs = false)
     {
         global $argv;
-        $options = array();
+        $options = [];
         $tmpOptions = $argv;
         array_shift($tmpOptions);
 
@@ -365,7 +365,7 @@ class Console
      * @param array $allowedUsers
      * @throws \Exception
      */
-    public static function checkExecutingUser($allowedUsers = array())
+    public static function checkExecutingUser($allowedUsers = [])
     {
         $configFile = \Pimcore\Config::locateConfigFile("system.php");
         $owner = fileowner($configFile);

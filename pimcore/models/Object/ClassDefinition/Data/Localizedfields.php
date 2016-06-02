@@ -41,7 +41,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     /**
      * @var array
      */
-    public $childs = array();
+    public $childs = [];
 
 
     /**
@@ -88,7 +88,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
      * contains further localized field definitions if there are more than one localized fields in on class
      * @var array
      */
-    protected $referencedFields = array();
+    protected $referencedFields = [];
 
     /**
      * @var array
@@ -103,13 +103,13 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getDataForEditmode($data, $object = null, $params = array())
+    public function getDataForEditmode($data, $object = null, $params = [])
     {
-        $fieldData = array();
-        $metaData = array();
+        $fieldData = [];
+        $metaData = [];
 
         if (!$data instanceof Object\Localizedfield) {
-            return array();
+            return [];
         }
 
         $result = $this->doGetDataForEditMode($data, $object, $fieldData, $metaData, 1);
@@ -124,7 +124,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
             }
         }
 
-        $calculatedChilds = array();
+        $calculatedChilds = [];
         self::collectCalculatedValueItems($this, $calculatedChilds);
 
         if ($calculatedChilds) {
@@ -166,7 +166,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
                     // never override existing data
                     $fieldData[$language][$key] = $fdata;
                     if (!$fd->isEmpty($fdata)) {
-                        $metaData[$language][$key] = array("inherited" => $level > 1, "objectid" => $object->getId());
+                        $metaData[$language][$key] = ["inherited" => $level > 1, "objectid" => $object->getId()];
                     }
                 }
             }
@@ -188,7 +188,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
                         if ($fd->isEmpty($fieldData[$language][$key])) {
                             $foundEmptyValue = true;
                             $inherited = true;
-                            $metaData[$language][$key] = array("inherited" => true, "objectid" => $parent->getId());
+                            $metaData[$language][$key] = ["inherited" => true, "objectid" => $parent->getId()];
                         }
                     }
                 }
@@ -201,11 +201,11 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
             }
         }
 
-        $result = array(
+        $result = [
             "data" => $fieldData,
             "metaData" => $metaData,
             "inherited" => $inherited
-        );
+        ];
 
         return $result;
     }
@@ -217,7 +217,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getDataFromEditmode($data, $object = null, $params = array())
+    public function getDataFromEditmode($data, $object = null, $params = [])
     {
         $localizedFields = $this->getDataFromObjectParam($object, $params);
 
@@ -245,7 +245,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return \stdClass
      */
-    public function getDataForGrid($data, $object = null, $params = array())
+    public function getDataForGrid($data, $object = null, $params = [])
     {
         $result = new \stdClass();
         foreach ($this->getFieldDefinitions() as $fd) {
@@ -265,7 +265,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getVersionPreview($data, $object = null, $params = array())
+    public function getVersionPreview($data, $object = null, $params = [])
     {
         // this is handled directly in the template
         // /pimcore/modules/admin/views/scripts/object/preview-version.php
@@ -279,7 +279,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
      * @param array $params
      * @return string
      */
-    public function getForCsvExport($object, $params = array())
+    public function getForCsvExport($object, $params = [])
     {
         return "NOT SUPPORTED";
     }
@@ -290,7 +290,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return null
      */
-    public function getFromCsvImport($importValue, $object = null, $params = array())
+    public function getFromCsvImport($importValue, $object = null, $params = [])
     {
         return;
     }
@@ -300,7 +300,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getDataForSearchIndex($object, $params = array())
+    public function getDataForSearchIndex($object, $params = [])
     {
         $dataString = "";
         $lfData = $this->getDataFromObjectParam($object);
@@ -323,15 +323,15 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return mixed
      */
-    public function getForWebserviceExport($object, $params = array())
+    public function getForWebserviceExport($object, $params = [])
     {
         $data = $object->{$this->getName()};
-        $wsData = array();
+        $wsData = [];
 
         $items = null;
 
         if (!$data instanceof Object\Localizedfield) {
-            $items = array();
+            $items = [];
         } else {
             $items = $data->getItems();
         }
@@ -391,7 +391,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
      * @return mixed|null|Object\Localizedfield
      * @throws \Exception
      */
-    public function getFromWebserviceImport($value, $object = null, $params = array(), $idMapper = null)
+    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
     {
         if (is_array($value)) {
             $validLanguages = Tool::getValidLanguages();
@@ -536,7 +536,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
      * @param array $blockedKeys
      * @return void
      */
-    public function setValues($data = array(), $blockedKeys = array())
+    public function setValues($data = [], $blockedKeys = [])
     {
         foreach ($data as $key => $value) {
             if (!in_array($key, $blockedKeys)) {
@@ -553,7 +553,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
      * @param $object
      * @param array $params
      */
-    public function save($object, $params = array())
+    public function save($object, $params = [])
     {
         $localizedFields = $this->getDataFromObjectParam($object, $params);
         if ($localizedFields instanceof Object\Localizedfield) {
@@ -572,7 +572,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
      * @param array $params
      * @return Object\Localizedfield
      */
-    public function load($object, $params = array())
+    public function load($object, $params = [])
     {
         if ($object instanceof Object\Fieldcollection\Data\AbstractData) {
             $object = $object->getObject();
@@ -590,7 +590,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     /**
      * @param $object
      */
-    public function delete($object, $params = array())
+    public function delete($object, $params = [])
     {
         $localizedFields = $this->getDataFromObjectParam($object);
 
@@ -606,7 +606,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
      * This method is called in Object|Class::save() and is used to create the database table for the localized data
      * @return void
      */
-    public function classSaved($class, $params = array())
+    public function classSaved($class, $params = [])
     {
         $localizedFields = new Object\Localizedfield();
         $localizedFields->setClass($class);
@@ -627,7 +627,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
      * @return Object\Localizedfield
      * @throws \Exception
      */
-    public function preGetData($container, $params = array())
+    public function preGetData($container, $params = [])
     {
         if (!$container instanceof Object\Concrete && !$container instanceof Object\Fieldcollection\Data\AbstractData) {
             throw new \Exception("Localized Fields are only valid in Objects and Fieldcollections");
@@ -640,10 +640,10 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
             if ($container instanceof  Object\Fieldcollection\Data\AbstractData) {
                 $object = $container->getObject();
 
-                $context = array(
+                $context = [
                     "containerType" => "fieldcollection",
                     "containerKey" => $container->getType()
-                );
+                ];
                 $lf->setContext($context);
             }
             $lf->setObject($object);
@@ -731,7 +731,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
      * @param array $fields
      * @return array
      */
-    public function doGetFieldDefinitions($def = null, $fields = array())
+    public function doGetFieldDefinitions($def = null, $fields = [])
     {
         if ($def === null) {
             $def = $this->getChilds();
@@ -766,9 +766,9 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
      * @param array $tags
      * @return array
      */
-    public function getCacheTags($data, $tags = array())
+    public function getCacheTags($data, $tags = [])
     {
-        $tags = is_array($tags) ? $tags : array();
+        $tags = is_array($tags) ? $tags : [];
 
         if (!$data instanceof Object\Localizedfield) {
             return $tags;
@@ -789,10 +789,10 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
      */
     public function resolveDependencies($data)
     {
-        $dependencies = array();
+        $dependencies = [];
 
         if (!$data instanceof Object\Localizedfield) {
-            return array();
+            return [];
         }
 
         foreach ($data->getItems() as $language => $values) {
@@ -943,14 +943,14 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return array|null
      */
-    public function getDiffDataForEditmode($data, $object = null, $params = array())
+    public function getDiffDataForEditmode($data, $object = null, $params = [])
     {
-        $return = array();
+        $return = [];
 
         $myname = $this->getName();
 
         if (!$data instanceof Object\Localizedfield) {
-            return array();
+            return [];
         }
 
         foreach ($data->getItems() as $language => $values) {
@@ -973,9 +973,9 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
                     $diffdata["title"] = $this->getName() . " / " . $item["title"];
                     $diffdata["lang"] = $language;
                     $diffdata["data"] = $item;
-                    $diffdata["extData"] = array(
+                    $diffdata["extData"] = [
                         "fieldname" => $fieldname
-                    );
+                    ];
 
                     $diffdata["disabled"] = $item["disabled"];
                     $return[] = $diffdata;
@@ -993,17 +993,17 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
      * @return null|Pimcore_Date
      */
 
-    public function getDiffDataFromEditmode($data, $object = null, $params = array())
+    public function getDiffDataFromEditmode($data, $object = null, $params = [])
     {
         $localFields = $this->getDataFromObjectParam($object, $params);
-        $localData = array();
+        $localData = [];
 
         // get existing data
         if ($localFields instanceof Object\Localizedfield) {
             $localData = $localFields->getItems();
         }
 
-        $mapping = array();
+        $mapping = [];
         foreach ($data as $item) {
             $extData = $item["extData"];
             $fieldname = $extData["fieldname"];
@@ -1014,7 +1014,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
 
             if ($itemdata) {
                 if (!$values) {
-                    $values = array();
+                    $values = [];
                 }
 
                 $values[] = $itemdata;
@@ -1046,7 +1046,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return bool
      */
-    public function isDiffChangeAllowed($object, $params = array())
+    public function isDiffChangeAllowed($object, $params = [])
     {
         return true;
     }
@@ -1077,7 +1077,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
      * @param array $params
      * @return Element\ElementInterface
      */
-    public function rewriteIds($object, $idMapping, $params = array())
+    public function rewriteIds($object, $idMapping, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
 
@@ -1086,7 +1086,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
         foreach ($validLanguages as $language) {
             foreach ($this->getFieldDefinitions() as $fd) {
                 if (method_exists($fd, "rewriteIds")) {
-                    $d = $fd->rewriteIds($data, $idMapping, array("language" => $language));
+                    $d = $fd->rewriteIds($data, $idMapping, ["language" => $language]);
                     $data->setLocalizedValue($fd->getName(), $d, $language);
                 }
             }
@@ -1128,7 +1128,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     }
 
 
-    public static function collectCalculatedValueItems($owner, &$list = array())
+    public static function collectCalculatedValueItems($owner, &$list = [])
     {
         if (method_exists($owner, "hasChilds")) {
             if ($owner->hasChilds()) {

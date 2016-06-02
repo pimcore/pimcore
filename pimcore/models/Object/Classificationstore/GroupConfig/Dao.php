@@ -20,7 +20,6 @@ use Pimcore\Model;
 
 class Dao extends Model\Dao\AbstractDao
 {
-
     const TABLE_NAME_GROUPS = "classificationstore_groups";
 
     /**
@@ -57,7 +56,7 @@ class Dao extends Model\Dao\AbstractDao
         $name = $this->model->getName();
         $storeId = $this->model->getStoreId();
 
-        $data = $this->db->fetchRow("SELECT * FROM " . self::TABLE_NAME_GROUPS . " WHERE name = ? and storeId = ?", array($name, $storeId));
+        $data = $this->db->fetchRow("SELECT * FROM " . self::TABLE_NAME_GROUPS . " WHERE name = ? and storeId = ?", [$name, $storeId]);
 
         if ($data["id"]) {
             $this->assignVariablesToModel($data);
@@ -141,7 +140,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->model->setModificationDate($ts);
         $this->model->setCreationDate($ts);
 
-        $this->db->insert(self::TABLE_NAME_GROUPS, array());
+        $this->db->insert(self::TABLE_NAME_GROUPS, []);
 
         $this->model->setId($this->db->lastInsertId());
 

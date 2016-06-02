@@ -9,7 +9,6 @@
 
 class TestSuite_Datatypes_KeyValueTest extends Test_Base
 {
-
     public function testUninitialized()
     {
         $this->printTestName();

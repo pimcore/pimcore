@@ -16,7 +16,6 @@ use Pimcore\Model\Tool\CustomReport;
 
 class Reports_CustomReportController extends \Pimcore\Controller\Action\Admin\Reports
 {
-
     public function init()
     {
         parent::init();
@@ -29,7 +28,7 @@ class Reports_CustomReportController extends \Pimcore\Controller\Action\Admin\Re
         $reports = CustomReport\Config::getReportsList();
 
         if ($this->getParam("portlet")) {
-            $this->_helper->json(array("data" => $reports));
+            $this->_helper->json(["data" => $reports]);
         } else {
             $this->_helper->json($reports);
         }
@@ -49,7 +48,7 @@ class Reports_CustomReportController extends \Pimcore\Controller\Action\Admin\Re
             $success = true;
         }
 
-        $this->_helper->json(array("success" => $success, "id" => $report->getName()));
+        $this->_helper->json(["success" => $success, "id" => $report->getName()]);
     }
 
     public function deleteAction()
@@ -57,7 +56,7 @@ class Reports_CustomReportController extends \Pimcore\Controller\Action\Admin\Re
         $report = CustomReport\Config::getByName($this->getParam("name"));
         $report->delete();
 
-        $this->_helper->json(array("success" => true));
+        $this->_helper->json(["success" => true]);
     }
 
 
@@ -74,7 +73,7 @@ class Reports_CustomReportController extends \Pimcore\Controller\Action\Admin\Re
         $data = \Zend_Json::decode($this->getParam("configuration"));
 
         if (\Pimcore\Tool\Admin::isExtJS6() && !is_array($data["yAxis"])) {
-            $data["yAxis"] = strlen($data["yAxis"]) ? array($data["yAxis"]) : array();
+            $data["yAxis"] = strlen($data["yAxis"]) ? [$data["yAxis"]] : [];
         }
 
 
@@ -87,7 +86,7 @@ class Reports_CustomReportController extends \Pimcore\Controller\Action\Admin\Re
 
         $report->save();
 
-        $this->_helper->json(array("success" => true));
+        $this->_helper->json(["success" => true]);
     }
 
     public function columnConfigAction()
@@ -95,7 +94,7 @@ class Reports_CustomReportController extends \Pimcore\Controller\Action\Admin\Re
         $report = CustomReport\Config::getByName($this->getParam("name"));
         $columnConfiguration = $report->getColumnConfiguration();
         if (!is_array($columnConfiguration)) {
-            $columnConfiguration = array();
+            $columnConfiguration = [];
         }
 
         $configuration = json_decode($this->getParam("configuration"));
@@ -105,13 +104,13 @@ class Reports_CustomReportController extends \Pimcore\Controller\Action\Admin\Re
         $columns = null;
         $errorMessage = null;
 
-        $result = array();
+        $result = [];
 
         try {
             $adapter = CustomReport\Config::getAdapter($configuration);
             $columns = $adapter->getColumns($configuration);
             if (!is_array($columns)) {
-                $columns = array();
+                $columns = [];
             }
 
             foreach ($columnConfiguration as $item) {
@@ -130,11 +129,11 @@ class Reports_CustomReportController extends \Pimcore\Controller\Action\Admin\Re
             $errorMessage = $e->getMessage();
         }
 
-        $this->_helper->json(array(
+        $this->_helper->json([
             "success" => $success,
             "columns" => $result,
             "errorMessage" => $errorMessage
-        ));
+        ]);
     }
 
 
@@ -146,20 +145,20 @@ class Reports_CustomReportController extends \Pimcore\Controller\Action\Admin\Re
         $items = $list->load();
 
         foreach ($items as $report) {
-            $reports[] = array(
+            $reports[] = [
                 "name" => $report->getName(),
                 "niceName" => $report->getNiceName(),
                 "iconClass" => $report->getIconClass(),
                 "group" => $report->getGroup(),
                 "groupIconClass" => $report->getGroupIconClass(),
                 "menuShortcut" => $report->getMenuShortcut()
-            );
+            ];
         }
 
-        $this->_helper->json(array(
+        $this->_helper->json([
             "success" => true,
             "reports" => $reports
-        ));
+        ]);
     }
 
     public function dataAction()
@@ -185,11 +184,11 @@ class Reports_CustomReportController extends \Pimcore\Controller\Action\Admin\Re
         $result = $adapter->getData($filters, $sort, $dir, $offset, $limit, null, $drillDownFilters, $config);
 
 
-        $this->_helper->json(array(
+        $this->_helper->json([
             "success" => true,
             "data" => $result['data'],
             "total" => $result['total']
-        ));
+        ]);
     }
 
     public function drillDownOptionsAction()
@@ -204,10 +203,10 @@ class Reports_CustomReportController extends \Pimcore\Controller\Action\Admin\Re
 
         $adapter = CustomReport\Config::getAdapter($configuration, $config);
         $result = $adapter->getAvailableOptions($filters, $field, $drillDownFilters);
-        $this->_helper->json(array(
+        $this->_helper->json([
             "success" => true,
             "data" => $result['data'],
-        ));
+        ]);
     }
 
     public function chartAction()
@@ -225,11 +224,11 @@ class Reports_CustomReportController extends \Pimcore\Controller\Action\Admin\Re
 
         $result = $adapter->getData($filters, $sort, $dir, null, null, null, $drillDownFilters);
 
-        $this->_helper->json(array(
+        $this->_helper->json([
             "success" => true,
             "data" => $result['data'],
             "total" => $result['total']
-        ));
+        ]);
     }
 
     public function downloadCsvAction()
@@ -244,7 +243,7 @@ class Reports_CustomReportController extends \Pimcore\Controller\Action\Admin\Re
         $config = CustomReport\Config::getByName($this->getParam("name"));
 
         $columns = $config->getColumnConfiguration();
-        $fields = array();
+        $fields = [];
         foreach ($columns as $column) {
             if ($column['export']) {
                 $fields[] = $column['name'];
@@ -270,9 +269,7 @@ class Reports_CustomReportController extends \Pimcore\Controller\Action\Admin\Re
 
         header("Content-type: text/plain");
         header("Content-Length: " . filesize($exportFile));
-        header("Content-Disposition: attachment; filename=\"export.csv\"");
-
-        while (@ob_end_flush());
+        header("Content-Disposition: attachment; filename=\"export.csv\""); while (@ob_end_flush());
         flush();
         readfile($exportFile);
 

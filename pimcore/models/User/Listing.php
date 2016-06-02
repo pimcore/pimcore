@@ -20,7 +20,6 @@ use Pimcore\Model;
 
 class Listing extends Listing\AbstractListing
 {
-
     public $type = "user";
 
     /**

@@ -26,7 +26,7 @@ class Listing extends Model\Listing\JsonListing
      *
      * @var array
      */
-    public $thumbnails = array();
+    public $thumbnails = [];
 
     /**
      * @return array

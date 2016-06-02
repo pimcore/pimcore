@@ -30,7 +30,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     {
         $personasData = $this->db->fetchCol("SELECT id FROM targeting_personas" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
-        $personas = array();
+        $personas = [];
         foreach ($personasData as $personaData) {
             $personas[] = Model\Tool\Targeting\Persona::getById($personaData);
         }

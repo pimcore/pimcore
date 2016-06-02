@@ -73,12 +73,12 @@ class Image extends Model\Document\Tag
     /**
      * @var array
      */
-    public $hotspots = array();
+    public $hotspots = [];
 
     /**
      * @var array
      */
-    public $marker = array();
+    public $marker = [];
 
     /**
      * @see Document\Tag\TagInterface::getType
@@ -95,7 +95,7 @@ class Image extends Model\Document\Tag
      */
     public function getData()
     {
-        return array(
+        return [
             "id" => $this->id,
             "alt" => $this->alt,
             "cropPercent" => $this->cropPercent,
@@ -105,7 +105,7 @@ class Image extends Model\Document\Tag
             "cropLeft" => $this->cropLeft,
             "hotspots" => $this->hotspots,
             "marker" => $this->marker
-        );
+        ];
     }
 
     /**
@@ -113,7 +113,7 @@ class Image extends Model\Document\Tag
      */
     public function getDataForResource()
     {
-        return array(
+        return [
             "id" => $this->id,
             "alt" => $this->alt,
             "cropPercent" => $this->cropPercent,
@@ -123,7 +123,7 @@ class Image extends Model\Document\Tag
             "cropLeft" => $this->cropLeft,
             "hotspots" => $this->hotspots,
             "marker" => $this->marker
-        );
+        ];
     }
 
     /**
@@ -137,9 +137,8 @@ class Image extends Model\Document\Tag
 
         if ($image instanceof Asset\Image) {
             $rewritePath = function ($data) {
-
                 if (!is_array($data)) {
-                    return array();
+                    return [];
                 }
 
                 foreach ($data as &$element) {
@@ -160,7 +159,7 @@ class Image extends Model\Document\Tag
             $marker = object2array($marker);
             $hotspots = object2array($hotspots);
 
-            return array(
+            return [
                 "id" => $this->id,
                 "path" => $image->getFullPath(),
                 "alt" => $this->alt,
@@ -171,7 +170,7 @@ class Image extends Model\Document\Tag
                 "cropLeft" => $this->cropLeft,
                 "hotspots" => $hotspots,
                 "marker" => $marker
-            );
+            ];
         }
         return null;
     }
@@ -183,7 +182,7 @@ class Image extends Model\Document\Tag
     public function frontend()
     {
         if (!is_array($this->options)) {
-            $this->options = array();
+            $this->options = [];
         }
 
         $image = $this->getImage();
@@ -199,12 +198,12 @@ class Image extends Model\Document\Tag
                 }
 
                 if ($this->cropPercent) {
-                    $cropConfig = array(
+                    $cropConfig = [
                         "width" => $this->cropWidth,
                         "height" => $this->cropHeight,
                         "y" => $this->cropTop,
                         "x" => $this->cropLeft
-                    );
+                    ];
 
                     $thumbConfig->addItemAt(0, "cropPercent", $cropConfig);
 
@@ -267,24 +266,24 @@ class Image extends Model\Document\Tag
                 }
             }
 
-            $defaultAttributes = array(
+            $defaultAttributes = [
                 "alt" => $altText
-            );
+            ];
             if (!empty($titleText)) {
                 $defaultAttributes["title"] = $titleText;
             }
 
             // add attributes to image
-            $allowedAttributes = array("alt", "align", "border", "height", "hspace", "ismap", "longdesc", "usemap",
+            $allowedAttributes = ["alt", "align", "border", "height", "hspace", "ismap", "longdesc", "usemap",
                 "vspace", "width", "class", "dir", "id", "lang", "style", "title", "xml:lang", "onmouseover",
                 "onabort", "onclick", "ondblclick", "onmousedown", "onmousemove", "onmouseout", "onmouseup",
-                "onkeydown", "onkeypress", "onkeyup", "itemprop", "itemscope", "itemtype");
+                "onkeydown", "onkeypress", "onkeyup", "itemprop", "itemscope", "itemtype"];
 
-            $htmlEscapeAttributes = array("alt", "align", "border", "height", "hspace",  "longdesc", "usemap",
-                "vspace", "width", "class", "dir", "id", "lang",  "title");
+            $htmlEscapeAttributes = ["alt", "align", "border", "height", "hspace",  "longdesc", "usemap",
+                "vspace", "width", "class", "dir", "id", "lang",  "title"];
 
 
-            $customAttributes = array();
+            $customAttributes = [];
             if (array_key_exists("attributes", $this->options) && is_array($this->options["attributes"])) {
                 $customAttributes = $this->options["attributes"];
             }
@@ -340,9 +339,8 @@ class Image extends Model\Document\Tag
 
 
         $rewritePath = function ($data) {
-
             if (!is_array($data)) {
-                return array();
+                return [];
             }
 
             foreach ($data as &$element) {
@@ -386,16 +384,15 @@ class Image extends Model\Document\Tag
     public function setDataFromEditmode($data)
     {
         $rewritePath = function ($data) {
-
             if (!is_array($data)) {
-                return array();
+                return [];
             }
 
             foreach ($data as &$element) {
                 if (array_key_exists("data", $element) && is_array($element["data"]) && count($element["data"]) > 0) {
                     foreach ($element["data"] as &$metaData) {
                         $metaData = new Element\Data\MarkerHotspotItem($metaData);
-                        if (in_array($metaData["type"], array("object", "asset", "document"))) {
+                        if (in_array($metaData["type"], ["object", "asset", "document"])) {
                             $el = Element\Service::getElementByPath($metaData["type"], $metaData->getValue());
                             $metaData["value"] = $el;
                         }
@@ -511,12 +508,12 @@ class Image extends Model\Document\Tag
         if ($image instanceof Asset) {
             $thumbConfig = $image->getThumbnailConfig($conf);
             if ($thumbConfig && $this->cropPercent) {
-                $thumbConfig->addItemAt(0, "cropPercent", array(
+                $thumbConfig->addItemAt(0, "cropPercent", [
                     "width" => $this->cropWidth,
                     "height" => $this->cropHeight,
                     "y" => $this->cropTop,
                     "x" => $this->cropLeft
-                ));
+                ]);
                 $hash = md5(Serialize::serialize($thumbConfig->getItems()));
                 $thumbConfig->setName($thumbConfig->getName() . "_auto_" . $hash);
             }
@@ -543,9 +540,9 @@ class Image extends Model\Document\Tag
      * @param $ownerDocument
      * @param array $blockedTags
      */
-    public function getCacheTags($ownerDocument, $tags = array())
+    public function getCacheTags($ownerDocument, $tags = [])
     {
-        $tags = is_array($tags) ? $tags : array();
+        $tags = is_array($tags) ? $tags : [];
 
         $image = $this->getImage();
 
@@ -556,7 +553,6 @@ class Image extends Model\Document\Tag
         }
 
         $getMetaDataCacheTags = function ($data, $tags) {
-
             if (!is_array($data)) {
                 return $tags;
             }
@@ -586,20 +582,19 @@ class Image extends Model\Document\Tag
      */
     public function resolveDependencies()
     {
-        $dependencies = array();
+        $dependencies = [];
         $image = $this->getImage();
 
         if ($image instanceof Asset\Image) {
             $key = "asset_" . $image->getId();
 
-            $dependencies[$key] = array(
+            $dependencies[$key] = [
                 "id" => $image->getId(),
                 "type" => "asset"
-            );
+            ];
         }
 
         $getMetaDataDependencies = function ($data, $dependencies) {
-
             if (!is_array($data)) {
                 return $dependencies;
             }
@@ -608,10 +603,10 @@ class Image extends Model\Document\Tag
                 if (array_key_exists("data", $element) && is_array($element["data"]) && count($element["data"]) > 0) {
                     foreach ($element["data"] as $metaData) {
                         if ($metaData["value"] instanceof Element\ElementInterface) {
-                            $dependencies[$metaData["type"] . "_" . $metaData["value"]->getId()] = array(
+                            $dependencies[$metaData["type"] . "_" . $metaData["value"]->getId()] = [
                                 "id" => $metaData["value"]->getId(),
                                 "type" => $metaData["type"]
-                            );
+                            ];
                         }
                     }
                 }
@@ -631,7 +626,7 @@ class Image extends Model\Document\Tag
      * @param null $idMapper
      * @throws \Exception
      */
-    public function getFromWebserviceImport($wsElement, $document = null, $params = array(), $idMapper = null)
+    public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
     {
         $data = $wsElement->value;
         if ($data->id !==null) {
@@ -802,8 +797,8 @@ class Image extends Model\Document\Tag
             $this->setId($idMapping["asset"][$this->getId()]);
 
             // reset marker & hotspot information
-            $this->setHotspots(array());
-            $this->setMarker(array());
+            $this->setHotspots([]);
+            $this->setMarker([]);
             $this->setCropPercent(false);
             $this->setImage(null);
         }
@@ -814,7 +809,7 @@ class Image extends Model\Document\Tag
      */
     public function __sleep()
     {
-        $finalVars = array();
+        $finalVars = [];
         $parentVars = parent::__sleep();
 
         $blockedVars = ["image"];

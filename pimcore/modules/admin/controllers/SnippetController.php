@@ -17,15 +17,14 @@ use Pimcore\Model\Document;
 
 class Admin_SnippetController extends \Pimcore\Controller\Action\Admin\Document
 {
-
     public function getDataByIdAction()
     {
 
         // check for lock
         if (Element\Editlock::isLocked($this->getParam("id"), "document")) {
-            $this->_helper->json(array(
+            $this->_helper->json([
                 "editlock" => Element\Editlock::getByElement($this->getParam("id"), "document")
-            ));
+            ]);
         }
         Element\Editlock::lock($this->getParam("id"), "document");
 
@@ -80,12 +79,12 @@ class Admin_SnippetController extends \Pimcore\Controller\Action\Admin\Document
                     try {
                         $snippet->save();
                         $this->saveToSession($snippet);
-                        $this->_helper->json(array("success" => true));
+                        $this->_helper->json(["success" => true]);
                     } catch (\Exception $e) {
                         if (\Pimcore\Tool\Admin::isExtJS6() && $e instanceof Element\ValidationException) {
                             throw $e;
                         }
-                        $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
+                        $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
                     }
                 } else {
                     if ($snippet->isAllowed("save")) {
@@ -94,9 +93,9 @@ class Admin_SnippetController extends \Pimcore\Controller\Action\Admin\Document
                         try {
                             $snippet->saveVersion();
                             $this->saveToSession($snippet);
-                            $this->_helper->json(array("success" => true));
+                            $this->_helper->json(["success" => true]);
                         } catch (\Exception $e) {
-                            $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
+                            $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
                         }
                     }
                 }
@@ -104,7 +103,7 @@ class Admin_SnippetController extends \Pimcore\Controller\Action\Admin\Document
         } catch (\Exception $e) {
             \Logger::log($e);
             if (\Pimcore\Tool\Admin::isExtJS6() && $e instanceof Element\ValidationException) {
-                $this->_helper->json(array("success" => false, "type" => "ValidationException", "message" => $e->getMessage(), "stack" => $e->getTraceAsString(), "code" => $e->getCode()));
+                $this->_helper->json(["success" => false, "type" => "ValidationException", "message" => $e->getMessage(), "stack" => $e->getTraceAsString(), "code" => $e->getCode()]);
             }
             throw $e;
         }

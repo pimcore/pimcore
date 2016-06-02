@@ -18,12 +18,13 @@ use Pimcore\Config;
 use \Pimcore\Model\Document;
 use Pimcore\Web2Print\Processor;
 
-class PdfReactor8 extends Processor {
-
-    protected function buildPdf(Document\PrintAbstract $document, $config) {
+class PdfReactor8 extends Processor
+{
+    protected function buildPdf(Document\PrintAbstract $document, $config)
+    {
         $web2PrintConfig = Config::getWeb2PrintConfig();
 
-        $params = array();
+        $params = [];
         $params['printermarks'] = $config->printermarks == "true";
         $params['screenResolutionImages'] = $config->screenResolutionImages == "true";
         $html = $document->renderDocument($params);
@@ -61,14 +62,14 @@ class PdfReactor8 extends Processor {
 
         ];
 
-        if(trim($web2PrintConfig->pdfreactorLicence)) {
+        if (trim($web2PrintConfig->pdfreactorLicence)) {
             $reactorConfig["licenseKey"] = trim($web2PrintConfig->pdfreactorLicence);
         }
 
         try {
             $result = $pdfreactor->convert($reactorConfig);
             $pdf = base64_decode($result->document);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             \Logger::error($e);
             $document->setLastGenerateMessage($e->getMessage());
 
@@ -79,54 +80,54 @@ class PdfReactor8 extends Processor {
         return $pdf;
     }
 
-    public function getProcessingOptions() {
+    public function getProcessingOptions()
+    {
         include_once('Pimcore/Web2Print/Processor/api/PDFreactor.class.php');
 
-        $options = array();
+        $options = [];
 
-        $options[] = array("name" => "author", "type" => "text", "default" => "");
-        $options[] = array("name" => "title", "type" => "text", "default" => "");
-        $options[] = array("name" => "printermarks", "type" => "bool", "default" => "");
-        $options[] = array("name" => "screenResolutionImages", "type" => "bool", "default" => false);
-        $options[] = array("name" => "links", "type" => "bool", "default" => true);
-        $options[] = array("name" => "bookmarks", "type" => "bool", "default" => true);
-        $options[] = array("name" => "tags", "type" => "bool", "default" => true);
-        $options[] = array(
+        $options[] = ["name" => "author", "type" => "text", "default" => ""];
+        $options[] = ["name" => "title", "type" => "text", "default" => ""];
+        $options[] = ["name" => "printermarks", "type" => "bool", "default" => ""];
+        $options[] = ["name" => "screenResolutionImages", "type" => "bool", "default" => false];
+        $options[] = ["name" => "links", "type" => "bool", "default" => true];
+        $options[] = ["name" => "bookmarks", "type" => "bool", "default" => true];
+        $options[] = ["name" => "tags", "type" => "bool", "default" => true];
+        $options[] = [
             "name" => "prJavaScriptMode",
             "type" => "select",
-            "values" => array(\JavaScriptMode::ENABLED, \JavaScriptMode::DISABLED, \JavaScriptMode::ENABLED_NO_LAYOUT),
+            "values" => [\JavaScriptMode::ENABLED, \JavaScriptMode::DISABLED, \JavaScriptMode::ENABLED_NO_LAYOUT],
             "default" => \JavaScriptMode::ENABLED
-        );
+        ];
 
-        $options[] = array(
+        $options[] = [
             "name" => "prViewerPreference",
             "type" => "select",
-            "values" => array(\ViewerPreferences::PAGE_LAYOUT_SINGLE_PAGE, \ViewerPreferences::PAGE_LAYOUT_TWO_COLUMN_LEFT, \ViewerPreferences::PAGE_LAYOUT_TWO_COLUMN_RIGHT),
+            "values" => [\ViewerPreferences::PAGE_LAYOUT_SINGLE_PAGE, \ViewerPreferences::PAGE_LAYOUT_TWO_COLUMN_LEFT, \ViewerPreferences::PAGE_LAYOUT_TWO_COLUMN_RIGHT],
             "default" => \ViewerPreferences::PAGE_LAYOUT_SINGLE_PAGE
-        );
+        ];
 
-        $options[] = array(
+        $options[] = [
             "name" => "prColorspace",
             "type" => "select",
-            "values" => array(\ColorSpace::CMYK, \ColorSpace::RGB),
+            "values" => [\ColorSpace::CMYK, \ColorSpace::RGB],
             "default" => \ColorSpace::CMYK
-        );
+        ];
 
-        $options[] = array(
+        $options[] = [
             "name" => "prEncryption",
             "type" => "select",
-            "values" => array(\Encryption::NONE, \Encryption::TYPE_40, \Encryption::TYPE_128),
+            "values" => [\Encryption::NONE, \Encryption::TYPE_40, \Encryption::TYPE_128],
             "default" => \Encryption::NONE
-        );
+        ];
 
-        $options[] = array(
+        $options[] = [
             "name" => "prLoglevel",
             "type" => "select",
-            "values" => array(\LogLevel::FATAL, \LogLevel::WARN, \LogLevel::INFO, \LogLevel::DEBUG, \LogLevel::PERFORMANCE),
+            "values" => [\LogLevel::FATAL, \LogLevel::WARN, \LogLevel::INFO, \LogLevel::DEBUG, \LogLevel::PERFORMANCE],
             "default" => \LogLevel::FATAL
-        );
+        ];
 
         return $options;
     }
-
 }

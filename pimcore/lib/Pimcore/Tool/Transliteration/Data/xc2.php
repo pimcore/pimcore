@@ -1,6 +1,6 @@
 <?php
 
-$base = array(
+$base = [
   0x00 => 'syon', 'syonj', 'syonh', 'syod', 'syol', 'syolg', 'syolm', 'syolb', 'syols', 'syolt', 'syolp', 'syolh', 'syom', 'syob', 'syobs', 'syos',
   0x10 => 'syoss', 'syong', 'syoj', 'syoc', 'syok', 'syot', 'syop', 'syoh', 'su', 'sug', 'sugg', 'sugs', 'sun', 'sunj', 'sunh', 'sud',
   0x20 => 'sul', 'sulg', 'sulm', 'sulb', 'suls', 'sult', 'sulp', 'sulh', 'sum', 'sub', 'subs', 'sus', 'suss', 'sung', 'suj', 'suc',
@@ -17,4 +17,4 @@ $base = array(
   0xD0 => 'syim', 'syib', 'syibs', 'syis', 'syiss', 'sying', 'syij', 'syic', 'syik', 'syit', 'syip', 'syih', 'si', 'sig', 'sigg', 'sigs',
   0xE0 => 'sin', 'sinj', 'sinh', 'sid', 'sil', 'silg', 'silm', 'silb', 'sils', 'silt', 'silp', 'silh', 'sim', 'sib', 'sibs', 'sis',
   0xF0 => 'siss', 'sing', 'sij', 'sic', 'sik', 'sit', 'sip', 'sih', 'ssa', 'ssag', 'ssagg', 'ssags', 'ssan', 'ssanj', 'ssanh', 'ssad',
-);
+];

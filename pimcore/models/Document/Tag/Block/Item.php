@@ -33,7 +33,7 @@ class Item
     /**
      * @var string[]
      */
-    protected $suffixes = array();
+    protected $suffixes = [];
 
     /**
      * @param Model\Document\PageSnippet $doc

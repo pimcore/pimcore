@@ -21,7 +21,7 @@ class Session
      * contains the session namespace objects
      * @var array
      */
-    protected static $sessions = array();
+    protected static $sessions = [];
 
     /**
      * contains how many sessions are currently open, this is important, because writeClose() must not be called if

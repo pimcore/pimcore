@@ -59,14 +59,14 @@ class ThumbnailsVideoCommand extends AbstractCommand
             $thumbnails[] = $item->getName();
         }
 
-        $allowedThumbs = array();
+        $allowedThumbs = [];
         if ($input->getOption("thumbnails")) {
             $allowedThumbs = explode(",", $input->getOption("thumbnails"));
         }
 
 
         // get only images
-        $conditions = array("type = 'video'");
+        $conditions = ["type = 'video'"];
 
         if ($input->getOption("parent")) {
             $parent = Asset::getById($input->getOption("parent"));

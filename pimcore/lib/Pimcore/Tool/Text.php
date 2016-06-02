@@ -26,7 +26,7 @@ class Text
      */
     public static function removeLineBreaks($text = "")
     {
-        $text = str_replace(array("\r\n", "\n", "\r", "\t"), " ", $text);
+        $text = str_replace(["\r\n", "\n", "\r", "\t"], " ", $text);
         $text = preg_replace('#[ ]+#', ' ', $text);
 
         return $text;
@@ -92,14 +92,14 @@ class Text
                         preg_match("/style=\"([^\"]+)*\"/", $oldTag, $styleAttr);
 
                         if ((isset($widthAttr[1]) && $widthAttr[1]) || (isset($heightAttr[1]) && $heightAttr[1])) {
-                            $config = array(
+                            $config = [
                                 "width" => intval($widthAttr[1]),
                                 "height" => intval($heightAttr[1])
-                            );
+                            ];
                         }
 
                         if (isset($styleAttr[1]) && $styleAttr[1] && preg_match("/(width|height)/", $styleAttr[1])) {
-                            $config = array(); // reset the config if it was set already before (attributes)
+                            $config = []; // reset the config if it was set already before (attributes)
 
                             $cleanedStyle = preg_replace('#[ ]+#', '', $styleAttr[1]);
                             $styles = explode(";", $cleanedStyle);
@@ -122,9 +122,9 @@ class Text
                                 $path = $element->getThumbnail($config);
                             } elseif ($element->getWidth() > 2000 || $element->getHeight() > 2000) {
                                 // if the image is too large, size it down to 2000px this is the max. for wysiwyg
-                                $path = $element->getThumbnail(array(
+                                $path = $element->getThumbnail([
                                     "width" => 2000,
-                                ));
+                                ]);
                             } else {
                                 // return the original
                                 $path = $element->getFullPath();
@@ -242,7 +242,7 @@ class Text
             return \Zend_Registry::get($hash);
         }
 
-        $elements = array();
+        $elements = [];
         $matches = self::getElementsTagsInWysiwyg($text);
 
         if (count($matches[2]) > 0) {
@@ -256,11 +256,11 @@ class Text
                 $element = Element\Service::getElementById($type, $id);
 
                 if ($id && $type && $element instanceof Element\ElementInterface) {
-                    $elements[] = array(
+                    $elements[] = [
                         "id" => $id,
                         "type" => $type,
                         "element" => $element
-                    );
+                    ];
                 }
             }
         }
@@ -279,16 +279,16 @@ class Text
      */
     public static function getDependenciesOfWysiwygText($text)
     {
-        $dependencies = array();
+        $dependencies = [];
 
         if (!empty($text)) {
             $elements = self::getElementsInWysiwyg($text);
             foreach ($elements as $element) {
                 $key = $element["type"] . "_" . $element["id"];
-                $dependencies[$key] = array(
+                $dependencies[$key] = [
                     "id" => $element["id"],
                     "type" => $element["type"]
-                );
+                ];
             }
         }
 
@@ -300,9 +300,9 @@ class Text
      * @param array $tags
      * @return array
      */
-    public static function getCacheTagsOfWysiwygText($text, $tags = array())
+    public static function getCacheTagsOfWysiwygText($text, $tags = [])
     {
-        $tags = is_array($tags) ? $tags : array();
+        $tags = is_array($tags) ? $tags : [];
         
         if (!empty($text)) {
             $elements = self::getElementsInWysiwyg($text);
@@ -337,7 +337,7 @@ class Text
     public static function detectEncoding($text)
     {
         if (function_exists("mb_detect_encoding")) {
-            $encoding = mb_detect_encoding($text, array(
+            $encoding = mb_detect_encoding($text, [
                 "UTF-32",
                 "UTF-32BE",
                 "UTF-32LE",
@@ -386,7 +386,7 @@ class Text
                 "JIS",
                 "ISO-2022-JP",
                 "ISO-2022-JP-MS"
-            ));
+            ]);
         }
 
         if (!$encoding) {

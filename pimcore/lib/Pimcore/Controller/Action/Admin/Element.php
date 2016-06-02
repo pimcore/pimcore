@@ -40,7 +40,7 @@ abstract class Element extends Admin
             }
         }
 
-        $this->_helper->json(array("success" => false, "message" => "missing_permission"));
+        $this->_helper->json(["success" => false, "message" => "missing_permission"]);
     }
 
     /**
@@ -65,7 +65,7 @@ abstract class Element extends Admin
             if ($element) {
                 if ($element->isAllowed("versions")) {
                     $schedule = $element->getScheduledTasks();
-                    $schedules = array();
+                    $schedules = [];
                     foreach ($schedule as $task) {
                         if ($task->getActive()) {
                             $schedules[$task->getVersion()] = $task->getDate();
@@ -83,7 +83,7 @@ abstract class Element extends Admin
                         }
                     }
 
-                    $this->_helper->json(array("versions" => $versions));
+                    $this->_helper->json(["versions" => $versions]);
                 } else {
                     throw new \Exception("Permission denied, " . $type . " id [" . $id . "]");
                 }
@@ -101,7 +101,7 @@ abstract class Element extends Admin
         $version = Model\Version::getById($this->getParam("id"));
         $version->delete();
 
-        $this->_helper->json(array("success" => true));
+        $this->_helper->json(["success" => true]);
     }
 
     /*
@@ -147,7 +147,7 @@ abstract class Element extends Admin
      */
     public function getPredefinedPropertiesAction()
     {
-        $properties = array();
+        $properties = [];
         $type = $this->getParam("controller");
         $allowedTypes = ["asset","document","object"];
 
@@ -167,6 +167,6 @@ abstract class Element extends Admin
             }
         }
 
-        $this->_helper->json(array("properties" => $properties));
+        $this->_helper->json(["properties" => $properties]);
     }
 }

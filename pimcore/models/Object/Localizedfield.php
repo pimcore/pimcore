@@ -21,7 +21,6 @@ use Pimcore\Tool;
 
 class Localizedfield extends Model\AbstractModel
 {
-
     const STRICT_DISABLED = 0;
 
     const STRICT_ENABLED = 1;
@@ -31,7 +30,7 @@ class Localizedfield extends Model\AbstractModel
     /**
      * @var array
      */
-    public $items = array();
+    public $items = [];
 
     /**
      * @var Model\Object\Concrete
@@ -207,7 +206,7 @@ class Localizedfield extends Model\AbstractModel
     /**
      * @param $name
      * @param null $language
-     * @return 
+     * @return
      */
     public function getLocalizedValue($name, $language = null, $ignoreFallbackLanguage = false)
     {
@@ -282,11 +281,11 @@ class Localizedfield extends Model\AbstractModel
         }
 
         if ($fieldDefinition && method_exists($fieldDefinition, "preGetData")) {
-            $data =  $fieldDefinition->preGetData($this, array(
+            $data =  $fieldDefinition->preGetData($this, [
                 "data" => $data,
                 "language" => $language,
                 "name" => $name
-            ));
+            ]);
         }
 
         return $data;
@@ -308,7 +307,7 @@ class Localizedfield extends Model\AbstractModel
 
         $language  = $this->getLanguage($language);
         if (!$this->languageExists($language)) {
-            $this->items[$language] = array();
+            $this->items[$language] = [];
         }
 
         $contextInfo = $this->getContext();
@@ -322,10 +321,10 @@ class Localizedfield extends Model\AbstractModel
         $fieldDefinition = $containerDefinition->getFieldDefinition("localizedfields")->getFieldDefinition($name);
 
         if (method_exists($fieldDefinition, "preSetData")) {
-            $value =  $fieldDefinition->preSetData($this, $value, array(
+            $value =  $fieldDefinition->preSetData($this, $value, [
                 "language" => $language,
                 "name" => $name
-            ));
+            ]);
         }
 
         $this->items[$language][$name] = $value;
@@ -337,7 +336,7 @@ class Localizedfield extends Model\AbstractModel
      */
     public function __sleep()
     {
-        return array("items");
+        return ["items"];
     }
 
     /**

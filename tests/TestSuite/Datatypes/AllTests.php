@@ -9,7 +9,7 @@ class TestSuite_Datatypes_AllTests extends Test_SuiteBase
     {
         $suite = new TestSuite_Datatypes_AllTests('Datatypes');
 
-        $tests = array('TestSuite_Datatypes_KeyValueTest', 'TestSuite_Datatypes_LocalizedFieldTest');
+        $tests = ['TestSuite_Datatypes_KeyValueTest', 'TestSuite_Datatypes_LocalizedFieldTest'];
 
         $success = shuffle($tests);
         print("Created the following execution order:\n");

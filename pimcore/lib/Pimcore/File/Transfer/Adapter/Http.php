@@ -18,7 +18,6 @@ use Pimcore\File;
 
 class Http extends \Zend_File_Transfer_Adapter_Http
 {
-
     use \Pimcore\File\Transfer\Adapter\AdapterTrait;
     /**
      * @var null
@@ -67,7 +66,7 @@ class Http extends \Zend_File_Transfer_Adapter_Http
         }
 
         if (!$this->getHttpClient()) {
-            $httpClient = \Pimcore\Tool::getHttpClient(null, array('timeout' => 3600*60));
+            $httpClient = \Pimcore\Tool::getHttpClient(null, ['timeout' => 3600*60]);
         } else {
             $httpClient = $this->getHttpClient();
         }

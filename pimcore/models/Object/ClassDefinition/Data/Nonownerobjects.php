@@ -157,7 +157,7 @@ class Nonownerobjects extends Model\Object\ClassDefinition\Data\Objects
      * @param mixed $params
      * @return array
      */
-    public function getDataForResource($data, $object = null, $params = array())
+    public function getDataForResource($data, $object = null, $params = [])
     {
         return null;
     }
@@ -169,7 +169,7 @@ class Nonownerobjects extends Model\Object\ClassDefinition\Data\Objects
      * @param mixed $params
      * @return string
      */
-    public function getDataForQueryResource($data, $object = null, $params = array())
+    public function getDataForQueryResource($data, $object = null, $params = [])
     {
         return null;
     }
@@ -226,7 +226,7 @@ class Nonownerobjects extends Model\Object\ClassDefinition\Data\Objects
      * @param array $params
      * @return string
      */
-    public function getForCsvExport($object, $params = array())
+    public function getForCsvExport($object, $params = [])
     {
         return "";
     }
@@ -239,7 +239,7 @@ class Nonownerobjects extends Model\Object\ClassDefinition\Data\Objects
      * @param mixed $params
      * @return Object\ClassDefinition\Data
      */
-    public function getFromCsvImport($importValue, $object = null, $params = array())
+    public function getFromCsvImport($importValue, $object = null, $params = [])
     {
         return null;
     }
@@ -251,7 +251,7 @@ class Nonownerobjects extends Model\Object\ClassDefinition\Data\Objects
      * @param array $tags
      * @return array
      */
-    public function getCacheTags($data, $tags = array())
+    public function getCacheTags($data, $tags = [])
     {
         return $tags;
     }
@@ -262,7 +262,7 @@ class Nonownerobjects extends Model\Object\ClassDefinition\Data\Objects
      */
     public function resolveDependencies($data)
     {
-        return array();
+        return [];
     }
 
     /**
@@ -270,7 +270,7 @@ class Nonownerobjects extends Model\Object\ClassDefinition\Data\Objects
      * @param mixed $params
      * @return array|null
      */
-    public function getForWebserviceExport($object, $params = array())
+    public function getForWebserviceExport($object, $params = [])
     {
         return null;
     }
@@ -282,7 +282,7 @@ class Nonownerobjects extends Model\Object\ClassDefinition\Data\Objects
      * @param mixed $params
      * @return mixed
      */
-    public function getFromWebserviceImport($value, $object = null, $params = array(), $idMapper = null)
+    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
     {
         return null;
     }

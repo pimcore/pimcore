@@ -44,14 +44,14 @@ class InternalNewsletterSendCommand extends AbstractCommand
             $objectList = "\\Pimcore\\Model\\Object\\" . ucfirst($newsletter->getClass()) . "\\Listing";
             $list = new $objectList();
 
-            $conditions = array("(newsletterActive = 1 AND newsletterConfirmed = 1)");
+            $conditions = ["(newsletterActive = 1 AND newsletterConfirmed = 1)"];
             if ($newsletter->getObjectFilterSQL()) {
                 $conditions[] = "(" . $newsletter->getObjectFilterSQL() . ")";
             }
             if ($newsletter->getPersonas()) {
                 $class = Model\Object\ClassDefinition::getByName($newsletter->getClass());
                 if ($class && $class->getFieldDefinition("persona")) {
-                    $personas = array();
+                    $personas = [];
                     $p = explode(",", $newsletter->getPersonas());
 
                     if ($class->getFieldDefinition("persona") instanceof \Pimcore\Model\Object\ClassDefinition\Data\Persona) {
@@ -62,7 +62,7 @@ class InternalNewsletterSendCommand extends AbstractCommand
                         }
                         $conditions[] = "persona IN (" . implode(",", $personas) . ")";
                     } elseif ($class->getFieldDefinition("persona") instanceof \Pimcore\Model\Object\ClassDefinition\Data\Personamultiselect) {
-                        $personasCondition = array();
+                        $personasCondition = [];
                         foreach ($p as $value) {
                             $personasCondition[] = "persona LIKE " . $list->quote("%," . $value .  ",%");
                         }
@@ -78,13 +78,13 @@ class InternalNewsletterSendCommand extends AbstractCommand
             $elementsTotal = $list->getTotalCount();
             $count = 0;
 
-            $pidContents = array(
+            $pidContents = [
                 "start" => time(),
                 "lastUpdate" => time(),
                 "newsletter" => $newsletter->getName(),
                 "total" => $elementsTotal,
                 "current" => $count
-            );
+            ];
 
             $this->writePid($pidFile, $pidContents);
 
@@ -107,7 +107,7 @@ class InternalNewsletterSendCommand extends AbstractCommand
                         $note->setType("newsletter");
                         $note->setTitle("sent newsletter: '" . $newsletter->getName() . "'");
                         $note->setUser(0);
-                        $note->setData(array());
+                        $note->setData([]);
                         $note->save();
 
                         \Logger::info("Sent newsletter to: " . $this->obfuscateEmail($object->getEmail()) . " [" . $newsletter->getName() . "]");

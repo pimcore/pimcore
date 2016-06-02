@@ -16,7 +16,7 @@ namespace Pimcore\Translate\Adapter;
 
 class Json extends \Zend_Translate_Adapter
 {
-    private $_data    = array();
+    private $_data    = [];
 
     /**
      * Load translation data
@@ -27,7 +27,7 @@ class Json extends \Zend_Translate_Adapter
      * @param  array         $option    OPTIONAL Options to use
      * @return array
      */
-    protected function _loadTranslationData($filename, $locale, array $options = array())
+    protected function _loadTranslationData($filename, $locale, array $options = [])
     {
         $this->_data = [];
         $options     = $options + $this->_options;

@@ -29,7 +29,7 @@ class Dao extends Model\Object\Fieldcollection\Dao
     public function load(Object\Concrete $object)
     {
         $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname());
-        $values = array();
+        $values = [];
 
         foreach ($fieldDef->getAllowedTypes() as $type) {
             try {
@@ -41,9 +41,9 @@ class Dao extends Model\Object\Fieldcollection\Dao
             $tableName = $definition->getTableName($object->getClass(), false);
 
             try {
-                $results = $this->db->fetchAll("SELECT * FROM ".$tableName." WHERE o_id = ? AND fieldname = ?", array($object->getId(), $this->model->getFieldname()));
+                $results = $this->db->fetchAll("SELECT * FROM ".$tableName." WHERE o_id = ? AND fieldname = ?", [$object->getId(), $this->model->getFieldname()]);
             } catch (\Exception $e) {
-                $results = array();
+                $results = [];
             }
 
             //$allRelations = $this->db->fetchAll("SELECT * FROM object_relations_" . $object->getO_classId() . " WHERE src_id = ? AND ownertype = 'objectbrick' AND ownername = ?", array($object->getO_id(), $this->model->getFieldname()));
@@ -64,7 +64,7 @@ class Dao extends Model\Object\Fieldcollection\Dao
                         }
                     } else {
                         if (is_array($fd->getColumnType())) {
-                            $multidata = array();
+                            $multidata = [];
                             foreach ($fd->getColumnType() as $fkey => $fvalue) {
                                 $multidata[$key . "__" . $fkey] = $result[$key . "__" . $fkey];
                             }

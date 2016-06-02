@@ -77,7 +77,7 @@ class Transliteration
 
         if (!isset($tail_bytes)) {
             // Each UTF-8 head byte is followed by a certain number of tail bytes.
-            $tail_bytes = array();
+            $tail_bytes = [];
             for ($n = 0; $n < 256; $n++) {
                 if ($n < 0xc0) {
                     $remaining = 0;
@@ -195,7 +195,7 @@ class Transliteration
      */
     private static function _transliterationReplace($ord, $unknown = '?', $langcode = null)
     {
-        $map = array();
+        $map = [];
 
         if (!isset($langcode)) {
             $langcode = "en";
@@ -206,7 +206,7 @@ class Transliteration
         if (!isset($map[$bank][$langcode])) {
             $file = __DIR__ . '/Transliteration/Data/' . sprintf('x%02x', $bank) . '.php';
             if (file_exists($file)) {
-                $base = array();
+                $base = [];
                 // contains the $base variable
                 include($file);
                 if ($langcode != 'en' && isset($variant[$langcode])) {
@@ -216,7 +216,7 @@ class Transliteration
                     $map[$bank][$langcode] = $base;
                 }
             } else {
-                $map[$bank][$langcode] = array();
+                $map[$bank][$langcode] = [];
             }
         }
 

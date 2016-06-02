@@ -27,7 +27,7 @@ class Archive
      * @return \ZipArchive
      * @throws \Exception
      */
-    public static function createZip($sourceDir, $destinationFile, $excludeFilePattern = array(), $options = array())
+    public static function createZip($sourceDir, $destinationFile, $excludeFilePattern = [], $options = [])
     {
         list($sourceDir, $destinationFile, $items) = self::prepareArchive($sourceDir, $destinationFile);
         $mode = $options['mode'] ? $options['mode'] : \ZIPARCHIVE::OVERWRITE;
@@ -90,7 +90,7 @@ class Archive
      * @return \Phar
      * @throws \Exception
      */
-    public static function createPhar($sourceDir, $destinationFile, $excludeFilePattern = array(), $options = array())
+    public static function createPhar($sourceDir, $destinationFile, $excludeFilePattern = [], $options = [])
     {
         list($sourceDir, $destinationFile, $items) = self::prepareArchive($sourceDir, $destinationFile);
 
@@ -152,6 +152,6 @@ class Archive
         if (!is_dir($destinationDir)) {
             File::mkdir($destinationDir);
         }
-        return array($sourceDir,$destinationFile,$items);
+        return [$sourceDir,$destinationFile,$items];
     }
 }

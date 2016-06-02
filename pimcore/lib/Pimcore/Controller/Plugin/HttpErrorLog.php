@@ -37,7 +37,7 @@ class HttpErrorLog extends \Zend_Controller_Plugin_Abstract
                 // do not cache if there's no data or an active session
 
                 if ($this->cacheKey) {
-                    \Pimcore\Cache::save($responseData, $this->cacheKey, array("output"), 900, 9992);
+                    \Pimcore\Cache::save($responseData, $this->cacheKey, ["output"], 900, 9992);
                 }
             }
         }
@@ -66,7 +66,7 @@ class HttpErrorLog extends \Zend_Controller_Plugin_Abstract
             if ($exists) {
                 $db->query("UPDATE http_error_log SET `count` = `count` + 1, date = ? WHERE uri = ?", [time(), $uri]);
             } else {
-                $db->insert("http_error_log", array(
+                $db->insert("http_error_log", [
                     "uri" => $uri,
                     "code" => (int) $code,
                     "parametersGet" => serialize($_GET),
@@ -75,7 +75,7 @@ class HttpErrorLog extends \Zend_Controller_Plugin_Abstract
                     "serverVars" => serialize($_SERVER),
                     "date" => time(),
                     "count" => 1
-                ));
+                ]);
             }
         } catch (\Exception $e) {
             \Logger::error("Unable to log http error");

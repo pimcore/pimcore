@@ -35,12 +35,12 @@ class ElementMetadata extends Model\AbstractModel
     /**
      * @var array
      */
-    protected $columns = array();
+    protected $columns = [];
 
     /**
      * @var array
      */
-    protected $data = array();
+    protected $data = [];
 
     /**
      * @param $fieldname
@@ -48,7 +48,7 @@ class ElementMetadata extends Model\AbstractModel
      * @param null $element
      * @throws \Exception
      */
-    public function __construct($fieldname, $columns = array(), $element = null)
+    public function __construct($fieldname, $columns = [], $element = null)
     {
         $this->fieldname = $fieldname;
         $this->element = $element;

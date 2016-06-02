@@ -178,7 +178,7 @@ class Table extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getDataForResource($data, $object = null, $params = array())
+    public function getDataForResource($data, $object = null, $params = [])
     {
         return Serialize::serialize($data);
     }
@@ -190,7 +190,7 @@ class Table extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getDataFromResource($data, $object = null, $params = array())
+    public function getDataFromResource($data, $object = null, $params = [])
     {
         return Serialize::unserialize((string) $data);
     }
@@ -202,10 +202,10 @@ class Table extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getDataForQueryResource($data, $object = null, $params = array())
+    public function getDataForQueryResource($data, $object = null, $params = [])
     {
         if (!empty($data)) {
-            $tmpLine = array();
+            $tmpLine = [];
             if (is_array($data)) {
                 foreach ($data as $row) {
                     if (is_array($row)) {
@@ -225,7 +225,7 @@ class Table extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getDataForEditmode($data, $object = null, $params = array())
+    public function getDataForEditmode($data, $object = null, $params = [])
     {
         return $data;
     }
@@ -237,7 +237,7 @@ class Table extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getDataFromEditmode($data, $object = null, $params = array())
+    public function getDataFromEditmode($data, $object = null, $params = [])
     {
         
         // check for empty data
@@ -264,7 +264,7 @@ class Table extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getVersionPreview($data, $object = null, $params = array())
+    public function getVersionPreview($data, $object = null, $params = [])
     {
         return $data;
     }
@@ -294,7 +294,7 @@ class Table extends Model\Object\ClassDefinition\Data
      * @param array $params
      * @return string
      */
-    public function getForCsvExport($object, $params = array())
+    public function getForCsvExport($object, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if (is_array($data)) {
@@ -310,7 +310,7 @@ class Table extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return mixed|null
      */
-    public function getFromCsvImport($importValue, $object = null, $params = array())
+    public function getFromCsvImport($importValue, $object = null, $params = [])
     {
         $value = Serialize::unserialize(base64_decode($importValue));
         if (is_array($value)) {
@@ -325,12 +325,12 @@ class Table extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getDataForSearchIndex($object, $params = array())
+    public function getDataForSearchIndex($object, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
 
         if (!empty($data)) {
-            $tmpLine = array();
+            $tmpLine = [];
             if (is_array($data)) {
                 foreach ($data as $row) {
                     if (is_array($row)) {
@@ -348,7 +348,7 @@ class Table extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return bool
      */
-    public function isDiffChangeAllowed($object, $params = array())
+    public function isDiffChangeAllowed($object, $params = [])
     {
         return true;
     }
@@ -361,7 +361,7 @@ class Table extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return array|string
      */
-    public function getDiffVersionPreview($data, $object = null, $params = array())
+    public function getDiffVersionPreview($data, $object = null, $params = [])
     {
         if ($data) {
             $html = "<table>";
@@ -380,7 +380,7 @@ class Table extends Model\Object\ClassDefinition\Data
             }
             $html .= "</table>";
 
-            $value = array();
+            $value = [];
             $value["html"] = $html;
             $value["type"] = "html";
             return $value;
@@ -396,10 +396,10 @@ class Table extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return array|mixed
      */
-    public function getFromWebserviceImport($value, $object = null, $params = array(), $idMapper = null)
+    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
     {
         if ($value && is_array($value)) {
-            $result = array();
+            $result = [];
             foreach ($value as $item) {
                 $item = (array) $item;
                 $item = array_values($item);

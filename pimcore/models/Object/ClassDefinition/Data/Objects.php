@@ -22,7 +22,6 @@ use Pimcore\Model\Element;
 
 class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
 {
-
     use Model\Object\ClassDefinition\Data\Extension\Relation;
 
     /**
@@ -83,27 +82,27 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
      * @param mixed $params
      * @return array
      */
-    public function getDataForResource($data, $object = null, $params = array())
+    public function getDataForResource($data, $object = null, $params = [])
     {
-        $return = array();
+        $return = [];
 
         if (is_array($data) && count($data) > 0) {
             $counter = 1;
             foreach ($data as $object) {
                 if ($object instanceof Object\Concrete) {
-                    $return[] = array(
+                    $return[] = [
                         "dest_id" => $object->getId(),
                         "type" => "object",
                         "fieldname" => $this->getName(),
                         "index" => $counter
-                    );
+                    ];
                 }
                 $counter++;
             }
             return $return;
         } elseif (is_array($data) and count($data)===0) {
             //give empty array if data was not null
-            return array();
+            return [];
         } else {
             //return null if data was null - this indicates data was not loaded
             return null;
@@ -117,9 +116,9 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
      * @param mixed $params
      * @return array
      */
-    public function getDataFromResource($data, $object = null, $params = array())
+    public function getDataFromResource($data, $object = null, $params = [])
     {
-        $objects = array();
+        $objects = [];
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $object) {
                 $o = Object::getById($object["dest_id"]);
@@ -138,7 +137,7 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
      * @param mixed $params
      * @throws \Exception
      */
-    public function getDataForQueryResource($data, $object = null, $params = array())
+    public function getDataForQueryResource($data, $object = null, $params = [])
     {
 
         //return null when data is not set
@@ -146,7 +145,7 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
             return null;
         }
 
-        $ids = array();
+        $ids = [];
 
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $object) {
@@ -170,14 +169,14 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
      * @param mixed $params
      * @return array
      */
-    public function getDataForEditmode($data, $object = null, $params = array())
+    public function getDataForEditmode($data, $object = null, $params = [])
     {
-        $return = array();
+        $return = [];
 
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $object) {
                 if ($object instanceof Object\Concrete) {
-                    $return[] = array($object->getId(), $object->getRealFullPath(), $object->getClassName());
+                    $return[] = [$object->getId(), $object->getRealFullPath(), $object->getClassName()];
                 }
             }
             if (empty($return)) {
@@ -195,7 +194,7 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
      * @param mixed $params
      * @return array
      */
-    public function getDataFromEditmode($data, $object = null, $params = array())
+    public function getDataFromEditmode($data, $object = null, $params = [])
     {
 
         //if not set, return null
@@ -203,7 +202,7 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
             return null;
         }
 
-        $objects = array();
+        $objects = [];
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $object) {
                 $o = Object::getById($object["id"]);
@@ -222,10 +221,10 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
      * @param mixed $params
      * @return array
      */
-    public function getDataForGrid($data, $object = null, $params = array())
+    public function getDataForGrid($data, $object = null, $params = [])
     {
         if (is_array($data)) {
-            $pathes = array();
+            $pathes = [];
             foreach ($data as $eo) {
                 if ($eo instanceof Element\ElementInterface) {
                     $pathes[] = $eo->getRealFullPath();
@@ -242,7 +241,7 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
      * @param mixed $params
      * @return string
      */
-    public function getVersionPreview($data, $object = null, $params = array())
+    public function getVersionPreview($data, $object = null, $params = [])
     {
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $o) {
@@ -329,11 +328,11 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
      * @param array $params
      * @return string
      */
-    public function getForCsvExport($object, $params = array())
+    public function getForCsvExport($object, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if (is_array($data)) {
-            $paths = array();
+            $paths = [];
             foreach ($data as $eo) {
                 if ($eo instanceof Element\ElementInterface) {
                     $paths[] = $eo->getRealFullPath();
@@ -351,11 +350,11 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
      * @param mixed $params
      * @return array|mixed
      */
-    public function getFromCsvImport($importValue, $object = null, $params = array())
+    public function getFromCsvImport($importValue, $object = null, $params = [])
     {
         $values = explode(",", $importValue);
 
-        $value = array();
+        $value = [];
         foreach ($values as $element) {
             if ($el = Object::getByPath($element)) {
                 $value[] = $el;
@@ -372,9 +371,9 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
      * @param array $tags
      * @return array
      */
-    public function getCacheTags($data, $tags = array())
+    public function getCacheTags($data, $tags = [])
     {
-        $tags = is_array($tags) ? $tags : array();
+        $tags = is_array($tags) ? $tags : [];
 
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $object) {
@@ -392,15 +391,15 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
      */
     public function resolveDependencies($data)
     {
-        $dependencies = array();
+        $dependencies = [];
 
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $o) {
                 if ($o instanceof Object\AbstractObject) {
-                    $dependencies["object_" . $o->getId()] = array(
+                    $dependencies["object_" . $o->getId()] = [
                         "id" => $o->getId(),
                         "type" => "object"
-                    );
+                    ];
                 }
             }
         }
@@ -412,17 +411,17 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
      * @param mixed $params
      * @return array|mixed|null
      */
-    public function getForWebserviceExport($object, $params = array())
+    public function getForWebserviceExport($object, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if (is_array($data)) {
-            $items = array();
+            $items = [];
             foreach ($data as $eo) {
                 if ($eo instanceof Element\ElementInterface) {
-                    $items[] = array(
+                    $items[] = [
                         "type" => $eo->getType(),
                         "id" => $eo->getId()
-                    );
+                    ];
                 }
             }
             return $items;
@@ -439,9 +438,9 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
      * @return array|mixed
      * @throws \Exception
      */
-    public function getFromWebserviceImport($value, $object = null, $params = array(), $idMapper = null)
+    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
     {
-        $relatedObjects = array();
+        $relatedObjects = [];
         if (empty($value)) {
             return null;
         } elseif (is_array($value)) {
@@ -475,14 +474,14 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
     }
 
 
-    public function preGetData($object, $params = array())
+    public function preGetData($object, $params = [])
     {
         $data = null;
         if ($object instanceof Object\Concrete) {
             $data = $object->{$this->getName()};
             if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
                 //$data = $this->getDataFromResource($object->getRelationData($this->getName(),true,null));
-                $data = $this->load($object, array("force" => true));
+                $data = $this->load($object, ["force" => true]);
 
                 $setter = "set" . ucfirst($this->getName());
                 if (method_exists($object, $setter)) {
@@ -499,7 +498,7 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
 
 
         if (Object\AbstractObject::doHideUnpublished() and is_array($data)) {
-            $publishedList = array();
+            $publishedList = [];
             foreach ($data as $listElement) {
                 if (Element\Service::isPublished($listElement)) {
                     $publishedList[] = $listElement;
@@ -507,13 +506,13 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
             }
             return $publishedList;
         }
-        return is_array($data) ? $data : array();
+        return is_array($data) ? $data : [];
     }
 
-    public function preSetData($object, $data, $params = array())
+    public function preSetData($object, $data, $params = [])
     {
         if ($data === null) {
-            $data = array();
+            $data = [];
         }
 
         if ($object instanceof Object\Concrete) {
@@ -566,7 +565,7 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
      * @param mixed $params
      * @return bool
      */
-    public function isDiffChangeAllowed($object, $params = array())
+    public function isDiffChangeAllowed($object, $params = [])
     {
         return true;
     }
@@ -578,9 +577,9 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
      * @param mixed $params
      * @return array|string
      */
-    public function getDiffVersionPreview($data, $object = null, $params = array())
+    public function getDiffVersionPreview($data, $object = null, $params = [])
     {
-        $value = array();
+        $value = [];
         $value["type"] = "html";
         $value["html"] = "";
 
@@ -597,7 +596,7 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
      * @param mixed $params
      * @return null|Pimcore_Date
      */
-    public function getDiffDataFromEditmode($data, $object = null, $params = array())
+    public function getDiffDataFromEditmode($data, $object = null, $params = [])
     {
         if ($data) {
             $tabledata = $data[0]["data"];
@@ -606,9 +605,9 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
                 return;
             }
 
-            $result = array();
+            $result = [];
             foreach ($tabledata as $in) {
-                $out = array();
+                $out = [];
                 $out["id"] = $in["id"];
                 $out["path"] = $in["fullpath"];
                 $out["type"] = $in["type"];
@@ -635,7 +634,7 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
      * @param array $params
      * @return Element\ElementInterface
      */
-    public function rewriteIds($object, $idMapping, $params = array())
+    public function rewriteIds($object, $idMapping, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
         $data = $this->rewriteIdsService($data, $idMapping);

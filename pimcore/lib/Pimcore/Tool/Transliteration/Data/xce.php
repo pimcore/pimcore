@@ -1,6 +1,6 @@
 <?php
 
-$base = array(
+$base = [
   0x00 => 'cwik', 'cwit', 'cwip', 'cwih', 'cyu', 'cyug', 'cyugg', 'cyugs', 'cyun', 'cyunj', 'cyunh', 'cyud', 'cyul', 'cyulg', 'cyulm', 'cyulb',
   0x10 => 'cyuls', 'cyult', 'cyulp', 'cyulh', 'cyum', 'cyub', 'cyubs', 'cyus', 'cyuss', 'cyung', 'cyuj', 'cyuc', 'cyuk', 'cyut', 'cyup', 'cyuh',
   0x20 => 'ceu', 'ceug', 'ceugg', 'ceugs', 'ceun', 'ceunj', 'ceunh', 'ceud', 'ceul', 'ceulg', 'ceulm', 'ceulb', 'ceuls', 'ceult', 'ceulp', 'ceulh',
@@ -17,4 +17,4 @@ $base = array(
   0xD0 => 'kyael', 'kyaelg', 'kyaelm', 'kyaelb', 'kyaels', 'kyaelt', 'kyaelp', 'kyaelh', 'kyaem', 'kyaeb', 'kyaebs', 'kyaes', 'kyaess', 'kyaeng', 'kyaej', 'kyaec',
   0xE0 => 'kyaek', 'kyaet', 'kyaep', 'kyaeh', 'keo', 'keog', 'keogg', 'keogs', 'keon', 'keonj', 'keonh', 'keod', 'keol', 'keolg', 'keolm', 'keolb',
   0xF0 => 'keols', 'keolt', 'keolp', 'keolh', 'keom', 'keob', 'keobs', 'keos', 'keoss', 'keong', 'keoj', 'keoc', 'keok', 'keot', 'keop', 'keoh',
-);
+];

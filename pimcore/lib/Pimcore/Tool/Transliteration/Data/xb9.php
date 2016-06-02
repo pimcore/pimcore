@@ -1,6 +1,6 @@
 <?php
 
-$base = array(
+$base = [
   0x00 => 'ruk', 'rut', 'rup', 'ruh', 'rweo', 'rweog', 'rweogg', 'rweogs', 'rweon', 'rweonj', 'rweonh', 'rweod', 'rweol', 'rweolg', 'rweolm', 'rweolb',
   0x10 => 'rweols', 'rweolt', 'rweolp', 'rweolh', 'rweom', 'rweob', 'rweobs', 'rweos', 'rweoss', 'rweong', 'rweoj', 'rweoc', 'rweok', 'rweot', 'rweop', 'rweoh',
   0x20 => 'rwe', 'rweg', 'rwegg', 'rwegs', 'rwen', 'rwenj', 'rwenh', 'rwed', 'rwel', 'rwelg', 'rwelm', 'rwelb', 'rwels', 'rwelt', 'rwelp', 'rwelh',
@@ -17,4 +17,4 @@ $base = array(
   0xD0 => 'mal', 'malg', 'malm', 'malb', 'mals', 'malt', 'malp', 'malh', 'mam', 'mab', 'mabs', 'mas', 'mass', 'mang', 'maj', 'mac',
   0xE0 => 'mak', 'mat', 'map', 'mah', 'mae', 'maeg', 'maegg', 'maegs', 'maen', 'maenj', 'maenh', 'maed', 'mael', 'maelg', 'maelm', 'maelb',
   0xF0 => 'maels', 'maelt', 'maelp', 'maelh', 'maem', 'maeb', 'maebs', 'maes', 'maess', 'maeng', 'maej', 'maec', 'maek', 'maet', 'maep', 'maeh',
-);
+];

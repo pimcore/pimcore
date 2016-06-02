@@ -209,26 +209,26 @@ class Api
         $data = self::getAnalyticsMetadata();
         $t = \Zend_Registry::get("Zend_Translate");
 
-        $result = array();
+        $result = [];
         foreach ($data['items'] as $item) {
             if ($item['attributes']['type'] == $type) {
                 if (strpos($item['id'], 'XX') !== false) {
                     for ($i = 1; $i<=5; $i++) {
                         $name = str_replace('1', $i, str_replace('01', $i, $t->translate($item['attributes']['uiName'])));
 
-                        if (in_array($item['id'], array('ga:dimensionXX', 'ga:metricXX'))) {
+                        if (in_array($item['id'], ['ga:dimensionXX', 'ga:metricXX'])) {
                             $name .= ' '.$i;
                         }
-                        $result[] = array(
+                        $result[] = [
                             'id'=>str_replace('XX', $i, $item['id']),
                             'name'=>$name
-                        );
+                        ];
                     }
                 } else {
-                    $result[] = array(
+                    $result[] = [
                         'id'=>$item['id'],
                         'name'=>$t->translate($item['attributes']['uiName'])
-                    );
+                    ];
                 }
             }
         }

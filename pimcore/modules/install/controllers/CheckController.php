@@ -17,8 +17,6 @@ use Pimcore\Update;
 
 class Install_CheckController extends \Pimcore\Controller\Action
 {
-
-
     public function init()
     {
         parent::init();
@@ -37,10 +35,10 @@ class Install_CheckController extends \Pimcore\Controller\Action
 
     public function indexAction()
     {
-        $checksPHP = array();
-        $checksMySQL = array();
-        $checksFS = array();
-        $checksApps = array();
+        $checksPHP = [];
+        $checksMySQL = [];
+        $checksFS = [];
+        $checksApps = [];
 
         // check for memory limit
         $memoryLimit = ini_get("memory_limit");
@@ -53,137 +51,137 @@ class Install_CheckController extends \Pimcore\Controller\Action
             $state = "warning";
         }
 
-        $checksPHP[] = array(
+        $checksPHP[] = [
             "name" => "memory_limit (in php.ini)",
             "link" => "http://www.php.net/memory_limit",
             "state" => $state
-        );
+        ];
 
         // pdo_mysql
-        $checksPHP[] = array(
+        $checksPHP[] = [
             "name" => "PDO_Mysql",
             "link" => "http://www.php.net/pdo_mysql",
             "state" => @constant("PDO::MYSQL_ATTR_FOUND_ROWS") ? "ok" : "error"
-        );
+        ];
 
         // pdo_mysql
-        $checksPHP[] = array(
+        $checksPHP[] = [
             "name" => "Mysqli",
             "link" => "http://www.php.net/mysqli",
             "state" => class_exists("mysqli") ? "ok" : "error"
-        );
+        ];
 
         // iconv
-        $checksPHP[] = array(
+        $checksPHP[] = [
             "name" => "iconv",
             "link" => "http://www.php.net/iconv",
             "state" => function_exists("iconv") ? "ok" : "error"
-        );
+        ];
 
         // dom
-        $checksPHP[] = array(
+        $checksPHP[] = [
             "name" => "dom",
             "link" => "http://www.php.net/dom",
             "state" => class_exists("DOMDocument") ? "ok" : "error"
-        );
+        ];
 
         // simplexml
-        $checksPHP[] = array(
+        $checksPHP[] = [
             "name" => "SimpleXML",
             "link" => "http://www.php.net/simplexml",
             "state" => class_exists("SimpleXMLElement") ? "ok" : "error"
-        );
+        ];
 
         // gd
-        $checksPHP[] = array(
+        $checksPHP[] = [
             "name" => "GD",
             "link" => "http://www.php.net/gd",
             "state" => function_exists("gd_info") ? "ok" : "error"
-        );
+        ];
 
         // exif
-        $checksPHP[] = array(
+        $checksPHP[] = [
             "name" => "EXIF",
             "link" => "http://www.php.net/exif",
             "state" => function_exists("exif_read_data") ? "ok" : "error"
-        );
+        ];
 
         // multibyte support
-        $checksPHP[] = array(
+        $checksPHP[] = [
             "name" => "Multibyte String (mbstring)",
             "link" => "http://www.php.net/mbstring",
             "state" => function_exists("mb_get_info") ? "ok" : "error"
-        );
+        ];
 
         // file_info support
-        $checksPHP[] = array(
+        $checksPHP[] = [
             "name" => "File Information (file_info)",
             "link" => "http://www.php.net/file_info",
             "state" => function_exists("finfo_open") ? "ok" : "error"
-        );
+        ];
 
         // zip
-        $checksPHP[] = array(
+        $checksPHP[] = [
             "name" => "zip",
             "link" => "http://www.php.net/zip",
             "state" => class_exists("ZipArchive") ? "ok" : "error"
-        );
+        ];
 
         // gzip
-        $checksPHP[] = array(
+        $checksPHP[] = [
             "name" => "zlib / gzip",
             "link" => "http://www.php.net/zlib",
             "state" => function_exists("gzcompress") ? "ok" : "error"
-        );
+        ];
 
         // bzip
-        $checksPHP[] = array(
+        $checksPHP[] = [
             "name" => "Bzip2",
             "link" => "http://www.php.net/bzip2",
             "state" => function_exists("bzcompress") ? "ok" : "error"
-        );
+        ];
 
         // openssl
-        $checksPHP[] = array(
+        $checksPHP[] = [
             "name" => "OpenSSL",
             "link" => "http://www.php.net/openssl",
             "state" => function_exists("openssl_open") ? "ok" : "error"
-        );
+        ];
 
         // Imagick
-        $checksPHP[] = array(
+        $checksPHP[] = [
             "name" => "Imagick",
             "link" => "http://www.php.net/imagick",
             "state" => class_exists("Imagick") ? "ok" : "warning"
-        );
+        ];
 
         // OPcache
-        $checksPHP[] = array(
+        $checksPHP[] = [
             "name" => "OPcache",
             "link" => "http://www.php.net/opcache",
             "state" => function_exists("opcache_reset") ? "ok" : "warning"
-        );
+        ];
 
         // memcache
-        $checksPHP[] = array(
+        $checksPHP[] = [
             "name" => "Memcache",
             "link" => "http://www.php.net/memcache",
             "state" => class_exists("Memcache") ? "ok" : "warning"
-        );
+        ];
 
         // Redis
-        $checksPHP[] = array(
+        $checksPHP[] = [
             "name" => "Redis",
             "link" => "https://pecl.php.net/package/redis",
             "state" => class_exists("Redis") ? "ok" : "warning"
-        );
+        ];
 
         // curl for google api sdk
-        $checksPHP[] = array(
+        $checksPHP[] = [
             "name" => "curl",
             "link" => "http://www.php.net/curl",
             "state" => function_exists("curl_init") ? "ok" : "warning"
-        );
+        ];
 
 
         $db = null;
@@ -219,36 +217,36 @@ class Install_CheckController extends \Pimcore\Controller\Action
         if ($db) {
 
             // storage engines
-            $engines = array();
+            $engines = [];
             $enginesRaw = $db->fetchAll("SHOW ENGINES;");
             foreach ($enginesRaw as $engineRaw) {
                 $engines[] = strtolower($engineRaw["Engine"]);
             }
 
             // innodb
-            $checksMySQL[] = array(
+            $checksMySQL[] = [
                 "name" => "InnoDB Support",
                 "state" => in_array("innodb", $engines) ? "ok" : "error"
-            );
+            ];
 
             // myisam
-            $checksMySQL[] = array(
+            $checksMySQL[] = [
                 "name" => "MyISAM Support",
                 "state" => in_array("myisam", $engines) ? "ok" : "error"
-            );
+            ];
 
             // memory
-            $checksMySQL[] = array(
+            $checksMySQL[] = [
                 "name" => "MEMORY Support",
                 "state" => in_array("memory", $engines) ? "ok" : "error"
-            );
+            ];
 
             // check database charset =>  utf-8 encoding
             $result = $db->fetchRow('SHOW VARIABLES LIKE "character\_set\_database"');
-            $checksMySQL[] = array(
+            $checksMySQL[] = [
                 "name" => "Database Charset UTF8",
                 "state" => ($result['Value'] == "utf8") ? "ok" : "error"
-            );
+            ];
 
             // create table
             $queryCheck = true;
@@ -262,10 +260,10 @@ class Install_CheckController extends \Pimcore\Controller\Action
                 $queryCheck = false;
             }
 
-            $checksMySQL[] = array(
+            $checksMySQL[] = [
                 "name" => "CREATE TABLE",
                 "state" => $queryCheck ? "ok" : "error"
-            );
+            ];
 
             // alter table
             $queryCheck = true;
@@ -275,10 +273,10 @@ class Install_CheckController extends \Pimcore\Controller\Action
                 $queryCheck = false;
             }
 
-            $checksMySQL[] = array(
+            $checksMySQL[] = [
                 "name" => "ALTER TABLE",
                 "state" => $queryCheck ? "ok" : "error"
-            );
+            ];
 
             // Manage indexes
             $queryCheck = true;
@@ -301,42 +299,42 @@ class Install_CheckController extends \Pimcore\Controller\Action
                 $queryCheck = false;
             }
 
-            $checksMySQL[] = array(
+            $checksMySQL[] = [
                 "name" => "Manage Indexes",
                 "state" => $queryCheck ? "ok" : "error"
-            );
+            ];
 
             // insert data
             $queryCheck = true;
             try {
-                $db->insert("__pimcore_req_check", array(
+                $db->insert("__pimcore_req_check", [
                     "field" => uniqid(),
                     "alter_field" => uniqid()
-                ));
+                ]);
             } catch (\Exception $e) {
                 $queryCheck = false;
             }
 
-            $checksMySQL[] = array(
+            $checksMySQL[] = [
                 "name" => "INSERT",
                 "state" => $queryCheck ? "ok" : "error"
-            );
+            ];
 
             // update
             $queryCheck = true;
             try {
-                $db->update("__pimcore_req_check", array(
+                $db->update("__pimcore_req_check", [
                     "field" => uniqid(),
                     "alter_field" => uniqid()
-                ));
+                ]);
             } catch (\Exception $e) {
                 $queryCheck = false;
             }
 
-            $checksMySQL[] = array(
+            $checksMySQL[] = [
                 "name" => "UPDATE",
                 "state" => $queryCheck ? "ok" : "error"
-            );
+            ];
 
             // select
             $queryCheck = true;
@@ -346,10 +344,10 @@ class Install_CheckController extends \Pimcore\Controller\Action
                 $queryCheck = false;
             }
 
-            $checksMySQL[] = array(
+            $checksMySQL[] = [
                 "name" => "SELECT",
                 "state" => $queryCheck ? "ok" : "error"
-            );
+            ];
 
 
             // create view
@@ -360,10 +358,10 @@ class Install_CheckController extends \Pimcore\Controller\Action
                 $queryCheck = false;
             }
 
-            $checksMySQL[] = array(
+            $checksMySQL[] = [
                 "name" => "CREATE VIEW",
                 "state" => $queryCheck ? "ok" : "error"
-            );
+            ];
 
             // select from view
             $queryCheck = true;
@@ -373,10 +371,10 @@ class Install_CheckController extends \Pimcore\Controller\Action
                 $queryCheck = false;
             }
 
-            $checksMySQL[] = array(
+            $checksMySQL[] = [
                 "name" => "SELECT (from view)",
                 "state" => $queryCheck ? "ok" : "error"
-            );
+            ];
 
 
             // delete
@@ -387,10 +385,10 @@ class Install_CheckController extends \Pimcore\Controller\Action
                 $queryCheck = false;
             }
 
-            $checksMySQL[] = array(
+            $checksMySQL[] = [
                 "name" => "DELETE",
                 "state" => $queryCheck ? "ok" : "error"
-            );
+            ];
 
             // show create view
             $queryCheck = true;
@@ -400,10 +398,10 @@ class Install_CheckController extends \Pimcore\Controller\Action
                 $queryCheck = false;
             }
 
-            $checksMySQL[] = array(
+            $checksMySQL[] = [
                 "name" => "SHOW CREATE VIEW",
                 "state" => $queryCheck ? "ok" : "error"
-            );
+            ];
 
             // show create table
             $queryCheck = true;
@@ -413,10 +411,10 @@ class Install_CheckController extends \Pimcore\Controller\Action
                 $queryCheck = false;
             }
 
-            $checksMySQL[] = array(
+            $checksMySQL[] = [
                 "name" => "SHOW CREATE TABLE",
                 "state" => $queryCheck ? "ok" : "error"
-            );
+            ];
 
             // drop view
             $queryCheck = true;
@@ -426,10 +424,10 @@ class Install_CheckController extends \Pimcore\Controller\Action
                 $queryCheck = false;
             }
 
-            $checksMySQL[] = array(
+            $checksMySQL[] = [
                 "name" => "DROP VIEW",
                 "state" => $queryCheck ? "ok" : "error"
-            );
+            ];
 
             // drop table
             $queryCheck = true;
@@ -439,10 +437,10 @@ class Install_CheckController extends \Pimcore\Controller\Action
                 $queryCheck = false;
             }
 
-            $checksMySQL[] = array(
+            $checksMySQL[] = [
                 "name" => "DROP TABLE",
                 "state" => $queryCheck ? "ok" : "error"
-            );
+            ];
         } else {
             die("Not possible... no or wrong database settings given.<br />Please fill out the MySQL Settings in the install form an click again on `Check Requirements´");
         }
@@ -462,22 +460,22 @@ class Install_CheckController extends \Pimcore\Controller\Action
                 }
             }
 
-            $checksFS[] = array(
+            $checksFS[] = [
                 "name" => "/website/var/ writeable",
                 "state" => $websiteVarWritable ? "ok" : "error"
-            );
+            ];
         } catch (\Exception $e) {
-            $checksFS[] = array(
+            $checksFS[] = [
                 "name" => "/website/var/ (not checked - too many files)",
                 "state" => "warning"
-            );
+            ];
         }
 
         // pimcore writeable
-        $checksFS[] = array(
+        $checksFS[] = [
             "name" => "/pimcore/ writeable",
             "state" => \Pimcore\Update::isWriteable() ? "ok" : "warning"
-        );
+        ];
 
 
         // system & application checks
@@ -489,16 +487,16 @@ class Install_CheckController extends \Pimcore\Controller\Action
             $phpCliBin = false;
         }
 
-        $checksApps[] = array(
+        $checksApps[] = [
             "name" => "PHP CLI Binary",
             "state" => $phpCliBin ? "ok" : "error"
-        );
+        ];
 
         // Composer
-        $checksApps[] = array(
+        $checksApps[] = [
             "name" => "Composer",
             "state" => Update::isComposerAvailable() ? "ok" : "error"
-        );
+        ];
 
 
         // FFMPEG BIN
@@ -508,10 +506,10 @@ class Install_CheckController extends \Pimcore\Controller\Action
             $ffmpegBin = false;
         }
 
-        $checksApps[] = array(
+        $checksApps[] = [
             "name" => "FFMPEG (CLI)",
             "state" => $ffmpegBin ? "ok" : "warning"
-        );
+        ];
 
         // WKHTMLTOIMAGE BIN
         try {
@@ -520,10 +518,10 @@ class Install_CheckController extends \Pimcore\Controller\Action
             $wkhtmltopdfBin = false;
         }
 
-        $checksApps[] = array(
+        $checksApps[] = [
             "name" => "wkhtmltoimage (CLI)",
             "state" => $wkhtmltopdfBin ? "ok" : "warning"
-        );
+        ];
 
         // HTML2TEXT BIN
         try {
@@ -532,10 +530,10 @@ class Install_CheckController extends \Pimcore\Controller\Action
             $html2textBin = false;
         }
 
-        $checksApps[] = array(
+        $checksApps[] = [
             "name" => "mbayer html2text (CLI)",
             "state" => $html2textBin ? "ok" : "warning"
-        );
+        ];
 
         // ghostscript BIN
         try {
@@ -544,10 +542,10 @@ class Install_CheckController extends \Pimcore\Controller\Action
             $ghostscriptBin = false;
         }
 
-        $checksApps[] = array(
+        $checksApps[] = [
             "name" => "Ghostscript (CLI)",
             "state" => $ghostscriptBin ? "ok" : "warning"
-        );
+        ];
 
         // LibreOffice BIN
         try {
@@ -556,10 +554,10 @@ class Install_CheckController extends \Pimcore\Controller\Action
             $libreofficeBin = false;
         }
 
-        $checksApps[] = array(
+        $checksApps[] = [
             "name" => "LibreOffice (CLI)",
             "state" => $libreofficeBin ? "ok" : "warning"
-        );
+        ];
 
         // PNG optimizer
         try {
@@ -568,10 +566,10 @@ class Install_CheckController extends \Pimcore\Controller\Action
             $pngOptimizer = false;
         }
 
-        $checksApps[] = array(
+        $checksApps[] = [
             "name" => "PNG Optimizer (pngcrush)",
             "state" => $pngOptimizer ? "ok" : "warning"
-        );
+        ];
 
         // JPEG optimizer
         try {
@@ -580,10 +578,10 @@ class Install_CheckController extends \Pimcore\Controller\Action
             $jpgOptimizer = false;
         }
 
-        $checksApps[] = array(
+        $checksApps[] = [
             "name" => "JPEG Optimizer (imgmin, jpegoptim)",
             "state" => $jpgOptimizer ? "ok" : "warning"
-        );
+        ];
 
         // timeout binary
         try {
@@ -592,10 +590,10 @@ class Install_CheckController extends \Pimcore\Controller\Action
             $timeoutBin = false;
         }
 
-        $checksApps[] = array(
+        $checksApps[] = [
             "name" => "timeout - (GNU coreutils)",
             "state" => $timeoutBin ? "ok" : "warning"
-        );
+        ];
 
         // pdftotext binary
         try {
@@ -604,10 +602,10 @@ class Install_CheckController extends \Pimcore\Controller\Action
             $pdftotextBin = false;
         }
 
-        $checksApps[] = array(
+        $checksApps[] = [
             "name" => "pdftotext - (part of poppler-utils)",
             "state" => $pdftotextBin ? "ok" : "warning"
-        );
+        ];
 
         $this->view->checksApps = $checksApps;
         $this->view->checksPHP = $checksPHP;
@@ -615,7 +613,7 @@ class Install_CheckController extends \Pimcore\Controller\Action
         $this->view->checksFS = $checksFS;
     }
 
-    protected function rscandir($base = '', &$data = array())
+    protected function rscandir($base = '', &$data = [])
     {
         if (substr($base, -1, 1) != DIRECTORY_SEPARATOR) { //add trailing slash if it doesn't exists
             $base .= DIRECTORY_SEPARATOR;
@@ -625,7 +623,7 @@ class Install_CheckController extends \Pimcore\Controller\Action
             throw new \Exception("limit of 2000 files reached");
         }
 
-        $array = array_diff(scandir($base), array('.', '..', '.svn'));
+        $array = array_diff(scandir($base), ['.', '..', '.svn']);
         foreach ($array as $value) {
             if (is_dir($base . $value)) {
                 $data[] = $base . $value . DIRECTORY_SEPARATOR;

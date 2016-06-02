@@ -29,16 +29,16 @@ class CompatibilityStubsCommand extends AbstractCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $paths = array(
+        $paths = [
             PIMCORE_CLASS_DIRECTORY,
-        );
+        ];
         $output = PIMCORE_WEBSITE_VAR . "/compatibility-2.x-stubs.php";
 
         $excludePatterns = [
 
         ];
 
-        $globalMap = array();
+        $globalMap = [];
         $map = new \stdClass();
 
         foreach ($paths as $path) {

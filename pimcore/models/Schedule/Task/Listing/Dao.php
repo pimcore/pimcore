@@ -28,7 +28,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function load()
     {
-        $tasks = array();
+        $tasks = [];
         $tasksData = $this->db->fetchCol("SELECT id FROM schedule_tasks" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         foreach ($tasksData as $taskData) {

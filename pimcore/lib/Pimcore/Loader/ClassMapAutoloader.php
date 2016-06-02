@@ -18,7 +18,6 @@ use Pimcore\Tool;
 
 class ClassMapAutoloader extends \Zend_Loader_ClassMapAutoloader
 {
-
     public function autoload($class)
     {
 

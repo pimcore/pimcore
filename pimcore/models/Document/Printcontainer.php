@@ -3,7 +3,8 @@ namespace Pimcore\Model\Document;
 
 use \Pimcore\Model\Document;
 
-class Printcontainer extends Document\PrintAbstract {
+class Printcontainer extends Document\PrintAbstract
+{
     /**
      * Static type of the document
      *
@@ -12,66 +13,72 @@ class Printcontainer extends Document\PrintAbstract {
     public $type = "printcontainer";
 
 
-    public function getController() {
-        if(empty($this->controller)) {
+    public function getController()
+    {
+        if (empty($this->controller)) {
             $this->controller = "container";
         }
         return $this->controller;
     }
 
-    public function getModule() {
-        if(empty($this->module)) {
+    public function getModule()
+    {
+        if (empty($this->module)) {
             $this->module = "Web2Print";
         }
         return $this->module;
     }
 
-    public function getAction() { 
-        if(empty($this->action)) {
+    public function getAction()
+    {
+        if (empty($this->action)) {
             $this->action = "container";
         }
         return $this->action;
     }
 
 
-    public function getTreeNodeConfig() {
-        $tmpDocument = array();
+    public function getTreeNodeConfig()
+    {
+        $tmpDocument = [];
         $tmpDocument["leaf"] = false;
         $tmpDocument["expanded"] = $this->hasNoChilds();
         $tmpDocument["iconCls"] = "pimcore_icon_printcontainer";
-        $tmpDocument["permissions"] = array(
+        $tmpDocument["permissions"] = [
             "view" => $this->isAllowed("view"),
             "remove" => $this->isAllowed("delete"),
             "settings" => $this->isAllowed("settings"),
             "rename" => $this->isAllowed("rename"),
             "publish" => $this->isAllowed("publish"),
             "create" => $this->isAllowed("create")
-        );
+        ];
 
         return $tmpDocument;
     }
 
 
     private $allChildren;
-    public function getAllChildren() {
-        $this->allChildren = array();
+    public function getAllChildren()
+    {
+        $this->allChildren = [];
         $this->doGetChildren($this);
         return $this->allChildren;
     }
 
-    private function doGetChildren(Document $document) {
+    private function doGetChildren(Document $document)
+    {
         $children = $document->getChilds();
-        foreach($children as $child) {
-            if($child instanceof Document\Printpage) {
+        foreach ($children as $child) {
+            if ($child instanceof Document\Printpage) {
                 $this->allChildren[] = $child;
             }
 
-            if($child instanceof Document\Folder || $child instanceof Document\Printcontainer) {
+            if ($child instanceof Document\Folder || $child instanceof Document\Printcontainer) {
                 $this->doGetChildren($child);
             }
 
-            if($child instanceof Document\Hardlink) {
-                if($child->getSourceDocument() instanceof Document\Printpage) {
+            if ($child instanceof Document\Hardlink) {
+                if ($child->getSourceDocument() instanceof Document\Printpage) {
                     $this->allChildren[] = $child;
                 }
 
@@ -81,9 +88,10 @@ class Printcontainer extends Document\PrintAbstract {
     }
 
 
-    public function pdfIsDirty() {
+    public function pdfIsDirty()
+    {
         $dirty = parent::pdfIsDirty();
-        if(!$dirty) {
+        if (!$dirty) {
             $dirty = ($this->getLastGenerated() < $this->getLastedChildMofidicationDate());
         }
 
@@ -93,22 +101,22 @@ class Printcontainer extends Document\PrintAbstract {
 
     public function getCssModificationForPreview($includeChildren = false)
     {
-        if($includeChildren) {
+        if ($includeChildren) {
             $allChildren = $this->getAllChildren();
 
             $modifications = parent::getCssModificationForPreview();
-            if(!$modifications) {
-                $modifications = array();
+            if (!$modifications) {
+                $modifications = [];
             }
 
-            if($allChildren) {
-                foreach($allChildren as $child) {
+            if ($allChildren) {
+                foreach ($allChildren as $child) {
                     $workingChild = $child;
-                    if($child instanceof Document\Hardlink) {
+                    if ($child instanceof Document\Hardlink) {
                         $workingChild = $child->getSourceDocument();
                     }
                     $childModifications = $workingChild->getCssModificationForPreview(true);
-                    if($childModifications) {
+                    if ($childModifications) {
                         $modifications = array_merge($modifications, $childModifications);
                     }
                 }
@@ -119,5 +127,4 @@ class Printcontainer extends Document\PrintAbstract {
             return parent::getCssModificationForPreview();
         }
     }
-
 }

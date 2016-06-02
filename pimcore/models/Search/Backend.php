@@ -52,7 +52,7 @@ class Backend
                 FROM search_backend_data d
                 WHERE (d.data like ? OR properties like ? )";
 
-        $this->backendQueryParams = array("%$queryStr%","%$queryStr%");
+        $this->backendQueryParams = ["%$queryStr%","%$queryStr%"];
 
         if (!empty($type)) {
             $this->backendQuery.=" AND maintype = ? ";

@@ -45,15 +45,15 @@ class Editmode extends \Zend_Controller_Plugin_Abstract
         // add scripts to editmode
 
         if (\Pimcore\Tool\Admin::isExtJS6()) {
-            $editmodeLibraries = array(
+            $editmodeLibraries = [
                 "/pimcore/static6/js/pimcore/namespace.js",
                 "/pimcore/static6/js/lib/prototype-light.js",
                 "/pimcore/static6/js/lib/jquery.min.js",
                 "/pimcore/static6/js/lib/ext/ext-all.js",
                 "/pimcore/static6/js/lib/ckeditor/ckeditor.js"
-            );
+            ];
 
-            $editmodeScripts = array(
+            $editmodeScripts = [
                 "/pimcore/static6/js/pimcore/functions.js",
                 "/pimcore/static6/js/pimcore/element/tag/imagehotspotmarkereditor.js",
                 "/pimcore/static6/js/pimcore/element/tag/imagecropper.js",
@@ -83,14 +83,14 @@ class Editmode extends \Zend_Controller_Plugin_Abstract
                 "/pimcore/static6/js/pimcore/document/tags/pdf.js",
                 "/pimcore/static6/js/pimcore/document/tags/embed.js",
                 "/pimcore/static6/js/pimcore/document/edit/helper.js"
-            );
+            ];
 
-            $editmodeStylesheets = array(
+            $editmodeStylesheets = [
                 "/pimcore/static6/css/icons.css",
                 "/pimcore/static6/css/editmode.css?_dc=" . time()
-            );
+            ];
         } else {
-            $editmodeLibraries = array(
+            $editmodeLibraries = [
                 "/pimcore/static/js/pimcore/namespace.js",
 
                 "/pimcore/static/js/lib/prototype-light.js",
@@ -104,9 +104,9 @@ class Editmode extends \Zend_Controller_Plugin_Abstract
                 "/pimcore/static/js/lib/ext-plugins/GridRowOrder/roworder.js",
                 "/pimcore/static/js/lib/ckeditor/ckeditor.js",
                 "/pimcore/static/js/pimcore/libfixes.js"
-            );
+            ];
 
-            $editmodeScripts = array(
+            $editmodeScripts = [
                 "/pimcore/static/js/pimcore/functions.js",
                 "/pimcore/static/js/pimcore/element/tag/imagehotspotmarkereditor.js",
                 "/pimcore/static/js/pimcore/element/tag/imagecropper.js",
@@ -134,9 +134,9 @@ class Editmode extends \Zend_Controller_Plugin_Abstract
                 "/pimcore/static/js/pimcore/document/tags/area.js",
                 "/pimcore/static/js/pimcore/document/tags/pdf.js",
                 "/pimcore/static/js/pimcore/document/edit/helper.js"
-            );
+            ];
 
-            $editmodeStylesheets = array(
+            $editmodeStylesheets = [
                 /*"/pimcore/static/js/lib/ext/resources/css/ext-all.css",
                 "/pimcore/static/js/lib/ext/resources/css/xtheme-gray.css",
                 "/pimcore/static/js/lib/ext-plugins/ux/css/Spinner.css",
@@ -144,19 +144,19 @@ class Editmode extends \Zend_Controller_Plugin_Abstract
                 "/pimcore/static/css/ext-admin-overwrite.css",*/
                 "/pimcore/static/css/icons.css",
                 "/pimcore/static/css/editmode.css?asd=" . time(),
-            );
+            ];
         }
 
         //add plugin editmode JS and CSS
         try {
             $pluginConfigs = ExtensionManager::getPluginConfigs();
-            $jsPaths = array();
-            $cssPaths = array();
+            $jsPaths = [];
+            $cssPaths = [];
 
             if (!empty($pluginConfigs)) {
                 //registering plugins
                 foreach ($pluginConfigs as $p) {
-                    $pluginJsPaths = array();
+                    $pluginJsPaths = [];
 
                     $pluginVersions = [""];
                     if (\Pimcore\Tool\Admin::isExtJS6()) {
@@ -187,7 +187,7 @@ class Editmode extends \Zend_Controller_Plugin_Abstract
                     }
 
 
-                    $pluginCssPaths = array();
+                    $pluginCssPaths = [];
                     foreach ($pluginVersions as $pluginVersion) {
                         if (array_key_exists("pluginDocumentEditmodeCssPaths".$pluginVersion, $p['plugin'])
                             && is_array($p['plugin']['pluginDocumentEditmodeCssPaths'.$pluginVersion])

@@ -6,21 +6,24 @@
  * into PDF.<br/>
  * <br/>
  */
-class PDFreactor {
-    var $url;
-    function __construct($url = "http://localhost:9423/service/rest") {
+class PDFreactor
+{
+    public $url;
+    public function __construct($url = "http://localhost:9423/service/rest")
+    {
         $this->url = $url;
     }
-    function convert($config) {
+    public function convert($config)
+    {
         $url = $this->url ."/convert.json";
-        $options = array(
-            'http' => array(
+        $options = [
+            'http' => [
                 'header'  => "Content-type: application/json\r\n",
                 'method'  => 'POST',
                 'content' => json_encode($config),
                 'ignore_errors' => true
-            ),
-        );
+            ],
+        ];
 
         $context = stream_context_create($options);
 
@@ -29,62 +32,64 @@ class PDFreactor {
         $status = intval(substr($http_response_header[0], 9, 3));
         if ($status == 404) {
             throw new Exception('Document with the given ID was not found.');
-        } else if ($status == 422) {
+        } elseif ($status == 422) {
             throw new Exception($result);
-        } else if ($status == 400) {
+        } elseif ($status == 400) {
             throw new Exception('Invalid configuration.');
-        } else if ($status > 400) {
+        } elseif ($status > 400) {
             throw new Exception('PDFreactor Web Service error. Please check your Configuration. ' . $status);
         }
         return json_decode($result);
     }
-    function convertAsBinary($config) {
+    public function convertAsBinary($config)
+    {
         $url = $this->url ."/convert.bin";
-        $options = array(
-            'http' => array(
+        $options = [
+            'http' => [
                 'header'  => "Content-type: application/json\r\n",
                 'method'  => 'POST',
                 'content' => json_encode($config),
                 'ignore_errors' => true
-            ),
-        );
+            ],
+        ];
         $context = stream_context_create($options);
         $result = file_get_contents($url, false, $context);
         $status = intval(substr($http_response_header[0], 9, 3));
         if ($status == 404) {
             throw new Exception('Document with the given ID was not found.');
-        } else if ($status == 422) {
+        } elseif ($status == 422) {
             throw new Exception($result);
-        } else if ($status == 400) {
+        } elseif ($status == 400) {
             throw new Exception('Invalid configuration.');
-        } else if ($status > 400) {
+        } elseif ($status > 400) {
             throw new Exception('PDFreactor Web Service error. Please check your Configuration.');
         }
         return $result;
     }
-    function convertAsync($config) {
+    public function convertAsync($config)
+    {
         $documentId = null;
         $url = $this->url ."/convert/async.json";
-        $options = array(
-            'http' => array(
+        $options = [
+            'http' => [
                 'header'  => "Content-type: application/json\r\n",
                 'method'  => 'POST',
                 'content' => json_encode($config),
                 'ignore_errors' => true
-            ),
-        );
+            ],
+        ];
         $context = stream_context_create($options);
         $result = file_get_contents($url, false, $context);
         $status = intval(substr($http_response_header[0], 9, 3));
         if ($status == 404) {
             throw new Exception('Document with the given ID was not found.');
-        } else if ($status == 422) {
+        } elseif ($status == 422) {
             throw new Exception($result);
-        } else if ($status == 400) {
+        } elseif ($status == 400) {
             throw new Exception('Invalid configuration.');
-        } else if ($status == 503) {
+        } elseif ($status == 503) {
             throw new Exception('Asynchronous conversions are unavailable.');
-        } else if ($status > 400) {
+        } elseif ($status > 400) {
             throw new Exception('PDFreactor Web Service error. Please check your Configuration.');
         }
         foreach ($http_response_header as $header) {
@@ -98,163 +103,171 @@ class PDFreactor {
         }
         return $documentId;
     }
-    function getProgress($documentId) {
+    public function getProgress($documentId)
+    {
         if (is_null($documentId)) {
             throw new Exception("No conversion was triggered.");
         }
         $url = $this->url ."/progress/" . $documentId . ".json";
-        $options = array(
-            'http' => array(
+        $options = [
+            'http' => [
                 'header'  => "Content-type: application/json\r\n",
                 'method'  => 'GET',
                 'ignore_errors' => true
-            ),
-        );
+            ],
+        ];
         $context = stream_context_create($options);
         $result = file_get_contents($url, false, $context);
         $status = intval(substr($http_response_header[0], 9, 3));
         if ($status == 404) {
             throw new Exception('Document with the given ID was not found.');
-        } else if ($status == 422) {
+        } elseif ($status == 422) {
             throw new Exception($result);
-        } else if ($status == 400) {
+        } elseif ($status == 400) {
             throw new Exception('Invalid configuration.');
-        } else if ($status > 400) {
+        } elseif ($status > 400) {
             throw new Exception('PDFreactor Web Service error. Please check your Configuration.');
         }
         return json_decode($result);
     }
-    function getDocument($documentId) {
+    public function getDocument($documentId)
+    {
         if (is_null($documentId)) {
             throw new Exception("No conversion was triggered.");
         }
         $url = $this->url ."/document/" . $documentId . ".json";
-        $options = array(
-            'http' => array(
+        $options = [
+            'http' => [
                 'header'  => "Content-type: application/json\r\n",
                 'method'  => 'GET',
                 'ignore_errors' => true
-            ),
-        );
+            ],
+        ];
         $context = stream_context_create($options);
         $result = file_get_contents($url, false, $context);
         $status = intval(substr($http_response_header[0], 9, 3));
         if ($status == 404) {
             throw new Exception('Document with the given ID was not found.');
-        } else if ($status == 422) {
+        } elseif ($status == 422) {
             throw new Exception($result);
-        } else if ($status == 400) {
+        } elseif ($status == 400) {
             throw new Exception('Invalid configuration.');
-        } else if ($status > 400) {
+        } elseif ($status > 400) {
             throw new Exception('PDFreactor Web Service error. Please check your Configuration.');
         }
         return json_decode($result);
     }
-    function getDocumentAsBinary($documentId) {
+    public function getDocumentAsBinary($documentId)
+    {
         if (is_null($documentId)) {
             throw new Exception("No conversion was triggered.");
         }
         $url = $this->url ."/document/" . $documentId . ".bin";
-        $options = array(
-            'http' => array(
+        $options = [
+            'http' => [
                 'header'  => "Content-type: application/json\r\n",
                 'method'  => 'GET',
                 'ignore_errors' => true
-            ),
-        );
+            ],
+        ];
         $context = stream_context_create($options);
         $result = file_get_contents($url, false, $context);
         $status = intval(substr($http_response_header[0], 9, 3));
         if ($status == 404) {
             throw new Exception('Document with the given ID was not found.');
-        } else if ($status == 422) {
+        } elseif ($status == 422) {
             throw new Exception($result);
-        } else if ($status == 400) {
+        } elseif ($status == 400) {
             throw new Exception('Invalid configuration.');
-        } else if ($status > 400) {
+        } elseif ($status > 400) {
             throw new Exception('PDFreactor Web Service error. Please check your Configuration.');
         }
         return $result;
     }
-    function deleteDocument($documentId) {
+    public function deleteDocument($documentId)
+    {
         if (is_null($documentId)) {
             throw new Exception("No conversion was triggered.");
         }
         $url = $this->url ."/document/" . $documentId . ".json";
-        $options = array(
-            'http' => array(
+        $options = [
+            'http' => [
                 'header'  => "Content-type: application/json\r\n",
                 'method'  => 'DELETE',
                 'ignore_errors' => true
-            ),
-        );
+            ],
+        ];
         $context = stream_context_create($options);
         $result = file_get_contents($url, false, $context);
         $status = intval(substr($http_response_header[0], 9, 3));
         if ($status == 404) {
             throw new Exception('Document with the given ID was not found.');
-        } else if ($status == 422) {
+        } elseif ($status == 422) {
             throw new Exception($result);
-        } else if ($status == 400) {
+        } elseif ($status == 400) {
             throw new Exception('Invalid configuration.');
-        } else if ($status > 400) {
+        } elseif ($status > 400) {
             throw new Exception('PDFreactor Web Service error. Please check your Configuration.');
         }
     }
-    function getVersion() {
+    public function getVersion()
+    {
         $url = $this->url ."/version.json";
-        $options = array(
-            'http' => array(
+        $options = [
+            'http' => [
                 'header'  => "Content-type: application/json\r\n",
                 'method'  => 'GET',
                 'ignore_errors' => true
-            ),
-        );
+            ],
+        ];
         $context = stream_context_create($options);
         $result = file_get_contents($url, false, $context);
         $status = intval(substr($http_response_header[0], 9, 3));
         if ($status == 404) {
             throw new Exception('Document with the given ID was not found.');
-        } else if ($status == 422) {
+        } elseif ($status == 422) {
             throw new Exception($result);
-        } else if ($status == 400) {
+        } elseif ($status == 400) {
             throw new Exception('Invalid configuration.');
-        } else if ($status > 400) {
+        } elseif ($status > 400) {
             throw new Exception('PDFreactor Web Service error. Please check your Configuration.');
         }
         return json_decode($result);
     }
-    function getStatus() {
+    public function getStatus()
+    {
         $url = $this->url ."/document.json";
-        $options = array(
-            'http' => array(
+        $options = [
+            'http' => [
                 'header'  => "Content-type: application/json\r\n",
                 'method'  => 'GET',
                 'ignore_errors' => true
-            ),
-        );
+            ],
+        ];
         $context = stream_context_create($options);
         $result = file_get_contents($url, false, $context);
         $status = intval(substr($http_response_header[0], 9, 3));
         if ($status == 404) {
             throw new Exception('Document with the given ID was not found.');
-        } else if ($status == 422) {
+        } elseif ($status == 422) {
             throw new Exception($result);
-        } else if ($status == 400) {
+        } elseif ($status == 400) {
             throw new Exception('Invalid configuration.');
-        } else if ($status == 503) {
+        } elseif ($status == 503) {
             throw new Exception('PDFreactor Web Service is unavailable.');
-        } else if ($status > 400) {
+        } elseif ($status > 400) {
             throw new Exception('PDFreactor Web Service error. Please check your Configuration.');
         }
     }
-    function getDocumentUrl($documentId) {
+    public function getDocumentUrl($documentId)
+    {
         if (!is_null($documentId)) {
             return $this->url . "/document/" . $documentId;
         }
         return null;
     }
-    function getProgressUrl($documentId) {
+    public function getProgressUrl($documentId)
+    {
         if (!is_null($documentId)) {
             return $this->url . "/progress/" . $documentId;
         }
@@ -262,17 +275,20 @@ class PDFreactor {
     }
     const VERSION = 0;
 }
-abstract class Cleanup {
+abstract class Cleanup
+{
     const CYBERNEKO = "CYBERNEKO";
     const JTIDY = "JTIDY";
     const NONE = "NONE";
     const TAGSOUP = "TAGSOUP";
 }
-abstract class ColorSpace {
+abstract class ColorSpace
+{
     const CMYK = "CMYK";
     const RGB = "RGB";
 }
-abstract class Conformance {
+abstract class Conformance
+{
     const PDF = "PDF";
     const PDFA1A = "PDFA1A";
     const PDFA1B = "PDFA1B";
@@ -288,45 +304,53 @@ abstract class Conformance {
     const PDFX3_2003 = "PDFX3_2003";
     const PDFX4 = "PDFX4";
 }
-abstract class Doctype {
+abstract class Doctype
+{
     const AUTODETECT = "AUTODETECT";
     const HTML5 = "HTML5";
     const XHTML = "XHTML";
     const XML = "XML";
 }
-abstract class Encryption {
+abstract class Encryption
+{
     const NONE = "NONE";
     const TYPE_128 = "TYPE_128";
     const TYPE_40 = "TYPE_40";
 }
-abstract class ExceedingContentAgainst {
+abstract class ExceedingContentAgainst
+{
     const NONE = "NONE";
     const PAGE_BORDERS = "PAGE_BORDERS";
     const PAGE_CONTENT = "PAGE_CONTENT";
     const PARENT = "PARENT";
 }
-abstract class ExceedingContentAnalyze {
+abstract class ExceedingContentAnalyze
+{
     const CONTENT = "CONTENT";
     const CONTENT_AND_BOXES = "CONTENT_AND_BOXES";
     const CONTENT_AND_STATIC_BOXES = "CONTENT_AND_STATIC_BOXES";
     const NONE = "NONE";
 }
-abstract class HttpsMode {
+abstract class HttpsMode
+{
     const LENIENT = "LENIENT";
     const STRICT = "STRICT";
 }
-abstract class JavaScriptMode {
+abstract class JavaScriptMode
+{
     const DISABLED = "DISABLED";
     const ENABLED = "ENABLED";
     const ENABLED_NO_LAYOUT = "ENABLED_NO_LAYOUT";
     const ENABLED_REAL_TIME = "ENABLED_REAL_TIME";
     const ENABLED_TIME_LAPSE = "ENABLED_TIME_LAPSE";
 }
-abstract class KeystoreType {
+abstract class KeystoreType
+{
     const JKS = "JKS";
     const PKCS12 = "PKCS12";
 }
-abstract class LogLevel {
+abstract class LogLevel
+{
     const DEBUG = "DEBUG";
     const FATAL = "FATAL";
     const INFO = "INFO";
@@ -334,7 +358,8 @@ abstract class LogLevel {
     const PERFORMANCE = "PERFORMANCE";
     const WARN = "WARN";
 }
-abstract class MediaFeature {
+abstract class MediaFeature
+{
     const ASPECT_RATIO = "ASPECT_RATIO";
     const COLOR = "COLOR";
     const COLOR_INDEX = "COLOR_INDEX";
@@ -348,14 +373,16 @@ abstract class MediaFeature {
     const RESOLUTION = "RESOLUTION";
     const WIDTH = "WIDTH";
 }
-abstract class MergeMode {
+abstract class MergeMode
+{
     const APPEND = "APPEND";
     const ARRANGE = "ARRANGE";
     const OVERLAY = "OVERLAY";
     const OVERLAY_BELOW = "OVERLAY_BELOW";
     const PREPEND = "PREPEND";
 }
-abstract class OutputType {
+abstract class OutputType
+{
     const BMP = "BMP";
     const GIF = "GIF";
     const JPEG = "JPEG";
@@ -371,13 +398,15 @@ abstract class OutputType {
     const TIFF_PACKBITS = "TIFF_PACKBITS";
     const TIFF_UNCOMPRESSED = "TIFF_UNCOMPRESSED";
 }
-abstract class OverlayRepeat {
+abstract class OverlayRepeat
+{
     const ALL_PAGES = "ALL_PAGES";
     const LAST_PAGE = "LAST_PAGE";
     const NONE = "NONE";
     const TRIM = "TRIM";
 }
-abstract class PagesPerSheetDirection {
+abstract class PagesPerSheetDirection
+{
     const DOWN_LEFT = "DOWN_LEFT";
     const DOWN_RIGHT = "DOWN_RIGHT";
     const LEFT_DOWN = "LEFT_DOWN";
@@ -387,7 +416,8 @@ abstract class PagesPerSheetDirection {
     const UP_LEFT = "UP_LEFT";
     const UP_RIGHT = "UP_RIGHT";
 }
-abstract class PdfScriptTriggerEvent {
+abstract class PdfScriptTriggerEvent
+{
     const AFTER_PRINT = "AFTER_PRINT";
     const AFTER_SAVE = "AFTER_SAVE";
     const BEFORE_PRINT = "BEFORE_PRINT";
@@ -395,15 +425,18 @@ abstract class PdfScriptTriggerEvent {
     const CLOSE = "CLOSE";
     const OPEN = "OPEN";
 }
-abstract class ProcessingPreferences {
+abstract class ProcessingPreferences
+{
     const SAVE_MEMORY_IMAGES = "SAVE_MEMORY_IMAGES";
 }
-abstract class SigningMode {
+abstract class SigningMode
+{
     const SELF_SIGNED = "SELF_SIGNED";
     const VERISIGN_SIGNED = "VERISIGN_SIGNED";
     const WINCER_SIGNED = "WINCER_SIGNED";
 }
-abstract class ViewerPreferences {
+abstract class ViewerPreferences
+{
     const CENTER_WINDOW = "CENTER_WINDOW";
     const DIRECTION_L2R = "DIRECTION_L2R";
     const DIRECTION_R2L = "DIRECTION_R2L";

@@ -23,7 +23,7 @@ class Analytics
     /**
      * @var array
      */
-    public static $stack = array();
+    public static $stack = [];
 
     /**
      * @var null

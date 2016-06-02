@@ -4,8 +4,6 @@
 
 class SingleTest extends Test_SuiteBase
 {
-
-
     public static function suite()
     {
         $suite = new SingleTest('Inheritance');

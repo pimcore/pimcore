@@ -111,7 +111,7 @@ class ClassDefinition extends Model\Webservice\Data
     public function map($class, $options = null)
     {
         $arr = $class->fieldDefinitions;
-        $result = array();
+        $result = [];
         foreach ($arr as $item) {
             $result[] = $item;
         }

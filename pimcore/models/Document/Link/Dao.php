@@ -60,9 +60,9 @@ class Dao extends Model\Document\Dao
         try {
             parent::create();
 
-            $this->db->insert("documents_link", array(
+            $this->db->insert("documents_link", [
                 "id" => $this->model->getId()
-            ));
+            ]);
         } catch (\Exception $e) {
             throw $e;
         }

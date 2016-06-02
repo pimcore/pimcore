@@ -19,15 +19,14 @@ use Pimcore\Model\Tool;
 
 class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
 {
-
     public function getDataByIdAction()
     {
 
         // check for lock
         if (Element\Editlock::isLocked($this->getParam("id"), "document")) {
-            $this->_helper->json(array(
+            $this->_helper->json([
                 "editlock" => Element\Editlock::getByElement($this->getParam("id"), "document")
-            ));
+            ]);
         }
         Element\Editlock::lock($this->getParam("id"), "document");
 
@@ -78,10 +77,10 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
                     try {
                         $page->save();
                         $this->saveToSession($page);
-                        $this->_helper->json(array("success" => true));
+                        $this->_helper->json(["success" => true]);
                     } catch (\Exception $e) {
                         \Logger::err($e);
-                        $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
+                        $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
                     }
                 } else {
                     if ($page->isAllowed("save")) {
@@ -91,14 +90,14 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
                         try {
                             $page->saveVersion();
                             $this->saveToSession($page);
-                            $this->_helper->json(array("success" => true));
+                            $this->_helper->json(["success" => true]);
                         } catch (\Exception $e) {
                             if (Tool\Admin::isExtJS6() && $e instanceof Element\ValidationException) {
                                 throw $e;
                             }
 
                             \Logger::err($e);
-                            $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
+                            $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
                         }
                     }
                 }
@@ -106,7 +105,7 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
         } catch (\Exception $e) {
             \Logger::log($e);
             if (\Pimcore\Tool\Admin::isExtJS6() && $e instanceof Element\ValidationException) {
-                $this->_helper->json(array("success" => false, "type" => "ValidationException", "message" => $e->getMessage(), "stack" => $e->getTraceAsString(), "code" => $e->getCode()));
+                $this->_helper->json(["success" => false, "type" => "ValidationException", "message" => $e->getMessage(), "stack" => $e->getTraceAsString(), "code" => $e->getCode()]);
             }
             throw $e;
         }
@@ -161,7 +160,7 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
         $list->setOrder("DESC");
 
         $data = $list->load();
-        $jsonData = array();
+        $jsonData = [];
 
         if (is_array($data)) {
             foreach ($data as $entry) {
@@ -172,11 +171,11 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
             }
         }
 
-        $this->_helper->json(array(
+        $this->_helper->json([
             "data" => $jsonData,
             "success" => true,
             "total" => $list->getTotalCount()
-        ));
+        ]);
     }
 
     /**
@@ -203,7 +202,7 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
                 $params = \Zend_Json::decode($emailLog->getParams());
             } catch (\Exception $e) {
                 \Logger::warning("Could not decode JSON param string");
-                $params = array();
+                $params = [];
             }
             foreach ($params as &$entry) {
                 $this->enhanceLoggingData($entry);
@@ -234,7 +233,7 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
             $niceClassName = str_replace("_", "\\", $niceClassName);
 
             $tmp = explode("\\", $niceClassName);
-            if (in_array($tmp[0], array('Object', 'Document', 'Asset'))) {
+            if (in_array($tmp[0], ['Object', 'Document', 'Asset'])) {
                 $data['objectClassBase'] = $tmp[0];
                 $data['objectClassSubType'] = $tmp[1];
             }
@@ -252,7 +251,7 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
                 }
             }
             $data['iconCls'] = 'pimcore_icon_folder';
-            $data['data'] = array('type' => 'simple', 'value' => 'Children (' . count($data['children']) . ')');
+            $data['data'] = ['type' => 'simple', 'value' => 'Children (' . count($data['children']) . ')'];
         } else {
             //setting the icon class
             if (!$data['iconCls']) {
@@ -272,7 +271,7 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
                         case 'Document':
                             $fullEntry['iconCls'] = 'pimcore_icon_pdf';
                             break;
-                        default :
+                        default:
                             $fullEntry['iconCls'] = 'pimcore_icon_asset';
                     }
                 } elseif (strpos($data['objectClass'], 'Document') === 0) {
@@ -302,9 +301,9 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
             $emailLog->delete();
             $success = true;
         }
-        $this->_helper->json(array(
+        $this->_helper->json([
             "success" => $success,
-        ));
+        ]);
     }
 
     /**
@@ -351,9 +350,9 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
             $success = true;
         }
 
-        $this->_helper->json(array(
+        $this->_helper->json([
             "success" => $success,
-        ));
+        ]);
     }
 
 
@@ -378,9 +377,9 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
 
         $mail->send();
 
-        $this->_helper->json(array(
+        $this->_helper->json([
             "success" => true,
-        ));
+        ]);
     }
 
 
@@ -403,13 +402,13 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
                 $address = Tool\Email\Blacklist::getByAddress($data);
                 $address->delete();
 
-                $this->_helper->json(array("success" => true, "data" => array()));
+                $this->_helper->json(["success" => true, "data" => []]);
             } elseif ($this->getParam("xaction") == "update") {
                 $address = Tool\Email\Blacklist::getByAddress($data["address"]);
                 $address->setValues($data);
                 $address->save();
 
-                $this->_helper->json(array("data" => $address, "success" => true));
+                $this->_helper->json(["data" => $address, "success" => true]);
             } elseif ($this->getParam("xaction") == "create") {
                 unset($data["id"]);
 
@@ -417,7 +416,7 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
                 $address->setValues($data);
                 $address->save();
 
-                $this->_helper->json(array("data" => $address, "success" => true));
+                $this->_helper->json(["data" => $address, "success" => true]);
             }
         } else {
             // get list of routes
@@ -442,11 +441,11 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
 
             $data = $list->load();
 
-            $this->_helper->json(array(
+            $this->_helper->json([
                 "success" => true,
                 "data" => $data,
                 "total" => $list->getTotalCount()
-            ));
+            ]);
         }
 
         $this->_helper->json(false);
@@ -459,37 +458,37 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
         $config = \Pimcore\Config::getSystemConfig();
 
         if ($config->email->bounce->type == "Mbox") {
-            $mail = new \Zend_Mail_Storage_Mbox(array(
+            $mail = new \Zend_Mail_Storage_Mbox([
                 'filename' => $config->email->bounce->mbox
-            ));
+            ]);
         } elseif ($config->email->bounce->type == "Maildir") {
-            $mail = new \Zend_Mail_Storage_Maildir(array(
+            $mail = new \Zend_Mail_Storage_Maildir([
                 'dirname' => $config->email->bounce->maildir
-            ));
+            ]);
         } elseif ($config->email->bounce->type == "IMAP") {
-            $mail = new \Zend_Mail_Storage_Imap(array(
+            $mail = new \Zend_Mail_Storage_Imap([
                 'host' => $config->email->bounce->imap->host,
                 "port" => $config->email->bounce->imap->port,
                 'user' => $config->email->bounce->imap->username,
                 'password' => $config->email->bounce->imap->password,
                 "ssl" => (bool) $config->email->bounce->imap->ssl
-            ));
+            ]);
         } else {
             // default
-            $pathes = array(
+            $pathes = [
                 "/var/mail/" . get_current_user(),
                 "/var/spool/mail/" . get_current_user()
-            );
+            ];
 
             foreach ($pathes as $path) {
                 if (is_dir($path)) {
-                    $mail = new \Zend_Mail_Storage_Maildir(array(
+                    $mail = new \Zend_Mail_Storage_Maildir([
                         'dirname' => $path . "/"
-                    ));
+                    ]);
                 } elseif (is_file($path)) {
-                    $mail = new \Zend_Mail_Storage_Mbox(array(
+                    $mail = new \Zend_Mail_Storage_Mbox([
                         'filename' => $path
-                    ));
+                    ]);
                 }
             }
         }
@@ -507,19 +506,19 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
         $mail = $this->getBounceMailbox();
         $mail->seek($offset);
 
-        $mails = array();
+        $mails = [];
         $count = 0;
         while ($mail->valid()) {
             $count++;
 
             $message = $mail->current();
 
-            $mailData = array(
+            $mailData = [
                 "subject" => iconv(mb_detect_encoding($message->subject), "UTF-8", $message->subject),
                 "to" => $message->to,
                 "from" => $message->from,
                 "id" => (int) $mail->key()
-            );
+            ];
 
             $date = new \DateTime();
             $date->setTimestamp($message->date);
@@ -534,11 +533,11 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
             $mail->next();
         }
 
-        $this->_helper->json(array(
+        $this->_helper->json([
             "data" => $mails,
             "success" => true,
             "total" => $mail->countMessages()
-        ));
+        ]);
     }
 
     public function bounceMailInboxDetailAction()

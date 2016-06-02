@@ -20,13 +20,12 @@ use Pimcore\Model;
 
 class Definition extends Model\AbstractModel
 {
-
     public $key;
 
     /**
      * @param array
      */
-    public function __construct($data = array())
+    public function __construct($data = [])
     {
         if (is_array($data) && !empty($data)) {
             $this->setValues($data);
@@ -62,7 +61,7 @@ class Definition extends Model\AbstractModel
             throw new \Exception("No permisson defined.");
         }
         $list = new Definition\Listing();
-        $list->setCondition("`key`=?", array($permission));
+        $list->setCondition("`key`=?", [$permission]);
         $list->setLimit(1);
         $permissionDefinition = $list->load();
         if ($permissionDefinition[0]) {

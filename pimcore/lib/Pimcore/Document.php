@@ -77,7 +77,7 @@ class Document
      */
     public static function getDefaultAdapter()
     {
-        $adapters = array("LibreOffice", "Ghostscript");
+        $adapters = ["LibreOffice", "Ghostscript"];
 
         foreach ($adapters as $adapter) {
             $adapterClass = "\\Pimcore\\Document\\Adapter\\" . $adapter;

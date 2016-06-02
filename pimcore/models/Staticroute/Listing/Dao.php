@@ -39,7 +39,7 @@ class Dao extends Model\Dao\PhpArrayTable
     {
         $routesData = $this->db->fetchAll($this->model->getFilter(), $this->model->getOrder());
 
-        $routes = array();
+        $routes = [];
         foreach ($routesData as $routeData) {
             $routes[] = Model\Staticroute::getById($routeData["id"]);
         }

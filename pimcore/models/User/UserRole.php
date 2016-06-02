@@ -24,32 +24,32 @@ class UserRole extends AbstractUser
     /**
      * @var array
      */
-    public $permissions = array();
+    public $permissions = [];
 
     /**
      * @var array
      */
-    public $workspacesAsset = array();
+    public $workspacesAsset = [];
 
     /**
      * @var array
      */
-    public $workspacesObject = array();
+    public $workspacesObject = [];
 
     /**
      * @var array
      */
-    public $workspacesDocument = array();
+    public $workspacesDocument = [];
 
     /**
      * @var array
      */
-    public $classes = array();
+    public $classes = [];
 
     /**
      * @var array
      */
-    public $docTypes = array();
+    public $docTypes = [];
 
     public $perspectives;
 
@@ -79,7 +79,7 @@ class UserRole extends AbstractUser
      */
     public function setAllAclToFalse()
     {
-        $this->permissions = array();
+        $this->permissions = [];
         return $this;
     }
 
@@ -219,7 +219,7 @@ class UserRole extends AbstractUser
         }
 
         if (empty($classes)) {
-            $classes = array();
+            $classes = [];
         }
         $this->classes = $classes;
     }
@@ -244,7 +244,7 @@ class UserRole extends AbstractUser
         }
 
         if (empty($docTypes)) {
-            $docTypes = array();
+            $docTypes = [];
         }
 
         $this->docTypes = $docTypes;
@@ -278,7 +278,7 @@ class UserRole extends AbstractUser
         }
 
         if (empty($perspectives)) {
-            $perspectives = array();
+            $perspectives = [];
         }
 
 

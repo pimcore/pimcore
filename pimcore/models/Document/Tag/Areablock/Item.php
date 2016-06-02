@@ -57,7 +57,7 @@ class Item
     {
         $id = sprintf('%s%s%d', $name, $this->name, $this->index);
         $element = $this->doc->getElement($id);
-        $element->suffixes = array( $this->name );
+        $element->suffixes = [ $this->name ];
 
         return $element;
     }

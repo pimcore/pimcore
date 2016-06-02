@@ -20,7 +20,6 @@ use Pimcore\Model;
 
 class Textarea extends Model\Object\ClassDefinition\Data
 {
-
     use Model\Object\ClassDefinition\Data\Extension\Text;
 
     /**
@@ -105,7 +104,7 @@ class Textarea extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getDataForResource($data, $object = null, $params = array())
+    public function getDataForResource($data, $object = null, $params = [])
     {
         return $data;
     }
@@ -117,7 +116,7 @@ class Textarea extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getDataFromResource($data, $object = null, $params = array())
+    public function getDataFromResource($data, $object = null, $params = [])
     {
         return $data;
     }
@@ -129,7 +128,7 @@ class Textarea extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getDataForQueryResource($data, $object = null, $params = array())
+    public function getDataForQueryResource($data, $object = null, $params = [])
     {
         return $data;
     }
@@ -142,7 +141,7 @@ class Textarea extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getDataForEditmode($data, $object = null, $params = array())
+    public function getDataForEditmode($data, $object = null, $params = [])
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -154,7 +153,7 @@ class Textarea extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getDataFromEditmode($data, $object = null, $params = array())
+    public function getDataFromEditmode($data, $object = null, $params = [])
     {
         return $data;
     }
@@ -166,10 +165,10 @@ class Textarea extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return array|string
      */
-    public function getDiffVersionPreview($data, $object = null, $params = array())
+    public function getDiffVersionPreview($data, $object = null, $params = [])
     {
         if ($data) {
-            $value = array();
+            $value = [];
             $data = str_replace("\r\n", "<br>", $data);
             $data = str_replace("\n", "<br>", $data);
             $data = str_replace("\r", "<br>", $data);

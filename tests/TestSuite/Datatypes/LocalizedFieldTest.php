@@ -8,7 +8,6 @@
 
 class TestSuite_Datatypes_LocalizedFieldTest extends Test_Base
 {
-
     public function tearDown()
     {
         \Pimcore\Model\Object\Localizedfield::setStrictMode(Pimcore\Model\Object\Localizedfield::STRICT_DISABLED);

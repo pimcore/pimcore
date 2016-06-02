@@ -119,7 +119,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function create()
     {
-        $this->db->insert("targeting_rules", array());
+        $this->db->insert("targeting_rules", []);
 
         $this->model->setId($this->db->lastInsertId());
 

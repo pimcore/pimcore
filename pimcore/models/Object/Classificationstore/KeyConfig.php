@@ -24,7 +24,7 @@ class KeyConfig extends Model\AbstractModel
     /**
      * @var array
      */
-    public static $cache = array();
+    public static $cache = [];
 
     /**
      * @var bool
@@ -113,7 +113,7 @@ class KeyConfig extends Model\AbstractModel
     {
         self::$cacheEnabled = $cacheEnabled;
         if (!$cacheEnabled) {
-            self::$cache = array();
+            self::$cache = [];
         }
     }
 

@@ -85,5 +85,5 @@ interface TagInterface
      * @abstract
      * @return array
      */
-    public function getForWebserviceExport($document = null, $params = array());
+    public function getForWebserviceExport($document = null, $params = []);
 }

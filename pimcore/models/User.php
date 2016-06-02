@@ -64,7 +64,7 @@ class User extends User\UserRole
     /**
      * @var array
      */
-    public $roles = array();
+    public $roles = [];
 
     /**
      * @var bool
@@ -343,7 +343,7 @@ class User extends User\UserRole
         } elseif (is_array($roles)) {
             $this->roles = $roles;
         } elseif (empty($roles)) {
-            $this->roles = array();
+            $this->roles = [];
         }
         return $this;
     }
@@ -354,7 +354,7 @@ class User extends User\UserRole
     public function getRoles()
     {
         if (empty($this->roles)) {
-            return array();
+            return [];
         }
         return $this->roles;
     }
@@ -491,7 +491,7 @@ class User extends User\UserRole
         if (strlen($this->contentLanguages)) {
             return explode(',', $this->contentLanguages);
         }
-        return array();
+        return [];
     }
 
     /**

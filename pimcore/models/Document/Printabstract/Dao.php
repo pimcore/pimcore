@@ -3,21 +3,23 @@ namespace Pimcore\Model\Document\PrintAbstract;
 
 use \Pimcore\Model\Document;
 
-class Dao extends Document\PageSnippet\Dao {
+class Dao extends Document\PageSnippet\Dao
+{
 
     /**
      * Contains the valid database columns
      *
      * @var array
      */
-    protected $validColumnsPage = array();
+    protected $validColumnsPage = [];
 
     /**
      * Get the valid columns from the database
      *
      * @return void
      */
-    public function init() {
+    public function init()
+    {
         // page
         $this->validColumnsPage = $this->getValidTableColumns("documents_printpage");
     }
@@ -28,7 +30,8 @@ class Dao extends Document\PageSnippet\Dao {
      * @param integer $id
      * @return void
      */
-    public function getById($id = null) {
+    public function getById($id = null)
+    {
         try {
             if ($id != null) {
                 $this->model->setId($id);
@@ -41,12 +44,10 @@ class Dao extends Document\PageSnippet\Dao {
 
             if ($data["id"] > 0) {
                 $this->assignVariablesToModel($data);
-            }
-            else {
+            } else {
                 throw new \Exception("Print Document with the ID " . $this->model->getId() . " doesn't exists");
             }
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }
@@ -56,18 +57,17 @@ class Dao extends Document\PageSnippet\Dao {
      *
      * @return void
      */
-    public function create() {
+    public function create()
+    {
         try {
             parent::create();
 
-            $this->db->insert("documents_printpage", array(
+            $this->db->insert("documents_printpage", [
                 "id" => $this->model->getId()
-            ));
-        }
-        catch (\Exception $e) {
+            ]);
+        } catch (\Exception $e) {
             throw $e;
         }
-
     }
 
     /**
@@ -75,7 +75,8 @@ class Dao extends Document\PageSnippet\Dao {
      *
      * @return void
      */
-    public function update() {
+    public function update()
+    {
         try {
             $this->model->setModificationDate(time());
             $document = get_object_vars($this->model);
@@ -83,18 +84,18 @@ class Dao extends Document\PageSnippet\Dao {
             foreach ($document as $key => $value) {
                 // check if the getter exists
                 $getter = "get" . ucfirst($key);
-                if(!method_exists($this->model,$getter)) {
+                if (!method_exists($this->model, $getter)) {
                     continue;
                 }
 
                 // get the value from the getter
-                if(in_array($key, $this->getValidTableColumns("documents")) || in_array($key, $this->validColumnsPage)) {
+                if (in_array($key, $this->getValidTableColumns("documents")) || in_array($key, $this->validColumnsPage)) {
                     $value = $this->model->$getter();
                 } else {
                     continue;
                 }
 
-                if(is_bool($value)) {
+                if (is_bool($value)) {
                     $value = (int)$value;
                 }
                 if (in_array($key, $this->getValidTableColumns("documents"))) {
@@ -109,8 +110,7 @@ class Dao extends Document\PageSnippet\Dao {
             $this->db->insertOrUpdate("documents_printpage", $dataPage);
 
             $this->updateLocks();
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }
@@ -120,15 +120,15 @@ class Dao extends Document\PageSnippet\Dao {
      *
      * @return void
      */
-    public function delete() {
+    public function delete()
+    {
         try {
             $this->deleteAllProperties();
 
             $this->db->delete("documents_page", $this->db->quoteInto("id = ?", $this->model->getId()));
             $this->db->delete("documents_printpage", $this->db->quoteInto("id = ?", $this->model->getId()));
             parent::delete();
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }

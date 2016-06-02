@@ -24,14 +24,14 @@ class Broker
      *
      * @var array
      */
-    protected $_plugins = array();
+    protected $_plugins = [];
 
     /**
      * Array of system compontents which need to be notified of hooks
      *
      * @var array
      */
-    protected $_systemModules = array();
+    protected $_systemModules = [];
 
     /**
      * @return mixed|Broker
@@ -180,7 +180,7 @@ class Broker
      */
     public function getPlugin($class)
     {
-        $found = array();
+        $found = [];
         foreach ($this->_plugins as $plugin) {
             $type = get_class($plugin);
             if ($class == $type) {
@@ -237,7 +237,7 @@ class Broker
      */
     public function getTranslations($language)
     {
-        $translations = array();
+        $translations = [];
         foreach ($this->_plugins as $plugin) {
             try {
                 $pluginLanguageFile = $plugin->getTranslationFile($language);

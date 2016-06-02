@@ -20,7 +20,7 @@ class Runtime
     /**
      * @var array
      */
-    protected static $_cache = array();
+    protected static $_cache = [];
 
     /**
      * @param $data
@@ -47,6 +47,6 @@ class Runtime
      */
     public static function clear()
     {
-        static::$_cache = array();
+        static::$_cache = [];
     }
 }

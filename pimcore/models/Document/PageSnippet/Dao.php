@@ -42,7 +42,7 @@ abstract class Dao extends Model\Document\Dao
     {
         $elementsRaw = $this->db->fetchAll("SELECT * FROM documents_elements WHERE documentId = ?", $this->model->getId());
 
-        $elements = array();
+        $elements = [];
 
         foreach ($elementsRaw as $elementRaw) {
             $class = "\\Pimcore\\Model\\Document\\Tag\\" . ucfirst($elementRaw["type"]);
@@ -76,7 +76,7 @@ abstract class Dao extends Model\Document\Dao
     {
         $versionIds = $this->db->fetchCol("SELECT id FROM versions WHERE cid = ? AND ctype='document' ORDER BY `id` DESC", $this->model->getId());
 
-        $versions = array();
+        $versions = [];
         foreach ($versionIds as $versionId) {
             $versions[] = Version::getById($versionId);
         }

@@ -1,6 +1,6 @@
 <?php
 
-$base = array(
+$base = [
   0x00 => 'apartment', 'alpha', 'ampere', 'are', 'inning', 'inch', 'won', 'escudo', 'acre', 'ounce', 'ohm', 'kai-ri', 'carat', 'calorie', 'gallon', 'gamma',
   0x10 => 'giga', 'guinea', 'curie', 'guilder', 'kilo', 'kilogram', 'kilometer', 'kilowatt', 'gram', 'gram ton', 'cruzeiro', 'krone', 'case', 'koruna', 'co-op', 'cycle',
   0x20 => 'centime', 'shilling', 'centi', 'cent', 'dozen', 'desi', 'dollar', 'ton', 'nano', 'knot', 'heights', 'percent', 'parts', 'barrel', 'piaster', 'picul',
@@ -17,4 +17,4 @@ $base = array(
   0xD0 => 'lm', 'ln', 'log', 'lx', 'mb', 'mil', 'mol', 'pH', 'p.m.', 'PPM', 'PR', 'sr', 'Sv', 'Wb', null, null,
   0xE0 => '1d', '2d', '3d', '4d', '5d', '6d', '7d', '8d', '9d', '10d', '11d', '12d', '13d', '14d', '15d', '16d',
   0xF0 => '17d', '18d', '19d', '20d', '21d', '22d', '23d', '24d', '25d', '26d', '27d', '28d', '29d', '30d', '31d', null,
-);
+];

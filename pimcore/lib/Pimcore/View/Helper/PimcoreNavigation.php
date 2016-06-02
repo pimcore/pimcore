@@ -81,7 +81,7 @@ class PimcoreNavigation extends \Zend_View_Helper_Navigation
      * @param array $arguments
      * @return mixed
      */
-    public function __call($method, array $arguments = array())
+    public function __call($method, array $arguments = [])
     {
         $return = parent::__call($method, $arguments);
 

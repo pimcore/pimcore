@@ -17,15 +17,14 @@ use Pimcore\Model\Element;
 
 class Admin_FolderController extends \Pimcore\Controller\Action\Admin\Document
 {
-
     public function getDataByIdAction()
     {
 
         // check for lock
         if (Element\Editlock::isLocked($this->getParam("id"), "document")) {
-            $this->_helper->json(array(
+            $this->_helper->json([
                 "editlock" => Element\Editlock::getByElement($this->getParam("id"), "document")
-            ));
+            ]);
         }
         Element\Editlock::lock($this->getParam("id"), "document");
 
@@ -59,13 +58,13 @@ class Admin_FolderController extends \Pimcore\Controller\Action\Admin\Document
                     $this->setValuesToDocument($folder);
                     $folder->save();
 
-                    $this->_helper->json(array("success" => true));
+                    $this->_helper->json(["success" => true]);
                 }
             }
         } catch (\Exception $e) {
             \Logger::log($e);
             if (Pimcore\Tool\Admin::isExtJS6() && $e instanceof Element\ValidationException) {
-                $this->_helper->json(array("success" => false, "type" => "ValidationException", "message" => $e->getMessage(), "stack" => $e->getTraceAsString(), "code" => $e->getCode()));
+                $this->_helper->json(["success" => false, "type" => "ValidationException", "message" => $e->getMessage(), "stack" => $e->getTraceAsString(), "code" => $e->getCode()]);
             }
             throw $e;
         }

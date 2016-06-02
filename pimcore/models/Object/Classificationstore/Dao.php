@@ -74,7 +74,7 @@ class Dao extends Model\Dao\AbstractDao
                     $value = $fd->marshal($value, $object);
                     $collectionId = $collectionMapping[$groupId];
 
-                    $data = array(
+                    $data = [
                         "o_id" => $objectId,
                         "collectionId" => $collectionId,
                         "groupId" => $groupId,
@@ -84,7 +84,7 @@ class Dao extends Model\Dao\AbstractDao
                         "fieldname" => $fieldname,
                         "language" => $language,
                         "type" => $keyConfig->getType()
-                    );
+                    ];
 
                     $this->db->insertOrUpdate($dataTable, $data);
                 }
@@ -102,11 +102,11 @@ class Dao extends Model\Dao\AbstractDao
         if (is_array($activeGroups)) {
             foreach ($activeGroups as $activeGroupId => $enabled) {
                 if ($enabled) {
-                    $data = array(
+                    $data = [
                         "o_id" => $objectId,
                         "groupId" => $activeGroupId,
                         "fieldname" => $fieldname
-                    );
+                    ];
                     $this->db->insertOrUpdate($groupsTable, $data);
                 }
             }
@@ -146,7 +146,7 @@ class Dao extends Model\Dao\AbstractDao
 
         $data = $this->db->fetchAll($query);
 
-        $groupCollectionMapping = array();
+        $groupCollectionMapping = [];
 
         foreach ($data as $item) {
             $groupId = $item["groupId"];
@@ -154,10 +154,10 @@ class Dao extends Model\Dao\AbstractDao
             $collectionId = $item["collectionId"];
             $groupCollectionMapping[$groupId] = $collectionId;
 
-            $value = array(
+            $value = [
                 "value" => $item["value"],
                 "value2" => $item["value2"]
-            );
+            ];
 
             $keyConfig = DefinitionCache::get($keyId);
             if (!$keyConfig) {
@@ -180,7 +180,7 @@ class Dao extends Model\Dao\AbstractDao
         $query = "SELECT * FROM " . $groupsTableName . " WHERE o_id = " . $this->db->quote($objectId) . " AND fieldname = " . $this->db->quote($fieldname);
 
         $data = $this->db->fetchAll($query);
-        $list = array();
+        $list = [];
 
         foreach ($data as $item) {
             $list[$item["groupId"]] = true;

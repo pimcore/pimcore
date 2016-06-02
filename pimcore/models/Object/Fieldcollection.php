@@ -24,7 +24,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator
     /**
      * @var array
      */
-    public $items = array();
+    public $items = [];
 
     /**
      * @var
@@ -35,7 +35,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator
      * @param array $items
      * @param null $fieldname
      */
-    public function __construct($items = array(), $fieldname = null)
+    public function __construct($items = [], $fieldname = null)
     {
         if (!empty($items)) {
             $this->setItems($items);
@@ -86,7 +86,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator
      */
     public function getItemDefinitions()
     {
-        $definitions = array();
+        $definitions = [];
         foreach ($this->getItems() as $item) {
             $definitions[$item->getType()] = $item->getDefinition();
         }
@@ -157,7 +157,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator
 
     /**
      * @param $index
-     * @return 
+     * @return
      */
     public function get($index)
     {

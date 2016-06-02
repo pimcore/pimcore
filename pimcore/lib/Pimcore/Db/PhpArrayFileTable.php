@@ -18,7 +18,6 @@ use Pimcore\File;
 
 class PhpArrayFileTable
 {
-
     protected static $tables = [];
     protected $filePath;
     protected $data = [];

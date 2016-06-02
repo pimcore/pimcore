@@ -1,6 +1,6 @@
 <?php
 
-$base = array(
+$base = [
   0x00 => 'kweon', 'kweonj', 'kweonh', 'kweod', 'kweol', 'kweolg', 'kweolm', 'kweolb', 'kweols', 'kweolt', 'kweolp', 'kweolh', 'kweom', 'kweob', 'kweobs', 'kweos',
   0x10 => 'kweoss', 'kweong', 'kweoj', 'kweoc', 'kweok', 'kweot', 'kweop', 'kweoh', 'kwe', 'kweg', 'kwegg', 'kwegs', 'kwen', 'kwenj', 'kwenh', 'kwed',
   0x20 => 'kwel', 'kwelg', 'kwelm', 'kwelb', 'kwels', 'kwelt', 'kwelp', 'kwelh', 'kwem', 'kweb', 'kwebs', 'kwes', 'kwess', 'kweng', 'kwej', 'kwec',
@@ -17,4 +17,4 @@ $base = array(
   0xD0 => 'tam', 'tab', 'tabs', 'tas', 'tass', 'tang', 'taj', 'tac', 'tak', 'tat', 'tap', 'tah', 'tae', 'taeg', 'taegg', 'taegs',
   0xE0 => 'taen', 'taenj', 'taenh', 'taed', 'tael', 'taelg', 'taelm', 'taelb', 'taels', 'taelt', 'taelp', 'taelh', 'taem', 'taeb', 'taebs', 'taes',
   0xF0 => 'taess', 'taeng', 'taej', 'taec', 'taek', 'taet', 'taep', 'taeh', 'tya', 'tyag', 'tyagg', 'tyags', 'tyan', 'tyanj', 'tyanh', 'tyad',
-);
+];

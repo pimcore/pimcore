@@ -1,6 +1,6 @@
 <?php
 
-$base = array(
+$base = [
   // Note: to save memory plain ASCII mappings have been left out.
   0x80 => '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
   0x90 => '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
@@ -10,18 +10,18 @@ $base = array(
   0xD0 => 'D', 'N', 'O', 'O', 'O', 'O', 'O', 'x', 'O', 'U', 'U', 'U', 'U', 'Y', 'Th', 'ss',
   0xE0 => 'a', 'a', 'a', 'a', 'a', 'a', 'ae', 'c', 'e', 'e', 'e', 'e', 'i', 'i', 'i', 'i',
   0xF0 => 'd', 'n', 'o', 'o', 'o', 'o', 'o', '/', 'o', 'u', 'u', 'u', 'u', 'y', 'th', 'y',
-);
+];
 
 // Overrides for Danish input.
-$variant['da'] = array(
+$variant['da'] = [
   0xC5 => 'Aa',
   0xD8 => 'Oe',
   0xE5 => 'aa',
   0xF8 => 'oe',
-);
+];
 
 // Overrides for German input.
-$variant['de'] = array(
+$variant['de'] = [
   0xC4 => 'Ae',
   0xD6 => 'Oe',
   0xDC => 'Ue',
@@ -29,14 +29,14 @@ $variant['de'] = array(
   0xF6 => 'oe',
   0xFC => 'ue',
   0xDF => 'ss',
-);
+];
 
 // Overrides for Spanish input.
-$variant['es'] = array(
+$variant['es'] = [
   0xE1 => 'a',
   0xE9 => 'e',
   0xED => 'i',
   0xF3 => 'o',
   0xFA => 'u',
   0xF1 => 'n',
-);
+];

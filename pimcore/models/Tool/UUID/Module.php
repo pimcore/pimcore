@@ -26,8 +26,8 @@ class Module extends \Pimcore\API\Module\AbstractModule
     {
         // attach event-listener
         foreach (["asset", "object", "document", "object.class"] as $type) {
-            \Pimcore::getEventManager()->attach($type . ".postAdd", array($this, "createUuid"));
-            \Pimcore::getEventManager()->attach($type . ".postDelete", array($this, "deleteUuid"));
+            \Pimcore::getEventManager()->attach($type . ".postAdd", [$this, "createUuid"]);
+            \Pimcore::getEventManager()->attach($type . ".postDelete", [$this, "deleteUuid"]);
         }
     }
 

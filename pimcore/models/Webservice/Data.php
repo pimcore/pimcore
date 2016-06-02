@@ -31,7 +31,7 @@ abstract class Data
     public function map($object, $options = null)
     {
         $keys = get_object_vars($this);
-        $blockedKeys = array("childs");
+        $blockedKeys = ["childs"];
         foreach ($keys as $key => $value) {
             $method = "get" . $key;
             if (method_exists($object, $method) && !in_array($key, $blockedKeys)) {
@@ -64,7 +64,7 @@ abstract class Data
     private function mapProperties($value)
     {
         if (is_array($value)) {
-            $result = array();
+            $result = [];
 
             foreach ($value as $property) {
                 if ($property instanceof \stdClass) {
@@ -113,7 +113,7 @@ abstract class Data
 
                 $dat = $propertyWs["data"];
                 $type = $propertyWs["type"];
-                if (in_array($type, array("object", "document", "asset"))) {
+                if (in_array($type, ["object", "document", "asset"])) {
                     $id = $propertyWs["data"];
                     $type = $propertyWs["type"];
                     $dat = null;

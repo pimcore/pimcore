@@ -119,7 +119,7 @@ class CacheController
         if ($this->captureEnabled) {
             $this->captureEnabled = false;
             
-            $tags = array("in_template");
+            $tags = ["in_template"];
             if (!$this->lifetime) {
                 $tags[] = "output";
             }

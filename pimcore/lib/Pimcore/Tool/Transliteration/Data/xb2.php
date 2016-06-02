@@ -1,6 +1,6 @@
 <?php
 
-$base = array(
+$base = [
   0x00 => 'nyok', 'nyot', 'nyop', 'nyoh', 'nu', 'nug', 'nugg', 'nugs', 'nun', 'nunj', 'nunh', 'nud', 'nul', 'nulg', 'nulm', 'nulb',
   0x10 => 'nuls', 'nult', 'nulp', 'nulh', 'num', 'nub', 'nubs', 'nus', 'nuss', 'nung', 'nuj', 'nuc', 'nuk', 'nut', 'nup', 'nuh',
   0x20 => 'nweo', 'nweog', 'nweogg', 'nweogs', 'nweon', 'nweonj', 'nweonh', 'nweod', 'nweol', 'nweolg', 'nweolm', 'nweolb', 'nweols', 'nweolt', 'nweolp', 'nweolh',
@@ -17,4 +17,4 @@ $base = array(
   0xD0 => 'nil', 'nilg', 'nilm', 'nilb', 'nils', 'nilt', 'nilp', 'nilh', 'nim', 'nib', 'nibs', 'nis', 'niss', 'ning', 'nij', 'nic',
   0xE0 => 'nik', 'nit', 'nip', 'nih', 'da', 'dag', 'dagg', 'dags', 'dan', 'danj', 'danh', 'dad', 'dal', 'dalg', 'dalm', 'dalb',
   0xF0 => 'dals', 'dalt', 'dalp', 'dalh', 'dam', 'dab', 'dabs', 'das', 'dass', 'dang', 'daj', 'dac', 'dak', 'dat', 'dap', 'dah',
-);
+];

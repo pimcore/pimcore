@@ -32,8 +32,8 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function load()
     {
-        $documents = array();
-        $select = (string) $this->getQuery(array('id', "type"));
+        $documents = [];
+        $select = (string) $this->getQuery(['id', "type"]);
 
         $documentsData = $this->db->fetchAll($select, $this->model->getConditionVariables());
 
@@ -75,21 +75,21 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function loadIdList()
     {
-        $select = (string) $this->getQuery(array('id'));
+        $select = (string) $this->getQuery(['id']);
         $documentIds = $this->db->fetchCol($select, $this->model->getConditionVariables());
         return $documentIds;
     }
 
     public function loadIdPathList()
     {
-        $select = (string) $this->getQuery(array('id', "CONCAT(path,`key`)"));
+        $select = (string) $this->getQuery(['id', "CONCAT(path,`key`)"]);
         $documentIds = $this->db->fetchAll($select, $this->model->getConditionVariables());
         return $documentIds;
     }
 
     public function getCount()
     {
-        $select = $this->getQuery(array(new \Zend_Db_Expr('COUNT(*)')));
+        $select = $this->getQuery([new \Zend_Db_Expr('COUNT(*)')]);
         $amount = (int)$this->db->fetchOne($select, $this->model->getConditionVariables());
 
         return $amount;
@@ -97,7 +97,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
     public function getTotalCount()
     {
-        $select = $this->getQuery(array(new \Zend_Db_Expr('COUNT(*)')));
+        $select = $this->getQuery([new \Zend_Db_Expr('COUNT(*)')]);
         $select->reset(\Zend_Db_Select::LIMIT_COUNT);
         $select = (string) $select;
         $amount = (int) $this->db->fetchOne($select, $this->model->getConditionVariables());

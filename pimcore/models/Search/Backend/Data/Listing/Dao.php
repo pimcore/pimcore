@@ -29,7 +29,7 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
      */
     public function load()
     {
-        $entries = array();
+        $entries = [];
         $data = $this->db->fetchAll("SELECT * FROM search_backend_data" .  $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
      
         foreach ($data as $entryData) {

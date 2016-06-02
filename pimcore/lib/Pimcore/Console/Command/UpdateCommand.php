@@ -71,7 +71,7 @@ class UpdateCommand extends AbstractCommand
 
                 $table = new Table($output);
                 $table
-                    ->setHeaders(array('Version', 'Date', 'Build'))
+                    ->setHeaders(['Version', 'Date', 'Build'])
                     ->setRows($rows);
                 $table->render();
             }
@@ -193,7 +193,7 @@ class UpdateCommand extends AbstractCommand
                 if (count($returnMessages)) {
                     $table = new Table($output);
                     $table
-                        ->setHeaders(array('Build', 'Message'))
+                        ->setHeaders(['Build', 'Message'])
                         ->setRows($returnMessages);
                     $table->render();
                 }

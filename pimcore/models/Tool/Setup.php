@@ -25,7 +25,7 @@ class Setup extends Model\AbstractModel
     /**
      * @param array $config
      */
-    public function config($config = array())
+    public function config($config = [])
     {
         $settings = null;
 
@@ -49,8 +49,8 @@ class Setup extends Model\AbstractModel
         // set default configuration if no template is present
         if (!$settings) {
             // write configuration file
-            $settings = array(
-                "general" => array(
+            $settings = [
+                "general" => [
                     "timezone" => "Europe/Berlin",
                     "language" => "en",
                     "validLanguages" => "en",
@@ -58,54 +58,54 @@ class Setup extends Model\AbstractModel
                     "debugloglevel" => "debug",
                     "custom_php_logfile" => "1",
                     "extjs6" => "1",
-                ),
-                "database" => array(
+                ],
+                "database" => [
                     "adapter" => "Mysqli",
-                    "params" => array(
+                    "params" => [
                         "username" => "root",
                         "password" => "",
                         "dbname" => "",
-                    )
-                ),
-                "documents" => array(
-                    "versions" => array(
+                    ]
+                ],
+                "documents" => [
+                    "versions" => [
                         "steps" => "10"
-                    ),
+                    ],
                     "default_controller" => "default",
                     "default_action" => "default",
-                    "error_pages" => array(
+                    "error_pages" => [
                         "default" => "/"
-                    ),
+                    ],
                     "createredirectwhenmoved" => "",
                     "allowtrailingslash" => "no",
                     "allowcapitals" => "no",
                     "generatepreview" => "1"
-                ),
-                "objects" => array(
-                    "versions" => array(
+                ],
+                "objects" => [
+                    "versions" => [
                         "steps" => "10"
-                    )
-                ),
-                "assets" => array(
-                    "versions" => array(
+                    ]
+                ],
+                "assets" => [
+                    "versions" => [
                         "steps" => "10"
-                    )
-                ),
-                "services" => array(),
-                "cache" => array(
+                    ]
+                ],
+                "services" => [],
+                "cache" => [
                     "excludeCookie" => ""
-                ),
-                "httpclient" => array(
+                ],
+                "httpclient" => [
                     "adapter" => "Zend_Http_Client_Adapter_Socket"
-                )
-            );
+                ]
+            ];
         }
 
         $settings = array_replace_recursive($settings, $config);
 
         // create initial /website/var folder structure
         // @TODO: should use values out of startup.php (Constants)
-        $varFolders = array("areas","assets","backup","cache","classes","config","email","log","plugins","recyclebin","search","system","tmp","versions","webdav");
+        $varFolders = ["areas","assets","backup","cache","classes","config","email","log","plugins","recyclebin","search","system","tmp","versions","webdav"];
         foreach ($varFolders as $folder) {
             \Pimcore\File::mkdir(PIMCORE_WEBSITE_VAR . "/" . $folder);
         }
@@ -117,7 +117,7 @@ class Setup extends Model\AbstractModel
     /**
      *
      */
-    public function contents($config = array())
+    public function contents($config = [])
     {
         $this->getDao()->contents();
         $this->createOrUpdateUser($config);
@@ -126,12 +126,12 @@ class Setup extends Model\AbstractModel
     /**
      * @param array $config
      */
-    public function createOrUpdateUser($config = array())
+    public function createOrUpdateUser($config = [])
     {
-        $defaultConfig = array(
+        $defaultConfig = [
             "username" => "admin",
             "password" => md5(microtime())
-        );
+        ];
 
         $settings = array_replace_recursive($defaultConfig, $config);
 
@@ -139,12 +139,12 @@ class Setup extends Model\AbstractModel
             $user->delete();
         }
 
-        $user = Model\User::create(array(
+        $user = Model\User::create([
             "parentId" => 0,
             "username" => $settings["username"],
             "password" => \Pimcore\Tool\Authentication::getPasswordHash($settings["username"], $settings["password"]),
             "active" => true
-        ));
+        ]);
         $user->setAdmin(true);
         $user->save();
     }

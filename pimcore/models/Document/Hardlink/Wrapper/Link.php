@@ -20,6 +20,5 @@ use Pimcore\Model;
 
 class Link extends Model\Document\Link implements Model\Document\Hardlink\Wrapper\WrapperInterface
 {
-
     use Model\Document\Hardlink\Wrapper;
 }

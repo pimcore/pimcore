@@ -152,7 +152,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
      */
     public static function clearDependentCache()
     {
-        \Pimcore\Cache::clearTags(array("translator", "translate"));
+        \Pimcore\Cache::clearTags(["translator", "translate"]);
     }
 
     /**
@@ -201,7 +201,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
                 $translation->setCreationDate(time());
                 $translation->setModificationDate(time());
 
-                $translations = array();
+                $translations = [];
                 foreach ($languages as $lang) {
                     $translations[$lang] = "";
                 }
@@ -277,7 +277,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
      */
     public static function importTranslationsFromFile($file, $replaceExistingTranslations = true, $languages = null)
     {
-        $delta = array();
+        $delta = [];
 
         if (is_readable($file)) {
             if (!$languages || empty($languages) || !is_array($languages)) {
@@ -315,7 +315,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
                 $keys = $data[0];
                 $data = array_slice($data, 1);
                 foreach ($data as $row) {
-                    $keyValueArray = array();
+                    $keyValueArray = [];
                     for ($counter = 0; $counter < count($row); $counter++) {
                         $rd = str_replace("&quot;", '"', $row[$counter]);
                         $keyValueArray[$keys[$counter]] = $rd;
@@ -341,12 +341,12 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
                                         }
                                     } elseif ($t->getTranslation($key) != $value && $value) {
                                         $delta[]=
-                                            array(
+                                            [
                                                 "lg" => $key,
                                                 "key" => $textKey,
                                                 "text" => $t->getTranslation($key),
                                                 "csv" =>  $value
-                                            );
+                                            ];
                                     }
                                 }
                             }

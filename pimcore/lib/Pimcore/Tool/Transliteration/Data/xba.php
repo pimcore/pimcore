@@ -1,6 +1,6 @@
 <?php
 
-$base = array(
+$base = [
   0x00 => 'mya', 'myag', 'myagg', 'myags', 'myan', 'myanj', 'myanh', 'myad', 'myal', 'myalg', 'myalm', 'myalb', 'myals', 'myalt', 'myalp', 'myalh',
   0x10 => 'myam', 'myab', 'myabs', 'myas', 'myass', 'myang', 'myaj', 'myac', 'myak', 'myat', 'myap', 'myah', 'myae', 'myaeg', 'myaegg', 'myaegs',
   0x20 => 'myaen', 'myaenj', 'myaenh', 'myaed', 'myael', 'myaelg', 'myaelm', 'myaelb', 'myaels', 'myaelt', 'myaelp', 'myaelh', 'myaem', 'myaeb', 'myaebs', 'myaes',
@@ -17,4 +17,4 @@ $base = array(
   0xD0 => 'mwals', 'mwalt', 'mwalp', 'mwalh', 'mwam', 'mwab', 'mwabs', 'mwas', 'mwass', 'mwang', 'mwaj', 'mwac', 'mwak', 'mwat', 'mwap', 'mwah',
   0xE0 => 'mwae', 'mwaeg', 'mwaegg', 'mwaegs', 'mwaen', 'mwaenj', 'mwaenh', 'mwaed', 'mwael', 'mwaelg', 'mwaelm', 'mwaelb', 'mwaels', 'mwaelt', 'mwaelp', 'mwaelh',
   0xF0 => 'mwaem', 'mwaeb', 'mwaebs', 'mwaes', 'mwaess', 'mwaeng', 'mwaej', 'mwaec', 'mwaek', 'mwaet', 'mwaep', 'mwaeh', 'moe', 'moeg', 'moegg', 'moegs',
-);
+];

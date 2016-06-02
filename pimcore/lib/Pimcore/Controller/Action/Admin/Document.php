@@ -34,7 +34,7 @@ abstract class Document extends Admin
         parent::init();
 
         // check permissions
-        $notRestrictedActions = array();
+        $notRestrictedActions = [];
         if (!in_array($this->getParam("action"), $notRestrictedActions)) {
             $this->checkPermission("documents");
         }
@@ -49,7 +49,7 @@ abstract class Document extends Admin
 
         // properties
         if ($this->getParam("properties")) {
-            $properties = array();
+            $properties = [];
             // assign inherited properties
             foreach ($document->getProperties() as $p) {
                 if ($p->isInherited()) {
@@ -95,7 +95,7 @@ abstract class Document extends Admin
 
         // scheduled tasks
         if ($this->getParam("scheduler")) {
-            $tasks = array();
+            $tasks = [];
             $tasksData = \Zend_Json::decode($this->getParam("scheduler"));
 
             if (!empty($tasksData)) {
@@ -183,7 +183,7 @@ abstract class Document extends Admin
             Session::writeClose();
         }
 
-        $this->_helper->json(array("success" => true));
+        $this->_helper->json(["success" => true]);
     }
 
     /**
@@ -209,7 +209,7 @@ abstract class Document extends Admin
             $session->$key = null;
         }, "pimcore_documents");
 
-        $this->_helper->json(array("success" => true));
+        $this->_helper->json(["success" => true]);
     }
 
     /**
@@ -245,11 +245,11 @@ abstract class Document extends Admin
     {
         $doc = Model\Document::getById($this->getParam("id"));
         if ($doc instanceof Model\Document\PageSnippet) {
-            $doc->setElements(array());
+            $doc->setElements([]);
             $doc->setContentMasterDocumentId($this->getParam("contentMasterDocumentPath"));
             $doc->saveVersion(true, true, true);
         }
 
-        $this->_helper->json(array("success" => true));
+        $this->_helper->json(["success" => true]);
     }
 }

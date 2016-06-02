@@ -63,12 +63,12 @@ class BackupCommand extends AbstractCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         // defaults
-        $config = array(
+        $config = [
             "filename" => "backup_" . date("m-d-Y_H-i"),
             "directory" => PIMCORE_BACKUP_DIRECTORY,
             "overwrite" => false,
             "cleanup" => 7,
-        );
+        ];
 
         $tmpConfig = $config;
         foreach ($config as $key => $value) {
@@ -107,7 +107,7 @@ class BackupCommand extends AbstractCommand
         $this->verboseMessage("------------------------------------------------");
         $this->verboseMessage("------------------------------------------------");
         $this->verboseMessage("starting backup into file: " . $backupFile);
-        $options = array();
+        $options = [];
         if ($mysqlTables = $input->getOption("mysql-tables")) {
             $options["mysql-tables"] = $mysqlTables;
         }
@@ -118,13 +118,13 @@ class BackupCommand extends AbstractCommand
         $backup = new \Pimcore\Backup($backupFile);
         $initInfo = $backup->init($options);
 
-        $stepMethodMapping = array(
+        $stepMethodMapping = [
             "mysql-tables" => "mysqlTables",
             "mysql" => "mysqlData",
             "mysql-complete" => "mysqlComplete",
             "files" => "fileStep",
             "complete" => "complete"
-        );
+        ];
 
         if (empty($initInfo["errors"])) {
             $progress = new ProgressBar($output, count($initInfo["steps"]));
@@ -134,12 +134,12 @@ class BackupCommand extends AbstractCommand
 
             foreach ($initInfo["steps"] as $step) {
                 if (!is_array($step[1])) {
-                    $step[1] = array();
+                    $step[1] = [];
                 }
 
                 $message = $step[0] . ": " . implode(",", $step[1]);
 
-                $return = call_user_func_array(array($backup, $stepMethodMapping[$step[0]]), $step[1]);
+                $return = call_user_func_array([$backup, $stepMethodMapping[$step[0]]], $step[1]);
                 if ($return["filesize"]) {
                     $message .= " - " . $return["filesize"];
                 }

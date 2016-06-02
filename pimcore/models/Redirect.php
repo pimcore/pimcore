@@ -88,13 +88,13 @@ class Redirect extends AbstractModel
     /**
      * StatusCodes
      */
-    public static $statusCodes = array(
+    public static $statusCodes = [
         "300" => "Multiple Choices",
         "301" => "Moved Permanently",
         "302" => "Found",
         "303" => "See Other",
         "307" => "Temporary Redirect"
-    );
+    ];
 
     /**
      * @param integer $id

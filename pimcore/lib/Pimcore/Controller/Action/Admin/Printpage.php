@@ -19,15 +19,16 @@ use \Pimcore\Model\Document;
 use Pimcore\Model\Element\Service;
 use Pimcore\Web2Print\Processor;
 
-class Printpage extends \Pimcore\Controller\Action\Admin\Document {
-
-    public function getDataByIdAction() {
+class Printpage extends \Pimcore\Controller\Action\Admin\Document
+{
+    public function getDataByIdAction()
+    {
 
         // check for lock
         if (\Pimcore\Model\Element\Editlock::isLocked($this->getParam("id"), "document")) {
-            $this->_helper->json(array(
+            $this->_helper->json([
                 "editlock" => \Pimcore\Model\Element\Editlock::getByElement($this->getParam("id"), "document")
-            ));
+            ]);
         }
         \Pimcore\Model\Element\Editlock::lock($this->getParam("id"), "document");
 
@@ -54,8 +55,8 @@ class Printpage extends \Pimcore\Controller\Action\Admin\Document {
         $this->_helper->json(false);
     }
 
-    public function saveAction() {
-
+    public function saveAction()
+    {
         if ($this->getParam("id")) {
             $page = Document\Printpage::getById($this->getParam("id"));
             
@@ -79,104 +80,100 @@ class Printpage extends \Pimcore\Controller\Action\Admin\Document {
 
                 //check, if to cleanup existing elements of document
                 $config = Config::getWeb2PrintConfig();
-                if($config->generalDocumentSaveMode == "cleanup") {
-                    $page->setElements(array());
+                if ($config->generalDocumentSaveMode == "cleanup") {
+                    $page->setElements([]);
                 }
 
                 $this->setValuesToDocument($page);
 
 
-                try{
+                try {
                     $page->save();
-                    $this->_helper->json(array("success" => true));
+                    $this->_helper->json(["success" => true]);
                 } catch (\Exception $e) {
                     \Logger::err($e);
-                    $this->_helper->json(array("success" => false,"message"=>$e->getMessage()));
+                    $this->_helper->json(["success" => false,"message"=>$e->getMessage()]);
                 }
-
-            }
-            else {
+            } else {
                 if ($page->isAllowed("save")) {
                     $this->setValuesToDocument($page);
                     
 
-                    try{
-                    $page->saveVersion();
-                        $this->_helper->json(array("success" => true));
+                    try {
+                        $page->saveVersion();
+                        $this->_helper->json(["success" => true]);
                     } catch (\Exception $e) {
                         \Logger::err($e);
-                        $this->_helper->json(array("success" => false,"message"=>$e->getMessage()));
+                        $this->_helper->json(["success" => false,"message"=>$e->getMessage()]);
                     }
-
                 }
             }
         }
         $this->_helper->json(false);
     }
 
-    protected function setValuesToDocument(Document\PrintAbstract $page) {
+    protected function setValuesToDocument(Document\PrintAbstract $page)
+    {
         $this->addSettingsToDocument($page);
         $this->addDataToDocument($page);
         $this->addCssDataToDocument($page);
         $this->addPropertiesToDocument($page);
     }
 
-    protected function addCssDataToDocument(Document $document) {
+    protected function addCssDataToDocument(Document $document)
+    {
         if ($this->getParam("cssedit")) {
             $document->setCssModification($this->getParam("cssedit"));
         }
     }
 
-    public function activeGenerateProcessAction() {
+    public function activeGenerateProcessAction()
+    {
         $document = Document\Printpage::getById(intval($this->getParam("id")));
-        if(empty($document)) {
+        if (empty($document)) {
             throw new \Exception("Document with id " . $this->getParam("id") . " not found.");
         }
 
         $date = $document->getLastGeneratedDate();
-        if($date) {
+        if ($date) {
             $date = $date->get(\Zend_Date::DATETIME_SHORT);
         }
 
         $inProgress = $document->getInProgress();
-        $this->_helper->json(array("activeGenerateProcess" => !empty($inProgress), "date" => $date, "message" => $document->getLastGenerateMessage(), "downloadAvailable" => file_exists($document->getPdfFileName())));
+        $this->_helper->json(["activeGenerateProcess" => !empty($inProgress), "date" => $date, "message" => $document->getLastGenerateMessage(), "downloadAvailable" => file_exists($document->getPdfFileName())]);
     }
 
-    public function pdfDownloadAction() {
+    public function pdfDownloadAction()
+    {
         $document = Document\Printpage::getById(intval($this->getParam("id")));
-        if(empty($document)) {
+        if (empty($document)) {
             throw new \Exception("Document with id " . $this->getParam("id") . " not found.");
         }
 
-        if(file_exists($document->getPdfFileName())) {
-            if($this->getParam("download")) {
+        if (file_exists($document->getPdfFileName())) {
+            if ($this->getParam("download")) {
                 header("Content-Type: application/pdf");
-                header("Content-Disposition: attachment; filename=" . $document->getKey() . '.pdf');
-
-                while (@ob_end_flush()) ;
+                header("Content-Disposition: attachment; filename=" . $document->getKey() . '.pdf'); while (@ob_end_flush()) ;
                 flush();
 
                 readfile($document->getPdfFileName());
                 exit;
             } else {
-                header("Content-Type: application/pdf");
-
-                while (@ob_end_flush()) ;
+                header("Content-Type: application/pdf"); while (@ob_end_flush()) ;
                 flush();
                 
                 readfile($document->getPdfFileName());
                 exit;
             }
-
         } else {
             throw new \Exception("File does not exist");
         }
-
     }
 
-    public function startPdfGenerationAction() {
+    public function startPdfGenerationAction()
+    {
         $document = Document\Printpage::getById(intval($this->getParam("id")));
-        if(empty($document)) {
+        if (empty($document)) {
             throw new \Exception("Document with id " . $this->getParam("id") . " not found.");
         }
 
@@ -184,72 +181,73 @@ class Printpage extends \Pimcore\Controller\Action\Admin\Document {
 
         $this->saveProcessingOptions($document->getId(), $this->getAllParams());
 
-        $this->_helper->json(array("success" => true));
+        $this->_helper->json(["success" => true]);
     }
 
 
-    public function checkPdfDirtyAction() {
+    public function checkPdfDirtyAction()
+    {
         $printDocument = Document\PrintAbstract::getById($this->getParam("id"));
 
         $dirty = true;
-        if($printDocument) {
+        if ($printDocument) {
             $dirty = $printDocument->pdfIsDirty();
         }
-        $this->_helper->json(array("pdfDirty" => $dirty));
+        $this->_helper->json(["pdfDirty" => $dirty]);
     }
 
 
-    public function getProcessingOptionsAction() {
+    public function getProcessingOptionsAction()
+    {
         $options = Processor::getInstance()->getProcessingOptions();
 
-        $returnValue = array();
+        $returnValue = [];
 
         $storedValues = $this->getStoredProcessingOptions($this->getParam("id"));
 
-        foreach($options as $option) {
-
+        foreach ($options as $option) {
             $value = $option['default'];
-            if($storedValues && array_key_exists($option['name'], $storedValues)) {
+            if ($storedValues && array_key_exists($option['name'], $storedValues)) {
                 $value = $storedValues[$option['name']];
             }
 
-            $returnValue[] = array(
+            $returnValue[] = [
                 "name" => $option['name'],
                 "label" => $this->view->translateAdmin($option['name']),
                 "value" => $value,
                 "type" => $option['type'],
                 "values" => $option['values']
-            );
+            ];
         }
 
 
-        $this->_helper->json(array("options" => $returnValue));
+        $this->_helper->json(["options" => $returnValue]);
     }
 
-    private function getStoredProcessingOptions($documentId) {
-
+    private function getStoredProcessingOptions($documentId)
+    {
         $filename = PIMCORE_TEMPORARY_DIRECTORY . DIRECTORY_SEPARATOR . "web2print-processingoptions-" . $documentId . "_" . $this->getUser()->getId() . ".psf";
-        if(file_exists($filename)) {
+        if (file_exists($filename)) {
             return \Pimcore\Tool\Serialize::unserialize(file_get_contents($filename));
         } else {
-            return array();
+            return [];
         }
-
     }
 
-    private function saveProcessingOptions($documentId, $options) {
+    private function saveProcessingOptions($documentId, $options)
+    {
         file_put_contents(PIMCORE_TEMPORARY_DIRECTORY . DIRECTORY_SEPARATOR . "web2print-processingoptions-" . $documentId . "_" . $this->getUser()->getId() . ".psf", \Pimcore\Tool\Serialize::serialize($options));
     }
 
-    public function cancelGenerationAction() {
+    public function cancelGenerationAction()
+    {
         $document = Document\Printpage::getById(intval($this->getParam("id")));
-        if(empty($document)) {
+        if (empty($document)) {
             throw new \Exception("Document with id " . $this->getParam("id") . " not found.");
         }
 
         \Pimcore\Model\Tool\Lock::release($document->getLockKey());
 
-        $this->_helper->json(array("success" => true));
+        $this->_helper->json(["success" => true]);
     }
-
 }

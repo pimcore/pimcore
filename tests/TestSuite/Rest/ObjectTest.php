@@ -9,7 +9,6 @@
 
 class TestSuite_Rest_ObjectTest extends Test_BaseRest
 {
-
     public function setUp()
     {
         // every single rest test assumes a clean database

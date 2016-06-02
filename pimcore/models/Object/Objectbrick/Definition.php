@@ -27,12 +27,12 @@ class Definition extends Model\Object\Fieldcollection\Definition
     /**
      * @var array()
      */
-    public $classDefinitions = array();
+    public $classDefinitions = [];
 
     /**
      * @var array
      */
-    private $oldClassDefinitions = array();
+    private $oldClassDefinitions = [];
 
     /**
      * @param $classDefinitions
@@ -104,8 +104,8 @@ class Definition extends Model\Object\Fieldcollection\Definition
             File::mkdir($objectBrickFolder);
         }
 
-        $newClassDefinitions = array();
-        $classDefinitionsToDelete = array();
+        $newClassDefinitions = [];
+        $classDefinitionsToDelete = [];
 
         foreach ($this->classDefinitions as $cl) {
             if (!$cl['deleted']) {
@@ -200,7 +200,7 @@ class Definition extends Model\Object\Fieldcollection\Definition
      */
     private function cleanupOldFiles($serializedFilename)
     {
-        $this->oldClassDefinitions = array();
+        $this->oldClassDefinitions = [];
         if (file_exists($serializedFilename)) {
             $prevSerialized = file_get_contents($serializedFilename);
         }
@@ -238,7 +238,7 @@ class Definition extends Model\Object\Fieldcollection\Definition
      */
     private function updateDatabase()
     {
-        $processedClasses = array();
+        $processedClasses = [];
         if (!empty($this->classDefinitions)) {
             foreach ($this->classDefinitions as $cl) {
                 unset($this->oldClassDefinitions[$cl['classname']]);
@@ -279,7 +279,7 @@ class Definition extends Model\Object\Fieldcollection\Definition
      */
     private function createContainerClasses()
     {
-        $containerDefinition = array();
+        $containerDefinition = [];
 
         if (!empty($this->classDefinitions)) {
             foreach ($this->classDefinitions as $cl) {
@@ -426,7 +426,7 @@ class Definition extends Model\Object\Fieldcollection\Definition
         @unlink($fieldClass);
 
 
-        $processedClasses = array();
+        $processedClasses = [];
         if (!empty($this->classDefinitions)) {
             foreach ($this->classDefinitions as $cl) {
                 unset($this->oldClassDefinitions[$cl['classname']]);

@@ -116,7 +116,7 @@ class Unit extends Model\AbstractModel
      * @param array $values
      * @return Unit
      */
-    public static function create($values = array())
+    public static function create($values = [])
     {
         $unit = new self();
         $unit->setValues($values);

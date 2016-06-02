@@ -243,7 +243,7 @@ class Numeric extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return float
      */
-    public function getDataForResource($data, $object = null, $params = array())
+    public function getDataForResource($data, $object = null, $params = [])
     {
         if (is_numeric($data)) {
             return $data;
@@ -258,7 +258,7 @@ class Numeric extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return float
      */
-    public function getDataFromResource($data, $object = null, $params = array())
+    public function getDataFromResource($data, $object = null, $params = [])
     {
         if (is_numeric($data)) {
             return $this->toNumeric($data);
@@ -273,7 +273,7 @@ class Numeric extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return float
      */
-    public function getDataForQueryResource($data, $object = null, $params = array())
+    public function getDataForQueryResource($data, $object = null, $params = [])
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -285,7 +285,7 @@ class Numeric extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return float
      */
-    public function getDataForEditmode($data, $object = null, $params = array())
+    public function getDataForEditmode($data, $object = null, $params = [])
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -297,7 +297,7 @@ class Numeric extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return float
      */
-    public function getDataFromEditmode($data, $object = null, $params = array())
+    public function getDataFromEditmode($data, $object = null, $params = [])
     {
         return $this->getDataFromResource($data, $object, $params);
     }
@@ -309,7 +309,7 @@ class Numeric extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return float
      */
-    public function getVersionPreview($data, $object = null, $params = array())
+    public function getVersionPreview($data, $object = null, $params = [])
     {
         return $data;
     }
@@ -363,7 +363,7 @@ class Numeric extends Model\Object\ClassDefinition\Data
      * @param array $params
      * @return string
      */
-    public function getForCsvExport($object, $params = array())
+    public function getForCsvExport($object, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
         return strval($data);
@@ -377,7 +377,7 @@ class Numeric extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return float
      */
-    public function getFromCsvImport($importValue, $object = null, $params = array())
+    public function getFromCsvImport($importValue, $object = null, $params = [])
     {
         $value = $this->toNumeric(str_replace(",", ".", $importValue));
         return $value;
@@ -388,7 +388,7 @@ class Numeric extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return bool
      */
-    public function isDiffChangeAllowed($object, $params = array())
+    public function isDiffChangeAllowed($object, $params = [])
     {
         return true;
     }

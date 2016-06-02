@@ -46,8 +46,8 @@ class Admin
      */
     public static function getLanguages()
     {
-        $languages = array();
-        $languageDirs = array(PIMCORE_PATH . "/config/texts/",PIMCORE_CONFIGURATION_DIRECTORY . "/texts/");
+        $languages = [];
+        $languageDirs = [PIMCORE_PATH . "/config/texts/",PIMCORE_CONFIGURATION_DIRECTORY . "/texts/"];
         foreach ($languageDirs as $filesDir) {
             if (is_dir($filesDir)) {
                 $files = scandir($filesDir);
@@ -120,7 +120,7 @@ class Admin
         }
 
         // validity check
-        if (!in_array($dialect->delimiter, array(";", ",", "\t", "|", ":"))) {
+        if (!in_array($dialect->delimiter, [";", ",", "\t", "|", ":"])) {
             $dialect->delimiter = ";";
         }
 

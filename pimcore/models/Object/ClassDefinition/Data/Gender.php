@@ -31,11 +31,11 @@ class Gender extends Model\Object\ClassDefinition\Data\Select
 
     public function __construct()
     {
-        $options = array(
-            array("key" => "male", "value" => "male"),
-            array("key" => "female", "value" => "female"),
-            array("key" => "", "value" => "unknown"),
-        );
+        $options = [
+            ["key" => "male", "value" => "male"],
+            ["key" => "female", "value" => "female"],
+            ["key" => "", "value" => "unknown"],
+        ];
 
         $this->setOptions($options);
     }

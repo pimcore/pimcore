@@ -333,8 +333,8 @@ abstract class Admin extends Action
      */
     protected function logUsageStatistics()
     {
-        $params = array();
-        $disallowedKeys = array("_dc", "module", "controller", "action", "password");
+        $params = [];
+        $disallowedKeys = ["_dc", "module", "controller", "action", "password"];
         foreach ($this->getAllParams() as $key => $value) {
             if (is_json($value)) {
                 $value = \Zend_Json::decode($value);

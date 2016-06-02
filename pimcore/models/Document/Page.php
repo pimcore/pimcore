@@ -40,7 +40,7 @@ class Page extends Model\Document\PageSnippet
     /**
      * @var array
      */
-    public $metaData = array();
+    public $metaData = [];
 
     /**
      * Static type of the document
@@ -371,10 +371,10 @@ class Page extends Model\Document\PageSnippet
      */
     public function __sleep()
     {
-        $finalVars = array();
+        $finalVars = [];
         $parentVars = parent::__sleep();
 
-        $blockedVars = array("usePersona");
+        $blockedVars = ["usePersona"];
 
         foreach ($parentVars as $key) {
             if (!in_array($key, $blockedVars)) {

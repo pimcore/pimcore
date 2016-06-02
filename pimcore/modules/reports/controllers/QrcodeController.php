@@ -17,12 +17,11 @@ use Pimcore\Model\Document;
 
 class Reports_QrcodeController extends \Pimcore\Controller\Action\Admin\Reports
 {
-
     public function init()
     {
         parent::init();
 
-        $notRestrictedActions = array("code");
+        $notRestrictedActions = ["code"];
         if (!in_array($this->getParam("action"), $notRestrictedActions)) {
             $this->checkPermission("qr_codes");
         }
@@ -36,10 +35,10 @@ class Reports_QrcodeController extends \Pimcore\Controller\Action\Admin\Reports
         $items = $list->load();
 
         foreach ($items as $item) {
-            $codes[] = array(
+            $codes[] = [
                 "id" => $item->getName(),
                 "text" => $item->getName()
-            );
+            ];
         }
 
         $this->_helper->json($codes);
@@ -59,7 +58,7 @@ class Reports_QrcodeController extends \Pimcore\Controller\Action\Admin\Reports
             $success = true;
         }
 
-        $this->_helper->json(array("success" => $success, "id" => $code->getName()));
+        $this->_helper->json(["success" => $success, "id" => $code->getName()]);
     }
 
     public function deleteAction()
@@ -67,7 +66,7 @@ class Reports_QrcodeController extends \Pimcore\Controller\Action\Admin\Reports
         $code = Qrcode\Config::getByName($this->getParam("name"));
         $code->delete();
 
-        $this->_helper->json(array("success" => true));
+        $this->_helper->json(["success" => true]);
     }
 
 
@@ -92,7 +91,7 @@ class Reports_QrcodeController extends \Pimcore\Controller\Action\Admin\Reports
 
         $code->save();
 
-        $this->_helper->json(array("success" => true));
+        $this->_helper->json(["success" => true]);
     }
 
     public function codeAction()

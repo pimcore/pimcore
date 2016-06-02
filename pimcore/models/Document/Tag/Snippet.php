@@ -80,10 +80,10 @@ class Snippet extends Model\Document\Tag
     public function getDataEditmode()
     {
         if ($this->snippet instanceof Document\Snippet) {
-            return array(
+            return [
                 "id" => $this->id,
                 "path" => $this->snippet->getFullPath()
-            );
+            ];
         }
         return null;
     }
@@ -124,7 +124,7 @@ class Snippet extends Model\Document\Tag
 
                         // write contents to the cache, if output-cache is enabled
                         if ($cacheConfig) {
-                            Cache::save($content, $cacheKey, array("output", "output_inline"), $cacheConfig["lifetime"]);
+                            Cache::save($content, $cacheKey, ["output", "output_inline"], $cacheConfig["lifetime"]);
                         }
 
                         return $content;
@@ -187,15 +187,15 @@ class Snippet extends Model\Document\Tag
      */
     public function resolveDependencies()
     {
-        $dependencies = array();
+        $dependencies = [];
 
         if ($this->snippet instanceof Document\Snippet) {
             $key = "document_" . $this->snippet->getId();
 
-            $dependencies[$key] = array(
+            $dependencies[$key] = [
                 "id" => $this->snippet->getId(),
                 "type" => "document"
-            );
+            ];
         }
 
         return $dependencies;
@@ -208,7 +208,7 @@ class Snippet extends Model\Document\Tag
      * @param null $idMapper
      * @throws \Exception
      */
-    public function getFromWebserviceImport($wsElement, $document = null, $params = array(), $idMapper = null)
+    public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
     {
         $data = $wsElement->value;
         if ($data->id !==null) {
@@ -230,9 +230,9 @@ class Snippet extends Model\Document\Tag
      */
     public function __sleep()
     {
-        $finalVars = array();
+        $finalVars = [];
         $parentVars = parent::__sleep();
-        $blockedVars = array("snippet");
+        $blockedVars = ["snippet"];
         foreach ($parentVars as $key) {
             if (!in_array($key, $blockedVars)) {
                 $finalVars[] = $key;

@@ -97,7 +97,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function create()
     {
-        $this->db->insert("redirects", array());
+        $this->db->insert("redirects", []);
 
         $ts = time();
         $this->model->setModificationDate($ts);

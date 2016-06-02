@@ -79,7 +79,7 @@ class Layout
     /**
      * @var array
      */
-    public $childs = array();
+    public $childs = [];
 
     /**
      * @var boolean
@@ -281,7 +281,7 @@ class Layout
      * @param array $blockedKeys
      * @return void
      */
-    public function setValues($data = array(), $blockedKeys = array())
+    public function setValues($data = [], $blockedKeys = [])
     {
         foreach ($data as $key => $value) {
             if (!in_array($key, $blockedKeys)) {

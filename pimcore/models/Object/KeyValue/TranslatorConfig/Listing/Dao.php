@@ -30,9 +30,9 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function load()
     {
         $sql = "SELECT id FROM " . Object\KeyValue\TranslatorConfig\Dao::TABLE_NAME_TRANSLATOR . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit();
-        $configsData = $this->db->fetchCol($sql,  $this->model->getConditionVariables());
+        $configsData = $this->db->fetchCol($sql, $this->model->getConditionVariables());
 
-        $configData = array();
+        $configData = [];
         foreach ($configsData as $config) {
             $configData[] = Object\KeyValue\TranslatorConfig::getById($config);
         }

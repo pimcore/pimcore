@@ -46,13 +46,13 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
      *
      * @var array
      */
-    public $validOrderKeys = array(
+    public $validOrderKeys = [
         "creationDate",
         "modificationDate",
         "id",
         "key",
         "index"
-    );
+    ];
 
     /**
      * Tests if the given key is an valid order key to sort the results

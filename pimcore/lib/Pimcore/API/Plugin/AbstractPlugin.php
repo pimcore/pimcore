@@ -104,7 +104,7 @@ class AbstractPlugin extends AbstractAPI
     }
 
     /**
-     * this method allows the plugin to show status messages in pimcore plugin settings 
+     * this method allows the plugin to show status messages in pimcore plugin settings
      *
      * @static
      * @return string

@@ -19,7 +19,6 @@ use Pimcore\Log\Handler\ApplicationLoggerDb;
 
 class Admin_LogController extends \Pimcore\Controller\Action\Admin
 {
-
     public function init()
     {
         parent::init();
@@ -87,14 +86,14 @@ class Admin_LogController extends \Pimcore\Controller\Action\Admin
 
         $result = $db->fetchAll("SELECT * FROM " . \Pimcore\Log\Handler\ApplicationLoggerDb::TABLE_NAME . $queryString . " $orderby LIMIT $offset, $limit");
 
-        $errorDataList = array();
+        $errorDataList = [];
         if (!empty($result)) {
             foreach ($result as $r) {
                 $parts = explode("/", $r['filelink']);
                 $filename = $parts[count($parts)-1];
                 $fileobject = str_replace(PIMCORE_DOCUMENT_ROOT, "", $r['fileobject']);
 
-                $errorData =  array("id"=>$r['id'],
+                $errorData =  ["id"=>$r['id'],
                                     "pid" => $r['pid'],
                                     "message"=>$r['message'],
                                     "timestamp"=>$r['timestamp'],
@@ -103,12 +102,12 @@ class Admin_LogController extends \Pimcore\Controller\Action\Admin
                                     "fileobject" => $fileobject,
                                     "relatedobject" => $r['relatedobject'],
                                     "component" => $r['component'],
-                                    "source" => $r['source']);
+                                    "source" => $r['source']];
                 $errorDataList[] = $errorData;
             }
         }
 
-        $results = array("p_totalCount"=>$total, "p_results"=>$errorDataList);
+        $results = ["p_totalCount"=>$total, "p_results"=>$errorDataList];
         $this->_helper->json($results);
     }
 
@@ -120,21 +119,21 @@ class Admin_LogController extends \Pimcore\Controller\Action\Admin
     
     public function priorityJsonAction()
     {
-        $priorities[] = array("key" => "-1", "value" => "-");
+        $priorities[] = ["key" => "-1", "value" => "-"];
         foreach (ApplicationLoggerDb::getPriorities() as $key => $p) {
-            $priorities[] = array("key" => $key, "value" => $p);
+            $priorities[] = ["key" => $key, "value" => $p];
         }
 
-        $this->_helper->json(array("priorities" => $priorities));
+        $this->_helper->json(["priorities" => $priorities]);
     }
 
     public function componentJsonAction()
     {
-        $components[] = array("key" => "-", "value" => "");
+        $components[] = ["key" => "-", "value" => ""];
         foreach (ApplicationLoggerDb::getComponents() as $p) {
-            $components[] = array("key" => $p, "value" => $p);
+            $components[] = ["key" => $p, "value" => $p];
         }
 
-        $this->_helper->json(array("components" => $components));
+        $this->_helper->json(["components" => $components]);
     }
 }

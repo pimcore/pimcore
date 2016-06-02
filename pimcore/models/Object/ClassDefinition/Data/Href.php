@@ -24,7 +24,6 @@ use Pimcore\Model\Element;
 
 class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
 {
-
     use Model\Object\ClassDefinition\Data\Extension\Relation;
 
     /**
@@ -54,10 +53,10 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
      *
      * @var array
      */
-    public $queryColumnType = array(
+    public $queryColumnType = [
         "id" => "int(11)",
         "type" => "enum('document','asset','object')"
-    );
+    ];
 
     /**
      * Type for the generated phpdoc
@@ -199,17 +198,17 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
      * @param mixed $params
      * @return array
      */
-    public function getDataForResource($data, $object = null, $params = array())
+    public function getDataForResource($data, $object = null, $params = [])
     {
         if ($data instanceof Element\ElementInterface) {
             $type =  Element\Service::getType($data);
             $id = $data->getId();
 
-            return array(array(
+            return [[
                 "dest_id" => $id,
                 "type" => $type,
                 "fieldname" => $this->getName()
-            ));
+            ]];
         } else {
             return null;
         }
@@ -222,10 +221,10 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
      * @param mixed $params
      * @return Asset|Document|Object\AbstractObject
      */
-    public function getDataFromResource($data, $object = null, $params = array(), $notRelationTable = false)
+    public function getDataFromResource($data, $object = null, $params = [], $notRelationTable = false)
     {
         // data from relation table
-        $data = is_array($data) ? $data : array();
+        $data = is_array($data) ? $data : [];
         $data = current($data);
 
         if ($data["dest_id"] && $data["type"]) {
@@ -242,11 +241,11 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
      * @param mixed $params
      * @return array
      */
-    public function getDataForQueryResource($data, $object = null, $params = array())
+    public function getDataForQueryResource($data, $object = null, $params = [])
     {
         $rData = $this->getDataForResource($data, $object, $params);
 
-        $return = array();
+        $return = [];
         $return[$this->getName() . "__id"] = $rData[0]["dest_id"];
         $return[$this->getName() . "__type"] = $rData[0]["type"];
 
@@ -260,15 +259,15 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
      * @param mixed $params
      * @return array
      */
-    public function getDataForEditmode($data, $object = null, $params = array())
+    public function getDataForEditmode($data, $object = null, $params = [])
     {
         if ($data instanceof Element\ElementInterface) {
-            $r = array(
+            $r = [
                 "id" => $data->getId(),
                 "path" => $data->getRealFullPath(),
                 "subtype" => $data->getType(),
                 "type" => Element\Service::getElementType($data)
-            );
+            ];
             return $r;
         }
         return;
@@ -281,7 +280,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
      * @param mixed $params
      * @return Asset|Document|Object\AbstractObject
      */
-    public function getDataFromEditmode($data, $object = null, $params = array())
+    public function getDataFromEditmode($data, $object = null, $params = [])
     {
         if ($data["id"] && $data["type"]) {
             return Element\Service::getElementById($data["type"], $data["id"]);
@@ -291,7 +290,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     }
 
 
-    public function getDataForGrid($data, $object = null, $params = array())
+    public function getDataForGrid($data, $object = null, $params = [])
     {
         if ($data instanceof Element\ElementInterface) {
             return $data->getRealFullPath();
@@ -305,7 +304,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
      * @param mixed $params
      * @return string
      */
-    public function getVersionPreview($data, $object = null, $params = array())
+    public function getVersionPreview($data, $object = null, $params = [])
     {
         if ($data instanceof Element\ElementInterface) {
             return $data->getRealFullPath();
@@ -369,7 +368,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
      * @param array $params
      * @return string
      */
-    public function getForCsvExport($object, $params = array())
+    public function getForCsvExport($object, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof Element\ElementInterface) {
@@ -385,7 +384,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
      * @param mixed $params
      * @return mixed|null|Asset|Document|Element\ElementInterface
      */
-    public function getFromCsvImport($importValue, $object = null, $params = array())
+    public function getFromCsvImport($importValue, $object = null, $params = [])
     {
         $value = null;
 
@@ -415,9 +414,9 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
      * @param array $tags
      * @return array
      */
-    public function getCacheTags($data, $tags = array())
+    public function getCacheTags($data, $tags = [])
     {
-        $tags = is_array($tags) ? $tags : array();
+        $tags = is_array($tags) ? $tags : [];
 
         if ($data instanceof Element\ElementInterface) {
             if (!array_key_exists($data->getCacheTag(), $tags)) {
@@ -434,14 +433,14 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
      */
     public function resolveDependencies($data)
     {
-        $dependencies = array();
+        $dependencies = [];
 
         if ($data instanceof Element\ElementInterface) {
             $elementType = Element\Service::getElementType($data);
-            $dependencies[$elementType . "_" . $data->getId()] = array(
+            $dependencies[$elementType . "_" . $data->getId()] = [
                 "id" => $data->getId(),
                 "type" => $elementType
-            );
+            ];
         }
 
         return $dependencies;
@@ -453,15 +452,15 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
      * @param mixed $params
      * @return mixed
      */
-    public function getForWebserviceExport($object, $params = array())
+    public function getForWebserviceExport($object, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof Element\ElementInterface) {
-            return array(
+            return [
                 "type" => Element\Service::getType($data),
                 "subtype" => $data->getType(),
                 "id" => $data->getId()
-            );
+            ];
         } else {
             return null;
         }
@@ -475,7 +474,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
      * @return mixed|void
      * @throws \Exception
      */
-    public function getFromWebserviceImport($value, $relatedObject = null, $params = array(), $idMapper = null)
+    public function getFromWebserviceImport($value, $relatedObject = null, $params = [], $idMapper = null)
     {
         if (empty($value)) {
             return null;
@@ -497,7 +496,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
                     return $el;
                 } else {
                     if ($idMapper && $idMapper->ignoreMappingFailures()) {
-                        $idMapper->recordMappingFailure("object", $relatedObject->getId(), $type,  $value["id"]);
+                        $idMapper->recordMappingFailure("object", $relatedObject->getId(), $type, $value["id"]);
                     } else {
                         throw new \Exception("cannot get values from web service import - invalid href relation");
                     }
@@ -513,14 +512,14 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
      * @param array $params
      * @return null|AbstractData|Object\Concrete|Object\Objectbrick\Data\
      */
-    public function preGetData($object, $params = array())
+    public function preGetData($object, $params = [])
     {
         $data = null;
         if ($object instanceof Object\Concrete) {
             $data = $object->{$this->getName()};
 
             if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
-                $data = $this->load($object, array("force" => true));
+                $data = $this->load($object, ["force" => true]);
 
                 $setter = "set" . ucfirst($this->getName());
                 if (method_exists($object, $setter)) {
@@ -550,7 +549,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
      * @param array $params
      * @return mixed
      */
-    public function preSetData($object, $data, $params = array())
+    public function preSetData($object, $data, $params = [])
     {
         if ($object instanceof Object\Concrete) {
             if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
@@ -584,7 +583,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
      * @param mixed $params
      * @return bool
      */
-    public function isDiffChangeAllowed($object, $params = array())
+    public function isDiffChangeAllowed($object, $params = [])
     {
         return true;
     }
@@ -604,11 +603,11 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
      * @param array $params
      * @return Element\ElementInterface
      */
-    public function rewriteIds($object, $idMapping, $params = array())
+    public function rewriteIds($object, $idMapping, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data) {
-            $data = $this->rewriteIdsService(array($data), $idMapping);
+            $data = $this->rewriteIdsService([$data], $idMapping);
             $data = $data[0]; //get the first element
         }
         return $data;

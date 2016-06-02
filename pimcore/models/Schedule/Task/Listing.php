@@ -26,7 +26,7 @@ class Listing extends Model\Listing\AbstractListing
      *
      * @var array
      */
-    public $tasks = array();
+    public $tasks = [];
 
     /**
      * Tests if the given key is an valid order key to sort the results

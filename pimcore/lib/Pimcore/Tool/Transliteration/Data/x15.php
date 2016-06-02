@@ -1,6 +1,6 @@
 <?php
 
-$base = array(
+$base = [
   0x00 => 'swa', 'swa', 'swaa', 'swaa', 'swaa', 's', 's', 'sw', 's', 'sk', 'skw', 'sW', 'spwa', 'stwa', 'skwa', 'scwa',
   0x10 => 'she', 'shi', 'shii', 'sho', 'shoo', 'sha', 'shaa', 'shwe', 'shwe', 'shwi', 'shwi', 'shwii', 'shwii', 'shwo', 'shwo', 'shwoo',
   0x20 => 'shwoo', 'shwa', 'shwa', 'shwaa', 'shwaa', 'sh', 'ye', 'yaai', 'yi', 'yii', 'yo', 'yoo', 'yoo', 'ya', 'yaa', 'ywe',
@@ -17,4 +17,4 @@ $base = array(
   0xD0 => 'wu', 'wo', 'we', 'wee', 'wi', 'wa', 'hwu', 'hwo', 'hwe', 'hwee', 'hwi', 'hwa', 'thu', 'tho', 'the', 'thee',
   0xE0 => 'thi', 'tha', 'ttu', 'tto', 'tte', 'ttee', 'tti', 'tta', 'pu', 'po', 'pe', 'pee', 'pi', 'pa', 'p', 'gu',
   0xF0 => 'go', 'ge', 'gee', 'gi', 'ga', 'khu', 'kho', 'khe', 'khee', 'khi', 'kha', 'kku', 'kko', 'kke', 'kkee', 'kki',
-);
+];

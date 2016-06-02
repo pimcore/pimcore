@@ -2,7 +2,6 @@
 
 class AllTests extends Test_SuiteBase
 {
-
     public static function suite()
     {
         $suite = new AllTests('Models');

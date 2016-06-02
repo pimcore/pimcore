@@ -56,14 +56,14 @@ class ThumbnailsImageCommand extends AbstractCommand
             $thumbnails[] = $item->getName();
         }
 
-        $allowedThumbs = array();
+        $allowedThumbs = [];
         if ($input->getOption("thumbnails")) {
             $allowedThumbs = explode(",", $input->getOption("thumbnails"));
         }
 
 
         // get only images
-        $conditions = array("type = 'image'");
+        $conditions = ["type = 'image'"];
 
         if ($input->getOption("parent")) {
             $parent = Asset::getById($input->getOption("parent"));

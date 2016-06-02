@@ -1,6 +1,6 @@
 <?php
 
-$base = array(
+$base = [
   0x00 => 'Kay ', 'Kayng ', 'Ke ', 'Ko ', 'Kol ', 'Koc ', 'Kwi ', 'Kwi ', 'Kyun ', 'Kul ', 'Kum ', 'Na ', 'Na ', 'Na ', 'La ', 'Na ',
   0x10 => 'Na ', 'Na ', 'Na ', 'Na ', 'Nak ', 'Nak ', 'Nak ', 'Nak ', 'Nak ', 'Nak ', 'Nak ', 'Nan ', 'Nan ', 'Nan ', 'Nan ', 'Nan ',
   0x20 => 'Nan ', 'Nam ', 'Nam ', 'Nam ', 'Nam ', 'Nap ', 'Nap ', 'Nap ', 'Nang ', 'Nang ', 'Nang ', 'Nang ', 'Nang ', 'Nay ', 'Nayng ', 'No ',
@@ -17,4 +17,4 @@ $base = array(
   0xD0 => 'Yu ', 'Yuk ', 'Yuk ', 'Yuk ', 'Yun ', 'Yun ', 'Yun ', 'Yun ', 'Yul ', 'Yul ', 'Yul ', 'Yul ', 'Yung ', 'I ', 'I ', 'I ',
   0xE0 => 'I ', 'I ', 'I ', 'I ', 'I ', 'I ', 'I ', 'I ', 'I ', 'I ', 'I ', 'Ik ', 'Ik ', 'In ', 'In ', 'In ',
   0xF0 => 'In ', 'In ', 'In ', 'In ', 'Im ', 'Im ', 'Im ', 'Ip ', 'Ip ', 'Ip ', 'Cang ', 'Cek ', 'Ci ', 'Cip ', 'Cha ', 'Chek ',
-);
+];

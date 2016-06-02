@@ -88,7 +88,7 @@ class Pimcore
             $whoops->register();
 
             // add event handler before Pimcore::shutdown() to ensure fatal errors are handled by Whoops
-            self::getEventManager()->attach("system.shutdown", array($whoops, "handleShutdown"), 10000);
+            self::getEventManager()->attach("system.shutdown", [$whoops, "handleShutdown"], 10000);
         }
 
         $front->registerPlugin(new Controller\Plugin\ErrorHandler(), 1);
@@ -121,75 +121,75 @@ class Pimcore
         $router = $front->getRouter();
         $routeAdmin = new \Zend_Controller_Router_Route(
             'admin/:controller/:action/*',
-            array(
+            [
                 'module' => 'admin',
                 "controller" => "index",
                 "action" => "index"
-            )
+            ]
         );
         $routeInstall = new \Zend_Controller_Router_Route(
             'install/:controller/:action/*',
-            array(
+            [
                 'module' => 'install',
                 "controller" => "index",
                 "action" => "index"
-            )
+            ]
         );
         $routeUpdate = new \Zend_Controller_Router_Route(
             'admin/update/:controller/:action/*',
-            array(
+            [
                 'module' => 'update',
                 "controller" => "index",
                 "action" => "index"
-            )
+            ]
         );
         $routePlugins = new \Zend_Controller_Router_Route(
             'admin/plugin/:controller/:action/*',
-            array(
+            [
                 'module' => 'pluginadmin',
                 "controller" => "index",
                 "action" => "index"
-            )
+            ]
         );
         $routeExtensions = new \Zend_Controller_Router_Route(
             'admin/extensionmanager/:controller/:action/*',
-            array(
+            [
                 'module' => 'extensionmanager',
                 "controller" => "index",
                 "action" => "index"
-            )
+            ]
         );
         $routeReports = new \Zend_Controller_Router_Route(
             'admin/reports/:controller/:action/*',
-            array(
+            [
                 'module' => 'reports',
                 "controller" => "index",
                 "action" => "index"
-            )
+            ]
         );
         $routePlugin = new \Zend_Controller_Router_Route(
             'plugin/:module/:controller/:action/*',
-            array(
+            [
                 "controller" => "index",
                 "action" => "index"
-            )
+            ]
         );
         $routeWebservice = new \Zend_Controller_Router_Route(
             'webservice/:controller/:action/*',
-            array(
+            [
                 "module" => "webservice",
                 "controller" => "index",
                 "action" => "index"
-            )
+            ]
         );
 
         $routeSearchAdmin = new \Zend_Controller_Router_Route(
             'admin/search/:controller/:action/*',
-            array(
+            [
                 "module" => "searchadmin",
                 "controller" => "index",
                 "action" => "index",
-            )
+            ]
         );
 
 
@@ -476,9 +476,9 @@ class Pimcore
         try {
             $pluginConfigs = ExtensionManager::getPluginConfigs();
             if (!empty($pluginConfigs)) {
-                $includePaths = array(
+                $includePaths = [
                     get_include_path()
-                );
+                ];
 
                 //adding plugin include paths and namespaces
                 if (count($pluginConfigs) > 0) {
@@ -514,7 +514,7 @@ class Pimcore
                         continue;
                     }
 
-                    $jsPaths = array();
+                    $jsPaths = [];
                     $isExtJs6 = \Pimcore\Tool\Admin::isExtJS6();
 
                     if ($isExtJs6 && is_array($p['plugin']['pluginJsPaths-extjs6'])
@@ -541,7 +541,7 @@ class Pimcore
                         }
                     }
 
-                    $cssPaths = array();
+                    $cssPaths = [];
                     if ($isExtJs6 && is_array($p['plugin']['pluginCssPaths-extjs6'])
                         && isset($p['plugin']['pluginCssPaths-extjs6']['path'])
                         && is_array($p['plugin']['pluginCssPaths-extjs6']['path'])) {
@@ -702,7 +702,7 @@ class Pimcore
     {
 
         // try to set tmp directoy into superglobals, ZF and other frameworks (PEAR) sometimes relies on that
-        foreach (array('TMPDIR', 'TEMP', 'TMP', 'windir', 'SystemRoot') as $key) {
+        foreach (['TMPDIR', 'TEMP', 'TMP', 'windir', 'SystemRoot'] as $key) {
             $_ENV[$key] = PIMCORE_CACHE_DIRECTORY;
             $_SERVER[$key] = PIMCORE_CACHE_DIRECTORY;
         }
@@ -763,10 +763,10 @@ class Pimcore
     public static function addToGloballyProtectedItems($keepItems)
     {
         if (is_string($keepItems)) {
-            $keepItems = array($keepItems);
+            $keepItems = [$keepItems];
         }
         if (!is_array(self::$globallyProtectedItems) && $keepItems) {
-            self::$globallyProtectedItems = array();
+            self::$globallyProtectedItems = [];
         }
         self::$globallyProtectedItems = array_merge(self::$globallyProtectedItems, $keepItems);
     }
@@ -778,7 +778,7 @@ class Pimcore
     public static function removeFromGloballyProtectedItems($deleteItems)
     {
         if (is_string($deleteItems)) {
-            $deleteItems = array($deleteItems);
+            $deleteItems = [$deleteItems];
         }
 
         if (is_array($deleteItems) && is_array(self::$globallyProtectedItems)) {
@@ -796,14 +796,14 @@ class Pimcore
      * @static
      * @return void
      */
-    public static function collectGarbage($keepItems = array())
+    public static function collectGarbage($keepItems = [])
     {
 
         // close mysql-connection
         Db::close();
         Cache\Runtime::clear();
 
-        $protectedItems = array(
+        $protectedItems = [
             "Zend_Locale",
             "Zend_View_Helper_Placeholder_Registry",
             "Zend_View_Helper_Doctype",
@@ -819,7 +819,7 @@ class Pimcore
             "pimcore_error_document",
             "pimcore_site",
             "Pimcore_Db"
-        );
+        ];
 
         if (is_array($keepItems) && count($keepItems) > 0) {
             $protectedItems = array_merge($protectedItems, $keepItems);
@@ -829,7 +829,7 @@ class Pimcore
             $protectedItems = array_merge($protectedItems, self::$globallyProtectedItems);
         }
 
-        $registryBackup = array();
+        $registryBackup = [];
 
         foreach ($protectedItems as $item) {
             if (\Zend_Registry::isRegistered($item)) {
@@ -944,7 +944,7 @@ class Pimcore
 
                 // prepare the response to be sent (gzip or not)
                 // do not add text/xml or a wildcard for text/* here because this causes problems with the SOAP server
-                $gzipContentTypes = array("@text/html@i", "@application/json@", "@text/javascript@", "@text/css@");
+                $gzipContentTypes = ["@text/html@i", "@application/json@", "@text/javascript@", "@text/css@"];
                 $gzipIt = false;
                 foreach ($gzipContentTypes as $type) {
                     if (@preg_match($type, $contentType)) {

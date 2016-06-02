@@ -30,7 +30,7 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
         $list->setOrderKey("key");
         $list->load();
 
-        $translations = array();
+        $translations = [];
         foreach ($list->getTranslations() as $t) {
             $translations[$t->getKey()] = $t->getTranslation($language);
         }
@@ -126,9 +126,9 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
 
     public function pingAction()
     {
-        $response = array(
+        $response = [
             "success" => true
-        );
+        ];
 
 
         $this->_helper->json($response);
@@ -144,9 +144,9 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
 
     public function getValidFilenameAction()
     {
-        $this->_helper->json(array(
+        $this->_helper->json([
             "filename" => File::getValidFilename($this->getParam("value"))
-        ));
+        ]);
     }
 
     /* FILEEXPLORER */
@@ -157,7 +157,7 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
         $referencePath = $this->getFileexplorerPath("node");
 
         $items = scandir($referencePath);
-        $contents = array();
+        $contents = [];
 
         foreach ($items as $item) {
             if ($item == "." || $item == "..") {
@@ -168,12 +168,12 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
             $file = str_replace("//", "/", $file);
 
             if (is_dir($file) || is_file($file)) {
-                $itemConfig = array(
+                $itemConfig = [
                     "id" => "/fileexplorer" . str_replace(PIMCORE_DOCUMENT_ROOT, "", $file),
                     "text" => $item,
                     "leaf" => true,
                     "writeable" => is_writable($file)
-                );
+                ];
 
                 if (is_dir($file)) {
                     $itemConfig["leaf"] = false;
@@ -208,12 +208,12 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
             }
         }
 
-        $this->_helper->json(array(
+        $this->_helper->json([
             "success" => $success,
             "content" => $content,
             "writeable" => $writeable,
             "path" => preg_replace("@^" . preg_quote(PIMCORE_DOCUMENT_ROOT) . "@", "", $file)
-        ));
+        ]);
     }
 
     public function fileexplorerContentSaveAction()
@@ -231,9 +231,9 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
             }
         }
 
-        $this->_helper->json(array(
+        $this->_helper->json([
                                   "success" => $success
-                             ));
+                             ]);
     }
 
     public function fileexplorerAddAction()
@@ -258,9 +258,9 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
             }
         }
 
-        $this->_helper->json(array(
+        $this->_helper->json([
                                   "success" => $success
-                             ));
+                             ]);
     }
 
     public function fileexplorerAddFolderAction()
@@ -285,9 +285,9 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
             }
         }
 
-        $this->_helper->json(array(
+        $this->_helper->json([
             "success" => $success
-        ));
+        ]);
     }
 
     public function fileexplorerDeleteAction()
@@ -302,9 +302,9 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
             }
         }
 
-        $this->_helper->json(array(
+        $this->_helper->json([
               "success" => $success
-        ));
+        ]);
     }
 
     private function getFileexplorerPath($paramName = 'node')
@@ -330,9 +330,9 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
             Tool\Admin::deactivateMaintenanceMode();
         }
 
-        $this->_helper->json(array(
+        $this->_helper->json([
               "success" => true
-        ));
+        ]);
     }
 
     public function httpErrorLogAction()
@@ -352,10 +352,10 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
         if (!$offset) {
             $offset = 0;
         }
-        if (!$sort || !in_array($sort, array("code", "uri", "date", "count"))) {
+        if (!$sort || !in_array($sort, ["code", "uri", "date", "count"])) {
             $sort = "count";
         }
-        if (!$dir || !in_array($dir, array("DESC", "ASC"))) {
+        if (!$dir || !in_array($dir, ["DESC", "ASC"])) {
             $dir = "DESC";
         }
 
@@ -363,8 +363,8 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
         if ($filter) {
             $filter = $db->quote("%" . $filter . "%");
 
-            $conditionParts = array();
-            foreach (array("uri", "code", "parametersGet", "parametersPost", "serverVars", "cookies") as $field) {
+            $conditionParts = [];
+            foreach (["uri", "code", "parametersGet", "parametersPost", "serverVars", "cookies"] as $field) {
                 $conditionParts[] = $field . " LIKE " . $filter;
             }
             $condition = " WHERE " . implode(" OR ", $conditionParts);
@@ -373,11 +373,11 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
         $logs = $db->fetchAll("SELECT code,uri,`count`,date FROM http_error_log " . $condition . " ORDER BY " . $sort . " " . $dir . " LIMIT " . $offset . "," . $limit);
         $total = $db->fetchOne("SELECT count(*) FROM http_error_log " . $condition);
 
-        $this->_helper->json(array(
+        $this->_helper->json([
             "items" => $logs,
             "total" => $total,
             "success" => true
-        ));
+        ]);
     }
 
     public function httpErrorLogFlushAction()
@@ -387,9 +387,9 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
         $db = Db::get();
         $db->query("TRUNCATE TABLE http_error_log"); // much faster then $db->delete()
 
-        $this->_helper->json(array(
+        $this->_helper->json([
             "success" => true
-        ));
+        ]);
     }
 
     public function httpErrorLogDetailAction()
@@ -397,10 +397,10 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
         $this->checkPermission("http_errors");
 
         $db = Db::get();
-        $data = $db->fetchRow("SELECT * FROM http_error_log WHERE uri = ?", array($this->getParam("uri")));
+        $data = $db->fetchRow("SELECT * FROM http_error_log WHERE uri = ?", [$this->getParam("uri")]);
 
         foreach ($data as $key => &$value) {
-            if (in_array($key, array("parametersGet", "parametersPost", "serverVars", "cookies"))) {
+            if (in_array($key, ["parametersGet", "parametersPost", "serverVars", "cookies"])) {
                 $value = unserialize($value);
             }
         }
@@ -412,18 +412,18 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
     {
         $countries = \Zend_Locale::getTranslationList('territory');
         asort($countries);
-        $options = array();
+        $options = [];
 
         foreach ($countries as $short => $translation) {
             if (strlen($short) == 2) {
-                $options[] = array(
+                $options[] = [
                     "name" => $translation,
                     "code" => $short
-                );
+                ];
             }
         }
 
-        $this->_helper->json(array("data" => $options));
+        $this->_helper->json(["data" => $options]);
     }
 
     public function languageListAction()
@@ -431,13 +431,13 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
         $locales = Tool::getSupportedLocales();
 
         foreach ($locales as $short => $translation) {
-            $options[] = array(
+            $options[] = [
                 "name" => $translation,
                 "code" => $short
-            );
+            ];
         }
 
-        $this->_helper->json(array("data" => $options));
+        $this->_helper->json(["data" => $options]);
     }
 
     public function phpinfoAction()
@@ -452,20 +452,20 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
 
     public function getAvailableModulesAction()
     {
-        $system_modules = array(
+        $system_modules = [
             "searchadmin", "reports", "webservice", "admin", "update", "install", "extensionmanager"
-        );
-        $modules = array();
+        ];
+        $modules = [];
         $front = $this->getFrontController();
         foreach ($front->getControllerDirectory() as $module => $path) {
             if (in_array($module, $system_modules)) {
                 continue;
             }
-            $modules[] = array("name" => $module);
+            $modules[] = ["name" => $module];
         }
-        $this->_helper->json(array(
+        $this->_helper->json([
             "data" => $modules
-        ));
+        ]);
     }
 
     /**
@@ -474,12 +474,12 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
 
     public function getAvailableControllersAction()
     {
-        $controllers = array();
+        $controllers = [];
         $controllerDir = $this->getControllerDir();
         $controllerFiles = rscandir($controllerDir);
         foreach ($controllerFiles as $file) {
             $file = str_replace($controllerDir, "", $file);
-            $dat = array();
+            $dat = [];
             if (strpos($file, ".php") !== false) {
                 $file = lcfirst(str_replace("Controller.php", "", $file));
                 $file = strtolower(preg_replace("/[A-Z]/", "-\\0", $file));
@@ -488,14 +488,14 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
             }
         }
 
-        $this->_helper->json(array(
+        $this->_helper->json([
             "data" => $controllers
-        ));
+        ]);
     }
 
     public function getAvailableActionsAction()
     {
-        $actions = array();
+        $actions = [];
         $controller = $this->getParam("controllerName");
         $controllerClass = str_replace("-", " ", $controller);
         $controllerClass = str_replace(" ", "", ucwords($controllerClass));
@@ -508,24 +508,24 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
         if (is_file($controllerFile)) {
             preg_match_all("/function[ ]+([a-zA-Z0-9]+)Action/i", file_get_contents($controllerFile), $matches);
             foreach ($matches[1] as $match) {
-                $dat = array();
+                $dat = [];
                 $dat["name"] = strtolower(preg_replace("/[A-Z]/", "-\\0", $match));
                 $actions[] = $dat;
             }
         }
 
-        $this->_helper->json(array(
+        $this->_helper->json([
             "data" => $actions
-        ));
+        ]);
     }
 
     public function getAvailableTemplatesAction()
     {
-        $templates = array();
+        $templates = [];
         $viewPath = PIMCORE_WEBSITE_PATH . DIRECTORY_SEPARATOR . "views" . DIRECTORY_SEPARATOR . "scripts";
         $files = rscandir($viewPath . DIRECTORY_SEPARATOR);
         foreach ($files as $file) {
-            $dat = array();
+            $dat = [];
             if (strpos($file, \Pimcore\View::getViewScriptSuffix()) !== false) {
                 $dat["path"] = str_replace($viewPath, "", $file);
                 $dat["path"] = str_replace("\\", "/", $dat["path"]); // unix directory separator are compatible with windows, not the reverse
@@ -533,9 +533,9 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
             }
         }
 
-        $this->_helper->json(array(
+        $this->_helper->json([
             "data" => $templates
-        ));
+        ]);
     }
 
     public function getLanguageFlagAction()

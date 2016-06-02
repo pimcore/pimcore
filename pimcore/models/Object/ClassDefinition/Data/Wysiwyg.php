@@ -23,7 +23,6 @@ use Pimcore\Tool\Text;
 
 class Wysiwyg extends Model\Object\ClassDefinition\Data
 {
-
     use Model\Object\ClassDefinition\Data\Extension\Text;
 
     /**
@@ -132,7 +131,7 @@ class Wysiwyg extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getDataForResource($data, $object = null, $params = array())
+    public function getDataForResource($data, $object = null, $params = [])
     {
         return Text::wysiwygText($data);
     }
@@ -144,7 +143,7 @@ class Wysiwyg extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getDataFromResource($data, $object = null, $params = array())
+    public function getDataFromResource($data, $object = null, $params = [])
     {
         return Text::wysiwygText($data);
     }
@@ -156,7 +155,7 @@ class Wysiwyg extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getDataForQueryResource($data, $object = null, $params = array())
+    public function getDataForQueryResource($data, $object = null, $params = [])
     {
         $data = $this->getDataForResource($data, $object, $params);
 
@@ -178,7 +177,7 @@ class Wysiwyg extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getDataForEditmode($data, $object = null, $params = array())
+    public function getDataForEditmode($data, $object = null, $params = [])
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -190,7 +189,7 @@ class Wysiwyg extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getDataFromEditmode($data, $object = null, $params = array())
+    public function getDataFromEditmode($data, $object = null, $params = [])
     {
         return $data;
     }
@@ -210,7 +209,7 @@ class Wysiwyg extends Model\Object\ClassDefinition\Data
      * @param array $tags
      * @return array
      */
-    public function getCacheTags($data, $tags = array())
+    public function getCacheTags($data, $tags = [])
     {
         return Text::getCacheTagsOfWysiwygText($data, $tags);
     }
@@ -243,7 +242,7 @@ class Wysiwyg extends Model\Object\ClassDefinition\Data
      * @param Object\Concrete $object
      * @return string
      */
-    public function preGetData($object, $params = array())
+    public function preGetData($object, $params = [])
     {
         $data = "";
         if ($object instanceof Object\Concrete) {
@@ -266,10 +265,10 @@ class Wysiwyg extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return array|string
      */
-    public function getDiffVersionPreview($data, $object = null, $params = array())
+    public function getDiffVersionPreview($data, $object = null, $params = [])
     {
         if ($data) {
-            $value = array();
+            $value = [];
             $value["html"] = $data;
             $value["type"] = "html";
             return $value;
@@ -294,7 +293,7 @@ class Wysiwyg extends Model\Object\ClassDefinition\Data
      * @param array $params
      * @return Element\ElementInterface
      */
-    public function rewriteIds($object, $idMapping, $params = array())
+    public function rewriteIds($object, $idMapping, $params = [])
     {
         include_once("simple_html_dom.php");
 

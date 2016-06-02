@@ -20,15 +20,14 @@ use Pimcore\Model\Redirect;
 
 class Admin_PageController extends \Pimcore\Controller\Action\Admin\Document
 {
-
     public function getDataByIdAction()
     {
 
         // check for lock
         if (Element\Editlock::isLocked($this->getParam("id"), "document")) {
-            $this->_helper->json(array(
+            $this->_helper->json([
                 "editlock" => Element\Editlock::getByElement($this->getParam("id"), "document")
-            ));
+            ]);
         }
         Element\Editlock::lock($this->getParam("id"), "document");
 
@@ -82,7 +81,7 @@ class Admin_PageController extends \Pimcore\Controller\Action\Admin\Document
                     $page->setPublished(true);
                 }
 
-                $settings = array();
+                $settings = [];
                 if ($this->getParam("settings")) {
                     $settings = \Zend_Json::decode($this->getParam("settings"));
                 }
@@ -93,7 +92,7 @@ class Admin_PageController extends \Pimcore\Controller\Action\Admin\Document
                         $redirectList = new Redirect\Listing();
                         $redirectList->setCondition("target = ?", $page->getId());
                         $existingRedirects = $redirectList->load();
-                        $existingRedirectIds = array();
+                        $existingRedirectIds = [];
                         foreach ($existingRedirects as $existingRedirect) {
                             $existingRedirectIds[$existingRedirect->getId()] = $existingRedirect->getId();
                         }
@@ -127,15 +126,15 @@ class Admin_PageController extends \Pimcore\Controller\Action\Admin\Document
 
                 // check if settings exist, before saving meta data
                 if ($this->getParam("settings") && is_array($settings)) {
-                    $metaData = array();
+                    $metaData = [];
                     for ($i=1; $i<30; $i++) {
                         if (array_key_exists("metadata_idName_" . $i, $settings)) {
-                            $metaData[] = array(
+                            $metaData[] = [
                                 "idName" => $settings["metadata_idName_" . $i],
                                 "idValue" => $settings["metadata_idValue_" . $i],
                                 "contentName" => $settings["metadata_contentName_" . $i],
                                 "contentValue" => $settings["metadata_contentValue_" . $i],
-                            );
+                            ];
                         }
                     }
                     $page->setMetaData($metaData);
@@ -149,13 +148,13 @@ class Admin_PageController extends \Pimcore\Controller\Action\Admin\Document
                     try {
                         $page->save();
                         $this->saveToSession($page);
-                        $this->_helper->json(array("success" => true));
+                        $this->_helper->json(["success" => true]);
                     } catch (\Exception $e) {
                         if (\Pimcore\Tool\Admin::isExtJS6() && $e instanceof Element\ValidationException) {
                             throw $e;
                         }
                         \Logger::err($e);
-                        $this->_helper->json(array("success" => false, "message"=>$e->getMessage()));
+                        $this->_helper->json(["success" => false, "message"=>$e->getMessage()]);
                     }
                 } else {
                     if ($page->isAllowed("save")) {
@@ -164,10 +163,10 @@ class Admin_PageController extends \Pimcore\Controller\Action\Admin\Document
                         try {
                             $page->saveVersion();
                             $this->saveToSession($page);
-                            $this->_helper->json(array("success" => true));
+                            $this->_helper->json(["success" => true]);
                         } catch (\Exception $e) {
                             \Logger::err($e);
-                            $this->_helper->json(array("success" => false, "message"=>$e->getMessage()));
+                            $this->_helper->json(["success" => false, "message"=>$e->getMessage()]);
                         }
                     }
                 }
@@ -175,7 +174,7 @@ class Admin_PageController extends \Pimcore\Controller\Action\Admin\Document
         } catch (\Exception $e) {
             \Logger::log($e);
             if (\Pimcore\Tool\Admin::isExtJS6() && $e instanceof Element\ValidationException) {
-                $this->_helper->json(array("success" => false, "type" => "ValidationException", "message" => $e->getMessage(), "stack" => $e->getTraceAsString(), "code" => $e->getCode()));
+                $this->_helper->json(["success" => false, "type" => "ValidationException", "message" => $e->getMessage(), "stack" => $e->getTraceAsString(), "code" => $e->getCode()]);
             }
             throw $e;
         }
@@ -186,13 +185,13 @@ class Admin_PageController extends \Pimcore\Controller\Action\Admin\Document
     public function getListAction()
     {
         $list = new Document\Listing();
-        $list->setCondition("type = ?", array("page"));
+        $list->setCondition("type = ?", ["page"]);
         $data = $list->loadIdPathList();
 
-        $this->_helper->json(array(
+        $this->_helper->json([
             "success" => true,
             "data" => $data
-        ));
+        ]);
     }
 
     public function uploadScreenshotAction()
@@ -210,7 +209,7 @@ class Admin_PageController extends \Pimcore\Controller\Action\Admin\Document
             File::put($file, $data);
         }
 
-        $this->_helper->json(array("success" => true));
+        $this->_helper->json(["success" => true]);
     }
 
     public function generateScreenshotAction()
@@ -253,7 +252,7 @@ class Admin_PageController extends \Pimcore\Controller\Action\Admin\Document
             }
         }
 
-        $this->_helper->json(array("success" => $success));
+        $this->_helper->json(["success" => $success]);
     }
 
     public function checkPrettyUrlAction()
@@ -279,17 +278,17 @@ class Admin_PageController extends \Pimcore\Controller\Action\Admin\Document
 
         $list = new Document\Listing();
         $list->setCondition("(CONCAT(path, `key`) = ? OR id IN (SELECT id from documents_page WHERE prettyUrl = ?))
-            AND id != ?", array(
+            AND id != ?", [
             $path, $path, $docId
-        ));
+        ]);
 
         if ($list->getTotalCount() > 0) {
             $success = false;
         }
 
-        $this->_helper->json(array(
+        $this->_helper->json([
             "success" => $success
-        ));
+        ]);
     }
 
     public function clearEditableDataAction()
@@ -314,9 +313,9 @@ class Admin_PageController extends \Pimcore\Controller\Action\Admin\Document
 
         $this->saveToSession($doc);
 
-        $this->_helper->json(array(
+        $this->_helper->json([
             "success" => true
-        ));
+        ]);
     }
 
     protected function setValuesToDocument(Document $page)

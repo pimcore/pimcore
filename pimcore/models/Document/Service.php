@@ -51,7 +51,7 @@ class Service extends Model\Element\Service
      * @param bool $useLayout
      * @return string
      */
-    public static function render(Document $document, $params = array(), $useLayout = false)
+    public static function render(Document $document, $params = [], $useLayout = false)
     {
         $layout = null;
         $existingActionHelper = null;
@@ -203,7 +203,7 @@ class Service extends Model\Element\Service
 
         // avoid recursion
         if (!$this->_copyRecursiveIds) {
-            $this->_copyRecursiveIds = array();
+            $this->_copyRecursiveIds = [];
         }
         if (in_array($source->getId(), $this->_copyRecursiveIds)) {
             return;
@@ -281,7 +281,7 @@ class Service extends Model\Element\Service
         }
 
         if ($enableInheritance && ($new instanceof Document\PageSnippet)) {
-            $new->setElements(array());
+            $new->setElements([]);
             $new->setContentMasterDocumentId($source->getId());
         }
 
@@ -423,14 +423,14 @@ class Service extends Model\Element\Service
      * @param $rewriteConfig
      * @return Document
      */
-    public static function rewriteIds($document, $rewriteConfig, $params = array())
+    public static function rewriteIds($document, $rewriteConfig, $params = [])
     {
 
         // rewriting elements only for snippets and pages
         if ($document instanceof Document\PageSnippet) {
             if (array_key_exists("enableInheritance", $params) && $params["enableInheritance"]) {
                 $elements = $document->getElements();
-                $changedElements = array();
+                $changedElements = [];
                 $contentMaster = $document->getContentMasterDocument();
                 if ($contentMaster instanceof Document\PageSnippet) {
                     $contentMasterElements = $contentMaster->getElements();
@@ -525,9 +525,9 @@ class Service extends Model\Element\Service
         }
 
         if (!$item->getId()) {
-            $list->setCondition('parentId = ? AND `key` = ? ', array($parent->getId(), $key));
+            $list->setCondition('parentId = ? AND `key` = ? ', [$parent->getId(), $key]);
         } else {
-            $list->setCondition('parentId = ? AND `key` = ? AND id != ? ', array($parent->getId(), $key, $item->getId()));
+            $list->setCondition('parentId = ? AND `key` = ? AND id != ? ', [$parent->getId(), $key, $item->getId()]);
         }
         $check = $list->loadIdList();
         if (!empty($check)) {

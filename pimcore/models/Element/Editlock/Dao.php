@@ -28,7 +28,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getByElement($cid, $ctype)
     {
-        $data = $this->db->fetchRow("SELECT * FROM edit_lock WHERE cid = ? AND ctype = ?", array($cid, $ctype));
+        $data = $this->db->fetchRow("SELECT * FROM edit_lock WHERE cid = ? AND ctype = ?", [$cid, $ctype]);
 
         if (!$data["id"]) {
             throw new \Exception("Lock with cid " . $cid . " and ctype " . $ctype . " not found");

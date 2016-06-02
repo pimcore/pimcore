@@ -18,7 +18,6 @@ use Pimcore\Model\Schedule;
 
 class AbstractAPI
 {
-
     protected static $legacyMappings = [
         "maintenance" => "system.maintenance",
         "maintenanceForce" => "system.maintenanceForce",
@@ -110,7 +109,7 @@ class AbstractAPI
                     });
                 } else {
                     // for all events that don't have parameters or targets (eg. preDispatch/pimcore.startup)
-                    $eventManager->attach($event, array($plugin, $method));
+                    $eventManager->attach($event, [$plugin, $method]);
                 }
             }
         }

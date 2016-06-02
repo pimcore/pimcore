@@ -42,7 +42,7 @@ class MaintenanceCommand extends AbstractCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $validJobs = array();
+        $validJobs = [];
         if ($input->getOption("job")) {
             $validJobs = explode(",", $input->getOption("job"));
         }

@@ -1,6 +1,6 @@
 <?php
 
-$base = array(
+$base = [
   0x00 => null, null, 'N', null, null, 'a', 'aa', 'i', 'ii', 'u', 'uu', null, null, null, null, 'ee',
   0x10 => 'ai', null, null, 'oo', 'au', 'k', 'kh', 'g', 'gh', 'ng', 'c', 'ch', 'j', 'jh', 'ny', 'tt',
   0x20 => 'tth', 'dd', 'ddh', 'nn', 't', 'th', 'd', 'dh', 'n', null, 'p', 'ph', 'b', 'bb', 'm', 'y',
@@ -17,4 +17,4 @@ $base = array(
   0xD0 => 'AUM', null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
   0xE0 => 'RR', null, null, null, null, null, '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
   0xF0 => null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-);
+];

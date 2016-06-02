@@ -38,7 +38,6 @@ namespace Pimcore;
 
 class Browser
 {
-
     private $_agent = '';
     private $_browser_name = '';
     private $_version = '';
@@ -560,12 +559,12 @@ class Browser
             if (stripos($this->_agent, 'msnb') !== false) {
                 $aresult = explode(' ', stristr(str_replace(';', '; ', $this->_agent), 'MSN'));
                 $this->setBrowser(self::BROWSER_MSN);
-                $this->setVersion(str_replace(array('(', ')', ';'), '', $aresult[1]));
+                $this->setVersion(str_replace(['(', ')', ';'], '', $aresult[1]));
                 return true;
             }
             $aresult = explode(' ', stristr(str_replace(';', '; ', $this->_agent), 'msie'));
             $this->setBrowser(self::BROWSER_IE);
-            $this->setVersion(str_replace(array('(', ')', ';'), '', $aresult[1]));
+            $this->setVersion(str_replace(['(', ')', ';'], '', $aresult[1]));
             return true;
         } // Test for Pocket IE
         elseif (stripos($this->_agent, 'mspie') !== false || stripos($this->_agent, 'pocket') !== false) {
@@ -590,7 +589,7 @@ class Browser
             $this->setVersion(preg_replace("/[^0-9.]+/", "", $result[1]));
 
             // remove Gecko out of the user-agent, otherwise the mozilla check will success
-            $this->_agent = str_replace(array("Mozilla", "Gecko"), "MSIE", $this->_agent);
+            $this->_agent = str_replace(["Mozilla", "Gecko"], "MSIE", $this->_agent);
         }
         return false;
     }
@@ -693,7 +692,7 @@ class Browser
         if (stripos($this->_agent, 'NetPositive') !== false) {
             $aresult = explode('/', stristr($this->_agent, 'NetPositive'));
             $aversion = explode(' ', $aresult[1]);
-            $this->setVersion(str_replace(array('(', ')', ';'), '', $aversion[0]));
+            $this->setVersion(str_replace(['(', ')', ';'], '', $aversion[0]));
             $this->setBrowser(self::BROWSER_NETPOSITIVE);
             return true;
         }

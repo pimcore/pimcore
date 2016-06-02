@@ -30,7 +30,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     {
         $emailLogs = $this->db->fetchCol("SELECT id FROM email_log" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
-        $emailLogsArray = array();
+        $emailLogsArray = [];
         foreach ($emailLogs as $log) {
             $emailLogsArray[] = Model\Tool\Email\Log::getById($log);
         }

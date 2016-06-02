@@ -111,7 +111,7 @@ class LibreOffice extends Ghostscript
      */
     public function getPdf($path = null)
     {
-        if($path) {
+        if ($path) {
             $path = $this->preparePath($path);
         }
 

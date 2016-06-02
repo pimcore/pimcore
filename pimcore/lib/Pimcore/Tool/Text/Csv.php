@@ -18,7 +18,6 @@ namespace Pimcore\Tool\Text;
 
 class Csv
 {
-
     public function detect($data)
     {
         $linefeed = $this->guessLinefeed($data);
@@ -78,7 +77,7 @@ class Csv
      */
     protected function guessQuoteAndDelim($data)
     {
-        $patterns = array();
+        $patterns = [];
         $patterns[] = '/([^\w\n"\']) ?(["\']).*?(\2)(\1)/';
         $patterns[] = '/(?:^|\n)(["\']).*?(\1)([^\w\n"\']) ?/'; // dont know if any of the regexes starting here work properly
         $patterns[] = '/([^\w\n"\']) ?(["\']).*?(\2)(?:^|\n)/';
@@ -93,7 +92,7 @@ class Csv
         }
 
         if (!$matches) {
-            return array("", null);
+            return ["", null];
         } // couldn't guess quote or delim
 
         $quotes = array_count_values($matches[2]);
@@ -106,7 +105,7 @@ class Csv
             $quote = "";
             $delim = null;
         }
-        return array($quote, $delim);
+        return [$quote, $delim];
     }
 
     /**
@@ -119,7 +118,7 @@ class Csv
     {
         $charcount = count_chars($data, 1);
 
-        $filtered = array();
+        $filtered = [];
         foreach ($charcount as $char => $count) {
             if ($char == ord($quotechar)) {
                 // exclude the quote char
@@ -150,7 +149,7 @@ class Csv
 
         // count every character on every line
         $data = explode($linefeed, $data);
-        $tmp = array();
+        $tmp = [];
         $linecount = 0;
         foreach ($data as $row) {
             if (empty($row)) {
@@ -167,7 +166,7 @@ class Csv
             // store the charcount along with the previous counts
             foreach ($frequency as $char => $count) {
                 if (!array_key_exists($char, $tmp)) {
-                    $tmp[$char] = array();
+                    $tmp[$char] = [];
                 }
                 $tmp[$char][] = $count; // this $char appears $count times on this line
             }

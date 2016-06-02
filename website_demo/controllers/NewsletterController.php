@@ -6,7 +6,6 @@ use Pimcore\Model;
 
 class NewsletterController extends Action
 {
-
     public function subscribeAction()
     {
         $this->enableLayout();
@@ -29,7 +28,7 @@ class NewsletterController extends Action
                 // user and email document
                 // parameters available in the email: gender, firstname, lastname, email, token, object
                 // ==> see mailing framework
-                $newsletter->sendConfirmationMail($user, Model\Document::getByPath("/en/advanced-examples/newsletter/confirmation-email"), array("additional" => "parameters"));
+                $newsletter->sendConfirmationMail($user, Model\Document::getByPath("/en/advanced-examples/newsletter/confirmation-email"), ["additional" => "parameters"]);
 
                 // do some other stuff with the new user
                 $user->setDateRegister(new \DateTime());

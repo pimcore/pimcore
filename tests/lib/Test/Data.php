@@ -16,7 +16,7 @@ class Test_Data
 
     private static function createRandomProperties()
     {
-        $properties = array();
+        $properties = [];
 
             // object property
         $property = new Property();
@@ -199,7 +199,7 @@ class Test_Data
 
     private static function createHotspots()
     {
-        $result = array();
+        $result = [];
         $hotspot = new stdClass();
         $hotspot->name = "hotspot1";
         $hotspot->width = "10";
@@ -335,14 +335,14 @@ class Test_Data
     public static function fillMultiSelect($object, $field, $seed = 1)
     {
         $setter = "set" . ucfirst($field);
-        $object->$setter(array("1", "2"));
+        $object->$setter(["1", "2"]);
     }
 
     public static function assertMultiSelect($object, $field, $seed = 1)
     {
         $getter = "get" . ucfirst($field);
         $value = $object->$getter();
-        $expected = array("1", "2");
+        $expected = ["1", "2"];
         if ($value != $expected) {
             print("   expected " . $expected . " but was " . $value);
             return false;
@@ -358,12 +358,12 @@ class Test_Data
         $user = User::getByName($username);
 
         if (!$user) {
-            $user = User::create(array(
+            $user = User::create([
                 "parentId" => 0,
                 "username" => $username,
                 "password" => Pimcore_Tool_Authentication::getPasswordHash($username, $username),
                 "active" => true
-            ));
+            ]);
             $user->setAdmin(true);
             $user->save();
         }
@@ -452,14 +452,14 @@ class Test_Data
     public static function fillCountryMultiSelect($object, $field, $seed = 1)
     {
         $setter = "set" . ucfirst($field);
-        $object->$setter(array("1", "2"));
+        $object->$setter(["1", "2"]);
     }
 
     public static function assertCountryMultiSelect($object, $field, $seed = 1)
     {
         $getter = "get" . ucfirst($field);
         $value = $object->$getter();
-        $expected = array("1", "2");
+        $expected = ["1", "2"];
         if ($value != $expected) {
             print("   expected " . $expected . " but was " . $value);
             return false;
@@ -470,14 +470,14 @@ class Test_Data
     public static function fillLanguageMultiSelect($object, $field, $seed = 1)
     {
         $setter = "set" . ucfirst($field);
-        $object->$setter(array("1", "2"));
+        $object->$setter(["1", "2"]);
     }
 
     public static function assertLanguageMultiSelect($object, $field, $seed = 1)
     {
         $getter = "get" . ucfirst($field);
         $value = $object->$getter();
-        $expected = array("1", "3");
+        $expected = ["1", "3"];
         if ($value != $expected) {
             print("   expected " . $expected . " but was " . $value);
             return false;
@@ -535,7 +535,7 @@ class Test_Data
     public static function fillGeopolygon($object, $field, $seed = 1)
     {
         $setter = "set" . ucfirst($field);
-        $polygon  = array(new Object_Data_Geopoint(150.54428100585938, -33.464671118242684), new Object_Data_Geopoint(150.73654174804688, -33.913733814316245), new Object_Data_Geopoint(151.2542724609375, -33.9946115848146));
+        $polygon  = [new Object_Data_Geopoint(150.54428100585938, -33.464671118242684), new Object_Data_Geopoint(150.73654174804688, -33.913733814316245), new Object_Data_Geopoint(151.2542724609375, -33.9946115848146)];
         $object->$setter($polygon);
     }
 
@@ -555,7 +555,7 @@ class Test_Data
     public static function fillTable($object, $field, $seed = 1)
     {
         $setter = "set" . ucfirst($field);
-        $tabledata  = array(array("eins", "zwei", "drei"), array($seed, 2, 3), array("a", "b", "c"));
+        $tabledata  = [["eins", "zwei", "drei"], [$seed, 2, 3], ["a", "b", "c"]];
         $object->$setter($tabledata);
     }
 
@@ -700,9 +700,9 @@ class Test_Data
         $objects = self::getObjectList("o_type = 'object' AND o_className = 'unittest'");
         $objects = array_slice($objects, 0, 4);
 
-        $metaobjects = array();
+        $metaobjects = [];
         foreach ($objects as $o) {
-            $mo = new Object_Data_ObjectMetadata($field, array("meta1", "meta2"), $o);
+            $mo = new Object_Data_ObjectMetadata($field, ["meta1", "meta2"], $o);
             $mo->setMeta1("value1" . $seed);
             $mo->setMeta2("value2" . $seed);
             $metaobjects[] = $mo;
@@ -748,10 +748,10 @@ class Test_Data
             $config->setName("unittest_key2");
             $config->setType("select");
 
-            $options = array(
-                array("key" => "option1", "value" => "1"),
-                array("key" => "option2", "value" => "2")
-            );
+            $options = [
+                ["key" => "option1", "value" => "1"],
+                ["key" => "option2", "value" => "2"]
+            ];
             $config->setPossibleValues(json_encode($options));
 
             $config->save();
@@ -763,13 +763,13 @@ class Test_Data
         $keyConfig1 = Object_KeyValue_KeyConfig::getByName("unittest_key1");
         $keyConfig2 = Object_KeyValue_KeyConfig::getByName("unittest_key2");
 
-        $pair = array();
+        $pair = [];
         $pair["key"] = $keyConfig1->getId();
         $pair["value"] = "text1_" . $seed;
         $pair["metadata"] = "meta1_" . $seed;
         $pairs[] = $pair;
 
-        $pair = array();
+        $pair = [];
         $pair["key"] = $keyConfig2->getId();
         $pair["value"] = 1 + ($seed % 2);
         $pair["metadata"] = "metda" . (1 + ($seed % 2));
@@ -852,7 +852,7 @@ class Test_Data
         $fc->setFieldinput1("field1" . $seed);
         $fc->setFieldinput2("field2" . $seed);
 
-        $items = new Object_Fieldcollection(array($fc), $field);
+        $items = new Object_Fieldcollection([$fc], $field);
         $object->$setter($items);
     }
 

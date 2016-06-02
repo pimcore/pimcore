@@ -141,8 +141,8 @@ class Config
             }
 
             if (!$config = Cache::load($cacheKey)) {
-                $settingsArray = array();
-                $cacheTags = array("website_config","system","config","output");
+                $settingsArray = [];
+                $cacheTags = ["website_config","system","config","output"];
 
                 $list = new Model\WebsiteSetting\Listing();
                 $list = $list->load();
@@ -222,7 +222,7 @@ class Config
                     throw new \Exception("Config-file " . $file . " doesn't exist.");
                 }
             } catch (\Exception $e) {
-                $config = new \Zend_Config(array());
+                $config = new \Zend_Config([]);
             }
 
             self::setReportConfig($config);
@@ -259,7 +259,7 @@ class Config
                     throw new \Exception("Config-file " . $file . " doesn't exist.");
                 }
             } catch (\Exception $e) {
-                $config = new \Zend_Config(array());
+                $config = new \Zend_Config([]);
             }
 
             self::setWeb2PrintConfig($config);
@@ -421,38 +421,38 @@ class Config
             "default" => [
                 "iconCls" => "pimcore_icon_perspective",
                 "elementTree" => $elementTree,
-                "dashboards" => array(
+                "dashboards" => [
                     "predefined" => [
-                        "welcome" => array(
-                            "positions" => array(
-                                array(
-                                    array(
+                        "welcome" => [
+                            "positions" => [
+                                [
+                                    [
                                         "id" => 1,
                                         "type" => "pimcore.layout.portlets.modificationStatistic",
                                         "config" => null
-                                    ),
-                                    array(
+                                    ],
+                                    [
                                         "id" => 2,
                                         "type" => "pimcore.layout.portlets.modifiedAssets",
                                         "config" => null
-                                    )
-                                ),
-                                array(
-                                    array(
+                                    ]
+                                ],
+                                [
+                                    [
                                         "id" => 3,
                                         "type" => "pimcore.layout.portlets.modifiedObjects",
                                         "config" => null
-                                    ),
-                                    array(
+                                    ],
+                                    [
                                         "id" => 4,
                                         "type" => "pimcore.layout.portlets.modifiedDocuments",
                                         "config" => null
-                                    )
-                                )
-                            )
-                        )
+                                    ]
+                                ]
+                            ]
+                        ]
                     ]
-                )
+                ]
             ]
         ];
     }
@@ -510,16 +510,16 @@ class Config
 
         $config = $masterConfig[$name];
         if (!$config) {
-            $config = array();
+            $config = [];
         }
 
         $tmpResult = $config["elementTree"];
         if (is_null($tmpResult)) {
-            $tmpResult = array();
+            $tmpResult = [];
         }
-        $result = array();
+        $result = [];
 
-        $cfConfigMapping = array();
+        $cfConfigMapping = [];
 
         $cvConfigs = Tool::getCustomViewConfig();
 
@@ -619,9 +619,9 @@ class Config
             if ($user->isAdmin()) {
                 $config = self::getPerspectivesConfig()->toArray();
             } else {
-                $config = array();
+                $config = [];
                 $roleIds = $user->getRoles();
-                $userIds = array($user->getId());
+                $userIds = [$user->getId()];
                 $userIds = array_merge($userIds, $roleIds);
 
                 foreach ($userIds as $userId) {
@@ -646,7 +646,7 @@ class Config
             }
 
             if ($config) {
-                $tmpConfig = array();
+                $tmpConfig = [];
                 $validPerspectiveNames = array_keys($config);
 
                 // sort the stuff
@@ -666,14 +666,14 @@ class Config
             $config = self::getPerspectivesConfig()->toArray();
         }
 
-        $result = array();
+        $result = [];
 
         foreach ($config as $configName => $configItem) {
-            $item = array(
+            $item = [
                 "name" => $configName,
                 "icon" => $configItem["icon"],
                 "iconCls" => $configItem["iconCls"]
-            );
+            ];
             if ($user) {
                 $item["active"] = $configName == $currentConfigName;
             }

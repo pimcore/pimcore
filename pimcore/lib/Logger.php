@@ -54,7 +54,7 @@ class Logger
      */
     public static function setLogger($logger)
     {
-        self::$logger = array();
+        self::$logger = [];
         self::$logger[] = $logger;
         self::$enabled = true;
     }
@@ -73,7 +73,7 @@ class Logger
      */
     public static function resetLoggers()
     {
-        self::$logger = array();
+        self::$logger = [];
     }
 
     /**
@@ -88,7 +88,7 @@ class Logger
         }
 
         if ($reset) {
-            self::$logger = array();
+            self::$logger = [];
         }
         self::$logger[] = $logger;
         self::$enabled = true;
@@ -206,7 +206,7 @@ class Logger
             $backtrace = debug_backtrace();
 
             if (!isset($backtrace[2])) {
-                $call = array('class' => '', 'type' => '', 'function' => '');
+                $call = ['class' => '', 'type' => '', 'function' => ''];
             } else {
                 $call = $backtrace[2];
             }

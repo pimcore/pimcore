@@ -18,7 +18,6 @@ namespace Pimcore\Model\Tool\Admin;
 
 class EventDataContainer
 {
-
     protected $data;
 
     public function __construct($data)

@@ -34,12 +34,12 @@ class Config extends Model\AbstractModel
     /**
      * @var string[]
      */
-    public $dataSourceConfig = array();
+    public $dataSourceConfig = [];
 
     /**
      * @var array
      */
-    public $columnConfiguration = array();
+    public $columnConfiguration = [];
 
     /**
      * @var string
@@ -128,10 +128,10 @@ class Config extends Model\AbstractModel
         $items = $list->load();
 
         foreach ($items as $item) {
-            $reports[] = array(
+            $reports[] = [
                 "id" => $item->getName(),
                 "text" => $item->getName()
-            );
+            ];
         }
 
         return $reports;

@@ -80,9 +80,9 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      * @param array $tags
      * @return array
      */
-    public function getCacheTags($tags = array())
+    public function getCacheTags($tags = [])
     {
-        $tags = is_array($tags) ? $tags : array();
+        $tags = is_array($tags) ? $tags : [];
 
         $tags[$this->getCacheTag()] = $this->getCacheTag();
         return $tags;
@@ -95,7 +95,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      */
     public function resolveDependencies()
     {
-        $dependencies = array();
+        $dependencies = [];
 
         // check for properties
         if (method_exists($this, "getProperties")) {
@@ -129,8 +129,8 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     {
         $elementType = Service::getElementType($this);
         $vars = get_class_vars("\\Pimcore\\Model\\User\\Workspace\\" . ucfirst($elementType));
-        $ignored = array("userId","cid","cpath","dao");
-        $permissions = array();
+        $ignored = ["userId","cid","cpath","dao"];
+        $permissions = [];
 
         foreach ($vars as $name => $defaultValue) {
             if (!in_array($name, $ignored)) {

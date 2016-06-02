@@ -30,10 +30,10 @@ class Url extends \Zend_View_Helper_Url
      * @return string|void
      * @throws \Exception
      */
-    public function url(array $urlOptions = array(), $name = null, $reset = false, $encode = true)
+    public function url(array $urlOptions = [], $name = null, $reset = false, $encode = true)
     {
         if (!$urlOptions) {
-            $urlOptions = array();
+            $urlOptions = [];
         }
 
         // when using $name = false we don't use the default route (happens when $name = null / ZF default behavior)
@@ -89,7 +89,7 @@ class Url extends \Zend_View_Helper_Url
 
 
         // this is to add support for arrays as values for the default \Zend_View_Helper_Url
-        $unset = array();
+        $unset = [];
         foreach ($urlOptions as $optionName => $optionValues) {
             if (is_array($optionValues)) {
                 foreach ($optionValues as $key => $value) {

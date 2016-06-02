@@ -100,7 +100,7 @@ class Video extends Model\Asset
      * @param mixed
      * @return string
      */
-    public function getThumbnail($thumbnailName, $onlyFormats = array())
+    public function getThumbnail($thumbnailName, $onlyFormats = [])
     {
         $thumbnail = $this->getThumbnailConfig($thumbnailName);
 
@@ -111,8 +111,7 @@ class Video extends Model\Asset
                 // check for existing videos
                 $customSetting = $this->getCustomSetting("thumbnails");
                 if (is_array($customSetting) && array_key_exists($thumbnail->getName(), $customSetting)) {
-
-                    foreach($customSetting[$thumbnail->getName()]["formats"] as &$path) {
+                    foreach ($customSetting[$thumbnail->getName()]["formats"] as &$path) {
                         $fullPath = $this->getVideoThumbnailSavePath() . $path;
                         $path = str_replace(PIMCORE_DOCUMENT_ROOT, "", $fullPath);
 
@@ -121,7 +120,7 @@ class Video extends Model\Asset
                             "frontendPath" => $path
                         ]);
 
-                        if($results->count()) {
+                        if ($results->count()) {
                             $path = $results->last();
                         }
                     }

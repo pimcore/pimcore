@@ -49,7 +49,7 @@ class Persona extends Model\AbstractModel
     /**
      * @var array
      */
-    public $conditions = array();
+    public $conditions = [];
 
     /**
      * @param $id
@@ -155,7 +155,7 @@ class Persona extends Model\AbstractModel
     public function setConditions($conditions)
     {
         if (!$conditions) {
-            $conditions = array();
+            $conditions = [];
         }
         $this->conditions = $conditions;
         return $this;

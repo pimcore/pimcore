@@ -30,7 +30,7 @@ class Translate extends \Zend_Translate_Adapter
      * Translation data
      * @var array
      */
-    protected $_translate = array();
+    protected $_translate = [];
 
     /**
      * @var bool
@@ -49,10 +49,10 @@ class Translate extends \Zend_Translate_Adapter
 
         $locale = (string) $locale;
 
-        parent::__construct(array(
+        parent::__construct([
             "locale" => $locale,
-            "content" => array("__pimcore_dummy" => "only_a_dummy")
-        ));
+            "content" => ["__pimcore_dummy" => "only_a_dummy"]
+        ]);
     }
 
     /**
@@ -61,26 +61,26 @@ class Translate extends \Zend_Translate_Adapter
      * @param array $options
      * @return array
      */
-    protected function _loadTranslationData($data, $locale, array $options = array())
+    protected function _loadTranslationData($data, $locale, array $options = [])
     {
         $locale = (string) $locale;
         $tmpKeyParts = explode("\\", self::getBackend());
         $cacheKey = "Translate_" . array_pop($tmpKeyParts) . "_data_" . $locale;
 
         if (!$data = Cache::load($cacheKey)) {
-            $data = array("__pimcore_dummy" => "only_a_dummy");
+            $data = ["__pimcore_dummy" => "only_a_dummy"];
             $listClass = self::getBackend() . "\\Listing";
             $list = new $listClass();
 
             if ($list->isCacheable()) {
-                $list->setCondition("language = ?", array($locale));
+                $list->setCondition("language = ?", [$locale]);
                 $translations = $list->loadRaw();
 
                 foreach ($translations as $translation) {
                     $data[mb_strtolower($translation["key"])] = Tool\Text::removeLineBreaks($translation["text"]);
                 }
 
-                Cache::save($data, $cacheKey, array("translator", "translator_website", "translate"), null, 999);
+                Cache::save($data, $cacheKey, ["translator", "translator_website", "translate"], null, 999);
                 $this->isCacheable = true;
             } else {
                 $this->isCacheable = false;
@@ -177,7 +177,7 @@ class Translate extends \Zend_Translate_Adapter
 
             if (count($keyParts) > 1) {
                 krsort($keyParts);
-                $keysLoop = array();
+                $keysLoop = [];
 
                 foreach ($keyParts as $key) {
                     array_unshift($keysLoop, $key);

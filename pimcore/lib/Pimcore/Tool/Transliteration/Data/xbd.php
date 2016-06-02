@@ -1,6 +1,6 @@
 <?php
 
-$base = array(
+$base = [
   0x00 => 'bols', 'bolt', 'bolp', 'bolh', 'bom', 'bob', 'bobs', 'bos', 'boss', 'bong', 'boj', 'boc', 'bok', 'bot', 'bop', 'boh',
   0x10 => 'bwa', 'bwag', 'bwagg', 'bwags', 'bwan', 'bwanj', 'bwanh', 'bwad', 'bwal', 'bwalg', 'bwalm', 'bwalb', 'bwals', 'bwalt', 'bwalp', 'bwalh',
   0x20 => 'bwam', 'bwab', 'bwabs', 'bwas', 'bwass', 'bwang', 'bwaj', 'bwac', 'bwak', 'bwat', 'bwap', 'bwah', 'bwae', 'bwaeg', 'bwaegg', 'bwaegs',
@@ -17,4 +17,4 @@ $base = array(
   0xD0 => 'bwek', 'bwet', 'bwep', 'bweh', 'bwi', 'bwig', 'bwigg', 'bwigs', 'bwin', 'bwinj', 'bwinh', 'bwid', 'bwil', 'bwilg', 'bwilm', 'bwilb',
   0xE0 => 'bwils', 'bwilt', 'bwilp', 'bwilh', 'bwim', 'bwib', 'bwibs', 'bwis', 'bwiss', 'bwing', 'bwij', 'bwic', 'bwik', 'bwit', 'bwip', 'bwih',
   0xF0 => 'byu', 'byug', 'byugg', 'byugs', 'byun', 'byunj', 'byunh', 'byud', 'byul', 'byulg', 'byulm', 'byulb', 'byuls', 'byult', 'byulp', 'byulh',
-);
+];

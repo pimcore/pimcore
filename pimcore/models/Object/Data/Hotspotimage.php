@@ -48,7 +48,7 @@ class Hotspotimage
      * @param array $marker
      * @param array $crop
      */
-    public function __construct($image = null, $hotspots = [], $marker = array(), $crop = array())
+    public function __construct($image = null, $hotspots = [], $marker = [], $crop = [])
     {
         if ($image instanceof Asset\Image) {
             $this->image = $image;
@@ -57,14 +57,14 @@ class Hotspotimage
         }
 
         if (is_array($hotspots)) {
-            $this->hotspots = array();
+            $this->hotspots = [];
             foreach ($hotspots as $h) {
                 $this->hotspots[] = $h;
             }
         }
 
         if (is_array($marker)) {
-            $this->marker = array();
+            $this->marker = [];
             foreach ($marker as $m) {
                 $this->marker[] = $m;
             }
@@ -167,12 +167,12 @@ class Hotspotimage
         }
 
         if ($crop) {
-            $thumbConfig->addItemAt(0, "cropPercent", array(
+            $thumbConfig->addItemAt(0, "cropPercent", [
                 "width" => $crop["cropWidth"],
                 "height" => $crop["cropHeight"],
                 "y" => $crop["cropTop"],
                 "x" => $crop["cropLeft"]
-            ));
+            ]);
 
             $hash = md5(\Pimcore\Tool\Serialize::serialize($thumbConfig->getItems()));
             $thumbConfig->setName($thumbConfig->getName() . "_auto_" . $hash);

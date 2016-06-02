@@ -29,7 +29,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function load()
     {
-        $classes = array();
+        $classes = [];
 
         $classesRaw = $this->db->fetchCol("SELECT id FROM classes" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 

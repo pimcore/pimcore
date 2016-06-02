@@ -86,7 +86,7 @@ class ClassDefinition extends Model\AbstractModel
     /**
      * @var array
      */
-    public $fieldDefinitions = array();
+    public $fieldDefinitions = [];
 
     /**
      * @var array
@@ -106,22 +106,22 @@ class ClassDefinition extends Model\AbstractModel
     /**
      * @var array
      */
-    public $propertyVisibility = array(
-        "grid" => array(
+    public $propertyVisibility = [
+        "grid" => [
             "id" => true,
             "path" => true,
             "published" => true,
             "modificationDate" => true,
             "creationDate" => true
-        ),
-        "search" => array(
+        ],
+        "search" => [
             "id" => true,
             "path" => true,
             "published" => true,
             "modificationDate" => true,
             "creationDate" => true
-        )
-    );
+        ]
+    ];
 
 
     /**
@@ -181,7 +181,7 @@ class ClassDefinition extends Model\AbstractModel
      * @param array $values
      * @return self
      */
-    public static function create($values = array())
+    public static function create($values = [])
     {
         $class = new self();
         $class->setValues($values);
@@ -240,7 +240,7 @@ class ClassDefinition extends Model\AbstractModel
         $cd .= "/**\n";
 
         if ($this->getDescription()) {
-            $description = str_replace(array("/**", "*/", "//"), "", $this->getDescription());
+            $description = str_replace(["/**", "*/", "//"], "", $this->getDescription());
             $description = str_replace("\n", "\n* ", $description);
 
             $cd .= "* " . $description . "\n";
@@ -314,7 +314,7 @@ class ClassDefinition extends Model\AbstractModel
         $cd .= "\n\n";
 
         if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
-            $relationTypes = array();
+            $relationTypes = [];
             foreach ($this->getFieldDefinitions() as $key => $def) {
                 if (method_exists($def, "isRemoteOwner") and $def->isRemoteOwner()) {
                     continue;
@@ -330,7 +330,7 @@ class ClassDefinition extends Model\AbstractModel
                 }
 
                 if ($def->isRelationType()) {
-                    $relationTypes[$key] = array("type" => $def->getFieldType());
+                    $relationTypes[$key] = ["type" => $def->getFieldType()];
                 }
 
                 // collect lazyloaded fields
@@ -612,7 +612,7 @@ class ClassDefinition extends Model\AbstractModel
     {
         $this->layoutDefinitions = $layoutDefinitions;
 
-        $this->fieldDefinitions = array();
+        $this->fieldDefinitions = [];
         $this->extractDataDefinitions($this->layoutDefinitions);
 
         return $this;

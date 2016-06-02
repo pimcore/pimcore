@@ -406,7 +406,7 @@ abstract class Frontend extends Action
         // try to get template out of the document object, but only if the parameter `staticroute´ is not set, which indicates
         // if a request comes through a static/custom route (contains the route Object => Staticroute)
         // see PIMCORE-1545
-        if ($this->document instanceof Document && !in_array($this->getParam("pimcore_request_source"), array("staticroute", "renderlet"))) {
+        if ($this->document instanceof Document && !in_array($this->getParam("pimcore_request_source"), ["staticroute", "renderlet"])) {
             if (method_exists($this->document, "getTemplate") && $this->document->getTemplate()) {
                 return $this->document->getTemplate();
             }

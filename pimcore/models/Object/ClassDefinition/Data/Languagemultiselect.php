@@ -42,7 +42,7 @@ class Languagemultiselect extends Model\Object\ClassDefinition\Data\Multiselect
     {
         $validLanguages = (array) Tool::getValidLanguages();
         $locales = Tool::getSupportedLocales();
-        $options = array();
+        $options = [];
 
         foreach ($locales as $short => $translation) {
             if ($this->getOnlySystemLanguages()) {
@@ -51,10 +51,10 @@ class Languagemultiselect extends Model\Object\ClassDefinition\Data\Multiselect
                 }
             }
 
-            $options[] = array(
+            $options[] = [
                 "key" => $translation,
                 "value" => $short
-            );
+            ];
         }
 
         $this->setOptions($options);

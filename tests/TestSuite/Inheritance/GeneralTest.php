@@ -8,7 +8,6 @@
 
 class TestSuite_Inheritance_GeneralTest extends Test_Base
 {
-
     public function setUp()
     {
         $this->inAdminMode = Pimcore::inAdmin();

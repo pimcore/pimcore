@@ -6,7 +6,6 @@ use Pimcore\API\Plugin as PluginLib;
 
 class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterface
 {
-
     public function init()
     {
         parent::init();
@@ -20,7 +19,7 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
         });
 
         // using methods
-        \Pimcore::getEventManager()->attach("document.postUpdate", array($this, "handleDocument"));
+        \Pimcore::getEventManager()->attach("document.postUpdate", [$this, "handleDocument"]);
 
         // for more information regarding events, please visit:
         // http://www.pimcore.org/wiki/display/PIMCORE/Event+API+%28EventManager%29+since+2.1.1

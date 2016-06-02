@@ -36,7 +36,7 @@ class Config extends Model\AbstractModel
      *
      * @var array
      */
-    public $items = array();
+    public $items = [];
 
     /**
      * @var string
@@ -105,15 +105,15 @@ class Config extends Model\AbstractModel
         $config->setAudioBitrate(128);
         $config->setVideoBitrate(700);
 
-        $config->setItems(array(
-            array(
+        $config->setItems([
+            [
                 "method" => "scaleByWidth",
                 "arguments" =>
-                array(
+                [
                     "width" => 500
-                )
-            )
-        ));
+                ]
+            ]
+        ]);
 
         return $config;
     }
@@ -125,10 +125,10 @@ class Config extends Model\AbstractModel
      */
     public function addItem($name, $parameters)
     {
-        $this->items[] = array(
+        $this->items[] = [
             "method" => $name,
             "arguments" => $parameters
-        );
+        ];
 
         return true;
     }
@@ -140,10 +140,10 @@ class Config extends Model\AbstractModel
      */
     public function addItemAt($position, $name, $parameters)
     {
-        array_splice($this->items, $position, 0, array(array(
+        array_splice($this->items, $position, 0, [[
             "method" => $name,
             "arguments" => $parameters
-        )));
+        ]]);
 
         return true;
     }
@@ -154,7 +154,7 @@ class Config extends Model\AbstractModel
      */
     public function resetItems()
     {
-        $this->items = array();
+        $this->items = [];
     }
 
     /**
@@ -252,7 +252,7 @@ class Config extends Model\AbstractModel
      */
     public function getEstimatedDimensions()
     {
-        $dimensions = array();
+        $dimensions = [];
         $transformations = $this->getItems();
         if (is_array($transformations) && count($transformations) > 0) {
             foreach ($transformations as $transformation) {

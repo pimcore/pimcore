@@ -22,7 +22,7 @@ class Transfer extends \Zend_File_Transfer
      * @param bool $direction
      * @param array $options
      */
-    public function __construct($adapter = "\\Pimcore\\File\\Transfer\\Adapter\\Http", $direction = false, $options = array())
+    public function __construct($adapter = "\\Pimcore\\File\\Transfer\\Adapter\\Http", $direction = false, $options = [])
     {
         parent::__construct($adapter, $direction, $options);
     }

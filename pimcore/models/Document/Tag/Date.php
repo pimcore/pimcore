@@ -140,7 +140,7 @@ class Date extends Model\Document\Tag
     * @param $idMapper
     * @throws \Exception
     */
-    public function getFromWebserviceImport($wsElement, $document = null, $params = array(), $idMapper = null)
+    public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
     {
         if (!$wsElement or empty($wsElement->value)) {
             $this->date = null;
@@ -157,7 +157,7 @@ class Date extends Model\Document\Tag
      * @abstract
      * @return array
      */
-    public function getForWebserviceExport($document = null, $params = array())
+    public function getForWebserviceExport($document = null, $params = [])
     {
         if ($this->date) {
             return $this->date->getTimestamp();

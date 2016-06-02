@@ -36,7 +36,7 @@ class User extends Model\Object\ClassDefinition\Data\Select
      * @param mixed $params
      * @return string
      */
-    public function getDataFromResource($data, $object = null, $params = array())
+    public function getDataFromResource($data, $object = null, $params = [])
     {
         if (!empty($data)) {
             try {
@@ -55,7 +55,7 @@ class User extends Model\Object\ClassDefinition\Data\Select
      * @param mixed $params
      * @return null|string
      */
-    public function getDataForResource($data, $object = null, $params = array())
+    public function getDataForResource($data, $object = null, $params = [])
     {
         if (!empty($data)) {
             try {
@@ -79,7 +79,7 @@ class User extends Model\Object\ClassDefinition\Data\Select
         $list->setOrderKey("name");
         $users = $list->load();
 
-        $options = array();
+        $options = [];
         if (is_array($users) and count($users) > 0) {
             foreach ($users as $user) {
                 if ($user instanceof Model\User) {
@@ -89,10 +89,10 @@ class User extends Model\Object\ClassDefinition\Data\Select
                     if (!empty($first) or !empty($last)) {
                         $value .= " (" . $first . " " . $last . ")";
                     }
-                    $options[] = array(
+                    $options[] = [
                         "value" => $user->getId(),
                         "key" => $value
-                    );
+                    ];
                 }
             }
         }

@@ -33,7 +33,7 @@ class Dao extends Model\Dao\AbstractDao
         return (int) $this->db->fetchOne("SELECT documents.id FROM documents
             LEFT JOIN documents_page ON documents.id = documents_page.id
             WHERE documents.path LIKE ? AND documents_page.prettyUrl = ?",
-        array($site->getRootPath() . "/%", rtrim($path, "/")));
+        [$site->getRootPath() . "/%", rtrim($path, "/")]);
     }
 
     /**
@@ -45,7 +45,7 @@ class Dao extends Model\Dao\AbstractDao
     {
         return $this->db->fetchOne("SELECT documents.id FROM documents
             LEFT JOIN documents_hardlink ON documents.id = documents_hardlink.id
-            WHERE documents_hardlink.sourceId = ? AND documents.path LIKE ?", array($document->getId(), $site->getRootPath() . "/%"));
+            WHERE documents_hardlink.sourceId = ? AND documents.path LIKE ?", [$document->getId(), $site->getRootPath() . "/%"]);
     }
 
     /**

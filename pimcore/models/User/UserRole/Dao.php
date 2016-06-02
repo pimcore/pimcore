@@ -29,7 +29,7 @@ class Dao extends Model\User\AbstractUser\Dao
     {
         parent::getById($id);
 
-        if (in_array($this->model->getType(), array("user", "role"))) {
+        if (in_array($this->model->getType(), ["user", "role"])) {
             $this->loadWorkspaces();
         }
     }
@@ -42,7 +42,7 @@ class Dao extends Model\User\AbstractUser\Dao
     {
         parent::getByName($name);
 
-        if (in_array($this->model->getType(), array("user", "role"))) {
+        if (in_array($this->model->getType(), ["user", "role"])) {
             $this->loadWorkspaces();
         }
     }
@@ -52,10 +52,10 @@ class Dao extends Model\User\AbstractUser\Dao
      */
     public function loadWorkspaces()
     {
-        $types = array("asset","document","object");
+        $types = ["asset","document","object"];
 
         foreach ($types as $type) {
-            $workspaces = array();
+            $workspaces = [];
             $className = "\\Pimcore\\Model\\User\\Workspace\\" . ucfirst($type);
             $result = $this->db->fetchAll("SELECT * FROM users_workspaces_" . $type . " WHERE userId = ?", $this->model->getId());
             foreach ($result as $row) {

@@ -20,7 +20,6 @@ use Pimcore\Model;
 
 class Dao extends Model\Dao\AbstractDao
 {
-
     const TABLE_NAME_GROUPS = "keyvalue_groups";
 
     /**
@@ -127,7 +126,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->model->setModificationDate($ts);
         $this->model->setCreationDate($ts);
 
-        $this->db->insert(self::TABLE_NAME_GROUPS, array());
+        $this->db->insert(self::TABLE_NAME_GROUPS, []);
 
         $this->model->setId($this->db->lastInsertId());
 

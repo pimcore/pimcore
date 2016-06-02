@@ -20,7 +20,6 @@ use Pimcore\Model;
 
 class Dao extends Model\Dao\AbstractDao
 {
-
     const TABLE_NAME = 'uuids';
 
     /**

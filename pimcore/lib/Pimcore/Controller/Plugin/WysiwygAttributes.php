@@ -26,7 +26,7 @@ class WysiwygAttributes extends \Zend_Controller_Plugin_Abstract
             return;
         }
         
-        // removes the non-valid html attributes which are used by the wysiwyg editor for ID based linking        
+        // removes the non-valid html attributes which are used by the wysiwyg editor for ID based linking
         $body = $this->getResponse()->getBody();
         $body = preg_replace("/ pimcore_(id|type|disable_thumbnail)=\\\"([0-9a-z]+)\\\"/", "", $body);
         $this->getResponse()->setBody($body);

@@ -180,7 +180,7 @@ class CssCombine extends \Zend_Controller_Plugin_Abstract
         $abs = "$path/$rel";
 
         /* replace '//' or '/./' or '/foo/../' with '/' */
-        $re = array('#(/\.?/)#', '#/(?!\.\.)[^/]+/\.\./#');
+        $re = ['#(/\.?/)#', '#/(?!\.\.)[^/]+/\.\./#'];
         for ($n=1; $n>0; $abs=preg_replace($re, '/', $abs, -1, $n)) {
         }
 

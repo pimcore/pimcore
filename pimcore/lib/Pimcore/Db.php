@@ -222,7 +222,7 @@ class Db
                 self::logDefinitionModification($args[0]);
             }
         } else {
-            $tablesToCheck = array("classes","users_permission_definitions");
+            $tablesToCheck = ["classes","users_permission_definitions"];
 
             if (in_array($args[0], $tablesToCheck)) {
                 self::$_logProfilerWasEnabled = $connection->getProfiler()->getEnabled();
@@ -263,7 +263,7 @@ class Db
      */
     public static function isWriteQuery($method, $args)
     {
-        $methodsToCheck = array("update","delete","insert","lastInsertId");
+        $methodsToCheck = ["update","delete","insert","lastInsertId"];
         if (in_array($method, $methodsToCheck)) {
             return true;
         }
@@ -315,11 +315,11 @@ class Db
     {
         if ($logError) {
             \Logger::error($exception);
-            \Logger::error(array(
+            \Logger::error([
                 "message" => $exception->getMessage(),
                 "method" => $method,
                 "arguments" => $args
-            ));
+            ]);
         }
 
         $lowerErrorMessage = strtolower($exception->getMessage());

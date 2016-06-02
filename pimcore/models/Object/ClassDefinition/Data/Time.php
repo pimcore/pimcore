@@ -56,7 +56,7 @@ class Time extends Model\Object\ClassDefinition\Data\Input
      * @param mixed $params
      * @return bool
      */
-    public function isDiffChangeAllowed($object, $params = array())
+    public function isDiffChangeAllowed($object, $params = [])
     {
         return true;
     }

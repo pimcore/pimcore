@@ -44,7 +44,7 @@ class Folder extends DAV\Collection
      */
     public function getChildren()
     {
-        $children = array();
+        $children = [];
 
         if ($this->asset->hasChilds()) {
             foreach ($this->asset->getChilds() as $child) {
@@ -119,12 +119,12 @@ class Folder extends DAV\Collection
         $user = AdminTool::getCurrentUser();
 
         if ($this->asset->isAllowed("create")) {
-            $asset = Asset::create($this->asset->getId(), array(
+            $asset = Asset::create($this->asset->getId(), [
                 "filename" => File::getValidFilename($name),
                 "sourcePath" => $tmpFile,
                 "userModification" => $user->getId(),
                 "userOwner" => $user->getId()
-            ));
+            ]);
 
             unlink($tmpFile);
         } else {
@@ -141,12 +141,12 @@ class Folder extends DAV\Collection
         $user = AdminTool::getCurrentUser();
 
         if ($this->asset->isAllowed("create")) {
-            $asset = Asset::create($this->asset->getId(), array(
+            $asset = Asset::create($this->asset->getId(), [
                 "filename" => File::getValidFilename($name),
                 "type" => "folder",
                 "userModification" => $user->getId(),
                 "userOwner" => $user->getId()
-            ));
+            ]);
         } else {
             throw new DAV\Exception\Forbidden();
         }

@@ -158,9 +158,9 @@ class Wrapper
     {
         // extract and quote col names from the array keys
         $i = 0;
-        $bind = array();
-        $cols = array();
-        $vals = array();
+        $bind = [];
+        $cols = [];
+        $vals = [];
         foreach ($data as $col => $val) {
             $cols[] = $this->quoteIdentifier($col, true);
             if ($val instanceof \Zend_Db_Expr) {
@@ -184,7 +184,7 @@ class Wrapper
 
 
         // build the statement
-        $set = array();
+        $set = [];
         foreach ($cols as $i => $col) {
             $set[] = sprintf('%s = %s', $col, $vals[$i]);
         }
@@ -272,14 +272,14 @@ class Wrapper
         $capture = false;
 
         if (\Pimcore::inAdmin()) {
-            $methodsToCheck = array("query","update","delete","insert");
+            $methodsToCheck = ["query","update","delete","insert"];
             if (in_array($method, $methodsToCheck)) {
                 $capture = true;
                 Db::startCapturingDefinitionModifications($resource, $method, $args);
             }
         }
 
-        $r = call_user_func_array(array($resource, $method), $args);
+        $r = call_user_func_array([$resource, $method], $args);
 
         if (\Pimcore::inAdmin() && $capture) {
             Db::stopCapturingDefinitionModifications($resource);

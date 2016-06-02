@@ -25,9 +25,9 @@ class Module extends \Pimcore\API\Module\AbstractModule
 
         // attach event-listener
         foreach (["asset", "object", "document"] as $type) {
-            \Pimcore::getEventManager()->attach($type . ".postAdd", array($this, "postAddElement"));
-            \Pimcore::getEventManager()->attach($type . ".postUpdate", array($this, "postUpdateElement"));
-            \Pimcore::getEventManager()->attach($type . ".preDelete", array($this, "preDeleteElement"));
+            \Pimcore::getEventManager()->attach($type . ".postAdd", [$this, "postAddElement"]);
+            \Pimcore::getEventManager()->attach($type . ".postUpdate", [$this, "postUpdateElement"]);
+            \Pimcore::getEventManager()->attach($type . ".preDelete", [$this, "preDeleteElement"]);
         }
     }
 

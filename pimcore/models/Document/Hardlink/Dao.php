@@ -59,9 +59,9 @@ class Dao extends Model\Document\Dao
         try {
             parent::create();
 
-            $this->db->insert("documents_hardlink", array(
+            $this->db->insert("documents_hardlink", [
                 "id" => $this->model->getId()
-            ));
+            ]);
         } catch (\Exception $e) {
             throw $e;
         }

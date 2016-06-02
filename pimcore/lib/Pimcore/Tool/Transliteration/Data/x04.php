@@ -1,6 +1,6 @@
 <?php
 
-$base = array(
+$base = [
   0x00 => 'Jo', 'Yo', 'Dj', 'Gj', 'Ie', 'Dz', 'I', 'Yi', 'J', 'Lj', 'Nj', 'Tsh', 'Kj', 'I', 'U', 'Dzh',
   0x10 => 'A', 'B', 'V', 'G', 'D', 'E', 'Zh', 'Z', 'I', 'Y', 'K', 'L', 'M', 'N', 'O', 'P',
   0x20 => 'R', 'S', 'T', 'U', 'F', 'H', 'C', 'Ch', 'Sh', 'Shch', '', 'Y', '', 'E', 'Yu', 'Ya',
@@ -17,10 +17,10 @@ $base = array(
   0xD0 => 'a', 'a', 'A', 'a', 'Ae', 'ae', 'Ie', 'ie', '@', '@', '@', '@', 'Zh', 'zh', 'Z', 'z',
   0xE0 => 'Dz', 'dz', 'I', 'i', 'I', 'i', 'O', 'o', 'O', 'o', 'O', 'o', 'E', 'e', 'U', 'u',
   0xF0 => 'U', 'u', 'U', 'u', 'Ch', 'ch', null, null, 'Y', 'y', null, null, null, null, null, null,
-);
+];
 
 // Overrides for Kyrgyz input.
-$variant['kg'] = array(
+$variant['kg'] = [
   0x01 => 'E',
   0x16 => 'C',
   0x19 => 'J',
@@ -43,4 +43,4 @@ $variant['kg'] = array(
   0xAF => 'w',
   0xE8 => 'Q',
   0xE9 => 'q',
-);
+];

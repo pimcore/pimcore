@@ -87,7 +87,7 @@ abstract class Dao extends Model\Listing\Dao\AbstractDao implements Dao\DaoInter
         $cacheKey = static::getTableName()."_data";
         if (!$translations = Cache::load($cacheKey)) {
             $itemClass = static::getItemClass();
-            $translations = array();
+            $translations = [];
 
 
             $select = $this->db->select();
@@ -121,7 +121,7 @@ abstract class Dao extends Model\Listing\Dao\AbstractDao implements Dao\DaoInter
                 $translations[$t["key"]]->setModificationDate($t["modificationDate"]);
             }
 
-            Cache::save($translations, $cacheKey, array("translator", "translate"), 999);
+            Cache::save($translations, $cacheKey, ["translator", "translate"], 999);
         }
 
         
@@ -159,7 +159,7 @@ abstract class Dao extends Model\Listing\Dao\AbstractDao implements Dao\DaoInter
     public function load()
     {
         $allTranslations = $this->getAllTranslations();
-        $translations = array();
+        $translations = [];
         $this->model->setGroupBy(static::getTableName() . ".key", false);
 
         $select = $this->db->select();
@@ -208,7 +208,7 @@ abstract class Dao extends Model\Listing\Dao\AbstractDao implements Dao\DaoInter
                = (SELECT count(*) FROM " . static::getTableName() . " WHERE `key` = tbl1.`key`) GROUP BY `key`;");
 
         if (is_array($keysToDelete) && !empty($keysToDelete)) {
-            $preparedKeys = array();
+            $preparedKeys = [];
             foreach ($keysToDelete as $value) {
                 if (strpos($value, ":") === false) { // colon causes problems due to a ZF bug, so we exclude them
                     $preparedKeys[] = $this->db->quote($value);

@@ -36,7 +36,7 @@ class Dao extends Model\Dao\PhpArrayTable
      */
     public function load()
     {
-        $properties = array();
+        $properties = [];
         $propertiesData = $this->db->fetchAll($this->model->getFilter(), $this->model->getOrder());
 
         foreach ($propertiesData as $propertyData) {

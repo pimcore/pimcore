@@ -19,13 +19,12 @@ use Pimcore\Model\Object;
 
 class Admin_UserController extends \Pimcore\Controller\Action\Admin
 {
-
     public function init()
     {
         parent::init();
 
         // check permissions
-        $notRestrictedActions = array("get-current-user", "update-current-user", "get-available-permissions", "get-minimal", "get-image", "upload-current-user-image");
+        $notRestrictedActions = ["get-current-user", "update-current-user", "get-available-permissions", "get-minimal", "get-image", "upload-current-user-image"];
         if (!in_array($this->getParam("action"), $notRestrictedActions)) {
             $this->checkPermission("users");
         }
@@ -39,7 +38,7 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
         $list->setOrderKey("name");
         $list->load();
 
-        $users = array();
+        $users = [];
         if (is_array($list->getUsers())) {
             foreach ($list->getUsers() as $user) {
                 if ($user->getId() && $user->getName() != "system") {
@@ -52,15 +51,15 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
 
     protected function getTreeNodeConfig($user)
     {
-        $tmpUser = array(
+        $tmpUser = [
             "id" => $user->getId(),
             "text" => $user->getName(),
             "elementType" => "user",
             "type" => $user->getType(),
-            "qtipCfg" => array(
+            "qtipCfg" => [
                 "title" => "ID: " . $user->getId()
-            )
-        );
+            ]
+        ];
 
         // set type specific settings
         if ($user instanceof User\Folder) {
@@ -95,12 +94,12 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
             $type = $this->getParam("type");
             ;
             $className = User\Service::getClassNameForType($type);
-            $user = $className::create(array(
+            $user = $className::create([
                 "parentId" => intval($this->getParam("parentId")),
                 "name" => trim($this->getParam("name")),
                 "password" => "",
                 "active" => $this->getParam("active")
-            ));
+            ]);
 
             if ($this->getParam("rid")) {
                 $rid = $this->getParam("rid");
@@ -115,12 +114,12 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
                             $user->setDocTypes(implode(',', $rObject->getDocTypes()));
                         }
 
-                        $keys = array("asset", "document", "object");
+                        $keys = ["asset", "document", "object"];
                         foreach ($keys as $key) {
                             $getter = "getWorkspaces" . ucfirst($key);
                             $setter = "setWorkspaces" . ucfirst($key);
                             $workspaces = $rObject->$getter();
-                            $clonedWorkspaces = array();
+                            $clonedWorkspaces = [];
                             if (is_array($workspaces)) {
                                 foreach ($workspaces as $workspace) {
                                     $vars = get_object_vars($workspace);
@@ -155,12 +154,12 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
                     }
                 }
             }
-            $this->_helper->json(array(
+            $this->_helper->json([
                 "success" => true,
                 "id" => $user->getId()
-            ));
+            ]);
         } catch (\Exception $e) {
-            $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
+            $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
         }
 
         $this->_helper->json(false);
@@ -201,7 +200,7 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
             throw new \Exception("You are not allowed to delete this user");
         } else {
             if ($user instanceof User\Folder) {
-                $list = array($user);
+                $list = [$user];
                 $this->populateChildNodes($user, $list);
                 $listCount = count($list);
                 for ($i = $listCount - 1; $i >= 0; $i--) {
@@ -214,7 +213,7 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
             }
         }
 
-        $this->_helper->json(array("success" => true));
+        $this->_helper->json(["success" => true]);
     }
 
     public function updateAction()
@@ -268,7 +267,7 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
             if ($this->getParam("workspaces")) {
                 $workspaces = \Zend_Json::decode($this->getParam("workspaces"));
                 foreach ($workspaces as $type => $spaces) {
-                    $newWorkspaces = array();
+                    $newWorkspaces = [];
                     foreach ($spaces as $space) {
                         $element = Element\Service::getElementByPath($type, $space["path"]);
                         if ($element) {
@@ -290,13 +289,13 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
 
         $user->save();
 
-        $this->_helper->json(array("success" => true));
+        $this->_helper->json(["success" => true]);
     }
 
     public function getAction()
     {
         if (intval($this->getParam("id")) < 1) {
-            $this->_helper->json(array("success" => false));
+            $this->_helper->json(["success" => false]);
         }
 
         $user = User::getById(intval($this->getParam("id")));
@@ -306,7 +305,7 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
         }
 
         // workspaces
-        $types = array("asset","document","object");
+        $types = ["asset","document","object"];
         foreach ($types as $type) {
             $workspaces = $user->{"getWorkspaces" . ucfirst($type)}();
             foreach ($workspaces as $workspace) {
@@ -320,16 +319,16 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
 
         // object <=> user dependencies
         $userObjects = Object\Service::getObjectsReferencingUser($user->getId());
-        $userObjectData = array();
+        $userObjectData = [];
 
         foreach ($userObjects as $o) {
             $hasHidden = false;
             if ($o->isAllowed("list")) {
-                $userObjectData[] = array(
+                $userObjectData[] = [
                     "path" => $o->getRealFullPath(),
                     "id" => $o->getId(),
                     "subtype" => $o->getClass()->getName()
-                );
+                ];
             } else {
                 $hasHidden = true;
             }
@@ -340,15 +339,15 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
         $availableUserPermissions = $availableUserPermissionsList->load();
 
         // get available roles
-        $roles = array();
+        $roles = [];
         $list = new User\Role\Listing();
-        $list->setCondition("`type` = ?", array("role"));
+        $list->setCondition("`type` = ?", ["role"]);
         $list->load();
 
-        $roles = array();
+        $roles = [];
         if (is_array($list->getItems())) {
             foreach ($list->getItems() as $role) {
-                $roles[] = array($role->getId(), $role->getName());
+                $roles[] = [$role->getId(), $role->getName()];
             }
         }
 
@@ -361,7 +360,7 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
         $availablePerspectives = \Pimcore\Config::getAvailablePerspectives(null);
 
         $conf = \Pimcore\Config::getSystemConfig();
-        $this->_helper->json(array(
+        $this->_helper->json([
             "success" => true,
             "wsenabled" => $conf->webservice->enabled,
             "user" => $userData,
@@ -369,11 +368,11 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
             "permissions" => $user->generatePermissionList(),
             "availablePermissions" => $availableUserPermissions,
             "availablePerspectives" => $availablePerspectives,
-            "objectDependencies" => array(
+            "objectDependencies" => [
                 "hasHidden" => $hasHidden,
                 "dependencies" => $userObjectData
-            )
-        ));
+            ]
+        ]);
     }
 
     public function getMinimalAction()
@@ -446,13 +445,13 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
                     if ($oldPasswordCheck && $values["new_password"] == $values["retype_password"]) {
                         $values["password"] = Tool\Authentication::getPasswordHash($user->getName(), $values["new_password"]);
                     } else {
-                        $this->_helper->json(array("success" => false, "message" => "password_cannot_be_changed"));
+                        $this->_helper->json(["success" => false, "message" => "password_cannot_be_changed"]);
                     }
                 }
 
                 $user->setValues($values);
                 $user->save();
-                $this->_helper->json(array("success" => true));
+                $this->_helper->json(["success" => true]);
             } else {
                 \Logger::warn("prevented save current user, because ids do not match. ");
                 $this->_helper->json(false);
@@ -494,7 +493,7 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
         $list->setCondition("parentId = ?", intval($this->getParam("node")));
         $list->load();
 
-        $roles = array();
+        $roles = [];
         if (is_array($list->getItems())) {
             foreach ($list->getItems() as $role) {
                 $roles[] = $this->getRoleTreeNodeConfig($role);
@@ -505,14 +504,14 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
 
     protected function getRoleTreeNodeConfig($role)
     {
-        $tmpUser = array(
+        $tmpUser = [
             "id" => $role->getId(),
             "text" => $role->getName(),
             "elementType" => "role",
-            "qtipCfg" => array(
+            "qtipCfg" => [
                 "title" => "ID: " . $role->getId()
-            )
-        );
+            ]
+        ];
 
         // set type specific settings
         if ($role instanceof User\Role\Folder) {
@@ -540,7 +539,7 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
         $role = User\Role::getById(intval($this->getParam("id")));
 
         // workspaces
-        $types = array("asset","document","object");
+        $types = ["asset","document","object"];
         foreach ($types as $type) {
             $workspaces = $role->{"getWorkspaces" . ucfirst($type)}();
             foreach ($workspaces as $workspace) {
@@ -558,7 +557,7 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
 
         $availablePerspectives = \Pimcore\Config::getAvailablePerspectives(null);
 
-        $this->_helper->json(array(
+        $this->_helper->json([
             "success" => true,
             "role" => $role,
             "permissions" => $role->generatePermissionList(),
@@ -566,7 +565,7 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
             "docTypes" => $role->getDocTypes(),
             "availablePermissions" => $availableUserPermissions,
             "availablePerspectives" => $availablePerspectives
-        ));
+        ]);
     }
 
     public function uploadImageAction()
@@ -589,9 +588,9 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
         $userObj->setImage($_FILES["Filedata"]["tmp_name"]);
 
 
-        $this->_helper->json(array(
+        $this->_helper->json([
             "success" => true
-        ), false);
+        ], false);
 
         // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
         // Ext.form.Action.Submit and mark the submission as failed
@@ -612,9 +611,7 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
         $userObj = User::getById($id);
         $thumb = $userObj->getImage();
 
-        header("Content-type: image/png", true);
-
-        while (@ob_end_flush());
+        header("Content-type: image/png", true); while (@ob_end_flush());
         flush();
         readfile($thumb);
         exit;
@@ -633,9 +630,9 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
             $r = $this->getRequest();
             $link = $r->getScheme() . "://" . $r->getHttpHost() . "/admin/login/login/?username=" . $user->getName() . "&token=" . $token;
 
-            $this->_helper->json(array(
+            $this->_helper->json([
                 "link" => $link
-            ));
+            ]);
         }
     }
 
@@ -649,7 +646,7 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
         $list->setOrderKey("name");
         $list->load();
 
-        $users = array();
+        $users = [];
         if (is_array($list->getUsers())) {
             foreach ($list->getUsers() as $user) {
                 if ($user instanceof User && $user->getId() && $user->getName() != "system") {

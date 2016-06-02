@@ -17,8 +17,6 @@ use Pimcore\Model\Element;
 
 class Admin_VariantsController extends \Pimcore\Controller\Action\Admin
 {
-
-
     public function updateKeyAction()
     {
         $id = $this->getParam("id");
@@ -29,12 +27,12 @@ class Admin_VariantsController extends \Pimcore\Controller\Action\Admin
             if (!empty($object)) {
                 $object->setKey($key);
                 $object->save();
-                $this->_helper->json(array("success" => true));
+                $this->_helper->json(["success" => true]);
             } else {
                 throw new \Exception("No Object found for given id.");
             }
         } catch (\Exception $e) {
-            $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
+            $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
         }
     }
 
@@ -53,7 +51,7 @@ class Admin_VariantsController extends \Pimcore\Controller\Action\Admin
             $object = Object::getById($data["id"]);
 
             if ($object->isAllowed("publish")) {
-                $objectData = array();
+                $objectData = [];
                 foreach ($data as $key => $value) {
                     $parts = explode("~", $key);
                     if (substr($key, 0, 1) == "~") {
@@ -99,9 +97,9 @@ class Admin_VariantsController extends \Pimcore\Controller\Action\Admin
 
                 try {
                     $object->save();
-                    $this->_helper->json(array("data" => Object\Service::gridObjectData($object, $this->getParam("fields")), "success" => true));
+                    $this->_helper->json(["data" => Object\Service::gridObjectData($object, $this->getParam("fields")), "success" => true]);
                 } catch (\Exception $e) {
-                    $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
+                    $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
                 }
             } else {
                 throw new \Exception("Permission denied");
@@ -122,8 +120,8 @@ class Admin_VariantsController extends \Pimcore\Controller\Action\Admin
                 $orderKey = "o_id";
                 $order = "ASC";
 
-                $fields = array();
-                $bricks = array();
+                $fields = [];
+                $bricks = [];
                 if ($this->getParam("fields")) {
                     $fields = $this->getParam("fields");
 
@@ -145,14 +143,14 @@ class Admin_VariantsController extends \Pimcore\Controller\Action\Admin
                 $orderKey = "o_id";
                 $order = "ASC";
 
-                $colMappings = array(
+                $colMappings = [
                     "filename" => "o_key",
-                    "fullpath" => array("o_path", "o_key"),
+                    "fullpath" => ["o_path", "o_key"],
                     "id" => "o_id",
                     "published" => "o_published",
                     "modificationDate" => "o_modificationDate",
                     "creationDate" => "o_creationDate"
-                );
+                ];
 
                 $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($this->getAllParams());
                 if ($sortingSettings['orderKey'] && $sortingSettings['order']) {
@@ -169,7 +167,7 @@ class Admin_VariantsController extends \Pimcore\Controller\Action\Admin
 
                 $listClass = "\\Pimcore\\Model\\Object\\" . ucfirst($className) . "\\Listing";
 
-                $conditionFilters = array("o_parentId = " . $parentObject->getId());
+                $conditionFilters = ["o_parentId = " . $parentObject->getId()];
                 // create filter condition
                 if ($this->getParam("filter")) {
                     $conditionFilters[] =  Object\Service::getFilterCondition($this->getParam("filter"), $class);
@@ -189,11 +187,11 @@ class Admin_VariantsController extends \Pimcore\Controller\Action\Admin
                 $list->setOffset($start);
                 $list->setOrder($order);
                 $list->setOrderKey($orderKey);
-                $list->setObjectTypes(array(Object\AbstractObject::OBJECT_TYPE_VARIANT));
+                $list->setObjectTypes([Object\AbstractObject::OBJECT_TYPE_VARIANT]);
 
                 $list->load();
 
-                $objects = array();
+                $objects = [];
                 foreach ($list->getObjects() as $object) {
                     if ($object->isAllowed("view")) {
                         $o = Object\Service::gridObjectData($object, $fields);
@@ -201,7 +199,7 @@ class Admin_VariantsController extends \Pimcore\Controller\Action\Admin
                     }
                 }
 
-                $this->_helper->json(array("data" => $objects, "success" => true, "total" => $list->getTotalCount()));
+                $this->_helper->json(["data" => $objects, "success" => true, "total" => $list->getTotalCount()]);
             } else {
                 throw new \Exception("Permission denied");
             }

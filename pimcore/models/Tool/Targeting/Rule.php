@@ -50,7 +50,7 @@ class Rule extends Model\AbstractModel
     /**
      * @var array
      */
-    public $conditions = array();
+    public $conditions = [];
 
     /**
      * @var Model\Tool\Targeting\Rule\Actions
@@ -220,7 +220,7 @@ class Rule extends Model\AbstractModel
     public function setConditions($conditions)
     {
         if (!$conditions) {
-            $conditions = array();
+            $conditions = [];
         }
         $this->conditions = $conditions;
         return $this;

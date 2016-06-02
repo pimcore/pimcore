@@ -20,7 +20,6 @@ use Pimcore\Model;
 
 class Dao extends Model\Dao\AbstractDao
 {
-
     const TABLE_NAME_TRANSLATOR = "keyvalue_translator_configuration";
 
     /**
@@ -120,7 +119,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function create()
     {
-        $this->db->insert(self::TABLE_NAME_TRANSLATOR, array());
+        $this->db->insert(self::TABLE_NAME_TRANSLATOR, []);
 
         $this->model->setId($this->db->lastInsertId());
 

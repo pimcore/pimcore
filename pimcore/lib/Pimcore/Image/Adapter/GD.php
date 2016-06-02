@@ -190,7 +190,7 @@ class GD extends Adapter
 
         $x = min($this->getWidth(), max(0, $x));
         $y = min($this->getHeight(), max(0, $y));
-        $width   = min($width,  $this->getWidth() - $x);
+        $width   = min($width, $this->getWidth() - $x);
         $height  = min($height, $this->getHeight() - $y);
         $new_img = $this->createImage($width, $height);
 

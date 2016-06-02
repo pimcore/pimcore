@@ -28,7 +28,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function load()
     {
-        $layouts = array();
+        $layouts = [];
 
         $layoutsRaw = $this->db->fetchCol("SELECT id FROM custom_layouts" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 

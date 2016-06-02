@@ -30,7 +30,7 @@ abstract class Mapper
      */
     public static function findWebserviceClass($object, $type)
     {
-        $mappingClasses = array(
+        $mappingClasses = [
             "Asset\\File",
             "Asset\\Folder",
             "Document\\Folder",
@@ -41,7 +41,7 @@ abstract class Mapper
             "Document\\Email",
             "Object\\Folder",
             "Object\\Concrete"
-        );
+        ];
 
         $retVal = null;
         if ($object instanceof Model\Property) {
@@ -92,7 +92,7 @@ abstract class Mapper
                 throw new \Exception("Webservice\\Data\\Mapper: Cannot map [ $apiclass ] - class does not exist");
             }
         } elseif (is_array($object)) {
-            $tmpArray = array();
+            $tmpArray = [];
             foreach ($object as $v) {
                 $className = self::findWebserviceClass($v, $type);
                 $tmpArray[] = self::map($v, $className, $type);

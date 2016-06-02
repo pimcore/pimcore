@@ -30,7 +30,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     {
         $notesData = $this->db->fetchCol("SELECT id FROM notes" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
-        $notes = array();
+        $notes = [];
         foreach ($notesData as $noteData) {
             if ($note = Model\Element\Note::getById($noteData)) {
                 $notes[] = $note;

@@ -110,11 +110,11 @@ class Service
     {
         if ($hardlink->getChildsFromSource() && $hardlink->getSourceDocument()) {
             $hardlinkRealPath = preg_replace("@^" . preg_quote($hardlink->getRealFullPath()) . "@", $hardlink->getSourceDocument()->getRealFullPath(), $path);
-            $pathes = array();
+            $pathes = [];
 
             $pathes[] = "/";
             $pathParts = explode("/", $hardlinkRealPath);
-            $tmpPathes = array();
+            $tmpPathes = [];
             foreach ($pathParts as $pathPart) {
                 $tmpPathes[] = $pathPart;
                 $t = implode("/", $tmpPathes);

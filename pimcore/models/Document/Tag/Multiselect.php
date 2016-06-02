@@ -26,7 +26,7 @@ class Multiselect extends Model\Document\Tag
      *
      * @var array
      */
-    public $values = array();
+    public $values = [];
 
     /**
      * @see Document\Tag\TagInterface::getType
@@ -103,7 +103,7 @@ class Multiselect extends Model\Document\Tag
      * @param null $idMapper
      * @throws \Exception
      */
-    public function getFromWebserviceImport($wsElement, $document = null, $params = array(), $idMapper = null)
+    public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
     {
         $data = $wsElement->value;
         if ($data->values === null or is_array($data->values)) {

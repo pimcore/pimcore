@@ -4,7 +4,6 @@ use Website\Controller\Action;
 
 class Category_ExampleController extends Action
 {
-
     public function testAction()
     {
 

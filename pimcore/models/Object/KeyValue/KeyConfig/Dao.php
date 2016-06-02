@@ -20,7 +20,6 @@ use Pimcore\Model;
 
 class Dao extends Model\Dao\AbstractDao
 {
-
     const TABLE_NAME_KEYS = "keyvalue_keys";
 
     /**
@@ -136,7 +135,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->model->setCreationDate($ts);
         $this->model->setModificationDate($ts);
 
-        $this->db->insert(self::TABLE_NAME_KEYS, array());
+        $this->db->insert(self::TABLE_NAME_KEYS, []);
 
         $this->model->setId($this->db->lastInsertId());
 

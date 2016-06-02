@@ -34,7 +34,7 @@ class Lock extends Model\AbstractModel
     /**
      * @var array
      */
-    protected static $acquiredLocks = array();
+    protected static $acquiredLocks = [];
 
     /**
      * @var Lock

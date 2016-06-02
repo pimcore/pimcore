@@ -65,9 +65,9 @@ class Dao extends Model\Dao\AbstractDao
 
         $existingColumns = $this->getValidTableColumns($table, false); // no caching of table definition
         $columnsToRemove = $existingColumns;
-        $protectedColums = array("o_id", "index","fieldname");
+        $protectedColums = ["o_id", "index","fieldname"];
 
-        Object\ClassDefinition\Service::updateTableDefinitions($this->tableDefinitions, (array($table)));
+        Object\ClassDefinition\Service::updateTableDefinitions($this->tableDefinitions, ([$table]));
 
         foreach ($this->model->getFieldDefinitions() as $value) {
             $key = $value->getName();
@@ -90,12 +90,12 @@ class Dao extends Model\Dao\AbstractDao
 
             if ($value instanceof  Object\ClassDefinition\Data\Localizedfields) {
                 $value->classSaved($class,
-                    array(
-                        "context" => array(
+                    [
+                        "context" => [
                             "containerType" => "fieldcollection",
                             "containerKey" => $this->model->getKey()
-                        )
-                    ));
+                        ]
+                    ]);
             }
         }
 

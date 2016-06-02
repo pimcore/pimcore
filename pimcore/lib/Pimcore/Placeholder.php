@@ -171,7 +171,7 @@ class Placeholder
      */
     public function detectPlaceholders($contentString, $params, $document = null)
     {
-        $placeholderStack = array();
+        $placeholderStack = [];
 
         $regex = "/" . self::$placeholderPrefix . "([a-z_]+)\(([a-z_0-9]+)[\s,]*(.*?)\)" . self::$placeholderSuffix . "/is";
         preg_match_all($regex, $contentString, $matches);
@@ -186,8 +186,8 @@ class Placeholder
                 if ($placeholderConfigString) {
                     //try to create the json config object
                     try {
-                        $configJsonString = str_replace(array("&quot;", "'"), '"', $placeholderConfigString);
-                        $placeholderConfig = new \Zend_Config_Json($configJsonString, null, array('ignoreconstants' => true));
+                        $configJsonString = str_replace(["&quot;", "'"], '"', $placeholderConfigString);
+                        $placeholderConfig = new \Zend_Config_Json($configJsonString, null, ['ignoreconstants' => true]);
                     } catch (\Exception $e) {
                         \Logger::warn('PlaceholderConfig is not a valid JSON string. PlaceholderConfig for ' . $placeholderClass . ' ignored.');
                         continue;
@@ -197,13 +197,13 @@ class Placeholder
                     $placeholderConfig = new \Zend_Config_Json("{}");
                 }
 
-                $placeholderStack[] = array('placeholderString' => $placeholderString,
+                $placeholderStack[] = ['placeholderString' => $placeholderString,
                     'placeholderClass' => $placeholderClass,
                     'placeholderKey' => $placeholderKey,
                     'placeholderConfig' => $placeholderConfig,
                     'document' => $document,
                     'params' => $params,
-                    'contentString' => $contentString);
+                    'contentString' => $contentString];
             }
         }
 
@@ -218,7 +218,7 @@ class Placeholder
      * @param null | Model\Document $document
      * @return string
      */
-    public function replacePlaceholders($mixed, $params = array(), $document = null, $enableLayoutOnPlaceholderReplacement = true)
+    public function replacePlaceholders($mixed, $params = [], $document = null, $enableLayoutOnPlaceholderReplacement = true)
     {
         if (is_string($mixed)) {
             $contentString = $mixed;
@@ -248,7 +248,7 @@ class Placeholder
      * @param array $placeholderStack
      * @return string
      */
-    protected function replacePlaceholdersFromStack($placeholderStack = array())
+    protected function replacePlaceholdersFromStack($placeholderStack = [])
     {
         $stringReplaced = null;
         if (!empty($placeholderStack)) {

@@ -28,7 +28,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function load()
     {
-        $definitions = array();
+        $definitions = [];
         $definitionsData = $this->db->fetchAll("SELECT * FROM users_permission_definitions" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         foreach ($definitionsData as $definitionData) {

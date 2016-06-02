@@ -319,8 +319,8 @@ class Version extends AbstractModel
             return;
         }
 
-        $days = array();
-        $steps = array();
+        $days = [];
+        $steps = [];
 
         if (intval($conf->days) > 0) {
             $days = $this->getDao()->getOutdatedVersionsDays($conf->days);
@@ -596,7 +596,7 @@ class Version extends AbstractModel
         $conf["asset"] = Config::getSystemConfig()->assets->versions;
         $conf["object"] = Config::getSystemConfig()->objects->versions;
 
-        $elementTypes = array();
+        $elementTypes = [];
 
         foreach ($conf as $elementType => $tConf) {
             if (intval($tConf->days) > 0) {
@@ -608,14 +608,14 @@ class Version extends AbstractModel
             }
 
             if ($versioningType) {
-                $elementTypes[] = array(
+                $elementTypes[] = [
                     "elementType" => $elementType,
                     $versioningType => $value
-                );
+                ];
             }
         }
 
-        $ignoredIds = array();
+        $ignoredIds = [];
 
         while (true) {
             $versions = $this->getDao()->maintenanceGetOutdatedVersions($elementTypes, $ignoredIds);

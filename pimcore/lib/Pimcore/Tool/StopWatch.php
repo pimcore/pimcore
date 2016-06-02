@@ -20,12 +20,12 @@ class StopWatch
     /**
      * @var array
      */
-    protected static $startTime = array();
+    protected static $startTime = [];
 
     /**
      * @var array
      */
-    protected static $laps = array();
+    protected static $laps = [];
 
     /**
      * @param $component string
@@ -35,7 +35,7 @@ class StopWatch
     public static function start($component = 'default')
     {
         self::$startTime[$component] = self::microtime_float();
-        self::$laps[$component] = array();
+        self::$laps[$component] = [];
     }
 
     /**

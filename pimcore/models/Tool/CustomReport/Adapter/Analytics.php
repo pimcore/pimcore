@@ -75,7 +75,7 @@ class Analytics extends AbstractAdapter
      * @param $filters
      * @param array $drillDownFilters
      */
-    protected function setFilters($filters, $drillDownFilters = array())
+    protected function setFilters($filters, $drillDownFilters = [])
     {
         $gaFilters = [ $this->config["filters"] ];
         if (sizeof($filters)) {

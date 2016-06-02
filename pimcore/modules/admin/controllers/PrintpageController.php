@@ -17,6 +17,6 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\Object;
 use Pimcore\Model\Site;
 
-class Admin_PrintpageController extends \Pimcore\Controller\Action\Admin\Printpage {
-
+class Admin_PrintpageController extends \Pimcore\Controller\Action\Admin\Printpage
+{
 }

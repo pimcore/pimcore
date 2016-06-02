@@ -18,7 +18,7 @@ error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
 $pimcoreDocumentRoot = realpath(dirname(__FILE__) . '/../..');
 
 $customConstants = $pimcoreDocumentRoot . "/constants.php";
-if(file_exists($customConstants)) {
+if (file_exists($customConstants)) {
     include_once $customConstants;
 }
 
@@ -45,7 +45,7 @@ if (!defined("PIMCORE_WEBSITE_PATH")) {
 
 if (is_array($_SERVER)
     && array_key_exists("HTTP_X_PIMCORE_UNIT_TEST_REQUEST", $_SERVER)
-    && in_array($_SERVER["REMOTE_ADDR"], array("127.0.0.1", $_SERVER["SERVER_ADDR"]))) {
+    && in_array($_SERVER["REMOTE_ADDR"], ["127.0.0.1", $_SERVER["SERVER_ADDR"]])) {
     // change the var directory for unit tests
     if (!defined("PIMCORE_WEBSITE_VAR")) {
         define("PIMCORE_WEBSITE_VAR", PIMCORE_DOCUMENT_ROOT . "/tests/tmp/var");
@@ -114,7 +114,7 @@ if (!defined("PIMCORE_LOG_MAIL_PERMANENT")) {
 // setup include paths
 // include paths defined in php.ini are ignored because they're causing problems with open_basedir, see PIMCORE-1233
 // it also improves the performance when reducing the amount of include paths, you can of course add additional paths anywhere in your code (/website)
-$includePaths = array(
+$includePaths = [
     PIMCORE_PATH . "/lib",
     PIMCORE_PATH . "/models",
     PIMCORE_WEBSITE_PATH . "/lib",
@@ -124,7 +124,7 @@ $includePaths = array(
     // see also: Pimcore\Composer::zendFrameworkOptimization()
     // actually the problem is 'require_once 'Zend/Loader.php';' in Zend/Loader/Autoloader.php
     PIMCORE_DOCUMENT_ROOT . "/vendor/zendframework/zendframework1/library/",
-);
+];
 set_include_path(implode(PATH_SEPARATOR, $includePaths) . PATH_SEPARATOR);
 
 // composer autoloader
@@ -144,15 +144,15 @@ $autoloader->setFallbackAutoloader(false);
 $autoloader->registerNamespace('Pimcore');
 
 // register class map loader => speed
-$autoloaderClassMapFiles = array(
+$autoloaderClassMapFiles = [
     PIMCORE_CONFIGURATION_DIRECTORY . "/autoload-classmap.php",
     PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . "/autoload-classmap.php",
     PIMCORE_PATH . "/config/autoload-classmap.php",
-);
+];
 
 foreach ($autoloaderClassMapFiles as $autoloaderClassMapFile) {
     if (file_exists($autoloaderClassMapFile)) {
-        $classMapAutoLoader = new \Pimcore\Loader\ClassMapAutoloader(array($autoloaderClassMapFile));
+        $classMapAutoLoader = new \Pimcore\Loader\ClassMapAutoloader([$autoloaderClassMapFile]);
         $classMapAutoLoader->register();
         break;
     }

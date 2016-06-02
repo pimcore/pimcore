@@ -27,7 +27,7 @@ class StructuredTable
     /**
      * @param array $data
      */
-    public function __construct($data = array())
+    public function __construct($data = [])
     {
         if ($data) {
             $this->data = $data;

@@ -95,10 +95,10 @@ class Dao extends Model\Dao\AbstractDao
 
         $updateMethod = $force ? "insertOrUpdate" : "insert";
 
-        $this->db->$updateMethod("locks", array(
+        $this->db->$updateMethod("locks", [
             "id" => $key,
             "date" => time()
-        ));
+        ]);
     }
 
     public function getById($key)

@@ -84,7 +84,7 @@ class GlossaryController
         if (!empty($data) && $enabled) {
             // replace
 
-            $blockedTags = array("a","script","style","code","pre","textarea","acronym","abbr","option","h1","h2","h3","h4","h5","h6");
+            $blockedTags = ["a","script","style","code","pre","textarea","acronym","abbr","option","h1","h2","h3","h4","h5","h6"];
 
             // why not using a simple str_ireplace(array(), array(), $subject) ?
             // because if you want to replace the terms "Donec vitae" and "Donec" you will get nested links, so the content of the html must be reloaded every searchterm to ensure that there is no replacement within a blocked tag
@@ -100,11 +100,11 @@ class GlossaryController
 
             $es = $html->find('text');
 
-            $tmpData = array(
-                "search" => array(),
-                "replace" => array(),
-                "placeholder" => array()
-            );
+            $tmpData = [
+                "search" => [],
+                "replace" => [],
+                "placeholder" => []
+            ];
 
 
             // get initial document out of the front controller (requested document, if it was a "document" request)
@@ -132,7 +132,7 @@ class GlossaryController
             }
             $data = $tmpData;
 
-            $data["placeholder"] = array();
+            $data["placeholder"] = [];
             for ($i = 0; $i < count($data["search"]); $i++) {
                 $data["placeholder"][] = '%%' . uniqid($i, true) . '%%';
             }
@@ -174,7 +174,7 @@ class GlossaryController
         if (\Zend_Registry::isRegistered("Zend_Locale")) {
             $locale = (string) \Zend_Registry::get("Zend_Locale");
         } else {
-            return array();
+            return [];
         }
 
         $siteId = "";
@@ -198,14 +198,14 @@ class GlossaryController
 
         if (!$data = CacheManger::load($cacheKey)) {
             $list = new Model\Glossary\Listing();
-            $list->setCondition("(language = ? OR language IS NULL OR language = '') AND (site = ? OR site IS NULL OR site = '')", array($locale, $siteId));
+            $list->setCondition("(language = ? OR language IS NULL OR language = '') AND (site = ? OR site IS NULL OR site = '')", [$locale, $siteId]);
             $list->setOrderKey("LENGTH(`text`)", false);
             $list->setOrder("DESC");
             $data = $list->getDataArray();
 
             $data = $this->prepareData($data);
 
-            CacheManger::save($data, $cacheKey, array("glossary"), null, 995);
+            CacheManger::save($data, $cacheKey, ["glossary"], null, 995);
             \Zend_Registry::set($cacheKey, $data);
         }
 
@@ -218,10 +218,10 @@ class GlossaryController
      */
     protected function prepareData($data)
     {
-        $mappedData = array();
+        $mappedData = [];
 
         // fix htmlentities issues
-        $tmpData = array();
+        $tmpData = [];
         foreach ($data as $d) {
             if ($d["text"] != htmlentities($d["text"], null, "UTF-8")) {
                 $td = $d;
@@ -272,12 +272,12 @@ class GlossaryController
                     $d["text"] .= "i";
                 }
 
-                $mappedData[] = array(
+                $mappedData[] = [
                     "replace" => $r,
                     "search" => $d["text"],
                     "linkType" => $linkType,
                     "linkTarget" => $linkTarget
-                );
+                ];
             }
         }
 

@@ -33,7 +33,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
      *
      * @var array
      */
-    public $validOrderKeys = array(
+    public $validOrderKeys = [
         "creationDate",
         "modificationDate",
         "id",
@@ -42,7 +42,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
         "parentId",
         "path",
         "mimetype"
-    );
+    ];
 
     /**
      * Test if the passed key is valid

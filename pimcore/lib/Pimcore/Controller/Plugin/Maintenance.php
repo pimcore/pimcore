@@ -38,7 +38,7 @@ class Maintenance extends \Zend_Controller_Plugin_Abstract
 
         // do not activate the maintenance for the server itself
         // this is to avoid problems with monitoring agents
-        $serverIps = array("127.0.0.1");
+        $serverIps = ["127.0.0.1"];
 
         if ($maintenance && !in_array(\Pimcore\Tool::getClientIp(), $serverIps)) {
             header("HTTP/1.1 503 Service Temporarily Unavailable", 503);

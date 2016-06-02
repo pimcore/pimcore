@@ -25,7 +25,7 @@ class Less
      */
     public static function processHtml($body)
     {
-        $processedPaths = array();
+        $processedPaths = [];
 
         preg_match_all("@\<link[^>]*(rel=\"stylesheet/less\")[^>]*\>@msUi", $body, $matches);
 
@@ -146,7 +146,7 @@ class Less
 
         // use the original less compiler if configured
         if ($conf->outputfilters->lesscpath) {
-            $output = array();
+            $output = [];
             exec($conf->outputfilters->lesscpath . " " . $path, $output);
             $compiledContent = implode(" ", $output);
 
@@ -228,7 +228,7 @@ class Less
         $abs = "$path/$rel";
 
         /* replace '//' or '/./' or '/foo/../' with '/' */
-        $re = array('#(/\.?/)#', '#/(?!\.\.)[^/]+/\.\./#');
+        $re = ['#(/\.?/)#', '#/(?!\.\.)[^/]+/\.\./#'];
         for ($n=1; $n>0; $abs=preg_replace($re, '/', $abs, -1, $n)) {
         }
 

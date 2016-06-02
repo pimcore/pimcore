@@ -115,7 +115,7 @@ class Site extends AbstractModel
                 $site = "failed";
             }
             
-            \Pimcore\Cache::save($site, $cacheKey, array("system", "site"));
+            \Pimcore\Cache::save($site, $cacheKey, ["system", "site"]);
         }
         
         if ($site == "failed" || !$site) {

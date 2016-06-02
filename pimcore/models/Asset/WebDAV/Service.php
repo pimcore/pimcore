@@ -34,14 +34,14 @@ class Service
      */
     public static function getDeleteLog()
     {
-        $log = array();
+        $log = [];
         if (file_exists(self::getDeleteLogFile())) {
             $log = unserialize(file_get_contents(self::getDeleteLogFile()));
             if (!is_array($log)) {
-                $log = array();
+                $log = [];
             } else {
                 // cleanup old entries
-                $tmpLog = array();
+                $tmpLog = [];
                 foreach ($log as $path => $data) {
                     if ($data["timestamp"] > (time()-30)) { // remove 30 seconds old entries
                         $tmpLog[$path] = $data;
@@ -60,7 +60,7 @@ class Service
     {
 
         // cleanup old entries
-        $tmpLog = array();
+        $tmpLog = [];
         foreach ($log as $path => $data) {
             if ($data["timestamp"] > (time()-30)) { // remove 30 seconds old entries
                 $tmpLog[$path] = $data;

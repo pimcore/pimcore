@@ -8,7 +8,6 @@
 
 class TestSuite_Basics_ObjectTest extends Test_Base
 {
-
     public function setUp()
     {
         Test_Tool::cleanUp();

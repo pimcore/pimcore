@@ -18,7 +18,7 @@
  */
 
 // attach global shutdown event
-Pimcore::getEventManager()->attach("system.shutdown", array("Pimcore", "shutdown"), 9999);
+Pimcore::getEventManager()->attach("system.shutdown", ["Pimcore", "shutdown"], 9999);
 
 // remove assets on element delete
 Pimcore::getEventManager()->attach("asset.postDelete", function (\Zend_EventManager_Event $e) {

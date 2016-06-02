@@ -30,7 +30,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     {
         $targetsData = $this->db->fetchCol("SELECT id FROM targeting_rules" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
-        $targets = array();
+        $targets = [];
         foreach ($targetsData as $targetData) {
             $targets[] = Model\Tool\Targeting\Rule::getById($targetData);
         }

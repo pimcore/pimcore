@@ -72,7 +72,7 @@ abstract class PageSnippet extends Model\Document
     /**
      * @var array
      */
-    protected $inheritedElements = array();
+    protected $inheritedElements = [];
 
     /**
      * @see Document::update
@@ -180,9 +180,9 @@ abstract class PageSnippet extends Model\Document
      *
      * @return array
      */
-    public function getCacheTags($tags = array())
+    public function getCacheTags($tags = [])
     {
-        $tags = is_array($tags) ? $tags : array();
+        $tags = is_array($tags) ? $tags : [];
 
         $tags = parent::getCacheTags($tags);
 
@@ -207,10 +207,10 @@ abstract class PageSnippet extends Model\Document
 
         if ($this->getContentMasterDocument() instanceof Document) {
             $key = "document_" . $this->getContentMasterDocument()->getId();
-            $dependencies[$key] = array(
+            $dependencies[$key] = [
                 "id" => $this->getContentMasterDocument()->getId(),
                 "type" => "document"
-            );
+            ];
         }
 
         return $dependencies;
@@ -550,10 +550,10 @@ abstract class PageSnippet extends Model\Document
      */
     public function __sleep()
     {
-        $finalVars = array();
+        $finalVars = [];
         $parentVars = parent::__sleep();
 
-        $blockedVars = array("inheritedElements");
+        $blockedVars = ["inheritedElements"];
 
         foreach ($parentVars as $key) {
             if (!in_array($key, $blockedVars)) {

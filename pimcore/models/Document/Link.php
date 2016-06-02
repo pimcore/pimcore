@@ -86,10 +86,10 @@ class Link extends Model\Document
             if ($this->getObject() instanceof Document || $this->getObject() instanceof Asset) {
                 $key = $this->getInternalType() . "_" . $this->getObject()->getId();
 
-                $dependencies[$key] = array(
+                $dependencies[$key] = [
                     "id" => $this->getObject()->getId(),
                     "type" => $this->getInternalType()
-                );
+                ];
             }
         }
 
@@ -101,9 +101,9 @@ class Link extends Model\Document
      *
      * @return array
      */
-    public function getCacheTags($tags = array())
+    public function getCacheTags($tags = [])
     {
-        $tags = is_array($tags) ? $tags : array();
+        $tags = is_array($tags) ? $tags : [];
         
         $tags = parent::getCacheTags($tags);
 
@@ -462,8 +462,8 @@ class Link extends Model\Document
      */
     public function getHtml()
     {
-        $attributes = array("rel", "tabindex", "accesskey", "title", "name", "target");
-        $attribs = array();
+        $attributes = ["rel", "tabindex", "accesskey", "title", "name", "target"];
+        $attribs = [];
         foreach ($attributes as $a) {
             $attribs[] = $a . '="' . $this->$a . '"';
         }
@@ -476,7 +476,7 @@ class Link extends Model\Document
      */
     public function __sleep()
     {
-        $finalVars = array();
+        $finalVars = [];
         $parentVars = parent::__sleep();
 
         $blockedVars = ["object"];

@@ -18,11 +18,10 @@ use Pimcore\Model\Object;
 
 class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
 {
-
     public function loadObjectDataAction()
     {
         $object = Object\AbstractObject::getById($this->getParam("id"));
-        $result = array();
+        $result = [];
         if ($object) {
             $result['success'] = true;
             $fields = $this->getParam("fields");
@@ -57,13 +56,13 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
             $fields = $class->getFieldDefinitions();
         }
 
-        $types = array();
+        $types = [];
         if ($this->getParam("types")) {
             $types = explode(",", $this->getParam("types"));
         }
 
         // grid config
-        $gridConfig = array();
+        $gridConfig = [];
         if ($objectId) {
             $searchType = $this->getParam("searchType");
             $postfix =  $searchType && $searchType != "folder" ? "_" . $this->getParam("searchType") : "";
@@ -78,7 +77,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
                         if ($gridConfig["classId"] == $class->getId()) {
                             break;
                         } else {
-                            $gridConfig = array();
+                            $gridConfig = [];
                         }
                     } else {
                         break;
@@ -87,8 +86,8 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
             }
         }
 
-        $localizedFields = array();
-        $objectbrickFields = array();
+        $localizedFields = [];
+        $objectbrickFields = [];
         foreach ($fields as $key => $field) {
             if ($field instanceof Object\ClassDefinition\Data\Localizedfields) {
                 $localizedFields[] = $field;
@@ -97,8 +96,8 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
             }
         }
 
-        $availableFields = array();
-        $systemColumns = array("id", "fullpath", "published", "creationDate", "modificationDate", "filename", "classname");
+        $availableFields = [];
+        $systemColumns = ["id", "fullpath", "published", "creationDate", "modificationDate", "filename", "classname"];
         if (empty($gridConfig)) {
             $count = 0;
 
@@ -111,11 +110,11 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
                     }
 
                     if (empty($types) && ($vis[$gridType][$key] || $gridType == "all")) {
-                        $availableFields[] = array(
+                        $availableFields[] = [
                             "key" => $sc,
                             "type" => "system",
                             "label" => $sc,
-                            "position" => $count);
+                            "position" => $count];
                         $count++;
                     }
                 }
@@ -174,11 +173,11 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
             foreach ($savedColumns as $key => $sc) {
                 if (!$sc['hidden']) {
                     if (in_array($key, $systemColumns)) {
-                        $colConfig = array(
+                        $colConfig = [
                             "key" => $key,
                             "type" => "system",
                             "label" => $key,
-                            "position" => $sc['position']);
+                            "position" => $sc['position']];
                         if (isset($sc['width'])) {
                             $colConfig['width'] = $sc['width'];
                         }
@@ -274,13 +273,13 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         if (!empty($gridConfig) && !empty($gridConfig['language'])) {
             $language = $gridConfig['language'];
         }
-        $this->_helper->json(array(
+        $this->_helper->json([
             "sortinfo" => $gridConfig['sortinfo'],
             "language" => $language,
             "availableFields" => $availableFields,
             "onlyDirectChildren" => $gridConfig['onlyDirectChildren'],
             "pageSize" => $gridConfig['pageSize']
-        ));
+        ]);
     }
 
 
@@ -296,7 +295,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
                 $searchType = $this->getParam("searchType");
                 $postfix =  $searchType && $searchType != "folder" ? "_" . $this->getParam("searchType") : "";
 
-                $configFiles = array();
+                $configFiles = [];
                 $configFiles[]= PIMCORE_CONFIGURATION_DIRECTORY . "/object/grid/" . $object->getId() . "_" . $classId . $postfix . "-user_" . $this->getUser()->getId() . ".psf";
                 $configFiles[] = PIMCORE_CONFIGURATION_DIRECTORY . "/object/grid/" . $object->getId() . $postfix . "-user_" . $this->getUser()->getId() . ".psf";
 
@@ -310,13 +309,13 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
                     }
                 }
 
-                $this->_helper->json(array("success" => true));
+                $this->_helper->json(["success" => true]);
             } catch (\Exception $e) {
-                $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
+                $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
             }
         }
 
-        $this->_helper->json(array("success" => false, "message" => "missing_permission"));
+        $this->_helper->json(["success" => false, "message" => "missing_permission"]);
     }
 
     public function gridSaveColumnConfigAction()
@@ -345,13 +344,13 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
                 }
                 File::put($configFile, Tool\Serialize::serialize($gridConfig));
 
-                $this->_helper->json(array("success" => true));
+                $this->_helper->json(["success" => true]);
             } catch (\Exception $e) {
-                $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
+                $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
             }
         }
 
-        $this->_helper->json(array("success" => false, "message" => "missing_permission"));
+        $this->_helper->json(["success" => false, "message" => "missing_permission"]);
     }
 
 
@@ -390,14 +389,14 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
 
         if (!$field->getInvisible() && ($force || $visible)) {
             Object\Service::enrichLayoutDefinition($field);
-            return array(
+            return [
                 "key" => $key,
                 "type" => $field->getFieldType(),
                 "label" => $title,
                 "config" => $config,
                 "layout" => $field ,
                 "position" => $position
-            );
+            ];
         } else {
             return null;
         }
@@ -418,9 +417,9 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         $importFileOriginal = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_" . $this->getParam("id") . "_original";
         File::put($importFileOriginal, $data);
 
-        $this->_helper->json(array(
+        $this->_helper->json([
             "success" => true
-        ), false);
+        ], false);
 
         // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
         // Ext.form.Action.Submit and mark the submission as failed
@@ -430,7 +429,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
     public function importGetFileInfoAction()
     {
         $success = true;
-        $supportedFieldTypes = array("checkbox", "country", "date", "datetime", "href", "image", "input", "language", "table", "multiselect", "numeric", "password", "select", "slider", "textarea", "wysiwyg", "objects", "multihref", "geopoint", "geopolygon", "geobounds", "link", "user", "email", "gender", "firstname", "lastname", "newsletterActive", "newsletterConfirmed", "countrymultiselect", "objectsMetadata");
+        $supportedFieldTypes = ["checkbox", "country", "date", "datetime", "href", "image", "input", "language", "table", "multiselect", "numeric", "password", "select", "slider", "textarea", "wysiwyg", "objects", "multihref", "geopoint", "geopolygon", "geobounds", "link", "user", "email", "gender", "firstname", "lastname", "newsletterActive", "newsletterConfirmed", "countrymultiselect", "objectsMetadata"];
 
         $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_" . $this->getParam("id");
 
@@ -443,7 +442,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
                 if ($count == 0) {
                     $firstRowData = $rowData;
                 }
-                $tmpData = array();
+                $tmpData = [];
                 foreach ($rowData as $key => $value) {
                     $tmpData["field_" . $key] = $value;
                 }
@@ -463,7 +462,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         $class = Object\ClassDefinition::getById($this->getParam("classId"));
         $fields = $class->getFieldDefinitions();
 
-        $availableFields = array();
+        $availableFields = [];
 
         foreach ($fields as $key => $field) {
             $config = null;
@@ -475,11 +474,11 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
             }
 
             if (in_array($field->getFieldType(), $supportedFieldTypes)) {
-                $availableFields[] = array($field->getName(), $title . "(" . $field->getFieldType() . ")");
+                $availableFields[] = [$field->getName(), $title . "(" . $field->getFieldType() . ")"];
             }
         }
 
-        $mappingStore = array();
+        $mappingStore = [];
         for ($i = 0; $i < $cols; $i++) {
             $mappedField = null;
             if ($availableFields[$i]) {
@@ -494,11 +493,11 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
                 }
             }
 
-            $mappingStore[] = array(
+            $mappingStore[] = [
                 "source" => $i,
                 "firstRow" => $firstRow,
                 "target" => $mappedField
-            );
+            ];
         }
 
         //How many rows
@@ -516,7 +515,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
             }
         }
 
-        $this->_helper->json(array(
+        $this->_helper->json([
             "success" => $success,
             "dataPreview" => $data,
             "dataFields" => array_keys($data[0]),
@@ -524,7 +523,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
             "mappingStore" => $mappingStore,
             "rows" => $rows,
             "cols" => $cols
-        ));
+        ]);
     }
 
     public function importProcessAction()
@@ -659,14 +658,14 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
 
             try {
                 $object->save();
-                $this->_helper->json(array("success" => true));
+                $this->_helper->json(["success" => true]);
             } catch (\Exception $e) {
-                $this->_helper->json(array("success" => false, "message" => $object->getKey() . " - " . $e->getMessage()));
+                $this->_helper->json(["success" => false, "message" => $object->getKey() . " - " . $e->getMessage()]);
             }
         }
 
 
-        $this->_helper->json(array("success" => $success));
+        $this->_helper->json(["success" => $success]);
     }
 
 
@@ -699,8 +698,8 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
 
     protected function extractFieldsAndBricks()
     {
-        $fields = array();
-        $bricks = array();
+        $fields = [];
+        $bricks = [];
         if ($this->getParam("fields")) {
             $fields = $this->getParam("fields");
 
@@ -728,12 +727,12 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         $listClass = "\\Pimcore\\Model\\Object\\" . ucfirst($className) . "\\Listing";
 
         if (!empty($folder)) {
-            $conditionFilters = array("o_path LIKE '" . $folder->getRealFullPath() . "%'");
+            $conditionFilters = ["o_path LIKE '" . $folder->getRealFullPath() . "%'"];
         } else {
-            $conditionFilters = array();
+            $conditionFilters = [];
         }
 
-        $featureJoins = array();
+        $featureJoins = [];
 
         if ($this->getParam("filter")) {
             $conditionFilters[] = Object\Service::getFilterCondition($this->getParam("filter"), $class);
@@ -756,7 +755,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
             if ($objectType == Object\AbstractObject::OBJECT_TYPE_OBJECT && $class->getShowVariants()) {
                 $list->setObjectTypes([Object\AbstractObject::OBJECT_TYPE_OBJECT, Object\AbstractObject::OBJECT_TYPE_VARIANT]);
             } else {
-                $list->setObjectTypes(array($objectType));
+                $list->setObjectTypes([$objectType]);
             }
         }
 
@@ -790,7 +789,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         $fileHandle = uniqid("export-");
         file_put_contents($this->getCsvFile($fileHandle), "");
 
-        $this->_helper->json(array("success"=>true, "jobs"=> $jobs, "fileHandle" => $fileHandle));
+        $this->_helper->json(["success"=>true, "jobs"=> $jobs, "fileHandle" => $fileHandle]);
     }
 
     public function doExportAction()
@@ -816,7 +815,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
 
         file_put_contents($this->getCsvFile($fileHandle), $csv, FILE_APPEND);
 
-        $this->_helper->json(array("success" => true));
+        $this->_helper->json(["success" => true]);
     }
 
     public function downloadCsvFileAction()
@@ -826,9 +825,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         if (file_exists($csvFile)) {
             header("Content-Type: application/csv");
             header("Content-Length: " . filesize($csvFile));
-            header('Content-Disposition: attachment; filename="export.csv"');
-
-            while (@ob_end_flush()) ;
+            header('Content-Disposition: attachment; filename="export.csv"'); while (@ob_end_flush()) ;
             flush();
 
             readfile($csvFile);
@@ -863,9 +860,9 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
     protected function getCsvData($list, $fields, $addTitles = true)
     {
         $requestedLanguage = $this->extractLanguage();
-        $mappedFieldnames = array();
+        $mappedFieldnames = [];
 
-        $objects = array();
+        $objects = [];
         \Logger::debug("objects in list:" . count($list->getObjects()));
         foreach ($list->getObjects() as $object) {
             if ($fields) {
@@ -959,13 +956,13 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
                             $fieldDefinition = \Pimcore\Model\Object\Classificationstore\Service::getFieldDefinitionFromJson($definition, $type);
 
                             return $fieldDefinition->getForCsvExport($object,
-                                array("context" => array(
+                                ["context" => [
                                     "containerType" => "classificationstore",
                                     "fieldname" => $fieldname,
                                     "groupId" => $groupId,
                                     "keyId" => $keyId,
                                     "language" => $requestedLanguage
-                                ))
+                                ]]
                             );
                         }
                     }
@@ -1013,7 +1010,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
      */
     protected function csvObjectData($object)
     {
-        $o = array();
+        $o = [];
         foreach ($object->getClass()->getFieldDefinitions() as $key => $value) {
             //exclude remote owner fields
             if (!($value instanceof Object\ClassDefinition\Data\Relations\AbstractRelations and $value->isRemoteOwner())) {
@@ -1041,7 +1038,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         $folder = Object::getById($this->getParam("folderId"));
         $class = Object\ClassDefinition::getById($this->getParam("classId"));
 
-        $conditionFilters = array("o_path = ? OR o_path LIKE '" . str_replace("//", "/", $folder->getRealFullPath() . "/") . "%'");
+        $conditionFilters = ["o_path = ? OR o_path LIKE '" . str_replace("//", "/", $folder->getRealFullPath() . "/") . "%'"];
 
         if ($this->getParam("filter")) {
             $conditionFilters[] = Object\Service::getFilterCondition($this->getParam("filter"), $class);
@@ -1053,17 +1050,17 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         $className = $class->getName();
         $listClass = "\\Pimcore\\Model\\Object\\" . ucfirst($className) . "\\Listing";
         $list = new $listClass();
-        $list->setCondition(implode(" AND ", $conditionFilters), array($folder->getRealFullPath()));
+        $list->setCondition(implode(" AND ", $conditionFilters), [$folder->getRealFullPath()]);
         $list->setOrder("ASC");
         $list->setOrderKey("o_id");
 
         if ($this->getParam("objecttype")) {
-            $list->setObjectTypes(array($this->getParam("objecttype")));
+            $list->setObjectTypes([$this->getParam("objecttype")]);
         }
 
         $jobs = $list->loadIdList();
 
-        $this->_helper->json(array("success"=>true, "jobs"=>$jobs));
+        $this->_helper->json(["success"=>true, "jobs"=>$jobs]);
     }
 
     public function batchAction()
@@ -1157,17 +1154,17 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
                     $object->save();
                     $success = true;
                 } catch (\Exception $e) {
-                    $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
+                    $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
                 }
             } else {
                 \Logger::debug("ObjectController::batchAction => There is no object left to update.");
-                $this->_helper->json(array("success" => false, "message" => "ObjectController::batchAction => There is no object left to update."));
+                $this->_helper->json(["success" => false, "message" => "ObjectController::batchAction => There is no object left to update."]);
             }
         } catch (\Exception $e) {
             \Logger::err($e);
-            $this->_helper->json(array("success" => false, "message" => $e->getMessage()));
+            $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
         }
 
-        $this->_helper->json(array("success" => $success));
+        $this->_helper->json(["success" => $success]);
     }
 }

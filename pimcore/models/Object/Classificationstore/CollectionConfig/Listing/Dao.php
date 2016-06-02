@@ -30,9 +30,9 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function load()
     {
         $sql = "SELECT id FROM " . Object\Classificationstore\CollectionConfig\Dao::TABLE_NAME_COLLECTIONS . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit();
-        $configsData = $this->db->fetchCol($sql,  $this->model->getConditionVariables());
+        $configsData = $this->db->fetchCol($sql, $this->model->getConditionVariables());
 
-        $configData = array();
+        $configData = [];
         foreach ($configsData as $config) {
             $configData[] = Object\Classificationstore\CollectionConfig::getById($config);
         }

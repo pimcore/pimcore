@@ -15,7 +15,6 @@ namespace Pimcore\Cache\Backend;
 
 class Mongodb extends \Zend_Cache_Backend implements \Zend_Cache_Backend_ExtendedInterface
 {
-
     const DEFAULT_HOST = '127.0.0.1';
     const DEFAULT_PORT =  27017;
     const DEFAULT_DBNAME = 'pimcore_cache';
@@ -48,13 +47,13 @@ class Mongodb extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Extende
      *
      * @var array available options
      */
-    protected $_options = array(
+    protected $_options = [
         'host'       => self::DEFAULT_HOST,
         'port'       => self::DEFAULT_PORT,
         'collection' => self::DEFAULT_COLLECTION,
         'dbname'     => self::DEFAULT_DBNAME,
-        'optional'   => array()
-    );
+        'optional'   => []
+    ];
 
     /**
      * @return void
@@ -73,8 +72,8 @@ class Mongodb extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Extende
         $this->_db         = $this->_conn->selectDB($this->_options['dbname']);
         $this->_collection = $this->_db->selectCollection($this->_options['collection']);
 
-        $this->_collection->ensureIndex(array('t' => 1), array('background' => true));
-        $this->_collection->ensureIndex(array('expire' => 1), array('background' => true));
+        $this->_collection->ensureIndex(['t' => 1], ['background' => true]);
+        $this->_collection->ensureIndex(['expire' => 1], ['background' => true]);
     }
 
     /**
@@ -147,7 +146,7 @@ class Mongodb extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Extende
      * @param  int    $specificLifetime If != false, set a specific lifetime for this cache record (null => infinite lifetime)
      * @return boolean True if no problem
      */
-    public function save($data, $id, $tags = array(), $specificLifetime = false)
+    public function save($data, $id, $tags = [], $specificLifetime = false)
     {
         try {
             $lifetime = $this->getLifetime($specificLifetime);
@@ -168,7 +167,7 @@ class Mongodb extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Extende
     public function remove($id)
     {
         try {
-            $result = $this->_collection->remove(array('_id' => $id));
+            $result = $this->_collection->remove(['_id' => $id]);
         } catch (\Exception $e) {
             return false;
         }
@@ -195,23 +194,23 @@ class Mongodb extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Extende
      * @throws \Zend_Cache_Exception
      * @return boolean True if no problem
      */
-    public function clean($mode = \Zend_Cache::CLEANING_MODE_ALL, $tags = array())
+    public function clean($mode = \Zend_Cache::CLEANING_MODE_ALL, $tags = [])
     {
         switch ($mode) {
             case \Zend_Cache::CLEANING_MODE_ALL:
                 return $this->_conn->dropDB($this->_options['dbname']);
                 break;
             case \Zend_Cache::CLEANING_MODE_OLD:
-                return $this->_collection->remove(array('expire' => array('$lt' => time())));
+                return $this->_collection->remove(['expire' => ['$lt' => time()]]);
                 break;
             case \Zend_Cache::CLEANING_MODE_MATCHING_TAG:
-                return $this->_collection->remove(array('t' => array('$all' => $tags)));
+                return $this->_collection->remove(['t' => ['$all' => $tags]]);
                 break;
             case \Zend_Cache::CLEANING_MODE_NOT_MATCHING_TAG:
-                return $this->_collection->remove(array('t' => array('$nin' => $tags)));
+                return $this->_collection->remove(['t' => ['$nin' => $tags]]);
                 break;
             case \Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG:
-                return $this->_collection->remove(array('t' => array('$in' => $tags)));
+                return $this->_collection->remove(['t' => ['$in' => $tags]]);
                 break;
             default:
                 \Zend_Cache::throwException('Invalid mode for clean() method');
@@ -242,7 +241,7 @@ class Mongodb extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Extende
         $lifetime = $this->getLifetime(false);
         if ($lifetime === null) {
             // #ZF-4614 : we tranform null to zero to get the maximal lifetime
-            parent::setDirectives(array('lifetime' => 0));
+            parent::setDirectives(['lifetime' => 0]);
         }
         return $this;
     }
@@ -255,7 +254,7 @@ class Mongodb extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Extende
     public function getIds()
     {
         $cursor = $this->_collection->find();
-        $ret = array();
+        $ret = [];
         while ($tmp = $cursor->getNext()) {
             $ret[] = $tmp['_id'];
         }
@@ -287,13 +286,13 @@ class Mongodb extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Extende
                                 return { count : total };
                             };';
 
-        $cmd['out'] = array('replace' => 'getTagsCollection');
+        $cmd['out'] = ['replace' => 'getTagsCollection'];
 
         $res2 = $this->_db->command($cmd);
 
         $res3 = $this->_db->selectCollection('getTagsCollection')->find();
 
-        $res = array();
+        $res = [];
         foreach ($res3 as $key => $val) {
             $res[] = $key;
         }
@@ -316,12 +315,12 @@ class Mongodb extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Extende
      * @param array $tags array of tags
      * @return array array of matching cache ids (string)
      */
-    public function getIdsMatchingTags($tags = array())
+    public function getIdsMatchingTags($tags = [])
     {
         $cursor =  $this->_collection->find(
-            array('t' => array('$all' => $tags))
+            ['t' => ['$all' => $tags]]
         );
-        $ret = array();
+        $ret = [];
 
         while ($tmp = $cursor->getNext()) {
             $ret[] = $tmp['_id'];
@@ -338,12 +337,12 @@ class Mongodb extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Extende
      * @param array $tags array of tags
      * @return array array of not matching cache ids (string)
      */
-    public function getIdsNotMatchingTags($tags = array())
+    public function getIdsNotMatchingTags($tags = [])
     {
         $cursor =  $this->_collection->find(
-            array('t' => array('$nin' => $tags))
+            ['t' => ['$nin' => $tags]]
         );
-        $ret = array();
+        $ret = [];
 
         while ($tmp = $cursor->getNext()) {
             $ret[] = $tmp['_id'];
@@ -360,13 +359,13 @@ class Mongodb extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Extende
      * @param array $tags array of tags
      * @return array array of any matching cache ids (string)
      */
-    public function getIdsMatchingAnyTags($tags = array())
+    public function getIdsMatchingAnyTags($tags = [])
     {
         $cursor =  $this->_collection->find(
-            array('t' => array('$in' => $tags))
+            ['t' => ['$in' => $tags]]
         );
 
-        $ret = array();
+        $ret = [];
         while ($tmp = $cursor->getNext()) {
             $ret[] = $tmp['_id'];
         }
@@ -404,11 +403,11 @@ class Mongodb extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Extende
             $data = $tmp['d'];
             $mtime = $tmp['created_at'];
             $lifetime = $tmp['l'];
-            return array(
+            return [
                 'expire' => $mtime + $lifetime,
                 'tags' => $tmp['t'],
                 'mtime' => $mtime
-            );
+            ];
         }
 
         return false;
@@ -457,14 +456,14 @@ class Mongodb extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Extende
      */
     public function getCapabilities()
     {
-        return array(
+        return [
             'automatic_cleaning' => true,
             'tags' => true,
             'expired_read' => true,
             'priority' => false,
             'infinite_lifetime' => true,
             'get_list' => true
-        );
+        ];
     }
 
     /**
@@ -484,14 +483,14 @@ class Mongodb extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Extende
         }
 
         return $this->_collection->save(
-            array(
+            [
                 '_id' => $id,
                 'd' => $data,
                 'created_at' => $now,
                 'l' => $lifetime,
                 'expire' =>  $now + $lifetime,
                 't' => $tags
-            )
+            ]
         );
     }
 
@@ -501,6 +500,6 @@ class Mongodb extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Extende
      */
     public function get($id)
     {
-        return $this->_collection->find(array('_id' => $id));
+        return $this->_collection->find(['_id' => $id]);
     }
 }

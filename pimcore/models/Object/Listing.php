@@ -35,18 +35,18 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     /**
      * @var array
      */
-    public $objectTypes = array(AbstractObject::OBJECT_TYPE_OBJECT, AbstractObject::OBJECT_TYPE_FOLDER);
+    public $objectTypes = [AbstractObject::OBJECT_TYPE_OBJECT, AbstractObject::OBJECT_TYPE_FOLDER];
     
     /**
      * @var array
      */
-    public $validOrderKeys = array(
+    public $validOrderKeys = [
         "o_creationDate",
         "o_modificationDate",
         "o_id",
         "o_key",
         "o_index"
-    );
+    ];
 
     /**
      * @param string $key

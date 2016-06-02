@@ -48,13 +48,13 @@ class Dao extends Model\Dao\AbstractDao
             $translated = $pair["translated"];
             $metadata = $pair["metadata"];
 
-            $this->db->insert($this->getTableName(), array(
+            $this->db->insert($this->getTableName(), [
                 "o_id" => $objectId,
                 "key" => $key,
                 "value" => $value,
                 "translated" => $translated,
                 "metadata" => $metadata
-            ));
+            ]);
         }
     }
 

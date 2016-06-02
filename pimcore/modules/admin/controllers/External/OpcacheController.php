@@ -18,7 +18,6 @@ use \Linfo\Common;
 
 class Admin_External_OpcacheController extends \Pimcore\Controller\Action\Admin
 {
-
     public function init()
     {
         parent::init();

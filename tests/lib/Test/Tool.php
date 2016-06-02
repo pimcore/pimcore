@@ -27,11 +27,11 @@ class Test_Tool
         }
 
         $client = new Zend_Soap_Client($conf->webservice->wsdl . "&username=" . $user->getUsername() . "&apikey=" . $user->getPassword(),
-            array(
+            [
                    "cache_wsdl" => false,
                    "soap_version" => SOAP_1_2,
                    "classmap" => Webservice_Tool::createClassMappings()
-              ));
+              ]);
 
         $client->setLocation($conf->webservice->serviceEndpoint . "?username=" . $user->getUsername() . "&apikey=" . $user->getPassword());
         return $client;
@@ -45,7 +45,7 @@ class Test_Tool
      */
     protected static function createPropertiesComparisonString($properties)
     {
-        $propertiesStringArray = array();
+        $propertiesStringArray = [];
         ksort($properties);
         if (is_array($properties)) {
             foreach ($properties as $key => $value) {
@@ -79,7 +79,7 @@ class Test_Tool
     public static function createAssetComparisonString($asset, $ignoreCopyDifferences = false)
     {
         if ($asset instanceof Asset) {
-            $a = array();
+            $a = [];
 
             //custom settings
             if (is_array($asset->getCustomSettings())) {
@@ -154,7 +154,7 @@ class Test_Tool
     protected static function createDocumentComparisonString($document, $ignoreCopyDifferences = false)
     {
         if ($document instanceof Document) {
-            $d = array();
+            $d = [];
 
             if ($document instanceof Document_PageSnippet) {
                 $elements = $document->getElements();
@@ -248,7 +248,7 @@ class Test_Tool
                 $collection = $object->$getter();
                 $items = $collection->getItems();
                 if (is_array($items)) {
-                    $returnValue = array();
+                    $returnValue = [];
                     $counter = 0;
                     foreach ($items as $item) {
                         $def = $item->getDefinition();
@@ -274,10 +274,10 @@ class Test_Tool
             }
         } elseif (method_exists($object, $getter) and $fd instanceof Object_Class_Data_Localizedfields) {
             $data = $object->$getter();
-            $lData = array();
+            $lData = [];
 
             if (!$data instanceof Object_Localizedfield) {
-                return array();
+                return [];
             }
 
             try {
@@ -313,7 +313,7 @@ class Test_Tool
     protected static function createObjectComparisonString($object, $ignoreCopyDifferences)
     {
         if ($object instanceof Object_Abstract) {
-            $o = array();
+            $o = [];
 
             if ($object instanceof Object_Concrete) {
                 foreach ($object->getClass()->getFieldDefinitions() as $key => $value) {
@@ -398,7 +398,7 @@ class Test_Tool
 
     public static function createEmptyObjects($keyPrefix = "", $save = true, $count = 10)
     {
-        $result = array();
+        $result = [];
         for ($i = 0; $i < $count; $i++) {
             $result[] = self::createEmptyObject($keyPrefix, $save);
         }
@@ -525,7 +525,7 @@ class Test_Tool
         $property->setName("propname");
         $property->setType("text");
         $property->setData("bla");
-        $properties = array($property);
+        $properties = [$property];
         $asset->setProperties($properties);
         $asset->setFilename($keyPrefix . uniqid() . rand(10, 99) . ".jpg");
         if ($save) {

@@ -16,12 +16,12 @@ return [
             "expanded" => true,                                                 // tree is expanded by default (there can be only one expanded tree on each side)
             "having" => "o_type = \"folder\" || o5.title NOT LIKE '%magnis%'",  // SQL having clause
             "joins" => [                                                        // Joins in Zend_DB_Select-like syntax
-                array(
+                [
                     "type" => "left",
-                    "name" => array("o5" => "object_localized_5_en"),
+                    "name" => ["o5" => "object_localized_5_en"],
                     "condition" => "objects.o_id = o5.oo_id",
-                    "columns" => array("o5" => "title")
-                )
+                    "columns" => ["o5" => "title"]
+                ]
             ],
             "where" => "",
             "treeContextMenu" => [

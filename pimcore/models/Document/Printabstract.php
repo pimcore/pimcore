@@ -5,8 +5,8 @@ namespace Pimcore\Model\Document;
 use \Pimcore\Model\Document;
 use Pimcore\Web2Print\Processor;
 
-abstract class PrintAbstract extends Document\PageSnippet {
-
+abstract class PrintAbstract extends Document\PageSnippet
+{
     public $lastGenerated;
     public $lastGenerateMessage;
 
@@ -17,7 +17,7 @@ abstract class PrintAbstract extends Document\PageSnippet {
 
     public function getLastGeneratedDate()
     {
-        if($this->lastGenerated) {
+        if ($this->lastGenerated) {
             return new \Zend_Date($this->lastGenerated, \Zend_Date::TIMESTAMP);
         }
         return null;
@@ -52,25 +52,29 @@ abstract class PrintAbstract extends Document\PageSnippet {
     /**
      * @param $config
      */
-    public function generatePdf($config) {
+    public function generatePdf($config)
+    {
         Processor::getInstance()->preparePdfGeneration($this->getId(), $config);
     }
 
-    public function renderDocument($params) {
+    public function renderDocument($params)
+    {
         $html = Document\Service::render($this, $params, true);
         return $html;
     }
 
-    public function getPdfFileName() {
+    public function getPdfFileName()
+    {
         return PIMCORE_TEMPORARY_DIRECTORY . DIRECTORY_SEPARATOR . "web2print-document-" . $this->getId() . ".pdf";
     }
 
-    public function pdfIsDirty() {
+    public function pdfIsDirty()
+    {
         return $this->getLastGenerated() < $this->getModificationDate();
     }
 
-    public function getLockKey() {
+    public function getLockKey()
+    {
         return "web2print_pdf_generation_" . $this->getId();
     }
-
 }

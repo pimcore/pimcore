@@ -48,12 +48,12 @@ class CDN extends \Zend_Controller_Plugin_Abstract
     /**
      * @var array
      */
-    protected $cdnhostnames = array();
+    protected $cdnhostnames = [];
 
     /**
      * @var array
      */
-    protected $cdnpatterns = array();
+    protected $cdnpatterns = [];
 
     /**
      *
@@ -82,7 +82,7 @@ class CDN extends \Zend_Controller_Plugin_Abstract
     protected function getHostnames()
     {
         if ($this->hostnames === null) {
-            $this->hostnames = array();
+            $this->hostnames = [];
             $hosts = $this->getCdnhostnames();
             if (is_array($hosts) && count($hosts) > 0) {
                 $this->hostnames = $hosts;
@@ -97,7 +97,7 @@ class CDN extends \Zend_Controller_Plugin_Abstract
     protected function getPatterns()
     {
         if ($this->patterns === null) {
-            $this->patterns = array();
+            $this->patterns = [];
             $patterns = $this->getCdnpatterns();
             if (is_array($patterns) && count($patterns) > 0) {
                 $this->patterns = $patterns;
@@ -129,7 +129,7 @@ class CDN extends \Zend_Controller_Plugin_Abstract
     protected function getStorage()
     {
         if ($this->cachedItems === null) {
-            $this->cachedItems = array();
+            $this->cachedItems = [];
             if ($items = CacheManager::load(self::cacheKey)) {
                 $this->cachedItems = $items;
             }
@@ -199,7 +199,7 @@ class CDN extends \Zend_Controller_Plugin_Abstract
                 $this->getResponse()->setBody($body);
 
                 // save storage
-                CacheManager::save($this->cachedItems, self::cacheKey, array(), 3600);
+                CacheManager::save($this->cachedItems, self::cacheKey, [], 3600);
             }
         }
     }

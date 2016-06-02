@@ -69,10 +69,10 @@ class Hardlink extends Document
         if ($this->getSourceDocument() instanceof Document) {
             $key = "document_" . $this->getSourceDocument()->getId();
 
-            $dependencies[$key] = array(
+            $dependencies[$key] = [
                 "id" => $this->getSourceDocument()->getId(),
                 "type" => "document"
-            );
+            ];
         }
 
         return $dependencies;
@@ -83,9 +83,9 @@ class Hardlink extends Document
      *
      * @return array
      */
-    public function getCacheTags($tags = array())
+    public function getCacheTags($tags = [])
     {
-        $tags = is_array($tags) ? $tags : array();
+        $tags = is_array($tags) ? $tags : [];
 
         $tags = parent::getCacheTags($tags);
 
@@ -191,7 +191,7 @@ class Hardlink extends Document
         if ($this->childs === null) {
             $childs = parent::getChilds();
 
-            $sourceChilds = array();
+            $sourceChilds = [];
             if ($this->getChildsFromSource() && $this->getSourceDocument() && !\Pimcore::inAdmin()) {
                 $sourceChilds = $this->getSourceDocument()->getChilds();
                 foreach ($sourceChilds as &$c) {

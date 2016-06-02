@@ -23,18 +23,16 @@ use Pimcore\Model\Tool\TmpStore;
 
 class Processor
 {
-
-
-    protected static $argumentMapping = array(
-        "resize" => array("width","height"),
-        "scaleByWidth" => array("width"),
-        "scaleByHeight" => array("height")
-    );
+    protected static $argumentMapping = [
+        "resize" => ["width","height"],
+        "scaleByWidth" => ["width"],
+        "scaleByHeight" => ["height"]
+    ];
 
     /**
      * @var array
      */
-    public $queue = array();
+    public $queue = [];
 
     /**
      * @var string
@@ -63,21 +61,21 @@ class Processor
      * @return Processor
      * @throws \Exception
      */
-    public static function process(Model\Asset\Video $asset, $config, $onlyFormats = array())
+    public static function process(Model\Asset\Video $asset, $config, $onlyFormats = [])
     {
         if (!\Pimcore\Video::isAvailable()) {
             throw new \Exception("No ffmpeg executable found, please configure the correct path in the system settings");
         }
 
         $instance = new self();
-        $formats = empty($onlyFormats) ? array("mp4","webm") : $onlyFormats;
+        $formats = empty($onlyFormats) ? ["mp4","webm"] : $onlyFormats;
         $instance->setProcessId(uniqid());
         $instance->setAssetId($asset->getId());
         $instance->setConfig($config);
 
         // check for running or already created thumbnails
         $customSetting = $asset->getCustomSetting("thumbnails");
-        $existingFormats = array();
+        $existingFormats = [];
         if (is_array($customSetting) && array_key_exists($config->getName(), $customSetting)) {
             if ($customSetting[$config->getName()]["status"] == "inprogress") {
                 if (TmpStore::get($instance->getJobStoreId($customSetting[$config->getName()]["processId"]))) {
@@ -85,7 +83,7 @@ class Processor
                 }
             } elseif ($customSetting[$config->getName()]["status"] == "finished") {
                 // check if the files are there
-                $formatsToConvert = array();
+                $formatsToConvert = [];
                 foreach ($formats as $f) {
                     if (!is_file($asset->getVideoThumbnailSavePath() . $customSetting[$config->getName()]["formats"][$f])) {
                         $formatsToConvert[] = $f;
@@ -131,7 +129,7 @@ class Processor
             if (is_array($transformations) && count($transformations) > 0) {
                 foreach ($transformations as $transformation) {
                     if (!empty($transformation)) {
-                        $arguments = array();
+                        $arguments = [];
                         $mapping = self::$argumentMapping[$transformation["method"]];
 
                         if (is_array($transformation["arguments"])) {
@@ -145,7 +143,7 @@ class Processor
 
                         ksort($arguments);
                         if (count($mapping) == count($arguments)) {
-                            call_user_func_array(array($converter, $transformation["method"]), $arguments);
+                            call_user_func_array([$converter, $transformation["method"]], $arguments);
                         } else {
                             $message = "Video Transform failed: cannot call method `" . $transformation["method"] . "´ with arguments `" . implode(",", $arguments) . "´ because there are too few arguments";
                             \Logger::error($message);
@@ -158,12 +156,12 @@ class Processor
         }
 
         $customSetting = $asset->getCustomSetting("thumbnails");
-        $customSetting = is_array($customSetting) ? $customSetting : array();
-        $customSetting[$config->getName()] = array(
+        $customSetting = is_array($customSetting) ? $customSetting : [];
+        $customSetting[$config->getName()] = [
             "status" => "inprogress",
             "formats" => $existingFormats,
             "processId" => $instance->getProcessId()
-        );
+        ];
         $asset->setCustomSetting("thumbnails", $customSetting);
         $asset->save();
 
@@ -183,8 +181,8 @@ class Processor
         $instanceItem = TmpStore::get($instance->getJobStoreId($processId));
         $instance = $instanceItem->getData();
 
-        $formats = array();
-        $overallStatus = array();
+        $formats = [];
+        $overallStatus = [];
         $conversionStatus = "finished";
 
         // set overall status for all formats to 0
@@ -238,7 +236,7 @@ class Processor
 
         if ($asset) {
             $customSetting = $asset->getCustomSetting("thumbnails");
-            $customSetting = is_array($customSetting) ? $customSetting : array();
+            $customSetting = is_array($customSetting) ? $customSetting : [];
 
             if (array_key_exists($instance->getConfig()->getName(), $customSetting)
                 && array_key_exists("formats", $customSetting[$instance->getConfig()->getName()])
@@ -246,10 +244,10 @@ class Processor
                 $formats = array_merge($customSetting[$instance->getConfig()->getName()]["formats"], $formats);
             }
 
-            $customSetting[$instance->getConfig()->getName()] = array(
+            $customSetting[$instance->getConfig()->getName()] = [
                 "status" => $conversionStatus,
                 "formats" => $formats
-            );
+            ];
             $asset->setCustomSetting("thumbnails", $customSetting);
             $asset->save();
         }

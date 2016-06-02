@@ -65,7 +65,7 @@ class AbstractData extends Model\AbstractModel
     }
 
     /**
-     * @return 
+     * @return
      */
     public function getType()
     {

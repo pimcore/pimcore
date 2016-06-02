@@ -70,11 +70,11 @@ class Href extends Model\Document\Tag
      */
     public function getData()
     {
-        return array(
+        return [
             "id" => $this->id,
             "type" => $this->type,
             "subtype" => $this->subtype
-        );
+        ];
     }
 
     /**
@@ -87,12 +87,12 @@ class Href extends Model\Document\Tag
         $this->setElement();
     
         if ($this->element instanceof Element\ElementInterface) {
-            return array(
+            return [
                 "id" => $this->id,
                 "path" => $this->element->getRealFullPath(),
                 "elementType" => $this->type,
                 "subtype" => $this->subtype
-            );
+            ];
         }
 
         return null;
@@ -219,16 +219,16 @@ class Href extends Model\Document\Tag
      */
     public function resolveDependencies()
     {
-        $dependencies = array();
+        $dependencies = [];
         $this->setElement();
 
         if ($this->element instanceof Element\ElementInterface) {
             $elementType = Element\Service::getElementType($this->element);
             $key = $elementType . "_" . $this->element->getId();
-            $dependencies[$key] = array(
+            $dependencies[$key] = [
                 "id" => $this->element->getId(),
                 "type" => $elementType
-            );
+            ];
         }
 
         return $dependencies;
@@ -240,7 +240,7 @@ class Href extends Model\Document\Tag
      * @param null $idMapper
      * @throws \Exception
      */
-    public function getFromWebserviceImport($wsElement, $document = null, $params = array(), $idMapper = null)
+    public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
     {
         $data = $wsElement->value;
         if ($data->id !==null) {
@@ -320,9 +320,9 @@ class Href extends Model\Document\Tag
      */
     public function __sleep()
     {
-        $finalVars = array();
+        $finalVars = [];
         $parentVars = parent::__sleep();
-        $blockedVars = array("element");
+        $blockedVars = ["element"];
         foreach ($parentVars as $key) {
             if (!in_array($key, $blockedVars)) {
                 $finalVars[] = $key;

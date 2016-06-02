@@ -107,7 +107,7 @@ class Wysiwyg extends Model\Document\Tag
      * @param null $idMapper
      * @throws \Exception
      */
-    public function getFromWebserviceImport($wsElement, $document = null, $params = array(), $idMapper = null)
+    public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
     {
         $data = $wsElement->value;
         if ($data->text === null or is_string($data->text)) {
@@ -131,7 +131,7 @@ class Wysiwyg extends Model\Document\Tag
      * @param array $blockedTags
      * @return array
      */
-    public function getCacheTags($ownerDocument, $blockedTags = array())
+    public function getCacheTags($ownerDocument, $blockedTags = [])
     {
         return Text::getCacheTagsOfWysiwygText($this->text, $blockedTags);
     }

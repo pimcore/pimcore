@@ -100,7 +100,7 @@ class Service extends Model\AbstractModel
      */
     public static function getIdList($list, $idGetter = 'getId')
     {
-        $ids = array();
+        $ids = [];
         if (is_array($list)) {
             foreach ($list as $entry) {
                 if (is_object($entry) && method_exists($entry, $idGetter)) {
@@ -125,7 +125,7 @@ class Service extends Model\AbstractModel
     public static function getRequiredByDependenciesForFrontend(Dependency $d)
     {
         $dependencies["hasHidden"] = false;
-        $dependencies["requiredBy"] = array();
+        $dependencies["requiredBy"] = [];
 
         // requiredBy
         foreach ($d->getRequiredBy() as $r) {
@@ -147,7 +147,7 @@ class Service extends Model\AbstractModel
     public static function getRequiresDependenciesForFrontend(Dependency $d)
     {
         $dependencies["hasHidden"] = false;
-        $dependencies["requires"] = array();
+        $dependencies["requires"] = [];
 
         // requires
         foreach ($d->getRequires() as $r) {
@@ -170,12 +170,12 @@ class Service extends Model\AbstractModel
     public static function getDependencyForFrontend($element)
     {
         if ($element instanceof ElementInterface) {
-            return array(
+            return [
                 "id" => $element->getId(),
                 "path" => $element->getRealFullPath(),
                 "type" => self::getElementType($element),
                 "subtype" => $element->getType()
-            );
+            ];
         }
     }
 
@@ -403,11 +403,11 @@ class Service extends Model\AbstractModel
      */
     public static function minimizePropertiesForEditmode($props)
     {
-        $properties = array();
+        $properties = [];
         foreach ($props as $key => $p) {
 
             //$p = object2array($p);
-            $allowedProperties = array(
+            $allowedProperties = [
                 "key",
                 "o_key",
                 "filename",
@@ -417,10 +417,10 @@ class Service extends Model\AbstractModel
                 "o_id",
                 "o_type",
                 "type"
-            );
+            ];
 
             if ($p->getData() instanceof Document || $p->getData() instanceof Asset || $p->getData() instanceof Object\AbstractObject) {
-                $pa = array();
+                $pa = [];
 
                 $vars = get_object_vars($p->getData());
 
@@ -468,10 +468,10 @@ class Service extends Model\AbstractModel
                 }
             }
             if (!$found) {
-                $target->setChilds(array_merge($target->getChilds(), array($new)));
+                $target->setChilds(array_merge($target->getChilds(), [$new]));
             }
         } else {
-            $target->setChilds(array($new));
+            $target->setChilds([$new]);
         }
     }
 
@@ -481,7 +481,7 @@ class Service extends Model\AbstractModel
      */
     public static function gridElementData(ElementInterface $element)
     {
-        $data = array(
+        $data = [
             "id" => $element->getId(),
             "fullpath" => $element->getRealFullPath(),
             "type" => self::getType($element),
@@ -489,7 +489,7 @@ class Service extends Model\AbstractModel
             "filename" => self::getFilename($element),
             "creationDate" => $element->getCreationDate(),
             "modificationDate" => $element->getModificationDate()
-        );
+        ];
 
         if (method_exists($element, "isPublished")) {
             $data["published"] = $element->isPublished();
@@ -521,7 +521,7 @@ class Service extends Model\AbstractModel
     public static function findForbiddenPaths($type, $user)
     {
         if ($user->isAdmin()) {
-            return array();
+            return [];
         }
 
         // get workspaces
@@ -531,7 +531,7 @@ class Service extends Model\AbstractModel
             $workspaces = array_merge($workspaces, $role->{"getWorkspaces".ucfirst($type)}());
         }
 
-        $forbidden = array();
+        $forbidden = [];
         if (count($workspaces) > 0) {
             foreach ($workspaces as $workspace) {
                 if (!$workspace->getList()) {
@@ -651,7 +651,7 @@ class Service extends Model\AbstractModel
      * @return null
      * @throws \Exception
      */
-    public static function createFolderByPath($path, $options = array())
+    public static function createFolderByPath($path, $options = [])
     {
         $calledClass = get_called_class();
         if ($calledClass == __CLASS__) {
@@ -663,7 +663,7 @@ class Service extends Model\AbstractModel
         $folderType = $type . '\Folder';
 
         $lastFolder = null;
-        $pathsArray = array();
+        $pathsArray = [];
         $parts = explode('/', $path);
         $parts = array_filter($parts, "\\Pimcore\\Model\\Element\\Service::filterNullValues");
 
@@ -789,17 +789,17 @@ class Service extends Model\AbstractModel
         if ((is_string($data) && !empty($data)) || (\Pimcore\Tool\Admin::isExtJS6() && is_array($data) && count($data))) {
             if (!\Pimcore\Tool\Admin::isExtJS6()) {
                 $parts = explode(",", $data);
-                $data = array();
+                $data = [];
                 foreach ($parts as $elementType) {
-                    $data[] = array($type => $elementType);
+                    $data[] = [$type => $elementType];
                 }
             } else {
                 $first = reset($data);
                 if (!is_array($first)) {
                     $parts = $data;
-                    $data = array();
+                    $data = [];
                     foreach ($parts as $elementType) {
-                        $data[] = array($type => $elementType);
+                        $data[] = [$type => $elementType];
                     }
                 }
             }

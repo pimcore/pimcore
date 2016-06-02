@@ -114,7 +114,7 @@ class Sql extends AbstractAdapter
             $sql .= " " . str_replace("\n", " ", $config["from"]);
         }
         if ($config["where"] || $drillDownFilters) {
-            $whereParts = array();
+            $whereParts = [];
             if ($config["where"]) {
                 $whereParts[] = "(" . str_replace("\n", " ", $config["where"]) . ")";
             }
@@ -176,11 +176,11 @@ class Sql extends AbstractAdapter
                             case "gt":
                             case "eq":
 
-                                $compMapping = array(
+                                $compMapping = [
                                     "lt" => "<",
                                     "gt" => ">",
                                     "eq" => "="
-                                );
+                                ];
 
                                 $condition[] = $db->quoteIdentifier($filter["property"]) . " " . $compMapping[$operator] . " " . $db->quote($filter["value"]);
                                 break;
@@ -192,11 +192,11 @@ class Sql extends AbstractAdapter
                         if ($filter["type"] == "string") {
                             $condition[] = $db->quoteIdentifier($filter["field"]) . " LIKE " . $db->quote("%" . $filter["value"] . "%");
                         } elseif ($filter["type"] == "numeric") {
-                            $compMapping = array(
+                            $compMapping = [
                                 "lt" => "<",
                                 "gt" => ">",
                                 "eq" => "="
-                            );
+                            ];
                             if ($compMapping[$filter["comparison"]]) {
                                 $condition[] = $db->quoteIdentifier($filter["field"]) . " " . $compMapping[$filter["comparison"]] . " " . $db->quote($filter["value"]);
                             }

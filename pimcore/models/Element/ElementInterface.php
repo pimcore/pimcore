@@ -142,5 +142,5 @@ interface ElementInterface
      * @param array $tags
      * @return array
      */
-    public function getCacheTags($tags = array());
+    public function getCacheTags($tags = []);
 }

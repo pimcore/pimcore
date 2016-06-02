@@ -70,7 +70,7 @@ class AbstractModule extends AbstractAPI
                 return (array)$config['module']['moduleJsPaths']['path'];
             }
         }
-        return array();
+        return [];
     }
 
     /**
@@ -84,7 +84,7 @@ class AbstractModule extends AbstractAPI
                 return (array)$config['module']['moduleJsPaths']['path'];
             }
         }
-        return array();
+        return [];
     }
 
     /**

@@ -63,9 +63,9 @@ class Job
         if (method_exists($this->getObject(), $this->getMethod())) {
             $arguments = $this->getArguments();
             if (!is_array($arguments)) {
-                $arguments = array();
+                $arguments = [];
             }
-            return call_user_func_array(array($this->getObject(), $this->getMethod()), $arguments);
+            return call_user_func_array([$this->getObject(), $this->getMethod()], $arguments);
         }
     }
 

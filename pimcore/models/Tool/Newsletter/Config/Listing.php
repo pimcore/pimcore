@@ -24,7 +24,7 @@ class Listing extends Model\Listing\JsonListing
     /**
      * @var array
      */
-    public $newsletter = array();
+    public $newsletter = [];
 
     /**
      * @return array

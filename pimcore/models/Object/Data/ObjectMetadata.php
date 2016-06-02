@@ -35,12 +35,12 @@ class ObjectMetadata extends Model\AbstractModel
     /**
      * @var array
      */
-    protected $columns = array();
+    protected $columns = [];
 
     /**
      * @var array
      */
-    protected $data = array();
+    protected $data = [];
 
     /**
      * @param $fieldname
@@ -48,7 +48,7 @@ class ObjectMetadata extends Model\AbstractModel
      * @param null $object
      * @throws \Exception
      */
-    public function __construct($fieldname, $columns = array(), $object = null)
+    public function __construct($fieldname, $columns = [], $object = null)
     {
         $this->fieldname = $fieldname;
         $this->object = $object;

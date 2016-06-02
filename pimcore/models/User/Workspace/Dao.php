@@ -36,7 +36,7 @@ class Dao extends Model\Dao\AbstractDao
             $tableName = "users_workspaces_object";
         }
 
-        $data = array();
+        $data = [];
 
         // add all permissions
         $dataRaw = get_object_vars($this->model);

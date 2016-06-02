@@ -14,7 +14,7 @@ if (!defined("TESTS_PATH")) {
 define("PIMCORE_ADMIN", true);
 define("PIMCORE_DEBUG", true);
 define("PIMCORE_DEVMODE", true);
-define("PIMCORE_WEBSITE_VAR",  TESTS_PATH . "/tmp/var");
+define("PIMCORE_WEBSITE_VAR", TESTS_PATH . "/tmp/var");
 
 @mkdir(TESTS_PATH . "/output", 0777, true);
 
@@ -43,7 +43,7 @@ if (is_file($systemConfigFile)) {
 }
 
 $includePathBak = get_include_path();
-$includePaths = array(get_include_path());
+$includePaths = [get_include_path()];
 $includePaths[] = TESTS_PATH . "/TestSuite";
 array_unshift($includePaths, "/lib");
 set_include_path(implode(PATH_SEPARATOR, $includePaths));
@@ -84,11 +84,11 @@ if (defined('HHVM_VERSION')) {
 echo "\n\nDatabase Config: ". print_r($dbConfig, true) . "\n\n";
 
 $setup = new Tool_Setup();
-$setup->config(array(
+$setup->config([
     "database" => $dbConfig,
-    "webservice" => array("enabled" => 1),
-    "general" => array("validLanguages" => "en,de")
-));
+    "webservice" => ["enabled" => 1],
+    "general" => ["validLanguages" => "en,de"]
+]);
 
 Pimcore::initConfiguration();
 
@@ -101,10 +101,10 @@ if (is_array($systemConfig)) {
 $setup->database();
 
 
-$setup->contents(array(
+$setup->contents([
     "username" => "admin",
     "password" => microtime()
-));
+]);
 
 echo "\nSetup done...\n";
 
@@ -114,9 +114,9 @@ Pimcore_Resource::reset();
 Pimcore_Model_Cache::disable();
 
 // add the tests, which still reside in the original development unit, not in pimcore_phpunit to the include path
-$includePaths = array(
+$includePaths = [
     get_include_path()
-);
+];
 
 $includePaths[] = TESTS_PATH;
 $includePaths[] = TESTS_PATH . "/TestSuite";

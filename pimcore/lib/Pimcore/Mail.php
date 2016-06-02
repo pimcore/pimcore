@@ -26,7 +26,7 @@ class Mail extends \Zend_Mail
      * @var array
      * @static
      */
-    protected static $debugEmailAddresses = array();
+    protected static $debugEmailAddresses = [];
 
     /**
      * @var object Pimcore_Placeholder
@@ -38,7 +38,7 @@ class Mail extends \Zend_Mail
      *
      * @var array
      */
-    protected $temporaryStorage = array();
+    protected $temporaryStorage = [];
 
     /**
      * If true - emails are logged in the database and on the file-system
@@ -59,7 +59,7 @@ class Mail extends \Zend_Mail
      *
      * @var array
      */
-    protected $params = array();
+    protected $params = [];
 
 
     /**
@@ -198,7 +198,7 @@ class Mail extends \Zend_Mail
         }
 
         if ($emailSettings['method'] == "smtp") {
-            $config = array();
+            $config = [];
             if ($emailSettings['smtp']['name']) {
                 $config['name'] = $emailSettings['smtp']['name'];
             }
@@ -379,10 +379,10 @@ class Mail extends \Zend_Mail
     protected function addToTemporaryStorage($key, $email, $name)
     {
         if (!is_array($email)) {
-            $email = array($name => $email);
+            $email = [$name => $email];
         }
         foreach ($email as $n => $recipient) {
-            $this->temporaryStorage[$key][] = array('email' => $recipient, 'name' => is_int($n) ? '' : $n);
+            $this->temporaryStorage[$key][] = ['email' => $recipient, 'name' => is_int($n) ? '' : $n];
         }
     }
 
@@ -605,7 +605,7 @@ class Mail extends \Zend_Mail
     public function send($transport = null)
     {
         // filter email addresses
-        $blockedAddresses = array();
+        $blockedAddresses = [];
         foreach ($this->getRecipients() as $recipient) {
             if (Model\Tool\Email\Blacklist::getByAddress($recipient)) {
                 $blockedAddresses[] = $recipient;

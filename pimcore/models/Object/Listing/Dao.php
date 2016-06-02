@@ -81,7 +81,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $list = $this->loadIdList();
 
 
-        $objects = array();
+        $objects = [];
         foreach ($list as $o_id) {
             if ($object = Object::getById($o_id)) {
                 $objects[] = $object;

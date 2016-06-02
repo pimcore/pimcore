@@ -52,7 +52,7 @@ class Mail
             }
             $debugInformation .= '</td></tr>';
 
-            foreach (array('To', 'Cc', 'Bcc') as $key) {
+            foreach (['To', 'Cc', 'Bcc'] as $key) {
                 if (isset($temporaryStorage[$key]) && is_array($temporaryStorage[$key])) {
                     $debugInformation .= '<tr><td class="pimcore_label_column">' . $key . ': </td>';
                     $debugInformation .= '<td>' . self::formatDebugReceivers($temporaryStorage[$key]) . '</td></tr>';
@@ -72,7 +72,7 @@ class Mail
 
             //generating text debug info
             $debugInformation = "\r\n  \r\nDebug Information:  \r\n  \r\n";
-            foreach (array('To', 'Cc', 'Bcc') as $key) {
+            foreach (['To', 'Cc', 'Bcc'] as $key) {
                 if (isset($temporaryStorage[$key]) && is_array($temporaryStorage[$key])) {
                     $debugInformation .= "$key: " . self::formatDebugReceivers($temporaryStorage[$key]) . "\r\n";
                 }
@@ -185,7 +185,7 @@ CSS;
         }
 
         $temporaryStorage = $mail->getTemporaryStorage();
-        foreach (array('To', 'Cc', 'Bcc') as $key) {
+        foreach (['To', 'Cc', 'Bcc'] as $key) {
             if (isset($temporaryStorage[$key]) && is_array($temporaryStorage[$key])) {
                 if (method_exists($emailLog, 'set' . $key)) {
                     $emailLog->{"set$key"}(self::formatDebugReceivers($temporaryStorage[$key]));
@@ -263,7 +263,7 @@ CSS;
                 $fullMatch = $matches[0][$key];
                 $path = $matches[1][$key];
                 $fileInfo = self::getNormalizedFileInfo($path, $document);
-                if (in_array($fileInfo['fileExtension'], array('css', 'less'))) {
+                if (in_array($fileInfo['fileExtension'], ['css', 'less'])) {
                     if (is_readable($fileInfo['filePathNormalized'])) {
                         if ($fileInfo['fileExtension'] == 'css') {
                             $fileContent = file_get_contents($fileInfo['filePathNormalized']);
@@ -343,7 +343,7 @@ CSS;
             throw new \Exception('$document has to be an instance of Document');
         }
 
-        $fileInfo = array();
+        $fileInfo = [];
         $hostUrl = Tool::getHostUrl();
         if ($path[0] != '/') {
             $fileInfo['fileUrl'] = $hostUrl . $document . "/$path"; //relative eg. ../file.css

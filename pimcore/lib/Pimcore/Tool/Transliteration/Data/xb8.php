@@ -1,6 +1,6 @@
 <?php
 
-$base = array(
+$base = [
   0x00 => 'reoss', 'reong', 'reoj', 'reoc', 'reok', 'reot', 'reop', 'reoh', 're', 'reg', 'regg', 'regs', 'ren', 'renj', 'renh', 'red',
   0x10 => 'rel', 'relg', 'relm', 'relb', 'rels', 'relt', 'relp', 'relh', 'rem', 'reb', 'rebs', 'res', 'ress', 'reng', 'rej', 'rec',
   0x20 => 'rek', 'ret', 'rep', 'reh', 'ryeo', 'ryeog', 'ryeogg', 'ryeogs', 'ryeon', 'ryeonj', 'ryeonh', 'ryeod', 'ryeol', 'ryeolg', 'ryeolm', 'ryeolb',
@@ -17,4 +17,4 @@ $base = array(
   0xD0 => 'ryon', 'ryonj', 'ryonh', 'ryod', 'ryol', 'ryolg', 'ryolm', 'ryolb', 'ryols', 'ryolt', 'ryolp', 'ryolh', 'ryom', 'ryob', 'ryobs', 'ryos',
   0xE0 => 'ryoss', 'ryong', 'ryoj', 'ryoc', 'ryok', 'ryot', 'ryop', 'ryoh', 'ru', 'rug', 'rugg', 'rugs', 'run', 'runj', 'runh', 'rud',
   0xF0 => 'rul', 'rulg', 'rulm', 'rulb', 'ruls', 'rult', 'rulp', 'rulh', 'rum', 'rub', 'rubs', 'rus', 'russ', 'rung', 'ruj', 'ruc',
-);
+];

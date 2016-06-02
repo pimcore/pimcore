@@ -38,14 +38,14 @@ class Dependency extends AbstractModel
      *
      * @var integer
      */
-    public $requires = array();
+    public $requires = [];
 
     /**
      * Contains the ID/type of objects that need the given source object (sourceId/sourceType)
      *
      * @var integer
      */
-    public $requiredBy = array();
+    public $requiredBy = [];
 
 
     /**
@@ -73,10 +73,10 @@ class Dependency extends AbstractModel
      */
     public function addRequirement($id, $type)
     {
-        $this->requires[] = array(
+        $this->requires[] = [
             "type" => $type,
             "id" => $id
-        );
+        ];
     }
 
     /**
@@ -95,7 +95,7 @@ class Dependency extends AbstractModel
      */
     public function clean()
     {
-        $this->requires = array();
+        $this->requires = [];
         $this->getDao()->clear();
     }
 

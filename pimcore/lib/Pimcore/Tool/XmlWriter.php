@@ -29,7 +29,7 @@ class XmlWriter extends \Zend_Config_Writer_Xml
      *
      * @var array
      */
-    protected $rootElementAttributes = array();
+    protected $rootElementAttributes = [];
 
     /**
      * @var string
@@ -41,7 +41,7 @@ class XmlWriter extends \Zend_Config_Writer_Xml
      *
      * @param array $options
      */
-    public function __construct($options = array())
+    public function __construct($options = [])
     {
         foreach ($options as $key => $value) {
             $setter = "set" . ucfirst($key);

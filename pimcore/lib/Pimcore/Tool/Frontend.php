@@ -121,10 +121,10 @@ class Frontend
         $front = \Zend_Controller_Front::getInstance();
         $cachePlugin = $front->getPlugin("Pimcore\\Controller\\Plugin\\Cache");
         if ($cachePlugin && $cachePlugin->isEnabled()) {
-            return array(
+            return [
                 "enabled" => true,
                 "lifetime" => $cachePlugin->getLifetime()
-            );
+            ];
         }
         return false;
     }

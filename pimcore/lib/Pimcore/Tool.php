@@ -92,14 +92,14 @@ class Tool
             $validLanguages = strval($config->general->validLanguages);
 
             if (empty($validLanguages)) {
-                return array();
+                return [];
             }
 
             $validLanguages = str_replace(" ", "", $validLanguages);
             $languages = explode(",", $validLanguages);
 
             if (!is_array($languages)) {
-                $languages = array();
+                $languages = [];
             }
 
             self::$validLanguages = $languages;
@@ -114,7 +114,7 @@ class Tool
      */
     public static function getFallbackLanguagesFor($language)
     {
-        $languages = array();
+        $languages = [];
 
         $conf = Config::getSystemConfig();
         if ($conf->general->fallbackLanguages && $conf->general->fallbackLanguages->$language) {
@@ -171,7 +171,7 @@ class Tool
 
             $languages = array_merge($languages, $aliases);
 
-            $languageOptions = array();
+            $languageOptions = [];
             foreach ($languages as $code => $active) {
                 if ($active) {
                     $translation = \Zend_Locale::getTranslation($code, "language");
@@ -268,11 +268,11 @@ class Tool
 
         if ($config) {
             // system default
-            $routeingDefaults = array(
+            $routeingDefaults = [
                 "controller" => "default",
                 "action" => "default",
                 "module" => PIMCORE_FRONTEND_MODULE
-            );
+            ];
 
             // get configured settings for defaults
             $systemRoutingDefaults = $config->documents->toArray();
@@ -285,7 +285,7 @@ class Tool
 
             return $routeingDefaults;
         } else {
-            return array();
+            return [];
         }
     }
 
@@ -296,12 +296,12 @@ class Tool
      */
     public static function isFrontend()
     {
-        $excludePatterns = array(
+        $excludePatterns = [
             "/^\/admin.*/",
             "/^\/install.*/",
             "/^\/plugin.*/",
             "/^\/webservice.*/"
-        );
+        ];
         foreach ($excludePatterns as $pattern) {
             if (preg_match($pattern, $_SERVER["REQUEST_URI"])) {
                 return false;
@@ -405,7 +405,7 @@ class Tool
         }
 
         if (isset($_SERVER["SERVER_PORT"])) {
-            if (!in_array((int) $_SERVER["SERVER_PORT"], array(443, 80))) {
+            if (!in_array((int) $_SERVER["SERVER_PORT"], [443, 80])) {
                 $port = ":" . $_SERVER["SERVER_PORT"];
             }
         }
@@ -515,7 +515,7 @@ class Tool
      * @throws \Exception
      * @throws \Zend_Http_Client_Exception
      */
-    public static function getHttpClient($type = "Zend_Http_Client", $options = array())
+    public static function getHttpClient($type = "Zend_Http_Client", $options = [])
     {
         $config = Config::getSystemConfig();
         $clientConfig = $config->httpclient->toArray();
@@ -531,7 +531,7 @@ class Tool
 
             // workaround/for ZF (Proxy-authorization isn't added by ZF)
             if ($clientConfig['proxy_user']) {
-                $client->setHeaders('Proxy-authorization',  \Zend_Http_Client::encodeAuthHeader(
+                $client->setHeaders('Proxy-authorization', \Zend_Http_Client::encodeAuthHeader(
                     $clientConfig['proxy_user'], $clientConfig['proxy_pass'], \Zend_Http_Client::AUTH_BASIC
                     ));
             }
@@ -549,7 +549,7 @@ class Tool
      * @param array $paramsPost
      * @return bool|string
      */
-    public static function getHttpData($url, $paramsGet = array(), $paramsPost = array())
+    public static function getHttpData($url, $paramsGet = [], $paramsPost = [])
     {
         $client = self::getHttpClient();
         $client->setUri($url);

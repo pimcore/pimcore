@@ -20,7 +20,6 @@ use Pimcore\Model;
 
 class Dao extends Model\Dao\AbstractDao
 {
-
     const TABLE_NAME_STORES = "classificationstore_stores";
 
     /**
@@ -127,7 +126,7 @@ class Dao extends Model\Dao\AbstractDao
     {
         $ts = time();
 
-        $this->db->insert(self::TABLE_NAME_STORES, array());
+        $this->db->insert(self::TABLE_NAME_STORES, []);
 
         $this->model->setId($this->db->lastInsertId());
 

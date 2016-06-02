@@ -61,7 +61,7 @@ class Link extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getDataForResource($data, $object = null, $params = array())
+    public function getDataForResource($data, $object = null, $params = [])
     {
         if ($data instanceof Object\Data\Link and isset($data->object)) {
             unset($data->object);
@@ -86,7 +86,7 @@ class Link extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return Object\Data\Link
      */
-    public function getDataFromResource($data, $object = null, $params = array())
+    public function getDataFromResource($data, $object = null, $params = [])
     {
         $link = Serialize::unserialize($data);
 
@@ -113,7 +113,7 @@ class Link extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getDataForQueryResource($data, $object = null, $params = array())
+    public function getDataForQueryResource($data, $object = null, $params = [])
     {
         return Serialize::serialize($data);
     }
@@ -125,7 +125,7 @@ class Link extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getDataForEditmode($data, $object = null, $params = array())
+    public function getDataForEditmode($data, $object = null, $params = [])
     {
         if (!$data instanceof Object\Data\Link) {
             return false;
@@ -141,7 +141,7 @@ class Link extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getDataFromEditmode($data, $object = null, $params = array())
+    public function getDataFromEditmode($data, $object = null, $params = [])
     {
         $link = new Object\Data\Link();
         $link->setValues($data);
@@ -159,7 +159,7 @@ class Link extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return string
      */
-    public function getVersionPreview($data, $object = null, $params = array())
+    public function getVersionPreview($data, $object = null, $params = [])
     {
         return $data;
     }
@@ -198,26 +198,26 @@ class Link extends Model\Object\ClassDefinition\Data
      */
     public function resolveDependencies($data)
     {
-        $dependencies = array();
+        $dependencies = [];
 
         if ($data instanceof Object\Data\Link and $data->getInternal()) {
             if (intval($data->getInternal()) > 0) {
                 if ($data->getInternalType() == "document") {
                     if ($doc = Document::getById($data->getInternal())) {
                         $key = "document_" . $doc->getId();
-                        $dependencies[$key] = array(
+                        $dependencies[$key] = [
                             "id" => $doc->getId(),
                             "type" => "document"
-                        );
+                        ];
                     }
                 } elseif ($data->getInternalType() == "asset") {
                     if ($asset = Asset::getById($data->getInternal())) {
                         $key = "asset_" . $asset->getId();
 
-                        $dependencies[$key] = array(
+                        $dependencies[$key] = [
                             "id" => $asset->getId(),
                             "type" => "asset"
-                        );
+                        ];
                     }
                 }
             }
@@ -233,9 +233,9 @@ class Link extends Model\Object\ClassDefinition\Data
      * @param array $tags
      * @return array
      */
-    public function getCacheTags($data, $tags = array())
+    public function getCacheTags($data, $tags = [])
     {
-        $tags = is_array($tags) ? $tags : array();
+        $tags = is_array($tags) ? $tags : [];
 
         if ($data instanceof Object\Data\Link and $data->getInternal()) {
             if (intval($data->getInternal()) > 0) {
@@ -265,7 +265,7 @@ class Link extends Model\Object\ClassDefinition\Data
      * @param array $params
      * @return string
      */
-    public function getForCsvExport($object, $params = array())
+    public function getForCsvExport($object, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof Object\Data\Link) {
@@ -282,7 +282,7 @@ class Link extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return Object\ClassDefinition\Data\Link
      */
-    public function getFromCsvImport($importValue, $object = null, $params = array())
+    public function getFromCsvImport($importValue, $object = null, $params = [])
     {
         $value = Serialize::unserialize(base64_decode($importValue));
         if ($value instanceof Object\Data\Link) {
@@ -298,7 +298,7 @@ class Link extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return mixed
      */
-    public function getForWebserviceExport($object, $params = array())
+    public function getForWebserviceExport($object, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof Object\Data\Link) {
@@ -323,7 +323,7 @@ class Link extends Model\Object\ClassDefinition\Data
      * @return mixed|void
      * @throws \Exception
      */
-    public function getFromWebserviceImport($value, $relatedObject = null, $params = array(), $idMapper = null)
+    public function getFromWebserviceImport($value, $relatedObject = null, $params = [], $idMapper = null)
     {
         if ($value instanceof \stdclass) {
             $value = (array) $value;
@@ -391,7 +391,7 @@ class Link extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return bool
      */
-    public function isDiffChangeAllowed($object, $params = array())
+    public function isDiffChangeAllowed($object, $params = [])
     {
         return true;
     }
@@ -403,7 +403,7 @@ class Link extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return array|string
      */
-    public function getDiffVersionPreview($data, $object = null, $params = array())
+    public function getDiffVersionPreview($data, $object = null, $params = [])
     {
         if ($data) {
             if ($data->text) {
@@ -429,7 +429,7 @@ class Link extends Model\Object\ClassDefinition\Data
      * @param array $params
      * @return Element\ElementInterface
      */
-    public function rewriteIds($object, $idMapping, $params = array())
+    public function rewriteIds($object, $idMapping, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof Object\Data\Link && $data->getLinktype() == "internal") {

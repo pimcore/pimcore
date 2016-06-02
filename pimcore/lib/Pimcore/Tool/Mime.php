@@ -16,8 +16,7 @@ namespace Pimcore\Tool;
 
 class Mime
 {
-
-    public static $extensionMapping = array(
+    public static $extensionMapping = [
         'ez'        => 'application/andrew-inset',
         'atom'      => 'application/atom+xml',
         'jar'       => 'application/java-archive',
@@ -218,7 +217,7 @@ class Mime
         'ogv'       => 'video/ogg',
         'movie'     => 'video/x-sgi-movie',
         'ice'       => 'x-conference/x-cooltalk',
-    );
+    ];
 
     /**
      * @param $file

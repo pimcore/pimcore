@@ -43,7 +43,7 @@ class Warming
     public static function documents($types = null)
     {
         if (empty($types)) {
-            $types = array("page", "snippet", "folder", "link");
+            $types = ["page", "snippet", "folder", "link"];
         }
 
         $list = new Document\Listing();
@@ -60,7 +60,7 @@ class Warming
     public static function objects($types = null, $classes = null)
     {
         if (empty($types)) {
-            $types = array("object", "folder", "variant");
+            $types = ["object", "folder", "variant"];
         }
 
         $classesCondition = "";
@@ -82,7 +82,7 @@ class Warming
     public static function assets($types = null)
     {
         if (empty($types)) {
-            $types = array("folder", "image", "text", "audio", "video", "document", "archive", "unknown");
+            $types = ["folder", "image", "text", "audio", "video", "document", "archive", "unknown"];
         }
 
         $list = new Asset\Listing();

@@ -17,7 +17,6 @@ use Pimcore\Model\Element;
 
 class Admin_RecyclebinController extends \Pimcore\Controller\Action\Admin
 {
-
     public function init()
     {
         parent::init();
@@ -28,7 +27,7 @@ class Admin_RecyclebinController extends \Pimcore\Controller\Action\Admin
         set_time_limit($timeout);
 
         // check permissions
-        $notRestrictedActions = array("add");
+        $notRestrictedActions = ["add"];
         if (!in_array($this->getParam("action"), $notRestrictedActions)) {
             $this->checkPermission("recyclebin");
         }
@@ -40,7 +39,7 @@ class Admin_RecyclebinController extends \Pimcore\Controller\Action\Admin
             $item = Recyclebin\Item::getById(\Pimcore\Admin\Helper\QueryParams::getRecordIdForGridRequest($this->getParam("data")));
             $item->delete();
 
-            $this->_helper->json(array("success" => true, "data" => array()));
+            $this->_helper->json(["success" => true, "data" => []]);
         } else {
             $list = new Recyclebin\Item\Listing();
             $list->setLimit($this->getParam("limit"));
@@ -56,7 +55,7 @@ class Admin_RecyclebinController extends \Pimcore\Controller\Action\Admin
             }
 
 
-            $conditionFilters = array();
+            $conditionFilters = [];
 
             if ($this->getParam("filterFullText")) {
                 $conditionFilters[] = "path LIKE " . $list->quote("%".$this->getParam("filterFullText")."%");
@@ -123,7 +122,7 @@ class Admin_RecyclebinController extends \Pimcore\Controller\Action\Admin
 
             $items = $list->load();
 
-            $this->_helper->json(array("data" => $items, "success" => true, "total" => $list->getTotalCount()));
+            $this->_helper->json(["data" => $items, "success" => true, "total" => $list->getTotalCount()]);
         }
     }
 
@@ -132,7 +131,7 @@ class Admin_RecyclebinController extends \Pimcore\Controller\Action\Admin
         $item = Recyclebin\Item::getById($this->getParam("id"));
         $item->restore();
 
-        $this->_helper->json(array("success" => true));
+        $this->_helper->json(["success" => true]);
     }
 
     public function flushAction()
@@ -140,7 +139,7 @@ class Admin_RecyclebinController extends \Pimcore\Controller\Action\Admin
         $bin = new Element\Recyclebin();
         $bin->flush();
 
-        $this->_helper->json(array("success" => true));
+        $this->_helper->json(["success" => true]);
     }
 
     public function addAction()
@@ -158,9 +157,9 @@ class Admin_RecyclebinController extends \Pimcore\Controller\Action\Admin
                 Recyclebin\Item::create($element, $this->getUser());
             }
 
-            $this->_helper->json(array("success" => true));
+            $this->_helper->json(["success" => true]);
         } else {
-            $this->_helper->json(array("success" => false));
+            $this->_helper->json(["success" => false]);
         }
     }
 }

@@ -61,7 +61,7 @@ class Imagick extends Adapter
             $imagePath = $tmpFilePath;
         }
 
-        if(!stream_is_local($imagePath)) {
+        if (!stream_is_local($imagePath)) {
             // imagick is only able to deal with local files
             // if your're using custom stream wrappers this wouldn't work, so we create a temp. local copy
             $tmpFilePath = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/imagick-tmp-" . uniqid() . "." . File::getFileExtension($imagePath);
@@ -187,7 +187,7 @@ class Imagick extends Adapter
 
         // Imagick isn't able to work with custom stream wrappers, so we make a workaround
         $realTargetPath = null;
-        if(!stream_is_local($path)) {
+        if (!stream_is_local($path)) {
             $realTargetPath = $path;
             $path = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/imagick-tmp-" . uniqid() . "." . File::getFileExtension($path);
         }
@@ -202,7 +202,7 @@ class Imagick extends Adapter
             throw new \Exception("Unable to write image: ", $path);
         }
 
-        if($realTargetPath) {
+        if ($realTargetPath) {
             File::rename($path, $realTargetPath);
         }
 
@@ -270,7 +270,7 @@ class Imagick extends Adapter
             }
         } elseif ($imageColorspace == \Imagick::COLORSPACE_GRAY) {
             $this->resource->setImageColorspace(\Imagick::COLORSPACE_SRGB);
-        } elseif (!in_array($imageColorspace, array(\Imagick::COLORSPACE_RGB, \Imagick::COLORSPACE_SRGB))) {
+        } elseif (!in_array($imageColorspace, [\Imagick::COLORSPACE_RGB, \Imagick::COLORSPACE_SRGB])) {
             $this->resource->setImageColorspace(\Imagick::COLORSPACE_SRGB);
         } else {
             // this is to handle embedded icc profiles in the RGB/sRGB colorspace
@@ -781,7 +781,7 @@ class Imagick extends Adapter
 
         try {
             $type = $this->resource->getimageformat();
-            $vectorTypes = array("EPT","EPDF","EPI","EPS","EPS2","EPS3","EPSF","EPSI","EPT","PDF","PFA","PFB","PFM","PS","PS2","PS3","SVG","SVGZ","MVG");
+            $vectorTypes = ["EPT","EPDF","EPI","EPS","EPS2","EPS3","EPSF","EPSI","EPT","PDF","PFA","PFB","PFM","PS","PS2","PS3","SVG","SVGZ","MVG"];
 
             if (in_array(strtoupper($type), $vectorTypes)) {
                 return true;

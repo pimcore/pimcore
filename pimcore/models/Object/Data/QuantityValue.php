@@ -108,7 +108,7 @@ class QuantityValue
             }
 
             if ($locale) {
-                $value = \Zend_Locale_Format::toNumber($value, array('locale' => $locale));
+                $value = \Zend_Locale_Format::toNumber($value, ['locale' => $locale]);
             }
         }
 

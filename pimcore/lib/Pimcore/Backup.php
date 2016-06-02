@@ -22,7 +22,7 @@ class Backup
     /**
      * @var array
      */
-    public $additionalExcludePatterns = array();
+    public $additionalExcludePatterns = [];
 
     /**
      * @var
@@ -42,7 +42,7 @@ class Backup
     /**
      * @var array
      */
-    protected $options = array();
+    protected $options = [];
 
     /**
      * @var \ZipArchive
@@ -177,7 +177,7 @@ class Backup
      * @param array $options
      * @return array
      */
-    public function init($options = array())
+    public function init($options = [])
     {
         $this->setOptions($options);
 
@@ -189,7 +189,7 @@ class Backup
             }
         }
 
-        $errors = array();
+        $errors = [];
         $this->setFileAmount(0);
 
 
@@ -199,14 +199,14 @@ class Backup
         }
 
         // get steps
-        $steps = array();
+        $steps = [];
 
         // get available tables
         $db = Db::get();
         $tables = $this->getTables();
 
 
-        $steps[] = array("mysql-tables", $this->options['mysql-tables']);
+        $steps[] = ["mysql-tables", $this->options['mysql-tables']];
 
         // tables
         foreach ($tables as $table) {
@@ -214,10 +214,10 @@ class Backup
             $type = next($table);
 
             if ($type != "VIEW") {
-                $steps[] = array("mysql", array(
+                $steps[] = ["mysql", [
                     "name" => $name,
                     "type" => $type
-                ));
+                ]];
             }
         }
 
@@ -228,21 +228,21 @@ class Backup
             $type = next($table);
 
             if ($type == "VIEW") {
-                $steps[] = array("mysql", array(
+                $steps[] = ["mysql", [
                     "name" => $name,
                     "type" => $type
-                ));
+                ]];
             }
         }
 
 
-        $steps[] = array("mysql-complete", null);
+        $steps[] = ["mysql-complete", null];
 
         if (!$options['only-mysql-related-tasks']) {
             // check files
             $currentFileCount = 0;
             $currentFileSize = 0;
-            $currentStepFiles = array();
+            $currentStepFiles = [];
 
 
             // check permissions
@@ -260,7 +260,7 @@ class Backup
                     if (!empty($currentStepFiles)) {
                         $filesToBackup[] = $currentStepFiles;
                     }
-                    $currentStepFiles = array();
+                    $currentStepFiles = [];
                 }
 
                 if (file_exists($fileIn)) {
@@ -279,22 +279,22 @@ class Backup
             $fileSteps = count($filesToBackup);
 
             for ($i = 0; $i < $fileSteps; $i++) {
-                $steps[] = array("files", array(
+                $steps[] = ["files", [
                     "step" => $i
-                ));
+                ]];
             }
 
-            $steps[] = array("complete", null);
+            $steps[] = ["complete", null];
         }
 
         if (!empty($errors)) {
             $steps = null;
         }
 
-        return array(
+        return [
             "steps" => $steps,
             "errors" => $errors
-        );
+        ];
     }
 
     /**
@@ -307,14 +307,14 @@ class Backup
         $filesContainer = $this->getFilesToBackup();
         $files = $filesContainer[$step];
 
-        $excludePatterns = array(
+        $excludePatterns = [
             PIMCORE_FRONTEND_MODULE . "/var/backup/.*",
             PIMCORE_FRONTEND_MODULE . "/var/cache/.*",
             PIMCORE_FRONTEND_MODULE . "/var/log/.*",
             PIMCORE_FRONTEND_MODULE . "/var/system/.*",
             PIMCORE_FRONTEND_MODULE . "/var/tmp/.*",
             PIMCORE_FRONTEND_MODULE . "/var/webdav/.*"
-        );
+        ];
 
         if (!empty($this->additionalExcludePatterns) && is_array($this->additionalExcludePatterns)) {
             $excludePatterns = array_merge($excludePatterns, $this->additionalExcludePatterns);
@@ -352,11 +352,11 @@ class Backup
 
         $this->setFileAmount($this->getFileAmount()+count($files));
 
-        return array(
+        return [
             "success" => true,
             "filesize" => $this->getFormattedFilesize(),
             "fileAmount" => $this->getFileAmount()
-        );
+        ];
     }
 
     /**
@@ -419,9 +419,9 @@ class Backup
         fwrite($h, $dumpData);
         fclose($h);
 
-        return array(
+        return [
             "success" => true
-        );
+        ];
     }
 
     /**
@@ -442,7 +442,7 @@ class Backup
             $tableData = $db->fetchAll("SELECT * FROM " . $name);
 
             foreach ($tableData as $row) {
-                $cells = array();
+                $cells = [];
                 foreach ($row as $cell) {
                     if (is_string($cell)) {
                         $cell = $db->quote($cell);
@@ -476,9 +476,9 @@ class Backup
         fwrite($h, $dumpData);
         fclose($h);
 
-        return array(
+        return [
             "success" => true
-        );
+        ];
     }
 
     /**
@@ -491,10 +491,10 @@ class Backup
         // cleanup
         //unlink(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/backup-dump.sql");
 
-        return array(
+        return [
             "success" => true,
             "filesize" => $this->getFormattedFilesize()
-        );
+        ];
     }
 
     /**
@@ -514,11 +514,11 @@ class Backup
         $this->getArchive()->addFile(PIMCORE_DOCUMENT_ROOT . "/index.php", "index.php");
         $this->getArchive()->addFile(PIMCORE_DOCUMENT_ROOT . "/.htaccess", ".htaccess");
 
-        return array(
+        return [
             "success" => true,
             "download" => str_replace(PIMCORE_DOCUMENT_ROOT, "", $this->getBackupFile()),
             "filesystem" => $this->getBackupFile()
-        );
+        ];
     }
 
     /**

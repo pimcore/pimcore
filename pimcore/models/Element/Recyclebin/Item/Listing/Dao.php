@@ -30,7 +30,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     {
         $itemsData = $this->db->fetchCol("SELECT id FROM recyclebin" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
-        $items = array();
+        $items = [];
         foreach ($itemsData as $itemData) {
             $items[] = Model\Element\Recyclebin\Item::getById($itemData);
         }

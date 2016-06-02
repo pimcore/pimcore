@@ -1,6 +1,6 @@
 <?php
 
-$base = array(
+$base = [
   0x00 => 'toels', 'toelt', 'toelp', 'toelh', 'toem', 'toeb', 'toebs', 'toes', 'toess', 'toeng', 'toej', 'toec', 'toek', 'toet', 'toep', 'toeh',
   0x10 => 'tyo', 'tyog', 'tyogg', 'tyogs', 'tyon', 'tyonj', 'tyonh', 'tyod', 'tyol', 'tyolg', 'tyolm', 'tyolb', 'tyols', 'tyolt', 'tyolp', 'tyolh',
   0x20 => 'tyom', 'tyob', 'tyobs', 'tyos', 'tyoss', 'tyong', 'tyoj', 'tyoc', 'tyok', 'tyot', 'tyop', 'tyoh', 'tu', 'tug', 'tugg', 'tugs',
@@ -17,4 +17,4 @@ $base = array(
   0xD0 => 'teuk', 'teut', 'teup', 'teuh', 'tyi', 'tyig', 'tyigg', 'tyigs', 'tyin', 'tyinj', 'tyinh', 'tyid', 'tyil', 'tyilg', 'tyilm', 'tyilb',
   0xE0 => 'tyils', 'tyilt', 'tyilp', 'tyilh', 'tyim', 'tyib', 'tyibs', 'tyis', 'tyiss', 'tying', 'tyij', 'tyic', 'tyik', 'tyit', 'tyip', 'tyih',
   0xF0 => 'ti', 'tig', 'tigg', 'tigs', 'tin', 'tinj', 'tinh', 'tid', 'til', 'tilg', 'tilm', 'tilb', 'tils', 'tilt', 'tilp', 'tilh',
-);
+];

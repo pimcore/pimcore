@@ -34,12 +34,12 @@ class Targeting extends \Zend_Controller_Plugin_Abstract
     /**
      * @var array
      */
-    protected $events = array();
+    protected $events = [];
 
     /**
      * @var array
      */
-    protected $personas = array();
+    protected $personas = [];
 
 
     /**
@@ -48,7 +48,7 @@ class Targeting extends \Zend_Controller_Plugin_Abstract
      */
     public function addEvent($key, $value)
     {
-        $this->events[] = array("key" => $key, "value" => $value);
+        $this->events[] = ["key" => $key, "value" => $value];
     }
 
     /**
@@ -108,12 +108,12 @@ class Targeting extends \Zend_Controller_Plugin_Abstract
         }
 
         if ($this->enabled) {
-            $targets = array();
-            $personas = array();
-            $dataPush = array(
+            $targets = [];
+            $personas = [];
+            $dataPush = [
                 "personas" => $this->personas,
                 "method" => strtolower($this->getRequest()->getMethod())
-            );
+            ];
 
             if (count($this->events) > 0) {
                 $dataPush["events"] = $this->events;
@@ -136,7 +136,7 @@ class Targeting extends \Zend_Controller_Plugin_Abstract
                 }
 
                 // check for persona specific variants of this page
-                $personaVariants = array();
+                $personaVariants = [];
                 foreach ($this->document->getElements() as $key => $tag) {
                     if (preg_match("/^persona_-([0-9]+)-_/", $key, $matches)) {
                         $id = (int) $matches[1];
@@ -154,7 +154,7 @@ class Targeting extends \Zend_Controller_Plugin_Abstract
 
             // no duplicates
             $dataPush["personas"] = array_unique($dataPush["personas"]);
-            $activePersonas = array();
+            $activePersonas = [];
             foreach ($dataPush["personas"] as $id) {
                 if (Model\Tool\Targeting\Persona::isIdActive($id)) {
                     $activePersonas[] = $id;

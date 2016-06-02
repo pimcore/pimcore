@@ -23,32 +23,30 @@ use Pimcore\Model\Asset;
 
 class Processor
 {
-
-
-    protected static $argumentMapping = array(
-        "resize" => array("width","height"),
-        "scaleByWidth" => array("width"),
-        "scaleByHeight" => array("height"),
-        "contain" => array("width","height"),
-        "cover" => array("width","height","positioning","doNotScaleUp"),
-        "frame" => array("width","height"),
-        "trim" => array("tolerance"),
-        "rotate" => array("angle"),
-        "crop" => array("x","y","width","height"),
-        "setBackgroundColor" => array("color"),
-        "roundCorners" => array("width","height"),
-        "setBackgroundImage" => array("path"),
-        "addOverlay" => array("path", "x", "y", "alpha", "composite", "origin"),
-        "addOverlayFit" => array("path", "composite"),
-        "applyMask" => array("path"),
-        "cropPercent" => array("width","height","x","y"),
-        "grayscale" => array(),
-        "sepia" => array(),
-        "sharpen" => array('radius', 'sigma', 'amount', 'threshold'),
-        "gaussianBlur" => array('radius', 'sigma'),
-        "brightnessSaturation" => array('brightness', 'saturation', "hue"),
-        "mirror" => array("mode")
-    );
+    protected static $argumentMapping = [
+        "resize" => ["width","height"],
+        "scaleByWidth" => ["width"],
+        "scaleByHeight" => ["height"],
+        "contain" => ["width","height"],
+        "cover" => ["width","height","positioning","doNotScaleUp"],
+        "frame" => ["width","height"],
+        "trim" => ["tolerance"],
+        "rotate" => ["angle"],
+        "crop" => ["x","y","width","height"],
+        "setBackgroundColor" => ["color"],
+        "roundCorners" => ["width","height"],
+        "setBackgroundImage" => ["path"],
+        "addOverlay" => ["path", "x", "y", "alpha", "composite", "origin"],
+        "addOverlayFit" => ["path", "composite"],
+        "applyMask" => ["path"],
+        "cropPercent" => ["width","height","x","y"],
+        "grayscale" => [],
+        "sepia" => [],
+        "sharpen" => ['radius', 'sigma', 'amount', 'threshold'],
+        "gaussianBlur" => ['radius', 'sigma'],
+        "brightnessSaturation" => ['brightness', 'saturation', "hue"],
+        "mirror" => ["mode"]
+    ];
 
     /**
      * @param $format
@@ -56,12 +54,12 @@ class Processor
      * @param string $fallback
      * @return string
      */
-    public static function getAllowedFormat($format, $allowed = array(), $fallback = "png")
+    public static function getAllowedFormat($format, $allowed = [], $fallback = "png")
     {
-        $typeMappings = array(
+        $typeMappings = [
             "jpg" => "jpeg",
             "tif" => "tiff"
-        );
+        ];
 
         if (array_key_exists($format, $typeMappings)) {
             $format = $typeMappings[$format];
@@ -110,12 +108,12 @@ class Processor
 
         // simple detection for source type if SOURCE is selected
         if ($format == "source" || empty($format)) {
-            $format = self::getAllowedFormat($fileExt, array("jpeg", "gif", "png"), "png");
+            $format = self::getAllowedFormat($fileExt, ["jpeg", "gif", "png"], "png");
             $contentOptimizedFormat = true; // format can change depending of the content (alpha-channel, ...)
         }
 
         if ($format == "print") {
-            $format = self::getAllowedFormat($fileExt, array("svg", "jpeg", "png", "tiff"), "png");
+            $format = self::getAllowedFormat($fileExt, ["svg", "jpeg", "png", "tiff"], "png");
 
             if (($format == "tiff" || $format == "svg") && \Pimcore\Tool::isFrontentRequestByAdmin()) {
                 // return a webformat in admin -> tiff cannot be displayed in browser
@@ -238,7 +236,7 @@ class Processor
         if (is_array($transformations) && count($transformations) > 0) {
             foreach ($transformations as $transformation) {
                 if (!empty($transformation)) {
-                    $arguments = array();
+                    $arguments = [];
                     $mapping = self::$argumentMapping[$transformation["method"]];
 
                     if (is_array($transformation["arguments"])) {
@@ -247,7 +245,7 @@ class Processor
                             if ($position !== false) {
 
                                 // high res calculations if enabled
-                                if (!in_array($transformation["method"], ["cropPercent"]) && in_array($key, array("width", "height", "x", "y"))) {
+                                if (!in_array($transformation["method"], ["cropPercent"]) && in_array($key, ["width", "height", "x", "y"])) {
                                     if ($config->getHighResolution() && $config->getHighResolution() > 1) {
                                         $value *= $config->getHighResolution();
                                     }
@@ -259,7 +257,7 @@ class Processor
                     }
 
                     ksort($arguments);
-                    call_user_func_array(array($image, $transformation["method"]), $arguments);
+                    call_user_func_array([$image, $transformation["method"]], $arguments);
                 }
             }
         }
@@ -293,8 +291,9 @@ class Processor
      * @param $absolute
      * @return mixed
      */
-    protected static function returnPath($path, $absolute) {
-        if(!$absolute) {
+    protected static function returnPath($path, $absolute)
+    {
+        if (!$absolute) {
             $path = str_replace(PIMCORE_DOCUMENT_ROOT, "", $path);
         }
 

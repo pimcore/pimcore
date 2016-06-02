@@ -6,7 +6,6 @@ use Pimcore\Controller\Action\Frontend;
 
 class Action extends Frontend
 {
-
     public function init()
     {
         if (self::$isInitial) {

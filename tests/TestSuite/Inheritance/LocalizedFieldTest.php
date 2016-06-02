@@ -8,7 +8,6 @@
 
 class TestSuite_Inheritance_LocalizedFieldTest extends Test_Base
 {
-
     public function setUp()
     {
         $this->inAdminMode = Pimcore::inAdmin();
