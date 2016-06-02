@@ -23,5 +23,5 @@ $db->query("CREATE TABLE IF NOT EXISTS `documents_printpage` (
   `lastGenerated` int(11) DEFAULT NULL,
   `lastGenerateMessage` text CHARACTER SET utf8,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;
 ");

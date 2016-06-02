@@ -125,7 +125,7 @@ DROP TABLE IF EXISTS `documents` ;
 CREATE TABLE `documents` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `parentId` int(11) unsigned DEFAULT NULL,
-  `type` enum('page','link','snippet','folder','hardlink','email') DEFAULT NULL,
+  `type` enum('page','link','snippet','folder','hardlink','email','printpage','printcontainer') DEFAULT NULL,
   `key` varchar(255) DEFAULT '',
   `path` varchar(765) CHARACTER SET ascii DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
   `index` int(11) unsigned DEFAULT '0',
@@ -225,6 +225,19 @@ CREATE TABLE `documents_translations` (
   KEY `sourceId` (`sourceId`),
   KEY `language` (`language`)
 ) DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `documents_printpage`;
+CREATE TABLE `documents_printpage` (
+  `id` int(11) unsigned NOT NULL DEFAULT '0',
+  `module` varchar(255) DEFAULT NULL,
+  `controller` varchar(255) DEFAULT NULL,
+  `action` varchar(255) DEFAULT NULL,
+  `template` varchar(255) DEFAULT NULL,
+  `lastGenerated` int(11) DEFAULT NULL,
+  `lastGenerateMessage` text CHARACTER SET utf8,
+  PRIMARY KEY (`id`)
+) DEFAULT CHARSET=utf8;
+
 
 DROP TABLE IF EXISTS `edit_lock`;
 CREATE TABLE `edit_lock` (
