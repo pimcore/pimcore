@@ -32,11 +32,11 @@ pimcore.document.printpages.pdfpreview = Class.create({
                 handler: this.generatePdf.bind(this)
             });
 
-            var checkoxPrinterMarks = new Ext.form.Checkbox({
-                fieldLabel: t("web2print_include_printermarks"),
-                name: "printermarks",
-                itemCls: "object_field"
-            });
+            // var checkoxPrinterMarks = new Ext.form.Checkbox({
+            //     fieldLabel: t("web2print_include_printermarks"),
+            //     name: "printermarks",
+            //     itemCls: "object_field"
+            // });
 
             this.generateForm = new Ext.form.FormPanel({
                 // bodyStyle: "padding: 10px;",
@@ -48,12 +48,42 @@ pimcore.document.printpages.pdfpreview = Class.create({
             });
 
 
+            this.progressBar = Ext.create('Ext.ProgressBar', {
+                text:'Initializing...'
+            });
+            this.statusUpdateBox = Ext.create('Ext.Panel', {
+                autoHeight: true,
+                border: false,
+                hidden: true,
+                items: [this.progressBar],
+                buttons: [{
+                    xtype: 'button',
+                    text: t("web2print_cancel_pdf_creation"),
+                    iconCls: "pimcore_icon_cancel",
+                    handler: function() {
+                        Ext.Ajax.request({
+                            url: "/admin/printpage/cancel-generation/",
+                            params: {id: this.page.id},
+                            success: function(response) {
+                                result = Ext.decode(response.responseText);
+                                if(!result.success) {
+                                    pimcore.helpers.showNotification(t('web2print_cancel_generation'), t('web2print_cancel_generation_error'), "error");
+                                }
+                            }.bind(this)
+                        });
+                    }.bind(this)
+                }]
+            });
+
+
+
             var generateBox = new Ext.Panel({
                 title: t("web2print_generate_pdf"),
                 expandable: true
             });
 
             generateBox.add(this.generateForm);
+            generateBox.add(this.statusUpdateBox);
 
             details.push(generateBox);
 
@@ -85,7 +115,6 @@ pimcore.document.printpages.pdfpreview = Class.create({
                 fieldLabel: t("web2print_last-generate-message"),
                 value: ""
             });
-
             this.dirtyLabel = new Ext.form.Label({
                 text: "Documents changed since last pdf generation.",
                 style: "color: red",
@@ -105,25 +134,7 @@ pimcore.document.printpages.pdfpreview = Class.create({
                 region: "west",
                 width: 350,
                 items: details,
-                autoScroll: true,
-                tbar: ['->',{
-                        xtype: 'button',
-                        text: t("web2print_cancel_pdf_creation"),
-                        iconCls: "pimcore_icon_cancel",
-                        handler: function() {
-                            Ext.Ajax.request({
-                                url: "/admin/printpage/cancel-generation/",
-                                params: {id: this.page.id},
-                                success: function(response) {
-                                    result = Ext.decode(response.responseText);
-                                    if(!result.success) {
-                                        pimcore.helpers.showNotification(t('web2print_cancel_generation'), t('web2print_cancel_generation_error'), "error");
-                                    }
-                                }.bind(this)
-                            });
-                        }.bind(this)
-                    }
-                ]
+                autoScroll: true
             });
             // this.detailsPanel.getTopToolbar().hide();
 
@@ -385,14 +396,23 @@ pimcore.document.printpages.pdfpreview = Class.create({
             url: "/admin/printpage/active-generate-process/",
             params: {id: this.page.id},
             success: function(response) {
-                result = Ext.decode(response.responseText);
+                var result = Ext.decode(response.responseText);
                 if(result.activeGenerateProcess) {
+                    this.generateForm.hide();
+                    this.statusUpdateBox.show();
+
+                    if(result.statusUpdate) {
+                        this.progressBar.updateProgress(result.statusUpdate.status / 100, result.statusUpdate.statusUpdate);
+                    }
+
                     // this.detailsPanel.getTopToolbar().show();
                     // this.loadMaskDetails.show();
                     window.setTimeout(function() {
                         this.checkForActiveGenerateProcess();
                     }.bind(this), 2000);
                 } else {
+                    this.generateForm.show();
+                    this.statusUpdateBox.hide();
 
                     this.downloadButton.setDisabled(!result.downloadAvailable);
 

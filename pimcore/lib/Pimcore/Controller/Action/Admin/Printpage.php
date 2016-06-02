@@ -116,19 +116,14 @@ class Printpage extends \Pimcore\Controller\Action\Admin\Document
     {
         $this->addSettingsToDocument($page);
         $this->addDataToDocument($page);
-        $this->addCssDataToDocument($page);
         $this->addPropertiesToDocument($page);
-    }
-
-    protected function addCssDataToDocument(Document $document)
-    {
-        if ($this->getParam("cssedit")) {
-            $document->setCssModification($this->getParam("cssedit"));
-        }
     }
 
     public function activeGenerateProcessAction()
     {
+        /**
+         * @var $document Document\Printpage
+         */
         $document = Document\Printpage::getById(intval($this->getParam("id")));
         if (empty($document)) {
             throw new \Exception("Document with id " . $this->getParam("id") . " not found.");
@@ -140,7 +135,19 @@ class Printpage extends \Pimcore\Controller\Action\Admin\Document
         }
 
         $inProgress = $document->getInProgress();
-        $this->_helper->json(["activeGenerateProcess" => !empty($inProgress), "date" => $date, "message" => $document->getLastGenerateMessage(), "downloadAvailable" => file_exists($document->getPdfFileName())]);
+
+        $statusUpdate = [];
+        if($inProgress) {
+            $statusUpdate = Processor::getInstance()->getStatusUpdate($document->getId());
+        }
+
+        $this->_helper->json([
+            "activeGenerateProcess" => !empty($inProgress),
+            "date" => $date,
+            "message" => $document->getLastGenerateMessage(),
+            "downloadAvailable" => file_exists($document->getPdfFileName()),
+            "statusUpdate" => $statusUpdate
+        ]);
     }
 
     public function pdfDownloadAction()

@@ -27,12 +27,17 @@ class PdfReactor8 extends Processor
         $params = [];
         $params['printermarks'] = $config->printermarks == "true";
         $params['screenResolutionImages'] = $config->screenResolutionImages == "true";
+
+        $this->updateStatus($document->getId(), 10, "start_html_rendering");
         $html = $document->renderDocument($params);
+        $this->updateStatus($document->getId(), 40, "finished_html_rendering");
 
         $filePath = PIMCORE_TEMPORARY_DIRECTORY . DIRECTORY_SEPARATOR . "pdf-reactor-input-" . $document->getId() . ".html";
 
         file_put_contents($filePath, $html);
         $html = null;
+
+        $this->updateStatus($document->getId(), 45, "saved_html_file");
 
         ini_set("default_socket_timeout", 3000);
         ini_set('max_input_time', -1);
@@ -67,12 +72,29 @@ class PdfReactor8 extends Processor
         }
 
         try {
-            $result = $pdfreactor->convert($reactorConfig);
+
+            $progress = new \stdClass();
+            $progress->finished = false;
+
+            $processId = $pdfreactor->convertAsync($reactorConfig);
+
+            $this->updateStatus($document->getId(), 50, "started_pdf_conversion");
+
+            while(!$progress->finished) {
+                $progress = $pdfreactor->getProgress($processId);
+                $this->updateStatus($document->getId(), 50 + ($progress->progress / 2), "pdf_conversion");
+
+                \Logger::info(print_r($progress, true) . " ... ");
+                \Logger::info("PDF converting progress: " . $progress->progress . "%");
+                sleep(2);
+            }
+
+            $this->updateStatus($document->getId(), 100, "saving_pdf_document");
+            $result = $pdfreactor->getDocument($processId);
             $pdf = base64_decode($result->document);
         } catch (\Exception $e) {
             \Logger::error($e);
             $document->setLastGenerateMessage($e->getMessage());
-
             throw new \Exception("Error during REST-Request:" . $e->getMessage());
         }
 

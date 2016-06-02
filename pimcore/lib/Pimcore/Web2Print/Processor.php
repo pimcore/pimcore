@@ -23,10 +23,6 @@ use Pimcore\Web2Print\Processor\WkHtmlToPdf;
 
 abstract class Processor
 {
-    public $documentId = -1;
-    public $config = [];
-    public $processId = "";
-
     /**
      * @return PdfReactor8|WkHtmlToPdf
      * @throws \Exception
@@ -51,37 +47,45 @@ abstract class Processor
      */
     public function preparePdfGeneration($documentId, $config)
     {
-        $this->documentId = $documentId;
-        $this->config = $config;
-        $this->processId = uniqid();
-        $this->saveJobConfigObjectFile();
+        $document = $this->getPrintDocument($documentId);
+        if(Model\Tool\TmpStore::get($document->getLockKey())) {
+            throw new \Exception("Process with given document alredy running.");
+        }
+        Model\Tool\TmpStore::add($document->getLockKey(), true);
 
-        $cmd = Tool\Console::getPhpCli() . " " . realpath(PIMCORE_PATH . DIRECTORY_SEPARATOR . "cli" . DIRECTORY_SEPARATOR . "console.php"). " web2print:pdf-creation -p " . $this->processId;
+        $jobConfig = new \stdClass();
+        $jobConfig->documentId = $documentId;
+        $jobConfig->config = $config;
+        $this->saveJobConfigObjectFile($jobConfig);
+
+        $this->updateStatus($documentId, 0, "prepare_pdf_generation");
+
+        $cmd = Tool\Console::getPhpCli() . " " . realpath(PIMCORE_PATH . DIRECTORY_SEPARATOR . "cli" . DIRECTORY_SEPARATOR . "console.php"). " web2print:pdf-creation -p " . $jobConfig->documentId;
 
         \Logger::info($cmd);
 
         if (!$config['disableBackgroundExecution']) {
             Tool\Console::execInBackground($cmd, PIMCORE_LOG_DIRECTORY . DIRECTORY_SEPARATOR . "web2print-output.log");
         } else {
-            Processor::getInstance()->startPdfGeneration($this->processId);
+            Processor::getInstance()->startPdfGeneration($jobConfig->documentId);
         }
     }
 
     /**
-     * @param $processId
+     * @param $documentId
      * @throws \Exception
      */
-    public function startPdfGeneration($processId)
+    public function startPdfGeneration($documentId)
     {
-        $this->loadJobConfigObject($processId);
+        $jobConfigFile = $this->loadJobConfigObject($documentId);
 
-        $document = $this->getPrintDocument();
+        $document = $this->getPrintDocument($documentId);
 
         // check if there is already a generating process running, wait if so ...
         Model\Tool\Lock::acquire($document->getLockKey(), 0);
 
         try {
-            $pdf = $this->buildPdf($document, $this->config);
+            $pdf = $this->buildPdf($document, $jobConfigFile->config);
             file_put_contents($document->getPdfFileName(), $pdf);
             $creationDate = \Zend_Date::now();
             $document->setLastGenerated(($creationDate->get() + 1));
@@ -92,8 +96,9 @@ abstract class Processor
         }
 
         Model\Tool\Lock::release($document->getLockKey());
+        Model\Tool\TmpStore::delete($document->getLockKey());
 
-        @unlink($this->getJobConfigFile($processId));
+        @unlink($this->getJobConfigFile($documentId));
     }
 
     /**
@@ -105,47 +110,35 @@ abstract class Processor
 
 
     /**
+     * @param $jobConfig
      * @return bool
      */
-    protected function saveJobConfigObjectFile()
+    protected function saveJobConfigObjectFile($jobConfig)
     {
-        file_put_contents($this->getJobConfigFile($this->processId), json_encode($this->getJobConfigObject()));
+        file_put_contents($this->getJobConfigFile($jobConfig->documentId), json_encode($jobConfig));
         return true;
     }
 
     /**
+     * @param $documentId
      * @return \stdClass
      */
-    protected function getJobConfigObject()
+    protected function loadJobConfigObject($documentId)
     {
-        $config = new \stdClass();
-        $config->documentId = $this->documentId;
-        $config->config = $this->config;
-        $config->processId = $this->processId;
-
-        return $config;
+        $jobConfig = json_decode(file_get_contents($this->getJobConfigFile($documentId)));
+        return $jobConfig;
     }
 
     /**
-     * @param $config
-     */
-    protected function loadJobConfigObject($processId)
-    {
-        $config = json_decode(file_get_contents($this->getJobConfigFile($processId)));
-        $this->documentId = $config->documentId;
-        $this->config = $config->config;
-        $this->processId = $config->processId;
-    }
-
-    /**
-     * @return Document\PrintAbstract
+     * @param $documentId
+     * @return Document\Printpage
      * @throws \Exception
      */
-    protected function getPrintDocument()
+    protected function getPrintDocument($documentId)
     {
-        $document = Document\Printpage::getById($this->documentId);
+        $document = Document\Printpage::getById($documentId);
         if (empty($document)) {
-            throw new \Exception("PrintDocument with " . $this->documentId . " not found.");
+            throw new \Exception("PrintDocument with " . $documentId . " not found.");
         }
         return $document;
     }
@@ -163,4 +156,27 @@ abstract class Processor
      * @return array
      */
     abstract public function getProcessingOptions();
+
+
+    /**
+     * @param $documentId
+     * @param $statusUpdate
+     */
+    protected function updateStatus($documentId, $status, $statusUpdate) {
+        $jobConfig = $this->loadJobConfigObject($documentId);
+        $jobConfig->status = $status;
+        $jobConfig->statusUpdate = $statusUpdate;
+        $this->saveJobConfigObjectFile($jobConfig);
+    }
+
+    public function getStatusUpdate($documentId) {
+        $jobConfig = $this->loadJobConfigObject($documentId);
+        if($jobConfig) {
+            return [
+                "status" => $jobConfig->status,
+                "statusUpdate" => $jobConfig->statusUpdate
+            ];
+        }
+    }
+
 }
