@@ -108,7 +108,6 @@ class PdfReactor8 extends Processor
         $options[] = ["name" => "author", "type" => "text", "default" => ""];
         $options[] = ["name" => "title", "type" => "text", "default" => ""];
         $options[] = ["name" => "printermarks", "type" => "bool", "default" => ""];
-        //$options[] = ["name" => "screenResolutionImages", "type" => "bool", "default" => false];
         $options[] = ["name" => "links", "type" => "bool", "default" => true];
         $options[] = ["name" => "bookmarks", "type" => "bool", "default" => true];
         $options[] = ["name" => "tags", "type" => "bool", "default" => true];
