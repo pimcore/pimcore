@@ -48,7 +48,7 @@ abstract class Processor
     public function preparePdfGeneration($documentId, $config)
     {
         $document = $this->getPrintDocument($documentId);
-        if(Model\Tool\TmpStore::get($document->getLockKey())) {
+        if (Model\Tool\TmpStore::get($document->getLockKey())) {
             throw new \Exception("Process with given document alredy running.");
         }
         Model\Tool\TmpStore::add($document->getLockKey(), true);
@@ -162,7 +162,8 @@ abstract class Processor
      * @param $documentId
      * @param $statusUpdate
      */
-    protected function updateStatus($documentId, $status, $statusUpdate) {
+    protected function updateStatus($documentId, $status, $statusUpdate)
+    {
         $jobConfig = $this->loadJobConfigObject($documentId);
         $jobConfig->status = $status;
         $jobConfig->statusUpdate = $statusUpdate;
@@ -173,9 +174,10 @@ abstract class Processor
      * @param $documentId
      * @return array
      */
-    public function getStatusUpdate($documentId) {
+    public function getStatusUpdate($documentId)
+    {
         $jobConfig = $this->loadJobConfigObject($documentId);
-        if($jobConfig) {
+        if ($jobConfig) {
             return [
                 "status" => $jobConfig->status,
                 "statusUpdate" => $jobConfig->statusUpdate
@@ -187,7 +189,8 @@ abstract class Processor
      * @param $documentId
      * @throws \Exception
      */
-    public function cancelGeneration($documentId) {
+    public function cancelGeneration($documentId)
+    {
         $document = Document\Printpage::getById($documentId);
         if (empty($document)) {
             throw new \Exception("Document with id " . $documentId . " not found.");
@@ -195,5 +198,4 @@ abstract class Processor
         Model\Tool\Lock::release($document->getLockKey());
         Model\Tool\TmpStore::delete($document->getLockKey());
     }
-
 }

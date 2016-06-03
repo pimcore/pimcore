@@ -72,13 +72,12 @@ class PdfReactor8 extends Processor
         }
 
         try {
-
             $progress = new \stdClass();
             $progress->finished = false;
 
             $processId = $pdfreactor->convertAsync($reactorConfig);
 
-            while(!$progress->finished) {
+            while (!$progress->finished) {
                 $progress = $pdfreactor->getProgress($processId);
                 $this->updateStatus($document->getId(), 50 + ($progress->progress / 2), "pdf_conversion");
 

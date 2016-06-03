@@ -137,7 +137,7 @@ class Printpage extends \Pimcore\Controller\Action\Admin\Document
         $inProgress = $document->getInProgress();
 
         $statusUpdate = [];
-        if($inProgress) {
+        if ($inProgress) {
             $statusUpdate = Processor::getInstance()->getStatusUpdate($document->getId());
         }
 

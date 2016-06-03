@@ -1,7 +1,7 @@
 <?php 
 
 return [
-    "enableInDefaultView" => FALSE,
+    "enableInDefaultView" => false,
     "displayfield-1521-inputEl" => "Enables Web2Print documents in default documents view in default perspective. Either activate this or create custom views and perspectives for managing Web2Print documents.",
     "generalTool" => "wkhtmltopdf",
     "generalDocumentSaveMode" => "default",

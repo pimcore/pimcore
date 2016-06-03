@@ -19,9 +19,8 @@ namespace Pimcore\Model\Webservice\Data\Document;
 
 use \Pimcore\Model\Webservice\Data\Document;
 
-class Printcontainer extends Document\PageSnippet {
-
-
+class Printcontainer extends Document\PageSnippet
+{
     public $lastGenerated;
 
     public $inProgress;
@@ -29,5 +28,4 @@ class Printcontainer extends Document\PageSnippet {
     public $css;
 
     public $lastGenerateMessage;
-
 }

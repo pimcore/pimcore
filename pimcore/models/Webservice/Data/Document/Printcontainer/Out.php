@@ -19,6 +19,6 @@ namespace Pimcore\Model\Webservice\Data\Document\Printcontainer;
 
 use \Pimcore\Model\Webservice\Data\Document;
 
-class Out extends Document\Printcontainer {
-
+class Out extends Document\Printcontainer
+{
 }

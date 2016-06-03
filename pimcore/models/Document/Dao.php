@@ -14,7 +14,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Model\Document; 
+namespace Pimcore\Model\Document;
 
 use Pimcore\Model;
 use Pimcore\Tool\Serialize;
