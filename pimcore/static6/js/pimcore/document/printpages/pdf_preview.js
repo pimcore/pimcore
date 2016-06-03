@@ -16,9 +16,6 @@ pimcore.document.printpages.pdfpreview = Class.create({
 
     initialize: function(page) {
         this.page = page;
-
-        console.log(page);
-
     },
 
     getLayout: function () {
