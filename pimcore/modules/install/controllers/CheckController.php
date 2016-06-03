@@ -245,7 +245,7 @@ class Install_CheckController extends \Pimcore\Controller\Action
             $result = $db->fetchRow('SHOW VARIABLES LIKE "character\_set\_database"');
             $checksMySQL[] = [
                 "name" => "Database Charset UTF8",
-                "state" => ($result['Value'] == "utf8") ? "ok" : "error"
+                "state" => (in_array($result['Value'], ["utf8", "utf8mb4"])) ? "ok" : "error"
             ];
 
             // create table
