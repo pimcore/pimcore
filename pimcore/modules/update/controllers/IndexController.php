@@ -76,7 +76,7 @@ class Update_IndexController extends \Pimcore\Controller\Action\Admin
         } elseif ($this->getParam("type") == "cleanup") {
             Update::cleanup();
         } elseif ($this->getParam("type") == "composer-dump-autoload") {
-            Update::composerDumpAutoload();
+            $status = Update::composerDumpAutoload();
         }
 
         // we use pure PHP here, otherwise this can cause issues with dependencies that changed during the update
