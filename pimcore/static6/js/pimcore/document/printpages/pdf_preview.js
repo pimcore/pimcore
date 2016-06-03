@@ -16,6 +16,9 @@ pimcore.document.printpages.pdfpreview = Class.create({
 
     initialize: function(page) {
         this.page = page;
+
+        console.log(page);
+
     },
 
     getLayout: function () {
@@ -179,35 +182,39 @@ pimcore.document.printpages.pdfpreview = Class.create({
             autoDestroy: true,
             autoLoad: true,
             baseParams: { id: this.page.id },
-
+            listeners: {
+                load: function() {
+                    if(this.processingOptionsStore.count() > 0) {
+                        this.processingOptionsGrid.show();
+                    }
+                }.bind(this)
+            },
             sortInfo:{field: 'name', direction: "ASC"}
         });
-
-        this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
-            clicksToEdit: 1,
-            listeners: {
-                beforeedit: function(editor, context, eOpts) {
-                    //need to clear cached editors of cell-editing editor in order to
-                    //enable different editors per row
-                    editor.editors.each(Ext.destroy, Ext);
-                    editor.editors.clear();
-                }
-            }
-        });
-
 
         this.processingOptionsGrid = Ext.create('Ext.grid.Panel', {
             style: "padding-bottom: 10px",
             autoScroll: true,
             autoHeight: true,
             trackMouseOver: true,
+            hidden: true,
             store: this.processingOptionsStore,
             clicksToEdit: 1,
             viewConfig: {
                 markDirty: false
             },
             plugins: [
-                this.cellEditing
+                Ext.create('Ext.grid.plugin.CellEditing', {
+                    clicksToEdit: 1,
+                    listeners: {
+                        beforeedit: function(editor, context, eOpts) {
+                            //need to clear cached editors of cell-editing editor in order to
+                            //enable different editors per row
+                            editor.editors.each(Ext.destroy, Ext);
+                            editor.editors.clear();
+                        }
+                    }
+                })
             ],
             columnLines: true,
             stripeRows: true,
