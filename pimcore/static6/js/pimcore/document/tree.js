@@ -216,7 +216,6 @@ pimcore.document.tree = Class.create({
     onTreeNodeClick: function (tree, record, item, index, e, eOpts ) {
         if (record.data.permissions.view) {
             pimcore.helpers.treeNodeThumbnailPreviewHide();
-            console.log(record.data.type);
             pimcore.helpers.openDocument(record.data.id, record.data.type);
         }
     },
