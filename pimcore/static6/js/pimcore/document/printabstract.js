@@ -110,7 +110,21 @@ pimcore.document.printabstract = Class.create(pimcore.document.page_snippet, {
 
 
         return parameters;
-    }
+    },
 
+
+    unpublish: function ($super) {
+        $super();
+        if(this.pdfpreview) {
+            this.pdfpreview.enableGenerateButton(false);
+        }
+    },
+
+    publish: function($super) {
+        $super();
+        if(this.pdfpreview) {
+            this.pdfpreview.enableGenerateButton(true);
+        }
+    }
 });
 

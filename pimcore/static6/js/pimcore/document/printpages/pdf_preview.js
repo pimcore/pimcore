@@ -25,21 +25,29 @@ pimcore.document.printpages.pdfpreview = Class.create({
             var details = [];
 
             // Generate PDF Panel
+            this.publishedWarning = new Ext.form.Label({
+                text: t("web2print_only_published"),
+                style: "color: red",
+                hidden: this.page.data.published
+            });
+
             this.generateButton = new Ext.Button({
                 text: t("web2print_generate_pdf"),
                 iconCls: "pimcore_icon_pdf",
-                style: "float: right;",
+                style: "float: right;  margin-top: 10px",
+                disabled: !this.page.data.published,
                 handler: this.generatePdf.bind(this)
             });
             this.generateForm = new Ext.form.FormPanel({
                 autoHeight: true,
                 border: false,
-                items: [this.getProcessingOptionsGrid(), this.generateButton]
+                items: [this.getProcessingOptionsGrid(), this.publishedWarning, this.generateButton]
             });
 
             this.progressBar = Ext.create('Ext.ProgressBar', {
                 style: "margin-bottom: 10px"
             });
+
             this.statusUpdateBox = Ext.create('Ext.Panel', {
                 autoHeight: true,
                 border: false,
@@ -99,7 +107,7 @@ pimcore.document.printpages.pdfpreview = Class.create({
                 value: ""
             });
             this.dirtyLabel = new Ext.form.Label({
-                text: "Documents changed since last pdf generation.",
+                text: t("web2print_documents_changed"),
                 style: "color: red",
                 hidden: true
             });
@@ -423,6 +431,17 @@ pimcore.document.printpages.pdfpreview = Class.create({
                 }
             }.bind(this)
         });
+    },
+
+
+    enableGenerateButton: function(enable) {
+        if(enable) {
+            this.generateButton.enable();
+            this.publishedWarning.hide();
+        } else {
+            this.generateButton.disable();
+            this.publishedWarning.show();
+        }
     }
 
 });

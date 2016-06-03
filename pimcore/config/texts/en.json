@@ -14158,5 +14158,21 @@
         "term_plural": "",
         "reference": "",
         "comment": ""
+    },
+    {
+        "term": "web2print_only_published",
+        "definition": "Only possible with published documents.",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
+    },
+    {
+        "term": "web2print_documents_changed",
+        "definition": "Documents changed since last pdf generation.",
+        "context": "",
+        "term_plural": "",
+        "reference": "",
+        "comment": ""
     }
 ]
