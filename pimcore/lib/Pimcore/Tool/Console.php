@@ -79,7 +79,7 @@ class Console
         }
 
         foreach ($paths as $path) {
-            foreach (["--help", "-h"] as $option) {
+            foreach (["--help", "-h", "-help"] as $option) {
                 try {
                     $path = rtrim($path, "/\\ ");
                     if ($path) {
