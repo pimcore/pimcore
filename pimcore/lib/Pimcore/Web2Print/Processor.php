@@ -36,7 +36,7 @@ abstract class Processor
         } elseif ($config->generalTool == "wkhtmltopdf") {
             return new WkHtmlToPdf();
         } else {
-            throw new \Exception("Invalid Configuation");
+            throw new \Exception("Invalid Configuation - " . $config->generalTool);
         }
     }
 

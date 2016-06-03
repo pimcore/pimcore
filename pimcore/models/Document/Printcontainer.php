@@ -27,30 +27,10 @@ class Printcontainer extends Document\PrintAbstract
      */
     public $type = "printcontainer";
 
-
-    public function getController()
-    {
-        if (empty($this->controller)) {
-            $this->controller = "container";
-        }
-        return $this->controller;
-    }
-
-    public function getModule()
-    {
-        if (empty($this->module)) {
-            $this->module = "Web2Print";
-        }
-        return $this->module;
-    }
-
-    public function getAction()
-    {
-        if (empty($this->action)) {
-            $this->action = "container";
-        }
-        return $this->action;
-    }
+    /**
+     * @var string
+     */
+    public $action = "container";
 
 
     public function getTreeNodeConfig()
@@ -107,39 +87,9 @@ class Printcontainer extends Document\PrintAbstract
     {
         $dirty = parent::pdfIsDirty();
         if (!$dirty) {
-            $dirty = ($this->getLastGenerated() < $this->getLastedChildMofidicationDate());
+            $dirty = ($this->getLastGenerated() < $this->getLastedChildModificationDate());
         }
 
         return $dirty;
-    }
-
-
-    public function getCssModificationForPreview($includeChildren = false)
-    {
-        if ($includeChildren) {
-            $allChildren = $this->getAllChildren();
-
-            $modifications = parent::getCssModificationForPreview();
-            if (!$modifications) {
-                $modifications = [];
-            }
-
-            if ($allChildren) {
-                foreach ($allChildren as $child) {
-                    $workingChild = $child;
-                    if ($child instanceof Document\Hardlink) {
-                        $workingChild = $child->getSourceDocument();
-                    }
-                    $childModifications = $workingChild->getCssModificationForPreview(true);
-                    if ($childModifications) {
-                        $modifications = array_merge($modifications, $childModifications);
-                    }
-                }
-            }
-
-            return $modifications;
-        } else {
-            return parent::getCssModificationForPreview();
-        }
     }
 }

@@ -507,6 +507,19 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
 
         $values = Config::getWeb2PrintConfig();
         $valueArray = $values->toArray();
+
+        $optionsString = [];
+        if($valueArray['wkhtml2pdfOptions']) {
+            foreach($valueArray['wkhtml2pdfOptions'] as $key => $value) {
+                $tmpStr = "--".$key;
+                if($value !== null && $value !== "") {
+                    $tmpStr .= " ".$value;
+                }
+                $optionsString[] = $tmpStr;
+            }
+        }
+        $valueArray['wkhtml2pdfOptions'] = implode("\n", $optionsString);
+
         $response = [
             "values" => $valueArray
         ];
@@ -519,6 +532,21 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
         $this->checkPermission("web2print_settings");
 
         $values = \Zend_Json::decode($this->getParam("data"));
+
+        if($values['wkhtml2pdfOptions']) {
+            $optionArray = [];
+            $lines = explode("\n", $values['wkhtml2pdfOptions']);
+            foreach($lines as $line) {
+                $parts = explode(" ", substr($line, 2));
+                $key = trim($parts[0]);
+                if($key) {
+                    $value = trim($parts[1]);
+                    $optionArray[$key] = $value;
+                }
+            }
+            $values['wkhtml2pdfOptions'] = $optionArray;
+        }
+
 
         $configFile = \Pimcore\Config::locateConfigFile("web2print.php");
         File::putPhpFile($configFile, to_php_data_file_format($values));

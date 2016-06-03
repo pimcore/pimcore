@@ -24,6 +24,11 @@ abstract class PrintAbstract extends Document\PageSnippet
     public $lastGenerated;
     public $lastGenerateMessage;
 
+    /**
+     * @var string
+     */
+    public $controller = "web2print";
+
     public function setLastGeneratedDate(\Zend_Date $lastGenerated)
     {
         $this->lastGenerated = $lastGenerated->get(\Zend_Date::TIMESTAMP);

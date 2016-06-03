@@ -58,12 +58,12 @@ class PdfReactor8 extends Processor
             "title" => $config->title ? $config->title : "",
             "addLinks" => $config->links == "true",
             "addBookmarks" => $config->bookmarks == "true",
-            "javaScriptMode" => $config->prJavaScriptMode,
-            "viewerPreferences" => [$config->prViewerPreference],
-            "defaultColorSpace" => $config->prColorspace,
-            "encryption" => $config->prEncryption,
+            "javaScriptMode" => $config->javaScriptMode,
+            "viewerPreferences" => [$config->viewerPreference],
+            "defaultColorSpace" => $config->colorspace,
+            "encryption" => $config->encryption,
             "addTags" => $config->tags == "true",
-            "logLevel" => $config->prLoglevel
+            "logLevel" => $config->loglevel
 
         ];
 

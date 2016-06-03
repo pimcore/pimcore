@@ -29,7 +29,7 @@ class WkHtmlToPdf extends Processor
     /**
      * @var string
      */
-    private $options;
+    private $options = "";
 
 
     /**
@@ -54,7 +54,7 @@ class WkHtmlToPdf extends Processor
 
         if ($options) {
             foreach ($options as $key => $value) {
-                $this->options = " --" . (string)$key;
+                $this->options .= " --" . (string)$key;
                 if ($value !== null && $value !== "") {
                     $this->options .= " " . (string)$value;
                 }
@@ -66,11 +66,14 @@ class WkHtmlToPdf extends Processor
 
     protected function buildPdf(Document\PrintAbstract $document, $config)
     {
+        $web2printConfig = Config::getWeb2PrintConfig();
+
         $params = [];
         $this->updateStatus($document->getId(), 10, "start_html_rendering");
         $html = $document->renderDocument($params);
         $placeholder = new \Pimcore\Placeholder();
         $html = $placeholder->replacePlaceholders($html);
+        $html = \Pimcore\Helper\Mail::setAbsolutePaths($html, $document, $web2printConfig->wkhtml2pdfHostname);
 
         $this->updateStatus($document->getId(), 40, "finished_html_rendering");
 
