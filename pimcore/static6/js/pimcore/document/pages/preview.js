@@ -105,6 +105,7 @@ pimcore.document.pages.preview = Class.create({
                 layout: "border",
                 tbar: tbar,
                 iconCls: "pimcore_icon_preview",
+                bodyCls: "pimcore_preview_body",
                 items: [this.framePanel]
             });
 

@@ -125,7 +125,7 @@ pimcore.document.printpages.pdfpreview = Class.create({
                 items: [{
                     region: "center",
                     hideMode: "offsets",
-                    bodyCls: "pimcore_overflow_scrolling",
+                    bodyCls: "pimcore_overflow_scrolling pimcore_preview_body",
                     forceLayout: true,
                     autoScroll: true,
                     border: false,

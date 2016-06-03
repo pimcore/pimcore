@@ -253,6 +253,9 @@
     overflow: auto;
 }
 
+.pimcore_preview_body {
+    overflow: hidden !important;
+}
 
 .pimcore_iframe_mask {
     position: absolute;
