@@ -210,34 +210,28 @@ pimcore.document.properties = Class.create(pimcore.element.properties,{
 
             var name = this.disallowedKeys[i];
 
-            var addProperty = false;
-            var unchanged = false;
+            var addProperty = true;
             if(typeof systemValues[name] != "undefined") {
-                if(this.element.data.properties[name]) {
-                    record = this.element.data.properties[name];
-                    if(record["data"]) {
-                        if(record["data"] != systemValues[name]) {
-                            addProperty = true;
-                        } else if(record["data"] == systemValues[name]) {
-                            unchanged=true;
+
+                if(in_array(name,this.inheritableKeys)) {
+                    if(this.element.data.properties[name]) {
+                        record = this.element.data.properties[name];
+                        if(record["inherited"] && record["data"] == systemValues[name]) {
+                            addProperty = false;
                         }
-                    } else if (systemValues[name]) {
-                        addProperty = true;
                     }
-                } else {
-                    addProperty = true;
                 }
 
                 if(addProperty) {
                     values[name] = {
                         data: systemValues[name],
-                        type: "text",
+                        type: (typeof systemValues[name] === "boolean") ? "bool" : "text",
                         inheritable: in_array(name,this.inheritableKeys)
                     };
                 }
             }
 
-            if(!addProperty && !unchanged) {
+            if(!addProperty) {
                 if(values[name]) {
                     delete values[name];
                 }
