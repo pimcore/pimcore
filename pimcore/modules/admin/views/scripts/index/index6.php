@@ -306,6 +306,7 @@ $scripts = array(
     "pimcore/document/page_snippet.js",
     "pimcore/document/edit.js",
     "pimcore/document/versions.js",
+    "pimcore/document/settings_abstract.js",
     "pimcore/document/pages/settings.js",
     "pimcore/document/pages/preview.js",
     "pimcore/document/snippets/settings.js",

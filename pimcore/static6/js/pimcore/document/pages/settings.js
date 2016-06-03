@@ -12,29 +12,11 @@
  */
 
 pimcore.registerNS("pimcore.document.pages.settings");
-pimcore.document.pages.settings = Class.create({
-
-    initialize: function(page) {
-        this.page = page;
-    },
-
+pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstract, {
 
     getLayout: function () {
 
         if (this.layout == null) {
-
-            var docTypeStore = new Ext.data.Store({
-                proxy: {
-                    url: '/admin/document/get-doc-types?type=page',
-                    type: 'ajax',
-                    reader: {
-                        type: 'json',
-                        rootProperty: "docTypes"
-                    }
-                },
-                fields: ["id","name","module","controller","action","template"]
-
-            });
 
             // redirects
             var addUrlAlias = function (url, id) {
@@ -116,8 +98,8 @@ pimcore.document.pages.settings = Class.create({
                 }]
             });
 
-            for(var r=0; r<this.page.data.redirects.length; r++) {
-                addUrlAlias(this.page.data.redirects[r].source, this.page.data.redirects[r]["id"]);
+            for(var r=0; r<this.document.data.redirects.length; r++) {
+                addUrlAlias(this.document.data.redirects[r].source, this.document.data.redirects[r]["id"]);
             }
 
             // meta-data
@@ -243,10 +225,10 @@ pimcore.document.pages.settings = Class.create({
             });
 
             try {
-                if(typeof this.page.data.metaData == "object" && this.page.data.metaData.length > 0) {
-                    for(var r=0; r<this.page.data.metaData.length; r++) {
-                        addMetaData(this.page.data.metaData[r]["idName"], this.page.data.metaData[r]["idValue"],
-                            this.page.data.metaData[r]["contentName"], this.page.data.metaData[r]["contentValue"]);
+                if(typeof this.document.data.metaData == "object" && this.document.data.metaData.length > 0) {
+                    for(var r=0; r<this.document.data.metaData.length; r++) {
+                        addMetaData(this.document.data.metaData[r]["idName"], this.document.data.metaData[r]["idValue"],
+                            this.document.data.metaData[r]["contentName"], this.document.data.metaData[r]["contentValue"]);
                     }
                 }
             } catch (e) {}
@@ -273,12 +255,12 @@ pimcore.document.pages.settings = Class.create({
                         defaultType: 'textarea',
                         items :[
                             {
-                                fieldLabel: t('title') + " (" + this.page.data.title.length + ")",
+                                fieldLabel: t('title') + " (" + this.document.data.title.length + ")",
                                 name: 'title',
                                 maxLength: 255,
                                 height: 51,
                                 width: 700,
-                                value: this.page.data.title,
+                                value: this.document.data.title,
                                 enableKeyEvents: true,
                                 listeners: {
                                     "keyup": function (el) {
@@ -287,12 +269,12 @@ pimcore.document.pages.settings = Class.create({
                                 }
                             },
                             {
-                                fieldLabel: t('description') + " (" + this.page.data.description.length + ")",
+                                fieldLabel: t('description') + " (" + this.document.data.description.length + ")",
                                 maxLength: 255,
                                 height: 51,
                                 width: 700,
                                 name: 'description',
-                                value: this.page.data.description,
+                                value: this.document.data.description,
                                 enableKeyEvents: true,
                                 listeners: {
                                     "keyup": function (el) {
@@ -317,14 +299,14 @@ pimcore.document.pages.settings = Class.create({
                                 name: 'prettyUrl',
                                 maxLength: 255,
                                 width: 700,
-                                value: this.page.data.prettyUrl,
+                                value: this.document.data.prettyUrl,
                                 enableKeyEvents: true,
                                 listeners: {
                                     "keyup": function (el) {
                                         Ext.Ajax.request({
                                             url: "/admin/page/check-pretty-url",
                                             params: {
-                                                id: this.page.id,
+                                                id: this.document.id,
                                                 path: el.getValue()
                                             },
                                             success: function (res) {
@@ -359,320 +341,19 @@ pimcore.document.pages.settings = Class.create({
                                 name: 'personas',
                                 width: 700,
                                 //listWidth: 200,
-                                value: this.page.data["personas"],
+                                value: this.document.data["personas"],
                                 minHeight: 100
                             })
                         ]
                     },
-                    {
-                        xtype:'fieldset',
-                        title: t('controller_and_view_settings'),
-                        collapsible: true,
-                        autoHeight:true,
-                        defaults: {
-                            labelWidth: 320,
-                            width: 700
-                        },
-                        defaultType: 'textfield',
-                        items :[
-                            {
-                                fieldLabel: t('predefined_document_type'),
-                                name: 'docType',
-                                xtype: "combo",
-                                displayField:'name',
-                                valueField: "id",
-                                store: docTypeStore,
-                                editable: false,
-                                triggerAction: 'all',
-                                listeners: {
-                                    "select": this.setDocumentType.bind(this)
-                                }
-                            },
-                            {
-                                xtype:'combo',
-                                fieldLabel: t('module_optional'),
-                                displayField: 'name',
-                                valueField: 'name',
-                                name: "module",
-                                disableKeyFilter: true,
-                                store: new Ext.data.Store({
-                                    autoDestroy: true,
-                                    proxy: {
-                                        type: 'ajax',
-                                        url: "/admin/misc/get-available-modules",
-                                        reader: {
-                                            type: 'json',
-                                            rootProperty: 'data'
-                                        }
-                                    },
-                                    fields: ["name"]
-                                }),
-                                triggerAction: "all",
-                                mode: "local",
-                                id: "pimcore_document_settings_module_" + this.page.id,
-                                value: this.page.data.module,
-                                listeners: {
-                                    afterrender: function (el) {
-                                        el.getStore().load();
-                                    }
-                                }
-                            },
-                            {
-                                xtype:'combo',
-                                fieldLabel: t('controller'),
-                                displayField: 'name',
-                                valueField: 'name',
-                                name: "controller",
-                                disableKeyFilter: true,
-                                store: new Ext.data.Store({
-                                    autoDestroy: true,
-                                    proxy: {
-                                        type: 'ajax',
-                                        url: "/admin/misc/get-available-controllers",
-                                        reader: {
-                                            type: 'json',
-                                            rootProperty: 'data'
-                                        }
-                                    },
-                                    fields: ["name"]
-                                }),
-                                triggerAction: "all",
-                                mode: "local",
-                                id: "pimcore_document_settings_controller_" + this.page.id,
-                                value: this.page.data.controller,
-                                listeners: {
-                                    "focus": function (el) {
-                                        el.getStore().reload({
-                                            params: {
-                                                moduleName: Ext.getCmp("pimcore_document_settings_module_"
-                                                    + this.page.id).getValue()
-                                            },
-                                            callback: function() {
-                                                el.expand();
-                                            }
-                                        });
-                                    }.bind(this),
-                                }
-                            },
-                            {
-                                xtype:'combo',
-                                fieldLabel: t('action'),
-                                displayField: 'name',
-                                valueField: 'name',
-                                name: "action",
-                                disableKeyFilter: true,
-                                store: new Ext.data.Store({
-                                    autoDestroy: true,
-                                    proxy: {
-                                        type: 'ajax',
-                                        url: "/admin/misc/get-available-actions",
-                                        reader: {
-                                            type: 'json',
-                                            rootProperty: 'data'
-                                        }
-                                    },
-                                    fields: ["name"]
-                                }),
-                                triggerAction: "all",
-                                queryMode: "local",
-                                value: this.page.data.action,
-                                listeners: {
-                                    "focus": function (el) {
-                                        el.getStore().reload({
-                                            params: {
-                                                moduleName: Ext.getCmp("pimcore_document_settings_module_"
-                                                    + this.page.id).getValue(),
-                                                controllerName: Ext.getCmp("pimcore_document_settings_controller_"
-                                                                                    + this.page.id).getValue()
-                                            },
-                                            callback: function() {
-                                                el.expand();
-                                            }
-                                        });
-                                    }.bind(this),
-                                }
-                            },
-                            {
-                                xtype:'combo',
-                                fieldLabel: t('template'),
-                                displayField: 'path',
-                                valueField: 'path',
-                                name: "template",
-                                disableKeyFilter: true,
-                                queryMode: "local",
-                                store: new Ext.data.Store({
-                                    autoDestroy: true,
-                                    proxy: {
-                                        type: 'ajax',
-                                        url: "/admin/misc/get-available-templates",
-                                        reader: {
-                                            type: 'json',
-                                            rootProperty: 'data'
-                                        }
-                                    },
-                                    fields: ["path"]
-                                }),
-                                triggerAction: "all",
-                                mode: "local",
-                                value: this.page.data.template,
-                                listeners: {
-                                    afterrender: function (el) {
-                                        el.getStore().load();
-                                    }
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        xtype:'fieldset',
-                        title: t('path_and_key_settings'),
-                        collapsible: true,
-                        autoHeight:true,
-                        defaultType: 'textfield',
-                        defaults: {
-                            width: 700,
-                            labelWidth: 200
-                        },
-                        items :[
-                            {
-                                fieldLabel: t('path'),
-                                name: 'path',
-                                value: this.page.data.path,
-                                disabled: true
-                            },
-                            {
-                                fieldLabel: t('key'),
-                                name: 'key',
-                                value: this.page.data.key,
-                                disabled: true
-                            },
-                            {
-                                fieldLabel: t('id'),
-                                name: 'id',
-                                value: this.page.data.id,
-                                disabled: true
-                            }
-                        ]
-                    },
-                    {
-                        xtype:'fieldset',
-                        title: t('content_master_document'),
-                        collapsible: true,
-                        autoHeight:true,
-                        labelWidth: 200,
-                        defaultType: 'textfield',
-                        defaults: {width: 700},
-                        items :[
-                            {
-                                fieldLabel: t("document"),
-                                name: "contentMasterDocumentPath",
-                                value: this.page.data.contentMasterDocumentPath,
-                                cls: "input_drop_target",
-                                id: "contentMasterDocumentPath_" + this.page.id,
-                                listeners: {
-                                    "render": function (el) {
-                                        new Ext.dd.DropZone(el.getEl(), {
-                                            reference: this,
-                                            ddGroup: "element",
-                                            getTargetFromEvent: function(e) {
-                                                return this.getEl();
-                                            }.bind(el),
-
-                                            onNodeOver : function(target, dd, e, data) {
-                                                return Ext.dd.DropZone.prototype.dropAllowed;
-                                            },
-
-                                            onNodeDrop : function (target, dd, e, data) {
-                                                data = data.records[0].data;
-                                                if (data.elementType == "document") {
-                                                    this.setValue(data.path);
-                                                    return true;
-                                                }
-                                                return false;
-                                            }.bind(el)
-                                        });
-                                    }
-                                }
-                            },
-                            {
-                                xtype: "toolbar",
-                                width: 700,
-                                items: ["->", {
-                                    text:t("delete_master_document"),
-                                    iconCls:"pimcore_icon_delete",
-                                    autoWidth:true,
-                                    handler:function () {
-                                        Ext.MessageBox.confirm(t("are_you_sure"), t("all_content_will_be_lost"),
-                                            function (buttonValue) {
-                                                if (buttonValue == "yes") {
-                                                    Ext.getCmp("contentMasterDocumentPath_"
-                                                                                    + this.page.id).setValue("");
-                                                    Ext.Ajax.request({
-                                                        url:"/admin/page/change-master-document/id/"
-                                                                                    + this.page.id,
-                                                        params:{
-                                                            contentMasterDocumentPath:""
-                                                        },
-                                                        success:function () {
-                                                            this.page.reload();
-                                                        }.bind(this)
-                                                    });
-                                                }
-                                            }.bind(this));
-                                    }.bind(this)
-                                }, {
-                                    text: t("open_master_document"),
-                                    iconCls: "pimcore_icon_edit",
-                                    autoWidth: true,
-                                    handler: function () {
-                                        var masterPath = Ext.getCmp("contentMasterDocumentPath_" + this.page.id).getValue();
-                                        pimcore.helpers.openDocumentByPath(masterPath);
-                                    }.bind(this)
-                                },{
-                                    text:t("apply_new_master_document"),
-                                    iconCls:"pimcore_icon_apply",
-                                    autoWidth:true,
-                                    handler:function () {
-                                        Ext.MessageBox.confirm(t("are_you_sure"), t("all_content_will_be_lost"),
-                                            function (buttonValue) {
-                                                if (buttonValue == "yes") {
-                                                    Ext.Ajax.request({
-                                                        url:"/admin/page/change-master-document/id/" + this.page.id,
-                                                        params:{
-                                                            contentMasterDocumentPath:Ext.getCmp(
-                                                                "contentMasterDocumentPath_" + this.page.id).getValue()
-                                                        },
-                                                        success:function () {
-                                                            this.page.reload();
-                                                        }.bind(this)
-                                                    });
-                                                }
-                                            }.bind(this));
-                                    }.bind(this)
-                                }]
-                            }
-                        ]
-                    }
+                    this.getControllerViewFields(),
+                    this.getPathAndKeyFields(),
+                    this.getContentMasterFields()
                 ]
             });
         }
 
         return this.layout;
-    },
-
-    setDocumentType: function (field, newValue, oldValue) {
-        var allowedFields = ["module","controller","action","template"];
-        var form = this.getLayout().getForm();
-        var element = null;
-
-        for (var i = 0; i < allowedFields.length; i++) {
-            element = form.findField(allowedFields[i]);
-            if (element) {
-                if (newValue.data.id > 0) {
-                    element.setValue(newValue.data[allowedFields[i]]);
-                }
-            }
-        }
     },
 
     getValues: function () {
