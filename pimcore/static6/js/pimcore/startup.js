@@ -530,6 +530,7 @@ Ext.onReady(function () {
                                     Ext.create('Ext.ux.TabCloseMenu', {
                                         pluginId: 'tabclosemenu',
                                         showCloseAll: false,
+                                        closeTabText: t("close_tab"),
                                         showCloseOthers: false,
                                         extraItemsTail: pimcore.helpers.getMainTabMenuItems()
                                     }),
