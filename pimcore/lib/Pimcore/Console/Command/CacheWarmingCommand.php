@@ -134,8 +134,6 @@ class CacheWarmingCommand extends AbstractCommand
             $this->writeWarmingMessage('object', $objectTypes);
             Warming::assets($assetTypes);
         }
-
-        $this->disableMaintenanceMode();
     }
 
     protected function writeWarmingMessage($type, $types)
