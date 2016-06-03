@@ -388,7 +388,7 @@ class Update
     }
 
     /**
-     *
+     * @return array
      */
     public static function composerDumpAutoload()
     {
@@ -397,11 +397,22 @@ class Update
             @unlink($composerLock);
         }
 
+        $outputMessage = "";
+
         // dump autoload and regenerate composer.lock
-        $composerPath = \Pimcore\Tool\Console::getExecutable("composer");
-        $process = new Process($composerPath . ' update nothing -d ' . PIMCORE_DOCUMENT_ROOT);
-        $process->setTimeout(null);
-        $process->mustRun();
+        try {
+            $composerPath = \Pimcore\Tool\Console::getExecutable("composer");
+            $process = new Process($composerPath . ' update nothing -d ' . PIMCORE_DOCUMENT_ROOT);
+            $process->setTimeout(20);
+            $process->mustRun();
+        } catch (\Exception $e) {
+            $outputMessage = "Failed running <pre>composer update nothing</pre>, please run it manually on commandline!";
+        }
+
+        return [
+            "message" => $outputMessage,
+            "success" => true
+        ];
     }
 
     /**
