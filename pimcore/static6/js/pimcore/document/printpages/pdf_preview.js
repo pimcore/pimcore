@@ -181,12 +181,12 @@ pimcore.document.printpages.pdfpreview = Class.create({
                     type: 'json',
                     rootProperty: "options",
                     idProperty: 'name'
-                }
+                },
+                extraParams: { id: this.page.id }
             },
             fields: ['name','label','type','value','default','values'],
             autoDestroy: true,
             autoLoad: true,
-            baseParams: { id: this.page.id },
             listeners: {
                 load: function() {
                     if(this.processingOptionsStore.count() > 0) {
