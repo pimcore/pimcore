@@ -220,7 +220,7 @@ class Printpage extends \Pimcore\Controller\Action\Admin\Document
 
             $returnValue[] = [
                 "name" => $option['name'],
-                "label" => $this->view->translateAdmin($option['name']),
+                "label" => $option['name'],
                 "value" => $value,
                 "type" => $option['type'],
                 "values" => $option['values']

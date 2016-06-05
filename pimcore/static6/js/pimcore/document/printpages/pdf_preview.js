@@ -200,6 +200,7 @@ pimcore.document.printpages.pdfpreview = Class.create({
         this.processingOptionsGrid = Ext.create('Ext.grid.Panel', {
             style: "padding-bottom: 10px",
             autoScroll: true,
+            bodyCls: "pimcore_editable_grid",
             autoHeight: true,
             trackMouseOver: true,
             hidden: true,
