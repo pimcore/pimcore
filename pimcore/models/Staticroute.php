@@ -519,7 +519,10 @@ class Staticroute extends AbstractModel
 
 
         $results = \Pimcore::getEventManager()->trigger("frontend.path.staticroute", $this, [
-            "frontendPath" => $url
+            "frontendPath" => $url,
+            "params" => $urlParams,
+            "reset" => $reset,
+            "encode" => $encode
         ]);
         if ($results->count()) {
             $url = $results->last();
