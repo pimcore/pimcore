@@ -406,7 +406,7 @@ class Update
             $process->setTimeout(60);
             $process->mustRun();
         } catch (\Exception $e) {
-            $outputMessage = "Failed running <pre>composer update nothing</pre>, please run it manually on commandline!";
+            $outputMessage = "<b style='color:red;'>Important</b>: Failed running <pre>composer update nothing</pre> Please run it manually on commandline!";
         }
 
         return [

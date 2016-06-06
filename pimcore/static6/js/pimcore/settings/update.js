@@ -492,13 +492,16 @@ pimcore.settings.update = Class.create({
 
         pimcore.helpers.deactivateMaintenance();
 
-        window.setTimeout(function () {
-            Ext.MessageBox.confirm(t("info"), t("reload_pimcore_changes"), function (buttonValue) {
-                if (buttonValue == "yes") {
-                    window.location.reload();
-                }
-            }.bind(this));
-        }.bind(this), 1000);
+        if(this.proceduralJobsMessages.length < 1) {
+            // only show reload prompt if there are no messages from the update
+            window.setTimeout(function () {
+                Ext.MessageBox.confirm(t("info"), t("reload_pimcore_changes"), function (buttonValue) {
+                    if (buttonValue == "yes") {
+                        window.location.reload();
+                    }
+                }.bind(this));
+            }.bind(this), 1000);
+        }
     },
 
     showErrorMessage: function (message) {
