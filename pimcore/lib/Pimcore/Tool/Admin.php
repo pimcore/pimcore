@@ -237,7 +237,7 @@ class Admin
         return false;
     }
 
-    public static function reorderWebsiteLanguages($user, $languages)
+    public static function reorderWebsiteLanguages($user, $languages, $returnLanguageArray = false)
     {
         if (!is_array($languages)) {
             $languages = explode(",", $languages);
@@ -248,6 +248,9 @@ class Admin
             $contentLanguages = array_intersect($contentLanguages, $languages);
             $newLanguages = array_diff($languages, $contentLanguages);
             $languages = array_merge($contentLanguages, $newLanguages);
+        }
+        if($returnLanguageArray){
+            return $languages;
         }
         return implode(",", $languages);
     }
