@@ -237,7 +237,7 @@ pimcore.layout.toolbar = Class.create({
 
             if (perspectiveCfg.inToolbar("file.about")) {
                 fileItems.push({
-                    text: "ABOUT PIMCORE &reg;",
+                    text: t("about_pimcore") + " &reg;",
                     iconCls: "pimcore_icon_pimcore",
                     handler: function () {
                         pimcore.helpers.showAbout();
@@ -395,7 +395,7 @@ pimcore.layout.toolbar = Class.create({
                     if (perspectiveCfg.inToolbar("extras.systemtools.phpinfo")) {
                         systemItems.push(
                             {
-                                text: "PHP Info",
+                                text: t("php_info"),
                                 iconCls: "pimcore_icon_php",
                                 handler: this.showPhpInfo
                             }
@@ -405,7 +405,7 @@ pimcore.layout.toolbar = Class.create({
                     if (perspectiveCfg.inToolbar("extras.systemtools.opcache")) {
                         systemItems.push(
                             {
-                                text: "PHP OPcache Status",
+                                text: t("php_opcache_status"),
                                 iconCls: "pimcore_icon_reports",
                                 handler: this.showOpcacheStatus
                             }
@@ -415,7 +415,7 @@ pimcore.layout.toolbar = Class.create({
                     if (perspectiveCfg.inToolbar("extras.systemtools.requirements")) {
                         systemItems.push(
                             {
-                                text: "System-Requirements Check",
+                                text: t("system_requirements_check"),
                                 iconCls: "pimcore_icon_systemrequirements",
                                 handler: this.showSystemRequirementsCheck
                             }
@@ -425,7 +425,7 @@ pimcore.layout.toolbar = Class.create({
                     if (perspectiveCfg.inToolbar("extras.systemtools.serverinfo")) {
                         systemItems.push(
                             {
-                                text: "Server Info",
+                                text: t("server_info"),
                                 iconCls: "pimcore_icon_server_info",
                                 handler: this.showServerInfo
                             }
@@ -435,7 +435,7 @@ pimcore.layout.toolbar = Class.create({
                     if (perspectiveCfg.inToolbar("extras.systemtools.database")) {
                         systemItems.push(
                             {
-                                text: "Database Administration",
+                                text: t("database_administration"),
                                 iconCls: "pimcore_icon_mysql",
                                 handler: this.showAdminer
                             }

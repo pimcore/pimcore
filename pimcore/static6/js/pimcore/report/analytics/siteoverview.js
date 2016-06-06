@@ -139,7 +139,7 @@ pimcore.report.analytics.overview = Class.create(pimcore.report.abstract, {
                     },
                     {
                         xtype: "button",
-                        text: "apply",
+                        text: t("apply"),
                         cls: "pimcore_analytics_filter_form_item",
                         handler: this.setFrameUrl.bind(this)
                     }

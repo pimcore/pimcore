@@ -425,7 +425,7 @@ pimcore.settings.targeting.conditions = {
                             }
                         },{
                             xtype: "button",
-                            text: "OK",
+                            text: t("OK"),
                             iconCls: "pimcore_icon_save",
                             handler: function () {
                                 var point = marker.getPosition();

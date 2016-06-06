@@ -33,19 +33,19 @@ pimcore.document.pages.preview = Class.create({
             if(this.page.getType() == "page") {
 
                 tbar = [{
-                    text: "Desktop",
+                    text: t("desktop"),
                     iconCls: "pimcore_icon_desktop",
                     handler: this.setFullMode.bind(this)
                 }, {
-                    text: "Tablet",
+                    text: t("tablet"),
                     iconCls: "pimcore_icon_tablet",
                     handler: this.setMode.bind(this, {width: 1024, height: 768})
                 }, {
-                    text: "Phone",
+                    text: t("phone"),
                     iconCls: "pimcore_icon_mobile",
                     handler: this.setMode.bind(this, {width: 375, height: 667})
                 },{
-                    text: "Phone",
+                    text: t("phone"),
                     iconCls: "pimcore_icon_tv",
                     handler: this.setMode.bind(this, {width: 667, height: 375})
                 }, "-", {

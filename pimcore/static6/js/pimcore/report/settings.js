@@ -95,7 +95,7 @@ pimcore.report.settings = Class.create({
                     items: settingsContainerItems,
                     buttons: [
                         {
-                            text: "Save",
+                            text: t("save"),
                             handler: this.save.bind(this),
                             iconCls: "pimcore_icon_accept"
                         }

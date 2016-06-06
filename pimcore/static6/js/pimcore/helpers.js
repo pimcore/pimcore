@@ -524,7 +524,7 @@ pimcore.helpers.showPrettyError = function (type, title, text, errorText, stack,
                             shadow: false,
                             closable: true,
                             buttons: [{
-                                text: "OK",
+                                text: t("OK"),
                                 handler: function () {
                                     detailedWindow.close();
                                 }
@@ -595,7 +595,7 @@ pimcore.helpers.showNotification = function (title, text, type, errorText, hideD
             shadow: false,
             closable: false,
             buttons: [{
-                text: "OK",
+                text: t("OK"),
                 handler: function () {
                     errWin.close();
                 }
