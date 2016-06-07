@@ -173,9 +173,12 @@ class Maintenance
                     $mail->send();
                 }
             }
-
-            $db->query("UPDATE " . \Pimcore\Log\Handler\ApplicationLoggerDb::TABLE_NAME . " set maintenanceChecked = 1");
         }
+
+        // flag them as checked, regardless if email notifications are enabled or not
+        // otherwise, when activating email notifications, you'll receive all log-messages from the past and not
+        // since the point when you enabled the notifications
+        $db->query("UPDATE " . \Pimcore\Log\Handler\ApplicationLoggerDb::TABLE_NAME . " set maintenanceChecked = 1");
     }
 
 
