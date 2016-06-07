@@ -557,10 +557,10 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
     {
         if ($layout->{"fieldtype"} == "localizedfields") {
             if (is_array($allowedView) && count($allowedView) > 0) {
-                $layout->{"permissionView"} = \Pimcore\Tool\Admin::reorderWebsiteLanguages(\Pimcore\Tool\Admin::getCurrentUser(), array_keys($allowedView),true);
+                $layout->{"permissionView"} = \Pimcore\Tool\Admin::reorderWebsiteLanguages(\Pimcore\Tool\Admin::getCurrentUser(), array_keys($allowedView), true);
             }
             if (is_array($allowedEdit) && count($allowedEdit) > 0) {
-                $layout->{"permissionEdit"} = \Pimcore\Tool\Admin::reorderWebsiteLanguages(\Pimcore\Tool\Admin::getCurrentUser(), array_keys($allowedEdit),true);
+                $layout->{"permissionEdit"} = \Pimcore\Tool\Admin::reorderWebsiteLanguages(\Pimcore\Tool\Admin::getCurrentUser(), array_keys($allowedEdit), true);
             }
         } else {
             if (method_exists($layout, "getChilds")) {

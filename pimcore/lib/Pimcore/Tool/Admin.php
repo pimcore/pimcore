@@ -249,7 +249,7 @@ class Admin
             $newLanguages = array_diff($languages, $contentLanguages);
             $languages = array_merge($contentLanguages, $newLanguages);
         }
-        if($returnLanguageArray){
+        if ($returnLanguageArray) {
             return $languages;
         }
         return implode(",", $languages);
