@@ -43,6 +43,8 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
         $object = Object\AbstractObject::getById($this->getParam("node"));
         $objectTypes = null;
         $objects = [];
+        $cv = false;
+        $offset = 0;
 
         if ($object instanceof Object\Concrete) {
             $class = $object->getClass();
@@ -315,15 +317,14 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             $this->getDataForObject($object, $objectFromVersion);
             $objectData["data"] = $this->objectData;
 
-
-
             $objectData["metaData"] = $this->metaData;
 
             $objectData["layout"] = $object->getClass()->getLayoutDefinitions();
 
             $objectData["properties"] = Element\Service::minimizePropertiesForEditmode($object->getProperties());
             $objectData["userPermissions"] = $object->getUserPermissions();
-            $objectData["versions"] = array_splice($object->getVersions(), 0, 1);
+            $objectVersions = $object->getVersions();
+            $objectData["versions"] = array_splice($objectVersions, 0, 1);
             $objectData["scheduledTasks"] = $object->getScheduledTasks();
             $objectData["general"]["allowVariants"] = $object->getClass()->getAllowVariants();
             $objectData["general"]["showVariants"] = $object->getClass()->getShowVariants();
@@ -441,6 +442,8 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
         ) {
 
             //lazy loading data is fetched from DB differently, so that not every relation object is instantiated
+            $refId = null;
+
             if ($fielddefinition->isRemoteOwner()) {
                 $refKey = $fielddefinition->getOwnerFieldName();
                 $refClass = Object\ClassDefinition::getByName($fielddefinition->getOwnerClassName());
@@ -536,7 +539,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
     private function isInheritableField(Object\ClassDefinition\Data $fielddefinition)
     {
         if ($fielddefinition instanceof Object\ClassDefinition\Data\Fieldcollections
-//            || $fielddefinition instanceof Object\ClassDefinition\Data\Localizedfields
+            //            || $fielddefinition instanceof Object\ClassDefinition\Data\Localizedfields
         ) {
             return false;
         }
@@ -1427,8 +1430,8 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                     $sub = substr($f, 0, 1);
                     if (substr($f, 0, 1) == "~") {
                         $type = $parts[1];
-//                        $field = $parts[2];
-//                        $keyid = $parts[3];
+                        //                        $field = $parts[2];
+                        //                        $keyid = $parts[3];
                         // key value, ignore for now
                         if ($type == "classificationstore") {
                         }
@@ -1447,6 +1450,8 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 
 
             $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($this->getAllParams());
+
+            $doNotQuote = false;
 
             if ($sortingSettings['order']) {
                 $order = $sortingSettings['order'];
@@ -1485,6 +1490,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 
 
             $featureJoins = [];
+            $featureFilters = FALSE;
 
             // create filter condition
             if ($this->getParam("filter")) {
@@ -1510,7 +1516,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             $list->setOffset($start);
 
 
-            if ($sortingSettings["isFeature"]) {
+            if (isset($sortingSettings["isFeature"]) && $sortingSettings["isFeature"]) {
                 $orderKey = "cskey_" . $sortingSettings["fieldname"] . "_" . $sortingSettings["groupId"]. "_" . $sortingSettings["keyId"];
                 $list->setOrderKey($orderKey);
                 $list->setGroupBy("o_id");

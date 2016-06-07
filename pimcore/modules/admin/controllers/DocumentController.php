@@ -58,6 +58,7 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
         $document = Document::getById($this->getParam("node"));
 
         $documents = [];
+        $cv = false;
         if ($document->hasChilds()) {
             $limit = intval($this->getParam("limit"));
             if (!$this->getParam("limit")) {

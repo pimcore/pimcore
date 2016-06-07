@@ -38,23 +38,23 @@ class Extensionmanager_AdminController extends \Pimcore\Controller\Action\Admin
             if (is_file($revisionFile)) {
                 $updateable = true;
             }
-            
+
             if (!empty($className)) {
                 $isEnabled = ExtensionManager::isEnabled("plugin", $config["plugin"]["pluginName"]);
 
                 $plugin = [
                     "id" => $config["plugin"]["pluginName"],
                     "type" => "plugin",
-                    "name" => $config["plugin"]["pluginNiceName"],
-                    "description" => $config["plugin"]["pluginDescription"],
+                    "name" => isset($config["plugin"]["pluginNiceName"]) ? $config["plugin"]["pluginNiceName"] : '',
+                    "description" => isset($config["plugin"]["pluginDescription"]) ? $config["plugin"]["pluginDescription"] : '',
                     "installed" => $isEnabled ? $className::isInstalled() : null,
                     "active" => $isEnabled,
-                    "configuration" => $config["plugin"]["pluginIframeSrc"],
+                    "configuration" => isset($config["plugin"]["pluginIframeSrc"]) ? $config["plugin"]["pluginIframeSrc"] : null,
                     "updateable" => $updateable,
-                    "version" => $config["plugin"]["pluginVersion"]  // NEU http://www.pimcore.org/issues/browse/PIMCORE-1947
+                    "version" => isset($config["plugin"]["pluginVersion"]) ? $config["plugin"]["pluginVersion"] : null
                 ];
 
-                if ($config["plugin"]["pluginXmlEditorFile"] && is_readable(PIMCORE_DOCUMENT_ROOT . $config["plugin"]["pluginXmlEditorFile"])) {
+                if (isset($config["plugin"]["pluginXmlEditorFile"]) && is_readable(PIMCORE_DOCUMENT_ROOT . $config["plugin"]["pluginXmlEditorFile"])) {
                     $plugin['xmlEditorFile'] = $config["plugin"]["pluginXmlEditorFile"];
                 }
 
@@ -67,7 +67,7 @@ class Extensionmanager_AdminController extends \Pimcore\Controller\Action\Admin
         // get repo state of bricks
         foreach ($brickConfigs as $id => $config) {
             $updateable = false;
-            
+
             $revisionFile = PIMCORE_WEBSITE_VAR . "/areas/" . $id . "/.pimcore_extension_revision";
             if (is_file($revisionFile)) {
                 $updateable = true;

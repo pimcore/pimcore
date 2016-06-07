@@ -123,7 +123,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
             for ($i = 0; $i < count($classes); $i++) {
                 /* @var Object\ClassDefinition $classItem */
                 $currentClass = $classes[$i];
-                $nextClass = $classes[$i+1];
+                $nextClass = isset($classes[$i+1]) ? $classes[$i+1] : null;
 
                 // check last group
                 $className = $currentClass->getName();
@@ -685,9 +685,9 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
         $objectId = intval($this->getParam("oid"));
 
         $filteredDefinitions = Object\Service::getCustomLayoutDefinitionForGridColumnConfig($class, $objectId);
-        ;
-        $layoutDefinitions = $filteredDefinitions["layoutDefinition"];
-        $filteredFieldDefinition = $filteredDefinitions["fieldDefinition"];
+
+        $layoutDefinitions = isset($filteredDefinitions["layoutDefinition"]) ? $filteredDefinitions["layoutDefinition"] : false;
+        $filteredFieldDefinition = isset($filteredDefinitions["fieldDefinition"]) ? $filteredDefinitions["fieldDefinition"] : false;
 
         $class->setFieldDefinitions(null);
 

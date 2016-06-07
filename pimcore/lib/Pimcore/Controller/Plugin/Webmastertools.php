@@ -23,7 +23,7 @@ class Webmastertools extends \Zend_Controller_Plugin_Abstract
     public function routeStartup(\Zend_Controller_Request_Abstract $request)
     {
         $conf = \Pimcore\Config::getReportConfig();
-        if ($conf->webmastertools->sites) {
+        if (!is_null($conf->webmastertools) && isset($conf->webmastertools->sites)) {
             $sites = $conf->webmastertools->sites->toArray();
             
             if (is_array($sites)) {

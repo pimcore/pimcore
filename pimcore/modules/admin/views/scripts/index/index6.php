@@ -130,7 +130,13 @@ $runtimePerspective = \Pimcore\Config::getRuntimePerspective();
 <?php // define stylesheets ?>
 <?php
 
-$extjsDev = $runtimePerspective["extjsDev"];
+$extjsDev = isset( $runtimePerspective["extjsDev"]) ? $runtimePerspective["extjsDev"] : FALSE;
+
+// SCRIPT LIBRARIES
+$debugSuffix = "";
+if (PIMCORE_DEVMODE || $extjsDev) {
+    $debugSuffix = "-debug";
+}
 
 $styles = array(
     "/admin/misc/admin-css?extjs6=true",
@@ -159,11 +165,6 @@ $styles = array(
 <?php // define scripts ?>
 <?php
 
-// SCRIPT LIBRARIES
-$debugSuffix = "";
-if (PIMCORE_DEVMODE || $extjsDev) {
-    $debugSuffix = "-debug";
-}
 
 $scriptLibs = array(
 
@@ -193,7 +194,7 @@ $scripts = array(
     "pimcore/browserfixes.js",
 
     // fixes for libraries
-//    "pimcore/libfixes.js",
+    //    "pimcore/libfixes.js",
 
     // small libs
     "lib/array_merge.js",
@@ -575,7 +576,6 @@ $googleMapsApiKey = $this->config->services->google->browserapikey;
         showCloseConfirmation: true,
         debug_admin_translations: <?= \Zend_Json::encode((bool) $this->config->general->debug_admin_translations) ?>,
         document_generatepreviews: <?= \Zend_Json::encode((bool) $this->config->documents->generatepreview) ?>,
-        asset_disable_tree_preview: <?= \Zend_Json::encode((bool) $this->config->assets->disable_tree_preview) ?>,
         htmltoimage: <?= \Zend_Json::encode(\Pimcore\Image\HtmlToImage::isSupported()) ?>,
         videoconverter: <?= \Zend_Json::encode(\Pimcore\Video::isAvailable()) ?>,
         asset_hide_edit: <?= $this->config->assets->hide_edit_image ? "true" : "false" ?>,
@@ -663,7 +663,7 @@ try {
             if (!empty($cssPath)) {
             ?>
             <link rel="stylesheet" type="text/css" href="<?= $cssPath ?>?_dc=<?= $pluginDcValue; ?>"/>
-                <?php
+            <?php
 
             }
             }

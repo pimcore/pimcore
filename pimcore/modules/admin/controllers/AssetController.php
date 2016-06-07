@@ -112,6 +112,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
     public function treeGetChildsByIdAction()
     {
         $assets = [];
+        $cv = false;
         $asset = Asset::getById($this->getParam("node"));
 
         if ($asset->hasChilds()) {
