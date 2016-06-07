@@ -198,22 +198,7 @@ class Image extends Model\Document\Tag
                 }
 
                 if ($this->cropPercent) {
-                    $cropConfig = [
-                        "width" => $this->cropWidth,
-                        "height" => $this->cropHeight,
-                        "y" => $this->cropTop,
-                        "x" => $this->cropLeft
-                    ];
-
-                    $thumbConfig->addItemAt(0, "cropPercent", $cropConfig);
-
-                    // also crop media query specific configs
-                    if ($thumbConfig->hasMedias()) {
-                        foreach ($thumbConfig->getMedias() as $mediaName => $mediaItems) {
-                            $thumbConfig->addItemAt(0, "cropPercent", $cropConfig, $mediaName);
-                        }
-                    }
-
+                    $this->applyCustomCropping($thumbConfig);
                     $autoName = true;
                 }
 
@@ -508,12 +493,7 @@ class Image extends Model\Document\Tag
         if ($image instanceof Asset) {
             $thumbConfig = $image->getThumbnailConfig($conf);
             if ($thumbConfig && $this->cropPercent) {
-                $thumbConfig->addItemAt(0, "cropPercent", [
-                    "width" => $this->cropWidth,
-                    "height" => $this->cropHeight,
-                    "y" => $this->cropTop,
-                    "x" => $this->cropLeft
-                ]);
+                $this->applyCustomCropping($thumbConfig);
                 $hash = md5(Serialize::serialize($thumbConfig->getItems()));
                 $thumbConfig->setName($thumbConfig->getName() . "_auto_" . $hash);
             }
@@ -521,6 +501,28 @@ class Image extends Model\Document\Tag
             return $image->getThumbnail($thumbConfig, $deferred);
         }
         return "";
+    }
+
+    /**
+     * @param $thumbConfig
+     * @return mixed
+     */
+    protected function applyCustomCropping($thumbConfig) {
+        $cropConfig = array(
+            "width" => $this->cropWidth,
+            "height" => $this->cropHeight,
+            "y" => $this->cropTop,
+            "x" => $this->cropLeft
+        );
+
+        $thumbConfig->addItemAt(0,"cropPercent", $cropConfig);
+
+        // also crop media query specific configs
+        if($thumbConfig->hasMedias()) {
+            foreach($thumbConfig->getMedias() as $mediaName => $mediaItems) {
+                $thumbConfig->addItemAt(0,"cropPercent", $cropConfig, $mediaName);
+            }
+        }
     }
 
     /**
