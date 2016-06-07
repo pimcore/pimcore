@@ -26,7 +26,7 @@ class QueryParams
         $orderByFeature = null;
 
         if (\Pimcore\Tool\Admin::isExtJS6()) {
-            $sortParam = $params["sort"];
+            $sortParam = isset($params["sort"]) ? $params["sort"] : false;
             if ($sortParam) {
                 $sortParam = json_decode($sortParam, true);
                 $sortParam = $sortParam[0];

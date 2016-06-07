@@ -130,7 +130,13 @@ $runtimePerspective = \Pimcore\Config::getRuntimePerspective();
 <?php // define stylesheets ?>
 <?php
 
-$extjsDev = $runtimePerspective["extjsDev"];
+$extjsDev = isset( $runtimePerspective["extjsDev"]) ? $runtimePerspective["extjsDev"] : FALSE;
+
+// SCRIPT LIBRARIES
+$debugSuffix = "";
+if (PIMCORE_DEVMODE || $extjsDev) {
+    $debugSuffix = "-debug";
+}
 
 $styles = array(
     "/admin/misc/admin-css?extjs6=true",
@@ -159,11 +165,6 @@ $styles = array(
 <?php // define scripts ?>
 <?php
 
-// SCRIPT LIBRARIES
-$debugSuffix = "";
-if (PIMCORE_DEVMODE || $extjsDev) {
-    $debugSuffix = "-debug";
-}
 
 $scriptLibs = array(
 
@@ -193,7 +194,7 @@ $scripts = array(
     "pimcore/browserfixes.js",
 
     // fixes for libraries
-//    "pimcore/libfixes.js",
+    //    "pimcore/libfixes.js",
 
     // small libs
     "lib/array_merge.js",
@@ -663,7 +664,7 @@ try {
             if (!empty($cssPath)) {
             ?>
             <link rel="stylesheet" type="text/css" href="<?= $cssPath ?>?_dc=<?= $pluginDcValue; ?>"/>
-                <?php
+            <?php
 
             }
             }

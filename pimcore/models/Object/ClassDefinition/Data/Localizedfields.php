@@ -160,7 +160,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
         foreach ($data->getItems() as $language => $values) {
             foreach ($this->getFieldDefinitions() as $fd) {
                 $key = $fd->getName();
-                $fdata = $values[$fd->getName()];
+                $fdata = isset($values[$fd->getName()]) ? $values[$fd->getName()] : null;
 
                 if (!isset($fieldData[$language][$key]) || $fd->isEmpty($fieldData[$language][$key])) {
                     // never override existing data
@@ -701,7 +701,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     public function getFielddefinition($name)
     {
         $fds = $this->getFieldDefinitions();
-        if ($fds[$name]) {
+        if (isset($fds[$name])) {
             return $fds[$name];
         }
         return;

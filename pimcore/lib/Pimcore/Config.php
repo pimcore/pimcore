@@ -678,8 +678,8 @@ class Config
         foreach ($config as $configName => $configItem) {
             $item = [
                 "name" => $configName,
-                "icon" => $configItem["icon"],
-                "iconCls" => $configItem["iconCls"]
+                "icon" => isset($configItem["icon"]) ? $configItem["icon"] : null,
+                "iconCls" => isset($configItem["iconCls"]) ? $configItem["iconCls"] : null
             ];
             if ($user) {
                 $item["active"] = $configName == $currentConfigName;
@@ -693,7 +693,7 @@ class Config
 
     public static function inPerspective($runtimeConfig, $key)
     {
-        if (!$runtimeConfig["toolbar"]) {
+        if (!isset($runtimeConfig["toolbar"]) || !$runtimeConfig["toolbar"]) {
             return true;
         }
         $parts = explode(".", $key);

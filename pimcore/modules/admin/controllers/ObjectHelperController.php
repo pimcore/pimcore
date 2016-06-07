@@ -274,11 +274,11 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
             $language = $gridConfig['language'];
         }
         $this->_helper->json([
-            "sortinfo" => $gridConfig['sortinfo'],
+            "sortinfo" => isset($gridConfig['sortinfo']) ? $gridConfig['sortinfo'] : false,
             "language" => $language,
             "availableFields" => $availableFields,
-            "onlyDirectChildren" => $gridConfig['onlyDirectChildren'],
-            "pageSize" => $gridConfig['pageSize']
+            "onlyDirectChildren" => isset($gridConfig['onlyDirectChildren']) ? $gridConfig['onlyDirectChildren'] : false,
+            "pageSize" => isset($gridConfig['pageSize']) ? $gridConfig['pageSize'] : false
         ]);
     }
 
