@@ -153,8 +153,8 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
                         cls: "pimcore_document_metadata_label"
                     },{
                         xtype: "combo",
-                        store: ["","og:title","og:type","og:url","og:image","og:description","og:locale",
-                                                                "twitter:card","twitter:site","twitter:creator"],
+                        store: ["","robots","og:title","og:type","og:url","og:image","og:description","og:locale",
+                               "twitter:card","twitter:site","twitter:creator"],
                         value: idValue,
                         editable: true,
                         mode: "local",

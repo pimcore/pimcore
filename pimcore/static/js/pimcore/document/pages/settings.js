@@ -163,7 +163,7 @@ pimcore.document.pages.settings = Class.create({
                         style: "float:left;margin-right:5px;"
                     },{
                         xtype: "combo",
-                        store: ["","og:title","og:type","og:url","og:image","og:description","og:locale",
+                        store: ["","robots","og:title","og:type","og:url","og:image","og:description","og:locale",
                                                                 "twitter:card","twitter:site","twitter:creator"],
                         value: idValue,
                         editable: true,
