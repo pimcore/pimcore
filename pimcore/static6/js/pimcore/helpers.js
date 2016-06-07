@@ -2731,10 +2731,13 @@ pimcore.helpers.hideRedundantSeparators = function(menu) {
             showSeparator = true;
         }
     }
-}
+};
 
 pimcore.helpers.initMenuTooltips = function(){
-    $("[data-menu-tooltip]").mouseenter(function (e) {
+
+    var items = $("[data-menu-tooltip]:not(.initialized)");
+
+    items.mouseenter(function (e) {
         $("#pimcore_menu_tooltip").show();
         $("#pimcore_menu_tooltip").html($(this).data("menu-tooltip"));
 
@@ -2744,7 +2747,10 @@ pimcore.helpers.initMenuTooltips = function(){
 
         $("#pimcore_menu_tooltip").css({top: top});
     });
-    $("[data-menu-tooltip]").mouseleave(function () {
+
+    items.mouseleave(function () {
         $("#pimcore_menu_tooltip").hide();
     });
-}
+
+    items.addClass("initialized", "true");
+};
