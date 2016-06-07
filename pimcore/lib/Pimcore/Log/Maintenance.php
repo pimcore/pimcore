@@ -128,6 +128,7 @@ class Maintenance
 
     public function checkErrorLogsDb()
     {
+        $db = \Pimcore\Db::get();
         $conf = Config::getSystemConfig();
         $config = $conf->applicationlog;
 
@@ -139,8 +140,6 @@ class Maintenance
             });
 
             $logLevel = (int)$config->mail_notification->filter_priority;
-            $db = \Pimcore\Db::get()->getResource();
-
 
             $query = "SELECT * FROM ". \Pimcore\Log\Handler\ApplicationLoggerDb::TABLE_NAME . " WHERE maintenanceChecked IS NULL AND priority <= $logLevel order by id desc";
 
