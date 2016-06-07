@@ -211,8 +211,17 @@ CSS;
             throw new \Exception('$document has to be an instance of Document');
         }
 
-        if (is_null($hostUrl)) {
-            $hostUrl = \Pimcore\Tool::getHostUrl();
+        if (!$hostUrl) {
+            // try to determine if the newsletter is within a site
+            $site = \Pimcore\Tool\Frontend::getSiteForDocument($document);
+            if($site) {
+                $hostUrl = "http://" . $site->getMainDomain();
+            }
+
+            // fallback
+            if(!$hostUrl) {
+                $hostUrl = \Pimcore\Tool::getHostUrl();
+            }
         }
 
         //matches all links
