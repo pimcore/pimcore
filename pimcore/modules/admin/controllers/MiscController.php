@@ -541,7 +541,11 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
     public function getLanguageFlagAction()
     {
         $iconPath = Tool::getLanguageFlagFile($this->getParam("language"));
-        header("Content-Type: image/png");
+        if (Tool\Admin::isExtJS6()) {
+            header("Content-Type: image/svg+xml");
+        } else {
+            header("Content-Type: image/png");
+        }
         echo file_get_contents($iconPath);
 
         exit;

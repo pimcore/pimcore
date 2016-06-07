@@ -75,9 +75,9 @@ pimcore.settings.translation.translationmerger = Class.create({
             plugins: ['gridfilters'],
             columns: [
                 {header: t("language"), sortable: true, dataIndex: 'lgname', editable: false},
-                {header: "&nbsp;", sortable: true, dataIndex: 'icon', editable: false, width: 30,
+                {header: "&nbsp;", sortable: true, dataIndex: 'icon', editable: false, width: 40,
                                 renderer: function(data){
-                                    return '<img src="'+data+'" alt="" />';
+                                    return '<img src="'+data+'" width="100%" height="auto" alt="" />';
                                 }
                 },
                 {header: t("key"), sortable: true, dataIndex: 'key', editable: false, flex: 150, filter: 'string'},
