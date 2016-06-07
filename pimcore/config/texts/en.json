@@ -8,6 +8,10 @@
         "definition": "PHP Info"
     },
     {
+        "term": "disable_tree_preview",
+        "definition": "Disable Tree Preview"
+    },
+    {
         "term": "php_opcache_status",
         "definition": "PHP OPcache Status"
     },

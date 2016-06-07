@@ -193,8 +193,10 @@ pimcore.asset.tree = Class.create({
             }
         }.bind(this));
 
-        this.tree.on("itemmouseenter", pimcore.helpers.treeNodeThumbnailPreview.bind(this));
-        this.tree.on("itemmouseleave", pimcore.helpers.treeNodeThumbnailPreviewHide.bind(this));
+        if(!pimcore.settings.asset_disable_tree_preview) {
+            this.tree.on("itemmouseenter", pimcore.helpers.treeNodeThumbnailPreview.bind(this));
+            this.tree.on("itemmouseleave", pimcore.helpers.treeNodeThumbnailPreviewHide.bind(this));
+        }
 
         store.on("nodebeforeexpand", function (node) {
             pimcore.helpers.addTreeNodeLoadingIndicator("asset", node.data.id);
