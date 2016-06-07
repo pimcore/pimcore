@@ -6341,7 +6341,7 @@
     },
     {
         "term": "log_config_send_summary_per_mail",
-        "definition": "Send log summary per mail"
+        "definition": "Send log summary via email"
     },
     {
         "term": "log_config_filter_priority",
@@ -6353,7 +6353,7 @@
     },
     {
         "term": "log_config_mail_receiver_description",
-        "definition": "Separate multiple mail receivers by ';'"
+        "definition": "Separate multiple email receivers separated by ';'"
     },
     {
         "term": "log_config_archive_log_entries",
