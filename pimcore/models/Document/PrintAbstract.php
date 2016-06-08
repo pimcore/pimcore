@@ -17,6 +17,7 @@
 namespace Pimcore\Model\Document;
 
 use \Pimcore\Model\Document;
+use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Web2Print\Processor;
 
 abstract class PrintAbstract extends Document\PageSnippet
@@ -45,7 +46,9 @@ abstract class PrintAbstract extends Document\PageSnippet
 
     public function getInProgress()
     {
-        return \Pimcore\Model\Tool\Lock::isLocked($this->getLockKey(), 0);
+        return TmpStore::get($this->getLockKey());
+
+//        return \Pimcore\Model\Tool\Lock::isLocked($this->getLockKey(), 0);
     }
 
     public function setLastGenerated($lastGenerated)
