@@ -419,7 +419,7 @@ class Pimcore
             $maxExecutionTime = 0;
         }
 
-        error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
+        error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED);
         //@ini_set("memory_limit", "1024M");
         @ini_set("max_execution_time", $maxExecutionTime);
         @set_time_limit($maxExecutionTime);
@@ -622,7 +622,6 @@ class Pimcore
 
     /**
      * @static
-     * @return bool
      */
     public static function initConfiguration()
     {
@@ -647,25 +646,21 @@ class Pimcore
                 define("PIMCORE_DEVMODE", (bool) $conf->general->devmode);
             }
 
-            return true;
         } catch (\Exception $e) {
             $m = "Couldn't load system configuration";
             \Logger::err($m);
 
-            //@TODO check here for /install otherwise exit here
+            if (!defined("PIMCORE_DEBUG")) {
+                define("PIMCORE_DEBUG", true);
+            }
+            if (!defined("PIMCORE_DEVMODE")) {
+                define("PIMCORE_DEVMODE", false);
+            }
         }
 
-        if (!defined("PIMCORE_DEBUG")) {
-            define("PIMCORE_DEBUG", true);
-        }
-        if (!defined("PIMCORE_DEVMODE")) {
-            define("PIMCORE_DEVMODE", false);
-        }
-
-        // custom error logging in DEVMODE
-        if (PIMCORE_DEVMODE) {
-            error_reporting((E_ALL ^ E_NOTICE) | E_STRICT);
-            ini_set('error_log', PIMCORE_LOG_DIRECTORY . '/php.log');
+        // custom error logging in DEBUG mode & DEVMODE
+        if (PIMCORE_DEVMODE || PIMCORE_DEBUG) {
+            error_reporting(E_ALL & ~E_NOTICE);
         }
     }
 
