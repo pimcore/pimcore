@@ -20,9 +20,9 @@ namespace OnlineShop\Framework\PaymentManager\Payment;
 class PayPal implements IPayment
 {
     /**
-     * @var string  sandbox|null
+     * @var string
      */
-    protected $environment;
+    protected $endpointUrlPart;
 
     /**
      * @var \SoapClient
@@ -51,13 +51,16 @@ class PayPal implements IPayment
     public function __construct(\Zend_Config $xml)
     {
         // init
-        $this->environment = $xml->mode == 'sandbox' ? 'sandbox' : '';
         $credentials = $xml->config->{$xml->mode};
-
+        if ($xml->mode == 'live') {
+            $this->endpointUrlPart = "paypal";
+        } else {
+            $this->endpointUrlPart = "sandbox.paypal";
+        }
 
         // create paypal interface
-        $wsdl = sprintf('https://www.sandbox.paypal.com/wsdl/PayPalSvc.wsdl', $this->environment);
-        $location = sprintf('https://api-3t.sandbox.paypal.com/2.0', $this->environment);
+        $wsdl = 'https://www.' . $this->endpointUrlPart . '.com/wsdl/PayPalSvc.wsdl';
+        $location = 'https://api-3t.' . $this->endpointUrlPart . '.com/2.0';
         $this->client = new \SoapClient($wsdl, array('location' => $location));
 
         // auth
@@ -136,7 +139,7 @@ class PayPal implements IPayment
         if($ret->Ack == 'Success' || $ret->Ack == 'SuccessWithWarning')
         {
             # pay url
-            return 'https://www.' . $this->environment . '.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token=' . $ret->Token;
+            return 'https://www.' . $this->endpointUrlPart . '.com/cgi-bin/webscr?cmd=_express-checkout&token=' . $ret->Token;
         }
         else
         {

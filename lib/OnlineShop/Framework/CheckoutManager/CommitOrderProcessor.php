@@ -205,17 +205,12 @@ class CommitOrderProcessor implements ICommitOrderProcessor {
      */
     public function cleanUpPendingOrders() {
         $config = Factory::getInstance()->getConfig();
-
-        $orderListClass = ((string) $config->onlineshop->ordermanager->config->orderstorage->orderClass) . "\\Listing";
-
-        if(!class_exists($orderListClass)) {
-            throw new \Exception("Class $orderListClass does not exist.");
-        }
+        $orderManager = Factory::getInstance()->getOrderManager();
 
         $timestamp = \Zend_Date::now()->sub(1, \Zend_Date::HOUR)->get();
 
         //Abort orders with payment pending
-        $list = new $orderListClass();
+        $list = $orderManager->buildOrderList();
         $list->addFieldCollection("PaymentInfo");
         $list->setCondition("orderState = ? AND orderdate < ?", array(\OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_PAYMENT_PENDING, $timestamp));
 
@@ -226,7 +221,7 @@ class CommitOrderProcessor implements ICommitOrderProcessor {
         }
 
         //Abort payments with payment pending
-        $list = new $orderListClass();
+        $list = $orderManager->buildOrderList();
         $list->addFieldCollection("PaymentInfo", "paymentinfo");
         $list->setCondition("`PaymentInfo~paymentinfo`.paymentState = ? AND `PaymentInfo~paymentinfo`.paymentStart < ?", array(\OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_PAYMENT_PENDING, $timestamp));
         foreach($list as $order) {

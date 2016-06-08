@@ -18,6 +18,19 @@ It's most important features are:
 [Update Notice](doc/update-notices.markdown)
 
 
+### Quick install
+Add the following to your `composer.json`
+```json
+  "require": {
+    "pimcore-partner/ecommerce-framework": "*"
+  },
+  "repositories": [
+    { "type": "vcs", "url": "https://github.com/pimcore-partner/ecommerce-framework" },
+    { "type": "vcs", "url": "https://github.com/pimcore-partner/Elements_OutputDataConfigToolkit" }
+  ],
+```
+Run `composer update` 
+
 ### E-Commerce Framework Demo
 
 The e-commerce framework demo implementation can be downloaded at https://www.pimcore.org/download/pimcore-ecommerce-demo.zip. 
