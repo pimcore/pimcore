@@ -28,6 +28,7 @@ class CheckoutManager implements ICheckoutManager
      * always concatenated with current cart id
      */
     const CURRENT_STEP = "checkout_current_step";
+    const FINISHED = "checkout_finished";
     const TRACK_ECOMMERCE = "checkout_trackecommerce";
     const TRACK_ECOMMERCE_UNIVERSAL = "checkout_trackecommerce_universal";
 
@@ -49,6 +50,12 @@ class CheckoutManager implements ICheckoutManager
      * @var ICheckoutStep
      */
     protected $currentStep;
+
+    /**
+     * @var bool
+     */
+    protected $finished = false;
+
 
     /**
      * @var bool
@@ -104,6 +111,7 @@ class CheckoutManager implements ICheckoutManager
 
         //getting state information for checkout from custom environment items
         $env = \OnlineShop\Framework\Factory::getInstance()->getEnvironment();
+        $this->finished = $env->getCustomItem(self::FINISHED . "_" . $this->cart->getId()) ? $env->getCustomItem(self::FINISHED . "_" . $this->cart->getId()) : false;
         $this->currentStep = $this->checkoutSteps[$env->getCustomItem(self::CURRENT_STEP . "_" . $this->cart->getId())];
 
         //if no step is set and cart is not finished -> set current step to first step of checkout
@@ -149,7 +157,7 @@ class CheckoutManager implements ICheckoutManager
 
     /**
      * @return \OnlineShop\Framework\Model\AbstractPaymentInformation
-     * @throws Exception
+     * @throws \Exception
      * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */
     public function startOrderPayment()
@@ -478,7 +486,14 @@ class CheckoutManager implements ICheckoutManager
                 $this->currentStep = $this->checkoutStepOrder[$index];
 
                 $env->setCustomItem(self::CURRENT_STEP . "_" . $this->cart->getId(), $this->currentStep->getName());
+
+                //checkout NOT finished
+                $this->finished = false;
+            } else {
+                //checkout is finished
+                $this->finished = true;
             }
+            $env->setCustomItem(self::FINISHED . "_" . $this->cart->getId(), $this->finished);
 
             $this->cart->save();
             $env->save();
@@ -525,11 +540,7 @@ class CheckoutManager implements ICheckoutManager
      */
     public function isFinished()
     {
-        if( !$this->currentStep ) {
-            return false;
-        }
-        $indexCurrentStep = array_search($this->currentStep, $this->checkoutStepOrder);
-        return count($this->checkoutStepOrder) > $indexCurrentStep;
+        return $this->finished;
     }
 
     /**
