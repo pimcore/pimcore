@@ -10,7 +10,7 @@ pimcore.plugin.example = Class.create(pimcore.plugin.admin, {
     },
  
     pimcoreReady: function (params,broker){
-        // alert("Example Ready!");
+        // alert("Example Plugin Ready!");
     }
 });
 

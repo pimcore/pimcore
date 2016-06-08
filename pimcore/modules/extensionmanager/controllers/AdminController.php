@@ -202,12 +202,10 @@ class Extensionmanager_AdminController extends \Pimcore\Controller\Action\Admin
                 $content = file_get_contents($pluginExampleFile);
 
                 // do some modifications in the content of the file
-                $content = str_replace("/Example/", "/".$name."/", $content);
-                $content = str_replace(">Example<", ">".$name."<", $content);
+                $content = str_replace("Example", $name, $content);
                 $content = str_replace(".example", ".".strtolower($name), $content);
                 $content = str_replace("examplePlugin", strtolower($name)."Plugin", $content);
                 $content = str_replace("Example Plugin", $name . " Plugin", $content);
-                $content = str_replace("Example", $name, $content);
 
                 if (!file_exists(dirname($newPath))) {
                     File::mkdir(dirname($newPath));
