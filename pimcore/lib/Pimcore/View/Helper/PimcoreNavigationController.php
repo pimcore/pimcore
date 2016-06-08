@@ -133,13 +133,13 @@ class PimcoreNavigationController
             foreach ($allPages as $page) {
                 $activeTrail = false;
 
-                if (strpos($activeDocument->getRealFullPath(), $page->getUri() . "/") === 0) {
+                if ($page->getUri() && strpos($activeDocument->getRealFullPath(), $page->getUri() . "/") === 0) {
                     $activeTrail = true;
                 }
 
                 if ($page instanceof Uri) {
                     if ($page->getDocumentType() == "link") {
-                        if (strpos($activeDocument->getFullPath(), $page->getUri() . "/") === 0) {
+                        if ($page->getUri() && strpos($activeDocument->getFullPath(), $page->getUri() . "/") === 0) {
                             $activeTrail = true;
                         }
                     }
