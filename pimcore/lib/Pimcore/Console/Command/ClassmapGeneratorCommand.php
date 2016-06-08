@@ -107,7 +107,7 @@ class ClassmapGeneratorCommand extends AbstractCommand
         // Create a file with the class/file map.
         // Stupid syntax highlighters make separating < from PHP declaration necessary
         $content = '<' . "?php\n"
-            . '$pdr = PIMCORE_DOCUMENT_ROOT;' . "\n"
+            . '$pdr = PIMCORE_DOCUMENT_ROOT;' . "\n\n"
             . 'return ' . var_export((array) $globalMap, true) . ';';
 
         // Prefix with dirname(__FILE__); modify the generated content
