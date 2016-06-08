@@ -68,7 +68,7 @@ class Processor
         }
 
         $instance = new self();
-        $formats = empty($onlyFormats) ? ["mp4","webm"] : $onlyFormats;
+        $formats = empty($onlyFormats) ? ["mp4"] : $onlyFormats;
         $instance->setProcessId(uniqid());
         $instance->setAssetId($asset->getId());
         $instance->setConfig($config);

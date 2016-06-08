@@ -668,8 +668,6 @@ class Video extends Model\Document\Tag
 
             $code .= '<video' . $attributesString . '>' . "\n";
 
-            $urls = array_reverse($urls); // use webm as the preferred format
-
             foreach ($urls as $type => $url) {
                 $code .= '<source type="video/' . $type . '" src="' . $url . '" />' . "\n";
             }
