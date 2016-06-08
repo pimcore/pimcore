@@ -109,6 +109,7 @@ class ImageThumbnail
     public function getFileSystemPath()
     {
         $this->generate();
+
         return $this->filesystemPath;
     }
 
@@ -212,6 +213,7 @@ class ImageThumbnail
         if (!$this->width) {
             $this->getDimensions();
         }
+
         return $this->width;
     }
 
@@ -224,6 +226,7 @@ class ImageThumbnail
         if (!$this->height) {
             $this->getDimensions();
         }
+
         return $this->height;
     }
 
@@ -235,6 +238,7 @@ class ImageThumbnail
         if (!$this->realWidth) {
             $this->getDimensions();
         }
+
         return $this->realWidth;
     }
 
@@ -247,6 +251,7 @@ class ImageThumbnail
         if (!$this->realHeight) {
             $this->getDimensions();
         }
+
         return $this->realHeight;
     }
 

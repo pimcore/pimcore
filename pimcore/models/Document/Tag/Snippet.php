@@ -85,6 +85,7 @@ class Snippet extends Model\Document\Tag
                 "path" => $this->snippet->getFullPath()
             ];
         }
+
         return null;
     }
 
@@ -129,6 +130,7 @@ class Snippet extends Model\Document\Tag
 
                         return $content;
                     }
+
                     return "";
                 }
             } catch (\Exception $e) {
@@ -153,6 +155,7 @@ class Snippet extends Model\Document\Tag
             $this->id = $data;
             $this->snippet = Document\Snippet::getById($this->id);
         }
+
         return $this;
     }
 
@@ -167,6 +170,7 @@ class Snippet extends Model\Document\Tag
             $this->id = $data;
             $this->snippet = Document\Snippet::getById($this->id);
         }
+
         return $this;
     }
 
@@ -178,6 +182,7 @@ class Snippet extends Model\Document\Tag
         if ($this->snippet instanceof Document\Snippet) {
             return false;
         }
+
         return true;
     }
 

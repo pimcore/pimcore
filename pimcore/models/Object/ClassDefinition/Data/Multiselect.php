@@ -82,6 +82,7 @@ class Multiselect extends Model\Object\ClassDefinition\Data
     public function setOptions($options)
     {
         $this->options = $options;
+
         return $this;
     }
 
@@ -100,6 +101,7 @@ class Multiselect extends Model\Object\ClassDefinition\Data
     public function setWidth($width)
     {
         $this->width = $this->getAsIntegerCast($width);
+
         return $this;
     }
 
@@ -118,6 +120,7 @@ class Multiselect extends Model\Object\ClassDefinition\Data
     public function setHeight($height)
     {
         $this->height = $this->getAsIntegerCast($height);
+
         return $this;
     }
 
@@ -163,6 +166,7 @@ class Multiselect extends Model\Object\ClassDefinition\Data
         if (!empty($data) && is_array($data)) {
             return ",".implode(",", $data).",";
         }
+
         return;
     }
 
@@ -195,6 +199,7 @@ class Multiselect extends Model\Object\ClassDefinition\Data
         } elseif (strlen($data)) {
             return explode(",", $data);
         }
+
         return null;
     }
 
@@ -283,6 +288,7 @@ class Multiselect extends Model\Object\ClassDefinition\Data
         if ($operator == "=") {
             $name = $params["name"] ? $params["name"] : $this->name;
             $value = "'%".$value."%'";
+
             return "`".$name."` LIKE ".$value." ";
         }
     }
@@ -326,6 +332,7 @@ class Multiselect extends Model\Object\ClassDefinition\Data
             $value = [];
             $value["html"] = $html;
             $value["type"] = "html";
+
             return $value;
         } else {
             return "";

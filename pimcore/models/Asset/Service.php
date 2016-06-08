@@ -155,6 +155,7 @@ class Service extends Model\Element\Service
     public static function gridAssetData($asset)
     {
         $data = Element\Service::gridElementData($asset);
+
         return $data;
     }
 
@@ -172,6 +173,7 @@ class Service extends Model\Element\Service
 
             if (\Pimcore\Tool::isValidPath($path)) {
                 $asset->getDao()->getByPath($path);
+
                 return true;
             }
         } catch (\Exception $e) {
@@ -188,6 +190,7 @@ class Service extends Model\Element\Service
     public static function loadAllFields(Element\ElementInterface $element)
     {
         $element->getProperties();
+
         return $element;
     }
 
@@ -250,6 +253,7 @@ class Service extends Model\Element\Service
             }
             $result[] = $item;
         }
+
         return $result;
     }
 
@@ -295,6 +299,7 @@ class Service extends Model\Element\Service
 
             $result[] = $item;
         }
+
         return $result;
     }
 
@@ -336,6 +341,7 @@ class Service extends Model\Element\Service
             $nr++;
             $key = self::getUniqueKey($item, $nr);
         }
+
         return $key;
     }
 }

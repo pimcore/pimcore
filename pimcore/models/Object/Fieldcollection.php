@@ -60,6 +60,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator
     public function setItems($items)
     {
         $this->items = $items;
+
         return $this;
     }
 
@@ -78,6 +79,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator
     public function setFieldname($fieldname)
     {
         $this->fieldname = $fieldname;
+
         return $this;
     }
 
@@ -132,6 +134,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator
         if (count($this->getItems()) < 1) {
             return true;
         }
+
         return false;
     }
 
@@ -194,6 +197,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator
     public function current()
     {
         $var = current($this->items);
+
         return $var;
     }
 
@@ -203,6 +207,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator
     public function key()
     {
         $var = key($this->items);
+
         return $var;
     }
 
@@ -212,6 +217,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator
     public function next()
     {
         $var = next($this->items);
+
         return $var;
     }
 
@@ -221,6 +227,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator
     public function valid()
     {
         $var = $this->current() !== false;
+
         return $var;
     }
 }

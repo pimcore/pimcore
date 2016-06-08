@@ -36,6 +36,7 @@ class Json extends \Zend_Controller_Action_Helper_Json
         $this->suppressExit = !$sendNow;
 
         $d = $this->sendJson($data, $keepLayouts, $encodeData);
+
         return $d;
     }
 }

@@ -71,6 +71,7 @@ class Checkbox extends Model\Object\ClassDefinition\Data
     public function setDefaultValue($defaultValue)
     {
         $this->defaultValue = (int)$defaultValue;
+
         return $this;
     }
 
@@ -104,6 +105,7 @@ class Checkbox extends Model\Object\ClassDefinition\Data
         if (!is_null($data)) {
             $data = (bool) $data;
         }
+
         return $data;
     }
 
@@ -143,6 +145,7 @@ class Checkbox extends Model\Object\ClassDefinition\Data
         if ($data === "false") {
             return false;
         }
+
         return (bool)$this->getDataFromResource($data, $object, $params);
     }
 
@@ -187,6 +190,7 @@ class Checkbox extends Model\Object\ClassDefinition\Data
     public function getForCsvExport($object, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
+
         return strval($data);
     }
 
@@ -206,6 +210,7 @@ class Checkbox extends Model\Object\ClassDefinition\Data
     public function getForWebserviceExport($object, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
+
         return (bool) $data;
     }
 
@@ -267,6 +272,7 @@ class Checkbox extends Model\Object\ClassDefinition\Data
         $name = $params["name"] ? $params["name"] : $this->name;
         $value = $db->quote($value);
         $key = $db->quoteIdentifier($this->name, $name);
+
         return "IFNULL(" . $key . ", 0) = " . $value . " ";
     }
 }

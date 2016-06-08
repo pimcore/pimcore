@@ -58,6 +58,7 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
     public function setClasses($classes)
     {
         $this->classes = Element\Service::fixAllowedTypes($classes, "classes");
+
         return $this;
     }
 
@@ -77,6 +78,7 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
     public function setLazyLoading($lazyLoading)
     {
         $this->lazyLoading = $lazyLoading;
+
         return $this;
     }
 
@@ -123,6 +125,7 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
             \Logger::debug("checked object relation to target in field [" . $this->getName() . "], not allowed, target ist not an object");
             \Logger::debug($object);
         }
+
         return $allowed;
     }
 
@@ -172,6 +175,7 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
         }
 
         \Logger::debug("checked object relation to target asset [" . $asset->getId() . "] in field [" . $this->getName() . "], allowed:" . $allowed);
+
         return $allowed;
     }
 
@@ -201,6 +205,7 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
         }
 
         \Logger::debug("checked object relation to target document [" . $document->getId() . "] in field [" . $this->getName() . "], allowed:" . $allowed);
+
         return $allowed;
     }
 
@@ -331,6 +336,7 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
             if ($a["index"] == $b["index"]) {
                 return 0;
             }
+
             return ($a["index"] < $b["index"]) ? -1 : 1;
         });
 

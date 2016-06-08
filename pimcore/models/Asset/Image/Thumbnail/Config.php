@@ -97,6 +97,7 @@ class Config extends Model\AbstractModel
                 $thumbnail = self::getByName($config);
             } catch (\Exception $e) {
                 \Logger::error("requested thumbnail " . $config . " is not defined");
+
                 return false;
             }
         } elseif (is_array($config)) {
@@ -172,6 +173,7 @@ class Config extends Model\AbstractModel
         $arrayConfig = object2array($this);
         $items = $arrayConfig["items"];
         $arrayConfig["items"] = $items;
+
         return $arrayConfig;
     }
 
@@ -255,8 +257,10 @@ class Config extends Model\AbstractModel
             $suffix = preg_replace("/[\-]+/", "-", $suffix);
 
             $this->setFilenameSuffix($suffix);
+
             return true;
         }
+
         return false;
     }
 
@@ -266,6 +270,7 @@ class Config extends Model\AbstractModel
     public function setDescription($description)
     {
         $this->description = $description;
+
         return $this;
     }
 
@@ -283,6 +288,7 @@ class Config extends Model\AbstractModel
     public function setItems($items)
     {
         $this->items = $items;
+
         return $this;
     }
 
@@ -300,6 +306,7 @@ class Config extends Model\AbstractModel
     public function setName($name)
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -317,6 +324,7 @@ class Config extends Model\AbstractModel
     public function setFormat($format)
     {
         $this->format = $format;
+
         return $this;
     }
 
@@ -336,6 +344,7 @@ class Config extends Model\AbstractModel
         if ($quality) {
             $this->quality = (int) $quality;
         }
+
         return $this;
     }
 

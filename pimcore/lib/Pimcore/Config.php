@@ -142,7 +142,7 @@ class Config
 
             if (!$config = Cache::load($cacheKey)) {
                 $settingsArray = [];
-                $cacheTags = ["website_config","system","config","output"];
+                $cacheTags = ["website_config", "system", "config", "output"];
 
                 $list = new Model\WebsiteSetting\Listing();
                 $list = $list->load();
@@ -227,6 +227,7 @@ class Config
 
             self::setReportConfig($config);
         }
+
         return $config;
     }
 
@@ -264,6 +265,7 @@ class Config
 
             self::setWeb2PrintConfig($config);
         }
+
         return $config;
     }
 
@@ -301,6 +303,7 @@ class Config
                 }
             }
         }
+
         return $config;
     }
 
@@ -503,6 +506,7 @@ class Config
 
 
         $result["elementTree"] = self::getRuntimeElementTreeConfig($currentConfigName);
+
         return $result;
     }
 
@@ -721,6 +725,7 @@ class Config
                 return $menuItem;
             }
         }
+
         return true;
     }
 

@@ -109,6 +109,7 @@ class KeyConfig extends Model\AbstractModel
     public function setUnit($unit)
     {
         $this->unit = $unit;
+
         return $this;
     }
 
@@ -127,6 +128,7 @@ class KeyConfig extends Model\AbstractModel
     public function setPossibleValues($values)
     {
         $this->possiblevalues = $values;
+
         return $this;
     }
 
@@ -145,6 +147,7 @@ class KeyConfig extends Model\AbstractModel
     public function setType($type)
     {
         $this->type = $type;
+
         return $this;
     }
 
@@ -163,6 +166,7 @@ class KeyConfig extends Model\AbstractModel
     public function setGroup($group)
     {
         $this->group = $group;
+
         return $this;
     }
 
@@ -253,6 +257,7 @@ class KeyConfig extends Model\AbstractModel
     public function setId($id)
     {
         $this->id = (int) $id;
+
         return $this;
     }
 
@@ -271,6 +276,7 @@ class KeyConfig extends Model\AbstractModel
     public function setName($name)
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -297,6 +303,7 @@ class KeyConfig extends Model\AbstractModel
     public function setDescription($description)
     {
         $this->description = $description;
+
         return $this;
     }
 
@@ -336,6 +343,7 @@ class KeyConfig extends Model\AbstractModel
         } else {
             \Pimcore::getEventManager()->trigger("object.keyValue.keyConfig.postAdd", $this);
         }
+
         return $model;
     }
 
@@ -346,6 +354,7 @@ class KeyConfig extends Model\AbstractModel
     public function setCreationDate($creationDate)
     {
         $this->creationDate = (int) $creationDate;
+
         return $this;
     }
 
@@ -364,6 +373,7 @@ class KeyConfig extends Model\AbstractModel
     public function setModificationDate($modificationDate)
     {
         $this->modificationDate = (int) $modificationDate;
+
         return $this;
     }
 

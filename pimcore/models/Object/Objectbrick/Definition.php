@@ -41,6 +41,7 @@ class Definition extends Model\Object\Fieldcollection\Definition
     public function setClassDefinitions($classDefinitions)
     {
         $this->classDefinitions = $classDefinitions;
+
         return $this;
     }
 

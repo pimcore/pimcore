@@ -63,6 +63,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
         if ($this->assets === null) {
             $this->load();
         }
+
         return $this->assets;
     }
 
@@ -73,6 +74,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     public function setAssets($assets)
     {
         $this->assets = $assets;
+
         return $this;
     }
     
@@ -91,6 +93,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     {
         $this->setOffset($offset);
         $this->setLimit($itemCountPerPage);
+
         return $this->load();
     }
 
@@ -114,6 +117,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     {
         $this->getAssets();
         $var = current($this->assets);
+
         return $var;
     }
 
@@ -121,6 +125,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     {
         $this->getAssets();
         $var = key($this->assets);
+
         return $var;
     }
 
@@ -128,6 +133,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     {
         $this->getAssets();
         $var = next($this->assets);
+
         return $var;
     }
 
@@ -135,6 +141,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     {
         $this->getAssets();
         $var = $this->current() !== false;
+
         return $var;
     }
 }

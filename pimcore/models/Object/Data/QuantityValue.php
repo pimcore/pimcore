@@ -73,6 +73,7 @@ class QuantityValue
         if (empty($this->unit)) {
             $this->unit = Unit::getById($this->unitId);
         }
+
         return $this->unit;
     }
 

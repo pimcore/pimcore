@@ -117,6 +117,7 @@ class Localizedfield extends Model\AbstractModel
     public function setItems($items)
     {
         $this->items = $items;
+
         return $this;
     }
 
@@ -157,6 +158,7 @@ class Localizedfield extends Model\AbstractModel
     public function setClass(ClassDefinition $class)
     {
         $this->class = $class;
+
         return $this;
     }
 
@@ -168,6 +170,7 @@ class Localizedfield extends Model\AbstractModel
         if (!$this->class && $this->getObject()) {
             $this->class = $this->getObject()->getClass();
         }
+
         return $this->class;
     }
 
@@ -226,6 +229,7 @@ class Localizedfield extends Model\AbstractModel
             $valueData = new Model\Object\Data\CalculatedValue($fieldDefinition->getName());
             $valueData->setContextualData("localizedfield", "localizedfields", null, $language);
             $data = Service::getCalculatedFieldValue($this->getObject(), $valueData);
+
             return $data;
         }
 
@@ -328,6 +332,7 @@ class Localizedfield extends Model\AbstractModel
         }
 
         $this->items[$language][$name] = $value;
+
         return $this;
     }
 

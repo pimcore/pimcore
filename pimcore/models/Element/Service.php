@@ -115,6 +115,7 @@ class Service extends Model\AbstractModel
             $ids = $list->loadIdList();
         }
         $ids = array_unique($ids);
+
         return $ids;
     }
 
@@ -137,6 +138,7 @@ class Service extends Model\AbstractModel
                 }
             }
         }
+
         return $dependencies;
     }
 
@@ -213,6 +215,7 @@ class Service extends Model\AbstractModel
                 return true;
             }
         }
+
         return false;
     }
 
@@ -231,6 +234,7 @@ class Service extends Model\AbstractModel
         } elseif ($type == "document") {
             $element = Document::getByPath($path);
         }
+
         return $element;
     }
 
@@ -255,6 +259,7 @@ class Service extends Model\AbstractModel
 
             return self::getSaveCopyName($type, $sourceKey, $target);
         }
+
         return $sourceKey;
     }
 
@@ -294,6 +299,7 @@ class Service extends Model\AbstractModel
         } elseif ($type == "document") {
             $element = Document::getById($id);
         }
+
         return $element;
     }
 
@@ -312,6 +318,7 @@ class Service extends Model\AbstractModel
         } elseif ($element instanceof Asset) {
             $type = "asset";
         }
+
         return $type;
     }
 
@@ -496,6 +503,7 @@ class Service extends Model\AbstractModel
         } else {
             $data["published"] = true;
         }
+
         return $data;
     }
 
@@ -556,6 +564,7 @@ class Service extends Model\AbstractModel
             foreach ($data as &$value) {
                 $value = self::renewReferences($value, false);
             }
+
             return $data;
         } elseif (is_object($data)) {
             if ($data instanceof ElementInterface && !$initial) {
@@ -585,9 +594,11 @@ class Service extends Model\AbstractModel
                 foreach ($properties as $name => $value) {
                     $data->$name = self::renewReferences($value, false);
                 }
+
                 return $data;
             }
         }
+
         return $data;
     }
 
@@ -719,6 +730,7 @@ class Service extends Model\AbstractModel
         } else {
             return $foundElement;
         }
+
         return $lastFolder;
     }
 
@@ -804,6 +816,7 @@ class Service extends Model\AbstractModel
                 }
             }
         }
+
         return $data ? $data : [];
     }
 }

@@ -39,6 +39,7 @@ class Dao extends Model\Dao\AbstractDao
             $containerType = $context["containerType"];
             if ($containerType == "fieldcollection") {
                 $containerKey = $context["containerKey"];
+
                 return "object_collection_" .  $containerKey . "_localized_" . $this->model->getClass()->getId();
             }
         }

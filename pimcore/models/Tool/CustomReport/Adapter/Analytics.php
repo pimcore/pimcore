@@ -51,6 +51,7 @@ class Analytics extends AbstractAdapter
 
         $results = $this->getDataHelper($fields, $drillDownFilters);
         $data = $this->extractData($results);
+
         return [ "data" => $data, "total" => $results['totalResults'] ];
     }
 

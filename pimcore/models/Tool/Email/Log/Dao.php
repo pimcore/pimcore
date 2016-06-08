@@ -134,6 +134,7 @@ class Dao extends Model\Dao\AbstractDao
             foreach ($data as $key => $value) {
                 $loggingData[] = self::prepareLoggingData($key, $value);
             }
+
             return $loggingData;
         }
     }
@@ -166,6 +167,7 @@ class Dao extends Model\Dao\AbstractDao
                 $class->children[] = self::prepareLoggingData($entryKey, $entryValue);
             }
         }
+
         return $class;
     }
 }

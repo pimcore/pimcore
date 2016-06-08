@@ -140,6 +140,7 @@ class InternalNewsletterSendCommand extends AbstractCommand
     protected function obfuscateEmail($email)
     {
         $email = substr_replace($email, ".xxx", strrpos($email, "."));
+
         return $email;
     }
 

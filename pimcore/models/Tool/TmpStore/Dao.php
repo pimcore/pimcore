@@ -45,6 +45,7 @@ class Dao extends Model\Dao\AbstractDao
                 "expiryDate" => (time()+$lifetime),
                 "serialized" => (int) $serialized
             ]);
+
             return true;
         } catch (\Exception $e) {
             return false;
@@ -73,6 +74,7 @@ class Dao extends Model\Dao\AbstractDao
             }
 
             $this->assignVariablesToModel($item);
+
             return true;
         }
 
@@ -94,6 +96,7 @@ class Dao extends Model\Dao\AbstractDao
     public function getIdsByTag($tag)
     {
         $items = $this->db->fetchCol("SELECT id FROM tmp_store WHERE tag = ?", [$tag]);
+
         return $items;
     }
 }

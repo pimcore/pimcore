@@ -46,6 +46,7 @@ class Listing extends Model\Listing\AbstractListing
     public function setTags($tags)
     {
         $this->tags = $tags;
+
         return $this;
     }
 

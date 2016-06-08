@@ -472,6 +472,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
                 "joins" => $joins,
                 "conditions" => $conditions
             ];
+
             return $result;
         } else {
             if (!empty($conditionFilters)) {
@@ -925,7 +926,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
         $openTags = [];
         $final = [];
 
-        $replacement = ['%_%_%lt;%_%_%','%_%_%gt;%_%_%'];
+        $replacement = ['%_%_%lt;%_%_%', '%_%_%gt;%_%_%'];
         $content = str_replace(['&lt;', '&gt;'], $replacement, $content);
         $content = html_entity_decode($content, null, "UTF-8");
 
@@ -964,6 +965,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
         }
 
         $content = implode("", $final);
+
         return $content;
     }
 

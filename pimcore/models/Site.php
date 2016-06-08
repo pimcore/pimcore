@@ -153,6 +153,7 @@ class Site extends AbstractModel
     {
         $site = new self();
         $site->setValues($data);
+
         return $site;
     }
 
@@ -178,6 +179,7 @@ class Site extends AbstractModel
     {
         if (\Zend_Registry::isRegistered("pimcore_site")) {
             $site = \Zend_Registry::get("pimcore_site");
+
             return $site;
         } else {
             throw new \Exception("This request/process is not inside a subsite");
@@ -223,6 +225,7 @@ class Site extends AbstractModel
     public function setId($id)
     {
         $this->id = (int) $id;
+
         return $this;
     }
 
@@ -236,6 +239,7 @@ class Site extends AbstractModel
             $domains = \Pimcore\Tool\Serialize::unserialize($domains);
         }
         $this->domains = $domains;
+
         return $this;
     }
 
@@ -249,6 +253,7 @@ class Site extends AbstractModel
 
         $rd = Document::getById($this->rootId);
         $this->setRootDocument($rd);
+
         return $this;
     }
 
@@ -259,6 +264,7 @@ class Site extends AbstractModel
     public function setRootDocument($rootDocument)
     {
         $this->rootDocument = $rootDocument;
+
         return $this;
     }
 
@@ -269,6 +275,7 @@ class Site extends AbstractModel
     public function setRootPath($path)
     {
         $this->rootPath = $path;
+
         return $this;
     }
 
@@ -280,6 +287,7 @@ class Site extends AbstractModel
         if (!$this->rootPath && $this->getRootDocument()) {
             return $this->getRootDocument()->getRealFullPath();
         }
+
         return $this->rootPath;
     }
 
@@ -352,6 +360,7 @@ class Site extends AbstractModel
     public function setModificationDate($modificationDate)
     {
         $this->modificationDate = (int) $modificationDate;
+
         return $this;
     }
 
@@ -370,6 +379,7 @@ class Site extends AbstractModel
     public function setCreationDate($creationDate)
     {
         $this->creationDate = (int) $creationDate;
+
         return $this;
     }
 

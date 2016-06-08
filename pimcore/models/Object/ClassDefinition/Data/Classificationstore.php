@@ -445,6 +445,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
     {
         $this->childs = $childs;
         $this->fieldDefinitionsCache = null;
+
         return $this;
     }
 
@@ -456,6 +457,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
         if (is_array($this->childs) && count($this->childs) > 0) {
             return true;
         }
+
         return false;
     }
 
@@ -508,6 +510,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
                 }
             }
         }
+
         return $this;
     }
 
@@ -583,6 +586,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
 
             $object->{$this->getName()} = $store;
         }
+
         return $object->{$this->getName()};
     }
 
@@ -594,6 +598,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
     {
         $code = "";
         $code .= parent::getGetterCode($class);
+
         return $code;
     }
 
@@ -617,6 +622,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
     {
         /** @var $keyConfig Object\Classificationstore\KeyConfig */
         $keyConfig = Object\Classificationstore\DefinitionCache::get($keyId);
+
         return $keyConfig;
     }
 
@@ -628,6 +634,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
     public function setHeight($height)
     {
         $this->height = $this->getAsIntegerCast($height);
+
         return $this;
     }
 
@@ -646,6 +653,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
     public function setLayout($layout)
     {
         $this->layout = $layout;
+
         return $this;
     }
 
@@ -664,6 +672,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
     public function setName($name)
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -682,6 +691,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
     public function setRegion($region)
     {
         $this->region = $region;
+
         return $this;
     }
 
@@ -700,6 +710,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
     public function setTitle($title)
     {
         $this->title = $title;
+
         return $this;
     }
 
@@ -718,6 +729,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
     public function setWidth($width)
     {
         $this->width = $this->getAsIntegerCast($width);
+
         return $this;
     }
 
@@ -829,6 +841,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
         $vars = get_object_vars($this);
         unset($vars['fieldDefinitionsCache']);
         unset($vars['referencedFields']);
+
         return array_keys($vars);
     }
 
@@ -1087,6 +1100,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
             $validLanguages = [];
         }
         array_unshift($validLanguages, "default");
+
         return $validLanguages;
     }
 }

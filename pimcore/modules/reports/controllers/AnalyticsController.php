@@ -111,6 +111,7 @@ class Reports_AnalyticsController extends \Pimcore\Controller\Action\Admin\Repor
                 $site = Site::getById($this->getParam("site"));
                 $path = preg_replace("@^" . preg_quote($site->getRootPath(), "@") . "/@", "/", $path);
             }
+
             return $path;
         }
 
@@ -405,6 +406,7 @@ class Reports_AnalyticsController extends \Pimcore\Controller\Action\Admin\Repor
         if (strpos($type, "date") !== false) {
             $date = new \DateTime();
             $date->setTimestamp(strtotime($value));
+
             return $date->format("Y-m-d");
         }
 
@@ -415,6 +417,7 @@ class Reports_AnalyticsController extends \Pimcore\Controller\Action\Admin\Repor
     {
         $minutes = intval(($sec / 60) % 60);
         $seconds = intval($sec % 60);
+
         return str_pad($minutes, 2, "0", STR_PAD_LEFT).":".str_pad($seconds, 2, "0", STR_PAD_LEFT);
     }
 }

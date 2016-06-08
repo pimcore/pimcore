@@ -38,6 +38,7 @@ class Serialize
         if (!empty($data) && is_string($data)) {
             $data = unserialize($data);
         }
+
         return $data;
     }
 

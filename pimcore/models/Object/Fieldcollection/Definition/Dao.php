@@ -65,7 +65,7 @@ class Dao extends Model\Dao\AbstractDao
 
         $existingColumns = $this->getValidTableColumns($table, false); // no caching of table definition
         $columnsToRemove = $existingColumns;
-        $protectedColums = ["o_id", "index","fieldname"];
+        $protectedColums = ["o_id", "index", "fieldname"];
 
         Object\ClassDefinition\Service::updateTableDefinitions($this->tableDefinitions, ([$table]));
 

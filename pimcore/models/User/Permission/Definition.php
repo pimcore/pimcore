@@ -47,6 +47,7 @@ class Definition extends Model\AbstractModel
     public function setKey($key)
     {
         $this->key = $key;
+
         return $this;
     }
 
@@ -82,11 +83,13 @@ class Definition extends Model\AbstractModel
         $permissionDefinition = static::getByKey($permission);
         if ($permissionDefinition instanceof self) {
             \Logger::info("Permission $permission allready exists. Skipping creation.");
+
             return $permissionDefinition;
         } else {
             $permissionDefinition = new static();
             $permissionDefinition->setKey($permission);
             $permissionDefinition->save();
+
             return $permissionDefinition;
         }
     }

@@ -14,7 +14,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
@@ -95,6 +94,7 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data
         if ($columnLength) {
             $this->columnLength = $columnLength;
         }
+
         return $this;
     }
 
@@ -167,6 +167,7 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data
         if ($data instanceof Model\Object\Data\CalculatedValue) {
             $data = Model\Object\Service::getCalculatedFieldValueForEditMode($object, [], $data);
         }
+
         return $data;
     }
 

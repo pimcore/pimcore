@@ -121,6 +121,7 @@ class Archive
             $phar->setMetadata($metaData);
         }
         $phar->stopBuffering();
+
         return $phar;
     }
 
@@ -152,6 +153,7 @@ class Archive
         if (!is_dir($destinationDir)) {
             File::mkdir($destinationDir);
         }
-        return [$sourceDir,$destinationFile,$items];
+
+        return [$sourceDir, $destinationFile, $items];
     }
 }

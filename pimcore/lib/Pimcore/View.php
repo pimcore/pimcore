@@ -129,6 +129,7 @@ class View extends \Zend_View
 
         if ($capture) {
             $this->placeholder($captureKey)->captureEnd();
+
             return trim($this->placeholder($captureKey)->getValue());
         }
     }
@@ -303,6 +304,7 @@ class View extends \Zend_View
     public function setRequest(\Zend_Controller_Request_Abstract $request)
     {
         $this->request = $request;
+
         return $this;
     }
 
@@ -349,6 +351,7 @@ class View extends \Zend_View
             if (!isset($arguments[1])) {
                 $arguments[1] = [];
             }
+
             return $this->tag($method, $arguments[0], $arguments[1]);
         }
 

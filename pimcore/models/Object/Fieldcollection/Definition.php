@@ -54,6 +54,7 @@ class Definition extends Model\AbstractModel
     public function setKey($key)
     {
         $this->key = $key;
+
         return $this;
     }
     
@@ -72,6 +73,7 @@ class Definition extends Model\AbstractModel
     public function setParentClass($parentClass)
     {
         $this->parentClass = $parentClass;
+
         return $this;
     }
     
@@ -93,6 +95,7 @@ class Definition extends Model\AbstractModel
         
         $this->fieldDefinitions = [];
         $this->extractDataDefinitions($this->layoutDefinitions);
+
         return $this;
     }
     
@@ -111,6 +114,7 @@ class Definition extends Model\AbstractModel
     public function setFieldDefinitions($fieldDefinitions)
     {
         $this->fieldDefinitions = $fieldDefinitions;
+
         return $this;
     }
 
@@ -122,6 +126,7 @@ class Definition extends Model\AbstractModel
     public function addFieldDefinition($key, $data)
     {
         $this->fieldDefinitions[$key] = $data;
+
         return $this;
     }
 
@@ -133,6 +138,7 @@ class Definition extends Model\AbstractModel
         if (array_key_exists($key, $this->fieldDefinitions)) {
             return $this->fieldDefinitions[$key];
         }
+
         return false;
     }
     

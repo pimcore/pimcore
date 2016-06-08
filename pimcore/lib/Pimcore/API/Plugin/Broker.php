@@ -48,6 +48,7 @@ class Broker
 
         $broker = new Broker();
         \Zend_Registry::set("Pimcore_API_Plugin_Broker", $broker);
+
         return $broker;
     }
 
@@ -87,6 +88,7 @@ class Broker
             } else {
                 \Logger::debug("Not registering plugin, it is not an object");
             }
+
             return $this;
         }
 
@@ -136,6 +138,7 @@ class Broker
                 }
             }
         }
+
         return $this;
     }
 
@@ -171,6 +174,7 @@ class Broker
                 return true;
             }
         }
+
         return false;
     }
 
@@ -226,6 +230,7 @@ class Broker
     {
         $modules = (array)$this->getModules();
         $plugins = (array)$this->getPlugins();
+
         return array_merge($modules, $plugins);
     }
 
@@ -247,7 +252,7 @@ class Broker
                     if (is_file($languageFile) and strtolower(substr($languageFile, -4, 4)) == ".csv") {
                         $handle = fopen($languageFile, "r");
                         while (($data = fgetcsv($handle, 0, ",")) !== false) {
-                            if( !isset($data[1]) ) {
+                            if (!isset($data[1])) {
                                 continue;
                             }
                             $pluginTranslations[$data[0]] = $data[1];
@@ -263,6 +268,7 @@ class Broker
                 \Logger::error("Plugin " . get_class($plugin) . " threw Exception when trying to get translations");
             }
         }
+
         return $translations;
     }
 }

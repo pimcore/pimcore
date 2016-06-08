@@ -79,6 +79,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
         $item = $data->$getter();
         if (!$item && !empty($parent)) {
             $data = $parent->{"get" . ucfirst($this->getName())}();
+
             return $this->doGetDataForEditmode($getter, $data, $params, $allowedBrickType, $objectFromVersion, $level + 1);
         }
 
@@ -126,6 +127,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
             "metaData" => $brickMetaData,
             "inherited" => $inherited
         ];
+
         return $editmodeDataItem;
     }
 
@@ -203,6 +205,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
             $result->metaData['objectid'] = $baseObject->getId();
             $result->metaData['inherited'] = $level != 0;
         }
+
         return $result;
     }
 
@@ -396,6 +399,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
         }
 
         $this->allowedTypes = (array)$allowedTypes;
+
         return $this;
     }
 
@@ -521,6 +525,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
         if ($value instanceof Object\Objectbrick) {
             $value->setFieldname($this->getName());
         }
+
         return $value;
     }
 
@@ -693,6 +698,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
         $valueGetter = "get" . ucfirst($key);
 
         $value = $fielddefinition->getDiffDataForEditmode($item->$valueGetter(), $baseObject);
+
         return $value;
     }
 
@@ -710,6 +716,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
 
         if (!$item && !empty($parent)) {
             $data = $parent->{"get" . ucfirst($this->getName())}();
+
             return $this->doGetDiffDataForEditmode($data, $getter, $objectFromVersion, $level + 1);
         }
 
@@ -827,6 +834,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
 
             $object->$valueSetter($brickdata);
         }
+
         return $brickdata;
     }
 

@@ -224,6 +224,7 @@ abstract class PageSnippet extends Model\Document
         if (empty($this->action)) {
             return "default";
         }
+
         return $this->action;
     }
 
@@ -235,6 +236,7 @@ abstract class PageSnippet extends Model\Document
         if (empty($this->controller)) {
             return "default";
         }
+
         return $this->controller;
     }
 
@@ -253,6 +255,7 @@ abstract class PageSnippet extends Model\Document
     public function setAction($action)
     {
         $this->action = $action;
+
         return $this;
     }
 
@@ -263,6 +266,7 @@ abstract class PageSnippet extends Model\Document
     public function setController($controller)
     {
         $this->controller = $controller;
+
         return $this;
     }
 
@@ -273,6 +277,7 @@ abstract class PageSnippet extends Model\Document
     public function setTemplate($template)
     {
         $this->template = $template;
+
         return $this;
     }
 
@@ -283,6 +288,7 @@ abstract class PageSnippet extends Model\Document
     public function setModule($module)
     {
         $this->module = $module;
+
         return $this;
     }
 
@@ -325,6 +331,7 @@ abstract class PageSnippet extends Model\Document
         } catch (\Exception $e) {
             \Logger::warning("can't set element " . $name . " with the type " . $type . " to the document: " . $this->getRealFullPath());
         }
+
         return $this;
     }
 
@@ -338,6 +345,7 @@ abstract class PageSnippet extends Model\Document
     public function setElement($name, $data)
     {
         $this->elements[$name] = $data;
+
         return $this;
     }
 
@@ -379,11 +387,13 @@ abstract class PageSnippet extends Model\Document
                         $inheritedElement = clone $inheritedElement;
                         $inheritedElement->setInherited(true);
                         $this->inheritedElements[$name] = $inheritedElement;
+
                         return $inheritedElement;
                     }
                 }
             }
         }
+
         return null;
     }
 
@@ -409,6 +419,7 @@ abstract class PageSnippet extends Model\Document
         }
 
         $this->contentMasterDocumentId = $contentMasterDocumentId;
+
         return $this;
     }
 
@@ -439,6 +450,7 @@ abstract class PageSnippet extends Model\Document
         } else {
             $this->setContentMasterDocumentId(null);
         }
+
         return $this;
     }
 
@@ -449,6 +461,7 @@ abstract class PageSnippet extends Model\Document
     public function hasElement($name)
     {
         $elements = $this->getElements();
+
         return array_key_exists($name, $elements);
     }
 
@@ -460,6 +473,7 @@ abstract class PageSnippet extends Model\Document
         if ($this->elements === null) {
             $this->setElements($this->getDao()->getElements());
         }
+
         return $this->elements;
     }
 
@@ -470,6 +484,7 @@ abstract class PageSnippet extends Model\Document
     public function setElements($elements)
     {
         $this->elements = $elements;
+
         return $this;
     }
 
@@ -481,6 +496,7 @@ abstract class PageSnippet extends Model\Document
         if ($this->versions === null) {
             $this->setVersions($this->getDao()->getVersions());
         }
+
         return $this->versions;
     }
 
@@ -491,6 +507,7 @@ abstract class PageSnippet extends Model\Document
     public function setVersions($versions)
     {
         $this->versions = $versions;
+
         return $this;
     }
 
@@ -513,6 +530,7 @@ abstract class PageSnippet extends Model\Document
             $taskList->setCondition("cid = ? AND ctype='document'", $this->getId());
             $this->setScheduledTasks($taskList->load());
         }
+
         return $this->scheduledTasks;
     }
 
@@ -523,6 +541,7 @@ abstract class PageSnippet extends Model\Document
     public function setScheduledTasks($scheduledTasks)
     {
         $this->scheduledTasks = $scheduledTasks;
+
         return $this;
     }
 

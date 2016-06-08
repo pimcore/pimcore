@@ -48,6 +48,7 @@ class Placeholder
     public function setId($id)
     {
         $this->id = (int) $id;
+
         return $this;
     }
 
@@ -66,6 +67,7 @@ class Placeholder
     public function setType($type)
     {
         $this->type = $type;
+
         return $this;
     }
 

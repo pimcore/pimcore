@@ -41,6 +41,7 @@ class Listing extends Model\Listing\JsonListing
     public function setNewsletter($newsletter)
     {
         $this->newsletter = $newsletter;
+
         return $this;
     }
 }

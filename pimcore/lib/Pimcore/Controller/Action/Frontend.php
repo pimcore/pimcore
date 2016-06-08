@@ -331,6 +331,7 @@ abstract class Frontend extends Action
             $this->document = $document;
             $this->view->document = $document;
         }
+
         return $this;
     }
 

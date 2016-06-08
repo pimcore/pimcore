@@ -196,6 +196,7 @@ class KeyValue extends Model\Object\ClassDefinition\Data
     public function setKeyWidth($width)
     {
         $this->keyWidth = $this->getAsIntegerCast($width);
+
         return $this;
     }
 
@@ -206,6 +207,7 @@ class KeyValue extends Model\Object\ClassDefinition\Data
     public function setGroupWidth($width)
     {
         $this->groupWidth = $this->getAsIntegerCast($width);
+
         return $this;
     }
 
@@ -216,6 +218,7 @@ class KeyValue extends Model\Object\ClassDefinition\Data
     public function setGroupDescWidth($width)
     {
         $this->groupDescWidth = $this->getAsIntegerCast($width);
+
         return $this;
     }
 
@@ -226,6 +229,7 @@ class KeyValue extends Model\Object\ClassDefinition\Data
     public function setDescWidth($width)
     {
         $this->descWidth = $this->getAsIntegerCast($width);
+
         return $this;
     }
 
@@ -236,6 +240,7 @@ class KeyValue extends Model\Object\ClassDefinition\Data
     public function setUnitWidth($width)
     {
         $this->unitWidth = $this->getAsIntegerCast($width);
+
         return $this;
     }
 
@@ -254,6 +259,7 @@ class KeyValue extends Model\Object\ClassDefinition\Data
     public function setMaxheight($maxheight)
     {
         $this->maxheight = $this->getAsIntegerCast($maxheight);
+
         return $this;
     }
 
@@ -288,6 +294,7 @@ class KeyValue extends Model\Object\ClassDefinition\Data
     public function setValueWidth($width)
     {
         $this->valueWidth = $this->getAsIntegerCast($width);
+
         return $this;
     }
 
@@ -357,6 +364,7 @@ class KeyValue extends Model\Object\ClassDefinition\Data
             $property["mandatory"] = $keyConfig->getMandatory();
             $result[] = $property;
         }
+
         return $result;
     }
 
@@ -442,6 +450,7 @@ class KeyValue extends Model\Object\ClassDefinition\Data
             }
         }
         $dataFromEditMode = $this->getDataFromEditmode($result, $object, $params);
+
         return $dataFromEditMode;
     }
 
@@ -535,6 +544,7 @@ class KeyValue extends Model\Object\ClassDefinition\Data
 
                 $result[] = $resultItem;
             }
+
             return $result;
         }
     }
@@ -581,6 +591,7 @@ class KeyValue extends Model\Object\ClassDefinition\Data
             $keyValueData->setProperties($pairs);
             $keyValueData->setClass($relatedObject->getClass());
             $keyValueData->setObjectId($relatedObject->getId());
+
             return ($keyValueData);
         }
     }

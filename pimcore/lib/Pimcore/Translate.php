@@ -161,6 +161,7 @@ class Translate extends \Zend_Translate_Adapter
                     }
                 }
             }
+
             return $translation;
         }
 
@@ -272,6 +273,7 @@ class Translate extends \Zend_Translate_Adapter
     public function isTranslated($messageId, $original = false, $locale = null)
     {
         $messageId = mb_strtolower($messageId);
+
         return parent::isTranslated($messageId, $original, $locale);
     }
 

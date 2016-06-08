@@ -39,6 +39,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
                 return $properties[$name]->getData();
             }
         }
+
         return null;
     }
 
@@ -49,6 +50,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     public function hasProperty($name)
     {
         $properties = $this->getProperties();
+
         return array_key_exists($name, $properties);
     }
 
@@ -70,6 +72,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     public function getCacheTag()
     {
         $elementType = Service::getElementType($this);
+
         return $elementType . "_" . $this->getId();
     }
 
@@ -85,6 +88,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $tags = is_array($tags) ? $tags : [];
 
         $tags[$this->getCacheTag()] = $this->getCacheTag();
+
         return $tags;
     }
 
@@ -129,7 +133,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     {
         $elementType = Service::getElementType($this);
         $vars = get_class_vars("\\Pimcore\\Model\\User\\Workspace\\" . ucfirst($elementType));
-        $ignored = ["userId","cid","cpath","dao"];
+        $ignored = ["userId", "cid", "cpath", "dao"];
         $permissions = [];
 
         foreach ($vars as $name => $defaultValue) {

@@ -120,6 +120,7 @@ class Imagick extends Adapter
         } catch (\Exception $e) {
             \Logger::error("Unable to load image: " . $imagePath);
             \Logger::error($e);
+
             return false;
         }
 
@@ -781,7 +782,7 @@ class Imagick extends Adapter
 
         try {
             $type = $this->resource->getimageformat();
-            $vectorTypes = ["EPT","EPDF","EPI","EPS","EPS2","EPS3","EPSF","EPSI","EPT","PDF","PFA","PFB","PFM","PS","PS2","PS3","SVG","SVGZ","MVG"];
+            $vectorTypes = ["EPT", "EPDF", "EPI", "EPS", "EPS2", "EPS3", "EPSF", "EPSI", "EPT", "PDF", "PFA", "PFB", "PFM", "PS", "PS2", "PS3", "SVG", "SVGZ", "MVG"];
 
             if (in_array(strtoupper($type), $vectorTypes)) {
                 return true;

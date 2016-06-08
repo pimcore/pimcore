@@ -39,6 +39,7 @@ class PDFreactor
         } elseif ($status > 400) {
             throw new Exception('PDFreactor Web Service error. Please check your Configuration. ' . $status);
         }
+
         return json_decode($result);
     }
     public function convertAsBinary($config)
@@ -64,6 +65,7 @@ class PDFreactor
         } elseif ($status > 400) {
             throw new Exception('PDFreactor Web Service error. Please check your Configuration.');
         }
+
         return $result;
     }
     public function convertAsync($config)
@@ -101,6 +103,7 @@ class PDFreactor
                 }
             }
         }
+
         return $documentId;
     }
     public function getProgress($documentId)
@@ -128,6 +131,7 @@ class PDFreactor
         } elseif ($status > 400) {
             throw new Exception('PDFreactor Web Service error. Please check your Configuration.');
         }
+
         return json_decode($result);
     }
     public function getDocument($documentId)
@@ -155,6 +159,7 @@ class PDFreactor
         } elseif ($status > 400) {
             throw new Exception('PDFreactor Web Service error. Please check your Configuration.');
         }
+
         return json_decode($result);
     }
     public function getDocumentAsBinary($documentId)
@@ -182,6 +187,7 @@ class PDFreactor
         } elseif ($status > 400) {
             throw new Exception('PDFreactor Web Service error. Please check your Configuration.');
         }
+
         return $result;
     }
     public function deleteDocument($documentId)
@@ -232,6 +238,7 @@ class PDFreactor
         } elseif ($status > 400) {
             throw new Exception('PDFreactor Web Service error. Please check your Configuration.');
         }
+
         return json_decode($result);
     }
     public function getStatus()
@@ -264,6 +271,7 @@ class PDFreactor
         if (!is_null($documentId)) {
             return $this->url . "/document/" . $documentId;
         }
+
         return null;
     }
     public function getProgressUrl($documentId)
@@ -271,6 +279,7 @@ class PDFreactor
         if (!is_null($documentId)) {
             return $this->url . "/progress/" . $documentId;
         }
+
         return null;
     }
     const VERSION = 0;

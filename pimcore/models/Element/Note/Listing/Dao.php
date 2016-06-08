@@ -38,6 +38,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         }
 
         $this->model->setNotes($notes);
+
         return $notes;
     }
 
@@ -45,6 +46,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function loadIdList()
     {
         $notesIds = $this->db->fetchCol("SELECT id FROM notes" . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+
         return $notesIds;
     }
 

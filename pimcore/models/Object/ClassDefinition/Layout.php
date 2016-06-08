@@ -157,6 +157,7 @@ class Layout
     public function setName($name)
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -167,6 +168,7 @@ class Layout
     public function setType($type)
     {
         $this->type = $type;
+
         return $this;
     }
 
@@ -177,6 +179,7 @@ class Layout
     public function setRegion($region)
     {
         $this->region = $region;
+
         return $this;
     }
 
@@ -187,6 +190,7 @@ class Layout
     public function setTitle($title)
     {
         $this->title = $title;
+
         return $this;
     }
 
@@ -201,6 +205,7 @@ class Layout
         } else {
             $this->width = $width;
         }
+
         return $this;
     }
 
@@ -215,6 +220,7 @@ class Layout
         } else {
             $this->height = $height;
         }
+
         return $this;
     }
 
@@ -225,6 +231,7 @@ class Layout
     public function setCollapsible($collapsible)
     {
         $this->collapsible = (bool) $collapsible;
+
         return $this;
     }
 
@@ -235,6 +242,7 @@ class Layout
     public function setPermissions($permissions)
     {
         $this->permissions = $permissions;
+
         return $this;
     }
 
@@ -253,6 +261,7 @@ class Layout
     public function setChilds($childs)
     {
         $this->childs = $childs;
+
         return $this;
     }
 
@@ -264,6 +273,7 @@ class Layout
         if (is_array($this->childs) && count($this->childs) > 0) {
             return true;
         }
+
         return false;
     }
 
@@ -291,6 +301,7 @@ class Layout
                 }
             }
         }
+
         return $this;
     }
 
@@ -309,6 +320,7 @@ class Layout
     public function setDatatype($datatype)
     {
         $this->datatype = $datatype;
+
         return $this;
     }
 
@@ -328,6 +340,7 @@ class Layout
     public function setLocked($locked)
     {
         $this->locked = (bool) $locked;
+
         return $this;
     }
 
@@ -338,6 +351,7 @@ class Layout
     public function setCollapsed($collapsed)
     {
         $this->collapsed = $collapsed;
+
         return $this;
     }
 
@@ -356,6 +370,7 @@ class Layout
     public function setBodyStyle($bodyStyle)
     {
         $this->bodyStyle = $bodyStyle;
+
         return $this;
     }
 

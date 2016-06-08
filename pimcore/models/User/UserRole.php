@@ -80,6 +80,7 @@ class UserRole extends AbstractUser
     public function setAllAclToFalse()
     {
         $this->permissions = [];
+
         return $this;
     }
 
@@ -96,6 +97,7 @@ class UserRole extends AbstractUser
             $position = array_search($permissionName, $this->permissions);
             array_splice($this->permissions, $position, 1);
         }
+
         return $this;
     }
 
@@ -150,6 +152,7 @@ class UserRole extends AbstractUser
         } elseif (is_array($permissions)) {
             $this->permissions = $permissions;
         }
+
         return $this;
     }
 
@@ -160,6 +163,7 @@ class UserRole extends AbstractUser
     public function setWorkspacesAsset($workspacesAsset)
     {
         $this->workspacesAsset = $workspacesAsset;
+
         return $this;
     }
 
@@ -178,6 +182,7 @@ class UserRole extends AbstractUser
     public function setWorkspacesDocument($workspacesDocument)
     {
         $this->workspacesDocument = $workspacesDocument;
+
         return $this;
     }
 
@@ -196,6 +201,7 @@ class UserRole extends AbstractUser
     public function setWorkspacesObject($workspacesObject)
     {
         $this->workspacesObject = $workspacesObject;
+
         return $this;
     }
 

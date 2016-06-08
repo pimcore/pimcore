@@ -99,6 +99,7 @@ class Numeric extends Model\Object\ClassDefinition\Data
     public function setWidth($width)
     {
         $this->width = $this->getAsIntegerCast($width);
+
         return $this;
     }
 
@@ -121,6 +122,7 @@ class Numeric extends Model\Object\ClassDefinition\Data
         if (strlen(strval($defaultValue)) > 0) {
             $this->defaultValue = $defaultValue;
         }
+
         return $this;
     }
 
@@ -248,6 +250,7 @@ class Numeric extends Model\Object\ClassDefinition\Data
         if (is_numeric($data)) {
             return $data;
         }
+
         return null;
     }
 
@@ -263,6 +266,7 @@ class Numeric extends Model\Object\ClassDefinition\Data
         if (is_numeric($data)) {
             return $this->toNumeric($data);
         }
+
         return $data;
     }
 
@@ -366,6 +370,7 @@ class Numeric extends Model\Object\ClassDefinition\Data
     public function getForCsvExport($object, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
+
         return strval($data);
     }
 
@@ -380,6 +385,7 @@ class Numeric extends Model\Object\ClassDefinition\Data
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
         $value = $this->toNumeric(str_replace(",", ".", $importValue));
+
         return $value;
     }
 
@@ -411,6 +417,7 @@ class Numeric extends Model\Object\ClassDefinition\Data
         if (strpos((string) $value, ".") === false) {
             return (int) $value;
         }
+
         return (float) $value;
     }
 }

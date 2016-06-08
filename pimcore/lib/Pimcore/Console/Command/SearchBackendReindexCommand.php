@@ -35,7 +35,7 @@ class SearchBackendReindexCommand extends AbstractCommand
         $db->query("TRUNCATE `search_backend_data`;");
 
         $elementsPerLoop = 100;
-        $types = ["asset","document","object"];
+        $types = ["asset", "document", "object"];
 
         foreach ($types as $type) {
             $listClassName = "\\Pimcore\\Model\\" . ucfirst($type) . "\\Listing";

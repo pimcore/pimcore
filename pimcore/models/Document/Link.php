@@ -114,6 +114,7 @@ class Link extends Model\Document
                 }
             }
         }
+
         return $tags;
     }
 
@@ -135,6 +136,7 @@ class Link extends Model\Document
         }
 
         $this->href = $path;
+
         return $path;
     }
 
@@ -180,6 +182,7 @@ class Link extends Model\Document
     public function setTarget($target)
     {
         $this->setProperty("navigation_target", "text", $target, false);
+
         return $this;
     }
 
@@ -225,6 +228,7 @@ class Link extends Model\Document
         } else {
             $this->internal = null;
         }
+
         return $this;
     }
 
@@ -235,6 +239,7 @@ class Link extends Model\Document
     public function setDirect($direct)
     {
         $this->direct = $direct;
+
         return $this;
     }
 
@@ -245,6 +250,7 @@ class Link extends Model\Document
     public function setLinktype($linktype)
     {
         $this->linktype = $linktype;
+
         return $this;
     }
 
@@ -269,6 +275,7 @@ class Link extends Model\Document
     public function setName($name)
     {
         $this->setProperty("navigation_name", "text", $name, false);
+
         return $this;
     }
 
@@ -288,6 +295,7 @@ class Link extends Model\Document
     public function setInternalType($type)
     {
         $this->internalType = $type;
+
         return $this;
     }
 
@@ -303,6 +311,7 @@ class Link extends Model\Document
                 return $this->object;
             }
         }
+
         return false;
     }
 
@@ -312,6 +321,7 @@ class Link extends Model\Document
     public function setObject($object)
     {
         $this->object = $object;
+
         return $this;
     }
 
@@ -350,6 +360,7 @@ class Link extends Model\Document
     public function setParameters($parameters)
     {
         $this->setProperty("navigation_parameters", "text", $parameters, false);
+
         return $this;
     }
 
@@ -371,6 +382,7 @@ class Link extends Model\Document
     public function setAnchor($anchor)
     {
         $this->setProperty("navigation_anchor", "text", $anchor, false);
+
         return $this;
     }
 
@@ -389,6 +401,7 @@ class Link extends Model\Document
     public function setTitle($title)
     {
         $this->setProperty("navigation_title", "text", $title, false);
+
         return $this;
     }
 
@@ -410,6 +423,7 @@ class Link extends Model\Document
     public function setAccesskey($accesskey)
     {
         $this->setProperty("accesskey", "text", $accesskey, false);
+
         return $this;
     }
 
@@ -431,6 +445,7 @@ class Link extends Model\Document
     public function setRel($rel)
     {
         $this->setProperty("navigation_relation", "text", $rel, false);
+
         return $this;
     }
 
@@ -452,6 +467,7 @@ class Link extends Model\Document
     public function setTabindex($tabindex)
     {
         $this->setProperty("navigation_tabindex", "text", $tabindex, false);
+
         return $this;
     }
 

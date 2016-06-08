@@ -48,6 +48,7 @@ abstract class AbstractArea
     public function setView($view)
     {
         $this->view = $view;
+
         return $this;
     }
 
@@ -66,6 +67,7 @@ abstract class AbstractArea
     public function setConfig($config)
     {
         $this->config = $config;
+
         return $this;
     }
 
@@ -86,6 +88,7 @@ abstract class AbstractArea
         if (array_key_exists($key, $this->params)) {
             return $this->params[$key];
         }
+
         return;
     }
 
@@ -133,6 +136,7 @@ abstract class AbstractArea
     public function setParams($params)
     {
         $this->params = $params;
+
         return $this;
     }
 
@@ -143,6 +147,7 @@ abstract class AbstractArea
     public function setBrick($brick)
     {
         $this->brick = $brick;
+
         return $this;
     }
 

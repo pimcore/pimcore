@@ -28,6 +28,7 @@ class Factory
     public static function getManager($pidFile)
     {
         $manager = new Procedural($pidFile);
+
         return $manager;
     }
 }

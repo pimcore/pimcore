@@ -149,6 +149,7 @@ class ClassDefinition extends Model\AbstractModel
                 \Zend_Registry::set($cacheKey, $class);
             } catch (\Exception $e) {
                 \Logger::error($e);
+
                 return null;
             }
         }
@@ -168,6 +169,7 @@ class ClassDefinition extends Model\AbstractModel
             $class->getDao()->getByName($name);
         } catch (\Exception $e) {
             \Logger::error($e);
+
             return null;
         }
 
@@ -185,6 +187,7 @@ class ClassDefinition extends Model\AbstractModel
     {
         $class = new self();
         $class->setValues($values);
+
         return $class;
     }
 
@@ -503,6 +506,7 @@ class ClassDefinition extends Model\AbstractModel
     public function setId($id)
     {
         $this->id = (int) $id;
+
         return $this;
     }
 
@@ -513,6 +517,7 @@ class ClassDefinition extends Model\AbstractModel
     public function setName($name)
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -523,6 +528,7 @@ class ClassDefinition extends Model\AbstractModel
     public function setCreationDate($creationDate)
     {
         $this->creationDate = (int) $creationDate;
+
         return $this;
     }
 
@@ -533,6 +539,7 @@ class ClassDefinition extends Model\AbstractModel
     public function setModificationDate($modificationDate)
     {
         $this->modificationDate = (int) $modificationDate;
+
         return $this;
     }
 
@@ -543,6 +550,7 @@ class ClassDefinition extends Model\AbstractModel
     public function setUserOwner($userOwner)
     {
         $this->userOwner = (int) $userOwner;
+
         return $this;
     }
 
@@ -553,6 +561,7 @@ class ClassDefinition extends Model\AbstractModel
     public function setUserModification($userModification)
     {
         $this->userModification = (int) $userModification;
+
         return $this;
     }
 
@@ -579,6 +588,7 @@ class ClassDefinition extends Model\AbstractModel
     public function setFieldDefinitions($fieldDefinitions)
     {
         $this->fieldDefinitions = $fieldDefinitions;
+
         return $this;
     }
 
@@ -590,6 +600,7 @@ class ClassDefinition extends Model\AbstractModel
     public function addFieldDefinition($key, $data)
     {
         $this->fieldDefinitions[$key] = $data;
+
         return $this;
     }
 
@@ -601,6 +612,7 @@ class ClassDefinition extends Model\AbstractModel
         if (array_key_exists($key, $this->fieldDefinitions)) {
             return $this->fieldDefinitions[$key];
         }
+
         return false;
     }
 
@@ -662,6 +674,7 @@ class ClassDefinition extends Model\AbstractModel
     public function setParent($parent)
     {
         $this->parent = $parent;
+
         return $this;
     }
 
@@ -688,6 +701,7 @@ class ClassDefinition extends Model\AbstractModel
     public function setUseTraits($useTraits)
     {
         $this->useTraits = $useTraits;
+
         return $this;
     }
 
@@ -714,6 +728,7 @@ class ClassDefinition extends Model\AbstractModel
     public function setParentClass($parentClass)
     {
         $this->parentClass = $parentClass;
+
         return $this;
     }
 
@@ -724,6 +739,7 @@ class ClassDefinition extends Model\AbstractModel
     public function setAllowInherit($allowInherit)
     {
         $this->allowInherit = (bool) $allowInherit;
+
         return $this;
     }
 
@@ -734,6 +750,7 @@ class ClassDefinition extends Model\AbstractModel
     public function setAllowVariants($allowVariants)
     {
         $this->allowVariants = (bool) $allowVariants;
+
         return $this;
     }
 
@@ -752,6 +769,7 @@ class ClassDefinition extends Model\AbstractModel
     public function setIcon($icon)
     {
         $this->icon = $icon;
+
         return $this;
     }
 
@@ -772,6 +790,7 @@ class ClassDefinition extends Model\AbstractModel
         if (is_array($propertyVisibility)) {
             $this->propertyVisibility = $propertyVisibility;
         }
+
         return $this;
     }
 
@@ -782,6 +801,7 @@ class ClassDefinition extends Model\AbstractModel
     public function setPreviewUrl($previewUrl)
     {
         $this->previewUrl = $previewUrl;
+
         return $this;
     }
 
@@ -800,6 +820,7 @@ class ClassDefinition extends Model\AbstractModel
     public function setDescription($description)
     {
         $this->description = $description;
+
         return $this;
     }
 

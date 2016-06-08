@@ -325,6 +325,7 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
                     if ($a["priority"] == $b["priority"]) {
                         return 0;
                     }
+
                     return ($a["priority"] < $b["priority"]) ? 1 : -1;
                 });
                 $routes = $list->load();
@@ -440,6 +441,7 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
                     }
                 }
             }
+
             return $document;
         }
 

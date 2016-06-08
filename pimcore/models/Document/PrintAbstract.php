@@ -39,6 +39,7 @@ abstract class PrintAbstract extends Document\PageSnippet
         if ($this->lastGenerated) {
             return new \Zend_Date($this->lastGenerated, \Zend_Date::TIMESTAMP);
         }
+
         return null;
     }
 
@@ -79,6 +80,7 @@ abstract class PrintAbstract extends Document\PageSnippet
     public function renderDocument($params)
     {
         $html = Document\Service::render($this, $params, true);
+
         return $html;
     }
 

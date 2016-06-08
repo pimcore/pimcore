@@ -41,6 +41,7 @@ class Dao extends Model\Dao\AbstractDao
             if ($expire > 0) {
                 \Logger::debug("Lock '" . $key . "' expired (expiry time: " . $expire . ", lock date: " . $lock["date"] . " / current time: " . time() . ")");
                 $this->release($key);
+
                 return false;
             }
         }
@@ -68,6 +69,7 @@ class Dao extends Model\Dao\AbstractDao
 
             try {
                 $this->lock($key, false);
+
                 return true;
             } catch (\Exception $e) {
                 \Logger::debug($e);

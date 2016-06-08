@@ -96,6 +96,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
                             return true;
                         }
                     }
+
                     return false;
                 });
             }
@@ -181,6 +182,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
                             return true;
                         }
                     }
+
                     return false;
                 });
             }
@@ -211,6 +213,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
                 }
                 delete($dir, $thumbnail, $matches);
             }
+
             return $matches;
         };
 
@@ -670,6 +673,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
                             return true;
                         }
                     }
+
                     return false;
                 });
             }
@@ -1461,6 +1465,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
                 $resultItem["data"] = $item->getData("data");
                 break;
         }
+
         return $resultItem;
     }
 

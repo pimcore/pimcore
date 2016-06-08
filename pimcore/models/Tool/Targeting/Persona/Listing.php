@@ -45,6 +45,7 @@ class Listing extends Model\Listing\AbstractListing
     public function setPersonas($personas)
     {
         $this->personas = $personas;
+
         return $this;
     }
 

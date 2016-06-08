@@ -99,6 +99,7 @@ class Dao extends Model\Dao\AbstractDao
         $model = $this->model;
         $class = $model->getClass();
         $classId = $class->getId();
+
         return "object_keyvalue_" . $classId;
     }
 

@@ -105,6 +105,7 @@ class Hardlink extends Document
     public function setChildsFromSource($childsFromSource)
     {
         $this->childsFromSource = (bool) $childsFromSource;
+
         return $this;
     }
 
@@ -123,6 +124,7 @@ class Hardlink extends Document
     public function setSourceId($sourceId)
     {
         $this->sourceId = (int) $sourceId;
+
         return $this;
     }
 
@@ -141,6 +143,7 @@ class Hardlink extends Document
     public function setPropertiesFromSource($propertiesFromSource)
     {
         $this->propertiesFromSource = (bool) $propertiesFromSource;
+
         return $this;
     }
 

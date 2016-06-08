@@ -34,6 +34,7 @@ class Webmastertools
         if (self::getSiteConfig($site)) {
             return true;
         }
+
         return false;
     }
 
@@ -45,13 +46,14 @@ class Webmastertools
     {
         $siteKey = \Pimcore\Tool\Frontend::getSiteKey($site);
 
-        if( is_null(Config::getReportConfig()->webmastertools ) ) {
+        if (is_null(Config::getReportConfig()->webmastertools)) {
             return false;
         }
 
         if (Config::getReportConfig()->webmastertools->sites->$siteKey->verification) {
             return Config::getReportConfig()->webmastertools->sites->$siteKey;
         }
+
         return false;
     }
 }

@@ -164,6 +164,7 @@ class Config extends Model\AbstractModel
     public function setDescription($description)
     {
         $this->description = $description;
+
         return $this;
     }
 
@@ -182,6 +183,7 @@ class Config extends Model\AbstractModel
     public function setItems($items)
     {
         $this->items = $items;
+
         return $this;
     }
 
@@ -200,6 +202,7 @@ class Config extends Model\AbstractModel
     public function setName($name)
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -218,6 +221,7 @@ class Config extends Model\AbstractModel
     public function setAudioBitrate($audioBitrate)
     {
         $this->audioBitrate = (int) $audioBitrate;
+
         return $this;
     }
 
@@ -236,6 +240,7 @@ class Config extends Model\AbstractModel
     public function setVideoBitrate($videoBitrate)
     {
         $this->videoBitrate = (int) $videoBitrate;
+
         return $this;
     }
 

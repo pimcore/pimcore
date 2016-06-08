@@ -117,6 +117,7 @@ class CacheWarmingCommand extends AbstractCommand
             $objectTypes   = $this->getArrayOption('objectTypes', 'validObjectTypes', 'object type');
         } catch (\InvalidArgumentException $e) {
             $this->writeError($e->getMessage());
+
             return 1;
         }
 
@@ -167,6 +168,7 @@ class CacheWarmingCommand extends AbstractCommand
 
         if (count($list) > 1) {
             $lastElement = array_pop($list);
+
             return implode(', ', $list) . ' ' . $glue . ' ' . $lastElement;
         } else {
             return implode(', ', $list);

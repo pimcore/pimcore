@@ -29,6 +29,7 @@ class UUID extends Model\AbstractModel
     public function setInstanceIdentifier($instanceIdentifier)
     {
         $this->instanceIdentifier = $instanceIdentifier;
+
         return $this;
     }
 
@@ -44,6 +45,7 @@ class UUID extends Model\AbstractModel
             throw new \Exception("No instance identifier set in system config!");
         }
         $this->setInstanceIdentifier($instanceIdentifier);
+
         return $this;
     }
 
@@ -54,6 +56,7 @@ class UUID extends Model\AbstractModel
     public function setItemId($id)
     {
         $this->itemId = $id;
+
         return $this;
     }
 
@@ -72,6 +75,7 @@ class UUID extends Model\AbstractModel
     public function setType($type)
     {
         $this->type = $type;
+
         return $this;
     }
 
@@ -129,6 +133,7 @@ class UUID extends Model\AbstractModel
         }
 
         $this->item = $item;
+
         return $this;
     }
 
@@ -142,6 +147,7 @@ class UUID extends Model\AbstractModel
         $self = new self;
         $self->setSystemInstanceIdentifier();
         $self->setUuid($self->setItem($item)->createUuid());
+
         return $self;
     }
 
@@ -152,6 +158,7 @@ class UUID extends Model\AbstractModel
     public static function getByUuid($uuid)
     {
         $self = new self;
+
         return $self->getDao()->getByUuid($uuid);
     }
 
@@ -165,6 +172,7 @@ class UUID extends Model\AbstractModel
         $uuid = new static;
         $uuid->setSystemInstanceIdentifier()->setItem($item);
         $uuid->setUuid($uuid->createUuid());
+
         return $uuid;
     }
 }

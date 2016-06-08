@@ -84,6 +84,7 @@ class Url extends \Zend_View_Helper_Url
                 $urlParts = parse_url($url);
                 $url = str_replace($urlParts["path"], strtolower($urlParts["path"]), $url);
             }
+
             return $url;
         }
 

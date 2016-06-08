@@ -25,6 +25,7 @@ class Cast
     public static function castToClass($class, $object)
     {
         $class = ltrim($class, "\\");
+
         return unserialize(preg_replace('/^O:\d+:"[^"]++"/', 'O:' . strlen($class) . ':"' . $class . '"', serialize($object)));
     }
 }

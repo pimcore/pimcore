@@ -54,6 +54,7 @@ class Listing extends Model\Listing\AbstractListing
     public function setTasks($tasks)
     {
         $this->tasks = $tasks;
+
         return $this;
     }
 }

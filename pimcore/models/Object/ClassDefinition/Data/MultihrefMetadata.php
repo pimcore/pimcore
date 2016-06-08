@@ -72,6 +72,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
                 }
                 $counter++;
             }
+
             return $return;
         } elseif (is_array($data) and count($data)===0) {
             //give empty array if data was not null
@@ -152,6 +153,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
                     $d[] = $elementType . "|" . $element->getId();
                 }
             }
+
             return "," . implode(",", $ids) . ",";
         } elseif (is_array($data) && count($data) === 0) {
             return "";
@@ -201,6 +203,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
             if (empty($return)) {
                 $return = false;
             }
+
             return $return;
         }
     }
@@ -266,6 +269,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
                     $pathes[] = $eo->getRealFullPath();
                 }
             }
+
             return $pathes;
         }
     }
@@ -284,6 +288,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
                 $o = $metaObject->getElement();
                 $pathes[] = Element\Service::getElementType($o) . " " . $o->getRealFullPath();
             }
+
             return implode("<br />", $pathes);
         }
     }
@@ -345,6 +350,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
                     $paths[] = Element\Service::getType($eo) . ":" . $eo->getRealFullPath();
                 }
             }
+
             return implode(",", $paths);
         } else {
             return null;
@@ -400,6 +406,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
                 }
             }
         }
+
         return $tags;
     }
 
@@ -428,6 +435,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
                     $items[] = $item;
                 }
             }
+
             return $items;
         } else {
             return null;
@@ -483,6 +491,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
                     }
                 }
             }
+
             return $hrefs;
         } else {
             throw new \Exception("cannot get values from web service import - invalid data");
@@ -590,6 +599,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
                     $publishedList[] = $listElement;
                 }
             }
+
             return $publishedList;
         }
 
@@ -637,6 +647,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
             $this->columns[] = $c;
             $this->columnKeys[] = $c['key'];
         }
+
         return $this;
     }
 
@@ -657,6 +668,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
         foreach ($this->columns as $c) {
             $this->columnKeys[] = $c['key'];
         }
+
         return $this->columnKeys;
     }
 
@@ -670,6 +682,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
         if (is_array($a) && is_array($b)) {
             return $a['position'] - $b['position'];
         }
+
         return strcmp($a, $b);
     }
 
@@ -756,6 +769,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
                 }
             }
         }
+
         return $dependencies;
     }
 }

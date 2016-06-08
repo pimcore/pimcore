@@ -168,6 +168,7 @@ class Ghostscript extends Adapter
             return $this;
         } catch (\Exception $e) {
             \Logger::error($e);
+
             return false;
         }
     }
@@ -206,9 +207,11 @@ class Ghostscript extends Adapter
                     unlink($textFile);
                 }
             }
+
             return $text;
         } catch (\Exception $e) {
             \Logger::error($e);
+
             return false;
         }
     }

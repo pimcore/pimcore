@@ -50,6 +50,7 @@ class Service
             if ($folder instanceof Document\Folder) {
                 $className = Webservice\Data\Mapper::findWebserviceClass($folder, "out");
                 $apiFolder = Webservice\Data\Mapper::map($folder, $className, "out");
+
                 return $apiFolder;
             }
 
@@ -71,6 +72,7 @@ class Service
             if ($link instanceof Document\Link) {
                 $className = Webservice\Data\Mapper::findWebserviceClass($link, "out");
                 $apiLink = Webservice\Data\Mapper::map($link, $className, "out");
+
                 return $apiLink;
             }
 
@@ -92,6 +94,7 @@ class Service
             if ($link instanceof Document\Hardlink) {
                 $className = Webservice\Data\Mapper::findWebserviceClass($link, "out");
                 $apiLink = Webservice\Data\Mapper::map($link, $className, "out");
+
                 return $apiLink;
             }
 
@@ -113,6 +116,7 @@ class Service
             if ($link instanceof Document\Email) {
                 $className = Webservice\Data\Mapper::findWebserviceClass($link, "out");
                 $apiLink = Webservice\Data\Mapper::map($link, $className, "out");
+
                 return $apiLink;
             }
 
@@ -136,6 +140,7 @@ class Service
                 Document\Service::loadAllDocumentFields($page);
                 $className = Webservice\Data\Mapper::findWebserviceClass($page, "out");
                 $apiPage = Webservice\Data\Mapper::map($page, $className, "out");
+
                 return $apiPage;
             }
 
@@ -224,6 +229,7 @@ class Service
             if ($doc instanceof Document) {
                 $doc->setPublished(false);
                 $doc->save();
+
                 return true;
             }
 
@@ -244,6 +250,7 @@ class Service
             $doc = Document::getById($id);
             if ($doc instanceof Document) {
                 $doc->delete();
+
                 return true;
             }
 
@@ -445,6 +452,7 @@ class Service
             if ($wsDocument instanceof Webservice\Data\Document\Page\In) {
                 $wsDocument->type = "page";
                 $document = new Document\Page();
+
                 return $this->create($wsDocument, $document);
             }
             throw new \Exception("Unable to create new Document Page.");
@@ -464,6 +472,7 @@ class Service
             if ($wsDocument instanceof Webservice\Data\Document\Snippet\In) {
                 $wsDocument->type = "snippet";
                 $document = new Document\Snippet();
+
                 return $this->create($wsDocument, $document);
             }
 
@@ -484,6 +493,7 @@ class Service
             if ($wsDocument instanceof Webservice\Data\Document\Email\In) {
                 $wsDocument->type = "email";
                 $document = new Document\Email();
+
                 return $this->create($wsDocument, $document);
             }
 
@@ -505,6 +515,7 @@ class Service
             if ($wsDocument instanceof Webservice\Data\Document\Folder\In) {
                 $wsDocument->type = "folder";
                 $document = new Document\Folder();
+
                 return $this->create($wsDocument, $document);
             }
             throw new \Exception("Unable to create new Document Folder.");
@@ -524,6 +535,7 @@ class Service
             if ($wsDocument instanceof Webservice\Data\Document\Link\In) {
                 $wsDocument->type = "link";
                 $document = new Document\Link();
+
                 return $this->create($wsDocument, $document);
             }
             throw new \Exception("Unable to create new Document Link.");
@@ -543,6 +555,7 @@ class Service
             if ($wsDocument instanceof Webservice\Data\Document\Hardlink\In) {
                 $wsDocument->type = "hardlink";
                 $document = new Document\Hardlink();
+
                 return $this->create($wsDocument, $document);
             }
             throw new \Exception("Unable to create new Document Hardlink.");
@@ -563,6 +576,7 @@ class Service
             if ($wsDocument instanceof Webservice\Data\Asset\Folder\In) {
                 $wsDocument->type = "folder";
                 $asset = new Asset\Folder();
+
                 return $this->create($wsDocument, $asset);
             }
             throw new \Exception("Unable to create new Asset Folder.");
@@ -612,6 +626,7 @@ class Service
             if ($wsDocument instanceof Webservice\Data\Object\Folder\In) {
                 $wsDocument->type = "folder";
                 $object = new Object\Folder();
+
                 return $this->create($wsDocument, $object);
             }
 
@@ -663,6 +678,7 @@ class Service
             if ($asset instanceof Asset\Folder) {
                 $className = Webservice\Data\Mapper::findWebserviceClass($asset, "out");
                 $apiAsset = Webservice\Data\Mapper::map($asset, $className, "out");
+
                 return $apiAsset;
             }
 
@@ -684,6 +700,7 @@ class Service
             $asset = Asset::getById($id);
             if ($asset instanceof Asset) {
                 $apiAsset = Webservice\Data\Mapper::map($asset, "\\Pimcore\\Model\\Webservice\\Data\\Asset\\File\\Out", "out", $options);
+
                 return $apiAsset;
             }
 
@@ -756,6 +773,7 @@ class Service
             $asset = Asset::getById($id);
             if ($asset instanceof Asset) {
                 $asset->delete();
+
                 return true;
             }
 
@@ -776,6 +794,7 @@ class Service
             $folder = Object::getById($id);
             if ($folder instanceof Object\Folder) {
                 $apiFolder = Webservice\Data\Mapper::map($folder, "\\Pimcore\\Model\\Webservice\\Data\\Object\\Folder\\Out", "out");
+
                 return $apiFolder;
             }
 
@@ -799,6 +818,7 @@ class Service
                 // load all data (eg. lazy loaded fields like multihref, object, ...)
                 Object\Service::loadAllObjectFields($object);
                 $apiObject = Webservice\Data\Mapper::map($object, "\\Pimcore\\Model\\Webservice\\Data\\Object\\Concrete\\Out", "out");
+
                 return $apiObject;
             }
 
@@ -884,6 +904,7 @@ class Service
             if ($object instanceof Object\AbstractObject) {
                 $object->setPublished(false);
                 $object->save();
+
                 return true;
             }
 
@@ -904,6 +925,7 @@ class Service
             $object = Object\AbstractObject::getById($id);
             if ($object instanceof Object\AbstractObject) {
                 $object->delete();
+
                 return true;
             }
 
@@ -954,8 +976,10 @@ class Service
 
         if ($equal) {
             $key .= "_WScopy";
+
             return $this->getSaveCopyName($element, $key, $path);
         }
+
         return $key;
     }
 
@@ -977,6 +1001,7 @@ class Service
         if ($document instanceof Document and strtolower($wsDocument->type) == $document->getType()) {
             $wsDocument->reverseMap($document);
             $document->save();
+
             return true;
         } else {
             throw new \Exception("Type mismatch for given document with ID [" . $wsDocument->id . "] and existing document with id [" . $document->getId() . "]");
@@ -1000,10 +1025,12 @@ class Service
         if ($object instanceof Object\Concrete and $object->getClassName() == $wsDocument->className) {
             $wsDocument->reverseMap($object);
             $object->save();
+
             return true;
         } elseif ($object instanceof Object\Folder and $object->getType() == strtolower($wsDocument->type)) {
             $wsDocument->reverseMap($object);
             $object->save();
+
             return true;
         } else {
             throw new \Exception("Type/Class mismatch for given object with ID [" . $wsDocument->id . "] and existing object with id [" . $object->getId() . "]");
@@ -1027,6 +1054,7 @@ class Service
         if ($asset instanceof Asset and $asset->getType() == strtolower($wsDocument->type)) {
             $wsDocument->reverseMap($asset);
             $asset->save();
+
             return true;
         } else {
             throw new \Exception("Type mismatch for given asset with ID [" . $wsDocument->id . "] and existing asset with id [" . $asset->getId() . "]");
@@ -1050,6 +1078,7 @@ class Service
         }
         $element->setUserModification($user->getId());
         $element->setModificationDate(time());
+
         return $this;
     }
 
@@ -1064,6 +1093,7 @@ class Service
             if ($class instanceof Object\ClassDefinition) {
                 $apiClass = Webservice\Data\Mapper::map($class, "\\Pimcore\\Model\\Webservice\\Data\\ClassDefinition\\Out", "out");
                 unset($apiClass->fieldDefinitions);
+
                 return $apiClass;
             }
 
@@ -1087,6 +1117,7 @@ class Service
             if ($object instanceof Object\Concrete) {
                 // load all data (eg. lazy loaded fields like multihref, object, ...)
                 $classId = $object->getClassId();
+
                 return $this->getClassById($classId);
             }
 
@@ -1120,6 +1151,7 @@ class Service
             foreach ($data as $obj) {
                 $result[] = $obj->getForWebserviceExport();
             }
+
             return $result;
         } else {
             throw new \Exception("Parameter 'type' has to be 'website' or 'admin'");

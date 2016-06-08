@@ -95,6 +95,7 @@ class PdfReactor8 extends Processor
         }
 
         $document->setLastGenerateMessage("");
+
         return $pdf;
     }
 

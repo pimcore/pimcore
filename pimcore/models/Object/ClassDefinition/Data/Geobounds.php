@@ -79,6 +79,7 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
                 $this->getName() . "__SWlatitude" => $data->getSouthWest()->getLatitude()
             ];
         }
+
         return [
             $this->getName() . "__NElongitude" => null,
             $this->getName() . "__NElatitude" => null,
@@ -102,6 +103,7 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
 
             return new Object\Data\Geobounds($ne, $sw);
         }
+
         return;
     }
 
@@ -134,6 +136,7 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
                 "SWlatitude" => $data->getSouthWest()->getLatitude()
             ];
         }
+
         return;
     }
 
@@ -157,6 +160,7 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
 
             return new Object\Data\Geobounds($ne, $sw);
         }
+
         return;
     }
 
@@ -172,6 +176,7 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
         if ($data instanceof Object\Data\Geobounds) {
             return $data->getNorthEast()->getLongitude() . "," . $data->getNorthEast()->getLatitude() . " " . $data->getSouthWest()->getLongitude() . "," . $data->getSouthWest()->getLatitude();
         }
+
         return "";
     }
 
@@ -254,6 +259,7 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
             if ($value["NElongitude"] !== null && $value["NElatitude"] !== null && $value["SWlongitude"] !== null && $value["SWlatitude"] !== null) {
                 $ne = new Object\Data\Geopoint($value["NElongitude"], $value["NElatitude"]);
                 $sw = new Object\Data\Geopoint($value["SWlongitude"], $value["SWlatitude"]);
+
                 return new Object\Data\Geobounds($ne, $sw);
             } else {
                 throw new \Exception("cannot get values from web service import - invalid data");

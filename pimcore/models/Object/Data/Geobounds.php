@@ -58,6 +58,7 @@ class Geobounds
     public function setNorthEast($nortEast)
     {
         $this->nortEast = $nortEast;
+
         return $this;
     }
 
@@ -76,6 +77,7 @@ class Geobounds
     public function setSouthWest($southWest)
     {
         $this->southWest = $southWest;
+
         return $this;
     }
 

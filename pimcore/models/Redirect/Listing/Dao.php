@@ -36,6 +36,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         }
 
         $this->model->setRedirects($redirects);
+
         return $redirects;
     }
 

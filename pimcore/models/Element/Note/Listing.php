@@ -46,6 +46,7 @@ class Listing extends Model\Listing\AbstractListing
     public function setNotes($notes)
     {
         $this->notes = $notes;
+
         return $this;
     }
 

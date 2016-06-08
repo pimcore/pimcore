@@ -46,6 +46,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         }
 
         $this->model->setDocuments($documents);
+
         return $documents;
     }
 
@@ -77,6 +78,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     {
         $select = (string) $this->getQuery(['id']);
         $documentIds = $this->db->fetchCol($select, $this->model->getConditionVariables());
+
         return $documentIds;
     }
 
@@ -84,6 +86,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     {
         $select = (string) $this->getQuery(['id', "CONCAT(path,`key`)"]);
         $documentIds = $this->db->fetchAll($select, $this->model->getConditionVariables());
+
         return $documentIds;
     }
 
@@ -101,6 +104,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $select->reset(\Zend_Db_Select::LIMIT_COUNT);
         $select = (string) $select;
         $amount = (int) $this->db->fetchOne($select, $this->model->getConditionVariables());
+
         return $amount;
     }
 

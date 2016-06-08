@@ -134,6 +134,7 @@ class Log extends Model\AbstractModel
     public function setDocumentId($id)
     {
         $this->documentId = $id;
+
         return $this;
     }
 
@@ -144,6 +145,7 @@ class Log extends Model\AbstractModel
     public function setRequestUri($requestUri)
     {
         $this->requestUri = $requestUri;
+
         return $this;
     }
 
@@ -174,6 +176,7 @@ class Log extends Model\AbstractModel
     public function setId($id)
     {
         $this->id = (int)$id;
+
         return $this;
     }
 
@@ -184,6 +187,7 @@ class Log extends Model\AbstractModel
     public function setSubject($subject)
     {
         $this->subject = $subject;
+
         return $this;
     }
 
@@ -215,6 +219,7 @@ class Log extends Model\AbstractModel
         $emailLog->getDao()->getById($id);
         $emailLog->setEmailLogExistsHtml();
         $emailLog->setEmailLogExistsText();
+
         return $emailLog;
     }
 
@@ -235,6 +240,7 @@ class Log extends Model\AbstractModel
     public function setParams($params)
     {
         $this->params = $params;
+
         return $this;
     }
 
@@ -257,6 +263,7 @@ class Log extends Model\AbstractModel
     public function setModificationDate($modificationDate)
     {
         $this->modificationDate = $modificationDate;
+
         return $this;
     }
 
@@ -279,6 +286,7 @@ class Log extends Model\AbstractModel
     public function setSentDate($sentDate)
     {
         $this->sentDate = $sentDate;
+
         return $this;
     }
 
@@ -299,6 +307,7 @@ class Log extends Model\AbstractModel
     {
         $file = PIMCORE_LOG_MAIL_PERMANENT . '/email-' . $this->getId() . '-html.log';
         $this->emailLogExistsHtml = (is_file($file) && is_readable($file)) ? 1 : 0;
+
         return $this;
     }
 
@@ -319,6 +328,7 @@ class Log extends Model\AbstractModel
     {
         $file = PIMCORE_LOG_MAIL_PERMANENT . '/email-' . $this->getId() . '-text.log';
         $this->emailLogExistsText = (is_file($file) && is_readable($file)) ? 1 : 0;
+
         return $this;
     }
 
@@ -376,6 +386,7 @@ class Log extends Model\AbstractModel
     public function setCreationDate($creationDate)
     {
         $this->creationDate = $creationDate;
+
         return $this;
     }
 
@@ -431,6 +442,7 @@ class Log extends Model\AbstractModel
     public function setTo($to)
     {
         $this->to = $to;
+
         return $this;
     }
 
@@ -461,6 +473,7 @@ class Log extends Model\AbstractModel
     public function setCc($cc)
     {
         $this->cc = $cc;
+
         return $this;
     }
 
@@ -491,6 +504,7 @@ class Log extends Model\AbstractModel
     public function setBcc($bcc)
     {
         $this->bcc = $bcc;
+
         return $this;
     }
 
@@ -521,6 +535,7 @@ class Log extends Model\AbstractModel
     public function setFrom($from)
     {
         $this->from = $from;
+
         return $this;
     }
 
@@ -541,6 +556,7 @@ class Log extends Model\AbstractModel
     public function setBodyHtml($html)
     {
         $this->bodyHtml = $html;
+
         return $this;
     }
 
@@ -561,6 +577,7 @@ class Log extends Model\AbstractModel
     public function setBodyText($text)
     {
         $this->bodyText = $text;
+
         return $this;
     }
 
@@ -589,6 +606,7 @@ class Log extends Model\AbstractModel
                                  'name' => str_replace(['(', ')'], '', $tmp2[1])
             ];
         }
+
         return $dataArray;
     }
 }

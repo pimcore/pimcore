@@ -37,6 +37,7 @@ class JsonEncoder
     public function decode($data)
     {
         $data = \Zend_Json::decode($data);
+
         return $data;
     }
 }

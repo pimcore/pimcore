@@ -88,6 +88,7 @@ class CDN extends \Zend_Controller_Plugin_Abstract
                 $this->hostnames = $hosts;
             }
         }
+
         return $this->hostnames;
     }
 
@@ -103,6 +104,7 @@ class CDN extends \Zend_Controller_Plugin_Abstract
                 $this->patterns = $patterns;
             }
         }
+
         return $this->patterns;
     }
 
@@ -117,9 +119,11 @@ class CDN extends \Zend_Controller_Plugin_Abstract
                 if (strpos($path, "/") === 0) {
                     return true;
                 }
+
                 return true;
             }
         }
+
         return false;
     }
 
@@ -134,6 +138,7 @@ class CDN extends \Zend_Controller_Plugin_Abstract
                 $this->cachedItems = $items;
             }
         }
+
         return $this->cachedItems;
     }
 
@@ -211,6 +216,7 @@ class CDN extends \Zend_Controller_Plugin_Abstract
     public function setCdnhostnames($cdnhostnames)
     {
         $this->cdnhostnames = $cdnhostnames;
+
         return $this;
     }
 
@@ -229,6 +235,7 @@ class CDN extends \Zend_Controller_Plugin_Abstract
     public function setCdnpatterns($cdnpatterns)
     {
         $this->cdnpatterns = $cdnpatterns;
+
         return $this;
     }
 

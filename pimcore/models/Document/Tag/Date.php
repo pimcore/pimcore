@@ -129,6 +129,7 @@ class Date extends Model\Document\Tag
         if ($this->date) {
             return false;
         }
+
         return true;
     }
 

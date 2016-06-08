@@ -29,6 +29,7 @@ function getIconData($icon, $iconCss, $pimcoreIconClasses)
     $data['path'] = dirname(dirname($_SERVER['SCRIPT_NAME'])) . '/img/icon/'.$icon;
     $data['id'] = str_replace('.', '', $icon);
     $data['iconClass'] = implode(', ', $pimcoreIconClasses[$data['path']]);
+
     return $data;
 }
 

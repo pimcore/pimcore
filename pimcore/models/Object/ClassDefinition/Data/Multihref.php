@@ -122,6 +122,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
     public function setObjectsAllowed($objectsAllowed)
     {
         $this->objectsAllowed = $objectsAllowed;
+
         return $this;
     }
 
@@ -140,6 +141,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
     public function setDocumentsAllowed($documentsAllowed)
     {
         $this->documentsAllowed = $documentsAllowed;
+
         return $this;
     }
 
@@ -159,6 +161,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
     public function setDocumentTypes($documentTypes)
     {
         $this->documentTypes = Element\Service::fixAllowedTypes($documentTypes, "documentTypes");
+
         return $this;
     }
 
@@ -179,6 +182,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
     public function setAssetsAllowed($assetsAllowed)
     {
         $this->assetsAllowed = $assetsAllowed;
+
         return $this;
     }
 
@@ -197,6 +201,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
     public function setAssetTypes($assetTypes)
     {
         $this->assetTypes = Element\Service::fixAllowedTypes($assetTypes, "assetTypes");
+
         return $this;
     }
 
@@ -226,6 +231,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
                 }
                 $counter++;
             }
+
             return $return;
         } elseif (is_array($data) and count($data) === 0) {
             //give empty array if data was not null
@@ -288,6 +294,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
                     $d[] = $elementType . "|" . $element->getId();
                 }
             }
+
             return "," . implode(",", $d) . ",";
         } elseif (is_array($data) && count($data) === 0) {
             return "";
@@ -322,6 +329,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
             if (empty($return)) {
                 $return = false;
             }
+
             return $return;
         }
 
@@ -372,6 +380,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
                     $pathes[] = $eo->getRealFullPath();
                 }
             }
+
             return $pathes;
         }
     }
@@ -391,6 +400,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
                     $pathes[] = get_class($e) . $e->getRealFullPath();
                 }
             }
+
             return implode("<br />", $pathes);
         }
     }
@@ -410,6 +420,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
     public function setWidth($width)
     {
         $this->width = $this->getAsIntegerCast($width);
+
         return $this;
     }
 
@@ -428,6 +439,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
     public function setHeight($height)
     {
         $this->height = $this->getAsIntegerCast($height);
+
         return $this;
     }
 
@@ -483,6 +495,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
                     $paths[] = Element\Service::getType($eo) . ":" . $eo->getRealFullPath();
                 }
             }
+
             return implode(",", $paths);
         } else {
             return null;
@@ -519,6 +532,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
                 }
             }
         }
+
         return $value;
     }
 
@@ -541,6 +555,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
                 }
             }
         }
+
         return $tags;
     }
 
@@ -563,6 +578,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
                 }
             }
         }
+
         return $dependencies;
     }
 
@@ -586,6 +602,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
                     ];
                 }
             }
+
             return $items;
         } else {
             return null;
@@ -632,6 +649,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
                     }
                 }
             }
+
             return $hrefs;
         } else {
             throw new \Exception("cannot get values from web service import - invalid data");
@@ -667,6 +685,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
                     $publishedList[] = $listElement;
                 }
             }
+
             return $publishedList;
         }
 
@@ -695,6 +714,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
     public function setMaxItems($maxItems)
     {
         $this->maxItems = $this->getAsIntegerCast($maxItems);
+
         return $this;
     }
 
@@ -713,6 +733,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
     public function setAssetUploadPath($assetUploadPath)
     {
         $this->assetUploadPath = $assetUploadPath;
+
         return $this;
     }
 
@@ -752,6 +773,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
             $html = $this->getVersionPreview($data, $object, $params);
             $value["html"] = $html;
         }
+
         return $value;
     }
 
@@ -780,6 +802,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
 
             return $this->getDataFromEditmode($result, $object, $params);
         }
+
         return;
     }
 
@@ -802,6 +825,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
     {
         $data = $this->getDataFromObjectParam($object, $params);
         $data = $this->rewriteIdsService($data, $idMapping);
+
         return $data;
     }
 

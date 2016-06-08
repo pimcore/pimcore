@@ -44,6 +44,7 @@ class Glossary extends \Zend_View_Helper_Abstract
     {
         $controller = self::getController();
         $controller->setView($this->view);
+
         return $controller;
     }
 }
@@ -84,7 +85,7 @@ class GlossaryController
         if (!empty($data) && $enabled) {
             // replace
 
-            $blockedTags = ["a","script","style","code","pre","textarea","acronym","abbr","option","h1","h2","h3","h4","h5","h6"];
+            $blockedTags = ["a", "script", "style", "code", "pre", "textarea", "acronym", "abbr", "option", "h1", "h2", "h3", "h4", "h5", "h6"];
 
             // why not using a simple str_ireplace(array(), array(), $subject) ?
             // because if you want to replace the terms "Donec vitae" and "Donec" you will get nested links, so the content of the html must be reloaded every searchterm to ensure that there is no replacement within a blocked tag
@@ -191,6 +192,7 @@ class GlossaryController
 
         try {
             $data = \Zend_Registry::get($cacheKey);
+
             return $data;
         } catch (\Exception $e) {
         }
@@ -291,6 +293,7 @@ class GlossaryController
     public function setView($view)
     {
         $this->view = $view;
+
         return $this;
     }
 

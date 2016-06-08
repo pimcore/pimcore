@@ -46,6 +46,7 @@ class Dao extends Model\Dao\PhpArrayTable
         }
 
         $this->model->setCodes($properties);
+
         return $properties;
     }
 

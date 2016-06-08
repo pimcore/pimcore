@@ -45,6 +45,7 @@ abstract class Dao extends Model\Listing\Dao\AbstractDao implements Dao\DaoInter
 
         $query = "SELECT COUNT(*) as amount FROM ($select) AS a";
         $amount = (int) $this->db->fetchOne($query, $this->model->getConditionVariables());
+
         return $amount;
     }
 
@@ -150,6 +151,7 @@ abstract class Dao extends Model\Listing\Dao\AbstractDao implements Dao\DaoInter
         $select = (string) $select;
 
         $translationsData = $this->db->fetchAll($select, $this->model->getConditionVariables());
+
         return $translationsData;
     }
 
@@ -183,6 +185,7 @@ abstract class Dao extends Model\Listing\Dao\AbstractDao implements Dao\DaoInter
         }
 
         $this->model->setTranslations($translations);
+
         return $translations;
     }
 
@@ -195,6 +198,7 @@ abstract class Dao extends Model\Listing\Dao\AbstractDao implements Dao\DaoInter
         if ($count > 5000) {
             return false;
         }
+
         return true;
     }
 

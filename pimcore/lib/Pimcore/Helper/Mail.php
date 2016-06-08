@@ -117,6 +117,7 @@ class Mail
 
 </style>
 CSS;
+
         return $style;
     }
 
@@ -139,6 +140,7 @@ CSS;
             }
         }
         $tmpString = substr($tmpString, 0, strrpos($tmpString, ','));
+
         return $tmpString;
     }
 
@@ -214,12 +216,12 @@ CSS;
         if (!$hostUrl) {
             // try to determine if the newsletter is within a site
             $site = \Pimcore\Tool\Frontend::getSiteForDocument($document);
-            if($site) {
+            if ($site) {
                 $hostUrl = "http://" . $site->getMainDomain();
             }
 
             // fallback
-            if(!$hostUrl) {
+            if (!$hostUrl) {
                 $hostUrl = \Pimcore\Tool::getHostUrl();
             }
         }
@@ -247,6 +249,7 @@ CSS;
                 $string = preg_replace("!([\"'])$path([\"'])!is", "\\1" . $absolutePath . "\\2", $string);
             }
         }
+
         return $string;
     }
 

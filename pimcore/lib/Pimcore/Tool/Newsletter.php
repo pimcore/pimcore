@@ -252,6 +252,7 @@ class Newsletter
                 }
             }
         }
+
         return false;
     }
 
@@ -305,6 +306,7 @@ class Newsletter
             foreach ($objects as $object) {
                 $this->unsubscribe($object);
             }
+
             return true;
         }
 
@@ -326,6 +328,7 @@ class Newsletter
 
             return true;
         }
+
         return false;
     }
 

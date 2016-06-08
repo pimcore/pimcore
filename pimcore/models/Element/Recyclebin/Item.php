@@ -301,6 +301,7 @@ class Item extends Model\AbstractModel
     public function setId($id)
     {
         $this->id = (int) $id;
+
         return $this;
     }
 
@@ -319,6 +320,7 @@ class Item extends Model\AbstractModel
     public function setPath($path)
     {
         $this->path = $path;
+
         return $this;
     }
 
@@ -337,6 +339,7 @@ class Item extends Model\AbstractModel
     public function setType($type)
     {
         $this->type = $type;
+
         return $this;
     }
 
@@ -355,6 +358,7 @@ class Item extends Model\AbstractModel
     public function setSubtype($subtype)
     {
         $this->subtype = $subtype;
+
         return $this;
     }
 
@@ -373,6 +377,7 @@ class Item extends Model\AbstractModel
     public function setAmount($amount)
     {
         $this->amount = (int) $amount;
+
         return $this;
     }
 
@@ -391,6 +396,7 @@ class Item extends Model\AbstractModel
     public function setDate($date)
     {
         $this->date = (int) $date;
+
         return $this;
     }
 
@@ -409,6 +415,7 @@ class Item extends Model\AbstractModel
     public function setElement($element)
     {
         $this->element = $element;
+
         return $this;
     }
 
@@ -419,6 +426,7 @@ class Item extends Model\AbstractModel
     public function setDeletedby($username)
     {
         $this->deletedby = $username;
+
         return $this;
     }
 

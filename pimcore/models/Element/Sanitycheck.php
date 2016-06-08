@@ -46,6 +46,7 @@ class Sanitycheck extends Model\AbstractModel
     public function setId($id)
     {
         $this->id = (int) $id;
+
         return $this;
     }
 
@@ -64,6 +65,7 @@ class Sanitycheck extends Model\AbstractModel
     public function setType($type)
     {
         $this->type = $type;
+
         return $this;
     }
 

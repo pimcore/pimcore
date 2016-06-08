@@ -68,11 +68,13 @@ class Dao extends Model\Dao\PhpArrayTable
                     return true;
                 }
             }
+
             return false;
         }, function ($a, $b) {
             if ($a["siteId"] == $b["siteId"]) {
                 return 0;
             }
+
             return ($a["siteId"] < $b["siteId"]) ? 1 : -1;
         });
 
@@ -97,8 +99,8 @@ class Dao extends Model\Dao\PhpArrayTable
         try {
             $dataRaw = get_object_vars($this->model);
             $data = [];
-            $allowedProperties = ["id","name","pattern","reverse","module","controller",
-                "action","variables","defaults","siteId","priority","creationDate","modificationDate"];
+            $allowedProperties = ["id", "name", "pattern", "reverse", "module", "controller",
+                "action", "variables", "defaults", "siteId", "priority", "creationDate", "modificationDate"];
 
             foreach ($dataRaw as $key => $value) {
                 if (in_array($key, $allowedProperties)) {

@@ -187,6 +187,7 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
                 }
             }
         }
+
         return $currentList;
     }
 
@@ -305,7 +306,7 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
         }
 
         // workspaces
-        $types = ["asset","document","object"];
+        $types = ["asset", "document", "object"];
         foreach ($types as $type) {
             $workspaces = $user->{"getWorkspaces" . ucfirst($type)}();
             foreach ($workspaces as $workspace) {
@@ -432,6 +433,7 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
                             if ($adminSession->password_reset) {
                                 return true;
                             }
+
                             return false;
                         });
                     } else {
@@ -539,7 +541,7 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
         $role = User\Role::getById(intval($this->getParam("id")));
 
         // workspaces
-        $types = ["asset","document","object"];
+        $types = ["asset", "document", "object"];
         foreach ($types as $type) {
             $workspaces = $role->{"getWorkspaces" . ucfirst($type)}();
             foreach ($workspaces as $workspace) {

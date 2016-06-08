@@ -41,6 +41,7 @@ class Listing extends \Pimcore\Model\Listing\JsonListing
     public function setDefinitions($definitions)
     {
         $this->definitions = $definitions;
+
         return $this;
     }
 
@@ -71,10 +72,12 @@ class Listing extends \Pimcore\Model\Listing\JsonListing
                 if (in_array($row["targetSubtype"], $subTypes)) {
                     return true;
                 }
+
                 return false;
             });
         }
         $list = $list->load();
+
         return $list;
     }
 
@@ -105,6 +108,7 @@ class Listing extends \Pimcore\Model\Listing\JsonListing
         if ($list) {
             return $list[0];
         }
+
         return null;
     }
 }

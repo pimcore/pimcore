@@ -97,6 +97,7 @@ class StructuredTable extends Model\Object\ClassDefinition\Data
     public function setWidth($width)
     {
         $this->width = $this->getAsIntegerCast($width);
+
         return $this;
     }
 
@@ -115,6 +116,7 @@ class StructuredTable extends Model\Object\ClassDefinition\Data
     public function setHeight($height)
     {
         $this->height = $this->getAsIntegerCast($height);
+
         return $this;
     }
 
@@ -133,6 +135,7 @@ class StructuredTable extends Model\Object\ClassDefinition\Data
     public function setLabelWidth($labelWidth)
     {
         $this->labelWidth = $labelWidth;
+
         return $this;
     }
 
@@ -143,6 +146,7 @@ class StructuredTable extends Model\Object\ClassDefinition\Data
     public function setLabelFirstCell($labelFirstCell)
     {
         $this->labelFirstCell = $labelFirstCell;
+
         return $this;
     }
 
@@ -179,6 +183,7 @@ class StructuredTable extends Model\Object\ClassDefinition\Data
             $c['key'] = strtolower($c['key']);
             $this->cols[] = $c;
         }
+
         return $this;
     }
 
@@ -209,6 +214,7 @@ class StructuredTable extends Model\Object\ClassDefinition\Data
             $r['key'] = strtolower($r['key']);
             $this->rows[] = $r;
         }
+
         return $this;
     }
 
@@ -217,6 +223,7 @@ class StructuredTable extends Model\Object\ClassDefinition\Data
         if (is_array($a) && is_array($b)) {
             return $a['position'] - $b['position']; // strcmp($a['position'], $b['position']);
         }
+
         return strcmp($a, $b);
     }
 
@@ -341,6 +348,7 @@ class StructuredTable extends Model\Object\ClassDefinition\Data
                 return $data->getData();
             }
         }
+
         return null;
     }
 
@@ -410,6 +418,7 @@ class StructuredTable extends Model\Object\ClassDefinition\Data
                     $string .= $dataArray[$r['key']][$c['key']] . "##";
                 }
             }
+
             return $string;
         } else {
             return null;
@@ -436,6 +445,7 @@ class StructuredTable extends Model\Object\ClassDefinition\Data
         }
 
         $value = new Object\Data\StructuredTable($dataTable);
+
         return $value;
     }
 
@@ -506,6 +516,7 @@ class StructuredTable extends Model\Object\ClassDefinition\Data
         foreach ($this->calculateDbColumns() as $c) {
             $columns[$c->name] = $c->type;
         }
+
         return $columns;
     }
 
@@ -518,6 +529,7 @@ class StructuredTable extends Model\Object\ClassDefinition\Data
         foreach ($this->calculateDbColumns() as $c) {
             $columns[$c->name] = $c->type;
         }
+
         return $columns;
     }
 
@@ -599,6 +611,7 @@ class StructuredTable extends Model\Object\ClassDefinition\Data
         $value["html"] = $html;
         $value["type"] = "html";
         $defaultData[0]["value"] = $value;
+
         return $defaultData;
     }
 

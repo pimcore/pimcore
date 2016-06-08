@@ -39,6 +39,7 @@ abstract class AbstractModel
         if (!$this->dao) {
             $this->initDao();
         }
+
         return $this->dao;
     }
 
@@ -49,6 +50,7 @@ abstract class AbstractModel
     public function setDao($dao)
     {
         $this->dao = $dao;
+
         return $this;
     }
 
@@ -203,6 +205,7 @@ abstract class AbstractModel
                 $this->setValue($key, $value);
             }
         }
+
         return $this;
     }
 
@@ -220,6 +223,7 @@ abstract class AbstractModel
             // compatibility mode for objects (they do not have any set_oXyz() methods anymore)
             $this->$method($value);
         }
+
         return $this;
     }
 
@@ -229,13 +233,14 @@ abstract class AbstractModel
     public function __sleep()
     {
         $finalVars = [];
-        $blockedVars = ["dao","_fulldump"]; // _fulldump is a temp var which is used to trigger a full serialized dump in __sleep eg. in Document, \Object_Abstract
+        $blockedVars = ["dao", "_fulldump"]; // _fulldump is a temp var which is used to trigger a full serialized dump in __sleep eg. in Document, \Object_Abstract
         $vars = get_object_vars($this);
         foreach ($vars as $key => $value) {
             if (!in_array($key, $blockedVars)) {
                 $finalVars[] = $key;
             }
         }
+
         return $finalVars;
     }
 
@@ -257,6 +262,7 @@ abstract class AbstractModel
         if (method_exists($this->getDao(), $method)) {
             try {
                 $r = call_user_func_array([$this->getDao(), $method], $args);
+
                 return $r;
             } catch (\Exception $e) {
                 \Logger::emergency($e);
@@ -285,6 +291,7 @@ abstract class AbstractModel
     {
         $data = get_object_vars($this);
         unset($data['dao']);
+
         return $data;
     }
 }

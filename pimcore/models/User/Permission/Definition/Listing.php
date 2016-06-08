@@ -46,6 +46,7 @@ class Listing extends Model\Listing\AbstractListing
     public function setDefinitions($definitions)
     {
         $this->definitions = $definitions;
+
         return $this;
     }
 

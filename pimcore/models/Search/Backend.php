@@ -52,7 +52,7 @@ class Backend
                 FROM search_backend_data d
                 WHERE (d.data like ? OR properties like ? )";
 
-        $this->backendQueryParams = ["%$queryStr%","%$queryStr%"];
+        $this->backendQueryParams = ["%$queryStr%", "%$queryStr%"];
 
         if (!empty($type)) {
             $this->backendQuery.=" AND maintype = ? ";
@@ -146,6 +146,7 @@ class Backend
     {
         $this->createBackendSearchQuery($queryStr, $type, $subtype, $classname, $modifiedRange, $createdRange, $userOwner, $userModification, false);
         $db = Db::get();
+
         return $db->fetchAll($this->backendQuery, $this->backendQueryParams);
     }
 }

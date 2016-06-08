@@ -65,6 +65,7 @@ class Dao extends Model\Dao\PhpArrayTable
             if ($language && $row["language"] != $language) {
                 $return = false;
             }
+
             return $return;
         });
 
@@ -89,8 +90,8 @@ class Dao extends Model\Dao\PhpArrayTable
         try {
             $dataRaw = get_object_vars($this->model);
             $data = [];
-            $allowedProperties = ["id","name","description","language","type","data",
-                "targetSubtype","config","creationDate","modificationDate"];
+            $allowedProperties = ["id", "name", "description", "language", "type", "data",
+                "targetSubtype", "config", "creationDate", "modificationDate"];
 
             foreach ($dataRaw as $key => $value) {
                 if (in_array($key, $allowedProperties)) {

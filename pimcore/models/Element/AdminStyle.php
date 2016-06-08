@@ -49,6 +49,7 @@ class AdminStyle
     public function setElementCssClass($elementCssClass)
     {
         $this->elementCssClass = $elementCssClass;
+
         return $this;
     }
 
@@ -60,6 +61,7 @@ class AdminStyle
     public function setElementIcon($elementIcon)
     {
         $this->elementIcon = $elementIcon;
+
         return $this;
     }
 
@@ -71,6 +73,7 @@ class AdminStyle
     public function setElementIconClass($elementIconClass)
     {
         $this->elementIconClass = $elementIconClass;
+
         return $this;
     }
 

@@ -54,6 +54,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         }
 
         $this->model->setList($configData);
+
         return $configData;
     }
 
@@ -63,6 +64,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function getDataArray()
     {
         $configsData = $this->db->fetchAll("SELECT * FROM " . Object\Classificationstore\CollectionGroupRelation\Dao::TABLE_NAME_RELATIONS . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+
         return $configsData;
     }
 

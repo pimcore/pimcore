@@ -105,6 +105,7 @@ class Csv
             $quote = "";
             $delim = null;
         }
+
         return [$quote, $delim];
     }
 
@@ -216,6 +217,7 @@ class Csv
             $variance[] = pow($value - $avg, 2);
         }
         $deviation = sqrt(array_sum($variance) / count($variance));
+
         return $deviation;
     }
 }

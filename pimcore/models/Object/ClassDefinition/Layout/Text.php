@@ -45,6 +45,7 @@ class Text extends Model\Object\ClassDefinition\Layout
     public function setHtml($html)
     {
         $this->html = $html;
+
         return $this;
     }
 }

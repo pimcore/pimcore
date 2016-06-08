@@ -111,12 +111,12 @@ class PimcoreNavigationController
         // cleanup active pages from links
         // pages have priority, if we don't find any active page, we use all we found
         $tmpPages = [];
-        foreach($activePages as $page) {
-            if($page->getDocumentType() != "link") {
+        foreach ($activePages as $page) {
+            if ($page->getDocumentType() != "link") {
                 $tmpPages[] = $page;
             }
         }
-        if(count($tmpPages)) {
+        if (count($tmpPages)) {
             $activePages = $tmpPages;
         }
 
@@ -193,6 +193,7 @@ class PimcoreNavigationController
     public function setPageClass($pageClass)
     {
         $this->_pageClass = $pageClass;
+
         return $this;
     }
 

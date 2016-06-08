@@ -38,6 +38,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         }
 
         $this->model->setTags($tags);
+
         return $tags;
     }
 
@@ -45,6 +46,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function loadIdList()
     {
         $tagsIds = $this->db->fetchCol("SELECT id FROM tags" . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+
         return $tagsIds;
     }
 

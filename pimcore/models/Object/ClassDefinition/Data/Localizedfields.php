@@ -255,6 +255,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
                 $result->$key = $fd->getDataForGrid($result->$key);
             }
         }
+
         return $result;
     }
 
@@ -483,6 +484,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     {
         $this->childs = $childs;
         $this->fieldDefinitionsCache = null;
+
         return $this;
     }
 
@@ -494,6 +496,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
         if (is_array($this->childs) && count($this->childs) > 0) {
             return true;
         }
+
         return false;
     }
 
@@ -546,6 +549,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
                 }
             }
         }
+
         return $this;
     }
 
@@ -651,6 +655,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
 
             $container->localizedfields = $lf;
         }
+
         return $container->localizedfields;
     }
 
@@ -704,6 +709,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
         if (isset($fds[$name])) {
             return $fds[$name];
         }
+
         return;
     }
 
@@ -811,6 +817,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     public function setHeight($height)
     {
         $this->height = $this->getAsIntegerCast($height);
+
         return $this;
     }
 
@@ -829,6 +836,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     public function setLayout($layout)
     {
         $this->layout = $layout;
+
         return $this;
     }
 
@@ -847,6 +855,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     public function setName($name)
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -865,6 +874,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     public function setRegion($region)
     {
         $this->region = $region;
+
         return $this;
     }
 
@@ -883,6 +893,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     public function setTitle($title)
     {
         $this->title = $title;
+
         return $this;
     }
 
@@ -901,6 +912,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     public function setWidth($width)
     {
         $this->width = $this->getAsIntegerCast($width);
+
         return $this;
     }
 
@@ -1038,6 +1050,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
 
         $localizedFields = new Object\Localizedfield($localData);
         $localizedFields->setObject($object);
+
         return $localizedFields;
     }
 
@@ -1059,6 +1072,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
         $vars = get_object_vars($this);
         unset($vars['fieldDefinitionsCache']);
         unset($vars['referencedFields']);
+
         return array_keys($vars);
     }
 

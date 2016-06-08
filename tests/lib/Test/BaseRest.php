@@ -17,6 +17,7 @@ class Test_BaseRest extends Test_Base
         $client->enableTestMode();
         $client->setBaseUrl("http://" . $testConfig["rest"]["host"] . $testConfig["rest"]["base"]);
         $client->setHost($testConfig["rest"]["host"]);
+
         return $client;
     }
 

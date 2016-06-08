@@ -74,6 +74,7 @@ class Ftp extends \Zend_File_Transfer_Adapter_Abstract
     public function setLoggedIn($loggedIn)
     {
         $this->loggedIn = $loggedIn;
+
         return $this;
     }
 
@@ -93,6 +94,7 @@ class Ftp extends \Zend_File_Transfer_Adapter_Abstract
     public function setTransferMode($transferMode)
     {
         $this->transferMode = $transferMode;
+
         return $this;
     }
 
@@ -139,6 +141,7 @@ class Ftp extends \Zend_File_Transfer_Adapter_Abstract
             $connection = ftp_connect($this->getHost());
             $this->setConnection($connection);
         }
+
         return $this;
     }
 
@@ -177,6 +180,7 @@ class Ftp extends \Zend_File_Transfer_Adapter_Abstract
             throw new \Exception("Upload of file " . $this->getSourceFile() . ' failed.');
         }
         $this->uploadedFiles[$this->getSourceFile()] = true;
+
         return true;
     }
 
@@ -194,6 +198,7 @@ class Ftp extends \Zend_File_Transfer_Adapter_Abstract
             throw new \Exception("Download of file " . $this->getSourceFile() . ' failed.');
         }
         $this->downloadedFiles[$this->getSourceFile()] = true;
+
         return true;
     }
 

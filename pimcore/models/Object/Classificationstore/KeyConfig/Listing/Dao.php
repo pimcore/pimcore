@@ -38,6 +38,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         }
 
         $this->model->setList($configData);
+
         return $configData;
     }
 
@@ -47,6 +48,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function getDataArray()
     {
         $configsData = $this->db->fetchAll("SELECT * FROM " . Object\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+
         return $configsData;
     }
 
@@ -78,6 +80,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         if ($condition) {
             return " WHERE " . $condition . " ";
         }
+
         return "";
     }
 }

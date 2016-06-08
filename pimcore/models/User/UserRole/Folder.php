@@ -33,6 +33,7 @@ class Folder extends Model\User\AbstractUser
     public function setHasChilds($state)
     {
         $this->hasChilds= $state;
+
         return $this;
     }
 
@@ -46,6 +47,7 @@ class Folder extends Model\User\AbstractUser
         if ($this->hasChilds !== null) {
             return $this->hasChilds;
         }
+
         return $this->getDao()->hasChilds();
     }
 }

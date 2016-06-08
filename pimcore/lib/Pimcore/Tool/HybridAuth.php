@@ -65,6 +65,7 @@ class HybridAuth
         } catch (\Exception $e) {
             \Logger::info($e);
         }
+
         return $adapter;
     }
 

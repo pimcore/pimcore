@@ -85,6 +85,7 @@ class Service extends Model\Element\Service
             $objects = $list->load();
             $userObjects = array_merge($userObjects, $objects);
         }
+
         return $userObjects;
     }
 
@@ -195,6 +196,7 @@ class Service extends Model\Element\Service
         $new->save();
 
         $target = AbstractObject::getById($new->getId());
+
         return $target;
     }
 
@@ -384,6 +386,7 @@ class Service extends Model\Element\Service
                 }
             }
         }
+
         return $data;
     }
 
@@ -474,6 +477,7 @@ class Service extends Model\Element\Service
                 }
             }
         }
+
         return null;
     }
 
@@ -515,6 +519,7 @@ class Service extends Model\Element\Service
         $result = new \stdClass();
         $result->value = $value;
         $result->objectid = $object->getId();
+
         return $result;
     }
 
@@ -665,7 +670,7 @@ class Service extends Model\Element\Service
      */
     public static function getFilterCondition($filterJson, $class)
     {
-        $systemFields = ["o_path", "o_key", "o_id", "o_published","o_creationDate","o_modificationDate", "o_fullpath"];
+        $systemFields = ["o_path", "o_key", "o_id", "o_published", "o_creationDate", "o_modificationDate", "o_fullpath"];
 
         // create filter condition
         $conditionPartsFilters = [];
@@ -782,6 +787,7 @@ class Service extends Model\Element\Service
             $conditionFilters = "(" . implode(" AND ", $conditionPartsFilters) . ")";
         }
         \Logger::log("ObjectController filter condition:" . $conditionFilters);
+
         return $conditionFilters;
     }
 
@@ -846,6 +852,7 @@ class Service extends Model\Element\Service
 
             if (\Pimcore\Tool::isValidPath($path)) {
                 $object->getDao()->getByPath($path);
+
                 return true;
             }
         } catch (\Exception $e) {
@@ -969,6 +976,7 @@ class Service extends Model\Element\Service
                 }
             }
         }
+
         return $targetList;
     }
 
@@ -983,6 +991,7 @@ class Service extends Model\Element\Service
         $superLayout = unserialize(serialize($masterLayout));
 
         self::createSuperLayout($superLayout);
+
         return $superLayout;
     }
 
@@ -1037,6 +1046,7 @@ class Service extends Model\Element\Service
                 }
             }
         }
+
         return true;
     }
 
@@ -1175,6 +1185,7 @@ class Service extends Model\Element\Service
             if ($def->getInvisible()) {
                 if ($mergedFieldDefinition[$key] instanceof ClassDefinition\Data\Objectbricks) {
                     unset($mergedFieldDefinition[$key]);
+
                     return;
                 } else {
                     $mergedFieldDefinition[$key]->setInvisible(true);
@@ -1216,6 +1227,7 @@ class Service extends Model\Element\Service
                 $layout->setChilds(array_values($children));
             }
         }
+
         return true;
     }
 
@@ -1291,6 +1303,7 @@ class Service extends Model\Element\Service
             $nr++;
             $key = self::getUniqueKey($item, $nr);
         }
+
         return $key;
     }
 
@@ -1343,6 +1356,7 @@ class Service extends Model\Element\Service
         $className = $fd->getCalculatorClass();
         if (!$className || !\Pimcore\Tool::classExists($className)) {
             \Logger::error("Class does not exist: " . $className);
+
             return null;
         }
 
@@ -1355,6 +1369,7 @@ class Service extends Model\Element\Service
             $result = self::getCalculatedFieldValue($object, $data);
         }
         Model\Object\Concrete::setGetInheritedValues($inheritanceEnabled);
+
         return $result;
     }
 
@@ -1388,6 +1403,7 @@ class Service extends Model\Element\Service
         $className = $fd->getCalculatorClass();
         if (!$className || !\Pimcore\Tool::classExists($className)) {
             \Logger::error("Class does not exsist: " . $className);
+
             return null;
         }
 
@@ -1397,6 +1413,7 @@ class Service extends Model\Element\Service
 
             $result = call_user_func($className . '::compute', $object, $data);
             Model\Object\Concrete::setGetInheritedValues($inheritanceEnabled);
+
             return $result;
         }
 

@@ -72,6 +72,7 @@ class XmlWriter extends \Zend_Config_Writer_Xml
     public function setRootElementAttributes($rootElementAttributes)
     {
         $this->rootElementAttributes = $rootElementAttributes;
+
         return $this;
     }
 
@@ -83,6 +84,7 @@ class XmlWriter extends \Zend_Config_Writer_Xml
     public function setRootElementName($name)
     {
         $this->rootElementName = $name;
+
         return $this;
     }
 
@@ -117,6 +119,7 @@ class XmlWriter extends \Zend_Config_Writer_Xml
     public function setEncoding($encoding)
     {
         $this->encoding  = $encoding;
+
         return $this;
     }
 
@@ -144,6 +147,7 @@ class XmlWriter extends \Zend_Config_Writer_Xml
     public function setFormatOutput($formatOutput)
     {
         $this->formatOutput = $formatOutput;
+
         return $this;
     }
 
@@ -156,6 +160,7 @@ class XmlWriter extends \Zend_Config_Writer_Xml
             $xml->{$key} = null;
             $child = $xml->{$key}->addCData((string) $data);
         }
+
         return $child;
     }
 
@@ -257,7 +262,7 @@ class XmlWriter extends \Zend_Config_Writer_Xml
      */
     public function displayXML()
     {
-        # header("Content-Type: application/xml");
+        // header("Content-Type: application/xml");
         die($this->render());
     }
 }

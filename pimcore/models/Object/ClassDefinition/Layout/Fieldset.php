@@ -45,6 +45,7 @@ class Fieldset extends Model\Object\ClassDefinition\Layout
         if (!empty($labelWidth)) {
             $this->labelWidth = intval($labelWidth);
         }
+
         return $this;
     }
 

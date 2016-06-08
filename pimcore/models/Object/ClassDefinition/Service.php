@@ -44,6 +44,7 @@ class Service
 
         $json = \Zend_Json::encode($data);
         $json = \Zend_Json::prettyPrint($json);
+
         return $json;
     }
 
@@ -98,6 +99,7 @@ class Service
 
         $json = \Zend_Json::encode($fieldCollection);
         $json = \Zend_Json::prettyPrint($json);
+
         return $json;
     }
 
@@ -140,6 +142,7 @@ class Service
 
         $json = \Zend_Json::encode($objectBrick);
         $json = \Zend_Json::prettyPrint($json);
+
         return $json;
     }
 
@@ -216,6 +219,7 @@ class Service
                                 if ($throwException) {
                                     throw new \Exception("Could not add child " . var_export($child, true));
                                 }
+
                                 return false;
                             }
                         }
@@ -230,6 +234,7 @@ class Service
         if ($throwException) {
             throw new \Exception("Could not add child " . var_export($array, true));
         }
+
         return false;
     }
 
@@ -287,6 +292,7 @@ class Service
                 }
             }
         }
+
         return false;
     }
 }

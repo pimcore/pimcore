@@ -67,8 +67,10 @@ class Editlock extends Model\AbstractModel
             if ((time() - $lock->getDate()) > 3600 || $lock->getSessionId() == session_id()) {
                 // lock is out of date unlock it
                 self::unlock($cid, $ctype);
+
                 return false;
             }
+
             return true;
         }
 
@@ -85,6 +87,7 @@ class Editlock extends Model\AbstractModel
         try {
             $lock = new self();
             $lock->getDao()->getByElement($cid, $ctype);
+
             return $lock;
         } catch (\Exception $e) {
             return null;
@@ -100,6 +103,7 @@ class Editlock extends Model\AbstractModel
         try {
             $lock = new self();
             $lock->getDao()->clearSession($sessionId);
+
             return true;
         } catch (\Exception $e) {
             return null;
@@ -140,6 +144,7 @@ class Editlock extends Model\AbstractModel
         if ($lock = self::getByElement($cid, $ctype)) {
             $lock->delete();
         }
+
         return true;
     }
 
@@ -173,6 +178,7 @@ class Editlock extends Model\AbstractModel
     public function setCid($cid)
     {
         $this->cid = (int) $cid;
+
         return $this;
     }
 
@@ -183,6 +189,7 @@ class Editlock extends Model\AbstractModel
     public function setId($id)
     {
         $this->id = (int) $id;
+
         return $this;
     }
 
@@ -198,6 +205,7 @@ class Editlock extends Model\AbstractModel
                 $this->setUser($user);
             }
         }
+
         return $this;
     }
 
@@ -216,6 +224,7 @@ class Editlock extends Model\AbstractModel
     public function setCtype($ctype)
     {
         $this->ctype = (string) $ctype;
+
         return $this;
     }
 
@@ -234,6 +243,7 @@ class Editlock extends Model\AbstractModel
     public function setSessionId($sessionId)
     {
         $this->sessionId = (string) $sessionId;
+
         return $this;
     }
 
@@ -252,6 +262,7 @@ class Editlock extends Model\AbstractModel
     public function setUser($user)
     {
         $this->user = $user;
+
         return $this;
     }
 
@@ -270,6 +281,7 @@ class Editlock extends Model\AbstractModel
     public function setDate($date)
     {
         $this->date = (int) $date;
+
         return $this;
     }
 
@@ -280,6 +292,7 @@ class Editlock extends Model\AbstractModel
     public function setCpath($cpath)
     {
         $this->cpath = $cpath;
+
         return $this;
     }
 

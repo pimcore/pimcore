@@ -80,6 +80,7 @@ abstract class Data
             }
             $value = $result;
         }
+
         return $value;
     }
 

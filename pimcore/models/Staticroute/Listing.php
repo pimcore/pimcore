@@ -43,6 +43,7 @@ class Listing extends Model\Listing\JsonListing
     public function setRoutes($routes)
     {
         $this->routes = $routes;
+
         return $this;
     }
 }

@@ -52,6 +52,7 @@ class Fieldcontainer extends Model\Object\ClassDefinition\Layout
         if (!empty($labelWidth)) {
             $this->labelWidth = intval($labelWidth);
         }
+
         return $this;
     }
 
@@ -70,6 +71,7 @@ class Fieldcontainer extends Model\Object\ClassDefinition\Layout
     public function setLayout($layout)
     {
         $this->layout = $layout;
+
         return $this;
     }
 
@@ -88,6 +90,7 @@ class Fieldcontainer extends Model\Object\ClassDefinition\Layout
     public function setFieldLabel($fieldLabel)
     {
         $this->fieldLabel = $fieldLabel;
+
         return $this;
     }
 

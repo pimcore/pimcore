@@ -94,6 +94,7 @@ class Table extends Model\Object\ClassDefinition\Data
     public function setWidth($width)
     {
         $this->width = $this->getAsIntegerCast($width);
+
         return $this;
     }
 
@@ -112,6 +113,7 @@ class Table extends Model\Object\ClassDefinition\Data
     public function setHeight($height)
     {
         $this->height = $this->getAsIntegerCast($height);
+
         return $this;
     }
 
@@ -130,6 +132,7 @@ class Table extends Model\Object\ClassDefinition\Data
     public function setCols($cols)
     {
         $this->cols = $this->getAsIntegerCast($cols);
+
         return $this;
     }
 
@@ -148,6 +151,7 @@ class Table extends Model\Object\ClassDefinition\Data
     public function setRows($rows)
     {
         $this->rows = $this->getAsIntegerCast($rows);
+
         return $this;
     }
 
@@ -167,6 +171,7 @@ class Table extends Model\Object\ClassDefinition\Data
     public function setData($data)
     {
         $this->data = $data;
+
         return $this;
     }
 
@@ -213,8 +218,10 @@ class Table extends Model\Object\ClassDefinition\Data
                     }
                 }
             }
+
             return implode("\n", $tmpLine);
         }
+
         return "";
     }
 
@@ -254,6 +261,7 @@ class Table extends Model\Object\ClassDefinition\Data
         if (empty($checkData)) {
             return null;
         }
+
         return $data;
     }
 
@@ -338,8 +346,10 @@ class Table extends Model\Object\ClassDefinition\Data
                     }
                 }
             }
+
             return implode("\n", $tmpLine);
         }
+
         return "";
     }
 
@@ -383,6 +393,7 @@ class Table extends Model\Object\ClassDefinition\Data
             $value = [];
             $value["html"] = $html;
             $value["type"] = "html";
+
             return $value;
         } else {
             return "";

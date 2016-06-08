@@ -43,6 +43,7 @@ class Listing extends Model\Listing\JsonListing
     public function setProperties($properties)
     {
         $this->properties = $properties;
+
         return $this;
     }
 }

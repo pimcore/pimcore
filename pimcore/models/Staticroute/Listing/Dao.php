@@ -45,6 +45,7 @@ class Dao extends Model\Dao\PhpArrayTable
         }
 
         $this->model->setRoutes($routes);
+
         return $routes;
     }
 

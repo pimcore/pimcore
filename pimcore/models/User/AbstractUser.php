@@ -78,6 +78,7 @@ class AbstractUser extends Model\AbstractModel
         $user = new static();
         $user->setValues($values);
         $user->save();
+
         return $user;
     }
 
@@ -90,6 +91,7 @@ class AbstractUser extends Model\AbstractModel
         try {
             $user = new static();
             $user->getDao()->getByName($name);
+
             return $user;
         } catch (\Exception $e) {
             return false;
@@ -111,6 +113,7 @@ class AbstractUser extends Model\AbstractModel
     public function setId($id)
     {
         $this->id = $id;
+
         return $this;
     }
 
@@ -129,6 +132,7 @@ class AbstractUser extends Model\AbstractModel
     public function setParentId($parentId)
     {
         $this->parentId = $parentId;
+
         return $this;
     }
 
@@ -147,6 +151,7 @@ class AbstractUser extends Model\AbstractModel
     public function setName($name)
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -187,6 +192,7 @@ class AbstractUser extends Model\AbstractModel
     public function setType($type)
     {
         $this->type = $type;
+
         return $this;
     }
 }

@@ -93,6 +93,7 @@ class Actions
     public function setProgrammaticallyEnabled($programmaticallyEnabled)
     {
         $this->programmaticallyEnabled = $programmaticallyEnabled;
+
         return $this;
     }
 
@@ -111,6 +112,7 @@ class Actions
     public function setCodesnippetCode($codesnippetCode)
     {
         $this->codesnippetCode = $codesnippetCode;
+
         return $this;
     }
 
@@ -129,6 +131,7 @@ class Actions
     public function setCodesnippetPosition($codesnippetPosition)
     {
         $this->codesnippetPosition = $codesnippetPosition;
+
         return $this;
     }
 
@@ -147,6 +150,7 @@ class Actions
     public function setCodesnippetSelector($codesnippetSelector)
     {
         $this->codesnippetSelector = $codesnippetSelector;
+
         return $this;
     }
 
@@ -165,6 +169,7 @@ class Actions
     public function setEventKey($eventKey)
     {
         $this->eventKey = $eventKey;
+
         return $this;
     }
 
@@ -183,6 +188,7 @@ class Actions
     public function setEventValue($eventValue)
     {
         $this->eventValue = $eventValue;
+
         return $this;
     }
 
@@ -201,6 +207,7 @@ class Actions
     public function setRedirectCode($redirectCode)
     {
         $this->redirectCode = $redirectCode;
+
         return $this;
     }
 
@@ -224,6 +231,7 @@ class Actions
             }
         }
         $this->redirectUrl = $redirectUrl;
+
         return $this;
     }
 
@@ -242,6 +250,7 @@ class Actions
     public function setCodesnippetEnabled($codesnippetEnabled)
     {
         $this->codesnippetEnabled = $codesnippetEnabled;
+
         return $this;
     }
 
@@ -260,6 +269,7 @@ class Actions
     public function setEventEnabled($eventEnabled)
     {
         $this->eventEnabled = $eventEnabled;
+
         return $this;
     }
 
@@ -278,6 +288,7 @@ class Actions
     public function setRedirectEnabled($redirectEnabled)
     {
         $this->redirectEnabled = $redirectEnabled;
+
         return $this;
     }
 

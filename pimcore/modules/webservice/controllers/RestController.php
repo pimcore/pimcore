@@ -132,6 +132,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                         $this->encoder->encode([  "success" => false,
                             "msg" => "Object does not exist",
                             "code" => self::ELEMENT_DOES_NOT_EXIST]);
+
                         return;
                     }
 
@@ -170,6 +171,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
 
 
                     $this->encoder->encode($result);
+
                     return;
                 }
             } elseif ($this->isDelete()) {
@@ -180,6 +182,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
 
                 $success = $this->service->deleteObject($id);
                 $this->encoder->encode(["success" => $success]);
+
                 return;
             } elseif ($this->isPost() || $this->isPut()) {
                 $data = file_get_contents("php://input");
@@ -230,6 +233,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                 }
 
                 $this->encoder->encode($result);
+
                 return;
             }
         } catch (\Exception $e) {
@@ -256,6 +260,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
             if ($id) {
                 $class = $this->service->getObjectMetadataById($id);
                 $this->encoder->encode(["success" => true, "data" => $class]);
+
                 return;
             }
         } catch (\Exception $e) {
@@ -281,6 +286,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
             if ($id) {
                 $class = $this->service->getClassById($id);
                 $this->encoder->encode(["success" => true, "data" => $class]);
+
                 return;
             }
         } catch (\Exception $e) {
@@ -305,6 +311,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                 }
 
                 $this->encoder->encode(["success" => true, "data" => $config->getForWebserviceExport()]);
+
                 return;
             }
         } catch (\Exception $e) {
@@ -420,6 +427,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                     $this->encoder->encode([  "success" => false,
                         "msg" => "Asset does not exist",
                         "code" => self::ELEMENT_DOES_NOT_EXIST]);
+
                     return;
                 }
 
@@ -451,6 +459,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                     }
                 }
                 $this->encoder->encode(["success" => true, "data" => $object]);
+
                 return;
             } elseif ($this->isDelete()) {
                 $asset = Asset::getById($id);
@@ -460,6 +469,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
 
                 $success = $this->service->deleteAsset($id);
                 $this->encoder->encode(["success" => $success]);
+
                 return;
             } elseif ($this->isPost() || $this->isPut()) {
                 $data = file_get_contents("php://input");
@@ -509,6 +519,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                 } else {
                     $this->encoder->encode(["success" => $success]);
                 }
+
                 return;
             }
         } catch (\Exception $e) {
@@ -597,6 +608,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                     $this->encoder->encode([  "success" => false,
                         "msg" => "Document does not exist",
                         "code" => self::ELEMENT_DOES_NOT_EXIST]);
+
                     return;
                 }
 
@@ -624,6 +636,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                     throw new \Exception("could not find document");
                 }
                 @$this->encoder->encode(["success" => true, "data" => $object]);
+
                 return;
             } elseif ($this->isDelete()) {
                 $doc = Document::getById($id);
@@ -632,6 +645,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                 }
                 $success = $this->service->deleteDocument($id);
                 $this->encoder->encode(["success" => $success]);
+
                 return;
             } elseif ($this->isPost() || $this->isPut()) {
                 $data = file_get_contents("php://input");
@@ -677,6 +691,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                 } else {
                     $this->encoder->encode(["success" => $success]);
                 }
+
                 return;
             }
         } catch (\Exception $e) {
@@ -1036,12 +1051,14 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
             }
             $wsData->$key = $value;
         }
+
         return $wsData;
     }
 
     public static function fillWebserviceData($class, $data)
     {
         $wsData = new $class();
+
         return self::map($wsData, $data);
     }
 
@@ -1057,6 +1074,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
         if (strtoupper($overrideMethod) == "DELETE") {
             return true;
         }
+
         return $request->isDelete();
     }
 
@@ -1071,6 +1089,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
         if (strtoupper($overrideMethod) == "GET") {
             return true;
         }
+
         return $request->isGet();
     }
 
@@ -1085,6 +1104,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
         if (strtoupper($overrideMethod) == "POST") {
             return true;
         }
+
         return $request->isPost();
     }
 
@@ -1099,6 +1119,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
         if (strtoupper($overrideMethod) == "PUT") {
             return true;
         }
+
         return $request->isPut();
     }
 

@@ -33,6 +33,7 @@ class Service
         $definition = json_decode($definition, true);
         $type = $keyConfig->getType();
         $fd = self::getFieldDefinitionFromJson($definition, $type);
+
         return $fd;
     }
 
@@ -55,6 +56,7 @@ class Service
         $dataDefinition = new $className();
 
         $dataDefinition->setValues($definition);
+
         return $dataDefinition;
     }
 }

@@ -58,6 +58,7 @@ class Tool
                 }
             }
         }
+
         return $classMap;
     }
     
@@ -68,6 +69,7 @@ class Tool
             foreach ($data as $k=>$d) {
                 $values[$k] = self::keyValueReverseMapping($d);
             }
+
             return $values;
         } elseif ($data instanceof \stdClass) {
             if ($data->key) {
@@ -78,6 +80,7 @@ class Tool
                 foreach ($data->item as $item) {
                     $values = array_merge($values, self::keyValueReverseMapping($item));
                 }
+
                 return $values;
             }
         } else {

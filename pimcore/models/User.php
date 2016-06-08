@@ -114,6 +114,7 @@ class User extends User\UserRole
         if (strlen($password) > 4) {
             $this->password = $password;
         }
+
         return $this;
     }
 
@@ -134,6 +135,7 @@ class User extends User\UserRole
     public function setUsername($username)
     {
         $this->setName($username);
+
         return $this;
     }
 
@@ -153,6 +155,7 @@ class User extends User\UserRole
     public function setFirstname($firstname)
     {
         $this->firstname = $firstname;
+
         return $this;
     }
 
@@ -172,6 +175,7 @@ class User extends User\UserRole
     public function setLastname($lastname)
     {
         $this->lastname = $lastname;
+
         return $this;
     }
 
@@ -191,6 +195,7 @@ class User extends User\UserRole
     public function setEmail($email)
     {
         $this->email = $email;
+
         return $this;
     }
 
@@ -211,6 +216,7 @@ class User extends User\UserRole
         if ($language) {
             $this->language = $language;
         }
+
         return $this;
     }
 
@@ -238,6 +244,7 @@ class User extends User\UserRole
     public function setAdmin($admin)
     {
         $this->admin = (bool) $admin;
+
         return $this;
     }
 
@@ -256,6 +263,7 @@ class User extends User\UserRole
     public function setActive($active)
     {
         $this->active = (bool) $active;
+
         return $this;
     }
 
@@ -345,6 +353,7 @@ class User extends User\UserRole
         } elseif (empty($roles)) {
             $this->roles = [];
         }
+
         return $this;
     }
 
@@ -356,6 +365,7 @@ class User extends User\UserRole
         if (empty($this->roles)) {
             return [];
         }
+
         return $this->roles;
     }
 
@@ -366,6 +376,7 @@ class User extends User\UserRole
     public function setWelcomescreen($welcomescreen)
     {
         $this->welcomescreen = (bool) $welcomescreen;
+
         return $this;
     }
 
@@ -384,6 +395,7 @@ class User extends User\UserRole
     public function setCloseWarning($closeWarning)
     {
         $this->closeWarning = (bool) $closeWarning;
+
         return $this;
     }
 
@@ -402,6 +414,7 @@ class User extends User\UserRole
     public function setMemorizeTabs($memorizeTabs)
     {
         $this->memorizeTabs = (bool) $memorizeTabs;
+
         return $this;
     }
 
@@ -433,6 +446,7 @@ class User extends User\UserRole
         if (empty($this->apiKey)) {
             return null;
         }
+
         return $this->apiKey;
     }
 
@@ -491,6 +505,7 @@ class User extends User\UserRole
         if (strlen($this->contentLanguages)) {
             return explode(',', $this->contentLanguages);
         }
+
         return [];
     }
 

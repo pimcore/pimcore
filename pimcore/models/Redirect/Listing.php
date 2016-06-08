@@ -54,6 +54,7 @@ class Listing extends Model\Listing\AbstractListing
     public function setRedirects($redirects)
     {
         $this->redirects = $redirects;
+
         return $this;
     }
 }

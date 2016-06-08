@@ -593,6 +593,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
         } elseif ($asset instanceof Asset\Document && \Pimcore\Document::isAvailable()) {
             return "/admin/asset/get-document-thumbnail/id/" . $asset->getId() . "/treepreview/true";
         }
+
         return null;
     }
 

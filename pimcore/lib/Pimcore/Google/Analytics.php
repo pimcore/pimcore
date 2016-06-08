@@ -48,6 +48,7 @@ class Analytics
         if (self::getSiteConfig($site) && self::getSiteConfig($site)->profile) {
             return true;
         }
+
         return false;
     }
 
@@ -67,6 +68,7 @@ class Analytics
         if ($config->analytics->sites->$siteKey) {
             return Config::getReportConfig()->analytics->sites->$siteKey;
         }
+
         return false;
     }
 

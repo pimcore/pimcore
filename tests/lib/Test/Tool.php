@@ -34,6 +34,7 @@ class Test_Tool
               ]);
 
         $client->setLocation($conf->webservice->serviceEndpoint . "?username=" . $user->getUsername() . "&apikey=" . $user->getPassword());
+
         return $client;
     }
 
@@ -68,6 +69,7 @@ class Test_Tool
                 }
             }
         }
+
         return $propertiesStringArray;
     }
 
@@ -269,6 +271,7 @@ class Test_Tool
                         }
                         $counter++;
                     }
+
                     return serialize($returnValue);
                 }
             }
@@ -393,6 +396,7 @@ class Test_Tool
         if ($save) {
             $emptyObject->save();
         }
+
         return $emptyObject;
     }
 
@@ -402,6 +406,7 @@ class Test_Tool
         for ($i = 0; $i < $count; $i++) {
             $result[] = self::createEmptyObject($keyPrefix, $save);
         }
+
         return $result;
     }
 
@@ -495,6 +500,7 @@ class Test_Tool
         if ($save) {
             $document->save();
         }
+
         return $document;
     }
 
@@ -531,6 +537,7 @@ class Test_Tool
         if ($save) {
             $asset->save();
         }
+
         return $asset;
     }
 
@@ -595,6 +602,7 @@ class Test_Tool
     {
         $list = new Object_List();
         $childs = $list->load();
+
         return count($childs);
     }
 
@@ -605,6 +613,7 @@ class Test_Tool
     {
         $list = new Asset_List();
         $childs = $list->load();
+
         return count($childs);
     }
 
@@ -615,6 +624,7 @@ class Test_Tool
     {
         $list = new Document_List();
         $childs = $list->load();
+
         return count($childs);
     }
 }

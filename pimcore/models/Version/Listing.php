@@ -54,6 +54,7 @@ class Listing extends Model\Listing\AbstractListing
     public function setVersions($versions)
     {
         $this->versions = $versions;
+
         return $this;
     }
 }

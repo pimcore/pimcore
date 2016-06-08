@@ -87,6 +87,7 @@ class Dashboard
                 $this->dashboards = $dasboardCfg["predefined"] ? $dasboardCfg["predefined"] : [];
             }
         }
+
         return $this->dashboards;
     }
 
@@ -162,6 +163,7 @@ class Dashboard
     {
         $perspectiveCfg = Config::getRuntimePerspective();
         $dasboardCfg = $perspectiveCfg["dashboards"] ? $perspectiveCfg["dashboards"] : [];
+
         return isset($dasboardCfg["disabledPortlets"]) ? $dasboardCfg["disabledPortlets"] : [];
     }
 }

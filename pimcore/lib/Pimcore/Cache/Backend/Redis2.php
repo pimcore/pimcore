@@ -199,6 +199,7 @@ class Redis2 extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Extended
         if ($data === null) {
             return false;
         }
+
         return $this->_decodeData($data);
     }
 
@@ -211,6 +212,7 @@ class Redis2 extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Extended
     public function test($id)
     {
         $mtime = $this->_redis->hGet(self::PREFIX_KEY.$id, self::FIELD_MTIME);
+
         return ($mtime ? $mtime : false);
     }
 
@@ -443,6 +445,7 @@ class Redis2 extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Extended
                     "return true";
                 $this->_redis->eval($script, $pTags, $sArgs);
             }
+
             return;
         }
 
@@ -533,6 +536,7 @@ class Redis2 extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Extended
                     usleep(20000);
                 }
             }
+
             return;
         }
 
@@ -618,6 +622,7 @@ class Redis2 extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Extended
             }
             if ($mode == \Zend_Cache::CLEANING_MODE_OLD) {
                 $this->_collectGarbage();
+
                 return true;
             }
             if (! count($tags)) {
@@ -645,6 +650,7 @@ class Redis2 extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Extended
         } catch (\CredisException $e) {
             \Zend_Cache::throwException('Error cleaning cache by mode '.$mode.': '.$e->getMessage(), $e);
         }
+
         return true;
     }
 
@@ -689,6 +695,7 @@ class Redis2 extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Extended
             foreach ($keys as $index => $key) {
                 $keys[$index] = substr($key, $prefixLen);
             }
+
             return $keys;
         }
     }
@@ -716,6 +723,7 @@ class Redis2 extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Extended
         if ($tags) {
             return (array) $this->_redis->sInter($this->_preprocessTagIds($tags));
         }
+
         return [];
     }
 
@@ -735,6 +743,7 @@ class Redis2 extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Extended
         if ($tags) {
             return (array) $this->_redis->sDiff(self::SET_IDS, $this->_preprocessTagIds($tags));
         }
+
         return (array) $this->_redis->sMembers(self::SET_IDS);
     }
 
@@ -751,6 +760,7 @@ class Redis2 extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Extended
         if ($tags) {
             return (array) $this->_redis->sUnion($this->_preprocessTagIds($tags));
         }
+
         return [];
     }
 
@@ -804,8 +814,10 @@ class Redis2 extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Extended
         list($inf) = $this->_redis->hGet(self::PREFIX_KEY.$id, self::FIELD_INF);
         if ($inf === '0') {
             $expireAt = time() + $this->_redis->ttl(self::PREFIX_KEY.$id) + $extraLifetime;
+
             return (bool) $this->_redis->expireAt(self::PREFIX_KEY.$id, $expireAt);
         }
+
         return false;
     }
 
@@ -854,8 +866,10 @@ class Redis2 extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Extended
             if (! $data) {
                 throw new \CredisException("Could not compress cache data.");
             }
+
             return $this->_compressPrefix.$data;
         }
+
         return $data;
     }
 
@@ -873,6 +887,7 @@ class Redis2 extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Extended
                 case 'gz': case 'zc': return gzuncompress(substr($data, 5));
             }
         }
+
         return $data;
     }
 
@@ -893,6 +908,7 @@ class Redis2 extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Extended
     protected function _preprocessIds($ids)
     {
         array_walk($ids, [$this, '_preprocess'], self::PREFIX_KEY);
+
         return $ids;
     }
 
@@ -903,6 +919,7 @@ class Redis2 extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Extended
     protected function _preprocessTagIds($tags)
     {
         array_walk($tags, [$this, '_preprocess'], self::PREFIX_TAG_IDS);
+
         return $tags;
     }
 

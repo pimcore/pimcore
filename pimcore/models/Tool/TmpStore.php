@@ -97,6 +97,7 @@ class TmpStore extends Model\AbstractModel
     public static function delete($id)
     {
         $instance = self::getInstance();
+
         return $instance->getDao()->delete($id);
     }
 
@@ -114,6 +115,7 @@ class TmpStore extends Model\AbstractModel
                 return $item;
             }
         }
+
         return null;
     }
 
@@ -134,6 +136,7 @@ class TmpStore extends Model\AbstractModel
     {
         $instance = self::getInstance();
         $items = $instance->getDao()->getIdsByTag($tag);
+
         return $items;
     }
 

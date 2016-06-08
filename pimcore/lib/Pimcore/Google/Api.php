@@ -31,6 +31,7 @@ class Api
     public static function getPrivateKeyPath()
     {
         $path = \Pimcore\Config::locateConfigFile("google-api-private-key.p12");
+
         return $path;
     }
 
@@ -65,6 +66,7 @@ class Api
         if ($config->client_id && $config->email && file_exists(self::getPrivateKeyPath())) {
             return true;
         }
+
         return false;
     }
 
@@ -78,6 +80,7 @@ class Api
         if ($config->simpleapikey) {
             return true;
         }
+
         return false;
     }
 
@@ -146,6 +149,7 @@ class Api
         }
 
         $client->setAccessToken($token);
+
         return $client;
     }
 
@@ -196,6 +200,7 @@ class Api
         $client->setUri(self::ANALYTICS_API_URL.'metadata/ga/columns');
 
         $result = $client->request();
+
         return \Zend_Json::decode($result->getBody());
     }
 

@@ -145,6 +145,7 @@ class Session
             } catch (\Exception $e) {
                 // invalid session, regenerate the session, and return a dummy object
                 \Zend_Session::regenerateId();
+
                 return new \stdClass();
             }
         }
@@ -165,6 +166,7 @@ class Session
         $session = self::get($namespace, true);
         $session->lock();
         self::writeClose();
+
         return $session;
     }
 

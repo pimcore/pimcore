@@ -79,6 +79,7 @@ class Input extends Model\Document\Tag
     public function setDataFromResource($data)
     {
         $this->text = $data;
+
         return $this;
     }
 
@@ -91,6 +92,7 @@ class Input extends Model\Document\Tag
     {
         $data = html_entity_decode($data, ENT_HTML5); // this is because the input is now an div contenteditable -> therefore in entities
         $this->text = $data;
+
         return $this;
     }
 

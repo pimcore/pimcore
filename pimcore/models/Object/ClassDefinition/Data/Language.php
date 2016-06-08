@@ -74,6 +74,7 @@ class Language extends Model\Object\ClassDefinition\Data\Select
     public function setOnlySystemLanguages($value)
     {
         $this->onlySystemLanguages = (bool) $value;
+
         return $this;
     }
 

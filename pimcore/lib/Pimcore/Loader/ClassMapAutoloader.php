@@ -34,6 +34,7 @@ class ClassMapAutoloader extends \Zend_Loader_ClassMapAutoloader
 
         if (array_key_exists($class, $classAliases)) {
             class_alias($classAliases[$class], $class);
+
             return;
         }
 
@@ -77,6 +78,7 @@ class ClassMapAutoloader extends \Zend_Loader_ClassMapAutoloader
 
                 if (!class_exists($alias, false) && !interface_exists($alias, false)) {
                     class_alias($class, $alias);
+
                     return; // skip here, nothing more to do ...
                 }
             }
@@ -130,6 +132,7 @@ class ClassMapAutoloader extends \Zend_Loader_ClassMapAutoloader
             $modelFile = PIMCORE_PATH . "/models/" . str_replace(["Pimcore\\Model\\", "\\"], ["", "/"], $class) . ".php";
             if (file_exists($modelFile)) {
                 include_once $modelFile;
+
                 return true;
             }
 
@@ -137,6 +140,7 @@ class ClassMapAutoloader extends \Zend_Loader_ClassMapAutoloader
                 $modelFile = PIMCORE_CLASS_DIRECTORY . "/" . str_replace(["Pimcore\\Model\\", "\\"], ["", "/"], $class) . ".php";
                 if (file_exists($modelFile)) {
                     include_once $modelFile;
+
                     return true;
                 }
             }

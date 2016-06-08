@@ -100,6 +100,7 @@ class Slider extends Model\Object\ClassDefinition\Data
     public function setWidth($width)
     {
         $this->width = $this->getAsIntegerCast($width);
+
         return $this;
     }
 
@@ -118,6 +119,7 @@ class Slider extends Model\Object\ClassDefinition\Data
     public function setHeight($height)
     {
         $this->height = $this->getAsIntegerCast($height);
+
         return $this;
     }
 
@@ -137,6 +139,7 @@ class Slider extends Model\Object\ClassDefinition\Data
     public function setMinValue($minValue)
     {
         $this->minValue = $this->getAsFloatCast($minValue);
+
         return $this;
     }
 
@@ -155,6 +158,7 @@ class Slider extends Model\Object\ClassDefinition\Data
     public function setMaxValue($maxValue)
     {
         $this->maxValue = $this->getAsFloatCast($maxValue);
+
         return $this;
     }
 
@@ -182,6 +186,7 @@ class Slider extends Model\Object\ClassDefinition\Data
     public function setVertical($vertical)
     {
         $this->vertical = (bool) $vertical;
+
         return $this;
     }
 
@@ -200,6 +205,7 @@ class Slider extends Model\Object\ClassDefinition\Data
     public function setIncrement($increment)
     {
         $this->increment = $this->getAsFloatCast($increment);
+
         return $this;
     }
     
@@ -219,6 +225,7 @@ class Slider extends Model\Object\ClassDefinition\Data
     public function setDecimalPrecision($decimalPrecision)
     {
         $this->decimalPrecision = $this->getAsIntegerCast($decimalPrecision);
+
         return $this;
     }
 

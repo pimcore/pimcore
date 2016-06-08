@@ -105,7 +105,7 @@ class Setup extends Model\AbstractModel
 
         // create initial /website/var folder structure
         // @TODO: should use values out of startup.php (Constants)
-        $varFolders = ["areas","assets","backup","cache","classes","config","email","log","plugins","recyclebin","search","system","tmp","versions","webdav"];
+        $varFolders = ["areas", "assets", "backup", "cache", "classes", "config", "email", "log", "plugins", "recyclebin", "search", "system", "tmp", "versions", "webdav"];
         foreach ($varFolders as $folder) {
             \Pimcore\File::mkdir(PIMCORE_WEBSITE_VAR . "/" . $folder);
         }

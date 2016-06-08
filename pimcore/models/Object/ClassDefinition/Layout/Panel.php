@@ -50,6 +50,7 @@ class Panel extends Model\Object\ClassDefinition\Layout
         if (!empty($labelWidth)) {
             $this->labelWidth = intval($labelWidth);
         }
+
         return $this;
     }
 
@@ -68,6 +69,7 @@ class Panel extends Model\Object\ClassDefinition\Layout
     public function setLayout($layout)
     {
         $this->layout = $layout;
+
         return $this;
     }
 

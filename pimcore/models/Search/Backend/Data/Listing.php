@@ -53,6 +53,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
     public function setEntries($entries)
     {
         $this->entries = $entries;
+
         return $this;
     }
 
@@ -73,6 +74,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
         if (in_array($key, $this->validOrderKeys)) {
             return true;
         }
+
         return false;
     }
 }

@@ -149,6 +149,7 @@ class PhpArrayFileTable
         $ids = array_keys($this->data);
         if (count($ids)) {
             $id = max($ids) + 1;
+
             return $id;
         }
 

@@ -54,6 +54,7 @@ class Dao extends Model\Dao\AbstractDao
         if ($this->model->getId()) {
             return $this->model->update();
         }
+
         return $this->create();
     }
 

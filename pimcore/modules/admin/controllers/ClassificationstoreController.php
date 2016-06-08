@@ -315,6 +315,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
             $rootElement["data"] = $data;
             $rootElement["success"] = true;
             $rootElement["total"] = $list->getTotalCount();
+
             return $this->_helper->json($rootElement);
         }
     }
@@ -450,6 +451,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
             $rootElement["data"] = $data;
             $rootElement["success"] = true;
             $rootElement["total"] = $list->getTotalCount();
+
             return $this->_helper->json($rootElement);
         }
     }
@@ -557,6 +559,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
             $rootElement["data"] = $data;
             $rootElement["success"] = true;
             $rootElement["total"] = $list->getTotalCount();
+
             return $this->_helper->json($rootElement);
         }
     }
@@ -565,6 +568,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
     {
         $list = new Pimcore\Model\Object\Classificationstore\StoreConfig\Listing();
         $list = $list->load();
+
         return $this->_helper->json($list);
     }
 
@@ -671,6 +675,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
         $rootElement["data"] = $data;
         $rootElement["success"] = true;
         $rootElement["total"] = $list->getTotalCount();
+
         return $this->_helper->json($rootElement);
     }
 
@@ -800,6 +805,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
             $rootElement["data"] = $data;
             $rootElement["success"] = true;
             $rootElement["total"] = $list->getTotalCount();
+
             return $this->_helper->json($rootElement);
         }
     }
@@ -1062,6 +1068,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
             $rootElement["data"] = $data;
             $rootElement["success"] = true;
             $rootElement["total"] = $list->getTotalCount();
+
             return $this->_helper->json($rootElement);
         }
     }
@@ -1095,6 +1102,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
         if ($config->getModificationDate()) {
             $item["modificationDate"] = $config->getModificationDate();
         }
+
         return $item;
     }
 

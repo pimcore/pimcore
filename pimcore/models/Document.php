@@ -280,6 +280,7 @@ class Document extends Element\AbstractElement
                 }
             } catch (\Exception $e) {
                 \Logger::warning($e->getMessage());
+
                 return null;
             }
         }
@@ -532,7 +533,7 @@ class Document extends Element\AbstractElement
      */
     protected function update()
     {
-        $disallowedKeysInFirstLevel = ["install","admin","webservice","plugin"];
+        $disallowedKeysInFirstLevel = ["install", "admin", "webservice", "plugin"];
         if ($this->getParentId() == 1 && in_array($this->getKey(), $disallowedKeysInFirstLevel)) {
             throw new \Exception("Key: " . $this->getKey() . " is not allowed in first level (root-level)");
         }
@@ -611,6 +612,7 @@ class Document extends Element\AbstractElement
         if (!$this->dependencies) {
             $this->dependencies = Dependency::getBySourceId($this->getId(), "document");
         }
+
         return $this->dependencies;
     }
 
@@ -629,6 +631,7 @@ class Document extends Element\AbstractElement
         } else {
             $this->hasChilds=false;
         }
+
         return $this;
     }
 
@@ -647,6 +650,7 @@ class Document extends Element\AbstractElement
             $list->setOrder("asc");
             $this->childs = $list->load();
         }
+
         return $this->childs;
     }
 
@@ -665,6 +669,7 @@ class Document extends Element\AbstractElement
                 return $this->hasChilds;
             }
         }
+
         return $this->getDao()->hasChilds();
     }
 
@@ -686,6 +691,7 @@ class Document extends Element\AbstractElement
             $list->setOrder("asc");
             $this->siblings = $list->load();
         }
+
         return $this->siblings;
     }
 
@@ -703,6 +709,7 @@ class Document extends Element\AbstractElement
                 return $this->hasSiblings;
             }
         }
+
         return $this->getDao()->hasSiblings();
     }
 
@@ -715,6 +722,7 @@ class Document extends Element\AbstractElement
         if (empty($this->locked)) {
             return null;
         }
+
         return $this->locked;
     }
 
@@ -725,6 +733,7 @@ class Document extends Element\AbstractElement
     public function setLocked($locked)
     {
         $this->locked = $locked;
+
         return $this;
     }
 
@@ -788,6 +797,7 @@ class Document extends Element\AbstractElement
                 if ($site instanceof Site) {
                     if ($site->getRootDocument()->getId() == $this->getId()) {
                         $link = $this->prepareFrontendPath("/");
+
                         return $link;
                     }
                 }
@@ -818,6 +828,7 @@ class Document extends Element\AbstractElement
 
                         $link = preg_replace("@^" . preg_quote($parent->getRealFullPath()) . "@", $hardlinkPath, $this->getRealFullPath());
                         $link = $this->prepareFrontendPath($link);
+
                         return $link;
                     }
                 }
@@ -833,10 +844,12 @@ class Document extends Element\AbstractElement
                     if ($site->getRootDocument()->getId() == $this->getId()) {
                         $link = $scheme . $site->getMainDomain() . "/";
                         $link = $this->prepareFrontendPath($link);
+
                         return $link;
                     }
                     $link = $scheme . $site->getMainDomain() . preg_replace("@^" . $site->getRootPath() . "/@", "/", $this->getRealFullPath());
                     $link = $this->prepareFrontendPath($link);
+
                     return $link;
                 }
             }
@@ -844,6 +857,7 @@ class Document extends Element\AbstractElement
             if ($config->general->domain) {
                 $link = $scheme . $config->general->domain . $this->getRealFullPath();
                 $link = $this->prepareFrontendPath($link);
+
                 return $link;
             }
         }
@@ -927,6 +941,7 @@ class Document extends Element\AbstractElement
                         $rootPath = $site->getRootPath();
                         $rootPath = preg_quote($rootPath);
                         $link = preg_replace("@^" . $rootPath . "@", "", $this->path);
+
                         return $link;
                     }
                 }
@@ -952,6 +967,7 @@ class Document extends Element\AbstractElement
     public function getRealFullPath()
     {
         $path = $this->getRealPath() . $this->getKey();
+
         return $path;
     }
 
@@ -962,6 +978,7 @@ class Document extends Element\AbstractElement
     public function setCreationDate($creationDate)
     {
         $this->creationDate = (int) $creationDate;
+
         return $this;
     }
 
@@ -972,6 +989,7 @@ class Document extends Element\AbstractElement
     public function setId($id)
     {
         $this->id = (int) $id;
+
         return $this;
     }
 
@@ -982,6 +1000,7 @@ class Document extends Element\AbstractElement
     public function setKey($key)
     {
         $this->key = $key;
+
         return $this;
     }
 
@@ -993,6 +1012,7 @@ class Document extends Element\AbstractElement
     public function setModificationDate($modificationDate)
     {
         $this->modificationDate = (int) $modificationDate;
+
         return $this;
     }
 
@@ -1005,6 +1025,7 @@ class Document extends Element\AbstractElement
     {
         $this->parentId = (int) $parentId;
         $this->parent = null;
+
         return $this;
     }
 
@@ -1015,6 +1036,7 @@ class Document extends Element\AbstractElement
     public function setPath($path)
     {
         $this->path = $path;
+
         return $this;
     }
 
@@ -1033,6 +1055,7 @@ class Document extends Element\AbstractElement
     public function setIndex($index)
     {
         $this->index = (int) $index;
+
         return $this;
     }
 
@@ -1051,6 +1074,7 @@ class Document extends Element\AbstractElement
     public function setType($type)
     {
         $this->type = $type;
+
         return $this;
     }
 
@@ -1077,6 +1101,7 @@ class Document extends Element\AbstractElement
     public function setUserModification($userModification)
     {
         $this->userModification = (int) $userModification;
+
         return $this;
     }
 
@@ -1087,6 +1112,7 @@ class Document extends Element\AbstractElement
     public function setUserOwner($userOwner)
     {
         $this->userOwner = (int) $userOwner;
+
         return $this;
     }
 
@@ -1113,6 +1139,7 @@ class Document extends Element\AbstractElement
     public function setPublished($published)
     {
         $this->published = (bool) $published;
+
         return $this;
     }
 
@@ -1136,6 +1163,7 @@ class Document extends Element\AbstractElement
 
             $this->setProperties($properties);
         }
+
         return $this->properties;
     }
 
@@ -1146,6 +1174,7 @@ class Document extends Element\AbstractElement
     public function setProperties($properties)
     {
         $this->properties = $properties;
+
         return $this;
     }
 
@@ -1171,6 +1200,7 @@ class Document extends Element\AbstractElement
         $property->setInheritable($inheritable);
 
         $this->properties[$name] = $property;
+
         return $this;
     }
 
@@ -1196,6 +1226,7 @@ class Document extends Element\AbstractElement
         if ($parent instanceof Document) {
             $this->parentId = $parent->getId();
         }
+
         return $this;
     }
 

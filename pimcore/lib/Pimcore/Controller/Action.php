@@ -103,6 +103,7 @@ class Action extends \Zend_Controller_Action
         if ($layout instanceof \Zend_Layout) {
             $layout->setLayout($name);
         }
+
         return $this;
     }
 

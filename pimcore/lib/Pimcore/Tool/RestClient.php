@@ -76,6 +76,7 @@ class RestClient
                 $this->setValue($key, $value);
             }
         }
+
         return $this;
     }
 
@@ -90,6 +91,7 @@ class RestClient
         if (method_exists($this, $method)) {
             $this->$method($value);
         }
+
         return $this;
     }
 
@@ -100,6 +102,7 @@ class RestClient
     public function setDisableMappingExceptions($disableMappingExceptions)
     {
         $this->disableMappingExceptions = $disableMappingExceptions;
+
         return $this;
     }
 
@@ -118,6 +121,7 @@ class RestClient
     public function setCondense($condense)
     {
         $this->condense = $condense;
+
         return $this;
     }
 
@@ -136,6 +140,7 @@ class RestClient
     public function setEnableProfiling($enableProfiling)
     {
         $this->enableProfiling = $enableProfiling;
+
         return $this;
     }
 
@@ -157,6 +162,7 @@ class RestClient
     {
         $this->host = $host;
         $this->client->setHeaders("Host", $host);
+
         return $this;
     }
 
@@ -175,6 +181,7 @@ class RestClient
     public function setBaseUrl($base)
     {
         $this->baseUrl = $base;
+
         return $this;
     }
 
@@ -223,6 +230,7 @@ class RestClient
     public function setTestMode($testMode)
     {
         $this->testMode = $testMode;
+
         return $this;
     }
 
@@ -241,6 +249,7 @@ class RestClient
     public function setApiKey($apikey)
     {
         $this->apikey = $apikey;
+
         return $this;
     }
 
@@ -259,6 +268,7 @@ class RestClient
     public function setClient(\Zend_Http_Client $client)
     {
         $this->client = $client;
+
         return $this;
     }
 
@@ -308,6 +318,7 @@ class RestClient
             }
             $wsData->$key = $value;
         }
+
         return $wsData;
     }
 
@@ -325,6 +336,7 @@ class RestClient
             throw new Exception("cannot fill web service data " . $class);
         }
         $wsData = new $class();
+
         return $this->map($wsData, $data);
     }
 
@@ -427,6 +439,7 @@ class RestClient
         if ($objectClass) {
             $params .= "&objectClass=" . $objectClass;
         }
+
         return $params;
     }
 
@@ -465,6 +478,7 @@ class RestClient
                 $result[] = $object;
             }
         }
+
         return $result;
     }
 
@@ -503,6 +517,7 @@ class RestClient
                 $result[] = $asset;
             }
         }
+
         return $result;
     }
 
@@ -546,6 +561,7 @@ class RestClient
                 $result[] = $document;
             }
         }
+
         return $result;
     }
 
@@ -586,6 +602,7 @@ class RestClient
         if ($wsDocument->type == "folder") {
             $object = new Object\Folder();
             $wsDocument->reverseMap($object);
+
             return $object;
         } elseif ($wsDocument->type == "object" || $wsDocument->type == "variant") {
             $classname = "\\Pimcore\\Model\\Object\\" . ucfirst($wsDocument->className);
@@ -603,6 +620,7 @@ class RestClient
                     if ($this->profilingInfo) {
                         $this->profilingInfo->reverse = $timeConsumed;
                     }
+
                     return $object;
                 } else {
                     throw new Exception("Unable to decode object, could not instantiate Object with given class name [ $classname ]");
@@ -632,6 +650,7 @@ class RestClient
             }
             $doc = new Document\Folder();
             $wsDocument->reverseMap($doc, $this->getDisableMappingExceptions(), $idMapper);
+
             return $doc;
         } else {
             $type = ucfirst($response->type);
@@ -646,6 +665,7 @@ class RestClient
                 $type = "\\Pimcore\\Model\\Document\\" . ucfirst($wsDocument->type);
                 $document = new $type();
                 $wsDocument->reverseMap($document, $this->getDisableMappingExceptions(), $idMapper);
+
                 return $document;
             }
         }
@@ -662,6 +682,7 @@ class RestClient
         if ($idx >= 0) {
             $filename = substr($filename, 0, $idx) . "." . $extension;
         }
+
         return $filename;
     }
 
@@ -681,6 +702,7 @@ class RestClient
             }
             $asset = new Asset\Folder();
             $wsDocument->reverseMap($asset, $this->getDisableMappingExceptions(), $idMapper);
+
             return $asset;
         } else {
             $wsDocument = $this->fillWebserviceData("\\Pimcore\\Model\\Webservice\\Data\\Asset\\File\\In", $response);
@@ -777,6 +799,7 @@ class RestClient
         $wsDocument = Webservice\Data\Mapper::map($document, $className, "out");
         $encodedData = json_encode($wsDocument);
         $response = $this->doRequest($this->buildEndpointUrl("document/"), "PUT", $encodedData);
+
         return $response;
     }
 
@@ -795,6 +818,7 @@ class RestClient
         $wsDocument = Webservice\Data\Mapper::map($object, $documentType, "out");
         $encodedData = json_encode($wsDocument);
         $response = $this->doRequest($this->buildEndpointUrl("object/"), "PUT", $encodedData);
+
         return $response;
     }
 
@@ -815,6 +839,7 @@ class RestClient
         $encodedData = json_encode($wsDocument);
         $response = $this->doRequest($this->buildEndpointUrl("asset/"), "PUT", $encodedData);
         $response = $response->data;
+
         return $response;
     }
 
@@ -825,6 +850,7 @@ class RestClient
     public function deleteObject($objectId)
     {
         $response = $this->doRequest($this->buildEndpointUrl("object/id/" . $objectId), "DELETE");
+
         return $response;
     }
 
@@ -835,6 +861,7 @@ class RestClient
     public function deleteAsset($assetId)
     {
         $response = $this->doRequest($this->buildEndpointUrl("asset/id/" . $assetId), "DELETE");
+
         return $response;
     }
 
@@ -845,6 +872,7 @@ class RestClient
     public function deleteDocument($documentId)
     {
         $response = $this->doRequest($this->buildEndpointUrl("document/id/" . $documentId), "DELETE");
+
         return $response;
     }
 
@@ -897,6 +925,7 @@ class RestClient
 
         $class = new Object\ClassDefinition();
         $wsDocument->reverseMap($class);
+
         return $class;
     }
 
@@ -920,6 +949,7 @@ class RestClient
 
         $class = new Object\ClassDefinition();
         $wsDocument->reverseMap($class);
+
         return $class;
     }
 
@@ -949,6 +979,7 @@ class RestClient
         if (!$response || !$response["success"]) {
             throw new Exception("Could not retrieve asset count");
         }
+
         return $response["data"]->totalCount;
     }
 
@@ -966,6 +997,7 @@ class RestClient
         if (!$response || !$response["success"]) {
             throw new Exception("Could not retrieve document count");
         }
+
         return $response["data"]->totalCount;
     }
 
@@ -984,6 +1016,7 @@ class RestClient
         if (!$response || !$response["success"]) {
             throw new Exception("Could not retrieve object count");
         }
+
         return $response["data"]->totalCount;
     }
 
@@ -994,6 +1027,7 @@ class RestClient
     {
         $response = $this->doRequest($this->buildEndpointUrl("user"), "GET");
         $response = ["success" => true, "data" => $response->data];
+
         return $response;
     }
 
@@ -1036,6 +1070,7 @@ class RestClient
     public function getObjectBricks()
     {
         $response = $this->doRequest($this->buildEndpointUrl("object-bricks"), "GET");
+
         return $response;
     }
 
@@ -1066,6 +1101,7 @@ class RestClient
     public function getImageThumbnails()
     {
         $response = $this->doRequest($this->buildEndpointUrl("image-thumbnails"), "GET");
+
         return $response;
     }
 
@@ -1076,6 +1112,7 @@ class RestClient
     public function getImageThumbnail($id)
     {
         $response = $this->doRequest($this->buildEndpointUrl("image-thumbnail/id/" . $id), "GET");
+
         return $response;
     }
 
@@ -1087,6 +1124,7 @@ class RestClient
     {
         $url = $this->buildEndpointUrl("server-info");
         $response = $this->doRequest($this->buildEndpointUrl("server-info"), "GET");
+
         return $response;
     }
 
@@ -1101,6 +1139,7 @@ class RestClient
         if (!empty($params)) {
             $url .= '&' . http_build_query($params);
         }
+
         return $url;
     }
 }

@@ -91,6 +91,7 @@ class Wysiwyg extends Model\Object\ClassDefinition\Data
     public function setWidth($width)
     {
         $this->width = $this->getAsIntegerCast($width);
+
         return $this;
     }
 
@@ -101,6 +102,7 @@ class Wysiwyg extends Model\Object\ClassDefinition\Data
     public function setHeight($height)
     {
         $this->height = $this->getAsIntegerCast($height);
+
         return $this;
     }
 
@@ -271,6 +273,7 @@ class Wysiwyg extends Model\Object\ClassDefinition\Data
             $value = [];
             $value["html"] = $data;
             $value["type"] = "html";
+
             return $value;
         } else {
             return "";

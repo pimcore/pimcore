@@ -123,6 +123,7 @@ class LibreOffice extends Ghostscript
         try {
             // if the document is already an PDF, delegate the call directly to parent::getPdf() (Ghostscript)
             $pdfPath = parent::getPdf($path);
+
             return $pdfPath;
         } catch (\Exception $e) {
             // nothing to do, delegate to libreoffice
@@ -188,6 +189,7 @@ class LibreOffice extends Ghostscript
                 $text = file_get_contents($tmpName);
                 $text = \Pimcore\Tool\Text::convertToUTF8($text);
                 unlink($tmpName);
+
                 return $text;
             } else {
                 $message = "Couldn't convert document to PDF: " . $path . " with the command: '" . $cmd . "' - now trying to get the text out of the PDF ...";

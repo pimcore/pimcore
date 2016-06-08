@@ -83,6 +83,7 @@ class Textarea extends Model\Object\ClassDefinition\Data
     public function setWidth($width)
     {
         $this->width = $this->getAsIntegerCast($width);
+
         return $this;
     }
 
@@ -93,6 +94,7 @@ class Textarea extends Model\Object\ClassDefinition\Data
     public function setHeight($height)
     {
         $this->height = $this->getAsIntegerCast($height);
+
         return $this;
     }
 
@@ -175,6 +177,7 @@ class Textarea extends Model\Object\ClassDefinition\Data
 
             $value["html"] = $data;
             $value["type"] = "html";
+
             return $value;
         } else {
             return "";

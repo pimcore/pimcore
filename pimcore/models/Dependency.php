@@ -61,6 +61,7 @@ class Dependency extends AbstractModel
         $d->setSourceId($id);
         $d->setSourceType($type);
         $d->getDao()->getBySourceId();
+
         return $d;
     }
 
@@ -130,6 +131,7 @@ class Dependency extends AbstractModel
     public function setSourceId($sourceId)
     {
         $this->sourceId = (int) $sourceId;
+
         return $this;
     }
 
@@ -140,6 +142,7 @@ class Dependency extends AbstractModel
     public function setRequires($requires)
     {
         $this->requires = $requires;
+
         return $this;
     }
 
@@ -150,6 +153,7 @@ class Dependency extends AbstractModel
     public function setRequiredBy($requiredBy)
     {
         $this->requiredBy = $requiredBy;
+
         return $this;
     }
 
@@ -168,6 +172,7 @@ class Dependency extends AbstractModel
     public function setSourceType($sourceType)
     {
         $this->sourceType = $sourceType;
+
         return $this;
     }
 
@@ -181,6 +186,7 @@ class Dependency extends AbstractModel
         if (is_array($this->getRequiredBy()) && count($this->getRequiredBy()) > 0) {
             return true;
         }
+
         return false;
     }
 }

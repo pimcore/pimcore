@@ -37,6 +37,7 @@ class DefinitionCache
             return;
         }
         self::put($config);
+
         return $config;
     }
 
@@ -72,6 +73,7 @@ class DefinitionCache
         } elseif ($config instanceof GroupConfig) {
             $type = "group";
         }
+
         return $type;
     }
 }

@@ -53,6 +53,7 @@ class Video
         if (self::getDefaultAdapter()) {
             return true;
         }
+
         return false;
     }
 

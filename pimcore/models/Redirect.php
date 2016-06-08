@@ -152,6 +152,7 @@ class Redirect extends AbstractModel
     public function setId($id)
     {
         $this->id = (int) $id;
+
         return $this;
     }
 
@@ -162,6 +163,7 @@ class Redirect extends AbstractModel
     public function setSource($source)
     {
         $this->source = $source;
+
         return $this;
     }
 
@@ -172,6 +174,7 @@ class Redirect extends AbstractModel
     public function setTarget($target)
     {
         $this->target = $target;
+
         return $this;
     }
 
@@ -184,6 +187,7 @@ class Redirect extends AbstractModel
         if ($priority) {
             $this->priority = $priority;
         }
+
         return $this;
     }
 
@@ -204,6 +208,7 @@ class Redirect extends AbstractModel
         if ($statusCode) {
             $this->statusCode = $statusCode;
         }
+
         return $this;
     }
 
@@ -224,6 +229,7 @@ class Redirect extends AbstractModel
         if (empty($statusCode)) {
             $statusCode = "301";
         }
+
         return "HTTP/1.1 " . $statusCode . " " . self::$statusCodes[$statusCode];
     }
 
@@ -251,6 +257,7 @@ class Redirect extends AbstractModel
             $expiry = strtotime($expiry);
         }
         $this->expiry = $expiry;
+
         return $this;
     }
 
@@ -287,6 +294,7 @@ class Redirect extends AbstractModel
         } else {
             $this->sourceEntireUrl = null;
         }
+
         return $this;
     }
 
@@ -317,6 +325,7 @@ class Redirect extends AbstractModel
         } else {
             $this->active = null;
         }
+
         return $this;
     }
 
@@ -331,6 +340,7 @@ class Redirect extends AbstractModel
         } else {
             $this->sourceSite = null;
         }
+
         return $this;
     }
 
@@ -353,6 +363,7 @@ class Redirect extends AbstractModel
         } else {
             $this->targetSite = null;
         }
+
         return $this;
     }
 
@@ -394,6 +405,7 @@ class Redirect extends AbstractModel
     public function setModificationDate($modificationDate)
     {
         $this->modificationDate = (int) $modificationDate;
+
         return $this;
     }
 
@@ -412,6 +424,7 @@ class Redirect extends AbstractModel
     public function setCreationDate($creationDate)
     {
         $this->creationDate = (int) $creationDate;
+
         return $this;
     }
 

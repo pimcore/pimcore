@@ -164,6 +164,7 @@ class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
             $rootElement["data"] = $data;
             $rootElement["success"] = true;
             $rootElement["total"] = $list->getTotalCount();
+
             return $this->_helper->json($rootElement);
         }
     }
@@ -288,6 +289,7 @@ class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
             $rootElement["data"] = $data;
             $rootElement["success"] = true;
             $rootElement["total"] = $list->getTotalCount();
+
             return $this->_helper->json($rootElement);
         }
     }
@@ -335,6 +337,7 @@ class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
         if ($config->getModificationDate()) {
             $item["modificationDate"] = $config->getModificationDate();
         }
+
         return $item;
     }
 

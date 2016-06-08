@@ -53,6 +53,7 @@ class Listing extends Model\Listing\AbstractListing
     public function setClasses($classes)
     {
         $this->classes = $classes;
+
         return $this;
     }
 }

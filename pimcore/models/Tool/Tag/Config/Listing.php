@@ -41,6 +41,7 @@ class Listing extends Model\Listing\JsonListing
     public function setTags($tags)
     {
         $this->tags = $tags;
+
         return $this;
     }
 }

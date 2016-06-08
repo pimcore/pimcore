@@ -88,6 +88,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     public function setLazyLoading($lazyLoading)
     {
         $this->lazyLoading = $lazyLoading;
+
         return $this;
     }
 
@@ -200,6 +201,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
         }
 
         $container = new Object\Fieldcollection($values, $this->getName());
+
         return $container;
     }
 
@@ -349,6 +351,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
         }
 
         $this->allowedTypes = (array)$allowedTypes;
+
         return $this;
     }
 
@@ -393,6 +396,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
                 $wsData[] = $wsDataItem;
             }
         }
+
         return $wsData;
     }
 
@@ -455,6 +459,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
         }
 
         $container = new Object\Fieldcollection($values, $this->getName());
+
         return $container;
     }
 
@@ -574,6 +579,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
                 $object->$setter($data);
             }
         }
+
         return $data;
     }
 
@@ -651,6 +657,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     public function setMaxItems($maxItems)
     {
         $this->maxItems = $this->getAsIntegerCast($maxItems);
+
         return $this;
     }
 
@@ -715,6 +722,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
         $value = [];
         $value["html"] = $html;
         $value["type"] = "html";
+
         return $value;
     }
 
@@ -727,6 +735,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     {
         $result = parent::getDiffDataFromEditmode($data, $object, $params);
         \Logger::debug("bla");
+
         return $result;
     }
 

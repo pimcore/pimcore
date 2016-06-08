@@ -146,6 +146,7 @@ class Datetime extends Model\Object\ClassDefinition\Data
         if ($data) {
             return $this->getDateFromTimestamp($data / 1000);
         }
+
         return false;
     }
 
@@ -196,6 +197,7 @@ class Datetime extends Model\Object\ClassDefinition\Data
         } elseif ($data instanceof \DateTime) {
             return $data->format("Y-m-d H:i");
         }
+
         return null;
     }
 
@@ -273,6 +275,7 @@ class Datetime extends Model\Object\ClassDefinition\Data
                 $this->defaultValue = strtotime($defaultValue);
             }
         }
+
         return $this;
     }
 
@@ -283,6 +286,7 @@ class Datetime extends Model\Object\ClassDefinition\Data
     public function setUseCurrentDate($useCurrentDate)
     {
         $this->useCurrentDate = (bool)$useCurrentDate;
+
         return $this;
     }
 

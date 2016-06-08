@@ -83,6 +83,7 @@ class Block extends Model\Document\Tag
     public function setDataFromResource($data)
     {
         $this->indices = \Pimcore\Tool\Serialize::unserialize($data);
+
         return $this;
     }
 
@@ -94,6 +95,7 @@ class Block extends Model\Document\Tag
     public function setDataFromEditmode($data)
     {
         $this->indices = $data;
+
         return $this;
     }
 
@@ -107,6 +109,7 @@ class Block extends Model\Document\Tag
                 $this->indices[$i] = $i + 1;
             }
         }
+
         return $this;
     }
 
@@ -139,11 +142,13 @@ class Block extends Model\Document\Tag
                 $this->blockConstruct();
                 $this->blockStart();
             }
+
             return true;
         } else {
             if (!$manual) {
                 $this->end();
             }
+
             return false;
         }
     }
@@ -326,6 +331,7 @@ class Block extends Model\Document\Tag
         }
 
         $this->options = $options;
+
         return $this;
     }
 

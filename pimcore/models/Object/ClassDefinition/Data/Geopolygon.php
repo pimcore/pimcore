@@ -105,9 +105,11 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
                         "longitude" => $point->getLongitude()
                     ];
                 }
+
                 return $points;
             }
         }
+
         return;
     }
 
@@ -125,8 +127,10 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
             foreach ($data as $point) {
                 $points[] = new Object\Data\Geopoint($point["longitude"], $point["latitude"]);
             }
+
             return $points;
         }
+
         return;
     }
 
@@ -159,9 +163,11 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
                 foreach ($dataArray as $point) {
                     $rows[] = implode(";", $point);
                 }
+
                 return implode("|", $rows);
             }
         }
+
         return null;
     }
 
@@ -181,6 +187,7 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
                 $points[] = new  Object\Data\Geopoint($coords[1], $coords[0]);
             }
         }
+
         return $points;
     }
 
@@ -222,6 +229,7 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
                     throw new \Exception("cannot get values from web service import - invalid data");
                 }
             }
+
             return $points;
         } else {
             throw new \Exception("cannot get values from web service import - invalid data");
@@ -264,6 +272,7 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
                 return $line;
             }
         }
+
         return;
     }
 }

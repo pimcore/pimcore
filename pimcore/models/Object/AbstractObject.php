@@ -99,6 +99,7 @@ class AbstractObject extends Model\Element\AbstractElement
     {
         if (self::$getInheritedValues && $object !== null) {
             $class = $object->getClass();
+
             return $class->getAllowInherit();
         }
 
@@ -269,6 +270,7 @@ class AbstractObject extends Model\Element\AbstractElement
                 }
             } catch (\Exception $e) {
                 \Logger::warning($e->getMessage());
+
                 return null;
             }
         }
@@ -301,6 +303,7 @@ class AbstractObject extends Model\Element\AbstractElement
 
             if (Tool::isValidPath($path)) {
                 $object->getDao()->getByPath($path);
+
                 return self::getById($object->getId());
             }
         } catch (\Exception $e) {
@@ -421,6 +424,7 @@ class AbstractObject extends Model\Element\AbstractElement
                 return $this->o_hasChilds;
             }
         }
+
         return $this->getDao()->hasChilds($objectTypes);
     }
 
@@ -447,6 +451,7 @@ class AbstractObject extends Model\Element\AbstractElement
             $list->setOrder("asc");
             $this->o_siblings = $list->load();
         }
+
         return $this->o_siblings;
     }
 
@@ -465,6 +470,7 @@ class AbstractObject extends Model\Element\AbstractElement
                 return $this->o_hasSiblings;
             }
         }
+
         return $this->getDao()->hasSiblings($objectTypes);
     }
 
@@ -485,6 +491,7 @@ class AbstractObject extends Model\Element\AbstractElement
     public function setLocked($o_locked)
     {
         $this->o_locked = $o_locked;
+
         return $this;
     }
 
@@ -757,6 +764,7 @@ class AbstractObject extends Model\Element\AbstractElement
         if (!$this->o_dependencies) {
             $this->o_dependencies = Model\Dependency::getBySourceId($this->getId(), "object");
         }
+
         return $this->o_dependencies;
     }
 
@@ -766,6 +774,7 @@ class AbstractObject extends Model\Element\AbstractElement
     public function getFullPath()
     {
         $path = $this->getPath() . $this->getKey();
+
         return $path;
     }
 
@@ -873,6 +882,7 @@ class AbstractObject extends Model\Element\AbstractElement
     public function setId($o_id)
     {
         $this->o_id = (int) $o_id;
+
         return $this;
     }
 
@@ -884,6 +894,7 @@ class AbstractObject extends Model\Element\AbstractElement
     {
         $this->o_parentId = (int) $o_parentId;
         $this->o_parent = null;
+
         return $this;
     }
 
@@ -894,6 +905,7 @@ class AbstractObject extends Model\Element\AbstractElement
     public function setType($o_type)
     {
         $this->o_type = $o_type;
+
         return $this;
     }
 
@@ -904,6 +916,7 @@ class AbstractObject extends Model\Element\AbstractElement
     public function setKey($o_key)
     {
         $this->o_key = $o_key;
+
         return $this;
     }
 
@@ -914,6 +927,7 @@ class AbstractObject extends Model\Element\AbstractElement
     public function setPath($o_path)
     {
         $this->o_path = $o_path;
+
         return $this;
     }
 
@@ -924,6 +938,7 @@ class AbstractObject extends Model\Element\AbstractElement
     public function setIndex($o_index)
     {
         $this->o_index = (int) $o_index;
+
         return $this;
     }
 
@@ -934,6 +949,7 @@ class AbstractObject extends Model\Element\AbstractElement
     public function setCreationDate($o_creationDate)
     {
         $this->o_creationDate = (int) $o_creationDate;
+
         return $this;
     }
 
@@ -944,6 +960,7 @@ class AbstractObject extends Model\Element\AbstractElement
     public function setModificationDate($o_modificationDate)
     {
         $this->o_modificationDate = (int) $o_modificationDate;
+
         return $this;
     }
 
@@ -954,6 +971,7 @@ class AbstractObject extends Model\Element\AbstractElement
     public function setUserOwner($o_userOwner)
     {
         $this->o_userOwner = (int) $o_userOwner;
+
         return $this;
     }
 
@@ -964,6 +982,7 @@ class AbstractObject extends Model\Element\AbstractElement
     public function setUserModification($o_userModification)
     {
         $this->o_userModification = (int) $o_userModification;
+
         return $this;
     }
 
@@ -979,6 +998,7 @@ class AbstractObject extends Model\Element\AbstractElement
         } else {
             $this->o_hasChilds=false;
         }
+
         return $this;
     }
 
@@ -1004,6 +1024,7 @@ class AbstractObject extends Model\Element\AbstractElement
         if ($o_parent instanceof self) {
             $this->o_parentId = $o_parent->getId();
         }
+
         return $this;
     }
 
@@ -1025,6 +1046,7 @@ class AbstractObject extends Model\Element\AbstractElement
 
             $this->setProperties($properties);
         }
+
         return $this->o_properties;
     }
 
@@ -1035,6 +1057,7 @@ class AbstractObject extends Model\Element\AbstractElement
     public function setProperties($o_properties)
     {
         $this->o_properties = $o_properties;
+
         return $this;
     }
 
@@ -1060,6 +1083,7 @@ class AbstractObject extends Model\Element\AbstractElement
         $property->setInheritable($inheritable);
 
         $this->o_properties[$name] = $property;
+
         return $this;
     }
 
@@ -1071,6 +1095,7 @@ class AbstractObject extends Model\Element\AbstractElement
         if (empty($this->o_elementAdminStyle)) {
             $this->o_elementAdminStyle = new Model\Element\AdminStyle($this);
         }
+
         return $this->o_elementAdminStyle;
     }
 
@@ -1084,12 +1109,12 @@ class AbstractObject extends Model\Element\AbstractElement
 
         if (isset($this->_fulldump)) {
             // this is if we want to make a full dump of the object (eg. for a new version), including childs for recyclebin
-            $blockedVars = ["o_userPermissions","o_dependencies","o_hasChilds","o_versions","o_class","scheduledTasks","o_parent","omitMandatoryCheck"];
+            $blockedVars = ["o_userPermissions", "o_dependencies", "o_hasChilds", "o_versions", "o_class", "scheduledTasks", "o_parent", "omitMandatoryCheck"];
             $finalVars[] = "_fulldump";
             $this->removeInheritedProperties();
         } else {
             // this is if we want to cache the object
-            $blockedVars = ["o_userPermissions","o_dependencies","o_childs","o_hasChilds","o_versions","o_class","scheduledTasks","o_properties","o_parent","o___loadedLazyFields","omitMandatoryCheck"];
+            $blockedVars = ["o_userPermissions", "o_dependencies", "o_childs", "o_hasChilds", "o_versions", "o_class", "scheduledTasks", "o_properties", "o_parent", "o___loadedLazyFields", "omitMandatoryCheck"];
         }
 
 
@@ -1175,6 +1200,7 @@ class AbstractObject extends Model\Element\AbstractElement
             $newMethod = preg_replace("/^(get|set)o_/i", "$1", $method);
             if (method_exists($this, $newMethod)) {
                 $r = call_user_func_array([$this, $newMethod], $args);
+
                 return $r;
             }
         }

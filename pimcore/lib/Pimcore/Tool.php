@@ -161,7 +161,7 @@ class Tool
             'kk_KZ' => true, 'ks_IN' => true, 'mn_MN' => true, 'ms_BN' => true, 'ms_MY' => true,
             'ms_SG' => true, 'pa_IN' => true, 'pa_PK' => true, 'shi_MA' => true, 'sr_BA' => true, 'sr_ME' => true,
             'sr_RS' => true, 'sr_XK' => true, 'tg_TJ' => true, 'tzm_MA' => true, 'uz_AF' => true, 'uz_UZ' => true,
-            'vai_LR' => true, 'zh_CN' => true, 'zh_HK' => true, 'zh_MO' => true, 'zh_SG' => true, 'zh_TW' => true,];
+            'vai_LR' => true, 'zh_CN' => true, 'zh_HK' => true, 'zh_MO' => true, 'zh_SG' => true, 'zh_TW' => true, ];
 
         $locale = \Zend_Locale::findLocale();
         $cacheKey = "system_supported_locales_" . strtolower((string) $locale);
@@ -319,6 +319,7 @@ class Tool
         if (preg_match("@^/install@", $_SERVER["REQUEST_URI"])) {
             return true;
         }
+
         return false;
     }
 
@@ -388,9 +389,10 @@ class Tool
     /**
      * @return string
      */
-    public static function getRequestScheme() {
+    public static function getRequestScheme()
+    {
         $requestScheme = \Zend_Controller_Request_Http::SCHEME_HTTP;
-        if(isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on") {
+        if (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on") {
             $requestScheme = \Zend_Controller_Request_Http::SCHEME_HTTPS;
         }
 
@@ -423,6 +425,7 @@ class Tool
             $hostname = $systemConfig['general']['domain'];
             if (!$hostname) {
                 \Logger::warn('Couldn\'t determine HTTP Host. No Domain set in "Settings" -> "System" -> "Website" -> "Domain"');
+
                 return "";
             }
         }
@@ -461,6 +464,7 @@ class Tool
                 }
             }
         }
+
         return $cvData;
     }
 
@@ -665,6 +669,7 @@ class Tool
         $ip = self::getClientIp();
         $aip = substr($ip, 0, strrpos($ip, ".")+1);
         $aip .= "255";
+
         return $aip;
     }
 

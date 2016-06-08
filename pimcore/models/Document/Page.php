@@ -128,6 +128,7 @@ class Page extends Model\Document\PageSnippet
     public function setName($name)
     {
         $this->setProperty("navigation_name", "text", $name, false);
+
         return $this;
     }
 
@@ -147,6 +148,7 @@ class Page extends Model\Document\PageSnippet
     {
         // keywords are not supported anymore
         \Logger::info("getKeywords() is deprecated and will be removed in the future!");
+
         return "";
     }
 
@@ -165,6 +167,7 @@ class Page extends Model\Document\PageSnippet
     public function setDescription($description)
     {
         $this->description = str_replace("\n", " ", $description);
+
         return $this;
     }
 
@@ -177,6 +180,7 @@ class Page extends Model\Document\PageSnippet
     {
         // keywords are not supported anymore
         \Logger::info("setKeywords() is deprecated and will be removed in the future!");
+
         return $this;
     }
 
@@ -187,6 +191,7 @@ class Page extends Model\Document\PageSnippet
     public function setTitle($title)
     {
         $this->title = $title;
+
         return $this;
     }
 
@@ -197,6 +202,7 @@ class Page extends Model\Document\PageSnippet
     public function setMetaData($metaData)
     {
         $this->metaData = $metaData;
+
         return $this;
     }
 
@@ -237,6 +243,7 @@ class Page extends Model\Document\PageSnippet
         if (strlen($this->prettyUrl) < 2) {
             $this->prettyUrl = null;
         }
+
         return $this;
     }
 
@@ -299,6 +306,7 @@ class Page extends Model\Document\PageSnippet
         if ($this->getUsePersona() && !preg_match("/^" . preg_quote($this->getPersonaElementPrefix(), "/") . "/", $name)) {
             $name = $this->getPersonaElementPrefix() . $name;
         }
+
         return $name;
     }
 
@@ -341,6 +349,7 @@ class Page extends Model\Document\PageSnippet
                     $inheritedElement->setName($personaName);
                     $inheritedElement->setInherited(true);
                     $this->setElement($personaName, $inheritedElement);
+
                     return $inheritedElement;
                 }
             }

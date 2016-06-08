@@ -58,6 +58,7 @@ class Geopoint
     public function setLongitude($longitude)
     {
         $this->longitude = (double) $longitude;
+
         return $this;
     }
 
@@ -76,6 +77,7 @@ class Geopoint
     public function setLatitude($latitude)
     {
         $this->latitude = (double) $latitude;
+
         return $this;
     }
 

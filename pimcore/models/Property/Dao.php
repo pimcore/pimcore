@@ -34,6 +34,7 @@ class Dao extends Model\Dao\AbstractDao
             $data = $this->db->fetchRow("SELECT * FROM properties WHERE type=? AND cid = ? AND name=?", [$type, $cid, $name]);
             $raw = $data['data'];
         }
+
         return $raw;
     }
 

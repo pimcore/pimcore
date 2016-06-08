@@ -87,6 +87,7 @@ class Property extends AbstractModel
             // plain text
             $this->data = $data;
         }
+
         return $this;
     }
 
@@ -111,6 +112,7 @@ class Property extends AbstractModel
             // plain text
             $this->data = $data;
         }
+
         return $this;
     }
 
@@ -167,6 +169,7 @@ class Property extends AbstractModel
     public function setCid($cid)
     {
         $this->cid = (int) $cid;
+
         return $this;
     }
 
@@ -177,6 +180,7 @@ class Property extends AbstractModel
     public function setCtype($ctype)
     {
         $this->ctype = $ctype;
+
         return $this;
     }
 
@@ -192,6 +196,7 @@ class Property extends AbstractModel
         }
 
         $this->data = $data;
+
         return $this;
     }
 
@@ -202,6 +207,7 @@ class Property extends AbstractModel
     public function setName($name)
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -212,6 +218,7 @@ class Property extends AbstractModel
     public function setType($type)
     {
         $this->type = $type;
+
         return $this;
     }
 
@@ -248,6 +255,7 @@ class Property extends AbstractModel
     public function setCpath($cpath)
     {
         $this->cpath = $cpath;
+
         return $this;
     }
 
@@ -258,6 +266,7 @@ class Property extends AbstractModel
     public function setInherited($inherited)
     {
         $this->inherited = (bool) $inherited;
+
         return $this;
     }
 
@@ -276,6 +285,7 @@ class Property extends AbstractModel
     public function setInheritable($inheritable)
     {
         $this->inheritable = (bool) $inheritable;
+
         return $this;
     }
 

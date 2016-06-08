@@ -79,6 +79,7 @@ class Tag extends Model\AbstractModel
     public static function getTagsForElement($cType, $cId)
     {
         $tag = new Tag();
+
         return $tag->getDao()->getTagsForElement($cType, $cId);
     }
 
@@ -153,6 +154,7 @@ class Tag extends Model\AbstractModel
     public function setId($id)
     {
         $this->id = $id;
+
         return $this;
     }
 
@@ -171,6 +173,7 @@ class Tag extends Model\AbstractModel
     public function setName($name)
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -191,6 +194,7 @@ class Tag extends Model\AbstractModel
         $this->parentId = $parentId;
         $this->parent = null;
         $this->correctPath();
+
         return $this;
     }
 
@@ -202,6 +206,7 @@ class Tag extends Model\AbstractModel
         if ($this->parent == null) {
             $this->parent = Tag::getById($this->getParentId());
         }
+
         return $this->parent;
     }
 
@@ -235,6 +240,7 @@ class Tag extends Model\AbstractModel
         }
 
         $parentNames = array_reverse($parentNames);
+
         return "/" . implode("/", $parentNames) . "/";
     }
 
@@ -249,6 +255,7 @@ class Tag extends Model\AbstractModel
             $listing->setOrderKey("name");
             $this->children = $listing->load();
         }
+
         return $this->children;
     }
 

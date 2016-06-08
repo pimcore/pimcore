@@ -148,6 +148,7 @@ class Area extends Model\Document\Tag
 
                 $actionClass = preg_replace_callback("/[\-_][a-z]/", function ($matches) {
                     $replacement = str_replace(["-", "_"], "", $matches[0]);
+
                     return strtoupper($replacement);
                 }, ucfirst($this->currentIndex["type"]));
 

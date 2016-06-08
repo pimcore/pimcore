@@ -129,6 +129,7 @@ class ExternalImage extends Model\Object\ClassDefinition\Data
         if ($data instanceof Model\Object\Data\ExternalImage) {
             return $data->getUrl();
         }
+
         return null;
     }
 
@@ -168,6 +169,7 @@ class ExternalImage extends Model\Object\ClassDefinition\Data
         if ($data instanceof Model\Object\Data\ExternalImage) {
             return $data->getUrl();
         }
+
         return null;
     }
 
@@ -213,6 +215,7 @@ class ExternalImage extends Model\Object\ClassDefinition\Data
         if ($data instanceof Model\Object\Data\ExternalImage) {
             return $data->getUrl();
         }
+
         return null;
     }
 
@@ -277,6 +280,7 @@ class ExternalImage extends Model\Object\ClassDefinition\Data
         if ($data) {
             return '<img style="max-width:200px;max-height:200px" src="' . $data  . '" />';
         }
+
         return $data;
     }
 
@@ -300,6 +304,7 @@ class ExternalImage extends Model\Object\ClassDefinition\Data
         if ($data instanceof Object\Data\ExternalImage and $data->getUrl()) {
             return false;
         }
+
         return true;
     }
 }

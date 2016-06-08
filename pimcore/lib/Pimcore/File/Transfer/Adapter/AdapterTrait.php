@@ -11,6 +11,7 @@
  * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
+
 namespace Pimcore\File\Transfer\Adapter;
 
 trait AdapterTrait
@@ -48,6 +49,7 @@ trait AdapterTrait
     public function setHost($host)
     {
         $this->host = $host;
+
         return $this;
     }
 
@@ -67,6 +69,7 @@ trait AdapterTrait
     public function setPassword($password)
     {
         $this->password = $password;
+
         return $this;
     }
 
@@ -86,6 +89,7 @@ trait AdapterTrait
     public function setUsername($username)
     {
         $this->username = $username;
+
         return $this;
     }
 
@@ -106,6 +110,7 @@ trait AdapterTrait
     public function setSourceFile($sourceFile)
     {
         $this->sourceFile = $sourceFile;
+
         return $this;
     }
 
@@ -125,6 +130,7 @@ trait AdapterTrait
     public function setDestinationFile($destinationFile)
     {
         $this->destinationFile  = $destinationFile;
+
         return $this;
     }
 

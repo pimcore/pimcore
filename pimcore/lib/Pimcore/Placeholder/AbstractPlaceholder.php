@@ -73,6 +73,7 @@ abstract class AbstractPlaceholder
     public function setPlaceholderString($string)
     {
         $this->placeholderString = $string;
+
         return $this;
     }
 
@@ -91,6 +92,7 @@ abstract class AbstractPlaceholder
     public function setPlaceholderKey($key)
     {
         $this->placeholderKey = $key;
+
         return $this;
     }
 
@@ -111,6 +113,7 @@ abstract class AbstractPlaceholder
     public function setPlaceholderConfig(\Zend_Config_Json $config)
     {
         $this->placeholderConfig = $config;
+
         return $this;
     }
 
@@ -133,6 +136,7 @@ abstract class AbstractPlaceholder
         if (is_array($params)) {
             $this->params = $params;
         }
+
         return $this;
     }
 
@@ -157,6 +161,7 @@ abstract class AbstractPlaceholder
         if (array_key_exists($key, $this->params)) {
             return $this->params[$key];
         }
+
         return null;
     }
 
@@ -169,6 +174,7 @@ abstract class AbstractPlaceholder
         if (is_string($contentString)) {
             $this->contentString = $contentString;
         }
+
         return $this;
     }
 
@@ -201,6 +207,7 @@ abstract class AbstractPlaceholder
         if ($document instanceof Document) {
             $this->document = $document;
         }
+
         return $this;
     }
 
@@ -224,6 +231,7 @@ abstract class AbstractPlaceholder
         if (is_null($this->locale)) {
             $this->setLocale();
         }
+
         return $this->locale;
     }
 
@@ -256,6 +264,7 @@ abstract class AbstractPlaceholder
                 }
             }
         }
+
         return $this;
     }
 

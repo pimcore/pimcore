@@ -79,6 +79,7 @@ class Rule extends Model\AbstractModel
         if (array_key_exists("_ptc", $_GET) && intval($targetId) == intval($_GET["_ptc"])) {
             return true;
         }
+
         return false;
     }
 
@@ -111,6 +112,7 @@ class Rule extends Model\AbstractModel
             $target = new self();
             $target->setId(intval($id));
             $target->getDao()->getById();
+
             return $target;
         } catch (\Exception $e) {
             return null;
@@ -127,6 +129,7 @@ class Rule extends Model\AbstractModel
             $target = new self();
             $target->setName($name);
             $target->getDao()->getByName();
+
             return $target;
         } catch (\Exception $e) {
             return null;
@@ -140,6 +143,7 @@ class Rule extends Model\AbstractModel
     public function setDescription($description)
     {
         $this->description = $description;
+
         return $this;
     }
 
@@ -158,6 +162,7 @@ class Rule extends Model\AbstractModel
     public function setId($id)
     {
         $this->id = (int) $id;
+
         return $this;
     }
 
@@ -176,6 +181,7 @@ class Rule extends Model\AbstractModel
     public function setName($name)
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -197,6 +203,7 @@ class Rule extends Model\AbstractModel
             $actions = new Tool\Targeting\Rule\Actions();
         }
         $this->actions = $actions;
+
         return $this;
     }
 
@@ -223,6 +230,7 @@ class Rule extends Model\AbstractModel
             $conditions = [];
         }
         $this->conditions = $conditions;
+
         return $this;
     }
 

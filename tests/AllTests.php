@@ -9,6 +9,7 @@ class AllTests extends Test_SuiteBase
         $suite->addTest(TestSuite_Datatypes_AllTests::suite());
         $suite->addTest(TestSuite_Inheritance_AllTests::suite());
         $suite->addTest(TestSuite_Rest_AllTests::suite());
+
         return $suite;
     }
 }

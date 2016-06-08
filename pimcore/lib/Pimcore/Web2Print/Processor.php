@@ -116,6 +116,7 @@ abstract class Processor
     protected function saveJobConfigObjectFile($jobConfig)
     {
         file_put_contents($this->getJobConfigFile($jobConfig->documentId), json_encode($jobConfig));
+
         return true;
     }
 
@@ -126,6 +127,7 @@ abstract class Processor
     protected function loadJobConfigObject($documentId)
     {
         $jobConfig = json_decode(file_get_contents($this->getJobConfigFile($documentId)));
+
         return $jobConfig;
     }
 
@@ -140,6 +142,7 @@ abstract class Processor
         if (empty($document)) {
             throw new \Exception("PrintDocument with " . $documentId . " not found.");
         }
+
         return $document;
     }
 

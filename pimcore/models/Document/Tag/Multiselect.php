@@ -68,6 +68,7 @@ class Multiselect extends Model\Document\Tag
     public function setDataFromResource($data)
     {
         $this->values = \Pimcore\Tool\Serialize::unserialize($data);
+
         return $this;
     }
 

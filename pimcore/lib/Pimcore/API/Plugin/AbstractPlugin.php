@@ -60,6 +60,7 @@ class AbstractPlugin extends AbstractAPI
     protected static function getDb()
     {
         $db = Db::get();
+
         return $db;
     }
 

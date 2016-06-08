@@ -74,6 +74,7 @@ class Unit extends Model\AbstractModel
     {
         $unit = new self();
         $unit->getDao()->getByAbbreviation($abbreviation);
+
         return $unit;
     }
 
@@ -85,6 +86,7 @@ class Unit extends Model\AbstractModel
     {
         $unit = new self();
         $unit->getDao()->getByReference($reference);
+
         return $unit;
     }
 
@@ -105,6 +107,7 @@ class Unit extends Model\AbstractModel
                 \Zend_Registry::set($cacheKey, $unit);
             } catch (\Exception $ex) {
                 \Logger::debug($ex->getMessage());
+
                 return null;
             }
         }
@@ -120,6 +123,7 @@ class Unit extends Model\AbstractModel
     {
         $unit = new self();
         $unit->setValues($values);
+
         return $unit;
     }
 

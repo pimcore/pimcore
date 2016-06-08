@@ -94,6 +94,7 @@ class WkHtmlToPdf extends Processor
         }
 
         $document->setLastGenerateMessage("");
+
         return $pdf;
     }
 
@@ -131,6 +132,7 @@ class WkHtmlToPdf extends Processor
         $tmpFile = $this->fromStringToFile($htmlString);
         $stream = file_get_contents($tmpFile);
         @unlink($tmpFile);
+
         return $stream;
     }
 
@@ -177,6 +179,7 @@ class WkHtmlToPdf extends Processor
         }
 
         $protocol = $_SERVER['HTTPS'] == 'on' ? 'https' : 'http';
+
         return $protocol . "://" . $hostname . "/website/var/tmp/";
     }
 }

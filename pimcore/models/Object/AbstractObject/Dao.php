@@ -102,10 +102,10 @@ class Dao extends Model\Element\Dao
         }
 
         // check the type before updating, changing the type or class of an object is not possible
-        $checkColumns = ["o_type","o_classId","o_className"];
+        $checkColumns = ["o_type", "o_classId", "o_className"];
         $existingData = $this->db->fetchRow("SELECT " . implode(",", $checkColumns) . " FROM objects WHERE o_id = ?", [$this->model->getId()]);
         foreach ($checkColumns as $column) {
-            if ($column == "o_type" && in_array($data[$column], ["variant","object"]) && in_array($existingData[$column], ["variant","object"])) {
+            if ($column == "o_type" && in_array($data[$column], ["variant", "object"]) && in_array($existingData[$column], ["variant", "object"])) {
                 // type conversion variant <=> object should be possible
                 continue;
             }
@@ -199,6 +199,7 @@ class Dao extends Model\Element\Dao
         } catch (\Exception $e) {
             \Logger::error("could not get current object path from DB");
         }
+
         return $path;
     }
 
@@ -275,6 +276,7 @@ class Dao extends Model\Element\Dao
     public function hasChilds($objectTypes = [Object::OBJECT_TYPE_OBJECT, Object::OBJECT_TYPE_FOLDER])
     {
         $c = $this->db->fetchOne("SELECT o_id FROM objects WHERE o_parentId = ? AND o_type IN ('" . implode("','", $objectTypes) . "')", $this->model->getId());
+
         return (bool)$c;
     }
 
@@ -287,6 +289,7 @@ class Dao extends Model\Element\Dao
     public function hasSiblings($objectTypes = [Object::OBJECT_TYPE_OBJECT, Object::OBJECT_TYPE_FOLDER])
     {
         $c = $this->db->fetchOne("SELECT o_id FROM objects WHERE o_parentId = ? and o_id != ? AND o_type IN ('" . implode("','", $objectTypes) . "')", [$this->model->getParentId(), $this->model->getId()]);
+
         return (bool)$c;
     }
 
@@ -309,6 +312,7 @@ class Dao extends Model\Element\Dao
         }
 
         $c = $this->db->fetchOne($query, $this->model->getId());
+
         return $c;
     }
 
@@ -316,6 +320,7 @@ class Dao extends Model\Element\Dao
     public function getTypeById($id)
     {
         $t = $this->db->fetchRow("SELECT o_type,o_className,o_classId FROM objects WHERE o_id = ?", $id);
+
         return $t;
     }
 
@@ -348,6 +353,7 @@ class Dao extends Model\Element\Dao
     {
         $lockIds = $this->db->fetchCol("SELECT o_id from objects WHERE o_path LIKE " . $this->db->quote($this->model->getRealFullPath() . "/%") . " OR o_id = " . $this->model->getId());
         $this->db->delete("tree_locks", "type = 'object' AND id IN (" . implode(",", $lockIds) . ")");
+
         return $lockIds;
     }
 
@@ -384,6 +390,7 @@ class Dao extends Model\Element\Dao
             }
         }
         $parentIds[] = $this->model->getId();
+
         return $parentIds;
     }
 
@@ -457,6 +464,7 @@ class Dao extends Model\Element\Dao
                         $permissionValues = $permission[$type];
                         if (!$permissionValues) {
                             $firstPermission[$type] = null;
+
                             return $firstPermission;
                         }
 
@@ -467,10 +475,12 @@ class Dao extends Model\Element\Dao
                     }
 
                     $firstPermission[$type] = implode(',', $mergedPermissions);
+
                     return $firstPermission;
                 }
             } else {
                 $permissions = $this->db->fetchRow("SELECT " . $queryType . " FROM users_workspaces_object WHERE cid IN (" . implode(",", $parentIds) . ") AND userId IN (" . implode(",", $userIds) . ") ORDER BY LENGTH(cpath) DESC  LIMIT 1");
+
                 return $permissions;
             }
         } catch (\Exception $e) {

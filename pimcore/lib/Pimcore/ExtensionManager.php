@@ -40,6 +40,7 @@ class ExtensionManager
                 self::$config = new \Zend_Config([], true);
             }
         }
+
         return self::$config;
     }
 
@@ -157,6 +158,7 @@ class ExtensionManager
                 }
             }
         }
+
         return $pluginConfigs;
     }
 

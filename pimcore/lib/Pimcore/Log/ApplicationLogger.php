@@ -86,6 +86,7 @@ class ApplicationLogger /*implements LoggerInterface*/
     public static function getDbLogger($component = null, $logLevel = "error")
     {
         $logger = self::getInstance($component, true);
+
         return $logger;
     }
 

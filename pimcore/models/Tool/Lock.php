@@ -82,6 +82,7 @@ class Lock extends Model\AbstractModel
     public static function lock($key)
     {
         $instance = self::getInstance();
+
         return $instance->getDao()->lock($key);
     }
 
@@ -93,6 +94,7 @@ class Lock extends Model\AbstractModel
     public static function isLocked($key, $expire = 120)
     {
         $instance = self::getInstance();
+
         return $instance->getDao()->isLocked($key, $expire);
     }
 
@@ -104,6 +106,7 @@ class Lock extends Model\AbstractModel
     {
         $lock = new self;
         $lock->getById($key);
+
         return $lock;
     }
 

@@ -81,6 +81,7 @@ class Profiler extends \Zend_Db_Profiler
     public function setEnabled($enable)
     {
         parent::setEnabled($enable);
+
         return $this;
     }
 
@@ -136,6 +137,7 @@ class Profiler extends \Zend_Db_Profiler
                 if ($a == $b) {
                     return 0;
                 }
+
                 return ($b < $a) ? -1 : 1;
             });
 

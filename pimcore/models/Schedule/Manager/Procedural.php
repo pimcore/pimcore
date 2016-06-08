@@ -58,6 +58,7 @@ class Procedural
         if (is_array($validJobs)) {
             $this->validJobs = $validJobs;
         }
+
         return $this;
     }
 
@@ -70,6 +71,7 @@ class Procedural
     {
         if (!empty($this->validJobs) and !in_array($job->getId(), $this->validJobs)) {
             \Logger::info("Skipped job with ID: " . $job->getId() . " because it is not in the valid jobs.");
+
             return false;
         }
 
@@ -124,6 +126,7 @@ class Procedural
         if ($date = $lock->getDate()) {
             return $date;
         }
+
         return;
     }
 

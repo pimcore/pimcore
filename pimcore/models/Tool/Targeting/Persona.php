@@ -61,6 +61,7 @@ class Persona extends Model\AbstractModel
             $persona = new self();
             $persona->setId(intval($id));
             $persona->getDao()->getById();
+
             return $persona;
         } catch (\Exception $e) {
             return null;
@@ -90,6 +91,7 @@ class Persona extends Model\AbstractModel
         if ($persona) {
             return $persona->getActive();
         }
+
         return false;
     }
 
@@ -100,6 +102,7 @@ class Persona extends Model\AbstractModel
     public function setDescription($description)
     {
         $this->description = $description;
+
         return $this;
     }
 
@@ -118,6 +121,7 @@ class Persona extends Model\AbstractModel
     public function setId($id)
     {
         $this->id = (int) $id;
+
         return $this;
     }
 
@@ -136,6 +140,7 @@ class Persona extends Model\AbstractModel
     public function setName($name)
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -158,6 +163,7 @@ class Persona extends Model\AbstractModel
             $conditions = [];
         }
         $this->conditions = $conditions;
+
         return $this;
     }
 

@@ -66,6 +66,7 @@ class Dao extends Model\Dao\PhpArrayTable
             if ($row["key"] == $key) {
                 return true;
             }
+
             return false;
         });
 
@@ -90,8 +91,8 @@ class Dao extends Model\Dao\PhpArrayTable
         try {
             $dataRaw = get_object_vars($this->model);
             $data = [];
-            $allowedProperties = ["id","name","description","key","type","data",
-                "config","ctype","inheritable","creationDate","modificationDate"];
+            $allowedProperties = ["id", "name", "description", "key", "type", "data",
+                "config", "ctype", "inheritable", "creationDate", "modificationDate"];
 
             foreach ($dataRaw as $key => $value) {
                 if (in_array($key, $allowedProperties)) {

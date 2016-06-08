@@ -80,6 +80,7 @@ class HtmlToImage
         if (file_exists($outputFile) && filesize($outputFile) > 1000) {
             return true;
         }
+
         return false;
     }
 }

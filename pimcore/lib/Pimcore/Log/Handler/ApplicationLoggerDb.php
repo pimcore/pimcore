@@ -94,6 +94,7 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
         $db = Database::get();
 
         $components = $db->fetchCol("SELECT component FROM " . \Pimcore\Log\Handler\ApplicationLoggerDb::TABLE_NAME . " WHERE NOT ISNULL(component) GROUP BY component;");
+
         return $components;
     }
 

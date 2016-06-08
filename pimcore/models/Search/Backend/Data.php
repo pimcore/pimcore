@@ -114,6 +114,7 @@ class Data extends \Pimcore\Model\AbstractModel
         if (!$this->dao) {
             $this->initDao("\\Pimcore\\Model\\Search\\Backend\\Data");
         }
+
         return $this->dao;
     }
 
@@ -133,6 +134,7 @@ class Data extends \Pimcore\Model\AbstractModel
     public function setId($id)
     {
         $this->id = $id;
+
         return $this;
     }
 
@@ -151,6 +153,7 @@ class Data extends \Pimcore\Model\AbstractModel
     public function setFullPath($fullpath)
     {
         $this->fullPath = $fullpath;
+
         return $this;
     }
 
@@ -169,6 +172,7 @@ class Data extends \Pimcore\Model\AbstractModel
     public function setType($type)
     {
         $this->type = $type;
+
         return $this;
     }
 
@@ -188,6 +192,7 @@ class Data extends \Pimcore\Model\AbstractModel
     public function setSubtype($subtype)
     {
         $this->subtype = $subtype;
+
         return $this;
     }
 
@@ -206,6 +211,7 @@ class Data extends \Pimcore\Model\AbstractModel
     public function setCreationDate($creationDate)
     {
         $this->creationDate = $creationDate;
+
         return $this;
     }
 
@@ -224,6 +230,7 @@ class Data extends \Pimcore\Model\AbstractModel
     public function setModificationDate($modificationDate)
     {
         $this->modificationDate = $modificationDate;
+
         return $this;
     }
 
@@ -242,6 +249,7 @@ class Data extends \Pimcore\Model\AbstractModel
     public function setUserModification($userModification)
     {
         $this->userModification = $userModification;
+
         return $this;
     }
 
@@ -260,6 +268,7 @@ class Data extends \Pimcore\Model\AbstractModel
     public function setUserOwner($userOwner)
     {
         $this->userOwner = $userOwner;
+
         return $this;
     }
 
@@ -286,6 +295,7 @@ class Data extends \Pimcore\Model\AbstractModel
     public function setPublished($published)
     {
         $this->published = (bool) $published;
+
         return $this;
     }
 
@@ -304,6 +314,7 @@ class Data extends \Pimcore\Model\AbstractModel
     public function setData($data)
     {
         $this->data = $data;
+
         return $this;
     }
 
@@ -322,6 +333,7 @@ class Data extends \Pimcore\Model\AbstractModel
     public function setProperties($properties)
     {
         $this->properties = $properties;
+
         return $this;
     }
 
@@ -461,6 +473,7 @@ class Data extends \Pimcore\Model\AbstractModel
     {
         $data = new self();
         $data->getDao()->getForElement($element);
+
         return $data;
     }
 

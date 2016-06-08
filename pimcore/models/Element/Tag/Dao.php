@@ -71,6 +71,7 @@ class Dao extends Model\Dao\AbstractDao
             }
 
             $this->db->commit();
+
             return true;
         } catch (\Exception $e) {
             $this->db->rollBack();
@@ -119,6 +120,7 @@ class Dao extends Model\Dao\AbstractDao
         @usort($tags, function ($left, $right) {
             return strcmp($left->getNamePath(), $right->getNamePath());
         });
+
         return $tags;
     }
 

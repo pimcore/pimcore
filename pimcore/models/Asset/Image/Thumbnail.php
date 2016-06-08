@@ -114,6 +114,7 @@ class Thumbnail
     public function getFileSystemPath($deferredAllowed = false)
     {
         $this->generate($deferredAllowed);
+
         return $this->filesystemPath;
     }
 
@@ -175,6 +176,7 @@ class Thumbnail
         if (!$this->width) {
             $this->getDimensions();
         }
+
         return $this->width;
     }
 
@@ -187,6 +189,7 @@ class Thumbnail
         if (!$this->height) {
             $this->getDimensions();
         }
+
         return $this->height;
     }
 
@@ -198,6 +201,7 @@ class Thumbnail
         if (!$this->realWidth) {
             $this->getDimensions();
         }
+
         return $this->realWidth;
     }
 
@@ -210,6 +214,7 @@ class Thumbnail
         if (!$this->realHeight) {
             $this->getDimensions();
         }
+
         return $this->realHeight;
     }
 

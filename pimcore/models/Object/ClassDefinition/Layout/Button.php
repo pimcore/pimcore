@@ -58,6 +58,7 @@ class Button extends Model\Object\ClassDefinition\Layout
     public function setText($text)
     {
         $this->text = $text;
+
         return $this;
     }
 
@@ -76,6 +77,7 @@ class Button extends Model\Object\ClassDefinition\Layout
     public function setHandler($handler)
     {
         $this->handler = $handler;
+
         return $this;
     }
     
@@ -94,6 +96,7 @@ class Button extends Model\Object\ClassDefinition\Layout
     public function setIcon($icon)
     {
         $this->icon = $icon;
+
         return $this;
     }
 }

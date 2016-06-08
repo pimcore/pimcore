@@ -65,6 +65,7 @@ class Job
             if (!is_array($arguments)) {
                 $arguments = [];
             }
+
             return call_user_func_array([$this->getObject(), $this->getMethod()], $arguments);
         }
     }
@@ -107,6 +108,7 @@ class Job
     public function setId($id)
     {
         $this->id = $id;
+
         return $this;
     }
 
@@ -125,6 +127,7 @@ class Job
     public function setObject($object)
     {
         $this->object = $object;
+
         return $this;
     }
 
@@ -143,6 +146,7 @@ class Job
     public function setMethod($method)
     {
         $this->method = $method;
+
         return $this;
     }
 
@@ -169,6 +173,7 @@ class Job
     public function setArguments($args)
     {
         $this->arguments = $args;
+
         return $this;
     }
 }

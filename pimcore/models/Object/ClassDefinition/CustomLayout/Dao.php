@@ -67,6 +67,7 @@ class Dao extends Model\Dao\AbstractDao
         if (is_file($file)) {
             return Serialize::unserialize(file_get_contents($file));
         }
+
         return;
     }
 
@@ -81,6 +82,7 @@ class Dao extends Model\Dao\AbstractDao
         if ($this->model->getId()) {
             return $this->update();
         }
+
         return $this->create();
     }
 

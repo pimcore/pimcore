@@ -54,6 +54,7 @@ class Listing extends Model\Listing\AbstractListing
     public function setSites($sites)
     {
         $this->sites = $sites;
+
         return $this;
     }
 }

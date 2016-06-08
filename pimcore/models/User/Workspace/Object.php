@@ -54,6 +54,7 @@ class Object extends AbstractWorkspace
     public function setSave($save)
     {
         $this->save = $save;
+
         return $this;
     }
 
@@ -72,6 +73,7 @@ class Object extends AbstractWorkspace
     public function setUnpublish($unpublish)
     {
         $this->unpublish = $unpublish;
+
         return $this;
     }
 

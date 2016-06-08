@@ -114,6 +114,7 @@ abstract class AbstractListing extends AbstractModel
         if (intval($limit) > 0) {
             $this->limit = intval($limit);
         }
+
         return $this;
     }
 
@@ -126,6 +127,7 @@ abstract class AbstractListing extends AbstractModel
         if (intval($offset) > 0) {
             $this->offset = intval($offset);
         }
+
         return $this;
     }
 
@@ -151,6 +153,7 @@ abstract class AbstractListing extends AbstractModel
                 }
             }
         }
+
         return $this;
     }
 
@@ -190,6 +193,7 @@ abstract class AbstractListing extends AbstractModel
             }
             $this->orderKey = $tmpKeys;
         }
+
         return $this;
     }
 
@@ -210,6 +214,7 @@ abstract class AbstractListing extends AbstractModel
             'concatenator' => $concatenator,
             'ignore-value' => $ignore, // If there is not a placeholder, ignore value!
         ];
+
         return $this;
     }
 
@@ -227,6 +232,7 @@ abstract class AbstractListing extends AbstractModel
     public function resetConditionParams()
     {
         $this->conditionParams = [];
+
         return $this;
     }
 
@@ -283,6 +289,7 @@ abstract class AbstractListing extends AbstractModel
         } elseif ($conditionVariables !== null) {
             $this->setConditionVariables([$conditionVariables]);
         }
+
         return $this;
     }
 
@@ -316,6 +323,7 @@ abstract class AbstractListing extends AbstractModel
                 $this->groupBy = "`" . $this->groupBy . "`";
             }
         }
+
         return $this;
     }
 
@@ -326,6 +334,7 @@ abstract class AbstractListing extends AbstractModel
     public function setValidOrders($validOrders)
     {
         $this->validOrders = $validOrders;
+
         return $this;
     }
 
@@ -336,6 +345,7 @@ abstract class AbstractListing extends AbstractModel
     public function quote($value, $type = null)
     {
         $db = Db::get();
+
         return $db->quote($value, $type);
     }
 
@@ -346,6 +356,7 @@ abstract class AbstractListing extends AbstractModel
     public function setConditionVariables($conditionVariables)
     {
         $this->conditionVariables = $conditionVariables;
+
         return $this;
     }
 

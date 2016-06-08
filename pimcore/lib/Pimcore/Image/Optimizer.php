@@ -98,6 +98,7 @@ class Optimizer
                     "path" => $path,
                     "type" => $app
                 ];
+
                 return self::$optimizerBinaries["pngOptimizer"];
             }
         }
@@ -125,6 +126,7 @@ class Optimizer
                     "path" => $path,
                     "type" => $app
                 ];
+
                 return self::$optimizerBinaries["jpegOptimizer"];
             }
         }

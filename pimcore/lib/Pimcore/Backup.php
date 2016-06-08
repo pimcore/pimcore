@@ -88,6 +88,7 @@ class Backup
     protected function setFilesToBackup($files)
     {
         $this->filesToBackup = $files;
+
         return $this;
     }
 
@@ -106,6 +107,7 @@ class Backup
     protected function setFileAmount($fileAmount)
     {
         $this->fileAmount = $fileAmount;
+
         return $this;
     }
 
@@ -132,6 +134,7 @@ class Backup
     public function setAdditionalExcludePatterns($additionalExcludePatterns)
     {
         $this->additionalExcludePatterns = $additionalExcludePatterns;
+
         return $this;
     }
 
@@ -375,6 +378,7 @@ class Backup
         }
 
         $tables = $db->fetchAll($query);
+
         return $tables;
     }
 

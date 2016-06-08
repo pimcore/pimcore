@@ -58,6 +58,7 @@ class Multihref extends Model\Document\Tag implements \Iterator
                 }
             }
         }
+
         return $this;
     }
 
@@ -68,6 +69,7 @@ class Multihref extends Model\Document\Tag implements \Iterator
     public function getData()
     {
         $this->setElements();
+
         return $this->elements;
     }
 
@@ -134,6 +136,7 @@ class Multihref extends Model\Document\Tag implements \Iterator
         if ($data = \Pimcore\Tool\Serialize::unserialize($data)) {
             $this->setDataFromEditmode($data);
         }
+
         return $this;
     }
 
@@ -147,6 +150,7 @@ class Multihref extends Model\Document\Tag implements \Iterator
         if (is_array($data)) {
             $this->elementIds = $data;
         }
+
         return $this;
     }
 
@@ -156,6 +160,7 @@ class Multihref extends Model\Document\Tag implements \Iterator
     public function getElements()
     {
         $this->setElements();
+
         return $this->elements;
     }
 
@@ -165,6 +170,7 @@ class Multihref extends Model\Document\Tag implements \Iterator
     public function isEmpty()
     {
         $this->setElements();
+
         return count($this->elements) > 0 ? false : true;
     }
 
@@ -275,6 +281,7 @@ class Multihref extends Model\Document\Tag implements \Iterator
     {
         $this->setElements();
         $var = current($this->elements);
+
         return $var;
     }
 
@@ -282,6 +289,7 @@ class Multihref extends Model\Document\Tag implements \Iterator
     {
         $this->setElements();
         $var = key($this->elements);
+
         return $var;
     }
 
@@ -289,6 +297,7 @@ class Multihref extends Model\Document\Tag implements \Iterator
     {
         $this->setElements();
         $var = next($this->elements);
+
         return $var;
     }
 
@@ -296,6 +305,7 @@ class Multihref extends Model\Document\Tag implements \Iterator
     {
         $this->setElements();
         $var = $this->current() !== false;
+
         return $var;
     }
 }

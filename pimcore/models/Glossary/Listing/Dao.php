@@ -36,12 +36,14 @@ class Dao extends Model\Listing\Dao\AbstractDao
         }
 
         $this->model->setGlossary($glossary);
+
         return $glossary;
     }
 
     public function getDataArray()
     {
         $glossarysData = $this->db->fetchAll("SELECT * FROM glossary" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+
         return $glossarysData;
     }
 

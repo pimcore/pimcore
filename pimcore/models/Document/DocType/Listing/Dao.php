@@ -45,6 +45,7 @@ class Dao extends Model\Dao\PhpArrayTable
         }
 
         $this->model->setDocTypes($docTypes);
+
         return $docTypes;
     }
 

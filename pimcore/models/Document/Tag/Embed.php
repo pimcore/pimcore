@@ -118,6 +118,7 @@ class Embed extends Model\Document\Tag
         }
 
         $this->url = $data["url"];
+
         return $this;
     }
 
@@ -143,6 +144,7 @@ class Embed extends Model\Document\Tag
         if ($this->url) {
             return false;
         }
+
         return true;
     }
 

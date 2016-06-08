@@ -86,6 +86,7 @@ class Targeting extends \Zend_Controller_Plugin_Abstract
     public function enable()
     {
         $this->enabled = true;
+
         return $this;
     }
 
@@ -95,6 +96,7 @@ class Targeting extends \Zend_Controller_Plugin_Abstract
     public function disable()
     {
         $this->enabled = false;
+
         return $this;
     }
 
@@ -237,6 +239,7 @@ class Targeting extends \Zend_Controller_Plugin_Abstract
                 }
             }
         }
+
         return false;
     }
 }

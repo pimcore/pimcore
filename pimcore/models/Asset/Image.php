@@ -103,6 +103,7 @@ class Image extends Model\Asset
     public function getThumbnailConfig($config)
     {
         $thumbnail = $this->getThumbnail($config);
+
         return $thumbnail->getConfig();
     }
 
@@ -149,6 +150,7 @@ class Image extends Model\Asset
         } elseif ($this->getHeight() > $this->getWidth()) {
             return "portrait";
         }
+
         return "unknown";
     }
 
@@ -202,6 +204,7 @@ class Image extends Model\Asset
     public function getWidth()
     {
         $dimensions = $this->getDimensions();
+
         return $dimensions["width"];
     }
 
@@ -211,6 +214,7 @@ class Image extends Model\Asset
     public function getHeight()
     {
         $dimensions = $this->getDimensions();
+
         return $dimensions["height"];
     }
 

@@ -23,6 +23,7 @@ class Dao extends Document\PrintAbstract\Dao
     public function getLastedChildModificationDate()
     {
         $path = $this->model->getFullPath();
+
         return $this->db->fetchOne("SELECT modificationDate FROM documents WHERE path LIKE ? ORDER BY modificationDate DESC LIMIT 0,1", [$path . "%"]);
     }
 }

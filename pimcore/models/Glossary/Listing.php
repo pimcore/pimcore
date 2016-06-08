@@ -54,6 +54,7 @@ class Listing extends Model\Listing\AbstractListing
     public function setGlossary($glossary)
     {
         $this->glossary = $glossary;
+
         return $this;
     }
 }

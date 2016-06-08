@@ -84,6 +84,7 @@ class Dao extends Model\Dao\AbstractDao
             }
 
             $this->db->insertOrUpdate(self::TABLE_NAME_RELATIONS, $data);
+
             return $this->model;
         } catch (\Exception $e) {
             throw $e;
@@ -98,6 +99,7 @@ class Dao extends Model\Dao\AbstractDao
     public function create()
     {
         $this->db->insert(self::TABLE_NAME_RELATIONS, []);
+
         return $this->save();
     }
 }

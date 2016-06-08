@@ -24,7 +24,7 @@ use Pimcore\Model\Tool\TmpStore;
 class Processor
 {
     protected static $argumentMapping = [
-        "resize" => ["width","height"],
+        "resize" => ["width", "height"],
         "scaleByWidth" => ["width"],
         "scaleByHeight" => ["height"]
     ];
@@ -292,6 +292,7 @@ class Processor
     public function save()
     {
         TmpStore::add($this->getJobStoreId(), $this, "video-job");
+
         return true;
     }
 
@@ -304,6 +305,7 @@ class Processor
         if (!$processId) {
             $processId = $this->getProcessId();
         }
+
         return "video-job-" . $processId;
     }
 
@@ -314,6 +316,7 @@ class Processor
     public function setProcessId($processId)
     {
         $this->processId = $processId;
+
         return $this;
     }
 
@@ -332,6 +335,7 @@ class Processor
     public function setAssetId($assetId)
     {
         $this->assetId = $assetId;
+
         return $this;
     }
 
@@ -350,6 +354,7 @@ class Processor
     public function setConfig($config)
     {
         $this->config = $config;
+
         return $this;
     }
 
@@ -368,6 +373,7 @@ class Processor
     public function setQueue($queue)
     {
         $this->queue = $queue;
+
         return $this;
     }
 
@@ -386,6 +392,7 @@ class Processor
     public function setStatus($status)
     {
         $this->status = $status;
+
         return $this;
     }
 

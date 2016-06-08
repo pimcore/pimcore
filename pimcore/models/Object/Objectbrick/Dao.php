@@ -85,6 +85,7 @@ class Dao extends Model\Object\Fieldcollection\Dao
                 $values[] = $brick;
             }
         }
+
         return $values;
     }
 

@@ -62,6 +62,7 @@ class Uri extends \Zend_Navigation_Page_Uri
     public function setTabindex($tabindex)
     {
         $this->_tabindex = $tabindex;
+
         return $this;
     }
 
@@ -80,6 +81,7 @@ class Uri extends \Zend_Navigation_Page_Uri
     public function setAccesskey($character = null)
     {
         $this->_accesskey = $character;
+
         return $this;
     }
 
@@ -98,6 +100,7 @@ class Uri extends \Zend_Navigation_Page_Uri
     public function setRelation($relation)
     {
         $this->_relation = $relation;
+
         return $this;
     }
 
@@ -124,6 +127,7 @@ class Uri extends \Zend_Navigation_Page_Uri
             $this->setDocumentType($document->getType());
             $this->setRealFullPath($document->getRealFullPath());
         }
+
         return $this;
     }
 
@@ -138,6 +142,7 @@ class Uri extends \Zend_Navigation_Page_Uri
             if ($doc instanceof Document\Hardlink) {
                 $doc = Document\Hardlink\Service::wrap($doc);
             }
+
             return $doc;
         }
 
@@ -200,6 +205,7 @@ class Uri extends \Zend_Navigation_Page_Uri
     public function setCustomSetting($name, $value)
     {
         $this->customSettings[$name] = $value;
+
         return $this;
     }
 

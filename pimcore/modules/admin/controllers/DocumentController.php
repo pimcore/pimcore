@@ -532,6 +532,7 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
                     if ($row["type"] == $type) {
                         return true;
                     }
+
                     return false;
                 });
             }

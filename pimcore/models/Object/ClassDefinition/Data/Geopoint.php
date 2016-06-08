@@ -72,6 +72,7 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
                 $this->getName() . "__latitude" => $data->getLatitude()
             ];
         }
+
         return [
             $this->getName() . "__longitude" => null,
             $this->getName() . "__latitude" => null
@@ -90,6 +91,7 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
         if ($data[$this->getName() . "__longitude"] && $data[$this->getName() . "__latitude"]) {
             return new Object\Data\Geopoint($data[$this->getName() . "__longitude"], $data[$this->getName() . "__latitude"]);
         }
+
         return;
     }
 
@@ -136,6 +138,7 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
         if ($data["longitude"] || $data["latitude"]) {
             return new Object\Data\Geopoint($data["longitude"], $data["latitude"]);
         }
+
         return;
     }
 
@@ -151,6 +154,7 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
         if ($data instanceof Object\Data\Geopoint) {
             return $data->getLongitude() . "," . $data->getLatitude();
         }
+
         return "";
     }
 
@@ -189,6 +193,7 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
             //TODO latitude and longitude should be switched - but doing this we will loose compatitbilty to old export files
             $value = new Object\Data\Geopoint($coords[1], $coords[0]);
         }
+
         return $value;
     }
 

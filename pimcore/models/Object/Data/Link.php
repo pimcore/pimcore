@@ -108,6 +108,7 @@ class Link
     public function setText($text)
     {
         $this->text = $text;
+
         return $this;
     }
 
@@ -126,6 +127,7 @@ class Link
     public function setInternalType($internalType)
     {
         $this->internalType = $internalType;
+
         return $this;
     }
 
@@ -147,6 +149,7 @@ class Link
         if (!empty($internal)) {
             $this->setObjectFromId();
         }
+
         return $this;
     }
 
@@ -165,6 +168,7 @@ class Link
     public function setDirect($direct)
     {
         $this->direct = $direct;
+
         return $this;
     }
 
@@ -183,6 +187,7 @@ class Link
     public function setLinktype($linktype)
     {
         $this->linktype = $linktype;
+
         return $this;
     }
 
@@ -201,6 +206,7 @@ class Link
     public function setTarget($target)
     {
         $this->target = $target;
+
         return $this;
     }
 
@@ -219,6 +225,7 @@ class Link
     public function setParameters($parameters)
     {
         $this->parameters = $parameters;
+
         return $this;
     }
 
@@ -237,6 +244,7 @@ class Link
     public function setAnchor($anchor)
     {
         $this->anchor = $anchor;
+
         return $this;
     }
 
@@ -255,6 +263,7 @@ class Link
     public function setTitle($title)
     {
         $this->title = $title;
+
         return $this;
     }
 
@@ -273,6 +282,7 @@ class Link
     public function setAccesskey($accesskey)
     {
         $this->accesskey = $accesskey;
+
         return $this;
     }
 
@@ -291,6 +301,7 @@ class Link
     public function setRel($rel)
     {
         $this->rel = $rel;
+
         return $this;
     }
 
@@ -309,6 +320,7 @@ class Link
     public function setTabindex($tabindex)
     {
         $this->tabindex = $tabindex;
+
         return $this;
     }
 
@@ -364,6 +376,7 @@ class Link
                 $this->direct = $path;
             }
         }
+
         return $this;
     }
 
@@ -408,6 +421,7 @@ class Link
         }
 
         $this->href = $path;
+
         return $path;
     }
     
@@ -423,6 +437,7 @@ class Link
                 return $this->object;
             }
         }
+
         return false;
     }
     
@@ -432,6 +447,7 @@ class Link
     public function setObject($object)
     {
         $this->object = $object;
+
         return $this;
     }
 
@@ -445,12 +461,13 @@ class Link
         } elseif ($this->internalType == "asset") {
             $this->object = Asset::getById($this->internal);
         }
+
         return $this->object;
     }
     
     public function getHtml()
     {
-        $attributes = ["rel", "tabindex", "accesskey", "title","target","class"];
+        $attributes = ["rel", "tabindex", "accesskey", "title", "target", "class"];
         $attribs = [];
         foreach ($attributes as $a) {
             if ($this->$a) {
@@ -498,6 +515,7 @@ class Link
                 }
             }
         }
+
         return $this;
     }
 

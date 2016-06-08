@@ -54,6 +54,7 @@ class Listing extends Model\Listing\AbstractListing
     public function setTranslations($translations)
     {
         $this->translations = $translations;
+
         return $this;
     }
 }

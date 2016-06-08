@@ -38,7 +38,7 @@ class Placeholder
      *
      * @var string
      */
-    protected static $placeholderClassPrefixes = ['Pimcore_Placeholder_', 'Website_Placeholder_', "\\Pimcore\\Placeholder\\","\\Website\\Placeholder\\"];
+    protected static $placeholderClassPrefixes = ['Pimcore_Placeholder_', 'Website_Placeholder_', "\\Pimcore\\Placeholder\\", "\\Website\\Placeholder\\"];
 
     /**
      * Contains the document object
@@ -77,6 +77,7 @@ class Placeholder
             return false;
         } else {
             unset(self::$placeholderClassPrefixes[$arrayIndex]);
+
             return true;
         }
     }
@@ -235,6 +236,7 @@ class Placeholder
         //replaces the placeholders if any were found
         if (!empty($placeholderStack)) {
             $replacedString = $this->replacePlaceholdersFromStack($placeholderStack);
+
             return $replacedString;
         } else {
             return $contentString;
@@ -291,6 +293,7 @@ class Placeholder
                 }
             }
         }
+
         return $stringReplaced;
     }
 }

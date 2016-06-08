@@ -92,7 +92,7 @@ class Printpage extends \Pimcore\Controller\Action\Admin\Document
                     $this->_helper->json(["success" => true]);
                 } catch (\Exception $e) {
                     \Logger::err($e);
-                    $this->_helper->json(["success" => false,"message"=>$e->getMessage()]);
+                    $this->_helper->json(["success" => false, "message"=>$e->getMessage()]);
                 }
             } else {
                 if ($page->isAllowed("save")) {
@@ -104,7 +104,7 @@ class Printpage extends \Pimcore\Controller\Action\Admin\Document
                         $this->_helper->json(["success" => true]);
                     } catch (\Exception $e) {
                         \Logger::err($e);
-                        $this->_helper->json(["success" => false,"message"=>$e->getMessage()]);
+                        $this->_helper->json(["success" => false, "message"=>$e->getMessage()]);
                     }
                 }
             }

@@ -48,6 +48,7 @@ abstract class AbstractGeo extends Model\Object\ClassDefinition\Data
     public function setLat($lat)
     {
         $this->lat = (float) $lat;
+
         return $this;
     }
 
@@ -59,6 +60,7 @@ abstract class AbstractGeo extends Model\Object\ClassDefinition\Data
     public function setLng($lng)
     {
         $this->lng = (float) $lng;
+
         return $this;
     }
 
@@ -70,6 +72,7 @@ abstract class AbstractGeo extends Model\Object\ClassDefinition\Data
     public function setZoom($zoom)
     {
         $this->zoom = (int) $zoom;
+
         return $this;
     }
 
@@ -81,6 +84,7 @@ abstract class AbstractGeo extends Model\Object\ClassDefinition\Data
     public function setMapType($mapType)
     {
         $this->mapType = $mapType;
+
         return $this;
     }
 }

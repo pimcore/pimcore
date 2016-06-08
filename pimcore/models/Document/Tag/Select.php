@@ -63,6 +63,7 @@ class Select extends Model\Document\Tag
     public function setDataFromResource($data)
     {
         $this->text = $data;
+
         return $this;
     }
 
@@ -74,6 +75,7 @@ class Select extends Model\Document\Tag
     public function setDataFromEditmode($data)
     {
         $this->text = $data;
+
         return $this;
     }
 

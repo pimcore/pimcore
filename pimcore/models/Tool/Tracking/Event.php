@@ -94,6 +94,7 @@ class Event extends Model\AbstractModel
     public function setAction($action)
     {
         $this->action = $action;
+
         return $this;
     }
 
@@ -112,6 +113,7 @@ class Event extends Model\AbstractModel
     public function setCategory($category)
     {
         $this->category = $category;
+
         return $this;
     }
 
@@ -130,6 +132,7 @@ class Event extends Model\AbstractModel
     public function setId($id)
     {
         $this->id = $id;
+
         return $this;
     }
 
@@ -148,6 +151,7 @@ class Event extends Model\AbstractModel
     public function setLabel($label)
     {
         $this->label = $label;
+
         return $this;
     }
 
@@ -166,6 +170,7 @@ class Event extends Model\AbstractModel
     public function setTimestamp($timestamp)
     {
         $this->timestamp = $timestamp;
+
         return $this;
     }
 
@@ -184,6 +189,7 @@ class Event extends Model\AbstractModel
     public function setData($data)
     {
         $this->data = $data;
+
         return $this;
     }
 

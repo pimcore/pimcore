@@ -83,6 +83,7 @@ class Image extends Model\Object\ClassDefinition\Data
     public function setWidth($width)
     {
         $this->width = $this->getAsIntegerCast($width);
+
         return $this;
     }
 
@@ -101,6 +102,7 @@ class Image extends Model\Object\ClassDefinition\Data
     public function setHeight($height)
     {
         $this->height = $this->getAsIntegerCast($height);
+
         return $this;
     }
 
@@ -116,6 +118,7 @@ class Image extends Model\Object\ClassDefinition\Data
         if ($data instanceof Asset) {
             return $data->getId();
         }
+
         return null;
     }
 
@@ -131,6 +134,7 @@ class Image extends Model\Object\ClassDefinition\Data
         if (intval($data) > 0) {
             return Asset\Image::getById($data);
         }
+
         return null;
     }
 
@@ -146,6 +150,7 @@ class Image extends Model\Object\ClassDefinition\Data
         if ($data instanceof Asset) {
             return $data->getId();
         }
+
         return null;
     }
 
@@ -218,6 +223,7 @@ class Image extends Model\Object\ClassDefinition\Data
         } else {
             $value = null;
         }
+
         return $value;
     }
 
@@ -237,6 +243,7 @@ class Image extends Model\Object\ClassDefinition\Data
                 $tags = $data->getCacheTags($tags);
             }
         }
+
         return $tags;
     }
 
@@ -312,6 +319,7 @@ class Image extends Model\Object\ClassDefinition\Data
     public function setUploadPath($uploadPath)
     {
         $this->uploadPath = $uploadPath;
+
         return $this;
     }
 
@@ -351,6 +359,7 @@ class Image extends Model\Object\ClassDefinition\Data
             $value = [];
             $value["src"] = $versionPreview;
             $value["type"] = "img";
+
             return $value;
         } else {
             return "";
@@ -380,6 +389,7 @@ class Image extends Model\Object\ClassDefinition\Data
                 return Asset::getById($idMapping["asset"][$data->getId()]);
             }
         }
+
         return $data;
     }
 

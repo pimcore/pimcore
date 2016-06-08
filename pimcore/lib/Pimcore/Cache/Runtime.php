@@ -30,6 +30,7 @@ class Runtime
     public static function save($data, $id)
     {
         static::$_cache[$id] = $data;
+
         return $data;
     }
 

@@ -64,6 +64,7 @@ class WebsiteSetting extends AbstractModel
 
         $setting->setId(intval($id));
         $setting->getDao()->getById();
+
         return $setting;
     }
     
@@ -81,8 +82,10 @@ class WebsiteSetting extends AbstractModel
             $setting->getDao()->getByName($name, $siteId);
         } catch (\Exception $e) {
             \Logger::error($e);
+
             return null;
         }
+
         return $setting;
     }
 
@@ -102,6 +105,7 @@ class WebsiteSetting extends AbstractModel
     public function setId($id)
     {
         $this->id = (int) $id;
+
         return $this;
     }
 
@@ -113,6 +117,7 @@ class WebsiteSetting extends AbstractModel
     public function setName($name)
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -131,6 +136,7 @@ class WebsiteSetting extends AbstractModel
     public function setCreationDate($creationDate)
     {
         $this->creationDate = (int) $creationDate;
+
         return $this;
     }
 
@@ -149,6 +155,7 @@ class WebsiteSetting extends AbstractModel
     public function setData($data)
     {
         $this->data = $data;
+
         return $this;
     }
 
@@ -167,6 +174,7 @@ class WebsiteSetting extends AbstractModel
     public function setModificationDate($modificationDate)
     {
         $this->modificationDate = (int) $modificationDate;
+
         return $this;
     }
 
@@ -185,6 +193,7 @@ class WebsiteSetting extends AbstractModel
     public function setSiteId($siteId)
     {
         $this->siteId = (int) $siteId;
+
         return $this;
     }
 
@@ -203,6 +212,7 @@ class WebsiteSetting extends AbstractModel
     public function setType($type)
     {
         $this->type = $type;
+
         return $this;
     }
 

@@ -83,6 +83,7 @@ class Http extends \Zend_File_Transfer_Adapter_Http
         } else {
             throw new \Exception("Couldn't download file:" . $sourceFile);
         }
+
         return true;
     }
 }

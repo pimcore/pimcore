@@ -115,6 +115,7 @@ class ObjectMetadata extends Model\AbstractModel
     public function setFieldname($fieldname)
     {
         $this->fieldname = $fieldname;
+
         return $this;
     }
 
@@ -133,6 +134,7 @@ class ObjectMetadata extends Model\AbstractModel
     public function setObject($object)
     {
         $this->object = $object;
+
         return $this;
     }
 
@@ -168,6 +170,7 @@ class ObjectMetadata extends Model\AbstractModel
     public function setColumns($columns)
     {
         $this->columns = $columns;
+
         return $this;
     }
 

@@ -241,6 +241,7 @@ class Version extends AbstractModel
         if (!$data) {
             \Logger::err("Version: cannot read version data from file system.");
             $this->delete();
+
             return;
         }
 
@@ -382,6 +383,7 @@ class Version extends AbstractModel
     public function setCid($cid)
     {
         $this->cid = (int) $cid;
+
         return $this;
     }
 
@@ -392,6 +394,7 @@ class Version extends AbstractModel
     public function setDate($date)
     {
         $this->date = (int) $date;
+
         return $this;
     }
 
@@ -402,6 +405,7 @@ class Version extends AbstractModel
     public function setId($id)
     {
         $this->id = (int) $id;
+
         return $this;
     }
 
@@ -412,6 +416,7 @@ class Version extends AbstractModel
     public function setNote($note)
     {
         $this->note = (string) $note;
+
         return $this;
     }
 
@@ -427,6 +432,7 @@ class Version extends AbstractModel
                 $this->setUser($user);
             }
         }
+
         return $this;
     }
 
@@ -438,6 +444,7 @@ class Version extends AbstractModel
         if (!$this->data) {
             $this->loadData();
         }
+
         return $this->data;
     }
 
@@ -448,6 +455,7 @@ class Version extends AbstractModel
     public function setData($data)
     {
         $this->data = $data;
+
         return $this;
     }
 
@@ -466,6 +474,7 @@ class Version extends AbstractModel
     public function setSerialized($serialized)
     {
         $this->serialized = (bool) $serialized;
+
         return $this;
     }
 
@@ -484,6 +493,7 @@ class Version extends AbstractModel
     public function setCtype($ctype)
     {
         $this->ctype = (string) $ctype;
+
         return $this;
     }
 
@@ -502,6 +512,7 @@ class Version extends AbstractModel
     public function setUser($user)
     {
         $this->user = $user;
+
         return $this;
     }
 
@@ -528,6 +539,7 @@ class Version extends AbstractModel
     public function setPublic($public)
     {
         $this->public = (bool) $public;
+
         return $this;
     }
 
@@ -582,6 +594,7 @@ class Version extends AbstractModel
             // versions need to be compressed, that's not perfect but a compromise we can (hopefully) live with.
             if ($alreadyCompressedCounter > 100) {
                 \Logger::debug("Over " . $alreadyCompressedCounter . " versions were already compressed before, it doesn't seem that there are still uncompressed versions in the past, skip...");
+
                 return;
             }
         }

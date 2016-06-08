@@ -82,6 +82,7 @@ class Select extends Model\Object\ClassDefinition\Data
     public function setOptions($options)
     {
         $this->options = $options;
+
         return $this;
     }
     
@@ -100,6 +101,7 @@ class Select extends Model\Object\ClassDefinition\Data
     public function setWidth($width)
     {
         $this->width = $this->getAsIntegerCast($width);
+
         return $this;
     }
 

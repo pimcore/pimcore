@@ -14,7 +14,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
@@ -165,6 +164,7 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
                 $this->getName() . "__unit" => $data->getUnitId()
             ];
         }
+
         return [
             $this->getName() . "__value" => null,
             $this->getName() . "__unit" => null
@@ -183,6 +183,7 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
         if ($data[$this->getName() . "__value"] && $data[$this->getName() . "__unit"]) {
             return new  \Pimcore\Model\Object\Data\QuantityValue($data[$this->getName() . "__value"], $data[$this->getName() . "__unit"]);
         }
+
         return;
     }
 
@@ -229,6 +230,7 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
         if ($data["value"] || $data["unit"]) {
             return new \Pimcore\Model\Object\Data\QuantityValue($data["value"], $data["unit"]);
         }
+
         return;
     }
 
@@ -244,6 +246,7 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
         if ($data instanceof \Pimcore\Model\Object\Data\QuantityValue) {
             return $data->getValue() . " " . $data->getUnit()->getAbbreviation();
         }
+
         return "";
     }
 
@@ -304,6 +307,7 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
             $number = (double) str_replace(",", ".", $values[0]);
             $value = new  \Pimcore\Model\Object\Data\QuantityValue($number, $values[1]);
         }
+
         return $value;
     }
 

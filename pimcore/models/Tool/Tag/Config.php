@@ -147,6 +147,7 @@ class Config extends Model\AbstractModel
     public function setDescription($description)
     {
         $this->description = $description;
+
         return $this;
     }
 
@@ -165,6 +166,7 @@ class Config extends Model\AbstractModel
     public function setItems($items)
     {
         $this->items = $items;
+
         return $this;
     }
 
@@ -183,6 +185,7 @@ class Config extends Model\AbstractModel
     public function setName($name)
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -201,6 +204,7 @@ class Config extends Model\AbstractModel
     public function setHttpMethod($httpMethod)
     {
         $this->httpMethod = $httpMethod;
+
         return $this;
     }
 
@@ -219,6 +223,7 @@ class Config extends Model\AbstractModel
     public function setUrlPattern($urlPattern)
     {
         $this->urlPattern = $urlPattern;
+
         return $this;
     }
 
@@ -253,6 +258,7 @@ class Config extends Model\AbstractModel
     public function setParams($params)
     {
         $this->params = $params;
+
         return $this;
     }
 
@@ -271,6 +277,7 @@ class Config extends Model\AbstractModel
     public function setTextPattern($textPattern)
     {
         $this->textPattern = $textPattern;
+
         return $this;
     }
 

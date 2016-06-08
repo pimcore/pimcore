@@ -87,6 +87,7 @@ class Task extends Model\AbstractModel
     {
         $task = new self();
         $task->setValues($data);
+
         return $task;
     }
 
@@ -153,6 +154,7 @@ class Task extends Model\AbstractModel
     public function setId($id)
     {
         $this->id = (int) $id;
+
         return $this;
     }
 
@@ -163,6 +165,7 @@ class Task extends Model\AbstractModel
     public function setCid($cid)
     {
         $this->cid = (int) $cid;
+
         return $this;
     }
 
@@ -173,6 +176,7 @@ class Task extends Model\AbstractModel
     public function setCtype($ctype)
     {
         $this->ctype = $ctype;
+
         return $this;
     }
 
@@ -183,6 +187,7 @@ class Task extends Model\AbstractModel
     public function setDate($date)
     {
         $this->date = (int) $date;
+
         return $this;
     }
 
@@ -193,6 +198,7 @@ class Task extends Model\AbstractModel
     public function setAction($action)
     {
         $this->action = $action;
+
         return $this;
     }
 
@@ -203,6 +209,7 @@ class Task extends Model\AbstractModel
     public function setVersion($version)
     {
         $this->version = $version;
+
         return $this;
     }
 
@@ -224,6 +231,7 @@ class Task extends Model\AbstractModel
             $active = false;
         }
         $this->active = (bool) $active;
+
         return $this;
     }
 }

@@ -252,6 +252,7 @@ class Mime
             if (strstr($type, ';')) {
                 $type = substr($type, 0, strpos($type, ';'));
             }
+
             return $type;
         }
 

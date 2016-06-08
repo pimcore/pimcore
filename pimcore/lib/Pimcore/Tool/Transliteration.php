@@ -182,6 +182,7 @@ class Transliteration
                 }
             }
         }
+
         return $result;
     }
 

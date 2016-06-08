@@ -222,6 +222,7 @@ class Asset extends Element\AbstractElement
 
             if (Tool::isValidPath($path)) {
                 $asset->getDao()->getByPath($path);
+
                 return self::getById($asset->getId());
             }
         } catch (\Exception $e) {
@@ -273,6 +274,7 @@ class Asset extends Element\AbstractElement
                 }
             } catch (\Exception $e) {
                 \Logger::warning($e->getMessage());
+
                 return null;
             }
         }
@@ -416,11 +418,11 @@ class Asset extends Element\AbstractElement
 
         $mappings = [
             "image" => ["/image/", "/\.eps$/", "/\.ai$/", "/\.svgz$/", "/\.pcx$/", "/\.iff$/", "/\.pct$/", "/\.wmf$/"],
-            "text" => ["/text/","/xml$/"],
+            "text" => ["/text/", "/xml$/"],
             "audio" => ["/audio/"],
             "video" => ["/video/"],
-            "document" => ["/msword/","/pdf/","/powerpoint/","/office/","/excel/","/opendocument/"],
-            "archive" => ["/zip/","/tar/"]
+            "document" => ["/msword/", "/pdf/", "/powerpoint/", "/office/", "/excel/", "/opendocument/"],
+            "archive" => ["/zip/", "/tar/"]
         ];
 
         foreach ($mappings as $assetType => $patterns) {
@@ -816,6 +818,7 @@ class Asset extends Element\AbstractElement
     public function getRealFullPath()
     {
         $path = $this->getRealPath() . $this->getFilename();
+
         return $path;
     }
 
@@ -849,8 +852,10 @@ class Asset extends Element\AbstractElement
                     return $this->hasChilds;
                 }
             }
+
             return $this->getDao()->hasChilds();
         }
+
         return false;
     }
 
@@ -870,6 +875,7 @@ class Asset extends Element\AbstractElement
             $list->setOrder("asc");
             $this->siblings = $list->load();
         }
+
         return $this->siblings;
     }
 
@@ -887,6 +893,7 @@ class Asset extends Element\AbstractElement
                 return $this->hasSiblings;
             }
         }
+
         return $this->getDao()->hasSiblings();
     }
 
@@ -906,6 +913,7 @@ class Asset extends Element\AbstractElement
     public function setLocked($locked)
     {
         $this->locked = $locked;
+
         return $this;
     }
 
@@ -1012,6 +1020,7 @@ class Asset extends Element\AbstractElement
         if (!$this->dependencies) {
             $this->dependencies = Dependency::getBySourceId($this->getId(), "asset");
         }
+
         return $this->dependencies;
     }
 
@@ -1088,6 +1097,7 @@ class Asset extends Element\AbstractElement
     public function setCreationDate($creationDate)
     {
         $this->creationDate = (int) $creationDate;
+
         return $this;
     }
 
@@ -1098,6 +1108,7 @@ class Asset extends Element\AbstractElement
     public function setId($id)
     {
         $this->id = (int) $id;
+
         return $this;
     }
 
@@ -1108,6 +1119,7 @@ class Asset extends Element\AbstractElement
     public function setFilename($filename)
     {
         $this->filename = (string) $filename;
+
         return $this;
     }
 
@@ -1118,6 +1130,7 @@ class Asset extends Element\AbstractElement
     public function setModificationDate($modificationDate)
     {
         $this->modificationDate = (int) $modificationDate;
+
         return $this;
     }
 
@@ -1129,6 +1142,7 @@ class Asset extends Element\AbstractElement
     {
         $this->parentId = (int) $parentId;
         $this->parent = null;
+
         return $this;
     }
 
@@ -1139,6 +1153,7 @@ class Asset extends Element\AbstractElement
     public function setPath($path)
     {
         $this->path = $path;
+
         return $this;
     }
 
@@ -1149,6 +1164,7 @@ class Asset extends Element\AbstractElement
     public function setType($type)
     {
         $this->type = $type;
+
         return $this;
     }
 
@@ -1269,6 +1285,7 @@ class Asset extends Element\AbstractElement
     public function setDataChanged($changed = true)
     {
         $this->_dataChanged = $changed;
+
         return $this;
     }
 
@@ -1291,6 +1308,7 @@ class Asset extends Element\AbstractElement
 
             $this->setProperties($properties);
         }
+
         return $this->properties;
     }
 
@@ -1301,6 +1319,7 @@ class Asset extends Element\AbstractElement
     public function setProperties($properties)
     {
         $this->properties = $properties;
+
         return $this;
     }
 
@@ -1326,6 +1345,7 @@ class Asset extends Element\AbstractElement
         $property->setInheritable($inheritable);
 
         $this->properties[$name] = $property;
+
         return $this;
     }
 
@@ -1352,6 +1372,7 @@ class Asset extends Element\AbstractElement
     public function setUserOwner($userOwner)
     {
         $this->userOwner = $userOwner;
+
         return $this;
     }
 
@@ -1362,6 +1383,7 @@ class Asset extends Element\AbstractElement
     public function setUserModification($userModification)
     {
         $this->userModification = $userModification;
+
         return $this;
     }
 
@@ -1373,6 +1395,7 @@ class Asset extends Element\AbstractElement
         if ($this->versions === null) {
             $this->setVersions($this->getDao()->getVersions());
         }
+
         return $this->versions;
     }
 
@@ -1383,6 +1406,7 @@ class Asset extends Element\AbstractElement
     public function setVersions($versions)
     {
         $this->versions = $versions;
+
         return $this;
     }
 
@@ -1415,6 +1439,7 @@ class Asset extends Element\AbstractElement
     public function setCustomSetting($key, $value)
     {
         $this->customSettings[$key] = $value;
+
         return $this;
     }
 
@@ -1427,6 +1452,7 @@ class Asset extends Element\AbstractElement
         if (is_array($this->customSettings) && array_key_exists($key, $this->customSettings)) {
             return $this->customSettings[$key];
         }
+
         return null;
     }
 
@@ -1467,6 +1493,7 @@ class Asset extends Element\AbstractElement
         }
 
         $this->customSettings = $customSettings;
+
         return $this;
     }
 
@@ -1485,6 +1512,7 @@ class Asset extends Element\AbstractElement
     public function setMimetype($mimetype)
     {
         $this->mimetype = $mimetype;
+
         return $this;
     }
 
@@ -1556,6 +1584,7 @@ class Asset extends Element\AbstractElement
             if (in_array($metaData["type"], ["asset", "document", "object"]) && is_numeric($metaData["data"])) {
                 return Element\Service::getElementById($metaData["type"], $metaData["data"]);
             }
+
             return $metaData["data"];
         };
 
@@ -1582,6 +1611,7 @@ class Asset extends Element\AbstractElement
             if ($data) {
                 return $convert($data);
             }
+
             return null;
         }
 
@@ -1606,6 +1636,7 @@ class Asset extends Element\AbstractElement
             $taskList->setCondition("cid = ? AND ctype='asset'", $this->getId());
             $this->setScheduledTasks($taskList->load());
         }
+
         return $this->scheduledTasks;
     }
 
@@ -1616,6 +1647,7 @@ class Asset extends Element\AbstractElement
     public function setScheduledTasks($scheduledTasks)
     {
         $this->scheduledTasks = $scheduledTasks;
+
         return $this;
     }
 
@@ -1701,6 +1733,7 @@ class Asset extends Element\AbstractElement
         if ($parent instanceof Asset) {
             $this->parentId = $parent->getId();
         }
+
         return $this;
     }
 
@@ -1712,6 +1745,7 @@ class Asset extends Element\AbstractElement
         // group the thumbnails because of limitations of some filesystems (eg. ext3 allows only 32k subfolders)
         $group = floor($this->getId() / 10000) * 10000;
         $path = PIMCORE_TEMPORARY_DIRECTORY . "/image-thumbnails/" . $group . "/" . $this->getId();
+
         return $path;
     }
 
@@ -1723,6 +1757,7 @@ class Asset extends Element\AbstractElement
         // group the thumbnails because of limitations of some filesystems (eg. ext3 allows only 32k subfolders)
         $group = floor($this->getId() / 10000) * 10000;
         $path = PIMCORE_TEMPORARY_DIRECTORY . "/video-thumbnails/" . $group . "/" . $this->getId();
+
         return $path;
     }
 

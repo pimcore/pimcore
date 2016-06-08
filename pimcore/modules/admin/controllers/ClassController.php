@@ -369,6 +369,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
     {
         $name = preg_replace('/[^a-zA-Z0-9]+/', '', $name);
         $name = preg_replace("/^[0-9]+/", "", $name);
+
         return $name;
     }
 

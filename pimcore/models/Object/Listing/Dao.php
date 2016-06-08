@@ -89,6 +89,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         }
 
         $this->model->setObjects($objects);
+
         return $objects;
     }
 

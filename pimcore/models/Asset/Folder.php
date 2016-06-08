@@ -39,6 +39,7 @@ class Folder extends Model\Asset
         } else {
             $this->hasChilds = false;
         }
+
         return $this;
     }
 }

@@ -69,6 +69,7 @@ class Dao extends Model\Dao\AbstractDao
         if ($this->model->getId()) {
             return $this->model->update();
         }
+
         return $this->create();
     }
 
@@ -99,6 +100,7 @@ class Dao extends Model\Dao\AbstractDao
     public function hasChilds()
     {
         $c = $this->db->fetchOne("SELECT id FROM users WHERE parentId = ?", $this->model->getId());
+
         return (bool) $c;
     }
 

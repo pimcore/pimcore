@@ -71,6 +71,7 @@ class Cache extends \Zend_Controller_Plugin_Abstract
         }
 
         $this->enabled = false;
+
         return true;
     }
 
@@ -80,6 +81,7 @@ class Cache extends \Zend_Controller_Plugin_Abstract
     public function enable()
     {
         $this->enabled = true;
+
         return true;
     }
 
@@ -160,6 +162,7 @@ class Cache extends \Zend_Controller_Plugin_Abstract
             }
         } catch (\Exception $e) {
             \Logger::error($e);
+
             return $this->disable("ERROR: Exception (see debug.log)");
         }
 
@@ -262,6 +265,7 @@ class Cache extends \Zend_Controller_Plugin_Abstract
                 CacheManager::save($cacheItem, $cacheKey, ["output"], $this->lifetime, 1000);
             } catch (\Exception $e) {
                 \Logger::error($e);
+
                 return;
             }
         } else {
@@ -278,6 +282,7 @@ class Cache extends \Zend_Controller_Plugin_Abstract
     public function setLifetime($lifetime)
     {
         $this->lifetime = $lifetime;
+
         return $this;
     }
 

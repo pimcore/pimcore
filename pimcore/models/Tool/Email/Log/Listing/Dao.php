@@ -47,6 +47,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function getDataArray()
     {
         $emailLogData = $this->db->fetchAll("SELECT * FROM email_log " . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+
         return $emailLogData;
     }
 
@@ -61,6 +62,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
             $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM email_log " . $this->getCondition(), $this->model->getConditionVariables());
         } catch (\Exception $e) {
         }
+
         return $amount;
     }
 }

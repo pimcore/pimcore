@@ -104,6 +104,7 @@ class Blacklist extends Model\AbstractModel
         if (!$this->modificationDate) {
             $this->modificationDate = time();
         }
+
         return $this->modificationDate;
     }
 }

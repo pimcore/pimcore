@@ -57,6 +57,7 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
             }
         }
         $this->model->setEntries($entries);
+
         return $entries;
     }
 
@@ -66,6 +67,7 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
     public function getTotalCount()
     {
         $amount = $this->db->fetchOne("SELECT COUNT(*) as amount FROM search_backend_data" . $this->getCondition() . $this->getGroupBy(), $this->model->getConditionVariables());
+
         return $amount;
     }
 
@@ -79,6 +81,7 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
         }
 
         $amount = $this->db->fetchOne("SELECT COUNT(*) as amount FROM search_backend_data "  . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+
         return $amount;
     }
 
@@ -90,6 +93,7 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
         if ($cond = $this->model->getCondition()) {
             return " WHERE " . $cond . " ";
         }
+
         return "";
     }
 }

@@ -126,6 +126,7 @@ class Frontend
                 "lifetime" => $cachePlugin->getLifetime()
             ];
         }
+
         return false;
     }
 }

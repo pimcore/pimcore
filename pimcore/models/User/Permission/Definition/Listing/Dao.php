@@ -37,6 +37,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         }
 
         $this->model->setDefinitions($definitions);
+
         return $definitions;
     }
 }

@@ -34,6 +34,7 @@ class Listing extends Model\Listing\AbstractListing
         if ($key == "abbreviation" || $key == "group" || $key == "id" || $key == "longname") {
             return true;
         }
+
         return false;
     }
 
@@ -45,6 +46,7 @@ class Listing extends Model\Listing\AbstractListing
         if (empty($this->units)) {
             $this->load();
         }
+
         return $this->units;
     }
 

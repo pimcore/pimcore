@@ -56,6 +56,7 @@ class KeyValue extends Model\AbstractModel
     public function setClass(Object\ClassDefinition $class)
     {
         $this->class = $class;
+
         return $this;
     }
 
@@ -80,6 +81,7 @@ class KeyValue extends Model\AbstractModel
                 $str .= "    " . $prop["key"] . "=>" . $prop["value"] . "\n";
             }
         }
+
         return $str;
     }
 
@@ -98,6 +100,7 @@ class KeyValue extends Model\AbstractModel
     public function setObjectId($objectId)
     {
         $this->objectId = $objectId;
+
         return $this;
     }
 
@@ -115,6 +118,7 @@ class KeyValue extends Model\AbstractModel
         }
 
         $this->arr = $newProperties;
+
         return $this;
     }
 
@@ -142,6 +146,7 @@ class KeyValue extends Model\AbstractModel
                 }
             }
         }
+
         return $data;
     }
 
@@ -255,6 +260,7 @@ class KeyValue extends Model\AbstractModel
             throw new \Exception("key does not exist");
         }
         $keyId =  $keyConfig->getId();
+
         return $keyId;
     }
 
@@ -307,6 +313,7 @@ class KeyValue extends Model\AbstractModel
                 $pair["value"] = $value;
                 $pair["translated"] = $translatedValue;
                 $this->arr[$i] = $pair;
+
                 return;
             }
         }
@@ -315,6 +322,7 @@ class KeyValue extends Model\AbstractModel
         $pair["key"] = $keyId;
         $pair["value"] = $value;
         $this->arr[] = $pair;
+
         return $this;
     }
 
@@ -337,6 +345,7 @@ class KeyValue extends Model\AbstractModel
                 $translatedValue = $value;
             }
         }
+
         return $translatedValue;
     }
 
@@ -363,18 +372,23 @@ class KeyValue extends Model\AbstractModel
         if (substr($name, 0, 16) == "getWithGroupName") {
             $key = substr($name, 16, strlen($name)-16);
             $groupConfig = Object\KeyValue\GroupConfig::getByName($arguments[0]);
+
             return $this->getProperty($key, $groupConfig->getId());
         } elseif (substr($name, 0, 14) == "getWithGroupId") {
             $key = substr($name, 14, strlen($name)-14);
             $groupConfig = Object\KeyValue\GroupConfig::getById($arguments[0]);
+
             return $this->getProperty($key, $groupConfig->getId());
         } elseif (substr($name, 0, 3) == "get") {
             $key = substr($name, 3, strlen($name)-3);
+
             return $this->getProperty($key);
         } elseif (substr($name, 0, 3) == "set") {
             $key = substr($name, 3, strlen($name)-3);
+
             return $this->setProperty($key, $arguments[0]);
         }
+
         return parent::__call($name, $arguments);
     }
 

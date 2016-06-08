@@ -121,6 +121,7 @@ class Authentication
                 return null;
             }
             date_default_timezone_set($timeZone);
+
             return $user;
         }
 
@@ -142,9 +143,11 @@ class Authentication
                     $user->setPassword(self::getPasswordHash($user->getName(), $password));
                     $user->save();
                 }
+
                 return true;
             }
         }
+
         return false;
     }
 
@@ -157,6 +160,7 @@ class Authentication
         if ($user instanceof User && $user->isActive() && $user->getId() && $user->getPassword()) {
             return true;
         }
+
         return false;
     }
 
@@ -172,6 +176,7 @@ class Authentication
         if (!$hash) {
             throw new \Exception("Unable to create password hash for user: " . $username);
         }
+
         return $hash;
     }
 

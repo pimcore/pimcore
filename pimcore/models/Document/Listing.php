@@ -72,6 +72,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
         if ($this->documents === null) {
             $this->load();
         }
+
         return $this->documents;
     }
 
@@ -82,6 +83,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     public function setDocuments($documents)
     {
         $this->documents = $documents;
+
         return $this;
     }
 
@@ -99,6 +101,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     public function setUnpublished($unpublished)
     {
         $this->unpublished = (bool) $unpublished;
+
         return $this;
     }
 
@@ -131,6 +134,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     {
         $this->setOffset($offset);
         $this->setLimit($itemCountPerPage);
+
         return $this->load();
     }
 
@@ -154,6 +158,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     {
         $this->getDocuments();
         $var = current($this->documents);
+
         return $var;
     }
 
@@ -161,6 +166,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     {
         $this->getDocuments();
         $var = key($this->documents);
+
         return $var;
     }
 
@@ -168,6 +174,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     {
         $this->getDocuments();
         $var = next($this->documents);
+
         return $var;
     }
 
@@ -175,6 +182,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     {
         $this->getDocuments();
         $var = $this->current() !== false;
+
         return $var;
     }
 }

@@ -64,6 +64,7 @@ namespace Pimcore\Log\Writer {
 }
 
 // GLOBAL NAMESPACE
+
 namespace {
 
     /**

@@ -46,6 +46,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         }
 
         $this->model->setAssets($assets);
+
         return $assets;
     }
 
@@ -85,6 +86,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     {
         $select = (string) $this->getQuery([new \Zend_Db_Expr('COUNT(*)')]);
         $amount = (int) $this->db->fetchOne($select, $this->model->getConditionVariables());
+
         return $amount;
     }
 

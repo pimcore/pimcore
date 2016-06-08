@@ -248,6 +248,7 @@ abstract class Admin extends Action
 
         $this->language = (string) $locale;
         $this->view->language = $this->getLanguage();
+
         return $this;
     }
 
@@ -290,6 +291,7 @@ abstract class Admin extends Action
     public function setTranslator(\Zend_Translate $t)
     {
         $this->translator = $t;
+
         return $this;
     }
 

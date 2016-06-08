@@ -645,7 +645,6 @@ class Pimcore
             if (!defined("PIMCORE_DEVMODE")) {
                 define("PIMCORE_DEVMODE", (bool) $conf->general->devmode);
             }
-
         } catch (\Exception $e) {
             $m = "Couldn't load system configuration";
             \Logger::err($m);
@@ -749,6 +748,7 @@ class Pimcore
         if (!self::$eventManager) {
             self::$eventManager = new \Zend_EventManager_EventManager();
         }
+
         return self::$eventManager;
     }
 

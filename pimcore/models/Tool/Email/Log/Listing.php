@@ -59,6 +59,7 @@ class Listing extends Model\Listing\AbstractListing
     public function setEmailLogs($emailLogs)
     {
         $this->emailLogs = $emailLogs;
+
         return $this;
     }
 }

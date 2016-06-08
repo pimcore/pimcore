@@ -55,6 +55,7 @@ class Document
         if (self::getDefaultAdapter()) {
             return true;
         }
+
         return false;
     }
 
@@ -69,6 +70,7 @@ class Document
                 return $adapter->isFileTypeSupported($filetype);
             }
         }
+
         return false;
     }
 

@@ -89,6 +89,7 @@ class AbstractWorkspace extends Model\AbstractModel
     public function setCreate($create)
     {
         $this->create = $create;
+
         return $this;
     }
 
@@ -107,6 +108,7 @@ class AbstractWorkspace extends Model\AbstractModel
     public function setDelete($delete)
     {
         $this->delete = $delete;
+
         return $this;
     }
 
@@ -125,6 +127,7 @@ class AbstractWorkspace extends Model\AbstractModel
     public function setList($list)
     {
         $this->list = $list;
+
         return $this;
     }
 
@@ -143,6 +146,7 @@ class AbstractWorkspace extends Model\AbstractModel
     public function setProperties($properties)
     {
         $this->properties = $properties;
+
         return $this;
     }
 
@@ -161,6 +165,7 @@ class AbstractWorkspace extends Model\AbstractModel
     public function setPublish($publish)
     {
         $this->publish = $publish;
+
         return $this;
     }
 
@@ -179,6 +184,7 @@ class AbstractWorkspace extends Model\AbstractModel
     public function setRename($rename)
     {
         $this->rename = $rename;
+
         return $this;
     }
 
@@ -197,6 +203,7 @@ class AbstractWorkspace extends Model\AbstractModel
     public function setSettings($settings)
     {
         $this->settings = $settings;
+
         return $this;
     }
 
@@ -215,6 +222,7 @@ class AbstractWorkspace extends Model\AbstractModel
     public function setVersions($versions)
     {
         $this->versions = $versions;
+
         return $this;
     }
 
@@ -233,6 +241,7 @@ class AbstractWorkspace extends Model\AbstractModel
     public function setView($view)
     {
         $this->view = $view;
+
         return $this;
     }
 
@@ -251,6 +260,7 @@ class AbstractWorkspace extends Model\AbstractModel
     public function setCid($cid)
     {
         $this->cid = $cid;
+
         return $this;
     }
 
@@ -269,6 +279,7 @@ class AbstractWorkspace extends Model\AbstractModel
     public function setUserId($userId)
     {
         $this->userId = $userId;
+
         return $this;
     }
 
@@ -287,6 +298,7 @@ class AbstractWorkspace extends Model\AbstractModel
     public function setCpath($cpath)
     {
         $this->cpath = $cpath;
+
         return $this;
     }
 

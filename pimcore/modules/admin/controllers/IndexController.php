@@ -103,6 +103,7 @@ class Admin_IndexController extends \Pimcore\Controller\Action\Admin
             if (!isset($adminSession->csrfToken) && !$adminSession->csrfToken) {
                 $adminSession->csrfToken = sha1(microtime() . $user->getName() . uniqid());
             }
+
             return $adminSession->csrfToken;
         });
 

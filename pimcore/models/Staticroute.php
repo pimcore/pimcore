@@ -145,6 +145,7 @@ class Staticroute extends AbstractModel
                 $route->getDao()->getById();
             } catch (\Exception $e) {
                 \Logger::error($e);
+
                 return null;
             }
         }
@@ -172,6 +173,7 @@ class Staticroute extends AbstractModel
             $route->getDao()->getByName($name, $siteId);
         } catch (\Exception $e) {
             \Logger::warn($e);
+
             return null;
         }
 
@@ -179,6 +181,7 @@ class Staticroute extends AbstractModel
         if ($route->getId() > 0) {
             // add it to the mini-per request cache
             self::$nameIdMappingCache[$cacheKey] = $route->getId();
+
             return self::getById($route->getId());
         }
     }
@@ -278,6 +281,7 @@ class Staticroute extends AbstractModel
     public function setId($id)
     {
         $this->id = (int) $id;
+
         return $this;
     }
 
@@ -288,6 +292,7 @@ class Staticroute extends AbstractModel
     public function setPattern($pattern)
     {
         $this->pattern = $pattern;
+
         return $this;
     }
 
@@ -298,6 +303,7 @@ class Staticroute extends AbstractModel
     public function setModule($module)
     {
         $this->module = $module;
+
         return $this;
     }
 
@@ -309,6 +315,7 @@ class Staticroute extends AbstractModel
     public function setController($controller)
     {
         $this->controller = $controller;
+
         return $this;
     }
 
@@ -319,6 +326,7 @@ class Staticroute extends AbstractModel
     public function setAction($action)
     {
         $this->action = $action;
+
         return $this;
     }
 
@@ -329,6 +337,7 @@ class Staticroute extends AbstractModel
     public function setVariables($variables)
     {
         $this->variables = $variables;
+
         return $this;
     }
 
@@ -339,6 +348,7 @@ class Staticroute extends AbstractModel
     public function setDefaults($defaults)
     {
         $this->defaults = $defaults;
+
         return $this;
     }
 
@@ -349,6 +359,7 @@ class Staticroute extends AbstractModel
     public function setPriority($priority)
     {
         $this->priority = (int) $priority;
+
         return $this;
     }
 
@@ -367,6 +378,7 @@ class Staticroute extends AbstractModel
     public function setName($name)
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -385,6 +397,7 @@ class Staticroute extends AbstractModel
     public function setReverse($reverse)
     {
         $this->reverse = $reverse;
+
         return $this;
     }
 
@@ -402,6 +415,7 @@ class Staticroute extends AbstractModel
     public function setSiteId($siteId)
     {
         $this->siteId = $siteId ? (int) $siteId : null;
+
         return $this;
     }
 
@@ -423,7 +437,7 @@ class Staticroute extends AbstractModel
     {
 
         // get request parameters
-        $blockedRequestParams = ["controller","action","module","document"];
+        $blockedRequestParams = ["controller", "action", "module", "document"];
         $front = \Zend_Controller_Front::getInstance();
 
         if ($reset) {
@@ -453,7 +467,7 @@ class Staticroute extends AbstractModel
         $parametersInReversePattern = [];
         $parametersGet = [];
         $url = $this->getReverse();
-        $forbiddenCharacters = ["#",":","?"];
+        $forbiddenCharacters = ["#", ":", "?"];
 
         // check for named variables
         uksort($urlParams, function ($a, $b) {
@@ -589,6 +603,7 @@ class Staticroute extends AbstractModel
                         }
                     }
                 }
+
                 return $item;
             };
 
@@ -615,6 +630,7 @@ class Staticroute extends AbstractModel
     public function setModificationDate($modificationDate)
     {
         $this->modificationDate = (int) $modificationDate;
+
         return $this;
     }
 
@@ -633,6 +649,7 @@ class Staticroute extends AbstractModel
     public function setCreationDate($creationDate)
     {
         $this->creationDate = (int) $creationDate;
+
         return $this;
     }
 

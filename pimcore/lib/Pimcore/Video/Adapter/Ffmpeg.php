@@ -191,6 +191,7 @@ class Ffmpeg extends Adapter
         if ($status === "error" || $status > 99) {
             return true;
         }
+
         return false;
     }
 
@@ -271,6 +272,7 @@ class Ffmpeg extends Adapter
     public function setProcessId($processId)
     {
         $this->processId = $processId;
+
         return $this;
     }
 
@@ -314,6 +316,7 @@ class Ffmpeg extends Adapter
         if ($videoBitrate) {
             $this->addArgument("videoBitrate", "-vb " . $videoBitrate . "k");
         }
+
         return $this;
     }
 
@@ -332,6 +335,7 @@ class Ffmpeg extends Adapter
         if ($audioBitrate) {
             $this->addArgument("audioBitrate", "-ab " . $audioBitrate . "k");
         }
+
         return $this;
     }
 

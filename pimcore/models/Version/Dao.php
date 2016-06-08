@@ -85,6 +85,7 @@ class Dao extends Model\Dao\AbstractDao
         $deadline = time() - (intval($days) * 86400);
 
         $versionIds = $this->db->fetchCol("SELECT id FROM versions WHERE cid = ? and ctype = ? AND date < ?", [$this->model->getCid(), $this->model->getCtype(), $deadline]);
+
         return $versionIds;
     }
 
@@ -95,6 +96,7 @@ class Dao extends Model\Dao\AbstractDao
     public function getOutdatedVersionsSteps($steps)
     {
         $versionIds = $this->db->fetchCol("SELECT id FROM versions WHERE cid = ? and ctype = ? ORDER BY date DESC LIMIT " . intval($steps) . ",1000000", [$this->model->getCid(), $this->model->getCtype()]);
+
         return $versionIds;
     }
 
@@ -154,6 +156,7 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
         \Logger::info("return " .  count($versionIds) . " ids\n");
+
         return $versionIds;
     }
 }

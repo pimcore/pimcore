@@ -54,6 +54,7 @@ class Less extends \Zend_Controller_Plugin_Abstract
     public function disable()
     {
         $this->enabled = false;
+
         return true;
     }
 

@@ -98,6 +98,7 @@ class Link extends Model\Document\Tag
 
             return '<a href="' . $url . '" ' . implode(" ", $attribs) . '>' . htmlspecialchars($this->data["text"]) . '</a>';
         }
+
         return "";
     }
 
@@ -126,6 +127,7 @@ class Link extends Model\Document\Tag
                 }
             }
         }
+
         return $sane;
     }
 
@@ -248,6 +250,7 @@ class Link extends Model\Document\Tag
         if (!is_array($this->data)) {
             $this->data = [];
         }
+
         return $this;
     }
 
@@ -281,6 +284,7 @@ class Link extends Model\Document\Tag
         }
 
         $this->data = $data;
+
         return $this;
     }
 
@@ -322,6 +326,7 @@ class Link extends Model\Document\Tag
                 }
             }
         }
+
         return $dependencies;
     }
 
@@ -404,6 +409,7 @@ class Link extends Model\Document\Tag
         }
 
         $el->data = $this->data;
+
         return $el;
     }
 

@@ -33,10 +33,10 @@ class EuCookieLawNotice extends \Zend_Controller_Plugin_Abstract
 
         $template = file_get_contents(__DIR__ . "/EuCookieLawNotice/template.html");
 
-        # cleanup code
-        $template = preg_replace('/[\r\n\t]+/', ' ', $template); #remove new lines, spaces, tabs
-        $template = preg_replace('/>[\s]+</', '><', $template); #remove new lines, spaces, tabs
-        $template = preg_replace('/[\s]+/', ' ', $template); #remove new lines, spaces, tabs
+        // cleanup code
+        $template = preg_replace('/[\r\n\t]+/', ' ', $template); //remove new lines, spaces, tabs
+        $template = preg_replace('/>[\s]+</', '><', $template); //remove new lines, spaces, tabs
+        $template = preg_replace('/[\s]+/', ' ', $template); //remove new lines, spaces, tabs
 
         $translations = $this->getTranslations();
 

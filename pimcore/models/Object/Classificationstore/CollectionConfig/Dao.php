@@ -75,6 +75,7 @@ class Dao extends Model\Dao\AbstractDao
         if ($this->model->getId()) {
             return $this->model->update();
         }
+
         return $this->create();
     }
 
@@ -113,6 +114,7 @@ class Dao extends Model\Dao\AbstractDao
             }
 
             $this->db->update(self::TABLE_NAME_COLLECTIONS, $data, $this->db->quoteInto("id = ?", $this->model->getId()));
+
             return $this->model;
         } catch (\Exception $e) {
             throw $e;

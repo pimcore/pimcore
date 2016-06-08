@@ -632,6 +632,7 @@ class Install_CheckController extends \Pimcore\Controller\Action
                 $data[] = $base . $value;
             }
         }
+
         return $data;
     }
 }

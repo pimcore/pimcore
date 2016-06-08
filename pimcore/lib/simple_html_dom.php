@@ -75,6 +75,7 @@ function file_get_html($url, $use_include_path = false, $context=null, $offset =
     }
     // The second parameter can force the selectors to all be lowercase.
     $dom->load($contents, $lowercase, $stripRN);
+
     return $dom;
 }
 
@@ -84,9 +85,11 @@ function str_get_html($str, $lowercase=true, $forceTagsClosed=false, $target_cha
     $dom = new simple_html_dom(null, $lowercase, $forceTagsClosed, $target_charset, $defaultBRText);
     if (empty($str)) {
         $dom->clear();
+
         return false;
     }
     $dom->load($str, $lowercase, $stripRN);
+
     return $dom;
 }
 
@@ -213,6 +216,7 @@ class simple_html_dom_node
         if (isset($this->children[$idx])) {
             return $this->children[$idx];
         }
+
         return null;
     }
 
@@ -222,6 +226,7 @@ class simple_html_dom_node
         if (count($this->children)>0) {
             return $this->children[0];
         }
+
         return null;
     }
 
@@ -231,6 +236,7 @@ class simple_html_dom_node
         if (($count=count($this->children))>0) {
             return $this->children[$count-1];
         }
+
         return null;
     }
 
@@ -248,6 +254,7 @@ class simple_html_dom_node
         if (++$idx>=$count) {
             return null;
         }
+
         return $this->parent->children[$idx];
     }
 
@@ -265,6 +272,7 @@ class simple_html_dom_node
         if (--$idx<0) {
             return null;
         }
+
         return $this->parent->children[$idx];
     }
 
@@ -289,6 +297,7 @@ class simple_html_dom_node
             }
             $returnDom = $returnDom->parent;
         }
+
         return $returnDom;
     }
 
@@ -306,6 +315,7 @@ class simple_html_dom_node
         foreach ($this->nodes as $n) {
             $ret .= $n->outertext();
         }
+
         return $ret;
     }
 
@@ -364,6 +374,7 @@ class simple_html_dom_node
         if (isset($this->_[HDOM_INFO_END]) && $this->_[HDOM_INFO_END]!=0) {
             $ret .= '</'.$this->tag.'>';
         }
+
         return $ret;
     }
 
@@ -394,6 +405,7 @@ class simple_html_dom_node
                 $ret .= $this->convert_text($n->text());
             }
         }
+
         return $ret;
     }
 
@@ -402,6 +414,7 @@ class simple_html_dom_node
         $ret = $this->innertext();
         $ret = str_ireplace('<![CDATA[', '', $ret);
         $ret = str_replace(']]>', '', $ret);
+
         return $ret;
     }
 
@@ -438,6 +451,7 @@ class simple_html_dom_node
             }
         }
         $ret = $this->dom->restore_noise($ret);
+
         return $ret . $this->_[HDOM_INFO_ENDSPACE] . '>';
     }
 
@@ -496,6 +510,7 @@ class simple_html_dom_node
         } elseif ($idx<0) {
             $idx = count($found) + $idx;
         }
+
         return (isset($found[$idx])) ? $found[$idx] : null;
     }
 
@@ -517,10 +532,12 @@ class simple_html_dom_node
                 if ($tag==='*' || $tag===$c->tag) {
                     if (++$count==$key) {
                         $ret[$c->_[HDOM_INFO_BEGIN]] = 1;
+
                         return;
                     }
                 }
             }
+
             return;
         }
 
@@ -637,8 +654,10 @@ class simple_html_dom_node
                 if ($pattern[0]=='/') {
                     return preg_match($pattern, $value);
                 }
+
                 return preg_match("/".$pattern."/i", $value);
         }
+
         return false;
     }
 
@@ -715,6 +734,7 @@ class simple_html_dom_node
         if (count($result)>0) {
             $selectors[] = $result;
         }
+
         return $selectors;
     }
 
@@ -740,6 +760,7 @@ class simple_html_dom_node
                 if (isset($this->_[HDOM_INFO_TEXT])) {
                     return $this->_[HDOM_INFO_TEXT] = $value;
                 }
+
                 return $this->_[HDOM_INFO_INNER] = $value;
         }
         if (!isset($this->attr[$name])) {
@@ -977,6 +998,7 @@ class simple_html_dom
         // Throw an error if we can't properly load the dom.
         if (($error=error_get_last())!==null) {
             $this->clear();
+
             return false;
         }
     }
@@ -1000,6 +1022,7 @@ class simple_html_dom
         if ($filepath!=='') {
             file_put_contents($filepath, $ret, LOCK_EX);
         }
+
         return $ret;
     }
 
@@ -1084,6 +1107,7 @@ class simple_html_dom
         ++$this->cursor;
         $node->_[HDOM_INFO_TEXT] = $s;
         $this->link_nodes($node, false);
+
         return true;
     }
 
@@ -1167,6 +1191,7 @@ class simple_html_dom
     {
         if ($this->char!=='<') {
             $this->root->_[HDOM_INFO_END] = $this->cursor;
+
             return false;
         }
         $begin_tag_pos = $this->pos;
@@ -1203,6 +1228,7 @@ class simple_html_dom
                             $this->parent = $this->parent->parent;
                         }
                         $this->parent->_[HDOM_INFO_END] = $this->cursor;
+
                         return $this->as_text_node($tag);
                     }
                 } elseif (($this->parent->parent) && isset($this->block_tags[$tag_lower])) {
@@ -1216,6 +1242,7 @@ class simple_html_dom
                     if (strtolower($this->parent->tag)!==$tag_lower) {
                         $this->parent = $org_parent; // restore origonal parent
                         $this->parent->_[HDOM_INFO_END] = $this->cursor;
+
                         return $this->as_text_node($tag);
                     }
                 } elseif (($this->parent->parent) && strtolower($this->parent->parent->tag)===$tag_lower) {
@@ -1273,6 +1300,7 @@ class simple_html_dom
             $node->_[HDOM_INFO_TEXT] = '<' . $tag . $this->copy_until('<>');
             if ($this->char==='<') {
                 $this->link_nodes($node, false);
+
                 return true;
             }
 
@@ -1320,6 +1348,7 @@ class simple_html_dom
                 $node->_[HDOM_INFO_TEXT] = '<'.$tag . $space[0] . $name;
                 $node->tag = 'text';
                 $this->link_nodes($node, false);
+
                 return true;
             }
 
@@ -1333,6 +1362,7 @@ class simple_html_dom
                 $this->pos -= 2;
                 $this->char = (++$this->pos<$this->size) ? $this->doc[$this->pos] : null; // next
                 $this->link_nodes($node, false);
+
                 return true;
             }
 
@@ -1456,6 +1486,7 @@ class simple_html_dom
         if ($len===0) {
             return '';
         }
+
         return substr($this->doc, $pos, $len);
     }
 
@@ -1478,6 +1509,7 @@ class simple_html_dom
             $ret = substr($this->doc, $this->pos, $this->size-$this->pos);
             $this->char = null;
             $this->pos = $this->size;
+
             return $ret;
         }
 
@@ -1487,6 +1519,7 @@ class simple_html_dom
         $pos_old = $this->pos;
         $this->char = $this->doc[$pos];
         $this->pos = $pos;
+
         return substr($this->doc, $pos_old, $pos-$pos_old);
     }
 
@@ -1502,6 +1535,7 @@ class simple_html_dom
                 $ret = substr($this->doc, $this->pos, $this->size-$this->pos);
                 $this->char = null;
                 $this->pos = $this->size;
+
                 return $ret;
             }
 
@@ -1517,6 +1551,7 @@ class simple_html_dom
             $pos_old = $this->pos;
             $this->char = $this->doc[$pos];
             $this->pos = $pos;
+
             return substr($this->doc, $pos_old, $pos-$pos_old);
         }
     }
@@ -1549,6 +1584,7 @@ class simple_html_dom
                 $text = substr($text, 0, $pos).$this->noise[$key].substr($text, $pos+14);
             }
         }
+
         return $text;
     }
 

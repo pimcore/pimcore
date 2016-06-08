@@ -45,6 +45,7 @@ class Listing extends Model\Listing\AbstractListing
     public function setTargets($targets)
     {
         $this->targets = $targets;
+
         return $this;
     }
 

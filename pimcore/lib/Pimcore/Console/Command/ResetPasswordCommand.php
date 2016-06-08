@@ -82,11 +82,13 @@ class ResetPasswordCommand extends AbstractCommand
             $command = "cscript //nologo " . escapeshellarg($vbscript);
             $password = rtrim(shell_exec($command));
             unlink($vbscript);
+
             return $password;
         } else {
             $command = "/usr/bin/env bash -c 'echo OK'";
             if (rtrim(shell_exec($command)) !== 'OK') {
                 trigger_error("Can't invoke bash");
+
                 return;
             }
             $command = "/usr/bin/env bash -c 'read -s -p \""
@@ -94,6 +96,7 @@ class ResetPasswordCommand extends AbstractCommand
                 . "\" mypassword && echo \$mypassword'";
             $password = rtrim(shell_exec($command));
             echo "\n";
+
             return $password;
         }
     }

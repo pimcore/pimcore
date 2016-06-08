@@ -64,6 +64,7 @@ abstract class Dao extends Model\Document\Dao
             $elements[$elementRaw["name"]] = $element;
             $this->model->setElement($elementRaw["name"], $element);
         }
+
         return $elements;
     }
 
@@ -98,8 +99,10 @@ abstract class Dao extends Model\Document\Dao
         
         if (($versionData["id"] && $versionData["date"] > $this->model->getModificationDate()) || $force) {
             $version = Version::getById($versionData["id"]);
+
             return $version;
         }
+
         return;
     }
     

@@ -54,6 +54,7 @@ class Listing extends Model\Listing\AbstractListing
     public function setList($theList)
     {
         $this->list = $theList;
+
         return $this;
     }
 }

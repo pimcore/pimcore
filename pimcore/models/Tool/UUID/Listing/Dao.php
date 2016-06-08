@@ -49,6 +49,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
             $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM " . Resource::TABLE_NAME ." " . $this->getCondition(), $this->model->getConditionVariables());
         } catch (\Exception $e) {
         }
+
         return $amount;
     }
 }

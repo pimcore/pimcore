@@ -145,6 +145,7 @@ class Db
         try {
             $db = self::getConnection();
             self::set($db);
+
             return $db;
         } catch (\Exception $e) {
             $errorMessage = "Unable to establish the database connection with the given configuration in /website/var/config/system.php, for details see the debug.log. \nReason: " . $e->getMessage();
@@ -222,7 +223,7 @@ class Db
                 self::logDefinitionModification($args[0]);
             }
         } else {
-            $tablesToCheck = ["classes","users_permission_definitions"];
+            $tablesToCheck = ["classes", "users_permission_definitions"];
 
             if (in_array($args[0], $tablesToCheck)) {
                 self::$_logProfilerWasEnabled = $connection->getProfiler()->getEnabled();
@@ -263,7 +264,7 @@ class Db
      */
     public static function isWriteQuery($method, $args)
     {
-        $methodsToCheck = ["update","delete","insert","lastInsertId"];
+        $methodsToCheck = ["update", "delete", "insert", "lastInsertId"];
         if (in_array($method, $methodsToCheck)) {
             return true;
         }
@@ -336,6 +337,7 @@ class Db
                 \Logger::warning("Reconnecting to the MySQL-Server was successful, sending the command again to the server.");
                 $r = self::get()->callResourceMethod($method, $args);
                 \Logger::warning("Resending the command was successful");
+
                 return $r;
             } catch (\Exception $e) {
                 \Logger::error($e);

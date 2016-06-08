@@ -38,14 +38,14 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
      *
      * @var string
      */
-    public $queryColumnType = ["image" => "int(11)","hotspots" => "text"];
+    public $queryColumnType = ["image" => "int(11)", "hotspots" => "text"];
 
     /**
      * Type for the column
      *
      * @var string
      */
-    public $columnType = ["image" => "int(11)","hotspots" => "text"];
+    public $columnType = ["image" => "int(11)", "hotspots" => "text"];
 
     /**
      * Type for the generated phpdoc
@@ -125,6 +125,7 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
                 $this->getName() . "__hotspots" => $metaData
             ];
         }
+
         return [
             $this->getName() . "__image" => null,
             $this->getName() . "__hotspots" => null
@@ -174,6 +175,7 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
                         }
                     }
                 }
+
                 return $data;
             };
 
@@ -181,8 +183,10 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
             $marker = $rewritePath($marker);
 
             $value = new Object\Data\Hotspotimage($imageId, $hotspots, $marker, $crop);
+
             return $value;
         }
+
         return null;
     }
 
@@ -227,6 +231,7 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
                         }
                     }
                 }
+
                 return $data;
             };
 
@@ -243,6 +248,7 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
                 "crop" => $data->getCrop()
             ];
         }
+
         return null;
     }
 
@@ -271,6 +277,7 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
                     }
                 }
             }
+
             return $data;
         };
 
@@ -367,6 +374,7 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
                         }
                     }
                 }
+
                 return $tags;
             };
 
@@ -411,6 +419,7 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
                         }
                     }
                 }
+
                 return $dependencies;
             };
 
@@ -469,6 +478,7 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
             return null;
         } elseif (is_numeric($id) and $asset instanceof Asset) {
             $hotspotImage->setImage($asset);
+
             return $hotspotImage;
         } else {
             if (!$idMapper || !$idMapper->ignoreMappingFailures()) {
@@ -576,6 +586,7 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
                 $newDataArray[] = $dataArrayEntry;
             }
         }
+
         return $newDataArray;
     }
 }

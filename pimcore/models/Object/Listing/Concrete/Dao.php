@@ -166,6 +166,7 @@ class Dao extends Model\Object\Listing\Dao
                 }
             }
         }
+
         return $this->tableName;
     }
 
@@ -182,6 +183,7 @@ class Dao extends Model\Object\Listing\Dao
         if (!empty($fieldCollections)) {
             $selectPart = "DISTINCT " . $column;
         }
+
         return $selectPart;
     }
 

@@ -93,9 +93,11 @@ abstract class AbstractStructureImportCommand extends AbstractCommand
 
         if ($result) {
             $this->output->writeln(sprintf('Successfully imported %s', $logName));
+
             return 0;
         } else {
             $this->output->writeln(sprintf('<error>ERROR:</error> Failed to import %s', $logName));
+
             return 1;
         }
     }

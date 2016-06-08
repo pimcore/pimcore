@@ -327,6 +327,7 @@ class Text
         if ($encoding) {
             $text = iconv($encoding, "UTF-8", $text);
         }
+
         return $text;
     }
 
@@ -392,6 +393,7 @@ class Text
         if (!$encoding) {
             $encoding = "UTF-8";
         }
+
         return $encoding;
     }
 }

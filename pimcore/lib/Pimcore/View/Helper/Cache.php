@@ -102,6 +102,7 @@ class CacheController
         
         if ($content = CacheManager::load($this->key)) {
             echo $content;
+
             return true;
         }
         

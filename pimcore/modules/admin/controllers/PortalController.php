@@ -87,7 +87,7 @@ class Admin_PortalController extends \Pimcore\Controller\Action\Admin
     public function removeWidgetAction()
     {
         $config = $this->getCurrentConfiguration();
-        $newConfig = [[],[]];
+        $newConfig = [[], []];
         $colCount = 0;
 
         foreach ($config["positions"] as $col) {
@@ -127,7 +127,7 @@ class Admin_PortalController extends \Pimcore\Controller\Action\Admin
     public function reorderWidgetAction()
     {
         $config = $this->getCurrentConfiguration();
-        $newConfig = [[],[]];
+        $newConfig = [[], []];
         $colCount = 0;
 
         foreach ($config["positions"] as $col) {

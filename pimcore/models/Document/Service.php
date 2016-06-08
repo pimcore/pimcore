@@ -392,6 +392,7 @@ class Service extends Model\Element\Service
             // validate path
             if (\Pimcore\Tool::isValidPath($path)) {
                 $document->getDao()->getByPath($path);
+
                 return true;
             }
         } catch (\Exception $e) {
@@ -534,6 +535,7 @@ class Service extends Model\Element\Service
             $nr++;
             $key = self::getUniqueKey($item, $nr);
         }
+
         return $key;
     }
 }

@@ -79,6 +79,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
                 }
                 $counter++;
             }
+
             return $return;
         } elseif (is_array($data) and count($data)===0) {
             //give empty array if data was not null
@@ -145,6 +146,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
                     $ids[] = $object->getId();
                 }
             }
+
             return "," . implode(",", $ids) . ",";
         } elseif (is_array($data) && count($data) === 0) {
             return "";
@@ -236,6 +238,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
                     $pathes[] = $eo->getRealFullPath();
                 }
             }
+
             return $pathes;
         }
     }
@@ -254,6 +257,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
                 $o = $metaObject->getObject();
                 $pathes[] = $o->getRealFullPath();
             }
+
             return implode("<br />", $pathes);
         }
     }
@@ -308,6 +312,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
                     $paths[] = $eo->getRealFullPath();
                 }
             }
+
             return implode(",", $paths);
         } else {
             return null;
@@ -333,6 +338,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
                 $value[] = $metaObject;
             }
         }
+
         return $value;
     }
 
@@ -356,6 +362,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
                 }
             }
         }
+
         return $tags;
     }
 
@@ -378,6 +385,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
                 }
             }
         }
+
         return $dependencies;
     }
 
@@ -405,6 +413,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
                     $items[] = $item;
                 }
             }
+
             return $items;
         } else {
             return null;
@@ -460,6 +469,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
         } else {
             throw new \Exception("cannot get values from web service import - invalid data");
         }
+
         return $objects;
     }
 
@@ -564,6 +574,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
                     $publishedList[] = $listElement;
                 }
             }
+
             return $publishedList;
         }
 
@@ -600,6 +611,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
     public function setAllowedClassId($allowedClassId)
     {
         $this->allowedClassId = $allowedClassId;
+
         return $this;
     }
 
@@ -625,6 +637,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
         }
 
         $this->visibleFields = $visibleFields;
+
         return $this;
     }
 
@@ -654,6 +667,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
             $this->columns[] = $c;
             $this->columnKeys[] = $c['key'];
         }
+
         return $this;
     }
 
@@ -674,6 +688,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
         foreach ($this->columns as $c) {
             $this->columnKeys[] = $c['key'];
         }
+
         return $this->columnKeys;
     }
 
@@ -687,6 +702,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
         if (is_array($a) && is_array($b)) {
             return $a['position'] - $b['position'];
         }
+
         return strcmp($a, $b);
     }
 

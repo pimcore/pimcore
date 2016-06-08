@@ -58,6 +58,7 @@ class Document extends Model\Asset
 
         if (!\Pimcore\Document::isAvailable()) {
             \Logger::error("Couldn't create image-thumbnail of document " . $this->getRealFullPath() . " no document adapter is available");
+
             return null;
         }
 
@@ -67,6 +68,7 @@ class Document extends Model\Asset
 
             // read from blob here, because in $this->update() (see above) $this->getFileSystemPath() contains the old data
             $pageCount = $converter->getPageCount();
+
             return $pageCount;
         } catch (\Exception $e) {
             \Logger::error($e);
@@ -80,6 +82,7 @@ class Document extends Model\Asset
         if (!$pageCount = $this->getCustomSetting("document_page_count")) {
             $pageCount = $this->readPageCount();
         }
+
         return $pageCount;
     }
 
@@ -93,6 +96,7 @@ class Document extends Model\Asset
     {
         if (!\Pimcore\Document::isAvailable()) {
             \Logger::error("Couldn't create image-thumbnail of document " . $this->getRealFullPath() . " no document adapter is available");
+
             return new Document\ImageThumbnail(null);
         }
 
@@ -108,6 +112,7 @@ class Document extends Model\Asset
                 $text = $document->getText($page, $this->getFileSystemPath());
                 Cache::save($text, $cacheKey, $this->getCacheTags(), null, 99, true); // force cache write
             }
+
             return $text;
         } else {
             \Logger::error("Couldn't get text out of document " . $this->getRealFullPath() . " no document adapter is available");

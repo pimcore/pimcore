@@ -20,7 +20,7 @@ class DeviceDetector
     /**
      * @var array
      */
-    protected $validDeviceTypes = ["phone","tablet","desktop"];
+    protected $validDeviceTypes = ["phone", "tablet", "desktop"];
 
     /**
      * @var null|string
@@ -86,6 +86,7 @@ class DeviceDetector
     public function isDesktop()
     {
         $this->determineDeviceType();
+
         return $this->isDesktop;
     }
 
@@ -95,6 +96,7 @@ class DeviceDetector
     public function isTablet()
     {
         $this->determineDeviceType();
+
         return $this->isTablet;
     }
 
@@ -104,6 +106,7 @@ class DeviceDetector
     public function isPhone()
     {
         $this->determineDeviceType();
+
         return $this->isPhone;
     }
 

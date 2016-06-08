@@ -99,6 +99,7 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
                 }
                 $counter++;
             }
+
             return $return;
         } elseif (is_array($data) and count($data)===0) {
             //give empty array if data was not null
@@ -153,6 +154,7 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
                     $ids[] = $object->getId();
                 }
             }
+
             return "," . implode(",", $ids) . ",";
         } elseif (is_array($data) && count($data) === 0) {
             return "";
@@ -182,8 +184,10 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
             if (empty($return)) {
                 $return = false;
             }
+
             return $return;
         }
+
         return false;
     }
 
@@ -230,6 +234,7 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
                     $pathes[] = $eo->getRealFullPath();
                 }
             }
+
             return $pathes;
         }
     }
@@ -249,6 +254,7 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
                     $pathes[] = $o->getRealFullPath();
                 }
             }
+
             return implode("<br />", $pathes);
         }
     }
@@ -268,6 +274,7 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
     public function setWidth($width)
     {
         $this->width = $this->getAsIntegerCast($width);
+
         return $this;
     }
 
@@ -286,6 +293,7 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
     public function setHeight($height)
     {
         $this->height = $this->getAsIntegerCast($height);
+
         return $this;
     }
 
@@ -338,6 +346,7 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
                     $paths[] = $eo->getRealFullPath();
                 }
             }
+
             return implode(",", $paths);
         } else {
             return null;
@@ -360,6 +369,7 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
                 $value[] = $el;
             }
         }
+
         return $value;
     }
 
@@ -382,6 +392,7 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
                 }
             }
         }
+
         return $tags;
     }
 
@@ -403,6 +414,7 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
                 }
             }
         }
+
         return $dependencies;
     }
 
@@ -424,6 +436,7 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
                     ];
                 }
             }
+
             return $items;
         } else {
             return null;
@@ -470,6 +483,7 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
         } else {
             throw new \Exception("cannot get values from web service import - invalid data");
         }
+
         return $relatedObjects;
     }
 
@@ -504,8 +518,10 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
                     $publishedList[] = $listElement;
                 }
             }
+
             return $publishedList;
         }
+
         return is_array($data) ? $data : [];
     }
 
@@ -531,6 +547,7 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
     public function setFieldtype($fieldtype)
     {
         $this->fieldtype = $fieldtype;
+
         return $this;
     }
 
@@ -549,6 +566,7 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
     public function setMaxItems($maxItems)
     {
         $this->maxItems = $this->getAsIntegerCast($maxItems);
+
         return $this;
     }
 
@@ -587,6 +605,7 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
             $html = $this->getVersionPreview($data, $object, $params);
             $value["html"] = $html;
         }
+
         return $value;
     }
 
@@ -616,6 +635,7 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
 
             return $this->getDataFromEditmode($result, $object, $params);
         }
+
         return;
     }
 
@@ -638,6 +658,7 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
     {
         $data = $this->getDataFromObjectParam($object, $params);
         $data = $this->rewriteIdsService($data, $idMapping);
+
         return $data;
     }
 

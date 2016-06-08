@@ -57,6 +57,7 @@ class Printcontainer extends Document\PrintAbstract
     {
         $this->allChildren = [];
         $this->doGetChildren($this);
+
         return $this->allChildren;
     }
 

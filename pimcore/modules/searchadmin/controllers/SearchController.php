@@ -41,7 +41,7 @@ class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin
         $classnames = explode(",", $this->getParam("class"));
 
         if ($this->getParam("type") == "object" && is_array($classnames) && empty($classnames[0])) {
-            $subtypes = ["object","variant","folder"];
+            $subtypes = ["object", "variant", "folder"];
         }
 
         $offset = intval($this->getParam("start"));

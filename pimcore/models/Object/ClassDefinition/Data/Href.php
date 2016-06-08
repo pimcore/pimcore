@@ -113,6 +113,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     public function setObjectsAllowed($objectsAllowed)
     {
         $this->objectsAllowed = $objectsAllowed;
+
         return $this;
     }
 
@@ -131,6 +132,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     public function setDocumentsAllowed($documentsAllowed)
     {
         $this->documentsAllowed = $documentsAllowed;
+
         return $this;
     }
 
@@ -150,6 +152,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     public function setDocumentTypes($documentTypes)
     {
         $this->documentTypes = Element\Service::fixAllowedTypes($documentTypes, "documentTypes");
+
         return $this;
     }
 
@@ -170,6 +173,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     public function setAssetsAllowed($assetsAllowed)
     {
         $this->assetsAllowed = $assetsAllowed;
+
         return $this;
     }
 
@@ -188,6 +192,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     public function setAssetTypes($assetTypes)
     {
         $this->assetTypes = Element\Service::fixAllowedTypes($assetTypes, "assetTypes");
+
         return $this;
     }
 
@@ -268,8 +273,10 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
                 "subtype" => $data->getType(),
                 "type" => Element\Service::getElementType($data)
             ];
+
             return $r;
         }
+
         return;
     }
 
@@ -326,6 +333,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     public function setWidth($width)
     {
         $this->width = $this->getAsIntegerCast($width);
+
         return $this;
     }
 
@@ -567,6 +575,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     public function setAssetUploadPath($assetUploadPath)
     {
         $this->assetUploadPath = $assetUploadPath;
+
         return $this;
     }
 
@@ -610,6 +619,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
             $data = $this->rewriteIdsService([$data], $idMapping);
             $data = $data[0]; //get the first element
         }
+
         return $data;
     }
 

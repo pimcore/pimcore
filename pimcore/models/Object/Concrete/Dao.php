@@ -70,6 +70,7 @@ class Dao extends Model\Object\AbstractObject\Dao
         foreach ($allRelations as $relation) {
             $relations[] = $relation["dest_id"];
         }
+
         return $relations;
     }
 
@@ -384,8 +385,10 @@ class Dao extends Model\Object\AbstractObject\Dao
 
         if (($versionData["id"] && $versionData["date"] > $this->model->getModificationDate()) || $force) {
             $version = Model\Version::getById($versionData["id"]);
+
             return $version;
         }
+
         return;
     }
 

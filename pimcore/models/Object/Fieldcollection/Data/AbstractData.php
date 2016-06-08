@@ -56,6 +56,7 @@ abstract class AbstractData extends Model\AbstractModel
     public function setIndex($index)
     {
         $this->index = (int) $index;
+
         return $this;
     }
 
@@ -74,6 +75,7 @@ abstract class AbstractData extends Model\AbstractModel
     public function setFieldname($fieldname)
     {
         $this->fieldname = $fieldname;
+
         return $this;
     }
 
@@ -91,6 +93,7 @@ abstract class AbstractData extends Model\AbstractModel
     public function getDefinition()
     {
         $definition = Model\Object\Fieldcollection\Definition::getByKey($this->getType());
+
         return $definition;
     }
 
@@ -101,6 +104,7 @@ abstract class AbstractData extends Model\AbstractModel
     public function setObject($object)
     {
         $this->object = $object;
+
         return $this;
     }
 

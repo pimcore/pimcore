@@ -41,6 +41,7 @@ class StructuredTable
     public function setData($data)
     {
         $this->data = $data;
+
         return $this;
     }
 
@@ -93,6 +94,7 @@ class StructuredTable
                     $rowArray = $this->data[$row];
                     if (array_key_exists($col, $rowArray)) {
                         $this->data[$row][$col] = $arguments[0];
+
                         return;
                     }
                 }

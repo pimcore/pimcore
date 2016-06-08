@@ -146,6 +146,7 @@ class Config extends Model\AbstractModel
     {
         $type = $configuration->type ? ucfirst($configuration->type) : 'Sql';
         $adapter = "\\Pimcore\\Model\\Tool\\CustomReport\\Adapter\\{$type}";
+
         return new $adapter($configuration, $fullConfig);
     }
 

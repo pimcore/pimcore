@@ -46,6 +46,7 @@ class Dao extends Model\Dao\PhpArrayTable
         }
 
         $this->model->setNewsletter($properties);
+
         return $properties;
     }
 

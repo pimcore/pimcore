@@ -66,6 +66,7 @@ abstract class AbstractDao extends Model\Dao\AbstractDao
         if ($this->model->getGroupBy()) {
             return " GROUP BY " . $this->model->getGroupBy();
         }
+
         return "";
     }
 
@@ -81,6 +82,7 @@ abstract class AbstractDao extends Model\Dao\AbstractDao
         if ($limit = $this->model->getLimit()) {
             return " LIMIT " . $limit;
         }
+
         return "";
     }
 
@@ -92,6 +94,7 @@ abstract class AbstractDao extends Model\Dao\AbstractDao
         if ($cond = $this->model->getCondition()) {
             return " WHERE " . $cond . " ";
         }
+
         return "";
     }
 

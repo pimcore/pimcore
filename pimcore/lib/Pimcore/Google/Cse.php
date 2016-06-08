@@ -251,6 +251,7 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
     public function setOffset($offset)
     {
         $this->offset = $offset;
+
         return $this;
     }
 
@@ -269,6 +270,7 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
     public function setRaw($raw)
     {
         $this->raw = $raw;
+
         return $this;
     }
 
@@ -287,6 +289,7 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
     public function setTotal($total)
     {
         $this->total = $total;
+
         return $this;
     }
 
@@ -305,6 +308,7 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
     public function setPerPage($perPage)
     {
         $this->perPage = $perPage;
+
         return $this;
     }
 
@@ -323,6 +327,7 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
     public function setConfig($config)
     {
         $this->config = $config;
+
         return $this;
     }
 
@@ -341,6 +346,7 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
     public function setQuery($query)
     {
         $this->query = $query;
+
         return $this;
     }
 
@@ -359,6 +365,7 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
     public function setResults($results)
     {
         $this->results = $results;
+
         return $this;
     }
 
@@ -370,6 +377,7 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
         if (empty($this->results) && $retry) {
             $this->load();
         }
+
         return $this->results;
     }
 
@@ -380,6 +388,7 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
     public function setFacets($facets)
     {
         $this->facets = $facets;
+
         return $this;
     }
 
@@ -402,6 +411,7 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
     public function count()
     {
         $this->getResults();
+
         return $this->getTotal();
     }
 
@@ -443,6 +453,7 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
     {
         $this->getResults();
         $var = current($this->results);
+
         return $var;
     }
 
@@ -450,6 +461,7 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
     {
         $this->getResults();
         $var = key($this->results);
+
         return $var;
     }
 
@@ -457,6 +469,7 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
     {
         $this->getResults();
         $var = next($this->results);
+
         return $var;
     }
 
@@ -464,6 +477,7 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
     {
         $this->getResults();
         $var = $this->current() !== false;
+
         return $var;
     }
 }

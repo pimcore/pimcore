@@ -95,6 +95,7 @@ class Nonownerobjects extends Model\Object\ClassDefinition\Data\Objects
     public function setOwnerClassName($ownerClassName)
     {
         $this->ownerClassName = $ownerClassName;
+
         return $this;
     }
 
@@ -112,6 +113,7 @@ class Nonownerobjects extends Model\Object\ClassDefinition\Data\Objects
                 \Logger::error($e->getMessage());
             }
         }
+
         return $this->ownerClassName;
     }
     
@@ -128,6 +130,7 @@ class Nonownerobjects extends Model\Object\ClassDefinition\Data\Objects
                 \Logger::error($e->getMessage());
             }
         }
+
         return $this->ownerClassId;
     }
 
@@ -146,6 +149,7 @@ class Nonownerobjects extends Model\Object\ClassDefinition\Data\Objects
     public function setOwnerFieldName($fieldName)
     {
         $this->ownerFieldName = $fieldName;
+
         return $this;
     }
 

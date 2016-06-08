@@ -64,6 +64,7 @@ class EditmodeTooltip extends \Zend_View_Helper_Abstract
 
             $s = "<img id='" . $options["target"] . "' src='" . $options["icon"] . "' alt='' class='pimcore_editmode_tooltip' />";
             $s .= "<script type='text/javascript'>new Ext.ToolTip(" . \Zend_Json::encode($options) .");</script>";
+
             return $s;
         }
     }

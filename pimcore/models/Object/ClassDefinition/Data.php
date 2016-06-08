@@ -297,6 +297,7 @@ abstract class Data
     public function setName($name)
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -307,6 +308,7 @@ abstract class Data
     public function setTitle($title)
     {
         $this->title = $title;
+
         return $this;
     }
 
@@ -317,6 +319,7 @@ abstract class Data
     public function setMandatory($mandatory)
     {
         $this->mandatory = (bool)$mandatory;
+
         return $this;
     }
 
@@ -327,6 +330,7 @@ abstract class Data
     public function setPermissions($permissions)
     {
         $this->permissions = $permissions;
+
         return $this;
     }
 
@@ -342,6 +346,7 @@ abstract class Data
                 $this->$method($value);
             }
         }
+
         return $this;
     }
 
@@ -361,6 +366,7 @@ abstract class Data
     public function setDatatype($datatype)
     {
         $this->datatype = $datatype;
+
         return $this;
     }
 
@@ -379,6 +385,7 @@ abstract class Data
     public function setFieldtype($fieldtype)
     {
         $this->fieldtype = $fieldtype;
+
         return $this;
     }
 
@@ -397,6 +404,7 @@ abstract class Data
     public function setColumnType($columnType)
     {
         $this->columnType = $columnType;
+
         return $this;
     }
 
@@ -415,6 +423,7 @@ abstract class Data
     public function setQueryColumnType($queryColumnType)
     {
         $this->queryColumnType = $queryColumnType;
+
         return $this;
     }
 
@@ -433,6 +442,7 @@ abstract class Data
     public function setNoteditable($noteditable)
     {
         $this->noteditable = (bool)$noteditable;
+
         return $this;
     }
 
@@ -451,6 +461,7 @@ abstract class Data
     public function setIndex($index)
     {
         $this->index = $index;
+
         return $this;
     }
 
@@ -478,6 +489,7 @@ abstract class Data
     public function setStyle($style)
     {
         $this->style = (string)$style;
+
         return $this;
     }
 
@@ -497,6 +509,7 @@ abstract class Data
     public function setLocked($locked)
     {
         $this->locked = (bool)$locked;
+
         return $this;
     }
 
@@ -516,6 +529,7 @@ abstract class Data
     public function setTooltip($tooltip)
     {
         $this->tooltip = (string)$tooltip;
+
         return $this;
     }
 
@@ -543,6 +557,7 @@ abstract class Data
     public function setInvisible($invisible)
     {
         $this->invisible = (bool)$invisible;
+
         return $this;
     }
 
@@ -561,6 +576,7 @@ abstract class Data
     public function setVisibleGridView($visibleGridView)
     {
         $this->visibleGridView = (bool)$visibleGridView;
+
         return $this;
     }
 
@@ -579,6 +595,7 @@ abstract class Data
     public function setVisibleSearch($visibleSearch)
     {
         $this->visibleSearch = (bool)$visibleSearch;
+
         return $this;
     }
 
@@ -944,6 +961,7 @@ abstract class Data
         if (empty($data)) {
             return true;
         }
+
         return false;
     }
 
@@ -970,6 +988,7 @@ abstract class Data
     public function getDiffDataFromEditmode($data, $object = null, $params = [])
     {
         $thedata = $this->getDataFromEditmode($data[0]["data"], $object, $params);
+
         return $thedata;
     }
 
@@ -1013,6 +1032,7 @@ abstract class Data
 
         $result = [];
         $result[] = $diffdata;
+
         return $result;
     }
 
@@ -1076,6 +1096,7 @@ abstract class Data
                         }
                     } elseif ($object instanceof Object\Localizedfield) {
                         $data = $object->getLocalizedValue($this->getName(), $params["language"], true);
+
                         return $data;
                     }
                 }
@@ -1090,6 +1111,7 @@ abstract class Data
                     /** @var  $classificationStoreData Object\Classificationstore */
                     $classificationStoreData = $object->$getter();
                     $data = $classificationStoreData->getLocalizedKeyValue($groupId, $keyId, $language, true, true);
+
                     return $data;
                 }
             }
@@ -1156,6 +1178,7 @@ abstract class Data
         if (is_array($data)) {
             return $data["value"];
         };
+
         return null;
     }
 }

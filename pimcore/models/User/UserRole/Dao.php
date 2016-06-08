@@ -52,7 +52,7 @@ class Dao extends Model\User\AbstractUser\Dao
      */
     public function loadWorkspaces()
     {
-        $types = ["asset","document","object"];
+        $types = ["asset", "document", "object"];
 
         foreach ($types as $type) {
             $workspaces = [];

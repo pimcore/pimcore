@@ -100,6 +100,7 @@ class CustomLayout extends Model\AbstractModel
                 \Zend_Registry::set($cacheKey, $customLayout);
             } catch (\Exception $e) {
                 \Logger::error($e);
+
                 return null;
             }
         }
@@ -116,6 +117,7 @@ class CustomLayout extends Model\AbstractModel
     {
         $class = new self();
         $class->setValues($values);
+
         return $class;
     }
 
@@ -225,6 +227,7 @@ class CustomLayout extends Model\AbstractModel
     public function setId($id)
     {
         $this->id = (int) $id;
+
         return $this;
     }
 
@@ -235,6 +238,7 @@ class CustomLayout extends Model\AbstractModel
     public function setName($name)
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -253,6 +257,7 @@ class CustomLayout extends Model\AbstractModel
     public function setDefault($default)
     {
         $this->default = (int)$default;
+
         return $this;
     }
 
@@ -265,6 +270,7 @@ class CustomLayout extends Model\AbstractModel
     public function setCreationDate($creationDate)
     {
         $this->creationDate = (int) $creationDate;
+
         return $this;
     }
 
@@ -275,6 +281,7 @@ class CustomLayout extends Model\AbstractModel
     public function setModificationDate($modificationDate)
     {
         $this->modificationDate = (int) $modificationDate;
+
         return $this;
     }
 
@@ -285,6 +292,7 @@ class CustomLayout extends Model\AbstractModel
     public function setUserOwner($userOwner)
     {
         $this->userOwner = (int) $userOwner;
+
         return $this;
     }
 
@@ -295,6 +303,7 @@ class CustomLayout extends Model\AbstractModel
     public function setUserModification($userModification)
     {
         $this->userModification = (int) $userModification;
+
         return $this;
     }
 
@@ -305,6 +314,7 @@ class CustomLayout extends Model\AbstractModel
     public function setDescription($description)
     {
         $this->description = $description;
+
         return $this;
     }
 

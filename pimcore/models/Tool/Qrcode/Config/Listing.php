@@ -41,6 +41,7 @@ class Listing extends Model\Listing\JsonListing
     public function setCodes($codes)
     {
         $this->codes = $codes;
+
         return $this;
     }
 }

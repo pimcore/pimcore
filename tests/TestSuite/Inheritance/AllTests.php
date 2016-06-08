@@ -9,7 +9,7 @@ class TestSuite_Inheritance_AllTests extends Test_SuiteBase
     {
         $suite = new TestSuite_Inheritance_AllTests('Inheritance');
 
-        $tests = ['TestSuite_Inheritance_GeneralTest' ,'TestSuite_Inheritance_LocalizedFieldTest'];
+        $tests = ['TestSuite_Inheritance_GeneralTest' , 'TestSuite_Inheritance_LocalizedFieldTest'];
 
         $success = shuffle($tests);
         print("Created the following execution order:\n");

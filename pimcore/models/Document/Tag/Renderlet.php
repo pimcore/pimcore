@@ -92,6 +92,7 @@ class Renderlet extends Model\Document\Tag
                 "subtype" => $this->subtype
             ];
         }
+
         return null;
     }
 
@@ -170,6 +171,7 @@ class Renderlet extends Model\Document\Tag
         $this->subtype = $data["subtype"];
 
         $this->setElement();
+
         return $this;
     }
 
@@ -185,6 +187,7 @@ class Renderlet extends Model\Document\Tag
         $this->subtype = $data["subtype"];
 
         $this->setElement();
+
         return $this;
     }
 
@@ -196,6 +199,7 @@ class Renderlet extends Model\Document\Tag
     public function setElement()
     {
         $this->o = Element\Service::getElementById($this->type, $this->id);
+
         return $this;
     }
 
@@ -251,6 +255,7 @@ class Renderlet extends Model\Document\Tag
         if ($this->o instanceof Element\ElementInterface) {
             return false;
         }
+
         return true;
     }
 
@@ -325,6 +330,7 @@ class Renderlet extends Model\Document\Tag
                 $this->subtype=null;
             }
         }
+
         return $sane;
     }
 
@@ -364,6 +370,7 @@ class Renderlet extends Model\Document\Tag
     public function setId($id)
     {
         $this->id = $id;
+
         return $this;
     }
 
@@ -382,6 +389,7 @@ class Renderlet extends Model\Document\Tag
     public function setO($o)
     {
         $this->o = $o;
+
         return $this;
     }
 
@@ -400,6 +408,7 @@ class Renderlet extends Model\Document\Tag
     public function setSubtype($subtype)
     {
         $this->subtype = $subtype;
+
         return $this;
     }
 

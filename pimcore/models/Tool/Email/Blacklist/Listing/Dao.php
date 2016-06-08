@@ -38,6 +38,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         }
 
         $this->model->setItems($addresses);
+
         return $addresses;
     }
 

@@ -45,6 +45,7 @@ class Object extends AbstractPlaceholder
                 $string = $object->{$this->getPlaceholderConfig()->method}($this->getLocale());
             }
         }
+
         return $string;
     }
 }

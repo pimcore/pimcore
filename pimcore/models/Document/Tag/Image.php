@@ -150,6 +150,7 @@ class Image extends Model\Document\Tag
                         }
                     }
                 }
+
                 return $data;
             };
 
@@ -172,6 +173,7 @@ class Image extends Model\Document\Tag
                 "marker" => $marker
             ];
         }
+
         return null;
     }
 
@@ -338,6 +340,7 @@ class Image extends Model\Document\Tag
                     }
                 }
             }
+
             return $data;
         };
 
@@ -384,6 +387,7 @@ class Image extends Model\Document\Tag
                     }
                 }
             }
+
             return $data;
         };
 
@@ -435,6 +439,7 @@ class Image extends Model\Document\Tag
         if ($image instanceof Asset) {
             return $image->getFullPath();
         }
+
         return "";
     }
 
@@ -446,6 +451,7 @@ class Image extends Model\Document\Tag
         if (!$this->image) {
             $this->image = Asset\Image::getById($this->getId());
         }
+
         return $this->image;
     }
 
@@ -471,6 +477,7 @@ class Image extends Model\Document\Tag
     public function setId($id)
     {
         $this->id = $id;
+
         return $this;
     }
 
@@ -500,6 +507,7 @@ class Image extends Model\Document\Tag
 
             return $image->getThumbnail($thumbConfig, $deferred);
         }
+
         return "";
     }
 
@@ -507,20 +515,21 @@ class Image extends Model\Document\Tag
      * @param $thumbConfig
      * @return mixed
      */
-    protected function applyCustomCropping($thumbConfig) {
-        $cropConfig = array(
+    protected function applyCustomCropping($thumbConfig)
+    {
+        $cropConfig = [
             "width" => $this->cropWidth,
             "height" => $this->cropHeight,
             "y" => $this->cropTop,
             "x" => $this->cropLeft
-        );
+        ];
 
-        $thumbConfig->addItemAt(0,"cropPercent", $cropConfig);
+        $thumbConfig->addItemAt(0, "cropPercent", $cropConfig);
 
         // also crop media query specific configs
-        if($thumbConfig->hasMedias()) {
-            foreach($thumbConfig->getMedias() as $mediaName => $mediaItems) {
-                $thumbConfig->addItemAt(0,"cropPercent", $cropConfig, $mediaName);
+        if ($thumbConfig->hasMedias()) {
+            foreach ($thumbConfig->getMedias() as $mediaName => $mediaItems) {
+                $thumbConfig->addItemAt(0, "cropPercent", $cropConfig, $mediaName);
             }
         }
     }
@@ -534,6 +543,7 @@ class Image extends Model\Document\Tag
         if ($image instanceof Asset\Image) {
             return false;
         }
+
         return true;
     }
 
@@ -570,6 +580,7 @@ class Image extends Model\Document\Tag
                     }
                 }
             }
+
             return $tags;
         };
 
@@ -613,6 +624,7 @@ class Image extends Model\Document\Tag
                     }
                 }
             }
+
             return $dependencies;
         };
 
@@ -665,6 +677,7 @@ class Image extends Model\Document\Tag
     public function setCropHeight($cropHeight)
     {
         $this->cropHeight = $cropHeight;
+
         return $this;
     }
 
@@ -683,6 +696,7 @@ class Image extends Model\Document\Tag
     public function setCropLeft($cropLeft)
     {
         $this->cropLeft = $cropLeft;
+
         return $this;
     }
 
@@ -701,6 +715,7 @@ class Image extends Model\Document\Tag
     public function setCropPercent($cropPercent)
     {
         $this->cropPercent = $cropPercent;
+
         return $this;
     }
 
@@ -719,6 +734,7 @@ class Image extends Model\Document\Tag
     public function setCropTop($cropTop)
     {
         $this->cropTop = $cropTop;
+
         return $this;
     }
 
@@ -737,6 +753,7 @@ class Image extends Model\Document\Tag
     public function setCropWidth($cropWidth)
     {
         $this->cropWidth = $cropWidth;
+
         return $this;
     }
 

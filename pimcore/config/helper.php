@@ -50,6 +50,7 @@ function is_json($string)
 {
     if (is_string($string)) {
         json_decode($string);
+
         return (json_last_error() == JSON_ERROR_NONE);
     } else {
         return false;
@@ -63,7 +64,7 @@ function foldersize($path)
     $cleanPath = rtrim($path, '/'). '/';
 
     foreach ($files as $t) {
-        if ($t<>"." && $t<>"..") {
+        if ($t!="." && $t!="..") {
             $currentFile = $cleanPath . $t;
             if (is_dir($currentFile)) {
                 $size = foldersize($currentFile);
@@ -119,6 +120,7 @@ function object2array($node)
 {
     // dirty hack, should be replaced
     $paj = @Zend_Json::encode($node);
+
     return @Zend_Json::decode($paj);
 }
 
@@ -143,6 +145,7 @@ function array_urlencode($args)
             $out .= urlencode($value).'&';
         }
     }
+
     return substr($out, 0, -1); //trim the last & }
 }
 
@@ -168,6 +171,7 @@ function array_toquerystring($args)
             $out .= $value.'&';
         }
     }
+
     return substr($out, 0, -1); //trim the last & }
 }
 
@@ -281,6 +285,7 @@ function rscandir($base = '', &$data = [])
             $data[] = $base . $value;
         }
     }
+
     return $data;
 }
 
@@ -307,6 +312,7 @@ function explode_and_trim($delimiter, $string = '', $limit = '', $useArrayFilter
     if ($useArrayFilter) {
         $exploded = array_filter($exploded);
     }
+
     return $exploded;
 }
 
@@ -422,6 +428,7 @@ function wrapArrayElements($array, $prefix = "'", $suffix = "'")
     foreach ($array as $key => $value) {
         $array[$key] = $prefix . trim($value). $suffix;
     }
+
     return $array;
 }
 
@@ -506,6 +513,7 @@ function is_dir_empty($dir)
             return false;
         }
     }
+
     return true;
 }
 
@@ -527,6 +535,7 @@ function var_export_pretty($var, $indent="")
                     . ($indexed ? "" : var_export_pretty($key) . " => ")
                     . var_export_pretty($value, "$indent    ");
             }
+
             return "[\n" . implode(",\n", $r) . "\n" . $indent . "]";
         case "boolean":
             return $var ? "TRUE" : "FALSE";

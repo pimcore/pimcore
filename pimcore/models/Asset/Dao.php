@@ -328,6 +328,7 @@ class Dao extends Model\Element\Dao
     public function hasChilds()
     {
         $c = $this->db->fetchOne("SELECT id FROM assets WHERE parentId = ?", $this->model->getId());
+
         return (bool)$c;
     }
 
@@ -339,6 +340,7 @@ class Dao extends Model\Element\Dao
     public function hasSiblings()
     {
         $c = $this->db->fetchOne("SELECT id FROM assets WHERE parentId = ? and id != ? LIMIT 1", [$this->model->getParentId(), $this->model->getId()]);
+
         return (bool)$c;
     }
 
@@ -363,6 +365,7 @@ class Dao extends Model\Element\Dao
 
 
         $c = $this->db->fetchOne($query, $this->model->getId());
+
         return $c;
     }
 
@@ -395,6 +398,7 @@ class Dao extends Model\Element\Dao
     {
         $lockIds = $this->db->fetchCol("SELECT id from assets WHERE path LIKE " . $this->db->quote($this->model->getRealFullPath() . "/%") . " OR id = " . $this->model->getId());
         $this->db->delete("tree_locks", "type = 'asset' AND id IN (" . implode(",", $lockIds) . ")");
+
         return $lockIds;
     }
 
@@ -410,9 +414,11 @@ class Dao extends Model\Element\Dao
 
             if (($versionData["id"] && $versionData["date"] > $this->model->getModificationDate()) || $force) {
                 $version = Model\Version::getById($versionData["id"]);
+
                 return $version;
             }
         }
+
         return;
     }
 

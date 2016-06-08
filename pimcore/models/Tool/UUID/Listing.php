@@ -24,6 +24,7 @@ class Listing extends Model\Listing\AbstractListing
     {
         $resource = new Model\Tool\UUID\Dao();
         $cols = $resource->getValidTableColumns(Model\Tool\UUID\Dao::TABLE_NAME);
+
         return in_array($key, $cols);
     }
 }

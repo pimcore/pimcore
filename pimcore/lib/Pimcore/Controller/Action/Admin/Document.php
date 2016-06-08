@@ -235,6 +235,7 @@ abstract class Document extends Admin
                 return $latestDoc;
             }
         }
+
         return $document;
     }
 

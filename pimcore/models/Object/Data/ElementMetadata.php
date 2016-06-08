@@ -117,6 +117,7 @@ class ElementMetadata extends Model\AbstractModel
     public function setFieldname($fieldname)
     {
         $this->fieldname = $fieldname;
+
         return $this;
     }
 
@@ -135,6 +136,7 @@ class ElementMetadata extends Model\AbstractModel
     public function setElement($element)
     {
         $this->element = $element;
+
         return $this;
     }
 
@@ -153,6 +155,7 @@ class ElementMetadata extends Model\AbstractModel
     public function setColumns($columns)
     {
         $this->columns = $columns;
+
         return $this;
     }
 

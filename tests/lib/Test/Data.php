@@ -32,6 +32,7 @@ class Test_Data
         $list->setOrderKey("o_id");
         $list->setCondition($condition);
         $objects = $list->load();
+
         return $objects;
     }
 
@@ -57,8 +58,10 @@ class Test_Data
 
         if ($value != $expected) {
             print("   expected " . $expected . " but was " . $value);
+
             return false;
         }
+
         return true;
     }
 
@@ -75,8 +78,10 @@ class Test_Data
         $expected = "123" + $seed;
         if ($value != $expected) {
             print("   expected " . $expected . " but was " . $value);
+
             return false;
         }
+
         return true;
     }
 
@@ -93,8 +98,10 @@ class Test_Data
         $expected = "sometext<br>" . $seed;
         if ($value != $expected) {
             print("   expected " . $expected . " but was " . $value);
+
             return false;
         }
+
         return true;
     }
 
@@ -114,8 +121,10 @@ class Test_Data
 
         if ($value != $expected) {
             print("   expected " . $expected->getId() . " but was " . $value->getId());
+
             return false;
         }
+
         return true;
     }
 
@@ -138,15 +147,18 @@ class Test_Data
 
         if (count($expectedArray) != count($value)) {
             print("count is different  " . count($expectedArray) . " != " . count($value) . "\n");
+
             return false;
         }
 
         for ($i = 0; $i < count($expectedArray); $i++) {
             if ($value[$i] != $expectedArray[$i]) {
                 print("   expected " . $expectedArray[$i]->getId() . " but was " . $value[$i]->getId());
+
                 return false;
             }
         }
+
         return true;
     }
 
@@ -166,8 +178,10 @@ class Test_Data
         $expected = 7 + ($seed % 3);
         if ($value != $expected) {
             print("   expected " . $expected . " but was " . $value);
+
             return false;
         }
+
         return true;
     }
 
@@ -192,8 +206,10 @@ class Test_Data
         $expected = Asset::getByPath("/" . self::IMAGE);
         if ($expected != $value) {
             print("   expected " . $expected . " but was " . $value);
+
             return false;
         }
+
         return true;
     }
 
@@ -212,6 +228,7 @@ class Test_Data
         $hotspot->top  = "20";
         $hotspot->left = "40";
         $result[] = $hotspot;
+
         return $result;
     }
 
@@ -238,6 +255,7 @@ class Test_Data
         $hotspots = $value->getHotspots();
         if (count($hotspots)  != 2) {
             print("hotspot count is " . count($hotspots));
+
             return false;
         }
         $asset = Asset::getByPath("/" . self::HOTSPOT_IMAGE);
@@ -249,8 +267,10 @@ class Test_Data
 
         if ($expected != $value) {
             print("   expected " . $expected . " but was " . $value);
+
             return false;
         }
+
         return true;
     }
 
@@ -267,8 +287,10 @@ class Test_Data
         $expected = "de";
         if ($value != $expected) {
             print("   expected " . $expected . " but was " . $value);
+
             return false;
         }
+
         return true;
     }
 
@@ -285,8 +307,10 @@ class Test_Data
         $expected = "AU";
         if ($value != $expected) {
             print("   expected " . $expected . " but was " . $value);
+
             return false;
         }
+
         return true;
     }
 
@@ -309,8 +333,10 @@ class Test_Data
 
         if ($value->format("Y-m-d") != $expected->format("Y-m-d")) {
             print("   expected " . $expected->format("Y-m-d") . " but was " . $value->format("Y-m-d"));
+
             return false;
         }
+
         return true;
     }
 
@@ -327,8 +353,10 @@ class Test_Data
         $expected = 1 + ($seed % 2);
         if ($value != $expected) {
             print("   expected " . $expected . " but was " . $value);
+
             return false;
         }
+
         return true;
     }
 
@@ -345,8 +373,10 @@ class Test_Data
         $expected = ["1", "2"];
         if ($value != $expected) {
             print("   expected " . $expected . " but was " . $value);
+
             return false;
         }
+
         return true;
     }
 
@@ -379,8 +409,10 @@ class Test_Data
         $expected = $user->getId();
         if ($value != $expected) {
             print("   expected " . $expected . " but was " . $value);
+
             return false;
         }
+
         return true;
     }
 
@@ -397,8 +429,10 @@ class Test_Data
         $expected = ($seed % 2) == true;
         if ($value != $expected) {
             print("   expected " . $expected . " but was " . $value);
+
             return false;
         }
+
         return true;
     }
 
@@ -415,8 +449,10 @@ class Test_Data
         $expected = "06:4" . $seed % 10;
         if ($value != $expected) {
             print("   expected " . $expected . " but was " . $value);
+
             return false;
         }
+
         return true;
     }
 
@@ -444,8 +480,10 @@ class Test_Data
         $expected = null;
         if ($value != $expected) {
             print("   expected " . $expected . " but was " . $value . "\n");
+
             return false;
         }
+
         return true;
     }
 
@@ -462,8 +500,10 @@ class Test_Data
         $expected = ["1", "2"];
         if ($value != $expected) {
             print("   expected " . $expected . " but was " . $value);
+
             return false;
         }
+
         return true;
     }
 
@@ -480,8 +520,10 @@ class Test_Data
         $expected = ["1", "3"];
         if ($value != $expected) {
             print("   expected " . $expected . " but was " . $value);
+
             return false;
         }
+
         return true;
     }
 
@@ -506,8 +548,10 @@ class Test_Data
 
         if ($value != $expected) {
             print("   expected " . $expected . " but was " . $value);
+
             return false;
         }
+
         return true;
     }
 
@@ -527,8 +571,10 @@ class Test_Data
 
         if ($value != $expected) {
             print("   expected " . $expected . " but was " . $value);
+
             return false;
         }
+
         return true;
     }
 
@@ -547,8 +593,10 @@ class Test_Data
 
         if ($value != $expected) {
             print("   expected " . $expected . " but was " . $value);
+
             return false;
         }
+
         return true;
     }
 
@@ -568,8 +616,10 @@ class Test_Data
         if ($value != $expected) {
             $getter = "get" . ucfirst($field);
             print("   expected:\n" . print_r($object->$getter(), true) . " \n\nbut was:\n" . print_r($comparisonObject->$getter(), true) . "\n\n\n");
+
             return false;
         }
+
         return true;
     }
 
@@ -601,8 +651,10 @@ class Test_Data
 
         if ($value != $expected) {
             print("   expected " . $expected . " but was " . $value);
+
             return false;
         }
+
         return true;
     }
 
@@ -641,8 +693,10 @@ class Test_Data
 
         if ($value != $expected) {
             print("   expected " . $expected . " but was " . $value);
+
             return false;
         }
+
         return true;
     }
 
@@ -682,15 +736,18 @@ class Test_Data
 
         if (count($expectedArray) != count($value)) {
             print("count is different  " . count($expectedArray) . " != " . count($value) . "\n");
+
             return false;
         }
 
         for ($i = 0; $i < count($expectedArray); $i++) {
             if ($value[$i] != $expectedArray[$i]) {
                 print("   expected " . $expectedArray[$i]->getId() . " but was " . $value[$i]->getId());
+
                 return false;
             }
         }
+
         return true;
     }
 
@@ -722,6 +779,7 @@ class Test_Data
 
         if ($valueForField != $expected) {
             print("   expected " . $expected . " but was " . $valueForField);
+
             return false;
         }
 
@@ -729,8 +787,10 @@ class Test_Data
         $meta = $rel1->getMeta1();
         if ($meta != ("value1".$seed)) {
             print("sample value does not match");
+
             return false;
         }
+
         return true;
     }
 
@@ -776,6 +836,7 @@ class Test_Data
 
 
         $pairs[] = $pair;
+
         return $pairs;
     }
 
@@ -802,6 +863,7 @@ class Test_Data
 
         if (count($expected) != count($properties)) {
             print("    number of properties do not match\n");
+
             return false;
         }
 
@@ -810,9 +872,11 @@ class Test_Data
             $p2 = $properties[i];
             if ($p1["key"] != $p2["key"] || $p1["value"] != $p2["value"] || $p1["metadata"] != $p2["metadata"]) {
                 print("    property does not match\n");
+
                 return false;
             }
         }
+
         return true;
     }
 
@@ -838,8 +902,10 @@ class Test_Data
 
         if ($value != $expected) {
             print("   expected " . $expected . " but was " . $value);
+
             return false;
         }
+
         return true;
     }
 
@@ -863,6 +929,7 @@ class Test_Data
 
         if ($value->getCount() != 1) {
             print("    expected 1 item");
+
             return false;
         }
 
@@ -870,11 +937,13 @@ class Test_Data
         $value = $value[0];
         if ($value->getFieldinput1() != "field1" . $seed) {
             print("field1" . $seed . " but was " . $value->getFieldInput1());
+
             return false;
         }
 
         if ($value->getFieldInput2() != "field2" . $seed) {
             print("field2" . $seed . " but was " . $value->getFieldInput2());
+
             return false;
         }
 

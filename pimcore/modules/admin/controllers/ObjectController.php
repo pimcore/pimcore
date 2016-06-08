@@ -529,6 +529,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                 $result = new stdClass();
                 $result->value = $value;
                 $result->id = $parent->getId();
+
                 return $result;
             } else {
                 return $this->getParentValue($parent, $key);
@@ -543,6 +544,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
         ) {
             return false;
         }
+
         return true;
     }
 
@@ -671,6 +673,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                 "name" => $class->getName()
             ];
         }
+
         return $reduced;
     }
 
@@ -1490,7 +1493,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 
 
             $featureJoins = [];
-            $featureFilters = FALSE;
+            $featureFilters = false;
 
             // create filter condition
             if ($this->getParam("filter")) {
@@ -1820,6 +1823,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             }
         }
         $diff = array_diff($originals, $changed);
+
         return $diff;
     }
 
@@ -1841,6 +1845,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             }
         }
         $diff = array_diff($changed, $originals);
+
         return $diff;
     }
 
@@ -1859,6 +1864,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                 $object->setModificationDate($modificationDate); // set de modification-date from published version to compare it in js-frontend
             }
         }
+
         return $object;
     }
 }

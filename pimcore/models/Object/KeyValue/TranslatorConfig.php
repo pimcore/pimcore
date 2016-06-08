@@ -87,6 +87,7 @@ class TranslatorConfig extends Model\AbstractModel
     public function setId($id)
     {
         $this->id = (int) $id;
+
         return $this;
     }
 
@@ -105,6 +106,7 @@ class TranslatorConfig extends Model\AbstractModel
     public function setName($name)
     {
         $this->name = $name;
+
         return $this;
     }
 

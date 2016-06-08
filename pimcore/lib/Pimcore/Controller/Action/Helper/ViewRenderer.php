@@ -92,6 +92,7 @@ class ViewRenderer extends \Zend_Controller_Action_Helper_ViewRenderer
     public function setIsInitialized($isInitialized)
     {
         $this->isInitialized = $isInitialized;
+
         return $this;
     }
 

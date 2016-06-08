@@ -147,6 +147,7 @@ class Video extends Model\Asset
     {
         if (!\Pimcore\Video::isAvailable()) {
             \Logger::error("Couldn't create image-thumbnail of video " . $this->getRealFullPath() . " no video adapter is available");
+
             return new Video\ImageThumbnail(null); // returns error image
         }
 
@@ -162,8 +163,10 @@ class Video extends Model\Asset
         if (\Pimcore\Video::isAvailable()) {
             $converter = \Pimcore\Video::getInstance();
             $converter->load($this->getFileSystemPath());
+
             return $converter->getDuration();
         }
+
         return null;
     }
 

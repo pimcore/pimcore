@@ -48,6 +48,7 @@ class Console
                 self::$systemEnvironment = 'unix';
             }
         }
+
         return self::$systemEnvironment;
     }
 
@@ -185,6 +186,7 @@ class Console
     {
         $cmd = self::buildPhpScriptCmd($script, $arguments);
         $return = Console::exec($cmd, $outputFile, $timeout);
+
         return $return;
     }
 
@@ -198,6 +200,7 @@ class Console
     {
         $cmd = self::buildPhpScriptCmd($script, $arguments);
         $return = Console::execInBackground($cmd, $outputFile);
+
         return $return;
     }
 

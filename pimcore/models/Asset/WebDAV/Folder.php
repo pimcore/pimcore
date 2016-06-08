@@ -59,6 +59,7 @@ class Folder extends DAV\Collection
                 }
             }
         }
+
         return $children;
     }
 

@@ -39,6 +39,7 @@ class HtmlCutString
         // cut the string by parsing through each element
         $this->searchEnd($this->tempDiv->documentElement, $this->newDiv);
         $newhtml = $this->newDiv->saveHTML();
+
         return $newhtml;
     }
 
@@ -83,12 +84,14 @@ class HtmlCutString
                 $newEle = $this->newDiv->importNode($ele);
                 $newEle->nodeValue = substr($newEle->nodeValue, 0, $this->limit - $this->charCount);
                 $newParent->appendChild($newEle);
+
                 return true;
             }
             $newEle = $this->newDiv->importNode($ele);
             $newParent->appendChild($newEle);
             $this->charCount += mb_strlen($newEle->nodeValue, $this->encoding);
         }
+
         return false;
     }
 }
@@ -101,5 +104,6 @@ class HtmlCutString
 function cut_html_string($string, $limit)
 {
     $output = new HtmlCutString($string, $limit);
+
     return $output->cut();
 }

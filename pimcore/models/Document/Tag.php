@@ -102,6 +102,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
         $tag->setView($view);
         $tag->setEditmode($editmode);
         $tag->setOptions($config);
+
         return $tag;
     }
 
@@ -161,6 +162,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     public function setName($name)
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -171,6 +173,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     public function setDocumentId($id)
     {
         $this->documentId = (int) $id;
+
         return $this;
     }
 
@@ -197,6 +200,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     public function setOptions($options)
     {
         $this->options = $options;
+
         return $this;
     }
 
@@ -207,6 +211,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     public function setController($controller)
     {
         $this->controller = $controller;
+
         return $this;
     }
 
@@ -225,6 +230,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     public function setView($view)
     {
         $this->view = $view;
+
         return $this;
     }
 
@@ -268,6 +274,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
                 $finalVars[] = $key;
             }
         }
+
         return $finalVars;
     }
 
@@ -295,6 +302,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
         if (is_string($return)) {
             return $return;
         }
+
         return '';
     }
 
@@ -313,6 +321,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     public function setEditmode($editmode)
     {
         $this->editmode = (bool) $editmode;
+
         return $this;
     }
 
@@ -324,6 +333,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     public function getDataForResource()
     {
         $this->checkValidity();
+
         return $this->getData();
     }
 
@@ -386,6 +396,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
         unset($el["editmode"]);
 
         $el = Webservice\Data\Mapper::toObject($el);
+
         return $el;
     }
 
@@ -406,6 +417,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     public function setInherited($inherited)
     {
         $this->inherited = $inherited;
+
         return $this;
     }
 

@@ -144,6 +144,7 @@ trait Wrapper
     public function setHardLinkSource($hardLinkSource)
     {
         $this->hardLinkSource = $hardLinkSource;
+
         return $this;
     }
 

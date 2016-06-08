@@ -131,6 +131,7 @@ class Link extends Model\Object\ClassDefinition\Data
             return false;
         }
         $data->path = $data->getPath();
+
         return $data;
     }
 
@@ -149,6 +150,7 @@ class Link extends Model\Object\ClassDefinition\Data
         if ($link->isEmpty()) {
             return false;
         }
+
         return $link;
     }
 
@@ -309,6 +311,7 @@ class Link extends Model\Object\ClassDefinition\Data
                     unset($keys[$key]);
                 }
             }
+
             return $keys;
         } else {
             return null;
@@ -341,6 +344,7 @@ class Link extends Model\Object\ClassDefinition\Data
                     throw new \Exception("cannot get values from web service import - invalid data. Unknown Object\\Data\\Link setter [ " . $method . " ]");
                 }
             }
+
             return $link;
         } elseif (is_array($value) and !empty($value['text']) and !empty($value['internalType']) and !empty($value['internal'])) {
             $id = $value['internal'];
@@ -354,6 +358,7 @@ class Link extends Model\Object\ClassDefinition\Data
             if (!$element) {
                 if ($idMapper && $idMapper->ignoreMappingFailures()) {
                     $idMapper->recordMappingFailure("object", $relatedObject->getId(), $value['internalType'], $value['internal']);
+
                     return null;
                 } else {
                     throw new \Exception("cannot get values from web service import - referencing unknown internal element with type [ ".$value['internalType']." ] and id [ ".$value['internal']." ]");
@@ -369,6 +374,7 @@ class Link extends Model\Object\ClassDefinition\Data
                     throw new \Exception("cannot get values from web service import - invalid data. Unknown Object\\Data\\Link setter [ " . $method . " ]");
                 }
             }
+
             return $link;
         } elseif (is_array($value)) {
             $link = new Object\Data\Link();
@@ -380,6 +386,7 @@ class Link extends Model\Object\ClassDefinition\Data
                     throw new \Exception("cannot get values from web service import - invalid data. Unknown Object\\Data\\Link setter [ " . $method . " ]");
                 }
             }
+
             return $link;
         } else {
             throw new \Exception("cannot get values from web service import - invalid data");
@@ -440,6 +447,7 @@ class Link extends Model\Object\ClassDefinition\Data
                 $data->setInternal($idMapping[$type][$id]);
             }
         }
+
         return $data;
     }
 }

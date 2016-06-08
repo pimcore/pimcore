@@ -163,6 +163,7 @@ class DocType extends Model\AbstractModel
     public function setAction($action)
     {
         $this->action = $action;
+
         return $this;
     }
 
@@ -173,6 +174,7 @@ class DocType extends Model\AbstractModel
     public function setController($controller)
     {
         $this->controller = $controller;
+
         return $this;
     }
 
@@ -183,6 +185,7 @@ class DocType extends Model\AbstractModel
     public function setId($id)
     {
         $this->id = (int) $id;
+
         return $this;
     }
 
@@ -193,6 +196,7 @@ class DocType extends Model\AbstractModel
     public function setName($name)
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -203,6 +207,7 @@ class DocType extends Model\AbstractModel
     public function setTemplate($template)
     {
         $this->template = $template;
+
         return $this;
     }
 
@@ -221,6 +226,7 @@ class DocType extends Model\AbstractModel
     public function setType($type)
     {
         $this->type = $type;
+
         return $this;
     }
 
@@ -232,6 +238,7 @@ class DocType extends Model\AbstractModel
     public function setPriority($priority)
     {
         $this->priority = (int) $priority;
+
         return $this;
     }
 
@@ -250,6 +257,7 @@ class DocType extends Model\AbstractModel
     public function setModule($module)
     {
         $this->module = $module;
+
         return $this;
     }
 
@@ -268,6 +276,7 @@ class DocType extends Model\AbstractModel
     public function setModificationDate($modificationDate)
     {
         $this->modificationDate = (int) $modificationDate;
+
         return $this;
     }
 
@@ -286,6 +295,7 @@ class DocType extends Model\AbstractModel
     public function setCreationDate($creationDate)
     {
         $this->creationDate = (int) $creationDate;
+
         return $this;
     }
 

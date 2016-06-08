@@ -45,6 +45,7 @@ class QueryParams
                     $groupKeyId = explode("-", $groupKeyId);
                     $groupId = $groupKeyId[0];
                     $keyid = $groupKeyId[1];
+
                     return ['fieldname' => $fieldname, 'groupId' => $groupId, "keyId"=> $keyid, "order" => $order, "isFeature" => 1];
                 }
             }
@@ -67,6 +68,7 @@ class QueryParams
             return intval($param);
         } else {
             $param = json_decode($param, true);
+
             return $param['id'];
         }
     }

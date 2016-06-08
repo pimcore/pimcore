@@ -82,6 +82,7 @@ class Hotspotimage
     public function setHotspots($hotspots)
     {
         $this->hotspots = $hotspots;
+
         return $this;
     }
 
@@ -100,6 +101,7 @@ class Hotspotimage
     public function setMarker($marker)
     {
         $this->marker = $marker;
+
         return $this;
     }
 
@@ -134,6 +136,7 @@ class Hotspotimage
     public function setImage($image)
     {
         $this->image = $image;
+
         return $this;
     }
 
@@ -189,6 +192,7 @@ class Hotspotimage
         if ($this->image) {
             return $this->image->__toString();
         }
+
         return "";
     }
 }

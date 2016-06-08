@@ -45,6 +45,7 @@ class File
         if (count($parts) > 1) {
             return strtolower($parts[count($parts) - 1]);
         }
+
         return "";
     }
 
@@ -132,6 +133,7 @@ class File
 
         $return = file_put_contents($path, $data, null, File::getContext());
         @chmod($path, self::$defaultMode);
+
         return $return;
     }
 
@@ -161,6 +163,7 @@ class File
         }
 
         $return = @mkdir($path, $mode, $recursive, self::getContext());
+
         return $return;
     }
 

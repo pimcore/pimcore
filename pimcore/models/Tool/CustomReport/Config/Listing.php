@@ -41,6 +41,7 @@ class Listing extends Model\Listing\JsonListing
     public function setReports($reports)
     {
         $this->reports = $reports;
+
         return $this;
     }
 }

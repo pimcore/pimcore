@@ -88,6 +88,7 @@ class StoreConfig extends Model\AbstractModel
     public function setName($name)
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -114,6 +115,7 @@ class StoreConfig extends Model\AbstractModel
     public function setDescription($description)
     {
         $this->description = $description;
+
         return $this;
     }
 
@@ -148,6 +150,7 @@ class StoreConfig extends Model\AbstractModel
         } else {
             \Pimcore::getEventManager()->trigger("object.Classificationstore.storeConfig.postAdd", $this);
         }
+
         return $model;
     }
 

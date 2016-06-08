@@ -26,7 +26,7 @@ abstract class Element extends Admin
     public function treeGetRootAction()
     {
         $type = $this->getParam("controller");
-        $allowedTypes = ["asset","document","object"];
+        $allowedTypes = ["asset", "document", "object"];
 
         $id = 1;
         if ($this->getParam("id")) {
@@ -58,7 +58,7 @@ abstract class Element extends Admin
     {
         $id = intval($this->getParam("id"));
         $type = $this->getParam("controller");
-        $allowedTypes = ["asset","document","object"];
+        $allowedTypes = ["asset", "document", "object"];
 
         if ($id && in_array($type, $allowedTypes)) {
             $element = Model\Element\Service::getElementById($type, $id);
@@ -111,7 +111,7 @@ abstract class Element extends Admin
     {
         $id = $this->getParam("id");
         $type = $this->getParam("controller");
-        $allowedTypes = ["asset","document","object"];
+        $allowedTypes = ["asset", "document", "object"];
 
         if ($id && in_array($type, $allowedTypes)) {
             $element = Model\Element\Service::getElementById($type, $id);
@@ -130,7 +130,7 @@ abstract class Element extends Admin
     {
         $id = $this->getParam("id");
         $type = $this->getParam("controller");
-        $allowedTypes = ["asset","document","object"];
+        $allowedTypes = ["asset", "document", "object"];
 
         if ($id && in_array($type, $allowedTypes)) {
             $element = Model\Element\Service::getElementById($type, $id);
@@ -149,7 +149,7 @@ abstract class Element extends Admin
     {
         $properties = [];
         $type = $this->getParam("controller");
-        $allowedTypes = ["asset","document","object"];
+        $allowedTypes = ["asset", "document", "object"];
 
         if (in_array($type, $allowedTypes)) {
             $list = new Model\Property\Predefined\Listing();
@@ -157,6 +157,7 @@ abstract class Element extends Admin
                 if ($row["ctype"] == $type) {
                     return true;
                 }
+
                 return false;
             });
 

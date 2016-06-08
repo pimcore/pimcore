@@ -78,6 +78,7 @@ class Email extends Model\Document\PageSnippet
     public function setSubject($subject)
     {
         $this->subject = $subject;
+
         return $this;
     }
 
@@ -100,6 +101,7 @@ class Email extends Model\Document\PageSnippet
     public function setTo($to)
     {
         $this->to = $to;
+
         return $this;
     }
 
@@ -172,6 +174,7 @@ class Email extends Model\Document\PageSnippet
     public function setFrom($from)
     {
         $this->from = $from;
+
         return $this;
     }
 
@@ -193,6 +196,7 @@ class Email extends Model\Document\PageSnippet
     public function getFromAsArray()
     {
         $emailAddresses = preg_split('/,|;/', $this->getFrom());
+
         return $emailAddresses;
     }
 
@@ -205,6 +209,7 @@ class Email extends Model\Document\PageSnippet
     public function setCc($cc)
     {
         $this->cc = $cc;
+
         return $this;
     }
 
@@ -237,6 +242,7 @@ class Email extends Model\Document\PageSnippet
     public function setBcc($bcc)
     {
         $this->bcc = $bcc;
+
         return $this;
     }
 

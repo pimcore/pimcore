@@ -98,7 +98,7 @@ class Admin_PageController extends \Pimcore\Controller\Action\Admin\Document
                             $existingRedirectIds[$existingRedirect->getId()] = $existingRedirect->getId();
                         }
 
-                        for ($i=1;$i<100;$i++) {
+                        for ($i=1; $i<100; $i++) {
                             if (array_key_exists("redirect_url_".$i, $settings)) {
 
                                 // check for existing

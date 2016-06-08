@@ -315,6 +315,7 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
         if (strpos($path, PIMCORE_DOCUMENT_ROOT) !== 0) {
             throw new \Exception('operation permitted, permission denied');
         }
+
         return $path;
     }
 
@@ -576,6 +577,7 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
                 }
             }
         }
+
         return $controllerDir;
     }
 }

@@ -317,6 +317,7 @@ class Dao extends Model\Element\Dao
     public function hasChilds()
     {
         $c = $this->db->fetchOne("SELECT id FROM documents WHERE parentId = ? LIMIT 1", $this->model->getId());
+
         return (bool)$c;
     }
 
@@ -338,6 +339,7 @@ class Dao extends Model\Element\Dao
             $query = "SELECT COUNT(*) AS count FROM documents WHERE parentId = ?";
         }
         $c = $this->db->fetchOne($query, $this->model->getId());
+
         return $c;
     }
 
@@ -349,6 +351,7 @@ class Dao extends Model\Element\Dao
     public function hasSiblings()
     {
         $c = $this->db->fetchOne("SELECT id FROM documents WHERE parentId = ? and id != ? LIMIT 1", [$this->model->getParentId(), $this->model->getId()]);
+
         return (bool)$c;
     }
 
@@ -402,6 +405,7 @@ class Dao extends Model\Element\Dao
     {
         $lockIds = $this->db->fetchCol("SELECT id from documents WHERE path LIKE " . $this->db->quote($this->model->getRealFullPath() . "/%") . " OR id = " . $this->model->getId());
         $this->db->delete("tree_locks", "type = 'document' AND id IN (" . implode(",", $lockIds) . ")");
+
         return $lockIds;
     }
 
@@ -470,6 +474,7 @@ class Dao extends Model\Element\Dao
     {
         $index = $this->db->fetchOne("SELECT MAX(`index`) FROM documents WHERE parentId = ?", [$this->model->getParentId()]);
         $index++;
+
         return $index;
     }
 }

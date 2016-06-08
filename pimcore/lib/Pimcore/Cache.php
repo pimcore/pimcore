@@ -210,6 +210,7 @@ class Cache
     public static function initializeCache($config)
     {
         $cache = \Zend_Cache::factory($config["frontendType"], $config["backendType"], $config["frontendConfig"], $config["backendConfig"], $config["customFrontendNaming"], $config["customBackendNaming"], true);
+
         return $cache;
     }
 
@@ -265,6 +266,7 @@ class Cache
             $config["backendType"] = "\\Zend_Cache_Backend_BlackHole";
             self::$blackHoleCache = self::initializeCache($config);
         }
+
         return self::$blackHoleCache;
     }
     
@@ -277,6 +279,7 @@ class Cache
     {
         if (!self::$enabled) {
             \Logger::debug("Key " . $key . " doesn't exist in cache (deactivated)");
+
             return;
         }
 
@@ -296,6 +299,7 @@ class Cache
     
             return $data;
         }
+
         return false;
     }
 
@@ -309,6 +313,7 @@ class Cache
     {
         if (!self::$enabled) {
             \Logger::debug("Key " . $key . " doesn't exist in cache (deactivated)");
+
             return;
         }
 
@@ -405,6 +410,7 @@ class Cache
                 foreach ($tags as $t) {
                     if (in_array($t, self::$clearedTagsStack)) {
                         \Logger::debug("Aborted caching for key: " . $key . " because it is in the clear stack");
+
                         return;
                     }
                 }
@@ -560,6 +566,7 @@ class Cache
             // lock is valid for 30 secs
             if ($lock && $lock > (time()-30)) {
                 self::$writeLockTimestamp = $lock;
+
                 return true;
             } else {
                 self::$writeLockTimestamp = 0;

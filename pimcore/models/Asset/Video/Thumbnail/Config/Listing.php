@@ -43,6 +43,7 @@ class Listing extends Model\Listing\JsonListing
     public function setThumbnails($thumbnails)
     {
         $this->thumbnails = $thumbnails;
+
         return $this;
     }
 }

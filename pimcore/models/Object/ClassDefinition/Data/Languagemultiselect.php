@@ -75,6 +75,7 @@ class Languagemultiselect extends Model\Object\ClassDefinition\Data\Multiselect
     public function setOnlySystemLanguages($value)
     {
         $this->onlySystemLanguages = (bool) $value;
+
         return $this;
     }
 

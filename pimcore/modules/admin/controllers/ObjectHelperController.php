@@ -253,6 +253,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
             if ($a["position"] == $b["position"]) {
                 return 0;
             }
+
             return ($a["position"] < $b["position"]) ? -1 : 1;
         });
 
@@ -389,6 +390,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
 
         if (!$field->getInvisible() && ($force || $visible)) {
             Object\Service::enrichLayoutDefinition($field);
+
             return [
                 "key" => $key,
                 "type" => $field->getFieldType(),
@@ -693,6 +695,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         } else {
             $requestedLanguage = $this->getLanguage();
         }
+
         return $requestedLanguage;
     }
 
@@ -712,6 +715,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
                 }
             }
         }
+
         return [$fields, $bricks];
     }
 
@@ -853,6 +857,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
                 $field = $fieldname . "~" . $groupConfig->getName() . "~" . $keyConfig->getName();
             }
         }
+
         return $field;
     }
 
@@ -912,6 +917,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
                 $csv .= implode(";", $o) . "\r\n";
             }
         }
+
         return $csv;
     }
 
@@ -991,6 +997,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
                     $fieldDefinition = $locFields->getFieldDefinition($field);
                     if ($fieldDefinition) {
                         $needLocalizedPermissions = true;
+
                         return $fieldDefinition->getForCsvExport($object->getLocalizedFields(), ["language" => $this->getParam("language")]);
                     }
                 }

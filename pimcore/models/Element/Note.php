@@ -105,6 +105,7 @@ class Note extends Model\AbstractModel
     {
         $this->setCid($element->getId());
         $this->setCtype(Service::getType($element));
+
         return $this;
     }
 
@@ -131,6 +132,7 @@ class Note extends Model\AbstractModel
     public function setCid($cid)
     {
         $this->cid = (int) $cid;
+
         return $this;
     }
 
@@ -149,6 +151,7 @@ class Note extends Model\AbstractModel
     public function setCtype($ctype)
     {
         $this->ctype = $ctype;
+
         return $this;
     }
 
@@ -167,6 +170,7 @@ class Note extends Model\AbstractModel
     public function setData($data)
     {
         $this->data = $data;
+
         return $this;
     }
 
@@ -185,6 +189,7 @@ class Note extends Model\AbstractModel
     public function setDate($date)
     {
         $this->date = (int) $date;
+
         return $this;
     }
 
@@ -203,6 +208,7 @@ class Note extends Model\AbstractModel
     public function setDescription($description)
     {
         $this->description = $description;
+
         return $this;
     }
 
@@ -221,6 +227,7 @@ class Note extends Model\AbstractModel
     public function setId($id)
     {
         $this->id = (int) $id;
+
         return $this;
     }
 
@@ -239,6 +246,7 @@ class Note extends Model\AbstractModel
     public function setTitle($title)
     {
         $this->title = $title;
+
         return $this;
     }
 
@@ -257,6 +265,7 @@ class Note extends Model\AbstractModel
     public function setType($type)
     {
         $this->type = $type;
+
         return $this;
     }
 
@@ -275,6 +284,7 @@ class Note extends Model\AbstractModel
     public function setUser($user)
     {
         $this->user = $user;
+
         return $this;
     }
 

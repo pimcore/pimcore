@@ -59,6 +59,7 @@ abstract class Adapter
     public function setHeight($height)
     {
         $this->height = $height;
+
         return $this;
     }
 
@@ -77,6 +78,7 @@ abstract class Adapter
     public function setWidth($width)
     {
         $this->width = $width;
+
         return $this;
     }
 
@@ -114,6 +116,7 @@ abstract class Adapter
         $r = hexdec(substr($colorhex, 1, 2));
         $g = hexdec(substr($colorhex, 3, 2));
         $b = hexdec(substr($colorhex, 5, 2));
+
         return [$r, $g, $b, 'type' => 'RGB'];
     }
 

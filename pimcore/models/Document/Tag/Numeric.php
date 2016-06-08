@@ -64,6 +64,7 @@ class Numeric extends Model\Document\Tag
     public function setDataFromResource($data)
     {
         $this->number = $data;
+
         return $this;
     }
 
@@ -75,6 +76,7 @@ class Numeric extends Model\Document\Tag
     public function setDataFromEditmode($data)
     {
         $this->number = $data;
+
         return $this;
     }
 

@@ -78,6 +78,7 @@ class Video extends Model\Object\ClassDefinition\Data
     public function setWidth($width)
     {
         $this->width = $this->getAsIntegerCast($width);
+
         return $this;
     }
 
@@ -96,6 +97,7 @@ class Video extends Model\Object\ClassDefinition\Data
     public function setHeight($height)
     {
         $this->height = $this->getAsIntegerCast($height);
+
         return $this;
     }
 
@@ -118,8 +120,10 @@ class Video extends Model\Object\ClassDefinition\Data
             }
 
             $data = object2array($data);
+
             return serialize($data);
         }
+
         return null;
     }
 
@@ -154,9 +158,11 @@ class Video extends Model\Object\ClassDefinition\Data
                 $video->setPoster($raw["poster"]);
                 $video->setTitle($raw["title"]);
                 $video->setDescription($raw["description"]);
+
                 return $video;
             }
         }
+
         return null;
     }
 
@@ -278,6 +284,7 @@ class Video extends Model\Object\ClassDefinition\Data
             if ($value instanceof Asset) {
                 $value = $value->getId();
             }
+
             return $data->getType() . "~" . $value;
         } else {
             return null;
@@ -424,6 +431,7 @@ class Video extends Model\Object\ClassDefinition\Data
             $value = [];
             $value["src"] = $versionPreview;
             $value["type"] = "img";
+
             return $value;
         }
 

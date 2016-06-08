@@ -150,11 +150,13 @@ class Areablock extends Model\Document\Tag
             } elseif (!$manual) {
                 $this->current++;
             }
+
             return true;
         } else {
             if (!$manual) {
                 $this->end();
             }
+
             return false;
         }
     }
@@ -207,6 +209,7 @@ class Areablock extends Model\Document\Tag
 
                 $actionClass = preg_replace_callback("/[\-_][a-z]/", function ($matches) {
                     $replacement = str_replace(["-", "_"], "", $matches[0]);
+
                     return strtoupper($replacement);
                 }, ucfirst($this->currentIndex["type"]));
 
@@ -302,6 +305,7 @@ class Areablock extends Model\Document\Tag
         if (!is_array($this->indices)) {
             $this->indices = [];
         }
+
         return $this;
     }
 
@@ -313,6 +317,7 @@ class Areablock extends Model\Document\Tag
     public function setDataFromEditmode($data)
     {
         $this->indices = $data;
+
         return $this;
     }
 
@@ -509,7 +514,7 @@ class Areablock extends Model\Document\Tag
         $areaConfigs = $this->getBrickConfigs();
         $availableAreas = ["name" => [], "index" => []];
 
-        if(isset($options["sorting"]) && is_array($options["sorting"]) && count($options["sorting"])) {
+        if (isset($options["sorting"]) && is_array($options["sorting"]) && count($options["sorting"])) {
             $availableAreasSort = $options["sorting"];
         } else {
             if (isset($options["allowed"]) && is_array($options["allowed"]) && count($options["allowed"])) {
@@ -631,6 +636,7 @@ class Areablock extends Model\Document\Tag
 
 
         $this->options = $options;
+
         return $this;
     }
 
@@ -714,6 +720,7 @@ class Areablock extends Model\Document\Tag
     public function isCustomAreaPath()
     {
         $options = $this->getOptions();
+
         return array_key_exists("areaDir", $options);
     }
 
@@ -736,6 +743,7 @@ class Areablock extends Model\Document\Tag
     public function getAreaDirectory()
     {
         $options = $this->getOptions();
+
         return PIMCORE_DOCUMENT_ROOT . "/" . trim($options["areaDir"], "/");
     }
 
@@ -760,6 +768,7 @@ class Areablock extends Model\Document\Tag
     {
         if ($this->isCustomAreaPath()) {
             $path = $this->getAreaDirectory();
+
             return ExtensionManager::getBrickConfig($name, $path);
         }
 

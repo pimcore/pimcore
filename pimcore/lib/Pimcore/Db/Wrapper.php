@@ -42,6 +42,7 @@ class Wrapper
     public function setWriteResource($writeResource)
     {
         $this->writeResource = $writeResource;
+
         return $this;
     }
 
@@ -93,6 +94,7 @@ class Wrapper
     public function setResource($resource)
     {
         $this->resource = $resource;
+
         return $this;
     }
 
@@ -105,6 +107,7 @@ class Wrapper
             // get the \Zend_Db_Adapter_Abstract not the wrapper
             $this->resource = Db::getConnection(true);
         }
+
         return $this->resource;
     }
 
@@ -206,6 +209,7 @@ class Wrapper
 
         $stmt = $this->query($sql, $bind);
         $result = $stmt->rowCount();
+
         return $result;
     }
 
@@ -215,6 +219,7 @@ class Wrapper
     public function beginTransaction()
     {
         $this->inTransaction = true;
+
         return $this->__call("beginTransaction", []);
     }
 
@@ -225,6 +230,7 @@ class Wrapper
     {
         $return = $this->__call("commit", []);
         $this->inTransaction = false;
+
         return $return;
     }
 
@@ -233,6 +239,7 @@ class Wrapper
         try {
             // we call callResourceMethod() directly to bypass the error-handling in __call()
             $return = $this->callResourceMethod("query", [$sql, $bind]);
+
             return $return;
         } catch (\Exception $e) {
             // we simply ignore the error
@@ -251,6 +258,7 @@ class Wrapper
     {
         try {
             $r = $this->callResourceMethod($method, $args);
+
             return $r;
         } catch (\Exception $e) {
             return Db::errorHandler($method, $args, $e);
@@ -272,7 +280,7 @@ class Wrapper
         $capture = false;
 
         if (\Pimcore::inAdmin()) {
-            $methodsToCheck = ["query","update","delete","insert"];
+            $methodsToCheck = ["query", "update", "delete", "insert"];
             if (in_array($method, $methodsToCheck)) {
                 $capture = true;
                 Db::startCapturingDefinitionModifications($resource, $method, $args);

@@ -31,6 +31,7 @@ trait DaoTrait
     public function setModel($model)
     {
         $this->model = $model;
+
         return $this;
     }
 

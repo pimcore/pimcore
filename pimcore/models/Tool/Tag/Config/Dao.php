@@ -64,8 +64,8 @@ class Dao extends Model\Dao\PhpArrayTable
         try {
             $dataRaw = get_object_vars($this->model);
             $data = [];
-            $allowedProperties = ["name","description","items", "siteId", "urlPattern", "textPattern",
-                "httpMethod","params","creationDate","modificationDate"];
+            $allowedProperties = ["name", "description", "items", "siteId", "urlPattern", "textPattern",
+                "httpMethod", "params", "creationDate", "modificationDate"];
 
             foreach ($dataRaw as $key => $value) {
                 if (in_array($key, $allowedProperties)) {

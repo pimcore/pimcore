@@ -35,6 +35,7 @@ class Admin
         if (!is_file($languageFile)) {
             $languageFile =  PIMCORE_PATH . "/config/texts/" . $language . ".json";
         }
+
         return $languageFile;
     }
 
@@ -47,7 +48,7 @@ class Admin
     public static function getLanguages()
     {
         $languages = [];
-        $languageDirs = [PIMCORE_PATH . "/config/texts/",PIMCORE_CONFIGURATION_DIRECTORY . "/texts/"];
+        $languageDirs = [PIMCORE_PATH . "/config/texts/", PIMCORE_CONFIGURATION_DIRECTORY . "/texts/"];
         foreach ($languageDirs as $filesDir) {
             if (is_dir($filesDir)) {
                 $files = scandir($filesDir);
@@ -63,6 +64,7 @@ class Admin
                 }
             }
         }
+
         return $languages;
     }
 
@@ -200,6 +202,7 @@ class Admin
     {
         if (\Zend_Registry::isRegistered("pimcore_admin_user")) {
             $user = \Zend_Registry::get("pimcore_admin_user");
+
             return $user;
         }
 
@@ -252,6 +255,7 @@ class Admin
         if ($returnLanguageArray) {
             return $languages;
         }
+
         return implode(",", $languages);
     }
 }

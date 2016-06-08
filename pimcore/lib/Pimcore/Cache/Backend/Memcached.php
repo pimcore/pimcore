@@ -82,6 +82,7 @@ class Memcached extends \Zend_Cache_Backend_Memcached
             \Logger::debug("Initialize dedicated MySQL connection for the cache adapter");
             $this->db = Db::getConnection();
         }
+
         return $this->db;
     }
 
@@ -145,6 +146,7 @@ class Memcached extends \Zend_Cache_Backend_Memcached
     {
         $this->checkCacheConsistency();
         $itemIds = $this->getDb()->fetchCol("SELECT id FROM cache_tags WHERE tag = ?", $tag);
+
         return $itemIds;
     }
 
@@ -222,6 +224,7 @@ class Memcached extends \Zend_Cache_Backend_Memcached
 
         if ($mode == \Zend_Cache::CLEANING_MODE_ALL) {
             $this->clearTags();
+
             return $this->_memcache->flush();
         }
         if ($mode == \Zend_Cache::CLEANING_MODE_OLD) {
@@ -278,6 +281,7 @@ class Memcached extends \Zend_Cache_Backend_Memcached
     protected function getTagsById($id)
     {
         $itemIds = $this->getDb()->fetchCol("SELECT tag FROM cache_tags WHERE id = ?", $id);
+
         return $itemIds;
     }
 
@@ -293,6 +297,7 @@ class Memcached extends \Zend_Cache_Backend_Memcached
         }
 
         $itemIds = $this->getDb()->fetchCol("SELECT id FROM cache_tags WHERE tag IN (".implode(",", $tags_).")");
+
         return $itemIds;
     }
 
@@ -309,6 +314,7 @@ class Memcached extends \Zend_Cache_Backend_Memcached
         }
 
         $itemIds = $this->getDb()->fetchCol("SELECT id FROM cache_tags WHERE ".implode(" AND ", $tags_));
+
         return $itemIds;
     }
 

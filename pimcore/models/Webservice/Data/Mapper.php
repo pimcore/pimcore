@@ -66,6 +66,7 @@ abstract class Mapper
         } else {
             $retVal = "Array";
         }
+
         return $retVal;
     }
 

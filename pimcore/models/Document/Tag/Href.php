@@ -134,6 +134,7 @@ class Href extends Model\Document\Tag
         $this->subtype = $data["subtype"];
 
         $this->setElement();
+
         return $this;
     }
 
@@ -149,6 +150,7 @@ class Href extends Model\Document\Tag
         $this->subtype = $data["subtype"];
 
         $this->setElement();
+
         return $this;
     }
 
@@ -162,6 +164,7 @@ class Href extends Model\Document\Tag
         if (!$this->element) {
             $this->element = Element\Service::getElementById($this->type, $this->id);
         }
+
         return $this;
     }
 
@@ -198,6 +201,7 @@ class Href extends Model\Document\Tag
         if ($this->element instanceof Element\ElementInterface) {
             return $this->element->getFullPath();
         }
+
         return;
     }
 
@@ -211,6 +215,7 @@ class Href extends Model\Document\Tag
         if ($this->getElement() instanceof Element\ElementInterface) {
             return false;
         }
+
         return true;
     }
 
@@ -312,6 +317,7 @@ class Href extends Model\Document\Tag
                 $this->element=null;
             }
         }
+
         return $sane;
     }
 
@@ -350,6 +356,7 @@ class Href extends Model\Document\Tag
     public function setId($id)
     {
         $this->id = $id;
+
         return $this;
     }
 
@@ -368,6 +375,7 @@ class Href extends Model\Document\Tag
     public function setSubtype($subtype)
     {
         $this->subtype = $subtype;
+
         return $this;
     }
 

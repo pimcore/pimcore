@@ -107,6 +107,7 @@ class Glossary extends AbstractModel
     public function setId($id)
     {
         $this->id = (int) $id;
+
         return $this;
     }
 
@@ -126,6 +127,7 @@ class Glossary extends AbstractModel
     public function setText($text)
     {
         $this->text = $text;
+
         return $this;
     }
 
@@ -144,6 +146,7 @@ class Glossary extends AbstractModel
     public function setLink($link)
     {
         $this->link = $link;
+
         return $this;
     }
 
@@ -163,6 +166,7 @@ class Glossary extends AbstractModel
     public function setAbbr($abbr)
     {
         $this->abbr = $abbr;
+
         return $this;
     }
 
@@ -182,6 +186,7 @@ class Glossary extends AbstractModel
     public function setAcronym($acronym)
     {
         $this->acronym = $acronym;
+
         return $this;
     }
 
@@ -201,6 +206,7 @@ class Glossary extends AbstractModel
     public function setLanguage($language)
     {
         $this->language = $language;
+
         return $this;
     }
 
@@ -219,6 +225,7 @@ class Glossary extends AbstractModel
     public function setCasesensitive($casesensitive)
     {
         $this->casesensitive = (bool) $casesensitive;
+
         return $this;
     }
 
@@ -237,6 +244,7 @@ class Glossary extends AbstractModel
     public function setExactmatch($exactmatch)
     {
         $this->exactmatch = (bool) $exactmatch;
+
         return $this;
     }
 
@@ -258,6 +266,7 @@ class Glossary extends AbstractModel
             $site = $site->getId();
         }
         $this->site = (int) $site;
+
         return $this;
     }
 
@@ -276,6 +285,7 @@ class Glossary extends AbstractModel
     public function setModificationDate($modificationDate)
     {
         $this->modificationDate = (int) $modificationDate;
+
         return $this;
     }
 
@@ -294,6 +304,7 @@ class Glossary extends AbstractModel
     public function setCreationDate($creationDate)
     {
         $this->creationDate = (int) $creationDate;
+
         return $this;
     }
 

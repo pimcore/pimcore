@@ -81,6 +81,7 @@ class Table extends Model\Document\Tag
     public function setDataFromResource($data)
     {
         $this->data = \Pimcore\Tool\Serialize::unserialize($data);
+
         return $this;
     }
 
@@ -92,6 +93,7 @@ class Table extends Model\Document\Tag
     public function setDataFromEditmode($data)
     {
         $this->data = $data;
+
         return $this;
     }
 
