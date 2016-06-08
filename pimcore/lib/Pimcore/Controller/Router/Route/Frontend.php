@@ -481,9 +481,8 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
                 Cache::save($this->redirects, $cacheKey, ["system", "redirect", "route"], null, 998);
             }
 
-            $requestScheme = ($_SERVER['HTTPS'] == 'on') ? \Zend_Controller_Request_Http::SCHEME_HTTPS : \Zend_Controller_Request_Http::SCHEME_HTTP;
             $matchRequestUri = $_SERVER["REQUEST_URI"];
-            $matchUrl = $requestScheme . "://" . $_SERVER["HTTP_HOST"] . $matchRequestUri;
+            $matchUrl = Tool::getHostUrl() . $matchRequestUri;
 
             foreach ($this->redirects as $redirect) {
                 $matchAgainst = $matchRequestUri;

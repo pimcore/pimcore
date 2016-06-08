@@ -301,7 +301,7 @@ class Video extends Model\Document\Tag
     public function getWidth()
     {
         $options = $this->getOptions();
-        if ($options["width"]) {
+        if (isset($options["width"]) && $options["width"]) {
             return $options["width"];
         }
         return "100%";
@@ -310,7 +310,7 @@ class Video extends Model\Document\Tag
     public function getHeight()
     {
         $options = $this->getOptions();
-        if ($options["height"]) {
+        if (isset($options["height"]) && $options["height"]) {
             return $options["height"];
         }
         return 300;

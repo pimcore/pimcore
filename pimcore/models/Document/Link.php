@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -104,7 +104,7 @@ class Link extends Model\Document
     public function getCacheTags($tags = [])
     {
         $tags = is_array($tags) ? $tags : [];
-        
+
         $tags = parent::getCacheTags($tags);
 
         if ($this->getLinktype() == "internal") {
@@ -379,7 +379,7 @@ class Link extends Model\Document
      */
     public function getTitle()
     {
-        return $this->title;
+        return $this->getProperty("navigation_title");
     }
 
     /**
@@ -388,7 +388,7 @@ class Link extends Model\Document
      */
     public function setTitle($title)
     {
-        $this->title = $title;
+        $this->setProperty("navigation_title", "text", $title, false);
         return $this;
     }
 

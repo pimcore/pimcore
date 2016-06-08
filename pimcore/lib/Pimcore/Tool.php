@@ -385,6 +385,17 @@ class Tool
         return $hostname;
     }
 
+    /**
+     * @return string
+     */
+    public static function getRequestScheme() {
+        $requestScheme = \Zend_Controller_Request_Http::SCHEME_HTTP;
+        if(isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on") {
+            $requestScheme = \Zend_Controller_Request_Http::SCHEME_HTTPS;
+        }
+
+        return $requestScheme;
+    }
 
     /**
      * Returns the host URL
@@ -395,14 +406,8 @@ class Tool
      */
     public static function getHostUrl($useProtocol = null)
     {
-        $protocol = "http";
+        $protocol = self::getRequestScheme();
         $port = '';
-
-        if (isset($_SERVER["SERVER_PROTOCOL"])) {
-            $protocol = strtolower($_SERVER["SERVER_PROTOCOL"]);
-            $protocol = substr($protocol, 0, strpos($protocol, "/"));
-            $protocol .= (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on") ? "s" : "";
-        }
 
         if (isset($_SERVER["SERVER_PORT"])) {
             if (!in_array((int) $_SERVER["SERVER_PORT"], [443, 80])) {

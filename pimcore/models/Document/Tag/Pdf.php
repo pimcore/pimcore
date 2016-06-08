@@ -434,7 +434,7 @@ class Pdf extends Model\Document\Tag
                     ], $i, true)
                 ];
 
-                if (is_array($hotspots) && $hotspots[$i]) {
+                if (is_array($hotspots) && isset($hotspots[$i]) && $hotspots[$i]) {
                     $pageData["hotspots"] = $rewritePath($hotspots[$i]);
                 }
 

@@ -126,6 +126,7 @@ class ImageThumbnail
             $config->setName("document_" . $config->getName()."-".$this->page);
 
             try {
+                $path = null;
                 if (!$this->deferred) {
                     $converter = \Pimcore\Document::getInstance();
                     $converter->load($this->asset->getFileSystemPath());
