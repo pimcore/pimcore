@@ -103,6 +103,12 @@ class Admin_LinkController extends \Pimcore\Controller\Action\Admin\Document
                     $data["linktype"] = "direct";
                     $data["direct"] = $data["path"];
                 }
+            } else {
+                // clear content of link
+                $data["linktype"] = "internal";
+                $data["direct"] = "";
+                $data["internalType"] = null;
+                $data["internal"] = null;
             }
 
             unset($data["path"]);
