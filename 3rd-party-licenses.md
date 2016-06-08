@@ -92,6 +92,28 @@ http://www.opensource.org/licenses/Apache-2.0
 License: MIT
 http://opensource.org/licenses/mit-license.php
 
+## opcache-gui
+License: MIT
+http://opensource.org/licenses/mit-license.php
+
+## php-encryption
+License: MIT
+http://opensource.org/licenses/mit-license.php
+
+## Embera
+License: MIT
+http://opensource.org/licenses/mit-license.php
+
+## QR Code by endroid
+License: MIT
+http://opensource.org/licenses/mit-license.php
+
+## Credis
+License: MIT
+http://opensource.org/licenses/mit-license.php
+
+
+
 ## Disclaimer 
 This information has no guarantee of completeness and is subject to change.  
 Please also check packages listed in [composer.json](composer.json). 
