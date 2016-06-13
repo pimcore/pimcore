@@ -207,8 +207,8 @@ class Select extends Model\Object\ClassDefinition\Data
 
         $value = "";
         foreach ($this->options as $option) {
-            if ($option["value"] == $data) {
-                $value = $option["key"];
+            if ($option->value == $data) {
+                $value = $option->key;
                 break;
             }
         }
