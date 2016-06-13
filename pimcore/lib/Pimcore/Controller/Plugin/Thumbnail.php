@@ -47,7 +47,8 @@ class Thumbnail extends \Zend_Controller_Plugin_Abstract
                             throw new \Exception("Deferred thumbnail config file doesn't contain a valid \\Asset\\Image\\Thumbnail\\Config object");
                         }
 
-                        $tmpPage = array_pop(explode("-", $thumbnailName));
+                        $tmpPage = explode("-", $thumbnailName);
+                        $tmpPage = array_pop($tmpPage);
                         if (is_numeric($tmpPage)) {
                             $page = $tmpPage;
                         }
