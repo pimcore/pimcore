@@ -1016,7 +1016,7 @@ abstract class Data
     {
         $diffdata = [];
         $diffdata["data"] = $this->getDataForEditmode($data, $object, $params);
-        $diffdata["disabled"] = !($this->isDiffChangeAllowed());
+        $diffdata["disabled"] = !($this->isDiffChangeAllowed($object));
         $diffdata["field"] = $this->getName();
         $diffdata["key"] = $this->getName();
         $diffdata["type"] = $this->fieldtype;
