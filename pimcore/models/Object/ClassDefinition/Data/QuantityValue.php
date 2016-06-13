@@ -237,14 +237,21 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
     /**
      * @see Object_Class_Data::getVersionPreview
      * @param float $data
-     * @param null|Object\AbstractObject $object
+     * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return float
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
         if ($data instanceof \Pimcore\Model\Object\Data\QuantityValue) {
-            return $data->getValue() . " " . $data->getUnit()->getAbbreviation();
+            $unit = "";
+            if ($data->getUnit()) {
+                $unitDefinition = Model\Object\QuantityValue\Unit::getById($data->getUnit());
+                if ($unitDefinition) {
+                    $unit = " " . $unitDefinition->getAbbreviation();
+                }
+            }
+            return $data->getValue() . $unit;
         }
 
         return "";
@@ -311,8 +318,7 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
         return $value;
     }
 
-
-       /**
+    /**
      * converts data to be exposed via webservices
      * @param string $object
      * @param mixed $params
@@ -334,7 +340,7 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
         }
     }
 
-     /**
+    /**
      * converts data to be imported via webservices
      * @param mixed $value
      * @param null|Model\Object\AbstractObject $object
