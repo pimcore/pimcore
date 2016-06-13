@@ -98,12 +98,6 @@ class Processor
             $id = "dyn~" . crc32($fileSystemPath);
         }
 
-        if (!file_exists($fileSystemPath)) {
-            return self::returnPath($errorImage, $returnAbsolutePath);
-        }
-
-        $modificationDate = filemtime($fileSystemPath);
-
         $fileExt = File::getFileExtension(basename($fileSystemPath));
 
         // simple detection for source type if SOURCE is selected
@@ -134,8 +128,6 @@ class Processor
             }
         }
 
-
-
         $thumbDir = $asset->getImageThumbnailSavePath() . "/thumb__" . $config->getName();
         $filename = preg_replace("/\." . preg_quote(File::getFileExtension($asset->getFilename())) . "/", "", $asset->getFilename());
         // add custom suffix if available
@@ -150,6 +142,25 @@ class Processor
 
         $fsPath = $thumbDir . "/" . $filename;
 
+
+        // deferred means that the image will be generated on-the-fly (when requested by the browser)
+        // the configuration is saved for later use in Pimcore\Controller\Plugin\Thumbnail::routeStartup()
+        // so that it can be used also with dynamic configurations
+        if ($deferred) {
+            // only add the config to the TmpStore if necessary (the config is auto-generated)
+            if(!Config::getByName($config->getName())) {
+                $configId = "thumb_" . $id . "__" . md5(str_replace(PIMCORE_TEMPORARY_DIRECTORY, "", $fsPath));
+                TmpStore::add($configId, $config, "thumbnail_deferred");
+            }
+
+            return self::returnPath($fsPath, $returnAbsolutePath);
+        }
+
+        // all checks on the file system should be below the deferred part for performance reasons (remote file systems)
+        if (!file_exists($fileSystemPath)) {
+            return self::returnPath($errorImage, $returnAbsolutePath);
+        }
+
         if (!is_dir(dirname($fsPath))) {
             File::mkdir(dirname($fsPath));
         }
@@ -157,17 +168,7 @@ class Processor
         $path = self::returnPath($fsPath, false);
 
         // check for existing and still valid thumbnail
-        if (is_file($fsPath) and filemtime($fsPath) >= $modificationDate) {
-            return self::returnPath($fsPath, $returnAbsolutePath);
-        }
-
-        // deferred means that the image will be generated on-the-fly (when requested by the browser)
-        // the configuration is saved for later use in Pimcore\Controller\Plugin\Thumbnail::routeStartup()
-        // so that it can be used also with dynamic configurations
-        if ($deferred) {
-            $configId = "thumb_" . $id . "__" . md5(str_replace(PIMCORE_TEMPORARY_DIRECTORY, "", $fsPath));
-            TmpStore::add($configId, $config, "thumbnail_deferred");
-
+        if (is_file($fsPath) and filemtime($fsPath) >= filemtime($fileSystemPath)) {
             return self::returnPath($fsPath, $returnAbsolutePath);
         }
 

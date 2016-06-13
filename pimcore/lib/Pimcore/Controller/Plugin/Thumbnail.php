@@ -31,38 +31,37 @@ class Thumbnail extends \Zend_Controller_Plugin_Abstract
         if (preg_match("@/image-thumbnails(.*)?/([0-9]+)/thumb__([a-zA-Z0-9_\-]+)([^\@]+)(\@[0-9.]+x)?\.([a-zA-Z]{2,5})@", $request->getPathInfo(), $matches)) {
             $assetId = $matches[2];
             $thumbnailName = $matches[3];
-            $format = $matches[6];
 
             if ($asset = Asset::getById($assetId)) {
                 try {
-                    $page = 1;
+                    $page = 1; // default
                     $thumbnailFile = null;
                     $thumbnailConfig = null;
-                    $deferredConfigId = "thumb_" . $assetId . "__" . md5($matches[0]);
-                    if ($thumbnailConfigItem = TmpStore::get($deferredConfigId)) {
-                        $thumbnailConfig = $thumbnailConfigItem->getData();
-                        TmpStore::delete($deferredConfigId);
 
-                        if (!$thumbnailConfig instanceof Asset\Image\Thumbnail\Config) {
-                            throw new \Exception("Deferred thumbnail config file doesn't contain a valid \\Asset\\Image\\Thumbnail\\Config object");
-                        }
+                    //get thumbnail for e.g. pdf page thumb__document_pdfPage-5
+                    if (preg_match("|document_(.*)\-(\d+)$|", $thumbnailName, $matchesThumbs)) {
+                        $thumbnailName = $matchesThumbs[1];
+                        $page = (int)$matchesThumbs[2];
+                    }
 
-                        $tmpPage = explode("-", $thumbnailName);
-                        $tmpPage = array_pop($tmpPage);
-                        if (is_numeric($tmpPage)) {
-                            $page = $tmpPage;
+                    // just check if the thumbnail exists -> throws exception otherwise
+                    $thumbnailConfig = Asset\Image\Thumbnail\Config::getByName($thumbnailName);
+
+                    if (!$thumbnailConfig) {
+                        // check if there's an item in the TmpStore
+                        $deferredConfigId = "thumb_" . $assetId . "__" . md5($matches[0]);
+                        if ($thumbnailConfigItem = TmpStore::get($deferredConfigId)) {
+                            $thumbnailConfig = $thumbnailConfigItem->getData();
+                            TmpStore::delete($deferredConfigId);
+
+                            if (!$thumbnailConfig instanceof Asset\Image\Thumbnail\Config) {
+                                throw new \Exception("Deferred thumbnail config file doesn't contain a valid \\Asset\\Image\\Thumbnail\\Config object");
+                            }
                         }
-                    } else {
-                        //get thumbnail for e.g. pdf page thumb__document_pdfPage-5
-                        if (preg_match("|document_(.*)\-(\d+)$|", $thumbnailName, $matchesThumbs)) {
-                            $thumbnailName = $matchesThumbs[1];
-                            $page = (int)$matchesThumbs[2];
-                        }
-                        // just check if the thumbnail exists -> throws exception otherwise
-                        $thumbnailConfig = Asset\Image\Thumbnail\Config::getByName($thumbnailName);
-                        if (!$thumbnailConfig instanceof Asset\Image\Thumbnail\Config) {
-                            throw new \Exception("Thumbnail '" . $thumbnailName . "' file doesn't exists");
-                        }
+                    }
+
+                    if(!$thumbnailConfig) {
+                        throw new \Exception("Thumbnail '" . $thumbnailName . "' file doesn't exists");
                     }
 
                     if ($asset instanceof Asset\Document) {
