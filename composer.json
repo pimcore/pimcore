@@ -78,7 +78,10 @@
             "Pimcore\\Model\\Object\\": "website/var/classes/Object",
             "Pimcore\\Model\\": "pimcore/models",
             "Pimcore\\": "pimcore/lib/Pimcore"
-        }
+        },
+        "exclude-from-classmap": [
+            "%/WindowsAzure/CommandLine/Scaffolders/%"
+        ]
     },
     "scripts": {
         "post-create-project-cmd": "Pimcore\\Composer::postCreateProject",
