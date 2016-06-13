@@ -243,6 +243,7 @@ abstract class AbstractListing extends AbstractModel
     {
         $conditionString = '';
         $conditionPrams = $this->getConditionParams();
+        $db = \Pimcore\Db::get();
 
         if (!empty($conditionPrams)) {
             $params = [];
@@ -257,8 +258,12 @@ abstract class AbstractListing extends AbstractModel
                 // If there is not a placeholder, ignore value!
                 if (!$value['ignore-value']) {
                     if (is_array($value['value'])) {
-                        foreach ($value['value'] as $v) {
-                            $params[] = $v;
+                        foreach ($value['value'] as $k => $v) {
+                            if($db->supportsParameters("named")) {
+                                $params[$k] = $v;
+                            } else {
+                                $params[] = $v;
+                            }
                         }
                     } else {
                         $params[] = $value['value'];
