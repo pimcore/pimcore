@@ -251,6 +251,7 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
                     $unit = " " . $unitDefinition->getAbbreviation();
                 }
             }
+
             return $data->getValue() . $unit;
         }
 

@@ -259,7 +259,7 @@ abstract class AbstractListing extends AbstractModel
                 if (!$value['ignore-value']) {
                     if (is_array($value['value'])) {
                         foreach ($value['value'] as $k => $v) {
-                            if($db->supportsParameters("named")) {
+                            if ($db->supportsParameters("named")) {
                                 $params[$k] = $v;
                             } else {
                                 $params[] = $v;
