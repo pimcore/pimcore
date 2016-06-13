@@ -60,7 +60,7 @@ class Thumbnail extends \Zend_Controller_Plugin_Abstract
                         }
                     }
 
-                    if(!$thumbnailConfig) {
+                    if (!$thumbnailConfig) {
                         throw new \Exception("Thumbnail '" . $thumbnailName . "' file doesn't exists");
                     }
 
