@@ -427,5 +427,4 @@ class Config extends Model\AbstractModel
     {
         $this->reportClass = $reportClass;
     }
-
 }
