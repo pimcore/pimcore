@@ -769,8 +769,10 @@ class DefaultElasticSearch implements IProductList {
      * @return void
      */
     public function prepareGroupByValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true) {
-        $this->preparedGroupByValues[$this->tenantConfig->getFieldNameMapped($fieldname)] = ["countValues" => $countValues, "fieldnameShouldBeExcluded" => $fieldnameShouldBeExcluded];
-        $this->preparedGroupByValuesLoaded = false;
+        if($fieldname) {
+            $this->preparedGroupByValues[$this->tenantConfig->getFieldNameMapped($fieldname)]= ["countValues" => $countValues, "fieldnameShouldBeExcluded" => $fieldnameShouldBeExcluded];
+            $this->preparedGroupByValuesLoaded = false;
+        }
     }
 
 
@@ -782,8 +784,10 @@ class DefaultElasticSearch implements IProductList {
      * @return void
      */
     public function prepareGroupByRelationValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true) {
-        $this->preparedGroupByValues[$this->tenantConfig->getFieldNameMapped($fieldname)] = ["countValues" => $countValues, "fieldnameShouldBeExcluded" => $fieldnameShouldBeExcluded];
-        $this->preparedGroupByValuesLoaded = false;
+        if($fieldname) {
+            $this->preparedGroupByValues[$this->tenantConfig->getFieldNameMapped($fieldname)] = ["countValues" => $countValues, "fieldnameShouldBeExcluded" => $fieldnameShouldBeExcluded];
+            $this->preparedGroupByValuesLoaded = false;
+        }
     }
 
 
