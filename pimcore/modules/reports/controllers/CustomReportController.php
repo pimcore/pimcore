@@ -144,6 +144,7 @@ class Reports_CustomReportController extends \Pimcore\Controller\Action\Admin\Re
         $list = new CustomReport\Config\Listing();
         $items = $list->load();
 
+        /** @var  $report CustomReport\Config */
         foreach ($items as $report) {
             $reports[] = [
                 "name" => $report->getName(),
@@ -151,7 +152,8 @@ class Reports_CustomReportController extends \Pimcore\Controller\Action\Admin\Re
                 "iconClass" => $report->getIconClass(),
                 "group" => $report->getGroup(),
                 "groupIconClass" => $report->getGroupIconClass(),
-                "menuShortcut" => $report->getMenuShortcut()
+                "menuShortcut" => $report->getMenuShortcut(),
+                "reportClass" => $report->getReportClass()
             ];
         }
 

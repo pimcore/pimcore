@@ -41,7 +41,6 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
         var gridColumns = [];
         var colConfig;
         var gridColConfig = {};
-        var filters = [];
         var drillDownFilterDefinitions = [];
         this.columnLabels = {};
         this.gridfilters = {};
@@ -81,9 +80,6 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
             };
 
 
-
-
-
             if(colConfig["filter_drilldown"] == 'only_filter' || colConfig["filter_drilldown"] == 'filter_and_show') {
                 drillDownFilterDefinitions.push(colConfig);
             }
@@ -118,7 +114,6 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                     ]
                 });
             }
-
         }
 
         var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
@@ -191,7 +186,6 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                 pimcore.helpers.download(downloadUrl);
             }.bind(this)
         });
-
 
         this.grid = new Ext.grid.GridPanel({
             region: "center",
@@ -549,8 +543,9 @@ pimcore.report.custom.reportplugin = Class.create(pimcore.plugin.admin, {
                                 report["groupIconClass"] = "pimcore_icon_sql";
                             }
 
+                            var reportClass = report.reportClass ? report.reportClass : "pimcore.report.custom.report";
                             pimcore.report.broker.addGroup(report["group"], report["group"], report["groupIconClass"]);
-                            pimcore.report.broker.addReport(pimcore.report.custom.report, report["group"], {
+                            pimcore.report.broker.addReport(reportClass, report["group"], {
                                 name: report["name"],
                                 text: report["niceName"],
                                 niceName: report["niceName"],
@@ -566,7 +561,7 @@ pimcore.report.custom.reportplugin = Class.create(pimcore.plugin.admin, {
                                             text: report["niceName"],
                                             iconCls: report["iconClass"],
                                             handler: function (report) {
-                                                toolbar.showReports(pimcore.report.custom.report, {
+                                                toolbar.showReports(reportClass, {
                                                     name: report["name"],
                                                     text: report["niceName"],
                                                     niceName: report["niceName"],

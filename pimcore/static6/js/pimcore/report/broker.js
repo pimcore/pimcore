@@ -37,7 +37,7 @@ pimcore.report.broker = {
         this.groupIds.push(id);
     },
 
-    addReport: function (report, groupId, config) {
+    addReport: function (reportClass, groupId, config) {
         if (!groupId) {
             groupId = "other";
         }
@@ -47,7 +47,7 @@ pimcore.report.broker = {
         }
 
         this.reports[groupId].push({
-            "class": report,
+            "class": reportClass,
             config: config
         });
     }

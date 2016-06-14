@@ -353,7 +353,9 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
 
     openReport: function() {
         var toolbar = pimcore.globalmanager.get("layout_toolbar");
-        toolbar.showReports(pimcore.report.custom.report, {
+
+        var reportClass = this.reportConfig.reportClass ? this.reportConfig.reportClass : "pimcore.report.custom.report";
+        toolbar.showReports(reportClass, {
             name: this.reportConfig.name,
             text: this.reportConfig.niceName,
             niceName: this.reportConfig.niceName,

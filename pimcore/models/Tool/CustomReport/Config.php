@@ -69,12 +69,12 @@ class Config extends Model\AbstractModel
     /**
      * @var string
      */
-    public $chartType;
+    public $reportClass;
 
     /**
      * @var string
      */
-    public $displayType;
+    public $chartType;
 
     /**
      * @var string
@@ -411,4 +411,21 @@ class Config extends Model\AbstractModel
     {
         $this->creationDate = $creationDate;
     }
+
+    /**
+     * @return string
+     */
+    public function getReportClass()
+    {
+        return $this->reportClass;
+    }
+
+    /**
+     * @param string $reportClass
+     */
+    public function setReportClass($reportClass)
+    {
+        $this->reportClass = $reportClass;
+    }
+
 }

@@ -312,15 +312,21 @@ pimcore.report.custom.item = Class.create({
                     fieldLabel: t("group")
                 }, {
                     xtype: "textfield",
-                    name: "groupIconClass",
-                    value: this.data.groupIconClass,
-                    fieldLabel: t("group_icon_class")
+                    name: "reportClass",
+                    value: this.data.reportClass,
+                    fieldLabel: t("custom_report_class")
                 }, {
                     xtype: "checkbox",
                     name: "menuShortcut",
                     checked: this.data.menuShortcut,
                     fieldLabel: t("create_menu_shortcut")
-                }]
+                }, {
+                    xtype: "checkbox",
+                    name: "menuShortcut",
+                    checked: this.data.menuShortcut,
+                    fieldLabel: t("create_menu_shortcut")
+                },
+                ]
             }]
         });
 

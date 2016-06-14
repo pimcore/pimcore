@@ -96,6 +96,7 @@ pimcore.report.panel = Class.create({
                 if (typeof pimcore.report.broker.reports[group.id] == "object") {
                     for (var r = 0; r < pimcore.report.broker.reports[group.id].length; r++) {
                         reportClass = pimcore.report.broker.reports[group.id][r]["class"];
+                        reportClass = stringToFunction(reportClass);
                         reportConfig = pimcore.report.broker.reports[group.id][r]["config"];
                         if(!reportConfig) {
                             reportConfig = {};
@@ -164,6 +165,9 @@ pimcore.report.panel = Class.create({
     },
 
     openReportViaToolbar: function (reportClass, reportConfig) {
+
+        reportClass = stringToFunction(reportClass);
+
         var report = new reportClass(this, this.type, null, reportConfig);
 
         var store = this.tree.getStore();
@@ -203,8 +207,10 @@ pimcore.report.panel = Class.create({
             // add reports to group
             if (typeof pimcore.report.broker.reports[group.id] == "object") {
                 for (var r = 0; r < pimcore.report.broker.reports[group.id].length; r++) {
-                    report = pimcore.report.broker.reports[group.id][r]["class"];
-                    if (report.prototype.matchType(this.type)) {
+                    reportClass = pimcore.report.broker.reports[group.id][r]["class"];
+                    reportClass = stringToFunction(reportClass);
+
+                    if (reportClass.prototype.matchType(this.type)) {
                         reportCount++;
                     }
                 }

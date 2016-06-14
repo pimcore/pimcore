@@ -7139,5 +7139,9 @@
     {
         "term": "web2print_documents_changed",
         "definition": "Documents changed since last pdf generation."
+    },
+    {
+        "term": "custom_report_class",
+        "definition": "Report class"
     }
 ]
