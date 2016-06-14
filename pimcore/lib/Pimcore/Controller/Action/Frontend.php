@@ -58,6 +58,11 @@ abstract class Frontend extends Action
     public static $isInitial = true;
 
     /**
+     * @var string
+     */
+    private static $locale;
+
+    /**
      * @throws \Zend_Controller_Router_Exception
      */
     public function init()
@@ -307,17 +312,40 @@ abstract class Frontend extends Action
      */
     public function setLocale($locale)
     {
-        if (\Zend_Locale::isLocale($locale)) {
+        if ((string) $locale != self::$locale && \Zend_Locale::isLocale($locale)) {
             $locale = new \Zend_Locale($locale);
             \Zend_Registry::set('Zend_Locale', $locale);
             $this->getResponse()->setHeader("Content-Language", strtolower(str_replace("_", "-", (string) $locale)), true);
 
+            // now we prepare everything for setlocale()
+            $localeList = [(string) $locale . ".utf8"];
+
+            if($locale->getRegion()) {
+                // add only the language to the list as a fallback
+                $localeList[] = $locale->getLanguage() . ".utf8";
+            } else {
+                // try to get a list of territories for this language
+                // usually OS have no "language only" locale, only the combination language-territory (eg. Debian)
+                $languageRegionMapping = include PIMCORE_PATH . "/config/data/cldr-language-territory-mapping.php";
+                if(isset($languageRegionMapping[$locale->getLanguage()])) {
+                    foreach($languageRegionMapping[$locale->getLanguage()] as $territory) {
+                        $localeList[] = $locale->getLanguage() . "_" . $territory . ".utf8";
+                    }
+                }
+            }
+
+            setlocale(LC_ALL, $localeList);
+
+
+            // reconfigure translation management
             if (\Zend_Registry::isRegistered("Zend_Translate")) {
                 $translator = \Zend_Registry::get("Zend_Translate");
                 if ($translator instanceof Translate) {
                     $translator->setLocale($locale);
                 }
             }
+
+            self::$locale = (string) $locale;
         }
     }
 
