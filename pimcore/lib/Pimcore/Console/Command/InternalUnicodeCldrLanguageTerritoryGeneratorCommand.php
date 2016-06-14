@@ -37,18 +37,17 @@ class InternalUnicodeCldrLanguageTerritoryGeneratorCommand extends AbstractComma
 
         $languageRawData = [];
 
-        foreach($xml->territoryInfo->territory as $territory) {
-            foreach($territory->languagePopulation as $language) {
-
+        foreach ($xml->territoryInfo->territory as $territory) {
+            foreach ($territory->languagePopulation as $language) {
                 $languageCode = (string) $language["type"];
-                if(\Zend_Locale::isLocale($languageCode)) {
+                if (\Zend_Locale::isLocale($languageCode)) {
                     $populationAbsolute = $territory["population"] * $language["populationPercent"] / 100;
 
                     if (!isset($languageRawData[$languageCode])) {
                         $languageRawData[$languageCode] = [];
                     }
 
-                    if(\Zend_Locale::isLocale($languageCode . "_" . $territory["type"], true)) {
+                    if (\Zend_Locale::isLocale($languageCode . "_" . $territory["type"], true)) {
                         $languageRawData[$languageCode][] = [
                             "country" => (string)$territory["type"],
                             "population" => $populationAbsolute
@@ -60,16 +59,17 @@ class InternalUnicodeCldrLanguageTerritoryGeneratorCommand extends AbstractComma
 
         $finalData = [];
 
-        foreach($languageRawData as $languageCode => $rawLanguage) {
+        foreach ($languageRawData as $languageCode => $rawLanguage) {
             usort($rawLanguage, function ($a, $b) {
                 if ($a["population"] == $b["population"]) {
                     return 0;
                 }
+
                 return ($a["population"] > $b["population"]) ? -1 : 1;
             });
 
             $finalData[$languageCode] = [];
-            foreach($rawLanguage as $territory) {
+            foreach ($rawLanguage as $territory) {
                 $finalData[$languageCode][] = $territory["country"];
             }
         }
