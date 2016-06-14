@@ -658,7 +658,7 @@ CREATE TABLE `users` (
   `contentLanguages` LONGTEXT NULL,
   `admin` tinyint(1) unsigned DEFAULT '0',
   `active` tinyint(1) unsigned DEFAULT '1',
-  `permissions` varchar(1000) DEFAULT NULL,
+  `permissions` text,
   `roles` varchar(1000) DEFAULT NULL,
   `welcomescreen` tinyint(1) DEFAULT NULL,
   `closeWarning` tinyint(1) DEFAULT NULL,
