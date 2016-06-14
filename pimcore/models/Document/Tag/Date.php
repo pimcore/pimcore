@@ -175,7 +175,7 @@ class Date extends Model\Document\Tag
         if (\Pimcore\Config::getFlag("useZendDate")) {
             $this->date = new \Pimcore\Date($timestamp);
         } else {
-            $this->date = new \DateTime();
+            $this->date = new \Carbon\Carbon();
             $this->date->setTimestamp($timestamp);
         }
     }
