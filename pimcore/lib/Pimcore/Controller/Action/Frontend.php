@@ -335,7 +335,7 @@ abstract class Frontend extends Action
             }
 
             setlocale(LC_ALL, $localeList);
-
+            \Carbon\Carbon::setLocale($locale->getLanguage());
 
             // reconfigure translation management
             if (\Zend_Registry::isRegistered("Zend_Translate")) {
