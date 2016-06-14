@@ -716,6 +716,11 @@
         "definition": "Filter Type"
     },
     {
+        "term": "display_type",
+        "definition": "Display Type"
+    },
+
+    {
         "term": "column_configuration",
         "definition": "Column Configuration"
     },

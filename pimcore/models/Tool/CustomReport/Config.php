@@ -74,6 +74,11 @@ class Config extends Model\AbstractModel
     /**
      * @var string
      */
+    public $displayType;
+
+    /**
+     * @var string
+     */
     public $pieColumn;
 
     /**

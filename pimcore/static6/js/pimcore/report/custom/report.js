@@ -68,6 +68,21 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                 this.gridfilters[colConfig["name"]] = colConfig["filter"];
             }
 
+            if (colConfig["displayType"] == "date") {
+                gridColConfig["renderer"] = function (key, value, metaData, record) {
+                    if (value) {
+                        var timestamp = intval(value) * 1000;
+                        var date = new Date(timestamp);
+
+                        return Ext.Date.format(date, "Y-m-d H:i");
+                    }
+                    return "";
+                }.bind(this, colConfig["name"]);
+            };
+
+
+
+
 
             if(colConfig["filter_drilldown"] == 'only_filter' || colConfig["filter_drilldown"] == 'filter_and_show') {
                 drillDownFilterDefinitions.push(colConfig);
@@ -184,7 +199,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
             bbar: this.pagingtoolbar,
             columns: gridColumns,
             columnLines: true,
-            plugins: ['gridfilters'],
+            plugins: ['pimcore.gridfilters'],
             stripeRows: true,
             trackMouseOver: true,
             viewConfig: {

@@ -167,10 +167,15 @@ class Sql extends AbstractAdapter
             if (is_array($filters)) {
                 foreach ($filters as $filter) {
                     if (\Pimcore\Tool\Admin::isExtJS6()) {
+                        $value = $filter["value"] ;
+                        $type = $filter["type"];
+                        if ($type == "date") {
+                            $value = strtotime($value);
+                        }
                         $operator = $filter['operator'];
                         switch ($operator) {
                             case 'like':
-                                $condition[] = $db->quoteIdentifier($filter["property"]) . " LIKE " . $db->quote("%" . $filter["value"] . "%");
+                                $condition[] = $db->quoteIdentifier($filter["property"]) . " LIKE " . $db->quote("%" . $value. "%");
                                 break;
                             case "lt":
                             case "gt":
@@ -182,10 +187,10 @@ class Sql extends AbstractAdapter
                                     "eq" => "="
                                 ];
 
-                                $condition[] = $db->quoteIdentifier($filter["property"]) . " " . $compMapping[$operator] . " " . $db->quote($filter["value"]);
+                                $condition[] = $db->quoteIdentifier($filter["property"]) . " " . $compMapping[$operator] . " " . $db->quote($value);
                                 break;
                             case "=":
-                                $condition[] = $db->quoteIdentifier($filter["property"]) . " = " . $db->quote((int)$filter["value"]);
+                                $condition[] = $db->quoteIdentifier($filter["property"]) . " = " . $db->quote($value);
                                 break;
                         }
                     } else {
