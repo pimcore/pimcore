@@ -236,7 +236,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
 
         $values = Config::getSystemConfig();
 
-        if (($handle = fopen(PIMCORE_PATH . "/config/timezones.csv", "r")) !== false) {
+        if (($handle = fopen(PIMCORE_PATH . "/config/data/timezones.csv", "r")) !== false) {
             while (($rowData = fgetcsv($handle, 10000, ",", '"')) !== false) {
                 $timezones[] = $rowData[0];
             }
