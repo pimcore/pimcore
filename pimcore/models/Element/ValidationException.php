@@ -20,4 +20,23 @@ use Pimcore\Model;
 
 class ValidationException extends \Exception
 {
+
+    /** @var  array */
+    protected $subItems;
+
+    /**
+     * @return array
+     */
+    public function getSubItems()
+    {
+        return $this->subItems;
+    }
+
+    /**
+     * @param array $subItems
+     */
+    public function setSubItems($subItems)
+    {
+        $this->subItems = $subItems;
+    }
 }
