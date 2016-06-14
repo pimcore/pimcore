@@ -1,89 +1,96 @@
 {
-    "name": "pimcore/pimcore",
-    "type": "project",
-    "description": "Content & Product Management Framework (CMS/PIM/E-Commerce)",
-    "keywords": ["CMS","PIM","DAM","E-Commerce","RAD","Product Information Management"],
-    "homepage": "http://www.pimcore.org/",
-    "license": "GPL-3.0+",
-    "authors": [
-        {
-            "name": "pimcore Team",
-            "email": "info@pimcore.com",
-            "homepage": "http://www.pimcore.org/",
-            "role": "Developer"
-        }
-    ],
-    "support": {
-        "issues": "https://github.com/pimcore/pimcore/issues",
-        "wiki": "https://www.pimcore.org/wiki/",
-        "source": "https://github.com/pimcore/pimcore",
-        "forum": "https://groups.google.com/forum/#!forum/pimcore",
-        "docs": "https://www.pimcore.org/wiki/"
-    },
-    "config": {
-        "optimize-autoloader": true
-    },
-    "require": {
-        "php": ">=5.5.0",
-        "ext-iconv" : "*",
-        "ext-dom" : "*",
-        "ext-SimpleXML" : "*",
-        "ext-gd" : "*",
-        "ext-exif" : "*",
-        "ext-mbstring" : "*",
-        "ext-fileinfo" : "*",
-        "ext-zip" : "*",
-        "ext-zlib" : "*",
-        "ext-bz2" : "*",
-        "ext-openssl" : "*",
-        "zendframework/zendframework1": "~1.12",
-        "symfony/console": "~3",
-        "symfony/finder": "~3",
-        "symfony/process": "~3",
-        "symfony/var-dumper": "~3",
-        "symfony/css-selector": "~3",
-        "symfony/event-dispatcher": "~3",
-        "filp/whoops": "~2",
-        "tijsverkoyen/css-to-inline-styles": "~1.5",
-        "hybridauth/hybridauth": "~2",
-        "google/apiclient": "~1",
-        "oyejorge/less.php": "~1.7",
-        "geoip2/geoip2": "~2",
-        "psr/log": "*",
-        "monolog/monolog": "~1",
-        "sabre/dav": "~3.1",
-        "pear/net_url2": "~2.2",
-        "ramsey/uuid": "~3",
-        "colinmollenhour/credis": "~1",
-        "endroid/qrcode": "~1.5",
-        "mpratt/embera": "~1",
-        "defuse/php-encryption": "~2",
-        "nesbot/carbon": "~1",
-        "linfo/linfo": "~3",
-        "amnuts/opcache-gui": "~2",
-        "vrana/adminer": "~4.2"
-    },
-    "require-dev": {
-        "phpunit/phpunit": "*"
-    },
-    "suggest": {
-        "ext-curl" : "*",
-        "ext-mysqli" : "*",
-        "ext-pdo_mysql" : "*",
-        "ext-imagick" : "*",
-        "ext-redis" : "*",
-        "ext-memcache" : "*"
-    },
-    "autoload": {
-        "psr-4": {
-            "Pimcore\\Model\\Object\\": "website/var/classes/Object",
-            "Pimcore\\Model\\": "pimcore/models",
-            "Pimcore\\": "pimcore/lib/Pimcore"
-        }
-    },
-    "scripts": {
-        "post-create-project-cmd": "Pimcore\\Composer::postCreateProject",
-        "post-install-cmd": "Pimcore\\Composer::postInstall",
-        "post-update-cmd": "Pimcore\\Composer::postUpdate"
+  "name": "pimcore/pimcore",
+  "type": "project",
+  "description": "Content & Product Management Framework (CMS/PIM/E-Commerce)",
+  "keywords": [
+    "CMS",
+    "PIM",
+    "DAM",
+    "E-Commerce",
+    "RAD",
+    "Product Information Management"
+  ],
+  "homepage": "http://www.pimcore.org/",
+  "license": "GPL-3.0+",
+  "authors": [
+    {
+      "name": "pimcore Team",
+      "email": "info@pimcore.com",
+      "homepage": "http://www.pimcore.org/",
+      "role": "Developer"
     }
+  ],
+  "support": {
+    "issues": "https://github.com/pimcore/pimcore/issues",
+    "wiki": "https://www.pimcore.org/wiki/",
+    "source": "https://github.com/pimcore/pimcore",
+    "forum": "https://groups.google.com/forum/#!forum/pimcore",
+    "docs": "https://www.pimcore.org/wiki/"
+  },
+  "config": {
+    "optimize-autoloader": true
+  },
+  "require": {
+    "php": ">=5.5.0",
+    "ext-iconv": "*",
+    "ext-dom": "*",
+    "ext-SimpleXML": "*",
+    "ext-gd": "*",
+    "ext-exif": "*",
+    "ext-mbstring": "*",
+    "ext-fileinfo": "*",
+    "ext-zip": "*",
+    "ext-zlib": "*",
+    "ext-bz2": "*",
+    "ext-openssl": "*",
+    "zendframework/zendframework1": "~1.12",
+    "symfony/console": "~3",
+    "symfony/finder": "~3",
+    "symfony/process": "~3",
+    "symfony/var-dumper": "~3",
+    "symfony/css-selector": "~3",
+    "symfony/event-dispatcher": "~3",
+    "filp/whoops": "~2",
+    "tijsverkoyen/css-to-inline-styles": "~1.5",
+    "hybridauth/hybridauth": "~2",
+    "google/apiclient": "~1",
+    "oyejorge/less.php": "~1.7",
+    "geoip2/geoip2": "~2",
+    "psr/log": "*",
+    "monolog/monolog": "~1",
+    "sabre/dav": "~3.1",
+    "pear/net_url2": "~2.2",
+    "ramsey/uuid": "~3",
+    "colinmollenhour/credis": "~1",
+    "endroid/qrcode": "~1.5",
+    "mpratt/embera": "~1",
+    "defuse/php-encryption": "~2",
+    "nesbot/carbon": "~1",
+    "linfo/linfo": "~3",
+    "amnuts/opcache-gui": "~2",
+    "vrana/adminer": "~4.2"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "*"
+  },
+  "suggest": {
+    "ext-curl": "*",
+    "ext-mysqli": "*",
+    "ext-pdo_mysql": "*",
+    "ext-imagick": "*",
+    "ext-redis": "*",
+    "ext-memcache": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Pimcore\\Model\\Object\\": "website/var/classes/Object",
+      "Pimcore\\Model\\": "pimcore/models",
+      "Pimcore\\": "pimcore/lib/Pimcore"
+    }
+  },
+  "scripts": {
+    "post-create-project-cmd": "Pimcore\\Composer::postCreateProject",
+    "post-install-cmd": "Pimcore\\Composer::postInstall",
+    "post-update-cmd": "Pimcore\\Composer::postUpdate"
+  }
 }
