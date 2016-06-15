@@ -241,7 +241,7 @@ class Processor
 
             $calculateMaxFactor = function ($factor, $original, $new) {
                 $newFactor = $factor*$original/$new;
-                if($newFactor < 1) {
+                if ($newFactor < 1) {
                     // don't go below factor 1
                     $newFactor = 1;
                 }
@@ -265,17 +265,16 @@ class Processor
                                 // high res calculations if enabled
                                 if (!in_array($transformation["method"], ["cropPercent"]) && in_array($key, ["width", "height", "x", "y"])) {
                                     if ($highResFactor && $highResFactor > 1) {
-
                                         $value *= $highResFactor;
 
                                         // check if source image is big enough otherwise adjust the high-res factor
-                                        if(in_array($key, ["width", "x"])) {
-                                            if($sourceImageWidth < $value) {
+                                        if (in_array($key, ["width", "x"])) {
+                                            if ($sourceImageWidth < $value) {
                                                 $highResFactor = $calculateMaxFactor($highResFactor, $sourceImageWidth, $value);
                                                 goto prepareTransformations;
                                             }
-                                        } else if (in_array($key, ["height", "y"])) {
-                                            if($sourceImageHeight < $value) {
+                                        } elseif (in_array($key, ["height", "y"])) {
+                                            if ($sourceImageHeight < $value) {
                                                 $highResFactor = $calculateMaxFactor($highResFactor, $sourceImageHeight, $value);
                                                 goto prepareTransformations;
                                             }
