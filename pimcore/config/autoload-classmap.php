@@ -1,7 +1,7 @@
 <?php
 $pdr = PIMCORE_DOCUMENT_ROOT;
 
-return [
+return array (
   'simple_html_dom_node' => $pdr . '/pimcore/lib/simple_html_dom.php',
   'simple_html_dom' => $pdr . '/pimcore/lib/simple_html_dom.php',
   'Pimcore\\Video\\Adapter\\Ffmpeg' => $pdr . '/pimcore/lib/Pimcore/Video/Adapter/Ffmpeg.php',
@@ -148,6 +148,7 @@ return [
   'Pimcore\\Console\\Command\\BackupCommand' => $pdr . '/pimcore/lib/Pimcore/Console/Command/BackupCommand.php',
   'Pimcore\\Console\\Command\\CacheClearCommand' => $pdr . '/pimcore/lib/Pimcore/Console/Command/CacheClearCommand.php',
   'Pimcore\\Console\\Command\\Web2PrintPdfCreationCommand' => $pdr . '/pimcore/lib/Pimcore/Console/Command/Web2PrintPdfCreationCommand.php',
+  'Pimcore\\Console\\Command\\InternalUnicodeCldrLanguageTerritoryGeneratorCommand' => $pdr . '/pimcore/lib/Pimcore/Console/Command/InternalUnicodeCldrLanguageTerritoryGeneratorCommand.php',
   'Pimcore\\Console\\Command\\InternalNewsletterSendCommand' => $pdr . '/pimcore/lib/Pimcore/Console/Command/InternalNewsletterSendCommand.php',
   'Pimcore\\Console\\Command\\ClassmapGeneratorCommand' => $pdr . '/pimcore/lib/Pimcore/Console/Command/ClassmapGeneratorCommand.php',
   'Pimcore\\Console\\Command\\ThumbnailsOptimizeImagesCommand' => $pdr . '/pimcore/lib/Pimcore/Console/Command/ThumbnailsOptimizeImagesCommand.php',
@@ -712,4 +713,4 @@ return [
   'Pimcore\\Model\\Property\\Predefined\\Dao' => $pdr . '/pimcore/models/Property/Predefined/Dao.php',
   'Pimcore\\Model\\Property\\Predefined' => $pdr . '/pimcore/models/Property/Predefined.php',
   'Pimcore\\Model\\Property\\Dao' => $pdr . '/pimcore/models/Property/Dao.php',
-];
+);
