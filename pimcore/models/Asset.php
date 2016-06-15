@@ -764,8 +764,10 @@ class Asset extends Element\AbstractElement
         $version = null;
 
         // only create a new version if there is at least 1 allowed
+        // or if saveVersion() was called directly (it's a newer version of the object)
         if (Config::getSystemConfig()->assets->versions->steps
-            || Config::getSystemConfig()->assets->versions->days) {
+            || Config::getSystemConfig()->assets->versions->days
+            || $setModificationDate) {
             $version = new Version();
             $version->setCid($this->getId());
             $version->setCtype("asset");

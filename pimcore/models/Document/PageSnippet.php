@@ -111,11 +111,10 @@ abstract class PageSnippet extends Model\Document
     /**
      * @param bool $setModificationDate
      * @param bool $callPluginHook
-     * @param bool $force
      * @return null|Model\Version
      * @throws \Exception
      */
-    public function saveVersion($setModificationDate = true, $callPluginHook = true, $force = false)
+    public function saveVersion($setModificationDate = true, $callPluginHook = true)
     {
 
         // hook should be also called if "save only new version" is selected
@@ -137,8 +136,10 @@ abstract class PageSnippet extends Model\Document
         $version = null;
 
         // only create a new version if there is at least 1 allowed
+        // or if saveVersion() was called directly (it's a newer version of the object)
         if (Config::getSystemConfig()->documents->versions->steps
-            || Config::getSystemConfig()->documents->versions->days || $force) {
+            || Config::getSystemConfig()->documents->versions->days
+            || $setModificationDate) {
             $version = new Model\Version();
             $version->setCid($this->getId());
             $version->setCtype("document");

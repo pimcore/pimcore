@@ -194,7 +194,7 @@ class Newsletter
         if (!$onlyCreateVersion) {
             $object->save();
         } else {
-            $object->saveVersion();
+            $object->saveVersion(true, true);
         }
 
         $this->addNoteOnObject($object, "subscribe");

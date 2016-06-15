@@ -27,12 +27,12 @@ class Concrete extends AbstractObject
      * @var boolean
      */
     public $o_published;
-    
+
     /**
      * @var Object|Class
      */
     public $o_class;
-    
+
     /**
      * @var integer
      */
@@ -161,7 +161,7 @@ class Concrete extends AbstractObject
 
                 $value = $this->$getter();
                 $omitMandatoryCheck = $this->getOmitMandatoryCheck();
-                
+
                 //check throws Exception
                 try {
                     $fd->checkValidity($value, $omitMandatoryCheck);
@@ -245,11 +245,11 @@ class Concrete extends AbstractObject
     }
 
     /**
-     * $directCall is true when the method is called from outside (eg. directly in the controller "save only version")
+     * $callPluginHook is true when the method is called from outside (eg. directly in the controller "save only version")
      * it is false when the method is called by $this->update()
      * @param bool $setModificationDate
-     * @param bool $directCall
-     * @return Version
+     * @param bool $callPluginHook
+     * @return Model\Version
      */
     public function saveVersion($setModificationDate = true, $callPluginHook = true)
     {
@@ -270,8 +270,10 @@ class Concrete extends AbstractObject
         $version = null;
 
         // only create a new version if there is at least 1 allowed
+        // or if saveVersion() was called directly (it's a newer version of the object)
         if (Config::getSystemConfig()->objects->versions->steps
-            || Config::getSystemConfig()->objects->versions->days) {
+            || Config::getSystemConfig()->objects->versions->days
+            || $setModificationDate) {
             // create version
             $version = new Model\Version();
             $version->setCid($this->getId());
