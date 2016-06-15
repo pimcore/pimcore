@@ -55,7 +55,7 @@ pimcore.settings.thumbnail.item = Class.create({
             items: [{
                 xtype: 'button',
                 style: "float: right",
-                text: t("add_media_query") + " (<b>" + t("experimental") + "</b>)",
+                text: t("add_media_query"),
                 iconCls: "pimcore_icon_add",
                 handler: function () {
                     Ext.MessageBox.prompt("", t("please_enter_the_maximum_viewport_width_in_pixels_allowed_for_this_thumbnail"), function (button, value) {
