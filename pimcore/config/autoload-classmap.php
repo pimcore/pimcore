@@ -1,7 +1,7 @@
 <?php
 $pdr = PIMCORE_DOCUMENT_ROOT;
 
-return array (
+return  [
   'simple_html_dom_node' => $pdr . '/pimcore/lib/simple_html_dom.php',
   'simple_html_dom' => $pdr . '/pimcore/lib/simple_html_dom.php',
   'Pimcore\\Video\\Adapter\\Ffmpeg' => $pdr . '/pimcore/lib/Pimcore/Video/Adapter/Ffmpeg.php',
@@ -713,4 +713,4 @@ return array (
   'Pimcore\\Model\\Property\\Predefined\\Dao' => $pdr . '/pimcore/models/Property/Predefined/Dao.php',
   'Pimcore\\Model\\Property\\Predefined' => $pdr . '/pimcore/models/Property/Predefined.php',
   'Pimcore\\Model\\Property\\Dao' => $pdr . '/pimcore/models/Property/Dao.php',
-);
+];
