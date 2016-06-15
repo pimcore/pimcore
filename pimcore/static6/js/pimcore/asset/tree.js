@@ -176,15 +176,7 @@ pimcore.asset.tree = Class.create({
                         }
 
                         var node = selection[0];
-                        var dt = e.dataTransfer;
-                        var files = dt.files;
-
-                        // if a folder is dropped (currently only Chrome) pass the dataTransfer object instead of the FileList object
-                        if (dt["items"]) {
-                            files = dt;
-                        }
-
-                        this.uploadFileList(files, node);
+                        this.uploadFileList(e.dataTransfer, node);
 
                     }.bind(this), true);
                 }
@@ -215,13 +207,10 @@ pimcore.asset.tree = Class.create({
         }
     },
 
-    uploadFileList: function (files, parentNode) {
+    uploadFileList: function (dataTransfer, parentNode) {
         var file;
         this.activeUploads = 0;
 
-        if(files.length < 1) {
-            return;
-        }
 
         var win = new Ext.Window({
             items: [],
@@ -283,40 +272,37 @@ pimcore.asset.tree = Class.create({
             );
         }.bind(this);
 
-
-
-        // this is for browser that support folders (currently: Chrome)
-        // in this case not a FileList object is given but a dataTransfer object (from DnD Event)
-        if(files["items"]) {
+        if(dataTransfer["items"] && dataTransfer.items[0] && dataTransfer.items[0].webkitGetAsEntry) {
+            // chrome
             var traverseFileTree = function (item, path) {
                 path = path || "";
                 if (item.isFile) {
                     // Get file
-                    item.file(function(file) {
+                    item.file(function (file) {
                         doFileUpload(file, path);
                     }.bind(this));
                 } else if (item.isDirectory) {
                     // Get folder contents
                     var dirReader = item.createReader();
-                    dirReader.readEntries(function(entries) {
-                        for (var i=0; i<entries.length; i++) {
+                    dirReader.readEntries(function (entries) {
+                        for (var i = 0; i < entries.length; i++) {
                             traverseFileTree(entries[i], path + item.name + "/");
                         }
                     });
                 }
             }.bind(this);
 
-            for (var i=0; i<files.items.length; i++) {
+            for (var i = 0; i < dataTransfer.items.length; i++) {
                 // webkitGetAsEntry is where the magic happens
-                var item = files.items[i].webkitGetAsEntry();
+                var item = dataTransfer.items[i].webkitGetAsEntry();
                 if (item) {
                     traverseFileTree(item);
                 }
             }
-        } else {
+        } else if(dataTransfer["files"]) {
             // default filelist upload
-            for (var i=0; i<files.length; i++) {
-                file = files[i];
+            for (var i=0; i<dataTransfer["files"].length; i++) {
+                file = dataTransfer["files"][i];
 
                 if (window.FileList && file.name && file.type) { // check for type (folder has no type)
                     doFileUpload(file);
