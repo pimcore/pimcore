@@ -163,7 +163,10 @@ class Image extends Model\Asset
     }
 
     /**
-     * @return array
+     * @param null $path
+     * @param bool $force
+     * @return array|void
+     * @throws \Exception
      */
     public function getDimensions($path = null, $force = false)
     {

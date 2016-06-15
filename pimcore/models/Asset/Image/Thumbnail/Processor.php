@@ -235,6 +235,23 @@ class Processor
         }
 
         if (is_array($transformations) && count($transformations) > 0) {
+            $sourceImageWidth = $asset->getWidth();
+            $sourceImageHeight = $asset->getHeight();
+            $highResFactor = $config->getHighResolution();
+
+            $calculateMaxFactor = function ($factor, $original, $new) {
+                $newFactor = $factor*$original/$new;
+                if($newFactor < 1) {
+                    // don't go below factor 1
+                    $newFactor = 1;
+                }
+
+                return $newFactor;
+            };
+
+            // sorry for the goto/label - but in this case it makes life really easier and the code more readable
+            prepareTransformations:
+
             foreach ($transformations as $transformation) {
                 if (!empty($transformation)) {
                     $arguments = [];
@@ -247,8 +264,22 @@ class Processor
 
                                 // high res calculations if enabled
                                 if (!in_array($transformation["method"], ["cropPercent"]) && in_array($key, ["width", "height", "x", "y"])) {
-                                    if ($config->getHighResolution() && $config->getHighResolution() > 1) {
-                                        $value *= $config->getHighResolution();
+                                    if ($highResFactor && $highResFactor > 1) {
+
+                                        $value *= $highResFactor;
+
+                                        // check if source image is big enough otherwise adjust the high-res factor
+                                        if(in_array($key, ["width", "x"])) {
+                                            if($sourceImageWidth < $value) {
+                                                $highResFactor = $calculateMaxFactor($highResFactor, $sourceImageWidth, $value);
+                                                goto prepareTransformations;
+                                            }
+                                        } else if (in_array($key, ["height", "y"])) {
+                                            if($sourceImageHeight < $value) {
+                                                $highResFactor = $calculateMaxFactor($highResFactor, $sourceImageHeight, $value);
+                                                goto prepareTransformations;
+                                            }
+                                        }
                                     }
                                 }
 
