@@ -1092,7 +1092,11 @@ abstract class Data
                                 } else {
                                     throw new \Exception("object seems to be modified, item with orginal index " . $originalndex . " not found, new index: " . $index);
                                 }
+                            } else {
+                                return null;
                             }
+                        } else {
+                            return null;
                         }
                     } elseif ($object instanceof Object\Localizedfield) {
                         $data = $object->getLocalizedValue($this->getName(), $params["language"], true);
