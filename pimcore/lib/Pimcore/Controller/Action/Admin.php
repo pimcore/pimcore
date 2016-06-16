@@ -242,7 +242,11 @@ abstract class Admin extends Action
             \Zend_Registry::set("Zend_Locale", $locale);
             if (\Zend_Registry::isRegistered("Zend_Translate")) {
                 $t = \Zend_Registry::get("Zend_Translate");
-                $t->setLocale($locale);
+                if((string) $locale != (string) $t->getLocale()) {
+                    $languageFile = AdminTool::getLanguageFile($locale);
+                    $t->addTranslation($languageFile, $locale);
+                    $t->setLocale($locale);
+                }
             }
         }
 
@@ -274,14 +278,8 @@ abstract class Admin extends Action
         $coreLanguageFile = AdminTool::getLanguageFile($language);
         $translator = new \Zend_Translate('Pimcore\Translate\Adapter\Json', $coreLanguageFile, $language);
 
-        $availableLanguages = AdminTool::getLanguages();
-
-        foreach ($availableLanguages as $lang) {
-            if ($lang != "en") {
-                $languageFile = AdminTool::getLanguageFile($lang);
-                $translator->addTranslation($languageFile, $lang);
-            }
-        }
+        $languageFile = AdminTool::getLanguageFile($language);
+        $translator->addTranslation($languageFile, $language);
 
         if (\Zend_Registry::isRegistered("Zend_Locale")) {
             $locale = \Zend_Registry::get("Zend_Locale");
