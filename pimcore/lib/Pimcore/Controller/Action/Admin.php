@@ -242,7 +242,7 @@ abstract class Admin extends Action
             \Zend_Registry::set("Zend_Locale", $locale);
             if (\Zend_Registry::isRegistered("Zend_Translate")) {
                 $t = \Zend_Registry::get("Zend_Translate");
-                if((string) $locale != (string) $t->getLocale()) {
+                if ((string) $locale != (string) $t->getLocale()) {
                     $languageFile = AdminTool::getLanguageFile($locale);
                     $t->addTranslation($languageFile, $locale);
                     $t->setLocale($locale);
@@ -264,7 +264,7 @@ abstract class Admin extends Action
     {
         $language = "en";
         $locale = $instance->getLanguage();
-        if($locale) {
+        if ($locale) {
             $locale = new \Zend_Locale($locale);
             foreach ([(string) $locale, $locale->getLanguage()] as $localeVariant) {
                 if (in_array($localeVariant, AdminTool::getLanguages())) {
