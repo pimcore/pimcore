@@ -39,15 +39,15 @@ pimcore.document.pages.preview = Class.create({
                 }, {
                     text: t("tablet"),
                     iconCls: "pimcore_icon_tablet",
-                    handler: this.setMode.bind(this, {width: 1024, height: 768})
+                    handler: this.setMode.bind(this, {device: "tablet", width: 1024, height: 768})
                 }, {
                     text: t("phone"),
                     iconCls: "pimcore_icon_mobile",
-                    handler: this.setMode.bind(this, {width: 375, height: 667})
+                    handler: this.setMode.bind(this, {device: "phone", width: 375, height: 667})
                 },{
                     text: t("phone"),
                     iconCls: "pimcore_icon_tv",
-                    handler: this.setMode.bind(this, {width: 667, height: 375})
+                    handler: this.setMode.bind(this, {device: "phone", width: 667, height: 375})
                 }, "-", {
                     text: t("qr_codes"),
                     iconCls: "pimcore_icon_qrcode",
@@ -137,6 +137,8 @@ pimcore.document.pages.preview = Class.create({
             top: "initial",
             left: "initial"
         });
+
+        this.loadCurrentPreview("desktop");
     },
 
     setMode: function (mode) {
@@ -164,6 +166,8 @@ pimcore.document.pages.preview = Class.create({
             top: top + "px",
             left: left + "px"
         });
+
+        this.loadCurrentPreview(mode["device"]);
     },
 
     onLayoutResize: function (el, width, height, rWidth, rHeight) {
@@ -204,11 +208,11 @@ pimcore.document.pages.preview = Class.create({
     },
 
 
-    loadCurrentPreview: function () {
+    loadCurrentPreview: function (device) {
         var date = new Date();
         var path;
 
-        path = this.page.data.path + this.page.data.key + "?pimcore_preview=true&time=" + date.getTime();
+        path = this.page.data.path + this.page.data.key + "?pimcore_preview=true&time=" + date.getTime() + "&forceDeviceType=" + device;
 
         // add persona parameter if available
         if(this.page["edit"] && this.page.edit["persona"]) {
