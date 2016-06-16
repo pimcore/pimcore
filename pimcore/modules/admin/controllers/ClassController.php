@@ -668,7 +668,8 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
                     $filteredList[] = $type;
 
                     // mainly for objects-meta data-type
-                    Object\Service::enrichLayoutDefinition($type->getLayoutDefinitions(), null);
+                    $layoutDefinitions = $type->getLayoutDefinitions();
+                    Object\Service::enrichLayoutDefinition($layoutDefinitions, null);
                 }
             }
 
