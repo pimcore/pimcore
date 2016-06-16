@@ -53,7 +53,7 @@
                     <br />
                     <br />
 
-                    <a href="/admin/login/"><?= $this->translate("Back to login"); ?></a>
+                    <a href="/admin/login/"><?= $this->translate("Back to Login"); ?></a>
                 </div>
             <?php } else { ?>
                 <div class="body info">
@@ -75,7 +75,7 @@
             <?php } ?>
 
             <div class="body lostpassword" style="padding-top: 30px;">
-                <a href="/admin/login/"><?= $this->translate("Back to login"); ?></a>
+                <a href="/admin/login/"><?= $this->translate("Back to Login"); ?></a>
             </div>
         </div>
     </div>

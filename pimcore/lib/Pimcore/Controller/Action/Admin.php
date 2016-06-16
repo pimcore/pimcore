@@ -235,7 +235,7 @@ abstract class Admin extends Action
             \Zend_Registry::set("Zend_Locale", $locale);
         } else {
             // check if given language is installed if not => skip
-            if (!in_array((string) $locale, AdminTool::getLanguages())) {
+            if (!in_array((string) $locale->getLanguage(), AdminTool::getLanguages())) {
                 return;
             }
 
@@ -258,10 +258,21 @@ abstract class Admin extends Action
      */
     public static function initTranslations($instance)
     {
+        $language = "en";
+        $locale = $instance->getLanguage();
+        if($locale) {
+            $locale = new \Zend_Locale($locale);
+            foreach ([(string) $locale, $locale->getLanguage()] as $localeVariant) {
+                if (in_array($localeVariant, AdminTool::getLanguages())) {
+                    $language = $localeVariant;
+                    break;
+                }
+            }
+        }
 
         //add translations to registry
-        $coreLanguageFile = AdminTool::getLanguageFile("en");
-        $translator = new \Zend_Translate('Pimcore\Translate\Adapter\Json', $coreLanguageFile, 'en');
+        $coreLanguageFile = AdminTool::getLanguageFile($language);
+        $translator = new \Zend_Translate('Pimcore\Translate\Adapter\Json', $coreLanguageFile, $language);
 
         $availableLanguages = AdminTool::getLanguages();
 
