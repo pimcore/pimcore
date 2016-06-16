@@ -213,7 +213,7 @@ CSS;
             throw new \Exception('$document has to be an instance of Document');
         }
 
-        if (!$hostUrl) {
+        if (!$hostUrl && $document) {
             // try to determine if the newsletter is within a site
             $site = \Pimcore\Tool\Frontend::getSiteForDocument($document);
             if ($site) {
