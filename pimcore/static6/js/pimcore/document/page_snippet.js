@@ -227,16 +227,32 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                 scale: "medium",
                 handler: function () {
                     var date = new Date();
-                    var link = this.data.path + this.data.key + "?pimcore_preview=true&time=" + date.getTime();
+                    var link = this.data.path + this.data.key;
+                    var linkParams = [];
+
+                    if(this.isDirty()) {
+                        linkParams.push("pimcore_preview=true");
+                        linkParams.push("_dc=" + date.getTime());
+                    }
 
                     // add persona parameter if available
                     if(this["edit"] && this.edit["persona"]) {
                         if(this.edit.persona && this.edit.persona.getValue()) {
-                            link += "&_ptp=" + this.edit.persona.getValue();
+                            linkParams.push("_ptp=" + this.edit.persona.getValue());
                         }
                     }
 
-                    window.open(link);
+                    if(linkParams.length) {
+                        link += "?" + linkParams.join("&");
+                    }
+
+                    if(this.isDirty()) {
+                        this.saveToSession(function () {
+                            window.open(link);
+                        });
+                    } else {
+                        window.open(link);
+                    }
                 }.bind(this)
             });
             buttons.push("-");
