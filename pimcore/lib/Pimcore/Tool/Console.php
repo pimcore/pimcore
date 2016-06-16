@@ -92,7 +92,7 @@ class Console
                     $process = new Process($executablePath . " " . $option);
                     $process->mustRun();
 
-                    if($process->isSuccessful()) {
+                    if ($process->isSuccessful()) {
                         if (empty($path) && self::getSystemEnvironment() == "unix") {
                             // get the full qualified path, seems to solve a lot of problems :)
                             // if not using the full path, timeout, nohup and nice will fail
