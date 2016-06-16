@@ -92,19 +92,21 @@ class Console
                     $process = new Process($executablePath . " " . $option);
                     $process->mustRun();
 
-                    if (empty($path) && self::getSystemEnvironment() == "unix") {
-                        // get the full qualified path, seems to solve a lot of problems :)
-                        // if not using the full path, timeout, nohup and nice will fail
-                        $fullQualifiedPath = shell_exec("which " . $executablePath);
-                        $fullQualifiedPath = trim($fullQualifiedPath);
-                        if ($fullQualifiedPath) {
-                            $executablePath = $fullQualifiedPath;
+                    if($process->isSuccessful()) {
+                        if (empty($path) && self::getSystemEnvironment() == "unix") {
+                            // get the full qualified path, seems to solve a lot of problems :)
+                            // if not using the full path, timeout, nohup and nice will fail
+                            $fullQualifiedPath = shell_exec("which " . $executablePath);
+                            $fullQualifiedPath = trim($fullQualifiedPath);
+                            if ($fullQualifiedPath) {
+                                $executablePath = $fullQualifiedPath;
+                            }
                         }
+
+                        self::$executableCache[$name] = $executablePath;
+
+                        return $executablePath;
                     }
-
-                    self::$executableCache[$name] = $executablePath;
-
-                    return $executablePath;
                 } catch (\Exception $e) {
                 }
             }
