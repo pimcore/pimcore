@@ -51,6 +51,10 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
             var colConfig = data.columnConfiguration[f];
             this.storeFields.push(colConfig["name"]);
 
+            if (colConfig["displayType"] == "hide") {
+                continue;
+            }
+
             this.columnLabels[colConfig["name"]] = colConfig["label"] ? ts(colConfig["label"]) : ts(colConfig["name"]);
 
             gridColConfig = {
@@ -222,7 +226,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
             drillDownFilterComboboxes.push({
                 xtype: 'label',
                 text: this.drillDownFilterDefinitions[i]["label"] ? ts(this.drillDownFilterDefinitions[i]["label"])
-                    : ts(this.drillDownFilterDefinitions[i]["name"]),
+                                                    : ts(this.drillDownFilterDefinitions[i]["name"]),
                 style: 'padding-right: 5px'
             });
 

@@ -79,7 +79,8 @@ pimcore.report.custom.item = Class.create({
             data: [
                 ["", t("none")],
                 ["text", t("text")],
-                ["date", t("date")]
+                ["date", t("date")],
+                ["hide", t("hide")]
             ]
         });
 

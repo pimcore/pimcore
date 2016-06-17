@@ -7143,5 +7143,9 @@
     {
         "term": "custom_report_class",
         "definition": "Report class"
+    },
+    {
+      "term": "hide",
+      "definition": "Hide"
     }
 ]
