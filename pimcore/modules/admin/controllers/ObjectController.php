@@ -1467,6 +1467,11 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                     } elseif ($class->getFieldDefinition($orderKey) instanceof  Object\ClassDefinition\Data\QuantityValue) {
                         $orderKey = "concat(" . $orderKey . "__unit, " . $orderKey . "__value)";
                         $doNotQuote = true;
+                    } elseif (strpos($orderKey,"~") !== FALSE) {
+                        $orderKeyParts = explode("~", $orderKey);
+                        if( count($orderKeyParts) == 2) {
+                            $orderKey = $orderKeyParts[1];
+                        }
                     }
                 }
             }
