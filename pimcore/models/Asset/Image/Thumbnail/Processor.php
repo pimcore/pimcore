@@ -237,7 +237,7 @@ class Processor
         if (is_array($transformations) && count($transformations) > 0) {
             $sourceImageWidth = PHP_INT_MAX;
             $sourceImageHeight = PHP_INT_MAX;
-            if($asset instanceof Asset\Image) {
+            if ($asset instanceof Asset\Image) {
                 $sourceImageWidth = $asset->getWidth();
                 $sourceImageHeight = $asset->getHeight();
             }
