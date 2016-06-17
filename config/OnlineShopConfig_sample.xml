@@ -120,10 +120,12 @@
                         <sandbox>
                             <merchantId>1000011011</merchantId>
                             <sign>30916165706580013</sign>
+                            <digitalSignature>0</digitalSignature>
                         </sandbox>
                         <live>
                             <merchantId></merchantId>
                             <sign></sign>
+                            <digitalSignature>0</digitalSignature>
                         </live>
                     </config>
                 </provider>

@@ -39,9 +39,14 @@ class Datatrans implements IPayment
     protected $sign;
 
     /**
+     * @var bool
+     */
+    protected $useDigitalSignature = false;
+
+    /**
      * @var string[]
      */
-    protected $authorizedData;
+    protected $authorizedData = [];
 
     /**
      * @var \OnlineShop\Framework\PaymentManager\IStatus
@@ -69,6 +74,12 @@ class Datatrans implements IPayment
 
         $this->merchantId = $settings->merchantId;
         $this->sign = $settings->sign;
+
+        // use digitally signed
+        if ($settings->digitalSignature)
+        {
+            $this->useDigitalSignature = (bool)$settings->digitalSignature;
+        }
 
 
         if($xml->mode == 'live')
@@ -138,6 +149,23 @@ class Datatrans implements IPayment
         // CAA – Authorisation and settlement
 
 
+        // create sign
+        if(!$this->useDigitalSignature)
+        {
+            $sign = $this->sign;
+        }
+        else
+        {
+            $data = [
+                'merchantId' => $this->merchantId
+                , 'amount' => $paymentData['amount']
+                , 'currency' => $paymentData['currency']
+                , 'refno' => $config['refno']
+            ];
+            $sign = hash_hmac('SHA256', implode('', $data), hex2bin($this->sign));
+        }
+
+
         // create form
         $form = new \Zend_Form();
         $form->setAction( $this->endpoint['form'] );
@@ -145,7 +173,7 @@ class Datatrans implements IPayment
 
         // auth
         $form->addElement( 'hidden', 'merchantId', ['value' => $this->merchantId] );
-        $form->addElement( 'hidden', 'sign', ['value' => $this->sign] );
+        $form->addElement( 'hidden', 'sign', ['value' => $sign] );
 
         // return urls
         $form->addElement( 'hidden', 'successUrl', ['value' => $config['successUrl']] );
@@ -165,7 +193,7 @@ class Datatrans implements IPayment
         // used for lightbox version
         $form->setAttrib( 'data-language', $config['language'] );
         $form->setAttrib( 'data-merchant-id', $this->merchantId );
-        $form->setAttrib( 'data-sign', $this->sign );
+        $form->setAttrib( 'data-sign', $sign );
         $form->setAttrib( 'data-amount', $paymentData['amount'] );
         $form->setAttrib( 'data-currency', $paymentData['currency'] );
         $form->setAttrib( 'data-refno', $config['refno'] );
