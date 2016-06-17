@@ -208,9 +208,6 @@ pimcore.asset.tree = Class.create({
     },
 
     uploadFileList: function (dataTransfer, parentNode) {
-        console.log(dataTransfer);
-        console.log(parentNode);
-        console.log("xxx");
 
         var file;
         this.activeUploads = 0;
