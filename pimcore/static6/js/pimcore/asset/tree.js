@@ -208,6 +208,10 @@ pimcore.asset.tree = Class.create({
     },
 
     uploadFileList: function (dataTransfer, parentNode) {
+        console.log(dataTransfer);
+        console.log(parentNode);
+        console.log("xxx");
+
         var file;
         this.activeUploads = 0;
 
@@ -878,7 +882,7 @@ pimcore.asset.tree = Class.create({
         jQuery("#multiUploadField").unbind("change");
         jQuery("#multiUploadField").on("change", function (e) {
             if(e.target.files.length) {
-                this.uploadFileList(e.target.files, record);
+                this.uploadFileList(e.target, record);
             }
         }.bind(this));
 
@@ -932,7 +936,6 @@ pimcore.asset.tree = Class.create({
                 jobs: res.jobs
             });
         }.bind(this), function (res) {
-            console.log("failed");
             pimcore.elementservice.refreshNodeAllTrees("asset", record.parentNode.get("id"));
         }.bind(this));
     },
