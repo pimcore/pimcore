@@ -102,13 +102,13 @@ class Installer {
      */
     private static $classes = [
         "FilterDefinition" => PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/class_source/class_FilterDefinition_export.json',
-        "OnlineShopOrderItem", PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/class_source/class_OnlineShopOrderItem_export.json',
-        "OnlineShopVoucherSeries", PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/class_source/class_OnlineShopVoucherSeries_export.json',
-        "OnlineShopVoucherToken", PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/class_source/class_OnlineShopVoucherToken_export.json',
-        "OnlineShopOrder", PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/class_source/class_OnlineShopOrder_export.json',
-        "OfferToolCustomProduct", PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/class_source/class_OfferToolCustomProduct_export.json',
-        "OfferToolOfferItem", PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/class_source/class_OfferToolOfferItem_export.json',
-        "OfferToolOffer", PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/class_source/class_OfferToolOffer_export.json'
+        "OnlineShopOrderItem" => PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/class_source/class_OnlineShopOrderItem_export.json',
+        "OnlineShopVoucherSeries" => PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/class_source/class_OnlineShopVoucherSeries_export.json',
+        "OnlineShopVoucherToken" => PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/class_source/class_OnlineShopVoucherToken_export.json',
+        "OnlineShopOrder" => PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/class_source/class_OnlineShopOrder_export.json',
+        "OfferToolCustomProduct" => PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/class_source/class_OfferToolCustomProduct_export.json',
+        "OfferToolOfferItem" => PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/class_source/class_OfferToolOfferItem_export.json',
+        "OfferToolOffer" => PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/class_source/class_OfferToolOffer_export.json'
     ];
 
     /**
@@ -176,10 +176,15 @@ class Installer {
         $db = \Pimcore\Db::get();
         $existingTables = [];
         foreach(self::$tables as $name => $statement) {
-            $result = $db->describeTable($name);
+            try {
+                $result = $db->describeTable($name);
+            } catch (\Exception $e) {
+                //nothing to do
+            }
             if(!empty($result)) {
                 $existingTables[] = $name;
             }
+
         }
         if(!empty($existingTables)) {
             throw new \Exception("Table(s) " . implode(", ", $existingTables) . " already exist. Please remove them first.");
