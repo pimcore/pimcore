@@ -491,7 +491,9 @@ class Data extends \Pimcore\Model\AbstractModel
     public function save()
     {
         if ($this->id instanceof Data\Id) {
+            \Pimcore::getEventManager()->trigger("search.backend.preSave", $this);
             $this->getDao()->save();
+            \Pimcore::getEventManager()->trigger("search.backend.postSave", $this);
         } else {
             throw new \Exception("Search\\Backend\\Data cannot be saved - no id set!");
         }
