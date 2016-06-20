@@ -23,7 +23,7 @@ pimcore.object.tags.time = Class.create(pimcore.object.tags.abstract, {
 
     getGridColumnFilter: function(field) {
         return {type: 'string', dataIndex: field.key};
-    },    
+    },
 
     getLayoutEdit: function () {
         this.component = new Ext.form.TimeField({
@@ -32,6 +32,9 @@ pimcore.object.tags.time = Class.create(pimcore.object.tags.abstract, {
             emptyText: "",
             width: 200,
             value: this.data,
+            allowBlank: (!this.fieldConfig.mandatory),
+            minValue: (this.fieldConfig.minValue) ? this.fieldConfig.minValue : null,
+            maxValue: (this.fieldConfig.maxValue) ? this.fieldConfig.maxValue : null,
             componentCls: "object_field"
         });
 

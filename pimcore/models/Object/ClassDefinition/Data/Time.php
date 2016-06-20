@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -35,6 +35,59 @@ class Time extends Model\Object\ClassDefinition\Data\Input
      */
     public $columnLength = 5;
 
+
+    /**
+     * @var string
+     */
+    public $minValue;
+
+    /**
+     * @var string
+     */
+    public $maxValue;
+
+
+    /**
+     * @return string
+     */
+    public function getMinValue()
+    {
+        return $this->minValue;
+    }
+
+    /**
+     * @param string $minValue
+     */
+    public function setMinValue($minValue)
+    {
+        if(strlen($minValue)) {
+            $this->minValue = $this->toTime($minValue);
+        } else {
+            $this->minValue = null;
+        }
+    }
+
+    /**
+     * @return string
+     */
+    public function getMaxValue()
+    {
+        return $this->maxValue;
+    }
+
+    /**
+     * @param string $maxValue
+     */
+    public function setMaxValue($maxValue)
+    {
+        if(strlen($maxValue)) {
+            $this->maxValue = $this->toTime($maxValue);
+        } else {
+            $this->maxValue = null;
+        }
+    }
+
+
     /**
      * Checks if data is valid for current data field
      *
@@ -42,13 +95,30 @@ class Time extends Model\Object\ClassDefinition\Data\Input
      * @param boolean $omitMandatoryCheck
      * @throws \Exception
      */
-    public function checkValidity($data, $omitMandatoryCheck = false)
-    {
+    public function checkValidity($data, $omitMandatoryCheck = false){
+
         parent::checkValidity($data, $omitMandatoryCheck);
 
         if ((is_string($data) && strlen($data) != 5 && !empty($data)) || (!empty($data) && !is_string($data))) {
             throw new Model\Element\ValidationException("Wrong time format given must be a 5 digit string (eg: 06:49) [ ".$this->getName()." ]");
         }
+
+        if (!$omitMandatoryCheck && strlen($data)) {
+
+            if (!$this->toTime($data)) {
+                throw new \Exception("Wrong time format given must be a 5 digit string (eg: 06:49) [ ".$this->getName()." ]");
+            }
+
+            if(strlen($this->getMinValue()) && $this->isEarlier($this->getMinValue(), $data)) {
+                throw new \Exception("Value in field [ ".$this->getName()." ] is not at least " . $this->getMinValue());
+            }
+
+            if(strlen($this->getMaxValue()) && $this->isLater($this->getMaxValue(), $data)) {
+                throw new \Exception("Value in field [ " . $this->getName() . " ] is bigger than " . $this->getMaxValue());
+            }
+
+        }
+
     }
 
     /** True if change is allowed in edit mode.
@@ -60,4 +130,64 @@ class Time extends Model\Object\ClassDefinition\Data\Input
     {
         return true;
     }
+
+    /**
+     * @param $data
+     * @return bool
+     */
+    public function isEmpty($data) {
+        return (strlen($data) !== 5);
+    }
+
+    /**
+     * Returns a 5 digit time string of a given time
+     * @param $string
+     * @return null|string
+     */
+    public function toTime($string) {
+
+        $time = @date("H:i", strtotime($string));
+        if(!$time) {
+            return null;
+        }
+
+        return $time;
+    }
+
+    /**
+     * Returns a timestamp representation of a given time
+     * @param      $string
+     * @param null $baseTimestamp
+     * @return int
+     */
+    protected function toTimestamp($string, $baseTimestamp=null) {
+        if ($baseTimestamp === null) {
+            $baseTimestamp = time();
+        }
+
+        return strtotime($string, $baseTimestamp);
+    }
+
+    /**
+     * Returns whether or not a time is earlier than the subject
+     * @param $subject
+     * @param $comparison
+     * @return int
+     */
+    public function isEarlier($subject, $comparison) {
+        $baseTs = time();
+        return $this->toTimestamp($subject, $baseTs) > $this->toTimestamp($comparison, $baseTs);
+    }
+
+    /**
+     * Returns whether or not a time is later than the subject
+     * @param $subject
+     * @param $comparison
+     * @return int
+     */
+    public function isLater($subject, $comparison) {
+        $baseTs = time();
+        return $this->toTimestamp($subject, $baseTs) < $this->toTimestamp($comparison, $baseTs);
+    }
+
 }
