@@ -236,13 +236,13 @@ class Tool
             "ka" => "ge", "os" => "ge", "kea" => "cv", "kk" => "kz", "kl" => "gl", "km" => "kh", "ko" => "kr",
             "lg" => "ug", "lo" => "la", "lt" => "lv", "mg" => "mg", "mk" => "mk", "mn" => "mn", "ms" => "my",
             "mt" => "mt", "my" => "mm", "nb" => "no", "ne" => "np", "nl" => "nl", "nn" => "no", "pl" => "pl",
-            "pt" => "pt", "ro" => "ro", "ru" => "ru", "sg" => "cf", "sk" => "sk", "sl" => "sl", "sq" => "al",
+            "pt" => "pt", "ro" => "ro", "ru" => "ru", "sg" => "cf", "sk" => "sk", "sl" => "si", "sq" => "al",
             "sr" => "rs", "sv" => "se", "swc" => "cd", "th" => "th", "to" => "to", "tr" => "tr", "tzm" => "ma",
             "uk" => "ua", "uz" => "uz", "vi" => "vn", "zh" => "cn", "gd" => "gb-sct", "gd-gb" => "gb-sct",
             "cy" => "gb-wls", "cy-gb" => "gb-wls", "fy" => "nl", "xh" => "za", "yo" => "bj", "zu" => "za",
             "ta" => "lk", "te" => "in", "ss" => "za", "sw" => "ke", "so" => "so", "si" => "lk", "ii" => "cn",
             "zh-hans" => "cn", "sn" => "zw", "rm" => "ch", "pa" => "in", "fa" => "ir", "lv" => "lv", "gl" => "es",
-            "fil" => "ph",
+            "fil" => "ph"
         ];
 
         if (array_key_exists($code, $languageCountryMapping)) {
