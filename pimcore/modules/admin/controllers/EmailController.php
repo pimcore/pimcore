@@ -223,20 +223,22 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
     protected function enhanceLoggingData(&$data, &$fullEntry = null)
     {
         if ($data['objectId']) {
-            $class = "\\" . ltrim($data['objectClass'], "\\");
-            $obj = $class::getById($data['objectId']);
-            if (is_null($obj)) {
-                $data['objectPath'] = '';
-            } else {
-                $data['objectPath'] = $obj->getRealFullPath();
-            }
-            $niceClassName = str_replace("\\Pimcore\\Model\\", "", $data['objectClass']);
-            $niceClassName = str_replace("_", "\\", $niceClassName);
+            if(is_subclass_of($class, "\\Pimcore\\Model\\Element\\ElementInterface")) {
+                $class = "\\" . ltrim($data['objectClass'], "\\");
+                $obj = $class::getById($data['objectId']);
+                if (is_null($obj)) {
+                    $data['objectPath'] = '';
+                } else {
+                    $data['objectPath'] = $obj->getRealFullPath();
+                }
+                $niceClassName = str_replace("\\Pimcore\\Model\\", "", $data['objectClass']);
+                $niceClassName = str_replace("_", "\\", $niceClassName);
 
-            $tmp = explode("\\", $niceClassName);
-            if (in_array($tmp[0], ['Object', 'Document', 'Asset'])) {
-                $data['objectClassBase'] = $tmp[0];
-                $data['objectClassSubType'] = $tmp[1];
+                $tmp = explode("\\", $niceClassName);
+                if (in_array($tmp[0], ['Object', 'Document', 'Asset'])) {
+                    $data['objectClassBase'] = $tmp[0];
+                    $data['objectClassSubType'] = $tmp[1];
+                }
             }
         }
 
