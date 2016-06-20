@@ -483,6 +483,7 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
                 Cache::save($this->redirects, $cacheKey, ["system", "redirect", "route"], null, 998);
             }
 
+            $requestScheme = Tool::getRequestScheme();
             $matchRequestUri = $_SERVER["REQUEST_URI"];
             $matchUrl = Tool::getHostUrl() . $matchRequestUri;
 
