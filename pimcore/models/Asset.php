@@ -637,6 +637,16 @@ class Asset extends Element\AbstractElement
         $typeChanged = false;
 
         if ($this->getType() != "folder") {
+
+            // fix for missing parent folders
+            // check if folder of new destination is already created and if not do so
+            $newPath = dirname($this->getFileSystemPath());
+            if (!is_dir($newPath)) {
+                if (!File::mkdir($newPath)) {
+                    throw new \Exception("Unable to create directory: ". $newPath . " for asset :" . $this->getId());
+                }
+            }
+
             if ($this->getDataChanged()) {
                 $src = $this->getStream();
                 $streamMeta = stream_get_meta_data($src);
