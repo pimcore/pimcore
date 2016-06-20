@@ -30,7 +30,11 @@ class Archive
     public static function createZip($sourceDir, $destinationFile, $excludeFilePattern = [], $options = [])
     {
         list($sourceDir, $destinationFile, $items) = self::prepareArchive($sourceDir, $destinationFile);
-        $mode = $options['mode'] ? $options['mode'] : \ZIPARCHIVE::OVERWRITE;
+        $mode = $options['mode'];
+
+        if (!$mode) {
+            $mode = (is_file($destinationFile)) ? \ZipArchive::OVERWRITE : \ZipArchive::CREATE;
+        }
 
         if (substr($sourceDir, -1, 1) != DIRECTORY_SEPARATOR) {
             $sourceDir .= DIRECTORY_SEPARATOR;
