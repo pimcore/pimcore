@@ -223,7 +223,7 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
     protected function enhanceLoggingData(&$data, &$fullEntry = null)
     {
         if ($data['objectId']) {
-            if(is_subclass_of($class, "\\Pimcore\\Model\\Element\\ElementInterface")) {
+            if (is_subclass_of($class, "\\Pimcore\\Model\\Element\\ElementInterface")) {
                 $class = "\\" . ltrim($data['objectClass'], "\\");
                 $obj = $class::getById($data['objectId']);
                 if (is_null($obj)) {

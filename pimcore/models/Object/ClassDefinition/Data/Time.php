@@ -60,7 +60,7 @@ class Time extends Model\Object\ClassDefinition\Data\Input
      */
     public function setMinValue($minValue)
     {
-        if(strlen($minValue)) {
+        if (strlen($minValue)) {
             $this->minValue = $this->toTime($minValue);
         } else {
             $this->minValue = null;
@@ -80,7 +80,7 @@ class Time extends Model\Object\ClassDefinition\Data\Input
      */
     public function setMaxValue($maxValue)
     {
-        if(strlen($maxValue)) {
+        if (strlen($maxValue)) {
             $this->maxValue = $this->toTime($maxValue);
         } else {
             $this->maxValue = null;
@@ -95,8 +95,8 @@ class Time extends Model\Object\ClassDefinition\Data\Input
      * @param boolean $omitMandatoryCheck
      * @throws \Exception
      */
-    public function checkValidity($data, $omitMandatoryCheck = false){
-
+    public function checkValidity($data, $omitMandatoryCheck = false)
+    {
         parent::checkValidity($data, $omitMandatoryCheck);
 
         if ((is_string($data) && strlen($data) != 5 && !empty($data)) || (!empty($data) && !is_string($data))) {
@@ -104,21 +104,18 @@ class Time extends Model\Object\ClassDefinition\Data\Input
         }
 
         if (!$omitMandatoryCheck && strlen($data)) {
-
             if (!$this->toTime($data)) {
                 throw new \Exception("Wrong time format given must be a 5 digit string (eg: 06:49) [ ".$this->getName()." ]");
             }
 
-            if(strlen($this->getMinValue()) && $this->isEarlier($this->getMinValue(), $data)) {
+            if (strlen($this->getMinValue()) && $this->isEarlier($this->getMinValue(), $data)) {
                 throw new \Exception("Value in field [ ".$this->getName()." ] is not at least " . $this->getMinValue());
             }
 
-            if(strlen($this->getMaxValue()) && $this->isLater($this->getMaxValue(), $data)) {
+            if (strlen($this->getMaxValue()) && $this->isLater($this->getMaxValue(), $data)) {
                 throw new \Exception("Value in field [ " . $this->getName() . " ] is bigger than " . $this->getMaxValue());
             }
-
         }
-
     }
 
     /** True if change is allowed in edit mode.
@@ -135,7 +132,8 @@ class Time extends Model\Object\ClassDefinition\Data\Input
      * @param $data
      * @return bool
      */
-    public function isEmpty($data) {
+    public function isEmpty($data)
+    {
         return (strlen($data) !== 5);
     }
 
@@ -144,10 +142,10 @@ class Time extends Model\Object\ClassDefinition\Data\Input
      * @param $string
      * @return null|string
      */
-    public function toTime($string) {
-
+    public function toTime($string)
+    {
         $time = @date("H:i", strtotime($string));
-        if(!$time) {
+        if (!$time) {
             return null;
         }
 
@@ -160,7 +158,8 @@ class Time extends Model\Object\ClassDefinition\Data\Input
      * @param null $baseTimestamp
      * @return int
      */
-    protected function toTimestamp($string, $baseTimestamp=null) {
+    protected function toTimestamp($string, $baseTimestamp=null)
+    {
         if ($baseTimestamp === null) {
             $baseTimestamp = time();
         }
@@ -174,8 +173,10 @@ class Time extends Model\Object\ClassDefinition\Data\Input
      * @param $comparison
      * @return int
      */
-    public function isEarlier($subject, $comparison) {
+    public function isEarlier($subject, $comparison)
+    {
         $baseTs = time();
+
         return $this->toTimestamp($subject, $baseTs) > $this->toTimestamp($comparison, $baseTs);
     }
 
@@ -185,9 +186,10 @@ class Time extends Model\Object\ClassDefinition\Data\Input
      * @param $comparison
      * @return int
      */
-    public function isLater($subject, $comparison) {
+    public function isLater($subject, $comparison)
+    {
         $baseTs = time();
+
         return $this->toTimestamp($subject, $baseTs) < $this->toTimestamp($comparison, $baseTs);
     }
-
 }
