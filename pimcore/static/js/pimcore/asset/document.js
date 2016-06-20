@@ -99,28 +99,36 @@ pimcore.asset.document = Class.create(pimcore.asset.asset, {
 
     hasNativePDFViewer: function() {
 
+        if(Ext.isChrome || Ext.isGecko) {
+            // Firefox and Chrome have native support, no need to further test anything
+            return true;
+        }
+
         var getActiveXObject = function(name) {
-            try { return new ActiveXObject(name); } catch(e) {}
+            // this is IE11 only (not Edge)
+            try {
+                return new ActiveXObject(name);
+            } catch(e) {}
         };
 
-        var getNavigatorPlugin = function(name) {
-            for(key in navigator.plugins) {
-                var plugin = navigator.plugins[key];
-                if(plugin.name == name) return plugin;
-            }
-        };
-
-        var getPDFPlugin = function() {
-            return this.plugin = this.plugin || function() {
-                if(typeof window["ActiveXObject"] != "undefined") {
-                    return getActiveXObject('AcroPDF.PDF') || getActiveXObject('PDF.PdfCtrl');
-                } else {
-                    return getNavigatorPlugin('Adobe Acrobat') || getNavigatorPlugin('Chrome PDF Viewer') || getNavigatorPlugin('WebKit built-in PDF');
+        var hasNavigatorPlugin = function(name) {
+            if(navigator["plugins"]) {
+                for (key in navigator.plugins) {
+                    var plugin = navigator.plugins[key];
+                    if (plugin.name == name) {
+                        return true;
+                    }
                 }
-            }();
+            }
+
+            return false;
         };
 
-        return !!getPDFPlugin();
+        var supported = hasNavigatorPlugin('Adobe Acrobat') || hasNavigatorPlugin('Chrome PDF Viewer')
+            || hasNavigatorPlugin('WebKit built-in PDF') || hasNavigatorPlugin('Edge PDF Viewer')
+            || getActiveXObject('AcroPDF.PDF') || getActiveXObject('PDF.PdfCtrl');
+
+        return supported;
     }
 });
 
