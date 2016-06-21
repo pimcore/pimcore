@@ -94,9 +94,9 @@ pimcore.document.pages.preview = Class.create({
                 scrollable: false,
                 bodyStyle: "background:#323232;",
                 bodyCls: "pimcore_overflow_scrolling",
-                html: '<iframe src="about:blank" onload="' + iframeOnLoad + '" frameborder="0" style="width: 100%;" id="'
-                    + this.iframeName + '" name="' + this.iframeName + '"' +
-                    'style="background: #fff;"></iframe>'
+                html: '<iframe src="about:blank" onload="' + iframeOnLoad + '" frameborder="0" ' +
+                    'style="width: 100%;background: #fff;" id="' + this.iframeName + '" ' +
+                    'name="' + this.iframeName + '"></iframe>'
             });
 
             this.layout = new Ext.Panel({
