@@ -179,7 +179,6 @@ class Reports_CustomReportController extends \Pimcore\Controller\Action\Admin\Re
 
         $config = CustomReport\Config::getByName($this->getParam("name"));
         $configuration = $config->getDataSourceConfig();
-        $configuration = $configuration[0];
 
         $adapter = CustomReport\Config::getAdapter($configuration, $config);
 
@@ -201,7 +200,6 @@ class Reports_CustomReportController extends \Pimcore\Controller\Action\Admin\Re
 
         $config = CustomReport\Config::getByName($this->getParam("name"));
         $configuration = $config->getDataSourceConfig();
-        $configuration = $configuration[0];
 
         $adapter = CustomReport\Config::getAdapter($configuration, $config);
         $result = $adapter->getAvailableOptions($filters, $field, $drillDownFilters);
@@ -221,7 +219,7 @@ class Reports_CustomReportController extends \Pimcore\Controller\Action\Admin\Re
         $config = CustomReport\Config::getByName($this->getParam("name"));
 
         $configuration = $config->getDataSourceConfig();
-        $configuration = $configuration[0];
+
         $adapter = CustomReport\Config::getAdapter($configuration, $config);
 
         $result = $adapter->getData($filters, $sort, $dir, null, null, null, $drillDownFilters);
