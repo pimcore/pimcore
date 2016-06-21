@@ -78,134 +78,71 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
             $classes = $tmpClasses;
         }
 
-        $classItems = [];
+        $getClassConfig = function ($class) use ($defaultIcon) {
+            return [
+                "id" => $class->getId(),
+                "text" => $class->getName(),
+                "leaf" => true,
+                "icon" => $class->getIcon() ? $class->getIcon() : $defaultIcon,
+                "propertyVisibility" => $class->getPropertyVisibility(),
+                "qtipCfg" => [
+                    "title" => "ID: " . $class->getId()
+                ]
+            ];
+        };
+
+        // build groups
+        $groups = [];
+        foreach($classes as $class) {
+            preg_match("@^([A-Za-z])([^A-Z]+)@", $class->getName(), $matches);
+            $groupName = $matches[0];
+            if(!isset($groupNames[$groupName])) {
+                $groupNames[$groupName] = [];
+            }
+            $groups[$groupName][] = $class;
+        }
+
+        $treeNodes = [];
 
         if (!$this->getParam('grouped')) {
             // list output
-            foreach ($classes as $classItem) {
-                $classItems[] = [
-                    "id" => $classItem->getId(),
-                    "text" => $classItem->getName(),
-                    "icon" => $classItem->getIcon() ? $classItem->getIcon() : $defaultIcon,
-                    "propertyVisibility" => $classItem->getPropertyVisibility(),
-                    "qtipCfg" => [
-                        "title" => "ID: " . $classItem->getId()
-                    ],
-                ];
+            foreach($groups as $groupName => $group) {
+                foreach($group as $class) {
+                    $node = $getClassConfig($class);
+                    if(count($group) > 1) {
+                        $node["group"] = $groupName;
+                    }
+                    $treeNodes[] = $node;
+                }
             }
         } else {
-            // group classes
-            $cnf['matchCount'] = 3; // min chars to group
-
-            /**
-             * @param string $str1
-             * @param string $str2
-             *
-             * @return int
-             */
-            $getEqual
-                = function ($str1, $str2) {
-                    $count = 0;
-                    for ($c = 0; $c < strlen($str1); $c++) {
-                        if (strcasecmp($str1[$c], $str2[$c]) !== 0) {
-                            break;
-                        }
-
-                        $count++;
-                    }
-
-                    return $count;
-                };
-
-            // create groups
-            $classGroups = [];
-            $lastGroup = '';
-            for ($i = 0; $i < count($classes); $i++) {
-                /* @var Object\ClassDefinition $classItem */
-                $currentClass = $classes[$i];
-                $nextClass = isset($classes[$i+1]) ? $classes[$i+1] : null;
-
-                // check last group
-                $className = $currentClass->getName();
-                $count = $getEqual($lastGroup, $className);
-                if ($count <= $cnf['matchCount'] || strlen($lastGroup) != $count) {
-                    // check new class to group with
-                    if ($nextClass === null) {
-                        // this is the last class
-                        $count = strlen($currentClass->getName());
-                    } else {
-                        // check next class to group with
-                        $count = $getEqual($currentClass->getName(), $nextClass->getName());
-                        if ($count <= $cnf['matchCount']) {
-                            // match is to low, use the complete name
-                            $count = strlen($currentClass->getName());
-                        }
-                    }
-
-                    $group = substr($currentClass->getName(), 0, $count);
-                } else {
-                    // use previous group
-                    $group = $lastGroup;
-                }
-
-
-                // add class to group
-                $classGroups[ $group ][] = $currentClass;
-                $lastGroup = $group;
-            }
-
             // create json output
-            $classItems = [];
-            foreach ($classGroups as $name => $classes) {
-                if (isset($classes[0]) && $classes[0] instanceof Object\ClassDefinition) {
-                    // basic setup
-                    $class = [
-                        "id" => $classes[0]->getId(),
-                        "text" => $name,
-                        "leaf" => true,
+            foreach($groups as $groupName => $group) {
+                if (count($group) === 1) {
+                    // no group, only one child
+                    $node = $getClassConfig($group[0]);
+                } else {
+                    // group classes
+                    $node = [
+                        "id" => "folder_" . $groupName,
+                        "text" => $groupName,
+                        "leaf" => false,
+                        'expandable' => true,
+                        'allowChildren' => true,
+                        'iconCls' => 'pimcore_icon_folder',
                         "children" => []
                     ];
 
-                    // add childs?
-                    if (count($classes) === 1) {
-                        // no group
-                        $class['id'] = $classes[0]->getId();
-                        $class['text'] = $classes[0]->getName();
-                        $class['icon'] = $classes[0]->getIcon() ? $classes[0]->getIcon() : $defaultIcon;
-                        $class['propertyVisibility'] = $classes[0]->getPropertyVisibility();
-                        $class['qtipCfg']['title'] = "ID: " . $classes[0]->getId();
-                    } else {
-                        // group classes
-                        $class['id'] = "folder_" . $class['id'];
-                        $class['leaf'] = false;
-                        $class['expandable'] = true;
-                        $class['allowChildren'] = true;
-                        $class['iconCls'] = 'pimcore_icon_folder';
-                        foreach ($classes as $classItem) {
-                            $child = [
-                                "id" => $classItem->getId(),
-                                "text" => $classItem->getName(),
-                                "leaf" => true,
-                                "icon" => $classItem->getIcon() ? $classItem->getIcon() : $defaultIcon,
-                                "propertyVisibility" => $classItem->getPropertyVisibility(),
-                                "qtipCfg" => [
-                                    "title" => "ID: " . $classItem->getId()
-                                ],
-                            ];
-
-                            $class['children'][] = $child;
-                        }
+                    foreach ($group as $class) {
+                        $node['children'][] = $getClassConfig($class);
                     }
                 }
 
-                // add
-                $classItems[] = $class;
+                $treeNodes[] = $node;
             }
         }
 
-        // send json
-
-        $this->_helper->json($classItems);
+        $this->_helper->json($treeNodes);
     }
 
     public function getAction()

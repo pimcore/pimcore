@@ -333,6 +333,7 @@ Ext.onReady(function () {
             return ts(rec.data.text);
         }},
         {name:'icon'},
+        {name:'group'},
         {name:"propertyVisibility"}
     ];
 

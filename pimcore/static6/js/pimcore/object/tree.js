@@ -287,212 +287,85 @@ pimcore.object.tree = Class.create({
 
         var perspectiveCfg = this.perspectiveCfg;
 
-        /**
-         * case-insensitive string comparison
-         * @param f_string1
-         * @param f_string2
-         * @returns {number}
-         */
-        function strcasecmp(f_string1, f_string2) {
-            var string1 = (f_string1 + '').toLowerCase();
-            var string2 = (f_string2 + '').toLowerCase();
-
-            if (string1 > string2) {
-                return 1;
-            } else if (string1 == string2) {
-                return 0;
-            }
-
-            return -1;
-        }
-
-        /**
-         *
-         * @param str1
-         * @param str2
-         * @returns {number}
-         */
-        function getEqual(str1, str2) {
-            var count = 0;
-            for (var c = 0; c < str1.length; c++) {
-                if (strcasecmp(str1[c], str2[c]) !== 0)
-                    break;
-
-                count++;
-            }
-
-            if(count > 0) {
-                lastSpace = str1.search(/ [^ ]*$/);
-
-                if((lastSpace > 0) && (lastSpace < count)) {
-                    count = lastSpace;
-                }
-            }
-
-            if (str1[count] == " " || (typeof str1[count] == 'undefined')) {
-                return 0;
-            } else {
-                return count;                
-            }
-        };
-
-        var matchCount = 3;
-        var classGroups = {};
-        var currentClass = '', nextClass = '', count = 0, group = '', lastGroup = '';
-
         var object_types = pimcore.globalmanager.get("object_types_store_create");
-        for (var i = 0; i < object_types.getCount(); i++) {
-            //
-            currentClass = object_types.getAt(i);
-            nextClass = object_types.getAt(i + 1);
-
-            // check last group
-            count = getEqual(lastGroup, currentClass.get("translatedText"));
-            if (count <= matchCount || lastGroup.length != count) {
-                // check new class to group with
-                if (!nextClass) {
-                    // this is the last class
-                    count = currentClass.get("translatedText").length;
-                }
-                else {
-                    // check next class to group with
-                    count = getEqual(currentClass.get("translatedText"), nextClass.get("translatedText"));
-                    if (count <= matchCount) {
-                        // match is to low, use the complete name
-                        count = currentClass.get("translatedText").length;
-                    }
-                }
-
-                group = currentClass.get("translatedText").substring(0, count);
-            }
-            else {
-                // use previous group
-                group = lastGroup;
-            }
-
-
-            // add class to group
-            if (!classGroups[ group ]) {
-                classGroups[ group ] = [];
-            }
-            classGroups[ group ].push(currentClass);
-            lastGroup = group;
-        }
-        ;
-
 
         var objectMenu = {
             objects: [],
             importer: [],
             ref: this
         };
+
+        var groups = {
+            importer: {},
+            objects: {}
+        };
+
         var tmpMenuEntry;
         var tmpMenuEntryImport;
-        var record, tmp;
+        var $this = this;
 
-        for (var groupName in classGroups) {
+        object_types.each(function (classRecord) {
 
-            if (classGroups[groupName].length > 1) {
-                // handle group
-
-                tmpMenuEntry = {
-                    text: groupName,
-                    iconCls: "pimcore_icon_folder",
-                    hideOnClick: false,
-                    menu: {
-                        items: []
-                    }
-                };
-                tmpMenuEntryImport = {
-                    text: groupName,
-                    iconCls: "pimcore_icon_folder",
-                    handler: this.importObjects.bind(this, classGroups[groupName][0].get("id"), classGroups[groupName][0].get("text")),
-                    menu: {
-                        items: []
-                    }
-                };
-
-                // add items
-                for (var i = 0; i < classGroups[groupName].length; i++) {
-                    classGroupRecord = classGroups[groupName][i];
-                    if (!this.config.allowedClasses || in_array(classGroupRecord.get("id"),  this.config.allowedClasses)) {
-
-                        /* == menu entry: create new object == */
-
-                        // create menu item
-                        tmp = {
-                            text: classGroupRecord.get("translatedText"),
-                            iconCls: "pimcore_icon_object pimcore_icon_overlay_add",
-                            handler: this.addObject.bind(this, classGroupRecord.get("id"), classGroupRecord.get("text"), tree, record)
-                        };
-
-                        // add special icon
-                        if (classGroupRecord.get("icon") != "/pimcore/static6/img/flat-color-icons/timeline.svg") {
-                            tmp.icon = classGroupRecord.get("icon");
-                            tmp.iconCls = "";
-                        }
-
-                        tmpMenuEntry.menu.items.push(tmp);
-
-
-                        /* == menu entry: import object == */
-
-                        // create menu item
-                        tmp = {
-                            text: classGroupRecord.get("translatedText"),
-                            iconCls: "pimcore_icon_object pimcore_icon_overlay_add",
-                            handler: this.importObjects.bind(this, classGroupRecord.get("id"), classGroupRecord.get("text"), tree, record)
-                        };
-
-                        // add special icon
-                        if (classGroupRecord.get("icon") != "/pimcore/static6/img/flat-color-icons/timeline.svg") {
-                            tmp.icon = classGroupRecord.get("icon");
-                            tmp.iconCls = "";
-                        }
-
-                        tmpMenuEntryImport.menu.items.push(tmp);
-                    }
-                }
-
-                objectMenu.objects.push(tmpMenuEntry);
-                objectMenu.importer.push(tmpMenuEntryImport);
-            }  else {
-                classGroupRecord = classGroups[groupName][0];
-
-                if (!this.config.allowedClasses || in_array(classGroupRecord.get("id"),
-                        this.config.allowedClasses)) {
-
-                    /* == menu entry: create new object == */
-                    tmpMenuEntry = {
-                        text: classGroupRecord.get("translatedText"),
-                        iconCls: "pimcore_icon_object pimcore_icon_overlay_add",
-                        handler: this.addObject.bind(this, classGroupRecord.get("id"), classGroupRecord.get("text"), tree, record)
-                    };
-
-                    if (classGroupRecord.get("icon") != "/pimcore/static6/img/flat-color-icons/timeline.svg") {
-                        tmpMenuEntry.icon = classGroupRecord.get("icon");
-                        tmpMenuEntry.iconCls = "";
-                    }
-
-                    objectMenu.objects.push(tmpMenuEntry);
-
-
-                    /* == menu entry: import object == */
-                    tmpMenuEntryImport = {
-                        text: classGroupRecord.get("translatedText"),
-                        iconCls: "pimcore_icon_object pimcore_icon_overlay_add",
-                        handler: this.importObjects.bind(this, classGroupRecord.get("id"), classGroupRecord.get("text"), tree, record)
-                    };
-
-                    if (classGroupRecord.get("icon") != "/pimcore/static6/img/flat-color-icons/timeline.svg") {
-                        tmpMenuEntryImport.icon = classGroupRecord.get("icon");
-                        tmpMenuEntryImport.iconCls = "";
-                    }
-
-                    objectMenu.importer.push(tmpMenuEntryImport);
-                }
+            if ($this.config.allowedClasses && !in_array(classRecord.get("id"), $this.config.allowedClasses)) {
+                return;
             }
-        };
+
+            tmpMenuEntry = {
+                text: classRecord.get("translatedText"),
+                iconCls: "pimcore_icon_object pimcore_icon_overlay_add",
+                handler: $this.addObject.bind($this, classRecord.get("id"), classRecord.get("text"), tree, record)
+            };
+
+            // add special icon
+            if (classRecord.get("icon") != "/pimcore/static6/img/flat-color-icons/timeline.svg") {
+                tmpMenuEntry.icon = classRecord.get("icon");
+                tmpMenuEntry.iconCls = "";
+            }
+
+            tmpMenuEntryImport = {
+                text: classRecord.get("translatedText"),
+                iconCls: "pimcore_icon_object pimcore_icon_overlay_add",
+                handler: $this.importObjects.bind($this, classRecord.get("id"), classRecord.get("text"), tree, record)
+            };
+
+            // add special icon
+            if (classRecord.get("icon") != "/pimcore/static6/img/flat-color-icons/timeline.svg") {
+                tmpMenuEntryImport.icon = classRecord.get("icon");
+                tmpMenuEntryImport.iconCls = "";
+            }
+
+
+            // check if the class is within a group
+            if(classRecord.get("group")) {
+                if(!groups["objects"][classRecord.get("group")]) {
+                    groups["objects"][classRecord.get("group")] = {
+                        text: classRecord.get("group"),
+                        iconCls: "pimcore_icon_folder",
+                        hideOnClick: false,
+                        menu: {
+                            items: []
+                        }
+                    };
+                    groups["importer"][classRecord.get("group")] = {
+                        text: classRecord.get("group"),
+                        iconCls: "pimcore_icon_folder",
+                        hideOnClick: false,
+                        menu: {
+                            items: []
+                        }
+                    };
+                    objectMenu["objects"].push(groups["objects"][classRecord.get("group")]);
+                    objectMenu["importer"].push(groups["importer"][classRecord.get("group")]);
+                }
+
+                groups["objects"][classRecord.get("group")]["menu"]["items"].push(tmpMenuEntry);
+                groups["importer"][classRecord.get("group")]["menu"]["items"].push(tmpMenuEntryImport);
+            } else {
+                objectMenu["objects"].push(tmpMenuEntry);
+                objectMenu["importer"].push(tmpMenuEntryImport);
+            }
+        });
+
 
         var isVariant = record.data.type == "variant";
 
