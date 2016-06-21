@@ -82,7 +82,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
             if (function_exists("exif_read_data") && is_file($asset->getFileSystemPath())) {
                 $supportedTypes = [IMAGETYPE_JPEG, IMAGETYPE_TIFF_II, IMAGETYPE_TIFF_MM];
 
-                if (in_array(exif_imagetype($asset->getFileSystemPath()), $supportedTypes)) {
+                if (in_array(@exif_imagetype($asset->getFileSystemPath()), $supportedTypes)) {
                     $exif = @exif_read_data($asset->getFileSystemPath());
                     if (is_array($exif)) {
                         $imageInfo["exif"] = [];
