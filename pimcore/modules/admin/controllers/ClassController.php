@@ -94,7 +94,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
         // build groups
         $groups = [];
         foreach ($classes as $class) {
-            if($class->getGroup()) {
+            if ($class->getGroup()) {
                 $type = "manual";
                 $groupName = $class->getGroup();
             } else {
