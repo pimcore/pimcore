@@ -330,7 +330,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
 
         $thumbnails = [];
 
-        $list = new Asset\Video\Thumbnail\Config\Listing();
+        $list = new Asset\Image\Thumbnail\Config\Listing();
         $items = $list->load();
 
         foreach ($items as $item) {
