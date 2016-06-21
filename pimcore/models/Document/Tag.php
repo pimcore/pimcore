@@ -285,6 +285,8 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      */
     public function __toString()
     {
+        $return = "";
+
         try {
             if ($this->editmode) {
                 $return = $this->admin();
@@ -299,8 +301,9 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
             \Logger::error("to string not possible - " . $e->getMessage());
         }
 
-        if (is_string($return)) {
-            return $return;
+        if (is_string($return) || is_numeric($return)) {
+            // we have to cast to string, because int/float is not auto-converted and throws an exception
+            return (string) $return;
         }
 
         return '';
