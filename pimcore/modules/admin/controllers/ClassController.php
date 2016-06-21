@@ -93,10 +93,10 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
 
         // build groups
         $groups = [];
-        foreach($classes as $class) {
+        foreach ($classes as $class) {
             preg_match("@^([A-Za-z])([^A-Z]+)@", $class->getName(), $matches);
             $groupName = $matches[0];
-            if(!isset($groupNames[$groupName])) {
+            if (!isset($groupNames[$groupName])) {
                 $groupNames[$groupName] = [];
             }
             $groups[$groupName][] = $class;
@@ -106,10 +106,10 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
 
         if (!$this->getParam('grouped')) {
             // list output
-            foreach($groups as $groupName => $group) {
-                foreach($group as $class) {
+            foreach ($groups as $groupName => $group) {
+                foreach ($group as $class) {
                     $node = $getClassConfig($class);
-                    if(count($group) > 1) {
+                    if (count($group) > 1) {
                         $node["group"] = $groupName;
                     }
                     $treeNodes[] = $node;
@@ -117,7 +117,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
             }
         } else {
             // create json output
-            foreach($groups as $groupName => $group) {
+            foreach ($groups as $groupName => $group) {
                 if (count($group) === 1) {
                     // no group, only one child
                     $node = $getClassConfig($group[0]);

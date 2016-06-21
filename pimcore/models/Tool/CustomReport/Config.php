@@ -297,8 +297,7 @@ class Config extends Model\AbstractModel
      */
     public function getDataSourceConfig()
     {
-        if( is_array($this->dataSourceConfig) && isset($this->dataSourceConfig[0]) ) {
-
+        if (is_array($this->dataSourceConfig) && isset($this->dataSourceConfig[0])) {
             $dataSourceConfig = new \stdClass();
             $dataSourceConfigArray = $this->dataSourceConfig[0];
 
@@ -309,7 +308,7 @@ class Config extends Model\AbstractModel
             return $dataSourceConfig;
         }
 
-        return NULL;
+        return null;
     }
 
     /**

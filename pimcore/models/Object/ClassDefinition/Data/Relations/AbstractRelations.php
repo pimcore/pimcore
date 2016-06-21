@@ -196,7 +196,7 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
             //check for allowed asset types
             $allowedTypes = [];
             foreach ($allowedDocumentTypes as $t) {
-                if($t['documentTypes']) {
+                if ($t['documentTypes']) {
                     $allowedTypes[] = $t['documentTypes'];
                 }
             }
