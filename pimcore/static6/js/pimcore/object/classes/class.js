@@ -653,6 +653,9 @@ pimcore.object.classes.klass = Class.create({
             disabled: !this.data.allowInherit
         });
 
+        var getPhpClassName = function (name) {
+            return "Pimcore\\Model\\Object\\" + ucfirst(name);
+        };
 
         this.rootPanel = new Ext.form.FormPanel({
             title: t("basic_configuration"),
@@ -667,7 +670,22 @@ pimcore.object.classes.klass = Class.create({
                     fieldLabel: t("name"),
                     name: "name",
                     width: 500,
-                    value: this.data.name
+                    enableKeyEvents: true,
+                    value: this.data.name,
+                    listeners: {
+                        keyup: function (el) {
+                            this.rootPanel.getComponent("phpClassName").setValue(getPhpClassName(el.getValue()))
+                        }.bind(this)
+                    }
+                },
+                {
+                    xtype: "textfield",
+                    fieldLabel: t("PHP Class Name"),
+                    name: "phpClassName",
+                    itemId: "phpClassName",
+                    width: 500,
+                    disabled: true,
+                    value: getPhpClassName(this.data.name)
                 },
                 {
                     xtype: "textarea",

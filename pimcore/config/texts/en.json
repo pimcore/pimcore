@@ -7147,5 +7147,9 @@
     {
       "term": "hide",
       "definition": "Hide"
+    },
+    {
+        "term": "PHP Class Name",
+        "definition": "PHP Class Name"
     }
 ]
