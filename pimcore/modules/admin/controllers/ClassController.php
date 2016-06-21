@@ -94,22 +94,34 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
         // build groups
         $groups = [];
         foreach ($classes as $class) {
-            preg_match("@^([A-Za-z])([^A-Z]+)@", $class->getName(), $matches);
-            $groupName = $matches[0];
-            if (!isset($groupNames[$groupName])) {
-                $groupNames[$groupName] = [];
+            if($class->getGroup()) {
+                $type = "manual";
+                $groupName = $class->getGroup();
+            } else {
+                $type = "auto";
+                preg_match("@^([A-Za-z])([^A-Z]+)@", $class->getName(), $matches);
+                $groupName = $matches[0];
             }
-            $groups[$groupName][] = $class;
+
+            $groupName = $this->view->translate($groupName);
+
+            if (!isset($groups[$groupName])) {
+                $groups[$groupName] = [
+                    "classes" => [],
+                    "type" => $type
+                ];
+            }
+            $groups[$groupName]["classes"][] = $class;
         }
 
         $treeNodes = [];
 
         if (!$this->getParam('grouped')) {
             // list output
-            foreach ($groups as $groupName => $group) {
-                foreach ($group as $class) {
+            foreach ($groups as $groupName => $groupData) {
+                foreach ($groupData["classes"] as $class) {
                     $node = $getClassConfig($class);
-                    if (count($group) > 1) {
+                    if (count($groupData["classes"]) > 1 || $groupData["type"] == "manual") {
                         $node["group"] = $groupName;
                     }
                     $treeNodes[] = $node;
@@ -117,10 +129,10 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
             }
         } else {
             // create json output
-            foreach ($groups as $groupName => $group) {
-                if (count($group) === 1) {
+            foreach ($groups as $groupName => $groupData) {
+                if (count($groupData["classes"]) === 1 && $groupData["type"] == "auto") {
                     // no group, only one child
-                    $node = $getClassConfig($group[0]);
+                    $node = $getClassConfig($groupData["classes"][0]);
                 } else {
                     // group classes
                     $node = [
@@ -133,7 +145,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
                         "children" => []
                     ];
 
-                    foreach ($group as $class) {
+                    foreach ($groupData["classes"] as $class) {
                         $node['children'][] = $getClassConfig($class);
                     }
                 }

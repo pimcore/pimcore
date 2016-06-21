@@ -104,6 +104,11 @@ class ClassDefinition extends Model\AbstractModel
     public $previewUrl;
 
     /**
+     * @var string
+     */
+    public $group;
+
+    /**
      * @var array
      */
     public $propertyVisibility = [
@@ -811,6 +816,22 @@ class ClassDefinition extends Model\AbstractModel
     public function getPreviewUrl()
     {
         return $this->previewUrl;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGroup()
+    {
+        return $this->group;
+    }
+
+    /**
+     * @param string $group
+     */
+    public function setGroup($group)
+    {
+        $this->group = $group;
     }
 
     /**

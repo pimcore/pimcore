@@ -89,6 +89,7 @@ CREATE TABLE `classes` (
   `previewUrl` varchar(255) DEFAULT NULL,
   `propertyVisibility` text,
   `showVariants` tinyint(1) DEFAULT NULL,
+  `group` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
 ) DEFAULT CHARSET=utf8;
