@@ -37,15 +37,15 @@ class Analytics extends AbstractAdapter
 
         if ($sort) {
             $dir = $dir == 'DESC' ? '-' : '';
-            $this->config["sort"] = $dir.$sort;
+            $this->config->sort = $dir.$sort;
         }
 
         if ($offset) {
-            $this->config["startIndex"] = $offset;
+            $this->config->startIndex = $offset;
         }
 
         if ($limit) {
-            $this->config["maxResults"] = $limit;
+            $this->config->maxResults = $limit;
         }
 
 
@@ -78,7 +78,7 @@ class Analytics extends AbstractAdapter
      */
     protected function setFilters($filters, $drillDownFilters = [])
     {
-        $gaFilters = [ $this->config["filters"] ];
+        $gaFilters = [ $this->config->filters ];
         if (sizeof($filters)) {
             foreach ($filters as $filter) {
                 if ($filter['type'] == 'string') {
@@ -113,7 +113,7 @@ class Analytics extends AbstractAdapter
             }
         }
 
-        $this->config["filters"] = implode(';', $gaFilters);
+        $this->config->filters = implode(';', $gaFilters);
     }
 
     /**
@@ -142,49 +142,48 @@ class Analytics extends AbstractAdapter
 
         $service = new \Google_Service_Analytics($client);
 
-        if (!$configuration["profileId"]) {
+        if (!$configuration->profileId) {
             throw new \Exception("no profileId given");
         }
 
-        if (!$configuration["metric"]) {
+        if (!$configuration->metric) {
             throw new \Exception("no metric given");
         }
 
-
         $options = [];
 
-        if ($configuration["filters"]) {
-            $options['filters'] = $configuration["filters"];
+        if ($configuration->filters) {
+            $options['filters'] = is_array($configuration->filters) ? implode(',', $configuration->filters) : $configuration->filters;
         }
-        if ($configuration["dimension"]) {
-            $options['dimensions'] = $configuration["dimension"];
+        if ($configuration->dimension) {
+            $options['dimensions'] = is_array($configuration->dimension) ? implode(',', $configuration->dimension) : $configuration->dimension;
         }
-        if ($configuration["sort"]) {
-            $options['sort'] = $configuration["sort"];
+        if ($configuration->sort) {
+            $options['sort'] = $configuration->sort;
         }
-        if ($configuration["startIndex"]) {
-            $options['start-index'] = $configuration["startIndex"];
+        if ($configuration->startIndex) {
+            $options['start-index'] = $configuration->startIndex;
         }
-        if ($configuration["maxResults"]) {
-            $options['max-results'] = $configuration["maxResults"];
+        if ($configuration->maxResults) {
+            $options['max-results'] = $configuration->maxResults;
         }
-        if ($configuration["segment"]) {
-            $options['segment'] = $configuration["segment"];
+        if ($configuration->segment) {
+            $options['segment'] = $configuration->segment;
         }
 
-        $configuration["startDate"] = $this->calcDate($configuration["startDate"], $configuration["relativeStartDate"]);
-        $configuration["endDate"] = $this->calcDate($configuration["endDate"], $configuration["relativeEndDate"]);
+        $configuration->startDate = $this->calcDate($configuration->startDate, $configuration->relativeStartDate);
+        $configuration->endDate = $this->calcDate($configuration->endDate, $configuration->relativeEndDate);
 
 
-        if (!$configuration["startDate"]) {
+        if (!$configuration->startDate) {
             throw new \Exception("no start date given");
         }
 
-        if (!$configuration["endDate"]) {
+        if (!$configuration->endDate) {
             throw new \Exception("no end date given");
         }
 
-        return $service->data_ga->get('ga:'.$configuration["profileId"], date('Y-m-d', $configuration["startDate"]), date('Y-m-d', $configuration["endDate"]), $configuration["metric"], $options);
+        return $service->data_ga->get('ga:'.$configuration->profileId, date('Y-m-d', $configuration->startDate), date('Y-m-d', $configuration->endDate), (is_array($configuration->metric) ? implode(',', $configuration->metric) : $configuration->metric), $options);
     }
 
     /**
@@ -215,22 +214,22 @@ class Analytics extends AbstractAdapter
      */
     protected function handleFields($configuration, $fields)
     {
-        $metrics = explode(',', $configuration["metric"]);
+        $metrics = $configuration->metric;
         foreach ($metrics as $key => $metric) {
             if (!in_array($metric, $fields)) {
                 unset($metrics[$key]);
             }
         }
-        $configuration["metric"] = implode(',', $metrics);
+        $configuration->metric = implode(',', $metrics);
 
 
-        $dimensions = explode(',', $configuration["dimension"]);
+        $dimensions = $configuration->dimension;
         foreach ($dimensions as $key => $dimension) {
             if (!in_array($dimension, $fields)) {
                 unset($dimensions[$key]);
             }
         }
-        $configuration["dimension"] = implode(',', $dimensions);
+        $configuration->dimension = implode(',', $dimensions);
 
         return $configuration;
     }
@@ -241,9 +240,9 @@ class Analytics extends AbstractAdapter
      */
     protected function handleDimensions($configuration)
     {
-        $dimension = explode(',', $configuration["dimension"]);
+        $dimension = $configuration->dimension;
         if (sizeof($dimension)) {
-            foreach ($this->fullConfig["columnConfiguration"] as $column) {
+            foreach ($this->fullConfig->columnConfiguration as $column) {
                 if ($column['filter_drilldown'] == 'only_filter') {
                     foreach ($dimension as $key => $dim) {
                         if ($dim == $column['name']) {
@@ -253,7 +252,7 @@ class Analytics extends AbstractAdapter
                 }
             }
         }
-        $configuration["dimension"] = implode(',', $dimension);
+        $configuration->dimension = implode(',', $dimension);
 
         return $configuration;
     }
@@ -276,7 +275,7 @@ class Analytics extends AbstractAdapter
                         && in_array($matches[3], ['d', 'm', 'y'])
                     ) {
                         $applyModifiers[] = ['sign' => $matches[1], 'number' => $matches[2],
-                                                  'type' => $matches[3]];
+                            'type' => $matches[3]];
                     }
                 }
             }
