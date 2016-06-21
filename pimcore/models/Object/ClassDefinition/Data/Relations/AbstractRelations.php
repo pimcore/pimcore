@@ -194,10 +194,14 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
             $allowed = false;
         } elseif ($this->getDocumentsAllowed() and  is_array($allowedDocumentTypes) and count($allowedDocumentTypes) > 0) {
             //check for allowed asset types
+            $allowedTypes = [];
             foreach ($allowedDocumentTypes as $t) {
-                $allowedTypes[] = $t['documentTypes'];
+                if($t['documentTypes']) {
+                    $allowedTypes[] = $t['documentTypes'];
+                }
             }
-            if (!in_array($document->getType(), $allowedTypes)) {
+
+            if (!in_array($document->getType(), $allowedTypes) && count($allowedTypes)) {
                 $allowed = false;
             }
         } else {
