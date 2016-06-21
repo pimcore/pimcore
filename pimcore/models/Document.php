@@ -134,14 +134,14 @@ class Document extends Element\AbstractElement
      *
      * @var integer
      */
-    public $userOwner;
+    public $userOwner = 0;
 
     /**
      * User-ID of the user last modified the document
      *
      * @var integer
      */
-    public $userModification;
+    public $userModification = 0;
 
     /**
      * Permissions for the user which requested this document in editmode*

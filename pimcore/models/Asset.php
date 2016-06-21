@@ -103,14 +103,14 @@ class Asset extends Element\AbstractElement
      *
      * @var integer
      */
-    public $userOwner;
+    public $userOwner = 0;
 
     /**
      * ID of the user who make the latest changes
      *
      * @var integer
      */
-    public $userModification;
+    public $userModification = 0;
 
     /**
      * List of properties
