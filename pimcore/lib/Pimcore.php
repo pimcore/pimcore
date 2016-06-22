@@ -767,11 +767,12 @@ class Pimcore
             $builder->addDefinitions(PIMCORE_PATH . "/config/di.php");
 
             $customFile = \Pimcore\Config::locateConfigFile("di.php");
+            
+            \Pimcore::getEventManager()->trigger('system.di.init', $builder);
+            
             if (file_exists($customFile)) {
                 $builder->addDefinitions($customFile);
             }
-            
-            \Pimcore::getEventManager()->trigger('system.di.init', $builder);
 
             self::$diContainer = $builder->build();
         }
