@@ -758,8 +758,8 @@ class Pimcore
     /**
      * @return \DI\Container
      */
-    public static function getDiContainer() {
-
+    public static function getDiContainer()
+    {
         if (!self::$diContainer) {
             $builder = new \DI\ContainerBuilder();
             $builder->useAutowiring(false);
@@ -767,7 +767,7 @@ class Pimcore
             $builder->addDefinitions(PIMCORE_PATH . "/config/di.php");
 
             $customFile = \Pimcore\Config::locateConfigFile("di.php");
-            if(file_exists($customFile)) {
+            if (file_exists($customFile)) {
                 $builder->addDefinitions($customFile);
             }
 

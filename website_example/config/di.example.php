@@ -16,4 +16,3 @@ return [
     'Pimcore\Model\Document\Link' => DI\object('Website\Model\Document\Link'),
     'Pimcore\Model\Document\Listing' => DI\object('Website\Model\Document\Listing'),
 ];
-
