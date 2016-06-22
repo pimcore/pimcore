@@ -597,11 +597,11 @@ class Tool
      *
      * @deprecated
      */
-    public static function getModelClassMapping($sourceClassName) {
+    public static function getModelClassMapping($sourceClassName)
+    {
         try {
             return get_class(\Pimcore::getDiContainer()->get($sourceClassName));
-        } catch(\Exception $ex) {
-
+        } catch (\Exception $ex) {
         }
 
         return $sourceClassName;
