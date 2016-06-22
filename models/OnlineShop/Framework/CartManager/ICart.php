@@ -299,7 +299,7 @@ interface ICart {
     public static function getAllCartsForUser($userId);
 
     /**
-     * @param \OnlineShop\Framework\VoucherService\Token $token
+     * @param string $token
      * @throws \Exception
      * @return bool
      */

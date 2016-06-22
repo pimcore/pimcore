@@ -753,7 +753,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
     /**
      * Adds a voucher token to the cart's checkout data and reserves it.
      *
-     * @param \OnlineShop\Framework\VoucherService\Token $code
+     * @param string $code
      *
      * @return bool
      *
