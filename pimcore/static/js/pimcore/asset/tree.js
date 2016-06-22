@@ -241,8 +241,7 @@ pimcore.asset.tree = Class.create({
                 win.doLayout();
 
                 pimcore.helpers.uploadAssetFromFileObject(file,
-                    "/admin/asset/add-asset/?pimcore_admin_sid="
-                    + pimcore.settings.sessionId + "&parentId=" + parentNode.id + "&dir=" + path,
+                    "/admin/asset/add-asset/?parentId=" + parentNode.id + "&dir=" + path,
                     finishedErrorHandler,
                     function (evt) {
                         //progress

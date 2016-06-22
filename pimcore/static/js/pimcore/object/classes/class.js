@@ -31,7 +31,7 @@ pimcore.object.classes.klass = Class.create({
     },
 
     getUploadUrl: function(){
-        return this.uploadUrl + '?pimcore_admin_sid=' + pimcore.settings.sessionId + "&id=" + this.getId();
+        return this.uploadUrl + '?id=' + this.getId();
     },
 
     getExportUrl: function() {

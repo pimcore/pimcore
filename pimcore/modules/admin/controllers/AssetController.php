@@ -916,6 +916,8 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
             header("Content-Type: " . $image->getMimetype(), true);
         }
 
+        header("Access-Control-Allow-Origin: *"); // for Aviary.Feather (Adobe Creative SDK)
+
         header("Content-Length: " . filesize($thumbnailFile), true);
         $this->sendThumbnailCacheHeaders(); while (@ob_end_flush());
         flush();
@@ -1049,15 +1051,20 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
         }
     }
 
-
-    public function saveImagePixlrAction()
+    public function imageEditorAction()
     {
         $asset = Asset::getById($this->getParam("id"));
-        $asset->setData(Tool::getHttpData($this->getParam("image")));
+        $this->view->asset = $asset;
+    }
+
+    public function imageEditorSaveAction()
+    {
+        $asset = Asset::getById($this->getParam("id"));
+        $asset->setData(Tool::getHttpData($this->getParam("url")));
         $asset->setUserModification($this->getUser()->getId());
         $asset->save();
 
-        $this->view->asset = $asset;
+        $this->_helper->json(["success" => true]);
     }
 
     public function getFolderContentPreviewAction()

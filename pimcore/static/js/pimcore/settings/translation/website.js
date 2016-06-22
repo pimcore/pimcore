@@ -17,8 +17,8 @@ pimcore.settings.translation.website = Class.create(pimcore.settings.translation
     translationType: 'website',
     dataUrl: '/admin/translation/translations',
     exportUrl: '/admin/translation/export',
-    importUrl:'/admin/translation/import/?pimcore_admin_sid=' + pimcore.settings.sessionId,
-    mergeUrl:'/admin/translation/import/?merge=1&pimcore_admin_sid=' + pimcore.settings.sessionId,
+    importUrl:'/admin/translation/import/',
+    mergeUrl:'/admin/translation/import/?merge=1',
     cleanupUrl: "/admin/translation/cleanup/type/website",
 
 

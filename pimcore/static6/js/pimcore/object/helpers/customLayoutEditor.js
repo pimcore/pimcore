@@ -99,7 +99,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
     },
 
     getUploadUrl: function(){
-        return this.uploadUrl + '?pimcore_admin_sid=' + pimcore.settings.sessionId + "&id=" + this.data.id;
+        return this.uploadUrl + '?id=' + this.data.id;
     },
 
     getExportUrl: function() {

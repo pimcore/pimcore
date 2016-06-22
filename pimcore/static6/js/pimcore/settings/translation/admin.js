@@ -17,8 +17,8 @@ pimcore.settings.translation.admin = Class.create(pimcore.settings.translations,
     translationType: 'admin',
     dataUrl: '/admin/translation/translations?admin=1',
     exportUrl: '/admin/translation/export/?admin=1',
-    importUrl:'/admin/translation/import/?admin=1&pimcore_admin_sid=' + pimcore.settings.sessionId,
-    mergeUrl:'/admin/translation/import/?admin=1&merge=1&pimcore_admin_sid=' + pimcore.settings.sessionId,
+    importUrl:'/admin/translation/import/?admin=1',
+    mergeUrl:'/admin/translation/import/?admin=1&merge=1',
     cleanupUrl: "/admin/translation/cleanup/type/admin",
 
     activate: function (filter) {

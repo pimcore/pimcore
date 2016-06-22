@@ -21,10 +21,8 @@ pimcore.object.bulkimport = Class.create({
     },
 
     getUploadUrl: function(){
-        return this.uploadUrl + '?pimcore_admin_sid=' + pimcore.settings.sessionId;
+        return this.uploadUrl;
     },
-
-
 
     upload: function() {
 

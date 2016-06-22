@@ -83,27 +83,10 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
     getEditPanel: function () {
 
         if (!this.editPanel) {
-
             this.editPanel = new Ext.Panel({
                 title: t("edit_image"),
-                tbar: [
-                    {
-                        text: t("simple"),
-                        iconCls: "pimcore_icon_image_editor_simple",
-                        handler: function () {
-                            Ext.get("asset_image_edit_" + this.id).dom.src = this.getEditUrlPixlr("express");
-                        }.bind(this)
-                    },"-",
-                    {
-                        text: t("advanced"),
-                        iconCls: "pimcore_icon_image_editor_advanced",
-                        handler: function () {
-                            Ext.get("asset_image_edit_" + this.id).dom.src = this.getEditUrlPixlr("editor");
-                        }.bind(this)
-                    }
-                ],
-                html: '<iframe src="' + this.getEditUrlPixlr("express") + '" frameborder="0" style="width: 100%;" id="asset_image_edit_'
-                                                                            + this.id + '"></iframe>',
+                html: '<iframe src="/admin/asset/image-editor/id/' + this.id + '" frameborder="0" ' +
+                    'style="width: 100%;" id="asset_image_edit_' + this.id + '"></iframe>',
                 iconCls: "pimcore_icon_edit"
             });
             this.editPanel.on("resize", function (el, width, height, rWidth, rHeight) {
@@ -114,34 +97,6 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
         }
 
         return this.editPanel;
-    },
-
-    getEditUrlPixlr: function (type) {
-
-        var parts = this.data.filename.split(".");
-        var imageType = parts[parts.length-1].toLowerCase();
-        var validImageTypes = ["png","jpg","gif"];
-
-        if(!in_array(imageType,validImageTypes)) {
-            imageType = "png";
-        }
-
-        var imageUrl = document.location.protocol + "//" + window.location.hostname
-                                                  + "/admin/asset/get-image-thumbnail/id/"
-                                                  + this.id + "/width/1000/aspectratio/true/pimcore_admin_sid/"
-                                                  + pimcore.settings.sessionId + "/" + this.data.filename;
-        var targetUrl = document.location.protocol + "//" + window.location.hostname
-                                                   + "/admin/asset/save-image-pixlr/?pimcore_admin_sid="
-                                                   + pimcore.settings.sessionId + "&id=" + this.id;
-        var editorUrl = "https://www.pixlr.com/" + type + "/?image=" + escape(imageUrl) + "&title="
-                                                 + this.data.filename + "&locktitle=true&locktarget=true&locktype="
-                                                 + imageType + "&wmode=transparent&target=" + escape(targetUrl);
-
-        if (type == "editor") {
-            editorUrl = editorUrl + "&redirect=false";
-        }
-
-        return editorUrl;
     },
 
     getDisplayPanel: function () {
