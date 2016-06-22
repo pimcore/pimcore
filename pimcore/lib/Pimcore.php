@@ -764,12 +764,13 @@ class Pimcore
             $builder = new \DI\ContainerBuilder();
             $builder->useAutowiring(false);
             $builder->useAnnotations(false);
-            $builder->addDefinitions(PIMCORE_PATH . "/config/di.php");
 
             $customFile = \Pimcore\Config::locateConfigFile("di.php");
             if (file_exists($customFile)) {
                 $builder->addDefinitions($customFile);
             }
+
+            $builder->addDefinitions(PIMCORE_PATH . "/config/di.php");
 
             self::$diContainer = $builder->build();
         }
