@@ -109,8 +109,11 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
                 }
 
                 if ($destination instanceof Element\ElementInterface) {
-                    $className = Tool::getModelClassMapping('\Pimcore\Model\Object\Data\ElementMetadata'); // the name for the class mapping is still with underscores
-                    $metaData = new $className($this->getName(), $this->getColumnKeys(), $destination);
+                    $metaData = \Pimcore::getDiContainer()->make('\Pimcore\Model\Object\Data\ElementMetadata', [
+                        "fieldname" => $this->getName(),
+                        "columns" => $this->getColumnKeys(),
+                        "element" => $destination
+                    ]);
 
                     $ownertype = $element["ownertype"] ? $element["ownertype"] : "";
                     $ownername = $element["ownername"] ? $element["ownername"] : "";
@@ -235,8 +238,12 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
                 }
 
                 if ($e instanceof Element\ElementInterface) {
-                    $className = Tool::getModelClassMapping('\Pimcore\Model\Object\Data\ElementMetadata');
-                    $metaData = new $className($this->getName(), $this->getColumnKeys(), $e);
+                    $metaData = \Pimcore::getDiContainer()->make('\Pimcore\Model\Object\Data\ElementMetadata', [
+                        "fieldname" => $this->getName(),
+                        "columns" => $this->getColumnKeys(),
+                        "element" => $e
+                    ]);
+
                     foreach ($this->getColumns() as $columnConfig) {
                         $key = $columnConfig["key"];
                         $setter = "set" . ucfirst($key);
@@ -376,8 +383,11 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
             $el = Element\Service::getElementByPath($type, $path);
 
             if ($el) {
-                $className = Tool::getModelClassMapping('\Pimcore\Model\Object\Data\ElementMetadata');
-                $metaObject = new $className($this->getName(), $this->getColumnKeys(), $el);
+                $metaObject = \Pimcore::getDiContainer()->make('\Pimcore\Model\Object\Data\ElementMetadata', [
+                    "fieldname" => $this->getName(),
+                    "columns" => $this->getColumnKeys(),
+                    "element" => $el
+                ]);
 
                 $value[] = $metaObject;
             }
@@ -691,8 +701,9 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
      */
     public function classSaved($class)
     {
-        $className = Tool::getModelClassMapping('\Pimcore\Model\Object\Data\ElementMetadata');
-        $temp = new $className(null);
+        $temp = \Pimcore::getDiContainer()->make('\Pimcore\Model\Object\Data\ElementMetadata', [
+            "fieldname" => null
+        ]);
         $temp->getDao()->createOrUpdateTable($class);
     }
 

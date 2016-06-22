@@ -256,25 +256,22 @@ class Document extends Element\AbstractElement
                     $document = new Document();
                     $document->getDao()->getById($id);
 
-                    $mappingClass = "\\Pimcore\\Model\\Document\\" . ucfirst($document->getType());
+                    $className = "\\Pimcore\\Model\\Document\\" . ucfirst($document->getType());
 
                     // this is the fallback for custom document types using prefixes
                     // so we need to check if the class exists first
-                    if (!Tool::classExists($mappingClass)) {
+                    if (!Tool::classExists($className)) {
                         $oldStyleClass = "Document_" . ucfirst($document->getType());
                         if (Tool::classExists($oldStyleClass)) {
-                            $mappingClass = $oldStyleClass;
+                            $className = $oldStyleClass;
                         }
                     }
-                    $typeClass = Tool::getModelClassMapping($mappingClass);
 
-                    if (Tool::classExists($typeClass)) {
-                        $document = new $typeClass();
-                        \Zend_Registry::set($cacheKey, $document);
-                        $document->getDao()->getById($id);
+                    $document = \Pimcore::getDiContainer()->make($className);
+                    \Zend_Registry::set($cacheKey, $document);
+                    $document->getDao()->getById($id);
 
-                        \Pimcore\Cache::save($document, $cacheKey);
-                    }
+                    \Pimcore\Cache::save($document, $cacheKey);
                 } else {
                     \Zend_Registry::set($cacheKey, $document);
                 }
@@ -347,16 +344,11 @@ class Document extends Element\AbstractElement
     {
         if (is_array($config)) {
             $listClass = "\\Pimcore\\Model\\Document\\Listing";
-            $listClass = Tool::getModelClassMapping($listClass);
+            $list = \Pimcore::getDiContainer()->make($listClass);
+            $list->setValues($config);
+            $list->load();
 
-            if (Tool::classExists($listClass)) {
-                $list = new $listClass();
-
-                $list->setValues($config);
-                $list->load();
-
-                return $list;
-            }
+            return $list;
         }
 
         throw new \Exception("Unable to initiate list class - class not found or invalid configuration");
@@ -370,9 +362,7 @@ class Document extends Element\AbstractElement
     {
         if (is_array($config)) {
             $listClass = "\\Pimcore\\Model\\Document\\Listing";
-            $listClass = Tool::getModelClassMapping($listClass);
-            $list = new $listClass();
-
+            $list = \Pimcore::getDiContainer()->make($listClass);
             $list->setValues($config);
             $count = $list->getTotalCount();
 

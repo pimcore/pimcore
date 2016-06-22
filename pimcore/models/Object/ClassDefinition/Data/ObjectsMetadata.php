@@ -107,8 +107,11 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
                 $destination = Object::getById($object["dest_id"]);
 
                 if ($source instanceof Object\Concrete && $destination instanceof Object\Concrete && $destination->getClassId() == $this->getAllowedClassId()) {
-                    $className = Tool::getModelClassMapping('\Pimcore\Model\Object\Data\ObjectMetadata'); // the name for the class mapping is still with underscores
-                    $metaData = new $className($this->getName(), $this->getColumnKeys(), $destination);
+                    $metaData = \Pimcore::getDiContainer()->make('\Pimcore\Model\Object\Data\ObjectMetadata', [
+                        "fieldname" => $this->getName(),
+                        "columns" => $this->getColumnKeys(),
+                        "object" => $destination
+                    ]);
 
                     $ownertype = $object["ownertype"] ? $object["ownertype"] : "";
                     $ownername = $object["ownername"] ? $object["ownername"] : "";
@@ -208,8 +211,12 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
             foreach ($data as $object) {
                 $o = Object::getById($object["id"]);
                 if ($o && $o->getClassId() == $this->getAllowedClassId()) {
-                    $className = Tool::getModelClassMapping('\Pimcore\Model\Object\Data\ObjectMetadata');
-                    $metaData = new $className($this->getName(), $this->getColumnKeys(), $o);
+                    $metaData = \Pimcore::getDiContainer()->make('\Pimcore\Model\Object\Data\ObjectMetadata', [
+                        "fieldname" => $this->getName(),
+                        "columns" => $this->getColumnKeys(),
+                        "object" => $o
+                    ]);
+
                     foreach ($this->getColumns() as $c) {
                         $setter = "set" . ucfirst($c["key"]);
                         $metaData->$setter($object[$c["key"]]);
@@ -332,8 +339,11 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
         $value = [];
         foreach ($values as $element) {
             if ($el = Object::getByPath($element)) {
-                $className = Tool::getModelClassMapping('\Pimcore\Model\Object\Data\ObjectMetadata');
-                $metaObject = new $className($this->getName(), $this->getColumnKeys(), $el);
+                $metaObject = \Pimcore::getDiContainer()->make('\Pimcore\Model\Object\Data\ObjectMetadata', [
+                    "fieldname" => $this->getName(),
+                    "columns" => $this->getColumnKeys(),
+                    "object" => $el
+                ]);
 
                 $value[] = $metaObject;
             }
@@ -449,8 +459,11 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
                 }
 
                 if ($dest instanceof Object\AbstractObject) {
-                    $className = Tool::getModelClassMapping('\Pimcore\Model\Object\Data\ObjectMetadata');
-                    $metaObject = new $className($this->getName(), $this->getColumnKeys(), $dest);
+                    $metaObject = \Pimcore::getDiContainer()->make('\Pimcore\Model\Object\Data\ObjectMetadata', [
+                        "fieldname" => $this->getName(),
+                        "columns" => $this->getColumnKeys(),
+                        "object" => $dest
+                    ]);
 
                     foreach ($this->getColumns() as $c) {
                         $setter = "set" . ucfirst($c['key']);
@@ -711,8 +724,9 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
      */
     public function classSaved($class, $params = [])
     {
-        $className = Tool::getModelClassMapping('\Pimcore\Model\Object\Data\ObjectMetadata');
-        $temp = new $className(null);
+        $temp = \Pimcore::getDiContainer()->make('\Pimcore\Model\Object\Data\ObjectMetadata', [
+            "fieldname" => null
+        ]);
         $temp->getDao()->createOrUpdateTable($class);
     }
 

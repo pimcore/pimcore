@@ -590,57 +590,6 @@ class Tool
         return false;
     }
 
-
-    /*
-     * Class Mapping Tools
-     * They are used to map all instances of \Element_Interface to an defined class (type)
-     */
-
-    /**
-     * @static
-     * @param  $sourceClassName
-     * @return string
-     */
-    public static function getModelClassMapping($sourceClassName)
-    {
-        $targetClassName = $sourceClassName;
-        $lookupName = str_replace("\\Pimcore\\Model\\", "", $sourceClassName);
-        $lookupName = ltrim($lookupName, "\\_");
-
-        if ($map = Config::getModelClassMappingConfig()) {
-            if (isset($map[$lookupName])) {
-                $tmpClassName = $map[$lookupName];
-                $tmpClassName = "\\" . ltrim($tmpClassName, "\\");
-                if (self::classExists($tmpClassName)) {
-                    if (is_subclass_of($tmpClassName, $sourceClassName)) {
-                        $targetClassName = "\\" . ltrim($tmpClassName, "\\"); // ensure class is in global namespace
-                    } else {
-                        \Logger::error("Classmapping for " . $sourceClassName . " failed. '" . $tmpClassName . " is not a subclass of '" . $sourceClassName . "'. " . $tmpClassName . " has to extend " . $sourceClassName);
-                    }
-                } else {
-                    \Logger::error("Classmapping for " . $sourceClassName . " failed. Cannot find class '" . $tmpClassName . "'");
-                }
-            }
-        }
-
-        return $targetClassName;
-    }
-
-    /**
-     * @static
-     * @return void
-     */
-    public static function registerClassModelMappingNamespaces()
-    {
-        $autoloader = \Zend_Loader_Autoloader::getInstance();
-        if ($map = Config::getModelClassMappingConfig()) {
-            foreach ($map as $targetClass) {
-                $classParts = explode("_", $targetClass);
-                $autoloader->registerNamespace($classParts[0]);
-            }
-        }
-    }
-
     /**
      * @static
      * @return mixed

@@ -279,34 +279,6 @@ class Config
         \Zend_Registry::set("pimcore_config_web2print", $config);
     }
 
-
-    /**
-     * @static
-     * @return \Zend_Config_Xml
-     */
-    public static function getModelClassMappingConfig()
-    {
-        $config = null;
-
-        if (\Zend_Registry::isRegistered("pimcore_config_model_classmapping")) {
-            $config = \Zend_Registry::get("pimcore_config_model_classmapping");
-        } else {
-            $mappingFile = \Pimcore\Config::locateConfigFile("classmap.php");
-
-            if (is_file($mappingFile)) {
-                $config = include($mappingFile);
-
-                if (is_array($config)) {
-                    self::setModelClassMappingConfig($config);
-                } else {
-                    \Logger::error("classmap.php exists but it is not a valid PHP array configuration.");
-                }
-            }
-        }
-
-        return $config;
-    }
-
     /**
      * @static
      * @param \Zend_Config $config

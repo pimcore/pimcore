@@ -645,17 +645,12 @@ class Service
     {
         try {
             if ($wsDocument instanceof Webservice\Data\Object\Concrete\In) {
-                $classname = Tool::getModelClassMapping("\\Pimcore\\Model\\Object\\" . ucfirst($wsDocument->className));
-                if (Tool::classExists($classname)) {
-                    $object = new $classname();
-
-                    if ($object instanceof Object\Concrete) {
-                        return $this->create($wsDocument, $object);
-                    } else {
-                        throw new \Exception("Unable to create new Object Concrete, could not instantiate Object with given class name [ $classname ]");
-                    }
+                $className = "\\Pimcore\\Model\\Object\\" . ucfirst($wsDocument->className);
+                $object = \Pimcore::getDiContainer()->make($className);
+                if ($object instanceof Object\Concrete) {
+                    return $this->create($wsDocument, $object);
                 } else {
-                    throw new \Exception("Unable to create new Object Concrete, no class name provided");
+                    throw new \Exception("Unable to create new Object Concrete, could not instantiate Object with given class name [ $classname ]");
                 }
             }
 

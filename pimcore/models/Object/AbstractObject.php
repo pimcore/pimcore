@@ -247,17 +247,13 @@ class AbstractObject extends Model\Element\AbstractElement
                     $typeInfo = $object->getDao()->getTypeById($id);
 
                     if ($typeInfo["o_type"] == "object" || $typeInfo["o_type"] == "variant" || $typeInfo["o_type"] == "folder") {
-                        $mappingName = "";
                         if ($typeInfo["o_type"] == "folder") {
-                            $mappingName = "\\Pimcore\\Model\\Object\\Folder";
+                            $className = "\\Pimcore\\Model\\Object\\Folder";
                         } else {
-                            $mappingName = "\\Pimcore\\Model\\Object\\" . ucfirst($typeInfo["o_className"]);
+                            $className = "\\Pimcore\\Model\\Object\\" . ucfirst($typeInfo["o_className"]);
                         }
 
-                        // check for a mapped class
-                        $concreteClassName = Tool::getModelClassMapping($mappingName);
-
-                        $object = new $concreteClassName();
+                        $object = \Pimcore::getDiContainer()->make($className);
                         \Zend_Registry::set($cacheKey, $object);
                         $object->getDao()->getById($id);
 
@@ -334,17 +330,11 @@ class AbstractObject extends Model\Element\AbstractElement
         if (is_array($config)) {
             if ($className) {
                 $listClass = $className . "\\Listing";
+                $list = \Pimcore::getDiContainer()->make($listClass);
+                $list->setValues($config);
+                $list->load();
 
-                // check for a mapped class
-                $listClass = Tool::getModelClassMapping($listClass);
-
-                if (Tool::classExists($listClass)) {
-                    $list = new $listClass();
-                    $list->setValues($config);
-                    $list->load();
-
-                    return $list;
-                }
+                return $list;
             }
         }
 
@@ -372,13 +362,7 @@ class AbstractObject extends Model\Element\AbstractElement
         if (is_array($config)) {
             if ($className) {
                 $listClass = ucfirst($className) . "\\Listing";
-
-                // check for a mapped class
-                $listClass = Tool::getModelClassMapping($listClass);
-
-                if (Tool::classExists($listClass)) {
-                    $list = new $listClass();
-                }
+                $list = \Pimcore::getDiContainer()->make($listClass);
             }
 
             $list->setValues($config);

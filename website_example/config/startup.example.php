@@ -41,4 +41,7 @@ $front->addModuleDirectory(PIMCORE_DOCUMENT_ROOT . "/customModuleDirectory");
     // ...
 });
 
+// do some dependency injection magic
+\Pimcore::getDiContainer()->set("foo", "bar");
+
 */

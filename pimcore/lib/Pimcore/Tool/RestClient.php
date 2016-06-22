@@ -606,27 +606,21 @@ class RestClient
             return $object;
         } elseif ($wsDocument->type == "object" || $wsDocument->type == "variant") {
             $classname = "\\Pimcore\\Model\\Object\\" . ucfirst($wsDocument->className);
-            // check for a mapped class
-            $classname = Tool::getModelClassMapping($classname);
 
-            if (Tool::classExists($classname)) {
-                $object = new $classname();
+            $object = \Pimcore::getDiContainer()->make($classname);
 
-                if ($object instanceof Object\Concrete) {
-                    $curTime = microtime(true);
-                    $wsDocument->reverseMap($object, $this->getDisableMappingExceptions(), $idMapper);
-                    $timeConsumed = round(microtime(true) - $curTime, 3) * 1000;
+            if ($object instanceof Object\Concrete) {
+                $curTime = microtime(true);
+                $wsDocument->reverseMap($object, $this->getDisableMappingExceptions(), $idMapper);
+                $timeConsumed = round(microtime(true) - $curTime, 3) * 1000;
 
-                    if ($this->profilingInfo) {
-                        $this->profilingInfo->reverse = $timeConsumed;
-                    }
-
-                    return $object;
-                } else {
-                    throw new Exception("Unable to decode object, could not instantiate Object with given class name [ $classname ]");
+                if ($this->profilingInfo) {
+                    $this->profilingInfo->reverse = $timeConsumed;
                 }
+
+                return $object;
             } else {
-                throw new Exception("Unable to deocode object, class [" . $classname . "] does not exist");
+                throw new Exception("Unable to decode object, could not instantiate Object with given class name [ $classname ]");
             }
         }
     }

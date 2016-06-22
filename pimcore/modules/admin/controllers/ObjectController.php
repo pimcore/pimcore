@@ -682,9 +682,6 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
         $success = false;
 
         $className = "\\Pimcore\\Model\\Object\\" . ucfirst($this->getParam("className"));
-        // check for a mapped class
-        $className = Tool::getModelClassMapping($className);
-
         $parent = Object::getById($this->getParam("parentId"));
 
         $message = "";
@@ -692,7 +689,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             $intendedPath = $parent->getRealFullPath() . "/" . $this->getParam("key");
 
             if (!Object\Service::pathExists($intendedPath) || true) {
-                $object = new $className();
+                $object = \Pimcore::getDiContainer()->make($className);
                 if ($object instanceof Object\Concrete) {
                     $object->setOmitMandatoryCheck(true); // allow to save the object although there are mandatory fields
                 }

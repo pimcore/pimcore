@@ -582,8 +582,6 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
 
         // create new object
         $className = "\\Pimcore\\Model\\Object\\" . ucfirst($this->getParam("className"));
-        $className = Tool::getModelClassMapping($className);
-
         $parent = Object::getById($this->getParam("parentId"));
 
         $objectKey = "object_" . $job;
@@ -605,15 +603,15 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
                 $object = Object::getByPath($intendedPath);
                 if (!$object instanceof Object\Concrete) {
                     //create new object
-                    $object = new $className();
+                    $object = \Pimcore::getDiContainer()->make($className);
                 } elseif ($object instanceof Object\Concrete and !($object instanceof $className)) {
                     //delete the old object it is of a different class
                     $object->delete();
-                    $object = new $className();
+                    $object = \Pimcore::getDiContainer()->make($className);
                 } elseif ($object instanceof Object\Folder) {
                     //delete the folder
                     $object->delete();
-                    $object = new $className();
+                    $object = \Pimcore::getDiContainer()->make($className);
                 } else {
                     //use the existing object
                 }

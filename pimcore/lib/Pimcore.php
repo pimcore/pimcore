@@ -41,6 +41,11 @@ class Pimcore
     private static $eventManager;
 
     /**
+     * @var \DI\Container
+     */
+    private static $diContainer;
+
+    /**
      * @var array items to be excluded from garbage collection
      */
     private static $globallyProtectedItems;
@@ -616,8 +621,6 @@ class Pimcore
         $autoloader->registerNamespace('Property');
         $autoloader->registerNamespace('Version');
         $autoloader->registerNamespace('Site');
-
-        Tool::registerClassModelMappingNamespaces();
     }
 
     /**
@@ -750,6 +753,28 @@ class Pimcore
         }
 
         return self::$eventManager;
+    }
+
+    /**
+     * @return \DI\Container
+     */
+    public static function getDiContainer() {
+
+        if (!self::$diContainer) {
+            $builder = new \DI\ContainerBuilder();
+            $builder->useAutowiring(false);
+            $builder->useAnnotations(false);
+            $builder->addDefinitions(PIMCORE_PATH . "/config/di.php");
+
+            $customFile = \Pimcore\Config::locateConfigFile("di.php");
+            if(file_exists($customFile)) {
+                $builder->addDefinitions($customFile);
+            }
+
+            self::$diContainer = $builder->build();
+        }
+
+        return self::$diContainer;
     }
 
     /** Add $keepItems to the list of items which are protected from garbage collection.
