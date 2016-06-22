@@ -47,8 +47,6 @@ abstract class PrintAbstract extends Document\PageSnippet
     public function getInProgress()
     {
         return TmpStore::get($this->getLockKey());
-
-//        return \Pimcore\Model\Tool\Lock::isLocked($this->getLockKey(), 0);
     }
 
     public function setLastGenerated($lastGenerated)

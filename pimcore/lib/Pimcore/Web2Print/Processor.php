@@ -87,6 +87,12 @@ abstract class Processor
         try {
             $pdf = $this->buildPdf($document, $jobConfigFile->config);
             file_put_contents($document->getPdfFileName(), $pdf);
+
+            \Pimcore::getEventManager()->trigger("document.print.postPdfGeneration", $document, [
+                "filename" => $document->getPdfFileName(),
+                "pdf" => $pdf
+            ]);
+
             $creationDate = \Zend_Date::now();
             $document->setLastGenerated(($creationDate->get() + 1));
             $document->save();
