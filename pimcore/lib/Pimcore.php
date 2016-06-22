@@ -765,6 +765,8 @@ class Pimcore
             $builder->useAutowiring(false);
             $builder->useAnnotations(false);
 
+            self::getEventManager()->trigger('system.di.init', $builder);
+
             $customFile = \Pimcore\Config::locateConfigFile("di.php");
             if (file_exists($customFile)) {
                 $builder->addDefinitions($customFile);
