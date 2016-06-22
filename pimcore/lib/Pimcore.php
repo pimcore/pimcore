@@ -770,6 +770,8 @@ class Pimcore
             if (file_exists($customFile)) {
                 $builder->addDefinitions($customFile);
             }
+            
+            \Pimcore::getEventManager()->trigger('system.di.init', $builder);
 
             self::$diContainer = $builder->build();
         }
