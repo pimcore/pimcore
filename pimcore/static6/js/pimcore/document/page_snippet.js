@@ -230,7 +230,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                     var link = this.data.path + this.data.key;
                     var linkParams = [];
 
-                    if(this.isDirty()) {
+                    if(this.isDirty() || !this.data.published) {
                         linkParams.push("pimcore_preview=true");
                         linkParams.push("_dc=" + date.getTime());
                     }
