@@ -20,7 +20,7 @@
 // attach global shutdown event
 Pimcore::getEventManager()->attach("system.shutdown", ["Pimcore", "shutdown"], 9999);
 
-// remove assets on element delete
+// remove tags on asset delete
 Pimcore::getEventManager()->attach("asset.postDelete", function (\Zend_EventManager_Event $e) {
     $asset = $e->getTarget();
     \Pimcore\Model\Element\Tag::setTagsForElement("asset", $asset->getId(), []);
@@ -42,3 +42,27 @@ Pimcore::getEventManager()->attach(
     ["admin.object.get.preSendData", "admin.asset.get.preSendData", "admin.document.get.preSendData"],
     ["\\Pimcore\\WorkflowManagement\\EventHandler", "adminElementGetPreSendData"]
 );
+
+// backed search
+foreach (["asset", "object", "document"] as $type) {
+    \Pimcore::getEventManager()->attach($type . ".postAdd", ["Pimcore\\Search\\EventHandler", "postAddElement"]);
+    \Pimcore::getEventManager()->attach($type . ".postUpdate", ["Pimcore\\Search\\EventHandler", "postUpdateElement"]);
+    \Pimcore::getEventManager()->attach($type . ".preDelete", ["Pimcore\\Search\\EventHandler", "preDeleteElement"]);
+}
+
+// UUID
+$conf = \Pimcore\Config::getSystemConfig();
+if ($conf->general->instanceIdentifier) {
+    foreach (["asset", "object", "document", "object.class"] as $type) {
+        \Pimcore::getEventManager()->attach($type . ".postAdd", function ($e) {
+            \Pimcore\Model\Tool\UUID::create($e->getTarget());
+        });
+
+        \Pimcore::getEventManager()->attach($type . ".postDelete", function ($e) {
+            $uuidObject = \Pimcore\Model\Tool\UUID::getByItem($e->getTarget());
+            if ($uuidObject instanceof \Pimcore\Model\Tool\UUID) {
+                $uuidObject->delete();
+            }
+        });
+    }
+}
