@@ -33,6 +33,4 @@ class Factory
 
         return new Workflow($config);
     }
-
-
 }

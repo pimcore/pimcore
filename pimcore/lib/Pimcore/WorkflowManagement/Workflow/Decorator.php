@@ -32,7 +32,8 @@ class Decorator
         $this->workflow = $workflow;
     }
 
-    private function translateLabel($key) {
+    private function translateLabel($key)
+    {
         try {
             return \Pimcore\Model\Translation\Admin::getByKeyLocalized($key, false, true);
         } catch (\Exception $e) {
@@ -42,7 +43,6 @@ class Decorator
 
     public function getAvailableActionsForForm($actionConfigs)
     {
-
         $availableActions = [];
         foreach ($actionConfigs as $actionConfig) {
             $availableActions[] = [
@@ -86,7 +86,7 @@ class Decorator
     public function getStatusLabel($statusName)
     {
         if (!$this->workflow) {
-           throw new \Exception('Decorator needs a workflow to produce labels');
+            throw new \Exception('Decorator needs a workflow to produce labels');
         }
 
         $config = $this->workflow->getStatusConfig($statusName);
@@ -114,7 +114,7 @@ class Decorator
     public function getNoteType($actionName, $formData)
     {
         $config = $this->workflow->getActionConfig($actionName);
-        if(!empty($config['note_type'])) {
+        if (!empty($config['note_type'])) {
             return $config['note_type'];
         }
 
@@ -129,7 +129,7 @@ class Decorator
     public function getNoteTitle($actionName, $formData)
     {
         $config = $this->workflow->getActionConfig($actionName);
-        if(!empty($config['note_title'])) {
+        if (!empty($config['note_title'])) {
             return $config['note_title'];
         }
 
@@ -139,8 +139,4 @@ class Decorator
 
         return $this->getStatusLabel($formData['oldStatus']) . ' ->' . $this->getStatusLabel($formData['newStatus']);
     }
-
-
-
-
 }

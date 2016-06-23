@@ -21,7 +21,6 @@ use Pimcore\Model\Object\ClassDefinition;
 use Pimcore\Model\Object\Concrete as ConcreteObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Asset;
-
 use Pimcore\Model\Object\Concrete;
 use Pimcore\WorkflowManagement\Workflow;
 
@@ -93,7 +92,6 @@ class Manager
         if ($this->user) {
             $this->initUserIds();
         }
-
     }
 
 
@@ -103,7 +101,6 @@ class Manager
      */
     private function initWorkflow()
     {
-
         $config = Workflow\Config::getElementWorkflowConfig($this->element);
         $this->workflow = Workflow\Factory::getWorkflowFromConfig($config);
 
@@ -131,10 +128,11 @@ class Manager
     /**
      * @return null|WorkflowState
      */
-    public function getWorkflowStateForElement() {
+    public function getWorkflowStateForElement()
+    {
         $elementType = Service::getElementType($this->element);
         $workflowState = WorkflowState::getByPrimary($this->element->getId(), $elementType, $this->workflow->getId());
-        if(empty($workflowState)) {
+        if (empty($workflowState)) {
             $workflowState = new WorkflowState();
             $workflowState->setCid($this->element->getId());
             $workflowState->setCtype($elementType);
@@ -190,7 +188,6 @@ class Manager
             $workflowState = $this->getWorkflowStateForElement();
             $workflowState->setState($newState);
             $workflowState->save();
-
         } catch (\Exception $e) {
             throw new \Exception('Cannot set element state, make sure state field exists in class definition');
         }
@@ -202,7 +199,6 @@ class Manager
             $workflowState = $this->getWorkflowStateForElement();
             $workflowState->setStatus($newStatus);
             $workflowState->save();
-
         } catch (\Exception $e) {
             throw new \Exception('Cannot set element status, make sure status field exists in class definition');
         }
@@ -248,7 +244,7 @@ class Manager
 
         //check user permissions on available actions
         $allowedActions = [];
-        foreach($availableActions as $actionName) {
+        foreach ($availableActions as $actionName) {
             if ($this->userCanPerformAction($actionName)) {
                 $allowedActions[$actionName] = $this->workflow->getActionConfig($actionName, $status);
             }
@@ -277,27 +273,21 @@ class Manager
      */
     public function getAvailableStates($actionName)
     {
-
         $actionConfig = $this->workflow->getActionConfig($actionName, $this->getElementStatus());
         $globalAction = $this->workflow->isGlobalAction($actionName);
         $hasTransition = $this->actionHasTransition($actionConfig);
 
         //if the action is global just return the current object state
         if ($globalAction || !$hasTransition) {
-
             $objectState = $this->getElementState();
             $availableStates = [
                 $objectState => $this->workflow->getStateConfig($objectState)
             ];
-
-
         } else {
-
             $availableStates = [];
             foreach ($actionConfig['transitionTo'] as $state => $statuses) {
                 $availableStates[$state] = $this->workflow->getStateConfig($state);
             }
-
         }
 
         return $availableStates;
@@ -318,12 +308,10 @@ class Manager
         $hasTransition = $this->actionHasTransition($actionConfig);
 
         if ($globalAction || !$hasTransition) {
-
             $objectStatus = $this->getElementStatus();
             $availableStatuses = [
                 $objectStatus => $this->workflow->getStatusConfig($objectStatus)
             ];
-
         } else {
 
             //we have a check here for the state being an existing one
@@ -336,7 +324,6 @@ class Manager
             foreach ($actionConfig['transitionTo'][$stateName] as $statusName) {
                 $availableStatuses[$statusName] = $this->workflow->getStatusConfig($statusName);
             }
-
         }
 
         return $availableStatuses;
@@ -353,6 +340,7 @@ class Manager
     public function getNotesRequiredForAction($actionName)
     {
         $actionConfig = $this->getWorkflow()->getActionConfig($actionName, $this->getElementStatus());
+
         return (bool) $actionConfig['notesRequired'];
     }
 
@@ -391,7 +379,7 @@ class Manager
             return true;
         }
 
-        foreach($requiredUserIds as $id) {
+        foreach ($requiredUserIds as $id) {
             if (in_array($id, $this->userIds)) {
                 return true;
             }
@@ -420,7 +408,6 @@ class Manager
         $element = $this->element;
 
         if (!$this->workflow->isGlobalAction($actionName)) {
-
             $availableActions = $this->getAvailableActions();
 
             //check the action is available
@@ -451,9 +438,7 @@ class Manager
 
                     return false;
                 }
-
             }
-
         }
 
         return true;
@@ -492,7 +477,6 @@ class Manager
 
         //process each field in the additional fields configuration
         if (isset($actionConfig['additionalFields']) && is_array($actionConfig['additionalFields'])) {
-
             foreach ($actionConfig['additionalFields'] as $additionalFieldConfig) {
 
                 /**
@@ -509,7 +493,7 @@ class Manager
                 $fieldName = $additionalFieldConfig['name'];
 
                 //check required
-                if ($additionalFieldConfig['required'] && empty($additional[$fieldName]) ) {
+                if ($additionalFieldConfig['required'] && empty($additional[$fieldName])) {
                     throw new \Exception("Workflow::performAction, fieldname [{$fieldName}] required for action [{$actionName}]");
                 }
 
@@ -526,20 +510,14 @@ class Manager
                         $additional[$fieldName] = Workflow\Service::getDataFromEditmode($additional[$fieldName], $additionalFieldConfig['fieldType']);
 
                         $this->element->$setter($additional[$fieldName]);
-
-                    } catch(\Exception $e) {
+                    } catch (\Exception $e) {
                         \Logger::error($e->getMessage());
                         throw new \Exception("Workflow::performAction, cannot set fieldname [{$fieldName}] using setter [{$setter}] in action [{$actionName}]");
                     }
                 } else {
-
                     $actionNoteData[] = Workflow\Service::createNoteData($additionalFieldConfig, $additional[$fieldName]);
-
                 }
-
-
             }
-
         }
 
         //save the old state and status in the form so that we can reference it later
@@ -551,11 +529,11 @@ class Manager
         $this->setElementStatus($formData['newStatus']);
 
 
-        if($this->element instanceof Concrete || $this->element instanceof Document\PageSnippet) {
+        if ($this->element instanceof Concrete || $this->element instanceof Document\PageSnippet) {
             if (!$this->workflow->getAllowUnpublished() || in_array($this->getElementStatus(), $this->workflow->getPublishedStatuses())) {
                 $this->element->setPublished(true);
 
-                if($this->element instanceof Concrete) {
+                if ($this->element instanceof Concrete) {
                     $this->element->setOmitMandatoryCheck(false);
                 }
 
@@ -563,7 +541,7 @@ class Manager
             } else {
                 $this->element->setPublished(false);
 
-                if($this->element instanceof Concrete) {
+                if ($this->element instanceof Concrete) {
                     $this->element->setOmitMandatoryCheck(true);
                 }
 
@@ -576,7 +554,6 @@ class Manager
 
 
         try {
-
             $response = \Pimcore::getEventManager()->trigger("workflowmanagement.action.before", $this, [
                 'actionConfig' => $actionConfig,
                 'data' => $formData
@@ -587,7 +564,7 @@ class Manager
             $this->element->setUserModification($this->user->getId());
             if (($task === "publish" && $this->element->isAllowed("publish")) || ($task === "unpublish" && $this->element->isAllowed("unpublish"))) {
                 $this->element->save();
-            } else if($this->element instanceof Concrete || $this->element instanceof Document\PageSnippet) {
+            } elseif ($this->element instanceof Concrete || $this->element instanceof Document\PageSnippet) {
                 $this->element->saveVersion();
             } else {
                 throw new \Exception("Operation not allowed for this element");
@@ -617,16 +594,12 @@ class Manager
                 'actionConfig' => $actionConfig,
                 'data' => $formData
             ]);
-
-
         } catch (\Exception $e) {
-
             \Pimcore::getEventManager()->trigger("workflowmanagement.action.failure", $this, [
                 'actionConfig' => $actionConfig,
                 'data' => $formData,
                 'exception' => $e
             ]);
-
         }
 
         $this->unregisterActionEvents();
@@ -662,7 +635,6 @@ class Manager
         $this->registeredActionEvents = [];
 
         if (isset($actionConfig['events'])) {
-
             if (isset($actionConfig['events']['before'])) {
                 $this->registeredActionEvents[] = \Pimcore::getEventManager()->attach('workflowmanagement.action.before', $actionConfig['events']['before']);
             }
@@ -672,7 +644,6 @@ class Manager
             if (isset($actionConfig['events']['failure'])) {
                 $this->registeredActionEvents[] = \Pimcore::getEventManager()->attach('workflowmanagement.action.failure', $actionConfig['events']['failure']);
             }
-
         }
     }
 
@@ -681,7 +652,7 @@ class Manager
      */
     private function unregisterActionEvents()
     {
-        foreach($this->registeredActionEvents as $listener) {
+        foreach ($this->registeredActionEvents as $listener) {
             \Pimcore::getEventManager()->detach($listener);
         }
 
@@ -729,7 +700,7 @@ class Manager
         }
 
         $manager = new self($element);
+
         return $manager->getWorkflow()->getAllowUnpublished();
     }
-
 }

@@ -106,14 +106,16 @@ class Workflow
     /**
      * @return int
      */
-    public function getId() {
+    public function getId()
+    {
         return $this->id;
     }
 
     /**
      * @return string
      */
-    public function getName() {
+    public function getName()
+    {
         return $this->name;
     }
 
@@ -338,6 +340,7 @@ class Workflow
         if (!empty($actionConfig['users']) && is_array($actionConfig['users'])) {
             return $actionConfig['users'];
         }
+
         return null;
     }
 
@@ -349,7 +352,6 @@ class Workflow
      */
     public function getAdditionalFieldsForAction($actionName, $statusName=null)
     {
-
         $actionConfig = $this->getActionConfig($actionName, $statusName);
 
         if (empty($actionConfig['additionalFields'])) {
@@ -357,18 +359,16 @@ class Workflow
         }
 
         $fields = [];
-        foreach($actionConfig['additionalFields'] as $field) {
-
+        foreach ($actionConfig['additionalFields'] as $field) {
             if (isset($field['fieldType'])) {
                 //support for pimcore tags
                 $newField = $field;
 
-                if($field['fieldType'] === 'user') {
+                if ($field['fieldType'] === 'user') {
                     $def = new \Pimcore\Model\Object\ClassDefinition\Data\User();
                     $def->configureOptions();
                     $newField['options'] = $def->getOptions();
                 }
-
             } else {
                 //support simple extjs types
                 $newField = $field;
@@ -379,5 +379,4 @@ class Workflow
 
         return $fields;
     }
-
 }

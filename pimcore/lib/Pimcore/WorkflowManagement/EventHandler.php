@@ -39,10 +39,9 @@ class EventHandler
 
         if (!self::isDisabled() && Workflow\Manager::elementHasWorkflow($element)) {
             $manager = Workflow\Manager\Factory::getManager($element);
-            $manager->setElementState( $manager->getWorkflow()->getDefaultState() );
-            $manager->setElementStatus( $manager->getWorkflow()->getDefaultStatus() );
+            $manager->setElementState($manager->getWorkflow()->getDefaultState());
+            $manager->setElementStatus($manager->getWorkflow()->getDefaultStatus());
         }
-
     }
 
     /**
@@ -50,7 +49,8 @@ class EventHandler
      *
      * @param \Zend_EventManager_Event $e
      */
-    public static function elementPostDelete(\Zend_EventManager_Event $e) {
+    public static function elementPostDelete(\Zend_EventManager_Event $e)
+    {
         /**
          * @var Asset|Document|ConcreteObject $element
          */
@@ -59,11 +59,10 @@ class EventHandler
         if (Workflow\Manager::elementHasWorkflow($element)) {
             $manager = Workflow\Manager\Factory::getManager($element);
             $workflowState = $manager->getWorkflowStateForElement();
-            if($workflowState) {
+            if ($workflowState) {
                 $workflowState->delete();
             }
         }
-
     }
 
 
@@ -85,7 +84,6 @@ class EventHandler
         ];
 
         if (Workflow\Manager::elementCanAction($element)) {
-
             $data['workflowManagement']['hasWorkflowManagement'] = true;
 
             //see if we can change the layout
@@ -101,7 +99,7 @@ class EventHandler
             $data['workflowManagement']['status'] = $manager->getWorkflow()->getStatusConfig($status);
 
 
-            if($element instanceof ConcreteObject) {
+            if ($element instanceof ConcreteObject) {
                 $workflowLayoutId = $manager->getObjectLayout();
 
                 //check for !is_null here as we might want to specify 0 in the workflow config
@@ -111,7 +109,7 @@ class EventHandler
                     $validLayouts = Object\Service::getValidLayouts($element);
 
                     //check that the layout id is valid before trying to load
-                    if(!empty($validLayouts)) {
+                    if (!empty($validLayouts)) {
 
                         //todo check user permissions again
                         if ($validLayouts && $validLayouts[$workflowLayoutId]) {
@@ -119,12 +117,9 @@ class EventHandler
                             $customLayoutDefinition = $customLayout->getLayoutDefinitions();
                             $data["layout"] = $customLayoutDefinition;
                         }
-
                     }
-
                 }
             }
-
         }
 
         $returnValueContainer->setData($data);
@@ -136,16 +131,16 @@ class EventHandler
      * @return AbstractElement
      * @throws \Exception
      */
-    private static function extractElementFromEvent(\Zend_EventManager_Event $e) {
-
+    private static function extractElementFromEvent(\Zend_EventManager_Event $e)
+    {
         $element = $e->getParam("object");
-        if(empty($element)) {
+        if (empty($element)) {
             $element = $e->getParam("asset");
         }
-        if(empty($element)) {
+        if (empty($element)) {
             $element = $e->getParam("document");
         }
-        if(empty($element)) {
+        if (empty($element)) {
             throw new \Exception("No element found in event");
         }
 
@@ -169,7 +164,4 @@ class EventHandler
     {
         return (\Zend_Registry::isRegistered('workflow_events_disable_cur_process') && \Zend_Registry::get('workflow_events_disable_cur_process'));
     }
-
-
-
 }

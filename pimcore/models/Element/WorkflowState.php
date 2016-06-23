@@ -18,7 +18,8 @@ namespace Pimcore\Model\Element;
 
 use Pimcore\Model;
 
-class WorkflowState extends Model\AbstractModel {
+class WorkflowState extends Model\AbstractModel
+{
 
     /**
      * @var int
@@ -51,7 +52,8 @@ class WorkflowState extends Model\AbstractModel {
      * @param $workflowId
      * @return null|WorkflowState
      */
-    public static function getByPrimary($cid, $ctype, $workflowId) {
+    public static function getByPrimary($cid, $ctype, $workflowId)
+    {
         try {
             $workflowState = new self();
             $workflowState->getDao()->getByPrimary($cid, $ctype, $workflowId);
@@ -142,6 +144,4 @@ class WorkflowState extends Model\AbstractModel {
     {
         $this->workflowId = $workflowId;
     }
-
-
 }

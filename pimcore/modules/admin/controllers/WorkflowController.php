@@ -59,9 +59,9 @@ class Admin_WorkflowController extends \Pimcore\Controller\Action\Admin\Element
 
         if ($this->getParam('ctype') === 'document') {
             $this->element = Document::getById((int) $this->getParam('cid', 0));
-        } else if ($this->getParam('ctype') === 'asset') {
+        } elseif ($this->getParam('ctype') === 'asset') {
             $this->element = Asset::getById((int) $this->getParam('cid', 0));
-        } else if ($this->getParam('ctype') === 'object') {
+        } elseif ($this->getParam('ctype') === 'object') {
             $this->element = ConcreteObject::getById((int) $this->getParam('cid', 0));
         }
 
@@ -72,7 +72,6 @@ class Admin_WorkflowController extends \Pimcore\Controller\Action\Admin\Element
         //get the latest available version of the element -
         //$this->element = $this->getLatestVersion($this->element);
         $this->element->setUserModification($this->getUser()->getId());
-
     }
 
 
@@ -110,7 +109,7 @@ class Admin_WorkflowController extends \Pimcore\Controller\Action\Admin\Element
             //if only one action select it by default
             if (count($wfConfig['available_actions']) === 1) {
                 $this->selectedAction = $wfConfig['available_actions'][0]['value'];
-            } else if ($this->selectedAction && !$workflow->isValidAction($this->selectedAction)) {
+            } elseif ($this->selectedAction && !$workflow->isValidAction($this->selectedAction)) {
                 $this->selectedAction = null;
             }
 
@@ -126,13 +125,12 @@ class Admin_WorkflowController extends \Pimcore\Controller\Action\Admin\Element
                 //validate the new state
                 if (count($wfConfig['available_states']) === 1) {
                     $this->newState = $wfConfig['available_states'][0]['value'];
-                } else if ( $this->newState && !$workflow->isValidState($this->newState) ) {
+                } elseif ($this->newState && !$workflow->isValidState($this->newState)) {
                     $this->newState = null;
                 }
 
                 //load the available statuses, notes and additional fields
                 if ($this->newState) {
-
                     $wfConfig['available_statuses'] = $this->getDecorator()->getAvailableStatusesForForm(
                         $manager->getAvailableStatuses($this->selectedAction, $this->newState)
                     );
@@ -142,11 +140,8 @@ class Admin_WorkflowController extends \Pimcore\Controller\Action\Admin\Element
                     $wfConfig['notes_required'] = $manager->getNotesRequiredForAction($this->selectedAction);
                     $wfConfig['additional_fields'] = $manager->getAdditionalFieldsForAction($this->selectedAction);
                 }
-
-
             }
-
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $wfConfig['message'] = $e->getMessage();
         }
 
@@ -159,29 +154,23 @@ class Admin_WorkflowController extends \Pimcore\Controller\Action\Admin\Element
         $manager = $this->getWorkflowManager();
         $params = $this->getParam('workflow', []);
 
-        if( $manager->validateAction($params['action'], $params['newState'], $params['newStatus']) ) {
+        if ($manager->validateAction($params['action'], $params['newState'], $params['newStatus'])) {
 
 
             //perform the action on the element
             try {
-
                 $manager->performAction($params['action'], $params);
                 $data = [
                     'success' => true,
                     'callback' => 'reloadObject'
                 ];
-
-            } catch(\Exception $e) {
-
+            } catch (\Exception $e) {
                 $data = [
                     'success' => false,
                     'message' => 'error performing action on this element',
                     'reason' => $e->getMessage()
                 ];
-
             }
-
-
         } else {
             $data = [
                 'success' => false,
@@ -215,7 +204,7 @@ class Admin_WorkflowController extends \Pimcore\Controller\Action\Admin\Element
      */
     protected function getDecorator()
     {
-        if($this->decorator) {
+        if ($this->decorator) {
             return $this->decorator;
         }
         $this->decorator = new Workflow\Decorator();
@@ -231,7 +220,7 @@ class Admin_WorkflowController extends \Pimcore\Controller\Action\Admin\Element
     {
 
         //TODO move this maybe to a service method, since this is also used in ObjectController and DocumentControllers
-        if($element instanceof Document) {
+        if ($element instanceof Document) {
             $latestVersion = $element->getLatestVersion();
             if ($latestVersion) {
                 $latestDoc = $latestVersion->loadData();
@@ -256,5 +245,4 @@ class Admin_WorkflowController extends \Pimcore\Controller\Action\Admin\Element
 
         return $element;
     }
-
 }

@@ -48,7 +48,6 @@ class Config
                         \Logger::error("$file exists but it is not a valid PHP array configuration.");
                     }
                 }
-
             } catch (\Exception $e) {
                 $file = \Pimcore\Config::locateConfigFile("workflowmanagement.php");
                 \Logger::emergency("Cannot find workflow configuration, should be located at: " . $file);
@@ -92,17 +91,14 @@ class Config
                 continue;
             }
 
-            if(isset($workflow['workflowSubject']) && in_array( $elementType, $workflow['workflowSubject']['types'] )) {
-
+            if (isset($workflow['workflowSubject']) && in_array($elementType, $workflow['workflowSubject']['types'])) {
                 switch ($elementType) {
                     case 'asset':
 
                         if (isset($workflow['workflowSubject']['assetTypes']) && is_array($workflow['workflowSubject']['assetTypes'])) {
-
                             if (in_array($elementSubType, $workflow['workflowSubject']['assetTypes'])) {
                                 return $workflow;
                             }
-
                         } else {
                             \Logger::warning('WorkflowManagement::getClassWorkflowConfig workflow does not feature a valid array of available asset types');
                         }
@@ -112,11 +108,9 @@ class Config
                     case 'document':
 
                         if (isset($workflow['workflowSubject']['documentTypes']) && is_array($workflow['workflowSubject']['documentTypes'])) {
-
                             if (in_array($elementSubType, $workflow['workflowSubject']['documentTypes'])) {
                                 return $workflow;
                             }
-
                         } else {
                             \Logger::warning('WorkflowManagement::getClassWorkflowConfig workflow does not feature a valid array of available document types');
                         }
@@ -125,14 +119,12 @@ class Config
 
                     case 'object':
 
-                        if($element instanceof ConcreteObject) {
+                        if ($element instanceof ConcreteObject) {
                             if (isset($workflow['workflowSubject']['classes']) && is_array($workflow['workflowSubject']['classes'])) {
-
                                 $classId = $element->getClassId();
                                 if (in_array($classId, $workflow['workflowSubject']['classes'])) {
                                     return $workflow;
                                 }
-
                             } else {
                                 \Logger::warning('WorkflowManagement::getClassWorkflowConfig workflow does not feature a valid array of available class ID\'s');
                             }
@@ -144,10 +136,7 @@ class Config
                         //unknown element type, return null
                         return null;
                 }
-
-
             }
-
         }
 
         return null;
@@ -190,6 +179,4 @@ class Config
 //
 //        return null;
 //    }
-
-
 }

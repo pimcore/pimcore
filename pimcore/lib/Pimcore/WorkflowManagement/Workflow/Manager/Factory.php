@@ -36,5 +36,4 @@ class Factory
 
         return $manager;
     }
-
 }

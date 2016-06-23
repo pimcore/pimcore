@@ -32,39 +32,30 @@ class Service
 
         //supported types for notes are text, date, document, asset, object, bool
         if ($fc['fieldType'] === 'checkbox') {
-
             $data['type'] = 'bool';
             $data['value'] = (bool) $value;
-
-        } else if (in_array($fc['fieldType'], ['date', 'datetime'])) {
-
+        } elseif (in_array($fc['fieldType'], ['date', 'datetime'])) {
             $data['type'] = 'date';
             if (empty($fc['timeformat']) || $fc['timeformat'] === 'milliseconds') {
                 $data['value'] = new \Pimcore\Date($value / 1000);
             } else {
                 $data['value'] = new \Pimcore\Date($value);
             }
-
-        } else if (false) { //TODO
+        } elseif (false) { //TODO
 
             $data['type'] = 'document';
             $data['value'] = $value;
-
-        } else if(false) { //TODO
+        } elseif (false) { //TODO
 
             $data['type'] = 'asset';
             $data['value'] = $value;
-
-        } else if(false) { //TODO
+        } elseif (false) { //TODO
 
             $data['type'] = 'object';
             $data['value'] = $value;
-
         } else {
-
             $data['type'] = 'text';
             $data['value'] = $value;
-            
         }
 
         $data['key'] = $fc['name'];
@@ -81,11 +72,13 @@ class Service
              * @var \Pimcore\Model\Object\ClassDefinition\Data $tag
              */
             $tag = new $tagClass();
+
             return $tag->getDataFromEditmode($data);
         }
 
         //purposely return null if there is no valid class, log a warning
         \Logger::warning("No valid pimcore tag found for fieldType ({$pimcoreTagName}), check 'fieldType' exists, and 'type' is not being used in config");
+
         return null;
     }
 
@@ -102,7 +95,7 @@ class Service
     public static function createActionNote($element, $type, $title, $description, $noteData, $user=null)
     {
         //prepare some vars for creating the note
-        if(!$user) {
+        if (!$user) {
             $user = \Pimcore\Tool\Admin::getCurrentUser();
         }
 
@@ -114,7 +107,7 @@ class Service
         $note->setDescription($description);
         $note->setUser($user->getId());
 
-        if(is_array($noteData)) {
+        if (is_array($noteData)) {
             foreach ($noteData as $row) {
                 $note->addData($row['key'], $row['type'], $row['value']);
             }
@@ -136,27 +129,27 @@ class Service
         //try {
 
             $recipients = self::getNotificationUsers($users);
-            if (!count($recipients)) {
-                return;
-            }
+        if (!count($recipients)) {
+            return;
+        }
 
-            $mail = new \Pimcore\Mail();
-            foreach($recipients as $user) {
-                /**
+        $mail = new \Pimcore\Mail();
+        foreach ($recipients as $user) {
+            /**
                  * @var $user User
                  */
                 $mail->addTo($user->getEmail(), $user->getName());
-            }
+        }
 
-            $element = Element\Service::getElementById($note->getCtype(), $note->getCid());
+        $element = Element\Service::getElementById($note->getCtype(), $note->getCid());
 
-            $mail->setSubject("[pimcore] {$note->getTitle()}, {$element->getType()} [{$element->getId()}]");
+        $mail->setSubject("[pimcore] {$note->getTitle()}, {$element->getType()} [{$element->getId()}]");
 
             //TODO decide some body text/html
 
             $mail->setBodyText($note->getDescription());
 
-            $mail->send();
+        $mail->send();
 
         //} catch(\Exception $e) {
         //    //todo application log
@@ -178,24 +171,23 @@ class Service
         $roleList = new User\Role\Listing();
         $roleList->setCondition('id in (?)', [implode(',', $userIds)]);
 
-        foreach($roleList->load() as $role) {
-
+        foreach ($roleList->load() as $role) {
             $userList = new User\Listing();
             $userList->setCondition('FIND_IN_SET(?, roles) > 0', [$role->getId()]);
 
-            foreach($userList->load() as $user) {
+            foreach ($userList->load() as $user) {
                 if ($user->getEmail()) {
                     $notifyUsers[] = $user;
                 }
             }
-
-        } unset($roleList, $user, $role);
+        }
+        unset($roleList, $user, $role);
 
         //get users
         $roleList = new User\Listing();
         $roleList->setCondition('id in (?)', [implode(',', $userIds)]);
 
-        foreach($roleList->load() as $user) {
+        foreach ($roleList->load() as $user) {
             /**
              * @var User $user
              */
@@ -206,8 +198,4 @@ class Service
 
         return $notifyUsers;
     }
-
-
-
-
 }
