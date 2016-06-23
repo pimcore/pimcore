@@ -581,7 +581,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         }
 
         // create new object
-        $className = "\\Pimcore\\Model\\Object\\" . ucfirst($this->getParam("className"));
+        $className = "Pimcore\\Model\\Object\\" . ucfirst($this->getParam("className"));
         $parent = Object::getById($this->getParam("parentId"));
 
         $objectKey = "object_" . $job;

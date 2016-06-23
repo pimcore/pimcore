@@ -256,7 +256,7 @@ class Document extends Element\AbstractElement
                     $document = new Document();
                     $document->getDao()->getById($id);
 
-                    $className = "\\Pimcore\\Model\\Document\\" . ucfirst($document->getType());
+                    $className = "Pimcore\\Model\\Document\\" . ucfirst($document->getType());
 
                     // this is the fallback for custom document types using prefixes
                     // so we need to check if the class exists first
@@ -343,7 +343,7 @@ class Document extends Element\AbstractElement
     public static function getList($config = [])
     {
         if (is_array($config)) {
-            $listClass = "\\Pimcore\\Model\\Document\\Listing";
+            $listClass = "Pimcore\\Model\\Document\\Listing";
             $list = \Pimcore::getDiContainer()->make($listClass);
             $list->setValues($config);
             $list->load();
@@ -361,7 +361,7 @@ class Document extends Element\AbstractElement
     public static function getTotalCount($config = [])
     {
         if (is_array($config)) {
-            $listClass = "\\Pimcore\\Model\\Document\\Listing";
+            $listClass = "Pimcore\\Model\\Document\\Listing";
             $list = \Pimcore::getDiContainer()->make($listClass);
             $list->setValues($config);
             $count = $list->getTotalCount();

@@ -681,7 +681,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
     {
         $success = false;
 
-        $className = "\\Pimcore\\Model\\Object\\" . ucfirst($this->getParam("className"));
+        $className = "Pimcore\\Model\\Object\\" . ucfirst($this->getParam("className"));
         $parent = Object::getById($this->getParam("parentId"));
 
         $message = "";

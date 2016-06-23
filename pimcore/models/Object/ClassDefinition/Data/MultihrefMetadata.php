@@ -109,7 +109,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
                 }
 
                 if ($destination instanceof Element\ElementInterface) {
-                    $metaData = \Pimcore::getDiContainer()->make('\Pimcore\Model\Object\Data\ElementMetadata', [
+                    $metaData = \Pimcore::getDiContainer()->make('Pimcore\Model\Object\Data\ElementMetadata', [
                         "fieldname" => $this->getName(),
                         "columns" => $this->getColumnKeys(),
                         "element" => $destination
@@ -238,7 +238,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
                 }
 
                 if ($e instanceof Element\ElementInterface) {
-                    $metaData = \Pimcore::getDiContainer()->make('\Pimcore\Model\Object\Data\ElementMetadata', [
+                    $metaData = \Pimcore::getDiContainer()->make('Pimcore\Model\Object\Data\ElementMetadata', [
                         "fieldname" => $this->getName(),
                         "columns" => $this->getColumnKeys(),
                         "element" => $e
@@ -383,7 +383,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
             $el = Element\Service::getElementByPath($type, $path);
 
             if ($el) {
-                $metaObject = \Pimcore::getDiContainer()->make('\Pimcore\Model\Object\Data\ElementMetadata', [
+                $metaObject = \Pimcore::getDiContainer()->make('Pimcore\Model\Object\Data\ElementMetadata', [
                     "fieldname" => $this->getName(),
                     "columns" => $this->getColumnKeys(),
                     "element" => $el
@@ -701,7 +701,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
      */
     public function classSaved($class)
     {
-        $temp = \Pimcore::getDiContainer()->make('\Pimcore\Model\Object\Data\ElementMetadata', [
+        $temp = \Pimcore::getDiContainer()->make('Pimcore\Model\Object\Data\ElementMetadata', [
             "fieldname" => null
         ]);
         $temp->getDao()->createOrUpdateTable($class);

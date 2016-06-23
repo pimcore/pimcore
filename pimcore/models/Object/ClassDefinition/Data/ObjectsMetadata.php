@@ -107,7 +107,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
                 $destination = Object::getById($object["dest_id"]);
 
                 if ($source instanceof Object\Concrete && $destination instanceof Object\Concrete && $destination->getClassId() == $this->getAllowedClassId()) {
-                    $metaData = \Pimcore::getDiContainer()->make('\Pimcore\Model\Object\Data\ObjectMetadata', [
+                    $metaData = \Pimcore::getDiContainer()->make('Pimcore\Model\Object\Data\ObjectMetadata', [
                         "fieldname" => $this->getName(),
                         "columns" => $this->getColumnKeys(),
                         "object" => $destination
@@ -211,7 +211,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
             foreach ($data as $object) {
                 $o = Object::getById($object["id"]);
                 if ($o && $o->getClassId() == $this->getAllowedClassId()) {
-                    $metaData = \Pimcore::getDiContainer()->make('\Pimcore\Model\Object\Data\ObjectMetadata', [
+                    $metaData = \Pimcore::getDiContainer()->make('Pimcore\Model\Object\Data\ObjectMetadata', [
                         "fieldname" => $this->getName(),
                         "columns" => $this->getColumnKeys(),
                         "object" => $o
@@ -339,7 +339,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
         $value = [];
         foreach ($values as $element) {
             if ($el = Object::getByPath($element)) {
-                $metaObject = \Pimcore::getDiContainer()->make('\Pimcore\Model\Object\Data\ObjectMetadata', [
+                $metaObject = \Pimcore::getDiContainer()->make('Pimcore\Model\Object\Data\ObjectMetadata', [
                     "fieldname" => $this->getName(),
                     "columns" => $this->getColumnKeys(),
                     "object" => $el
@@ -459,7 +459,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
                 }
 
                 if ($dest instanceof Object\AbstractObject) {
-                    $metaObject = \Pimcore::getDiContainer()->make('\Pimcore\Model\Object\Data\ObjectMetadata', [
+                    $metaObject = \Pimcore::getDiContainer()->make('Pimcore\Model\Object\Data\ObjectMetadata', [
                         "fieldname" => $this->getName(),
                         "columns" => $this->getColumnKeys(),
                         "object" => $dest
@@ -724,7 +724,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
      */
     public function classSaved($class, $params = [])
     {
-        $temp = \Pimcore::getDiContainer()->make('\Pimcore\Model\Object\Data\ObjectMetadata', [
+        $temp = \Pimcore::getDiContainer()->make('Pimcore\Model\Object\Data\ObjectMetadata', [
             "fieldname" => null
         ]);
         $temp->getDao()->createOrUpdateTable($class);

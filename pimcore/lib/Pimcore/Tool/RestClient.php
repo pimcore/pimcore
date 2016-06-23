@@ -605,7 +605,7 @@ class RestClient
 
             return $object;
         } elseif ($wsDocument->type == "object" || $wsDocument->type == "variant") {
-            $classname = "\\Pimcore\\Model\\Object\\" . ucfirst($wsDocument->className);
+            $classname = "Pimcore\\Model\\Object\\" . ucfirst($wsDocument->className);
 
             $object = \Pimcore::getDiContainer()->make($classname);
 

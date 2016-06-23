@@ -248,9 +248,9 @@ class AbstractObject extends Model\Element\AbstractElement
 
                     if ($typeInfo["o_type"] == "object" || $typeInfo["o_type"] == "variant" || $typeInfo["o_type"] == "folder") {
                         if ($typeInfo["o_type"] == "folder") {
-                            $className = "\\Pimcore\\Model\\Object\\Folder";
+                            $className = "Pimcore\\Model\\Object\\Folder";
                         } else {
-                            $className = "\\Pimcore\\Model\\Object\\" . ucfirst($typeInfo["o_className"]);
+                            $className = "Pimcore\\Model\\Object\\" . ucfirst($typeInfo["o_className"]);
                         }
 
                         $object = \Pimcore::getDiContainer()->make($className);
@@ -316,15 +316,15 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public static function getList($config = [])
     {
-        $className = "\\Pimcore\\Model\\Object";
+        $className = "Pimcore\\Model\\Object";
         // get classname
         if (get_called_class() != "Pimcore\\Model\\Object\\AbstractObject" && get_called_class() != "Pimcore\\Model\\Object\\Concrete") {
             $tmpObject = new static();
-            $className = "\\Pimcore\\Model\\Object\\" . ucfirst($tmpObject->getClassName());
+            $className = "Pimcore\\Model\\Object\\" . ucfirst($tmpObject->getClassName());
         }
 
         if (!empty($config["class"])) {
-            $className = "\\" . ltrim($config["class"], "\\");
+            $className = ltrim($config["class"], "\\");
         }
 
         if (is_array($config)) {
@@ -348,15 +348,15 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public static function getTotalCount($config = [])
     {
-        $className = "\\Pimcore\\Model\\Object";
+        $className = "Pimcore\\Model\\Object";
         // get classname
         if (get_called_class() != "Pimcore\\Model\\Object\\AbstractObject" && get_called_class() != "Pimcore\\Model\\Object\\Concrete") {
             $tmpObject = new static();
-            $className = "\\Pimcore\\Model\\Object\\" . ucfirst($tmpObject->getClassName());
+            $className = "Pimcore\\Model\\Object\\" . ucfirst($tmpObject->getClassName());
         }
 
         if (!empty($config["class"])) {
-            $className = "\\" . ltrim($config["class"], "\\");
+            $className = ltrim($config["class"], "\\");
         }
 
         if (is_array($config)) {

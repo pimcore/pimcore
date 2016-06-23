@@ -259,7 +259,7 @@ class Asset extends Element\AbstractElement
                     $asset = new Asset();
                     $asset->getDao()->getById($id);
 
-                    $className = "\\Pimcore\\Model\\Asset\\" . ucfirst($asset->getType());
+                    $className = "Pimcore\\Model\\Asset\\" . ucfirst($asset->getType());
 
                     $asset = \Pimcore::getDiContainer()->make($className);
                     \Zend_Registry::set($cacheKey, $asset);
@@ -364,7 +364,7 @@ class Asset extends Element\AbstractElement
     public static function getList($config = [])
     {
         if (is_array($config)) {
-            $listClass = "\\Pimcore\\Model\\Asset\\Listing";
+            $listClass = "Pimcore\\Model\\Asset\\Listing";
             $list = \Pimcore::getDiContainer()->make($listClass);
             $list->setValues($config);
             $list->load();
@@ -380,7 +380,7 @@ class Asset extends Element\AbstractElement
     public static function getTotalCount($config = [])
     {
         if (is_array($config)) {
-            $listClass = "\\Pimcore\\Model\\Asset\\Listing";
+            $listClass = "Pimcore\\Model\\Asset\\Listing";
             $list = \Pimcore::getDiContainer()->make($listClass);
             $list->setValues($config);
             $count = $list->getTotalCount();
