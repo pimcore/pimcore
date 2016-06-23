@@ -148,7 +148,7 @@ class Service
                 $mail->addTo($user->getEmail(), $user->getName());
             }
 
-            $element = Element\Service::getElementById($note->getCtype(), $note->getId());
+            $element = Element\Service::getElementById($note->getCtype(), $note->getCid());
 
             $mail->setSubject("[pimcore] {$note->getTitle()}, {$element->getType()} [{$element->getId()}]");
 

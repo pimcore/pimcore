@@ -133,11 +133,12 @@ class Manager
      */
     public function getWorkflowStateForElement() {
         $elementType = Service::getElementType($this->element);
-        $workflowState = WorkflowState::getByIdAndType($this->element->getId(), $elementType);
+        $workflowState = WorkflowState::getByPrimary($this->element->getId(), $elementType, $this->workflow->getId());
         if(empty($workflowState)) {
             $workflowState = new WorkflowState();
             $workflowState->setCid($this->element->getId());
             $workflowState->setCtype($elementType);
+            $workflowState->setWorkflowId($this->workflow->getId());
         }
 
         return $workflowState;

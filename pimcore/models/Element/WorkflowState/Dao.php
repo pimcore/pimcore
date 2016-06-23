@@ -27,11 +27,12 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param $cid
      * @param $ctype
+     * @param $workflowId
      * @throws \Exception
      */
-    public function getByIdAndType($cid, $ctype)
+    public function getByPrimary($cid, $ctype, $workflowId)
     {
-        $data = $this->db->fetchRow("SELECT * FROM element_workflow_state WHERE cid = ? AND ctype = ?", [$cid, $ctype]);
+        $data = $this->db->fetchRow("SELECT * FROM element_workflow_state WHERE cid = ? AND ctype = ? AND workflowId = ?", [$cid, $ctype, $workflowId]);
 
         if (!$data["cid"]) {
             throw new \Exception("WorkflowStatus item with cid " . $cid . " and ctype " . $ctype . " not found");

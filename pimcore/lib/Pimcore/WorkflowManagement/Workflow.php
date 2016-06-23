@@ -103,6 +103,9 @@ class Workflow
         $this->allowUnpublished = $data['allowUnpublished'];
     }
 
+    public function getId() {
+        return $this->id;
+    }
 
     /**
      * Returns the default state for new elements

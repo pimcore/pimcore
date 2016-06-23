@@ -31,6 +31,10 @@ class WorkflowState extends Model\AbstractModel {
     public $ctype;
 
     /**
+     * @var int
+     */
+    public $workflowId;
+    /**
      * @var string
      */
     public $state;
@@ -44,12 +48,13 @@ class WorkflowState extends Model\AbstractModel {
     /**
      * @param $cid
      * @param $ctype
+     * @param $workflowId
      * @return null|WorkflowState
      */
-    public static function getByIdAndType($cid, $ctype) {
+    public static function getByPrimary($cid, $ctype, $workflowId) {
         try {
             $workflowState = new self();
-            $workflowState->getDao()->getByIdAndType($cid, $ctype);
+            $workflowState->getDao()->getByPrimary($cid, $ctype, $workflowId);
 
             return $workflowState;
         } catch (\Exception $e) {
@@ -122,6 +127,21 @@ class WorkflowState extends Model\AbstractModel {
         $this->status = $status;
     }
 
+    /**
+     * @return int
+     */
+    public function getWorkflowId()
+    {
+        return $this->workflowId;
+    }
+
+    /**
+     * @param int $workflowId
+     */
+    public function setWorkflowId($workflowId)
+    {
+        $this->workflowId = $workflowId;
+    }
 
 
 }
