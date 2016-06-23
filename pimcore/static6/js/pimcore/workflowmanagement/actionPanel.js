@@ -76,10 +76,6 @@ pimcore.workflowmanagement.actionPanel = Class.create({
             xtype: 'hiddenfield',
             name: 'ctype',
             value: this.elementType
-        // },{
-        //     xtype: 'hiddenfield',
-        //     name: 'objectType',
-        //     value: this.elementType
         },{
             xtype: 'fieldset',
             itemId: 'actionFieldset',

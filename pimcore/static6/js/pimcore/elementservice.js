@@ -774,7 +774,7 @@ pimcore.elementservice.integrateWorkflowManagement = function(elementType, eleme
         buttons.push({
             xtype: 'container',
             html: [
-                elementEditor.data.workflowManagement.status.label
+                ts(elementEditor.data.workflowManagement.status.label)
             ].join(''),
             style: 'color: ' + elementEditor.data.workflowManagement.state.color + ';',
             cls: 'wf-status-outer'

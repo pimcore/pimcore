@@ -32,13 +32,22 @@ class Decorator
         $this->workflow = $workflow;
     }
 
+    private function translateLabel($key) {
+        try {
+            return \Pimcore\Model\Translation\Admin::getByKeyLocalized($key, false, true);
+        } catch (\Exception $e) {
+            return $key;
+        }
+    }
+
     public function getAvailableActionsForForm($actionConfigs)
     {
+
         $availableActions = [];
         foreach ($actionConfigs as $actionConfig) {
             $availableActions[] = [
                 'value' => $actionConfig['name'],
-                'label' => $actionConfig['label']
+                'label' => $this->translateLabel($actionConfig['label'])
             ];
         }
 
@@ -52,7 +61,7 @@ class Decorator
         foreach ($stateConfigs as $stateConfig) {
             $availableStates[] = [
                 'value' => $stateConfig['name'],
-                'label' => $stateConfig['label'],
+                'label' => $this->translateLabel($stateConfig['label']),
                 'color' => $stateConfig['color']
             ];
         }
@@ -66,7 +75,7 @@ class Decorator
         foreach ($statusConfigs as $statusConfig) {
             $availableStatuses[] = [
                 'value' => $statusConfig['name'],
-                'label' => $statusConfig['label'],
+                'label' => $this->translateLabel($statusConfig['label']),
             ];
         }
 
@@ -82,8 +91,7 @@ class Decorator
 
         $config = $this->workflow->getStatusConfig($statusName);
 
-        //todo add translation support
-        return $config['label'];
+        return $this->translateLabel($config['label']);
     }
 
 
@@ -95,8 +103,7 @@ class Decorator
 
         $config = $this->workflow->getActionConfig($actionName);
 
-        //todo add translation support
-        return $config['label'];
+        return $this->translateLabel($config['label']);
     }
 
     /**
