@@ -92,6 +92,8 @@ class EventHandler
             $currentUser = Admin::getCurrentUser();
             $manager = Workflow\Manager\Factory::getManager($element, $currentUser);
 
+            $data['workflowManagement']['workflowName'] = $manager->getWorkflow()->getName();
+
             //get the state and status
             $state = $manager->getElementState();
             $data['workflowManagement']['state'] = $manager->getWorkflow()->getStateConfig($state);

@@ -103,8 +103,18 @@ class Workflow
         $this->allowUnpublished = $data['allowUnpublished'];
     }
 
+    /**
+     * @return int
+     */
     public function getId() {
         return $this->id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName() {
+        return $this->name;
     }
 
     /**

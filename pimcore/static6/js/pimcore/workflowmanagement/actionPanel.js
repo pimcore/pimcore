@@ -206,7 +206,7 @@ pimcore.workflowmanagement.actionPanel = Class.create({
                 width: 530,
                 height: height,
                 iconCls: "pimcore_icon_workflow_action",
-                title: this.elementType + ' ' + t('workflow_actions'),
+                title: this.elementEditor.data.workflowManagement.workflowName + ' ' + t('workflow_actions'),
                 layout: "fit",
                 closeAction:'close',
                 plain: true,

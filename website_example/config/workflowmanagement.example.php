@@ -4,7 +4,7 @@ return [
 
     "workflows" => [
         [
-            "name" => "A friendly name",                                        // display name
+            "name" => "A friendly name",                                        // display name, is shown at workflow window in pimcore admin
             "id" => 1,                                                          // unique (!!!) workflow management ID
             "workflowSubject" => [                                              // defines for which elements the workflow is for
                 "types" => ["object", "asset", "document"],                     // the type of element that this workflow is for (asset|object|document)
