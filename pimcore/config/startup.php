@@ -164,7 +164,6 @@ foreach ($autoloaderClassMapFiles as $autoloaderClassMapFile) {
 \Pimcore::initConfiguration();
 \Pimcore::setupFramework();
 \Pimcore::initLogger();
-\Pimcore::initModules();
 
 if (\Pimcore\Config::getSystemConfig()) {
     // we do not initialize plugins if pimcore isn't installed properly

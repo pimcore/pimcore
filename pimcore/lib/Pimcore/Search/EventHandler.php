@@ -12,29 +12,17 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Model\Search\Backend;
+namespace Pimcore\Search;
 
-class Module extends \Pimcore\API\Module\AbstractModule
+use Pimcore\Model\Search\Backend\Data;
+
+class EventHandler
 {
-
-    /**
-     * @throws \Zend_EventManager_Exception_InvalidArgumentException
-     */
-    public function init()
-    {
-
-        // attach event-listener
-        foreach (["asset", "object", "document"] as $type) {
-            \Pimcore::getEventManager()->attach($type . ".postAdd", [$this, "postAddElement"]);
-            \Pimcore::getEventManager()->attach($type . ".postUpdate", [$this, "postUpdateElement"]);
-            \Pimcore::getEventManager()->attach($type . ".preDelete", [$this, "preDeleteElement"]);
-        }
-    }
 
     /**
      * @param $e
      */
-    public function postAddElement($e)
+    public static function postAddElement($e)
     {
         $searchEntry = new Data($e->getTarget());
         $searchEntry->save();
@@ -43,7 +31,7 @@ class Module extends \Pimcore\API\Module\AbstractModule
     /**
      * @param $e
      */
-    public function preDeleteElement($e)
+    public static function preDeleteElement($e)
     {
         $searchEntry = Data::getForElement($e->getTarget());
         if ($searchEntry instanceof Data and $searchEntry->getId() instanceof Data\Id) {
@@ -54,7 +42,7 @@ class Module extends \Pimcore\API\Module\AbstractModule
     /**
      * @param $e
      */
-    public function postUpdateElement($e)
+    public static function postUpdateElement($e)
     {
         $element = $e->getTarget();
         $searchEntry = Data::getForElement($element);
@@ -62,7 +50,7 @@ class Module extends \Pimcore\API\Module\AbstractModule
             $searchEntry->setDataFromElement($element);
             $searchEntry->save();
         } else {
-            $this->postAddElement($e);
+            self::postAddElement($e);
         }
     }
 }

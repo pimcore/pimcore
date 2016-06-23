@@ -453,20 +453,13 @@ class Pimcore
     }
 
     /**
-     * initialisze system modules and register them with the broker
-     *
      * @static
      * @return void
+     * @deprecated
      */
     public static function initModules()
     {
-        $broker = \Pimcore\API\Plugin\Broker::getInstance();
-        $broker->registerModule("\\Pimcore\\Model\\Search\\Backend\\Module");
-
-        $conf = Config::getSystemConfig();
-        if ($conf->general->instanceIdentifier) {
-            $broker->registerModule("\\Pimcore\\Model\\Tool\\UUID\\Module");
-        }
+        // only for compatibility reasons, will be removed in pimcore 5
     }
 
     /**
