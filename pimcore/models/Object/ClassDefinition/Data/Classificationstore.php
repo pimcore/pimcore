@@ -36,7 +36,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
      *
      * @var string
      */
-    public $phpdocType = "\\Pimcore\\Model\\Object\\Data\\ClassificationStore";
+    public $phpdocType = "\\Pimcore\\Model\\Object\\Classificationstore";
 
     /**
      * @var array
