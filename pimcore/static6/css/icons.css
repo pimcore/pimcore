@@ -1017,5 +1017,10 @@
     background: url(/pimcore/static6/img/flat-color-icons/book.svg) center center no-repeat !important;
 }
 
+.pimcore_icon_workflow_action {
+    background: url(/pimcore/static6/img/flat-color-icons/workflow.svg) center center no-repeat !important
+}
+
+
 
 

@@ -7151,5 +7151,85 @@
     {
         "term": "PHP Class Name",
         "definition": "PHP Class Name"
+    },
+    {
+        "term":"workflow_select_action",
+        "definition":"Select the Action to perform",
+        "context":"",
+        "term_plural":"",
+        "reference":"",
+        "comment":""
+    },
+    {
+        "term":"workflow_action_detail",
+        "definition":"Action detail",
+        "context":"",
+        "term_plural":"",
+        "reference":"",
+        "comment":""
+    },
+    {
+        "term":"workflow_select_new_state",
+        "definition":"Select new State",
+        "context":"",
+        "term_plural":"",
+        "reference":"",
+        "comment":""
+    },
+    {
+        "term":"workflow_select_new_status",
+        "definition":"Select new Status",
+        "context":"",
+        "term_plural":"",
+        "reference":"",
+        "comment":""
+    },
+    {
+        "term":"workflow_additional_info",
+        "definition":"Additional Information",
+        "context":"",
+        "term_plural":"",
+        "reference":"",
+        "comment":""
+    },
+    {
+        "term":"workflow_notes",
+        "definition":"Notes",
+        "context":"",
+        "term_plural":"",
+        "reference":"",
+        "comment":""
+    },
+    {
+        "term":"workflow_actions",
+        "definition":"Actions",
+        "context":"",
+        "term_plural":"",
+        "reference":"",
+        "comment":""
+    },
+    {
+        "term":"workflow_perform_action",
+        "definition":"Perform Action",
+        "context":"",
+        "term_plural":"",
+        "reference":"",
+        "comment":""
+    },
+    {
+        "term":"workflow_notes_required",
+        "definition":"Notes (Required)",
+        "context":"",
+        "term_plural":"",
+        "reference":"",
+        "comment":""
+    },
+    {
+        "term":"workflow_notes_optional",
+        "definition":"Notes (Optional)",
+        "context":"",
+        "term_plural":"",
+        "reference":"",
+        "comment":""
     }
 ]

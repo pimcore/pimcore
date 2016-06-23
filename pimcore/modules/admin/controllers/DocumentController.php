@@ -46,8 +46,17 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
         $document = Document::getById($this->getParam("id"));
         $document = clone $document;
 
+
+        //Hook for modifying return value - e.g. for changing permissions based on object data
+        //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
+        $returnValueContainer = new \Pimcore\Model\Tool\Admin\EventDataContainer(object2array($document));
+        \Pimcore::getEventManager()->trigger("admin.document.get.preSendData", $this, [
+            "document" => $document,
+            "returnValueContainer" => $returnValueContainer
+        ]);
+
         if ($document->isAllowed("view")) {
-            $this->_helper->json($document);
+            $this->_helper->json($returnValueContainer->getData());
         }
 
         $this->_helper->json(["success" => false, "message" => "missing_permission"]);

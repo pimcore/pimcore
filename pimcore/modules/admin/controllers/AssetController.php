@@ -102,8 +102,18 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
         }
 
         $asset->setStream(null);
+
+        //Hook for modifying return value - e.g. for changing permissions based on object data
+        //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
+        $returnValueContainer = new Model\Tool\Admin\EventDataContainer(object2array($asset));
+        \Pimcore::getEventManager()->trigger("admin.asset.get.preSendData", $this, [
+            "asset" => $asset,
+            "returnValueContainer" => $returnValueContainer
+        ]);
+
+
         if ($asset->isAllowed("view")) {
-            $this->_helper->json($asset);
+            $this->_helper->json($returnValueContainer->getData());
         }
 
         $this->_helper->json(["success" => false, "message" => "missing_permission"]);

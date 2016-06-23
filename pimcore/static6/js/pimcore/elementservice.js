@@ -755,3 +755,31 @@ pimcore.elementservice.showLocateInTreeButton = function(elementType) {
     }
     return false;
 };
+
+pimcore.elementservice.integrateWorkflowManagement = function(elementType, elementId, elementEditor, buttons) {
+
+    if(elementEditor.data.workflowManagement && elementEditor.data.workflowManagement.hasWorkflowManagement === true) {
+
+        buttons.unshift({
+            xtype: 'button',
+            text: t('actions'),
+            scale: "medium",
+            iconCls: 'pimcore_icon_workflow_action',
+            handler: function() {
+                new pimcore.workflowmanagement.actionPanel(elementType, elementId, elementEditor);
+            }
+        });
+
+        buttons.push("-");
+        buttons.push({
+            xtype: 'container',
+            html: [
+                elementEditor.data.workflowManagement.status.label
+            ].join(''),
+            style: 'color: ' + elementEditor.data.workflowManagement.state.color + ';',
+            cls: 'wf-status-outer'
+        });
+
+    }
+
+};

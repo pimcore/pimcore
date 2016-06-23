@@ -367,7 +367,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                         elementSubType: this.data.general.o_type,
                         id: this.id,
                         default: this.data.general.o_key
-                    }
+                    };
                     pimcore.elementservice.editElementKey(options);
                 }.bind(this)
             });
@@ -397,7 +397,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 iconCls: "pimcore_icon_reload",
                 scale: "medium",
                 handler: this.reload.bind(this, this.data.currentLayoutId)
-            }
+            };
 
             if (this.data["validLayouts"] && this.data.validLayouts.length > 1) {
                 var menu = [];
@@ -459,6 +459,9 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             });
 
             buttons.push(this.newerVersionNotification);
+
+            //workflow management
+            pimcore.elementservice.integrateWorkflowManagement('object', this.id, this, buttons);
 
             // check for newer version than the published
             if (this.data.versions.length > 0) {

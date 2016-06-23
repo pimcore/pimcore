@@ -546,6 +546,9 @@ $scripts = array(
     "pimcore/object/classificationstore/storeTree.js",
     "pimcore/object/classificationstore/columnConfigDialog.js",
 
+    //workflow
+    "pimcore/workflowmanagement/actionPanel.js",
+
 );
 
 // google maps API key

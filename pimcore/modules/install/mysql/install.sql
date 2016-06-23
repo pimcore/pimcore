@@ -866,13 +866,22 @@ CREATE TABLE `classificationstore_collectionrelations` (
 
 DROP TABLE IF EXISTS `quantityvalue_units`;
 CREATE TABLE `quantityvalue_units` (
-              `id` bigint(20) NOT NULL AUTO_INCREMENT,
-              `group` varchar(50) COLLATE utf8_bin DEFAULT NULL,
-              `abbreviation` varchar(10) COLLATE utf8_bin NOT NULL,
-              `longname` varchar(250) COLLATE utf8_bin DEFAULT NULL,
-              `baseunit` varchar(10) COLLATE utf8_bin DEFAULT NULL,
-              `factor` double DEFAULT NULL,
-              `conversionOffset` DOUBLE NULL DEFAULT NULL,
-              `reference` varchar(50) COLLATE utf8_bin DEFAULT NULL,
-              PRIMARY KEY (`id`)
-            ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `group` varchar(50) COLLATE utf8_bin DEFAULT NULL,
+  `abbreviation` varchar(10) COLLATE utf8_bin NOT NULL,
+  `longname` varchar(250) COLLATE utf8_bin DEFAULT NULL,
+  `baseunit` varchar(10) COLLATE utf8_bin DEFAULT NULL,
+  `factor` double DEFAULT NULL,
+  `conversionOffset` DOUBLE NULL DEFAULT NULL,
+  `reference` varchar(50) COLLATE utf8_bin DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+DROP TABLE IF EXISTS `element_workflow_state`;
+CREATE TABLE `element_workflow_state` (
+  `cid` int(10) NOT NULL DEFAULT '0',
+  `ctype` enum('document','asset','object') NOT NULL,
+  `state` varchar(255) DEFAULT NULL,
+  `status` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`cid`, `ctype`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

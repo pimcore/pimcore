@@ -245,6 +245,8 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                 scale: "medium"
             });
 
+            //workflow management
+            pimcore.elementservice.integrateWorkflowManagement('asset', this.data.id, this, buttons);
 
             this.toolbar = new Ext.Toolbar({
                 id: "asset_toolbar_" + this.id,

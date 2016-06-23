@@ -1381,3 +1381,22 @@ span.warning {
     padding: 5px 10px;
     line-height: 23px;
 }
+
+.action_error,
+.action_reason {
+    background-color: #BF302B;
+    padding: 3px 10px;
+    color: white;
+    border-radius: 0px;
+}
+
+.wf-status-outer {
+    top: 0;
+    margin: 0px;
+    background-color: #fff;
+    padding: 7px 7px 6px 7px;
+    border-width: 1px;
+    border-style: solid;
+    display: inline-block;
+    outline: 0;
+}

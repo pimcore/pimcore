@@ -41,8 +41,16 @@ class Admin_LinkController extends \Pimcore\Controller\Action\Admin\Document
         $this->addTranslationsData($link);
         $this->minimizeProperties($link);
 
+        //Hook for modifying return value - e.g. for changing permissions based on object data
+        //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
+        $returnValueContainer = new \Pimcore\Model\Tool\Admin\EventDataContainer(object2array($link));
+        \Pimcore::getEventManager()->trigger("admin.document.get.preSendData", $this, [
+            "document" => $link,
+            "returnValueContainer" => $returnValueContainer
+        ]);
+
         if ($link->isAllowed("view")) {
-            $this->_helper->json($link);
+            $this->_helper->json($returnValueContainer->getData());
         }
 
         $this->_helper->json(false);

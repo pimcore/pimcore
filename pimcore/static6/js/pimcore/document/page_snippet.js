@@ -167,7 +167,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                         elementSubType: this.getType(),
                         id: this.id,
                         default: this.data.key
-                    }
+                    };
                     pimcore.elementservice.editElementKey(options);
                 }.bind(this)
             });
@@ -261,6 +261,10 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                 text: this.data.id,
                 scale: "medium"
             });
+
+            //workflow management
+            pimcore.elementservice.integrateWorkflowManagement('document', this.data.id, this, buttons);
+
 
             // version notification
             this.newerVersionNotification = new Ext.Toolbar.TextItem({

@@ -25,3 +25,20 @@ Pimcore::getEventManager()->attach("asset.postDelete", function (\Zend_EventMana
     $asset = $e->getTarget();
     \Pimcore\Model\Element\Tag::setTagsForElement("asset", $asset->getId(), []);
 }, 9999);
+
+
+// attach workflow events to event handler
+Pimcore::getEventManager()->attach(
+    ["object.postAdd", "document.postAdd", "asset.postAdd"],
+    ["\\Pimcore\\WorkflowManagement\\EventHandler", "elementPostAdd"]
+);
+
+Pimcore::getEventManager()->attach(
+    ["object.postDelete", "document.postDelete", "asset.postDelete"],
+    ["\\Pimcore\\WorkflowManagement\\EventHandler", "elementPostDelete"]
+);
+
+\Pimcore::getEventManager()->attach(
+    ["admin.object.get.preSendData", "admin.asset.get.preSendData", "admin.document.get.preSendData"],
+    ["\\Pimcore\\WorkflowManagement\\EventHandler", "adminElementGetPreSendData"]
+);
