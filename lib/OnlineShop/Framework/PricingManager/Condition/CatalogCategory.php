@@ -104,7 +104,7 @@ class CatalogCategory extends AbstractObjectListCondition implements ICategory
      */
     public function __sleep()
     {
-        $this->handleSleep('categories', 'categoryIds');
+        return $this->handleSleep('categories', 'categoryIds');
     }
 
     /**

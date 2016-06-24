@@ -103,12 +103,15 @@ class Bracket implements IBracket
         $json = array('type' => 'Bracket', 'conditions' => array());
         foreach($this->conditions as $num => $condition)
         {
-            /* @var \OnlineShop\Framework\PricingManager\ICondition $condition */
-            $cond = array(
-                'operator' => $this->operator[$num],
-                'condition' => json_decode($condition->toJSON())
-            );
-            $json['conditions'][] = $cond;
+            if($condition) {
+                /* @var \OnlineShop\Framework\PricingManager\ICondition $condition */
+                $cond = array(
+                    'operator' => $this->operator[$num],
+                    'condition' => json_decode($condition->toJSON())
+                );
+                $json['conditions'][] = $cond;
+            }
+
         }
 
         return json_encode($json);
