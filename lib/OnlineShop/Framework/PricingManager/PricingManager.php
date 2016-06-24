@@ -16,6 +16,7 @@
 
 
 namespace OnlineShop\Framework\PricingManager;
+use OnlineShop\Framework\CartManager\CartPriceModificator\Discount;
 
 /**
  * Class PricingManager
@@ -95,6 +96,18 @@ class PricingManager implements IPricingManager
             }
         }
         $env->setCategories(array_values($categories));
+
+
+        //clean up discount pricing modificators in car price calculator
+        $priceCalculator = $cart->getPriceCalculator();
+        $priceModificators = $priceCalculator->getModificators();
+        if($priceModificators) {
+            foreach($priceModificators as $priceModificator) {
+                if($priceModificator instanceof  Discount) {
+                    $priceCalculator->removeModificator($priceModificator);
+                }
+            }
+        }
 
 
         // execute all valid rules

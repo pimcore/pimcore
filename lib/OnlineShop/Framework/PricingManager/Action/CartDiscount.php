@@ -53,8 +53,9 @@ class CartDiscount implements IDiscount
         $amount = round($this->getAmount() !== 0 ? $this->getAmount() : ($priceCalculator->getSubTotal()->getAmount() * ($this->getPercent() / 100)), 2);
         $amount *= -1;
 
+        //make sure that one rule is applied only once
         foreach($priceCalculator->getModificators() as &$modificator) {
-            if($modificator instanceof Discount) {
+            if($modificator instanceof Discount && $modificator->getRuleId() == $environment->getRule()->getId()) {
                 $modificator->setAmount($amount);
                 $priceCalculator->reset();
                 return $this;

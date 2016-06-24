@@ -87,5 +87,8 @@ class Discount implements IDiscount
         return $this->amount;
     }
 
+    public function getRuleId() {
+        return $this->rule ? $this->rule->getId() : null;
+    }
 
 }
