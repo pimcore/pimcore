@@ -645,11 +645,21 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
             content = Ext.getBody().down( '#' + element.getAttribute('data-editmmode-button-ref' ) );
         }
 
+        var editmodeWindowWidth = 550;
+        if(this.options.params[element.type].editWidth) {
+            editmodeWindowWidth = this.options.params[element.type].editWidth;
+        }
+
+        var editmodeWindowHeight = 370;
+        if(this.options.params[element.type].editHeight) {
+            editmodeWindowHeight = this.options.params[element.type].editHeight;
+        }
+
         this.editmodeWindow = new Ext.Window({
             modal: true,
-            width: 550,
-            height: 370,
-            title: "Edit Block",
+            width: editmodeWindowWidth,
+            height: editmodeWindowHeight,
+            title: t("edit_block"),
             closeAction: "hide",
             bodyStyle: "padding: 10px;",
             closable: false,
