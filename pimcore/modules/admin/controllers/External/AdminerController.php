@@ -111,7 +111,7 @@ function adminer_object()
             return "";
         }
 
-        public function permanentLogin()
+        public function permanentLogin($create = false)
         {
             // key used for permanent login
             return \Zend_Session::getId();
