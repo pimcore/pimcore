@@ -197,11 +197,24 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
     },
 
     onNodeOver: function(target, dd, e, data) {
-        return Ext.dd.DropZone.prototype.dropAllowed;
+        var record = data.records[0];
+
+        record = this.getCustomPimcoreDropData(record);
+        if (this.dndAllowed(record)) {
+            return Ext.dd.DropZone.prototype.dropAllowed;
+        }
+        else {
+            return Ext.dd.DropZone.prototype.dropNotAllowed;
+        }
     },
 
     onNodeDrop: function (target, dd, e, data) {
         var record = data.records[0];
+
+        if(!this.dndAllowed(this.getCustomPimcoreDropData(record))){
+            return false;
+        }
+
         var data = record.data;
 
         var initData = {
@@ -231,6 +244,76 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
 
         return false;
 
+    },
+
+    dndAllowed: function(data) {
+
+        var i;
+        var found;
+
+        var checkSubType = false;
+        var checkClass = false;
+        var type;
+
+        //only is legacy
+        if (this.options.only && !this.options.types) {
+            this.options.types = [this.options.only];
+        }
+
+        //type check   (asset,document,object)
+        if (this.options.types) {
+            found = false;
+            for (i = 0; i < this.options.types.length; i++) {
+                type = this.options.types[i];
+                if (type == data.data.elementType) {
+                    found = true;
+
+                    if(this.options.subtypes[type] && this.options.subtypes[type].length) {
+                        checkSubType = true;
+                    }
+                    if(data.data.elementType == "object" && this.options.classes) {
+                        checkClass = true;
+                    }
+                    break;
+                }
+            }
+            if (!found) {
+                return false;
+            }
+        }
+
+        //subtype check  (folder,page,snippet ... )
+        if (checkSubType) {
+
+            found = false;
+            var subTypes = this.options.subtypes[type];
+            for (i = 0; i < subTypes.length; i++) {
+                if (subTypes[i] == data.data.type) {
+                    found = true;
+                    break;
+                }
+
+            }
+            if (!found) {
+                return false;
+            }
+        }
+
+        //object class check
+        if (checkClass) {
+            found = false;
+            for (i = 0; i < this.options.classes.length; i++) {
+                if (this.options.classes[i] == data.data.className) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                return false;
+            }
+        }
+
+        return true;
     },
 
     onRowContextmenu: function (grid, record, tr, rowIndex, e, eOpts ) {
@@ -284,12 +367,13 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
 
     openSearchEditor: function () {
 
-        var allowedTypes = [];
-        var allowedSpecific = {};
-        var allowedSubtypes = {};
-
-
-        pimcore.helpers.itemselector(true, this.addDataFromSelector.bind(this), {});
+        pimcore.helpers.itemselector(false, this.addDataFromSelector.bind(this), {
+            type: this.options.types,
+            subtype: this.options.subtypes,
+            specific: {
+                classes: this.options["classes"]
+            }
+        });
 
     },
 

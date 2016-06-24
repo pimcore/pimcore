@@ -137,6 +137,10 @@ pimcore.document.tags.href = Class.create(pimcore.document.tag, {
         var i;
         var found;
 
+        var checkSubType = false;
+        var checkClass = false;
+        var type;
+
         //only is legacy
         if (this.options.only && !this.options.types) {
             this.options.types = [this.options.only];
@@ -146,8 +150,16 @@ pimcore.document.tags.href = Class.create(pimcore.document.tag, {
         if (this.options.types) {
             found = false;
             for (i = 0; i < this.options.types.length; i++) {
-                if (this.options.types[i] == data.data.elementType) {
+                type = this.options.types[i];
+                if (type == data.data.elementType) {
                     found = true;
+
+                    if(this.options.subtypes[type] && this.options.subtypes[type].length) {
+                        checkSubType = true;
+                    }
+                    if(data.data.elementType == "object" && this.options.classes) {
+                        checkClass = true;
+                    }
                     break;
                 }
             }
@@ -157,10 +169,12 @@ pimcore.document.tags.href = Class.create(pimcore.document.tag, {
         }
 
         //subtype check  (folder,page,snippet ... )
-        if (this.options.subtypes) {
+        if (checkSubType) {
+
             found = false;
-            for (i = 0; i < this.options.subtypes.length; i++) {
-                if (this.options.subtypes[i] == data.data.type) {
+            var subTypes = this.options.subtypes[type];
+            for (i = 0; i < subTypes.length; i++) {
+                if (subTypes[i] == data.data.type) {
                     found = true;
                     break;
                 }
@@ -172,7 +186,7 @@ pimcore.document.tags.href = Class.create(pimcore.document.tag, {
         }
 
         //object class check
-        if (data.data.elementType == "object" && this.options.classes) {
+        if (checkClass) {
             found = false;
             for (i = 0; i < this.options.classes.length; i++) {
                 if (this.options.classes[i] == data.data.className) {
