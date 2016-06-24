@@ -16,6 +16,7 @@
 
 
 namespace OnlineShop\Framework\VoucherService\TokenManager;
+use OnlineShop\Framework\Exception\VoucherServiceException;
 
 /**
  * Class Pattern
@@ -40,7 +41,7 @@ class Pattern extends AbstractTokenManager
         if ($configuration instanceof \Pimcore\Model\Object\Fieldcollection\Data\VoucherTokenTypePattern) {
             $this->template = "voucher/voucher-code-tab-pattern.php";
         } else {
-            throw new \Exception("Invalid Configuration Class for Type VoucherTokenTypePattern.");
+            throw new VoucherServiceException("Invalid Configuration Class for Type VoucherTokenTypePattern.");
         }
     }
 
@@ -67,7 +68,7 @@ class Pattern extends AbstractTokenManager
     /**
      * @param string $code
      * @param \OnlineShop\Framework\CartManager\ICart $cart
-     * @throws \Exception
+     * @throws VoucherServiceException
      * @return bool|int
      */
     public function checkToken($code, \OnlineShop\Framework\CartManager\ICart $cart)
@@ -75,10 +76,10 @@ class Pattern extends AbstractTokenManager
         parent::checkToken($code, $cart);
         if ($token = \OnlineShop\Framework\VoucherService\Token::getByCode($code)) {
             if ($token->isUsed()) {
-                throw new \Exception('Token has already been used.', 1);
+                throw new VoucherServiceException('Token has already been used.', 1);
             }
             if ($token->isReserved()) {
-                throw new \Exception('Token has already been reserved.', 2);
+                throw new VoucherServiceException('Token has already been reserved.', 2);
             }
         }
 
@@ -88,7 +89,7 @@ class Pattern extends AbstractTokenManager
     /**
      * @param string $code
      * @param \OnlineShop\Framework\CartManager\ICart $cart
-     * @throws \Exception
+     * @throws VoucherServiceException
      * @return bool
      */
     public function reserveToken($code, \OnlineShop\Framework\CartManager\ICart $cart)
@@ -97,10 +98,10 @@ class Pattern extends AbstractTokenManager
             if (\OnlineShop\Framework\VoucherService\Reservation::create($code, $cart)) {
                 return true;
             } else {
-                throw new \Exception("Token Reservation not possible.", 3);
+                throw new VoucherServiceException("Token Reservation not possible.", 3);
             }
         }
-        throw new \Exception("No Token for this code exists.", 4);
+        throw new VoucherServiceException("No Token for this code exists.", 4);
     }
 
     /**
@@ -108,7 +109,7 @@ class Pattern extends AbstractTokenManager
      * @param \OnlineShop\Framework\CartManager\ICart $cart
      * @param \OnlineShop\Framework\Model\AbstractOrder $order
      *
-     * @throws \Exception
+     * @throws VoucherServiceException
      *
      * @return bool|\Pimcore\Model\Object\OnlineShopVoucherToken
      */
@@ -116,7 +117,7 @@ class Pattern extends AbstractTokenManager
     {
         if ($token = \OnlineShop\Framework\VoucherService\Token::getByCode($code)) {
             if ($token->isUsed()) {
-                throw new \Exception('Token has already been used.', 1);
+                throw new VoucherServiceException('Token has already been used.', 1);
             }
             if ($token->apply()) {
                 $orderToken = new \Pimcore\Model\Object\OnlineShopVoucherToken();

@@ -17,6 +17,7 @@
 
 namespace OnlineShop\Framework\VoucherService\TokenManager;
 
+use OnlineShop\Framework\Exception\VoucherServiceException;
 use Pimcore\Model\Object\OnlineShopVoucherSeries;
 
 abstract class AbstractTokenManager implements ITokenManager
@@ -32,7 +33,7 @@ abstract class AbstractTokenManager implements ITokenManager
 
     /**
      * @param \OnlineShop\Framework\Model\AbstractVoucherTokenType $configuration
-     * @throws \Exception
+     * @throws VoucherServiceException
      */
     public function __construct(\OnlineShop\Framework\Model\AbstractVoucherTokenType $configuration)
     {
@@ -41,7 +42,7 @@ abstract class AbstractTokenManager implements ITokenManager
             $this->seriesId = $configuration->getObject()->getId();
             $this->series = $configuration->getObject();
         } else {
-            throw new \Exception("Invalid Configuration Class.");
+            throw new VoucherServiceException("Invalid Configuration Class.");
         }
     }
 
@@ -71,7 +72,7 @@ abstract class AbstractTokenManager implements ITokenManager
      *
      * @param $code
      * @param \OnlineShop\Framework\CartManager\ICart $cart
-     * @throws \Exception
+     * @throws VoucherServiceException
      */
     protected function checkAllowOncePerCart($code, \OnlineShop\Framework\CartManager\ICart $cart)
     {
@@ -82,7 +83,7 @@ abstract class AbstractTokenManager implements ITokenManager
                 foreach ($cartCodes as $cartCode) {
                     $cartToken = \OnlineShop\Framework\VoucherService\Token::getByCode($cartCode);
                     if ($token->getVoucherSeriesId() == $cartToken->getVoucherSeriesId()) {
-                        throw new \OnlineShop\Framework\Exception\VoucherServiceException("OncePerCart: Only one token of this series is allowed per cart.", 5);
+                        throw new VoucherServiceException("OncePerCart: Only one token of this series is allowed per cart.", 5);
                     }
                 }
             }
@@ -94,7 +95,7 @@ abstract class AbstractTokenManager implements ITokenManager
      *
      * @param \OnlineShop\Framework\CartManager\ICart $cart
      *
-     * @throws \Exception
+     * @throws VoucherServiceException
      */
     protected function checkOnlyToken(\OnlineShop\Framework\CartManager\ICart $cart)
     {
@@ -102,13 +103,13 @@ abstract class AbstractTokenManager implements ITokenManager
         $cartVoucherCount = sizeof($cartCodes);
         if ($cartVoucherCount && method_exists($this->configuration, 'getOnlyTokenPerCart')) {
             if ($this->configuration->getOnlyTokenPerCart()) {
-                throw new \OnlineShop\Framework\Exception\VoucherServiceException("OnlyTokenPerCart: This token is only allowed as only token in this cart.", 6);
+                throw new VoucherServiceException("OnlyTokenPerCart: This token is only allowed as only token in this cart.", 6);
             }
 
             $cartToken = \OnlineShop\Framework\VoucherService\Token::getByCode($cartCodes[0]);
             $cartTokenSettings = OnlineShopVoucherSeries::getById($cartToken->getVoucherSeriesId())->getTokenSettings()->getItems()[0];
             if ($cartTokenSettings->getOnlyTokenPerCart()) {
-                throw new \OnlineShop\Framework\Exception\VoucherServiceException("OnlyTokenPerCart: There is a token of type onlyToken in your this cart already.", 7);
+                throw new VoucherServiceException("OnlyTokenPerCart: There is a token of type onlyToken in your this cart already.", 7);
             }
         }
     }

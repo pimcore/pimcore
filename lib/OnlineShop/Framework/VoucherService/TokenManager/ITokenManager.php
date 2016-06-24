@@ -54,7 +54,7 @@ interface ITokenManager
      *
      * @param string $code
      * @param \OnlineShop\Framework\CartManager\ICart $cart
-     * @throws \Exception
+     * @throws \OnlineShop\Framework\Exception\VoucherServiceException
      * @return bool
      */
     public function checkToken($code, \OnlineShop\Framework\CartManager\ICart $cart);
@@ -65,7 +65,7 @@ interface ITokenManager
      * @param string $code
      * @param \OnlineShop\Framework\CartManager\ICart $cart
      *
-     * @throws \Exception
+     * @throws \OnlineShop\Framework\Exception\VoucherServiceException
      *
      * @return bool
      */
@@ -79,7 +79,7 @@ interface ITokenManager
      * @param \OnlineShop\Framework\CartManager\ICart $cart
      * @param \OnlineShop\Framework\Model\AbstractOrder $order
      *
-     * @throws \Exception
+     * @throws \OnlineShop\Framework\Exception\VoucherServiceException
      *
      * @return bool|\Pimcore\Model\Object\OnlineShopVoucherToken
      */

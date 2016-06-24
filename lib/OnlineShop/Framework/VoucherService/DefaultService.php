@@ -34,6 +34,7 @@ class DefaultService implements IVoucherService
      * @param string $code
      * @param \OnlineShop\Framework\CartManager\ICart $cart
      * @return bool
+     * @throws \OnlineShop\Framework\Exception\VoucherServiceException
      */
     public function checkToken($code, \OnlineShop\Framework\CartManager\ICart $cart)
     {

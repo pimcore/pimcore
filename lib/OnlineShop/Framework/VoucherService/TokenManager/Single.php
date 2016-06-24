@@ -17,6 +17,8 @@
 
 namespace OnlineShop\Framework\VoucherService\TokenManager;
 
+use OnlineShop\Framework\Exception\InvalidConfigException;
+
 class Single extends AbstractTokenManager
 {
 
@@ -28,7 +30,7 @@ class Single extends AbstractTokenManager
         if ($configuration instanceof \Pimcore\Model\Object\Fieldcollection\Data\VoucherTokenTypeSingle) {
             $this->template =  "voucher/voucher-code-tab-single.php";
         } else {
-            throw new \Exception("Invalid Configuration Class for type VoucherTokenTypeSingle.");
+            throw new InvalidConfigException("Invalid Configuration Class for type VoucherTokenTypeSingle.");
         }
     }
 
