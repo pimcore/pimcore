@@ -150,7 +150,7 @@ class Area extends Model\Document\Tag
                     $replacement = str_replace(["-", "_"], "", $matches[0]);
 
                     return strtoupper($replacement);
-                }, ucfirst($this->currentIndex["type"]));
+                }, ucfirst($options["type"]));
 
                 $actionClassname = "\\Pimcore\\Model\\Document\\Tag\\Area\\" . $actionClass;
 
