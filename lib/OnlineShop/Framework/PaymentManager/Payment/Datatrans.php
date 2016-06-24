@@ -259,15 +259,15 @@ class Datatrans implements IPayment
             // creditcard
             case 'VIS':
             case 'ECA':
-                $required['aliasCC'] = null;
-                $required['maskedCC'] = null;
+//                $required['aliasCC'] = null;
+//                $required['maskedCC'] = null;
                 $required['expm'] = null;
                 $required['expy'] = null;
                 break;
 
             // paypal
             case 'PAP':
-                $required['aliasCC'] = null;
+//                $required['aliasCC'] = null;
                 break;
         }
 
