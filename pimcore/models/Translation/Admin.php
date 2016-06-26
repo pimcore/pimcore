@@ -27,9 +27,8 @@ class Admin extends AbstractTranslation
      * @param bool $create
      * @param bool $returnIdIfEmpty
      * @param null $language
-     * @return array
+     * @return string
      * @throws \Exception
-     * @throws \Zend_Exception
      */
     public static function getByKeyLocalized($id, $create = false, $returnIdIfEmpty = false, $language = null)
     {

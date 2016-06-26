@@ -103,7 +103,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
                 $groupName = $matches[0];
             }
 
-            $groupName = $this->view->translate($groupName);
+            $groupName = \Pimcore\Model\Translation\Admin::getByKeyLocalized($groupName, true, true);
 
             if (!isset($groups[$groupName])) {
                 $groups[$groupName] = [
