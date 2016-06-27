@@ -75,28 +75,19 @@ class Admin
      */
     public static function getMinimizedScriptPath($scriptContent)
     {
-        $scriptPath = PIMCORE_TEMPORARY_DIRECTORY."/minified_javascript_core_".md5($scriptContent).".js";
+        $scriptPath = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/minified_javascript_core_".md5($scriptContent).".js";
 
         if (!is_file($scriptPath)) {
             File::put($scriptPath, $scriptContent);
         }
 
-        return preg_replace("@^" . preg_quote(PIMCORE_DOCUMENT_ROOT, "@") . "@", "", $scriptPath);
-    }
+        $params = [
+            "scriptPath" => "/website/var/system/",
+            "scripts" =>  basename($scriptPath),
+            "_dc" => \Pimcore\Version::getRevision()
+        ];
 
-    /**
-     * @param $stylesheetContent
-     * @return mixed
-     */
-    public static function getMinimizedStylesheetPath($stylesheetContent)
-    {
-        $stylesheetPath = PIMCORE_TEMPORARY_DIRECTORY."/minified_css_core_".md5($stylesheetContent).".css";
-
-        if (!is_file($stylesheetPath)) {
-            File::put($stylesheetPath, $stylesheetContent);
-        }
-
-        return preg_replace("@^" . preg_quote(PIMCORE_DOCUMENT_ROOT, "@") . "@", "", $stylesheetPath);
+        return "/admin/misc/script-proxy?" . array_toquerystring($params);
     }
 
 

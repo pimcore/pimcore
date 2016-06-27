@@ -551,7 +551,7 @@ foreach ($scripts as $scriptUrl) {
     }
 }
 ?>
-    <script type="text/javascript" src="<?= \Pimcore\Tool\Admin::getMinimizedScriptPath($scriptContents) ?>?_dc=<?= \Pimcore\Version::$revision ?>"></script>
+    <script type="text/javascript" src="<?= \Pimcore\Tool\Admin::getMinimizedScriptPath($scriptContents) ?>"></script>
 <?php } ?>
 
 

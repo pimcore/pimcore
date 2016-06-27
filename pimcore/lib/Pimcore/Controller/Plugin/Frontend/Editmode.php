@@ -252,7 +252,7 @@ class Editmode extends \Zend_Controller_Plugin_Abstract
             foreach ($editmodeScripts as $scriptUrl) {
                 $scriptContents .= file_get_contents(PIMCORE_DOCUMENT_ROOT.$scriptUrl) . "\n\n\n";
             }
-            $editmodeHeadHtml .= '<script type="text/javascript" src="' . \Pimcore\Tool\Admin::getMinimizedScriptPath($scriptContents) . '?_dc=' . Version::$revision . '"></script>'."\n";
+            $editmodeHeadHtml .= '<script type="text/javascript" src="' . \Pimcore\Tool\Admin::getMinimizedScriptPath($scriptContents) . '"></script>'."\n";
         }
 
         $user = \Pimcore\Tool\Authentication::authenticateSession();

@@ -164,11 +164,11 @@ function array_toquerystring($args)
         if (is_array($value)) {
             foreach ($value as $key => $val) {
                 $out .= $name.'['.$key.']'.'=';
-                $out .= $val.'&';
+                $out .= urlencode($val).'&';
             }
         } else {
             $out .= $name.'=';
-            $out .= $value.'&';
+            $out .= urlencode($value).'&';
         }
     }
 
