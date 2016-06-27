@@ -112,7 +112,7 @@ class PimcoreNavigationController
         // pages have priority, if we don't find any active page, we use all we found
         $tmpPages = [];
         foreach ($activePages as $page) {
-            if ($page->getDocumentType() != "link") {
+            if ($page instanceof Uri && $page->getDocumentType() != "link") {
                 $tmpPages[] = $page;
             }
         }
