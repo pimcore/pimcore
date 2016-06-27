@@ -100,30 +100,6 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
         $this->getResponse()->setHeader("Content-Type", "text/css; charset=UTF-8", true);
     }
 
-    public function proxyAction()
-    {
-        if ($this->getParam("url")) {
-            header("Content-Type: application/javascript");
-
-            $client = Tool::getHttpClient();
-            $client->setUri($this->getParam("url"));
-
-            try {
-                $response = $client->request(\Zend_Http_Client::GET);
-
-                if ($response->isSuccessful()) {
-                    echo $this->getParam("callback") . "(" . \Zend_Json::encode("data:" .$response->getHeader("Content-Type") . ";base64," . base64_encode($response->getBody())) . ");";
-                } else {
-                    throw new \Exception("Invalid response");
-                }
-            } catch (\Exception $e) {
-                echo $this->getParam("callback") . "(" . \Zend_Json::encode("error:Application error") . ")";
-            }
-        }
-
-        exit;
-    }
-
     public function pingAction()
     {
         $response = [
