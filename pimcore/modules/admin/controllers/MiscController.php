@@ -71,7 +71,7 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
     {
         $this->disableViewAutoRender();
 
-        $allowedFileTypes = ["js","css"];
+        $allowedFileTypes = ["js", "css"];
         $scripts = explode(",", $this->getParam("scripts"));
         $scriptPath = $this->getParam("scriptPath");
         $scriptsContent = "";
@@ -85,7 +85,7 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
 
         $fileExtension = \Pimcore\File::getFileExtension($scripts[0]);
         $contentType = "text/javascript";
-        if($fileExtension == "css") {
+        if ($fileExtension == "css") {
             $contentType = "text/css";
         }
 

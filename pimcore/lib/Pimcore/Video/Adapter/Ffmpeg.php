@@ -127,7 +127,7 @@ class Ffmpeg extends Adapter
             });
             fclose($logHandle);
 
-            if($process->isSuccessful()) {
+            if ($process->isSuccessful()) {
                 // cleanup & status update
                 $this->deleteConversionLogFile();
                 $success = true;
