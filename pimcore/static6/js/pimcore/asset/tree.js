@@ -241,16 +241,19 @@ pimcore.asset.tree = Class.create({
             win.add(pbar);
             win.updateLayout();
 
-            var finishedErrorHandler = function () {
-                // success
+            var finishedErrorHandler = function (e) {
                 this.activeUploads--;
-
                 win.remove(pbar);
 
                 if(this.activeUploads < 1) {
                     win.close();
                     pimcore.elementservice.refreshNodeAllTrees("asset", parentNode.get("id"));
                 }
+            }.bind(this);
+
+            var errorHandler = function (e) {
+                pimcore.helpers.showNotification(t("error"), e["responseText"], "error");
+                finishedErrorHandler();
             }.bind(this);
 
             pimcore.helpers.uploadAssetFromFileObject(file,
@@ -268,7 +271,7 @@ pimcore.asset.tree = Class.create({
                         pbar.updateProgress(percentComplete, progressText);
                     }
                 },
-                finishedErrorHandler
+                errorHandler
             );
         }.bind(this);
 
