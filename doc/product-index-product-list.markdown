@@ -201,7 +201,14 @@ It is possible that elastic search cannot update the mapping if e.g. datatypes a
 As soon the reindex is finished, the current index is switched to the newly created index and the old index is deleted.  
 
 
-
+#### Special aspects with findologic exporter
+Basically findologic worker works as described in the optimized architecture. 
+But there is an additional speciality with the export: 
+Executing `processUpdateIndexQueue()` does not write the data directly to findologic, but into a extra table `OnlineShop_Framework_IndexService_Tenant_Worker_DefaultFindologic::EXPORT_TABLE_NAME` (default is `plugin_onlineshop_productindex_export_findologic`). 
+Findologic then can use the endpoint `/plugin/OnlineShop/findologic/export`, which delivers all data directly based on the table `OnlineShop_Framework_IndexService_Tenant_Worker_DefaultFindologic::EXPORT_TABLE_NAME`. Valid parameters for this endpoint are:
+- start: Pagination start
+- count: Count of delivered entries
+- shopKey: Shopkey to identify the shop. 
 
 
 ## 5 - Usage of product list
