@@ -17,6 +17,8 @@ namespace Pimcore\Video\Adapter;
 use Pimcore\Video\Adapter;
 use Pimcore\Tool\Console;
 use Pimcore\File;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\Process;
 
 class Ffmpeg extends Adapter
 {
@@ -82,6 +84,8 @@ class Ffmpeg extends Adapter
      */
     public function save()
     {
+        $success = false;
+
         if ($this->getDestinationFile()) {
             if (is_file($this->getConversionLogFile())) {
                 $this->deleteConversionLogFile();
@@ -94,13 +98,7 @@ class Ffmpeg extends Adapter
             $arguments = implode(" ", $this->arguments);
 
             // add format specific arguments
-            /*if($this->getFormat() == "f4v") {
-                $arguments = "-f flv -vcodec libx264 -acodec libfaac -ar 44000 -g 100 " . $arguments;
-            } else*/
             if ($this->getFormat() == "mp4") {
-                // `-coder 0 -bf 0 -flags2 -wpred-dct8x8 -wpredp 0´ is the same as to -vpre baseline, using this to avid problems with missing preset files
-                // Some flags used were deprecated already
-                // todo set the -x264opts flag correctly and get profiles working as they should.
                 $arguments = "-strict experimental -f mp4 -vcodec libx264 -acodec aac -g 100 -pix_fmt yuv420p -movflags faststart " . $arguments;
             } elseif ($this->getFormat() == "webm") {
                 // check for vp9 support
@@ -119,10 +117,29 @@ class Ffmpeg extends Adapter
             $arguments = "-threads 0 " . $arguments;
 
             $cmd = self::getFfmpegCli() . ' -i ' . realpath($this->file) . ' ' . $arguments . " " . str_replace("/", DIRECTORY_SEPARATOR, $this->getDestinationFile());
-            Console::execInBackground($cmd, $this->getConversionLogFile());
+
+            $process = new Process($cmd);
+            $process->start();
+
+            $logHandle = fopen($this->getConversionLogFile(), "a");
+            $process->wait(function ($type, $buffer) use ($logHandle) {
+                fwrite($logHandle, $buffer);
+            });
+            fclose($logHandle);
+
+            if($process->isSuccessful()) {
+                // cleanup & status update
+                $this->deleteConversionLogFile();
+                $success = true;
+            } else {
+                // create an error log file
+                copy($this->getConversionLogFile(), str_replace(".log", ".error.log", $this->getConversionLogFile()));
+            }
         } else {
             throw new \Exception("There is no destination file for video converter");
         }
+
+        return $success;
     }
 
     /**
@@ -137,7 +154,7 @@ class Ffmpeg extends Adapter
         $realTargetPath = null;
         if (!stream_is_local($file)) {
             $realTargetPath = $file;
-            $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/ghostscript-tmp-" . uniqid() . "." . File::getFileExtension($file);
+            $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/ffmpeg-tmp-" . uniqid() . "." . File::getFileExtension($file);
         }
 
         $cmd = self::getFfmpegCli() . " -i " . realpath($this->file) . " -vcodec png -vframes 1 -vf scale=iw*sar:ih -ss " . $timeOffset . " " . str_replace("/", DIRECTORY_SEPARATOR, $file);
@@ -183,19 +200,6 @@ class Ffmpeg extends Adapter
     }
 
     /**
-     * @return bool
-     */
-    public function isFinished()
-    {
-        $status = $this->getConversionStatus();
-        if ($status === "error" || $status > 99) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
      * @param $output
      * @return int
      */
@@ -210,59 +214,6 @@ class Ffmpeg extends Adapter
         $duration = (intval($durationParts[0]) * 3600) + (intval($durationParts[1]) * 60) + floatval($durationParts[2]);
 
         return $duration;
-    }
-
-    /**
-     *
-     */
-    public function getConversionStatus()
-    {
-        $log = file_get_contents($this->getConversionLogFile());
-
-        // check if the conversion failed
-        if (stripos($log, "Invalid data found when processing") !== false
-           || stripos($log, "incorrect parameters") !== false
-           || stripos($log, "error") !== false
-           || stripos($log, "unable") !== false) {
-            \Logger::critical("Problem converting video: " . $this->file . " to format " . $this->getFormat());
-            \Logger::critical($log);
-
-            // create a copy of the conversion log, so that it will persist
-            copy($this->getConversionLogFile(), str_replace(".log", ".error.log", $this->getConversionLogFile()));
-
-            return "error";
-        }
-
-        $duration = $this->extractDuration($log);
-
-        // get conversion time
-        preg_match_all("/time=([0-9:\.]+) bitrate/", $log, $matches);
-        $conversionTimeRaw = $matches[1][count($matches[1])-1];
-        $conversionTimeParts = explode(":", $conversionTimeRaw);
-        // calculate time in seconds
-        $conversionTime = (intval($conversionTimeParts[0]) * 3600) + (intval($conversionTimeParts[1]) * 60) + floatval($conversionTimeParts[2]);
-
-        if ($duration > 0) {
-            $status = $conversionTime / $duration;
-        } else {
-            $status = 0;
-        }
-
-        $percent = round($status * 100);
-        // check if the conversion is finished
-        clearstatcache(); // clear stat cache otherwise filemtime always returns the same timestamp
-        if ((time() - filemtime($this->getConversionLogFile())) > 10) {
-            $percent = 100;
-            $this->deleteConversionLogFile();
-        }
-
-        if (!$percent) {
-            $percent = 1;
-        }
-
-        \Logger::debug("Video transcoding status of " . $this->getDestinationFile() . ": " . $percent . " - " . $this->getFormat());
-
-        return $percent;
     }
 
     /**

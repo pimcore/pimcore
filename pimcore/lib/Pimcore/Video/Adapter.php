@@ -107,18 +107,7 @@ abstract class Adapter
     /**
      * @abstract
      */
-    abstract public function getConversionStatus();
-
-    /**
-     * @abstract
-     */
     abstract public function destroy();
-
-    /**
-     * @abstract
-     * @return bool
-     */
-    abstract public function isFinished();
 
     /**
      * @param $format

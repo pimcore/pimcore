@@ -127,9 +127,7 @@ class ThumbnailsVideoCommand extends AbstractCommand
                 $finished = true;
                 \Logger::debug("video [" . $video->getId() . "] FINISHED");
             } elseif ($thumb["status"] == "inprogress") {
-                $progress = Asset\Video\Thumbnail\Processor::getProgress($thumb["processId"]);
-                \Logger::debug("video [" . $video->getId() . "] in progress: " . number_format($progress, 0) . "%");
-
+                \Logger::debug("video [" . $video->getId() . "] in progress ...");
                 sleep(5);
             } else {
                 // error

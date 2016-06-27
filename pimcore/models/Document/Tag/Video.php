@@ -380,9 +380,7 @@ class Video extends Model\Document\Tag
                     $front = \Zend_Controller_Front::getInstance();
                     $front->unregisterPlugin("Pimcore\\Controller\\Plugin\\Cache");
 
-                    $progress = Asset\Video\Thumbnail\Processor::getProgress($thumbnail["processId"]);
-
-                    return $this->getProgressCode($progress, $image);
+                    return $this->getProgressCode($image);
                 } else {
                     return $this->getErrorCode("The video conversion failed, please see the debug.log for more details.");
                 }
@@ -689,7 +687,7 @@ class Video extends Model\Document\Tag
         return $code;
     }
 
-    public function getProgressCode($progress, $thumbnail = null)
+    public function getProgressCode($thumbnail = null)
     {
         $uid = "video_" . uniqid();
         $code = '

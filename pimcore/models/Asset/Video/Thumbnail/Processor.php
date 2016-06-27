@@ -182,13 +182,7 @@ class Processor
         $instance = $instanceItem->getData();
 
         $formats = [];
-        $overallStatus = [];
         $conversionStatus = "finished";
-
-        // set overall status for all formats to 0
-        foreach ($instance->queue as $converter) {
-            $overallStatus[$converter->getFormat()] = 0;
-        }
 
         // check if there is already a transcoding process running, wait if so ...
         Model\Tool\Lock::acquire("video-transcoding", 7200, 10); // expires after 2 hrs, refreshes every 10 secs
@@ -199,20 +193,7 @@ class Processor
         foreach ($instance->queue as $converter) {
             try {
                 \Logger::info("start video " . $converter->getFormat() . " to " . $converter->getDestinationFile());
-                $converter->save();
-                while (!$converter->isFinished()) {
-                    sleep(5);
-                    $overallStatus[$converter->getFormat()] = $converter->getConversionStatus();
-
-                    $a = 0;
-                    foreach ($overallStatus as $f => $s) {
-                        $a += $s;
-                    }
-                    $a = $a / count($overallStatus);
-
-                    $instance->setStatus($a);
-                    $instance->save();
-                }
+                $success = $converter->save();
                 \Logger::info("finished video " . $converter->getFormat() . " to " . $converter->getDestinationFile());
 
                 File::rename($converter->getDestinationFile(), $converter->getStorageFile());
@@ -220,7 +201,7 @@ class Processor
                 // set proper permissions
                 @chmod($converter->getStorageFile(), File::getDefaultMode());
 
-                if ($converter->getConversionStatus() !== "error") {
+                if ($success) {
                     $formats[$converter->getFormat()] = str_replace($asset->getVideoThumbnailSavePath(), "", $converter->getStorageFile());
                 } else {
                     $conversionStatus = "error";
@@ -253,28 +234,6 @@ class Processor
         }
 
         TmpStore::delete($instance->getJobStoreId());
-    }
-
-    /**
-     * @static
-     * @param $processId
-     * @return int
-     */
-    public static function getProgress($processId)
-    {
-        $instance = new self();
-        $instance->setProcessId($processId);
-
-        $instanceItem = TmpStore::get($instance->getJobStoreId());
-
-        if ($instanceItem) {
-            $i = $instanceItem->getData();
-            if ($i instanceof Processor) {
-                $instance = $i;
-            }
-        }
-
-        return $instance->getStatus();
     }
 
     /**
@@ -383,24 +342,5 @@ class Processor
     public function getQueue()
     {
         return $this->queue;
-    }
-
-    /**
-     * @param $status
-     * @return $this
-     */
-    public function setStatus($status)
-    {
-        $this->status = $status;
-
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getStatus()
-    {
-        return $this->status;
     }
 }

@@ -34,8 +34,6 @@
     <tr>
         <td class="error" align="center" valign="center">
             <?php if ($this->thumbnail && $this->thumbnail["status"] == "inprogress") { ?>
-                <?php $progress = \Pimcore\Model\Asset\Video\Thumbnail\Processor::getProgress($this->thumbnail["processId"]) ?>
-
                 <style type="text/css">
                     .pimcore_tag_video_progress {
                         position:relative;
@@ -71,7 +69,7 @@
                     <br />
                     <?= $this->translate("please_wait"); ?>
 
-                    <div class="pimcore_tag_video_progress_status"><?= number_format($progress,0) ?>%</div>
+                    <div class="pimcore_tag_video_progress_status"></div>
                 </div>
 
 
