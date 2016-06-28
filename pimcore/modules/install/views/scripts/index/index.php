@@ -24,7 +24,15 @@
         }
 
         .icon_generate {
-            background: url(/pimcore/static6/img/icon/cog.png) center center no-repeat !important;
+            background: url(/pimcore/static6/img/flat-color-icons/engineering.svg) center center no-repeat !important;
+        }
+
+        .icon_ok {
+            background: url(/pimcore/static6/img/flat-color-icons/ok.svg) center center no-repeat !important;
+        }
+
+        .icon_check {
+            background: url(/pimcore/static6/img/flat-color-icons/factory.svg) center center no-repeat !important;
         }
     </style>
 
@@ -312,7 +320,7 @@ $scripts = array(
             bbar: [{
                     id: "check_button",
                     text: "Check Requirements",
-                    icon: "/pimcore/static6/img/icon/laptop_magnify.png",
+                    iconCls: "icon_check",
                     disabled: true,
                     handler: function () {
                         window.open("/install/check/?" + Ext.urlEncode(Ext.getCmp("install_form").getForm().getFieldValues()));
@@ -321,7 +329,7 @@ $scripts = array(
                 {
                     id: "install_button",
                     text: "<b>Install Now!</b>",
-                    icon: "/pimcore/static6/img/icon/accept.png",
+                    iconCls: "icon_ok",
                     disabled: true,
                     handler: function (btn) {
 
