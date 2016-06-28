@@ -1029,10 +1029,6 @@
         "definition": "Style Editor"
     },
     {
-        "term": "preview_and_styles",
-        "definition": "Preview &amp; Styles"
-    },
-    {
         "term": "absolute_path_to_wkhtmltoimage_binary",
         "definition": "Absolute path to wkhtmltoimage binary"
     },

@@ -1150,6 +1150,11 @@ span.warning {
     padding: 0 5px;
 }
 
+.pimcore_panel_body_centered .x-autocontainer-innerCt {
+    text-align: center;
+    vertical-align: middle;
+}
+
 .pimcore_navigation_flyout.x-menu-default {
     border-color: #000;
 }
