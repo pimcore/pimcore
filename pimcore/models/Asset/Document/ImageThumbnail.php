@@ -121,6 +121,7 @@ class ImageThumbnail
     public function generate()
     {
         $errorImage = PIMCORE_PATH . '/static6/img/filetype-not-supported.png';
+        $generated = false;
 
         if (!$this->asset) {
             $this->filesystemPath = $errorImage;
@@ -143,6 +144,7 @@ class ImageThumbnail
                     if (!is_file($path) && !Model\Tool\Lock::isLocked($lockKey)) {
                         Model\Tool\Lock::lock($lockKey);
                         $converter->saveImage($path, $this->page);
+                        $generated = true;
                         Model\Tool\Lock::release($lockKey);
                     } elseif (Model\Tool\Lock::isLocked($lockKey)) {
                         return "/pimcore/static6/img/please-wait.png";
@@ -150,7 +152,7 @@ class ImageThumbnail
                 }
 
                 if ($config) {
-                    $path = Image\Thumbnail\Processor::process($this->asset, $config, $path, $this->deferred, true);
+                    $path = Image\Thumbnail\Processor::process($this->asset, $config, $path, $this->deferred, true, $generated);
                 }
 
                 $this->filesystemPath = $path;
@@ -160,7 +162,10 @@ class ImageThumbnail
                 $this->filesystemPath = $errorImage;
             }
 
-            \Pimcore::getEventManager()->trigger("asset.document.image-thumbnail", $this);
+            \Pimcore::getEventManager()->trigger("asset.document.image-thumbnail", $this, [
+                "deferred" => $this->deferred,
+                "generated" => $generated
+            ]);
         }
     }
 

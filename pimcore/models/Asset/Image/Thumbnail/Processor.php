@@ -80,10 +80,12 @@ class Processor
      * @param null $fileSystemPath
      * @param bool $deferred deferred means that the image will be generated on-the-fly (details see below)
      * @param bool $returnAbsolutePath
+     * @param bool $generated
      * @return mixed|string
      */
-    public static function process($asset, Config $config, $fileSystemPath = null, $deferred = false, $returnAbsolutePath = false)
+    public static function process($asset, Config $config, $fileSystemPath = null, $deferred = false, $returnAbsolutePath = false, &$generated = false)
     {
+        $generated = false;
         $errorImage = PIMCORE_PATH . "/static6/img/filetype-not-supported.png";
         $format = strtolower($config->getFormat());
         $contentOptimizedFormat = false;
@@ -299,6 +301,7 @@ class Processor
         }
 
         $image->save($fsPath, $format, $config->getQuality());
+        $generated = true; 
 
         if ($contentOptimizedFormat) {
             $tmpStoreKey = str_replace(PIMCORE_TEMPORARY_DIRECTORY . "/", "", $fsPath);
