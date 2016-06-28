@@ -345,7 +345,6 @@ $scripts = array(
     "pimcore/object/helpers/edit.js",
     "pimcore/object/classes/class.js",
     "pimcore/object/class.js",
-    "pimcore/object/classes/data/block.js",
     "pimcore/object/bulk-export.js",
     "pimcore/object/bulk-import.js",
     "pimcore/object/classes/data/data.js",          // THIS MUST BE THE FIRST FILE, DO NOT MOVE THIS DOWN !!!
