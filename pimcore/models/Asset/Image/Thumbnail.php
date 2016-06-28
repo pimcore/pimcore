@@ -136,6 +136,9 @@ class Thumbnail
                 try {
                     $deferred = ($deferredAllowed && $this->deferred) ? true : false;
                     $this->filesystemPath = Thumbnail\Processor::process($this->asset, $this->config, null, $deferred, true);
+                    \Pimcore::getEventManager()->trigger("asset.image.thumbnail", $this, [
+                        "deferred" => $deferred
+                    ]);
                 } catch (\Exception $e) {
                     $this->filesystemPath = $errorImage;
                     \Logger::error("Couldn't create thumbnail of image " . $this->asset->getRealFullPath());
