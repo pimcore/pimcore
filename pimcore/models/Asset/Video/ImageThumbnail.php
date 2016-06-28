@@ -108,7 +108,9 @@ class ImageThumbnail
      */
     public function getFileSystemPath()
     {
-        $this->generate();
+        if(!$this->filesystemPath) {
+            $this->generate();
+        }
 
         return $this->filesystemPath;
     }

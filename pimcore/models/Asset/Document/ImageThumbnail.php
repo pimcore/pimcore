@@ -108,7 +108,9 @@ class ImageThumbnail
      */
     public function getFileSystemPath()
     {
-        $this->generate();
+        if(!$this->filesystemPath) {
+            $this->generate();
+        }
 
         return $this->filesystemPath;
     }
@@ -157,7 +159,7 @@ class ImageThumbnail
                 \Logger::error($e);
                 $this->filesystemPath = $errorImage;
             }
-            
+
             \Pimcore::getEventManager()->trigger("asset.document.image-thumbnail", $this);
         }
     }
