@@ -68,20 +68,8 @@
         "definition": "Environment"
     },
     {
-        "term": "production",
-        "definition": "Production"
-    },
-    {
-        "term": "stage",
-        "definition": "Stage"
-    },
-    {
         "term": "test",
         "definition": "Test"
-    },
-    {
-        "term": "development",
-        "definition": "Development"
     },
     {
         "term": "local",
@@ -192,10 +180,6 @@
         "definition": "Please enter the maximum viewport width (in pixels) allowed for this thumbnail"
     },
     {
-        "term": "experimental",
-        "definition": "Experimental"
-    },
-    {
         "term": "example",
         "definition": "Example"
     },
@@ -284,52 +268,8 @@
         "definition": "Use different email delivery settings for newsletters"
     },
     {
-        "term": "promotion_enquiry_sent_success",
-        "definition": "Your promotion enquiry was sent to the manager of this project"
-    },
-    {
-        "term": "budget",
-        "definition": "Budget"
-    },
-    {
         "term": "duration",
         "definition": "Duration"
-    },
-    {
-        "term": "ad_type",
-        "definition": "Ad-Type"
-    },
-    {
-        "term": "promotion_enquiry_for",
-        "definition": "Promotion Enquiry for"
-    },
-    {
-        "term": "collected_information",
-        "definition": "Collected Information"
-    },
-    {
-        "term": "change_persona_to",
-        "definition": "Change Persona to (not permanently)"
-    },
-    {
-        "term": "bug_report_sent_success",
-        "definition": "Your bug report was sent to the manager of this project"
-    },
-    {
-        "term": "feature_request_sent_success",
-        "definition": "Your feature request was sent to the manager of this project"
-    },
-    {
-        "term": "notes_screenshot",
-        "definition": "Put some notes on the screenshot! (click on the image)"
-    },
-    {
-        "term": "bug_report_for",
-        "definition": "Bug Report for"
-    },
-    {
-        "term": "feature_request_for",
-        "definition": "Feature Request for"
     },
     {
         "term": "scope",
@@ -394,26 +334,6 @@
     {
         "term": "imageadvanced",
         "definition": "Image Advanced"
-    },
-    {
-        "term": "absolute_path_to_libreoffice",
-        "definition": "Absolute path to LibreOffice"
-    },
-    {
-        "term": "absolute_path_to_pngcrush",
-        "definition": "Absolute path to pngcrush"
-    },
-    {
-        "term": "absolute_path_to_imgmin",
-        "definition": "Absolute path to imgmin"
-    },
-    {
-        "term": "absolute_path_to_jpegoptim",
-        "definition": "Absolute path to jpegoptim"
-    },
-    {
-        "term": "absolute_path_to_pdftotext",
-        "definition": "Absolute path to pdftotext"
     },
     {
         "term": "word_export_notice",
@@ -484,16 +404,8 @@
         "definition": "Localization &amp; Internationalization"
     },
     {
-        "term": "contact_email",
-        "definition": "Contact E-Mail"
-    },
-    {
         "term": "password_was_not_changed",
         "definition": "Password wasn't changed because it isn't secure enough"
-    },
-    {
-        "term": "absolute_path_to_ghostscript",
-        "definition": "Absolute path to Ghostscript"
     },
     {
         "term": "deactivate_maintenance",
@@ -502,10 +414,6 @@
     {
         "term": "marketing",
         "definition": "Marketing"
-    },
-    {
-        "term": "universal_analytics_code",
-        "definition": "Universal Analytics Code (analytics.js)"
     },
     {
         "term": "code_settings",
@@ -630,10 +538,6 @@
     {
         "term": "translation",
         "definition": "Translation"
-    },
-    {
-        "term": "add_hotspots",
-        "definition": "Add Hotspots"
     },
     {
         "term": "composite",
@@ -793,10 +697,6 @@
         "definition": "Label Column"
     },
     {
-        "term": "custom_report_groupBy_columns",
-        "definition": "GroupBy Columns"
-    },
-    {
         "term": "custom_report_only_filter",
         "definition": "Only Filter"
     },
@@ -835,10 +735,6 @@
     {
         "term": "source_definition",
         "definition": "Source Definition"
-    },
-    {
-        "term": "content_social_analysis",
-        "definition": "Content & Social Analysis"
     },
     {
         "term": "up",
@@ -945,90 +841,6 @@
         "definition": "Delete Folder"
     },
     {
-        "term": "there_are_more_than_one_items_for_the_given_selector",
-        "definition": "There are more than one items for the given selector, would you like to change all elements (Yes), or just the selected (No)?"
-    },
-    {
-        "term": "clear_all_styles",
-        "definition": "Clear all styles"
-    },
-    {
-        "term": "top",
-        "definition": "Top"
-    },
-    {
-        "term": "bottom",
-        "definition": "Bottom"
-    },
-    {
-        "term": "left",
-        "definition": "Left"
-    },
-    {
-        "term": "right",
-        "definition": "Right"
-    },
-    {
-        "term": "padding",
-        "definition": "Padding"
-    },
-    {
-        "term": "margin",
-        "definition": "Margin"
-    },
-    {
-        "term": "appearance",
-        "definition": "Appearance"
-    },
-    {
-        "term": "font-family",
-        "definition": "Font-Family"
-    },
-    {
-        "term": "font-weight",
-        "definition": "Font-Weight"
-    },
-    {
-        "term": "line-height",
-        "definition": "Line-Height"
-    },
-    {
-        "term": "letter-spacing",
-        "definition": "Letter-Spacing"
-    },
-    {
-        "term": "font-style",
-        "definition": "Font-Style"
-    },
-    {
-        "term": "text-align",
-        "definition": "Text-Align"
-    },
-    {
-        "term": "text-decoration",
-        "definition": "Text-Decoration"
-    },
-    {
-        "term": "text-transform",
-        "definition": "Text-Transform"
-    },
-    {
-        "term": "hierarchy",
-        "definition": "Hierarchy"
-    },
-    {
-        "term": "no_item_selected",
-        "definition": "No item selected"
-    },
-    {
-        "term": "select_element",
-        "definition": "Select Element"
-    },
-    {
-        "term": "style_editor",
-        "definition": "Style Editor"
-    },
-    {
         "term": "absolute_path_to_wkhtmltoimage_binary",
         "definition": "Absolute path to wkhtmltoimage binary"
     },
@@ -1049,18 +861,6 @@
         "definition": "Home"
     },
     {
-        "term": "sorry_no_data_available",
-        "definition": "Sorry, no data available :("
-    },
-    {
-        "term": "top_shares_pages",
-        "definition": "Top Shared Pages"
-    },
-    {
-        "term": "social_media",
-        "definition": "Social Media"
-    },
-    {
         "term": "meta_data",
         "definition": "Meta Data (&lt;meta ...\/&gt;)"
     },
@@ -1069,60 +869,12 @@
         "definition": "Last Update"
     },
     {
-        "term": "robots_meta_blocked",
-        "definition": "Blocked by robots Meta"
-    },
-    {
-        "term": "robots_txt_blocked",
-        "definition": "Blocked by robots.txt"
-    },
-    {
-        "term": "twitter",
-        "definition": "Twitter"
-    },
-    {
-        "term": "opengraph",
-        "definition": "OpenGraph"
-    },
-    {
-        "term": "microdata",
-        "definition": "Microdata"
-    },
-    {
-        "term": "url_parameters",
-        "definition": "URL Parameters"
-    },
-    {
-        "term": "url_length",
-        "definition": "URL Length"
-    },
-    {
-        "term": "google_plus_one",
-        "definition": "Google +1"
-    },
-    {
-        "term": "facebook_shares",
-        "definition": "Facebook Shares"
-    },
-    {
-        "term": "type_reference",
-        "definition": "Type Reference"
-    },
-    {
         "term": "h1_text",
         "definition": "H1 Text"
     },
     {
-        "term": "cleanup_existing_data",
-        "definition": "Cleanup existing data"
-    },
-    {
         "term": "generate_page_previews",
         "definition": "Generate Page Previews"
-    },
-    {
-        "term": "SEO",
-        "definition": "SEO"
     },
     {
         "term": "port",
@@ -1253,10 +1005,6 @@
         "definition": "Referring Site"
     },
     {
-        "term": "regular_expression",
-        "definition": "Regular Expression"
-    },
-    {
         "term": "method",
         "definition": "Method"
     },
@@ -1269,10 +1017,6 @@
         "definition": "Convert to"
     },
     {
-        "term": "enable_targeting",
-        "definition": "Enable Targeting"
-    },
-    {
         "term": "AND",
         "definition": "AND"
     },
@@ -1283,10 +1027,6 @@
     {
         "term": "AND_NOT",
         "definition": "AND NOT"
-    },
-    {
-        "term": "create_a_variant_from_this_page",
-        "definition": "Create a new variant from the current page to provide a modified version"
     },
     {
         "term": "radius_in_km",
@@ -1353,10 +1093,6 @@
         "definition": "Apply new master document"
     },
     {
-        "term": "empty_content_master_content",
-        "definition": "Empty Content - This is useful after defining a new master document"
-    },
-    {
         "term": "content_master_document",
         "definition": "Content-Master Document"
     },
@@ -1381,22 +1117,6 @@
         "definition": "Open Object"
     },
     {
-        "term": "please_enter_the_id_of_the_asset",
-        "definition": "Please enter the ID or Path (e.g. \/images\/logo.jpg) of the asset"
-    },
-    {
-        "term": "please_enter_the_id_of_the_object",
-        "definition": "Please enter the ID or Path of the object"
-    },
-    {
-        "term": "please_enter_the_id_of_the_document",
-        "definition": "Please enter the ID, Path or URL (also including http:\/\/) of the document"
-    },
-    {
-        "term": "open_by_id",
-        "definition": "Open by ID"
-    },
-    {
         "term": "element_not_found",
         "definition": "Element not found"
     },
@@ -1413,10 +1133,6 @@
         "definition": "Path or URL (also incl. http:\/\/)"
     },
     {
-        "term": "no_matching_document_found_for",
-        "definition": "No matching document found for"
-    },
-    {
         "term": "open_document_by_url",
         "definition": "Open document by URL"
     },
@@ -1427,10 +1143,6 @@
     {
         "term": "browser_api_key",
         "definition": "Browser API-Key"
-    },
-    {
-        "term": "add_childs",
-        "definition": "Add Children"
     },
     {
         "term": "url_incl_http",
@@ -1451,10 +1163,6 @@
     {
         "term": "source_entire_url",
         "definition": "Entire URL as Source"
-    },
-    {
-        "term": "auto_reload",
-        "definition": "Auto-Reload"
     },
     {
         "term": "do_you_really_want_to_leave_the_editmode",
@@ -1549,10 +1257,6 @@
         "definition": "Sorry, this is not possible in elements which are paged, try to restructure your data to avoid pages in the tree"
     },
     {
-        "term": "not_supported_by_your_browser",
-        "definition": "This feature is not supported by your browser, please update to the latest version"
-    },
-    {
         "term": "absolute_path_to_icc_rgb_profile",
         "definition": "Absolute path to ICC RGB profile"
     },
@@ -1585,14 +1289,6 @@
         "definition": "exact match"
     },
     {
-        "term": "open_document",
-        "definition": "Open Document"
-    },
-    {
-        "term": "open_image",
-        "definition": "Open Image"
-    },
-    {
         "term": "expiry",
         "definition": "Expiry"
     },
@@ -1607,14 +1303,6 @@
     {
         "term": "drag_me",
         "definition": "Drag Me"
-    },
-    {
-        "term": "parameterPost",
-        "definition": "POST Parameters"
-    },
-    {
-        "term": "parameterGet",
-        "definition": "GET Parameters"
     },
     {
         "term": "cookies",
@@ -1713,10 +1401,6 @@
         "definition": "Tag & Snippet Management"
     },
     {
-        "term": "import_class_definition",
-        "definition": "Import Class Definition"
-    },
-    {
         "term": "Click here to proceed",
         "definition": "Click here to proceed"
     },
@@ -1763,10 +1447,6 @@
     {
         "term": "path_aliases",
         "definition": "Path Aliases"
-    },
-    {
-        "term": "path_error_message",
-        "definition": "A path must start with \/ and should only contain the following characters: a-zA-Z0-9-_.\/"
     },
     {
         "term": "pretty_url",
@@ -1925,10 +1605,6 @@
         "definition": "Video Thumbnails"
     },
     {
-        "term": "absolute_path_to_ffmpeg_binary",
-        "definition": "Absolute path to FFMPEG binary"
-    },
-    {
         "term": "module_optional",
         "definition": "Module (optional)"
     },
@@ -1951,10 +1627,6 @@
     {
         "term": "select_specific_area_of_image",
         "definition": "Select specific area of image"
-    },
-    {
-        "term": "insert_video_url_here",
-        "definition": "Insert video URL here"
     },
     {
         "term": "error_pasting_asset",
@@ -1985,10 +1657,6 @@
         "definition": "Use properties from source document"
     },
     {
-        "term": "inherited_properties_from_source",
-        "definition": "Inherit properties from source document"
-    },
-    {
         "term": "childs_from_source",
         "definition": "Use children from source document"
     },
@@ -2011,10 +1679,6 @@
     {
         "term": "not_supported",
         "definition": "Not supported"
-    },
-    {
-        "term": "show_random_pictures_on_login_screen",
-        "definition": "Show random pictures on login screen"
     },
     {
         "term": "url_to_custom_image_on_login_screen",
@@ -2177,10 +1841,6 @@
         "definition": "Disable Cookies (comma separated)"
     },
     {
-        "term": "click_here_to_proceed",
-        "definition": "Click here to proceed"
-    },
-    {
         "term": "path_to_lessc_optional",
         "definition": "Path to lessc (optional)"
     },
@@ -2193,60 +1853,12 @@
         "definition": "Only for IP (optional)"
     },
     {
-        "term": "extension_is_up_to_date",
-        "definition": "This extension is up-to-date."
-    },
-    {
-        "term": "update_information",
-        "definition": "Update Information"
-    },
-    {
         "term": "files",
         "definition": "Files"
     },
     {
-        "term": "share_extension_upload_summary",
-        "definition": "The following files will be transferred to the extension hub at pimcore.org."
-    },
-    {
-        "term": "number_of_files",
-        "definition": "Number of files"
-    },
-    {
-        "term": "share_extension_description",
-        "definition": "You have to use regular expressions - One expression per line"
-    },
-    {
         "term": "next",
         "definition": "Next"
-    },
-    {
-        "term": "exclude_files",
-        "definition": "Exclude Files"
-    },
-    {
-        "term": "collecting_download_information",
-        "definition": "Collecting Download Information"
-    },
-    {
-        "term": "share",
-        "definition": "Share"
-    },
-    {
-        "term": "push_update",
-        "definition": "Push Update"
-    },
-    {
-        "term": "collecting_update_information",
-        "definition": "Collecting Update Information.<br \/>Please wait ..."
-    },
-    {
-        "term": "extensions_upload_agree_text",
-        "definition": "If you share this extension this will not be automatically public to everyone. First you have the possibility to edit some details, permissions and dependencies for the plugin. After that it's on you if the extension goes public or not."
-    },
-    {
-        "term": "extension_upload_proceed",
-        "definition": "I've read the above. Proceed with the upload now!"
     },
     {
         "term": "please_dont_forget_to_reload_pimcore_after_modifications",
@@ -2265,20 +1877,8 @@
         "definition": "Configure"
     },
     {
-        "term": "download_extension",
-        "definition": "Download Extensions"
-    },
-    {
         "term": "manage_extensions",
         "definition": "Manage Extensions"
-    },
-    {
-        "term": "share_extension",
-        "definition": "Share Extensions"
-    },
-    {
-        "term": "beginning_with_ending_with_optional_slash",
-        "definition": "Beginning with, ... and ending with an optional slash"
     },
     {
         "term": "beginning_with",
@@ -2337,20 +1937,8 @@
         "definition": "Maintenance Mode"
     },
     {
-        "term": "translate_content_to",
-        "definition": "Translate content to"
-    },
-    {
-        "term": "translate_api_key",
-        "definition": "Translate API Key"
-    },
-    {
         "term": "image_is_too_small",
         "definition": "Image is too small, please choose a bigger one."
-    },
-    {
-        "term": "new_version_available",
-        "definition": "New Version available"
     },
     {
         "term": "countrymultiselect",
@@ -2479,10 +2067,6 @@
     {
         "term": "parent_element",
         "definition": "Parent Element"
-    },
-    {
-        "term": "import_fieldcollection_definition",
-        "definition": "Import Field Collection Definition"
     },
     {
         "term": "batch_change_selected",
@@ -2649,20 +2233,12 @@
         "definition": "Block"
     },
     {
-        "term": "update_flash",
-        "definition": "Your Flash Plugin is outdated, please update!"
-    },
-    {
         "term": "tooltip",
         "definition": "Tooltip"
     },
     {
         "term": "label",
         "definition": "Label"
-    },
-    {
-        "term": "objectsid",
-        "definition": "Objects (ID's)"
     },
     {
         "term": "decimalPrecision",
@@ -2677,24 +2253,12 @@
         "definition": "Login failed!<br \/>Please try again."
     },
     {
-        "term": "error_user_inactive",
-        "definition": "This user has been set to inactive"
-    },
-    {
         "term": "error_session_expired",
         "definition": "Session expired!<br \/>Please login again."
     },
     {
         "term": "settings_save_success",
         "definition": "Settings saved successfully"
-    },
-    {
-        "term": "variation_page",
-        "definition": "Variation Page"
-    },
-    {
-        "term": "add_variation_page",
-        "definition": "Add Variation Page"
     },
     {
         "term": "navigation_summary",
@@ -2749,20 +2313,12 @@
         "definition": "Navigation"
     },
     {
-        "term": "bounces",
-        "definition": "Bounces"
-    },
-    {
         "term": "entrances",
         "definition": "Entrances"
     },
     {
         "term": "exits",
         "definition": "Exits"
-    },
-    {
-        "term": "uniquePageviews",
-        "definition": "Unique Pageviews"
     },
     {
         "term": "debug_mode_on",
@@ -2885,14 +2441,6 @@
         "definition": "Class cannot be saved"
     },
     {
-        "term": "show_root_node",
-        "definition": "Show root-node"
-    },
-    {
-        "term": "root_folder",
-        "definition": "Root-Folder"
-    },
-    {
         "term": "email_log_resend_window_success_message",
         "definition": "The email has been sent successfully to all recipients."
     },
@@ -2903,10 +2451,6 @@
     {
         "term": "condition",
         "definition": "Condition"
-    },
-    {
-        "term": "custom_views",
-        "definition": "Custom Views"
     },
     {
         "term": "error_jobs",
@@ -2945,48 +2489,12 @@
         "definition": "Info"
     },
     {
-        "term": "ab_test_was_created_successfully",
-        "definition": "Your A\/B was created successfully"
-    },
-    {
-        "term": "ab_test_error",
-        "definition": "There was an error while creating your A\/B test."
-    },
-    {
-        "term": "add_your_test_pages",
-        "definition": "Now add your pages to this experiment"
-    },
-    {
-        "term": "create_ab_description",
-        "definition": "Here you can create new A\/B tests with Google Analytics and Google Websiteoptimizer"
-    },
-    {
-        "term": "experiment_name",
-        "definition": "Name of the Experiment"
-    },
-    {
-        "term": "conversion_page",
-        "definition": "Conversion (Goal)-Page"
-    },
-    {
-        "term": "test_page",
-        "definition": "Test-Page"
-    },
-    {
         "term": "URL",
         "definition": "URL"
     },
     {
-        "term": "select_version",
-        "definition": "Select a Version"
-    },
-    {
         "term": "or",
         "definition": "or"
-    },
-    {
-        "term": "link_settings",
-        "definition": "Link Settings"
     },
     {
         "term": "error_pasting_object",
@@ -3033,56 +2541,16 @@
         "definition": "Public URL"
     },
     {
-        "term": "create_ab_test",
-        "definition": "Create A\/B Test"
-    },
-    {
         "term": "pageviews",
         "definition": "Pageviews"
-    },
-    {
-        "term": "unique_pageviews",
-        "definition": "Unique Pageviews"
     },
     {
         "term": "visits",
         "definition": "Visits"
     },
     {
-        "term": "pagespervisit",
-        "definition": "Pages \/ Visit"
-    },
-    {
-        "term": "average_timeonsite",
-        "definition": "Av. Time on Site"
-    },
-    {
-        "term": "bouncerate",
-        "definition": "Bounce Rate"
-    },
-    {
-        "term": "link_sources",
-        "definition": "Link Sources"
-    },
-    {
-        "term": "google_crawling_issues",
-        "definition": "Google Crawler Issues (Click on row to view details)"
-    },
-    {
         "term": "detail",
         "definition": "Detail"
-    },
-    {
-        "term": "crawling_issues",
-        "definition": "Crawling Issues"
-    },
-    {
-        "term": "internal_keywords",
-        "definition": "Internal Keywords"
-    },
-    {
-        "term": "external_keywords",
-        "definition": "External Keywords"
     },
     {
         "term": "verification_filename_text",
@@ -3103,10 +2571,6 @@
     {
         "term": "analytics_trackid_code",
         "definition": "Track-ID (eg. UA-XXXXX-X)<br \/><small>required for code integration<\/small>"
-    },
-    {
-        "term": "analytics_settings_profile_description",
-        "definition": "Before you can select a profile you have to define your Google Analytics credentials for the account in the system settings (Google-Credentials) or in the fields below."
     },
     {
         "term": "report_settings",
@@ -3157,16 +2621,8 @@
         "definition": "Forms"
     },
     {
-        "term": "add_form_component",
-        "definition": "Add Form Component"
-    },
-    {
         "term": "save_only_scheduled_tasks",
         "definition": "Save only scheduled tasks"
-    },
-    {
-        "term": "minify_javascript_algorithm",
-        "definition": "Javascript minification algorithm"
     },
     {
         "term": "modified_assets",
@@ -3177,24 +2633,12 @@
         "definition": "Changes in the last 31 days"
     },
     {
-        "term": "minify_javascript",
-        "definition": "Minify Javascript"
-    },
-    {
-        "term": "minify_css",
-        "definition": "Minify CSS"
-    },
-    {
         "term": "content",
         "definition": "Content"
     },
     {
         "term": "add_portlet",
         "definition": "Add Portlet"
-    },
-    {
-        "term": "system_statistics",
-        "definition": "System Statistics"
     },
     {
         "term": "modified_documents",
@@ -3219,10 +2663,6 @@
     {
         "term": "save",
         "definition": "Save"
-    },
-    {
-        "term": "your_asset_has_been_saved_successfully",
-        "definition": "Your asset has been saved successfully!"
     },
     {
         "term": "add_assets",
@@ -3253,18 +2693,6 @@
         "definition": "Permissions"
     },
     {
-        "term": "assets_permissions",
-        "definition": "Assets Permissions"
-    },
-    {
-        "term": "documents_permissions",
-        "definition": "Documents Permissions"
-    },
-    {
-        "term": "objects_permissions",
-        "definition": "Objects Permissions"
-    },
-    {
         "term": "username",
         "definition": "Username"
     },
@@ -3283,10 +2711,6 @@
     {
         "term": "rename",
         "definition": "Rename"
-    },
-    {
-        "term": "create_childs",
-        "definition": "Create Children"
     },
     {
         "term": "settings",
@@ -3345,10 +2769,6 @@
         "definition": "BCC"
     },
     {
-        "term": "email_receive_empty_text",
-        "definition": "Recipients"
-    },
-    {
         "term": "email_settings",
         "definition": "Email Settings"
     },
@@ -3403,10 +2823,6 @@
     {
         "term": "email_log_show_text_params",
         "definition": "Show dynamic params"
-    },
-    {
-        "term": "email_log_iframe_title_params",
-        "definition": "Dynamic params"
     },
     {
         "term": "email_log_html",
@@ -3477,20 +2893,8 @@
         "definition": "Description"
     },
     {
-        "term": "keywords",
-        "definition": "Keywords"
-    },
-    {
-        "term": "your_document_has_been_saved",
-        "definition": "Your document has been saved successfully!"
-    },
-    {
         "term": "unpublish",
         "definition": "Unpublish"
-    },
-    {
-        "term": "internal_link",
-        "definition": "Internal Link"
     },
     {
         "term": "link_properties",
@@ -3505,20 +2909,12 @@
         "definition": "Type"
     },
     {
-        "term": "external_link",
-        "definition": "External Link"
-    },
-    {
         "term": "add_folder",
         "definition": "Add Folder"
     },
     {
         "term": "please_enter_the_name_of_the_folder",
         "definition": "Please enter the name of the folder"
-    },
-    {
-        "term": "upload_your_files_press_shift_to_select_multiple_files",
-        "definition": "Upload your files, press \"Shift\" to select multiple files"
     },
     {
         "term": "please_enter_the_new_name",
@@ -3557,20 +2953,8 @@
         "definition": "Edit Key"
     },
     {
-        "term": "use_this_as_document_root_for_new_site",
-        "definition": "Use this as Document-Root for a new site"
-    },
-    {
-        "term": "please_enter_the_domains_for_the_new_site",
-        "definition": "Please enter the domain(s) [comma separated] for the new site"
-    },
-    {
         "term": "edit_site",
         "definition": "Edit Site"
-    },
-    {
-        "term": "please_enter_the_domains_for_the_site",
-        "definition": "Please enter the domain(s) [comma separated] for the site"
     },
     {
         "term": "please_enter_the_new_key",
@@ -3749,22 +3133,6 @@
         "definition": "Database Port"
     },
     {
-        "term": "chmod_folder",
-        "definition": "CHMOD Folder"
-    },
-    {
-        "term": "chmod_files",
-        "definition": "CHMOD Files"
-    },
-    {
-        "term": "api_key",
-        "definition": "API Key"
-    },
-    {
-        "term": "secret",
-        "definition": "Secret"
-    },
-    {
         "term": "client_id",
         "definition": "Client ID"
     },
@@ -3781,20 +3149,12 @@
         "definition": "Quality"
     },
     {
-        "term": "interlace",
-        "definition": "Interlace"
-    },
-    {
         "term": "aspect_ratio",
         "definition": "Aspect Ratio"
     },
     {
         "term": "format",
         "definition": "Format"
-    },
-    {
-        "term": "trees",
-        "definition": "Trees"
     },
     {
         "term": "documents",
@@ -3843,10 +3203,6 @@
     {
         "term": "cache",
         "definition": "Cache"
-    },
-    {
-        "term": "temporary_files",
-        "definition": "Temporary files"
     },
     {
         "term": "clear_temporary_files",
@@ -3981,10 +3337,6 @@
         "definition": "Error Pages"
     },
     {
-        "term": "no_preview_available",
-        "definition": "Sorry, no preview available"
-    },
-    {
         "term": "add_object",
         "definition": "Add object"
     },
@@ -4025,10 +3377,6 @@
         "definition": "Collapsible"
     },
     {
-        "term": "display_layout_to_users",
-        "definition": "Show layout only to these users"
-    },
-    {
         "term": "allowed_classes",
         "definition": "Allowed classes"
     },
@@ -4055,10 +3403,6 @@
     {
         "term": "use_as_site",
         "definition": "Use as site"
-    },
-    {
-        "term": "edit_domains",
-        "definition": "Edit Domains"
     },
     {
         "term": "remove_site",
@@ -4105,88 +3449,12 @@
         "definition": "Open"
     },
     {
-        "term": "pimcore_setup",
-        "definition": "Installer"
-    },
-    {
-        "term": "pimcore_setup_not_allowed",
-        "definition": "pimcore seems to be installed already. Re-installing is not possible."
-    },
-    {
-        "term": "pimcore_setup_not_ready",
-        "definition": "Errors occurred. Pimcore is not ready for setup"
-    },
-    {
-        "term": "db_settings_found",
-        "definition": "INFO: Database settings found."
-    },
-    {
-        "term": "db_already_setup",
-        "definition": "INFO: Could connect to DB."
-    },
-    {
-        "term": "could_not_create_tables",
-        "definition": "ERROR: Import of DB dump failed."
-    },
-    {
-        "term": "could_not_create_dir_for_log",
-        "definition": "ERROR! Could not create directory for log file"
-    },
-    {
-        "term": "could_not_write_log",
-        "definition": "ERROR! log file not writeable. Please adjust permissions."
-    },
-    {
-        "term": "system_xml_not_writeable",
-        "definition": "ERROR! System.php is not writeable."
-    },
-    {
-        "term": "system_xml_dir_not_writeable",
-        "definition": "ERROR! The directory website\/var\/config is not writeable."
-    },
-    {
-        "term": "system_xml_exists",
-        "definition": "Warning! The file website\/var\/config\/system.php already exists and will be overwritten by the installer."
-    },
-    {
-        "term": "could_not_verify_db_encoding",
-        "definition": "ERROR! DB character set could not be determined."
-    },
-    {
-        "term": "wrong_db_encoding",
-        "definition": "ERROR! DB character set is not set to utf8."
-    },
-    {
-        "term": "no_db_connection",
-        "definition": "ERROR! DB connection could not be established."
-    },
-    {
-        "term": "db_adapter_unknown",
-        "definition": "ERROR! DB-adapter is unknown."
-    },
-    {
-        "term": "could_not_create_admin_user",
-        "definition": "ERROR! Admin user could not be created."
-    },
-    {
         "term": "add_user",
         "definition": "Add User"
     },
     {
-        "term": "could_not_write_system_xml",
-        "definition": "ERROR! system.php could not be created."
-    },
-    {
-        "term": "pimcore_setup_completed",
-        "definition": "pimcore Setup completed successfully!"
-    },
-    {
         "term": "submit",
         "definition": "Submit"
-    },
-    {
-        "term": "steps_description",
-        "definition": "If you want to use steps for versioning instead of days, please leave days empty."
     },
     {
         "term": "days",
@@ -4207,18 +3475,6 @@
     {
         "term": "database",
         "definition": "Database"
-    },
-    {
-        "term": "version_days",
-        "definition": "Days for versioning"
-    },
-    {
-        "term": "version_steps",
-        "definition": "Steps for versioning"
-    },
-    {
-        "term": "problem_creating_new_class",
-        "definition": "There was an error, please be sure that the name of the class is at least 3 characters."
     },
     {
         "term": "seemode",
@@ -4249,38 +3505,6 @@
         "definition": "Plugins"
     },
     {
-        "term": "plugin_info",
-        "definition": "Plugin Info"
-    },
-    {
-        "term": "available_plugins",
-        "definition": "Available Plugins"
-    },
-    {
-        "term": "settings_plugins",
-        "definition": "Options"
-    },
-    {
-        "term": "plugin_classname",
-        "definition": "Plugin class name"
-    },
-    {
-        "term": "plugin_includepaths",
-        "definition": "Plugin include paths"
-    },
-    {
-        "term": "plugin_namespaces",
-        "definition": "plugin namespaces"
-    },
-    {
-        "term": "plugin_jspaths",
-        "definition": "plugin JavaScript files"
-    },
-    {
-        "term": "plugin_csspaths",
-        "definition": "plugin CSS files"
-    },
-    {
         "term": "install",
         "definition": "Install"
     },
@@ -4289,28 +3513,12 @@
         "definition": "Uninstall"
     },
     {
-        "term": "plugin_uninstall_warning",
-        "definition": "Do you really want to uninstall this plugin? WARNING! All data of this plugin is going to be deleted!"
-    },
-    {
         "term": "some_fields_cannot_be_saved",
         "definition": "Some fields cannot be saved."
     },
     {
-        "term": "icon_path",
-        "definition": "Path to icon"
-    },
-    {
         "term": "reload",
         "definition": "Reload"
-    },
-    {
-        "term": "plugin_needs_reload",
-        "definition": "This plugin requires a reload of the user interface in order to be fully functional. Do you want to reload now?"
-    },
-    {
-        "term": "plugin_installing_please_wait",
-        "definition": "Plugin is being installed, please wait ... "
     },
     {
         "term": "schedule",
@@ -4389,10 +3597,6 @@
         "definition": "Slider"
     },
     {
-        "term": "name_not_valid",
-        "definition": "Name is not valid"
-    },
-    {
         "term": "filename_not_valid",
         "definition": "Name is not valid"
     },
@@ -4437,24 +3641,12 @@
         "definition": "Read more about here"
     },
     {
-        "term": "admin_theme",
-        "definition": "Admin-Theme"
-    },
-    {
         "term": "publish_version",
         "definition": "Publish version"
     },
     {
-        "term": "no_version",
-        "definition": "no version available"
-    },
-    {
         "term": "save_only_new_version",
         "definition": "Only save new version"
-    },
-    {
-        "term": "there_is_a_newer_not_published_version",
-        "definition": "There is a newer not published version"
     },
     {
         "term": "datetime",
@@ -4545,14 +3737,6 @@
         "definition": "Session Error"
     },
     {
-        "term": "update_successful",
-        "definition": "Update successful!"
-    },
-    {
-        "term": "select_plugin_update",
-        "definition": "Select plugin update"
-    },
-    {
         "term": "select_update",
         "definition": "Select update"
     },
@@ -4565,48 +3749,12 @@
         "definition": "Available non-stable updates"
     },
     {
-        "term": "looking_for_updates",
-        "definition": "Pimcore is looking for newer versions<br \/>Depending on your build this can take a while."
-    },
-    {
         "term": "please_wait",
         "definition": "Please wait ..."
     },
     {
-        "term": "latest_version_already_installed",
-        "definition": "You have installed the latest version."
-    },
-    {
         "term": "latest_pimcore_version_already_installed",
         "definition": "You have installed the latest version of pimcore."
-    },
-    {
-        "term": "plugin_update_error",
-        "definition": "There was an error, please check permissions, or try later.<br \/><br \/>"
-    },
-    {
-        "term": "update_error",
-        "definition": "There was an error.<br \/><br \/>"
-    },
-    {
-        "term": "downloading_packages",
-        "definition": "Downloading packages ..."
-    },
-    {
-        "term": "start_update",
-        "definition": "Start Update"
-    },
-    {
-        "term": "update_in_progress",
-        "definition": "Update in progress ..."
-    },
-    {
-        "term": "plugindownload",
-        "definition": "Download Plugins"
-    },
-    {
-        "term": "download_plugins",
-        "definition": "Download Plugins"
     },
     {
         "term": "download",
@@ -4615,26 +3763,6 @@
     {
         "term": "revision",
         "definition": "Build"
-    },
-    {
-        "term": "plugin_downloaded",
-        "definition": "Plugin Downloaded"
-    },
-    {
-        "term": "plugin_downloaded_info",
-        "definition": "Plugin has been added. Please see tab available plugins to install the plugin."
-    },
-    {
-        "term": "plugin_download_failed",
-        "definition": "Download failed"
-    },
-    {
-        "term": "plugin_download_failed_info",
-        "definition": "Plugin download failed. Please check permissions!"
-    },
-    {
-        "term": "plugin_repositories",
-        "definition": "Plugin Servers (comma separated)"
     },
     {
         "term": "inheritable",
@@ -4669,10 +3797,6 @@
         "definition": "Default-Language in Admin-Interface"
     },
     {
-        "term": "valid_languages_frontend",
-        "definition": "Valid languages for content (eg.: de,en)"
-    },
-    {
         "term": "link",
         "definition": "Link"
     },
@@ -4683,10 +3807,6 @@
     {
         "term": "acronym",
         "definition": "Acronym"
-    },
-    {
-        "term": "downloading_plugin",
-        "definition": "Downloading Plugin ... "
     },
     {
         "term": "cache_enabled",
@@ -4703,10 +3823,6 @@
     {
         "term": "outputfilters",
         "definition": "Outputfilters"
-    },
-    {
-        "term": "image_datauri_filter",
-        "definition": "Image DataURI"
     },
     {
         "term": "dependencies",
@@ -4729,20 +3845,12 @@
         "definition": "Subtype"
     },
     {
-        "term": "minify_html",
-        "definition": "Minify HTML"
-    },
-    {
         "term": "initializing",
         "definition": "Initializing ..."
     },
     {
         "term": "backup_error",
         "definition": "There was an error while backing up"
-    },
-    {
-        "term": "plugin_dir_error",
-        "definition": "The plugin directory does not exist or is not writable."
     },
     {
         "term": "user_save_success",
@@ -4801,10 +3909,6 @@
         "definition": "Filter"
     },
     {
-        "term": "add_filter",
-        "definition": "Add filter"
-    },
-    {
         "term": "field",
         "definition": "Field"
     },
@@ -4815,10 +3919,6 @@
     {
         "term": "apply",
         "definition": "Apply"
-    },
-    {
-        "term": "clear_filter",
-        "definition": "Clear filter"
     },
     {
         "term": "output_cache",
@@ -4909,10 +4009,6 @@
         "definition": "Cancel"
     },
     {
-        "term": "current_address",
-        "definition": "Current Address"
-    },
-    {
         "term": "open_search_editor",
         "definition": "Open Search Editor"
     },
@@ -4989,76 +4085,16 @@
         "definition": "Show welcome screen on startup"
     },
     {
-        "term": "edit_user_permissions",
-        "definition": "Edit user permissions"
-    },
-    {
-        "term": "plugin_misconfiguration",
-        "definition": "Cannot open plugins. Please check permissions on plugin folder and plugin server in system settings"
-    },
-    {
-        "term": "plugin_repositories_description",
-        "definition": "Specify one or more plugin servers to which pimcore connects to download and update plugins"
-    },
-    {
         "term": "website",
         "definition": "Website"
-    },
-    {
-        "term": "plugin_build",
-        "definition": "plugin build"
-    },
-    {
-        "term": "permission_overwrite_children",
-        "definition": "Save & Force on children"
-    },
-    {
-        "term": "permission_reset",
-        "definition": "Reset"
     },
     {
         "term": "superselectbox_empty_text",
         "definition": "Please enter your desired value and hit return key"
     },
     {
-        "term": "valid_languages_frontend_empty_text",
-        "definition": "Please choose the valid system languages"
-    },
-    {
-        "term": "language_download",
-        "definition": "Download System Languages"
-    },
-    {
-        "term": "language_downloaded",
-        "definition": "Language File Downloaded"
-    },
-    {
-        "term": "language_downloaded_info",
-        "definition": "The language file has been installed successfully. You need to reload pimcore before the language becomes available. Do you want to reload pimcore now? "
-    },
-    {
-        "term": "language_download_failed",
-        "definition": "Download System Language Failed"
-    },
-    {
-        "term": "language_download_failed_info",
-        "definition": "The language file could not be downloaded."
-    },
-    {
-        "term": "language_translation_percentage",
-        "definition": "translated"
-    },
-    {
-        "term": "downloading_language",
-        "definition": "Downloading language file ..."
-    },
-    {
         "term": "user_creation_error",
         "definition": "Could not create user"
-    },
-    {
-        "term": "duplicate_username",
-        "definition": "user and user group names must be unique!"
     },
     {
         "term": "importFileHasHeadRow",
@@ -5071,14 +4107,6 @@
     {
         "term": "log_messages_user_mail_recipient",
         "definition": "Log messages email recipient"
-    },
-    {
-        "term": "loglevels",
-        "definition": "Log Levels"
-    },
-    {
-        "term": "loglevels_description",
-        "definition": "The levels checked will be logged to website\/var\/log\/debug.log. The most critical errors are always logged, they should not be deactivated."
     },
     {
         "term": "email_senderemail",
@@ -5137,32 +4165,12 @@
         "definition": "Debug Email Addresses"
     },
     {
-        "term": "email_debug_addresses_empty_text",
-        "definition": "Enter a list of email addresses that are allowed to receive debug emails."
-    },
-    {
-        "term": "email_debug_domains",
-        "definition": "Debug email domains"
-    },
-    {
-        "term": "email_debug_domains_empty_text",
-        "definition": "Enter a list of domains (e.g. pimcore.org) that are allowed to receive debug emails. All email addresses form this domains are allowed to receive debug emails."
-    },
-    {
         "term": "no_ssl",
         "definition": "-"
     },
     {
-        "term": "user_settings",
-        "definition": "User Settings"
-    },
-    {
         "term": "error_deleting_object",
         "definition": "Could not delete object"
-    },
-    {
-        "term": "user_object_dependencies",
-        "definition": "User - Object Dependencies"
     },
     {
         "term": "user_object_dependencies_description",
@@ -5205,48 +4213,12 @@
         "definition": "Admin users do not only automatically gain all permissions listed below, they are also allowed to perform all actions on documents, assets and objects without any restrictions."
     },
     {
-        "term": "user_apikey_change_warning",
-        "definition": "Please be aware that changing the password also changes the web service API key."
-    },
-    {
         "term": "user_apikey_description",
         "definition": "API key required for web service access by this user"
     },
     {
         "term": "apikey",
         "definition": "API Key"
-    },
-    {
-        "term": "successful_publish_document",
-        "definition": "Your document has been published"
-    },
-    {
-        "term": "successful_unpublish_document",
-        "definition": "Your document has been unpublished"
-    },
-    {
-        "term": "error_publish_document",
-        "definition": "Your document could not be published"
-    },
-    {
-        "term": "error_unpublish_document",
-        "definition": "Your document could not be unpublished"
-    },
-    {
-        "term": "successful_publish_object",
-        "definition": "Your object has been published"
-    },
-    {
-        "term": "successful_unpublish_object",
-        "definition": "Your object has been unpublished"
-    },
-    {
-        "term": "error_publish_object",
-        "definition": "Your object could not be published"
-    },
-    {
-        "term": "error_unpublish_object",
-        "definition": "Your object could not be unpublished"
     },
     {
         "term": "error_general",
@@ -5263,10 +4235,6 @@
     {
         "term": "lazy_loading_description",
         "definition": "Lazy loading means that related objects are not loaded initially when the object is instantiated. When accessing the object programmatically, relations are only loaded when the according get method is called."
-    },
-    {
-        "term": "lazy_loading_activated",
-        "definition": "(lazy loading activated)"
     },
     {
         "term": "non_owner_description",
@@ -5317,64 +4285,8 @@
         "definition": "Initializing"
     },
     {
-        "term": "import_archive",
-        "definition": "Archive Import"
-    },
-    {
-        "term": "export_archive",
-        "definition": "Export (Archive)"
-    },
-    {
-        "term": "element_export_skip_root",
-        "definition": "Export only child elements"
-    },
-    {
-        "term": "element_export_recursive",
-        "definition": "Include child elements"
-    },
-    {
-        "term": "element_export_include_relations",
-        "definition": "Include referenced elements"
-    },
-    {
-        "term": "exporting_elements",
-        "definition": "Exporting Elements ..."
-    },
-    {
-        "term": "export_items_finished",
-        "definition": "Items finished"
-    },
-    {
-        "term": "element_import_settings",
-        "definition": "Import Settings"
-    },
-    {
-        "term": "element_import_overwrite",
-        "definition": "Overwrite element if path exists"
-    },
-    {
-        "term": "importing_elements",
-        "definition": "Importing Elements ... "
-    },
-    {
-        "term": "element_import",
-        "definition": "Element Import"
-    },
-    {
-        "term": "element_import_finished",
-        "definition": "Import Finished"
-    },
-    {
-        "term": "element_import_finished_hint",
-        "definition": "All elements have been imported successfully. If related elements were included, pimcore tried to restore them to their original path. If that path does not exist, pimcore restored them to the root folder"
-    },
-    {
         "term": "error_renaming_object",
         "definition": "There was an error while renaming the object."
-    },
-    {
-        "term": "element_import_import",
-        "definition": "import elements - rename in case of duplicate paths"
     },
     {
         "term": "navigation_settings",
@@ -5391,10 +4303,6 @@
     {
         "term": "navigation_basic",
         "definition": "Basic Navigation Settings"
-    },
-    {
-        "term": "further_navigation_settings",
-        "definition": "More Navigation Settings"
     },
     {
         "term": "navigation_exclude",
@@ -5513,10 +4421,6 @@
         "definition": "Invalid Key"
     },
     {
-        "term": "data_width",
-        "definition": "Data Columns Width"
-    },
-    {
         "term": "grid_current_language",
         "definition": "Current Language"
     },
@@ -5549,20 +4453,8 @@
         "definition": "just direct child objects"
     },
     {
-        "term": "hotspotimage_add_selector",
-        "definition": "Add Hotspot"
-    },
-    {
-        "term": "hotspotimage_enter_name_of_new_hotspot",
-        "definition": "Enter name of new Hotspot"
-    },
-    {
         "term": "hotspotimage",
         "definition": "Image with Hotspots"
-    },
-    {
-        "term": "hotspotimage_no_image",
-        "definition": "Please define an image first"
     },
     {
         "term": "objectsMetadata_allowed_class",
@@ -5625,10 +4517,6 @@
         "definition": "Default values are not stored in the database table definition, nor are they set in empty Object instances. They are only available in the pimcore GUI"
     },
     {
-        "term": "gui_default_value",
-        "definition": "Unstored default value"
-    },
-    {
         "term": "memorize_tabs",
         "definition": "Memorize open tabs"
     },
@@ -5651,10 +4539,6 @@
     {
         "term": "keyValue_properties",
         "definition": "Key Definition"
-    },
-    {
-        "term": "keyValue_add_group",
-        "definition": "Add Group"
     },
     {
         "term": "keyvalue_mbx_entergroup_title",
@@ -5697,14 +4581,6 @@
         "definition": "Invalid name"
     },
     {
-        "term": "keyvalue_save_success",
-        "definition": "Your config has been saved"
-    },
-    {
-        "term": "keyvalue_save_error",
-        "definition": "Your config could not be saved"
-    },
-    {
         "term": "keyvalue_no_keys",
         "definition": "No keys found"
     },
@@ -5745,32 +4621,8 @@
         "definition": "Key\/Value"
     },
     {
-        "term": "keyvalue_tag_col_keyName",
-        "definition": "Key"
-    },
-    {
-        "term": "keyvalue_tag_col_keyDesc",
-        "definition": "Description"
-    },
-    {
         "term": "keyvalue_tag_col_group",
         "definition": "Group"
-    },
-    {
-        "term": "keyvalue_tag_col_groupDesc",
-        "definition": "Group Description"
-    },
-    {
-        "term": "keyvalue_tag_col_value",
-        "definition": "Value (click to edit...)"
-    },
-    {
-        "term": "keyvalue_tag_col_unit",
-        "definition": "Unit"
-    },
-    {
-        "term": "keyvalue_tag_col_metadata",
-        "definition": "Metadata"
     },
     {
         "term": "keyvalue_col_groupdescription",
@@ -5783,10 +4635,6 @@
     {
         "term": "keyvalue_col_translator",
         "definition": "Translator"
-    },
-    {
-        "term": "keyvalue_col_metadata",
-        "definition": "Metadata"
     },
     {
         "term": "keyvalue_key_unique",
@@ -5873,10 +4721,6 @@
         "definition": "Meta Information"
     },
     {
-        "term": "delete_confirm",
-        "definition": "delete"
-    },
-    {
         "term": "note_details",
         "definition": "Note Details"
     },
@@ -5931,22 +4775,6 @@
     {
         "term": "hotspots_cleared",
         "definition": "Hotspots, Markers and Cropping Data cleared"
-    },
-    {
-        "term": "localized_view_tooltip",
-        "definition": "Localized View Settings"
-    },
-    {
-        "term": "localized_edit_tooltip",
-        "definition": "Localized Edit Settings"
-    },
-    {
-        "term": "localized_view",
-        "definition": "L-View"
-    },
-    {
-        "term": "localized_edit",
-        "definition": "L-Edit"
     },
     {
         "term": "maximum_tabs",
@@ -6193,14 +5021,6 @@
         "definition": "Import &amp; Merge CSV"
     },
     {
-        "term": "translation_merger_website",
-        "definition": "Merge Website Translations"
-    },
-    {
-        "term": "translation_merger_admin",
-        "definition": "Merge Admin Translation"
-    },
-    {
         "term": "translation_merger_current",
         "definition": "Current Text"
     },
@@ -6257,14 +5077,6 @@
         "definition": "Application Logger"
     },
     {
-        "term": "log_logentry",
-        "definition": "Logentry"
-    },
-    {
-        "term": "log_filelink",
-        "definition": "Filelink"
-    },
-    {
         "term": "log_relatedobject",
         "definition": "Related object"
     },
@@ -6305,20 +5117,12 @@
         "definition": "search"
     },
     {
-        "term": "log_no_search_results",
-        "definition": "no results found"
-    },
-    {
         "term": "log_search_relatedobject",
         "definition": "Related object (id)"
     },
     {
         "term": "application_logging",
         "definition": "Application Logger"
-    },
-    {
-        "term": "log_applicationlogs",
-        "definition": "Application logs"
     },
     {
         "term": "log_timestamp",
@@ -6361,10 +5165,6 @@
         "definition": "Separate multiple email receivers separated by ';'"
     },
     {
-        "term": "log_config_archive_log_entries",
-        "definition": "Archive log entries"
-    },
-    {
         "term": "log_config_archive_treshold",
         "definition": "Archive treshold (in days)"
     },
@@ -6379,10 +5179,6 @@
     {
         "term": "classificationstore_menu_config",
         "definition": "Classification Store"
-    },
-    {
-        "term": "classificationstore_root",
-        "definition": "Groups"
     },
     {
         "term": "classificationstore_group_definition",
@@ -6449,20 +5245,12 @@
         "definition": "Relations"
     },
     {
-        "term": "classificationstore_group_empty",
-        "definition": "Group empty"
-    },
-    {
         "term": "classificationstore",
         "definition": "Classification Store"
     },
     {
         "term": "localized",
         "definition": "Localized"
-    },
-    {
-        "term": "delete_group",
-        "definition": "Delete Group"
     },
     {
         "term": "allowed_group_ids",
@@ -6487,10 +5275,6 @@
     {
         "term": "classificationstore_collection_definition",
         "definition": "Group Collections"
-    },
-    {
-        "term": "classificationstore_collection_empty",
-        "definition": "Collection empty"
     },
     {
         "term": "classificationstore_no_collections",
@@ -6543,10 +5327,6 @@
     {
         "term": "quantityValue_field",
         "definition": "Quantity Value"
-    },
-    {
-        "term": "valid_quantityValue_units_empty_text",
-        "definition": "Please select valid dimension units"
     },
     {
         "term": "abbreviation",
@@ -6621,10 +5401,6 @@
         "definition": "Language Order"
     },
     {
-        "term": "click_to_edit",
-        "definition": "Click to edit"
-    },
-    {
         "term": "preview_width",
         "definition": "Preview Width"
     },
@@ -6679,10 +5455,6 @@
     {
         "term": "tags_assignment",
         "definition": "Tags Assignment"
-    },
-    {
-        "term": "tags_configuration",
-        "definition": "Tags Configuration"
     },
     {
         "term": "tags_search",
@@ -6781,10 +5553,6 @@
         "definition": "To use the Google Search Console integration, please configure the Google API Service Account in System Settings"
     },
     {
-        "term": "google_search_console",
-        "definition": "Google Search Console"
-    },
-    {
         "term": "splitter",
         "definition": "Splitter"
     },
@@ -6829,10 +5597,6 @@
         "definition": "Perspectives"
     },
     {
-        "term": "lower_sortvalues_first",
-        "definition": "Items with lower values will be displayed first (defaults to 0)"
-    },
-    {
         "term": "search_for_key",
         "definition": "Search Key"
     },
@@ -6867,10 +5631,6 @@
     {
         "term": "marketing_settings",
         "definition": "Marketing Settings"
-    },
-    {
-        "term": "tree_type",
-        "definition": "Tree Type"
     },
     {
         "term": "expanded",
