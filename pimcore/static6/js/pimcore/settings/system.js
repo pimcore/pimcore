@@ -1623,7 +1623,7 @@ pimcore.settings.system = Class.create({
                     fieldLabel: t("default_language"),
                     checked: this.getValue("general.defaultLanguage") == language || (!this.getValue("general.defaultLanguage") && container.items.length == 0 ),
                     listeners: {
-                        check: function (el, checked) {
+                        change: function (el, checked) {
                             if (checked) {
                                 var defaultLanguageField = Ext.getCmp("system_settings_general_defaultLanguage");
                                 defaultLanguageField.setValue(language);
