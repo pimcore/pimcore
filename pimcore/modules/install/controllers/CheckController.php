@@ -488,7 +488,7 @@ class Install_CheckController extends \Pimcore\Controller\Action
         }
 
         $checksApps[] = [
-            "name" => "PHP CLI Binary",
+            "name" => "PHP",
             "state" => $phpCliBin ? "ok" : "error"
         ];
 
@@ -507,7 +507,7 @@ class Install_CheckController extends \Pimcore\Controller\Action
         }
 
         $checksApps[] = [
-            "name" => "FFMPEG (CLI)",
+            "name" => "FFMPEG",
             "state" => $ffmpegBin ? "ok" : "warning"
         ];
 
@@ -519,7 +519,7 @@ class Install_CheckController extends \Pimcore\Controller\Action
         }
 
         $checksApps[] = [
-            "name" => "wkhtmltoimage (CLI)",
+            "name" => "wkhtmltoimage",
             "state" => $wkhtmltopdfBin ? "ok" : "warning"
         ];
 
@@ -531,7 +531,7 @@ class Install_CheckController extends \Pimcore\Controller\Action
         }
 
         $checksApps[] = [
-            "name" => "mbayer html2text (CLI)",
+            "name" => "html2text (mbayer)",
             "state" => $html2textBin ? "ok" : "warning"
         ];
 
@@ -543,7 +543,7 @@ class Install_CheckController extends \Pimcore\Controller\Action
         }
 
         $checksApps[] = [
-            "name" => "Ghostscript (CLI)",
+            "name" => "Ghostscript",
             "state" => $ghostscriptBin ? "ok" : "warning"
         ];
 
@@ -555,21 +555,25 @@ class Install_CheckController extends \Pimcore\Controller\Action
         }
 
         $checksApps[] = [
-            "name" => "LibreOffice (CLI)",
+            "name" => "LibreOffice",
             "state" => $libreofficeBin ? "ok" : "warning"
         ];
 
-        // PNG optimizer
-        try {
-            $pngOptimizer = (bool) \Pimcore\Image\Optimizer::getPngOptimizerCli();
-        } catch (\Exception $e) {
-            $pngOptimizer = false;
+        // image optimizer
+        foreach(["zopflipng", "pngcrush", "jpegoptim", "imgmin"] as $optimizerName) {
+            try {
+                $optimizerAvailable = \Pimcore\Tool\Console::getExecutable($optimizerName);
+            } catch (\Exception $e) {
+                $optimizerAvailable = false;
+            }
+
+            $checksApps[] = [
+                "name" => $optimizerName,
+                "state" => $optimizerAvailable ? "ok" : "warning"
+            ];
         }
 
-        $checksApps[] = [
-            "name" => "PNG Optimizer (pngcrush)",
-            "state" => $pngOptimizer ? "ok" : "warning"
-        ];
+
 
         // JPEG optimizer
         try {
