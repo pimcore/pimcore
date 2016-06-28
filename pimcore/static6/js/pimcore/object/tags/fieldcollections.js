@@ -24,7 +24,6 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
         this.currentElements = [];
         this.layoutDefinitions = {};
         this.dataFields = [];
-        this.layoutIds = [];
 
         if (data) {
             this.data = data;
