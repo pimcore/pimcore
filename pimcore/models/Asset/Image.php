@@ -66,7 +66,8 @@ class Image extends Model\Asset
 
                 // set the modification time of the thumbnail to the same time from the asset
                 // so that the thumbnail check doesn't fail in Asset\Image\Thumbnail\Processor::process();
-                touch($path, $this->getModificationDate());
+                // we need the @ in front of touch because of some stream wrapper (eg. s3) which don't support touch()
+                @touch($path, $this->getModificationDate());
             } catch (\Exception $e) {
                 \Logger::error("Problem while creating system-thumbnails for image " . $this->getRealFullPath());
                 \Logger::error($e);
