@@ -920,18 +920,6 @@ pimcore.settings.system = Class.create({
                                 xtype: "checkbox",
                                 name: "documents.generatepreview",
                                 checked: this.getValue("documents.generatepreview")
-                            },
-                            {
-                                fieldLabel: t('absolute_path_to_wkhtmltoimage_binary'),
-                                name: 'documents.wkhtmltoimage',
-                                value: this.getValue("documents.wkhtmltoimage"),
-                                width: 300
-                            },
-                            {
-                                fieldLabel: t('absolute_path_to_wkhtmltopdf_binary'),
-                                name: 'documents.wkhtmltopdf',
-                                value: this.getValue("documents.wkhtmltopdf"),
-                                width: 300
                             }
                         ]
                     },
