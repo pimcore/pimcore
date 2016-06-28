@@ -152,12 +152,13 @@ class ImageThumbnail
                 }
 
                 $this->filesystemPath = $path;
-                \Pimcore::getEventManager()->trigger("asset.document.image-thumbnail", $this);
             } catch (\Exception $e) {
                 \Logger::error("Couldn't create image-thumbnail of document " . $this->asset->getRealFullPath());
                 \Logger::error($e);
                 $this->filesystemPath = $errorImage;
             }
+            
+            \Pimcore::getEventManager()->trigger("asset.document.image-thumbnail", $this);
         }
     }
 

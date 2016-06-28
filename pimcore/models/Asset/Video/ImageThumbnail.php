@@ -171,7 +171,6 @@ class ImageThumbnail
 
                 try {
                     $path = Image\Thumbnail\Processor::process($this->asset, $this->getConfig(), $path, false, true);
-                    \Pimcore::getEventManager()->trigger("asset.video.image-thumbnail", $this);
                 } catch (\Exception $e) {
                     \Logger::error("Couldn't create image-thumbnail of video " . $this->asset->getRealFullPath());
                     \Logger::error($e);
@@ -180,6 +179,7 @@ class ImageThumbnail
             }
 
             $this->filesystemPath = $path;
+            \Pimcore::getEventManager()->trigger("asset.video.image-thumbnail", $this);
         }
     }
 
