@@ -113,7 +113,7 @@ class Thumbnail
      */
     public function getFileSystemPath($deferredAllowed = false)
     {
-        if(!$this->filesystemPath) {
+        if (!$this->filesystemPath) {
             $this->generate($deferredAllowed);
         }
 

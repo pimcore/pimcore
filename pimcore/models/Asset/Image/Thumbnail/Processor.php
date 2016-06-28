@@ -301,7 +301,7 @@ class Processor
         }
 
         $image->save($fsPath, $format, $config->getQuality());
-        $generated = true; 
+        $generated = true;
 
         if ($contentOptimizedFormat) {
             $tmpStoreKey = str_replace(PIMCORE_TEMPORARY_DIRECTORY . "/", "", $fsPath);
