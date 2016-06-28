@@ -1089,7 +1089,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
      * @param mixed $object
      * @param array $idMapping
      * @param array $params
-     * @return Element\ElementInterface
+     * @return Model\Element\ElementInterface
      */
     public function rewriteIds($object, $idMapping, $params = [])
     {
