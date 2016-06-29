@@ -84,7 +84,7 @@ pimcore.asset.audio = Class.create(pimcore.asset.asset, {
             var html = t("preview_not_available");
 
             if(this.data.filename.match(/\.mp3$/) || (!Ext.isIE && this.data.filename.match(/\.wav$/))) {
-                html = '<audio controls><source src="' + this.data.path + this.data.filename + '" type="audio/mpeg"></audio>';
+                html = '<audio controls><source src="' + this.data.path + this.data.filename + '" type="' + this.data.mimetype + '"></audio>';
             }
 
             this.editPanel = new Ext.Panel({
