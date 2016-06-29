@@ -112,6 +112,14 @@ http://opensource.org/licenses/mit-license.php
 License: MIT
 http://opensource.org/licenses/mit-license.php
 
+## PHP-DI
+License: MIT
+http://opensource.org/licenses/mit-license.php
+
+## Carbon
+License: MIT
+http://opensource.org/licenses/mit-license.php
+
 
 
 ## Disclaimer 
