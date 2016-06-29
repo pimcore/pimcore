@@ -77,7 +77,7 @@ class Thumbnail extends \Zend_Controller_Plugin_Abstract
                         }
 
                         // check if a media query thumbnail was requested
-                        if(preg_match("#~\-~([\d]+w)#", $matches[4], $mediaQueryResult)) {
+                        if (preg_match("#~\-~([\d]+w)#", $matches[4], $mediaQueryResult)) {
                             $thumbnailConfig->selectMedia($mediaQueryResult[1]);
                         }
 
