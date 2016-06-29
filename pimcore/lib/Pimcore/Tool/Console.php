@@ -55,11 +55,10 @@ class Console
     /**
      * @param $name
      * @param bool $throwException
-     * @param bool|string $checkString
      * @return bool|mixed|string
      * @throws \Exception
      */
-    public static function getExecutable($name, $throwException = false, $checkString = false)
+    public static function getExecutable($name, $throwException = false)
     {
         if (isset(self::$executableCache[$name])) {
             return self::$executableCache[$name];
@@ -80,6 +79,12 @@ class Console
             self::$customSetupMethod();
         }
 
+        // allow custom check routines for certain programs
+        $customCheckMethod = "check" . ucfirst($name);
+        if (!method_exists(__CLASS__, $customCheckMethod)) {
+            $customCheckMethod = "checkDummy";
+        }
+
         foreach ($paths as $path) {
             foreach (["--help", "-h", "-help"] as $option) {
                 try {
@@ -93,7 +98,7 @@ class Console
                     $process = new Process($executablePath . " " . $option);
                     $process->run();
 
-                    if ($process->isSuccessful() || ($checkString && strpos($process->getOutput() . $process->getErrorOutput(), $checkString) !== false)) {
+                    if ($process->isSuccessful() || self::$customCheckMethod($process)) {
                         if (empty($path) && self::getSystemEnvironment() == "unix") {
                             // get the full qualified path, seems to solve a lot of problems :)
                             // if not using the full path, timeout, nohup and nice will fail
@@ -137,6 +142,26 @@ class Console
         }
 
         putenv("COMPOSER_DISABLE_XDEBUG_WARN=true");
+    }
+
+    /**
+     * @param $process
+     * @return bool
+     */
+    protected static function checkPngout($process) {
+        if(strpos($process->getOutput() . $process->getErrorOutput(), "bitdepth") !== false) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param $process
+     * @return bool
+     */
+    protected static function checkDummy($process) {
+        return false;
     }
 
     /**
