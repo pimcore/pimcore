@@ -76,6 +76,11 @@ class Thumbnail extends \Zend_Controller_Plugin_Abstract
                             $thumbnailConfig->setHighResolution($highResFactor);
                         }
 
+                        // check if a media query thumbnail was requested
+                        if(preg_match("#~\-~([\d]+w)#", $matches[4], $mediaQueryResult)) {
+                            $thumbnailConfig->selectMedia($mediaQueryResult[1]);
+                        }
+
                         $thumbnailFile = $asset->getThumbnail($thumbnailConfig)->getFileSystemPath();
                     }
 
