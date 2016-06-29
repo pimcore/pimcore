@@ -55,10 +55,11 @@ class Console
     /**
      * @param $name
      * @param bool $throwException
+     * @param bool|string $checkString
      * @return bool|mixed|string
      * @throws \Exception
      */
-    public static function getExecutable($name, $throwException = false)
+    public static function getExecutable($name, $throwException = false, $checkString = false)
     {
         if (isset(self::$executableCache[$name])) {
             return self::$executableCache[$name];
@@ -90,9 +91,9 @@ class Console
                     }
 
                     $process = new Process($executablePath . " " . $option);
-                    $process->mustRun();
+                    $process->run();
 
-                    if ($process->isSuccessful()) {
+                    if ($process->isSuccessful() || ($checkString && strpos($process->getOutput() . $process->getErrorOutput(), $checkString) !== false)) {
                         if (empty($path) && self::getSystemEnvironment() == "unix") {
                             // get the full qualified path, seems to solve a lot of problems :)
                             // if not using the full path, timeout, nohup and nice will fail
