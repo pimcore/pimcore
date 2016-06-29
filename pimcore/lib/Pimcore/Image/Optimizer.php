@@ -25,7 +25,7 @@ class Optimizer
     public static function optimize($path)
     {
         $workingPath = $path;
-        if(!stream_is_local($path)) {
+        if (!stream_is_local($path)) {
             $workingPath = self::getTempFile();
             copy($path, $workingPath);
         }
@@ -36,11 +36,11 @@ class Optimizer
 
             $optimizedFiles = [];
             $supportedOptimizers = [
-                "png" => ["pngcrush","zopflipng","pngout","advpng"],
-                "jpeg" => ["imgmin","jpegoptim","cjpeg"]
+                "png" => ["pngcrush", "zopflipng", "pngout", "advpng"],
+                "jpeg" => ["imgmin", "jpegoptim", "cjpeg"]
             ];
 
-            if(isset($supportedOptimizers[$format])) {
+            if (isset($supportedOptimizers[$format])) {
                 foreach ($supportedOptimizers[$format] as $optimizer) {
                     $optimizerMethod = "optimize" . $optimizer;
                     $optimizedFile = self::$optimizerMethod($workingPath);
@@ -58,29 +58,31 @@ class Optimizer
                     if ($a["filesize"] == $b["filesize"]) {
                         return 0;
                     }
+
                     return ($a["filesize"] < $b["filesize"]) ? -1 : 1;
                 });
 
                 // first entry is the smallest -> use this one
-                if(count($optimizedFiles)) {
+                if (count($optimizedFiles)) {
                     copy($optimizedFiles[0]["path"], $path);
                 }
 
                 // cleanup
-                foreach($optimizedFiles as $tmpFile) {
+                foreach ($optimizedFiles as $tmpFile) {
                     unlink($tmpFile["path"]);
                 }
 
-                if(!stream_is_local($path)) {
+                if (!stream_is_local($path)) {
                     unlink($workingPath);
                 }
             }
         }
     }
 
-    public static function optimizePngcrush($path) {
+    public static function optimizePngcrush($path)
+    {
         $bin = \Pimcore\Tool\Console::getExecutable("pngcrush");
-        if($bin) {
+        if ($bin) {
             $newFile = self::getTempFile("png");
             Console::exec($bin . " " . $path . " " . $newFile, null, 60);
             if (file_exists($newFile)) {
@@ -91,9 +93,10 @@ class Optimizer
         return null;
     }
 
-    public static function optimizeZopflipng($path) {
+    public static function optimizeZopflipng($path)
+    {
         $bin = \Pimcore\Tool\Console::getExecutable("zopflipng");
-        if($bin) {
+        if ($bin) {
             $newFile = self::getTempFile("png");
             Console::exec($bin . " " . $path . " " . $newFile, null, 60);
             if (file_exists($newFile)) {
@@ -104,9 +107,10 @@ class Optimizer
         return null;
     }
 
-    public static function optimizePngout($path) {
+    public static function optimizePngout($path)
+    {
         $bin = \Pimcore\Tool\Console::getExecutable("pngout", false);
-        if($bin) {
+        if ($bin) {
             $newFile = self::getTempFile("png");
             Console::exec($bin . " " . $path . " " . $newFile, null, 60);
             if (file_exists($newFile)) {
@@ -117,21 +121,24 @@ class Optimizer
         return null;
     }
 
-    public static function optimizeAdvpng($path) {
+    public static function optimizeAdvpng($path)
+    {
         $bin = \Pimcore\Tool\Console::getExecutable("advpng");
-        if($bin) {
+        if ($bin) {
             $newFile = self::getTempFile("png");
             copy($path, $newFile);
             Console::exec($bin . " -z4 " . $newFile, null, 60);
+
             return $newFile;
         }
 
         return null;
     }
 
-    public static function optimizeImgmin($path) {
+    public static function optimizeImgmin($path)
+    {
         $bin = \Pimcore\Tool\Console::getExecutable("imgmin");
-        if($bin) {
+        if ($bin) {
             $newFile = self::getTempFile("jpg");
             Console::exec($bin . " " . $path . " " . $newFile, null, 60);
             if (file_exists($newFile)) {
@@ -142,9 +149,10 @@ class Optimizer
         return null;
     }
 
-    public static function optimizeCjpeg($path) {
+    public static function optimizeCjpeg($path)
+    {
         $bin = \Pimcore\Tool\Console::getExecutable("cjpeg");
-        if($bin) {
+        if ($bin) {
             $newFile = self::getTempFile("jpg");
             Console::exec($bin . " -outfile " . $newFile . " " . $path, null, 60);
             if (file_exists($newFile)) {
@@ -155,16 +163,17 @@ class Optimizer
         return null;
     }
 
-    public static function optimizeJpegoptim($path) {
+    public static function optimizeJpegoptim($path)
+    {
         $bin = \Pimcore\Tool\Console::getExecutable("jpegoptim");
-        if($bin) {
+        if ($bin) {
             $newFile = self::getTempFile("jpg");
             $additionalParams = "";
             if (filesize($path) > 10000) {
                 $additionalParams = " --all-progressive";
             }
             $content = Console::exec($bin . $additionalParams . " -o --strip-all --max=85 --stdout " . $path, null, 60);
-            if($content) {
+            if ($content) {
                 File::put($newFile, $content);
             }
 
@@ -178,9 +187,10 @@ class Optimizer
      * @param string $type
      * @return string
      */
-    protected static function getTempFile($type = "") {
+    protected static function getTempFile($type = "")
+    {
         $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/image-optimize-" . uniqid();
-        if($type) {
+        if ($type) {
             $file .= "." . $type;
         }
 

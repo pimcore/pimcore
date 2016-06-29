@@ -148,8 +148,9 @@ class Console
      * @param $process
      * @return bool
      */
-    protected static function checkPngout($process) {
-        if(strpos($process->getOutput() . $process->getErrorOutput(), "bitdepth") !== false) {
+    protected static function checkPngout($process)
+    {
+        if (strpos($process->getOutput() . $process->getErrorOutput(), "bitdepth") !== false) {
             return true;
         }
 
@@ -160,8 +161,9 @@ class Console
      * @param $process
      * @return bool
      */
-    protected static function checkCjpeg($process) {
-        if(strpos($process->getOutput() . $process->getErrorOutput(), "-optimize") !== false) {
+    protected static function checkCjpeg($process)
+    {
+        if (strpos($process->getOutput() . $process->getErrorOutput(), "-optimize") !== false) {
             return true;
         }
 
@@ -172,7 +174,8 @@ class Console
      * @param $process
      * @return bool
      */
-    protected static function checkDummy($process) {
+    protected static function checkDummy($process)
+    {
         return false;
     }
 
