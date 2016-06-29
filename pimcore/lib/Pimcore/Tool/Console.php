@@ -160,6 +160,18 @@ class Console
      * @param $process
      * @return bool
      */
+    protected static function checkCjpeg($process) {
+        if(strpos($process->getOutput() . $process->getErrorOutput(), "-optimize") !== false) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param $process
+     * @return bool
+     */
     protected static function checkDummy($process) {
         return false;
     }

@@ -560,7 +560,7 @@ class Install_CheckController extends \Pimcore\Controller\Action
         ];
 
         // image optimizer
-        foreach (["zopflipng", "pngcrush", "jpegoptim", "imgmin"] as $optimizerName) {
+        foreach (["zopflipng", "pngcrush", "jpegoptim", "imgmin", "pngout", "advpng", "cjpeg"] as $optimizerName) {
             try {
                 $optimizerAvailable = \Pimcore\Tool\Console::getExecutable($optimizerName);
             } catch (\Exception $e) {
@@ -572,20 +572,6 @@ class Install_CheckController extends \Pimcore\Controller\Action
                 "state" => $optimizerAvailable ? "ok" : "warning"
             ];
         }
-
-
-
-        // JPEG optimizer
-        try {
-            $jpgOptimizer = (bool) \Pimcore\Image\Optimizer::getJpegOptimizerCli();
-        } catch (\Exception $e) {
-            $jpgOptimizer = false;
-        }
-
-        $checksApps[] = [
-            "name" => "JPEG Optimizer (imgmin, jpegoptim)",
-            "state" => $jpgOptimizer ? "ok" : "warning"
-        ];
 
         // timeout binary
         try {
