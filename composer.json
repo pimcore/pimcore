@@ -6,7 +6,7 @@
   },
   "suggest": {
     "klarna/checkout": "1.2.0"
-    , "elasticsearch/elasticsearch": "1.2.2"
+    , "elasticsearch/elasticsearch": "2.0.0"
   },
   "autoload": {
     "psr-4": {
