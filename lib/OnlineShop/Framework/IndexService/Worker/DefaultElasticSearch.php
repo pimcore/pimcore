@@ -191,19 +191,18 @@ class DefaultElasticSearch extends AbstractWorker implements IBatchProcessingWor
         $esClient = $this->getElasticSearchClient();
 
         $result = $esClient->indices()->exists(['index' => $this->getIndexNameVersion()]);
-
         if(!$result) {
-            //index doesn't exists -> call reindex to make sure all Products get updated
-            $this->startReindexMode();
-            //has to be called after reindex to create the index with the new version
             $result = $esClient->indices()->create(['index' => $this->getIndexNameVersion(), 'body' => ['settings' => $this->tenantConfig->getIndexSettings()]]);
             \Logger::info('Creating new Index. Name: ' . $this->getIndexNameVersion());
             if(!$result['acknowledged']) {
                 throw new \Exception("Index creation failed. IndexName: " . $this->getIndexNameVersion());
             }
+
+            //index didn't exist -> reset index queue to make sure all products get reindexed
+            $this->resetIndexingQueue();
         }
 
-        $reIndex = false;
+
         foreach([\OnlineShop\Framework\IndexService\ProductList\IProductList::PRODUCT_TYPE_VARIANT,\OnlineShop\Framework\IndexService\ProductList\IProductList::PRODUCT_TYPE_OBJECT] as $mappingType){
             $params = $this->getMappingParams($mappingType);
 
@@ -215,15 +214,13 @@ class DefaultElasticSearch extends AbstractWorker implements IBatchProcessingWor
                 if($exceptionOnFailure){
                     throw new \Exception("Can't create Mapping - Exiting to prevent infinit loop");
                 } else {
-                    $reIndex = true;
+                    //when update mapping fails, start reindex mode
+                    $this->startReindexMode();
+                    $this->doCreateOrUpdateIndexStructures(true);
                 }
             }
         }
-        if($reIndex){
-            //when update mapping fails, start reindex mode
-            $this->startReindexMode();
-            $this->doCreateOrUpdateIndexStructures(true);
-        }
+
         // index created return "true" and mapping creation returns array
         if((is_array($result) && !$result['acknowledged']) || (is_bool($result) && !$result)) {
             throw new \Exception("Index creation failed");
