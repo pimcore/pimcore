@@ -222,6 +222,7 @@ class DefaultElasticSearch extends AbstractWorker implements IBatchProcessingWor
         if($reIndex){
             //when update mapping fails, start reindex mode
             $this->startReindexMode();
+            $this->doCreateOrUpdateIndexStructures(true);
         }
         // index created return "true" and mapping creation returns array
         if((is_array($result) && !$result['acknowledged']) || (is_bool($result) && !$result)) {
