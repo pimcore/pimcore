@@ -400,4 +400,34 @@ class Image extends Model\Object\ClassDefinition\Data
     {
         $this->uploadPath = $masterDefinition->uploadPath;
     }
+
+    /** Encode value for packing it into a single column.
+     * @param mixed $value
+     * @param Model\Object\AbstractObject $object
+     * @param mixed $params
+     * @return mixed
+     */
+    public function marshal($value, $object = null, $params = []) {
+
+        if ($value instanceof \Pimcore\Model\Asset\Image) {
+            return [
+                "type" => "asset",
+                "id" => $value->getId()
+            ];
+        }
+    }
+
+    /** See marshal
+     * @param mixed $value
+     * @param Model\Object\AbstractObject $object
+     * @param mixed $params
+     * @return mixed
+     */
+    public function unmarshal($value, $object = null, $params = [])
+    {
+        $id = $value["id"];
+        if (intval($id) > 0) {
+            return Asset\Image::getById($id);
+        }
+    }
 }

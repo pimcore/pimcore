@@ -24,7 +24,8 @@ pimcore.object.classes.data.newsletterActive = Class.create(pimcore.object.class
         objectbrick: true,
         fieldcollection: true,
         localizedfield: true,
-        classificationstore : false
+        classificationstore : false,
+        block: true
     },
 
     initialize: function (treeNode, initData) {

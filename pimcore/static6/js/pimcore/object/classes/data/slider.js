@@ -23,7 +23,8 @@ pimcore.object.classes.data.slider = Class.create(pimcore.object.classes.data.da
         objectbrick: true,
         fieldcollection: true,
         localizedfield: true,
-        classificationstore : true
+        classificationstore : true,
+        block: true
     },
 
     initialize: function (treeNode, initData) {

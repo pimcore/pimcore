@@ -273,8 +273,8 @@ pimcore.object.classes.klass = Class.create({
         var groups = new Array();
         var groupNames = ["text","numeric","date","select","relation","structured","geo","other"];
         for (var i = 0; i < dataComps.length; i++) {
-
-            var dataComp = pimcore.object.classes.data[dataComps[i]];
+            var dataCompName = dataComps[i];
+            var dataComp = pimcore.object.classes.data[dataCompName];
 
             // check for disallowed types
             var allowed = false;
@@ -347,18 +347,27 @@ pimcore.object.classes.klass = Class.create({
 
         var menu = new Ext.menu.Menu();
 
-        //get all allowed data types for localized fields
+        //get all allowed layout types for localized fields
         var lftypes = ["panel","tabpanel","accordion","fieldset", "fieldcontainer", "text","region","button"];
+        var blockTypes = ["panel","tabpanel","accordion","fieldset", "fieldcontainer", "text","region","button"];
+
         var dataComps = Object.keys(pimcore.object.classes.data);
 
         for (var i = 0; i < dataComps.length; i++) {
-            if ('object' === typeof pimcore.object.classes.data[dataComps[i]]) {
+            var dataCompName = dataComps[i];
+            if ('object' === typeof pimcore.object.classes.data[dataCompName]) {
                 continue;
             }
-            if(pimcore.object.classes.data[dataComps[i]].prototype.allowIn['localizedfield']) {
-                lftypes.push(dataComps[i]);
+            var component = pimcore.object.classes.data[dataCompName];
+            if(component.prototype.allowIn['localizedfield']) {
+                lftypes.push(dataCompName);
+            }
+
+            if(component.prototype.allowIn['block']) {
+                blockTypes.push(dataCompName);
             }
         }
+
 
         // specify which childs a layout can have
         // the child-type "data" is a placehoder for all data components
@@ -372,7 +381,8 @@ pimcore.object.classes.klass = Class.create({
             button: [],
             text: [],
             root: ["panel","region","tabpanel","accordion","text"],
-            localizedfields: lftypes
+            localizedfields: lftypes,
+            block: blockTypes
         };
 
         var parentType = "root";

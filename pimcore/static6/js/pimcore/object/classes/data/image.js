@@ -23,7 +23,8 @@ pimcore.object.classes.data.image = Class.create(pimcore.object.classes.data.dat
         objectbrick: true,
         fieldcollection: true,
         localizedfield: true,
-        classificationstore : false
+        classificationstore : false,
+        block: true
     },
 
     initialize: function (treeNode, initData) {

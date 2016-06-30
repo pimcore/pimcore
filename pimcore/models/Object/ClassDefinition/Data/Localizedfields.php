@@ -231,7 +231,8 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
         if (is_array($data)) {
             foreach ($data as $language => $fields) {
                 foreach ($fields as $name => $fdata) {
-                    $localizedFields->setLocalizedValue($name, $this->getFielddefinition($name)->getDataFromEditmode($fdata), $language);
+                    $fd = $this->getFielddefinition($name);
+                    $localizedFields->setLocalizedValue($name, $fd->getDataFromEditmode($fdata, $object, $params), $language);
                 }
             }
         }
@@ -1158,4 +1159,82 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
             }
         }
     }
+
+    /** Encode value for packing it into a single column.
+     * @param mixed $value
+     * @param Model\Object\AbstractObject $object
+     * @param mixed $params
+     * @return mixed
+     */
+    public function marshal($value, $object = null, $params = []) {
+        if ($value instanceof  Object\Localizedfield) {
+            $items = $value->getItems();
+            if (is_array($items)) {
+                $result = array();
+                foreach ($items as $language => $languageData) {
+                    $languageResult = array();
+                    foreach ($languageData as $elementName => $elementData) {
+
+                        $fd = $this->getFielddefinition($elementName);
+                        if (!$fd) {
+                            // class definition seems to have changed
+                            \Logger::warn("class definition seems to have changed, element name: " . $elementName);
+                            continue;
+                        }
+
+                        $dataForResource = $fd->marshal($elementData, $object, array("raw" => true));
+
+                        $languageResult[$elementName] = $dataForResource;
+                    }
+
+                    $result[$language] = $languageResult;
+                }
+                return $result;
+            }
+        }
+
+        return null;
+    }
+
+    /** See marshal
+     * @param mixed $value
+     * @param Model\Object\AbstractObject $object
+     * @param mixed $params
+     * @return mixed
+     */
+    public function unmarshal($value, $object = null, $params = [])
+    {
+        $lf = new Object\Localizedfield();
+        if (is_array($value)) {
+
+            $items = array();
+            foreach ($value as $language => $languageData) {
+                $languageResult = array();
+                foreach ($languageData as $elementName => $elementData) {
+
+                    $fd = $this->getFielddefinition($elementName);
+                    if (!$fd) {
+                        // class definition seems to have changed
+                        \Logger::warn("class definition seems to have changed, element name: " . $elementName);
+                        continue;
+                    }
+
+                    $dataFromResource = $fd->unmarshal($elementData, $object, array("raw" => true));
+
+                    $languageResult[$elementName] = $dataFromResource;
+                }
+
+                $items[$language] = $languageResult;
+            }
+
+            $lf->setItems($items);
+
+        }
+
+        return $lf;
+
+
+
+    }
+
 }

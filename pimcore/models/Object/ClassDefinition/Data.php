@@ -1065,7 +1065,7 @@ abstract class Data
         $context = $params && $params["context"] ? $params["context"] : null;
 
         if ($context) {
-            if ($context["containerType"] == "fieldcollection") {
+            if ($context["containerType"] == "fieldcollection" || $context["containerType"] == "block") {
                 if ($this instanceof Object\ClassDefinition\Data\Localizedfields || $object instanceof Object\Localizedfield) {
                     $fieldname = $context["fieldname"];
                     $index = $context["index"];
@@ -1074,24 +1074,41 @@ abstract class Data
                         $containerGetter = "get" . ucfirst($fieldname);
                         $container = $object->$containerGetter();
                         if ($container) {
-                            $items = $container->getItems();
-                            $originalndex = $context["oIndex"];
+                            $originalIndex = $context["oIndex"];
 
-                            // field collection items
-                            if (!is_null($originalndex)) {
-                                if ($items && count($items) > $originalndex) {
-                                    $item = $items[$originalndex];
-                                    $getter = "get" . ucfirst($this->getName());
-                                    $data = $item->$getter();
+                            // field collection or block items
+                            if (!is_null($originalIndex)) {
 
-                                    if ($object instanceof Object\Localizedfield) {
-                                        $data = $data->getLocalizedValue($this->getName(), $params["language"], true);
+                                if ($context["containerType"] == "block") {
+                                    $items = $container;
+                                } else {
+                                    $items = $container->getItems();
+                                }
+
+                                if ($items && count($items) > $originalIndex) {
+                                    $item = $items[$originalIndex];
+
+                                    if ($context["containerType"] == "block") {
+                                        $data = $item[$this->getName()];
+                                        if ($data instanceof  Object\Data\BlockElement) {
+                                            $data = $data->getData();
+                                            return $data;
+                                        }
+                                    } else {
+                                        $getter = "get" . ucfirst($this->getName());
+                                        $data = $item->$getter();
+
+                                        if ($object instanceof Object\Localizedfield) {
+                                            $data = $data->getLocalizedValue($this->getName(), $params["language"], true);
+                                        }
                                     }
 
                                     return $data;
                                 } else {
-                                    throw new \Exception("object seems to be modified, item with orginal index " . $originalndex . " not found, new index: " . $index);
+                                    throw new \Exception("object seems to be modified, item with orginal index " . $originalIndex . " not found, new index: " . $index);
                                 }
+
+
                             } else {
                                 return null;
                             }
@@ -1169,7 +1186,11 @@ abstract class Data
      */
     public function marshal($value, $object = null, $params = [])
     {
-        return ["value" => $value];
+        if ($params["raw"]) {
+            return $value;
+        } else {
+            return ["value" => $value];
+        }
     }
 
     /** See marshal
@@ -1179,8 +1200,12 @@ abstract class Data
      */
     public function unmarshal($data, $object = null, $params = [])
     {
-        if (is_array($data)) {
-            return $data["value"];
+        if ($params["raw"]) {
+            return $data;
+        } else {
+            if (is_array($data)) {
+                return $data["value"];
+            }
         };
 
         return null;

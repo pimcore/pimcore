@@ -23,7 +23,8 @@ pimcore.object.classes.data.user = Class.create(pimcore.object.classes.data.data
         objectbrick: false,
         fieldcollection: false,
         localizedfield: false,
-        classificationstore : false
+        classificationstore : false,
+        block: true
     },        
 
     initialize: function (treeNode, initData) {

@@ -23,7 +23,8 @@ pimcore.object.classes.data.countrymultiselect = Class.create(pimcore.object.cla
         objectbrick: true,
         fieldcollection: true,
         localizedfield: true,
-        classificationstore : true
+        classificationstore : true,
+        block: true
     },
 
     initialize: function (treeNode, initData) {

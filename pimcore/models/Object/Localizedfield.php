@@ -315,14 +315,29 @@ class Localizedfield extends Model\AbstractModel
         }
 
         $contextInfo = $this->getContext();
-        if ($contextInfo && $contextInfo["containerType"] == "fieldcollection") {
-            $containerKey = $contextInfo["containerKey"];
-            $containerDefinition = Fieldcollection\Definition::getByKey($containerKey);
+        if ($contextInfo && $contextInfo["containerType"] == "block") {
+            $classId = $contextInfo["classId"];
+            $containerDefinition = ClassDefinition::getById($classId);
+            $blockDefinition = $containerDefinition->getFieldDefinition($contextInfo["fieldname"]);
+
+            $fieldDefinition = $blockDefinition->getFieldDefinition("localizedfields");
+
         } else {
-            $containerDefinition = $this->getObject()->getClass();
+            if ($contextInfo && $contextInfo["containerType"] == "fieldcollection") {
+                $containerKey = $contextInfo["containerKey"];
+                $containerDefinition = Fieldcollection\Definition::getByKey($containerKey);
+            } else {
+                $containerDefinition = $this->getObject()->getClass();
+
+            }
+
+            $localizedFieldDefinition = $containerDefinition->getFieldDefinition("localizedfields");
+            $fieldDefinition = $localizedFieldDefinition->getFieldDefinition($name);
+
         }
 
-        $fieldDefinition = $containerDefinition->getFieldDefinition("localizedfields")->getFieldDefinition($name);
+
+
 
         if (method_exists($fieldDefinition, "preSetData")) {
             $value =  $fieldDefinition->preSetData($this, $value, [
@@ -344,7 +359,7 @@ class Localizedfield extends Model\AbstractModel
         return ["items"];
     }
 
-    /**
+        /**
      * @return mixed
      */
     public function getContext()

@@ -23,7 +23,8 @@ pimcore.object.classes.data.link = Class.create(pimcore.object.classes.data.data
         objectbrick: true,
         fieldcollection: true,
         localizedfield: true,
-        classificationstore : false
+        classificationstore : false,
+        block: true
     },
 
     initialize: function (treeNode, initData) {

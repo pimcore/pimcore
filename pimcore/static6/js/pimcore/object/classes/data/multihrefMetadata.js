@@ -23,7 +23,8 @@ pimcore.object.classes.data.multihrefMetadata = Class.create(pimcore.object.clas
         objectbrick: true,
         fieldcollection: true,
         localizedfield: true,
-        classificationstore : false
+        classificationstore : false,
+        block: true
     },
 
     initialize: function (treeNode, initData) {

@@ -687,4 +687,53 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
     {
         return implode(' | ', $this->getPhpDocClassString(true));
     }
+
+    /** Encode value for packing it into a single column.
+     * @param mixed $value
+     * @param Model\Object\AbstractObject $object
+     * @param mixed $params
+     * @return mixed
+     */
+    public function marshal($value, $object = null, $params = []) {
+
+        if (is_array($value)) {
+            $result = array();
+            foreach ($value as $element) {
+                $type = Element\Service::getType($element);
+                $id = $element->getId();
+                $result[] =  array(
+                    "type" => $type,
+                    "id" => $id
+                );
+            }
+            return $result;
+        }
+
+        return null;
+    }
+
+    /** See marshal
+     * @param mixed $value
+     * @param Model\Object\AbstractObject $object
+     * @param mixed $params
+     * @return mixed
+     */
+    public function unmarshal($value, $object = null, $params = [])
+    {
+        if (is_array($value)) {
+            $result = array();
+            foreach ($value as $elementData) {
+                $type = $elementData["type"];
+                $id = $elementData["id"];
+                $element = Element\Service::getElementById($type, $id);
+                if ($element) {
+                    $result[] = $element;
+                }
+            }
+
+            return $result;
+        }
+
+    }
+
 }

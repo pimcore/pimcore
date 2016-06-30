@@ -589,4 +589,57 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
 
         return $newDataArray;
     }
+
+    /** Encode value for packing it into a single column.
+     * @param mixed $value
+     * @param Model\Object\AbstractObject $object
+     * @param mixed $params
+     * @return mixed
+     */
+    public function marshal($value, $object = null, $params = []) {
+
+        if ($value instanceof Object\Data\Hotspotimage) {
+
+            $result = array();
+            $result["hotspots"] = $value->getHotspots();
+            $result["marker"] = $value->getMarker();
+            $result["crop"] = $value->getCrop();
+
+            $image = $value->getImage();
+            if ($image) {
+                $type = Element\Service::getType($image);
+                $id = $image->getId();
+                $result["image"] = array(
+                    "type" => $type,
+                    "id" => $id
+                );
+
+            }
+            return $result;
+        }
+        return null;
+    }
+
+    /** See marshal
+     * @param mixed $value
+     * @param Model\Object\AbstractObject $object
+     * @param mixed $params
+     * @return mixed
+     */
+    public function unmarshal($value, $object = null, $params = [])
+    {
+        if (is_array($value)) {
+            $image = new Object\Data\Hotspotimage();
+            $image->setHotspots($value["hotspots"]);
+            $image->setMarker($value["marker"]);
+            $image->setCrop($value["crop"]);
+            if ($value["image"]) {
+                $type = $value["image"]["type"];
+                $id = $value["image"]["id"];
+                $asset = Element\Service::getElementById($type, $id);
+                $image->setImage($asset);
+            }
+            return $image;
+        }
+    }
 }

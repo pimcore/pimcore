@@ -40,7 +40,7 @@ class ElementMetadata extends Model\AbstractModel
     /**
      * @var array
      */
-    protected $data = [];
+    public $data = [];
 
     /**
      * @param $fieldname

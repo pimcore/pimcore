@@ -23,7 +23,8 @@ pimcore.object.classes.data.languagemultiselect = Class.create(pimcore.object.cl
         objectbrick: true,
         fieldcollection: true,
         localizedfield: true,
-        classificationstore : true
+        classificationstore : true,
+        block: true
     },
 
     initialize: function (treeNode, initData) {

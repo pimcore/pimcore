@@ -835,4 +835,69 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
             }
         }
     }
+
+    /** Encode value for packing it into a single column.
+     * @param mixed $value
+     * @param Model\Object\AbstractObject $object
+     * @param mixed $params
+     * @return mixed
+     */
+    public function marshal($value, $object = null, $params = []) {
+
+        if (is_array($value)) {
+            $result = array();
+            /** @var  $elementMetadata Object\Data\ObjectMetadata */
+            foreach ($value as $elementMetadata) {
+
+                $element = $elementMetadata->getElement();
+
+                $type = Element\Service::getType($element);
+                $id = $element->getId();
+                $result[] =  array(
+                    "element" => array(
+                        "type" => $type,
+                        "id" => $id
+                    ),
+                    "fieldname" => $elementMetadata->getFieldname(),
+                    "columns" => $elementMetadata->getColumns(),
+                    "data" => $elementMetadata->data);
+            }
+            return $result;
+        }
+
+        return null;
+    }
+
+    /** See marshal
+     * @param mixed $value
+     * @param Model\Object\AbstractObject $object
+     * @param mixed $params
+     * @return mixed
+     */
+    public function unmarshal($value, $object = null, $params = [])
+    {
+        if (is_array($value)) {
+            $result = array();
+            foreach ($value as $elementMetadata) {
+
+                $elementData = $elementMetadata["element"];
+
+                $type = $elementData["type"];
+                $id = $elementData["id"];
+                $target = Element\Service::getElementById($type, $id);
+                if ($target) {
+                    $columns = $elementMetadata["columns"];
+                    $fieldname = $elementMetadata["fieldname"];
+                    $data = $elementMetadata["data"];
+
+                    $item = new Object\Data\ObjectMetadata($fieldname, $columns, $target);
+                    $item->data = $data;
+                    $result[] = $item;
+                }
+            }
+
+            return $result;
+        }
+
+    }
 }

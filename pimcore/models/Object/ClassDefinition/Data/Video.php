@@ -462,4 +462,76 @@ class Video extends Model\Object\ClassDefinition\Data
 
         return $data;
     }
+
+    /** Encode value for packing it into a single column.
+     * @param mixed $value
+     * @param Model\Object\AbstractObject $object
+     * @param mixed $params
+     * @return mixed
+     */
+    public function marshal($value, $object = null, $params = []) {
+
+        if ($value instanceof Object\Data\Video) {
+
+            $result = array();
+            $result["type"] = $value->getType();
+            if ($value->getTitle()) {
+                $result["title"] = $value->getTitle();
+            }
+
+            if ($value->getDescription()) {
+                $result["description"] = $value->getDescription();
+            }
+
+            $poster = $value->getPoster();
+            if ($poster) {
+                $result["poster"] = array(
+                    "type" => Model\Element\Service::getType($poster),
+                    "id" => $poster->getId()
+                );
+            }
+
+            $data = $value->getData();
+
+            if ($data && $value->getType() == "asset") {
+                $result["data"] = array(
+                    "type" => Model\Element\Service::getType($data),
+                    "id" => $data->getId()
+                );
+            } else {
+                $result["data"] = $data;
+            }
+
+            return $result;
+        }
+        return null;
+    }
+
+    /** See marshal
+     * @param mixed $value
+     * @param Model\Object\AbstractObject $object
+     * @param mixed $params
+     * @return mixed
+     */
+    public function unmarshal($value, $object = null, $params = [])
+    {
+        if (is_array($value)) {
+            $video = new Object\Data\Video();
+            $video->setType($value["type"]);
+            $video->setTitle($value["title"]);
+            $video->setDescription($value["description"]);
+
+            if ($value["poster"]) {
+                $video->setPoster(Model\Element\Service::getElementById($value["poster"]["type"], $value["poster"]["id"]));
+            }
+
+            if ($value["data"]) {
+                $video->setData(Model\Element\Service::getElementById($value["data"]["type"], $value["data"]["id"]));
+            }
+
+
+            return $video;
+        }
+    }
+
 }

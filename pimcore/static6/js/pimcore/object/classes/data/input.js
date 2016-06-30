@@ -23,7 +23,8 @@ pimcore.object.classes.data.input = Class.create(pimcore.object.classes.data.dat
         objectbrick: true,
         fieldcollection: true,
         localizedfield: true,
-        classificationstore : true
+        classificationstore : true,
+        block: true
     },
 
     initialize: function (treeNode, initData) {

@@ -1024,6 +1024,8 @@
     background: url(/pimcore/static6/img/flat-color-icons/workflow.svg) center center no-repeat !important
 }
 
-
+.pimcore_icon_block {
+    background: url(/pimcore/static6/img/flat-color-icons/filing_cabinet.svg) center center no-repeat !important;
+}
 
 

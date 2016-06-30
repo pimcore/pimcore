@@ -640,4 +640,36 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     {
         return implode(' | ', $this->getPhpDocClassString(false));
     }
+
+    /** Encode value for packing it into a single column.
+     * @param mixed $value
+     * @param Model\Object\AbstractObject $object
+     * @param mixed $params
+     * @return mixed
+     */
+    public function marshal($value, $object = null, $params = []) {
+
+        if ($value) {
+            $type = Element\Service::getType($value);
+            $id = $value->getId();
+            return array(
+                "type" => $type,
+                "id" => $id
+            );
+        }
+    }
+
+    /** See marshal
+     * @param mixed $value
+     * @param Model\Object\AbstractObject $object
+     * @param mixed $params
+     * @return mixed
+     */
+    public function unmarshal($value, $object = null, $params = [])
+    {
+        $type = $value["type"];
+        $id = $value["id"];
+        return Element\Service::getElementById($type, $id);
+
+    }
 }

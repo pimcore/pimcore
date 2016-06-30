@@ -23,7 +23,8 @@ pimcore.object.classes.data.personamultiselect = Class.create(pimcore.object.cla
         objectbrick: true,
         fieldcollection: true,
         localizedfield: true,
-        classificationstore : false
+        classificationstore : false,
+        block: true
     },
 
     initialize: function (treeNode, initData) {

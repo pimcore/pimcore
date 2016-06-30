@@ -22,7 +22,8 @@ pimcore.object.classes.data.geo.abstract = Class.create(pimcore.object.classes.d
         objectbrick: true,
         fieldcollection: true,
         localizedfield: true,
-        classificationstore : false
+        classificationstore : false,
+        block: true
     },
 
     getLayout: function ($super) {

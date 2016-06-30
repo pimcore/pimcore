@@ -156,7 +156,7 @@ class Dao extends Model\Object\AbstractObject\Dao
                     }
                     $this->model->setValue($key, $this->model->getClass()->getFieldDefinition($key)->getDataFromResource($multidata));
                 } else {
-                    $this->model->setValue($key, $value->getDataFromResource($data[$key]));
+                    $this->model->setValue($key, $value->getDataFromResource($data[$key], $this->model));
                 }
             }
         }
