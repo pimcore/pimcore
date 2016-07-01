@@ -35,7 +35,9 @@ class SessionCart extends AbstractCart implements ICart {
         return '\OnlineShop\Framework\CartManager\SessionCartCheckoutData';
     }
 
-    protected static function getSession() {
+
+
+    protected function getSession() {
         $session = new \Zend_Session_Namespace(self::$sessionNamespace);
         if(empty($session->carts)) {
             $session->carts = array();
@@ -46,7 +48,7 @@ class SessionCart extends AbstractCart implements ICart {
 
 
     public function save() {
-        $session = self::getSession();
+        $session = $this->getSession();
 
         if(!$this->getId()) {
             $this->setId(uniqid("sesscart_"));
@@ -61,7 +63,7 @@ class SessionCart extends AbstractCart implements ICart {
     public function delete() {
         $this->setIgnoreReadonly();
 
-        $session = self::getSession();
+        $session = $this->getSession();
 
         if(!$this->getId()) {
             throw new \Exception("Cart saved not yes.");
@@ -104,7 +106,10 @@ class SessionCart extends AbstractCart implements ICart {
      */
     public static function getAllCartsForUser($userId) {
         if(self::$unserializedCarts == null) {
-            foreach(self::getSession()->carts as $serializedCart) {
+
+            $tmpCart = new self();
+
+            foreach($tmpCart->getSession()->carts as $serializedCart) {
                 $cart = unserialize($serializedCart);
                 self::$unserializedCarts[$cart->getId()] = $cart;
             }

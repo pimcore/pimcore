@@ -163,7 +163,6 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
                 $itemKey = $itemKey . "_" . uniqid();
             }
         }
-
         return $this->updateItem($itemKey, $product, $count, $replace, $params, $subProducts, $comment);
     }
 
@@ -187,12 +186,12 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
         $this->itemAmount = null;
         $this->subItemAmount = null;
 
-
-        $item = $this->items[$itemKey];
-        if (empty($item)) {
+        if (!array_key_exists($itemKey, $this->items)) {
             $className = $this->getCartItemClassName();
             $item = new $className();
             $item->setCart($this);
+        } else {
+            $item = $this->items[$itemKey];
         }
 
         $item->setProduct($product);
