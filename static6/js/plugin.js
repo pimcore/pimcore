@@ -51,7 +51,7 @@ pimcore.plugin.OnlineShop.plugin = Class.create(pimcore.plugin.admin,{
             var insertPoint = Ext.get("pimcore_menu_settings");
             if(!insertPoint) {
                 var dom = Ext.dom.Query.select('#pimcore_navigation ul li:last');
-                var insertPoint = Ext.get(dom[0]);
+                insertPoint = Ext.get(dom[0]);
             }
 
             var config = pimcore.plugin.OnlineShop.plugin.config;

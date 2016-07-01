@@ -60,8 +60,9 @@ trait BatchProcessing {
 
     protected function getDefaultDataForIndex($object,$subObjectId){
         $categories = $object->getCategories();
-        $categoryIds = array();
-        $parentCategoryIds = array();
+        $categoryIds = [];
+        $parentCategoryIds =[];
+        $categoryIdPaths = [];
         if($categories) {
             foreach($categories as $c) {
                 $parent = $c;
@@ -81,27 +82,29 @@ trait BatchProcessing {
 
                     $categoryIds[$c->getId()] = $c->getId();
                 }
-            }
-        }
-        $categoryPaths = [];
-        foreach ($categories as $category) {
-            $tmpIds = [];
-            while ($category) {
-                $tmpIds[] = $category->getId();
-                $category = $category->getParent();
-                if (!$category instanceof  \OnlineShop\Framework\Model\AbstractCategory) {
-                    break;
+
+
+                $tmpIds = [];
+                $workingCategory = $c;
+                while ($workingCategory) {
+                    $tmpIds[] = $workingCategory->getId();
+                    $category = $workingCategory->getParent();
+                    if (!$workingCategory instanceof  \OnlineShop\Framework\Model\AbstractCategory) {
+                        break;
+                    }
                 }
-            }
-            $tmpIds = array_reverse($tmpIds);
-            $s = '';
-            foreach($tmpIds as $id){
-                $s.= '/'.$id;
-                $categoryPaths[] = $s;
+                $tmpIds = array_reverse($tmpIds);
+                $s = '';
+                foreach($tmpIds as $id){
+                    $s.= '/'.$id;
+                    $categoryIdPaths[] = $s;
+                }
+
+
             }
         }
-        $categoryPaths = (array)array_unique($categoryPaths);
-        sort($categoryPaths);
+        $categoryIdPaths = (array)array_unique($categoryIdPaths);
+        sort($categoryIdPaths);
         ksort($categoryIds);
 
         $virtualProductId = $subObjectId;
@@ -124,7 +127,7 @@ trait BatchProcessing {
             "o_type" => $object->getOSIndexType(),
             "categoryIds" => ',' . implode(",", $categoryIds) . ",",
             "parentCategoryIds" => ',' . implode(",", $parentCategoryIds) . ",",
-            "categoryPaths" => (array)$categoryPaths,
+            "categoryPaths" => (array)$categoryIdPaths,
             "priceSystemName" => $object->getPriceSystemName(),
             "active" => $object->isActive(),
             "inProductList" => $object->isActive(true),
