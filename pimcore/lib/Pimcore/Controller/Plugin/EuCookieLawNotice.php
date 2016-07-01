@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -198,7 +198,7 @@ class EuCookieLawNotice extends \Zend_Controller_Plugin_Abstract
         $language = "en"; // default language
         if (\Zend_Registry::isRegistered("Zend_Locale")) {
             $locale = \Zend_Registry::get("Zend_Locale");
-            if (array_key_exists($locale->getLanguage(), $defaultTranslations["text"])) {
+            if ($locale instanceof \Zend_Locale && array_key_exists($locale->getLanguage(), $defaultTranslations["text"])) {
                 $language = $locale->getLanguage();
             }
         }
