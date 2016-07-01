@@ -407,8 +407,8 @@ class Image extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return mixed
      */
-    public function marshal($value, $object = null, $params = []) {
-
+    public function marshal($value, $object = null, $params = [])
+    {
         if ($value instanceof \Pimcore\Model\Asset\Image) {
             return [
                 "type" => "asset",

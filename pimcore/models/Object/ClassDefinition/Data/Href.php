@@ -647,15 +647,16 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
      * @param mixed $params
      * @return mixed
      */
-    public function marshal($value, $object = null, $params = []) {
-
+    public function marshal($value, $object = null, $params = [])
+    {
         if ($value) {
             $type = Element\Service::getType($value);
             $id = $value->getId();
-            return array(
+
+            return [
                 "type" => $type,
                 "id" => $id
-            );
+            ];
         }
     }
 
@@ -669,7 +670,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     {
         $type = $value["type"];
         $id = $value["id"];
-        return Element\Service::getElementById($type, $id);
 
+        return Element\Service::getElementById($type, $id);
     }
 }

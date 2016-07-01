@@ -842,26 +842,26 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
      * @param mixed $params
      * @return mixed
      */
-    public function marshal($value, $object = null, $params = []) {
-
+    public function marshal($value, $object = null, $params = [])
+    {
         if (is_array($value)) {
-            $result = array();
+            $result = [];
             /** @var  $elementMetadata Object\Data\ObjectMetadata */
             foreach ($value as $elementMetadata) {
-
                 $element = $elementMetadata->getElement();
 
                 $type = Element\Service::getType($element);
                 $id = $element->getId();
-                $result[] =  array(
-                    "element" => array(
+                $result[] =  [
+                    "element" => [
                         "type" => $type,
                         "id" => $id
-                    ),
+                    ],
                     "fieldname" => $elementMetadata->getFieldname(),
                     "columns" => $elementMetadata->getColumns(),
-                    "data" => $elementMetadata->data);
+                    "data" => $elementMetadata->data];
             }
+
             return $result;
         }
 
@@ -877,9 +877,8 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
     public function unmarshal($value, $object = null, $params = [])
     {
         if (is_array($value)) {
-            $result = array();
+            $result = [];
             foreach ($value as $elementMetadata) {
-
                 $elementData = $elementMetadata["element"];
 
                 $type = $elementData["type"];
@@ -898,6 +897,5 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
 
             return $result;
         }
-
     }
 }

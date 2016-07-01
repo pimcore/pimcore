@@ -596,11 +596,10 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
      * @param mixed $params
      * @return mixed
      */
-    public function marshal($value, $object = null, $params = []) {
-
+    public function marshal($value, $object = null, $params = [])
+    {
         if ($value instanceof Object\Data\Hotspotimage) {
-
-            $result = array();
+            $result = [];
             $result["hotspots"] = $value->getHotspots();
             $result["marker"] = $value->getMarker();
             $result["crop"] = $value->getCrop();
@@ -609,14 +608,15 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
             if ($image) {
                 $type = Element\Service::getType($image);
                 $id = $image->getId();
-                $result["image"] = array(
+                $result["image"] = [
                     "type" => $type,
                     "id" => $id
-                );
-
+                ];
             }
+
             return $result;
         }
+
         return null;
     }
 
@@ -639,6 +639,7 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
                 $asset = Element\Service::getElementById($type, $id);
                 $image->setImage($asset);
             }
+
             return $image;
         }
     }

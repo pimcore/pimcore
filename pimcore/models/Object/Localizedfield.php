@@ -321,19 +321,16 @@ class Localizedfield extends Model\AbstractModel
             $blockDefinition = $containerDefinition->getFieldDefinition($contextInfo["fieldname"]);
 
             $fieldDefinition = $blockDefinition->getFieldDefinition("localizedfields");
-
         } else {
             if ($contextInfo && $contextInfo["containerType"] == "fieldcollection") {
                 $containerKey = $contextInfo["containerKey"];
                 $containerDefinition = Fieldcollection\Definition::getByKey($containerKey);
             } else {
                 $containerDefinition = $this->getObject()->getClass();
-
             }
 
             $localizedFieldDefinition = $containerDefinition->getFieldDefinition("localizedfields");
             $fieldDefinition = $localizedFieldDefinition->getFieldDefinition($name);
-
         }
 
 

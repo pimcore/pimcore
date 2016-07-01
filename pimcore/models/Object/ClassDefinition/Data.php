@@ -1078,7 +1078,6 @@ abstract class Data
 
                             // field collection or block items
                             if (!is_null($originalIndex)) {
-
                                 if ($context["containerType"] == "block") {
                                     $items = $container;
                                 } else {
@@ -1092,6 +1091,7 @@ abstract class Data
                                         $data = $item[$this->getName()];
                                         if ($data instanceof  Object\Data\BlockElement) {
                                             $data = $data->getData();
+
                                             return $data;
                                         }
                                     } else {
@@ -1107,8 +1107,6 @@ abstract class Data
                                 } else {
                                     throw new \Exception("object seems to be modified, item with orginal index " . $originalIndex . " not found, new index: " . $index);
                                 }
-
-
                             } else {
                                 return null;
                             }

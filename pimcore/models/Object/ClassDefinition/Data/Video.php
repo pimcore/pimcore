@@ -469,11 +469,10 @@ class Video extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return mixed
      */
-    public function marshal($value, $object = null, $params = []) {
-
+    public function marshal($value, $object = null, $params = [])
+    {
         if ($value instanceof Object\Data\Video) {
-
-            $result = array();
+            $result = [];
             $result["type"] = $value->getType();
             if ($value->getTitle()) {
                 $result["title"] = $value->getTitle();
@@ -485,25 +484,26 @@ class Video extends Model\Object\ClassDefinition\Data
 
             $poster = $value->getPoster();
             if ($poster) {
-                $result["poster"] = array(
+                $result["poster"] = [
                     "type" => Model\Element\Service::getType($poster),
                     "id" => $poster->getId()
-                );
+                ];
             }
 
             $data = $value->getData();
 
             if ($data && $value->getType() == "asset") {
-                $result["data"] = array(
+                $result["data"] = [
                     "type" => Model\Element\Service::getType($data),
                     "id" => $data->getId()
-                );
+                ];
             } else {
                 $result["data"] = $data;
             }
 
             return $result;
         }
+
         return null;
     }
 
@@ -533,5 +533,4 @@ class Video extends Model\Object\ClassDefinition\Data
             return $video;
         }
     }
-
 }

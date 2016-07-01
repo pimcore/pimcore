@@ -104,11 +104,11 @@ class Block extends Model\Object\ClassDefinition\Data
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
-        $result = array();
+        $result = [];
 
         if (is_array($data)) {
             foreach ($data as $blockElements) {
-                $resultElement = array();
+                $resultElement = [];
 
                 /**
                  * @var  $blockElement Object\Data\BlockElement
@@ -122,20 +122,21 @@ class Block extends Model\Object\ClassDefinition\Data
                         continue;
                     }
                     $elementData = $blockElement->getData();
-                    $dataForResource = $fd->marshal($elementData, $object, array("raw" => true));
+                    $dataForResource = $fd->marshal($elementData, $object, ["raw" => true]);
                     $blockElement->setData($dataForResource);
 
                     // do not serialize the block element itself
-                    $resultElement[$elementName] = array(
+                    $resultElement[$elementName] = [
                         "name" => $blockElement->getName(),
                         "type" => $blockElement->getType(),
                         "data" => $blockElement->getData()
-                    );
+                    ];
                 }
                 $result[] = $resultElement;
             }
         }
         $result = Serialize::serialize($result);
+
         return $result;
     }
 
@@ -150,10 +151,10 @@ class Block extends Model\Object\ClassDefinition\Data
     {
         if ($data) {
             $unserializedData = unserialize($data);
-            $result = array();
+            $result = [];
 
             foreach ($unserializedData as $blockElements) {
-                $items = array();
+                $items = [];
                 /** @var  $blockElement Object\Data\BlockElement */
                 foreach ($blockElements as $elementName => $blockElementRaw) {
 
@@ -169,7 +170,7 @@ class Block extends Model\Object\ClassDefinition\Data
 //                    $elementData = $blockElement->getData();
                     $elementData = $blockElementRaw["data"];
 
-                    $dataFromResource = $fd->unmarshal($elementData, $object, array("raw" => true));
+                    $dataFromResource = $fd->unmarshal($elementData, $object, ["raw" => true]);
                     $blockElementRaw["data"] = $dataFromResource;
 
                     if ($blockElementRaw["type"] == "localizedfields") {
@@ -180,7 +181,7 @@ class Block extends Model\Object\ClassDefinition\Data
                             $blockElementRaw["data"] = $data;
                         }
                     }
-                    $blockElement = new Object\Data\BlockElement($blockElementRaw["name"] , $blockElementRaw["type"], $blockElementRaw["data"]);
+                    $blockElement = new Object\Data\BlockElement($blockElementRaw["name"], $blockElementRaw["type"], $blockElementRaw["data"]);
                     $items[$elementName] = $blockElement;
                 }
                 $result[] = $items;
@@ -213,12 +214,12 @@ class Block extends Model\Object\ClassDefinition\Data
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
-        $result = array();
+        $result = [];
         $idx = -1;
 
         if (is_array($data)) {
             foreach ($data as $blockElements) {
-                $resultElement = array();
+                $resultElement = [];
                 $idx++;
 
                 /**
@@ -236,14 +237,14 @@ class Block extends Model\Object\ClassDefinition\Data
                     $dataForEditMode = $fd->getDataForEditmode($elementData, $object, $params);
                     $resultElement[$elementName] = $dataForEditMode;
                 }
-                $result[] = array(
+                $result[] = [
                     "oIndex" => $idx,
                     "data" => $resultElement
-                );
+                ];
             }
         }
-        return $result;
 
+        return $result;
     }
 
     /**
@@ -255,11 +256,11 @@ class Block extends Model\Object\ClassDefinition\Data
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
-        $result = array();
+        $result = [];
         $count = 0;
 
         foreach ($data as $rawBlockElement) {
-            $resultElement = array();
+            $resultElement = [];
 
             $oIndex = $rawBlockElement["oIndex"];
             $blockElement = $rawBlockElement["data"];
@@ -269,15 +270,15 @@ class Block extends Model\Object\ClassDefinition\Data
                 /** @var  $fd Object\ClassDefinition\Data */
                 $fd = $this->getFielddefinition($elementName);
                 $dataFromEditMode = $fd->getDataFromEditmode($elementData, $object,
-                    array(
-                        "context" => array(
+                    [
+                        "context" => [
                             "containerType" => "block",
                             "fieldname" => $this->getName(),
                             "index" => $count,
                             "oIndex" => $oIndex,
                             "classId" => $object->getClassId()
-                        )
-                    )
+                        ]
+                    ]
                 );
 
                 $elementType = $fd->getFieldtype();
@@ -314,7 +315,6 @@ class Block extends Model\Object\ClassDefinition\Data
      */
     public function getForCsvExport($object, $params = [])
     {
-
         return null;
     }
 
@@ -610,7 +610,6 @@ class Block extends Model\Object\ClassDefinition\Data
 
                 $dependencies = array_merge($dependencies, $fd->resolveDependencies($elementData));
             }
-
         }
 
         return $dependencies;
@@ -679,9 +678,4 @@ class Block extends Model\Object\ClassDefinition\Data
     {
         $this->collapsible = $collapsible;
     }
-
-
-
-
-
 }
