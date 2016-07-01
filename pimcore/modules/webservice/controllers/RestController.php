@@ -1268,6 +1268,21 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                 }
                 $definition["stores"] = $stores;
 
+                $list = new Pimcore\Model\Object\Classificationstore\CollectionConfig\Listing();
+                if ($condition) {
+                    $list->setCondition($condition);
+                }
+                $list->load();
+                $items = $list->getList();
+
+                $collections = [];
+
+
+                foreach ($items as $item) {
+                    $collections[] = $item->getObjectVars();
+                }
+                $definition["collections"] = $collections;
+
 
                 $list = new Pimcore\Model\Object\Classificationstore\GroupConfig\Listing();
                 if ($condition) {
