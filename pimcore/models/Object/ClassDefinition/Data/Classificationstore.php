@@ -412,7 +412,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
      */
     public function getForWebserviceExport($object, $params = [])
     {
-        throw new \Exception("not supported");
+        //TODO not supported
     }
 
     /**
@@ -425,7 +425,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
      */
     public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
     {
-        throw new \Exception("not supported");
+        // TODO not supported
     }
 
 
