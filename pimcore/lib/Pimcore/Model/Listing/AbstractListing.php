@@ -133,7 +133,7 @@ abstract class AbstractListing extends AbstractModel
 
     /**
      * @param  $order
-     * @return void
+     * @return $this
      */
     public function setOrder($order)
     {
@@ -168,7 +168,7 @@ abstract class AbstractListing extends AbstractModel
     /**
      * @param string|array $orderKey
      * @param bool $quote
-     * @return void
+     * @return $this
      */
     public function setOrderKey($orderKey, $quote = true)
     {
