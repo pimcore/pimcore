@@ -1260,7 +1260,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                 $list->load();
                 $items = $list->getList();
 
-                $stores = array();
+                $stores = [];
 
 
                 foreach ($items as $item) {
@@ -1276,7 +1276,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                 $list->load();
                 $items = $list->getList();
 
-                $groups = array();
+                $groups = [];
 
 
                 foreach ($items as $item) {
@@ -1291,7 +1291,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                 $list->load();
                 $items = $list->getList();
 
-                $keys = array();
+                $keys = [];
 
                 foreach ($items as $item) {
                     $keys[] = $item->getObjectVars();
@@ -1305,7 +1305,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                 $list->load();
                 $items = $list->getList();
 
-                $relations = array();
+                $relations = [];
 
                 /** @var  $item Pimcore\Model\Object\Classificationstore\CollectionGroupRelation */
                 foreach ($items as $item) {
@@ -1321,7 +1321,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                 $list->load();
                 $items = $list->getList();
 
-                $relations = array();
+                $relations = [];
 
                 foreach ($items as $item) {
                     $relations[] = $item->getObjectVars();
@@ -1337,6 +1337,4 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
         }
         $this->encoder->encode(["success" => false]);
     }
-
-
 }
