@@ -1545,8 +1545,8 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param $name
-     * @param $type can be "folder", "image", "input", "audio", "video", "document", "archive" or "unknown"
+     * @param string $name
+     * @param string $type can be "folder", "image", "input", "audio", "video", "document", "archive" or "unknown"
      * @param null $data
      * @param null $language
      */

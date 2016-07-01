@@ -859,18 +859,19 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
      * @param mixed $params
      * @return mixed
      */
-    public function marshal($value, $object = null, $params = []) {
-
+    public function marshal($value, $object = null, $params = [])
+    {
         if (is_array($value)) {
-            $result = array();
+            $result = [];
             foreach ($value as $element) {
                 $type = Element\Service::getType($element);
                 $id = $element->getId();
-                $result[] =  array(
+                $result[] =  [
                     "type" => $type,
                     "id" => $id
-                );
+                ];
             }
+
             return $result;
         }
 
@@ -886,7 +887,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
     public function unmarshal($value, $object = null, $params = [])
     {
         if (is_array($value)) {
-            $result = array();
+            $result = [];
             foreach ($value as $elementData) {
                 $type = $elementData["type"];
                 $id = $elementData["id"];
@@ -898,6 +899,5 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
 
             return $result;
         }
-
     }
 }

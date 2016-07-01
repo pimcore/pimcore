@@ -318,6 +318,10 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
             //process translations
             if (is_array($data) and count($data) > 1) {
                 $keys = $data[0];
+                // remove wrong quotes in some export/import constellations
+                $keys = array_map(function ($value) {
+                    return trim($value, '﻿""');
+                }, $keys);
                 $data = array_slice($data, 1);
                 foreach ($data as $row) {
                     $keyValueArray = [];

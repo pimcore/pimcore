@@ -1166,15 +1166,15 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @return mixed
      */
-    public function marshal($value, $object = null, $params = []) {
+    public function marshal($value, $object = null, $params = [])
+    {
         if ($value instanceof  Object\Localizedfield) {
             $items = $value->getItems();
             if (is_array($items)) {
-                $result = array();
+                $result = [];
                 foreach ($items as $language => $languageData) {
-                    $languageResult = array();
+                    $languageResult = [];
                     foreach ($languageData as $elementName => $elementData) {
-
                         $fd = $this->getFielddefinition($elementName);
                         if (!$fd) {
                             // class definition seems to have changed
@@ -1182,13 +1182,14 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
                             continue;
                         }
 
-                        $dataForResource = $fd->marshal($elementData, $object, array("raw" => true));
+                        $dataForResource = $fd->marshal($elementData, $object, ["raw" => true]);
 
                         $languageResult[$elementName] = $dataForResource;
                     }
 
                     $result[$language] = $languageResult;
                 }
+
                 return $result;
             }
         }
@@ -1206,12 +1207,10 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     {
         $lf = new Object\Localizedfield();
         if (is_array($value)) {
-
-            $items = array();
+            $items = [];
             foreach ($value as $language => $languageData) {
-                $languageResult = array();
+                $languageResult = [];
                 foreach ($languageData as $elementName => $elementData) {
-
                     $fd = $this->getFielddefinition($elementName);
                     if (!$fd) {
                         // class definition seems to have changed
@@ -1219,7 +1218,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
                         continue;
                     }
 
-                    $dataFromResource = $fd->unmarshal($elementData, $object, array("raw" => true));
+                    $dataFromResource = $fd->unmarshal($elementData, $object, ["raw" => true]);
 
                     $languageResult[$elementName] = $dataFromResource;
                 }
@@ -1228,13 +1227,8 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
             }
 
             $lf->setItems($items);
-
         }
 
         return $lf;
-
-
-
     }
-
 }
