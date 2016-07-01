@@ -85,6 +85,13 @@ class Thumbnail extends \Zend_Controller_Plugin_Abstract
                     }
 
                     if ($thumbnailFile && file_exists($thumbnailFile)) {
+
+                        // set appropriate caching headers
+                        // see also: https://github.com/pimcore/pimcore/blob/1931860f0aea27de57e79313b2eb212dcf69ef13/.htaccess#L86-L86
+                        $lifetime = 86400 * 7; // 1 week lifetime, same as direct delivery in .htaccess
+                        header("Cache-Control: public, max-age=" . $lifetime);
+                        header("Expires: ". date("D, d M Y H:i:s T", time()+$lifetime));
+
                         $fileExtension = \Pimcore\File::getFileExtension($thumbnailFile);
                         if (in_array($fileExtension, ["gif", "jpeg", "jpeg", "png", "pjpeg"])) {
                             header("Content-Type: image/".$fileExtension, true);
