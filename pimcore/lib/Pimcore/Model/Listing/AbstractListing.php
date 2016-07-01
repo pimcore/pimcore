@@ -107,7 +107,7 @@ abstract class AbstractListing extends AbstractModel
 
     /**
      * @param  $limit
-     * @return void
+     * @return $this
      */
     public function setLimit($limit)
     {
@@ -120,7 +120,7 @@ abstract class AbstractListing extends AbstractModel
 
     /**
      * @param  $offset
-     * @return void
+     * @return $this
      */
     public function setOffset($offset)
     {
