@@ -57,8 +57,6 @@ class GroupConfig extends Model\AbstractModel
      */
     public $modificationDate;
 
-    public $collId;
-
 
     /**
      * @param integer $id
