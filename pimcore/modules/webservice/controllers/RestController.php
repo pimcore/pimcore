@@ -1237,4 +1237,106 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
     {
         return $this->getRequest()->getQuery();
     }
+
+
+    /** Returns the classification store feature definition as JSON. Could be useful to provide separate endpoints
+     * for the various sub-configs.
+     * @return mixed
+     */
+    public function classificationstoreDefinitionAction()
+    {
+        $this->checkUserPermission("classes");
+
+        try {
+            if ($this->isGet()) {
+                $condition = urldecode($this->getParam("condition"));
+
+                $definition = [];
+
+                $list = new Pimcore\Model\Object\Classificationstore\StoreConfig\Listing();
+                if ($condition) {
+                    $list->setCondition($condition);
+                }
+                $list->load();
+                $items = $list->getList();
+
+                $stores = array();
+
+
+                foreach ($items as $item) {
+                    $stores[] = $item->getObjectVars();
+                }
+                $definition["stores"] = $stores;
+
+
+                $list = new Pimcore\Model\Object\Classificationstore\GroupConfig\Listing();
+                if ($condition) {
+                    $list->setCondition($condition);
+                }
+                $list->load();
+                $items = $list->getList();
+
+                $groups = array();
+
+
+                foreach ($items as $item) {
+                    $groups[] = $item->getObjectVars();
+                }
+                $definition["groups"] = $groups;
+
+                $list = new Pimcore\Model\Object\Classificationstore\KeyConfig\Listing();
+                if ($condition) {
+                    $list->setCondition($condition);
+                }
+                $list->load();
+                $items = $list->getList();
+
+                $keys = array();
+
+                foreach ($items as $item) {
+                    $keys[] = $item->getObjectVars();
+                }
+                $definition["keys"] = $keys;
+
+                $list = new Pimcore\Model\Object\Classificationstore\CollectionGroupRelation\Listing();
+                if ($condition) {
+                    $list->setCondition($condition);
+                }
+                $list->load();
+                $items = $list->getList();
+
+                $relations = array();
+
+                /** @var  $item Pimcore\Model\Object\Classificationstore\CollectionGroupRelation */
+                foreach ($items as $item) {
+                    $relations[] = $item->getObjectVars();
+                }
+
+                $definition["collections2groups"] = $relations;
+
+                $list = new Pimcore\Model\Object\Classificationstore\KeyGroupRelation\Listing();
+                if ($condition) {
+                    $list->setCondition($condition);
+                }
+                $list->load();
+                $items = $list->getList();
+
+                $relations = array();
+
+                foreach ($items as $item) {
+                    $relations[] = $item->getObjectVars();
+                }
+                $definition["groups2keys"] = $relations;
+
+
+
+                $this->encoder->encode(["success" => true, "data" => $definition]);
+            }
+        } catch (\Exception $e) {
+            $this->encoder->encode(["success" => false, "msg" => (string) $e]);
+        }
+        $this->encoder->encode(["success" => false]);
+    }
+
+
 }
