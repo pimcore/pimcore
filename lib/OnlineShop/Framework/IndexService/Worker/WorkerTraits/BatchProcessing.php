@@ -88,7 +88,7 @@ trait BatchProcessing {
                 $workingCategory = $c;
                 while ($workingCategory) {
                     $tmpIds[] = $workingCategory->getId();
-                    $category = $workingCategory->getParent();
+                    $workingCategory = $workingCategory->getParent();
                     if (!$workingCategory instanceof  \OnlineShop\Framework\Model\AbstractCategory) {
                         break;
                     }
