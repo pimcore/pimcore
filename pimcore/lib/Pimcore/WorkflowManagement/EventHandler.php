@@ -115,6 +115,7 @@ class EventHandler
                         if ($validLayouts && $validLayouts[$workflowLayoutId]) {
                             $customLayout = ClassDefinition\CustomLayout::getById($workflowLayoutId);
                             $customLayoutDefinition = $customLayout->getLayoutDefinitions();
+                            Object\Service::enrichLayoutDefinition($customLayoutDefinition  , $e->getParam('object'));
                             $data["layout"] = $customLayoutDefinition;
                         }
                     }
