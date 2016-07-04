@@ -1377,7 +1377,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                     $units[] = $item->getObjectVars();
                 }
 
-                $this->encoder->encode(["success" => true, "units" => $units]);
+                $this->encoder->encode(["success" => true, "data" => $units]);
             }
         } catch (\Exception $e) {
             $this->encoder->encode(["success" => false, "msg" => (string) $e]);
