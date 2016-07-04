@@ -333,7 +333,7 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
             return [
                 "value" => $data->getValue(),
                 "unit" => $data->getUnitId(),
-                "unitAbbreviation" => is_object($data->getUnit()) ? $data->getUnit()->getAbbreviation() : ""
+                "unitAbbreviation" => is_object($data->getUnit()) ? $data->getUnit() : ""
             ];
         } else {
             return null;
@@ -351,15 +351,25 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
     {
         if (empty($value)) {
             return null;
-        } elseif ($value["value"] !== null && $value["unit"] !== null && $value["unitAbbreviation"] !== null) {
-            $unit = Model\Object\QuantityValue\Unit::getById($value["unit"]);
-            if ($unit && $unit->getAbbreviation() == $value["unitAbbreviation"]) {
-                return new \Pimcore\Model\Object\Data\QuantityValue($value["value"], $value["unit"]);
-            } else {
-                throw new \Exception(get_class($this).": cannot get values from web service import - unit id and unit abbreviation do not match with local database");
-            }
         } else {
-            throw new \Exception(get_class($this).": cannot get values from web service import - invalid data");
+            $value = (array) $value;
+            if ($value["value"] !== null && $value["unit"] !== null && $value["unitAbbreviation"] !== null) {
+
+                $unitId = $value["unit"];
+
+                if ($idMapper) {
+                    $unitId = $idMapper->getMappedId("unit", $unitId);
+                }
+
+                $unit = Model\Object\QuantityValue\Unit::getById($unitId);
+                if ($unit && $unit->getAbbreviation() == $value["unitAbbreviation"]) {
+                    return new \Pimcore\Model\Object\Data\QuantityValue($value["value"], $unitId);
+                } else {
+                    throw new \Exception(get_class($this).": cannot get values from web service import - unit id and unit abbreviation do not match with local database");
+                }
+            } else {
+                throw new \Exception(get_class($this).": cannot get values from web service import - invalid data");
+            }
         }
     }
 
