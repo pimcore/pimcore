@@ -327,14 +327,13 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
      */
     public function getForWebserviceExport($object, $params = [])
     {
-        $key = $this->getName();
-        $getter = "get".ucfirst($key);
+        $data = $this->getDataFromObjectParam($object, $params);
 
-        if ($object->$getter() instanceof \Pimcore\Model\Object\Data\QuantityValue) {
+        if ($data instanceof \Pimcore\Model\Object\Data\QuantityValue) {
             return [
-                "value" => $object->$getter()->getValue(),
-                "unit" => $object->$getter()->getUnitId(),
-                "unitAbbreviation" => is_object($object->$getter()->getUnit()) ? $object->$getter()->getUnit()->getAbbreviation() : ""
+                "value" => $data->getValue(),
+                "unit" => $data->getUnitId(),
+                "unitAbbreviation" => is_object($data->getUnit()) ? $data->getUnit()->getAbbreviation() : ""
             ];
         } else {
             return null;
