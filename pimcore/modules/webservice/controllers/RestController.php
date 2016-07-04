@@ -1352,4 +1352,37 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
         }
         $this->encoder->encode(["success" => false]);
     }
+
+    /** Returns the classification store feature definition as JSON. Could be useful to provide separate endpoints
+     * for the various sub-configs.
+     * @return mixed
+     */
+    public function quantityValueUnitDefinitionAction()
+    {
+        $this->checkUserPermission("classes");
+
+        try {
+            if ($this->isGet()) {
+                $condition = urldecode($this->getParam("condition"));
+
+                $list = new Object\QuantityValue\Unit\Listing();
+                if ($condition) {
+                    $list->setCondition($condition);
+                }
+                $items = $list->load();
+                $units = [];
+
+
+                foreach ($items as $item) {
+                    $units[] = $item->getObjectVars();
+                }
+
+                $this->encoder->encode(["success" => true, "units" => $units]);
+            }
+        } catch (\Exception $e) {
+            $this->encoder->encode(["success" => false, "msg" => (string) $e]);
+        }
+        $this->encoder->encode(["success" => false]);
+    }
+
 }
