@@ -1384,5 +1384,4 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
         }
         $this->encoder->encode(["success" => false]);
     }
-
 }
