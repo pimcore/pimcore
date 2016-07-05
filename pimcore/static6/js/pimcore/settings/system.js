@@ -696,20 +696,20 @@ pimcore.settings.system = Class.create({
                                 hidden: (this.getValue("email.bounce.type") == "Maildir") ? false : true
                             }, {
                                 fieldLabel: t('path'),
-                                name: 'email_bounce_mbox',
-                                value: this.getValue("email_bounce_mbox"),
+                                name: 'email.bounce.mbox',
+                                value: this.getValue("email.bounce.mbox"),
                                 id: "system_settings_email_bounce_mbox",
                                 hidden: (this.getValue("email.bounce.type") == "Mbox") ? false : true
                             }, {
                                 fieldLabel: t('host'),
-                                name: 'email_bounce_imap_host',
-                                value: this.getValue("email_bounce_imap_host"),
+                                name: 'email.bounce.imap.host',
+                                value: this.getValue("email.bounce.imap.host"),
                                 id: "system_settings_email_bounce_imap_host",
                                 hidden: (this.getValue("email.bounce.type") == "IMAP") ? false : true
                             }, {
                                 fieldLabel: t('port'),
-                                name: 'email_bounce_imap_port',
-                                value: this.getValue("email_bounce_imap_port"),
+                                name: 'email.bounce.imap.port',
+                                value: this.getValue("email.bounce.imap.port"),
                                 id: "system_settings_email_bounce_imap_port",
                                 hidden: (this.getValue("email.bounce.type") == "IMAP") ? false : true
                             }, {
