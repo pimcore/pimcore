@@ -965,7 +965,6 @@ pimcore.document.tree = Class.create({
 
         var win = new Ext.Window({
             width: 600,
-            height: 340,
             layout: "fit",
             closeAction: "close",
             items: [{
