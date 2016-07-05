@@ -97,10 +97,12 @@ class Csv
 
         $quotes = array_count_values($matches[2]);
         arsort($quotes);
-        if ($quote = array_shift(array_flip($quotes))) {
+        $quotes = array_flip($quotes);
+        if ($quote = array_shift($quotes)) {
             $delims = array_count_values($matches[1]);
             arsort($delims);
-            $delim = array_shift(array_flip($delims));
+            $delims = array_flip($delims);
+            $delim = array_shift($delims);
         } else {
             $quote = "";
             $delim = null;
