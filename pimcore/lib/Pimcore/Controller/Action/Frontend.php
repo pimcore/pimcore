@@ -338,7 +338,6 @@ abstract class Frontend extends Action
             // Zend_Currency -> see also https://github.com/zendframework/zf1/issues/706
             // once this is resolved we can safely set the locale for LC_MONETARY as well.
             setlocale(LC_ALL & ~LC_MONETARY, $localeList);
-            \Carbon\Carbon::setLocale($locale->getLanguage());
 
             // reconfigure translation management
             if (\Zend_Registry::isRegistered("Zend_Translate")) {
