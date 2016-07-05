@@ -51,15 +51,13 @@ class PimcoreNavigationController
             $navigationRootDocument = Document::getById(1);
         }
 
-        $cacheKeys = [];
+        $cacheKeys = ["root_id__" . $navigationRootDocument->getId(), $htmlMenuIdPrefix];
 
         if (Site::isSiteRequest()) {
             $site = Site::getCurrentSite();
             $cacheKeys[] = "site__" . $site->getId();
         }
 
-
-        $cacheKeys[] = "root_id__" . $navigationRootDocument->getId();
         if (is_string($cache)) {
             $cacheKeys[] = "custom__" . $cache;
         }
