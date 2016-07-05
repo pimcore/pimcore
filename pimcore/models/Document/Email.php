@@ -156,7 +156,15 @@ class Email extends Model\Document\PageSnippet
     public static function validateEmailAddress($emailAddress)
     {
         if (is_null(self::$validator)) {
-            self::$validator = new \Zend_Validate_EmailAddress();
+            $hostnameValidator = new \Zend_Validate_Hostname([
+                "idn" => false,
+                "tld" => false
+            ]);
+            self::$validator = new \Zend_Validate_EmailAddress([
+                "mx" => false,
+                "deep" => false,
+                "hostname" => $hostnameValidator
+            ]);
         }
 
         $emailAddress = trim($emailAddress);

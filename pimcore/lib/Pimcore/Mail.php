@@ -720,8 +720,16 @@ class Mail extends \Zend_Mail
      */
     public static function isValidEmailAddress($emailAddress)
     {
-        $validator = new \Zend_Validate_EmailAddress();
-
+        $hostnameValidator = new \Zend_Validate_Hostname([
+            "idn" => false,
+            "tld" => false
+        ]);
+        $validator = new \Zend_Validate_EmailAddress([
+            "mx" => false,
+            "deep" => false,
+            "hostname" => $hostnameValidator
+        ]);
+        
         return $validator->isValid($emailAddress);
     }
 
