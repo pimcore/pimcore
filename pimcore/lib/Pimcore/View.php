@@ -183,15 +183,15 @@ class View extends \Zend_View
             $include = (string) $include;
         }
 
-        if (is_string($include)) {
+        if (is_numeric($include)) {
             try {
-                $include = Model\Document::getByPath($include);
+                $include = Model\Document::getById($include);
             } catch (\Exception $e) {
                 $include = $includeBak;
             }
-        } elseif (is_numeric($include)) {
+        } else if (is_string($include)) {
             try {
-                $include = Model\Document::getById($include);
+                $include = Model\Document::getByPath($include);
             } catch (\Exception $e) {
                 $include = $includeBak;
             }
