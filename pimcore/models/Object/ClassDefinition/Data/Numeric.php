@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -331,11 +331,11 @@ class Numeric extends Model\Object\ClassDefinition\Data
             throw new Model\Element\ValidationException("Empty mandatory field [ ".$this->getName()." ]");
         }
 
-        if (!$this->isEmpty($data) and !is_numeric($data)) {
+        if (!$this->isEmpty($data) && !is_numeric($data)) {
             throw new Model\Element\ValidationException("invalid numeric data [" . $data . "]");
         }
 
-        if (!$omitMandatoryCheck) {
+        if (!$this->isEmpty($data) && !$omitMandatoryCheck) {
             $data = $this->toNumeric($data);
 
             if ($data >= PHP_INT_MAX) {
