@@ -69,6 +69,11 @@ class Wysiwyg extends Model\Object\ClassDefinition\Data
     public $toolbarConfig = "";
 
     /**
+     * @var string
+     */
+    public $customConfig = "";
+
+    /**
      * @return integer
      */
     public function getWidth()
@@ -124,6 +129,26 @@ class Wysiwyg extends Model\Object\ClassDefinition\Data
     public function getToolbarConfig()
     {
         return $this->toolbarConfig;
+    }
+
+    /**
+     * @param string $customConfig
+     */
+    public function setCustomConfig($customConfig)
+    {
+        if (is_string($customConfig)) {
+            $this->customConfig = $customConfig;
+        } else {
+            $this->customConfig = "";
+        }
+    }
+
+    /**
+     * @return string
+     */
+    public function getCustomConfig()
+    {
+        return $this->customConfig;
     }
 
     /**
