@@ -266,6 +266,13 @@ abstract class Frontend extends Action
 
                 if (\Pimcore\Tool\Frontend::isDocumentInCurrentSite($hardlinkCanonicalSourceDocument)) {
                     $this->getResponse()->setHeader("Link", '<' . $request->getScheme() . "://" . $request->getHttpHost() . $hardlinkCanonicalSourceDocument->getFullPath() . '>; rel="canonical"');
+                }else {
+                    $id =$hardlinkCanonicalSourceDocument->getId();
+                    $sql="SELECT dd.key, dd.id, dd.path, ss.mainDomain, CONCAT(ss.mainDomain, SUBSTRING(dd.path, LENGTH(ss.sitePath)+1, LENGTH(dd.path)-LENGTH(ss.sitePath)-1)) relPath FROM documents dd INNER JOIN ( SELECT s.mainDomain, concat(d.path, d.key) sitePath FROM `sites` s INNER JOIN documents d ON s.rootId = d.id ) ss ON dd.path LIKE CONCAT(ss.sitePath, '%') WHERE dd.id=$id;";
+                    $connection = \Pimcore\Resource::getConnection();
+                    $mysqlRequest = $connection->query($sql);
+                    $result = reset($mysqlRequest->fetchAll());
+                    $this->getResponse()->setHeader("Link", '<' . $request->getScheme() . "://" . $result["relPath"]."/".$hardlinkCanonicalSourceDocument->getKey() . '>; rel="canonical"');
                 }
             }
 
