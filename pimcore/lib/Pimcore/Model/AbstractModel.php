@@ -65,70 +65,63 @@ abstract class AbstractModel
 
     /**
      * @param null $key
+     * @param bool $forceDetection
      * @throws \Exception
      */
-    public function initDao($key = null)
+    public function initDao($key = null, $forceDetection = false)
     {
         $myClass = get_class($this);
+        $cacheKey = $myClass . ($key ? ("-" . $key) : "");
         $dao = null;
 
-        if (!$key) {
-            // check for a resource in the cache
-            if (array_key_exists($myClass, self::$daoClassCache)) {
-                $dao = self::$daoClassCache[$myClass];
-            } else {
-                $classes = $this->getParentClasses($myClass);
+        if (!$forceDetection && array_key_exists($cacheKey, self::$daoClassCache)) {
+            $dao = self::$daoClassCache[$cacheKey];
+        } elseif (!$key || $forceDetection) {
+            $classes = $this->getParentClasses($key ? $key : $myClass);
 
-                foreach ($classes as $class) {
-                    $delimiter = "_"; // old prefixed class style
-                    if (strpos($class, "\\")) {
-                        $delimiter = "\\"; // that's the new with namespaces
-                    }
-
-                    $classParts = explode($delimiter, $class);
-                    $length = count($classParts);
-                    $className = null;
-
-                    for ($i = 0; $i < $length; $i++) {
-
-                        // check for a general dao adapter
-                        $tmpClassName = implode($delimiter, $classParts) . $delimiter . "Dao";
-                        if ($className = $this->determineResourceClass($tmpClassName)) {
-                            break;
-                        }
-
-                        // check for the old style resource adapter
-                        $tmpClassName = implode($delimiter, $classParts) . $delimiter . "Resource";
-                        if ($className = $this->determineResourceClass($tmpClassName)) {
-                            break;
-                        }
-
-                        array_pop($classParts);
-                    }
-
-                    if ($className) {
-                        $dao = $className;
-                        self::$daoClassCache[$myClass] = $dao;
-
-                        break;
-                    }
-                }
-            }
-        } else {
-            // check in cache
-            $cacheKey = $myClass . "-" . $key;
-            if (array_key_exists($cacheKey, self::$daoClassCache)) {
-                $dao = self::$daoClassCache[$cacheKey];
-            } else {
+            foreach ($classes as $class) {
                 $delimiter = "_"; // old prefixed class style
-                if (strpos($key, "\\") !== false) {
+                if (strpos($class, "\\")) {
                     $delimiter = "\\"; // that's the new with namespaces
                 }
 
-                $dao = $key . $delimiter . "Dao";
+                $classParts = explode($delimiter, $class);
+                $length = count($classParts);
+                $className = null;
 
-                self::$daoClassCache[$cacheKey] = $dao;
+                for ($i = 0; $i < $length; $i++) {
+
+                    // check for a general dao adapter
+                    $tmpClassName = implode($delimiter, $classParts) . $delimiter . "Dao";
+                    if ($className = $this->determineResourceClass($tmpClassName)) {
+                        break;
+                    }
+
+                    // check for the old style resource adapter
+                    $tmpClassName = implode($delimiter, $classParts) . $delimiter . "Resource";
+                    if ($className = $this->determineResourceClass($tmpClassName)) {
+                        break;
+                    }
+
+                    array_pop($classParts);
+                }
+
+                if ($className) {
+                    $dao = $className;
+                    self::$daoClassCache[$cacheKey] = $dao;
+
+                    break;
+                }
             }
+        } elseif ($key) {
+            $delimiter = "_"; // old prefixed class style
+            if (strpos($key, "\\") !== false) {
+                $delimiter = "\\"; // that's the new with namespaces
+            }
+
+            $dao = $key . $delimiter . "Dao";
+
+            self::$daoClassCache[$cacheKey] = $dao;
         }
 
         if (!$dao) {
