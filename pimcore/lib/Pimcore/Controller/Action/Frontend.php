@@ -263,9 +263,22 @@ abstract class Frontend extends Action
                 // get the cononical (source) document
                 $hardlinkCanonicalSourceDocument = Document::getById($this->getDocument()->getId());
                 $request = $this->getRequest();
+                $canonical = null;
 
                 if (\Pimcore\Tool\Frontend::isDocumentInCurrentSite($hardlinkCanonicalSourceDocument)) {
-                    $this->getResponse()->setHeader("Link", '<' . $request->getScheme() . "://" . $request->getHttpHost() . $hardlinkCanonicalSourceDocument->getFullPath() . '>; rel="canonical"');
+                    $canonical = $request->getScheme() . "://" . $request->getHttpHost() . $hardlinkCanonicalSourceDocument->getFullPath();
+                } elseif (Model\Site::isSiteRequest()) {
+                    $sourceSite = \Pimcore\Tool\Frontend::getSiteForDocument($hardlinkCanonicalSourceDocument);
+                    if($sourceSite) {
+                        if($sourceSite->getMainDomain()) {
+                            $sourceSiteRelPath = preg_replace("@^" . preg_quote($sourceSite->getRootPath(), "@") . "@", "", $hardlinkCanonicalSourceDocument->getRealFullPath());
+                            $canonical = $request->getScheme() . "://" . $sourceSite->getMainDomain() . $sourceSiteRelPath;
+                        }
+                    }
+                }
+
+                if($canonical) {
+                    $this->getResponse()->setHeader("Link", '<' . $canonical . '>; rel="canonical"');
                 }
             }
 
