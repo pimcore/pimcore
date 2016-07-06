@@ -1130,24 +1130,6 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
         return $this->labelWidth;
     }
 
-
-    public static function collectCalculatedValueItems($owner, &$list = [])
-    {
-        if (method_exists($owner, "hasChilds")) {
-            if ($owner->hasChilds()) {
-                $childs = $owner->getChilds();
-
-                foreach ($childs as $childDef) {
-                    if ($childDef instanceof Model\Object\ClassDefinition\Data\CalculatedValue) {
-                        $list[] = $childDef;
-                    } else {
-                        self::collectCalculatedValueItems($childDef, $list);
-                    }
-                }
-            }
-        }
-    }
-
     /** Encode value for packing it into a single column.
      * @param mixed $value
      * @param Model\Object\AbstractObject $object
