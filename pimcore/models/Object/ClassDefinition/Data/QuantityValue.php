@@ -354,7 +354,6 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
         } else {
             $value = (array) $value;
             if ($value["value"] !== null && $value["unit"] !== null && $value["unitAbbreviation"] !== null) {
-
                 $unitId = $value["unit"];
 
                 if ($idMapper) {

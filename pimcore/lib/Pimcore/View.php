@@ -189,7 +189,7 @@ class View extends \Zend_View
             } catch (\Exception $e) {
                 $include = $includeBak;
             }
-        } else if (is_string($include)) {
+        } elseif (is_string($include)) {
             try {
                 $include = Model\Document::getByPath($include);
             } catch (\Exception $e) {

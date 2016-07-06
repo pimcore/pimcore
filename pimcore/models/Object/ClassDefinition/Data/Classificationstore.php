@@ -416,53 +416,52 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
         $data = $this->getDataFromObjectParam($object, $params);
 
         if ($data) {
-            $result = array();
-            $activeGroups = array();
+            $result = [];
+            $activeGroups = [];
             $items = $data->getActiveGroups();
             if (is_array($items)) {
                 foreach ($items as $groupId => $groupData) {
                     $groupDef = Object\Classificationstore\GroupConfig::getById($groupId);
-                    $activeGroups[] = array(
+                    $activeGroups[] = [
                         "id" => $groupId,
                         "name" => $groupDef->getName(). " - " . $groupDef->getDescription(),
                         "enabled" => $groupData
-                    );
+                    ];
                 }
             }
 
             $result["activeGroups" ] = $activeGroups;
             $items = $data->getItems();
-            $resultItems = array();
+            $resultItems = [];
 
             foreach ($items as $groupId => $groupData) {
-                $groupResult = array();
+                $groupResult = [];
 
                 foreach ($groupData as $keyId => $keyData) {
                     $keyConfig = Object\Classificationstore\DefinitionCache::get($keyId);
                     $fd = Object\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
-                    $context = array(
+                    $context = [
                         "containerType" => "classificationstore",
                         "fieldname" => $this->getName(),
                         "groupId" => $groupId,
                         "keyId" => $keyId
-                    );
-                    $value = $fd->getForWebserviceExport($object, array("context" => $context));
-                    $groupResult[] = array(
+                    ];
+                    $value = $fd->getForWebserviceExport($object, ["context" => $context]);
+                    $groupResult[] = [
                         "id" => $keyId,
                         "name" => $keyConfig->getName(),
                         "description" => $keyConfig->getDescription(),
                         "value" => $value
-                    );
-
+                    ];
                 }
 
                 if ($groupResult) {
                     $groupDef = Object\Classificationstore\GroupConfig::getById($groupId);
-                    $groupResult = array(
+                    $groupResult = [
                         "id" => $groupId,
                         "name" => $groupDef->getName(). " - " . $groupDef->getDescription(),
                         "keys" => $groupResult
-                    );
+                    ];
                 }
 
                 $result["groups"][] = $groupResult;

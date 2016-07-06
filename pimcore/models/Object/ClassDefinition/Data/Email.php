@@ -29,7 +29,6 @@ class Email extends Model\Object\ClassDefinition\Data\Input
 
     public function checkValidity($data, $omitMandatoryCheck = false)
     {
-
         if (!$omitMandatoryCheck && strlen($data) > 0) {
             $hostnameValidator = new \Zend_Validate_Hostname([
                 "idn" => false,
@@ -40,7 +39,7 @@ class Email extends Model\Object\ClassDefinition\Data\Input
                 "deep" => false,
                 "hostname" => $hostnameValidator
             ]);
-            if(!$validator->isValid($data)) {
+            if (!$validator->isValid($data)) {
                 throw new Model\Element\ValidationException("Value in field [ " . $this->getName() . " ] isn't a valid email address");
             }
         }
