@@ -520,8 +520,12 @@ class Config extends Model\AbstractModel
     }
 
 
-    public function getEstimatedDimensions($originalWidth = null, $originalHeight = null)
+    public function getEstimatedDimensions($asset)
     {
+        $originalWidth = $asset->getWidth();
+        $originalHeight = $asset->getHeight();
+
+
         $dimensions = [];
         $transformations = $this->getItems();
         if (is_array($transformations) && count($transformations) > 0) {
@@ -549,9 +553,17 @@ class Config extends Model\AbstractModel
                         } elseif ($transformation["method"] == "contain") {
                             $x = $dimensions["width"] / $arg["width"];
                             $y = $dimensions["height"] / $arg["height"];
+
                             if ($x <= 1 && $y <= 1) {
-                                continue;
-                            } elseif ($x > $y) {
+                                $imageTransformer = \Pimcore\Image::getInstance();
+                                $imageTransformer->load($asset->getFileSystemPath());
+
+                                if(!$imageTransformer->isVectorGraphic()) {
+                                    continue;
+                                }
+                            }
+
+                            if ($x > $y) {
                                 $dimensions["height"] = round(($arg["width"] / $dimensions["width"]) * $dimensions["height"], 0);
                                 $dimensions["width"] = $arg["width"];
                             } else {
@@ -584,6 +596,10 @@ class Config extends Model\AbstractModel
                 }
             }
         }
+
+        // ensure we return int's, sometimes $arg[...] contain strings
+        $dimensions["width"] = (int) $dimensions["width"];
+        $dimensions["height"] = (int) $dimensions["height"];
 
         return $dimensions;
     }
