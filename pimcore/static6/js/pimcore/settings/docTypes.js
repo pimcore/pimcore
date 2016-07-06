@@ -55,7 +55,6 @@ pimcore.settings.document.doctypes = Class.create({
     getRowEditor: function () {
 
         this.store = pimcore.globalmanager.get("document_types_store");
-        var documentDocumentTypeStore = pimcore.globalmanager.get("document_documenttype_store");
 
         var typesColumns = [
             {header: t("name"), flex: 100, sortable: true, dataIndex: 'name',
@@ -72,7 +71,7 @@ pimcore.settings.document.doctypes = Class.create({
                                                                         editor: new Ext.form.ComboBox({
                 triggerAction: 'all',
                 editable: false,
-                store: documentDocumentTypeStore
+                store: ["page","snippet","email","printpage","printcontainer"]
             })},
             {header: t("priority"), flex: 50, sortable: true, dataIndex: 'priority', editor: new Ext.form.ComboBox({
                 store: [1,2,3,4,5,6,7,8,9,10],
