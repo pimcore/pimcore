@@ -118,24 +118,12 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
         foreach ($result["data"] as $language => &$data) {
             foreach ($data as $key => &$value) {
                 $fieldDefinition = $this->getFielddefinition($key);
-                if (!$fieldDefinition instanceof CalculatedValue) {
-                    $value = $fieldDefinition->getDataForEditmode($value, $object, $params);
-                }
-            }
-        }
-
-        $calculatedChilds = [];
-        self::collectCalculatedValueItems($this, $calculatedChilds);
-
-        if ($calculatedChilds) {
-            $validLanguages = Tool::getValidLanguages();
-
-            foreach ($calculatedChilds as $childDef) {
-                foreach ($validLanguages as $language) {
-                    $childData = new Object\Data\CalculatedValue($childDef->getName());
+                if ($fieldDefinition instanceof CalculatedValue) {
+                    $childData = new Object\Data\CalculatedValue($fieldDefinition->getName());
                     $childData->setContextualData("localizedfield", $this->getName(), null, $language);
-                    $childData = $childDef->getDataForEditmode($childData, $object, $params);
-                    $result["data"][$language][$childDef->getName()] = $childData;
+                    $value = $fieldDefinition->getDataForEditmode($childData, $object, $params);
+                } else {
+                    $value = $fieldDefinition->getDataForEditmode($value, $object, $params);
                 }
             }
         }
