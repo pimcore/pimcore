@@ -558,7 +558,7 @@ class Config extends Model\AbstractModel
                                 $imageTransformer = \Pimcore\Image::getInstance();
                                 $imageTransformer->load($asset->getFileSystemPath());
 
-                                if(!$imageTransformer->isVectorGraphic()) {
+                                if (!$imageTransformer->isVectorGraphic()) {
                                     continue;
                                 }
                             }

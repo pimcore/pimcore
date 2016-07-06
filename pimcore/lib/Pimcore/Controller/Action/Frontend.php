@@ -269,15 +269,15 @@ abstract class Frontend extends Action
                     $canonical = $request->getScheme() . "://" . $request->getHttpHost() . $hardlinkCanonicalSourceDocument->getFullPath();
                 } elseif (Model\Site::isSiteRequest()) {
                     $sourceSite = \Pimcore\Tool\Frontend::getSiteForDocument($hardlinkCanonicalSourceDocument);
-                    if($sourceSite) {
-                        if($sourceSite->getMainDomain()) {
+                    if ($sourceSite) {
+                        if ($sourceSite->getMainDomain()) {
                             $sourceSiteRelPath = preg_replace("@^" . preg_quote($sourceSite->getRootPath(), "@") . "@", "", $hardlinkCanonicalSourceDocument->getRealFullPath());
                             $canonical = $request->getScheme() . "://" . $sourceSite->getMainDomain() . $sourceSiteRelPath;
                         }
                     }
                 }
 
-                if($canonical) {
+                if ($canonical) {
                     $this->getResponse()->setHeader("Link", '<' . $canonical . '>; rel="canonical"');
                 }
             }

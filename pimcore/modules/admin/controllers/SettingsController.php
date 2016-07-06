@@ -335,7 +335,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
         }
 
         // check if there's a fallback language endless loop
-        foreach($fallbackLanguages as $sourceLang => $targetLang) {
+        foreach ($fallbackLanguages as $sourceLang => $targetLang) {
             $this->checkFallbackLanguageLoop($sourceLang, $fallbackLanguages);
         }
 
@@ -507,10 +507,11 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
         $this->_helper->json(["success" => true]);
     }
 
-    protected function checkFallbackLanguageLoop($source, $definitions, $fallbacks = []) {
-        if(isset($definitions[$source])) {
+    protected function checkFallbackLanguageLoop($source, $definitions, $fallbacks = [])
+    {
+        if (isset($definitions[$source])) {
             $target = $definitions[$source];
-            if($target) {
+            if ($target) {
                 if (in_array($target, $fallbacks)) {
                     throw new \Exception("Language `$source` | `$target` causes an infinte loop.");
                 }
