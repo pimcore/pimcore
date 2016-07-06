@@ -1,5 +1,17 @@
 [
     {
+        "term": "please_enter_the_id_of_the_asset",
+        "definition": "Please enter the ID or Path (e.g. \/images\/logo.jpg) of the asset"
+    },
+    {
+        "term": "please_enter_the_id_of_the_object",
+        "definition": "Please enter the ID or Path of the object"
+    },
+    {
+        "term": "please_enter_the_id_of_the_document",
+        "definition": "Please enter the ID, Path or URL (also including http:\/\/) of the document"
+    },
+    {
         "term": "brightness",
         "definition": "Brightness"
     },
