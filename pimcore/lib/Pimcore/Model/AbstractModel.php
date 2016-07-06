@@ -65,15 +65,14 @@ abstract class AbstractModel
 
     /**
      * @param null $key
-     * @param bool $forceDetection
      * @throws \Exception
      */
-    public function initDao($key = null, $forceDetection = false)
+    public function initDao($key = null)
     {
         $myClass = get_class($this);
         $dao = null;
 
-        if (!$key || $forceDetection) {
+        if (!$key) {
             // check for a resource in the cache
             if (array_key_exists($myClass, self::$daoClassCache)) {
                 $dao = self::$daoClassCache[$myClass];
