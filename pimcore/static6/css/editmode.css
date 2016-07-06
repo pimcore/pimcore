@@ -336,7 +336,7 @@
     display: inline-block;
 }
 
-/* support for placeholders as in EXTJS3,4 */
+/* support for placeholders */
 .pimcore_tag_input[contenteditable=true][data-placeholder]:empty:before,
 .pimcore_tag_textarea[contenteditable=true][data-placeholder]:empty:before,
 .pimcore_wysiwyg.empty[contenteditable=true][data-placeholder]:before {
