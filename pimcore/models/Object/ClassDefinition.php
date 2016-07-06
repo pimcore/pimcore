@@ -506,7 +506,7 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * @param int $id
-     * @return void
+     * @return $this
      */
     public function setId($id)
     {
@@ -517,7 +517,7 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * @param string $name
-     * @return void
+     * @return $this
      */
     public function setName($name)
     {

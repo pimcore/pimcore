@@ -276,7 +276,7 @@ class Staticroute extends AbstractModel
 
     /**
      * @param integer $id
-     * @return void
+     * @return $this
      */
     public function setId($id)
     {
@@ -287,7 +287,7 @@ class Staticroute extends AbstractModel
 
     /**
      * @param string $pattern
-     * @return void
+     * @return $this
      */
     public function setPattern($pattern)
     {
@@ -298,7 +298,7 @@ class Staticroute extends AbstractModel
 
     /**
      * @param string $module
-     * @return void
+     * @return $this
      */
     public function setModule($module)
     {

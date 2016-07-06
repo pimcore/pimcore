@@ -157,7 +157,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
 
     /**
      * @param string $name
-     * @return void
+     * @return $this
      */
     public function setName($name)
     {
@@ -168,7 +168,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
 
     /**
      * @param integer $id
-     * @return void
+     * @return $this
      */
     public function setDocumentId($id)
     {
@@ -195,7 +195,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
 
     /**
      * @param array $options
-     * @return void
+     * @return $this
      */
     public function setOptions($options)
     {
@@ -206,7 +206,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
 
     /**
      * @param \Pimcore\Controller\Action $controller
-     * @return void
+     * @return $this
      */
     public function setController($controller)
     {
@@ -225,7 +225,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
 
     /**
      * @param \Pimcore\View $view
-     * @return void
+     * @return $this
      */
     public function setView($view)
     {
@@ -319,7 +319,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
 
     /**
      * @param boolean $editmode
-     * @return void
+     * @return $this
      */
     public function setEditmode($editmode)
     {
@@ -331,7 +331,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
 
     /**
      * @see Document\Tag\DocumentInterface::getDataForResource
-     * @return void
+     * @return $this
      */
     public function getDataForResource()
     {
@@ -365,7 +365,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      * @abstract
      * @param  Webservice\Data\Document\Element $wsElement
      * @param mixed $params
-     * @return void
+     * @return Webservice\Data\Document\Element
      */
     public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
     {

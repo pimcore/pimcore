@@ -49,7 +49,7 @@ class Listing extends Model\Listing\AbstractListing
 
     /**
      * @param array $redirects
-     * @return void
+     * @return $this
      */
     public function setRedirects($redirects)
     {

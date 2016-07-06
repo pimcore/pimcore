@@ -100,7 +100,7 @@ class Href extends Model\Document\Tag
 
     /**
      * @see Document\Tag\TagInterface::frontend
-     * @return void
+     * @return string
      */
     public function frontend()
     {

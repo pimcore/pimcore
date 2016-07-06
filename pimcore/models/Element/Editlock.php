@@ -173,7 +173,7 @@ class Editlock extends Model\AbstractModel
     }
 
     /**
-     * @return void
+     * @return $this
      */
     public function setCid($cid)
     {
@@ -184,7 +184,7 @@ class Editlock extends Model\AbstractModel
 
     /**
      * @param integer $id
-     * @return void
+     * @return $this
      */
     public function setId($id)
     {

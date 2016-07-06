@@ -78,7 +78,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
 
     /**
      * @param array $documents
-     * @return void
+     * @return $this
      */
     public function setDocuments($documents)
     {

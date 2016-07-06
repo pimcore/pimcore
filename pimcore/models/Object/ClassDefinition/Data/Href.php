@@ -108,7 +108,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
 
     /**
      * @param boolean $objectsAllowed
-     * @return void
+     * @return $this
      */
     public function setObjectsAllowed($objectsAllowed)
     {
@@ -127,7 +127,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
 
     /**
      * @param boolean $documentsAllowed
-     * @return void
+     * @return $this
      */
     public function setDocumentsAllowed($documentsAllowed)
     {
@@ -146,8 +146,8 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     }
 
     /**
-     * @param array
-     * @return void $documentTypes
+     * @param array $documentTypes
+     * @return $this
      */
     public function setDocumentTypes($documentTypes)
     {
@@ -168,7 +168,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     /**
      *
      * @param boolean $assetsAllowed
-     * @return void
+     * @return $this
      */
     public function setAssetsAllowed($assetsAllowed)
     {
@@ -186,8 +186,8 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     }
 
     /**
-     * @param array
-     * @return void $assetTypes
+     * @param array $assetTypes
+     * @return $this
      */
     public function setAssetTypes($assetTypes)
     {
@@ -328,7 +328,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
 
     /**
      * @param integer $width
-     * @return void
+     * @return $this
      */
     public function setWidth($width)
     {

@@ -57,7 +57,7 @@ class Uri extends \Zend_Navigation_Page_Uri
 
     /**
      * @param  $tabindex
-     * @return void
+     * @return $this
      */
     public function setTabindex($tabindex)
     {
@@ -95,7 +95,7 @@ class Uri extends \Zend_Navigation_Page_Uri
 
     /**
      * @param  $relation
-     * @return void
+     * @return $this
      */
     public function setRelation($relation)
     {

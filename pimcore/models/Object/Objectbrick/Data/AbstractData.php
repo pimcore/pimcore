@@ -56,7 +56,7 @@ class AbstractData extends Model\AbstractModel
 
     /**
      * @param $fieldname
-     * @return void
+     * @return $this
      */
     public function setFieldname($fieldname)
     {
@@ -85,7 +85,7 @@ class AbstractData extends Model\AbstractModel
 
     /**
      * @param $doDelete
-     * @return void
+     * @return $this
      */
     public function setDoDelete($doDelete)
     {

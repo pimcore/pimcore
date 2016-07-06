@@ -82,8 +82,8 @@ class StoreConfig extends Model\AbstractModel
 
 
     /**
-     * @param string name
-     * @return void
+     * @param string $name
+     * @return $this
      */
     public function setName($name)
     {

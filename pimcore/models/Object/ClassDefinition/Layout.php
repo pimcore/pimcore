@@ -152,7 +152,7 @@ class Layout
 
     /**
      * @param string $name
-     * @return void
+     * @return $this
      */
     public function setName($name)
     {
@@ -163,7 +163,7 @@ class Layout
 
     /**
      * @param string $type
-     * @return void
+     * @return $this
      */
     public function setType($type)
     {

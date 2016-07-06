@@ -105,7 +105,7 @@ class Item
     /**
      * @param  $key
      * @param  $value
-     * @return void
+     * @return $this
      */
     public function setValue($key, $value)
     {

@@ -158,7 +158,7 @@ class Predefined extends Model\AbstractModel
 
     /**
      * @param string $name
-     * @return void
+     * @return $this
      */
     public function setName($name)
     {
@@ -169,7 +169,7 @@ class Predefined extends Model\AbstractModel
 
     /**
      * @param string $type
-     * @return void
+     * @return $this
      */
     public function setType($type)
     {

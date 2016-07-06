@@ -239,7 +239,7 @@ abstract class AbstractPlaceholder
      * Try to set the locale from different sources
      *
      * @param $locale
-     * @return void
+     * @return $this
      */
     public function setLocale($locale = null)
     {

@@ -292,7 +292,7 @@ abstract class Data
 
     /**
      * @param string $name
-     * @return void
+     * @return $this
      */
     public function setName($name)
     {
@@ -303,7 +303,7 @@ abstract class Data
 
     /**
      * @param string $title
-     * @return void
+     * @return $this
      */
     public function setTitle($title)
     {
@@ -314,7 +314,7 @@ abstract class Data
 
     /**
      * @param boolean $mandatory
-     * @return void
+     * @return $this
      */
     public function setMandatory($mandatory)
     {
@@ -325,7 +325,7 @@ abstract class Data
 
     /**
      * @param array $permissions
-     * @return void
+     * @return $this
      */
     public function setPermissions($permissions)
     {
@@ -336,7 +336,7 @@ abstract class Data
 
     /**
      * @param array $data
-     * @return void
+     * @return $this
      */
     public function setValues($data = [])
     {
@@ -361,7 +361,7 @@ abstract class Data
 
     /**
      * @param string $datatype
-     * @return void
+     * @return $this
      */
     public function setDatatype($datatype)
     {
@@ -380,7 +380,7 @@ abstract class Data
 
     /**
      * @param string $fieldtype
-     * @return void
+     * @return $this
      */
     public function setFieldtype($fieldtype)
     {
@@ -399,7 +399,7 @@ abstract class Data
 
     /**
      * @param string | array $columnType
-     * @return void
+     * @return $this
      */
     public function setColumnType($columnType)
     {
@@ -418,7 +418,7 @@ abstract class Data
 
     /**
      * @param string | array $queryColumnType
-     * @return void
+     * @return $this
      */
     public function setQueryColumnType($queryColumnType)
     {
@@ -437,7 +437,7 @@ abstract class Data
 
     /**
      * @param boolean $noteditable
-     * @return void
+     * @return $this
      */
     public function setNoteditable($noteditable)
     {
@@ -456,7 +456,7 @@ abstract class Data
 
     /**
      * @param integer $index
-     * @return void
+     * @return $this
      */
     public function setIndex($index)
     {

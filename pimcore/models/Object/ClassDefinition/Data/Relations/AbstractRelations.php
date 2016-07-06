@@ -52,8 +52,8 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @param array
-     * @return void $classes
+     * @param array $classes
+     * @return $this
      */
     public function setClasses($classes)
     {
@@ -73,7 +73,7 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
 
     /**
      * @param  $lazyLoading
-     * @return void
+     * @return $this
      */
     public function setLazyLoading($lazyLoading)
     {

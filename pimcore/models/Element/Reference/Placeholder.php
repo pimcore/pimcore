@@ -43,7 +43,7 @@ class Placeholder
 
     /**
      * @param int $id
-     * @return void
+     * @return $this
      */
     public function setId($id)
     {
@@ -62,7 +62,7 @@ class Placeholder
 
     /**
      * @param string $type
-     * @return void
+     * @return $this
      */
     public function setType($type)
     {

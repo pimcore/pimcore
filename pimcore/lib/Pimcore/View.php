@@ -299,7 +299,7 @@ class View extends \Zend_View
 
     /**
      * @param \Zend_Controller_Request_Abstract $request
-     * @return void
+     * @return $this
      */
     public function setRequest(\Zend_Controller_Request_Abstract $request)
     {

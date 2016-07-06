@@ -77,7 +77,7 @@ class Select extends Model\Object\ClassDefinition\Data
 
     /**
      * @param array $options
-     * @return void
+     * @return $this
      */
     public function setOptions($options)
     {

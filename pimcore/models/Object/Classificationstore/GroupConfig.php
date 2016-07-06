@@ -109,7 +109,7 @@ class GroupConfig extends Model\AbstractModel
 
     /**
      * @param integer $id
-     * @return void
+     * @return $this
      */
     public function setId($id)
     {

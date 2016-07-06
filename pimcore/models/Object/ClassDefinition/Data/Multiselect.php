@@ -77,7 +77,7 @@ class Multiselect extends Model\Object\ClassDefinition\Data
 
     /**
      * @param array $options
-     * @return void
+     * @return $this
      */
     public function setOptions($options)
     {
@@ -96,7 +96,7 @@ class Multiselect extends Model\Object\ClassDefinition\Data
 
     /**
      * @param array $width
-     * @return void
+     * @return $this
      */
     public function setWidth($width)
     {
@@ -115,7 +115,7 @@ class Multiselect extends Model\Object\ClassDefinition\Data
 
     /**
      * @param array $height
-     * @return void
+     * @return $this
      */
     public function setHeight($height)
     {

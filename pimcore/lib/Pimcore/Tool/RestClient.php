@@ -67,7 +67,7 @@ class RestClient
 
     /**
      * @param array $data
-     * @return void
+     * @return $this
      */
     public function setValues($data = [])
     {
@@ -83,7 +83,7 @@ class RestClient
     /**
      * @param  $key
      * @param  $value
-     * @return void
+     * @return $this
      */
     public function setValue($key, $value)
     {

@@ -51,7 +51,7 @@ abstract class AbstractData extends Model\AbstractModel
 
     /**
      * @param int $index
-     * @return void
+     * @return $this
      */
     public function setIndex($index)
     {
@@ -70,7 +70,7 @@ abstract class AbstractData extends Model\AbstractModel
 
     /**
      * @param $fieldname
-     * @return void
+     * @return $this
      */
     public function setFieldname($fieldname)
     {
@@ -99,7 +99,7 @@ abstract class AbstractData extends Model\AbstractModel
 
     /**
      * @param Object\Concrete $object
-     * @return void
+     * @return $this
      */
     public function setObject($object)
     {

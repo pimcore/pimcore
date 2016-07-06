@@ -251,7 +251,7 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @param string $action
-     * @return void
+     * @return $this
      */
     public function setAction($action)
     {
@@ -262,7 +262,7 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @param string $controller
-     * @return void
+     * @return $this
      */
     public function setController($controller)
     {
@@ -273,7 +273,7 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @param string $template
-     * @return void
+     * @return $this
      */
     public function setTemplate($template)
     {
@@ -307,7 +307,7 @@ abstract class PageSnippet extends Model\Document
      * @param string $name
      * @param string $type
      * @param string $data
-     * @return void
+     * @return $this
      */
     public function setRawElement($name, $type, $data)
     {
@@ -341,7 +341,7 @@ abstract class PageSnippet extends Model\Document
      *
      * @param string $name
      * @param string $data
-     * @return void
+     * @return $this
      */
     public function setElement($name, $data)
     {
@@ -480,7 +480,7 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @param array $elements
-     * @return void
+     * @return $this
      */
     public function setElements($elements)
     {
@@ -503,7 +503,7 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @param array $versions
-     * @return void
+     * @return $this
      */
     public function setVersions($versions)
     {

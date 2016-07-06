@@ -252,7 +252,7 @@ class KeyConfig extends Model\AbstractModel
 
     /**
      * @param integer $id
-     * @return void
+     * @return $this
      */
     public function setId($id)
     {
@@ -270,8 +270,8 @@ class KeyConfig extends Model\AbstractModel
     }
 
     /**
-     * @param string name
-     * @return void
+     * @param string $name
+     * @return $this
      */
     public function setName($name)
     {

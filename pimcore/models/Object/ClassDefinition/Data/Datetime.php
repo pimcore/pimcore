@@ -264,7 +264,7 @@ class Datetime extends Model\Object\ClassDefinition\Data
 
     /**
      * @param mixed $defaultValue
-     * @return void
+     * @return $this
      */
     public function setDefaultValue($defaultValue)
     {

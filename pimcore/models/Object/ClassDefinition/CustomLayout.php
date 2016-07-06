@@ -222,7 +222,7 @@ class CustomLayout extends Model\AbstractModel
 
     /**
      * @param int $id
-     * @return void
+     * @return $this
      */
     public function setId($id)
     {
@@ -233,7 +233,7 @@ class CustomLayout extends Model\AbstractModel
 
     /**
      * @param string $name
-     * @return void
+     * @return $this
      */
     public function setName($name)
     {

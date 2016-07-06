@@ -99,7 +99,7 @@ class CollectionConfig extends Model\AbstractModel
 
     /**
      * @param integer $id
-     * @return void
+     * @return $this
      */
     public function setId($id)
     {
@@ -118,8 +118,8 @@ class CollectionConfig extends Model\AbstractModel
 
 
     /**
-     * @param string name
-     * @return void
+     * @param string $name
+     * @return $this
      */
     public function setName($name)
     {

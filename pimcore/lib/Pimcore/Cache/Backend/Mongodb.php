@@ -234,7 +234,7 @@ class Mongodb extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Extende
      *
      * @param  array $directives Assoc of directives
      * @throws \Zend_Cache_Exception
-     * @return void
+     * @return $this
      */
     public function setDirectives($directives)
     {

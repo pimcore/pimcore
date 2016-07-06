@@ -49,7 +49,7 @@ class Definition extends Model\AbstractModel
 
     /**
      * @param string $key
-     * @return void
+     * @return $this
      */
     public function setKey($key)
     {
@@ -68,7 +68,7 @@ class Definition extends Model\AbstractModel
 
     /**
      * @param string $parentClass
-     * @return void
+     * @return $this
      */
     public function setParentClass($parentClass)
     {
@@ -87,7 +87,7 @@ class Definition extends Model\AbstractModel
 
     /**
      * @param array $layoutDefinitions
-     * @return void
+     * @return $this
      */
     public function setLayoutDefinitions($layoutDefinitions)
     {
@@ -109,7 +109,7 @@ class Definition extends Model\AbstractModel
 
     /**
      * @param array $fieldDefinitions
-     * @return void
+     * @return $this
      */
     public function setFieldDefinitions($fieldDefinitions)
     {
@@ -121,7 +121,7 @@ class Definition extends Model\AbstractModel
     /**
      * @param string $key
      * @param Object\ClassDefinition\Data $data
-     * @return void
+     * @return $this
      */
     public function addFieldDefinition($key, $data)
     {

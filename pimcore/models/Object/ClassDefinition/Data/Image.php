@@ -78,7 +78,7 @@ class Image extends Model\Object\ClassDefinition\Data
 
     /**
      * @param integer $width
-     * @return void
+     * @return $this
      */
     public function setWidth($width)
     {
@@ -97,7 +97,7 @@ class Image extends Model\Object\ClassDefinition\Data
 
     /**
      * @param integer $height
-     * @return void
+     * @return $this
      */
     public function setHeight($height)
     {

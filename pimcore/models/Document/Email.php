@@ -73,7 +73,7 @@ class Email extends Model\Document\PageSnippet
      * Contains the email subject
      *
      * @param string $subject
-     * @return void
+     * @return $this
      */
     public function setSubject($subject)
     {
@@ -96,7 +96,7 @@ class Email extends Model\Document\PageSnippet
      * Sets the "to" receiver
      *
      * @param string $to
-     * @return void
+     * @return $this
      */
     public function setTo($to)
     {
@@ -177,7 +177,7 @@ class Email extends Model\Document\PageSnippet
      * Sets the "from" email address
      *
      * @param string $from
-     * @return void
+     * @return $this
      */
     public function setFrom($from)
     {
@@ -212,7 +212,7 @@ class Email extends Model\Document\PageSnippet
      * Sets the carbon copy receivers (multiple receivers should be separated with a ",")
      *
      * @param string $cc
-     * @return void
+     * @return $this
      */
     public function setCc($cc)
     {
@@ -245,7 +245,7 @@ class Email extends Model\Document\PageSnippet
      * Sets the blind carbon copy receivers (multiple receivers should be separated with a ",")
      *
      * @param string $bcc
-     * @return void
+     * @return $this
      */
     public function setBcc($bcc)
     {

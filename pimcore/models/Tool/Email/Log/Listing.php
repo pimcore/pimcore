@@ -54,7 +54,7 @@ class Listing extends Model\Listing\AbstractListing
      * Sets EmailLog entries
      *
      * @param array $emailLogs
-     * @return void
+     * @return $this
      */
     public function setEmailLogs($emailLogs)
     {

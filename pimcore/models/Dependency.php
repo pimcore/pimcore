@@ -126,7 +126,7 @@ class Dependency extends AbstractModel
 
     /**
      * @param integer $sourceId
-     * @return void
+     * @return $this
      */
     public function setSourceId($sourceId)
     {
@@ -137,7 +137,7 @@ class Dependency extends AbstractModel
 
     /**
      * @param array $requires
-     * @return void
+     * @return $this
      */
     public function setRequires($requires)
     {

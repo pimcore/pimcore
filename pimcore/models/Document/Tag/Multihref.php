@@ -110,7 +110,7 @@ class Multihref extends Model\Document\Tag implements \Iterator
 
     /**
      * @see Document\Tag\TagInterface::frontend
-     * @return void
+     * @return string
      */
     public function frontend()
     {
@@ -129,7 +129,7 @@ class Multihref extends Model\Document\Tag implements \Iterator
     /**
      * @see Document\Tag\TagInterface::setDataFromResource
      * @param mixed $data
-     * @return void
+     * @return $this
      */
     public function setDataFromResource($data)
     {
@@ -143,7 +143,7 @@ class Multihref extends Model\Document\Tag implements \Iterator
     /**
      * @see Document\Tag\TagInterface::setDataFromEditmode
      * @param mixed $data
-     * @return void
+     * @return $this
      */
     public function setDataFromEditmode($data)
     {

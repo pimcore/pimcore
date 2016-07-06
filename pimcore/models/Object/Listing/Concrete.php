@@ -114,7 +114,7 @@ abstract class Concrete extends Model\Object\Listing
 
     /**
      * @param mixed $locale
-     * @return void
+     * @return $this
      */
     public function setLocale($locale)
     {
@@ -133,7 +133,7 @@ abstract class Concrete extends Model\Object\Listing
 
     /**
      * @param bool $ignoreLocalizedFields
-     * @return void
+     * @return $this
      */
     public function setIgnoreLocalizedFields($ignoreLocalizedFields)
     {

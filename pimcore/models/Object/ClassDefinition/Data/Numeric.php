@@ -94,7 +94,7 @@ class Numeric extends Model\Object\ClassDefinition\Data
 
     /**
      * @param integer $width
-     * @return void
+     * @return $this
      */
     public function setWidth($width)
     {

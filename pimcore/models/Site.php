@@ -220,7 +220,7 @@ class Site extends AbstractModel
 
     /**
      * @param integer $id
-     * @return void
+     * @return $this
      */
     public function setId($id)
     {
@@ -231,7 +231,7 @@ class Site extends AbstractModel
 
     /**
      * @param mixed $domains
-     * @return void
+     * @return $this
      */
     public function setDomains($domains)
     {

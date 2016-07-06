@@ -415,7 +415,7 @@ class Block extends Model\Object\ClassDefinition\Data
 
     /**
      * @param array $childs
-     * @return void
+     * @return $this
      */
     public function setChilds($childs)
     {

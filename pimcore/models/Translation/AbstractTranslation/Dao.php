@@ -80,7 +80,7 @@ abstract class Dao extends Model\Dao\AbstractDao implements Dao\DaoInterface
     /**
      * Returns a array containing all available languages
      *
-     * @return void
+     * @return array
      */
     public function getAvailableLanguages()
     {

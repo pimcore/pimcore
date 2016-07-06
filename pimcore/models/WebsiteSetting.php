@@ -100,7 +100,7 @@ class WebsiteSetting extends AbstractModel
 
     /**
      * @param integer $id
-     * @return void
+     * @return $this
      */
     public function setId($id)
     {
@@ -112,7 +112,7 @@ class WebsiteSetting extends AbstractModel
 
     /**
      * @param string $name
-     * @return void
+     * @return $this
      */
     public function setName($name)
     {

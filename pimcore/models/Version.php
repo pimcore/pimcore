@@ -378,7 +378,7 @@ class Version extends AbstractModel
     }
 
     /**
-     * @return void
+     * @return $this
      */
     public function setCid($cid)
     {
@@ -389,7 +389,7 @@ class Version extends AbstractModel
 
     /**
      * @param integer $date
-     * @return void
+     * @return $this
      */
     public function setDate($date)
     {

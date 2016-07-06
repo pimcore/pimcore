@@ -269,7 +269,7 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
 
     /**
      * @param integer $width
-     * @return void
+     * @return $this
      */
     public function setWidth($width)
     {
@@ -288,7 +288,7 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
 
     /**
      * @param integer $height
-     * @return void
+     * @return $this
      */
     public function setHeight($height)
     {

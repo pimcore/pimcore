@@ -218,7 +218,7 @@ class Link extends Model\Document
 
     /**
      * @param integer $internal
-     * @return void
+     * @return $this
      */
     public function setInternal($internal)
     {
@@ -234,7 +234,7 @@ class Link extends Model\Document
 
     /**
      * @param string $direct
-     * @return void
+     * @return $this
      */
     public function setDirect($direct)
     {
@@ -245,7 +245,7 @@ class Link extends Model\Document
 
     /**
      * @param string $linktype
-     * @return void
+     * @return $this
      */
     public function setLinktype($linktype)
     {
@@ -270,7 +270,7 @@ class Link extends Model\Document
      *
      * @deprecated
      * @param string $name
-     * @return void
+     * @return $this
      */
     public function setName($name)
     {
@@ -290,7 +290,7 @@ class Link extends Model\Document
 
     /**
      * @param string $type
-     * @return void
+     * @return $this
      */
     public function setInternalType($type)
     {
@@ -316,7 +316,7 @@ class Link extends Model\Document
     }
 
     /**
-     * @return void
+     * @return $this
      */
     public function setObject($object)
     {

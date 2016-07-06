@@ -84,7 +84,7 @@ class Objectbrick extends Model\AbstractModel
 
     /**
      * @param $items
-     * @return void
+     * @return $this
      */
     public function setItems($items)
     {

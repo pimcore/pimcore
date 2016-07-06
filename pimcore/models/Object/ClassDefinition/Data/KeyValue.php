@@ -191,7 +191,7 @@ class KeyValue extends Model\Object\ClassDefinition\Data
 
     /**
      * @param integer $width
-     * @return void
+     * @return $this
      */
     public function setKeyWidth($width)
     {
@@ -202,7 +202,7 @@ class KeyValue extends Model\Object\ClassDefinition\Data
 
     /**
      * @param integer $width
-     * @return void
+     * @return $this
      */
     public function setGroupWidth($width)
     {

@@ -242,7 +242,7 @@ class Area extends Model\Document\Tag
     /**
      * @see Model\Document\Tag\TagInterface::setDataFromResource
      * @param mixed $data
-     * @return void
+     * @return $this
      */
     public function setDataFromResource($data)
     {
@@ -252,7 +252,7 @@ class Area extends Model\Document\Tag
     /**
      * @see Model\Document\Tag\TagInterface::setDataFromEditmode
      * @param mixed $data
-     * @return void
+     * @return $this
      */
     public function setDataFromEditmode($data)
     {

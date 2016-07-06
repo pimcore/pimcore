@@ -109,7 +109,7 @@ class Concrete extends AbstractObject
 
     /**
      * @param array $o___loadedLazyFields
-     * @return void
+     * @return $this
      */
     public function setO__loadedLazyFields(array $o___loadedLazyFields)
     {
@@ -308,7 +308,7 @@ class Concrete extends AbstractObject
 
     /**
      * @param array $o_versions
-     * @return void
+     * @return $this
      */
     public function setVersions($o_versions)
     {
@@ -405,7 +405,7 @@ class Concrete extends AbstractObject
 
     /**
      * @param int $o_classId
-     * @return void
+     * @return $this
      */
     public function setClassId($o_classId)
     {
@@ -424,7 +424,7 @@ class Concrete extends AbstractObject
 
     /**
      * @param string $o_className
-     * @return void
+     * @return $this
      */
     public function setClassName($o_className)
     {

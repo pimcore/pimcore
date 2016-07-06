@@ -67,7 +67,7 @@ class Classificationstore extends Model\AbstractModel
 
     /**
      * @param  array $items
-     * @return void
+     * @return $this
      */
     public function setItems($items)
     {
@@ -86,7 +86,7 @@ class Classificationstore extends Model\AbstractModel
 
     /**
      * @param Concrete $object
-     * @return void
+     * @return $this
      */
     public function setObject(Concrete $object)
     {
@@ -105,7 +105,7 @@ class Classificationstore extends Model\AbstractModel
 
     /**
      * @param Model\Object\ClassDefinition $class
-     * @return void
+     * @return $this
      */
     public function setClass(ClassDefinition $class)
     {

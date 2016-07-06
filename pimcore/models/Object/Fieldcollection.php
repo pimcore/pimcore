@@ -55,7 +55,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator
 
     /**
      * @param $items
-     * @return void
+     * @return $this
      */
     public function setItems($items)
     {
@@ -74,7 +74,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator
 
     /**
      * @param $fieldname
-     * @return void
+     * @return $this
      */
     public function setFieldname($fieldname)
     {

@@ -908,7 +908,7 @@ class Asset extends Element\AbstractElement
 
     /**
      * @param  $locked
-     * @return void
+     * @return $this
      */
     public function setLocked($locked)
     {
@@ -1092,7 +1092,7 @@ class Asset extends Element\AbstractElement
 
     /**
      * @param integer $creationDate
-     * @return void
+     * @return $this
      */
     public function setCreationDate($creationDate)
     {
@@ -1103,7 +1103,7 @@ class Asset extends Element\AbstractElement
 
     /**
      * @param integer $id
-     * @return void
+     * @return $this
      */
     public function setId($id)
     {
@@ -1114,7 +1114,7 @@ class Asset extends Element\AbstractElement
 
     /**
      * @param string $filename
-     * @return void
+     * @return $this
      */
     public function setFilename($filename)
     {
@@ -1125,7 +1125,7 @@ class Asset extends Element\AbstractElement
 
     /**
      * @param integer $modificationDate
-     * @return void
+     * @return $this
      */
     public function setModificationDate($modificationDate)
     {
@@ -1136,7 +1136,7 @@ class Asset extends Element\AbstractElement
 
     /**
      * @param integer $parentId
-     * @return void
+     * @return $this
      */
     public function setParentId($parentId)
     {
@@ -1148,7 +1148,7 @@ class Asset extends Element\AbstractElement
 
     /**
      * @param string $path
-     * @return void
+     * @return $this
      */
     public function setPath($path)
     {
@@ -1159,7 +1159,7 @@ class Asset extends Element\AbstractElement
 
     /**
      * @param string $type
-     * @return void
+     * @return $this
      */
     public function setType($type)
     {
@@ -1183,7 +1183,7 @@ class Asset extends Element\AbstractElement
 
     /**
      * @param mixed $data
-     * @return void
+     * @return $this
      */
     public function setData($data)
     {
@@ -1314,7 +1314,7 @@ class Asset extends Element\AbstractElement
 
     /**
      * @param array $properties
-     * @return void
+     * @return $this
      */
     public function setProperties($properties)
     {
@@ -1367,7 +1367,7 @@ class Asset extends Element\AbstractElement
 
     /**
      * @param integer $userOwner
-     * @return void
+     * @return $this
      */
     public function setUserOwner($userOwner)
     {
@@ -1378,7 +1378,7 @@ class Asset extends Element\AbstractElement
 
     /**
      * @param integer $userModification
-     * @return void
+     * @return $this
      */
     public function setUserModification($userModification)
     {
@@ -1401,7 +1401,7 @@ class Asset extends Element\AbstractElement
 
     /**
      * @param array $versions
-     * @return void
+     * @return $this
      */
     public function setVersions($versions)
     {
@@ -1434,7 +1434,7 @@ class Asset extends Element\AbstractElement
     /**
      * @param string $key
      * @param mixed $value
-     * @return void
+     * @return $this
      */
     public function setCustomSetting($key, $value)
     {
@@ -1476,7 +1476,7 @@ class Asset extends Element\AbstractElement
 
     /**
      * @param array $customSettings
-     * @return void
+     * @return $this
      */
     public function setCustomSettings($customSettings)
     {
@@ -1507,7 +1507,7 @@ class Asset extends Element\AbstractElement
 
     /**
      * @param string $mimetype
-     * @return void
+     * @return $this
      */
     public function setMimetype($mimetype)
     {
@@ -1725,7 +1725,7 @@ class Asset extends Element\AbstractElement
 
     /**
      * @param Asset $parent
-     * @return void
+     * @return $this
      */
     public function setParent($parent)
     {

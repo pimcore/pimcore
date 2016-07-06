@@ -43,7 +43,7 @@ abstract class AbstractArea
 
     /**
      * @param $view
-     * @return void
+     * @return $this
      */
     public function setView($view)
     {
@@ -62,7 +62,7 @@ abstract class AbstractArea
 
     /**
      * @param $config
-     * @return void
+     * @return $this
      */
     public function setConfig($config)
     {
@@ -131,7 +131,7 @@ abstract class AbstractArea
 
     /**
      * @param $params
-     * @return void
+     * @return $this
      */
     public function setParams($params)
     {

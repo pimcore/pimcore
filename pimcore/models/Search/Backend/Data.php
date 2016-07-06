@@ -148,7 +148,7 @@ class Data extends \Pimcore\Model\AbstractModel
 
     /**
      * @param  string $fullpath
-     * @return void
+     * @return $this
      */
     public function setFullPath($fullpath)
     {

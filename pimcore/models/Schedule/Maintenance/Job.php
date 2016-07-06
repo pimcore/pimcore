@@ -103,7 +103,7 @@ class Job
 
     /**
      * @param  string $id
-     * @return void
+     * @return $this
      */
     public function setId($id)
     {

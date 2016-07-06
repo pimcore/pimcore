@@ -112,7 +112,7 @@ class Localizedfield extends Model\AbstractModel
 
     /**
      * @param  array $items
-     * @return void
+     * @return $this
      */
     public function setItems($items)
     {

@@ -107,7 +107,7 @@ class User extends User\UserRole
 
     /**
      * @param string $password
-     * @return void
+     * @return $this
      */
     public function setPassword($password)
     {

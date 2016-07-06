@@ -78,7 +78,7 @@ class Block extends Model\Document\Tag
     /**
      * @see Document\Tag\TagInterface::setDataFromResource
      * @param mixed $data
-     * @return void
+     * @return $this
      */
     public function setDataFromResource($data)
     {
@@ -90,7 +90,7 @@ class Block extends Model\Document\Tag
     /**
      * @see Document\Tag\TagInterface::setDataFromEditmode
      * @param mixed $data
-     * @return void
+     * @return $this
      */
     public function setDataFromEditmode($data)
     {
@@ -100,7 +100,7 @@ class Block extends Model\Document\Tag
     }
 
     /**
-     * @return void
+     * @return $this
      */
     public function setDefault()
     {
@@ -167,7 +167,7 @@ class Block extends Model\Document\Tag
     /**
      * Is executed at the beginning of the loop and setup some general settings
      *
-     * @return void
+     * @return $this
      */
     public function start()
     {
@@ -322,7 +322,7 @@ class Block extends Model\Document\Tag
 
     /**
      * @param array $options
-     * @return void
+     * @return $this
      */
     public function setOptions($options)
     {

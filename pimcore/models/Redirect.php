@@ -147,7 +147,7 @@ class Redirect extends AbstractModel
 
     /**
      * @param integer $id
-     * @return void
+     * @return $this
      */
     public function setId($id)
     {
@@ -158,7 +158,7 @@ class Redirect extends AbstractModel
 
     /**
      * @param string $source
-     * @return void
+     * @return $this
      */
     public function setSource($source)
     {

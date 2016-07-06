@@ -150,7 +150,7 @@ class Service extends Model\Element\Service
 
     /**
      * @param  Asset $asset
-     * @return void
+     * @return $this
      */
     public static function gridAssetData($asset)
     {

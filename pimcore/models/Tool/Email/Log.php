@@ -258,7 +258,7 @@ class Log extends Model\AbstractModel
      * Sets the modification date
      *
      * @param integer $modificationDate
-     * @return void
+     * @return $this
      */
     public function setModificationDate($modificationDate)
     {

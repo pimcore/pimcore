@@ -158,7 +158,7 @@ class DocType extends Model\AbstractModel
 
     /**
      * @param string $action
-     * @return void
+     * @return $this
      */
     public function setAction($action)
     {
@@ -169,7 +169,7 @@ class DocType extends Model\AbstractModel
 
     /**
      * @param string $controller
-     * @return void
+     * @return $this
      */
     public function setController($controller)
     {

@@ -442,7 +442,7 @@ class Link
     }
     
     /**
-     * @return void
+     * @return $this
      */
     public function setObject($object)
     {

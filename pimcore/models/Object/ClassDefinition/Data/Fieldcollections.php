@@ -83,7 +83,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
 
     /**
      * @param  $lazyLoading
-     * @return void
+     * @return $this
      */
     public function setLazyLoading($lazyLoading)
     {

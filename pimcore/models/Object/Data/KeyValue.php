@@ -51,7 +51,7 @@ class KeyValue extends Model\AbstractModel
 
     /**
      * @param Object\ClassDefinition $class
-     * @return void
+     * @return $this
      */
     public function setClass(Object\ClassDefinition $class)
     {

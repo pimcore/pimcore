@@ -69,7 +69,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
 
     /**
      * @param string $assets
-     * @return void
+     * @return $this
      */
     public function setAssets($assets)
     {

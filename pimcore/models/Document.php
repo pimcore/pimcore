@@ -718,7 +718,7 @@ class Document extends Element\AbstractElement
 
     /**
      * @param  $locked
-     * @return void
+     * @return $this
      */
     public function setLocked($locked)
     {
@@ -963,7 +963,7 @@ class Document extends Element\AbstractElement
 
     /**
      * @param integer $creationDate
-     * @return void
+     * @return $this
      */
     public function setCreationDate($creationDate)
     {
@@ -974,7 +974,7 @@ class Document extends Element\AbstractElement
 
     /**
      * @param integer $id
-     * @return void
+     * @return $this
      */
     public function setId($id)
     {
@@ -985,7 +985,7 @@ class Document extends Element\AbstractElement
 
     /**
      * @param integer $key
-     * @return void
+     * @return $this
      */
     public function setKey($key)
     {
@@ -997,7 +997,7 @@ class Document extends Element\AbstractElement
 
     /**
      * @param integer $modificationDate
-     * @return void
+     * @return $this
      */
     public function setModificationDate($modificationDate)
     {
@@ -1009,7 +1009,7 @@ class Document extends Element\AbstractElement
 
     /**
      * @param integer $parentId
-     * @return void
+     * @return $this
      */
     public function setParentId($parentId)
     {
@@ -1021,7 +1021,7 @@ class Document extends Element\AbstractElement
 
     /**
      * @param integer $path
-     * @return void
+     * @return $this
      */
     public function setPath($path)
     {
@@ -1040,7 +1040,7 @@ class Document extends Element\AbstractElement
 
     /**
      * @param integer $index
-     * @return void
+     * @return $this
      */
     public function setIndex($index)
     {
@@ -1059,7 +1059,7 @@ class Document extends Element\AbstractElement
 
     /**
      * @param integer $type
-     * @return void
+     * @return $this
      */
     public function setType($type)
     {
@@ -1086,7 +1086,7 @@ class Document extends Element\AbstractElement
 
     /**
      * @param integer $userModification
-     * @return void
+     * @return $this
      */
     public function setUserModification($userModification)
     {
@@ -1097,7 +1097,7 @@ class Document extends Element\AbstractElement
 
     /**
      * @param integer $userOwner
-     * @return void
+     * @return $this
      */
     public function setUserOwner($userOwner)
     {
@@ -1124,7 +1124,7 @@ class Document extends Element\AbstractElement
 
     /**
      * @param integer $published
-     * @return void
+     * @return $this
      */
     public function setPublished($published)
     {
@@ -1159,7 +1159,7 @@ class Document extends Element\AbstractElement
 
     /**
      * @param array $properties
-     * @return void
+     * @return $this
      */
     public function setProperties($properties)
     {
@@ -1174,7 +1174,7 @@ class Document extends Element\AbstractElement
      * @param mixed $data
      * @param bool $inherited
      * @param bool $inheritable
-     * @return void
+     * @return $this
      */
     public function setProperty($name, $type, $data, $inherited = false, $inheritable = true)
     {
@@ -1208,7 +1208,7 @@ class Document extends Element\AbstractElement
 
     /**
      * @param Document $parent
-     * @return void
+     * @return $this
      */
     public function setParent($parent)
     {

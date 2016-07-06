@@ -123,7 +123,7 @@ class Page extends Model\Document\PageSnippet
      *
      * @deprecated
      * @param string $name
-     * @return void
+     * @return $this
      */
     public function setName($name)
     {
@@ -162,7 +162,7 @@ class Page extends Model\Document\PageSnippet
 
     /**
      * @param string $description
-     * @return void
+     * @return $this
      */
     public function setDescription($description)
     {
@@ -174,7 +174,7 @@ class Page extends Model\Document\PageSnippet
     /**
      * @deprecated
      * @param string $keywords
-     * @return void
+     * @return $this
      */
     public function setKeywords($keywords)
     {
@@ -186,7 +186,7 @@ class Page extends Model\Document\PageSnippet
 
     /**
      * @param string $title
-     * @return void
+     * @return $this
      */
     public function setTitle($title)
     {

@@ -117,7 +117,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
 
     /**
      * @param boolean $objectsAllowed
-     * @return void
+     * @return $this
      */
     public function setObjectsAllowed($objectsAllowed)
     {
@@ -136,7 +136,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
 
     /**
      * @param boolean $documentsAllowed
-     * @return void
+     * @return $this
      */
     public function setDocumentsAllowed($documentsAllowed)
     {
@@ -155,8 +155,8 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
     }
 
     /**
-     * @param array
-     * @return void $documentTypes
+     * @param array $documentTypes
+     * @return $this
      */
     public function setDocumentTypes($documentTypes)
     {
@@ -177,7 +177,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
     /**
      *
      * @param boolean $assetsAllowed
-     * @return void
+     * @return $this
      */
     public function setAssetsAllowed($assetsAllowed)
     {
@@ -195,8 +195,8 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
     }
 
     /**
-     * @param array
-     * @return void $assetTypes
+     * @param array $assetTypes
+     * @return $this
      */
     public function setAssetTypes($assetTypes)
     {
@@ -415,7 +415,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
 
     /**
      * @param integer $width
-     * @return void
+     * @return $this
      */
     public function setWidth($width)
     {
@@ -434,7 +434,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
 
     /**
      * @param integer $height
-     * @return void
+     * @return $this
      */
     public function setHeight($height)
     {

@@ -207,7 +207,7 @@ class Dao extends Model\Element\Dao
     /**
      * Get the properties for the object from database and assign it
      *
-     * @return void
+     * @return []
      */
     public function getProperties($onlyInherited = false)
     {

@@ -66,7 +66,7 @@ class Property extends AbstractModel
      * Takes data from editmode and convert it to internal objects
      *
      * @param mixed $data
-     * @return void
+     * @return $this
      */
     public function setDataFromEditmode($data)
     {

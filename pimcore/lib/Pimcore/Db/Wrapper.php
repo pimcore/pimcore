@@ -89,7 +89,7 @@ class Wrapper
 
     /**
      * @param $resource
-     * @return void
+     * @return $this
      */
     public function setResource($resource)
     {
