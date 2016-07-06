@@ -334,6 +334,10 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
             }
         }
 
+        // check if there's a fallback language endless loop
+        foreach($fallbackLanguages as $sourceLang => $targetLang) {
+            $this->checkFallbackLanguageLoop($sourceLang, $fallbackLanguages);
+        }
 
         // delete views if fallback languages has changed or the language is no more available
         $fallbackLanguagesChanged = array_diff_assoc($existingValues['general']['fallbackLanguages'], $fallbackLanguages);
@@ -501,6 +505,22 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
         File::putPhpFile($configFile, to_php_data_file_format($settings));
 
         $this->_helper->json(["success" => true]);
+    }
+
+    protected function checkFallbackLanguageLoop($source, $definitions, $fallbacks = []) {
+        if(isset($definitions[$source])) {
+            $target = $definitions[$source];
+            if($target) {
+                if (in_array($target, $fallbacks)) {
+                    throw new \Exception("Language `$source` | `$target` causes an infinte loop.");
+                }
+                $fallbacks[] = $target;
+
+                $this->checkFallbackLanguageLoop($target, $definitions, $fallbacks);
+            }
+        } else {
+            throw new \Exception("Language `$source` doesn't exist");
+        }
     }
 
     public function getWeb2printAction()
