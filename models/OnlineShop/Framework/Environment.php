@@ -214,7 +214,7 @@ class Environment implements IEnvironment {
      *
      * use setCurrentAssortmentSubTenant instead
      *
-     * @param string $currentSubTenant
+     * @param mixed $currentSubTenant
      * @return mixed|void
      */
     public function setCurrentSubTenant($currentSubTenant) {
@@ -227,7 +227,7 @@ class Environment implements IEnvironment {
      *
      * use getCurrentAssortmentSubTenant instead
      *
-     * @return string
+     * @return mixed
      */
     public function getCurrentSubTenant() {
         return $this->getCurrentAssortmentSubTenant();
@@ -280,7 +280,7 @@ class Environment implements IEnvironment {
     /**
      * sets current assortment sub tenant which is used for indexing and product lists
      *
-     * @param $subTenant string
+     * @param $subTenant mixed
      * @return mixed
      */
     public function setCurrentAssortmentSubTenant($subTenant)
@@ -291,7 +291,7 @@ class Environment implements IEnvironment {
     /**
      * gets current assortment tenant which is used for indexing and product lists
      *
-     * @return string
+     * @return mixed
      */
     public function getCurrentAssortmentSubTenant()
     {

@@ -110,7 +110,7 @@ interface IEnvironment extends IComponent {
     /**
      * sets current assortment sub tenant which is used for indexing and product lists
      *
-     * @param $subTenant string
+     * @param $subTenant mixed
      * @return mixed
      */
     public function setCurrentAssortmentSubTenant($subTenant);
@@ -118,7 +118,7 @@ interface IEnvironment extends IComponent {
     /**
      * gets current sub assortment tenant which is used for indexing and product lists
      *
-     * @return string
+     * @return mixed
      */
     public function getCurrentAssortmentSubTenant();
 
@@ -186,7 +186,7 @@ interface IEnvironment extends IComponent {
      *
      * use setCurrentAssortmentSubTenant instead
      *
-     * @param $tenant string
+     * @param $tenant mixed
      * @return mixed
      */
     public function setCurrentSubTenant($tenant);
@@ -196,7 +196,7 @@ interface IEnvironment extends IComponent {
      *
      * use getCurrentAssortmentSubTenant instead
      *
-     * @return string
+     * @return mixed
      */
     public function getCurrentSubTenant();
 
