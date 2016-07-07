@@ -527,7 +527,7 @@ class Config extends Model\AbstractModel
         $isVectorFormatStatus = null;
 
         $isVectorFormat = function () use ($isVectorFormatStatus, $asset) {
-            if($isVectorFormatStatus === null) {
+            if ($isVectorFormatStatus === null) {
                 $imageTransformer = \Pimcore\Image::getInstance();
                 $imageTransformer->load($asset->getFileSystemPath());
                 $isVectorFormatStatus = $imageTransformer->isVectorGraphic();
