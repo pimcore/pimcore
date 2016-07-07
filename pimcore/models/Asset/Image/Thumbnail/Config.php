@@ -524,6 +524,17 @@ class Config extends Model\AbstractModel
     {
         $originalWidth = $asset->getWidth();
         $originalHeight = $asset->getHeight();
+        $isVectorFormatStatus = null;
+
+        $isVectorFormat = function () use ($isVectorFormatStatus, $asset) {
+            if($isVectorFormatStatus === null) {
+                $imageTransformer = \Pimcore\Image::getInstance();
+                $imageTransformer->load($asset->getFileSystemPath());
+                $isVectorFormatStatus = $imageTransformer->isVectorGraphic();
+            }
+
+            return $isVectorFormatStatus;
+        };
 
 
         $dimensions = [];
@@ -541,12 +552,12 @@ class Config extends Model\AbstractModel
                             $dimensions["width"] = $arg["width"];
                             $dimensions["height"] = $arg["height"];
                         } elseif ($transformation["method"] == "scaleByWidth") {
-                            if ($arg["width"] <= $dimensions["width"]) {
+                            if ($arg["width"] <= $dimensions["width"] || $isVectorFormat()) {
                                 $dimensions["height"] = round(($arg["width"] / $dimensions["width"]) * $dimensions["height"], 0);
                                 $dimensions["width"] = $arg["width"];
                             }
                         } elseif ($transformation["method"] == "scaleByHeight") {
-                            if ($arg["height"] < $dimensions["height"]) {
+                            if ($arg["height"] < $dimensions["height"] || $isVectorFormat()) {
                                 $dimensions["width"] = round(($arg["height"] / $dimensions["height"]) * $dimensions["width"], 0);
                                 $dimensions["height"] = $arg["height"];
                             }
@@ -554,13 +565,8 @@ class Config extends Model\AbstractModel
                             $x = $dimensions["width"] / $arg["width"];
                             $y = $dimensions["height"] / $arg["height"];
 
-                            if ($x <= 1 && $y <= 1) {
-                                $imageTransformer = \Pimcore\Image::getInstance();
-                                $imageTransformer->load($asset->getFileSystemPath());
-
-                                if (!$imageTransformer->isVectorGraphic()) {
-                                    continue;
-                                }
+                            if ($x <= 1 && $y <= 1 && !$isVectorFormat()) {
+                                continue;
                             }
 
                             if ($x > $y) {
