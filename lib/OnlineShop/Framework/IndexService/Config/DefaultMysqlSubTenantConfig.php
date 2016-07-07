@@ -84,7 +84,7 @@ class DefaultMysqlSubTenantConfig extends DefaultMysql {
     }
 
     public function updateSubTenantEntries($objectId, $subTenantData, $subObjectId = null) {
-        $db = \Pimcore\Resource::get();
+        $db = \Pimcore\Db::get();
         $db->delete($this->getTenantRelationTablename(), "o_id = " . $db->quote($subObjectId ? $subObjectId : $objectId));
 
         if($subTenantData) {

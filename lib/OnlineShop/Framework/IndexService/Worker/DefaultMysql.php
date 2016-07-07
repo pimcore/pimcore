@@ -328,7 +328,8 @@ class DefaultMysql extends AbstractWorker implements IWorker {
                 }
 
             }
-            $this->tenantConfig->updateSubTenantEntries($object, $subObjectId);
+            $subTenantData = $this->tenantConfig->prepareSubTenantEntries($object, $subObjectId);
+            $this->tenantConfig->updateSubTenantEntries($object, $subTenantData, $subObjectId);
         }
 
         //cleans up all old zombie data
