@@ -35,6 +35,7 @@ class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin
         }
 
         $query = str_replace("%", "*", $query);
+        $query = preg_replace("@([^ ])\-@", "$1 ", $query);
 
         $types = explode(",", $this->getParam("type"));
         $subtypes = explode(",", $this->getParam("subtype"));
