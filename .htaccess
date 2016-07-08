@@ -19,6 +19,12 @@ RewriteBase /
     RewriteRule . - [L]
 </IfModule>
 
+<IfModule mod_headers.c>
+    <FilesMatch "\.(jpe?g|png)$">
+        Header always unset X-Content-Type-Options
+    </FilesMatch>
+</IfModule>
+
 # ASSETS: check if request method is GET (because of WebDAV) and if the requested file (asset) exists on the filesystem, if both match, deliver the asset directly 
 RewriteCond %{REQUEST_METHOD} ^(GET|HEAD)
 RewriteCond %{DOCUMENT_ROOT}/website/var/assets%{REQUEST_URI} -f
