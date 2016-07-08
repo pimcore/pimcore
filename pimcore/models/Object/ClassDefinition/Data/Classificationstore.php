@@ -417,7 +417,6 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
         $data = $this->getDataFromObjectParam($object, $params);
 
         if ($data) {
-
             if ($this->isLocalized()) {
                 $validLanguages = Tool::getValidLanguages();
             } else {
@@ -425,17 +424,17 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
             }
             array_unshift($validLanguages, "default");
 
-            $result = array();
-            $activeGroups = array();
+            $result = [];
+            $activeGroups = [];
             $items = $data->getActiveGroups();
             if (is_array($items)) {
                 foreach ($items as $groupId => $groupData) {
                     $groupDef = Object\Classificationstore\GroupConfig::getById($groupId);
-                    $activeGroups[] = array(
+                    $activeGroups[] = [
                         "id" => $groupId,
                         "name" => $groupDef->getName(). " - " . $groupDef->getDescription(),
                         "enabled" => $groupData
-                    );
+                    ];
                 }
             }
 
@@ -443,44 +442,42 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
             $items = $data->getItems();
 
             foreach ($items as $groupId => $groupData) {
-                $groupResult = array();
+                $groupResult = [];
 
                 foreach ($groupData as $keyId => $keyData) {
                     $keyConfig = Object\Classificationstore\DefinitionCache::get($keyId);
                     $fd = Object\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
-                    $context = array(
+                    $context = [
                         "containerType" => "classificationstore",
                         "fieldname" => $this->getName(),
                         "groupId" => $groupId,
                         "keyId" => $keyId
-                    );
+                    ];
 
                     foreach ($validLanguages as $language) {
-                        $value = $fd->getForWebserviceExport($object, array("context" => $context, "language" => $language));
-                        $groupResult[$language][] = array(
+                        $value = $fd->getForWebserviceExport($object, ["context" => $context, "language" => $language]);
+                        $groupResult[$language][] = [
                             "id" => $keyId,
                             "name" => $keyConfig->getName(),
                             "description" => $keyConfig->getDescription(),
                             "value" => $value
-                        );
+                        ];
                     }
-
                 }
 
                 if ($groupResult) {
                     $groupDef = Object\Classificationstore\GroupConfig::getById($groupId);
-                    $groupResult = array(
+                    $groupResult = [
                         "id" => $groupId,
                         "name" => $groupDef->getName(). " - " . $groupDef->getDescription(),
                         "keys" => $groupResult
-                    );
+                    ];
                 }
 
                 $result["groups"][] = $groupResult;
             }
 
             return $result;
-
         }
     }
 
@@ -494,12 +491,11 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
      */
     public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
     {
-
         if ($value) {
             $storeData = new Object\Classificationstore();
             $storeData->setFieldname($this->getName());
             $storeData->setObject($object);
-            $activeGroupsLocal = array();
+            $activeGroupsLocal = [];
             $activeGroupsRemote = $value->activeGroups;
             if (is_array($activeGroupsRemote)) {
                 foreach ($activeGroupsRemote as $data) {
@@ -527,7 +523,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
                             $keyConfig = Object\Classificationstore\KeyConfig::getById($localKeyId);
                             $keyDef = Object\Classificationstore\Service::getFieldDefinitionFromJson(json_decode($keyConfig->getDefinition()), $keyConfig->getType());
                             $value = $keyData->value;
-                            $value = $keyDef->getFromWebserviceImport($value, $object, array());
+                            $value = $keyDef->getFromWebserviceImport($value, $object, []);
                             $storeData->setLocalizedKeyValue($localGroupId, $localKeyId, $value, $language);
                         }
                     }
