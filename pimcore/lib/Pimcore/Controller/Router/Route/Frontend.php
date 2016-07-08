@@ -145,7 +145,7 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
 
         // test if there is a suitable redirect with override = all (=> priority = 99)
         if (!$matchFound) {
-            $this->checkForRedirect(true);
+            $this->checkForRedirect($originalPath, true);
         }
 
         // do not allow requests including /index.php/ => SEO
@@ -363,7 +363,7 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
 
         // test if there is a suitable redirect
         if (!$matchFound) {
-            $this->checkForRedirect(false);
+            $this->checkForRedirect($originalPath, false);
         }
 
         if (!$matchFound) {
@@ -449,12 +449,10 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
     }
 
     /**
-     * Checks for a suitable redirect
-     * @throws Exception
+     * @param $matchRequestUri
      * @param bool $override
-     * @return void
      */
-    protected function checkForRedirect($override = false)
+    protected function checkForRedirect($matchRequestUri, $override = false)
     {
 
         // not for admin requests
@@ -484,7 +482,6 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
             }
 
             $requestScheme = Tool::getRequestScheme();
-            $matchRequestUri = $_SERVER["REQUEST_URI"];
             $matchUrl = Tool::getHostUrl() . $matchRequestUri;
 
             foreach ($this->redirects as $redirect) {
