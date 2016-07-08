@@ -416,58 +416,70 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
         $data = $this->getDataFromObjectParam($object, $params);
 
         if ($data) {
-            $result = [];
-            $activeGroups = [];
+
+            if ($this->isLocalized()) {
+                $validLanguages = Tool::getValidLanguages();
+            } else {
+                $validLanguages = [];
+            }
+            array_unshift($validLanguages, "default");
+
+            $result = array();
+            $activeGroups = array();
             $items = $data->getActiveGroups();
             if (is_array($items)) {
                 foreach ($items as $groupId => $groupData) {
                     $groupDef = Object\Classificationstore\GroupConfig::getById($groupId);
-                    $activeGroups[] = [
+                    $activeGroups[] = array(
                         "id" => $groupId,
                         "name" => $groupDef->getName(). " - " . $groupDef->getDescription(),
                         "enabled" => $groupData
-                    ];
+                    );
                 }
             }
 
             $result["activeGroups" ] = $activeGroups;
             $items = $data->getItems();
-            $resultItems = [];
 
             foreach ($items as $groupId => $groupData) {
-                $groupResult = [];
+                $groupResult = array();
 
                 foreach ($groupData as $keyId => $keyData) {
                     $keyConfig = Object\Classificationstore\DefinitionCache::get($keyId);
                     $fd = Object\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
-                    $context = [
+                    $context = array(
                         "containerType" => "classificationstore",
                         "fieldname" => $this->getName(),
                         "groupId" => $groupId,
                         "keyId" => $keyId
-                    ];
-                    $value = $fd->getForWebserviceExport($object, ["context" => $context]);
-                    $groupResult[] = [
-                        "id" => $keyId,
-                        "name" => $keyConfig->getName(),
-                        "description" => $keyConfig->getDescription(),
-                        "value" => $value
-                    ];
+                    );
+
+                    foreach ($validLanguages as $language) {
+                        $value = $fd->getForWebserviceExport($object, array("context" => $context, "language" => $language));
+                        $groupResult[$language][] = array(
+                            "id" => $keyId,
+                            "name" => $keyConfig->getName(),
+                            "description" => $keyConfig->getDescription(),
+                            "value" => $value
+                        );
+                    }
+
                 }
 
                 if ($groupResult) {
                     $groupDef = Object\Classificationstore\GroupConfig::getById($groupId);
-                    $groupResult = [
+                    $groupResult = array(
                         "id" => $groupId,
                         "name" => $groupDef->getName(). " - " . $groupDef->getDescription(),
                         "keys" => $groupResult
-                    ];
+                    );
                 }
 
                 $result["groups"][] = $groupResult;
             }
 
             return $result;
+
         }
     }
 
@@ -495,7 +507,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
 
     /**
      * @param array $childs
-     * @return $this
+     * @return void
      */
     public function setChilds($childs)
     {
