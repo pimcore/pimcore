@@ -19,6 +19,7 @@ namespace Pimcore\Model\Object\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\Object;
 use Pimcore\Tool;
+use RestImporter\IdMapper;
 
 class Classificationstore extends Model\Object\ClassDefinition\Data
 {
@@ -487,13 +488,54 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
      * @param mixed $value
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
-     * @param null $idMapper
-     * @return mixed|null|Object\Localizedfield
+     * @param IdMapper $idMapper
+     * @return mixed|null|Object\Classificationstore
      * @throws \Exception
      */
     public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
     {
-        // TODO not supported
+
+        if ($value) {
+            $storeData = new Object\Classificationstore();
+            $storeData->setFieldname($this->getName());
+            $storeData->setObject($object);
+            $activeGroupsLocal = array();
+            $activeGroupsRemote = $value->activeGroups;
+            if (is_array($activeGroupsRemote)) {
+                foreach ($activeGroupsRemote as $data) {
+                    $remoteId = $data->id;
+                    $localId = $idMapper->getMappedId("csGroup", $remoteId);
+                    $activeGroupsLocal[$localId] = $localId;
+                }
+            }
+
+            $storeData->setActiveGroups($activeGroupsLocal);
+
+
+            $groupsRemote = $value->groups;
+            if (is_array($groupsRemote)) {
+                foreach ($groupsRemote as $remoteGroupData) {
+                    $remoteGroupId = $remoteGroupData->id;
+                    $localGroupId = $idMapper->getMappedId("csGroup", $remoteGroupId);
+                    $remoteKeys = $remoteGroupData->keys;
+                    $remoteKeys = (array) $remoteKeys;
+
+                    foreach ($remoteKeys as $language => $keyList) {
+                        foreach ($keyList as $keyData) {
+                            $remoteKeyId = $keyData->id;
+                            $localKeyId = $idMapper->getMappedId("csKey", $remoteKeyId);
+                            $keyConfig = Object\Classificationstore\KeyConfig::getById($localKeyId);
+                            $keyDef = Object\Classificationstore\Service::getFieldDefinitionFromJson(json_decode($keyConfig->getDefinition()), $keyConfig->getType());
+                            $value = $keyData->value;
+                            $value = $keyDef->getFromWebserviceImport($value, $object, array());
+                            $storeData->setLocalizedKeyValue($localGroupId, $localKeyId, $value, $language);
+                        }
+                    }
+                }
+            }
+
+            return $storeData;
+        }
     }
 
 
@@ -507,7 +549,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
 
     /**
      * @param array $childs
-     * @return void
+     * @return $this
      */
     public function setChilds($childs)
     {
