@@ -37,6 +37,8 @@ The configuration of the FilterTypes takes place in the OnlineShopConfig.xml
 </filtertypes>
 ```
 
+You can find some script filter exemples in the ecommerce framework demo (/website/views/scripts directory).
+
 
 **Configuration elements are:**
 - FilterCategory: represents the field collection type for configuration in filter definitions
@@ -74,6 +76,7 @@ $this->view->filterDefinitionObject = $filterDefinition;
 
 // create product list
 $products = \OnlineShop\Framework\Factory::getInstance()->getIndexService()->getProductListForCurrentTenant();
+$this->view->products = $products;
 
 // create and init filter service
 $filterService = \OnlineShop\Framework\Factory::getInstance()->getFilterService($this->view);

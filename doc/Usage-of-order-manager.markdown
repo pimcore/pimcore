@@ -33,7 +33,7 @@ foreach($orderList as $order)
 {
     /* @var OnlineShop\Framework\OrderManager\Order\Listing\IOrderListItem $order */
 
-    echo $order->orderNumber();
+    echo $order->getOrdernumber();
 }
 
 
