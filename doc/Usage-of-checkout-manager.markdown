@@ -115,7 +115,7 @@ class DeliveryAddress extends AbstractStep implements ICheckoutStep {
 ```php
 <?php
 
-$manager = $this->of->getCheckoutManager($cart);
+$manager = \OnlineShop\Framework\Factory::getInstance()->getCheckoutManager($cart);
 $step = $manager->getCheckoutStep("deliveryaddress");
 $address = new stdClass();
 //fill address
@@ -131,7 +131,7 @@ $cart->save();
 After each checkout step is completed, the order can be committed. If no payment is needed, this is done as follows: 
 ```php
 <?php
-$manager = $this->of->getCheckoutManager($cart);
+$manager = \OnlineShop\Framework\Factory::getInstance()->getCheckoutManager($cart);
 $order = $manager->commitOrder();
 ```
 While committing the order, the checkout manager delegates it to the specified commit order processor implementation, which needs to implement `\OnlineShop\Framework\CheckoutManager\ICommitOrderProcessor`. 
@@ -215,7 +215,7 @@ To integrate payment into the checkout process instead of calling ```$manager->c
 After each checkout step is completed, the payment can be started. This is done as follows: 
 ```php
 <?php
-$manager = $this->of->getCheckoutManager($cart);
+$manager = \OnlineShop\Framework\Factory::getInstance()->getCheckoutManager($cart);
 
 // start order payment
 $paymentInformation= $manager->startOrderPayment();
