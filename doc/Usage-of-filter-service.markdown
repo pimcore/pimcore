@@ -37,7 +37,7 @@ The configuration of the FilterTypes takes place in the OnlineShopConfig.xml
 </filtertypes>
 ```
 
-You can find some script filter exemples in the ecommerce framework demo (/website/views/scripts directory).
+You can find some script filter examples in the ecommerce framework demo (/website/views/scripts directory).
 
 
 **Configuration elements are:**
