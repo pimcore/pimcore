@@ -30,6 +30,9 @@ RewriteCond %{REQUEST_METHOD} ^(GET|HEAD)
 RewriteCond %{DOCUMENT_ROOT}/website/var/assets%{REQUEST_URI} -f
 RewriteRule ^(.*)$ /website/var/assets%{REQUEST_URI} [PT,L]
 
+# cache-buster rule for scripts & stylesheets embedded using view helpers
+RewriteRule ^cache-buster\-[\d]+/(.*) $1 [PT,L]
+
 # allow access to plugin-data and core assets
 RewriteRule ^plugins/.*/static.* - [PT,L]
 RewriteRule ^.*modules/.*/static.* - [PT,L]
@@ -47,7 +50,7 @@ RewriteCond %{REQUEST_FILENAME} -f
 RewriteRule (^\.|/\.) - [F,L]
 
 # restrict access to potentially sensitive directories and files
-RewriteRule ^(vendor|tests|node_modules|phing)/.*$ / [F,L]
+RewriteRule ^(vendor|tests|node_modules|phing|docs)/.*$ / [F,L]
 RewriteRule ^(bower|package|composer|gulpfile|readme)\. / [NC,F,L]
 
 # basic zend-framework setup see: http://framework.zend.com/manual/en/zend.controller.html

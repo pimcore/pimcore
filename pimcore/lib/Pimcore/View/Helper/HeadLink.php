@@ -29,7 +29,7 @@ class HeadLink extends \Zend_View_Helper_HeadLink
             if (isset($item->href)) {
                 $realFile = PIMCORE_DOCUMENT_ROOT . $item->href;
                 if (file_exists($realFile)) {
-                    $item->href = $item->href . "?_dc=" . filemtime($realFile);
+                    $item->href = "/cache-buster-" . filemtime($realFile) . $item->href;
                 }
             }
         }

@@ -35,7 +35,7 @@ class HeadScript extends \Zend_View_Helper_HeadScript
                 if (isset($item->attributes["src"])) {
                     $realFile = PIMCORE_DOCUMENT_ROOT . $item->attributes["src"];
                     if (file_exists($realFile)) {
-                        $item->attributes["src"] = $item->attributes["src"] . "?_dc=" . filemtime($realFile);
+                        $item->attributes["src"] = "/cache-buster-" . filemtime($realFile) . $item->attributes["src"];
                     }
                 }
             }
