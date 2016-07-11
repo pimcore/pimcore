@@ -168,8 +168,8 @@
         "definition": "Language Settings"
     },
     {
-        "term": "toolbar_configuration",
-        "definition": "Toolbar Configuration"
+        "term": "editor_configuration",
+        "definition": "Editor Configuration"
     },
     {
         "term": "too_many_children_for_recyclebin",
