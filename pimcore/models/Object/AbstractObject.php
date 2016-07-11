@@ -694,7 +694,7 @@ class AbstractObject extends Model\Element\AbstractElement
         $this->getProperties();
         $this->getDao()->deleteAllProperties();
 
-        if (is_array($this->getProperties()) and count(is_array($this->getProperties())) > 0) {
+        if (is_array($this->getProperties()) and count($this->getProperties()) > 0) {
             foreach ($this->getProperties() as $property) {
                 if (!$property->getInherited()) {
                     $property->setDao(null);
