@@ -75,11 +75,6 @@ pimcore.object.classes.data.wysiwyg = Class.create(pimcore.object.classes.data.d
                 value: this.datax.toolbarConfig,
                 width:400,
                 height:150
-            }, {
-                xtype: "textfield",
-                fieldLabel: t("editor_custom_configuration"),
-                name: "customConfig",
-                value: this.datax.customConfig
             }
         ]);
 
@@ -95,8 +90,7 @@ pimcore.object.classes.data.wysiwyg = Class.create(pimcore.object.classes.data.d
                 {
                     width: source.datax.width,
                     height: source.datax.height,
-                    toolbarConfig: source.datax.toolbarConfig,
-                    customConfig: source.datax.customConfig
+                    toolbarConfig: source.datax.toolbarConfig
                 });
         }
     }
