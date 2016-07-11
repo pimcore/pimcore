@@ -133,30 +133,33 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
         var eConfig = {
             width: this.fieldConfig.width,
             height: this.fieldConfig.height,
-            resize_enabled: false,
             language: pimcore.settings["language"]
         };
 
-
         eConfig.toolbarGroups = [
-            { name: 'clipboard', groups: [ "sourcedialog", 'clipboard', 'undo', "find" ] },
+            { name: 'clipboard', groups: [ 'sourcedialog', 'clipboard', 'undo', 'find' ] },
             { name: 'basicstyles', groups: [ 'basicstyles', 'list'] },
             '/',
             { name: 'paragraph', groups: [ 'align', 'indent'] },
             { name: 'blocks' },
             { name: 'links' },
             { name: 'insert' },
-            "/",
+            '/',
             { name: 'styles' },
-            { name: 'tools', groups: ['colors', "tools", 'cleanup', 'mode', "others"] }
+            { name: 'tools', groups: ['colors', 'tools', 'cleanup', 'mode', 'others'] }
         ];
 
         if(this.fieldConfig.toolbarConfig) {
-            eConfig.toolbarGroups = Ext.decode("[" + this.fieldConfig.toolbarConfig + "]")
+
+            var elementCustomConfig = Ext.decode(this.fieldConfig.toolbarConfig);
+            eConfig = mergeObject(eConfig, elementCustomConfig);
+
         }
 
+        //prevent override important settings!
         eConfig.allowedContent = true; // disables CKEditor ACF (will remove pimcore_* attributes from links, etc.)
         eConfig.removePlugins = "tableresize";
+        eConfig.resize_enabled = false;
 
         if(typeof(pimcore.object.tags.wysiwyg.defaultEditorConfig) == 'object'){
             eConfig = mergeObject(pimcore.object.tags.wysiwyg.defaultEditorConfig,eConfig);
