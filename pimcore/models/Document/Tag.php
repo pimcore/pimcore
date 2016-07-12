@@ -107,7 +107,6 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     }
 
     /**
-     * @see Document\Tag\DocumentInterface::admin
      * @return string
      */
     public function admin()
@@ -139,7 +138,6 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     }
 
     /**
-     * @see Document\Tag\DocumentInterface::getData
      * @return mixed
      */
     public function getValue()
@@ -328,9 +326,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
         return $this;
     }
 
-
     /**
-     * @see Document\Tag\DocumentInterface::getDataForResource
      * @return $this
      */
     public function getDataForResource()

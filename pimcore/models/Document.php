@@ -205,7 +205,7 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * Static helper to get a Document by it's path, only type Document is returned, not Document\Page, ... (see getConcreteByPath() )
+     * Static helper to get a Document by it's path
      *
      * @param string $path
      * @return Document
@@ -230,7 +230,7 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * Static helper to get a Document by it's id, only type Document is returned, not Document\Page, ... (see getConcreteById() )
+     * Static helper to get a Document by it's ID
      *
      * @param integer $id
      * @return Document
@@ -287,28 +287,6 @@ class Document extends Element\AbstractElement
         }
 
         return $document;
-    }
-
-    /**
-     * Static helper to get a concrete implementation of a document by it's id, this method returns the concrete object to retrieve only the basic object use getById()
-     *
-     * @param Document|integer $id
-     * @return Document\Page|Document\Snippet|Document\Folder|Document\Link
-     */
-    public static function getConcreteById($id)
-    {
-        return self::getById($id);
-    }
-
-    /**
-     * Static helper to get a concrete implementation of a document by it's path, this method returns the concrete object to retrieve only the basic object use getById()
-     *
-     * @param string|Document $path
-     * @return Document\Page|Document\Snippet|Document\Folder|Document\Link
-     */
-    public static function getConcreteByPath($path)
-    {
-        return self::getByPath($path);
     }
 
     /**

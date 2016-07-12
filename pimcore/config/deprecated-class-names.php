@@ -2226,13 +2226,6 @@ namespace {
     /**
      * @deprecated
      */
-    interface Document_Interface extends \Pimcore\Model\Document\DocumentInterface
-    {
-    }
-
-    /**
-     * @deprecated
-     */
     abstract class Document_Tag extends \Pimcore\Model\Document\Tag
     {
     }

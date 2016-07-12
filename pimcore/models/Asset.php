@@ -280,17 +280,7 @@ class Asset extends Element\AbstractElement
 
         return $asset;
     }
-
-    /**
-     *
-     * @param Asset|integer $id
-     * @return Asset
-     */
-    public static function getConcreteById($id)
-    {
-        return self::getById($id);
-    }
-
+    
     /**
      * Helper to quickly create a new asset
      *
