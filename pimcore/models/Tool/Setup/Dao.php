@@ -59,7 +59,8 @@ class Dao extends Model\Dao\AbstractDao
         $sql = file_get_contents($file);
 
         //replace document root placeholder with current document root
-        $sql = str_replace("~~DOCUMENTROOT~~", PIMCORE_DOCUMENT_ROOT, $sql);
+        $docRoot = str_replace(PIMCORE_DOCUMENT_ROOT, "\\", "/"); // Windows fix
+        $sql = str_replace("~~DOCUMENTROOT~~", $docRoot, $sql);
 
         // we have to use the raw connection here otherwise \Zend_Db uses prepared statements, which causes problems with inserts (: placeholders)
         // and mysqli causes troubles because it doesn't support multiple queries
