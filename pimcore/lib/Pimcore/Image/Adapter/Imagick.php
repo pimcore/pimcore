@@ -83,7 +83,7 @@ class Imagick extends Adapter
                 $i->setcolorspace(\Imagick::COLORSPACE_SRGB);
             }
 
-            if($this->isVectorGraphic($imagePath)) {
+            if ($this->isVectorGraphic($imagePath)) {
                 // only for vector graphics
                 // the below causes problems with PSDs when target format is PNG32 (nobody knows why ;-))
                 $i->setBackgroundColor(new \ImagickPixel('transparent'));
@@ -785,7 +785,7 @@ class Imagick extends Adapter
         }
 
         try {
-            if($this->resource) {
+            if ($this->resource) {
                 $type = $this->resource->getimageformat();
                 $vectorTypes = [
                     "EPT",

@@ -928,8 +928,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
         header("Access-Control-Allow-Origin: *"); // for Aviary.Feather (Adobe Creative SDK)
 
         header("Content-Length: " . filesize($thumbnailFile), true);
-        $this->sendThumbnailCacheHeaders();
-        while (@ob_end_flush());
+        $this->sendThumbnailCacheHeaders(); while (@ob_end_flush());
         flush();
 
         readfile($thumbnailFile);
