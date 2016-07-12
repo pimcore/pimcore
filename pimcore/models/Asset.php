@@ -208,10 +208,9 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * Static helper to get an asset by the passed path (returned is not the concrete asset like Asset\Folder!)
-     *
+     * Static helper to get an asset by the passed path
      * @param string $path
-     * @return Asset
+     * @return Asset|Asset\Archive|Asset\Audio|Asset\Document|Asset\Folder|Asset\Image|Asset\Text|Asset\Unknown|Asset\Video
      */
     public static function getByPath($path)
     {
@@ -233,10 +232,9 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * Static helper to get an asset by the passed id (returned is not the concrete asset like Asset\Folder!)
-     *
+     * Static helper to get an asset by the passed ID
      * @param integer $id
-     * @return Asset
+     * @return Asset|Asset\Archive|Asset\Audio|Asset\Document|Asset\Folder|Asset\Image|Asset\Text|Asset\Unknown|Asset\Video
      */
     public static function getById($id)
     {
@@ -284,7 +282,6 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     *
      *
      * @param Asset|integer $id
      * @return Asset
