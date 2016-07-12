@@ -114,6 +114,7 @@ class Processor
             if (($format == "tiff" || $format == "svg") && \Pimcore\Tool::isFrontentRequestByAdmin()) {
                 // return a webformat in admin -> tiff cannot be displayed in browser
                 $format = "png";
+                $deferred = false; // deferred is default, but it's not possible when using isFrontentRequestByAdmin()
             } elseif ($format == "tiff") {
                 $transformations = $config->getItems();
                 if (is_array($transformations) && count($transformations) > 0) {
