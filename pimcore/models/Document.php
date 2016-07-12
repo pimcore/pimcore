@@ -206,9 +206,8 @@ class Document extends Element\AbstractElement
 
     /**
      * Static helper to get a Document by it's path
-     *
      * @param string $path
-     * @return Document
+     * @return Document|Document\Email|Document\Folder|Document\Hardlink|Document\Link|Document\Page|Document\Printcontainer|Document\Printpage|Document\Snippet
      */
     public static function getByPath($path)
     {
@@ -231,9 +230,8 @@ class Document extends Element\AbstractElement
 
     /**
      * Static helper to get a Document by it's ID
-     *
      * @param integer $id
-     * @return Document
+     * @return Document|Document\Email|Document\Folder|Document\Hardlink|Document\Link|Document\Page|Document\Printcontainer|Document\Printpage|Document\Snippet
      */
     public static function getById($id)
     {
