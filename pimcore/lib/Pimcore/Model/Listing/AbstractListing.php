@@ -246,7 +246,7 @@ abstract class AbstractListing extends AbstractModel
         $db = \Pimcore\Db::get();
 
         if (!empty($conditionPrams)) {
-            $params = [];
+            $params = $this->getConditionVariables();
             $i = 0;
             foreach ($conditionPrams as $key => $value) {
                 if (!$this->condition && $i == 0) {
