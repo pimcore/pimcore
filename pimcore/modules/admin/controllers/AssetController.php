@@ -885,7 +885,6 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
         $format = strtolower($thumbnail->getFormat());
         if ($format == "source" || $format == "print") {
             $thumbnail->setFormat("PNG");
-            $format = "png";
         }
 
         if ($this->getParam("treepreview")) {

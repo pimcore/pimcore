@@ -83,7 +83,11 @@ class Imagick extends Adapter
                 $i->setcolorspace(\Imagick::COLORSPACE_SRGB);
             }
 
-            $i->setBackgroundColor(new \ImagickPixel('transparent')); //set .png transparent (print)
+            if($this->isVectorGraphic($imagePath)) {
+                // only for vector graphics
+                // the below causes problems with PSDs when target format is PNG32 (nobody knows why ;-))
+                $i->setBackgroundColor(new \ImagickPixel('transparent'));
+            }
 
             if (isset($options["resolution"])) {
                 // set the resolution to 2000x2000 for known vector formats
@@ -781,11 +785,33 @@ class Imagick extends Adapter
         }
 
         try {
-            $type = $this->resource->getimageformat();
-            $vectorTypes = ["EPT", "EPDF", "EPI", "EPS", "EPS2", "EPS3", "EPSF", "EPSI", "EPT", "PDF", "PFA", "PFB", "PFM", "PS", "PS2", "PS3", "SVG", "SVGZ", "MVG"];
+            if($this->resource) {
+                $type = $this->resource->getimageformat();
+                $vectorTypes = [
+                    "EPT",
+                    "EPDF",
+                    "EPI",
+                    "EPS",
+                    "EPS2",
+                    "EPS3",
+                    "EPSF",
+                    "EPSI",
+                    "EPT",
+                    "PDF",
+                    "PFA",
+                    "PFB",
+                    "PFM",
+                    "PS",
+                    "PS2",
+                    "PS3",
+                    "SVG",
+                    "SVGZ",
+                    "MVG"
+                ];
 
-            if (in_array(strtoupper($type), $vectorTypes)) {
-                return true;
+                if (in_array(strtoupper($type), $vectorTypes)) {
+                    return true;
+                }
             }
         } catch (\Exception $e) {
             \Logger::err($e);

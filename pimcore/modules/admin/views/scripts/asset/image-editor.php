@@ -22,7 +22,7 @@
 
 <div id="editor"></div>
 
-<img style="visibility: hidden" id='image' src='/admin/asset/get-image-thumbnail/id/<?= $this->asset->getId() ?>/width/1000/height/1000/contain/true/<?= $this->asset->getFilename() ?>'/>
+<img style="visibility: hidden" id='image' src='/admin/asset/get-image-thumbnail/id/<?= $this->asset->getId() ?>/width/1000/height/1000/contain/true/image.png'/>
 
 <script type='text/javascript'>
     var featherEditor = new Aviary.Feather({
