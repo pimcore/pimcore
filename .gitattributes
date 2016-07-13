@@ -10,5 +10,6 @@ website_demo/static/* linguist-vendored
 /tests export-ignore
 /build export-ignore
 /update export-ignore
+/docs export-ignore
 /.github export-ignore
 /.travis export-ignore
