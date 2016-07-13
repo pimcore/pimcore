@@ -26,6 +26,7 @@ class Image
     public static function getInstance()
     {
         $adapter = \Pimcore::getDiContainer()->make(Image\Adapter::class);
+
         return $adapter;
     }
 
