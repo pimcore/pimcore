@@ -115,18 +115,6 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
         return $this->itemKey;
     }
 
-
-    public abstract function save();
-
-    public abstract static function getByCartIdItemKey($cartId, $itemKey, $parentKey = "");
-
-    public abstract static function removeAllFromCart($cartId);
-
-    /**
-     * @return \OnlineShop\Framework\CartManager\ICartItem[]
-     */
-    public abstract function getSubItems();
-
     /**
      * @param  \OnlineShop\Framework\CartManager\ICartItem[] $subItems
      * @return void
