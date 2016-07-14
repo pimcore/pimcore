@@ -1,6 +1,7 @@
-# Pimcore
+# Pimcore development documentation
 
 ## Introduction
+
 
 
 ## Quick start developer's guide
@@ -21,15 +22,14 @@ Here is the place when you should start if you're new in Pimcore platform.
     * [Editables](!Documents/Template/Editables)
     * [Helpers](!Documents/Template/Helpers)
     * [Document types](!Documents/Template/Document_Types)
-* [Multi-language](!Start/Translations)
-    * [Creating translations](!Translations/Creating_Translations)
-    * [Website translations](!Translations/Website_Translations)
+    
 * [Plugin development](!Start/Create_Extension)
 * [Next steps](!Start/Next_Steps)
 
 ## [Documents](!Documents)
 
 * [Template](!Documents/Template)
+* [Web2Print](!Documents/Web2Print)
 
 ## [Assets](!Assets)
 
@@ -41,6 +41,9 @@ Here is the place when you should start if you're new in Pimcore platform.
 * [Blocks](!Objects/Blocks)
 
 ## [Translations](!Translations)
+
+* [Creating translations](!Translations/Creating_Translations)
+* [Website translations](!Translations/Website_Translations)
 
 ## [Cache](!Cache)
 
@@ -54,7 +57,3 @@ Here is the place when you should start if you're new in Pimcore platform.
 ## [Extension development](!Extensions)
 
 ## [Best practices](!Best_Practices)
-
-## [Ecommerce Framerwork](!Ecommerce_Framework)
-
-## [Web2Print](!Web2Print)
