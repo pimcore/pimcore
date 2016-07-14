@@ -16,10 +16,30 @@ pimcore.element.abstract = Class.create({
 
     dirty: false,
 
+    /**
+     * if allowDirtyClose is true, a tab can be closed whether
+     * the element is dirty or not, else the user will
+     * be asked if he really wants to loose unsaved
+     * changes.
+     *
+     * @private {boolean}
+     */
+    // _allowDirtyClose: false,
+    _allowDirtyClose: false,
+
+    /**
+     * if dirtyClose is disabled, dirtyConfirmed defines
+     * whether the user already decided to close the tab
+     * never the less.
+     *
+     * @private {boolean}
+     */
+    _dirtyCloseConfirmed: false,
+
     addToHistory: true,
 
     // startup / opening functions
-    addLoadingPanel : function () {
+    addLoadingPanel: function () {
         var type = pimcore.helpers.getElementTypeByObject(this);
         pimcore.helpers.addTreeNodeLoadingIndicator(type, this.id);
     },
@@ -29,11 +49,32 @@ pimcore.element.abstract = Class.create({
         pimcore.helpers.removeTreeNodeLoadingIndicator(type, this.id);
     },
 
+    _dirtyClose: function () {
+        /*
+         * let a subclass also decide whether a dirty close is possible
+         * or not, if onDirtyClose returns false, closing the tab
+         * will be prevented using a decision dialog
+         */
+        var preventDirtyClose = false;
+        if (typeof this.onDirtyClose === 'function') {
+            preventDirtyClose = this.onDirtyClose() === false;
+        }
+
+        /*
+         * dirty closing works if the subclass did not return false
+         * the user disabled it in the settings
+         * or the element is not dirty at all
+         */
+        if (!preventDirtyClose && (this.allowsDirtyClose() || !this.isDirty())) return true;
+
+        this._confirmDirtyClose();
+        return false;
+    },
 
     // CHANGE DETECTOR
     startChangeDetector: function () {
-        if(!this.changeDetectorInterval) {
-            this.changeDetectorInterval = window.setInterval(this.checkForChanges.bind(this),1000);
+        if (!this.changeDetectorInterval) {
+            this.changeDetectorInterval = window.setInterval(this.checkForChanges.bind(this), 1000);
         }
     },
 
@@ -43,14 +84,28 @@ pimcore.element.abstract = Class.create({
     },
 
     setupChangeDetector: function () {
+        /*
+         * define whether the user allows dirty closing or not
+         */
+        this._allowDirtyClose = pimcore.globalmanager.get("user").allowDirtyClose;
+
         this.resetChanges();
         this.tab.on("deactivate", this.stopChangeDetector.bind(this));
         this.tab.on("activate", this.startChangeDetector.bind(this));
+        this.tab.on("beforeclose", this._dirtyClose.bind(this));
         this.tab.on("destroy", this.stopChangeDetector.bind(this));
     },
 
     isDirty: function () {
         return this.dirty;
+    },
+
+    allowsDirtyClose: function () {
+        return this._allowDirtyClose;
+    },
+
+    confirmedDirtyClose: function () {
+        return this._confirmedDirtyClose;
     },
 
     detectedChange: function () {
@@ -68,7 +123,7 @@ pimcore.element.abstract = Class.create({
     },
 
     checkForChanges: function () {
-        if(!this.changeDetectorInitData) {
+        if (!this.changeDetectorInitData) {
             this.setupChangeDetector();
         }
 
@@ -78,9 +133,9 @@ pimcore.element.abstract = Class.create({
 
         var keys = Object.keys(liveData);
 
-        for (var i=0; i<keys.length; i++) {
-            if(this.changeDetectorInitData[keys[i]]) {
-                if(this.changeDetectorInitData[keys[i]] != liveData[keys[i]]) {
+        for (var i = 0; i < keys.length; i++) {
+            if (this.changeDetectorInitData[keys[i]]) {
+                if (this.changeDetectorInitData[keys[i]] != liveData[keys[i]]) {
                     this.detectedChange();
                 }
             }
@@ -88,11 +143,25 @@ pimcore.element.abstract = Class.create({
         }
     },
 
-    setAddToHistory: function(addToHistory) {
+    setAddToHistory: function (addToHistory) {
         this.addToHistory = addToHistory;
     },
 
-    getAddToHistory: function() {
+    getAddToHistory: function () {
         return this.addToHistory;
+    },
+
+    _confirmDirtyClose: function () {
+        Ext.MessageBox.confirm(
+            t("element_has_unsaved_changes"),
+            t("element_unsaved_changes_message"),
+            function (buttonValue) {
+                if (buttonValue === "yes") {
+                    this._confirmedDirtyClose = true;
+                    var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+                    tabPanel.remove(this.tab);
+                }
+            }.bind(this)
+        );
     }
 });

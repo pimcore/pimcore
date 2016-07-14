@@ -18,7 +18,6 @@ pimcore.settings.user.user.settings = Class.create({
     initialize:function (userPanel) {
         this.userPanel = userPanel;
 
-
         this.data = this.userPanel.data;
         this.currentUser = this.data.user;
         this.wsenabled = this.data.wsenabled;
@@ -117,7 +116,7 @@ pimcore.settings.user.user.settings = Class.create({
                             var cont = Ext.getCmp("pimcore_user_image_" + this.currentUser.id);
                             var date = new Date();
                             cont.update('<img src="/admin/user/get-image?id='
-                                                    + this.currentUser.id + '&_dc=' + date.getTime() + '" />');
+                                + this.currentUser.id + '&_dc=' + date.getTime() + '" />');
                         }.bind(this));
                 }.bind(this)
             }]
@@ -180,6 +179,13 @@ pimcore.settings.user.user.settings = Class.create({
             fieldLabel:t("memorize_tabs"),
             name:"memorizeTabs",
             checked:this.currentUser.memorizeTabs
+        });
+
+        generalItems.push({
+            xtype: "checkbox",
+            fieldLabel: t("allow_dirty_close"),
+            name: "allowDirtyClose",
+            checked: this.currentUser.allowDirtyClose
         });
 
         generalItems.push({
@@ -288,13 +294,13 @@ pimcore.settings.user.user.settings = Class.create({
                 },
                 items: [this.apiKeyField,
                     {
-                    xtype: "button",
-                    test: t("Generate"),
-                    iconCls: "pimcore_icon_clear_cache",
-                    handler: function (e) {
-                        this.apiKeyField.setValue(md5(uniqid()) + md5(uniqid()));
-                    }.bind(this)
-                }],
+                        xtype: "button",
+                        test: t("Generate"),
+                        iconCls: "pimcore_icon_clear_cache",
+                        handler: function (e) {
+                            this.apiKeyField.setValue(md5(uniqid()) + md5(uniqid()));
+                        }.bind(this)
+                    }],
                 hidden: !this.wsenabled
             });
 
@@ -325,7 +331,7 @@ pimcore.settings.user.user.settings = Class.create({
                         var res = Ext.decode(response.responseText);
                         if(res["link"]) {
                             Ext.MessageBox.alert("", t("login_as_this_user_description")
-                                            + ' <br /><br /><textarea style="width:100%;height:70px;">' + res["link"] + "</textarea>");
+                                + ' <br /><br /><textarea style="width:100%;height:70px;">' + res["link"] + "</textarea>");
                         }
                     }
                 });
@@ -364,27 +370,27 @@ pimcore.settings.user.user.settings = Class.create({
             title:t("allowed_types_to_create") + " (" + t("defaults_to_all") + ")",
             items:[
                 Ext.create('Ext.ux.form.MultiSelect', {
-                name: "docTypes",
-                triggerAction:"all",
-                editable:false,
-                fieldLabel:t("document_types"),
-                width:400,
-                displayField: "name",
-                valueField: "id",
-                store: pimcore.globalmanager.get("document_types_store"),
-                value: this.currentUser.docTypes
-            }),
+                    name: "docTypes",
+                    triggerAction:"all",
+                    editable:false,
+                    fieldLabel:t("document_types"),
+                    width:400,
+                    displayField: "name",
+                    valueField: "id",
+                    store: pimcore.globalmanager.get("document_types_store"),
+                    value: this.currentUser.docTypes
+                }),
                 Ext.create('Ext.ux.form.MultiSelect', {
-                name: "classes",
-                triggerAction:"all",
-                editable:false,
-                fieldLabel:t("classes"),
-                width:400,
-                displayField: "text",
-                valueField: "id",
-                store: pimcore.globalmanager.get("object_types_store"),
-                value: this.currentUser.classes
-            })],
+                    name: "classes",
+                    triggerAction:"all",
+                    editable:false,
+                    fieldLabel:t("classes"),
+                    width:400,
+                    displayField: "text",
+                    valueField: "id",
+                    store: pimcore.globalmanager.get("object_types_store"),
+                    value: this.currentUser.classes
+                })],
             hidden:this.currentUser.admin
         });
 
