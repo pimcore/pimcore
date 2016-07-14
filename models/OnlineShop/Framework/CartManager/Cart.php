@@ -134,7 +134,7 @@ class Cart extends AbstractCart implements ICart {
             $itemList = new \OnlineShop\Framework\CartManager\CartItem\Listing();
             $itemList->setCartItemClassName( $this->getCartItemClassName() );
             $itemList->setCondition("cartId = " . $itemList->quote($this->getId()) . " AND parentItemKey = ''");
-            $itemList->setOrderKey('sortIndex');
+            $itemList->setOrderKey(['sortIndex', 'addedDateTimestamp']);
             $items = array();
             foreach ($itemList->getCartItems() as $item) {
                 if(static::isValidCartItem($item)){
