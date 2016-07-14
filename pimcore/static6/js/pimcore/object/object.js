@@ -158,6 +158,14 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             pimcore.layout.refresh();
         }.bind(this));
 
+        this.tab.on("beforeclose", function () {
+            if (!this.confirmedClose && this.isAllowed("save") && this.isDirty()) {
+                this.confirmCloseDirty();
+                return false;
+            }
+            return true;
+        }.bind(this));
+
         this.tab.on("beforedestroy", function () {
             Ext.Ajax.request({
                 url: "/admin/element/unlock-element",
@@ -723,6 +731,8 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
     reload: function (layoutId) {
         var options = {};
         options.layoutId = layoutId;
+        //automatically confirm to close the object
+        this.confirmedClose = true;
         window.setTimeout(function (id) {
             pimcore.helpers.openObject(id, "object", options);
         }.bind(window, this.id), 500);

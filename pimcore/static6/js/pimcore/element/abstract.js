@@ -18,6 +18,8 @@ pimcore.element.abstract = Class.create({
 
     addToHistory: true,
 
+    confirmedClose: false,
+
     // startup / opening functions
     addLoadingPanel : function () {
         var type = pimcore.helpers.getElementTypeByObject(this);
@@ -94,5 +96,19 @@ pimcore.element.abstract = Class.create({
 
     getAddToHistory: function() {
         return this.addToHistory;
+    },
+
+    confirmCloseDirty: function() {
+        Ext.MessageBox.confirm(
+            t("element_has_unsaved_changes"), t("element_unsaved_changes_message"),
+            function (buttonValue) {
+                if (buttonValue === "yes") {
+                    this.confirmedClose = true;
+                    var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+                    tabPanel.remove(this.tab);
+                }
+            }.bind(this)
+        );
     }
+
 });
