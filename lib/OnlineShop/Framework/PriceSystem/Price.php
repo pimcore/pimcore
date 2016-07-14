@@ -22,17 +22,6 @@ class Price implements IPrice {
     private $amount;
     private $minPrice;
 
-    /** @return \Zend_Currency*/
-    function getCurrency() {
-        return $this->currency;
-    }
-
-    /** @return double*/
-    function getAmount() {
-        return $this->amount;
-    }
-
-
     function __construct($amount, \Zend_Currency $currency, $minPrice = false) {
         $this->amount = $amount;
         $this->currency = $currency;
@@ -56,5 +45,22 @@ class Price implements IPrice {
      */
     public function setAmount($amount) {
         $this->amount = $amount;
+    }
+
+    /** @return double*/
+    function getAmount() {
+        return $this->amount;
+    }
+
+    /**
+     * @param \Zend_Currency $currency
+     */
+    public function setCurrency(\Zend_Currency $currency) {
+        $this->currency = $currency;
+    }
+
+    /** @return \Zend_Currency*/
+    function getCurrency() {
+        return $this->currency;
     }
 }
