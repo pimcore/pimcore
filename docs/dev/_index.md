@@ -9,8 +9,7 @@
 Here is the place when you should start if you're new in Pimcore platform.
 
 * [Introduction](!Start)
-* [Create Pimcore project](!Start/Installation)
-* [Configuration](!Start/Configuration) 
+* [Create Pimcore project](!Start/Installation) 
 * [Project tree overview](!Start/Directories_Structure)
 * [Main Pimcore elements](!Start/Pimcore_Elements)
     * [What is Document?](!Documents)
