@@ -84,7 +84,7 @@ class User extends User\UserRole
     /**
      * @var bool
      */
-    public $allowDirtyClose = false;
+    public $allowDirtyClose = true;
 
     /**
      * @var string|null
