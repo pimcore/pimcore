@@ -16,8 +16,8 @@ The main goal of this Guide is to give minimal required information to every new
 In Pimcore platform is a number of areas which you have to know before you start creating projects. 
 If you would like to start fast this is the most efficiently  way. 
 
-You start with step by step [installation](!Start/Installation) and [configuration](!Start/Configuration) process. 
-Next, you determine about Pimcore architecture (directories structure, which area is editable etc.).
+You start with step by step [installation and configuration](!Start/Installation) process. 
+Next, you determine about Pimcore architecture (directories structure, which area is editable ...).
 Finally, you'll discover Documents, Objects, Assets and learn something about extensions development.  
 
 [Let's start!](!Start/Installation)
