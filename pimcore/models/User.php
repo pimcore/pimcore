@@ -76,11 +76,15 @@ class User extends User\UserRole
      */
     public $closeWarning = true;
 
-
     /**
      * @var bool
      */
     public $memorizeTabs = true;
+
+    /**
+     * @var bool
+     */
+    public $allowDirtyClose = false;
 
     /**
      * @var string|null
@@ -424,6 +428,25 @@ class User extends User\UserRole
     public function getMemorizeTabs()
     {
         return $this->memorizeTabs;
+    }
+
+    /**
+     * @param $allowDirtyClose
+     * @return $this
+     */
+    public function setAllowDirtyClose($allowDirtyClose)
+    {
+        $this->allowDirtyClose = (bool)$allowDirtyClose;
+
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getAllowDirtyClose()
+    {
+        return $this->allowDirtyClose;
     }
 
     /**
