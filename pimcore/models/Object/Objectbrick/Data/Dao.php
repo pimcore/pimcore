@@ -184,7 +184,9 @@ class Dao extends Model\Dao\AbstractDao
 
         $this->db->insertOrUpdate($querytable, $data);
 
-        $this->inheritanceHelper->doUpdate($object->getId(), true);
+        if($inheritanceEnabled) {
+            $this->inheritanceHelper->doUpdate($object->getId(), true);
+        }
         $this->inheritanceHelper->resetFieldsToCheck();
 
         // HACK: see a few lines above!

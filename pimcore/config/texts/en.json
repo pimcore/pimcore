@@ -6003,5 +6003,17 @@
     {
         "term": "edit_block",
         "definition": "Edit Block"
+    },
+    {
+        "term": "allow_dirty_close",
+        "definition": "Disable unsaved content warning"
+    },
+    {
+        "term": "element_has_unsaved_changes",
+        "definition": "Element has unsaved changes"
+    },
+    {
+        "term": "element_unsaved_changes_message",
+        "definition": "All unsaved changes will be lost, are you really sure?"
     }
 ]
