@@ -20,7 +20,7 @@ namespace OnlineShop\Framework\Model;
 /**
  * Abstract base class for pimcore objects who should be used as products in the online shop framework
  */
-class AbstractProduct extends \Pimcore\Model\Object\Concrete implements IIndexable, ICheckoutable {
+class AbstractProduct extends \Pimcore\Model\Object\Concrete implements IIndexable, ICheckoutable, IProduct {
 
 // =============================================
 //     IIndexable Methods

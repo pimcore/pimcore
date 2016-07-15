@@ -95,6 +95,10 @@ class Factory {
      */
     private $tokenManagers = array();
 
+    /**
+     * @var \OnlineShop\Framework\Tracking\TrackingManager
+     */
+    private $trackingManager;
 
     public static function getInstance() {
         if (self::$instance === null) {
@@ -172,6 +176,7 @@ class Factory {
         $this->configurePricingManager($config);
         $this->configurePaymentManager($config);
         $this->configureOrderManager($config);
+        $this->configureTrackingManager($config);
 
         $this->configureOfferToolService($config);
     }
@@ -189,6 +194,44 @@ class Factory {
                 throw new \OnlineShop\Framework\Exception\InvalidConfigException("Cartmanager class " . $config->onlineshop->cartmanager->class . " not found.");
             }
         }
+    }
+    
+    /**
+     * Configure tracking manager
+     *
+     * @param \Zend_Config $config
+     * @throws \OnlineShop\Framework\Exception\InvalidConfigException
+     */
+    private function configureTrackingManager(\Zend_Config $config)
+    {
+        if (!empty($config->onlineshop->trackingmanager->class)) {
+            $trackingManagerClass = $config->onlineshop->trackingmanager->class;
+            if (class_exists($trackingManagerClass)) {
+                $instance = new $trackingManagerClass($config->onlineshop->trackingmanager->config);
+                if ($instance instanceof \OnlineShop\Framework\Tracking\ITrackingManager) {
+                    $this->trackingManager = $instance;
+                } else {
+                    throw new \OnlineShop\Framework\Exception\InvalidConfigException(sprintf('TrackingManager class %s does not implement OnlineShop\\Framework\\Tracking\\ITrackingManager', $trackingManagerClass));
+                }
+            } else {
+                throw new \OnlineShop\Framework\Exception\InvalidConfigException(sprintf('TrackingManager class %s not found.', $trackingManagerClass));
+            }
+        }
+    }
+    
+    /**
+     * Get tracking manager
+     *
+     * @return \OnlineShop\Framework\Tracking\TrackingManager
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     */
+    public function getTrackingManager()
+    {
+        if (null === $this->trackingManager) {
+            throw new \OnlineShop\Framework\Exception\UnsupportedException('Tracking is not configured, check configuration!');
+        }
+
+        return $this->trackingManager;
     }
 
     private function configurePriceSystem($config) {
