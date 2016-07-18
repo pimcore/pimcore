@@ -661,7 +661,7 @@ class Asset extends Element\AbstractElement
 
             // scheduled tasks are saved in $this->saveVersion();
         } else {
-            if (!is_dir($this->getFileSystemPath())) {
+            if (!is_dir($destinationPath) && !is_dir($this->getFileSystemPath())) {
                 if (!File::mkdir($this->getFileSystemPath())) {
                     throw new \Exception("Unable to create directory: ". $this->getFileSystemPath() . " for asset :" . $this->getId());
                 }
