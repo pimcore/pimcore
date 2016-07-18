@@ -96,7 +96,8 @@ abstract class Tracker implements ITracker
     private $dependenciesIncluded = false;
 
     /**
-     * Include all defined dependencies of this tracker.
+     * Include all defined google dependencies of this tracker
+     * and only include them once in the script.
      */
     public function includeDependencies()
     {

@@ -40,7 +40,7 @@ class EnhancedEcommerce extends Tracker implements IProductView, IProductImpress
     }
 
     /**
-     * Array of google dependencies to include before tracking actions.
+     * Array of google dependencies to include before any tracking actions.
      * @var array
      */
     protected $dependencies = ['ec'];
