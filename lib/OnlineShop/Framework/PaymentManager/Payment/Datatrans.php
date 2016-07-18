@@ -229,6 +229,13 @@ class Datatrans implements IPayment
      */
     public function handleResponse($response)
     {
+        // check for provider error's
+        if(array_key_exists('errorCode', $response))
+        {
+            throw new \Exception( $response['errorDetail'], $response['errorCode'] );
+        }
+
+
         // check required fields
         $required = [  'uppTransactionId' => null
                        , 'responseCode' => null

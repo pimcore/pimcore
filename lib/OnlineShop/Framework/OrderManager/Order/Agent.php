@@ -443,6 +443,8 @@ class Agent implements IOrderAgent
         $fingerprintParts[] = $order->getCreationDate();
         foreach($order->getItems() as $item) {
             $fingerprintParts[] = $item->getProductNumber();
+            $fingerprintParts[] = $item->getId();
+            $fingerprintParts[] = $item->getAmount();
         }
         return crc32(strtolower(implode(".", $fingerprintParts)));
     }
