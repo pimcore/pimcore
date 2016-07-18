@@ -12,15 +12,18 @@
 
 namespace OnlineShop\Framework\Tracking;
 
-use OnlineShop\Framework\Tracking\ITracker;
-use OnlineShop\Framework\Tracking\ITrackingItemBuilder;
-use OnlineShop\Framework\Tracking\ProductAction;
-use OnlineShop\Framework\Tracking\Transaction;
+use Pimcore\Google\Analytics;
+
 
 abstract class Tracker implements ITracker
 {
     /** @var ITrackingItemBuilder */
     protected $trackingItemBuilder;
+
+    /**
+     * @var array
+     */
+    protected $dependencies = [];
 
     /**
      * @param ITrackingItemBuilder $trackingItemBuilder
@@ -88,4 +91,23 @@ abstract class Tracker implements ITracker
 
         return $result;
     }
+
+
+    private $dependenciesIncluded = false;
+
+    /**
+     * Include all defined dependencies of this tracker.
+     */
+    public function includeDependencies()
+    {
+        if (!$this->dependenciesIncluded) {
+            if ($dependencies = $this->dependencies) {
+                foreach ($dependencies as $dependency) {
+                    Analytics::addAdditionalCode("ga('require', '" . $dependency . "')", "beforePageview");
+                }
+            }
+            $this->dependenciesIncluded = true;
+        }
+    }
+
 }

@@ -17,7 +17,6 @@ use OnlineShop\Framework\CheckoutManager\ICheckoutStep;
 use OnlineShop\Framework\Model\AbstractOrder;
 use OnlineShop\Framework\Model\IProduct;
 use OnlineShop\Framework\Exception\InvalidConfigException;
-use Pimcore\Google\Analytics;
 
 class TrackingManager implements ITrackingManager
 {
@@ -128,13 +127,16 @@ class TrackingManager implements ITrackingManager
     }
 
 
-    private $ecScriptRequired = false;
-    public function ensureEcScript()
+    /**
+     * Ensure the dependency for enhanced e-commerce tracking "ec.js" 
+     * is included.
+     */
+    public function ensureDependencies()
     {
-        if (!$this->ecScriptRequired) {
-            Analytics::addAdditionalCode("ga('require', 'ec')", "beforePageview");
-            $this->ecScriptRequired = true;
+        foreach ($this->trackers as $tracker) {
+            $tracker->includeDependencies();
         }
+        
         return $this;
     }
 
@@ -147,7 +149,7 @@ class TrackingManager implements ITrackingManager
      */
     public function trackProductImpression(IProduct $product)
     {
-        $this->ensureEcScript();
+        $this->ensureDependencies();
         foreach ($this->trackers as $tracker) {
             if ($tracker instanceof IProductImpression) {
                 $tracker->trackProductImpression($product);
@@ -163,7 +165,7 @@ class TrackingManager implements ITrackingManager
      */
     public function trackProductView(IProduct $product)
     {
-        $this->ensureEcScript();
+        $this->ensureDependencies();
         foreach ($this->trackers as $tracker) {
             if ($tracker instanceof IProductView) {
                 $tracker->trackProductView($product);
@@ -181,7 +183,7 @@ class TrackingManager implements ITrackingManager
      */
     public function trackProductActionAdd(IProduct $product, $quantity = 1)
     {
-        $this->ensureEcScript();
+        $this->ensureDependencies();
         foreach ($this->trackers as $tracker) {
             if ($tracker instanceof IProductActionAdd) {
                 $tracker->trackProductActionAdd($product, $quantity);
@@ -198,7 +200,7 @@ class TrackingManager implements ITrackingManager
      */
     public function trackProductActionRemove(IProduct $product, $quantity = 1)
     {
-        $this->ensureEcScript();
+        $this->ensureDependencies();
         foreach ($this->trackers as $tracker) {
             if ($tracker instanceof IProductActionRemove) {
                 $tracker->trackProductActionRemove($product, $quantity);
@@ -214,7 +216,7 @@ class TrackingManager implements ITrackingManager
      */
     public function trackCheckout(ICart $cart)
     {
-        $this->ensureEcScript();
+        $this->ensureDependencies();
         foreach ($this->trackers as $tracker) {
             if ($tracker instanceof ICheckout) {
                 $tracker->trackCheckout($cart);
@@ -231,7 +233,7 @@ class TrackingManager implements ITrackingManager
      */
     public function trackCheckoutComplete(AbstractOrder $order)
     {
-        $this->ensureEcScript();
+        $this->ensureDependencies();
         foreach ($this->trackers as $tracker) {
             if ($tracker instanceof ICheckoutComplete) {
                 $tracker->trackCheckoutComplete($order);
@@ -251,7 +253,7 @@ class TrackingManager implements ITrackingManager
      */
     public function trackCheckoutStep(ICheckoutStep $step, ICart $cart, $stepNumber = null, $checkoutOption = null)
     {
-        $this->ensureEcScript();
+        $this->ensureDependencies();
         foreach ($this->trackers as $tracker) {
             if ($tracker instanceof \OnlineShop\Framework\Tracking\ICheckoutStep) {
                 $tracker->trackCheckoutStep($step, $cart, $stepNumber, $checkoutOption);

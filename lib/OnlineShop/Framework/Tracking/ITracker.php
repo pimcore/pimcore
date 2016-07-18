@@ -23,4 +23,9 @@ interface ITracker
      * @return ITrackingItemBuilder
      */
     public function getTrackingItemBuilder();
+
+    /**
+     * @return mixed
+     */
+    public function includeDependencies();
 }
