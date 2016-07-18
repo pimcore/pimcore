@@ -664,6 +664,7 @@ CREATE TABLE `users` (
   `welcomescreen` tinyint(1) DEFAULT NULL,
   `closeWarning` tinyint(1) DEFAULT NULL,
   `memorizeTabs` tinyint(1) DEFAULT NULL,
+  `allowDirtyClose` tinyint(1) unsigned DEFAULT '1',
   `docTypes` varchar(255) DEFAULT NULL,
   `classes` varchar(255) DEFAULT NULL,
   `apiKey` varchar(255) DEFAULT NULL,
@@ -791,8 +792,7 @@ CREATE TABLE `classificationstore_stores` (
 	`description` LONGTEXT NULL,
 	PRIMARY KEY (`id`),
 	INDEX `name` (`name`)
-)
-ENGINE=InnoDB;
+) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `classificationstore_groups`;
 CREATE TABLE `classificationstore_groups` (
@@ -875,7 +875,7 @@ CREATE TABLE `quantityvalue_units` (
   `conversionOffset` DOUBLE NULL DEFAULT NULL,
   `reference` varchar(50) COLLATE utf8_bin DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `element_workflow_state`;
 CREATE TABLE `element_workflow_state` (
@@ -885,4 +885,4 @@ CREATE TABLE `element_workflow_state` (
   `state` varchar(255) DEFAULT NULL,
   `status` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`cid`,`ctype`,`workflowId`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8;

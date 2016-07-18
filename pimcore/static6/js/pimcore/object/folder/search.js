@@ -65,11 +65,13 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                     name: "selectClass",
                     listWidth: 'auto',
                     store: classStore,
-                    mode:"local",
+                    queryMode:"local",
                     valueField: 'id',
                     displayField: 'translatedText',
                     triggerAction: 'all',
-                    editable: false,
+                    editable: true,
+                    typeAhead:true,
+                    forceSelection: true,
                     value: this.object.data["selectedClass"],
                     listeners: {
                         "select": this.changeClassSelect.bind(this)
@@ -291,7 +293,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                 iconCls: "pimcore_icon_table_col pimcore_icon_overlay_edit",
                 handler: this.openColumnConfig.bind(this)
             },
-            this.saveColumnConfigButton
+                this.saveColumnConfigButton
             ]
         });
         this.grid.on("rowcontextmenu", this.onRowContextmenu);
