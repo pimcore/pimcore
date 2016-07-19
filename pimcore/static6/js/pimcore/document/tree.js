@@ -343,6 +343,7 @@ pimcore.document.tree = Class.create({
                     page: [],
                     snippet: [],
                     email: [],
+                    newsletter: [],
                     printPage: [],
                     ref: this
                 };
@@ -370,6 +371,14 @@ pimcore.document.tree = Class.create({
                     handler: this.addDocument.bind(this, tree, record, "email")
                 });
 
+                // empty newsletter
+                documentMenu.newsletter.push({
+                    text: "&gt; " + t("empty_newsletter"),
+                    iconCls: "pimcore_icon_newsletter pimcore_icon_overlay_add",
+                    handler: this.addDocument.bind(this, tree, record, "newsletter")
+                });
+
+
 
                 //don't add pages below print containers - makes no sense
                 if(addDocuments && record.data.type != "printcontainer") {
@@ -381,7 +390,7 @@ pimcore.document.tree = Class.create({
                     }));
                 }
 
-                if (addPrintDocuments && record.data.type != "email" && record.data.type != "link") {
+                if (addPrintDocuments && record.data.type != "email" && record.data.type != "newsletter" && record.data.type != "link") {
                     //print pages
                     documentMenu.printPage.push({
                         text: "&gt; " + t("add_printpage"),
@@ -410,12 +419,19 @@ pimcore.document.tree = Class.create({
                     hideOnClick: false
                 }));
 
-                //don't add emails and links below print containers - makes no sense
+                //don't add emails, newsletters and links below print containers - makes no sense
                 if(addDocuments && record.data.type != "printcontainer") {
                     menu.add(new Ext.menu.Item({
                         text: t('add_email'),
                         iconCls: "pimcore_icon_email pimcore_icon_overlay_add",
                         menu: documentMenu.email,
+                        hideOnClick: false
+                    }));
+
+                    menu.add(new Ext.menu.Item({
+                        text: t('add_newsletter'),
+                        iconCls: "pimcore_icon_newsletter pimcore_icon_overlay_add",
+                        menu: documentMenu.newsletter,
                         hideOnClick: false
                     }));
 

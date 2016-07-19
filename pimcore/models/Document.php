@@ -27,7 +27,7 @@ class Document extends Element\AbstractElement
      * possible types of a document
      * @var array
      */
-    public static $types = ["folder", "page", "snippet", "link", "hardlink", "email", "printpage", "printcontainer"];
+    public static $types = ["folder", "page", "snippet", "link", "hardlink", "email", "newsletter", "printpage", "printcontainer"];
 
     /**
      * @param $type
@@ -231,7 +231,7 @@ class Document extends Element\AbstractElement
     /**
      * Static helper to get a Document by it's ID
      * @param integer $id
-     * @return Document|Document\Email|Document\Folder|Document\Hardlink|Document\Link|Document\Page|Document\Printcontainer|Document\Printpage|Document\Snippet
+     * @return Document|Document\Email|Document\Folder|Document\Hardlink|Document\Link|Document\Page|Document\Printcontainer|Document\Printpage|Document\Snippet|Document\Newsletter
      */
     public static function getById($id)
     {

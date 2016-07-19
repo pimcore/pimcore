@@ -14,6 +14,7 @@
 
 namespace Pimcore\Tool;
 
+use Pimcore\Document\Newsletter\SendingParamContainer;
 use Pimcore\Mail;
 use Pimcore\Tool;
 use Pimcore\Model\Object;
@@ -23,10 +24,114 @@ use Pimcore\Model;
 class Newsletter
 {
 
+    const SENDING_MODE_BATCH = "batch";
+    const SENDING_MODE_SINGLE = "single";
+
     /**
      * @var Object\ClassDefinition
      */
     protected $class;
+
+    /**
+     * @param Document\Newsletter $newsletterDocument
+     * @param Mail $mail
+     * @return Mail
+     */
+    protected static function preRenderMail(Document\Newsletter $newsletterDocument, Mail $mail) {
+        $contentHTML = $mail->getBodyHtmlRendered();
+        $contentText = $mail->getBodyTextRendered();
+
+        // render the document and rewrite the links (if analytics is enabled)
+        if ($newsletterDocument->getEnableTrackingParameters()) {
+            if ($contentHTML) {
+                include_once("simple_html_dom.php");
+
+                $html = str_get_html($contentHTML);
+                if ($html) {
+                    $links = $html->find("a");
+                    foreach ($links as $link) {
+                        if (preg_match("/^(mailto)/", trim(strtolower($link->href)))) {
+                            continue;
+                        }
+
+                        $glue = "?";
+                        if (strpos($link->href, "?")) {
+                            $glue = "&";
+                        }
+                        $link->href = $link->href . $glue .
+                            "utm_source=" . $newsletterDocument->getTrackingParameterSource() .
+                            "&utm_medium=" . $newsletterDocument->getTrackingParameterMedium() .
+                            "&utm_campaign=" . $newsletterDocument->getTrackingParameterName();
+                    }
+
+                    $contentHTML = $html->save();
+
+                    $html->clear();
+                    unset($html);
+                }
+
+                $mail->setBodyHtml($contentHTML);
+            }
+        }
+
+        $mail->setBodyHtml($contentHTML);
+        $mail->setBodyText($contentText);
+        $mail->setSubject($mail->getSubjectRendered());
+
+        return $mail;
+    }
+
+    /**
+     * @param Document\Newsletter $newsletterDocument
+     * @param SendingParamContainer[] $sendingContainers
+     * @param string $sendingMode
+     * @param string|null $hostUrl
+     */
+    public static function sendNewsletterDocumentBasedMail(Document\Newsletter $newsletterDocument, array $sendingContainers, $sendingMode = self::SENDING_MODE_SINGLE, $hostUrl = null) {
+
+        $mail = new Mail();
+        $mail->setIgnoreDebugMode(true);
+
+        if (\Pimcore\Config::getSystemConfig()->newsletter->usespecific) {
+            $mail->init("newsletter");
+        }
+
+        if (!Tool::getHostUrl() && $hostUrl) {
+            $mail->setHostUrl($hostUrl);
+        }
+
+        $mail->setDocument($newsletterDocument);
+
+        if($sendingMode == self::SENDING_MODE_BATCH) {
+
+            $mail = self::preRenderMail($newsletterDocument, $mail);
+
+            foreach($sendingContainers as $sendingContainer) {
+                $mail->setTo($sendingContainer->getEmail());
+                $mail->sendWithoutRendering();
+                \Logger::info("Sent newsletter to: " . self::obfuscateEmail($sendingContainer->getEmail()) . " [" . $newsletterDocument->getId() . "]");
+            }
+
+        } else {
+
+            foreach ($sendingContainers as $sendingContainer) {
+                $mail->setParams($sendingContainer->getParams());
+                $mail->setTo($sendingContainer->getEmail());
+                $mail = self::preRenderMail($newsletterDocument, $mail);
+                $mail->sendWithoutRendering();
+                \Logger::info("Sent newsletter to: " . self::obfuscateEmail($sendingContainer->getEmail()) . " [" . $newsletterDocument->getId() . "]");
+            }
+
+        }
+
+    }
+
+    protected static function obfuscateEmail($email)
+    {
+        $email = substr_replace($email, ".xxx", strrpos($email, "."));
+        return $email;
+    }
+
 
     /**
      * @param Model\Tool\Newsletter\Config $newsletter

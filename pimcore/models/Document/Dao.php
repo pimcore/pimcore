@@ -102,7 +102,7 @@ class Dao extends Model\Element\Dao
         try {
             $typeSpecificTable = null;
             $validColumnsTypeSpecific = [];
-            if (in_array($this->model->getType(), ["email", "hardlink", "link", "page", "snippet"])) {
+            if (in_array($this->model->getType(), ["email", "newsletter", "hardlink", "link", "page", "snippet"])) {
                 $typeSpecificTable = "documents_" . $this->model->getType();
                 $validColumnsTypeSpecific = $this->getValidTableColumns($typeSpecificTable);
             }

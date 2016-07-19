@@ -1,0 +1,195 @@
+<?php
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Enterprise License (PEL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @category   Pimcore
+ * @package    Document
+ * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ */
+
+namespace Pimcore\Model\Document;
+
+use Pimcore\Model;
+
+class Newsletter extends Model\Document\PageSnippet
+{
+    /**
+     * Contains a \Zend_Validate_EmailAddress object
+     *
+     * @var \Zend_Validate_EmailAddress
+     */
+    protected static $validator;
+
+    /**
+     * Static type of the document
+     *
+     * @var string
+     */
+    public $type = "newsletter";
+
+    /**
+     * Contains the email subject
+     *
+     * @var string
+     */
+    public $subject = "";
+
+    /**
+     * Contains the from email address
+     *
+     * @var string
+     */
+    public $from = "";
+
+    /**
+     * enables adding tracking parameters to all links
+     *
+     * @var bool
+     */
+    public $enableTrackingParameters = false;
+
+    /**
+     * @var string
+     */
+    public $trackingParameterSource = "newsletter";
+
+    /**
+     * @var string
+     */
+    public $trackingParameterMedium = "email";
+
+    /**
+     * @var string
+     */
+    public $trackingParameterName = "";
+
+
+    /**
+     * Contains the email subject
+     *
+     * @param string $subject
+     * @return $this
+     */
+    public function setSubject($subject)
+    {
+        $this->subject = $subject;
+
+        return $this;
+    }
+
+    /**
+     * Returns the email subject
+     *
+     * @return string
+     */
+    public function getSubject()
+    {
+        return $this->subject;
+    }
+
+    /**
+     * Sets the "from" email address
+     *
+     * @param string $from
+     * @return $this
+     */
+    public function setFrom($from)
+    {
+        $this->from = $from;
+
+        return $this;
+    }
+
+    /**
+     * Returns the "from" email address
+     *
+     * @return string
+     */
+    public function getFrom()
+    {
+        return $this->from;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getEnableTrackingParameters()
+    {
+        return $this->enableTrackingParameters;
+    }
+
+    /**
+     * @param boolean $enableTrackingParameters
+     */
+    public function setEnableTrackingParameters($enableTrackingParameters)
+    {
+        $this->enableTrackingParameters = $enableTrackingParameters;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTrackingParameterSource()
+    {
+        return $this->trackingParameterSource;
+    }
+
+    /**
+     * @param string $trackingParameterSource
+     */
+    public function setTrackingParameterSource($trackingParameterSource)
+    {
+        $this->trackingParameterSource = $trackingParameterSource;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTrackingParameterMedium()
+    {
+        return $this->trackingParameterMedium;
+    }
+
+    /**
+     * @param string $trackingParameterMedium
+     */
+    public function setTrackingParameterMedium($trackingParameterMedium)
+    {
+        $this->trackingParameterMedium = $trackingParameterMedium;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTrackingParameterName()
+    {
+        return $this->trackingParameterName;
+    }
+
+    /**
+     * @param string $trackingParameterName
+     */
+    public function setTrackingParameterName($trackingParameterName)
+    {
+        $this->trackingParameterName = $trackingParameterName;
+    }
+
+
+
+    /**
+     * @return string
+     */
+    public function getTmpStoreId()
+    {
+        return "newsletter__" . $this->getId();
+    }
+
+
+}

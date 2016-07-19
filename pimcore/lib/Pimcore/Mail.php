@@ -614,6 +614,33 @@ class Mail extends \Zend_Mail
      */
     public function send($transport = null)
     {
+        $this->setSubject($this->getSubjectRendered());
+
+        $bodyHtmlRendered = $this->getBodyHtmlRendered();
+        if ($bodyHtmlRendered) {
+            $this->setBodyHtml($bodyHtmlRendered);
+        }
+
+        $bodyTextRendered = $this->getBodyTextRendered();
+        if ($bodyTextRendered) {
+            $this->setBodyText($bodyTextRendered);
+        }
+
+        if ($this->ignoreDebugMode == false) {
+            $this->checkDebugMode();
+        }
+
+        return $this->sendWithoutRendering($transport);
+    }
+
+    /**
+     * sends mail without (re)rendering the content.
+     * see also comments of send() method
+     *
+     * @param null $transport
+     * @return \Zend_Mail
+     */
+    public function sendWithoutRendering($transport = null) {
         // filter email addresses
         $blockedAddresses = [];
         foreach ($this->getRecipients() as $recipient) {
@@ -633,22 +660,6 @@ class Mail extends \Zend_Mail
                     }
                 }
             }
-        }
-
-        $this->setSubject($this->getSubjectRendered());
-
-        $bodyHtmlRendered = $this->getBodyHtmlRendered();
-        if ($bodyHtmlRendered) {
-            $this->setBodyHtml($bodyHtmlRendered);
-        }
-
-        $bodyTextRendered = $this->getBodyTextRendered();
-        if ($bodyTextRendered) {
-            $this->setBodyText($bodyTextRendered);
-        }
-
-        if ($this->ignoreDebugMode == false) {
-            $this->checkDebugMode();
         }
 
         $result = parent::send($transport);

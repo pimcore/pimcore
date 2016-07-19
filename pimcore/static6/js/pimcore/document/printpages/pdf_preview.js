@@ -62,7 +62,7 @@ pimcore.document.printpages.pdfpreview = Class.create({
                             url: "/admin/printpage/cancel-generation/",
                             params: {id: this.page.id},
                             success: function(response) {
-                                result = Ext.decode(response.responseText);
+                                var result = Ext.decode(response.responseText);
                                 if(!result.success) {
                                     pimcore.helpers.showNotification(t('web2print_cancel_generation'), t('web2print_cancel_generation_error'), "error");
                                 }

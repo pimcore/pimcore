@@ -619,7 +619,7 @@ pimcore.elementservice.addDocumentComplete = function (options, response) {
         if (response && response.success) {
             pimcore.elementservice.refreshNodeAllTrees(options.elementType, options.parentId);
 
-            if(in_array(response["type"], ["page","snippet","email","link","hardlink","printpage","printcontainer"])) {
+            if(in_array(response["type"], ["page","snippet","email","newsletter","link","hardlink","printpage","printcontainer"])) {
                 pimcore.helpers.openDocument(response.id, response.type);
             }
         }  else {
