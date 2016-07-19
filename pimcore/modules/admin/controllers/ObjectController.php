@@ -649,7 +649,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                     $selectedClassId = $gridConfig["classId"];
 
                     foreach ($objectData["classes"] as $class) {
-                        if ($class->getId() == $selectedClassId) {
+                        if ($class["id"] == $selectedClassId) {
                             $objectData["selectedClass"] = $selectedClassId;
                             break;
                         }
