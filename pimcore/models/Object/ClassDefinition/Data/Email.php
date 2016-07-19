@@ -17,6 +17,10 @@
 namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
+use Egulias\EmailValidator\EmailValidator;
+use Egulias\EmailValidator\Validation\DNSCheckValidation;
+use Egulias\EmailValidator\Validation\MultipleValidationWithAnd;
+use Egulias\EmailValidator\Validation\RFCValidation;
 
 class Email extends Model\Object\ClassDefinition\Data\Input
 {
@@ -26,20 +30,21 @@ class Email extends Model\Object\ClassDefinition\Data\Input
      */
     public $fieldtype = "email";
 
-
+    /**
+     * @param mixed $data
+     * @param bool $omitMandatoryCheck
+     * @throws Model\Element\ValidationException
+     */
     public function checkValidity($data, $omitMandatoryCheck = false)
     {
         if (!$omitMandatoryCheck && strlen($data) > 0) {
-            $hostnameValidator = new \Zend_Validate_Hostname([
-                "idn" => false,
-                "tld" => false
+            //email validation with DNS checking
+            $validator = new EmailValidator();
+            $multipleValidations = new MultipleValidationWithAnd([
+                new RFCValidation(),
+                new DNSCheckValidation()
             ]);
-            $validator = new \Zend_Validate_EmailAddress([
-                "mx" => false,
-                "deep" => false,
-                "hostname" => $hostnameValidator
-            ]);
-            if (!$validator->isValid($data)) {
+            if(!$validator->isValid($data, $multipleValidations)) {
                 throw new Model\Element\ValidationException("Value in field [ " . $this->getName() . " ] isn't a valid email address");
             }
         }
