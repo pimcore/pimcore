@@ -76,7 +76,10 @@ class Admin_IndexController extends \Pimcore\Controller\Action\Admin
                     $tmpData["allowedClasses"] = $tmpData["classes"] ? explode(",", $tmpData["classes"]) : null;
                     $tmpData["showroot"] = (bool)$tmpData["showroot"];
 
-                    $cvData[] = $tmpData;
+                    // Check if a user has privileges to that node
+                    if ($rootNode->isAllowed("list")) {
+                        $cvData[] = $tmpData;
+                    }
                 }
             }
         }
