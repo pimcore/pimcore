@@ -65,23 +65,23 @@ pimcore.document.newsletters.settings = Class.create(pimcore.document.settings_a
                                 fieldLabel: t('newsletter_trackingParameterName'),
                                 name: 'trackingParameterName',
                                 value: this.document.data.trackingParameterName
+                            },
+                            {
+                                xtype: 'combo',
+                                store: Ext.create('Ext.data.Store', {
+                                    fields: ['key', 'value'],
+                                    data : [
+                                        {'key': 'single', 'value': t("newsletter_sendingmode_single")},
+                                        {'key': 'batch', 'value': t("newsletter_sendingmode_batch")}
+                                    ]
+                                }),
+                                queryMode: 'local',
+                                displayField: 'value',
+                                valueField: 'key',
+                                fieldLabel: t('newsletter_sendingMode'),
+                                name: 'sendingMode',
+                                value: this.document.data.sendingMode
                             }
-
-                            // {
-                            //     fieldLabel: t('email_to'),
-                            //     name: 'to',
-                            //     value: this.document.data.to
-                            // },
-                            // {
-                            //     fieldLabel: t('email_cc'),
-                            //     name: 'cc',
-                            //     value: this.document.data.cc
-                            // },
-                            // {
-                            //     fieldLabel: t('email_bcc'),
-                            //     name: 'bcc',
-                            //     value: this.document.data.bcc
-                            // },
                         ]
                     },
                     this.getControllerViewFields(),

@@ -87,7 +87,7 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
             $tmpStore->update();
 
             $sendingParamContainer = $addressAdapter->getParamsForSingleSending($limit, $offset);
-            \Pimcore\Tool\Newsletter::sendNewsletterDocumentBasedMail($document, $sendingParamContainer, \Pimcore\Tool\Newsletter::SENDING_MODE_SINGLE, $input->getArgument("hostUrl"));
+            \Pimcore\Tool\Newsletter::sendNewsletterDocumentBasedMail($document, $sendingParamContainer, $document->getSendingMode(), $input->getArgument("hostUrl"));
             $offset += $limit;
             $hasElements = count($sendingParamContainer);
 

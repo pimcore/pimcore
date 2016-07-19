@@ -72,6 +72,12 @@ class Newsletter extends Model\Document\PageSnippet
 
 
     /**
+     * @var string
+     */
+    public $sendingMode = \Pimcore\Tool\Newsletter::SENDING_MODE_SINGLE;
+
+
+    /**
      * Contains the email subject
      *
      * @param string $subject
@@ -181,7 +187,21 @@ class Newsletter extends Model\Document\PageSnippet
         $this->trackingParameterName = $trackingParameterName;
     }
 
+    /**
+     * @return string
+     */
+    public function getSendingMode()
+    {
+        return $this->sendingMode;
+    }
 
+    /**
+     * @param string $sendingMode
+     */
+    public function setSendingMode($sendingMode)
+    {
+        $this->sendingMode = $sendingMode;
+    }
 
     /**
      * @return string
