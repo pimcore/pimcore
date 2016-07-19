@@ -57,11 +57,11 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         var filterStore = [];
         var selectedStore = [];
         for (i=0; i<possibleRestrictions.length; i++) {
-           if(this.parent.restrictions.subtype.object && in_array(possibleRestrictions[i],
-                                    this.parent.restrictions.subtype.object )) {
+            if(this.parent.restrictions.subtype.object && in_array(possibleRestrictions[i],
+                    this.parent.restrictions.subtype.object )) {
                 filterStore.push([possibleRestrictions[i], t(possibleRestrictions[i])]);
                 selectedStore.push(possibleRestrictions[i]);
-           }
+            }
         }
 
         // add all to store if empty
@@ -78,15 +78,18 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         }
 
         if(!this.parent.initialRestrictions.specific || (!this.parent.initialRestrictions.specific.classes
-                            || this.parent.initialRestrictions.specific.classes.length < 1)) {
+            || this.parent.initialRestrictions.specific.classes.length < 1)) {
             // only add the subtype filter if there is no class restriction
             compositeConfig.items.push({
                 xtype: "combo",
                 store: filterStore,
-                mode: "local",
+                queryMode: "local",
                 name: "subtype",
                 triggerAction: "all",
-                editable: false,
+                editable: true,
+                typeAhead:true,
+                forceSelection: true,
+                selectOnFocus: true,
                 value: selectedValue
             });
         }
@@ -96,16 +99,16 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         var possibleClassRestrictions = [];
         var classStore = pimcore.globalmanager.get("object_types_store");
         classStore.each(function (rec) {
-             possibleClassRestrictions.push(rec.data.text);
+            possibleClassRestrictions.push(rec.data.text);
         });
 
         var filterClassStore = [];
         var selectedClassStore = [];
         for (i=0; i<possibleClassRestrictions.length; i++) {
-           if(in_array(possibleClassRestrictions[i], this.parent.restrictions.specific.classes )) {
+            if(in_array(possibleClassRestrictions[i], this.parent.restrictions.specific.classes )) {
                 filterClassStore.push([possibleClassRestrictions[i], ts(possibleClassRestrictions[i])]);
                 selectedClassStore.push(possibleClassRestrictions[i]);
-           }
+            }
         }
 
         // add all to store if empty
@@ -122,12 +125,14 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         }
 
         this.classChangeCombo = new Ext.form.ComboBox({
-            xtype: "combo",
             store: filterClassStore,
-            mode: "local",
+            queryMode: "local",
             name: "class",
             triggerAction: "all",
-            editable: false,
+            editable: true,
+            typeAhead: true,
+            forceSelection: true,
+            selectOnFocus: true,
             value: selectedClassValue,
             listeners: {
                 select: this.changeClass.bind(this)
@@ -167,22 +172,22 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
             });
 
             this.selectionPanel = new Ext.grid.GridPanel({
-               region: "east",
-               title: t("your_selection"),
-               tbar: [{
+                region: "east",
+                title: t("your_selection"),
+                tbar: [{
                     xtype: "tbtext",
                     text: t("double_click_to_add_item_to_selection"),
                     autoHeight: true,
                     style: {
                         whiteSpace: "normal"
                     }
-               }],
-               tbarCfg: {
+                }],
+                tbarCfg: {
                     autoHeight: true
-               },
-               width: 300,
-               store: this.selectionStore,
-               columns: [
+                },
+                width: 300,
+                store: this.selectionStore,
+                columns: [
                     {header: t("type"), width: 40, sortable: true, dataIndex: 'subtype'},
                     {header: t("filename"), flex: 1, sortable: true, dataIndex: 'filename'}
                 ],
@@ -293,15 +298,15 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
                 }
             },
             fields: ["id","fullpath","type","subtype","filename",{name:"classname",convert: function(v, rec){
-                    return ts(rec.data.classname);
-                }},"published"]
+                return ts(rec.data.classname);
+            }},"published"]
         });
 
         var columns = [
             {header: t("type"), width: 40, sortable: true, dataIndex: 'subtype',
                 renderer: function (value, metaData, record, rowIndex, colIndex, store) {
                     return '<div style="height: 16px;" class="pimcore_icon_asset  pimcore_icon_' + value + '" name="'
-                                                            + t(record.data.subtype) + '">&nbsp;</div>';
+                        + t(record.data.subtype) + '">&nbsp;</div>';
                 }
             },
             {header: 'ID', width: 40, sortable: true, dataIndex: 'id', hidden: true},
@@ -353,9 +358,9 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
                 var classStore = pimcore.globalmanager.get("object_types_store");
                 var classId = null;
                 classStore.each(function (rec) {
-                     if(rec.data.text == selectedClass) {
-                         classId = rec.data.id;
-                     }
+                    if(rec.data.text == selectedClass) {
+                        classId = rec.data.id;
+                    }
                 });
 
                 var columnConfig = new Ext.menu.Item({
