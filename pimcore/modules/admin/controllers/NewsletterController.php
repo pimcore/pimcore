@@ -156,7 +156,8 @@ class Admin_NewsletterController extends \Pimcore\Controller\Action\Admin\Docume
         ]);
     }
 
-    public function getAvailableClassesAction() {
+    public function getAvailableClassesAction()
+    {
         $classList = new \Pimcore\Model\Object\ClassDefinition\Listing();
 
         $availableClasses = [];
@@ -192,7 +193,6 @@ class Admin_NewsletterController extends \Pimcore\Controller\Action\Admin\Docume
 
     public function stopSendAction()
     {
-
         $document = Document\Newsletter::getById($this->getParam("id"));
         Tool\TmpStore::delete($document->getTmpStoreId());
 
@@ -205,7 +205,7 @@ class Admin_NewsletterController extends \Pimcore\Controller\Action\Admin\Docume
     {
         $document = Document\Newsletter::getById($this->getParam("id"));
 
-        if(Tool\TmpStore::get($document->getTmpStoreId())) {
+        if (Tool\TmpStore::get($document->getTmpStoreId())) {
             throw new Exception("newsletter sending already in progress, need to finish first.");
         }
 
@@ -243,5 +243,4 @@ class Admin_NewsletterController extends \Pimcore\Controller\Action\Admin\Docume
 
         $this->_helper->json(["success" => true]);
     }
-
 }

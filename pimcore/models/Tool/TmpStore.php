@@ -240,10 +240,12 @@ class TmpStore extends Model\AbstractModel
      * @param null $lifetime
      * @return mixed
      */
-    public function update($lifetime = null) {
+    public function update($lifetime = null)
+    {
         if (!$lifetime) {
             $lifetime = 86400;
         }
+
         return $this->getDao()->add($this->getId(), $this->getData(), $this->getTag(), $lifetime);
     }
 }

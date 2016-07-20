@@ -23,7 +23,6 @@ use Pimcore\Model;
 
 class Newsletter
 {
-
     const SENDING_MODE_BATCH = "batch";
     const SENDING_MODE_SINGLE = "single";
 
@@ -37,7 +36,8 @@ class Newsletter
      * @param Mail $mail
      * @return Mail
      */
-    protected static function preRenderMail(Document\Newsletter $newsletterDocument, Mail $mail) {
+    protected static function preRenderMail(Document\Newsletter $newsletterDocument, Mail $mail)
+    {
         $contentHTML = $mail->getBodyHtmlRendered();
         $contentText = $mail->getBodyTextRendered();
 
@@ -87,8 +87,8 @@ class Newsletter
      * @param string $sendingMode
      * @param string|null $hostUrl
      */
-    public static function sendNewsletterDocumentBasedMail(Document\Newsletter $newsletterDocument, array $sendingContainers, $sendingMode = self::SENDING_MODE_SINGLE, $hostUrl = null) {
-
+    public static function sendNewsletterDocumentBasedMail(Document\Newsletter $newsletterDocument, array $sendingContainers, $sendingMode = self::SENDING_MODE_SINGLE, $hostUrl = null)
+    {
         $mail = new Mail();
         $mail->setIgnoreDebugMode(true);
 
@@ -102,18 +102,15 @@ class Newsletter
 
         $mail->setDocument($newsletterDocument);
 
-        if($sendingMode == self::SENDING_MODE_BATCH) {
-
+        if ($sendingMode == self::SENDING_MODE_BATCH) {
             $mail = self::preRenderMail($newsletterDocument, $mail);
 
-            foreach($sendingContainers as $sendingContainer) {
+            foreach ($sendingContainers as $sendingContainer) {
                 $mail->setTo($sendingContainer->getEmail());
                 $mail->sendWithoutRendering();
                 \Logger::info("Sent newsletter to: " . self::obfuscateEmail($sendingContainer->getEmail()) . " [" . $newsletterDocument->getId() . "]");
             }
-
         } else {
-
             foreach ($sendingContainers as $sendingContainer) {
                 $mail->setParams($sendingContainer->getParams());
                 $mail->setTo($sendingContainer->getEmail());
@@ -121,14 +118,13 @@ class Newsletter
                 $mail->sendWithoutRendering();
                 \Logger::info("Sent newsletter to: " . self::obfuscateEmail($sendingContainer->getEmail()) . " [" . $newsletterDocument->getId() . "]");
             }
-
         }
-
     }
 
     protected static function obfuscateEmail($email)
     {
         $email = substr_replace($email, ".xxx", strrpos($email, "."));
+
         return $email;
     }
 

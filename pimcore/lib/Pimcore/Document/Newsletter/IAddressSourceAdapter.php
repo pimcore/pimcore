@@ -14,8 +14,8 @@
 
 namespace Pimcore\Document\Newsletter;
 
-
-interface IAddressSourceAdapter {
+interface IAddressSourceAdapter
+{
 
     /**
      * IAddressSourceAdapter constructor.
@@ -53,7 +53,4 @@ interface IAddressSourceAdapter {
      * @return SendingParamContainer[]
      */
     public function getParamsForSingleSending($limit, $offset);
-
-
 }
-

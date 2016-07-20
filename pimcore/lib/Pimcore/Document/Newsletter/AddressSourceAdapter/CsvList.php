@@ -14,11 +14,11 @@
 
 namespace Pimcore\Document\Newsletter\AddressSourceAdapter;
 
-
 use Pimcore\Document\Newsletter\IAddressSourceAdapter;
 use Pimcore\Document\Newsletter\SendingParamContainer;
 
-class CsvList implements IAddressSourceAdapter {
+class CsvList implements IAddressSourceAdapter
+{
 
     /**
      * @var string[]
@@ -42,7 +42,7 @@ class CsvList implements IAddressSourceAdapter {
     public function getMailAddressesForBatchSending()
     {
         $containers = [];
-        foreach($this->emailAddresses as $address) {
+        foreach ($this->emailAddresses as $address) {
             $containers[] = new SendingParamContainer($address, null);
         }
 
@@ -83,9 +83,10 @@ class CsvList implements IAddressSourceAdapter {
     {
         $addresses = array_slice($this->emailAddresses, $offset, $limit);
         $containers = [];
-        foreach($addresses as $address) {
+        foreach ($addresses as $address) {
             $containers[] = new SendingParamContainer($address, null);
         }
+
         return $containers;
     }
 }

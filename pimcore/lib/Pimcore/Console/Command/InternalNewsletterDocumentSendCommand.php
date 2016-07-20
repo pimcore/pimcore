@@ -34,14 +34,14 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
         $sendingId = $input->getArgument("sendingId");
         $tmpStore = Model\Tool\TmpStore::get($sendingId);
 
-        if(empty($tmpStore)) {
+        if (empty($tmpStore)) {
             \Logger::alert("No sending configuration for $sendingId found. Cannot send newsletter.");
             exit;
         }
 
         $data = $tmpStore->getData();
 
-        if($data['inProgress']) {
+        if ($data['inProgress']) {
             \Logger::alert("Cannot send newsletters because there's already one active sending process.");
             exit;
         }
@@ -68,11 +68,10 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
         $offset = 0;
         $hasElements = true;
 
-        while($hasElements) {
-
+        while ($hasElements) {
             $tmpStore = Model\Tool\TmpStore::get($sendingId);
 
-            if(empty($tmpStore)) {
+            if (empty($tmpStore)) {
                 \Logger::warn("Sending configuration for sending ID $sendingId was deleted. Cancelling sending process.");
                 exit;
             }
@@ -92,7 +91,6 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
             $hasElements = count($sendingParamContainer);
 
             \Pimcore::collectGarbage();
-
         }
         Model\Tool\TmpStore::delete($sendingId);
     }

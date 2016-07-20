@@ -44,7 +44,7 @@ class Email extends Model\Object\ClassDefinition\Data\Input
                 new RFCValidation(),
                 new DNSCheckValidation()
             ]);
-            if(!$validator->isValid($data, $multipleValidations)) {
+            if (!$validator->isValid($data, $multipleValidations)) {
                 throw new Model\Element\ValidationException("Value in field [ " . $this->getName() . " ] isn't a valid email address");
             }
         }

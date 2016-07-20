@@ -14,13 +14,13 @@
 
 namespace Pimcore\Document\Newsletter\AddressSourceAdapter;
 
-
 use Pimcore\Document\Newsletter\IAddressSourceAdapter;
 use Pimcore\Document\Newsletter\SendingParamContainer;
 use Pimcore\Model\Object\ClassDefinition;
 use Pimcore\Model\Object\Listing;
 
-class DefaultAdapter implements IAddressSourceAdapter {
+class DefaultAdapter implements IAddressSourceAdapter
+{
 
     /**
      * @var string
@@ -61,9 +61,9 @@ class DefaultAdapter implements IAddressSourceAdapter {
     /**
      * @return Listing
      */
-    protected function getListing() {
-
-        if(empty($this->list)) {
+    protected function getListing()
+    {
+        if (empty($this->list)) {
             $objectList = "\\Pimcore\\Model\\Object\\" . ucfirst($this->class) . "\\Listing";
             $this->list = new $objectList();
 
@@ -120,7 +120,7 @@ class DefaultAdapter implements IAddressSourceAdapter {
         $emails = $db->fetchCol("SELECT email FROM $tableName WHERE o_id IN (" . implode(",", $ids) . ")");
 
         $containers = [];
-        foreach($emails as $email) {
+        foreach ($emails as $email) {
             $containers = new SendingParamContainer($email, null);
         }
 
@@ -155,6 +155,7 @@ class DefaultAdapter implements IAddressSourceAdapter {
     public function getTotalRecordCount()
     {
         $this->getListing();
+
         return $this->elementsTotal;
     }
 

@@ -210,6 +210,4 @@ class Newsletter extends Model\Document\PageSnippet
     {
         return "newsletter__" . $this->getId();
     }
-
-
 }

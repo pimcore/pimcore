@@ -14,7 +14,8 @@
 
 namespace Pimcore\Document\Newsletter;
 
-class SendingParamContainer {
+class SendingParamContainer
+{
 
     /**
      * @var string
@@ -68,5 +69,4 @@ class SendingParamContainer {
     {
         $this->params = $params;
     }
-
 }

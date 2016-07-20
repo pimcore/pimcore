@@ -640,7 +640,8 @@ class Mail extends \Zend_Mail
      * @param null $transport
      * @return \Zend_Mail
      */
-    public function sendWithoutRendering($transport = null) {
+    public function sendWithoutRendering($transport = null)
+    {
         // filter email addresses
         $blockedAddresses = [];
         foreach ($this->getRecipients() as $recipient) {
