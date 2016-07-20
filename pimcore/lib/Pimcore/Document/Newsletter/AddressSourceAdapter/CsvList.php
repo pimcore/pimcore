@@ -81,7 +81,6 @@ class CsvList implements IAddressSourceAdapter
      */
     public function getParamsForSingleSending($limit, $offset)
     {
-
         \Logger::warn(print_r([$limit, $offset], true));
 
         $addresses = array_slice($this->emailAddresses, $offset, $limit);

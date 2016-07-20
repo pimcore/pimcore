@@ -40,6 +40,4 @@ class Out extends Document\Printcontainer
      * @var integer
      */
     public $userModification;
-
-
 }

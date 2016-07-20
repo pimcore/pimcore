@@ -81,5 +81,4 @@ class Out extends Model\Webservice\Data\Document\Snippet\Out
      * @var string
      */
     public $sendingMode = \Pimcore\Tool\Newsletter::SENDING_MODE_SINGLE;
-
 }

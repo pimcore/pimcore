@@ -335,7 +335,7 @@ class User extends User\UserRole
             } else {
                 return true;
             }
-        } elseif($type == self::PERMISSION_TYPE_PERSPECTIVE) {
+        } elseif ($type == self::PERMISSION_TYPE_PERSPECTIVE) {
             //returns true if required perspective is allowed to use by the user
             return in_array($key, $this->getMergedPerspectives());
         }
@@ -588,6 +588,7 @@ class User extends User\UserRole
             }
             $this->mergedPerspectives = array_values($this->mergedPerspectives);
         }
+
         return $this->mergedPerspectives;
     }
 

@@ -171,7 +171,7 @@ class Newsletter extends Model\Document\PageSnippet
      */
     public function getTrackingParameterName()
     {
-        if(is_null($this->trackingParameterName)) {
+        if (is_null($this->trackingParameterName)) {
             return $this->getKey();
         }
 

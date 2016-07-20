@@ -39,5 +39,4 @@ class Out extends Document\Printpage
      * @var integer
      */
     public $userModification;
-
 }
