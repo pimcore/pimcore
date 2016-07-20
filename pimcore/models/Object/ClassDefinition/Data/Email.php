@@ -38,13 +38,8 @@ class Email extends Model\Object\ClassDefinition\Data\Input
     public function checkValidity($data, $omitMandatoryCheck = false)
     {
         if (!$omitMandatoryCheck && strlen($data) > 0) {
-            //email validation with DNS checking
             $validator = new EmailValidator();
-            $multipleValidations = new MultipleValidationWithAnd([
-                new RFCValidation(),
-                new DNSCheckValidation()
-            ]);
-            if (!$validator->isValid($data, $multipleValidations)) {
+            if(!$validator->isValid($data, new RFCValidation())) {
                 throw new Model\Element\ValidationException("Value in field [ " . $this->getName() . " ] isn't a valid email address");
             }
         }
