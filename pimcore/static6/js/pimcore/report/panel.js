@@ -132,7 +132,9 @@ pimcore.report.panel = Class.create({
 
 
             var layoutConfig = {
-                title: t('reports_and_marketing'),
+                tabConfig: {
+                    tooltip: t('reports_and_marketing')
+                },
                 border: false,
                 layout: "border",
                 items: [this.tree,this.reportContainer],

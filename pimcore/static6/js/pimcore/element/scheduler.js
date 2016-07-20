@@ -211,7 +211,9 @@ pimcore.element.scheduler = Class.create({
 
 
             this.layout = new Ext.Panel({
-                title: t('schedule'),
+                tabConfig: {
+                    tooltip: t('schedule')
+                },
                 border: false,
                 iconCls: "pimcore_icon_schedule",
                 items: [this.grid],

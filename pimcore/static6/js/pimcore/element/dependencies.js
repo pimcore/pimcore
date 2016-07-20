@@ -35,7 +35,9 @@ pimcore.element.dependencies = Class.create({
         
         if (this.layout == null) {
             this.layout = new Ext.Panel({
-                title: t('dependencies'),
+                tabConfig: {
+                    tooltip: t('dependencies')
+                },
                 border: false,
                 scrollable: "y",
                 iconCls: "pimcore_icon_dependencies",

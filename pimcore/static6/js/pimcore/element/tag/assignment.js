@@ -134,7 +134,9 @@ pimcore.element.tag.assignment = Class.create({
             });
 
             this.layout = Ext.create("Ext.Panel", {
-                title: t("tags"),
+                tabConfig: {
+                    tooltip: t('tags')
+                },
                 region: "center",
                 iconCls: "pimcore_icon_element_tags",
                 layout: 'border',

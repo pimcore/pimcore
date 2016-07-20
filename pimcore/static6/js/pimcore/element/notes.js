@@ -199,7 +199,9 @@ pimcore.element.notes = Class.create({
             });
 
             this.layout = new Ext.Panel({
-                title: t('notes_events'),
+                tabConfig: {
+                    tooltip: t('notes_events')
+                },
                 iconCls: "pimcore_icon_notes",
                 items: [this.grid, this.detailView],
                 layout: "border",
