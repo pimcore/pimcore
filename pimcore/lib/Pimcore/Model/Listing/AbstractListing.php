@@ -188,6 +188,7 @@ abstract class AbstractListing extends AbstractModel
         }
 
         if ($quote) {
+            $tmpKeys = [];
             foreach ($this->orderKey as $key) {
                 $tmpKeys[] = "`" . $key . "`";
             }
@@ -246,7 +247,7 @@ abstract class AbstractListing extends AbstractModel
         $db = \Pimcore\Db::get();
 
         if (!empty($conditionPrams)) {
-            $params = $this->getConditionVariables();
+            $params = [];
             $i = 0;
             foreach ($conditionPrams as $key => $value) {
                 if (!$this->condition && $i == 0) {
@@ -281,7 +282,8 @@ abstract class AbstractListing extends AbstractModel
     }
 
     /**
-     * @param string $condition
+     * @param $condition
+     * @param null $conditionVariables
      * @return $this
      */
     public function setCondition($condition, $conditionVariables = null)
