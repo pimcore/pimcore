@@ -17,16 +17,11 @@
 namespace Pimcore\Model\Document;
 
 use Pimcore\Model;
+use Egulias\EmailValidator\EmailValidator;
+use Egulias\EmailValidator\Validation\RFCValidation;
 
 class Email extends Model\Document\PageSnippet
 {
-    /**
-     * Contains a \Zend_Validate_EmailAddress object
-     *
-     * @var \Zend_Validate_EmailAddress
-     */
-    protected static $validator;
-
     /**
      * Static type of the document
      *
@@ -155,22 +150,14 @@ class Email extends Model\Document\PageSnippet
      */
     public static function validateEmailAddress($emailAddress)
     {
-        if (is_null(self::$validator)) {
-            $hostnameValidator = new \Zend_Validate_Hostname([
-                "idn" => false,
-                "tld" => false
-            ]);
-            self::$validator = new \Zend_Validate_EmailAddress([
-                "mx" => false,
-                "deep" => false,
-                "hostname" => $hostnameValidator
-            ]);
-        }
-
         $emailAddress = trim($emailAddress);
-        if (self::$validator->isValid($emailAddress)) {
+
+        $validator = new EmailValidator();
+        if($validator->isValid($emailAddress, new RFCValidation())) {
             return $emailAddress;
         }
+
+        return null;
     }
 
     /**

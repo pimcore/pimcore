@@ -21,13 +21,6 @@ use Pimcore\Model;
 class Newsletter extends Model\Document\PageSnippet
 {
     /**
-     * Contains a \Zend_Validate_EmailAddress object
-     *
-     * @var \Zend_Validate_EmailAddress
-     */
-    protected static $validator;
-
-    /**
      * Static type of the document
      *
      * @var string

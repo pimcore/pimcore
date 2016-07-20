@@ -16,6 +16,8 @@ namespace Pimcore;
 
 use Pimcore\Helper\Mail as MailHelper;
 use Pimcore\Model;
+use Egulias\EmailValidator\EmailValidator;
+use Egulias\EmailValidator\Validation\RFCValidation;
 
 class Mail extends \Zend_Mail
 {
@@ -732,19 +734,9 @@ class Mail extends \Zend_Mail
      */
     public static function isValidEmailAddress($emailAddress)
     {
-        $hostnameValidator = new \Zend_Validate_Hostname([
-            "idn" => false,
-            "tld" => false
-        ]);
-        $validator = new \Zend_Validate_EmailAddress([
-            "mx" => false,
-            "deep" => false,
-            "hostname" => $hostnameValidator
-        ]);
-        
-        return $validator->isValid($emailAddress);
+        $validator = new EmailValidator();
+        return $validator->isValid($emailAddress, new RFCValidation());
     }
-
 
     /**
      * Replaces the placeholders with the content and returns the rendered Subject
@@ -762,7 +754,6 @@ class Mail extends \Zend_Mail
 
         return $this->placeholderObject->replacePlaceholders($subject, $this->getParams(), $this->getDocument(), $this->getEnableLayoutOnPlaceholderRendering());
     }
-
 
     /**
      * Replaces the placeholders with the content and returns the rendered Html

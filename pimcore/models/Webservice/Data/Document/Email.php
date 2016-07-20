@@ -20,15 +20,6 @@ use Pimcore\Model;
 
 class Email extends Model\Webservice\Data\Document\Snippet
 {
-
-
-    /**
-     * Contains a \Zend_Validate_EmailAddress object
-     *
-     * @var \Zend_Validate_EmailAddress
-     */
-    protected static $validator;
-
     /**
      * Static type of the document
      *

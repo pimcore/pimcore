@@ -18,8 +18,6 @@ namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
 use Egulias\EmailValidator\EmailValidator;
-use Egulias\EmailValidator\Validation\DNSCheckValidation;
-use Egulias\EmailValidator\Validation\MultipleValidationWithAnd;
 use Egulias\EmailValidator\Validation\RFCValidation;
 
 class Email extends Model\Object\ClassDefinition\Data\Input
