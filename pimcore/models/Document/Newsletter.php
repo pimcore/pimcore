@@ -61,7 +61,7 @@ class Newsletter extends Model\Document\PageSnippet
     /**
      * @var string
      */
-    public $trackingParameterName = "";
+    public $trackingParameterName = null;
 
 
     /**
@@ -165,10 +165,16 @@ class Newsletter extends Model\Document\PageSnippet
     }
 
     /**
+     * returns key by default
+     *
      * @return string
      */
     public function getTrackingParameterName()
     {
+        if(is_null($this->trackingParameterName)) {
+            return $this->getKey();
+        }
+
         return $this->trackingParameterName;
     }
 

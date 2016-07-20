@@ -799,6 +799,12 @@ pimcore.document.tree = Class.create({
                     iconCls: "pimcore_icon_email pimcore_icon_overlay_add",
                     handler: this.addDocument.bind(this, tree, record, "email", typeRecord.get("id"))
                 });
+            } else if (typeRecord.get("type") == "newsletter") {
+                documentMenu.newsletter.push({
+                    text: ts(typeRecord.get("name")),
+                    iconCls: "pimcore_icon_newsletter pimcore_icon_overlay_add",
+                    handler: this.addDocument.bind(this, tree, record, "newsletter", typeRecord.get("id"))
+                });
             } else if (typeRecord.get("type") == "printpage") {
                 documentMenu.printPage.push({
                     text: ts(typeRecord.get("name")),
