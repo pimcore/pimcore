@@ -2,3 +2,6 @@
 .idea
 # NetBeans
 nbproject
+
+tests/_output/*
+tests/_output/*
