@@ -14,10 +14,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Model\Webservice\Data\Document\Snippet;
+namespace Pimcore\Model\Webservice\Data\Document\Newsletter;
 
 use Pimcore\Model;
 
-class Incoming extends Model\Webservice\Data\Document\Snippet
+class In extends Model\Webservice\Data\Document\Snippet\Out
 {
 }

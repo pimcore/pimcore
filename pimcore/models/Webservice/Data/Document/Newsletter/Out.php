@@ -14,7 +14,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Model\Webservice\Data\Document\Email;
+namespace Pimcore\Model\Webservice\Data\Document\Newsletter;
 
 use Pimcore\Model;
 
@@ -55,23 +55,31 @@ class Out extends Model\Webservice\Data\Document\Snippet\Out
     public $from = "";
 
     /**
-     * Contains the email addresses of the recipients
+     * enables adding tracking parameters to all links
      *
-     * @var string
+     * @var bool
      */
-    public $to = "";
+    public $enableTrackingParameters = false;
 
     /**
-     * Contains the carbon copy recipients
-     *
      * @var string
      */
-    public $cc = "";
+    public $trackingParameterSource = "newsletter";
 
     /**
-     * Contains the blind carbon copy recipients
-     *
      * @var string
      */
-    public $bcc = "";
+    public $trackingParameterMedium = "email";
+
+    /**
+     * @var string
+     */
+    public $trackingParameterName = "";
+
+
+    /**
+     * @var string
+     */
+    public $sendingMode = \Pimcore\Tool\Newsletter::SENDING_MODE_SINGLE;
+
 }

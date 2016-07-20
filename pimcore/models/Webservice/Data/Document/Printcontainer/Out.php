@@ -20,4 +20,26 @@ use \Pimcore\Model\Webservice\Data\Document;
 
 class Out extends Document\Printcontainer
 {
+
+    /**
+     * @var string
+     */
+    public $path;
+
+    /**
+     * @var integer
+     */
+    public $creationDate;
+
+    /**
+     * @var integer
+     */
+    public $modificationDate;
+
+    /**
+     * @var integer
+     */
+    public $userModification;
+
+
 }
