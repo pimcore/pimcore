@@ -116,7 +116,7 @@ pimcore.document.newsletters.sendingPanel = Class.create({
             this.statusUpdateBox = Ext.create('Ext.Panel', {
                 autoHeight: true,
                 border: false,
-                hidden: false,
+                hidden: true,
                 items: [this.progressBar, {
                     xtype: 'button',
                     style: "float: right;",

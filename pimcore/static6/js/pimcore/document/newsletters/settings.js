@@ -31,9 +31,8 @@ pimcore.document.newsletters.settings = Class.create(pimcore.document.settings_a
                         title: t('email_settings'),
                         collapsible: true,
                         autoHeight:true,
-                        labelWidth: 300,
                         defaultType: 'textfield',
-                        defaults: {width: 700},
+                        defaults: {width: 700, labelWidth: 320},
                         items :[
                             {
                                 fieldLabel: t('email_subject'),

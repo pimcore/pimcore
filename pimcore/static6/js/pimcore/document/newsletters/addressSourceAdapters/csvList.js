@@ -35,7 +35,7 @@ pimcore.document.newsletters.addressSourceAdapters.csvList = Class.create({
                     {
                         xtype: "textarea",
                         name: "csvList",
-                        fieldLabel: t("newsletter_csvlist"),
+                        fieldLabel: t("newsletter_csvList"),
                         width: 600,
                         height: 300
                     }
