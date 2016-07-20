@@ -15,6 +15,8 @@
 namespace Pimcore\Console\Command;
 
 use Pimcore\Console\AbstractCommand;
+use Pimcore\Document\Newsletter\IAddressSourceAdapter;
+use Pimcore\Tool\Newsletter;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Pimcore\Model;
@@ -62,15 +64,28 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
         $addressAdapter = new $adapterClass($adapterParams);
 
 
+        if($document->getSendingMode() == Newsletter::SENDING_MODE_BATCH) {
+            $this->doSendMailInBatchMode($document, $addressAdapter, $sendingId);
+        } else {
+            $this->doSendMailInSingleMode($document, $addressAdapter, $sendingId);
+        }
+
+        Model\Tool\TmpStore::delete($sendingId);
+    }
+
+    protected function doSendMailInBatchMode(Model\Document\Newsletter $document, IAddressSourceAdapter $addressAdapter, $sendingId) {
+
+        $mail = \Pimcore\Tool\Newsletter::prepareMail($document);
+        $sendingParamContainers = $addressAdapter->getMailAddressesForBatchSending();
+
+        $currentCount = 0;
         $totalCount = $addressAdapter->getTotalRecordCount();
 
-        //calculate page size based on total item count - with min page size 3 and max page size 20
+        //calculate page size based on total item count - with min page size 3 and max page size 10
         $fifth = $totalCount / 5;
-        $limit = $fifth > 20 ? 20 : ($fifth < 3 ? 3 : intval($fifth));
-        $offset = 0;
-        $hasElements = true;
+        $pageSize = $fifth > 10 ? 10 : ($fifth < 3 ? 3 : intval($fifth));
 
-        while ($hasElements) {
+        foreach($sendingParamContainers as $sendingParamContainer) {
             $tmpStore = Model\Tool\TmpStore::get($sendingId);
 
             if (empty($tmpStore)) {
@@ -78,8 +93,35 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
                 exit;
             }
 
-            $data = $tmpStore->getData();
+            if($currentCount % $pageSize == 0) {
+                \Logger::info("Sending newsletter " . $currentCount . " / " . $totalCount. " [" . $document->getId(). "]");
+                $data = $tmpStore->getData();
+                $data['progress'] = round($currentCount / $totalCount * 100, 2);
+                $tmpStore->setData($data);
+                $tmpStore->update();
+                \Pimcore::collectGarbage();
+            }
 
+            \Pimcore\Tool\Newsletter::sendNewsletterDocumentBasedMail($mail, $sendingParamContainer);
+
+            $currentCount++;
+        }
+
+    }
+
+    protected function doSendMailInSingleMode(Model\Document\Newsletter $document, IAddressSourceAdapter $addressAdapter, $sendingId) {
+        $totalCount = $addressAdapter->getTotalRecordCount();
+
+        //calculate page size based on total item count - with min page size 3 and max page size 10
+        $fifth = $totalCount / 5;
+        $limit = $fifth > 10 ? 10 : ($fifth < 3 ? 3 : intval($fifth));
+        $offset = 0;
+        $hasElements = true;
+
+        while ($hasElements) {
+            $tmpStore = Model\Tool\TmpStore::get($sendingId);
+
+            $data = $tmpStore->getData();
 
             \Logger::info("Sending newsletter " . $hasElements . " / " . $totalCount. " [" . $document->getId(). "]");
 
@@ -87,15 +129,23 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
             $tmpStore->setData($data);
             $tmpStore->update();
 
-            $sendingParamContainer = $addressAdapter->getParamsForSingleSending($limit, $offset);
-            \Pimcore\Tool\Newsletter::sendNewsletterDocumentBasedMail($document, $sendingParamContainer, $document->getSendingMode(), $input->getArgument("hostUrl"));
-            $offset += $limit;
-            $hasElements = count($sendingParamContainer);
+            $sendingParamContainers = $addressAdapter->getParamsForSingleSending($limit, $offset);
+            foreach($sendingParamContainers as $sendingParamContainer) {
 
-            \Logger::info("DONE");
+                $mail = \Pimcore\Tool\Newsletter::prepareMail($document);
+                \Pimcore\Tool\Newsletter::sendNewsletterDocumentBasedMail($mail, $sendingParamContainer);
+
+
+                if (empty($tmpStore)) {
+                    \Logger::warn("Sending configuration for sending ID $sendingId was deleted. Cancelling sending process.");
+                    exit;
+                }
+            }
+
+            $offset += $limit;
+            $hasElements = count($sendingParamContainers);
 
             \Pimcore::collectGarbage();
         }
-        Model\Tool\TmpStore::delete($sendingId);
     }
 }
