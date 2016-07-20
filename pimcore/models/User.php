@@ -20,6 +20,11 @@ use Pimcore\File;
 
 class User extends User\UserRole
 {
+    /**
+     * const variable used to define perspective permission type in isAllowed function
+     * @var string
+     */
+    const PERMISSION_TYPE_PERSPECTIVE = 'perspective';
 
     /**
      * @var string
@@ -100,6 +105,11 @@ class User extends User\UserRole
      * @var string|null
      */
     public $activePerspective;
+
+    /**
+     * @var null|array
+     */
+    protected $mergedPerspectives = null;
 
     /**
      * @return string
@@ -325,6 +335,9 @@ class User extends User\UserRole
             } else {
                 return true;
             }
+        } elseif($type == self::PERMISSION_TYPE_PERSPECTIVE) {
+            //returns true if required perspective is allowed to use by the user
+            return in_array($key, $this->getMergedPerspectives());
         }
 
         return false;
@@ -557,5 +570,34 @@ class User extends User\UserRole
     public function setActivePerspective($activePerspective)
     {
         $this->activePerspective = $activePerspective;
+    }
+
+    /**
+     * Returns array of perspectives names related to user and all related roles
+     *
+     * @return array|string[]
+     */
+    public function getMergedPerspectives()
+    {
+        if (null === $this->mergedPerspectives) {
+            $this->mergedPerspectives = $this->getPerspectives();
+            foreach ($this->getRoles() as $role) {
+                /** @var User\UserRole $userRole */
+                $userRole = User\UserRole::getById($role);
+                $this->mergedPerspectives = array_merge($this->mergedPerspectives, $userRole->getPerspectives());
+            }
+            $this->mergedPerspectives = array_values($this->mergedPerspectives);
+        }
+        return $this->mergedPerspectives;
+    }
+
+    /**
+     * Returns the first perspective name
+     *
+     * @return string
+     */
+    public function getFirstAllowedPerspective()
+    {
+        return $this->getMergedPerspectives()[0];
     }
 }
