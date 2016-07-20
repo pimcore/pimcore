@@ -6030,15 +6030,15 @@
     },
     {
         "term": "newsletter_trackingParameterMedium",
-        "definition": "Tracking Parameters 'Medium'"
+        "definition": "Tracking Parameter 'Medium'"
     },
     {
         "term": "newsletter_trackingParameterSource",
-        "definition": "Tracking Parameters 'Source'"
+        "definition": "Tracking Parameter 'Source'"
     },
     {
         "term": "newsletter_trackingParameterName",
-        "definition": "Tracking Parameters 'Name'"
+        "definition": "Tracking Parameter 'Name'"
     },
     {
         "term": "newsletter_sendingMode",
@@ -6066,7 +6066,7 @@
     },
     {
         "term": "newsletter_sourceAdapter",
-        "definition": "Source Adapter"
+        "definition": "Address Source Adapter"
     },
     {
         "term": "newsletter_default",

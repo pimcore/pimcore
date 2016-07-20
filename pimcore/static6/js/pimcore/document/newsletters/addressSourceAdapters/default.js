@@ -18,11 +18,20 @@ pimcore.document.newsletters.addressSourceAdapters.default = Class.create({
         this.document = document;
     },
 
+    /**
+     * returns name of corresponding php implementation class
+     *
+     * @returns {string}
+     */
     getName: function() {
         return "defaultAdapter";
     },
 
-
+    /**
+     * returns layout for sending panel
+     *
+     * @returns {Ext.form.Panel|*}
+     */
     getLayout: function () {
 
         if (this.layout == null) {
@@ -112,16 +121,18 @@ pimcore.document.newsletters.addressSourceAdapters.default = Class.create({
         return this.layout;
     },
 
+    /**
+     * returns values for sending process
+     *
+     * @returns {*|Object}
+     */
     getValues: function () {
 
         if (!this.layout.rendered) {
             throw "settings not available";
         }
 
-        // get values
-        var settings = this.getLayout().getForm().getFieldValues();
-
-        return settings;
+        return this.getLayout().getForm().getFieldValues();
     }
 
 });
