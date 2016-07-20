@@ -64,7 +64,9 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
 
         $totalCount = $addressAdapter->getTotalRecordCount();
 
-        $limit = $totalCount / 5 > 20 ? 20 : intval($totalCount / 5);
+        //calculate page size based on total item count - with min page size 3 and max page size 20
+        $fifth = $totalCount / 5;
+        $limit = $fifth > 20 ? 20 : ($fifth < 3 ? 3 : intval($fifth));
         $offset = 0;
         $hasElements = true;
 
@@ -89,6 +91,8 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
             \Pimcore\Tool\Newsletter::sendNewsletterDocumentBasedMail($document, $sendingParamContainer, $document->getSendingMode(), $input->getArgument("hostUrl"));
             $offset += $limit;
             $hasElements = count($sendingParamContainer);
+
+            \Logger::info("DONE");
 
             \Pimcore::collectGarbage();
         }

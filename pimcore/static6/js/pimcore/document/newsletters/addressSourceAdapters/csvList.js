@@ -34,7 +34,7 @@ pimcore.document.newsletters.addressSourceAdapters.csvList = Class.create({
                 items: [
                     {
                         xtype: "textarea",
-                        name: "csvlist",
+                        name: "csvList",
                         fieldLabel: t("newsletter_csvlist"),
                         width: 600,
                         height: 300
@@ -48,18 +48,14 @@ pimcore.document.newsletters.addressSourceAdapters.csvList = Class.create({
 
     getValues: function () {
 
-        // if (!this.layout.rendered) {
-        //     throw "settings not available";
-        // }
-        //
-        // var fields = ["controller","action","template"];
-        // var form = this.getLayout().getForm();
-        // var element = null;
-        //
-        // // get values
-        // var settings = this.getLayout().getForm().getFieldValues();
-        //
-        // return settings;
+        if (!this.layout.rendered) {
+            throw "settings not available";
+        }
+
+        // get values
+        var settings = this.getLayout().getForm().getFieldValues();
+
+        return settings;
     }
 
 });

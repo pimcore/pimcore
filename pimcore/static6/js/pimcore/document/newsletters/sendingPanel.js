@@ -45,7 +45,6 @@ pimcore.document.newsletters.sendingPanel = Class.create({
             this.sendTestMessage = Ext.create('Ext.button.Button', {
                 text: t("send_test_newsletter"),
                 iconCls: "pimcore_icon_email",
-                // style: "margin-left: 10px",
                 handler: this.sendTest.bind(this)
             });
 
@@ -197,6 +196,11 @@ pimcore.document.newsletters.sendingPanel = Class.create({
                             Ext.MessageBox.alert(t("error"), t("newsletter_send_error"))
                         }
 
+                        //again check in 2 seconds since it may take a while until process starts
+                        window.setTimeout(function() {
+                            this.checkForActiveSendingProcess();
+                        }.bind(this), 2000);
+
                     }.bind(this)
                 });
             }
@@ -250,6 +254,8 @@ pimcore.document.newsletters.sendingPanel = Class.create({
                     if(result.data.progress) {
                         var text = result.data.progress + "%";
                         this.progressBar.updateProgress(result.data.progress / 100, text);
+                    } else {
+                        this.progressBar.updateProgress(0, "0%");
                     }
 
                     window.setTimeout(function() {
