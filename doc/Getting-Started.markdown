@@ -57,7 +57,8 @@ For more detailed documentation see 'Dev-Doku' chapters and the source code docu
    2. [Usage OrderList](Usage-of-order-manager.markdown#2---usage-orderlist)
    3. [Usage OrderAgent](Usage-of-order-manager.markdown#3---usage-orderagent)
 
-### 8. Usage of tracking manager
+
+### 9. Usage of tracking manager
    1. [Tracking Manager configuration](Usage-of-tracking-manager.markdown#1---tracking-manager-configuration)
    2. [Usage Tracking Manager](Usage-of-tracking-manager.markdown#2---usage-tracking-manager)
    3. [Project specific data](Usage-of-tracking-manager.markdown#3---project-specific-data)
