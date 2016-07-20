@@ -153,7 +153,7 @@ class Email extends Model\Document\PageSnippet
         $emailAddress = trim($emailAddress);
 
         $validator = new EmailValidator();
-        if($validator->isValid($emailAddress, new RFCValidation())) {
+        if ($validator->isValid($emailAddress, new RFCValidation())) {
             return $emailAddress;
         }
 

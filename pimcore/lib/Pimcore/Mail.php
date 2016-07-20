@@ -735,6 +735,7 @@ class Mail extends \Zend_Mail
     public static function isValidEmailAddress($emailAddress)
     {
         $validator = new EmailValidator();
+
         return $validator->isValid($emailAddress, new RFCValidation());
     }
 
