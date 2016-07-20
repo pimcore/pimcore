@@ -24,6 +24,7 @@ class XmlWriter extends \Zend_Config_Writer_Xml
      */
     protected $rootElementName = 'data';
 
+
     /**
      * Attributes for the root element
      *
@@ -89,11 +90,11 @@ class XmlWriter extends \Zend_Config_Writer_Xml
     }
 
     /**
-     * @param \Zend_Config $config
+     * @param array | \Zend_Config $config
      *
      * @return $this|\Zend_Config_Writer
      */
-    public function setConfig($config)
+    public function setData($config)
     {
         if (is_array($config)) {
             $config = new \Zend_Config($config);
@@ -173,6 +174,11 @@ class XmlWriter extends \Zend_Config_Writer_Xml
     public function render()
     {
         $xml         = new SimpleXMLExtended('<'.$this->getRootElementName().' />');
+
+        foreach($this->getRootElementAttributes() as $key => $value){
+            $xml->addAttribute($key,$value);
+        }
+
         if ($this->_config) {
             $extends     = $this->_config->getExtends();
             $sectionName = $this->_config->getSectionName();
@@ -199,7 +205,7 @@ class XmlWriter extends \Zend_Config_Writer_Xml
         if ($encoding = $this->getEncoding()) {
             $dom->encoding = $encoding;
         }
-        
+
         $dom->formatOutput = $this->getFormatOutput();
 
         $xmlString = $dom->saveXML();
@@ -220,6 +226,14 @@ class XmlWriter extends \Zend_Config_Writer_Xml
         $branchType = null;
 
         foreach ($config as $key => $value) {
+
+            $attributes = null;
+            if($value instanceof \Zend_Config){
+
+                $attributes = $value->get('@attributes');
+                $value = $value->get('@value') ?: $value;
+
+            }
             if ($branchType === null) {
                 if (is_numeric($key)) {
                     $branchType = 'numeric';
@@ -235,24 +249,34 @@ class XmlWriter extends \Zend_Config_Writer_Xml
                 throw new \Zend_Config_Exception('Mixing of string and numeric keys is not allowed');
             }
 
+
+
             if ($branchType === 'numeric') {
                 if ($value instanceof \Zend_Config) {
-                    $child = $parent->addChild($branchName);
-
+                    $child = $this->applyAttributes($parent->addChild($branchName),$attributes);
                     $this->_addBranch($value, $child, $parent);
                 } else {
-                    $parent->addChild($branchName, (string) $value);
+                    $child = $this->applyAttributes($parent->addChild($branchName, (string) $value),$attributes);
                 }
             } else {
                 if ($value instanceof \Zend_Config) {
                     $child = $xml->addChild($key);
-
+                    $this->applyAttributes($child,$attributes);
                     $this->_addBranch($value, $child, $xml);
                 } else {
                     $this->addChildConsiderCdata($xml, $key, $value);
                 }
             }
         }
+    }
+
+    protected function applyAttributes(\SimpleXMLElement $element,$attributes){
+        if($attributes){
+            foreach($attributes as $aKey => $aValue){
+                $element->addAttribute($aKey,$aValue);
+            }
+        }
+        return $element;
     }
 
 
