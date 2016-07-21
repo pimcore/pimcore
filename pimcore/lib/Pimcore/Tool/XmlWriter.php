@@ -214,7 +214,7 @@ class XmlWriter extends \Zend_Config_Writer_Xml
     }
 
     /**
-     * Add a branch to an XML object recursively
+     * Add a branch to an XML object recursively - test
      *
      * @param  \Zend_Config      $config
      * @param  \SimpleXMLElement $xml
