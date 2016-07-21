@@ -33,11 +33,29 @@ class Newsletter
 
     /**
      * @param Document\Newsletter $newsletterDocument
-     * @param Mail $mail
+     * @param SendingParamContainer|null $sendingContainer
+     * @param string|null $hostUrl
      * @return Mail
      */
-    protected static function preRenderMail(Document\Newsletter $newsletterDocument, Mail $mail)
+    public static function prepareMail(Document\Newsletter $newsletterDocument, SendingParamContainer $sendingContainer = null, $hostUrl = null)
     {
+        $mail = new Mail();
+        $mail->setIgnoreDebugMode(true);
+
+        if (\Pimcore\Config::getSystemConfig()->newsletter->usespecific) {
+            $mail->init("newsletter");
+        }
+
+        if (!Tool::getHostUrl() && $hostUrl) {
+            $mail->setHostUrl($hostUrl);
+        }
+
+        $mail->setDocument($newsletterDocument);
+
+        if ($sendingContainer && $sendingContainer->getParams()) {
+            $mail->setParams($sendingContainer->getParams());
+        }
+
         $contentHTML = $mail->getBodyHtmlRendered();
         $contentText = $mail->getBodyTextRendered();
 
@@ -82,43 +100,15 @@ class Newsletter
     }
 
     /**
-     * @param Document\Newsletter $newsletterDocument
-     * @param SendingParamContainer[] $sendingContainers
-     * @param string $sendingMode
-     * @param string|null $hostUrl
+     * @param Mail $mail
+     * @param SendingParamContainer $sendingContainer
      */
-    public static function sendNewsletterDocumentBasedMail(Document\Newsletter $newsletterDocument, array $sendingContainers, $sendingMode = self::SENDING_MODE_SINGLE, $hostUrl = null)
+    public static function sendNewsletterDocumentBasedMail(Mail $mail, SendingParamContainer $sendingContainer)
     {
-        $mail = new Mail();
-        $mail->setIgnoreDebugMode(true);
+        $mail->setTo($sendingContainer->getEmail());
+        $mail->sendWithoutRendering();
 
-        if (\Pimcore\Config::getSystemConfig()->newsletter->usespecific) {
-            $mail->init("newsletter");
-        }
-
-        if (!Tool::getHostUrl() && $hostUrl) {
-            $mail->setHostUrl($hostUrl);
-        }
-
-        $mail->setDocument($newsletterDocument);
-
-        if ($sendingMode == self::SENDING_MODE_BATCH) {
-            $mail = self::preRenderMail($newsletterDocument, $mail);
-
-            foreach ($sendingContainers as $sendingContainer) {
-                $mail->setTo($sendingContainer->getEmail());
-                $mail->sendWithoutRendering();
-                \Logger::info("Sent newsletter to: " . self::obfuscateEmail($sendingContainer->getEmail()) . " [" . $newsletterDocument->getId() . "]");
-            }
-        } else {
-            foreach ($sendingContainers as $sendingContainer) {
-                $mail->setParams($sendingContainer->getParams());
-                $mail->setTo($sendingContainer->getEmail());
-                $mail = self::preRenderMail($newsletterDocument, $mail);
-                $mail->sendWithoutRendering();
-                \Logger::info("Sent newsletter to: " . self::obfuscateEmail($sendingContainer->getEmail()) . " [" . $newsletterDocument->getId() . "]");
-            }
-        }
+        \Logger::info("Sent newsletter to: " . self::obfuscateEmail($sendingContainer->getEmail()) . " [" . $mail->getDocument()->getId() . "]");
     }
 
     protected static function obfuscateEmail($email)

@@ -606,7 +606,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
         Cache::removeIgnoredTagOnClear("output");
 
         // empty document cache
-        Cache::clearTag("output");
+        Cache::clearTags(["output", "output_lifetime"]);
 
         \Pimcore::getEventManager()->trigger("system.cache.clearOutputCache", $this);
 

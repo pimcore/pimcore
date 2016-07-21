@@ -262,7 +262,12 @@ class Cache extends \Zend_Controller_Plugin_Abstract
                     $cacheKey .= "_" . $deviceDetector->getDevice();
                 }
 
-                CacheManager::save($cacheItem, $cacheKey, ["output"], $this->lifetime, 1000);
+                $tags = ["output"];
+                if ($this->lifetime) {
+                    $tags = ["output_lifetime"];
+                }
+
+                CacheManager::save($cacheItem, $cacheKey, $tags, $this->lifetime, 1000, true);
             } catch (\Exception $e) {
                 \Logger::error($e);
 

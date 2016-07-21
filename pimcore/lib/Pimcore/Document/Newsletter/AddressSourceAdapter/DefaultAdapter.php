@@ -111,7 +111,7 @@ class DefaultAdapter implements IAddressSourceAdapter
     public function getMailAddressesForBatchSending()
     {
         $listing = $this->getListing();
-        $ids = $listing->getIdList();
+        $ids = $listing->loadIdList();
 
         $class = ClassDefinition::getByName($this->class);
         $tableName = "object_" . $class->getId();
@@ -121,7 +121,7 @@ class DefaultAdapter implements IAddressSourceAdapter
 
         $containers = [];
         foreach ($emails as $email) {
-            $containers = new SendingParamContainer($email, null);
+            $containers[] = new SendingParamContainer($email, ['emailAddress' => $email]);
         }
 
         return $containers;

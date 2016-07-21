@@ -190,9 +190,9 @@ abstract class Admin extends Action
             }
         }
 
-        if (!$requestedPerspective || !$user->isAllowed($requestedPerspective, Model\User::PERMISSION_TYPE_PERSPECTIVE)) {
+        if (!$requestedPerspective || !$user->isAllowed($requestedPerspective, "perspective")) {
             //choose active perspective or a first allowed
-            $requestedPerspective = $user->isAllowed($user->getActivePerspective(), Model\User::PERMISSION_TYPE_PERSPECTIVE)
+            $requestedPerspective = $user->isAllowed($user->getActivePerspective(), "perspective")
                 ? $user->getActivePerspective()
                 : $user->getFirstAllowedPerspective();
         }

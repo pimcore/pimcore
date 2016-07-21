@@ -626,6 +626,11 @@ pimcore.document.tree = Class.create({
                     iconCls: "pimcore_icon_email",
                     handler: this.convert.bind(this, tree, record, "email"),
                     hidden: record.data.type == "email"
+                }, {
+                    text: t("newsletter"),
+                    iconCls: "pimcore_icon_newsletter",
+                    handler: this.convert.bind(this, tree, record, "newsletter"),
+                    hidden: record.data.type == "newsletter"
                 },{
                     text: t("link"),
                     iconCls: "pimcore_icon_link",

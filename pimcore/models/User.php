@@ -21,12 +21,6 @@ use Pimcore\File;
 class User extends User\UserRole
 {
     /**
-     * const variable used to define perspective permission type in isAllowed function
-     * @var string
-     */
-    const PERMISSION_TYPE_PERSPECTIVE = 'perspective';
-
-    /**
      * @var string
      */
     public $type = "user";
@@ -335,7 +329,7 @@ class User extends User\UserRole
             } else {
                 return true;
             }
-        } elseif ($type == self::PERMISSION_TYPE_PERSPECTIVE) {
+        } elseif ($type == "perspective") {
             //returns true if required perspective is allowed to use by the user
             return in_array($key, $this->getMergedPerspectives());
         }
