@@ -3353,6 +3353,10 @@
         "definition": "Add object"
     },
     {
+        "term": "add_object_mbx_title",
+        "definition": "Add a new %s object"
+    },
+    {
         "term": "basic_configuration",
         "definition": "Basic configuration"
     },

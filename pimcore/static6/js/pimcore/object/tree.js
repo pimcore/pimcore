@@ -858,7 +858,7 @@ pimcore.object.tree = Class.create({
     },
 
     addObject: function (classId, className, tree, record) {
-        Ext.MessageBox.prompt(t('add_object'), t('please_enter_the_name_of_the_new_object'),
+        Ext.MessageBox.prompt(sprintf(t('add_object_mbx_title'), ts(className)), t('please_enter_the_name_of_the_new_object'),
             this.addObjectCreate.bind(this, classId, className, tree, record));
     },
 
