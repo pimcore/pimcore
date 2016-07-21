@@ -401,7 +401,7 @@ class Thumbnail
                 continue;
             }
 
-            if(!(in_array($key, $w3cImgAttributes) || array_key_exists($key, $customAttributes) || strpos($key, "data-") === 0)) {
+            if (!(in_array($key, $w3cImgAttributes) || array_key_exists($key, $customAttributes) || strpos($key, "data-") === 0)) {
                 continue;
             }
 

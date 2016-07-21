@@ -52,7 +52,7 @@ class Newsletter
 
         $mail->setDocument($newsletterDocument);
 
-        if($sendingContainer && $sendingContainer->getParams()) {
+        if ($sendingContainer && $sendingContainer->getParams()) {
             $mail->setParams($sendingContainer->getParams());
         }
 

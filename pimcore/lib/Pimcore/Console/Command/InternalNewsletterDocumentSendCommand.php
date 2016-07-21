@@ -64,7 +64,7 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
         $addressAdapter = new $adapterClass($adapterParams);
 
 
-        if($document->getSendingMode() == Newsletter::SENDING_MODE_BATCH) {
+        if ($document->getSendingMode() == Newsletter::SENDING_MODE_BATCH) {
             $this->doSendMailInBatchMode($document, $addressAdapter, $sendingId);
         } else {
             $this->doSendMailInSingleMode($document, $addressAdapter, $sendingId);
@@ -73,8 +73,8 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
         Model\Tool\TmpStore::delete($sendingId);
     }
 
-    protected function doSendMailInBatchMode(Model\Document\Newsletter $document, IAddressSourceAdapter $addressAdapter, $sendingId) {
-
+    protected function doSendMailInBatchMode(Model\Document\Newsletter $document, IAddressSourceAdapter $addressAdapter, $sendingId)
+    {
         $mail = \Pimcore\Tool\Newsletter::prepareMail($document);
         $sendingParamContainers = $addressAdapter->getMailAddressesForBatchSending();
 
@@ -85,7 +85,7 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
         $fifth = $totalCount / 5;
         $pageSize = $fifth > 10 ? 10 : ($fifth < 3 ? 3 : intval($fifth));
 
-        foreach($sendingParamContainers as $sendingParamContainer) {
+        foreach ($sendingParamContainers as $sendingParamContainer) {
             $tmpStore = Model\Tool\TmpStore::get($sendingId);
 
             if (empty($tmpStore)) {
@@ -93,7 +93,7 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
                 exit;
             }
 
-            if($currentCount % $pageSize == 0) {
+            if ($currentCount % $pageSize == 0) {
                 \Logger::info("Sending newsletter " . $currentCount . " / " . $totalCount. " [" . $document->getId(). "]");
                 $data = $tmpStore->getData();
                 $data['progress'] = round($currentCount / $totalCount * 100, 2);
@@ -106,10 +106,10 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
 
             $currentCount++;
         }
-
     }
 
-    protected function doSendMailInSingleMode(Model\Document\Newsletter $document, IAddressSourceAdapter $addressAdapter, $sendingId) {
+    protected function doSendMailInSingleMode(Model\Document\Newsletter $document, IAddressSourceAdapter $addressAdapter, $sendingId)
+    {
         $totalCount = $addressAdapter->getTotalRecordCount();
 
         //calculate page size based on total item count - with min page size 3 and max page size 10
@@ -130,8 +130,7 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
             $tmpStore->update();
 
             $sendingParamContainers = $addressAdapter->getParamsForSingleSending($limit, $offset);
-            foreach($sendingParamContainers as $sendingParamContainer) {
-
+            foreach ($sendingParamContainers as $sendingParamContainer) {
                 $mail = \Pimcore\Tool\Newsletter::prepareMail($document);
                 \Pimcore\Tool\Newsletter::sendNewsletterDocumentBasedMail($mail, $sendingParamContainer);
 
