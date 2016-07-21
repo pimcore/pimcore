@@ -6091,5 +6091,9 @@
     {
         "term": "newsletter_test_sent_message",
         "definition": "Test Newsletter sent successfully"
+    },
+    {
+        "term": "add_object_mbx_title",
+        "definition": "Add object of type "
     }
 ]
