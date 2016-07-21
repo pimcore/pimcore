@@ -263,13 +263,14 @@ class Cache extends \Zend_Controller_Plugin_Abstract
                 }
 
                 $tags = ["output"];
-                if($this->lifetime) {
+                if ($this->lifetime) {
                     $tags = ["output_lifetime"];
                 }
 
                 CacheManager::save($cacheItem, $cacheKey, $tags, $this->lifetime, 1000, true);
             } catch (\Exception $e) {
                 \Logger::error($e);
+
                 return;
             }
         } else {
