@@ -500,26 +500,22 @@ class DefaultElasticSearch extends AbstractWorker implements IBatchProcessingWor
             $responses = $esClient->bulk([
                 "body" => $this->bulkIndexData
             ]);
-    
-            if($responses['errors'])
-            {
-                // save update status
-                \Logger::error('commitUpdateIndex partial failed');
-    
-                foreach($responses['items'] as $response)
-                {
-                    if($response['index']['error'])
-                    {
-                        $query = <<<SQL
+
+            // save update status
+            foreach($responses['items'] as $response) {
+                $update_error = null;
+                if($response['index']['error']) {
+                    $update_error = \Zend_Json::encode($response['index']['error']);
+                    \Logger::error('Failed to Index Object with Id:' . $response['index']['_id']);
+                }
+                $query = <<<SQL
 UPDATE {$this->getStoreTableName()}
 SET update_status = ?, update_error = ?, crc_index = 0
 WHERE o_id = ?
 SQL;
-                        $this->db->query( $query, [$response['index']['status'],\Zend_Json::encode($response['index']['error']), $response['index']['_id']]);
-                        \Logger::error('Faild to Index Object with Id:' . $response['index']['_id']);
-                    }
-                }
-            }
+                $this->db->query( $query, [$response['index']['status'],$update_error, $response['index']['_id']]);
+
+            }    
         }
 
         // reset
