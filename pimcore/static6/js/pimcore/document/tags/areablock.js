@@ -646,13 +646,16 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         }
 
         var editmodeWindowWidth = 550;
-        if(this.options.params[element.type].editWidth) {
-            editmodeWindowWidth = this.options.params[element.type].editWidth;
-        }
-
         var editmodeWindowHeight = 370;
-        if(this.options.params[element.type].editHeight) {
-            editmodeWindowHeight = this.options.params[element.type].editHeight;
+
+        if(this.options["params"]) {
+            if (this.options.params[element.type] && this.options.params[element.type]["editWidth"]) {
+                editmodeWindowWidth = this.options.params[element.type].editWidth;
+            }
+
+            if (this.options.params[element.type] && this.options.params[element.type]["editHeight"]) {
+                editmodeWindowHeight = this.options.params[element.type].editHeight;
+            }
         }
 
         this.editmodeWindow = new Ext.Window({
