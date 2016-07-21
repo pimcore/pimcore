@@ -86,7 +86,11 @@ return [
                             "in_progress"
                         ]
                     ],
-                    "notesRequired" => false,                                   // disable / enable notes to be optional
+                    "notes" => [
+                        "required" => false,                                     // disable / enable notes to be optional
+                        "type"     => "Worklog",                                 // an optional alternative "type" to the note, defaults to "Status update" or "Global action" if blank
+                        "title"    => "Progress Started"                         // an optional alternative "title" to the note, if blank he actions transition result is used (See Decorator).
+                    ],
                     "users" => [8],                                             // add user-ids or role-ids that are allowed this action - admin always is allowed for everything
                     /*"events" => [
                         "before" => ['\\Website\\WorkflowExampleEventHandler', 'before'],                                         // class and method to call before this action is performed (false will throw an error)
@@ -104,7 +108,9 @@ return [
                             "todo"
                         ]
                     ],
-                    "notesRequired" => true
+                    "notes" => [
+                        "required" => true
+                    ]
                 ],
 
                 [
@@ -115,7 +121,9 @@ return [
                             "in_review"
                         ]
                     ],
-                    "notesRequired" => true
+                    "notes" => [
+                        "required" => true
+                    ]
                 ],
 
                 [
@@ -126,7 +134,9 @@ return [
                             "done"
                         ]
                     ],
-                    "notesRequired" => true
+                    "notes" => [
+                        "required" => true
+                    ]
                 ],
 
                 [
@@ -137,7 +147,9 @@ return [
                             "blocked"
                         ]
                     ],
-                    "notesRequired" => true,
+                    "notes" => [
+                        "required" => true
+                    ],
                     "additionalFields" => [                    //define additional fields needed
                         [
                             "name"=> "notifyUser",              // the name (for the frontend form)
@@ -158,7 +170,9 @@ return [
                             "reopened"
                         ]
                     ],
-                    "notesRequired" => true
+                    "notes" => [
+                        "required" => true
+                    ]
                 ],
 
                 [
@@ -174,7 +188,11 @@ return [
                 [
                     "name" => "log_time",
                     "label" => "Log Time",
-                    "notesRequired" => true,
+                    "notes" => [
+                        "required" => true,
+                        "type" => "Worklog",
+                        "title" => "Time Logged"
+                    ],
                     "additionalFields" => [
                         [
                             "name"=> "timeWorked",

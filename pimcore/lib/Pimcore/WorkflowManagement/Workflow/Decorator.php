@@ -114,8 +114,8 @@ class Decorator
     public function getNoteType($actionName, $formData)
     {
         $config = $this->workflow->getActionConfig($actionName);
-        if (!empty($config['noteType'])) {
-            return $config['noteType'];
+        if (!empty($config['notes']['type'])) {
+            return $config['notes']['type'];
         }
 
         if ($this->workflow->isGlobalAction($actionName)) {
@@ -129,8 +129,8 @@ class Decorator
     public function getNoteTitle($actionName, $formData)
     {
         $config = $this->workflow->getActionConfig($actionName);
-        if (!empty($config['noteTitle'])) {
-            return $config['noteTitle'];
+        if (!empty($config['notes']['title'])) {
+            return $config['notes']['title'];
         }
 
         if ($this->workflow->isGlobalAction($actionName) || $formData['oldStatus'] === $formData['newStatus']) {

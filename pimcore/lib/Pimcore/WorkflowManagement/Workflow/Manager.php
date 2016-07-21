@@ -341,7 +341,7 @@ class Manager
     {
         $actionConfig = $this->getWorkflow()->getActionConfig($actionName, $this->getElementStatus());
 
-        return (bool) $actionConfig['notesRequired'];
+        return isset($actionConfig['notes']['required']) ? (bool) $actionConfig['notes']['required'] : false;
     }
 
     /**
