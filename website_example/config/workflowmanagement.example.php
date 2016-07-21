@@ -86,7 +86,11 @@ return [
                             "in_progress"
                         ]
                     ],
-                    "notesRequired" => false,                                   // disable / enable notes to be optional
+                    "notes" => [
+                        "required" => false,                                     // disable / enable notes to be optional
+                        "type"     => "Worklog",                                 // an optional alternative "type" to the note, defaults to "Status update" or "Global action" if blank
+                        "title"    => "Progress Started"                         // an optional alternative "title" to the note, if blank he actions transition result is used (See Decorator).
+                    ],
                     "users" => [8],                                             // add user-ids or role-ids that are allowed this action - admin always is allowed for everything
                     /*"events" => [
                         "before" => ['\\Website\\WorkflowExampleEventHandler', 'before'],                                         // class and method to call before this action is performed (false will throw an error)
