@@ -7,14 +7,14 @@ Pimcore is the leading open source platform for managing digital experiences use
 Pimcore follows the MVC pattern and is based on Zend Framework.
 If you are new to the Zend Framework or the ZF MVC you can read about 
 [controller](http://framework.zend.com/manual/1.12/en/zend.controller.html) in Zend Framework manual. 
-Therefore, learn Pimcore would be easier.
+With this knowledge learning pimcore will be much easier.
 
 
 ## What is this Guide about?
 
 The main goal of this Guide is to give minimal required information to every new Pimcore developer.
-In Pimcore platform is a number of areas which you have to know before you start creating projects. 
-If you would like to start fast this is the most efficiently  way. 
+In Pimcore platform there area a number of areas which you have to know before you start creating projects. 
+If you would like to start fast, this is the most efficient way. 
 
 You start with step by step [installation and configuration](!Start/Installation) process. 
 Next, you determine about Pimcore architecture (directories structure, which area is editable ...).
