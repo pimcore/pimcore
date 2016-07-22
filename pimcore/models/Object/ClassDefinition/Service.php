@@ -63,7 +63,7 @@ class Service
 
         $importData = \Zend_Json::decode($json);
 
-        if(!is_null($importData["layoutDefinitions"])) {
+        if (!is_null($importData["layoutDefinitions"])) {
             // set layout-definition
             $layout = self::generateLayoutTreeFromArray($importData["layoutDefinitions"], $throwException);
             if ($layout === false) {
@@ -114,7 +114,7 @@ class Service
     {
         $importData = \Zend_Json::decode($json);
 
-        if(!is_null($importData["layoutDefinitions"])) {
+        if (!is_null($importData["layoutDefinitions"])) {
             $layout = self::generateLayoutTreeFromArray($importData["layoutDefinitions"], $throwException);
             $fieldCollection->setLayoutDefinitions($layout);
         }
@@ -179,7 +179,7 @@ class Service
             }
         }
 
-        if(!is_null($importData["layoutDefinitions"])) {
+        if (!is_null($importData["layoutDefinitions"])) {
             $layout = self::generateLayoutTreeFromArray($importData["layoutDefinitions"], $throwException);
             $objectBrick->setLayoutDefinitions($layout);
         }

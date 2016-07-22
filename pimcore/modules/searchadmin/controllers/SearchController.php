@@ -146,10 +146,10 @@ class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin
             $params = \Zend_Json::decode($this->getParam('filter'));
             $unlocalizedFieldsFilters = [];
             $localizedFieldsFilters = [];
-            foreach($params as $paramConditionObject) {
+            foreach ($params as $paramConditionObject) {
                 //this lopp divides filter parameters: localazed and unlocalized groups
                 $definition = $class->getFieldDefinition($paramConditionObject['property']);
-                if($definition) { //TODO: for sure, we can add additional condition like getLocalizedFieldDefinition()->getFieldDefiniton(...
+                if ($definition) { //TODO: for sure, we can add additional condition like getLocalizedFieldDefinition()->getFieldDefiniton(...
                     $unlocalizedFieldsFilters[] = $paramConditionObject;
                 } else {
                     $localizedFieldsFilters[] = $paramConditionObject;
@@ -174,7 +174,7 @@ class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin
                     . $join . " WHERE " . $conditionFilters . ") )";
             }
 
-            if($localizedConditionFilters) {
+            if ($localizedConditionFilters) {
                 //add condition query for localised fields
                 $conditionParts[] = "( id IN (SELECT `object_localized_data_" . $class->getId()
                     . "`.ooo_id FROM object_localized_data_" . $class->getId() . $join . " WHERE "
