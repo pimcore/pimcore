@@ -126,53 +126,54 @@ function object2array($node)
 
 /**
  * @param  $args
- * @return bool|string
+ * @return false|string
  */
 function array_urlencode($args)
 {
     if (!is_array($args)) {
         return false;
     }
-    $out = '';
-    foreach ($args as $name => $value) {
-        if (is_array($value)) {
-            foreach ($value as $key => $val) {
-                $out .= urlencode($name).'['.urlencode($key).']'.'=';
-                $out .= urlencode($val).'&';
-            }
-        } else {
-            $out .= urlencode($name).'=';
-            $out .= urlencode($value).'&';
-        }
-    }
-
-    return substr($out, 0, -1); //trim the last & }
+    
+    return str_replace(['%5B', '%5D'], ['[', ']'], http_build_query($args));
 }
 
 /**
  * same as  array_urlencode but no urlencode()
  * @param  $args
- * @return bool|string
+ * @return false|string
  */
 function array_toquerystring($args)
 {
     if (!is_array($args)) {
         return false;
     }
-    $out = '';
+    $parts = [];
     foreach ($args as $name => $value) {
         if (is_array($value)) {
-            foreach ($value as $key => $val) {
-                $out .= $name.'['.$key.']'.'=';
-                $out .= urlencode($val).'&';
-            }
+            $parts[] = $name . array_toquerystringHelper( $value );
         } else {
-            $out .= $name.'=';
-            $out .= urlencode($value).'&';
+            $parts[] = $name . '=' . $value;
         }
     }
 
-    return substr($out, 0, -1); //trim the last & }
+    return implode( '&', $parts );
+}
+
+/**
+ * @param array $values
+ *
+ * @return string
+ */
+function array_toquerystringHelper(array $values) {
+    $string = '';
+    foreach( $values as $k => $v ) {
+        if( is_array( $v) ) {
+            $string .= '['.$k.']' .array_toquerystringHelper($v);
+        } else {
+            $string .= '['.$k.']=' . $v;
+        }
+    }
+    return $string;
 }
 
 /**
