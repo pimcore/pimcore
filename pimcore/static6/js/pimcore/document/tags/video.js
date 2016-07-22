@@ -48,7 +48,7 @@ pimcore.document.tags.video = Class.create(pimcore.document.tag, {
         this.window = pimcore.helpers.editmode.openVideoEditPanel(this.data, {
             save: this.save.bind(this),
             cancel: this.cancel.bind(this)
-        })
+        });
     },
 
     save: function () {
