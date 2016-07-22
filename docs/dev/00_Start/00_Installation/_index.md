@@ -54,7 +54,7 @@ unzip pimcore-latest.zip
 
 You can choose between Apache2 and Nginx webserver.
 Every of those has different configuration process. 
-Please visit link from a table below with webserver you're going to use.
+Please see the following links for the webserver you're going to use.
 
 [comment]: # (TODO: Discuss and Update)
 
