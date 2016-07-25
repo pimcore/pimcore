@@ -5,16 +5,16 @@
 * [Pimcore overview](!Overview) 
 
 
-## Quick start developer's guide
+## Getting started developer's guide
 
 Here is the place when you should start if you're new in Pimcore platform.
 
-* [Getting Started](!Start)
-* [Create Pimcore project](!Start/Installation) 
-* [Project tree overview](!Start/Directories_Structure)
-* [Main Pimcore elements](!Start/Pimcore_Elements)
-* [Plugin development](!Start/Create_Extension)
-* [Next steps](!Start/Next_Steps)
+* [Getting Started](!Getting_Started)
+* [Create Pimcore project](!Getting_Started/Installation) 
+* [Project tree overview](!Getting_Started/Directories_Structure)
+* [Main Pimcore elements](!Getting_Started/Pimcore_Elements)
+* [Plugin development](!Getting_Started/Create_Extension)
+* [Next steps](!Getting_Started/Next_Steps)
 
 ## [Documents](!Documents)
 

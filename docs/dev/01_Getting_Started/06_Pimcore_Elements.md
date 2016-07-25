@@ -358,4 +358,4 @@ Now the product page looks like that:
 ![Final product page](/img/Pimcore_Elements_final_product_page.png)
 
 
-[Create Pimcore extension](!Start/Create_Extension)
+[Create Pimcore extension](!Getting_Started/Create_Extension)
