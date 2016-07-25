@@ -8,7 +8,6 @@ Find basic information about directories tree in Pimcore project, below.
 | ![Plugins directory](/img/Directories_plugins.png) | Directory for [extensions](!Start/Create_Extension).                               |
 | ![Vendor directory](/img/Directories_vendor.png)   | All third part libraries are here. For example Zend libraries.                     |
 | ![Website directory](/img/Directories_website.png) | Everything concerning the website (templates, controllers, settings, objects, ...) |
-[comment]: #(TODO) | ![Tests directory](/img/Directories_tests.png)     | Unit tests (only in pimcore development instance it self, not in build package)    |
 
 ## Parts of the website directory
 
