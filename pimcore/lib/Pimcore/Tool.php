@@ -528,9 +528,9 @@ class Tool
     {
         $config = Config::getSystemConfig();
         $clientConfig = $config->httpclient->toArray();
-        $clientConfig["adapter"] = $clientConfig["adapter"] ? $clientConfig["adapter"] : "Zend_Http_Client_Adapter_Socket";
-        $clientConfig["maxredirects"] = $options["maxredirects"] ? $options["maxredirects"] : 2;
-        $clientConfig["timeout"] = $options["timeout"] ? $options["timeout"] : 3600;
+        $clientConfig["adapter"] =  isset($clientConfig["adapter"]) ? $clientConfig["adapter"] : "Zend_Http_Client_Adapter_Socket";
+        $clientConfig["maxredirects"] =  isset($options["maxredirects"]) ? $options["maxredirects"] : 2;
+        $clientConfig["timeout"] =  isset($options["timeout"]) ? $options["timeout"] : 3600;
         $type = empty($type) ? "Zend_Http_Client" : $type;
 
         $type = "\\" . ltrim($type, "\\");
