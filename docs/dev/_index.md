@@ -2,13 +2,14 @@
 
 ## Introduction
 
-[comment]: #(TODO)
+* [Pimcore overview](!Overview) 
+
 
 ## Quick start developer's guide
 
 Here is the place when you should start if you're new in Pimcore platform.
 
-* [Introduction](!Start)
+* [Getting Started](!Start)
 * [Create Pimcore project](!Start/Installation) 
 * [Project tree overview](!Start/Directories_Structure)
 * [Main Pimcore elements](!Start/Pimcore_Elements)

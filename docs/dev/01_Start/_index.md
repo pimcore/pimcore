@@ -1,14 +1,4 @@
-# Quick start developer's guide - introduction
-
-## Pimcore overview
-
-Pimcore is the leading open source platform for managing digital experiences used more than 80.000 times at leading enterprises around the globe.
-
-Pimcore follows the MVC pattern and is based on Zend Framework.
-If you are new to the Zend Framework or the ZF MVC you can read about 
-[controller](http://framework.zend.com/manual/1.12/en/zend.controller.html) in Zend Framework manual. 
-With this knowledge learning pimcore will be much easier.
-
+# Quick start developer's guide
 
 ## What is this Guide about?
 
