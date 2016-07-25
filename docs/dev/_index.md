@@ -12,7 +12,7 @@ Here is the place when you should start if you're new in Pimcore platform.
 * [Getting Started](!Getting_Started)
 * [Create Pimcore project](!Getting_Started/Installation) 
 * [Project tree overview](!Getting_Started/Directories_Structure)
-* [Main Pimcore elements](!Getting_Started/Pimcore_Elements)
+* [Main Pimcore elements](!Getting_Started/Tutorial)
 * [Plugin development](!Getting_Started/Create_Extension)
 * [Next steps](!Getting_Started/Next_Steps)
 
