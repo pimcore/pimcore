@@ -1,5 +1,5 @@
 To get started with data objects, classes must be defined.
-In [Objects starting guide](!Start/Tutorial) you can learn how to create objects and classes.
+In [Objects starting guide](!Getting_Started/Tutorial) you can learn how to create objects and classes.
 
 Defining a class consists of defining the attributes of the object and the layout for data within the object. 
 Layout object properties can be grouped into panels, which incorporate the layout areas north, east, west, south and center and additionally they can be positioned into tab panels. 

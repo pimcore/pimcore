@@ -343,14 +343,14 @@ And the last step, we would like to show the product picture.
         /** @var \Pimcore\Model\Asset\Image $picture */
         
     ?>
-        <?= $picture->getThumbnail("content") ?>
+        <?= $picture->getThumbnail("content")->getHTML(); ?>
         
     <?php endif; ?>
     <?php echo $product->getDescription(); ?>
 </div>
 ```
 As you see, image attribute is an additional class with useful parameter.
-To print out the image in the right size just use the method ```getThumbnail``` which returns the <img> tag with the 
+To print out the image in the right size just use the method ```getThumbnail``` which returns the ```<img>``` tag with the 
 correct image path and also sets alt attributes to values based on the asset meta data. 
 
 Now the product page looks like that:
