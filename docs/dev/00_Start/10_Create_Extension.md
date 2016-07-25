@@ -125,8 +125,9 @@ pimcore.plugin.extensionexample = Class.create(pimcore.plugin.admin, {
         });
 
         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-        tabPanel.activate("extensionexample_check_panel");
-
+        tabPanel.add(extensionexamplePlugin.panel);
+        tabPanel.setActiveTab(extensionexamplePlugin.panel);
+        
         pimcore.layout.refresh();
     }
 });
@@ -150,10 +151,14 @@ showTab: function() {
 getGrid: function() {
     // fetch data from a webservice (which we haven't written yet!)
     extensionexamplePlugin.store = new Ext.data.JsonStore({
-        id:                 'extensionexample_store',
-        url:                '/plugin/ExtensionExample/admin/get-address-book',
-        restful:            false,
-        root:               "addresses",
+        proxy: {
+            url: '/plugin/ExtensionExample/admin/get-address-book',
+            type: 'ajax',
+            reader: {
+                type: 'json',
+                rootProperty: 'addresses'
+            }
+        },
         fields: [
             "name",
             "phoneNumber",
@@ -223,3 +228,5 @@ class ExtensionExample_AdminController extends Admin
 ```
 
 Reload the admin interface, navigate to **Tools-> Extension Example**  and you should see a table with two rows, which can be sorted by column.
+
+![Final grid](/img/Extensions_final_grid.png)
