@@ -30,7 +30,7 @@ Here is the place when you should start if you're new in Pimcore platform.
 ## [Objects](!dev/Objects)
 
 * [Object bricks](!dev/Objects/Structured_Data_Fields/Object_Bricks)
-* [Classification store](!dev/Objects/Structured_Data_Fields/Object_Bricks)
+* [Classification store](!dev/Objects/Classification_Store)
 * [Localized fields](!dev/Objects/Structured_Data_Fields/Object_Bricks)
 * [Blocks](!dev/Objects/Structured_Data_Fields/Object_Bricks)
 
