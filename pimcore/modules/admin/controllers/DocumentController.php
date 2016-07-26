@@ -988,9 +988,7 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
 
         $root = Document::getById(1);
         if ($root->isAllowed("list")) {
-            $nodeConfig = $this->getTreeNodeConfig($root);
-            $nodeConfig["title"] = $root->getTitle();
-            $nodeConfig["description"] = $root->getDescription();
+            $nodeConfig = $this->getSeoNodeConfig($root);
 
             $this->_helper->json($nodeConfig);
         }
@@ -1021,106 +1019,7 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
                     $list->setCondition("path LIKE ? and type = ?", [$childDocument->getRealFullPath() . "/%", "page"]);
 
                     if ($childDocument instanceof Document\Page || $list->getTotalCount() > 0) {
-                        $nodeConfig = $this->getTreeNodeConfig($childDocument);
-
-                        if (method_exists($childDocument, "getTitle") && method_exists($childDocument, "getDescription")) {
-
-                            // anaylze content
-                            $nodeConfig["links"] = 0;
-                            $nodeConfig["externallinks"] = 0;
-                            $nodeConfig["h1"] = 0;
-                            $nodeConfig["h1_text"] = "";
-                            $nodeConfig["hx"] = 0;
-                            $nodeConfig["imgwithalt"] = 0;
-                            $nodeConfig["imgwithoutalt"] = 0;
-
-                            $title = null;
-                            $description = null;
-
-                            try {
-
-                                // cannot use the rendering service from Document\Service::render() because of singleton's ...
-                                // $content = Document\Service::render($childDocument, array("pimcore_admin" => true, "pimcore_preview" => true), true);
-
-                                $request = $this->getRequest();
-
-                                $contentUrl = $request->getScheme() . "://" . $request->getHttpHost() . $childDocument->getRealFullPath();
-                                $content = Tool::getHttpData($contentUrl, [
-                                    "pimcore_preview" => true,
-                                    "pimcore_admin" => true,
-                                    "_dc" => time()
-                                ]);
-
-                                if ($content) {
-                                    include_once("simple_html_dom.php");
-                                    $html = str_get_html($content);
-                                    if ($html) {
-                                        $nodeConfig["links"] = count($html->find("a"));
-                                        $nodeConfig["externallinks"] = count($html->find("a[href^=http]"));
-                                        $nodeConfig["h1"] = count($html->find("h1"));
-
-                                        $h1 = $html->find("h1", 0);
-                                        if ($h1) {
-                                            $nodeConfig["h1_text"] = strip_tags($h1->innertext);
-                                        }
-
-                                        $title = $html->find("title", 0);
-                                        if ($title) {
-                                            $title = html_entity_decode(trim(strip_tags($title->innertext)), null, "UTF-8");
-                                        }
-
-                                        $description = $html->find("meta[name=description]", 0);
-                                        if ($description) {
-                                            $description = html_entity_decode(trim(strip_tags($description->content)), null, "UTF-8");
-                                        }
-
-                                        $nodeConfig["hx"] = count($html->find("h2,h2,h4,h5"));
-
-                                        $images = $html->find("img");
-                                        if ($images) {
-                                            foreach ($images as $image) {
-                                                $alt = $image->alt;
-                                                if (empty($alt)) {
-                                                    $nodeConfig["imgwithoutalt"]++;
-                                                } else {
-                                                    $nodeConfig["imgwithalt"]++;
-                                                }
-                                            }
-                                        }
-
-                                        $html->clear();
-                                        unset($html);
-                                    }
-                                }
-                            } catch (\Exception $e) {
-                                \Logger::debug($e);
-                            }
-
-                            if (!$title) {
-                                $title = $childDocument->getTitle();
-                            }
-                            if (!$description) {
-                                $description = $childDocument->getDescription();
-                            }
-
-                            $nodeConfig["title"] = $title;
-                            $nodeConfig["description"] = $description;
-
-                            $nodeConfig["title_length"] = mb_strlen($title);
-                            $nodeConfig["description_length"] = mb_strlen($description);
-
-                            if (mb_strlen($title) > 80
-                                || mb_strlen($title) < 5
-                                || mb_strlen($description) > 180
-                                || mb_strlen($description) < 20
-                                || $nodeConfig["h1"] != 1
-                                || $nodeConfig["hx"] < 1
-                            ) {
-                                $nodeConfig["cls"] = "pimcore_document_seo_warning";
-                            }
-                        }
-
-                        $documents[] = $nodeConfig;
+                        $documents[] = $this->getSeoNodeConfig($childDocument);
                     }
                 }
             }
@@ -1220,4 +1119,99 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
             "language" => $language
         ]);
     }
+
+    private function getSeoNodeConfig($document)
+    {
+        $nodeConfig = $this->getTreeNodeConfig($document);
+
+        if (method_exists($document, "getTitle") && method_exists($document, "getDescription")) {
+
+            // anaylze content
+            $nodeConfig["links"]         = 0;
+            $nodeConfig["externallinks"] = 0;
+            $nodeConfig["h1"]            = 0;
+            $nodeConfig["h1_text"]       = "";
+            $nodeConfig["hx"]            = 0;
+            $nodeConfig["imgwithalt"]    = 0;
+            $nodeConfig["imgwithoutalt"] = 0;
+
+            $title       = null;
+            $description = null;
+
+            try {
+
+                // cannot use the rendering service from Document\Service::render() because of singleton's ...
+                // $content = Document\Service::render($childDocument, array("pimcore_admin" => true, "pimcore_preview" => true), true);
+
+                $request = $this->getRequest();
+
+                $contentUrl = $request->getScheme() . "://" . $request->getHttpHost() . $document->getFullPath();
+                $content    = Tool::getHttpData($contentUrl, array("pimcore_preview" => true, "pimcore_admin" => true, "_dc" => time()));
+
+                if ($content) {
+                    include_once("simple_html_dom.php");
+                    $html = str_get_html($content);
+                    if ($html) {
+                        $nodeConfig["links"]         = count($html->find("a"));
+                        $nodeConfig["externallinks"] = count($html->find("a[href^=http]"));
+                        $nodeConfig["h1"]            = count($html->find("h1"));
+
+                        $h1 = $html->find("h1", 0);
+                        if ($h1) {
+                            $nodeConfig["h1_text"] = strip_tags($h1->innertext);
+                        }
+
+                        $title = $html->find("title", 0);
+                        if ($title) {
+                            $title = html_entity_decode(trim(strip_tags($title->innertext)), null, "UTF-8");
+                        }
+
+                        $description = $html->find("meta[name=description]", 0);
+                        if ($description) {
+                            $description = html_entity_decode(trim(strip_tags($description->content)), null, "UTF-8");
+                        }
+
+                        $nodeConfig["hx"] = count($html->find("h2,h2,h4,h5"));
+
+                        $images = $html->find("img");
+                        if ($images) {
+                            foreach ($images as $image) {
+                                $alt = $image->alt;
+                                if (empty($alt)) {
+                                    $nodeConfig["imgwithoutalt"]++;
+                                } else {
+                                    $nodeConfig["imgwithalt"]++;
+                                }
+                            }
+                        }
+
+                        $html->clear();
+                        unset($html);
+                    }
+                }
+            } catch (\Exception $e) {
+                \Logger::debug($e);
+            }
+
+            if (!$title) {
+                $title = $document->getTitle();
+            }
+            if (!$description) {
+                $description = $document->getDescription();
+            }
+
+            $nodeConfig["title"]       = $title;
+            $nodeConfig["description"] = $description;
+
+            $nodeConfig["title_length"]       = mb_strlen($title);
+            $nodeConfig["description_length"] = mb_strlen($description);
+
+            if (mb_strlen($title) > 80 || mb_strlen($title) < 5 || mb_strlen($description) > 180 || mb_strlen($description) < 20 || $nodeConfig["h1"] != 1 || $nodeConfig["hx"] < 1) {
+                $nodeConfig["cls"] = "pimcore_document_seo_warning";
+            }
+        }
+
+        return $nodeConfig;
+    }
+
 }
