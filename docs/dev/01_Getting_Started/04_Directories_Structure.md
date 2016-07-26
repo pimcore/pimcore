@@ -4,10 +4,10 @@ Find basic information about directories tree in Pimcore project, below.
 
 | Directory                                          | Description                                                                        |
 |-- ------------------------------------------------ | -----------------------------------------------------------------------------------|
-| ![Pimcore directory](/img/dev/Directories_pimcore.png) | Here is Core of Pimcore, do not change anything here.                              |
-| ![Plugins directory](/img/dev/Directories_plugins.png) | Directory for [extensions](!dev/Getting_Started/Create_Extension).                               |
-| ![Vendor directory](/img/dev/Directories_vendor.png)   | All third part libraries are here. For example Zend libraries.                     |
-| ![Website directory](/img/dev/Directories_website.png) | Everything concerning the website (templates, controllers, settings, objects, ...) |
+| ![Pimcore directory](/dev/img/Directories_pimcore.png) | Here is Core of Pimcore, do not change anything here.                              |
+| ![Plugins directory](/dev/img/Directories_plugins.png) | Directory for [extensions](!dev/Getting_Started/Create_Extension).                               |
+| ![Vendor directory](/dev/img/Directories_vendor.png)   | All third part libraries are here. For example Zend libraries.                     |
+| ![Website directory](/dev/img/Directories_website.png) | Everything concerning the website (templates, controllers, settings, objects, ...) |
 
 ## Parts of the website directory
 

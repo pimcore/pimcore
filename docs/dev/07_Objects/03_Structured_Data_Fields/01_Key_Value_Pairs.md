@@ -12,7 +12,7 @@ Keys are defined and managed in a global list and can be organized into groups (
 
 <div class="inline-imgs">
 
-Open the **key/group** definition tab via the ![Settings](/img/dev/Icon_settings.png)**Settings -> Object -> KeyValue config** Config menu.
+Open the **key/group** definition tab via the ![Settings](/dev/img/Icon_settings.png)**Settings -> Object -> KeyValue config** Config menu.
 
 </div>
 
@@ -22,7 +22,7 @@ Groups are used to group keys together, for example describing certain aspects o
 
 Add a group by clicking on the **Add** button. Add button. A description can be entered directly in the description grid column.
 
-![Groups grid](/img/dev/Objects_KeyValue_Groups.png)
+![Groups grid](/dev/img/Objects_KeyValue_Groups.png)
 
 ### Adding a key
 
@@ -41,19 +41,19 @@ Switch to the **Key definition** tab. You will see a list of all defined keys:
 * Unit: Additional optional field which can be used to enter a dimension unit for example.
 * GID: the group id if associated with a group
 * Group: the group description (as entered in the group configuration) if associated with a group
-* ![Search action column](/img/dev/Icon_magnifier.png) Search action column:  Opens the group selection dialog
+* ![Search action column](/dev/img/Icon_magnifier.png) Search action column:  Opens the group selection dialog
 * Remove action column: Removes the key from the global list.
 
 </div>
 
-![Key definition](/img/dev/Objects_KeyValue_Keys.png)
+![Key definition](/dev/img/Objects_KeyValue_Keys.png)
 
 A key can be added by clicking on the **Add** button. Note that the key name must be unique. 
 Double-click on description, type or unit cell if you want to add a description, change the data type or specify the dimension unit, respectively.
 For the **select** data type you also have to provide a list of options. 
 Click on the **Detailed Configuration** button which will open the options editor.
 
-![Define possible values](/img/dev/Objects_KeyValue_Options.png)
+![Define possible values](/dev/img/Objects_KeyValue_Options.png)
 
 **Key** represents name for display.
 **Value** is for internal representation.
@@ -62,11 +62,11 @@ Click on the **Detailed Configuration** button which will open the options edito
 
 <div class="inline-imgs">
 
-Click on the ![Search action column](/img/dev/Icon_magnifier.png) **Magnifier** class if you want the key to be part of a group.
+Click on the ![Search action column](/dev/img/Icon_magnifier.png) **Magnifier** class if you want the key to be part of a group.
 
 </div>
 
-![Select group](/img/dev/Objects_KeyValue_SelectGroup.png)
+![Select group](/dev/img/Objects_KeyValue_SelectGroup.png)
 
 Either double-click on a group or select a group and confirm using the **Apply** button. 
 This can be reverted by opening the group selection dialog again and closing it using the **Apply** button without a selection.
@@ -76,7 +76,7 @@ This can be reverted by opening the group selection dialog again and closing it 
 **Note:** there can be only one KeyValue field per object. 
 The field’s name is predefined and cannot be changed.
 
-![Add KeyValue attribute to the class](/img/dev/Objects_KeyValue_AddToClass.png)
+![Add KeyValue attribute to the class](/dev/img/Objects_KeyValue_AddToClass.png)
 
 After it, you can see few special settings which are primarily used for the grid editor.
 
@@ -91,7 +91,7 @@ After it, you can see few special settings which are primarily used for the grid
 
 <div class="inline-imgs">
 
-Click on the plus sign to add one or more key/value pairs to your object. ![Add the key to the object](/img/dev/Icon_add.png)
+Click on the plus sign to add one or more key/value pairs to your object. ![Add the key to the object](/dev/img/Icon_add.png)
 This will open the group/key selection dialog. 
 Pick one or more keys which should be added to your object. 
 Selecting a group will add all keys within that group

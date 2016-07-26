@@ -7,7 +7,7 @@ Its API driven approach makes it easy to develop with pimcore, allows integratio
 
 Pimcore is built for developers and should empower them to build great digital experiences easily. As a consequence Pimcore is NOT an ‘out-of-the-box’ software product like Wordpress, Magento, Oxid and others. You need a developer to get started. 
 
-![Pimcore](/img/dev/pimcore_basis.png)
+![Pimcore](/dev/img/pimcore_basis.png)
 
 
 # Pimcore in a nutshell
