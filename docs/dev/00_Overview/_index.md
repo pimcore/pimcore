@@ -45,4 +45,4 @@ Pimcore provides lots of functionality on top of its basic data elements that al
 
 
 
-[Let's start!](!Getting_Started)
+[Let's start!](!dev/Getting_Started)

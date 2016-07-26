@@ -16,7 +16,7 @@ Good choice when you're starting a new project.
 Daily released version. Shouldn't be used in the production environment.
 
 ## System requirements
-You can visit a dedicated page to see the full list of system requirements: [System Requirements](!Getting_Started/Installation/System_Requirements)
+You can visit a dedicated page to see the full list of system requirements: [System Requirements](!dev/Getting_Started/Installation/System_Requirements)
 Below the most important of those. 
 
 [comment]: # (TODO: specified requirements)
@@ -58,10 +58,10 @@ Please see the following links for the webserver you're going to use.
 
 [comment]: # (TODO: Discuss and Update)
 
-| Choice                                             | Version |
-|----------------------------------------------------|---------|
-| [Apache2](!Getting_Started/Installation/Apache_Configuration)| >=2.2   |
-| [Nginx](!Getting_Started/Installation/Nginx_Configuration)   | ?       |
+| Choice                                                            | Version   |
+|-- --------------------------------------------------              | ------- --|
+| [Apache2](!dev/Getting_Started/Installation/Apache_Configuration) | >=2.2     |
+| [Nginx](!dev/Getting_Started/Installation/Nginx_Configuration)    | ?         |
 
 
 You also need to create a mysql database which is needed in the installation process.
@@ -75,7 +75,7 @@ If everything goes well you should see form like below:
  
 ![Installation success](/img/Installation_success.png)
 
-[Have a look at directories structure](!Getting_Started/Directories_Structure)
+[Have a look at directories structure](!dev/Getting_Started/Directories_Structure)
 
 
 

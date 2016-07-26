@@ -5,7 +5,7 @@ Find basic information about directories tree in Pimcore project, below.
 | Directory                                          | Description                                                                        |
 |-- ------------------------------------------------ | -----------------------------------------------------------------------------------|
 | ![Pimcore directory](/img/Directories_pimcore.png) | Here is Core of Pimcore, do not change anything here.                              |
-| ![Plugins directory](/img/Directories_plugins.png) | Directory for [extensions](!Getting_Started/Create_Extension).                               |
+| ![Plugins directory](/img/Directories_plugins.png) | Directory for [extensions](!dev/Getting_Started/Create_Extension).                               |
 | ![Vendor directory](/img/Directories_vendor.png)   | All third part libraries are here. For example Zend libraries.                     |
 | ![Website directory](/img/Directories_website.png) | Everything concerning the website (templates, controllers, settings, objects, ...) |
 
@@ -20,4 +20,4 @@ Find basic information about directories tree in Pimcore project, below.
 | website/var         | This directory contains files created by Pimcore during runtime like assets, classes, thumbnails, ...              |
 | website/views       | Your templates.                                                                                                    |
 
-[Next part: Documents, Assets, Objects](!Getting_Started/Tutorial)
+[Next part: Documents, Assets, Objects](!dev/Getting_Started/Tutorial)

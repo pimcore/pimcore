@@ -7,5 +7,5 @@ To get the details information about extension visit sites below
 
 |                                              | Description                                        |
 |----------------------------------------------|----------------------------------------------------|
-| [Plugin Anatomy](!Extensions/Plugin_Anatomy) | Detailed extension structure.                      |
-| [Plugin Backend](!Extensions/Plugin_Backend) | Learn more about specific elements in your plugin. |
+| [Plugin Anatomy](!dev/Extensions/Plugin_Anatomy) | Detailed extension structure.                      |
+| [Plugin Backend](!dev/Extensions/Plugin_Backend) | Learn more about specific elements in your plugin. |

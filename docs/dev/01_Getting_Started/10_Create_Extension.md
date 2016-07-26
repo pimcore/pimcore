@@ -7,9 +7,9 @@ To get the detailed information about extension visit sites below:
 
 |                                                | Description                                                           |
 |------------------------------------------------|-----------------------------------------------------------------------|
-| [Plugin Anatomy](!Extensions/Plugin_Anatomy)   | Detailed extension structure.                                         |
-| [Plugin Backend](!Extensions/Plugin_Backend)   | Learn more about specific elements in your plugin.                    |
-| [Plugin Admin UI](!Extensions/Plugin_Admin)    | Go there if you would like to know more about Pimcore user interface. |
+| [Plugin Anatomy](!dev/Extensions/Plugin_Anatomy)   | Detailed extension structure.                                         |
+| [Plugin Backend](!dev/Extensions/Plugin_Backend)   | Learn more about specific elements in your plugin.                    |
+| [Plugin Admin UI](!dev/Extensions/Plugin_Admin)    | Go there if you would like to know more about Pimcore user interface. |
 
 ## Example
 

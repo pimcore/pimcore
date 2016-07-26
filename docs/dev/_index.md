@@ -2,58 +2,58 @@
 
 ## Introduction
 
-* [Pimcore overview](!Overview) 
+* [Pimcore overview](!dev/Overview) 
 
 
 ## Getting started developer's guide
 
 Here is the place when you should start if you're new in Pimcore platform.
 
-* [Getting Started](!Getting_Started)
-* [Create Pimcore project](!Getting_Started/Installation) 
-* [Project tree overview](!Getting_Started/Directories_Structure)
-* [Main Pimcore elements](!Getting_Started/Tutorial)
-* [Plugin development](!Getting_Started/Create_Extension)
-* [Next steps](!Getting_Started/Next_Steps)
+* [Getting Started](!dev/Getting_Started)
+* [Create Pimcore project](!dev/Getting_Started/Installation) 
+* [Project tree overview](!dev/Getting_Started/Directories_Structure)
+* [Main Pimcore elements](!dev/Getting_Started/Tutorial)
+* [Plugin development](!dev/Getting_Started/Create_Extension)
+* [Next steps](!dev/Getting_Started/Next_Steps)
 
-## [Documents](!Documents)
+## [Documents](!dev/Documents)
 
-* [Template](!Documents/Template)
-    * [Template language](!Documents/Template/Language)
-    * [Editables](!Documents/Template/Editables)
-    * [Helpers](!Documents/Template/Helpers)
-    * [Document types](!Documents/Template/Document_Types)
-* [Web2Print](!Documents/Web2Print)
+* [Template](!dev/Documents/Template)
+    * [Template language](!dev/Documents/Template/Language)
+    * [Editables](!dev/Documents/Template/Editables)
+    * [Helpers](!dev/Documents/Template/Helpers)
+    * [Document types](!dev/Documents/Template/Document_Types)
+* [Web2Print](!dev/Documents/Web2Print)
 
-## [Assets](!Assets)
+## [Assets](!dev/Assets)
 
-## [Objects](!Objects)
+## [Objects](!dev/Objects)
 
-* [Object bricks](!Objects/Structured_Data_Fields/Object_Bricks)
-* [Classification store](!Objects/Structured_Data_Fields/Object_Bricks)
-* [Localized fields](!Objects/Structured_Data_Fields/Object_Bricks)
-* [Blocks](!Objects/Structured_Data_Fields/Object_Bricks)
+* [Object bricks](!dev/Objects/Structured_Data_Fields/Object_Bricks)
+* [Classification store](!dev/Objects/Structured_Data_Fields/Object_Bricks)
+* [Localized fields](!dev/Objects/Structured_Data_Fields/Object_Bricks)
+* [Blocks](!dev/Objects/Structured_Data_Fields/Object_Bricks)
 
-## [Translations](!Translations)
+## [Translations](!dev/Translations)
 
-* [Creating translations](!Translations/Creating_Translations)
-* [Website translations](!Translations/Website_Translations)
+* [Creating translations](!dev/Translations/Creating_Translations)
+* [Website translations](!dev/Translations/Website_Translations)
 
-## [Cache](!Cache)
+## [Cache](!dev/Cache)
 
-## [Deployment](!Deployment) 
+## [Deployment](!dev/Deployment) 
 
 ## Additional
 
-* [SEO](!Features/Seo)
-* [Marketing](!Features/Marketing)
+* [SEO](!dev/Features/Seo)
+* [Marketing](!dev/Features/Marketing)
 
-## [Extension development](!Extensions)
+## [Extension development](!dev/Extensions)
 
-## [Best practices](!Best_Practices)
+## [Best practices](!dev/Best_Practices)
 
-## [Updates and history](!Versions)
+## [Updates and history](!dev/Versions)
 
-* [Versions History](!Versions/Versions_History)
-* [Versions Updates](!Versions/Versions_Updates)
+* [Versions History](!dev/Versions/Versions_History)
+* [Versions Updates](!dev/Versions/Versions_Updates)
 

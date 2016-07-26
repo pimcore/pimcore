@@ -1,5 +1,5 @@
 To get started with data objects, classes must be defined.
-In [Objects starting guide](!Getting_Started/Tutorial) you can learn how to create objects and classes.
+In [Objects starting guide](!dev/Getting_Started/Tutorial) you can learn how to create objects and classes.
 
 Defining a class consists of defining the attributes of the object and the layout for data within the object. 
 Layout object properties can be grouped into panels, which incorporate the layout areas north, east, west, south and center and additionally they can be positioned into tab panels. 
@@ -60,8 +60,8 @@ The second column indicates the underlying data type class and the third column 
 
 | Topic                                                     | description                                                           |
 |-----------------------------------------------------------|-----------------------------------------------------------------------|
-| [Structured_Data_Fields](!Objects/Structured_Data_Fields) | Learn more about Fieldcollections, Objectbricks and Structured tables |
-| [Localized Fields](!Objects/Localized_Fields)             | Multilanguage feature in object attributes.                           |
-| [Classification Store](!Objects/Classification_Store)     |                                                                       |
-| [Blocks](!Objects/Blocks)                                 | The block datatype acts as a simple container for other data fields.  |
+| [Structured_Data_Fields](!dev/Objects/Structured_Data_Fields) | Learn more about Fieldcollections, Objectbricks and Structured tables |
+| [Localized Fields](!dev/Objects/Localized_Fields)             | Multilanguage feature in object attributes.                           |
+| [Classification Store](!dev/Objects/Classification_Store)     |                                                                       |
+| [Blocks](!dev/Objects/Blocks)                                 | The block datatype acts as a simple container for other data fields.  |
 
