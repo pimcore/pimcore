@@ -69,11 +69,11 @@ You also need to create a mysql database which is needed in the installation pro
 Now go into your server url, you should see Pimcore install page. 
 If you see warning like below, you should change 'website/var' directory permissions:
 
-![Installation permission warning](/img/Installation_index_1.png)
+![Installation permission warning](/img/dev/Installation_index_1.png)
 
 If everything goes well you should see form like below:
  
-![Installation success](/img/Installation_success.png)
+![Installation success](/img/dev/Installation_success.png)
 
 [Have a look at directories structure](!dev/Getting_Started/Directories_Structure)
 

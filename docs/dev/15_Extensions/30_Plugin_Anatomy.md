@@ -8,7 +8,7 @@ You can generate the structure of the plugin in the administration panel:
 
 [comment]: #TODOinlineimgs
 
-Go to: ![Tools](/img/Icon_tools.png)  **Tools -> Extensions ->** ![Create new plugin skeleton](/img/Icon_Create_new_plugin_skeleton.png)
+Go to: ![Tools](/img/dev/Icon_tools.png)  **Tools -> Extensions ->** ![Create new plugin skeleton](/img/dev/Icon_Create_new_plugin_skeleton.png)
 
 </div>
 
