@@ -145,8 +145,11 @@ In this chapter we will create a simple product database and connect this to our
 
 Ok, let's create our first class for objects. 
 <div class="inline-imgs">
+
 [comment]: #TODOinlineimgs
+
 Go to: ![Settings](/dev/img/Pimcore_Elements_settings.png) **Settings -> Object -> Classes** and click the button with *Add class* label.
+
 </div>
 
 ![Add product class](/dev/img/Pimcore_Elements_class_add.png)
