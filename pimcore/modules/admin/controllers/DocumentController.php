@@ -1206,8 +1206,41 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
             $nodeConfig["title_length"]       = mb_strlen($title);
             $nodeConfig["description_length"] = mb_strlen($description);
 
-            if (mb_strlen($title) > 80 || mb_strlen($title) < 5 || mb_strlen($description) > 180 || mb_strlen($description) < 20 || $nodeConfig["h1"] != 1 || $nodeConfig["hx"] < 1) {
+            $qtip = "";
+            /** @var \Zend_Translate_Adapter $t */
+            $t = \Zend_Registry::get("Zend_Translate");
+            if (mb_strlen($title) > 80) {
                 $nodeConfig["cls"] = "pimcore_document_seo_warning";
+                $qtip .= $t->translate("The title is too long, it should have 5 to 80 characters.<br>");
+            }
+
+            if (mb_strlen($title) < 5) {
+                $nodeConfig["cls"] = "pimcore_document_seo_warning";
+                $qtip .= $t->translate("The title is too short, it should have 5 to 80 characters.<br>");
+            }
+
+            if (mb_strlen($description) > 180) {
+                $nodeConfig["cls"] = "pimcore_document_seo_warning";
+                $qtip .= $t->translate("The description is too long, it should have 20 to 180 characters.<br>");
+            }
+
+            if (mb_strlen($description) < 20) {
+                $nodeConfig["cls"] = "pimcore_document_seo_warning";
+                $qtip .= $t->translate("The description is too short, it should have 20 to 180 characters.<br>");
+            }
+
+            if ($nodeConfig["h1"] != 1) {
+                $nodeConfig["cls"] = "pimcore_document_seo_warning";
+                $qtip .= sprintf($t->translate("The document should have one h1, but has %s.<br>"), $nodeConfig["h1"]);
+            }
+
+            if ($nodeConfig["hx"] < 1) {
+                $nodeConfig["cls"] = "pimcore_document_seo_warning";
+                $qtip .= $t->translate("The document should some headlines other than h1, but has none.<br>");
+            }
+
+            if ($qtip) {
+                $nodeConfig["qtip"] = $qtip;
             }
         }
 
