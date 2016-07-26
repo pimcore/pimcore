@@ -145,8 +145,8 @@ pimcore.element.notes = Class.create({
                         xtype: 'actioncolumn',
                         width: 30,
                         items: [{
-                            tooltip: t('element'),
-                            iconCls: "pimcore_icon_edit",
+                            tooltip: t('click_to_open'),
+                            iconCls: "pimcore_icon_open",
                             handler: function (grid, rowIndex, event) {
                                 var record = this.store.getAt(rowIndex);
                                 var id = record.get("cid");
@@ -198,7 +198,7 @@ pimcore.element.notes = Class.create({
                 layout: "fit"
             });
 
-            this.layout = new Ext.Panel({
+            var layoutConf = {
                 tabConfig: {
                     tooltip: t('notes_events')
                 },
@@ -206,7 +206,13 @@ pimcore.element.notes = Class.create({
                 items: [this.grid, this.detailView],
                 layout: "border",
                 closable: !this.inElementContext
-            });
+            };
+
+            if(!this.inElementContext) {
+                layoutConf["title"] = t('notes_events');
+            }
+
+            this.layout = new Ext.Panel(layoutConf);
 
             this.layout.on("activate", function () {
                 this.store.load();
