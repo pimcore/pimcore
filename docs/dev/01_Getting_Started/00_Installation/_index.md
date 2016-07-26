@@ -4,9 +4,10 @@
 You have to choose one of three packages before you start the installation process.
 You can download every of these on [Pimcore download page](https://www.pimcore.org/en/resources/download). 
 
-| **Quick Start Bundle** | Boilerplate, This package contains sample data the same as our [online demo version](http://demo.pimcore.org).  |
-| **Professional package** | Package without any data, just core Pimcore platform. Good choice when you're starting a new project. |
-| **Nightly build** | Daily released version. Shouldn't be used in the production environment. |
+
+| **Quick Start Bundle**   | Boilerplate, This package contains sample data the same as our [online demo version](http://demo.pimcore.org).  |
+| **Professional package** | Package without any data, just core Pimcore platform. Good choice when you're starting a new project.           |
+| **Nightly build**        | Daily released version. Shouldn't be used in the production environment.                                        |
 
 ## System requirements
 You can visit a dedicated page to see the full list of system requirements: [System Requirements](!dev/Getting_Started/Installation/System_Requirements)
