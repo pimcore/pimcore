@@ -993,6 +993,7 @@ class Pimcore
                 // check here if there is actually content, otherwise readfile() and similar functions are not working anymore
                 header("Content-Length: " . mb_strlen($output, "latin1"));
             }
+            header("Vary: Accept-Encoding", true);
             header("X-Powered-By: pimcore", true);
         }
 
