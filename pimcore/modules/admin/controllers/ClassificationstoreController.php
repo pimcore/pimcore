@@ -462,11 +462,11 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
             $dataParam = $this->getParam("data");
             $data = \Zend_Json::decode($dataParam);
 
-            if(count($data) == count($data, 1)) {
+            if (count($data) == count($data, 1)) {
                 $data = [$data];
             }
 
-            foreach($data as &$row) {
+            foreach ($data as &$row) {
                 $colId = $row["colId"];
                 $groupId = $row["groupId"];
                 $sorter = $row["sorter"];

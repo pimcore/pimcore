@@ -1146,7 +1146,7 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
                 $request = $this->getRequest();
 
                 $contentUrl = $request->getScheme() . "://" . $request->getHttpHost() . $document->getFullPath();
-                $content    = Tool::getHttpData($contentUrl, array("pimcore_preview" => true, "pimcore_admin" => true, "_dc" => time()));
+                $content    = Tool::getHttpData($contentUrl, ["pimcore_preview" => true, "pimcore_admin" => true, "_dc" => time()]);
 
                 if ($content) {
                     include_once("simple_html_dom.php");
@@ -1246,5 +1246,4 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
 
         return $nodeConfig;
     }
-
 }
