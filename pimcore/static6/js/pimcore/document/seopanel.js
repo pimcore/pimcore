@@ -202,7 +202,7 @@ pimcore.document.seopanel = Class.create({
                 enableKeyEvents: true,
                 listeners: {
                     "keyup": function (el) {
-                        el.label.update(t("title") + " (" + el.getValue().length + "):");
+                        el.setFieldLabel(t("title") + " (" + el.getValue().length + "):");
                     }
                 }
             }, {
@@ -214,7 +214,7 @@ pimcore.document.seopanel = Class.create({
                 enableKeyEvents: true,
                 listeners: {
                     "keyup": function (el) {
-                        el.label.update(t("description") + " (" + el.getValue().length + "):");
+                        el.setFieldLabel(t("description") + " (" + el.getValue().length + "):");
                     }
                 }
             },{
@@ -250,8 +250,27 @@ pimcore.document.seopanel = Class.create({
             method: "post",
             params: values,
             success: function (node) {
-
-                tree.getStore().load();
+                if (values.id == 1) {
+                    Ext.Ajax.request({
+                        url: "/admin/document/seopanel-tree-root",
+                        success: function (response) {
+                            var cfg = Ext.decode(response.responseText);
+                            if(cfg.id) { // We are the root node
+                                var rootNode = tree.getStore().getRootNode();
+                                rootNode.set(cfg); // set the changes as set for the document
+                                rootNode.set({ // reset root node stuff
+                                    text: "home",
+                                    iconCls:  "pimcore_icon_home",
+                                    expanded: true
+                                });
+                                rootNode.commit(true); // Tell the model that everything's ok without telling the store
+                                tree.refresh(); // refresh the tree t
+                            }
+                        }.bind(tree)
+                    });
+                } else {
+                    tree.getStore().load();
+                }
             }.bind(this, tree, record)
         });
     }
