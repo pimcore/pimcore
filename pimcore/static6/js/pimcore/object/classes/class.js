@@ -716,6 +716,13 @@ pimcore.object.classes.klass = Class.create({
                 },
                 {
                     xtype: "textfield",
+                    fieldLabel: t("use_traits"),
+                    name: "useTraits",
+                    width: 600,
+                    value: this.data.useTraits
+                },
+                {
+                    xtype: "textfield",
                     fieldLabel: t("icon"),
                     name: "icon",
                     width: 600,
