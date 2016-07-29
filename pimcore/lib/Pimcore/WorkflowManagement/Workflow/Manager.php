@@ -459,12 +459,12 @@ class Manager
      */
     public function performAction($actionName, $formData=[])
     {
+        //store the current action data
+        $this->setActionData($formData);
+        
         \Pimcore::getEventManager()->trigger("workflowmanagement.preAction", $this, [
             'actionName' => $actionName
         ]);
-
-        //store the current action data
-        $this->setActionData($formData);
 
         $actionConfig = $this->workflow->getActionConfig($actionName, $this->getElementStatus());
         $additional = $formData['additional'];
