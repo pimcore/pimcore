@@ -462,17 +462,24 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
             $dataParam = $this->getParam("data");
             $data = \Zend_Json::decode($dataParam);
 
-            $colId = $data["colId"];
-            $groupId = $data["groupId"];
-            $sorter = $data["sorter"];
+            if (count($data) == count($data, 1)) {
+                $data = [$data];
+            }
 
-            $config = new Classificationstore\CollectionGroupRelation();
-            $config->setGroupId($groupId);
-            $config->setColId($colId);
-            $config->setSorter($sorter);
+            foreach ($data as &$row) {
+                $colId = $row["colId"];
+                $groupId = $row["groupId"];
+                $sorter = $row["sorter"];
 
-            $config->save();
-            $data["id"] = $config->getColId() . "-" . $config->getGroupId();
+                $config = new Classificationstore\CollectionGroupRelation();
+                $config->setGroupId($groupId);
+                $config->setColId($colId);
+                $config->setSorter($sorter);
+
+                $config->save();
+
+                $row["id"] = $config->getColId() . "-" . $config->getGroupId();
+            }
 
             $this->_helper->json(["success" => true, "data" => $data]);
         } else {

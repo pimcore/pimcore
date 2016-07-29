@@ -175,8 +175,8 @@ class XmlWriter extends \Zend_Config_Writer_Xml
     {
         $xml         = new SimpleXMLExtended('<'.$this->getRootElementName().' />');
 
-        foreach($this->getRootElementAttributes() as $key => $value){
-            $xml->addAttribute($key,$value);
+        foreach ($this->getRootElementAttributes() as $key => $value) {
+            $xml->addAttribute($key, $value);
         }
 
         if ($this->_config) {
@@ -226,13 +226,10 @@ class XmlWriter extends \Zend_Config_Writer_Xml
         $branchType = null;
 
         foreach ($config as $key => $value) {
-
             $attributes = null;
-            if($value instanceof \Zend_Config){
-
+            if ($value instanceof \Zend_Config) {
                 $attributes = $value->get('@attributes');
                 $value = $value->get('@value') ?: $value;
-
             }
             if ($branchType === null) {
                 if (is_numeric($key)) {
@@ -253,15 +250,15 @@ class XmlWriter extends \Zend_Config_Writer_Xml
 
             if ($branchType === 'numeric') {
                 if ($value instanceof \Zend_Config) {
-                    $child = $this->applyAttributes($parent->addChild($branchName),$attributes);
+                    $child = $this->applyAttributes($parent->addChild($branchName), $attributes);
                     $this->_addBranch($value, $child, $parent);
                 } else {
-                    $child = $this->applyAttributes($parent->addChild($branchName, (string) $value),$attributes);
+                    $child = $this->applyAttributes($parent->addChild($branchName, (string) $value), $attributes);
                 }
             } else {
                 if ($value instanceof \Zend_Config) {
                     $child = $xml->addChild($key);
-                    $this->applyAttributes($child,$attributes);
+                    $this->applyAttributes($child, $attributes);
                     $this->_addBranch($value, $child, $xml);
                 } else {
                     $this->addChildConsiderCdata($xml, $key, $value);
@@ -270,12 +267,14 @@ class XmlWriter extends \Zend_Config_Writer_Xml
         }
     }
 
-    protected function applyAttributes(\SimpleXMLElement $element,$attributes){
-        if($attributes){
-            foreach($attributes as $aKey => $aValue){
-                $element->addAttribute($aKey,$aValue);
+    protected function applyAttributes(\SimpleXMLElement $element, $attributes)
+    {
+        if ($attributes) {
+            foreach ($attributes as $aKey => $aValue) {
+                $element->addAttribute($aKey, $aValue);
             }
         }
+
         return $element;
     }
 

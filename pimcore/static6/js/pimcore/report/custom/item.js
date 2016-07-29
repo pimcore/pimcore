@@ -321,12 +321,7 @@ pimcore.report.custom.item = Class.create({
                     name: "menuShortcut",
                     checked: this.data.menuShortcut,
                     fieldLabel: t("create_menu_shortcut")
-                }, {
-                    xtype: "checkbox",
-                    name: "menuShortcut",
-                    checked: this.data.menuShortcut,
-                    fieldLabel: t("create_menu_shortcut")
-                },
+                }
                 ]
             }]
         });

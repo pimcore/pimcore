@@ -127,276 +127,23 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
         }
     },
 
-
     openEdit: function () {
+        this.data["path"] = this.data["data"];
+        this.window = pimcore.helpers.editmode.openVideoEditPanel(this.data, {
+            save: function () {
+                this.window.hide();
 
-        this.fieldData = new Ext.form.TextField({
-            value: this.data.data,
-            name: "data",
-            width: 320,
-            fieldCls: "pimcore_droptarget_input",
-            enableKeyEvents: true,
-            listeners: {
-                keyup: function (el) {
+                var values = this.window.getComponent("form").getForm().getFieldValues();
+                values["data"] = values["path"];
+                delete values["path"];
+                this.data = values;
 
-                    var tmpId;
-
-                    if(el.getValue().indexOf("youtu") >= 0 && el.getValue().indexOf("//") >= 0) {
-                        this.form.getComponent("type").setValue("youtube");
-
-                        // get id
-                        /*
-                            Possible Links:
-                            # //www.youtube.com/embed/Vhf5cuXiLTA
-                            # http://www.youtube.com/watch?v=Vhf5cuXiLTA
-                            # http://youtu.be/Vhf5cuXiLTA
-
-                         */
-                        var path = el.getValue();
-                        var parts = parse_url(path);
-
-                        var vars = Ext.urlDecode(parts["query"]);
-                        if(vars["v"]) {
-                            tmpId = vars["v"];
-                        }
-
-                        //get youtube id if form urls like  http://www.youtube.com/embed/youtubeId
-                        if(path.indexOf("embed") >= 0){
-                            var explodedPath = trim(parts["path"]," /").split("/");
-                            var tmpIndex = intval(array_search('embed',explodedPath))+1;
-                            tmpId = explodedPath[tmpIndex];
-                        }
-
-                        if(parts["host"] == "youtu.be") {
-                            tmpId = trim(parts["path"]," /");
-                        }
-
-                        if(tmpId) {
-                            el.setValue(tmpId);
-                        }
-
-                    } else if (el.getValue().indexOf("vime") >= 0 && el.getValue().indexOf("//") >= 0) {
-                        this.form.getComponent("type").setValue("vimeo");
-
-                        /*
-                            Possible Links
-                            # http://vimeo.com/11696823
-                            # http://player.vimeo.com/video/22775048?title=0&byline=0&portrait=0
-                            # http://vimeo.com/groups/1615/videos/151603026
-                         */
-
-                        var path = el.getValue();
-                        var parts = parse_url(path);
-
-                        if (path.indexOf("groups") >= 0) {
-                            var explodedPath = trim(parts["path"]," /").split("/");
-                            var tmpIndex = intval(array_search('videos', explodedPath)) + 1;
-                            tmpId = explodedPath[tmpIndex];
-                        } else {
-                            var pathParts = trim(parts["path"], " /").split("/");
-                            for (var i = 0; i < pathParts.length; i++) {
-                                if (intval(pathParts[i]) > 0 && pathParts[i].length > 3) {
-                                    tmpId = pathParts[i];
-                                    break;
-                                }
-                            }
-                        }
-
-                        if(tmpId) {
-                            el.setValue(tmpId);
-                        }
-                    }
-                }.bind(this)
-            }
-        });
-
-        this.poster = new Ext.form.TextField({
-            fieldLabel: t('poster_image'),
-            value: this.data.poster,
-            name: "poster",
-            width: 420,
-            fieldCls: "pimcore_droptarget_input",
-            enableKeyEvents: true,
-            listeners: {
-                keyup: function (el) {
-                    //el.setValue(this.data.poster)
-                }.bind(this)
-            }
-        });
-
-
-        this.fieldData.on("render", this.initDD.bind(this, "video"));
-        this.poster.on("render", this.initDD.bind(this, "image"));
-
-        this.searchButton = new Ext.Button({
-            iconCls: "pimcore_icon_search",
-            handler: this.openSearchEditor.bind(this)
-        });
-
-        this.form = new Ext.FormPanel({
-            bodyStyle: "padding:10px;",
-            items: [{
-                xtype: "combo",
-                itemId: "type",
-                fieldLabel: t('type'),
-                name: 'type',
-                triggerAction: 'all',
-                editable: false,
-                mode: "local",
-                store: ["asset","youtube","vimeo"],
-                value: this.data.type,
-                listeners: {
-                    select: function (combo) {
-                        var type = combo.getValue();
-                        this.updateType(type);
-                    }.bind(this)
-                }
-            }, {
-                fieldLabel: t('path'),
-                xtype: "fieldcontainer",
-                layout: 'hbox',
-                border: false,
-                itemId: "dataContainer",
-                items: [this.fieldData, this.searchButton]
-            }, this.poster,{
-                xtype: "textfield",
-                name: "title",
-                fieldLabel: t('title'),
-                width: 420,
-                value: this.data.title
-            },{
-                xtype: "textarea",
-                name: "description",
-                fieldLabel: t('description'),
-                width: 420,
-                height: 50,
-                value: this.data.description
-            }],
-            buttons: [
-                {
-                    text: t("cancel"),
-                    listeners:  {
-                        "click": function () {
-                            this.window.hide();
-                        }.bind(this)
-                    }
-                },
-                {
-                    text: t("save"),
-                    listeners: {
-                        "click": function () {
-                            // close window
-                            this.window.hide();
-
-                            var values = this.form.getForm().getFieldValues();
-                            this.data = values;
-
-                            this.dirty = true;
-                            this.updateVideo();
-                        }.bind(this)
-                    },
-                    iconCls: "pimcore_icon_save"
-                }
-            ]
-        });
-
-
-        this.window = new Ext.Window({
-            width: 500,
-            height: 400,
-            title: t("video"),
-            items: [this.form],
-            layout: "fit",
-            listeners: {
-                afterrender: function () {
-                    setTimeout(function() {
-                        this.updateType(this.data.type);
-                    }.bind(this), 1000);
-                }.bind(this)
-            }
-        });
-        this.window.show();
-    },
-
-    initDD: function (type, el) {
-
-        // add drop zone
-        new Ext.dd.DropZone(el.getEl(), {
-            reference: this,
-            ddGroup: "element",
-            getTargetFromEvent: function(e) {
-                return this.reference.component.getEl();
-            },
-
-            onNodeOver : function(target, dd, e, data) {
-                try {
-                    var record = data.records[0];
-                    var data = record.data;
-
-                    if (data.type == type) {
-                        return Ext.dd.DropZone.prototype.dropAllowed;
-                    }
-                } catch (e) {
-                    console.log(e);
-                }
-                return Ext.dd.DropZone.prototype.dropNotAllowed;
-            },
-
-            onNodeDrop : function (target, dd, e, data) {
-
-                try {
-                    var record = data.records[0];
-                    var data = record.data;
-
-                    if (data.type == type) {
-                        if (this.data.data != data.path) {
-                            this.dirty = true;
-                        }
-
-                        if (type == "video") {
-                            this.empty();
-                            this.data.data = data.path;
-                            this.fieldData.setValue(data.path);
-                            this.form.getComponent("type").setValue("asset");
-                        } else if (type == "image") {
-                            this.data.poster = data.path;
-                            this.poster.setValue(data.path);
-                        }
-
-                        this.updateVideo();
-                        return true;
-                    }
-                } catch (e) {
-                    console.log(e);
-                }
+                this.dirty = true;
+                this.updateVideo();
+            }.bind(this),
+            cancel: function () {
+                this.window.hide();
             }.bind(this)
-        });
-    },
-
-    updateType: function (type) {
-        this.searchButton.enable();
-        var cmp = this.form.getComponent("dataContainer");
-        var textField = cmp.items.getAt(0);
-        var labelEl = textField.labelEl;
-        labelEl.update(t("path"));
-
-        if(type != "asset") {
-            this.searchButton.disable();
-        }
-        if(type == "youtube") {
-            labelEl.update("URL / ID");
-        }
-        if(type == "vimeo") {
-            labelEl.update("URL / ID");
-        }
-    },
-
-    openSearchEditor: function () {
-        pimcore.helpers.itemselector(false, this.addDataFromSelector.bind(this), {
-            type: ["asset"],
-            subtype: {
-                asset: ["video"]
-            }
         });
     },
 
@@ -440,6 +187,7 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
     },
 
     getValue: function () {
+        delete this.data["path"];
         return this.data;
     },
 

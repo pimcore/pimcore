@@ -906,7 +906,7 @@ class Mail extends \Zend_Mail
     public static function getHtml2textInstalled()
     {
         if (is_null(self::$html2textInstalled)) {
-            self::determineHtml2TextIsInstalled();
+            self::$html2textInstalled = self::determineHtml2TextIsInstalled();
         }
 
         return self::$html2textInstalled;

@@ -428,7 +428,8 @@ class Pimcore
         //@ini_set("memory_limit", "1024M");
         @ini_set("max_execution_time", $maxExecutionTime);
         @set_time_limit($maxExecutionTime);
-        mb_internal_encoding("UTF-8");
+        ini_set('default_charset', "UTF-8");
+        mb_internal_encoding("UTF-8"); // only required for PHP 5.5, can be removed after 5.5 is unsupported by pimcore
 
         // this is for simple_dom_html
         ini_set('pcre.recursion-limit', 100000);
@@ -992,6 +993,7 @@ class Pimcore
                 // check here if there is actually content, otherwise readfile() and similar functions are not working anymore
                 header("Content-Length: " . mb_strlen($output, "latin1"));
             }
+            header("Vary: Accept-Encoding", true);
             header("X-Powered-By: pimcore", true);
         }
 

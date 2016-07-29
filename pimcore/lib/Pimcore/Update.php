@@ -320,8 +320,8 @@ class Update
 
         Cache::disable(); // it's important to disable the cache here eg. db-schemas, ...
 
+        $outputMessage = "";
         if (is_file($script)) {
-            $outputMessage = "";
             ob_start();
             try {
                 if (!self::$dryRun) {

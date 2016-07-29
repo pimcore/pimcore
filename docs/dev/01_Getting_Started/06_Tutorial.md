@@ -1,20 +1,11 @@
-## Introduction
-Pimcore has three core modules. 
-Documents, Assets and Object give you powerful and complete system for creating every kind of a software.
-
-| Module                        | Description                                                                                                                                                                                                                                                                                      |
-|-------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| [Documents](!Documents)       | Module responsible for content management on whole application. Great drag & drop mechanism allows creating cms pages, email templates, offline print materials with live preview. As a developer, you can specify areas possible to edit by end administration panel user.                      |
-| [Assets](!Assets)             | Images, videos, documents and every other file. Due to integration with Documents and Objects, you can use these files in content or in data structures for example as a picture of Author object. Available additional features like editing images and other useful operations at files.       |
-| [Objects (Classes)](!Objects) | This can be used for RAD (Rapid Application Development). You can easily create a data model with drag & drop, the system creates the model for you in the backend (yes also the php files to work with).                                                                                        |
-
 
 In this part, you are going to known required minimum of knowledge, crucial for start developing with Pimcore. 
-More advanced cases you'll find at links above (in the table).
-
-Table of contents:
 
 [TOC]
+
+# Creating CMS pages with Pimcore Documents
+
+In the first part you'll learn the basics for creating CMS pages with Pimcore Documents. 
 
 ## Create template, layout and controller
 
@@ -42,13 +33,13 @@ class ContentController extends Action
 ```
 
 There is the only one action *defaultAction*.
-The method *enableLayout* registers \Zend_Layout to decorate our content page. 
+The method *enableLayout* registers a ```\Zend_Layout``` to decorate our content page. 
 In the defaultAction, we can put some custom code or assign values to the template.
 
 ### Create Template
 Now we can create the templates for our new content page:
-* Create a new folder in ```/website/view/scripts``` and name it like the controller (in this case “content”). 
-* Put a new PHP file into this folder and name it like our action (default.php).
+* Create a new folder in ```/website/view/scripts``` and name it like the controller (in this case *content*). 
+* Put a new PHP file into this folder and name it like our action (*default.php*).
 
 Then we can put some template code into it, for example:
 
@@ -65,6 +56,11 @@ Then we can put some template code into it, for example:
 <?php } ?>
 ```
 
+Pimcore uses ```\Zend_View``` as templates and therefore plain php as template language. So you have the full power of
+  ```\Zend_View``` with all Zend functionality available. In addition to that, there are some Pimcore additions like editables,
+  which add editable parts to the layout. 
+  For details concerning editables (like ```$this->input```, ```$this->block```, ...) see [Editables](!dev/Documents/Template/Editables). 
+
 ### Add Layout
 Pimcore uses the advantages of Zend_Layout out of the ZF, for details please read more here about it.
 Because we have enabled the layout engine in our controller, we can use layouts to wrap our content page with another template which contains the main navigation, a sidebar, …
@@ -73,7 +69,7 @@ With this code:
 ```php
 <?php $this->layout()->setLayout('default'); ?>
 ```
-We tell the engine that we want to use the layout standard. Now create a new php file in the folder /website/views/layouts and name it to default.php (just like the name of the layout appending .php).
+We tell the engine that we want to use the layout default. Now create a new php file in the folder ```/website/views/layouts``` and name it to default.php (just like the name of the layout appending .php).
 Then we can also put some HTML and template code into it:
 
 ```php
@@ -104,30 +100,117 @@ Then we can also put some HTML and template code into it:
 
 The code ```<?= $this->layout()->content ?>``` is the placeholder where your contentpage will be inserted.
 
-### Using a controller in CMS Page
+### Putting it together with Pimcore documents
 Now we need to connect the action to a page. This will be done in the Pimcore backend.
 First, click on the left under "Documents" at "home".
 
-![Create page](/img/Pimcore_Elements_check_homepage.png)
+![Create page](/dev/img/Pimcore_Elements_check_homepage.png)
 
 Now select the tab "settings" in the newly opened window.
 In controller and action input you have to select the name of the controller and the name of the action.  
 If everything goes properly, you see the view like below:
 
-![Page settings](/img/Pimcore_Elements_homepage_settings.png)
+![Page settings](/dev/img/Pimcore_Elements_homepage_settings.png)
 
 You can test the new controller and action, after save.
 Just change tab to *edit*. Now, you see your page with an editable place.
 
-![Page edit preview](/img/Pimcore_Elements_homepage_edit_tab.png)
+![Page edit preview](/dev/img/Pimcore_Elements_homepage_edit_tab.png)
 
-## Introduction to objects
-Create simple products database. 
+
+# Introduction to Assets
+
+In assets, all binary files like images, video, pdfs, ... can uploaded, stored and managed. 
+You can organize them in a directory structure and assign them additional meta data. 
+Once uploaded, an asset can be used in multiple places - e.g. documents or objects. 
+
+In terms of images or videos, always upload only one master version. Thumbnails for different output channels can be
+created directly by Pimcore (Master Data Management). 
+
+For this tutorial, at least add one file which later you will use in an object. 
+
+There are many ways to upload files:
+* Just drag it from files browser on your computer
+* Right click on the home and choose the most interesting method.
+
+![Upload assets](/dev/img/asset-upload.png)
+
+
+
+# Introduction to objects
 We've already made our own controller, template and view and we're allowed to adding text from admin panel to our pages.
+In this chapter we will create a simple product database and connect this to our CMS page.  
 
-### Update controller and template
+## Create the class
 
-Let's create another action in the controller (ContentController) called productAction.
+Ok, let's create our first class for objects. 
+<div class="inline-imgs">
+
+[comment]: #TODOinlineimgs
+
+Go to: ![Settings](/dev/img/Pimcore_Elements_settings.png) **Settings -> Object -> Classes** and click the button with *Add class* label.
+
+</div>
+
+![Add product class](/dev/img/Pimcore_Elements_class_add.png)
+
+Now, there is a new product class. 
+Classes are like database scheme for the objects. 
+
+More specific knowledge you can find in [Objects section](!dev/Objects)
+
+The product should have: SKU, picture, name and description. 
+
+* Go to the edit page of the class product 
+* Click on the right after **Base -> Add layout Component -> Panel** - the main panel for elements of the class created, now we can add main products elements.
+* To add elements:
+    * Click on the right after **Panel** and then **Add data component -> Text -> Input**, after it change the name of the input to **sku**
+    * In the same way, add new component for **product name** and change the name of the input to **name**
+    * Now we're going to add WYSIWYG attribute. We use it to create a description for products. **Add data component -> Text -> WYSIWYG**. Let's call it **description**.
+    * The last attribute is the picture. We can use special data component from **Other** section called **Image**. Name the attribute **picture**.
+
+If everything goes well, the new class looks like in the picture:
+
+![Product class](/dev/img/Pimcore_Elements_product_class.png)
+
+**Important:** Every generated class in Pimcore admin panel has also mapper in the code. You can find the product class in ```website/var/classes/Object/Product.php``` 
+
+## Add new object
+
+Ok, we've just prepared the simple class for new products. 
+Now we can use it to create objects. 
+
+* Open the objects section on the left and click on the right button after **Home** (Note that you can create also directories structure for objects).
+* Choose **Add object -> product** and fill the input with some name, for example: **tshirt**
+* Add values for sku, name and description attributes.
+* Click  *Save & Publish*
+
+Probably, your view looks like below:
+
+![New product](/dev/img/Pimcore_Elements_new_product.png)
+
+The last step to finish the product object is add a photo.
+
+[comment]: #TODOinlineimgs
+
+<div class="inline-imgs">
+
+The one way to upload a photo is this button: ![Upload image to an object](/dev/img/Pimcore_Elements_upload_button.png) or just drag file which you uploaded from Assets section.
+
+</div>
+
+Click **Save & Publish** button. 
+
+That's it. 
+
+![Complete object](/dev/img/Pimcore_Elements_complete_object.png)
+
+
+# Putting the pieces togehter
+Let's put the pieces together and connect the products to the CMS. 
+
+## Update controller and template
+Therefore create another action in the controller (ContentController) called ```productAction```.
  
 ```php
 <?php
@@ -180,91 +263,15 @@ New lines:
 $this->editmode
 ```
 
-The parameter above check if you're in the administration area. 
+The parameter above check if view is called from the Pimcore backend and therefore you might have some different output. 
 
 ```php
 $this->href('product');
 ```
 
 Href is one of editable elements. It would be used to make relation 1 to 1.
-The full list of editables is presented in the special section: [Editables](!Documents/Template/Editables)
+The full list of editables is presented in the special section: [Editables](!dev/Documents/Template/Editables)
 
-### Create the class
-
-Ok, let's create our first class for objects. 
-
-
-
-<div class="inline-imgs">
-
-[comment]: #TODOinlineimgs
-
-Go to: ![Settings](/img/Pimcore_Elements_settings.png) **Settings -> Object -> Classes** and click the button with *Add class* label.
-
-</div>
-
-![Add product class](/img/Pimcore_Elements_class_add.png)
-
-Now, there is a new product class.
-Classes are like database scheme for the objects. 
-
-More specific knowledge you can find in [Objects section](!Objects)
-
-The product should have: SKU, picture, name and description. 
-
-* Go to the edit page of the class product 
-* Click on the right after **Base -> Add layout Component -> Panel** - the main panel for elements of the class created, now we can add main products elements.
-* To add elements:
-    * Click on the right after **Panel** and then **Add data component -> Text -> Input**, after it change the name of the input to **sku**
-    * In the same way, add new component for **product name** and change the name of the input to **name**
-    * Now we're going to add WYSIWYG attribute. We use it to create a description for products. **Add data component -> Text -> WYSIWYG**. Let's call it **description**.
-    * The last attribute is the picture. We can use special data component from **Other** section called **Image**. Name the attribute **picture**.
-
-If everything goes well, the new class looks like in the picture:
-
-![Product class](/img/Pimcore_Elements_product_class.png)
-
-**Important:** Every generated class in Pimcore admin panel has also mapper in the code. You can find the product class in ```website/var/classes/Object/Product.php``` 
-
-### Add new object
-
-Ok, we've just prepared the simple class for new products. 
-Now we can use it to create objects. 
-
-* Open the objects section on the left and click on the right button after **Home** (Note that you can create also directories structure for objects).
-* Choose **Add object -> product** and fill the input with some name, for example: **tshirt**
-* Add values for sku, name and description attributes.
-* Click  *Save & Publish*
-
-Probably, your view looks like below:
-
-![New product](/img/Pimcore_Elements_new_product.png)
-
-## Introduction to Assets
-
-In assets label, you can also create directories structure. 
-You can upload there every file like image, movie, document, ... and after, use those in objects and documents.
-Add one file which later you will use in an object. 
-
-There are many ways to upload files:
-* Just drag it from files browser on your computer
-* Right click on the home and choose the most interesting method.
-
-The last step to finish the product object is add a photo.
-
-[comment]: #TODOinlineimgs
-
-<div class="inline-imgs">
-
-The one way to upload a photo is this button: ![Upload image to an object](/img/Pimcore_Elements_upload_button.png) or just drag file which you uploaded from Assets section.
-
-</div>
-
-Click **Save & Publish** button. 
-
-That's it. 
-
-![Complete object](/img/Pimcore_Elements_complete_object.png)
 
 ## Add the product object to a document
 
@@ -276,7 +283,7 @@ In the settings label, choose the product action and the content controller, cli
 There is new element (**Href**) which you added in the product template.
 Drag the product object to that input and click **Save & Publish**.
 
-![Drag the object to the document](/img/Pimcore_Elements_drag_to_document.png)
+![Drag the object to the document](/dev/img/Pimcore_Elements_drag_to_document.png)
 
 Let's see what happened on the front... 
 
@@ -317,8 +324,18 @@ In the template file (```website/views/scripts/content/product.php```) add few l
 
 You are able to access to your object by method **getElement**.
 Now you have access to whole data from the object (name, description, ...).
-It's a good practice to add ```@var``` doc in every view. If you do this you have access to autocomplete in IDE.
+It's a good practice to add ```@var``` doc in every view. If you do this you have access to auto complete in your IDE.
 
+
+## Add a thumbnail configuration
+To show the product image in the view, we need to add a thumbnail configuration first. With thumbnail configurations
+pimcore automatically calculates optimized images for certain output channels. For details on thumbnails, see TODO. 
+
+For adding a thumbnail configuration see the following screen. Just add a configuration named ```content```. 
+![Adding thumbnail configuration](/dev/img/adding_thumbnails.png)
+
+
+## Showing the image in the view
 And the last step, we would like to show the product picture.
 
 ```php
@@ -329,19 +346,19 @@ And the last step, we would like to show the product picture.
         /** @var \Pimcore\Model\Asset\Image $picture */
         
     ?>
-        <img src="<?php echo (string) $picture; ?>"
-             alt="<?php echo $this->escape($product->getName()); ?>">
+        <?= $picture->getThumbnail("content")->getHTML(); ?>
         
     <?php endif; ?>
     <?php echo $product->getDescription(); ?>
 </div>
 ```
-
-As you see, image attribute is an additional class with usefull parameter.
+As you see, image attribute is an additional class with useful parameter.
+To print out the image in the right size just use the method ```getThumbnail``` which returns the ```<img>``` tag with the 
+correct image path and also sets alt attributes to values based on the asset meta data. 
 
 Now the product page looks like that:
 
-![Final product page](/img/Pimcore_Elements_final_product_page.png)
+![Final product page](/dev/img/Pimcore_Elements_final_product_page.png)
 
 
-[Create Pimcore extension](!Start/Create_Extension)
+[Create Pimcore extension](!dev/Getting_Started/Create_Extension)

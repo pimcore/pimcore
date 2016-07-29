@@ -50,9 +50,7 @@ pimcore.report.custom.definition.sql = Class.create({
                     growMax: 200,
                     enableKeyEvents: true,
                     listeners: {
-                        keyup: function() {
-                            this.updateGroupByMultiSelectStore(false);
-                        }.bind(this)
+                        keyup: this.onSqlEditorKeyup.bind(this)
                     }
                 },
                 {
@@ -66,9 +64,7 @@ pimcore.report.custom.definition.sql = Class.create({
                     growMax: 200,
                     enableKeyEvents: true,
                     listeners: {
-                        keyup: function() {
-                            this.updateGroupByMultiSelectStore(false);
-                        }.bind(this)
+                        keyup: this.onSqlEditorKeyup.bind(this)
                     }
                 },
                 {
@@ -82,9 +78,7 @@ pimcore.report.custom.definition.sql = Class.create({
                     growMax: 200,
                     enableKeyEvents: true,
                     listeners: {
-                        keyup: function() {
-                            this.updateGroupByMultiSelectStore(false);
-                        }.bind(this)
+                        keyup: this.onSqlEditorKeyup.bind(this)
                     }
                 },
                 {
@@ -98,9 +92,7 @@ pimcore.report.custom.definition.sql = Class.create({
                     growMax: 200,
                     enableKeyEvents: true,
                     listeners: {
-                        keyup: function() {
-                            this.updateGroupByMultiSelectStore(false);
-                        }.bind(this)
+                        keyup: this.onSqlEditorKeyup.bind(this)
                     }
                 }
             ]
@@ -122,6 +114,15 @@ pimcore.report.custom.definition.sql = Class.create({
         var values = this.element.getForm().getFieldValues();
         values.type = "sql";
         return values;
+    },
+
+    onSqlEditorKeyup: function() {
+        clearTimeout(this._keyupTimout);
+
+        var self = this;
+        this._keyupTimout = setTimeout(function() {
+            self.updateGroupByMultiSelectStore(false);
+        }, 500);
     },
 
     updateGroupByMultiSelectStore: function(addItem) {

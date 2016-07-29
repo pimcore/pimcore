@@ -145,6 +145,7 @@ pimcore.report.panel = Class.create({
             if (this.type == "global") {
                 layoutConfig.id = "pimcore_reports";
                 layoutConfig.closable = true;
+                layoutConfig["title"] = t('reports_and_marketing');
             }
 
             this.layout = new Ext.Panel(layoutConfig);

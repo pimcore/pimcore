@@ -7,9 +7,9 @@ To get the detailed information about extension visit sites below:
 
 |                                                | Description                                                           |
 |------------------------------------------------|-----------------------------------------------------------------------|
-| [Plugin Anatomy](!Extensions/Plugin_Anatomy)   | Detailed extension structure.                                         |
-| [Plugin Backend](!Extensions/Plugin_Backend)   | Learn more about specific elements in your plugin.                    |
-| [Plugin Admin UI](!Extensions/Plugin_Admin)    | Go there if you would like to know more about Pimcore user interface. |
+| [Plugin Anatomy](!dev/Extensions/Plugin_Anatomy)   | Detailed extension structure.                                         |
+| [Plugin Backend](!dev/Extensions/Plugin_Backend)   | Learn more about specific elements in your plugin.                    |
+| [Plugin Admin UI](!dev/Extensions/Plugin_Admin)    | Go there if you would like to know more about Pimcore user interface. |
 
 ## Example
 
@@ -27,12 +27,12 @@ As a name choose: *ExtensionExample*
 
 [comment]: #TODOinlineimgs
 
-Go to: ![Tools](/img/Icon_tools.png)  **Tools -> Extensions ->** ![Create new plugin skeleton](/img/Icon_Create_new_plugin_skeleton.png)
+Go to: ![Tools](/dev/img/Icon_tools.png)  **Tools -> Extensions ->** ![Create new plugin skeleton](/dev/img/Icon_Create_new_plugin_skeleton.png)
 
 You can find your newly generated plugin including all necessary files in ```plugins/ExtensionExample```
 
-At this point, if you log into the Pimcore admin then navigate to ![Tools](/img/Icon_tools.png)**Tools -> Extensions**  you should be able to see, enable, install and uninstall your new plugin.
-Don't forget to activate the extension ![Enable extension](/img/Extensions_enable.png)
+At this point, if you log into the Pimcore admin then navigate to ![Tools](/dev/img/Icon_tools.png)**Tools -> Extensions**  you should be able to see, enable, install and uninstall your new plugin.
+Don't forget to activate the extension ![Enable extension](/dev/img/Extensions_enable.png)
 
 </div>
 
@@ -62,7 +62,7 @@ pimcoreReady: function(params,broker){
 
 Now if you reload the Pimcore panel, you will see new menu item in Tools menu:
 
-![Extension Example menu item](/img/Extensions_new_menu_item.png)
+![Extension Example menu item](/dev/img/Extensions_new_menu_item.png)
 
 But when you click on it nothing happens. 
 
@@ -125,8 +125,9 @@ pimcore.plugin.extensionexample = Class.create(pimcore.plugin.admin, {
         });
 
         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-        tabPanel.activate("extensionexample_check_panel");
-
+        tabPanel.add(extensionexamplePlugin.panel);
+        tabPanel.setActiveTab(extensionexamplePlugin.panel);
+        
         pimcore.layout.refresh();
     }
 });
@@ -136,7 +137,7 @@ var extensionexamplePlugin = new pimcore.plugin.extensionexample();
 
 Now, a new tab is opened if you click on the plugin button.
 
-![New extension Tab](/img/Extensions_new_tab.png)
+![New extension Tab](/dev/img/Extensions_new_tab.png)
 
 In the ```showTab``` method, w have the empty array called ```items```, we're going to use it to show records in a grid.
 
@@ -150,10 +151,14 @@ showTab: function() {
 getGrid: function() {
     // fetch data from a webservice (which we haven't written yet!)
     extensionexamplePlugin.store = new Ext.data.JsonStore({
-        id:                 'extensionexample_store',
-        url:                '/plugin/ExtensionExample/admin/get-address-book',
-        restful:            false,
-        root:               "addresses",
+        proxy: {
+            url: '/plugin/ExtensionExample/admin/get-address-book',
+            type: 'ajax',
+            reader: {
+                type: 'json',
+                rootProperty: 'addresses'
+            }
+        },
         fields: [
             "name",
             "phoneNumber",
@@ -223,3 +228,5 @@ class ExtensionExample_AdminController extends Admin
 ```
 
 Reload the admin interface, navigate to **Tools-> Extension Example**  and you should see a table with two rows, which can be sorted by column.
+
+![Final grid](/dev/img/Extensions_final_grid.png)

@@ -141,7 +141,25 @@ class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin
         // filtering for objects
         if ($this->getParam("filter") && $this->getParam("class")) {
             $class = Object\ClassDefinition::getByName($this->getParam("class"));
-            $conditionFilters = Object\Service::getFilterCondition($this->getParam("filter"), $class);
+
+            // add Localized Fields filtering
+            $params = \Zend_Json::decode($this->getParam('filter'));
+            $unlocalizedFieldsFilters = [];
+            $localizedFieldsFilters = [];
+            foreach ($params as $paramConditionObject) {
+                //this lopp divides filter parameters: localazed and unlocalized groups
+                $definition = $class->getFieldDefinition($paramConditionObject['property']);
+                if ($definition) { //TODO: for sure, we can add additional condition like getLocalizedFieldDefinition()->getFieldDefiniton(...
+                    $unlocalizedFieldsFilters[] = $paramConditionObject;
+                } else {
+                    $localizedFieldsFilters[] = $paramConditionObject;
+                }
+            }
+
+            //string statements for divided filters
+            $conditionFilters = Object\Service::getFilterCondition(\Zend_Json::encode($unlocalizedFieldsFilters), $class);
+            $localizedConditionFilters = Object\Service::getFilterCondition(\Zend_Json::encode($localizedFieldsFilters), $class);
+
             $join = "";
             foreach ($bricks as $ob) {
                 $join .= " LEFT JOIN object_brick_query_" . $ob . "_" . $class->getId();
@@ -150,7 +168,18 @@ class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin
                 $join .= " ON `" . $ob . "`.o_id = `object_" . $class->getId() . "`.o_id";
             }
 
-            $conditionParts[] = "( id IN (SELECT `object_" . $class->getId() . "`.o_id FROM object_" . $class->getId() . $join . " WHERE " . $conditionFilters . ") )";
+            if ($conditionFilters) {
+                //add condition query for non localised fields
+                $conditionParts[] = "( id IN (SELECT `object_" . $class->getId() . "`.o_id FROM object_" . $class->getId()
+                    . $join . " WHERE " . $conditionFilters . ") )";
+            }
+
+            if ($localizedConditionFilters) {
+                //add condition query for localised fields
+                $conditionParts[] = "( id IN (SELECT `object_localized_data_" . $class->getId()
+                    . "`.ooo_id FROM object_localized_data_" . $class->getId() . $join . " WHERE "
+                    . $localizedConditionFilters . " GROUP BY ooo_id " . ") )";
+            }
         }
 
         if (is_array($types) and !empty($types[0])) {
