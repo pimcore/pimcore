@@ -52,10 +52,10 @@ Please see the following links for the webserver you're going to use.
 
 [comment]: # (TODO: Discuss and Update)
 
-| Choice                                                                                                          | Version   |
-|-----------------------------------------------------------------------------------------------------------------|-----------|
-| [Apache2](!Development_Documentation/Installation_and_Upgrade/System_Setup_and_Hosting/01_Apache_Configuration) | >=2.2     |
-| [Nginx](!Development_Documentation/Getting_Started/Installation/Nginx_Configuration)                            | ?         |
+| Choice                                                                                                            | Version     |
+|-- --------------------------------------------------------------------------------------------------------------- | --------- --|
+| [Apache2](!Development_Documentation/Installation_and_Upgrade/System_Setup_and_Hosting/Apache_Configuration)      | >=2.2       |
+| [Nginx](!Development_Documentation/Getting_Started/Installation/Nginx_Configuration)                              | ?           |
 
 
 You also need to create a mysql database which is needed in the installation process.
