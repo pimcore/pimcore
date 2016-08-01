@@ -41,6 +41,12 @@ class Printpage extends \Pimcore\Controller\Action\Admin\Document
         $page->userPermissions = $page->getUserPermissions();
         $page->setLocked($page->isLocked());
 
+        if ($page->getContentMasterDocument()) {
+            $page->contentMasterDocumentPath = $page->getContentMasterDocument()->getRealFullPath();
+        }
+
+        $this->addTranslationsData($page);
+
         // unset useless data
         $page->setElements(null);
         $page->childs = null;

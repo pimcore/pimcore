@@ -253,6 +253,7 @@ CREATE TABLE `documents_printpage` (
   `template` varchar(255) DEFAULT NULL,
   `lastGenerated` int(11) DEFAULT NULL,
   `lastGenerateMessage` text CHARACTER SET utf8,
+  `contentMasterDocumentId` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8;
 
