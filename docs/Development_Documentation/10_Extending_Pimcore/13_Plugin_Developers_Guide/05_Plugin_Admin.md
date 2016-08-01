@@ -1,7 +1,7 @@
 The Pimcore user interface is based upon the Ext JS Framework.  
 A plugin can add Ext components to the user interface or execute any other Javascript required in the plugin context.
 User interface plugins for the pimcore admin need to be registered at a plugin broker, which notifies all registered plugins upon certain hooks. 
-All Javascript and CSS which should be included, needs to be defined in plugin.xml, as described in [plugin anatomy and design](!Development_Documentation/Extending_Pimcore/Plugin_Developers_Guide/Plugin_Anatomy). 
+All Javascript and CSS which should be included, needs to be defined in plugin.xml, as described in [plugin anatomy and design](./Plugin_Anatomy.md). 
 These scripts are loaded last upon pimcore startup. 
 They are loaded in the same order as specified in plugin.xml.
 

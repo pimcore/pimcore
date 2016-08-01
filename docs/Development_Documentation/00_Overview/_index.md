@@ -11,7 +11,7 @@ easily extendable. Even headless execution of Pimcore is possible.
 Pimcore is built for developers and should empower them to build great digital experiences easily. As a consequence Pimcore 
 is NOT an ‘out-of-the-box’ software product like Wordpress, Magento, Oxid and others. You need a developer to get started. 
 
-![Pimcore](/Development_Documentation/img/pimcore_basis.png)
+![Pimcore](../img/pimcore_basis.png)
 
 
 # Pimcore in a nutshell
@@ -63,4 +63,4 @@ But being a platform, Pimcore can be used for pretty much any use case and easil
 
 
 
-[Let's start!](!Development_Documentation/Getting_Started)
+[Let's start!](../Getting_Started/_index.md)

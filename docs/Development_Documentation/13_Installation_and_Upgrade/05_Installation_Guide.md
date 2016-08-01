@@ -10,7 +10,7 @@ You can download every of these on [Pimcore download page](https://www.pimcore.o
 | **Nightly build**        | Daily released version. Shouldn't be used in the production environment.                                        |
 
 ## System requirements
-You can visit a dedicated page to see the full list of system requirements: [System Requirements](!Development_Documentation/Installation_and_Upgrade/System_Requirements)
+You can visit a dedicated page to see the full list of system requirements: [System Requirements](./System_Requirements.md)
 Below the most important of those. 
 
 [comment]: # (TODO: specified requirements)
@@ -53,9 +53,9 @@ Please see the following links for the webserver you're going to use.
 [comment]: # (TODO: Discuss and Update)
 
 | Choice                                                                                                            | Version     |
-|-- --------------------------------------------------------------------------------------------------------------- | --------- --|
-| [Apache2](!Development_Documentation/Installation_and_Upgrade/System_Setup_and_Hosting/Apache_Configuration)      | >=2.2       |
-| [Nginx](!Development_Documentation/Installation_and_Upgrade/System_Setup_and_Hosting/Nginx_Configuration)                              | ?           |
+|-------------------------------------------------------------------------------------------------------------------|-------------|
+| [Apache2](./System_Setup_and_Hosting/Apache_Configuration.md)                                                     | >=2.2       |
+| [Nginx](./System_Setup_and_Hosting/Nginx_Configuration.md)                                                        | ?           |
 
 
 You also need to create a mysql database which is needed in the installation process.

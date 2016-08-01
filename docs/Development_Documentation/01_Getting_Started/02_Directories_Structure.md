@@ -20,4 +20,4 @@ Find basic information about directories tree in Pimcore project, below.
 | website/var         | This directory contains files created by Pimcore during runtime like assets, classes, thumbnails, ...              |
 | website/views       | Your templates.                                                                                                    |
 
-[Next part: Documents, Assets, Objects](!Development_Documentation/Getting_Started/Create_A_First_Project)
+[Next part: Documents, Assets, Objects](./Create_A_First_Project.md)
