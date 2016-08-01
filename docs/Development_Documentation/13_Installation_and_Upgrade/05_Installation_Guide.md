@@ -20,7 +20,7 @@ Below the most important of those.
 The easiest way to install Pimcore is from your terminal.
 There are two ways:
 
-## Install via [Composer]('https://getcomposer.org/download/'):
+## Install via [Composer](https://getcomposer.org/download/):
 
 ```bash
 cd /your/working/directory
