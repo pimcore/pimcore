@@ -63,4 +63,4 @@ But being a platform, Pimcore can be used for pretty much any use case and easil
 
 
 
-[Let's start!](../01_Getting_Started/_index.md)
+[Let's start!](../01_Getting_Started/00_Installation.md)
