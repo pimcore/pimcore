@@ -3,7 +3,7 @@
 The table widget can hold structured data in the form of an array. 
 The input widget for table data is a table with variable rows and columns as shown below.
 
-![Table preview](/Development_Documentation/img/Objects_Table_preview.png)
+![Table preview](../../../img/Objects_Table_preview.png)
 
 The data is stored in an array, which needs to be flattened for storage in the database. 
 For this purpose columns are separated with a "|" and rows are distinguished with line breaks. 
@@ -16,7 +16,7 @@ four|five|six
 seven|eight|nine
 ```
 
-![Table settings](/Development_Documentation/img/Objects_Table_settings.png)
+![Table settings](../../../img/Objects_Table_settings.png)
 
 The input widget can be preconfigured with default data or a fixed amount of rows and columns. 
 The default amount of rows and columns, as well as the default data, can be changed later when the data is entered, this can not be prevented with predefined settings.

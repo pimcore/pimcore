@@ -26,16 +26,16 @@ Let's add key definitions:
 
 * Go to classification store in Objects menu:
 
-![Classification store menu](/Development_Documentation/img/Objects_ClassificationStore_menu.png)
+![Classification store menu](../../../img/Objects_ClassificationStore_menu.png)
 
 * Select type:
 
-![choose Classification Store type](/Development_Documentation/img/Objects_ClassificationStore_type.png)
+![choose Classification Store type](../../../img/Objects_ClassificationStore_type.png)
 
 * Click on the configuration button on the right for detailed settings
 * Note that not all settings are respected (e.g. "indexed")
 
-![Classification Store detailed config](/Development_Documentation/img/Objects_ClassificationStore_detailed_config.png)
+![Classification Store detailed config](../../../img/Objects_ClassificationStore_detailed_config.png)
 
 ### Group definition and key assignment
 
@@ -47,14 +47,14 @@ Let's add key definitions:
 * Use the grid on the right side to manage the keys belonging to the selected group
 * Configure sort order for the object editor, keys with lower values are listed first
 
-![Classification store groups management](/Development_Documentation/img/Objects_ClassificationStore_groups_grid.png)
+![Classification store groups management](../../../img/Objects_ClassificationStore_groups_grid.png)
 
 ### Collection definition
 
 * Groups can optionally be organized into collections
 * A collection is simply a container which allows to add several groups at once, there is no actual logic behind it
 
-![Classification store - group collections](/Development_Documentation/img/Objects_ClassificationStore_group_collections_grid.png)
+![Classification store - group collections](../../../img/Objects_ClassificationStore_group_collections_grid.png)
 
 ### Class definition
 
@@ -63,7 +63,7 @@ Let's add key definitions:
 * There can be more than one classification store field 
 * Configure the group sort order for the object editor, groups with lower values are listed first
 
-![Class definitaion with Classification Store](/Development_Documentation/img/Objects_ClassificationStore_classes.png)
+![Class definitaion with Classification Store](../../../img/Objects_ClassificationStore_classes.png)
 
 ### Inheritance
 
@@ -75,7 +75,7 @@ Consider the following example and let’s assume that English is the fallback l
 We request the German value for the object at level 3. 
 Since the only value can be found on level 1 for the default language the tree is traversed as depicted.
 
-![Language value levels in Classification store](/Development_Documentation/img/Objects_ClassificationStore_levels.png)
+![Language value levels in Classification store](../../../img/Objects_ClassificationStore_levels.png)
 
 ### API 
 
@@ -154,4 +154,4 @@ $config->save();
 * Groups can be added/removed via the add/remove buttons (see screenshot below)
 * Keys are displayed in the specified sort order. If the order is equal then the keys are sorted by creation date
 
-![Edit classification store in object](/Development_Documentation/img/Objects_ClassificationStore_edit_object.png)
+![Edit classification store in object](../../../img/Objects_ClassificationStore_edit_object.png)

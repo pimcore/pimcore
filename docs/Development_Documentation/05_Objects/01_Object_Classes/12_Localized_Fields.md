@@ -10,30 +10,30 @@ The advantage of this, is to make it very easy to translate fields to the config
 <div class="inline-imgs">
 
 If it's not already configured, please specify the valid languages for your website. 
-You can do this in ![Settings](/Development_Documentation/img/Icon_settings.png)**Settings -> System Settings -> Localization & Internationalization**
+You can do this in ![Settings](../../img/Icon_settings.png)**Settings -> System Settings -> Localization & Internationalization**
 
 </div>
 
 
-![Add languages](/Development_Documentation/img/Objects_LocalizedFields_add_language.png)
+![Add languages](../../img/Objects_LocalizedFields_add_language.png)
 
 First of all, you have to configure your localized fields and layouts, this can be simply done in the class editor.
 
-![Add localized fields to a class](/Development_Documentation/img/Objects_LocalizedFields_add_data_component.png)
+![Add localized fields to a class](../../img/Objects_LocalizedFields_add_data_component.png)
 
 The container for localized fields is created. Now, you can add data component to that container.
 
-![Add data component to localized fields](/Development_Documentation/img/Objects_LocalizedFields_add_inputs_to_lf.png)
+![Add data component to localized fields](../../img/Objects_LocalizedFields_add_inputs_to_lf.png)
 
 Pimcore generated the input widgets for every configured language. 
 The result in your object editor will look like below:
 
-![Localized page preview](/Development_Documentation/img/Objects_LocalizedFields_page_preview.png)
+![Localized page preview](../../img/Objects_LocalizedFields_page_preview.png)
 
 By default, tabs are used if the number of languages does not exceed 15. 
 This limit can be changed via the field settings in the class configurator.
 
-![Change tabs limit in Localized Fields](/Development_Documentation/img/Objects_LocalizedFields_change_tabs_limit.png)
+![Change tabs limit in Localized Fields](../../img/Objects_LocalizedFields_change_tabs_limit.png)
 
 ### Accessing the data
 

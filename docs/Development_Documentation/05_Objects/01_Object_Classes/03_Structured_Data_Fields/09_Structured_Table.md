@@ -11,15 +11,15 @@ But there are a few fundamental differences:
 
 You can add structured table component in a class definition:
 
-![Add structured table component to the class](/Development_Documentation/img/Objects_Structured_Table_add_data_component.png)
+![Add structured table component to the class](../../../img/Objects_Structured_Table_add_data_component.png)
 
 To define the table, you have to specify rows and columns headers which would be used to fill the structured table content.
 
-![Structured table definition](/Development_Documentation/img/Objects_Structured_Table_definition.png)
+![Structured table definition](../../../img/Objects_Structured_Table_definition.png)
 
 Now, you can use the table in your object, like below:
 
-![Edit object with structured table](/Development_Documentation/img/Objects_Structured_Table_use.png)
+![Edit object with structured table](../../../img/Objects_Structured_Table_use.png)
 
 ### Using structured table in the code
 

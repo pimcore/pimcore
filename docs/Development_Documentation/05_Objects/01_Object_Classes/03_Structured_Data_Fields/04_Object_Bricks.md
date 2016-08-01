@@ -19,14 +19,14 @@ The Objectbrick for tires has dimension, type, maximum speed and so on.
 
 By creating a tire product object, the tire Objectbrick is added and so this tire product has all the tire attributes.
 
-![Object bricks example](/Development_Documentation/img/ObjectsBricks_object_example.png)
+![Object bricks example](../../../img/ObjectsBricks_object_example.png)
 
 To one object a number of Objectbricks can be added, but just one instance per Objectbrick type. 
 This is the main difference to Fieldcollections.
 Because only one instance per Objectbrick can be added to an object, Objectbricks fully support inheritance. 
 Each attribute of an Objectbrick can be overwritten in child objects.
 
-![Object bricks inheritance example](/Development_Documentation/img/ObjectsBricks_inheritance_example.png)
+![Object bricks inheritance example](../../../img/ObjectsBricks_inheritance_example.png)
 
 Despite this flexibility, the database model in the background stays clean and well structured. 
 This is because the attributes of an Objectbrick have to be defined like these of Fieldcollections.
@@ -35,7 +35,7 @@ This is because the attributes of an Objectbrick have to be defined like these o
 
 As mentioned before, Objectbricks themselves are defined the same way as objects and Fieldcollections are and support the same data types as Fieldcollections.
 
-![Object bricks menu](/Development_Documentation/img/ObjectsBricks_menu.png)
+![Object bricks menu](../../../img/ObjectsBricks_menu.png)
 
 To allow adding an Objectbrick to an object, two things have to be done:
 
@@ -43,11 +43,11 @@ To allow adding an Objectbrick to an object, two things have to be done:
 This data type defines, where Objectbricks can be added. 
 A field of this data type has to be added to the object class.
 
-![Object data component](/Development_Documentation/img/ObjectsBricks_data_component.png)
+![Object data component](../../../img/ObjectsBricks_data_component.png)
 
 2. In the Objectbrick definition, the object class and the desired field has to be added to the allowed classes.
 
-![Object class definition](/Development_Documentation/img/ObjectsBricks_data_component.png)
+![Object class definition](../../../img/ObjectsBricks_data_component.png)
 
 ### Retrieving Objectbricks via code
 
