@@ -116,6 +116,7 @@ class QuantityValue
         if ($this->getUnit()) {
             $value .= " " . $this->getUnit()->getAbbreviation();
         }
+
         return $value;
     }
 }
