@@ -159,7 +159,7 @@ class Manager
 
             return $state;
         } catch (\Exception $e) {
-            throw new \Exception('Cannot get state of element, make sure state field exists in class definition');
+            throw new \Exception('Cannot get state of element.');
         }
     }
 
@@ -178,7 +178,7 @@ class Manager
 
             return $status;
         } catch (\Exception $e) {
-            throw new \Exception('Cannot get status of element, make sure status field exists in class definition');
+            throw new \Exception('Cannot get status of element.');
         }
     }
 
@@ -189,7 +189,7 @@ class Manager
             $workflowState->setState($newState);
             $workflowState->save();
         } catch (\Exception $e) {
-            throw new \Exception('Cannot set element state, make sure state field exists in class definition');
+            throw new \Exception('Cannot set element state.');
         }
     }
 
@@ -200,7 +200,7 @@ class Manager
             $workflowState->setStatus($newStatus);
             $workflowState->save();
         } catch (\Exception $e) {
-            throw new \Exception('Cannot set element status, make sure status field exists in class definition');
+            throw new \Exception('Cannot set element status.');
         }
     }
 
@@ -524,11 +524,6 @@ class Manager
         $formData['oldState'] = $this->getElementState();
         $formData['oldStatus'] = $this->getElementStatus();
 
-        //transition the element
-        $this->setElementState($formData['newState']);
-        $this->setElementStatus($formData['newStatus']);
-
-
         if ($this->element instanceof Concrete || $this->element instanceof Document\PageSnippet) {
             if (!$this->workflow->getAllowUnpublished() || in_array($this->getElementStatus(), $this->workflow->getPublishedStatuses())) {
                 $this->element->setPublished(true);
@@ -569,12 +564,16 @@ class Manager
             } else {
                 throw new \Exception("Operation not allowed for this element");
             }
+            
+            //transition the element
+            $this->setElementState($formData['newState']);
+            $this->setElementStatus($formData['newStatus']);
 
-            //finally record a note against the object to show the transition
+            // record a note against the object to show the transition
             $decorator = new Workflow\Decorator($this->workflow);
             $description = $formData['notes'];
 
-            //create a note for this action
+            // create a note for this action
             $note = Workflow\Service::createActionNote(
                 $this->element,
                 $decorator->getNoteType($actionName, $formData),
@@ -583,6 +582,7 @@ class Manager
                 $actionNoteData
             );
 
+            //notify users
             if (isset($actionConfig['notificationUsers']) && is_array($actionConfig['notificationUsers'])) {
                 Workflow\Service::sendEmailNotification(
                     $actionConfig['notificationUsers'],
