@@ -104,18 +104,18 @@ The code ```<?= $this->layout()->content ?>``` is the placeholder where your con
 Now we need to connect the action to a page. This will be done in the Pimcore backend.
 First, click on the left under "Documents" at "home".
 
-![Create page](/Development_Documentation/img/Pimcore_Elements_check_homepage.png)
+![Create page](../img/Pimcore_Elements_check_homepage.png)
 
 Now select the tab "settings" in the newly opened window.
 In controller and action input you have to select the name of the controller and the name of the action.  
 If everything goes properly, you see the view like below:
 
-![Page settings](/Development_Documentation/img/Pimcore_Elements_homepage_settings.png)
+![Page settings](../img/Pimcore_Elements_homepage_settings.png)
 
 You can test the new controller and action, after save.
 Just change tab to *edit*. Now, you see your page with an editable place.
 
-![Page edit preview](/Development_Documentation/img/Pimcore_Elements_homepage_edit_tab.png)
+![Page edit preview](../img/Pimcore_Elements_homepage_edit_tab.png)
 
 
 # Introduction to Assets
@@ -133,7 +133,7 @@ There are many ways to upload files:
 * Just drag it from files browser on your computer
 * Right click on the home and choose the most interesting method.
 
-![Upload assets](/Development_Documentation/img/asset-upload.png)
+![Upload assets](../img/asset-upload.png)
 
 
 
@@ -148,11 +148,11 @@ Ok, let's create our first class for objects.
 
 [comment]: #TODOinlineimgs
 
-Go to: ![Settings](/Development_Documentation/img/Pimcore_Elements_settings.png) **Settings -> Object -> Classes** and click the button with *Add class* label.
+Go to: ![Settings](../img/Pimcore_Elements_settings.png) **Settings -> Object -> Classes** and click the button with *Add class* label.
 
 </div>
 
-![Add product class](/Development_Documentation/img/Pimcore_Elements_class_add.png)
+![Add product class](../img/Pimcore_Elements_class_add.png)
 
 Now, there is a new product class. 
 Classes are like database scheme for the objects. 
@@ -171,7 +171,7 @@ The product should have: SKU, picture, name and description.
 
 If everything goes well, the new class looks like in the picture:
 
-![Product class](/Development_Documentation/img/Pimcore_Elements_product_class.png)
+![Product class](../img/Pimcore_Elements_product_class.png)
 
 **Important:** Every generated class in Pimcore admin panel has also mapper in the code. You can find the product class in ```website/var/classes/Object/Product.php``` 
 
@@ -187,7 +187,7 @@ Now we can use it to create objects.
 
 Probably, your view looks like below:
 
-![New product](/Development_Documentation/img/Pimcore_Elements_new_product.png)
+![New product](../img/Pimcore_Elements_new_product.png)
 
 The last step to finish the product object is add a photo.
 
@@ -195,7 +195,7 @@ The last step to finish the product object is add a photo.
 
 <div class="inline-imgs">
 
-The one way to upload a photo is this button: ![Upload image to an object](/Development_Documentation/img/Pimcore_Elements_upload_button.png) or just drag file which you uploaded from Assets section.
+The one way to upload a photo is this button: ![Upload image to an object](../img/Pimcore_Elements_upload_button.png) or just drag file which you uploaded from Assets section.
 
 </div>
 
@@ -203,7 +203,7 @@ Click **Save & Publish** button.
 
 That's it. 
 
-![Complete object](/Development_Documentation/img/Pimcore_Elements_complete_object.png)
+![Complete object](../img/Pimcore_Elements_complete_object.png)
 
 
 # Putting the pieces togehter
@@ -283,7 +283,7 @@ In the settings label, choose the product action and the content controller, cli
 There is new element (**Href**) which you added in the product template.
 Drag the product object to that input and click **Save & Publish**.
 
-![Drag the object to the document](/Development_Documentation/img/Pimcore_Elements_drag_to_document.png)
+![Drag the object to the document](../img/Pimcore_Elements_drag_to_document.png)
 
 Let's see what happened on the front... 
 
@@ -332,7 +332,7 @@ To show the product image in the view, we need to add a thumbnail configuration 
 pimcore automatically calculates optimized images for certain output channels. For details on thumbnails, see TODO. 
 
 For adding a thumbnail configuration see the following screen. Just add a configuration named ```content```. 
-![Adding thumbnail configuration](/Development_Documentation/img/adding_thumbnails.png)
+![Adding thumbnail configuration](../img/adding_thumbnails.png)
 
 
 ## Showing the image in the view
@@ -358,4 +358,4 @@ correct image path and also sets alt attributes to values based on the asset met
 
 Now the product page looks like that:
 
-![Final product page](/Development_Documentation/img/Pimcore_Elements_final_product_page.png)
+![Final product page](../img/Pimcore_Elements_final_product_page.png)
