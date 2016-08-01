@@ -134,7 +134,7 @@ function array_urlencode($args)
         return false;
     }
     
-    return str_replace(['%5B', '%5D'], ['[', ']'], http_build_query($args));
+    return http_build_query($args);
 }
 
 /**
@@ -147,33 +147,8 @@ function array_toquerystring($args)
     if (!is_array($args)) {
         return false;
     }
-    $parts = [];
-    foreach ($args as $name => $value) {
-        if (is_array($value)) {
-            $parts[] = $name . array_toquerystringHelper( $value );
-        } else {
-            $parts[] = $name . '=' . $value;
-        }
-    }
-
-    return implode( '&', $parts );
-}
-
-/**
- * @param array $values
- *
- * @return string
- */
-function array_toquerystringHelper(array $values) {
-    $string = '';
-    foreach( $values as $k => $v ) {
-        if( is_array( $v) ) {
-            $string .= '['.$k.']' .array_toquerystringHelper($v);
-        } else {
-            $string .= '['.$k.']=' . $v;
-        }
-    }
-    return $string;
+    
+    return urldecode(http_build_query($args));
 }
 
 /**
