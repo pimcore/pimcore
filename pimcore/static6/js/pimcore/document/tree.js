@@ -1311,7 +1311,7 @@ pimcore.document.tree = Class.create({
     searchAndMove: function(tree, record) {
         var parentId = record.data.id;
         pimcore.helpers.searchAndMove(parentId, function() {
-            this.reload();
+            pimcore.elementservice.refreshNode(record);
         }.bind(this), "document");
     },
 
