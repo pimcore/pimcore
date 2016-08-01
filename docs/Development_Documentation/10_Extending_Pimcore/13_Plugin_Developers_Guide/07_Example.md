@@ -5,11 +5,11 @@ The following sections explain how to design and structure plugins and how to re
 
 To get the detailed information about extension visit sites below:
 
-|                                                                                                         | Description                                                               |
-|---------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------|
-| [Plugin Anatomy](./Plugin_Anatomy.md)                                                                   | Detailed extension structure.                                             |
-| [Plugin Backend](./Plugin_Backend.md)                                                                   | Learn more about specific elements in your plugin.                        |
-| [Plugin Admin UI](./Plugin_Admin.md)                                                                    | Go there if you would like to know more about Pimcore user interface.     |
+|                                                                                                           | Description                                                                 |
+|-----------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------|
+| [Plugin Anatomy](./01_Plugin_Anatomy.md)                                                                  | Detailed extension structure.                                               |
+| [Plugin Backend](./03_Plugin_Backend.md)                                                                  | Learn more about specific elements in your plugin.                          |
+| [Plugin Admin UI](./05_Plugin_Admin.md)                                                                   | Go there if you would like to know more about Pimcore user interface.       |
 
 ## Example
 

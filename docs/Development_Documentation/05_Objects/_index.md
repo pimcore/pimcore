@@ -1,5 +1,5 @@
 To get started with data objects, classes must be defined.
-In [Objects starting guide](../Getting_Started/Create_A_First_Project.md) you can learn how to create objects and classes.
+In [Objects starting guide](../01_Getting_Started/06_Create_A_First_Project.md) you can learn how to create objects and classes.
 
 Defining a class consists of defining the attributes of the object and the layout for data within the object. 
 Layout object properties can be grouped into panels, which incorporate the layout areas north, east, west, south and center and additionally they can be positioned into tab panels. 
@@ -58,10 +58,10 @@ The second column indicates the underlying data type class and the third column 
 
 ## More advanced topics:
 
-| Topic                                                                                                                   | description                                                               |
-|-------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------|
-| [Structured_Data_Fields](./Object_Classes/Structured_Data_Fields/_index.md)                                             | Learn more about Fieldcollections, Objectbricks and Structured tables     |
-| [Localized Fields](./Object_Classes/Localized_Fields.md)                                                                | Multilanguage feature in object attributes.                               |
-| [Classification Store](./Object_Classes/Structured_Data_Fields/Classification_Store.md)                                 |                                                                           |
-| [Blocks](./Object_Classes/Structured_Data_Fields/Blocks.md)                                                             | The block datatype acts as a simple container for other data fields.      |
+| Topic                                                                                                                       | description                                                                   |
+|-----------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------|
+| [Structured_Data_Fields](./01_Object_Classes/03_Structured_Data_Fields/_index.md)                                           | Learn more about Fieldcollections, Objectbricks and Structured tables         |
+| [Localized Fields](./01_Object_Classes/12_Localized_Fields.md)                                                              | Multilanguage feature in object attributes.                                   |
+| [Classification Store](./01_Object_Classes/03_Structured_Data_Fields/08_Classification_Store.md)                            |                                                                               |
+| [Blocks](./01_Object_Classes/03_Structured_Data_Fields/16_Blocks.md)                                                        | The block datatype acts as a simple container for other data fields.          |
 
