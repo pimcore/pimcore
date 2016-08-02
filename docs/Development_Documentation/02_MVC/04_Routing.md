@@ -10,7 +10,7 @@ Since objects are not reachable via the web and they have no template assigned, 
 
 <div class="inline-imgs">
 
-Go to:  ![Settings](../img/Icon_settings.png)**Settings -> Static Routes**
+Go to:  ![Settings](../img/Icon_settings.png) **Settings -> Static Routes**
 
 </div>
 
@@ -108,8 +108,8 @@ You can use the **Defaults** column to add default values which will be used if 
 
 For example, I declared default values for **text** and **id** parameter, below:
 
-|...|Defaults|...|
-|-|-|-|
+| ... | Defaults               | ... |
+|-----|------------------------|-----|
 | ... | id=5\|text=random text | ... |
 
 ![Default values in the route](../img/Routing_default_values.png)
