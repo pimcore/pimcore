@@ -62,5 +62,9 @@ Pimcore provides lots of functionality on top of its basic data elements that al
 But being a platform, Pimcore can be used for pretty much any use case and easily extended if necessary. 
 
 
+-----
+Wanna see more - [Let's get started](../01_Getting_Started/00_Installation.md)
 
-[Let's start!](../01_Getting_Started/00_Installation.md)
+### Also have a look at 
+* [Pimcore ecosystem](./00_Pimcore_Ecosystem.md)
+* [develop for pimcore](./01_Develop_for_Pimcore.md)
