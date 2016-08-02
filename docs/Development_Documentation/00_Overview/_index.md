@@ -67,4 +67,4 @@ Wanna see more - [Let's get started](../01_Getting_Started/00_Installation.md)
 
 #### Also have a look at 
 * [Pimcore ecosystem](./00_Pimcore_Ecosystem.md)
-* [develop for pimcore](./01_Develop_for_Pimcore.md)
+* [Develop for Pimcore](./01_Develop_for_Pimcore.md)
