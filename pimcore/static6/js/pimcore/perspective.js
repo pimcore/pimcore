@@ -15,10 +15,9 @@ pimcore.registerNS("pimcore.perspective");
 
 pimcore.perspective = Class.create({
 
-    cache: {},
-
     initialize: function(perspective) {
         Object.extend(this, perspective);
+        this.cache = {};
     },
 
     getElementTree: function() {
@@ -72,7 +71,6 @@ pimcore.perspective = Class.create({
                 this.cache[cacheKey] = menuItem;
                 return menuItem;
             }
-
         }
         this.cache[cacheKey] = true;
         return true;
