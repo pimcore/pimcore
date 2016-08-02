@@ -111,7 +111,7 @@ $config = new \Pimcore\Model\Object\Classificationstore\KeyConfig();
 $config->setName($name);
 $config->setDescription($description);
 $config->setEnabled(true);
-$config->setType("text");
+$config->setType("input");
 $config->setDefinition(json_encode($definition)); // The definition is used in object editor to render fields
 $config->save();
   
