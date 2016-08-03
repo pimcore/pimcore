@@ -393,6 +393,7 @@ class Layout
     {
         //if class definition set as collapsed the code below forces collapsible, issue: #778
         $this->collapsible = $this->getCollapsed() || $this->getCollapsible();
+
         return $this;
     }
 }
