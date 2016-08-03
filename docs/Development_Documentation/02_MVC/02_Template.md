@@ -1,6 +1,6 @@
 ## General
 
-Pimcore uses \Zend_View as its template engine, and the standard template language is PHP.
+Pimcore uses ```\Zend_View``` as its template engine, and the standard template language is PHP.
 
 You can find your templates in: ```/website/views/scripts```
 
@@ -29,7 +29,7 @@ $this->layout()->setLayout('catalog');
 
 ## Helpers (Available view methods)
 
-The Pimcore implementation of \Zend_View namely Pimcore\View offers special methods to increase the usability:
+The Pimcore implementation of ```\Zend_View``` namely ```Pimcore\View``` offers special methods to increase the usability:
 
 | Method          | Reference                                       | Description                                                       |
 |-----------------|-------------------------------------------------|-------------------------------------------------------------------|
@@ -40,7 +40,7 @@ The Pimcore implementation of \Zend_View namely Pimcore\View offers special meth
 | glossary        | \\Pimcore\\View\\Helper\\Glossary::glossary     | [Glossary documentation](../08_Tools_and_Features/21_Glossary.md) |
 | headLink        | \\Pimcore\\View\\Helper\\HeadLink               | Should be used to add stylesheets in your templates.              |
 
-Additionally you can use the Zend_View helpers which are shipped with ZF. There are some really cool helpers which are really useful when used in combination with Pimcore.
+Additionally you can use the ```\Zend_View``` helpers which are shipped with ZF. There are some really cool helpers which are really useful when used in combination with Pimcore.
 
 | Method    | Reference                               | Description                                                                                                                          |
 |-----------|-----------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------|
