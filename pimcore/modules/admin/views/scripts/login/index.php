@@ -159,6 +159,8 @@ $config = \Pimcore\Config::getSystemConfig();
     &copy; 2009-<?= date("Y") ?> <a href="http://www.pimcore.org/">pimcore GmbH</a>, a proud member of the <a href="http://www.elements.at/">elements group</a>
 </div>
 
+<div id="background"></div>
+<div id="backgroundImageInfo"></div>
 
 <script type="text/javascript">
     <?php if(!$this->getParam("deeplink")) { ?>
@@ -168,7 +170,7 @@ $config = \Pimcore\Config::getSystemConfig();
     $("#username").select();
 </script>
 
-<script type="text/javascript" src="https://www.pimcore.org/imageservice/?nocache=1"></script>
+<script type="text/javascript" src="https://www.pimcore.org/imageservice/"></script>
 
 </body>
 </html>
