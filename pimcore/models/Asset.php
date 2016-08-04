@@ -621,7 +621,6 @@ class Asset extends Element\AbstractElement
         }
 
         if ($this->getType() != "folder") {
-
             if ($this->getDataChanged()) {
                 $src = $this->getStream();
                 $streamMeta = stream_get_meta_data($src);
