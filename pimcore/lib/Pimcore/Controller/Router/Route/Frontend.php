@@ -495,8 +495,8 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
                     if (@preg_match($redirect->getSource(), $matchAgainst, $matches)) {
 
                         // check for a site
-                        if ($sourceSite) {
-                            if ($sourceSite->getId() != $redirect->getSourceSite()) {
+                        if ($redirect->getSourceSite()) {
+                            if(!$sourceSite || $sourceSite->getId() != $redirect->getSourceSite()) {
                                 continue;
                             }
                         }
