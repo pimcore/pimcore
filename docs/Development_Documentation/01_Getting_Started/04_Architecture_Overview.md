@@ -37,3 +37,4 @@ For more detailed information about the architecture also have a look at the
 [architecture page](../09_Development_Tools_and_Details/01_Architecture_Overview.md)
 in the Development Tools and Details section. 
 
+[Next up: Create a first project](./06_Create_A_First_Project.md)
