@@ -67,7 +67,8 @@ class QPay implements IPayment
         'imageURL',
         'confirmURL',
         'confirmMail',
-        'displayText'
+        'displayText',
+        'shopId' // value=mobile for mobile checkout page
     ];
 
     /**
