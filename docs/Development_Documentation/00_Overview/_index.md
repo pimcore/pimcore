@@ -52,7 +52,7 @@ In terms of output to the frontend, Pimcore follows the MVC pattern and is based
  first.
 If you are new to the Zend Framework or the ZF MVC you can read about 
 [controller](http://framework.zend.com/manual/1.12/en/zend.controller.html) in Zend Framework manual. With this 
-knowledge learning pimcore will be much easier.
+knowledge learning Pimcore will be much easier.
 
 In addition to that, Pimcore can also be executed in a headless way and therefore integrated into any environment. 
 
