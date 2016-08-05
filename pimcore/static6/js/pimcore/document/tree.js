@@ -79,7 +79,7 @@ pimcore.document.tree = Class.create({
 
     init: function(rootNodeConfig) {
 
-        var itemsPerPage = 30;
+        var itemsPerPage = 100;
 
 
         rootNodeConfig.text = t("home");
