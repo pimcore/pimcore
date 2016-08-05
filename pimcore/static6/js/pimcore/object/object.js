@@ -65,6 +65,11 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         }
         catch (e) {
             console.log(e);
+
+            pimcore.globalmanager.remove("object_" + this.id);
+            pimcore.helpers.forgetOpenTab("object_" + this.id + "_object");
+            pimcore.helpers.forgetOpenTab("object_" + this.id + "_variant");
+
             if (this.toolbar) {
                 this.toolbar.destroy();
             }
