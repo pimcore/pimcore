@@ -35,39 +35,6 @@ a, a:hover, a:visited, a:active {
     text-decoration: none;
 }
 
-#background {
-    position: fixed;
-    left: 0;
-    right: 0;
-    z-index: 1;
-    width:100%;
-    height:100%;
-    background-size: cover;
-    background-position: center center;
-}
-
-#background:after {
-    position: absolute;
-    width:100%;
-    height:100%;
-    display: block;
-    content: "";
-    background: #000;
-    opacity: 0.4;
-}
-
-#backgroundImageInfo {
-    position: absolute;
-    bottom: 50px;
-    right: 20px;
-    z-index: 20;
-}
-
-#backgroundImageInfo a {
-    color: #fff;
-    font-size:12px;
-}
-
 #vcenter {
     position: absolute;
     top: 50%;
@@ -103,7 +70,6 @@ a, a:hover, a:visited, a:active {
 #content {
     background: #fff;
     padding: 30px 0 10px 0;
-    border-radius: 5px;
 }
 
 #content .form-fields {
@@ -157,7 +123,6 @@ input:-webkit-autofill {
 
 #loginform button {
     font-weight: 500;
-    border-radius: 3px;
     background: #222;
     display: block;
     width: 100%;
@@ -197,11 +162,81 @@ input:-webkit-autofill {
     font-size: 13px;
     line-height: 18px;
     text-shadow: 0 0 3px #000;
-    background: #222;
     padding: 10px 0;
 }
 
 #footer a {
     color: #fff;
     text-decoration: none;
+}
+
+.imageservice #content {
+    background: none;
+    padding-top: 0;
+}
+
+.imageservice #content .form-fields {
+    background: none;
+    border:0;
+}
+
+.imageservice a, .imageservice a:hover, .imageservice a:visited, .imageservice a:active {
+    color: #fff;
+}
+
+.imageservice #content .form-fields input {
+    opacity: 0.7;
+}
+
+.imageservice #content .form-fields input:focus {
+    opacity: 1;
+}
+
+.imageservice #loginform button {
+
+}
+
+.imageservice .lostpassword {
+    font-size: 11px;
+    text-shadow: 0 0 3px #000;
+}
+
+.imageservice #header {
+
+}
+
+#background {
+    position: fixed;
+    left: 0;
+    right: 0;
+    z-index: 1;
+    width:100%;
+    height:100%;
+    background-size: cover;
+    background-position: center center;
+}
+
+.imageservice #background:after {
+    position: absolute;
+    width:100%;
+    height:100%;
+    display: block;
+    content: "";
+    background: #000;
+    opacity: 0.4;
+}
+
+#backgroundImageInfo {
+    position: absolute;
+    bottom: 0;
+    right: 20px;
+    z-index: 20;
+    font-size: 13px;
+    line-height: 18px;
+    padding: 10px 0;
+}
+
+#backgroundImageInfo a {
+    color: #fff;
+    font-size:12px;
 }
