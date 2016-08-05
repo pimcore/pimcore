@@ -26,16 +26,12 @@ The most common module for working within the MVC is the website module.
 |--------|--------------|---------------------
 | /website/models | Place for all the specific models of your application. Please keep in mind, that pimcore Objects are located at an other place | 
 | /website/controllers | The controllers directory, the naming follows the Zend Framework naming-convention. | ContentController.php
-| /website/views/scripts | The view (template) directory, the naming (sub folders and file names) follows also the naming-convention of ZF (/website/views/scripts/[controller]/[action].php) | /website/views/scripts/content/view-single.php
-(if the above controller were to contain an action called viewSingleAction) 
+| /website/views/scripts | The view (template) directory, the naming (sub folders and file names) follows also the naming-convention of ZF (/website/views/scripts/[controller]/[action].php) | /website/views/scripts/content/view-single.php (if the above controller were to contain an action called viewSingleAction) 
 | /website/views/layouts | Optionally: here you can put your layouts which are used by pages | layout.php (this is the default when enabled)
 
 
 
-
-
-| Link                                | Description                                                                                          |
-|-------------------------------------|------------------------------------------------------------------------------------------------------|
-| [Controller](./00_Controller.md)    | The controller contains the functionality of a page or snippet.                                      |
-| [Template](./02_Template.md)        | Pimcore uses ```\Zend_View``` as its template engine, and the standard template language is PHP.     |
-| [Routing](./04_Routing.md)          | Custom routes are used to define a URL-pattern for a specific action                                 |
+The following sub chapter provide insight into details of the Pimcore MVC structure and explain the topics
+ * [Controller](./00_Controller.md) 
+ * [Template](./02_Template/_index.md)
+ * [Routing](./04_Routing.md) 
