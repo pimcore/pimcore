@@ -21,25 +21,29 @@ In addition to the ZF standard view helpers, Pimcore adds powerful additional vi
 
 The Pimcore implementation of ```\Zend_View``` namely ```Pimcore\View``` offers addtional view helpers to increase the usability even more:
 
-| Method                | Reference                                             | Description                                                          |
-|-----------------------|-------------------------------------------------------|----------------------------------------------------------------------|
-| [```inc```](#inc)             | ```\\Pimcore\\View::inc```                            | Use this function to directly include a document.                    |
-| ```template```        | ```\\Pimcore\\View::template```                       | Use this method to include a template                                |
-| ```getParam```        | ```\\Pimcore\\View::getParam```                       | Get's a parameter (get, post, .... ), it's an equivalent to $this->getParam() in the controller action.                               |
-| ```cache```           | ```\\Pimcore\\View\\Helper\\Cache::cache```           | Cache implementation in temaplates.                                  |
-| ```device```           | ```\\Pimcore\\View\\Helper\\Device::device```           | Helps implementing adaptive designs.                                  |
-| ```glossary```        | ```\\Pimcore\\View\\Helper\\Glossary::glossary```     | [Glossary documentation](../../08_Tools_and_Features/21_Glossary.md) |
-| ```translate```       | ```\\Pimcore\\View::t```                              | i18n / shared translations                                                  |
-| ```translateAdmin```       | ```\\Pimcore\\View::ts```                              | i18n / admin translations                                                  |
-| ```headLink```        | ```\\Pimcore\\View\\Helper\\HeadLink```               | Should be used to add stylesheets in your templates.                 |
+| Method                                   | Reference                                             | Description                                                          |
+|------------------------------------------|-------------------------------------------------------|----------------------------------------------------------------------|
+| [```inc```](#inc)                        | ```\\Pimcore\\View::inc```                            | Use this function to directly include a document.                    |
+| [```template```](#template)              | ```\\Pimcore\\View::template```                       | Use this method to include a template                                |
+| [```getParam```](#getParam)              | ```\\Pimcore\\View::getParam```                       | Get's a parameter (get, post, .... ), it's an equivalent to $this->getParam() in the controller action.                               |
+| [```cache```](#cache)                    | ```\\Pimcore\\View\\Helper\\Cache::cache```           | Cache implementation in temaplates.                                  |
+| [```device```](#device)                  | ```\\Pimcore\\View\\Helper\\Device::device```         | Helps implementing adaptive designs.                                  |
+| [```glossary```](#glossary)              | ```\\Pimcore\\View\\Helper\\Glossary::glossary```     | [Glossary documentation](../../08_Tools_and_Features/21_Glossary.md) |
+| [```translate```](#translate)            | ```\\Pimcore\\View::t```                              | i18n / shared translations                                                  |
+| [```translateAdmin```](#translateAdmin)  | ```\\Pimcore\\View::ts```                             | i18n / admin translations                                                  |
+| [```headLink```](#headLink)              | ```\\Pimcore\\View\\Helper\\HeadLink```               | Should be used to add stylesheets in your templates.                 |
 
 
 You also can create some [new custom helpers](https://framework.zend.com/manual/1.10/en/zend.view.helpers.html#zend.view.helpers.custom) to make your life easier.
 
 ### Using helper method in a template
 
-#### inc 
-**inc** helper usage:
+#### inc ```$this->inc(mixed $document, [array $params])```
+Use ```$this->inc()``` to include documents inside of views, for example a snippet. This is useful for footers, headers, navigations, sidebars, ...
+
+##### Arguments
+
+| 
 
 ```php
 ...
