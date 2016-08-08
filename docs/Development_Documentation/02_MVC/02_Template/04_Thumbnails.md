@@ -1,37 +1,36 @@
+# Pimcore Thumbnails
 
-## Thumbnails
+## Introduction
+When displaying images in templates, they should be optimized (e.g. size) for the actual use case and device. 
+When source images are stored as Pimcore Assets (as they should be), Pimcore can do all the optimizing work for you. 
+  Just use the Thumbnail functionality and let Pimcore transform the images the way you need them. 
+  
+To get all the information about Thumbnails, which possibilities exist and how to configure them, 
+please have a look at [Working with thumbnails](../04_Assets/03_Working_with_Thumbnails.md). 
 
-Pimcore offers an advanced thumbnail-service also called **image-pipeline**. 
-It allows you to transform images in unlimited steps to the expected result. 
-
-[comment]: #TODOinlineimgs
-
-<div class="inline-imgs">
-
-You can configure them in ![Settings](../img/Icon_settings.png) **Settings -> Thumbnails**.
-
-</div>
-
-To get the complete information about Thumbnails, please visit a dedicated part in the documentation [Working with thumbnails](../04_Assets/03_Working_with_Thumbnails.md)
-
-### Usage example
+## Use Thumbnails in Templates
 
 ```php
-<?php // Use with the image tag in documents ?>
+<?php 
+    // Use directly on the asset object - myThumbnail is the name of the thumbnail configured in thumbnail configuration
+    $asset = Asset::getByPath("/path/to/image.jpg");
+    echo $asset->getThumbnail("myThumbnail")->getHTML();
+    
+    // Use directly on the asset object using dynamic configuration 
+    $asset = Asset::getByPath("/path/to/image.jpg");
+    echo $asset->getThumbnail(["width" => 500, "format" => "png"])->getHTML();
+?>
+ 
+ 
+
+<?php // Use with the image editable in documents ?>
 <div>
     <p>
         <?= $this->image("image", ["thumbnail" => "myThumbnail"]) ?>
     </p>
 </div>
  
- 
-<?php // Use directly on the asset object ?>
-<?php
-    $asset = Asset::getByPath("/path/to/image.jpg");
-    echo $asset->getThumbnail("myThumbnail")->getHTML();
-?>
- 
-<?php // Use without preconfigured thumbnail ?>
+<?php // Use with the image editable in documents using dynamic configuration ?>
 <?= $this->image("image", [
     "thumbnail" => [
         "width" => 500,
@@ -43,26 +42,15 @@ To get the complete information about Thumbnails, please visit a dedicated part 
     ]
 ]) ?>
  
+ 
 <?php // Use from an object-field ?>
 <?php if ($this->myObject->getMyImage() instanceof Asset\Image) { ?>
     <img src="<?= $this->myObject->getMyImage()->getThumbnail("myThumbnail"); ?>" />
 <?php } ?>
  
-// where "myThumbnail" is the name of the thumbnail configuration in settings -> thumbnails
- 
- 
- 
-<?php // Use from an object-field with dynamic configuration ?><?php if ($this->myObject->getMyImage() instanceof Asset\Image) { ?>
+<?php // Use from an object-field using dynamic configuration ?>
+<?php if ($this->myObject->getMyImage() instanceof Asset\Image) { ?>
     <img src="<?= $this->myObject->getMyImage()->getThumbnail(["width" => 220, "format" => "jpeg"]); ?>" />
 <?php } ?>
- 
- 
- 
-<?php // Use directly on the asset object using dynamic configuration ?>
-<?php
- 
-$asset = Asset::getByPath("/path/to/image.jpg");
-echo $asset->getThumbnail(["width" => 500, "format" => "png"])->getHTML();
- 
-?>
+
 ```
