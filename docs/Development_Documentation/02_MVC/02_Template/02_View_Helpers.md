@@ -23,7 +23,7 @@ The Pimcore implementation of ```\Zend_View``` namely ```Pimcore\View``` offers 
 
 | Method                | Reference                                             | Description                                                          |
 |-----------------------|-------------------------------------------------------|----------------------------------------------------------------------|
-| [```inc```](#ink)             | ```\\Pimcore\\View::inc```                            | Use this function to directly include a document.                    |
+| [```inc```](#inc)             | ```\\Pimcore\\View::inc```                            | Use this function to directly include a document.                    |
 | ```template```        | ```\\Pimcore\\View::template```                       | Use this method to include a template                                |
 | ```getParam```        | ```\\Pimcore\\View::getParam```                       | Get's a parameter (get, post, .... ), it's an equivalent to $this->getParam() in the controller action.                               |
 | ```cache```           | ```\\Pimcore\\View\\Helper\\Cache::cache```           | Cache implementation in temaplates.                                  |
