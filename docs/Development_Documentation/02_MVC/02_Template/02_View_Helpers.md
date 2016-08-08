@@ -25,13 +25,12 @@ The Pimcore implementation of ```\Zend_View``` namely ```Pimcore\View``` offers 
 |------------------------------------------|-------------------------------------------------------|----------------------------------------------------------------------|
 | [```inc```](#inc)                        | ```\\Pimcore\\View::inc```                            | Use this function to directly include a document.                    |
 | [```template```](#template)              | ```\\Pimcore\\View::template```                       | Use this method to include a template                                |
-| [```getParam```](#getParam)              | ```\\Pimcore\\View::getParam```                       | Get's a parameter (get, post, .... ), it's an equivalent to $this->getParam() in the controller action.                               |
+| [```getParam```](#getparam)              | ```\\Pimcore\\View::getParam```                       | Get's a parameter (get, post, .... ), it's an equivalent to $this->getParam() in the controller action.                               |
 | [```cache```](#cache)                    | ```\\Pimcore\\View\\Helper\\Cache::cache```           | Cache implementation in temaplates.                                  |
 | [```device```](#device)                  | ```\\Pimcore\\View\\Helper\\Device::device```         | Helps implementing adaptive designs.                                  |
 | [```glossary```](#glossary)              | ```\\Pimcore\\View\\Helper\\Glossary::glossary```     | [Glossary documentation](../../08_Tools_and_Features/21_Glossary.md) |
 | [```translate```](#translate)            | ```\\Pimcore\\View::t```                              | i18n / shared translations                                                  |
-| [```translateAdmin```](#translateAdmin)  | ```\\Pimcore\\View::ts```                             | i18n / admin translations                                                  |
-| [```headLink```](#headLink)              | ```\\Pimcore\\View\\Helper\\HeadLink```               | Should be used to add stylesheets in your templates.                 |
+| [```translateAdmin```](#translateadmin)  | ```\\Pimcore\\View::ts```                             | i18n / admin translations                                                  |
 
 
 You also can create some [new custom helpers](https://framework.zend.com/manual/1.10/en/zend.view.helpers.html#zend.view.helpers.custom) to make your life easier.
