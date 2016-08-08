@@ -40,7 +40,6 @@ You also can create some [new custom helpers](https://framework.zend.com/manual/
 Use ```$this->inc()``` to include Pimcore Documents inside of 
 views, for example a snippet. This is useful for footers, headers, navigations, sidebars, ...
 
-##### Arguments
 ```$this->inc(mixed $document, [array $params], [$cacheEnabled = true])```
 
 | Name                | Description  |
@@ -75,15 +74,27 @@ echo $this->inc($doc, [
 This method is designed to include an other template directly, without calling an action. If you use this extensively 
 on the same view object, the parameter $resetPassedParams will come very handy.
 
+```$this->template(string $path, [array $params = []], [bool $resetPassedParams = false], [bool $capture = false])```
+| Name                | Description  |
+|---------------------|--------------|
+| ```$path```              | Path of template to include. |
+| ```$params```            | Additional params to include. |
+| ```$resetPassedParams``` | Resets and removes additional params from view after inclusion of file is finished.  |
+| ```$capture```           | ?!  |
+ 
+
 ```php
-...
+<?php $this->template("includes/footer.php") ?>
+ 
+<!-- with parameters -->
+<?php $this->template("includes/somthingelse.php", [
+    "param1" => "value1"
+]) ?>
+```
 
-<?php includes language.php template from: /website/views/scripts/includes/language.php ?>
-<div id="lang-switcher">
-<?= $this->template("/includes/language.php"); ?>
-</div>
-
-...
+Parameters in the included template are then accessible through `` $this->paramName``` i.e. from the example above. 
+```php
+<?= $this->param1 ?>
 ```
 
 **cache** helper usage:
