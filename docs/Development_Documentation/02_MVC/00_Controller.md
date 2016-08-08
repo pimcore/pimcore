@@ -14,10 +14,10 @@ controller class names.
 
 ## Pimcore specific extensions
 
-| Controller name | File name             | Class name        | Default view directory         |
-|-----------------|-----------------------|-------------------|--------------------------------|
-| content         | ContentController.php | ContentController | /website/views/scripts/content |
-| news            | NewsController.php    | NewsController    | /website/views/scripts/news    |
+| Controller name | File name                   | Class name        | Default view directory               |
+|-----------------|-----------------------------|-------------------|--------------------------------------|
+| content         | ```ContentController.php``` | ContentController | ```/website/views/scripts/content``` |
+| news            | ```NewsController.php```    | NewsController    | ```/website/views/scripts/news```    |
 
 In controllers, for every action there exists a separate method ending with the **Action** suffix. 
 The **DefaultController** comes with Pimcore. When you create an empty page in Pimcore it will call 
@@ -99,10 +99,10 @@ If you want to use one of the methods (hooks) below which are offered by ZF you 
 
 There are also some properties which can be useful:
 
-| Name           | Type     | Description                                              |
-|----------------|----------|----------------------------------------------------------|
-| ```document``` | Document | Reference to the current document, if any is available.  |
-| ```editmode``` | boolean  | True if you are in editmode (admin)                      |
+| Name                  | Type     | Description                                              |
+|-----------------------|----------|----------------------------------------------------------|
+| ```$this->document``` | Document | Reference to the current document, if any is available.  |
+| ```$this->editmode``` | boolean  | True if you are in editmode (admin)                      |
 
 
 Example:
