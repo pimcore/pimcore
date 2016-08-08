@@ -41,6 +41,7 @@ class Dao extends Model\Dao\AbstractDao
     public function getNameById($id = null)
     {
         $name = $this->db->fetchOne("SELECT name FROM classes WHERE id = ?", $id);
+
         return $name;
     }
 
@@ -51,6 +52,7 @@ class Dao extends Model\Dao\AbstractDao
     public function getIdByName($name = null)
     {
         $id = $this->db->fetchOne("SELECT id FROM classes WHERE name = ?", $name);
+
         return $id;
     }
 
