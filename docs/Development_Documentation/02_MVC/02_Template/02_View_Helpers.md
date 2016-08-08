@@ -37,10 +37,11 @@ The Pimcore implementation of ```\Zend_View``` namely ```Pimcore\View``` offers 
 You also can create some [new custom helpers](https://framework.zend.com/manual/1.10/en/zend.view.helpers.html#zend.view.helpers.custom) to make your life easier.
 
 ### inc 
-Use ```$this->inc(mixed $document, [array $params], [$cacheEnabled = true])``` to include Pimcore Documents inside of views, for example a snippet. This is useful for footers, headers, navigations, sidebars, ...
+Use ```$this->inc()``` to include Pimcore Documents inside of 
+views, for example a snippet. This is useful for footers, headers, navigations, sidebars, ...
 
 ##### Arguments
-
+```$this->inc(mixed $document, [array $params], [$cacheEnabled = true])```
 | Name                | Description  |
 |---------------------|--------------|
 | ```$document```     | Document to include, can be either an ID, a path or even the Document object itself |
@@ -69,7 +70,9 @@ echo $this->inc($doc, [
 <?= $this->inc(123, null, false) ?>
 ```
 
-**template** helper usage:
+### template
+This method is designed to include an other template directly, without calling an action. If you use this extensively 
+on the same view object, the parameter $resetPassedParams will come very handy.
 
 ```php
 ...
