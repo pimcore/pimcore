@@ -71,8 +71,7 @@ echo $this->inc($doc, [
 ```
 
 ### template
-This method is designed to include an other template directly, without calling an action. If you use this extensively 
-on the same view object, the parameter $resetPassedParams will come very handy.
+This method is designed to include an other template directly, without calling an action. 
 
 ```$this->template(string $path, [array $params = []], [bool $resetPassedParams = false], [bool $capture = false])```
 
@@ -80,9 +79,8 @@ on the same view object, the parameter $resetPassedParams will come very handy.
 |---------------------|--------------|
 | ```$path```              | Path of template to include. |
 | ```$params```            | Additional params to include. |
-| ```$resetPassedParams``` | Resets and removes additional params from view after inclusion of file is finished.  |
-| ```$capture```           | ?!  |
- 
+| ```$resetPassedParams``` | Resets and removes additional params from view after inclusion of given template is finished. If you use this extensively on the same view object, the parameter $resetPassedParams will come very handy.  |
+| ```$capture```           | Returns rendered template instead of adding it to output buffer. |
 
 ```php
 <?php $this->template("includes/footer.php") ?>
@@ -98,36 +96,81 @@ Parameters in the included template are then accessible through `` $this->paramN
 <?= $this->param1 ?>
 ```
 
-**cache** helper usage:
+### getParam
+Get's a parameter (get, post, .... ), it's an equivalent to $this->getParam() in the controller action.
+
+```$this->getParam(string $key, [mixed $default = null])```
+
+| Name                | Description  |
+|---------------------|--------------|
+| ```$key```              | Key of param |
+| ```$default```            | Default value if key not set |
+
+```php
+
+<?= $this->getParam("myParam"); ?>
+
+```
+
+
+### cache
+This is an implementation of a direct in-template cache. You can use this to cache some parts directly in the template, 
+independent of the other global definable caching functionality. This can be useful for templates which need a lot 
+of calculation or require a huge amount of objects.
+
+```$this->cache(string $name, [int $lifetime = null], [bool $force = false])```
+
+| Name                | Description  |
+|---------------------|--------------|
+| ```$name```         | Name of cache item |
+| ```$lifetime```     | Lifetime is expected in seconds. If you define no lifetime the behavior is like the output cache, so if you make any change in Pimcore, the cache will be flushed. When specifying a lifetime this is independent from changes in the CMS. |
+| ```$force```        | Force caching, even when Request is done within Pimcore Admin interface |
+
 
 ```php
 ... 
-<div id="product-container">
-    <?php
-    /** @var \Pimcore\View\Helper\CacheController $cache */
-    $cache = $this->cache('product_content');
-    if(! $cache->start()):
-        //if content is not loaded from cache
-    ?>
-    <p>
-        Product name: <?php echo $product->name; ?>
-        SKU: <?php echo $product->sku; ?>
-    </p>
-    <?php
-        $cache->stop();
-    endif;
-    ?>
-</div>
+<?php if(!$this->cache("test_cache_key", 60)->start()) { ?>
+    <h1>This is some cached microtime</h1>
+    <?= microtime() ?>
+    <?php $this->cache("test_cache_key")->end(); ?>
+<?php } ?>
 ...
 ```
 
-**translate** helper usage:
+### device
+This helper makes it easy to implement "Adaptive Design" in Pimcore. 
+
+```$this->device([string $default = null])```
+
+| Name                | Description  |
+|---------------------|--------------|
+| ```$default```         | Default if no device can be detected |
+
 
 ```php
-<a href="/"><?= $this->translate("Home"); ?></a>
+<?php
+    $device = $this->device("phone"); // first argument is the default setting
+?>
+ 
+<?php if($device->isPhone()) { ?>
+    This is my phone content
+<?php } else if($device->isTablet()) { ?>
+    This text is shown on a tablet
+<?php } else if($device->isDesktop()) { ?>
+    This is for default desktop Browser
+<?php } ?>
+ 
+<?php if($this->device()->isDesktop()) { ?>
+    Here is some desktop specific content
+<?php } ?>
 ```
+For details also see [Adaptive Design](../../09_Development_Tools_and_Details/21_Adaptive_Design.md).
 
-**glossary** helper usage:
+
+### glossary
+
+For details please see [glossary documentation](../../08_Tools_and_Features/21_Glossary.md).
+
 
 ```php
 <section class="area-wysiwyg">
@@ -140,14 +183,35 @@ Parameters in the included template are then accessible through `` $this->paramN
 </section>
 ```
 
-**headLink** helper usage:
+
+### translate
+View helper for getting translation from shared translations. For details also see [Shared Translations](../../06_Multi_Language_i18n/04_Shared_Translations.md).
+
+```$this->t(string $key = "")```
+```$this->translate(string $key = "")```
+
+| Name                | Description  |
+|---------------------|--------------|
+| ```$key```         | Key of translation |
+
 
 ```php
-<head>
-    ...
+<a href="/"><?= $this->translate("Home"); ?></a>
+```
 
-    <?php $this->headLink()->appendStylesheet('/website/static/css/global.css'); ?>
 
-    ...
-</head>
+
+### translateAdmin
+View helper for getting translation from admin translations. For details also see [Admin Translations](../../06_Multi_Language_i18n/06_Admin_Translations.md).
+
+```$this->ts(string $key = "")```
+```$this->translateAdmin(string $key = "")```
+
+| Name                | Description  |
+|---------------------|--------------|
+| ```$key```         | Key of translation |
+
+
+```php
+<a href="/"><?= $this->translateAdmin("Home"); ?></a>
 ```
