@@ -1,4 +1,6 @@
-## General
+# Pimcore Controller
+
+## Introduction
 
 Pimcore controller play the designated role in the MVC pattern. They bind the pattern together and contain or delegate 
 the functionality of the web application. It is good practise to keep the controllers as lean as possible and capsualte
