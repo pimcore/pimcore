@@ -42,6 +42,7 @@ views, for example a snippet. This is useful for footers, headers, navigations, 
 
 ##### Arguments
 ```$this->inc(mixed $document, [array $params], [$cacheEnabled = true])```
+
 | Name                | Description  |
 |---------------------|--------------|
 | ```$document```     | Document to include, can be either an ID, a path or even the Document object itself |
