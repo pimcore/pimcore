@@ -75,6 +75,7 @@ This method is designed to include an other template directly, without calling a
 on the same view object, the parameter $resetPassedParams will come very handy.
 
 ```$this->template(string $path, [array $params = []], [bool $resetPassedParams = false], [bool $capture = false])```
+
 | Name                | Description  |
 |---------------------|--------------|
 | ```$path```              | Path of template to include. |
