@@ -38,20 +38,37 @@ You also can create some [new custom helpers](https://framework.zend.com/manual/
 
 ### Using helper method in a template
 
-#### inc ```$this->inc(mixed $document, [array $params])```
-Use ```$this->inc()``` to include documents inside of views, for example a snippet. This is useful for footers, headers, navigations, sidebars, ...
+#### inc 
+Use ```$this->inc(mixed $document, [array $params], [$cacheEnabled = true])``` to include Pimcore Documents inside of views, for example a snippet. This is useful for footers, headers, navigations, sidebars, ...
 
 ##### Arguments
 
-| 
-
+| Name                | Description  |
+|---------------------|--------------|
+| ```$document```     | Document to include, can be either an ID, a path or even the Document object itself |
+| ```$params```       | Is optional and should be an array with key value pairs like in ```$this->action()``` from ZF. |
+| ```$enabledCache``` | Is true by default, set it to false to disable the cache. Hashing is done across source and parameters to ensure a consistent result. |
+ 
 ```php
-...
-<?php //including footer to the template ?>
-<div id="footer">
-    echo $this->inc("/snippets/includes/footer");
-</div>
-...
+use Pimcore\Model\Document;
+  
+<!-- include path -->
+<?= $this->inc("/shared/boxes/buttons") ?>
+ 
+<!-- include ID -->
+<?= $this->inc(256) ?>
+ 
+<!-- include object -->
+<?php
+ 
+$doc = Document::getById(477);
+echo $this->inc($doc, [
+    "param1" => "value1"
+]);
+ 
+  
+<!-- without cache -->
+<?= $this->inc(123, null, false) ?>
 ```
 
 **template** helper usage:
