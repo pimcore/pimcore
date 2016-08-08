@@ -23,6 +23,7 @@ use Pimcore\Cache;
 
 class ClassDefinition extends Model\AbstractModel
 {
+    use Object\ClassDefinition\Helper\VarExport;
 
     /**
      * @var int
@@ -150,7 +151,11 @@ class ClassDefinition extends Model\AbstractModel
         } catch (\Exception $e) {
             try {
                 $class = new self();
-                $class->getDao()->getById($id);
+                $name = $class->getDao()->getNameById($id);
+                $definitionFile = PIMCORE_CLASS_DIRECTORY."/definition_". $name .".php";
+                $class = include_once $definitionFile;
+                $class->setId($id);
+
                 \Zend_Registry::set($cacheKey, $class);
             } catch (\Exception $e) {
                 \Logger::error($e);
@@ -168,19 +173,18 @@ class ClassDefinition extends Model\AbstractModel
      */
     public static function getByName($name)
     {
-        $class = new self();
-
         try {
-            $class->getDao()->getByName($name);
+            $class = new self();
+            $id = $class->getDao()->getIdByName($name);
+            if($id) {
+                return self::getById($id);
+            } else {
+                throw new \Exception("There is no class with the name: " . $name);
+            }
         } catch (\Exception $e) {
             \Logger::error($e);
 
             return null;
-        }
-
-        // to have a singleton in a way. like all instances of Element\ElementInterface do also, like Object\AbstractObject
-        if ($class->getId() > 0) {
-            return self::getById($class->getId());
         }
     }
 

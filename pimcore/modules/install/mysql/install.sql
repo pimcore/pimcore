@@ -76,20 +76,6 @@ DROP TABLE IF EXISTS `classes` ;
 CREATE TABLE `classes` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) DEFAULT NULL,
-  `description` text,
-  `creationDate` bigint(20) unsigned DEFAULT NULL,
-  `modificationDate` bigint(20) unsigned DEFAULT NULL,
-  `userOwner` int(11) unsigned DEFAULT NULL,
-  `userModification` int(11) unsigned DEFAULT NULL,
-  `allowInherit` tinyint(1) unsigned DEFAULT '0',
-  `allowVariants` tinyint(1) unsigned DEFAULT '0',
-  `parentClass` varchar(255) DEFAULT NULL,
-  `useTraits` varchar(255) DEFAULT NULL,
-  `icon` varchar(255) DEFAULT NULL,
-  `previewUrl` varchar(255) DEFAULT NULL,
-  `propertyVisibility` text,
-  `showVariants` tinyint(1) DEFAULT NULL,
-  `group` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
 ) DEFAULT CHARSET=utf8;
