@@ -178,8 +178,8 @@ class Cache extends \Zend_Controller_Plugin_Abstract
 
         $appendKey = "";
         // this is for example for the image-data-uri plugin
-        if ($request->getParam("pimcore_cache_tag_suffix")) {
-            $tags = $request->getParam("pimcore_cache_tag_suffix");
+        if (isset($_REQUEST["pimcore_cache_tag_suffix"])) {
+            $tags = $_REQUEST["pimcore_cache_tag_suffix"];
             if (is_array($tags)) {
                 $appendKey = "_" . implode("_", $tags);
             }
