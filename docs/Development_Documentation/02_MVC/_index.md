@@ -33,7 +33,7 @@ folders and files concerning the MVC within the website module are the following
 But all Pimcore plugins and other modules follow the same schema and you will always find the folders ```models```, ```controllers``` and ```scripts```. 
  
 
-The following sub chapter provide insight into details of the Pimcore MVC structure and explain the topics
+The following sub chapters provide insight into details of the Pimcore MVC structure and explain the topics
  * [Controller](./00_Controller.md) 
  * [Template](./02_Template/_index.md)
  * [Routing](./04_Routing.md) 
