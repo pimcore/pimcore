@@ -24,6 +24,7 @@ trait VarExport
     {
         $obj = new static();
         $obj->setValues($data);
+
         return $obj;
     }
 }

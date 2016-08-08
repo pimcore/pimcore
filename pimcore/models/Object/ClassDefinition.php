@@ -155,7 +155,7 @@ class ClassDefinition extends Model\AbstractModel
                 $definitionFile = PIMCORE_CLASS_DIRECTORY."/definition_". $name .".php";
                 $class = include $definitionFile;
 
-                if(!$class instanceof self) {
+                if (!$class instanceof self) {
                     throw new \Exception("Class definition with name " . $name . " or ID " . $id . " does not exist");
                 }
 
@@ -181,7 +181,7 @@ class ClassDefinition extends Model\AbstractModel
         try {
             $class = new self();
             $id = $class->getDao()->getIdByName($name);
-            if($id) {
+            if ($id) {
                 return self::getById($id);
             } else {
                 throw new \Exception("There is no class with the name: " . $name);
