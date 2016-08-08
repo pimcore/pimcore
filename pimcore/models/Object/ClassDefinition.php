@@ -153,7 +153,12 @@ class ClassDefinition extends Model\AbstractModel
                 $class = new self();
                 $name = $class->getDao()->getNameById($id);
                 $definitionFile = PIMCORE_CLASS_DIRECTORY."/definition_". $name .".php";
-                $class = include_once $definitionFile;
+                $class = include $definitionFile;
+
+                if(!$class instanceof self) {
+                    throw new \Exception("Class definition with name " . $name . " or ID " . $id . " does not exist");
+                }
+
                 $class->setId($id);
 
                 \Zend_Registry::set($cacheKey, $class);
