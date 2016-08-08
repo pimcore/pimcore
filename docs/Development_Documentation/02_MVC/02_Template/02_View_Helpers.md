@@ -36,9 +36,7 @@ The Pimcore implementation of ```\Zend_View``` namely ```Pimcore\View``` offers 
 
 You also can create some [new custom helpers](https://framework.zend.com/manual/1.10/en/zend.view.helpers.html#zend.view.helpers.custom) to make your life easier.
 
-### Using helper method in a template
-
-#### inc 
+### inc 
 Use ```$this->inc(mixed $document, [array $params], [$cacheEnabled = true])``` to include Pimcore Documents inside of views, for example a snippet. This is useful for footers, headers, navigations, sidebars, ...
 
 ##### Arguments
