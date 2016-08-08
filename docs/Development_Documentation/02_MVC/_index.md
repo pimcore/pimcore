@@ -36,4 +36,4 @@ But all Pimcore plugins and other modules follow the same schema and you will al
 The following sub chapters provide insight into details of the Pimcore MVC structure and explain the topics
  * [Controller](./00_Controller.md) 
  * [Template](./02_Template/_index.md)
- * [Routing](./04_Routing.md) 
+ * [Routing](./04_Routing/_index.md) 

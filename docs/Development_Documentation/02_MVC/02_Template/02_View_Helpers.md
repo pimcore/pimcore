@@ -9,9 +9,9 @@ For the most important see following table.
 
 | Method          | Reference                                     | Description                                                                                                                          |
 |-----------------|-----------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------|
-| ```action```    | ```\\Zend_View_Helper_Action::action```       | [Action helper description](https://framework.zend.com/manual/1.10/en/zend.view.helpers.html#zend.view.helpers.initial.action)       |
-| ```headMeta```  | ```\\Zend_View_Helper_HeadMeta::headMeta```   | [HeadMeta helper description](https://framework.zend.com/manual/1.10/en/zend.view.helpers.html#zend.view.helpers.initial.headmeta)   |
-| ```headTitle``` | ```\\Zend_View_Helper_HeadTitle::headTitle``` | [HeadTitle helper description](https://framework.zend.com/manual/1.10/en/zend.view.helpers.html#zend.view.helpers.initial.headtitle) |
+| ```action```    | ```\Zend_View_Helper_Action::action```       | [Action helper description](https://framework.zend.com/manual/1.10/en/zend.view.helpers.html#zend.view.helpers.initial.action)       |
+| ```headMeta```  | ```\Zend_View_Helper_HeadMeta::headMeta```   | [HeadMeta helper description](https://framework.zend.com/manual/1.10/en/zend.view.helpers.html#zend.view.helpers.initial.headmeta)   |
+| ```headTitle``` | ```\Zend_View_Helper_HeadTitle::headTitle``` | [HeadTitle helper description](https://framework.zend.com/manual/1.10/en/zend.view.helpers.html#zend.view.helpers.initial.headtitle) |
 
 
 In addition to the ZF standard view helpers, Pimcore adds powerful additional view helpers. 
@@ -23,14 +23,14 @@ The Pimcore implementation of ```\Zend_View``` namely ```Pimcore\View``` offers 
 
 | Method                                   | Reference                                             | Description                                                          |
 |------------------------------------------|-------------------------------------------------------|----------------------------------------------------------------------|
-| [```inc```](#inc)                        | ```\\Pimcore\\View::inc```                            | Use this function to directly include a document.                    |
-| [```template```](#template)              | ```\\Pimcore\\View::template```                       | Use this method to include a template                                |
-| [```getParam```](#getparam)              | ```\\Pimcore\\View::getParam```                       | Get's a parameter (get, post, .... ), it's an equivalent to $this->getParam() in the controller action.                               |
-| [```cache```](#cache)                    | ```\\Pimcore\\View\\Helper\\Cache::cache```           | Cache implementation in temaplates.                                  |
-| [```device```](#device)                  | ```\\Pimcore\\View\\Helper\\Device::device```         | Helps implementing adaptive designs.                                  |
-| [```glossary```](#glossary)              | ```\\Pimcore\\View\\Helper\\Glossary::glossary```     | [Glossary documentation](../../08_Tools_and_Features/21_Glossary.md) |
-| [```translate```](#translate)            | ```\\Pimcore\\View::t```                              | i18n / shared translations                                                  |
-| [```translateAdmin```](#translateadmin)  | ```\\Pimcore\\View::ts```                             | i18n / admin translations                                                  |
+| [```inc```](#inc)                        | ```\Pimcore\View::inc```                            | Use this function to directly include a document.                    |
+| [```template```](#template)              | ```\Pimcore\View::template```                       | Use this method to include a template                                |
+| [```getParam```](#getparam)              | ```\Pimcore\View::getParam```                       | Get's a parameter (get, post, .... ), it's an equivalent to $this->getParam() in the controller action.                               |
+| [```cache```](#cache)                    | ```\Pimcore\View\Helper\Cache::cache```           | Cache implementation in temaplates.                                  |
+| [```device```](#device)                  | ```\Pimcore\View\Helper\Device::device```         | Helps implementing adaptive designs.                                  |
+| [```glossary```](#glossary)              | ```\Pimcore\View\Helper\Glossary::glossary```     | [Glossary documentation](../../08_Tools_and_Features/21_Glossary.md) |
+| [```translate```](#translate)            | ```\Pimcore\View::t```                              | i18n / shared translations                                                  |
+| [```translateAdmin```](#translateadmin)  | ```\Pimcore\View::ts```                             | i18n / admin translations                                                  |
 
 
 You also can create some [new custom helpers](https://framework.zend.com/manual/1.10/en/zend.view.helpers.html#zend.view.helpers.custom) to make your life easier.
