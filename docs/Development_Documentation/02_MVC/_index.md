@@ -25,10 +25,10 @@ folders and files concerning the MVC within the website module are the following
  
 | Path   |  Description |  Example
 |--------|--------------|---------------------
-| /website/models | Place for all the specific models of your application. Please keep in mind, that pimcore Objects are located at an other place | 
-| /website/controllers | The controllers directory, the naming follows the Zend Framework naming-convention. | ```ContentController.php```
-| /website/views/scripts | The view (template) directory, the naming (sub folders and file names) follows also the naming-convention of ZF (```/website/views/scripts/[controller]/[action].php```) | ```/website/views/scripts/content/view-single.php``` (if the controller above contains an action called ```viewSingleAction```) 
-| /website/views/layouts | Optionally: here you can put your layouts which are used by pages | ```layout.php``` (this is the default when enabled)
+| ```/website/models``` | Place for all the specific models of your application. Please keep in mind, that pimcore Objects are located at an other place | 
+| ```/website/controllers``` | The controllers directory, the naming follows the Zend Framework naming-convention. | ```ContentController.php```
+| ```/website/views/scripts``` | The view (template) directory, the naming (sub folders and file names) follows also the naming-convention of ZF (```/website/views/scripts/[controller]/[action].php```) | ```/website/views/scripts/content/view-single.php``` (if the controller above contains an action called ```viewSingleAction```) 
+| ```/website/views/layouts``` | Optionally: here you can put your layouts which are used by pages | ```layout.php``` (this is the default when enabled)
 
 But all Pimcore plugins and other modules follow the same schema and you will always find the folders ```models```, ```controllers``` and ```scripts```. 
  
