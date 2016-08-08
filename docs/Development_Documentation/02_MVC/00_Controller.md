@@ -12,7 +12,7 @@ The naming of the file and the class is the same as in Zend Framework.
 Because **website** is configured as the default module in the front controller, you don't have to add a prefix to your 
 controller class names.
 
-## Pimcore specific extensions
+## Pimcore specialities and examples
 
 | Controller name | File name                   | Class name        | Default view directory               |
 |-----------------|-----------------------------|-------------------|--------------------------------------|
@@ -80,7 +80,7 @@ There are some helpers defined in ```Pimcore\Controller\Action\Frontend``` (the 
 But the best way is to use the ```Website\Controller\Action``` (```/website/lib/Website/Controller/Action.php```) which is already shipped with Pimcore 
 and implements the ```Pimcore\Controller\Action\Frontend``` and can be modified and extended the way you need.
 
-You can use:
+###### You can use:
 
 | Method                | Arguments                                    | Description                                                                                                                                              |
 |-----------------------|----------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -97,7 +97,7 @@ If you want to use one of the methods (hooks) below which are offered by ZF you 
 * ```postDispatch```
 * ```init```
 
-There are also some properties which can be useful:
+###### There are also some properties which can be useful:
 
 | Name                  | Type     | Description                                              |
 |-----------------------|----------|----------------------------------------------------------|
