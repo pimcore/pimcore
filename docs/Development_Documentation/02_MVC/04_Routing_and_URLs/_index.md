@@ -46,7 +46,7 @@ Redirects with priority 99 come second in the processing priority. See [Redirect
 #### 3. Pimcore Documents and Pretty URLs:
 The path of Pimcore Documents also defines their URL. In addition to the path, so called pretty URLs can be defined for
  documents. The path and pre pretty URLs come third in the processing priority. 
- See [00_Documents_and_Pretty_URLs.md] for details. 
+ See [Documents and Pretty URLs](./00_Documents_and_Pretty_URLs.md) for details. 
 
 
 #### 4. Static Routes / Custom Routes: 
