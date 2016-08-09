@@ -86,7 +86,7 @@ In addition there is one parameter which is not in the reverse route. That will 
 Output will be: ```/news-category/test_67_category_33?getExample=some+value```
 
 
-#### Reusing existing URL parameter
+### Reusing existing URL parameter
 
 Source url: ```/some-example/some~random~text_45```
 ```php
@@ -112,7 +112,7 @@ $this->url([
 Output will be: /some-example/This+is+some+random+text_776
 
 
-#### Adding default values to the route
+### Adding default values to the route
 
 You can use the **Defaults** column to add default values which will be used if you don't specify parameters in the
  url helper.
@@ -133,12 +133,12 @@ $this->url([
 Output will be: ```/news-category/random+text_5_category_776```
 
 
-#### Site support
+### Site support
 
 It's possible to generate URL's pointing to a different Site inside Pimcore. To do so set the option **site**. 
  
 
-##### Example: Linking to the site with the ID 3
+#### Example: Linking to the site with the ID 3
 
 ```php
 
@@ -166,7 +166,7 @@ echo $this->url([
 
 ```
 
-##### Example: Linking back to the main-site
+#### Example: Linking back to the main-site
 
 ```php
 echo $this->url([
