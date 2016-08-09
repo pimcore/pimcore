@@ -88,30 +88,6 @@ class Dao extends Model\Dao\AbstractDao
 
         $this->db->update("classes", $data, $this->db->quoteInto("id = ?", $this->model->getId()));
 
-        // save definition as a php file
-        $definitionFile = PIMCORE_CLASS_DIRECTORY."/definition_". $this->model->getName() .".php";
-        if (!is_writable(dirname($definitionFile)) || (is_file($definitionFile) && !is_writable($definitionFile))) {
-            throw new \Exception("Cannot write definition file in: " . $definitionFile . " please check write permission on this directory.");
-        }
-
-        $clone = clone $this->model;
-        $clone->setDao(null);
-        unset($clone->id);
-        unset($clone->fieldDefinitions);
-
-        $exportedClass = var_export($clone, true);
-
-        $data = '<?php ';
-
-        $data .= "\n\n";
-        $data .= "/** Generated at " . date('c') . " */";
-        $data .= "\n\n";
-
-        $data .= "\nreturn " . $exportedClass . ";\n";
-
-        \Pimcore\File::put($definitionFile, $data);
-
-
         $objectTable = "object_query_" . $this->model->getId();
         $objectDatastoreTable = "object_store_" . $this->model->getId();
         $objectDatastoreTableRelation = "object_relations_" . $this->model->getId();
@@ -299,8 +275,6 @@ class Dao extends Model\Dao\AbstractDao
             $brickTable = current($table);
             $this->db->query("DROP TABLE `".$brickTable."`");
         }
-
-        @unlink(PIMCORE_CLASS_DIRECTORY."/definition_". $this->model->getName() .".php");
     }
 
     /**
