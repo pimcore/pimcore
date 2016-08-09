@@ -13,7 +13,7 @@ The other components are printed in different colors.
 Pimcore itself consits of the Pimcore Core and the MVC component. 
 The Pimcore Core is the core application, which provides all the basic
 functionality and and be started within the MVC component or in a headless way, for example via CLI scripts.
-The Pimcore Core is also responsible or accessing the persistence layer with Database, Filesystem and Cache-System. 
+The Pimcore Core is also responsible for accessing the persistence layer with Database, Filesystem and Cache-System. 
 
 Build upon the Pimcore Core, the MVC component provides all the necessary 
 functionalities for interacting with Pimcore via the Browser or any other 
