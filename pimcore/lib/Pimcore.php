@@ -148,14 +148,6 @@ class Pimcore
                 "action" => "index"
             ]
         );
-        $routePlugins = new \Zend_Controller_Router_Route(
-            'admin/plugin/:controller/:action/*',
-            [
-                'module' => 'pluginadmin',
-                "controller" => "index",
-                "action" => "index"
-            ]
-        );
         $routeExtensions = new \Zend_Controller_Router_Route(
             'admin/extensionmanager/:controller/:action/*',
             [
@@ -210,7 +202,6 @@ class Pimcore
             $router->addRoute('plugin', $routePlugin);
             $router->addRoute('admin', $routeAdmin);
             $router->addRoute('update', $routeUpdate);
-            $router->addRoute('plugins', $routePlugins);
             $router->addRoute('extensionmanager', $routeExtensions);
             $router->addRoute('reports', $routeReports);
             $router->addRoute('searchadmin', $routeSearchAdmin);
