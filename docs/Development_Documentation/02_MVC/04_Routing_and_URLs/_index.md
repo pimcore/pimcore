@@ -9,7 +9,7 @@ Beside the pure technical aspect (which controller is called) there are several 
    
 Knowing how routing works in Pimcore is essential to understand how Pimcore application can be implemented and how 
  they work. Technically the whole routing process is based on the ZF routing. For details please have a look at the 
- [ZF docs](https://framework.zend.com/manual/1.12/en/zend.controller.router.html). 
+ [ZF documentation](https://framework.zend.com/manual/1.12/en/zend.controller.router.html). 
  
 
 ## Routing in Pimcore
@@ -22,11 +22,11 @@ but only the following few are relevant on a daily basis:
 ##### Route for Pimcore plugins - ```/plugin/:module/:controller/:action/*```
 This route is relevant when implementing plugins with their own controllers. By default these controllers are reachable 
 with this route whereas ```:module``` is the plugin name. For more details on plugin development see the 
-[plugin docs section](../../10_Extending_Pimcore/13_Plugin_Developers_Guide/01_Plugin_Anatomy.md). 
+[plugin documentation section](../../10_Extending_Pimcore/13_Plugin_Developers_Guide/01_Plugin_Anatomy.md). 
  
 ##### Route for Pimcore web services - ```/webservice/:controller/:action/*```
 This route is relevant when using Pimcore web services. For details see the 
-[web services docs section](../../14_Web_Services/_index.md). 
+[web services documentation section](../../14_Web_Services/_index.md). 
 
   
 ##### List of all system routes:    
@@ -41,7 +41,7 @@ This route is relevant when using Pimcore web services. For details see the
    
    
 #### 2. Redirects with priority 99:  
-Redirects with priority 99 come second in the processing priority. See [redirects](./04_Redirects.md) for details. 
+Redirects with priority 99 come second in the processing priority. See [Redirects](./04_Redirects.md) for details. 
    
 #### 3. Pimcore Documents and Pretty URLs:
 The path of Pimcore Documents also defines their URL. In addition to the path, so called pretty URLs can be defined for
@@ -57,7 +57,7 @@ When your application has functionality where there is no Pimcore Document neces
 
 #### 5. Redirects: 
 All Redirects with priority lower than 99 come fifth in the processing priority. 
-See [redirects](./04_Redirects.md) for details. 
+See [Redirects](./04_Redirects.md) for details. 
 
 
 #### Multi domain sites
