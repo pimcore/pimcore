@@ -1,0 +1,1 @@
+https://www.pimcore.org/wiki/display/PIMCORE4/Redirects
