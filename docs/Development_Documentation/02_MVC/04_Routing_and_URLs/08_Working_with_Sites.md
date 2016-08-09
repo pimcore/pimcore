@@ -16,7 +16,7 @@ That's basically all.
  domains are delegated to Pimcore. 
  
  
-Now also the Routing functionalities [Custom Routes](./02_Custom_Routes.md) and [Redirects]((./04_Redirects.md)) 
+Now also the Routing functionalities [Custom Routes](./02_Custom_Routes.md) and [Redirects](./04_Redirects.md) 
 can be configured site specific. 
 Also lots of other Pimcore tools and functionalities like Glossary, Tag & Snippet Management, Marketing Settings 
 (Google Analytics, Google Search Console, Google Tag Manager) and Website Settings are site specific. 
