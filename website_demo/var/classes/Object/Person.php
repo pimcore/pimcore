@@ -1,27 +1,35 @@
 <?php 
 
-/** Generated at 2015-11-17T06:56:43+01:00 */
-
-/**
+/** 
+* Generated at: 2016-08-09T09:00:04+02:00
 * Inheritance: no
-* Variants   : no
-* Changed by : admin (37)
-* IP:          192.168.11.33
-*/
+* Variants: no
+* Changed by: system (0)
+* IP: 192.168.11.111
 
+
+Fields Summary: 
+- gender [gender]
+- firstname [firstname]
+- lastname [lastname]
+- email [email]
+- newsletterActive [newsletterActive]
+- newsletterConfirmed [newsletterConfirmed]
+- dateRegister [datetime]
+*/ 
 
 namespace Pimcore\Model\Object;
 
 
 
 /**
-* @method static \Pimcore\Model\Object\Person getByGender ($value, $limit = 0) 
-* @method static \Pimcore\Model\Object\Person getByFirstname ($value, $limit = 0) 
-* @method static \Pimcore\Model\Object\Person getByLastname ($value, $limit = 0) 
-* @method static \Pimcore\Model\Object\Person getByEmail ($value, $limit = 0) 
-* @method static \Pimcore\Model\Object\Person getByNewsletterActive ($value, $limit = 0) 
-* @method static \Pimcore\Model\Object\Person getByNewsletterConfirmed ($value, $limit = 0) 
-* @method static \Pimcore\Model\Object\Person getByDateRegister ($value, $limit = 0) 
+* @method static \Pimcore\Model\Object\Person\Listing getByGender ($value, $limit = 0) 
+* @method static \Pimcore\Model\Object\Person\Listing getByFirstname ($value, $limit = 0) 
+* @method static \Pimcore\Model\Object\Person\Listing getByLastname ($value, $limit = 0) 
+* @method static \Pimcore\Model\Object\Person\Listing getByEmail ($value, $limit = 0) 
+* @method static \Pimcore\Model\Object\Person\Listing getByNewsletterActive ($value, $limit = 0) 
+* @method static \Pimcore\Model\Object\Person\Listing getByNewsletterConfirmed ($value, $limit = 0) 
+* @method static \Pimcore\Model\Object\Person\Listing getByDateRegister ($value, $limit = 0) 
 */
 
 class Person extends Concrete {

@@ -1,13 +1,29 @@
 <?php 
 
-/** Generated at 2016-08-08T16:19:50+02:00 */
+/** 
+* Generated at: 2016-08-09T09:00:04+02:00
+* Inheritance: no
+* Variants: no
+* Changed by: system (0)
+* IP: 192.168.11.111
+
+
+Fields Summary: 
+- gender [gender]
+- firstname [firstname]
+- lastname [lastname]
+- email [email]
+- newsletterActive [newsletterActive]
+- newsletterConfirmed [newsletterConfirmed]
+- dateRegister [datetime]
+*/ 
 
 
 return Pimcore\Model\Object\ClassDefinition::__set_state(array(
    'name' => 'person',
    'description' => '',
    'creationDate' => 1368620452,
-   'modificationDate' => 1368621909,
+   'modificationDate' => 1470726004,
    'userOwner' => 0,
    'userModification' => 0,
    'parentClass' => '',
@@ -26,7 +42,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
      'title' => NULL,
      'width' => NULL,
      'height' => NULL,
-     'collapsible' => NULL,
+     'collapsible' => false,
      'collapsed' => NULL,
      'bodyStyle' => NULL,
      'datatype' => 'layout',
@@ -235,7 +251,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
          'locked' => false,
       )),
     ),
-     'locked' => NULL,
+     'locked' => false,
   )),
    'icon' => '',
    'previewUrl' => '',

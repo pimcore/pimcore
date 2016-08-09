@@ -1,13 +1,26 @@
 <?php 
 
-/** Generated at 2016-08-08T16:19:50+02:00 */
+/** 
+* Generated at: 2016-08-09T09:00:04+02:00
+* Inheritance: no
+* Variants: no
+* Changed by: system (0)
+* IP: 192.168.11.111
+
+
+Fields Summary: 
+- date [datetime]
+- person [href]
+- message [textarea]
+- terms [checkbox]
+*/ 
 
 
 return Pimcore\Model\Object\ClassDefinition::__set_state(array(
    'name' => 'inquiry',
    'description' => '',
    'creationDate' => 1368620413,
-   'modificationDate' => 1368622807,
+   'modificationDate' => 1470726004,
    'userOwner' => 0,
    'userModification' => 0,
    'parentClass' => '',
@@ -26,7 +39,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
      'title' => NULL,
      'width' => NULL,
      'height' => NULL,
-     'collapsible' => NULL,
+     'collapsible' => false,
      'collapsed' => NULL,
      'bodyStyle' => NULL,
      'datatype' => 'layout',
@@ -106,9 +119,13 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
                  'phpdocType' => '\\Pimcore\\Model\\Document\\Page | \\Pimcore\\Model\\Document\\Snippet | \\Pimcore\\Model\\Document | \\Pimcore\\Model\\Asset | \\Pimcore\\Model\\Object\\AbstractObject',
                  'objectsAllowed' => true,
                  'assetsAllowed' => false,
-                 'assetTypes' => '',
+                 'assetTypes' => 
+                array (
+                ),
                  'documentsAllowed' => false,
-                 'documentTypes' => '',
+                 'documentTypes' => 
+                array (
+                ),
                  'lazyLoading' => false,
                  'classes' => 
                 array (
@@ -184,7 +201,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
          'locked' => false,
       )),
     ),
-     'locked' => NULL,
+     'locked' => false,
   )),
    'icon' => '',
    'previewUrl' => '',

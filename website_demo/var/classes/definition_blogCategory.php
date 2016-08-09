@@ -1,13 +1,23 @@
 <?php 
 
-/** Generated at 2016-08-08T16:19:50+02:00 */
+/** 
+* Generated at: 2016-08-09T09:00:04+02:00
+* Inheritance: no
+* Variants: no
+* IP: 192.168.11.111
+
+
+Fields Summary: 
+- localizedfields [localizedfields]
+-- name [input]
+*/ 
 
 
 return Pimcore\Model\Object\ClassDefinition::__set_state(array(
    'name' => 'blogCategory',
    'description' => '',
    'creationDate' => 1388389401,
-   'modificationDate' => 1388389839,
+   'modificationDate' => 1470726004,
    'userOwner' => 7,
    'userModification' => 7,
    'parentClass' => '',
@@ -26,7 +36,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
      'title' => NULL,
      'width' => NULL,
      'height' => NULL,
-     'collapsible' => NULL,
+     'collapsible' => false,
      'collapsed' => NULL,
      'bodyStyle' => NULL,
      'datatype' => 'layout',
@@ -54,7 +64,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
           0 => 
           Pimcore\Model\Object\ClassDefinition\Data\Localizedfields::__set_state(array(
              'fieldtype' => 'localizedfields',
-             'phpdocType' => 'array',
+             'phpdocType' => '\\Pimcore\\Model\\Object\\Localizedfield',
              'childs' => 
             array (
               0 => 
@@ -93,7 +103,33 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
              'referencedFields' => 
             array (
             ),
-             'fieldDefinitionsCache' => NULL,
+             'fieldDefinitionsCache' => 
+            array (
+              'name' => 
+              Pimcore\Model\Object\ClassDefinition\Data\Input::__set_state(array(
+                 'fieldtype' => 'input',
+                 'width' => '',
+                 'queryColumnType' => 'varchar',
+                 'columnType' => 'varchar',
+                 'columnLength' => 255,
+                 'phpdocType' => 'string',
+                 'regex' => '',
+                 'name' => 'name',
+                 'title' => 'Name',
+                 'tooltip' => '',
+                 'mandatory' => false,
+                 'noteditable' => false,
+                 'index' => false,
+                 'locked' => false,
+                 'style' => '',
+                 'permissions' => NULL,
+                 'datatype' => 'data',
+                 'relationType' => false,
+                 'invisible' => false,
+                 'visibleGridView' => false,
+                 'visibleSearch' => false,
+              )),
+            ),
              'tooltip' => '',
              'mandatory' => false,
              'noteditable' => false,
@@ -113,7 +149,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
          'locked' => false,
       )),
     ),
-     'locked' => NULL,
+     'locked' => false,
   )),
    'icon' => '',
    'previewUrl' => '',
