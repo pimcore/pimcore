@@ -10,7 +10,7 @@ Since objects are not reachable via the web and they have no template assigned, 
 
 <div class="inline-imgs">
 
-Go to:  ![Settings](../img/Icon_settings.png) **Settings -> Static Routes**
+Go to:  ![Settings](../../img/Icon_settings.png) **Settings -> Static Routes**
 
 </div>
 
@@ -22,7 +22,7 @@ The configuration fro a newslist coild look like below:
 
 And, the grid preview:
 
-![Grid with the new route](../img/Routing_grid.png)
+![Grid with the new route](../../img/Routing_grid.png)
 
 In the pattern you can define a regex, and the column "Variables" you can specify comma-separated the keys of the placeholders in the pattern regex.
 
@@ -54,7 +54,7 @@ to do so just enbrace the part with curly braces { } (see example below).
 
 Admin panel:
 
-![Grid with the new route](../img/Routing_grid2.png)
+![Grid with the new route](../../img/Routing_grid2.png)
 
 Due to optional parameters, the above example matches for the following URL's:
 
@@ -112,7 +112,7 @@ For example, I declared default values for **text** and **id** parameter, below:
 |-----|------------------------|-----|
 | ... | id=5\|text=random text | ... |
 
-![Default values in the route](../img/Routing_default_values.png)
+![Default values in the route](../../img/Routing_default_values.png)
 
 ```php
 $this->url([
@@ -136,7 +136,7 @@ The following configuration should explain the way how it works:
 | articles-dynamic-prefix       | /\\/(events\|news)\\/(list\|detail)/       | /%con/%act                 |                    | %con                   | %act               | con,act               |                      |                  | 10                   |
 | articles-dynamic-simple       | /\\/dyn_([a-z]+)\\/([a-z]+)/               | /dyn_%controller/%action   |                    | %controller            | %action            | controller,action     |                      |                  | 1                    |
 
-![Advanced routes grid](../img/Routing_grid_advanced_routes.png)
+![Advanced routes grid](../../img/Routing_grid_advanced_routes.png)
 
 In that case, you have few valid URL's:
 
