@@ -24,6 +24,6 @@ The Pretty URL setting overrides a documents full path within the document tree 
 This is useful for when you would like to create shorter paths or friendly URLs for sharing. A Pretty URL does 
 not redirect to the original URL.
 
-Pretty URLs can be defined in the Documents settings. 
+Pretty URLs can be defined in the Documents settings as shown in the screen.
 
-  ![Document Path](../../img/pretty-url.png)
+  ![Pretty URL](../../img/pretty-url.png)
