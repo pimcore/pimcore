@@ -415,8 +415,8 @@ class ClassDefinition extends Model\AbstractModel
     /**
      * @return string
      */
-    protected function getInfoDocBlock() {
-
+    protected function getInfoDocBlock()
+    {
         $cd = "";
 
         $cd .= "/** ";
@@ -458,10 +458,11 @@ class ClassDefinition extends Model\AbstractModel
      * @param $level
      * @return string
      */
-    protected function getInfoDocBlockForFields($definition, $text, $level) {
-        foreach($definition->getFieldDefinitions() as $fd) {
-            $text .= str_pad("",$level, "-") . " " . $fd->getName() . " [" . $fd->getFieldtype() . "]\n";
-            if(method_exists($fd, "getFieldDefinitions")) {
+    protected function getInfoDocBlockForFields($definition, $text, $level)
+    {
+        foreach ($definition->getFieldDefinitions() as $fd) {
+            $text .= str_pad("", $level, "-") . " " . $fd->getName() . " [" . $fd->getFieldtype() . "]\n";
+            if (method_exists($fd, "getFieldDefinitions")) {
                 $text = $this->getInfoDocBlockForFields($fd, $text, $level+1);
             }
         }
@@ -526,12 +527,14 @@ class ClassDefinition extends Model\AbstractModel
      * @param null $name
      * @return string
      */
-    public function getDefinitionFile($name = null) {
-        if(!$name) {
+    public function getDefinitionFile($name = null)
+    {
+        if (!$name) {
             $name = $this->getName();
         }
 
         $file = PIMCORE_CLASS_DIRECTORY . "/definition_". $name .".php";
+
         return $file;
     }
 
