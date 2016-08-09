@@ -44,8 +44,8 @@ This route is relevant when using Pimcore web services. For details see the
 Redirects with priority 99 come second in the processing priority. See [Redirects](./04_Redirects.md) for details. 
    
 #### 3. Pimcore Documents and Pretty URLs:
-The path of Pimcore Documents also defines their URL. In addition to the path, so called pretty URLs can be defined for
- documents. The path and pre pretty URLs come third in the processing priority. 
+The path of Pimcore Documents also defines its URL. In addition to the path, so called pretty URLs can be defined for
+ documents. The Document path and pretty URLs come third in the processing priority. 
  See [Documents and Pretty URLs](./00_Documents_and_Pretty_URLs.md) for details. 
 
 
