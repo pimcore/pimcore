@@ -276,11 +276,11 @@ class LegacyClassMappingTool {
     public static function loadMapping() {
 
         foreach(self::$mappingInterfaces as $withNamespace => $withoutNamespace) {
-            class_alias($withNamespace, $withoutNamespace);
+            @class_alias($withNamespace, $withoutNamespace);
         }
 
         foreach(self::$mappingClasses as $withNamespace => $withoutNamespace) {
-            class_alias($withNamespace, $withoutNamespace);
+            @class_alias($withNamespace, $withoutNamespace);
         }
     }
 
