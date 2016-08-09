@@ -223,9 +223,10 @@ class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @param integer $id
+     * @param bool $originalData
      * @return static
      */
-    public static function getById($id)
+    public static function getById($id, $originalData = false)
     {
         $id = intval($id);
 
@@ -236,7 +237,13 @@ class AbstractObject extends Model\Element\AbstractElement
         $cacheKey = "object_" . $id;
 
         try {
-            $object = \Zend_Registry::get($cacheKey);
+            
+            if($originalData) {
+                $object = clone \Zend_Registry::get($cacheKey);
+            } else {
+                $object = \Zend_Registry::get($cacheKey);
+            }
+            
             if (!$object) {
                 throw new \Exception("Object\\AbstractObject: object in registry is null");
             }
