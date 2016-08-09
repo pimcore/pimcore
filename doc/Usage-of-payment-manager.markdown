@@ -71,6 +71,61 @@ The configuration takes place in the OnlineShopConfig.xml
 
 ## 2 - Provider configuration
 
+#### Wirecard seamless
+
+> For testing creditcards use card-nr. 9500000000000001.
+
+##### Configuration
+
+```php
+<?php
+$url = 'http://'. $_SERVER["HTTP_HOST"] . "/en/payment/complete?state=";
+
+ // wirecard seamless
+$config = [
+    "successURL" => $url . \OnlineShop\Framework\PaymentManager\Payment\WirecardSeamless::PAYMENT_RETURN_STATE_SUCCESS,
+    "failureURL" => $url . \OnlineShop\Framework\PaymentManager\Payment\WirecardSeamless::PAYMENT_RETURN_STATE_FAILURE,
+    "cancelURL" => $url . \OnlineShop\Framework\PaymentManager\Payment\WirecardSeamless::PAYMENT_RETURN_STATE_CANCEL,
+    "serviceURL" => Pimcore\Tool::getHostUrl(),
+    "pendingURL" => $url . \OnlineShop\Framework\PaymentManager\Payment\WirecardSeamless::PAYMENT_RETURN_STATE_PENDING,
+    /* wirecard callback url --> commit order here */
+    "confirmURL" => Pimcore\Tool::getHostUrl() . $this->view->url(['action' => 'confirm-payment', 'elementsclientauth' => 'disabled'], 'action', true),
+    "paymentInfo" => $paymentInformation,
+    "paymentType" => $this->getParam('paymentType'),
+    "cart" => $this->getCart(),
+    "birthday" => $this->getParam('birth'),
+    "orderDescription" => $orderNumber,
+    "orderReference" => $orderNumber,
+];
+```
+
+In view script of your _completeAction_ you could then handle your response as follows:
+
+```php
+<?php
+$isCommited = $this->order && $this->order->getOrderState() == \OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_COMMITTED;
+$state = $this->getParam('state');
+?>
+
+<?php if($isCommited) { ?>
+
+    <!-- redirect to order completed page -->
+    
+<? } elseif (in_array($state, [
+        \OnlineShop\Framework\PaymentManager\Payment\WirecardSeamless::PAYMENT_RETURN_STATE_FAILURE, 
+        \OnlineShop\Framework\PaymentManager\Payment\WirecardSeamless::PAYMENT_RETURN_STATE_CANCEL
+    ])) { ?>
+    
+    <!-- output errors and handle failures and cancel  -->
+    <!-- give retry possibility -->
+        
+<? } elseif ($state == \OnlineShop\Framework\PaymentManager\Payment\WirecardSeamless::PAYMENT_RETURN_STATE_PENDING) { ?>
+    <!-- handle payment pending state -->
+<? } else { ?>
+    <!-- payment stillt running, poll for status updates (ie. refresh page) -->
+<? } ?>
+```
+
 #### Wirecard
 
 * [Documentation](https://integration.wirecard.at/doku.php)
