@@ -19,17 +19,17 @@ order as described below.
 #### 1. System Routes:
 Pimcore has a few system routes that are required for Pimcore base functionality. The list below lists all of them, 
 but only the following few are relevant on a daily basis: 
-###### ```/plugin/:module/:controller/:action/*``` - Route for Pimcore plugins
+##### Route for Pimcore plugins - ```/plugin/:module/:controller/:action/*```
 This route is relevant when implementing plugins with their own controllers. By default these controllers are reachable 
 with this route whereas ```:module``` is the plugin name. For more details on plugin development see the 
 [plugin docs section](../../10_Extending_Pimcore/13_Plugin_Developers_Guide/01_Plugin_Anatomy.md). 
  
-###### ```/webservice/:controller/:action/*``` - Route for Pimcore web services
+##### Route for Pimcore web services - ```/webservice/:controller/:action/*```
 This route is relevant when using Pimcore web services. For details see the 
 [web services docs section](../../14_Web_Services/_index.md). 
 
   
-###### List of all system routes:    
+##### List of all system routes:    
 * ```/install/:controller/:action/*``` - Route for Pimcore installer
 * ```/plugin/:module/:controller/:action/*``` - Route for Pimcore plugins
 * ```/admin/:controller/:action/*``` - Route for Pimcore admin backend interface
