@@ -1,6 +1,6 @@
 ## 1 - Basic Idea of the IndexService
 The IndexService (in combination with the FilterService) provides functionality concerning indexing, listing, filtering and searching product. 
-Heart of this component is the product index - a optimized storage of product data for all queries. Depending on the implementation, this product index is stored in a special mysql table, in elastic search or any other search provider (currently implemented are fact finder and findologic). 
+Heart of this component is the product index - an optimized storage of product data for all queries. Depending on the implementation, this product index is stored in a special mysql table, in elastic search or any other search provider (currently implemented are fact finder and findologic). 
 These implementations can be configured in product index tenants (see later in this chapter), the default tenant always uses DefaultMysql as implementation.  
 
 Advantages of product index: 
@@ -33,7 +33,7 @@ The configuration of the product index defines the content of the product index 
 </productindex>
 ```
 ### ```<generalSearchColumns>```
-Defines attributes which should be considered in fulltext-search. All attributes must be defined within the <columns>-section
+Defines attributes which should be considered in fulltext-search. All attributes must be defined within the ```<columns>```-section
 
 ### ```<columns>```
 Defines for all attributes if and how they should be indexed. Following information can be/ needs to be provided: 
@@ -50,7 +50,7 @@ Each attribute can have an additional ```<config>```-Element for additional conf
 
 #### Relations in product index
 Relations are treated in a special way within the product index and also need to be filtered in a different way in the product list. 
-In order to store relations correctly in the product index, relation attributes must have a interpreter defined, which implements the interface ```\OnlineShop\Framework\IndexService\Interpreter\IRelationInterpreter```. 
+In order to store relations correctly in the product index, relation attributes must have an interpreter defined, which implements the interface ```\OnlineShop\Framework\IndexService\Interpreter\IRelationInterpreter```. 
 
 
 #### Selection of available getters:
@@ -75,9 +75,9 @@ The ecommerce framework provides a two level tenant system for the product index
 
    2. SubTenant: The second level of tenants are light-weight tenants, which exist within a shop instance. Light-weight tenants use the same product index with the same attributes as their parent shop, but can contain a subset of the products. So they are meant to be used for implementing different product assortments within one shop. 
 
-One system can have multiple tenants (heavy- and light-weight). But too many tenants can have bad effects on the performance of saving products, since the product indices need to up updated on each save. 
+One system can have multiple tenants (heavy- and light-weight). But too many tenants can have bad effects on the performance of saving products, since the product indices need to be updated on each save. 
 
-By default the system always one heavy-weight tenant (= DefaultMysql), but the default tenant can be disabled. 
+By default the system always uses one heavy-weight tenant (= DefaultMysql), but the default tenant can be disabled. 
 
 ### Configuration of tenants
 For setting up a tenant, following things are necessary: 
@@ -90,7 +90,7 @@ The tenant config class is the central configuration of the tenant, defines whic
 
 
 - **Configuring tenants within OnlineShopConfig.xml:** 
-Each tenant has to be configured within OnlineShopConfig.xml by defining the tenant config class and index attributes. Depending on the product index implementation, additional configuration may be necessary. The configuration also can be outsourced in to an additional configuration file. For more information and samples see the OnlineShopConfig_sample.xml (TODO add link). 
+Each tenant has to be configured within OnlineShopConfig.xml by defining the tenant config class and index attributes. Depending on the product index implementation, additional configuration may be necessary. The configuration also can be outsourced to an additional configuration file. For more information and samples see the OnlineShopConfig_sample.xml (TODO add link). 
 
 
 ### Setting current tenant for frontend
@@ -232,7 +232,7 @@ Findologic then can use the endpoint `/plugin/OnlineShop/findologic/export`, whi
 
 
 ## 5 - Usage of product list
-The API for getting (and filtering, ...) products out of the product index are so called ProductLists. The all implement the interface ```\OnlineShop\Framework\IndexService\ProductList\IProductList``` and need to be product index implementation specific. Detailed method documentation is available in in-source documentation. 
+The API for getting (and filtering, ...) products out of the product index are so called ProductLists. They all implement the interface ```\OnlineShop\Framework\IndexService\ProductList\IProductList``` and need to be product index implementation specific. Detailed method documentation is available in in-source documentation. 
 For getting a ProdutList instance suitable for the product index implementation and filter for products see following code: 
 ```php 
 <?php 

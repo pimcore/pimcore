@@ -4,7 +4,7 @@ Each component implementation can be switched with a custom implementation.
 ![bigpicture](images/bigpicture.png)
 
 #Separation of Concerns
-We try to separate the the different functionalities and capsulate them as good as possible in the different components. 
+We try to separate the different functionalities and capsulate them as good as possible in the different components. 
 Following list should state the basic ideas and represent a guideline for future extensions: 
 
 ## Index Service
@@ -18,7 +18,7 @@ These aspects contain among other things:
 
 ## Filter Service
 The Filter Service is responsible for all aspects concerning filtering products and setting up filtered navigation. 
- It is tightly coupled with the product lists of from the Index Service, provides the developer a simple API for building
+ It is tightly coupled with the product lists of the Index Service, provides the developer a simple API for building
  a layered navigation and takes care of all the query generation, counting results and stuff.  
 
 
@@ -65,8 +65,8 @@ The Cart Manager is responsible for all aspects concerning payment. The main asp
 
 ## Checkout Manager
 The Checkout Manager is responsible for all aspects concerning checkout process and a one-stop API for getting through the checkout process.
- The Checkout Manager always works with an cart and at some point in the checkout process delegates to other components to 
- convert the cart to and order object (Order Manager), start payment operations (Commit Order Processor and Payment Manager) 
+ The Checkout Manager always works with a cart and at some point in the checkout process delegates to other components to 
+ convert the cart to an order object (Order Manager), start payment operations (Commit Order Processor and Payment Manager) 
  and commits the order (Commit Order Processor). 
 
 ### Commit Order Processor
@@ -82,7 +82,7 @@ Therefore it also can be used to commit orders in combination with server side p
 
 
 ## Order Manager 
-The Order Manager is responsible for all aspects of working with orders except commiting them (with is the responsibility of the Commit
+The Order Manager is responsible for all aspects of working with orders except commiting them (which is the responsibility of the Commit
  Order Processor). These aspects contain among other things:
  
 * Creating orders based on carts
