@@ -367,7 +367,7 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
 
     openSearchEditor: function () {
 
-        pimcore.helpers.itemselector(false, this.addDataFromSelector.bind(this), {
+        pimcore.helpers.itemselector(true, this.addDataFromSelector.bind(this), {
             type: this.options.types,
             subtype: this.options.subtypes,
             specific: {
