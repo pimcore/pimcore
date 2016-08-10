@@ -18,6 +18,7 @@ use Pimcore\Config;
 use Pimcore\Model\Site;
 use Pimcore\Model\Staticroute;
 use Pimcore\Tool;
+use Pimcore\Logger;
 
 class Url extends \Zend_View_Helper_Url
 {
@@ -62,8 +63,8 @@ class Url extends \Zend_View_Helper_Url
                     $hostname = $site->getMainDomain();
                     $siteId = $site->getId();
                 } catch (\Exception $e) {
-                    \Logger::warn("passed site doesn't exists");
-                    \Logger::warn($e);
+                    Logger::warn("passed site doesn't exists");
+                    Logger::warn($e);
                 }
             } elseif ($config->general->domain) {
                 $hostname = $config->general->domain;

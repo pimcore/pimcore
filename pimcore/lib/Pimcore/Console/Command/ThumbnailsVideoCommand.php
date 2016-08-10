@@ -20,6 +20,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Version;
+use Pimcore\Logger;
 
 class ThumbnailsVideoCommand extends AbstractCommand
 {
@@ -125,13 +126,13 @@ class ThumbnailsVideoCommand extends AbstractCommand
             $thumb = $video->getThumbnail($thumbnail);
             if ($thumb["status"] == "finished") {
                 $finished = true;
-                \Logger::debug("video [" . $video->getId() . "] FINISHED");
+                Logger::debug("video [" . $video->getId() . "] FINISHED");
             } elseif ($thumb["status"] == "inprogress") {
-                \Logger::debug("video [" . $video->getId() . "] in progress ...");
+                Logger::debug("video [" . $video->getId() . "] in progress ...");
                 sleep(5);
             } else {
                 // error
-                \Logger::debug("video [" . $video->getId() . "] has status: '" . $thumb["status"] . "' -> skipping");
+                Logger::debug("video [" . $video->getId() . "] has status: '" . $thumb["status"] . "' -> skipping");
                 break;
             }
         }

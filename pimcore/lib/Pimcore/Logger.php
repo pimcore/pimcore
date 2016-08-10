@@ -12,6 +12,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
+namespace Pimcore;
+
 use Psr\Log\LogLevel;
 
 class Logger

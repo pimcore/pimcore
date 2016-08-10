@@ -17,6 +17,7 @@ namespace Pimcore\Tool;
 use Defuse\Crypto\Crypto;
 use Pimcore\Model\User;
 use Pimcore\Tool;
+use Pimcore\Logger;
 
 class Authentication
 {
@@ -90,7 +91,7 @@ class Authentication
 
         $auth->requireLogin();
         $response->setBody("Authentication required");
-        \Logger::error("Authentication Basic (WebDAV) required");
+        Logger::error("Authentication Basic (WebDAV) required");
         \Sabre\HTTP\Sapi::sendResponse($response);
         die();
     }

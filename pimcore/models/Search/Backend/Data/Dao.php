@@ -15,6 +15,7 @@
 namespace Pimcore\Model\Search\Backend\Data;
 
 use Pimcore\Model;
+use Pimcore\Logger;
 
 class Dao extends \Pimcore\Model\Dao\AbstractDao
 {
@@ -69,7 +70,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
 
             $this->db->insertOrUpdate("search_backend_data", $data);
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
         }
     }
 
@@ -83,7 +84,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
         if ($this->model->getId() instanceof Model\Search\Backend\Data\Id) {
             $this->db->delete("search_backend_data", "id='" . $this->model->getId()->getId() . "' AND maintype ='" .$this->model->getId()->getType() . "'");
         } else {
-            \Logger::alert("Cannot delete Search\\Backend\\Data, ID is empty");
+            Logger::alert("Cannot delete Search\\Backend\\Data, ID is empty");
         }
     }
 }

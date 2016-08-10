@@ -18,6 +18,7 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Object;
 use Pimcore\Model\Search;
+use Pimcore\Logger;
 
 class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
 {
@@ -31,7 +32,7 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
     {
         $entries = [];
         $data = $this->db->fetchAll("SELECT * FROM search_backend_data" .  $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
-     
+
         foreach ($data as $entryData) {
             if ($entryData['maintype']=='document') {
                 $element = Document::getById($entryData['id']);
@@ -40,7 +41,7 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
             } elseif ($entryData['maintype']=='object') {
                 $element = Object::getById($entryData['id']);
             } else {
-                \Logger::err("unknown maintype ");
+                Logger::err("unknown maintype ");
             }
             if ($element) {
                 $entry = new Search\Backend\Data();

@@ -16,6 +16,7 @@ namespace Pimcore\Document\Newsletter\AddressSourceAdapter;
 
 use Pimcore\Document\Newsletter\IAddressSourceAdapter;
 use Pimcore\Document\Newsletter\SendingParamContainer;
+use Pimcore\Logger;
 
 class CsvList implements IAddressSourceAdapter
 {
@@ -81,19 +82,19 @@ class CsvList implements IAddressSourceAdapter
      */
     public function getParamsForSingleSending($limit, $offset)
     {
-        \Logger::warn(print_r([$limit, $offset], true));
+        Logger::warn(print_r([$limit, $offset], true));
 
         $addresses = array_slice($this->emailAddresses, $offset, $limit);
 
-        \Logger::warn(print_r($this->emailAddresses, true));
-        \Logger::warn(print_r($addresses, true));
+        Logger::warn(print_r($this->emailAddresses, true));
+        Logger::warn(print_r($addresses, true));
 
         $containers = [];
         foreach ($addresses as $address) {
             $containers[] = new SendingParamContainer($address, ['emailAddress' => $address]);
         }
 
-        \Logger::warn(print_r($containers, true));
+        Logger::warn(print_r($containers, true));
 
         return $containers;
     }

@@ -18,6 +18,7 @@ namespace Pimcore\Model\Webservice\Data\Object;
 
 use Pimcore\Model;
 use Pimcore\Model\Webservice;
+use Pimcore\Logger;
 
 class Concrete extends Model\Webservice\Data\Object
 {
@@ -98,7 +99,7 @@ class Concrete extends Model\Webservice\Data\Object
                             $object->$setter($tag->getFromWebserviceImport($element->value, $object, [], $idMapper));
                         }
                     } else {
-                        \Logger::error("tag for field " . $element->name . " not found");
+                        Logger::error("tag for field " . $element->name . " not found");
                     }
                 } else {
                     if (!$disableMappingExceptions) {

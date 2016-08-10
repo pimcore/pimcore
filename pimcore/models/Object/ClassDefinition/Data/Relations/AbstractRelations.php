@@ -21,6 +21,7 @@ use Pimcore\Model\Object;
 use Pimcore\Model\Element;
 use Pimcore\Db;
 use Pimcore\Tool\Admin;
+use Pimcore\Logger;
 
 abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
 {
@@ -120,10 +121,10 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
         }
 
         if ($object instanceof Object\AbstractObject) {
-            \Logger::debug("checked object relation to target object [" . $object->getId() . "] in field [" . $this->getName() . "], allowed:" . $allowed);
+            Logger::debug("checked object relation to target object [" . $object->getId() . "] in field [" . $this->getName() . "], allowed:" . $allowed);
         } else {
-            \Logger::debug("checked object relation to target in field [" . $this->getName() . "], not allowed, target ist not an object");
-            \Logger::debug($object);
+            Logger::debug("checked object relation to target in field [" . $this->getName() . "], not allowed, target ist not an object");
+            Logger::debug($object);
         }
 
         return $allowed;
@@ -174,7 +175,7 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
             //don't check if no allowed asset types set
         }
 
-        \Logger::debug("checked object relation to target asset [" . $asset->getId() . "] in field [" . $this->getName() . "], allowed:" . $allowed);
+        Logger::debug("checked object relation to target asset [" . $asset->getId() . "] in field [" . $this->getName() . "], allowed:" . $allowed);
 
         return $allowed;
     }
@@ -208,7 +209,7 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
             //don't check if no allowed document types set
         }
 
-        \Logger::debug("checked object relation to target document [" . $document->getId() . "] in field [" . $this->getName() . "], allowed:" . $allowed);
+        Logger::debug("checked object relation to target document [" . $document->getId() . "] in field [" . $this->getName() . "], allowed:" . $allowed);
 
         return $allowed;
     }
@@ -282,9 +283,9 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
                 try {
                     $db->insert("object_relations_" . $classId, $relation);
                 } catch (\Exception $e) {
-                    \Logger::error("It seems that the relation " . $relation["src_id"] . " => " . $relation["dest_id"]
+                    Logger::error("It seems that the relation " . $relation["src_id"] . " => " . $relation["dest_id"]
                         . " (fieldname: " . $this->getName() . ") already exist -> please check immediately!");
-                    \Logger::error($e);
+                    Logger::error($e);
 
                     // try it again with an update if the insert fails, shouldn't be the case, but it seems that
                     // sometimes the insert throws an exception

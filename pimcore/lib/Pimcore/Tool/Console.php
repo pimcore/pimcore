@@ -17,6 +17,7 @@ namespace Pimcore\Tool;
 use Pimcore\Config;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
+use Pimcore\Logger;
 
 class Console
 {
@@ -274,7 +275,7 @@ class Console
 
             $cmd = self::getTimeoutBinary() . $killAfter . " " . $timeout . "s " . $cmd;
         } elseif ($timeout) {
-            \Logger::warn("timeout binary not found, executing command without timeout");
+            Logger::warn("timeout binary not found, executing command without timeout");
         }
 
         if ($outputFile) {
@@ -286,7 +287,7 @@ class Console
             }
         }
 
-        \Logger::debug("Executing command `" . $cmd . "` on the current shell");
+        Logger::debug("Executing command `" . $cmd . "` on the current shell");
         $return = shell_exec($cmd);
 
         return $return;
@@ -332,10 +333,10 @@ class Console
         }
 
         $commandWrapped = $nohup . $nice . $cmd . " > ". $outputFile ." 2>&1 & echo $!";
-        \Logger::debug("Executing command `" . $commandWrapped . "´ on the current shell in background");
+        Logger::debug("Executing command `" . $commandWrapped . "´ on the current shell in background");
         $pid = shell_exec($commandWrapped);
 
-        \Logger::debug("Process started with PID " . $pid);
+        Logger::debug("Process started with PID " . $pid);
 
         return $pid;
     }
@@ -353,11 +354,11 @@ class Console
         }
 
         $commandWrapped = "cmd /c " . $cmd . " > ". $outputFile . " 2>&1";
-        \Logger::debug("Executing command `" . $commandWrapped . "´ on the current shell in background");
+        Logger::debug("Executing command `" . $commandWrapped . "´ on the current shell in background");
 
         $WshShell = new \COM("WScript.Shell");
         $WshShell->Run($commandWrapped, 0, false);
-        \Logger::debug("Process started - returning the PID is not supported on Windows Systems");
+        Logger::debug("Process started - returning the PID is not supported on Windows Systems");
 
         return 0;
     }

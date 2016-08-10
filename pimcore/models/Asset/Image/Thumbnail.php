@@ -16,6 +16,8 @@
 
 namespace Pimcore\Model\Asset\Image;
 
+use Pimcore\Logger;
+
 class Thumbnail
 {
 
@@ -141,8 +143,8 @@ class Thumbnail
                     $this->filesystemPath = Thumbnail\Processor::process($this->asset, $this->config, null, $deferred, true, $generated);
                 } catch (\Exception $e) {
                     $this->filesystemPath = $errorImage;
-                    \Logger::error("Couldn't create thumbnail of image " . $this->asset->getRealFullPath());
-                    \Logger::error($e);
+                    Logger::error("Couldn't create thumbnail of image " . $this->asset->getRealFullPath());
+                    Logger::error($e);
                 }
             }
         }

@@ -21,6 +21,7 @@ use Pimcore\Tool;
 use Pimcore\Tool\Session;
 use Pimcore\Tool\Admin as AdminTool;
 use Pimcore\Model;
+use Pimcore\Logger;
 
 abstract class Admin extends Action
 {
@@ -69,7 +70,7 @@ abstract class Admin extends Action
             try {
                 $this->setUser(\Zend_Registry::get("pimcore_admin_user"));
             } catch (\Exception $e) {
-                \Logger::emerg("adminInitialized was set to true although there was no user set in the registry -> to be save the process was killed");
+                Logger::emerg("adminInitialized was set to true although there was no user set in the registry -> to be save the process was killed");
                 exit;
             }
         } else {
@@ -123,7 +124,7 @@ abstract class Admin extends Action
             if (!$this->getUser() instanceof Model\User && !($this->getParam("module") == "admin" && $this->getParam("controller") == "login")) {
 
                 // put a detailed message into the debug.log
-                \Logger::error("Prevented access to " . $_SERVER["REQUEST_URI"] . " because there is no user in the session!", [
+                Logger::error("Prevented access to " . $_SERVER["REQUEST_URI"] . " because there is no user in the session!", [
                     "server" => $_SERVER,
                     "get" => $_GET,
                     "post" => $_POST,
@@ -335,7 +336,7 @@ abstract class Admin extends Action
     {
         if (!$this->getUser() || !$this->getUser()->isAllowed($permission)) {
             $message = "attempt to access " . $permission . ", but has no permission to do so.";
-            \Logger::err($message);
+            Logger::err($message);
             throw new \Exception($message);
         }
     }

@@ -16,6 +16,7 @@ use Pimcore\Model\Element;
 use Pimcore\Model\Document;
 use Pimcore\Model\Tool;
 use Pimcore\Model\Tool\Newsletter;
+use Pimcore\Logger;
 
 class Admin_NewsletterController extends \Pimcore\Controller\Action\Admin\Document
 {
@@ -89,7 +90,7 @@ class Admin_NewsletterController extends \Pimcore\Controller\Action\Admin\Docume
                         $this->saveToSession($page);
                         $this->_helper->json(["success" => true]);
                     } catch (\Exception $e) {
-                        \Logger::err($e);
+                        Logger::err($e);
                         $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
                     }
                 } else {
@@ -106,14 +107,14 @@ class Admin_NewsletterController extends \Pimcore\Controller\Action\Admin\Docume
                                 throw $e;
                             }
 
-                            \Logger::err($e);
+                            Logger::err($e);
                             $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
                         }
                     }
                 }
             }
         } catch (\Exception $e) {
-            \Logger::log($e);
+            Logger::log($e);
             if (\Pimcore\Tool\Admin::isExtJS6() && $e instanceof Element\ValidationException) {
                 $this->_helper->json(["success" => false, "type" => "ValidationException", "message" => $e->getMessage(), "stack" => $e->getTraceAsString(), "code" => $e->getCode()]);
             }

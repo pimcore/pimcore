@@ -14,6 +14,8 @@
 
 namespace Pimcore\Controller\Plugin;
 
+use Pimcore\Logger;
+
 class HttpErrorLog extends \Zend_Controller_Plugin_Abstract
 {
 
@@ -78,8 +80,8 @@ class HttpErrorLog extends \Zend_Controller_Plugin_Abstract
                 ]);
             }
         } catch (\Exception $e) {
-            \Logger::error("Unable to log http error");
-            \Logger::error($e);
+            Logger::error("Unable to log http error");
+            Logger::error($e);
         }
     }
 }

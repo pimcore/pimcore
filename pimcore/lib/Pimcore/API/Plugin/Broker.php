@@ -15,6 +15,7 @@
 namespace Pimcore\API\Plugin;
 
 use Pimcore\Tool;
+use Pimcore\Logger;
 
 class Broker
 {
@@ -84,9 +85,9 @@ class Broker
         if (!$plugin::isInstalled()) {
             if (is_object($plugin)) {
                 $className = get_class($plugin);
-                \Logger::debug("Not registering plugin [ " . $className . " ] because it is not installed");
+                Logger::debug("Not registering plugin [ " . $className . " ] because it is not installed");
             } else {
-                \Logger::debug("Not registering plugin, it is not an object");
+                Logger::debug("Not registering plugin, it is not an object");
             }
 
             return $this;
@@ -265,7 +266,7 @@ class Broker
                     }
                 }
             } catch (Exception $e) {
-                \Logger::error("Plugin " . get_class($plugin) . " threw Exception when trying to get translations");
+                Logger::error("Plugin " . get_class($plugin) . " threw Exception when trying to get translations");
             }
         }
 

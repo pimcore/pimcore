@@ -14,6 +14,7 @@
 
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use Pimcore\Logger;
 
 class Admin_FolderController extends \Pimcore\Controller\Action\Admin\Document
 {
@@ -70,7 +71,7 @@ class Admin_FolderController extends \Pimcore\Controller\Action\Admin\Document
                 }
             }
         } catch (\Exception $e) {
-            \Logger::log($e);
+            Logger::log($e);
             if (Pimcore\Tool\Admin::isExtJS6() && $e instanceof Element\ValidationException) {
                 $this->_helper->json(["success" => false, "type" => "ValidationException", "message" => $e->getMessage(), "stack" => $e->getTraceAsString(), "code" => $e->getCode()]);
             }

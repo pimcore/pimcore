@@ -19,6 +19,7 @@ namespace Pimcore\Model\Document;
 use Pimcore\Model;
 use Pimcore\Config;
 use Pimcore\Model\Document;
+use Pimcore\Logger;
 
 abstract class PageSnippet extends Model\Document
 {
@@ -330,7 +331,7 @@ abstract class PageSnippet extends Model\Document
                 $this->elements[$name]->setDocumentId($this->getId());
             }
         } catch (\Exception $e) {
-            \Logger::warning("can't set element " . $name . " with the type " . $type . " to the document: " . $this->getRealFullPath());
+            Logger::warning("can't set element " . $name . " with the type " . $type . " to the document: " . $this->getRealFullPath());
         }
 
         return $this;

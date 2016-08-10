@@ -18,6 +18,7 @@ namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
 use Pimcore\Model\Object;
+use Pimcore\Logger;
 
 class Nonownerobjects extends Model\Object\ClassDefinition\Data\Objects
 {
@@ -45,7 +46,7 @@ class Nonownerobjects extends Model\Object\ClassDefinition\Data\Objects
      * @var number
      */
     public $ownerClassId;
-    
+
     /**
      * @var string
      */
@@ -110,13 +111,13 @@ class Nonownerobjects extends Model\Object\ClassDefinition\Data\Objects
                 $class = Object\ClassDefinition::getById($this->ownerClassId);
                 $this->ownerClassName =  $class->getName();
             } catch (\Exception $e) {
-                \Logger::error($e->getMessage());
+                Logger::error($e->getMessage());
             }
         }
 
         return $this->ownerClassName;
     }
-    
+
     /**
      * @return number
      */
@@ -127,7 +128,7 @@ class Nonownerobjects extends Model\Object\ClassDefinition\Data\Objects
                 $class = Object\ClassDefinition::getByName($this->ownerClassName);
                 $this->ownerClassId =  $class->getId();
             } catch (\Exception $e) {
-                \Logger::error($e->getMessage());
+                Logger::error($e->getMessage());
             }
         }
 

@@ -20,6 +20,7 @@ use Pimcore\Model\Object;
 use Pimcore\Model\Object\Concrete as ConcreteObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Asset;
+use Pimcore\Logger;
 
 class Config
 {
@@ -45,12 +46,12 @@ class Config
                     if (is_array($config)) {
                         self::setWorkflowManagementConfig($config);
                     } else {
-                        \Logger::error("$file exists but it is not a valid PHP array configuration.");
+                        Logger::error("$file exists but it is not a valid PHP array configuration.");
                     }
                 }
             } catch (\Exception $e) {
                 $file = \Pimcore\Config::locateConfigFile("workflowmanagement.php");
-                \Logger::emergency("Cannot find workflow configuration, should be located at: " . $file);
+                Logger::emergency("Cannot find workflow configuration, should be located at: " . $file);
             }
         }
 
@@ -100,7 +101,7 @@ class Config
                                 return $workflow;
                             }
                         } else {
-                            \Logger::warning('WorkflowManagement::getClassWorkflowConfig workflow does not feature a valid array of available asset types');
+                            Logger::warning('WorkflowManagement::getClassWorkflowConfig workflow does not feature a valid array of available asset types');
                         }
 
                         break;
@@ -112,7 +113,7 @@ class Config
                                 return $workflow;
                             }
                         } else {
-                            \Logger::warning('WorkflowManagement::getClassWorkflowConfig workflow does not feature a valid array of available document types');
+                            Logger::warning('WorkflowManagement::getClassWorkflowConfig workflow does not feature a valid array of available document types');
                         }
 
                         break;
@@ -126,7 +127,7 @@ class Config
                                     return $workflow;
                                 }
                             } else {
-                                \Logger::warning('WorkflowManagement::getClassWorkflowConfig workflow does not feature a valid array of available class ID\'s');
+                                Logger::warning('WorkflowManagement::getClassWorkflowConfig workflow does not feature a valid array of available class ID\'s');
                             }
                         }
 
@@ -172,7 +173,7 @@ class Config
 //                    return $workflow;
 //                }
 //            } else {
-//                \Logger::warning('WorkflowManagement::getClassWorkflowConfig workflow does not feature a valid array of available class ID\'s');
+//                Logger::warning('WorkflowManagement::getClassWorkflowConfig workflow does not feature a valid array of available class ID\'s');
 //            }
 //
 //        }

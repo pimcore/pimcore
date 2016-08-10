@@ -20,6 +20,7 @@ use Pimcore\File;
 use Pimcore\Tool\Console;
 use Pimcore\Model;
 use Pimcore\Model\Tool\TmpStore;
+use Pimcore\Logger;
 
 class Processor
 {
@@ -146,7 +147,7 @@ class Processor
                             call_user_func_array([$converter, $transformation["method"]], $arguments);
                         } else {
                             $message = "Video Transform failed: cannot call method `" . $transformation["method"] . "´ with arguments `" . implode(",", $arguments) . "´ because there are too few arguments";
-                            \Logger::error($message);
+                            Logger::error($message);
                         }
                     }
                 }
@@ -192,9 +193,9 @@ class Processor
         // start converting
         foreach ($instance->queue as $converter) {
             try {
-                \Logger::info("start video " . $converter->getFormat() . " to " . $converter->getDestinationFile());
+                Logger::info("start video " . $converter->getFormat() . " to " . $converter->getDestinationFile());
                 $success = $converter->save();
-                \Logger::info("finished video " . $converter->getFormat() . " to " . $converter->getDestinationFile());
+                Logger::info("finished video " . $converter->getFormat() . " to " . $converter->getDestinationFile());
 
                 File::rename($converter->getDestinationFile(), $converter->getStorageFile());
 
@@ -209,7 +210,7 @@ class Processor
 
                 $converter->destroy();
             } catch (\Exception $e) {
-                \Logger::error($e);
+                Logger::error($e);
             }
         }
 

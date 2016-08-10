@@ -20,6 +20,7 @@ use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Tool\Serialize;
 use Pimcore\Config;
 use Pimcore\File;
+use Pimcore\Logger;
 
 class Version extends AbstractModel
 {
@@ -239,7 +240,7 @@ class Version extends AbstractModel
         }
 
         if (!$data) {
-            \Logger::err("Version: cannot read version data from file system.");
+            Logger::err("Version: cannot read version data from file system.");
             $this->delete();
 
             return;
@@ -560,7 +561,7 @@ class Version extends AbstractModel
         $iterations = ceil($total/$perIteration);
 
         for ($i=0; $i<$iterations; $i++) {
-            \Logger::debug("iteration " . ($i+1) . " of " . $iterations);
+            Logger::debug("iteration " . ($i+1) . " of " . $iterations);
 
             $list->setOffset($i*$perIteration);
 
@@ -575,13 +576,13 @@ class Version extends AbstractModel
 
                     $alreadyCompressedCounter = 0;
 
-                    \Logger::debug("version compressed:" . $version->getFilePath());
+                    Logger::debug("version compressed:" . $version->getFilePath());
                 } else {
                     $alreadyCompressedCounter++;
                 }
 
                 if ($overallCounter % 10 == 0) {
-                    \Logger::debug("Waiting 5 secs to not kill the server...");
+                    Logger::debug("Waiting 5 secs to not kill the server...");
                     sleep(5);
                 }
             }
@@ -593,7 +594,7 @@ class Version extends AbstractModel
             // is would be very unusual that older versions are not already compressed, so we assume that only new
             // versions need to be compressed, that's not perfect but a compromise we can (hopefully) live with.
             if ($alreadyCompressedCounter > 100) {
-                \Logger::debug("Over " . $alreadyCompressedCounter . " versions were already compressed before, it doesn't seem that there are still uncompressed versions in the past, skip...");
+                Logger::debug("Over " . $alreadyCompressedCounter . " versions were already compressed before, it doesn't seem that there are still uncompressed versions in the past, skip...");
 
                 return;
             }
@@ -637,7 +638,7 @@ class Version extends AbstractModel
             }
             $counter = 0;
 
-            \Logger::debug("versions to check: " . count($versions));
+            Logger::debug("versions to check: " . count($versions));
             if (is_array($versions) && !empty($versions)) {
                 $totalCount = count($versions);
                 foreach ($versions as $index => $id) {
@@ -645,7 +646,7 @@ class Version extends AbstractModel
                         $version = Version::getById($id);
                     } catch (\Exception $e) {
                         $ignoredIds[] = $id;
-                        \Logger::debug("Version with " . $id . " not found\n");
+                        Logger::debug("Version with " . $id . " not found\n");
                         continue;
                     }
                     $counter++;
@@ -665,19 +666,19 @@ class Version extends AbstractModel
                     }
 
                     if ($element instanceof ElementInterface) {
-                        \Logger::debug("currently checking Element-ID: " . $element->getId() . " Element-Type: " . Element\Service::getElementType($element) . " in cycle: " . $counter . "/" . $totalCount);
+                        Logger::debug("currently checking Element-ID: " . $element->getId() . " Element-Type: " . Element\Service::getElementType($element) . " in cycle: " . $counter . "/" . $totalCount);
 
                         if ($element->getModificationDate() >= $version->getDate()) {
                             // delete version if it is outdated
-                            \Logger::debug("delete version: " . $version->getId() . " because it is outdated");
+                            Logger::debug("delete version: " . $version->getId() . " because it is outdated");
                             $version->delete();
                         } else {
                             $ignoredIds[] = $version->getId();
-                            \Logger::debug("do not delete version (" . $version->getId() . ") because version's date is newer than the actual modification date of the element. Element-ID: " . $element->getId() . " Element-Type: " . Element\Service::getElementType($element));
+                            Logger::debug("do not delete version (" . $version->getId() . ") because version's date is newer than the actual modification date of the element. Element-ID: " . $element->getId() . " Element-Type: " . Element\Service::getElementType($element));
                         }
                     } else {
                         // delete version if the corresponding element doesn't exist anymore
-                        \Logger::debug("delete version (" . $version->getId() . ") because the corresponding element doesn't exist anymore");
+                        Logger::debug("delete version (" . $version->getId() . ") because the corresponding element doesn't exist anymore");
                         $version->delete();
                     }
 

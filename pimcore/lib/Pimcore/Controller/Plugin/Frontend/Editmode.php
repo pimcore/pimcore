@@ -18,6 +18,7 @@ use Pimcore\Version;
 use Pimcore\ExtensionManager;
 use Pimcore\Config;
 use Pimcore\Model\Document;
+use Pimcore\Logger;
 
 class Editmode extends \Zend_Controller_Plugin_Abstract
 {
@@ -217,8 +218,8 @@ class Editmode extends \Zend_Controller_Plugin_Abstract
             $editmodeScripts=array_merge($editmodeScripts, $jsPaths);
             $editmodeStylesheets=array_merge($editmodeStylesheets, $cssPaths);
         } catch (\Exception $e) {
-            \Logger::alert("there is a problem with the plugin configuration");
-            \Logger::alert($e);
+            Logger::alert("there is a problem with the plugin configuration");
+            Logger::alert($e);
         }
 
         $editmodeHeadHtml = "\n\n\n<!-- pimcore editmode -->\n";

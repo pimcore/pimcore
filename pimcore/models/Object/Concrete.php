@@ -18,6 +18,7 @@ namespace Pimcore\Model\Object;
 
 use Pimcore\Model;
 use Pimcore\Config;
+use Pimcore\Logger;
 
 class Concrete extends AbstractObject
 {
@@ -603,7 +604,7 @@ class Concrete extends AbstractObject
                 $localizedField = $field->getFielddefinition($localizedPropertyName);
 
                 if (!$localizedField instanceof Model\Object\ClassDefinition\Data) {
-                    \Logger::error("Class: Object\\Concrete => call to undefined static method " . $method);
+                    Logger::error("Class: Object\\Concrete => call to undefined static method " . $method);
                     throw new \Exception("Call to undefined static method " . $method . " in class Object\\Concrete");
                 }
 
@@ -653,7 +654,7 @@ class Concrete extends AbstractObject
         }
 
         // there is no property for the called method, so throw an exception
-        \Logger::error("Class: Object\\Concrete => call to undefined static method " . $method);
+        Logger::error("Class: Object\\Concrete => call to undefined static method " . $method);
         throw new \Exception("Call to undefined static method " . $method . " in class Object\\Concrete");
     }
 

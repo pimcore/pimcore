@@ -19,6 +19,7 @@ namespace Pimcore\Model\Asset\Document;
 use Pimcore\Model\Asset\Image;
 use Pimcore\Model;
 use Pimcore\File;
+use Pimcore\Logger;
 
 class ImageThumbnail
 {
@@ -157,8 +158,8 @@ class ImageThumbnail
 
                 $this->filesystemPath = $path;
             } catch (\Exception $e) {
-                \Logger::error("Couldn't create image-thumbnail of document " . $this->asset->getRealFullPath());
-                \Logger::error($e);
+                Logger::error("Couldn't create image-thumbnail of document " . $this->asset->getRealFullPath());
+                Logger::error($e);
                 $this->filesystemPath = $errorImage;
             }
 

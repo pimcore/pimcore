@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -15,6 +15,7 @@
 namespace Pimcore\Controller\Plugin;
 
 use Pimcore\Model\Tool;
+use Pimcore\Logger;
 
 class QrCode extends \Zend_Controller_Plugin_Abstract
 {
@@ -42,7 +43,7 @@ class QrCode extends \Zend_Controller_Plugin_Abstract
                     header("Location: " . $url, true, 302);
                     exit;
                 } else {
-                    \Logger::error("called an QR code but '" . $matches[1] . " is not a code in the system.");
+                    Logger::error("called an QR code but '" . $matches[1] . " is not a code in the system.");
                 }
             }
         }

@@ -18,6 +18,7 @@ namespace Pimcore\Model\Asset;
 
 use Pimcore\File;
 use Pimcore\Model;
+use Pimcore\Logger;
 
 class Video extends Model\Asset
 {
@@ -38,7 +39,7 @@ class Video extends Model\Asset
             try {
                 $this->setCustomSetting("duration", $this->getDurationFromBackend());
             } catch (\Exception $e) {
-                \Logger::err("Unable to get duration of video: " . $this->getId());
+                Logger::err("Unable to get duration of video: " . $this->getId());
             }
         }
 
@@ -128,8 +129,8 @@ class Video extends Model\Asset
                     return $customSetting[$thumbnail->getName()];
                 }
             } catch (\Exception $e) {
-                \Logger::error("Couldn't create thumbnail of video " . $this->getRealFullPath());
-                \Logger::error($e);
+                Logger::error("Couldn't create thumbnail of video " . $this->getRealFullPath());
+                Logger::error($e);
             }
         }
 
@@ -146,7 +147,7 @@ class Video extends Model\Asset
     public function getImageThumbnail($thumbnailName, $timeOffset = null, $imageAsset = null)
     {
         if (!\Pimcore\Video::isAvailable()) {
-            \Logger::error("Couldn't create image-thumbnail of video " . $this->getRealFullPath() . " no video adapter is available");
+            Logger::error("Couldn't create image-thumbnail of video " . $this->getRealFullPath() . " no video adapter is available");
 
             return new Video\ImageThumbnail(null); // returns error image
         }

@@ -15,6 +15,7 @@
 namespace Pimcore\Model\Search;
 
 use Pimcore\Db;
+use Pimcore\Logger;
 
 class Backend
 {
@@ -102,8 +103,8 @@ class Backend
             $this->backendQueryParams[] = $userModification;
         }
 
-        \Logger::debug($this->backendQuery);
-        \Logger::debug($this->backendQueryParams);
+        Logger::debug($this->backendQuery);
+        Logger::debug($this->backendQueryParams);
     }
 
     /**

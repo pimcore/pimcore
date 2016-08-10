@@ -15,6 +15,7 @@
 namespace Pimcore;
 
 use Pimcore\Db;
+use Pimcore\Logger;
 
 class Backup
 {
@@ -187,7 +188,7 @@ class Backup
         // create backup directory if not exists
         if (!is_dir(PIMCORE_BACKUP_DIRECTORY)) {
             if (!\Pimcore\File::mkdir(PIMCORE_BACKUP_DIRECTORY)) {
-                \Logger::err("Directory " . PIMCORE_BACKUP_DIRECTORY . " does not exists and cannot be created.");
+                Logger::err("Directory " . PIMCORE_BACKUP_DIRECTORY . " does not exists and cannot be created.");
                 exit;
             }
         }
@@ -345,10 +346,10 @@ class Backup
                     if (!$exclude && is_file($file)) {
                         $this->getArchive()->addFile($file, ltrim($relPath, "/"));
                     } else {
-                        \Logger::info("Backup: Excluded: " . $file);
+                        Logger::info("Backup: Excluded: " . $file);
                     }
                 } else {
-                    \Logger::err("Backup: Can't read file: " . $file);
+                    Logger::err("Backup: Can't read file: " . $file);
                 }
             }
         }
@@ -470,7 +471,7 @@ class Backup
                 $viewData = $db->fetchRow("SHOW CREATE VIEW " . $name);
                 $dumpData .= $viewData["Create View"] . ";";
             } catch (\Exception $e) {
-                \Logger::error($e);
+                Logger::error($e);
             }
         }
 

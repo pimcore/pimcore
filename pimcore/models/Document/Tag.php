@@ -19,6 +19,7 @@ namespace Pimcore\Model\Document;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Webservice;
+use Pimcore\Logger;
 
 abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\TagInterface
 {
@@ -296,7 +297,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
                 // the __toString method isn't allowed to throw exceptions
                 $return = '<b style="color:#f00">' . $e->getMessage().'</b><br/>'.$e->getTraceAsString();
             }
-            \Logger::error("to string not possible - " . $e->getMessage());
+            Logger::error("to string not possible - " . $e->getMessage());
         }
 
         if (is_string($return) || is_numeric($return)) {

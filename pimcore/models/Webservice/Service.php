@@ -22,6 +22,7 @@ use Pimcore\Model\Webservice;
 use Pimcore\Model\User;
 use Pimcore\Model\Object;
 use Pimcore\Model\Asset;
+use Pimcore\Logger;
 
 class Service
 {
@@ -56,7 +57,7 @@ class Service
 
             throw new \Exception("Document Folder with given ID (" . $id . ") does not exist.");
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             throw $e;
         }
     }
@@ -78,7 +79,7 @@ class Service
 
             throw new \Exception("Document Link with given ID (" . $id . ") does not exist.");
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             throw $e;
         }
     }
@@ -100,7 +101,7 @@ class Service
 
             throw new \Exception("Document Hardlink with given ID (" . $id . ") does not exist.");
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             throw $e;
         }
     }
@@ -122,7 +123,7 @@ class Service
 
             throw new \Exception("Document Email with given ID (" . $id . ") does not exist.");
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             throw $e;
         }
     }
@@ -146,7 +147,7 @@ class Service
 
             throw new \Exception("Document Page with given ID (" . $id . ") does not exist.");
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             throw $e;
         }
     }
@@ -170,7 +171,7 @@ class Service
 
             throw new \Exception("Document Snippet with given ID (" . $id . ") does not exist.");
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             throw $e;
         }
     }
@@ -213,7 +214,7 @@ class Service
 
             return $items;
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             throw $e;
         }
     }
@@ -235,7 +236,7 @@ class Service
 
             throw new \Exception("Document with given ID (" . $id . ") does not exist.");
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             throw $e;
         }
     }
@@ -256,7 +257,7 @@ class Service
 
             throw new \Exception("Document with given ID (" . $id . ") does not exist.");
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             throw $e;
         }
     }
@@ -274,7 +275,7 @@ class Service
                 throw new \Exception("Unable to update Document Page. Inappropriate Data given");
             }
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             throw $e;
         }
     }
@@ -292,7 +293,7 @@ class Service
                 throw new \Exception("Unable to update Document Folder. Inappropriate Data given");
             }
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             throw $e;
         }
     }
@@ -310,7 +311,7 @@ class Service
                 throw new \Exception("Unable to update Document Snippet. Inappropriate Data given");
             }
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             throw $e;
         }
     }
@@ -328,7 +329,7 @@ class Service
                 throw new \Exception("Unable to update Document Link. Inappropriate Data given");
             }
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             throw $e;
         }
     }
@@ -346,7 +347,7 @@ class Service
                 throw new \Exception("Unable to update Document Hardlink. Inappropriate Data given");
             }
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             throw $e;
         }
     }
@@ -364,7 +365,7 @@ class Service
                 throw new \Exception("Unable to update Document Email. Inappropriate Data given");
             }
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             throw $e;
         }
     }
@@ -383,7 +384,7 @@ class Service
                 throw new \Exception("Unable to update Object Folder. Inappropriate Data given");
             }
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             throw $e;
         }
     }
@@ -401,7 +402,7 @@ class Service
                 throw new \Exception("Unable to update Object Concrete. Inappropriate Data given");
             }
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             throw $e;
         }
     }
@@ -419,7 +420,7 @@ class Service
                 throw new \Exception("Unable to update Asset Folder. Inappropriate Data given");
             }
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             throw $e;
         }
     }
@@ -437,7 +438,7 @@ class Service
                 throw new \Exception("Unable to update Asset Folder. Inappropriate Data given");
             }
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             throw $e;
         }
     }
@@ -457,7 +458,7 @@ class Service
             }
             throw new \Exception("Unable to create new Document Page.");
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             throw $e;
         }
     }
@@ -478,7 +479,7 @@ class Service
 
             throw new \Exception("Unable to create new Document Snippet.");
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             throw $e;
         }
     }
@@ -499,7 +500,7 @@ class Service
 
             throw new \Exception("Unable to create new Document Snippet.");
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             throw $e;
         }
     }
@@ -520,7 +521,7 @@ class Service
             }
             throw new \Exception("Unable to create new Document Folder.");
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             throw $e;
         }
     }
@@ -540,7 +541,7 @@ class Service
             }
             throw new \Exception("Unable to create new Document Link.");
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             throw $e;
         }
     }
@@ -560,7 +561,7 @@ class Service
             }
             throw new \Exception("Unable to create new Document Hardlink.");
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             throw $e;
         }
     }
@@ -581,7 +582,7 @@ class Service
             }
             throw new \Exception("Unable to create new Asset Folder.");
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             throw $e;
         }
     }
@@ -611,7 +612,7 @@ class Service
 
             throw new \Exception("Unable to create new Asset File.");
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             throw $e;
         }
     }
@@ -632,7 +633,7 @@ class Service
 
             throw new \Exception("Unable to create new Object Folder.");
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             throw $e;
         }
     }
@@ -656,7 +657,7 @@ class Service
 
             throw new \Exception("Unable to create new Object Concrete.");
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             throw $e;
         }
     }
@@ -679,7 +680,7 @@ class Service
 
             throw new \Exception("Asset Folder with given ID (" . $id . ") does not exist.");
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             throw $e;
         }
     }
@@ -701,7 +702,7 @@ class Service
 
             throw new \Exception("Asset File with given ID (" . $id . ") does not exist.");
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             throw $e;
         }
     }
@@ -753,7 +754,7 @@ class Service
 
             return $items;
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             throw $e;
         }
     }
@@ -774,7 +775,7 @@ class Service
 
             throw new \Exception("Asset with given ID (" . $id . ") does not exist.");
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             throw $e;
         }
     }
@@ -795,7 +796,7 @@ class Service
 
             throw new \Exception("Object Folder with given ID (" . $id . ") does not exist.");
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             throw $e;
         }
     }
@@ -819,7 +820,7 @@ class Service
 
             throw new \Exception("Object with given ID (" . $id . ") does not exist.");
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             throw $e;
         }
     }
@@ -883,7 +884,7 @@ class Service
 
             return $items;
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             throw $e;
         }
     }
@@ -905,7 +906,7 @@ class Service
 
             throw new \Exception("Object with given ID (" . $id . ") does not exist.");
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             throw $e;
         }
     }
@@ -926,7 +927,7 @@ class Service
 
             throw new \Exception("Object with given ID (" . $id . ") does not exist.");
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             throw $e;
         }
     }
@@ -1094,7 +1095,7 @@ class Service
 
             throw new \Exception("Class with given ID (" . $id . ") does not exist.");
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             throw $e;
         }
     }
@@ -1118,7 +1119,7 @@ class Service
 
             throw new \Exception("Object with given ID (" . $id . ") does not exist.");
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             throw $e;
         }
     }

@@ -19,6 +19,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Pimcore\Model\Asset;
 use Pimcore\Update;
+use Pimcore\Logger;
 
 class InternalUpdateProcessorCommand extends AbstractCommand
 {
@@ -41,7 +42,7 @@ class InternalUpdateProcessorCommand extends AbstractCommand
             if (is_array($job)) {
                 if (isset($job["dry-run"])) {
                     // do not do anything here
-                    \Logger::info("skipped update job because it is in dry-run mode", $job);
+                    Logger::info("skipped update job because it is in dry-run mode", $job);
                 } elseif ($job["type"] == "files") {
                     Update::installData($job["revision"]);
                 } elseif ($job["type"] == "clearcache") {

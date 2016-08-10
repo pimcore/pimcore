@@ -16,6 +16,7 @@ namespace Pimcore\WorkflowManagement\Workflow;
 
 use Pimcore\Model\Element;
 use Pimcore\Model\User;
+use Pimcore\Logger;
 
 class Service
 {
@@ -77,7 +78,7 @@ class Service
         }
 
         //purposely return null if there is no valid class, log a warning
-        \Logger::warning("No valid pimcore tag found for fieldType ({$pimcoreTagName}), check 'fieldType' exists, and 'type' is not being used in config");
+        Logger::warning("No valid pimcore tag found for fieldType ({$pimcoreTagName}), check 'fieldType' exists, and 'type' is not being used in config");
 
         return null;
     }

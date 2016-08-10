@@ -20,6 +20,7 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
 use Pimcore\Model\Object;
 use Pimcore\Model\Element;
+use Pimcore\Logger;
 
 class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
 {
@@ -237,7 +238,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                 return;
             }
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             $this->encoder->encode(["success" => false, "msg" => (string) $e]);
         }
 
@@ -265,7 +266,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
             }
         } catch (\Exception $e) {
             $this->encoder->encode(["success" => false, "message" => (string) $e]);
-            \Logger::error($e);
+            Logger::error($e);
         }
 
         $this->encoder->encode(["success" => false]);
@@ -290,7 +291,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                 return;
             }
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             $this->encoder->encode(["success" => false, "msg" => (string) $e]);
         }
         $this->encoder->encode(["success" => false]);
@@ -315,7 +316,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                 return;
             }
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             $this->encoder->encode(["success" => false, "msg" => (string) $e]);
         }
         $this->encoder->encode(["success" => false]);
@@ -356,7 +357,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
             $fc = Object\Objectbrick\Definition::getByKey($this->getParam("id"));
             $this->_helper->json(["success" => true, "data" => $fc]);
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             $this->encoder->encode(["success" => false, "msg" => (string) $e]);
         }
         $this->encoder->encode(["success" => false]);
@@ -374,7 +375,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
             $fc = Object\Fieldcollection\Definition::getByKey($this->getParam("id"));
             $this->_helper->json(["success" => true, "data" => $fc]);
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             $this->encoder->encode(["success" => false, "msg" => (string) $e]);
         }
         $this->encoder->encode(["success" => false]);
@@ -392,7 +393,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
             $object = $this->service->getuser();
             $this->encoder->encode(["success" => true, "data" => $object]);
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
         }
         $this->encoder->encode(["success" => false]);
     }
@@ -523,7 +524,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                 return;
             }
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             $this->encoder->encode(["success" => false, "msg" => (string) $e]);
         }
         $this->encoder->encode(["success" => false]);
@@ -1145,7 +1146,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
             $result = $this->service->getTranslations($params['type'], $params);
             $this->encoder->encode(["success" => true, "data" => $result]);
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             $this->encoder->encode(["success" => false, "msg" => (string) $e]);
         }
     }

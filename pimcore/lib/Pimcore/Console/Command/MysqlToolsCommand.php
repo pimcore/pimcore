@@ -18,6 +18,7 @@ use Pimcore\Console\AbstractCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Pimcore\Logger;
 
 class MysqlToolsCommand extends AbstractCommand
 {
@@ -49,10 +50,10 @@ class MysqlToolsCommand extends AbstractCommand
             foreach ($tables as $table) {
                 $t = current($table);
                 try {
-                    \Logger::debug("Running: OPTIMIZE TABLE " . $t);
+                    Logger::debug("Running: OPTIMIZE TABLE " . $t);
                     $db->query("OPTIMIZE TABLE " . $t);
                 } catch (\Exception $e) {
-                    \Logger::error($e);
+                    Logger::error($e);
                 }
             }
         } elseif ($input->getOption("mode") == "warmup") {
@@ -61,11 +62,11 @@ class MysqlToolsCommand extends AbstractCommand
             foreach ($tables as $table) {
                 $t = current($table);
                 try {
-                    \Logger::debug("Running: SELECT COUNT(*) FROM $t");
+                    Logger::debug("Running: SELECT COUNT(*) FROM $t");
                     $res = $db->fetchOne("SELECT COUNT(*) FROM $t");
-                    \Logger::debug("Result: " . $res);
+                    Logger::debug("Result: " . $res);
                 } catch (\Exception $e) {
-                    \Logger::error($e);
+                    Logger::error($e);
                 }
             }
         }

@@ -15,6 +15,7 @@
 use Pimcore\Tool;
 use Pimcore\File;
 use Pimcore\Model\Object;
+use Pimcore\Logger;
 
 class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
 {
@@ -866,7 +867,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         $mappedFieldnames = [];
 
         $objects = [];
-        \Logger::debug("objects in list:" . count($list->getObjects()));
+        Logger::debug("objects in list:" . count($list->getObjects()));
         foreach ($list->getObjects() as $object) {
             if ($fields) {
                 $objectData = [];
@@ -1162,11 +1163,11 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
                     $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
                 }
             } else {
-                \Logger::debug("ObjectController::batchAction => There is no object left to update.");
+                Logger::debug("ObjectController::batchAction => There is no object left to update.");
                 $this->_helper->json(["success" => false, "message" => "ObjectController::batchAction => There is no object left to update."]);
             }
         } catch (\Exception $e) {
-            \Logger::err($e);
+            Logger::err($e);
             $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
         }
 

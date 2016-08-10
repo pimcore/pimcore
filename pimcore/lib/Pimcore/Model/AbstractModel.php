@@ -17,6 +17,7 @@ namespace Pimcore\Model;
 use Pimcore\File;
 use Pimcore\Db;
 use Pimcore\Tool;
+use Pimcore\Logger;
 
 abstract class AbstractModel
 {
@@ -125,7 +126,7 @@ abstract class AbstractModel
         }
 
         if (!$dao) {
-            \Logger::critical("No dao implementation found for: " . $myClass);
+            Logger::critical("No dao implementation found for: " . $myClass);
             throw new \Exception("No dao implementation found for: " . $myClass);
         }
 
@@ -257,11 +258,11 @@ abstract class AbstractModel
 
                 return $r;
             } catch (\Exception $e) {
-                \Logger::emergency($e);
+                Logger::emergency($e);
                 throw $e;
             }
         } else {
-            \Logger::error("Class: " . get_class($this) . " => call to undefined method " . $method);
+            Logger::error("Class: " . get_class($this) . " => call to undefined method " . $method);
             throw new \Exception("Call to undefined method " . $method . " in class " . get_class($this));
         }
     }

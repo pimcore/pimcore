@@ -20,6 +20,7 @@ use Pimcore\Model;
 use Pimcore\Model\Object;
 use Pimcore\Model\Webservice;
 use Pimcore\Tool;
+use Pimcore\Logger;
 
 class Objectbricks extends Model\Object\ClassDefinition\Data
 {
@@ -392,7 +393,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
                 try {
                     Object\Objectbrick\Definition::getByKey($allowedTypes[$i]);
                 } catch (\Exception $e) {
-                    \Logger::warn("Removed unknown allowed type [ $allowedTypes[$i] ] from allowed types of object brick");
+                    Logger::warn("Removed unknown allowed type [ $allowedTypes[$i] ] from allowed types of object brick");
                     unset($allowedTypes[$i]);
                 }
             }
@@ -912,7 +913,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
                 try {
                     $definition = Object\Objectbrick\Definition::getByKey($allowedType);
                 } catch (\Exception $e) {
-                    \Logger::info("Unknown allowed type [ $allowedType ] ignored.");
+                    Logger::info("Unknown allowed type [ $allowedType ] ignored.");
                 }
 
                 if ($definition) {

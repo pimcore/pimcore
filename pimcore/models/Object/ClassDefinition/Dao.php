@@ -20,6 +20,7 @@ use Pimcore\Model;
 use Pimcore\Model\Object;
 use Pimcore\Tool\Serialize;
 use Pimcore\File;
+use Pimcore\Logger;
 
 class Dao extends Model\Dao\AbstractDao
 {
@@ -204,7 +205,7 @@ class Dao extends Model\Dao\AbstractDao
             //$this->db->query('CREATE OR REPLACE VIEW `' . $objectView . '` AS SELECT * FROM `objects` left JOIN `' . $objectTable . '` ON `objects`.`o_id` = `' . $objectTable . '`.`oo_id` WHERE `objects`.`o_classId` = ' . $this->model->getId() . ';');
             $this->db->query('CREATE OR REPLACE VIEW `' . $objectView . '` AS SELECT * FROM `' . $objectTable . '` JOIN `objects` ON `objects`.`o_id` = `' . $objectTable . '`.`oo_id`;');
         } catch (\Exception $e) {
-            \Logger::debug($e);
+            Logger::debug($e);
         }
 
         $this->tableDefinitions = null;

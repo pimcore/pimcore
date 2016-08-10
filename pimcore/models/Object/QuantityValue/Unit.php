@@ -17,6 +17,7 @@
 namespace Pimcore\Model\Object\QuantityValue;
 
 use Pimcore\Model;
+use Pimcore\Logger;
 
 class Unit extends Model\AbstractModel
 {
@@ -106,7 +107,7 @@ class Unit extends Model\AbstractModel
                 $unit->getDao()->getById($id);
                 \Zend_Registry::set($cacheKey, $unit);
             } catch (\Exception $ex) {
-                \Logger::debug($ex->getMessage());
+                Logger::debug($ex->getMessage());
 
                 return null;
             }

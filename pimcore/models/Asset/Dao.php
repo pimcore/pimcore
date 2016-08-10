@@ -17,6 +17,7 @@
 namespace Pimcore\Model\Asset;
 
 use Pimcore\Model;
+use Pimcore\Logger;
 
 class Dao extends Model\Element\Dao
 {
@@ -235,7 +236,7 @@ class Dao extends Model\Element\Dao
 
                 $properties[$propertyRaw["name"]] = $property;
             } catch (\Exception $e) {
-                \Logger::error("can't add property " . $propertyRaw["name"] . " to asset " . $this->model->getRealFullPath());
+                Logger::error("can't add property " . $propertyRaw["name"] . " to asset " . $this->model->getRealFullPath());
             }
         }
 
@@ -313,7 +314,7 @@ class Dao extends Model\Element\Dao
         try {
             $path = $this->db->fetchOne("SELECT CONCAT(path,filename) as path FROM assets WHERE id = ?", $this->model->getId());
         } catch (\Exception $e) {
-            \Logger::error("could not get  current asset path from DB");
+            Logger::error("could not get  current asset path from DB");
         }
 
         return $path;
@@ -461,7 +462,7 @@ class Dao extends Model\Element\Dao
                 }
             }
         } catch (\Exception $e) {
-            \Logger::warn("Unable to get permission " . $type . " for asset " . $this->model->getId());
+            Logger::warn("Unable to get permission " . $type . " for asset " . $this->model->getId());
         }
 
         return false;

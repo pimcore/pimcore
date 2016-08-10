@@ -17,6 +17,7 @@
 namespace Pimcore\Model\Tool\Lock;
 
 use Pimcore\Model;
+use Pimcore\Logger;
 
 class Dao extends Model\Dao\AbstractDao
 {
@@ -39,7 +40,7 @@ class Dao extends Model\Dao\AbstractDao
             return false;
         } elseif (is_array($lock) && array_key_exists("id", $lock) && $lock["date"] < (time()-$expire)) {
             if ($expire > 0) {
-                \Logger::debug("Lock '" . $key . "' expired (expiry time: " . $expire . ", lock date: " . $lock["date"] . " / current time: " . time() . ")");
+                Logger::debug("Lock '" . $key . "' expired (expiry time: " . $expire . ", lock date: " . $lock["date"] . " / current time: " . time() . ")");
                 $this->release($key);
 
                 return false;
@@ -56,7 +57,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function acquire($key, $expire = 120, $refreshInterval = 1)
     {
-        \Logger::debug("Acquiring key: '" . $key . "' expiry: " . $expire);
+        Logger::debug("Acquiring key: '" . $key . "' expiry: " . $expire);
 
         if (!is_numeric($refreshInterval)) {
             $refreshInterval = 1;
@@ -72,7 +73,7 @@ class Dao extends Model\Dao\AbstractDao
 
                 return true;
             } catch (\Exception $e) {
-                \Logger::debug($e);
+                Logger::debug($e);
             }
         }
     }
@@ -82,7 +83,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function release($key)
     {
-        \Logger::debug("Releasing: '" . $key . "'");
+        Logger::debug("Releasing: '" . $key . "'");
 
         $this->db->delete("locks", "id = " . $this->db->quote($key));
     }
@@ -93,7 +94,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function lock($key, $force = true)
     {
-        \Logger::debug("Locking: '" . $key . "'");
+        Logger::debug("Locking: '" . $key . "'");
 
         $updateMethod = $force ? "insertOrUpdate" : "insert";
 

@@ -14,6 +14,8 @@
 
 namespace Pimcore\Tool;
 
+use Pimcore\Logger;
+
 class Session
 {
 
@@ -122,11 +124,11 @@ class Session
                     }
                 }
             } catch (\Exception $e) {
-                \Logger::error("Problem while starting session");
-                \Logger::error($e);
+                Logger::error("Problem while starting session");
+                Logger::error($e);
             }
         } catch (\Exception $e) {
-            \Logger::emergency("there is a problem with admin session");
+            Logger::emergency("there is a problem with admin session");
             die();
         }
 

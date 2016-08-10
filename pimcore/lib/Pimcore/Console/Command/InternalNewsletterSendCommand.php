@@ -18,6 +18,7 @@ use Pimcore\Console\AbstractCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Pimcore\Model;
+use Pimcore\Logger;
 
 class InternalNewsletterSendCommand extends AbstractCommand
 {
@@ -36,7 +37,7 @@ class InternalNewsletterSendCommand extends AbstractCommand
             $pidFile = $newsletter->getPidFile();
 
             if (file_exists($pidFile)) {
-                \Logger::alert("Cannot send newsletters because there's already one active sending process");
+                Logger::alert("Cannot send newsletters because there's already one active sending process");
                 exit;
             }
 
@@ -97,7 +98,7 @@ class InternalNewsletterSendCommand extends AbstractCommand
                 foreach ($objects as $object) {
                     try {
                         $count++;
-                        \Logger::info("Sending newsletter " . $count . " / " . $elementsTotal. " [" . $newsletter->getName() . "]");
+                        Logger::info("Sending newsletter " . $count . " / " . $elementsTotal. " [" . $newsletter->getName() . "]");
 
                         \Pimcore\Tool\Newsletter::sendMail($newsletter, $object, null, $input->getArgument("hostUrl"));
 
@@ -110,15 +111,15 @@ class InternalNewsletterSendCommand extends AbstractCommand
                         $note->setData([]);
                         $note->save();
 
-                        \Logger::info("Sent newsletter to: " . $this->obfuscateEmail($object->getEmail()) . " [" . $newsletter->getName() . "]");
+                        Logger::info("Sent newsletter to: " . $this->obfuscateEmail($object->getEmail()) . " [" . $newsletter->getName() . "]");
                     } catch (\Exception $e) {
-                        \Logger::err($e);
+                        Logger::err($e);
                     }
                 }
 
                 // check if pid exists
                 if (!file_exists($pidFile)) {
-                    \Logger::alert("Newsletter PID not found, cancel sending process");
+                    Logger::alert("Newsletter PID not found, cancel sending process");
                     exit;
                 }
 
@@ -133,7 +134,7 @@ class InternalNewsletterSendCommand extends AbstractCommand
             // remove pid
             @unlink($pidFile);
         } else {
-            \Logger::emerg("Newsletter '" . $input->getArgument("id") . "' doesn't exist");
+            Logger::emerg("Newsletter '" . $input->getArgument("id") . "' doesn't exist");
         }
     }
 

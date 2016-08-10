@@ -22,6 +22,7 @@ use Pimcore\Model\Object;
 use Pimcore\Model\Document;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Webservice;
+use Pimcore\Logger;
 
 class RestClient
 {
@@ -756,7 +757,7 @@ class RestClient
 
                         }
 
-                        \Logger::debug("mimeType: " . $mimeType);
+                        Logger::debug("mimeType: " . $mimeType);
                         $asset->setFilename($filename);
                     }
 

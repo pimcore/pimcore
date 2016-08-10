@@ -19,6 +19,7 @@ use Pimcore\Config;
 use Pimcore\Model\Document;
 use Pimcore\Model\Version;
 use Pimcore\Model\Site;
+use Pimcore\Logger;
 
 class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
 {
@@ -222,17 +223,17 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
                             }
                             break;
                         } else {
-                            \Logger::debug("Unknown document type, can't add [ " . $this->getParam("type") . " ] ");
+                            Logger::debug("Unknown document type, can't add [ " . $this->getParam("type") . " ] ");
                         }
                         break;
                 }
             } else {
                 $errorMessage = "prevented adding a document because document with same path+key [ $intendedPath ] already exists";
-                \Logger::debug($errorMessage);
+                Logger::debug($errorMessage);
             }
         } else {
             $errorMessage = "prevented adding a document because of missing permissions";
-            \Logger::debug($errorMessage);
+            Logger::debug($errorMessage);
         }
 
         if ($success) {
@@ -291,7 +292,7 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
                     $document->delete();
                     $this->_helper->json(["success" => true]);
                 } catch (\Exception $e) {
-                    \Logger::err($e);
+                    Logger::err($e);
                     $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
                 }
             }
@@ -308,7 +309,7 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
             $document = Document::getById($this->getParam("id"));
             $hasDependency = $document->getDependencies()->isRequired();
         } catch (\Exception $e) {
-            \Logger::err("failed to access document with id: " . $this->getParam("id"));
+            Logger::err("failed to access document with id: " . $this->getParam("id"));
         }
 
         $deleteJobs = [];
@@ -418,7 +419,7 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
 
                 if (!$document->isAllowed("rename") && $this->getParam("key")) {
                     $blockedVars[] = "key";
-                    \Logger::debug("prevented renaming document because of missing permissions ");
+                    Logger::debug("prevented renaming document because of missing permissions ");
                 }
 
                 foreach ($this->getAllParams() as $key => $value) {
@@ -454,7 +455,7 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
                 }
             } else {
                 $msg = "Prevented moving document, because document with same path+key already exists or the document is locked. ID: " . $document->getId();
-                \Logger::debug($msg);
+                Logger::debug($msg);
                 $this->_helper->json(["success" => false, "message" => $msg]);
             }
         } elseif ($document->isAllowed("rename") && $this->getParam("key")) {
@@ -468,7 +469,7 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
                 $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
             }
         } else {
-            \Logger::debug("Prevented update document, because of missing permissions.");
+            Logger::debug("Prevented update document, because of missing permissions.");
         }
 
         $this->_helper->json(["success" => $success]);
@@ -805,10 +806,10 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
 
                     $success = true;
                 } else {
-                    \Logger::error("prevended copy/paste because document with same path+key already exists in this location");
+                    Logger::error("prevended copy/paste because document with same path+key already exists in this location");
                 }
             } else {
-                \Logger::error("could not execute copy/paste because of missing permissions on target [ " . $targetId . " ]");
+                Logger::error("could not execute copy/paste because of missing permissions on target [ " . $targetId . " ]");
                 $this->_helper->json(["success" => false, "message" => "missing_permission"]);
             }
         }
@@ -1190,7 +1191,7 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
                     }
                 }
             } catch (\Exception $e) {
-                \Logger::debug($e);
+                Logger::debug($e);
             }
 
             if (!$title) {

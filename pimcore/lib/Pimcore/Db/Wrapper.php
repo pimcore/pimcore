@@ -15,6 +15,7 @@
 namespace Pimcore\Db;
 
 use Pimcore\Db;
+use Pimcore\Logger;
 
 class Wrapper
 {
@@ -139,12 +140,12 @@ class Wrapper
                 } elseif ($resource instanceof \Zend_Db_Adapter_Pdo_Mysql) {
                     $connectionId = $resource->fetchOne("SELECT CONNECTION_ID()");
                 }
-                \Logger::debug(get_class($resource) . ": closing MySQL-Server connection with ID: " . $connectionId);
+                Logger::debug(get_class($resource) . ": closing MySQL-Server connection with ID: " . $connectionId);
 
                 $resource->closeConnection();
             } catch (\Exception $e) {
                 // this is the case when the mysql connection has gone away (eg. when forking using pcntl)
-                \Logger::info($e);
+                Logger::info($e);
             }
         }
     }

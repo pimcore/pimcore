@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -15,6 +15,7 @@
 namespace Pimcore;
 
 use Pimcore\Tool;
+use Pimcore\Logger;
 
 class Document
 {
@@ -40,7 +41,7 @@ class Document
                 }
             }
         } catch (\Exception $e) {
-            \Logger::crit("Unable to load document adapter: " . $e->getMessage());
+            Logger::crit("Unable to load document adapter: " . $e->getMessage());
             throw $e;
         }
 
@@ -90,7 +91,7 @@ class Document
                         return $adapter;
                     }
                 } catch (\Exception $e) {
-                    \Logger::warning($e);
+                    Logger::warning($e);
                 }
             }
         }

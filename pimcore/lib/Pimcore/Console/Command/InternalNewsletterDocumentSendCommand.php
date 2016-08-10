@@ -20,6 +20,7 @@ use Pimcore\Tool\Newsletter;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Pimcore\Model;
+use Pimcore\Logger;
 
 class InternalNewsletterDocumentSendCommand extends AbstractCommand
 {
@@ -37,14 +38,14 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
         $tmpStore = Model\Tool\TmpStore::get($sendingId);
 
         if (empty($tmpStore)) {
-            \Logger::alert("No sending configuration for $sendingId found. Cannot send newsletter.");
+            Logger::alert("No sending configuration for $sendingId found. Cannot send newsletter.");
             exit;
         }
 
         $data = $tmpStore->getData();
 
         if ($data['inProgress']) {
-            \Logger::alert("Cannot send newsletters because there's already one active sending process.");
+            Logger::alert("Cannot send newsletters because there's already one active sending process.");
             exit;
         }
 
@@ -89,12 +90,12 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
             $tmpStore = Model\Tool\TmpStore::get($sendingId);
 
             if (empty($tmpStore)) {
-                \Logger::warn("Sending configuration for sending ID $sendingId was deleted. Cancelling sending process.");
+                Logger::warn("Sending configuration for sending ID $sendingId was deleted. Cancelling sending process.");
                 exit;
             }
 
             if ($currentCount % $pageSize == 0) {
-                \Logger::info("Sending newsletter " . $currentCount . " / " . $totalCount. " [" . $document->getId(). "]");
+                Logger::info("Sending newsletter " . $currentCount . " / " . $totalCount. " [" . $document->getId(). "]");
                 $data = $tmpStore->getData();
                 $data['progress'] = round($currentCount / $totalCount * 100, 2);
                 $tmpStore->setData($data);
@@ -123,7 +124,7 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
 
             $data = $tmpStore->getData();
 
-            \Logger::info("Sending newsletter " . $hasElements . " / " . $totalCount. " [" . $document->getId(). "]");
+            Logger::info("Sending newsletter " . $hasElements . " / " . $totalCount. " [" . $document->getId(). "]");
 
             $data['progress'] = round($offset / $totalCount * 100, 2);
             $tmpStore->setData($data);
@@ -136,7 +137,7 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
 
 
                 if (empty($tmpStore)) {
-                    \Logger::warn("Sending configuration for sending ID $sendingId was deleted. Cancelling sending process.");
+                    Logger::warn("Sending configuration for sending ID $sendingId was deleted. Cancelling sending process.");
                     exit;
                 }
             }

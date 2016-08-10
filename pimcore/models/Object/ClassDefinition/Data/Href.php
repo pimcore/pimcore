@@ -21,6 +21,7 @@ use Pimcore\Model\Object;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use Pimcore\Logger;
 
 class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
 {
@@ -360,7 +361,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
         } elseif (empty($data)) {
             $allow = true;
         } else {
-            \Logger::error("invalid data in href");
+            Logger::error("invalid data in href");
             $allow = false;
         }
 

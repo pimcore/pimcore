@@ -16,6 +16,7 @@ namespace Pimcore\Google;
 
 use Pimcore\Config;
 use Pimcore\Model;
+use Pimcore\Logger;
 
 class Analytics
 {
@@ -175,7 +176,7 @@ class Analytics
      */
     public static function trackElement(Model\Element\ElementInterface $element)
     {
-        \Logger::error("Pimcore_Google_Analytics::trackPageView() is unsupported as of version 2.0.1");
+        Logger::error("Pimcore_Google_Analytics::trackPageView() is unsupported as of version 2.0.1");
     }
 
     /**
@@ -183,7 +184,7 @@ class Analytics
      */
     public static function trackPageView($path)
     {
-        \Logger::error("Pimcore_Google_Analytics::trackPageView() is unsupported as of version 2.0.1");
+        Logger::error("Pimcore_Google_Analytics::trackPageView() is unsupported as of version 2.0.1");
     }
 
     /**

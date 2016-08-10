@@ -17,6 +17,7 @@
 namespace Pimcore\Model\Tool\Email\Log;
 
 use Pimcore\Model;
+use Pimcore\Logger;
 
 class Dao extends Model\Dao\AbstractDao
 {
@@ -81,7 +82,7 @@ class Dao extends Model\Dao\AbstractDao
         try {
             $this->db->update(self::$dbTable, $data, $this->db->quoteInto("id = ?", $this->model->getId()));
         } catch (\Exception $e) {
-            \Logger::emerg('Could not Save emailLog with the id "'.$this->model->getId().'" ');
+            Logger::emerg('Could not Save emailLog with the id "'.$this->model->getId().'" ');
         }
     }
 

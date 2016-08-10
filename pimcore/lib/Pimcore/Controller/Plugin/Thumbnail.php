@@ -16,6 +16,7 @@ namespace Pimcore\Controller\Plugin;
 
 use Pimcore\Model\Asset;
 use Pimcore\Model\Tool\TmpStore;
+use Pimcore\Logger;
 
 class Thumbnail extends \Zend_Controller_Plugin_Abstract
 {
@@ -107,7 +108,7 @@ class Thumbnail extends \Zend_Controller_Plugin_Abstract
                     }
                 } catch (\Exception $e) {
                     // nothing to do
-                    \Logger::error("Thumbnail with name '" . $thumbnailName . "' doesn't exist");
+                    Logger::error("Thumbnail with name '" . $thumbnailName . "' doesn't exist");
                 }
             }
         }

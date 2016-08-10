@@ -20,6 +20,7 @@ use Pimcore\Model;
 use Pimcore\Model\Object;
 use Pimcore\File;
 use Pimcore\Cache;
+use Pimcore\Logger;
 
 class ClassDefinition extends Model\AbstractModel
 {
@@ -163,7 +164,7 @@ class ClassDefinition extends Model\AbstractModel
 
                 \Zend_Registry::set($cacheKey, $class);
             } catch (\Exception $e) {
-                \Logger::error($e);
+                Logger::error($e);
 
                 return null;
             }
@@ -187,7 +188,7 @@ class ClassDefinition extends Model\AbstractModel
                 throw new \Exception("There is no class with the name: " . $name);
             }
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
 
             return null;
         }

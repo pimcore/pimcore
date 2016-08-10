@@ -17,6 +17,7 @@ use Pimcore\Tool;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Redirect;
+use Pimcore\Logger;
 
 class Admin_PageController extends \Pimcore\Controller\Action\Admin\Document
 {
@@ -162,7 +163,7 @@ class Admin_PageController extends \Pimcore\Controller\Action\Admin\Document
                         if (\Pimcore\Tool\Admin::isExtJS6() && $e instanceof Element\ValidationException) {
                             throw $e;
                         }
-                        \Logger::err($e);
+                        Logger::err($e);
                         $this->_helper->json(["success" => false, "message"=>$e->getMessage()]);
                     }
                 } else {
@@ -174,14 +175,14 @@ class Admin_PageController extends \Pimcore\Controller\Action\Admin\Document
                             $this->saveToSession($page);
                             $this->_helper->json(["success" => true]);
                         } catch (\Exception $e) {
-                            \Logger::err($e);
+                            Logger::err($e);
                             $this->_helper->json(["success" => false, "message"=>$e->getMessage()]);
                         }
                     }
                 }
             }
         } catch (\Exception $e) {
-            \Logger::log($e);
+            Logger::log($e);
             if (\Pimcore\Tool\Admin::isExtJS6() && $e instanceof Element\ValidationException) {
                 $this->_helper->json(["success" => false, "type" => "ValidationException", "message" => $e->getMessage(), "stack" => $e->getTraceAsString(), "code" => $e->getCode()]);
             }
@@ -257,7 +258,7 @@ class Admin_PageController extends \Pimcore\Controller\Action\Admin\Document
                     $success = true;
                 }
             } catch (\Exception $e) {
-                \Logger::error($e);
+                Logger::error($e);
             }
         }
 

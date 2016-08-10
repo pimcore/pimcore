@@ -19,6 +19,7 @@ namespace Pimcore\Model;
 
 use Pimcore\Tool;
 use Pimcore\Tool\Frontend as FrontendTool;
+use Pimcore\Logger;
 
 class Document extends Element\AbstractElement
 {
@@ -222,7 +223,7 @@ class Document extends Element\AbstractElement
 
             return self::getById($document->getId());
         } catch (\Exception $e) {
-            \Logger::debug($e->getMessage());
+            Logger::debug($e->getMessage());
         }
 
         return null;
@@ -274,7 +275,7 @@ class Document extends Element\AbstractElement
                     \Zend_Registry::set($cacheKey, $document);
                 }
             } catch (\Exception $e) {
-                \Logger::warning($e->getMessage());
+                Logger::warning($e->getMessage());
 
                 return null;
             }
@@ -410,14 +411,14 @@ class Document extends Element\AbstractElement
                     $this->rollBack();
                 } catch (\Exception $er) {
                     // PDO adapter throws exceptions if rollback fails
-                    \Logger::error($er);
+                    Logger::error($er);
                 }
 
                 // we try to start the transaction $maxRetries times again (deadlocks, ...)
                 if ($retries < ($maxRetries-1)) {
                     $run = $retries+1;
                     $waitTime = 100000; // microseconds
-                    \Logger::warn("Unable to finish transaction (" . $run . ". run) because of the following reason '" . $e->getMessage() . "'. --> Retrying in " . $waitTime . " microseconds ... (" . ($run+1) . " of " . $maxRetries . ")");
+                    Logger::warn("Unable to finish transaction (" . $run . ". run) because of the following reason '" . $e->getMessage() . "'. --> Retrying in " . $waitTime . " microseconds ... (" . ($run+1) . " of " . $maxRetries . ")");
 
                     usleep($waitTime); // wait specified time until we restart the transaction
                 } else {
@@ -564,7 +565,7 @@ class Document extends Element\AbstractElement
 
             \Pimcore\Cache::clearTags($tags);
         } catch (\Exception $e) {
-            \Logger::crit($e);
+            Logger::crit($e);
         }
     }
 
@@ -769,7 +770,7 @@ class Document extends Element\AbstractElement
                 }
             }
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
         }
 
         // @TODO please forgive me, this is the dirtiest hack I've ever made :(
@@ -913,7 +914,7 @@ class Document extends Element\AbstractElement
                 }
             }
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
         }
 
         return $this->path;

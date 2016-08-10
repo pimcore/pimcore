@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -15,6 +15,7 @@
 namespace Pimcore\Cache\Backend;
 
 use Pimcore\Db;
+use Pimcore\Logger;
 
 class MysqlTable extends \Zend_Cache_Backend implements \Zend_Cache_Backend_ExtendedInterface
 {
@@ -46,7 +47,7 @@ class MysqlTable extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Exte
     {
         if (!$this->db) {
             // we're using a new mysql connection here to avoid problems with active (nested) transactions
-            \Logger::debug("Initialize dedicated MySQL connection for the cache adapter");
+            Logger::debug("Initialize dedicated MySQL connection for the cache adapter");
             $this->db = Db::getConnection();
         }
 
@@ -103,7 +104,7 @@ class MysqlTable extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Exte
             }
             $this->getDb()->commit();
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             $this->getDb()->rollBack();
             $this->truncate();
 
@@ -182,7 +183,7 @@ class MysqlTable extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Exte
                 } catch (\Exception $e) {
                     $this->getDb()->rollBack();
                     $this->truncate();
-                    \Logger::error($e);
+                    Logger::error($e);
                 }
             }
         }
@@ -200,7 +201,7 @@ class MysqlTable extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Exte
 
         return true;
     }
-    
+
     protected function truncate()
     {
         $this->getDb()->query("TRUNCATE TABLE `cache`");
