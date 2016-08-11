@@ -32,7 +32,7 @@ class PricingManager implements IPricingManager
     /**
      * @var Rule\Listing
      */
-    private $rules;
+    protected $rules;
 
     /**
      * @param \Zend_Config $config
