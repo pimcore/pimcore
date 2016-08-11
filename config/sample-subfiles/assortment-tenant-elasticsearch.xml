@@ -6,6 +6,9 @@
         <clientConfig>
             <!-- name of the index (alias). the index itself is versioned in the format "indexName-versionnumber" -->
             <indexName>products</indexName>
+
+            <!-- enable logging to website/var/log/elasticsearch.log, useful for debugging -->
+            <!-- <logging>true</logging> -->
         </clientConfig>
 
         <!-- configure all settings for index creation -->
