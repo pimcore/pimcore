@@ -267,7 +267,7 @@
 
             <!-- configuration of different tenants -->
             <tenants>
-                <!--  <elasticsearch class="\OnlineShop\Framework\IndexService\Config\ElasticSearch" file="/website/var/plugins/EcommerceFramework/assortment-tenant-elasticsearch.xml"> -->
+                <!--  <elasticsearch class="\OnlineShop\Framework\IndexService\Config\ElasticSearch" file="/website/var/plugins/EcommerceFramework/assortment-tenant-elasticsearch.xml" /> -->
 
                 <!-- <sampletenant class="\OnlineShop\Framework\IndexService\Config\DefaultMysqlSubTenantConfig">
                       <generalSearchColumns>
