@@ -158,7 +158,7 @@ If you need to create or update the index structures you can use:
 // Set the third parameter of updateIndex to true to force index structures update
 \OnlineShop\Framework\IndexService\Tool\IndexUpdater::updateIndex("Object_Product_List", "", true);
 // Or directly call the following method
-\OnlineShop\Framework\IndexService\Tool\IndexUpdater::createOrUpdateIndexStructures();
+\OnlineShop\Framework\Factory::getInstance()->getIndexService()->createOrUpdateIndexStructures();
 ```
 
 - Only used for \OnlineShop\Framework\IndexService\Config\DefaultMysql
@@ -191,7 +191,7 @@ If you need to create or update the index structures you can use:
 // Set the third parameter of updateIndex to true to force index structures update
 \OnlineShop\Framework\IndexService\Tool\IndexUpdater::updateIndex("Object_Product_List", "", true);
 // Or directly call the following method
-\OnlineShop\Framework\IndexService\Tool\IndexUpdater::createOrUpdateIndexStructures();
+\OnlineShop\Framework\Factory::getInstance()->getIndexService()->createOrUpdateIndexStructures();
 ```
 
 - For process the preparation queue and update pimcore objects to the index store use following command. This command should be executed periodically (e.g. all 10 mins) 
