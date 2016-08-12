@@ -63,7 +63,8 @@ class Image extends Model\Asset
         // now directly create "system" thumbnails (eg. for the tree, ...)
         if ($this->getDataChanged()) {
             try {
-                $path = $this->getThumbnail(Image\Thumbnail\Config::getPreviewConfig())->getFileSystemPath();
+                $config = \Pimcore::getDiContainer()->get('Pimcore\Model\Asset\Image\Thumbnail\Config');
+                $path = $this->getThumbnail($config::getPreviewConfig())->getFileSystemPath();
 
                 // set the modification time of the thumbnail to the same time from the asset
                 // so that the thumbnail check doesn't fail in Asset\Image\Thumbnail\Processor::process();

@@ -98,7 +98,8 @@ class ThumbnailsImageCommand extends AbstractCommand
                 }
 
                 if ($input->getOption("system")) {
-                    $thumbnail = Asset\Image\Thumbnail\Config::getPreviewConfig();
+                    $thumbnail = \Pimcore::getDiContainer()->get('Pimcore\Model\Asset\Image\Thumbnail\Config');
+                    $thumbnail = $thumbnail::getPreviewConfig();
                     if ($input->getOption("force")) {
                         $image->clearThumbnail($thumbnail->getName());
                     }
