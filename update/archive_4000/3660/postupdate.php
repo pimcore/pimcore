@@ -6,7 +6,7 @@ $db = Pimcore\Db::get();
 $tables = $db->query("CREATE TABLE `documents_translations` (
   `id` int(11) unsigned NOT NULL DEFAULT '0',
   `sourceId` int(11) unsigned NOT NULL DEFAULT '0',
-  `language` varchar(10) DEFAULT NULL,
+  `language` varchar(10) NOT NULL DEFAULT '',
   PRIMARY KEY (`sourceId`,`language`),
   KEY `id` (`id`),
   KEY `sourceId` (`sourceId`),
