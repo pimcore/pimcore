@@ -526,24 +526,15 @@ class Service extends Model\Element\Service
 
     /**
      * @param Concrete $object
-     * @return AbstractObject
+     * @return AbstractObject|null
      */
     public static function hasInheritableParentObject(Concrete $object)
     {
         if ($object->getClass()->getAllowInherit()) {
-            if ($object->getParent() instanceof AbstractObject) {
-                $parent = $object->getParent();
-                while ($parent && $parent->getType() == "folder") {
-                    $parent = $parent->getParent();
-                }
-
-                if ($parent && ($parent->getType() == "object" || $parent->getType() == "variant")) {
-                    if ($parent->getClassId() == $object->getClassId()) {
-                        return $parent;
-                    }
-                }
-            }
+            return $object->getNextParentForInheritance();
         }
+
+        return null;
     }
 
     /**

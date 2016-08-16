@@ -523,8 +523,7 @@ class Concrete extends AbstractObject
 
 
     /**
-     * @return AbstractObject|void
-     * @return AbstractObject|void
+     * @return AbstractObject|null
      */
     public function getNextParentForInheritance()
     {
@@ -541,7 +540,7 @@ class Concrete extends AbstractObject
             }
         }
 
-        return;
+        return null;
     }
 
     /**
