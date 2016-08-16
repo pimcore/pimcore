@@ -199,7 +199,9 @@ class Csv
         // now, prefer the delimiter with the highest average number of appearances
         if (count($tmp) > 0) {
             asort($tmp);
-            $delim = chr(end(array_keys($tmp)));
+            $keys = array_keys($tmp);
+            $lastEl = end($keys);
+            $delim = chr($lastEl);
         } else {
             // no potential delimiters remain
             $delim = false;
