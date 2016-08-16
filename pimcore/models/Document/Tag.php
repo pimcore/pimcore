@@ -439,7 +439,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      */
     public static function buildTagName($type, $name, $document = null)
     {
-        if (!preg_match("@^[ -~]+$@", $name)) {
+        if(!preg_match("@^[a-zA-Z0-9\-_\:\.]+$@", $name)) {
             throw new \Exception("Only ASCII characters are allowed as the name for an editable, your name was: " . $name);
         }
 
