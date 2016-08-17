@@ -461,7 +461,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
     {
         $containerName = "\\Pimcore\\Model\\Object\\" . ucfirst($relatedObject->getClass()->getName()) . "\\" . ucfirst($this->getName());
 
-        if(Tool::classExists($containerName)) {
+        if (Tool::classExists($containerName)) {
             $container = new $containerName($relatedObject, $this->getName());
 
             if (is_array($data)) {

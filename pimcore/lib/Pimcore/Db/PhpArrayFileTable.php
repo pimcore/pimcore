@@ -180,7 +180,7 @@ class PhpArrayFileTable
     {
         if (file_exists($this->filePath)) {
             $this->data = include($this->filePath);
-            if(!is_array($this->data)) {
+            if (!is_array($this->data)) {
                 $this->data = [];
             }
         }
