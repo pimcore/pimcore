@@ -14,7 +14,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-class Admin_QuantityValueController extends Pimcore_Controller_Action_Admin
+use Pimcore\Controller\Action\Admin;
+
+class Admin_QuantityValueController extends Admin
 {
     public function unitProxyAction()
     {
