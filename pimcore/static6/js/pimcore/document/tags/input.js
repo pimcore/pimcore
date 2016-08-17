@@ -88,6 +88,11 @@ pimcore.document.tags.input = Class.create(pimcore.document.tag, {
         if (options["placeholder"]) {
             this.element.dom.setAttribute('data-placeholder', options["placeholder"]);
         }
+
+        if(options["validator"]) {
+            this.element.isValid = options["validator"];
+            this.validateElement();
+        }
     },
 
     checkValue: function () {
@@ -106,6 +111,8 @@ pimcore.document.tags.input = Class.create(pimcore.document.tag, {
         if(value != origValue) {
             this.element.update(this.getValue());
         }
+
+        this.validateElement(value);
     },
 
     getValue: function () {
@@ -139,5 +146,31 @@ pimcore.document.tags.input = Class.create(pimcore.document.tag, {
         } else {
             this.element.dom.setAttribute("contenteditable", true);
         }
+    },
+
+    /**
+     *
+     * validation for dedicated validator which could be added in an element view helper as the validator option
+     *
+     *
+     * @returns {pimcore.document.tags.input}
+     */
+    validateElement: function(value){
+
+        if(this.element.isValid && typeof this.element.isValid == 'function') {
+
+            value = !value ? this.element.dom.innerText : value;
+
+            var validatorMessage = this.element.isValid(strip_tags(value));
+            if(true !== validatorMessage) {
+                this.element.addCls('invalid-document-element');
+                this.element.setStyle('border', '1px solid #f40204');
+            } else {
+                this.element.removeCls('invalid-document-element');
+                this.element.setStyle('border', '');
+            }
+        }
+
+        return this;
     }
 });
