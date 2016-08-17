@@ -14,11 +14,11 @@
 
 namespace Pimcore\Document\Newsletter;
 
-interface IAddressSourceAdapter
+interface AddressSourceAdapterInterface
 {
 
     /**
-     * IAddressSourceAdapter constructor.
+     * AddressSourceAdapterInterface constructor.
      * @param $params
      */
     public function __construct($params);

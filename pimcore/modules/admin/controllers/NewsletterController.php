@@ -234,7 +234,7 @@ class Admin_NewsletterController extends \Pimcore\Controller\Action\Admin\Docume
         $adapterClass = "\\Pimcore\\Document\\Newsletter\\AddressSourceAdapter\\" . ucfirst($addressSourceAdapterName);
 
         /**
-         * @var $addressAdapter \Pimcore\Document\Newsletter\IAddressSourceAdapter
+         * @var $addressAdapter \Pimcore\Document\Newsletter\AddressSourceAdapterInterface
          */
         $addressAdapter = new $adapterClass($adapterParams);
 

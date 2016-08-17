@@ -15,7 +15,7 @@
 namespace Pimcore\Console\Command;
 
 use Pimcore\Console\AbstractCommand;
-use Pimcore\Document\Newsletter\IAddressSourceAdapter;
+use Pimcore\Document\Newsletter\AddressSourceAdapterInterface;
 use Pimcore\Tool\Newsletter;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -60,7 +60,7 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
         $adapterClass = "\\Pimcore\\Document\\Newsletter\\AddressSourceAdapter\\" . ucfirst($addressSourceAdapterName);
 
         /**
-         * @var $addressAdapter \Pimcore\Document\Newsletter\IAddressSourceAdapter
+         * @var $addressAdapter \Pimcore\Document\Newsletter\AddressSourceAdapterInterface
          */
         $addressAdapter = new $adapterClass($adapterParams);
 
@@ -74,7 +74,7 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
         Model\Tool\TmpStore::delete($sendingId);
     }
 
-    protected function doSendMailInBatchMode(Model\Document\Newsletter $document, IAddressSourceAdapter $addressAdapter, $sendingId)
+    protected function doSendMailInBatchMode(Model\Document\Newsletter $document, AddressSourceAdapterInterface $addressAdapter, $sendingId)
     {
         $mail = \Pimcore\Tool\Newsletter::prepareMail($document);
         $sendingParamContainers = $addressAdapter->getMailAddressesForBatchSending();
@@ -109,7 +109,7 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
         }
     }
 
-    protected function doSendMailInSingleMode(Model\Document\Newsletter $document, IAddressSourceAdapter $addressAdapter, $sendingId)
+    protected function doSendMailInSingleMode(Model\Document\Newsletter $document, AddressSourceAdapterInterface $addressAdapter, $sendingId)
     {
         $totalCount = $addressAdapter->getTotalRecordCount();
 

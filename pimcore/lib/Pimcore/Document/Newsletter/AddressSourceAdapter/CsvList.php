@@ -14,11 +14,11 @@
 
 namespace Pimcore\Document\Newsletter\AddressSourceAdapter;
 
-use Pimcore\Document\Newsletter\IAddressSourceAdapter;
+use Pimcore\Document\Newsletter\AddressSourceAdapterInterface;
 use Pimcore\Document\Newsletter\SendingParamContainer;
 use Pimcore\Logger;
 
-class CsvList implements IAddressSourceAdapter
+class CsvList implements AddressSourceAdapterInterface
 {
 
     /**
