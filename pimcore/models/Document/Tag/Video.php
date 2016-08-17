@@ -721,7 +721,7 @@ class Video extends Model\Document\Tag
                 }
             </style>
             <div class="pimcore_tag_video_progress" id="' . $uid . '" style="width: ' . $this->getWidth() . 'px; height: ' . $this->getHeight() . 'px;">
-                <div class="pimcore_tag_video_progress_status">' . number_format($progress, 0) . '%</div>
+                <div class="pimcore_tag_video_progress_status"></div>
             </div>
         </div>';
 
