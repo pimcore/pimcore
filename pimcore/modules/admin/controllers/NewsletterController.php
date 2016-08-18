@@ -240,7 +240,8 @@ class Admin_NewsletterController extends \Pimcore\Controller\Action\Admin\Docume
 
         $sendingContainer = $addressAdapter->getParamsForTestSending($this->getParam("testMailAddress"));
 
-        \Pimcore\Tool\Newsletter::sendNewsletterDocumentBasedMail($document, [$sendingContainer], \Pimcore\Tool\Newsletter::SENDING_MODE_SINGLE);
+        $mail = \Pimcore\Tool\Newsletter::prepareMail($document);
+        \Pimcore\Tool\Newsletter::sendNewsletterDocumentBasedMail($mail, $sendingContainer);
 
         $this->_helper->json(["success" => true]);
     }
