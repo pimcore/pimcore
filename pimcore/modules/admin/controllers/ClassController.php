@@ -607,12 +607,16 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
 
     public function fieldcollectionListAction()
     {
+        $user = \Pimcore\Tool\Admin::getCurrentUser();
+        $currentLayoutId = $this->getParam("layoutId");
+
         $list = new Object\Fieldcollection\Definition\Listing();
         $list = $list->load();
 
         if ($this->hasParam("allowedTypes")) {
             $filteredList = [];
             $allowedTypes = explode(",", $this->getParam("allowedTypes"));
+            /** @var $type Object\Fieldcollection\Definition */
             foreach ($list as $type) {
                 if (in_array($type->getKey(), $allowedTypes)) {
                     $filteredList[] = $type;
@@ -620,11 +624,17 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
                     // mainly for objects-meta data-type
                     $layoutDefinitions = $type->getLayoutDefinitions();
                     Object\Service::enrichLayoutDefinition($layoutDefinitions, null);
+
+                    if ($currentLayoutId == -1 && $user->isAdmin()) {
+                        Object\Service::createSuperLayout($layoutDefinitions);
+                    }
+
                 }
             }
 
             $list = $filteredList;
         }
+
 
         $this->_helper->json(["fieldcollections" => $list]);
     }

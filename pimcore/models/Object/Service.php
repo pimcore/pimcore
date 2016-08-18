@@ -988,7 +988,7 @@ class Service extends Model\Element\Service
     }
 
 
-    private static function createSuperLayout(&$layout)
+    public static function createSuperLayout(&$layout)
     {
         if ($layout instanceof ClassDefinition\Data) {
             $layout->setInvisible(false);
@@ -996,8 +996,13 @@ class Service extends Model\Element\Service
         }
 
 
-        unset($layout->disallowAddRemove);
-        unset($layout->disallowReorder);
+        if ($layout instanceof Model\Object\ClassDefinition\Data\Fieldcollections) {
+            unset($layout->disallowAddRemove);
+            unset($layout->disallowReorder);
+            $layout->layoutId = -1;
+        }
+
+
 
         if (method_exists($layout, "getChilds")) {
             $children = $layout->getChilds();

@@ -47,6 +47,15 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
             allowedTypes = [];
         }
 
+
+        var extraParams = {
+            allowedTypes: allowedTypes.join(",")
+        };
+
+        if (typeof this.fieldConfig.layoutId !== "undefined") {
+            extraParams.layoutId = this.fieldConfig.layoutId;
+        }
+
         this.fieldstore = new Ext.data.Store({
             proxy: {
                 type: 'ajax',
@@ -56,9 +65,7 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
                     rootProperty: 'fieldcollections',
                     idProperty: 'key'
                 },
-                extraParams: {
-                    allowedTypes: allowedTypes.join(",")
-                }
+                extraParams: extraParams
             },
             autoDestroy: false,
             fields: ['key', {name: "fieldConfigigurations", convert: function (v, rec) {
