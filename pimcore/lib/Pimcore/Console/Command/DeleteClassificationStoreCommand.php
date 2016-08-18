@@ -17,8 +17,8 @@ namespace Pimcore\Console\Command;
 use Pimcore\Cache;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Db;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class DeleteClassificationStoreCommand extends AbstractCommand
@@ -28,21 +28,16 @@ class DeleteClassificationStoreCommand extends AbstractCommand
         $this
             ->setName('classificationstore:delete-store')
             ->setDescription('Delete Classification Store')
-            ->addOption(
-                'storeId', null,
-                InputOption::VALUE_REQUIRED,
-                "the store ID"
-            )
+            ->addArgument('storeId', InputArgument::REQUIRED, 'The store ID to delete')
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $storeId = $input->getOption("storeId");
+        $storeId = $input->getArgument('storeId');
 
-        var_dump($storeId);
-        if (is_null($storeId)) {
-            throw new \Exception("store ID must be set");
+        if (!is_numeric($storeId)) {
+            throw new \Exception('Invalid store ID');
         }
 
         $db = Db::get();
@@ -78,12 +73,6 @@ class DeleteClassificationStoreCommand extends AbstractCommand
         $sql = "delete from classificationstore_stores where id = " . $db->quote($storeId);
         echo($sql . "\n");
         $db->query($sql);
-
-
-
-
-
-
 
         Cache::clearAll();
     }
