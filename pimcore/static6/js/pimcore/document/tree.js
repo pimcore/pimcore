@@ -738,7 +738,7 @@ pimcore.document.tree = Class.create({
                     iconCls: "pimcore_icon_lock pimcore_icon_overlay_delete",
                     handler: function () {
                         pimcore.elementservice.unlockElement({
-                            elementType: "object",
+                            elementType: "document",
                             id: record.data.id
                         });
                     }.bind(this)
