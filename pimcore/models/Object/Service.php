@@ -995,6 +995,10 @@ class Service extends Model\Element\Service
             $layout->setNoteditable(false);
         }
 
+
+        unset($layout->disallowAddRemove);
+        unset($layout->disallowReorder);
+
         if (method_exists($layout, "getChilds")) {
             $children = $layout->getChilds();
             if (is_array($children)) {
