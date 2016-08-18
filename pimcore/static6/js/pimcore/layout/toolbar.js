@@ -524,14 +524,6 @@ pimcore.layout.toolbar = Class.create({
                 });
             }
 
-            if (user.isAllowed("newsletter") && perspectiveCfg.inToolbar("marketing.newsletter")) {
-                marketingItems.push({
-                    text: t("newsletter"),
-                    iconCls: "pimcore_icon_newsletter",
-                    handler: this.showNewsletter
-                });
-            }
-
             if (perspectiveCfg.inToolbar("marketing.seo")) {
                 var seoMenu = [];
 
@@ -1268,15 +1260,6 @@ pimcore.layout.toolbar = Class.create({
         }
         catch (e) {
             pimcore.globalmanager.add("custom_reports_settings", new pimcore.report.custom.settings());
-        }
-    },
-
-    showNewsletter: function () {
-        try {
-            pimcore.globalmanager.get("newsletter").activate();
-        }
-        catch (e) {
-            pimcore.globalmanager.add("newsletter", new pimcore.report.newsletter.panel());
         }
     },
 
