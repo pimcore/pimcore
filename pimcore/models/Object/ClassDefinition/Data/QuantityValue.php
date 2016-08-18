@@ -180,7 +180,7 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
-        if ($data[$this->getName() . "__value"] && $data[$this->getName() . "__unit"]) {
+        if ($data[$this->getName() . "__value"] || $data[$this->getName() . "__unit"]) {
             return new  \Pimcore\Model\Object\Data\QuantityValue($data[$this->getName() . "__value"], $data[$this->getName() . "__unit"]);
         }
 

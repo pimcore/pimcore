@@ -16,6 +16,8 @@
 
 namespace Pimcore\Model;
 
+use Pimcore\Logger;
+
 class Redirect extends AbstractModel
 {
 
@@ -243,7 +245,7 @@ class Redirect extends AbstractModel
         try {
             \Pimcore\Cache::clearTag("redirect");
         } catch (\Exception $e) {
-            \Logger::crit($e);
+            Logger::crit($e);
         }
     }
 

@@ -462,11 +462,11 @@ INSERT INTO `assets` VALUES ('70','34','image','pim1.png','/screenshots/','image
 
 
 
-INSERT INTO `classes` VALUES ('2','news','','1368613289','1382958417','0','0','0','0','',NULL,'','/%title_n%o_id','a:2:{s:4:\"grid\";a:5:{s:2:\"id\";b:1;s:4:\"path\";b:1;s:9:\"published\";b:1;s:16:\"modificationDate\";b:1;s:12:\"creationDate\";b:1;}s:6:\"search\";a:5:{s:2:\"id\";b:1;s:4:\"path\";b:1;s:9:\"published\";b:1;s:16:\"modificationDate\";b:1;s:12:\"creationDate\";b:1;}}','0',NULL);
-INSERT INTO `classes` VALUES ('3','inquiry','','1368620413','1368622807','0','0','0','0','',NULL,'','','a:2:{s:4:\"grid\";a:5:{s:2:\"id\";b:1;s:4:\"path\";b:1;s:9:\"published\";b:1;s:16:\"modificationDate\";b:1;s:12:\"creationDate\";b:1;}s:6:\"search\";a:5:{s:2:\"id\";b:1;s:4:\"path\";b:1;s:9:\"published\";b:1;s:16:\"modificationDate\";b:1;s:12:\"creationDate\";b:1;}}','0',NULL);
-INSERT INTO `classes` VALUES ('4','person','','1368620452','1368621909','0','0','0','0','',NULL,'','','a:2:{s:4:\"grid\";a:5:{s:2:\"id\";b:1;s:4:\"path\";b:1;s:9:\"published\";b:1;s:16:\"modificationDate\";b:1;s:12:\"creationDate\";b:1;}s:6:\"search\";a:5:{s:2:\"id\";b:1;s:4:\"path\";b:1;s:9:\"published\";b:1;s:16:\"modificationDate\";b:1;s:12:\"creationDate\";b:1;}}','0',NULL);
-INSERT INTO `classes` VALUES ('5','blogArticle','','1388389165','1388389849','7','7','0','0','',NULL,'','','a:2:{s:4:\"grid\";a:5:{s:2:\"id\";b:1;s:4:\"path\";b:1;s:9:\"published\";b:1;s:16:\"modificationDate\";b:1;s:12:\"creationDate\";b:1;}s:6:\"search\";a:5:{s:2:\"id\";b:1;s:4:\"path\";b:1;s:9:\"published\";b:1;s:16:\"modificationDate\";b:1;s:12:\"creationDate\";b:1;}}','0',NULL);
-INSERT INTO `classes` VALUES ('6','blogCategory','','1388389401','1388389839','7','7','0','0','',NULL,'','','a:2:{s:4:\"grid\";a:5:{s:2:\"id\";b:1;s:4:\"path\";b:1;s:9:\"published\";b:1;s:16:\"modificationDate\";b:1;s:12:\"creationDate\";b:1;}s:6:\"search\";a:5:{s:2:\"id\";b:1;s:4:\"path\";b:1;s:9:\"published\";b:1;s:16:\"modificationDate\";b:1;s:12:\"creationDate\";b:1;}}','0',NULL);
+INSERT INTO `classes` VALUES ('2','news');
+INSERT INTO `classes` VALUES ('3','inquiry');
+INSERT INTO `classes` VALUES ('4','person');
+INSERT INTO `classes` VALUES ('5','blogArticle');
+INSERT INTO `classes` VALUES ('6','blogCategory');
 
 
 

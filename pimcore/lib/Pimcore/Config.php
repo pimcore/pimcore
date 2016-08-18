@@ -17,6 +17,7 @@ namespace Pimcore;
 use Pimcore\Tool;
 use Pimcore\Cache;
 use Pimcore\Model;
+use Pimcore\Logger;
 
 class Config
 {
@@ -102,7 +103,7 @@ class Config
                 self::setSystemConfig($config);
             } catch (\Exception $e) {
                 $file = self::locateConfigFile("system.php");
-                \Logger::emergency("Cannot find system configuration, should be located at: " . $file);
+                Logger::emergency("Cannot find system configuration, should be located at: " . $file);
                 if (is_file($file)) {
                     $m = "Your system.php located at " . $file . " is invalid, please check and correct it manually!";
                     Tool::exitWithError($m);
@@ -342,7 +343,7 @@ class Config
                 }
                 self::setPerspectivesConfig($config);
             } catch (\Exception $e) {
-                \Logger::info("Cannot find perspectives configuration, should be located at: " . $file);
+                Logger::info("Cannot find perspectives configuration, should be located at: " . $file);
                 if (is_file($file)) {
                     $m = "Your perspectives.php located at " . $file . " is invalid, please check and correct it manually!";
                     Tool::exitWithError($m);
@@ -510,7 +511,7 @@ class Config
             foreach ($cvConfigs as $node) {
                 $tmpData = $node;
                 if (!isset($tmpData["id"])) {
-                    \Logger::error("custom view ID is missing " . var_export($tmpData, true));
+                    Logger::error("custom view ID is missing " . var_export($tmpData, true));
                     continue;
                 }
 
@@ -542,12 +543,12 @@ class Config
             if ($resultItem["type"] == "customview") {
                 $customViewId = $resultItem["id"];
                 if (!$customViewId) {
-                    \Logger::error("custom view id missing " . var_export($resultItem, true));
+                    Logger::error("custom view id missing " . var_export($resultItem, true));
                     continue;
                 }
                 $customViewCfg = $cfConfigMapping[$customViewId];
                 if (!$customViewId) {
-                    \Logger::error("no custom view config for id  " . $customViewId);
+                    Logger::error("no custom view config for id  " . $customViewId);
                     continue;
                 }
 

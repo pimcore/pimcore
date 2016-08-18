@@ -20,6 +20,7 @@ use Pimcore\Model;
 use Pimcore\ExtensionManager;
 use Pimcore\Tool;
 use Pimcore\Model\Document;
+use Pimcore\Logger;
 
 class Areablock extends Model\Document\Tag
 {
@@ -177,7 +178,7 @@ class Areablock extends Model\Document\Tag
             $info->setPath(str_replace(PIMCORE_DOCUMENT_ROOT, "", $this->getPathForBrick($this->currentIndex["type"])));
             $info->setConfig($this->getBrickConfig($this->currentIndex["type"]));
         } catch (\Exception $e) {
-            \Logger::err($e);
+            Logger::err($e);
         }
 
         if ($this->getView() instanceof \Zend_View) {

@@ -17,6 +17,7 @@
 namespace Pimcore\Model\Object\Data\KeyValue;
 
 use Pimcore\Model;
+use Pimcore\Logger;
 
 class Dao extends Model\Dao\AbstractDao
 {
@@ -68,7 +69,7 @@ class Dao extends Model\Dao\AbstractDao
         $sql = $this->db->quoteInto("o_id = ?", $this->model->getObjectId());
 
         // $sql = "o_id = " . $this->model->getObjectId();
-        \Logger::debug("query= " . $sql);
+        Logger::debug("query= " . $sql);
         $this->db->delete($this->getTableName(), $sql);
     }
 
@@ -79,7 +80,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function update()
     {
-        \Logger::debug("update called");
+        Logger::debug("update called");
     }
 
     /**
@@ -108,7 +109,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function createUpdateTable()
     {
-        \Logger::debug("createUpdateTable called");
+        Logger::debug("createUpdateTable called");
 
         $model = $this->model;
         $class = $model->getClass();
@@ -138,7 +139,7 @@ class Dao extends Model\Dao\AbstractDao
             $db->query("ALTER TABLE `" . $table . "` ADD COLUMN `metadata` LONGTEXT NULL AFTER `translated`;");
         }
 
-        \Logger::debug("createUpdateTable done");
+        Logger::debug("createUpdateTable done");
     }
 
     /**
@@ -147,7 +148,7 @@ class Dao extends Model\Dao\AbstractDao
     public function load()
     {
         $model = $this->model;
-        \Logger::debug("load called");
+        Logger::debug("load called");
 
         $table = $this->getTableName();
         $db = \Pimcore\Db::get();
@@ -155,6 +156,6 @@ class Dao extends Model\Dao\AbstractDao
         $result = $db->fetchAll($sql);
         $model->setProperties($result);
 
-        \Logger::debug("result=" . $result);
+        Logger::debug("result=" . $result);
     }
 }

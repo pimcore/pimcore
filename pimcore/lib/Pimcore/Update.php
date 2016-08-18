@@ -16,6 +16,7 @@ namespace Pimcore;
 
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
+use Pimcore\Logger;
 
 class Update
 {
@@ -328,7 +329,7 @@ class Update
                     include($script);
                 }
             } catch (\Exception $e) {
-                \Logger::error($e);
+                Logger::error($e);
                 $outputMessage .= "EXCEPTION: " . $e->getMessage();
                 $outputMessage .= "<br>For details please have a look into debug.log<br>";
             }
@@ -457,12 +458,12 @@ class Update
 
                 unlink($geoDbFileGz);
 
-                \Logger::info("Updated MaxMind GeoIP2 Database in: " . $geoDbFile);
+                Logger::info("Updated MaxMind GeoIP2 Database in: " . $geoDbFile);
             } else {
-                \Logger::err("Failed to update MaxMind GeoIP2, size is under about 1M");
+                Logger::err("Failed to update MaxMind GeoIP2, size is under about 1M");
             }
         } else {
-            \Logger::debug("MayMind GeoIP2 Download skipped, everything up to date, last update: " . date("m/d/Y H:i", $filemtime));
+            Logger::debug("MayMind GeoIP2 Download skipped, everything up to date, last update: " . date("m/d/Y H:i", $filemtime));
         }
     }
 }

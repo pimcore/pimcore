@@ -16,6 +16,8 @@
 
 namespace Pimcore\Model;
 
+use Pimcore\Logger;
+
 class Staticroute extends AbstractModel
 {
 
@@ -144,7 +146,7 @@ class Staticroute extends AbstractModel
                 $route->setId(intval($id));
                 $route->getDao()->getById();
             } catch (\Exception $e) {
-                \Logger::error($e);
+                Logger::error($e);
 
                 return null;
             }
@@ -172,7 +174,7 @@ class Staticroute extends AbstractModel
         try {
             $route->getDao()->getByName($name, $siteId);
         } catch (\Exception $e) {
-            \Logger::warn($e);
+            Logger::warn($e);
 
             return null;
         }

@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -20,6 +20,7 @@ use Pimcore\Model;
 
 class Layout
 {
+    use Model\Object\ClassDefinition\Helper\VarExport;
 
     /**
      * @var string
@@ -232,6 +233,8 @@ class Layout
     {
         $this->collapsible = (bool) $collapsible;
 
+        $this->filterCollapsibleValue();
+
         return $this;
     }
 
@@ -352,6 +355,8 @@ class Layout
     {
         $this->collapsed = $collapsed;
 
+        $this->filterCollapsibleValue();
+
         return $this;
     }
 
@@ -380,5 +385,16 @@ class Layout
     public function getBodyStyle()
     {
         return $this->bodyStyle;
+    }
+
+    /**
+     * @return Layout
+     */
+    protected function filterCollapsibleValue()
+    {
+        //if class definition set as collapsed the code below forces collapsible, issue: #778
+        $this->collapsible = $this->getCollapsed() || $this->getCollapsible();
+
+        return $this;
     }
 }

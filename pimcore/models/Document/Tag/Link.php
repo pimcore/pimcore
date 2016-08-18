@@ -19,6 +19,7 @@ namespace Pimcore\Model\Document\Tag;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
+use Pimcore\Logger;
 
 class Link extends Model\Document\Tag
 {
@@ -113,7 +114,7 @@ class Link extends Model\Document\Tag
                 $doc = Document::getById($this->data["internalId"]);
                 if (!$doc) {
                     $sane = false;
-                    \Logger::notice("Detected insane relation, removing reference to non existent document with id [" . $this->getDocumentId() . "]");
+                    Logger::notice("Detected insane relation, removing reference to non existent document with id [" . $this->getDocumentId() . "]");
                     $new = Document\Tag::factory($this->getType(), $this->getName(), $this->getDocumentId());
                     $this->data = $new->getData();
                 }
@@ -121,7 +122,7 @@ class Link extends Model\Document\Tag
                 $asset = Asset::getById($this->data["internalId"]);
                 if (!$asset) {
                     $sane = false;
-                    \Logger::notice("Detected insane relation, removing reference to non existent asset with id [" . $this->getDocumentId() . "]");
+                    Logger::notice("Detected insane relation, removing reference to non existent asset with id [" . $this->getDocumentId() . "]");
                     $new = Document\Tag::factory($this->getType(), $this->getName(), $this->getDocumentId());
                     $this->data = $new->getData();
                 }

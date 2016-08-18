@@ -21,6 +21,8 @@ use Pimcore\Model\Object;
 
 abstract class Data
 {
+    use Object\ClassDefinition\Helper\VarExport;
+
     /**
      * @var string
      */

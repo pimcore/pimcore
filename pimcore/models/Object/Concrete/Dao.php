@@ -18,6 +18,7 @@ namespace Pimcore\Model\Object\Concrete;
 
 use Pimcore\Model;
 use Pimcore\Model\Object;
+use Pimcore\Logger;
 
 class Dao extends Model\Object\AbstractObject\Dao
 {
@@ -55,7 +56,7 @@ class Dao extends Model\Object\AbstractObject\Dao
                 throw new \Exception("Object with the ID " . $id . " doesn't exists");
             }
         } catch (\Exception $e) {
-            \Logger::warning($e);
+            Logger::warning($e);
         }
     }
 
@@ -314,7 +315,7 @@ class Dao extends Model\Object\AbstractObject\Dao
                         }
                     }
                 } else {
-                    \Logger::debug("Excluding untouchable query value for object [ " . $this->model->getId() . " ]  key [ $key ] because it has not been loaded");
+                    Logger::debug("Excluding untouchable query value for object [ " . $this->model->getId() . " ]  key [ $key ] because it has not been loaded");
                 }
             }
         }

@@ -21,6 +21,7 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Site;
 use Pimcore\Model\Redirect;
 use Pimcore\Model\Staticroute;
+use Pimcore\Logger;
 
 class Frontend extends \Zend_Controller_Router_Route_Abstract
 {
@@ -495,8 +496,8 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
                     if (@preg_match($redirect->getSource(), $matchAgainst, $matches)) {
 
                         // check for a site
-                        if ($sourceSite) {
-                            if ($sourceSite->getId() != $redirect->getSourceSite()) {
+                        if ($redirect->getSourceSite() || $sourceSite) {
+                            if (!$sourceSite || $sourceSite->getId() != $redirect->getSourceSite()) {
                                 continue;
                             }
                         }
@@ -509,7 +510,7 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
                             if ($d instanceof Document\Page || $d instanceof Document\Link || $d instanceof Document\Hardlink) {
                                 $target = $d->getFullPath();
                             } else {
-                                \Logger::error("Target of redirect no found (Document-ID: " . $target . ")!");
+                                Logger::error("Target of redirect no found (Document-ID: " . $target . ")!");
                                 continue;
                             }
                         }
@@ -526,7 +527,7 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
                                 $url = preg_replace("@^" . $targetSite->getRootPath() . "/@", "/", $url);
                                 $url = $requestScheme . "://" . $targetSite->getMainDomain() . $url;
                             } catch (\Exception $e) {
-                                \Logger::error("Site with ID " . $redirect->getTargetSite() . " not found.");
+                                Logger::error("Site with ID " . $redirect->getTargetSite() . " not found.");
                                 continue;
                             }
                         } elseif (!preg_match("@http(s)?://@i", $url) && $config->general->domain && $redirect->getSourceEntireUrl()) {

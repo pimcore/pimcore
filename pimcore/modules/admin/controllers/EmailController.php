@@ -16,6 +16,7 @@ use Pimcore\Mail;
 use Pimcore\Model\Element;
 use Pimcore\Model\Document;
 use Pimcore\Model\Tool;
+use Pimcore\Logger;
 
 class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
 {
@@ -89,7 +90,7 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
                         $this->saveToSession($page);
                         $this->_helper->json(["success" => true]);
                     } catch (\Exception $e) {
-                        \Logger::err($e);
+                        Logger::err($e);
                         $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
                     }
                 } else {
@@ -106,14 +107,14 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
                                 throw $e;
                             }
 
-                            \Logger::err($e);
+                            Logger::err($e);
                             $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
                         }
                     }
                 }
             }
         } catch (\Exception $e) {
-            \Logger::log($e);
+            Logger::log($e);
             if (\Pimcore\Tool\Admin::isExtJS6() && $e instanceof Element\ValidationException) {
                 $this->_helper->json(["success" => false, "type" => "ValidationException", "message" => $e->getMessage(), "stack" => $e->getTraceAsString(), "code" => $e->getCode()]);
             }
@@ -211,7 +212,7 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
             try {
                 $params = \Zend_Json::decode($emailLog->getParams());
             } catch (\Exception $e) {
-                \Logger::warning("Could not decode JSON param string");
+                Logger::warning("Could not decode JSON param string");
                 $params = [];
             }
             foreach ($params as &$entry) {

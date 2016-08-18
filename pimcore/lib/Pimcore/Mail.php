@@ -18,6 +18,7 @@ use Pimcore\Helper\Mail as MailHelper;
 use Pimcore\Model;
 use Egulias\EmailValidator\EmailValidator;
 use Egulias\EmailValidator\Validation\RFCValidation;
+use Pimcore\Logger;
 
 class Mail extends \Zend_Mail
 {
@@ -298,7 +299,7 @@ class Mail extends \Zend_Mail
         if (is_string($options)) {
             $this->html2textOptions = $options;
         } else {
-            \Logger::warn('Html2Text options ignored. You have to pass a string');
+            Logger::warn('Html2Text options ignored. You have to pass a string');
         }
 
         return $this;
@@ -467,7 +468,7 @@ class Mail extends \Zend_Mail
         if (is_string($key) || is_integer($key)) {
             $this->params[$key] = $value;
         } else {
-            \Logger::warn('$key has to be a string - Param ignored!');
+            Logger::warn('$key has to be a string - Param ignored!');
         }
 
         return $this;
@@ -520,7 +521,7 @@ class Mail extends \Zend_Mail
         if (is_string($key) || is_integer($key)) {
             unset($this->params[$key]);
         } else {
-            \Logger::warn('$key has to be a string - unsetParam ignored!');
+            Logger::warn('$key has to be a string - unsetParam ignored!');
         }
 
         return $this;
@@ -671,7 +672,7 @@ class Mail extends \Zend_Mail
             try {
                 MailHelper::logEmail($this);
             } catch (\Exception $e) {
-                \Logger::emerg("Couldn't log Email");
+                Logger::emerg("Couldn't log Email");
             }
         }
 
@@ -820,7 +821,7 @@ class Mail extends \Zend_Mail
                 }
                 $content = $this->html2Text($htmlContent);
             } catch (\Exception $e) {
-                \Logger::err($e);
+                Logger::err($e);
                 $content = "";
             }
         }

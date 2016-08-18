@@ -16,6 +16,7 @@ namespace Pimcore;
 
 use Pimcore\Tool;
 use Pimcore\Image\Adapter;
+use Pimcore\Logger;
 
 class Image
 {
@@ -43,7 +44,7 @@ class Image
                 return new Adapter\GD();
             }
         } catch (\Exception $e) {
-            \Logger::crit("Unable to load image extensions: " . $e->getMessage());
+            Logger::crit("Unable to load image extensions: " . $e->getMessage());
             throw $e;
         }
     }

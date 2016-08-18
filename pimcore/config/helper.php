@@ -126,53 +126,29 @@ function object2array($node)
 
 /**
  * @param  $args
- * @return bool|string
+ * @return false|string
  */
 function array_urlencode($args)
 {
     if (!is_array($args)) {
         return false;
     }
-    $out = '';
-    foreach ($args as $name => $value) {
-        if (is_array($value)) {
-            foreach ($value as $key => $val) {
-                $out .= urlencode($name).'['.urlencode($key).']'.'=';
-                $out .= urlencode($val).'&';
-            }
-        } else {
-            $out .= urlencode($name).'=';
-            $out .= urlencode($value).'&';
-        }
-    }
-
-    return substr($out, 0, -1); //trim the last & }
+    
+    return http_build_query($args);
 }
 
 /**
  * same as  array_urlencode but no urlencode()
  * @param  $args
- * @return bool|string
+ * @return false|string
  */
 function array_toquerystring($args)
 {
     if (!is_array($args)) {
         return false;
     }
-    $out = '';
-    foreach ($args as $name => $value) {
-        if (is_array($value)) {
-            foreach ($value as $key => $val) {
-                $out .= $name.'['.$key.']'.'=';
-                $out .= urlencode($val).'&';
-            }
-        } else {
-            $out .= $name.'=';
-            $out .= urlencode($value).'&';
-        }
-    }
-
-    return substr($out, 0, -1); //trim the last & }
+    
+    return urldecode(http_build_query($args));
 }
 
 /**

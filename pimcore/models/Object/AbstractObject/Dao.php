@@ -18,6 +18,7 @@ namespace Pimcore\Model\Object\AbstractObject;
 
 use Pimcore\Model;
 use Pimcore\Model\Object;
+use Pimcore\Logger;
 
 class Dao extends Model\Element\Dao
 {
@@ -197,7 +198,7 @@ class Dao extends Model\Element\Dao
         try {
             $path = $this->db->fetchOne("SELECT CONCAT(o_path,`o_key`) as o_path FROM objects WHERE o_id = ?", $this->model->getId());
         } catch (\Exception $e) {
-            \Logger::error("could not get current object path from DB");
+            Logger::error("could not get current object path from DB");
         }
 
         return $path;
@@ -245,7 +246,7 @@ class Dao extends Model\Element\Dao
 
                 $properties[$propertyRaw["name"]] = $property;
             } catch (\Exception $e) {
-                \Logger::error("can't add property " . $propertyRaw["name"] . " to object " . $this->model->getRealFullPath());
+                Logger::error("can't add property " . $propertyRaw["name"] . " to object " . $this->model->getRealFullPath());
             }
         }
 
@@ -422,7 +423,7 @@ class Dao extends Model\Element\Dao
                 }
             }
         } catch (\Exception $e) {
-            \Logger::warn("Unable to get permission " . $type . " for object " . $this->model->getId());
+            Logger::warn("Unable to get permission " . $type . " for object " . $this->model->getId());
         }
 
         return false;
@@ -484,7 +485,7 @@ class Dao extends Model\Element\Dao
                 return $permissions;
             }
         } catch (\Exception $e) {
-            \Logger::warn("Unable to get permission " . $type . " for object " . $this->model->getId());
+            Logger::warn("Unable to get permission " . $type . " for object " . $this->model->getId());
         }
     }
 
@@ -506,7 +507,7 @@ class Dao extends Model\Element\Dao
             $sql = "SELECT " . $type . " FROM users_workspaces_object WHERE cid != " . $cid . " AND cpath LIKE " . $this->db->quote($this->model->getRealFullPath() . "%") . " AND userId IN (" . implode(",", $userIds) . ") ORDER BY LENGTH(cpath) DESC";
             $permissions = $this->db->fetchAll($sql);
         } catch (\Exception $e) {
-            \Logger::warn("Unable to get permission " . $type . " for object " . $this->model->getId());
+            Logger::warn("Unable to get permission " . $type . " for object " . $this->model->getId());
         }
 
         return $permissions;

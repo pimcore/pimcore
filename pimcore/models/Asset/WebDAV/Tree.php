@@ -19,6 +19,7 @@ namespace Pimcore\Model\Asset\WebDAV;
 use Pimcore\File;
 use Sabre\DAV;
 use Pimcore\Model\Asset;
+use Pimcore\Logger;
 
 class Tree extends DAV\Tree
 {
@@ -78,7 +79,7 @@ class Tree extends DAV\Tree
             $asset->setUserModification($user->getId());
             $asset->save();
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
         }
     }
 }

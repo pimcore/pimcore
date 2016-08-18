@@ -17,6 +17,7 @@
 namespace Pimcore\Model\Asset;
 
 use Pimcore\Model;
+use Pimcore\Logger;
 
 class Image extends Model\Asset
 {
@@ -46,7 +47,7 @@ class Image extends Model\Asset
                     $this->setCustomSetting("imageHeight", $dimensions["height"]);
                 }
             } catch (\Exception $e) {
-                \Logger::error("Problem getting the dimensions of the image with ID " . $this->getId());
+                Logger::error("Problem getting the dimensions of the image with ID " . $this->getId());
             }
 
             // this is to be downward compatible so that the controller can check if the dimensions are already calculated
@@ -69,8 +70,8 @@ class Image extends Model\Asset
                 // we need the @ in front of touch because of some stream wrapper (eg. s3) which don't support touch()
                 @touch($path, $this->getModificationDate());
             } catch (\Exception $e) {
-                \Logger::error("Problem while creating system-thumbnails for image " . $this->getRealFullPath());
-                \Logger::error($e);
+                Logger::error("Problem while creating system-thumbnails for image " . $this->getRealFullPath());
+                Logger::error($e);
             }
         }
     }

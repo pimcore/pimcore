@@ -17,6 +17,7 @@
 namespace Pimcore\Model\Schedule\Manager;
 
 use Pimcore\Model;
+use Pimcore\Logger;
 
 class Procedural
 {
@@ -70,7 +71,7 @@ class Procedural
     public function registerJob(Model\Schedule\Maintenance\Job $job, $force = false)
     {
         if (!empty($this->validJobs) and !in_array($job->getId(), $this->validJobs)) {
-            \Logger::info("Skipped job with ID: " . $job->getId() . " because it is not in the valid jobs.");
+            Logger::info("Skipped job with ID: " . $job->getId() . " because it is not in the valid jobs.");
 
             return false;
         }
@@ -78,13 +79,13 @@ class Procedural
         if (!$job->isLocked() || $force || $this->getForce()) {
             $this->jobs[] = $job;
 
-            \Logger::info("Registered job with ID: " . $job->getId());
+            Logger::info("Registered job with ID: " . $job->getId());
 
             return true;
         } else {
-            \Logger::info("Skipped job with ID: " . $job->getId() . " because it is still locked.");
+            Logger::info("Skipped job with ID: " . $job->getId() . " because it is still locked.");
         }
-        
+
         return false;
     }
 
@@ -97,13 +98,13 @@ class Procedural
 
         foreach ($this->jobs as $job) {
             $job->lock();
-            \Logger::info("Executing job with ID: " . $job->getId());
+            Logger::info("Executing job with ID: " . $job->getId());
             try {
                 $job->execute();
-                \Logger::info("Finished job with ID: " . $job->getId());
+                Logger::info("Finished job with ID: " . $job->getId());
             } catch (\Exception $e) {
-                \Logger::error("Failed to execute job with id: " . $job->getId());
-                \Logger::error($e);
+                Logger::error("Failed to execute job with id: " . $job->getId());
+                Logger::error($e);
             }
             $job->unlock();
         }

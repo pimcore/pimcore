@@ -18,6 +18,7 @@ namespace Pimcore\Model\Document;
 
 use Pimcore\Model;
 use Pimcore\Tool\Serialize;
+use Pimcore\Logger;
 
 class Dao extends Model\Element\Dao
 {
@@ -219,7 +220,7 @@ class Dao extends Model\Element\Dao
         try {
             $path = $this->db->fetchOne("SELECT CONCAT(path,`key`) as path FROM documents WHERE id = ?", $this->model->getId());
         } catch (\Exception $e) {
-            \Logger::error("could not  get current document path from DB");
+            Logger::error("could not  get current document path from DB");
         }
 
         return $path;
@@ -269,7 +270,7 @@ class Dao extends Model\Element\Dao
 
                 $properties[$propertyRaw["name"]] = $property;
             } catch (\Exception $e) {
-                \Logger::error("can't add property " . $propertyRaw["name"] . " to document " . $this->model->getRealFullPath());
+                Logger::error("can't add property " . $propertyRaw["name"] . " to document " . $this->model->getRealFullPath());
             }
         }
 
@@ -452,7 +453,7 @@ class Dao extends Model\Element\Dao
                 }
             }
         } catch (\Exception $e) {
-            \Logger::warn("Unable to get permission " . $type . " for document " . $this->model->getId());
+            Logger::warn("Unable to get permission " . $type . " for document " . $this->model->getId());
         }
 
         return false;

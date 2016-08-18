@@ -113,6 +113,10 @@ class QuantityValue
             }
         }
 
-        return $value . " " . $this->getUnit()->getAbbreviation();
+        if ($this->getUnit() instanceof Unit) {
+            $value .= " " . $this->getUnit()->getAbbreviation();
+        }
+
+        return $value;
     }
 }

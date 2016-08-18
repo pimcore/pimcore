@@ -18,6 +18,7 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
 use Pimcore\Model\Object;
 use Pimcore\Model\Element;
+use Pimcore\Logger;
 
 class Data extends \Pimcore\Model\AbstractModel
 {
@@ -417,7 +418,7 @@ class Data extends \Pimcore\Model\AbstractModel
                         $contentText = preg_replace("/[ ]+/", " ", $contentText);
                         $this->data .= " " . $contentText;
                     } catch (\Exception $e) {
-                        \Logger::error($e);
+                        Logger::error($e);
                     }
                 }
             }
@@ -439,7 +440,7 @@ class Data extends \Pimcore\Model\AbstractModel
                 $this->published = true;
             }
         } else {
-            \Logger::crit("Search\\Backend\\Data received an unknown element!");
+            Logger::crit("Search\\Backend\\Data received an unknown element!");
         }
 
         if ($element instanceof Element\ElementInterface) {

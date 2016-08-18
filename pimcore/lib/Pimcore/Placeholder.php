@@ -15,6 +15,7 @@
 namespace Pimcore;
 
 use Pimcore\Model;
+use Pimcore\Logger;
 
 class Placeholder
 {
@@ -190,7 +191,7 @@ class Placeholder
                         $configJsonString = str_replace(["&quot;", "'"], '"', $placeholderConfigString);
                         $placeholderConfig = new \Zend_Config_Json($configJsonString, null, ['ignoreconstants' => true]);
                     } catch (\Exception $e) {
-                        \Logger::warn('PlaceholderConfig is not a valid JSON string. PlaceholderConfig for ' . $placeholderClass . ' ignored.');
+                        Logger::warn('PlaceholderConfig is not a valid JSON string. PlaceholderConfig for ' . $placeholderClass . ' ignored.');
                         continue;
                     }
                 } else {
@@ -289,7 +290,7 @@ class Placeholder
                     }
                     $stringReplaced = str_replace($placeholderObject->getPlaceholderString(), $replaceWith, $stringReplaced);
                 } else {
-                    \Logger::warn('Ignoring Placeholder "' . $placeholder['placeholderClass'] . '" -> Class not Found or not an instance of Pimcore_Placeholder_Abstract!');
+                    Logger::warn('Ignoring Placeholder "' . $placeholder['placeholderClass'] . '" -> Class not Found or not an instance of Pimcore_Placeholder_Abstract!');
                 }
             }
         }

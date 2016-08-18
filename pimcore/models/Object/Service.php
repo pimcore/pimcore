@@ -19,6 +19,7 @@ namespace Pimcore\Model\Object;
 use Pimcore\Model;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Admin as AdminTool;
+use Pimcore\Logger;
 
 class Service extends Model\Element\Service
 {
@@ -525,24 +526,15 @@ class Service extends Model\Element\Service
 
     /**
      * @param Concrete $object
-     * @return AbstractObject
+     * @return AbstractObject|null
      */
     public static function hasInheritableParentObject(Concrete $object)
     {
         if ($object->getClass()->getAllowInherit()) {
-            if ($object->getParent() instanceof AbstractObject) {
-                $parent = $object->getParent();
-                while ($parent && $parent->getType() == "folder") {
-                    $parent = $parent->getParent();
-                }
-
-                if ($parent && ($parent->getType() == "object" || $parent->getType() == "variant")) {
-                    if ($parent->getClassId() == $object->getClassId()) {
-                        return $parent;
-                    }
-                }
-            }
+            return $object->getNextParentForInheritance();
         }
+
+        return null;
     }
 
     /**
@@ -786,7 +778,7 @@ class Service extends Model\Element\Service
         if (count($conditionPartsFilters) > 0) {
             $conditionFilters = "(" . implode(" AND ", $conditionPartsFilters) . ")";
         }
-        \Logger::log("ObjectController filter condition:" . $conditionFilters);
+        Logger::log("ObjectController filter condition:" . $conditionFilters);
 
         return $conditionFilters;
     }
@@ -996,12 +988,21 @@ class Service extends Model\Element\Service
     }
 
 
-    private static function createSuperLayout(&$layout)
+    public static function createSuperLayout(&$layout)
     {
         if ($layout instanceof ClassDefinition\Data) {
             $layout->setInvisible(false);
             $layout->setNoteditable(false);
         }
+
+
+        if ($layout instanceof Model\Object\ClassDefinition\Data\Fieldcollections) {
+            unset($layout->disallowAddRemove);
+            unset($layout->disallowReorder);
+            $layout->layoutId = -1;
+        }
+
+
 
         if (method_exists($layout, "getChilds")) {
             $children = $layout->getChilds();
@@ -1355,7 +1356,7 @@ class Service extends Model\Element\Service
         }
         $className = $fd->getCalculatorClass();
         if (!$className || !\Pimcore\Tool::classExists($className)) {
-            \Logger::error("Class does not exist: " . $className);
+            Logger::error("Class does not exist: " . $className);
 
             return null;
         }
@@ -1402,7 +1403,7 @@ class Service extends Model\Element\Service
         }
         $className = $fd->getCalculatorClass();
         if (!$className || !\Pimcore\Tool::classExists($className)) {
-            \Logger::error("Class does not exsist: " . $className);
+            Logger::error("Class does not exsist: " . $className);
 
             return null;
         }

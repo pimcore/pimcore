@@ -1156,14 +1156,14 @@ pimcore.asset.tree = Class.create({
             elementSubType: record.data.type,
             id: record.data.id,
             default: record.data.text
-        }
+        };
         pimcore.elementservice.editElementKey(options);
     },
 
 
-    searchAndMove: function(parentId) {
-        pimcore.helpers.searchAndMove(parentId, function() {
-            this.reload();
+    searchAndMove: function(tree, record) {
+        pimcore.helpers.searchAndMove(record.data.id, function() {
+            pimcore.elementservice.refreshNode(record);
         }.bind(this), "asset");
     },
 

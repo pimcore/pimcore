@@ -16,6 +16,7 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Object;
 use Pimcore\Model\Site;
+use Pimcore\Logger;
 
 class Admin_PortalController extends \Pimcore\Controller\Action\Admin
 {
@@ -198,7 +199,7 @@ class Admin_PortalController extends \Pimcore\Controller\Action\Admin
             try {
                 $feed = \Zend_Feed_Reader::import($feedUrl);
             } catch (\Exception $e) {
-                \Logger::error($e);
+                Logger::error($e);
             }
         }
 

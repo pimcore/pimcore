@@ -22,6 +22,7 @@ use Pimcore\File;
 use Pimcore\Config;
 use Pimcore\Model;
 use Pimcore\Model\Element;
+use Pimcore\Logger;
 
 class Asset extends Element\AbstractElement
 {
@@ -225,7 +226,7 @@ class Asset extends Element\AbstractElement
                 return self::getById($asset->getId());
             }
         } catch (\Exception $e) {
-            \Logger::warning($e->getMessage());
+            Logger::warning($e->getMessage());
         }
 
         return null;
@@ -268,7 +269,7 @@ class Asset extends Element\AbstractElement
                     \Zend_Registry::set($cacheKey, $asset);
                 }
             } catch (\Exception $e) {
-                \Logger::warning($e->getMessage());
+                Logger::warning($e->getMessage());
 
                 return null;
             }
@@ -280,7 +281,7 @@ class Asset extends Element\AbstractElement
 
         return $asset;
     }
-    
+
     /**
      * Helper to quickly create a new asset
      *
@@ -485,14 +486,14 @@ class Asset extends Element\AbstractElement
                     $this->rollBack();
                 } catch (\Exception $er) {
                     // PDO adapter throws exceptions if rollback fails
-                    \Logger::error($er);
+                    Logger::error($er);
                 }
 
                 // we try to start the transaction $maxRetries times again (deadlocks, ...)
                 if ($retries < ($maxRetries-1)) {
                     $run = $retries+1;
                     $waitTime = 100000; // microseconds
-                    \Logger::warn("Unable to finish transaction (" . $run . ". run) because of the following reason '" . $e->getMessage() . "'. --> Retrying in " . $waitTime . " microseconds ... (" . ($run+1) . " of " . $maxRetries . ")");
+                    Logger::warn("Unable to finish transaction (" . $run . ". run) because of the following reason '" . $e->getMessage() . "'. --> Retrying in " . $waitTime . " microseconds ... (" . ($run+1) . " of " . $maxRetries . ")");
 
                     usleep($waitTime); // wait specified time until we restart the transaction
                 } else {
@@ -611,17 +612,16 @@ class Asset extends Element\AbstractElement
 
         $typeChanged = false;
 
-        if ($this->getType() != "folder") {
-
-            // fix for missing parent folders
-            // check if folder of new destination is already created and if not do so
-            $newPath = dirname($this->getFileSystemPath());
-            if (!is_dir($newPath)) {
-                if (!File::mkdir($newPath)) {
-                    throw new \Exception("Unable to create directory: ". $newPath . " for asset :" . $this->getId());
-                }
+        // fix for missing parent folders
+        // check if folder of new destination is already created and if not do so
+        $newPath = dirname($this->getFileSystemPath());
+        if (!is_dir($newPath)) {
+            if (!File::mkdir($newPath)) {
+                throw new \Exception("Unable to create directory: ". $newPath . " for asset :" . $this->getId());
             }
+        }
 
+        if ($this->getType() != "folder") {
             if ($this->getDataChanged()) {
                 $src = $this->getStream();
                 $streamMeta = stream_get_meta_data($src);
@@ -994,7 +994,7 @@ class Asset extends Element\AbstractElement
 
             \Pimcore\Cache::clearTags($tags);
         } catch (\Exception $e) {
-            \Logger::crit($e);
+            Logger::crit($e);
         }
     }
 

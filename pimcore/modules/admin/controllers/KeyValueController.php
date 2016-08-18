@@ -15,6 +15,7 @@
 use Pimcore\Db;
 use Pimcore\Model\Object;
 use Pimcore\Model\Object\KeyValue;
+use Pimcore\Logger;
 
 class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
 {
@@ -403,7 +404,7 @@ class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
         $pairs = $obj->getKeyValuePairs();
 
         $value = $pairs->getab123();
-        \Logger::debug("value=" . $value);
+        Logger::debug("value=" . $value);
 
         $pairs->setab123("new valuexyz");
         $pairs->setdddd("dvalue");

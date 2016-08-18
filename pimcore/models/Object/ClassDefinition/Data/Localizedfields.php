@@ -19,6 +19,7 @@ namespace Pimcore\Model\Object\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\Object;
 use Pimcore\Tool;
+use Pimcore\Logger;
 
 class Localizedfields extends Model\Object\ClassDefinition\Data
 {
@@ -1148,7 +1149,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
                         $fd = $this->getFielddefinition($elementName);
                         if (!$fd) {
                             // class definition seems to have changed
-                            \Logger::warn("class definition seems to have changed, element name: " . $elementName);
+                            Logger::warn("class definition seems to have changed, element name: " . $elementName);
                             continue;
                         }
 
@@ -1184,7 +1185,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
                     $fd = $this->getFielddefinition($elementName);
                     if (!$fd) {
                         // class definition seems to have changed
-                        \Logger::warn("class definition seems to have changed, element name: " . $elementName);
+                        Logger::warn("class definition seems to have changed, element name: " . $elementName);
                         continue;
                     }
 

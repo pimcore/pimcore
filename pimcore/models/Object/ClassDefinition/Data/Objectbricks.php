@@ -20,6 +20,7 @@ use Pimcore\Model;
 use Pimcore\Model\Object;
 use Pimcore\Model\Webservice;
 use Pimcore\Tool;
+use Pimcore\Logger;
 
 class Objectbricks extends Model\Object\ClassDefinition\Data
 {
@@ -392,7 +393,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
                 try {
                     Object\Objectbrick\Definition::getByKey($allowedTypes[$i]);
                 } catch (\Exception $e) {
-                    \Logger::warn("Removed unknown allowed type [ $allowedTypes[$i] ] from allowed types of object brick");
+                    Logger::warn("Removed unknown allowed type [ $allowedTypes[$i] ] from allowed types of object brick");
                     unset($allowedTypes[$i]);
                 }
             }
@@ -459,59 +460,64 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
     public function getFromWebserviceImport($data, $relatedObject = null, $params = [], $idMapper = null)
     {
         $containerName = "\\Pimcore\\Model\\Object\\" . ucfirst($relatedObject->getClass()->getName()) . "\\" . ucfirst($this->getName());
-        $container = new $containerName($relatedObject, $this->getName());
 
-        if (is_array($data)) {
-            foreach ($data as $collectionRaw) {
-                if ($collectionRaw instanceof \stdClass) {
-                    $class = "\\Pimcore\\Model\\Webservice\\Data\\Object\\Element";
-                    $collectionRaw = Tool\Cast::castToClass($class, $collectionRaw);
-                }
+        if (Tool::classExists($containerName)) {
+            $container = new $containerName($relatedObject, $this->getName());
 
-                if ($collectionRaw != null) {
-                    if (!$collectionRaw instanceof Webservice\Data\Object\Element) {
-                        throw new \Exception("invalid data in objectbrick [" . $this->getName() . "]");
+            if (is_array($data)) {
+                foreach ($data as $collectionRaw) {
+                    if ($collectionRaw instanceof \stdClass) {
+                        $class = "\\Pimcore\\Model\\Webservice\\Data\\Object\\Element";
+                        $collectionRaw = Tool\Cast::castToClass($class, $collectionRaw);
                     }
 
-                    $brick = $collectionRaw->type;
-                    $collectionData = [];
-                    $collectionDef = Object\Objectbrick\Definition::getByKey($brick);
+                    if ($collectionRaw != null) {
+                        if (!$collectionRaw instanceof Webservice\Data\Object\Element) {
+                            throw new \Exception("invalid data in objectbrick [" . $this->getName() . "]");
+                        }
 
-                    if (!$collectionDef) {
-                        throw new \Exception("Unknown objectbrick in webservice import [" . $brick . "]");
-                    }
+                        $brick = $collectionRaw->type;
+                        $collectionData = [];
+                        $collectionDef = Object\Objectbrick\Definition::getByKey($brick);
 
-                    foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                        foreach ($collectionRaw->value as $field) {
-                            if ($field instanceof \stdClass) {
-                                $class = "\\Pimcore\\Model\\Webservice\\Data\\Object\\Element";
-                                $field = Tool\Cast::castToClass($class, $field);
-                            }
-                            if (!$field instanceof Webservice\Data\Object\Element) {
-                                throw new \Exception("invalid data in objectbricks [" . $this->getName() . "]");
-                            } elseif ($field->name == $fd->getName()) {
-                                if ($field->type != $fd->getFieldType()) {
-                                    throw new \Exception("Type mismatch for objectbricks field [" . $field->name . "]. Should be [" . $fd->getFieldType() . "] but is [" . $field->type . "]");
+                        if (!$collectionDef) {
+                            throw new \Exception("Unknown objectbrick in webservice import [" . $brick . "]");
+                        }
+
+                        foreach ($collectionDef->getFieldDefinitions() as $fd) {
+                            foreach ($collectionRaw->value as $field) {
+                                if ($field instanceof \stdClass) {
+                                    $class = "\\Pimcore\\Model\\Webservice\\Data\\Object\\Element";
+                                    $field = Tool\Cast::castToClass($class, $field);
                                 }
-                                $collectionData[$fd->getName()] = $fd->getFromWebserviceImport($field->value, $relatedObject, $params, $idMapper);
-                                break;
+                                if (!$field instanceof Webservice\Data\Object\Element) {
+                                    throw new \Exception("invalid data in objectbricks [" . $this->getName() . "]");
+                                } elseif ($field->name == $fd->getName()) {
+                                    if ($field->type != $fd->getFieldType()) {
+                                        throw new \Exception("Type mismatch for objectbricks field [" . $field->name . "]. Should be [" . $fd->getFieldType() . "] but is [" . $field->type . "]");
+                                    }
+                                    $collectionData[$fd->getName()] = $fd->getFromWebserviceImport($field->value, $relatedObject, $params, $idMapper);
+                                    break;
+                                }
                             }
                         }
+
+                        $collectionClass = "\\Pimcore\\Model\\Object\\Objectbrick\\Data\\" . ucfirst($brick);
+                        $collection = new $collectionClass($relatedObject);
+                        $collection->setValues($collectionData);
+                        $collection->setFieldname($this->getName());
+
+                        $setter = "set" . ucfirst($brick);
+
+                        $container->$setter($collection);
                     }
-
-                    $collectionClass = "\\Pimcore\\Model\\Object\\Objectbrick\\Data\\" . ucfirst($brick);
-                    $collection = new $collectionClass($relatedObject);
-                    $collection->setValues($collectionData);
-                    $collection->setFieldname($this->getName());
-
-                    $setter = "set" . ucfirst($brick);
-
-                    $container->$setter($collection);
                 }
             }
+
+            return $container;
         }
 
-        return $container;
+        return null;
     }
 
     /**
@@ -912,7 +918,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
                 try {
                     $definition = Object\Objectbrick\Definition::getByKey($allowedType);
                 } catch (\Exception $e) {
-                    \Logger::info("Unknown allowed type [ $allowedType ] ignored.");
+                    Logger::info("Unknown allowed type [ $allowedType ] ignored.");
                 }
 
                 if ($definition) {

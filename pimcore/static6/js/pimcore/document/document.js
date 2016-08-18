@@ -514,10 +514,11 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
             scale: "medium",
             menu: [{
                 text: t("new_document"),
-                hidden: !in_array(this.getType(), ["page","snippet","email"]),
+                hidden: !in_array(this.getType(), ["page","snippet","email","printpage","printcontainer"]),
                 iconCls: "pimcore_icon_page pimcore_icon_overlay_add",
                 menu: [{
                     text: t("using_inheritance"),
+                    hidden: !in_array(this.getType(), ["page","snippet","printpage","printcontainer"]),
                     handler: this.createTranslation.bind(this, true),
                     iconCls: "pimcore_icon_clone"
                 },{

@@ -16,6 +16,7 @@ namespace Pimcore\Controller\Plugin;
 
 use Pimcore\Tool;
 use Pimcore\Cache as CacheManager;
+use Pimcore\Logger;
 
 class Cache extends \Zend_Controller_Plugin_Abstract
 {
@@ -161,7 +162,7 @@ class Cache extends \Zend_Controller_Plugin_Abstract
                 return $this->disable();
             }
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
 
             return $this->disable("ERROR: Exception (see debug.log)");
         }
@@ -178,8 +179,8 @@ class Cache extends \Zend_Controller_Plugin_Abstract
 
         $appendKey = "";
         // this is for example for the image-data-uri plugin
-        if ($request->getParam("pimcore_cache_tag_suffix")) {
-            $tags = $request->getParam("pimcore_cache_tag_suffix");
+        if (isset($_REQUEST["pimcore_cache_tag_suffix"])) {
+            $tags = $_REQUEST["pimcore_cache_tag_suffix"];
             if (is_array($tags)) {
                 $appendKey = "_" . implode("_", $tags);
             }
@@ -269,7 +270,7 @@ class Cache extends \Zend_Controller_Plugin_Abstract
 
                 CacheManager::save($cacheItem, $cacheKey, $tags, $this->lifetime, 1000, true);
             } catch (\Exception $e) {
-                \Logger::error($e);
+                Logger::error($e);
 
                 return;
             }

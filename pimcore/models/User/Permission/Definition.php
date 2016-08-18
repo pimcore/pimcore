@@ -17,6 +17,7 @@
 namespace Pimcore\Model\User\Permission;
 
 use Pimcore\Model;
+use Pimcore\Logger;
 
 class Definition extends Model\AbstractModel
 {
@@ -82,7 +83,7 @@ class Definition extends Model\AbstractModel
         }
         $permissionDefinition = static::getByKey($permission);
         if ($permissionDefinition instanceof self) {
-            \Logger::info("Permission $permission allready exists. Skipping creation.");
+            Logger::info("Permission $permission allready exists. Skipping creation.");
 
             return $permissionDefinition;
         } else {

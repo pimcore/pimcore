@@ -18,6 +18,7 @@ namespace Pimcore\Model\Dependency;
 
 use Pimcore\Model;
 use Pimcore\Model\Element;
+use Pimcore\Logger;
 
 class Dao extends Model\Dao\AbstractDao
 {
@@ -83,7 +84,7 @@ class Dao extends Model\Dao\AbstractDao
             $this->db->delete("dependencies", $this->db->quoteInto("sourceid = ?", $id) . " AND " . $this->db->quoteInto("sourcetype = ?", $type));
             $this->db->delete("dependencies", $this->db->quoteInto("targetid = ?", $id) . " AND " . $this->db->quoteInto("targettype = ?", $type));
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
         }
     }
 
@@ -98,7 +99,7 @@ class Dao extends Model\Dao\AbstractDao
         try {
             $this->db->delete("dependencies", $this->db->quoteInto("sourceid = ?", $this->model->getSourceId()) . " AND " . $this->db->quoteInto("sourcetype = ?", $this->model->getSourceType()));
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
         }
     }
 

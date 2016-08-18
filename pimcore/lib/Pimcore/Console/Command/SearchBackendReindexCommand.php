@@ -18,6 +18,7 @@ use Pimcore\Console\AbstractCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Pimcore\Model\Search;
+use Pimcore\Logger;
 
 class SearchBackendReindexCommand extends AbstractCommand
 {
@@ -64,7 +65,7 @@ class SearchBackendReindexCommand extends AbstractCommand
 
                         $searchEntry->save();
                     } catch (\Exception $e) {
-                        \Logger::err($e);
+                        Logger::err($e);
                     }
                 }
                 \Pimcore::collectGarbage();

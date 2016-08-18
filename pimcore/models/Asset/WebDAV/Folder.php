@@ -20,6 +20,7 @@ use Sabre\DAV;
 use Pimcore\File;
 use Pimcore\Tool\Admin as AdminTool;
 use Pimcore\Model\Asset;
+use Pimcore\Logger;
 
 class Folder extends DAV\Collection
 {
@@ -54,7 +55,7 @@ class Folder extends DAV\Collection
                             $children[] = $child;
                         }
                     } catch (\Exception $e) {
-                        \Logger::warning($e);
+                        Logger::warning($e);
                     }
                 }
             }

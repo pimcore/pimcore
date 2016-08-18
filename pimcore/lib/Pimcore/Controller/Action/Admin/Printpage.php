@@ -18,6 +18,7 @@ use Pimcore\Config;
 use \Pimcore\Model\Document;
 use Pimcore\Model\Element\Service;
 use Pimcore\Web2Print\Processor;
+use Pimcore\Logger;
 
 class Printpage extends \Pimcore\Controller\Action\Admin\Document
 {
@@ -41,13 +42,19 @@ class Printpage extends \Pimcore\Controller\Action\Admin\Document
         $page->userPermissions = $page->getUserPermissions();
         $page->setLocked($page->isLocked());
 
+        if ($page->getContentMasterDocument()) {
+            $page->contentMasterDocumentPath = $page->getContentMasterDocument()->getRealFullPath();
+        }
+
+        $this->addTranslationsData($page);
+
         // unset useless data
         $page->setElements(null);
         $page->childs = null;
 
         // cleanup properties
         $this->minimizeProperties($page);
- 
+
         if ($page->isAllowed("view")) {
             $this->_helper->json($page);
         }
@@ -59,7 +66,7 @@ class Printpage extends \Pimcore\Controller\Action\Admin\Document
     {
         if ($this->getParam("id")) {
             $page = Document\Printpage::getById($this->getParam("id"));
-            
+
             $page = $this->getLatestVersion($page);
             $page->setUserModification($this->getUser()->getId());
 
@@ -91,19 +98,19 @@ class Printpage extends \Pimcore\Controller\Action\Admin\Document
                     $page->save();
                     $this->_helper->json(["success" => true]);
                 } catch (\Exception $e) {
-                    \Logger::err($e);
+                    Logger::err($e);
                     $this->_helper->json(["success" => false, "message"=>$e->getMessage()]);
                 }
             } else {
                 if ($page->isAllowed("save")) {
                     $this->setValuesToDocument($page);
-                    
+
 
                     try {
                         $page->saveVersion();
                         $this->_helper->json(["success" => true]);
                     } catch (\Exception $e) {
-                        \Logger::err($e);
+                        Logger::err($e);
                         $this->_helper->json(["success" => false, "message"=>$e->getMessage()]);
                     }
                 }
@@ -168,7 +175,7 @@ class Printpage extends \Pimcore\Controller\Action\Admin\Document
             } else {
                 header("Content-Type: application/pdf"); while (@ob_end_flush()) ;
                 flush();
-                
+
                 readfile($document->getPdfFileName());
                 exit;
             }

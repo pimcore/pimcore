@@ -106,13 +106,29 @@ pimcore.object.classes.layout.layout = Class.create({
                             xtype: "checkbox",
                             fieldLabel: t("collapsible"),
                             name: "collapsible",
-                            checked: this.datax.collapsible
+                            checked: this.datax.collapsible || this.datax.collapsed,
+                            listeners: {
+                                change: function (row, checked) {
+                                    if(!checked) {
+                                        //force uncheck on collapsed checkbox
+                                        row.nextNode().setValue(false);
+                                    }
+                                }
+                            }
                         },
                         {
                             xtype: "checkbox",
                             fieldLabel: t("collapsed"),
                             name: "collapsed",
-                            checked: this.datax.collapsed
+                            checked: this.datax.collapsed,
+                            listeners: {
+                                change: function (row, checked) {
+                                    if(checked) {
+                                        //force check on collapsible checkbox
+                                        row.previousNode().setValue(true);
+                                    }
+                                }
+                            }
                         },
                         {
                             xtype: "textfield",

@@ -16,6 +16,7 @@ namespace Pimcore;
 
 use Pimcore\Model;
 use Pimcore\Model\Element;
+use Pimcore\Logger;
 
 class View extends \Zend_View
 {
@@ -64,7 +65,7 @@ class View extends \Zend_View
 
             return $tag;
         } catch (\Exception $e) {
-            \Logger::warning($e);
+            Logger::warning($e);
         }
     }
 

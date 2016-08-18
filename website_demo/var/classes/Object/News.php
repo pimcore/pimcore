@@ -1,25 +1,34 @@
 <?php 
 
-/** Generated at 2015-11-17T06:56:39+01:00 */
-
-/**
+/** 
+* Generated at: 2016-08-09T09:00:04+02:00
 * Inheritance: no
-* Variants   : no
-* Changed by : admin (37)
-* IP:          192.168.11.33
-*/
+* Variants: no
+* Changed by: system (0)
+* IP: 192.168.11.111
 
+
+Fields Summary: 
+- localizedfields [localizedfields]
+-- title [input]
+-- shortText [textarea]
+-- text [wysiwyg]
+- date [datetime]
+- image_1 [image]
+- image_2 [image]
+- image_3 [image]
+*/ 
 
 namespace Pimcore\Model\Object;
 
 
 
 /**
-* @method static \Pimcore\Model\Object\News getByLocalizedfields ($value, $limit = 0) 
-* @method static \Pimcore\Model\Object\News getByDate ($value, $limit = 0) 
-* @method static \Pimcore\Model\Object\News getByImage_1 ($value, $limit = 0) 
-* @method static \Pimcore\Model\Object\News getByImage_2 ($value, $limit = 0) 
-* @method static \Pimcore\Model\Object\News getByImage_3 ($value, $limit = 0) 
+* @method static \Pimcore\Model\Object\News\Listing getByLocalizedfields ($field, $value, $locale = null, $limit = 0) 
+* @method static \Pimcore\Model\Object\News\Listing getByDate ($value, $limit = 0) 
+* @method static \Pimcore\Model\Object\News\Listing getByImage_1 ($value, $limit = 0) 
+* @method static \Pimcore\Model\Object\News\Listing getByImage_2 ($value, $limit = 0) 
+* @method static \Pimcore\Model\Object\News\Listing getByImage_3 ($value, $limit = 0) 
 */
 
 class News extends Concrete {
@@ -45,7 +54,7 @@ public static function create($values = array()) {
 
 /**
 * Get localizedfields - 
-* @return array
+* @return \Pimcore\Model\Object\Localizedfield
 */
 public function getLocalizedfields () {
 	$preValue = $this->preGetValue("localizedfields"); 
@@ -97,7 +106,7 @@ public function getText ($language = null) {
 
 /**
 * Set localizedfields - 
-* @param array $localizedfields
+* @param \Pimcore\Model\Object\Localizedfield $localizedfields
 * @return \Pimcore\Model\Object\News
 */
 public function setLocalizedfields ($localizedfields) {

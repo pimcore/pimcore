@@ -18,6 +18,7 @@ namespace Pimcore\Model\Asset\Image\Thumbnail;
 
 use Pimcore\Tool\Serialize;
 use Pimcore\Model;
+use Pimcore\Logger;
 
 class Config extends Model\AbstractModel
 {
@@ -96,7 +97,7 @@ class Config extends Model\AbstractModel
             try {
                 $thumbnail = self::getByName($config);
             } catch (\Exception $e) {
-                \Logger::error("requested thumbnail " . $config . " is not defined");
+                Logger::error("requested thumbnail " . $config . " is not defined");
 
                 return false;
             }

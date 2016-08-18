@@ -19,6 +19,7 @@ namespace Pimcore\Model\Document\Tag;
 use Pimcore\Model;
 use Pimcore\Cache;
 use Pimcore\Model\Document;
+use Pimcore\Logger;
 
 class Snippet extends Model\Document\Tag
 {
@@ -137,7 +138,7 @@ class Snippet extends Model\Document\Tag
                 if (\Pimcore::inDebugMode()) {
                     return "ERROR: " . $e->getMessage() . " (for details see debug.log)";
                 }
-                \Logger::error($e);
+                Logger::error($e);
             }
         } else {
             return null;

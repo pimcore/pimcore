@@ -15,6 +15,7 @@
 use Pimcore\Tool;
 use Pimcore\File;
 use Pimcore\Model\User;
+use Pimcore\Logger;
 
 class Admin_LoginController extends \Pimcore\Controller\Action\Admin
 {
@@ -151,7 +152,7 @@ class Admin_LoginController extends \Pimcore\Controller\Action\Admin
 
             if (!$user instanceof User) {
                 $this->writeLogFile($this->getParam("username"), $e->getMessage());
-                \Logger::info("Login failed: " . $e);
+                Logger::info("Login failed: " . $e);
             }
         }
 
@@ -209,7 +210,7 @@ class Admin_LoginController extends \Pimcore\Controller\Action\Admin
 
         if (!is_writable($logfile)) {
             $m = "It seems that " . $logfile . " is not writable.";
-            \Logger::crit($m);
+            Logger::crit($m);
             die($m);
         }
 
@@ -248,7 +249,7 @@ class Admin_LoginController extends \Pimcore\Controller\Action\Admin
 
         if ($matchesIpOnly > 49 || $matchesUserOnly > 9 || $matchesUserIp > 4) {
             $m = "Security Alert: Too many login attempts , please wait 5 minutes and try again.";
-            \Logger::crit($m);
+            Logger::crit($m);
             die($m);
         }
     }

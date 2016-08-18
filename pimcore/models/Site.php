@@ -16,6 +16,8 @@
 
 namespace Pimcore\Model;
 
+use Pimcore\Logger;
+
 class Site extends AbstractModel
 {
 
@@ -102,28 +104,28 @@ class Site extends AbstractModel
      */
     public static function getByDomain($domain)
     {
-        
+
         // cached because this is called in the route (Pimcore_Controller_Router_Route_Frontend)
         $cacheKey = "site_domain_". md5($domain);
         if (!$site = \Pimcore\Cache::load($cacheKey)) {
             $site = new self();
-            
+
             try {
                 $site->getDao()->getByDomain($domain);
             } catch (\Exception $e) {
-                \Logger::debug($e);
+                Logger::debug($e);
                 $site = "failed";
             }
-            
+
             \Pimcore\Cache::save($site, $cacheKey, ["system", "site"]);
         }
-        
+
         if ($site == "failed" || !$site) {
             $msg = "there is no site for the requested domain [" . $domain . "], content was [" . $site . "]";
-            \Logger::debug($msg);
+            Logger::debug($msg);
             throw new \Exception($msg);
         }
-        
+
         return $site;
     }
 
@@ -344,12 +346,12 @@ class Site extends AbstractModel
      */
     public function clearDependentCache()
     {
-        
+
         // this is mostly called in Site\Dao not here
         try {
             \Pimcore\Cache::clearTag("site");
         } catch (\Exception $e) {
-            \Logger::crit($e);
+            Logger::crit($e);
         }
     }
 

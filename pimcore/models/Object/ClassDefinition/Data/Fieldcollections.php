@@ -20,6 +20,7 @@ use Pimcore\Model;
 use Pimcore\Model\Object;
 use Pimcore\Model\Webservice;
 use Pimcore\Tool\Cast;
+use Pimcore\Logger;
 
 class Fieldcollections extends Model\Object\ClassDefinition\Data
 {
@@ -344,7 +345,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
                 try {
                     Object\Fieldcollection\Definition::getByKey($allowedTypes[$i]);
                 } catch (\Exception $e) {
-                    \Logger::warn("Removed unknown allowed type [ $allowedTypes[$i] ] from allowed types of field collection");
+                    Logger::warn("Removed unknown allowed type [ $allowedTypes[$i] ] from allowed types of field collection");
                     unset($allowedTypes[$i]);
                 }
             }
@@ -734,7 +735,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     public function getDiffDataFromEditmode($data, $object = null, $params = [])
     {
         $result = parent::getDiffDataFromEditmode($data, $object, $params);
-        \Logger::debug("bla");
+        Logger::debug("bla");
 
         return $result;
     }

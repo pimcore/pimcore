@@ -19,6 +19,7 @@ namespace Pimcore\Model\Object\Classificationstore;
 use Pimcore\Model;
 use Pimcore\Model\Object;
 use Pimcore\Tool;
+use Pimcore\Logger;
 
 class Dao extends Model\Dao\AbstractDao
 {
@@ -161,7 +162,7 @@ class Dao extends Model\Dao\AbstractDao
 
             $keyConfig = DefinitionCache::get($keyId);
             if (!$keyConfig) {
-                \Logger::error("Could not resolve key with ID: " . $keyId);
+                Logger::error("Could not resolve key with ID: " . $keyId);
                 continue;
             }
 
@@ -212,7 +213,7 @@ class Dao extends Model\Dao\AbstractDao
             `collectionId` BIGINT(20) NULL,
             `groupId` BIGINT(20) NOT NULL,
             `keyId` BIGINT(20) NOT NULL,
-            `value` LONGTEXT NOT NULL,
+            `value` LONGTEXT NULL,
 	        `value2` LONGTEXT NULL,
             `fieldname` VARCHAR(70) NOT NULL,
             `language` VARCHAR(10) NOT NULL,

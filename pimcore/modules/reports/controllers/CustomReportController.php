@@ -251,7 +251,11 @@ class Reports_CustomReportController extends \Pimcore\Controller\Action\Admin\Re
         }
 
         $configuration = $config->getDataSourceConfig();
-        $configuration = $configuration[0];
+        //if many rows returned as an array than use the first row. Fixes: #782
+        $configuration = is_array($configuration)
+            ? $configuration[0]
+            : $configuration;
+
         $adapter = CustomReport\Config::getAdapter($configuration, $config);
 
         $result = $adapter->getData($filters, $sort, $dir, null, null, $fields, $drillDownFilters);

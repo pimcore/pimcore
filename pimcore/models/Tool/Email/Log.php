@@ -18,6 +18,7 @@ namespace Pimcore\Model\Tool\Email;
 
 use Pimcore\Model;
 use Pimcore\File;
+use Pimcore\Logger;
 
 class Log extends Model\AbstractModel
 {
@@ -424,13 +425,13 @@ class Log extends Model\AbstractModel
 
         if ($html = $this->getBodyHtml()) {
             if (File::put(PIMCORE_LOG_MAIL_PERMANENT . '/email-' . $this->getId() . '-html.log', $html) === false) {
-                \Logger::warn('Could not write html email log file. LogId: ' . $this->getId());
+                Logger::warn('Could not write html email log file. LogId: ' . $this->getId());
             }
         }
 
         if ($text = $this->getBodyText()) {
             if (File::put(PIMCORE_LOG_MAIL_PERMANENT . '/email-' . $this->getId() . '-text.log', $text) === false) {
-                \Logger::warn('Could not write text email log file. LogId: ' . $this->getId());
+                Logger::warn('Could not write text email log file. LogId: ' . $this->getId());
             }
         }
     }

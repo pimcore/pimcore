@@ -70,7 +70,7 @@ class Admin_WorkflowController extends \Pimcore\Controller\Action\Admin\Element
         }
 
         //get the latest available version of the element -
-        //$this->element = $this->getLatestVersion($this->element);
+        $this->element = $this->getLatestVersion($this->element);
         $this->element->setUserModification($this->getUser()->getId());
     }
 

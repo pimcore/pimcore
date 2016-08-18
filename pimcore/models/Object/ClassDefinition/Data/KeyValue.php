@@ -18,6 +18,7 @@ namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
 use Pimcore\Model\Object;
+use Pimcore\Logger;
 
 class KeyValue extends Model\Object\ClassDefinition\Data
 {
@@ -143,7 +144,7 @@ class KeyValue extends Model\Object\ClassDefinition\Data
         //TODO is this even called if type keyvalue not part of the class def?
         foreach ($fieldDefinitions as $definition) {
             if ($definition instanceof Object\ClassDefinition\Data\KeyValue) {
-                \Logger::debug("found definition of type keyvalue, create table");
+                Logger::debug("found definition of type keyvalue, create table");
                 $keyValue->createUpdateTable();
                 break;
             }

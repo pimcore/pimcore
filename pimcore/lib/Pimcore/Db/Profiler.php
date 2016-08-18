@@ -14,6 +14,8 @@
 
 namespace Pimcore\Db;
 
+use Pimcore\Logger;
+
 class Profiler extends \Zend_Db_Profiler
 {
     /**
@@ -99,13 +101,13 @@ class Profiler extends \Zend_Db_Profiler
         if (!$this->getEnabled() || $state == self::IGNORED) {
             return;
         }
-        
+
         $profile = $this->getQueryProfile($queryId);
         $this->_totalElapsedTime += $profile->getElapsedSecs();
         $this->_totalQueries++;
 
         $logEntry = $profile->getQuery() . " | " . implode(",", $profile->getQueryParams());
-        \Logger::debug($logEntry, [
+        Logger::debug($logEntry, [
             "connection" => $this->getConnectionId(),
             "queryNum" => $this->_totalQueries,
             "time" => (string)round($profile->getElapsedSecs(), 5)

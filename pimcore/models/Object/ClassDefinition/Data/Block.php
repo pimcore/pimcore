@@ -20,6 +20,7 @@ use Pimcore\Model;
 use Pimcore\Model\Element;
 use Pimcore\Model\Object;
 use Pimcore\Tool\Serialize;
+use Pimcore\Logger;
 
 class Block extends Model\Object\ClassDefinition\Data
 {
@@ -118,7 +119,7 @@ class Block extends Model\Object\ClassDefinition\Data
                     $fd = $this->getFielddefinition($elementName);
                     if (!$fd) {
                         // class definition seems to have changed
-                        \Logger::warn("class definition seems to have changed, element name: " . $elementName);
+                        Logger::warn("class definition seems to have changed, element name: " . $elementName);
                         continue;
                     }
                     $elementData = $blockElement->getData();
@@ -162,7 +163,7 @@ class Block extends Model\Object\ClassDefinition\Data
                     $fd = $this->getFielddefinition($elementName);
                     if (!$fd) {
                         // class definition seems to have changed
-                        \Logger::warn("class definition seems to have changed, element name: " . $elementName);
+                        Logger::warn("class definition seems to have changed, element name: " . $elementName);
                         continue;
                     }
 
@@ -230,7 +231,7 @@ class Block extends Model\Object\ClassDefinition\Data
                     $fd = $this->getFielddefinition($elementName);
                     if (!$fd) {
                         // class definition seems to have changed
-                        \Logger::warn("class definition seems to have changed, element name: " . $elementName);
+                        Logger::warn("class definition seems to have changed, element name: " . $elementName);
                         continue;
                     }
                     $elementData = $blockElement->getData();
@@ -603,7 +604,7 @@ class Block extends Model\Object\ClassDefinition\Data
                 $fd = $this->getFielddefinition($elementName);
                 if (!$fd) {
                     // class definition seems to have changed
-                    \Logger::warn("class definition seems to have changed, element name: " . $elementName);
+                    Logger::warn("class definition seems to have changed, element name: " . $elementName);
                     continue;
                 }
                 $elementData = $blockElement->getData();
@@ -635,7 +636,7 @@ class Block extends Model\Object\ClassDefinition\Data
                 $fd = $this->getFielddefinition($elementName);
                 if (!$fd) {
                     // class definition seems to have changed
-                    \Logger::warn("class definition seems to have changed, element name: " . $elementName);
+                    Logger::warn("class definition seems to have changed, element name: " . $elementName);
                     continue;
                 }
                 $data = $blockElement->getData();

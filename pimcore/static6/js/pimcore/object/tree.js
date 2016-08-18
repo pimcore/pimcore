@@ -930,7 +930,7 @@ pimcore.object.tree = Class.create({
     },
 
     searchAndMove: function(tree, record) {
-        pimcore.helpers.searchAndMove(record.parentId, function() {
+        pimcore.helpers.searchAndMove(record.data.id, function() {
             pimcore.elementservice.refreshNode(record);
         }.bind(this), "object");
     }

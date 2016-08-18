@@ -20,6 +20,7 @@ use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
 use Pimcore\Model\Document;
+use Pimcore\Logger;
 
 class Pdf extends Model\Document\Tag
 {
@@ -237,7 +238,7 @@ class Pdf extends Model\Document\Tag
             $el = Asset::getById($this->id);
             if (!$el instanceof Asset) {
                 $sane = false;
-                \Logger::notice("Detected insane relation, removing reference to non existent asset with id [" . $this->id . "]");
+                Logger::notice("Detected insane relation, removing reference to non existent asset with id [" . $this->id . "]");
                 $this->id = null;
             }
         }

@@ -17,6 +17,7 @@
 namespace Pimcore\Model\User\Permission\Definition;
 
 use Pimcore\Model;
+use Pimcore\Logger;
 
 class Dao extends Model\Dao\AbstractDao
 {
@@ -31,7 +32,7 @@ class Dao extends Model\Dao\AbstractDao
                 "key" => $this->model->getKey()
             ]);
         } catch (\Exception $e) {
-            \Logger::warn($e);
+            Logger::warn($e);
         }
     }
 }

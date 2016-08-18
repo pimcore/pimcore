@@ -19,6 +19,7 @@ namespace Pimcore\Model\Asset\Video;
 use Pimcore\Model\Asset\Image;
 use Pimcore\Model;
 use Pimcore\File;
+use Pimcore\Logger;
 
 class ImageThumbnail
 {
@@ -177,8 +178,8 @@ class ImageThumbnail
                 try {
                     $path = Image\Thumbnail\Processor::process($this->asset, $this->getConfig(), $path, $deferred, true, $generated);
                 } catch (\Exception $e) {
-                    \Logger::error("Couldn't create image-thumbnail of video " . $this->asset->getRealFullPath());
-                    \Logger::error($e);
+                    Logger::error("Couldn't create image-thumbnail of video " . $this->asset->getRealFullPath());
+                    Logger::error($e);
                     $path = $errorImage;
                 }
             }

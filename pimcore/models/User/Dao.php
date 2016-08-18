@@ -39,10 +39,6 @@ class Dao extends UserRole\Dao
         $this->db->update("assets", ["userModification" => null], $this->db->quoteInto("userModification = ?", $userId));
         $this->db->delete("users_workspaces_asset", $this->db->quoteInto("userId = ?", $userId));
 
-        // classes
-        $this->db->update("classes", ["userOwner" => null], $this->db->quoteInto("userOwner = ?", $userId));
-        $this->db->update("classes", ["userModification" => null], $this->db->quoteInto("userModification = ?", $userId));
-
         // documents
         $this->db->update("documents", ["userOwner" => null], $this->db->quoteInto("userOwner = ?", $userId));
         $this->db->update("documents", ["userModification" => null], $this->db->quoteInto("userModification = ?", $userId));

@@ -17,6 +17,7 @@ use Pimcore\Tool;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
 use Pimcore\Model;
+use Pimcore\Logger;
 
 class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
 {
@@ -285,7 +286,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
 
             @unlink($sourcePath);
         } else {
-            \Logger::debug("prevented creating asset because of missing permissions, parent asset is " . $parentAsset->getRealFullPath());
+            Logger::debug("prevented creating asset because of missing permissions, parent asset is " . $parentAsset->getRealFullPath());
         }
 
         return [
@@ -356,7 +357,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
                 $success = true;
             }
         } else {
-            \Logger::debug("prevented creating asset because of missing permissions");
+            Logger::debug("prevented creating asset because of missing permissions");
         }
 
         $this->_helper->json(["success" => $success]);
@@ -416,7 +417,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
                 }
                 $hasDependency = $asset->getDependencies()->isRequired();
             } catch (\Exception $e) {
-                \Logger::err("failed to access asset with id: " . $id);
+                Logger::err("failed to access asset with id: " . $id);
                 continue;
             }
 
@@ -562,7 +563,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
                     $tmpAsset["imageHeight"] = $asset->getCustomSetting("imageHeight");
                 }
             } catch (\Exception $e) {
-                \Logger::debug("Cannot get dimensions of image, seems to be broken.");
+                Logger::debug("Cannot get dimensions of image, seems to be broken.");
             }
         } elseif ($asset->getType() == "video") {
             try {
@@ -570,7 +571,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
                     $tmpAsset["thumbnail"] = $this->getThumbnailUrl($asset);
                 }
             } catch (\Exception $e) {
-                \Logger::debug("Cannot get dimensions of video, seems to be broken.");
+                Logger::debug("Cannot get dimensions of video, seems to be broken.");
             }
         } elseif ($asset->getType() == "document") {
             try {
@@ -579,7 +580,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
                     $tmpAsset["thumbnail"] = $this->getThumbnailUrl($asset);
                 }
             } catch (\Exception $e) {
-                \Logger::debug("Cannot get dimensions of video, seems to be broken.");
+                Logger::debug("Cannot get dimensions of video, seems to be broken.");
             }
         }
 
@@ -653,7 +654,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
 
                 if ($this->getParam("filename") != $asset->getFilename() and !$asset->isAllowed("rename")) {
                     unset($updateData["filename"]);
-                    \Logger::debug("prevented renaming asset because of missing permissions ");
+                    Logger::debug("prevented renaming asset because of missing permissions ");
                 }
 
                 $asset->setValues($updateData);
@@ -667,7 +668,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
                 }
             } else {
                 $msg = "prevented moving asset, asset with same path+key already exists at target location or the asset is locked. ID: " . $asset->getId();
-                \Logger::debug($msg);
+                Logger::debug($msg);
                 $this->_helper->json(["success" => $success, "message" => $msg]);
             }
         } elseif ($asset->isAllowed("rename") && $this->getParam("filename")) {
@@ -680,7 +681,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
                 $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
             }
         } else {
-            \Logger::debug("prevented update asset because of missing permissions ");
+            Logger::debug("prevented update asset because of missing permissions ");
         }
 
         $this->_helper->json(["success" => $success]);
@@ -710,7 +711,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
 
             $server->exec();
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
         }
 
         exit;
@@ -752,7 +753,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
 
                                     $properties[$propertyName] = $property;
                                 } catch (\Exception $e) {
-                                    \Logger::err("Can't add " . $propertyName . " to asset " . $asset->getRealFullPath());
+                                    Logger::err("Can't add " . $propertyName . " to asset " . $asset->getRealFullPath());
                                 }
                             }
 
@@ -794,7 +795,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
                         $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
                     }
                 } else {
-                    \Logger::debug("prevented save asset because of missing permissions ");
+                    Logger::debug("prevented save asset because of missing permissions ");
                 }
 
                 $this->_helper->json(["success" => $success]);
@@ -802,7 +803,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
 
             $this->_helper->json(false);
         } catch (\Exception $e) {
-            \Logger::log($e);
+            Logger::log($e);
             if (Tool\Admin::isExtJS6() && $e instanceof Element\ValidationException) {
                 $this->_helper->json(["success" => false, "type" => "ValidationException", "message" => $e->getMessage(), "stack" => $e->getTraceAsString(), "code" => $e->getCode()]);
             }
@@ -1239,10 +1240,10 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
 
                 $success = true;
             } else {
-                \Logger::debug("prevended copy/paste because asset with same path+key already exists in this location");
+                Logger::debug("prevended copy/paste because asset with same path+key already exists in this location");
             }
         } else {
-            \Logger::error("could not execute copy/paste because of missing permissions on target [ " . $targetId . " ]");
+            Logger::error("could not execute copy/paste because of missing permissions on target [ " . $targetId . " ]");
             $this->_helper->json(["error" => false, "message" => "missing_permission"]);
         }
 
@@ -1444,7 +1445,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
 
                             @unlink($tmpFile);
                         } else {
-                            \Logger::debug("prevented creating asset because of missing permissions");
+                            Logger::debug("prevented creating asset because of missing permissions");
                         }
                     }
                 }
@@ -1524,7 +1525,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
                         "userModification" => $this->getUser()->getId()
                     ]);
                 } else {
-                    \Logger::debug("prevented creating asset because of missing permissions ");
+                    Logger::debug("prevented creating asset because of missing permissions ");
                 }
             }
         }
@@ -1562,7 +1563,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
             ]);
             $success = true;
         } else {
-            \Logger::debug("prevented creating asset because of missing permissions");
+            Logger::debug("prevented creating asset because of missing permissions");
         }
 
         $this->_helper->json(["success" => $success]);

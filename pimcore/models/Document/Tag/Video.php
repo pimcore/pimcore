@@ -19,6 +19,7 @@ namespace Pimcore\Model\Document\Tag;
 use Pimcore\Model;
 use Pimcore\Tool;
 use Pimcore\Model\Asset;
+use Pimcore\Logger;
 
 class Video extends Model\Document\Tag
 {
@@ -212,7 +213,7 @@ class Video extends Model\Document\Tag
             $el = Asset::getById($this->id);
             if (!$el instanceof Asset) {
                 $sane = false;
-                \Logger::notice("Detected insane relation, removing reference to non existent asset with id [" . $this->id . "]");
+                Logger::notice("Detected insane relation, removing reference to non existent asset with id [" . $this->id . "]");
                 $this->id = null;
                 $this->type = null;
             }
@@ -220,7 +221,7 @@ class Video extends Model\Document\Tag
 
         if (!($poster = Asset::getById($this->poster))) {
             $sane = false;
-            \Logger::notice("Detected insane relation, removing reference to non existent asset with id [" . $this->id . "]");
+            Logger::notice("Detected insane relation, removing reference to non existent asset with id [" . $this->id . "]");
             $this->poster = null;
         }
 
@@ -720,7 +721,7 @@ class Video extends Model\Document\Tag
                 }
             </style>
             <div class="pimcore_tag_video_progress" id="' . $uid . '" style="width: ' . $this->getWidth() . 'px; height: ' . $this->getHeight() . 'px;">
-                <div class="pimcore_tag_video_progress_status">' . number_format($progress, 0) . '%</div>
+                <div class="pimcore_tag_video_progress_status"></div>
             </div>
         </div>';
 

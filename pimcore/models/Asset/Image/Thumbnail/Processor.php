@@ -20,6 +20,7 @@ use Pimcore\File;
 use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Tool\StopWatch;
 use Pimcore\Model\Asset;
+use Pimcore\Logger;
 
 class Processor
 {
@@ -311,7 +312,7 @@ class Processor
 
         clearstatcache();
 
-        \Logger::debug("Thumbnail " . $path . " generated in " . (StopWatch::microtime_float() - $startTime) . " seconds");
+        Logger::debug("Thumbnail " . $path . " generated in " . (StopWatch::microtime_float() - $startTime) . " seconds");
 
         // set proper permissions
         @chmod($fsPath, File::getDefaultMode());
@@ -353,9 +354,9 @@ class Processor
             if (file_exists($file)) {
                 $originalFilesize = filesize($file);
                 \Pimcore\Image\Optimizer::optimize($file);
-                \Logger::debug("Optimized image: " . $file . " saved " . formatBytes($originalFilesize-filesize($file)));
+                Logger::debug("Optimized image: " . $file . " saved " . formatBytes($originalFilesize-filesize($file)));
             } else {
-                \Logger::debug("Skip optimizing of " . $file . " because it doesn't exist anymore");
+                Logger::debug("Skip optimizing of " . $file . " because it doesn't exist anymore");
             }
 
             TmpStore::delete($id);

@@ -18,6 +18,11 @@ namespace Pimcore\Model\Object;
 
 use Pimcore\Model;
 
+/**
+ * @method int getTotalCount()
+ * @method int getCount()
+ * @method int loadIdList()
+ */
 class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterAggregate, \Iterator
 {
 

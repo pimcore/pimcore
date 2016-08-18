@@ -22,6 +22,7 @@ use Pimcore\Model;
 use Pimcore\Model\Element;
 use Pimcore\Model\Property;
 use Pimcore\Model\Schedule;
+use Pimcore\Logger;
 
 abstract class Document extends Admin
 {
@@ -73,7 +74,7 @@ abstract class Document extends Admin
 
                         $properties[$propertyName] = $property;
                     } catch (\Exception $e) {
-                        \Logger::warning("Can't add " . $propertyName . " to document " . $document->getRealFullPath());
+                        Logger::warning("Can't add " . $propertyName . " to document " . $document->getRealFullPath());
                     }
                 }
             }

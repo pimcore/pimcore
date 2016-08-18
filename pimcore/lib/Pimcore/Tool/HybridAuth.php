@@ -14,6 +14,8 @@
 
 namespace Pimcore\Tool;
 
+use Pimcore\Logger;
+
 class HybridAuth
 {
 
@@ -63,7 +65,7 @@ class HybridAuth
             $provider = @trim(strip_tags($provider));
             $adapter = $hybridauth->authenticate($provider);
         } catch (\Exception $e) {
-            \Logger::info($e);
+            Logger::info($e);
         }
 
         return $adapter;

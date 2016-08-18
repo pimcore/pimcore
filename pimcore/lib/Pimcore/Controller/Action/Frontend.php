@@ -23,6 +23,7 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Object;
 use Pimcore\Model;
 use Pimcore\Translate;
+use Pimcore\Logger;
 
 abstract class Frontend extends Action
 {
@@ -412,11 +413,11 @@ abstract class Frontend extends Action
                 if (Tool::isValidLanguage($locale)) {
                     $translate->setLocale($locale);
                 } else {
-                    \Logger::error("You want to use an invalid language which is not defined in the system settings: " . $locale);
+                    Logger::error("You want to use an invalid language which is not defined in the system settings: " . $locale);
                     // fall back to the first (default) language defined
                     $languages = Tool::getValidLanguages();
                     if ($languages[0]) {
-                        \Logger::error("Using '" . $languages[0] . "' as a fallback, because the language '".$locale."' is not defined in system settings");
+                        Logger::error("Using '" . $languages[0] . "' as a fallback, because the language '".$locale."' is not defined in system settings");
                         $translate = new \Pimcore\Translate\Website($languages[0]); // reinit with new locale
                         $translate->setLocale($languages[0]);
                     } else {
@@ -428,8 +429,8 @@ abstract class Frontend extends Action
                 // register the translator in \Zend_Registry with the key "\Zend_Translate" to use the translate helper for \Zend_View
                 \Zend_Registry::set("Zend_Translate", $translate);
             } catch (\Exception $e) {
-                \Logger::error("initialization of Pimcore_Translate failed");
-                \Logger::error($e);
+                Logger::error("initialization of Pimcore_Translate failed");
+                Logger::error($e);
             }
         }
 
@@ -517,7 +518,7 @@ abstract class Frontend extends Action
                 \Zend_Registry::set("pimcore_tag_block_numeration", null);
             }
         } catch (\Exception $e) {
-            \Logger::debug($e);
+            Logger::debug($e);
         }
     }
 
@@ -568,8 +569,8 @@ abstract class Frontend extends Action
                     $this->getResponse()->setHttpResponseCode(503);
                 }
 
-                \Logger::error("Unable to find URL: " . $_SERVER["REQUEST_URI"]);
-                \Logger::error($error->exception);
+                Logger::error("Unable to find URL: " . $_SERVER["REQUEST_URI"]);
+                Logger::error($error->exception);
 
                 $results = \Pimcore::getEventManager()->trigger("frontend.error", $this, [
                     "exception" => $error->exception

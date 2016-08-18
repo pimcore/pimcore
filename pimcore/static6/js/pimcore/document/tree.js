@@ -79,7 +79,7 @@ pimcore.document.tree = Class.create({
 
     init: function(rootNodeConfig) {
 
-        var itemsPerPage = 30;
+        var itemsPerPage = 100;
 
 
         rootNodeConfig.text = t("home");
@@ -738,7 +738,7 @@ pimcore.document.tree = Class.create({
                     iconCls: "pimcore_icon_lock pimcore_icon_overlay_delete",
                     handler: function () {
                         pimcore.elementservice.unlockElement({
-                            elementType: "object",
+                            elementType: "document",
                             id: record.data.id
                         });
                     }.bind(this)
@@ -1311,7 +1311,7 @@ pimcore.document.tree = Class.create({
     searchAndMove: function(tree, record) {
         var parentId = record.data.id;
         pimcore.helpers.searchAndMove(parentId, function() {
-            this.reload();
+            pimcore.elementservice.refreshNode(record);
         }.bind(this), "document");
     },
 

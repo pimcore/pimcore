@@ -23,6 +23,7 @@ use Pimcore\Model\Object;
 use Pimcore\Model\Dependency;
 use Pimcore\File;
 use Pimcore\Tool;
+use Pimcore\Logger;
 
 class Service extends Model\AbstractModel
 {
@@ -366,7 +367,7 @@ class Service extends Model\AbstractModel
                 try {
                     self::performSanityCheck($element);
                 } catch (\Exception $e) {
-                    \Logger::error("Element\\Service: sanity check for element with id [ " . $element->getId() . " ] and type [ " . self::getType($element) . " ] failed");
+                    Logger::error("Element\\Service: sanity check for element with id [ " . $element->getId() . " ] and type [ " . self::getType($element) . " ] failed");
                 }
                 $sanityCheck->delete();
             } else {
@@ -375,7 +376,7 @@ class Service extends Model\AbstractModel
             $sanityCheck = Sanitycheck::getNext();
 
             // reduce load on server
-            \Logger::debug("Now timeout for 3 seconds");
+            Logger::debug("Now timeout for 3 seconds");
             sleep(3);
         }
     }

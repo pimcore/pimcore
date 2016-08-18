@@ -14,6 +14,8 @@
 
 namespace Pimcore\Model;
 
+use Pimcore\Logger;
+
 class WebsiteSetting extends AbstractModel
 {
 
@@ -21,7 +23,7 @@ class WebsiteSetting extends AbstractModel
      * @var integer
      */
     public $id;
-    
+
     /**
      * @var string
      */
@@ -67,7 +69,7 @@ class WebsiteSetting extends AbstractModel
 
         return $setting;
     }
-    
+
     /**
      * @param string $name
      * @return WebsiteSetting
@@ -81,7 +83,7 @@ class WebsiteSetting extends AbstractModel
         try {
             $setting->getDao()->getByName($name, $siteId);
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
 
             return null;
         }

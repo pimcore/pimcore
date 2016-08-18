@@ -18,6 +18,7 @@ use Pimcore\Tool;
 use Pimcore\Config;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
+use Pimcore\Logger;
 
 class ErrorHandler extends \Zend_Controller_Plugin_ErrorHandler
 {
@@ -28,7 +29,7 @@ class ErrorHandler extends \Zend_Controller_Plugin_ErrorHandler
      */
     protected function _handleError(\Zend_Controller_Request_Abstract $request)
     {
-        
+
         // remove zend error handler
         $front = \Zend_Controller_Front::getInstance();
         $front->unregisterPlugin("Zend_Controller_Plugin_ErrorHandler");
@@ -93,7 +94,7 @@ class ErrorHandler extends \Zend_Controller_Plugin_ErrorHandler
                     }
                 }
             } catch (\Exception $e) {
-                \Logger::emergency("error page not found");
+                Logger::emergency("error page not found");
             }
         }
 

@@ -17,6 +17,7 @@ namespace Pimcore\Image\Adapter;
 use Pimcore\Image\Adapter;
 use Pimcore\File;
 use Pimcore\Config;
+use Pimcore\Logger;
 
 class Imagick extends Adapter
 {
@@ -122,8 +123,8 @@ class Imagick extends Adapter
 
             $this->setColorspaceToRGB();
         } catch (\Exception $e) {
-            \Logger::error("Unable to load image: " . $imagePath);
-            \Logger::error($e);
+            Logger::error("Unable to load image: " . $imagePath);
+            Logger::error($e);
 
             return false;
         }
@@ -286,7 +287,7 @@ class Imagick extends Adapter
                     // if getImageColorspace() says SRGB but the embedded icc profile is CMYK profileImage() will throw an exception
                     $this->resource->profileImage('icc', self::getRGBColorProfile());
                 } catch (\Exception $e) {
-                    \Logger::warn($e);
+                    Logger::warn($e);
                 }
             }
         }
@@ -814,7 +815,7 @@ class Imagick extends Adapter
                 }
             }
         } catch (\Exception $e) {
-            \Logger::err($e);
+            Logger::err($e);
         }
 
         return false;

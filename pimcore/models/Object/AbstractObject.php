@@ -19,6 +19,7 @@ namespace Pimcore\Model\Object;
 use Pimcore\Model;
 use Pimcore\Cache;
 use Pimcore\Tool;
+use Pimcore\Logger;
 
 class AbstractObject extends Model\Element\AbstractElement
 {
@@ -265,7 +266,7 @@ class AbstractObject extends Model\Element\AbstractElement
                     \Zend_Registry::set($cacheKey, $object);
                 }
             } catch (\Exception $e) {
-                \Logger::warning($e->getMessage());
+                Logger::warning($e->getMessage());
 
                 return null;
             }
@@ -303,7 +304,7 @@ class AbstractObject extends Model\Element\AbstractElement
                 return self::getById($object->getId());
             }
         } catch (\Exception $e) {
-            \Logger::warning($e->getMessage());
+            Logger::warning($e->getMessage());
         }
 
         return null;
@@ -586,7 +587,7 @@ class AbstractObject extends Model\Element\AbstractElement
                     $this->rollBack();
                 } catch (\Exception $er) {
                     // PDO adapter throws exceptions if rollback fails
-                    \Logger::info($er);
+                    Logger::info($er);
                 }
 
                 if ($e instanceof Model\Element\ValidationException) {
@@ -600,12 +601,12 @@ class AbstractObject extends Model\Element\AbstractElement
                 if ($retries < ($maxRetries-1)) {
                     $run = $retries+1;
                     $waitTime = 100000; // microseconds
-                    \Logger::warn("Unable to finish transaction (" . $run . ". run) because of the following reason '" . $e->getMessage() . "'. --> Retrying in " . $waitTime . " microseconds ... (" . ($run+1) . " of " . $maxRetries . ")");
+                    Logger::warn("Unable to finish transaction (" . $run . ". run) because of the following reason '" . $e->getMessage() . "'. --> Retrying in " . $waitTime . " microseconds ... (" . ($run+1) . " of " . $maxRetries . ")");
 
                     usleep($waitTime); // wait specified time until we restart the transaction
                 } else {
                     // if the transaction still fail after $maxRetries retries, we throw out the exception
-                    \Logger::error("Finally giving up restarting the same transaction again and again, last message: " . $e->getMessage());
+                    Logger::error("Finally giving up restarting the same transaction again and again, last message: " . $e->getMessage());
                     throw $e;
                 }
             }
@@ -736,7 +737,7 @@ class AbstractObject extends Model\Element\AbstractElement
 
             Cache::clearTags($tags);
         } catch (\Exception $e) {
-            \Logger::crit($e);
+            Logger::crit($e);
         }
     }
 

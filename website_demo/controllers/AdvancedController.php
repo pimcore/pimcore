@@ -111,7 +111,7 @@ class AdvancedController extends Action
                 $this->view->result = $result;
             } catch (\Exception $e) {
                 // something went wrong: eg. limit exceeded, wrong configuration, ...
-                \Logger::err($e);
+                \Pimcore\Logger::err($e);
                 echo $e->getMessage();
                 exit;
             }

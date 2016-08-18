@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -20,6 +20,7 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Object;
 use Pimcore\Model\Asset;
+use Pimcore\Logger;
 
 class Warming
 {
@@ -110,10 +111,10 @@ class Warming
         $totalCount = $list->getTotalCount();
         $iterations = ceil($totalCount / self::getPerIteration());
 
-        \Logger::info("New list of elements queued for storing into the cache with " . $iterations . " iterations and " . $totalCount . " total items");
+        Logger::info("New list of elements queued for storing into the cache with " . $iterations . " iterations and " . $totalCount . " total items");
 
         for ($i=0; $i<$iterations; $i++) {
-            \Logger::info("Starting iteration " . $i . " with offset: " . (self::getPerIteration() * $i));
+            Logger::info("Starting iteration " . $i . " with offset: " . (self::getPerIteration() * $i));
 
             $list->setLimit(self::getPerIteration());
             $list->setOffset(self::getPerIteration() * $i);

@@ -20,6 +20,7 @@ use Pimcore\Model;
 use Pimcore\Model\Object;
 use Pimcore\Tool\Serialize;
 use Pimcore\File;
+use Pimcore\Logger;
 
 class Dao extends Model\Dao\AbstractDao
 {
@@ -36,59 +37,24 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * @param null $id
-     * @throws \Exception
+     * @return string
      */
-    public function getById($id = null)
+    public function getNameById($id = null)
     {
-        if (!$id) {
-            $id = $this->model->getId();
-        }
+        $name = $this->db->fetchOne("SELECT name FROM classes WHERE id = ?", $id);
 
-        $classRaw = $this->db->fetchRow("SELECT * FROM classes WHERE id = ?", $id);
-
-        if ($classRaw["id"]) {
-            $this->assignVariablesToModel($classRaw);
-
-            $this->model->setPropertyVisibility(Serialize::unserialize($classRaw["propertyVisibility"]));
-            $this->model->setLayoutDefinitions($this->getLayoutData());
-        } else {
-            throw new \Exception("Class with ID " . $id . " doesn't exist");
-        }
+        return $name;
     }
 
     /**
      * @param null $name
-     * @throws \Exception
+     * @return string
      */
-    public function getByName($name = null)
+    public function getIdByName($name = null)
     {
-        if (!$name) {
-            $name = $this->model->getName();
-        }
+        $id = $this->db->fetchOne("SELECT id FROM classes WHERE name = ?", $name);
 
-        $classRaw = $this->db->fetchRow("SELECT id FROM classes WHERE name = ?", $name);
-
-        if ($classRaw["id"]) {
-            $this->assignVariablesToModel($classRaw);
-            // the layout is loaded in Object|Class::getByName();
-        } else {
-            throw new \Exception("Class with name " . $name . " doesn't exist");
-        }
-    }
-
-    /**
-     * Save object to database
-     *
-     * @return mixed
-     */
-    protected function getLayoutData()
-    {
-        $file = PIMCORE_CLASS_DIRECTORY."/definition_". $this->model->getId() .".psf";
-        if (is_file($file)) {
-            return Serialize::unserialize(file_get_contents($file));
-        }
-
-        return;
+        return $id;
     }
 
 
@@ -117,23 +83,11 @@ class Dao extends Model\Dao\AbstractDao
 
         foreach ($class as $key => $value) {
             if (in_array($key, $this->getValidTableColumns("classes"))) {
-                if (is_array($value) || is_object($value)) {
-                    $value = Serialize::serialize($value);
-                } elseif (is_bool($value)) {
-                    $value = (int)$value;
-                }
                 $data[$key] = $value;
             }
         }
 
         $this->db->update("classes", $data, $this->db->quoteInto("id = ?", $this->model->getId()));
-
-        // save definition as a serialized file
-        $definitionFile = PIMCORE_CLASS_DIRECTORY."/definition_". $this->model->getId() .".psf";
-        if (!is_writable(dirname($definitionFile)) || (is_file($definitionFile) && !is_writable($definitionFile))) {
-            throw new \Exception("Cannot write definition file in: " . $definitionFile . " please check write permission on this directory.");
-        }
-        File::put($definitionFile, Serialize::serialize($this->model->layoutDefinitions));
 
         $objectTable = "object_query_" . $this->model->getId();
         $objectDatastoreTable = "object_store_" . $this->model->getId();
@@ -251,7 +205,7 @@ class Dao extends Model\Dao\AbstractDao
             //$this->db->query('CREATE OR REPLACE VIEW `' . $objectView . '` AS SELECT * FROM `objects` left JOIN `' . $objectTable . '` ON `objects`.`o_id` = `' . $objectTable . '`.`oo_id` WHERE `objects`.`o_classId` = ' . $this->model->getId() . ';');
             $this->db->query('CREATE OR REPLACE VIEW `' . $objectView . '` AS SELECT * FROM `' . $objectTable . '` JOIN `objects` ON `objects`.`o_id` = `' . $objectTable . '`.`oo_id`;');
         } catch (\Exception $e) {
-            \Logger::debug($e);
+            Logger::debug($e);
         }
 
         $this->tableDefinitions = null;
@@ -265,11 +219,7 @@ class Dao extends Model\Dao\AbstractDao
     public function create()
     {
         $this->db->insert("classes", ["name" => $this->model->getName()]);
-
         $this->model->setId($this->db->lastInsertId());
-        $this->model->setCreationDate(time());
-        $this->model->setModificationDate(time());
-
         $this->save();
     }
 
@@ -326,8 +276,6 @@ class Dao extends Model\Dao\AbstractDao
             $brickTable = current($table);
             $this->db->query("DROP TABLE `".$brickTable."`");
         }
-
-        @unlink(PIMCORE_CLASS_DIRECTORY."/definition_". $this->model->getId() .".psf");
     }
 
     /**
