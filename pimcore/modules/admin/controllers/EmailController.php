@@ -232,16 +232,22 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
      */
     protected function enhanceLoggingData(&$data, &$fullEntry = null)
     {
-        if ($data['objectId']) {
-            if (is_subclass_of($class, "\\Pimcore\\Model\\Element\\ElementInterface")) {
-                $class = "\\" . ltrim($data['objectClass'], "\\");
+        if (!empty($data['objectClass'])) {
+            $class = "\\" . ltrim($data['objectClass'], "\\");
+            if (!empty($data['objectId']) && is_subclass_of($class, "\\Pimcore\\Model\\Element\\ElementInterface")) {
                 $obj = $class::getById($data['objectId']);
                 if (is_null($obj)) {
                     $data['objectPath'] = '';
                 } else {
                     $data['objectPath'] = $obj->getRealFullPath();
                 }
-                $niceClassName = str_replace("\\Pimcore\\Model\\", "", $data['objectClass']);
+                //check for classmapping
+                if (stristr($class, "\\Pimcore\\Model") === false) {
+                    $niceClassName = "\\" . ltrim(get_parent_class($class), "\\");
+                } else {
+                    $niceClassName = $class;
+                }
+                $niceClassName = str_replace("\\Pimcore\\Model\\", "", $niceClassName);
                 $niceClassName = str_replace("_", "\\", $niceClassName);
 
                 $tmp = explode("\\", $niceClassName);
