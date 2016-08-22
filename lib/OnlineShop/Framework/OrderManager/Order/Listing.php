@@ -217,11 +217,16 @@ class Listing extends AbstractOrderList implements IOrderList
      */
     public function joinProduct($classId)
     {
-        $this->getQuery()->join(
-            ['product' => 'object_query_' . (int)$classId]
-            , 'product.oo_id = orderItem.product__id'
-            , ''
-        );
+        $joins = $this->getQuery()->getPart( \Zend_Db_Select::FROM );
+
+        if(!array_key_exists('product', $joins))
+        {
+            $this->getQuery()->join(
+                ['product' => 'object_query_' . (int)$classId]
+                , 'product.oo_id = orderItem.product__id'
+                , ''
+            );
+        }
 
         return $this;
     }
