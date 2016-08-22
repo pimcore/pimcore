@@ -466,6 +466,9 @@ class Manager
         \Pimcore::getEventManager()->trigger("workflowmanagement.preAction", $this, [
             'actionName' => $actionName
         ]);
+        
+        //refresh the local copy after the event
+        $formData = $this->getActionData();
 
         $actionConfig = $this->workflow->getActionConfig($actionName, $this->getElementStatus());
         $additional = $formData['additional'];
