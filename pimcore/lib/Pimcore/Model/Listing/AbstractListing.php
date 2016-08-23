@@ -243,13 +243,13 @@ abstract class AbstractListing extends AbstractModel
     public function getCondition()
     {
         $conditionString = '';
-        $conditionPrams = $this->getConditionParams();
+        $conditionParams = $this->getConditionParams();
         $db = \Pimcore\Db::get();
 
-        if (!empty($conditionPrams)) {
+        if (!empty($conditionParams)) {
             $params = [];
             $i = 0;
-            foreach ($conditionPrams as $key => $value) {
+            foreach ($conditionParams as $key => $value) {
                 if (!$this->condition && $i == 0) {
                     $conditionString .= $key . ' ';
                 } else {
