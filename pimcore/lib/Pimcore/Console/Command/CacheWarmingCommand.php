@@ -133,7 +133,7 @@ class CacheWarmingCommand extends AbstractCommand
 
         if (in_array('object', $types)) {
             $this->writeWarmingMessage('object', $objectTypes);
-            Warming::assets($assetTypes);
+            Warming::objects($objectTypes);
         }
     }
 
