@@ -30,18 +30,18 @@ abstract class AbstractConfig implements IConfig {
 
     /**
      * @param string $tenantName
-     * @param $tenantConfigXml
-     * @param null $totalConfigXml
+     * @param $tenantConfig
+     * @param null $totalConfig
      */
-    public function __construct($tenantName, $tenantConfigXml, $totalConfigXml = null) {
+    public function __construct($tenantName, $tenantConfig, $totalConfig = null) {
         $this->tenantName = $tenantName;
-        $this->attributeConfig = $tenantConfigXml->columns;
-        $this->filterTypeConfig = $tenantConfigXml->filtertypes;
+        $this->attributeConfig = $tenantConfig->columns;
+        $this->filterTypeConfig = $tenantConfig->filtertypes;
 
-        if(sizeof($tenantConfigXml->generalSearchColumns->column) == 1) {
-            $this->searchAttributeConfig[] = (string)$tenantConfigXml->generalSearchColumns->column->name;
-        } elseif($tenantConfigXml->generalSearchColumns->column) {
-            foreach($tenantConfigXml->generalSearchColumns->column as $c) {
+        if(sizeof($tenantConfig->generalSearchColumns->column) == 1) {
+            $this->searchAttributeConfig[] = (string)$tenantConfig->generalSearchColumns->column->name;
+        } elseif($tenantConfig->generalSearchColumns->column) {
+            foreach($tenantConfig->generalSearchColumns->column as $c) {
                 $this->searchAttributeConfig[] = $c->name;
             }
         }

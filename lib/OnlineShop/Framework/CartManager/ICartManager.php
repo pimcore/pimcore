@@ -25,7 +25,7 @@ use OnlineShop\Framework;
 interface ICartManager extends Framework\IComponent {
  
     /**
-     * returns cart class name configured in the xml
+     * returns cart class name configured in the onlineshop config
      *
      * Is also responsible for checking if guest cart class should be used or not,
      * by calling \OnlineShop\Framework\IEnvironment::getUseGuestCart();

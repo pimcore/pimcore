@@ -5,7 +5,7 @@ For more detailed documentation see 'Dev-Doku' chapters and the source code docu
 
    1. [Installation](Installation-and-base-configuration.markdown#1---installation)
    2. [Configure Product and Product Category classes](Installation-and-base-configuration.markdown#2---configure-product-and-product-category-classes)
-   3. [Configuring OnlineShopConfig.xml](Installation-and-base-configuration.markdown#3---configuring-onlineshopconfigxml)
+   3. [Configuring OnlineShopConfig.php](Installation-and-base-configuration.markdown#3---configuring-onlineshopconfigphp)
 
 
 ### 2. Setup product index, use product list

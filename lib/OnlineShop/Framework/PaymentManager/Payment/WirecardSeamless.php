@@ -32,15 +32,15 @@ class WirecardSeamless implements IPayment
     const ENCODED_ORDERIDENT_DELIMITER = '---';
 
     /**
-     * @param \Zend_Config $xml
+     * @param \Zend_Config $config
      *
      * @throws \Exception
      */
-    public function __construct(\Zend_Config $xml)
+    public function __construct(\Zend_Config $config)
     {
-        $this->settings = $xml->config->{$xml->mode};
-        $this->partial = $xml->partial;
-        $this->js = $xml->js;
+        $this->settings = $config->config->{$config->mode};
+        $this->partial = $config->partial;
+        $this->js = $config->js;
 
         $this->URL_WIRECARD_CHECKOUT = "https://checkout.wirecard.com";
         $this->URL_DATASTORAGE_INIT = $this->URL_WIRECARD_CHECKOUT . "/seamless/dataStorage/init";

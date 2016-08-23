@@ -23,9 +23,9 @@ namespace OnlineShop\Framework\PaymentManager\Payment;
 interface IPayment
 {
     /**
-     * @param \Zend_Config $xml
+     * @param \Zend_Config $config
      */
-    public function __construct(\Zend_Config $xml);
+    public function __construct(\Zend_Config $config);
 
 
     /**

@@ -14,60 +14,89 @@
 * PayPal (paypal)
 
 
-The configuration takes place in the OnlineShopConfig.xml
-```xml
+The configuration takes place in the OnlineShopConfig.php
+```php
 <!-- general settings for cart manager -->
-<paymentmanager class="\OnlineShop\Framework\PaymentManager\PaymentManager" statusClass="\OnlineShop\Framework\PaymentManager\Status">
-    <config>
-        <provider name="datatrans" class="\OnlineShop\Framework\PaymentManager\Payment\Datatrans" mode="sandbox">
-            <config>
-                <sandbox>
-                    <merchantId>1000011011</merchantId>
-                    <sign>30916165706580013</sign>
-                </sandbox>
-
-                <elementsSandbox>
-                    <!-- elements DataTrans test merchant (Zugangsdaten in PWS) -->
-                    <merchantId>1100004971</merchantId>
-                    <sign>150820082849579274</sign>
-                </elementsSandbox>
-
-                <live>
-                    <merchantId></merchantId>
-                    <sign></sign>
-                </live>
-            </config>
-        </provider>
-
-        <provider name="qpay" class="\OnlineShop\Framework\PaymentManager\Payment\QPay" mode="sandbox">
-            <config>
-                <sandbox>
-                    <secret>B8AKTPWBRMNBV455FG6M2DANE99WU2</secret>
-                    <customer>D200001</customer>
-                    <toolkitPassword>jcv45z</toolkitPassword>
-                </sandbox>
-                <live>
-                    <secret></secret>
-                    <customer></customer>
-                </live>
-            </config>
-        </provider>
-
-        <provider name="paypal" class="\OnlineShop\Framework\PaymentManager\Payment\PayPal" mode="sandbox">
-            <config>
-                <sandbox>
-                    <api_username>paypal-facilitator_api1.i-2xdream.de</api_username>
-                    <api_password>1375366858</api_password>
-                    <api_signature>AT2PJj7VTo5Rt.wM6enrwOFBoD1fACBe1RbAEMsSshWFRhpvjAuPR8wD</api_signature>
-                </sandbox>
-            </config>
-        </provider>
-    </config>
-</paymentmanager>
+"paymentmanager" => [
+            "class" => "\\OnlineShop\\Framework\\PaymentManager\\PaymentManager",
+            "statusClass" => "\\OnlineShop\\Framework\\PaymentManager\\Status",
+            "config" => [
+                "provider" => [
+                    [
+                        "name" => "datatrans",
+                        "class" => "\\OnlineShop\\Framework\\PaymentManager\\Payment\\Datatrans",
+                        "mode" => "sandbox",
+                        "config" => [
+                            "sandbox" => [
+                                "merchantId" => "1000011011",
+                                "sign" => "30916165706580013",
+                                "digitalSignature" => "0"
+                            ],
+                            "live" => [
+                                "merchantId" => "",
+                                "sign" => "",
+                                "digitalSignature" => "0"
+                            ]
+                        ]
+                    ],
+                    [
+                        /* https://integration.wirecard.at/doku.php/wcp:integration */
+                        /* https://integration.wirecard.at/doku.php/demo:demo_data */
+                        "name" => "qpay",
+                        "class" => "\\OnlineShop\\Framework\\PaymentManager\\Payment\\QPay",
+                        "mode" => "sandbox",
+                        "config" => [
+                            "sandbox" => [
+                                "secret" => "B8AKTPWBRMNBV455FG6M2DANE99WU2",
+                                "customer" => "D200001",
+                                "toolkitPassword" => "jcv45z",
+                                /* define optional properties which can be used in initPayment (see Wirecard documentation)
+                                https://git.io/v2ty1 */
+                                /* "optionalPaymentProerties" => [
+                                    "property" => [
+                                        "paymentType",
+                                        "financialInstitution"
+                                    ]
+                                ], */
+                                /*  set hash algorithm to HMAC-SHA512
+                                https://git.io/v2tyV */
+                                /* ["hashAlgorithm" => "hmac_sha512"] */
+                            ],
+                            "test" => [
+                                "secret" => "CHCSH7UGHVVX2P7EHDHSY4T2S4CGYK4QBE4M5YUUG2ND5BEZWNRZW5EJYVJQ",
+                                "customer" => "D200411",
+                                "toolkitPassword" => "2g4fq2m"
+                            ],
+                            "live" => [
+                                "secret" => "",
+                                "customer" => "",
+                                "toolkitPassword" => ""
+                            ]
+                        ]
+                    ],
+                    [
+                        "name" => "paypal",
+                        "class" => "\\OnlineShop\\Framework\\PaymentManager\\Payment\\PayPal",
+                        "mode" => "sandbox",
+                        "config" => [
+                            "sandbox" => [
+                                "api_username" => "paypal-facilitator_api1.i-2xdream.de",
+                                "api_password" => "1375366858",
+                                "api_signature" => "AT2PJj7VTo5Rt.wM6enrwOFBoD1fACBe1RbAEMsSshWFRhpvjAuPR8wD"
+                            ],
+                            "live" => [
+                                "api_username" => "",
+                                "api_password" => "",
+                                "api_signature" => ""
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ],
 ```
 
- 
-
+ > For older Versions check [OnlineShopConfig_sample.xml](/config/OnlineShopConfig_sample.xml)
 
 ## 2 - Provider configuration
 

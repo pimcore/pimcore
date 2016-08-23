@@ -4,47 +4,55 @@ The checkout manager is not a out-of-the-box checkout process!
 
 It is a tool for the developer to create a use case specific checkout process and consists of checkout steps and a commit order processor, which is responsible for completing the order and doing use case specific work. 
 
-The configuration takes place in the OnlineShopConfig.xml
-```xml
-<!-- general settings for checkout manager -->
-<checkoutmanager class="\OnlineShop\Framework\CheckoutManager\CheckoutManager">
-    <config>
-        <!-- define different checkout steps which need to be committed before commit of order is possible -->
-        <steps>
-            <deliveryaddress class="\OnlineShop\Framework\CheckoutManager\DeliveryAddress"/>
-            <confirm class="Website_OnlineShop_Checkout_Confirm"/>
-        </steps>
-
-        <!-- optional
-             -> define payment provider which should be used for payment.
-             -> payment providers are defined in payment manager section.
-        -->
-        <payment provider="qpay" />
-
-        <!-- define used commit order processor -->
-        <commitorderprocessor class="Website_OnlineShop_Order_Processor"/>
-
-        <!-- settings for confirmation mail sent to customer after order is finished.
-             also could be defined defined directly in commit order processor (e.g. when different languages are necessary)
-        -->
-        <mails confirmation="/en/emails/order-confirmation" />
-
-
-        <!-- special configuration for specific checkout tenants -->
-        <tenants>
-            <paypal>
-                <payment provider="paypal" />
-            </paypal>
-            <datatrans>
-                <payment provider="datatrans" />
-            </datatrans>
-            <otherFolder>
-                <parentorderfolder>/order_otherfolder/%Y/%m/%d</parentorderfolder>
-            </otherFolder>
-        </tenants>
-    </config>
-</checkoutmanager>
+The configuration takes place in the OnlineShopConfig.php
+```php
+/* general settings for checkout manager */
+        "checkoutmanager" => [
+            "class" => "\\OnlineShop\\Framework\\CheckoutManager\\CheckoutManager",
+            "config" => [
+                /* define different checkout steps which need to be committed before commit of order is possible */
+                "steps" => [
+                    "deliveryaddress" => [
+                        "class" => "\\OnlineShop\\Framework\\CheckoutManager\\DeliveryAddress"
+                    ],
+                    "confirm" => [
+                        "class" => "Website_OnlineShop_Checkout_Confirm"
+                    ]
+                ],
+                /* optional
+                     -> define payment provider which should be used for payment.
+                     -> payment providers are defined in payment manager section. */
+                "payment" => [
+                    "provider" => "qpay"
+                ],
+                /* define used commit order processor */
+                "commitorderprocessor" => [
+                    "class" => "Website_OnlineShop_Order_Processor"
+                ],
+                /* settings for confirmation mail sent to customer after order is finished.
+                     also could be defined defined directly in commit order processor (e.g. when different languages are necessary)
+                 */
+                "mails" => [
+                    "confirmation" => "/en/emails/order-confirmation"
+                ],
+                /* special configuration for specific checkout tenants */
+                "tenants" => [
+                    "paypal" => [
+                        "payment" => [
+                            "provider" => "paypal"
+                        ]
+                    ],
+                    "datatrans" => [
+                        "payment" => [
+                            "provider" => "datatrans"
+                        ]
+                    ]
+                ]
+            ]
+        ],
 ```
+
+> For older Versions check [OnlineShopConfig_sample.xml](/config/OnlineShopConfig_sample.xml)
 
 Following elements are configured: 
 * **Implementation of the checkout manager**: The Checkout Manager is a central player of the checkout process. It checks the state of single checkout steps, it responsible for the payment integration and also calls the commit order processor in the end. 

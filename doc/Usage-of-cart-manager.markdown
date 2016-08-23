@@ -2,53 +2,54 @@
 
 > Basically, every user specific product collection is a cart. No matter how it is called (cart, wish list, compare list, ...), all these product collections need the same base functionality. Therefore all different product collections are carts with a specific name. 
 
-The configuration takes place in the OnlineShopConfig.xml
-```xml
-<!-- general settings for cart manager -->
-<cartmanager class="\OnlineShop\Framework\CartManager\MultiCartManager">
-    <config>
-        <!-- default cart implementation that is used -->
-        <cart class="\OnlineShop\Framework\CartManager\Cart">
-            <!--
-                cart implementation that is used when system is in guest-checkout mode
-                -> \OnlineShop\Framework\IEnvironment::getUseGuestCart()
-            -->
-            <guest class="\OnlineShop\Framework\CartManager\SessionCart"/>
-        </cart>
-
-        <!-- default price calculator for cart -->
-        <pricecalculator class="\OnlineShop\Framework\CartManager\CartPriceCalculator">
-            <config>
-                <!-- price modificators for cart, e.g. for shipping-cost, special discounts, ... -->
-                <modificators>
-                    <shipping class="\OnlineShop\Framework\CartManager\CartPriceModificator\Shipping">
-                        <config charge="5.90"/>
-                    </shipping>
-                </modificators>
-            </config>
-        </pricecalculator>
-
-        <!--
-            special configuration for specific checkout tenants
-            - for not specified elements the default configuration is used as fallback 
-            - active tenant is set at \OnlineShop\Framework\IEnvironment::setCurrentCheckoutTenant()
-        -->
-        <tenants>
-            <noShipping>
-                <pricecalculator class="\OnlineShop\Framework\CartManager\CartPriceCalculator">
-                    <config>
-                        <modificators>
-                        </modificators>
-                    </config>
-                </pricecalculator>
-            </noShipping>
-
-            <expensiveShipping file="/website/var/plugins/OnlineShopConfig/cartmanager-expensiveShipping.xml" />
-        </tenants>
-
-    </config>
-</cartmanager>
+The configuration takes place in the OnlineShopConfig.php
+```php
+ /* general settings for cart manager */
+        "cartmanager" => [
+            "class" => "\\OnlineShop\\Framework\\CartManager\\MultiCartManager",
+            "config" => [
+                /* default cart implementation that is used */
+                "cart" => [
+                    "class" => "\\OnlineShop\\Framework\\CartManager\\Cart",
+                    "guest" => [
+                        "class" => "\\OnlineShop\\Framework\\CartManager\\SessionCart"
+                    ]
+                ],
+                /* default price calculator for cart */
+                "pricecalculator" => [
+                    "class" => "\\OnlineShop\\Framework\\CartManager\\CartPriceCalculator",
+                    "config" => [
+                        /* price modificators for cart, e.g. for shipping-cost, special discounts, ... */
+                        "modificators" => [
+                            "shipping" => [
+                                "class" => "\\OnlineShop\\Framework\\CartManager\\CartPriceModificator\\Shipping",
+                                "config" => [
+                                    "charge" => "5.90"
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+                /*  special configuration for specific checkout tenants
+                    - for not specified elements the default configuration is used as fallback
+                    - active tenant is set at \OnlineShop\Framework\IEnvironment::setCurrentCheckoutTenant() */
+                "tenants" => [
+                    "noShipping" => [
+                        "pricecalculator" => [
+                            "class" => "\\OnlineShop\\Framework\\CartManager\\CartPriceCalculator",
+                            "config" => [
+                                "modificators" => "\n                                "
+                            ]
+                        ]
+                    ]
+                    /* you also can use external files for additional configuration */
+                    /* "expensiveShipping" =>[ "file" => "\\website\\var\\plugins\\OnlineShopConfig\\cartmanager-expensiveShipping.php ] */ 
+                ],
+                
+            ]
+        ],
 ```
+> For older Versions check [OnlineShopConfig_sample.xml](/config/OnlineShopConfig_sample.xml)
 
 Following elements are configured: 
 * **Implementation of the cart manager**: The cart manager is the basic entry point for working with carts. It is responsible for all interactions with different carts and provides functionality as creating carts, adding/removing products and also creates the corresponding price calculator. 

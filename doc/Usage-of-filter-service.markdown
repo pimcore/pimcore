@@ -16,26 +16,55 @@ Each product listing has different filters like dropdowns, multi selects, input 
 The FilterTypes are responsible for these three tasks. By adding filter type field collections to the filter definition objects (see next chapter) simple configuration of filters is possible for the user. The backend implementation of FilterTypes is done in php classes which implement the abstract class ```\OnlineShop\Framework\FilterService\FilterType\AbstractFilterType``` and responsible for creating the correct filter conditions based on the product index implementation and rendering the filter output for the frontend. Therefore ```\OnlineShop\Framework\FilterService\FilterType\AbstractFilterType``` expects the two methods ```getFilterFrontend()``` and ```addCondition()``` to be implemented. 
 
 
-The configuration of the FilterTypes takes place in the OnlineShopConfig.xml
-```xml
-<!--
-	assign backend implementations and views to filter type field collections
+The configuration of the FilterTypes takes place in the OnlineShopConfig.php
+```php
+ /*  assign backend implementations and views to filter type field collections
 
-	helper = tool for pimcore backend controller to get possible group by values for a certain field
-			 (used by object data type IndexFieldSelection, e.g. in filter definitions)
--->
-<filtertypes helper="\OnlineShop\Framework\FilterService\FilterGroupHelper">
-	<FilterNumberRange class="\OnlineShop\Framework\FilterService\FilterType\NumberRange" script="/shop/filters/range.php"/>
-	<FilterNumberRangeSelection class="\OnlineShop\Framework\FilterService\FilterType\NumberRangeSelection" script="/shop/filters/numberrange.php"/>
-	<FilterSelect class="\OnlineShop\Framework\FilterService\FilterType\Select" script="/shop/filters/select.php"/>
-	<FilterSelectFromMultiSelect class="\OnlineShop\Framework\FilterService\FilterType\SelectFromMultiSelect" script="/shop/filters/select.php"/>
-	<FilterMultiSelect class="\OnlineShop\Framework\FilterService\FilterType\MultiSelect" script="/shop/filters/multiselect.php"/>
-	<FilterMultiSelectFromMultiSelect class="\OnlineShop\Framework\FilterService\FilterType\MultiSelectFromMultiSelect" script="/shop/filters/multiselect.php"/>
-	<FilterMultiRelation class="\OnlineShop\Framework\FilterService\FilterType\MultiSelectRelation" script="/shop/filters/multiselect-relation.php"/>
-	<FilterCategory class="\OnlineShop\Framework\FilterService\FilterType\SelectCategory" script="/shop/filters/select_category.php"/>
-	<FilterRelation class="\OnlineShop\Framework\FilterService\FilterType\SelectRelation" script="/shop/filters/object_relation.php"/>
-</filtertypes>
+            helper = tool for pimcore backend controller to get possible group by values for a certain field
+                     (used by object data type IndexFieldSelection, e.g. in filter definitions)
+         */
+        "filtertypes" => [
+            "helper" => "\\OnlineShop\\Framework\\FilterService\\FilterGroupHelper",
+            "FilterNumberRange" => [
+                "class" => "\\OnlineShop\\Framework\\FilterService\\FilterType\\NumberRange",
+                "script" => "/shop/filters/range.php"
+            ],
+            "FilterNumberRangeSelection" => [
+                "class" => "\\OnlineShop\\Framework\\FilterService\\FilterType\\NumberRangeSelection",
+                "script" => "/shop/filters/numberrange.php"
+            ],
+            "FilterSelect" => [
+                "class" => "\\OnlineShop\\Framework\\FilterService\\FilterType\\Select",
+                "script" => "/shop/filters/select.php"
+            ],
+            "FilterSelectFromMultiSelect" => [
+                "class" => "\\OnlineShop\\Framework\\FilterService\\FilterType\\SelectFromMultiSelect",
+                "script" => "/shop/filters/select.php"
+            ],
+            "FilterMultiSelect" => [
+                "class" => "\\OnlineShop\\Framework\\FilterService\\FilterType\\MultiSelect",
+                "script" => "/shop/filters/multiselect.php"
+            ],
+            "FilterMultiSelectFromMultiSelect" => [
+                "class" => "\\OnlineShop\\Framework\\FilterService\\FilterType\\MultiSelectFromMultiSelect",
+                "script" => "/shop/filters/multiselect.php"
+            ],
+            "FilterMultiRelation" => [
+                "class" => "\\OnlineShop\\Framework\\FilterService\\FilterType\\MultiSelectRelation",
+                "script" => "/shop/filters/multiselect-relation.php"
+            ],
+            "FilterCategory" => [
+                "class" => "\\OnlineShop\\Framework\\FilterService\\FilterType\\SelectCategory",
+                "script" => "/shop/filters/select_category.php"
+            ],
+            "FilterRelation" => [
+                "class" => "\\OnlineShop\\Framework\\FilterService\\FilterType\\SelectRelation",
+                "script" => "/shop/filters/object_relation.php"
+            ]
+        ],
 ```
+
+> For older Versions check [OnlineShopConfig_sample.xml](/config/OnlineShopConfig_sample.xml)
 
 You can find some script filter examples in the ecommerce framework demo (/website/views/scripts directory).
 
@@ -57,7 +86,7 @@ The configuration of available filters and the set up of product listings in the
 ![filterdefinition](images/filterdefinitions.png)
 
 
-The configuration of preconditions and filters is done by field collection entries, whereby the field collection types are mapped to FilterTypes and their backend implementations in the OnlineShopConfig.xml (see previous chapter). The FilterDefinition class can be extended and modified to the needs of the system. 
+The configuration of preconditions and filters is done by field collection entries, whereby the field collection types are mapped to FilterTypes and their backend implementations in the OnlineShopConfig.php (see previous chapter). The FilterDefinition class can be extended and modified to the needs of the system. 
 
 FilterDefinition objects can be assigned to category objects to build up automatic category pages or to area bricks in pimcore documents to set up manual landing pages etc. 
 

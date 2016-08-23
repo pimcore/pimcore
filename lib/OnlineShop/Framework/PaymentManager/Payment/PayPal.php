@@ -46,13 +46,13 @@ class PayPal implements IPayment
 
 
     /**
-     * @param \Zend_Config $xml
+     * @param \Zend_Config $config
      */
-    public function __construct(\Zend_Config $xml)
+    public function __construct(\Zend_Config $config)
     {
         // init
-        $credentials = $xml->config->{$xml->mode};
-        if ($xml->mode == 'live') {
+        $credentials = $config->config->{$config->mode};
+        if ($config->mode == 'live') {
             $this->endpointUrlPart = "paypal";
         } else {
             $this->endpointUrlPart = "sandbox.paypal";

@@ -8,15 +8,28 @@ In terms of procuct availabilities and stocks, the very similar concept of avail
 ## 2 - Configuration of price systems
 There are two places where the configuration of price system takes place: 
 - **Product class**: each product has the method ```getPriceSystemName()``` which returns the name of its price system. 
-- **OnlineShopConfig.xml**: in the pricesystems section the mapping between price system names and thier implementation classes takes place. Price system implementations at least need to implement the interface ```\OnlineShop\Framework\PriceSystem\IPriceSystem```, but there exist already some useful concrete implementations. 
+- **OnlineShopConfig.php**: in the pricesystems section the mapping between price system names and their implementation classes takes place. Price system implementations at least need to implement the interface ```\OnlineShop\Framework\PriceSystem\IPriceSystem```, but there exist already some useful concrete implementations. 
 
-```xml
-<pricesystems>
-	<!-- Define one or more price systems. The products getPriceSystemName method need to return a name here defined -->
-	<pricesystem name="default" class="\OnlineShop\Framework\PriceSystem\AttributePriceSystem">
-		<config attributename="price" />
-	</pricesystem>
-</pricesystems>
+```php
+"pricesystems" => [
+            /* Define one or more price systems. The products getPriceSystemName method need to return a name here defined */
+            "pricesystem" => [
+                [
+                    "name" => "default",
+                    "class" => "\\OnlineShop\\Framework\\PriceSystem\\AttributePriceSystem",
+                    "config" => [
+                        "attributename" => "price"
+                    ]
+                ],
+                [
+                    "name" => "defaultOfferToolPriceSystem",
+                    "class" => "\\OnlineShop\\Framework\\PriceSystem\\AttributePriceSystem",
+                    "config" => [
+                        "attributename" => "price"
+                    ]
+                ]
+            ]
+        ],
 ```
 
 > The simplest price system is ```\OnlineShop\Framework\PriceSystem\AttributePriceSystem``` which reads the price from an attribute of the product object. For implementing custom price systems have a look at method comments of ```\OnlineShop\Framework\PriceSystem\IPriceSystem``` and the implementations of the existing price systems. 

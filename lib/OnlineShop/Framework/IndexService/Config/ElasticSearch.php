@@ -58,20 +58,20 @@ class ElasticSearch extends AbstractConfig implements IMockupConfig, IElasticSea
 
     /**
      * @param string $tenantName
-     * @param $tenantConfigXml
-     * @param null $totalConfigXml
+     * @param $tenantConfig
+     * @param null $totalConfig
      */
-    public function __construct($tenantName, $tenantConfigXml, $totalConfigXml = null) {
-        parent::__construct($tenantName, $tenantConfigXml, $totalConfigXml);
+    public function __construct($tenantName, $tenantConfig, $totalConfig = null) {
+        parent::__construct($tenantName, $tenantConfig, $totalConfig);
 
-        $this->indexSettings = json_decode($tenantConfigXml->indexSettingsJson, true);
-        $this->elasticSearchClientParams = json_decode($tenantConfigXml->elasticSearchClientParamsJson, true);
+        $this->indexSettings = json_decode($tenantConfig->indexSettingsJson, true);
+        $this->elasticSearchClientParams = json_decode($tenantConfig->elasticSearchClientParamsJson, true);
 
-        if($tenantConfigXml->clientConfig){
-            $this->clientConfig = $tenantConfigXml->clientConfig->toArray();
+        if($tenantConfig->clientConfig){
+            $this->clientConfig = $tenantConfig->clientConfig->toArray();
         }
 
-        $config = $tenantConfigXml->toArray();
+        $config = $tenantConfig->toArray();
         foreach($config['columns']['column'] as $col){
             $attributeType = 'attributes';
             if($col['interpreter']){

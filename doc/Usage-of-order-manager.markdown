@@ -2,17 +2,36 @@
 
 ### Configuration
 
-The configuration takes place in the OnlineShopConfig.xml
-```xml
-<ordermanager class="OnlineShop\Framework\OrderManager\OrderManager">
-    <config>
-        <orderList class="OnlineShop\Framework\OrderManager\Order\Listing" classItem="OnlineShop\Framework\OrderManager\Order\Listing\Item"/>
-        <orderAgent class="OnlineShop\Framework\OrderManager\Order\Agent" />
-    </config>
-</ordermanager>
+The configuration takes place in the OnlineShopConfig.php
+```php
+"ordermanager" => [
+            "class" => "OnlineShop\\Framework\\OrderManager\\OrderManager",
+            "config" => [
+                "orderList" => [
+                    "class" => "OnlineShop\\Framework\\OrderManager\\Order\\Listing",
+                    "classItem" => "OnlineShop\\Framework\\OrderManager\\Order\\Listing\\Item"
+                ],
+                "orderAgent" => [
+                    "class" => "OnlineShop\\Framework\\OrderManager\\Order\\Agent"
+                ],
+                /* settings for order storage - pimcore class names for oder and order items */
+                "orderstorage" => [
+                    "orderClass" => "\\Pimcore\\Model\\Object\\OnlineShopOrder",
+                    "orderItemClass" => "\\Pimcore\\Model\\Object\\OnlineShopOrderItem"
+                ],
+                /* parent folder for order objects - either ID or path can be specified. path is parsed by strftime. */
+                "parentorderfolder" => "/order/%Y/%m/%d",
+                /* special configuration for specific checkout tenants */
+                "tenants" => [
+                    "otherFolder" => [
+                        "parentorderfolder" => "/order_otherfolder/%Y/%m/%d"
+                    ]
+                ]
+            ]
+        ],
 ```
 
-
+> For older Versions check [OnlineShopConfig_sample.xml](/config/OnlineShopConfig_sample.xml)
 
 ## 2 - Usage OrderList
 

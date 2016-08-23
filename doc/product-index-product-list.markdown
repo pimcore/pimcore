@@ -9,29 +9,46 @@ Advantages of product index:
 
 
 ## 2 - Configuration of the Product Index
-The configuration of the product index defines the content of the product index and takes place in the OnlineShopConfig.xml within the section ```<productindex>```:
+The configuration of the product index defines the content of the product index and takes place in the OnlineShopConfig.php within the index ```"productindex"```:
 
-```xml
-<productindex>
-	<!-- add columns for general fulltext search index of productlist - they must be part of the column configuration below -->
-	<generalSearchColumns>
-		<column name="name"/>
-		<column name="seoname"/>
-	</generalSearchColumns>
-
-	<!-- column definition for product index -->
-	<columns>
-		<column name="name" type="varchar(255)" locale="en_GB" filtergroup="string"/>
-		<column name="seoname" type="varchar(255)" filtergroup="string"/>
-
-	 	<column name="features" interpreter="\OnlineShop\Framework\IndexService\Interpreter\DefaultObjects" filtergroup="relation" />
-		<column name="tentTentPegs" type="varchar(50)"
-				getter="\OnlineShop\Framework\IndexService\Getter\DefaultBrickGetter" filtergroup="string">
-			<config brickfield="specificAttributes" bricktype="tentSpecifications" fieldname="tentPegs"/>
-		</column>
-	</columns>
-</productindex>
+```php
+"productindex" => [
+            /* to disable default tenant, add parameter  "disableDefaultTenant"=>true  to productindex element  */
+            
+            /* add columns for general fulltext search index of productlist - they must be part of the column configuration below  */
+            "generalSearchColumns" => [
+                /* column definition for product index */
+                "column" => [
+                    [
+                        "name" => "name"
+                    ],
+                    [
+                        "name" => "seoname"
+                    ]
+                ]
+            ],
+            /* column definition for product index */
+            "columns" => [
+                "column" => [
+                    [
+                        "name" => "name",
+                        "type" => "varchar(255)",
+                        "locale" => "en_GB",
+                        "filtergroup" => "string"
+                    ],
+                    [
+                        "name" => "seoname",
+                        "type" => "varchar(255)",
+                        "filtergroup" => "string"
+                    ]
+                ]
+            ]
+        ]
 ```
+> For older Versions check [OnlineShopConfig_sample.xml](/config/OnlineShopConfig_sample.xml)
+
+
+
 ### ```<generalSearchColumns>```
 Defines attributes which should be considered in fulltext-search. All attributes must be defined within the <columns>-section
 
@@ -89,8 +106,8 @@ The tenant config class is the central configuration of the tenant, defines whic
   - ```\OnlineShop\Framework\IndexService\Config\DefaultFactFinder```: provides a default fact finder implementation of the product index.
 
 
-- **Configuring tenants within OnlineShopConfig.xml:** 
-Each tenant has to be configured within OnlineShopConfig.xml by defining the tenant config class and index attributes. Depending on the product index implementation, additional configuration may be necessary. The configuration also can be outsourced in to an additional configuration file. For more information and samples see the OnlineShopConfig_sample.xml (TODO add link). 
+- **Configuring tenants within OnlineShopConfig.php:** 
+Each tenant has to be configured within OnlineShopConfig.php by defining the tenant config class and index attributes. Depending on the product index implementation, additional configuration may be necessary. The configuration also can be outsourced in to an additional configuration file. For more information and samples see the [Sample OnlineShopConfig.php](/config/OnlineShopConfig_sample.php). 
 
 
 ### Setting current tenant for frontend

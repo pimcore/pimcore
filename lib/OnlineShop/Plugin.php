@@ -18,10 +18,11 @@
 namespace OnlineShop;
 
 use Pimcore\Config;
+use Pimcore\File;
 
 class Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \Pimcore\API\Plugin\PluginInterface {
 
-    public static $configFile = "/EcommerceFramework/config/plugin_config.xml";
+    public static $configFile = "/EcommerceFramework/config/plugin_config.php";
 
     public function init() {
         parent::init();
@@ -40,13 +41,10 @@ class Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \Pimcore\API\
     }
 
     public static function getConfig($readonly = true) {
-        if(!$readonly) {
-            $config = new \Zend_Config_Xml(PIMCORE_PLUGINS_PATH . self::$configFile,
-                null,
-                array('skipExtends'        => true,
-                    'allowModifications' => true));
+        if (!$readonly) {
+            $config = new \Zend_Config(require PIMCORE_PLUGINS_PATH . self::$configFile, true);
         } else {
-            $config = new \Zend_Config_Xml(PIMCORE_PLUGINS_PATH . self::$configFile);
+            $config = new \Zend_Config(require PIMCORE_PLUGINS_PATH . self::$configFile);
         }
         return $config;
     }
@@ -56,9 +54,7 @@ class Plugin extends \Pimcore\API\Plugin\AbstractPlugin implements \Pimcore\API\
         $config->onlineshop_config_file = $onlineshopConfigFile;
 
         // Write the config file
-        $writer = new \Zend_Config_Writer_Xml(array('config'   => $config,
-            'filename' => PIMCORE_PLUGINS_PATH . self::$configFile));
-        $writer->write();
+        File::putPhpFile(PIMCORE_PLUGINS_PATH . self::$configFile, to_php_data_file_format($config->toArray()));
     }
 
 

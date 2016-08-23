@@ -25,12 +25,12 @@ namespace OnlineShop\Framework\IndexService\Config;
  */
 class DefaultMysqlInheritColumnConfig extends DefaultMysql {
 
-    public function __construct($tenantConfigXml, $totalConfigXml = null) {
-        $this->attributeConfig = $totalConfigXml->columns;
+    public function __construct($tenantConfig, $totalConfig = null) {
+        $this->attributeConfig = $totalConfig->columns;
 
         $this->searchAttributeConfig = array();
-        if($totalConfigXml->generalSearchColumns->column) {
-            foreach($totalConfigXml->generalSearchColumns->column as $c) {
+        if($totalConfig->generalSearchColumns->column) {
+            foreach($totalConfig->generalSearchColumns->column as $c) {
                 $this->searchAttributeConfig[] = $c->name;
             }
         }

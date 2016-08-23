@@ -25,11 +25,11 @@ When a product category class is used, this class needs to implement the abstrac
 > For product categories only one pimcore class should be used. For products, several pimcore classes can be used. Eventually the index update scripts need to be adapted. 
 
 
-## 3 - Configuring OnlineShopConfig.xml
+## 3 - Configuring OnlineShopConfig.php
 
-[Sample OnlineShopConfig.xml](/config/OnlineShopConfig_sample.xml)
+[Sample OnlineShopConfig.php](/config/OnlineShopConfig_sample.php)
 
-Open /website/var/plugins/EcommerceFramework/OnlineShopConfig.xml and adjust the settings. This configuration file is the central configuration for the e-commerce framework and defines the concrete implementations and configurations for all modules.
+Open /website/var/plugins/EcommerceFramework/OnlineShopConfig.php and adjust the settings. This configuration file is the central configuration for the e-commerce framework and defines the concrete implementations and configurations for all modules.
 
 So this configuration file specifies thinks like
 - cart manager
@@ -40,7 +40,7 @@ So this configuration file specifies thinks like
 - index service and which attributes should be in the product index
 - pricing manager
 - ...
-For detailed information see comments within the xml file. Depending on your use case, you might not need all components configured in the xml file. 
+For detailed information see comments within the configuration file. Depending on your use case, you might not need all components configured in the configuration file. 
 
 Things you need to adjust when using the product index: 
 * productindex - columns (adust the sample attributes to attributes that are available in your product class). 

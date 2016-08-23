@@ -332,12 +332,12 @@ class Installer {
      */
     private static function copyConfigFile() {
         //copy config file
-        if(!is_file(PIMCORE_WEBSITE_PATH . "/var/plugins/EcommerceFramework/OnlineShopConfig.xml")) {
+        if(!is_file(PIMCORE_WEBSITE_PATH . "/var/plugins/EcommerceFramework/OnlineShopConfig.php")) {
             mkdir(PIMCORE_WEBSITE_PATH . "/var/plugins/EcommerceFramework", 0777, true);
-            copy(PIMCORE_PLUGINS_PATH . "/EcommerceFramework/config/OnlineShopConfig_sample.xml", PIMCORE_WEBSITE_PATH . "/var/plugins/EcommerceFramework/OnlineShopConfig.xml");
+            copy(PIMCORE_PLUGINS_PATH . "/EcommerceFramework/config/OnlineShopConfig_sample.php", PIMCORE_WEBSITE_PATH . "/var/plugins/EcommerceFramework/OnlineShopConfig.php");
             copy(PIMCORE_PLUGINS_PATH . "/EcommerceFramework/config/.htaccess", PIMCORE_WEBSITE_PATH . "/var/plugins/EcommerceFramework/.htaccess");
         }
-        Plugin::setConfig("/website/var/plugins/EcommerceFramework/OnlineShopConfig.xml");
+        Plugin::setConfig("/website/var/plugins/EcommerceFramework/OnlineShopConfig.php");
         
     }
 

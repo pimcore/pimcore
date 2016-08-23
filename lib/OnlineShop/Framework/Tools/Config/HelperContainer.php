@@ -57,7 +57,7 @@ class HelperContainer {
                     $cacheKey = "onlineshop_config_" . $identifier . "_checkout_tenant_" . $tenantName;
 
                     if(!$tenantConfigFile =  \Pimcore\Model\Cache::load($cacheKey)) {
-                        $tenantConfigFile = new \Zend_Config_Xml(PIMCORE_DOCUMENT_ROOT . ((string)$tenantConfig->file), null, true);
+                        $tenantConfigFile = new \Zend_Config(require PIMCORE_DOCUMENT_ROOT . ((string)$tenantConfig->file), true);
                         $tenantConfigFile = $tenantConfigFile->tenant;
                         \Pimcore\Model\Cache::save($tenantConfigFile, $cacheKey, array("ecommerceconfig"), 9999);
                     }

@@ -60,13 +60,13 @@ class Datatrans implements IPayment
 
 
     /**
-     * @param \Zend_Config $xml
+     * @param \Zend_Config $config
      *
      * @throws \Exception
      */
-    public function __construct(\Zend_Config $xml)
+    public function __construct(\Zend_Config $config)
     {
-        $settings = $xml->config->{$xml->mode};
+        $settings = $config->config->{$config->mode};
         if($settings->sign == '' || $settings->merchantId == '')
         {
             throw new \Exception('payment configuration is wrong. secret or customer is empty !');
@@ -82,7 +82,7 @@ class Datatrans implements IPayment
         }
 
 
-        if($xml->mode == 'live')
+        if($config->mode == 'live')
         {
             $this->endpoint['form'] = 'https://payment.datatrans.biz/upp/jsp/upStart.jsp';
             $this->endpoint['script'] = 'https://payment.datatrans.biz/upp/payment/js/datatrans-1.0.2.js';

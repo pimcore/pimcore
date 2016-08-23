@@ -28,14 +28,14 @@ class DefaultFindologic extends AbstractConfig implements IFindologicConfig, IMo
 
     /**
      * @param string $tenantName
-     * @param $tenantConfigXml
-     * @param null $totalConfigXml
+     * @param $tenantConfig
+     * @param null $totalConfig
      */
-    public function __construct($tenantName, $tenantConfigXml, $totalConfigXml = null)
+    public function __construct($tenantName, $tenantConfig, $totalConfig = null)
     {
-        parent::__construct($tenantName, $tenantConfigXml, $totalConfigXml);
+        parent::__construct($tenantName, $tenantConfig, $totalConfig);
 
-        $this->clientConfig = $tenantConfigXml->clientConfig->toArray();
+        $this->clientConfig = $tenantConfig->clientConfig->toArray();
     }
 
 

@@ -17,12 +17,14 @@
 
 namespace OnlineShop\Framework;
 
+use Pimcore\Cache;
+
 class Factory {
 
     /**
      * framework configuration file
      */
-    const CONFIG_PATH = "/EcommerceFramework/conf/OnlineShopConfig.xml";
+    const CONFIG_PATH = "/EcommerceFramework/conf/OnlineShopConfig.php";
 
     /**
      * @var Factory
@@ -30,7 +32,7 @@ class Factory {
     private static $instance;
 
     /**
-     * @var \Zend_Config_Xml
+     * @var \Zend_Config
      */
     private $config;
 
@@ -134,7 +136,7 @@ class Factory {
         if(empty($this->config)) {
             if(!$config = \Pimcore\Model\Cache::load("onlineshop_config")) {
                 $configPath = \OnlineShop\Plugin::getConfig(true)->onlineshop_config_file;
-                $config = new \Zend_Config_Xml(PIMCORE_DOCUMENT_ROOT . $configPath, null, true);
+                $config = new \Zend_Config(require PIMCORE_DOCUMENT_ROOT . $configPath, true);
                 \Pimcore\Model\Cache::save($config, "onlineshop_config", array("ecommerceconfig"), 9999);
             }
             $this->config = $config;
@@ -323,11 +325,11 @@ class Factory {
     }
 
     /**
-     * @param \Zend_Config_Xml $config
+     * @param \Zend_Config $config
      *
      * @throws \OnlineShop\Framework\Exception\InvalidConfigException
      */
-    private function configurePricingManager(\Zend_Config_Xml $config) {
+    private function configurePricingManager(\Zend_Config $config) {
         if (empty($config->onlineshop->pricingmanager->class)) {
             throw new \OnlineShop\Framework\Exception\InvalidConfigException("No PricingManager class defined.");
         } else {

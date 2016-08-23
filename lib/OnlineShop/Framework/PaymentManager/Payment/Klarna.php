@@ -41,13 +41,13 @@ class Klarna implements IPayment
 
 
     /**
-     * @param \Zend_Config $xml
+     * @param \Zend_Config $config
      *
      * @throws \Exception
      */
-    public function __construct(\Zend_Config $xml)
+    public function __construct(\Zend_Config $config)
     {
-        $settings = $xml->config->{$xml->mode};
+        $settings = $config->config->{$config->mode};
         if($settings->eid == '' || $settings->{'shared-secret-key'} == '')
         {
             throw new \Exception('payment configuration is wrong. eid or shared-secret-key is empty !');
@@ -57,7 +57,7 @@ class Klarna implements IPayment
         $this->sharedSecretKey = $settings->{'shared-secret-key'};
 
 
-        if($xml->mode == 'live')
+        if($config->mode == 'live')
         {
             $this->endpoint = 'https://checkout.klarna.com/checkout/orders';
         }

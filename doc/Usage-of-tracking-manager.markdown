@@ -2,16 +2,25 @@
 
 ### Configuration
 
-The configuration takes place in the OnlineShopConfig.xml. If no _Tracker_ is configured, the _TrackingItemBuilder_ will fall back to the default implementation.
-```xml
-<trackingmanager class="Website\OnlineShop\Tracking\TrackingManager">
-   <config>
-       <trackers>
-           <tracker name="GoogleAnalyticsEnhancedEcommerce" class="Website\OnlineShop\Tracking\Tracker\EnhancedEcommerce" trackingItemBuilder="Website\OnlineShop\Tracking\TrackingItemBuilder" />
-       </trackers>
-   </config>
-</trackingmanager>
+The configuration takes place in the OnlineShopConfig.php. If no _Tracker_ is configured, the _TrackingItemBuilder_ will fall back to the default implementation.
+```php
+"trackingmanager" => [
+            "class" => "Website\\OnlineShop\\Tracking\\TrackinManager",
+            "config" => [
+                "trackers" => [
+                    "tracker" => [
+                        [
+                        "name" => "GoogleAnalyticsEnhancedEcommerce",
+                        "class" => "Website\\OnlineShop\\Tracking\\Tracker\\EnhancedEcommerce",
+                        "trackingItemBuilder" => "Website\\OnlineShop\\Tracking\\TrackingItemBuilder"
+                        ]
+                    ]
+                ]
+            ]
+        ],
 ```
+
+> For older Versions check [OnlineShopConfig_sample.xml](/config/OnlineShopConfig_sample.xml)
 
 ### Overview
 
@@ -67,7 +76,7 @@ class CartController extends \Pimcore\Controller\Action\Frontend {
 
 ## 3 - Project specific data
 
-Adding project specific data to tracking items by extending the TrackingItemBuilder class. The extending class has to be defined in the OnlineShopConfig.xml.
+Adding project specific data to tracking items by extending the TrackingItemBuilder class. The extending class has to be defined in the OnlineShopConfig.php.
 
 ###### _Product Impression_
 

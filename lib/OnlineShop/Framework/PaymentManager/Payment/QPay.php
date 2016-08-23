@@ -72,13 +72,13 @@ class QPay implements IPayment
     ];
 
     /**
-     * @param \Zend_Config $xml
+     * @param \Zend_Config $config
      *
      * @throws \Exception
      */
-    public function __construct(\Zend_Config $xml)
+    public function __construct(\Zend_Config $config)
     {
-        $settings = $xml->config->{$xml->mode};
+        $settings = $config->config->{$config->mode};
         if($settings->secret == '' || $settings->customer == '')
         {
             throw new \Exception('payment configuration is wrong. secret or customer is empty !');
