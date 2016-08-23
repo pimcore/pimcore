@@ -512,9 +512,7 @@ class Concrete extends AbstractObject
         if ($parent) {
             $method = "get" . $key;
             if (method_exists($parent, $method)) {
-                if (method_exists($parent, $method)) {
-                    return call_user_func([$parent, $method], $params);
-                }
+                return call_user_func([$parent, $method], $params);
             }
         }
 
