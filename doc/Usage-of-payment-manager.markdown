@@ -111,21 +111,36 @@ The configuration takes place in the OnlineShopConfig.php
 $url = 'http://'. $_SERVER["HTTP_HOST"] . "/en/payment/complete?state=";
 
  // wirecard seamless
-$config = [
-    "successURL" => $url . \OnlineShop\Framework\PaymentManager\Payment\WirecardSeamless::PAYMENT_RETURN_STATE_SUCCESS,
-    "failureURL" => $url . \OnlineShop\Framework\PaymentManager\Payment\WirecardSeamless::PAYMENT_RETURN_STATE_FAILURE,
-    "cancelURL" => $url . \OnlineShop\Framework\PaymentManager\Payment\WirecardSeamless::PAYMENT_RETURN_STATE_CANCEL,
-    "serviceURL" => Pimcore\Tool::getHostUrl(),
-    "pendingURL" => $url . \OnlineShop\Framework\PaymentManager\Payment\WirecardSeamless::PAYMENT_RETURN_STATE_PENDING,
-    /* wirecard callback url --> commit order here */
-    "confirmURL" => Pimcore\Tool::getHostUrl() . $this->view->url(['action' => 'confirm-payment', 'elementsclientauth' => 'disabled'], 'action', true),
-    "paymentInfo" => $paymentInformation,
-    "paymentType" => $this->getParam('paymentType'),
-    "cart" => $this->getCart(),
-    "birthday" => $this->getParam('birth'),
-    "orderDescription" => $orderNumber,
-    "orderReference" => $orderNumber,
-];
+  $config = [
+                'view' => $this->view, 
+                'orderIdent' => $paymentInformation->getInternalPaymentId()
+            ];
+```
+
+After selection of the payment-type you can then form your redirect url by doing:
+
+```php
+<?php
+
+        $config = [
+            "successURL" => 'http://' .$_SERVER["HTTP_HOST"] . $this->view->url(['action' => 'complete', 'id' => base64_encode($paymentInformation->getObject()->getId()),
+                'state' => \OnlineShop\Framework\PaymentManager\Payment\WirecardSeamless::PAYMENT_RETURN_STATE_SUCCESS, 'prefix' => $this->language], 'action', true),
+            "failureURL" => 'http://' . $_SERVER["HTTP_HOST"] . $this->view->url(['action' => 'complete', 'id' => base64_encode($paymentInformation->getObject()->getId()),
+                    'state' => \OnlineShop\Framework\PaymentManager\Payment\WirecardSeamless::PAYMENT_RETURN_STATE_FAILURE, 'prefix' => $this->language], 'action', true),
+            "cancelURL" => 'http://' . $_SERVER["HTTP_HOST"] . $this->view->url(['action' => 'complete', 'id' => base64_encode($paymentInformation->getObject()->getId()),
+                    'state' => \OnlineShop\Framework\PaymentManager\Payment\WirecardSeamless::PAYMENT_RETURN_STATE_CANCEL, 'prefix' => $this->language], 'action', true),
+            "serviceURL" => Pimcore\Tool::getHostUrl(),
+            "pendingURL" => 'http://' . $_SERVER["HTTP_HOST"] . $this->view->url(['action' => 'complete', 'id' => base64_encode($paymentInformation->getObject()->getId()),
+                    'state' => \OnlineShop\Framework\PaymentManager\Payment\WirecardSeamless::PAYMENT_RETURN_STATE_PENDING, 'prefix' => $this->language], 'action', true),
+            "confirmURL" => 'http://' . $_SERVER["HTTP_HOST"] . $this->view->url(['action' => 'confirm-payment', 'elementsclientauth' => 'disabled'], 'action', true),
+            "paymentInfo" => $paymentInformation,
+            "paymentType" => $this->getParam('paymentType'),
+            "cart" => $this->getCart(),
+            "orderDescription" => $orderNumber,
+            "orderReference" => $orderNumber];
+
+        $this->_helper->json(['url' => $payment->getInitPaymentRedirectUrl($config)]);
+                
 ```
 
 In view script of your _completeAction_ you could then handle your response as follows:

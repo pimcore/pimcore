@@ -114,6 +114,7 @@ class WirecardSeamless implements IPayment
         $_SESSION['Wirecard_dataStorageId'] = $result['storageId'];
         $javascriptURL = $result['javascriptUrl'];
 
+
         $params = [];
         $params['javascriptUrl'] = $javascriptURL;
         $params['view'] = $config['view'];
@@ -131,11 +132,9 @@ class WirecardSeamless implements IPayment
     public function getInitPaymentRedirectUrl($config)
     {
 
-
         if (!$cart = $config['cart']) {
             throw new \Exception('no cart sent');
         }
-
 
         $price = $config['price'] ?: $cart->getPriceCalculator()->getGrandTotal();
 

@@ -1,7 +1,12 @@
 #Update Notices
 Please consider following update notices when updating the e-commerce framework.
  
-## next Version
+## 0.9.8 - 0.10.0
+- After updating the plugin execute `plugins/EcommerceFramework/cli/updateToPhpConfigs.php`.
+  The old xml config files will stay untouched, but will no longer be in use.
+
+
+## 0.9.1 - 0.9.8
 - Default Elasticserach worker has been renamed from Elasticsearch to DefaultElasticSearch (to be consistent) + Updates for Elasticserach 2.x
 - the configuration tag "generalSettings" has been renamed to "clientConfig" to be consistent with other adapters
 - The id field of the store tables has been renamed to o_id instead of id (consistency). In Addition o_virtualProductId has been added.

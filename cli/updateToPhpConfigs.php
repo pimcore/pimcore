@@ -1,15 +1,9 @@
 <?php
 /**
- * Update Onlineshop Website specific configs.
+ * Update Onlineshop Website specific xml config files to php config files.
  *
- * Execute after updating ECommerce Plugin to php configs!
+ * Execute after updating E-Commerce Plugin to 0.10.0!
  *
- *
- *
- * Created by PhpStorm.
- * User: jraab
- * Date: 10.08.2016
- * Time: 09:00
  */
 
 $workingDirectory = getcwd();
