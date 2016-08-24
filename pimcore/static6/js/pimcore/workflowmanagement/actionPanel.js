@@ -420,7 +420,7 @@ pimcore.workflowmanagement.actionPanel = Class.create({
         Ext.each(additional, function(c) {
             //add a new field
             var field = {};
-            var supportedTags = ['input', 'textarea', 'select', 'datetime', 'date'];
+            var supportedTags = ['input', 'textarea', 'select', 'datetime', 'date', 'user'];
 
             if (in_array(c.fieldType, supportedTags)) {
 
