@@ -49,6 +49,9 @@ class Bracket implements IBracket
      */
     public function check(\OnlineShop\Framework\PricingManager\IEnvironment $environment)
     {
+        // A bracket without conditions is not restricted and thus doesn't fail
+        if (sizeof($this->conditions) == 0) return true;
+        
         // default
         $state = false;
 
