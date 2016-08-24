@@ -9,7 +9,8 @@ TODO: ADD LINKS HERE
 
 ### Product
 There are two ways of preparing a pimcore class for product-usage in the ecommerce-framework
-1. The pimcore class needs to implement the abstract class `\OnlineShop\Framework\Model\AbstractProduct`
+
+1. The pimcore class needs to extend the abstract class `\OnlineShop\Framework\Model\AbstractProduct`
    * this is useful, when product index and checkout functionality is based on the e-commerce framework. 
 2. Make sure that the pimcore class implements either `\OnlineShop\Framework\Model\IIndexable` or `\OnlineShop\Framework\Model\ICheckoutable` - or both, depending on the use case it is used for.
    * this is useful, when e.g. only checkout functionality is based on the e-commerce framework, but not the product presentation. 
@@ -19,7 +20,7 @@ There are two ways of preparing a pimcore class for product-usage in the ecommer
 > For the abstract class use the parent class functionality of pimcore. For implementing the interfaces use either the parent class functionality or the class map functionality of pimcore (see also <https://www.pimcore.org/wiki/display/PIMCORE3/Class-Mappings+-+Overwrite+pimcore+models>). 
 
 ### Product Category
-When a product category class is used, this class needs to implement the abstract class `\OnlineShop\Framework\Model\AbstractCategory`
+When a product category class is used, this class needs to extend the abstract class `\OnlineShop\Framework\Model\AbstractCategory`
 
 
 > For product categories only one pimcore class should be used. For products, several pimcore classes can be used. Eventually the index update scripts need to be adapted. 
@@ -31,7 +32,7 @@ When a product category class is used, this class needs to implement the abstrac
 
 Open /website/var/plugins/EcommerceFramework/OnlineShopConfig.php and adjust the settings. This configuration file is the central configuration for the e-commerce framework and defines the concrete implementations and configurations for all modules.
 
-So this configuration file specifies thinks like
+So this configuration file specifies things like
 - cart manager
 - price systems
 - availability systems

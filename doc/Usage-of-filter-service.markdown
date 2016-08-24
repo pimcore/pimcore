@@ -1,6 +1,6 @@
 ## 1 - Basic Idea of the FilterService
 The FilterService supports the developer of setting up e-commerce product listings with filters and layered navigation known from classic shop systems. Therefore it provides functionality to ...
-- ... configure available filters and so set up the product listings in the frontend.
+- ... configure available filters and to set up the product listings in the frontend.
 - ... generating the necessary filter conditions for the product index based on the filter type and user input. 
 - ... printing out the configured filter with possible filter values etc. to the frontend. 
 
@@ -13,7 +13,7 @@ Each product listing has different filters like dropdowns, multi selects, input 
 - special presentation in the view
 - special filter conditions for the product index
 
-The FilterTypes are responsible for these three tasks. By adding filter type field collections to the filter definition objects (see next chapter) simple configuration of filters is possible for the user. The backend implementation of FilterTypes is done in php classes which implement the abstract class ```\OnlineShop\Framework\FilterService\FilterType\AbstractFilterType``` and responsible for creating the correct filter conditions based on the product index implementation and rendering the filter output for the frontend. Therefore ```\OnlineShop\Framework\FilterService\FilterType\AbstractFilterType``` expects the two methods ```getFilterFrontend()``` and ```addCondition()``` to be implemented. 
+The FilterTypes are responsible for these three tasks. By adding filter type field collections to the filter definition objects (see next chapter) simple configuration of filters is possible for the user. The backend implementation of FilterTypes is done in php classes which extend the abstract class ```\OnlineShop\Framework\FilterService\FilterType\AbstractFilterType``` and are responsible for creating the correct filter conditions based on the product index implementation and rendering the filter output for the frontend. Therefore ```\OnlineShop\Framework\FilterService\FilterType\AbstractFilterType``` expects the two methods ```getFilterFrontend()``` and ```addCondition()``` to be implemented. 
 
 
 The configuration of the FilterTypes takes place in the OnlineShopConfig.php
@@ -72,7 +72,7 @@ You can find some script filter examples in the ecommerce framework demo (/websi
 **Configuration elements are:**
 - FilterCategory: represents the field collection type for configuration in filter definitions
 - class: backend implementation of the filter type
-- script: default view script of the filter type, can be overwritten in den filter definitions
+- script: default view script of the filter type, can be overwritten in the filter definitions
 
 - Helper: is a helper implementation that gets available values for pre select settings in the filter definition objects based on the filtergroup setting in the index attributes definition. 
 
@@ -124,7 +124,7 @@ $this->view->paginator = $paginator;
 ```
 
 ### View
-For putting all filters to the frontend use following snippet. It is important, that this snippet is inside a form in order to get the parameter of changed filters delivered back to the controller. 
+For putting all filters to the frontend use following snippet. It is important that this snippet is inside a form in order to get the parameter of changed filters delivered back to the controller. 
 
 ```php
 <?php if($this->filterDefinitionObject->getFilters()): ?>

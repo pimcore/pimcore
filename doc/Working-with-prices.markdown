@@ -53,7 +53,7 @@ The snippet for printing the price on a product detail page may be:
 
 ## 4 - Using pricing rules
 Basically pricing rules are supported by the ecommerce framework out of the box. The pricing rules themselves can be configured in the pimcore backend by putting conditions and actions together. Once active, all rules are checked and applied  automatically by the system - including reducing product prices, adding price modificators to reduce cart totals, removing shipping costs and adding gift items to the cart. 
-To print the applied rules in the frontend, the developer needs add some lines of code. Depending on the location, following scripts can be used. 
+To print the applied rules in the frontend, the developer needs to add some lines of code. Depending on the location, following scripts can be used. 
 
 
 #### Product Detail Page
@@ -111,18 +111,18 @@ To print the applied rules in the frontend, the developer needs add some lines o
 
 
 ## 5 - Using vouchers
-Like pricing rule, also vouchers are supported out of the box by the framework. 
+Like pricing rules, also vouchers are supported out of the box by the framework. 
 But to use vouchers, a few things need to be done. 
-- Create a OnlineShopVoucherSeries
+- Create an OnlineShopVoucherSeries
 - Create tokens based on the OnlineShopVoucherSeries.
 - Create a pricing rule for the OnlineShopVoucherSeries and define the benefit of the voucher.
 - Allow the user to add a token to his cart. 
 
-#### Create a OnlineShopVoucherSeries
-A voucher series contains basic information of the voucher and settings for creating the voucher tokens. It is represented by OnlineShopVoucherSeries objects. Currently there are to types of vouchers supported - Single and Pattern. 
+#### Create an OnlineShopVoucherSeries
+A voucher series contains basic information of the voucher and settings for creating the voucher tokens. It is represented by OnlineShopVoucherSeries objects. Currently there are two types of vouchers supported - Single and Pattern. 
 
 #### Create tokens based on the OnlineShopVoucherSeries
-In the pimcore backend, each OnlineShopVoucherSeries object has an additional tab for managing the voucher tokens. Depening on the token type there are different functionalities for managing the tokens and some statistics concerning the voucher. 
+In the pimcore backend, each OnlineShopVoucherSeries object has an additional tab for managing the voucher tokens. Depending on the token type there are different functionalities for managing the tokens and some statistics concerning the voucher. 
 - Simple: 'activate' the token and specify how often it may be used. 
 - Pattern: create tokens based on the defined pattern, export created tokens as csv and get an overview of created tokens and their usages. 
 
@@ -152,7 +152,7 @@ if ($token = strip_tags($this->getParam('voucherToken'))) {
 | 4     | No token for this code exists.                                   	|
 | 5  	| Criteria oncePerCart: Token of same series already in cart.      	|
 | 6 	| Criteria onlyTokenPerCart: Token of type "only" already in cart. 	|
-| 7 	| Criteria onlyTokenPerCart: Tokens in cart and try to add token of type "only"|
-| 8 	| No more usages for a single tokens.|
+| 7 	| Criteria onlyTokenPerCart: Tokens in cart and tried to add token of type "only"|
+| 8 	| No more usages for a single token.|
 
 > Since benefits for vouchers are defined via pricing rules, no special actions are needed to display them. They are just displayed the same way as all other pricing rules.

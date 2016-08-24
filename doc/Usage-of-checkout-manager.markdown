@@ -1,6 +1,6 @@
 ## 1 - Checkout Manager configuration
 
-The checkout manager is not a out-of-the-box checkout process! 
+The checkout manager is not an out-of-the-box checkout process! 
 
 It is a tool for the developer to create a use case specific checkout process and consists of checkout steps and a commit order processor, which is responsible for completing the order and doing use case specific work. 
 
@@ -55,14 +55,14 @@ The configuration takes place in the OnlineShopConfig.php
 > For older Versions check [OnlineShopConfig_sample.xml](/config/OnlineShopConfig_sample.xml)
 
 Following elements are configured: 
-* **Implementation of the checkout manager**: The Checkout Manager is a central player of the checkout process. It checks the state of single checkout steps, it responsible for the payment integration and also calls the commit order processor in the end. 
+* **Implementation of the checkout manager**: The Checkout Manager is a central player of the checkout process. It checks the state of single checkout steps, is responsible for the payment integration and also calls the commit order processor in the end. 
 * **Checkout steps and their implementation**: Each checkout step (e.g. Delivery address, delivery date, ...) needs a concrete checkout step implementation. The implementation is responsible for storing and validating the necessary data, is project dependent and has to be implemented for each project. 
 * **Implementation of the commit order processor**: When finalization of the order is done by the commit order processor. This is the places, where custom ERP integrations and other project dependent order finishing stuff should be placed. 
 * **Additional stuff like**: 
    * Mail configuration
 
 ## 2 - Setting up Checkout Steps
-For each checkout step (e.g. delivery address, delivery date, ...) there has to be a concrete checkout step implementation. This implementation is responsible for storage and loading of neccessary checkout data for each step. It needs to extend `\OnlineShop\Framework\CheckoutManager\AbstractStep` and implement `\OnlineShop\Framework\CheckoutManager\ICheckoutStep`. 
+For each checkout step (e.g. delivery address, delivery date, ...) there has to be a concrete checkout step implementation. This implementation is responsible for storage and loading of necessary checkout data for each step. It needs to extend `\OnlineShop\Framework\CheckoutManager\AbstractStep` and implement `\OnlineShop\Framework\CheckoutManager\ICheckoutStep`. 
 
 Following methods have to be implemented: 
 * commit($data): is called when step is finished and data needs to be saved
@@ -145,7 +145,7 @@ $order = $manager->commitOrder();
 While committing the order, the checkout manager delegates it to the specified commit order processor implementation, which needs to implement `\OnlineShop\Framework\CheckoutManager\ICommitOrderProcessor`. 
 This is the place where all functionality for committing the order (e.g. sending orders to erp systems, sending order confirmation mails, ...) is bundled. 
 
-The default implementation `\OnlineShop\Framework\CheckoutManager\CommitOrderProcessor` provides basic functionality like creating an order object and sending a order confirmation mail.
+The default implementation `\OnlineShop\Framework\CheckoutManager\CommitOrderProcessor` provides basic functionality like creating an order object and sending an order confirmation mail.
  Order creation it self is delegated to the `\OnlineShop\Framework\OrderManager\IOrderManager`. 
 In simple use cases a website specific implementation needs 
 
@@ -247,7 +247,7 @@ $this->view->paymentForm = $payment->initPayment( $cart->getPriceCalculator()->g
 ```
 
 #### Build payment view
-One the payment is started, the created payment form need to be integrated into the view script. Depending on the payment provider, also other data structures an be created: 
+Once the payment is started, the created payment form needs to be integrated into the view script. Depending on the payment provider, also other data structures can be created: 
 ```php
 <?php
 $form = $this->payment

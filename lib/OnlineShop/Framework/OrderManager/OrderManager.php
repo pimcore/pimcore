@@ -233,11 +233,10 @@ class OrderManager implements IOrderManager
             $i++;
 
             $orderItem = $this->createOrderItem($item, $order);
-            $orderItem->save();
 
+            $orderSubItems = array();
             $subItems = $item->getSubItems();
             if(!empty($subItems)) {
-                $orderSubItems = array();
 
                 foreach($subItems as $subItem) {
                     $orderSubItem = $this->createOrderItem($subItem, $orderItem);
@@ -245,10 +244,10 @@ class OrderManager implements IOrderManager
 
                     $orderSubItems[] = $orderSubItem;
                 }
-
-                $orderItem->setSubItems($orderSubItems);
-                $orderItem->save();
             }
+
+            $orderItem->setSubItems($orderSubItems);
+            $orderItem->save();
 
             $orderItems[] = $orderItem;
 
