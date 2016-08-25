@@ -43,7 +43,7 @@ return [
                         "pricecalculator" => [
                             "class" => "\\OnlineShop\\Framework\\CartManager\\CartPriceCalculator",
                             "config" => [
-                                "modificators" => "\n                                "
+                                "modificators" => []
                             ]
                         ]
                     ]
