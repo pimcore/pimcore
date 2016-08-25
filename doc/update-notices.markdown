@@ -4,6 +4,44 @@ Please consider following update notices when updating the e-commerce framework.
 ## 0.9.8 - 0.10.0
 - After updating the plugin execute `plugins/EcommerceFramework/cli/updateToPhpConfigs.php`.
   The old xml config files will stay untouched, but will no longer be in use.
+- Following method signatures changed:
+  - `\OnlineShop\Framework\IndexService\Config\IConfig::__construct`
+
+  ```php
+    //old
+        /**
+         * @param string $tenantName
+         * @param $tenantConfigXml
+         * @param null $totalConfigXml
+         */
+        public function __construct($tenantName, $tenantConfigXml, $totalConfigXml = null) {...}
+
+
+    //new
+        /**
+         * @param string $tenantName
+         * @param $tenantConfig
+         * @param null $totalConfig
+         */
+        public function __construct($tenantName, $tenantConfig, $totalConfig = null) {...}
+  ```
+
+  - \OnlineShop\Framework\PaymentManager\Payment\IPayment::__construct`
+    ```php
+    //old
+        /**
+         * @param \Zend_Config $xml
+         */
+        public function __construct(\Zend_Config $xml);
+
+
+    //new
+        /**
+         * @param \Zend_Config $config
+         */
+        public function __construct(\Zend_Config $config);
+    ```
+
 
 
 ## 0.9.1 - 0.9.8
