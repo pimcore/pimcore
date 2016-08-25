@@ -84,4 +84,4 @@ if (file_exists($onlineshopConfigPath)) {
 }
 
 /* clear all cache for loading new configs on further requests */
-Pimcore\Cache::clearAll();
+Pimcore\Cache::clearTag("ecommerceconfig");
