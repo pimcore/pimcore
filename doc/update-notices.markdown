@@ -6,8 +6,7 @@ Please consider following update notices when updating the e-commerce framework.
   The old xml config files will stay untouched, but will no longer be in use.
 - Following method signatures changed:
   - `\OnlineShop\Framework\IndexService\Config\IConfig::__construct`
-
-  ```php
+    ```php
     //old
         /**
          * @param string $tenantName
@@ -24,7 +23,7 @@ Please consider following update notices when updating the e-commerce framework.
          * @param null $totalConfig
          */
         public function __construct($tenantName, $tenantConfig, $totalConfig = null) {...}
-  ```
+    ```
 
   - \OnlineShop\Framework\PaymentManager\Payment\IPayment::__construct`
     ```php
