@@ -31,7 +31,6 @@ class IndexUpdater {
     public static function updateIndex($objectListClass, $condition = "", $updateIndexStructures = false, $loggername = "indexupdater") {
         $updater = \OnlineShop\Framework\Factory::getInstance()->getIndexService();
         if($updateIndexStructures) {
-            \Pimcore\Model\Cache::clearTag("ecommerceconfig");
             $updater->createOrUpdateIndexStructures();
         }
 

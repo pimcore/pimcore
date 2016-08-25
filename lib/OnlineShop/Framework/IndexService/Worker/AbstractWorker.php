@@ -53,7 +53,7 @@ abstract class AbstractWorker implements IWorker {
 
             $this->indexColumns["categoryIds"] = "categoryIds";
 
-            foreach($this->columnConfig->column as $column) {
+            foreach($this->columnConfig as $column) {
                 if(!$considerHideInFieldList || ($considerHideInFieldList && $column->hideInFieldlistDatatype != "true")) {
                     $this->indexColumns[$column->name] = $column->name;
                 }
@@ -77,7 +77,7 @@ abstract class AbstractWorker implements IWorker {
 
 
             if($this->columnConfig) {
-                foreach($this->columnConfig->column as $column) {
+                foreach($this->columnConfig as $column) {
                     if($column->filtergroup) {
                         $this->filterGroups[(string)$column->filtergroup][] = (string)$column->name;
                     }

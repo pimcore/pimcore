@@ -29,8 +29,8 @@ class DefaultMysqlInheritColumnConfig extends DefaultMysql {
         $this->attributeConfig = $totalConfig->columns;
 
         $this->searchAttributeConfig = array();
-        if($totalConfig->generalSearchColumns->column) {
-            foreach($totalConfig->generalSearchColumns->column as $c) {
+        if($totalConfig->generalSearchColumns) {
+            foreach($totalConfig->generalSearchColumns as $c) {
                 $this->searchAttributeConfig[] = $c->name;
             }
         }

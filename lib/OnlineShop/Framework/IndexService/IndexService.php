@@ -38,15 +38,10 @@ class IndexService {
         if($config->tenants && $config->tenants instanceof \Zend_Config) {
             foreach($config->tenants as $name => $tenant) {
                 $tenantConfigClass = (string) $tenant->class;
-                $cachekey = "onlineshop_config_assortment_tenant_" . str_replace('\\','_', (string) $tenantConfigClass);
-
                 $tenantConfig = $tenant;
                 if($tenant->file) {
-                    if(!$tenantConfig = \Pimcore\Model\Cache::load($cachekey)) {
-                        $tenantConfig = new \Zend_Config(require PIMCORE_DOCUMENT_ROOT . ((string)$tenant->file), true);
-                        $tenantConfig = $tenantConfig->tenant;
-                        \Pimcore\Model\Cache::save($tenantConfig, $cachekey, array("ecommerceconfig"), 9999);
-                    }
+                    $tenantConfig = new \Zend_Config(require PIMCORE_DOCUMENT_ROOT . ((string)$tenant->file), true);
+                    $tenantConfig = $tenantConfig->tenant;
                 }
 
                 /**

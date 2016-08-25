@@ -218,6 +218,15 @@ return [
             /* column definition for product index */
             "columns" => [
                 "column" => [
+                    /* included config files will be merged with given columns
+                     *
+                     * placeholder values in this file ("locale" => "%locale%") will be replaced by
+                     * the given placeholder value (eg. "de_AT")
+                     */
+                    [
+                        "file" => "/website/var/plugins/EcommerceFramework/additional-index.php",
+                        "placeholders" => ["%locale%" => "de_AT"]
+                    ],
                     [
                         "name" => "name",
                         "type" => "varchar(255)",

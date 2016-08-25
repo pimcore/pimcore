@@ -48,4 +48,4 @@ Things you need to adjust when using the product index:
 
 > During development you will return to this file and adjust the settings multiple times. 
 
-> This setting file is cached due to performance issues. You need to clean up the configuration cache in the pimcore backend so that the changes take affect.
+> In older versions this settings file is cached due to performance issues. You need to clean up the configuration cache in the pimcore backend so that the changes take affect. Since Version 0.10.0 the settings file is not cached any more. 

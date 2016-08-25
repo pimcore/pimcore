@@ -17,8 +17,6 @@
 
 namespace OnlineShop\Framework;
 
-use Pimcore\Cache;
-
 class Factory {
 
     /**
@@ -134,12 +132,8 @@ class Factory {
 
     public function getConfig() {
         if(empty($this->config)) {
-            if(!$config = \Pimcore\Model\Cache::load("onlineshop_config")) {
-                $configPath = \OnlineShop\Plugin::getConfig(true)->onlineshop_config_file;
-                $config = new \Zend_Config(require PIMCORE_DOCUMENT_ROOT . $configPath, true);
-                \Pimcore\Model\Cache::save($config, "onlineshop_config", array("ecommerceconfig"), 9999);
-            }
-            $this->config = $config;
+            $configPath = \OnlineShop\Plugin::getConfig(true)->onlineshop_config_file;
+            $this->config = new \Zend_Config(require PIMCORE_DOCUMENT_ROOT . $configPath, true);
         }
 
         return $this->config;

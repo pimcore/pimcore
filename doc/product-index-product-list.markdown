@@ -18,33 +18,40 @@ The configuration of the product index defines the content of the product index 
             /* add columns for general fulltext search index of productlist - they must be part of the column configuration below  */
             "generalSearchColumns" => [
                 /* column definition for product index */
-                "column" => [
-                    [
-                        "name" => "name"
-                    ],
-                    [
-                        "name" => "seoname"
-                    ]
+                [
+                    "name" => "name"
+                ],
+                [
+                    "name" => "seoname"
                 ]
             ],
-            /* column definition for product index */
+            /* column definition for product index 
+             *
+             * Included config files will be merged with given columns.
+             *
+             * Placeholder values in this file ("locale" => "%locale%") will be replaced by
+             * the given placeholder value (eg. "de_AT").
+             */
             "columns" => [
-                "column" => [
-                    [
-                        "name" => "name",
-                        "type" => "varchar(255)",
-                        "locale" => "en_GB",
-                        "filtergroup" => "string"
-                    ],
-                    [
-                        "name" => "seoname",
-                        "type" => "varchar(255)",
-                        "filtergroup" => "string"
-                    ]
+                [
+                    "file" => "/website/var/plugins/EcommerceFramework/additional-index.php",
+                    "placeholders" => ["%locale%" => "de_AT"]
+                ],
+                [
+                    "name" => "name",
+                    "type" => "varchar(255)",
+                    "locale" => "en_GB",
+                    "filtergroup" => "string"
+                ],
+                [
+                    "name" => "seoname",
+                    "type" => "varchar(255)",
+                    "filtergroup" => "string"
                 ]
             ]
         ]
 ```
+
 > For older Versions check [OnlineShopConfig_sample.xml](/config/OnlineShopConfig_sample.xml)
 
 

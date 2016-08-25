@@ -17,6 +17,8 @@
 
 namespace OnlineShop\Framework\IndexService\Config;
 
+use Pimcore\API\Plugin\Exception;
+
 abstract class AbstractConfig implements IConfig {
 
     protected $tenantName;
@@ -35,13 +37,40 @@ abstract class AbstractConfig implements IConfig {
      */
     public function __construct($tenantName, $tenantConfig, $totalConfig = null) {
         $this->tenantName = $tenantName;
-        $this->attributeConfig = $tenantConfig->columns;
+        $attributeConfigArray = $tenantConfig->columns->toArray();
+
+        /* include column file configs and replace placeholders */
+        foreach ($attributeConfigArray as $i => $columnConfig) {
+            if (!array_key_exists("file", $columnConfig)) {
+                continue;
+            }
+
+            $includeColumnConfig = include PIMCORE_DOCUMENT_ROOT . (string)$columnConfig['file'];
+
+            /* if placeholders are defined, check for them in the included config */
+            if (array_key_exists("placeholders", $columnConfig)) {
+                $placeholders = $columnConfig['placeholders'];
+                foreach ($includeColumnConfig as $incIndex => $replaceConfig) {
+                    foreach ($replaceConfig as $key => $value) {
+                        if (array_key_exists($value, $placeholders)) {
+                            $includeColumnConfig[$incIndex][$key] = $placeholders[$value];
+                        }
+                    }
+                }
+            }
+
+            $attributeConfigArray = array_merge($attributeConfigArray, $includeColumnConfig);
+            unset($attributeConfigArray[$i]);
+        }
+
+        $this->attributeConfig = new \Zend_Config($attributeConfigArray);
+
         $this->filterTypeConfig = $tenantConfig->filtertypes;
 
-        if(sizeof($tenantConfig->generalSearchColumns->column) == 1) {
-            $this->searchAttributeConfig[] = (string)$tenantConfig->generalSearchColumns->column->name;
+        if(sizeof($tenantConfig->generalSearchColumns) == 1) {
+            $this->searchAttributeConfig[] = (string)$tenantConfig->generalSearchColumns->name;
         } elseif($tenantConfig->generalSearchColumns->column) {
-            foreach($tenantConfig->generalSearchColumns->column as $c) {
+            foreach($tenantConfig->generalSearchColumns as $c) {
                 $this->searchAttributeConfig[] = $c->name;
             }
         }
