@@ -505,18 +505,17 @@ class DefaultElasticSearch extends AbstractWorker implements IBatchProcessingWor
 
             // save update status
             foreach($responses['items'] as $response) {
-                $update_error = null;
+                $data = [
+                    'update_status' => $response['index']['status'],
+                    'update_error' => null,
+                ];
                 if($response['index']['error']) {
-                    $update_error = \Zend_Json::encode($response['index']['error']);
+                    $data['update_error'] = \Zend_Json::encode($response['index']['error']);
+                    $data['crc_index'] = 0;
                     \Logger::error('Failed to Index Object with Id:' . $response['index']['_id']);
                 }
-                $query = <<<SQL
-UPDATE {$this->getStoreTableName()}
-SET update_status = ?, update_error = ?, crc_index = 0
-WHERE o_id = ?
-SQL;
-                $this->db->query( $query, [$response['index']['status'],$update_error, $response['index']['_id']]);
 
+                $this->db->update($this->getStoreTableName(), $data, ['o_id = ?' => $response['index']['_id']]);
             }    
         }
 

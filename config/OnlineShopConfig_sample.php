@@ -206,206 +206,202 @@ return [
             /* add columns for general fulltext search index of productlist - they must be part of the column configuration below  */
             "generalSearchColumns" => [
                 /* column definition for product index */
-                "column" => [
-                    [
-                        "name" => "name"
-                    ],
-                    [
-                        "name" => "seoname"
-                    ]
+                [
+                    "name" => "name"
+                ],
+                [
+                    "name" => "seoname"
                 ]
             ],
             /* column definition for product index */
             "columns" => [
-                "column" => [
-                    /* included config files will be merged with given columns
-                     *
-                     * placeholder values in this file ("locale" => "%locale%") will be replaced by
-                     * the given placeholder value (eg. "de_AT")
-                     */
-                    [
-                        "file" => "/website/var/plugins/EcommerceFramework/additional-index.php",
-                        "placeholders" => ["%locale%" => "de_AT"]
-                    ],
-                    [
-                        "name" => "name",
-                        "type" => "varchar(255)",
-                        "locale" => "en_GB",
-                        "filtergroup" => "string"
-                    ],
-                    [
-                        "name" => "seoname",
-                        "type" => "varchar(255)",
-                        "filtergroup" => "string"
-                    ],
+                /* included config files will be merged with given columns
+                 *
+                 * placeholder values in this file ("locale" => "%locale%") will be replaced by
+                 * the given placeholder value (eg. "de_AT")
+                 */
+                [
+                    "file" => "/website/var/plugins/EcommerceFramework/additional-index.php",
+                    "placeholders" => ["%locale%" => "de_AT"]
+                ],
+                [
+                    "name" => "name",
+                    "type" => "varchar(255)",
+                    "locale" => "en_GB",
+                    "filtergroup" => "string"
+                ],
+                [
+                    "name" => "seoname",
+                    "type" => "varchar(255)",
+                    "filtergroup" => "string"
+                ],
 
-                    /* SAMPLE FOR FURTHER ATTRIBUTES */
+                /* SAMPLE FOR FURTHER ATTRIBUTES */
 
-                    /*  [
-                        "name" => "color",
-                        "type" => "varchar(255)",
-                        "filtergroup" => "multiselect"
-                    ],
-                    [
-                        "name" => "gender",
-                        "type" => "varchar(100)",
-                        "filtergroup" => "multiselect"
-                    ],
-                    [
-                        "name" => "features",
-                        "interpreter" => "\\OnlineShop\\Framework\\IndexService\\Interpreter\\DefaultObjects",
-                        "filtergroup" => "relation"
-                    ],
-                    [
-                        "name" => "technologies",
-                        "interpreter" => "\\OnlineShop\\Framework\\IndexService\\Interpreter\\DefaultObjects",
-                        "filtergroup" => "relation"
-                    ],
-                    [
-                        "name" => "tentTentPegs",
-                        "type" => "varchar(50)",
-                        "getter" => "\\OnlineShop\\Framework\\IndexService\\Getter\\DefaultBrickGetter",
-                        "filtergroup" => "string",
-                        "config" => [
-                            "brickfield" => "specificAttributes",
-                            "bricktype" => "tentSpecifications",
-                            "fieldname" => "tentPegs"
-                        ]
-                    ],
-                    [
-                        "name" => "tentWaterproofRain",
-                        "type" => "varchar(50)",
-                        "getter" => "\\OnlineShop\\Framework\\IndexService\\Getter\\DefaultBrickGetter",
-                        "filtergroup" => "string",
-                        "config" => [
-                            "brickfield" => "specificAttributes",
-                            "bricktype" => "tentSpecifications",
-                            "fieldname" => "waterproofRain"
-                        ]
-                    ],
-                    [
-                        "name" => "tentWaterproofGround",
-                        "type" => "varchar(50)",
-                        "getter" => "\\OnlineShop\\Framework\\IndexService\\Getter\\DefaultBrickGetter",
-                        "filtergroup" => "string",
-                        "config" => [
-                            "brickfield" => "specificAttributes",
-                            "bricktype" => "tentSpecifications",
-                            "fieldname" => "waterproofGround"
-                        ]
-                    ],
-                    [
-                        "name" => "rucksacksVolume",
-                        "type" => "double",
-                        "interpreter" => "\\OnlineShop\\Framework\\IndexService\\Interpreter\\Numeric",
-                        "getter" => "\\OnlineShop\\Framework\\IndexService\\Getter\\DefaultBrickGetter",
-                        "filtergroup" => "string",
-                        "config" => [
-                            "brickfield" => "specificAttributes",
-                            "bricktype" => "rucksackSpecs",
-                            "fieldname" => "volume"
-                        ]
-                    ],
-                    [
-                        "name" => "rucksacksWeight",
-                        "type" => "double",
-                        "interpreter" => "\\OnlineShop\\Framework\\IndexService\\Interpreter\\Numeric",
-                        "getter" => "\\OnlineShop\\Framework\\IndexService\\Getter\\DefaultBrickGetter",
-                        "filtergroup" => "string",
-                        "config" => [
-                            "brickfield" => "specificAttributes",
-                            "bricktype" => "rucksackSpecs",
-                            "fieldname" => "weight"
-                        ]
-                    ],
-                    [
-                        "name" => "rucksacksLoad",
-                        "type" => "double",
-                        "interpreter" => "\\OnlineShop\\Framework\\IndexService\\Interpreter\\Numeric",
-                        "getter" => "\\OnlineShop\\Framework\\IndexService\\Getter\\DefaultBrickGetter",
-                        "filtergroup" => "string",
-                        "config" => [
-                            "brickfield" => "specificAttributes",
-                            "bricktype" => "rucksackSpecs",
-                            "fieldname" => "load"
-                        ]
-                    ],
-                    [
-                        "name" => "matsWidth",
-                        "type" => "double",
-                        "getter" => "\\OnlineShop\\Framework\\IndexService\\Getter\\DefaultBrickGetter",
-                        "filtergroup" => "string",
-                        "config" => [
-                            "brickfield" => "specificAttributes",
-                            "bricktype" => "matsSpecs",
-                            "fieldname" => "width"
-                        ]
-                    ],
-                    [
-                        "name" => "matsLength",
-                        "type" => "double",
-                        "getter" => "\\OnlineShop\\Framework\\IndexService\\Getter\\DefaultBrickGetter",
-                        "filtergroup" => "string",
-                        "config" => [
-                            "brickfield" => "specificAttributes",
-                            "bricktype" => "matsSpecs",
-                            "fieldname" => "length"
-                        ]
-                    ],
-                    [
-                        "name" => "matsHeight",
-                        "type" => "double",
-                        "getter" => "\\OnlineShop\\Framework\\IndexService\\Getter\\DefaultBrickGetter",
-                        "filtergroup" => "string",
-                        "config" => [
-                            "brickfield" => "specificAttributes",
-                            "bricktype" => "matsSpecs",
-                            "fieldname" => "height"
-                        ]
-                    ],
-                    [
-                        "name" => "simularity_color",
-                        "fieldname" => "color",
-                        "hideInFieldlistDatatype" => "true",
-                        "type" => "INTEGER",
-                        "interpreter" => "\\OnlineShop\\Framework\\IndexService\\Interpreter\\Soundex"
-                    ],
-                    [
-                        "name" => "simularity_gender",
-                        "fieldname" => "gender",
-                        "hideInFieldlistDatatype" => "true",
-                        "type" => "INTEGER",
-                        "interpreter" => "\\OnlineShop\\Framework\\IndexService\\Interpreter\\Soundex"
-                    ],
-                    [
-                        "name" => "simularity_category",
-                        "fieldname" => "categories",
-                        "hideInFieldlistDatatype" => "true",
-                        "type" => "INTEGER",
-                        "interpreter" => "\\OnlineShop\\Framework\\IndexService\\Interpreter\\ObjectIdSum"
-                    ],
-                    [
-                        "name" => "simularity_feature",
-                        "fieldname" => "features",
-                        "hideInFieldlistDatatype" => "true",
-                        "type" => "INTEGER",
-                        "interpreter" => "\\OnlineShop\\Framework\\IndexService\\Interpreter\\ObjectIdSum"
-                    ],
-                    [
-                        "name" => "simularity_technolgy",
-                        "fieldname" => "technologies",
-                        "hideInFieldlistDatatype" => "true",
-                        "type" => "INTEGER",
-                        "interpreter" => "\\OnlineShop\\Framework\\IndexService\\Interpreter\\ObjectIdSum"
-                    ],
-                    [
-                        "name" => "simularity_attributes",
-                        "fieldname" => "attributes",
-                        "hideInFieldlistDatatype" => "true",
-                        "type" => "INTEGER",
-                        "interpreter" => "\\OnlineShop\\Framework\\IndexService\\Interpreter\\ObjectIdSum"
-                    ] */
-                ]
+                /*  [
+                    "name" => "color",
+                    "type" => "varchar(255)",
+                    "filtergroup" => "multiselect"
+                ],
+                [
+                    "name" => "gender",
+                    "type" => "varchar(100)",
+                    "filtergroup" => "multiselect"
+                ],
+                [
+                    "name" => "features",
+                    "interpreter" => "\\OnlineShop\\Framework\\IndexService\\Interpreter\\DefaultObjects",
+                    "filtergroup" => "relation"
+                ],
+                [
+                    "name" => "technologies",
+                    "interpreter" => "\\OnlineShop\\Framework\\IndexService\\Interpreter\\DefaultObjects",
+                    "filtergroup" => "relation"
+                ],
+                [
+                    "name" => "tentTentPegs",
+                    "type" => "varchar(50)",
+                    "getter" => "\\OnlineShop\\Framework\\IndexService\\Getter\\DefaultBrickGetter",
+                    "filtergroup" => "string",
+                    "config" => [
+                        "brickfield" => "specificAttributes",
+                        "bricktype" => "tentSpecifications",
+                        "fieldname" => "tentPegs"
+                    ]
+                ],
+                [
+                    "name" => "tentWaterproofRain",
+                    "type" => "varchar(50)",
+                    "getter" => "\\OnlineShop\\Framework\\IndexService\\Getter\\DefaultBrickGetter",
+                    "filtergroup" => "string",
+                    "config" => [
+                        "brickfield" => "specificAttributes",
+                        "bricktype" => "tentSpecifications",
+                        "fieldname" => "waterproofRain"
+                    ]
+                ],
+                [
+                    "name" => "tentWaterproofGround",
+                    "type" => "varchar(50)",
+                    "getter" => "\\OnlineShop\\Framework\\IndexService\\Getter\\DefaultBrickGetter",
+                    "filtergroup" => "string",
+                    "config" => [
+                        "brickfield" => "specificAttributes",
+                        "bricktype" => "tentSpecifications",
+                        "fieldname" => "waterproofGround"
+                    ]
+                ],
+                [
+                    "name" => "rucksacksVolume",
+                    "type" => "double",
+                    "interpreter" => "\\OnlineShop\\Framework\\IndexService\\Interpreter\\Numeric",
+                    "getter" => "\\OnlineShop\\Framework\\IndexService\\Getter\\DefaultBrickGetter",
+                    "filtergroup" => "string",
+                    "config" => [
+                        "brickfield" => "specificAttributes",
+                        "bricktype" => "rucksackSpecs",
+                        "fieldname" => "volume"
+                    ]
+                ],
+                [
+                    "name" => "rucksacksWeight",
+                    "type" => "double",
+                    "interpreter" => "\\OnlineShop\\Framework\\IndexService\\Interpreter\\Numeric",
+                    "getter" => "\\OnlineShop\\Framework\\IndexService\\Getter\\DefaultBrickGetter",
+                    "filtergroup" => "string",
+                    "config" => [
+                        "brickfield" => "specificAttributes",
+                        "bricktype" => "rucksackSpecs",
+                        "fieldname" => "weight"
+                    ]
+                ],
+                [
+                    "name" => "rucksacksLoad",
+                    "type" => "double",
+                    "interpreter" => "\\OnlineShop\\Framework\\IndexService\\Interpreter\\Numeric",
+                    "getter" => "\\OnlineShop\\Framework\\IndexService\\Getter\\DefaultBrickGetter",
+                    "filtergroup" => "string",
+                    "config" => [
+                        "brickfield" => "specificAttributes",
+                        "bricktype" => "rucksackSpecs",
+                        "fieldname" => "load"
+                    ]
+                ],
+                [
+                    "name" => "matsWidth",
+                    "type" => "double",
+                    "getter" => "\\OnlineShop\\Framework\\IndexService\\Getter\\DefaultBrickGetter",
+                    "filtergroup" => "string",
+                    "config" => [
+                        "brickfield" => "specificAttributes",
+                        "bricktype" => "matsSpecs",
+                        "fieldname" => "width"
+                    ]
+                ],
+                [
+                    "name" => "matsLength",
+                    "type" => "double",
+                    "getter" => "\\OnlineShop\\Framework\\IndexService\\Getter\\DefaultBrickGetter",
+                    "filtergroup" => "string",
+                    "config" => [
+                        "brickfield" => "specificAttributes",
+                        "bricktype" => "matsSpecs",
+                        "fieldname" => "length"
+                    ]
+                ],
+                [
+                    "name" => "matsHeight",
+                    "type" => "double",
+                    "getter" => "\\OnlineShop\\Framework\\IndexService\\Getter\\DefaultBrickGetter",
+                    "filtergroup" => "string",
+                    "config" => [
+                        "brickfield" => "specificAttributes",
+                        "bricktype" => "matsSpecs",
+                        "fieldname" => "height"
+                    ]
+                ],
+                [
+                    "name" => "simularity_color",
+                    "fieldname" => "color",
+                    "hideInFieldlistDatatype" => "true",
+                    "type" => "INTEGER",
+                    "interpreter" => "\\OnlineShop\\Framework\\IndexService\\Interpreter\\Soundex"
+                ],
+                [
+                    "name" => "simularity_gender",
+                    "fieldname" => "gender",
+                    "hideInFieldlistDatatype" => "true",
+                    "type" => "INTEGER",
+                    "interpreter" => "\\OnlineShop\\Framework\\IndexService\\Interpreter\\Soundex"
+                ],
+                [
+                    "name" => "simularity_category",
+                    "fieldname" => "categories",
+                    "hideInFieldlistDatatype" => "true",
+                    "type" => "INTEGER",
+                    "interpreter" => "\\OnlineShop\\Framework\\IndexService\\Interpreter\\ObjectIdSum"
+                ],
+                [
+                    "name" => "simularity_feature",
+                    "fieldname" => "features",
+                    "hideInFieldlistDatatype" => "true",
+                    "type" => "INTEGER",
+                    "interpreter" => "\\OnlineShop\\Framework\\IndexService\\Interpreter\\ObjectIdSum"
+                ],
+                [
+                    "name" => "simularity_technolgy",
+                    "fieldname" => "technologies",
+                    "hideInFieldlistDatatype" => "true",
+                    "type" => "INTEGER",
+                    "interpreter" => "\\OnlineShop\\Framework\\IndexService\\Interpreter\\ObjectIdSum"
+                ],
+                [
+                    "name" => "simularity_attributes",
+                    "fieldname" => "attributes",
+                    "hideInFieldlistDatatype" => "true",
+                    "type" => "INTEGER",
+                    "interpreter" => "\\OnlineShop\\Framework\\IndexService\\Interpreter\\ObjectIdSum"
+                ] */
             ],
             /* configuration of different tenants */
             "tenants" => ""
