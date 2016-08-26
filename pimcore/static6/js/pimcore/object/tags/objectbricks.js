@@ -33,6 +33,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         if (data) {
             this.data = data;
         }
+        fieldConfig.noteditable = typeof fieldConfig.noteditable != 'undefined' ? fieldConfig.noteditable : false;
         this.fieldConfig = fieldConfig;
     },
 
@@ -127,18 +128,21 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
 
         var items = [];
 
-        if(collectionMenu.length == 1) {
-            items.push({
-                cls: "pimcore_block_button_plus",
-                iconCls: "pimcore_icon_plus",
-                handler: collectionMenu[0].handler
-            });
-        } else if (collectionMenu.length > 1) {
-            items.push({
-                cls: "pimcore_block_button_plus",
-                iconCls: "pimcore_icon_plus",
-                menu: collectionMenu
-            });
+        if(!this.fieldConfig.noteditable) {
+
+            if(collectionMenu.length == 1) {
+                items.push({
+                    cls: "pimcore_block_button_plus",
+                    iconCls: "pimcore_icon_plus",
+                    handler: collectionMenu[0].handler
+                });
+            } else if (collectionMenu.length > 1) {
+                items.push({
+                    cls: "pimcore_block_button_plus",
+                    iconCls: "pimcore_icon_plus",
+                    menu: collectionMenu
+                });
+            }
         }
 
         var toolbar = new Ext.Toolbar({
@@ -215,23 +219,32 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
             this.currentMetaData = blockData.metaData;
         }
 
+        var items = this.getRecursiveLayout(this.layoutDefinitions[type]).items;
+
+        if(this.fieldConfig.noteditable && items) {
+            items.forEach(function (record) {
+                record.disabled = true;
+            });
+        }
+
         var blockElement = new Ext.Panel({
             //bodyStyle: "padding:10px;",
             style: "margin: 0 0 10px 0;",
             autoHeight: true,
             border: false,
             title: ts(type),
-            items: this.getRecursiveLayout(this.layoutDefinitions[type]).items
+            items: items
         });
-
 
         this.component.remove(this.component.getComponent(0));
 
         this.addedTypes[type] = true;
 
-        var control = this.getDeleteControl(type, blockElement);
-        if(control) {
-            blockElement.insert(0, control);
+        if(!this.fieldConfig.noteditable) {
+            var control = this.getDeleteControl(type, blockElement);
+            if(control) {
+                blockElement.insert(0, control);
+            }
         }
 
         blockElement.key = type;
@@ -276,7 +289,6 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
     getLayoutShow: function () {
 
         this.component = this.getLayoutEdit();
-        this.component.disable();
 
         return this.component;
     },
