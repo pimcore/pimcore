@@ -143,7 +143,8 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Zend_Pa
             }
         }
 
-        if (self::isValidOrderKey($params['sort_criteria'])) {
+        $tmp = new self();
+        if ($tmp->isValidOrderKey($params['sort_criteria'])) {
             $query .= " ORDER BY " . $params['sort_criteria'];
         } else {
             $query .= " ORDER BY timestamp";
