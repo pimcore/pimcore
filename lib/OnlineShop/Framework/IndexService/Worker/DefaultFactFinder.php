@@ -175,9 +175,9 @@ class DefaultFactFinder extends AbstractWorker implements IWorker, IBatchProcess
              * @var \OnlineShop\Framework\Model\IIndexable $object
              */
             if($object->getOSDoIndexProduct() && $this->tenantConfig->inIndex($object)) {
-                $a = Pimcore::inAdmin();
+                $a = \Pimcore::inAdmin();
                 $b = \Pimcore\Model\Object\AbstractObject::doGetInheritedValues();
-                Pimcore::unsetAdminMode();
+                \Pimcore::unsetAdminMode();
                 \Pimcore\Model\Object\AbstractObject::setGetInheritedValues(true);
                 $hidePublishedMemory = \Pimcore\Model\Object\AbstractObject::doHideUnpublished();
                 \Pimcore\Model\Object\AbstractObject::setHideUnpublished(false);
@@ -236,7 +236,7 @@ class DefaultFactFinder extends AbstractWorker implements IWorker, IBatchProcess
 
                 }
                 if($a) {
-                    Pimcore::setAdminMode();
+                    \Pimcore::setAdminMode();
                 }
                 \Pimcore\Model\Object\AbstractObject::setGetInheritedValues($b);
                 \Pimcore\Model\Object\AbstractObject::setHideUnpublished($hidePublishedMemory);
@@ -247,8 +247,8 @@ class DefaultFactFinder extends AbstractWorker implements IWorker, IBatchProcess
                 $data['crc_current'] = crc32(serialize($data));
                 $this->insertDataToIndex($data,$subObjectId);
             } else {
-                Logger::info("Don't adding product " . $subObjectId . " to index " . $this->name . ".");
-                $this->doDeleteFromIndex($subObjectId);
+                \Logger::info("Don't adding product " . $subObjectId . " to index " . $this->name . ".");
+                $this->doDeleteFromIndex($subObjectId, $object);
             }
         }
 
@@ -269,7 +269,7 @@ class DefaultFactFinder extends AbstractWorker implements IWorker, IBatchProcess
     {
         if(!$this->tenantConfig->isActive($object))
         {
-            Logger::info("Tenant {$this->name} is not active.");
+            \Logger::info("Tenant {$this->name} is not active.");
             return;
         }
 
