@@ -359,7 +359,11 @@ class DefaultElasticSearch extends AbstractWorker implements IBatchProcessingWor
 
         if($object) {
             try {
-                $esClient->delete(['index' => $this->getIndexNameVersion(), 'type' => $object->getOSIndexType(), 'id' => $objectId]);
+                $params = ['index' => $this->getIndexNameVersion(), 'type' => $object->getOSIndexType(), 'id' => $objectId];
+                if ($object->getOSIndexType() == \OnlineShop\Framework\IndexService\ProductList\IProductList::PRODUCT_TYPE_VARIANT) {
+                    $params['parent'] = $object->getOSParentId();
+                }
+                $esClient->delete($params);
 
                 $this->deleteFromStoreTable($objectId);
                 $this->deleteFromMockupCache($objectId);
@@ -381,11 +385,9 @@ class DefaultElasticSearch extends AbstractWorker implements IBatchProcessingWor
                 \Logger::warn('Could not delete item form ES index: ID: ' . $objectId.' Message: ' . $e->getMessage());
             }
 
-            try {
-                $esClient->delete(['index' => $this->getIndexNameVersion(), 'type' => \OnlineShop\Framework\IndexService\ProductList\IProductList::PRODUCT_TYPE_VARIANT, 'id' => $objectId]);
-            } catch(\Exception $e) {
-                \Logger::warn('Could not delete item form ES index: ID: ' . $objectId.' Message: ' . $e->getMessage());
-            }
+            // TODO NOTE: we cannot delete variants from ES when we don't know their parents anymore.
+            // Delete won't work w/o a parent specified, as there is a parent-child-relationship.
+            // So this might produce an invalid index.
 
             $this->deleteFromStoreTable($objectId);
             $this->deleteFromMockupCache($objectId);
