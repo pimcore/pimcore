@@ -55,7 +55,7 @@ function createPhpConfigFileFor($filePath)
  *
  * @param $config - modified on call
  */
-function searchForSubConfigs(&$config)
+function searchAndRefactorSubConfigs(&$config)
 {
     if (!is_array($config)) {
         return;
@@ -66,10 +66,20 @@ function searchForSubConfigs(&$config)
             $config[$prop] = setFileExtension($val);
             createPhpConfigFileFor($val);
         } else {
-            searchForSubConfigs($val);
+            searchAndRefactorSubConfigs($val);
             $config[$prop] = $val;
         }
     }
+}
+
+/**
+ * Remove "column" key in product index config array.
+ * @param $config
+ */
+function refactorProductIndexColumns(&$config)
+{
+    $config['onlineshop']['productindex']['generalSearchColumns'] = $config['onlineshop']['productindex']['generalSearchColumns']['column'];
+    $config['onlineshop']['productindex']['columns'] = $config['onlineshop']['productindex']['columns']['column'];
 }
 
 $config = \OnlineShop\Plugin::getConfig(true);
@@ -79,9 +89,15 @@ if (file_exists($onlineshopConfigPath)) {
     $onlineshopConfig = new \Zend_Config_Xml($onlineshopConfigPath, null, ["allowModifications" => true]);
 
     $onlineshopConfigArray = $onlineshopConfig->toArray();
-    searchForSubConfigs($onlineshopConfigArray);
+    
+    searchAndRefactorSubConfigs($onlineshopConfigArray);
+    refactorProductIndexColumns($onlineshopConfigArray);
+    
     \Pimcore\File::putPhpFile(setFileExtension($onlineshopConfigPath), to_php_data_file_format($onlineshopConfigArray));
 }
+
+
+
 
 /* clear all cache for loading new configs on further requests */
 Pimcore\Cache::clearTag("ecommerceconfig");
