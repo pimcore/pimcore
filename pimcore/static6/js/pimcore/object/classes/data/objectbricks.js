@@ -32,7 +32,7 @@ pimcore.object.classes.data.objectbricks = Class.create(pimcore.object.classes.d
         this.initData(initData);
 
         // overwrite default settings
-        this.availableSettingsFields = ["name","title","invisible","style"];
+        this.availableSettingsFields = ["name","title","invisible","style","noteditable"];
 
         this.treeNode = treeNode;
     },
