@@ -37,11 +37,12 @@ abstract class AbstractConfig implements IConfig {
      */
     public function __construct($tenantName, $tenantConfig, $totalConfig = null) {
         $this->tenantName = $tenantName;
-        $attributeConfigArray = $tenantConfig->columns->toArray();
+        $attributeConfigArray = [];
 
         /* include column file configs and replace placeholders */
-        foreach ($attributeConfigArray as $i => $columnConfig) {
+        foreach ($tenantConfig->columns->toArray() as $columnConfig) {
             if (!array_key_exists("file", $columnConfig)) {
+                $attributeConfigArray[] = $columnConfig;
                 continue;
             }
 
@@ -60,7 +61,6 @@ abstract class AbstractConfig implements IConfig {
             }
 
             $attributeConfigArray = array_merge($attributeConfigArray, $includeColumnConfig);
-            unset($attributeConfigArray[$i]);
         }
 
         $this->attributeConfig = new \Zend_Config($attributeConfigArray);
