@@ -354,7 +354,7 @@ class Manager
     {
         $additionalFields = $this->getWorkflow()->getAdditionalFieldsForAction($actionName, $this->getElementStatus());
 
-        foreach($additionalFields as &$field) {
+        foreach ($additionalFields as &$field) {
             if ($field['fieldType'] === 'user') {
                 $userdata = new \Pimcore\Model\Object\ClassDefinition\Data\User();
                 $userdata->configureOptions();
