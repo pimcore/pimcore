@@ -113,7 +113,7 @@ class DefaultFactFinder extends AbstractWorker implements IWorker, IBatchProcess
         $columnsToDelete = $columns;
 
         $columnsToAdd = array();
-        $columnConfig = $this->columnConfig->column;
+        $columnConfig = $this->columnConfig;
         if(!empty($columnConfig->name)) {
             $columnConfig = array($columnConfig);
         }
@@ -189,7 +189,7 @@ class DefaultFactFinder extends AbstractWorker implements IWorker, IBatchProcess
                 $data['preparation_worker_id'] = $this->db->quote(null);
                 $data['in_preparation_queue'] = 0;
 
-                $columnConfig = $this->columnConfig->column;
+                $columnConfig = $this->columnConfig;
                 if(!empty($columnConfig->name)) {
                     $columnConfig = array($columnConfig);
                 }

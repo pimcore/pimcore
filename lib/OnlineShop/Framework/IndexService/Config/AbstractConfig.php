@@ -69,7 +69,7 @@ abstract class AbstractConfig implements IConfig {
 
         if(sizeof($tenantConfig->generalSearchColumns) == 1) {
             $this->searchAttributeConfig[] = (string)$tenantConfig->generalSearchColumns->name;
-        } elseif($tenantConfig->generalSearchColumns->column) {
+        } elseif($tenantConfig->generalSearchColumns) {
             foreach($tenantConfig->generalSearchColumns as $c) {
                 $this->searchAttributeConfig[] = $c->name;
             }

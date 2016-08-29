@@ -247,7 +247,7 @@ class DefaultElasticSearch extends AbstractWorker implements IBatchProcessingWor
         $customAttributesMapping = array();
         $relationAttributesMapping = array();
 
-        $attributesConfig = $this->columnConfig->column;
+        $attributesConfig = $this->columnConfig;
         if(!empty($attributesConfig->name)) {
             $attributesConfig = array($attributesConfig);
         }

@@ -161,7 +161,7 @@ trait BatchProcessing {
                 $data = $this->getDefaultDataForIndex($object,$subObjectId);
                 $relationData = array();
 
-                $columnConfig = $this->columnConfig->column;
+                $columnConfig = $this->columnConfig;
                 if(!empty($columnConfig->name)) {
                     $columnConfig = array($columnConfig);
                 }
