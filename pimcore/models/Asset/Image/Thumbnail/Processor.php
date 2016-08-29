@@ -26,8 +26,8 @@ class Processor
 {
     protected static $argumentMapping = [
         "resize" => ["width", "height"],
-        "scaleByWidth" => ["width"],
-        "scaleByHeight" => ["height"],
+        "scaleByWidth" => ["width", "forceResize"],
+        "scaleByHeight" => ["height", "forceResize"],
         "contain" => ["width", "height"],
         "cover" => ["width", "height", "positioning", "doNotScaleUp"],
         "frame" => ["width", "height"],
@@ -35,7 +35,7 @@ class Processor
         "rotate" => ["angle"],
         "crop" => ["x", "y", "width", "height"],
         "setBackgroundColor" => ["color"],
-        "roundCorners" => ["width", "height"],
+        "roundCorners" => ["x", "y"],
         "setBackgroundImage" => ["path"],
         "addOverlay" => ["path", "x", "y", "alpha", "composite", "origin"],
         "addOverlayFit" => ["path", "composite"],
