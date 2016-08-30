@@ -459,7 +459,75 @@ class QPay implements IPayment
      */
     public function executeCredit(\OnlineShop\Framework\PriceSystem\IPrice $price, $reference, $transactionId)
     {
-        // TODO: Implement executeCredit() method.
+        // init request
+        $request = [
+            'customerId' => $this->customer
+            , 'toolkitPassword' => $this->toolkitPassword
+            , 'command' => 'refund'
+            , 'language' => $this->authorizedData['language']
+            , 'requestFingerprint' => ''
+            , 'orderNumber' => $reference
+            , 'amount' => $price->getAmount()
+            , 'currency' => $price->getCurrency()->getShortName()
+            , 'merchantReference' => $transactionId
+        ];
+
+
+        // add fingerprint
+        $request['requestFingerprint'] = $this->computeFingerprint([
+            $request['customerId']
+            , $request['toolkitPassword']
+            , $this->secret
+            , $request['command']
+            , $request['language']
+            , $request['orderNumber']
+            , $request['amount']
+            , $request['currency']
+            , $request['merchantReference']
+        ]);
+
+
+        // execute request
+        $response = $this->wirecardServerRequest( '/page/toolkit.php', $request);
+
+
+        // check response
+        if($response['status'] === '0')
+        {
+            // Operation successfully done.
+
+            return new \OnlineShop\Framework\PaymentManager\Status(
+                $transactionId
+                , $reference
+                , 'executeCredit'
+                , \OnlineShop\Framework\PaymentManager\IStatus::STATUS_CLEARED
+                , [
+                    'qpay_amount' => (string)$price
+                    , 'qpay_command' => $request['command']
+                    , 'qpay_response' => print_r($response, true)
+                ]
+            );
+        }
+        else if($response['errorCode'])
+        {
+            // https://integration.wirecard.at/doku.php/backend:response_parameters
+
+            return new \OnlineShop\Framework\PaymentManager\Status(
+                $transactionId
+                , $reference
+                , $response['message']
+                , \OnlineShop\Framework\PaymentManager\IStatus::STATUS_CANCELLED
+                , [
+                    'qpay_amount' => (string)$price
+                    , 'qpay_command' => $request['command']
+                    , 'qpay_response' => print_r($response, true)
+                ]
+            );
+        }
+        else
+        {
+            throw new \Exception( print_r($response, true) );
+        }
     }
 
     /**
