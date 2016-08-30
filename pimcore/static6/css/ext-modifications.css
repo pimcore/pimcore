@@ -160,6 +160,10 @@
     padding: 3px 4px 0px 7px;
 }
 
+.x-mask {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
 body > .x-mask {
     background-color: rgba(246, 246, 246, 0.75);
 }

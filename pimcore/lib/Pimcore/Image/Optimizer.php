@@ -37,7 +37,7 @@ class Optimizer
             $optimizedFiles = [];
             $supportedOptimizers = [
                 "png" => ["pngcrush", "zopflipng", "pngout", "advpng"],
-                "jpeg" => ["imgmin", "jpegoptim", "cjpeg"]
+                "jpeg" => ["jpegoptim", "cjpeg"]
             ];
 
             if (isset($supportedOptimizers[$format])) {
@@ -130,20 +130,6 @@ class Optimizer
             Console::exec($bin . " -z4 " . $newFile, null, 60);
 
             return $newFile;
-        }
-
-        return null;
-    }
-
-    public static function optimizeImgmin($path)
-    {
-        $bin = \Pimcore\Tool\Console::getExecutable("imgmin");
-        if ($bin) {
-            $newFile = self::getTempFile("jpg");
-            Console::exec($bin . " " . $path . " " . $newFile, null, 60);
-            if (file_exists($newFile)) {
-                return $newFile;
-            }
         }
 
         return null;

@@ -205,6 +205,10 @@ input:-webkit-autofill {
 
 }
 
+.imageservice .body.error {
+    margin: 30px 20px 0 20px;
+}
+
 #background {
     position: fixed;
     left: 0;

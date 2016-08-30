@@ -440,9 +440,6 @@ $scripts = array(
     "pimcore/report/qrcode/panel.js",
     "pimcore/report/qrcode/item.js",
 
-    "pimcore/report/newsletter/panel.js",
-    "pimcore/report/newsletter/item.js",
-
     // extension manager
     "pimcore/extensionmanager/settings.js",
     "pimcore/extensionmanager/xmlEditor.js",

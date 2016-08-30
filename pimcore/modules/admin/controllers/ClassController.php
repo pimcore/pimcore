@@ -628,7 +628,6 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
                     if ($currentLayoutId == -1 && $user->isAdmin()) {
                         Object\Service::createSuperLayout($layoutDefinitions);
                     }
-
                 }
             }
 

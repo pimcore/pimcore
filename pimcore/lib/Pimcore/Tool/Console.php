@@ -165,7 +165,9 @@ class Console
     protected static function checkCjpeg($process)
     {
         if (strpos($process->getOutput() . $process->getErrorOutput(), "-optimize") !== false) {
-            return true;
+            if (strpos($process->getOutput() . $process->getErrorOutput(), "mozjpeg") !== false) {
+                return true;
+            }
         }
 
         return false;

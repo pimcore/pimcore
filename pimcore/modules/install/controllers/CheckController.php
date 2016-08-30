@@ -560,7 +560,7 @@ class Install_CheckController extends \Pimcore\Controller\Action
         ];
 
         // image optimizer
-        foreach (["zopflipng", "pngcrush", "jpegoptim", "imgmin", "pngout", "advpng", "cjpeg"] as $optimizerName) {
+        foreach (["zopflipng", "pngcrush", "jpegoptim", "pngout", "advpng", "cjpeg"] as $optimizerName) {
             try {
                 $optimizerAvailable = \Pimcore\Tool\Console::getExecutable($optimizerName);
             } catch (\Exception $e) {

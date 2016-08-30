@@ -152,7 +152,10 @@ class Classificationstore extends Model\AbstractModel
     {
         $language  = $this->getLanguage($language);
 
-        if ($value) {
+        // treat value "0" nonempty
+        $nonEmpty = (is_string($value) || is_numeric($value)) && strlen($value) > 0;
+
+        if ($nonEmpty || $value) {
             $this->items[$groupId][$keyId][$language] = $value;
         } elseif (isset($this->items[$groupId][$keyId][$language])) {
             unset($this->items[$groupId][$keyId][$language]);

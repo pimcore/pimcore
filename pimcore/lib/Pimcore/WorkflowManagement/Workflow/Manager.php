@@ -17,7 +17,6 @@ namespace Pimcore\WorkflowManagement\Workflow;
 use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Element\WorkflowState;
-use Pimcore\Model\Object\ClassDefinition;
 use Pimcore\Model\Object\Concrete as ConcreteObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Asset;
@@ -353,7 +352,17 @@ class Manager
      */
     public function getAdditionalFieldsForAction($actionName)
     {
-        return $this->getWorkflow()->getAdditionalFieldsForAction($actionName, $this->getElementStatus());
+        $additionalFields = $this->getWorkflow()->getAdditionalFieldsForAction($actionName, $this->getElementStatus());
+
+        foreach ($additionalFields as &$field) {
+            if ($field['fieldType'] === 'user') {
+                $userdata = new \Pimcore\Model\Object\ClassDefinition\Data\User();
+                $userdata->configureOptions();
+                $field['options'] = $userdata->getOptions();
+            }
+        }
+
+        return $additionalFields;
     }
 
 
@@ -466,6 +475,9 @@ class Manager
         \Pimcore::getEventManager()->trigger("workflowmanagement.preAction", $this, [
             'actionName' => $actionName
         ]);
+        
+        //refresh the local copy after the event
+        $formData = $this->getActionData();
 
         $actionConfig = $this->workflow->getActionConfig($actionName, $this->getElementStatus());
         $additional = $formData['additional'];

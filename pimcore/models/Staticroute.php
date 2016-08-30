@@ -548,9 +548,9 @@ class Staticroute extends AbstractModel
     }
 
     /**
-     * @param $path
+     * @param string $path
      * @param array $params
-     * @return array
+     * @return array|bool
      * @throws \Exception
      */
     public function match($path, $params = [])
@@ -623,6 +623,8 @@ class Staticroute extends AbstractModel
 
             return $params;
         }
+
+        return [];
     }
 
     /**

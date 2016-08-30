@@ -46,7 +46,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
         $objects = [];
         $cv = false;
         $offset = 0;
-
+        $total = 0;
         if ($object instanceof Object\Concrete) {
             $class = $object->getClass();
             if ($class->getShowVariants()) {
@@ -117,6 +117,11 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                     $objects[] = $tmpObject;
                 }
             }
+            //pagination for custom view
+            $total = $cv
+                ? $childsList->count()
+                : $object->getChildAmount([Object\AbstractObject::OBJECT_TYPE_OBJECT, Object\AbstractObject::OBJECT_TYPE_FOLDER,
+                    Object\AbstractObject::OBJECT_TYPE_VARIANT], $this->getUser());
         }
 
         //Hook for modifying return value - e.g. for changing permissions based on object data
@@ -129,7 +134,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             $this->_helper->json([
                 "offset" => $offset,
                 "limit" => $limit,
-                "total" => $object->getChildAmount([Object\AbstractObject::OBJECT_TYPE_OBJECT, Object\AbstractObject::OBJECT_TYPE_FOLDER, Object\AbstractObject::OBJECT_TYPE_VARIANT], $this->getUser()),
+                "total" => $total,
                 "nodes" => $returnValueContainer->getData(),
                 "fromPaging" => intval($this->getParam("fromPaging"))
             ]);

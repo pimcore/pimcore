@@ -1053,6 +1053,14 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
             $wsData->$key = $value;
         }
 
+        if ($wsData instanceof Pimcore\Model\Webservice\Data\Object || $wsData instanceof Pimcore\Model\Webservice\Data\Document) {
+            /** @var Pimcore\Model\Webservice\Data\Object|Pimcore\Model\Webservice\Data\Document key */
+            $wsData->key = \Pimcore\File::getValidFilename($wsData->key); //adds key filter to new objects and documents
+        } elseif ($wsData instanceof Pimcore\Model\Webservice\Data\Asset) {
+            /** @var Pimcore\Model\Webservice\Data\Asset $wsData */
+            $wsData->filename = \Pimcore\File::getValidFilename($wsData->filename);
+        }
+
         return $wsData;
     }
 

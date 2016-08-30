@@ -119,8 +119,8 @@ class Tool
 
         $conf = Config::getSystemConfig();
         if ($conf->general->fallbackLanguages && $conf->general->fallbackLanguages->$language) {
-            $languages = explode(",", $conf->general->fallbackLanguages->$language);
-            foreach ($languages as $l) {
+            $fallbackLanguages = explode(",", $conf->general->fallbackLanguages->$language);
+            foreach ($fallbackLanguages as $l) {
                 if (self::isValidLanguage($l)) {
                     $languages[] = trim($l);
                 }
