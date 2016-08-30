@@ -330,9 +330,10 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
             loadMask: true,
             columnLines: true,
             stripeRows: true,
-            plugins: ['gridfilters'],
+            plugins: ['pimcore.gridfilters'],
             viewConfig: {
-                forceFit: false
+                forceFit: false,
+                xtype: 'patchedgridview'
             },
             cls: 'pimcore_object_grid_panel',
             selModel: Ext.create('Ext.selection.RowModel', {}),
