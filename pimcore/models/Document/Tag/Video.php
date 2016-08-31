@@ -31,7 +31,7 @@ class Video extends Model\Document\Tag
     public $id;
 
     /**
-     * one of asset, youtube, vimeo
+     * one of asset, youtube, vimeo, dailymotion
      * @var string
      */
     public $type = "asset";
@@ -166,6 +166,8 @@ class Video extends Model\Document\Tag
             return $this->getYoutubeCode();
         } elseif ($this->type == "vimeo") {
             return $this->getVimeoCode();
+        } elseif ($this->type == "dailymotion") {
+            return $this->getDailymotionCode();
         } elseif ($this->type == "url") {
             return $this->getUrlCode();
         }
@@ -595,6 +597,79 @@ class Video extends Model\Document\Tag
         return $this->getEmptyCode();
     }
 
+    public function getDailymotionCode()
+    {
+        if (!$this->id) {
+            return $this->getEmptyCode();
+        }
+
+        $options = $this->getOptions();
+        $code = "";
+        $uid = "video_" . uniqid();
+
+        // get dailymotion id
+        if (preg_match("@dailymotion.*/([\d]+)@i", $this->id, $matches)) {
+            $dailymotionId = intval($matches[1]);
+        } else {
+            // for object-videos
+            $dailymotionId = $this->id;
+        }
+
+        if ($dailymotionId) {
+            $width = "100%";
+            if (array_key_exists("width", $options)) {
+                $width = $options["width"];
+            }
+
+            $height = "300";
+            if (array_key_exists("height", $options)) {
+                $height = $options["height"];
+            }
+
+            $valid_dailymotion_prams=[
+                "autoplay",
+                "loop"];
+
+            $additional_params="";
+
+            $clipConfig = [];
+            if (is_array($options["config"]["clip"])) {
+                $clipConfig = $options["config"]["clip"];
+            }
+
+            // this is to be backward compatible to <= v 1.4.7
+            $configurations = $clipConfig;
+            if (is_array($options["dailymotion"])) {
+                $configurations = array_merge($clipConfig, $options["dailymotion"]);
+            }
+
+            if (!empty($configurations)) {
+                foreach ($configurations as $key=>$value) {
+                    if (in_array($key, $valid_dailymotion_prams)) {
+                        if (is_bool($value)) {
+                            if ($value) {
+                                $additional_params.="&".$key."=1";
+                            } else {
+                                $additional_params.="&".$key."=0";
+                            }
+                        } else {
+                            $additional_params.="&".$key."=".$value;
+                        }
+                    }
+                }
+            }
+
+            $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video">
+                <iframe src="//www.dailymotion.com/embed/video/' . $dailymotionId . '?' . $additional_params .'" width="' . $width . '" height="' . $height . '" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+            </div>';
+
+            return $code;
+        }
+
+        // default => return the empty code
+        return $this->getEmptyCode();
+    }
+
     public function getHtml5Code($urls = [], $thumbnail = null)
     {
         $code = "";
@@ -766,11 +841,11 @@ class Video extends Model\Document\Tag
                     throw new \Exception("Referencing unknown asset with id [ ".$data->id." ] in webservice import field [ ".$data->name." ]");
                 }
                 $this->type = $data->type;
-            } elseif (in_array($data->type, ["vimeo", "youtube", "url"])) {
+            } elseif (in_array($data->type, ["dailymotion", "vimeo", "youtube", "url"])) {
                 $this->id = $data->id;
                 $this->type = $data->type;
             } else {
-                throw new \Exception("cannot get values from web service import - type must be asset,youtube,url or vimeo ");
+                throw new \Exception("cannot get values from web service import - type must be asset,youtube,url, vimeo or dailymotion");
             }
         }
     }
