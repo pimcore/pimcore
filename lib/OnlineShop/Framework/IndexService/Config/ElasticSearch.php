@@ -72,7 +72,7 @@ class ElasticSearch extends AbstractConfig implements IMockupConfig, IElasticSea
         }
 
         $config = $tenantConfig->toArray();
-        foreach($config['columns']['column'] as $col){
+        foreach($config['columns'] as $col){
             $attributeType = 'attributes';
             if($col['interpreter']){
                 $class = $col['interpreter'];

@@ -60,7 +60,7 @@ class DefaultMysql extends AbstractWorker implements IWorker {
 
         $columnsToDelete = $columns;
         $columnsToAdd = array();
-        $columnConfig = $this->columnConfig->column;
+        $columnConfig = $this->columnConfig;
         if(!empty($columnConfig->name)) {
             $columnConfig = array($columnConfig);
         }
@@ -225,7 +225,7 @@ class DefaultMysql extends AbstractWorker implements IWorker {
 
                 $relationData = array();
 
-                $columnConfig = $this->columnConfig->column;
+                $columnConfig = $this->columnConfig;
                 if(!empty($columnConfig->name)) {
                     $columnConfig = array($columnConfig);
                 }
