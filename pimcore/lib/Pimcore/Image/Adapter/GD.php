@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -210,13 +210,14 @@ class GD extends Adapter
     /**
      * @param  $width
      * @param  $height
+     * @param  bool $doNotScaleUp
      * @return self
      */
-    public function frame($width, $height)
+    public function frame($width, $height, $doNotScaleUp = true)
     {
         $this->preModify();
 
-        $this->contain($width, $height);
+        $this->contain($width, $height, $doNotScaleUp);
 
         $x = ($width - $this->getWidth()) / 2;
         $y = ($height - $this->getHeight()) / 2;
