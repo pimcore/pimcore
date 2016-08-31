@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -60,17 +60,17 @@ class Password extends Model\Object\ClassDefinition\Data
      * @var string
      */
     public $algorithm = "md5";
-    
+
     /**
      * @var string
      */
     public $salt = "";
-      
+
     /**
      * @var string
      */
     public $saltlocation = "";
-    
+
     /**
      * @return integer
      */
@@ -170,10 +170,10 @@ class Password extends Model\Object\ClassDefinition\Data
         /** set the hashed password back to the object, to be sure that is not plain-text after the first save
          this is especially to aviod plaintext passwords in the search-index see: PIMCORE-1406 */
 
-        // a model should be switched if the field_definition parameter is used,
+        // a model should be switched if the context parameter is used,
         // for example: field collections would use \Pimcore\Model\Object\Fieldcollection\Data\Dao
-        $passwordModel = array_key_exists('field_definition', $params)
-            ? $params['field_definition']
+        $passwordModel = array_key_exists('context', $params)
+            ? $params['context']
             : ($object ?: null);
 
         if (null !== $passwordModel) {
