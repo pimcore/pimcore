@@ -143,7 +143,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     public function getPriceInfo() {
 
         if ($this->getProduct() instanceof \OnlineShop\Framework\Model\AbstractSetProduct) {
-            $priceInfo = $this->getProduct()->getOSPriceInfo($this->getCount(),$this->getSetEntries());
+            $priceInfo = $this->getProduct()->getOSPriceInfo($this->getCount(), $this->getSetEntries());
         } else {
             $priceInfo = $this->getProduct()->getOSPriceInfo($this->getCount());
         }
@@ -162,7 +162,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
      */
     public function getAvailabilityInfo() {
         if ($this->getProduct() instanceof \OnlineShop\Framework\Model\AbstractSetProduct) {
-            return $this->getProduct()->getOSAvailabilityInfo($this->getCount(),$this->getSetEntries());
+            return $this->getProduct()->getOSAvailabilityInfo($this->getCount(), $this->getSetEntries());
 
         } else {
             return $this->getProduct()->getOSAvailabilityInfo($this->getCount());
