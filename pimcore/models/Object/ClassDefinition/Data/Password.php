@@ -167,11 +167,18 @@ class Password extends Model\Object\ClassDefinition\Data
 
         $hashed = $this->calculateHash($data);
 
-        // set the hashed password back to the object, to be sure that is not plain-text after the first save
-        // this is especially to aviod plaintext passwords in the search-index see: PIMCORE-1406
-        if ($object) {
+        /** set the hashed password back to the object, to be sure that is not plain-text after the first save
+         this is especially to aviod plaintext passwords in the search-index see: PIMCORE-1406 */
+
+        // a model should be switched if the field_definition parameter is used,
+        // for example: field collections would use \Pimcore\Model\Object\Fieldcollection\Data\Dao
+        $passwordModel = array_key_exists('field_definition', $params)
+            ? $params['field_definition']
+            : ($object ?: null);
+
+        if (null !== $passwordModel) {
             $setter = "set" . ucfirst($this->getName());
-            $object->$setter($hashed);
+            $passwordModel->$setter($hashed);
         }
 
         return $hashed;

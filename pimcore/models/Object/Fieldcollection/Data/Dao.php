@@ -53,10 +53,14 @@ class Dao extends Model\Dao\AbstractDao
                     );
                 } elseif ($fd->getColumnType()) {
                     if (is_array($fd->getColumnType())) {
-                        $insertDataArray = $fd->getDataForResource($this->model->$getter(), $object);
+                        $insertDataArray = $fd->getDataForResource($this->model->$getter(), $object, [
+                            'field_definition' => $this->model //\Pimcore\Model\Object\Fieldcollection\Data\Dao
+                        ]);
                         $data = array_merge($data, $insertDataArray);
                     } else {
-                        $data[$fd->getName()] = $fd->getDataForResource($this->model->$getter(), $object);
+                        $data[$fd->getName()] = $fd->getDataForResource($this->model->$getter(), $object, [
+                            'field_definition' => $this->model //\Pimcore\Model\Object\Fieldcollection\Data\Dao
+                        ]);
                     }
                 }
             }
