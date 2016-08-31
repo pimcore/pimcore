@@ -535,15 +535,15 @@ class Imagick extends Adapter
 
 
     /**
-     * @param  $x
-     * @param  $y
-     * @return self
+     * @param $width
+     * @param $height
+     * @return $this
      */
-    public function roundCorners($x, $y)
+    public function roundCorners($width, $height)
     {
         $this->preModify();
 
-        $this->resource->roundCorners($x, $y);
+        $this->resource->roundCorners($width, $height);
 
         $this->postModify();
 

@@ -301,11 +301,11 @@ abstract class Adapter
 
 
     /**
-     * @param  $x
-     * @param  $y
-     * @return self
+     * @param $width
+     * @param $height
+     * @return $this
      */
-    public function roundCorners($x, $y)
+    public function roundCorners($width, $height)
     {
         return $this;
     }
