@@ -45,6 +45,11 @@ class PriceInfo implements IPriceInfo
     protected $rulesApplied = false;
 
     /**
+     * @var string
+     */
+    protected $priceEnvironmentHash = null;
+
+    /**
      * @var IEnvironment
      */
     protected $environment;
@@ -93,6 +98,22 @@ class PriceInfo implements IPriceInfo
 
 
     /**
+     * checks if environment changed based on hash
+     * if so, resets valid rules
+     *
+     * @return bool
+     */
+    protected function environmentHashChanged() {
+        $hash = $this->getEnvironment() ? $this->getEnvironment()->getHash() : "";
+        if($this->priceEnvironmentHash != $hash) {
+            $this->validRules = null;
+            return true;
+        }
+        return false;
+    }
+
+
+    /**
      * returns all valid rules, if forceRecalc, recalculation of valid rules is forced
      *
      * @param bool $forceRecalc
@@ -135,7 +156,7 @@ class PriceInfo implements IPriceInfo
             return null;
         }
 
-        if(!$this->rulesApplied) {
+        if(!$this->rulesApplied || $this->environmentHashChanged()) {
             $this->setAmount( $price->getAmount() );
             $env = $this->getEnvironment();
 

@@ -102,4 +102,13 @@ interface IEnvironment
      * @return \Zend_Session_Namespace
      */
     public function getSession();
+
+
+    /**
+     * returns hash of environment based on its content
+     *
+     * @return string
+     */
+    public function getHash();
+
 }

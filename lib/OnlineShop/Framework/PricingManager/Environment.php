@@ -191,25 +191,32 @@ class Environment implements IEnvironment
 
 
     /**
-     * test für zukünftiges caching...
+     * returns hash of environment based on its content
+     *
      * @return string
      */
     public function getHash()
     {
         $hash = '';
-        if($this->getCart())
-            $hash .= spl_object_hash($this->getCart());
+        if($this->getCart()) {
+            $hash .= json_encode($this->getCart());
+        }
 
-        if(count($this->getCategories())>0)
-            $hash .= spl_object_hash(new \ArrayObject($this->getCategories()));
-        if($this->getPriceInfo())
+        if(count($this->getCategories()) > 0) {
+            $hash .= json_encode($this->getCategories());
+        }
+
+        if($this->getPriceInfo()) {
             $hash .= spl_object_hash($this->getPriceInfo());
+        }
 
-        if($this->getProduct())
+        if($this->getProduct()) {
             $hash .= spl_object_hash($this->getProduct());
+        }
 
-        if($this->getRule())
+        if($this->getRule()) {
             $hash .= spl_object_hash($this->getRule());
+        }
 
         return sha1($hash);
     }
