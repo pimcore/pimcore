@@ -57,11 +57,18 @@ abstract class Processor
         $jobConfig = new \stdClass();
         $jobConfig->documentId = $documentId;
         $jobConfig->config = $config;
-        $this->saveJobConfigObjectFile($jobConfig);
 
+        $this->saveJobConfigObjectFile($jobConfig);
         $this->updateStatus($documentId, 0, "prepare_pdf_generation");
 
-        $cmd = Tool\Console::getPhpCli() . " " . realpath(PIMCORE_PATH . DIRECTORY_SEPARATOR . "cli" . DIRECTORY_SEPARATOR . "console.php"). " web2print:pdf-creation -p " . $jobConfig->documentId;
+        $args = array("-p " . $jobConfig->documentId);
+
+        $env = \Pimcore\Config::getEnvironment();
+        if( $env !== FALSE) {
+            $args[] = "--environment=" . $env;
+        }
+
+        $cmd = Tool\Console::getPhpCli() . " " . realpath(PIMCORE_PATH . DIRECTORY_SEPARATOR . "cli" . DIRECTORY_SEPARATOR . "console.php"). " web2print:pdf-creation " . implode(" ", $args);
 
         Logger::info($cmd);
 
