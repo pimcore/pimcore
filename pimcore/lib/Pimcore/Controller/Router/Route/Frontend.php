@@ -244,6 +244,8 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
                     if (in_array($document->getType(), self::getDirectRouteDocumentTypes())) {
                         if (Tool::isFrontentRequestByAdmin() || $document->isPublished()) {
 
+                            $finalUrl = $originalPath;
+
                             // check for a pretty url, and if the document is called by that, otherwise redirect to pretty url
                             if ($document instanceof Document\Page
                                 && !($document instanceof Document\Hardlink\Wrapper\WrapperInterface)
@@ -251,12 +253,7 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
                                 && !Tool::isFrontentRequestByAdmin()
                             ) {
                                 if (rtrim(strtolower($document->getPrettyUrl()), " /") != rtrim(strtolower($originalPath), "/")) {
-                                    $redirectUrl = $document->getPrettyUrl();
-                                    if ($_SERVER["QUERY_STRING"]) {
-                                        $redirectUrl .= "?" . $_SERVER["QUERY_STRING"];
-                                    }
-                                    header("Location: " . $redirectUrl, true, 301);
-                                    exit;
+                                    $finalUrl = $document->getPrettyUrl();
                                 }
                             }
 
@@ -279,29 +276,27 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
                             if (strtolower($_SERVER["REQUEST_METHOD"]) == "get") {
                                 if ($config->documents->allowtrailingslash) {
                                     if ($config->documents->allowtrailingslash == "no") {
-                                        if (substr($originalPath, strlen($originalPath)-1, 1) == "/" && $originalPath != "/") {
-                                            $redirectUrl = rtrim($originalPath, "/");
-                                            if ($_SERVER["QUERY_STRING"]) {
-                                                $redirectUrl .= "?" . $_SERVER["QUERY_STRING"];
-                                            }
-                                            header("Location: " . $redirectUrl, true, 301);
-                                            exit;
+                                        if (substr($finalUrl, strlen($finalUrl) - 1, 1) == "/" && $finalUrl != "/") {
+                                            $finalUrl = rtrim($finalUrl, "/");
                                         }
                                     }
                                 }
 
                                 if ($config->documents->allowcapitals) {
                                     if ($config->documents->allowcapitals == "no") {
-                                        if (strtolower($originalPath) != $originalPath) {
-                                            $redirectUrl = strtolower($originalPath);
-                                            if ($_SERVER["QUERY_STRING"]) {
-                                                $redirectUrl .= "?" . $_SERVER["QUERY_STRING"];
-                                            }
-                                            header("Location: " . $redirectUrl, true, 301);
-                                            exit;
+                                        if (strtolower($finalUrl) != $finalUrl) {
+                                            $finalUrl = strtolower($finalUrl);
                                         }
                                     }
                                 }
+                            }
+
+                            if ($finalUrl !== $originalPath) {
+                                if ($_SERVER["QUERY_STRING"]) {
+                                    $finalUrl .= "?" . $_SERVER["QUERY_STRING"];
+                                }
+                                header("Location: " . $finalUrl, true, 301);
+                                exit;
                             }
 
                             $matchFound = true;
