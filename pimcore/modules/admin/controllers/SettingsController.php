@@ -340,10 +340,13 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
         }
 
         // delete views if fallback languages has changed or the language is no more available
-        $fallbackLanguagesChanged = array_diff_assoc($existingValues['general']['fallbackLanguages'], $fallbackLanguages);
-        $dbName = $existingValues["database"]["params"]["dbname"];
-        foreach ($fallbackLanguagesChanged as $language => $dummy) {
-            $this->deleteViews($language, $dbName);
+        if(isset($existingValues['general']['fallbackLanguages']) && is_array($existingValues['general']['fallbackLanguages'])) {
+            $fallbackLanguagesChanged = array_diff_assoc($existingValues['general']['fallbackLanguages'],
+                $fallbackLanguages);
+            $dbName = $existingValues["database"]["params"]["dbname"];
+            foreach ($fallbackLanguagesChanged as $language => $dummy) {
+                $this->deleteViews($language, $dbName);
+            }
         }
 
         $cacheExcludePatterns = $values["cache.excludePatterns"];
