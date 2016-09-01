@@ -361,10 +361,14 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
             ]];
         }
 
+        // get the element key
+        $elementKey = $document->getKey();
+
         $this->_helper->json([
             "hasDependencies" => $hasDependency,
             "childs" => $childs,
-            "deletejobs" => $deleteJobs
+            "deletejobs" => $deleteJobs,
+            "elementKey" => $elementKey
         ]);
     }
 

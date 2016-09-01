@@ -895,12 +895,19 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             }
         }
 
+        // get the element key in case of just one
+        $elementKey = false;
+        if (count($ids) === 1) {
+            $elementKey = Object::getById($id)->getKey();
+        }
+
         $deleteJobs = array_merge($recycleJobs, $deleteJobs);
         $this->_helper->json([
             "hasDependencies" => $hasDependency,
             "childs" => $totalChilds,
             "deletejobs" => $deleteJobs,
-            "batchDelete" => count($ids) > 1
+            "batchDelete" => count($ids) > 1,
+            "elementKey" => $elementKey
         ]);
     }
 
