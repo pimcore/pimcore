@@ -59,7 +59,7 @@ Then we can put some template code into it, for example:
 Pimcore uses ```\Zend_View``` as templates and therefore plain php as template language. So you have the full power of
   ```\Zend_View``` with all Zend functionality available. In addition to that, there are some Pimcore additions like editables,
   which add editable parts to the layout. 
-  For details concerning editables (like ```$this->input```, ```$this->block```, ...) see [Editables](../03_Documents/01_Editables.md). 
+  For details concerning editables (like ```$this->input```, ```$this->block```, ...) see [Editables](../03_Documents/01_Editables/_index.md). 
 
 ### Add Layout
 Pimcore uses the advantages of Zend_Layout out of the ZF, for details please read more here about it.
@@ -270,7 +270,7 @@ $this->href('product');
 ```
 
 Href is one of editable elements. It would be used to make relation 1 to 1.
-The full list of editables is presented in the special section: [Editables](../03_Documents/01_Editables.md)
+The full list of editables is presented in the special section: [Editables](../03_Documents/01_Editables/_index.md)
 
 
 ## Add the product object to a document
