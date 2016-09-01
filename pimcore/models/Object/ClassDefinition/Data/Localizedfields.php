@@ -923,12 +923,12 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
      */
     public function checkValidity($data, $omitMandatoryCheck = false)
     {
-        $data = $data->getItems();
         $conf = \Pimcore\Config::getSystemConfig();
         if ($conf->general->validLanguages) {
             $languages = explode(",", $conf->general->validLanguages);
         }
 
+        $data = $this->getDataForValidity($data, $languages);
         if (!$omitMandatoryCheck) {
             foreach ($languages as $language) {
                 foreach ($this->getFieldDefinitions() as $fd) {
@@ -936,6 +936,30 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
                 }
             }
         }
+    }
+
+    /**
+     * @param Object\Localizedfield|mixed $localizedObject
+     * @param array $languages
+     * @return array
+     */
+    protected function getDataForValidity($localizedObject, array $languages)
+    {
+        //TODO verify if in any place in the code \Pimcore\Model\Object\ClassDefinition\Data\Localizedfields::checkValidity is used with different parameter then Object\Localizedfield
+        if($localizedObject->object->getType() != 'variant' || !$localizedObject instanceof Object\Localizedfield) {
+            return $localizedObject->getItems();
+        }
+
+        //prepare data for variants
+        $data = [];
+        foreach ($languages as $language) {
+            $data[$language] = [];
+            foreach ($this->getFieldDefinitions() as $fd) {
+                $data[$language][$fd->getName()] = $localizedObject->getLocalizedValue($fd->getName(), $language);
+            }
+        }
+
+        return $data;
     }
 
 
