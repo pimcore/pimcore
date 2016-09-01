@@ -95,7 +95,21 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
             componentCls: "object_field",
             height: 100,
             valueField: 'id',
-            labelWidth: this.fieldConfig.labelWidth ? this.fieldConfig.labelWidth : 100
+            labelWidth: this.fieldConfig.labelWidth ? this.fieldConfig.labelWidth : 100,
+            listeners: {
+                change : function  ( multiselect , newValue , oldValue , eOpts ) {
+                    if (this.fieldConfig.maxItems && multiselect.getValue().length > this.fieldConfig.maxItems) {
+                        // we need to set a timeout so setValue is applied when change event is totally finished
+                        // without this, multiselect wont be updated visually with oldValue (but internal value will be oldValue)
+                        setTimeout(function(multiselect, oldValue){
+                            multiselect.setValue(oldValue);
+                        }, 100, multiselect, oldValue);
+
+                        Ext.Msg.alert(t("error"),t("limit_reached"));
+                    }
+                    return true;
+                }.bind(this)
+            }
         };
 
         if (this.fieldConfig.width) {
