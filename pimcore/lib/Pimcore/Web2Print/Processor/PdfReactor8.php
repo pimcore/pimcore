@@ -15,9 +15,9 @@
 namespace Pimcore\Web2Print\Processor;
 
 use Pimcore\Config;
+use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Web2Print\Processor;
-use Pimcore\Logger;
 
 class PdfReactor8 extends Processor
 {
@@ -43,7 +43,7 @@ class PdfReactor8 extends Processor
         ini_set("default_socket_timeout", 3000);
         ini_set('max_input_time', -1);
 
-        include_once('Pimcore/Web2Print/Processor/api/PDFreactor.class.php');
+        include_once('Pimcore/Web2Print/Processor/api/v' . $web2PrintConfig->get('pdfreactorVersion', '8.0') . '/PDFreactor.class.php');
 
 
         $port = ((string) $web2PrintConfig->pdfreactorServerPort) ? (string) $web2PrintConfig->pdfreactorServerPort : "9423";
@@ -102,7 +102,7 @@ class PdfReactor8 extends Processor
 
     public function getProcessingOptions()
     {
-        include_once('Pimcore/Web2Print/Processor/api/PDFreactor.class.php');
+        include_once('Pimcore/Web2Print/Processor/api/v' . Config::getWeb2PrintConfig()->get('pdfreactorVersion', '8.0') . '/PDFreactor.class.php');
 
         $options = [];
 
