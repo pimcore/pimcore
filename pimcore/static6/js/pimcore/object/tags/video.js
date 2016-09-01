@@ -162,6 +162,8 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
             content = '<iframe width="' + width + '" height="' + height + '" src="//www.youtube.com/embed/' + this.data.data + '" frameborder="0" allowfullscreen></iframe>';
         } else if (this.data.type == "vimeo") {
             content = '<iframe src="//player.vimeo.com/video/' + this.data.data + '?title=0&amp;byline=0&amp;portrait=0" width="' + width + '" height="' + height + '" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>';
+        } else if (this.data.type == "dailymotion") {
+            content = '<iframe src="//www.dailymotion.com/embed/video/' + this.data.data + '" width="' + width + '" height="' + height + '" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>';
         }
 
         this.getBody().update(content);

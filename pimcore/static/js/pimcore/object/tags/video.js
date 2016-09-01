@@ -234,7 +234,7 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
                 triggerAction: 'all',
                 editable: true,
                 mode: "local",
-                store: ["asset","youtube","vimeo"],
+                store: ["asset","youtube","vimeo","dailymotion"],
                 value: this.data.type,
                 listeners: {
                     select: function (combo) {
@@ -356,10 +356,13 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
             this.searchButton.disable();
         }
         if(type == "youtube") {
-            labelEl.update("URL / ID");
+            labelEl.update("ID");
         }
         if(type == "vimeo") {
-            labelEl.update("URL / ID");
+            labelEl.update("ID");
+        }
+        if(type == "dailymotion") {
+            labelEl.update("ID");
         }
     },
 
@@ -387,8 +390,10 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
             content = '<iframe width="' + width + '" height="' + height + '" src="//www.youtube.com/embed/' + this.data.data + '" frameborder="0" allowfullscreen></iframe>';
         } else if (this.data.type == "vimeo") {
             content = '<iframe src="//player.vimeo.com/video/' + this.data.data + '?title=0&amp;byline=0&amp;portrait=0" width="' + width + '" height="' + height + '" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>';
+        } else if (this.data.type == "dailymotion") {
+            content = '<iframe src="//www.dailymotion.com/embed/video/' + this.data.data + '" width="' + width + '" height="' + height + '" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>';
         }
-
+        
         this.getBody().update(content);
     },
 
