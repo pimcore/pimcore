@@ -47,6 +47,11 @@ class Multiselect extends Model\Object\ClassDefinition\Data
     public $height;
 
     /**
+     * @var int
+     */
+    public $maxItems;
+
+    /**
      * Type for the column to query
      *
      * @var string
@@ -122,6 +127,25 @@ class Multiselect extends Model\Object\ClassDefinition\Data
         $this->height = $this->getAsIntegerCast($height);
 
         return $this;
+    }
+
+    /**
+     * @param $maxItems
+     * @return $this
+     */
+    public function setMaxItems($maxItems)
+    {
+        $this->maxItems = $this->getAsIntegerCast($maxItems);
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMaxItems()
+    {
+        return $this->maxItems;
     }
 
     /**
@@ -344,6 +368,7 @@ class Multiselect extends Model\Object\ClassDefinition\Data
      */
     public function synchronizeWithMasterDefinition(Object\ClassDefinition\Data $masterDefinition)
     {
+        $this->maxItems = $masterDefinition->maxItems;
         $this->options = $masterDefinition->options;
     }
 }
