@@ -243,7 +243,6 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
                 if ($document instanceof Document) {
                     if (in_array($document->getType(), self::getDirectRouteDocumentTypes())) {
                         if (Tool::isFrontentRequestByAdmin() || $document->isPublished()) {
-
                             $redirectTargetUrl = $originalPath;
 
                             // check for a pretty url, and if the document is called by that, otherwise redirect to pretty url

@@ -946,7 +946,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     protected function getDataForValidity($localizedObject, array $languages)
     {
         //TODO verify if in any place in the code \Pimcore\Model\Object\ClassDefinition\Data\Localizedfields::checkValidity is used with different parameter then Object\Localizedfield
-        if($localizedObject->object->getType() != 'variant' || !$localizedObject instanceof Object\Localizedfield) {
+        if ($localizedObject->object->getType() != 'variant' || !$localizedObject instanceof Object\Localizedfield) {
             return $localizedObject->getItems();
         }
 
