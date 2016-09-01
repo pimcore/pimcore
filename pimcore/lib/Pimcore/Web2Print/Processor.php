@@ -61,10 +61,10 @@ abstract class Processor
         $this->saveJobConfigObjectFile($jobConfig);
         $this->updateStatus($documentId, 0, "prepare_pdf_generation");
 
-        $args = array("-p " . $jobConfig->documentId);
+        $args = ["-p " . $jobConfig->documentId];
 
         $env = \Pimcore\Config::getEnvironment();
-        if( $env !== FALSE) {
+        if ($env !== false) {
             $args[] = "--environment=" . $env;
         }
 

@@ -129,9 +129,9 @@ class Sql extends AbstractAdapter
             }
 
             if ($whereParts) {
-                if($config["where"]){
+                if ($config["where"]) {
                     $sql .= " WHERE ";
-                }else{
+                } else {
                     if (strpos(strtoupper(trim($config["where"])), "WHERE") === false) {
                         $sql .= " WHERE ";
                     }
