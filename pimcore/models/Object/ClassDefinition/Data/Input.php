@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -47,13 +47,18 @@ class Input extends Model\Object\ClassDefinition\Data
      * @var string
      */
     public $columnType = "varchar";
-    
+
     /**
      * Column length
      *
      * @var integer
      */
     public $columnLength = 255;
+
+    /**
+     * @var bool
+     */
+    public $isColor = false;
 
     /**
      * Type for the generated phpdoc
@@ -145,7 +150,7 @@ class Input extends Model\Object\ClassDefinition\Data
     {
         return $this->getDataFromResource($data, $object, $params);
     }
-    
+
     /**
      * @return integer
      */
@@ -168,6 +173,22 @@ class Input extends Model\Object\ClassDefinition\Data
     }
 
     /**
+     * @param boolean $isColor
+     */
+    public function setIsColor($isColor)
+    {
+        $this->isColor = $isColor;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getIsColor()
+    {
+        return $this->isColor;
+    }
+
+    /**
      * @param string $regex
      */
     public function setRegex($regex)
@@ -182,7 +203,7 @@ class Input extends Model\Object\ClassDefinition\Data
     {
         return $this->regex;
     }
-    
+
     /**
      * @return string
      */
@@ -223,5 +244,6 @@ class Input extends Model\Object\ClassDefinition\Data
     public function synchronizeWithMasterDefinition(Model\Object\ClassDefinition\Data $masterDefinition)
     {
         $this->columnLength = $masterDefinition->columnLength;
+        $this->isColor = $masterDefinition->isColor;
     }
 }
