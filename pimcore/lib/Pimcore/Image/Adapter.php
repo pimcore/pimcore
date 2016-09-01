@@ -135,6 +135,7 @@ abstract class Adapter
 
     /**
      * @param  $width
+     * @param  bool $forceResize
      * @return self
      */
     public function scaleByWidth($width, $forceResize = false)
@@ -149,6 +150,7 @@ abstract class Adapter
 
     /**
      * @param  $height
+     * @param  bool $forceResize
      * @return self
      */
     public function scaleByHeight($height, $forceResize = false)
@@ -164,18 +166,19 @@ abstract class Adapter
     /**
      * @param  $width
      * @param  $height
+     * @param  bool $forceResize
      * @return self
      */
-    public function contain($width, $height)
+    public function contain($width, $height, $forceResize = false)
     {
         $x = $this->getWidth() / $width;
         $y = $this->getHeight() / $height;
-        if ($x <= 1 && $y <= 1 && !$this->isVectorGraphic()) {
+        if ((!$forceResize) && $x <= 1 && $y <= 1 && !$this->isVectorGraphic()) {
             return $this;
         } elseif ($x > $y) {
-            $this->scaleByWidth($width);
+            $this->scaleByWidth($width, $forceResize);
         } else {
-            $this->scaleByHeight($height);
+            $this->scaleByHeight($height, $forceResize);
         }
 
         return $this;
@@ -185,18 +188,18 @@ abstract class Adapter
      * @param  $width
      * @param  $height
      * @param string $orientation
+     * @param  bool $forceResize
      * @return self
      */
-    public function cover($width, $height, $orientation = "center", $doNotScaleUp = true)
+    public function cover($width, $height, $orientation = "center", $forceResize = false)
     {
-        $scaleUp = $doNotScaleUp ? false : true;
-
+        if (empty($orientation)) $orientation = "center"; // if not set (from GUI for instance) - default value in getByLegacyConfig method of Config object too
         $ratio = $this->getWidth() / $this->getHeight();
 
         if (($width / $height) > $ratio) {
-            $this->scaleByWidth($width, $scaleUp);
+            $this->scaleByWidth($width, $forceResize);
         } else {
-            $this->scaleByHeight($height, $scaleUp);
+            $this->scaleByHeight($height, $forceResize);
         }
 
         if ($orientation == "center") {
@@ -243,9 +246,10 @@ abstract class Adapter
     /**
      * @param $width
      * @param $height
+     * @param  bool $forceResize
      * @return $this
      */
-    public function frame($width, $height)
+    public function frame($width, $height, $forceResize = false)
     {
         return $this;
     }
