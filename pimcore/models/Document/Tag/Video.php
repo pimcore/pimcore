@@ -430,7 +430,6 @@ class Video extends Model\Document\Tag
 
         $options = $this->getOptions();
         $code = "";
-        $uid = "video_" . uniqid();
 
         // get youtube id
         $youtubeId = $this->id;
@@ -608,8 +607,8 @@ class Video extends Model\Document\Tag
         $uid = "video_" . uniqid();
 
         // get dailymotion id
-        if (preg_match("@dailymotion.*/([\d]+)@i", $this->id, $matches)) {
-            $dailymotionId = intval($matches[1]);
+        if (preg_match("@dailymotion.*/video/([^_]+)@i", $this->id, $matches)) {
+            $dailymotionId = $matches[1];
         } else {
             // for object-videos
             $dailymotionId = $this->id;
