@@ -5045,6 +5045,10 @@
         "definition": "Text from CSV"
     },
     {
+        "term": "translation_merger_website",
+        "definition": "Merge website translations."
+    },
+    {
         "term": "nothing_to_merge",
         "definition": "There is nothing to merge"
     },
