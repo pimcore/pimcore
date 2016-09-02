@@ -316,6 +316,7 @@ $scripts = array(
     "pimcore/document/newsletters/sendingPanel.js",
     "pimcore/document/newsletters/addressSourceAdapters/default.js",
     "pimcore/document/newsletters/addressSourceAdapters/csvList.js",
+    "pimcore/document/newsletters/addressSourceAdapters/report.js",
     "pimcore/document/link.js",
     "pimcore/document/hardlink.js",
     "pimcore/document/folder.js",
