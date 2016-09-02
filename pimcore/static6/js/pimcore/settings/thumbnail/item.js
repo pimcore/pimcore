@@ -90,7 +90,7 @@ pimcore.settings.thumbnail.item = Class.create({
                 value: this.data.description,
                 fieldLabel: t("description"),
                 width: 450,
-                height: 100
+                height: 50
             }, {
                 xtype: "combo",
                 name: "format",
