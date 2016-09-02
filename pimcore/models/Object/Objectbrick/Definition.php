@@ -450,7 +450,8 @@ class Definition extends Model\Object\Fieldcollection\Definition
     /**
      * @return string
      */
-    protected function getDefinitionFile() {
+    protected function getDefinitionFile()
+    {
         $objectBrickFolder = PIMCORE_CLASS_DIRECTORY . "/objectbricks";
         $definitionFile = $objectBrickFolder . "/" . $this->getKey() . ".php";
 
@@ -460,7 +461,8 @@ class Definition extends Model\Object\Fieldcollection\Definition
     /**
      * @return string
      */
-    protected function getPhpClassFile() {
+    protected function getPhpClassFile()
+    {
         $classFolder = PIMCORE_CLASS_DIRECTORY . "/Object/Objectbrick/Data";
         $classFile = $classFolder . "/" . ucfirst($this->getKey()) . ".php";
 
