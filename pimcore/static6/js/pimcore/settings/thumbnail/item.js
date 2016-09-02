@@ -102,18 +102,27 @@ pimcore.settings.thumbnail.item = Class.create({
                         ["PRINT","Print (PNG,JPG,SVG,TIFF)"]],
                 width: 450
             }, {
-                xtype: "numberfield",
-                name: "quality",
-                value: this.data.quality,
-                fieldLabel: t("quality"),
-                width: 210
-            }, {
-                xtype: "numberfield",
-                name: "highResolution",
-                value: this.data.highResolution,
-                fieldLabel: t("high_resolution") + "<br /><small>(2x Retina, 3.2x Print, ...)</small>",
-                width: 210,
-                decimalPrecision: 1
+                xtype: "fieldset",
+                title: t("advanced_settings"),
+                collapsible: true,
+                collapsed: true,
+                items: [{
+                    xtype: "numberfield",
+                    name: "quality",
+                    value: this.data.quality,
+                    fieldLabel: t("quality"),
+                    width: 210
+                }, {
+                    xtype: "numberfield",
+                    name: "highResolution",
+                    value: this.data.highResolution,
+                    fieldLabel: t("high_resolution"),
+                    width: 210,
+                    decimalPrecision: 1
+                }, {
+                    xtype: "container",
+                    html: "<small>(" + t("high_resolution_info_text") + ")</small>"
+                }]
             }]
         });
 

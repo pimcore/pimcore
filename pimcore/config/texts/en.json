@@ -1,5 +1,13 @@
 [
     {
+        "term": "high_resolution_info_text",
+        "definition": "eg. for Web-to-Print or everywhere where srcset is not possible/sufficient, not necessary for normal web-thumbnails, they automatically get a srcset attribute with 1x and 2x"
+    },
+    {
+        "term": "advanced_settings",
+        "definition": "Advanced settings"
+    },
+    {
         "term": "please_enter_the_id_of_the_asset",
         "definition": "Please enter the ID or Path (e.g. \/images\/logo.jpg) of the asset"
     },
