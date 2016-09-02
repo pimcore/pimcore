@@ -20,7 +20,6 @@ use Pimcore\Model;
 
 class User extends Model\Object\ClassDefinition\Data\Select
 {
-
     /**
      * Static type of this element
      *
@@ -28,6 +27,20 @@ class User extends Model\Object\ClassDefinition\Data\Select
      */
     public $fieldtype = "user";
 
+
+    /**
+     * @return User
+     */
+    protected function init()
+    {
+        //loads select list options
+        $options = $this->getOptions();
+        if (\Pimcore::inAdmin() || empty($options)) {
+            $this->configureOptions();
+        }
+
+        return $this;
+    }
 
     /**
      * @see Object\ClassDefinition\Data::getDataFromResource
@@ -57,6 +70,7 @@ class User extends Model\Object\ClassDefinition\Data\Select
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
+        $this->init();
         if (!empty($data)) {
             try {
                 $this->checkValidity($data, true);
@@ -118,17 +132,6 @@ class User extends Model\Object\ClassDefinition\Data\Select
             if (!$user instanceof Model\User) {
                 throw new Model\Element\ValidationException("Invalid user reference");
             }
-        }
-    }
-
-    /**
-     *
-     */
-    public function __wakeup()
-    {
-        $options = $this->getOptions();
-        if (\Pimcore::inAdmin() || empty($options)) {
-            $this->configureOptions();
         }
     }
 }
