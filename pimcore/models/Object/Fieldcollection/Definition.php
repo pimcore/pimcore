@@ -336,7 +336,8 @@ class Definition extends Model\AbstractModel
     /**
      * @return string
      */
-    protected function getDefinitionFile() {
+    protected function getDefinitionFile()
+    {
         $fieldClassFolder = PIMCORE_CLASS_DIRECTORY . "/fieldcollections";
         $definitionFile = $fieldClassFolder . "/" . $this->getKey() . ".php";
 
@@ -346,7 +347,8 @@ class Definition extends Model\AbstractModel
     /**
      * @return string
      */
-    protected function getPhpClassFile() {
+    protected function getPhpClassFile()
+    {
         $classFolder = PIMCORE_CLASS_DIRECTORY . "/Object/Fieldcollection/Data";
         $classFile = $classFolder . "/" . ucfirst($this->getKey()) . ".php";
 
