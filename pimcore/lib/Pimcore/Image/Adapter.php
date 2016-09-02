@@ -481,12 +481,12 @@ abstract class Adapter
         $this->tmpFiles[] = $tmpFile;
 
         $format = "png32";
-        if($this->isPreserveColor() || $this->isPreserveMetaData()) {
+        if ($this->isPreserveColor() || $this->isPreserveMetaData()) {
             $format = "original";
         }
 
         $this->reinitializing = true;
-        $this->save($tmpFile, $format); 
+        $this->save($tmpFile, $format);
         $this->destroy();
         $this->load($tmpFile);
         $this->reinitializing = false;

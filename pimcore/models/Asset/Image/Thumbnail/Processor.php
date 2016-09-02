@@ -144,7 +144,7 @@ class Processor
         }
 
         $fileExtension = $format;
-        if($format == "original") {
+        if ($format == "original") {
             $fileExtension = \Pimcore\File::getFileExtension($fileSystemPath);
         }
         $filename .= "." . $fileExtension;
@@ -303,7 +303,7 @@ class Processor
                     }
 
                     ksort($arguments);
-                    if(method_exists($image, $transformation["method"])) {
+                    if (method_exists($image, $transformation["method"])) {
                         call_user_func_array([$image, $transformation["method"]], $arguments);
                     }
                 }

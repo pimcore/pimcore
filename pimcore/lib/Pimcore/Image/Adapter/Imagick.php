@@ -121,7 +121,7 @@ class Imagick extends Adapter
                 }
             }
 
-            if(!$this->isPreserveColor()) {
+            if (!$this->isPreserveColor()) {
                 $this->setColorspaceToRGB();
             }
         } catch (\Exception $e) {
@@ -156,7 +156,7 @@ class Imagick extends Adapter
             // when used with gray-scale images
             $format = "png32";
         }
-        if($format == "original") {
+        if ($format == "original") {
             $format = strtolower($this->resource->getImageFormat());
         }
 
@@ -172,10 +172,10 @@ class Imagick extends Adapter
             }
         }
 
-        if(!$this->isPreserveMetaData()) {
+        if (!$this->isPreserveMetaData()) {
             $i->stripImage();
         }
-        if(!$this->isPreserveColor()) {
+        if (!$this->isPreserveColor()) {
             $i->profileImage('*', null);
         }
         $i->setImageFormat($format);
