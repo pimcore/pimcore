@@ -1,5 +1,17 @@
 [
     {
+        "term": "thumbnail_preserve_info_text",
+        "definition": "'Preserve meta data' and 'preserve color' only works for transitions without compositions (frame, background color, ...) and color modifications (greyscale, sepia, ...)"
+    },
+    {
+        "term": "preserve_meta_data",
+        "definition": "Preserve meta data (don't strip)"
+    },
+    {
+        "term": "preserve_color",
+        "definition": "Preserve color (profile, space)"
+    },
+    {
         "term": "high_resolution_info_text",
         "definition": "eg. for Web-to-Print or everywhere where srcset is not possible/sufficient, not necessary for normal web-thumbnails, they automatically get a srcset attribute with 1x and 2x"
     },

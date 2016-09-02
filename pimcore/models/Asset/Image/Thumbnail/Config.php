@@ -71,6 +71,16 @@ class Config extends Model\AbstractModel
     public $highResolution;
 
     /**
+     * @var bool
+     */
+    public $preserveColor = false;
+
+    /**
+     * @var bool
+     */
+    public $preserveMetaData = false;
+
+    /**
      * @var int
      */
     public $modificationDate;
@@ -658,5 +668,37 @@ class Config extends Model\AbstractModel
     public function setCreationDate($creationDate)
     {
         $this->creationDate = $creationDate;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isPreserveColor()
+    {
+        return $this->preserveColor;
+    }
+
+    /**
+     * @param boolean $preserveColor
+     */
+    public function setPreserveColor($preserveColor)
+    {
+        $this->preserveColor = $preserveColor;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isPreserveMetaData()
+    {
+        return $this->preserveMetaData;
+    }
+
+    /**
+     * @param boolean $preserveMetaData
+     */
+    public function setPreserveMetaData($preserveMetaData)
+    {
+        $this->preserveMetaData = $preserveMetaData;
     }
 }

@@ -142,7 +142,12 @@ class Processor
         if ($config->getHighResolution() > 1) {
             $filename .= "@" . $config->getHighResolution() . "x";
         }
-        $filename .= "." . $format;
+
+        $fileExtension = $format;
+        if($format == "original") {
+            $fileExtension = \Pimcore\File::getFileExtension($fileSystemPath);
+        }
+        $filename .= "." . $fileExtension;
 
         $fsPath = $thumbDir . "/" . $filename;
 
@@ -178,12 +183,13 @@ class Processor
 
         // transform image
         $image = Asset\Image::getImageTransformInstance();
+        $image->setPreserveColor($config->isPreserveColor());
+        $image->setPreserveMetaData($config->isPreserveMetaData());
         if (!$image->load($fileSystemPath)) {
             return self::returnPath($errorImage, $returnAbsolutePath);
         }
 
         $image->setUseContentOptimizedFormat($contentOptimizedFormat);
-
 
         $startTime = StopWatch::microtime_float();
 
@@ -297,7 +303,9 @@ class Processor
                     }
 
                     ksort($arguments);
-                    call_user_func_array([$image, $transformation["method"]], $arguments);
+                    if(method_exists($image, $transformation["method"])) {
+                        call_user_func_array([$image, $transformation["method"]], $arguments);
+                    }
                 }
             }
         }
