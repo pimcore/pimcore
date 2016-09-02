@@ -71,7 +71,8 @@
     "linfo/linfo": "~3",
     "amnuts/opcache-gui": "~2",
     "vrana/adminer": "~4.2",
-    "egulias/email-validator": "*"
+    "egulias/email-validator": "*",
+    "neitanod/forceutf8": "~2"
   },
   "require-dev": {
     "phpunit/phpunit": "*"
