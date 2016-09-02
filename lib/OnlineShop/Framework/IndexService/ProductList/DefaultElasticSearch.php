@@ -382,13 +382,15 @@ class DefaultElasticSearch implements IProductList {
      * @return void
      */
     public function setLimit($limit) {
-        if($limit == static::LIMIT_UNLIMITED) {
+        if($this->limit != $limit) {
             $this->products = null;
+        }
+
+        if($limit == static::LIMIT_UNLIMITED) {
             $this->limit = 100;
             $this->doScrollRequest = true;
         } else {
             $this->doScrollRequest = false;
-            $this->products = null;
             $this->limit = $limit;
         }
     }
@@ -405,7 +407,9 @@ class DefaultElasticSearch implements IProductList {
      * @return void
      */
     public function setOffset($offset) {
-        $this->products = null;
+        if($this->offset != $offset) {
+            $this->products = null;
+        }
         $this->offset = $offset;
     }
 
@@ -1160,13 +1164,6 @@ class DefaultElasticSearch implements IProductList {
      * @return array
      */
     public function getItems($offset, $itemCountPerPage) {
-
-        // clear current items
-        if($this->getOffset() != $offset || $this->getLimit() != $itemCountPerPage)
-        {
-            $this->products = null;
-        }
-
         $this->setOffset($offset);
         $this->setLimit($itemCountPerPage);
 
