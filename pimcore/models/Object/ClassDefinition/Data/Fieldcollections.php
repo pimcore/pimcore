@@ -352,6 +352,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
         }
 
         $this->allowedTypes = (array)$allowedTypes;
+        $this->allowedTypes = array_values($this->allowedTypes); // get rid of indexed array (.join() doesnt work in JS)
 
         return $this;
     }
