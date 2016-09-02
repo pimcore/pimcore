@@ -150,6 +150,14 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
             }
         }
 
+        //remove invalid languages
+        foreach ($columns as $key => $column) {
+            if (strtolower(trim($column)) != 'key' && !in_array($column, $languages)) {
+                unset($columns[$key]);
+            }
+        }
+        $columns = array_values($columns);
+
         $headerRow = [];
         foreach ($columns as $key => $value) {
             $headerRow[] = '"' . $value . '"';
