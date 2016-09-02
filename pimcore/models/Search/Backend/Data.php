@@ -423,7 +423,7 @@ class Data extends \Pimcore\Model\AbstractModel
                         Logger::error($e);
                     }
                 }
-            } else if ($element instanceof Asset\Text) {
+            } elseif ($element instanceof Asset\Text) {
                 try {
                     $contentText = $element->getData();
                     $contentText = Encoding::toUTF8($contentText);

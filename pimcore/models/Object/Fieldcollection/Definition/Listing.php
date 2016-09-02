@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -28,19 +28,12 @@ class Listing
     {
         $fields = [];
         $fieldCollectionFolder = PIMCORE_CLASS_DIRECTORY . "/fieldcollections";
-        
-        if (is_dir($fieldCollectionFolder)) {
-            $files = scandir($fieldCollectionFolder);
-            
-            foreach ($files as $file) {
-                $file = $fieldCollectionFolder . "/" . $file;
-                if (is_file($file)) {
-                    $fieldData = file_get_contents($file);
-                    $fields[] = \Pimcore\Tool\Serialize::unserialize($fieldData);
-                }
-            }
+        $files = glob($fieldCollectionFolder . "/*.php");
+
+        foreach ($files as $file) {
+            $fields[] = include $file;
         }
-        
+
         return $fields;
     }
 }
