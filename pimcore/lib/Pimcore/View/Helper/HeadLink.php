@@ -29,9 +29,9 @@ class HeadLink extends \Zend_View_Helper_HeadLink
      */
     public function toString($indent = null)
     {
-        // adds the automatic cache buster functionality
-        if($this->isCacheBuster()) {
-            foreach ($this as $item) {
+        foreach ($this as &$item) {
+            if($this->isCacheBuster()) {
+                // adds the automatic cache buster functionality
                 if (isset($item->href)) {
                     $realFile = PIMCORE_DOCUMENT_ROOT . $item->href;
                     if (file_exists($realFile)) {
@@ -39,9 +39,11 @@ class HeadLink extends \Zend_View_Helper_HeadLink
                     }
                 }
             }
+
+            \Pimcore::getEventManager()->trigger("frontend.view.helper.head-link", $this, [
+                "item" => $item
+            ]);
         }
-
-
 
         return parent::toString($indent);
     }

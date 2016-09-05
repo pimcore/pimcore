@@ -29,13 +29,13 @@ class HeadScript extends \Zend_View_Helper_HeadScript
      */
     public function toString($indent = null)
     {
-        // adds the automatic cache buster functionality
-        if($this->isCacheBuster()) {
-            foreach ($this as &$item) {
-                if (!$this->_isValid($item)) {
-                    continue;
-                }
+        foreach ($this as &$item) {
+            if (!$this->_isValid($item)) {
+                continue;
+            }
 
+            if($this->isCacheBuster()) {
+                // adds the automatic cache buster functionality
                 if (is_array($item->attributes)) {
                     if (isset($item->attributes["src"])) {
                         $realFile = PIMCORE_DOCUMENT_ROOT . $item->attributes["src"];
@@ -45,7 +45,12 @@ class HeadScript extends \Zend_View_Helper_HeadScript
                     }
                 }
             }
+
+            \Pimcore::getEventManager()->trigger("frontend.view.helper.head-script", $this, [
+                "item" => $item
+            ]);
         }
+
 
         return parent::toString($indent);
     }
