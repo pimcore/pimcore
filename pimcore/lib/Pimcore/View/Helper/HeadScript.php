@@ -34,7 +34,7 @@ class HeadScript extends \Zend_View_Helper_HeadScript
                 continue;
             }
 
-            if($this->isCacheBuster()) {
+            if ($this->isCacheBuster()) {
                 // adds the automatic cache buster functionality
                 if (is_array($item->attributes)) {
                     if (isset($item->attributes["src"])) {

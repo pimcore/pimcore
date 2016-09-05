@@ -30,7 +30,7 @@ class HeadLink extends \Zend_View_Helper_HeadLink
     public function toString($indent = null)
     {
         foreach ($this as &$item) {
-            if($this->isCacheBuster()) {
+            if ($this->isCacheBuster()) {
                 // adds the automatic cache buster functionality
                 if (isset($item->href)) {
                     $realFile = PIMCORE_DOCUMENT_ROOT . $item->href;
