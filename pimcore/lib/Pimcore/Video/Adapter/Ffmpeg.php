@@ -120,6 +120,8 @@ class Ffmpeg extends Adapter
             $cmd = self::getFfmpegCli() . ' -i ' . realpath($this->file) . ' ' . $arguments . " " . str_replace("/", DIRECTORY_SEPARATOR, $this->getDestinationFile());
 
             $process = new Process($cmd);
+            //symfony has a default timeout which is 60 sec. This is not enough for converting big video-files.
+            $process->setTimeout(null);
             $process->start();
 
             $logHandle = fopen($this->getConversionLogFile(), "a");
