@@ -6119,5 +6119,17 @@
     {
         "term": "add_object_mbx_title",
         "definition": "Add object of type "
+    },
+    {
+        "term": "newsletter_report",
+        "definition": "Column from a report"
+    },
+    {
+        "term": "newsletter_choose_report",
+        "definition": "Choose a report"
+    },
+    {
+        "term": "newsletter_email_field_name",
+        "definition": "Email field name"
     }
 ]

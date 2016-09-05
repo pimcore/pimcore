@@ -44,7 +44,7 @@ pimcore.document.newsletters.addressSourceAdapters.report = Class.create({
                     {
                         xtype: "combo",
                         name: "reportId",
-                        fieldLabel: t("report"),
+                        fieldLabel: t("newsletter_choose_report"),
                         triggerAction: 'all',
                         editable: false,
                         store: new Ext.data.Store({
@@ -66,7 +66,7 @@ pimcore.document.newsletters.addressSourceAdapters.report = Class.create({
                     },{
                         xtype:'combo',
                         name: "emailFieldName",
-                        fieldLabel: t('email_field_name'),
+                        fieldLabel: t('newsletter_email_field_name'),
                         triggerAction: "all",
                         editable: false,
                         store: new Ext.data.JsonStore({
