@@ -17,6 +17,11 @@ namespace Pimcore\View\Helper;
 class HeadScript extends \Zend_View_Helper_HeadScript
 {
     /**
+     * @var bool
+     */
+    protected $cacheBuster = true;
+
+    /**
      * Retrieve string representation
      *
      * @param  string|int $indent
@@ -24,23 +29,40 @@ class HeadScript extends \Zend_View_Helper_HeadScript
      */
     public function toString($indent = null)
     {
-
         // adds the automatic cache buster functionality
-        foreach ($this as &$item) {
-            if (!$this->_isValid($item)) {
-                continue;
-            }
+        if($this->isCacheBuster()) {
+            foreach ($this as &$item) {
+                if (!$this->_isValid($item)) {
+                    continue;
+                }
 
-            if (is_array($item->attributes)) {
-                if (isset($item->attributes["src"])) {
-                    $realFile = PIMCORE_DOCUMENT_ROOT . $item->attributes["src"];
-                    if (file_exists($realFile)) {
-                        $item->attributes["src"] = "/cache-buster-" . filemtime($realFile) . $item->attributes["src"];
+                if (is_array($item->attributes)) {
+                    if (isset($item->attributes["src"])) {
+                        $realFile = PIMCORE_DOCUMENT_ROOT . $item->attributes["src"];
+                        if (file_exists($realFile)) {
+                            $item->attributes["src"] = "/cache-buster-" . filemtime($realFile) . $item->attributes["src"];
+                        }
                     }
                 }
             }
         }
 
         return parent::toString($indent);
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isCacheBuster()
+    {
+        return $this->cacheBuster;
+    }
+
+    /**
+     * @param boolean $cacheBuster
+     */
+    public function setCacheBuster($cacheBuster)
+    {
+        $this->cacheBuster = $cacheBuster;
     }
 }

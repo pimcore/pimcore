@@ -17,6 +17,11 @@ namespace Pimcore\View\Helper;
 class HeadLink extends \Zend_View_Helper_HeadLink
 {
     /**
+     * @var bool
+     */
+    protected $cacheBuster = true;
+
+    /**
      * Render link elements as string
      *
      * @param  string|int $indent
@@ -25,15 +30,35 @@ class HeadLink extends \Zend_View_Helper_HeadLink
     public function toString($indent = null)
     {
         // adds the automatic cache buster functionality
-        foreach ($this as $item) {
-            if (isset($item->href)) {
-                $realFile = PIMCORE_DOCUMENT_ROOT . $item->href;
-                if (file_exists($realFile)) {
-                    $item->href = "/cache-buster-" . filemtime($realFile) . $item->href;
+        if($this->isCacheBuster()) {
+            foreach ($this as $item) {
+                if (isset($item->href)) {
+                    $realFile = PIMCORE_DOCUMENT_ROOT . $item->href;
+                    if (file_exists($realFile)) {
+                        $item->href = "/cache-buster-" . filemtime($realFile) . $item->href;
+                    }
                 }
             }
         }
 
+
+
         return parent::toString($indent);
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isCacheBuster()
+    {
+        return $this->cacheBuster;
+    }
+
+    /**
+     * @param boolean $cacheBuster
+     */
+    public function setCacheBuster($cacheBuster)
+    {
+        $this->cacheBuster = $cacheBuster;
     }
 }
