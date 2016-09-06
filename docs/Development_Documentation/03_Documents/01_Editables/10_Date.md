@@ -18,8 +18,8 @@ please read the topic [Pimcore localization](../../06_Multi_Language_i18n/00_Loc
 
 ### Configuration
 
-| Name | Type | Description |
-||||
+| Name   | Type   | Description                                                  |
+|--------|--------|--------------------------------------------------------------|
 | format | string | A string which describes how to output the date. (see below) |
 
 ## List of supported formats
