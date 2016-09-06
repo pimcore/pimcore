@@ -61,7 +61,7 @@ Asset Metadata allow to to attach localized metadata to assets within Pimcore. T
 therefore used on all output channels. 
 
 ### Examples
- ##### Getting Data
+##### Getting Data
  ```php
     $asset = Asset::getById(123);
      
@@ -75,7 +75,7 @@ therefore used on all output channels.
     // if there's no title for "en" but one without a language this will be returned (fallback mechanism).
  ```
  
- ##### Setting Data
+##### Setting Data
  ```php
      // Set the English title
      $asset->addMetadata("title", "input", "the new title", "en");
