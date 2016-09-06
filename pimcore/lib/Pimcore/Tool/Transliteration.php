@@ -39,10 +39,15 @@ class Transliteration
         }
 
         $value = self::_transliterationProcess($value, "~", $language);
-        
+
         // then use iconv
-        $value = trim(iconv("utf-8", "ASCII//IGNORE//TRANSLIT", $value));
-        
+        $iconvValue = trim(iconv("utf-8", "ASCII//IGNORE//TRANSLIT", $value));
+
+        // iconv translit returns an empty value in alpine linux (musl libc)
+        if (!empty($iconvValue)) {
+            $value = $iconvValue;
+        }
+
         return $value;
     }
 
