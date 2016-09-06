@@ -1,5 +1,9 @@
 [
     {
+        "term": "mode",
+        "definition": "Mode"
+    },
+    {
         "term": "thumbnail_preserve_info_text",
         "definition": "'Preserve meta data' and 'preserve color' only works for transitions without compositions (frame, background color, ...) and color modifications (greyscale, sepia, ...)"
     },
@@ -1814,7 +1818,7 @@
     },
     {
         "term": "setbackgroundimage",
-        "definition": "Set Backgroundimage"
+        "definition": "Set Background Image"
     },
     {
         "term": "roundcorners",
