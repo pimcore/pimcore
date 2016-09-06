@@ -72,7 +72,9 @@ class ReportAdapter implements AddressSourceAdapterInterface
 
         $this->emailAddresses = [];
         foreach ($this->list as $row) {
-            if (isset($row[$this->emailFieldName])) $this->emailAddresses[] = $row[$this->emailFieldName];
+            if (isset($row[$this->emailFieldName])) {
+                $this->emailAddresses[] = $row[$this->emailFieldName];
+            }
         }
 
         return $this->list;
@@ -85,7 +87,9 @@ class ReportAdapter implements AddressSourceAdapterInterface
      */
     public function getMailAddressesForBatchSending()
     {
-        if (!$this->list) $this->getListing();
+        if (!$this->list) {
+            $this->getListing();
+        }
 
         $containers = [];
         foreach ($this->emailAddresses as $address) {
@@ -103,7 +107,9 @@ class ReportAdapter implements AddressSourceAdapterInterface
      */
     public function getParamsForTestSending($emailAddress)
     {
-        if (!$this->list) $this->getListing();
+        if (!$this->list) {
+            $this->getListing();
+        }
 
         return new SendingParamContainer($emailAddress, current($this->list));
     }
@@ -115,7 +121,9 @@ class ReportAdapter implements AddressSourceAdapterInterface
      */
     public function getTotalRecordCount()
     {
-        if (!$this->list) $this->getListing();
+        if (!$this->list) {
+            $this->getListing();
+        }
 
         return $this->elementsTotal;
     }
@@ -129,7 +137,9 @@ class ReportAdapter implements AddressSourceAdapterInterface
      */
     public function getParamsForSingleSending($limit, $offset)
     {
-        if (!$this->list) $this->getListing();
+        if (!$this->list) {
+            $this->getListing();
+        }
 
         $listing = $this->list;
 

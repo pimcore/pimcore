@@ -185,7 +185,6 @@ class Admin_NewsletterController extends \Pimcore\Controller\Action\Admin\Docume
         $task = $this->getParam("task");
 
         if ($task === 'list') {
-
             $reportList = \Pimcore\Model\Tool\CustomReport\Config::getReportsList();
 
             $availableReports = [];
@@ -194,20 +193,19 @@ class Admin_NewsletterController extends \Pimcore\Controller\Action\Admin\Docume
             }
 
             $this->_helper->json(['data' => $availableReports]);
-
-        } else if ($task === 'fieldNames') {
-
+        } elseif ($task === 'fieldNames') {
             $reportId = $this->getParam("reportId");
             $report = \Pimcore\Model\Tool\CustomReport\Config::getByName($reportId);
             $columnConfiguration = $report->getColumnConfiguration();
 
             $availableColumns = [];
             foreach ($columnConfiguration as $column) {
-                if ($column['display']) $availableColumns[] = ['name' => $column['name']];
+                if ($column['display']) {
+                    $availableColumns[] = ['name' => $column['name']];
+                }
             }
 
             $this->_helper->json(['data' => $availableColumns]);
-
         }
     }
 

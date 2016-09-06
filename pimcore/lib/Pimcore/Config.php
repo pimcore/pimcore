@@ -138,19 +138,19 @@ class Config
             $siteId = null;
             if (Model\Site::isSiteRequest()) {
                 $siteId = Model\Site::getCurrentSite()->getId();
-            } else if (Tool::isFrontentRequestByAdmin()) {
+            } elseif (Tool::isFrontentRequestByAdmin()) {
                 // this is necessary to set the correct settings in editmode/preview (using the main domain)
                 $front = \Zend_Controller_Front::getInstance();
                 $originDocument = $front->getRequest()->getParam("document");
-                if($originDocument) {
+                if ($originDocument) {
                     $site = Tool\Frontend::getSiteForDocument($originDocument);
-                    if($site) {
+                    if ($site) {
                         $siteId = $site->getId();
                     }
                 }
             }
 
-            if($siteId) {
+            if ($siteId) {
                 $cacheKey = $cacheKey . "_site_" . $siteId;
             }
 
