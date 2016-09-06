@@ -105,4 +105,4 @@ The ```copyright``` field will be appended to every ```title``` and ```alt``` at
 ---
 
 For more information about Asset Metadata also have a look at the [User Documentation]().
- [comment]: #(TODO add links)
+[comment]: #(TODO add links)
