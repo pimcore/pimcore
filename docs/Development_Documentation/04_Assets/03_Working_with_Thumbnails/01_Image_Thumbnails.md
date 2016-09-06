@@ -247,8 +247,7 @@ this generates the followinig ouput:
 ```php
 <img src="/website/var/tmp/thumb_6644__testimage.png" width="250" height="190" />
 ```
-when using retina.js the script tries to load the image including the high-resolution modifier: 
-```/website/var/tmp/thumb_6644__testimage@2x.png```. 
+when using retina.js the script tries to load the image including the high-resolution modifier: ```/website/var/tmp/thumb_6644__testimage@2x.png```. 
 This images doesn't exist on the file system, so it is dispatched by Pimcore (see "Dynamic Generation on Request" 
 above) which generates the thumbnail (all dimensions 2x). 
 
