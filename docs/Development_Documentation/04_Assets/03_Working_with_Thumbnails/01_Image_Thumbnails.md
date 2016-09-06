@@ -18,7 +18,7 @@ To use the thumbnailing service of Pimcore, you have to create a transformation 
 The fields name, description, format and quality should be clear, interesting are now the transformations. 
 Click on ```+``` to add a new transformation, so that it look like that for example:
 
-![Thumbnails](../../img/thumnbails1.png)
+![Thumbnails](../../img/thumbnails1.png)
 
 Important: The transformations are performed in the order from the top to the bottom. This is for example important 
 in the configuration above. If the you first round the corners this would be performed on the original image, 
@@ -175,7 +175,7 @@ After downloading the profiles put them into your ```/website``` folder or anywh
 (eg. ```/usr/share/color/icc```). Then go to the Pimcore system settings, open the assets section and configure the 
 path to your favorite color profile.
 
-![Color Profiles](../../img/thumnbails2.png)
+![Color Profiles](../../img/thumbnails2.png)
 
 
 ## Dynamic Generation on Request
@@ -212,7 +212,7 @@ $asset->getThumbnail("myConfig", true); // 2nd parameter means "deferred"
 ## High-Resolution Support
 This is a special functionality to allow embedding high resolution (ppi/dpi) images.  
 In the thumbnail configuration: 
-![High Resolution](../../img/thumnbails3.png)
+![High Resolution](../../img/thumbnails3.png)
 The above configuration will generate a thumbnail with 500px width. 
 
 When using this configuration in combination with the [image editable](../../03_Documents/01_Editables/14_Image.md) 
