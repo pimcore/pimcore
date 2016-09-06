@@ -49,8 +49,8 @@ This path can then be directly used to display the image in a ```<img />``` tag.
 
 | Transformation | Description | Configuration | Result |
 |----------------|-------------|---------------|--------|
-| ORIGINAL IMAGE | This is the image which is used in the following transformations | NONE ;-) | ![Sample Original](../../img/thumbnails_sample_original.png) |
-| RESIZE | The image is exactly resized to the given dimensions without respecting the ratio. | ![Config Resize](../../img/thumbnails_config_resize.png) | ![Sample Resize](../../img/thumbnails_sample_resize.png) |
+| ORIGINAL IMAGE | This is the image which is used in the following transformations | NONE ;-) | ![Sample Original](../../../img/thumbnails_sample_original.png) |
+| RESIZE | The image is exactly resized to the given dimensions without respecting the ratio. | ![Config Resize](../../../img/thumbnails_config_resize.png) | ![Sample Resize](../../../img/thumbnails_sample_resize.png) |
 
 
 
