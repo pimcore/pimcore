@@ -905,12 +905,19 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
         }
 
         if ($this->getParam("download")) {
-            $downloadFilename = str_replace("." . File::getFileExtension($image->getFilename()), "." . $thumbnail->getFormat(), $image->getFilename());
-            $downloadFilename = strtolower($downloadFilename);
-            header('Content-Disposition: attachment; filename="' . $downloadFilename . '"');
+            if(in_array(strtolower($thumbnail->getFormat()), ["jpg","pjpeg","jpeg"])) {
+                $thumbnail->setPreserveMetaData(true);
+                $thumbnail->setPreserveColor(true);
+            }
         }
 
         $thumbnail = $image->getThumbnail($thumbnail);
+
+        if ($this->getParam("download")) {
+            $downloadFilename = str_replace("." . File::getFileExtension($image->getFilename()), "." . $thumbnail->getFileExtension() , $image->getFilename());
+            $downloadFilename = strtolower($downloadFilename);
+            header('Content-Disposition: attachment; filename="' . $downloadFilename . '"');
+        }
 
         if ($fileinfo) {
             $this->_helper->json([
@@ -919,15 +926,8 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
         }
 
         $thumbnailFile = $thumbnail->getFileSystemPath();
-        $fileExtension = File::getFileExtension($thumbnailFile);
-        if (in_array($fileExtension, ["gif", "jpeg", "jpeg", "png", "pjpeg"])) {
-            header("Content-Type: image/".$fileExtension, true);
-        } else {
-            header("Content-Type: " . $image->getMimetype(), true);
-        }
-
+        header("Content-Type: " . $thumbnail->getMimeType(), true);
         header("Access-Control-Allow-Origin: *"); // for Aviary.Feather (Adobe Creative SDK)
-
         header("Content-Length: " . filesize($thumbnailFile), true);
         $this->sendThumbnailCacheHeaders(); while (@ob_end_flush());
         flush();
