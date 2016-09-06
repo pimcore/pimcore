@@ -167,8 +167,9 @@ class Config extends Model\AbstractModel
         $thumbnail->addItem("scaleByWidth", [
             "width" => 400
         ]);
-        $thumbnail->addItem("setBackgroundColor", [
-            "color" => "#323232"
+        $thumbnail->addItem("setBackgroundImage", [
+            "path" => "/pimcore/static6/img/tree-preview-transparent-background.png",
+            "mode" => "cropTopLeft"
         ]);
         $thumbnail->setQuality(60);
         $thumbnail->setFormat("PJPEG");

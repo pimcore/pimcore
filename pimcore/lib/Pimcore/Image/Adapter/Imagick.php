@@ -564,9 +564,10 @@ class Imagick extends Adapter
 
     /**
      * @param $image
-     * @return $this|Adapter
+     * @param null|string $mode
+     * @return $this
      */
-    public function setBackgroundImage($image)
+    public function setBackgroundImage($image, $mode = null)
     {
         $this->preModify();
 
@@ -576,7 +577,14 @@ class Imagick extends Adapter
         if (is_file($image)) {
             $newImage = new \Imagick();
             $newImage->readimage($image);
-            $newImage->resizeimage($this->getWidth(), $this->getHeight(), \Imagick::FILTER_UNDEFINED, 1, false);
+
+            if($mode == "cropTopLeft") {
+                $newImage->cropImage($this->getWidth(), $this->getHeight(), 0, 0);
+            } else {
+                // default behavior (fit)
+                $newImage->resizeimage($this->getWidth(), $this->getHeight(), \Imagick::FILTER_UNDEFINED, 1, false);
+            }
+
             $newImage->compositeImage($this->resource, \Imagick::COMPOSITE_DEFAULT, 0, 0);
             $this->resource = $newImage;
         }

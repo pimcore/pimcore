@@ -36,7 +36,7 @@ class Processor
         "crop" => ["x", "y", "width", "height"],
         "setBackgroundColor" => ["color"],
         "roundCorners" => ["width", "height"],
-        "setBackgroundImage" => ["path"],
+        "setBackgroundImage" => ["path", "mode"],
         "addOverlay" => ["path", "x", "y", "alpha", "composite", "origin"],
         "addOverlayFit" => ["path", "composite"],
         "applyMask" => ["path"],

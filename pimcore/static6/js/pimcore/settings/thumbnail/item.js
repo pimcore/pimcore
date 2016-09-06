@@ -810,7 +810,7 @@ pimcore.settings.thumbnail.items = {
 
     itemSetBackgroundImage: function (panel, data, getName) {
 
-        var niceName = t("setbackgroundimage") + " (Imagick)";
+        var niceName = t("setbackgroundimage");
         if(typeof getName != "undefined" && getName) {
             return niceName;
         }
@@ -831,8 +831,17 @@ pimcore.settings.thumbnail.items = {
                 fieldLabel: t("path") + " <br />(rel. to doc-root)",
                 name: "path",
                 value: data.path,
-                width: 350
+                width: 450
             },{
+                xtype: "combo",
+                name: "mode",
+                fieldLabel: t("mode"),
+                value: data.mode,
+                triggerAction: 'all',
+                editable: false,
+                store: [["", "fit"], ["cropTopLeft","cropTopLeft"]],
+                width: 300
+            }, {
                 xtype: "hidden",
                 name: "type",
                 value: "setBackgroundImage"
