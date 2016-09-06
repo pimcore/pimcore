@@ -318,6 +318,32 @@ class Thumbnail
     }
 
     /**
+     * @return string
+     */
+    public function getFileExtension() {
+
+        $mapping = [
+            "image/png" => "png",
+            "image/jpeg" => "jpg",
+            "image/gif" => "gif",
+            "image/tiff" => "tif",
+            "image/svg+xml" => "svg",
+        ];
+
+        $mimeType = $this->getMimeType();
+
+        if(isset($mapping[$mimeType])) {
+            return $mapping[$mimeType];
+        }
+
+        if($this->getAsset()) {
+            return \Pimcore\File::getFileExtension($this->getAsset()->getFilename());
+        }
+
+        return "";
+    }
+
+    /**
     * Get generated HTML for displaying the thumbnail image in a HTML document. (XHTML compatible).
     * Attributes can be added as a parameter. Attributes containing illigal characters are ignored.
     * Width and Height attribute can be overridden. SRC-attribute not.
