@@ -5,24 +5,23 @@ Pimcore provides and object orientated php API to work with Assets.
 ## CRUD Operations
 Following lines of code show simple CRUD operations for Assets. 
  ```php
-    //creating and saving new asset
-    $newAsset = new Pimcore\Model\Asset();
-    $newAsset->setFilename("myAsset.png");
-    $newAsset->setData(file_get_contents("some-file.png"));
-    $newAsset->setParent(Pimcore\Model\Asset::getByPath("/"));
-    $newAsset->save();
+//creating and saving new asset
+$newAsset = new Pimcore\Model\Asset();
+$newAsset->setFilename("myAsset.png");
+$newAsset->setData(file_get_contents("some-file.png"));
+$newAsset->setParent(Pimcore\Model\Asset::getByPath("/"));
+$newAsset->save();
 
-    //getting assets
-    $asset1 = Pimcore\Model\Asset::getById(3456);
-    $asset2 = Pimcore\Model\Asset::getByPath("/my-assets/sample.png");
+//getting assets
+$asset1 = Pimcore\Model\Asset::getById(3456);
+$asset2 = Pimcore\Model\Asset::getByPath("/my-assets/sample.png");
 
-    //updating assets
-    $asset1->setData(file_get_contents("some-updated-file.png"));
-    $asset1->save();
-    
-    //deleting assets
-    $asset2->delete();
- 
+//updating assets
+$asset1->setData(file_get_contents("some-updated-file.png"));
+$asset1->save();
+
+//deleting assets
+$asset2->delete();
  ```
   
 ## Asset Listings
@@ -63,22 +62,22 @@ therefore used on all output channels.
 ### Examples
 ##### Getting Data
  ```php
-    $asset = Asset::getById(123);
-     
-     
-    // get the title for the current language (Zend_Locale in Zend_Registry)
-    $asset->getMetadata("title");
-     
-     
-    // get the English title
-    $asset->getMetadata("title", "en");
-    // if there's no title for "en" but one without a language this will be returned (fallback mechanism).
+$asset = Asset::getById(123);
+ 
+ 
+// get the title for the current language (Zend_Locale in Zend_Registry)
+$asset->getMetadata("title");
+ 
+ 
+// get the English title
+$asset->getMetadata("title", "en");
+// if there's no title for "en" but one without a language this will be returned (fallback mechanism).
  ```
  
 ##### Setting Data
  ```php
-     // Set the English title
-     $asset->addMetadata("title", "input", "the new title", "en");
+ // Set the English title
+ $asset->addMetadata("title", "input", "the new title", "en");
  ```
 
 
@@ -93,13 +92,13 @@ corresponding image.
  
 This includes for example: 
 ```php
-    // image editable on documents
-    <?= $this->image("myImage", ["thumbnail" => "xyz"]); ?>
-     
-     
-    // thumbnail html generator
-    <?= $asset->getThumbnail("xyz")->getHTML(); ?>
-    <?= $object->getMyImage()->getThumbnail("xyz")->getHTML(); ?>
+// image editable on documents
+<?= $this->image("myImage", ["thumbnail" => "xyz"]); ?>
+ 
+ 
+// thumbnail html generator
+<?= $asset->getThumbnail("xyz")->getHTML(); ?>
+<?= $object->getMyImage()->getThumbnail("xyz")->getHTML(); ?>
 ```
 The ```copyright``` field will be appended to every ```title``` and ```alt``` attribute separated by |. 
 
