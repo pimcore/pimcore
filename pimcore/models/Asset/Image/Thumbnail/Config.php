@@ -535,18 +535,6 @@ class Config extends Model\AbstractModel
     {
         $originalWidth = $asset->getWidth();
         $originalHeight = $asset->getHeight();
-        $isVectorFormatStatus = null;
-
-        $isVectorFormat = function () use ($isVectorFormatStatus, $asset) {
-            if ($isVectorFormatStatus === null) {
-                $imageTransformer = \Pimcore\Image::getInstance();
-                $imageTransformer->load($asset->getFileSystemPath());
-                $isVectorFormatStatus = $imageTransformer->isVectorGraphic();
-            }
-
-            return $isVectorFormatStatus;
-        };
-
 
         $dimensions = [];
         $transformations = $this->getItems();
@@ -563,12 +551,12 @@ class Config extends Model\AbstractModel
                             $dimensions["width"] = $arg["width"];
                             $dimensions["height"] = $arg["height"];
                         } elseif ($transformation["method"] == "scaleByWidth") {
-                            if ($arg["width"] <= $dimensions["width"] || $isVectorFormat()) {
+                            if ($arg["width"] <= $dimensions["width"] || $asset->isVectorGraphic()) {
                                 $dimensions["height"] = round(($arg["width"] / $dimensions["width"]) * $dimensions["height"], 0);
                                 $dimensions["width"] = $arg["width"];
                             }
                         } elseif ($transformation["method"] == "scaleByHeight") {
-                            if ($arg["height"] < $dimensions["height"] || $isVectorFormat()) {
+                            if ($arg["height"] < $dimensions["height"] || $asset->isVectorGraphic()) {
                                 $dimensions["width"] = round(($arg["height"] / $dimensions["height"]) * $dimensions["width"], 0);
                                 $dimensions["height"] = $arg["height"];
                             }
@@ -576,7 +564,7 @@ class Config extends Model\AbstractModel
                             $x = $dimensions["width"] / $arg["width"];
                             $y = $dimensions["height"] / $arg["height"];
 
-                            if ($x <= 1 && $y <= 1 && !$isVectorFormat()) {
+                            if ($x <= 1 && $y <= 1 && !$asset->isVectorGraphic()) {
                                 continue;
                             }
 
