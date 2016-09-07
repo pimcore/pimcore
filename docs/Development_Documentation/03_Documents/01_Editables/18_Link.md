@@ -73,7 +73,7 @@ Let's see how to make a list of links with [Block](./06_Block.md).
 </ul>
 ```
 
-Tha above example renders the block list, there is possible to add unlimited rows with Link editable.
+The above example renders the block list, there is possible to add unlimited rows with Link editable.
 
 ![The links list in the backend](../../img/editables_link_inside_block.png)
 
