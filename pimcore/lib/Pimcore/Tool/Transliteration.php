@@ -44,7 +44,7 @@ class Transliteration
 
         // then use iconv
         $result = iconv("utf-8", "ASCII//IGNORE//TRANSLIT", $value);
-        if(empty($result)) {
+        if (empty($result)) {
             // TRANSLIT doesn't work in musl's iconv, see #859.
             $result = iconv("utf-8", "ASCII//IGNORE", $value);
         }

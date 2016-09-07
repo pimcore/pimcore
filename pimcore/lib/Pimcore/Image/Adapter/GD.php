@@ -276,7 +276,7 @@ class GD extends Adapter
         if (is_file($image)) {
             $backgroundImage = imagecreatefromstring(file_get_contents($image));
             list($backgroundImageWidth, $backgroundImageHeight) = getimagesize($image);
-            if($mode == "cropTopLeft") {
+            if ($mode == "cropTopLeft") {
                 $newImg = $this->createImage($this->getWidth(), $this->getHeight());
                 imagecopyresampled($newImg, $backgroundImage, 0, 0, 0, 0, $this->getWidth(), $this->getHeight(), $this->getWidth(), $this->getHeight());
                 imagealphablending($newImg, true);

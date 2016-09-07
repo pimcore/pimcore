@@ -320,8 +320,8 @@ class Thumbnail
     /**
      * @return string
      */
-    public function getFileExtension() {
-
+    public function getFileExtension()
+    {
         $mapping = [
             "image/png" => "png",
             "image/jpeg" => "jpg",
@@ -332,11 +332,11 @@ class Thumbnail
 
         $mimeType = $this->getMimeType();
 
-        if(isset($mapping[$mimeType])) {
+        if (isset($mapping[$mimeType])) {
             return $mapping[$mimeType];
         }
 
-        if($this->getAsset()) {
+        if ($this->getAsset()) {
             return \Pimcore\File::getFileExtension($this->getAsset()->getFilename());
         }
 
