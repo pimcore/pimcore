@@ -9,5 +9,5 @@ backend or within code by a developer and have influence on appearance and behav
 * [Object Preview](./05_Preview.md)
 * [Custom Icons for objects](./07_Custom_Icons.md)
 * [Custom Layouts](./09_Custom_Layouts.md)
-* Custom Views
+* [Custom Views](./11_Custom_Views.md)
 * Locking Fields

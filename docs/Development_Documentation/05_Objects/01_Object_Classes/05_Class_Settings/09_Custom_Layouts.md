@@ -17,6 +17,7 @@ just as many you need. This does not have any impact on your data!
 ![Custom Layouts](../../../img/classes-custom-layouts1.png)
 
 In the object editor, the layout can then be chosen via the reload button. Note that any data changes will be lost.
+
 ![Custom Layouts](../../../img/classes-custom-layouts2.png)
 
 Admin users will notice an extra Layout called ```Master (Admin Mode)``` which is basically the same as the Master 
