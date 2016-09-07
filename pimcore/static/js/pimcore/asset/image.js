@@ -78,7 +78,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
         if (!this.editPanel) {
 
             this.editPanel = new Ext.Panel({
-                title: t("edit_image"),
+                title: t("edit"),
                 html: '<iframe src="/admin/asset/image-editor/id/' + this.id + '" frameborder="0" ' +
                     'style="width: 100%;" id="asset_image_edit_' + this.id + '"></iframe>',
                 iconCls: "pimcore_icon_tab_edit"
@@ -178,7 +178,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
 
             if(this.data.imageInfo && this.data.imageInfo.exif) {
                 var exifPanel = new Ext.grid.PropertyGrid({
-                    title: t("exif_data"),
+                    title: "EXIF",
                     source: this.data.imageInfo.exif,
                     clicksToEdit: 1000,
                     autoHeight: true

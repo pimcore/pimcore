@@ -1989,10 +1989,6 @@
         "definition": "Allow capitals in URL"
     },
     {
-        "term": "exif_data",
-        "definition": "EXIF Data"
-    },
-    {
         "term": "dimensions",
         "definition": "Dimensions"
     },
@@ -2707,10 +2703,6 @@
     {
         "term": "preview",
         "definition": "Preview"
-    },
-    {
-        "term": "edit_image",
-        "definition": "Edit Image"
     },
     {
         "term": "simple",
