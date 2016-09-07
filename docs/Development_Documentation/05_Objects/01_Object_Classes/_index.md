@@ -64,7 +64,7 @@ The second column indicates the underlying data type class and the third column 
 | Topic                                                                                                                       | description                                                                   |
 |-----------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------|
 | [Structured_Data_Fields](./03_Structured_Data_Fields/_index.md)                                           | Learn more about Fieldcollections, Objectbricks and Structured tables         |
-| [Localized Fields](./01_Object_Classes/12_Localized_Fields.md)                                                              | Multilanguage feature in object attributes.                                   |
-| [Classification Store](./01_Object_Classes/03_Structured_Data_Fields/08_Classification_Store.md)                            |                                                                               |
-| [Blocks](./01_Object_Classes/03_Structured_Data_Fields/16_Blocks.md)                                                        | The block datatype acts as a simple container for other data fields.          |
+| [Localized Fields](./12_Localized_Fields.md)                                                              | Multilanguage feature in object attributes.                                   |
+| [Classification Store](./03_Structured_Data_Fields/08_Classification_Store.md)                            |                                                                               |
+| [Blocks](./03_Structured_Data_Fields/16_Blocks.md)                                                        | The block datatype acts as a simple container for other data fields.          |
 
