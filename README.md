@@ -1,4 +1,5 @@
 # pimcore
+[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/pimcore/pimcore?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 THE OPEN-SOURCE ENTERPRISE CMS/CMF, PIM, DAM, ECOMMERCE-SUITE
 
