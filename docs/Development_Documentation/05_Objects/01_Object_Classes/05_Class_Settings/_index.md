@@ -5,7 +5,7 @@ backend or within code by a developer and have influence on appearance and behav
 
 #### These features include: 
 * [Data Inheritance and Parent Class](./01_Inheritance.md)
-* Object Variants
+* [Object Variants](./03_Variants.md)
 * Object Preview
 * Custom Icons for objects
 * Custom Layouts
