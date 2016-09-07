@@ -905,7 +905,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
         }
 
         if ($this->getParam("download")) {
-            if(in_array(strtolower($thumbnail->getFormat()), ["jpg","pjpeg","jpeg"])) {
+            if (in_array(strtolower($thumbnail->getFormat()), ["jpg", "pjpeg", "jpeg"])) {
                 $thumbnail->setPreserveMetaData(true);
                 $thumbnail->setPreserveColor(true);
             }
@@ -914,7 +914,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
         $thumbnail = $image->getThumbnail($thumbnail);
 
         if ($this->getParam("download")) {
-            $downloadFilename = str_replace("." . File::getFileExtension($image->getFilename()), "." . $thumbnail->getFileExtension() , $image->getFilename());
+            $downloadFilename = str_replace("." . File::getFileExtension($image->getFilename()), "." . $thumbnail->getFileExtension(), $image->getFilename());
             $downloadFilename = strtolower($downloadFilename);
             header('Content-Disposition: attachment; filename="' . $downloadFilename . '"');
         }

@@ -226,9 +226,10 @@ class Image extends Model\Asset
     /**
      * @return bool
      */
-    public function isVectorGraphic() {
+    public function isVectorGraphic()
+    {
         // we use a simple file-extension check, for performance reasons
-        if(preg_match("@\.(svgz?|eps|pdf|ps|ai|indd)$@", $this->getFilename())) {
+        if (preg_match("@\.(svgz?|eps|pdf|ps|ai|indd)$@", $this->getFilename())) {
             return true;
         }
 

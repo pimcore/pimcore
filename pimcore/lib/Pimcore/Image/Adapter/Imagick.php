@@ -578,7 +578,7 @@ class Imagick extends Adapter
             $newImage = new \Imagick();
             $newImage->readimage($image);
 
-            if($mode == "cropTopLeft") {
+            if ($mode == "cropTopLeft") {
                 $newImage->cropImage($this->getWidth(), $this->getHeight(), 0, 0);
             } else {
                 // default behavior (fit)
@@ -797,7 +797,7 @@ class Imagick extends Adapter
 
         // we need to do this check first, because ImageMagick using the inkscape delegate returns "PNG" when calling
         // getimageformat() onto SVG graphics, this is a workaround to avoid problems
-        if(preg_match("@\.(svgz?|eps|pdf|ps|ai|indd)$@", $imagePath)) {
+        if (preg_match("@\.(svgz?|eps|pdf|ps|ai|indd)$@", $imagePath)) {
             return true;
         }
 
