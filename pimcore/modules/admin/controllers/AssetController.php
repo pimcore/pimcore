@@ -99,6 +99,49 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
                 }
             }
 
+
+            $result = getimagesize($asset->getFileSystemPath(), $info);
+            if($result) {
+                $mapping = [
+                    '2#105' => 'headline',
+                    '2#120' => 'caption',
+                    '2#092' => 'location',
+                    '2#090' => 'city',
+                    '2#095' => 'state',
+                    '2#101' => 'country',
+                    '2#100' => 'countryCode',
+                    '2#080' => 'photographerName',
+                    '2#110' => 'credit',
+                    '2#085' => 'photographerTitle',
+                    '2#115' => 'source',
+                    '2#116' => 'copyright',
+                    '2#005' => 'objectName',
+                    '2#122' => 'captionWriters',
+                    '2#040' => 'instructions',
+                    '2#015' => 'category',
+                    '2#020' => 'supplementalCategories',
+                    '2#103' => 'transmissionReference',
+                    '2#010' => 'urgency',
+                    '2#025' => 'keywords',
+                    '2#055' => 'date',
+                    '2#060' => 'time',
+                ];
+
+                if ($info && isset($info['APP13'])) {
+                    $iptcRaw = iptcparse($info['APP13']);
+                    $imageInfo["iptc"] = [];
+                    foreach ($iptcRaw as $key => $value) {
+                        if (is_array($value) && count($value) === 1) {
+                            $value = $value[0];
+                        }
+
+                        if (isset($mapping[$key])) {
+                            $imageInfo["iptc"][$mapping[$key]] = $value;
+                        }
+                    }
+                }
+            }
+
             $asset->imageInfo = $imageInfo;
         }
 

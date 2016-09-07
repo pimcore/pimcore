@@ -547,6 +547,10 @@
     background: url(/pimcore/static6/img/flat-color-icons/camera_addon.svg) center center no-repeat !important;
 }
 
+.pimcore_icon_exif {
+    background: url(/pimcore/static6/img/flat-color-icons/camera.svg) center center no-repeat !important;
+}
+
 .pimcore_icon_image_editor_advanced {
     background: url(/pimcore/static6/img/flat-color-icons/camera_identification.svg) center center no-repeat !important;
 }
