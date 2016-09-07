@@ -3,7 +3,7 @@
 On class level, there are multiple additional settings and features available. These can be either configured in Pimcore
 backend or within code by a developer and have influence on appearance and behaviour of Pimcore. 
 
-These features conclude: 
+#### These features include: 
 * [Data Inheritance and Parent Class](./01_Inheritance.md)
 * Object Variants
 * Object Preview

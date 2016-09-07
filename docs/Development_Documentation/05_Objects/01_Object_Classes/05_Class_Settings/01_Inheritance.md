@@ -24,7 +24,9 @@ In the Pimcore backend, inherited values are visualized as in the screen below: 
 and have a green marker in the upper left corner. With a click on this corner, one can open the source object of this 
 specific attribute.
 ![Data Inheritance](../../../img/classes-data-inheritance1.png)
+
 ![Data Inheritance](../../../img/classes-data-inheritance2.png)
+
 ![Data Inheritance](../../../img/classes-data-inheritance3.png)
 
 To get the inherited values in the backend via code, you have to use the getter-methods of the attributes. By accessing 
