@@ -65,7 +65,7 @@ process. Object listings also come with a built-in paginator that simplifies the
 When working with object listings, user defined routes come in handy while implementing a object detail views. 
 User defined routes allow directing requests to certain detail pages, even though the request does not portray the path 
 of a document, but matches a certain route. For more information have a look at 
-[URLs based on Custom Routes](../../../02_MVC/04_Routing_and_URLs/02_Custom_Routes.md).
+[URLs based on Custom Routes](../02_MVC/04_Routing_and_URLs/02_Custom_Routes.md).
 
 An object listing class is created automatically for each class defined in Pimcore. Objects for the class ```Myobject``` 
 are retrieved through a listing as in the following example:
