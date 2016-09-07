@@ -7,7 +7,7 @@ backend or within code by a developer and have influence on appearance and behav
 * [Data Inheritance and Parent Class](./01_Inheritance.md)
 * [Object Variants](./03_Variants.md)
 * [Object Preview](./05_Preview.md)
-* Custom Icons for objects
+* [Custom Icons for objects](./07_Custom_Icons.md)
 * Custom Layouts
 * Custom Views
 * Locking Fields
