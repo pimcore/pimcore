@@ -51,7 +51,7 @@ The code below is responsible for showing the list of elements types related to 
 <?php endif; ?>
 ```
 
-Picture below, presents the editmode previe:
+Picture below, presents the editmode preview:
 
 ![Multihref editable - editmode preview](../../img/editables_multihref_editmode_preview.png)
 
