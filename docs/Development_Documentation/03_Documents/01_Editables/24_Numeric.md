@@ -27,7 +27,8 @@ The numeric editable is like a normal textfield but with special configurations 
 
 <div class="inline-imgs">
 
-Now you can see the **numeric** input in the Editmode view ![Numeric input - editmode](../../img/editables_numeric_simple_editmode.png)
+Now you can see the **numeric** input in the Editmode view 
+![Numeric input - editmode](../../img/editables_numeric_simple_editmode.png)
 
 </div>
 
