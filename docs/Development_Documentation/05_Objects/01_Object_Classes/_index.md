@@ -26,5 +26,5 @@ image data type comes with a drop area to which a user can drag and drop an imag
  
 For detailed documentation about these data types see [Data Types](./01_Data_Types/_index.md).
 Also have a look at [Layout Elements](./03_Layout_Elements.md) for information about the layout elements 
-and [Class Settings](./05_Class_Settings.md) for further details and features of Pimcore classes like 
+and [Class Settings](./05_Class_Settings/_index.md) for further details and features of Pimcore classes like 
 inheritance, variants, preview, custom layouts, etc.   
