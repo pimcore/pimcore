@@ -1,4 +1,4 @@
-## Blocks
+# Blocks
 
 The block data type acts as a simple container for other data fields. 
 Similar to a field collection, an unlimited number of block elements can be created.

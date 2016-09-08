@@ -107,21 +107,6 @@ Object\AbstractObject::setHideUnpublished(true);
 ```
 
 
-## Lazy Loading
-Whenever an object is loaded from database or cache, all these related objects are loaded with it. Especially with 
-MultiHrefs and Objects it is easy to produce a huge amount of relations, which makes the object or an object list slow 
-in loading. 
-
-As a solution to this dilemma, multihref and object data types can be classified as ```lazy loading``` attributes 
-in the class definition.
-
-![Lazy Loading](../../../img/classes-datatypes-relation3.png)
-
-Object attributes which are lazy, are only loaded from the ```database/cache``` when their getter is called. In the 
-example above this would mean, that the multihref data is only loaded when calling ```$object->getMultihref();```, 
-otherwise the attribute (```$object->multihref```) remains ```null```.
-
-
 ##Objects with Metadata 
 This data type is an extension to the objects data type. To each assigned object additional metadata can be saved. 
 The type of the metadata can be text, number, selection or a boolean value.
@@ -231,6 +216,24 @@ $references[] = $elementMetadata;
 //set the metadata array to your object
 $object->setMetadata($references); // object’s multihref field is called „metadata“
 ```
+
+
+
+
+## Lazy Loading
+Whenever an object is loaded from database or cache, all these related objects are loaded with it. Especially with 
+MultiHrefs and Objects it is easy to produce a huge amount of relations, which makes the object or an object list slow 
+in loading. 
+
+As a solution to this dilemma, multihref and object data types can be classified as ```lazy loading``` attributes 
+in the class definition.
+
+![Lazy Loading](../../../img/classes-datatypes-relation3.png)
+
+Object attributes which are lazy, are only loaded from the ```database/cache``` when their getter is called. In the 
+example above this would mean, that the multihref data is only loaded when calling ```$object->getMultihref();```, 
+otherwise the attribute (```$object->multihref```) remains ```null```.
+
 
 
 ## Dependencies
