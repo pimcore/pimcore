@@ -64,7 +64,7 @@ public static function getCalculatedValueForEditMode($object, $context) {
 
 The visual outcome would be as follows: 
 
-![Calculated Value Field](../../../img/classes-datatypes-calculated2.png)
+![Calculated Value Field](../../../img/classes-datatypes-calculated-field.png)
 
 
 
