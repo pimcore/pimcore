@@ -27,12 +27,15 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
 
     init: function () {
 
+        var user = pimcore.globalmanager.get("user");
+
         this.search = new pimcore.object.search(this, "folder");
 
         if (this.isAllowed("properties")) {
             this.properties = new pimcore.element.properties(this, "object");
         }
-        if (this.isAllowed("settings")) {
+
+        if (user.isAllowed("notes_events")) {
             this.notes = new pimcore.element.notes(this, "object");
         }
 
@@ -239,6 +242,7 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
     getTabPanel: function () {
 
         var items = [];
+        var user = pimcore.globalmanager.get("user");
 
         var search = this.search.getLayout();
         if (search) {
@@ -249,11 +253,10 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
         }
         items.push(this.dependencies.getLayout());
 
-        if (this.isAllowed("settings")) {
+        if (user.isAllowed("notes_events")) {
             items.push(this.notes.getLayout());
         }
 
-        var user = pimcore.globalmanager.get("user");
         if (user.isAllowed("tags_assignment")) {
             items.push(this.tagAssignment.getLayout());
         }

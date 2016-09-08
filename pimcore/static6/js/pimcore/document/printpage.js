@@ -19,12 +19,18 @@ pimcore.document.printpage = Class.create(pimcore.document.printabstract, {
 
     init: function () {
 
+        var user = pimcore.globalmanager.get("user");
+
         this.edit = new pimcore.document.edit(this);
 
         if (this.isAllowed("settings")) {
             this.settings = new pimcore.document.snippets.settings(this, "printpage");
+        }
+
+        if (user.isAllowed("notes_events")) {
             this.notes = new pimcore.element.notes(this, "document");
         }
+
         if (this.isAllowed("properties")) {
             this.properties = new pimcore.document.properties(this, "document");
         }
@@ -38,7 +44,10 @@ pimcore.document.printpage = Class.create(pimcore.document.printabstract, {
     },
 
     getTabPanel: function () {
+
         var items = [];
+        var user = pimcore.globalmanager.get("user");
+
         items.push(this.edit.getLayout());
         items.push(this.preview.getLayout());
         items.push(this.pdfpreview.getLayout());
@@ -54,7 +63,7 @@ pimcore.document.printpage = Class.create(pimcore.document.printabstract, {
 
         items.push(this.dependencies.getLayout());
 
-        if (this.isAllowed("settings")) {
+        if (user.isAllowed("notes_events")) {
             items.push(this.notes.getLayout());
         }
 

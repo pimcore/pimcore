@@ -101,7 +101,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
 
 
             $result = getimagesize($asset->getFileSystemPath(), $info);
-            if($result) {
+            if ($result) {
                 $mapping = [
                     '2#105' => 'headline',
                     '2#120' => 'caption',
