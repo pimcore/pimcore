@@ -78,11 +78,55 @@ $valueEn =  $object->getSum("en");   // => 11
 ## Context Information for Cacluation Class
 As said before, the richness of the context information depends on the location of the calculated-value field.
 
+
 #### Object (top-level)
 
-| ownerType | "object" |
+| Name | Description |
+| --- | ---- |
+| ownerType | ```"object"``` |
 | fieldName | the name of the calcuated-value field (e.g. ```sum```) |
 
 
+#### Localizedfields
 
+| Name | Description |
+| --- | ---- |
+| position | the language ("en", "de", ...) |
+| ownerType | ```"localizedfield"``` |
+| ownerName | the name of the localized field ("localizedfields") | 
+
+
+#### Objectbricks
+
+| Name | Description |
+| --- | ---- |
+| ownerType | ```"objectbrick"``` |
+| ownerName | the name of the objectbrick field inside the object |
+| fieldName | the name of the attribute inside the brick |
+| index | the name of the brick |
+| keyDefinition | the calculated-value field definition |
+
+
+#### Fieldcollections
+
+| Name | Description |
+| --- | ---- |
+| ownerType | ```"fieldcollection"``` |
+| ownerName | the name of the fieldcollection attribute |
+| fieldName | the name of the attribute inside the fieldcollection |
+| index | the index of the fieldcollection item |
+| keyDefinition | the calculated-value field definition |
+
+
+#### Classification Store
+
+| Name | Description |
+| --- | ---- |
+| ownerType | ```"classificationstore"``` |
+| ownerName | the name of the fieldcollection attribute |
+| fieldName | the name of the attribute inside the fieldcollection |
+| position  | the language |
+| groupId   | group id |
+| keyId     | key id |
+| keyDefinition | the fielddefinition of the classificationstore attribute |
 
