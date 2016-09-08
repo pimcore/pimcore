@@ -1,20 +1,15 @@
-It allows you to add an arbitrary number of key/value pairs to your object with the restriction that each key can only be added once to that object.
+# Key Vaile Pairs
+
+## Overview
+
+The Key Value data type allows to add an arbitrary number of key/value pairs to objects with the restriction that each 
+key can only be added once to that object.
 
 Keys are defined and managed in a global list and can be organized into groups (optional).
 
-[TOC]
-
-## Settings
-
-### Key definition
-
-[comment]: #(TODOinlineimgs)
-
-<div class="inline-imgs">
+## Configuration of Keys
 
 Open the **key/group** definition tab via the ![Settings](../../../img/Icon_settings.png)**Settings -> Object -> KeyValue config** Config menu.
-
-</div>
 
 ### Adding a group
 
