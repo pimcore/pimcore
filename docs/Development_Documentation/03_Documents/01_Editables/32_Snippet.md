@@ -169,5 +169,5 @@ he solution is to get the reference through the request object instead:
 
 ```php
 $snippet = $this->getRequest()->getParam('document');
-$myPropery = $snippet->getProperty('my-property-name');
+$myProperty = $snippet->getProperty('my-property-name');
 ```
