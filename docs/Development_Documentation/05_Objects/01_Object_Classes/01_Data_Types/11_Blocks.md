@@ -10,5 +10,8 @@ Nesting is not possible.
 
 ![Block, edit peview](../../../img/ObjectsBlocks_edit_preview.png)
 
+
+<div class="notice-box">
 The block data basically just gets serialized into a single database column. 
 As a consequence, this container type is not suitable, if you are planning to query the data.
+</div>
