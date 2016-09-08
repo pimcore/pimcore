@@ -9,94 +9,80 @@ Keys are defined and managed in a global list and can be organized into groups (
 
 ## Configuration of Keys
 
-Open the **key/group** definition tab via the ![Settings](../../../img/Icon_settings.png)**Settings -> Object -> KeyValue config** Config menu.
+Open the **key/group** definition tab via the ```Settings``` -> ```Object``` -> ```KeyValue Config``` config menu.
 
 ### Adding a group
 
 Groups are used to group keys together, for example describing certain aspects of a feature set.
 
-Add a group by clicking on the **Add** button. Add button. A description can be entered directly in the description grid column.
+Add a group by clicking on the ```Add``` button. A description can be entered directly in the description grid column.
 
 ![Groups grid](../../../img/Objects_KeyValue_Groups.png)
 
 ### Adding a key
 
-Switch to the **Key definition** tab. You will see a list of all defined keys:
+Switch to the ```Key definition``` tab. You will see a list of all defined keys:
 
-[comment]: #(TODOinlineimgs)
-
-<div class="inline-imgs">
-
-
-* ID: the internal database id
-* Name: The name of the key
-* Description: A user-friendly description of the key (optional but recommended)
-* Type: The datatype of the value, can be either "text”, "number”, "bool” or "select”
-* Detailed Configuration action column. Currently used for "select” datatype allowing you to enter possible options. See below.
-* Unit: Additional optional field which can be used to enter a dimension unit for example.
-* GID: the group id if associated with a group
-* Group: the group description (as entered in the group configuration) if associated with a group
-* ![Search action column](../../../img/Icon_magnifier.png) Search action column:  Opens the group selection dialog
-* Remove action column: Removes the key from the global list.
-
-</div>
+* ```ID```: the internal database id
+* ```Name```: The name of the key
+* ```Description```: A user-friendly description of the key (optional but recommended)
+* ```Type```: The datatype of the value, can be either "text”, "number”, "bool” or "select”
+* ```Detailed Configuration action column```: Currently used for "select” datatype allowing you to enter possible options. See below.
+* ```Unit```: Additional optional field which can be used to enter a dimension unit for example.
+* ```GID```: the group id if associated with a group
+* ```Group```: the group description (as entered in the group configuration) if associated with a group
+* ```Search action column```:  Opens the group selection dialog
+* ```Remove action column```: Removes the key from the global list.
 
 ![Key definition](../../../img/Objects_KeyValue_Keys.png)
 
-A key can be added by clicking on the **Add** button. Note that the key name must be unique. 
-Double-click on description, type or unit cell if you want to add a description, change the data type or specify the dimension unit, respectively.
-For the **select** data type you also have to provide a list of options. 
-Click on the **Detailed Configuration** button which will open the options editor.
+A key can be added by clicking on the ```Add``` button. Note that the key name must be unique. 
+Double-click on description, type or unit cell if you want to add a description, change the data type or specify 
+the dimension unit, respectively.
+
+For the ```select``` data type you also have to provide a list of options. Click on the ```Detailed Configuration``` 
+button which will open the options editor.
 
 ![Define possible values](../../../img/Objects_KeyValue_Options.png)
 
-**Key** represents name for display.
-**Value** is for internal representation.
+* ```Key``` represents name for display.
+* ```Value``` is for internal representation.
 
-[comment]: #(TODOinlineimgs)
 
-<div class="inline-imgs">
 
-Click on the ![Search action column](../../../img/Icon_magnifier.png) **Magnifier** class if you want the key to be part of a group.
-
-</div>
+Click on the ```Magnifier``` button if you want the key to be part of a group.
 
 ![Select group](../../../img/Objects_KeyValue_SelectGroup.png)
 
-Either double-click on a group or select a group and confirm using the **Apply** button. 
-This can be reverted by opening the group selection dialog again and closing it using the **Apply** button without a selection.
 
-### Adding a KeyValue field to your class
+Either double-click on a group or select a group and confirm using the ```Apply``` button. An assignment can be 
+reverted by opening the group selection dialog again and closing it using the ```Apply``` button without a selection.
 
-**Note:** there can be only one KeyValue field per object. 
-The field’s name is predefined and cannot be changed.
+
+## Adding a KeyValue field to class definition
+
+**Note:** there can be only one KeyValue field per object. The field’s name is predefined and cannot be changed.
 
 ![Add KeyValue attribute to the class](../../../img/Objects_KeyValue_AddToClass.png)
 
 After it, you can see few special settings which are primarily used for the grid editor.
 
-* Key column width: The width of the "key name/key description” column.
-* Group column width: The width of the "group/group description” column.
-* Value column width: The width of the "value” column.
-* Max Height: The maximum height of the grid.
+* ```Key column width```: The width of the "key name/key description” column.
+* ```Group column width```: The width of the "group/group description” column.
+* ```Value column width```: The width of the "value” column.
+* ```Max Height```: The maximum height of the grid.
 
-### Adding KeyValue pairs to the object
 
-[comment]: #(TODOinlineimgs)
+## Adding KeyValue pairs to the object
 
-<div class="inline-imgs">
+Click on the plus sign to add one or more key/value pairs to your object. This will open the group/key selection dialog. 
+Pick one or more keys which should be added to your object. Selecting a group will add all keys within that group. 
 
-Click on the plus sign to add one or more key/value pairs to your object. ![Add the key to the object](../../../img/Icon_add.png)
-This will open the group/key selection dialog. 
-Pick one or more keys which should be added to your object. 
-Selecting a group will add all keys within that group
+Double click inside the ```value``` column to enter a value. The actual behavior depends on the data type declared 
+in the key configuration.
 
-Double click inside the **value* column to enter  a value. 
-The actual behavior depends on the data type declared in the key configuration.
 
-</div>
-
-## Programming with KeyValue pairs
+## Working with PHP api
 The key definition consists at least of a key name and its type.
 
 ```php
@@ -112,7 +98,7 @@ Supported types are:
 * bool (yes or no)
 * select
 
-For **select**, you have to specify a list of possible values which is expected as a json-encoded list of possible options.
+For ```select```, you have to specify a list of possible values which is expected as a json-encoded list of possible options.
 An option consists of text presented to the user and the internal value used for storing the actual choice.
 
 ```php
