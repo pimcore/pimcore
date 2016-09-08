@@ -1,18 +1,39 @@
 # Fieldcollection
 
+## General Usage
+
 Object field collections are predefined sets of data and layout fields, 
 that can be added to objects at an arbitrary amount.
 
 An object field collection is very similar to an object itself. 
-It has a *class* or in this case **field definition** which needs to be made first, and then different field collection definitions can be used to add sets of fields to an object. 
+It has a *class* or in this case **field definition** which needs to be made first, and then different field collection 
+definitions can be used to add sets of fields to an object. 
+
+![Fieldcollection Configuration](../../../img/classes-datatypes-fieldcollection1.png)
+
 So with some restrictions you could say, a field collection is an object within an object. 
-When adding a field collection field to an object's class definition, the developer needs to specify the allowed field definition types for this field. 
+
+When adding a field collection field to an object's class definition, the developer needs to specify the allowed field 
+definition types for this field. 
+
+![Fieldcollection Configuration](../../../img/classes-datatypes-fieldcollection2.png)
+
 The user can then decide which and how many of the available field definitions shall be added to the object.
 
+![Fieldcollection Field](../../../img/classes-datatypes-fieldcollection3.png)
+
+
+## Data Storage
+
 Field definition data is stored in a separate table for each field definition and object class. 
-The naming convention for these tables is: **object_collection_COLLECTION-NAME_OBJECT-ID**. 
-Such a table contains all the field data, the concrete object's id, field name and index of of the field collection within the field collection data field. 
-In order to fully understand the data structure of objects and field collections, it is best to enter some example data and have a look at the tables created by pimcore.
+The naming convention for these tables is: ```object_collection_COLLECTION-NAME_OBJECT-ID```. 
+Such a table contains all the field data, the concrete object's id, field name and index of of the field collection 
+within the field collection data field. 
+In order to fully understand the data structure of objects and field collections, it is best to enter some example data 
+and have a look at the tables created by Pimcore.
+
+
+## Working with PHP api
 
 Of course, field collection data can be set programmatically as well. 
 The following code snippet illustrates how this can be achieved. 
