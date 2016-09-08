@@ -24,7 +24,7 @@ As icons SVG graphics are recommended. If you use pixel graphics, maximum size i
 
 It is possible to define custom icons and styles for objects in the object tree. 
 In order to do so, overwrite the method ```getElementAdminStyle``` of ```AbstractObject``` by [extending the Pimcore 
- default class](./01_Ineritance.md) and return your own implementation of Element_AdminStyle.
+ default class](./01_Inheritance.md) and return your own implementation of Element_AdminStyle.
  
 #### Possible properties to define:
 * Element css class
