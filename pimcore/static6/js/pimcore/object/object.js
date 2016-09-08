@@ -22,6 +22,8 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
         this.options = options;
 
+        var user = pimcore.globalmanager.get("user");
+
         //TODO why do we create all this stuff and decide whether we want to display it or not ????????????????
         this.edit = new pimcore.object.edit(this);
         this.preview = new pimcore.object.preview(this);
@@ -29,7 +31,11 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         this.versions = new pimcore.object.versions(this);
         this.scheduler = new pimcore.element.scheduler(this, "object");
         this.dependencies = new pimcore.element.dependencies(this, "object");
-        this.notes = new pimcore.element.notes(this, "object");
+
+        if (user.isAllowed("notes_events")) {
+            this.notes = new pimcore.element.notes(this, "object");
+        }
+
         this.reports = new pimcore.report.panel("object_concrete", this);
         this.variants = new pimcore.object.variantsTab(this);
         this.tagAssignment = new pimcore.element.tag.assignment(this, "object");
@@ -200,6 +206,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
     getTabPanel: function () {
 
         var items = [];
+        var user = pimcore.globalmanager.get("user");
 
         //try {
         items.push(this.edit.getLayout(this.data.layout));
@@ -255,16 +262,8 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
         }
 
-
-        var user = pimcore.globalmanager.get("user");
-        if (user.admin || (this.isAllowed("settings") && in_array("notes_events", user.permissions))) {
-            if (this.isAllowed("settings")) {
-                try {
-                    items.push(this.notes.getLayout());
-                } catch (e) {
-
-                }
-            }
+        if (user.isAllowed("notes_events")) {
+            items.push(this.notes.getLayout());
         }
 
         if (user.isAllowed("tags_assignment")) {

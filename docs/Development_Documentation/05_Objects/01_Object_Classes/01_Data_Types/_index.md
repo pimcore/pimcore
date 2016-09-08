@@ -44,7 +44,7 @@ The entire list of data types is indicated below:
 | languages                | combo box with multiple select and combo box with multiple select and predefined language list from Zend_Locale                                                                                                                                                                                                                                                                                                                                                                 |
 
 
-### Relation Datatypes
+### [Relation Datatypes](./09_Relation_Types.md)
 
 | Name                     | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 |--------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -60,13 +60,13 @@ The entire list of data types is indicated below:
 
 | Name                     | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 |--------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| block                    | repeatable block of attributes within an object                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| classificationstore      | advanced store for classification systems like ETIM, ecl@ss, etc. |
-| table                    | table input                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| structuredtable          | table with predefined rows and columns  |
-| fieldcollections         | A collection of fields that can be added to the object                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| objectbricks             | Bricks of attributes, that can be added to objects | 
-| localizedfields          | Set of attributes that can be translated |
+| [block](./11_Blocks.md)  | repeatable block of attributes within an object                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| [classificationstore](./13_Classification_Store.md)      | advanced store for classification systems like ETIM, ecl@ss, etc. |
+| [table](./15_Table.md)   | table input                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| [structuredtable](./17_Structured_Table.md)          | table with predefined rows and columns  |
+| [fieldcollections](./19_Fieldcollections.md)         | A collection of fields that can be added to the object                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| [objectbricks](./21_Object_Bricks.md)             | Bricks of attributes, that can be added to objects | 
+| [localizedfields](./23_Localized_Fields.md)          | Set of attributes that can be translated |
 | keyvalue                 | key/value pairs                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 
 
@@ -105,6 +105,9 @@ The entire list of data types is indicated below:
 | persona                  | typed selectbox for personas defined within Pimcore |
 | personas                 | typed selectbox with multiselect for personas defined within Pimcore |
 
+
+
+### General Aspects
 
 All data types are wrapped in an object derived from ```Pimcore\Model\Object\Class\Data```. 
 These data type objects provide getters and setters and they define the Description in the frontend. 

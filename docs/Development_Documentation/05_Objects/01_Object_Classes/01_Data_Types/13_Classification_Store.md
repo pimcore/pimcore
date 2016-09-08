@@ -1,44 +1,47 @@
-## Classification Store
+# Classification Store
 
-[TOC]
+## Overview
 
-### Overview
+The classification store has quite some similarities with the KeyValue datatype, the way how the keys can be added to 
+the object differs as well as the variety of supported data types.
 
-The classification store has quite some similarities with the KeyValue datatype, the way how the keys can be added to the object differs as well as the variety of supported datatypes.
+#### The most important facts:
+* There can be multiple store with completely isolated feature sets.
+* Inheritance is supported.
+* An object can have more than one classification store.
+* Localization is supported (optionally, can be configured in the class definition).
+* The classification store introduces the concept of a fallback language.
+* All simple data types (e.g. textarea, date, etc are supported). The store can be extended with custom data types.
+* Takes advantage of the built-in mechanism for the field definition + data editing (validation, etc).
+* Keys can be organized in groups.
+* A key can belong to several groups.
+* Individual keys currently cannot be added to the object. Instead, the corresponding groups added.
+* The allowed groups can be restricted via the class definition.
 
-The most important facts:
 
-* There can be multiple store with completely isolated feature sets
-* Inheritance is supported
-* An object can have more than one classification store
-* Localization is supported (optional, can be configured in the class definition)
-* The classification store introduces the concept of a fallback language
-* All simple datatypes (e.g. textarea, date, etc are supported). The store can be extended with custom datatypes (since build 3729).
-* Takes advantage of the built-in mechanism for the field definition + data editing (validation, etc)
-* Keys can be organized in groups
-* A key can belong to several groups
-* Individual keys currently cannot be added to the object. Instead, the corresponding groups added
-* The allowed groups can be restricted via the class definition
+## Configuration of Classification Stores
+
+Before using the classification store, at least one classification store with collections, groups and keys has to be
+defined. 
 
 ### Key definition
-
-Let's add key definitions:
-
 * Go to classification store in Objects menu:
 
 ![Classification store menu](../../../img/Objects_ClassificationStore_menu.png)
 
-* Select type:
+* Add a new store if necessary
+* Add a key
+* Select type
 
 ![choose Classification Store type](../../../img/Objects_ClassificationStore_type.png)
 
 * Click on the configuration button on the right for detailed settings
-* Note that not all settings are respected (e.g. "indexed")
+* Note that not all settings are respected (e.g. ```indexed```)
 
 ![Classification Store detailed config](../../../img/Objects_ClassificationStore_detailed_config.png)
 
-### Group definition and key assignment
 
+### Group definition and key assignment
 * Use the group editor to define and organize keys into groups
 * Similar to keys a sort order can be specified
 * Groups with lower sort order are displayed first
@@ -46,6 +49,7 @@ Let's add key definitions:
 * It is not necessary for the group name to be unique
 * Use the grid on the right side to manage the keys belonging to the selected group
 * Configure sort order for the object editor, keys with lower values are listed first
+* Configure which keys should be mandatory in this group
 
 ![Classification store groups management](../../../img/Objects_ClassificationStore_groups_grid.png)
 
@@ -56,20 +60,31 @@ Let's add key definitions:
 
 ![Classification store - group collections](../../../img/Objects_ClassificationStore_group_collections_grid.png)
 
-### Class definition
 
-* Localization can be enabled, by default only the **default** language is available
+## Class definition
+
+* Localization can be enabled, by default only the ```default``` language is available
 * Allowed groups can be restricted by providing a comma-separated list of group ids
 * There can be more than one classification store field 
 * Configure the group sort order for the object editor, groups with lower values are listed first
 
 ![Class definitaion with Classification Store](../../../img/Objects_ClassificationStore_classes.png)
 
-### Inheritance
+
+## Object editor
+
+* Groups can be added/removed via the add/remove buttons (see screenshot below)
+* Keys are displayed in the specified sort order. If the order is equal then the keys are sorted by creation date
+
+![Edit classification store in object](../../../img/Objects_ClassificationStore_edit_object.png)
+
+
+## Inheritance
 
 In contrast to localized fields fallback and inherited values are first resolved in a horizontal way. 
 If no value can be found on the same level, the parent level is scanned in the same language order. 
-As mentioned before, there is the concept of a **default** language which is just an additional pseudo language which acts as the last resort.
+As mentioned before, there is the concept of a ```default``` language which is just an additional pseudo language 
+which acts as the last resort.
 
 Consider the following example and let’s assume that English is the fallback language for German. 
 We request the German value for the object at level 3. 
@@ -77,7 +92,7 @@ Since the only value can be found on level 1 for the default language the tree i
 
 ![Language value levels in Classification store](../../../img/Objects_ClassificationStore_levels.png)
 
-### API 
+## Using Classification Store via PHP api
 
 ```php
 // setter, group id = 1, key id id = 2, language = de
@@ -149,9 +164,3 @@ $config->setDescription($description);
 $config->save();
 ```
 
-### Object editor
-
-* Groups can be added/removed via the add/remove buttons (see screenshot below)
-* Keys are displayed in the specified sort order. If the order is equal then the keys are sorted by creation date
-
-![Edit classification store in object](../../../img/Objects_ClassificationStore_edit_object.png)
