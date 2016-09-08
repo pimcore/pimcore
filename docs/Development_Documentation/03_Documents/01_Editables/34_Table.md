@@ -3,7 +3,7 @@
 ## General
 
 The Table editable provides ability to define a table structure.
-With that, you can built tables for a frontend application in graphical way. 
+With that, you can build tables for a frontend application in graphical way. 
 Also, the Table editable allows you to add some predefined values.
 
 ## Configuration
