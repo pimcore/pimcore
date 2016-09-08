@@ -80,8 +80,6 @@ As said before, the richness of the context information depends on the location 
 
 #### Object (top-level)
 
-| Name | Description |
-| --- | ---- |
 | ownerType | "object" |
 | fieldName | the name of the calcuated-value field (e.g. ```sum```) |
 
