@@ -1,4 +1,4 @@
-## Structure table
+# Structure table
 
 ### Add structure table to the class
 
