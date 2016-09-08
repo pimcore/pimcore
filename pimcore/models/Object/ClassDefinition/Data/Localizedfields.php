@@ -586,7 +586,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
      */
     public function delete($object, $params = [])
     {
-        $localizedFields = $this->getDataFromObjectParam($object);
+        $localizedFields = $this->getDataFromObjectParam($object, $params);
 
         if ($localizedFields instanceof Object\Localizedfield) {
             $localizedFields->setObject($object);
