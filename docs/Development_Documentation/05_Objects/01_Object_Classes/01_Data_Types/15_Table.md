@@ -1,4 +1,4 @@
-## Table
+# Table
 
 The table widget can hold structured data in the form of an array. 
 The input widget for table data is a table with variable rows and columns as shown below.
