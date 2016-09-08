@@ -2,13 +2,13 @@
 
 ## Input
 
-![Input Field](../../../../img/classes-datatypes-text1.jpg)
+![Input Field](../../../img/classes-datatypes-text1.jpg)
 
 The input field is a simple text input field. It's data is stored in a VARCHAR column in the database. The display 
 width and database column length can be configured in the object class definition.
 
 
-![Input Configuration](../../../../img/classes-datatypes-text2.jpg)
+![Input Configuration](../../../img/classes-datatypes-text2.jpg)
 
 
 To set the value of an input field, the string value needs to be passed to the setter.
@@ -21,7 +21,7 @@ $object->save();
 
 ## Password
 
-![Password Field](../../../../img/classes-datatypes-text3.jpg)
+![Password Field](../../../img/classes-datatypes-text3.jpg)
 
 The password field is basically the same as the input field with hidden input characters. It's column length can not be 
 changed, since passwords are always hashed using the selected algorithm.  
@@ -39,12 +39,12 @@ hashed - and does so if not.
 We recommend using ```password_hash``` as algorithm.
  
 
-![Password Configuration](../../../../img/classes-datatypes-text4.jpg)
+![Password Configuration](../../../img/classes-datatypes-text4.jpg)
 
 
 ## Textarea
 
-![Textarea Field](../../../../img/classes-datatypes-text5.jpg)
+![Textarea Field](../../../img/classes-datatypes-text5.jpg)
 
 The textarea is an input widget for unformatted plain text. It is stored in a TEXT column in the database. Setting it's 
 value works the same as for the input field. The width and height of the input widget can be configured in the object 
@@ -59,7 +59,7 @@ If images and documents are used in a WYSIWYG widget, they create a dependency f
 image, assets can be dragged to a WYSIWYG widget. In order to create a link, a document needs to be dragged and dropped 
 on selected text in the WYSIWYG widget. The text is stored as HTML. 
 
-![WYSIWYG Field](../../../../img/classes-datatypes-text6.jpg)
+![WYSIWYG Field](../../../img/classes-datatypes-text6.jpg)
 
 #### Editor - Configuration
 It's possible to pass a custom CKEditor config object to the wysiwyg editor. 
