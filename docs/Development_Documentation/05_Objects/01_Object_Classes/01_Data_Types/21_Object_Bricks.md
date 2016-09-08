@@ -1,8 +1,6 @@
-## Objects bricks 
+# Objects Bricks 
 
-[TOC]
-
-### General
+## General
 
 With Objectbricks, objects can be extended without changing the class definition. 
 This is especially useful when storing product data.
@@ -10,26 +8,28 @@ Often there is a base set of attributes, which all products have.
 But then there are lots of attributes, which only a subset of your products have.
 
 Take the example of a car accessories dealer. Brakes have different attributes than tires, rims or navigation systems.
-The old-fashioned way to deal with this use case is, to define a product class which contains all possible attributes from all product types. 
-This would work fine, but most of the attributes will be empty and the object editor would be quite unmanageable.
+The old-fashioned way to deal with this use case is, to define a product class which contains all possible attributes 
+from all product types. This would work fine, but most of the attributes will be empty and the object editor 
+would be quite unmanageable.
 
-The new way is to use Objectbricks. The product class itself has only attributes all products have. This might be attributes like name, article number, manufacturer, price, etc.
-In addition to that, for each product group there is an Objectbrick. The Objectbrick for brakes has attributes like diameter, material. 
-The Objectbrick for tires has dimension, type, maximum speed and so on.
+The new way is to use Objectbricks. The product class itself has only attributes all products have. This might be 
+attributes like name, article number, manufacturer, price, etc. In addition to that, for each product group there 
+is an object brick. The object brick for brakes has attributes like diameter, material. 
+The object brick for tires has dimension, type, maximum speed and so on.
 
-By creating a tire product object, the tire Objectbrick is added and so this tire product has all the tire attributes.
+By creating a tire product object, the tire object brick is added and so this tire product has all the tire attributes.
 
 ![Object bricks example](../../../img/ObjectsBricks_object_example.png)
 
-To one object a number of Objectbricks can be added, but just one instance per Objectbrick type. 
+To one object a number of Objectbricks can be added, but just one instance per object brick type. 
 This is the main difference to Fieldcollections.
-Because only one instance per Objectbrick can be added to an object, Objectbricks fully support inheritance. 
-Each attribute of an Objectbrick can be overwritten in child objects.
+Because only one instance per object brick can be added to an object, Objectbricks fully support inheritance on 
+field level. Each attribute of an object brick can be overwritten in child objects.
 
 ![Object bricks inheritance example](../../../img/ObjectsBricks_inheritance_example.png)
 
 Despite this flexibility, the database model in the background stays clean and well structured. 
-This is because the attributes of an Objectbrick have to be defined like these of Fieldcollections.
+This is because the attributes of an object brick have to be defined like these of Fieldcollections.
 
 ### Definition of an Objectbrick
 
