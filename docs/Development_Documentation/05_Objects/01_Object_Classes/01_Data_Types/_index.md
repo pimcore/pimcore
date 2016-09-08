@@ -44,7 +44,7 @@ The entire list of data types is indicated below:
 | languages                | combo box with multiple select and combo box with multiple select and predefined language list from Zend_Locale                                                                                                                                                                                                                                                                                                                                                                 |
 
 
-### Relation Datatypes
+### [Relation Datatypes](./09_Relation_Types.md)
 
 | Name                     | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 |--------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -105,6 +105,9 @@ The entire list of data types is indicated below:
 | persona                  | typed selectbox for personas defined within Pimcore |
 | personas                 | typed selectbox with multiselect for personas defined within Pimcore |
 
+
+
+### General Aspects
 
 All data types are wrapped in an object derived from ```Pimcore\Model\Object\Class\Data```. 
 These data type objects provide getters and setters and they define the Description in the frontend. 
