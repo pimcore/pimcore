@@ -35,7 +35,9 @@ Since ```$object->getImage()``` just returns an asset object, you can of course 
 ```\Pimcore\Model\Asset\Image```.
 
 
+
 ## External Image (ExtJS6 only)
+
 This one allows you to enter an external image URL which is then shown as a preview.
 
 ![External Image Field](../../../img/classes-datatypes-image3.jpg)
