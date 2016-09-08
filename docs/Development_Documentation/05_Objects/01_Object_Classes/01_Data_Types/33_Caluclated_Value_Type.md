@@ -43,7 +43,7 @@ class CalculatorDemo
             \Logger::error("unknown field");
         }
     }
-}
+} 
 ```
 
 As we see here the calculator class sums up the x and y values from the corresponding language tab.
@@ -63,7 +63,9 @@ public static function getCalculatedValueForEditMode($object, $context) {
 ```
 
 The visual outcome would be as follows: 
+
 ![Calculated Value Field](../../../img/classes-datatypes-calculated2.png)
+
 
 
 ## Working with PHP api
