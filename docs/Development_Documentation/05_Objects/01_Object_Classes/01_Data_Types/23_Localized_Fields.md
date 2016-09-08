@@ -1,4 +1,4 @@
-## Localized Fields
+# Localized Fields
 
 The datatype **Localized Fields** is a container which can be filled with selected datatypes and layouts. 
 The advantage of this, is to make it very easy to translate fields to the configured languages.

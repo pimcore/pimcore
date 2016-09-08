@@ -66,7 +66,7 @@ The entire list of data types is indicated below:
 | [structuredtable](./17_Structured_Table.md)          | table with predefined rows and columns  |
 | [fieldcollections](./19_Fieldcollections.md)         | A collection of fields that can be added to the object                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | [objectbricks](./21_Object_Bricks.md)             | Bricks of attributes, that can be added to objects | 
-| localizedfields          | Set of attributes that can be translated |
+| [localizedfields](./23_Localized_Fields.md)          | Set of attributes that can be translated |
 | keyvalue                 | key/value pairs                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 
 
