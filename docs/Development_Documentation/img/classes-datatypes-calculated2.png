@@ -1,0 +1,2312 @@
+<!DOCTYPE html>
+<!-- saved from url=(0087)https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value -->
+<html class="splitter-invoked"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Structured Data Fields - Calculated Value - pimcore 4.x - Pimcore Documentation</title>
+
+        
+
+                        
+    
+                        
+    
+                        
+    
+
+    <meta http-equiv="X-UA-Compatible" content="IE=EDGE,chrome=IE7">
+
+<meta id="confluence-context-path" name="confluence-context-path" content="/wiki">
+<meta id="confluence-base-url" name="confluence-base-url" content="https://www.pimcore.org/wiki">
+
+<meta id="atlassian-token" name="atlassian-token" content="2880da610a80b23e26bedb940c65141194f45100">
+
+
+<meta id="confluence-space-key" name="confluence-space-key" content="PIMCORE4">
+<script type="text/javascript" async="" src="./classes-datatypes-calculated2_files/ga.js"></script><script type="text/javascript">
+        var contextPath = '/wiki';
+</script>
+
+    
+
+    <meta name="confluence-request-time" content="1473335861646">
+        
+    
+        
+            <meta name="ajs-is-space-admin" content=""> <meta name="ajs-has-space-config" content="">
+            <meta name="ajs-use-keyboard-shortcuts" content="true">
+            <meta name="ajs-discovered-plugin-features" content="$discoveredList">
+            <meta name="ajs-keyboardshortcut-hash" content="596bb900b687dd9c22836534c9179bfe">
+            <meta name="ajs-is-confluence-admin" content="false">
+            <meta name="ajs-connection-timeout" content="10000">
+            
+    
+    
+            <meta name="ajs-page-id" content="16855523">
+            <meta name="ajs-latest-page-id" content="16855523">
+            <meta name="ajs-content-type" content="page">
+            <meta name="ajs-page-title" content="Structured Data Fields - Calculated Value">
+            <meta name="ajs-parent-page-title" content="Structured Data Fields">
+            <meta name="ajs-parent-page-id" content="16854213">
+            <meta name="ajs-space-key" content="PIMCORE4">
+            <meta name="ajs-space-name" content="pimcore 4.x">
+            <meta name="ajs-from-page-title" content="">
+            <meta name="ajs-can-remove-page" content="false">
+            <meta name="ajs-context-path" content="/wiki">
+            <meta name="ajs-base-url" content="https://www.pimcore.org/wiki">
+            <meta name="ajs-version-number" content="5.9.2">
+            <meta name="ajs-build-number" content="6208">
+            <meta name="ajs-remote-user" content="">
+            <meta name="ajs-remote-user-key" content="">
+            <meta name="ajs-remote-user-has-licensed-access" content="false">
+            <meta name="ajs-current-user-fullname" content="">
+            <meta name="ajs-current-user-avatar-url" content="">
+            <meta name="ajs-static-resource-url-prefix" content="/wiki/s/en_GB/6208/5b3b332f8e293021ada3993e5808a6651f60b74f.46/_">
+            <meta name="ajs-global-settings-attachment-max-size" content="10485760">
+            <meta name="ajs-user-locale" content="en_GB">
+            <meta name="ajs-enabled-dark-features" content="clc.quick.create,confluence.view.edit.transition,cql.search.screen,confluence-inline-comments-resolved,notification.plugin.api.enabled.com.atlassian.confluence.plugins.sharepage.api.ShareContentEvent,notification.plugin.api.enabled.com.atlassian.confluence.plugins.mentions.api.ConfluenceMentionEvent,nps.survey.inline.dialog,confluence.efi.onboarding.new.templates,notification.plugin.api.enabled.com.atlassian.confluence.event.events.security.ForgotPasswordEvent,pdf-preview,notification.plugin.api.enabled.com.atlassian.confluence.plugins.tasklist.event.SendTaskEmailEvent,notification.plugin.api.enabled.com.atlassian.confluence.event.events.content.page.async.PageMovedEvent,previews.sharing,previews.versions,notification.plugin.api.enabled.com.atlassian.confluence.plugins.files.notifications.event.FileContentUpdateEvent,file-annotations,notification.plugin.api.enabled.com.atlassian.confluence.event.events.content.attachment.AttachmentBatchUploadCompletedEvent,confluence.efi.onboarding.rich.space.content,notification.plugin.api.enabled.com.atlassian.confluence.event.events.content.comment.CommentCreateEvent,notification.plugin.api.enabled.com.atlassian.confluence.efi.emails.events.OnboardingLessUsersEvent,notification.plugin.api.enabled.com.atlassian.confluence.plugins.files.notifications.event.FileContentRemoveEvent,confluence.wrap.macro,atlassian.aui.raphael.disabled,previews.conversion-service,notification.plugin.api.enabled.com.atlassian.confluence.event.events.content.comment.CommentUpdateEvent,notification.plugin.api.enabled.com.atlassian.confluence.event.events.follow.FollowEvent,notification.plugin.api.enabled.com.atlassian.confluence.event.events.content.page.async.PageEditedEvent,notification.plugin.api.enabled.com.atlassian.confluence.event.events.content.blogpost.BlogPostCreateEvent,previews.trigger-all-file-types,notification.plugin.api.enabled.com.atlassian.confluence.plugins.inlinecomments.events.InlineCommentResolveEvent,notification.plugin.api.enabled.com.atlassian.confluence.event.events.like.LikeCreatedEvent,notification.plugin.api.enabled.com.atlassian.confluence.plugins.inlinecomments.events.InlineCommentCreateEvent,previews.sharing.pushstate,confluence-inline-comments-rich-editor,notification.plugin.api.enabled.com.atlassian.confluence.event.events.content.blogpost.BlogPostUpdateEvent,file-annotations.likes,notification.plugin.api.enabled.com.atlassian.confluence.event.events.content.page.async.PageCreatedEvent,notification.plugin.api.enabled.com.atlassian.confluence.plugins.files.notifications.event.FileContentMentionUpdateEvent,notification.plugin.api.enabled.com.atlassian.confluence.efi.emails.events.OnboardingNoSpaceCreatedEvent,notification.plugin.api.enabled.com.atlassian.confluence.plugins.hipchat.api.events.HipChatUserMapped,notification.plugin.api.enabled.com.atlassian.confluence.plugins.sharepage.api.ShareAttachmentEvent,confluence-inline-comments,quick-reload-inline-comments-flags,confluence-inline-comments-dangling-comment,notification.plugin.api.enabled.com.atlassian.confluence.event.events.content.blogpost.BlogPostMovedEvent">
+            <meta name="ajs-atl-token" content="2880da610a80b23e26bedb940c65141194f45100">
+            <meta name="ajs-confluence-flavour" content="VANILLA">
+            <meta name="ajs-user-date-pattern" content="dd MMM yyyy">
+            <meta name="ajs-date.format" content="MMM dd, yyyy">
+    
+    <link rel="shortcut icon" href="https://www.pimcore.org/wiki/s/en_GB/6208/5b3b332f8e293021ada3993e5808a6651f60b74f.46/_/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="https://www.pimcore.org/wiki/s/en_GB/6208/5b3b332f8e293021ada3993e5808a6651f60b74f.46/_/favicon.ico">
+
+<link rel="search" type="application/opensearchdescription+xml" href="https://www.pimcore.org/wiki/opensearch/osd.action" title="Pimcore Documentation">
+
+<script>
+window.WRM=window.WRM||{};window.WRM._unparsedData=window.WRM._unparsedData||{};
+WRM._unparsedData["com.atlassian.plugins.atlassian-plugins-webresource-plugin:context-path.context-path"]="\"/wiki\"";
+WRM._unparsedData["com.atlassian.plugins.atlassian-nps-plugin:atlassian-nps-plugin-resources.is-server-instance-data-provider"]="true";
+WRM._unparsedData["com.atlassian.plugins.browser.metrics.browser-metrics-plugin:browser-metrics.feature-data-provider-legacy"]="true";
+WRM._unparsedData["com.atlassian.plugins.atlassian-plugins-webresource-rest:web-resource-manager.resource-base-url-pattern"]="\"(?:/wiki(?:/s/.*?/_)?/download)\"";
+WRM._unparsedData["com.atlassian.confluence.plugins.confluence-license-banner:confluence-license-banner-resources.license-details"]="{\"daysBeforeLicenseExpiry\":0,\"daysBeforeMaintenanceExpiry\":0,\"showLicenseExpiryBanner\":false,\"showMaintenanceExpiryBanner\":false,\"renewUrl\":null,\"salesEmail\":null}";
+WRM._unparsedData["com.atlassian.confluence.plugins.confluence-hipchat-integration-plugin:discovery-javascript-data.link-active"]="{\"linkActive\":false,\"conditionsMet\":true,\"admin\":false}";
+WRM._unparsedData["com.atlassian.plugins.atlassian-nps-plugin:nps-acknowledgement-resources.analytics-enabled-data-provider"]="\"false\"";
+WRM._unparsedData["com.atlassian.plugins.atlassian-nps-plugin:nps-acknowledgement-resources.sen-data-provider"]="\"SEN-2034462\"";
+WRM._unparsedData["com.atlassian.confluence.plugins.confluence-feature-discovery-plugin:confluence-feature-discovery-plugin-resources.test-mode"]="false";
+WRM._unparsedData["com.atlassian.plugins.browser.metrics.browser-metrics-plugin:api.feature-data-provider"]="true";
+WRM._unparsedData["com.atlassian.plugins.browser.metrics.browser-metrics-plugin:api.rack-data-provider"]="\"\"";
+WRM._unparsedData["com.atlassian.applinks.applinks-plugin:applinks-common.applinks-context"]="{\"hostApplication\":{\"id\":\"e7e20de5-7a91-3ace-a787-b1e404d1c38b\",\"type\":\"confluence\"}}";
+WRM._unparsedData["com.atlassian.applinks.applinks-plugin:applinks-common.applinks-features"]="{\"BITBUCKET_REBRAND\":true,\"V3_UI_OPT_IN\":false,\"V3_UI\":false}";
+WRM._unparsedData["com.atlassian.applinks.applinks-plugin:applinks-common.applinks-discovered-features"]="[]";
+WRM._unparsedData["com.atlassian.applinks.applinks-plugin:applinks-util-js.applinks-context"]="{\"hostApplication\":{\"id\":\"e7e20de5-7a91-3ace-a787-b1e404d1c38b\",\"type\":\"confluence\"}}";
+WRM._unparsedData["com.atlassian.applinks.applinks-plugin:applinks-util-js.applinks-features"]="{\"BITBUCKET_REBRAND\":true,\"V3_UI_OPT_IN\":false,\"V3_UI\":false}";
+WRM._unparsedData["com.atlassian.applinks.applinks-plugin:applinks-util-js.applinks-discovered-features"]="[]";
+</script>
+<link type="text/css" rel="stylesheet" href="./classes-datatypes-calculated2_files/batch.css" media="all">
+<!--[if lt IE 9]>
+<link type="text/css" rel="stylesheet" href="/wiki/s/d41d8cd98f00b204e9800998ecf8427e-CDN/en_GB/6208/5b3b332f8e293021ada3993e5808a6651f60b74f.46/29/_/download/superbatch/css/batch.css?conditionalComment=lt+IE+9" media="all">
+<![endif]-->
+<!--[if lte IE 9]>
+<link type="text/css" rel="stylesheet" href="/wiki/s/d41d8cd98f00b204e9800998ecf8427e-CDN/en_GB/6208/5b3b332f8e293021ada3993e5808a6651f60b74f.46/29/_/download/superbatch/css/batch.css?conditionalComment=lte+IE+9" media="all">
+<![endif]-->
+<link type="text/css" rel="stylesheet" href="./classes-datatypes-calculated2_files/batch(1).css" media="all">
+<!--[if lt IE 9]>
+<link type="text/css" rel="stylesheet" href="/wiki/s/d41d8cd98f00b204e9800998ecf8427e-CDN/en_GB/6208/5b3b332f8e293021ada3993e5808a6651f60b74f.46/db7fbe8503581d7563dd16bcdc4679c6/_/download/contextbatch/css/atl.confluence.plugins.pagetree-desktop,main,viewcontent,atl.general,page,atl.comments/batch.css?conditionalComment=lt+IE+9" media="all">
+<![endif]-->
+<link type="text/css" rel="stylesheet" href="./classes-datatypes-calculated2_files/batch(2).css" media="all">
+<link type="text/css" rel="stylesheet" href="./classes-datatypes-calculated2_files/colors.css" media="all">
+<script type="text/javascript" src="./classes-datatypes-calculated2_files/batch.js"></script><style></style><style type="text/css"></style>
+<script type="text/javascript" src="./classes-datatypes-calculated2_files/batch(3).js"></script>
+<script type="text/javascript" src="./classes-datatypes-calculated2_files/batch(4).js"></script>
+
+    
+        
+    
+
+        
+        <meta name="ajs-site-title" content="Pimcore Documentation">
+
+    
+    <script type="text/javascript"> 
+ 
+              var _gaq = _gaq || [];
+              _gaq.push(['_setAccount', 'UA-12436865-1']);
+              _gaq.push(['_trackPageview']);
+            
+              (function() {
+                var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+              })();
+             
+            </script> 
+
+<style type="text/css">
+
+#content .code{
+    background-color:black !important;
+    boder:0;
+    border-style:none !important;
+}
+
+#content .pdl .panelContent {
+    background-color:black !important;
+}
+
+.syntaxhighlighter {
+    overflow:hidden !important;
+}
+
+</style>
+
+    
+                <link rel="canonical" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value">
+        <link rel="shortlink" href="https://www.pimcore.org/wiki/x/4zEBAQ">
+    <meta name="wikilink" content="[PIMCORE4:Structured Data Fields - Calculated Value]">
+    <meta name="page-version" content="3">
+
+
+            <meta name="ajs-use-watch" content="false">
+            <meta name="ajs-attachment-source-content-id" content="16855523">
+            <meta name="ajs-use-inline-tasks" content="true">
+            <meta name="ajs-heartbeat" content="true">
+            <meta name="ajs-action-locale" content="en_GB">
+            <meta name="ajs-editor-plugin-resource-prefix" content="/wiki/s/en_GB/6208/5b3b332f8e293021ada3993e5808a6651f60b74f.46/5.9.2/_">
+            <meta name="ajs-existing-draft-id" content="0">
+            <meta name="ajs-user-watching-own-content" content="false">
+            <meta name="ajs-new-page" content="false">
+            <meta name="ajs-content-id" content="16855523">
+            <meta name="ajs-editor-mode" content="richtext">
+            <meta name="ajs-form-name" content="inlinecommentform">
+            <meta name="ajs-auto-start" content="false">
+            <meta name="ajs-can-attach-files" content="false">
+            <meta name="ajs-show-draft-message" content="false">
+            <meta name="ajs-draft-id" content="0">
+            <meta name="ajs-shared-drafts" content="false">
+            <meta name="ajs-min-editor-height" content="150">
+            <meta name="ajs-draft-share-id" content="">
+            <meta name="ajs-content-type" content="page">
+            <meta name="ajs-version-comment" content="">
+            <meta name="ajs-draft-type" content="page">
+                
+            		    <meta name="ajs-max-thumb-width" content="300">
+		    <meta name="ajs-max-thumb-height" content="300">
+		    <meta name="ajs-can-send-email" content="true">
+		    <meta name="ajs-is-dev-mode" content="false">
+		    <meta name="ajs-draft-save-interval" content="30000">
+		    <meta name="ajs-show-hidden-user-macros" content="false">
+		    <meta name="ajs-is-admin" content="false">
+		    <meta name="ajs-heartbeat-interval" content="30000">
+	
+    <link rel="stylesheet" type="text/css" href="./classes-datatypes-calculated2_files/batch(5).css"><script type="text/javascript" charset="utf-8" src="./classes-datatypes-calculated2_files/batch(6).js"></script><script type="text/javascript" charset="utf-8" src="./classes-datatypes-calculated2_files/batch(7).js"></script><link rel="stylesheet" type="text/css" href="./classes-datatypes-calculated2_files/com.atlassian.confluence.ext.newcode-macro-plugin-sh-theme-emacs.css"><link rel="stylesheet" type="text/css" href="./classes-datatypes-calculated2_files/batch(8).css" media="(max-width: 1450px)"></head>
+
+    
+<body onload="placeFocus()" id="com-atlassian-confluence" class="theme-documentation  aui-theme-default aui-layout splitter-invoked" data-aui-version="5.7.34">
+
+        
+            <div id="stp-licenseStatus-banner"></div>
+    <div id="full-height-container">
+    <div id="header-precursor">
+        
+                    </div>
+
+    
+
+    
+
+
+
+
+
+<header id="header" role="banner">
+    <nav class="aui-header aui-dropdown2-trigger-group" role="navigation" data-aui-responsive="true"><div class="aui-header-inner"><div class="aui-header-primary"><h1 id="logo" class="aui-header-logo aui-header-logo-custom"><a href="https://www.pimcore.org/wiki/"><img src="./classes-datatypes-calculated2_files/atl.site.logo" alt="Pimcore Documentation" data-aui-responsive-header-index="0"></a></h1><ul class="aui-nav __skate" style="width: auto;">
+                            <li>
+            
+        
+        
+<a id="space-menu-link" class=" aui-dropdown2-trigger aui-nav-link" aria-owns="space-menu-link-content" aria-controls="space-menu-link-content" aria-haspopup="true" title="Spaces" tabindex="0" data-aui-trigger="">Spaces<span class="icon aui-icon-dropdown"></span></a><div id="space-menu-link-content" class="aui-dropdown2 aui-style-default aui-dropdown2-in-header"></div>
+        </li>
+                            <li id="browseMenu" role="menu">
+            
+    
+        <a id="browse-menu-link" class="aui-nav-link aui-dropdown2-trigger" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" aria-haspopup="true" aria-owns="browse-menu-link-content" title="Browse">
+        <span class="browse">Browse</span>
+    </a>
+    <nav id="browse-menu-link-content" class="aui-dropdown2 aui-style-default" aria-hidden="true">
+                    <div class="aui-dropdown2-section">
+                                <ul id="browse-menu-link-leading" class="aui-list-truncate section-leading first">
+                                            <li>
+    
+            
+<a id="space-pages-link" href="https://www.pimcore.org/wiki/pages/listpages.action?key=PIMCORE4" class="    " title="Browse pages in the pimcore 4.x space (g , s)">
+        Pages
+</a>
+</li>
+                                            <li>
+    
+            
+<a id="space-blogposts-link" href="https://www.pimcore.org/wiki/pages/viewrecentblogposts.action?key=PIMCORE4" class="    " title="Browse blogs in the pimcore 4.x space">
+        Blog
+</a>
+</li>
+                                            <li>
+    
+            
+<a id="space-labels-link" href="https://www.pimcore.org/wiki/labels/listlabels-heatmap.action?key=PIMCORE4" class="    " title="Browse labels in the pimcore 4.x space">
+        Labels
+</a>
+</li>
+                                            <li>
+    
+            
+<a id="space-advanced-link" href="https://www.pimcore.org/wiki/spaces/viewspacesummary.action?key=PIMCORE4" class="    " title="Browse additional space functions in the pimcore 4.x space">
+        Space Operations
+</a>
+</li>
+                                    </ul>
+            </div>
+            </nav>
+    
+        </li>
+                        <li class="aui-buttons">
+            </li>
+    </ul>
+</div><div class="aui-header-secondary"><ul class="aui-nav __skate">
+            <li>
+        
+    
+        
+<a id="doctheme-anchor" class=" aui-nav-imagelink" title=""><div id="splitter-button" class="" title="Show or hide sidebar ([)"></div></a>
+    </li>
+                    <li>
+        <form id="quick-search" class="aui-quicksearch dont-default-focus header-quicksearch" action="https://www.pimcore.org/wiki/dosearchsite.action" method="get"><fieldset><input type="hidden" name="where" value="PIMCORE4"><input type="hidden" name="spaceSearch" value="true"><label for="quick-search-query" class="assistive">Quick Search</label><input id="quick-search-query" class="text app-search search quick-search-query" type="text" accesskey="q" autocomplete="off" name="queryString" title="Quick Search (/or g , g)" placeholder="Search space"><input id="quick-search-submit" class="quick-search-submit" type="submit" value="Search"><div class="aui-dd-parent quick-nav-drop-down"></div></fieldset></form>
+    </li>
+        <li>
+            
+        <a id="help-menu-link" class="aui-nav-link aui-dropdown2-trigger" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" aria-haspopup="true" aria-owns="help-menu-link-content" title="Help">
+        <span class="aui-icon aui-icon-small aui-iconfont-help">Help</span>
+    </a>
+    <nav id="help-menu-link-content" class="aui-dropdown2 aui-style-default" aria-hidden="true">
+                    <div class="aui-dropdown2-section">
+                                <ul id="help-menu-link-leading" class="aui-list-truncate section-leading first">
+                                            <li>
+        
+            
+<a id="confluence-help-link" href="https://docs.atlassian.com/confluence/docs-59/Getting+Help+And+Support" class="    " title="Visit the Confluence documentation home" target="_blank">
+        Online Help
+</a>
+</li>
+                                            <li>
+    
+            
+<a id="keyboard-shortcuts-link" href="https://www.pimcore.org/wiki" class="    " title="View available keyboard shortcuts (?)">
+        Keyboard Shortcuts
+</a>
+</li>
+                                            <li>
+    
+            
+<a id="feed-builder-link" href="https://www.pimcore.org/wiki/dashboard/configurerssfeed.action" class="    " title="Create your custom RSS feed.">
+        Feed Builder
+</a>
+</li>
+                                            <li>
+    
+            
+<a id="whats-new-menu-link" href="https://confluence.atlassian.com/display/DOC/Confluence+5.9+Release+Notes" class="    " title="">
+        What’s new
+</a>
+</li>
+                                            <li>
+    
+            
+<a id="gadget-directory-link" href="https://www.pimcore.org/wiki" class="   user-item administration-link " title="Browse gadgets provided by Confluence">
+        Available Gadgets
+</a>
+</li>
+                                            <li>
+    
+            
+<a id="confluence-about-link" href="https://www.pimcore.org/wiki/aboutconfluencepage.action" class="    " title="Get more information about Confluence">
+        About Confluence
+</a>
+</li>
+                                    </ul>
+            </div>
+            </nav>
+    
+    </li>
+        <li>
+                
+    
+    </li>
+        <li>
+            
+    </li>
+        <li>
+                                            </li><li>
+        
+            
+<a id="login-link" href="https://www.pimcore.org/wiki/login.action?os_destination=%2Fdisplay%2FPIMCORE4%2FStructured%2BData%2BFields%2B-%2BCalculated%2BValue" class="   user-item login-link " title="">
+        Log in
+</a>
+</li>
+                        <li>
+    
+            
+<a id="signup-link" href="https://www.pimcore.org/wiki/signup.action" class="   user-item signup-link " title="">
+        Sign up
+</a>
+</li>
+                        
+    
+    </ul>
+</div></div><!-- .aui-header-inner--></nav><!-- .aui-header -->
+    <br class="clear">
+</header>
+    
+
+    <div id="splitter" style="position: relative; height: 967px;">
+    <div id="splitter-sidebar" class="padding-div" style="position: absolute; left: 0px; width: 300px; height: 967px;">
+        
+
+                    
+    
+
+
+<div class="plugin_pagetree">
+
+        
+        
+    <ul class="plugin_pagetree_children_list plugin_pagetree_children_list_noleftspace">
+        <div class="plugin_pagetree_children" id="children16854179-0">
+<ul class="plugin_pagetree_children_list" id="child_ul16854179-0">
+            <li>
+    <div class="plugin_pagetree_childtoggle_container">
+                                            <a id="plusminus16854180-0" class="plugin_pagetree_childtoggle icon icon-section-closed" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#">
+            </a>
+            </div>
+    <div class="plugin_pagetree_children_content">
+          
+        
+                    <span class="plugin_pagetree_children_span" id="childrenspan16854180-0">                        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Installation+and+Upgrade">Installation and Upgrade</a>
+        </span>
+            </div>
+
+        <div id="children16854180-0" class="plugin_pagetree_children_container">
+                                                            </div>
+    </li>
+            <li>
+    <div class="plugin_pagetree_childtoggle_container">
+                                            <a id="plusminus16854199-0" class="plugin_pagetree_childtoggle icon icon-section-opened" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#">
+            </a>
+            </div>
+    <div class="plugin_pagetree_children_content">
+          
+        
+                    <span class="plugin_pagetree_children_span" id="childrenspan16854199-0">                        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Develop+with+pimcore">Develop with pimcore</a>
+        </span>
+            </div>
+
+        <div id="children16854199-0" class="plugin_pagetree_children_container">
+                                                        <ul class="plugin_pagetree_children_list" id="child_ul16854199-0">
+                                            <li>
+    <div class="plugin_pagetree_childtoggle_container">
+                    <span class="no-children icon"></span>
+            </div>
+    <div class="plugin_pagetree_children_content">
+          
+        
+                    <span class="plugin_pagetree_children_span" id="childrenspan16854237-0">                        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Overview">Overview</a>
+        </span>
+            </div>
+
+        <div id="children16854237-0" class="plugin_pagetree_children_container">
+            </div>
+    </li>
+                                            <li>
+    <div class="plugin_pagetree_childtoggle_container">
+                                            <a id="plusminus16854238-0" class="plugin_pagetree_childtoggle icon icon-section-closed" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#">
+            </a>
+            </div>
+    <div class="plugin_pagetree_children_content">
+          
+        
+                    <span class="plugin_pagetree_children_span" id="childrenspan16854238-0">                        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Documents">Documents</a>
+        </span>
+            </div>
+
+        <div id="children16854238-0" class="plugin_pagetree_children_container">
+                                                            </div>
+    </li>
+                                            <li>
+    <div class="plugin_pagetree_childtoggle_container">
+                                            <a id="plusminus16854278-0" class="plugin_pagetree_childtoggle icon icon-section-closed" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#">
+            </a>
+            </div>
+    <div class="plugin_pagetree_children_content">
+          
+        
+                    <span class="plugin_pagetree_children_span" id="childrenspan16854278-0">                        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Assets">Assets</a>
+        </span>
+            </div>
+
+        <div id="children16854278-0" class="plugin_pagetree_children_container">
+                                                            </div>
+    </li>
+                                            <li>
+    <div class="plugin_pagetree_childtoggle_container">
+                                            <a id="plusminus16854205-0" class="plugin_pagetree_childtoggle icon icon-section-opened" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#">
+            </a>
+            </div>
+    <div class="plugin_pagetree_children_content">
+          
+        
+                    <span class="plugin_pagetree_children_span" id="childrenspan16854205-0">                        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Data+Objects">Data Objects</a>
+        </span>
+            </div>
+
+        <div id="children16854205-0" class="plugin_pagetree_children_container">
+                                                        <ul class="plugin_pagetree_children_list" id="child_ul16854205-0">
+                                            <li>
+    <div class="plugin_pagetree_childtoggle_container">
+                                            <a id="plusminus16854206-0" class="plugin_pagetree_childtoggle icon icon-section-opened" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#">
+            </a>
+            </div>
+    <div class="plugin_pagetree_children_content">
+          
+        
+                    <span class="plugin_pagetree_children_span" id="childrenspan16854206-0">                        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Object+Classes">Object Classes</a>
+        </span>
+            </div>
+
+        <div id="children16854206-0" class="plugin_pagetree_children_container">
+                                                        <ul class="plugin_pagetree_children_list" id="child_ul16854206-0">
+                                            <li>
+    <div class="plugin_pagetree_childtoggle_container">
+                                            <a id="plusminus16854208-0" class="plugin_pagetree_childtoggle icon icon-section-opened" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#">
+            </a>
+            </div>
+    <div class="plugin_pagetree_children_content">
+          
+        
+                    <span class="plugin_pagetree_children_span" id="childrenspan16854208-0">                        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Data+Fields">Data Fields</a>
+        </span>
+            </div>
+
+        <div id="children16854208-0" class="plugin_pagetree_children_container">
+                                                        <ul class="plugin_pagetree_children_list" id="child_ul16854208-0">
+                                            <li>
+    <div class="plugin_pagetree_childtoggle_container">
+                    <span class="no-children icon"></span>
+            </div>
+    <div class="plugin_pagetree_children_content">
+          
+        
+                    <span class="plugin_pagetree_children_span" id="childrenspan16854212-0">                        <a href="https://www.pimcore.org/wiki/pages/viewpage.action?pageId=16854212">Date, Date &amp; Time, Time</a>
+        </span>
+            </div>
+
+        <div id="children16854212-0" class="plugin_pagetree_children_container">
+            </div>
+    </li>
+                                            <li>
+    <div class="plugin_pagetree_childtoggle_container">
+                    <span class="no-children icon"></span>
+            </div>
+    <div class="plugin_pagetree_children_content">
+          
+        
+                    <span class="plugin_pagetree_children_span" id="childrenspan16854221-0">                        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Geographic+Fields+-+Point%2C+Bounds%2C+Polygon">Geographic Fields - Point, Bounds, Polygon</a>
+        </span>
+            </div>
+
+        <div id="children16854221-0" class="plugin_pagetree_children_container">
+            </div>
+    </li>
+                                            <li>
+    <div class="plugin_pagetree_childtoggle_container">
+                    <span class="no-children icon"></span>
+            </div>
+    <div class="plugin_pagetree_children_content">
+          
+        
+                    <span class="plugin_pagetree_children_span" id="childrenspan16854209-0">                        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Href%2C+Multihref%2C+Objects+-+Relations%2C+Dependencies+and+Lazy+Loading%2C+Objects+with+Metadata%2C+Multihref+with+Metadata">Href, Multihref, Objects - Relations, Dependencies and Lazy Loading, Objects with Metadata, Multihref with Metadata</a>
+        </span>
+            </div>
+
+        <div id="children16854209-0" class="plugin_pagetree_children_container">
+            </div>
+    </li>
+                                            <li>
+    <div class="plugin_pagetree_childtoggle_container">
+                    <span class="no-children icon"></span>
+            </div>
+    <div class="plugin_pagetree_children_content">
+          
+        
+                    <span class="plugin_pagetree_children_span" id="childrenspan16854225-0">                        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Localized+Fields">Localized Fields</a>
+        </span>
+            </div>
+
+        <div id="children16854225-0" class="plugin_pagetree_children_container">
+            </div>
+    </li>
+                                            <li>
+    <div class="plugin_pagetree_childtoggle_container">
+                    <span class="no-children icon"></span>
+            </div>
+    <div class="plugin_pagetree_children_content">
+          
+        
+                    <span class="plugin_pagetree_children_span" id="childrenspan16854224-0">                        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Non-Owner+Objects">Non-Owner Objects</a>
+        </span>
+            </div>
+
+        <div id="children16854224-0" class="plugin_pagetree_children_container">
+            </div>
+    </li>
+                                            <li>
+    <div class="plugin_pagetree_childtoggle_container">
+                                            <a id="plusminus16854223-0" class="plugin_pagetree_childtoggle icon icon-section-closed" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#">
+            </a>
+            </div>
+    <div class="plugin_pagetree_children_content">
+          
+        
+                    <span class="plugin_pagetree_children_span" id="childrenspan16854223-0">                        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Number+Fields+-+Numeric%2C+Slider">Number Fields - Numeric, Slider</a>
+        </span>
+            </div>
+
+        <div id="children16854223-0" class="plugin_pagetree_children_container">
+                                                            </div>
+    </li>
+                                            <li>
+    <div class="plugin_pagetree_childtoggle_container">
+                    <span class="no-children icon"></span>
+            </div>
+    <div class="plugin_pagetree_children_content">
+          
+        
+                    <span class="plugin_pagetree_children_span" id="childrenspan16854210-0">                        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Other+Fields+-+Image%2C+External+Image%2C+Image+with+Hotspots%2C+Checkbox%2C+Link">Other Fields - Image, External Image, Image with Hotspots, Checkbox, Link</a>
+        </span>
+            </div>
+
+        <div id="children16854210-0" class="plugin_pagetree_children_container">
+            </div>
+    </li>
+                                            <li>
+    <div class="plugin_pagetree_childtoggle_container">
+                    <span class="no-children icon"></span>
+            </div>
+    <div class="plugin_pagetree_children_content">
+          
+        
+                    <span class="plugin_pagetree_children_span" id="childrenspan16854211-0">                        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Select+Fields+-+Select%2C++Multiselect%2C+User%2C+Country%2C+Language">Select Fields - Select,  Multiselect, User, Country, Language</a>
+        </span>
+            </div>
+
+        <div id="children16854211-0" class="plugin_pagetree_children_container">
+            </div>
+    </li>
+                                            <li>
+    <div class="plugin_pagetree_childtoggle_container">
+                                            <a id="plusminus16854213-0" class="plugin_pagetree_childtoggle icon icon-section-opened" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#">
+            </a>
+            </div>
+    <div class="plugin_pagetree_children_content">
+          
+        
+                    <span class="plugin_pagetree_children_span" id="childrenspan16854213-0">                        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields">Structured Data Fields</a>
+        </span>
+            </div>
+
+        <div id="children16854213-0" class="plugin_pagetree_children_container">
+                                                        <ul class="plugin_pagetree_children_list" id="child_ul16854213-0">
+                                            <li>
+    <div class="plugin_pagetree_childtoggle_container">
+                    <span class="no-children icon"></span>
+            </div>
+    <div class="plugin_pagetree_children_content">
+          
+        
+                    <span class="plugin_pagetree_children_span" id="childrenspan23101462-0">                        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Block">Structured Data Fields - Block</a>
+        </span>
+            </div>
+
+        <div id="children23101462-0" class="plugin_pagetree_children_container">
+            </div>
+    </li>
+                                            <li>
+    <div class="plugin_pagetree_childtoggle_container">
+                    <span class="no-children icon"></span>
+            </div>
+    <div class="plugin_pagetree_children_content">
+          
+        
+                    <span class="plugin_pagetree_children_span plugin_pagetree_current" id="childrenspan16855523-0">                        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value">Structured Data Fields - Calculated Value</a>
+        </span>
+            </div>
+
+        <div id="children16855523-0" class="plugin_pagetree_children_container">
+            </div>
+    </li>
+                                            <li>
+    <div class="plugin_pagetree_childtoggle_container">
+                    <span class="no-children icon"></span>
+            </div>
+    <div class="plugin_pagetree_children_content">
+          
+        
+                    <span class="plugin_pagetree_children_span" id="childrenspan16854220-0">                        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Classification+Store">Structured Data Fields - Classification Store</a>
+        </span>
+            </div>
+
+        <div id="children16854220-0" class="plugin_pagetree_children_container">
+            </div>
+    </li>
+                                            <li>
+    <div class="plugin_pagetree_childtoggle_container">
+                    <span class="no-children icon"></span>
+            </div>
+    <div class="plugin_pagetree_children_content">
+          
+        
+                    <span class="plugin_pagetree_children_span" id="childrenspan16854215-0">                        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Fieldcollections">Structured Data Fields - Fieldcollections</a>
+        </span>
+            </div>
+
+        <div id="children16854215-0" class="plugin_pagetree_children_container">
+            </div>
+    </li>
+                                            <li>
+    <div class="plugin_pagetree_childtoggle_container">
+                    <span class="no-children icon"></span>
+            </div>
+    <div class="plugin_pagetree_children_content">
+          
+        
+                    <span class="plugin_pagetree_children_span" id="childrenspan16854219-0">                        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Key+Value+Pairs">Structured Data Fields - Key Value Pairs</a>
+        </span>
+            </div>
+
+        <div id="children16854219-0" class="plugin_pagetree_children_container">
+            </div>
+    </li>
+                                            <li>
+    <div class="plugin_pagetree_childtoggle_container">
+                    <span class="no-children icon"></span>
+            </div>
+    <div class="plugin_pagetree_children_content">
+          
+        
+                    <span class="plugin_pagetree_children_span" id="childrenspan16854216-0">                        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Objectbricks">Structured Data Fields - Objectbricks</a>
+        </span>
+            </div>
+
+        <div id="children16854216-0" class="plugin_pagetree_children_container">
+            </div>
+    </li>
+                                            <li>
+    <div class="plugin_pagetree_childtoggle_container">
+                    <span class="no-children icon"></span>
+            </div>
+    <div class="plugin_pagetree_children_content">
+          
+        
+                    <span class="plugin_pagetree_children_span" id="childrenspan16854218-0">                        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Structured+Table">Structured Data Fields - Structured Table</a>
+        </span>
+            </div>
+
+        <div id="children16854218-0" class="plugin_pagetree_children_container">
+            </div>
+    </li>
+                                            <li>
+    <div class="plugin_pagetree_childtoggle_container">
+                    <span class="no-children icon"></span>
+            </div>
+    <div class="plugin_pagetree_children_content">
+          
+        
+                    <span class="plugin_pagetree_children_span" id="childrenspan16854214-0">                        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Table">Structured Data Fields - Table</a>
+        </span>
+            </div>
+
+        <div id="children16854214-0" class="plugin_pagetree_children_container">
+            </div>
+    </li>
+                                        </ul>
+                                        </div>
+    </li>
+                                            <li>
+    <div class="plugin_pagetree_childtoggle_container">
+                    <span class="no-children icon"></span>
+            </div>
+    <div class="plugin_pagetree_children_content">
+          
+        
+                    <span class="plugin_pagetree_children_span" id="childrenspan16854222-0">                        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Text+Input+Fields+-+Input%2C+Password%2CTextarea%2C+WYSIWYG">Text Input Fields - Input, Password,Textarea, WYSIWYG</a>
+        </span>
+            </div>
+
+        <div id="children16854222-0" class="plugin_pagetree_children_container">
+            </div>
+    </li>
+                                            <li>
+    <div class="plugin_pagetree_childtoggle_container">
+                    <span class="no-children icon"></span>
+            </div>
+    <div class="plugin_pagetree_children_content">
+          
+        
+                    <span class="plugin_pagetree_children_span" id="childrenspan16854226-0">                        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Video+Field">Video Field</a>
+        </span>
+            </div>
+
+        <div id="children16854226-0" class="plugin_pagetree_children_container">
+            </div>
+    </li>
+                                        </ul>
+                                        </div>
+    </li>
+                                            <li>
+    <div class="plugin_pagetree_childtoggle_container">
+                    <span class="no-children icon"></span>
+            </div>
+    <div class="plugin_pagetree_children_content">
+          
+        
+                    <span class="plugin_pagetree_children_span" id="childrenspan16854207-0">                        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Layout+Elements">Layout Elements</a>
+        </span>
+            </div>
+
+        <div id="children16854207-0" class="plugin_pagetree_children_container">
+            </div>
+    </li>
+                                        </ul>
+                                        </div>
+    </li>
+                                            <li>
+    <div class="plugin_pagetree_childtoggle_container">
+                    <span class="no-children icon"></span>
+            </div>
+    <div class="plugin_pagetree_children_content">
+          
+        
+                    <span class="plugin_pagetree_children_span" id="childrenspan16854227-0">                        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Object+Lists">Object Lists</a>
+        </span>
+            </div>
+
+        <div id="children16854227-0" class="plugin_pagetree_children_container">
+            </div>
+    </li>
+                                            <li>
+    <div class="plugin_pagetree_childtoggle_container">
+                    <span class="no-children icon"></span>
+            </div>
+    <div class="plugin_pagetree_children_content">
+          
+        
+                    <span class="plugin_pagetree_children_span" id="childrenspan16854228-0">                        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/External+System+Interaction">External System Interaction</a>
+        </span>
+            </div>
+
+        <div id="children16854228-0" class="plugin_pagetree_children_container">
+            </div>
+    </li>
+                                            <li>
+    <div class="plugin_pagetree_childtoggle_container">
+                    <span class="no-children icon"></span>
+            </div>
+    <div class="plugin_pagetree_children_content">
+          
+        
+                    <span class="plugin_pagetree_children_span" id="childrenspan16854229-0">                        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Inheritance">Inheritance</a>
+        </span>
+            </div>
+
+        <div id="children16854229-0" class="plugin_pagetree_children_container">
+            </div>
+    </li>
+                                            <li>
+    <div class="plugin_pagetree_childtoggle_container">
+                    <span class="no-children icon"></span>
+            </div>
+    <div class="plugin_pagetree_children_content">
+          
+        
+                    <span class="plugin_pagetree_children_span" id="childrenspan16854230-0">                        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Custom+Icons">Custom Icons</a>
+        </span>
+            </div>
+
+        <div id="children16854230-0" class="plugin_pagetree_children_container">
+            </div>
+    </li>
+                                            <li>
+    <div class="plugin_pagetree_childtoggle_container">
+                    <span class="no-children icon"></span>
+            </div>
+    <div class="plugin_pagetree_children_content">
+          
+        
+                    <span class="plugin_pagetree_children_span" id="childrenspan16854231-0">                        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Locking+fields">Locking fields</a>
+        </span>
+            </div>
+
+        <div id="children16854231-0" class="plugin_pagetree_children_container">
+            </div>
+    </li>
+                                            <li>
+    <div class="plugin_pagetree_childtoggle_container">
+                    <span class="no-children icon"></span>
+            </div>
+    <div class="plugin_pagetree_children_content">
+          
+        
+                    <span class="plugin_pagetree_children_span" id="childrenspan16854232-0">                        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Object+Variants">Object Variants</a>
+        </span>
+            </div>
+
+        <div id="children16854232-0" class="plugin_pagetree_children_container">
+            </div>
+    </li>
+                                            <li>
+    <div class="plugin_pagetree_childtoggle_container">
+                    <span class="no-children icon"></span>
+            </div>
+    <div class="plugin_pagetree_children_content">
+          
+        
+                    <span class="plugin_pagetree_children_span" id="childrenspan16854233-0">                        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Object+Preview">Object Preview</a>
+        </span>
+            </div>
+
+        <div id="children16854233-0" class="plugin_pagetree_children_container">
+            </div>
+    </li>
+                                            <li>
+    <div class="plugin_pagetree_childtoggle_container">
+                                            <a id="plusminus16854234-0" class="plugin_pagetree_childtoggle icon icon-section-closed" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#">
+            </a>
+            </div>
+    <div class="plugin_pagetree_children_content">
+          
+        
+                    <span class="plugin_pagetree_children_span" id="childrenspan16854234-0">                        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Object+Tree">Object Tree</a>
+        </span>
+            </div>
+
+        <div id="children16854234-0" class="plugin_pagetree_children_container">
+                                                            </div>
+    </li>
+                                            <li>
+    <div class="plugin_pagetree_childtoggle_container">
+                    <span class="no-children icon"></span>
+            </div>
+    <div class="plugin_pagetree_children_content">
+          
+        
+                    <span class="plugin_pagetree_children_span" id="childrenspan16854236-0">                        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Custom+Layouts">Custom Layouts</a>
+        </span>
+            </div>
+
+        <div id="children16854236-0" class="plugin_pagetree_children_container">
+            </div>
+    </li>
+                                        </ul>
+                                        </div>
+    </li>
+                                            <li>
+    <div class="plugin_pagetree_childtoggle_container">
+                                            <a id="plusminus16854285-0" class="plugin_pagetree_childtoggle icon icon-section-closed" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#">
+            </a>
+            </div>
+    <div class="plugin_pagetree_children_content">
+          
+        
+                    <span class="plugin_pagetree_children_span" id="childrenspan16854285-0">                        <a href="https://www.pimcore.org/wiki/pages/viewpage.action?pageId=16854285">Reports &amp; Marketing</a>
+        </span>
+            </div>
+
+        <div id="children16854285-0" class="plugin_pagetree_children_container">
+                                                            </div>
+    </li>
+                                            <li>
+    <div class="plugin_pagetree_childtoggle_container">
+                                            <a id="plusminus16854289-0" class="plugin_pagetree_childtoggle icon icon-section-closed" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#">
+            </a>
+            </div>
+    <div class="plugin_pagetree_children_content">
+          
+        
+                    <span class="plugin_pagetree_children_span" id="childrenspan16854289-0">                        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/General">General</a>
+        </span>
+            </div>
+
+        <div id="children16854289-0" class="plugin_pagetree_children_container">
+                                                            </div>
+    </li>
+                                            <li>
+    <div class="plugin_pagetree_childtoggle_container">
+                                            <a id="plusminus16854342-0" class="plugin_pagetree_childtoggle icon icon-section-closed" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#">
+            </a>
+            </div>
+    <div class="plugin_pagetree_children_content">
+          
+        
+                    <span class="plugin_pagetree_children_span" id="childrenspan16854342-0">                        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Web+Services">Web Services</a>
+        </span>
+            </div>
+
+        <div id="children16854342-0" class="plugin_pagetree_children_container">
+                                                            </div>
+    </li>
+                                            <li>
+    <div class="plugin_pagetree_childtoggle_container">
+                    <span class="no-children icon"></span>
+            </div>
+    <div class="plugin_pagetree_children_content">
+          
+        
+                    <span class="plugin_pagetree_children_span" id="childrenspan16854344-0">                        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Localization">Localization</a>
+        </span>
+            </div>
+
+        <div id="children16854344-0" class="plugin_pagetree_children_container">
+            </div>
+    </li>
+                                            <li>
+    <div class="plugin_pagetree_childtoggle_container">
+                                            <a id="plusminus16854345-0" class="plugin_pagetree_childtoggle icon icon-section-closed" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#">
+            </a>
+            </div>
+    <div class="plugin_pagetree_children_content">
+          
+        
+                    <span class="plugin_pagetree_children_span" id="childrenspan16854345-0">                        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Outputfilters">Outputfilters</a>
+        </span>
+            </div>
+
+        <div id="children16854345-0" class="plugin_pagetree_children_container">
+                                                            </div>
+    </li>
+                                            <li>
+    <div class="plugin_pagetree_childtoggle_container">
+                                            <a id="plusminus16854349-0" class="plugin_pagetree_childtoggle icon icon-section-closed" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#">
+            </a>
+            </div>
+    <div class="plugin_pagetree_children_content">
+          
+        
+                    <span class="plugin_pagetree_children_span" id="childrenspan16854349-0">                        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Email+Framework">Email Framework</a>
+        </span>
+            </div>
+
+        <div id="children16854349-0" class="plugin_pagetree_children_container">
+                                                            </div>
+    </li>
+                                            <li>
+    <div class="plugin_pagetree_childtoggle_container">
+                                            <a id="plusminus16854200-0" class="plugin_pagetree_childtoggle icon icon-section-closed" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#">
+            </a>
+            </div>
+    <div class="plugin_pagetree_children_content">
+          
+        
+                    <span class="plugin_pagetree_children_span" id="childrenspan16854200-0">                        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Best+Practices">Best Practices</a>
+        </span>
+            </div>
+
+        <div id="children16854200-0" class="plugin_pagetree_children_container">
+                                                            </div>
+    </li>
+                                            <li>
+    <div class="plugin_pagetree_childtoggle_container">
+                    <span class="no-children icon"></span>
+            </div>
+    <div class="plugin_pagetree_children_content">
+          
+        
+                    <span class="plugin_pagetree_children_span" id="childrenspan21626984-0">                        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Perspectives">Perspectives</a>
+        </span>
+            </div>
+
+        <div id="children21626984-0" class="plugin_pagetree_children_container">
+            </div>
+    </li>
+                                        </ul>
+                                        </div>
+    </li>
+            <li>
+    <div class="plugin_pagetree_childtoggle_container">
+                                            <a id="plusminus16854187-0" class="plugin_pagetree_childtoggle icon icon-section-closed" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#">
+            </a>
+            </div>
+    <div class="plugin_pagetree_children_content">
+          
+        
+                    <span class="plugin_pagetree_children_span" id="childrenspan16854187-0">                        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Administrator%27s+Guide">Administrator's Guide</a>
+        </span>
+            </div>
+
+        <div id="children16854187-0" class="plugin_pagetree_children_container">
+                                                            </div>
+    </li>
+            <li>
+    <div class="plugin_pagetree_childtoggle_container">
+                                            <a id="plusminus16854354-0" class="plugin_pagetree_childtoggle icon icon-section-closed" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#">
+            </a>
+            </div>
+    <div class="plugin_pagetree_children_content">
+          
+        
+                    <span class="plugin_pagetree_children_span" id="childrenspan16854354-0">                        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/User%27s+Guide">User's Guide</a>
+        </span>
+            </div>
+
+        <div id="children16854354-0" class="plugin_pagetree_children_container">
+                                                            </div>
+    </li>
+            <li>
+    <div class="plugin_pagetree_childtoggle_container">
+                                            <a id="plusminus16854363-0" class="plugin_pagetree_childtoggle icon icon-section-closed" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#">
+            </a>
+            </div>
+    <div class="plugin_pagetree_children_content">
+          
+        
+                    <span class="plugin_pagetree_children_span" id="childrenspan16854363-0">                        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Extensions">Extensions</a>
+        </span>
+            </div>
+
+        <div id="children16854363-0" class="plugin_pagetree_children_container">
+                                                            </div>
+    </li>
+            <li>
+    <div class="plugin_pagetree_childtoggle_container">
+                                            <a id="plusminus16854351-0" class="plugin_pagetree_childtoggle icon icon-section-closed" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#">
+            </a>
+            </div>
+    <div class="plugin_pagetree_children_content">
+          
+        
+                    <span class="plugin_pagetree_children_span" id="childrenspan16854351-0">                        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Develop+for+pimcore">Develop for pimcore</a>
+        </span>
+            </div>
+
+        <div id="children16854351-0" class="plugin_pagetree_children_container">
+                                                            </div>
+    </li>
+            <li>
+    <div class="plugin_pagetree_childtoggle_container">
+                    <span class="no-children icon"></span>
+            </div>
+    <div class="plugin_pagetree_children_content">
+          
+        
+                    <span class="plugin_pagetree_children_span" id="childrenspan16854362-0">                        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/FAQ">FAQ</a>
+        </span>
+            </div>
+
+        <div id="children16854362-0" class="plugin_pagetree_children_container">
+            </div>
+    </li>
+            <li>
+    <div class="plugin_pagetree_childtoggle_container">
+                                            <a id="plusminus16854374-0" class="plugin_pagetree_childtoggle icon icon-section-closed" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#">
+            </a>
+            </div>
+    <div class="plugin_pagetree_children_content">
+          
+        
+                    <span class="plugin_pagetree_children_span" id="childrenspan16854374-0">                        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Documentation+Guideline">Documentation Guideline</a>
+        </span>
+            </div>
+
+        <div id="children16854374-0" class="plugin_pagetree_children_container">
+                                                            </div>
+    </li>
+    </ul>
+</div>
+    </ul>
+
+    <fieldset class="hidden">
+        <input type="hidden" name="treeId" value="">
+        <input type="hidden" name="treeRequestId" value="/wiki/plugins/pagetree/naturalchildren.action?decorator=none&amp;excerpt=false&amp;sort=position&amp;reverse=false&amp;disableLinks=false&amp;expandCurrent=false">
+        <input type="hidden" name="treePageId" value="16855523">
+
+        <input type="hidden" name="noRoot" value="false">
+        <input type="hidden" name="rootPageId" value="16854179">
+
+        <input type="hidden" name="rootPage" value="">
+        <input type="hidden" name="startDepth" value="0">
+        <input type="hidden" name="spaceKey" value="PIMCORE4">
+
+        <input type="hidden" name="i18n-pagetree.loading" value="Loading...">
+        <input type="hidden" name="i18n-pagetree.error.permission" value="Unable to load page tree. It seems that you do not have permission to view the root page.">
+        <input type="hidden" name="i18n-pagetree.eeror.general" value="There was a problem retrieving the page tree. Please check the server log file for more information.">
+        <input type="hidden" name="loginUrl" value="/wiki/login.action?os_destination=%2Fpages%2Fviewpage.action%3FspaceKey%3DPIMCORE4%26title%3DStructured%2BData%2BFields%2B-%2BCalculated%2BValue&amp;permissionViolation=true">
+        <input type="hidden" name="mobile" value="false">
+
+                <fieldset class="hidden">
+                                                <input type="hidden" name="ancestorId" value="16854213">
+                                    <input type="hidden" name="ancestorId" value="16854208">
+                                    <input type="hidden" name="ancestorId" value="16854206">
+                                    <input type="hidden" name="ancestorId" value="16854205">
+                                    <input type="hidden" name="ancestorId" value="16854199">
+                                    <input type="hidden" name="ancestorId" value="16854179">
+                                    </fieldset>
+    </fieldset>
+</div>
+
+
+
+            </div><div class="vsplitbar" unselectable="on" style="z-index: 4; position: absolute; -webkit-user-select: none; cursor: ew-resize; left: 300px; height: 967px;"><a href="javascript:void(0)" accesskey="L" tabindex="0" title="vsplitbar"></a></div>
+    <div id="splitter-content" style="position: absolute; left: 305px; width: 1615px; height: 967px;">
+
+        <script>require('doctheme/doc-theme')()</script>
+
+                        
+            
+<div id="main" class="aui-page-panel">
+    <div id="main-header" class="doctheme-no-override">
+        
+        
+    <div id="navigation" class="content-navigation view">
+                    <ul class="ajs-menu-bar">
+                                            
+        <li class="normal ajs-menu-item">
+        <a id="action-menu-link" class="action aui-dropdown2-trigger-arrowless aui-button aui-button-subtle ajs-menu-title aui-dropdown2-trigger" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" aria-haspopup="true" aria-owns="action-menu" data-container="#navigation">
+            <span>
+                                    <span class="aui-icon aui-icon-small aui-iconfont-more"></span>
+                                
+            </span>
+        </a>         <div id="action-menu" class="aui-dropdown2 aui-style-default most-right-menu-item" aria-hidden="true">
+                            <div class="aui-dropdown2-section">
+                    <ul id="action-menu-primary" class="section-primary first">
+                                                    <li>
+
+    
+        
+                                            
+    
+    
+    <a id="view-attachments-link" href="https://www.pimcore.org/wiki/pages/viewpageattachments.action?pageId=16855523" rel="nofollow" class="action-view-attachments" accesskey="t" title="View Attachments (t)">
+                <span>
+                        A<u>t</u>tachments (3)
+        </span>    </a>
+</li>
+                                                <li>
+
+    
+        
+                                            
+    
+    
+    <a id="action-view-history-link" href="https://www.pimcore.org/wiki/pages/viewpreviousversions.action?pageId=16855523" rel="nofollow" class="action-view-history" title="">
+                <span>
+                        Page History
+        </span>    </a>
+</li>
+                                        </ul>
+                </div>
+                            <div class="aui-dropdown2-section">
+                    <ul id="action-menu-secondary" class="section-secondary">
+                                                    <li>
+
+    
+        
+                                            
+    
+    
+    <a id="view-page-info-link" href="https://www.pimcore.org/wiki/pages/viewinfo.action?pageId=16855523" rel="nofollow" class="action-view-info" title="">
+                <span>
+                        Page Information
+        </span>    </a>
+</li>
+                                                <li>
+
+    
+        
+                                            
+    
+    
+    <a id="view-resolved-comments" href="https://www.pimcore.org/wiki" rel="nofollow" class="" title="" style="display: none;">
+                <span>Resolved comments (0)</span>    </a>
+</li>
+                                                <li>
+
+    
+        
+                                            
+    
+    
+    <a id="link-to-page-link" href="https://www.pimcore.org/wiki/pages/viewinfo.action?pageId=16855523" rel="nofollow" class="" title="Link to this Page (k)">
+                <span>
+                        Link to this Page…
+        </span>    </a>
+</li>
+                                                <li>
+
+    
+        
+                                            
+    
+    
+    <a id="view-in-hierarchy-link" href="https://www.pimcore.org/wiki/pages/listpages-dirview.action?key=PIMCORE4&amp;openId=16855523#selectedPageInHierarchy" rel="nofollow" class="" title="">
+                <span>
+                        View in Hierarchy
+        </span>    </a>
+</li>
+                                                <li>
+
+    
+        
+                                            
+    
+    
+    <a id="action-view-source-link" href="https://www.pimcore.org/wiki/plugins/viewsource/viewpagesrc.action?pageId=16855523" rel="nofollow" class="action-view-source popup-link" title="">
+                <span>
+                        View Source
+        </span>    </a>
+</li>
+                                                <li>
+
+    
+        
+                                            
+    
+    
+    <a id="action-export-pdf-link" href="https://www.pimcore.org/wiki/spaces/flyingpdf/pdfpageexport.action?pageId=16855523" rel="nofollow" class="" title="">
+                <span>
+                        Export to PDF
+        </span>    </a>
+</li>
+                                                <li>
+
+    
+        
+                                            
+    
+    
+    <a id="action-export-word-link" href="https://www.pimcore.org/wiki/exportword?pageId=16855523" rel="nofollow" class="action-export-word" title="">
+                <span>
+                        Export to Word
+        </span>    </a>
+</li>
+                                        </ul>
+                </div>
+                    </div>
+    </li>
+            </ul>
+    </div>
+
+        
+                <div id="title-heading" class="pagetitle with-breadcrumbs">
+        
+                            <div class="space-logo " data-key="PIMCORE4" data-name="pimcore 4.x" data-entity-type="confluence.space">
+            <a><img class="logo space custom" src="./classes-datatypes-calculated2_files/PIMCORE4" alt=""></a>
+        </div>            
+                            <div id="breadcrumb-section">
+                    
+    
+    
+    <ol id="breadcrumbs">
+                                        
+                        
+        <li class="first">
+                        
+                            <span class=""><a href="https://www.pimcore.org/wiki/display/PIMCORE4?src=breadcrumbs-homepage">pimcore 4.x</a></span>
+                                                                                            </li><li id="ellipsis" title="Show all breadcrumbs"><span><strong>…</strong></span></li>
+                                                
+                        
+        <li class="hidden-crumb">
+                        
+                            <span class=""><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Pimcore+Version+4.x+Documentation?src=breadcrumbs-expanded">Pimcore Version 4.x Documentation</a></span>
+                                                                                    
+                        
+        </li><li class="hidden-crumb">
+                        
+                            <span class=""><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Develop+with+pimcore?src=breadcrumbs-expanded">Develop with pimcore</a></span>
+                                                                                    
+                        
+        </li><li class="hidden-crumb">
+                        
+                            <span class=""><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Data+Objects?src=breadcrumbs-expanded">Data Objects</a></span>
+                                                                                    
+                        
+        </li><li class="hidden-crumb">
+                        
+                            <span class=""><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Object+Classes?src=breadcrumbs-expanded">Object Classes</a></span>
+                                                                                    
+                        
+        </li><li class="hidden-crumb">
+                        
+                            <span class=""><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Data+Fields?src=breadcrumbs-expanded">Data Fields</a></span>
+                                                                    
+                        
+        </li><li>
+                        
+                            <span class=""><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields?src=breadcrumbs-parent">Structured Data Fields</a></span>
+                                                    </li></ol>
+
+
+                </div>
+            
+            <h1 id="title-text" class="with-breadcrumbs">
+                                        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value">Structured Data Fields - Calculated Value</a>
+                            </h1>
+        </div>
+    </div>
+
+    
+
+    
+    
+    
+    
+    
+
+        
+
+
+
+
+            
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+        
+    
+    
+                    
+    
+
+    
+    
+    
+
+    
+    
+
+    
+    
+
+    
+<div id="content" class="page view">
+    
+
+
+<div id="action-messages">
+                        </div>
+
+
+
+        <script type="text/x-template" title="searchResultsGrid">
+    <table class="aui">
+        <thead>
+            <tr class="header">
+                <th class="search-result-title">Page Title</th>
+                <th class="search-result-space">Space</th>
+                <th class="search-result-date">Updated</th>
+            </tr>
+        </thead>
+    </table>
+</script>
+<script type="text/x-template" title="searchResultsGridCount">
+    <p class="search-result-count">{0}</p>
+</script>
+<script type="text/x-template" title="searchResultsGridRow">
+    <tr class="search-result">
+        <td class="search-result-title"><a href="{1}" class="content-type-{2}"><span>{0}</span></a></td>
+        <td class="search-result-space"><a class="space" href="/wiki/display/{4}/" title="{3}">{3}</a></td>
+        <td class="search-result-date"><span class="date" title="{6}">{5}</span></td>
+    </tr>
+</script>
+        
+    
+    
+        <fieldset class="hidden parameters">
+            <input type="hidden" title="parentPageId" value="16854213">
+        </fieldset>
+
+                            
+    
+
+                    
+
+        
+        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#page-metadata-end" class="assistive">Skip to end of metadata</a>
+<div id="page-metadata-start" class="assistive"></div>
+
+    <div class="page-metadata">
+        <ul>
+                            <li class="page-metadata-item noprint">
+
+    
+            
+                                            
+    
+    
+    <a id="content-metadata-page-restrictions-hidden" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" rel="nofollow" class="hidden" title="Unrestricted">
+                <span>
+                        
+        </span>    </a>
+</li>
+                            <li class="page-metadata-item noprint">
+
+    
+        
+                                            
+    
+    
+    <a id="content-metadata-attachments" href="https://www.pimcore.org/wiki/pages/viewpageattachments.action?pageId=16855523&amp;metadataLink=true" rel="nofollow" class="aui-icon aui-icon-small aui-iconfont-attachment" accesskey="t" title="3 attachments">
+                <span>
+                        
+        </span>    </a>
+</li>
+                        <li class="page-metadata-modification-info">
+                
+        
+    
+        
+    
+        
+            
+            Created by <span class="author">     <a href="https://www.pimcore.org/wiki/display/~memleak" class="url fn">Josef Aichhorn</a></span>, last modified on <a class="last-modified" title="Show changes" href="https://www.pimcore.org/wiki/pages/diffpagesbyversion.action?pageId=16855523&amp;selectedPageVersions=2&amp;selectedPageVersions=3">Oct 07, 2015</a>
+                </li>
+        </ul>
+    </div>
+
+
+<a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#page-metadata-start" class="assistive">Go to start of metadata</a>
+<div id="page-metadata-end" class="assistive"></div>
+
+        
+        <fieldset class="hidden parameters">
+                        <input type="hidden" title="browsePageTreeMode" value="view">
+        </fieldset>
+
+        <div id="main-content" class="wiki-content">
+                           
+        <div class="confluence-information-macro confluence-information-macro-note conf-macro output-block" data-hasbody="true" data-macro-name="note"><span class="aui-icon aui-icon-small aui-iconfont-warning confluence-information-macro-icon"> </span><div class="confluence-information-macro-body"><p><span style="color: rgb(255,0,0);">EXPERIMENTAL. Subject to change without notice!</span></p></div></div><div class="confluence-information-macro confluence-information-macro-information conf-macro output-block" data-hasbody="true" data-macro-name="info"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"> </span><div class="confluence-information-macro-body"><p>ExtJS6 only. Since build 3551.</p><p>Known limitations:</p><ul><li>no CSV Export</li><li>no Webservice Export&nbsp;</li></ul></div></div><p>The calculated-value datatype allows you to calculate attributes based on the value of various other attributes. The only data stored is the one in the object's query tables.</p><p>Let's have a closer look by walking through a simple example.</p><p>Let's suppose we have a very simple class with 2 number fields called xValue and yValue and a calculated-value field called "sum" placed inside a localizedfields container.</p><p><span class="confluence-embedded-file-wrapper"><img class="confluence-embedded-image" src="./classes-datatypes-calculated2_files/image2015-10-7 14-29-17.png" data-image-src="/wiki/download/attachments/16855523/image2015-10-7%2014%3A29%3A17.png?version=1&amp;modificationDate=1444220958000&amp;api=v2" data-unresolved-comment-count="0" data-linked-resource-id="17170856" data-linked-resource-version="1" data-linked-resource-type="attachment" data-linked-resource-default-alias="image2015-10-7 14:29:17.png" data-base-url="https://www.pimcore.org/wiki" data-linked-resource-content-type="image/png" data-linked-resource-container-id="16855523" data-linked-resource-container-version="3"></span></p><p>The first step is to provide a PHP calculator class implementing at least one static method which computes the result for the "sum" field. An example is shown below.</p><p>The arguments passed into this method is the pimcore object and the contextual information telling you which calculated-value field is affected and where it is located it.<br>The extent of information differs on which datatype is the owner of the calculated-value field (localizedfield, object brick etc.). The details are documented below.</p><div class="code panel pdl conf-macro output-block" style="border-width: 1px;" data-hasbody="true" data-macro-name="code"><div class="codeContent panelContent pdl">
+<div><div id="highlighter_489219" class="syntaxhighlighter nogutter  php"><div class="toolbar"><span><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" class="toolbar_item command_help help">?</a></span></div><table border="0" cellpadding="0" cellspacing="0"><tbody><tr><td class="code"><div class="container" title="Hint: double-click to select code"><div class="line number1 index0 alt2"><code class="php keyword">namespace</code> <code class="php plain">Website;</code></div><div class="line number2 index1 alt1">&nbsp;</div><div class="line number3 index2 alt2"><code class="php keyword">use</code> <code class="php plain">Pimcore\Model\Object\Concrete;</code></div><div class="line number4 index3 alt1">&nbsp;</div><div class="line number5 index4 alt2"><code class="php keyword">class</code> <code class="php plain">CalculatorDemo</code></div><div class="line number6 index5 alt1"><code class="php plain">{</code></div><div class="line number7 index6 alt2"><code class="php spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="php comments">/**</code></div><div class="line number8 index7 alt1"><code class="php spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="php comments">* @param $object Concrete</code></div><div class="line number9 index8 alt2"><code class="php spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="php comments">* @param $context \Pimcore\Model\Object\Data\CalculatedValue</code></div><div class="line number10 index9 alt1"><code class="php spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="php comments">* @return string</code></div><div class="line number11 index10 alt2"><code class="php spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="php comments">*/</code></div><div class="line number12 index11 alt1"><code class="php spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="php keyword">public</code> <code class="php keyword">static</code> <code class="php keyword">function</code> <code class="php plain">compute(</code><code class="php variable">$object</code><code class="php plain">, </code><code class="php variable">$context</code><code class="php plain">) {</code></div><div class="line number13 index12 alt2"><code class="php spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="php keyword">if</code> <code class="php plain">(</code><code class="php variable">$context</code><code class="php plain">-&gt;getFieldname() == </code><code class="php string">"sum"</code><code class="php plain">) {</code></div><div class="line number14 index13 alt1"><code class="php spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="php variable">$language</code> <code class="php plain">= </code><code class="php variable">$context</code><code class="php plain">-&gt;getPosition();</code></div><div class="line number15 index14 alt2"><code class="php spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="php keyword">return</code> <code class="php variable">$object</code><code class="php plain">-&gt;getXValue(</code><code class="php variable">$language</code><code class="php plain">) +&nbsp; </code><code class="php variable">$object</code><code class="php plain">-&gt;getYValue(</code><code class="php variable">$language</code><code class="php plain">);</code></div><div class="line number16 index15 alt1"><code class="php spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="php plain">} </code><code class="php keyword">else</code> <code class="php plain">{</code></div><div class="line number17 index16 alt2"><code class="php spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="php plain">\Logger::error(</code><code class="php string">"unknown field"</code><code class="php plain">);</code></div><div class="line number18 index17 alt1"><code class="php spaces">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="php plain">}</code></div><div class="line number19 index18 alt2"><code class="php spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="php plain">}</code></div><div class="line number20 index19 alt1"><code class="php plain">}</code></div></div></td></tr></tbody></table></div></div>
+</div></div><p>As we see here the calculator class sums up the x and y values from the corresponding language tab.</p><p>It is also possible to provide a different representation for edit mode by providing a second (optional) implementation just for this purpose. An example would be:</p><div class="code panel pdl conf-macro output-block" style="border-width: 1px;" data-hasbody="true" data-macro-name="code"><div class="codeContent panelContent pdl">
+<div><div id="highlighter_271259" class="syntaxhighlighter nogutter  php"><div class="toolbar"><span><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" class="toolbar_item command_help help">?</a></span></div><table border="0" cellpadding="0" cellspacing="0"><tbody><tr><td class="code"><div class="container" title="Hint: double-click to select code"><div class="line number1 index0 alt2"><code class="php comments">/**</code></div><div class="line number2 index1 alt1"><code class="php spaces">&nbsp;</code><code class="php comments">* @param $object</code></div><div class="line number3 index2 alt2"><code class="php spaces">&nbsp;</code><code class="php comments">* @param $context \Pimcore\Model\Object\Data\CalculatedValue</code></div><div class="line number4 index3 alt1"><code class="php spaces">&nbsp;</code><code class="php comments">* @return string</code></div><div class="line number5 index4 alt2"><code class="php spaces">&nbsp;</code><code class="php comments">*/</code></div><div class="line number6 index5 alt1"><code class="php keyword">public</code> <code class="php keyword">static</code> <code class="php keyword">function</code> <code class="php plain">getCalculatedValueForEditMode(</code><code class="php variable">$object</code><code class="php plain">, </code><code class="php variable">$context</code><code class="php plain">) {</code></div><div class="line number7 index6 alt2"><code class="php spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="php variable">$language</code> <code class="php plain">= </code><code class="php variable">$context</code><code class="php plain">-&gt;getPosition();</code></div><div class="line number8 index7 alt1"><code class="php spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="php variable">$result</code> <code class="php plain">= </code><code class="php variable">$object</code><code class="php plain">-&gt;getXValue(</code><code class="php variable">$language</code><code class="php plain">) . </code><code class="php string">" + "</code> <code class="php plain">. </code><code class="php variable">$object</code><code class="php plain">-&gt;getYValue(</code><code class="php variable">$language</code><code class="php plain">) . </code><code class="php string">" = "</code> <code class="php plain">. self::compute(</code><code class="php variable">$object</code><code class="php plain">, </code><code class="php variable">$context</code><code class="php plain">);</code></div><div class="line number9 index8 alt2"><code class="php spaces">&nbsp;&nbsp;&nbsp;&nbsp;</code><code class="php keyword">return</code> <code class="php variable">$result</code><code class="php plain">;</code></div><div class="line number10 index9 alt1"><code class="php plain">}</code></div></div></td></tr></tbody></table></div></div>
+</div></div><p>The visual outcome would be as follows.</p><p><span class="confluence-embedded-file-wrapper"><img class="confluence-embedded-image" src="./classes-datatypes-calculated2_files/image2015-10-7 14-41-10.png" data-image-src="/wiki/download/attachments/16855523/image2015-10-7%2014%3A41%3A10.png?version=1&amp;modificationDate=1444221671000&amp;api=v2" data-unresolved-comment-count="0" data-linked-resource-id="17170857" data-linked-resource-version="1" data-linked-resource-type="attachment" data-linked-resource-default-alias="image2015-10-7 14:41:10.png" data-base-url="https://www.pimcore.org/wiki" data-linked-resource-content-type="image/png" data-linked-resource-container-id="16855523" data-linked-resource-container-version="3"></span>&nbsp; &nbsp;<span class="confluence-embedded-file-wrapper"><img class="confluence-embedded-image" src="./classes-datatypes-calculated2_files/image2015-10-7 14-42-6.png" data-image-src="/wiki/download/attachments/16855523/image2015-10-7%2014%3A42%3A6.png?version=1&amp;modificationDate=1444221727000&amp;api=v2" data-unresolved-comment-count="0" data-linked-resource-id="17170858" data-linked-resource-version="1" data-linked-resource-type="attachment" data-linked-resource-default-alias="image2015-10-7 14:42:6.png" data-base-url="https://www.pimcore.org/wiki" data-linked-resource-content-type="image/png" data-linked-resource-container-id="16855523" data-linked-resource-container-version="3"></span></p><p>Getter methods are also generated. The code to retrieve the values would then be&nbsp;</p><div class="code panel pdl conf-macro output-block" style="border-width: 1px;" data-hasbody="true" data-macro-name="code"><div class="codeContent panelContent pdl">
+<div><div id="highlighter_374146" class="syntaxhighlighter nogutter  php"><div class="toolbar"><span><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" class="toolbar_item command_help help">?</a></span></div><table border="0" cellpadding="0" cellspacing="0"><tbody><tr><td class="code"><div class="container" title="Hint: double-click to select code"><div class="line number1 index0 alt2"><code class="php variable">$object</code> <code class="php plain">= Object_Abstract::getByPath(</code><code class="php string">"/demoobject"</code><code class="php plain">);</code></div><div class="line number2 index1 alt1"><code class="php variable">$valueDe</code> <code class="php plain">=&nbsp; </code><code class="php variable">$object</code><code class="php plain">-&gt;getSum(</code><code class="php string">"de"</code><code class="php plain">);&nbsp;&nbsp; </code><code class="php comments">// =&gt; 38</code></div><div class="line number3 index2 alt2"><code class="php variable">$valueEn</code> <code class="php plain">=&nbsp; </code><code class="php variable">$object</code><code class="php plain">-&gt;getSum(</code><code class="php string">"en"</code><code class="php plain">);&nbsp;&nbsp; </code><code class="php comments">// =&gt; 11</code></div></div></td></tr></tbody></table></div></div>
+</div></div><p>As said before, the richness of the context information depends on the location of the calculated-value field.</p><div class="table-wrap"><table class="confluenceTable tablesorter tablesorter-default"><thead><tr class="tablesorter-headerRow"><th class="confluenceTh sortableHeader" data-column="0" tabindex="0" unselectable="on"><div class="tablesorter-header-inner">object (top-level)</div></th><th class="confluenceTh sortableHeader" data-column="1" tabindex="0" unselectable="on"><div class="tablesorter-header-inner">&nbsp;</div></th></tr></thead><tbody><tr><td colspan="1" class="confluenceTd">ownerType</td><td colspan="1" class="confluenceTd">"object"</td></tr><tr><td colspan="1" class="confluenceTd">fieldName</td><td colspan="1" class="confluenceTd">the name of the calculated-value field ("sum")</td></tr></tbody></table></div><div class="table-wrap"><table class="confluenceTable tablesorter tablesorter-default"><thead><tr class="tablesorter-headerRow"><th class="confluenceTh sortableHeader" data-column="0" tabindex="0" unselectable="on"><div class="tablesorter-header-inner">localizedfields</div></th><th class="confluenceTh sortableHeader" data-column="1" tabindex="0" unselectable="on"><div class="tablesorter-header-inner">&nbsp;</div></th></tr></thead><tbody><tr><td colspan="1" class="confluenceTd">ownerType</td><td colspan="1" class="confluenceTd">"localizedfield"</td></tr><tr><td colspan="1" class="confluenceTd">ownerName</td><td colspan="1" class="confluenceTd">the name of the localized field ("localizedfields")</td></tr><tr><td colspan="1" class="confluenceTd">position</td><td colspan="1" class="confluenceTd">the language ("en", "de", ...)</td></tr></tbody></table></div><div class="table-wrap"><table class="confluenceTable tablesorter tablesorter-default"><thead><tr class="tablesorter-headerRow"><th class="confluenceTh sortableHeader" data-column="0" tabindex="0" unselectable="on"><div class="tablesorter-header-inner">objectbricks</div></th><th class="confluenceTh sortableHeader" data-column="1" tabindex="0" unselectable="on"><div class="tablesorter-header-inner">&nbsp;</div></th></tr></thead><tbody><tr><td colspan="1" class="confluenceTd">ownerType</td><td colspan="1" class="confluenceTd">"objectbrick"</td></tr><tr><td colspan="1" class="confluenceTd">ownerName</td><td colspan="1" class="confluenceTd">the name of the objectbrick field inside the object</td></tr><tr><td colspan="1" class="confluenceTd">fieldName</td><td colspan="1" class="confluenceTd">the name of the attribute inside the brick</td></tr><tr><td colspan="1" class="confluenceTd">index</td><td colspan="1" class="confluenceTd">the name of the brick</td></tr><tr><td colspan="1" class="confluenceTd">keyDefinition</td><td colspan="1" class="confluenceTd">the calculated-value field definition</td></tr></tbody></table></div><div class="table-wrap"><table class="confluenceTable tablesorter tablesorter-default"><thead><tr class="tablesorter-headerRow"><th class="confluenceTh sortableHeader" data-column="0" tabindex="0" unselectable="on"><div class="tablesorter-header-inner">fieldcollections</div></th><th class="confluenceTh sortableHeader" data-column="1" tabindex="0" unselectable="on"><div class="tablesorter-header-inner">&nbsp;</div></th></tr></thead><tbody><tr><td colspan="1" class="confluenceTd">ownerType</td><td colspan="1" class="confluenceTd">"fieldcollection"</td></tr><tr><td colspan="1" class="confluenceTd">ownerName</td><td colspan="1" class="confluenceTd">the name of the fieldcollection attribute</td></tr><tr><td colspan="1" class="confluenceTd">fieldName</td><td colspan="1" class="confluenceTd">the name of the attribute inside the fieldcollection</td></tr><tr><td colspan="1" class="confluenceTd">index</td><td colspan="1" class="confluenceTd">the index of the fieldcollection item</td></tr><tr><td colspan="1" class="confluenceTd">keyDefinition</td><td colspan="1" class="confluenceTd">the calculated-value field definition</td></tr></tbody></table></div><div class="table-wrap"><table class="confluenceTable tablesorter tablesorter-default"><thead><tr class="tablesorter-headerRow"><th class="confluenceTh sortableHeader" data-column="0" tabindex="0" unselectable="on"><div class="tablesorter-header-inner">classification store</div></th><th class="confluenceTh sortableHeader" data-column="1" tabindex="0" unselectable="on"><div class="tablesorter-header-inner">&nbsp;</div></th></tr></thead><tbody><tr><td colspan="1" class="confluenceTd">ownerType</td><td colspan="1" class="confluenceTd">"classificationstore"</td></tr><tr><td colspan="1" class="confluenceTd">ownerName</td><td colspan="1" class="confluenceTd">the name of the classification store attribute</td></tr><tr><td colspan="1" class="confluenceTd">fieldName</td><td colspan="1" class="confluenceTd"><span>the name of the classification store attribute</span></td></tr><tr><td colspan="1" class="confluenceTd">position</td><td colspan="1" class="confluenceTd">the language</td></tr><tr><td colspan="1" class="confluenceTd">groupId</td><td colspan="1" class="confluenceTd">group id</td></tr><tr><td colspan="1" class="confluenceTd">keyId</td><td colspan="1" class="confluenceTd">key id</td></tr><tr><td colspan="1" class="confluenceTd">keyDefinition</td><td colspan="1" class="confluenceTd">the fielddefinition of the classificationstore attribute</td></tr></tbody></table></div><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p>
+
+                
+        
+    
+        </div>
+
+        <!--
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:dc="http://purl.org/dc/elements/1.1/"
+         xmlns:trackback="http://madskills.com/public/xml/rss/module/trackback/">
+         <rdf:Description
+    rdf:about="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value"
+    dc:identifier="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value"
+    dc:title="Structured Data Fields - Calculated Value"
+    trackback:ping="https://www.pimcore.org/wiki/rpc/trackback/16855523"/>
+</rdf:RDF>
+-->
+
+            
+    
+
+
+
+<div id="likes-and-labels-container"><div id="likes-section" style="display: none;"><span class="like-summary"></span></div><div id="labels-section" class="pageSection group">
+    <div class="labels-section-content content-column" entityid="16855523" entitytype="page">
+	<div class="labels-content">
+		
+    <ul class="label-list label-list-right ">
+            <li class="no-labels-message">
+            No labels
+        </li>
+            </ul>
+
+    </div>
+</div>
+</div></div>
+
+            
+            
+
+
+
+
+            
+        
+
+
+
+
+
+
+
+
+                        
+    
+<div id="comments-section" class="pageSection group">
+        
+    
+
+
+
+</div>
+        
+
+
+            
+</div>
+    
+
+
+    
+
+
+
+
+    
+    
+
+    
+    
+    
+
+
+
+
+        
+
+
+
+
+</div>
+    
+  
+    </div>
+</div>
+
+
+        
+            
+            
+
+<div id="footer" role="contentinfo">
+    <section class="footer-body">
+
+                                                            <p class="license license-opensource">
+                    Powered by a free <b>Atlassian Confluence Open Source Project License</b> granted to pimcore. <a href="http://www.atlassian.com/c/conf/11461">Evaluate Confluence today</a>.<br>
+                </p>
+                    
+        
+
+        <ul id="poweredby">
+            <li class="noprint">Powered by <a href="http://www.atlassian.com/software/confluence" class="hover-footer-link">Atlassian Confluence</a> <span id="footer-build-information">5.9.2</span>, <a href="http://www.atlassian.com/software/confluence/overview/team-collaboration-software?utm_source=confluence-footer" class="hover-footer-link">Team Collaboration Software</a></li>
+            <li class="print-only">Printed by Atlassian Confluence 5.9.2, Team Collaboration Software.</li>
+            <li class="noprint"><a href="https://jira.atlassian.com/browse/CONF" class="hover-footer-link">Report a bug</a></li>
+            <li class="noprint"><a href="http://www.atlassian.com/about/connected.jsp?s_kwcid=Confluence-stayintouch" class="hover-footer-link">Atlassian News</a></li>
+        </ul>
+
+        
+
+        <div id="footer-logo"><a href="http://www.atlassian.com/">Atlassian</a></div>
+
+                    
+        
+    </section>
+</div>
+
+    </div>
+
+        <span style="display:none;" id="confluence-server-performance">{"serverDuration": 76, "requestCorrelationId": "45a12f7a498f20"}</span>
+
+
+    
+<div id="editor-preload-container" style="display: none;">
+ 
+
+<div class="hidden">
+        
+
+
+<content tag="breadcrumbs">
+    
+    
+    <ol id="quickedit-breadcrumbs">
+                                        
+                        
+        <li class="first">
+                        
+                            <span class=""><a href="https://www.pimcore.org/wiki/display/PIMCORE4">pimcore 4.x</a></span>
+                                                                                            </li><li id="ellipsis" title="Show all breadcrumbs"><span><strong>…</strong></span></li>
+                                                
+                        
+        <li class="hidden-crumb">
+                        
+                            <span class=""><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Pimcore+Version+4.x+Documentation">Pimcore Version 4.x Documentation</a></span>
+                                                                                    
+                        
+        </li><li class="hidden-crumb">
+                        
+                            <span class=""><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Develop+with+pimcore">Develop with pimcore</a></span>
+                                                                                    
+                        
+        </li><li class="hidden-crumb">
+                        
+                            <span class=""><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Data+Objects">Data Objects</a></span>
+                                                                                    
+                        
+        </li><li class="hidden-crumb">
+                        
+                            <span class=""><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Object+Classes">Object Classes</a></span>
+                                                                                    
+                        
+        </li><li class="hidden-crumb">
+                        
+                            <span class=""><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Data+Fields">Data Fields</a></span>
+                                                                    
+                        
+        </li><li>
+                        
+                            <span class=""><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields">Structured Data Fields</a></span>
+                                                                    
+                        
+        </li><li>
+                        
+                            <span class="edited-page-title"><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value">Structured Data Fields - Calculated Value</a></span>
+                                                    </li></ol>
+
+</content>
+</div>
+
+
+        
+    <div id="anonymous-warning" class="aui-message warning closeable">You are not logged in. Any changes you make will be marked as <span class="smalltext">anonymous</span>. You may want to <a href="https://www.pimcore.org/wiki/login.action?os_destination=%2Fdisplay%2FPIMCORE4%2FStructured%2BData%2BFields%2B-%2BCalculated%2BValue">Log In</a> if you already have an account.</div>
+
+                                                                                        
+
+<script type="text/x-template" title="editor-css" id="editor-css-resources">
+    <link type="text/css" rel="stylesheet" href="/wiki/s/7e417bbc07ed21f90a55e989886f1017-CDN/en_GB/6208/5b3b332f8e293021ada3993e5808a6651f60b74f.46/5.7.34/_/download/batch/com.atlassian.auiplugin:aui-page-typography/com.atlassian.auiplugin:aui-page-typography.css" media="all">
+<link type="text/css" rel="stylesheet" href="/wiki/s/7e417bbc07ed21f90a55e989886f1017-CDN/en_GB/6208/5b3b332f8e293021ada3993e5808a6651f60b74f.46/5.7.34/_/download/batch/com.atlassian.auiplugin:aui-avatars/com.atlassian.auiplugin:aui-avatars.css" media="all">
+<link type="text/css" rel="stylesheet" href="/wiki/s/90731515e1d37d44a291c7a04cec4f94-CDN/en_GB/6208/5b3b332f8e293021ada3993e5808a6651f60b74f.46/5.7.34/_/download/batch/com.atlassian.auiplugin:aui-page-layout/com.atlassian.auiplugin:aui-page-layout.css" media="all">
+<link type="text/css" rel="stylesheet" href="/wiki/s/1ccd59155201f54e983ef3bc062fd66b-CDN/en_GB/6208/5b3b332f8e293021ada3993e5808a6651f60b74f.46/5.9.2/_/download/batch/com.atlassian.confluence.editor:editor-content-styles/com.atlassian.confluence.editor:editor-content-styles.css" media="all">
+<link type="text/css" rel="stylesheet" href="/wiki/s/d41d8cd98f00b204e9800998ecf8427e-CDN/en_GB/6208/5b3b332f8e293021ada3993e5808a6651f60b74f.46/5.9.2/_/download/batch/com.atlassian.confluence.plugins.confluence-templates:variable-editor-content-styles/com.atlassian.confluence.plugins.confluence-templates:variable-editor-content-styles.css" media="all">
+<link type="text/css" rel="stylesheet" href="/wiki/s/7e417bbc07ed21f90a55e989886f1017-CDN/en_GB/6208/5b3b332f8e293021ada3993e5808a6651f60b74f.46/5.7.34/_/download/batch/com.atlassian.auiplugin:aui-lozenge/com.atlassian.auiplugin:aui-lozenge.css" media="all">
+<link type="text/css" rel="stylesheet" href="/wiki/s/d41d8cd98f00b204e9800998ecf8427e-CDN/en_GB/6208/5b3b332f8e293021ada3993e5808a6651f60b74f.46/2.17/_/download/batch/com.atlassian.confluence.plugins.status-macro:view_content_status/com.atlassian.confluence.plugins.status-macro:view_content_status.css" media="all">
+<link type="text/css" rel="stylesheet" href="/wiki/s/489901e715cade6fe0efc7e21e194576-CDN/en_GB/6208/5b3b332f8e293021ada3993e5808a6651f60b74f.46/2.17/_/download/batch/com.atlassian.confluence.plugins.status-macro:editor_content_status/com.atlassian.confluence.plugins.status-macro:editor_content_status.css" media="all">
+<link type="text/css" rel="stylesheet" href="/wiki/s/db3daece29a9d5f93d193ed25a4b973b-CDN/en_GB/6208/5b3b332f8e293021ada3993e5808a6651f60b74f.46/1.2.5/_/download/batch/com.atlassian.confluence.plugins.confluence-fixed-headers:confluence-fixed-headers-editor-content-resources/com.atlassian.confluence.plugins.confluence-fixed-headers:confluence-fixed-headers-editor-content-resources.css?confluence.view.edit.transition=true" media="all">
+<link type="text/css" rel="stylesheet" href="/wiki/s/6bcc3684f18aa21874fa709f122723cf-CDN/en_GB/6208/5b3b332f8e293021ada3993e5808a6651f60b74f.46/3.7.0/_/download/batch/confluence.extra.attachments:attachments-css/confluence.extra.attachments:attachments-css.css" media="all">
+<link type="text/css" rel="stylesheet" href="/wiki/s/d41d8cd98f00b204e9800998ecf8427e-CDN/en_GB/6208/5b3b332f8e293021ada3993e5808a6651f60b74f.46/12.4.05/_/download/batch/com.atlassian.confluence.plugins.confluence-roadmap-plugin:roadmap-placeholder-css/com.atlassian.confluence.plugins.confluence-roadmap-plugin:roadmap-placeholder-css.css" media="all">
+<link type="text/css" rel="stylesheet" href="/wiki/s/d41d8cd98f00b204e9800998ecf8427e-CDN/en_GB/6208/5b3b332f8e293021ada3993e5808a6651f60b74f.46/1.0/_/download/batch/confluence.web.resources:panel-styles/confluence.web.resources:panel-styles.css" media="all">
+<link type="text/css" rel="stylesheet" href="/wiki/s/d41d8cd98f00b204e9800998ecf8427e-CDN/en_GB/6208/5b3b332f8e293021ada3993e5808a6651f60b74f.46/1.0/_/download/batch/confluence.web.resources:content-styles/confluence.web.resources:content-styles.css" media="all">
+<link type="text/css" rel="stylesheet" href="/wiki/s/d41d8cd98f00b204e9800998ecf8427e-CDN/en_GB/6208/5b3b332f8e293021ada3993e5808a6651f60b74f.46/5.9.2/_/download/batch/com.atlassian.confluence.plugins.confluence-page-layout:editor-pagelayout-content-styles/com.atlassian.confluence.plugins.confluence-page-layout:editor-pagelayout-content-styles.css" media="all">
+<link type="text/css" rel="stylesheet" href="/wiki/s/d41d8cd98f00b204e9800998ecf8427e-CDN/en_GB/6208/5b3b332f8e293021ada3993e5808a6651f60b74f.46/4.1.2/_/download/batch/com.atlassian.confluence.plugins.confluence-business-blueprints:sharelinks-urlmacro-editor-resources/com.atlassian.confluence.plugins.confluence-business-blueprints:sharelinks-urlmacro-editor-resources.css" media="all">
+<link type="text/css" rel="stylesheet" href="/wiki/s/d41d8cd98f00b204e9800998ecf8427e-CDN/en_GB/6208/5b3b332f8e293021ada3993e5808a6651f60b74f.46/5.7.14/_/download/batch/com.atlassian.confluence.plugins.confluence-inline-tasks:inline-tasks-styles/com.atlassian.confluence.plugins.confluence-inline-tasks:inline-tasks-styles.css" media="all">
+<link type="text/css" rel="stylesheet" href="/wiki/s/d41d8cd98f00b204e9800998ecf8427e-CDN/en_GB/6208/5b3b332f8e293021ada3993e5808a6651f60b74f.46/5.7.14/_/download/batch/com.atlassian.confluence.plugins.confluence-inline-tasks:editor-autocomplete-date-css/com.atlassian.confluence.plugins.confluence-inline-tasks:editor-autocomplete-date-css.css" media="all">
+<!--[if lte IE 9]>
+<link type="text/css" rel="stylesheet" href="/wiki/s/d41d8cd98f00b204e9800998ecf8427e-CDN/en_GB/6208/5b3b332f8e293021ada3993e5808a6651f60b74f.46/5.7.14/_/download/batch/com.atlassian.confluence.plugins.confluence-inline-tasks:editor-autocomplete-date-css/com.atlassian.confluence.plugins.confluence-inline-tasks:editor-autocomplete-date-css.css?conditionalComment=lte+IE+9" media="all">
+<![endif]-->
+<link type="text/css" rel="stylesheet" href="/wiki/s/ff60b7aab5aad26f3fe092077c8029d8-CDN/en_GB/6208/5b3b332f8e293021ada3993e5808a6651f60b74f.46/1.4.26/_/download/batch/com.atlassian.confluence.plugins.confluence-view-file-macro:view-file-macro-editor-content-resources/com.atlassian.confluence.plugins.confluence-view-file-macro:view-file-macro-editor-content-resources.css" media="all">
+<link type="text/css" rel="stylesheet" href="/wiki/s/d41d8cd98f00b204e9800998ecf8427e-CDN/en_GB/6208/5b3b332f8e293021ada3993e5808a6651f60b74f.46/3.1.0/_/download/batch/com.atlassian.confluence.plugins.confluence-software-blueprints:common-resources/com.atlassian.confluence.plugins.confluence-software-blueprints:common-resources.css" media="all">
+<link type="text/css" rel="stylesheet" href="/wiki/s/en_GB/6208/5b3b332f8e293021ada3993e5808a6651f60b74f.46/4/_/styles/colors.css" media="all">
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+
+<div class="editor-container">
+
+        
+            
+
+<div id="link-browser-tab-items" class="hidden">
+                <div title="Search" data-weight="10">search</div>
+            <div title="Files" data-weight="30">attachments</div>
+            <div title="Web link" data-weight="40">weblink</div>
+            <div title="Advanced" data-weight="50">advanced</div>
+    </div>
+            <div id="image-properties-tab-items" class="hidden">
+                <div title="Effects" data-weight="10">image-effects</div>
+            <div title="Title" data-weight="20">image-attributes</div>
+    </div>
+            
+
+ 
+
+
+
+
+
+
+
+
+
+
+        <div id="toolbar">
+        <div id="rte-toolbar" class="aui-toolbar aui-toolbar2">
+
+            <div class="aui-toolbar2-primary toolbar-primary">
+                <ul class="aui-buttons rte-toolbar-group-formatting">
+                                        <li id="format-dropdown" class="toolbar-item toolbar-dropdown">
+                        <div class="aui-dd-parent">
+                            <a id="format-dropdown-display" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" class="toolbar-trigger aui-dd-trigger aui-button" data-control-id="formatselect">
+                                <span class="dropdown-text">Paragraph</span>
+                                    <span class="icon icon-dropdown "></span>
+                            </a>
+                            <ul id="format-dropdown-display-menu" class="aui-dropdown hidden">
+                                    <li class="dropdown-item format-p" data-format="p" data-tooltip="Paragraph (Ctrl+0)">
+        <a class="item-link" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#">Paragraph</a>
+    </li>
+                                    <li class="dropdown-item format-h1" data-format="h1" data-tooltip="Heading 1 (Ctrl+1)">
+        <a class="item-link" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#">Heading 1</a>
+    </li>
+                                    <li class="dropdown-item format-h2" data-format="h2" data-tooltip="Heading 2 (Ctrl+2)">
+        <a class="item-link" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#">Heading 2</a>
+    </li>
+                                    <li class="dropdown-item format-h3" data-format="h3" data-tooltip="Heading 3 (Ctrl+3)">
+        <a class="item-link" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#">Heading 3</a>
+    </li>
+                                    <li class="dropdown-item format-h4" data-format="h4" data-tooltip="Heading 4 (Ctrl+4)">
+        <a class="item-link" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#">Heading 4</a>
+    </li>
+                                    <li class="dropdown-item format-h5" data-format="h5" data-tooltip="Heading 5 (Ctrl+5)">
+        <a class="item-link" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#">Heading 5</a>
+    </li>
+                                    <li class="dropdown-item format-h6" data-format="h6" data-tooltip="Heading 6 (Ctrl+6)">
+        <a class="item-link" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#">Heading 6</a>
+    </li>
+                                    <li class="dropdown-item format-pre" data-format="pre" data-tooltip="Preformatted (Ctrl+7)">
+        <a class="item-link" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#">Preformatted</a>
+    </li>
+                                    <li class="dropdown-item format-blockquote" data-format="blockquote" data-tooltip="Quote (Ctrl+8)">
+        <a class="item-link" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#">Quote</a>
+    </li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+
+                <ul class="aui-buttons rte-toolbar-group-style">
+                    
+                <li class="toolbar-item aui-button" id="rte-button-bold" data-tooltip="Bold (Ctrl+B)">
+        <a class="toolbar-trigger" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" data-control-id="bold">
+                <span class="icon icon-bold ">Bold</span>
+        </a>
+    </li>
+                    
+                <li class="toolbar-item aui-button" id="rte-button-italic" data-tooltip="Italic (Ctrl+I)">
+        <a class="toolbar-trigger" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" data-control-id="italic">
+                <span class="icon icon-italic ">Italic</span>
+        </a>
+    </li>
+                    
+                <li class="toolbar-item aui-button" id="rte-button-underline" data-tooltip="Underline (Ctrl+U)">
+        <a class="toolbar-trigger" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" data-control-id="underline">
+                <span class="icon icon-underline ">Underline</span>
+        </a>
+    </li>
+                                        <li id="color-picker-control" class="toolbar-item toolbar-splitbutton">
+                        <a class="toolbar-trigger aui-button" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" id="rte-button-color" data-color="003366" data-tooltip="Colour"><span class="icon icon-textcolor ">Colour picker</span><span class="selected-color"></span></a><div class="aui-dd-parent"><a class="toolbar-trigger aui-dd-trigger aui-button" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" id="rte-button-color-selector" data-control-id="colorSelector" data-tooltip="More colours"><span class="icon icon-dropdown ">More colours</span></a><div class="color-picker-container"><div class="color-picker aui-dropdown hidden"><ul><li><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" style="background-color: #000000" data-color="000000">&nbsp;</a></li><li><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" style="background-color: #993300" data-color="993300">&nbsp;</a></li><li><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" style="background-color: #333300" data-color="333300">&nbsp;</a></li><li><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" style="background-color: #003300" data-color="003300">&nbsp;</a></li><li><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" style="background-color: #003366" data-color="003366">&nbsp;</a></li><li><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" style="background-color: #000080" data-color="000080">&nbsp;</a></li><li><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" style="background-color: #333399" data-color="333399">&nbsp;</a></li><li><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" style="background-color: #333333" data-color="333333">&nbsp;</a></li><li><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" style="background-color: #800000" data-color="800000">&nbsp;</a></li><li><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" style="background-color: #FF6600" data-color="FF6600">&nbsp;</a></li><li><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" style="background-color: #808000" data-color="808000">&nbsp;</a></li><li><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" style="background-color: #008000" data-color="008000">&nbsp;</a></li><li><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" style="background-color: #008080" data-color="008080">&nbsp;</a></li><li><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" style="background-color: #0000FF" data-color="0000FF">&nbsp;</a></li><li><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" style="background-color: #666699" data-color="666699">&nbsp;</a></li><li><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" style="background-color: #808080" data-color="808080">&nbsp;</a></li><li><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" style="background-color: #FF0000" data-color="FF0000">&nbsp;</a></li><li><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" style="background-color: #FF9900" data-color="FF9900">&nbsp;</a></li><li><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" style="background-color: #99CC00" data-color="99CC00">&nbsp;</a></li><li><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" style="background-color: #339966" data-color="339966">&nbsp;</a></li><li><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" style="background-color: #33CCCC" data-color="33CCCC">&nbsp;</a></li><li><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" style="background-color: #3366FF" data-color="3366FF">&nbsp;</a></li><li><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" style="background-color: #800080" data-color="800080">&nbsp;</a></li><li><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" style="background-color: #999999" data-color="999999">&nbsp;</a></li><li><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" style="background-color: #FF00FF" data-color="FF00FF">&nbsp;</a></li><li><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" style="background-color: #FFCC00" data-color="FFCC00">&nbsp;</a></li><li><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" style="background-color: #FFFF00" data-color="FFFF00">&nbsp;</a></li><li><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" style="background-color: #00FF00" data-color="00FF00">&nbsp;</a></li><li><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" style="background-color: #00FFFF" data-color="00FFFF">&nbsp;</a></li><li><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" style="background-color: #00CCFF" data-color="00CCFF">&nbsp;</a></li><li><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" style="background-color: #993366" data-color="993366">&nbsp;</a></li><li><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" style="background-color: #C0C0C0" data-color="C0C0C0">&nbsp;</a></li><li><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" style="background-color: #FF99CC" data-color="FF99CC">&nbsp;</a></li><li><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" style="background-color: #FFCC99" data-color="FFCC99">&nbsp;</a></li><li><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" style="background-color: #FFFF99" data-color="FFFF99">&nbsp;</a></li><li><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" style="background-color: #CCFFCC" data-color="CCFFCC">&nbsp;</a></li><li><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" style="background-color: #CCFFFF" data-color="CCFFFF">&nbsp;</a></li><li><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" style="background-color: #99CCFF" data-color="99CCFF">&nbsp;</a></li><li><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" style="background-color: #CC99FF" data-color="CC99FF">&nbsp;</a></li><li><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" style="background-color: #FFFFFF" data-color="FFFFFF">&nbsp;</a></li></ul></div></div></div>
+                    </li>
+                    <li id="more-menu" class="toolbar-item toolbar-dropdown">
+                        <div class="aui-dd-parent">
+                            <a id="rte-button-more" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" class="toolbar-trigger aui-dd-trigger aui-button" data-tooltip="More">
+                                    <span class="icon icon-more ">Formatting</span>
+                                    <span class="icon icon-dropdown "></span>
+                            </a>
+                            <div id="rte-button-more-menu" class="aui-dropdown grouped hidden">
+                                <div class="grouped-dropdown-item">
+                                    <ul>
+                                                                <li class="dropdown-item more-menu-trigger" data-control-id="strikethrough" data-tooltip="Strikethrough (Ctrl+Shift+S)">
+        <a id="rte-strikethrough" class="item-link" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#">
+                <span class="icon icon-check hidden"></span>
+Strikethrough
+        </a>
+    </li>
+                                                                 <li class="dropdown-item more-menu-trigger" data-control-id="sub" data-tooltip="">
+        <a id="rte-sub" class="item-link" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#">
+                <span class="icon icon-check hidden"></span>
+Subscript
+        </a>
+    </li>
+                                                                 <li class="dropdown-item more-menu-trigger" data-control-id="sup" data-tooltip="">
+        <a id="rte-sup" class="item-link" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#">
+                <span class="icon icon-check hidden"></span>
+Superscript
+        </a>
+    </li>
+                                                        <li class="dropdown-item more-menu-trigger" data-control-id="monospace" data-tooltip="Format text with monospaced font">
+        <a id="rte-monospace" class="item-link" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#">
+                <span class="icon icon-check hidden"></span>
+Monospace
+        </a>
+    </li>
+
+                                                                                                                    </ul>
+                                </div>
+                                <div class="grouped-dropdown-item">
+                                    <ul>
+                                            <li class="dropdown-item more-menu-trigger no-icon" data-format="removeformat" data-tooltip="Clears formatting on currently selected text">
+        <a id="rte-removeformat" class="item-link" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#">
+            Clear formatting
+        </a>
+    </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                    </li>
+                </ul>
+
+                <ul class="aui-buttons rte-toolbar-group-lists">
+                    
+                <li class="toolbar-item aui-button" id="rte-button-bullist" data-tooltip="Bullet list (Ctrl+Shift+B)">
+        <a class="toolbar-trigger" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" data-control-id="bullist">
+                <span class="icon icon-bullist ">Bullet list</span>
+        </a>
+    </li>
+                    
+                <li class="toolbar-item aui-button" id="rte-button-numlist" data-tooltip="Numbered list (Ctrl+Shift+N)">
+        <a class="toolbar-trigger" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" data-control-id="numlist">
+                <span class="icon icon-numlist ">Numbered list</span>
+        </a>
+    </li>
+                </ul>
+                                <ul class="aui-buttons rte-toolbar-group-task-lists">
+                    
+                <li class="toolbar-item aui-button" id="rte-button-tasklist" data-tooltip="Task list ([ then ])">
+        <a class="toolbar-trigger" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" data-control-id="tasklist">
+                <span class="icon icon-tasklist ">Task list</span>
+        </a>
+    </li>
+                </ul>
+                
+                <ul class="aui-buttons rte-toolbar-group-indentation">
+                    
+                <li class="toolbar-item aui-button" id="rte-button-outdent" data-tooltip="Outdent">
+        <a class="toolbar-trigger" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" data-control-id="outdent">
+                <span class="icon icon-outdent ">Outdent</span>
+        </a>
+    </li>
+                    
+                <li class="toolbar-item aui-button" id="rte-button-indent" data-tooltip="Indent">
+        <a class="toolbar-trigger" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" data-control-id="indent">
+                <span class="icon icon-indent ">Indent</span>
+        </a>
+    </li>
+                </ul>
+
+                <ul class="aui-buttons rte-toolbar-group-justification">
+                    
+                <li class="toolbar-item aui-button" id="rte-button-justifyleft" data-tooltip="Align left">
+        <a class="toolbar-trigger" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" data-control-id="justifyleft">
+                <span class="icon icon-justifyleft ">Align left</span>
+        </a>
+    </li>
+                    
+                <li class="toolbar-item aui-button" id="rte-button-justifycenter" data-tooltip="Align center">
+        <a class="toolbar-trigger" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" data-control-id="justifycenter">
+                <span class="icon icon-justifycenter ">Align center</span>
+        </a>
+    </li>
+                    
+                <li class="toolbar-item aui-button" id="rte-button-justifyright" data-tooltip="Align right">
+        <a class="toolbar-trigger" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" data-control-id="justifyright">
+                <span class="icon icon-justifyright ">Align right</span>
+        </a>
+    </li>
+                </ul>
+
+                                <ul class="aui-buttons hidden" id="page-layout-2-group">
+                    <li id="page-layout-2" class="toolbar-item" data-tooltip="Page layout">
+                        <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" class="aui-button toolbar-trigger" id="rte-button-pagelayout-2">
+                                <span class="icon icon-layout ">Page layout</span>
+                        </a>
+                    </li>
+                </ul>
+                
+
+                <ul class="aui-buttons rte-toolbar-group-files hidden"></ul>
+
+                <ul class="aui-buttons rte-toolbar-group-link no-separator">
+                    <li class="toolbar-item" data-tooltip="Insert link (Ctrl+K)">
+                        <a id="rte-button-link" class="toolbar-trigger aui-button" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" data-control-id="linkbrowserButton">
+                                <span class="icon icon-link "></span>
+                            <span class="trigger-text">Link</span>
+                        </a>
+                    </li>
+                </ul>
+
+                <ul class="aui-buttons rte-toolbar-group-table no-separator">
+                    <li class="toolbar-item toolbar-dropdown" id="insert-table-dropdown">
+                        <div class="aui-dd-parent">
+                            <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" class="toolbar-trigger aui-dd-trigger aui-button" id="rte-button-insert-table" data-tooltip="Insert table">
+                                    <span class="icon icon-table "></span>
+                                <span class="dropdown-text">Table</span>
+                                    <span class="icon icon-dropdown "></span>
+                            </a>
+
+                            <div id="table-picker-container" class="hidden aui-box-shadow">
+                                <div class="table-picker-box" data-tooltip="Hold SHIFT for a table without a heading.">
+                                    <div class="table-picker-background">
+                                        <div class="picker picker-cell"></div>
+                                        <div class="picker picker-heading heading"></div>
+                                        <div class="picker picker-selected-cell"></div>
+                                        <div class="picker picker-selected-heading heading"></div>
+                                    </div>
+                                    <p class="desc"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+
+                                                                
+                
+                <ul class="aui-buttons rte-toolbar-group-insert no-separator">
+                    <li class="toolbar-item toolbar-dropdown" id="insert-menu">
+                        <div class="aui-dd-parent">
+                            <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" class="toolbar-trigger aui-dd-trigger aui-button" id="rte-button-insert" data-tooltip="Insert more content">
+                                    <span class="icon icon-insert "></span>
+                                <span class="dropdown-text">Insert</span>
+                                    <span class="icon icon-dropdown "></span>
+                            </a>
+
+                            <div id="insert-menu-options" class="aui-dropdown grouped hidden">
+                                <div class="grouped-dropdown-item">
+                                    <span class="assistive">Insert content</span>
+                                    <ul id="content-insert-list">
+                                        
+        
+        <li class="dropdown-item content-image" data-command="mceConfimage" data-tooltip="Insert files and images (Ctrl+M)">
+        <a id="rte-insert-image" class="item-link" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#">
+                <span class="icon "></span>
+ Files and images
+        </a>
+    </li>
+                                        
+        
+        <li class="dropdown-item content-link" data-control-id="linkbrowserButton" data-tooltip="Insert link (Ctrl+K)">
+        <a id="rte-insert-link" class="item-link" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#">
+                <span class="icon "></span>
+ Link
+        </a>
+    </li>
+                                        
+    
+        <li class="dropdown-item content-symbol" data-command="confCharmap" data-tooltip="Insert symbol">
+        <a id="rte-insert-symbol" class="item-link" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#">
+                <span class="icon "></span>
+ Symbol
+        </a>
+    </li>
+                                        
+    
+        <li class="dropdown-item content-emoticon" data-command="mceEmotion" data-tooltip="Insert emoticon">
+        <a id="rte-insert-emoticon" class="item-link" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#">
+                <span class="icon "></span>
+ Emoticon
+        </a>
+    </li>
+                                        
+        
+        <li class="dropdown-item content-wikimarkup" data-command="InsertWikiMarkup" data-tooltip="Insert markup (Ctrl+Shift+D)">
+        <a id="rte-insert-wikimarkup" class="item-link" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#">
+                <span class="icon "></span>
+ Markup
+        </a>
+    </li>
+                                        
+    
+        <li class="dropdown-item content-hr" data-command="InsertHorizontalRule" data-tooltip="Insert horizontal rule (----)">
+        <a id="rte-insert-hr" class="item-link" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#">
+                <span class="icon "></span>
+ Horizontal rule
+        </a>
+    </li>
+                                                                                    
+        
+        <li class="dropdown-item content-tasklist" data-command="InsertInlineTaskListNoToggle" data-tooltip="Insert task list ([ then ])">
+        <a id="rte-insert-tasklist" class="item-link" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#">
+                <span class="icon "></span>
+ Task list
+        </a>
+    </li>
+                                                                            </ul>
+                                </div>
+                                <div class="grouped-dropdown-item">
+                                    <span class="assistive">Insert macro</span>
+                                    <ul id="macro-insert-list">
+                                                                                                                                                                                <li class="dropdown-item macro-insertmention-button" data-macro-name="insertmention-button" data-tooltip="Insert &#39;User mention&#39; macro">
+        <a id="insertmention-button" class="item-link" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#">
+                <span class="icon "></span>
+ User mention
+        </a>
+    </li>
+                                                                                                <li class="dropdown-item macro-jiralink" data-macro-name="jiralink" data-tooltip="Insert &#39;JIRA Issue/Filter&#39; macro">
+        <a id="jiralink" class="item-link" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#">
+                <span class="icon "></span>
+ JIRA Issue/Filter
+        </a>
+    </li>
+                                                                                                <li class="dropdown-item macro-info" data-macro-name="info" data-tooltip="Insert &#39;Info&#39; macro">
+        <a id="info" class="item-link" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#">
+                <span class="icon "></span>
+ Info
+        </a>
+    </li>
+                                                                                                <li class="dropdown-item macro-status" data-macro-name="status" data-tooltip="Insert &#39;Status&#39; macro">
+        <a id="status" class="item-link" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#">
+                <span class="icon "></span>
+ Status
+        </a>
+    </li>
+                                                                                                <li class="dropdown-item macro-gallery" data-macro-name="gallery" data-tooltip="Insert &#39;Gallery&#39; macro">
+        <a id="gallery" class="item-link" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#">
+                <span class="icon "></span>
+ Gallery
+        </a>
+    </li>
+                                                                                                <li class="dropdown-item macro-toc" data-macro-name="toc" data-tooltip="Insert &#39;Table of Contents&#39; macro">
+        <a id="toc" class="item-link" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#">
+                <span class="icon "></span>
+ Table of Contents
+        </a>
+    </li>
+                                                                                                                            
+        
+        <li class="dropdown-item content-macro" data-command="mceConfMacroBrowser" data-tooltip="Open the macro browser (Ctrl+Shift+A)">
+        <a id="rte-insert-macro" class="item-link" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#">
+                <span class="icon "></span>
+ Other macros
+        </a>
+    </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+
+                                <ul class="aui-buttons rte-toolbar-group-page-layouts-section-types">
+                    <li id="pagelayout-menu" class="toolbar-item toolbar-dropdown">
+                        <div class="aui-dd-parent">
+                            <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" class="toolbar-trigger aui-dd-trigger aui-button" id="rte-button-pagelayout" data-tooltip="Page layout">
+                                    <span class="icon icon-layout pagelayout-default">Page layout</span>
+                                    <span class="icon icon-dropdown "></span>
+                            </a>
+
+                            <ul id="pagelayout-menu-options" class="aui-dropdown hidden">
+                                <li class="dropdown-item" data-tooltip="No layout">
+    <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" class="item-link" data-atlassian-layout="{&quot;name&quot;: &quot;pagelayout-none&quot;, &quot;columns&quot;: 0   }">
+            <span class="icon icon-check hidden"></span>
+            <span class="icon icon-layout pagelayout-none">No layout</span>
+    </a>
+</li>
+                                <li class="dropdown-item" data-tooltip="Two column (simple)">
+    <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" class="item-link" data-atlassian-layout="{&quot;name&quot;: &quot;pagelayout-two-simple&quot;, &quot;columns&quot;: [&quot;&quot;, &quot;&quot;]   }">
+            <span class="icon icon-check hidden"></span>
+            <span class="icon icon-layout pagelayout-two-simple">Two column (simple)</span>
+    </a>
+</li>
+                                <li class="dropdown-item" data-tooltip="Two column (simple, left sidebar)">
+    <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" class="item-link" data-atlassian-layout="{&quot;name&quot;: &quot;pagelayout-two-simple-left&quot;, &quot;columns&quot;: [&quot;aside&quot;, &quot;large&quot;]   }">
+            <span class="icon icon-check hidden"></span>
+            <span class="icon icon-layout pagelayout-two-simple-left">Two column (simple, left sidebar)</span>
+    </a>
+</li>
+                                <li class="dropdown-item" data-tooltip="Two column (simple, right sidebar)">
+    <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" class="item-link" data-atlassian-layout="{&quot;name&quot;: &quot;pagelayout-two-simple-right&quot;, &quot;columns&quot;: [&quot;large&quot;, &quot;aside&quot;]   }">
+            <span class="icon icon-check hidden"></span>
+            <span class="icon icon-layout pagelayout-two-simple-right">Two column (simple, right sidebar)</span>
+    </a>
+</li>
+                                <li class="dropdown-item" data-tooltip="Three column (simple)">
+    <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" class="item-link" data-atlassian-layout="{&quot;name&quot;: &quot;pagelayout-three-simple&quot;, &quot;columns&quot;: [&quot;&quot;, &quot;&quot;, &quot;&quot;]   }">
+            <span class="icon icon-check hidden"></span>
+            <span class="icon icon-layout pagelayout-three-simple">Three column (simple)</span>
+    </a>
+</li>
+                                <li class="dropdown-item" data-tooltip="Two column">
+    <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" class="item-link" data-atlassian-layout="{&quot;name&quot;: &quot;pagelayout-two&quot;, &quot;columns&quot;: [&quot;&quot;, &quot;&quot;] , &quot;header&quot;: true  , &quot;footer&quot;:true  }">
+            <span class="icon icon-check hidden"></span>
+            <span class="icon icon-layout pagelayout-two">Two column</span>
+    </a>
+</li>
+                                <li class="dropdown-item" data-tooltip="Two column (left sidebar)">
+    <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" class="item-link" data-atlassian-layout="{&quot;name&quot;: &quot;pagelayout-two-left&quot;, &quot;columns&quot;: [&quot;aside&quot;, &quot;large&quot;] , &quot;header&quot;: true  , &quot;footer&quot;:true  }">
+            <span class="icon icon-check hidden"></span>
+            <span class="icon icon-layout pagelayout-two-left">Two column (left sidebar)</span>
+    </a>
+</li>
+                                <li class="dropdown-item" data-tooltip="Two column (right sidebar)">
+    <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" class="item-link" data-atlassian-layout="{&quot;name&quot;: &quot;pagelayout-two-right&quot;, &quot;columns&quot;: [&quot;large&quot;, &quot;aside&quot;] , &quot;header&quot;: true  , &quot;footer&quot;:true  }">
+            <span class="icon icon-check hidden"></span>
+            <span class="icon icon-layout pagelayout-two-right">Two column (right sidebar)</span>
+    </a>
+</li>
+                                <li class="dropdown-item" data-tooltip="Three column">
+    <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" class="item-link" data-atlassian-layout="{&quot;name&quot;: &quot;pagelayout-three&quot;, &quot;columns&quot;: [&quot;&quot;, &quot;&quot;, &quot;&quot;] , &quot;header&quot;: true  , &quot;footer&quot;:true  }">
+            <span class="icon icon-check hidden"></span>
+            <span class="icon icon-layout pagelayout-three">Three column</span>
+    </a>
+</li>
+                                <li class="dropdown-item" data-tooltip="Three column (left and right sidebars)">
+    <a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" class="item-link" data-atlassian-layout="{&quot;name&quot;: &quot;pagelayout-three-sidebars&quot;, &quot;columns&quot;: [&quot;sidebars&quot;, &quot;large&quot;, &quot;sidebars&quot;] , &quot;header&quot;: true  , &quot;footer&quot;:true  }">
+            <span class="icon icon-check hidden"></span>
+            <span class="icon icon-layout pagelayout-three-sidebars">Three column (left and right sidebars)</span>
+    </a>
+</li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+                
+                                                
+                <ul class="aui-buttons rte-toolbar-group-undo">
+                    
+                <li class="toolbar-item aui-button" id="rte-button-undo" data-tooltip="Undo (Ctrl+Z)">
+        <a class="toolbar-trigger" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" data-control-id="undo">
+                <span class="icon icon-undo ">Undo</span>
+        </a>
+    </li>
+                    
+                <li class="toolbar-item aui-button" id="rte-button-redo" data-tooltip="Redo (Ctrl+Y)">
+        <a class="toolbar-trigger" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" data-control-id="redo">
+                <span class="icon icon-redo ">Redo</span>
+        </a>
+    </li>
+                </ul>
+
+            </div>                                                                                                <div id="draft-status" style="display:none"></div>
+                            <div class="aui-toolbar2-secondary">
+                <ul class="aui-buttons rte-toolbar-group-searchreplace">
+                        <li class="toolbar-item aui-button" id="rte-button-searchreplace" data-tooltip="Find/Replace">
+        <a class="toolbar-trigger" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" data-control-id="searchreplace">
+                <span class="icon icon-searchreplace ">Find/Replace</span>
+        </a>
+    </li>
+                </ul>
+                <ul class="aui-buttons rte-toolbar-group-help">
+                        <li class="toolbar-item aui-button" id="rte-button-help" data-tooltip="Help">
+        <a class="toolbar-trigger" href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" data-control-id="help">
+                <span class="icon icon-help ">Keyboard shortcuts help</span>
+        </a>
+    </li>
+                </ul>
+            </div>        </div>    </div>
+
+        
+        
+        
+                                        <div id="editor-notifications-container"><div id="editor-messages"><div id="anonymous-warning" class="aui-message warning closeable">You are not logged in. Any changes you make will be marked as <span class="smalltext">anonymous</span>. You may want to <a href="https://www.pimcore.org/wiki/login.action?os_destination=%2Fdisplay%2FPIMCORE4%2FStructured%2BData%2BFields%2B-%2BCalculated%2BValue">Log In</a> if you already have an account.</div><div id="heartbeat-div" class="hidden"><div class="aui-message info closeable"><span class="aui-icon icon-info"></span>This page is also being edited by <span id="other-users-span"></span>. Your changes will be merged with theirs when you save.</div></div></div><div id="all-messages"><div id="action-messages"></div></div></div><div id="editor-precursor"><div class="cell"><div class="aui-buttons aui-toolbar2"><button class="aui-button aui-button-subtle" type="button" data-tooltip="Labels" id="rte-button-labels" data-explicit-restrictions="" data-inherited-restrictions=""><span class="icon icon-labels"></span></button></div><div id="content-title-div"><input type="text" name="title" id="content-title" tabindex="1" class="text pagetitle" autocomplete="off" value="Structured Data Fields - Calculated Value" placeholder="Page title"></div></div></div>
+            
+    <div id="wysiwyg">
+        <div id="rte" class="cell editor-default">
+            <textarea id="wysiwygTextarea" name="wysiwygContent" class="hidden tinymce-editor"></textarea>
+        </div>
+    </div>
+    <div id="editor-html-source-container" class="hidden">
+        <textarea id="editor-html-source" class="monospaceInput"></textarea>
+    </div>
+
+    <div id="preview">
+                        <div id="previewArea" class="cell">
+        </div>
+    </div>
+
+            <div id="savebar-container"><div id="rte-savebar" class="aui-toolbar aui-toolbar2"><div class="toolbar-split toolbar-split-row toolbar-split-captcha"><div class="toolbar-group"><div class="toolbar-item"><div class="captcha field-group"><label id="captcha-response-label" for="captcha-response"><span class="assistive">If you are unable to use this CAPTCHA please &lt;a href="administrators.action" tabindex="5"&gt;contact your administrator&lt;/a&gt; for assistance.</span></label><img src="./classes-datatypes-calculated2_files/jcaptcha" class="captcha-image" alt="CAPTCHA image"><input type="hidden" name="captchaId" value="-1581218301" placeholder="Type the word above"><input type="text" id="captcha-response" name="captchaResponse" value="" class="text" placeholder="Type the word above"></div></div></div></div><div class="toolbar-split toolbar-split-row"><div class="toolbar-split toolbar-split-left"><div class="aui-buttons"></div></div><div class="toolbar-split toolbar-split-right"><div class="aui-buttons" id="rte-savebar-tinymce-plugin-point"></div><div class="aui-buttons"><span id="rte-spinner" class="toolbar-item">&nbsp;</span></div><div class="aui-buttons toolbar-group-edit assistive"><button id="rte-button-edit" class="aui-button" title="Return To edit Mode" type="button"><span class="trigger-text">Edit</span></button></div><div class="aui-buttons toolbar-group-preview"><button class="aui-button toolbar-item" id="rte-button-preview" title="Preview" type="button"><span class="trigger-text">Preview</span></button></div><div class="save-button-container"><button class="aui-button aui-button-primary" type="submit" id="rte-button-publish" name="confirm" value="Save" title="Save"><span class="trigger-text">Save</span></button></div><button class="toolbar-item-link aui-button aui-button-link" type="submit" id="rte-button-cancel" name="cancel" value="cancel"><span class="trigger-text">Cancel</span></button></div></div></div></div>
+    
+    
+</div>
+
+
+
+<script type="text/x-template" title="dynamic-editor-metadata" id="dynamic-editor-metadata-template">
+            <meta name="ajs-use-watch" content="false">
+            <meta name="ajs-attachment-source-content-id" content="16855523">
+            <meta name="ajs-use-inline-tasks" content="true">
+            <meta name="ajs-heartbeat" content="true">
+            <meta name="ajs-action-locale" content="en_GB">
+            <meta name="ajs-editor-plugin-resource-prefix" content="/wiki/s/en_GB/6208/5b3b332f8e293021ada3993e5808a6651f60b74f.46/5.9.2/_">
+            <meta name="ajs-existing-draft-id" content="0">
+            <meta name="ajs-user-watching-own-content" content="false">
+            <meta name="ajs-new-page" content="false">
+            <meta name="ajs-content-id" content="16855523">
+            <meta name="ajs-editor-mode" content="richtext">
+            <meta name="ajs-form-name" content="inlinecommentform">
+            <meta name="ajs-auto-start" content="false">
+            <meta name="ajs-can-attach-files" content="false">
+            <meta name="ajs-show-draft-message" content="false">
+            <meta name="ajs-draft-id" content="0">
+            <meta name="ajs-shared-drafts" content="false">
+            <meta name="ajs-min-editor-height" content="150">
+            <meta name="ajs-draft-share-id" content="">
+            <meta name="ajs-content-type" content="page">
+            <meta name="ajs-version-comment" content="">
+            <meta name="ajs-draft-type" content="page">
+                
+            		    <meta name="ajs-max-thumb-width" content="300">
+		    <meta name="ajs-max-thumb-height" content="300">
+		    <meta name="ajs-can-send-email" content="true">
+		    <meta name="ajs-is-dev-mode" content="false">
+		    <meta name="ajs-draft-save-interval" content="30000">
+		    <meta name="ajs-show-hidden-user-macros" content="false">
+		    <meta name="ajs-is-admin" content="false">
+		    <meta name="ajs-heartbeat-interval" content="30000">
+	
+    </script>
+
+<script type="text/x-template" title="tableForm" id="table-form-template">
+    <form id="tinymce-table-form" class="aui">
+        <div class="field-group">
+            <label for="rows">Rows</label>
+            <input id="rows" name="rows" type="text" size="3" autocomplete="off" value="{0}">
+        </div>
+        <div class="field-group">
+            <label for="cols">Columns</label>
+            <input id="cols" name="cols" type="text" size="3" autocomplete="off" value="{1}">
+        </div>
+        <div class="field-group hidden">
+            <input id="width" type="hidden" name="width" value="">
+            <label for="width">Width</label>
+        </div>
+        <div class="group">
+            <div class="checkbox">
+                <input id="table-heading-checkbox" class="checkbox" type="checkbox" name="heading" checked="checked" value="true">
+                <label for="table-heading-checkbox">First row is heading</label>
+            </div>
+        </div>
+        <div class="group hidden">
+            <div class="checkbox">
+                <input id="table-equal-width-columns-checkbox" class="checkbox" type="checkbox" name="equal-width-columns" value="false">
+                <label for="table-equal-width-columns-checkbox">Equal width columns</label>
+            </div>
+        </div>
+    </form>
+</script>
+<input type="hidden" name="draftId" value="0" id="draftId"><input type="hidden" name="originalVersion" value="3" id="originalVersion">
+<input type="hidden" name="syncRev" value="" id="syncRev">    <input type="hidden" name="atl_token" value="2880da610a80b23e26bedb940c65141194f45100">
+</div><div id="window-resizer-tooltip" style="display: none;"><a href="https://www.pimcore.org/wiki/display/PIMCORE4/Structured+Data+Fields+-+Calculated+Value#" title="Edit settings"></a><span class="tooltipTitle">Window size: </span><span class="tooltipWidth" id="winWidth">1920</span> x <span class="tooltipHeight" id="winHeight">1200</span><br><span class="tooltipTitle">Viewport size: </span><span class="tooltipWidth" id="vpWidth">1920</span> x <span class="tooltipHeight" id="vpHeight">1069</span></div><div id="fileuploadShim" style="position: relative; z-index: 0;"></div><div id="p1as5139mqjb17od1dno1rgqm3e0_html5_container" class="plupload html5" style="position: absolute; width: 1920px; height: 0px; overflow: hidden; z-index: -1; opacity: 0; top: 1069px; left: 0px; background: transparent;"><input id="p1as5139mqjb17od1dno1rgqm3e0_html5" style="font-size: 999px; position: absolute; width: 100%; height: 100%;" type="file" accept="" multiple="multiple"></div></body></html>
