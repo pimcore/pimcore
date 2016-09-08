@@ -1,6 +1,6 @@
 # Structure table
 
-### Add structure table to the class
+## Add structure table to the class
 
 Similar to the table widget, the structured table can hold structured data. 
 But there are a few fundamental differences:
@@ -21,7 +21,7 @@ Now, you can use the table in your object, like below:
 
 ![Edit object with structured table](../../../img/Objects_Structured_Table_use.png)
 
-### Using structured table in the code
+## Using structured table with PHP api
 
 In the code, the data of this field can be accessed as shown in the code snippets, below:
 

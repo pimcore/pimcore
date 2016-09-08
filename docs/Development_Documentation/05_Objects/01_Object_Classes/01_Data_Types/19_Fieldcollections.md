@@ -1,4 +1,4 @@
-## Fieldcollection
+# Fieldcollection
 
 Object field collections are predefined sets of data and layout fields, 
 that can be added to objects at an arbitrary amount.
