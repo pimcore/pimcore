@@ -6,9 +6,9 @@ The areablock is the content construction kit for documents offered by pimcore.
 The concept is like you know it already from the block element. 
 The difference is that you can insert predefined **mini applications** called bricks into an areablock.
 
-![Admin panel preview 1](../../img/areablock_editmode1.png)
+![Admin panel preview 1](../../../img/areablock_editmode1.png)
 
-![Admin panel preview 2](../../img/areablock_editmode2.png)
+![Admin panel preview 2](../../../img/areablock_editmode2.png)
 
 ## Integrate an areablock in a template
 Similar to the other document editables, an areablock can be integrated in any document view template as follows:
@@ -66,7 +66,7 @@ echo  $this->areablock("content", [
 
 And you can see the effect, below:
 
-![Admin panel preview - sroting areablocks](../../img/areablock_editmode3.png)
+![Admin panel preview - sroting areablocks](../../../img/areablock_editmode3.png)
 
 ## Configuration
 
@@ -114,7 +114,7 @@ Example:
 
 ## How to create bricks for the areablock
 
-You can read about **bricks** in the [Bricks](./Bricks_02.md) section.
+You can read about **bricks** in the [Bricks](./02_Bricks.md) section.
 
 ## Using manual mode
 
