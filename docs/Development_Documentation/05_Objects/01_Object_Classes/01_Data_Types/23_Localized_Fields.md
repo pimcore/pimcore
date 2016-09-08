@@ -1,27 +1,19 @@
 # Localized Fields
 
-The datatype **Localized Fields** is a container which can be filled with selected datatypes and layouts. 
+Localized fields allow the definition of attributes, that should be translated into multiple languages within an object. 
+They can be filled with selected data types and layouts - due to technical and data storage reasons not all data types are
+available. 
+
 The advantage of this, is to make it very easy to translate fields to the configured languages.
 
-### Define your localized fields
+## Definition of localized fields
 
-[comment]: #TODOinlineimgs
-
-<div class="inline-imgs">
-
-If it's not already configured, please specify the valid languages for your website. 
-You can do this in ![Settings](../../../img/Icon_settings.png)**Settings -> System Settings -> Localization & Internationalization**
-
-</div>
-
-
-![Add languages](../../../img/Objects_LocalizedFields_add_language.png)
-
-First of all, you have to configure your localized fields and layouts, this can be simply done in the class editor.
+First of all, you have to configure your localized fields and layouts within your class. This can be easily done in 
+the class editor.
 
 ![Add localized fields to a class](../../../img/Objects_LocalizedFields_add_data_component.png)
 
-The container for localized fields is created. Now, you can add data component to that container.
+Then add attributes, that need to be translated, into this container. 
 
 ![Add data component to localized fields](../../../img/Objects_LocalizedFields_add_inputs_to_lf.png)
 
@@ -34,6 +26,15 @@ By default, tabs are used if the number of languages does not exceed 15.
 This limit can be changed via the field settings in the class configurator.
 
 ![Change tabs limit in Localized Fields](../../../img/Objects_LocalizedFields_change_tabs_limit.png)
+
+## Definition of available Languages
+If it's not already configured, please specify the valid languages for your website. 
+You can do this in ```Settings``` -> ```System Settings``` -> ```Localization & Internationalization```
+
+![Add languages](../../../img/Objects_LocalizedFields_add_language.png)
+
+
+## Working with PHP api
 
 ### Accessing the data
 
@@ -58,4 +59,5 @@ $object = Object::getById(234);
 $object->setInput1("My Name", "fr") // set the French value for the field "input1"
 ```
 
-**Warning:** Please note that moving a field from outside (normal object field) into the localizedfield container means the loss of data from the field in all objects using this class.
+**Warning:** Please note that moving a field from outside (normal object field) into the localizedfield container means 
+the loss of data from the field in all objects using this class.
