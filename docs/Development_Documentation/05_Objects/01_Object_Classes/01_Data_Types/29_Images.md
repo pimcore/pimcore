@@ -31,8 +31,7 @@ The get a thumbnail of an image field, just call ```getThumbnail()``` on the ret
 <?php } ?>
 ```
 
-Since ```$object->getImage()``` just returns an asset object, you can of course use all other thumbnail features of 
-```\Pimcore\Model\Asset\Image```.
+Since ```$object->getImage()``` just returns an asset object, you can of course use all other thumbnail features of ```Pimcore\Model\Asset\Image```.
 
 
 
