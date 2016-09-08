@@ -144,7 +144,7 @@ class ImageThumbnail
                 }
             }
 
-            if(!$this->filesystemPath) {
+            if (!$this->filesystemPath) {
                 $timeOffset = $this->timeOffset;
                 if (!$this->timeOffset && $cs) {
                     $timeOffset = $cs;
