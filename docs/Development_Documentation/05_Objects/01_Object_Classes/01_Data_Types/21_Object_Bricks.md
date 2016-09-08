@@ -31,28 +31,32 @@ field level. Each attribute of an object brick can be overwritten in child objec
 Despite this flexibility, the database model in the background stays clean and well structured. 
 This is because the attributes of an object brick have to be defined like these of Fieldcollections.
 
-### Definition of an Objectbrick
+## Definition of an Objectbrick
 
-As mentioned before, Objectbricks themselves are defined the same way as objects and Fieldcollections are and support the same data types as Fieldcollections.
+As mentioned before, Objectbricks themselves are defined the same way as objects and Fieldcollections are and support 
+similar data types as Fieldcollections.
 
 ![Object bricks menu](../../../img/ObjectsBricks_menu.png)
 
 To allow adding an Objectbrick to an object, two things have to be done:
 
-1. In data components list (when you're creating the class) is Objectbricks data type. 
+* In data components list (when you're creating the class) is Objectbricks data type. 
 This data type defines, where Objectbricks can be added. 
 A field of this data type has to be added to the object class.
 
 ![Object data component](../../../img/ObjectsBricks_data_component.png)
 
-2. In the Objectbrick definition, the object class and the desired field has to be added to the allowed classes.
+* In the Objectbrick definition, the object class and the desired field has to be added to the allowed classes.
 
 ![Object class definition](../../../img/ObjectsBricks_data_component.png)
 
-### Retrieving Objectbricks via code
 
-By saving the object class, for each Objectbrick field of this class, the own data class is created with getters for each allowed Objectbrick.
-In our example, this data class would looks like this.
+## Working with PHP api
+
+### Retrieving Objectbricks
+
+By saving the object class, for each Objectbrick field of this class, the own data class is created with getters for each 
+allowed Objectbrick. In our example, this data class would looks like this.
 
 The getter ```$product->getBricks()``` returns an instance of this class filled with the Objectbricks of the ```$product```. 
 By calling the getter, the Objectbrick class with its attribute getter is returned.
@@ -108,7 +112,8 @@ $product->save();
 ### Querying for Objectbrick data
 
 Data of Objectbricks can be queried in the same way as data of fieldcollections. 
-The Objectbricks have to be added to the ```Object_List``` object and then the Objectbrick data can be queried in the condition like in the sample below.
+The Objectbricks have to be added to the ```Object_List``` object and then the Objectbrick data can be queried in the 
+condition like in the sample below.
 
 ```php
 //querying for Objectbrick data
@@ -120,7 +125,8 @@ $productList = Object\Product::getList([
 ]);
 ```
 
-If you want to obtain a list of objects which have a specific Objectbrick you can query for the **fieldname** value in the condition statement.
+If you want to obtain a list of objects which have a specific Objectbrick you can query for the ```fieldname``` value 
+in the condition statement.
 
 ```php
 //return all Products that have the Objectbrick "Tire"
