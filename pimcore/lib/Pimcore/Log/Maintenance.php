@@ -118,6 +118,7 @@ class Maintenance
         $logs = [
             PIMCORE_LOG_DEBUG,
             PIMCORE_LOG_DIRECTORY . "/php.log",
+            PIMCORE_LOG_DIRECTORY . "/redirect.log",
             PIMCORE_LOG_DIRECTORY . "/legacy-class-names.log",
             PIMCORE_LOG_DIRECTORY . "/legacy-class-names-admin.log",
             PIMCORE_LOG_DIRECTORY . "/libreoffice-pdf-convert.log",
