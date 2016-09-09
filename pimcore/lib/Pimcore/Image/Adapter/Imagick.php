@@ -172,7 +172,7 @@ class Imagick extends Adapter
 
         $i = $this->resource; // this is because of HHVM which has problems with $this->resource->writeImage();
 
-        if (in_array($format, ["jpeg","pjpeg","jpg"]) && $this->isAlphaPossible) {
+        if (in_array($format, ["jpeg", "pjpeg", "jpg"]) && $this->isAlphaPossible) {
             // set white background for transparent pixels
             $i->setImageBackgroundColor("#ffffff");
             $i = $i->flattenImages();
