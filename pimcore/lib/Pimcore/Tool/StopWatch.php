@@ -93,8 +93,6 @@ class StopWatch
      */
     public static function microtime_float()
     {
-        list($usec, $sec) = explode(" ", microtime());
-
-        return ((float)$usec + (float)$sec);
+        return microtime(true);
     }
 }
