@@ -179,16 +179,50 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                 details.push(dimensionPanel);
             }
 
+            var downloadDefaultWidth = 800;
+
             if (this.data.imageInfo && this.data.imageInfo) {
                 if (this.data.imageInfo.dimensions && this.data.imageInfo.dimensions.width) {
                     downloadDefaultWidth = intval(this.data.imageInfo.dimensions.width);
                 }
             }
 
-            var downloadDefaultWidth = 800;
 
-            this.downloadBox = new Ext.form.FormPanel({
-                title: t("convert_to") + " & " + t("download"),
+            this.downloadBox = new Ext.Panel({
+                title: t("download"),
+                bodyStyle: "padding: 10px;",
+                style: "margin: 10px 0 10px 0",
+                items: [{
+                    xtype: "button",
+                    iconCls: "pimcore_icon_download",
+                    width: 260,
+                    style: "margin-bottom: 5px",
+                    text: t("original_file")
+                },{
+                    xtype: "button",
+                    iconCls: "pimcore_icon_download",
+                    width: 260,
+                    style: "margin-bottom: 5px",
+                    text: t("web_format")
+                }, {
+                    xtype: "button",
+                    iconCls: "pimcore_icon_download",
+                    width: 260,
+                    style: "margin-bottom: 5px",
+                    text: t("print_format")
+                },{
+                    xtype: "button",
+                    iconCls: "pimcore_icon_download",
+                    width: 260,
+                    style: "margin-bottom: 5px",
+                    text: t("office_format")
+                }]
+            });
+            details.push(this.downloadBox);
+
+
+            this.customDownloadBox = new Ext.form.FormPanel({
+                title: t("custom_download"),
                 bodyStyle: "padding: 10px;",
                 style: "margin: 10px 0 10px 0",
                 items: [{
@@ -199,38 +233,81 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                     store: [["JPEG", "JPEG"], ["PNG", "PNG"]],
                     mode: "local",
                     value: "JPEG",
-                    editable: false
+                    editable: false,
+                    listeners: {
+                        select: function (el) {
+                            var dpiField = this.customDownloadBox.getComponent("dpi");
+                            if(el.getValue() == "JPEG") {
+                                dpiField.enable();
+                            } else {
+                                dpiField.disable();
+                            }
+                        }.bind(this)
+                    }
+                }, {
+                    xtype: "combo",
+                    triggerAction: "all",
+                    name: "resize_mode",
+                    itemId: "resize_mode",
+                    fieldLabel: t("resize_mode"),
+                    forceSelection: true,
+                    store: [["scaleByWidth", t("scalebywidth")], ["scaleByHeight", t("scalebyheight")], ["resize", t("resize")]],
+                    mode: "local",
+                    value: "scaleByWidth",
+                    editable: false,
+                    listeners: {
+                        select: function (el) {
+                            var widthField = this.customDownloadBox.getComponent("width");
+                            var heightField = this.customDownloadBox.getComponent("height");
+
+                            if(el.getValue() == "scalebywidth") {
+                                widthField.enable();
+                                heightField.disable();
+                            } else if(el.getValue() == "scalebyheight") {
+                                widthField.disable();
+                                heightField.enable();
+                            } else {
+                                widthField.enable();
+                                heightField.enable();
+                            }
+                        }.bind(this)
+                    }
                 }, {
                     xtype: "numberfield",
                     name: "width",
+                    itemId: "width",
                     fieldLabel: t("width"),
                     value: downloadDefaultWidth
                 }, {
                     xtype: "numberfield",
                     name: "height",
-                    fieldLabel: t("height")
+                    itemId: "height",
+                    fieldLabel: t("height"),
+                    disabled: true
                 }, {
                     xtype: "numberfield",
                     name: "quality",
                     fieldLabel: t("quality"),
                     value: 95
                 }, {
-                    xtype: "checkbox",
-                    name: "aspectratio",
-                    fieldLabel: t("aspect_ratio"),
-                    checked: true
+                    xtype: "numberfield",
+                    name: "dpi",
+                    itemId: "dpi",
+                    fieldLabel: "DPI",
+                    value: 300,
+                    disabled: !this.data.imageInfo["exiftoolAvailable"]
                 }],
                 buttons: [{
                     text: t("download"),
                     iconCls: "pimcore_icon_download",
                     handler: function () {
-                        var config = this.downloadBox.getForm().getFieldValues();
-                        pimcore.helpers.download("/admin/asset/get-image-thumbnail/id/" + this.id
-                            + "/download/true?config=" + Ext.encode(config));
+                        var config = this.customDownloadBox.getForm().getFieldValues();
+                        pimcore.helpers.download("/admin/asset/download-image-thumbnail/id/" + this.id
+                            + "/?config=" + Ext.encode(config));
                     }.bind(this)
                 }]
             });
-            details.push(this.downloadBox);
+            details.push(this.customDownloadBox);
 
             this.displayPanel = new Ext.Panel({
                 title: t("view"),

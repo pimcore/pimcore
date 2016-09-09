@@ -1,5 +1,29 @@
 [
     {
+        "term": "original_file",
+        "definition": "Original File"
+    },
+    {
+        "term": "web_format",
+        "definition": "Web Format"
+    },
+    {
+        "term": "print_format",
+        "definition": "Print Format"
+    },
+    {
+        "term": "office_format",
+        "definition": "Office Format"
+    },
+    {
+        "term": "resize_mode",
+        "definition": "Resize Mode"
+    },
+    {
+        "term": "custom_download",
+        "definition": "Custom Download"
+    },
+    {
         "term": "mode",
         "definition": "Mode"
     },

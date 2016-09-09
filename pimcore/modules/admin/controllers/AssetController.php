@@ -90,6 +90,8 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
                 $imageInfo["iptc"] = $iptcData;
             }
 
+            $imageInfo["exiftoolAvailable"] = (bool) \Pimcore\Tool\Console::getExecutable("exiftool");
+
             $asset->imageInfo = $imageInfo;
         }
 
@@ -852,6 +854,59 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
         $this->removeViewRenderer();
     }
 
+    public function downloadImageThumbnailAction() {
+
+        $image = Asset\Image::getById($this->getParam("id"));
+        $config = \Zend_Json::decode($this->getParam("config"));
+        $thumbnail = new Asset\Image\Thumbnail\Config();
+        $thumbnail->setName("pimcore-download-" . $image->getId() . "-" . md5($this->getParam("config")));
+
+        if($config["resize_mode"] == "scaleByWidth") {
+            $thumbnail->addItem("scaleByWidth", [
+                "width" => $config["width"]
+            ]);
+        } elseif($config["resize_mode"] == "scaleByHeight") {
+            $thumbnail->addItem("scaleByHeight", [
+                "height" => $config["height"]
+            ]);
+        } else {
+            $thumbnail->addItem("resize", [
+                "width" => $config["width"],
+                "height" => $config["height"]
+            ]);
+        }
+
+        $thumbnail->setQuality($config["quality"]);
+        $thumbnail->setFormat($config["format"]);
+
+
+        if ($thumbnail->getFormat() == "JPEG") {
+            $thumbnail->setPreserveMetaData(true);
+            $thumbnail->setPreserveColor(true);
+        }
+
+        $thumbnail = $image->getThumbnail($thumbnail);
+        $thumbnailFile = $thumbnail->getFileSystemPath();
+
+        $exiftool = \Pimcore\Tool\Console::getExecutable("exiftool");
+        if($thumbnail->getFormat() == "JPEG" && $exiftool && isset($config["dpi"]) && $config["dpi"]) {
+            \Pimcore\Tool\Console::exec($exiftool . " -overwrite_original -xresolution=" . $config["dpi"] . " -yresolution=" . $config["dpi"] . " -resolutionunit=inches " . $thumbnailFile);
+        }
+
+        $downloadFilename = str_replace("." . File::getFileExtension($image->getFilename()), "." . $thumbnail->getFileExtension(), $image->getFilename());
+        $downloadFilename = strtolower($downloadFilename);
+        header('Content-Disposition: attachment; filename="' . $downloadFilename . '"');
+
+        header("Content-Type: " . $thumbnail->getMimeType(), true);
+        header("Content-Length: " . filesize($thumbnailFile), true);
+        $this->sendThumbnailCacheHeaders();
+        while (@ob_end_flush());
+        flush();
+
+        readfile($thumbnailFile);
+        exit;
+    }
+
     public function getImageThumbnailAction()
     {
         $fileinfo = $this->getParam("fileinfo");
@@ -895,20 +950,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
             $thumbnail->setName($thumbnail->getName() . "_auto_" . $hash);
         }
 
-        if ($this->getParam("download")) {
-            if (in_array(strtolower($thumbnail->getFormat()), ["jpg", "pjpeg", "jpeg"])) {
-                $thumbnail->setPreserveMetaData(true);
-                $thumbnail->setPreserveColor(true);
-            }
-        }
-
         $thumbnail = $image->getThumbnail($thumbnail);
-
-        if ($this->getParam("download")) {
-            $downloadFilename = str_replace("." . File::getFileExtension($image->getFilename()), "." . $thumbnail->getFileExtension(), $image->getFilename());
-            $downloadFilename = strtolower($downloadFilename);
-            header('Content-Disposition: attachment; filename="' . $downloadFilename . '"');
-        }
 
         if ($fileinfo) {
             $this->_helper->json([
@@ -920,7 +962,8 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
         header("Content-Type: " . $thumbnail->getMimeType(), true);
         header("Access-Control-Allow-Origin: *"); // for Aviary.Feather (Adobe Creative SDK)
         header("Content-Length: " . filesize($thumbnailFile), true);
-        $this->sendThumbnailCacheHeaders(); while (@ob_end_flush());
+        $this->sendThumbnailCacheHeaders();
+        while (@ob_end_flush());
         flush();
 
         readfile($thumbnailFile);
