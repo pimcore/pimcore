@@ -57,7 +57,7 @@ Pimcore provides two additional features to support editors in translating and m
 ### Localization Tool
 
 The localization tool for Pimcore documents is a comfort tool which supports creation and management of the same document
- for multiple languages. 
+ for multiple languages. It can be accessed in the editor button row of every document. 
 
 ![Localization Tool](../img/localization-documents2.png)
 
