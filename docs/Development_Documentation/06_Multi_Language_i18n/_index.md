@@ -27,7 +27,7 @@ Following settings can be defined here:
 The activated languages have influence to following modules of content within Pimcore: 
 
 * [Document - Localization (system property for language)](./02_Localize_your_Documents.md)
-* Shared Translations (Zend_Translate)
+* [Shared Translations (Zend_Translate)](./04_Shared_Translations.md)
 * Localized Fields for Objects (object localization)
 * Structured Data Fields - Classification Store
 
