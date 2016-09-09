@@ -27,7 +27,7 @@ class ClassesRebuildCommand extends AbstractCommand
     {
         $this
             ->setName('deployment:classes-rebuild')
-            ->setDescription('rebuilds classes and db structure based on updated website/var/classes/*.psf files')
+            ->setDescription('rebuilds classes and db structure based on updated website/var/classes/definition_*.php files')
         ;
     }
 
