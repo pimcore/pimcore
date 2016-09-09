@@ -28,8 +28,8 @@ The activated languages have influence to following modules of content within Pi
 
 * [Document - Localization (system property for language)](./02_Localize_your_Documents.md)
 * [Shared Translations (Zend_Translate)](./04_Shared_Translations.md)
-* Localized Fields for Objects (object localization)
-* Structured Data Fields - Classification Store
+* [Localized Fields for Objects (object localization)](../05_Objects/01_Object_Classes/01_Data_Types/23_Localized_Fields.md)
+* [Structured Data Fields - Classification Store](../05_Objects/01_Object_Classes/01_Data_Types/13_Classification_Store.md)
 
 
 ### Dealing with Locales within our code
