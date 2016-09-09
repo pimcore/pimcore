@@ -281,6 +281,7 @@ class Processor
                                 if (!in_array($transformation["method"], ["cropPercent"]) && in_array($key, ["width", "height", "x", "y"])) {
                                     if ($highResFactor && $highResFactor > 1) {
                                         $value *= $highResFactor;
+                                        $value = (int) ceil($value);
 
                                         // check if source image is big enough otherwise adjust the high-res factor
                                         if (in_array($key, ["width", "x"])) {
