@@ -341,13 +341,6 @@ class Pimcore
         }
 
         if (is_writable(PIMCORE_LOG_DEBUG)) {
-
-            // check for big logfile, empty it if it's bigger than about 200M
-            if (filesize(PIMCORE_LOG_DEBUG) > 200000000) {
-                rename(PIMCORE_LOG_DEBUG, PIMCORE_LOG_DEBUG . "-archive-" . date("m-d-Y-H-i")); // archive log (will be cleaned up by maintenance)
-                File::put(PIMCORE_LOG_DEBUG, "");
-            }
-
             // set default core logger (debug.log)
             if (!empty($prios)) {
                 $loggerFile = new \Monolog\Logger('core');
