@@ -160,8 +160,6 @@ class Imagick extends Adapter
             $format = strtolower($this->resource->getImageFormat());
         }
 
-        $i = $this->resource; // this is because of HHVM which has problems with $this->resource->writeImage();
-
         $originalFilename = null;
         if (!$this->reinitializing) {
             if ($this->getUseContentOptimizedFormat()) {
@@ -170,6 +168,14 @@ class Imagick extends Adapter
                     $format = "png32";
                 }
             }
+        }
+
+        $i = $this->resource; // this is because of HHVM which has problems with $this->resource->writeImage();
+
+        if (in_array($format, ["jpeg","pjpeg","jpg"]) && $this->isAlphaPossible) {
+            // set white background for transparent pixels
+            $i->setImageBackgroundColor("#ffffff");
+            $i = $i->flattenImages();
         }
 
         if (!$this->isPreserveMetaData()) {
