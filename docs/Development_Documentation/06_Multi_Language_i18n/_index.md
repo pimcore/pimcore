@@ -48,6 +48,72 @@ $locale = new \Zend_Locale("en_US");
 Now every Pimcore and ZF module will respect your registered locale.
 
 
-## Pimcore Backend Localization 
+## Pimcore Backend UI Localization 
 
+Pimcore backend UI localization is independent from content localization but works similar to Shared Translations. 
+Basically every text in Pimcore backend is translatable, but there are two different sources for translations - Pimcore
+system translations and project specific translations. 
+
+
+### Pimcore system translations
+This covers all labels and texts within Pimcore that ship with Pimcore installation pacakge. Here the standard language 
+English is maintained by the core team. In addition to that, every body can join the 
+ [Pimcore translation project](http://www.pimcore.org/en/community/translations) to add system translations in additional
+ languages. With every Pimcore release, newly added translations are added to the Pimcore installation package.
+
+
+### Project specific translations
+There are several components in the Pimcore backend UI which are configured differently for each project. These are
+
+* object class names
+* object field labels
+* object layout components
+* document types
+* predefined properties
+* custom views
+* document editables
+
+All these elements (except document editables) can be translated in ```Extras``` > ```Translations Admin``` similar to the
+Shared Translations. All installed system languages are available for translation.
+
+Strings which are subject to special translations, but have not been translated yet, are displayed with a "+" in front 
+and after the string, if Pimcore is in DEBUG mode.
+ 
+
+Document editables are translated through a special view helper.
+
+Example: Translation of options of a select editable
+```php
+
+(view script)
+...
+ 
+<?= $this->select("select", [
+    "store" => [
+        ["option1", $this->translateAdmin("Option One")],
+        ["option2", $this->translateAdmin("Option Two")],
+        ["option3", $this->translateAdmin("Option Three")]
+    ]
+]); ?>
+
+
+// short hands
+
+<?= $this->select("select", [
+    "store" => [
+        ["option1", $this->ts("Option One")],
+        ["option2", $this->ts("Option Two")],
+        ["option3", $this->ts("Option Three")]
+    ]
+]); ?>
+
+
+```
+After adding a new translation, the document needs to be loaded once in editmode. This adds the new translation keys to 
+to the Admin Translations where all extra translations can be edited.
+
+  
+### Plugin Translations
+If you are a plugin developer, you can add translations to your plugins and provide them with your plugin as you wish. 
+To see how plugins can hook into translations, please see the Plugin Developer's Guide.
 
