@@ -80,66 +80,14 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
                 $imageInfo["dimensions"]["height"] = $asset->getHeight();
             }
 
-            if (function_exists("exif_read_data") && is_file($asset->getFileSystemPath())) {
-                $supportedTypes = [IMAGETYPE_JPEG, IMAGETYPE_TIFF_II, IMAGETYPE_TIFF_MM];
-
-                if (in_array(@exif_imagetype($asset->getFileSystemPath()), $supportedTypes)) {
-                    $exif = @exif_read_data($asset->getFileSystemPath());
-                    if (is_array($exif)) {
-                        $imageInfo["exif"] = [];
-                        foreach ($exif as $name => $value) {
-                            if ((is_string($value) && strlen($value) < 50) || is_numeric($value)) {
-                                // this is to ensure that the data can be converted to json (must be utf8)
-                                if (mb_check_encoding($value, "UTF-8")) {
-                                    $imageInfo["exif"][$name] = $value;
-                                }
-                            }
-                        }
-                    }
-                }
+            $exifData = $asset->getEXIFData();
+            if(!empty($exifData)) {
+                $imageInfo["exif"] = $exifData;
             }
 
-
-            $result = getimagesize($asset->getFileSystemPath(), $info);
-            if ($result) {
-                $mapping = [
-                    '2#105' => 'headline',
-                    '2#120' => 'caption',
-                    '2#092' => 'location',
-                    '2#090' => 'city',
-                    '2#095' => 'state',
-                    '2#101' => 'country',
-                    '2#100' => 'countryCode',
-                    '2#080' => 'photographerName',
-                    '2#110' => 'credit',
-                    '2#085' => 'photographerTitle',
-                    '2#115' => 'source',
-                    '2#116' => 'copyright',
-                    '2#005' => 'objectName',
-                    '2#122' => 'captionWriters',
-                    '2#040' => 'instructions',
-                    '2#015' => 'category',
-                    '2#020' => 'supplementalCategories',
-                    '2#103' => 'transmissionReference',
-                    '2#010' => 'urgency',
-                    '2#025' => 'keywords',
-                    '2#055' => 'date',
-                    '2#060' => 'time',
-                ];
-
-                if ($info && isset($info['APP13'])) {
-                    $iptcRaw = iptcparse($info['APP13']);
-                    $imageInfo["iptc"] = [];
-                    foreach ($iptcRaw as $key => $value) {
-                        if (is_array($value) && count($value) === 1) {
-                            $value = $value[0];
-                        }
-
-                        if (isset($mapping[$key])) {
-                            $imageInfo["iptc"][$mapping[$key]] = $value;
-                        }
-                    }
-                }
+            $iptcData = $asset->getIPTCData();
+            if(!empty($exifData)) {
+                $imageInfo["iptc"] = $iptcData;
             }
 
             $asset->imageInfo = $imageInfo;
