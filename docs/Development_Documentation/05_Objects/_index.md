@@ -18,7 +18,6 @@ This chapter describes following aspects of objects from a technical point of vi
  * [Object Classes](./01_Object_Classes/_index.md) 
  * [Working with Objects via php API](./03_Working_with_php_API.md)
  * [External System Interaction](./05_External_System_Interaction.md)
- * [Database Model](./07_Database_Model.md)
 
 For all the provided backend functionality within Pimcore have a look at the User Documentation of Pimcore.
 [comment]: #(TODO add link)
