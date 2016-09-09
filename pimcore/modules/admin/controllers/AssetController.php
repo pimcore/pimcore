@@ -81,12 +81,12 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
             }
 
             $exifData = $asset->getEXIFData();
-            if(!empty($exifData)) {
+            if (!empty($exifData)) {
                 $imageInfo["exif"] = $exifData;
             }
 
             $iptcData = $asset->getIPTCData();
-            if(!empty($exifData)) {
+            if (!empty($exifData)) {
                 $imageInfo["iptc"] = $iptcData;
             }
 

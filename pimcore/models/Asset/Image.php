@@ -314,8 +314,8 @@ class Image extends Model\Asset
     /**
      * @return array
      */
-    public function getEXIFData() {
-
+    public function getEXIFData()
+    {
         $data = [];
 
         if (function_exists("exif_read_data") && is_file($this->getFileSystemPath())) {
@@ -339,11 +339,11 @@ class Image extends Model\Asset
     /**
      * @return array
      */
-    public function getIPTCData() {
-
+    public function getIPTCData()
+    {
         $data = [];
 
-        if(is_file($this->getFileSystemPath())) {
+        if (is_file($this->getFileSystemPath())) {
             $result = getimagesize($this->getFileSystemPath(), $info);
             if ($result) {
                 $mapping = [

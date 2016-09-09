@@ -434,7 +434,7 @@ class Data extends \Pimcore\Model\AbstractModel
             } elseif ($element instanceof Asset\Image) {
                 try {
                     $metaData = array_merge($element->getEXIFData(), $element->getIPTCData());
-                    foreach($metaData as $key => $value) {
+                    foreach ($metaData as $key => $value) {
                         $this->data .= " " . $key . " : " . $value;
                     }
                 } catch (\Exception $e) {

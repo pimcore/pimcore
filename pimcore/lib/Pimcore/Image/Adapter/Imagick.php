@@ -178,7 +178,7 @@ class Imagick extends Adapter
 
             // Imagick version compatibility
             $alphaChannel = 11; // This works at least as far back as version 3.1.0~rc1-1
-            if(defined("Imagick::ALPHACHANNEL_REMOVE")) {
+            if (defined("Imagick::ALPHACHANNEL_REMOVE")) {
                 // Imagick::ALPHACHANNEL_REMOVE has been added in 3.2.0b2
                 $alphaChannel = \Imagick::ALPHACHANNEL_REMOVE;
             }
