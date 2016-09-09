@@ -123,7 +123,7 @@ class Maintenance
             PIMCORE_LOG_DIRECTORY . "/libreoffice-pdf-convert.log",
         ];
 
-        foreach($logs as $log) {
+        foreach ($logs as $log) {
             if (file_exists($log) && filesize($log) > 200000000) {
                 // archive log (will be cleaned up by maintenance)
                 rename($log, $log . "-archive-" . date("m-d-Y-H-i"));
