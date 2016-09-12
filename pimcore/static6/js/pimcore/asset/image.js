@@ -187,6 +187,9 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                 }
             }
 
+            var downloadShortcutsHandler = function (type) {
+                pimcore.helpers.download("/admin/asset/download-image-thumbnail/id/" + this.id   + "/?type=" + type);
+            };
 
             this.downloadBox = new Ext.Panel({
                 title: t("download"),
@@ -194,28 +197,38 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                 style: "margin: 10px 0 10px 0",
                 items: [{
                     xtype: "button",
-                    iconCls: "pimcore_icon_download",
+                    iconCls: "pimcore_icon_image",
                     width: 260,
+                    textAlign: "left",
                     style: "margin-bottom: 5px",
-                    text: t("original_file")
+                    text: t("original_file"),
+                    handler: function () {
+                        pimcore.helpers.download("/admin/asset/download/id/" + this.data.id);
+                    }.bind(this)
                 },{
                     xtype: "button",
-                    iconCls: "pimcore_icon_download",
+                    iconCls: "pimcore_icon_world",
                     width: 260,
+                    textAlign: "left",
                     style: "margin-bottom: 5px",
-                    text: t("web_format")
+                    text: t("web_format"),
+                    handler: downloadShortcutsHandler.bind(this, "web")
                 }, {
                     xtype: "button",
-                    iconCls: "pimcore_icon_download",
+                    iconCls: "pimcore_icon_print",
                     width: 260,
+                    textAlign: "left",
                     style: "margin-bottom: 5px",
-                    text: t("print_format")
+                    text: t("print_format"),
+                    handler: downloadShortcutsHandler.bind(this, "print")
                 },{
                     xtype: "button",
-                    iconCls: "pimcore_icon_download",
+                    iconCls: "pimcore_icon_docx",
                     width: 260,
+                    textAlign: "left",
                     style: "margin-bottom: 5px",
-                    text: t("office_format")
+                    text: t("office_format"),
+                    handler: downloadShortcutsHandler.bind(this, "office")
                 }]
             });
             details.push(this.downloadBox);

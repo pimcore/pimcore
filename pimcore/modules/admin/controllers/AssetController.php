@@ -857,54 +857,91 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
     public function downloadImageThumbnailAction() {
 
         $image = Asset\Image::getById($this->getParam("id"));
-        $config = \Zend_Json::decode($this->getParam("config"));
-        $thumbnail = new Asset\Image\Thumbnail\Config();
-        $thumbnail->setName("pimcore-download-" . $image->getId() . "-" . md5($this->getParam("config")));
+        $config = null;
 
-        if($config["resize_mode"] == "scaleByWidth") {
-            $thumbnail->addItem("scaleByWidth", [
-                "width" => $config["width"]
-            ]);
-        } elseif($config["resize_mode"] == "scaleByHeight") {
-            $thumbnail->addItem("scaleByHeight", [
-                "height" => $config["height"]
-            ]);
-        } else {
-            $thumbnail->addItem("resize", [
-                "width" => $config["width"],
-                "height" => $config["height"]
-            ]);
+        if($this->getParam("config")) {
+            $config = \Zend_Json::decode($this->getParam("config"));
+        } elseif ($this->getParam("type")) {
+            $predefined = [
+                "web" => [
+                    "resize_mode" => "scaleByWidth",
+                    "width" => 3500,
+                    "dpi" => 72,
+                    "format" => "JPEG",
+                    "quality" => 85
+                ],
+                "print" => [
+                    "resize_mode" => "scaleByWidth",
+                    "width" => 6000,
+                    "dpi" => 300,
+                    "format" => "JPEG",
+                    "quality" => 95
+                ],
+                "office" => [
+                    "resize_mode" => "scaleByWidth",
+                    "width" => 1190,
+                    "dpi" => 144,
+                    "format" => "JPEG",
+                    "quality" => 90
+                ],
+            ];
+
+            $config = $predefined[$this->getParam("type")];
         }
 
-        $thumbnail->setQuality($config["quality"]);
-        $thumbnail->setFormat($config["format"]);
+        if($config) {
+            $thumbnailConfig = new Asset\Image\Thumbnail\Config();
+            $thumbnailConfig->setName("pimcore-download-" . $image->getId() . "-" . md5($this->getParam("config")));
+
+            if ($config["resize_mode"] == "scaleByWidth") {
+                $thumbnailConfig->addItem("scaleByWidth", [
+                    "width" => $config["width"]
+                ]);
+            } elseif ($config["resize_mode"] == "scaleByHeight") {
+                $thumbnailConfig->addItem("scaleByHeight", [
+                    "height" => $config["height"]
+                ]);
+            } else {
+                $thumbnailConfig->addItem("resize", [
+                    "width" => $config["width"],
+                    "height" => $config["height"]
+                ]);
+            }
+
+            $thumbnailConfig->setQuality($config["quality"]);
+            $thumbnailConfig->setFormat($config["format"]);
 
 
-        if ($thumbnail->getFormat() == "JPEG") {
-            $thumbnail->setPreserveMetaData(true);
-            $thumbnail->setPreserveColor(true);
+            if ($thumbnailConfig->getFormat() == "JPEG") {
+                $thumbnailConfig->setPreserveMetaData(true);
+                $thumbnailConfig->setPreserveColor(true);
+            }
+
+            $thumbnail = $image->getThumbnail($thumbnailConfig);
+            $thumbnailFile = $thumbnail->getFileSystemPath();
+
+            $exiftool = \Pimcore\Tool\Console::getExecutable("exiftool");
+            if ($thumbnailConfig->getFormat() == "JPEG" && $exiftool && isset($config["dpi"]) && $config["dpi"]) {
+                \Pimcore\Tool\Console::exec($exiftool . " -overwrite_original -xresolution=" . $config["dpi"] . " -yresolution=" . $config["dpi"] . " -resolutionunit=inches " . $thumbnailFile);
+            }
+
+            $downloadFilename = str_replace("." . File::getFileExtension($image->getFilename()),
+                "." . $thumbnail->getFileExtension(), $image->getFilename());
+            $downloadFilename = strtolower($downloadFilename);
+            header('Content-Disposition: attachment; filename="' . $downloadFilename . '"');
+
+            header("Content-Type: " . $thumbnail->getMimeType(), true);
+            header("Content-Length: " . filesize($thumbnailFile), true);
+            $this->sendThumbnailCacheHeaders();
+            while (@ob_end_flush()) {
+                ;
+            }
+            flush();
+
+            readfile($thumbnailFile);
+            @unlink($thumbnailFile);
+            exit;
         }
-
-        $thumbnail = $image->getThumbnail($thumbnail);
-        $thumbnailFile = $thumbnail->getFileSystemPath();
-
-        $exiftool = \Pimcore\Tool\Console::getExecutable("exiftool");
-        if($thumbnail->getFormat() == "JPEG" && $exiftool && isset($config["dpi"]) && $config["dpi"]) {
-            \Pimcore\Tool\Console::exec($exiftool . " -overwrite_original -xresolution=" . $config["dpi"] . " -yresolution=" . $config["dpi"] . " -resolutionunit=inches " . $thumbnailFile);
-        }
-
-        $downloadFilename = str_replace("." . File::getFileExtension($image->getFilename()), "." . $thumbnail->getFileExtension(), $image->getFilename());
-        $downloadFilename = strtolower($downloadFilename);
-        header('Content-Disposition: attachment; filename="' . $downloadFilename . '"');
-
-        header("Content-Type: " . $thumbnail->getMimeType(), true);
-        header("Content-Length: " . filesize($thumbnailFile), true);
-        $this->sendThumbnailCacheHeaders();
-        while (@ob_end_flush());
-        flush();
-
-        readfile($thumbnailFile);
-        exit;
     }
 
     public function getImageThumbnailAction()

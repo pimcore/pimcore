@@ -1032,4 +1032,6 @@
     background: url(/pimcore/static6/img/flat-color-icons/filing_cabinet.svg) center center no-repeat !important;
 }
 
-
+.pimcore_icon_print {
+    background: url(/pimcore/static6/img/flat-color-icons/print.svg) center center no-repeat !important;
+}
