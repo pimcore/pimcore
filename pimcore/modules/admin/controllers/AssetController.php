@@ -854,12 +854,12 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
         $this->removeViewRenderer();
     }
 
-    public function downloadImageThumbnailAction() {
-
+    public function downloadImageThumbnailAction()
+    {
         $image = Asset\Image::getById($this->getParam("id"));
         $config = null;
 
-        if($this->getParam("config")) {
+        if ($this->getParam("config")) {
             $config = \Zend_Json::decode($this->getParam("config"));
         } elseif ($this->getParam("type")) {
             $predefined = [
@@ -889,7 +889,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
             $config = $predefined[$this->getParam("type")];
         }
 
-        if($config) {
+        if ($config) {
             $thumbnailConfig = new Asset\Image\Thumbnail\Config();
             $thumbnailConfig->setName("pimcore-download-" . $image->getId() . "-" . md5($this->getParam("config")));
 
@@ -999,8 +999,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
         header("Content-Type: " . $thumbnail->getMimeType(), true);
         header("Access-Control-Allow-Origin: *"); // for Aviary.Feather (Adobe Creative SDK)
         header("Content-Length: " . filesize($thumbnailFile), true);
-        $this->sendThumbnailCacheHeaders();
-        while (@ob_end_flush());
+        $this->sendThumbnailCacheHeaders(); while (@ob_end_flush());
         flush();
 
         readfile($thumbnailFile);
