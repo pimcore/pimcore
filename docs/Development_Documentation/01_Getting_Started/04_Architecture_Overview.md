@@ -1,4 +1,4 @@
-# Architecture Overview
+# Architecture overview
 
 At this point we want to give a short overview of the architecture of Pimcore. 
 
@@ -27,9 +27,9 @@ via its API and also can be used by the MVC component.
 When implementing solutions with Pimcore, your custom parts should go into following locations within the
  total architecture: 
 
- * Apps/Website within the MVC component: Here go all the solution specific implementations 
+ * Apps/website within the MVC component: Here are all the solution specific implementations 
  like all controllers, views, models for your website. 
- * Plugins, Custom Modules: Here go all implementations and modules you might want to reuse 
+ * Plugins, custom modules: Here are all implementations and modules you might want to reuse 
  with other solutions. 
  
   
