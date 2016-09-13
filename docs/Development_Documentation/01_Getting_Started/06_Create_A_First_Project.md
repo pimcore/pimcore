@@ -68,7 +68,7 @@ With this code:
 ```php
 <?php $this->layout()->setLayout('default'); ?>
 ```
-We tell the engine that we want to use the layout default. Now create a new php file in the folder ```/website/views/layouts``` and name it to default.php (just like the name of the layout appending .php).
+We tell the engine that we want to use the layout default. Now create a new php file in the folder `/website/views/layouts` and name it to default.php (just like the name of the layout appending .php).
 Then we can also put some HTML and template code into it:
 
 ```php
@@ -167,7 +167,7 @@ If everything goes well, the new class looks like in the picture:
 
 ![Product class](../img/Pimcore_Elements_product_class.png)
 
-**Important:** Every generated class in the Pimcore admin panel has also an accordingly PHP class with getters and setters. You can find our newly created class above class in ```website/var/classes/Object/Product.php``` 
+**Important:** Every generated class in the Pimcore admin panel has also an accordingly PHP class with getters and setters. You can find our newly created class above class in `website/var/classes/Object/Product.php` 
 
 ## Add a new Object
 
@@ -275,7 +275,7 @@ Go to the product page. In my case, it would be *http://pimcore.local/tshirt* wh
 
 We haven't implemented frontend feature yet. Therefore, the page doesn't contain product information.
 
-In the template file (```website/views/scripts/content/product.php```) add few lines:
+In the template file (`website/views/scripts/content/product.php`) add few lines:
 
 ```php
 <?php /** @var $this \Pimcore\View */ ?>
@@ -308,7 +308,7 @@ In the template file (```website/views/scripts/content/product.php```) add few l
 
 You are able to access to your object by method `getElement()`.
 Now you have access to whole data from the object (name, description, ...).
-It's a good practice to add ```@var``` doc in every view. If you do this you have access to auto complete in your IDE.
+It's a good practice to add `@var` doc in every view. If you do this you have access to auto complete in your IDE.
 
 
 ## Add a Thumbnail Configuration

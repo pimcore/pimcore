@@ -67,7 +67,7 @@ User defined routes allow directing requests to certain detail pages, even thoug
 of a document, but matches a certain route. For more information have a look at 
 [URLs based on Custom Routes](../02_MVC/04_Routing_and_URLs/02_Custom_Routes.md).
 
-An object listing class is created automatically for each class defined in Pimcore. Objects for the class ```Myobject``` 
+An object listing class is created automatically for each class defined in Pimcore. Objects for the class `Myobject` 
 are retrieved through a listing as in the following example:
 
 ```php
@@ -151,7 +151,7 @@ $entries->load();
 ```
 
 ### Conditions on localized fields
-Following code will only search the EN value of the field ```name```.
+Following code will only search the EN value of the field `name`.
 ```php
 $entries = new Object\Myclassname\Listing();
 $entries->setLocale("en"); // string or instance of Zend_Locale
@@ -237,8 +237,8 @@ $country = Object\Country::getByLocalizedfields("name", "Austria", "en", 1);
 
 
 ### Get an Object List including unpublished Objects
-Normally object lists only give published objects. This can be changed by setting a lists ```unpublished``` property to 
-```true```.
+Normally object lists only give published objects. This can be changed by setting a lists `unpublished` property to 
+`true`.
 
 ```php
 $list = Object\News::getList(["unpublished" => true]);
@@ -276,12 +276,12 @@ $list = Object\Collectiontest::getList([
 You can add field collections to an listing object by specifying the type of the field collection and optionally the 
 fieldname. The fieldname is the fieldname of the field collection in the class definition of the current object.
 Once field collections are added to an object listing, you can access attributes of field collections in the condition 
-of the object listing. The syntax is as shown in the examples above ```FIELDCOLLECTIONTYPE~FIELDNAME.ATTRIBUTE_OF_FIELDCOLLECTION```, 
-or if you have not specified a fieldname ```FIELDCOLLECTION.ATTRIBUTE_OF_FIELDCOLLECTION```.
+of the object listing. The syntax is as shown in the examples above `FIELDCOLLECTIONTYPE~FIELDNAME.ATTRIBUTE_OF_FIELDCOLLECTION`, 
+or if you have not specified a fieldname `FIELDCOLLECTION.ATTRIBUTE_OF_FIELDCOLLECTION`.
 
 The object listing of this example only delivers objects of the type Collectiontest, which have
-* an Fieldcollection of the type ```MyCollection``` and the value ```testinput``` in the attribute ```myinput``` and
-* an Fieldcollection in the field ```collection``` of the type ```MyCollection``` and the value ```hugo``` in the attribute ```myinput```. 
+* an Fieldcollection of the type `MyCollection` and the value `testinput` in the attribute `myinput` and
+* an Fieldcollection in the field `collection` of the type `MyCollection` and the value `hugo` in the attribute `myinput`. 
 
 
 

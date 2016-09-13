@@ -14,7 +14,7 @@ that ships with pimcore and its comments.
 
 #### Additional object tree including condition filter
 The main idea for this configuration is to
-* add an additional object tree called ```Articles``` having its root at ```/blog```
+* add an additional object tree called `Articles` having its root at `/blog`
 * not showing the parent folder as its root
 * showing it at the right side in expanded state (there can be only one expanded tree on each side)
 * do NOT show all blog articles which have the text "magnis" in their English title.
@@ -56,7 +56,7 @@ return [
 
 
 #### Additional asset tree hiding items based on a property
-* use the ```/examples/panama``` as the root folder
+* use the `/examples/panama` as the root folder
 * do not show the parent node
 * position it on the left
 * place it on the top and expand it
@@ -93,7 +93,7 @@ return [
 
 #### Document tree filtering using the where clause
 The intention is to
-* show the ```/en/basic-examples subtree``` (including the parent node on the right side)
+* show the `/en/basic-examples subtree` (including the parent node on the right side)
 * apply a simple filter which allows us to only show
    * folders 
    * links

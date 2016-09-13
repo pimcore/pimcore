@@ -22,11 +22,11 @@ So it's possible to make a multifunctional dropbox in editmode where the editor 
 | width        | integer   | Width of the renderlet in pixel                                             |             |
 
 Optionally you can pass every parameter (with a simple data type) you like to the renderlet which can be accessed by 
-the configured controller with ```$this->getParam("yourKey")```.
+the configured controller with `$this->getParam("yourKey")`.
 
 ## In the configured Controller Action
 
-In the target controller action you get the follwing parameters which can be accessed by ```$this->getParam("key")```.
+In the target controller action you get the follwing parameters which can be accessed by `$this->getParam("key")`.
 
 | Name     | Type                   | Description                                                                                      |
 |----------|------------------------|--------------------------------------------------------------------------------------------------|
@@ -36,7 +36,7 @@ In the target controller action you get the follwing parameters which can be acc
 | subtype  | string                 | The subtype of the element assigned to the renderlet (folder, image, link, page, classname, ...) |
 | type     | string                 | The type of the element assigned to the renderlet (document,asset,object)                        |
 
-If you have defined custom parameters to the renderlet configuration you can access them also with ```$this->getParam```.
+If you have defined custom parameters to the renderlet configuration you can access them also with `$this->getParam`.
 
 ## Example
 
@@ -81,7 +81,7 @@ Of course, to limit access to the renderlet, you can use the **type** configurat
 
 ### Create view
 
-Now you should create the template file in: ```website/views/scripts/content/my-gallery.php``` path. 
+Now you should create the template file in: `website/views/scripts/content/my-gallery.php` path. 
 
 ```php
 <?php

@@ -14,7 +14,7 @@ immediately which objects are of the type "football".
 
 ![Class Icons](../../../img/classes-icons1.png)
 
-Icons that come along with Pimcore by default can be found in ```http://your-domain/pimcore/static6/html/icons.php```.
+Icons that come along with Pimcore by default can be found in `http://your-domain/pimcore/static6/html/icons.php`.
 
 #### Icon Sizes
 As icons SVG graphics are recommended. If you use pixel graphics, maximum size is 18x20 pixels. 
@@ -23,7 +23,7 @@ As icons SVG graphics are recommended. If you use pixel graphics, maximum size i
 ## Custom icons and style in object-tree
 
 It is possible to define custom icons and styles for objects in the object tree. 
-In order to do so, overwrite the method ```getElementAdminStyle``` of ```AbstractObject``` by [extending the Pimcore 
+In order to do so, overwrite the method `getElementAdminStyle` of `AbstractObject` by [extending the Pimcore 
  default class](./01_Inheritance.md) and return your own implementation of Element_AdminStyle.
  
 #### Possible properties to define:

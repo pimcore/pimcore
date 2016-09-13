@@ -10,7 +10,7 @@ through a user friendly graphical user interface (GUI), but nevertheless in the 
 which can profit from inheritance and can be utilized and accessed within your custom php code. 
 So managing data becomes really easy. Data objects can be instantiated and filled within Pimcore backend or within your
 custom code by using the php API and common programming paradigms (create new instances, using getter and setter, ...).
- For saving objects just call the ```save```` method and Pimcore takes care of the rest. 
+ For saving objects just call the `save`` method and Pimcore takes care of the rest. 
  So it is also really eays to serve object from external systems like CRM, ERP, PIM or asset management systems.
  
 

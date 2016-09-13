@@ -2,17 +2,17 @@
 
 ## Date, Date & Time
 
-The ```date``` and ```date & time``` object fields are represented by a calender widget in the Pimcore GUI. 
+The `date` and `date & time` object fields are represented by a calender widget in the Pimcore GUI. 
 
 ![Date Field](../../../img/classes-datatypes-date1.jpg)
 
 In the database its data is saved as unix timestamp and thereby stored in an INT data column. Programmatically 
-these data types are represented by a ```DateTime/Carbon``` Object.
+these data types are represented by a `DateTime/Carbon` Object.
 
 
 ## Time
 
-The ```time``` data field is the same drop down list of day times as in the ```date & time``` field.
+The `time` data field is the same drop down list of day times as in the `date & time` field.
 
 ![Time Field](../../../img/classes-datatypes-date2.jpg)
 

@@ -9,13 +9,13 @@ The only data stored is the one in the object's query tables.
 Let's have a closer look by walking through a simple example.
 
 Let's suppose we have a very simple class with 2 number fields called xValue and yValue and a calculated-value field 
-called ```sum``` placed inside a localizedfields container.
+called `sum` placed inside a localizedfields container.
 
 ![Calculated Value Configuration](../../../img/classes-datatypes-calculated.png)
 
 
 The first step is to provide a PHP calculator class implementing at least one static method which computes the result 
-for the ```sum``` field. An example is shown below.
+for the `sum` field. An example is shown below.
 
 The arguments passed into this method is the Pimcore object and the contextual information telling you which 
 calculated-value field is affected and where it is located it.
@@ -85,8 +85,8 @@ As said before, the richness of the context information depends on the location 
 
 | Name | Description |
 | --- | ---- |
-| ownerType | ```"object"``` |
-| fieldName | the name of the calcuated-value field (e.g. ```sum```) |
+| ownerType | `"object"` |
+| fieldName | the name of the calcuated-value field (e.g. `sum`) |
 
 
 #### Localizedfields
@@ -94,7 +94,7 @@ As said before, the richness of the context information depends on the location 
 | Name | Description |
 | --- | ---- |
 | position | the language ("en", "de", ...) |
-| ownerType | ```"localizedfield"``` |
+| ownerType | `"localizedfield"` |
 | ownerName | the name of the localized field ("localizedfields") | 
 
 
@@ -102,7 +102,7 @@ As said before, the richness of the context information depends on the location 
 
 | Name | Description |
 | --- | ---- |
-| ownerType | ```"objectbrick"``` |
+| ownerType | `"objectbrick"` |
 | ownerName | the name of the objectbrick field inside the object |
 | fieldName | the name of the attribute inside the brick |
 | index | the name of the brick |
@@ -113,7 +113,7 @@ As said before, the richness of the context information depends on the location 
 
 | Name | Description |
 | --- | ---- |
-| ownerType | ```"fieldcollection"``` |
+| ownerType | `"fieldcollection"` |
 | ownerName | the name of the fieldcollection attribute |
 | fieldName | the name of the attribute inside the fieldcollection |
 | index | the index of the fieldcollection item |
@@ -124,7 +124,7 @@ As said before, the richness of the context information depends on the location 
 
 | Name | Description |
 | --- | ---- |
-| ownerType | ```"classificationstore"``` |
+| ownerType | `"classificationstore"` |
 | ownerName | the name of the fieldcollection attribute |
 | fieldName | the name of the attribute inside the fieldcollection |
 | position  | the language |

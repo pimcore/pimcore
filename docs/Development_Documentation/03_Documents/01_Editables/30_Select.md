@@ -57,7 +57,7 @@ Frontend:
 
 ### Preselect option
 
-You can ***preselect*** an option in your select editable by using ```setDataFromResource``` method.
+You can ***preselect*** an option in your select editable by using `setDataFromResource` method.
 
 ```php
 if($this->editmode):

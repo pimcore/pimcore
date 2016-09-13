@@ -3,7 +3,7 @@
 ## General
 
 Similar to the [Input](./16_Input.md) editable, Textarea could be use as a place when you can put some parts of a pure text. 
-You can specify a css class of the table, auto ```<br>``` tags and few other you can find in the configuration table, below.
+You can specify a css class of the table, auto `<br>` tags and few other you can find in the configuration table, below.
 
 
 ## Configuration

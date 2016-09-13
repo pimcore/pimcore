@@ -36,7 +36,7 @@ defined.
 ![choose Classification Store type](../../../img/Objects_ClassificationStore_type.png)
 
 * Click on the configuration button on the right for detailed settings
-* Note that not all settings are respected (e.g. ```indexed```)
+* Note that not all settings are respected (e.g. `indexed`)
 
 ![Classification Store detailed config](../../../img/Objects_ClassificationStore_detailed_config.png)
 
@@ -63,7 +63,7 @@ defined.
 
 ## Class definition
 
-* Localization can be enabled, by default only the ```default``` language is available
+* Localization can be enabled, by default only the `default` language is available
 * Allowed groups can be restricted by providing a comma-separated list of group ids
 * There can be more than one classification store field 
 * Configure the group sort order for the object editor, groups with lower values are listed first
@@ -83,7 +83,7 @@ defined.
 
 In contrast to localized fields fallback and inherited values are first resolved in a horizontal way. 
 If no value can be found on the same level, the parent level is scanned in the same language order. 
-As mentioned before, there is the concept of a ```default``` language which is just an additional pseudo language 
+As mentioned before, there is the concept of a `default` language which is just an additional pseudo language 
 which acts as the last resort.
 
 Consider the following example and let’s assume that English is the fallback language for German. 

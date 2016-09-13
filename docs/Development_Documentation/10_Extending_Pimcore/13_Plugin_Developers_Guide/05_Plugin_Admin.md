@@ -23,7 +23,7 @@ The broker then will notify each plugin upon the hooks described below:
 * postOpenObject - after object is opened, object and type are passed as parameters
 
 Uninstall is called after plugin has been uninstalled - this hook can be used to do remove plugin features from the UI after installation. 
-Note: In order to be notified upon uninstall, a plugin must override the ```getClassName``` method of ```pimcore.plugin.admin``` and return its own class name
+Note: In order to be notified upon uninstall, a plugin must override the `getClassName` method of `pimcore.plugin.admin` and return its own class name
 
 ## I18n texts for plugins
 

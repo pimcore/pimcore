@@ -12,15 +12,15 @@ The items in the loop as well as their order can be defined by the editor with t
 |-----------|-----------|----------------------------------------------------------------------------------------------------------------------------|
 | limit     | integer   | Max. amount of iterations.                                                                                                 |
 | default   | integer   | If block is empty, this specifies the iterations at startup.                                                               |
-| manual    | bool      | forces the manual mode, which enables a complete free implementation for blocks, for example using read ```<table>``` elements |
+| manual    | bool      | forces the manual mode, which enables a complete free implementation for blocks, for example using read `<table>` elements |
 
 ## Methods
 
 | Name                | Description                                                 |
 |---------------------|-------------------------------------------------------------|
-| ```getCount()```    | Get the total amount of iterations.                         |
-| ```getCurrent()```  | Get the current index while looping.                        |
-| ```getElements()``` | Return a array for every loop to access the defined childs. |
+| `getCount()`    | Get the total amount of iterations.                         |
+| `getCurrent()`  | Get the current index while looping.                        |
+| `getElements()` | Return a array for every loop to access the defined childs. |
 
 ## The Block controls
 
@@ -74,7 +74,7 @@ And in the frontend of the application:
 <?php } ?>
 ```
 
-### Example for ```getCurrent()```
+### Example for `getCurrent()`
 
 ```php
 

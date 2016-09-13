@@ -1,20 +1,20 @@
 # Localize your Documents
 
-Pimcore allows you to localize every document. You can find the setting in your document in the tab ```Properties```. 
+Pimcore allows you to localize every document. You can find the setting in your document in the tab `Properties`. 
 There you can choose from language which is configured in the system settings.
 
 The selected language is registered as a property on the document, which is inherited to all of it's children. 
 
 If you have selected a language this will be automatically registered globally the ZF way 
-(```\Zend_Registry::set("Zend_Locale", new \Zend_Locale($this->document->getProperty("language")))```). 
+(`\Zend_Registry::set("Zend_Locale", new \Zend_Locale($this->document->getProperty("language")))`). 
 
-Because of this, every Pimcore and ZF module automatically recognized the locale, for example ```\Zend_Date```, 
-```\Pimcore\Translate``` ( based on ```\Zend_Translate```) as described later in this text.
+Because of this, every Pimcore and ZF module automatically recognized the locale, for example `\Zend_Date`, 
+`\Pimcore\Translate` ( based on `\Zend_Translate`) as described later in this text.
  
 ![Localization Settings](../img/localization-documents.png)
  
 
-It's no longer required to set the locale manually for example in your ```\Website\Controller\Action::init();```. 
+It's no longer required to set the locale manually for example in your `\Website\Controller\Action::init();`. 
 
 Since the language is a simple property you can access it like every other property like:
  

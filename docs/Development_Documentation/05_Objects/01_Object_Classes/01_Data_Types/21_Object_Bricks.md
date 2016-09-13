@@ -58,7 +58,7 @@ A field of this data type has to be added to the object class.
 By saving the object class, for each Objectbrick field of this class, the own data class is created with getters for each 
 allowed Objectbrick. In our example, this data class would looks like this.
 
-The getter ```$product->getBricks()``` returns an instance of this class filled with the Objectbricks of the ```$product```. 
+The getter `$product->getBricks()` returns an instance of this class filled with the Objectbricks of the `$product`. 
 By calling the getter, the Objectbrick class with its attribute getter is returned.
 
 ```php
@@ -112,7 +112,7 @@ $product->save();
 ### Querying for Objectbrick data
 
 Data of Objectbricks can be queried in the same way as data of fieldcollections. 
-The Objectbricks have to be added to the ```Object_List``` object and then the Objectbrick data can be queried in the 
+The Objectbricks have to be added to the `Object_List` object and then the Objectbrick data can be queried in the 
 condition like in the sample below.
 
 ```php
@@ -125,7 +125,7 @@ $productList = Object\Product::getList([
 ]);
 ```
 
-If you want to obtain a list of objects which have a specific Objectbrick you can query for the ```fieldname``` value 
+If you want to obtain a list of objects which have a specific Objectbrick you can query for the `fieldname` value 
 in the condition statement.
 
 ```php

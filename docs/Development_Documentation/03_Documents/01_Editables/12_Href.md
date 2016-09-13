@@ -61,7 +61,7 @@ Have a look at the example, below.
 ]); ?>
 ```
 
-We specified that in to the **myHref** editable user can put only video / image **assets** and **objects** represented by Person (```\Pimcore\Model\Object\Person```) class. 
+We specified that in to the **myHref** editable user can put only video / image **assets** and **objects** represented by Person (`\Pimcore\Model\Object\Person`) class. 
  
 As you see in the picture below, it's impossible to drop any other type to that editable.
 
@@ -71,7 +71,7 @@ As you see in the picture below, it's impossible to drop any other type to that 
 
 You could use the href editable to make download video feature in your website. 
 
-You could check an element type using ```instanceof``` on your href element ```getElement``` method.  
+You could check an element type using `instanceof` on your href element `getElement` method.  
 
 ```php
 <?php if ($this->editmode): ?>

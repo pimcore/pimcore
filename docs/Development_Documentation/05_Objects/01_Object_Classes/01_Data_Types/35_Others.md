@@ -5,7 +5,7 @@
 ![Link Field](../../../img/classes-datatypes-checkbox.png)
 
 A checkbox field can be configured to be checked by default when a new object is created. This can be achieved by 
-checking ```Default value``` in the object field settings. In the UI a checkbox is displayed as a simple checkbox. 
+checking `Default value` in the object field settings. In the UI a checkbox is displayed as a simple checkbox. 
 
 It is stored in a TINYINT column in the database with the value 0 or 1. 
 
@@ -22,8 +22,8 @@ $object->setCheckbox(true);
 In the UI a link is displayed as text. Its details can be edited by clicking on the button next to the link text. In the 
 object class definition there are no special configurations available for an object field link.
 
-The link object field has its own data class which is ```Pimcore\Model\Object\Data\Link```. In order to set a link 
-programmatically an ```Pimcore\Model\Object\Data\Link``` object needs to be instantiated and passed to the setter:
+The link object field has its own data class which is `Pimcore\Model\Object\Data\Link`. In order to set a link 
+programmatically an `Pimcore\Model\Object\Data\Link` object needs to be instantiated and passed to the setter:
 
 ```php
 $l = new Object\Data\Link();               

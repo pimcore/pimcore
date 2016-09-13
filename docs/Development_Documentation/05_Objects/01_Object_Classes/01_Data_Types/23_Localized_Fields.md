@@ -29,7 +29,7 @@ This limit can be changed via the field settings in the class configurator.
 
 ## Definition of available Languages
 If it's not already configured, please specify the valid languages for your website. 
-You can do this in ```Settings``` -> ```System Settings``` -> ```Localization & Internationalization```
+You can do this in `Settings` -> `System Settings` -> `Localization & Internationalization`
 
 ![Add languages](../../../img/Objects_LocalizedFields_add_language.png)
 

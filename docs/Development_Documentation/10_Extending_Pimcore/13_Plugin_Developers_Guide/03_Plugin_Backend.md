@@ -94,7 +94,7 @@ More information on installing and uninstalling a plugin with UI components, is 
 
 ### Plugin State
 Each plugin can show a status message in Pimcore plugin settings. 
-To accomplish that override ```getPluginState``` method in class ```plugins/ExtensionExample/lib/ExtensionExample/Plugin.php```.
+To accomplish that override `getPluginState` method in class `plugins/ExtensionExample/lib/ExtensionExample/Plugin.php`.
 
 ```php
 public static function getPluginState()
@@ -105,4 +105,4 @@ public static function getPluginState()
 
 ### Local storage for your plugin
 Sometimes a plugin needs to put file somewhere (logfiles, cache files and other dynamically generated),
-You can should use for it: ```website/var/plugins/ExtensionExample``` where **ExtensionExample** is the name of the plugin.
+You can should use for it: `website/var/plugins/ExtensionExample` where **ExtensionExample** is the name of the plugin.

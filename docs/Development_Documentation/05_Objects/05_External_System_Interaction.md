@@ -9,7 +9,7 @@ interaction layer with your custom php code. This interaction layer can be withi
  a rest or soap service or just a simple CLI command - you have the full flexibility.
  
 ## Import
-The following example indicates the creation of a new object of the class ```myclass```. 
+The following example indicates the creation of a new object of the class `myclass`. 
 ```php
 use \Pimcore\Model\Object;
 

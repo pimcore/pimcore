@@ -59,7 +59,7 @@ The frontend part looks like that:
 
 ![Multihref editable - frontend preview](../../img/editables_multihref_preview.png)
 
-To better understand what exactly is the ```$element``` variable, have a look at the output below:
+To better understand what exactly is the `$element` variable, have a look at the output below:
 
 ```
 array(6) {

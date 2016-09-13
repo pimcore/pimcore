@@ -11,8 +11,8 @@ In Pimcore there is a difference between content localization and localization o
 ## Content Localization 
 
 ### Language Configuration
-The available languages for content are configured centrally in system settings (```Settings``` -> ```System Settings``` 
--> ```Localization & Internationalization (i18n/l10n)```). 
+The available languages for content are configured centrally in system settings (`Settings` -> `System Settings` 
+-> `Localization & Internationalization (i18n/l10n)`). 
 
 ![Localization Settings](../img/localization-settings.png)
 
@@ -73,7 +73,7 @@ There are several components in the Pimcore backend UI which are configured diff
 * custom views
 * document editables
 
-All these elements (except document editables) can be translated in ```Extras``` > ```Translations Admin``` similar to the
+All these elements (except document editables) can be translated in `Extras` > `Translations Admin` similar to the
 Shared Translations. All installed system languages are available for translation.
 
 Strings which are subject to special translations, but have not been translated yet, are displayed with a "+" in front 

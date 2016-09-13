@@ -26,7 +26,7 @@ Except the basic usage, due to the configuration options you can specify the too
 
 ### Basic usage
 
-```wysiwyg``` helper doesn't require any attributes except ```name```. 
+`wysiwyg` helper doesn't require any attributes except `name`. 
 The following code specifies also height for the rendered WYSIWYG editable.
 
 ```php
@@ -47,7 +47,7 @@ If you have a look at the edit mode, you will see that our WYSIWYG is rendered w
 The complete list of configuration options you can find on [CKeditor toolbar documentation](http://docs.ckeditor.com/#!/guide/dev_toolbar).
 
 The WYSIWYG editable allows us to specify the toolbar. 
-If you have to limit styling options (for example only basic styles like ```<b>``` tag and lists would be allowed), just use ```toolbarGroups``` option.
+If you have to limit styling options (for example only basic styles like `<b>` tag and lists would be allowed), just use `toolbarGroups` option.
 
 ```php
 <section id="marked-content">

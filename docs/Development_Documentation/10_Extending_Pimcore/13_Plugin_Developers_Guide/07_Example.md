@@ -29,7 +29,7 @@ As a name choose: *ExtensionExample*
 
 Go to: ![Tools](../../img/Icon_tools.png)  **Tools -> Extensions ->** ![Create new plugin skeleton](../../img/Icon_Create_new_plugin_skeleton.png)
 
-You can find your newly generated plugin including all necessary files in ```plugins/ExtensionExample```
+You can find your newly generated plugin including all necessary files in `plugins/ExtensionExample`
 
 At this point, if you log into the Pimcore admin then navigate to ![Tools](../../img/Icon_tools.png)**Tools -> Extensions**  you should be able to see, enable, install and uninstall your new plugin.
 Don't forget to activate the extension ![Enable extension](../../img/Extensions_enable.png)
@@ -38,11 +38,11 @@ Don't forget to activate the extension ![Enable extension](../../img/Extensions_
 
 ### Modyfing The Admin Interface
 We're going to modify the admin interface. 
-All of the UI changes are driven by javascript, so open the ```plugins/ExtensionExample/static/js/startup.js``` file.
+All of the UI changes are driven by javascript, so open the `plugins/ExtensionExample/static/js/startup.js` file.
 
 Let's create a new menu item:
 
-Change ```pimcoreReady``` function like below:
+Change `pimcoreReady` function like below:
 
 ```javascript
 pimcoreReady: function(params,broker){
@@ -75,7 +75,7 @@ For plugins, requesting a controller and action in the browser works a little bi
 
 For the example below, we will have a URL like this:
 
-```http://your_domain/plugin/ExtensionExample/admin/get-address-book```
+`http://your_domain/plugin/ExtensionExample/admin/get-address-book`
 
 There are some aspects regarding the above URL that you should keep in mind:
 1. /plugin - is always the prefix for accesing plugins (notice there is no "s" in plugin)
@@ -85,7 +85,7 @@ There are some aspects regarding the above URL that you should keep in mind:
 ### Making It Do Something Useful
 Let's add some functionality to pull data from a web service and display it in a table.
 
-In the ```plugins/ExtensionExample/static/js/startup.js``` file add new function ```showTab``` with body standard. 
+In the `plugins/ExtensionExample/static/js/startup.js` file add new function `showTab` with body standard. 
 At the moment, our file should looks like this:
 
 ```javascript
@@ -139,9 +139,9 @@ Now, a new tab is opened if you click on the plugin button.
 
 ![New extension Tab](../../img/Extensions_new_tab.png)
 
-In the ```showTab``` method, w have the empty array called ```items```, we're going to use it to show records in a grid.
+In the `showTab` method, w have the empty array called `items`, we're going to use it to show records in a grid.
 
-Now, add new method ```getGrid``` to the plugin class and use it for collect the items array. 
+Now, add new method `getGrid` to the plugin class and use it for collect the items array. 
 
 ```javascript
 showTab: function() {
@@ -191,7 +191,7 @@ getGrid: function() {
 
 Ok, it's time to write a simple webservice  so that we can pull some data - create the following file: 
 
-```plugins/ExtensionExample/controllers/AdminController.php```
+`plugins/ExtensionExample/controllers/AdminController.php`
 
 With the following content:
 

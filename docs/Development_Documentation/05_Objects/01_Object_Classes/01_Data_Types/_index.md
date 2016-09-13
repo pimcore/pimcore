@@ -36,7 +36,7 @@ The entire list of data types is indicated below:
 | Name                     | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 |--------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | select                   | combo box                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| user                     | combo box to select from all existing pimcore users (available since build 716) </br></br>In the user settings the object dependencies of each user are shown in the second tab panel.</br>All objects which reference the selected user are listed in a grid view.</br></br>If one needs to find out which objects hold a reference to a specific user, the ```Pimcore\\Tool\\Admin::getObjectsReferencingUser($userId)``` method can be used to find all referencing objects. |
+| user                     | combo box to select from all existing pimcore users (available since build 716) </br></br>In the user settings the object dependencies of each user are shown in the second tab panel.</br>All objects which reference the selected user are listed in a grid view.</br></br>If one needs to find out which objects hold a reference to a specific user, the `Pimcore\\Tool\\Admin::getObjectsReferencingUser($userId)` method can be used to find all referencing objects. |
 | country                  | combo box with predefined country list from Zend_Locale                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | language                 | combo box with predefined language list from Zend_Locale                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | multiselect              | combo box with multiple select                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
@@ -109,33 +109,33 @@ The entire list of data types is indicated below:
 
 ### General Aspects
 
-All data types are wrapped in an object derived from ```Pimcore\Model\Object\Class\Data```. 
+All data types are wrapped in an object derived from `Pimcore\Model\Object\Class\Data`. 
 These data type objects provide getters and setters and they define the Description in the frontend. 
 Data type objects are displayed in the first column of the table above. 
 The second column indicates the underlying data type class and the third column outlines the Description used in pimcore 
 to fill in, edit and display data objects.
 
 
-Besides the ```name```, which is the name of the object's property and the ```title```, which is shown in the GUI, an 
+Besides the `name`, which is the name of the object's property and the `title`, which is shown in the GUI, an 
 object field has the general configuration options listed below. The title can be translated for different system 
 languages. Please see the article about Translations to find out how to add object field translations.
 
-* ```mandatory```: Makes the field mandatory and does not allow saving the object when it is empty
-* ```not editable```: Does not allow a change of this field's value in pimcore backend (data change can only be done 
+* `mandatory`: Makes the field mandatory and does not allow saving the object when it is empty
+* `not editable`: Does not allow a change of this field's value in pimcore backend (data change can only be done 
   programmatically)
-* ```invisible```: The field is not visible in pimcore
-* ```visible in grid view```: Determines if the field's data column is shown in the object grid view, or hidden 
+* `invisible`: The field is not visible in pimcore
+* `visible in grid view`: Determines if the field's data column is shown in the object grid view, or hidden 
   (meaning it has to be activated manually)
-* ```visible in search result```: Determines if the field's data column is shown in the search results grid, or hidden 
+* `visible in search result`: Determines if the field's data column is shown in the search results grid, or hidden 
   (meaning it has to be activated manually)
-* ```indexed```: puts an index on this column in the database
-Moreover, each data field can have a ```tooltip```, which is shown when the mouse hovers over the input field.
+* `indexed`: puts an index on this column in the database
+Moreover, each data field can have a `tooltip`, which is shown when the mouse hovers over the input field.
 
 ![Data Field Settings](../../../img/classes-datatypes1.jpg)
 ![Data Field Settings](../../../img/classes-datatypes2.jpg)
 
 
-The ```layout settings``` allow to apply custom CSS to any object field.
+The `layout settings` allow to apply custom CSS to any object field.
 
 
 ![Data Field Settings](../../../img/classes-datatypes3.jpg)

@@ -9,54 +9,54 @@ Keys are defined and managed in a global list and can be organized into groups (
 
 ## Configuration of Keys
 
-Open the **key/group** definition tab via the ```Settings``` -> ```Object``` -> ```KeyValue Config``` config menu.
+Open the **key/group** definition tab via the `Settings` -> `Object` -> `KeyValue Config` config menu.
 
 ### Adding a group
 
 Groups are used to group keys together, for example describing certain aspects of a feature set.
 
-Add a group by clicking on the ```Add``` button. A description can be entered directly in the description grid column.
+Add a group by clicking on the `Add` button. A description can be entered directly in the description grid column.
 
 ![Groups grid](../../../img/Objects_KeyValue_Groups.png)
 
 ### Adding a key
 
-Switch to the ```Key definition``` tab. You will see a list of all defined keys:
+Switch to the `Key definition` tab. You will see a list of all defined keys:
 
-* ```ID```: the internal database id
-* ```Name```: The name of the key
-* ```Description```: A user-friendly description of the key (optional but recommended)
-* ```Type```: The datatype of the value, can be either "text”, "number”, "bool” or "select”
-* ```Detailed Configuration action column```: Currently used for "select” datatype allowing you to enter possible options. See below.
-* ```Unit```: Additional optional field which can be used to enter a dimension unit for example.
-* ```GID```: the group id if associated with a group
-* ```Group```: the group description (as entered in the group configuration) if associated with a group
-* ```Search action column```:  Opens the group selection dialog
-* ```Remove action column```: Removes the key from the global list.
+* `ID`: the internal database id
+* `Name`: The name of the key
+* `Description`: A user-friendly description of the key (optional but recommended)
+* `Type`: The datatype of the value, can be either "text”, "number”, "bool” or "select”
+* `Detailed Configuration action column`: Currently used for "select” datatype allowing you to enter possible options. See below.
+* `Unit`: Additional optional field which can be used to enter a dimension unit for example.
+* `GID`: the group id if associated with a group
+* `Group`: the group description (as entered in the group configuration) if associated with a group
+* `Search action column`:  Opens the group selection dialog
+* `Remove action column`: Removes the key from the global list.
 
 ![Key definition](../../../img/Objects_KeyValue_Keys.png)
 
-A key can be added by clicking on the ```Add``` button. Note that the key name must be unique. 
+A key can be added by clicking on the `Add` button. Note that the key name must be unique. 
 Double-click on description, type or unit cell if you want to add a description, change the data type or specify 
 the dimension unit, respectively.
 
-For the ```select``` data type you also have to provide a list of options. Click on the ```Detailed Configuration``` 
+For the `select` data type you also have to provide a list of options. Click on the `Detailed Configuration` 
 button which will open the options editor.
 
 ![Define possible values](../../../img/Objects_KeyValue_Options.png)
 
-* ```Key``` represents name for display.
-* ```Value``` is for internal representation.
+* `Key` represents name for display.
+* `Value` is for internal representation.
 
 
 
-Click on the ```Magnifier``` button if you want the key to be part of a group.
+Click on the `Magnifier` button if you want the key to be part of a group.
 
 ![Select group](../../../img/Objects_KeyValue_SelectGroup.png)
 
 
-Either double-click on a group or select a group and confirm using the ```Apply``` button. An assignment can be 
-reverted by opening the group selection dialog again and closing it using the ```Apply``` button without a selection.
+Either double-click on a group or select a group and confirm using the `Apply` button. An assignment can be 
+reverted by opening the group selection dialog again and closing it using the `Apply` button without a selection.
 
 
 ## Adding a KeyValue field to class definition
@@ -67,10 +67,10 @@ reverted by opening the group selection dialog again and closing it using the ``
 
 After it, you can see few special settings which are primarily used for the grid editor.
 
-* ```Key column width```: The width of the "key name/key description” column.
-* ```Group column width```: The width of the "group/group description” column.
-* ```Value column width```: The width of the "value” column.
-* ```Max Height```: The maximum height of the grid.
+* `Key column width`: The width of the "key name/key description” column.
+* `Group column width`: The width of the "group/group description” column.
+* `Value column width`: The width of the "value” column.
+* `Max Height`: The maximum height of the grid.
 
 
 ## Adding KeyValue pairs to the object
@@ -78,7 +78,7 @@ After it, you can see few special settings which are primarily used for the grid
 Click on the plus sign to add one or more key/value pairs to your object. This will open the group/key selection dialog. 
 Pick one or more keys which should be added to your object. Selecting a group will add all keys within that group. 
 
-Double click inside the ```value``` column to enter a value. The actual behavior depends on the data type declared 
+Double click inside the `value` column to enter a value. The actual behavior depends on the data type declared 
 in the key configuration.
 
 
@@ -98,7 +98,7 @@ Supported types are:
 * bool (yes or no)
 * select
 
-For ```select```, you have to specify a list of possible values which is expected as a json-encoded list of possible options.
+For `select`, you have to specify a list of possible values which is expected as a json-encoded list of possible options.
 An option consists of text presented to the user and the internal value used for storing the actual choice.
 
 ```php
@@ -129,7 +129,7 @@ $groupId = $groupConfig->getId();                // use this id to associate a k
 ```
 
 The following example shows how to add two keyvalue pairs to an object assuming that the key id is already known. 
-The key id can be retrieved from ```Pimcore\Model\Object\KeyValue\KeyConfig``` by calling ```getId()```;
+The key id can be retrieved from `Pimcore\Model\Object\KeyValue\KeyConfig` by calling `getId()`;
 
 ```php
 $keyconfig1 = Object\KeyValue\KeyConfig::getByName("keyconfig”);     // look up the key config by name and retrieve the id

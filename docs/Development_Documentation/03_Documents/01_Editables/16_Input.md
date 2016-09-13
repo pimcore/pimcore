@@ -48,7 +48,7 @@ You could also specify other parameters, like the size:
 ## Validation
 
 In the input editable a simple validation is implemented. 
-To validate the input you have to add ```validator``` parameter to the configuration array. 
+To validate the input you have to add `validator` parameter to the configuration array. 
 
 ```php
 <h2>

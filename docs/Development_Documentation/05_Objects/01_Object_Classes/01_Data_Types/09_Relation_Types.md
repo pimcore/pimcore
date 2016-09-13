@@ -33,8 +33,8 @@ of objects it is even possible to create a new object and select it for the obje
 
 
 #### Filtering for relations via PHP api
-These pure relation types are stored in a separate database table called ```object_relations_ID```. In the according 
-```object_~ID~``` database view, which is used for querying data, the relations fields are summarized as a comma 
+These pure relation types are stored in a separate database table called `object_relations_ID`. In the according 
+`object_~ID~` database view, which is used for querying data, the relations fields are summarized as a comma 
 separated list of IDs of related elements. Therefore, if one needs to create an object list with a filter condition on a 
 relation column this can be achieved as follows:
 
@@ -119,7 +119,7 @@ class definition.
 ![Objects Metadata Configuration](../../../img/classes-datatypes-relation5.png)
 
 The shown class definition results in the following object list in the object editor. The first two columns contain 
-```id``` and ```title``` of the assigned object. The other four columns are metadata columns and can be edited within this 
+`id` and `title` of the assigned object. The other four columns are metadata columns and can be edited within this 
 list.
 
 ![Objects Metadata Field](../../../img/classes-datatypes-relation6.png)
@@ -188,14 +188,14 @@ $object->save();
 
 
 ## Multihref with Metadata (ExtJS 6 only)
-This datatype is similar to the ```Objects with Metadata``` datatype in the way that additional information can be 
+This datatype is similar to the `Objects with Metadata` datatype in the way that additional information can be 
 added to the relation.
 
 The main difference is that all element types (documents, assets and objects) can be added to the relation list. 
 The element types can also be mixed. Essentially, the same rules as for the standard multihref apply.
 
-The API is nearly identical. However, instead of dealing with an ```ObjectMetadata``` class you have to do the same stuff 
-with ```ElementMetadata```.
+The API is nearly identical. However, instead of dealing with an `ObjectMetadata` class you have to do the same stuff 
+with `ElementMetadata`.
 
 ```php
 use Pimcore\Model\Object;
@@ -225,14 +225,14 @@ Whenever an object is loaded from database or cache, all these related objects a
 MultiHrefs and Objects it is easy to produce a huge amount of relations, which makes the object or an object list slow 
 in loading. 
 
-As a solution to this dilemma, multihref and object data types can be classified as ```lazy loading``` attributes 
+As a solution to this dilemma, multihref and object data types can be classified as `lazy loading` attributes 
 in the class definition.
 
 ![Lazy Loading](../../../img/classes-datatypes-relation3.png)
 
-Object attributes which are lazy, are only loaded from the ```database/cache``` when their getter is called. In the 
-example above this would mean, that the multihref data is only loaded when calling ```$object->getMultihref();```, 
-otherwise the attribute (```$object->multihref```) remains ```null```.
+Object attributes which are lazy, are only loaded from the `database/cache` when their getter is called. In the 
+example above this would mean, that the multihref data is only loaded when calling `$object->getMultihref();`, 
+otherwise the attribute (`$object->multihref`) remains `null`.
 
 
 
@@ -243,7 +243,7 @@ There are several object data types which represent a relation to an other Pimco
 * MultiHref
 * Objects
 
-Furthermore, the following data types represent a relation, but they are not reflected in the ```object_relation_..``` 
+Furthermore, the following data types represent a relation, but they are not reflected in the `object_relation_..` 
 tables, since they are by some means special and not pure relations. (One could argue that the image is, but for now it 
 is not classified as a pure relation type)
 * Image

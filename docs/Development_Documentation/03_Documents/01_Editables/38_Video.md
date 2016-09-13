@@ -9,7 +9,7 @@ There are also options like: thumbnails creation, poster assets assigning...
 
 | Name                    | Type      | Description                                                                                                                                                                                                             |
 |-------------------------|-----------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| attributes              | array     | Additional attributes for the generated ```<video>``` tag - only for type asset                                                                                                                                         |
+| attributes              | array     | Additional attributes for the generated `<video>` tag - only for type asset                                                                                                                                         |
 | disableProgressReload   | bool      | set to true to disable the automatic page refresh while the video thumbnail is generated                                                                                                                                |
 | editmodeImagePreview    | bool      | set to true to display only an image and not the video player in editmode, this can be necessary if you have many videos on one page (performance)                                                                      |
 | height                  | integer   | Height of the video in pixel                                                                                                                                                                                            |
@@ -31,7 +31,7 @@ There are also options like: thumbnails creation, poster assets assigning...
 
 <a name="posterReturnedValue">&nbsp;</a>
 
-Output returned by ```getPosterAsset```:
+Output returned by `getPosterAsset`:
 ```
 [status] => finished
 [formats] => Array
@@ -52,7 +52,7 @@ Output returned by ```getPosterAsset```:
 
 ### Basic usage - a local file
 
-To create a container for local video files you can just use ```video``` helper without any requried parameters.
+To create a container for local video files you can just use `video` helper without any requried parameters.
 See the code, below.
 
 ```php
@@ -72,7 +72,7 @@ In the editmode, there is now available the container where you can specify an a
 ### YouTube & Vimeo
 
 You can put videos from external services, as well (at the moment, YouTube and Vimeo).
-In the video edit dialog, change the type to ```youtube``` and fill the **ID** input with a video identifier 
+In the video edit dialog, change the type to `youtube` and fill the **ID** input with a video identifier 
 (in that case you can easily find it in the url).
 
 ![Video editable - YouTube configuration - editmode](../../img/editables_video_youtube_editmode.png)

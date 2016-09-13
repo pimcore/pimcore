@@ -45,7 +45,7 @@ The complex data type field collections do not support inheritance.
 ## Parent Class - Class Inheritance
 
 Pimcore data objects support inheritance, just as any php object does. In Pimcore the class from which a specific data 
-class inherits can be changed. By default a data class inherits from ```Pimcore\Model\Object\Concrete```, but if required 
+class inherits can be changed. By default a data class inherits from `Pimcore\Model\Object\Concrete`, but if required 
 otherwise, a data class can extend a different parent class. If the parent class should be changed, this needs to be 
 specified in the class definition as shown in the screen below:
 ![Parent Class](../../../img/classes-class-inheritance.png)
@@ -53,12 +53,12 @@ specified in the class definition as shown in the screen below:
 <div class="notice-box">
 Be Careful
 This is a very advanced feature and should only be used by very experienced developers who know what they are doing and 
-what consequences it might have when the parent class is changed from ```Pimcore\Model\Object\Concrete``` to something 
+what consequences it might have when the parent class is changed from `Pimcore\Model\Object\Concrete` to something 
 else. 
 
 In order to maintain all pimcore functionalities, it has to be ensured that the special class used in the example 
-above extends ```Pimcore\Model\Object\Concrete``` and that it's methods don't override and clash in unexpected ways 
-with existing methods of ```Pimcore\Model\Object\Concrete``` or any magic functions of ```Pimcore\Model\Object\Concrete```
+above extends `Pimcore\Model\Object\Concrete` and that it's methods don't override and clash in unexpected ways 
+with existing methods of `Pimcore\Model\Object\Concrete` or any magic functions of `Pimcore\Model\Object\Concrete`
 or it's parent classes.
 </div>
 
@@ -67,7 +67,7 @@ Currently there's one hook available. Hooks can be defined as simple methods in 
 
 | Method | Arguments |  Description |
 |--------|-----------|--------------|
-| ```preGetValue($key)``` | ```$key``` (the name of the property) | This method is called in the getter and makes it possible to modify data before returning it to the caller. |
+| `preGetValue($key)` | `$key` (the name of the property) | This method is called in the getter and makes it possible to modify data before returning it to the caller. |
 
 ##### Example:
 ```php
@@ -107,7 +107,7 @@ class News extends Object\News{
 }
 ``` 
 
-Create or extend the dependency injection configuration at ```/website/config/di.php``` to use the custom class instead
+Create or extend the dependency injection configuration at `/website/config/di.php` to use the custom class instead
 of the default Pimcore class: 
 ```php
 <?php

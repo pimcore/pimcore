@@ -51,7 +51,7 @@ The default variables can be accessed the same way.
 
 ## Building URLs based on Custom Routes
 
-URLs are generated using the default ```\Zend_View``` URL helper ```$this->url()```. 
+URLs are generated using the default `\Zend_View` URL helper `$this->url()`. 
 You can define a placeholder in the reverse pattern with %NAME and it is also possible to define an optional part, 
 to do so just embrace the part with curly brackets { } (see example below).
 
@@ -69,7 +69,7 @@ Due to optional parameters, the above example matches for the following URL's:
 
 #### Generating url with additional parameter
 
-Source url: ```/some-other-url```
+Source url: `/some-other-url`
 
 ```php
 $this->url([
@@ -83,12 +83,12 @@ $this->url([
 Since there is no default parameter available out of the route pattern you have to set every not optional parameter. 
 In addition there is one parameter which is not in the reverse route. That will be added as a normal GET parameter in the URL.
 
-Output will be: ```/news-category/test_67_category_33?getExample=some+value```
+Output will be: `/news-category/test_67_category_33?getExample=some+value`
 
 
 ### Reusing existing URL parameter
 
-Source url: ```/some-example/some~random~text_45```
+Source url: `/some-example/some~random~text_45`
 ```php
 $this->url([
         "categoryId" => 776
@@ -101,7 +101,7 @@ The parameters text and id are available via the route pattern, so the will be a
 Output will be: /some-example/This+is+some+random+text_45_category_776
 
 
-Source url: ```/some-example/some~random~text_45```
+Source url: `/some-example/some~random~text_45`
 ```php
 $this->url([
         "id" => 776
@@ -130,7 +130,7 @@ $this->url([
 ], "news category");
 ```
 
-Output will be: ```/news-category/random+text_5_category_776```
+Output will be: `/news-category/random+text_5_category_776`
 
 
 ### Site support
@@ -194,8 +194,8 @@ The following configuration should explain the way how it works:
 ![Advanced routes grid](../../img/Routing_grid_advanced_routes.png)
 
 In that case, you have few valid URL's:
-* ```/news/list``` - ```\NewsController::listAction```
-* ```/events/detail``` - ```\EventsController::detailAction```
+* `/news/list` - `\NewsController::listAction`
+* `/events/detail` - `\EventsController::detailAction`
  
 
 ## Using URL helper for query string URL generation

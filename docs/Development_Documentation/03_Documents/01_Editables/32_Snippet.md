@@ -35,20 +35,20 @@ developer to place one on a fixed position in a (layout) template (like footer t
 
 Let's create snippet with an additional links list to external services. We will use it in next examples.
  
-To create your own snippet start with creating a PHP file in the directory ```website/views/scripts/snippets```. 
+To create your own snippet start with creating a PHP file in the directory `website/views/scripts/snippets`. 
 This file can contain HTML and PHP code. You can add text input fields here. 
 This file is the view that is being used for this snippet.
 
-The file ```website/controllers/SnippetsController.php``` is the controller and contains the actions associated with all snippets. 
-If you have named your view ```footer.php``` you should add a method ```footerAction()``` here. 
-This method will be called every time the snippet is displayed. You can retrieve information from the database here and pass it on to the view here using ```$this->view``` and adding variables to it.
+The file `website/controllers/SnippetsController.php` is the controller and contains the actions associated with all snippets. 
+If you have named your view `footer.php` you should add a method `footerAction()` here. 
+This method will be called every time the snippet is displayed. You can retrieve information from the database here and pass it on to the view here using `$this->view` and adding variables to it.
 
 After creating the view and the action the snippet will not yet appear for the user. 
 Before a snippet can be used you need to define it as a custom [Document Type](../07_Document_Types/07_Predefined_Document_Types.md).
 
 #### Snippet template
 
-Let's create the file ```website/views/scripts/snippets/recommended-links.php``` with contents like, below:
+Let's create the file `website/views/scripts/snippets/recommended-links.php` with contents like, below:
 
 ```php
 <?php
@@ -72,8 +72,8 @@ Next step is to specify the controller and the action.
 
 #### Snippet action
 
-If you haven't added a ```SnippetController``` it's a right time. 
-Let's create the file ```website/controllers/SnippetsController.php``` and add there the ```recommendedLinks``` action:
+If you haven't added a `SnippetController` it's a right time. 
+Let's create the file `website/controllers/SnippetsController.php` and add there the `recommendedLinks` action:
 
 ```php
 <?php
@@ -104,7 +104,7 @@ find in the [Document Types section](../07_Document_Types/07_Predefined_Document
 ![Snippet predefined document type](../../img/editables_snippet_document_type.png)
 
 The last thing in the administration panel is to add a new document. 
-We can put our snippet to the locked folder called ```en/shared/includes```, like you can see on pictures, below.
+We can put our snippet to the locked folder called `en/shared/includes`, like you can see on pictures, below.
 
 Add menu:
 ![Add snippet menu](../../img/editables_snippet_add_document.png)
@@ -119,9 +119,9 @@ You can add few links in the document and publish it (a similar example with a l
 
 ### Displaying a text from a snippet on every page
 
-You can display a snippet on every page by using ```inc``` helper.
+You can display a snippet on every page by using `inc` helper.
 
-For example, if you want to show recommended-links on every page you can put the code below to the layout file ```website/views/layouts/layout.php```
+For example, if you want to show recommended-links on every page you can put the code below to the layout file `website/views/layouts/layout.php`
 
 ```php
 <div id="special-links">
@@ -142,7 +142,7 @@ And the result is like in the picture
 ### The snippet helper - container
 
 The snippet helper can be used if you need to specify container fot snippets in the layout.
-In the example below I added the place for snippets in the ```website/views/layouts/layout.php`` file. 
+In the example below I added the place for snippets in the `website/views/layouts/layout.php`` file. 
 
 ```php
 <div id="special-links">

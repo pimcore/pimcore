@@ -3,9 +3,9 @@
 ## Introduction
 
 Layouts define everything that repeats on one page to another, such as a header, footer, navigation and included styles and scripts. 
-Layouts often contain the ```<HTML>``` tag as well as the ```<HEAD>``` and ```<BODY>``` tags.
+Layouts often contain the `<HTML>` tag as well as the `<HEAD>` and `<BODY>` tags.
 
-Layouts in Pimcore are located in the ```/website/views/layouts``` directory.
+Layouts in Pimcore are located in the `/website/views/layouts` directory.
 
 
 ## Usage of Layouts
@@ -30,7 +30,7 @@ Layouts in Pimcore are located in the ```/website/views/layouts``` directory.
 ```
 
 Of course, php can be used within the layout file and therefore layouts can become much more complicated. The most 
-important line though is ```echo $this->layout()->content;```. It includes the actual template content. 
+important line though is `echo $this->layout()->content;`. It includes the actual template content. 
 
 
 ###### To enable a layout in your controller action use:
@@ -39,7 +39,7 @@ important line though is ```echo $this->layout()->content;```. It includes the a
     $this->enableLayout();
 ```
 
-By default, the default layout ```layout.php``` is used. If you wanted to change default layout, you 
+By default, the default layout `layout.php` is used. If you wanted to change default layout, you 
  need to add the following lines to your template file:
 
 ```php

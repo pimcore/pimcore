@@ -8,7 +8,7 @@ An image field is stored in an INT column in the database. It holds the ID of th
 Unlike other object relation types, an image relation is not stored in the relations table (this has historic reasons), 
 but it creates a dependency in the dependencies table.
 
-To set an object's image field programmatically, an ```\Pimcore\Model\Asset\Image``` must be passed to the according setter.
+To set an object's image field programmatically, an `\Pimcore\Model\Asset\Image` must be passed to the according setter.
 
 ```php
 $image = Asset\Image::getByPath("/examples/example1.jpg");
@@ -23,7 +23,7 @@ in the class settings as follows:
 
 
 #### Working with images in frontend
-The get a thumbnail of an image field, just call ```getThumbnail()``` on the returned asset object.
+The get a thumbnail of an image field, just call `getThumbnail()` on the returned asset object.
 
 ```php
 <?php if ($object->getMyImage() instanceof Asset\Image) {?>
@@ -31,7 +31,7 @@ The get a thumbnail of an image field, just call ```getThumbnail()``` on the ret
 <?php } ?>
 ```
 
-Since ```$object->getImage()``` just returns an asset object, you can of course use all other thumbnail features of ```Pimcore\Model\Asset\Image```.
+Since `$object->getImage()` just returns an asset object, you can of course use all other thumbnail features of `Pimcore\Model\Asset\Image`.
 
 
 
@@ -73,7 +73,7 @@ $image = $hotspotImage->getImage();
 $hotspots = $hotspotImage->getHotspots();
 ```
 
-The content of ```$hotspots``` could look like:
+The content of `$hotspots` could look like:
 
 ```php
 Array
@@ -134,7 +134,7 @@ Array
 
 #### Get the cropped image
 
-To get the cropped image you have to use the ```getThumbnail()``` method:
+To get the cropped image you have to use the `getThumbnail()` method:
 
 ```php
 $hotspotImage = $object->getHotspot1(); // name of the field in pimcore is "hotspot1" in this case (class definition)

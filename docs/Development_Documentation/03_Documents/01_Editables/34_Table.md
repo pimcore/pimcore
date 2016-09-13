@@ -23,8 +23,8 @@ Also, the Table editable allows you to add some predefined values.
 
 ### Basic usage
 
-I added the table editable responsible for additional product attributes in the ```website/views/scripts/content/default.php``` template file. 
-The ```defaults``` row specify the predefined data and number of columns and rows in an initial stage. 
+I added the table editable responsible for additional product attributes in the `website/views/scripts/content/default.php` template file. 
+The `defaults` row specify the predefined data and number of columns and rows in an initial stage. 
 
 ```php
 <h4><?php echo $this->translate("Product attributes"); ?></h4>
@@ -52,7 +52,7 @@ Find the effect from the backend, below:
 ### Processing the data
 
 Sometimes you would need use only the data from a filled table. 
-You would just use the ```getData``` method instead of rendering the whole table html.
+You would just use the `getData` method instead of rendering the whole table html.
 
 ```php
 <?php if($this->editmode):
@@ -78,7 +78,7 @@ endif;
 ```
 
 
-The output from ```getData```:
+The output from `getData`:
 
 ```
 array(4) {

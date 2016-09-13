@@ -20,7 +20,7 @@ In the object editor, the layout can then be chosen via the reload button. Note 
 
 ![Custom Layouts](../../../img/classes-custom-layouts2.png)
 
-Admin users will notice an extra Layout called ```Master (Admin Mode)``` which is basically the same as the Master 
+Admin users will notice an extra Layout called `Master (Admin Mode)` which is basically the same as the Master 
 Layout except that invisible fields are shown and non-editable fields are made editable again. This layout is available 
 for admin users only. 
 

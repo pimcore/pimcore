@@ -5,7 +5,7 @@
 | Name   | Type    | Description                                                          |
 |--------|---------|----------------------------------------------------------------------|
 | reload | boolean | Set to true to reload the page in editmode after changing the state. |
-| label  | string  | a ```<label>``` which is added in the editmode                           |
+| label  | string  | a `<label>` which is added in the editmode                           |
 
 ## Accessible Methods & Types
 

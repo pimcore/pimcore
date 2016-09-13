@@ -9,7 +9,7 @@ The biggest cons of using that instead of (for example) the href editable:
 
 * you are able to specify generated thumbnail properties
 * there is a image preview rendered in the administration panel
-* you can specify additional attribute for generated ```<img>``` tag
+* you can specify additional attribute for generated `<img>` tag
 
 ## Configuration
 
@@ -24,7 +24,7 @@ The biggest cons of using that instead of (for example) the href editable:
 | minWidth                     | integer | min. width of the image (in pixel)                                                                                                                                                                                                 |
 | minHeight                    | integer | min. height of the image (in pixel)                                                                                                                                                                                                |
 | attributes                   | array   | custom attributes for the <img /> tag - this can be used to pass custom attributes (not w3c)                                                                                                                                       |
-| removeAttributes             | array   | You can remove standard attributes using this configuration, e.g. ```"removeAttributes" => ["controls","poster"]```                                                                                                       |
+| removeAttributes             | array   | You can remove standard attributes using this configuration, e.g. `"removeAttributes" => ["controls","poster"]`                                                                                                       |
 | uploadPath                   | string  | Target path for (inline) uploaded images                                                                                                                                                                                           |
 | highResolution               | float   | factor the thumbnail dimensions should be multiplied with (html attributes width and height contain the original dimensions ... used for **Retina* displays, print, ...)                                                            |
 | disableWidthHeightAttributes | bool    | width & height attributes are set automatically by pimcore, to avoid this set this option (eg. to true => isset check)                                                                                                             |
@@ -46,7 +46,7 @@ You can also pass every valid attribute an img-tag can have ([w3.org Image](http
 | getThumbnail($name)  | (string/array) $name | Pimcore\Model\Asset\Image\Thumbnail   | get a specific thumbnail of the image                                   |
 | getText() / getAlt() | -                    | string, alt/title text from the image | The entered alternative text in the widget                              |
 | getSrc()             | -                    | string, absolute path to the image    | The path to the original image which is referenced                      |
-| getImage()           | -                    | \Pimcore\Model\Asset\Image            | The asset object which is referenced (```\Pimcore\Model\Asset\Image```) |
+| getImage()           | -                    | \Pimcore\Model\Asset\Image            | The asset object which is referenced (`\Pimcore\Model\Asset\Image`) |
 | getHotspots()        | -                    | array                                 | returns the hotspot data (see example below)                            |
 | getMarker()          | -                    | array                                 | returns the marker data (see example below)                             |
 
@@ -118,7 +118,7 @@ You can also change a thumbnail configuration:
 ]) ?>
 ```
 
-And this is how the rendered html looks: ```<img custom-attr="value" data-role="image" src="/website/var/tmp/image-thumbnails/0/56/thumb__content/dsc03807.jpeg" />```
+And this is how the rendered html looks: `<img custom-attr="value" data-role="image" src="/website/var/tmp/image-thumbnails/0/56/thumb__content/dsc03807.jpeg" />`
 
 ### Other advanced examples
 
@@ -185,7 +185,7 @@ Setting a marker or a hotspot on an image has no direct effect on the output, th
 
 You as a developer have to get the data out of the image editable to build amazing frontends with it.
 
-You can get the data with the methods ```getMarker()``` and ```getHotspots()```. 
+You can get the data with the methods `getMarker()` and `getHotspots()`. 
 All dimensions are in percent and therefore independent from the image size, you have to change them back to pixels according to your image size.
  
 ### Code usage example
@@ -216,7 +216,7 @@ All dimensions are in percent and therefore independent from the image size, you
 ```
 
 
-```getHotspots``` output:
+`getHotspots` output:
 
 ```
 array(1) {
@@ -243,7 +243,7 @@ array(1) {
 ```
 
 
-```getMarker``` output:
+`getMarker` output:
 
 ```
 array(1) {

@@ -76,22 +76,22 @@ And you can see the effect, below:
 | sorting           | array  | An array of area-ID's in the order you want to display them in the toolbar.                                                                                                                  |
 | params            | array  | Optional Parameter, this can also contain additional brick-specific configurations, see **brick-specific configuration**                                                                     |
 | group             | array  | Array with group configuration (see example above).                                                                                                                                          |
-| manual            | bool   | forces the manual mode, which enables a complete free implementation for areablocks, for example using real ```<table>``` elements... example see below                                      |
+| manual            | bool   | forces the manual mode, which enables a complete free implementation for areablocks, for example using real `<table>` elements... example see below                                      |
 | reload            | bool   | set to true, to force a reload in editmode after reordering items (default: **false**)                                                                                                       |
 | toolbar           | bool   | set to false to not display the extra toolbar for areablocks (default: **true**)                                                                                                             |
 | dontCheckEnabled  | bool   | set to true to display all installed area bricks, regardless if they are enabled in the extension manager                                                                                    |
 | limit             | int    | limit the amount of elements                                                                                                                                                                 |
 | areablock_toolbar | array  | Array with option that allows you to change the position of the toolbar.                                                                                                                     |
-| areaDir           | string | absolute path (from document-root) to an area directory, only areas out of this path will be shown eg. ```/website/views/customAreas/```                                                     |
-| editWidth         | int    | Width of editing popup (if dedicated ```edit.php``` is used).                                                                                                                                |
-| editHeight        | int    | Height of editing popup (if dedicated ```edit.php``` is used).                                                                                                                               |
+| areaDir           | string | absolute path (from document-root) to an area directory, only areas out of this path will be shown eg. `/website/views/customAreas/`                                                     |
+| editWidth         | int    | Width of editing popup (if dedicated `edit.php` is used).                                                                                                                                |
+| editHeight        | int    | Height of editing popup (if dedicated `edit.php` is used).                                                                                                                               |
 
 ## Brick-specific configuration
 Brick-specific configurations are passed using the params configuration (see above). 
 
 | Name            | Type | Description                                                                                                                                                     |
 |-----------------|------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| forceEditInView | bool | if a brick contains an edit.php there's no editmode for the ```view.php``` file, if you want to have the editmode enabled in both templates, enable this option |
+| forceEditInView | bool | if a brick contains an edit.php there's no editmode for the `view.php` file, if you want to have the editmode enabled in both templates, enable this option |
 
 Example: 
 
@@ -106,11 +106,11 @@ Example:
 
 | Name                    | Description                                                                            |
 |-------------------------|----------------------------------------------------------------------------------------|
-| ```getCount()```        | total count of blocks                                                                  |
-| ```getCurrent()```      | current number of block (useful with area bricks)                                      |
-| ```getCurrentIndex()``` | get the current index (index is different from position, as you can move block around) |
-| ```getElement()```      | get an element out of an areabrick                                                     |
-| ```renderIndex()```     | renders only one specific block within the areablock                                   |
+| `getCount()`        | total count of blocks                                                                  |
+| `getCurrent()`      | current number of block (useful with area bricks)                                      |
+| `getCurrentIndex()` | get the current index (index is different from position, as you can move block around) |
+| `getElement()`      | get an element out of an areabrick                                                     |
+| `renderIndex()`     | renders only one specific block within the areablock                                   |
 
 ## How to create bricks for the areablock
 

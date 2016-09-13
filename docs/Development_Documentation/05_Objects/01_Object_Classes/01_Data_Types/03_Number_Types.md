@@ -1,6 +1,6 @@
 # Number Datatypes
 
-Both numeric data types (```number``` and ```slider```) are stored as a number in a DOUBLE column in the database. 
+Both numeric data types (`number` and `slider`) are stored as a number in a DOUBLE column in the database. 
 To set numeric data, a number must be passed to the according setter. The two fields merely differ in their GUI input 
 widgets and the fact that the slider has a min/max value and step size, which the numeric field does not have.
 

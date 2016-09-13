@@ -18,7 +18,7 @@ The PDF editable allows you to embed asset documents (pdf, doc, xls, ...) into d
 | width             | integer   | Width of the viewer (default 100%)                                                      |
 | height            | integer   | Height of the viewerin pixel                                                            |
 | fullscreen        | bool      | allow fullscreen or not                                                                 |
-| hotspotCallback   | closure   | possibility to add custom attributes on hotspot ```<div>``` tags, ... see example below |
+| hotspotCallback   | closure   | possibility to add custom attributes on hotspot `<div>` tags, ... see example below |
 
 ## Methods
 
@@ -101,8 +101,8 @@ In that case, on the first page of the pdf document you can find the textarea no
 ### Pimcore PDF - possible javascript methods
 
 The PDF editable also, allows you to use javascript actions.
-There is always created a javascript object with prefix: ```pimcore_pdf_```. Therefore, looking at the case above, you can use: 
-```pimcore_pdf_myPdf``` variable to get access to methods. 
+There is always created a javascript object with prefix: `pimcore_pdf_`. Therefore, looking at the case above, you can use: 
+`pimcore_pdf_myPdf` variable to get access to methods. 
 
 The list of available actions:
 

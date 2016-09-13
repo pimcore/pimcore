@@ -2,8 +2,8 @@
 Sometimes it's useful that a field cannot be modified/deleted in the class editor. Especially if a class is 
 created by a plugin.
 
-Pimcore offers the possibility to lock a field programmatically, you can call the method ```setLocked()``` on every 
-```Pimcore\Model\Object\Class\Data``` object.
+Pimcore offers the possibility to lock a field programmatically, you can call the method `setLocked()` on every 
+`Pimcore\Model\Object\Class\Data` object.
 
 ### Example
 

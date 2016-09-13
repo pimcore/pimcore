@@ -7,7 +7,7 @@ This is best explained with an example:
 
 ![Non-Owner Object Field](../../../img/classes-datatypes-nonownerobject1.png)
 
-Let's say there is a product, which has an object field called ```accessories```. The straight forward way of establishing 
+Let's say there is a product, which has an object field called `accessories`. The straight forward way of establishing 
 a relation is to open a product and assign it it's accessories by dragging and dropping other products into the 
 accessories field. If you now also want to be able to go to the accessory product and define which other products 
 this is an accessory of, you'd have to set up a non-owner field to do that. The non-owner field needs to be configured 
@@ -32,7 +32,7 @@ Non Owner objects are a pure Pimcore admin feature, they don't play any role in 
 Since non owner objects are owned by the remote object, they can only be set through the remote owner. Also the getter 
 has been omitted because non-owner objects are not exposed through exporters or webservices.
 
-The best way to "get" non owner objects would be to use the ```getRelationData()``` method of objects:
+The best way to "get" non owner objects would be to use the `getRelationData()` method of objects:
 
 ```php
 $def = $object->getClass()->getFieldDefinition("myNonOwnerObjectField");

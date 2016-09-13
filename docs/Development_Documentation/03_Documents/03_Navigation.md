@@ -5,7 +5,7 @@
 ## Basics
 
 Pimcore comes with a standard navigation implementation in the form of a view helper, which utilizes Zend_Navigation. 
-The ```Pimcore\View\Helper\PimcoreNavigation``` gets registered by default with the other pimcore view helpers. 
+The `Pimcore\View\Helper\PimcoreNavigation` gets registered by default with the other pimcore view helpers. 
 It builds a [Zend_Navigation](https://framework.zend.com/manual/1.10/en/zend.navigation.introduction.html) container based on the existing document structure and needs to be set up as follows in your view script or layout script:
 
 **Only documents are included** in this structure, directories are ignored, regardless of their navigation properties.
@@ -109,7 +109,7 @@ These navigation settings include the following properties:
 
 * **Name:** Document's name used in the navigation (label).
 * **Title:** Document's title used in the navigation - the HTML Attribute title.
-* **Target:** Link target (```_blank```, ```_self```, ```_top```, ```_parent```)
+* **Target:** Link target (`_blank`, `_self`, `_top`, `_parent`)
 * **Exclude from Navigation:**  Property to quickly exclude a page from the navigation.
  
  In your view template you can use:
@@ -127,7 +127,7 @@ These navigation settings include the following properties:
 
 ## Individual (partial) navigation view script.
 If the standard HTML output of the render() method is not suitable for a project, there is the possibility to provide a custom script for the menu HTML. 
-This can be achieved using the renderPartial() method of the **Zend Menu Helper** (```\Zend_View_Helper_Navigation_Menu::renderPartial```).
+This can be achieved using the renderPartial() method of the **Zend Menu Helper** (`\Zend_View_Helper_Navigation_Menu::renderPartial`).
 
 For example, inside your view:
 
@@ -137,7 +137,7 @@ For example, inside your view:
 ?>
 ```
 
-```website/views/scripts/includes/navigation.php```
+`website/views/scripts/includes/navigation.php`
 
 ```php
 <?php foreach($this->container as $page): ?>
@@ -153,9 +153,9 @@ For example, inside your view:
 
 ## Document_Link navigation properties
 
-A Document_Link has three properties which are not covered by ```Zend_Navigation``` by default. 
-These are tabindex, accesskey and relation. Since the ```Zend_Navigation``` container 
-contains instances of ```Pimcore\Navigation\Page\Uri```, which extend ```Zend_Navigation_Page_Uri```, 
+A Document_Link has three properties which are not covered by `Zend_Navigation` by default. 
+These are tabindex, accesskey and relation. Since the `Zend_Navigation` container 
+contains instances of `Pimcore\Navigation\Page\Uri`, which extend `Zend_Navigation_Page_Uri`, 
 these additional properties are available and accessible through their according getters. 
 
 Consequently, they can be regarded in an individual (partial) view script for the navigation, but will be ignored by the default render() methods.
@@ -284,8 +284,8 @@ $navigation = $this->pimcoreNavigation($this->document, $navStartNode, null, fun
 
 ## Cacheable / High-Performance Navigation
 
-The navigation tree / container (```Zend_Navigation_Container```) is automatically cached by pimcore and improves significantly the performance of navigations. 
-To benefit from the cache it's absolutely necessary to don't use ```Pimcore\Model\Document``` objects directly in the navigation templates / partial scripts, because this would result in loading all the documents again in the navigation.
+The navigation tree / container (`Zend_Navigation_Container`) is automatically cached by pimcore and improves significantly the performance of navigations. 
+To benefit from the cache it's absolutely necessary to don't use `Pimcore\Model\Document` objects directly in the navigation templates / partial scripts, because this would result in loading all the documents again in the navigation.
 
 But sometimes it's necessary to get some properties or other data out of the documents in the navigation to build the navigation as it should be. 
 For that we've introduced a new parameter for the pimcoreNavigation view helper, which acts as a callback and allows to map custom data onto the navigation page item.
@@ -303,7 +303,7 @@ echo $mainNavigation->render();
 ?>
 ```
 
-Later in the template of the navigation (```/navigation/partials/navigation.php```) you can use the mapped data directly on the page item object.
+Later in the template of the navigation (`/navigation/partials/navigation.php`) you can use the mapped data directly on the page item object.
 
 ```php
 <?php foreach( $this->container as $page ){ ?>
@@ -330,7 +330,7 @@ $this->pimcoreNavigation($this->document, $mainNavStartNode, null, null, "yourin
 
 ### Disabling the navigation cache
 
-You can disable the navigation cache by setting the 5th argument to ```false```.
+You can disable the navigation cache by setting the 5th argument to `false`.
 
 ```php
 $this->pimcoreNavigation($this->document, $mainNavStartNode, null, null, false);
@@ -345,7 +345,7 @@ $this->pimcoreNavigation()->getNavigation($this->document, $navStartNode, null, 
 **A document does not show up in the navigation. Why?**
 
 Please make sure that the documents and its parent documents are published and that the document it self as well as all it's parents have a navigation name set. 
-Neither the document itself nor one of it's parent documents may have activated **Exclude From Navigation** in their properties. (```Document properties -> System properties```)
+Neither the document itself nor one of it's parent documents may have activated **Exclude From Navigation** in their properties. (`Document properties -> System properties`)
 
 **Why is the navigation not appearing?**
 
