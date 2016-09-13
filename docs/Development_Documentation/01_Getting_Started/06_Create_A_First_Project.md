@@ -3,13 +3,13 @@ In this part, you are going to known required minimum of knowledge, crucial for 
 
 [TOC]
 
-# Creating CMS pages with documents
+# Creating CMS Pages with Documents
 
 In the first part you'll learn the basics for creating CMS pages with Pimcore Documents. 
 
-## Create template, layout and controller
+## Create Template, Layout and Controller
 
-### New controller
+### New Controller
 First of all, we need our own controller. 
 Let's call it `ContentController.php`. 
 You have to put the file into the `/website/controllers` directory.
@@ -34,7 +34,7 @@ There is the only one action `defaultAction()`.
 The method `enableLayout()` registers a global instance of `\Zend_Layout` to decorate the page. 
 In the defaultAction, we can put some custom code or assign values to the template.
 
-### Create Template
+### Create a Template
 Now we create a template for our page:
 * Create a new folder in `/website/view/scripts` and name it like the controller but in lowercase (in this case `content`). 
 * Put a new PHP file into this folder and name it like our action, again in lowercase (`default.php`).
@@ -60,7 +60,7 @@ Pimcore uses `\Zend_View` as templates and therefore plain php as template langu
   which add editable parts (placeholders) to the layout. 
   For details concerning editables (like `$this->input`, `$this->block`, ...) see [Editables](../03_Documents/01_Editables/_index.md). 
 
-### Add layout
+### Add a Layout
 Pimcore uses the advantages of `\Zend_Layout` out of the ZF, for details please read more here about it.
 Because we have enabled the layout engine in our controller, we can use layouts to wrap our content page with another template which contains the main navigation, a sidebar, …
 With this code:
@@ -99,7 +99,7 @@ Then we can also put some HTML and template code into it:
 
 The code `<?= $this->layout()->content ?>` is the placeholder where your contentpage will be inserted.
 
-### Putting it together with Pimcore documents
+### Putting It Together with Pimcore Documents
 Now we need to connect the action to a page. This is done in the Pimcore backend.
 First, click on the left under "Documents" at "home".
 
@@ -116,7 +116,7 @@ Then select the tab *Edit*, to see your page with all the editable placeholders.
 ![Page edit preview](../img/Pimcore_Elements_homepage_edit_tab.png)
 
 
-# Introduction to assets
+# Introduction to Assets
 
 In assets, all binary files like images, videos, office files and PDFs, ... can be uploaded, stored and managed. 
 You can organize them in a directory structure and assign them additional meta data. 
@@ -134,12 +134,12 @@ There are many ways to upload files:
 ![Upload assets](../img/asset-upload.png)
 
 
-# Introduction to objects
+# Introduction to Objects
 We've already made a controller, action and a view and we're able to add text from within the admin panel to our pages.
 In this chapter we will create a simple product database and use them in our CMS pages. 
 Objects are used to store any structured data independently from the output-channel and can be used anywhere in your project. 
 
-## Create the class model
+## Create the Class Model
 
 Ok, let's create our first class for objects. 
 
@@ -169,7 +169,7 @@ If everything goes well, the new class looks like in the picture:
 
 **Important:** Every generated class in the Pimcore admin panel has also an accordingly PHP class with getters and setters. You can find our newly created class above class in ```website/var/classes/Object/Product.php``` 
 
-## Add new object
+## Add a new Object
 
 We've just prepared a simple class for new products. 
 Now we can use it to create objects in Pimcore.
@@ -194,10 +194,10 @@ That's it.
 ![Complete object](../img/Pimcore_Elements_complete_object.png)
 
 
-# Putting the pieces together
+# Putting the Pieces Together
 Let's put the pieces together and connect the products to the CMS. 
 
-## Update controller and template
+## Update Controller and Template
 Therefore create another action in the controller (ContentController) called `productAction`.
  
 ```php
@@ -257,7 +257,7 @@ Href is one of editable elements. It would be used to make relation 1 to 1 a coo
 The full list of editables is presented in the special section: [Editables](../03_Documents/01_Editables/_index.md)
 
 
-## Add the product object to a document
+## Add the Product Object to a Document
 
 The last thing is to show the product in the body of the document you created. 
 
@@ -311,7 +311,7 @@ Now you have access to whole data from the object (name, description, ...).
 It's a good practice to add ```@var``` doc in every view. If you do this you have access to auto complete in your IDE.
 
 
-## Add a thumbnail configuration
+## Add a Thumbnail Configuration
 To show the product image in the view, we need to add a thumbnail configuration first. Using [thumbnail configurations](../04_Assets/03_Working_with_Thumbnails/01_Image_Thumbnails.md),
 Pimcore automatically renders optimized images for certain output channels. 
 
@@ -319,7 +319,7 @@ For adding a thumbnail configuration see the following screen. Just add a config
 ![Adding thumbnail configuration](../img/adding_thumbnails.png)
 
 
-## Showing the image in the view
+## Showing the Image in the View
 And the last step, we would like to show the product picture.
 
 ```php

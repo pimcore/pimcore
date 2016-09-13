@@ -1,4 +1,4 @@
-# Architecture overview
+# Architecture Overview
 
 At this point we want to give a short overview of the architecture of Pimcore. 
 
@@ -34,7 +34,7 @@ When implementing solutions with Pimcore, your custom parts should go into follo
  
   
 For more detailed information about the architecture also have a look at the
-[architecture page](../09_Development_Tools_and_Details/01_Architecture_Overview.md)
+[Architecture Page](../09_Development_Tools_and_Details/01_Architecture_Overview.md)
 in the Development Tools and Details section. 
 
-[Next up: Create a first project](./06_Create_A_First_Project.md)
+[Next up: Create a First Project](./06_Create_A_First_Project.md)

@@ -9,7 +9,7 @@ Find basic information about directories tree in Pimcore project, below.
 | `/vendor/`  | All third part libraries are there. It's the default location for packages installed using [Composer](https://getcomposer.org/) / [Packagist](https://packagist.org/)                     |
 | `/website/` | Everything regarding your individual project/application (templates, controllers, settings, objects, ...). All your code goes there.   |
 
-## Parts of the website directory
+## Parts of the Website Directory
 
 | Directory             | Description                                                                                                        |
 |-----------------------|--------------------------------------------------------------------------------------------------------------------|
@@ -20,4 +20,4 @@ Find basic information about directories tree in Pimcore project, below.
 | `/website/var`         | This directory contains files created by Pimcore during runtime like assets, classes, thumbnails, ...              |
 | `/website/views`       | Your templates.                                                                                                    |
 
-[Next up: Overval architecture of Pimcore](./04_Architecture_Overview.md)
+[Next up: Overval Architecture of Pimcore](./04_Architecture_Overview.md)

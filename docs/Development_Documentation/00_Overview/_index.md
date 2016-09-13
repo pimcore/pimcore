@@ -1,4 +1,4 @@
-# Pimcore overview
+# Pimcore Overview
 Pimcore is the leading open source platform for managing digital data and a fully integrated software stack for CMS, DAM, PIM 
 and Commerce. 
 
@@ -14,11 +14,11 @@ is NOT an ‘out-of-the-box’ software product like Wordpress, Magento, Oxid an
 ![Pimcore](../img/pimcore_basis.png)
 
 
-# Pimcore in a nutshell
+# Pimcore in a Nutshell
 Our mission is to provide ONE platform for ANY data, ANY channel, ANY process and ANY one. 
 
 
-## ANY data 
+## ANY Data 
 In Pimcore every digital content can be managed and put in relation with each other. To do so, there are three main element 
 data types in pimcore:
 
@@ -43,7 +43,7 @@ complex ones) are available.
 Most important, all elements (assets, documents or objects) can be linked with and set into relation with each other.
 
 
-## ANY channel / ANY process
+## ANY Channel / ANY Process
 As Pimcore is a platform that stores data channel independent, it can provide the managed data to any channel – simple 
 websites (B2B, B2C), commerce-systems (integrated, third party), print, digital signage, … There are basically no limits. 
 
@@ -65,6 +65,6 @@ But being a platform, Pimcore can be used for pretty much any use case and easil
 -----
 Wanna see more - [Let's get started](../01_Getting_Started/00_Installation.md)
 
-#### Also have a look at 
-* [Pimcore ecosystem](./00_Pimcore_Ecosystem.md)
+#### Also Have a Look at 
+* [Pimcore Ccosystem](./00_Pimcore_Ecosystem.md)
 * [Develop for Pimcore](./01_Develop_for_Pimcore.md)

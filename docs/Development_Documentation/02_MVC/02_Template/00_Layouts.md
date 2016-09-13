@@ -10,7 +10,7 @@ Layouts in Pimcore are located in the ```/website/views/layouts``` directory.
 
 ## Usage of Layouts
 
-###### One simple sample layout looks like the following:  
+###### One Simple Sample Layout Looks Like the Following:  
 
 ```php
 <?php /** @var $this \Pimcore\View */ ?>
