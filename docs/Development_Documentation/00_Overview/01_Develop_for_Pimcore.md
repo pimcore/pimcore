@@ -13,7 +13,7 @@ So, in very short - just fork Pimcore on [GitHub](https://github.com/pimcore/pim
 
 
 # PSRs (PHP-FIG) & Standards
-Pimcore is commited to standards and interoperability, therefore we always try to implement the latest standards.
+Pimcore is an active member of the PHP-FIG and commited to standards and interoperability, therefore we always try to implement the latest standards.
 At the moment pimcore follows the following PSRs: 
 * PSR-1 (Basic Coding Standard)
 * PSR-2 (Coding Style Guide)
