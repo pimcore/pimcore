@@ -598,7 +598,10 @@ abstract class Frontend extends Action
 
                         exit;
                     } else {
-                        \Zend_Controller_Front::getInstance()->getPlugin("Pimcore\\Controller\\Plugin\\HttpErrorLog")->setCacheKey($cacheKey);
+                        $errorLogPlugin = \Zend_Controller_Front::getInstance()->getPlugin("Pimcore\\Controller\\Plugin\\HttpErrorLog");
+                        if ($errorLogPlugin) {
+                            $errorLogPlugin->setCacheKey($cacheKey);
+                        }
                         $document = \Zend_Registry::get("pimcore_error_document");
                         $this->setDocument($document);
                         $this->setParam("document", $document);
