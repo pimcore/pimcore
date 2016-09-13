@@ -22,14 +22,14 @@ The Pimcore implementation of `\Zend_View` namely `Pimcore\View` offers addtiona
 
 | Method                                   | Reference                                             | Description                                                          |
 |------------------------------------------|-------------------------------------------------------|----------------------------------------------------------------------|
-| [`inc()`](#inc)                        | `\Pimcore\View::inc`                            | Use this function to directly include a document.                    |
-| [`template()`](#template)              | `\Pimcore\View::template`                       | Use this method to include a template                                |
-| [`getParam()`](#getparam)              | `\Pimcore\View::getParam`                       | Get's a parameter (get, post, .... ), it's an equivalent to $this->getParam() in the controller action.                               |
-| [`cache()`](#cache)                    | `\Pimcore\View\Helper\Cache::cache`           | Cache implementation in temaplates.                                  |
-| [`device()`](#device)                  | `\Pimcore\View\Helper\Device::device`         | Helps implementing adaptive designs.                                  |
-| [`glossary()`](#glossary)              | `\Pimcore\View\Helper\Glossary::glossary`     | [Glossary documentation](../../08_Tools_and_Features/21_Glossary.md) |
-| [`translate()`](#translate)            | `\Pimcore\View::t`                              | i18n / shared translations                                                  |
-| [`translateAdmin()`](#translateadmin)  | `\Pimcore\View::ts`                             | i18n / admin translations                                                  |
+| [`inc()`](#this-inc)                        | `\Pimcore\View::inc`                            | Use this function to directly include a document.                    |
+| [`template()`](#this-template)              | `\Pimcore\View::template`                       | Use this method to include a template                                |
+| [`getParam()`](#this-getparam)              | `\Pimcore\View::getParam`                       | Get's a parameter (get, post, .... ), it's an equivalent to $this->getParam() in the controller action.                               |
+| [`cache()`](#this-cache)                    | `\Pimcore\View\Helper\Cache::cache`           | Cache implementation in temaplates.                                  |
+| [`device()`](#this-device)                  | `\Pimcore\View\Helper\Device::device`         | Helps implementing adaptive designs.                                  |
+| [`glossary()`](#this-glossary)              | `\Pimcore\View\Helper\Glossary::glossary`     | [Glossary documentation](../../08_Tools_and_Features/21_Glossary.md) |
+| [`translate()`](#this-translate)            | `\Pimcore\View::t`                              | i18n / shared translations                                                  |
+| [`translateAdmin()`](#this-translateadmin)  | `\Pimcore\View::ts`                             | i18n / admin translations                                                  |
 
 
 You can also create your [own custom view helpers](https://framework.zend.com/manual/1.10/en/zend.view.helpers.html#zend.view.helpers.custom) to make certain functionalities available to your views.
