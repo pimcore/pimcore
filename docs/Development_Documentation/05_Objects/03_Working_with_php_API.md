@@ -284,6 +284,7 @@ The object listing of this example only delivers objects of the type Collectiont
 * an Fieldcollection in the field `collection` of the type `MyCollection` and the value `hugo` in the attribute `myinput`. 
 
 
+<a name="zendPaginatorListing">&nbsp;</a>
 
 ### Working with Zend_Paginator
 

@@ -4,7 +4,7 @@
 
 ## General
 
-Pimcore provides and object orientated php API to work with Documents.
+Pimcore provides the object orientated php API to work with Documents.
 
 ## CRUD operations
 
@@ -100,5 +100,95 @@ if (null ==! $document) {
 ```
 
 
-## Documents listings
+## Document listings
+
+### Examples
+
+Let's assume that we following documents structure in our Pimcore instance.
+
+![Apitests children - preview](../img/documents_apitests_children_preview.png)
+
+To list all published documents with parentId = 82, see the code below.
+
+```php
+//list all published children from the folder
+/** @var \Pimcore\Model\Document\Listing $listing */
+$listing = \Pimcore\Model\Document::getList(['condition' => "`parentId` = 82"]);
+Zend_Debug::dump($listing->getItems(0, 10));
+```
+
+In the output ou can see array which contains three items.
+
+```
+array(3) {
+  [0] => object(Pimcore\Model\Document\Page)#225 (37) { ... }
+  [1] => object(Pimcore\Model\Document\Page)#227 (37) { ... }
+  [2] => object(Pimcore\Model\Document\Folder)#229 (22) { ... }
+}
+```
+
+But sometimes, you would need to also get unpublished elements. 
+To achieve that the only one thing to do is to add unpublished flag to the configuration argument in the `getList` method.
+
+```php
+//list all children from the folder
+/** @var \Pimcore\Model\Document\Listing $listing */
+$listing = \Pimcore\Model\Document::getList([
+    'unpublished' => true,
+    'condition' => "`parentId` = 82"
+]);
+```
+
+Now in the output you can see also unpublished children.
+
+Find below, other powerful keys which you can use in the config parameter in the `getList` method.
+
+| Key         | Value               | Description                                                                       |
+|-------------|---------------------|-----------------------------------------------------------------------------------|
+| order       | string (asc,desc)   | Set ascending or descending order type.                                           |
+| orderKey    | string              | Chosen column name / names for as a order key. You can choose many order keys.    |
+| limit       | int                 | amount of collection results limit                                                |
+| offset      | int                 | a distance from beginning of the collection items                                 |
+| condition   | string              | Your own SQL condition like in the example above.                                 |
+
+Extended example with additional parameters. 
+
+```php
+//list all published children from the folder
+/** @var \Pimcore\Model\Document\Listing $listing */
+$listing = \Pimcore\Model\Document::getList([
+    'unpublished' => true,
+    'condition' => "`parentId` = 82",
+    'orderKey' => ['key', 'published'],
+    'order' => 'desc',
+    'offset' => 2,
+    'limit' => 2
+]);
+```
+Alternatively, you can build the statement by available methods.
+
+```php
+$listing = new \Pimcore\Model\Document\Listing();
+$listing->setUnpublished(1);
+$listing->setCondition("`parentId` = 82")
+    ->setOrderKey(['key', 'published'])
+    ->setOrder('desc')
+    ->setOffset(2)
+    ->setLimit(2);
+```
+
+
+### Methods
+
+In the list object you can find few method which for sure, you're going to use. 
+
+| Method                                               | Arguments                           | Description                                                                                 |
+|------------------------------------------------------|-------------------------------------|---------------------------------------------------------------------------------------------|
+| \Pimcore\Model\Document\Listing::getTotalCount       |                                     | Returns total number of selected rows.                                                      |
+| \Pimcore\Model\Document\Listing::getPaginatorAdapter |                                     | List implements `\Zend_Paginator_Adapter_Interface`, you could use the list as a paginator. |
+| \Pimcore\Model\Document\Listing::getItems            | int $offset, int $itemsCountPerPage | as arguments you have to specify the limit of rows and the offset.                          |
+| \Pimcore\Model\Document\Listing::loadIdList          |                                     | Returns complete array with id as a row.                                                    |
+
+If you want to know more about the paginator usage with lists, you should visit [Working with Objects via php API part](../05_Objects/03_Working_with_php_API.md#zendPaginatorListing)
+
 
