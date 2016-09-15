@@ -127,7 +127,7 @@ Persona is assigned **each** time user visits the page.
 
 Expand [Programatically section in Rule Actions](./04_Actions.md) to turn it **ON**. 
 After javascript evaluates condition it will refresh and add **_ptc** GET param with IDs of matching targets.
-```http://your.domain/?_ptc=3,5```
+`http://your.domain/?_ptc=3,5`
 
 Get ID of Persona in a controller action
 
@@ -153,7 +153,7 @@ if (!$this->view->editmode & !\Pimcore\Tool::isFrontentRequestByAdmin()) {
 
 Expand [Programatically section in Rule Actions](./04_Actions.md) to turn it **ON**. 
 After javascript evaluates condition it will refresh and add **_ptc** GET param with IDs of matching targets to the request.
-```http://your.domain/?_ptc=3,5```
+`http://your.domain/?_ptc=3,5`
 
 Get ID of Persona in the frontend
 
