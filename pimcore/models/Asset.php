@@ -398,7 +398,8 @@ class Asset extends Element\AbstractElement
             "audio" => ["/audio/"],
             "video" => ["/video/"],
             "document" => ["/msword/", "/pdf/", "/powerpoint/", "/office/", "/excel/", "/opendocument/"],
-            "archive" => ["/zip/", "/tar/"]
+            "archive" => ["/zip/", "/tar/"],
+            "unknown" => ["/\.stp$/"],
         ];
 
         foreach ($mappings as $assetType => $patterns) {
