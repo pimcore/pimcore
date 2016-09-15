@@ -416,7 +416,7 @@ class Asset extends Element\AbstractElement
             }
         }
 
-        if(!$type) {
+        if (!$type) {
             $type = "unknown";
         }
 
