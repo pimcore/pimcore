@@ -80,21 +80,20 @@ To assign a persona multiple times, use Global Targeting Rules or assign them pr
 It is extremely easy to create per-persona customized document variants by overriding only the elements you need to change. 
 All other elements are inherited from base document.
 
-<div class="inline-imgs">
 
-1. In the document editmode click the Persona button (the left / bottom corner) ![The Persona button in the editmode](../../img/targeting_personas_document_button.png)
+* In the document editmode click the Persona button (the left / bottom corner) 
 
-</div>
+![The Persona button in the editmode](../../img/targeting_personas_document_button.png)
 
-2. Choose a Persona 
+* Choose a Persona 
 
 ![Choose the Persona - editmode](../../img/targeting_editmode_choose_persona.png)
 
-3. **Right click** on the content block you want to override and click **Override**
+* **Right click** on the content block you want to override and click **Override**
 
 ![Overwrite the editable - editmode](../../img/targeting_editmode_overwrite_the_editable.png)
 
-4. Personalize the content. You need to edit only overridden blocks, all the other content will be inheritet from the general document.
+* Personalize the content. You need to edit only overridden blocks, all the other content will be inheritet from the general document.
 
 ![Update block for a chosen Persona - editmode](../../img/targeting_editmode_update_editable.png)
 
