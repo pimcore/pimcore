@@ -529,11 +529,11 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
             $tmpAsset["expandable"] = false;
             $tmpAsset["expanded"] = false;
 
-            $tmpAsset["iconCls"] = "pimcore_icon_asset_unknown";
+            $tmpAsset["iconCls"] = "pimcore_icon_asset_default";
 
             $fileExt = File::getFileExtension($asset->getFilename());
             if ($fileExt) {
-                $tmpAsset["iconCls"] = "pimcore_icon_" . File::getFileExtension($asset->getFilename());
+                $tmpAsset["iconCls"] .= " pimcore_icon_" . File::getFileExtension($asset->getFilename());
             }
         }
 

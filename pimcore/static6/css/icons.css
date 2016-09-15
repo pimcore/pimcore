@@ -246,6 +246,12 @@
     background: url(/pimcore/static6/img/flat-color-icons/unknown.svg) center center no-repeat !important;
 }
 
+.x-tree-icon-custom.pimcore_icon_asset_default {
+    background-image: url(/pimcore/static6/img/flat-color-icons/unknown.svg);
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+
 .pimcore_icon_pdf {
     background: url(/pimcore/static6/img/flat-color-icons/pdf.svg) center center no-repeat !important;
 }

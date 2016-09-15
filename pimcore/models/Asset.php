@@ -390,16 +390,16 @@ class Asset extends Element\AbstractElement
             return "folder";
         }
 
-        $type = "unknown";
+        $type = null;
 
         $mappings = [
+            "unknown" => ["/\.stp$/"],
             "image" => ["/image/", "/\.eps$/", "/\.ai$/", "/\.svgz$/", "/\.pcx$/", "/\.iff$/", "/\.pct$/", "/\.wmf$/"],
             "text" => ["/text/", "/xml$/"],
             "audio" => ["/audio/"],
             "video" => ["/video/"],
             "document" => ["/msword/", "/pdf/", "/powerpoint/", "/office/", "/excel/", "/opendocument/"],
             "archive" => ["/zip/", "/tar/"],
-            "unknown" => ["/\.stp$/"],
         ];
 
         foreach ($mappings as $assetType => $patterns) {
@@ -411,9 +411,13 @@ class Asset extends Element\AbstractElement
             }
 
             // break at first match
-            if ($type != "unknown") {
+            if ($type) {
                 break;
             }
+        }
+
+        if(!$type) {
+            $type = "unknown";
         }
 
         return $type;
