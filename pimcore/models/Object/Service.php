@@ -16,10 +16,10 @@
 
 namespace Pimcore\Model\Object;
 
+use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Admin as AdminTool;
-use Pimcore\Logger;
 
 class Service extends Model\Element\Service
 {
@@ -33,6 +33,13 @@ class Service extends Model\Element\Service
      * @var Model\User
      */
     protected $_user;
+
+    /**
+     * System fields used by filter conditions
+     *
+     * @var array
+     */
+    protected static $systemFields = ["o_path", "o_key", "o_id", "o_published", "o_creationDate", "o_modificationDate", "o_fullpath"];
 
     /**
      * @param  Model\User $user
@@ -662,7 +669,7 @@ class Service extends Model\Element\Service
      */
     public static function getFilterCondition($filterJson, $class)
     {
-        $systemFields = ["o_path", "o_key", "o_id", "o_published", "o_creationDate", "o_modificationDate", "o_fullpath"];
+        $systemFields = self::getSystemFields();
 
         // create filter condition
         $conditionPartsFilters = [];
@@ -1468,5 +1475,13 @@ class Service extends Model\Element\Service
                 }
             });
         }
+    }
+
+    /**
+     * @return array
+     */
+    public static function getSystemFields()
+    {
+        return self::$systemFields;
     }
 }
