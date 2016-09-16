@@ -127,7 +127,7 @@ class Dao extends Model\Dao\AbstractDao
             `metadata` LONGTEXT NULL,
     	    PRIMARY KEY  (`id`),
 	        INDEX `o_id` (`o_id`)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
 
         $validColumns = $this->getValidTableColumns($table, false); // no caching of table definition
 

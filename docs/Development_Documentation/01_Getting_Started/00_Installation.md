@@ -17,7 +17,7 @@ Keep in mind, that Pimcore needs to be installed into document root of your web 
 
 ## 2. Create Database
 ```bash
-mysql -u root -p -e "CREATE DATABASE pimcore charset=utf8;"
+mysql -u root -p -e "CREATE DATABASE pimcore charset=utf8mb4;"
 ```
 
 ## 3. Launch Pimcore and Finish Installation

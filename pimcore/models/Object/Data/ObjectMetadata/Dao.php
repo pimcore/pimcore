@@ -109,7 +109,7 @@ class Dao extends Model\Dao\AbstractDao
               `dest_id` int(11) NOT NULL default '0',
 	          `type` VARCHAR(50) NOT NULL DEFAULT '',
               `fieldname` varchar(71) NOT NULL,
-              `column` varchar(255) NOT NULL,
+              `column` varchar(190) NOT NULL,
               `data` text,
               `ownertype` ENUM('object','fieldcollection','localizedfield','objectbrick') NOT NULL DEFAULT 'object',
               `ownername` VARCHAR(70) NOT NULL DEFAULT '',
@@ -122,6 +122,6 @@ class Dao extends Model\Dao\AbstractDao
               INDEX `ownertype` (`ownertype`),
               INDEX `ownername` (`ownername`),
               INDEX `position` (`position`)
-		) DEFAULT CHARSET=utf8;");
+		) DEFAULT CHARSET=utf8mb4;");
     }
 }

@@ -131,9 +131,9 @@ class Translate extends \Zend_Translate_Adapter
         $messageIdOriginal = $messageId;
         $messageId = mb_strtolower($messageId);
 
-        // the maximum length of message-id's is 255
-        if (strlen($messageId) > 255) {
-            throw new \Exception("Pimcore_Translate: Message ID's longer than 255 characters are invalid!");
+        // the maximum length of message-id's is 190
+        if (strlen($messageId) > 190) {
+            throw new \Exception("Pimcore_Translate: Message ID's longer than 190 characters are invalid!");
         }
 
         if ($locale === null) {
