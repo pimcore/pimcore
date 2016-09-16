@@ -187,7 +187,7 @@ What I want to achieve? Let's suppose that our new products are integrated with 
 I need to have ability to decide which products would be used in Pimcore, the rest of products I want to reject.
 To achieve that requirement, I have to make two states.
 
-* Opened - for new product. Opened in my case would mean only "new product""
+* Opened - for new products. Opened in my case would mean only *"new product"*
 * Processing - for unfinished products
 * Done - for published and rejected products. There doesn't exist any required action for that product. 
 
@@ -252,7 +252,7 @@ As you can see I used `objectLayout` key to define which custom layout would be 
 I should also add some actions.
 
 * reject product - to change the status for products I don't want to use
-* start processing - to move product to the processing step
+* start processing - to move the product to the processing step
 
 ```php
 ...
@@ -402,7 +402,7 @@ And, the action with the *"timeWorked"* field.
 
 ### Transition definitions
 
-Tha last thing you have to do before start using the workflow - transition definitions.
+The last thing you have to do before start using the workflow - transition definitions.
 These definitions specify which actions are available at a specific stage.
 
 ```php
