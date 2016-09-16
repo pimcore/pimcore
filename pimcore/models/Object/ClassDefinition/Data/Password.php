@@ -40,14 +40,14 @@ class Password extends Model\Object\ClassDefinition\Data
      *
      * @var string
      */
-    public $queryColumnType = "varchar(255)";
+    public $queryColumnType = "varchar(190)";
 
     /**
      * Type for the column
      *
      * @var string
      */
-    public $columnType = "varchar(255)";
+    public $columnType = "varchar(190)";
 
     /**
      * Type for the generated phpdoc

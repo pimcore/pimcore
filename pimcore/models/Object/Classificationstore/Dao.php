@@ -206,7 +206,7 @@ class Dao extends Model\Dao\AbstractDao
             PRIMARY KEY (`groupId`, `o_id`, `fieldname`),
             INDEX `o_id` (`o_id`),
             INDEX `fieldname` (`fieldname`)
-        ) DEFAULT CHARSET=utf8;");
+        ) DEFAULT CHARSET=utf8mb4;");
 
         $this->db->query("CREATE TABLE IF NOT EXISTS `" . $dataTable . "` (
             `o_id` BIGINT(20) NOT NULL,
@@ -224,7 +224,7 @@ class Dao extends Model\Dao\AbstractDao
             INDEX `keyId` (`keyId`),
             INDEX `fieldname` (`fieldname`),
             INDEX `language` (`language`)
-        ) DEFAULT CHARSET=utf8;");
+        ) DEFAULT CHARSET=utf8mb4;");
 
         $this->tableDefinitions = null;
     }

@@ -1,6 +1,6 @@
-<?php 
+<?php
 
-/** 
+/**
 * Generated at: 2016-08-09T09:00:04+02:00
 * Inheritance: no
 * Variants: no
@@ -8,7 +8,7 @@
 * IP: 192.168.11.111
 
 
-Fields Summary: 
+Fields Summary:
 - gender [gender]
 - firstname [firstname]
 - lastname [lastname]
@@ -16,7 +16,7 @@ Fields Summary:
 - newsletterActive [newsletterActive]
 - newsletterConfirmed [newsletterConfirmed]
 - dateRegister [datetime]
-*/ 
+*/
 
 
 return Pimcore\Model\Object\ClassDefinition::__set_state(array(
@@ -31,7 +31,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
    'allowInherit' => false,
    'allowVariants' => false,
    'showVariants' => false,
-   'layoutDefinitions' => 
+   'layoutDefinitions' =>
   Pimcore\Model\Object\ClassDefinition\Layout\Panel::__set_state(array(
      'fieldtype' => 'panel',
      'labelWidth' => 100,
@@ -47,9 +47,9 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
      'bodyStyle' => NULL,
      'datatype' => 'layout',
      'permissions' => NULL,
-     'childs' => 
+     'childs' =>
     array (
-      0 => 
+      0 =>
       Pimcore\Model\Object\ClassDefinition\Layout\Panel::__set_state(array(
          'fieldtype' => 'panel',
          'labelWidth' => 100,
@@ -65,24 +65,24 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
          'bodyStyle' => NULL,
          'datatype' => 'layout',
          'permissions' => NULL,
-         'childs' => 
+         'childs' =>
         array (
-          0 => 
+          0 =>
           Pimcore\Model\Object\ClassDefinition\Data\Gender::__set_state(array(
              'fieldtype' => 'gender',
-             'options' => 
+             'options' =>
             array (
-              0 => 
+              0 =>
               array (
                 'key' => 'male',
                 'value' => 'male',
               ),
-              1 => 
+              1 =>
               array (
                 'key' => 'female',
                 'value' => 'female',
               ),
-              2 => 
+              2 =>
               array (
                 'key' => '',
                 'value' => 'unknown',
@@ -90,8 +90,8 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
             ),
              'width' => '',
              'defaultValue' => NULL,
-             'queryColumnType' => 'varchar(255)',
-             'columnType' => 'varchar(255)',
+             'queryColumnType' => 'varchar(190)',
+             'columnType' => 'varchar(190)',
              'phpdocType' => 'string',
              'name' => 'gender',
              'title' => 'Gender',
@@ -108,13 +108,13 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
              'visibleGridView' => false,
              'visibleSearch' => false,
           )),
-          1 => 
+          1 =>
           Pimcore\Model\Object\ClassDefinition\Data\Firstname::__set_state(array(
              'fieldtype' => 'firstname',
              'width' => '',
              'queryColumnType' => 'varchar',
              'columnType' => 'varchar',
-             'columnLength' => 255,
+             'columnLength' => 190,
              'phpdocType' => 'string',
              'regex' => '',
              'name' => 'firstname',
@@ -132,13 +132,13 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
              'visibleGridView' => false,
              'visibleSearch' => false,
           )),
-          2 => 
+          2 =>
           Pimcore\Model\Object\ClassDefinition\Data\Lastname::__set_state(array(
              'fieldtype' => 'lastname',
              'width' => '',
              'queryColumnType' => 'varchar',
              'columnType' => 'varchar',
-             'columnLength' => 255,
+             'columnLength' => 190,
              'phpdocType' => 'string',
              'regex' => '',
              'name' => 'lastname',
@@ -156,13 +156,13 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
              'visibleGridView' => false,
              'visibleSearch' => false,
           )),
-          3 => 
+          3 =>
           Pimcore\Model\Object\ClassDefinition\Data\Email::__set_state(array(
              'fieldtype' => 'email',
              'width' => '',
              'queryColumnType' => 'varchar',
              'columnType' => 'varchar',
-             'columnLength' => 255,
+             'columnLength' => 190,
              'phpdocType' => 'string',
              'regex' => '',
              'name' => 'email',
@@ -180,7 +180,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
              'visibleGridView' => false,
              'visibleSearch' => false,
           )),
-          4 => 
+          4 =>
           Pimcore\Model\Object\ClassDefinition\Data\NewsletterActive::__set_state(array(
              'fieldtype' => 'newsletterActive',
              'defaultValue' => 0,
@@ -202,7 +202,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
              'visibleGridView' => true,
              'visibleSearch' => true,
           )),
-          5 => 
+          5 =>
           Pimcore\Model\Object\ClassDefinition\Data\NewsletterConfirmed::__set_state(array(
              'fieldtype' => 'newsletterConfirmed',
              'defaultValue' => 0,
@@ -224,7 +224,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
              'visibleGridView' => false,
              'visibleSearch' => false,
           )),
-          6 => 
+          6 =>
           Pimcore\Model\Object\ClassDefinition\Data\Datetime::__set_state(array(
              'fieldtype' => 'datetime',
              'queryColumnType' => 'bigint(20)',
@@ -256,9 +256,9 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
    'icon' => '',
    'previewUrl' => '',
    'group' => NULL,
-   'propertyVisibility' => 
+   'propertyVisibility' =>
   array (
-    'grid' => 
+    'grid' =>
     array (
       'id' => true,
       'path' => true,
@@ -266,7 +266,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
       'modificationDate' => true,
       'creationDate' => true,
     ),
-    'search' => 
+    'search' =>
     array (
       'id' => true,
       'path' => true,

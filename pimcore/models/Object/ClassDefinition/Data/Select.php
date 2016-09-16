@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -35,7 +35,7 @@ class Select extends Model\Object\ClassDefinition\Data
      * @var array
      */
     public $options;
-    
+
     /**
      * @var integer
      */
@@ -45,20 +45,20 @@ class Select extends Model\Object\ClassDefinition\Data
      * @var string
      */
     public $defaultValue;
-    
+
     /**
      * Type for the column to query
      *
      * @var string
      */
-    public $queryColumnType = "varchar(255)";
+    public $queryColumnType = "varchar(190)";
 
     /**
      * Type for the column
      *
      * @var string
      */
-    public $columnType = "varchar(255)";
+    public $columnType = "varchar(190)";
 
     /**
      * Type for the generated phpdoc
@@ -85,7 +85,7 @@ class Select extends Model\Object\ClassDefinition\Data
 
         return $this;
     }
-    
+
     /**
      * @return integer
      */

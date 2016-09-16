@@ -56,12 +56,12 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->query("CREATE TABLE IF NOT EXISTS `" . $table . "` (
 		  `o_id` int(11) NOT NULL default '0',
 		  `index` int(11) default '0',
-          `fieldname` varchar(255) default '',
-          PRIMARY KEY (`o_id`,`index`,`fieldname`(255)),
+          `fieldname` varchar(190) default '',
+          PRIMARY KEY (`o_id`,`index`,`fieldname`(190)),
           INDEX `o_id` (`o_id`),
           INDEX `index` (`index`),
           INDEX `fieldname` (`fieldname`)
-		) DEFAULT CHARSET=utf8;");
+		) DEFAULT CHARSET=utf8mb4;");
 
         $existingColumns = $this->getValidTableColumns($table, false); // no caching of table definition
         $columnsToRemove = $existingColumns;

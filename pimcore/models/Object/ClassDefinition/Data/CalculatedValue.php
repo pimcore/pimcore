@@ -52,7 +52,7 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data
      *
      * @var integer
      */
-    public $columnLength = 255;
+    public $columnLength = 190;
 
     /**
      * Type for the generated phpdoc

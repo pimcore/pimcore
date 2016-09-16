@@ -1,13 +1,13 @@
-<?php 
+<?php
 
-/** 
+/**
 * Generated at: 2016-08-09T09:00:04+02:00
 * Inheritance: no
 * Variants: no
 * IP: 192.168.11.111
 
 
-Fields Summary: 
+Fields Summary:
 - localizedfields [localizedfields]
 -- title [input]
 -- text [wysiwyg]
@@ -15,7 +15,7 @@ Fields Summary:
 - date [datetime]
 - categories [objects]
 - posterImage [hotspotimage]
-*/ 
+*/
 
 
 return Pimcore\Model\Object\ClassDefinition::__set_state(array(
@@ -30,7 +30,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
    'allowInherit' => false,
    'allowVariants' => false,
    'showVariants' => false,
-   'layoutDefinitions' => 
+   'layoutDefinitions' =>
   Pimcore\Model\Object\ClassDefinition\Layout\Panel::__set_state(array(
      'fieldtype' => 'panel',
      'labelWidth' => 100,
@@ -46,9 +46,9 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
      'bodyStyle' => NULL,
      'datatype' => 'layout',
      'permissions' => NULL,
-     'childs' => 
+     'childs' =>
     array (
-      0 => 
+      0 =>
       Pimcore\Model\Object\ClassDefinition\Layout\Region::__set_state(array(
          'fieldtype' => 'region',
          'name' => 'Layout',
@@ -62,21 +62,21 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
          'bodyStyle' => '',
          'datatype' => 'layout',
          'permissions' => NULL,
-         'childs' => 
+         'childs' =>
         array (
-          0 => 
+          0 =>
           Pimcore\Model\Object\ClassDefinition\Data\Localizedfields::__set_state(array(
              'fieldtype' => 'localizedfields',
              'phpdocType' => '\\Pimcore\\Model\\Object\\Localizedfield',
-             'childs' => 
+             'childs' =>
             array (
-              0 => 
+              0 =>
               Pimcore\Model\Object\ClassDefinition\Data\Input::__set_state(array(
                  'fieldtype' => 'input',
                  'width' => 500,
                  'queryColumnType' => 'varchar',
                  'columnType' => 'varchar',
-                 'columnLength' => 255,
+                 'columnLength' => 190,
                  'phpdocType' => 'string',
                  'regex' => '',
                  'name' => 'title',
@@ -94,7 +94,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
                  'visibleGridView' => false,
                  'visibleSearch' => false,
               )),
-              1 => 
+              1 =>
               Pimcore\Model\Object\ClassDefinition\Data\Wysiwyg::__set_state(array(
                  'fieldtype' => 'wysiwyg',
                  'width' => '',
@@ -118,13 +118,13 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
                  'visibleGridView' => false,
                  'visibleSearch' => false,
               )),
-              2 => 
+              2 =>
               Pimcore\Model\Object\ClassDefinition\Data\Input::__set_state(array(
                  'fieldtype' => 'input',
                  'width' => 500,
                  'queryColumnType' => 'varchar',
                  'columnType' => 'varchar',
-                 'columnLength' => 255,
+                 'columnLength' => 190,
                  'phpdocType' => 'string',
                  'regex' => '',
                  'name' => 'tags',
@@ -151,18 +151,18 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
              'height' => '',
              'maxTabs' => NULL,
              'labelWidth' => NULL,
-             'referencedFields' => 
+             'referencedFields' =>
             array (
             ),
-             'fieldDefinitionsCache' => 
+             'fieldDefinitionsCache' =>
             array (
-              'title' => 
+              'title' =>
               Pimcore\Model\Object\ClassDefinition\Data\Input::__set_state(array(
                  'fieldtype' => 'input',
                  'width' => 500,
                  'queryColumnType' => 'varchar',
                  'columnType' => 'varchar',
-                 'columnLength' => 255,
+                 'columnLength' => 190,
                  'phpdocType' => 'string',
                  'regex' => '',
                  'name' => 'title',
@@ -180,7 +180,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
                  'visibleGridView' => false,
                  'visibleSearch' => false,
               )),
-              'text' => 
+              'text' =>
               Pimcore\Model\Object\ClassDefinition\Data\Wysiwyg::__set_state(array(
                  'fieldtype' => 'wysiwyg',
                  'width' => '',
@@ -204,13 +204,13 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
                  'visibleGridView' => false,
                  'visibleSearch' => false,
               )),
-              'tags' => 
+              'tags' =>
               Pimcore\Model\Object\ClassDefinition\Data\Input::__set_state(array(
                  'fieldtype' => 'input',
                  'width' => 500,
                  'queryColumnType' => 'varchar',
                  'columnType' => 'varchar',
-                 'columnLength' => 255,
+                 'columnLength' => 190,
                  'phpdocType' => 'string',
                  'regex' => '',
                  'name' => 'tags',
@@ -244,7 +244,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
              'visibleGridView' => true,
              'visibleSearch' => true,
           )),
-          1 => 
+          1 =>
           Pimcore\Model\Object\ClassDefinition\Layout\Panel::__set_state(array(
              'fieldtype' => 'panel',
              'labelWidth' => 100,
@@ -260,9 +260,9 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
              'bodyStyle' => '',
              'datatype' => 'layout',
              'permissions' => NULL,
-             'childs' => 
+             'childs' =>
             array (
-              0 => 
+              0 =>
               Pimcore\Model\Object\ClassDefinition\Data\Datetime::__set_state(array(
                  'fieldtype' => 'datetime',
                  'queryColumnType' => 'bigint(20)',
@@ -285,7 +285,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
                  'visibleGridView' => false,
                  'visibleSearch' => false,
               )),
-              1 => 
+              1 =>
               Pimcore\Model\Object\ClassDefinition\Data\Objects::__set_state(array(
                  'fieldtype' => 'objects',
                  'width' => '',
@@ -295,9 +295,9 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
                  'phpdocType' => 'array',
                  'relationType' => true,
                  'lazyLoading' => false,
-                 'classes' => 
+                 'classes' =>
                 array (
-                  0 => 
+                  0 =>
                   array (
                     'classes' => 'blogCategory',
                   ),
@@ -317,15 +317,15 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
                  'visibleGridView' => false,
                  'visibleSearch' => false,
               )),
-              2 => 
+              2 =>
               Pimcore\Model\Object\ClassDefinition\Data\Hotspotimage::__set_state(array(
                  'fieldtype' => 'hotspotimage',
-                 'queryColumnType' => 
+                 'queryColumnType' =>
                 array (
                   'image' => 'int(11)',
                   'hotspots' => 'text',
                 ),
-                 'columnType' => 
+                 'columnType' =>
                 array (
                   'image' => 'int(11)',
                   'hotspots' => 'text',
@@ -363,9 +363,9 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
    'icon' => '',
    'previewUrl' => '',
    'group' => NULL,
-   'propertyVisibility' => 
+   'propertyVisibility' =>
   array (
-    'grid' => 
+    'grid' =>
     array (
       'id' => true,
       'path' => true,
@@ -373,7 +373,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
       'modificationDate' => true,
       'creationDate' => true,
     ),
-    'search' => 
+    'search' =>
     array (
       'id' => true,
       'path' => true,
