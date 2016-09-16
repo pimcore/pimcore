@@ -949,6 +949,14 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
             }
         }
 
+        if ($childDocument instanceof Document\Page) {
+            $tmpDocument["url"] = $childDocument->getFullPath();
+            $site = Tool\Frontend::getSiteForDocument($childDocument);
+            if($site) {
+                $tmpDocument["url"] = "http://" . $site->getMainDomain() . preg_replace("@^" . $site->getRootPath() . "/?@", "/", $childDocument->getRealFullPath());
+            }
+        }
+
         $tmpDocument["cls"] = "";
 
         if (!$childDocument->isPublished()) {

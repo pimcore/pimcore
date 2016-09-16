@@ -597,7 +597,7 @@ pimcore.document.tree = Class.create({
                 text: t('open'),
                 iconCls: "pimcore_icon_cursor",
                 handler: function () {
-                    window.open(record.data.path);
+                    window.open(record.data.url);
                 }.bind(this)
             }));
         }
