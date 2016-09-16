@@ -953,7 +953,7 @@ INSERT INTO `documents_elements` VALUES ('1','teaser_2content2','snippet','17');
 INSERT INTO `documents_elements` VALUES ('1','text_0content6','textarea','This demo is based on the Bootstrap framework which is the most popular, intuitive and powerful front-end framework available.');
 INSERT INTO `documents_elements` VALUES ('1','text_1content6','textarea','HTML5, Javascript, CSS3, jQuery as well as concepts like responsive, mobile-apps or non-linear design-patterns.');
 INSERT INTO `documents_elements` VALUES ('1','text_2content6','textarea','Content is created by simply dragging & dropping blocks, that can be editited in-place and wysiwyg in a very intuitive and comfortable way. ');
-INSERT INTO `documents_elements` VALUES ('1','title_0content6','input','Fully Responsive');
+INSERT INTO `documents_elements` VALUES ('1','title_0content6','input','Fully Responsive 😻');
 INSERT INTO `documents_elements` VALUES ('1','title_1content6','input','100% Buzzword Compatible');
 INSERT INTO `documents_elements` VALUES ('1','title_2content6','input','Drag & Drop Interface');
 INSERT INTO `documents_elements` VALUES ('1','typecontent_blockcontent11_1','select','');
@@ -1121,7 +1121,7 @@ INSERT INTO `documents_elements` VALUES ('15','image','image','a:9:{s:2:\"id\";i
 INSERT INTO `documents_elements` VALUES ('15','link','link','a:15:{s:4:\"text\";s:11:\"Lorem ipsum\";s:4:\"path\";s:15:\"/basic-examples\";s:6:\"target\";s:0:\"\";s:10:\"parameters\";s:0:\"\";s:6:\"anchor\";s:0:\"\";s:5:\"title\";s:0:\"\";s:9:\"accesskey\";s:0:\"\";s:3:\"rel\";s:0:\"\";s:8:\"tabindex\";s:0:\"\";s:5:\"class\";s:0:\"\";s:10:\"attributes\";s:0:\"\";s:8:\"internal\";b:1;s:10:\"internalId\";i:3;s:12:\"internalType\";s:8:\"document\";s:4:\"type\";s:8:\"internal\";}');
 INSERT INTO `documents_elements` VALUES ('15','text','wysiwyg','<p>This demo is based on Bootstrap, the most popular, intuitive, and powerful front-end framework.</p>\n');
 INSERT INTO `documents_elements` VALUES ('16','circle','checkbox','');
-INSERT INTO `documents_elements` VALUES ('16','headline','input','Drag & Drop Interface');
+INSERT INTO `documents_elements` VALUES ('16','headline','input','Drag & Drop Interface 😻');
 INSERT INTO `documents_elements` VALUES ('16','image','image','a:9:{s:2:\"id\";i:20;s:3:\"alt\";s:0:\"\";s:11:\"cropPercent\";N;s:9:\"cropWidth\";N;s:10:\"cropHeight\";N;s:7:\"cropTop\";N;s:8:\"cropLeft\";N;s:8:\"hotspots\";a:0:{}s:6:\"marker\";a:0:{}}');
 INSERT INTO `documents_elements` VALUES ('16','link','link','a:15:{s:4:\"text\";s:12:\"Etiam rhoncu\";s:4:\"path\";s:18:\"/advanced-examples\";s:6:\"target\";s:0:\"\";s:10:\"parameters\";s:0:\"\";s:6:\"anchor\";s:0:\"\";s:5:\"title\";s:0:\"\";s:9:\"accesskey\";s:0:\"\";s:3:\"rel\";s:0:\"\";s:8:\"tabindex\";s:0:\"\";s:5:\"class\";s:0:\"\";s:10:\"attributes\";s:0:\"\";s:8:\"internal\";b:1;s:10:\"internalId\";i:5;s:12:\"internalType\";s:8:\"document\";s:4:\"type\";s:8:\"internal\";}');
 INSERT INTO `documents_elements` VALUES ('16','text','wysiwyg','<p>Content is created by simply dragging &amp; dropping blocks, that can&nbsp;be editited in-place and wysiwyg.&nbsp;</p>\n');
