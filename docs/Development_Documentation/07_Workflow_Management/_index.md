@@ -473,3 +473,8 @@ Below, you can find showcase of the workflow I've just prepared.
 | ![New product status](../img/workflow_editmode_ready_status.png)            | ![New product status](../img/workflow_editmode_ready_layout.png)            | ![New product status](../img/workflow_editmode_ready_actions2.png)           |
 | ![New product status](../img/workflow_editmode_published_status.png)        | ![New product status](../img/workflow_editmode_ready_layout.png)            | ![New product status](../img/workflow_editmode_published_actions.png)        |
 
+### Check the history
+
+In the *"Notes & Events"* tab, there is a list with every action used on the object via the Workflow module.
+
+![Notes & Events - notes from the workflow](../img/notestandevents_object_grid.png)
