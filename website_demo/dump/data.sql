@@ -953,7 +953,7 @@ INSERT INTO `documents_elements` VALUES ('1','teaser_2content2','snippet','17');
 INSERT INTO `documents_elements` VALUES ('1','text_0content6','textarea','This demo is based on the Bootstrap framework which is the most popular, intuitive and powerful front-end framework available.');
 INSERT INTO `documents_elements` VALUES ('1','text_1content6','textarea','HTML5, Javascript, CSS3, jQuery as well as concepts like responsive, mobile-apps or non-linear design-patterns.');
 INSERT INTO `documents_elements` VALUES ('1','text_2content6','textarea','Content is created by simply dragging & dropping blocks, that can be editited in-place and wysiwyg in a very intuitive and comfortable way. ');
-INSERT INTO `documents_elements` VALUES ('1','title_0content6','input','Fully Responsive 😻');
+INSERT INTO `documents_elements` VALUES ('1','title_0content6','input','Fully Responsive');
 INSERT INTO `documents_elements` VALUES ('1','title_1content6','input','100% Buzzword Compatible');
 INSERT INTO `documents_elements` VALUES ('1','title_2content6','input','Drag & Drop Interface');
 INSERT INTO `documents_elements` VALUES ('1','typecontent_blockcontent11_1','select','');
