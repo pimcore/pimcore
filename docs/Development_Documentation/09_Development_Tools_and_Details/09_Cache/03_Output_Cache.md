@@ -59,7 +59,7 @@ Per default the disable-cookie in the system settings is set to `pimcore_admin_s
 That means that if your're logged into Pimcore (have a session-id cookie) you will always get the 
 content live and not from the cache. 
 
-##### Bookmarklet
+#### Bookmarklet
 If you have the cookie `pimcore_admin_sid` in your system configuration you can use the following 
 bookmarklet to disable the output-cache without having an active admin session in an other tab.
 To use the bookmarklet, just drag the following Link into your bookmark toolbar (any browser): 
