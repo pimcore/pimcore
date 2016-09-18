@@ -25,7 +25,7 @@ Add the desired package to the `composer.json` and define your dependencies:
 }
 ```
 
-Download and install composer from https://getcomposer.org/download/ 
+Download and install composer from [https://getcomposer.org/download/](https://getcomposer.org/download/) 
 
 #### Install dependencies:
 ```php
