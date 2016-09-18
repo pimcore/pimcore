@@ -28,7 +28,7 @@ automatically handled by the `Pimcore\Mail` object.
 Lets assume that we have created a `Email Document` in the Pimcore Backen UI (`/email/myemaildocument`) 
 which looks like this:
 
-![Pimcore Mail](../img/pimcore-mail.png)
+![Pimcore Mail](../../img/pimcore-mail.png)
 
 To send this document as email we just have to write the following code-snippet in our controller 
 action:
