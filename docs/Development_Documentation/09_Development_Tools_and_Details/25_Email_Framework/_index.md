@@ -48,7 +48,7 @@ $mail->send();
 ```
 
 
-Sending a plain text email:
+#### Sending a plain text email:
 ```php
 $mail = new \Pimcore\Mail();
 $mail->addTo('example@pimcore.org');
@@ -56,7 +56,7 @@ $mail->setBodyText("This is just plain text");
 $mail->send();
 ```
 
-Sending a rich text (HTML) email: 
+#### Sending a rich text (HTML) email: 
 ```php
 $mail = new \Pimcore\Mail();
 $mail->addTo('example@pimcore.org');
