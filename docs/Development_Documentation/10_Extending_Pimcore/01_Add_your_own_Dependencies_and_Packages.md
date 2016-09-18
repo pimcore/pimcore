@@ -32,7 +32,7 @@ Download and install composer from [https://getcomposer.org/download/](https://g
 composer update
 ```
 
-### Use the newly added components
+#### Use the newly added components
 
 That's it! Now you can use all components of Symfony in your Pimcore project, no need to 
 do anything further, it just works! 
