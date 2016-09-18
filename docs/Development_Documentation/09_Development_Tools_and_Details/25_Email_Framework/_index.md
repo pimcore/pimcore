@@ -6,7 +6,7 @@ The Pimcore Email Framework provides an easy way to send/create emails with Pimc
 For this you have several components:
 * [Document\Email](../../03_Documents/07_Document_Types/_index.md)
 * [Pimcore\Mail](./01_Pimcore_Mail.md)
-* [Placeholder Objects](../23_Placeholders/01_Object_Placehoder.md)
+* [Placeholder Objects](../../23_Placeholders/01_Object_Placehoder.md)
 
 Pimcore provides a `Pimcore\Mail` Class which extends the `Zend_Mail` Class. When you initialize a 
 `Pimcore\Mail` object, all data from `Settings` -> `System` -> `Email Settings` are applied 
