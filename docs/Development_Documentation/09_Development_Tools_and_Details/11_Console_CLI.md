@@ -73,6 +73,7 @@ manually.
 #### Autoloaded Commands
 The console application tries to autoload commands from a list of given namespaces. Currently the 
 following namespaces are taken into consideration (more are likely to follow):
+
 | Namespace | Directory |
 | --------- | --------- |
 | `Pimcore\Console\Command` | `/pimcore/lib/Pimcore/Console/Command` |
