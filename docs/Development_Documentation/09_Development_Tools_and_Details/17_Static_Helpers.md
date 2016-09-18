@@ -78,3 +78,14 @@ foreach($users as $user) {
 }
 ```
 
+## Locking
+Pimcore provides a simple tool for locking. With that tool it is possible to avoid concurrent
+execution of same code sections or functions.
+
+Just have a look at `Pimcore\Model\Lock` and the static class functions 
+* acquire
+* release
+* lock
+* isLocked
+
+Active locks are stores in the database table `locks`. 
