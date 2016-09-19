@@ -123,6 +123,16 @@ attach multiple events
 
 ### Document
 
+| Name | Target | Parameters | Description | 
+| ---- | ------ | ---------- | ----------- |
+| `document.preAdd` | `Pimcore\Model\Document` | - |  |
+| `document.postAdd` | `Pimcore\Model\Document` | - | |
+| `document.preUpdate` | `Pimcore\Model\Document` | (bool) `saveVersionOnly` | saveVersionOnly is set if method saveVersion() was called instead of save() |
+| `document.postUpdate` | `Pimcore\Model\Document` | (bool) `saveVersionOnly` | saveVersionOnly is set if method saveVersion() was called instead of save() |
+| `document.preDelete` | `Pimcore\Model\Document` | - |  |
+| `document.postDelete` | `Pimcore\Model\Document` | - |  |
+| `document.print.postPdfGeneration` | `Pimcore\Model\Document` | (string) `filename`, (string) `pdf` | filename contains the filename of the generated pdf on filesystem, pdf contains generated pdf as string. |
+
 ### Object
 
 ### Asset
