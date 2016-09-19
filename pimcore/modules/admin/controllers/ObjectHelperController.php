@@ -12,10 +12,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-use Pimcore\Tool;
 use Pimcore\File;
-use Pimcore\Model\Object;
 use Pimcore\Logger;
+use Pimcore\Model\Object;
+use Pimcore\Tool;
 
 class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
 {
@@ -1137,7 +1137,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
                             if ($localizedField) {
                                 $field = $localizedField->getFieldDefinition($name);
                                 if ($field) {
-                                    $object->{"set" . $name}($value, $this->getParam("language"));
+                                    $object->{"set" . $name}($field->getDataFromEditmode($value, $object), $this->getParam("language"));
                                 }
                             }
                         }
