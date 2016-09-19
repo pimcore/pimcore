@@ -187,15 +187,78 @@ attach multiple events
 
 ### Object KeyValue Key Configuration
 
+| Name | Target | Parameters | Description | 
+| ---- | ------ | ---------- | ----------- |
+| `object.keyValue.keyConfig.postAdd` | `Pimcore\Model\Object\KeyValue\KeyConfig` | - |  |
+| `object.keyValue.keyConfig.postDelete` | `Pimcore\Model\Object\KeyValue\KeyConfig` | - | |  
+| `object.keyValue.keyConfig.postUpdate` | `Pimcore\Model\Object\KeyValue\KeyConfig` | - | |
+| `object.keyValue.keyConfig.preAdd` | `Pimcore\Model\Object\KeyValue\KeyConfig` | - |  |
+| `object.keyValue.keyConfig.preDelete` | `Pimcore\Model\Object\KeyValue\KeyConfig` | - | |  
+| `object.keyValue.keyConfig.preUpdate` | `Pimcore\Model\Object\KeyValue\KeyConfig` | - |  |
+
+
 ### Versions
+
+| Name | Target | Parameters | Description | 
+| ---- | ------ | ---------- | ----------- |
+| `version.preSave` | `Pimcore\Model\Element\AbstractElement` | - |  |
+| `version.postSave` | `Pimcore\Model\Element\AbstractElement` | - |  |
+| `version.preDelete` | `Pimcore\Model\Element\AbstractElement` | - |  |
+| `version.postDelete` | `Pimcore\Model\Element\AbstractElement` | - |  |
+
 
 ### Search Backend
 
+| Name | Target | Parameters | Description | 
+| ---- | ------ | ---------- | ----------- |
+| `search.backend.postSave` | `Pimcore\Model\Search\Backend\Data` | - | |  
+| `search.backend.preSave` | `Pimcore\Model\Search\Backend\Data` | - |  |
+
 ### Admin Interface
+
+| Name | Target | Parameters | Description | 
+| ---- | ------ | ---------- | ----------- |
+| `admin.asset.get.preSendData` | `Admin_AssetController` | (Pimcore\Model\Tool\Admin\EventDataContainer) `returnValueContainer`, (Pimcore\Model\Asset) `asset` | Fired at the end of Admin_AssetController::getDataById() - (since build 3874) |
+| `admin.class.objectbrickList.preSendData` | `Admin_ClassController` | (Pimcore\Model\Tool\Admin\EventDataContainer) `returnValueContainer`, (int) `objectId` | Fired at the end of Admin_ClassController:objectbrickList() - (since build 3300) |
+| `admin.controller.postInit` | `Zend_Controller_Action` | - | Fired at the end of Pimcore_Controller_Action_Admin::init() - only fired once (2.3.1) |
+| `admin.controller.preInit` | `Zend_Controller_Action` | - | Fired at the beginning of Pimcore\Controller\Action_Admin::init() - only fired once (2.3.1) |
+| `admin.document.get.preSendData` | `Admin_DocumentController` | (Pimcore\Model\Tool\Admin\EventDataContainer) `returnValueContainer`, (Pimcore\Model\Document) `document` | Fired at the end of Admin_DocumentController::getDataById() - (since build 3874) |
+| `admin.login.index.authenticate` | `Zend_Controller_Action` | (string) username,(string) `password` | Fired at the beginning of /admin/login/index if there is no valid user. Use $e-getTarget()->setUser($user); if you want to login a user in your callback |
+| `admin.login.login.authenticate` | `Zend_Controller_Action` | (string) username,(string) `password` | Fired at the beginning of /admin/login/login before any other authentication steps are taken. Use $e-getTarget()->setUser($user); if you want to login a user in your callback | 
+| `admin.login.login.failed` | `Zend_Controller_Action` | (string) `username`,(string) `password` | Use $e-getTarget()->setUser($user); if you want to login a user in your callback |
+| `admin.login.logout` | `Zend_Controller_Action` | (User) `$user` |  
+| `admin.object.get.preSendData` | `Admin_ObjectController` | (Pimcore\Model\Tool\Admin\EventDataContainer) `returnValueContainer`, (Pimcore\Model\Object\AbstractObject) `object` | Fired at the end of Admin_ObjectController::get() - (since build 3277) |
+| `admin.object.treeGetChildsById.preSendData` | `Admin_ObjectController` | (Pimcore\Model\Tool\Admin\EventDataContainer) `returnValueContainer` | Fired at the end of Admin_ObjectController::treeGetChildsById() - (since build 3277) |
+
 
 ### Frontend
 
+| Name | Target | Parameters | Return | Description | 
+| ---- | ------ | ---------- | ------ | ----------- |
+| `frontend.error` | `Zend_Controller_Action` | (Exception) `exception` | (string) will be appended to the cache key | The return values are aggregated and are added to the cache key. This allows the customization of the error page without disabling the cache. (since 4.0) |
+| `frontend.controller.preInit` | `Zend_Controller_Action` |   |   | (since 4.0) |
+| `frontend.controller.postInit` | `Zend_Controller_Action` |   |   | (since 4.0) |
+| `frontend.path.asset.image.thumbnail` | `Pimcore\Model\Asset\Image\Thumbnail` | (string) `filesystemPath` (string)  `frontendPath` | (string) the modified path for the frontend | (since 4.0.1) |
+| `frontend.path.asset.video.image-thumbnail` | `Pimcore\Model\Asset\Video\ImageThumbnail` | (string) `filesystemPath` (string)  `frontendPath` | (string) the modified path for the frontend | (since 4.0.1) |
+| `frontend.path.asset.video.thumbnail` | `Pimcore\Model\Asset\Video` | (string) `filesystemPath` (string)  `frontendPath` | (string) the modified path for the frontend | (since 4.0.1) |
+| `frontend.path.asset.document.image-thumbnail` | `Pimcore\Model\Asset\Document\ImageThumbnail` | (string) `filesystemPath`, (string)  `frontendPath` | (string) the modified path for the frontend | (since 4.0.1) |
+| `frontend.path.asset` | `Pimcore\Model\Asset` | - | (string) the modified path for the frontend | (since 4.0.1) called at the end of getFullPath() |
+| `frontend.path.document` | `Pimcore\Model\Document` | (string)  `frontendPath` | (string) the modified path for the frontend | (since 4.0.1) called at the end of getFullPath() |
+| `frontend.path.staticroute` | `Pimcore\Model\Staticroute` | (string)  `frontendPath`, (array) `params`, (bool) `reset`, (bool) `encode` | (string) the modified path for the frontend | (since 4.0.1) |
+| `frontend.view.helper.head-link` | `Pimcore\View\Helper\HeadLink` | (stdClass) `item` |   | Useful to do some rewriting (since 4.3.1) |
+| `frontend.view.helper.head-script` | `Pimcore\View\Helper\HeadScript` | (stdClass) `item` |   | Useful to do some rewriting (since 4.3.1) |
+
 ### Workflow Management
+
+| Name | Target | Parameters | Description | 
+| ---- | ------ | ---------- | ----------- |
+| `workflowmanagement.preAction` | `Pimcore\WorkflowManagement\Workflow\Manager` | (string) `actionName` | Fired BEFORE any action happens in the workflow. use this to hook into actions globally and define your own logic. i.e. validation or checks on other system vars |
+| `workflowmanagement.postAction` | `Pimcore\WorkflowManagement\Workflow\Manager` | (string) `actionName` | Fired AFTER any action happens in the workflow. Use this to hook into actions globally and define your own logic. i.e. trigger an email or maintenance job. |
+| `workflowmanagement.preReturnAvailableActions` | allowed actions as associated array `$actionName` => `$actionConfig` | Pimcore\WorkflowManagement\Workflow\Manager `manager` | Fired when returning the available actions to a user in the admin panel. use this to further customise what actions are available to a user. i.e. stop them logging time after 5pm ;) |
+| `workflowmanagement.action.before` | `Pimcore\WorkflowManagement\Workflow\Manager` | array `actionConfig`, array `data`  | |
+| `workflowmanagement.action.success` | `Pimcore\WorkflowManagement\Workflow\Manager` | array `actionConfig`, array `data`  | |
+| `workflowmanagement.action.failur` | `Pimcore\WorkflowManagement\Workflow\Manager` | array `actionConfig`, array `data`, Exception `e` | |
+ 
 
 ## Example of custom error handling using the Event API
 
