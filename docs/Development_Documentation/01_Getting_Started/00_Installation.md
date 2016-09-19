@@ -3,7 +3,7 @@
 The following guide assumes your're using a typical LAMP environment, if you're using a different setup (eg. Nginx) or facing a problem, please visit the [Installation Guide](../13_Installation_and_Upgrade/_index.md) section.
 
 ## 1. System Requirements
-Please have a look at [System Requirements](./01_System_Requirements.md) and ensure your system is ready for Pimcore. 
+Please have a look at [System Requirements](../13_Installation_and_Upgrade/01_System_Requirements.md) and ensure your system is ready for Pimcore. 
 
 ## 2. Install Pimcore Sources
 The easiest way to install Pimcore is from your terminal using our installer package. We additionally provide a [Composer based install guide](../13_Installation_and_Upgrade/03_System_Setup_and_Hosting/04_Composer_Install.md). But of course you can install Pimcore also without the help of the command line using your favorite tools.
