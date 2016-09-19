@@ -150,6 +150,15 @@ class Classificationstore extends Model\AbstractModel
      */
     public function setLocalizedKeyValue($groupId, $keyId, $value, $language = null)
     {
+
+        if (!$groupId) {
+            throw new \Exception("groupId not valid");
+        }
+
+        if (!$keyId) {
+            throw new \Exception("keyId not valid");
+        }
+
         $language  = $this->getLanguage($language);
 
         // treat value "0" nonempty
