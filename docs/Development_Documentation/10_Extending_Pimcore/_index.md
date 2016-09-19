@@ -25,7 +25,7 @@ Following a list of ways to extend Pimcore. See detail pages for additional info
 * [**Hook into the Startup Process**](./09_Hook_into_the_Startup_Process.md) to attach event listeners, 
  register additional custom routes, etc. 
  
-* [**Event API and Event Manger**](./11_Event_API_and_EventManager.md) for hooking into standard
+* [**Event API and Event Manger**](../10_Extending_Pimcore/11_Event_API_and_Event_Manager.md) for hooking into standard
  Pimcore functions like creating, updating, deleting elements etc. 
  
 * Use [**Maintenance Mode**](./15_Maintenance_Mode.md) to show users a maintenance page when 

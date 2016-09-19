@@ -4,7 +4,7 @@ At this point we want to give a short overview of the architecture of Pimcore.
 
 As usual, picture tells more than thousand words:  
 
-![Pimcore Architekture](../img/architectural-chart.png) 
+![Pimcore Architecture](../img/architectural-chart.png) 
 
 This charts shows the architecture of a typical Pimcore application. Every 
 thing in blue is shipped directly with Pimcore or a integral part of it. 

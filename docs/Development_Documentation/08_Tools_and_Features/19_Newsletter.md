@@ -321,7 +321,7 @@ and at the end, just push the **Send Newsletter Now** button.
 
 ## Sending newsletter from the command-line
 
-To send newsletters ausin a scheduler (cron-job, ...) you can use the command-line interface:
+You can use the command-line interface to send newsletters (cron-jobs, scheduling...)
 
 ```bash
 php pimcore/cli/console.php internal:newsletter-send NAME-OF-NEWSLETTER
