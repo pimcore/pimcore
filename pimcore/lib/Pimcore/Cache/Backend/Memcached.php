@@ -17,6 +17,11 @@ namespace Pimcore\Cache\Backend;
 use Pimcore\Db;
 use Pimcore\Logger;
 
+/**
+ * Class Memcached
+ * @package Pimcore\Cache\Backend
+ * @deprecated
+ */
 class Memcached extends \Zend_Cache_Backend_Memcached
 {
 
