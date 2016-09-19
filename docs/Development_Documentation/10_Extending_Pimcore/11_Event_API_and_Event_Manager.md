@@ -162,7 +162,28 @@ attach multiple events
 
 ### Object Class
 
+| Name | Target | Parameters | Description | 
+| ---- | ------ | ---------- | ----------- |
+| `object.class.postAdd` | `Pimcore\Model\Object\ClassDefinition` | - |  |
+| `object.class.postUpdate` | `Pimcore\Model\Object\ClassDefinition` | - |  |
+| `object.class.preAdd` | `Pimcore\Model\Object\ClassDefinition` | - |  |
+| `object.class.preUpdate` | `Pimcore\Model\Object\ClassDefinition` | - |  |
+
+
 ### Object KeyValue Group Configuration
+
+| Name | Target | Parameters | Description | 
+| ---- | ------ | ---------- | ----------- |
+| `object.keyValue.groupConfig.postAdd` | `Pimcore\Model\Object\KeyValue\GroupConfig` | - |  |
+| `object.keyValue.groupConfig.postUpdate` | `Pimcore\Model\Object\KeyValue\GroupConfig` | - |  |
+| `object.keyValue.groupConfig.postUpdate` | `Pimcore\Model\Object\KeyValue\GroupConfig` | - |  |
+| `object.keyValue.groupConfig.postDelete` | `Pimcore\Model\Object\KeyValue\GroupConfig` | - |   |
+| `object.keyValue.groupConfig.preAdd` | `Pimcore\Model\Object\KeyValue\GroupConfig` | - |  |
+| `object.keyValue.groupConfig.preDelete` | `Pimcore\Model\Object\KeyValue\GroupConfig` | - | |  
+| `object.keyValue.groupConfig.preUpdate` | `Pimcore\Model\Object\KeyValue\GroupConfig` | - | | 
+
+
+
 
 ### Object KeyValue Key Configuration
 
