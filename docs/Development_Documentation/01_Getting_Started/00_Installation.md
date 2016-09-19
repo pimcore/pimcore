@@ -1,32 +1,75 @@
 # Pimcore Installation
 
-The following guide assumes your're using a typical LAMP environment, if you're using a different setup (eg. Nginx) or facing a problem, please visit the [Installation Guide](../13_Installation_and_Upgrade/05_Installation_Guide.md) section.
+The following guide assumes your're using a typical LAMP environment, if you're using a different setup (eg. Nginx) or facing a problem, please visit the [Installation Guide](../13_Installation_and_Upgrade/_index.md) section.
 
-## 1. Install Pimcore Sources
+## 1. System Requirements
+Please have a look at [System Requirements](./01_System_Requirements.md) and ensure your system is ready for Pimcore. 
 
-The easiest way to install Pimcore is from your terminal.
-
+## 2. Install Pimcore Sources
+The easiest way to install Pimcore is from your terminal using our installer package. We additionally provide a [Composer based install guide](../13_Installation_and_Upgrade/03_System_Setup_and_Hosting/04_Composer_Install.md). But of course you can install Pimcore also without the help of the command line using your favorite tools.
 ```bash
 cd /your/document/root
-wget https://www.pimcore.org/download/pimcore-latest.zip
-unzip pimcore-latest.zip
 ```
 
-Keep in mind, that Pimcore needs to be installed into document root of your web server. 
+Pimcore is offering [3 packages](https://www.pimcore.org/download) for different use-cases: 
+
+|  |  |
+|--------------------------|-----------------------------------------------------------------------------------------------------------------|
+| **Quick Start Bundle**   | Boilerplate. This package contains the core including sample data of our [online demo version](http://demo.pimcore.org).  |
+| **Professional Package** | Package without any data, just the core Pimcore platform. Good choice when you're starting a new project as an experienced Pimcore developer.           |
+| **Nightly Build**        | Daily released version. Shouldn't be used in production.                                        |
 
 
-## 2. Create Database
+#### Choose a Package: 
+##### Professional Package
+```bash
+wget https://www.pimcore.org/download/pimcore-latest.zip -O pimcore-install.zip
+```
+
+##### Quick Start Bundle
+```bash
+wget https://www.pimcore.org/download/pimcore-data.zip -O pimcore-install.zip
+```
+
+```bash
+unzip pimcore-install.zip
+```
+
+Keep in mind, that Pimcore needs to be installed into the document root of your web server. Specific configurations and optimizations for your webserver are available here: [Apache](../13_Installation_and_Upgrade/03_System_Setup_and_Hosting/01_Apache_Configuration.md), [Nginx](../13_Installation_and_Upgrade/03_System_Setup_and_Hosting/02_Nginx_Configuration.md)
+
+Pimcore requires write access to the following directories: `/website/var` and `/pimcore` ([Details](../13_Installation_and_Upgrade/03_System_Setup_and_Hosting/03_File_Permissions.md)) 
+
+No CLI? Click [Professional Package](https://www.pimcore.org/download/pimcore-latest.zip) or [Quick Start Bundle](https://www.pimcore.org/download/pimcore-data.zip) to download the package in your browser and extract/upload Pimcore manually on your server (document root). 
+
+
+## 3. Create Database
 ```bash
 mysql -u root -p -e "CREATE DATABASE pimcore charset=utf8mb4;"
 ```
 
-## 3. Launch Pimcore and Finish Installation
+For further informations please visit out [DB Setup Guide](../13_Installation_and_Upgrade/03_System_Setup_and_Hosting/05_DB_Setup.md)
+
+## 4. Launch Pimcore and Finish Installation
 Finish the Pimcore installation by accessing the URL (eg. `https://your-host.com/`) in your web browser. 
+- Fill in the required fields 
+- Press *Check Requirements* and check if your system is ready for Pimcore
+- Click *Install Now!* 
 
 
-## 4. Additional Information
-If you would like to know more about installation process or if you are having problems getting Pimcore up an running, visit 
-the [Installation Guide](../13_Installation_and_Upgrade/05_Installation_Guide.md) section.
+## 5. Maintenance Cron Job
+```
+*/5 * * * * php /path/to/pimcore/cli/console.php maintenance
+```
+Keep in mind that the cron job has to run as the same user as the web interface (eg. `www-data`).
 
+## 6. Additional Information & Help
+If you would like to know more about installation process or if you are having problems getting Pimcore up and running, visit 
+the [Installation Guide](../13_Installation_and_Upgrade/_index.md) section.
+
+## 7. Further Reading
+- [Apache Configuration](../13_Installation_and_Upgrade/03_System_Setup_and_Hosting/01_Apache_Configuration.md)
+- [Nginx Configuration](../13_Installation_and_Upgrade/03_System_Setup_and_Hosting/03_Nginx_Configuration.md)
+- [Database Setup](../13_Installation_and_Upgrade/03_System_Setup_and_Hosting/05_DB_Setup.md)
+- [Additional Tools Installation](../13_Installation_and_Upgrade/03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md)
 
 Next up - [Directories Structure](./02_Directories_Structure.md)
