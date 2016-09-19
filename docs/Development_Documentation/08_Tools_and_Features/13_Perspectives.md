@@ -48,7 +48,7 @@ The table below, describes the most useful of available options in the configura
 
 ## Simple example
 
-In the [Example File](https://github.com/pimcore/pimcore/blob/master/website_demo/config/perspectives.example.php) you can find advance usege.
+In the [Example File](https://github.com/pimcore/pimcore/blob/master/website_demo/config/perspectives.example.php) you can find advance usage.
 Below, I showed how to create the simple structure which would be use for catalog administrators.
 
 We need only to see
