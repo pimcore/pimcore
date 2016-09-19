@@ -373,15 +373,17 @@ class Image extends Model\Asset
 
                 if ($info && isset($info['APP13'])) {
                     $iptcRaw = iptcparse($info['APP13']);
-                    foreach ($iptcRaw as $key => $value) {
-                        if (is_array($value) && count($value) === 1) {
-                            $value = $value[0];
-                        }
+	                if (is_array($iptcRaw)) {
+		                foreach ($iptcRaw as $key => $value) {
+	                        if (is_array($value) && count($value) === 1) {
+	                            $value = $value[0];
+	                        }
 
-                        if (isset($mapping[$key])) {
-                            $data[$mapping[$key]] = \ForceUTF8\Encoding::toUTF8($value);
-                        }
-                    }
+	                        if (isset($mapping[$key])) {
+	                            $data[$mapping[$key]] = \ForceUTF8\Encoding::toUTF8($value);
+	                        }
+	                    }
+	                }
                 }
             }
         }
