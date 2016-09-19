@@ -135,7 +135,30 @@ attach multiple events
 
 ### Object
 
+| Name | Target | Parameters | Description | 
+| ---- | ------ | ---------- | ----------- |
+| `object.postAdd` | `Pimcore\Model\Object\AbstractObject` | - | |
+| `object.postDelete` | `Pimcore\Model\Object\AbstractObject` | - | |  
+| `object.postUpdate` | `Pimcore\Model\Object\AbstractObject` | (bool) saveVersionOnly | saveVersionOnly is set if method saveVersion() was called instead of save() |
+| `object.preAdd` | `Pimcore\Model\Object\AbstractObject` | - |  |
+| `object.preDelete` | `Pimcore\Model\Object\AbstractObject` | - | |  
+| `object.preUpdate` | `Pimcore\Model\Object\AbstractObject` | (bool) saveVersionOnly | saveVersionOnly is set if method saveVersion() was called instead of save() |
+
+
 ### Asset
+
+| Name | Target | Parameters | Description | 
+| ---- | ------ | ---------- | ----------- |
+| `asset.preAdd` | `Pimcore\Model\Asset` | - |  |
+| `asset.postAdd` | `Pimcore\Model\Asset` | -  | |
+| `asset.preUpdate` | `Pimcore\Model\Asset` | (bool) `saveVersionOnly` | saveVersionOnly is set if method saveVersion() was called instead of save() |
+| `asset.postUpdate` | `Pimcore\Model\Asset` | (bool) `saveVersionOnly` | saveVersionOnly is set if method saveVersion() was called instead of save() |
+| `asset.preDelete` | `Pimcore\Model\Asset` | - |  |
+| `asset.postDelete` | `Pimcore\Model\Asset` | - |   |
+| `asset.image.thumbnail` | `Pimcore\Model\Asset\Image\Thumbnail` | (bool) `deferred`, (bool) `generated` | fires after the thumbnail was created |
+| `asset.video.image-thumbnail` | `Pimcore\Model\Asset\Video\ImageThumbnail` | (bool) `deferred`, (bool) `generated` | fires after the image thumbnail was created |
+| `asset.document.image-thumbnail` | `Pimcore\Model\Asset\Document\ImageThumbnail` | (bool) `deferred`, (bool) `generated` | fires after the image thumbnail was created |
+
 
 ### Object Class
 
