@@ -1137,6 +1137,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
                             if ($localizedField) {
                                 $field = $localizedField->getFieldDefinition($name);
                                 if ($field) {
+                                    /** @var $field Pimcore\Model\Object\ClassDefinition\Data */
                                     $object->{"set" . $name}($field->getDataFromEditmode($value, $object), $this->getParam("language"));
                                 }
                             }
