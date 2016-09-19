@@ -369,3 +369,21 @@ $list->onCreateQuery(function (Zend_Db_Select $query) use ($list) {
     );
 });
 ```
+
+### Debugging the Object List Query
+
+You can access and print the internal query which is based on [Zend_Db_Select](http://framework.zend.com/manual/1.12/de/zend.db.select.html) to debug your conditions like this:
+
+```php
+<?php
+// get all news with ratings that is stored in a not pimcore related table
+ 
+/** @var \Pimcore\Model\Object\Listing\Dao|\Pimcore\Model\Object\News\Listing $list */
+$list = new Pimcore\Model\Object\News\Listing();
+ 
+// set onCreateQuery callback
+$list->onCreateQuery(function (Zend_Db_Select $query) use ($list) {
+    // echo query
+    echo $query;
+});
+```
