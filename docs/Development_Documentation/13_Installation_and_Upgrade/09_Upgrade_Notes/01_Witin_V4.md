@@ -4,7 +4,7 @@
 ## Upgrade notes for 4.3.0
 #### Newsletter
 Newsletters are no longer managed in Marketing. 
-See: [Newsletter Documents](../..//03_Documents/07_Document_Types/05_Newsletter_Documents.md) (since 4.3.0) 
+See: [Newsletter Documents](../../03_Documents/07_Document_Types/05_Newsletter_Documents.md) (since 4.3.0) 
 
 #### Class definitions are stored as PHP configuration files
 The definition (fields + layout) is no longer stored in *.psf files (PHP serialized format) but is migrated to PHP configuration files and is using the class name in the file name instead of the ID. 
