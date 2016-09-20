@@ -14,7 +14,7 @@ This makes it easy to use and gives you all the advantages Pimcore offers you.
 
 The newsletter content is assembled in an *Newsletter* document.
 Therefore, your newsletter template is just a simple action and view. In the view you can use all features known 
-from the other [document types](../03_Documents/07_Document_Types/_index.md) (page, snippets...)
+from the other [document types](../03_Documents/07_Document_Types/README.md) (page, snippets...)
 
 As mentioned before, this document is rendered individually for every user, that makes it possible to include content 
 depending on the user data.

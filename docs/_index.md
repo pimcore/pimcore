@@ -1,4 +1,4 @@
 # Pimcore Documentation
 
-* [Development Documentation](./Development_Documentation/_index.md) 
+* [Development Documentation](./Development_Documentation/README.md) 
 
