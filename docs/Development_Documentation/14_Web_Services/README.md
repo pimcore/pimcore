@@ -51,7 +51,7 @@ The following methods are available for web service calls:
 
 ### Get Object By ID
 * **Method**: GET
-* **URL**: http://YOUR-DOMAIN/webservice/rest/object/id/1281?apikey=[API-KEY\
+* **URL**: `http://YOUR-DOMAIN/webservice/rest/object/id/1281?apikey=[API-KEY]`
 * **Returns**: JSON--encoded object data.
 
 ### Delete Object By ID
