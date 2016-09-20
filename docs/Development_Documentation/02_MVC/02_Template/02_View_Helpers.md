@@ -203,7 +203,7 @@ View helper for getting translation from shared translations. For details also s
 
 
 ### `$this->translateAdmin()`
-View helper for getting translation from admin translations. For details also see [Admin Translations](../../06_Multi_Language_i18n/06_Admin_Translations.md).
+View helper for getting translation from admin translations. For details also see the [Multi language part](../../06_Multi_Language_i18n/README.md).
 
 `$this->ts(string $key = "")`
 `$this->translateAdmin(string $key = "")`
