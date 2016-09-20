@@ -56,7 +56,7 @@ system translations and project specific translations.
 
 
 ### Pimcore system translations
-This covers all labels and texts within Pimcore that ship with Pimcore installation pacakge. Here the standard language 
+This covers all labels and texts within Pimcore that ship with Pimcore installation package. Here the standard language 
 English is maintained by the core team. In addition to that, every body can join the 
  [Pimcore translation project](http://www.pimcore.org/en/community/translations) to add system translations in additional
  languages. With every Pimcore release, newly added translations are added to the Pimcore installation package.
