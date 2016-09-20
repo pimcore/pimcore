@@ -134,7 +134,12 @@ class DefaultMockup {
             }
 
         }
-        \Logger::warn("Method $method not in Mockup implemented, delegating to object with id {$this->id}.");
+        $msg = "Method $method not in Mockup implemented, delegating to object with id {$this->id}.";
+        if(PIMCORE_DEBUG) {
+            \Logger::warn($msg);
+        } else {
+            \Logger::info($msg);
+        }
 
         $object = $this->getOriginalObject();
         if($object) {
