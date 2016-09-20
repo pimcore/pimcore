@@ -31,7 +31,7 @@ In order to do so, overwrite the method `getElementAdminStyle` of `AbstractObjec
 * Element icon
 * Element icon class
 
-##### Extend the object class and overwrite the getElementAdminStyle:
+##### Extend the object class and overwrite the `getElementAdminStyle`:
 ```php
 public function getElementAdminStyle() {
    if (!$this->o_elementAdminStyle) {
@@ -41,7 +41,7 @@ return $this->o_elementAdminStyle;
 }
 ```
 
-##### Custom Implementation of Element_AdminStyle
+##### Custom Implementation of `Element_AdminStyle`
 ```php
 class Website_OnlineShop_AdminStyle extends Element_AdminStyle {
  
