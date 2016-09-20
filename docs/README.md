@@ -1,9 +1,4 @@
-# Pimcore documentation
+# Pimcore Documentation
 
-## Development documentation
+* [Development documentation](./Development_Documentation/README.md) 
 
-* [Pimcore development documentation](./Development_Documentation/README.md) 
-
-## User documentation
-
-* [Pimcore user documentation](./User_Documentation/README.md) 

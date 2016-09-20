@@ -59,7 +59,7 @@ to do so just embrace the part with curly brackets { } (see example below).
 | Name          | Pattern                                                  | Reverse                                          | Module     | Controller     | Action     | Variables                | Defaults     | Site     | Priority     |
 |---------------|----------------------------------------------------------|--------------------------------------------------|------------|----------------|------------|--------------------------|--------------|----------|--------------|
 | news category | /\\/news-category\\/([^_]+)_([0-9]+)(_category_)?([0-9]+)?/ | /news-category/%text_%id{_category_%category_id} |            | news           | list       | text,id,text2,categoryId |              |          | 1            |
-
+  
 ![Grid with the new route](../../img/Routing_grid2.png)
 
 Due to optional parameters, the above example matches for the following URL's:
