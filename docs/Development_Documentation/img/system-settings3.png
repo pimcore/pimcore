@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<!-- saved from url=(0039)http://pimcore.pim.zone/en/introduction -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <link rel="icon" type="image/png" href="http://pimcore.pim.zone/pimcore/static/img/favicon/favicon-32x32.png">
+
+    <title>Introduction : pimcore Demo</title><meta name="description" content="Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a,...">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Le styles -->
+    
+    <link href="./system-settings3_files/bootstrap.css" media="screen" rel="stylesheet" type="text/css">
+<link href="./system-settings3_files/global.css" media="screen" rel="stylesheet" type="text/css">
+<link href="./system-settings3_files/video-js.min.css" media="screen" rel="stylesheet" type="text/css">
+<link href="./system-settings3_files/magnific.css" media="screen" rel="stylesheet" type="text/css">
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="/website/static/js/html5shiv.js"></script>
+    <script src="/website/static/js/respond.min.js"></script>
+    <![endif]-->
+
+
+            <script async="" src="./system-settings3_files/analytics.js.download"></script><script>
+              (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+              (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+              m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+              })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+              
+
+              ga('create', 'UA-12436865-5');
+              ga('set', 'anonymizeIp', true);
+              
+              if (typeof _gaqPageView != "undefined"){
+                ga('send', 'pageview', _gaqPageView);
+              } else {
+                ga('send', 'pageview');
+              }
+
+              
+            </script>
+            <script>
+                (function () {
+                    var ls = window["localStorage"];
+                    if(ls && !ls.getItem("pc-cookie-accepted")) {
+
+                        var code = " <style type=\"text\/css\"> #pc-cookie-notice { background: #3c3c3c; color: #fff; position: fixed; bottom:0; left:0; width: 100%; box-sizing: border-box; padding: 5px 0 5px; font-family: 'Arial Unicode MS', Arial, Verdana, sans-serif; font-size: 12px; z-index: 10000; } #pc-cookie-notice a { color: #fff; text-decoration: underline; } #pc-cookie-notice #pc-icon { position: absolute; top: 5px; left: 5px; } #pc-cookie-notice #pc-message { width: 100%; padding: 0 55px 0 25px; } #pc-cookie-notice #pc-message span:after { content: attr(data-content); } #pc-cookie-notice #pc-message a:after { content: attr(data-content); } #pc-cookie-notice #pc-button { position: absolute; top: 3px; right: 20px; } #pc-cookie-notice #pc-button button { font-weight: bold; background: #008d4c; border-radius: 2px; border:1px solid #000; padding: 1px 5px; } #pc-cookie-notice #pc-button button:after { content: attr(data-content); } @media (max-width: 750px) { #pc-cookie-notice #pc-icon { display: none; } #pc-cookie-notice #pc-message { padding-left: 5px; } #pc-cookie-notice #pc-button { right:5px; top:5px; } #pc-cookie-notice #pc-button button { padding: 5px 3px; } } <\/style><div id=\"pc-cookie-notice\"><div id=\"pc-icon\"><\/div><div id=\"pc-message\"><span data-content=\"Cookies help us deliver our services. By using our services, you agree to our use of cookies.\"><\/span>  <\/div><div id=\"pc-button\"><button data-content=\"&#10003; OK\"><\/button><\/div><\/div> ";
+                        var ci = window.setInterval(function () {
+                            if(document.body) {
+                                clearInterval(ci);
+                                document.body.insertAdjacentHTML("beforeend", code);
+
+                                document.getElementById("pc-button").onclick = function () {
+                                    document.getElementById("pc-cookie-notice").style.display = "none";
+                                    ls.setItem("pc-cookie-accepted", "true");
+                                };
+                            }
+                        }, 100);
+                    }
+                })();
+            </script>
+        </head>
+
+<body class="">
+
+<div class="navbar-wrapper">
+        <div class="container">
+        <div class="navbar navbar-inverse navbar-static-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="http://pimcore.pim.zone/en">
+                        <img src="./system-settings3_files/logo-white.svg" alt="pimcore Demo">
+                    </a>
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+    <li class="active">
+        <a id="menu-4" class=" main active mainactive" href="http://pimcore.pim.zone/en/introduction">Introduction</a>
+    </li>
+    <li class="dropdown">
+        <a id="menu-3" class="main dropdown-toggle" href="http://pimcore.pim.zone/en/basic-examples">Basic Examples</a>
+        <ul class="dropdown-menu">
+            <li>
+                <a id="menu-24" href="http://pimcore.pim.zone/en/basic-examples/content-page">Content Page</a>
+            </li>
+            <li>
+                <a id="menu-7" href="http://pimcore.pim.zone/en/basic-examples/html5-video">HTML5 Video</a>
+            </li>
+            <li>
+                <a id="menu-18" href="http://pimcore.pim.zone/en/basic-examples/pdf-viewer">Document Viewer</a>
+            </li>
+            <li>
+                <a id="menu-19" href="http://pimcore.pim.zone/en/basic-examples/galleries">Galleries</a>
+            </li>
+            <li>
+                <a id="menu-20" href="http://pimcore.pim.zone/en/basic-examples/glossary">Glossary</a>
+            </li>
+            <li>
+                <a id="menu-21" href="http://pimcore.pim.zone/en/basic-examples/thumbnails">Thumbnails</a>
+            </li>
+            <li>
+                <a id="menu-73" href="http://pimcore.pim.zone/en/basic-examples/social-contents">Social Contents</a>
+            </li>
+            <li>
+                <a id="menu-22" href="http://pimcore.pim.zone/en/basic-examples/website-translations">Website Translations</a>
+            </li>
+            <li>
+                <a id="menu-25" href="http://pimcore.pim.zone/en/basic-examples/editable-roundup">Editable Round-Up</a>
+            </li>
+            <li>
+                <a id="menu-26" href="http://pimcore.pim.zone/en/basic-examples/form">Simple Form</a>
+            </li>
+            <li>
+                <a id="menu-27" href="http://pimcore.pim.zone/en/basic-examples/news">News</a>
+            </li>
+            <li>
+                <a id="menu-28" href="http://pimcore.pim.zone/en/basic-examples/properties">Properties</a>
+            </li>
+            <li>
+                <a id="menu-29" href="http://pimcore.pim.zone/en/basic-examples/tag-and-snippet-management">Tag &amp; Snippet Management</a>
+            </li>
+            <li>
+                <a id="menu-32" href="http://www.pimcore.org/" target="_blank">External Link</a>
+            </li>
+        </ul>
+    </li>
+    <li class="dropdown">
+        <a id="menu-5" class="main dropdown-toggle" href="http://pimcore.pim.zone/en/advanced-examples">Advanced Examples</a>
+        <ul class="dropdown-menu">
+            <li>
+                <a id="menu-60" href="http://pimcore.pim.zone/en/advanced-examples/blog">Blog</a>
+            </li>
+            <li>
+                <a id="menu-9" href="http://pimcore.pim.zone/en/advanced-examples/creating-objects-using-forms">Creating Objects with a Form</a>
+            </li>
+            <li>
+                <a id="menu-30" href="http://pimcore.pim.zone/en/advanced-examples/content-inheritance">Content Inheritance</a>
+            </li>
+            <li>
+                <a id="menu-34" href="http://pimcore.pim.zone/en/advanced-examples/hard-link">Hard Link</a>
+            </li>
+            <li>
+                <a id="menu-35" href="http://pimcore.pim.zone/en/advanced-examples/image-with-hotspots-and-markers">Image with Hotspots</a>
+            </li>
+            <li>
+                <a id="menu-36" href="http://pimcore.pim.zone/en/advanced-examples/search">Search</a>
+            </li>
+            <li>
+                <a id="menu-37" href="http://pimcore.pim.zone/en/advanced-examples/contact-form">Contact Form</a>
+            </li>
+            <li>
+                <a id="menu-61" href="http://pimcore.pim.zone/en/advanced-examples/sitemap">Sitemap</a>
+            </li>
+            <li>
+                <a id="menu-63" href="http://pimcore.pim.zone/en/advanced-examples/newsletter">Newsletter</a>
+            </li>
+            <li>
+                <a id="menu-68" href="http://pimcore.pim.zone/en/advanced-examples/asset-thumbnail-list">Asset Thumbnail List</a>
+            </li>
+            <li>
+                <a id="menu-72" href="http://pimcore.pim.zone/en/advanced-examples/sub-modules">Sub-Modules</a>
+            </li>
+            <li>
+                <a id="menu-71" href="http://pimcore.pim.zone/en/advanced-examples/e-commerce">E-Commerce</a>
+            </li>
+            <li>
+                <a id="menu-70" href="http://pimcore.pim.zone/en/advanced-examples/product-information-management">Product Information Management</a>
+            </li>
+        </ul>
+    </li>
+    <li class="dropdown">
+        <a id="menu-6" class="main dropdown-toggle" href="http://pimcore.pim.zone/en/experiments">Experiments</a>
+        <ul class="dropdown-menu">
+            <li>
+                <a id="menu-74" href="http://pimcore.pim.zone/en/experiments/basic-examples">Basic Examples</a>
+            </li>
+        </ul>
+    </li>
+</ul>                </div>
+            </div>
+            <div class="languages">
+    <div class="dropdown">
+        <button class="btn btn-default btn-xs dropdown-toggle" type="button" id="languageSelector" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            Language            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="languageSelector">
+                                        <li><a href="http://pimcore.pim.zone/en/introduction">English</a></li>
+                            <li><a href="http://pimcore.pim.zone/de/einfuehrung">German</a></li>
+                    </ul>
+    </div>
+</div>
+        </div>
+    </div>
+</div>
+
+    <header class="jumbotron subhead">
+        <div class="container">
+            <h2>Getting started</h2>
+            <p class="lead">Overview of the project and how to get started with a simple template.</p>
+        </div>
+    </header>
+    
+    <div id="content" class="container">
+        <div class="col-md-9 col-md-push-3">
+            
+
+<div class="page-header">
+    <h1>Introduction</h1>
+</div>
+
+
+<div class="pimcore_area_headlines pimcore_area_content">    <div class="page-header">
+        <h2>Maecenas tempus, tellus eget condimentum rhoncu</h2>
+    </div>
+
+    <div class="lead">
+        <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.</p>
+    </div>
+
+</div><div class="pimcore_area_wysiwyg pimcore_area_content">
+<section class="area-wysiwyg">
+
+            <p>Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. <a href="http://pimcore.pim.zone/basic-examples">Etiam rhoncus</a>.</p>
+
+<p>&nbsp;</p>
+
+<ul>
+	<li>Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum.</li>
+	<li>Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.</li>
+	<li>Maecenas nec odio et ante tincidunt tempus.</li>
+	<li><a href="http://pimcore.pim.zone/basic-examples">Donec vitae sapien ut libero venenatis faucibus.</a></li>
+	<li>Nullam quis ante.</li>
+	<li>Etiam sit amet orci eget eros <a href="http://pimcore.pim.zone/advanced-examples">faucibus </a>tincidunt.</li>
+</ul>
+
+<p>&nbsp;</p>
+
+<p>Li Europan lingues es membres del sam <a class="pimcore_glossary" href="http://pimcore.pim.zone/en/basic-examples/pdf-viewer">familie</a>. Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam <a class="pimcore_glossary" href="http://pimcore.pim.zone/en/basic-examples/glossary">vocabular</a>. Li lingues differe solmen in li <acronym class="pimcore_glossary" title="grammatica">grammatica</acronym>, li pronunciation e li plu commun vocabules. <a class="pimcore_glossary" href="http://pimcore.pim.zone/en/basic-examples/galleries">omnicos</a> directe al desirabilite de un nov lingua franca: On refusa continuar payar custosi traductores. At solmen va esser necessi far uniform <a href="http://pimcore.pim.zone/experiments">grammatica</a>, pronunciation e plu sommun paroles.</p>
+
+<p>&nbsp;</p>
+
+<ol>
+	<li>It va esser tam simplic quam <a class="pimcore_glossary" href="http://pimcore.pim.zone/en/basic-examples/html5-video">occidental</a> in fact, it va esser <a class="pimcore_glossary" href="http://pimcore.pim.zone/en/basic-examples/html5-video">occidental</a>.</li>
+	<li>A un Angleso it va semblar un simplificat Angles, quam un skeptic <a href="http://pimcore.pim.zone/introduction">Cambridge </a>amico dit me que <a class="pimcore_glossary" href="http://pimcore.pim.zone/en/basic-examples/html5-video">occidental</a> es.</li>
+	<li>Li Europan lingues es membres del sam <a class="pimcore_glossary" href="http://pimcore.pim.zone/en/basic-examples/pdf-viewer">familie</a>.</li>
+	<li>Lor separat existentie es un myth.</li>
+	<li>Por scientie, musica, sport etc, litot Europa usa li sam <a class="pimcore_glossary" href="http://pimcore.pim.zone/en/basic-examples/glossary">vocabular</a>.</li>
+	<li>Li lingues differe solmen in li <acronym class="pimcore_glossary" title="grammatica">grammatica</acronym>, li pronunciation e li plu commun vocabules.</li>
+</ol>
+
+<p>&nbsp;</p>
+    
+</section></div><div class="pimcore_area_standard-teaser-row pimcore_area_content">
+<section class="area-standard-teaser-row">
+    <div class="row">
+                    <div class="col-sm-4">
+                                
+
+
+<div class="teaser">
+
+    <img width="360" height="200" class="" alt="" title="" src="./system-settings3_files/img_0037.jpeg" srcset="/website/var/tmp/image-thumbnails/0/21/thumb__standardTeaser/img_0037.jpeg 1x, /website/var/tmp/image-thumbnails/0/21/thumb__standardTeaser/img_0037@2x.jpeg 2x">
+    
+    <h2>Fully Responsive</h2>
+
+    <div>
+        <p>This demo is based on Bootstrap, the most popular, intuitive, and powerful front-end framework.</p>
+    </div>
+
+    <p>
+        <a href="http://pimcore.pim.zone/en/basic-examples" class="btn btn-default">Lorem ipsum</a>    </p>
+
+    
+</div>            </div>
+                    <div class="col-sm-4">
+                                
+
+
+<div class="teaser">
+
+    <img width="360" height="200" class="" alt="" title="" src="./system-settings3_files/img_0089.jpeg" srcset="/website/var/tmp/image-thumbnails/0/20/thumb__standardTeaser/img_0089.jpeg 1x, /website/var/tmp/image-thumbnails/0/20/thumb__standardTeaser/img_0089@2x.jpeg 2x">
+    
+    <h2>Drag &amp; Drop Interface 😻</h2>
+
+    <div>
+        <p>Content is created by simply dragging &amp; dropping blocks, that can&nbsp;be editited in-place and wysiwyg.&nbsp;</p>
+    </div>
+
+    <p>
+        <a href="http://pimcore.pim.zone/en/advanced-examples" class="btn btn-default">Etiam rhoncu</a>    </p>
+
+    
+</div>            </div>
+                    <div class="col-sm-4">
+                                
+
+
+<div class="teaser">
+
+    <img width="360" height="200" class="" alt="" title="" src="./system-settings3_files/img_0117.jpeg" srcset="/website/var/tmp/image-thumbnails/0/18/thumb__standardTeaser/img_0117.jpeg 1x, /website/var/tmp/image-thumbnails/0/18/thumb__standardTeaser/img_0117@2x.jpeg 2x">
+    
+    <h2>HTML5 omnipresent</h2>
+
+    <div>
+        <p>Drag &amp; drop upload directly&nbsp;into the asset tree, automatic html5 video transcoding, and much more ...</p>
+    </div>
+
+    <p>
+        <a href="http://pimcore.pim.zone/en/experiments" class="btn btn-default">Quisque rutrum</a>    </p>
+
+    
+</div>            </div>
+            </div>
+</section>
+</div><div class="pimcore_area_featurette pimcore_area_content">
+<section class="area-featurette">
+            <div class="row featurette">
+
+            
+            <div class="col-sm-7 col-sm-push-5">
+                <h2 class="featurette-heading">
+                    Ullamcorper Scelerisque                     <span class="text-muted"></span>
+                </h2>
+                <div class="lead">
+                    <p>Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo.</p>
+                </div>
+            </div>
+
+            <div class="col-sm-5 col-sm-pull-7">
+                
+                <img width="512" height="260" class="featurette-image img-responsive" alt="" title="" src="./system-settings3_files/img_0410.jpeg" srcset="/website/var/tmp/image-thumbnails/0/24/thumb__featurerette/img_0410.jpeg 1x, /website/var/tmp/image-thumbnails/0/24/thumb__featurerette/img_0410@2x.jpeg 2x">            </div>
+        </div>
+
+            </section>
+</div>
+
+            <div>
+                <a href="http://pimcore.pim.zone/">Home</a> &gt;
+                Introduction            </div>
+        </div>
+
+                    <div class="col-md-3 col-md-pull-9 sidebar">
+                <div class="bs-sidebar hidden-print affix-top" role="complementary">
+                                        <h3>Home</h3>
+                    <ul class="nav bs-sidenav">
+    <li class="active">
+        <a id="menu-4" class=" main active mainactive" href="http://pimcore.pim.zone/en/introduction">Introduction</a>
+    </li>
+    <li>
+        <a id="menu-3" class=" main" href="http://pimcore.pim.zone/en/basic-examples">Basic Examples</a>
+    </li>
+    <li>
+        <a id="menu-5" class=" main" href="http://pimcore.pim.zone/en/advanced-examples">Advanced Examples</a>
+    </li>
+    <li>
+        <a id="menu-6" class=" main" href="http://pimcore.pim.zone/en/experiments">Experiments</a>
+    </li>
+</ul>                </div>
+                
+
+
+
+<div class="teasers">
+            
+
+
+<div class="teaser">
+
+    <img width="360" height="200" class="" alt="" title="" src="./system-settings3_files/img_0037.jpeg" srcset="/website/var/tmp/image-thumbnails/0/21/thumb__standardTeaser/img_0037.jpeg 1x, /website/var/tmp/image-thumbnails/0/21/thumb__standardTeaser/img_0037@2x.jpeg 2x">
+    
+    <h2>Fully Responsive</h2>
+
+    <div>
+        <p>This demo is based on Bootstrap, the most popular, intuitive, and powerful front-end framework.</p>
+    </div>
+
+    <p>
+        <a href="http://pimcore.pim.zone/en/basic-examples" class="btn btn-default">Lorem ipsum</a>    </p>
+
+    
+</div>            
+
+
+<div class="teaser">
+
+    <img width="360" height="200" class="" alt="" title="" src="./system-settings3_files/img_0089.jpeg" srcset="/website/var/tmp/image-thumbnails/0/20/thumb__standardTeaser/img_0089.jpeg 1x, /website/var/tmp/image-thumbnails/0/20/thumb__standardTeaser/img_0089@2x.jpeg 2x">
+    
+    <h2>Drag &amp; Drop Interface 😻</h2>
+
+    <div>
+        <p>Content is created by simply dragging &amp; dropping blocks, that can&nbsp;be editited in-place and wysiwyg.&nbsp;</p>
+    </div>
+
+    <p>
+        <a href="http://pimcore.pim.zone/en/advanced-examples" class="btn btn-default">Etiam rhoncu</a>    </p>
+
+    
+</div>    </div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Recently in the Blog</h3>
+    </div>
+    <div class="panel-body">
+        <div class="list-group">
+                                            <a href="http://pimcore.pim.zone/en/advanced-examples/blog/lorem+ipsum+dolor+sit+amet_b39" class="list-group-item">
+                    <h5 class="list-group-item-heading">Lorem ipsum dolor sit amet</h5>
+                                            <p class="list-group-item-text">
+                            <i class="glyphicon glyphicon-calendar"></i> 08/01/2014                        </p>
+                                    </a>
+                                            <a href="http://pimcore.pim.zone/en/advanced-examples/blog/maecenas+nec+odio+et+ante+tincidunt+tempus_b35" class="list-group-item">
+                    <h5 class="list-group-item-heading">Maecenas nec odio et ante tincidunt tempus</h5>
+                                            <p class="list-group-item-text">
+                            <i class="glyphicon glyphicon-calendar"></i> 02/01/2014                        </p>
+                                    </a>
+                    </div>
+    </div>
+</div>
+
+
+
+
+
+            </div>
+            </div>
+
+
+
+
+<!-- FOOTER -->
+<footer>
+    <p class="pull-right"><a href="http://pimcore.pim.zone/en/introduction#">Back to top</a></p>
+    <p class="links">© 2016 pimcore GmbH ·
+                    <a href="http://www.pimcore.org/" target="_blank">pimcore.org</a>                    <a href="http://www.pimcore.org/wiki/" target="_blank">Documentation</a>                    <a href="http://www.pimcore.org/issues/" target="_blank">Bug Tracker</a>            </p>
+</footer><script type="text/javascript" src="./system-settings3_files/jquery-1.11.0.min.js.download"></script>
+<script type="text/javascript" src="./system-settings3_files/bootstrap.js.download"></script>
+<script type="text/javascript" src="./system-settings3_files/magnific.js.download"></script>
+<script type="text/javascript" src="./system-settings3_files/video.js.download"></script>
+<script type="text/javascript" src="./system-settings3_files/srcset-polyfill.min.js.download"></script>
+<script>
+    videojs.options.flash.swf = "/website/static/lib/video-js/video-js.swf";
+</script>
+
+<script>
+
+    // main menu
+    $(".navbar-wrapper ul.nav>li>ul").each(function () {
+        var li = $(this).parent();
+        var a = $("a.main", li);
+
+        $(this).addClass("dropdown-menu");
+        li.addClass("dropdown");
+        a.addClass("dropdown-toggle");
+        li.on("mouseenter", function () {
+            $("ul", $(this)).show();
+        });
+        li.on("mouseleave", function () {
+            $("ul", $(this)).hide();
+        });
+    });
+
+    // side menu
+    $(".bs-sidenav ul").each(function () {
+        $(this).addClass("nav");
+    });
+
+    // gallery carousel: do not auto-start
+    $('.gallery').carousel('pause');
+
+    // tabbed slider text
+    var clickEvent = false;
+    $('.tabbed-slider').on('click', '.nav a', function() {
+        clickEvent = true;
+        $('.nav li').removeClass('active');
+        $(this).parent().addClass('active');
+    }).on('slid.bs.carousel', function(e) {
+        if(!clickEvent) {
+            var count = $('.nav').children().length -1;
+            var current = $('.nav li.active');
+            current.removeClass('active').next().addClass('active');
+            var id = parseInt(current.data('slide-to'));
+            if(count == id) {
+                $('.nav li').first().addClass('active');
+            }
+        }
+        clickEvent = false;
+    });
+
+    $("#portalHeader img, #portalHeader .item, #portalHeader").height($(window).height());
+
+    
+        // center the caption on the portal page
+        $("#portalHeader .carousel-caption").css("bottom", Math.round(($(window).height() - $("#portalHeader .carousel-caption").height())/3) + "px");
+
+        $(document).ready(function() {
+
+            // lightbox (magnific)
+            $('a.thumbnail').magnificPopup({
+                type:'image',
+                gallery: {
+                    enabled: true
+                }
+            });
+
+            $(".image-hotspot").tooltip();
+            $(".image-marker").tooltip();
+        });
+
+    </script>
+
+
+
+ <style type="text/css"> #pc-cookie-notice { background: #3c3c3c; color: #fff; position: fixed; bottom:0; left:0; width: 100%; box-sizing: border-box; padding: 5px 0 5px; font-family: 'Arial Unicode MS', Arial, Verdana, sans-serif; font-size: 12px; z-index: 10000; } #pc-cookie-notice a { color: #fff; text-decoration: underline; } #pc-cookie-notice #pc-icon { position: absolute; top: 5px; left: 5px; } #pc-cookie-notice #pc-message { width: 100%; padding: 0 55px 0 25px; } #pc-cookie-notice #pc-message span:after { content: attr(data-content); } #pc-cookie-notice #pc-message a:after { content: attr(data-content); } #pc-cookie-notice #pc-button { position: absolute; top: 3px; right: 20px; } #pc-cookie-notice #pc-button button { font-weight: bold; background: #008d4c; border-radius: 2px; border:1px solid #000; padding: 1px 5px; } #pc-cookie-notice #pc-button button:after { content: attr(data-content); } @media (max-width: 750px) { #pc-cookie-notice #pc-icon { display: none; } #pc-cookie-notice #pc-message { padding-left: 5px; } #pc-cookie-notice #pc-button { right:5px; top:5px; } #pc-cookie-notice #pc-button button { padding: 5px 3px; } } </style><div id="pc-cookie-notice"><div id="pc-icon"></div><div id="pc-message"><span data-content="Cookies help us deliver our services. By using our services, you agree to our use of cookies."></span>  </div><div id="pc-button"><button data-content="✓ OK"></button></div></div> </body></html>
