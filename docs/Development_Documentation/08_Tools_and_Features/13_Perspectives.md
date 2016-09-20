@@ -5,7 +5,8 @@
 Perspectives allow to create different views in the backend UI and even customize the standard perspective.
 This feature could be combined with the configuration options already available for the [Custom Views](../05_Objects/01_Object_Classes/05_Class_Settings/11_Custom_Views.md).
 
-Please be aware that if combined with custom views, the custom view settings must be defined in the customviews.php.The link is accompished via the ID.
+Please be aware that if combined with custom views, the custom view settings must be defined in the `customviews.php`. 
+The link is accomplished via the ID.
 
 You can define:
 
@@ -27,9 +28,11 @@ You can restrict the access to certain perspectives via the user settings.
 
 ![Perspectives - miltiselect](../img/perspectives_multiselect.png)
 
-## The configuration file
+## The Configuration File
 
-Please refer to the [Example File](https://github.com/pimcore/pimcore/blob/master/website_demo/config/perspectives.example.php) for further details on how this can be set up.
+Please refer to the [Example File](https://github.com/pimcore/pimcore/blob/master/website_demo/config/perspectives.example.php) 
+for further details on how this can be set up.
+
 You can find out there how the default view is prepared and how to add a special perspective.
 
 The table below, describes the most useful of available options in the configuration file.
@@ -46,10 +49,11 @@ The table below, describes the most useful of available options in the configura
 | `[perspectiveName]["toolbar"][i][menuName]["hidden"]`          | boolean                                      | ability to hide a specified menu (the available list you can find in the example below)     |
 | `[perspectiveName]["toolbar"][i][menuName]["hidden"]["items"]` | array                                        | You could specify there, which submenus elements you would like to generate.                |
 
+
 ## Simple example
 
-In the [Example File](https://github.com/pimcore/pimcore/blob/master/website_demo/config/perspectives.example.php) you can find advance usage.
-Below, I showed how to create the simple structure which would be use for catalog administrators.
+In the [Example File](https://github.com/pimcore/pimcore/blob/master/website_demo/config/perspectives.example.php) you 
+can find advance usage. Below, I showed how to create the simple structure which would be use for catalog administrators.
 
 We need only to see
 * products (objects from a specific directory)
@@ -59,7 +63,7 @@ We need only to see
 To specify the range of objects you're going to use you, you have to firstly add a customview.
 See the [Custom views](../05_Objects/01_Object_Classes/05_Class_Settings/11_Custom_Views.md) section to get more details.
 
-The custom view row would look like that:
+The custom view definition would look like that:
 
 ```php
 [
