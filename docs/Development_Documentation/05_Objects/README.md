@@ -15,7 +15,7 @@ custom code by using the php API and common programming paradigms (create new in
  
 
 This chapter describes following aspects of objects from a technical point of view: 
- * [Object Classes](./01_Object_Classes/_index.md) 
+ * [Object Classes](./01_Object_Classes/README.md) 
  * [Working with Objects via php API](./03_Working_with_php_API.md)
  * [External System Interaction](./05_External_System_Interaction.md)
 

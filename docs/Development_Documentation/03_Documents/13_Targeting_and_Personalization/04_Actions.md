@@ -20,7 +20,7 @@ Redirect to document (by drag & drop) or any other url.
 ### Programmatically
 
 Enables developers to handle this action in the code.
-See [Interacting with the targeting & personalization engine](./_index.md#Interacting_with_targeting_and_personalization_engine)
+See [Interacting with the targeting & personalization engine](./README.md#Interacting_with_targeting_and_personalization_engine)
 
 ![Programmatically action](../../img/targeting_actions_programmatically.png)
 

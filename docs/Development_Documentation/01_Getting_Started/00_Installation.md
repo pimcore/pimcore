@@ -1,6 +1,6 @@
 # Pimcore Installation
 
-The following guide assumes your're using a typical LAMP environment, if you're using a different setup (eg. Nginx) or facing a problem, please visit the [Installation Guide](../13_Installation_and_Upgrade/_index.md) section.
+The following guide assumes your're using a typical LAMP environment, if you're using a different setup (eg. Nginx) or facing a problem, please visit the [Installation Guide](../13_Installation_and_Upgrade/README.md) section.
 
 ## 1. System Requirements
 Please have a look at [System Requirements](../13_Installation_and_Upgrade/01_System_Requirements.md) and ensure your system is ready for Pimcore. 
@@ -64,7 +64,7 @@ Keep in mind that the cron job has to run as the same user as the web interface 
 
 ## 6. Additional Information & Help
 If you would like to know more about installation process or if you are having problems getting Pimcore up and running, visit 
-the [Installation Guide](../13_Installation_and_Upgrade/_index.md) section.
+the [Installation Guide](../13_Installation_and_Upgrade/README.md) section.
 
 ## 7. Further Reading
 - [Apache Configuration](../13_Installation_and_Upgrade/03_System_Setup_and_Hosting/01_Apache_Configuration.md)

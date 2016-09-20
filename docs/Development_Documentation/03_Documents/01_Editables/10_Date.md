@@ -7,7 +7,7 @@ In frontend it will output the date as defined in **output**.
 
 Localization (output-format, ...) is automatically used from the global locale, which is either defined by the 
 underlying document or in your code ( `$this->setLocale("de_AT")` in your action ), for more information, 
-please read the topic [Pimcore localization](../../06_Multi_Language_i18n/_index.md).
+please read the topic [Pimcore localization](../../06_Multi_Language_i18n/README.md).
 
 ## Simple example
 ```php

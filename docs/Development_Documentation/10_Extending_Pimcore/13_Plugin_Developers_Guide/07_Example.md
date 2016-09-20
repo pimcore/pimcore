@@ -70,7 +70,7 @@ There are some aspects regarding the above URL that you should keep in mind:
 2. /ExtensionExample/ - the plugin name is always case sensitive
 3. /get-address-book - if the action is in camelcase you should write it with hyphens and make it lowercase
 
-For more information have a look at [Routing and URLs](../../02_MVC/04_Routing_and_URLs/_index.md).
+For more information have a look at [Routing and URLs](../../02_MVC/04_Routing_and_URLs/README.md).
 
 ## Making It Do Something Useful
 Let's add some functionality to pull data from a web service and display it in a table.

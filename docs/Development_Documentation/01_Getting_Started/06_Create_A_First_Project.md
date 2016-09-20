@@ -58,7 +58,7 @@ Then we can put some template code into it, for example:
 Pimcore uses `\Zend_View` as templates and therefore plain php as template language. So you have the full power of
   `\Zend_View` with all ZF (*Zend Framework*) functionality available. In addition to that, there are some Pimcore additions like so called *editables*,
   which add editable parts (placeholders) to the layout. 
-  For details concerning editables (like `$this->input`, `$this->block`, ...) see [Editables](../03_Documents/01_Editables/_index.md). 
+  For details concerning editables (like `$this->input`, `$this->block`, ...) see [Editables](../03_Documents/01_Editables/README.md). 
 
 ### Add a Layout
 Pimcore uses the advantages of `\Zend_Layout` out of the ZF, for details please read more here about it.
@@ -150,7 +150,7 @@ Go to: *Settings -> Object -> Classes* and click the button *Add Class*.
 Now, there is a new product class/model which is a representation of your entity including the underlying database 
 scheme as well as a generated PHP class you can use to create, update, list and delete your entities. 
 
-More specific backgrounds and insights can be found in [Objects section](../05_Objects/_index.md)
+More specific backgrounds and insights can be found in [Objects section](../05_Objects/README.md)
 
 The product should have the following attributes: **SKU**, **picture**, **name** and **description**. 
 To add them follow these steps: 
@@ -254,7 +254,7 @@ $this->href('product');
 ```
 
 Href is one of editable elements. It would be used to make relation 1 to 1 a cool alternative that could be used, would be the [Renderlet](../03_Documents/01_Editables/28_Renderlet.md) editable of pimcore.  
-The full list of editables is presented in the special section: [Editables](../03_Documents/01_Editables/_index.md)
+The full list of editables is presented in the special section: [Editables](../03_Documents/01_Editables/README.md)
 
 
 ## Add the Product Object to a Document

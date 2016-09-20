@@ -12,7 +12,7 @@ Have a look at the picture, below. This is the standard architecture of a brick.
 ![Bricks architecture overview](../../../img/bricks_architecture_overview.png)
 
 The area.xml contains some meta-infos concerning the brick, 
-and the view.php is a simple `\Zend_View` - script where you can use all [pimcore editables](../_index.md).
+and the view.php is a simple `\Zend_View` - script where you can use all [pimcore editables](../README.md).
 
 ## How to create a brick
  

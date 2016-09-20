@@ -26,7 +26,7 @@ with this route whereas `:module` is the plugin name. For more details on plugin
  
 ##### Route for Pimcore web services - `/webservice/:controller/:action/*`
 This route is relevant when using Pimcore web services. For details see the 
-[web services documentation section](../../14_Web_Services/_index.md). 
+[web services documentation section](../../14_Web_Services/README.md). 
 
   
 ##### List of all system routes:    

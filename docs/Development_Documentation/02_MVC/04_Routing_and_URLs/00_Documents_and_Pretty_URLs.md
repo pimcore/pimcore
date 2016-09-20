@@ -16,7 +16,7 @@ The Document path and pretty URLs come third in the route processing priority.
   
   If there is a document, the route then uses the controller, action and view defined in the 
   document's settings, passing them to the dispatcher along with the document itself.
-  See [Documents documentation](../../03_Documents/_index.md) for more details for setting of Documents. 
+  See [Documents documentation](../../03_Documents/README.md) for more details for setting of Documents. 
   
  
 ## Pretty URL

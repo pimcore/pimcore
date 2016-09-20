@@ -14,7 +14,7 @@ the translations in a grid in Pimcore backend at `Extras` -> `Translation` -> `S
 
 ![Shared Translations](../img/localization-translations.png)
 
-Available languages are defined within the system languages, see [here](./_index.md).
+Available languages are defined within the system languages, see [here](./README.md).
  
 
 ## Working with shared translations in Code
