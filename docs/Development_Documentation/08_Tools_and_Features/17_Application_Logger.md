@@ -93,7 +93,7 @@ $logger->addWriter($customLog);
 
 There are some options in the system settings to configure the application logger (within the *Debug* panel):
 
-[Application logger settings](../img/applogger_settings.png)
+![Application logger settings](../img/applogger_settings.png)
 
 When the *Send log summary per mail* checkbox is activated the defined receivers will receive log entries by mail. 
 The priority can be used to setup which log messages will be contained in the mail. 
