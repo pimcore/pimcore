@@ -4,29 +4,29 @@
 
 Tags provide a way to create additional taxonomies and classifications for documents, assets and objects. 
 
-By using tags you are able easily filters Pimcore elements (documents, objects, assets) and keep the additional 
+By using tags you are able to easily filter Pimcore elements (documents, objects, assets) and keep the additional 
 search criteria to the application.
 
-## Tags definition
+## Tags Definition
 
 The available tags have to be defined centrally (user permission *tags configuration* is necessary).
  
 ![Tags Pimcore menu](../img/tags_menu.png)
 
-## Tags assignment
+## Tags Assignment
 
 In document, asset or object editor there is an additional tab, 
 where tags can be assigned to the current element (user permission *tags assignment* is necessary).
 
 ![Tags assignment](../img/tags_assignment.png)
 
-## Tags usage
+## Tags Usage
 
 In Search Dialogs, tags can be selected as additional criteria for the search (user permission *tags search* necessary).
 
 ![Tags usage](../img/tags_filtering.png)
 
-## Working with tags via API
+## Working with Tags via API
 
 ### Overview 
 
@@ -86,9 +86,9 @@ public static function setTagsForElement($cType, $cId, array $tags)
 }
 ```
 
-### API usage examples
+### API Usage Examples
 
-#### Get tags for element
+#### Get Tags for Element
 
 To get all tags from the element below, 
 
@@ -111,10 +111,10 @@ array(3) {
   ...  
 ```
 
-#### Assing a new tag to the element.
+#### Assign a New Tag to a Element
 
-If there is needed to add newly created tag to the element, firstly you have to add a new tag, 
-after just use the `\Pimcore\Model\Element\Tag::addTagToElement` method to assign the tag to the chosen element (by element id).
+To add a new tag an element, first create the new tag and after that just use the `\Pimcore\Model\Element\Tag::addTagToElement` 
+method to assign the tag to the chosen element (by element id).
 
 ```php
 $tag =  new \Pimcore\Model\Element\Tag();
