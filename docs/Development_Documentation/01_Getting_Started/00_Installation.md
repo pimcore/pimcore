@@ -7,11 +7,13 @@ Please have a look at [System Requirements](../13_Installation_and_Upgrade/01_Sy
 
 ## 2. Install Pimcore Sources
 The easiest way to install Pimcore is from your terminal using our installer package. We additionally provide a [Composer based install guide](../13_Installation_and_Upgrade/03_System_Setup_and_Hosting/04_Composer_Install.md). But of course you can install Pimcore also without the help of the command line using your favorite tools.
+
+Change into the document root folder of your new project: 
 ```bash
 cd /your/document/root
 ```
 
-Pimcore is offering [3 packages](https://www.pimcore.org/download) for different use-cases: 
+Pimcore is offering [3 installation packages](https://www.pimcore.org/download) for different use-cases: 
 
 |  |  |
 |--------------------------|-----------------------------------------------------------------------------------------------------------------|
@@ -31,6 +33,7 @@ wget https://www.pimcore.org/download/pimcore-latest.zip -O pimcore-install.zip
 wget https://www.pimcore.org/download/pimcore-data.zip -O pimcore-install.zip
 ```
 
+Unzip the installer package into the current folder (document root): 
 ```bash
 unzip pimcore-install.zip
 ```
@@ -52,12 +55,12 @@ For further informations please visit out [DB Setup Guide](../13_Installation_an
 ## 4. Launch Pimcore and Finish Installation
 Finish the Pimcore installation by accessing the URL (eg. `https://your-host.com/`) in your web browser. 
 - Fill in the required fields 
-- Press *Check Requirements* and check if your system is ready for Pimcore
-- Click *Install Now!* 
+- Press ***Check Requirements*** to check if your system is ready for Pimcore
+- Click ***Install Now!*** 
 
 
 ## 5. Maintenance Cron Job
-```
+```text
 */5 * * * * php /path/to/pimcore/cli/console.php maintenance
 ```
 Keep in mind that the cron job has to run as the same user as the web interface (eg. `www-data`).
