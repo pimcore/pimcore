@@ -61,7 +61,7 @@ You can specify your own texts and add your custom detail link using the "Shared
 Just search for "cookie-" in Shared Translations, then you get listed the predefined keys for the cookie 
 texts and links:
 
-![Cookie Policy Translation](../img/system-settings3.png)
+![Cookie Policy Translation](../img/system-settings-sample.png)
 
  
 ## MySQL Database
