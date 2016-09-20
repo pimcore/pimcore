@@ -204,12 +204,16 @@ class Dao extends Model\Dao\AbstractDao
 
         $select = $this->db->select()
                            ->from('tags_assignment', array())
-                           ->where('tags_assignment.tagid = ?', $tag->getId())
                            ->where('tags_assignment.ctype = ?', $type);
 
-        if ($considerChildTags) {
+        if (true === $considerChildTags) {
             $select->joinInner('tags', 'tags.id = tags_assignment.tagid', array('tags_id' => 'id'));
-            $select->orWhere('tags.idPath LIKE ? ', $tag->getFullIdPath() . "%");
+            $select->where('(' .
+                $this->db->quoteInto('tags_assignment.tagid = ?', $tag->getId()) . ' OR ' .
+                $this->db->quoteInto('tags.idPath LIKE ?', $tag->getFullIdPath() . "%") . ')'
+            );
+        } else {
+            $select->where('tags_assignment.tagid = ?', $tag->getId());
         }
 
         $select->joinInner(
