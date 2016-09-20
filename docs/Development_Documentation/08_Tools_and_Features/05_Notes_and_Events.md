@@ -41,7 +41,8 @@ And this is how the entry looks like:
 
 ![Notes & events - the grid preview](../img/notesandevents_preview.png)
 
-### In the editmode
+
+### Add Events in Pimcore backend UI
 
 You could also add the note directly in the edit view of objects, documents and assets.
 
