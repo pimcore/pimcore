@@ -2576,7 +2576,7 @@ namespace {
     /**
      * @deprecated
      */
-    class Object_Abstract extends \Pimcore\Model\Object\AbstractObject\Dao
+    class Object_Abstract extends \Pimcore\Model\Object\AbstractObject
     {
     }
 
