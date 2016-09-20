@@ -9,14 +9,15 @@ in the system (products, ...).
 The content of the e-mail is rendered individually for every recipient (the user object is available in the action and view), 
 this gives you the absolute freedom for your content.
 
-The newsletter framework is just a wrapper for existing functionalities in Pimcore. 
-This makes it easy to use and gives you all the advantages pimcore offers you. 
+The newsletter framework is just a wrapper for existing functionality in Pimcore. 
+This makes it easy to use and gives you all the advantages Pimcore offers you. 
 
-The newsletter content is assembled in an *Email* document.
+The newsletter content is assembled in an *Newsletter* document.
 Therefore, your newsletter template is just a simple action and view. In the view you can use all features known 
 from the other [document types](../03_Documents/07_Document_Types/_index.md) (page, snippets...)
 
-As mentioned before, this document is rendered individually for every user, that makes it possible to include content depending on the user data.
+As mentioned before, this document is rendered individually for every user, that makes it possible to include content 
+depending on the user data.
 
 If your *mailing list* is stored in objects, you can find few special data components for that case.  
 
@@ -31,13 +32,18 @@ The class definition below shows how to build a class used by the newsletter lis
 The purpose of the fields gender, *firstname*, *lastname* and *email* should be clear.
 *newsletterActive* and *newsletterConfirmed* are used to save the state of the user (also used by the frontend framework). 
 The *newsletterActive* data component tells the newsletter framework whether to send the newsletter to this user or not. 
-The *newsletterConfirmed* compontent is used for double opt-in (provided by the frontend framework). 
+The *newsletterConfirmed* component is used for double opt-in (provided by the frontend framework). 
 
 **Only if newsletterActive and newsletterConfirmed are ticked the user in the object receives the newsletter.**
 
-The *newsletterConfirmed* cannot be set in the admin interface, the reason is simple: the frontend framework logs every activity to *Notes & Events* including the IP etc. from the user, so it's possible to track every modification the user has made to his profile. 
-Now if the editor is able to change this important setting the audit trail is pitted and it's not clear why the user receives the newsletter. 
-Of course it's possible to change the value programmatically (eg. in importers).
+The *newsletterConfirmed* cannot be set in the admin interface, the reason is simple: the frontend framework logs every 
+activity to *Notes & Events* including the IP etc. from the user, so it's possible to track every modification the user 
+has made to his profile. 
+
+Now if the editor is able to change this important setting the audit trail is pitted and it's not clear why the user 
+receives the newsletter. 
+
+Of course it's possible to change the value via API (eg. in importers).
 
 ## Newsletter frontend framework
 
@@ -263,9 +269,9 @@ In the picture, you can see how you would add a token placeholder to the url.
 ![The email document - a variable placeholder](../img/newsletter_token_url.png)
 
 
-### Sending newsletters
+### Sending Newsletters
 
-#### Create a Newsletter (E-Mail) Document
+#### Create a Newsletter Document
 
 To send a newsletter you need an email document, which is used as content for the newsletter (nothing special to consider).
  
@@ -282,7 +288,7 @@ In this document the following placeholders are available:
 
 ![Create newsletter document](../img/newsletter_create_newsletter_document.png)
 
-#### Get UserData in the email template
+#### Get UserData in the Email Template
 
 ```php
 $userObject = $this->getParam('object');
@@ -296,14 +302,14 @@ In the example below, you can find out how to add the unsubscribe link and how t
 
 ![Newsletter - mailing, using variables](../img/newsletter_mailing_example.png)
 
-### Send a test message
+### Send a Test Message
 
 In newsletter documents, there is additional tab in the top panel, it's called *Newsletter Sending Panel*.
 It's a good practise to check newsletter before it would be used with real emails. 
 
 ![Send a test newsletter](../img/newsletter_test_sending.png)
 
-### Send the newsletter
+### Send the Newsletter
 
 To send the newsletter you have to specify a source adapter.
 We're going to use customer objects as a source, therefore we need to choose the *Default object list* adapter.
@@ -319,7 +325,7 @@ Choose the class:
 
 and at the end, just push the **Send Newsletter Now** button.
 
-## Sending newsletter from the command-line
+## Sending Newsletter from the Command Line
 
 You can use the command-line interface to send newsletters (cron-jobs, scheduling...)
 
