@@ -1,4 +1,4 @@
-# Gloassary
+# Glossary
 
 ## General
 
