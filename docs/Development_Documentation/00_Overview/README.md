@@ -66,5 +66,5 @@ But being a platform, Pimcore can be used for pretty much any use case and easil
 Wanna see more - [Let's get started](../01_Getting_Started/00_Installation.md)
 
 #### Also Have a Look at 
-* [Pimcore Ccosystem](./00_Pimcore_Ecosystem.md)
+* [Pimcore Ecosystem](./00_Pimcore_Ecosystem.md)
 * [Develop for Pimcore](./01_Develop_for_Pimcore.md)
