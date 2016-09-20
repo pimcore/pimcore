@@ -6,7 +6,7 @@ Pimcore provides an extensive number of events that are fired during execution o
 used to hook into many Pimcore functions such as saving an object, asset or document and can be used to change or extend 
 the default behavior of Pimcore.
 
-The most common use-case for events is using them in a [plugin](./13_Plugin_Developers_Guide/03_Plugin_Backend.md), but 
+The most common use-case for events is using them in a [plugin](./13_Plugin_Developers_Guide/05_Plugin_Backend.md), but 
 of course you can use them also anywhere in your code or when hooking into the startup process. 
 
 You can attach a handler at any time in your code by using the following code:
