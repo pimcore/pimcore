@@ -1,7 +1,8 @@
 # Scheduling
 
 ## General
-Every type of content in Pimcore (documents, objects, assets) has implemented scheduler which provides the ability to create tasks like:
+Every element type in Pimcore (documents, objects, assets) has implemented a scheduler which provides the ability to create 
+tasks like:
 
 * Publish
 * Unpublish
@@ -10,10 +11,11 @@ Every type of content in Pimcore (documents, objects, assets) has implemented sc
 
 **Note:** To use scheduler you have to configure "cronjobs". You can find more in the [System setup section](../13_Installation_and_Upgrade/03_System_Setup_and_Hosting/_index.md).
 
+
 ## Usage
 
 Let's get objects as an example.
-In the editmode find the icon: 
+In the Pimcore backend UI find the icon: 
 
 ![Scheduling - the icon in editmode](../img/scheduling_editmode_icon.png)
 
