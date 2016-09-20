@@ -21,7 +21,7 @@ depending on the user data.
 
 If your *mailing list* is stored in objects, you can find few special data components for that case.  
 
-## Basic setup
+## Basic Setup
 
 **Class definition**
 
@@ -45,7 +45,7 @@ receives the newsletter.
 
 Of course it's possible to change the value via API (eg. in importers).
 
-## Newsletter frontend framework
+## Newsletter Frontend Framework
 
 Once you have setup your data class, it's possible to use the newsletter frontend framework. 
 This simple framework allows you to create a hassle free subscribe/confirm/unsubscribe workflow.
@@ -234,7 +234,7 @@ The unsubscribe action view: `website/views/scripts/newsletter/unsubscribe.php`
 <?php } ?>
 ```
 
-### Confirmation e-mail
+### Confirmation E-Mail
 
 The confirmation e-mail (See: `\Pimcore\Tool\Newsletter::sendConfirmationMail`) is a simple e-mail document.
 
