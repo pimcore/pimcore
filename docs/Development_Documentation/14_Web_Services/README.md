@@ -183,7 +183,7 @@ condense parameter is set to true then only non-existing object ids are returned
 
 ### Create New Document
 * **Method**: PUT or POST
-* **URL**: [http://YOUR-DOMAIN/webservice/rest/document?apikey=API-KEY]
+* **URL**: http://YOUR-DOMAIN/webservice/rest/document?apikey=API-KEY
 * **Request body**: JSON-encoded document data in the same format as returned by get document by id for the data segment but with missing id field or id set to 0
 * **Returns**: JSON-encoded document id
 
@@ -202,4 +202,128 @@ condense parameter is set to true then only non-existing object ids are returned
 * **Returns**: JSON-encoded success value and list of document ids and flag indicating whether document exists or not. If optional condense parameter is set to true then only non-existing documentids are returned.
 
 
+### Search Assets
+* **Method**: GET
+* **URL**: http://YOUR-DOMAIN/webservice/rest/asset-list?apikey=API-KEY&order=DESC&offset=3&orderKey=id&limit=2&condition=type%3D%27folder%27
+* **Returns**: A list of asset id/type pairs matching the given criteria.
+* **Parameters**:
+    * **condition**: where clause
+    * **order**: sort order (if supplied then also the key must be provided)
+    * **orderKey**: sort order key
+    * **offset**: search offset
+    * **limit**: result limit
+    * **groupBy**: group by key
 
+
+### Search Documents
+* **Method**: GET
+* **URL**: http://YOUR-DOMAIN/webservice/rest/document-list?apikey=API-KEY&order=DESC&offset=3&orderKey=id&limit=2&condition=type%3D%27folder%27
+* **Returns**: A list of document id/type pairs matching the given criteria.
+* **Parameters**:
+    * **condition**: where clause
+    * **order**: sort order (if supplied then also the key must be provided)
+    * **orderKey**: sort order key
+    * **offset**: search offset
+    * **limit**: result  limit
+    * **groupBy**: group by key
+
+
+### Search  Objects
+* **Method**: GET
+* **URL**: http://YOUR-DOMAIN/webservice/rest/object-list?apikey=API-KEY&order=DESC&offset=3&orderKey=id&limit=2&objectClass=myClassname&condition=o_type%3D%27folder%27
+* **Returns**: A list of object id/type pairs matching the given criteria.
+* **Parameters**:
+    * **condition**: where clause
+    * **order**: sort order (if supplied then also the key must be provided)
+    * **orderKey**: sort order key
+    * **offset**: search offset
+    * **limit**: result limit
+    * **groupBy**: group by key
+    * **objectClass**: the name of the object class (without "Object\"). Note: If the class does not exist the filter criteria will be ignored!
+
+
+### Get Asset Count
+* **Method**: GET
+* **URL**: http://YOUR-DOMAIN/webservice/rest/asset-count?apikey=API-KEY2&condition=type%3D%27folder%27
+* **Returns**: The total number of assets matching the given criteria.
+* **Parameters**:
+    * **condition**: where clause
+    * **groupBy**: group by key
+
+
+### Get Document Count
+* **Method**: GET
+* **URL**: http://YOUR-DOMAIN/webservice/rest/document-count?apikey=API-KEY2&condition=type%3D%27folder%27
+* **Returns**: The total number of documents matching the given criteria.
+* **Parameters**:
+    * **condition**: where clause
+    * **groupBy**: group by key
+
+
+### Get Object Count
+* **Method**: GET
+* **URL**: http://YOUR-DOMAIN/webservice/rest/document-count?apikey=API-KEY2&condition=type%3D%27folder%27
+* **Returns**: The total number of objects matching the given criteria.
+* **Parameters**:
+    * **condition**: where clause
+    * **groupBy**: group by key
+    * **objectClass**: the name of the object class (without "Object\"). Note: If the class does not exist the filter criteria will be ignored!
+
+
+### Get User
+* **Method**: GET
+* **URL**: http://YOUR-DOMAIN/webservice/rest/user?apikey=API-KEY
+* **Returns**: The JSON-encoded user data for the current user
+
+
+### Get KeyValue Definition
+* **Method**: GET
+* **URL**: http://YOUR-DOMAIN/webservice/rest/key-value-definition?apikey=API-KEY
+* **Returns**: The JSON-encoded Key/Value definition
+* **Parameters**:
+    * **condition**: where clause
+
+
+### Get Server Info
+* **Method**: GET
+* **URL**: http://YOUR-DOMAIN/webservice/rest/server-info?apikey=API-KEY
+* **Returns**: The JSON encoded server-info including pimcore version, current time and extension data.
+
+
+### Get Server Time
+* **Method**: GET
+* **URL**: http://YOUR-DOMAIN/webservice/rest/system-clock?apikey=API-KEY
+* **Returns**: The JSON encoded system time.
+
+
+### Translations
+* **Method**: GET
+* **URL**: http://YOUR-DOMAIN/webservice/rest/translations?apikey=API-KEY&type=website
+* **Returns**: List of translations.
+* **Parameters**:
+    * **type**: "website" or "admin" (required)
+    * **key**: tranlation key matches param
+    * **creationDateFrom**: timestamp
+    * **creationDateTill**: timstamp
+
+
+### Get Classification Store Definition
+* **Method**: GET
+* **URL**: http://YOUR-DOMAIN/webservice/rest/classificationstore-definition?apikey=API-KEY
+* **Returns**: The JSON-encoded classification store definition
+* **Parameters**:
+    * **condition**: where clause
+
+
+### Get QuantityValue unit Definition
+* **Method**: GET
+* **URL**: http://YOUR-DOMAIN/webservice/rest/quantity-value-unit-definition?apikey=API-KEY
+* **Returns**: The JSON-encoded list of QuantityValue unit definitions
+* **Parameters**:
+    * **condition**: where clause
+
+
+## Override HTTP Method
+The HTTP request method can be overwritten by providing a method parameter.
+* **Method**: any
+* **URL**: http://YOUR-DOMAIN/webservice/rest/object/id/1281?apikey=API-KEY&method=PUT
