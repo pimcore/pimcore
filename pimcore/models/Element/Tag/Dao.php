@@ -217,11 +217,11 @@ class Dao extends Model\Dao\AbstractDao
             array('el_id' => $map[$type][1])
         );
 
-        if (is_array($subtypes) && ! empty($subtypes[0])) {
+        if (! empty($subtypes)) {
             $select->where($map[$type][2] . ' IN (?)', $subtypes);
         }
 
-        if ('object' === $type && is_array($classNames) && ! empty($classNames[0])) {
+        if ('object' === $type && ! empty($classNames)) {
             $select->where('o_className IN (?)', $classNames);
         }
 
