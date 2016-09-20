@@ -7,7 +7,7 @@ In a special editor you can define your terms which are replaced automatically w
 
 But the glossary is not only useful for internal linking, it's also perfect for explaining abbreviations and/or acronyms.
 
-## How it works
+## How it Works
 
 <div class="inline-imgs">
 
