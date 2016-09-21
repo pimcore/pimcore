@@ -2,7 +2,7 @@
 Pimcore is the leading open source platform for managing digital data and a fully integrated software stack for CMS, DAM, PIM 
 and Commerce. 
 
-As a platform pimcore provides a solid foundation with generic functionality for all kinds of web applications and therefore 
+As a platform, pimcore provides a solid foundation with generic functionality for all kinds of web applications and therefore 
 allows rapid application development and building customer solutions really fast. 
 
 Its API driven approach makes it easy to develop with pimcore, allows integration into every IT infrastructure and makes it 
