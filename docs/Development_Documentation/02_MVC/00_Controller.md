@@ -14,18 +14,19 @@ The naming of the file and the class is the same as in Zend Framework.
 Because `website` is configured as the default module in the front controller, you don't have to add a prefix to your 
 controller class names.
 
-## Pimcore specialities and examples
+## Pimcore Specialities and Examples
 
-| Controller name | File name                   | Class name        | Default view directory               |
+| Controller Name | File Name                   | Class Name        | Default View Directory               |
 |-----------------|-----------------------------|-------------------|--------------------------------------|
 | content         | `ContentController.php` | ContentController | `/website/views/scripts/content` |
 | news            | `NewsController.php`    | NewsController    | `/website/views/scripts/news`    |
 
-In controllers, for every action there exists a separate method ending with the **Action** suffix. 
-The **DefaultController** comes with Pimcore. When you create an empty page in Pimcore it will call 
-the **defaultAction** in the **DefaultController** which uses the view `/website/views/scripts/default/default.php`. 
+In controllers, for every action there exists a separate method ending with the `Action` suffix. 
+The `DefaultController` comes with Pimcore. When you create an empty page in Pimcore it will call 
+the `defaultAction` in the `DefaultController` which uses the view `/website/views/scripts/default/default.php`. 
 
-Views are tied to actions implicitly using the filename. You can override this by using `$this->views->setTemplate('directory/viewname.php')`
+Views are tied to actions implicitly using the filename. 
+You can override this by using `$this->renderScript('directory/viewname.php')`
  like in the example below.
 
 ```php
@@ -65,7 +66,7 @@ class DefaultController extends Action {
     */
     public function differentAction() {
         $this->view->bodyClass = 'different';
-        $this->view->setTemplate('default/somethingelse.php');
+        $this->renderScript('default/somethingelse.php');
     }
     
     /**
@@ -79,10 +80,10 @@ class DefaultController extends Action {
 Put your controllers in the following directory: `/website/controllers`
 
 There are some helpers defined in `Pimcore\Controller\Action\Frontend` (the abstract class your controller must extend). 
-But the best way is to use the `Website\Controller\Action` (`/website/lib/Website/Controller/Action.php`) which is already shipped with Pimcore 
-and implements the `Pimcore\Controller\Action\Frontend` and can be modified and extended the way you need.
+But the best way is to use `Website\Controller\Action` (`/website/lib/Website/Controller/Action.php`) which is already shipped with Pimcore 
+and implements the `Pimcore\Controller\Action\Frontend` and can be modified and extended the way you need it.
 
-###### You can use:
+###### Methods Available
 
 | Method                | Arguments                                    | Description                                                                                                                                              |
 |-----------------------|----------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -105,8 +106,8 @@ If you want to use one of the methods (hooks) below which are offered by ZF you 
 |-----------------------|----------|----------------------------------------------------------|
 | `$this->document` | Document | Reference to the current document, if any is available.  |
 | `$this->editmode` | boolean  | True if you are in editmode (admin)                      |
-
-
+   
+  
 Example:
 
 ```php
