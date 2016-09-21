@@ -9,7 +9,7 @@ Its API driven approach makes it easy to develop with pimcore, allows integratio
 easily extendable. Even headless execution of Pimcore is possible. 
 
 Pimcore is built for developers and should empower them to build great digital experiences easily. As a consequence Pimcore 
-is NOT an ‘out-of-the-box’ software product like Wordpress, Magento, Oxid and others. You need a developer to get started. 
+is NOT an ‘out-of-the-box’ software product like Wordpress, Magento, Akeneo, WooCommerce, Shopify and others. You need a developer to get started. 
 
 ![Pimcore](../img/pimcore_basis.png)
 
@@ -22,18 +22,18 @@ Our mission is to provide ONE platform for ANY data, ANY channel, ANY process an
 In Pimcore every digital content can be managed and put in relation with each other. To do so, there are three main element 
 data types in pimcore:
 
-### Assets
+### [Assets](../04_Assets/README.md)
 Assets are the DAM part of Pimcore. Within assets every digital file (images, videos, pdfs, …) can be stored and managed in 
 a folder structure. Additionally, previews for many file types and editing functionality for some file types are available and 
 assets can be enriched with meta data. 
 
 
-### Documents
+### [Documents](../03_Documents/README.md)
 Documents are the CMS part of Pimcore and can be used to manage unstructured data. Based on a template, documents can contain 
 any content and can be used to create webpages, print pages or any other output format. 
 
 
-### Objects
+### [Objects](../05_Objects/README.md)
 Objects are the PIM part of Pimcore and are the way to go for managing structured data within Pimcore. Based on a class 
 definition that defines structure and attributes object can be used for pretty much any structured data – may it be products, 
 categories, persons, customers, news, orders, blog entries, … For the attributes many datatypes (simple ones and really 
