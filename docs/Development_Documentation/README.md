@@ -20,4 +20,3 @@
 * [Administration](./12_Administration_of_Pimcore/README.md) 
 * [Installation & Upgrade](./13_Installation_and_Upgrade/README.md) 
 * [Web Services](./14_Web_Services/README.md) 
-* [FAQ](./15_FAQ/README.md) 
