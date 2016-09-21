@@ -4,14 +4,15 @@ Start contributing to Pimcore and become an official Community Developer - we ar
 For details on how to contribute have a look at your [Contributing Guide](https://github.com/pimcore/pimcore/blob/master/CONTRIBUTING.md). 
  
 ## Short Summary: 
-##### Bug fixes
+##### Bug Fixes
 Please create a pull request including a step by step description to reproduce the problem. 
 
-##### Contribute features
+##### Contribute Features
 Contact the core-team before you start developing (contribute@pimcore.org) so we can 
-coordinate feature development and avoid parallel development of the same features. 
+coordinate feature development and avoid parallel development of similar features. 
+Don't forget about the documentation for your new feature! 
 
-##### Security vulnerabilities
+##### Security Vulnerabilities
 Please contact us (security@pimcore.org)
 
 So, in very short - just fork us on [GitHub](https://github.com/pimcore/pimcore) and contribute code with pull requests ;-). 
