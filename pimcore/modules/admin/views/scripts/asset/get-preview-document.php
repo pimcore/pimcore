@@ -35,7 +35,7 @@ if($pdfPath && $this->getParam("native-viewer")) {
     ?><!DOCTYPE html>
     <html>
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <meta charset="UTF-8">
         <style type="text/css">
             html {
                 height: 100%;

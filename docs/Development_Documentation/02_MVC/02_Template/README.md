@@ -2,25 +2,26 @@
 
 ## Introduction
 
-In MVC the view part defines what is presented to the user. In Pimcore templates represent the view part. 
+In MVC the view part defines what is going to be presented to the user. 
+In Pimcore templates represent the view part. 
 
 In general the templates are located in: `/website/views/scripts/[controller]/[action].php` 
 (both controller as well as action without their suffix).  
 
-As template engine Pimcore uses `\Zend_View`. Therefore the standard template language is plain PHP. But other
- template languages could be used so Pimcore does not restrict the output technology. The documentation uses PHP as 
- template language though. 
+Pimcore uses `\Zend_View` as the templating engine. 
+Therefore the standard template language is plain PHP. 
+But other template languages could be used so Pimcore does not restrict the output technology. 
+The documentation uses PHP as template language though. 
 
-## Pimcore specialities and examples
+## Pimcore Specialities and Examples
 
-A simple example of a view looks like the following. Lust use HTML/CSS and enrich it with php code. 
-But keep in mind, it is bad practise to include busnisess logic code in your view. So keep your view as clean as 
-possible and use php just printing out data. 
+A simple example of a view looks like the following code. Just use HTML/CSS and enrich it with custom PHP code. 
+But keep in mind, it is bad practise to include business logic code in your view. So keep your view as clean as 
+possible and use PHP just printing out data. 
 
 #### Example
 
 ```php 
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
