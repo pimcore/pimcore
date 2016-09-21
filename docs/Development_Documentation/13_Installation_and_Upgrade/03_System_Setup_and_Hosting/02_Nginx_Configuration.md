@@ -84,5 +84,8 @@ server {
         try_files $uri $uri/ /website/var/assets$uri /index.php?$args;
         expires 1w;
     }
+    
+    # cache-buster rule for scripts & stylesheets embedded using view helpers
+    rewrite ^\/cache-buster-(.*) $1 break;
 }
 ``` 
