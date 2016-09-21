@@ -2,16 +2,16 @@
 
 ## Introduction
 
-Pimcore controller play the designated role in the MVC pattern. They bind the pattern together and contain or delegate 
+Pimcore controller play the designated role in the MVC pattern. They bind the design patterns together and contain or delegate 
 the functionality of the web application. It is good practise to keep the controllers as lean as possible and capsualte
-the business logic into models or libraries. 
+the business logic into models or services/libraries. 
 
 Pimcore offers an abstract class (`Pimcore\Controller\Action\Frontend`), which must be implemented by your controllers 
-(or use `Website\Controller\Action` out of your website folder). This abstract class adds some Pimcore specific 
+(or better use `Website\Controller\Action` out of your website folder). This abstract class adds some Pimcore specific 
  dispatching features - especially in combination with Pimcore Documents, multilanguage Support etc. 
 
 The naming of the file and the class is the same as in Zend Framework. 
-Because **website** is configured as the default module in the front controller, you don't have to add a prefix to your 
+Because `website` is configured as the default module in the front controller, you don't have to add a prefix to your 
 controller class names.
 
 ## Pimcore specialities and examples
