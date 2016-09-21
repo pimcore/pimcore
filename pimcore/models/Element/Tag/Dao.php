@@ -19,6 +19,7 @@ namespace Pimcore\Model\Element\Tag;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Asset;
+use Pimcore\Model\Element\Tag;
 use Pimcore\Model\Object;
 
 class Dao extends Model\Dao\AbstractDao
@@ -177,5 +178,66 @@ class Dao extends Model\Dao\AbstractDao
                 $this->doAddTagToElement($tagId, $cType, $cId);
             }
         }
+    }
+
+    /**
+     * Retrieves all elements that have a specific tag or one of its child tags assigned
+     *
+     * @param Tag    $tag               The tag to search for
+     * @param string $type              The type of elements to search for: 'document', 'asset' or 'object'
+     * @param array  $subtypes          Filter by subtypes, eg. page, object, email, folder etc.
+     * @param array  $classNames        For objects only: filter by classnames
+     * @param bool   $considerChildTags Look for elements having one of $tag's children assigned
+     *
+     * @return array
+     */
+    public function getElementsForTag(
+        Tag $tag, $type, array $subtypes = [], array $classNames = [], $considerChildTags = false
+    ) {
+        $elements = array();
+
+        $map = array(
+            'document' => array('documents', 'id', 'type', '\Pimcore\Model\Document'),
+            'asset'    => array('assets', 'id', 'type', '\Pimcore\Model\Asset'),
+            'object'   => array('objects', 'o_id', 'o_type', '\Pimcore\Model\Object\AbstractObject'),
+        );
+
+        $select = $this->db->select()
+                           ->from('tags_assignment', array())
+                           ->where('tags_assignment.ctype = ?', $type);
+
+        if (true === $considerChildTags) {
+            $select->joinInner('tags', 'tags.id = tags_assignment.tagid', array('tags_id' => 'id'));
+            $select->where('(' .
+                $this->db->quoteInto('tags_assignment.tagid = ?', $tag->getId()) . ' OR ' .
+                $this->db->quoteInto('tags.idPath LIKE ?', $tag->getFullIdPath() . "%") . ')'
+            );
+        } else {
+            $select->where('tags_assignment.tagid = ?', $tag->getId());
+        }
+
+        $select->joinInner(
+            array('el' => $map[$type][0]), 'tags_assignment.cId = el.' . $map[$type][1],
+            array('el_id' => $map[$type][1])
+        );
+
+        if (! empty($subtypes)) {
+            $select->where($map[$type][2] . ' IN (?)', $subtypes);
+        }
+
+        if ('object' === $type && ! empty($classNames)) {
+            $select->where('o_className IN (?)', $classNames);
+        }
+
+        $res = $this->db->query($select);
+
+        while ($row = $res->fetch()) {
+            $el = $map[$type][3]::getById($row['el_id']);
+            if ($el) {
+                $elements[] = $el;
+            }
+        }
+
+        return $elements;
     }
 }
