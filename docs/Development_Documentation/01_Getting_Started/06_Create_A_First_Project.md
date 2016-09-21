@@ -38,7 +38,7 @@ In the defaultAction, we can put some custom code or assign values to the templa
 Now we create a template for our page:
 * Create a new folder in `/website/view/scripts` and name it like the controller but in lowercase (in this case `content`). 
 * Put a new PHP file into this folder and name it like our action, again in lowercase (`default.php`).
-* If your're using camel-case for your action/controller name it's still lowercase but separated by a hyphen: `myCustomAction` => `my-custom.php` ...
+* If your're using camel-case for the name of your action/controller, it's still lowercase but separated by a hyphen: `myCustomAction` => `my-custom.php` ...
 
 Then we can put some template code into it, for example:
 
@@ -61,14 +61,14 @@ Pimcore uses `\Zend_View` as templates and therefore plain php as template langu
   For details concerning editables (like `$this->input`, `$this->block`, ...) see [Editables](../03_Documents/01_Editables/README.md). 
 
 ### Add a Layout
-Pimcore uses the advantages of `\Zend_Layout` out of the ZF, for details please read more here about it.
+Pimcore uses the advantages of `\Zend_Layout` out of the ZF, for details please read more [here](https://framework.zend.com/manual/1.12/en/zend.layout.html) about it.
 Because we have enabled the layout engine in our controller, we can use layouts to wrap our content page with another template which contains the main navigation, a sidebar, …
-With this code:
+using the following code:
 
 ```php
 <?php $this->layout()->setLayout('default'); ?>
 ```
-We tell the engine that we want to use the layout default. Now create a new php file in the folder `/website/views/layouts` and name it to default.php (just like the name of the layout appending .php).
+We tell the engine that we want to use the layout `default`. Now create a new php file in the folder `/website/views/layouts` and name it to default.php (just like the name of the layout appending .php).
 Then we can also put some HTML and template code into it:
 
 ```php
@@ -101,7 +101,7 @@ The code `<?= $this->layout()->content ?>` is the placeholder where your content
 
 ### Putting It Together with Pimcore Documents
 Now we need to connect the action to a page. This is done in the Pimcore backend.
-First, click on the left under "Documents" at "home".
+First, click right on *Home* in the *Documents* panel. 
 
 ![Create page](../img/Pimcore_Elements_check_homepage.png)
 
@@ -111,7 +111,7 @@ Select the name of the controller and the name of the action in the accordingly 
 ![Page settings](../img/Pimcore_Elements_homepage_settings.png)
 
 You can test the new controller and action, after saving the document (press *Save & Publish*).
-Then select the tab *Edit*, to see your page with all the editable placeholders.
+Select the tab *Edit*, to see your page with all the editable placeholders.
 
 ![Page edit preview](../img/Pimcore_Elements_homepage_edit_tab.png)
 
@@ -128,18 +128,18 @@ In terms of images or videos, always upload only one high quality version (best 
 For this tutorial, at least add one file which  you will use in an object later. 
 
 There are many ways to upload files:
-* Just drag & drop files from your file explorer into the browser
-* Right click on *Home* and choose the most suitable method for you
+1. Drag & drop files from your file explorer into the browser on the desired asset folder
+2. Right click on *Home* and choose the most suitable method for you
 
 ![Upload assets](../img/asset-upload.png)
 
 
 # Introduction to Objects
-We've already made a controller, action and a view and we're able to add text from within the admin panel to our pages.
+We've already made a controller, action and a view so we're able to add text from within the admin panel to our pages.
 In this chapter we will create a simple product database and use them in our CMS pages. 
 Objects are used to store any structured data independently from the output-channel and can be used anywhere in your project. 
 
-## Create the Class Model
+## Create the Class Model/Definition
 
 Ok, let's create our first class for objects. 
 
@@ -150,15 +150,15 @@ Go to: *Settings -> Object -> Classes* and click the button *Add Class*.
 Now, there is a new product class/model which is a representation of your entity including the underlying database 
 scheme as well as a generated PHP class you can use to create, update, list and delete your entities. 
 
-More specific backgrounds and insights can be found in [Objects section](../05_Objects/README.md)
+More specific backgrounds and insights can be found in the [Objects section](../05_Objects/README.md)
 
 The product should have the following attributes: **SKU**, **picture**, **name** and **description**. 
 To add them follow these steps: 
 
 * Go to the edit page of the class product 
-* Click right on *Base* and select *Add layout Component -> Panel* - This is the main panel/container for the following product attributes
-* To add elements:
-    * Click right on *Panel*, then *Add data component -> Text -> Input*, then change the name of the input to **sku** (in the edit panel on the right side)
+* Click right on *Base* and select *Add Layout Component -> Panel* - This is the main panel/container for the following product attributes
+* To add attributes:
+    * Click right on *Panel*, then *Add data component -> Text -> Input*, then change the name of the input component to **sku** (in the edit panel on the right side)
     * Just the same way you add the new data field for **name**
     * Now we're going to add a WYSIWYG attribute for the **description**. Again, click right, select *Add data component -> Text -> WYSIWYG*. We name it *description*.
     * The last attribute is for the picture. We can use on of the specialized image components in *Other -> Image*. Name the attribute **picture**.
