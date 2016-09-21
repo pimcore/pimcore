@@ -217,11 +217,10 @@ class ContentController extends Action
     {
         $this->enableLayout();
     }
-    
 }
 ```
 
-Then we also need the new template `website/views/scripts/content/product.php` 
+Then we also need a new template: `website/views/scripts/content/product.php` 
 
 ```php
 <?php /** @var $this \Pimcore\View */ ?>
@@ -241,39 +240,30 @@ Then we also need the new template `website/views/scripts/content/product.php`
 
 ```
 
-New lines:
+`$this->editmode` is a standard variable (is always set) to check if the view is called from the Pimcore admin backend and gives you the 
+ possibility to to different stuff in editmode and in frontend. 
 
-```php
-$this->editmode
-```
-
-The parameter above check if view is called from the Pimcore backend and therefore you might have some different output. 
-
-```php
-$this->href('product');
-```
-
-Href is one of editable elements. It would be used to make relation 1 to 1 a cool alternative that could be used, would be the [Renderlet](../03_Documents/01_Editables/28_Renderlet.md) editable of pimcore.  
-The full list of editables is presented in the special section: [Editables](../03_Documents/01_Editables/README.md)
+`$this->href('product')` is one of the possible editable placeholders. It can be used to make 1 to 1 relations, a cool alternative for that, would be also the [Renderlet](../03_Documents/01_Editables/28_Renderlet.md) editable.  
+Click [here](../03_Documents/01_Editables/README.md) for a full list of available editables in Pimcore.
 
 
 ## Add the Product Object to a Document
 
 The last thing is to show the product in the body of the document you created. 
 
-Let's go back to the documents section. Right click on the Home then **Add Page -> Empty Page**.
-In the settings label, choose the product action and the content controller, click save and go back to the edit tab.
+Let's go back to the documents section. Right click on *Home* then *Add Page* > *Empty Page*.
+In the settings label, choose the `product` action and the `content` controller, click save and go back to the edit tab.
 
-There is new element (**Href**) which you added in the product template.
-Drag the product object to that input and click **Save & Publish**.
+Now you can see the new editable element (`href`) which we added in the product template above.
+Drag the product object to that editable and press *Save & Publish*.
 
 ![Drag the object to the document](../img/Pimcore_Elements_drag_to_document.png)
 
-Let's see what happened on the front... 
+Let's see what happened on the frontend... 
 
-Go to the product page. In my case, it would be *http://pimcore.local/tshirt* where *tshirt* is the identifier of the product (the name visible the documents tree).
+Go to the product page. In my case, let's say `http://pimcore.local/tshirt` where *tshirt* is the identifier of the product (the name visible the documents tree).
 
-We haven't implemented frontend feature yet. Therefore, the page doesn't contain product information.
+We haven't implemented frontend features yet, therefore the page doesn't contain any product information.
 
 In the template file (`website/views/scripts/content/product.php`) add few lines:
 
@@ -281,15 +271,11 @@ In the template file (`website/views/scripts/content/product.php`) add few lines
 <?php /** @var $this \Pimcore\View */ ?>
 <?php $this->layout()->setLayout('default'); ?>
 
-
-
 <h1><?= $this->input("headline", ["width" => 540]); ?></h1>
-
 <div class="product-info">
     <?php if($this->editmode):
         echo $this->href('product');
     else: ?>
-
     <div id="product">
         <?php
         /** @var \Pimcore\Model\Object\Product $product */
@@ -300,27 +286,25 @@ In the template file (`website/views/scripts/content/product.php`) add few lines
             <?php echo $product->getDescription(); ?>
         </div>
     </div>
-
     <?php endif; ?>
 </div>
 
 ```
 
-You are able to access to your object by method `getElement()`.
-Now you have access to whole data from the object (name, description, ...).
-It's a good practice to add `@var` doc in every view. If you do this you have access to auto complete in your IDE.
-
+You are now able to access the linked object above by using the method `getElement()`.
+Now you have access to the entire data from the linked object (name, description, ...).
+It's a good practice to add `@var` PHPDoc in every view, to benefit from auto-complete in your IDE.
 
 ## Add a Thumbnail Configuration
 To show the product image in the view, we need to add a thumbnail configuration first. Using [thumbnail configurations](../04_Assets/03_Working_with_Thumbnails/01_Image_Thumbnails.md),
-Pimcore automatically renders optimized images for certain output channels. 
+Pimcore automatically renders optimized images for certain output channels (including high-res @2x versions). 
 
 For adding a thumbnail configuration see the following screen. Just add a configuration named `content`. 
 ![Adding thumbnail configuration](../img/adding_thumbnails.png)
 
 
 ## Showing the Image in the View
-And the last step, we would like to show the product picture.
+Now, last but not least, we would like to show the product picture: 
 
 ```php
 <div class="content">
@@ -331,15 +315,14 @@ And the last step, we would like to show the product picture.
         
     ?>
         <?= $picture->getThumbnail("content")->getHTML(); ?>
-        
     <?php endif; ?>
     <?php echo $product->getDescription(); ?>
 </div>
 ```
-As you see, image attribute is an additional class with useful parameter.
+As you can see, image attribute is an additional class with useful parameter.
 To print out the image in the right size just use the method `getThumbnail()->getHTML()` which returns the `<img>` or `<picture>` (when using media queries in your config) tag with the 
 correct image path and also sets alt attributes to values based on the asset meta data. 
 
-Now the product page looks like that:
+Now the product page should look like:
 
 ![Final product page](../img/Pimcore_Elements_final_product_page.png)
