@@ -34,9 +34,9 @@ any content and can be used to create webpages, print pages or any other output 
 
 
 ### [Objects](../05_Objects/README.md)
-Objects are the PIM part of Pimcore and are the way to go for managing structured data within Pimcore. Based on a class 
-definition that defines structure and attributes object can be used for pretty much any structured data – may it be products, 
-categories, persons, customers, news, orders, blog entries, … For the attributes many datatypes (simple ones and really 
+Objects are the PIM/MDM part of Pimcore and are the way to go for managing structured data within Pimcore. Based on a class 
+definition that defines the structure and attributes, objects can be used for pretty much any structured data – may it be products, 
+categories, persons, customers, news, orders, blog entries, … For the attributes many data-types (simple ones and really 
 complex ones) are available.  
 
 
@@ -44,14 +44,14 @@ Most important, all elements (assets, documents or objects) can be linked with a
 
 
 ## ANY Channel / ANY Process
-As Pimcore is a platform that stores data channel independent, it can provide the managed data to any channel – simple 
-websites (B2B, B2C), commerce-systems (integrated, third party), print, digital signage, … There are basically no limits. 
+As Pimcore is a platform that stores data independently from the channel ,it can provide the managed data to any channel – simple 
+websites (B2B, B2C), commerce-systems (integrated, third party), mobile apps, print, digital signage, … There are basically no limits. 
 
-In terms of output to the frontend, Pimcore follows the MVC pattern and is based on Zend Framework. 
+In terms of output to the frontend or custom APIs, Pimcore follows the MVC pattern and is based on Zend Framework. 
  If you don't know the MVC pattern please read [this article](http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) 
  first.
 If you are new to the Zend Framework or the ZF MVC you can read about 
-[controller](http://framework.zend.com/manual/1.12/en/zend.controller.html) in Zend Framework manual. With this 
+[controllers](http://framework.zend.com/manual/1.12/en/zend.controller.html) in Zend Framework manual. With this 
 knowledge learning Pimcore will be much easier.
 
 In addition to that, Pimcore can also be executed in a headless way and therefore integrated into any environment. 
