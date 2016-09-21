@@ -194,20 +194,20 @@ class Dao extends Model\Dao\AbstractDao
     public function getElementsForTag(
         Tag $tag, $type, array $subtypes = [], array $classNames = [], $considerChildTags = false
     ) {
-        $elements = array();
+        $elements = [];
 
-        $map = array(
-            'document' => array('documents', 'id', 'type', '\Pimcore\Model\Document'),
-            'asset'    => array('assets', 'id', 'type', '\Pimcore\Model\Asset'),
-            'object'   => array('objects', 'o_id', 'o_type', '\Pimcore\Model\Object\AbstractObject'),
-        );
+        $map = [
+            'document' => ['documents', 'id', 'type', '\Pimcore\Model\Document'],
+            'asset'    => ['assets', 'id', 'type', '\Pimcore\Model\Asset'],
+            'object'   => ['objects', 'o_id', 'o_type', '\Pimcore\Model\Object\AbstractObject'],
+        ];
 
         $select = $this->db->select()
-                           ->from('tags_assignment', array())
+                           ->from('tags_assignment', [])
                            ->where('tags_assignment.ctype = ?', $type);
 
         if (true === $considerChildTags) {
-            $select->joinInner('tags', 'tags.id = tags_assignment.tagid', array('tags_id' => 'id'));
+            $select->joinInner('tags', 'tags.id = tags_assignment.tagid', ['tags_id' => 'id']);
             $select->where('(' .
                 $this->db->quoteInto('tags_assignment.tagid = ?', $tag->getId()) . ' OR ' .
                 $this->db->quoteInto('tags.idPath LIKE ?', $tag->getFullIdPath() . "%") . ')'
@@ -217,8 +217,8 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         $select->joinInner(
-            array('el' => $map[$type][0]), 'tags_assignment.cId = el.' . $map[$type][1],
-            array('el_id' => $map[$type][1])
+            ['el' => $map[$type][0]], 'tags_assignment.cId = el.' . $map[$type][1],
+            ['el_id' => $map[$type][1]]
         );
 
         if (! empty($subtypes)) {

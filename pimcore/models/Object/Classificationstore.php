@@ -150,7 +150,6 @@ class Classificationstore extends Model\AbstractModel
      */
     public function setLocalizedKeyValue($groupId, $keyId, $value, $language = null)
     {
-
         if (!$groupId) {
             throw new \Exception("groupId not valid");
         }

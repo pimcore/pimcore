@@ -14,7 +14,7 @@
 
 // referrer check
 $referrerHost = "";
-if(isset($_SERVER["HTTP_REFERER"])) {
+if (isset($_SERVER["HTTP_REFERER"])) {
     $referrerHost = parse_url($_SERVER["HTTP_REFERER"], PHP_URL_HOST);
 }
 if ($_SERVER["HTTP_HOST"] != $referrerHost) {
@@ -110,9 +110,11 @@ pimcore["location"] = {
         city: "<?= $record->city->name ?>"
     }
 <?php
+
 } else {
     ?>
     error: "<?= $exception ?>"
 <?php
+
 } ?>
 };
