@@ -33,7 +33,7 @@ Documents are the CMS part of Pimcore and can be used to manage unstructured dat
 any content and can be used to create webpages, print pages or any other output format. 
 
 
-### [Objects](../05_Object/README.md)
+### [Objects](../05_Objects/README.md)
 Objects are the PIM part of Pimcore and are the way to go for managing structured data within Pimcore. Based on a class 
 definition that defines structure and attributes object can be used for pretty much any structured data – may it be products, 
 categories, persons, customers, news, orders, blog entries, … For the attributes many datatypes (simple ones and really 
