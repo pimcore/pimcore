@@ -86,6 +86,6 @@ server {
     }
     
     # cache-buster rule for scripts & stylesheets embedded using view helpers
-    rewrite ^\/cache-buster-(.*) $1 break;
+    rewrite ^\/cache-buster-(\d+)(.*) $2 break;
 }
 ``` 
