@@ -18,10 +18,10 @@ Below is the configuration for a nginx server ( just the server bit, the http et
  
 # mod_status is not (yet) available for nginx, so that directive is skipped
 server {
-    listen 80;
+    root /vagrant/www/pimcore;
+    index index.php;
     server_name pimcore.loc;
- 
-    root        /var/www/pimcore/;
+    listen 80;
     access_log  /var/www/pimcore/website/var/log/nginx_access.log;
     error_log   /var/www/pimcore/website/var/log/nginx_error.log error;
  
@@ -68,6 +68,7 @@ server {
         # fastcgi_pass 127.0.0.1:9000; (if you cannot run on a socket)
         fastcgi_pass   unix:/var/run/php5-fpm.sock;
         fastcgi_index  index.php;
+        fastcgi_split_path_info ^(.+\.php)(/.+)$;
         fastcgi_param  SCRIPT_FILENAME    $document_root$fastcgi_script_name;
         include        fastcgi_params;
         # Set a maximum execution time. This should be the same as your php_max_exec time and php-fpm pool request_terminate_timeout to prevent
