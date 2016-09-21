@@ -48,7 +48,7 @@ class Admin_External_AdminerController extends \Pimcore\Controller\Action\Admin
             // it seems that css files need the right content-type (Chrome)
             if (preg_match("@.css$@", $path)) {
                 header("Content-Type: text/css");
-            } elseif (preg_match("@.js@", $path)) {
+            } elseif (preg_match("@.js$@", $path)) {
                 header("Content-Type: text/javascript");
             }
 
