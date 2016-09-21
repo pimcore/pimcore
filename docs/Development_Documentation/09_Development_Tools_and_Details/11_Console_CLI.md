@@ -1,6 +1,6 @@
 # CLI and Pimcore Console
 
-Pimcore can be executed headless and has a very powerful php API. As a consequence of these two aspects, 
+Pimcore can be executed headless and has a very powerful PHP API. As a consequence of these two aspects, 
 it is possible to do automate pretty every thing within Pimcore. 
 
 There are two ways to getting up and running - simple CLI scripts and Pimcore Console. 

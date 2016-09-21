@@ -1,7 +1,7 @@
 # Data Inheritance and Parent Class
   
 Pimcore provides two sorts of inheritance. While data inheritance allows the inheritance of object data along the tree
- hierarchy of objects, can the developer modify the php class hierarchy with the parent class setting of object classes. 
+ hierarchy of objects, can the developer modify the PHP class hierarchy with the parent class setting of object classes. 
    
 ## Data Inheritance
 A very important feature in connection with PIM is data inheritance. Data inheritance means, that objects of the same 
@@ -44,7 +44,7 @@ The complex data type field collections do not support inheritance.
 
 ## Parent Class - Class Inheritance
 
-Pimcore data objects support inheritance, just as any php object does. In Pimcore the class from which a specific data 
+Pimcore data objects support inheritance, just as any PHP object does. In Pimcore the class from which a specific data 
 class inherits can be changed. By default a data class inherits from `Pimcore\Model\Object\Concrete`, but if required 
 otherwise, a data class can extend a different parent class. If the parent class should be changed, this needs to be 
 specified in the class definition as shown in the screen below:
