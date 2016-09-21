@@ -3,7 +3,7 @@
 ## Introduction
 
 View Helpers are methods that offer special functionality to increase usability of views. 
-This concept is a concept of the ZF and you can use all the `\Zend_View` helpers which are shipped with ZF. 
+This concept is a concept of the ZF and you can use all the `\Zend_View` helpers which are [shipped with ZF](https://framework.zend.com/manual/1.10/en/zend.view.helpers.html). 
 There are some really cool helpers which are really useful when used in combination with Pimcore.
 For the most important see following table. 
 
@@ -13,7 +13,7 @@ For the most important see following table.
 | `headMeta()`  | `\Zend_View_Helper_HeadMeta::headMeta`   | [HeadMeta helper description](https://framework.zend.com/manual/1.10/en/zend.view.helpers.html#zend.view.helpers.initial.headmeta)   |
 | `headTitle()` | `\Zend_View_Helper_HeadTitle::headTitle` | [HeadTitle helper description](https://framework.zend.com/manual/1.10/en/zend.view.helpers.html#zend.view.helpers.initial.headtitle) |
 
-
+There are around [20 helpers](https://framework.zend.com/manual/1.10/en/zend.view.helpers.html) provided by the Zend Framework.
 In addition to the ZF standard view helpers, Pimcore adds some addition powerful view helpers. 
 
 ## Pimcore View Helpers
@@ -22,21 +22,21 @@ The Pimcore implementation of `\Zend_View` namely `Pimcore\View` offers addtiona
 
 | Method                                   | Reference                                             | Description                                                          |
 |------------------------------------------|-------------------------------------------------------|----------------------------------------------------------------------|
-| [`inc()`](#this-inc)                        | `\Pimcore\View::inc`                            | Use this function to directly include a document.                    |
-| [`template()`](#this-template)              | `\Pimcore\View::template`                       | Use this method to include a template                                |
-| [`getParam()`](#this-getparam)              | `\Pimcore\View::getParam`                       | Get's a parameter (get, post, .... ), it's an equivalent to $this->getParam() in the controller action.                               |
-| [`cache()`](#this-cache)                    | `\Pimcore\View\Helper\Cache::cache`           | Cache implementation in temaplates.                                  |
-| [`device()`](#this-device)                  | `\Pimcore\View\Helper\Device::device`         | Helps implementing adaptive designs.                                  |
-| [`glossary()`](#this-glossary)              | `\Pimcore\View\Helper\Glossary::glossary`     | [Glossary documentation](../../08_Tools_and_Features/21_Glossary.md) |
-| [`translate()`](#this-translate)            | `\Pimcore\View::t`                              | i18n / shared translations                                                  |
-| [`translateAdmin()`](#this-translateadmin)  | `\Pimcore\View::ts`                             | i18n / admin translations                                                  |
+| `inc()`                    | `\Pimcore\View::inc`                            | Use this function to directly include a document.                    |
+| `template()`              | `\Pimcore\View::template`                       | Use this method to include a template                                |
+| `getParam()`            | `\Pimcore\View::getParam`                       | Get's a parameter (get, post, .... ), it's an equivalent to $this->getParam() in the controller action.                               |
+| `cache()`                    | `\Pimcore\View\Helper\Cache::cache`           | Cache implementation in temaplates.                                  |
+| `device()`                  | `\Pimcore\View\Helper\Device::device`         | Helps implementing adaptive designs.                                  |
+| `glossary()`              | `\Pimcore\View\Helper\Glossary::glossary`     | [Glossary documentation](../../08_Tools_and_Features/21_Glossary.md) |
+| `translate()`           | `\Pimcore\View::t`                              | i18n / shared translations                                                  |
+| `translateAdmin()`  | `\Pimcore\View::ts`                             | i18n / admin translations                                                  |
 
 
 You can also create your [own custom view helpers](https://framework.zend.com/manual/1.10/en/zend.view.helpers.html#zend.view.helpers.custom) to make certain functionalities available to your views.
 
 ### `$this->inc()` 
 Use `$this->inc()` to include documents (eg. snippets) within views. 
-This is especially useful for footers, headers, navigations, sidebars, ...
+This is especially useful for footers, headers, navigations, sidebars, teasers, ...
 
 `$this->inc(mixed $document, [array $params], [$cacheEnabled = true])`
 
@@ -70,7 +70,7 @@ echo $this->inc($doc, [
 ```
 
 ### `$this->template()`
-This method is designed to include an other templates directly, without calling an action. 
+This method is designed to include a different template directly, without calling an action. 
 Basically it's just using PHP's `include()` in the background, but you don't have to care about path issues. 
 
 `$this->template(string $path, [array $params = []], [bool $resetPassedParams = false], [bool $capture = false])`
@@ -118,7 +118,7 @@ Returns a parameter (get, post, .... ), it's an equivalent to `$this->getParam()
 ### `$this->cache()`
 This is an implementation of an in-template cache. You can use this to cache some parts directly in the template, 
 independent of the other global definable caching functionality. This can be useful for templates which need a lot 
-of calculation or require a huge amount of objects.
+of calculation or require a huge amount of objects (like navigations, ...).
 
 `$this->cache(string $name, [int $lifetime = null], [bool $force = false])`
 
@@ -126,7 +126,7 @@ of calculation or require a huge amount of objects.
 |---------------------|--------------|
 | `$name`         | Name of cache item |
 | `$lifetime`     | Lifetime in seconds. If you define no lifetime the behavior is like the output cache, so if you make any change in Pimcore, the cache will be flushed. When specifying a lifetime this is independent from changes in the CMS. |
-| `$force`        | Force caching, even when Request is done within Pimcore Admin interface |
+| `$force`        | Force caching, even when request is done within Pimcore admin interface |
 
 ##### Example
 ```php
@@ -169,7 +169,7 @@ For details also see [Adaptive Design](../../09_Development_Tools_and_Details/21
 
 ### `$this->glossary()`
 
-For details please see [glossary documentation](../../08_Tools_and_Features/21_Glossary.md).
+For details please see [Glossary Documentation](../../08_Tools_and_Features/21_Glossary.md).
 
 ##### Example
 ```php
@@ -203,7 +203,7 @@ View helper for getting translation from shared translations. For details also s
 
 
 ### `$this->translateAdmin()`
-View helper for getting translation from admin translations. For details also see the [Multi language part](../../06_Multi_Language_i18n/README.md).
+View helper for getting translation from admin translations. For details also see the [Multi Language Part](../../06_Multi_Language_i18n/README.md).
 
 `$this->ts(string $key = "")`
 `$this->translateAdmin(string $key = "")`
