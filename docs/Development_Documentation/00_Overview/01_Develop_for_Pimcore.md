@@ -19,7 +19,7 @@ So, in very short - just fork us on [GitHub](https://github.com/pimcore/pimcore)
 
 ## PSRs (PHP-FIG) & Standards in General
 Pimcore is an active member of the [PHP-FIG](http://www.php-fig.org/) and committed to standards and interoperability, therefore we always try to implement the latest standards.
-At the moment pimcore follows the following PSRs: 
+At the moment Pimcore implements the following PSRs: 
 * PSR-1 (Basic Coding Standard)
 * PSR-2 (Coding Style Guide)
 * PSR-3 (Logger Interface)

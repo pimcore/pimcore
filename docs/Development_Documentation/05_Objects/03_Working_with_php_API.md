@@ -1,7 +1,7 @@
 # Working with Objects via php API
 
 Pimcore provides and object orientated php API to work with Objects. There are several generic functionalities 
-provided by Pimcore and for each pimcore object class Pimcore generates corresponding php classes for working
+provided by Pimcore and for each Pimcore object class Pimcore generates corresponding php classes for working
 with these objects via a comfortable php API and take full advantage of a IDE (e.g. code completion etc.). 
     
 ## CRUD Operations
@@ -354,7 +354,7 @@ on [Zend_Db_Select](http://framework.zend.com/manual/1.12/de/zend.db.select.html
 ```php
 
 <?php
-// get all news with ratings that is stored in a not pimcore related table
+// get all news with ratings that is stored in a not Pimcore related table
  
 /** @var \Pimcore\Model\Object\Listing\Dao|\Pimcore\Model\Object\News\Listing $list */
 $list = new Pimcore\Model\Object\News\Listing();
@@ -376,7 +376,7 @@ You can access and print the internal query which is based on [Zend_Db_Select](h
 
 ```php
 <?php
-// get all news with ratings that is stored in a not pimcore related table
+// get all news with ratings that is stored in a not Pimcore related table
  
 /** @var \Pimcore\Model\Object\Listing\Dao|\Pimcore\Model\Object\News\Listing $list */
 $list = new Pimcore\Model\Object\News\Listing();

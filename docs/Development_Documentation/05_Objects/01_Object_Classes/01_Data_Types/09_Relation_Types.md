@@ -90,7 +90,7 @@ Internally the setter sets the value to an empty array, regardless if an empty a
 Be Careful - Use Getters and Setters!
 $object->multihref = null;
 Will not work to clear the list of elements in the multihref when lazy loading ist activated. If the value of an object 
-or multihref data type is null, for pimcore this means that the data of this field has not been loaded an that it is 
+or multihref data type is null, for Pimcore this means that the data of this field has not been loaded an that it is 
 not to be touched when saving the object.
 </div>
 

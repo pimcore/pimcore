@@ -5,7 +5,7 @@
 ## Basics
 
 Pimcore comes with a standard navigation implementation in the form of a view helper, which utilizes Zend_Navigation. 
-The `Pimcore\View\Helper\PimcoreNavigation` gets registered by default with the other pimcore view helpers. 
+The `Pimcore\View\Helper\PimcoreNavigation` gets registered by default with the other Pimcore view helpers. 
 It builds a [Zend_Navigation](https://framework.zend.com/manual/1.10/en/zend.navigation.introduction.html) container based on the existing document structure and needs to be set up as follows in your view script or layout script:
 
 **Only documents are included** in this structure, directories are ignored, regardless of their navigation properties.

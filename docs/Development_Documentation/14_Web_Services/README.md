@@ -287,7 +287,7 @@ condense parameter is set to true then only non-existing object ids are returned
 ### Get Server Info
 * **Method**: GET
 * **URL**: `http://YOUR-DOMAIN/webservice/rest/server-info?apikey=[API-KEY]`
-* **Returns**: The JSON encoded server-info including pimcore version, current time and extension data.
+* **Returns**: The JSON encoded server-info including Pimcore version, current time and extension data.
 
 
 ### Get Server Time

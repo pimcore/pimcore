@@ -19,8 +19,8 @@ Our mission is to provide ONE platform for ANY data, ANY channel, ANY process an
 
 
 ## ANY Data 
-In Pimcore every digital content can be managed and put in relation with each other. To do so, there are three main element 
-data types in pimcore:
+In Pimcore every digital content can be managed and put in relation with each other, so we're also talking about master data management. 
+There are three main element data types in Pimcore:
 
 ### [Assets](../04_Assets/README.md)
 Assets are the DAM part of Pimcore. Within assets every digital file (images, videos, pdfs, …) can be stored and managed in 

@@ -16,7 +16,7 @@ See also: [Example definition](https://github.com/pimcore/pimcore/blob/master/we
 Class mapping feature was replaced by PHP-DI solution. The updater automatically migrates your classmap.php to di.php so basically there's nothing special to consider (except eventually downloading & adding di.php to your VCS). 
 For more details please have a look at the following pages: 
 - Dependency Injection (since 3866)
-- Overwrite pimcore models using dependency injection (since build 3866)
+- Overwrite Pimcore models using dependency injection (since build 3866)
 
 #### Removed Methods / Classes / Interfaces
 The following legacy methods were removed: 
@@ -36,7 +36,7 @@ http://carbon.nesbot.com/docs/
 
 ## Upgrade notes for 4.0.1
 #### Composer
-As of 4.0.1 composer is a dependency of pimcore. Please ensure composer is installed properly (in PATH) on the system.  
+As of 4.0.1 composer is a dependency of Pimcore. Please ensure composer is installed properly (in PATH) on the system.  
 
 There was also a bug in the updater prior 4.0.1 which caused the corruption of the composer.json and autoload class map.
 If you encounter any problems please try the following on the command line:  
