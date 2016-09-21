@@ -37,6 +37,7 @@ $list->load();
 ```
 
 Please also have a look at [object listings]() and [document listings](). 
+
 [comment]: #(TODO add links)
 
 
@@ -105,4 +106,5 @@ The `copyright` field will be appended to every `title` and `alt` attribute sepa
 ---
 
 For more information about Asset Metadata also have a look at the [User Documentation]().
+
 [comment]: #(TODO add links)

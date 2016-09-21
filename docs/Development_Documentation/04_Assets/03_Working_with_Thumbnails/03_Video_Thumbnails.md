@@ -48,4 +48,5 @@ if($asset instanceof Asset\Video) {
 
 --- 
 For more information about Working with Video Thumbnails in Pimcore Backend also have a look at the [User Documentation]().
+
 [comment]: #(TODO add links)

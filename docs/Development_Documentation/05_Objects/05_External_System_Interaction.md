@@ -38,6 +38,7 @@ for ($i = 0; $i < 60; $i++) {
 ```
 Thus, with very few lines of codes importer scripts can be implemented to populate data objects. Please have a look at 
 Pimcore\Console how to integrate your custom CLI scripts to the Pimcore console.
+
 [comment]: #(TODO add link)
 
 
