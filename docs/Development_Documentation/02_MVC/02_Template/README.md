@@ -22,15 +22,13 @@ possible and use PHP just printing out data.
 #### Example
 
 ```php 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="UTF-8">
     <title>Example</title>
 </head>
-
 <body>
-
 <div id="site">
     <div id="logo">
         <a href="http://www.pimcore.org/"><img src="/pimcore/static6/img/logo-gray.svg" style="width: 200px;" /></a>
@@ -48,11 +46,11 @@ possible and use PHP just printing out data.
 
 </body>
 </html>
-
 ```
 
-#### Pimcore specialities
-Pimcore provides a few specialities to make templates even more prowerful. These are explained in following sub chapters:
+#### Pimcore Specialities
+Pimcore provides a few special functionalities to make templates even more powerful. 
+These are explained in following sub chapters:
 * [Layouts](./00_Layouts.md) - Use layouts to define everything that repeats on a page. 
 * [View Helpers](./02_View_Helpers.md) - Use view helpers for things like includes, translations, cache, glossary, etc.
 * [Thumbnails](./04_Thumbnails.md) - Learn how to include images into templates with using Thumbnails. 
