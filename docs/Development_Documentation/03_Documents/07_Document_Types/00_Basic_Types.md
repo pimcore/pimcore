@@ -1,27 +1,20 @@
-# Basic Document Types
+# Document Types
 
-## General
-
-Pimcore becomes with a few predefined document types. 
-
-## Available types
-
-Several document types are built-in in the fresh Pimcore installation. 
-Basic types are listed, below.
+Pimcore groups documents into different types depending on their purpose. 
+Following a list of all available document types in Pimcore: 
 
 ### Folder
 
-Folder is just a container which contains other document.
+Folder is just a container which contains other documents.
 
-The editmode for folders is the most simple in comparison to other types. 
+The editmode for folders is the most simple compared to other types. 
 Only [properties](../../08_Tools_and_Features/07_Properties.md), dependencies, [notes & events](../../08_Tools_and_Features/05_Notes_and_Events.md) 
 and [tags](../../08_Tools_and_Features/09_Tags.md) are available there. 
 
 
 ![Folder preview](../../img/basictypes_folder_preview.png)
 
-
-Folder doesn't have dedicated url where the content is rendered.
+Folder doesn't have a dedicated url where the content is rendered.
 
 ### Page
 
