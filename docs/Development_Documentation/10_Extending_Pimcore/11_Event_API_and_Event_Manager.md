@@ -22,12 +22,10 @@ You can attach a handler at any time in your code by using the following code:
 The Pimcore event API is based on the ZF Event Manager. 
 [Click here to learn more about attaching listeners to an event.](http://framework.zend.com/manual/1.12/de/zend.event-manager.event-manager.html)
 
-<div class="notice-box">
-IMPORTANT INFO
-`Pimcore::getEventManager()` returns an instance of `Zend_EventManager_EventManager` and therefore it provides the full
- set of functionalities that the ZF provides. 
-For details have a look at [http://framework.zend.com/manual/1.12/de/zend.event-manager.event-manager.html](http://framework.zend.com/manual/1.12/de/zend.event-manager.event-manager.html) 
-</div>
+> **IMPORTANT INFO**  
+> `Pimcore::getEventManager()` returns an instance of `Zend_EventManager_EventManager` and therefore it provides the full
+> set of functionalities that the ZF provides. 
+> For details have a look at [http://framework.zend.com/manual/1.12/de/zend.event-manager.event-manager.html](http://framework.zend.com/manual/1.12/de/zend.event-manager.event-manager.html) 
 
 
 ## Examples
