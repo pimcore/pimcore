@@ -1,7 +1,7 @@
 # Numeric Editable
 
 ## General
-The numeric editable is very similar to the [input editable](../16_Input.md), but with special configurations for the use with numbers.
+The numeric editable is very similar to the [input editable](./16_Input.md), but with special configurations for the use with numbers.
 
 ## Configuration
 
