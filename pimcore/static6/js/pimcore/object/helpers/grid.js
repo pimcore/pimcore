@@ -90,10 +90,10 @@ pimcore.object.helpers.grid = Class.create({
                 destroy : this.url + "?xaction=destroy"
             },
             actionMethods: {
-                create : 'GET',
-                read   : 'GET',
-                update : 'GET',
-                destroy: 'GET'
+                create : 'POST',
+                read   : 'POST',
+                update : 'POST',
+                destroy: 'POST'
             },
             listeners: {
                 exception: function (proxy, request, operation, eOpts) {
