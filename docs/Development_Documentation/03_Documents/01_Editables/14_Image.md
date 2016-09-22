@@ -2,12 +2,14 @@
 
 ## Description
 
-The Image editable add an editable area when you can drop images from assets (or just upload from you desktop).
+The image editable adds an placeholder for images out of the assets module.
 The biggest cons of using that instead of (for example) the href editable:
 
-* you are able to specify generated thumbnail properties
-* there is a image preview rendered in the administration panel
-* you can specify additional attribute for generated `<img>` tag
+* You are able to specify generated thumbnail properties (including high-res)
+* There is a image preview rendered in the administration panel
+* You can specify additional attribute for generated `<img>` or `<picture>`
+* You can crop the image directly inline
+* You can put hotspots and markers on the actual image 
 
 ## Configuration
 
@@ -19,23 +21,20 @@ The biggest cons of using that instead of (for example) the href editable:
 | `thumbnail`                    | string  | Name of the configured thumbnail which should be used                                                                                                                                                                              |
 | `hidetext`                     | boolean | Hides the input for the ALT-text in editmode                                                                                                                                                                                       |
 | `reload`                       | boolean | Set true to reload the page in editmode after updating the image                                                                                                                                                                   |
-| `minWidth`                     | integer | min. width of the image (in pixel)                                                                                                                                                                                                 |
-| `minHeight`                    | integer | min. height of the image (in pixel)                                                                                                                                                                                                |
-| `attributes`                   | array   | custom attributes for the <img /> tag - this can be used to pass custom attributes (not w3c)                                                                                                                                       |
+| `minWidth`                     | integer | Min. width of the image (in pixel)                                                                                                                                                                                                 |
+| `minHeight`                    | integer | Min. height of the image (in pixel)                                                                                                                                                                                                |
+| `attributes`                   | array   | Custom attributes for the <img /> tag - this can be used to pass custom attributes (not w3c)                                                                                                                                       |
 | `removeAttributes`             | array   | You can remove standard attributes using this configuration, e.g. `"removeAttributes" => ["controls","poster"]`                                                                                                       |
 | `uploadPath`                   | string  | Target path for (inline) uploaded images                                                                                                                                                                                           |
-| `highResolution`               | float   | factor the thumbnail dimensions should be multiplied with (html attributes width and height contain the original dimensions ... used for **Retina* displays, print, ...)                                                            |
-| `disableWidthHeightAttributes` | bool    | width & height attributes are set automatically by pimcore, to avoid this set this option (eg. to true => isset check)                                                                                                             |
-| `disableAutoTitle`             | bool    | set to true, to disable the automatically generated title attribute (containing title and copyright from the origin image)                                                                                                         |
-| `disableAutoAlt`               | bool    | set to true, to disable the automatically generated alt attribute                                                                                                                                                                  |
-| `disableAutoCopyright`         | bool    | set to true, to disable the automatically appended copyright info (alt & title attribute)                                                                                                                                          |
+| `highResolution`               | float   | Factor the thumbnail dimensions should be multiplied with (html attributes width and height contain the original dimensions ... used for **Retina* displays, print, ...)                                                            |
+| `disableWidthHeightAttributes` | bool    | Width & height attributes are set automatically by pimcore, to avoid this set this option (eg. to true => isset check)                                                                                                             |
+| `disableAutoTitle`             | bool    | Set to true, to disable the automatically generated title attribute (containing title and copyright from the origin image)                                                                                                         |
+| `disableAutoAlt`               | bool    | Set to true, to disable the automatically generated alt attribute                                                                                                                                                                  |
+| `disableAutoCopyright`         | bool    | Set to true, to disable the automatically appended copyright info (alt & title attribute)                                                                                                                                          |
 | `dropClass`                    | string  | This option can be used to add multiple alternative drop-targets and context menus on custom HTML elements in your code. <br /><br />Just add the class specified here also to custom HTML elements and they will get a drop target too. |
-| `deferred`                     | bool    | set to false to disable deferred (on demand) thumbnail rendering                                                                                                                                                                   |
+| `deferred`                     | bool    | Set to false to disable deferred (on demand) thumbnail rendering                                                                                                                                                                   |
 
-You can also pass every valid attribute an img-tag can have ([w3.org Image](http://www.w3.org/TR/html401/struct/objects.html#edef-IMG)), such as:
-* class
-* style
-* ...
+You can also pass every valid `<img`> tag attribute ([w3.org Image](http://www.w3.org/TR/html401/struct/objects.html#edef-IMG)), such as: `class`, `style`
 
 ## Methods
 
@@ -57,22 +56,20 @@ You can also pass every valid attribute an img-tag can have ([w3.org Image](http
 <?= $this->image("myImage"); ?>
 ```
 
-The code above generates default image area in the backend and thumbnail on the frontend of the application.
+The code above generates an image area in the backend and displays the image at the frontend.
 
 The empty backend area:
-
 ![Empty image area](../../img/image_preview_backend1.png)
 
 The filled backend area:
-
 ![Filled image area](../../img/image_preview_backend2.png)
 
 
-### Advanced usage
-In the example below you can see how to add title and specify size of the image area.
-Note that if you use the thumbnail argument, the rendered image on the frontend will use specified thumbnail. 
+### Advanced Usage
+In the example below you can see how to add a title and specify size of the image area.
+Note that if you use the thumbnail argument, the rendered image on the frontend will use the specified thumbnail. 
 
-You can find out more about thumbnails in [Image Thumbnails section](../../04_Assets/03_Working_with_Thumbnails/01_Image_Thumbnails.md).
+Learn more about thumbnails here: [Image Thumbnails](../../04_Assets/03_Working_with_Thumbnails/01_Image_Thumbnails.md).
 
 ```php
 <?= $this->image("myImage", [
@@ -83,13 +80,13 @@ You can find out more about thumbnails in [Image Thumbnails section](../../04_As
 ]); ?>
 ```
 
-Backend preview:
+###### Backend Preview
 
 ![Image with title and specified size - the backend preview](../../img/image_preview_backend3.png)
 
-### An example with a direct thumbnail configuration
+### An Example with a Direct Thumbnail Configuration
 
-You can also change a thumbnail configuration:
+You can also change the thumbnail configuration:
 
 ```php
 <?= $this->image("myImage", [
@@ -105,7 +102,7 @@ You can also change a thumbnail configuration:
 ]); ?>
 ```
 
-### An example with custom attributes
+### An Example Using Custom Attributes
 
 ```php
 <?= $this->image("myImage", [
@@ -119,7 +116,7 @@ You can also change a thumbnail configuration:
 
 And this is how the rendered html looks: `<img custom-attr="value" data-role="image" src="/website/var/tmp/image-thumbnails/0/56/thumb__content/dsc03807.jpeg" />`
 
-### Other advanced examples
+### Other Advanced Examples
 
 ```php
 
@@ -159,22 +156,20 @@ And this is how the rendered html looks: `<img custom-attr="value" data-role="im
 <div class="myCustomImageDropTarget someClass">My second alternative drop target</div>
 ```
 
-## Fieldspecific image cropping for Documents
+## Field-specific Image Cropping for Documents
 
-### Backend usage
+### Backend Usage
 
-With right click on the image in document edit mode, it is possible to define field specific image cropping.
-
+Right-click on the image editable in editmode and press *Select specific area of image* 
 ![image options in the editmode](../../img/image_preview_backend_modification.png)
 
-And the cropping tool, below:
-
+Now you're able to select the desired area on the image: 
 ![image cropping in the editmode](../../img/image_preview_backend_modification2.png)
 
-Therefore, there is no need any more to define specific images or thumbnails if a specific region of an image should be shown. 
+Therefore, there is no need any more to define specific images or thumbnails if a specific region of an image should be displayed. 
 Just assign the original image and define field specific cropping directly within the document.
 
-## Markers & hotspots
+## Markers & Hotspots
 
 This functionality is available on every image editable (no configuration necessary).
 
@@ -187,7 +182,7 @@ You as a developer have to get the data out of the image editable to build amazi
 You can get the data with the methods `getMarker()` and `getHotspots()`. 
 All dimensions are in percent and therefore independent from the image size, you have to change them back to pixels according to your image size.
  
-### Code usage example
+### Code Usage Example
  
 ```php
 <div>
@@ -213,7 +208,6 @@ All dimensions are in percent and therefore independent from the image size, you
  </p>
 </div>
 ```
-
 
 `getHotspots` output:
 
@@ -260,3 +254,4 @@ array(1) {
   }
 }
 ```
+

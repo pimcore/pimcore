@@ -85,7 +85,7 @@ And in the frontend of the application:
 <?php } ?>
 ```
 
-### Using manual mode
+### Using Manual Mode
 
 The manual mode offers you the possibility to deal with block the way you like, this is for example useful with tables: 
 
@@ -109,7 +109,7 @@ The manual mode offers you the possibility to deal with block the way you like, 
 <?php $block->end(); ?>
 ```
 
-### Using fluent interfaces
+### Accessing Data Within a Block Element
 
 ```php
 // load document

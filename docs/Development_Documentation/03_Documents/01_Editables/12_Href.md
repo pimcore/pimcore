@@ -2,9 +2,7 @@
 
 ## General
 
-Href provides to create a reference to an other element in Pimcore (document, asset, object).
-This can be useful to link a video for example (in editmode show the href to link the video out of the assets, outside embed a object code an make a reference to the video.).
-
+Href provides the functionality to create a reference to an other element in Pimcore (document, asset, object).
 In frontend-mode the href returns the path of the linked element.
 
 ## Configuration
@@ -41,12 +39,12 @@ After, the view in the administration panel changes like in the picture:
 
 ![Href editable preview in the administration panel](../../img/href_backend_preview.png)
 
-### Usage with restriction
+### Using estriction
 
-If you want specify elements which could be used in the href editable, just use **types**, **subtypes** and **classes**
-keys in the editable configuration.
+If you want specify elements which could be assigned to the href editable, use `types`, `subtypes` and `classes`
+options in the editable configuration.
 
-Have a look at the example, below.
+##### Example
  
 ```php
 <?= $this->href("myHref", [
@@ -59,24 +57,24 @@ Have a look at the example, below.
 ]); ?>
 ```
 
-We specified that in to the `myHref` editable user can put only video / image **assets** and **objects** represented by Person (`\Pimcore\Model\Object\Person`) class. 
+We restricted the `myHref` editable to the following entities: 
+* Video / Image (Assets) 
+* Person Objects (`\Pimcore\Model\Object\Person`) (Objects) 
  
 As you see in the picture below, it's impossible to drop any other type to that editable.
 
 ![Href restriction](../../img/href_restriction_in_backend.png)
 
-### Video download example
+### Download Example
 
-You could use the href editable to make download video feature in your website. 
-
-You could check an element type using `instanceof` on your href element `getElement` method.  
+Another useful use-case for the href editable is a download link. 
 
 ```php
 <?php if ($this->editmode): ?>
     <?= $this->href("myHref"); ?>
 <?php else: ?>
-    <?php if ($this->href("myHref")->getElement() instanceof Asset\Video): ?>
-        <a href="<?= $this->href("myHref")->getFullPath() ?>"><?= $this->translate("Video Download") ?></a>
+    <?php if ($this->href("myHref")->getElement() instanceof Asset): ?>
+        <a href="<?= $this->href("myHref")->getFullPath() ?>"><?= $this->translate("Download") ?></a>
     <?php endif; ?>
 <?php endif; ?>
 ```
