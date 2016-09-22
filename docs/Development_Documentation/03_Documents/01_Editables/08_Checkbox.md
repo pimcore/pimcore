@@ -1,4 +1,4 @@
-# Checkbox
+# Checkbox Editable
 
 ## Configuration
 

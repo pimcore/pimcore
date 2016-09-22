@@ -1,4 +1,4 @@
-# Multihref
+# Multihref Editable
 
 ## General
 Multihref editable provides one to many relation to other Pimcore elements (document, asset, object). 

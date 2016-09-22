@@ -1,4 +1,4 @@
-# Multiselect
+# Multiselect Editable
 
 ## General
 

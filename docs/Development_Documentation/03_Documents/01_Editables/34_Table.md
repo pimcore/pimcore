@@ -1,4 +1,4 @@
-# Table 
+# Table Editable
 
 ## General
 

@@ -1,4 +1,4 @@
-# Block editable
+# Block Editable
 
 ## General
 

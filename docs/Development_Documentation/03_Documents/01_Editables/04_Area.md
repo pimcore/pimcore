@@ -1,4 +1,4 @@
-# Area editable
+# Area Editable
 
 ## General
 The area editable is similar to the [areablock](./02_Areablock/README.md) editable, the only difference is that the area bricks are not wrapped 

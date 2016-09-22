@@ -1,4 +1,4 @@
-# Numeric
+# Numeric Editable
 
 ## General
 The numeric editable is like a normal textfield but with special configurations for numbers.

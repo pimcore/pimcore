@@ -1,4 +1,4 @@
-# WYSIWYG
+# WYSIWYG Editable
 
 ## General
 
