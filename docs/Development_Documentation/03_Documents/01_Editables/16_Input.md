@@ -2,8 +2,8 @@
 
 ## General
 
-The input editable is a fixed place when you can put your text headlines, paragraphs and other values. 
-An administration user is not able to change any style properties in the editmode. 
+The input editable is a single line unformatted text placeholder (just as HTMLs `<input>` is), which is useful for text headlines, paragraphs and other values. 
+For a multi-line alternative have a look at the [textarea editable](./36_Textarea.md), for rich-text [WYSIWYG](./40_WYSIWYG.md). 
 
 ## Configuration
 
@@ -12,8 +12,8 @@ An administration user is not able to change any style properties in the editmod
 | `width`            | integer | Width of the input in editmode (in pixels)                                            |
 | `htmlspecialchars` | boolean | Set to false to get the raw value without HTML special chars like & (default to true) |
 | `nowrap`           | boolean | set to false to disable the automatic line break                                      |
-| `class`            | string  | a css class that is added to the element only in editmode                             |
-| `placeholder`      | string  | a placeholder that is displayed when the field is empty                               |
+| `class`            | string  | A css class that is added to the element only in editmode                             |
+| `placeholder`      | string  | A placeholder that is displayed when the field is empty                               |
 
 ## Methods
 
@@ -32,8 +32,7 @@ An administration user is not able to change any style properties in the editmod
 </h2>
 ```
 
-The code generates an editable area which you can fill with the text, see the picture:
-
+The above code generates an editable area which you can fill with the text, see:
 ![Inpute preview in the backend](../../img/input_backend_preview.png)
 
 ### Advanced usage
@@ -42,13 +41,11 @@ You could also specify other parameters, like the size:
 
 ```php
 <h2>
- <?= $this->input("myHeadline", ["width" => 540]); ?>
+    <?= $this->input("myHeadline", ["width" => 540]); ?>
 </h2>
 ```
 
 ## Validation
-
-In the input editable a simple validation is implemented. 
 To validate the input you have to add `validator` parameter to the configuration array. 
 
 ```php
@@ -63,4 +60,4 @@ To validate the input you have to add `validator` parameter to the configuration
 </h2>
 ```
 
-> At the moment, the validation has **only visual effect**, user can still save an incorrect value. 
+> At the moment, the validation has **only a visual effect**, user can still save an incorrect value. 
