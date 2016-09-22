@@ -8,16 +8,17 @@ Also, the Table editable allows you to add some predefined values.
 
 ## Configuration
 
-| Name     | Type    | Description                                                             |
-|----------|---------|-------------------------------------------------------------------------|
-| defaults | array   | Array can have the following properties: rows, cols, data (see example) |
-| width    | integer | Width of the field in pixel                                             |
+| Name       | Type    | Description                                                             |
+|------------|---------|-------------------------------------------------------------------------|
+| `defaults` | array   | Array can have the following properties: rows, cols, data (see example) |
+| `width`    | integer | Width of the field in pixel                                             |
 
-## Accessible method
+## Methods
 
-| Name      | Type  | Description                        |
-|-----------|-------|------------------------------------|
-| getData() | array | Get the data of the table as array |
+| Name        | Type  | Description                           |
+|-------------|-------|---------------------------------------|
+| `getData()` | array | Get the data of the table as array    |
+| `isEmpty()` | bool  | Whether the editable is empty or not. |
 
 # Examples
 

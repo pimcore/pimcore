@@ -8,19 +8,20 @@ Except the basic usage, due to the configuration options you can specify the too
  
 ## Configuration
 
-| Name          | Type    | Description                                             |
-|---------------|---------|---------------------------------------------------------|
-| customConfig  | string  | Path to Javascript file with configuration for CKEditor |
-| enterMode     | integer | Set it to 2 if you don't want to add the P-tag          |
-| height        | integer | min-height of the field in pixels                       |
-| toolbarGroups | string  | A toolbar config array (see below)                      |
-| width         | integer | Width of the field in pixels                            |
+| Name            | Type    | Description                                             |
+|-----------------|---------|---------------------------------------------------------|
+| `customConfig`  | string  | Path to Javascript file with configuration for CKEditor |
+| `enterMode`     | integer | Set it to 2 if you don't want to add the P-tag          |
+| `height`        | integer | min-height of the field in pixels                       |
+| `toolbarGroups` | string  | A toolbar config array (see below)                      |
+| `width`         | integer | Width of the field in pixels                            |
 
-## Accessible properties
+## Methods
 
-| Name            | Type      | Description                                                            |
-|-----------------|-----------|------------------------------------------------------------------------|
-| text            | string    | Value of the WYSIWYG, this is useful to get the value even in editmode |
+| Name        | Return | Description                           |
+|-------------|--------|---------------------------------------|
+| `getData()` | array  | Get the value of the wysiwyg          |
+| `isEmpty()` | bool   | Whether the editable is empty or not. |
 
 ## Examples
 

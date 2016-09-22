@@ -7,18 +7,18 @@ The select editable generates **select** box component in Editmode, next you can
 
 ## Configuration
 
-| Name   | Type    | Description                                                     |
-|--------|---------|-----------------------------------------------------------------|
-| store  | array   | Key/Value pairs for the available options.                      |
-| reload | bool    | Set true to reload the page in editmode after selecting an item |
-| width  | integer | Width of the select box in pixel                                |
+| Name     | Type    | Description                                                     |
+|----------|---------|-----------------------------------------------------------------|
+| `store`  | array   | Key/Value pairs for the available options.                      |
+| `reload` | bool    | Set true to reload the page in editmode after selecting an item |
+| `width`  | integer | Width of the select box in pixel                                |
 
 ## Methods
 
-| Name    | Type   | Description                                                           |
-|---------|--------|-----------------------------------------------------------------------|
-| getData | string | Value of the select, this is useful to get the value even in editmode |
-
+| Name        | Return | Description                                                           |
+|-------------|--------|-----------------------------------------------------------------------|
+| `getData()` | string | Value of the select, this is useful to get the value even in editmode |
+| `isEmpty()` | bool   | Whether the editable is empty or not.                                 |
 
 ## Examples
 

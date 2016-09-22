@@ -7,27 +7,31 @@ There are also options like: thumbnails creation, poster assets assigning...
 
 ## Configuration
 
-| Name                    | Type      | Description                                                                                                                                                                                                             |
-|-------------------------|-----------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| attributes              | array     | Additional attributes for the generated `<video>` tag - only for type asset                                                                                                                                         |
-| disableProgressReload   | bool      | set to true to disable the automatic page refresh while the video thumbnail is generated                                                                                                                                |
-| editmodeImagePreview    | bool      | set to true to display only an image and not the video player in editmode, this can be necessary if you have many videos on one page (performance)                                                                      |
-| height                  | integer   | Height of the video in pixel                                                                                                                                                                                            |
-| imagethumbnail          | string    | Name of the image-thumbnail, this thumbnail config is used to generate the preview image (poster image), if not specified pimcore tries to get the information out of the video thumbnail. see also: Video Thumbnails   |
-| removeAttributes        | array     | You can remove standard attributes using this configuration, e.g. "removeAttributes" => ["controls","poster"]                                                                                                           |
-| thumbnail               | string    | Name of the video-thumbnail (required when using automatic-transcoding of videos) see: [Video Thumbnails](../../04_Assets/03_Working_with_Thumbnails/03_Video_Thumbnails.md)                                            |
-| width                   | integer   | Width of the video in pixel                                                                                                                                                                                             |
-| youtube                 | array     | Parameters for youtube integration. Possible parameters: [https://developers.google.com/youtube/player_parameters](https://developers.google.com/youtube/player_parameters) - only for type ***youtube***               |
+| Name                      | Type      | Description                                                                                                                                                                                                             |
+|---------------------------|-----------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `attributes`              | array     | Additional attributes for the generated `<video>` tag - only for type asset                                                                                                                                         |
+| `disableProgressReload`   | bool      | Set to true to disable the automatic page refresh while the video thumbnail is generated                                                                                                                                |
+| `editmodeImagePreview`    | bool      | Set to true to display only an image and not the video player in editmode, this can be necessary if you have many videos on one page (performance)                                                                      |
+| `height`                  | integer   | Height of the video in pixel                                                                                                                                                                                            |
+| `imagethumbnail`          | string    | Name of the image-thumbnail, this thumbnail config is used to generate the preview image (poster image), if not specified pimcore tries to get the information out of the video thumbnail. see also: Video Thumbnails   |
+| `removeAttributes`        | array     | You can remove standard attributes using this configuration, e.g. "removeAttributes" => ["controls","poster"]                                                                                                           |
+| `thumbnail`               | string    | Name of the video-thumbnail (required when using automatic-transcoding of videos) see: [Video Thumbnails](../../04_Assets/03_Working_with_Thumbnails/03_Video_Thumbnails.md)                                            |
+| `width`                   | integer   | Width of the video in pixel                                                                                                                                                                                             |
+| `youtube`                 | array     | Parameters for youtube integration. Possible parameters: [https://developers.google.com/youtube/player_parameters](https://developers.google.com/youtube/player_parameters) - only for type ***youtube***               |
 
 ## Methods
 
-| Name                     | Arguments            | Return Value                                            | Description                                                                                   |
-|--------------------------|----------------------|---------------------------------------------------------|-----------------------------------------------------------------------------------------------|
-| getImageThumbnail($name) | (string/array) $name | string, absolute path to the thumbnail                  | get a specific image thumbnail of the video, or a thumbnail of the poster image (if assigned) |
-| getPosterAsset()         |                      | Pimcore\Model\Asset                                     | returns the [assigned poster image asset](#posterReturnedValue)                                                       |
-| getThumbnail()           | (string/array) $name | array, absolute paths to the different video thumbnails | get a specific video-thumbnail of the video                                                   |
-| getVideoAsset()          | -                    | asset                                                   | returns the video asset object if assigned, otherwise null                                    |
-| getVideoType()           | -                    | string, type of the video (asset,youtube,vimeo,url)     | this is to check which video type is assigned                                                 |
+| Name                       | Arguments            | Return                                                  | Description                                                                                   |
+|----------------------------|----------------------|---------------------------------------------------------|-----------------------------------------------------------------------------------------------|
+| `getImageThumbnail($name)` | (string/array) $name | string, absolute path to the thumbnail                  | Get a specific image thumbnail of the video, or a thumbnail of the poster image (if assigned) |
+| `getPosterAsset()`         |                      | Pimcore\Model\Asset                                     | Returns the [assigned poster image asset](#posterReturnedValue)                               |
+| `getThumbnail()`           | (string/array) $name | array, absolute paths to the different video thumbnails | Get a specific video-thumbnail of the video                                                   |
+| `getVideoAsset()`          | -                    | asset                                                   | Returns the video asset object if assigned, otherwise null                                    |
+| `getVideoType()`           | -                    | string, type of the video (asset,youtube,vimeo,url)     | This is to check which video type is assigned                                                 |
+| `getTitle()`               | -                    | string                                                  | Title of the video                                                                            |
+| `getDescription()`         | -                    | string                                                  | Description of the video                                                                      |
+| `getData()`                | -                    | array                                                   | All the available data on this editable                                                       |
+| `isEmpty()`                | -                    | bool                                                    | Whether the editable is empty or not.                                                         |
 
 <a name="posterReturnedValue">&nbsp;</a>
 

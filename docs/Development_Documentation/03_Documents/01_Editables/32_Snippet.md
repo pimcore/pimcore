@@ -14,20 +14,21 @@ developer to place one on a fixed position in a (layout) template (like footer t
 
 ## Configuration
 
-| Name          | Type    | Description                              |
-|---------------|---------|------------------------------------------|
-| defaultHeight | integer | A default height if the element is empty |
-| height        | integer | Height of the snippet in pixel           |
-| reload        | bool    | Reload document on change                |
-| title         | string  | You can give the element a title         |
-| width         | integer | Width of the snippet in pixel            |
+| Name            | Type    | Description                              |
+|-----------------|---------|------------------------------------------|
+| `defaultHeight` | integer | A default height if the element is empty |
+| `height`        | integer | Height of the snippet in pixel           |
+| `reload`        | bool    | Reload document on change                |
+| `title`         | string  | You can give the element a title         |
+| `width`         | integer | Width of the snippet in pixel            |
 
-## Accessible properties
+## Methods
 
-| Name    | Type                           | Description                                         |
-|---------|--------------------------------|-----------------------------------------------------|
-| id      | integer                        | ID of the referenced Pimcore\Model\Document\Snippet |
-| snippet | Pimcore\Model\Document\Snippet | referenced document snippet object                  |
+| Name           | Return  | Description                           |
+|----------------|---------|---------------------------------------|
+| `getId()`      | int     | ID of the assigned snippet            |
+| `getSnippet()` | Snippet | The assigned snippet object           |
+| `isEmpty()`    | bool    | Whether the editable is empty or not. |
 
 ## Examples
 

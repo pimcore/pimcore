@@ -8,21 +8,21 @@ You can specify a css class of the table, auto `<br>` tags and few other you can
 
 ## Configuration
 
-| Name             | Type    | Description                                                                         |
-|------------------|---------|-------------------------------------------------------------------------------------|
-| class            | string  | a css class that is added to the element only in editmode                           |
-| height           | integer | Height of the textarea in pixel                                                     |
-| htmlspecialchars | boolean | Set to false to get the raw value without HTML special chars like & (default: true) |
-| nl2br            | boolean | Set to true to get also breaks in frontend                                          |
-| placeholder      | string  | a placeholder that is displayed when the field is empty                             |
-| width            | integer | Width of the textarea in pixel                                                      |
+| Name               | Type    | Description                                                                         |
+|--------------------|---------|-------------------------------------------------------------------------------------|
+| `class`            | string  | a css class that is added to the element only in editmode                           |
+| `height`           | integer | Height of the textarea in pixel                                                     |
+| `htmlspecialchars` | boolean | Set to false to get the raw value without HTML special chars like & (default: true) |
+| `nl2br`            | boolean | Set to true to get also breaks in frontend                                          |
+| `placeholder`      | string  | a placeholder that is displayed when the field is empty                             |
+| `width`            | integer | Width of the textarea in pixel                                                      |
 
+## Methods
 
-## Accessible properties
-
-| Name | Type   | Description                                                             |
-|------|--------|-------------------------------------------------------------------------|
-| text | string | Value of the textarea, this is useful to get the value even in editmode |
+| Name        | Return | Description                           |
+|-------------|--------|---------------------------------------|
+| `getData()` | array  | Get the value of the textarea         |
+| `isEmpty()` | bool   | Whether the editable is empty or not. |
 
 ## Example
 

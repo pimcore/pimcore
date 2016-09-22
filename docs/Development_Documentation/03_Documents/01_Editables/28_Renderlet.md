@@ -8,33 +8,39 @@ So it's possible to make a multifunctional dropbox in editmode where the editor 
 
 ## Configuration
 
-| Name         | Type      | Description                                                                 | Mandatory   |
-|--------------|-----------|-----------------------------------------------------------------------------|-------------|
-| action       | string    | Specify action                                                              | X           |
-| className    | string    | Specify class name (if type **object** chosen)                              |             |
-| controller   | string    | Specify controller                                                          | X           |
-| height       | integer   | Height of the renderlet in pixel                                            |             |
-| module       | string    | Specify module (default: website)                                           |             |
-| reload       | bool      | Reload document on change                                                   |             |
-| template     | string    | Specify template                                                            |             |
-| title        | string    | Add a title to the box in editmode                                          |             |
-| type         | string    | The type of the element assigned to the renderlet (document,asset,object)   |             |
-| width        | integer   | Width of the renderlet in pixel                                             |             |
+| Name           | Type      | Description                                                                 | Mandatory   |
+|----------------|-----------|-----------------------------------------------------------------------------|-------------|
+| `action`       | string    | Specify action                                                              | X           |
+| `className`    | string    | Specify class name (if type **object** chosen)                              |             |
+| `controller`   | string    | Specify controller                                                          | X           |
+| `height`       | integer   | Height of the renderlet in pixel                                            |             |
+| `module`       | string    | Specify module (default: website)                                           |             |
+| `reload`       | bool      | Reload document on change                                                   |             |
+| `template`     | string    | Specify template                                                            |             |
+| `title`        | string    | Add a title to the box in editmode                                          |             |
+| `type`         | string    | The type of the element assigned to the renderlet (document,asset,object)   |             |
+| `width`        | integer   | Width of the renderlet in pixel                                             |             |
 
 Optionally you can pass every parameter (with a simple data type) you like to the renderlet which can be accessed by 
 the configured controller with `$this->getParam("yourKey")`.
+
+## Methods
+
+| Name            | Return    | Description                                                 |
+|-----------------|-----------|-------------------------------------------------------------|
+| `isEmpty()`     | bool      | Whether the editable is empty or not.                       |
 
 ## In the configured Controller Action
 
 In the target controller action you get the follwing parameters which can be accessed by `$this->getParam("key")`.
 
-| Name     | Type                   | Description                                                                                      |
-|----------|------------------------|--------------------------------------------------------------------------------------------------|
-| document | Pimcore\Model\Document | If the element which is dropped on the renderlet is a document this parameter is defined.        |
-| id       | integer                | The id of the element assigned to the renderlet                                                  |
-| object   | Pimcore\Model\Object   | If the element which is dropped on the renderlet is an object this parameter is defined.         |
-| subtype  | string                 | The subtype of the element assigned to the renderlet (folder, image, link, page, classname, ...) |
-| type     | string                 | The type of the element assigned to the renderlet (document,asset,object)                        |
+| Name       | Type                   | Description                                                                                      |
+|------------|------------------------|--------------------------------------------------------------------------------------------------|
+| `document` | Pimcore\Model\Document | If the element which is dropped on the renderlet is a document this parameter is defined.        |
+| `id`       | integer                | The id of the element assigned to the renderlet                                                  |
+| `object`   | Pimcore\Model\Object   | If the element which is dropped on the renderlet is an object this parameter is defined.         |
+| `subtype`  | string                 | The subtype of the element assigned to the renderlet (folder, image, link, page, classname, ...) |
+| `type`     | string                 | The type of the element assigned to the renderlet (document,asset,object)                        |
 
 If you have defined custom parameters to the renderlet configuration you can access them also with `$this->getParam`.
 
