@@ -63,3 +63,35 @@ class TestController extends Action {
  
 ...
 ````
+
+
+## Pimcore Plugins
+It is also possible to install Pimcore plugins via composer. To do so, the plugin has to have a `composer.json` with a special type and need to be accessably for composer. 
+
+### Plugin `composer.json`
+In the plugins `composer.json` a special type (`pimcore-plugin`) and a additional requirement (`"pimcore/installer-plugin": ">=1"`) has to be defined. These two things enable Pimcore to install plugins into */plugins* folder of Pimcore. 
+
+```json 
+{
+  "name": "pimcore-plugins/MyPlugin",
+  "type": "pimcore-plugin",
+  "require": {
+    "pimcore/installer-plugin": ">=1",
+    ...
+  }
+}
+```
+
+### Include Plugins to Pimcore `composer.json`
+To install a plugin into a Pimcore instance, just add the plugin as requirement to Pimcores `composer.json` as follows. Maybe you also need to add an additional repository to tell composer where to find the plugin. 
+
+```json
+{
+    "require": {
+        "pimcore-plugins/MyPlugin": "*"
+    },
+    "repositories": [
+        { "type": "composer", "url": "https://composer-packages.mydomain.com/" }
+    ]
+}
+```
