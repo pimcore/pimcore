@@ -2,32 +2,31 @@
 
 ## Configuration
 
-| Name   | Type    | Description                                                          |
-|--------|---------|----------------------------------------------------------------------|
-| reload | boolean | Set to true to reload the page in editmode after changing the state. |
-| label  | string  | a `<label>` which is added in the editmode                           |
+| Name     | Type    | Description                                                          |
+|----------|---------|----------------------------------------------------------------------|
+| `reload` | boolean | Set to true to reload the page in editmode after changing the state. |
+| `label`  | string  | a `<label>` which is added in the editmode                           |
 
-## Accessible Methods & Types
+## Methods
 
-| Name        | Type      | Description                                                            |
-|-------------|-----------|------------------------------------------------------------------------|
-| value       | boolean   | Status of the checkbox.                                                |
-| isChecked() | boolean   | Get status of the checkbox.                                            |
+| Name          | Type      | Description                                                            |
+|---------------|-----------|------------------------------------------------------------------------|
+| `isChecked()` | boolean   | Get status of the checkbox.                                            |
 
-## Simple example
+## Simple Example
 
 ```php
-<?php echo $this->checkbox("myCheckbox"); ?>
+<?= $this->checkbox("myCheckbox"); ?>
 ```
 
-## Advanced example
+## Advanced Example
 
 ```php
+Setting XYZ: <?= $this->checkbox("myCheckbox"); ?>
+
 <?php if($this->checkbox("myCheckbox")->isChecked()): ?>
-
-<div>
-    <?php //do something... ?>
-</div>
-
+    <div>
+        <?php //do something... ?>
+    </div>
 <? endif; ?>
 ```
