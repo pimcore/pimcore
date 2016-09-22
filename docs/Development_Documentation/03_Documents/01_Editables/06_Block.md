@@ -2,17 +2,18 @@
 
 ## General
 
-A block element is a iterating component which is really powerful.
-Basically a block is only a loop, but you can use other editables in this loop, so it's possible to repeat a set of editables to create a structured page.
-The items in the loop as well as their order can be defined by the editor with the block controls.
+The block element is an iterating component which is really powerful.
+Basically a block is only a loop, but you can use other editables within this loop, so it's possible to repeat a set of 
+editables to create structured content (eg. a link list, or a image gallery).
+The items in the loop as well as their order can be defined by the editor with the block controls provided in the editmode. 
 
 ## Configuration
 
-| Name      | Type      | Description                                                                                                                |
-|-----------|-----------|----------------------------------------------------------------------------------------------------------------------------|
-| limit     | integer   | Max. amount of iterations.                                                                                                 |
-| default   | integer   | If block is empty, this specifies the iterations at startup.                                                               |
-| manual    | bool      | forces the manual mode, which enables a complete free implementation for blocks, for example using read `<table>` elements |
+| Name        | Type      | Description                                                                                                                |
+|-------------|-----------|----------------------------------------------------------------------------------------------------------------------------|
+| `limit`     | integer   | Max. amount of iterations.                                                                                                 |
+| `default`   | integer   | If block is empty, this specifies the iterations at startup.                                                               |
+| `manual`    | bool      | Forces the manual mode, which enables a complete custom HTML implementation for blocks, for example using `<table>` elements |
 
 ## Methods
 
@@ -20,9 +21,9 @@ The items in the loop as well as their order can be defined by the editor with t
 |---------------------|-------------------------------------------------------------|
 | `getCount()`    | Get the total amount of iterations.                         |
 | `getCurrent()`  | Get the current index while looping.                        |
-| `getElements()` | Return a array for every loop to access the defined childs. |
+| `getElements()` | Return a array for every loop to access the defined children. |
 
-## The Block controls
+## The Block Controls
 
 | Control                                   | Operation                                |
 |-------------------------------------------|------------------------------------------|
@@ -30,7 +31,7 @@ The items in the loop as well as their order can be defined by the editor with t
 | ![-](../../img/block_x.png)               | Remove the current block.                |
 | ![up and down](../../img/block_order.png) | Move Block up and down.                  |
 
-## Basic usage
+## Basic Usage
 
 ```php
 <?php while($this->block("contentblock")->loop()) { ?>
@@ -39,17 +40,14 @@ The items in the loop as well as their order can be defined by the editor with t
 <?php } ?>
 ```
 
-The result in editmode should look like, below:
-
+The result in editmode should looks like to following: 
 ![Block in editmode](../../img/block_editmode.png)
 
 And in the frontend of the application:
-
 ![Block in the frontend](../../img/block_frontend_preview.png)
 
-## Advanced usage
-
-### Advanced usage with different bricks.
+## Advanced Usage
+### Advanced Usage with Different Includes.
 
 ```php
 <?php while($this->block("contentblock")->loop()) { ?>
@@ -75,9 +73,7 @@ And in the frontend of the application:
 ```
 
 ### Example for `getCurrent()`
-
 ```php
-
 <?php while ($this->block("myBlock")->loop()) { ?>
     <?php if ($this->block("myBlock")->getCurrent() > 0) { ?>
         Insert this line only after the first iteration<br />
