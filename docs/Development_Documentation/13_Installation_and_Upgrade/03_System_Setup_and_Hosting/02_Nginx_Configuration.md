@@ -1,15 +1,12 @@
 # Nginx Configuration 
 
-**This guide is still unfinished, it only includes the working server config, not other Nginx requirements.**   
-
-**It's highly recommended to use Apache until we definitely have finished this reference configuration**.
-
 Installation on Nginx is entirely possible, and in our experience quite a lot faster thnn apache. This section won't dive into how 
 Nginx is installed etc, but will show a working Nginx configuration.
 
 ## Configuration 
 
-Below is the configuration for a nginx server ( just the server bit, the http etc. bit can be kept default, as long as you include mime.types ).
+Below is the configuration for a Nginx server (just the server part, the http etc. part can be kept default, as long as mime.types 
+are included).
 
 ```
 # mime types are covered in nginx.conf by:
