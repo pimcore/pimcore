@@ -1,4 +1,4 @@
-# Predefined document-types
+# Predefined Document-Types
 
 ## General
 

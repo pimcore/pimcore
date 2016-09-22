@@ -2,9 +2,7 @@
 
 ## General
 
-The Table editable provides ability to define a table structure.
-With that, you can build tables for a frontend application in graphical way. 
-Also, the Table editable allows you to add some predefined values.
+The table editable provides the ability to edit a table structure.
 
 ## Configuration
 
@@ -15,20 +13,17 @@ Also, the Table editable allows you to add some predefined values.
 
 ## Methods
 
-| Name        | Type  | Description                           |
-|-------------|-------|---------------------------------------|
-| `getData()` | array | Get the data of the table as array    |
-| `isEmpty()` | bool  | Whether the editable is empty or not. |
+| Name        | Return | Description                           |
+|-------------|--------|---------------------------------------|
+| `getData()` | array  | Get the data of the table as array    |
+| `isEmpty()` | bool   | Whether the editable is empty or not. |
 
 # Examples
 
 ### Basic usage
 
-I added the table editable responsible for additional product attributes in the `website/views/scripts/content/default.php` template file. 
-The `defaults` row specify the predefined data and number of columns and rows in an initial stage. 
-
 ```php
-<h4><?= $this->translate("Product attributes"); ?></h4>
+<h4><?= $this->translate("Product Attributes"); ?></h4>
 <?= $this->table("productProperties", [
     "width" => 700,
     "height" => 400,
@@ -45,15 +40,14 @@ The `defaults` row specify the predefined data and number of columns and rows in
 ]); ?>
 ```
 
-You're able to change columns and predefined data in the edit mode.
-Find the effect from the backend, below:
+You're now able to change columns and the predefined data in the editmode.
 
 ![Table editable rendered in the editmode](../../img/editables_table_editmode.png)
 
-### Processing the data
+### Processing the Data
 
-Sometimes you would need use only the data from a filled table. 
-You would just use the `getData` method instead of rendering the whole table html.
+Sometimes you need use only the data from a filled table. 
+You would just use the `getData()` method instead of rendering the entire HTML of the table.
 
 ```php
 <?php if($this->editmode):
@@ -73,13 +67,14 @@ echo $this->table("productProperties", [
 ]);
 else:
     $data = $this->table("productProperties")->getData();
-    //do something
+    // returns the data as an array
+    // do something with it ;-) 
 endif;
 ?>
 ```
 
 
-The output from `getData`:
+The output from `getData()`:
 
 ```
 array(4) {
@@ -105,3 +100,4 @@ array(4) {
   }
 }
 ```
+

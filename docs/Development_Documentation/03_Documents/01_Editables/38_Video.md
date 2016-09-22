@@ -2,8 +2,9 @@
 
 ## General
 
-The Video editable is a powerful tool which can place the video (in different types: local files, youtube, vimeo) in the content.
-There are also options like: thumbnails creation, poster assets assigning...
+The video editable is a powerful editable to embed videos in the content.
+Supported video sources are: local assets, YouTube, Vimeo and Dailymotion. 
+Local asset videos support the automatic generation and transcoding of videos using [Video Thumbnails](../../04_Assets/03_Working_with_Thumbnails/03_Video_Thumbnails.md). 
 
 ## Configuration
 
@@ -18,7 +19,8 @@ There are also options like: thumbnails creation, poster assets assigning...
 | `thumbnail`               | string    | Name of the video-thumbnail (required when using automatic-transcoding of videos) see: [Video Thumbnails](../../04_Assets/03_Working_with_Thumbnails/03_Video_Thumbnails.md)                                            |
 | `width`                   | integer   | Width of the video in pixel                                                                                                                                                                                             |
 | `youtube`                 | array     | Parameters for youtube integration. Possible parameters: [https://developers.google.com/youtube/player_parameters](https://developers.google.com/youtube/player_parameters) - only for type ***youtube***               |
-
+  
+  
 ## Methods
 
 | Name                       | Arguments            | Return                                                  | Description                                                                                   |
@@ -33,31 +35,20 @@ There are also options like: thumbnails creation, poster assets assigning...
 | `getData()`                | -                    | array                                                   | All the available data on this editable                                                       |
 | `isEmpty()`                | -                    | bool                                                    | Whether the editable is empty or not.                                                         |
 
-<a name="posterReturnedValue">&nbsp;</a>
-
 Output returned by `getPosterAsset`:
 ```
 [status] => finished
 [formats] => Array
     (
         [mp4] => /website/var/tmp/video_3414__example.mp4
-        [webm] => /website/var/tmp/video_3414__example.webm
     )
 ```
 
-## Accessible properties
-
-| Name | Type   | Description                                         |
-|------|--------|-----------------------------------------------------|
-| id   | string | Asset-ID, YouTube-URL, Vimeo-URL, External-URL, ... |
-| type | string | One of asset, youtube, vimeo, url, ...              |
-
 ## Examples
 
-### Basic usage - a local file
+### Basic Usage - a Local Asset
 
-To create a container for local video files you can just use `video` helper without any requried parameters.
-See the code, below.
+To create a container for local video files you can just use the `$this->video` helperwithout any options.
 
 ```php
 <section id="campaign_video">
@@ -68,15 +59,15 @@ See the code, below.
 </section>
 ```
 
-In the editmode, there is now available the container where you can specify an asset path and a video poster. 
+In the editmode, there is now a container available where you can assign an asset path and a video poster. 
 
 ![Video editable window - editmode](../../img/editables_video_localtype_editmode.png)
 
 
-### YouTube & Vimeo
+### YouTube, Vimeo & Dailymotion
 
-You can put videos from external services, as well (at the moment, YouTube and Vimeo).
-In the video edit dialog, change the type to `youtube` and fill the **ID** input with a video identifier 
+You can use videos from external services, as well (at the moment, YouTube, Vimeo and Dailymotion) but with limited functionalities. 
+In the video edit dialog, change the type to `youtube` and fill the **ID** input with a video identifier or the video URL.
 (in that case you can easily find it in the url).
 
 ![Video editable - YouTube configuration - editmode](../../img/editables_video_youtube_editmode.png)
@@ -104,7 +95,7 @@ In the configuration, you could also specify additional options for external ser
 </section>
 ```
 
-### HTML5 with automatic Video transcoding (using video.js)
+### HTML5 with Automatic Video Transcoding (using video.js)
 ```php
 <!DOCTYPE HTML>
 <html>
@@ -125,5 +116,5 @@ In the configuration, you could also specify additional options for external ser
 </html>
 ```
 
-Find out more about Thumbnails in [the dedicated section](../../04_Assets/03_Working_with_Thumbnails/03_Video_Thumbnails.md).
+Read more about [Video Thumbnails](../../04_Assets/03_Working_with_Thumbnails/03_Video_Thumbnails.md).
 
