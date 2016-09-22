@@ -88,7 +88,8 @@ Brick-specific configurations are passed using the params configuration (see abo
 |-----------------|------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | forceEditInView | bool | If a brick contains an edit.php there's no editmode for the `view.php` file, if you want to have the editmode enabled in both templates, enable this option |
 
-Example: 
+  
+##### Example
 
 ```php
 <?php echo $this->areablock("myArea", [
@@ -113,7 +114,7 @@ You can read about **bricks** in the [Bricks](./02_Bricks.md) section.
 
 ## Using Manual Mode
 
-The manual mode offers you the possibility to deal with areablocks the way you like, this is for example useful when using tables: 
+The manual mode offers you the possibility to use areablocks with custom HTML, this is for example useful when using tables: 
 
 ```php
 <?php $areaBlock = $this->areablock("myArea", ["manual" => true])->start(); ?>
