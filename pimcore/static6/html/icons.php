@@ -52,6 +52,7 @@
                 <div class="label"><?= basename($icon) ?></div>
             </div>
         <?php
+
 } ?>
     </div>
 

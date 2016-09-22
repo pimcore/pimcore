@@ -84,6 +84,7 @@ foreach ($icons as $icon) {
     ?>" alt="<?php echo $icon;
     ?>"/></a>
 <?php
+
 } ?>
 <br/><br/>
 <table>
