@@ -1,7 +1,5 @@
 # Snippet Editable
 
-[TOC]
-
 ## General
 
 Use the snippet editable to embed a document snippet, for example teasers, boxes, footers, etc.

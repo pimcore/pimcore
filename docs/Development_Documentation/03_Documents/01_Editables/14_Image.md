@@ -1,7 +1,5 @@
 # Image Editable
 
-[TOC]
-
 ## Description
 
 The Image editable add an editable area when you can drop images from assets (or just upload from you desktop).

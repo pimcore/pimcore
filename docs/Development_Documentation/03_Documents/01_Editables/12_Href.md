@@ -1,7 +1,5 @@
 # Href Editable
 
-[TOC]
-
 ## General
 
 Href provides to create a reference to an other element in Pimcore (document, asset, object).
