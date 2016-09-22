@@ -7,34 +7,27 @@ assets and for structured links, which shouldn't be inside WYSIWYG (for example 
 
 ## Configuration
 
-You can pass every valid attribute an a-tag can have ([w3.org - Link](http://www.w3.org/TR/html401/struct/links.html#h-12.2)), such as:
+You can pass every valid attribute an `<a>`-tag can have ([w3.org - Link](http://www.w3.org/TR/html401/struct/links.html#h-12.2)), 
+such as: `class`, `target`, `id`, `style`, `accesskey`, `name`, `title` and additionally the following: 
 
-* class
-* target
-* id
-* style
-* accesskey
-* name
-* title
-
-| Name   | Type     | Description                                                             |
-|--------|----------|-------------------------------------------------------------------------|
-| reload | boolean  | Set to true to reload the page in editmode after changing the state.    |
+| Name     | Type     | Description                                                             |
+|----------|----------|-------------------------------------------------------------------------|
+| `reload` | boolean  | Set to true to reload the page in editmode after changing the state.    |
 
 ## Methods
 
-| Name            | Return-Type | Description                      |
-|-----------------|-------------|----------------------------------|
-| getHref()       | string      | get the path of this link        |
-| getText()       | string      | get the text of the link         |
-| getTarget()     | string      | get the target of the link       |
-| getParameters() | string      | get the query params of the link |
-| getAnchor()     | string      | get the anchor text of the link  |
-| getTitle()      | string      | get the title of the link        |
-| getRel()        | string      | get the rel text of the link     |
-| getTabindex()   | string      | get the tabindex of the link     |
-| getAccessKey()  | string      | get the access key of the link   |
-| isEmpty()       | string      | empty or not                     |
+| Name              | Return      | Description                          |
+|-------------------|-------------|--------------------------------------|
+| `getHref()`       | string      | Get the path of this link            |
+| `getText()`       | string      | Get the text of the link             |
+| `getTarget()`     | string      | Get the target of the link           |
+| `getParameters()` | string      | Get the query params of the link     |
+| `getAnchor()`     | string      | Get the anchor text of the link      |
+| `getTitle()`      | string      | Get the title of the link            |
+| `getRel()`        | string      | Get the rel text of the link         |
+| `getTabindex()`   | string      | Get the tabindex of the link         |
+| `getAccessKey()`  | string      | Get the access key of the link       |
+| `isEmpty()`       | string      | Whether the editable is empty or not |
 
 ## Examples
 

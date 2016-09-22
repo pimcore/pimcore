@@ -6,10 +6,16 @@ into a block element, and the editor cannot choose which area is used, this has 
 
 ## Configuration
 
-| Name   | Type   | Description                                                    |
-|--------|--------|----------------------------------------------------------------|
+| Name     | Type   | Description                                                    |
+|----------|--------|----------------------------------------------------------------|
 | `type`   | string | ID of the brick which should be used in this area              |
 | `params` | array  | Optional Parameter see [areablock](./02_Areablock/README.md) for details |
+
+## Methods
+
+| Name                | Return        | Description                                                 |
+|---------------------|---------------|-------------------------------------------------------------|
+| `getElement($name)` | Document\Tag  | Retrieves an editable from within the actual area           |
 
 ## Example
 

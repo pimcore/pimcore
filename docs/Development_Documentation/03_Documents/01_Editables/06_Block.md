@@ -17,11 +17,12 @@ The items in the loop as well as their order can be defined by the editor with t
 
 ## Methods
 
-| Name                | Description                                                 |
-|---------------------|-------------------------------------------------------------|
-| `getCount()`    | Get the total amount of iterations.                         |
-| `getCurrent()`  | Get the current index while looping.                        |
-| `getElements()` | Return a array for every loop to access the defined children. |
+| Name            | Return    | Description                                                 |
+|-----------------|-----------|-------------------------------------------------------------|
+| `isEmpty()`     | bool      | Whether the editable is empty or not.                          |
+| `getCount()`    | int       | Get the total amount of iterations.                         |
+| `getCurrent()`  | int       | Get the current index while looping.                        |
+| `getElements()` | array     | Return a array for every loop to access the defined children. |
 
 ## The Block Controls
 

@@ -1,15 +1,14 @@
 # Date Editable
 
-## Basic usage
+## Basic Usage
 
 The following code will create a simple date widget in editmode. 
-In frontend it will output the date as defined in **output**.
+In frontend it will format the date as defined in `format`.
 
-Localization (output-format, ...) is automatically used from the global locale, which is either defined by the 
-underlying document or in your code ( `$this->setLocale("de_AT")` in your action ), for more information, 
-please read the topic [Pimcore localization](../../06_Multi_Language_i18n/README.md).
+Localization (output-format, ...) is automatically used from the globally registered locale.
+Please read the topic [Localization](../../06_Multi_Language_i18n/README.md).
 
-## Simple example
+## Simple Example
 ```php
 <?= $this->date("myDate", [
      "format" => "d.m.Y"
@@ -18,9 +17,15 @@ please read the topic [Pimcore localization](../../06_Multi_Language_i18n/README
 
 ### Configuration
 
-| Name   | Type   | Description                                                  |
-|--------|--------|--------------------------------------------------------------|
-| format | string | A string which describes how to output the date. (see below) |
+| Name     | Type   | Description                                                  |
+|----------|--------|--------------------------------------------------------------|
+| `format` | string | A string which describes how to output the date. (see below) |
+
+## Methods
+
+| Name          | Return    | Description                                                            |
+|---------------|-----------|------------------------------------------------------------------------|
+| `isEmpty()`   | boolean   | Whether the editable is empty or not                                   |
 
 ## List of supported formats
 

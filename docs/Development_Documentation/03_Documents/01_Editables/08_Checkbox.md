@@ -9,9 +9,10 @@
 
 ## Methods
 
-| Name          | Type      | Description                                                            |
+| Name          | Return    | Description                                                            |
 |---------------|-----------|------------------------------------------------------------------------|
 | `isChecked()` | boolean   | Get status of the checkbox.                                            |
+| `isEmpty()`   | boolean   | Whether the editable is empty or not (alias of `isChecked()`)          |
 
 ## Simple Example
 

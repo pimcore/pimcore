@@ -6,28 +6,23 @@ Multihref editable provides one to many relation to other Pimcore elements (docu
 
 ## Configuration 
 
-| Name         | Type      | Description                                                                                                                                                     |
-|--------------|-----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| width        | integer   | Width for the widget in pixels (optional)                                                                                                                       |
-| height       | integer   | Height for the widget in pixels  (optional)                                                                                                                     |
-| title        | string    | Title for the input-widget                                                                                                                                      |
-| uploadPath   | string    | Target path for (inline) uploaded assets                                                                                                                        |
-| types        | array     | Allowed types (document, asset, object), if empty all types are allowed                                                                                         |
-| subtypes     | array     | Allowed subtypes grouped by type (folder, page, snippet, image, video, object, ...), if empty all subtypes are allowed (see example below)                      |
-| classes      | array     | Allowed object class names, if empty all classes are allowed                                                                                                    |
+| Name           | Type      | Description                                                                                                                                                     |
+|----------------|-----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `width`        | integer   | Width for the widget in pixels (optional)                                                                                                                       |
+| `height`       | integer   | Height for the widget in pixels  (optional)                                                                                                                     |
+| `title`        | string    | Title for the input-widget                                                                                                                                      |
+| `uploadPath`   | string    | Target path for (inline) uploaded assets                                                                                                                        |
+| `types`        | array     | Allowed types (document, asset, object), if empty all types are allowed                                                                                         |
+| `subtypes`     | array     | Allowed subtypes grouped by type (folder, page, snippet, image, video, object, ...), if empty all subtypes are allowed (see example below)                      |
+| `classes`      | array     | Allowed object class names, if empty all classes are allowed                                                                                                    |
 
-## Accesible properties
+## Methods
 
-| Name     | Type  | Description                    |
-|----------|-------|--------------------------------|
-| elements | array | Array of the assigned elements |
-
-## Available methods
-
-| Name          | Type    | Description                         |
-|---------------|---------|-------------------------------------|
-| getElements() | array   | Array of the assigned elements      |
-| current()     | int     | Get the current index while looping |
+| Name            | Return   | Description                          |
+|-----------------|----------|--------------------------------------|
+| `getElements()` | array    | Array of the assigned elements       |
+| `current()`     | int      | Get the current index while looping  |
+| `isEmpty()`     | boolean  | Whether the editable is empty or not |
 
 
 ## Example

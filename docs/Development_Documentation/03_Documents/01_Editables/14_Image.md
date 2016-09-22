@@ -13,26 +13,26 @@ The biggest cons of using that instead of (for example) the href editable:
 
 ## Configuration
 
-| Name                         | Type    | Description                                                                                                                                                                                                                        |
-|------------------------------|---------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| title                        | string  | You can give the image widget in editmode a title. Using the new style (**ExtJS 6**) this title is displayed as a tooltip.                                                                                                             |
-| width                        | integer | Width of the image in pixel                                                                                                                                                                                                        |
-| height                       | integer | Height of the image in pixel                                                                                                                                                                                                       |
-| thumbnail                    | string  | Name of the configured thumbnail which should be used                                                                                                                                                                              |
-| hidetext                     | boolean | Hides the input for the ALT-text in editmode                                                                                                                                                                                       |
-| reload                       | boolean | Set true to reload the page in editmode after updating the image                                                                                                                                                                   |
-| minWidth                     | integer | min. width of the image (in pixel)                                                                                                                                                                                                 |
-| minHeight                    | integer | min. height of the image (in pixel)                                                                                                                                                                                                |
-| attributes                   | array   | custom attributes for the <img /> tag - this can be used to pass custom attributes (not w3c)                                                                                                                                       |
-| removeAttributes             | array   | You can remove standard attributes using this configuration, e.g. `"removeAttributes" => ["controls","poster"]`                                                                                                       |
-| uploadPath                   | string  | Target path for (inline) uploaded images                                                                                                                                                                                           |
-| highResolution               | float   | factor the thumbnail dimensions should be multiplied with (html attributes width and height contain the original dimensions ... used for **Retina* displays, print, ...)                                                            |
-| disableWidthHeightAttributes | bool    | width & height attributes are set automatically by pimcore, to avoid this set this option (eg. to true => isset check)                                                                                                             |
-| disableAutoTitle             | bool    | set to true, to disable the automatically generated title attribute (containing title and copyright from the origin image)                                                                                                         |
-| disableAutoAlt               | bool    | set to true, to disable the automatically generated alt attribute                                                                                                                                                                  |
-| disableAutoCopyright         | bool    | set to true, to disable the automatically appended copyright info (alt & title attribute)                                                                                                                                          |
-| dropClass                    | string  | This option can be used to add multiple alternative drop-targets and context menus on custom HTML elements in your code. <br /><br />Just add the class specified here also to custom HTML elements and they will get a drop target too. |
-| deferred                     | bool    | set to false to disable deferred (on demand) thumbnail rendering                                                                                                                                                                   |
+| Name                           | Type    | Description                                                                                                                                                                                                                        |
+|--------------------------------|---------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `title`                        | string  | You can give the image widget in editmode a title. Using the new style (**ExtJS 6**) this title is displayed as a tooltip.                                                                                                             |
+| `width`                        | integer | Width of the image in pixel                                                                                                                                                                                                        |
+| `height`                       | integer | Height of the image in pixel                                                                                                                                                                                                       |
+| `thumbnail`                    | string  | Name of the configured thumbnail which should be used                                                                                                                                                                              |
+| `hidetext`                     | boolean | Hides the input for the ALT-text in editmode                                                                                                                                                                                       |
+| `reload`                       | boolean | Set true to reload the page in editmode after updating the image                                                                                                                                                                   |
+| `minWidth`                     | integer | min. width of the image (in pixel)                                                                                                                                                                                                 |
+| `minHeight`                    | integer | min. height of the image (in pixel)                                                                                                                                                                                                |
+| `attributes`                   | array   | custom attributes for the <img /> tag - this can be used to pass custom attributes (not w3c)                                                                                                                                       |
+| `removeAttributes`             | array   | You can remove standard attributes using this configuration, e.g. `"removeAttributes" => ["controls","poster"]`                                                                                                       |
+| `uploadPath`                   | string  | Target path for (inline) uploaded images                                                                                                                                                                                           |
+| `highResolution`               | float   | factor the thumbnail dimensions should be multiplied with (html attributes width and height contain the original dimensions ... used for **Retina* displays, print, ...)                                                            |
+| `disableWidthHeightAttributes` | bool    | width & height attributes are set automatically by pimcore, to avoid this set this option (eg. to true => isset check)                                                                                                             |
+| `disableAutoTitle`             | bool    | set to true, to disable the automatically generated title attribute (containing title and copyright from the origin image)                                                                                                         |
+| `disableAutoAlt`               | bool    | set to true, to disable the automatically generated alt attribute                                                                                                                                                                  |
+| `disableAutoCopyright`         | bool    | set to true, to disable the automatically appended copyright info (alt & title attribute)                                                                                                                                          |
+| `dropClass`                    | string  | This option can be used to add multiple alternative drop-targets and context menus on custom HTML elements in your code. <br /><br />Just add the class specified here also to custom HTML elements and they will get a drop target too. |
+| `deferred`                     | bool    | set to false to disable deferred (on demand) thumbnail rendering                                                                                                                                                                   |
 
 You can also pass every valid attribute an img-tag can have ([w3.org Image](http://www.w3.org/TR/html401/struct/objects.html#edef-IMG)), such as:
 * class
@@ -41,14 +41,15 @@ You can also pass every valid attribute an img-tag can have ([w3.org Image](http
 
 ## Methods
 
-| Name                 | Arguments            | Returned value                        | Description                                                             |
-|----------------------|----------------------|---------------------------------------|-------------------------------------------------------------------------|
-| getThumbnail($name)  | (string/array) $name | Pimcore\Model\Asset\Image\Thumbnail   | get a specific thumbnail of the image                                   |
-| getText() / getAlt() | -                    | string, alt/title text from the image | The entered alternative text in the widget                              |
-| getSrc()             | -                    | string, absolute path to the image    | The path to the original image which is referenced                      |
-| getImage()           | -                    | \Pimcore\Model\Asset\Image            | The asset object which is referenced (`\Pimcore\Model\Asset\Image`) |
-| getHotspots()        | -                    | array                                 | returns the hotspot data (see example below)                            |
-| getMarker()          | -                    | array                                 | returns the marker data (see example below)                             |
+| Name                     | Arguments            | Return                                | Description                                                             |
+|--------------------------|----------------------|---------------------------------------|-------------------------------------------------------------------------|
+| `getThumbnail($name)`    | (string/array) $name | Pimcore\Model\Asset\Image\Thumbnail   | Get a specific thumbnail of the image                                   |
+| `getText()` / `getAlt()` | -                    | string, alt/title text from the image | The entered alternative text in the widget                              |
+| `getSrc()`               | -                    | string, absolute path to the image    | The path to the original image which is referenced                      |
+| `getImage()`             | -                    | \Pimcore\Model\Asset\Image            | The asset object which is referenced (`\Pimcore\Model\Asset\Image`)     |
+| `getHotspots()`          | -                    | array                                 | Returns the hotspot data (see example below)                            |
+| `getMarker()`            | -                    | array                                 | Returns the marker data (see example below)                             |
+| `isEmpty()`              | -                    | bool                                  | Whether the editable is empty or not                                    |
 
 ## Examples
 

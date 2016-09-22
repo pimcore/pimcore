@@ -5,17 +5,18 @@ The numeric editable is like a normal textfield but with special configurations 
 
 ## Configuration
 
-| Name     | Type    | Description                 |
-|----------|---------|-----------------------------|
-| maxValue | float   | Define a maximum value      |
-| minValue | float   | Define a minimum value      |
-| width    | integer | Width of the field in pixel |
+| Name       | Type    | Description                 |
+|------------|---------|-----------------------------|
+| `maxValue` | float   | Define a maximum value      |
+| `minValue` | float   | Define a minimum value      |
+| `width`    | integer | Width of the field in pixel |
 
-## Accessible properties
+## Methods
 
-| Name       | Type      | Description                                                                  |
-|------------|-----------|------------------------------------------------------------------------------|
-| number     | float     | Value of the numeric field, this is useful to get the value even in editmode |
+| Name        | Return      | Description                                                                  |
+|-------------|-------------|------------------------------------------------------------------------------|
+| `getData()` | int|float   | Value of the numeric field, this is useful to get the value even in editmode |
+| `isEmpty()` | boolean  | Whether the editable is empty or not                                            |
 
 ## Examples
 

@@ -11,23 +11,23 @@ In frontend-mode the href returns the path of the linked element.
 
 ## Configuration
 
-| Name       | Type    | Description                                                                                                                                |
-|------------|---------|--------------------------------------------------------------------------------------------------------------------------------------------|
-| types      | array   | Allowed types (document, asset, object), if empty all types are allowed                                                                    |
-| subtypes   | array   | Allowed subtypes grouped by type (folder, page, snippet, image, video, object, ...), if empty all subtypes are allowed (see example below) |
-| classes    | array   | Allowed object class names, if empty all classes are allowed                                                                               |
-| reload     | boolean | true triggers page reload on each change                                                                                                   |
-| width      | int     | Width of the field in pixel.                                                                                                               |
-| uploadPath | string  | Target path for (inline) uploaded assets                                                                                                   |
+| Name         | Type    | Description                                                                                                                                |
+|--------------|---------|--------------------------------------------------------------------------------------------------------------------------------------------|
+| `types`      | array   | Allowed types (document, asset, object), if empty all types are allowed                                                                    |
+| `subtypes`   | array   | Allowed subtypes grouped by type (folder, page, snippet, image, video, object, ...), if empty all subtypes are allowed (see example below) |
+| `classes`    | array   | Allowed object class names, if empty all classes are allowed                                                                               |
+| `reload`     | boolean | `true` triggers page reload on each change                                                                                                   |
+| `width`      | int     | Width of the field in pixel.                                                                                                               |
+| `uploadPath` | string  | Target path for (inline) uploaded assets                                                                                                   |
 
 
-## Properties and methods
+## Methods
 
-| Name          | Type     | Description                      |        |                                                                   |
-|---------------|----------|----------------------------------|--------|-------------------------------------------------------------------|
-| getElement()  | Document | Asset                            | Object | Object assigned to the href.                                      |
-| getFullPath() | string   | Get the of the assigned element. |        |                                                                   |
-| element       | Document | Asset                            | Object | The property for getElement() it's a good idea to use the getter. |
+| Name            | Return   | Description                                |
+|-----------------|----------|--------------------------------------------|
+| `getElement()`  | Element  | Get the assigned element                   |
+| `getFullPath()` | string   | Get the full path of the assigned element. |
+| `isEmpty()`     | boolean  | Whether the editable is empty or not       |
 
 ## Examples
 
@@ -61,7 +61,7 @@ Have a look at the example, below.
 ]); ?>
 ```
 
-We specified that in to the **myHref** editable user can put only video / image **assets** and **objects** represented by Person (`\Pimcore\Model\Object\Person`) class. 
+We specified that in to the `myHref` editable user can put only video / image **assets** and **objects** represented by Person (`\Pimcore\Model\Object\Person`) class. 
  
 As you see in the picture below, it's impossible to drop any other type to that editable.
 

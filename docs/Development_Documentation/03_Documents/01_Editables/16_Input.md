@@ -7,19 +7,20 @@ An administration user is not able to change any style properties in the editmod
 
 ## Configuration
 
-| Name             | Type    | Configuration                                                                         |
-|------------------|---------|---------------------------------------------------------------------------------------|
-| width            | integer | Width of the input in editmode (in pixels)                                            |
-| htmlspecialchars | boolean | Set to false to get the raw value without HTML special chars like & (default to true) |
-| nowrap           | boolean | set to false to disable the automatic line break                                      |
-| class            | string  | a css class that is added to the element only in editmode                             |
-| placeholder      | string  | a placeholder that is displayed when the field is empty                               |
+| Name               | Type    | Configuration                                                                         |
+|--------------------|---------|---------------------------------------------------------------------------------------|
+| `width`            | integer | Width of the input in editmode (in pixels)                                            |
+| `htmlspecialchars` | boolean | Set to false to get the raw value without HTML special chars like & (default to true) |
+| `nowrap`           | boolean | set to false to disable the automatic line break                                      |
+| `class`            | string  | a css class that is added to the element only in editmode                             |
+| `placeholder`      | string  | a placeholder that is displayed when the field is empty                               |
 
-## Accesible properties
+## Methods
 
-| Name | Type   | Description                                                           |
-|------|--------|-----------------------------------------------------------------------|
-| text | string | Value of the input, this is useful to get the value even in editmode. |
+| Name        | Return   | Description                                                           |
+|-------------|----------|-----------------------------------------------------------------------|
+| `getData()` | string   | Value of the input, this is useful to get the value even in editmode. |
+| `isEmpty()` | boolean  | Whether the editable is empty or not                                  |
 
 ## Example 
 

@@ -11,25 +11,20 @@ The PDF editable allows you to embed asset documents (pdf, doc, xls, ...) into d
 
 ## Configuration
 
-| Name              | Type      | Description                                                                             |
-|-------------------|-----------|-----------------------------------------------------------------------------------------|
-| width             | integer   | Width of the viewer (default 100%)                                                      |
-| height            | integer   | Height of the viewerin pixel                                                            |
-| fullscreen        | bool      | allow fullscreen or not                                                                 |
-| hotspotCallback   | closure   | possibility to add custom attributes on hotspot `<div>` tags, ... see example below |
+| Name                | Type      | Description                                                                             |
+|---------------------|-----------|-----------------------------------------------------------------------------------------|
+| `width`             | integer   | Width of the viewer (default 100%)                                                      |
+| `height`            | integer   | Height of the viewerin pixel                                                            |
+| `fullscreen`        | bool      | allow fullscreen or not                                                                 |
+| `hotspotCallback`   | closure   | possibility to add custom attributes on hotspot `<div>` tags, ... see example below |
 
 ## Methods
 
-| Name          | Arguments | Returned value | Description                                 |
-|---------------|-----------|----------------|---------------------------------------------|
-| getHotspots() | -         | Array          | containing the hotspots defined in editmode |
-
-## Accessible properties
-
-| Name        | Type   | Description                                         |
-|-------------|--------|-----------------------------------------------------|
-| hotspots    | array  | Array containing the hotspots defined in editmode   |
-| id          | string | Asset-ID, YouTube-URL, Vimeo-URL, External-URL, ... |
+| Name            | Return   | Description                                 |
+|-----------------|----------|---------------------------------------------|
+| `getData()`     | array    | Returns all stored data for this editable   |
+| `isEmpty()`     | boolean  | Whether the editable is empty or not        |
+| `getElement()`  | Asset    | Returns the assigned Asset Document         |
 
 ## Examples
 

@@ -3,22 +3,23 @@
 ## General
 
 The Multiselect implemention in documents.
-The Multiselect editable generates **multiselect** box component in Editmode, 
+The Multiselect editable generates **multiselect** box component in dditmode, 
 next you can use those values in the application.
 
 ## Configuration
 
-| Name   | Type    | Description                                |
-|--------|---------|--------------------------------------------|
-| store  | array   | Key/Value pairs for the available options. |
-| width  | integer | Width of a generated block in editmode     |
-| height | integer | Height of a generated block in editmode    |
+| Name     | Type    | Description                                |
+|----------|---------|--------------------------------------------|
+| `store`  | array   | Key/Value pairs for the available options. |
+| `width`  | integer | Width of a generated block in editmode     |
+| `height` | integer | Height of a generated block in editmode    |
 
-## Available methods
+## Methods
 
-| Name      | Type  | Description                                     |
-|-----------|-------|-------------------------------------------------|
-| getData() | array | Returns array of values chosen in the editmode. |
+| Name        | Return  | Description                                     |
+|-------------|---------|-------------------------------------------------|
+| `getData()` | array   | Returns array of values chosen in the editmode. |
+| `isEmpty()` | boolean | Whether the editable is empty or not            |
 
 ## Example
 
