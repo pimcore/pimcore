@@ -111,11 +111,8 @@ And the final view is like, below:
 
 ## Editmode
 
-<div class="notice-box">
+> Please be aware, that the renderlet itself is not editmode-aware. If you need to determine within the renderlet whether in editmode or not, you need to pass that parameter to the renderlet.
 
-Please be aware, that the renderlet itself is not editmode-aware. If you need to determine within the renderlet whether in editmode or not, you need to pass that parameter to the renderlet.
-
-</div>
 
 ```php
 $this->renderlet("myRenderlet", [

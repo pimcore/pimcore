@@ -36,10 +36,8 @@ specific attribute.
 To get the inherited values in the backend via code, you have to use the getter-methods of the attributes. By accessing 
 the attributes directly, you will not get the inherited values.
 
-<div class="notice-box">
-Bear in mind
-The complex data type field collections do not support inheritance.
-</div>
+> **Bear in mind**
+> The complex data type field collections do not support inheritance.
 
 
 ## Parent Class - Class Inheritance
@@ -50,11 +48,9 @@ otherwise, a data class can extend a different parent class. If the parent class
 specified in the class definition as shown in the screen below:
 ![Parent Class](../../../img/classes-class-inheritance.png)
 
-<div class="notice-box">
-Be Careful
-This is a very advanced feature and should only be used by very experienced developers who know what they are doing and 
-what consequences it might have when the parent class is changed from `Pimcore\Model\Object\Concrete` to something 
-else. 
+> **Be Careful**  
+> This is a very advanced feature and should only be used by very experienced developers who know what they are doing and 
+> what consequences it might have when the parent class is changed from `Pimcore\Model\Object\Concrete` to something else. 
 
 In order to maintain all pimcore functionalities, it has to be ensured that the special class used in the example 
 above extends `Pimcore\Model\Object\Concrete` and that it's methods don't override and clash in unexpected ways 

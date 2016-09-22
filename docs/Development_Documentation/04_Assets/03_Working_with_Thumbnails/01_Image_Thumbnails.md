@@ -7,11 +7,10 @@ For images, Pimcore offers an advanced thumbnail-service also called 'image-pipe
 With this service every image which is stored as an asset can be transformed. Pimcore doesn't support to modify images 
 which are not stored as an asset inside Pimcore.
 
-<div class="notice-box">
-IMPORTANT: Use imagick PECL extension for best results, GDlib is just a fallback with limited functionality 
-(only PNG, JPG, GIF) and less quality!
-Using ImageMagick pimcore supports hundreds of formats including: AI, EPS, TIFF, PNG, JPG, GIF, PSD, ...
-</div>
+> IMPORTANT: Use imagick PECL extension for best results, GDlib is just a fallback with limited functionality 
+> (only PNG, JPG, GIF) and less quality!
+> Using ImageMagick pimcore supports hundreds of formats including: AI, EPS, TIFF, PNG, JPG, GIF, PSD, ...
+
 
 To use the thumbnailing service of Pimcore, you have to create a transformation pipeline first. To do so, open 
 `Settings` -> `Thumbnails`, and click on `Add Thumbnail` to create a new configuration.

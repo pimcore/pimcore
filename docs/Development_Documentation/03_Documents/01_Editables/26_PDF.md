@@ -1,9 +1,7 @@
 # PDF
 
-<div class="notice-box">
-
-This editable requires ghostscript installed on your server. 
-See [System requirements](../../13_Installation_and_Upgrade/01_System_Requirements.md)
+> This editable requires Ghostscript installed on your server. 
+> See [System Requirements](../../13_Installation_and_Upgrade/01_System_Requirements.md)
 
 </div>
 

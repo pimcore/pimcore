@@ -123,10 +123,8 @@ The intention is to
 
 ## Customizing the Tree Context Menu
 
-<div class="notice-box">
-Since build 3790
-Experimental: Subject to change without notice.
-</div>
+> **Since build 3790**  
+> Experimental: Subject to change without notice.
 
 Allows you to hide certain context menu items via the customview's treeContextMenu configuration option.
 

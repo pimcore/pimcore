@@ -27,6 +27,5 @@ if($asset instanceof Asset\Document) {
 }
 ```
 
-<div class="notice-box">
-This feature requires Ghostscript and LibreOffice on the server installed.
-</div>
+> This feature requires Ghostscript and LibreOffice on the server installed.
+

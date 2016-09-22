@@ -141,10 +141,7 @@ The `layout settings` allow to apply custom CSS to any object field.
 ![Data Field Settings](../../../img/classes-datatypes3.jpg)
 
 
-<div class="notice-box">
-WARNING
-Please note that renaming a field means the loss of data from the field in all objects using this class.
-</div>
+> **WARNING**  
+> Please note that renaming a field means the loss of data from the field in all objects using this class.
 
-
-See subpages of this page for detail documentation of different data types. 
+See sub-pages of this page for detail documentation of different data types. 

@@ -57,9 +57,5 @@ Fields available in the properties configuration.
 | Configuration | N            | This field is used to configure a property. At the mmoment, this is used only by the property-type *select*.                                                                                                     |
 | Content-Type  | Y            | Defines for which element-type (document, asset or object) the property should be available.                                                                                                                     |
 
-<div class="notice-box">
-
-**Note**:
-Each defined field can be overwritten in the element after it was added.
-
-</div>
+> **Note**   
+> Each defined field can be overwritten in the element after it was added.

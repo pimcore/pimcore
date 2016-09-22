@@ -136,12 +136,9 @@ In the following table you can see all available methods in your views (both in 
 You can use the `edit.php` file to allow users to add data to the brick. The `edit.php` file can include HTML and editables.
 When this file is present an icon will appear for the user which can be clicked to display and edit the editable fields.
 
-<div class="notice-box">
+> Using `edit.php` will disable all editables in `view.php` (they appear like in the frontend, but cannot be edited). 
+> You cannot have editables in both files.
 
-Using `edit.php` will disable all editables in `view.php` (they appear like in the frontend, but cannot be edited). 
-You cannot have editables in both files.
-
-</div>
 
 Example contents of the `edit.php` file:
 

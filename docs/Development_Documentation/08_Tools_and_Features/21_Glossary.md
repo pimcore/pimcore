@@ -41,12 +41,7 @@ And the HTML-markup will look like, below.
 </p>
 ```
 
-<div class="notice-box">
-
-**Note:** 
-Since the glossary depends on languages you'll have to register a language first.
+> **Note**   
+> Since the glossary depends on languages you'll have to register a language first.
 
 [Read more about this topic here.](../06_Multi_Language_i18n/02_Localize_your_Documents.md)
-
-</div>
-

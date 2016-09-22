@@ -5,11 +5,9 @@
 
 ## Configure the Output Cache
 
-<div class="notice-box">
-Please Note
-The output-cache is disabled by default if you're logged in in the admin interface or in the case 
-the debug mode (settings -> system -> debug) is on.
-</div>
+> **Please Note**  
+> The output-cache is disabled by default if you're logged in in the admin interface or in the case 
+> the debug mode (settings -> system -> debug) is on.
 
 The output-cache only works with GET request, he takes the whole response (only for the frontend)
 including the headers from a request and stores it into the cache. The next request to the same 

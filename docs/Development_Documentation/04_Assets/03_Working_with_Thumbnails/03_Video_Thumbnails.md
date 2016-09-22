@@ -2,11 +2,10 @@
 Pimcore is able to convert videos to the most formats used in the web automatically. It is also possible capture a 
 custom preview image out of the video.
 
-<div class="notice-box">
-To use all these functionalities it is required to install FFMPEG on the server. It is also required to configure the 
-path to FFMPEG and to the PHP-CLI binary in the system settings. For Details of installation 
-see [Installation Documentation](../../13_Installation_and_Upgrade/03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md).
-</div>
+> To use all these functionalities it is required to install FFMPEG on the server. It is also required to configure the 
+> path to FFMPEG and to the PHP-CLI binary in the system settings. For Details of installation 
+> see [Installation Documentation](../../13_Installation_and_Upgrade/03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md).
+
 
 ### Using Video Thumbnails in Code
 

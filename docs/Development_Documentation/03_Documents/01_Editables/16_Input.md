@@ -61,8 +61,5 @@ To validate the input you have to add `validator` parameter to the configuration
     ]); ?>
 </h2>
 ```
-<div class="notice-box">
 
-At the moment, the validation has **only visual effect**, user can still save an incorrect value. 
-
-</div>
+> At the moment, the validation has **only visual effect**, user can still save an incorrect value. 

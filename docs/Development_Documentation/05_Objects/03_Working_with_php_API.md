@@ -45,13 +45,9 @@ $city->delete();
 ```
 
 
-<div class="notice-box">
-When using your generated classes in the code, the classname always starts with a capital letter.
-
-Example-Classname: product
-
-PHP-Class: Object\Product
-</div>
+> When using your generated classes in the code, the classname always starts with a capital letter.  
+> Example-Classname: `product`  
+> PHP-Class: `Object\Product`
 
 
 ## Object Listings

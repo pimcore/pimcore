@@ -122,9 +122,9 @@ if ($myProductList instanceof \Website\Model\News\Listing) {
 }
 ```
 
-<div class="notice-box">
-WARNING: Be carefully if you want to overwrite methods like save(), update(), delete() or any other method which is already defined by Pimcore.
-</div>
+> **WARNING**  
+> Be carefully if you want to overwrite methods like `save()`, `update()`, `delete()` or any other method which is already defined by Pimcore.
+
 
 So far it's only read-only that means that the mapping only take effect by the getters like Document::getById() or 
 Asset::getList(), .. and so on.
