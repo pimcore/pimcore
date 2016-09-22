@@ -1,6 +1,6 @@
 # Amazon AWS Setup Guide & Best Practice Configurations
 
-This guide works using version => 4.2.0 (build 3878)
+This guide works using Pimcore version => 4.2.0 (build 3878)
 
 ## App-Server (EC2 + EBS)
 We recommend a Debian based setup. Provision as many nodes as needed. 
@@ -33,16 +33,17 @@ Details: see [CDN - Amazon Cloudfront](02_Amazon_AWS_Cloudfront_CDN_Setup.md)
 If you are running a single instance on AWS there's nothing special to consider. You can modify your object classes directly in the admin interface and deploy your code to the EBS volume (via EC2). 
 
 #### Cluster Deployment
-**Please notice:**   
-Never ever make any configuration changes that reflect on files (like object class modifications, static routes, document types, predefined properties, system settings, thumbnails, etc.) in cluster-mode!  
-
 If you're in cluster-mode deployment needs more attention. 
+
+> **Please notice:**   
+> Never ever make any configuration changes that reflect on files (like object class modifications, static routes, 
+> document types, predefined properties, system settings, thumbnails, etc.) in cluster-mode!  
 
 - Prepare & test all your changes on a test-system
 - Deploy the following to all EC2/EBS instances 
-  - Your code changes, basically everything in /website/ except /website/var
-  - everything in /website/var/classes (if you changed a class, field collection or object brick) 
-  - everything in /website/var/config/ (Note: you can use multi environment configurations to specify different configurations for different environments)
+  - Your code changes, basically everything in `/website/` except `/website/var`
+  - everything in `/website/var/classes` (if you changed a class, field collection or object brick) 
+  - everything in `/website/var/config/` (**Note**: you can use multi environment configurations to specify different configurations for different environments)
 - Run the following commands in order to recreate the database schema according to your changes in the class editor and clear the cache
 ```
 php pimcore/cli/console.php deployment:classes-rebuild
