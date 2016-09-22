@@ -189,6 +189,6 @@ In the list object you can find few method which for sure, you're going to use.
 | \Pimcore\Model\Document\Listing::getItems            | int $offset, int $itemsCountPerPage | as arguments you have to specify the limit of rows and the offset.                          |
 | \Pimcore\Model\Document\Listing::loadIdList          |                                     | Returns complete array with id as a row.                                                    |
 
-If you want to know more about the paginator usage with lists, you should visit [Working with Objects via PHP API part](../05_Objects/03_Working_with_php_API.md#zendPaginatorListing)
+If you want to know more about the paginator usage with lists, you should visit [Working with Objects via PHP API part](../05_Objects/03_Working_with_PHP_API.md#zendPaginatorListing)
 
 

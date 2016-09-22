@@ -23,5 +23,5 @@ For all the provided backend functionality within Pimcore have a look at the Use
 [comment]: #(TODO add links)
 
 The sub chapters of this chapter provide insight into details for
- * [Working with Assets via PHP API](./01_Working_with_php_API.md) 
+ * [Working with Assets via PHP API](./01_Working_with_PHP_API.md) 
  * [Working with Thumbnails](./03_Working_with_Thumbnails/README.md)

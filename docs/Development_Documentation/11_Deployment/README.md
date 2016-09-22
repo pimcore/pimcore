@@ -151,8 +151,8 @@ The content should be created by editors in the production environment and visib
 by built-in features like publishing / unpublishing / [versioning](../08_Tools_and_Features/01_Versioning.md) / [scheduling](../08_Tools_and_Features/03_Scheduling.md) / preview the effect in editmode.
 Therefore, editors shouldn't work on different stages. 
 
-Of course, the content migration is possible by the complex [assets](../04_Assets/01_Working_with_php_API.md), 
-[objects](../05_Objects/03_Working_with_php_API.md) and [documents](../03_Documents/09_Working_with_php_API.md) PHP API. 
+Of course, the content migration is possible by the complex [assets](../04_Assets/01_Working_with_PHP_API.md), 
+[objects](../05_Objects/03_Working_with_PHP_API.md) and [documents](../03_Documents/09_Working_with_PHP_API.md) PHP API. 
 Still, if it's not necessary the content migration shouldn't be provided to the project.
 
 ### Rebuild Classes
