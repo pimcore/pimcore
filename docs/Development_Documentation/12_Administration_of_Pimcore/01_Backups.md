@@ -18,7 +18,7 @@ needs be included into the backup.
 
 ### Backups in the administration interface
 
-You can create full backups of the system directly in Pimcore. Just go to `Extras` -> `Backup`. 
+You can create full backups of the system directly in Pimcore. Just go to *Extras* > *Backup*. 
  
 The backup includes the following directories: 
 * `/pimcore`
