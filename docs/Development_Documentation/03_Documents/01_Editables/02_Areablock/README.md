@@ -12,13 +12,13 @@ The areablock is the content construction kit for documents offered by pimcore.
 Similar to the other document editables, an areablock can be integrated in any document view template as follows:
 
 ```php
-<?php echo $this->areablock('myAreablock'); ?>
+<?= $this->areablock('myAreablock'); ?>
 ```
 
 Advanced usage with allowed areas, below:
 
 ```php
-<?php echo $this->areablock("myAreablock", [
+<?= $this->areablock("myAreablock", [
     "allowed" => ["iframe","googletagcloud","spacer","rssreader"],
     "group" => [
         "First Group" => ["iframe", "spacer"],
@@ -92,7 +92,7 @@ Brick-specific configurations are passed using the params configuration (see abo
 ##### Example
 
 ```php
-<?php echo $this->areablock("myArea", [
+<?= $this->areablock("myArea", [
     "params" => [
         "my_brick" => ["forceEditInView" => true]
     ]

@@ -11,7 +11,7 @@ please read the topic [Pimcore localization](../../06_Multi_Language_i18n/README
 
 ## Simple example
 ```php
-<?php echo $this->date("myDate", [
+<?= $this->date("myDate", [
      "format" => "d.m.Y"
 ]); ?>
 ```

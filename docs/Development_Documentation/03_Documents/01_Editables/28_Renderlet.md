@@ -49,7 +49,7 @@ The code below, shows how to use renderlet to create gallery based on it.
 
 ```php
 <section id="renderlet-gallery">
-    <?php echo $this->renderlet("myGallery", [
+    <?= $this->renderlet("myGallery", [
         "controller" => "content",
         "action" => "my-gallery",
         "title" => "Drag an asset folder here to get a gallery",
@@ -95,7 +95,7 @@ Now you should create the template file in: `website/views/scripts/content/my-ga
                 /** @var Pimcore\Model\Asset\Image $asset */
             ?>
             <div class="gallery-row">
-                <?php echo $asset->getThumbnail('galleryThumbnail')->getHTML(); ?>
+                <?= $asset->getThumbnail('galleryThumbnail')->getHTML(); ?>
             </div>
         <?php
             endif;

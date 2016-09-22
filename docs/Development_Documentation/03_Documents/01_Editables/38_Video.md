@@ -57,7 +57,7 @@ See the code, below.
 
 ```php
 <section id="campaign_video">
-    <?php echo $this->video("campaignVideo", [
+    <?= $this->video("campaignVideo", [
         "width" => 700,
         "height" => 400
     ]); ?>
@@ -85,7 +85,7 @@ In the configuration, you could also specify additional options for external ser
 
 ```php
 <section id="campaign_video">
-    <?php echo $this->video("campaignVideo", [
+    <?= $this->video("campaignVideo", [
         "width" => 700,
         "height" => 400,
         "youtube" => [
@@ -109,7 +109,7 @@ In the configuration, you could also specify additional options for external ser
 </head>
 <body>
  
-    <?php echo  $this->video("myVideo", array(
+    <?= $this->video("myVideo", array(
         "thumbnail" => "example", // NOTE: don't forget to create a video thumbnail
         "width" => 400,
         "height" => 300,

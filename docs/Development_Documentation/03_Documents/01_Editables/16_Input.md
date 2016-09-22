@@ -27,7 +27,7 @@ An administration user is not able to change any style properties in the editmod
 
 ```php
 <h2>
- <?php echo $this->input("myHeadline"); ?>
+ <?= $this->input("myHeadline"); ?>
 </h2>
 ```
 
@@ -41,7 +41,7 @@ You could also specify other parameters, like the size:
 
 ```php
 <h2>
- <?php echo $this->input("myHeadline", ["width" => 540]); ?>
+ <?= $this->input("myHeadline", ["width" => 540]); ?>
 </h2>
 ```
 
@@ -52,7 +52,7 @@ To validate the input you have to add `validator` parameter to the configuration
 
 ```php
 <h2>
-    <?php echo $this->input("myHeadline", [
+    <?= $this->input("myHeadline", [
         "validator" => new Zend_Json_Expr('
             function(value){
               return value.match(/\d.*/) !== null;

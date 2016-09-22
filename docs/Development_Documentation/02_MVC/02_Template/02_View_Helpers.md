@@ -177,7 +177,7 @@ For details please see [Glossary Documentation](../../08_Tools_and_Features/21_G
 
     <?php // start filtering content with Glossary feature ?>
     <?php $this->glossary()->start(); ?>
-        <?php echo $this->wysiwyg("content"); ?>
+        <?= $this->wysiwyg("content"); ?>
     <?php $this->glossary()->stop(); ?>
 
 </section>

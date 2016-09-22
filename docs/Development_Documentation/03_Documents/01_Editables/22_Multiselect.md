@@ -27,7 +27,7 @@ The code below renders multiselectbox in the backend. Also, shows the list of ch
 ```php
 <?php if($this->editmode): ?>
 
-<?php echo $this->multiselect("categories", [
+<?= $this->multiselect("categories", [
     "width" => 200,
     "height" => 100,
     "store" => [
@@ -38,11 +38,11 @@ The code below renders multiselectbox in the backend. Also, shows the list of ch
 ]) ?>
 
 <?php else: ?>
-<p><?php echo $this->translate("This page is linked to"); ?>:
+<p><?= $this->translate("This page is linked to"); ?>:
     <?php foreach($this->multiselect("categories")->getData() as $categoryKey): ?>
 
         <span>
-            <?php echo $this->translate($categoryKey); ?>
+            <?= $this->translate($categoryKey); ?>
         </span>
 
     <?php endforeach; ?>

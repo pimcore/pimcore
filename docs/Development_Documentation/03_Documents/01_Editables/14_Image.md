@@ -55,7 +55,7 @@ You can also pass every valid attribute an img-tag can have ([w3.org Image](http
 ### Basic usage
 
 ```php
-<?php echo $this->image("myImage"); ?>
+<?= $this->image("myImage"); ?>
 ```
 
 The code above generates default image area in the backend and thumbnail on the frontend of the application.
@@ -76,7 +76,7 @@ Note that if you use the thumbnail argument, the rendered image on the frontend 
 You can find out more about thumbnails in [Image Thumbnails section](../../04_Assets/03_Working_with_Thumbnails/01_Image_Thumbnails.md).
 
 ```php
-<?php echo $this->image("myImage", [
+<?= $this->image("myImage", [
     "title" => "Drag your image here",
     "width" => 200,
     "height" => 200,
@@ -93,7 +93,7 @@ Backend preview:
 You can also change a thumbnail configuration:
 
 ```php
-<?php echo $this->image("myImage", [
+<?= $this->image("myImage", [
     "title" => "Drag your image here",
     "width" => 200,
     "height" => 200,
@@ -109,7 +109,7 @@ You can also change a thumbnail configuration:
 ### An example with custom attributes
 
 ```php
-<?php echo $this->image("myImage", [
+<?= $this->image("myImage", [
     "thumbnail" => "content",
     "attributes" => [
         "custom-attr" => "value",
@@ -125,7 +125,7 @@ And this is how the rendered html looks: `<img custom-attr="value" data-role="im
 ```php
 
 // get retina image
-<?php echo $this->image("myImage", [
+<?= $this->image("myImage", [
     "thumbnail" => [
         "width" => 200,
         "height" => 200
@@ -138,22 +138,22 @@ And this is how the rendered html looks: `<img custom-attr="value" data-role="im
 
 // custom image tag (thumbnail objects)
 <?php if($this->editmode): ?>
-    <?php echo $this->image("myImage", ["thumbnail" => "myThumbnail"]); ?>
+    <?= $this->image("myImage", ["thumbnail" => "myThumbnail"]); ?>
 <?php else: ?>
     <?php $thumbnail = $this->image("myImage")->getThumbnail("myThumbnail"); ?>
-    <img src="<?php echo $thumbnail; ?>" width="<?php echo $thumbnail->getWidth(); ?>" height="<?php echo $thumbnail->getHeight(); ?>" data-custom="xxxx" />
+    <img src="<?= $thumbnail; ?>" width="<?= $thumbnail->getWidth(); ?>" height="<?= $thumbnail->getHeight(); ?>" data-custom="xxxx" />
 <?php endif; ?>
  
  
 // disable automatic width and height attributes
-<?php echo $this->image("myImage", [
+<?= $this->image("myImage", [
     "thumbnail" => "exampleScaleWidth",
     "disableWidthHeightAttributes" => true
 ]) ?>
   
 // custom drop targets
 <div class="myCustomImageDropTarget anotherClass">My first alternative drop target</div>
-<?php echo $this->image("image", [
+<?= $this->image("image", [
     "thumbnail" => "contentfullimage",
     "dropClass" => "myCustomImageDropTarget"
 ]) ?>
@@ -193,7 +193,7 @@ All dimensions are in percent and therefore independent from the image size, you
 ```php
 <div>
  <p>
-        <?php echo $this->image("myImage", [
+        <?= $this->image("myImage", [
             "title" => "Drag your image here",
             "width" => 400,
             "height" => 400,

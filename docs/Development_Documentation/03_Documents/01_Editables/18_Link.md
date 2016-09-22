@@ -44,7 +44,7 @@ In this example I created the link with some static page to the internal blog pa
 
 ```php
 <p>
-    Visit our <?php echo $this->link("blogLink"); ?>
+    Visit our <?= $this->link("blogLink"); ?>
 </p>
 ```
 
@@ -67,7 +67,7 @@ Let's see how to make a list of links with [Block](./06_Block.md).
 <ul>
     <?php while ($this->block("linkblock")->loop()): ?>
         <li>
-            <?php echo $this->link("myLink", ["class" => "special-link-class"]); ?>
+            <?= $this->link("myLink", ["class" => "special-link-class"]); ?>
         </li>
     <?php endwhile; ?>
 </ul>

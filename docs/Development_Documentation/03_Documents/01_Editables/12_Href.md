@@ -36,7 +36,7 @@ In frontend-mode the href returns the path of the linked element.
 You can just create the code line like, below:
 
 ```php 
-<?php echo $this->href("myHref"); ?>
+<?= $this->href("myHref"); ?>
 ```
 
 After, the view in the administration panel changes like in the picture:
@@ -51,7 +51,7 @@ keys in the editable configuration.
 Have a look at the example, below.
  
 ```php
-<?php echo $this->href("myHref", [
+<?= $this->href("myHref", [
     "types" => ["asset","object"],
     "subtypes" => [
         "asset" => ["video","image"],
@@ -75,10 +75,10 @@ You could check an element type using `instanceof` on your href element `getElem
 
 ```php
 <?php if ($this->editmode): ?>
-    <?php echo $this->href("myHref"); ?>
+    <?= $this->href("myHref"); ?>
 <?php else: ?>
     <?php if ($this->href("myHref")->getElement() instanceof Asset\Video): ?>
-        <a href="<?php echo $this->href("myHref")->getFullPath() ?>"><?php echo $this->translate("Video Download") ?></a>
+        <a href="<?= $this->href("myHref")->getFullPath() ?>"><?= $this->translate("Video Download") ?></a>
     <?php endif; ?>
 <?php endif; ?>
 ```

@@ -27,8 +27,8 @@ I added the table editable responsible for additional product attributes in the 
 The `defaults` row specify the predefined data and number of columns and rows in an initial stage. 
 
 ```php
-<h4><?php echo $this->translate("Product attributes"); ?></h4>
-<?php echo $this->table("productProperties", [
+<h4><?= $this->translate("Product attributes"); ?></h4>
+<?= $this->table("productProperties", [
     "width" => 700,
     "height" => 400,
     "defaults" => [

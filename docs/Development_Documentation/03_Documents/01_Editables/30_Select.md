@@ -42,7 +42,7 @@ if($this->editmode):
 else:
 ?>
 <p>
-    <?php echo $this->translate("Something is valid for") ?>: <?php echo $this->translate($this->select("valid_for")->getData()) ?>
+    <?= $this->translate("Something is valid for") ?>: <?= $this->translate($this->select("valid_for")->getData()) ?>
 </p>
 <?php endif; ?>
 ```

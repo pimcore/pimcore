@@ -40,7 +40,7 @@ This path can then be directly used to display the image in a `<img />` tag. For
    <img src="<?= $asset->getThumbnail("myThumbnailName") ?>" />
 
     <!-- preferred alternative - let Pimcore create the whole image tag -->
-    <?php echo $asset->getThumbnail("myThumbnail")->getHTML(); ?>
+    <?= $asset->getThumbnail("myThumbnail")->getHTML(); ?>
 
 <?php } ?>
 ```

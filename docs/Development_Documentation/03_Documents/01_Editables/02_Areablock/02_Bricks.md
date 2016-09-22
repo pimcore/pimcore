@@ -50,7 +50,7 @@ The `view.php` file would look like, below.
     <?php
     // with $this->brick->getPath() you get the path of the area out of the info-object.
     ?>
-    <link rel="stylesheet" type="text/css" href="<?php echo $this->brick->getPath(); ?>/editmode.css" />
+    <link rel="stylesheet" type="text/css" href="<?= $this->brick->getPath(); ?>/editmode.css" />
 
     <div>
         <h2>IFrame</h2>

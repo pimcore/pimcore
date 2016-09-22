@@ -28,7 +28,7 @@ You can specify a css class of the table, auto `<br>` tags and few other you can
 
 ```php
 <p class="product-description">
-    <?php echo $this->textarea("product_description", [
+    <?= $this->textarea("product_description", [
         "nl2br" => true,
         "height" => 300,
         "placeholder" =>

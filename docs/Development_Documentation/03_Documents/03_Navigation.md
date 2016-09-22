@@ -35,7 +35,7 @@ $navigation = $mainNavigation->getContainer();
 ?>
 
 <div class="my-menu">
-    <?php echo $mainNavigation->menu()->renderMenu($navigation, ["maxDepth" => 0]); ?>
+    <?= $mainNavigation->menu()->renderMenu($navigation, ["maxDepth" => 0]); ?>
 </div>
 ```
 
@@ -44,7 +44,7 @@ $navigation = $mainNavigation->getContainer();
 ```php
 <div class="my-breadcrumbs">
     <a href="/">Home</a>
-    <?php echo $mainNavigation->breadcrumbs()->setMinDepth(null); ?>
+    <?= $mainNavigation->breadcrumbs()->setMinDepth(null); ?>
 </div>
 ```
 
@@ -52,7 +52,7 @@ $navigation = $mainNavigation->getContainer();
 
 ```php
 <div class="my-sidebar-menu">
-    <?php echo $mainNavigation->menu()->renderMenu($navigation); ?>
+    <?= $mainNavigation->menu()->renderMenu($navigation); ?>
 </div>
 ```
 
@@ -144,7 +144,7 @@ For example, inside your view:
 
     <div class="my-menu-element">
 
-        <?php echo $this->navigation()->menu()->htmlify($page); ?>
+        <?= $this->navigation()->menu()->htmlify($page); ?>
 
     </div>
 
@@ -174,7 +174,7 @@ if(!$navStartNode instanceof Document\Page) {
     }
 }
  
-<?php echo $this->pimcoreNavigation($this->document, $navStartNode)->menu()->renderMenu(null, [
+<?= $this->pimcoreNavigation($this->document, $navStartNode)->menu()->renderMenu(null, [
         "maxDepth" => 1,
         "ulClass" => "nav navbar-nav"
     ]);
@@ -216,19 +216,19 @@ if(!$navStartNode instanceof Document\Page) {
             <?php $hasChildren = $page->hasPages(); ?>
             <?php if (!$hasChildren) { ?>
                 <li>
-                    <a href="<?php echo $page->getHref() ?>">
-                        <?php echo $this->translate($page->getLabel()) ?>
+                    <a href="<?= $page->getHref() ?>">
+                        <?= $this->translate($page->getLabel()) ?>
                     </a>
                 </li>
             <?php } else { ?>
             <li class="dropdown">
-                <a href="<?php echo $page->getHref(); ?>"><?php echo $this->translate($page->getLabel()) ?></a>
+                <a href="<?= $page->getHref(); ?>"><?= $this->translate($page->getLabel()) ?></a>
                 <ul class="dropdown-menu">
                     <?php foreach ($page->getPages() as $child) { ?>
                         <?php if(!$child->isVisible() || !$this->navigation()->accept($child)) { continue; } ?>
                         <li>
-                            <a href="<?php echo $child->getHref() ?>">
-                                <?php echo $this->translate($child->getLabel()) ?>
+                            <a href="<?= $child->getHref() ?>">
+                                <?= $this->translate($child->getLabel()) ?>
                             </a>
                         </li>
                     <?php } ?>
@@ -275,7 +275,7 @@ $navigation = $this->pimcoreNavigation($this->document, $navStartNode, null, fun
 ?>
 
 <div class="my-navigation">
-    <?php echo $navigation->menu()->renderMenu(null, [
+    <?= $navigation->menu()->renderMenu(null, [
         'ulClass' => 'nav my-sidenav',
         'expandSiblingNodesOfActiveBranch' => true
     ]); ?>
@@ -309,8 +309,8 @@ Later in the template of the navigation (`/navigation/partials/navigation.php`) 
 <?php foreach( $this->container as $page ){ ?>
     <?php if($page->isVisible()){ ?>
          <li class="<?php if( $page->getActive(true) ){ ?>active<?php } ?>">
-          <a href="<?php echo $page->getUri() ?>" target="<?= $page->getTarget() ?>"><?= $page->getLabel() ?></a>
-          <ul class="<?php echo $page->getCustomSetting("subListClass") ?>" role="menu">
+          <a href="<?= $page->getUri() ?>" target="<?= $page->getTarget() ?>"><?= $page->getLabel() ?></a>
+          <ul class="<?= $page->getCustomSetting("subListClass") ?>" role="menu">
                 <?php $this->template( "/navigation/partials/main.php", [ "container" => $page->getPages() ] ); ?>
           </ul>
      </li>

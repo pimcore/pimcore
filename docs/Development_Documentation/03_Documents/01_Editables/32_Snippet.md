@@ -57,7 +57,7 @@ Let's create the file `website/views/scripts/snippets/recommended-links.php` wit
 <ul id="recommended-links">
     <?php while($this->block("recommended_links", ["limit" => $this->limit])->loop()): ?>
     <li>
-        <?php echo $this->link('rl_exernal', [
+        <?= $this->link('rl_exernal', [
             "class" => "recommended-link"
         ]); ?>
     </li>
@@ -126,7 +126,7 @@ For example, if you want to show recommended-links on every page you can put the
 ```php
 <div id="special-links">
     <h4>
-        <?php echo $this->translate("Recommended links"); ?>
+        <?= $this->translate("Recommended links"); ?>
     </h4>
     <?php 
         //if the location doesn't exists the snippet just won't be rendered
@@ -147,9 +147,9 @@ In the example below I added the place for snippets in the `website/views/layout
 ```php
 <div id="special-links">
     <h4>
-        <?php echo $this->input("headline_for_snippet"); ?>
+        <?= $this->input("headline_for_snippet"); ?>
     </h4>
-    <?php echo $this->snippet("snippet_visible_on_every_page"); ?>
+    <?= $this->snippet("snippet_visible_on_every_page"); ?>
 </div>
 ```
 

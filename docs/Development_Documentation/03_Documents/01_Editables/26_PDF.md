@@ -37,7 +37,7 @@ The PDF editable allows you to embed asset documents (pdf, doc, xls, ...) into d
 
 ```php
 <div class="pdf">
-    <?php echo $this->pdf("myPdf", ["width" => 640]); ?>
+    <?= $this->pdf("myPdf", ["width" => 640]); ?>
 </div>
 ```
 
@@ -59,7 +59,7 @@ The example below shows how you can retrieve these information:
 
 ```php
 <div class="pdf">
-    <?php echo $this->pdf("myPdf", [
+    <?= $this->pdf("myPdf", [
         "hotspotCallback" => function($data) {
 
             \Zend_Debug::dump($data);

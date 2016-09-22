@@ -31,7 +31,7 @@ The following code specifies also height for the rendered WYSIWYG editable.
 
 ```php
 <section id="marked-content">
-    <?php echo $this->wysiwyg("specialContent", [
+    <?= $this->wysiwyg("specialContent", [
         "height" => 200
     ]); ?>
 </section>
@@ -51,7 +51,7 @@ If you have to limit styling options (for example only basic styles like `<b>` t
 
 ```php
 <section id="marked-content">
-    <?php echo $this->wysiwyg("specialContent", [
+    <?= $this->wysiwyg("specialContent", [
         "height" => 200,
         "toolbarGroups" => [
             [
@@ -72,7 +72,7 @@ There is also additional way to specify the configuration. You can just add cust
 
 ```php
 <section id="marked-content">
-    <?php echo $this->wysiwyg("specialContent", [
+    <?= $this->wysiwyg("specialContent", [
         "height" => 200,
         "customConfig" => "/custom/ckeditor_config.js"
     ]); ?>
@@ -84,11 +84,11 @@ There is also additional way to specify the configuration. You can just add cust
 With the following code you can get the text even in editmode:
 
 ```php
-<?php echo $this->wysiwyg("specialContent"); ?>
+<?= $this->wysiwyg("specialContent"); ?>
 <?php if($this->editmode): ?>
 <h4>Preview</h4>
 <div style="border: 1px solid #000;" class="preview">
-    <?php echo $this->wysiwyg("specialContent")->text; ?>
+    <?= $this->wysiwyg("specialContent")->text; ?>
 </div>
 <?php endif; ?>
 ```

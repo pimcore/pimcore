@@ -35,8 +35,8 @@ The items in the loop as well as their order can be defined by the editor with t
 
 ```php
 <?php while($this->block("contentblock")->loop()) { ?>
-    <h2><?php echo $this->input("subline"); ?></h2>
-    <?php echo $this->wysiwyg("content"); ?>
+    <h2><?= $this->input("subline"); ?></h2>
+    <?= $this->wysiwyg("content"); ?>
 <?php } ?>
 ```
 
@@ -52,7 +52,7 @@ And in the frontend of the application:
 ```php
 <?php while($this->block("contentblock")->loop()) { ?>
     <?php if($this->editmode) { ?>
-        <?php echo $this->select("blocktype", [
+        <?= $this->select("blocktype", [
             "store" => [
                 ["wysiwyg", "WYSIWYG"],
                 ["contentimages", "WYSIWYG with images"],
@@ -68,7 +68,7 @@ And in the frontend of the application:
 <?php } ?>
  
 <?php while($this->block("teasers", ["limit" => 2])->loop()) { ?>
-    <?php echo $this->snippet("teaser") ?>
+    <?= $this->snippet("teaser") ?>
 <?php } ?>
 ```
 
@@ -79,7 +79,7 @@ And in the frontend of the application:
         Insert this line only after the first iteration<br />
         <br />
     <?php } ?>
-    <h2><?php echo $this->input("subline"); ?></h2>
+    <h2><?= $this->input("subline"); ?></h2>
      
 <?php } ?>
 ```
@@ -94,10 +94,10 @@ The manual mode offers you the possibility to deal with block the way you like, 
     <tr>
         <?php while ($block->loop()) { ?>
             <?php $block->blockConstruct(); ?>
-                <td customAttribute="<?php echo $this->input("myInput")->getData() ?>">
+                <td customAttribute="<?= $this->input("myInput")->getData() ?>">
                     <?php $block->blockStart(); ?>
                         <div style="width:200px; height:200px;border:1px solid black;">
-                            <?php echo $this->input("myInput"); ?>
+                            <?= $this->input("myInput"); ?>
                         </div>
                     <?php $block->blockEnd(); ?>
                 </td>

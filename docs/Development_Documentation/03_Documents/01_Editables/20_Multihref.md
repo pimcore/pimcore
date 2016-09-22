@@ -39,13 +39,13 @@ The code below is responsible for showing the list of elements types related to 
 ```php
 <p>Types of elements:</p>
 <?php if($this->editmode): ?>
-    <?php echo $this->multihref("objectPaths"); ?>
+    <?= $this->multihref("objectPaths"); ?>
 <?php else: ?>
     <ul>
         <?php foreach($this->multihref("objectPaths") as $element):
             /** @var \Pimcore\Model\Element\ElementInterface $element */
             ?>
-            <li><?php echo $element->getType(); ?></li>
+            <li><?= $element->getType(); ?></li>
         <?php endforeach; ?>
     </ul>
 <?php endif; ?>
@@ -78,7 +78,7 @@ array(6) {
 Similar to the Href editable, Multihref also could specify allowed **types**, **subtypes** and **classes**. 
 For example:
 ```php
-<?php echo $this->multihref("objectPaths", [
+<?= $this->multihref("objectPaths", [
     "types" => ["asset","object"],
         "subtypes" => [
             "asset" => ["video","image"],

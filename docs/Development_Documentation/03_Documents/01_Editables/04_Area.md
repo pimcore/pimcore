@@ -15,7 +15,7 @@ into a block element, and the editor cannot choose which area is used, this has 
 
 ```php
 <div>
-    <?php echo $this->area("myArea", ["type" => "nameofbrick"]); ?>
+    <?= $this->area("myArea", ["type" => "nameofbrick"]); ?>
 </div>
 ```
 
@@ -23,7 +23,7 @@ into a block element, and the editor cannot choose which area is used, this has 
 
 ```php
 <div>
-    <?php echo $this->area("myArea", [
+    <?= $this->area("myArea", [
         "type" => "nameofbrick",
         "params" => [
             "nameofbrick" => [
@@ -38,6 +38,6 @@ Get the params in your brick:
 
 ```php
 <div>
-    <?php echo $this->param1; ?>
+    <?= $this->param1; ?>
 </div>
 ```

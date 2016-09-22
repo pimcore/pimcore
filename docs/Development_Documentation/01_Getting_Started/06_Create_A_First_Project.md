@@ -90,7 +90,7 @@ Then we can also put some HTML and template code into it:
             </div>
         </div>
         <div class="info">
-            <?php echo $this->layout()->content; ?>
+            <?= $this->layout()->content; ?>
         </div>
     </div>
 </body>
@@ -281,9 +281,9 @@ In the template file (`website/views/scripts/content/product.php`) add few lines
         /** @var \Pimcore\Model\Object\Product $product */
         $product = $this->href('product')->getElement();
         ?>
-        <h2><?php echo $this->escape($product->getName()); ?></h2>
+        <h2><?= $this->escape($product->getName()); ?></h2>
         <div class="content">
-            <?php echo $product->getDescription(); ?>
+            <?= $product->getDescription(); ?>
         </div>
     </div>
     <?php endif; ?>
@@ -316,7 +316,7 @@ Now, last but not least, we would like to show the product picture:
     ?>
         <?= $picture->getThumbnail("content")->getHTML(); ?>
     <?php endif; ?>
-    <?php echo $product->getDescription(); ?>
+    <?= $product->getDescription(); ?>
 </div>
 ```
 As you can see, image attribute is an additional class with useful parameter.

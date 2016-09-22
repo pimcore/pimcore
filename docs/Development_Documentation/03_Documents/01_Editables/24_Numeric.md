@@ -22,7 +22,7 @@ The numeric editable is like a normal textfield but with special configurations 
 ### Basic usage
 
 ```php
-<?php echo $this->numeric("myNumber"); ?>
+<?= $this->numeric("myNumber"); ?>
 ```
 
 
@@ -34,7 +34,7 @@ Now you can see the **numeric** input in the Editmode view
 You can also, specify the values range and the decimal precision:
 
 ```php
-<?php echo $this->numeric("myNumber", [
+<?= $this->numeric("myNumber", [
     "width" => 300,
     "minValue" => 0,
     "maxValue" => 100,
@@ -46,6 +46,6 @@ To show the number, just use the number property:
 
 ```php
 <p>
-    <?php echo $this->numeric("myNumber")->number; ?>
+    <?= $this->numeric("myNumber")->number; ?>
 </p>
 ```
