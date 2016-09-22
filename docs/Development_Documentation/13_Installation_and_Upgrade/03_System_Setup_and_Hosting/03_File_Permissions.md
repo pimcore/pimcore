@@ -12,5 +12,5 @@ chown -R YOURUSER:YOURGROUP website/var pimcore
 On Debian systems (and most other Linux distributions) mostly the www-data user executes the php files, just execute the following commands in your install directory.
 
 ```bash
-chown -R www-data:www-data website/var pimcore plugins
+chown -R www-data:www-data website/var pimcore
 ```
