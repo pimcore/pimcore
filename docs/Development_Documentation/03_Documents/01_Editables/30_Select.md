@@ -2,8 +2,7 @@
 
 ## General
 
-A selectbox implemention in documents.
-The select editable generates **select** box component in Editmode, next you can use that value in your application.
+The select editable generates select-box component in Editmode.
 
 ## Configuration
 
@@ -22,10 +21,10 @@ The select editable generates **select** box component in Editmode, next you can
 
 ## Examples
 
-### Basic uage
+### Basic Usage
 
-The code below, shows a select box in editmode,
-in the frontend preview you will see a simple text with rendered value of chosen option.
+The code below shows a select box in editmode,
+in the frontend preview you will see simply the value of the chosen option.
 
 ```php
 <?php
@@ -48,16 +47,14 @@ else:
 ```
 
 Editmode:
-
 ![Select editable in editmode](../../img/editables_select_editmode_preview.png)
 
 Frontend:
-
 ![Select editable in frontend](../../img/editables_select_frontend_preview.png)
 
-### Preselect option
+### Preselect an Option
 
-You can ***preselect*** an option in your select editable by using `setDataFromResource` method.
+You can ***preselect*** an option in your select editable by using `setDataFromResource()`.
 
 ```php
 if($this->editmode):

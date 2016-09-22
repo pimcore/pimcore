@@ -2,9 +2,10 @@
 
 ## General
 
-The renderlet is a special container which is able to receive every object in Pimcore (Documents, Assets, Objects).
-You can decide in your controller/action what to do with the object which is linked to the renderlet.
-So it's possible to make a multifunctional dropbox in editmode where the editor can drop anything on it.
+The renderlet is a special container which is able to handle every element in Pimcore (Documents, Assets, Objects).
+You can decide in your controller/action what to do with the element which is linked to the renderlet.
+So it's possible to make a multifunctional area in editmode where the editor can drop anything on it.
+A typical use-case would be to render product objects within a document. 
 
 ## Configuration
 
@@ -21,7 +22,7 @@ So it's possible to make a multifunctional dropbox in editmode where the editor 
 | `type`         | string    | The type of the element assigned to the renderlet (document,asset,object)   |             |
 | `width`        | integer   | Width of the renderlet in pixel                                             |             |
 
-Optionally you can pass every parameter (with a simple data type) you like to the renderlet which can be accessed by 
+Optionally you can pass every parameter (with a scalar data type) you like to the renderlet which can be accessed in 
 the configured controller with `$this->getParam("yourKey")`.
 
 ## Methods
@@ -32,7 +33,7 @@ the configured controller with `$this->getParam("yourKey")`.
 
 ## In the configured Controller Action
 
-In the target controller action you get the follwing parameters which can be accessed by `$this->getParam("key")`.
+In the target controller action, you get the following parameters which can be accessed by `$this->getParam("key")`.
 
 | Name       | Type                   | Description                                                                                      |
 |------------|------------------------|--------------------------------------------------------------------------------------------------|
@@ -42,16 +43,13 @@ In the target controller action you get the follwing parameters which can be acc
 | `subtype`  | string                 | The subtype of the element assigned to the renderlet (folder, image, link, page, classname, ...) |
 | `type`     | string                 | The type of the element assigned to the renderlet (document,asset,object)                        |
 
-If you have defined custom parameters to the renderlet configuration you can access them also with `$this->getParam`.
+If you have defined any custom parameters on the renderlet configuration you can access them also with `$this->getParam()`.
 
 ## Example
 
-The code below, shows how to use renderlet to create gallery based on it. 
+The code below shows how to use renderlet to create gallery based on it. 
 
-### Specify the renderlet editable in a template
-
-* controller - a controller which contains action responsible for renderlet
-* action - that action could for example put assets models to the view
+### Specify the Renderlet Editable in a Template
 
 ```php
 <section id="renderlet-gallery">
@@ -64,11 +62,11 @@ The code below, shows how to use renderlet to create gallery based on it.
 </section>
 ```
 
-After it, users are able to put elements into the renderlet in the edit mode.
+Now editors are able to put elements onto the renderlet in the editmode.
 
 ![Renderlet gallery - editmode](../../img/editables_renderlet_gallery_example_editmode.png)
 
-### Specify the controller action
+### Specify the Controller Action
 
 ```php
 public function myGalleryAction()
@@ -82,12 +80,12 @@ public function myGalleryAction()
 }
 ```
 
-The action is responsible for validation and transfering assets to the view.
-Of course, to limit access to the renderlet, you can use the **type** configuration option as well. 
+The action is responsible for validation and transferring assets to the view.
+Of course, to limit access to the renderlet, you can use the `type` configuration option as well. 
 
-### Create view
+### Create View
 
-Now you should create the template file in: `website/views/scripts/content/my-gallery.php` path. 
+Now you have to create the template file at: `website/views/scripts/content/my-gallery.php`
 
 ```php
 <?php
@@ -111,14 +109,12 @@ Now you should create the template file in: `website/views/scripts/content/my-ga
 ```
 
 And the final view is like, below:
-
 ![Rendered renderlet - frontend](../../img/editables_renderlet_rendered_view.png)
 
 
 ## Editmode
 
 > Please be aware, that the renderlet itself is not editmode-aware. If you need to determine within the renderlet whether in editmode or not, you need to pass that parameter to the renderlet.
-
 
 ```php
 $this->renderlet("myRenderlet", [

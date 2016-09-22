@@ -3,8 +3,6 @@
 > This editable requires Ghostscript installed on your server. 
 > See [System Requirements](../../13_Installation_and_Upgrade/01_System_Requirements.md)
 
-</div>
-
 ## General
 
 The PDF editable allows you to embed asset documents (pdf, doc, xls, ...) into documents.
@@ -15,8 +13,8 @@ The PDF editable allows you to embed asset documents (pdf, doc, xls, ...) into d
 |---------------------|-----------|-----------------------------------------------------------------------------------------|
 | `width`             | integer   | Width of the viewer (default 100%)                                                      |
 | `height`            | integer   | Height of the viewerin pixel                                                            |
-| `fullscreen`        | bool      | allow fullscreen or not                                                                 |
-| `hotspotCallback`   | closure   | possibility to add custom attributes on hotspot `<div>` tags, ... see example below |
+| `fullscreen`        | bool      | Allow fullscreen or not                                                                 |
+| `hotspotCallback`   | closure   | Possibility to add custom attributes on hotspot `<div>` tags, ... see example below     |
 
 ## Methods
 
@@ -36,22 +34,20 @@ The PDF editable allows you to embed asset documents (pdf, doc, xls, ...) into d
 </div>
 ```
 
-The code above created container for documents: 
+This looks like the following in editmode: 
 
 ![PDF editable - the empty area](../../img/editables_pdf_empty_container.png)
 
-A user can drag there documents from Assets:
+A user can now drag documents there from the *Assets* tree:
 
 ![PDF editable - drag a document](../../img/editables_pdf_filled.png)
 
-### Processing metadata
+### Processing Metadata
 
-You're able to add some metadata information (for example hotspots) in every page puted into the PDF area. 
-
+You're also able to add some meta information (for example hotspots) on every page of the assigned PDF. 
 ![Add metada to the PDF editable](../../img/editables_pdf_add_metadata.png)
 
-The example below shows how you can retrieve these information:
-
+The example below shows how you can retrieve this information:
 ```php
 <div class="pdf">
     <?= $this->pdf("myPdf", [
@@ -88,22 +84,21 @@ array(5) {
 }
 ```
 
-As you see, you're able to get information about every metadata added to specified page. 
+As you can see, you're able to get information about every metadata added to specified page. 
 In that case, on the first page of the pdf document you can find the textarea note and the unchecked checkbox.
 
-### Pimcore PDF - possible javascript methods
+### Pimcore PDF - Possible Javascript Methods
 
 The PDF editable also, allows you to use javascript actions.
-There is always created a javascript object with prefix: `pimcore_pdf_`. Therefore, looking at the case above, you can use: 
-`pimcore_pdf_myPdf` variable to get access to methods. 
+There is always created a javascript object named: `pimcore_pdf`, which contains an object for every pdf editable on this page. 
 
 The list of available actions:
 
-| Function name                | Description             |
-|------------------------------|-------------------------|
-| pimcore_pdf_myPdf.toPage(3)  | go to the page 3        |
-| pimcore_pdf_myPdf.nextPage() | go to the next page     |
-| pimcore_pdf_myPdf.prevPage() | go to the previous page |
+| Function Name                     | Description             |
+|-----------------------------------|-------------------------|
+| `pimcore_pdf["myPdf"].toPage(3)`  | go to the page 3        |
+| `pimcore_pdf["myPdf"].nextPage()` | go to the next page     |
+| `pimcore_pdf["myPdf"].prevPage()` | go to the previous page |
 
 
 
