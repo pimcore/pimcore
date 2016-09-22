@@ -1,4 +1,4 @@
-# Basic document types
+# Basic Document Types
 
 ## General
 
