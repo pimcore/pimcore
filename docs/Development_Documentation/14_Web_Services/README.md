@@ -1,15 +1,15 @@
 # REST Webservice API
-Pimcore provides a web service to retrieve and save objects, documents and assets through a RESTful API. When the web 
-service feature is enabled in the system settings (by default it is disabled), any admin user can access  and utilize 
-the REST API.
 
-When the web service API is enabled, for each user his API key is displayed in `Settings` > `Users`. Please be aware 
-that the API Key changes when the user changes his/her password.
+Pimcore provides a REST web service interface to many entities in the system, such as assets, documents, objects and class definitions. 
+The webservices are not enabled by default, you have to do this in `Settings` > `System Settings` > `Web Service API`.
 
-For testing in the browser it's not necessary to add the apikey if you have a valid user session from the admin interface 
-(session authentication). 
+Once the web service API is enabled, there is an API key is displayed in `Settings` > `Users` for each user. 
+Please be aware that the API Key changes when the user changes his/her password.
 
- 
+The webservices also support session authentication, this means that it's not necessary to 
+add the `apikey` to the request if you have a valid user session from the admin interface (eg. when testing in the browser). 
+  
+  
 [TOC]
 
 
