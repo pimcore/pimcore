@@ -1,9 +1,9 @@
 # REST Webservice API
 
-Pimcore provides a REST web service interface to many entities in the system, such as assets, documents, objects and class definitions. 
-The webservices are not enabled by default, you have to do this in `Settings` > `System Settings` > `Web Service API`.
+Pimcore provides a REST web service interface to many entities of the system, such as assets, documents, objects, class definitions, translations, etc. 
+The webservices are not enabled by default, you have to do this in *Settings* > *System Settings* > *Web Service API*.
 
-Once the web service API is enabled, there is an API key is displayed in `Settings` > `Users` for each user. 
+Once the web service API is enabled, there is an API key displayed in *Settings* > *Users* for each user. 
 Please be aware that the API Key changes when the user changes his/her password.
 
 The webservices also support session authentication, this means that it's not necessary to 
@@ -57,7 +57,7 @@ The following methods are available for web service calls:
 ### Get Object By ID
 * **Method**: GET
 * **URL**: `http://YOUR-DOMAIN/webservice/rest/object/id/1281?apikey=[API-KEY]`
-* **Returns**: JSON--encoded object data.
+* **Returns**: JSON-encoded object data.
 
 ### Delete Object By ID
 * **Method**: DELETE
@@ -173,7 +173,7 @@ condense parameter is set to true then only non-existing object ids are returned
     * **ids Parameter for GET**: comma-seperated list of asset ids
 * **URL for POST**:  `http://YOUR-DOMAIN/webservice/rest/asset-inquire?apikey=[API-KEY]&condense=0`
     * **Request body for POST**: comma-seperated list of asset ids
-* **Returns**: JSON-encoded success value and list of asset ids and flag indicating whether asset exists or not. If optional condense parameter is set to true then only non-existing asset ids are returned.
+* **Returns**: JSON-encoded success value, list of asset ids and flag indicating whether asset exists or not. If optional condense parameter is set to true then only non-existing asset ids are returned.
 
 
 ### Get Document By ID
@@ -204,7 +204,7 @@ condense parameter is set to true then only non-existing object ids are returned
     * **ids Parameter for GET**: comma-seperated list of document ids
 * **URL for POST**: `http://YOUR-DOMAIN/webservice/rest/document-inquire?apikey=[API-KEY]&condense=0`
     * **Request body for POST**: comma-seperated list of document ids
-* **Returns**: JSON-encoded success value and list of document ids and flag indicating whether document exists or not. If optional condense parameter is set to true then only non-existing documentids are returned.
+* **Returns**: JSON-encoded success value,  list of document ids and flag indicating whether document exists or not. If optional condense parameter is set to true then only non-existing documentids are returned.
 
 
 ### Search Assets
