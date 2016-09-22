@@ -1,4 +1,4 @@
-# Assets in Pimcore
+# Assets
 
 Assets are files that can be managed within the Pimcore system which you can organize in folders. The most common assets 
 are images. Other kinds of common assets are PDF or MS Word documents which people can download from the website.
