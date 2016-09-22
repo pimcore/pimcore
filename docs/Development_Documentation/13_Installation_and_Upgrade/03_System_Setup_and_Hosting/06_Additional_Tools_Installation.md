@@ -6,7 +6,7 @@ The installation of some of the tools is covered in this guide and should work a
 For other Linux distribution you might have to adopt some commands to platform specifics, but we try to use as many statically linked software as possible, that can be used on any x64 Linux platform.  
 
 ## Composer 
-Please visit the official install guide for Composer: https://getcomposer.org/
+Please visit the official install guide for Composer: [https://getcomposer.org/](https://getcomposer.org/)
 
 
 ## FFMPEG
@@ -32,7 +32,7 @@ apt-get install libreoffice python-uno libreoffice-math xfonts-75dpi poppler-uti
 ```
 
 ## Wkhtmltoimage / Wkhtmltopdf
-Please visit: http://wkhtmltopdf.org/downloads.html 
+Please visit: [http://wkhtmltopdf.org/downloads.html](http://wkhtmltopdf.org/downloads.html)
 
 ## Image Optimizers
 
