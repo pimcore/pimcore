@@ -1,7 +1,7 @@
 # Numeric Editable
 
 ## General
-The numeric editable is like a normal textfield but with special configurations for numbers.
+The numeric editable is very similar to the [input editable](../16_Input.md), but with special configurations for the use with numbers.
 
 ## Configuration
 
@@ -16,23 +16,22 @@ The numeric editable is like a normal textfield but with special configurations 
 | Name        | Return      | Description                                                                  |
 |-------------|-------------|------------------------------------------------------------------------------|
 | `getData()` | int|float   | Value of the numeric field, this is useful to get the value even in editmode |
-| `isEmpty()` | boolean  | Whether the editable is empty or not                                            |
+| `isEmpty()` | boolean     | Whether the editable is empty or not                                         |
 
 ## Examples
 
-### Basic usage
+### Basic Usage
 
 ```php
 <?= $this->numeric("myNumber"); ?>
 ```
 
-
-Now you can see the **numeric** input in the Editmode view 
+Now you can see the **numeric** value in the editmode view 
 ![Numeric input - editmode](../../img/editables_numeric_simple_editmode.png)
 
-### Advanced usage
+### Advanced Usage
 
-You can also, specify the values range and the decimal precision:
+In the following example we're going to use a minimal and maximum value as well as a decimal precision. 
 
 ```php
 <?= $this->numeric("myNumber", [
@@ -43,10 +42,9 @@ You can also, specify the values range and the decimal precision:
 ]); ?>
 ```
 
-To show the number, just use the number property:
-
+To display the number also in editmode, you can use the method `getData()`
 ```php
 <p>
-    <?= $this->numeric("myNumber")->number; ?>
+    <?= $this->numeric("myNumber")->getData(); ?>
 </p>
 ```

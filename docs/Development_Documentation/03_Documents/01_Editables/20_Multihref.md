@@ -27,12 +27,12 @@ Multihref editable provides one to many relation to other Pimcore elements (docu
 
 ## Example
 
-### Basic usage
+### Basic Usage
 
 The code below is responsible for showing the list of elements types related to the multihref. 
 
 ```php
-<p>Types of elements:</p>
+<p><?= $this->translate("Types of elements"); ?>:</p>
 <?php if($this->editmode): ?>
     <?= $this->multihref("objectPaths"); ?>
 <?php else: ?>
@@ -70,7 +70,7 @@ array(6) {
 
 
 ### Example with allowed types and subtypes
-Similar to the Href editable, Multihref also could specify allowed **types**, **subtypes** and **classes**. 
+Similar to the Href editable, Multihref also could specify allowed `types`, `subtypes` and `classes`. 
 For example:
 ```php
 <?= $this->multihref("objectPaths", [

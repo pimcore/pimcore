@@ -2,8 +2,7 @@
 
 ## General 
 
-The link editable is used for dynamic link creation based on documents, 
-assets and for structured links, which shouldn't be inside WYSIWYG (for example external link).
+The link editable is used for dynamic link creation in documents.
 
 ## Configuration
 
@@ -31,13 +30,12 @@ such as: `class`, `target`, `id`, `style`, `accesskey`, `name`, `title` and addi
 
 ## Examples
 
-### Basic usage
-
-In this example I created the link with some static page to the internal blog page.
+### Basic Usage
 
 ```php
 <p>
-    Visit our <?= $this->link("blogLink"); ?>
+    <?= $this->translate("Visit our"); ?> 
+    <?= $this->link("blogLink"); ?>
 </p>
 ```
 
@@ -51,12 +49,12 @@ And the frontend:
 
 
 
-### Use link in the block editable
+### Use Link in the Block Editable
 
 Let's see how to make a list of links with [Block](./06_Block.md).
 
 ```php
-<p>Useful links:</p>
+<h3><?= $this->translate("Useful links"); ?></h3>
 <ul>
     <?php while ($this->block("linkblock")->loop()): ?>
         <li>
@@ -66,8 +64,7 @@ Let's see how to make a list of links with [Block](./06_Block.md).
 </ul>
 ```
 
-The above example renders the block list, there is possible to add unlimited rows with Link editable.
-
+The above example renders a list of links: 
 ![The links list in the backend](../../img/editables_link_inside_block.png)
 
 
