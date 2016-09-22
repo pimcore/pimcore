@@ -1,9 +1,9 @@
-# URLs based on Custom Routes 
+# URLs Based on Custom (Static) Routes 
 
 ## Introduction
-When your application has functionality where there is no Pimcore Document necessary. For example you have a news list, 
-which is generated out of a Pimcore object list, and you want to give the news a detail page. Or you want create product lists 
-with detail pages, or cart pages, a checkout process, ... 
+Static routes are necessary for functionalities where you don't have an underlying document or where you have the need
+of dynamic URLs. For example you have a news list, which is generated out of a Pimcore object list and you want to give 
+the news a detail page. Or you want create product lists with detail pages, or cart pages, a checkout process, ... 
 
 All things where Documents are not practical. Here Custom Routes come into action and allow the definition of URL patterns 
  that are delegated to specific controllers with specific views.
@@ -28,6 +28,8 @@ Following options are relevant:
 * *Site* - Site for which this route should be applied to. 
 * *Priority* - priority in resolving the URL pattern. 
 
+Routes are saved in PHP configuration files on the file system (`website/var/config/staticroutes.php`), so it's also possible to edit them directly in your 
+favorite IDE and keep track of the changes in your VCS (eg. Git).
 
 ## Accessing Variables in Controller
 This is how you can access (form a controller action) the values of the variables (placeholders) you specified in 
@@ -67,7 +69,7 @@ Due to optional parameters, the above example matches for the following URL's:
 * /news-category/testcategory_12_category_2
 * /news-category/testcategory_12
 
-#### Generating url with additional parameter
+#### Generating url with Optional Parameters
 
 Source url: `/some-other-url`
 
@@ -80,13 +82,13 @@ $this->url([
 ], 'news category');
 ```
 
-Since there is no default parameter available out of the route pattern you have to set every not optional parameter. 
+Since there is no default parameter available out of the route pattern, you have to set every not optional parameter. 
 In addition there is one parameter which is not in the reverse route. That will be added as a normal GET parameter in the URL.
 
 Output will be: `/news-category/test_67_category_33?getExample=some+value`
 
 
-### Reusing existing URL parameter
+### Reusing Existing URL Parameters
 
 Source url: `/some-example/some~random~text_45`
 ```php
@@ -96,7 +98,7 @@ $this->url([
     "news category"
 )
 ```
-The parameters text and id are available via the route pattern, so the will be added automatically if you don't specify them.
+The parameters `text` and `id` are available via the route pattern, so the will be added automatically if you don't specify them.
 
 Output will be: /some-example/This+is+some+random+text_45_category_776
 
@@ -112,9 +114,9 @@ $this->url([
 Output will be: /some-example/This+is+some+random+text_776
 
 
-### Adding default values to the route
+### Adding Default Values to the Route
 
-You can use the **Defaults** column to add default values which will be used if you don't specify parameters in the
+You can use the *Defaults* column to add default values which will be used if you don't specify parameters in the
  url helper.
 
 
@@ -133,12 +135,11 @@ $this->url([
 Output will be: `/news-category/random+text_5_category_776`
 
 
-### Site support
+### Site Support
 
-It's possible to generate URL's pointing to a different Site inside Pimcore. To do so set the option **site**. 
+It's possible to generate URL's pointing to a different Site inside Pimcore. To do so, set the option *Site*. 
  
-
-#### Example: Linking to the site with the ID 3
+#### Example: Linking to the Site with the ID 3
 
 ```php
 
@@ -166,7 +167,7 @@ echo $this->url([
 
 ```
 
-#### Example: Linking back to the main-site
+#### Example: Linking Back to the Main-Site
 
 ```php
 echo $this->url([
@@ -177,11 +178,9 @@ echo $this->url([
 
 ```
 
-## Dynamic controller / action / module out of the route pattern
+## Dynamic controller / action / module out of the Route Pattern
 
 Pimcore supports dynamic values for the controller, action and the module. 
-
-**NOTE:** This works only with named placeholders!
 
 It works similar to the reverse route, you can place your placeholders directly into the controller.
 The following configuration should explain the way how it works:
@@ -201,7 +200,7 @@ In that case, you have few valid URL's:
 ## Using URL helper for query string URL generation
 
 Sometimes it is useful to generate a link with just a query string. 
-You can do so by using **false** as the 2nd parameter (instead of a routes name). 
+You can do so by using `false`  as the 2nd parameter (instead of a routes name). 
 
 ```php
 
@@ -210,7 +209,7 @@ $this->url(["foo" => "bar"], false);
 
 ```
 
-## Responding 404 status code
+## Responding 404 Status Code
 
 Sometimes you want to trigger a correct 404 error within your controller/action (addressed by a custom route), 
 for example when a requested object (in the route) doesn't exist anymore. 
@@ -225,6 +224,3 @@ public function testAction() {
     }
 }
 ```
-
-
-##
