@@ -1,10 +1,11 @@
 # Nginx Configuration 
 
-**This guide is still unfinished, it only includes the working server config not other Nginx requirements.**   
+**This guide is still unfinished, it only includes the working server config, not other Nginx requirements.**   
 
 **It's highly recommended to use Apache until we definitely have finished this reference configuration**.
 
-Installation on Nginx is entirely possible, and in my experience quite a lot faster then apache.I won't dive into how niginx is installed etc. But I will share the Nginx configuration which works.
+Installation on Nginx is entirely possible, and in our experience quite a lot faster thnn apache. This section won't dive into how 
+Nginx is installed etc, but will show a working Nginx configuration.
 
 ## Configuration 
 
