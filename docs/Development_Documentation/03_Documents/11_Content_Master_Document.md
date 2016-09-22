@@ -23,7 +23,7 @@ See, the step by step process below.
 
 ## Content Master document in the code
 
-Content master document doesn't change anything in the php API. If you load a document which has related a master document, 
+Content master document doesn't change anything in the PHP API. If you load a document which has related a master document, 
 then values returned by it will be replaced by values from the master document (unless values are overwritten).
 
 You can get Master document object by `getContentMasterDocument` method avaialble in `\Pimcore\Model\Document\Page`.

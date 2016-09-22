@@ -37,8 +37,8 @@ You can globally deactivate and activate the versioning with the following PHP c
 This setting is not saved, and only affects changes on elements which are modified within this process! 
 
 
-## Working with php API
-When working with php API - especially when saving elements - you need to set the `userModification` so that a proper 
+## Working with PHP API
+When working with PHP API - especially when saving elements - you need to set the `userModification` so that a proper 
 user is shown in version history. 
 
 When you set `userModification` to `0` Pimcore shows `system` as user in the version history. 

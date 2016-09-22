@@ -4,7 +4,7 @@ Whenever interaction with other systems is required, data objects are the vital 
 Pimcore data objects can be created, filled and listed programmatically in order to realize batch imports and exports 
 with only very few lines of code.
 
-Therefore the recommended way of interacting with external systems is using the php API of Pimcore and create a 
+Therefore the recommended way of interacting with external systems is using the PHP API of Pimcore and create a 
 interaction layer with your custom php code. This interaction layer can be within a Pimcore plugin, a library component,
  a rest or soap service or just a simple CLI command - you have the full flexibility.
  

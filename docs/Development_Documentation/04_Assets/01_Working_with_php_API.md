@@ -1,6 +1,6 @@
-# Working with Assets via php API
+# Working with Assets via PHP API
 
-Pimcore provides and object orientated php API to work with Assets. 
+Pimcore provides and object orientated PHP API to work with Assets. 
 
 ## CRUD Operations
 Following lines of code show simple CRUD operations for Assets. 

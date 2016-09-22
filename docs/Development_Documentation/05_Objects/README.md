@@ -9,14 +9,14 @@ Pimcore objects are literally objects in the sense of object oriented programmin
 through a user friendly graphical user interface (GUI), but nevertheless in the background a plain php class is created, 
 which can profit from inheritance and can be utilized and accessed within your custom php code. 
 So managing data becomes really easy. Data objects can be instantiated and filled within Pimcore backend or within your
-custom code by using the php API and common programming paradigms (create new instances, using getter and setter, ...).
+custom code by using the PHP API and common programming paradigms (create new instances, using getter and setter, ...).
  For saving objects just call the `save`` method and Pimcore takes care of the rest. 
  So it is also really eays to serve object from external systems like CRM, ERP, PIM or asset management systems.
  
 
 This chapter describes following aspects of objects from a technical point of view: 
  * [Object Classes](./01_Object_Classes/README.md) 
- * [Working with Objects via php API](./03_Working_with_php_API.md)
+ * [Working with Objects via PHP API](./03_Working_with_php_API.md)
  * [External System Interaction](./05_External_System_Interaction.md)
 
 For all the provided backend functionality within Pimcore have a look at the User Documentation of Pimcore.
