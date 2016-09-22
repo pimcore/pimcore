@@ -5,8 +5,8 @@
 User permissions in Pimcore are based on a users and roles concept. Each user can have serveral roles and both - users
  and roles - can have permissions. 
  
-Users and roles are configured in Pimcore backend UI at `Settings` -> `Users & Roles` -> `Users` and
- `Settings` -> `Users & Roles` -> `Roles`. 
+Users and roles are configured in Pimcore backend UI at *Settings* > *Users & Roles* > *Users* and
+ *Settings* > *Users & Roles* > *Roles*. 
 
 
 ## Permissions
