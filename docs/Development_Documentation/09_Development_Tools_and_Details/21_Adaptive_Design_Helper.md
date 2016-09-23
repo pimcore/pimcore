@@ -2,7 +2,7 @@
 
 The DeviceDetector helper makes it easy to implement the adaptive design approach in Pimcore. 
  
-### Using it anywhere in your code
+### Using it anywhere in your Code
 
 ```php
 class TestController extends Action {
@@ -18,7 +18,7 @@ class TestController extends Action {
 }
 ```
 
-### Force a device type
+### Force a Device Type
 Sometimes it's necessary to force a device type. A typical use case is a "Back to Desktop Version" 
 or vice versa link. 
 
