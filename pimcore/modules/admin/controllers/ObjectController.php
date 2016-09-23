@@ -694,7 +694,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
         if ($parent->isAllowed("create")) {
             $intendedPath = $parent->getRealFullPath() . "/" . $this->getParam("key");
 
-            if (!Object\Service::pathExists($intendedPath) || true) {
+            if (!Object\Service::pathExists($intendedPath)) {
                 $object = \Pimcore::getDiContainer()->make($className);
                 if ($object instanceof Object\Concrete) {
                     $object->setOmitMandatoryCheck(true); // allow to save the object although there are mandatory fields
