@@ -60,7 +60,7 @@ return [
 ```
 
 
-## Setup a custom cache frontend (e.g. for redis with id-prefix)
+## Setup a Custom Cache Frontend (e.g. for redis with id-prefix)
 You can also define a custom cache frontend, this can be also done in the `cache.php`
 
 ```php
