@@ -140,11 +140,11 @@ your Placeholders.
 
 | Method | Description |
 | ------ | ----------- |
-| getEmptyValue() | If the getReplacement() method returns an empty value the "getEmptyValue()" is called and the value which is returned by the "getEmptyValue()" method is used for the replacement. |
-| getLocale() / getLanguage() | Returns the current locale / language |
-| getParam($key) | Returns a specific parameter form the array that you passed to the replacePlaceholders() as second parameter. |
-| getParams() | Returns the array that you passed to the replacePlaceholders() as second parameter. |
-| getPlaceholderConfig() | Returns the JSON-Config of the placeholder (if it was set), otherwise returns an empty JSON-Config object |
-| getPlaceholderKey() | Returns the key from the dynamic parameters. E.g. If you take a look at the "Create your own Placeholder" example. When the placeholder "%Person(salutation);" is processed the key would be "salutation" When the placeholder "%Person(firstName);" is processed the key would be "firstName" ... |
-| getPlaceholderString() | Returns the placeholder string (raw text) |
-| getValue() | Returns the value from the dynamic parameter. |
+| `getEmptyValue()` | If the `getReplacement()` method returns an empty value the `getEmptyValue()` is called and the value which is returned by the `getEmptyValue()` method is used for the replacement. |
+| `getLocale()` / `getLanguage()` | Returns the current locale / language |
+| `getParam($key)` | Returns a specific parameter form the array that you passed to the `replacePlaceholders()` as second parameter. |
+| `getParams()` | Returns the array that you passed to the `replacePlaceholders()` as second parameter. |
+| `getPlaceholderConfig()` | Returns the JSON-Config of the placeholder (if it was set), otherwise returns an empty JSON-Config object |
+| `getPlaceholderKey()` | Returns the key from the dynamic parameters. E.g. If you take a look at the "Create your own Placeholder" example. When the placeholder `"%Person(salutation);"` is processed the key would be "salutation" When the placeholder `"%Person(firstName);"` is processed the key would be "firstName" ... |
+| `getPlaceholderString()` | Returns the placeholder string (raw text) |
+| `getValue()` | Returns the value from the dynamic parameter. |
