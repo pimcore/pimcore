@@ -128,8 +128,8 @@ if ($myProductList instanceof \Website\Model\News\Listing) {
 
 So far it's only read-only that means that the mapping only take effect by the getters like Document::getById() or 
 Asset::getList(), .. and so on.
- 
-** Don't forget to clear the cache after you change the configuration. **
+
+**Don't forget to clear the cache after you change the configuration.**
 
 
 ## Supported Types
