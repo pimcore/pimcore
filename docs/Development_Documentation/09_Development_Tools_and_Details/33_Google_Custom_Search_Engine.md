@@ -6,12 +6,12 @@ makes it easy to integrate a search engine into your website.
 
 [Further information about Google CSE/Site Search](http://www.google.com/cse/)
 
-## Setup in CSE control panel and Google API Console
+## Setup in CSE Control Panel and Google API Console
 * Create and configure a new search engine at [http://www.google.com/cse/](http://www.google.com/cse/) - 
-for more information please visit: [http://support.google.com/customsearch/](http://support.google.com/customsearch/) 
+for more information please visit: [http://support.google.com/customsearch/](http://support.google.com/customsearch/) .
 * Test your search engine first using the preview on the right hand side. 
 * If your results are as expected, go back to "Setup" (-> left navigation) and note the search engine ID 
-- you'll need it later in the code (parameter 'cx'  in configuration): 
+- You'll need it later in the code (parameter 'cx'  in configuration): 
 
 ![Google CSE Setup](../img/cse1.png)
 
@@ -19,7 +19,7 @@ for more information please visit: [http://support.google.com/customsearch/](htt
 create a new project, then search for `Custom Search API` and click on `Enable`.
 `Custom Search API` should now be listed under `Enabled APIs` in your project overview.
 * To get the necessary access keys, click on: `Credentials` -> `Create credentials` -> `API key` -> `Server key`
-Complete the setup as described and note the server API key
+Complete the setup as described and note the server API key.
 
 ![Google CSE Server Key](../img/cse2.png)
 
