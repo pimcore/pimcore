@@ -1,6 +1,6 @@
 # UUID Support
 Pimcore provides a toolkit for UUID-support. To activate the UUID-support, an instance identifier 
-has to be set in `Settings` -> `System` -> `General`:
+has to be set in *Settings* > *System* > *General*:
 
 ![UUID Support Config](../img/uuid-support-config.jpg)
 
