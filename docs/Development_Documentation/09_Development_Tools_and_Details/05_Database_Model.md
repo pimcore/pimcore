@@ -48,7 +48,7 @@ These tables are created during Pimcore install and are always the same.
 | http_error_log | HTTP error log |
 | keyvalue_groups | Groups of key value store |
 | keyvalue_keys | Keys of key value store |
-| keyvalue_translator_configuration ||
+| keyvalue_translator_configuration | |
 | locks | Store for [Locking functionality](./17_Static_Helpers.md#locking) |
 | notes | [Notes](../08_Tools_and_Features/05_Notes_and_Events.md) for elements | 
 | notes_data | Additional data for notes | 
