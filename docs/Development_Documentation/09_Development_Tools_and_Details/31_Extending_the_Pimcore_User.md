@@ -10,7 +10,7 @@ there is also an example of how the user and member objects can be created and a
 with each other programmatically.
 
 Regardless of the creation method of users and objects, in the first step the member class 
-has to be defined in `Settings` -> `Object` -> `Classes`:
+has to be defined in *Settings* > *Object* > *Classes*:
 
 ![Member Class Config](../img/object-user1.png)
 
@@ -27,7 +27,7 @@ Pimcore users.
 
 In this example the user "jondoe" was selected.
 
-In the `Settings` -> `Users` panel this relation is portrayed in the third tab of each 
+In the *Settings* > *Users* panel this relation is portrayed in the third tab of each 
 user which is called `This user is referenced in the following objects:`
 
 ![User Object Relations](../img/object-user3.png)
