@@ -1,6 +1,6 @@
 # Email Framework
 
-## General information
+## General Information
 The Pimcore Email Framework provides an easy way to send/create emails with Pimcore.
   
 For this you have several components:
@@ -9,11 +9,11 @@ For this you have several components:
 * [Placeholder Objects](../23_Placeholders/01_Object_Placeholder.md)
 
 Pimcore provides a `Pimcore\Mail` Class which extends the `Zend_Mail` Class. When you initialize a 
-`Pimcore\Mail` object, all data from `Settings` -> `System` -> `Email Settings` are applied 
+`Pimcore\Mail` object, all data from *Settings* > *System* > *Email Settings* are applied 
 automatically.  
 
-When you enable the debug mode in `Settings` -> `System` -> `Debug`, all emails will be sent to the 
-addresses given in `Settings` -> `System` -> `Email Settings` -> `Debug Email Addresses` and the debug 
+When you enable the debug mode in *Settings* > *System* > *Debug*, all emails will be sent to the 
+addresses given in *Settings* > *System* > *Email Settings* > *Debug Email Addresses* and the debug 
 information (to whom the email would have been sent) is automatically appended.
 
 Pimcore provides a `Document Email` type where you can define the recipients ... (more information 
@@ -48,7 +48,7 @@ $mail->send();
 ```
 
 
-#### Sending a plain text email:
+#### Sending a Plain Text Email:
 ```php
 $mail = new \Pimcore\Mail();
 $mail->addTo('example@pimcore.org');
@@ -56,7 +56,7 @@ $mail->setBodyText("This is just plain text");
 $mail->send();
 ```
 
-#### Sending a rich text (HTML) email: 
+#### Sending a Rich Text (HTML) Email: 
 ```php
 $mail = new \Pimcore\Mail();
 $mail->addTo('example@pimcore.org');
