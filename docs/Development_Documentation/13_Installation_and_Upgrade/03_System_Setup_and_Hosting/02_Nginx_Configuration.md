@@ -1,6 +1,6 @@
 # Nginx Configuration 
 
-Installation on Nginx is entirely possible, and in our experience quite a lot faster thnn apache. This section won't dive into how 
+Installation on Nginx is entirely possible, and in our experience quite a lot faster than apache. This section won't dive into how 
 Nginx is installed etc, but will show a working Nginx configuration.
 
 ## Configuration 
