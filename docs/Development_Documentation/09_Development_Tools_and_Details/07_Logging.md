@@ -5,7 +5,7 @@ There are several different kinds of logs in Pimcore. All of them are located un
 ## debug.log
 This is definitely one of the most important logs and also the default logging location. 
 
-You can configure the log levels in Pimcore Backend Interface in `Settings` -> `System` -> `Debug`. 
+You can configure the log levels in Pimcore Backend Interface in *Settings* > *System* > *Debug*. 
 For development purposes it's recommenced to turn on all log-levels. 
 
 If you turn on the DEV-MODE also the SQL-profiler logs to this location. 
@@ -22,7 +22,7 @@ In this log you can find every action done within the Pimcore Backend Interface.
 2013-07-25T18:26:30+02:00 : 2|admin|page|save|{"task":"publish","id":"4","data":"{\"headTitle\":{\"data\":\"Getting started\",\"..."}
 ```
 
-#### Explanation
+##### Explanation
 
 | Value (from the example above) | Description |
 | ------------------------------ | ----------- |
