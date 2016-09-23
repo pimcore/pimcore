@@ -58,7 +58,7 @@ class ClassesRebuildCommand extends AbstractCommand
         }
         $list = new Object\Objectbrick\Definition\Listing();
         $list = $list->load();
-        foreach($list as $brickDefinition) {
+        foreach ($list as $brickDefinition) {
             if ($output->isVerbose()) {
                 $output->writeln($brickDefinition->getKey() . " saved");
             }
