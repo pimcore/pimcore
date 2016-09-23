@@ -39,7 +39,10 @@ function createPhpConfigFileFor($filePath)
     try {
         $config = new \Zend_Config_Xml(PIMCORE_DOCUMENT_ROOT . $filePath);
 
-        \Pimcore\File::putPhpFile($newPath, to_php_data_file_format($config->toArray()));
+        $config = $config->toArray();
+
+        refactorProductIndexColumns($config);
+        \Pimcore\File::putPhpFile($newPath, to_php_data_file_format($config));
 
         print "created file " . $newPath . "\n";
     } catch (Exception $e) {
@@ -80,6 +83,13 @@ function refactorProductIndexColumns(&$config)
 {
     $config['onlineshop']['productindex']['generalSearchColumns'] = $config['onlineshop']['productindex']['generalSearchColumns']['column'];
     $config['onlineshop']['productindex']['columns'] = $config['onlineshop']['productindex']['columns']['column'];
+
+    if($config['tenant']['generalSearchColumns']['column']) {
+        $config['tenant']['generalSearchColumns'] = $config['tenant']['generalSearchColumns']['column'];
+    }
+    if($config['tenant']['columns']['column']) {
+        $config['tenant']['columns'] = $config['tenant']['columns']['column'];
+    }
 }
 
 $config = \OnlineShop\Plugin::getConfig(true);
