@@ -814,6 +814,23 @@ class Service extends Model\AbstractModel
                     foreach ($parts as $elementType) {
                         $data[] = [$type => $elementType];
                     }
+                } else {
+                    $newList = array();
+                    foreach ($data as $key => $item) {
+                        if ($item) {
+                            if (is_array($item)) {
+                                foreach ($item as $itemKey => $itemValue) {
+                                    if ($itemValue) {
+                                        $newList[$key][$itemKey] = $itemValue;
+                                    }
+                                }
+                            } else if ($item) {
+                                $newList[$key] = $item;
+                            }
+                        }
+                    }
+
+                    $data = $newList;
                 }
             }
         }
