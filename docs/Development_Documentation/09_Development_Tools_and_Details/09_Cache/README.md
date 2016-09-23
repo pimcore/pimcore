@@ -1,7 +1,7 @@
 # Cache
 
-Pimcore uses extensively caches, for differently types of data. The primary cache is a pure object 
-cache, every element (document, asset, object) in Pimcore is cached as it is (serialized objects). 
+Pimcore uses extensively caches for differently types of data. The primary cache is a pure object 
+cache where every element (document, asset, object) in Pimcore is cached as it is (serialized objects). 
 Every cache item is tagged with dependencies so the system is able to evict dependent objects if 
 a referenced object changes.
 
@@ -75,10 +75,10 @@ if(!$data = \Pimcore\Cache::load($cacheKey)) {
 \Pimcore\Cache::setForceImmendiateWrite(true);
 ```
 
-#### Disable the cache for a single request
+#### Disable the Cache for a Single Request
 Sometimes it's useful to deactivate the cache for testing purposes for a single request. You 
 can do this by passing the url parameter `nocache=true`. Note: This is only possible if you have 
-enabled the `DEBUG MODE` in `Settings` -> `System`
+enabled the `DEBUG MODE` in *Settings* > *System*
 
 For example: `http://www.pimcore.org/download?nocache=true` 
 
