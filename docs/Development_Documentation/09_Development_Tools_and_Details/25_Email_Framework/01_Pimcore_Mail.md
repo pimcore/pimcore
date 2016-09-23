@@ -3,11 +3,11 @@
 The `Pimcore\Mail` Class extend the [`Zend_Mail`](http://framework.zend.com/manual/1.12/en/zend.mail.html) 
 Class and adds some features for the usage with Pimcore.
 
-When you create a new `Pimcore\Mail` instance the E-Mail settings from `Settings` -> `System` -> `Email Settings` 
+When you create a new `Pimcore\Mail` instance the E-Mail settings from *Settings* > *System* > *Email Settings*
 are automatically applied.
 
-If the Debug Mode in `Settings` -> `System` -> `Debug` is enabled, all emails will be sent to the 
-Debug Email recipients defined in `Settings` -> `System` -> `Email Settings` -> `Debug Email Addresses`. 
+If the Debug Mode in *Settings* > *System* > *Debug* is enabled, all emails will be sent to the 
+Debug Email recipients defined in *Settings* > *System* > *Email Settings* > *Debug Email Addresses*. 
 Additionaly the debug information (to whom the email would have been sent) is appended to the email 
 and the Subject contains the prefix "Debug email:". 
 
@@ -24,7 +24,7 @@ produces better results for your text mail than the default (php) library.
 On Debian/Ubuntu you can install it with: `apt-get install html2text`
 
 
-## Useful methods
+## Useful Methods
 
 | Method | Description |
 | ------ | ----------- |
