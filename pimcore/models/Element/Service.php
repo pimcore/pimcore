@@ -815,7 +815,7 @@ class Service extends Model\AbstractModel
                         $data[] = [$type => $elementType];
                     }
                 } else {
-                    $newList = array();
+                    $newList = [];
                     foreach ($data as $key => $item) {
                         if ($item) {
                             if (is_array($item)) {
@@ -824,7 +824,7 @@ class Service extends Model\AbstractModel
                                         $newList[$key][$itemKey] = $itemValue;
                                     }
                                 }
-                            } else if ($item) {
+                            } elseif ($item) {
                                 $newList[$key] = $item;
                             }
                         }
