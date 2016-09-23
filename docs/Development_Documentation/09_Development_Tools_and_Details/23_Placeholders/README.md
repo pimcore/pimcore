@@ -16,7 +16,7 @@ E.g.: To use the Placeholder `Pimcore\Placeholder\Object` you would type `%Objec
 config is used)
 
 
-### Example usage
+### Example Usage
 Lets assume you have a text `"Thank you for the order of "PRODUCTNAME""` and you want replace 
 `"PRODUCTNAME"` with the real Product name.
 
@@ -29,7 +29,7 @@ $placeholder = new \Pimcore\Placeholder();
 echo $replaced = $placeholder->replacePlaceholders($text, ['object_id' => 73613, 'locale' => 'de_DE']);
 ```
 
-### More detailed:
+### More Detailed:
 The `replacePlaceholders()` method accepts 3 parameter:
 * First one: The text that contains the placeholders which should be replaced or a document 
 (the document is rendered to HTML)
