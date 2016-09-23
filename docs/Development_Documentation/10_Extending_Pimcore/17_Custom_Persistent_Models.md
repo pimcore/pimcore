@@ -1,6 +1,6 @@
 # Custom Persistent Models
 
-## When to use custom models
+## When to use Custom Models
 
 The Pimcore objects are very flexible but shouldn't be use to store all types of data. For example it doesn't make sense 
 to implement a rating-, comments- or a complex blog system on top of the Pimcore objects. Sometimes people also 
@@ -217,7 +217,7 @@ Please mind that this is just a very easy example dao. You also could do more co
 save dependencies or whatever you want.
 
 
-## Assign types like `\Zend_Date` directly into the model
+## Assign types like `\Zend_Date` directly into the Model
 
 You maybe need to assign types like `\Zend_Date` or another Custom-Model right from your Dao to your Model. To do that, 
 you need to overwrite the `assignVariablesToModel` function. 
