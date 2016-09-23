@@ -104,6 +104,7 @@ added to the database. The tables have a numerical suffix, denoting the number
 Following is an overview of how different object data types are stored in to database. This overview might not be complete.
 This overview might be a useful starting point when querying object data with object lists. 
 
+
 ##### Text
 Table: object_store_(id)
  
@@ -113,7 +114,8 @@ Table: object_store_(id)
 | Textarea | longtext | NULL | / |
 | wysiwyg | longtext | NULL | Text with HTML-tags |
 | password | varchar(255) | NULL | Passwort - as hash |
- 
+
+
 ##### Number
 Table: object_store_(id)
  
@@ -121,7 +123,8 @@ Table: object_store_(id)
 | ---- | --------- | ------- | ------- |
 | Number | double/decimal(64,3) | NULL | Datatype depends on selected precision |
 | Slider | double | NULL | / |
- 
+
+
 ##### Date 
 Table: object_store_(id)
 
@@ -130,7 +133,8 @@ Table: object_store_(id)
 | Date | bigint(20) | NULL  | < 1970 = negative Timestamp |
 | Date & Time | bigint(20) | NULL | < 1970 = negative Timestamp |
 | Time | varchar(5) | NULL | String - e.g.: "12:00" |
-  
+
+
 ##### Select 
 Table: object_store_(id)
  
@@ -143,7 +147,8 @@ Table: object_store_(id)
 | Multiselection | text | NULL | String, selected values, separated by "," |
 | Countries (Multiselect) | text | NULL | String, selected language-codes, separated by "," |
 | Languages (Multiselect) | text | NULL | String, selected language-codes, separated by "," |
- 
+
+
 ##### Relations
 Table: object_relations_(id) & object_meta_data_(id)
 
@@ -167,7 +172,8 @@ specifies the name of the meta item and `data` stores the value
 | Objectbricks | see special data fields later | 
 | Localized Fields | see special data fields later |
 | Key/Value | varchar(255)
- 
+
+
 ##### Geographic
 Table: object_store_(id)
  
@@ -198,6 +204,7 @@ Table: object_store_(id)
 | object_brick_query_(id) Table | Analog to object_query_(id) |
 | object_brick_store_(id) Table Main data storage |
 
+
 ##### Localized fields
  
 | Table/View | Purpose |
@@ -205,6 +212,7 @@ Table: object_store_(id)
 | object_localized_(id)_(language-code) View | A database view per language, combining regular and localized data fields |
 | object_localized_data_(id) Table | Stores localized field data |
 | object_localized_query_(id)_(language-code) Table | Analog to object_query_(id) |
+
 
 ##### Field Collections
  
