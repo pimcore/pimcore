@@ -83,7 +83,7 @@ Settings for assets like version steps, default color profiles for thumbnail pro
 
 ## Google Credentials & API Keys
 Google API Credentials (Service Account Client ID for Analytics, ...) is required for the Google API integrations. 
-Only use a `Service Account´ from the Google API Console.
+Only use a *Service Account* from the Google API Console.
 
 Google API Key (Simple API Access for Maps, CSE, ...) is e.g. required for correct display of geo datatypes in Pimcore ojbects. 
  
