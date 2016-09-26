@@ -1,7 +1,8 @@
-# Document properties
+# Properties
+
 ## General
 
-An every element could have custom properties. 
+An every element can have custom properties. 
 You can find these in the **Properties** tab for each type of elements (documents, assets, objects).
 
 ![Properties in the document](../img/properties_tab_editmode_preview.png)

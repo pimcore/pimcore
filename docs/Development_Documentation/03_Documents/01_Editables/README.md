@@ -1,6 +1,14 @@
 # Editables
 
 The editables are placeholders in the templates, which are displayed as input widgets in the admin interface (so called editmode) and output the content in frontend mode.
+They are the essential part of managing content in documents. 
+
+## Example Usage 
+The following code makes the `<h1>` headline editable in a document: 
+```php 
+<h1><?= $this->input("headline") ?></h1>
+```
+Pimcore automatically displays an input widget in the edit mode and renders the content when accessing the document via the frontend. 
 
 ## List of Editables 
 

@@ -71,7 +71,7 @@ Following features are supported:
 Content inheritance is a Pimcore feature to save duplicate data maintenance within documents. This feature is quite handy
 in multi language document structures in order to maintain language independent content only once. 
 
-For details see [Content Master Document](../03_Documents/11_Content_Master_Document.md).
+For details see [Document Inheritance / Content Master Document](../03_Documents/11_Inheritance.md).
 
 
 ## Translating terms on the website

@@ -1,6 +1,4 @@
-# Pimcore Navigation
-
-[TOC]
+# Navigation
 
 ## Basics
 
@@ -27,7 +25,7 @@ $mainNavigation = $this->pimcoreNavigation($this->document, $navStartNode);
 
 Having set up the navigation view helper as shown above, you can easily use the Zend Navigation Helpers to render a navigation tree, or breadcrumbs.
 
-### Meta navigation - only 1st level
+### Meta Navigation - Only the 1st Level
 
 ```php
 <?php
@@ -48,7 +46,7 @@ $navigation = $mainNavigation->getContainer();
 </div>
 ```
 
-### Sidebar navigation
+### Sidebar Navigation
 
 ```php
 <div class="my-sidebar-menu">
@@ -56,7 +54,7 @@ $navigation = $mainNavigation->getContainer();
 </div>
 ```
 
-### Sidebar navigation with a different html prefix
+### Sidebar Navigation with a Different HTML Prefix
 
 ```php
 <div class="my-sidebar-menu">
@@ -100,7 +98,7 @@ The example css below shows how to do that (includes 3 Levels):
 }
 ```
 
-## Setting a Document's Navigation properties in Pimcore
+## Setting a Document's Navigation Property
 
 ![Settings for navigation on document edit page.](../img/navigation_document_settings.png)
 
@@ -125,7 +123,7 @@ These navigation settings include the following properties:
 * **Accesskey:** Only available in custom navigation script
 * **Tab-Index:** Only available in custom navigation script
 
-## Individual (partial) navigation view script.
+## Individual (Partial) Navigation View Script
 If the standard HTML output of the render() method is not suitable for a project, there is the possibility to provide a custom script for the menu HTML. 
 This can be achieved using the renderPartial() method of the **Zend Menu Helper** (`\Zend_View_Helper_Navigation_Menu::renderPartial`).
 
@@ -151,7 +149,7 @@ For example, inside your view:
 <?php endforeach; ?>
 ```
 
-## Document_Link navigation properties
+## `Document\Link` Navigation Properties
 
 A Document_Link has three properties which are not covered by `Zend_Navigation` by default. 
 These are tabindex, accesskey and relation. Since the `Zend_Navigation` container 
@@ -160,7 +158,7 @@ these additional properties are available and accessible through their according
 
 Consequently, they can be regarded in an individual (partial) view script for the navigation, but will be ignored by the default render() methods.
 
-## Using the navigation helper with sites.
+## Using the Navigation Helper with Sites.
 
 For example:
 ```php
@@ -181,7 +179,7 @@ if(!$navStartNode instanceof Document\Page) {
 ?>
 ```
 
-## Using partials generate customized Navigation
+## Using Partials Generating a Customized Navigation
 
 For example, generate bootstrap 3.0 style navigation: 
 
@@ -242,7 +240,7 @@ if(!$navStartNode instanceof Document\Page) {
 </nav>
 ```
 
-## Adding custom items to the navigation
+## Adding Custom Items to the Navigation
 
 In the following example we're adding news items (objects) to the navigation using the callback. 
 
@@ -282,7 +280,7 @@ $navigation = $this->pimcoreNavigation($this->document, $navStartNode, null, fun
 </div>
 ```
 
-## Cacheable / High-Performance Navigation
+## Caching / High-Performance Navigation
 
 The navigation tree / container (`Zend_Navigation_Container`) is automatically cached by pimcore and improves significantly the performance of navigations. 
 To benefit from the cache it's absolutely necessary to don't use `Pimcore\Model\Document` objects directly in the navigation templates / partial scripts, because this would result in loading all the documents again in the navigation.
@@ -320,7 +318,7 @@ Later in the template of the navigation (`/navigation/partials/navigation.php`) 
 
 Using this method will dramatically improve the performance of your navigation. 
 
-### Dynamic key for the navigation cache
+### Dynamic Key for the Navigation Cache
 
 Sometimes it's necessary to manually set the key for the navigation cache. 
 
@@ -328,7 +326,7 @@ Sometimes it's necessary to manually set the key for the navigation cache.
 $this->pimcoreNavigation($this->document, $mainNavStartNode, null, null, "yourindividualkey");
 ```
 
-### Disabling the navigation cache
+### Disabling the Navigation Cache
 
 You can disable the navigation cache by setting the 5th argument to `false`.
 
