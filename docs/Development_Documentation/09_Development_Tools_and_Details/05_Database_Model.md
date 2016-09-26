@@ -63,8 +63,6 @@ These tables are created during Pimcore install and are always the same.
 | sites | Stores [sites](../02_MVC/04_Routing_and_URLs/08_Working_with_Sites.md) |
 | tags | Stores available [tags](../08_Tools_and_Features/09_Tags.md)
 | tags_assignment | Stores assignment of tags to elements |
-| targeting_personas | Personas for [targeting](../03_Documents/13_Targeting_and_Personalization/README.md) |
-| targeting_rules | Rules for  [targeting](../03_Documents/13_Targeting_and_Personalization/README.md) |
 | tmp_store | Pimcore internal tmp store | 
 | tracking_events | |
 | translations_admin | Backend translations |
