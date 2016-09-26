@@ -437,7 +437,7 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
      * @param mixed $params
      * @return mixed
      */
-    public function getForWebserviceExport($object, $params = array())
+    public function getForWebserviceExport($object, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
 
