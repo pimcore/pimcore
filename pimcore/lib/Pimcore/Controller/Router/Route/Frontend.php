@@ -478,6 +478,9 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
 
             $requestScheme = Tool::getRequestScheme();
             $matchUrl = Tool::getHostUrl() . $matchRequestUri;
+            if (!empty($_SERVER["QUERY_STRING"])) {
+                $matchUrl .= "?" . $_SERVER["QUERY_STRING"];
+            }
 
             foreach ($this->redirects as $redirect) {
                 $matchAgainst = $matchRequestUri;
