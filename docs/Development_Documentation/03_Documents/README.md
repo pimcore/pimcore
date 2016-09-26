@@ -77,7 +77,7 @@ As you can see there are really useful cases for properties, feel free to use th
 * Although the templates are written in PHP, there is a clear separation as mentioned before.
 
 ## Create Your First Document 
-Working with documents is described in detail in our [Create a First Project](../01_Getting_Started/06_Create_A_First_Project.md) manual. 
+Working with documents is described in detail in our [Create a First Project](../01_Getting_Started/06_Create_a_First_Project.md) manual. 
 
 ## Document Topics
 - [Creating editable templates](./01_Editables/README.md) 
