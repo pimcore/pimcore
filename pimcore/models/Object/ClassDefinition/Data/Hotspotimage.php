@@ -456,12 +456,14 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
 
     /**
      * @param mixed $value
-     * @param null $relatedObject
+     * @param null $object
+     * @param array $params
      * @param null $idMapper
-     * @return mixed|void
+     * @return null|Asset|Object\Data\Hotspotimage
      * @throws \Exception
      */
-    public function getFromWebserviceImport($value, $relatedObject = null, $idMapper = null) {
+    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
+    {
 
         if(!is_null($value)) {
             $value = json_decode(json_encode($value), true);
