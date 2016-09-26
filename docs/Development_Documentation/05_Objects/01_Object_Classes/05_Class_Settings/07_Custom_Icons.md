@@ -1,4 +1,4 @@
-# Custom Icons for objects
+# Custom Icons for Objects
 
 Pimcore allows to define custom icons for objects. Either, icons can be the same for all objects of a class 
 (via configuration in class) or objects depending on their data values can have different icons (via admin style in code). 
@@ -20,18 +20,18 @@ Icons that come along with Pimcore by default can be found in `http://your-domai
 As icons SVG graphics are recommended. If you use pixel graphics, maximum size is 18x20 pixels. 
 
 
-## Custom icons and style in object-tree
+## Custom Icons and Style in Object-Tree
 
 It is possible to define custom icons and styles for objects in the object tree. 
 In order to do so, overwrite the method `getElementAdminStyle` of `AbstractObject` by [extending the Pimcore 
  default class](./01_Inheritance.md) and return your own implementation of Element_AdminStyle.
  
-#### Possible properties to define:
+#### Possible Properties to Define:
 * Element css class
 * Element icon
 * Element icon class
 
-##### Extend the object class and overwrite the `getElementAdminStyle`:
+##### Extend the Object Class and Overwrite `getElementAdminStyle()`:
 ```php
 public function getElementAdminStyle() {
    if (!$this->o_elementAdminStyle) {
@@ -66,11 +66,11 @@ class Website_OnlineShop_AdminStyle extends Element_AdminStyle {
 }
 ```
 
-##### Example result
+##### Example Result
 ![Class Icons](../../../img/classes-icons2.png)
 
 
-### Custom Tooltips (ExtJs 6 only)
+### Custom Tooltips (ExtJS 6 only)
 
 Since build 3584 it is possible to define custom tooltips which are shown while hovering over the object tree.
 ![Class Icons](../../../img/classes-icons3.png)
