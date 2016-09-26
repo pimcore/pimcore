@@ -443,13 +443,14 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
 
         $dataForResource = $this->getDataForResource($data, $object, $params);
 
-        if($dataForResource) {
-            if($dataForResource['image__hotspots']) {
+        if ($dataForResource) {
+            if ($dataForResource['image__hotspots']) {
                 $dataForResource['image__hotspots'] = unserialize($dataForResource['image__hotspots']);
             }
 
             return $dataForResource;
         }
+
         return null;
     }
 
@@ -464,16 +465,15 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
      */
     public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
     {
-
-        if(!is_null($value)) {
+        if (!is_null($value)) {
             $value = json_decode(json_encode($value), true);
 
-            if($value['image__image']) {
+            if ($value['image__image']) {
                 $value['image__image'] = $idMapper->getMappedId('asset', $value['image__image']);
             }
         }
 
-        if(is_array($value) && isset($value['image__hotspots']) && $value['image__hotspots']) {
+        if (is_array($value) && isset($value['image__hotspots']) && $value['image__hotspots']) {
             $value['image__hotspots'] = serialize($value['image__hotspots']);
         }
         $hotspotImage = $this->getDataFromResource($value);
@@ -481,7 +481,7 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
 
         /** @var $hotspotImage Object\Data\Hotspotimage */
 
-        if(!$hotspotImage) {
+        if (!$hotspotImage) {
             return null;
         }
 
@@ -494,10 +494,11 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
         $id = $theImage->getId();
 
         $asset = Asset::getById($id);
-        if(empty($id)){
+        if (empty($id)) {
             return null;
-        } else if (is_numeric($id) and $asset instanceof Asset) {
+        } elseif (is_numeric($id) and $asset instanceof Asset) {
             $hotspotImage->setImage($asset);
+
             return $hotspotImage;
         } else {
             if (!$idMapper || !$idMapper->ignoreMappingFailures()) {

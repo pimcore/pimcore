@@ -69,7 +69,7 @@ if ($conf->general->instanceIdentifier) {
 
 //assign tags after copying an element
 Pimcore::getEventManager()->attach(["document.postCopy", "asset.postCopy", "object.postCopy"],
-    function(\Zend_EventManager_Event $e) {
+    function (\Zend_EventManager_Event $e) {
         $elementType = strtok($e->getName(), '.');
         /** @var \Pimcore\Model\Element\AbstractElement $copiedElement */
         $copiedElement = $e->getTarget();
