@@ -11,8 +11,8 @@ In Pimcore there is a difference between content localization and localization o
 ## Content Localization 
 
 ### Language Configuration
-The available languages for content are configured centrally in system settings (`Settings` -> `System Settings` 
--> `Localization & Internationalization (i18n/l10n)`). 
+The available languages for content are configured centrally in system settings (*Settings* > *System Settings*
+> *Localization & Internationalization (i18n/l10n)*). 
 
 ![Localization Settings](../img/localization-settings.png)
 
@@ -32,7 +32,7 @@ The activated languages have influence to following modules of content within Pi
 * [Structured Data Fields - Classification Store](../05_Objects/01_Object_Classes/01_Data_Types/13_Classification_Store.md)
 
 
-### Dealing with Locales within our code
+### Dealing with Locales within our Code
 Pimcore offers localization for documents as described above. If you don't want to use that, you can set the locale 
 manually in your controller/action: 
 
@@ -55,14 +55,14 @@ Basically every text in Pimcore backend is translatable, but there are two diffe
 system translations and project specific translations. 
 
 
-### Pimcore system translations
+### Pimcore System Translations
 This covers all labels and texts within Pimcore that ship with Pimcore installation package. Here the standard language 
 English is maintained by the core team. In addition to that, every body can join the 
  [Pimcore translation project](http://www.pimcore.org/en/community/translations) to add system translations in additional
  languages. With every Pimcore release, newly added translations are added to the Pimcore installation package.
 
 
-### Project specific translations
+### Project Specific Translations
 There are several components in the Pimcore backend UI which are configured differently for each project. These are
 
 * object class names
@@ -73,7 +73,7 @@ There are several components in the Pimcore backend UI which are configured diff
 * custom views
 * document editables
 
-All these elements (except document editables) can be translated in `Extras` > `Translations Admin` similar to the
+All these elements (except document editables) can be translated in *Extras* > *Translations Admin* similar to the
 Shared Translations. All installed system languages are available for translation.
 
 Strings which are subject to special translations, but have not been translated yet, are displayed with a "+" in front 
