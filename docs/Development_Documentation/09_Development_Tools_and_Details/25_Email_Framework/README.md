@@ -4,7 +4,7 @@
 The Pimcore Email Framework provides an easy way to send/create emails with Pimcore.
   
 For this you have several components:
-* [Document\Email](../../03_Documents/07_Document_Types/README.md)
+* Document\\Email
 * [Pimcore\Mail](./01_Pimcore_Mail.md)
 * [Placeholder Objects](../23_Placeholders/01_Object_Placeholder.md)
 
