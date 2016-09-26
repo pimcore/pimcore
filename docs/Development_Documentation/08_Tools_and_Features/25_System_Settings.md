@@ -1,6 +1,6 @@
 # System Settings
 
-In system settings (`Settings` -> `System Settings`) system wide settings fpr Pimcore can be made. Changes should 
+In system settings (*Settings* > *System Settings*) system wide settings fpr Pimcore can be made. Changes should 
 be made with care and only by developers. 
 These settings are saved in `website/var/config/system.php`. 
 
@@ -29,7 +29,7 @@ specific remote address.
 ![System Settings](../img/system-settings1.png)
 
 If you are using `Pimcore\Mail` to send emails and the Debug Mode is enabled, all emails will be sent to the debug email 
-receivers defined in `Settings` -> `System Settings` -> `Email Settings` -> `Debug email addresses`. In addition a debug 
+receivers defined in *Settings* > *System Settings* > *Email Settings* > *Debug email addresses*. In addition a debug 
 information is attached to the email which shows you to who the email would be sent if the debug mode is disabled.
 
 To check anywhere in your own code if you are working in debug-mode, you can make use of the `PIMCORE_DEBUG` constant.
