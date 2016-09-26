@@ -271,7 +271,7 @@ class Reports_CustomReportController extends \Pimcore\Controller\Action\Admin\Re
 
         fclose($fp);
 
-        header("Content-type: text/plain");
+        header('Content-type: text/csv; charset=UTF-8');
         header("Content-Length: " . filesize($exportFile));
         header("Content-Disposition: attachment; filename=\"export.csv\""); while (@ob_end_flush());
         flush();
