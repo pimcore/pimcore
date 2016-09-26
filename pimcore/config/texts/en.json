@@ -1,5 +1,9 @@
 [
     {
+        "term": "full_page_cache",
+        "definition": "Full Page Cache"
+    },
+    {
         "term": "original_file",
         "definition": "Original File"
     },
@@ -1730,7 +1734,7 @@
     },
     {
         "term": "clear_only_output_cache",
-        "definition": "Clear only output-cache"
+        "definition": "Clear only Full Page Cache"
     },
     {
         "term": "move_to_tab",
@@ -3975,10 +3979,6 @@
     {
         "term": "apply",
         "definition": "Apply"
-    },
-    {
-        "term": "output_cache",
-        "definition": "Output-Cache"
     },
     {
         "term": "lifetime",

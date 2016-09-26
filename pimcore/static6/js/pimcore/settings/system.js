@@ -1113,7 +1113,7 @@ pimcore.settings.system = Class.create({
                     ,
                     {
                         xtype: 'fieldset',
-                        title: t('output_cache'),
+                        title: t('full_page_cache'),
                         collapsible: true,
                         collapsed: true,
                         autoHeight: true,
