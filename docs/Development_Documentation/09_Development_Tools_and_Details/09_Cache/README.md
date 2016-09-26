@@ -94,10 +94,10 @@ If you want to disable the cache in your code, you can use:
 
 This will disable the entire cache, not only the output-cache. WARNING: Do not use this in production code!
 
-It is also possible to just disable the output-cache in your code, read more [here](./03_Output_Cache.md).
+It is also possible to just disable the output-cache in your code, read more [here](./03_Full_Page_Cache.md).
 
 
 ## Further Reading
 
 * Setup a custom caching-backend - see [Custom Cache Backends](./01_Custom_Cache_Backends.md).
-* Details about output-cache - see [Output Cache](./03_Output_Cache.md).
+* Details about output-cache - see [Output Cache](./03_Full_Page_Cache.md).
