@@ -445,11 +445,9 @@ class Staticroute extends AbstractModel
 
         // allow blocked params if we use it as variables
         $variables = explode(",", $this->getVariables());
-        foreach($variables as $name)
-        {
+        foreach ($variables as $name) {
             $pos = array_search($name, $blockedRequestParams);
-            if($pos !== false)
-            {
+            if ($pos !== false) {
                 unset($blockedRequestParams[$pos]);
             }
         }
