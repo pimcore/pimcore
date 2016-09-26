@@ -85,6 +85,10 @@ class Service extends Model\Element\Service
             $this->updateChilds($target, $new);
         }
 
+        // triggers actions after the complete asset cloning
+        \Pimcore::getEventManager()->trigger('asset.postCopy', $new, [
+            'base_element' => $source // the element used to make a copy
+        ]);
 
         return $new;
     }
@@ -117,6 +121,11 @@ class Service extends Model\Element\Service
         if ($target instanceof Asset\Folder) {
             $this->updateChilds($target, $new);
         }
+
+        // triggers actions after the complete asset cloning
+        \Pimcore::getEventManager()->trigger('asset.postCopy', $new, [
+            'base_element' => $source // the element used to make a copy
+        ]);
 
         return $new;
     }

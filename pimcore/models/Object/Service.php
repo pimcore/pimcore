@@ -138,6 +138,11 @@ class Service extends Model\Element\Service
 
         $this->updateChilds($target, $new);
 
+        // triggers actions after the complete document cloning
+        \Pimcore::getEventManager()->trigger('object.postCopy', $new, [
+            'base_element' => $source // the element used to make a copy
+        ]);
+
         return $new;
     }
 
@@ -170,6 +175,11 @@ class Service extends Model\Element\Service
         $new->save();
 
         $this->updateChilds($target, $new);
+
+        // triggers actions after the complete object cloning
+        \Pimcore::getEventManager()->trigger('object.postCopy', $new, [
+            'base_element' => $source // the element used to make a copy
+        ]);
 
         return $new;
     }

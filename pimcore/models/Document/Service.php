@@ -17,10 +17,10 @@
 namespace Pimcore\Model\Document;
 
 use Pimcore\Model;
-use Pimcore\Tool\Serialize;
-use Pimcore\View;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use Pimcore\Tool\Serialize;
+use Pimcore\View;
 
 class Service extends Model\Element\Service
 {
@@ -241,6 +241,11 @@ class Service extends Model\Element\Service
 
         $this->updateChilds($target, $new);
 
+        // triggers actions after the complete document cloning
+        \Pimcore::getEventManager()->trigger('document.postCopy', $new, [
+            'base_element' => $source // the element used to make a copy
+        ]);
+
         return $new;
     }
 
@@ -288,6 +293,11 @@ class Service extends Model\Element\Service
         $new->save();
 
         $this->updateChilds($target, $new);
+
+        // triggers actions after the complete document cloning
+        \Pimcore::getEventManager()->trigger('document.postCopy', $new, [
+            'base_element' => $source // the element used to make a copy
+        ]);
 
         return $new;
     }
