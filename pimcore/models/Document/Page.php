@@ -18,6 +18,7 @@ namespace Pimcore\Model\Document;
 
 use Pimcore\Model;
 use Pimcore\Model\Redirect;
+use Pimcore\Logger;
 
 class Page extends Model\Document\PageSnippet
 {
@@ -147,7 +148,7 @@ class Page extends Model\Document\PageSnippet
     public function getKeywords()
     {
         // keywords are not supported anymore
-        \Logger::info("getKeywords() is deprecated and will be removed in the future!");
+        Logger::info("getKeywords() is deprecated and will be removed in the future!");
 
         return "";
     }
@@ -179,7 +180,7 @@ class Page extends Model\Document\PageSnippet
     public function setKeywords($keywords)
     {
         // keywords are not supported anymore
-        \Logger::info("setKeywords() is deprecated and will be removed in the future!");
+        Logger::info("setKeywords() is deprecated and will be removed in the future!");
 
         return $this;
     }

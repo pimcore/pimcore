@@ -16,6 +16,7 @@ use Pimcore\Tool;
 use Pimcore\Model\User;
 use Pimcore\Model\Element;
 use Pimcore\Model\Object;
+use Pimcore\Logger;
 
 class Admin_UserController extends \Pimcore\Controller\Action\Admin
 {
@@ -398,7 +399,7 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
             if ($user->getId() == $this->getParam("id")) {
                 $this->uploadImageAction();
             } else {
-                \Logger::warn("prevented save current user, because ids do not match. ");
+                Logger::warn("prevented save current user, because ids do not match. ");
                 $this->_helper->json(false);
             }
         } else {
@@ -455,7 +456,7 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
                 $user->save();
                 $this->_helper->json(["success" => true]);
             } else {
-                \Logger::warn("prevented save current user, because ids do not match. ");
+                Logger::warn("prevented save current user, because ids do not match. ");
                 $this->_helper->json(false);
             }
         } else {

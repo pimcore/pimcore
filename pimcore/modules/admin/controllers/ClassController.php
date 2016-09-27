@@ -16,6 +16,7 @@ use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Object;
+use Pimcore\Logger;
 
 class Admin_ClassController extends \Pimcore\Controller\Action\Admin
 {
@@ -245,7 +246,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
 
             $this->_helper->json(["success" => true, "id" => $customLayout->getId(), "data" => $customLayout]);
         } catch (\Exception $e) {
-            \Logger::error($e->getMessage());
+            Logger::error($e->getMessage());
             $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
         }
     }
@@ -308,7 +309,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
 
             $this->_helper->json(["success" => true, "class" => $class]);
         } catch (\Exception $e) {
-            \Logger::error($e->getMessage());
+            Logger::error($e->getMessage());
             $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
         }
     }
@@ -359,7 +360,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
                 $customLayout->save();
                 $success = true;
             } catch (\Exception $e) {
-                \Logger::error($e->getMessage());
+                Logger::error($e->getMessage());
             }
         }
 
@@ -443,7 +444,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
 
         if (!$class instanceof Object\ClassDefinition) {
             $errorMessage = ": Class with id [ " . $id . " not found. ]";
-            \Logger::error($errorMessage);
+            Logger::error($errorMessage);
             echo $errorMessage;
         } else {
             $json = Object\ClassDefinition\Service::generateClassDefinitionJson($class);
@@ -483,7 +484,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
 
 
         $errorMessage = ": Custom Layout with id [ " . $id . " not found. ]";
-        \Logger::error($errorMessage);
+        Logger::error($errorMessage);
         echo $errorMessage;
     }
 
@@ -538,7 +539,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
 
             $this->_helper->json(["success" => true, "id" => $fc->getKey()]);
         } catch (\Exception $e) {
-            \Logger::error($e->getMessage());
+            Logger::error($e->getMessage());
             $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
         }
     }
@@ -569,7 +570,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
         $key = $fieldCollection->getKey();
         if (!$fieldCollection instanceof Object\Fieldcollection\Definition) {
             $errorMessage = ": Field-Collection with id [ " . $this->getParam("id") . " not found. ]";
-            \Logger::error($errorMessage);
+            Logger::error($errorMessage);
             echo $errorMessage;
         } else {
             $json = Object\ClassDefinition\Service::generateFieldCollectionJson($fieldCollection);
@@ -606,12 +607,16 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
 
     public function fieldcollectionListAction()
     {
+        $user = \Pimcore\Tool\Admin::getCurrentUser();
+        $currentLayoutId = $this->getParam("layoutId");
+
         $list = new Object\Fieldcollection\Definition\Listing();
         $list = $list->load();
 
         if ($this->hasParam("allowedTypes")) {
             $filteredList = [];
             $allowedTypes = explode(",", $this->getParam("allowedTypes"));
+            /** @var $type Object\Fieldcollection\Definition */
             foreach ($list as $type) {
                 if (in_array($type->getKey(), $allowedTypes)) {
                     $filteredList[] = $type;
@@ -619,11 +624,16 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
                     // mainly for objects-meta data-type
                     $layoutDefinitions = $type->getLayoutDefinitions();
                     Object\Service::enrichLayoutDefinition($layoutDefinitions, null);
+
+                    if ($currentLayoutId == -1 && $user->isAdmin()) {
+                        Object\Service::createSuperLayout($layoutDefinitions);
+                    }
                 }
             }
 
             $list = $filteredList;
         }
+
 
         $this->_helper->json(["fieldcollections" => $list]);
     }
@@ -738,7 +748,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
 
             $this->_helper->json(["success" => true, "id" => $fc->getKey()]);
         } catch (\Exception $e) {
-            \Logger::error($e->getMessage());
+            Logger::error($e->getMessage());
             $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
         }
     }
@@ -768,7 +778,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
         $key = $objectBrick->getKey();
         if (!$objectBrick instanceof Object\Objectbrick\Definition) {
             $errorMessage = ": Object-Brick with id [ " . $this->getParam("id") . " not found. ]";
-            \Logger::error($errorMessage);
+            Logger::error($errorMessage);
             echo $errorMessage;
         } else {
             $xml = Object\ClassDefinition\Service::generateObjectBrickJson($objectBrick);
@@ -976,7 +986,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
                         $layoutDefinition->setLayoutDefinitions($layoutDef);
                         $layoutDefinition->save();
                     } catch (\Exception $e) {
-                        \Logger::error($e->getMessage());
+                        Logger::error($e->getMessage());
                         $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
                     }
                 }

@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -15,6 +15,7 @@
 namespace Pimcore;
 
 use Pimcore\Db\Wrapper;
+use Pimcore\Logger;
 
 class Db
 {
@@ -59,7 +60,7 @@ class Db
             return new Wrapper();
         }
 
-        $charset = "UTF8";
+        $charset = "utf8mb4";
 
         // explicit set charset for connection (to the adapter)
         $config = Config::getSystemConfig()->database->toArray();
@@ -78,7 +79,7 @@ class Db
             $db = \Zend_Db::factory($config["adapter"], $config["params"]);
             $db->query("SET NAMES " . $charset);
         } catch (\Exception $e) {
-            \Logger::emerg($e);
+            Logger::emerg($e);
             \Pimcore\Tool::exitWithError("Database Error! See debug.log for details");
         }
 
@@ -86,14 +87,14 @@ class Db
         try {
             $db->query("SET default_storage_engine=InnoDB;");
         } catch (\Exception $e) {
-            \Logger::warn($e);
+            Logger::warn($e);
         }
 
         // try to set mysql mode
         try {
             $db->query("SET sql_mode = '';");
         } catch (\Exception $e) {
-            \Logger::warn($e);
+            Logger::warn($e);
         }
 
         $connectionId = $db->fetchOne("SELECT CONNECTION_ID()");
@@ -106,7 +107,7 @@ class Db
             $db->setProfiler($profiler);
         }
 
-        \Logger::debug(get_class($db) . ": Successfully established connection to MySQL-Server, Process-ID: " . $connectionId);
+        Logger::debug(get_class($db) . ": Successfully established connection to MySQL-Server, Process-ID: " . $connectionId);
 
         return $db;
     }
@@ -138,7 +139,7 @@ class Db
                 }
             }
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
         }
 
         // get new connection
@@ -150,8 +151,8 @@ class Db
         } catch (\Exception $e) {
             $errorMessage = "Unable to establish the database connection with the given configuration in /website/var/config/system.php, for details see the debug.log. \nReason: " . $e->getMessage();
 
-            \Logger::emergency($errorMessage);
-            \Logger::emergency($e);
+            Logger::emergency($errorMessage);
+            Logger::emergency($e);
             \Pimcore\Tool::exitWithError($errorMessage);
         }
     }
@@ -183,13 +184,13 @@ class Db
 
                 if ($db instanceof Wrapper) {
                     // the following select causes an infinite loop (eg. when the connection is lost -> error handler)
-                    //\Logger::debug("closing mysql connection with ID: " . $db->fetchOne("SELECT CONNECTION_ID()"));
+                    //Logger::debug("closing mysql connection with ID: " . $db->fetchOne("SELECT CONNECTION_ID()"));
                     $db->closeResource();
                     $db->closeWriteResource();
                 }
             }
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
         }
     }
 
@@ -315,8 +316,8 @@ class Db
     public static function errorHandler($method, $args, $exception, $logError = true)
     {
         if ($logError) {
-            \Logger::error($exception);
-            \Logger::error([
+            Logger::error($exception);
+            Logger::error([
                 "message" => $exception->getMessage(),
                 "method" => $method,
                 "arguments" => $args
@@ -332,15 +333,15 @@ class Db
 
             // the connection to the server has probably been lost, try to reconnect and call the method again
             try {
-                \Logger::warning("The connection to the MySQL-Server has probably been lost, try to reconnect...");
+                Logger::warning("The connection to the MySQL-Server has probably been lost, try to reconnect...");
                 self::reset();
-                \Logger::warning("Reconnecting to the MySQL-Server was successful, sending the command again to the server.");
+                Logger::warning("Reconnecting to the MySQL-Server was successful, sending the command again to the server.");
                 $r = self::get()->callResourceMethod($method, $args);
-                \Logger::warning("Resending the command was successful");
+                Logger::warning("Resending the command was successful");
 
                 return $r;
             } catch (\Exception $e) {
-                \Logger::error($e);
+                Logger::error($e);
                 throw $e;
             }
         }
@@ -369,12 +370,12 @@ class Db
                     $createStatement = $db->fetchRow("SHOW FIELDS FROM " . $name);
                 } catch (\Exception $e) {
                     if (strpos($e->getMessage(), "references invalid table") !== false) {
-                        \Logger::err("view " . $name . " seems to be a broken one, it will be removed");
-                        \Logger::err("error message was: " . $e->getMessage());
+                        Logger::err("view " . $name . " seems to be a broken one, it will be removed");
+                        Logger::err("error message was: " . $e->getMessage());
 
                         $db->query("DROP VIEW " . $name);
                     } else {
-                        \Logger::error($e);
+                        Logger::error($e);
                     }
                 }
             }

@@ -14,12 +14,12 @@
  * @author      JA
  */
 
-use Pimcore\Tool;
-use Pimcore\Model\Webservice;
+use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
 use Pimcore\Model\Object;
-use Pimcore\Model\Element;
+use Pimcore\Model\Webservice;
+use Pimcore\Tool;
 
 class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
 {
@@ -121,6 +121,44 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
 
         try {
             if ($this->isGet()) {
+                /**
+                 * @api {get} /object Get object data
+                 * @apiName Get object by id
+                 * @apiGroup Object
+                 * @apiSampleRequest off
+                 * @apiParam {int} id an object id
+                 * @apiParam {string} apikey your access token
+                 * @apiParamExample {json} Request-Example:
+                 *     {
+                 *         "id": 1,
+                 *         "apikey": "21314njdsfn1342134"
+                 *      }
+                 * @apiSuccess {json} success parameter of the returned data = true
+                 * @apiError {json} success parameter of the returned data = false
+                 * @apiErrorExample {json} Error-Response:
+                 *                  {"success":false, "msg":"exception 'Exception' with message '....'"}
+                 * @apiSuccessExample {json} Success-Response:
+                 *                    HTTP/1.1 200 OK
+                 *                    {
+                 *                      "success": true
+                 *                      "data": {
+                 *                       "path": "/crm/inquiries/",
+                 *                       "creationDate": 1368630916,
+                 *                       "modificationDate": 1388409137,
+                 *                       "userModification": null,
+                 *                       "childs": null,
+                 *                       "elements": [
+                 *                       {
+                 *                           "type": "gender",
+                 *                           "value": "female",
+                 *                           "name": "gender",
+                 *                           "language": null
+                 *                      },
+                 *
+                 *                      ...
+                 *
+                 *                    }
+                 */
                 if ($id) {
                     $profile = $this->getParam("profiling");
                     if ($profile) {
@@ -129,7 +167,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
 
                     $object = Object::getById($id);
                     if (!$object) {
-                        $this->encoder->encode([  "success" => false,
+                        $this->encoder->encode(["success" => false,
                             "msg" => "Object does not exist",
                             "code" => self::ELEMENT_DOES_NOT_EXIST]);
 
@@ -137,14 +175,14 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                     }
 
                     if ($profile) {
-                        $timeConsumedGet = round(microtime(true) - $startTs, 3)*1000;
+                        $timeConsumedGet = round(microtime(true) - $startTs, 3) * 1000;
                         $startTs = microtime(true);
                     }
 
                     $this->checkPermission($object, "get");
 
                     if ($profile) {
-                        $timeConsumedPerm = round(microtime(true) - $startTs, 3)*1000;
+                        $timeConsumedPerm = round(microtime(true) - $startTs, 3) * 1000;
                         $startTs = microtime(true);
                     }
 
@@ -155,7 +193,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                     }
 
                     if ($profile) {
-                        $timeConsumedGetWebservice = round(microtime(true) - $startTs, 3)*1000;
+                        $timeConsumedGetWebservice = round(microtime(true) - $startTs, 3) * 1000;
                     }
 
                     if ($profile) {
@@ -175,6 +213,30 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                     return;
                 }
             } elseif ($this->isDelete()) {
+                /**
+                 * @api {delete} /object Delete object
+                 * @apiName Delete object
+                 * @apiGroup Object
+                 * @apiSampleRequest off
+                 * @apiParam {int} id an object id
+                 * @apiParam {string} apikey your access token
+                 * @apiParamExample {json} Request-Example:
+                 *     {
+                 *         "id": 1,
+                 *         "apikey": "21314njdsfn1342134"
+                 *     }
+                 * @apiSuccess {json} success parameter of the returned data = true
+                 * @apiError {json} success parameter of the returned data = false
+                 * @apiErrorExample {json} Error-Response:
+                 *                  {"success":false, "msg":"exception 'Exception' with message '....'"}
+                 * @apiSuccessExample {json} Success-Response:
+                 *                    HTTP/1.1 200 OK
+                 *                    {
+                 *                      "success": true,
+                 *                    }
+                 *
+                 *
+                 */
                 $object = Object::getById($id);
                 if ($object) {
                     $this->checkPermission($object, "delete");
@@ -192,6 +254,77 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                 $id = null;
 
                 if ($data["id"]) {
+                    /**
+                     * @api {put} /object Create a new object
+                     * @apiName Create a new object
+                     * @apiGroup Object
+                     * @apiSampleRequest off
+                     * @apiDescription
+                     * Request body: JSON-encoded object data in the same format as returned by get object by id for the data segment but with missing id field or id set to 0
+                     *
+                     * @apiParam {json} data a new object data
+                     * @apiParam {string} apikey your access token
+                     * @apiParamExample {json} Request-Example:
+                     *     {
+                     *         "apikey": "21314njdsfn1342134",
+                     *         "id": 66
+                     *         "data": {
+                     *               "parentId": 48,
+                     *               "key": "test-product-key",
+                     *               "className": "product",
+                     *               "type": "object",
+                     *               "elements": [
+                     *                   {
+                     *                   "type": "input",
+                     *                   "value": "some identyfier",
+                     *                   "name": "identyfier",
+                     *                   "language": null
+                     *                   },
+                     *                   {
+                     *                   "type": "localizedfields",
+                     *                   "value": [
+                     *                   {
+                     *                   "type": "input",
+                     *                   "value": "Test new",
+                     *                   "name": "name1",
+                     *                   "language": "en"
+                     *                   },
+                     *                   {
+                     *                   "type": "input",
+                     *                   "value": "1",
+                     *                   "name": "name2",
+                     *                   "language": "en"
+                     *                   },
+                     *                   {
+                     *                   "type": "input",
+                     *                   "value": null,
+                     *                   "name": "name1",
+                     *                   "language": "de"
+                     *                   },
+                     *                   {
+                     *                   "type": "input",
+                     *                   "value": "aaa",
+                     *                   "name": "name2",
+                     *                   "language": "de"
+                     *                   }
+                     *                   ],
+                     *                   "name": "localizedfields",
+                     *                   "language": null
+                     *                       }
+                     *               ]
+                     *           }
+                     *     }
+                     * @apiSuccess {json} success parameter of the returned data = true
+                     * @apiError {json} success parameter of the returned data = false
+                     * @apiErrorExample {json} Error-Response:
+                     *                  {"success":false, "msg":"exception 'Exception' with message '....'"}
+                     * @apiSuccessExample {json} Success-Response:
+                     *                    HTTP/1.1 200 OK
+                     *                    {
+                     *                      "success": true,
+                     *                      "id": 66
+                     *                    }
+                     */
                     $obj = Object::getById($data["id"]);
                     if ($obj) {
                         $this->checkPermission($obj, "update");
@@ -206,6 +339,76 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                         $success = $this->service->updateObjectConcrete($wsData);
                     }
                 } else {
+                    /**
+                     * @api {put} /object Create a new object
+                     * @apiName Create a new object
+                     * @apiGroup Object
+                     * @apiSampleRequest off
+                     * @apiDescription
+                     * Request body: JSON-encoded object data in the same format as returned by get object by id for the data segment but with missing id field or id set to 0
+                     *
+                     * @apiParam {json} data a new object data
+                     * @apiParam {string} apikey your access token
+                     * @apiParamExample {json} Request-Example:
+                     *     {
+                     *         "apikey": "21314njdsfn1342134",
+                     *         "data": {
+                     *               "id": 61,
+                     *               "parentId": 48,
+                     *               "key": "test-product-key",
+                     *               "className": "product",
+                     *               "type": "object",
+                     *               "elements": [
+                     *                   {
+                     *                   "type": "input",
+                     *                   "value": "some identyfier",
+                     *                   "name": "identyfier",
+                     *                   "language": null
+                     *                   },
+                     *                   {
+                     *                   "type": "localizedfields",
+                     *                   "value": [
+                     *                   {
+                     *                   "type": "input",
+                     *                   "value": "Test",
+                     *                   "name": "name1",
+                     *                   "language": "en"
+                     *                   },
+                     *                   {
+                     *                   "type": "input",
+                     *                   "value": "1",
+                     *                   "name": "name2",
+                     *                   "language": "en"
+                     *                   },
+                     *                   {
+                     *                   "type": "input",
+                     *                   "value": null,
+                     *                   "name": "name1",
+                     *                   "language": "de"
+                     *                   },
+                     *                   {
+                     *                   "type": "input",
+                     *                   "value": "aaa",
+                     *                   "name": "name2",
+                     *                   "language": "de"
+                     *                   }
+                     *                   ],
+                     *                   "name": "localizedfields",
+                     *                   "language": null
+                     *                       }
+                     *               ]
+                     *           }
+                     *     }
+                     * @apiSuccess {json} success parameter of the returned data = true
+                     * @apiError {json} success parameter of the returned data = false
+                     * @apiErrorExample {json} Error-Response:
+                     *                  {"success":false, "msg":"exception 'Exception' with message '....'"}
+                     * @apiSuccessExample {json} Success-Response:
+                     *                    HTTP/1.1 200 OK
+                     *                    {
+                     *                      "success": true
+                     *                    }
+                     */
                     if ($type == "folder") {
                         $class = "\\Pimcore\\Model\\Webservice\\Data\\Object\\Folder\\In";
                         $method = "createObjectFolder";
@@ -237,7 +440,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                 return;
             }
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             $this->encoder->encode(["success" => false, "msg" => (string) $e]);
         }
 
@@ -265,7 +468,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
             }
         } catch (\Exception $e) {
             $this->encoder->encode(["success" => false, "message" => (string) $e]);
-            \Logger::error($e);
+            Logger::error($e);
         }
 
         $this->encoder->encode(["success" => false]);
@@ -290,7 +493,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                 return;
             }
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             $this->encoder->encode(["success" => false, "msg" => (string) $e]);
         }
         $this->encoder->encode(["success" => false]);
@@ -315,7 +518,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                 return;
             }
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             $this->encoder->encode(["success" => false, "msg" => (string) $e]);
         }
         $this->encoder->encode(["success" => false]);
@@ -356,7 +559,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
             $fc = Object\Objectbrick\Definition::getByKey($this->getParam("id"));
             $this->_helper->json(["success" => true, "data" => $fc]);
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             $this->encoder->encode(["success" => false, "msg" => (string) $e]);
         }
         $this->encoder->encode(["success" => false]);
@@ -374,7 +577,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
             $fc = Object\Fieldcollection\Definition::getByKey($this->getParam("id"));
             $this->_helper->json(["success" => true, "data" => $fc]);
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             $this->encoder->encode(["success" => false, "msg" => (string) $e]);
         }
         $this->encoder->encode(["success" => false]);
@@ -392,7 +595,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
             $object = $this->service->getuser();
             $this->encoder->encode(["success" => true, "data" => $object]);
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
         }
         $this->encoder->encode(["success" => false]);
     }
@@ -422,6 +625,21 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
 
         try {
             if ($this->isGet()) {
+                /**
+                 * @api {get} /asset Get asset
+                 * @apiParamExample {json} Request-Example:
+                 *     {
+                 *       "id": 4711
+                 *       "apikey": '2132sdf2321rwefdcvvce22'
+                 *     }
+                 * @apiName getAssetFileById
+                 * @apiSampleRequest off
+                 * @apiGroup Asset
+                 * @apiParam {int} id The id of asset you search
+                 * @apiParam {string} apikey your access token
+                 * @apiSuccessExample {json} Success-Response:
+                 *                    {"success": "true", "data":{"path":"\/crm\/inquiries\/","creationDate":1368630916,"modificationDate":1388409137,"userModification":null,"childs":null}}
+                 */
                 $asset = Asset::getById($id);
                 if (!$asset) {
                     $this->encoder->encode([  "success" => false,
@@ -462,6 +680,25 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
 
                 return;
             } elseif ($this->isDelete()) {
+                /**
+                 * @api {delete} /asset Delete asset
+                 * @apiName deleteAsset
+                 * @apiGroup Asset
+                 * @apiParam {int} id The id of asset you delete
+                 * @apiSampleRequest off
+                 * @apiParamExample {json} Request-Example:
+                 *     {
+                 *       "id": 4711
+                 *       "apikey": '2132sdf2321rwefdcvvce22'
+                 *     }
+                 * @apiParam {string} apikey your access token
+                 * @apiSuccess {boolean} success Returns true if finished successfully
+                 * @apiSuccessExample {json} Succes-Response:
+                 *                    {"success":true}
+                 * @apiError {boolean} success Returns false if failed
+                 * @apiErrorExample {json} Error-Response:
+                 *                  {"success":false,"msg":"exception 'Exception' with message 'Asset with given ID (712131243) does not exist.'"}
+                 */
                 $asset = Asset::getById($id);
                 if ($asset) {
                     $this->checkPermission($asset, "delete");
@@ -523,7 +760,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                 return;
             }
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             $this->encoder->encode(["success" => false, "msg" => (string) $e]);
         }
         $this->encoder->encode(["success" => false]);
@@ -603,9 +840,31 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
 
         try {
             if ($this->isGet()) {
+                /**
+                 * @api {get} /document Get document
+                 * @apiName getDocument
+                 * @apiGroup Document
+                 * @apiSampleRequest off
+                 * @apiParam {int} id The id of document you search
+                 * @apiParamExample {json} Request-Example:
+                 *     {
+                 *       "id": 4711
+                 *       "apikey": '2132sdf2321rwefdcvvce22'
+                 *     }
+                 * @apiParam {string} apikey your access token
+                 * @apiSuccess {boolean} success Returns true if finished successfully
+                 * @apiSuccessExample {json} Succes-Response:
+                 *                    HTTP/1.1 200 OK
+                 *                    {
+                 *                        "success":true
+                 *                    }
+                 * @apiError {boolean} success Returns false if failed
+                 * @apiErrorExample {json} Error-Response:
+                 *                  {"success":false,"msg":"exception 'Exception' with message 'Document with given ID (712131243) does not exist.'"}
+                 */
                 $doc = Document::getById($id);
                 if (!$doc) {
-                    $this->encoder->encode([  "success" => false,
+                    $this->encoder->encode(["success" => false,
                         "msg" => "Document does not exist",
                         "code" => self::ELEMENT_DOES_NOT_EXIST]);
 
@@ -639,6 +898,28 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
 
                 return;
             } elseif ($this->isDelete()) {
+                /**
+                 * @api {delete} /document Delete document
+                 * @apiName deleteDocument
+                 * @apiGroup Document
+                 * @apiParam {int} id The id of document you delete
+                 * @apiSampleRequest off
+                 * @apiParamExample {json} Request-Example:
+                 *     {
+                 *       "id": 4711
+                 *       "apikey": '2132sdf2321rwefdcvvce22'
+                 *     }
+                 * @apiParam {string} apikey your access token
+                 * @apiSuccess {boolean} success Returns true if finished successfully
+                 * @apiSuccessExample {json} Succes-Response:
+                 *                    HTTP/1.1 200 OK
+                 *                    {
+                 *                        "success":true
+                 *                    }
+                 * @apiError {boolean} success Returns false if failed
+                 * @apiErrorExample {json} Error-Response:
+                 *                  {"success":false,"msg":"exception 'Exception' with message 'Document with given ID (712131243) does not exist.'"}
+                 */
                 $doc = Document::getById($id);
                 if ($doc) {
                     $this->checkPermission($doc, "delete");
@@ -648,6 +929,28 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
 
                 return;
             } elseif ($this->isPost() || $this->isPut()) {
+                /**
+                 * @api {post} /document Update document
+                 * @apiName updateDocument
+                 * @apiGroup Document
+                 * @apiParam {int} id The id of document you delete
+                 * @apiSampleRequest off
+                 * @apiParamExample {json} Request-Example:
+                 *     {
+                 *       "id": 4711
+                 *       "apikey": '2132sdf2321rwefdcvvce22'
+                 *     }
+                 * @apiParam {string} apikey your access token
+                 * @apiSuccess {boolean} success Returns true if finished successfully
+                 * @apiSuccessExample {json} Succes-Response:
+                 *                    HTTP/1.1 200 OK
+                 *                    {
+                 *                        "success":true
+                 *                    }
+                 * @apiError {boolean} success Returns false if failed
+                 * @apiErrorExample {json} Error-Response:
+                 *                  {"success":false,"msg":"exception 'Exception' with message 'Document with given ID (712131243) does not exist.'"}
+                 */
                 $data = file_get_contents("php://input");
                 $data = \Zend_Json::decode($data);
 
@@ -1052,6 +1355,14 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
             $wsData->$key = $value;
         }
 
+        if ($wsData instanceof Pimcore\Model\Webservice\Data\Object || $wsData instanceof Pimcore\Model\Webservice\Data\Document) {
+            /** @var Pimcore\Model\Webservice\Data\Object|Pimcore\Model\Webservice\Data\Document key */
+            $wsData->key = \Pimcore\File::getValidFilename($wsData->key); //adds key filter to new objects and documents
+        } elseif ($wsData instanceof Pimcore\Model\Webservice\Data\Asset) {
+            /** @var Pimcore\Model\Webservice\Data\Asset $wsData */
+            $wsData->filename = \Pimcore\File::getValidFilename($wsData->filename);
+        }
+
         return $wsData;
     }
 
@@ -1145,7 +1456,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
             $result = $this->service->getTranslations($params['type'], $params);
             $this->encoder->encode(["success" => true, "data" => $result]);
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             $this->encoder->encode(["success" => false, "msg" => (string) $e]);
         }
     }

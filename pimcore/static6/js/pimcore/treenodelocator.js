@@ -108,11 +108,7 @@ pimcore.treenodelocator.getDirection = function(node, element, elementType, sear
         fullPath = element.fullpath;
         var elementKey = element.index;
     } else {
-        if (elementType == "asset") {
-            fullPath = element.path + element.filename;
-        } else if (elementType == "object") {
-            fullPath = element.fullpath;
-        }
+        fullPath = element.fullpath;
         var elementParts = fullPath.split("/");
         var elementKey = elementParts[nodeParts.length - 1];
     }

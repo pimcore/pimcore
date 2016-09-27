@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -47,13 +47,13 @@ class Input extends Model\Object\ClassDefinition\Data
      * @var string
      */
     public $columnType = "varchar";
-    
+
     /**
      * Column length
      *
      * @var integer
      */
-    public $columnLength = 255;
+    public $columnLength = 190;
 
     /**
      * Type for the generated phpdoc
@@ -145,7 +145,7 @@ class Input extends Model\Object\ClassDefinition\Data
     {
         return $this->getDataFromResource($data, $object, $params);
     }
-    
+
     /**
      * @return integer
      */
@@ -182,7 +182,7 @@ class Input extends Model\Object\ClassDefinition\Data
     {
         return $this->regex;
     }
-    
+
     /**
      * @return string
      */

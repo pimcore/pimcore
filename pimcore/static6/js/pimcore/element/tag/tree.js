@@ -197,6 +197,7 @@ pimcore.element.tag.tree = Class.create({
                                 },
                                 success: function(record, value) {
                                     record.set('text', value);
+                                    tree.getStore().reload();
                                 }.bind(this, record, value)
                             });
                         } else if (button == "cancel") {

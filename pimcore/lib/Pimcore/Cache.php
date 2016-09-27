@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -16,6 +16,7 @@ namespace Pimcore;
 
 use Pimcore\Model\Element;
 use Pimcore\Model\Document;
+use Pimcore\Logger;
 
 class Cache
 {
@@ -96,7 +97,7 @@ class Cache
      * @var \Zend_Cache_Core
      */
     protected static $blackHoleCache = null;
-    
+
     /**
      * Returns a instance of the cache, if the instance isn't available it creates a new one
      *
@@ -155,10 +156,10 @@ class Cache
                     try {
                         self::$instance = self::initializeCache($config);
                     } catch (\Exception $e) {
-                        \Logger::crit("can't initialize cache with the given configuration " . $e->getMessage());
+                        Logger::crit("can't initialize cache with the given configuration " . $e->getMessage());
                     }
                 } else {
-                    \Logger::crit("Error while reading cache configuration, using the default database backend");
+                    Logger::crit("Error while reading cache configuration, using the default database backend");
                 }
             }
         }
@@ -269,7 +270,7 @@ class Cache
 
         return self::$blackHoleCache;
     }
-    
+
     /**
      * Returns the content of the requested cache entry
      * @param string $key
@@ -278,7 +279,7 @@ class Cache
     public static function load($key, $doNotTestCacheValidity = false)
     {
         if (!self::$enabled) {
-            \Logger::debug("Key " . $key . " doesn't exist in cache (deactivated)");
+            Logger::debug("Key " . $key . " doesn't exist in cache (deactivated)");
 
             return;
         }
@@ -290,13 +291,13 @@ class Cache
             if (is_object($data)) {
                 $data->____pimcore_cache_item__ = $key;
             }
-    
+
             if ($data !== false) {
-                \Logger::debug("Successfully got data for key " . $key . " from cache");
+                Logger::debug("Successfully got data for key " . $key . " from cache");
             } else {
-                \Logger::debug("Key " . $key . " doesn't exist in cache");
+                Logger::debug("Key " . $key . " doesn't exist in cache");
             }
-    
+
             return $data;
         }
 
@@ -312,7 +313,7 @@ class Cache
     public static function test($key)
     {
         if (!self::$enabled) {
-            \Logger::debug("Key " . $key . " doesn't exist in cache (deactivated)");
+            Logger::debug("Key " . $key . " doesn't exist in cache (deactivated)");
 
             return;
         }
@@ -326,7 +327,7 @@ class Cache
             if ($data !== false) {
                 $lastModified = $data;
             } else {
-                \Logger::debug("Key " . $key . " doesn't exist in cache");
+                Logger::debug("Key " . $key . " doesn't exist in cache");
             }
         }
 
@@ -402,14 +403,14 @@ class Cache
                 $tags = $data->getCacheTags($tags);
                 $type = get_class($data);
 
-                \Logger::debug("prepared " . $type . " " . $data->getId() . " for data cache with tags: " . implode(",", $tags));
+                Logger::debug("prepared " . $type . " " . $data->getId() . " for data cache with tags: " . implode(",", $tags));
             }
 
             // check for cleared tags, only item which are not cleared within the same session are stored to the cache
             if (is_array($tags)) {
                 foreach ($tags as $t) {
                     if (in_array($t, self::$clearedTagsStack)) {
-                        \Logger::debug("Aborted caching for key: " . $key . " because it is in the clear stack");
+                        Logger::debug("Aborted caching for key: " . $key . " because it is in the clear stack");
 
                         return;
                     }
@@ -436,10 +437,10 @@ class Cache
 
             $success = $cache->save($data, $key, $tags, $lifetime);
             if ($success !== true) {
-                \Logger::error("Failed to add entry $key to the cache, item-size was " . formatBytes(strlen(serialize($data))));
+                Logger::error("Failed to add entry $key to the cache, item-size was " . formatBytes(strlen(serialize($data))));
             }
 
-            \Logger::debug("Added " . $key . " to cache");
+            Logger::debug("Added " . $key . " to cache");
 
             return $success;
         }
@@ -480,7 +481,7 @@ class Cache
     {
         self::$saveStack = [];
     }
-    
+
     /**
      * Write the stack to the cache
      *
@@ -502,8 +503,8 @@ class Cache
             try {
                 forward_static_call_array([__CLASS__, "storeToCache"], $conf);
             } catch (\Exception $e) {
-                \Logger::error("Unable to put element " . $conf[1] . " to cache because of the following reason: ");
-                \Logger::error($e);
+                Logger::error("Unable to put element " . $conf[1] . " to cache because of the following reason: ");
+                Logger::error($e);
             }
 
             $processedKeys[] = $conf[1]; // index 1 is the key for the cache item
@@ -584,7 +585,7 @@ class Cache
 
         // do not disable clearing, it's better purging items here than having inconsistent data because of wrong usage
         /*if (!self::$enabled) {
-            \Logger::debug("Cache is not cleared because it is disabled");
+            Logger::debug("Cache is not cleared because it is disabled");
             return;
         }*/
 
@@ -606,7 +607,7 @@ class Cache
 
         // do not disable clearing, it's better purging items here than having inconsistent data because of wrong usage
         /*if (!self::$enabled) {
-            \Logger::debug("Cache is not cleared because it is disabled");
+            Logger::debug("Cache is not cleared because it is disabled");
             return;
         }*/
 
@@ -615,7 +616,7 @@ class Cache
         if ($cache = self::getInstance()) {
             $cache->clean(\Zend_Cache::CLEANING_MODE_ALL);
         }
-        
+
         // add tag to clear stack
         self::$clearedTagsStack[] = "__CLEAR_ALL__";
 
@@ -633,7 +634,7 @@ class Cache
     {
         self::clearTags([$tag]);
     }
-    
+
     /**
      * Removes entries from the cache matching the given tags
      *
@@ -645,13 +646,13 @@ class Cache
 
         // do not disable clearing, it's better purging items here than having inconsistent data because of wrong usage
         /*if (!self::$enabled) {
-            \Logger::debug("Cache is not cleared because it is disabled");
+            Logger::debug("Cache is not cleared because it is disabled");
             return;
         }*/
 
         self::setWriteLock();
 
-        \Logger::info("clear cache tags: " . implode(",", $tags));
+        Logger::info("clear cache tags: " . implode(",", $tags));
 
         // ensure that every tag is unique
         $tags = array_unique($tags);
@@ -711,7 +712,7 @@ class Cache
 
         // do not disable clearing, it's better purging items here than having inconsistent data because of wrong usage
         /*if (!self::$enabled) {
-            \Logger::debug("Cache is not cleared because it is disabled");
+            Logger::debug("Cache is not cleared because it is disabled");
             return;
         }*/
 

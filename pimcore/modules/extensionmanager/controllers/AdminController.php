@@ -14,6 +14,7 @@
 
 use Pimcore\ExtensionManager;
 use Pimcore\File;
+use Pimcore\Logger;
 
 class Extensionmanager_AdminController extends \Pimcore\Controller\Action\Admin
 {
@@ -131,7 +132,7 @@ class Extensionmanager_AdminController extends \Pimcore\Controller\Action\Admin
                     "success" => true
                 ]);
             } catch (\Exception $e) {
-                \Logger::error($e);
+                Logger::error($e);
 
                 $this->_helper->json([
                     "message" => $e->getMessage(),

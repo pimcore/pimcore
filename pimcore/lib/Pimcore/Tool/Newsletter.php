@@ -20,6 +20,7 @@ use Pimcore\Tool;
 use Pimcore\Model\Object;
 use Pimcore\Model\Document;
 use Pimcore\Model;
+use Pimcore\Logger;
 
 class Newsletter
 {
@@ -108,7 +109,7 @@ class Newsletter
         $mail->setTo($sendingContainer->getEmail());
         $mail->sendWithoutRendering();
 
-        \Logger::info("Sent newsletter to: " . self::obfuscateEmail($sendingContainer->getEmail()) . " [" . $mail->getDocument()->getId() . "]");
+        Logger::info("Sent newsletter to: " . self::obfuscateEmail($sendingContainer->getEmail()) . " [" . $mail->getDocument()->getId() . "]");
     }
 
     protected static function obfuscateEmail($email)

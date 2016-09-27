@@ -17,6 +17,7 @@
 namespace Pimcore\Model\Version;
 
 use Pimcore\Model;
+use Pimcore\Logger;
 
 class Dao extends Model\Dao\AbstractDao
 {
@@ -50,7 +51,7 @@ class Dao extends Model\Dao\AbstractDao
                 if (is_bool($value)) {
                     $value = (int) $value;
                 }
-                
+
                 $data[$key] = $value;
             }
         }
@@ -112,7 +113,7 @@ class Dao extends Model\Dao\AbstractDao
         }
         $versionIds = [];
 
-        \Logger::debug("ignore ID's: " . $ignoreIdsList);
+        Logger::debug("ignore ID's: " . $ignoreIdsList);
 
         if (!empty($elementTypes)) {
             $count = 0;
@@ -128,7 +129,7 @@ class Dao extends Model\Dao\AbstractDao
                     $elementIds = $this->db->fetchCol("SELECT cid,count(*) as amount FROM versions WHERE ctype = ? AND NOT public AND id NOT IN (" . $ignoreIdsList . ") GROUP BY cid HAVING amount > ?", [$elementType["elementType"], $elementType["steps"]]);
                     foreach ($elementIds as $elementId) {
                         $count++;
-                        \Logger::info($elementId . "(object " . $count . ") Vcount " . count($versionIds));
+                        Logger::info($elementId . "(object " . $count . ") Vcount " . count($versionIds));
                         $elementVersions = $this->db->fetchCol("SELECT id FROM versions WHERE cid = ? and ctype = ? ORDER BY date DESC LIMIT " . $elementType["steps"] . ",1000000", [$elementId, $elementType["elementType"]]);
 
                         $versionIds = array_merge($versionIds, $elementVersions);
@@ -155,7 +156,7 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
         }
-        \Logger::info("return " .  count($versionIds) . " ids\n");
+        Logger::info("return " .  count($versionIds) . " ids\n");
 
         return $versionIds;
     }

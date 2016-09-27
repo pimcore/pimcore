@@ -20,6 +20,7 @@ use \Pimcore\Model;
 use \Pimcore\Model\Document;
 use Pimcore\Web2Print\Processor\PdfReactor8;
 use Pimcore\Web2Print\Processor\WkHtmlToPdf;
+use Pimcore\Logger;
 
 abstract class Processor
 {
@@ -56,13 +57,20 @@ abstract class Processor
         $jobConfig = new \stdClass();
         $jobConfig->documentId = $documentId;
         $jobConfig->config = $config;
-        $this->saveJobConfigObjectFile($jobConfig);
 
+        $this->saveJobConfigObjectFile($jobConfig);
         $this->updateStatus($documentId, 0, "prepare_pdf_generation");
 
-        $cmd = Tool\Console::getPhpCli() . " " . realpath(PIMCORE_PATH . DIRECTORY_SEPARATOR . "cli" . DIRECTORY_SEPARATOR . "console.php"). " web2print:pdf-creation -p " . $jobConfig->documentId;
+        $args = ["-p " . $jobConfig->documentId];
 
-        \Logger::info($cmd);
+        $env = \Pimcore\Config::getEnvironment();
+        if ($env !== false) {
+            $args[] = "--environment=" . $env;
+        }
+
+        $cmd = Tool\Console::getPhpCli() . " " . realpath(PIMCORE_PATH . DIRECTORY_SEPARATOR . "cli" . DIRECTORY_SEPARATOR . "console.php"). " web2print:pdf-creation " . implode(" ", $args);
+
+        Logger::info($cmd);
 
         if (!$config['disableBackgroundExecution']) {
             Tool\Console::execInBackground($cmd, PIMCORE_LOG_DIRECTORY . DIRECTORY_SEPARATOR . "web2print-output.log");
@@ -98,7 +106,7 @@ abstract class Processor
             $document->save();
         } catch (\Exception $e) {
             $document->save();
-            \Logger::err($e);
+            Logger::err($e);
         }
 
         Model\Tool\Lock::release($document->getLockKey());

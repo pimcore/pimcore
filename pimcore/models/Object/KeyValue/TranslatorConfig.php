@@ -17,6 +17,7 @@
 namespace Pimcore\Model\Object\KeyValue;
 
 use Pimcore\Model;
+use Pimcore\Logger;
 
 class TranslatorConfig extends Model\AbstractModel
 {
@@ -49,7 +50,7 @@ class TranslatorConfig extends Model\AbstractModel
 
             return $config;
         } catch (\Exception $e) {
-            \Logger::warning($e);
+            Logger::warning($e);
         }
     }
 
@@ -65,7 +66,7 @@ class TranslatorConfig extends Model\AbstractModel
 
             return $config;
         } catch (\Exception $e) {
-            \Logger::warning($e);
+            Logger::warning($e);
         }
     }
 

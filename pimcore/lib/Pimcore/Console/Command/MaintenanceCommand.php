@@ -19,6 +19,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Pimcore\Model\Schedule;
+use Pimcore\Logger;
 
 class MaintenanceCommand extends AbstractCommand
 {
@@ -75,6 +76,6 @@ class MaintenanceCommand extends AbstractCommand
 
         $manager->run();
 
-        \Logger::info("All maintenance-jobs finished!");
+        Logger::info("All maintenance-jobs finished!");
     }
 }

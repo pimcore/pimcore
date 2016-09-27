@@ -422,6 +422,12 @@ pimcore.document.tree = Class.create({
                 //don't add emails, newsletters and links below print containers - makes no sense
                 if(addDocuments && record.data.type != "printcontainer") {
                     menu.add(new Ext.menu.Item({
+                        text: t('add_link'),
+                        iconCls: "pimcore_icon_link pimcore_icon_overlay_add",
+                        handler: this.addDocument.bind(this, tree, record, "link")
+                    }));
+
+                    menu.add(new Ext.menu.Item({
                         text: t('add_email'),
                         iconCls: "pimcore_icon_email pimcore_icon_overlay_add",
                         menu: documentMenu.email,
@@ -434,13 +440,6 @@ pimcore.document.tree = Class.create({
                         menu: documentMenu.newsletter,
                         hideOnClick: false
                     }));
-
-                    menu.add(new Ext.menu.Item({
-                        text: t('add_link'),
-                        iconCls: "pimcore_icon_link pimcore_icon_overlay_add",
-                        handler: this.addDocument.bind(this, tree, record, "link")
-                    }));
-
                 }
 
                 menu.add(new Ext.menu.Item({
@@ -597,7 +596,7 @@ pimcore.document.tree = Class.create({
                 text: t('open'),
                 iconCls: "pimcore_icon_cursor",
                 handler: function () {
-                    window.open(record.data.path);
+                    window.open(record.data.url);
                 }.bind(this)
             }));
         }
@@ -738,7 +737,7 @@ pimcore.document.tree = Class.create({
                     iconCls: "pimcore_icon_lock pimcore_icon_overlay_delete",
                     handler: function () {
                         pimcore.elementservice.unlockElement({
-                            elementType: "object",
+                            elementType: "document",
                             id: record.data.id
                         });
                     }.bind(this)

@@ -178,7 +178,6 @@ class Dao extends Model\Dao\AbstractDao
             ["key" => "backup"],
             ["key" => "emails"],
             ["key" => "website_settings"],
-            ["key" => "newsletter"],
             ["key" => "dashboards"],
             ["key" => "users"],
         ];

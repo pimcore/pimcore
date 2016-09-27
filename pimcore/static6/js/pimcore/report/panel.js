@@ -96,24 +96,28 @@ pimcore.report.panel = Class.create({
                 if (typeof pimcore.report.broker.reports[group.id] == "object") {
                     for (var r = 0; r < pimcore.report.broker.reports[group.id].length; r++) {
                         reportClass = pimcore.report.broker.reports[group.id][r]["class"];
-                        reportClass = stringToFunction(reportClass);
-                        reportConfig = pimcore.report.broker.reports[group.id][r]["config"];
-                        if(!reportConfig) {
-                            reportConfig = {};
-                        }
+                        try {
+                            reportClass = stringToFunction(reportClass);
+                            reportConfig = pimcore.report.broker.reports[group.id][r]["config"];
+                            if (!reportConfig) {
+                                reportConfig = {};
+                            }
 
-                        if (reportClass.prototype.matchType(this.type)) {
-                            var childConfig = {
-                                text: reportConfig["text"] ? ts(reportConfig["text"]) : t(reportClass.prototype.getName()),
-                                iconCls: reportConfig["iconCls"] ? reportConfig["iconCls"] : reportClass.prototype.getIconCls(),
-                                leaf: true,
-                                xdata: {
-                                    reportClass: reportClass,
-                                    reportConfig: reportConfig
-                                }
-                            };
-                            groupNode.appendChild(childConfig);
-                            reportCount++;
+                            if (reportClass.prototype.matchType(this.type)) {
+                                var childConfig = {
+                                    text: reportConfig["text"] ? ts(reportConfig["text"]) : t(reportClass.prototype.getName()),
+                                    iconCls: reportConfig["iconCls"] ? reportConfig["iconCls"] : reportClass.prototype.getIconCls(),
+                                    leaf: true,
+                                    xdata: {
+                                        reportClass: reportClass,
+                                        reportConfig: reportConfig
+                                    }
+                                };
+                                groupNode.appendChild(childConfig);
+                                reportCount++;
+                            }
+                        } catch (e) {
+                            console.log(e);
                         }
                     }
                     if (reportCount > 0) {
@@ -169,15 +173,19 @@ pimcore.report.panel = Class.create({
 
     openReportViaToolbar: function (reportClass, reportConfig) {
 
-        reportClass = stringToFunction(reportClass);
+        try {
+            reportClass = stringToFunction(reportClass);
 
-        var report = new reportClass(this, this.type, null, reportConfig);
+            var report = new reportClass(this, this.type, null, reportConfig);
 
-        var store = this.tree.getStore();
-        var record = store.findRecord('text', reportConfig.name);
-        if (record) {
-            var selModel = this.tree.getSelectionModel();
-            selModel.select(record);
+            var store = this.tree.getStore();
+            var record = store.findRecord('text', reportConfig.name);
+            if (record) {
+                var selModel = this.tree.getSelectionModel();
+                selModel.select(record);
+            }
+        } catch (e) {
+            console.log(e);
         }
     },
 
@@ -211,10 +219,14 @@ pimcore.report.panel = Class.create({
             if (typeof pimcore.report.broker.reports[group.id] == "object") {
                 for (var r = 0; r < pimcore.report.broker.reports[group.id].length; r++) {
                     reportClass = pimcore.report.broker.reports[group.id][r]["class"];
-                    reportClass = stringToFunction(reportClass);
+                    try {
+                        reportClass = stringToFunction(reportClass);
 
-                    if (reportClass.prototype.matchType(this.type)) {
-                        reportCount++;
+                        if (reportClass.prototype.matchType(this.type)) {
+                            reportCount++;
+                        }
+                    } catch (e) {
+                        console.log(e);
                     }
                 }
             }

@@ -15,7 +15,8 @@
 namespace Pimcore\Web2Print\Processor;
 
 use Pimcore\Config;
-use \Pimcore\Model\Document;
+use Pimcore\Logger;
+use Pimcore\Model\Document;
 use Pimcore\Web2Print\Processor;
 
 class PdfReactor8 extends Processor
@@ -42,7 +43,7 @@ class PdfReactor8 extends Processor
         ini_set("default_socket_timeout", 3000);
         ini_set('max_input_time', -1);
 
-        include_once('Pimcore/Web2Print/Processor/api/PDFreactor.class.php');
+        include_once('Pimcore/Web2Print/Processor/api/v' . $web2PrintConfig->get('pdfreactorVersion', '8.0') . '/PDFreactor.class.php');
 
 
         $port = ((string) $web2PrintConfig->pdfreactorServerPort) ? (string) $web2PrintConfig->pdfreactorServerPort : "9423";
@@ -81,7 +82,7 @@ class PdfReactor8 extends Processor
                 $progress = $pdfreactor->getProgress($processId);
                 $this->updateStatus($document->getId(), 50 + ($progress->progress / 2), "pdf_conversion");
 
-                \Logger::info("PDF converting progress: " . $progress->progress . "%");
+                Logger::info("PDF converting progress: " . $progress->progress . "%");
                 sleep(2);
             }
 
@@ -89,7 +90,7 @@ class PdfReactor8 extends Processor
             $result = $pdfreactor->getDocument($processId);
             $pdf = base64_decode($result->document);
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             $document->setLastGenerateMessage($e->getMessage());
             throw new \Exception("Error during REST-Request:" . $e->getMessage());
         }
@@ -101,7 +102,7 @@ class PdfReactor8 extends Processor
 
     public function getProcessingOptions()
     {
-        include_once('Pimcore/Web2Print/Processor/api/PDFreactor.class.php');
+        include_once('Pimcore/Web2Print/Processor/api/v' . Config::getWeb2PrintConfig()->get('pdfreactorVersion', '8.0') . '/PDFreactor.class.php');
 
         $options = [];
 

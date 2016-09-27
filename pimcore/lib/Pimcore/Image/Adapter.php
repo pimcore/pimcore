@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -13,6 +13,8 @@
  */
 
 namespace Pimcore\Image;
+
+use Pimcore\Logger;
 
 abstract class Adapter
 {
@@ -51,6 +53,16 @@ abstract class Adapter
      * @var bool
      */
     protected $isAlphaPossible = false;
+
+    /**
+     * @var bool
+     */
+    protected $preserveColor = false;
+
+    /**
+     * @var bool
+     */
+    protected $preserveMetaData = false;
 
     /**
      * @param $height
@@ -232,7 +244,7 @@ abstract class Adapter
         if ($cropX !== null && $cropY !== null) {
             $this->crop($cropX, $cropY, $width, $height);
         } else {
-            \Logger::error("Cropping not processed, because X or Y is not defined or null, proceeding with next step");
+            Logger::error("Cropping not processed, because X or Y is not defined or null, proceeding with next step");
         }
 
         return $this;
@@ -299,11 +311,11 @@ abstract class Adapter
 
 
     /**
-     * @param  $x
-     * @param  $y
-     * @return self
+     * @param $width
+     * @param $height
+     * @return $this
      */
-    public function roundCorners($x, $y)
+    public function roundCorners($width, $height)
     {
         return $this;
     }
@@ -468,8 +480,13 @@ abstract class Adapter
         $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . uniqid() . "_pimcore_image_tmp_file.png";
         $this->tmpFiles[] = $tmpFile;
 
+        $format = "png32";
+        if ($this->isPreserveColor() || $this->isPreserveMetaData()) {
+            $format = "original";
+        }
+
         $this->reinitializing = true;
-        $this->save($tmpFile); // do not optimize image
+        $this->save($tmpFile, $format);
         $this->destroy();
         $this->load($tmpFile);
         $this->reinitializing = false;
@@ -556,5 +573,37 @@ abstract class Adapter
     public function setIsAlphaPossible($value)
     {
         $this->isAlphaPossible = $value;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isPreserveColor()
+    {
+        return $this->preserveColor;
+    }
+
+    /**
+     * @param boolean $preserveColor
+     */
+    public function setPreserveColor($preserveColor)
+    {
+        $this->preserveColor = $preserveColor;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isPreserveMetaData()
+    {
+        return $this->preserveMetaData;
+    }
+
+    /**
+     * @param boolean $preserveMetaData
+     */
+    public function setPreserveMetaData($preserveMetaData)
+    {
+        $this->preserveMetaData = $preserveMetaData;
     }
 }

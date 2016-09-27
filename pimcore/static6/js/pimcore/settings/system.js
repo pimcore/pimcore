@@ -1113,7 +1113,7 @@ pimcore.settings.system = Class.create({
                     ,
                     {
                         xtype: 'fieldset',
-                        title: t('output_cache'),
+                        title: t('full_page_cache'),
                         collapsible: true,
                         collapsed: true,
                         autoHeight: true,
@@ -1467,13 +1467,6 @@ pimcore.settings.system = Class.create({
 
     save: function () {
         var values = this.layout.getForm().getFieldValues();
-
-        // check for mandatory fields
-        if (empty(values["general.validLanguages"])) {
-            Ext.MessageBox.alert(t("error"), t("mandatory_field_empty"));
-            return;
-        }
-
 
         Ext.Ajax.request({
             url: "/admin/settings/set-system",

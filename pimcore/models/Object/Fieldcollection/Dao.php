@@ -39,16 +39,16 @@ class Dao extends Model\Dao\AbstractDao
         $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname());
         $values = [];
 
-        
+
         foreach ($fieldDef->getAllowedTypes() as $type) {
             try {
                 $definition = Object\Fieldcollection\Definition::getByKey($type);
             } catch (\Exception $e) {
                 continue;
             }
-            
+
             $tableName = $definition->getTableName($object->getClass());
-            
+
             try {
                 $results = $this->db->fetchAll("SELECT * FROM " . $tableName . " WHERE o_id = ? AND fieldname = ? ORDER BY `index` ASC", [$object->getId(), $this->model->getFieldname()]);
             } catch (\Exception $e) {
@@ -57,14 +57,13 @@ class Dao extends Model\Dao\AbstractDao
 
             $fieldDefinitions = $definition->getFieldDefinitions();
             $collectionClass = "\\Pimcore\\Model\\Object\\Fieldcollection\\Data\\" . ucfirst($type);
-            
-            $index = 0;
+
             foreach ($results as $result) {
                 $collection = new $collectionClass();
                 $collection->setIndex($result["index"]);
                 $collection->setFieldname($result["fieldname"]);
                 $collection->setObject($object);
-                
+
                 foreach ($fieldDefinitions as $key => $fd) {
                     if (method_exists($fd, "load")) {
                         // datafield has it's own loader
@@ -74,7 +73,7 @@ class Dao extends Model\Dao\AbstractDao
                                     "containerType" => "fieldcollection",
                                     "containerKey" => $type,
                                     "fieldname" =>  $this->model->getFieldname(),
-                                    "index" => $index
+                                    "index" => $result["index"]
                             ]]);
                         if ($value === 0 || !empty($value)) {
                             $collection->setValue($key, $value);
@@ -92,20 +91,19 @@ class Dao extends Model\Dao\AbstractDao
                     }
                 }
 
-                $index++;
                 $values[] = $collection;
             }
         }
-        
+
         $orderedValues = [];
         foreach ($values as $value) {
             $orderedValues[$value->getIndex()] = $value;
         }
-        
+
         ksort($orderedValues);
-        
+
         $this->model->setItems($orderedValues);
-                
+
         return $orderedValues;
     }
 
@@ -116,16 +114,16 @@ class Dao extends Model\Dao\AbstractDao
     {
         // empty or create all relevant tables
         $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname());
-        
+
         foreach ($fieldDef->getAllowedTypes() as $type) {
             try {
                 $definition = Object\Fieldcollection\Definition::getByKey($type);
             } catch (\Exception $e) {
                 continue;
             }
-              
+
             $tableName = $definition->getTableName($object->getClass());
-            
+
             try {
                 $this->db->delete($tableName, $this->db->quoteInto("o_id = ?", $object->getId()) . " AND " . $this->db->quoteInto("fieldname = ?", $this->model->getFieldname()));
             } catch (\Exception $e) {

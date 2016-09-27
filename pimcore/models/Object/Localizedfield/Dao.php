@@ -19,6 +19,7 @@ namespace Pimcore\Model\Object\Localizedfield;
 use Pimcore\Model;
 use Pimcore\Model\Object;
 use Pimcore\Tool;
+use Pimcore\Logger;
 
 class Dao extends Model\Dao\AbstractDao
 {
@@ -246,7 +247,7 @@ class Dao extends Model\Dao\AbstractDao
                                 }
                             }
                         } else {
-                            \Logger::debug("Excluding untouchable query value for object [ " . $this->model->getId() . " ]  key [ $key ] because it has not been loaded");
+                            Logger::debug("Excluding untouchable query value for object [ " . $this->model->getId() . " ]  key [ $key ] because it has not been loaded");
                         }
                     }
                 }
@@ -310,7 +311,7 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             $this->createUpdateTable();
         }
 
@@ -485,7 +486,7 @@ QUERY;
                 // execute
                 $this->db->query($viewQuery);
             } catch (\Exception $e) {
-                \Logger::error($e);
+                Logger::error($e);
             }
         }
     }
@@ -503,14 +504,14 @@ QUERY;
             $this->db->query("CREATE TABLE IF NOT EXISTS `" . $table . "` (
               `ooo_id` int(11) NOT NULL default '0',
               `index` INT(11) NOT NULL DEFAULT '0',
-              `fieldname` VARCHAR(255) NOT NULL DEFAULT '',
+              `fieldname` VARCHAR(190) NOT NULL DEFAULT '',
               `language` varchar(10) NOT NULL DEFAULT '',
               PRIMARY KEY (`ooo_id`, `language`, `index`, `fieldname`),
               INDEX `ooo_id` (`ooo_id`),
               INDEX `index` (`index`),
               INDEX `fieldname` (`fieldname`),
               INDEX `language` (`language`)
-            ) DEFAULT CHARSET=utf8;");
+            ) DEFAULT CHARSET=utf8mb4;");
         } else {
             $this->db->query("CREATE TABLE IF NOT EXISTS `" . $table . "` (
               `ooo_id` int(11) NOT NULL default '0',
@@ -518,7 +519,7 @@ QUERY;
               PRIMARY KEY (`ooo_id`,`language`),
               INDEX `ooo_id` (`ooo_id`),
               INDEX `language` (`language`)
-            ) DEFAULT CHARSET=utf8;");
+            ) DEFAULT CHARSET=utf8mb4;");
         }
 
         $existingColumns = $this->getValidTableColumns($table, false); // no caching of table definition
@@ -571,7 +572,7 @@ QUERY;
                       PRIMARY KEY (`ooo_id`,`language`),
                       INDEX `ooo_id` (`ooo_id`),
                       INDEX `language` (`language`)
-                    ) DEFAULT CHARSET=utf8;");
+                    ) DEFAULT CHARSET=utf8mb4;");
 
 
                 // create object table if not exists

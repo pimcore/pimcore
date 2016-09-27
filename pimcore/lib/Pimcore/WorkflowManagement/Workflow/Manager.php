@@ -17,12 +17,12 @@ namespace Pimcore\WorkflowManagement\Workflow;
 use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Element\WorkflowState;
-use Pimcore\Model\Object\ClassDefinition;
 use Pimcore\Model\Object\Concrete as ConcreteObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Object\Concrete;
 use Pimcore\WorkflowManagement\Workflow;
+use Pimcore\Logger;
 
 class Manager
 {
@@ -352,7 +352,19 @@ class Manager
      */
     public function getAdditionalFieldsForAction($actionName)
     {
-        return $this->getWorkflow()->getAdditionalFieldsForAction($actionName, $this->getElementStatus());
+        $additionalFields = $this->getWorkflow()->getAdditionalFieldsForAction($actionName, $this->getElementStatus());
+
+        if (is_array($additionalFields)) {
+            foreach ($additionalFields as &$field) {
+                if ($field['fieldType'] === 'user') {
+                    $userdata = new \Pimcore\Model\Object\ClassDefinition\Data\User();
+                    $userdata->configureOptions();
+                    $field['options'] = $userdata->getOptions();
+                }
+            }
+        }
+
+        return $additionalFields;
     }
 
 
@@ -413,7 +425,7 @@ class Manager
             //check the action is available
             if (!array_key_exists($actionName, $availableActions)) {
                 $this->error = "Workflow::validateTransition, Action [$actionName] not available for element [{$element->getId()}] with status [{$this->getElementStatus()}]";
-                \Logger::debug($this->error);
+                Logger::debug($this->error);
 
                 return false;
             }
@@ -425,7 +437,7 @@ class Manager
                 //check that the new state is correct for the action taken
                 if (!array_key_exists($newState, $actionToTake['transitionTo'])) {
                     $this->error = "Workflow::validateTransition, State [$newState] not a valid transition state for action [$actionName] from status [{$this->getElementStatus()}]";
-                    \Logger::debug($this->error);
+                    Logger::debug($this->error);
 
                     return false;
                 }
@@ -434,7 +446,7 @@ class Manager
                 //check that the new status is valid for the action taken
                 if (!in_array($newStatus, $availableNewStatuses)) {
                     $this->error = "Workflow::validateTransition, Status [$newState] not a valid transition status for action [$actionName] from status [{$this->getElementStatus()}]";
-                    \Logger::debug($this->error);
+                    Logger::debug($this->error);
 
                     return false;
                 }
@@ -461,10 +473,13 @@ class Manager
     {
         //store the current action data
         $this->setActionData($formData);
-        
+
         \Pimcore::getEventManager()->trigger("workflowmanagement.preAction", $this, [
             'actionName' => $actionName
         ]);
+        
+        //refresh the local copy after the event
+        $formData = $this->getActionData();
 
         $actionConfig = $this->workflow->getActionConfig($actionName, $this->getElementStatus());
         $additional = $formData['additional'];
@@ -511,7 +526,7 @@ class Manager
 
                         $this->element->$setter($additional[$fieldName]);
                     } catch (\Exception $e) {
-                        \Logger::error($e->getMessage());
+                        Logger::error($e->getMessage());
                         throw new \Exception("Workflow::performAction, cannot set fieldname [{$fieldName}] using setter [{$setter}] in action [{$actionName}]");
                     }
                 } else {
@@ -564,7 +579,7 @@ class Manager
             } else {
                 throw new \Exception("Operation not allowed for this element");
             }
-            
+
             //transition the element
             $this->setElementState($formData['newState']);
             $this->setElementStatus($formData['newStatus']);

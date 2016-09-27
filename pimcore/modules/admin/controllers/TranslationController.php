@@ -19,6 +19,7 @@ use Pimcore\Model\Object;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model;
+use Pimcore\Logger;
 
 class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
 {
@@ -149,6 +150,14 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
             }
         }
 
+        //remove invalid languages
+        foreach ($columns as $key => $column) {
+            if (strtolower(trim($column)) != 'key' && !in_array($column, $languages)) {
+                unset($columns[$key]);
+            }
+        }
+        $columns = array_values($columns);
+
         $headerRow = [];
         foreach ($columns as $key => $value) {
             $headerRow[] = '"' . $value . '"';
@@ -196,7 +205,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
                 try {
                     $t = Translation\Admin::getByKey($translationData);
                 } catch (\Exception $e) {
-                    \Logger::log($e);
+                    Logger::log($e);
                 }
                 if (!$t instanceof Translation\Admin) {
                     $t = new Translation\Admin();
@@ -212,7 +221,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
                     try {
                         $t->save();
                     } catch (\Exception $e) {
-                        \Logger::log($e);
+                        Logger::log($e);
                     }
                 }
             }
@@ -876,7 +885,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
                 throw new \Exception("Unable to save " . Element\Service::getElementType($element) . " with id " . $element->getId() . " because of the following reason: " . $e->getMessage());
             }
         } else {
-            \Logger::error("Could not resolve element " . $file["original"]);
+            Logger::error("Could not resolve element " . $file["original"]);
         }
 
         $this->_helper->json([
@@ -1176,8 +1185,8 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
                     fclose($f);
                 }
             } catch (\Exception $e) {
-                \Logger::error("Word Export: " . $e->getMessage());
-                \Logger::error($e);
+                Logger::error("Word Export: " . $e->getMessage());
+                Logger::error($e);
             }
         }
 
@@ -1204,7 +1213,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
 
             $out = Tool\Console::exec(\Pimcore\Document\Adapter\LibreOffice::getLibreOfficeCli() . ' --headless --convert-to docx:"Office Open XML Text" --outdir ' . PIMCORE_SYSTEM_TEMP_DIRECTORY . " " . $exportFile);
 
-            \Logger::debug("LibreOffice Output was: " . $out);
+            Logger::debug("LibreOffice Output was: " . $out);
 
             $tmpName = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . preg_replace("/\." . File::getFileExtension($exportFile) . "$/", ".docx", basename($exportFile));
 

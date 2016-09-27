@@ -18,6 +18,8 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
 use Pimcore\Model\Object;
 use Pimcore\Model\Element;
+use Pimcore\Logger;
+use ForceUTF8\Encoding;
 
 class Data extends \Pimcore\Model\AbstractModel
 {
@@ -413,12 +415,30 @@ class Data extends \Pimcore\Model\AbstractModel
                 if (\Pimcore\Document::isFileTypeSupported($element->getFilename())) {
                     try {
                         $contentText = $element->getText();
+                        $contentText = Encoding::toUTF8($contentText);
                         $contentText = str_replace(["\r\n", "\r", "\n", "\t", "\f"], " ", $contentText);
                         $contentText = preg_replace("/[ ]+/", " ", $contentText);
                         $this->data .= " " . $contentText;
                     } catch (\Exception $e) {
-                        \Logger::error($e);
+                        Logger::error($e);
                     }
+                }
+            } elseif ($element instanceof Asset\Text) {
+                try {
+                    $contentText = $element->getData();
+                    $contentText = Encoding::toUTF8($contentText);
+                    $this->data .= " " . $contentText;
+                } catch (\Exception $e) {
+                    Logger::error($e);
+                }
+            } elseif ($element instanceof Asset\Image) {
+                try {
+                    $metaData = array_merge($element->getEXIFData(), $element->getIPTCData());
+                    foreach ($metaData as $key => $value) {
+                        $this->data .= " " . $key . " : " . $value;
+                    }
+                } catch (\Exception $e) {
+                    Logger::error($e);
                 }
             }
 
@@ -439,7 +459,7 @@ class Data extends \Pimcore\Model\AbstractModel
                 $this->published = true;
             }
         } else {
-            \Logger::crit("Search\\Backend\\Data received an unknown element!");
+            Logger::crit("Search\\Backend\\Data received an unknown element!");
         }
 
         if ($element instanceof Element\ElementInterface) {

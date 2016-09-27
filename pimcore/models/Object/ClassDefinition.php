@@ -20,9 +20,11 @@ use Pimcore\Model;
 use Pimcore\Model\Object;
 use Pimcore\File;
 use Pimcore\Cache;
+use Pimcore\Logger;
 
 class ClassDefinition extends Model\AbstractModel
 {
+    use Object\ClassDefinition\Helper\VarExport;
 
     /**
      * @var int
@@ -150,10 +152,19 @@ class ClassDefinition extends Model\AbstractModel
         } catch (\Exception $e) {
             try {
                 $class = new self();
-                $class->getDao()->getById($id);
+                $name = $class->getDao()->getNameById($id);
+                $definitionFile = $class->getDefinitionFile($name);
+                $class = include $definitionFile;
+
+                if (!$class instanceof self) {
+                    throw new \Exception("Class definition with name " . $name . " or ID " . $id . " does not exist");
+                }
+
+                $class->setId($id);
+
                 \Zend_Registry::set($cacheKey, $class);
             } catch (\Exception $e) {
-                \Logger::error($e);
+                Logger::error($e);
 
                 return null;
             }
@@ -168,19 +179,18 @@ class ClassDefinition extends Model\AbstractModel
      */
     public static function getByName($name)
     {
-        $class = new self();
-
         try {
-            $class->getDao()->getByName($name);
+            $class = new self();
+            $id = $class->getDao()->getIdByName($name);
+            if ($id) {
+                return self::getById($id);
+            } else {
+                throw new \Exception("There is no class with the name: " . $name);
+            }
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
 
             return null;
-        }
-
-        // to have a singleton in a way. like all instances of Element\ElementInterface do also, like Object\AbstractObject
-        if ($class->getId() > 0) {
-            return self::getById($class->getId());
         }
     }
 
@@ -227,6 +237,32 @@ class ClassDefinition extends Model\AbstractModel
 
         $this->getDao()->save();
 
+
+        $infoDocBlock = $this->getInfoDocBlock();
+
+        // save definition as a php file
+        $definitionFile = $this->getDefinitionFile();
+        if (!is_writable(dirname($definitionFile)) || (is_file($definitionFile) && !is_writable($definitionFile))) {
+            throw new \Exception("Cannot write definition file in: " . $definitionFile . " please check write permission on this directory.");
+        }
+
+        $clone = clone $this;
+        $clone->setDao(null);
+        unset($clone->id);
+        unset($clone->fieldDefinitions);
+
+        $exportedClass = var_export($clone, true);
+
+        $data = '<?php ';
+        $data .= "\n\n";
+        $data .= $infoDocBlock;
+        $data .= "\n\n";
+
+        $data .= "\nreturn " . $exportedClass . ";\n";
+
+        \Pimcore\File::put($definitionFile, $data);
+
+
         // create class for object
         $extendClass = "Concrete";
         if ($this->getParentClass()) {
@@ -234,40 +270,14 @@ class ClassDefinition extends Model\AbstractModel
             $extendClass = "\\" . ltrim($extendClass, "\\");
         }
 
-        // creaste directory if not exists
+        // create directory if not exists
         if (!is_dir(PIMCORE_CLASS_DIRECTORY . "/Object")) {
             File::mkdir(PIMCORE_CLASS_DIRECTORY . "/Object");
         }
 
         $cd = '<?php ';
-
         $cd .= "\n\n";
-        $cd .= "/** Generated at " . date('c') . " */";
-        $cd .= "\n\n";
-
-        $cd .= "/**\n";
-
-        if ($this->getDescription()) {
-            $description = str_replace(["/**", "*/", "//"], "", $this->getDescription());
-            $description = str_replace("\n", "\n* ", $description);
-
-            $cd .= "* " . $description . "\n";
-        }
-
-        $cd .= "* Inheritance: " . ($this->getAllowInherit() ? "yes" : "no") . "\n";
-        $cd .= "* Variants   : " . ($this->getAllowVariants() ? "yes" : "no") . "\n";
-
-        $user = Model\User::getById($this->getUserModification());
-        if ($user) {
-            $cd .= "* Changed by : " . $user->getName() . " (" . $user->getId() . ")" . "\n";
-        }
-
-        if ($_SERVER["REMOTE_ADDR"]) {
-            $cd .= "* IP:          " . $_SERVER["REMOTE_ADDR"] . "\n";
-        }
-
-        $cd .= "*/\n";
-
+        $cd .= $infoDocBlock;
         $cd .= "\n\n";
         $cd .= "namespace Pimcore\\Model\\Object;";
         $cd .= "\n\n";
@@ -360,8 +370,8 @@ class ClassDefinition extends Model\AbstractModel
         }
         File::put($classFile, $cd);
 
-        // create list class
 
+        // create list class
         $cd = '<?php ';
 
         $cd .= "\n\n";
@@ -381,8 +391,6 @@ class ClassDefinition extends Model\AbstractModel
 
         $cd .= "\n\n";
         $cd .= "}\n";
-        /*$cd .= "?>";*/
-
 
         File::mkdir(PIMCORE_CLASS_DIRECTORY . "/Object/" . ucfirst($this->getName()));
 
@@ -403,6 +411,64 @@ class ClassDefinition extends Model\AbstractModel
         } else {
             \Pimcore::getEventManager()->trigger("object.class.postAdd", $this);
         }
+    }
+
+    /**
+     * @return string
+     */
+    protected function getInfoDocBlock()
+    {
+        $cd = "";
+
+        $cd .= "/** ";
+        $cd .= "\n";
+        $cd .= "* Generated at: " . date('c') . "\n";
+        $cd .= "* Inheritance: " . ($this->getAllowInherit() ? "yes" : "no") . "\n";
+        $cd .= "* Variants: " . ($this->getAllowVariants() ? "yes" : "no") . "\n";
+
+        $user = Model\User::getById($this->getUserModification());
+        if ($user) {
+            $cd .= "* Changed by: " . $user->getName() . " (" . $user->getId() . ")" . "\n";
+        }
+
+        if (isset($_SERVER["REMOTE_ADDR"])) {
+            $cd .= "* IP: " . $_SERVER["REMOTE_ADDR"] . "\n";
+        }
+
+        if ($this->getDescription()) {
+            $description = str_replace(["/**", "*/", "//"], "", $this->getDescription());
+            $description = str_replace("\n", "\n* ", $description);
+
+            $cd .= "* " . $description . "\n";
+        }
+
+        $cd .= "\n\n";
+        $cd .= "Fields Summary: \n";
+
+        $cd = $this->getInfoDocBlockForFields($this, $cd, 1);
+
+        $cd .= "*/ ";
+
+
+        return $cd;
+    }
+
+    /**
+     * @param $definition
+     * @param $text
+     * @param $level
+     * @return string
+     */
+    protected function getInfoDocBlockForFields($definition, $text, $level)
+    {
+        foreach ($definition->getFieldDefinitions() as $fd) {
+            $text .= str_pad("", $level, "-") . " " . $fd->getName() . " [" . $fd->getFieldtype() . "]\n";
+            if (method_exists($fd, "getFieldDefinitions")) {
+                $text = $this->getInfoDocBlockForFields($fd, $text, $level+1);
+            }
+        }
+
+        return $text;
     }
 
     /**
@@ -454,6 +520,23 @@ class ClassDefinition extends Model\AbstractModel
         @unlink(PIMCORE_CLASS_DIRECTORY . "/Object/" . ucfirst($this->getName()) . ".php");
         @unlink(PIMCORE_CLASS_DIRECTORY . "/Object/" . ucfirst($this->getName()) . "/Listing.php");
         @rmdir(PIMCORE_CLASS_DIRECTORY . "/Object/" . ucfirst($this->getName()));
+        @unlink($this->getDefinitionFile());
+    }
+
+
+    /**
+     * @param null $name
+     * @return string
+     */
+    public function getDefinitionFile($name = null)
+    {
+        if (!$name) {
+            $name = $this->getName();
+        }
+
+        $file = PIMCORE_CLASS_DIRECTORY . "/definition_". $name .".php";
+
+        return $file;
     }
 
     /**

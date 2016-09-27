@@ -22,6 +22,7 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Object;
 use Pimcore\Model\Element;
+use Pimcore\Logger;
 
 class Renderlet extends Model\Document\Tag
 {
@@ -151,7 +152,7 @@ class Renderlet extends Model\Document\Tag
                     if (\Pimcore::inDebugMode()) {
                         return "ERROR: " . $e->getMessage() . " (for details see debug.log)";
                     }
-                    \Logger::error($e);
+                    Logger::error($e);
                 }
             }
         }
@@ -323,7 +324,7 @@ class Renderlet extends Model\Document\Tag
             $el = Element\Service::getElementById($this->type, $this->id);
             if (!$el instanceof Element\ElementInterface) {
                 $sane = false;
-                \Logger::notice("Detected insane relation, removing reference to non existent ".$this->type." with id [".$this->id."]");
+                Logger::notice("Detected insane relation, removing reference to non existent ".$this->type." with id [".$this->id."]");
                 $this->id = null;
                 $this->type = null;
                 $this->o=null;

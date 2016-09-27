@@ -16,6 +16,7 @@ use Pimcore\Mail;
 use Pimcore\Model\Element;
 use Pimcore\Model\Document;
 use Pimcore\Model\Tool;
+use Pimcore\Logger;
 
 class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
 {
@@ -89,7 +90,7 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
                         $this->saveToSession($page);
                         $this->_helper->json(["success" => true]);
                     } catch (\Exception $e) {
-                        \Logger::err($e);
+                        Logger::err($e);
                         $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
                     }
                 } else {
@@ -106,14 +107,14 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
                                 throw $e;
                             }
 
-                            \Logger::err($e);
+                            Logger::err($e);
                             $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
                         }
                     }
                 }
             }
         } catch (\Exception $e) {
-            \Logger::log($e);
+            Logger::log($e);
             if (\Pimcore\Tool\Admin::isExtJS6() && $e instanceof Element\ValidationException) {
                 $this->_helper->json(["success" => false, "type" => "ValidationException", "message" => $e->getMessage(), "stack" => $e->getTraceAsString(), "code" => $e->getCode()]);
             }
@@ -211,7 +212,7 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
             try {
                 $params = \Zend_Json::decode($emailLog->getParams());
             } catch (\Exception $e) {
-                \Logger::warning("Could not decode JSON param string");
+                Logger::warning("Could not decode JSON param string");
                 $params = [];
             }
             foreach ($params as &$entry) {
@@ -231,16 +232,22 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
      */
     protected function enhanceLoggingData(&$data, &$fullEntry = null)
     {
-        if ($data['objectId']) {
-            if (is_subclass_of($class, "\\Pimcore\\Model\\Element\\ElementInterface")) {
-                $class = "\\" . ltrim($data['objectClass'], "\\");
+        if (!empty($data['objectClass'])) {
+            $class = "\\" . ltrim($data['objectClass'], "\\");
+            if (!empty($data['objectId']) && is_subclass_of($class, "\\Pimcore\\Model\\Element\\ElementInterface")) {
                 $obj = $class::getById($data['objectId']);
                 if (is_null($obj)) {
                     $data['objectPath'] = '';
                 } else {
                     $data['objectPath'] = $obj->getRealFullPath();
                 }
-                $niceClassName = str_replace("\\Pimcore\\Model\\", "", $data['objectClass']);
+                //check for classmapping
+                if (stristr($class, "\\Pimcore\\Model") === false) {
+                    $niceClassName = "\\" . ltrim(get_parent_class($class), "\\");
+                } else {
+                    $niceClassName = $class;
+                }
+                $niceClassName = str_replace("\\Pimcore\\Model\\", "", $niceClassName);
                 $niceClassName = str_replace("_", "\\", $niceClassName);
 
                 $tmp = explode("\\", $niceClassName);

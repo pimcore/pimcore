@@ -18,6 +18,7 @@ use Pimcore\Document\Adapter;
 use Pimcore\Tool\Console;
 use Pimcore\Config;
 use Pimcore\File;
+use Pimcore\Logger;
 
 class Ghostscript extends Adapter
 {
@@ -39,7 +40,7 @@ class Ghostscript extends Adapter
                 return true;
             }
         } catch (\Exception $e) {
-            \Logger::warning($e);
+            Logger::warning($e);
         }
 
         return false;
@@ -96,7 +97,7 @@ class Ghostscript extends Adapter
 
         if (!$this->isFileTypeSupported($path)) {
             $message = "Couldn't load document " . $path . " only PDF documents are currently supported";
-            \Logger::error($message);
+            Logger::error($message);
             throw new \Exception($message);
         }
 
@@ -125,7 +126,7 @@ class Ghostscript extends Adapter
         }
 
         $message = "Couldn't load document " . $path . " only PDF documents are currently supported";
-        \Logger::error($message);
+        Logger::error($message);
         throw new \Exception($message);
     }
 
@@ -167,7 +168,7 @@ class Ghostscript extends Adapter
 
             return $this;
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
 
             return false;
         }
@@ -210,7 +211,7 @@ class Ghostscript extends Adapter
 
             return $text;
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
 
             return false;
         }

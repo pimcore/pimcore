@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -13,6 +13,8 @@
  */
 
 namespace Pimcore;
+
+use Pimcore\Logger;
 
 class Video
 {
@@ -38,7 +40,7 @@ class Video
                 }
             }
         } catch (\Exception $e) {
-            \Logger::crit("Unable to load video adapter: " . $e->getMessage());
+            Logger::crit("Unable to load video adapter: " . $e->getMessage());
             throw $e;
         }
 
@@ -73,7 +75,7 @@ class Video
                         return $adapter;
                     }
                 } catch (\Exception $e) {
-                    \Logger::warning($e);
+                    Logger::warning($e);
                 }
             }
         }

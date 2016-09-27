@@ -15,6 +15,7 @@
 namespace Pimcore\Log;
 
 use Psr\Log\LoggerInterface;
+use Pimcore\Logger;
 
 class ApplicationLogger /*implements LoggerInterface*/
 {
@@ -202,7 +203,7 @@ class ApplicationLogger /*implements LoggerInterface*/
                 $logger->log($level, $message, $context);
             } elseif ($logger instanceof \Zend_Log) {
                 // zf compatibility
-                $zendLoggerPsr3Mapping = array_flip(\Logger::getZendLoggerPsr3Mapping());
+                $zendLoggerPsr3Mapping = array_flip(Logger::getZendLoggerPsr3Mapping());
                 $prio = $zendLoggerPsr3Mapping[$level];
                 $logger->log($message, $prio, $context);
             }

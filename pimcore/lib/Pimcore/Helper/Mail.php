@@ -160,8 +160,16 @@ CSS;
 
         $emailLog->setRequestUri(htmlspecialchars($_SERVER['REQUEST_URI']));
         $emailLog->setParams($mail->getParams());
-        $emailLog->setSubject($mail->getSubject());
         $emailLog->setSentDate(time());
+
+        $subject = $mail->getSubjectRendered();
+        if (0 === strpos($subject, '=?')) {
+            $mbIntEnc = mb_internal_encoding();
+            mb_internal_encoding($mail->getCharset());
+            $subject = mb_decode_mimeheader($subject);
+            mb_internal_encoding($mbIntEnc);
+        }
+        $emailLog->setSubject($subject);
 
         $mailFrom = $mail->getFrom();
         if ($mailFrom) {

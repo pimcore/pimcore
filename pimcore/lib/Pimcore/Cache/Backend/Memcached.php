@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -15,7 +15,13 @@
 namespace Pimcore\Cache\Backend;
 
 use Pimcore\Db;
+use Pimcore\Logger;
 
+/**
+ * Class Memcached
+ * @package Pimcore\Cache\Backend
+ * @deprecated
+ */
 class Memcached extends \Zend_Cache_Backend_Memcached
 {
 
@@ -79,7 +85,7 @@ class Memcached extends \Zend_Cache_Backend_Memcached
     {
         if (!$this->db) {
             // we're using a new mysql connection here to avoid problems with active (nested) transactions
-            \Logger::debug("Initialize dedicated MySQL connection for the cache adapter");
+            Logger::debug("Initialize dedicated MySQL connection for the cache adapter");
             $this->db = Db::getConnection();
         }
 
@@ -105,7 +111,7 @@ class Memcached extends \Zend_Cache_Backend_Memcached
                     ]);
                 } catch (\Exception $e) {
                     if (strpos(strtolower($e->getMessage()), "is full") !== false) {
-                        \Logger::warning($e);
+                        Logger::warning($e);
 
                         if ($this->_options["tags_do_not_switch_to_innodb"]) {
                             $this->clean();
@@ -125,7 +131,7 @@ class Memcached extends \Zend_Cache_Backend_Memcached
             }
             //$this->getDb()->commit();
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
         }
     }
 
@@ -228,7 +234,7 @@ class Memcached extends \Zend_Cache_Backend_Memcached
             return $this->_memcache->flush();
         }
         if ($mode == \Zend_Cache::CLEANING_MODE_OLD) {
-            \Logger::debug("Zend_Cache_Backend_Memcached::clean() : CLEANING_MODE_OLD is unsupported by the Memcached backend");
+            Logger::debug("Zend_Cache_Backend_Memcached::clean() : CLEANING_MODE_OLD is unsupported by the Memcached backend");
         }
         if ($mode == \Zend_Cache::CLEANING_MODE_MATCHING_TAG || $mode == \Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG) {
             foreach ($tags as $tag) {
@@ -252,7 +258,7 @@ class Memcached extends \Zend_Cache_Backend_Memcached
             foreach ($tags as $tag) {
                 $condParts[] = "tag != '" . $tag . "'";
             }
-            
+
             $itemIds = $this->getDb()->fetchCol("SELECT id FROM cache_tags WHERE ".implode(" AND ", $condParts));
 
             foreach ($itemIds as $item) {
@@ -272,8 +278,8 @@ class Memcached extends \Zend_Cache_Backend_Memcached
 
         return true;
     }
-    
-    
+
+
     /**
      * @param  string $id
      * @return array tags for given id

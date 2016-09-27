@@ -226,7 +226,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
 
             $allowedCollectionIds = [];
             if ($this->getParam("oid")) {
-                $object = Object_Concrete::getById($this->getParam("oid"));
+                $object = Object\Concrete::getById($this->getParam("oid"));
                 $class = $object->getClass();
                 $fd = $class->getFieldDefinition($this->getParam("fieldname"));
                 $allowedGroupIds = $fd->getAllowedGroupIds();
@@ -407,7 +407,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
             }
 
             if ($this->getParam("oid")) {
-                $object = Object_Concrete::getById($this->getParam("oid"));
+                $object = Object\Concrete::getById($this->getParam("oid"));
                 $class = $object->getClass();
                 $fd = $class->getFieldDefinition($this->getParam("fieldname"));
                 $allowedGroupIds = $fd->getAllowedGroupIds();
@@ -838,7 +838,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
             $allowedGroupIds = null;
 
             if ($this->getParam("oid")) {
-                $object = Object_Concrete::getById($this->getParam("oid"));
+                $object = Object\Concrete::getById($this->getParam("oid"));
                 $class = $object->getClass();
                 $fd = $class->getFieldDefinition($this->getParam("fieldname"));
                 $allowedGroupIds = $fd->getAllowedGroupIds();

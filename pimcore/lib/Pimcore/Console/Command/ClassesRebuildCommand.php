@@ -17,6 +17,7 @@ namespace Pimcore\Console\Command;
 use Pimcore\Cache;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Model\Object\ClassDefinition;
+use Pimcore\Model\Object;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -27,7 +28,7 @@ class ClassesRebuildCommand extends AbstractCommand
     {
         $this
             ->setName('deployment:classes-rebuild')
-            ->setDescription('rebuilds classes and db structure based on updated website/var/classes/*.psf files')
+            ->setDescription('rebuilds db structure for classes, field collections and object bricks based on updated website/var/classes/definition_*.php files')
         ;
     }
 
@@ -38,12 +39,46 @@ class ClassesRebuildCommand extends AbstractCommand
         $list = new ClassDefinition\Listing();
         $list->load();
 
+        if ($output->isVerbose()) {
+            $output->writeln("---------------------");
+            $output->writeln("Saving all classes");
+        }
         foreach ($list->getClasses() as $class) {
             if ($output->isVerbose()) {
                 $output->writeln($class->getName() . " [" . $class->getId() . "] saved");
             }
 
             $class->save();
+        }
+
+
+        if ($output->isVerbose()) {
+            $output->writeln("---------------------");
+            $output->writeln("Saving all object bricks");
+        }
+        $list = new Object\Objectbrick\Definition\Listing();
+        $list = $list->load();
+        foreach ($list as $brickDefinition) {
+            if ($output->isVerbose()) {
+                $output->writeln($brickDefinition->getKey() . " saved");
+            }
+
+            $brickDefinition->save();
+        }
+
+
+        if ($output->isVerbose()) {
+            $output->writeln("---------------------");
+            $output->writeln("Saving all field collections");
+        }
+        $list = new Object\Fieldcollection\Definition\Listing();
+        $list = $list->load();
+        foreach ($list as $fc) {
+            if ($output->isVerbose()) {
+                $output->writeln($fc->getKey() . " saved");
+            }
+
+            $fc->save();
         }
     }
 }

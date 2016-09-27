@@ -17,6 +17,7 @@
 namespace Pimcore\Model\Element\Recyclebin\Item;
 
 use Pimcore\Model;
+use Pimcore\Logger;
 
 class Dao extends Model\Dao\AbstractDao
 {
@@ -55,7 +56,7 @@ class Dao extends Model\Dao\AbstractDao
             $this->db->insert("recyclebin", $data);
             $this->model->setId($this->db->lastInsertId());
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
         }
 
         return true;

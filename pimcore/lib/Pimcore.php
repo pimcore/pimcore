@@ -21,6 +21,7 @@ use Pimcore\Db;
 use Pimcore\ExtensionManager;
 use Pimcore\Model\User;
 use Pimcore\Model;
+use Pimcore\Logger;
 
 class Pimcore
 {
@@ -148,14 +149,6 @@ class Pimcore
                 "action" => "index"
             ]
         );
-        $routePlugins = new \Zend_Controller_Router_Route(
-            'admin/plugin/:controller/:action/*',
-            [
-                'module' => 'pluginadmin',
-                "controller" => "index",
-                "action" => "index"
-            ]
-        );
         $routeExtensions = new \Zend_Controller_Router_Route(
             'admin/extensionmanager/:controller/:action/*',
             [
@@ -210,7 +203,6 @@ class Pimcore
             $router->addRoute('plugin', $routePlugin);
             $router->addRoute('admin', $routeAdmin);
             $router->addRoute('update', $routeUpdate);
-            $router->addRoute('plugins', $routePlugins);
             $router->addRoute('extensionmanager', $routeExtensions);
             $router->addRoute('reports', $routeReports);
             $router->addRoute('searchadmin', $routeSearchAdmin);
@@ -267,7 +259,7 @@ class Pimcore
                 if (!headers_sent()) {
                     header("HTTP/1.0 404 Not Found");
                 }
-                \Logger::err($e);
+                Logger::err($e);
                 throw new \Zend_Controller_Router_Exception("No route, document, custom route or redirect is matching the request: " . $_SERVER["REQUEST_URI"] . " | \n" . "Specific ERROR: " . $e->getMessage());
             } catch (\Exception $e) {
                 if (!headers_sent()) {
@@ -308,7 +300,7 @@ class Pimcore
     {
 
         // for forks, etc ...
-        \Logger::resetLoggers();
+        Logger::resetLoggers();
 
         // try to load configuration
         $conf = Config::getSystemConfig();
@@ -334,7 +326,7 @@ class Pimcore
         }
 
         $prios = [];
-        $availablePrios = \Logger::getAvailablePriorities();
+        $availablePrios = Logger::getAvailablePriorities();
 
         if ($conf && $conf->general->debugloglevel) {
             foreach ($availablePrios as $level) {
@@ -343,24 +335,17 @@ class Pimcore
                     break;
                 }
             }
-            \Logger::setPriorities($prios);
+            Logger::setPriorities($prios);
         } else {
-            \Logger::setVerbosePriorities();
+            Logger::setVerbosePriorities();
         }
 
         if (is_writable(PIMCORE_LOG_DEBUG)) {
-
-            // check for big logfile, empty it if it's bigger than about 200M
-            if (filesize(PIMCORE_LOG_DEBUG) > 200000000) {
-                rename(PIMCORE_LOG_DEBUG, PIMCORE_LOG_DEBUG . "-archive-" . date("m-d-Y-H-i")); // archive log (will be cleaned up by maintenance)
-                File::put(PIMCORE_LOG_DEBUG, "");
-            }
-
             // set default core logger (debug.log)
             if (!empty($prios)) {
                 $loggerFile = new \Monolog\Logger('core');
                 $loggerFile->pushHandler(new \Monolog\Handler\StreamHandler(PIMCORE_LOG_DEBUG));
-                \Logger::addLogger($loggerFile);
+                Logger::addLogger($loggerFile);
             }
 
             $conf = Config::getSystemConfig();
@@ -374,7 +359,7 @@ class Pimcore
                             $loggerMail = new \Monolog\Logger('email');
                             $mailHandler = new \Pimcore\Log\Handler\Mail($email);
                             $loggerMail->pushHandler(new \Monolog\Handler\BufferHandler($mailHandler));
-                            \Logger::addLogger($loggerMail);
+                            Logger::addLogger($loggerMail);
                         }
                     }
                 }
@@ -384,7 +369,7 @@ class Pimcore
             try {
                 $loggerSyslog = new \Monolog\Logger('core');
                 $loggerSyslog->pushHandler(new \Monolog\Handler\SyslogHandler("pimcore"));
-                \Logger::addLogger($loggerSyslog);
+                Logger::addLogger($loggerSyslog);
             } catch (\Exception $e) {
                 // nothing to do here
             }
@@ -405,9 +390,9 @@ class Pimcore
 
             $loggerRequest = new \Monolog\Logger('request');
             $loggerRequest->pushHandler(new \Monolog\Handler\StreamHandler($requestLogFile));
-            \Logger::addLogger($loggerRequest);
+            Logger::addLogger($loggerRequest);
 
-            \Logger::setVerbosePriorities();
+            Logger::setVerbosePriorities();
         }
     }
 
@@ -575,14 +560,14 @@ class Pimcore
                             }
                         }
                     } catch (\Exception $e) {
-                        \Logger::err("Could not instantiate and register plugin [" . $p['plugin']['pluginClassName'] . "]");
+                        Logger::err("Could not instantiate and register plugin [" . $p['plugin']['pluginClassName'] . "]");
                     }
                 }
                 \Zend_Registry::set("Pimcore_API_Plugin_Broker", $broker);
             }
         } catch (\Exception $e) {
-            \Logger::alert("there is a problem with the plugin configuration");
-            \Logger::alert($e);
+            Logger::alert("there is a problem with the plugin configuration");
+            Logger::alert($e);
         }
     }
 
@@ -644,7 +629,7 @@ class Pimcore
             }
         } catch (\Exception $e) {
             $m = "Couldn't load system configuration";
-            \Logger::err($m);
+            Logger::err($m);
 
             if (!defined("PIMCORE_DEBUG")) {
                 define("PIMCORE_DEBUG", true);
@@ -867,7 +852,7 @@ class Pimcore
         gc_enable();
         $collectedCycles = gc_collect_cycles();
 
-        \Logger::debug("garbage collection finished, collected cycles: " . $collectedCycles);
+        Logger::debug("garbage collection finished, collected cycles: " . $collectedCycles);
     }
 
     /**
@@ -1035,6 +1020,6 @@ class Pimcore
         Model\Tool\Lock::releaseAll();
 
         // disable logging - otherwise this will cause problems in the ongoing shutdown process (session write, __destruct(), ...)
-        \Logger::resetLoggers();
+        Logger::resetLoggers();
     }
 }

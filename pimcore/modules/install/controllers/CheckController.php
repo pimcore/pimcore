@@ -253,9 +253,9 @@ class Install_CheckController extends \Pimcore\Controller\Action
             try {
                 $db->query("CREATE TABLE __pimcore_req_check (
                   id int(11) NOT NULL AUTO_INCREMENT,
-                  field varchar(255) CHARACTER SET latin1 NULL DEFAULT NULL,
+                  field varchar(190) DEFAULT NULL,
                   PRIMARY KEY (id)
-                ) DEFAULT CHARSET=utf8 COLLATE utf8_general_ci");
+                ) DEFAULT CHARSET=utf8mb4;");
             } catch (\Exception $e) {
                 $queryCheck = false;
             }
@@ -268,7 +268,7 @@ class Install_CheckController extends \Pimcore\Controller\Action
             // alter table
             $queryCheck = true;
             try {
-                $db->query("ALTER TABLE __pimcore_req_check ADD COLUMN alter_field varchar(255) NULL DEFAULT NULL");
+                $db->query("ALTER TABLE __pimcore_req_check ADD COLUMN alter_field varchar(190) NULL DEFAULT NULL");
             } catch (\Exception $e) {
                 $queryCheck = false;
             }
@@ -283,18 +283,18 @@ class Install_CheckController extends \Pimcore\Controller\Action
             try {
                 $db->query("ALTER TABLE __pimcore_req_check
                   CHANGE COLUMN id id int(11) NOT NULL,
-                  CHANGE COLUMN field field varchar(255) NULL DEFAULT NULL,
-                  CHANGE COLUMN alter_field alter_field varchar(255) NULL DEFAULT NULL,
+                  CHANGE COLUMN field field varchar(190) NULL DEFAULT NULL,
+                  CHANGE COLUMN alter_field alter_field varchar(190) NULL DEFAULT NULL,
                   ADD KEY field (field),
                   DROP PRIMARY KEY ,
-                 DEFAULT CHARSET=utf8");
+                 DEFAULT CHARSET=utf8mb4");
 
                 $db->query("ALTER TABLE __pimcore_req_check
                   CHANGE COLUMN id id int(11) NOT NULL AUTO_INCREMENT,
-                  CHANGE COLUMN field field varchar(255) NULL DEFAULT NULL,
-                  CHANGE COLUMN alter_field alter_field varchar(255) NULL DEFAULT NULL,
+                  CHANGE COLUMN field field varchar(190) NULL DEFAULT NULL,
+                  CHANGE COLUMN alter_field alter_field varchar(190) NULL DEFAULT NULL,
                   ADD PRIMARY KEY (id) ,
-                 DEFAULT CHARSET=utf8");
+                 DEFAULT CHARSET=utf8mb4");
             } catch (\Exception $e) {
                 $queryCheck = false;
             }
@@ -560,7 +560,7 @@ class Install_CheckController extends \Pimcore\Controller\Action
         ];
 
         // image optimizer
-        foreach (["zopflipng", "pngcrush", "jpegoptim", "imgmin", "pngout", "advpng", "cjpeg"] as $optimizerName) {
+        foreach (["zopflipng", "pngcrush", "jpegoptim", "pngout", "advpng", "cjpeg", "exiftool"] as $optimizerName) {
             try {
                 $optimizerAvailable = \Pimcore\Tool\Console::getExecutable($optimizerName);
             } catch (\Exception $e) {

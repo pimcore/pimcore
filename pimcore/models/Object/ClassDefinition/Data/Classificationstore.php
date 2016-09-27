@@ -1107,6 +1107,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
             /** @var  $key Object\Classificationstore\KeyGroupRelation */
             foreach ($relation as $key) {
                 $definition = \Pimcore\Model\Object\Classificationstore\Service::getFieldDefinitionFromKeyConfig($key);
+                $definition->setTooltip($definition->getName() . " - " . $key->getDescription());
 
                 if (method_exists($definition, "__wakeup")) {
                     $definition->__wakeup();

@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -20,6 +20,7 @@ use Pimcore\Model;
 
 class Layout
 {
+    use Model\Object\ClassDefinition\Helper\VarExport;
 
     /**
      * @var string

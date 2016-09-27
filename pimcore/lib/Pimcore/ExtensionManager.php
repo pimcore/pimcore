@@ -14,6 +14,8 @@
 
 namespace Pimcore;
 
+use Pimcore\Logger;
+
 class ExtensionManager
 {
 
@@ -150,8 +152,8 @@ class ExtensionManager
                                     $pluginConfigs[] = $pluginConf->toArray();
                                 }
                             } catch (\Exception $e) {
-                                \Logger::error("Unable to initialize plugin with ID: " . $d);
-                                \Logger::error($e);
+                                Logger::error("Unable to initialize plugin with ID: " . $d);
+                                Logger::error($e);
                             }
                         }
                     }
@@ -258,8 +260,8 @@ class ExtensionManager
                 try {
                     $configs[$areaName] = new \Zend_Config_Xml($path . "/area.xml");
                 } catch (\Exception $e) {
-                    \Logger::error("Unable to initalize brick with id: " . $areaName);
-                    \Logger::error($e);
+                    Logger::error("Unable to initalize brick with id: " . $areaName);
+                    Logger::error($e);
                 }
             }
 

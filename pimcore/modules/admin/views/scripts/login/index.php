@@ -4,7 +4,7 @@
 
     <title>Welcome to pimcore!</title>
 
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta charset="UTF-8">
     <meta name="robots" content="noindex, follow" />
 
     <link rel="icon" type="image/png" href="/pimcore/static6/img/favicon/favicon-32x32.png" />
@@ -159,8 +159,10 @@ $config = \Pimcore\Config::getSystemConfig();
     &copy; 2009-<?= date("Y") ?> <a href="http://www.pimcore.org/">pimcore GmbH</a>, a proud member of the <a href="http://www.elements.at/">elements group</a>
 </div>
 
-<div id="background"></div>
-<div id="backgroundImageInfo"></div>
+<?php if (!$config->general->loginscreencustomimage) { ?>
+    <div id="background"></div>
+    <div id="backgroundImageInfo"></div>
+<?php } ?>
 
 <script type="text/javascript">
     <?php if(!$this->getParam("deeplink")) { ?>

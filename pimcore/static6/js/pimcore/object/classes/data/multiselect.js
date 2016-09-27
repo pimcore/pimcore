@@ -217,7 +217,15 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                 fieldLabel: t("height"),
                 name: "height",
                 value: this.datax.height
-            },this.valueGrid
+            },
+            {
+                xtype: "numberfield",
+                fieldLabel: t("maximum_items"),
+                name: "maxItems",
+                value: this.datax.maxItems,
+                minValue: 0
+            },
+            this.valueGrid
         ]);
 
         return this.layout;
@@ -249,7 +257,8 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                 {
                     options: source.datax.options,
                     width: source.datax.width,
-                    height: source.datax.height
+                    height: source.datax.height,
+                    maxItems: source.datax.maxItems
                 });
         }
     },

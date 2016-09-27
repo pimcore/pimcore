@@ -19,9 +19,9 @@ use Pimcore\Tool;
 use Pimcore\Tool\Session;
 use Pimcore\Config;
 use Pimcore\Model;
-use Pimcore\Model\Element;
 use Pimcore\Model\Property;
 use Pimcore\Model\Schedule;
+use Pimcore\Logger;
 
 abstract class Document extends Admin
 {
@@ -73,7 +73,7 @@ abstract class Document extends Admin
 
                         $properties[$propertyName] = $property;
                     } catch (\Exception $e) {
-                        \Logger::warning("Can't add " . $propertyName . " to document " . $document->getRealFullPath());
+                        Logger::warning("Can't add " . $propertyName . " to document " . $document->getRealFullPath());
                     }
                 }
             }
@@ -217,7 +217,7 @@ abstract class Document extends Admin
      */
     protected function minimizeProperties($document)
     {
-        $properties = Element\Service::minimizePropertiesForEditmode($document->getProperties());
+        $properties = Model\Element\Service::minimizePropertiesForEditmode($document->getProperties());
         $document->setProperties($properties);
     }
 

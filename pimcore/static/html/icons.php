@@ -45,12 +45,10 @@ foreach ($icons as $icon) {
         }
     }
 }
-?>
-
-<!DOCTYPE html>
+?><!DOCTYPE html>
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta charset="UTF-8">
     <title>Pimcore:: Icon list</title>
     <style type="text/css">
         table {
@@ -85,7 +83,8 @@ foreach ($icons as $icon) {
     ?>" title="<?php echo $icon;
     ?>" alt="<?php echo $icon;
     ?>"/></a>
-<?php 
+<?php
+
 } ?>
 <br/><br/>
 <table>

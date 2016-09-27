@@ -16,6 +16,8 @@
 
 namespace Pimcore\Model;
 
+use Pimcore\Logger;
+
 class Staticroute extends AbstractModel
 {
 
@@ -144,7 +146,7 @@ class Staticroute extends AbstractModel
                 $route->setId(intval($id));
                 $route->getDao()->getById();
             } catch (\Exception $e) {
-                \Logger::error($e);
+                Logger::error($e);
 
                 return null;
             }
@@ -172,7 +174,7 @@ class Staticroute extends AbstractModel
         try {
             $route->getDao()->getByName($name, $siteId);
         } catch (\Exception $e) {
-            \Logger::warn($e);
+            Logger::warn($e);
 
             return null;
         }
@@ -440,6 +442,17 @@ class Staticroute extends AbstractModel
         $blockedRequestParams = ["controller", "action", "module", "document"];
         $front = \Zend_Controller_Front::getInstance();
 
+
+        // allow blocked params if we use it as variables
+        $variables = explode(",", $this->getVariables());
+        foreach ($variables as $name) {
+            $pos = array_search($name, $blockedRequestParams);
+            if ($pos !== false) {
+                unset($blockedRequestParams[$pos]);
+            }
+        }
+
+
         if ($reset) {
             $requestParameters = [];
         } else {
@@ -546,9 +559,9 @@ class Staticroute extends AbstractModel
     }
 
     /**
-     * @param $path
+     * @param string $path
      * @param array $params
-     * @return array
+     * @return array|bool
      * @throws \Exception
      */
     public function match($path, $params = [])
@@ -621,6 +634,8 @@ class Staticroute extends AbstractModel
 
             return $params;
         }
+
+        return [];
     }
 
     /**

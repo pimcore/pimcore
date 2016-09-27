@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -40,14 +40,14 @@ class Password extends Model\Object\ClassDefinition\Data
      *
      * @var string
      */
-    public $queryColumnType = "varchar(255)";
+    public $queryColumnType = "varchar(190)";
 
     /**
      * Type for the column
      *
      * @var string
      */
-    public $columnType = "varchar(255)";
+    public $columnType = "varchar(190)";
 
     /**
      * Type for the generated phpdoc
@@ -60,17 +60,17 @@ class Password extends Model\Object\ClassDefinition\Data
      * @var string
      */
     public $algorithm = "md5";
-    
+
     /**
      * @var string
      */
     public $salt = "";
-      
+
     /**
      * @var string
      */
     public $saltlocation = "";
-    
+
     /**
      * @return integer
      */
@@ -167,11 +167,18 @@ class Password extends Model\Object\ClassDefinition\Data
 
         $hashed = $this->calculateHash($data);
 
-        // set the hashed password back to the object, to be sure that is not plain-text after the first save
-        // this is especially to aviod plaintext passwords in the search-index see: PIMCORE-1406
-        if ($object) {
+        /** set the hashed password back to the object, to be sure that is not plain-text after the first save
+         this is especially to aviod plaintext passwords in the search-index see: PIMCORE-1406 */
+
+        // a model should be switched if the context parameter is used,
+        // for example: field collections would use \Pimcore\Model\Object\Fieldcollection\Data\Dao
+        $passwordModel = array_key_exists('context', $params)
+            ? $params['context']
+            : ($object ?: null);
+
+        if (null !== $passwordModel) {
             $setter = "set" . ucfirst($this->getName());
-            $object->$setter($hashed);
+            $passwordModel->$setter($hashed);
         }
 
         return $hashed;

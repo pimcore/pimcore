@@ -18,6 +18,7 @@ namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
 use Pimcore\Model\Object;
+use Pimcore\Logger;
 
 class CalculatedValue extends Model\Object\ClassDefinition\Data
 {
@@ -51,7 +52,7 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data
      *
      * @var integer
      */
-    public $columnLength = 255;
+    public $columnLength = 190;
 
     /**
      * Type for the generated phpdoc
@@ -215,7 +216,7 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data
      */
     public function getForCsvExport($object, $params = [])
     {
-        \Logger::debug("csv not supported");
+        Logger::debug("csv not supported");
         //TODO
     }
 

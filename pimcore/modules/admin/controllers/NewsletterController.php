@@ -16,6 +16,7 @@ use Pimcore\Model\Element;
 use Pimcore\Model\Document;
 use Pimcore\Model\Tool;
 use Pimcore\Model\Tool\Newsletter;
+use Pimcore\Logger;
 
 class Admin_NewsletterController extends \Pimcore\Controller\Action\Admin\Document
 {
@@ -89,7 +90,7 @@ class Admin_NewsletterController extends \Pimcore\Controller\Action\Admin\Docume
                         $this->saveToSession($page);
                         $this->_helper->json(["success" => true]);
                     } catch (\Exception $e) {
-                        \Logger::err($e);
+                        Logger::err($e);
                         $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
                     }
                 } else {
@@ -106,14 +107,14 @@ class Admin_NewsletterController extends \Pimcore\Controller\Action\Admin\Docume
                                 throw $e;
                             }
 
-                            \Logger::err($e);
+                            Logger::err($e);
                             $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
                         }
                     }
                 }
             }
         } catch (\Exception $e) {
-            \Logger::log($e);
+            Logger::log($e);
             if (\Pimcore\Tool\Admin::isExtJS6() && $e instanceof Element\ValidationException) {
                 $this->_helper->json(["success" => false, "type" => "ValidationException", "message" => $e->getMessage(), "stack" => $e->getTraceAsString(), "code" => $e->getCode()]);
             }
@@ -179,6 +180,34 @@ class Admin_NewsletterController extends \Pimcore\Controller\Action\Admin\Docume
         $this->_helper->json(['data' => $availableClasses]);
     }
 
+    public function getAvailableReportsAction()
+    {
+        $task = $this->getParam("task");
+
+        if ($task === 'list') {
+            $reportList = \Pimcore\Model\Tool\CustomReport\Config::getReportsList();
+
+            $availableReports = [];
+            foreach ($reportList as $report) {
+                $availableReports[] = ['id' => $report['id'], 'text' => $report['text']];
+            }
+
+            $this->_helper->json(['data' => $availableReports]);
+        } elseif ($task === 'fieldNames') {
+            $reportId = $this->getParam("reportId");
+            $report = \Pimcore\Model\Tool\CustomReport\Config::getByName($reportId);
+            $columnConfiguration = $report->getColumnConfiguration();
+
+            $availableColumns = [];
+            foreach ($columnConfiguration as $column) {
+                if ($column['display']) {
+                    $availableColumns[] = ['name' => $column['name']];
+                }
+            }
+
+            $this->_helper->json(['data' => $availableColumns]);
+        }
+    }
 
     public function getSendStatusAction()
     {
@@ -233,13 +262,14 @@ class Admin_NewsletterController extends \Pimcore\Controller\Action\Admin\Docume
         $adapterClass = "\\Pimcore\\Document\\Newsletter\\AddressSourceAdapter\\" . ucfirst($addressSourceAdapterName);
 
         /**
-         * @var $addressAdapter \Pimcore\Document\Newsletter\IAddressSourceAdapter
+         * @var $addressAdapter \Pimcore\Document\Newsletter\AddressSourceAdapterInterface
          */
         $addressAdapter = new $adapterClass($adapterParams);
 
         $sendingContainer = $addressAdapter->getParamsForTestSending($this->getParam("testMailAddress"));
 
-        \Pimcore\Tool\Newsletter::sendNewsletterDocumentBasedMail($document, [$sendingContainer], \Pimcore\Tool\Newsletter::SENDING_MODE_SINGLE);
+        $mail = \Pimcore\Tool\Newsletter::prepareMail($document);
+        \Pimcore\Tool\Newsletter::sendNewsletterDocumentBasedMail($mail, $sendingContainer);
 
         $this->_helper->json(["success" => true]);
     }

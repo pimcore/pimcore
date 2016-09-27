@@ -19,6 +19,7 @@ use Pimcore\Tool\Console;
 use Pimcore\File;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
+use Pimcore\Logger;
 
 class Ffmpeg extends Adapter
 {
@@ -51,7 +52,7 @@ class Ffmpeg extends Adapter
                 return true;
             }
         } catch (\Exception $e) {
-            \Logger::warning($e);
+            Logger::warning($e);
         }
 
         return false;
@@ -119,6 +120,8 @@ class Ffmpeg extends Adapter
             $cmd = self::getFfmpegCli() . ' -i ' . realpath($this->file) . ' ' . $arguments . " " . str_replace("/", DIRECTORY_SEPARATOR, $this->getDestinationFile());
 
             $process = new Process($cmd);
+            //symfony has a default timeout which is 60 sec. This is not enough for converting big video-files.
+            $process->setTimeout(null);
             $process->start();
 
             $logHandle = fopen($this->getConversionLogFile(), "a");
@@ -187,7 +190,7 @@ class Ffmpeg extends Adapter
      */
     public function destroy()
     {
-        \Logger::debug("FFMPEG finished, last message was: \n" . file_get_contents($this->getConversionLogFile()));
+        Logger::debug("FFMPEG finished, last message was: \n" . file_get_contents($this->getConversionLogFile()));
         $this->deleteConversionLogFile();
     }
 

@@ -18,6 +18,7 @@ use Pimcore\Document\Adapter\Ghostscript;
 use Pimcore\Tool\Console;
 use Pimcore\File;
 use Pimcore\Model;
+use Pimcore\Logger;
 
 class LibreOffice extends Ghostscript
 {
@@ -38,7 +39,7 @@ class LibreOffice extends Ghostscript
                 return true;
             }
         } catch (\Exception $e) {
-            \Logger::warning($e);
+            Logger::warning($e);
         }
 
         return false;
@@ -85,7 +86,7 @@ class LibreOffice extends Ghostscript
 
         if (!$this->isFileTypeSupported($path)) {
             $message = "Couldn't load document " . $path . " only Microsoft/Libre/Open-Office/PDF documents are currently supported";
-            \Logger::error($message);
+            Logger::error($message);
             throw new \Exception($message);
         }
 
@@ -146,7 +147,7 @@ class LibreOffice extends Ghostscript
             $out = Console::exec($cmd, PIMCORE_LOG_DIRECTORY . "/libreoffice-pdf-convert.log", 240);
             Model\Tool\Lock::release($lockKey);
 
-            \Logger::debug("LibreOffice Output was: " . $out);
+            Logger::debug("LibreOffice Output was: " . $out);
 
             $tmpName = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . preg_replace("/\." . File::getFileExtension($path) . "$/", ".pdf", basename($path));
             if (file_exists($tmpName)) {
@@ -154,7 +155,7 @@ class LibreOffice extends Ghostscript
                 $pdfPath = $pdfFile;
             } else {
                 $message = "Couldn't convert document to PDF: " . $path . " with the command: '" . $cmd . "'";
-                \Logger::error($message);
+                Logger::error($message);
                 throw new \Exception($message);
             }
         } else {
@@ -182,7 +183,7 @@ class LibreOffice extends Ghostscript
             $cmd = self::getLibreOfficeCli() . " --headless --nologo --nofirststartwizard --norestore --convert-to txt:Text --outdir " . PIMCORE_TEMPORARY_DIRECTORY . " " . $path;
             $out = Console::exec($cmd, null, 240);
 
-            \Logger::debug("LibreOffice Output was: " . $out);
+            Logger::debug("LibreOffice Output was: " . $out);
 
             $tmpName = PIMCORE_TEMPORARY_DIRECTORY . "/" . preg_replace("/\." . File::getFileExtension($path) . "$/", ".txt", basename($path));
             if (file_exists($tmpName)) {
@@ -193,7 +194,7 @@ class LibreOffice extends Ghostscript
                 return $text;
             } else {
                 $message = "Couldn't convert document to PDF: " . $path . " with the command: '" . $cmd . "' - now trying to get the text out of the PDF ...";
-                \Logger::error($message);
+                Logger::error($message);
 
                 return parent::getText(null, $this->getPdf($path));
             }

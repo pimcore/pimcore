@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -565,7 +565,7 @@ class StructuredTable extends Model\Object\ClassDefinition\Data
     protected function typeMapper($type, $length = null)
     {
         $mapper = [
-            "text" => "varchar(".($length > 0 ? $length : "255").")",
+            "text" => "varchar(".($length > 0 ? $length : "190").")",
             "number" => "double",
             "bool" => "tinyint(1)"
         ];

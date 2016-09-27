@@ -17,6 +17,7 @@
 namespace Pimcore\Model\User\AbstractUser;
 
 use Pimcore\Model;
+use Pimcore\Logger;
 
 class Dao extends Model\Dao\AbstractDao
 {
@@ -143,7 +144,7 @@ class Dao extends Model\Dao\AbstractDao
     public function delete()
     {
         $userId = $this->model->getId();
-        \Logger::debug("delete user with ID: " . $userId);
+        Logger::debug("delete user with ID: " . $userId);
 
         try {
             $this->db->delete("users", $this->db->quoteInto("id = ?", $userId));

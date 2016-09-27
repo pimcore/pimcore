@@ -30,6 +30,7 @@ class ClassMapAutoloader extends \Zend_Loader_ClassMapAutoloader
             "Pimcore\\Log\\Log" => "Pimcore\\Log\\ApplicationLogger",
             "Pimcore\\Log\\Writer\\Db" => "Pimcore\\Log\\Handler\\ApplicationLoggerDb",
             "Pimcore\\Model\\Cache" => "Pimcore\\Cache",
+            "Logger" => "Pimcore\\Logger",
         ];
 
         if (array_key_exists($class, $classAliases)) {

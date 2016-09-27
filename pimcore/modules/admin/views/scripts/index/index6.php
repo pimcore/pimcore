@@ -316,6 +316,7 @@ $scripts = array(
     "pimcore/document/newsletters/sendingPanel.js",
     "pimcore/document/newsletters/addressSourceAdapters/default.js",
     "pimcore/document/newsletters/addressSourceAdapters/csvList.js",
+    "pimcore/document/newsletters/addressSourceAdapters/report.js",
     "pimcore/document/link.js",
     "pimcore/document/hardlink.js",
     "pimcore/document/folder.js",
@@ -507,9 +508,6 @@ $scripts = array(
 
     "pimcore/report/qrcode/panel.js",
     "pimcore/report/qrcode/item.js",
-
-    "pimcore/report/newsletter/panel.js",
-    "pimcore/report/newsletter/item.js",
 
     // extension manager
     "pimcore/extensionmanager/xmlEditor.js",

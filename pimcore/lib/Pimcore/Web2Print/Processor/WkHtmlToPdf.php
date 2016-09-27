@@ -17,6 +17,7 @@ namespace Pimcore\Web2Print\Processor;
 use Pimcore\Config;
 use \Pimcore\Model\Document;
 use Pimcore\Web2Print\Processor;
+use Pimcore\Logger;
 
 class WkHtmlToPdf extends Processor
 {
@@ -88,7 +89,7 @@ class WkHtmlToPdf extends Processor
 
             $this->updateStatus($document->getId(), 100, "saving_pdf_document");
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             $document->setLastGenerateMessage($e->getMessage());
             throw new \Exception("Error during REST-Request:" . $e->getMessage());
         }

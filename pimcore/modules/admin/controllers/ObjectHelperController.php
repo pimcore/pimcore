@@ -12,9 +12,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-use Pimcore\Tool;
 use Pimcore\File;
+use Pimcore\Logger;
 use Pimcore\Model\Object;
+use Pimcore\Tool;
 
 class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
 {
@@ -866,7 +867,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         $mappedFieldnames = [];
 
         $objects = [];
-        \Logger::debug("objects in list:" . count($list->getObjects()));
+        Logger::debug("objects in list:" . count($list->getObjects()));
         foreach ($list->getObjects() as $object) {
             if ($fields) {
                 $objectData = [];
@@ -1136,7 +1137,8 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
                             if ($localizedField) {
                                 $field = $localizedField->getFieldDefinition($name);
                                 if ($field) {
-                                    $object->{"set" . $name}($value, $this->getParam("language"));
+                                    /** @var $field Pimcore\Model\Object\ClassDefinition\Data */
+                                    $object->{"set" . $name}($field->getDataFromEditmode($value, $object), $this->getParam("language"));
                                 }
                             }
                         }
@@ -1162,11 +1164,11 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
                     $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
                 }
             } else {
-                \Logger::debug("ObjectController::batchAction => There is no object left to update.");
+                Logger::debug("ObjectController::batchAction => There is no object left to update.");
                 $this->_helper->json(["success" => false, "message" => "ObjectController::batchAction => There is no object left to update."]);
             }
         } catch (\Exception $e) {
-            \Logger::err($e);
+            Logger::err($e);
             $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
         }
 

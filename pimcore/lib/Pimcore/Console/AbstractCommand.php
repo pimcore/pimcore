@@ -16,7 +16,7 @@ namespace Pimcore\Console;
 
 use Monolog\Handler\NullHandler;
 use Monolog\Handler\StreamHandler;
-use Monolog\Logger;
+use Pimcore\Logger;
 use Pimcore\Console\Log\Formatter\ConsoleColorFormatter;
 use Pimcore\Tool\Admin;
 use Psr\Log\LoggerInterface;
@@ -72,10 +72,10 @@ abstract class AbstractCommand extends \Symfony\Component\Console\Command\Comman
         $logger = $this->getLogger();
 
         // hook logger into pimcore
-        \Logger::addLogger($logger);
+        Logger::addLogger($logger);
 
         if ($this->output->isVerbose()) {
-            \Logger::setPriorities([
+            Logger::setPriorities([
                 "info",
                 "notice",
                 "warning",
@@ -88,7 +88,7 @@ abstract class AbstractCommand extends \Symfony\Component\Console\Command\Comman
 
         // set all priorities
         if ($this->output->isDebug()) {
-            \Logger::setVerbosePriorities();
+            Logger::setVerbosePriorities();
         }
     }
 
@@ -97,7 +97,7 @@ abstract class AbstractCommand extends \Symfony\Component\Console\Command\Comman
      */
     protected function disableLogging()
     {
-        \Logger::removeLogger($this->getLogger());
+        Logger::removeLogger($this->getLogger());
     }
 
     /**
@@ -116,7 +116,7 @@ abstract class AbstractCommand extends \Symfony\Component\Console\Command\Comman
     }
 
     /**
-     * @return Logger|LoggerInterface
+     * @return \Monolog\Logger|LoggerInterface
      */
     protected function getLogger()
     {
@@ -131,7 +131,7 @@ abstract class AbstractCommand extends \Symfony\Component\Console\Command\Comman
                 }
             }
 
-            $logger = new Logger('core');
+            $logger = new \Monolog\Logger('core');
             $logger->pushHandler($handler);
 
             $this->logger = $logger;

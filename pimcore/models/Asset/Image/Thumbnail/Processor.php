@@ -20,6 +20,7 @@ use Pimcore\File;
 use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Tool\StopWatch;
 use Pimcore\Model\Asset;
+use Pimcore\Logger;
 
 class Processor
 {
@@ -35,7 +36,7 @@ class Processor
         "crop" => ["x", "y", "width", "height"],
         "setBackgroundColor" => ["color"],
         "roundCorners" => ["width", "height"],
-        "setBackgroundImage" => ["path"],
+        "setBackgroundImage" => ["path", "mode"],
         "addOverlay" => ["path", "x", "y", "alpha", "composite", "origin"],
         "addOverlayFit" => ["path", "composite"],
         "applyMask" => ["path"],
@@ -141,7 +142,12 @@ class Processor
         if ($config->getHighResolution() > 1) {
             $filename .= "@" . $config->getHighResolution() . "x";
         }
-        $filename .= "." . $format;
+
+        $fileExtension = $format;
+        if ($format == "original") {
+            $fileExtension = \Pimcore\File::getFileExtension($fileSystemPath);
+        }
+        $filename .= "." . $fileExtension;
 
         $fsPath = $thumbDir . "/" . $filename;
 
@@ -177,12 +183,13 @@ class Processor
 
         // transform image
         $image = Asset\Image::getImageTransformInstance();
+        $image->setPreserveColor($config->isPreserveColor());
+        $image->setPreserveMetaData($config->isPreserveMetaData());
         if (!$image->load($fileSystemPath)) {
             return self::returnPath($errorImage, $returnAbsolutePath);
         }
 
         $image->setUseContentOptimizedFormat($contentOptimizedFormat);
-
 
         $startTime = StopWatch::microtime_float();
 
@@ -274,6 +281,7 @@ class Processor
                                 if (!in_array($transformation["method"], ["cropPercent"]) && in_array($key, ["width", "height", "x", "y"])) {
                                     if ($highResFactor && $highResFactor > 1) {
                                         $value *= $highResFactor;
+                                        $value = (int) ceil($value);
 
                                         // check if source image is big enough otherwise adjust the high-res factor
                                         if (in_array($key, ["width", "x"])) {
@@ -296,7 +304,9 @@ class Processor
                     }
 
                     ksort($arguments);
-                    call_user_func_array([$image, $transformation["method"]], $arguments);
+                    if (method_exists($image, $transformation["method"])) {
+                        call_user_func_array([$image, $transformation["method"]], $arguments);
+                    }
                 }
             }
         }
@@ -311,7 +321,7 @@ class Processor
 
         clearstatcache();
 
-        \Logger::debug("Thumbnail " . $path . " generated in " . (StopWatch::microtime_float() - $startTime) . " seconds");
+        Logger::debug("Thumbnail " . $path . " generated in " . (StopWatch::microtime_float() - $startTime) . " seconds");
 
         // set proper permissions
         @chmod($fsPath, File::getDefaultMode());
@@ -353,9 +363,9 @@ class Processor
             if (file_exists($file)) {
                 $originalFilesize = filesize($file);
                 \Pimcore\Image\Optimizer::optimize($file);
-                \Logger::debug("Optimized image: " . $file . " saved " . formatBytes($originalFilesize-filesize($file)));
+                Logger::debug("Optimized image: " . $file . " saved " . formatBytes($originalFilesize-filesize($file)));
             } else {
-                \Logger::debug("Skip optimizing of " . $file . " because it doesn't exist anymore");
+                Logger::debug("Skip optimizing of " . $file . " because it doesn't exist anymore");
             }
 
             TmpStore::delete($id);

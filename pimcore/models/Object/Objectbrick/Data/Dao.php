@@ -18,6 +18,7 @@ namespace Pimcore\Model\Object\Objectbrick\Data;
 
 use Pimcore\Model;
 use Pimcore\Model\Object;
+use Pimcore\Logger;
 
 class Dao extends Model\Dao\AbstractDao
 {
@@ -57,7 +58,7 @@ class Dao extends Model\Dao\AbstractDao
         try {
             $this->db->delete("object_relations_" . $object->getClassId(), "src_id = " . $object->getId() . " AND ownertype = 'objectbrick' AND ownername = '" . $this->model->getFieldname() . "' AND (position = '" . $this->model->getType() . "' OR position IS NULL OR position = '')");
         } catch (\Exception $e) {
-            \Logger::warning("Error during removing old relations: " . $e);
+            Logger::warning("Error during removing old relations: " . $e);
         }
 
         foreach ($fieldDefinitions as $key => $fd) {
@@ -68,10 +69,14 @@ class Dao extends Model\Dao\AbstractDao
                 $fd->save($this->model);
             } elseif ($fd->getColumnType()) {
                 if (is_array($fd->getColumnType())) {
-                    $insertDataArray = $fd->getDataForResource($this->model->$getter(), $object);
+                    $insertDataArray = $fd->getDataForResource($this->model->$getter(), $object, [
+                        'context' => $this->model //\Pimcore\Model\Object\Objectbrick\Data\Dao
+                    ]);
                     $data = array_merge($data, $insertDataArray);
                 } else {
-                    $insertData = $fd->getDataForResource($this->model->$getter(), $object);
+                    $insertData = $fd->getDataForResource($this->model->$getter(), $object, [
+                        'context' => $this->model //\Pimcore\Model\Object\Objectbrick\Data\Dao
+                    ]);
                     $data[$key] = $insertData;
                 }
             }
@@ -227,6 +232,10 @@ class Dao extends Model\Dao\AbstractDao
                 if ($fd->getQueryColumnType()) {
                     //exclude untouchables if value is not an array - this means data has not been loaded
                     //get changed fields for inheritance
+                    if ($fd instanceof  Object\ClassDefinition\Data\CalculatedValue) {
+                        continue;
+                    }
+
                     if ($fd->isRelationType()) {
                         if ($oldData[$key] != null) {
                             $this->inheritanceHelper->addRelationToCheck($key, $fd);

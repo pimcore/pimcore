@@ -340,10 +340,13 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
         }
 
         // delete views if fallback languages has changed or the language is no more available
-        $fallbackLanguagesChanged = array_diff_assoc($existingValues['general']['fallbackLanguages'], $fallbackLanguages);
-        $dbName = $existingValues["database"]["params"]["dbname"];
-        foreach ($fallbackLanguagesChanged as $language => $dummy) {
-            $this->deleteViews($language, $dbName);
+        if (isset($existingValues['general']['fallbackLanguages']) && is_array($existingValues['general']['fallbackLanguages'])) {
+            $fallbackLanguagesChanged = array_diff_assoc($existingValues['general']['fallbackLanguages'],
+                $fallbackLanguages);
+            $dbName = $existingValues["database"]["params"]["dbname"];
+            foreach ($fallbackLanguagesChanged as $language => $dummy) {
+                $this->deleteViews($language, $dbName);
+            }
         }
 
         $cacheExcludePatterns = $values["cache.excludePatterns"];
@@ -510,14 +513,17 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
     protected function checkFallbackLanguageLoop($source, $definitions, $fallbacks = [])
     {
         if (isset($definitions[$source])) {
-            $target = $definitions[$source];
-            if ($target) {
-                if (in_array($target, $fallbacks)) {
-                    throw new \Exception("Language `$source` | `$target` causes an infinte loop.");
-                }
-                $fallbacks[] = $target;
+            $targets = explode(",", $definitions[$source]);
+            foreach ($targets as $l) {
+                $target = trim($l);
+                if ($target) {
+                    if (in_array($target, $fallbacks)) {
+                        throw new \Exception("Language `$source` | `$target` causes an infinte loop.");
+                    }
+                    $fallbacks[] = $target;
 
-                $this->checkFallbackLanguageLoop($target, $definitions, $fallbacks);
+                    $this->checkFallbackLanguageLoop($target, $definitions, $fallbacks);
+                }
             }
         } else {
             throw new \Exception("Language `$source` doesn't exist");

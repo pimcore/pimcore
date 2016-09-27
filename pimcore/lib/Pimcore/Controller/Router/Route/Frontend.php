@@ -21,6 +21,7 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Site;
 use Pimcore\Model\Redirect;
 use Pimcore\Model\Staticroute;
+use Pimcore\Logger;
 
 class Frontend extends \Zend_Controller_Router_Route_Abstract
 {
@@ -242,6 +243,7 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
                 if ($document instanceof Document) {
                     if (in_array($document->getType(), self::getDirectRouteDocumentTypes())) {
                         if (Tool::isFrontentRequestByAdmin() || $document->isPublished()) {
+                            $redirectTargetUrl = $originalPath;
 
                             // check for a pretty url, and if the document is called by that, otherwise redirect to pretty url
                             if ($document instanceof Document\Page
@@ -250,12 +252,7 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
                                 && !Tool::isFrontentRequestByAdmin()
                             ) {
                                 if (rtrim(strtolower($document->getPrettyUrl()), " /") != rtrim(strtolower($originalPath), "/")) {
-                                    $redirectUrl = $document->getPrettyUrl();
-                                    if ($_SERVER["QUERY_STRING"]) {
-                                        $redirectUrl .= "?" . $_SERVER["QUERY_STRING"];
-                                    }
-                                    header("Location: " . $redirectUrl, true, 301);
-                                    exit;
+                                    $redirectTargetUrl = $document->getPrettyUrl();
                                 }
                             }
 
@@ -278,29 +275,27 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
                             if (strtolower($_SERVER["REQUEST_METHOD"]) == "get") {
                                 if ($config->documents->allowtrailingslash) {
                                     if ($config->documents->allowtrailingslash == "no") {
-                                        if (substr($originalPath, strlen($originalPath)-1, 1) == "/" && $originalPath != "/") {
-                                            $redirectUrl = rtrim($originalPath, "/");
-                                            if ($_SERVER["QUERY_STRING"]) {
-                                                $redirectUrl .= "?" . $_SERVER["QUERY_STRING"];
-                                            }
-                                            header("Location: " . $redirectUrl, true, 301);
-                                            exit;
+                                        if (substr($redirectTargetUrl, strlen($redirectTargetUrl) - 1, 1) == "/" && $redirectTargetUrl != "/") {
+                                            $redirectTargetUrl = rtrim($redirectTargetUrl, "/");
                                         }
                                     }
                                 }
 
                                 if ($config->documents->allowcapitals) {
                                     if ($config->documents->allowcapitals == "no") {
-                                        if (strtolower($originalPath) != $originalPath) {
-                                            $redirectUrl = strtolower($originalPath);
-                                            if ($_SERVER["QUERY_STRING"]) {
-                                                $redirectUrl .= "?" . $_SERVER["QUERY_STRING"];
-                                            }
-                                            header("Location: " . $redirectUrl, true, 301);
-                                            exit;
+                                        if (strtolower($redirectTargetUrl) != $redirectTargetUrl) {
+                                            $redirectTargetUrl = strtolower($redirectTargetUrl);
                                         }
                                     }
                                 }
+                            }
+
+                            if ($redirectTargetUrl !== $originalPath) {
+                                if ($_SERVER["QUERY_STRING"]) {
+                                    $redirectTargetUrl .= "?" . $_SERVER["QUERY_STRING"];
+                                }
+                                header("Location: " . $redirectTargetUrl, true, 301);
+                                exit;
                             }
 
                             $matchFound = true;
@@ -483,6 +478,9 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
 
             $requestScheme = Tool::getRequestScheme();
             $matchUrl = Tool::getHostUrl() . $matchRequestUri;
+            if (!empty($_SERVER["QUERY_STRING"])) {
+                $matchUrl .= "?" . $_SERVER["QUERY_STRING"];
+            }
 
             foreach ($this->redirects as $redirect) {
                 $matchAgainst = $matchRequestUri;
@@ -495,8 +493,8 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
                     if (@preg_match($redirect->getSource(), $matchAgainst, $matches)) {
 
                         // check for a site
-                        if ($sourceSite) {
-                            if ($sourceSite->getId() != $redirect->getSourceSite()) {
+                        if ($redirect->getSourceSite() || $sourceSite) {
+                            if (!$sourceSite || $sourceSite->getId() != $redirect->getSourceSite()) {
                                 continue;
                             }
                         }
@@ -509,7 +507,7 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
                             if ($d instanceof Document\Page || $d instanceof Document\Link || $d instanceof Document\Hardlink) {
                                 $target = $d->getFullPath();
                             } else {
-                                \Logger::error("Target of redirect no found (Document-ID: " . $target . ")!");
+                                Logger::error("Target of redirect no found (Document-ID: " . $target . ")!");
                                 continue;
                             }
                         }
@@ -526,7 +524,7 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
                                 $url = preg_replace("@^" . $targetSite->getRootPath() . "/@", "/", $url);
                                 $url = $requestScheme . "://" . $targetSite->getMainDomain() . $url;
                             } catch (\Exception $e) {
-                                \Logger::error("Site with ID " . $redirect->getTargetSite() . " not found.");
+                                Logger::error("Site with ID " . $redirect->getTargetSite() . " not found.");
                                 continue;
                             }
                         } elseif (!preg_match("@http(s)?://@i", $url) && $config->general->domain && $redirect->getSourceEntireUrl()) {

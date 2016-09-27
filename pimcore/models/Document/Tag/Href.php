@@ -21,6 +21,7 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Object;
+use Pimcore\Logger;
 
 class Href extends Model\Document\Tag
 {
@@ -85,7 +86,7 @@ class Href extends Model\Document\Tag
     public function getDataEditmode()
     {
         $this->setElement();
-    
+
         if ($this->element instanceof Element\ElementInterface) {
             return [
                 "id" => $this->id,
@@ -105,7 +106,7 @@ class Href extends Model\Document\Tag
     public function frontend()
     {
         $this->setElement();
-    
+
         //don't give unpublished elements in frontend
         if (Document::doHideUnpublished() and !Element\Service::isPublished($this->element)) {
             return "";
@@ -176,7 +177,7 @@ class Href extends Model\Document\Tag
     public function getElement()
     {
         $this->setElement();
-    
+
         //don't give unpublished elements in frontend
         if (Document::doHideUnpublished() and !Element\Service::isPublished($this->element)) {
             return false;
@@ -193,7 +194,7 @@ class Href extends Model\Document\Tag
     public function getFullPath()
     {
         $this->setElement();
-    
+
         //don't give unpublished elements in frontend
         if (Document::doHideUnpublished() and !Element\Service::isPublished($this->element)) {
             return false;
@@ -211,7 +212,7 @@ class Href extends Model\Document\Tag
     public function isEmpty()
     {
         $this->setElement();
-    
+
         if ($this->getElement() instanceof Element\ElementInterface) {
             return false;
         }
@@ -310,7 +311,7 @@ class Href extends Model\Document\Tag
             $el = Element\Service::getElementById($this->type, $this->id);
             if (!$el instanceof Element\ElementInterface) {
                 $sane = false;
-                \Logger::notice("Detected insane relation, removing reference to non existent ".$this->type." with id [".$this->id."]");
+                Logger::notice("Detected insane relation, removing reference to non existent ".$this->type." with id [".$this->id."]");
                 $this->id = null;
                 $this->type = null;
                 $this->subtype=null;

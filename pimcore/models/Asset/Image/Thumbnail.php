@@ -16,6 +16,8 @@
 
 namespace Pimcore\Model\Asset\Image;
 
+use Pimcore\Logger;
+
 class Thumbnail
 {
 
@@ -141,8 +143,8 @@ class Thumbnail
                     $this->filesystemPath = Thumbnail\Processor::process($this->asset, $this->config, null, $deferred, true, $generated);
                 } catch (\Exception $e) {
                     $this->filesystemPath = $errorImage;
-                    \Logger::error("Couldn't create thumbnail of image " . $this->asset->getRealFullPath());
-                    \Logger::error($e);
+                    Logger::error("Couldn't create thumbnail of image " . $this->asset->getRealFullPath());
+                    Logger::error($e);
                 }
             }
         }
@@ -313,6 +315,32 @@ class Thumbnail
         }
 
         return $this->mimetype;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFileExtension()
+    {
+        $mapping = [
+            "image/png" => "png",
+            "image/jpeg" => "jpg",
+            "image/gif" => "gif",
+            "image/tiff" => "tif",
+            "image/svg+xml" => "svg",
+        ];
+
+        $mimeType = $this->getMimeType();
+
+        if (isset($mapping[$mimeType])) {
+            return $mapping[$mimeType];
+        }
+
+        if ($this->getAsset()) {
+            return \Pimcore\File::getFileExtension($this->getAsset()->getFilename());
+        }
+
+        return "";
     }
 
     /**

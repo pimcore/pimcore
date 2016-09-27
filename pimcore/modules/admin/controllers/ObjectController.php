@@ -17,6 +17,7 @@ use Pimcore\File;
 use Pimcore\Model\Object;
 use Pimcore\Model\Element;
 use Pimcore\Model;
+use Pimcore\Logger;
 
 class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 {
@@ -45,7 +46,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
         $objects = [];
         $cv = false;
         $offset = 0;
-
+        $total = 0;
         if ($object instanceof Object\Concrete) {
             $class = $object->getClass();
             if ($class->getShowVariants()) {
@@ -116,6 +117,11 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                     $objects[] = $tmpObject;
                 }
             }
+            //pagination for custom view
+            $total = $cv
+                ? $childsList->count()
+                : $object->getChildAmount([Object\AbstractObject::OBJECT_TYPE_OBJECT, Object\AbstractObject::OBJECT_TYPE_FOLDER,
+                    Object\AbstractObject::OBJECT_TYPE_VARIANT], $this->getUser());
         }
 
         //Hook for modifying return value - e.g. for changing permissions based on object data
@@ -128,7 +134,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             $this->_helper->json([
                 "offset" => $offset,
                 "limit" => $limit,
-                "total" => $object->getChildAmount([Object\AbstractObject::OBJECT_TYPE_OBJECT, Object\AbstractObject::OBJECT_TYPE_FOLDER, Object\AbstractObject::OBJECT_TYPE_VARIANT], $this->getUser()),
+                "total" => $total,
                 "nodes" => $returnValueContainer->getData(),
                 "fromPaging" => intval($this->getParam("fromPaging"))
             ]);
@@ -401,7 +407,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 
             $this->_helper->json($returnValueContainer->getData());
         } else {
-            \Logger::debug("prevented getting object id [ " . $object->getId() . " ] because of missing permissions");
+            Logger::debug("prevented getting object id [ " . $object->getId() . " ] because of missing permissions");
             $this->_helper->json(["success" => false, "message" => "missing_permission"]);
         }
     }
@@ -659,7 +665,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 
             $this->_helper->json($objectData);
         } else {
-            \Logger::debug("prevented getting folder id [ " . $object->getId() . " ] because of missing permissions");
+            Logger::debug("prevented getting folder id [ " . $object->getId() . " ] because of missing permissions");
             $this->_helper->json(["success" => false, "message" => "missing_permission"]);
         }
     }
@@ -688,7 +694,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
         if ($parent->isAllowed("create")) {
             $intendedPath = $parent->getRealFullPath() . "/" . $this->getParam("key");
 
-            if (!Object\Service::pathExists($intendedPath) || true) {
+            if (!Object\Service::pathExists($intendedPath)) {
                 $object = \Pimcore::getDiContainer()->make($className);
                 if ($object instanceof Object\Concrete) {
                     $object->setOmitMandatoryCheck(true); // allow to save the object although there are mandatory fields
@@ -723,11 +729,11 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                 }
             } else {
                 $message = "prevented creating object because object with same path+key already exists";
-                \Logger::debug($message);
+                Logger::debug($message);
             }
         } else {
             $message = "prevented adding object because of missing permissions";
-            \Logger::debug($message);
+            Logger::debug($message);
         }
 
         if ($success) {
@@ -773,7 +779,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                 }
             }
         } else {
-            \Logger::debug("prevented creating object id because of missing permissions");
+            Logger::debug("prevented creating object id because of missing permissions");
         }
 
         $this->_helper->json(["success" => $success]);
@@ -835,7 +841,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                 }
                 $hasDependency |= $object->getDependencies()->isRequired();
             } catch (\Exception $e) {
-                \Logger::err("failed to access object with id: " . $id);
+                Logger::err("failed to access object with id: " . $id);
                 continue;
             }
 
@@ -925,7 +931,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             if ($values["key"] && $object->isAllowed("rename")) {
                 $object->setKey($values["key"]);
             } elseif ($values["key"] != $object->getKey()) {
-                \Logger::debug("prevented renaming object because of missing permissions ");
+                Logger::debug("prevented renaming object because of missing permissions ");
             }
 
             if ($values["parentId"]) {
@@ -964,11 +970,11 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                     $object->save();
                     $success = true;
                 } catch (\Exception $e) {
-                    \Logger::error($e);
+                    Logger::error($e);
                     $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
                 }
             } else {
-                \Logger::debug("prevented move of object, object with same path+key already exists in this location.");
+                Logger::debug("prevented move of object, object with same path+key already exists in this location.");
             }
         } elseif ($object->isAllowed("rename") && $values["key"]) {
             //just rename
@@ -977,11 +983,11 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                 $object->save();
                 $success = true;
             } catch (\Exception $e) {
-                \Logger::error($e);
+                Logger::error($e);
                 $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
             }
         } else {
-            \Logger::debug("prevented update object because of missing permissions.");
+            Logger::debug("prevented update object because of missing permissions.");
         }
 
         $this->_helper->json(["success" => $success]);
@@ -1116,7 +1122,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                 }
             }
         } catch (\Exception $e) {
-            \Logger::log($e);
+            Logger::log($e);
             if (Tool\Admin::isExtJS6() && $e instanceof Element\ValidationException) {
                 $this->_helper->json(["success" => false, "type" => "ValidationException", "message" => $e->getMessage(), "stack" => $e->getTraceAsString(), "code" => $e->getCode()]);
             }
@@ -1204,7 +1210,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 
                         $properties[$propertyName] = $property;
                     } catch (\Exception $e) {
-                        \Logger::err("Can't add " . $propertyName . " to object " . $object->getRealFullPath());
+                        Logger::err("Can't add " . $propertyName . " to object " . $object->getRealFullPath());
                     }
                 }
             }
@@ -1709,16 +1715,16 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 
                     $success = true;
                 } catch (\Exception $e) {
-                    \Logger::err($e);
+                    Logger::err($e);
                     $success = false;
                     $message = $e->getMessage() . " in object " . $source->getRealFullPath() . " [id: " . $source->getId() . "]";
                 }
             } else {
-                \Logger::error("could not execute copy/paste, source object with id [ $sourceId ] not found");
+                Logger::error("could not execute copy/paste, source object with id [ $sourceId ] not found");
                 $this->_helper->json(["success" => false, "message" => "source object not found"]);
             }
         } else {
-            \Logger::error("could not execute copy/paste because of missing permissions on target [ " . $targetId . " ]");
+            Logger::error("could not execute copy/paste because of missing permissions on target [ " . $targetId . " ]");
             $this->_helper->json(["error" => false, "message" => "missing_permission"]);
         }
 
@@ -1783,7 +1789,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                             $owner->$setter($currentData);
                             $owner->setUserModification($this->getUser()->getId());
                             $owner->save();
-                            \Logger::debug("Saved object id [ " . $owner->getId() . " ] by remote modification through [" . $object->getId() . "], Action: deleted [ " . $object->getId() . " ] from [ $ownerFieldName]");
+                            Logger::debug("Saved object id [ " . $owner->getId() . " ] by remote modification through [" . $object->getId() . "], Action: deleted [ " . $object->getId() . " ] from [ $ownerFieldName]");
                             break;
                         }
                     }
@@ -1802,7 +1808,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                 $owner->$setter($currentData);
                 $owner->setUserModification($this->getUser()->getId());
                 $owner->save();
-                \Logger::debug("Saved object id [ " . $owner->getId() . " ] by remote modification through [" . $object->getId() . "], Action: added [ " . $object->getId() . " ] to [ $ownerFieldName ]");
+                Logger::debug("Saved object id [ " . $owner->getId() . " ] by remote modification through [" . $object->getId() . "], Action: added [ " . $object->getId() . " ] to [ $ownerFieldName ]");
             }
         }
     }

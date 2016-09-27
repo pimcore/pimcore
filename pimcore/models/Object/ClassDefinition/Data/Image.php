@@ -283,13 +283,13 @@ class Image extends Model\Object\ClassDefinition\Data
 
     /**
      * @param mixed $value
-     * @param null $relatedObject
-     * @param mixed $params
+     * @param null $object
+     * @param array $params
      * @param null $idMapper
-     * @return mixed|void
+     * @return null|Asset|Asset\Archive|Asset\Audio|Asset\Document|Asset\Folder|Asset\Image|Asset\Text|Asset\Unknown|Asset\Video
      * @throws \Exception
      */
-    public function getFromWebserviceImport($value, $relatedObject = null, $params = [], $idMapper = null)
+    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
     {
         $id = $value;
 
@@ -307,7 +307,7 @@ class Image extends Model\Object\ClassDefinition\Data
             if (!$idMapper || !$idMapper->ignoreMappingFailures()) {
                 throw new \Exception("cannot get values from web service import - invalid data, referencing unknown asset with id [ ".$value." ]");
             } else {
-                $idMapper->recordMappingFailure("object", $relatedObject->getId(), "asset", $value);
+                $idMapper->recordMappingFailure("object", $object->getId(), "asset", $value);
             }
         }
     }

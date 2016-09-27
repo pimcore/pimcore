@@ -66,3 +66,16 @@ if ($conf->general->instanceIdentifier) {
         });
     }
 }
+
+//assign tags after copying an element
+Pimcore::getEventManager()->attach(["document.postCopy", "asset.postCopy", "object.postCopy"],
+    function (\Zend_EventManager_Event $e) {
+        $elementType = strtok($e->getName(), '.');
+        /** @var \Pimcore\Model\Element\AbstractElement $copiedElement */
+        $copiedElement = $e->getTarget();
+        /** @var \Pimcore\Model\Element\AbstractElement $baseElement */
+        $baseElement = $e->getParam('base_element');
+        \Pimcore\Model\Element\Tag::setTagsForElement($elementType, $copiedElement->getId(),
+            \Pimcore\Model\Element\Tag::getTagsForElement($elementType, $baseElement->getId()));
+    }
+);

@@ -1822,6 +1822,8 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
                     form.getComponent("type").setValue("youtube");
                 } else if (el.getValue().indexOf("vim") >= 0 && el.getValue().indexOf("http") >= 0) {
                     form.getComponent("type").setValue("vimeo");
+                } else if (el.getValue().indexOf("dai") >= 0 && el.getValue().indexOf("http") >= 0) {
+                    form.getComponent("type").setValue("dailymotion");
                 }
             }.bind(this)
         }
@@ -1929,11 +1931,15 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
         }
 
         if(type == "youtube") {
-            labelEl.update("URL / ID");
+            labelEl.update("ID");
         }
 
         if(type == "vimeo") {
-            labelEl.update("URL");
+            labelEl.update("ID");
+        }
+        
+        if(type == "dailymotion") {
+            labelEl.update("ID");
         }
     };
 
@@ -1949,7 +1955,7 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
             editable: false,
             width: 270,
             mode: "local",
-            store: ["asset","youtube","vimeo"],
+            store: ["asset","youtube","vimeo","dailymotion"],
             value: data.type,
             listeners: {
                 select: function (combo) {

@@ -638,8 +638,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
     editmodeOpen: function (element) {
 
-        var content = Ext.get(element).down(".pimcore_area_editmode");
-
+        var content = Ext.get(element).down(".pimcore_area_editmode_" + this.name);
         if( content === null && element.getAttribute('data-editmmode-button-ref') !== null)
         {
             content = Ext.getBody().down( '#' + element.getAttribute('data-editmmode-button-ref' ) );

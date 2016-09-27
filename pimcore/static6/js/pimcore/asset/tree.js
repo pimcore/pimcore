@@ -307,7 +307,7 @@ pimcore.asset.tree = Class.create({
             for (var i=0; i<dataTransfer["files"].length; i++) {
                 file = dataTransfer["files"][i];
 
-                if (window.FileList && file.name && file.type) { // check for type (folder has no type)
+                if (window.FileList && file.name && file.size) { // check for size (folder has size=0)
                     doFileUpload(file);
                 }
             }

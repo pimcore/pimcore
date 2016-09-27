@@ -17,6 +17,7 @@
 namespace Pimcore\Model\Asset;
 
 use Pimcore\Model;
+use Pimcore\Logger;
 
 class Image extends Model\Asset
 {
@@ -46,7 +47,7 @@ class Image extends Model\Asset
                     $this->setCustomSetting("imageHeight", $dimensions["height"]);
                 }
             } catch (\Exception $e) {
-                \Logger::error("Problem getting the dimensions of the image with ID " . $this->getId());
+                Logger::error("Problem getting the dimensions of the image with ID " . $this->getId());
             }
 
             // this is to be downward compatible so that the controller can check if the dimensions are already calculated
@@ -69,8 +70,8 @@ class Image extends Model\Asset
                 // we need the @ in front of touch because of some stream wrapper (eg. s3) which don't support touch()
                 @touch($path, $this->getModificationDate());
             } catch (\Exception $e) {
-                \Logger::error("Problem while creating system-thumbnails for image " . $this->getRealFullPath());
-                \Logger::error($e);
+                Logger::error("Problem while creating system-thumbnails for image " . $this->getRealFullPath());
+                Logger::error($e);
             }
         }
     }
@@ -223,6 +224,19 @@ class Image extends Model\Asset
     }
 
     /**
+     * @return bool
+     */
+    public function isVectorGraphic()
+    {
+        // we use a simple file-extension check, for performance reasons
+        if (preg_match("@\.(svgz?|eps|pdf|ps|ai|indd)$@", $this->getFilename())) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Checks if this file represents an animated image (png or gif)
      *
      * @return bool
@@ -294,5 +308,86 @@ class Image extends Model\Asset
         }
 
         return $isAnimated;
+    }
+
+
+    /**
+     * @return array
+     */
+    public function getEXIFData()
+    {
+        $data = [];
+
+        if (function_exists("exif_read_data") && is_file($this->getFileSystemPath())) {
+            $supportedTypes = [IMAGETYPE_JPEG, IMAGETYPE_TIFF_II, IMAGETYPE_TIFF_MM];
+
+            if (in_array(@exif_imagetype($this->getFileSystemPath()), $supportedTypes)) {
+                $exif = @exif_read_data($this->getFileSystemPath());
+                if (is_array($exif)) {
+                    foreach ($exif as $name => $value) {
+                        if ((is_string($value) && strlen($value) < 50) || is_numeric($value)) {
+                            $data[$name] = \ForceUTF8\Encoding::toUTF8($value);
+                        }
+                    }
+                }
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * @return array
+     */
+    public function getIPTCData()
+    {
+        $data = [];
+
+        if (is_file($this->getFileSystemPath())) {
+            $result = getimagesize($this->getFileSystemPath(), $info);
+            if ($result) {
+                $mapping = [
+                    '2#105' => 'headline',
+                    '2#120' => 'caption',
+                    '2#092' => 'location',
+                    '2#090' => 'city',
+                    '2#095' => 'state',
+                    '2#101' => 'country',
+                    '2#100' => 'countryCode',
+                    '2#080' => 'photographerName',
+                    '2#110' => 'credit',
+                    '2#085' => 'photographerTitle',
+                    '2#115' => 'source',
+                    '2#116' => 'copyright',
+                    '2#005' => 'objectName',
+                    '2#122' => 'captionWriters',
+                    '2#040' => 'instructions',
+                    '2#015' => 'category',
+                    '2#020' => 'supplementalCategories',
+                    '2#103' => 'transmissionReference',
+                    '2#010' => 'urgency',
+                    '2#025' => 'keywords',
+                    '2#055' => 'date',
+                    '2#060' => 'time',
+                ];
+
+                if ($info && isset($info['APP13'])) {
+                    $iptcRaw = iptcparse($info['APP13']);
+                    if (is_array($iptcRaw)) {
+                        foreach ($iptcRaw as $key => $value) {
+                            if (is_array($value) && count($value) === 1) {
+                                $value = $value[0];
+                            }
+
+                            if (isset($mapping[$key])) {
+                                $data[$mapping[$key]] = \ForceUTF8\Encoding::toUTF8($value);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return $data;
     }
 }
