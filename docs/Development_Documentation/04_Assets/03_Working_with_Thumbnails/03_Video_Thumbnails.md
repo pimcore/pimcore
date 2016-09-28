@@ -1,13 +1,12 @@
 # Video Thumbnails
-Pimcore is able to convert videos to the most formats used in the web automatically. It is also possible capture a 
+Pimcore is able to convert any video to web formats automatically. It is also possible capture a 
 custom preview image out of the video.
 
-> To use all these functionalities it is required to install FFMPEG on the server. It is also required to configure the 
-> path to FFMPEG and to the PHP-CLI binary in the system settings. For Details of installation 
-> see [Installation Documentation](../../13_Installation_and_Upgrade/03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md).
+> **IMPORTANT** 
+> To use all the following functionalities it is required to install FFMPEG on the server.  
+> For details, please have a look at [Additional Tools Installation](../../13_Installation_and_Upgrade/03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md).
 
-
-### Using Video Thumbnails in Code
+### Using Video Thumbnails in your Code
 
 ##### Examples - Image Snapshots
 ```php
@@ -46,6 +45,6 @@ if($asset instanceof Asset\Video) {
 ```
 
 --- 
-For more information about Working with Video Thumbnails in Pimcore Backend also have a look at the [User Documentation]().
 
-[comment]: #(TODO add links)
+### Using with the Video Editable
+Please have a look at [Video Editable](../../03_Documents/01_Editables/38_Video.md). 

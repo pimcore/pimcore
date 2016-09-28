@@ -1,34 +1,35 @@
 # Image Thumbnails
 
 For images, Pimcore offers an advanced thumbnail-service also called 'image-pipeline'. It allows you to transform images
- in unlimited steps to the expected result. You can configure them in `Settings` -> `Thumbnails`.
+ in unlimited steps to the expected result. You can configure them in *Settings* > *Thumbnails*.
  
  
 With this service every image which is stored as an asset can be transformed. Pimcore doesn't support to modify images 
 which are not stored as an asset inside Pimcore.
 
-> IMPORTANT: Use imagick PECL extension for best results, GDlib is just a fallback with limited functionality 
+> **IMPORTANT**  
+> Use Imagick PECL extension for best results, GDlib is just a fallback with limited functionality 
 > (only PNG, JPG, GIF) and less quality!
 > Using ImageMagick pimcore supports hundreds of formats including: AI, EPS, TIFF, PNG, JPG, GIF, PSD, ...
 
 
 To use the thumbnailing service of Pimcore, you have to create a transformation pipeline first. To do so, open 
-`Settings` -> `Thumbnails`, and click on `Add Thumbnail` to create a new configuration.
-The fields name, description, format and quality should be clear, interesting are now the transformations. 
-Click on `+` to add a new transformation, so that it look like that for example:
+*Settings* > *Thumbnails* and click on *Add Thumbnail* to create a new configuration.
+The fields name, description, format and quality should be self-explanatory, the interesting part are now the transformations. 
+Click on *+* to add a new transformation, so that it look like that for example:
 
 ![Thumbnails](../../img/thumbnails1.png)
 
-Important: The transformations are performed in the order from the top to the bottom. This is for example important 
+**Important**: The transformations are performed in the order from the top to the bottom. This is for example important 
 in the configuration above. If the you first round the corners this would be performed on the original image, 
-and then the image will get resized, so the rounded corners are also resized. 
+and then the image will get resized, so the rounded corners are also resized which is not intended. 
 
-To retrieve a thumbnail from an asses simply call `$asset->getThumbnail()` on the asset object, this will return 
-`\Pimcore\Model\Asset\Image\Thumbnail` object. It's `__toString` method returns the path to the thumbnail file 
+To retrieve a thumbnail from an asses simply call `$asset->getThumbnail("thumbnail-name")` on the asset object, which will return 
+an `\Pimcore\Model\Asset\Image\Thumbnail` object. The thumbnail object's `__toString()` method returns the path to the thumbnail file 
 beginning from the document root, for example: 
 `/website/var/tmp/image-thumbnails/0/53/thumb__exampleCover/img_0322.jpeg`
 
-This path can then be directly used to display the image in a `<img />` tag. For example:
+This path can then be directly used to display the image in a `<img />` or `<picture`> tag. For example:
 ```php
 <?php
     use Pimcore\Model\Asset;
@@ -40,12 +41,13 @@ This path can then be directly used to display the image in a `<img />` tag. For
    <img src="<?= $asset->getThumbnail("myThumbnailName") ?>" />
 
     <!-- preferred alternative - let Pimcore create the whole image tag -->
+    <!-- including high-res alternatives (srcset) or media queries, if configured -->
     <?= $asset->getThumbnail("myThumbnail")->getHTML(); ?>
 
 <?php } ?>
 ```
 
-## Explanation of the transformations
+## Explanation of the Transformations
 
 | Transformation | Description | Configuration | Result |
 |----------------|-------------|---------------|--------|
@@ -62,11 +64,7 @@ This path can then be directly used to display the image in a `<img />` tag. For
 | ROUNDED CORNERS | Rounds the corners to the given width/height. |   ![Config Corner](../../img/thumbnails-config-corner.png) | ![Sample Corner](../../img/thumbnails-sample-corner.png) |
 
 
-For Thumbnails in action also have a look at our [live demo](http://demo.pimcore.org/en/basic-examples/thumbnails). 
-
-##### For more information about configuring thumbnails in Pimcore backend have a look at [User Documentation]().
-[comment]: #(TODO add links)
-
+For thumbnails in action also have a look at our [Live Demo](http://demo.pimcore.org/en/basic-examples/thumbnails). 
 
 ## Usage Examples
 ```php
@@ -84,7 +82,7 @@ For Thumbnails in action also have a look at our [live demo](http://demo.pimcore
     echo $asset->getThumbnail("myThumbnail")->getHTML();
 ?>
  
-<?php // Use without preconfigured thumbnail ?>
+<?php // Use without pre-configured thumbnail ?>
 <?= $this->image("image", [
     "thumbnail" => [
         "width" => 500,
@@ -104,7 +102,6 @@ For Thumbnails in action also have a look at our [live demo](http://demo.pimcore
 // where "myThumbnail" is the name of the thumbnail configuration in settings -> thumbnails
  
  
- 
 <?php // Use from an object-field with dynamic configuration ?><?php if ($this->myObject->getMyImage() instanceof Asset\Image) { ?>
     <img src="<?= $this->myObject->getMyImage()->getThumbnail(["width" => 220, "format" => "jpeg"]); ?>" />
 <?php } ?>
@@ -121,7 +118,7 @@ echo $asset->getThumbnail(["width" => 500, "format" => "png"])->getHTML();
 ```
 
 ## Advanced Examples
-Pimcore returns an `\Pimcore\Model\Asset\Image\Thumbnail` object when calling `$asset->getThumbnail("..")` 
+Pimcore returns an `\Pimcore\Model\Asset\Image\Thumbnail` object when calling `$asset->getThumbnail("thumb-name")` 
 which gives you even more flexibility when working with thumbnails.
 
 ```php
@@ -137,7 +134,7 @@ echo $thumbnail->getHTML(["class" => "custom-class"]);
 // get the path to the thumbnail
 $path = $thumbnail->getPath();
  
-// Asset_Image_Thumbnail implements __toString, so you can still print the path by
+// Asset\Image\Thumbnail implements __toString(), so you can still print the path by
 echo $thumbnail; // prints something like /website/var/tmp/....png
 ```
 
@@ -178,7 +175,7 @@ path to your favorite color profile.
 
 
 ## Dynamic Generation on Request
-Pimcore auto-generates a thumbnail if it doesn't exist and is directly called via it's file path (not using any of 
+Pimcore auto-generates a thumbnail if requested but doesn't exist and is directly called via it's file path (not using any of 
 the `getThumbnail()` methods). 
 For example: Call `http://example.com/website/var/tmp/image-thumbnails/0/6644/thumb__contentimages/placeholder.jpeg` 
  ("6644" is the asset ID and "contentimages" is the name of the thumbnail) directly in your browser. Now pimcore checks 
@@ -192,25 +189,35 @@ process).
 
 Of course this works only with predefined (named) thumbnail configurations and not with dynamic configurations. 
 
-Starting with build 2648 it's possible to use this feature in combination with "High Resolution Support". 
-(Example see below). 
-
 
 ## Deferred Rendering of Thumbnails
-Normally Pimcore generates the thumbnail as soon as you call the method `getThumbnail()` on an `Asset\Image`. 
-But there are cases where you want to avoid this for performance or other reasons. To just get the path to the 
-thumbnail without generating it you have to pass a second parameter, by doing so the image is generated on request 
-and not when calling `getThumbnail()` in your code.
+For performance reasons, Pimcore doesn't generate the thumbnail image directly when calling `getThumbnail()` 
+on an asset, instead it generates them when they are actually needed (on request). 
+
+But sometimes it's necessary to have the actual image already generated, in this case you can pass a 
+2nd parameter to `getThumbnail()` to force the processing of the image. 
 
 ```php
 $asset = Asset\Image::getById(123);
-$asset->getThumbnail("myConfig", true); // 2nd parameter means "deferred"
+$asset->getThumbnail("myConfig", false); // set the 2nd parameter to false
+```
+
+The processing is also forced when calling the method `getFileSystemPath()` or `getPath(false)` on 
+the returning thumbnail object: 
+
+```php
+$asset->getThumbnail("myConfig")->getFileSystemPath(); 
+// or 
+$asset->getThumbnail("myConfig")->getPath(false); 
 ```
 
 
 ## High-Resolution Support
-This is a special functionality to allow embedding high resolution (ppi/dpi) images.  
-In the thumbnail configuration: 
+This is a special functionality to allow embedding high resolution (ppi/dpi) images.
+The following is only necessary in special use-cases like Web-to-Print, in typical web-based cases, Pimcore 
+automatically adds the `srcset` attribute to `<img>` and `<picture>` tags automatically, so no manual work is necessary. 
+
+####Use in the Thumbnail Configuration: 
 ![High Resolution](../../img/thumbnails3.png)
 The above configuration will generate a thumbnail with 500px width. 
 
@@ -229,28 +236,23 @@ It's also possible to add the high-res dynamically:
 ```
 This will create an image `width = 500px`
 
-#### Combining "dynamic generation on request" with high resolution
-This is especially useful in the case you want to serve thunbnails depending on the ppi of the device screen or in 
-combination with Web2Print documents (browser preview with normal size, tripled in size for PDF ouptut)
+#### Combining "Dynamic Generation on Request" with High Resolution Images
+This is especially useful in the case you want to serve thumbnails depending on the ppi of the device screen or in 
+combination with Web2Print documents (browser preview with normal size, tripled in size for PDF ouptut). 
+Pimcore also utilizes this functionality internally to provide the automatically added high.res support on `<img>` and `<picture>` tags. 
+So again, this feature is only useful in some edge-cases. 
 
-Scripts like [retina.js](http://retinajs.com/) make it really easy to use this feature in the browser, since Pimcore 
-is compatible to [Apple's prescribed high-resolution modifier (@2x)](http://developer.apple.com/library/ios/#documentation/2DDrawing/Conceptual/DrawingPrintingiOS/SupportingHiResScreensInViews/SupportingHiResScreensInViews.html#//apple_ref/doc/uid/TP40010156-CH15-SW1). 
+###### Example 
 
-###### Example: 
-You have this code in your template (the thumbnail configuration "testimage" doesn't make use of the "High Resolution" 
-setting): 
 ```php
-<?= $this->image("myImage", ["thumbnail" => "testimage"]); ?>
+<?= $image->getThumbnail("testimage")->getPath(); ?>
 ```
 this generates the followinig ouput: 
 ```php
-<img src="/website/var/tmp/thumb_6644__testimage.png" width="250" height="190" />
+/website/var/tmp/thumb_6644__testimage.png
 ```
-when using retina.js the script tries to load the image including the high-resolution modifier: `/website/var/tmp/thumb_6644__testimage@2x.png`. 
-This images doesn't exist on the file system, so it is dispatched by Pimcore (see "Dynamic Generation on Request" 
-above) which generates the thumbnail (all dimensions 2x). 
 
-But of course you can use this feature without retina.js or something similar.  
+To get an high-res version of the thumbnail, you can just add `@2x` before the file extension: 
 ```
 /website/var/tmp/thumb_7865__teaserportal@2x.png
 /website/var/tmp/thumb_6644__testimage@5x.png
@@ -260,6 +262,7 @@ Using float is possible too:
 /website/var/tmp/thumb_123456__teaserportal@3.2x.png
 ```
 
+Pimcore will then dynamically generate the thumbnails accordingly. 
 
 ## Media Queries in Thumbnail Configuration
 If your're using media queries in your thumbnail configuration pimcore automatically generates a `<picture>`  tag 
