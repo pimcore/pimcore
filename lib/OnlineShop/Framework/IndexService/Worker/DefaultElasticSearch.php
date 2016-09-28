@@ -642,7 +642,7 @@ class DefaultElasticSearch extends AbstractWorker implements IBatchProcessingWor
      *
      * @throws \Exception
      */
-    protected function switchIndexAlias(){
+    public function switchIndexAlias(){
         \Logger::info('Switching Alias');
         $esClient = $this->getElasticSearchClient();
 
