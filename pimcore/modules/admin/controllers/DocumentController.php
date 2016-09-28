@@ -558,12 +558,6 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
         $this->_helper->json(["docTypes" => $docTypes]);
     }
 
-    public function getPathForIdAction()
-    {
-        $document = Document::getById($this->getParam("id"));
-        die($document->getRealFullPath());
-    }
-
     public function versionToSessionAction()
     {
         $version = Version::getById($this->getParam("id"));
