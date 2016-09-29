@@ -72,7 +72,7 @@ class Website_OnlineShop_AdminStyle extends Element_AdminStyle {
 
 ### Custom Tooltips (ExtJS 6 only)
 
-Since build 3584 it is possible to define custom tooltips which are shown while hovering over the object tree.
+It is possible to define custom tooltips which are shown while hovering over the object tree.
 ![Class Icons](../../../img/classes-icons3.png)
 
 
