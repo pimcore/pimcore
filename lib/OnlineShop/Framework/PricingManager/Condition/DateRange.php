@@ -102,10 +102,15 @@ class DateRange implements IDateRange
     public function fromJSON($string)
     {
         $json = json_decode($string);
-        $this->setStarting(new \Zend_Date(strtotime($json->starting)));
+
+        $starting = new \Zend_Date(strtotime($json->starting));
+        $starting->setTime('00:00:00');
+
         $ending = new \Zend_Date(strtotime($json->ending));
-        $ending->setHour(59)->setMinute(59)->setSecond(59);
-        $this->setEnding( $ending );
+        $ending->setTime('23:59:59');
+
+        $this->setStarting($starting);
+        $this->setEnding($ending);
 
         return $this;
     }
