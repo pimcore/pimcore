@@ -812,13 +812,13 @@ pimcore.document.tree = Class.create({
             } else if (typeRecord.get("type") == "printpage") {
                 documentMenu.printPage.push({
                     text: ts(typeRecord.get("name")),
-                    iconCls: "pimcore_icon_printpage_add",
+                    iconCls: "pimcore_icon_printpage pimcore_icon_overlay_add",
                     handler: this.addDocument.bind(this, tree, record, "printpage", typeRecord.get("id"))
                 });
             } else if (typeRecord.get("type") == "printcontainer") {
                 documentMenu.printPage.push({
                     text: ts(typeRecord.get("name")),
-                    iconCls: "pimcore_icon_printcontainer_add",
+                    iconCls: "pimcore_icon_printcontainer pimcore_icon_overlay_add",
                     handler: this.addDocument.bind(this, tree, record, "printcontainer", typeRecord.get("id"))
                 });
             }
