@@ -58,3 +58,5 @@ see [https://github.com/pimcore/pimcore/blob/master/.htaccess](https://github.co
         RewriteRule ".*" "-" [E=HTTP_AUTHORIZATION:%{HTTP:Authorization},L]
 </VirtualHost>
 ```
+
+>  [this tutorial from RoseHosting](https://www.rosehosting.com/blog/how-to-install-pimcore-on-a-centos-7-vps/) has a working Apache configuration that you can use as an example.      
