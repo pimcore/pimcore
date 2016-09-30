@@ -131,7 +131,11 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
 
     getValue:function () {
         if (this.isRendered()) {
-            return this.component.getValue().toString();
+            var value = this.component.getValue();
+            if (value == null) {
+                return value;
+            }
+            return value.toString();
         } else if (this.defaultValue) {
             return this.defaultValue;
         }
