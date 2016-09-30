@@ -134,7 +134,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
             <script type="text/javascript">
                 editableConfigurations.push(' . $options . ');
             </script>
-            <div id="pimcore_editable_' . $this->getName() . '" class="pimcore_editable pimcore_tag_' . $this->getType() . '"></div>
+            <div id="pimcore_editable_' . $this->getName() . '" class="pimcore_editable pimcore_tag_' . $this->getType() . ' '.$this->getOptions()['class'].'"></div>
         ';
     }
 
