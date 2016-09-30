@@ -1,17 +1,27 @@
 ## 1 - Tracking Manager configuration
 
+The Tracking Manager enables ecommerce transaction tracking for ecommerce websites built with the framework. Due to
+different tracker implementations, it supports different tracking services.
+
+Current implementations of trackers are
+* Google Analytics Classic: `OnlineShop\Framework\Tracking\Tracker\Analytics\Ecommerce`
+* Google Analytics Universal: `OnlineShop\Framework\Tracking\Tracker\Analytics\UniversalEcommerce`
+* Google Analytics Enhanced Ecommerce: `OnlineShop\Framework\Tracking\Tracker\Analytics\EnhancedEcommerce`
+
+
 ### Configuration
 
-The configuration takes place in the OnlineShopConfig.php. If no _Tracker_ is configured, the _TrackingItemBuilder_ will fall back to the default implementation.
+The configuration takes place in the OnlineShopConfig.php. If no `Tracker` is configured, the `TrackingItemBuilder` will
+fall back to the default implementation.
 ```php
 "trackingmanager" => [
-            "class" => "Website\\OnlineShop\\Tracking\\TrackinManager",
+            "class" => "OnlineShop\\Framework\\Tracking\\TrackingManager",
             "config" => [
                 "trackers" => [
                     "tracker" => [
                         [
                         "name" => "GoogleAnalyticsEnhancedEcommerce",
-                        "class" => "Website\\OnlineShop\\Tracking\\Tracker\\EnhancedEcommerce",
+                        "class" => "OnlineShop\\Framework\\Tracking\\Tracker\\Analytics\\EnhancedEcommerce",
                         "trackingItemBuilder" => "Website\\OnlineShop\\Tracking\\TrackingItemBuilder"
                         ]
                     ]

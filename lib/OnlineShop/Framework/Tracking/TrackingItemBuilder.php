@@ -13,6 +13,7 @@
 namespace OnlineShop\Framework\Tracking;
 
 use OnlineShop\Framework\CartManager\AbstractCartItem;
+use OnlineShop\Framework\CartManager\CartPriceModificator\IShipping;
 use OnlineShop\Framework\CartManager\ICart;
 use OnlineShop\Framework\Model\AbstractOrder;
 use OnlineShop\Framework\Model\AbstractOrderItem;
@@ -224,9 +225,8 @@ class TrackingItemBuilder implements ITrackingItemBuilder
         $modifications = $order->getPriceModifications();
         if ($modifications) {
             foreach ($modifications as $modification) {
-                if ($modification->getName() === 'shipping') {
-                    $shipping = $modification->getAmount();
-                    break;
+                if ($modification instanceof IShipping) {
+                    $shipping += $modification->getAmount();
                 }
             }
         }
