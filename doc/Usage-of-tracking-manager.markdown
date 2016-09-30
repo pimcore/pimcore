@@ -32,7 +32,8 @@ Current implementations of trackers are
     * Tracks checkout complete
     * `$trackingManager->trackCheckoutComplete($order)`
 
-If one tracking service does not support a tracking action, the tracking action is ignored for this tracker.
+Depending on the used tracking service some of these actions might not be available.
+If so, the tracking action is ignored for this tracker.
 
 
 ### Configuration in `OnlineShopConfig.php`
