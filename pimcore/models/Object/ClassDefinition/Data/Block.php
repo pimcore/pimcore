@@ -124,13 +124,13 @@ class Block extends Model\Object\ClassDefinition\Data
                     }
                     $elementData = $blockElement->getData();
                     $dataForResource = $fd->marshal($elementData, $object, ["raw" => true]);
-                    $blockElement->setData($dataForResource);
+//                    $blockElement->setData($fd->unmarshal($dataForResource, $object, ["raw" => true]));
 
                     // do not serialize the block element itself
                     $resultElement[$elementName] = [
                         "name" => $blockElement->getName(),
                         "type" => $blockElement->getType(),
-                        "data" => $blockElement->getData()
+                        "data" => $dataForResource
                     ];
                 }
                 $result[] = $resultElement;
