@@ -15,7 +15,7 @@ namespace OnlineShop\Framework\Tracking;
 interface IProductActionAdd
 {
     /**
-     * Track product impression
+     * Track product action add
      * 
      * @param \OnlineShop\Framework\Model\IProduct $product
      * @param int $quantity

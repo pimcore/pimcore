@@ -23,5 +23,7 @@ interface ICheckoutStep
      *
      * @return
      */
-    public function trackCheckoutStep(\OnlineShop\Framework\CheckoutManager\ICheckoutStep $step, \OnlineShop\Framework\CartManager\ICart $cart, $stepNumber = null, $checkoutOption = null);
+    public function trackCheckoutStep(\OnlineShop\Framework\CheckoutManager\ICheckoutStep $step,
+                                      \OnlineShop\Framework\CartManager\ICart $cart,
+                                      $stepNumber = null, $checkoutOption = null);
 }

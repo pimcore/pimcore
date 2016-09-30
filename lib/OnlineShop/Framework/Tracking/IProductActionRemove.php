@@ -15,7 +15,7 @@ namespace OnlineShop\Framework\Tracking;
 interface IProductActionRemove
 {
     /**
-     * Track product impression
+     * Track product remove from cart
      *
      * @param \OnlineShop\Framework\Model\IProduct $product
      */

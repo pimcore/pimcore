@@ -1,18 +1,45 @@
-## 1 - Tracking Manager configuration
+## 1 - Tracking Manager Configuration
 
 The Tracking Manager enables ecommerce transaction tracking for ecommerce websites built with the framework. Due to
 different tracker implementations, it supports different tracking services.
 
 Current implementations of trackers are
-* Google Analytics Classic: `OnlineShop\Framework\Tracking\Tracker\Analytics\Ecommerce`
-* Google Analytics Universal: `OnlineShop\Framework\Tracking\Tracker\Analytics\UniversalEcommerce`
-* Google Analytics Enhanced Ecommerce: `OnlineShop\Framework\Tracking\Tracker\Analytics\EnhancedEcommerce`
+* **Google Analytics Classic**: `OnlineShop\Framework\Tracking\Tracker\Analytics\Ecommerce`
+* **Google Analytics Universal**: `OnlineShop\Framework\Tracking\Tracker\Analytics\UniversalEcommerce`
+* **Google Analytics Enhanced Ecommerce**: `OnlineShop\Framework\Tracking\Tracker\Analytics\EnhancedEcommerce`
+
+### Tracking Actions
+
+* Product Impression
+    * Tracks product impression
+    * `$trackingManager->trackProductImpression($product)`
+* Product View
+    * Tracks product view (of detail page)
+    * `$trackingManager->trackProductView($product)`
+* Product Action Add
+    * Tracks action for adding product to cart
+    * `$trackingManager->trackProductActionAdd($product, $quantity)`
+* Product Action Remove
+    * Tracks action for removing product from cart
+    * `$trackingManager->trackProductActionRemove($product, $quantity)`
+* Checkout
+    * Tracks start of checkout with first step
+    * `$trackingManager->trackCheckout($cart)`
+* Checkout Step
+    * Tracks checkout step
+    * `$trackingManager->trackCheckoutStep($step, $cart, $stepNumber, $checkoutOption)`
+* Checkout Complete
+    * Tracks checkout complete
+    * `$trackingManager->trackCheckoutComplete($order)`
+
+If one tracking service does not support a tracking action, the tracking action is ignored for this tracker.
 
 
-### Configuration
+### Configuration in `OnlineShopConfig.php`
 
-The configuration takes place in the OnlineShopConfig.php. If no `Tracker` is configured, the `TrackingItemBuilder` will
-fall back to the default implementation.
+The configuration takes place in the `OnlineShopConfig.php`. If no `TrackingItemBuilder` is configured, the
+`TrackingItemBuilder` will
+fall back to the default implementation `OnlineShop\Framework\Tracking\TrackingItemBuilder`.
 ```php
 "trackingmanager" => [
             "class" => "OnlineShop\\Framework\\Tracking\\TrackingManager",
@@ -32,25 +59,15 @@ fall back to the default implementation.
 
 > For older Versions check [OnlineShopConfig_sample.xml](/config/OnlineShopConfig_sample.xml)
 
-### Overview
-
-##### External Links
-[Google Documentation Enhanced E-Commerce](https://developers.google.com/analytics/devguides/collection/analyticsjs/enhanced-ecommerce)
-
-#### Tracking Actions
-
-* Product Impression        (```$trackingManager->trackProductImpression($product)```)
-* Product View              (```$trackingManager->trackProductView($product)```)
-* Product Action Add        (```$trackingManager->trackProductActionAdd($product, $quantity)```)
-* Product Action Remove     (```$trackingManager->trackProductActionRemove($product, $quantity)```)
-* Checkout                  (```$trackingManager->trackCheckout($cart)```)
-* Checkout Complete         (```$trackingManager->trackCheckoutComplete($order)```)
-* Checkout Step             (```$trackingManager->trackCheckoutStep($step, $cart, $stepNumber, $checkoutOption)```)
 
 ## 2 - Usage Tracking Manager
 
-#### Trigger events
-###### _Product Impression_
+For utilizing the Tracking Manager, just call the corresponding methods of the TrackingManager in your controller.
+The framework does the rest (adding necessary code snippets to your view).
+
+See the following examples
+
+### Product Impression
 ```php
 <?php
 class ShopController extends \Pimcore\Controller\Action\Frontend {
@@ -69,11 +86,11 @@ class ShopController extends \Pimcore\Controller\Action\Frontend {
 
 ```
 
-###### _Checkout_
+### Checkout
 ```php
 <?php
-class CartController extends \Pimcore\Controller\Action\Frontend {
-    public function listAction() {
+class CheckoutController extends \Pimcore\Controller\Action\Frontend {
+    public function startCheckoutAction() {
         ...
         $trackingManager = \OnlineShop\Framework\Factory::getInstance()->getTrackingManager();
         $trackingManager->trackCheckout($this->getCart());
@@ -84,11 +101,12 @@ class CartController extends \Pimcore\Controller\Action\Frontend {
 ```
 
 
-## 3 - Project specific data
+## 3 - Project Specific Data
 
-Adding project specific data to tracking items by extending the TrackingItemBuilder class. The extending class has to be defined in the OnlineShopConfig.php.
+Adding project specific data to tracking items by extending the `TrackingItemBuilder` class. The extending class has to
+be configured in the `OnlineShopConfig.php`.
 
-###### _Product Impression_
+### Example for Additional Data in Poduct Impressions
 
 ```php
 class TrackingItemBuilder extends \OnlineShop\Framework\Tracking\TrackingItemBuilder {
@@ -114,3 +132,5 @@ class TrackingItemBuilder extends \OnlineShop\Framework\Tracking\TrackingItemBui
 ```
 
 
+## External Links
+[Google Documentation Enhanced E-Commerce](https://developers.google.com/analytics/devguides/collection/analyticsjs/enhanced-ecommerce)

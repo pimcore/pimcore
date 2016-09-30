@@ -15,10 +15,11 @@ namespace OnlineShop\Framework\Tracking\Tracker\Analytics;
 use OnlineShop\Framework\Model\AbstractOrder;
 use OnlineShop\Framework\Tracking\ICheckoutComplete;
 use OnlineShop\Framework\Tracking\ProductAction;
+use OnlineShop\Framework\Tracking\Tracker;
 use OnlineShop\Framework\Tracking\Transaction;
 use Pimcore\Google\Analytics;
 
-class UniversalEcommerce extends \OnlineShop\Framework\Tracking\Tracker implements ICheckoutComplete
+class UniversalEcommerce extends Tracker implements ICheckoutComplete
 {
     /**
      * @return string

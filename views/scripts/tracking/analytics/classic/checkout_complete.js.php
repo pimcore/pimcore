@@ -12,7 +12,7 @@
 ?>
 
 <?php foreach ($this->calls as $call): ?>
-_gaq.push(<?= json_encode($call); ?>);
+    _gaq.push(<?= json_encode($call); ?>);
 <?php endforeach; ?>
 
 _gaq.push(['_trackTrans']);

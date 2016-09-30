@@ -13,6 +13,7 @@
 namespace OnlineShop\Framework\Tracking\Tracker\Analytics;
 
 use OnlineShop\Framework\CartManager\ICart;
+use OnlineShop\Framework\Tracking\IProductActionRemove;
 use OnlineShop\Framework\Tracking\Tracker;
 use OnlineShop\Framework\Model\AbstractOrder;
 use OnlineShop\Framework\Model\IProduct;
@@ -29,7 +30,8 @@ use OnlineShop\Framework\Tracking\Transaction;
 use Pimcore\Google\Analytics;
 use Pimcore\Model\Object\Concrete;
 
-class EnhancedEcommerce extends Tracker implements IProductView, IProductImpression, IProductActionAdd, ICheckout, ICheckoutStep, ICheckoutComplete, ICheckoutAction
+class EnhancedEcommerce extends Tracker implements IProductView, IProductImpression, IProductActionAdd, IProductActionRemove,
+    ICheckout, ICheckoutStep, ICheckoutComplete
 {
     /**
      * @return string
@@ -115,11 +117,11 @@ class EnhancedEcommerce extends Tracker implements IProductView, IProductImpress
     }
 
     /**
+     * Track start checkout with first step
+     *
      * @param ICart $cart
-     * @param null $stepNumber
-     * @param null $checkoutOption
      */
-    public function trackCheckout(ICart $cart, $stepNumber = null, $checkoutOption = null)
+    public function trackCheckout(ICart $cart)
     {
         $items = $this->getTrackingItemBuilder()->buildCheckoutItemsByCart($cart);
 
@@ -148,36 +150,6 @@ class EnhancedEcommerce extends Tracker implements IProductView, IProductImpress
         $view = $this->buildView();
         $view->items = $items;
         $view->calls = [];
-        if (!is_null($stepNumber) || !is_null($checkoutOption)) {
-            $actionData = ["step" => $stepNumber];
-
-            if (!is_null($checkoutOption)) {
-                $actionData["option"] = $checkoutOption;
-            }
-
-            $view->actionData = $actionData;
-        }
-
-
-        $result = $view->render($this->getViewScript('checkout'));
-
-        Analytics::addAdditionalCode($result, 'beforePageview');
-    }
-
-    /**
-     * @param \OnlineShop\Framework\CheckoutManager\ICheckoutStep $step
-     * @param ICart $cart
-     * @param null $stepNumber
-     * @param null $checkoutOption
-     */
-    public function trackCheckoutAction(\OnlineShop\Framework\CheckoutManager\ICheckoutStep $step, ICart $cart, $stepNumber = null, $checkoutOption = null)
-    {
-
-        $items = $this->getTrackingItemBuilder()->buildCheckoutItemsByCart($cart);
-
-        $view = $this->buildView();
-        $view->items = $items;
-        $view->calls = $this->buildCheckoutCalls($items);
         if (!is_null($stepNumber) || !is_null($checkoutOption)) {
             $actionData = ["step" => $stepNumber];
 

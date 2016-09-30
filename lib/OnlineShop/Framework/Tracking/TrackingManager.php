@@ -75,7 +75,12 @@ class TrackingManager implements ITrackingManager
         $itemBuilder = $this->getItemBuilder($cfg->trackingItemBuilder);
         $tracker     = new $className($itemBuilder);
 
-        $this->registerTracker($cfg->name, $tracker);
+        if($tracker instanceof ITracker) {
+            $this->registerTracker($cfg->name, $tracker);
+        } else {
+            throw new InvalidConfigException(sprintf('Tracker class %s not an insance of ITracker.', $className));
+        }
+
     }
     /**
      * Get an item builder instance, fall back to default implementation
@@ -197,6 +202,7 @@ class TrackingManager implements ITrackingManager
      * @implements IProductImpression
      *
      * @param IProduct $product
+     * @param int $quantity
      */
     public function trackProductActionRemove(IProduct $product, $quantity = 1)
     {
@@ -209,7 +215,7 @@ class TrackingManager implements ITrackingManager
     }
 
     /**
-     * Track checkout complete
+     * Track start checkout with first step
      *
      * @implements ICheckoutComplete
      * @param ICart $cart

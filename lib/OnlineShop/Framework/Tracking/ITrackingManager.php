@@ -12,6 +12,7 @@
 
 namespace OnlineShop\Framework\Tracking;
 
-interface ITrackingManager extends IProductImpression, IProductView, ICheckoutStep, ICheckoutComplete, IProductActionAdd,IProductActionRemove
+interface ITrackingManager extends IProductImpression, IProductView, ICheckoutStep, ICheckoutComplete, ICheckout,
+    IProductActionAdd, IProductActionRemove
 {
 }

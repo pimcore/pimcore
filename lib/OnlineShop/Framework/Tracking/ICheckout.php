@@ -15,7 +15,7 @@ namespace OnlineShop\Framework\Tracking;
 interface ICheckout
 {
     /**
-     * Track checkout step
+     * Track start checkout with first step
      *
      * @param \OnlineShop\Framework\CartManager\ICart $cart
      */

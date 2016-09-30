@@ -14,9 +14,9 @@
 ga('require', 'ecommerce', 'ecommerce.js');
 
 <?php foreach ($this->calls as $call => $callData): ?>
-<?php foreach ($callData as $cd): ?>
-ga('<?= $call ?>', <?= json_encode($cd); ?>);
-<?php endforeach; ?>
+    <?php foreach ($callData as $cd): ?>
+        ga('<?= $call ?>', <?= json_encode($cd); ?>);
+    <?php endforeach; ?>
 <?php endforeach; ?>
 
 ga('ecommerce:send');
