@@ -615,26 +615,26 @@ return [
             ],
             "config" => [
                 /*  Reservations older than x MINUTES get removed by maintenance task */
-                "reservationDuration" => [
-                    "duration" => "120"
+                "reservations" => [
+                    "duration" => "5"
                 ],
                 /* Statistics older than x DAYS get removed by maintenance task */
-                /* "statisticDuration" => [
+                "statistics" => [
                     "duration" => "30"
-                ] */
+                ]
             ]
         ],
         
         /*  tracking manager - define which trackers (e.g. Google Analytics Universal Ecommerce) are active and should
      be called when you track something via TrackingManager */
         "trackingmanager" => [
-            "class" => "Website\\OnlineShop\\Tracking\\TrackinManager",
+            "class" => "OnlineShop\\Framework\\Tracking\\TrackingManager",
             "config" => [
                 "trackers" => [
                     "tracker" => [
                         [
                         "name" => "GoogleAnalyticsEnhancedEcommerce",
-                        "class" => "Website\\OnlineShop\\Tracking\\Tracker\\EnhancedEcommerce",
+                        "class" => "OnlineShop\\Framework\\Tracking\\Tracker\\Analytics\\EnhancedEcommerce",
                         "trackingItemBuilder" => "Website\\OnlineShop\\Tracking\\TrackingItemBuilder"
                         ]
                     ]
