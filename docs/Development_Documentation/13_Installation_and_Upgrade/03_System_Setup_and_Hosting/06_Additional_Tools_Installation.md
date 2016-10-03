@@ -47,7 +47,7 @@ chmod 0755 /usr/local/bin/zopflipng
 
 ### PngCrush 
 ```bash
-https://github.com/imagemin/pngcrush-bin/raw/master/vendor/linux/pngcrush -O /usr/local/bin/pngcrush
+wget https://github.com/imagemin/pngcrush-bin/raw/master/vendor/linux/pngcrush -O /usr/local/bin/pngcrush
 chmod 0755 /usr/local/bin/pngcrush
 ```
 
@@ -65,15 +65,20 @@ chmod 0755 /usr/local/bin/pngout
 
 ### AdvPNG
 ```bash
-wget https://github.com/imagemin/advpng-bin/blob/master/vendor/linux/advpng -O /usr/local/bin/advpng
+wget https://github.com/imagemin/advpng-bin/raw/master/vendor/linux/advpng -O /usr/local/bin/advpng
 chmod 0755 /usr/local/bin/advpng
 ```
 
 ### MozJPEG
 ```bash
-wget https://github.com/imagemin/mozjpeg-bin/blob/master/vendor/linux/cjpeg -O /usr/local/bin/cjpeg
+wget https://github.com/imagemin/mozjpeg-bin/raw/master/vendor/linux/cjpeg -O /usr/local/bin/cjpeg
 chmod 0755 /usr/local/bin/cjpeg
 ```
 
+## Exiftool
+
+```bash 
+apt-get install libimage-exiftool-perl
+```
 
 
