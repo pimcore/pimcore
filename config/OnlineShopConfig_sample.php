@@ -635,7 +635,7 @@ return [
                         [
                         "name" => "GoogleAnalyticsEnhancedEcommerce",
                         "class" => "OnlineShop\\Framework\\Tracking\\Tracker\\Analytics\\EnhancedEcommerce",
-                        "trackingItemBuilder" => "Website\\OnlineShop\\Tracking\\TrackingItemBuilder"
+                        "trackingItemBuilder" => "\\OnlineShop\\Framework\\Tracking\\TrackingItemBuilder"
                         ]
                     ]
                 ]
