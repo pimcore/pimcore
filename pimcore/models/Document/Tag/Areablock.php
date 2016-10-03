@@ -406,7 +406,12 @@ class Areablock extends Model\Document\Tag
         $suffixes[] = $this->getName();
         \Zend_Registry::set("pimcore_tag_block_current", $suffixes);
 
-        $this->outputEditmode('<div id="pimcore_editable_' . $this->getName() . '" name="' . $this->getName() . '" class="pimcore_editable pimcore_tag_' . $this->getType() . '" type="' . $this->getType() . '">');
+        $class = "pimcore_editable pimcore_tag_" . $this->getType();
+        if(array_key_exists("class", $this->getOptions())) {
+            $class .= (" " . $this->getOptions()["class"]);
+        }
+
+        $this->outputEditmode('<div id="pimcore_editable_' . $this->getName() . '" name="' . $this->getName() . '" class="' . $class . '" type="' . $this->getType() . '">');
 
         return $this;
     }

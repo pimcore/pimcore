@@ -71,15 +71,16 @@ And you can see the effect, below:
 | `sorting`           | array  | An array of area-ID's in the order you want to display them in the toolbar.                                                                                                                  |
 | `params`            | array  | Optional parameter, this can also contain additional brick-specific configurations, see **brick-specific configuration**                                                                     |
 | `group`             | array  | Array with group configuration (see example above).                                                                                                                                          |
-| `manual`            | bool   | Forces the manual mode, which enables a complete free implementation for areablocks, for example using real `<table>` elements... example see below                                      |
+| `manual`            | bool   | Forces the manual mode, which enables a complete free implementation for areablocks, for example using real `<table>` elements... example see below                                          |
 | `reload`            | bool   | Set to `true`, to force a reload in editmode after reordering items (default: `false`)                                                                                                       |
 | `toolbar`           | bool   | Set to `false` to not display the extra toolbar for areablocks (default: `true`)                                                                                                             |
-| `dontCheckEnabled`  | bool   | Set to `true` to display all installed area bricks, regardless if they are enabled in the extension manager                                                                                    |
+| `dontCheckEnabled`  | bool   | Set to `true` to display all installed area bricks, regardless if they are enabled in the extension manager                                                                                  |
 | `limit`             | int    | Limit the amount of elements                                                                                                                                                                 |
 | `areablock_toolbar` | array  | Array with option that allows you to change the position of the toolbar.                                                                                                                     |
-| `areaDir`           | string | Absolute path (from document-root) to an area directory, only areas out of this path will be shown eg. `/website/views/customAreas/`                                                     |
-| `editWidth`         | int    | Width of editing popup (if dedicated `edit.php` is used).                                                                                                                                |
-| `editHeight`        | int    | Height of editing popup (if dedicated `edit.php` is used).                                                                                                                               |
+| `areaDir`           | string | Absolute path (from document-root) to an area directory, only areas out of this path will be shown eg. `/website/views/customAreas/`                                                         |
+| `editWidth`         | int    | Width of editing popup (if dedicated `edit.php` is used).                                                                                                                                    |
+| `editHeight`        | int    | Height of editing popup (if dedicated `edit.php` is used).                                                                                                                                   |
+| `class`             | string | A CSS class that is added to the surrounding container of this element in editmode                                                                                                           |
 
 ## Brick-specific Configuration
 Brick-specific configurations are passed using the params configuration (see above). 

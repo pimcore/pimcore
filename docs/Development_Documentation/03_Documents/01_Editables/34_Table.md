@@ -6,10 +6,11 @@ The table editable provides the ability to edit a table structure.
 
 ## Configuration
 
-| Name       | Type    | Description                                                             |
-|------------|---------|-------------------------------------------------------------------------|
-| `defaults` | array   | Array can have the following properties: rows, cols, data (see example) |
-| `width`    | integer | Width of the field in pixel                                             |
+| Name       | Type    | Description                                                                        |
+|------------|---------|------------------------------------------------------------------------------------|
+| `defaults` | array   | Array can have the following properties: rows, cols, data (see example)            |
+| `width`    | integer | Width of the field in pixel                                                        |
+| `class`    | string  | A CSS class that is added to the surrounding container of this element in editmode |
 
 ## Methods
 

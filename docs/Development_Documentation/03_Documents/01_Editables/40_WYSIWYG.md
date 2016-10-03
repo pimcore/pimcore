@@ -6,13 +6,14 @@ Similar to Textarea and Input you can use the WYSIWYG editable in the templates 
  
 ## Configuration
 
-| Name            | Type    | Description                                             |
-|-----------------|---------|---------------------------------------------------------|
-| `customConfig`  | string  | Path to Javascript file with configuration for CKEditor |
-| `enterMode`     | integer | Set it to 2 if you don't want to add the P-tag          |
-| `height`        | integer | Minimum height of the field in pixels                   |
-| `toolbarGroups` | string  | A toolbar config array (see below)                      |
-| `width`         | integer | Width of the field in pixels                            |
+| Name            | Type    | Description                                                                        |
+|-----------------|---------|------------------------------------------------------------------------------------|
+| `customConfig`  | string  | Path to Javascript file with configuration for CKEditor                            |
+| `enterMode`     | integer | Set it to 2 if you don't want to add the P-tag                                     |
+| `height`        | integer | Minimum height of the field in pixels                                              |
+| `toolbarGroups` | string  | A toolbar config array (see below)                                                 |
+| `width`         | integer | Width of the field in pixels                                                       |
+| `class`         | string  | A CSS class that is added to the surrounding container of this element in editmode |
 
 ## Methods
 

@@ -15,6 +15,7 @@ The PDF editable allows you to embed asset documents (pdf, doc, xls, ...) into d
 | `height`            | integer   | Height of the viewerin pixel                                                            |
 | `fullscreen`        | bool      | Allow fullscreen or not                                                                 |
 | `hotspotCallback`   | closure   | Possibility to add custom attributes on hotspot `<div>` tags, ... see example below     |
+| `class`             | string    | A CSS class that is added to the surrounding container of this element in editmode      |
 
 ## Methods
 

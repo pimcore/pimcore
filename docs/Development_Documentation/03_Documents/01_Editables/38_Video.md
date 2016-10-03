@@ -10,7 +10,7 @@ Local asset videos support the automatic generation and transcoding of videos us
 
 | Name                      | Type      | Description                                                                                                                                                                                                             |
 |---------------------------|-----------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `attributes`              | array     | Additional attributes for the generated `<video>` tag - only for type asset                                                                                                                                         |
+| `attributes`              | array     | Additional attributes for the generated `<video>` tag - only for type asset                                                                                                                                             |
 | `disableProgressReload`   | bool      | Set to true to disable the automatic page refresh while the video thumbnail is generated                                                                                                                                |
 | `editmodeImagePreview`    | bool      | Set to true to display only an image and not the video player in editmode, this can be necessary if you have many videos on one page (performance)                                                                      |
 | `height`                  | integer   | Height of the video in pixel                                                                                                                                                                                            |
@@ -19,7 +19,7 @@ Local asset videos support the automatic generation and transcoding of videos us
 | `thumbnail`               | string    | Name of the video-thumbnail (required when using automatic-transcoding of videos) see: [Video Thumbnails](../../04_Assets/03_Working_with_Thumbnails/03_Video_Thumbnails.md)                                            |
 | `width`                   | integer   | Width of the video in pixel                                                                                                                                                                                             |
 | `youtube`                 | array     | Parameters for youtube integration. Possible parameters: [https://developers.google.com/youtube/player_parameters](https://developers.google.com/youtube/player_parameters) - only for type ***youtube***               |
-  
+| `class`                   | string    | A CSS class that is added to the surrounding container of this element in editmode                                                                                                                                      |
   
 ## Methods
 

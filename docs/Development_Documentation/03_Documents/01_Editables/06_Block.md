@@ -9,11 +9,12 @@ The items in the loop as well as their order can be defined by the editor with t
 
 ## Configuration
 
-| Name        | Type      | Description                                                                                                                |
-|-------------|-----------|----------------------------------------------------------------------------------------------------------------------------|
-| `limit`     | integer   | Max. amount of iterations.                                                                                                 |
-| `default`   | integer   | If block is empty, this specifies the iterations at startup.                                                               |
+| Name        | Type      | Description                                                                                                                  |
+|-------------|-----------|------------------------------------------------------------------------------------------------------------------------------|
+| `limit`     | integer   | Max. amount of iterations.                                                                                                   |
+| `default`   | integer   | If block is empty, this specifies the iterations at startup.                                                                 |
 | `manual`    | bool      | Forces the manual mode, which enables a complete custom HTML implementation for blocks, for example using `<table>` elements |
+| `class`     | string    | A CSS class that is added to the surrounding container of this element in editmode                                           |
 
 ## Methods
 

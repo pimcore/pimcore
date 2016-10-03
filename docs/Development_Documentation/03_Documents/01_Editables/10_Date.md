@@ -2,9 +2,10 @@
 
 ### Configuration
 
-| Name     | Type   | Description                                                  |
-|----------|--------|--------------------------------------------------------------|
-| `format` | string | A string which describes how to output the date. (see below) |
+| Name     | Type   | Description                                                                        |
+|----------|--------|------------------------------------------------------------------------------------|
+| `format` | string | A string which describes how to output the date. (see below)                       |
+| `class`  | string | A CSS class that is added to the surrounding container of this element in editmode |
 
 ## Methods
 

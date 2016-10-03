@@ -8,12 +8,12 @@ The textarea editable is very similar to the [Input](./16_Input.md) editable, th
 
 | Name               | Type    | Description                                                                           |
 |--------------------|---------|---------------------------------------------------------------------------------------|
-| `class`            | string  | A css class that is added to the element only in editmode                             |
 | `height`           | integer | Height of the textarea in pixel                                                       |
 | `htmlspecialchars` | boolean | Set to false to get the raw value without HTML special chars like & (default: `true`) |
 | `nl2br`            | boolean | Set to true to get also breaks in frontend                                            |
 | `placeholder`      | string  | A placeholder that is displayed when the field is empty                               |
 | `width`            | integer | Width of the textarea in pixel                                                        |
+| `class`            | string  | A CSS class that is added to the surrounding container of this element in editmode    |
 
 ## Methods
 

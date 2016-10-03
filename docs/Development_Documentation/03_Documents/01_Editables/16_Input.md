@@ -12,7 +12,7 @@ For a multi-line alternative have a look at the [textarea editable](./36_Textare
 | `width`            | integer | Width of the input in editmode (in pixels)                                            |
 | `htmlspecialchars` | boolean | Set to false to get the raw value without HTML special chars like & (default to true) |
 | `nowrap`           | boolean | set to false to disable the automatic line break                                      |
-| `class`            | string  | A css class that is added to the element only in editmode                             |
+| `class`            | string  | A CSS class that is added to the surrounding container of this element in editmode    |
 | `placeholder`      | string  | A placeholder that is displayed when the field is empty                               |
 
 ## Methods

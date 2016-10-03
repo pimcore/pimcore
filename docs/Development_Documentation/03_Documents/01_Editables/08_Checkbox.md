@@ -2,10 +2,11 @@
 
 ## Configuration
 
-| Name     | Type    | Description                                                          |
-|----------|---------|----------------------------------------------------------------------|
-| `reload` | boolean | Set to true to reload the page in editmode after changing the state. |
-| `label`  | string  | a `<label>` which is added in the editmode                           |
+| Name     | Type    | Description                                                                        |
+|----------|---------|------------------------------------------------------------------------------------|
+| `reload` | boolean | Set to true to reload the page in editmode after changing the state.               |
+| `label`  | string  | a `<label>` which is added in the editmode                                         |
+| `class`  | string  | A CSS class that is added to the surrounding container of this element in editmode |
 
 ## Methods
 

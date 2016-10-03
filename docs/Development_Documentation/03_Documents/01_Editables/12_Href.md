@@ -12,10 +12,10 @@ In frontend-mode the href returns the path of the linked element.
 | `types`      | array   | Allowed types (document, asset, object), if empty all types are allowed                                                                    |
 | `subtypes`   | array   | Allowed subtypes grouped by type (folder, page, snippet, image, video, object, ...), if empty all subtypes are allowed (see example below) |
 | `classes`    | array   | Allowed object class names, if empty all classes are allowed                                                                               |
-| `reload`     | boolean | `true` triggers page reload on each change                                                                                                   |
+| `reload`     | boolean | `true` triggers page reload on each change                                                                                                 |
 | `width`      | int     | Width of the field in pixel.                                                                                                               |
 | `uploadPath` | string  | Target path for (inline) uploaded assets                                                                                                   |
-
+| `class`      | string  | A CSS class that is added to the surrounding container of this element in editmode                                                         |
 
 ## Methods
 
