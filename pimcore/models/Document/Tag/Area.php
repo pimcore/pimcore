@@ -65,9 +65,8 @@ class Area extends Model\Document\Tag
         $options = @\Zend_Json::encode($options, false, ['enableJsonExprFinder' => true]);
 
         if ($this->editmode) {
-
             $class = "pimcore_editable pimcore_tag_" . $this->getType();
-            if(array_key_exists("class", $this->getOptions())) {
+            if (array_key_exists("class", $this->getOptions())) {
                 $class .= (" " . $this->getOptions()["class"]);
             }
 

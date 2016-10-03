@@ -131,7 +131,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
         $options = @\Zend_Json::encode($options, false, ['enableJsonExprFinder' => true]);
 
         $class = "pimcore_editable pimcore_tag_" . $this->getType();
-        if(array_key_exists("class", $this->getOptions())) {
+        if (array_key_exists("class", $this->getOptions())) {
             $class .= (" " . $this->getOptions()["class"]);
         }
 

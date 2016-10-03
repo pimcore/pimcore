@@ -203,7 +203,7 @@ class Block extends Model\Document\Tag
         \Zend_Registry::set("pimcore_tag_block_current", $suffixes);
 
         $class = "pimcore_editable pimcore_tag_" . $this->getType();
-        if(array_key_exists("class", $this->getOptions())) {
+        if (array_key_exists("class", $this->getOptions())) {
             $class .= (" " . $this->getOptions()["class"]);
         }
 
