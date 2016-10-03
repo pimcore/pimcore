@@ -11,6 +11,9 @@ Please visit the official install guide for Composer: [https://getcomposer.org/]
 
 ## FFMPEG
 
+* Linux 64bit static builds (including qt-faststart): http://johnvansickle.com/ffmpeg/
+* Windows builds: http://ffmpeg.zeranoe.com/builds/
+
 Run all this commands as root
 
 ```bash
