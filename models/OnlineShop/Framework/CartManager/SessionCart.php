@@ -81,8 +81,10 @@ class SessionCart extends AbstractCart implements ICart {
      */
     public function sortItems(callable $value_compare_func)
     {
-        uasort($this->items, $value_compare_func);
-
+        if(is_array($this->items)) {
+            uasort($this->items, $value_compare_func);
+        }
+        
         return $this;
     }
 
