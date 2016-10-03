@@ -108,6 +108,7 @@
 }
 
 #pimcore_status_update {
+    cursor: pointer;
     background-image: url(/pimcore/static6/img/flat-color-icons/process.svg);
 }
 
