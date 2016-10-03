@@ -553,7 +553,9 @@ class Mail extends \Zend_Mail
                     $this->addBcc($bcc);
                 }
             }
+        }
 
+        if ($document instanceof Model\Document\Email || $document instanceof Model\Document\Newsletter) {
             //if more than one "from" email address is defined -> we set the first one
             $fromArray = $document->getFromAsArray();
             if (!empty($fromArray)) {

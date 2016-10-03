@@ -117,6 +117,18 @@ class Newsletter extends Model\Document\PageSnippet
     }
 
     /**
+     * Returns the "from" email address as array
+     *
+     * @return array
+     */
+    public function getFromAsArray()
+    {
+        $emailAddresses = preg_split('/,|;/', $this->getFrom());
+
+        return $emailAddresses;
+    }
+
+    /**
      * @return boolean
      */
     public function getEnableTrackingParameters()
