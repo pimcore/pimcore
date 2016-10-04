@@ -681,12 +681,12 @@ class Service extends Model\AbstractModel
 
         $sanitizedPath = "/";
         foreach ($parts as $part) {
-            $sanitizedPath = $sanitizedPath . File::getValidFilename($part) . "/";
+            $sanitizedPath = $sanitizedPath . self::getValidKey($part) . "/";
         }
 
         if (!($foundElement = $type::getByPath($sanitizedPath))) {
             foreach ($parts as $part) {
-                $pathsArray[] = $pathsArray[count($pathsArray) - 1] . '/' . File::getValidFilename($part);
+                $pathsArray[] = $pathsArray[count($pathsArray) - 1] . '/' . self::getValidKey($part);
             }
 
             for ($i = 0; $i < count($pathsArray); $i++) {
@@ -777,6 +777,21 @@ class Service extends Model\AbstractModel
                 }
             }
         }
+    }
+
+    /**
+     * @static
+     * @param  $tmpFilename
+     * @param null $language
+     * @return string
+     */
+    public static function getValidKey($tmpFilename, $language = null)
+    {
+        $tmpFilename = \Pimcore\Tool\Transliteration::toASCII($tmpFilename, $language);
+        $tmpFilename = preg_replace('/[^a-zA-Z0-9\-\.~_ ]+/', '-', $tmpFilename);
+        $tmpFilename = ltrim($tmpFilename, "."); // files shouldn't start with a "." (=hidden file)
+
+        return $tmpFilename;
     }
 
     /**

@@ -15,6 +15,7 @@
 use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model\Object;
+use Pimcore\Model\Element;
 use Pimcore\Tool;
 
 class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
@@ -589,7 +590,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         if ($this->getParam("filename") == "id") {
             $objectKey = null;
         } elseif ($this->getParam("filename") != "default") {
-            $objectKey = File::getValidFilename($data[$this->getParam("filename")]);
+            $objectKey = Element\Service::getValidKey($data[$this->getParam("filename")]);
         }
 
         $overwrite = false;
@@ -797,7 +798,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
 
     public function doExportAction()
     {
-        $fileHandle = Pimcore\File::getValidFilename($this->getParam("fileHandle"));
+        $fileHandle = Element\Service::getValidKey($this->getParam("fileHandle"));
         $ids = $this->getParam("ids");
 
         $class = Object\ClassDefinition::getById($this->getParam("classId"));
@@ -823,7 +824,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
 
     public function downloadCsvFileAction()
     {
-        $fileHandle = Pimcore\File::getValidFilename($this->getParam("fileHandle"));
+        $fileHandle = Element\Service::getValidKey($this->getParam("fileHandle"));
         $csvFile = $this->getCsvFile($fileHandle);
         if (file_exists($csvFile)) {
             header("Content-Type: application/csv");

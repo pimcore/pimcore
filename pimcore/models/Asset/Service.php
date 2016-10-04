@@ -321,7 +321,7 @@ class Service extends Model\Element\Service
     public static function getUniqueKey($item, $nr = 0)
     {
         $list = new Listing();
-        $key = \Pimcore\File::getValidFilename($item->getKey());
+        $key = Element\Service::getValidKey($item->getKey());
         if (!$key) {
             throw new \Exception("No item key set.");
         }
