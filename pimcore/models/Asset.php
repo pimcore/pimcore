@@ -786,11 +786,13 @@ class Asset extends Element\AbstractElement
     {
         $path = $this->getPath() . $this->getFilename();
 
-        if (!\Pimcore::inAdmin()) {
+        if (\Pimcore\Tool::isFrontend()) {
             $results = \Pimcore::getEventManager()->trigger("frontend.path.asset", $this);
             if ($results->count()) {
                 $path = $results->last();
             }
+
+            $path = urlencode_ignore_slash($path);
         }
 
         return $path;

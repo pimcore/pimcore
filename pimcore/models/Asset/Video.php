@@ -124,6 +124,8 @@ class Video extends Model\Asset
                         if ($results->count()) {
                             $path = $results->last();
                         }
+
+                        $path = urlencode_ignore_slash($path);
                     }
 
                     return $customSetting[$thumbnail->getName()];

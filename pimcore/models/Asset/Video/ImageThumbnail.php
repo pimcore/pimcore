@@ -101,6 +101,8 @@ class ImageThumbnail
             $path = $results->last();
         }
 
+        $path = urlencode_ignore_slash($path);
+
         return $path;
     }
 

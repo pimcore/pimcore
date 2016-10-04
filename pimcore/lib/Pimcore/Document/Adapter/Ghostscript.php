@@ -160,7 +160,7 @@ class Ghostscript extends Adapter
                 $path = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/ghostscript-tmp-" . uniqid() . "." . File::getFileExtension($path);
             }
 
-            Console::exec(self::getGhostscriptCli() . " -sDEVICE=png16m -dFirstPage=" . $page . " -dLastPage=" . $page . " -r" . $resolution . " -o " . $path . " " . $this->path, null, 240);
+            Console::exec(self::getGhostscriptCli() . " -sDEVICE=png16m -dFirstPage=" . $page . " -dLastPage=" . $page . " -r" . $resolution . " -o " . escapeshellarg($path) . " " . escapeshellarg($this->path), null, 240);
 
             if ($realTargetPath) {
                 File::rename($path, $realTargetPath);
@@ -190,14 +190,14 @@ class Ghostscript extends Adapter
                 if ($page) {
                     $pageRange = "-f " . $page . " -l " . $page . " ";
                 }
-                $text = Console::exec(self::getPdftotextCli() . " " . $pageRange . $path . " -", null, 120);
+                $text = Console::exec(self::getPdftotextCli() . " " . $pageRange . escapeshellarg($path) . " -", null, 120);
             } catch (\Exception $e) {
                 // pure ghostscript way
                 if ($page) {
                     $pageRange = "-dFirstPage=" . $page . " -dLastPage=" . $page . " ";
                 }
                 $textFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/pdf-text-extract-" . uniqid() . ".txt";
-                Console::exec(self::getGhostscriptCli() . " -dBATCH -dNOPAUSE -sDEVICE=txtwrite " . $pageRange . "-dTextFormat=2 -sOutputFile=" . $textFile . " " . $path, null, 120);
+                Console::exec(self::getGhostscriptCli() . " -dBATCH -dNOPAUSE -sDEVICE=txtwrite " . $pageRange . "-dTextFormat=2 -sOutputFile=" . $textFile . " " . escapeshellarg($path), null, 120);
 
                 if (is_file($textFile)) {
                     $text =  file_get_contents($textFile);

@@ -922,7 +922,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
 
             $exiftool = \Pimcore\Tool\Console::getExecutable("exiftool");
             if ($thumbnailConfig->getFormat() == "JPEG" && $exiftool && isset($config["dpi"]) && $config["dpi"]) {
-                \Pimcore\Tool\Console::exec($exiftool . " -overwrite_original -xresolution=" . $config["dpi"] . " -yresolution=" . $config["dpi"] . " -resolutionunit=inches " . $thumbnailFile);
+                \Pimcore\Tool\Console::exec($exiftool . " -overwrite_original -xresolution=" . $config["dpi"] . " -yresolution=" . $config["dpi"] . " -resolutionunit=inches " . escapeshellarg($thumbnailFile));
             }
 
             $downloadFilename = str_replace("." . File::getFileExtension($image->getFilename()),

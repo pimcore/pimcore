@@ -31,6 +31,11 @@ class Tool
     protected static $validLanguages = [];
 
     /**
+     * @var null
+     */
+    protected static $isFrontend = null;
+
+    /**
      * @static
      * @param string $key
      * @return bool
@@ -297,19 +302,39 @@ class Tool
      */
     public static function isFrontend()
     {
-        $excludePatterns = [
-            "/^\/admin.*/",
-            "/^\/install.*/",
-            "/^\/plugin.*/",
-            "/^\/webservice.*/"
-        ];
-        foreach ($excludePatterns as $pattern) {
-            if (preg_match($pattern, $_SERVER["REQUEST_URI"])) {
-                return false;
+        if(self::$isFrontend !== null) {
+            return self::$isFrontend;
+        }
+
+        $isFrontend = true;
+
+        if($isFrontend && php_sapi_name() == "cli") {
+            $isFrontend = false;
+        }
+
+        if($isFrontend && \Pimcore::inAdmin()) {
+            $isFrontend = false;
+        }
+
+        if($isFrontend) {
+            $excludePatterns = [
+                "/^\/admin.*/",
+                "/^\/install.*/",
+                "/^\/plugin.*/",
+                "/^\/webservice.*/"
+            ];
+
+            foreach ($excludePatterns as $pattern) {
+                if (preg_match($pattern, $_SERVER["REQUEST_URI"])) {
+                    $isFrontend = false;
+                    break;
+                }
             }
         }
 
-        return true;
+        self::$isFrontend = $isFrontend;
+
+        return $isFrontend;
     }
 
     /**

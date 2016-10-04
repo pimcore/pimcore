@@ -133,7 +133,7 @@ function array_urlencode($args)
     if (!is_array($args)) {
         return false;
     }
-    
+
     return http_build_query($args);
 }
 
@@ -147,7 +147,7 @@ function array_toquerystring($args)
     if (!is_array($args)) {
         return false;
     }
-    
+
     return urldecode(http_build_query($args));
 }
 
@@ -158,7 +158,7 @@ function urlencode_ignore_slash($var)
 {
     $placeholder = "x-X-x-ignore-" . md5(microtime()) . "-slash-x-X-x";
     $var = str_replace("/", $placeholder, $var);
-    $var = urlencode($var);
+    $var = rawurlencode($var);
     $var = str_replace($placeholder, "/", $var);
 
     return $var;

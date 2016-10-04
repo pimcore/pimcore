@@ -141,7 +141,7 @@ class LibreOffice extends Ghostscript
 
             // a list of all available filters is here:
             // http://cgit.freedesktop.org/libreoffice/core/tree/filter/source/config/fragments/filters
-            $cmd = self::getLibreOfficeCli() . " --headless --nologo --nofirststartwizard --norestore --convert-to pdf:writer_web_pdf_Export --outdir " . PIMCORE_SYSTEM_TEMP_DIRECTORY . " " . $path;
+            $cmd = self::getLibreOfficeCli() . " --headless --nologo --nofirststartwizard --norestore --convert-to pdf:writer_web_pdf_Export --outdir " . escapeshellarg(PIMCORE_SYSTEM_TEMP_DIRECTORY) . " " . escapeshellarg($path);
 
             Model\Tool\Lock::acquire($lockKey); // avoid parallel conversions
             $out = Console::exec($cmd, PIMCORE_LOG_DIRECTORY . "/libreoffice-pdf-convert.log", 240);
@@ -180,7 +180,7 @@ class LibreOffice extends Ghostscript
             return parent::getText($page, $this->getPdf($path));
         } elseif (File::getFileExtension($path)) {
             // if we want to get the text of the whole document, we can use libreoffices text export feature
-            $cmd = self::getLibreOfficeCli() . " --headless --nologo --nofirststartwizard --norestore --convert-to txt:Text --outdir " . PIMCORE_TEMPORARY_DIRECTORY . " " . $path;
+            $cmd = self::getLibreOfficeCli() . " --headless --nologo --nofirststartwizard --norestore --convert-to txt:Text --outdir " . escapeshellarg(PIMCORE_TEMPORARY_DIRECTORY) . " " . escapeshellarg($path);
             $out = Console::exec($cmd, null, 240);
 
             Logger::debug("LibreOffice Output was: " . $out);

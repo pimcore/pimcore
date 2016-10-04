@@ -759,7 +759,7 @@ class Document extends Element\AbstractElement
 
         // check if this document is also the site root, if so return /
         try {
-            if (Site::isSiteRequest()) {
+            if (\Pimcore\Tool::isFrontend() && Site::isSiteRequest()) {
                 $site = Site::getCurrentSite();
                 if ($site instanceof Site) {
                     if ($site->getRootDocument()->getId() == $this->getId()) {
@@ -782,7 +782,7 @@ class Document extends Element\AbstractElement
         // the hardlink there are snippets embedded and this snippets have links pointing to a document which is also
         // inside the hardlink scope, but this is an ID link, so we cannot rewrite the link the usual way because in the
         // snippet / link we don't know anymore that whe a inside a hardlink wrapped document
-        if (!\Pimcore::inAdmin() && Site::isSiteRequest() && !FrontendTool::isDocumentInCurrentSite($this)) {
+        if (\Pimcore\Tool::isFrontend() && Site::isSiteRequest() && !FrontendTool::isDocumentInCurrentSite($this)) {
             $documentService = new Document\Service();
             $parent = $this;
             while ($parent) {
@@ -841,13 +841,15 @@ class Document extends Element\AbstractElement
      */
     protected function prepareFrontendPath($path)
     {
-        if (!\Pimcore::inAdmin()) {
+        if (\Pimcore\Tool::isFrontend()) {
             $results = \Pimcore::getEventManager()->trigger("frontend.path.document", $this, [
                 "frontendPath" => $path
             ]);
             if ($results->count()) {
                 $path = $results->last();
             }
+
+            $path = urlencode_ignore_slash($path);
         }
 
         return $path;
@@ -901,7 +903,7 @@ class Document extends Element\AbstractElement
 
         // check for site, if so rewrite the path for output
         try {
-            if (!\Pimcore::inAdmin() && Site::isSiteRequest()) {
+            if (\Pimcore\Tool::isFrontend() && Site::isSiteRequest()) {
                 $site = Site::getCurrentSite();
                 if ($site instanceof Site) {
                     if ($site->getRootDocument() instanceof Document\Page && $site->getRootDocument() !== $this) {

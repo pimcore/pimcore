@@ -618,6 +618,10 @@ class Service extends Model\AbstractModel
         // correct wrong path (root-node problem)
         $path = str_replace("//", "/", $path);
 
+        if(strpos($path, "%") !== false) {
+            $path = rawurldecode($path);
+        }
+
         return $path;
     }
 
