@@ -37,7 +37,7 @@ class Tool
      */
     public static function isValidKey($key)
     {
-        return (bool) preg_match("/^[a-z0-9_~\.\-]+$/", $key);
+        return (bool) preg_match("/^[a-zA-Z0-9_~\.\- ]+$/", $key);
     }
 
     /**
@@ -58,7 +58,7 @@ class Tool
      */
     public static function isValidPath($path)
     {
-        return (bool) preg_match("/^[a-zA-Z0-9_~\.\-\/]+$/", $path, $matches);
+        return (bool) preg_match("/^[a-zA-Z0-9_~\.\-\/ ]+$/", $path, $matches);
     }
 
     /**

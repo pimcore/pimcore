@@ -27,8 +27,8 @@ CREATE TABLE `assets` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `parentId` int(11) unsigned DEFAULT NULL,
   `type` varchar(20) DEFAULT NULL,
-  `filename` varchar(255) CHARACTER SET ascii DEFAULT '',
-  `path` varchar(765) CHARACTER SET ascii DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
+  `filename` varchar(255) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT '',
+  `path` varchar(765) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
   `mimetype` varchar(190) DEFAULT NULL,
   `creationDate` bigint(20) unsigned DEFAULT NULL,
   `modificationDate` bigint(20) unsigned DEFAULT NULL,
@@ -113,8 +113,8 @@ CREATE TABLE `documents` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `parentId` int(11) unsigned DEFAULT NULL,
   `type` enum('page','link','snippet','folder','hardlink','email','newsletter','printpage','printcontainer') DEFAULT NULL,
-  `key` varchar(255) CHARACTER SET ascii DEFAULT '',
-  `path` varchar(765) CHARACTER SET ascii DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
+  `key` varchar(255) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT '',
+  `path` varchar(765) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
   `index` int(11) unsigned DEFAULT '0',
   `published` tinyint(1) unsigned DEFAULT '1',
   `creationDate` bigint(20) unsigned DEFAULT NULL,
@@ -133,7 +133,7 @@ CREATE TABLE `documents` (
 DROP TABLE IF EXISTS `documents_elements`;
 CREATE TABLE `documents_elements` (
   `documentId` int(11) unsigned NOT NULL DEFAULT '0',
-  `name` varchar(750) CHARACTER SET ascii NOT NULL DEFAULT '',
+  `name` varchar(750) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL DEFAULT '',
   `type` varchar(50) DEFAULT NULL,
   `data` longtext,
   PRIMARY KEY (`documentId`,`name`),
@@ -303,7 +303,7 @@ CREATE TABLE `glossary` (
 
 DROP TABLE IF EXISTS `http_error_log`;
 CREATE TABLE `http_error_log` (
-  `uri` varchar(3000) CHARACTER SET ascii DEFAULT NULL,
+  `uri` varchar(3000) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL,
   `code` int(3) DEFAULT NULL,
   `parametersGet` longtext,
   `parametersPost` longtext,
@@ -391,8 +391,8 @@ CREATE TABLE `objects` (
   `o_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `o_parentId` int(11) unsigned DEFAULT NULL,
   `o_type` enum('object','folder','variant') DEFAULT NULL,
-  `o_key` varchar(255) CHARACTER SET ascii default '',
-  `o_path` varchar(765) CHARACTER SET ascii DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
+  `o_key` varchar(255) CHARACTER SET ascii COLLATE ascii_general_ci default '',
+  `o_path` varchar(765) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
   `o_index` int(11) unsigned DEFAULT '0',
   `o_published` tinyint(1) unsigned DEFAULT '1',
   `o_creationDate` bigint(20) unsigned DEFAULT NULL,
@@ -415,7 +415,7 @@ DROP TABLE IF EXISTS `properties`;
 CREATE TABLE `properties` (
   `cid` int(11) unsigned NOT NULL DEFAULT '0',
   `ctype` enum('document','asset','object') NOT NULL DEFAULT 'document',
-  `cpath` varchar(765) CHARACTER SET ascii DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
+  `cpath` varchar(765) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
   `name` varchar(190) NOT NULL DEFAULT '',
   `type` enum('text','document','asset','object','bool','select') DEFAULT NULL,
   `data` text,
@@ -484,7 +484,7 @@ CREATE TABLE `schedule_tasks` (
 DROP TABLE IF EXISTS `search_backend_data`;
 CREATE TABLE `search_backend_data` (
   `id` int(11) NOT NULL,
-  `fullpath` varchar(765) CHARACTER SET ascii DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
+  `fullpath` varchar(765) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
   `maintype` varchar(8) NOT NULL DEFAULT '',
   `type` varchar(20) DEFAULT NULL,
   `subtype` varchar(255) DEFAULT NULL,
@@ -690,7 +690,7 @@ CREATE TABLE `users_permission_definitions` (
 DROP TABLE IF EXISTS `users_workspaces_asset`;
 CREATE TABLE `users_workspaces_asset` (
   `cid` int(11) unsigned NOT NULL DEFAULT '0',
-  `cpath` varchar(765) CHARACTER SET ascii DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
+  `cpath` varchar(765) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
   `userId` int(11) NOT NULL DEFAULT '0',
   `list` tinyint(1) DEFAULT '0',
   `view` tinyint(1) DEFAULT '0',
@@ -709,7 +709,7 @@ CREATE TABLE `users_workspaces_asset` (
 DROP TABLE IF EXISTS `users_workspaces_document`;
 CREATE TABLE `users_workspaces_document` (
   `cid` int(11) unsigned NOT NULL DEFAULT '0',
-  `cpath` varchar(765) CHARACTER SET ascii DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
+  `cpath` varchar(765) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
   `userId` int(11) NOT NULL DEFAULT '0',
   `list` tinyint(1) unsigned DEFAULT '0',
   `view` tinyint(1) unsigned DEFAULT '0',
@@ -730,7 +730,7 @@ CREATE TABLE `users_workspaces_document` (
 DROP TABLE IF EXISTS `users_workspaces_object`;
 CREATE TABLE `users_workspaces_object` (
   `cid` int(11) unsigned NOT NULL DEFAULT '0',
-  `cpath` varchar(765) CHARACTER SET ascii DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
+  `cpath` varchar(765) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
   `userId` int(11) NOT NULL DEFAULT '0',
   `list` tinyint(1) unsigned DEFAULT '0',
   `view` tinyint(1) unsigned DEFAULT '0',

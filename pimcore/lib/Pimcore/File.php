@@ -58,8 +58,7 @@ class File
     public static function getValidFilename($tmpFilename, $language = null)
     {
         $tmpFilename = \Pimcore\Tool\Transliteration::toASCII($tmpFilename, $language);
-        $tmpFilename = strtolower($tmpFilename);
-        $tmpFilename = preg_replace('/[^a-z0-9\-\.~_]+/', '-', $tmpFilename);
+        $tmpFilename = preg_replace('/[^a-zA-Z0-9\-\.~_ ]+/', '-', $tmpFilename);
         $tmpFilename = ltrim($tmpFilename, "."); // files shouldn't start with a "." (=hidden file)
 
         return $tmpFilename;
