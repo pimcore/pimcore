@@ -302,21 +302,21 @@ class Tool
      */
     public static function isFrontend()
     {
-        if(self::$isFrontend !== null) {
+        if (self::$isFrontend !== null) {
             return self::$isFrontend;
         }
 
         $isFrontend = true;
 
-        if($isFrontend && php_sapi_name() == "cli") {
+        if ($isFrontend && php_sapi_name() == "cli") {
             $isFrontend = false;
         }
 
-        if($isFrontend && \Pimcore::inAdmin()) {
+        if ($isFrontend && \Pimcore::inAdmin()) {
             $isFrontend = false;
         }
 
-        if($isFrontend) {
+        if ($isFrontend) {
             $excludePatterns = [
                 "/^\/admin.*/",
                 "/^\/install.*/",
