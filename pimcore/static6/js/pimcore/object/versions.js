@@ -223,7 +223,7 @@ pimcore.object.versions = Class.create({
             url: "/admin/object/publish-version",
             params: {id: versionId},
             success: function(response) {
-                this.object.reload.bind(this.object);
+                this.object.reload();
 
                 var rdata = Ext.decode(response.responseText);
                 if (rdata && rdata.success) {
