@@ -88,9 +88,10 @@ return [
                     "deliveryaddress" => [
                         "class" => "\\OnlineShop\\Framework\\CheckoutManager\\DeliveryAddress"
                     ],
-                    "confirm" => [
-                        "class" => "Website_OnlineShop_Checkout_Confirm"
-                    ]
+                    /* example step from the Ecommerce demo, which extends AbstractStep */
+                    /*"confirm" => [
+                        "class" => "\\Website\\OnlineShop\\Checkout\\Confirm"
+                    ]*/
                 ],
                 /* optional
                      -> define payment provider which should be used for payment.
