@@ -89,8 +89,10 @@ class PricingManager implements IPricingManager
             if($product = $item->getProduct()) {
                 if(method_exists($product, "getCategories")) {
                     $productCategories = $product->getCategories();
-                    foreach($productCategories as $c) {
-                        $categories[$c->getId()] = $c;
+                    if (is_array($productCategories) {
+                        foreach($productCategories as $c) {
+                            $categories[$c->getId()] = $c;
+                        }
                     }
                 }
             }
