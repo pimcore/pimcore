@@ -36,7 +36,8 @@ $list->setOrder("DESC");
 $list->load();
 ```
 
-Please also have a look at [object listings]() and [document listings](). 
+Please also have a look at [object listings](../05_Objects/03_Working_with_PHP_API.md#objectsListing) 
+and [document listings](../03_Documents/09_Working_with_PHP_API.md#documentsListing).
 
 [comment]: #(TODO add links)
 
