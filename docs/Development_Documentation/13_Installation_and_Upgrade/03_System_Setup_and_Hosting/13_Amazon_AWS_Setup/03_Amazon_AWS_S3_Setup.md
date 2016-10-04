@@ -1,6 +1,6 @@
 # Amazon AWS S3 Setup
 
-Saving certain files in a S3 bucket is only necessary if you're running in cluser mode. If you have only one EC2 instance 
+Saving certain files in a S3 bucket is only necessary if you're running in cluster mode. If you have only one EC2 instance 
 in one zone, we recommend storing the data on an EBS volume instead (performance). 
 
 There's also a new product called Amazon EFS (in preview as of May, 30th), which is a NFS share also across regions - 
