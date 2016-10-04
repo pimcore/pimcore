@@ -281,12 +281,9 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
                                     }
                                 }
 
-                                if ($config->documents->allowcapitals) {
-                                    if ($config->documents->allowcapitals == "no") {
-                                        if (strtolower($redirectTargetUrl) != $redirectTargetUrl) {
-                                            $redirectTargetUrl = strtolower($redirectTargetUrl);
-                                        }
-                                    }
+                                // only allow the original key of a document to be the URL (lowercase/uppercase)
+                                if($redirectTargetUrl != $document->getFullPath()) {
+                                    $redirectTargetUrl = $document->getFullPath();
                                 }
                             }
 

@@ -78,7 +78,6 @@ class Setup extends Model\AbstractModel
                     ],
                     "createredirectwhenmoved" => "",
                     "allowtrailingslash" => "no",
-                    "allowcapitals" => "no",
                     "generatepreview" => "1"
                 ],
                 "objects" => [

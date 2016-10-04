@@ -395,7 +395,6 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
                 ],
                 "createredirectwhenmoved" => $values["documents.createredirectwhenmoved"],
                 "allowtrailingslash" => $values["documents.allowtrailingslash"],
-                "allowcapitals" => $values["documents.allowcapitals"],
                 "generatepreview" => $values["documents.generatepreview"]
             ],
             "objects" => [

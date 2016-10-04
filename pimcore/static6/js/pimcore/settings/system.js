@@ -915,19 +915,6 @@ pimcore.settings.system = Class.create({
                                 forceSelection: true,
                                 triggerAction: "all"
                             }, {
-                                fieldLabel: t("allow_capitals_for_documents"),
-                                xtype: "combo",
-                                name: "documents.allowcapitals",
-                                value: this.getValue("documents.allowcapitals"),
-                                store: [
-                                    ["", t("yes")],
-                                    ["no", t("no")]
-                                ],
-                                mode: "local",
-                                editable: false,
-                                forceSelection: true,
-                                triggerAction: "all"
-                            }, {
                                 fieldLabel: t("generate_previews"),
                                 xtype: "checkbox",
                                 name: "documents.generatepreview",

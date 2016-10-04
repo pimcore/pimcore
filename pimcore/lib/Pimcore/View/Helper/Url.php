@@ -81,11 +81,6 @@ class Url extends \Zend_View_Helper_Url
                 $url = "//" . $hostname . $url;
             }
 
-            if (Config::getSystemConfig()->documents->allowcapitals == 'no') {
-                $urlParts = parse_url($url);
-                $url = str_replace($urlParts["path"], strtolower($urlParts["path"]), $url);
-            }
-
             return $url;
         }
 
