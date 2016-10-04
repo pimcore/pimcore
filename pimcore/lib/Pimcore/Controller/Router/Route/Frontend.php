@@ -282,7 +282,7 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
                                 }
 
                                 // only allow the original key of a document to be the URL (lowercase/uppercase)
-                                if($redirectTargetUrl != $document->getFullPath()) {
+                                if ($redirectTargetUrl != $document->getFullPath()) {
                                     $redirectTargetUrl = $document->getFullPath();
                                 }
                             }
