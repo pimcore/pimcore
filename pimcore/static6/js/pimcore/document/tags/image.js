@@ -313,7 +313,7 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
         } else {
             if (typeof this.options.thumbnail == "string") {
                 path = "/admin/asset/get-image-thumbnail/id/" + this.datax.id + "/thumbnail/" + this.options.thumbnail
-                    + "?" + Ext.urlEncode(this.datax);
+                    + "?" + Ext.urlEncode(this.datax) + "&pimcore_editmode=1";
             }
             else if (this.options.thumbnail.width || this.options.thumbnail.height) {
                 path = "/admin/asset/get-image-thumbnail/id/" + this.datax.id + "/width/"
