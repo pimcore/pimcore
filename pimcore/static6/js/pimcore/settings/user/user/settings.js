@@ -289,9 +289,7 @@ pimcore.settings.user.user.settings = Class.create({
             this.apiKeyFieldContainer = new Ext.form.FieldSet({
                 border: false,
                 layout: 'hbox',
-                style: {
-                    padding: 0
-                },
+                style: "padding:10px 0 0 0; ",
                 items: [this.apiKeyField,
                     {
                         xtype: "button",

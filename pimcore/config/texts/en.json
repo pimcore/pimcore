@@ -1,5 +1,9 @@
 [
     {
+        "term": "change_password",
+        "definition": "Change Password"
+    },
+    {
         "term": "full_page_cache",
         "definition": "Full Page Cache"
     },
