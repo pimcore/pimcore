@@ -595,7 +595,7 @@ $googleMapsApiKey = $this->config->services->google->browserapikey;
 
 <?php // 3rd party libraries ?>
 <script type="text/javascript">
-    <?php if(isset($googleMapsApiKey)){ ?>
+    <?php if(isset($googleMapsApiKey) && strlen($googleMapsApiKey)>0){ ?>
         var gmapInitialize = function () {}; // dummy callback
         (function() {
             var script = document.createElement("script");
