@@ -4061,6 +4061,14 @@
         "definition": "Geographic Point"
     },
     {
+        "term": "geopoint_error_title",
+        "definition": "Google API Key error"
+    },
+    {
+        "term": "geopoint_error_message",
+        "definition": "Google API Key is not defined and could not be loaded, go to settings and setup correctly."
+    },
+    {
         "term": "google_api_key_simple",
         "definition": "Google API Key (Simple API Access for Maps, CSE, ...)"
     },
