@@ -130,7 +130,7 @@ class Processor
             } elseif ($format == "svg") {
                 return self::returnPath($fileSystemPath, $returnAbsolutePath);
             }
-        } else if ($format == "tiff") {
+        } elseif ($format == "tiff") {
             if (\Pimcore\Tool::isFrontentRequestByAdmin()) {
                 // return a webformat in admin -> tiff cannot be displayed in browser
                 $format = "png";
