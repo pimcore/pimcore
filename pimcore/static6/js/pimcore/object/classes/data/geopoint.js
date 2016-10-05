@@ -22,6 +22,10 @@ pimcore.object.classes.data.geopoint = Class.create(pimcore.object.classes.data.
         this.initData(initData);
 
         this.treeNode = treeNode;
+
+        if(!this.checkIfKeyIsAvailable()) {
+            Ext.MessageBox.alert(t("geopoint_error_title"), t("geopoint_error_message"));
+        }
     },
 
     getTypeName: function () {
