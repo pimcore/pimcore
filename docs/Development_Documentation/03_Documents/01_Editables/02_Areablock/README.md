@@ -78,8 +78,6 @@ And you can see the effect, below:
 | `limit`             | int    | Limit the amount of elements                                                                                                                                                                 |
 | `areablock_toolbar` | array  | Array with option that allows you to change the position of the toolbar.                                                                                                                     |
 | `areaDir`           | string | Absolute path (from document-root) to an area directory, only areas out of this path will be shown eg. `/website/views/customAreas/`                                                         |
-| `editWidth`         | int    | Width of editing popup (if dedicated `edit.php` is used).                                                                                                                                    |
-| `editHeight`        | int    | Height of editing popup (if dedicated `edit.php` is used).                                                                                                                                   |
 | `class`             | string | A CSS class that is added to the surrounding container of this element in editmode                                                                                                           |
 
 ## Brick-specific Configuration
@@ -88,14 +86,19 @@ Brick-specific configurations are passed using the params configuration (see abo
 | Name              | Type | Description                                                                                                                                                     |
 |-------------------|------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `forceEditInView` | bool | If a brick contains an edit.php there's no editmode for the `view.php` file, if you want to have the editmode enabled in both templates, enable this option |
-
+| `editWidth`       | int  | Width of editing popup (if dedicated `edit.php` is used).                                                                                               |
+| `editHeight`      | int  | Height of editing popup (if dedicated `edit.php` is used).                                                                                              |
   
 ##### Example
 
 ```php
 <?= $this->areablock("myArea", [
     "params" => [
-        "my_brick" => ["forceEditInView" => true]
+        "my_brick" => [
+            "forceEditInView" => true,
+            "editWidth" => "800",
+            "editHeight" => "500"
+        ]
     ]
 ]); ?>
 ```
