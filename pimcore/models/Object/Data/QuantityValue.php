@@ -42,9 +42,8 @@ class QuantityValue
         $this->unitId = $unitId;
         $this->unit = "";
 
-        $unit = Unit::getById($this->unitId);
-        if ($unit) {
-            $this->unit = $unit->getAbbreviation();
+        if ($unitId) {
+            $this->unit = Unit::getById($this->unitId);
         }
     }
 
