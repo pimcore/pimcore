@@ -641,7 +641,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
         var saveData = this.getSaveData(only, omitMandatoryCheck);
 
-        if (saveData.data != false && saveData.data != "false") {
+        if (saveData && saveData.data != false && saveData.data != "false") {
 
             // check for version notification
             if(this.newerVersionNotification) {
