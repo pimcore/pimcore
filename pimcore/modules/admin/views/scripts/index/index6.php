@@ -196,10 +196,6 @@ $scripts = array(
     // fixes for libraries
     //    "pimcore/libfixes.js",
 
-    // small libs
-    "lib/array_merge.js",
-    "lib/array_merge_recursive.js",
-
     // runtime
     "pimcore/namespace.js",
     "pimcore/functions.js",
