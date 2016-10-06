@@ -4061,11 +4061,11 @@
         "definition": "Geographic Point"
     },
     {
-        "term": "geopoint_error_title",
+        "term": "geo_error_title",
         "definition": "Google API Key error"
     },
     {
-        "term": "geopoint_error_message",
+        "term": "geo_error_message",
         "definition": "Google API Key is not defined and could not be loaded, go to settings and setup correctly."
     },
     {
