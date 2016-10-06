@@ -931,6 +931,10 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
             header('Content-Disposition: attachment; filename="' . $downloadFilename . '"');
 
             header("Content-Type: " . $thumbnail->getMimeType(), true);
+
+            // we have to clear the stat cache here, otherwise filesize() would return the wrong value
+            // the reason is that exiftool modifies the file's size, but PHP doesn't know anything about that
+            clearstatcache();
             header("Content-Length: " . filesize($thumbnailFile), true);
             $this->sendThumbnailCacheHeaders();
             while (@ob_end_flush()) {
