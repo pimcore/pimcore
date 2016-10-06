@@ -118,6 +118,7 @@ attach multiple events
 | `system.cache.clearOutputCache` | | | This event is fired on Output Cache clear |
 | `system.cache.clear` | | | This event is fired on Cache clear |
 | `system.cache.clearTemporaryFiles` | | | This event is fired on Temporary Files clear |
+| `system.service.preGetValidKey` | | (string) $key, (string) $type | Can be used to enforce your own key/filename policies for assets, documents and objects. To modify the key, just return the modified key in your callback function. |
 
 ### Document
 

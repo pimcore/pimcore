@@ -254,7 +254,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
             $this->setParam("parentId", 1);
         }
 
-        $filename = Element\Service::getValidKey($filename);
+        $filename = Element\Service::getValidKey($filename, "asset");
         if (empty($filename)) {
             throw new \Exception("The filename of the asset is empty");
         }
@@ -1496,7 +1496,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
                     if ($zip->extractTo($tmpDir . "/", $path)) {
                         $tmpFile = $tmpDir . "/" . preg_replace("@^/@", "", $path);
 
-                        $filename = Element\Service::getValidKey(basename($path));
+                        $filename = Element\Service::getValidKey(basename($path), "asset");
 
                         $relativePath = "";
                         if (dirname($path) != ".") {
@@ -1588,7 +1588,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
                 $filename = basename($file);
 
                 // check for duplicate filename
-                $filename = Element\Service::getValidKey($filename);
+                $filename = Element\Service::getValidKey($filename, "asset");
                 $filename = $this->getSafeFilename($folder->getRealFullPath(), $filename);
 
                 if ($assetFolder->isAllowed("create")) {
@@ -1618,7 +1618,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
         $parentId = $this->getParam("id");
         $parentAsset = Asset::getById(intval($parentId));
 
-        $filename = Element\Service::getValidKey($filename);
+        $filename = Element\Service::getValidKey($filename, "asset");
         $filename = $this->getSafeFilename($parentAsset->getRealFullPath(), $filename);
 
         if (empty($filename)) {

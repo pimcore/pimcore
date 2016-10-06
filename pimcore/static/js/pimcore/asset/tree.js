@@ -776,7 +776,7 @@ pimcore.asset.tree = Class.create({
                 url: "/admin/asset/add-folder/",
                 params: {
                     parentId: this.id,
-                    name: pimcore.helpers.getValidFilename(value)
+                    name: pimcore.helpers.getValidFilename(value, "asset")
                 },
                 success: this.attributes.reference.addFolderComplete.bind(this)
             });
@@ -1102,7 +1102,7 @@ pimcore.asset.tree = Class.create({
                 }
             }
 
-            value = pimcore.helpers.getValidFilename(value);
+            value = pimcore.helpers.getValidFilename(value, "asset");
 
             this.setText(value);
             this.attributes.path = this.attributes.basePath + value;

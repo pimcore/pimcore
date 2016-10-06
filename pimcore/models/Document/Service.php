@@ -522,7 +522,7 @@ class Service extends Model\Element\Service
     {
         $list = new Listing();
         $list->setUnpublished(true);
-        $key = Element\Service::getValidKey($item->getKey());
+        $key = Element\Service::getValidKey($item->getKey(), "document");
         if (!$key) {
             throw new \Exception("No item key set.");
         }
