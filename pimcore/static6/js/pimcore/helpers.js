@@ -587,7 +587,7 @@ pimcore.helpers.showNotification = function (title, text, type, errorText, hideD
             iconCls: "pimcore_icon_error",
             title: title,
             width: 700,
-            height: 500,
+            maxHeight: 500,
             html: text,
             autoScroll: true,
             bodyStyle: "padding: 10px; background:#fff;",
@@ -965,6 +965,7 @@ pimcore.helpers.assetSingleUploadDialog = function (parent, parentType, success,
                         failure: function (el, res) {
                             failure(res);
                             uploadWindowCompatible.close();
+                            pimcore.helpers.showNotification(t("error"), res.response.responseText, "error");
                         }
                     });
                 }
@@ -1389,6 +1390,14 @@ pimcore.helpers.uploadAssetFromFileObject = function (file, url, callbackSuccess
     }
     if(typeof callbackFailure != "function") {
         callbackFailure = function () {};
+    }
+
+    if(file["size"]) {
+        if(file["size"] > pimcore.settings["upload_max_filesize"]) {
+            callbackSuccess();
+            pimcore.helpers.showNotification(t("error"), t("file_is_bigger_that_upload_limit") + " " + file.name, "error");
+            return;
+        }
     }
 
     var data = new FormData();
