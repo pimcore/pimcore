@@ -6,15 +6,14 @@ Pimcore supports some *magic parameters* which can be added as parameter to ever
 You can call a controller/action/template directly without a route, eg.: 
 `http://www.example.com/?controller=my-app&action=my-action&template=my/template.php`
 
-### pimcore_document | pdid
-Sometimes it's useful to call a page directly by its ID, you can do that for example with: `http://www.example.com/?pimcore_document=345`
-
 ### nocache
-Setting this parameter disables every kind of cache, eg.: `http://www.example.com/my/page?nocache=1`
+Setting this parameter disables every kind of cache, eg.: `http://www.example.com/my/page?nocache=1`  
+This parameter only works if [`DEBUG MODE`](../08_Tools_and_Features/25_System_Settings.md) is on.
 
 ### pimcore_outputfilters_disabled
 Disables all output filters, incl. the output-cache. But this doesn't disable the internal object cache, 
-eg.: `http://www.example.com/my/page?pimcore_outputfilters_disabled=1`
+eg.: `http://www.example.com/my/page?pimcore_outputfilters_disabled=1`  
+This parameter only works if [`DEBUG MODE`](../08_Tools_and_Features/25_System_Settings.md) is on.
 
 ### pimcore_log
 Enables verbose logging (including database queries) to a separate log file only for this particular 
