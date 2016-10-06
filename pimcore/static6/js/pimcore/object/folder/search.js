@@ -146,9 +146,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             fields = response.availableFields;
             this.gridLanguage = response.language;
             this.sortinfo = response.sortinfo;
-            if (response.onlyDirectChildren) {
-                this.onlyDirectChildren = response.onlyDirectChildren;
-            }
+            this.onlyDirectChildren = response.onlyDirectChildren === true;
         } else {
             fields = response;
         }
