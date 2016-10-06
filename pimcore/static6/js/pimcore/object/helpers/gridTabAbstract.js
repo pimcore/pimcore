@@ -31,7 +31,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                 if(operator == 'lt') {
                     operator = "&lt;";
                 } else if(operator == 'gt') {
-                    operator = "&lt;";
+                    operator = "&gt;";
                 } else if(operator == 'eq') {
                     operator = "=";
                 }

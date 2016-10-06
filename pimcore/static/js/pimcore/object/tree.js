@@ -732,7 +732,7 @@ pimcore.object.tree = Class.create({
 //                    classId: this.element.data.general.o_classId,
                     parentId: this.attributes.id,
                     objecttype: "variant",
-                    key: pimcore.helpers.getValidFilename(value)
+                    key: pimcore.helpers.getValidFilename(value, "object")
                 },
                 success: this.attributes.reference.addVariantComplete.bind(this)
             });
@@ -905,7 +905,7 @@ pimcore.object.tree = Class.create({
                     className: className,
                     classId: classId,
                     parentId: this.id,
-                    key: pimcore.helpers.getValidFilename(value)
+                    key: pimcore.helpers.getValidFilename(value, "object")
                 },
                 success: this.attributes.reference.addObjectComplete.bind(this)
             });
@@ -930,7 +930,7 @@ pimcore.object.tree = Class.create({
                 url: "/admin/object/add-folder",
                 params: {
                     parentId: this.id,
-                    key: pimcore.helpers.getValidFilename(value)
+                    key: pimcore.helpers.getValidFilename(value, "object")
                 },
                 success: this.attributes.reference.addObjectComplete.bind(this)
             });
@@ -962,7 +962,7 @@ pimcore.object.tree = Class.create({
 
     isExistingKeyInLevel: function (parentNode, key, node) {
 
-        key = pimcore.helpers.getValidFilename(key);
+        key = pimcore.helpers.getValidFilename(key, "object");
         var parentChilds = parentNode.childNodes;
         for (var i = 0; i < parentChilds.length; i++) {
             if (parentChilds[i].text == key && node != parentChilds[i]) {
@@ -1007,7 +1007,7 @@ pimcore.object.tree = Class.create({
              return;
              }*/
 
-            value = pimcore.helpers.getValidFilename(value);
+            value = pimcore.helpers.getValidFilename(value, "object");
 
             this.setText(value);
             this.attributes.path = this.attributes.basePath + value;

@@ -460,24 +460,25 @@ pimcore.helpers.isValidFilename = function (value) {
 
 pimcore.helpers.getValidFilenameCache = {};
 
-pimcore.helpers.getValidFilename = function (value) {
+pimcore.helpers.getValidFilename = function (value, type) {
 
-    if(pimcore.helpers.getValidFilenameCache[value]) {
-        return pimcore.helpers.getValidFilenameCache[value];
+    if(pimcore.helpers.getValidFilenameCache[value + type]) {
+        return pimcore.helpers.getValidFilenameCache[value + type];
     }
 
     // we use jQuery for the synchronous xhr request, because ExtJS doesn't provide this
     var response = jQuery.ajax({
         url: "/admin/misc/get-valid-filename",
         data: {
-            value: value
+            value: value,
+            type: type
         },
         async: false
     });
 
     var res = Ext.decode(response.responseText);
 
-    pimcore.helpers.getValidFilenameCache[value] = res["filename"];
+    pimcore.helpers.getValidFilenameCache[value + type] = res["filename"];
 
     return res["filename"];
 
@@ -587,7 +588,7 @@ pimcore.helpers.showNotification = function (title, text, type, errorText, hideD
             iconCls: "pimcore_icon_error",
             title: title,
             width: 700,
-            height: 500,
+            maxHeight: 500,
             html: text,
             autoScroll: true,
             bodyStyle: "padding: 10px; background:#fff;",
@@ -965,6 +966,7 @@ pimcore.helpers.assetSingleUploadDialog = function (parent, parentType, success,
                         failure: function (el, res) {
                             failure(res);
                             uploadWindowCompatible.close();
+                            pimcore.helpers.showNotification(t("error"), res.response.responseText, "error");
                         }
                     });
                 }
@@ -1389,6 +1391,14 @@ pimcore.helpers.uploadAssetFromFileObject = function (file, url, callbackSuccess
     }
     if(typeof callbackFailure != "function") {
         callbackFailure = function () {};
+    }
+
+    if(file["size"]) {
+        if(file["size"] > pimcore.settings["upload_max_filesize"]) {
+            callbackSuccess();
+            pimcore.helpers.showNotification(t("error"), t("file_is_bigger_that_upload_limit") + " " + file.name, "error");
+            return;
+        }
     }
 
     var data = new FormData();

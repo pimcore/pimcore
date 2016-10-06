@@ -1356,12 +1356,15 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
             $wsData->$key = $value;
         }
 
-        if ($wsData instanceof Pimcore\Model\Webservice\Data\Object || $wsData instanceof Pimcore\Model\Webservice\Data\Document) {
-            /** @var Pimcore\Model\Webservice\Data\Object|Pimcore\Model\Webservice\Data\Document key */
-            $wsData->key = Element\Service::getValidKey($wsData->key); //adds key filter to new objects and documents
+        if ($wsData instanceof Pimcore\Model\Webservice\Data\Object) {
+            /** @var Pimcore\Model\Webservice\Data\Object key */
+            $wsData->key = Element\Service::getValidKey($wsData->key, "object");
+        } elseif ($wsData instanceof Pimcore\Model\Webservice\Data\Document) {
+            /** @var Pimcore\Model\Webservice\Data\Document key */
+            $wsData->key = Element\Service::getValidKey($wsData->key, "document");
         } elseif ($wsData instanceof Pimcore\Model\Webservice\Data\Asset) {
             /** @var Pimcore\Model\Webservice\Data\Asset $wsData */
-            $wsData->filename = Element\Service::getValidKey($wsData->filename);
+            $wsData->filename = Element\Service::getValidKey($wsData->filename, "asset");
         }
 
         return $wsData;

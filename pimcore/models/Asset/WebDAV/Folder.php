@@ -73,9 +73,7 @@ class Folder extends DAV\Collection
     public function getChild($name)
     {
         $nameParts = explode("/", $name);
-        $name = Element\Service::getValidKey($nameParts[count($nameParts)-1]);
-
-        //$name = implode("/",$nameParts);
+        $name = Element\Service::getValidKey($nameParts[count($nameParts)-1], "asset");
 
         if (is_string($name)) {
             $parentPath = $this->asset->getRealFullPath();
@@ -123,7 +121,7 @@ class Folder extends DAV\Collection
 
         if ($this->asset->isAllowed("create")) {
             $asset = Asset::create($this->asset->getId(), [
-                "filename" => Element\Service::getValidKey($name),
+                "filename" => Element\Service::getValidKey($name, "asset"),
                 "sourcePath" => $tmpFile,
                 "userModification" => $user->getId(),
                 "userOwner" => $user->getId()
@@ -145,7 +143,7 @@ class Folder extends DAV\Collection
 
         if ($this->asset->isAllowed("create")) {
             $asset = Asset::create($this->asset->getId(), [
-                "filename" => Element\Service::getValidKey($name),
+                "filename" => Element\Service::getValidKey($name, "asset"),
                 "type" => "folder",
                 "userModification" => $user->getId(),
                 "userOwner" => $user->getId()
@@ -177,7 +175,7 @@ class Folder extends DAV\Collection
     public function setName($name)
     {
         if ($this->asset->isAllowed("rename")) {
-            $this->asset->setFilename(Element\Service::getValidKey($name));
+            $this->asset->setFilename(Element\Service::getValidKey($name, "asset"));
             $this->asset->save();
         } else {
             throw new DAV\Exception\Forbidden();

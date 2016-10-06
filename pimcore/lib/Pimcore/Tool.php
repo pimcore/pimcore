@@ -384,7 +384,7 @@ class Tool
         }
 
         // check for manually disabled ?pimcore_outputfilters_disabled=true
-        if ($request->getParam("pimcore_outputfilters_disabled")) {
+        if ($request->getParam("pimcore_outputfilters_disabled") && PIMCORE_DEBUG) {
             return false;
         }
 

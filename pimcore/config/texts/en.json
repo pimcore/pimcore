@@ -1,5 +1,9 @@
 [
     {
+        "term": "file_is_bigger_that_upload_limit",
+        "definition": "The following file is bigger than the actual upload limit of your server:"
+    },
+    {
         "term": "change_password",
         "definition": "Change Password"
     },

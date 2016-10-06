@@ -935,6 +935,9 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
         $openTags = [];
         $final = [];
 
+        // remove nasty device control characters
+        $content = preg_replace('/[\x00-\x09\x0B\x0C\x0E-\x1F\x7F]/', '', $content);
+
         $replacement = ['%_%_%lt;%_%_%', '%_%_%gt;%_%_%'];
         $content = str_replace(['&lt;', '&gt;'], $replacement, $content);
         $content = html_entity_decode($content, null, "UTF-8");

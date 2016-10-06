@@ -143,7 +143,7 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
                     "published" => false
                 ];
 
-                $createValues["key"] = \Pimcore\Model\Element\Service::getValidKey($this->getParam("key"));
+                $createValues["key"] = \Pimcore\Model\Element\Service::getValidKey($this->getParam("key"), "document");
 
                 // check for a docType
                 $docType = Document\DocType::getById(intval($this->getParam("docTypeId")));

@@ -109,7 +109,7 @@ class Cache
             self::init();
         }
 
-        if (!empty($_REQUEST["nocache"])) {
+        if (!empty($_REQUEST["nocache"]) && PIMCORE_DEBUG) {
             self::disable();
         }
 

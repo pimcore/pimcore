@@ -321,7 +321,7 @@ class Service extends Model\Element\Service
     public static function getUniqueKey($item, $nr = 0)
     {
         $list = new Listing();
-        $key = Element\Service::getValidKey($item->getKey());
+        $key = Element\Service::getValidKey($item->getKey(), "asset");
         if (!$key) {
             throw new \Exception("No item key set.");
         }

@@ -7,14 +7,14 @@ The `Pimcore\Tool` class is a collection of general service methods. Their names
 explaining, just have a look at the [class source file](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Tool.php).
 
 Particular useful can be following methods:
-* isValidPath
-* getValidLanguages
-* getHostname
-* getHostUrl
-* getHttpClient
-* classExists
-* exitWithError
-* getMail
+* `isValidPath()`
+* `getValidLanguages()`
+* `getHostname()`
+* `getHostUrl()`
+* `getHttpClient()`
+* `classExists()`
+* `exitWithError()`
+* `getMail()`
 
 ### E-Mail
 There is a convenience function which allows any Pimcore system component or plugin to use a 
@@ -32,12 +32,13 @@ The `Pimcore\Model\Element\Service` class is a collection of service methods for
 Their names should be self explaining, just have a look at the [class source file](https://github.com/pimcore/pimcore/blob/master/pimcore/models/Element/Service.php). 
 
 Particular useful can be following methods:
-* getElementByPath
-* getSaveCopyName 
-* pathExists
-* getElementById
-* getElementType 
-* createFolderByPath
+* `getElementByPath()`
+* `getSaveCopyName()`
+* `pathExists()`
+* `getElementById()`
+* `getElementType()`
+* `createFolderByPath()`
+* `getValidKey()`
 
 
 Also have a look at the sub classes `Pimcore\Model\Asset\Service`, `Pimcore\Model\Document\Service` and 
@@ -83,9 +84,9 @@ Pimcore provides a simple tool for locking. With that tool it is possible to avo
 execution of same code sections or functions.
 
 Just have a look at `Pimcore\Model\Lock` and the static class functions 
-* acquire
-* release
-* lock
-* isLocked
+* `acquire()`
+* `release()`
+* `lock()`
+* `isLocked()`
 
 Active locks are stores in the database table `locks`. 

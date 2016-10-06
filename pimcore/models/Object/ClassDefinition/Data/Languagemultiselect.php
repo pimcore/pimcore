@@ -80,10 +80,14 @@ class Languagemultiselect extends Model\Object\ClassDefinition\Data\Multiselect
     }
 
     /**
-     *
+     * @param $data
+     * @return static
      */
-    public function __wakeup()
+    public static function __set_state($data)
     {
-        $this->configureOptions();
+        $obj = parent::__set_state($data);
+        $obj->configureOptions();
+
+        return $obj;
     }
 }

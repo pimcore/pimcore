@@ -1250,7 +1250,7 @@ pimcore.document.tree = Class.create({
 
             params["sourceTree"] = tree;
             params["elementType"] = "document";
-            params["key"] = pimcore.helpers.getValidFilename(params["key"]);
+            params["key"] = pimcore.helpers.getValidFilename(params["key"], "document");
             params["index"] = record.childNodes.length;
             params["parentId"] = record.id;
             params["url"] = "/admin/document/add/";
