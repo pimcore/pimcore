@@ -52,13 +52,17 @@ class Personamultiselect extends Model\Object\ClassDefinition\Data\Multiselect
     }
 
     /**
-     *
+     * @param $data
+     * @return static
      */
-    public function __wakeup()
+    public static function __set_state($data)
     {
-        $options = $this->getOptions();
+        $obj = parent::__set_state($data);
+        $options = $obj->getOptions();
         if (\Pimcore::inAdmin() || empty($options)) {
-            $this->configureOptions();
+            $obj->configureOptions();
         }
+
+        return $obj;
     }
 }
