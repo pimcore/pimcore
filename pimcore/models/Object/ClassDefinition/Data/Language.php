@@ -86,6 +86,7 @@ class Language extends Model\Object\ClassDefinition\Data\Select
     {
         $obj = parent::__set_state($data);
         $obj->configureOptions();
+
         return $obj;
     }
 }

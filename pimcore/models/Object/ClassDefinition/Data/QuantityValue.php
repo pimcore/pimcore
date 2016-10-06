@@ -448,6 +448,7 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
     {
         $obj = parent::__set_state($data);
         $obj->configureOptions();
+
         return $obj;
     }
 }

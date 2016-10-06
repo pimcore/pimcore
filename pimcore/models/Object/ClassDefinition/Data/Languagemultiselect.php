@@ -87,6 +87,7 @@ class Languagemultiselect extends Model\Object\ClassDefinition\Data\Multiselect
     {
         $obj = parent::__set_state($data);
         $obj->configureOptions();
+
         return $obj;
     }
 }
