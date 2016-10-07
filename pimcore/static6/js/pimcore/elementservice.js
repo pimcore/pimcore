@@ -298,6 +298,11 @@ pimcore.elementservice.editDocumentKeyComplete =  function (options, button, val
                 return;
             }
 
+            if(rdata && rdata.success) {
+                // removes loading indicator added in the applyNewKey method
+                pimcore.helpers.removeTreeNodeLoadingIndicator(elementType, id);
+            }
+
             for (index = 0; index < affectedNodes.length; index++) {
                 record = affectedNodes[index];
                 pimcore.elementservice.refreshNode(record.parentNode);
@@ -358,6 +363,8 @@ pimcore.elementservice.editObjectKeyComplete = function (options, button, value,
                     var rdata = Ext.decode(response.responseText);
                     if (rdata && rdata.success) {
                         pimcore.elementservice.reopenElement(options);
+                        // removes loading indicator added in the applyNewKey method
+                        pimcore.helpers.removeTreeNodeLoadingIndicator(elementType, id);
                     }  else {
                         pimcore.helpers.showNotification(t("error"), t("error_renaming_object"), "error",
                             t(rdata.message));
@@ -434,6 +441,11 @@ pimcore.elementservice.editAssetKeyComplete = function (options, button, value, 
                         pimcore.helpers.showNotification(t("error"), t("error_renaming_element"),
                             "error");
                         return;
+                    }
+
+                    if(rdata && rdata.success) {
+                        // removes loading indicator added in the applyNewKey method
+                        pimcore.helpers.removeTreeNodeLoadingIndicator(elementType, id);
                     }
 
                     for (index = 0; index < affectedNodes.length; index++) {
