@@ -566,7 +566,7 @@ class Document extends Element\AbstractElement
 
     /**
      * Update the document index.
-     * 
+     *
      * @param int $index
      */
     public function saveIndex($index)

@@ -336,14 +336,14 @@ class Admin_ElementController extends \Pimcore\Controller\Action\Admin
         $this->_helper->json(["success" => true]);
     }
 
-    public function getNicePathAction() {
-
+    public function getNicePathAction()
+    {
         $source = \Zend_Json::decode($this->getParam("source"));
         if ($source["type"] != "object") {
             throw new \Exception("currently only objects as source elements are supported");
         }
 
-        $result = array();
+        $result = [];
 
         $id = $source["id"];
         $source = Object\Concrete::getById($id);
@@ -351,7 +351,7 @@ class Admin_ElementController extends \Pimcore\Controller\Action\Admin
         if ($this->getParam("context")) {
             $context = \Zend_Json::decode($this->getParam("context"));
         } else {
-            $context = array();
+            $context = [];
         }
 
         $ownerType = $context["containerType"];
@@ -361,7 +361,7 @@ class Admin_ElementController extends \Pimcore\Controller\Action\Admin
             $fd = $source->getClass()->getFieldDefinition($fieldname);
         } elseif ($ownerType == "localizedfield") {
             $fd = $source->getClass()->getFieldDefinition("localizedfields")->getFieldDefinition($fieldname);
-        } elseif( $ownerType == "objectbrick") {
+        } elseif ($ownerType == "objectbrick") {
             $fdBrick = Object\Objectbrick\Definition::getByKey($context["containerKey"]);
             $fd = $fdBrick->getFieldDefinition($fieldname);
         } elseif ($ownerType == "fieldcollection") {
@@ -382,10 +382,10 @@ class Admin_ElementController extends \Pimcore\Controller\Action\Admin
                 $targets = \Zend_Json::decode($this->getParam("targets"));
 
                 $result = call_user_func($formatterClass . "::formatPath", $result, $source, $targets,
-                    array(
+                    [
                         "fd" => $fd,
                         "context" => $context
-                    ));
+                    ]);
             } else {
                 Logger::error("Formatter Class does not exist: " . $formatterClass);
             }

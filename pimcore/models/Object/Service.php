@@ -785,7 +785,7 @@ class Service extends Model\Element\Service
                     if ($filterField == "fullpath") {
                         $conditionPartsFilters[] = "concat(o_path, o_key) " . $operator . " " . $db->quote("%" . $filter["value"] . "%");
                     } else {
-                        if($filter['type'] == 'date' && $operator == '=') {
+                        if ($filter['type'] == 'date' && $operator == '=') {
                             //if the equal operator is chosen with the date type, condition has to be changed
                             $maxTime = $filter['value'] + (86400 - 1); //specifies the top point of the range used in the condition
                             $conditionPartsFilters[] = "`o_" . $filterField . "` BETWEEN " . $db->quote($filter["value"]) . " AND " . $db->quote($maxTime);
