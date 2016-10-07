@@ -803,7 +803,7 @@ class Service extends Model\AbstractModel
         $key = preg_replace('/[^a-zA-Z0-9\-\.~_ ]+/', '-', $key);
         // keys shouldn't start with a "." (=hidden file) *nix operating systems
         // keys shouldn't end with a "." - Windows issue: filesystem API trims automatically . at the end of a folder name (no warning ... et al)
-        $key = trim($key, ".");
+        $key = trim($key, ". ");
 
         return $key;
     }
