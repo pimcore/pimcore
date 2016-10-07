@@ -276,6 +276,10 @@
         "definition": "Send Test-Email"
     },
     {
+        "term": "send_test_email_success",
+        "definition": "Your test-email has been sent. Would you like to keep this window open to send the email again?"
+    },
+    {
         "term": "global",
         "definition": "Global"
     },

@@ -288,32 +288,43 @@ CSS;
         }
 
         //matches all <link> Tags
-        preg_match_all("@<link.*?href\s*=\s*[\"']([^http].*?)[\"'].*?(/?>|</\s*link>)@is", $string, $matches);
+        preg_match_all("@<link.*?href\s*=\s*[\"'](.*?)[\"'].*?(/?>|</\s*link>)@is", $string, $matches);
         if (!empty($matches[0])) {
             $css = "";
 
             foreach ($matches[0] as $key => $value) {
                 $fullMatch = $matches[0][$key];
                 $path = $matches[1][$key];
-                $fileInfo = self::getNormalizedFileInfo($path, $document);
-                if (in_array($fileInfo['fileExtension'], ['css', 'less'])) {
-                    if (is_readable($fileInfo['filePathNormalized'])) {
-                        if ($fileInfo['fileExtension'] == 'css') {
-                            $fileContent = file_get_contents($fileInfo['filePathNormalized']);
-                        } else {
-                            $fileContent = \Pimcore\Tool\Less::compile($fileInfo['filePathNormalized']);
-                            $fileContent = str_replace('/**** compiled with lessphp ****/', '', $fileContent);
-                        }
-                        if ($fileContent) {
-                            $fileContent = self::normalizeCssContent($fileContent, $fileInfo);
 
-                            $css .= "\n\n\n";
-                            $css .= $fileContent;
-
-                            // remove <link> tag
-                            $string = str_replace($fullMatch, '', $string);
+                $fileContent = "";
+                $fileInfo = [];
+                if(stream_is_local($path)) {
+                    $fileInfo = self::getNormalizedFileInfo($path, $document);
+                    if (in_array($fileInfo['fileExtension'], ['css', 'less'])) {
+                        if (is_readable($fileInfo['filePathNormalized'])) {
+                            if ($fileInfo['fileExtension'] == 'css') {
+                                $fileContent = file_get_contents($fileInfo['filePathNormalized']);
+                            } else {
+                                $fileContent = \Pimcore\Tool\Less::compile($fileInfo['filePathNormalized']);
+                                $fileContent = str_replace('/**** compiled with lessphp ****/', '', $fileContent);
+                            }
                         }
                     }
+                } elseif (strpos($path, "http") === 0) {
+                    $fileContent = \Pimcore\Tool::getHttpData($path);
+                    $fileInfo = [
+                        "fileUrlNormalized" => $path
+                    ];
+                }
+
+                if ($fileContent) {
+                    $fileContent = self::normalizeCssContent($fileContent, $fileInfo);
+
+                    $css .= "\n\n\n";
+                    $css .= $fileContent;
+
+                    // remove <link> tag
+                    $string = str_replace($fullMatch, '', $string);
                 }
             }
 

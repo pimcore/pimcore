@@ -1586,14 +1586,28 @@ pimcore.helpers.sendTestEmail = function () {
         var params = win.getComponent("form").getForm().getFieldValues();
         params["type"] = type;
 
+        win.disable();
+
         Ext.Ajax.request({
             url: "/admin/email/send-test-email",
             params: params,
-            method: "post"
+            method: "post",
+            success: function () {
+                Ext.Msg.show({
+                    title: t("send_test_email"),
+                    message: t("send_test_email_success"),
+                    buttons: Ext.Msg.YESNO,
+                    icon: Ext.Msg.QUESTION,
+                    fn: function(btn) {
+                        win.enable();
+                        if (btn === 'no') {
+                            win.close();
+                        }
+                    }
+                });
+            }
         });
-
-        win.close();
-    }
+    };
 
     win.show();
 
