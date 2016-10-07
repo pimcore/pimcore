@@ -239,6 +239,7 @@ class Reports_CustomReportController extends \Pimcore\Controller\Action\Admin\Re
         $dir = $this->getParam("dir");
         $filters = ($this->getParam("filter") ? json_decode($this->getParam("filter"), true) : null);
         $drillDownFilters = $this->getParam("drillDownFilters", null);
+        $includeHeaders = $this->getParam('headers', false);
 
         $config = CustomReport\Config::getByName($this->getParam("name"));
 
@@ -264,6 +265,10 @@ class Reports_CustomReportController extends \Pimcore\Controller\Action\Admin\Re
         @unlink($exportFile);
 
         $fp = fopen($exportFile, 'w');
+
+        if ($includeHeaders) {
+            fputcsv($fp, $fields);
+        }
 
         foreach ($result['data'] as $row) {
             fputcsv($fp, array_values($row));
