@@ -801,7 +801,9 @@ class Service extends Model\AbstractModel
 
         $key = \Pimcore\Tool\Transliteration::toASCII($key);
         $key = preg_replace('/[^a-zA-Z0-9\-\.~_ ]+/', '-', $key);
-        $key = ltrim($key, "."); // keys shouldn't start with a "." (=hidden file)
+        // keys shouldn't start with a "." (=hidden file) *nix operating systems
+        // keys shouldn't end with a "." - Windows issue: filesystem API trims automatically . at the end of a folder name (no warning ... et al)
+        $key = trim($key, ".");
 
         return $key;
     }
