@@ -298,7 +298,7 @@ CSS;
 
                 $fileContent = "";
                 $fileInfo = [];
-                if(stream_is_local($path)) {
+                if (stream_is_local($path)) {
                     $fileInfo = self::getNormalizedFileInfo($path, $document);
                     if (in_array($fileInfo['fileExtension'], ['css', 'less'])) {
                         if (is_readable($fileInfo['filePathNormalized'])) {
