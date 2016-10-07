@@ -111,7 +111,7 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
                 },
                 items: [
                     {header: 'ID', dataIndex: 'id', flex: 50},
-                    {header: t("path"), dataIndex: 'path', flex: 200},
+                    {header: t("reference"), dataIndex: 'path', flex: 200},
                     {header: t("type"), dataIndex: 'type', flex: 100},
                     {
                         xtype: 'actioncolumn',
