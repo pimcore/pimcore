@@ -400,6 +400,4 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
     {
         $this->pathFormatterClass = $pathFormatterClass;
     }
-
-
 }

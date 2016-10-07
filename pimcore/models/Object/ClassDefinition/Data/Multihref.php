@@ -898,6 +898,4 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
             return $result;
         }
     }
-
-
 }

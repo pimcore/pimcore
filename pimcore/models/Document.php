@@ -567,7 +567,7 @@ class Document extends Element\AbstractElement
 
     /**
      * Update the document index.
-     * 
+     *
      * @param int $index
      * @return void
      */

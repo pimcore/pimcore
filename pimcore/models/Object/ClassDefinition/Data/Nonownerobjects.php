@@ -289,5 +289,4 @@ class Nonownerobjects extends Model\Object\ClassDefinition\Data\Objects
     {
         return null;
     }
-
 }
