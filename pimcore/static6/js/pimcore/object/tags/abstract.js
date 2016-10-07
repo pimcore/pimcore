@@ -29,6 +29,7 @@ pimcore.object.tags.abstract = Class.create({
 
     setName:function (name) {
         this.name = name;
+        this.context.fieldname = name;
     },
 
     getName:function () {
@@ -237,5 +238,25 @@ pimcore.object.tags.abstract = Class.create({
         }
 
         throw "isDirty() is not implemented";
+    },
+
+    getContext: function() {
+        this.createDefaultContext();
+        return this.context;
+    },
+
+    updateContext: function(context) {
+        this.createDefaultContext();
+        Ext.apply(this.context, context);
+    },
+
+    createDefaultContext: function() {
+        if (typeof this.context === "undefined") {
+            this.context = {
+                containerType: "object",
+                fieldname: null
+            };
+        }
     }
+
 });

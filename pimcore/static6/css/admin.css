@@ -1406,3 +1406,7 @@ span.warning {
     display: inline-block;
     outline: 0;
 }
+
+.grid_nicepath_requested {
+    background-color: lightblue;
+}

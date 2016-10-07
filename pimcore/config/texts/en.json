@@ -6167,5 +6167,9 @@
     {
         "term": "newsletter_email_field_name",
         "definition": "Email field name"
+    },
+    {
+        "term": "path_formatter_class",
+        "definition": "Formatter Class"
     }
 ]

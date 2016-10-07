@@ -2793,3 +2793,87 @@ pimcore.helpers.initMenuTooltips = function(){
 
     items.addClass("initialized", "true");
 };
+
+pimcore.helpers.requestNicePathDataGridDecorator = function(gridView, targets) {
+    targets.each(function(record){
+        var el = gridView.getRow(record);
+        if (el) {
+            el = Ext.fly(el);
+            el.addCls("grid_nicepath_requested");
+        }
+    },this);
+
+};
+
+pimcore.helpers.requestNicePathData = function(source, targets, config, fieldConfig, context, decorator, responseHandler) {
+    if (typeof targets === "undefined" || typeof fieldConfig.pathFormatterClass === "undefined") {
+        return;
+    }
+
+    if (!targets.getCount() > 0 ) {
+        return;
+    }
+
+    config = config || {};
+    Ext.applyIf(config, {
+        idProperty: "id"
+    });
+
+    var elementData = {};
+
+    targets.each(function(record){
+        var recordId = record.data[config.idProperty];
+        elementData[recordId] = record.data;
+    },this);
+
+    if (decorator) {
+        decorator(targets);
+    }
+
+    elementData = Ext.encode(elementData);
+
+    Ext.Ajax.request({
+        url: "/admin/element/get-nice-path",
+        params: {
+            source: Ext.encode(source),
+            targets: elementData,
+            context: Ext.encode(context)
+
+        },
+        success: function (response) {
+            try {
+                var rdata = Ext.decode(response.responseText);
+                if (rdata.success) {
+
+                    var responseData = rdata.data;
+                    responseHandler(responseData);
+                }
+            } catch (e) {
+                console.log(e);
+            }
+        }.bind(this)
+    });
+}
+
+
+pimcore.helpers.getNicePathHandlerStore = function(store, config, gridView, responseData) {
+    config = config || {};
+    Ext.applyIf(config, {
+        idProperty: "id",
+        pathProperty: "path"
+    });
+
+    store.each(function (record, id) {
+        var recordId = record.data[config.idProperty];
+        if (typeof responseData[recordId] != "undefined") {
+            record.set(config.pathProperty, responseData[recordId], { dirty: false });
+
+            var el = gridView.getRow(record);
+            if (el) {
+                el = Ext.fly(el);
+                el.removeCls("grid_nicepath_requested");
+            }
+        }
+    }, this);
+
+}

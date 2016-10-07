@@ -106,6 +106,11 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
      */
     public $documentTypes;
 
+    /** Optional path formatter class
+     * @var mixed
+     */
+    public $pathFormatterClass;
+
 
     /**
      * @return boolean
@@ -441,6 +446,22 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
         $this->height = $this->getAsIntegerCast($height);
 
         return $this;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getPathFormatterClass()
+    {
+        return $this->pathFormatterClass;
+    }
+
+    /**
+     * @param null|string $pathFormatterClass
+     */
+    public function setPathFormatterClass($pathFormatterClass)
+    {
+        $this->pathFormatterClass = $pathFormatterClass;
     }
 
 
@@ -900,4 +921,6 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
             return $result;
         }
     }
+
+
 }

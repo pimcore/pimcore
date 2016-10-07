@@ -197,6 +197,13 @@ pimcore.object.classes.data.multihref = Class.create(pimcore.object.classes.data
                         value: t('lazy_loading_warning'),
                         cls: "pimcore_extra_label_bottom",
                         style: "color:red; font-weight: bold; padding-bottom:0;"
+                    },
+                    {
+                        xtype: 'textfield',
+                        width: 600,
+                        fieldLabel: t("path_formatter_class"),
+                        name: 'pathFormatterClass',
+                        value: this.datax.pathFormatterClass
                     }
                 ]
             },
@@ -349,8 +356,6 @@ pimcore.object.classes.data.multihref = Class.create(pimcore.object.classes.data
                     })
                 ]
             }
-
-
         ]);
 
         return this.layout;
