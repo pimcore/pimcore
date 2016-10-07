@@ -470,6 +470,7 @@ class Document extends Element\AbstractElement
      * Validate the document path.
      *
      * @throws \Exception
+     * @return void
      */
     public function correctPath()
     {
@@ -568,6 +569,7 @@ class Document extends Element\AbstractElement
      * Update the document index.
      * 
      * @param int $index
+     * @return void
      */
     public function saveIndex($index)
     {
@@ -579,6 +581,7 @@ class Document extends Element\AbstractElement
      * Clear the cache related to the document.
      *
      * @param array $additionalTags
+     * @return void
      */
     public function clearDependentCache($additionalTags = [])
     {
@@ -720,7 +723,7 @@ class Document extends Element\AbstractElement
      * Mark the document as locked.
      *
      * @param  $locked
-     * @return $this
+     * @return Document
      */
     public function setLocked($locked)
     {
@@ -998,7 +1001,7 @@ class Document extends Element\AbstractElement
      * Set the id of the document.
      *
      * @param integer $id
-     * @return $this
+     * @return Document
      */
     public function setId($id)
     {
@@ -1011,7 +1014,7 @@ class Document extends Element\AbstractElement
      * Set the document key.
      *
      * @param integer $key
-     * @return $this
+     * @return Document
      */
     public function setKey($key)
     {
@@ -1025,7 +1028,7 @@ class Document extends Element\AbstractElement
      * Set the document modification date.
      *
      * @param integer $modificationDate
-     * @return $this
+     * @return Document
      */
     public function setModificationDate($modificationDate)
     {
@@ -1039,7 +1042,7 @@ class Document extends Element\AbstractElement
      * Set the parent id of the document.
      *
      * @param integer $parentId
-     * @return $this
+     * @return Document
      */
     public function setParentId($parentId)
     {
@@ -1053,7 +1056,7 @@ class Document extends Element\AbstractElement
      * Set the document path.
      *
      * @param string $path
-     * @return $this
+     * @return Document
      */
     public function setPath($path)
     {
@@ -1076,7 +1079,7 @@ class Document extends Element\AbstractElement
      * Set the document index.
      *
      * @param integer $index
-     * @return $this
+     * @return Document
      */
     public function setIndex($index)
     {
@@ -1212,6 +1215,8 @@ class Document extends Element\AbstractElement
     }
 
     /**
+     * Set document properties.
+     *
      * @param array $properties
      * @return Document
      */
@@ -1223,6 +1228,8 @@ class Document extends Element\AbstractElement
     }
 
     /**
+     * Set the document property.
+     *
      * @param string $name
      * @param string $type
      * @param mixed $data
@@ -1266,7 +1273,7 @@ class Document extends Element\AbstractElement
      * Set the parent document instance.
      *
      * @param Document $parent
-     * @return $this
+     * @return Document
      */
     public function setParent($parent)
     {
@@ -1331,6 +1338,8 @@ class Document extends Element\AbstractElement
 
     /**
      *  Removes all inherited properties.
+     *
+     * @return void
      */
     public function removeInheritedProperties()
     {
@@ -1348,6 +1357,8 @@ class Document extends Element\AbstractElement
 
     /**
      * Renews all inherited properties.
+     *
+     * @return void
      */
     public function renewInheritedProperties()
     {
