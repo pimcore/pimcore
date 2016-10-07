@@ -70,6 +70,8 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     }
 
     /**
+     * Returns documents, also loads the rows if these aren't loaded.
+     *
      * @return array
      */
     public function getDocuments()
@@ -82,8 +84,10 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     }
 
     /**
+     * Assign documents to the listing.
+     *
      * @param array $documents
-     * @return $this
+     * @return Listing
      */
     public function setDocuments($documents)
     {
@@ -93,6 +97,8 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     }
 
     /**
+     * Checks if the document is unpublished.
+     *
      * @return bool
      */
     public function getUnpublished()
@@ -101,6 +107,8 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     }
 
     /**
+     * Set the unpublished flag for the document.
+     *
      * @return bool
      */
     public function setUnpublished($unpublished)
@@ -110,6 +118,11 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
         return $this;
     }
 
+    /**
+     * Returns the SQL condition value.
+     *
+     * @return string
+     */
     public function getCondition()
     {
         $condition = parent::getCondition();
@@ -130,11 +143,23 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
      * Methods for \Zend_Paginator_Adapter_Interface
      */
 
+    /**
+     * Returns the total items count.
+     *
+     * @return int
+     */
     public function count()
     {
         return $this->getTotalCount();
     }
 
+    /**
+     * Returns the listing based on defined offset and limit as parameters.
+     *
+     * @param int $offset
+     * @param int $itemCountPerPage
+     * @return Listing
+     */
     public function getItems($offset, $itemCountPerPage)
     {
         $this->setOffset($offset);
@@ -143,6 +168,9 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
         return $this->load();
     }
 
+    /**
+     * @return Listing
+     */
     public function getPaginatorAdapter()
     {
         return $this;
@@ -153,12 +181,20 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
      * Methods for Iterator
      */
 
+    /**
+     * Rewind the listing back to te start.
+     */
     public function rewind()
     {
         $this->getDocuments();
         reset($this->documents);
     }
 
+    /**
+     * Returns the current listing row.
+     *
+     * @return Document
+     */
     public function current()
     {
         $this->getDocuments();
@@ -167,6 +203,11 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
         return $var;
     }
 
+    /**
+     * Returns the current listing row key.
+     *
+     * @return mixed
+     */
     public function key()
     {
         $this->getDocuments();
@@ -175,6 +216,11 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
         return $var;
     }
 
+    /**
+     * Returns the next listing row key.
+     *
+     * @return mixed
+     */
     public function next()
     {
         $this->getDocuments();
@@ -183,6 +229,11 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
         return $var;
     }
 
+    /**
+     * Checks whether the listing contains more entries.
+     *
+     * @return bool
+     */
     public function valid()
     {
         $this->getDocuments();
