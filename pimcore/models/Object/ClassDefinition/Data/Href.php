@@ -99,7 +99,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     public $documentTypes;
 
     /** Optional path formatter class
-     * @var string
+     * @var null|string
      */
     public $pathFormatterClass;
 
@@ -683,17 +683,17 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     }
 
     /**
-     * @return string
+     * @return null|string
      */
-    public function getPathFormatterClass(): string
+    public function getPathFormatterClass()
     {
         return $this->pathFormatterClass;
     }
 
     /**
-     * @param string $pathFormatterClass
+     * @param null|string $pathFormatterClass
      */
-    public function setPathFormatterClass(string $pathFormatterClass)
+    public function setPathFormatterClass($pathFormatterClass)
     {
         $this->pathFormatterClass = $pathFormatterClass;
     }
