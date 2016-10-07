@@ -67,11 +67,6 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
      */
     public $relationType = true;
 
-    /** Optional path formatter class
-     * @var null|string $pathFormatterClass
-     */
-    public $pathFormatterClass;
-
     /**
      * @return boolean
      */
@@ -740,22 +735,4 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
             return $result;
         }
     }
-
-    /**
-     * @return null|string
-     */
-    public function getPathFormatterClass()
-    {
-        return $this->pathFormatterClass;
-    }
-
-    /**
-     * @param null|string $pathFormatterClass
-     */
-    public function setPathFormatterClass($pathFormatterClass)
-    {
-        $this->pathFormatterClass = $pathFormatterClass;
-    }
-
-
 }

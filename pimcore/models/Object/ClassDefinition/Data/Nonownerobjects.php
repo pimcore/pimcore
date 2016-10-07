@@ -58,11 +58,6 @@ class Nonownerobjects extends Model\Object\ClassDefinition\Data\Objects
      */
     public $lazyLoading = true;
 
-    /** Optional path formatter class
-     * @var mixed
-     */
-    public $pathFormatterClass;
-
     /**
      * @param array $classes
      * @return $this
@@ -294,22 +289,5 @@ class Nonownerobjects extends Model\Object\ClassDefinition\Data\Objects
     {
         return null;
     }
-
-    /**
-     * @return mixed
-     */
-    public function getPathFormatterClass()
-    {
-        return $this->pathFormatterClass;
-    }
-
-    /**
-     * @param mixed $pathFormatterClass
-     */
-    public function setPathFormatterClass($pathFormatterClass)
-    {
-        $this->pathFormatterClass = $pathFormatterClass;
-    }
-
 
 }
