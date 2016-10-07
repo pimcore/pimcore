@@ -317,9 +317,6 @@ CSS;
                 }
             }
 
-            $autoloader = \Zend_Loader_Autoloader::getInstance();
-            $autoloader->registerNamespace('TijsVerkoyen');
-
             $cssToInlineStyles = new CssToInlineStyles();
             $cssToInlineStyles->setHTML($string);
             $cssToInlineStyles->setCSS($css);
