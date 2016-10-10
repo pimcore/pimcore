@@ -295,10 +295,17 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
         if(this.dirty) {
             return this.dirty;
         }
-        
+
         if(this.ckeditor) {
-            return this.ckeditor.checkDirty();
+            var ckeditorDirty = this.ckeditor.checkDirty();
+            if(ckeditorDirty) {
+                // once dirty, always dirty
+                // this is due the way checkDirty() is implemented in CKEditor, because it relies on the initial content
+                this.dirty = ckeditorDirty;
+            }
+            return ckeditorDirty;
         }
+
         return false;
     }
 });
