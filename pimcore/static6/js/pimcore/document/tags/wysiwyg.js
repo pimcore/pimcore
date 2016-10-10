@@ -101,11 +101,11 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
             }
 
             eConfig.language = pimcore.settings["language"];
-            eConfig.removePlugins = 'bgcolor,' + removePluginsAdd;
+            eConfig.removePlugins = removePluginsAdd;
             eConfig.entities = false;
             eConfig.entities_greek = false;
             eConfig.entities_latin = false;
-            eConfig.allowedContent = true; // disables CKEditor ACF (will remove pimcore_* attributes from links, etc.)
+            eConfig.extraAllowedContent = "*[pimcore_type,pimcore_id]";
 
             this.ckeditor = CKEDITOR.inline(this.textarea, eConfig);
 

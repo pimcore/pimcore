@@ -157,9 +157,12 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
         }
 
         //prevent override important settings!
-        eConfig.allowedContent = true; // disables CKEditor ACF (will remove pimcore_* attributes from links, etc.)
         eConfig.removePlugins = "tableresize";
         eConfig.resize_enabled = false;
+        eConfig.entities = false;
+        eConfig.entities_greek = false;
+        eConfig.entities_latin = false;
+        eConfig.extraAllowedContent = "*[pimcore_type,pimcore_id]";
 
         if(typeof(pimcore.object.tags.wysiwyg.defaultEditorConfig) == 'object'){
             eConfig = mergeObject(pimcore.object.tags.wysiwyg.defaultEditorConfig,eConfig);
