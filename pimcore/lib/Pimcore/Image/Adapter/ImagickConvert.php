@@ -149,7 +149,8 @@ class ImagickConvert extends Adapter
         $frameWidth = $width - $this->getWidth() == 0 ? 0 : ($width - $this->getWidth()) / 2;
         $frameHeight = $height - $this->getHeight() == 0 ? 0 : ($height - $this->getHeight()) / 2;
         $this->addOption('frame', "{$frameWidth}x{$frameHeight}")
-            ->addOption('alpha', 'Set');
+            ->addOption('alpha', 'set')
+        ;
 
         return $this;
     }
@@ -172,7 +173,9 @@ class ImagickConvert extends Adapter
      */
     public function rotate($angle)
     {
-        $this->addOption('rotate', $angle)->addOption('alpha', 'Set');
+        $this->addOption('rotate', $angle)
+            ->addOption('alpha', 'set')
+        ;
         return $this;
     }
 
@@ -230,7 +233,8 @@ class ImagickConvert extends Adapter
         $this
             ->addOption('matte', $maskTargetPath)
             ->addOption('compose', 'DstIn')
-            ->addOption('composite', '')
+            ->addOption('composite')
+            ->addOption('alpha', 'set')
         ;
 
         return $this;
