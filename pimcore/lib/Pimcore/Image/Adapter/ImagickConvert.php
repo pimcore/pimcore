@@ -25,6 +25,11 @@ class ImagickConvert extends Adapter
      */
     protected $availableOptions = null;
 
+    /**
+     * @var null|\Imagick
+     */
+    protected $resource = null;
+
     public function load($imagePath, $options = [])
     {
         // support image URLs
@@ -49,9 +54,21 @@ class ImagickConvert extends Adapter
 
         $this->imagePath = $imagePath;
 
+        $this->initResource();
+
         $this->setModified(false);
 
         return $this;
+    }
+
+    protected function initResource()
+    {
+        if (null === $this->resource) {
+            $this->resource = new \Imagick();
+        }
+        $this->resource->readImage($this->imagePath);
+        $this->setWidth($this->resource->getImageWidth())
+            ->setHeight($this->resource->getImageHeight());
     }
 
     /**
@@ -64,7 +81,9 @@ class ImagickConvert extends Adapter
      */
     public function save($path, $format = null, $quality = null)
     {
-        exec((string) $this);
+        $command = ((string) $this) . $path;
+        recursiveCopy($this->imagePath, $path);
+        exec($command);
 
         return $this;
     }
@@ -81,25 +100,78 @@ class ImagickConvert extends Adapter
         return $this;
     }
 
+    /**
+     * @param $width
+     * @param $height
+     * @return $this
+     */
     public function resize($width, $height)
     {
-
+        $this->preModify();
+        $this->addOption('resize', "{$width}x{$height}");
+        $this->setWidth($width);
+        $this->setHeight($height);
+        $this->postModify();
+        return $this;
     }
 
+    /**
+     * @param $width
+     * @param $height
+     * @return ImagickConvert
+     */
     public function frame($width, $height)
     {
+        $this->preModify();
+
+        $this->contain($width, $height);
+        $frameWidth = $width - $this->getWidth() == 0 ? 0 : ($width - $this->getWidth()) / 2;
+        $frameHeight = $height - $this->getHeight() == 0 ? 0 : ($height - $this->getHeight()) / 2;
+        $this->addOption('frame', "{$frameWidth}x{$frameHeight}")
+            ->addOption('alpha', 'Set');
+
+        $this->postModify();
+
+        return $this;
     }
 
+    /**
+     * @param int $tolerance
+     * @return ImagickConvert
+     */
     public function trim($tolerance)
     {
+        $this->preModify();
+        $this->addOption('trim', $tolerance);
+        $this->postModify();
+
+        return $this;
     }
 
+    /**
+     * @param $angle
+     * @return ImagickConvert
+     */
     public function rotate($angle)
     {
+        $this->preModify();
+        $this->addOption('rotate', $angle)->addOption('alpha', 'Set');
+        $this->postModify();
+        return $this;
     }
 
+    /**
+     * @param $x
+     * @param $y
+     * @param $width
+     * @param $height
+     * @return ImagickConvert
+     */
     public function crop($x, $y, $width, $height)
     {
+        $this->addOption('crop', "{$width}x{$height}+{$x}+{$y}");
+
+        return $this;
     }
 
     public function setBackgroundColor($color)
@@ -183,7 +255,7 @@ class ImagickConvert extends Adapter
      */
     public function __toString()
     {
-        return "convert {$this->getOptionsAsString($this->outputPath)}";
+        return "convert {$this->getOptionsAsString()}";
     }
 
     /**
@@ -191,14 +263,30 @@ class ImagickConvert extends Adapter
      *
      * @return string
      */
-    public function getOptionsAsString($path = null)
+    public function getOptionsAsString()
     {
-        $options = '';
+        $options = $this->imagePath . ' ';
         foreach($this->command as $commandKey => $commandValue) {
-            $options .= "{$commandKey} {$commandValue} ";
+            $options .= "-{$commandKey} {$commandValue} ";
         }
-        $options .= ' ' . $path;
 
         return $options;
+    }
+
+    /**
+     * @TODO - change to CLI
+     *
+     * @param $width
+     * @param $height
+     * @param string $color
+     * @return \Imagick
+     */
+    protected function createImage($width, $height, $color = "transparent")
+    {
+        $newImage = new \Imagick();
+        $newImage->newimage($width, $height, $color);
+        $newImage->setImageFormat($this->resource->getImageFormat());
+
+        return $newImage;
     }
 }
