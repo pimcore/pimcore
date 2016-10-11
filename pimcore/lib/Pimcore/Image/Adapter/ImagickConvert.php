@@ -30,8 +30,18 @@ class ImagickConvert extends Adapter
      */
     protected $resource = null;
 
+    /**
+     * Array with filters used with options
+     *
+     * @var array
+     */
     protected $filters = [];
 
+    /**
+     * @param $imagePath
+     * @param array $options
+     * @return ImagickConvert
+     */
     public function load($imagePath, $options = [])
     {
         // support image URLs
@@ -63,6 +73,9 @@ class ImagickConvert extends Adapter
         return $this;
     }
 
+    /**
+     * @return ImagickConvert
+     */
     protected function initResource()
     {
         if (null === $this->resource) {
@@ -71,6 +84,8 @@ class ImagickConvert extends Adapter
         $this->resource->readImage($this->imagePath);
         $this->setWidth($this->resource->getImageWidth())
             ->setHeight($this->resource->getImageHeight());
+
+        return $this;
     }
 
     /**
@@ -103,6 +118,8 @@ class ImagickConvert extends Adapter
     }
 
     /**
+     * Resize the image
+     *
      * @param $width
      * @param $height
      * @return $this
@@ -116,20 +133,19 @@ class ImagickConvert extends Adapter
     }
 
     /**
+     * Adds frame which cause that the image gets exactly the entered dimensions by adding borders.
+     *
      * @param $width
      * @param $height
      * @return ImagickConvert
      */
     public function frame($width, $height)
     {
-
         $this->contain($width, $height);
         $frameWidth = $width - $this->getWidth() == 0 ? 0 : ($width - $this->getWidth()) / 2;
         $frameHeight = $height - $this->getHeight() == 0 ? 0 : ($height - $this->getHeight()) / 2;
         $this->addOption('frame', "{$frameWidth}x{$frameHeight}")
             ->addOption('alpha', 'Set');
-
-
 
         return $this;
     }
@@ -146,6 +162,7 @@ class ImagickConvert extends Adapter
     }
 
     /**
+     * Rotates the image with the given angle.
      * @param $angle
      * @return ImagickConvert
      */
@@ -156,6 +173,8 @@ class ImagickConvert extends Adapter
     }
 
     /**
+     * Cuts out a box of the image starting at the given X,Y coordinates and using the width and height.
+     *
      * @param $x
      * @param $y
      * @param $width
@@ -170,6 +189,8 @@ class ImagickConvert extends Adapter
     }
 
     /**
+     * Set the background color of the image.
+     *
      * @param $color
      * @return ImagickConvert
      */
@@ -182,6 +203,9 @@ class ImagickConvert extends Adapter
     }
 
     /**
+     * Rounds the corners to the given width/height.
+     *
+     * @TODO hasn't done yet. At the moment it's using width and height as a rounded values.
      *
      * @param $width
      * @param $height
@@ -208,6 +232,12 @@ class ImagickConvert extends Adapter
         return $this;
     }
 
+    /**
+     * @TODO find easier way to achievie setting the background image
+     *
+     * @param $image
+     * @param null $mode
+     */
     public function setBackgroundImage($image, $mode = null)
     {
 
@@ -255,11 +285,25 @@ class ImagickConvert extends Adapter
         return $this;
     }
 
+    /**
+     * Cuts out a box of the image starting at the given X,Y coordinates and using the percentage values of width and height.
+     *
+     * @param $x
+     * @param $y
+     * @param $width
+     * @param $height
+     * @return $this
+     */
     public function cropPercent($x, $y, $width, $height)
     {
+        $this->addOption('crop-percent', "{$width}%x{$height}%+{$x}+{$y}");
+
+        return $this;
     }
 
     /**
+     * Converts the image into a linear-grayscale image.
+     *
      * @return ImagickConvert
      */
     public function grayscale($method = "Rec709Luminance")
@@ -269,18 +313,39 @@ class ImagickConvert extends Adapter
         return $this;
     }
 
+    /**
+     * Applies the sepia effect into the image.
+     *
+     * @return ImagickConvert
+     */
     public function sepia()
     {
         $this->addOption('sepia-tone', "85%");
         return $this;
     }
 
+    /**
+     * Sharpen the image.
+     *
+     * @param int $radius
+     * @param float $sigma
+     * @param float $amount
+     * @param float $threshold
+     * @return ImagickConvert
+     */
     public function sharpen($radius = 0, $sigma = 1.0, $amount = 1.0, $threshold = 0.05)
     {
         $this->addOption('sharpen', "'{$radius}x{$sigma}+$amount+$threshold'");
         return $this;
     }
 
+    /**
+     * Blur the image.
+     *
+     * @param int $radius
+     * @param float $sigma
+     * @return $this
+     */
     public function gaussianBlur($radius = 0, $sigma = 1.0)
     {
         $this->addOption('gaussian-blur', "{$radius}x{$sigma}");
@@ -288,6 +353,8 @@ class ImagickConvert extends Adapter
     }
 
     /**
+     * Brightness, saturation and hue setting of the image.
+     *
      * @param int $brightness
      * @param int $saturation
      * @param int $hue
@@ -299,10 +366,30 @@ class ImagickConvert extends Adapter
         return $this;
     }
 
+    /**
+     * Creates vertical or horizontal mirror of the image.
+     *
+     * @param $mode
+     * @return ImagickConvert
+     */
     public function mirror($mode)
     {
+        if ($mode == "vertical") {
+            $this->addOption('flip');
+        } elseif ($mode == "horizontal") {
+            $this->addOption('flop');
+        }
+
+        return $this;
     }
 
+    /**
+     * Add option to the command
+     *
+     * @param $name
+     * @param null $value
+     * @return $this
+     */
     public function addOption($name, $value = null)
     {
         $this->command[$name] = $value;
