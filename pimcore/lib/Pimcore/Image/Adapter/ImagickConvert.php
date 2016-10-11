@@ -423,6 +423,8 @@ class ImagickConvert extends Adapter
     }
 
     /**
+     * @TODO Path to the tool should be taken from DI configuration
+     *
      * @return string
      */
     public function __toString()
