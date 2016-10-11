@@ -7,7 +7,7 @@ use Pimcore\Logger;
 
 class ImagickConvert extends Adapter
 {
-    protected $imagePath = "";
+    protected $imagePath = null;
 
     /**
      * Command used by the CLI script
@@ -36,6 +36,10 @@ class ImagickConvert extends Adapter
      * @var array
      */
     protected $filters = [];
+
+    protected $convertScriptPath = 'convert';
+
+
 
     /**
      * @param $imagePath
@@ -286,7 +290,7 @@ class ImagickConvert extends Adapter
     }
 
     /**
-     * Cuts out a box of the image starting at the given X,Y coordinates and using the percentage values of width and height.
+     * Cuts out a box of the image starting at the given X,Y coordinates and using percentage values of width and height.
      *
      * @param $x
      * @param $y
@@ -423,13 +427,12 @@ class ImagickConvert extends Adapter
     }
 
     /**
-     * @TODO Path to the tool should be taken from DI configuration
      *
      * @return string
      */
     public function __toString()
     {
-        return "convert {$this->getOptionsAsString()}";
+        return "{$this->getConvertScriptPath()} {$this->getOptionsAsString()}";
     }
 
     /**
@@ -448,4 +451,25 @@ class ImagickConvert extends Adapter
         return $options;
     }
 
+    /**
+     * Returns the convert cli script path.
+     *
+     * @return string
+     */
+    public function getConvertScriptPath()
+    {
+        return $this->convertScriptPath;
+    }
+
+    /**
+     * Convert script path, as a default the adapter is just using 'convert'.
+     *
+     * @param $convertScriptPath
+     * @return $this
+     */
+    public function setConvertScriptPath($convertScriptPath)
+    {
+        $this->convertScriptPath = $convertScriptPath;
+        return $this;
+    }
 }
