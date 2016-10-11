@@ -212,8 +212,6 @@ class ImagickConvert extends Adapter
     /**
      * Rounds the corners to the given width/height.
      *
-     * @TODO hasn't done yet. At the moment it's using width and height as a rounded values.
-     *
      * @param $width
      * @param $height
      * @return ImagickConvert
