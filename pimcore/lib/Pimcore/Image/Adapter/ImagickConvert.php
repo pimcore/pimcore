@@ -287,8 +287,16 @@ class ImagickConvert extends Adapter
         return $this;
     }
 
+    /**
+     * @param int $brightness
+     * @param int $saturation
+     * @param int $hue
+     * @return ImagickConvert
+     */
     public function brightnessSaturation($brightness = 100, $saturation = 100, $hue = 100)
     {
+        $this->addOption('modulate', "{$brightness},{$saturation},{$hue}");
+        return $this;
     }
 
     public function mirror($mode)
