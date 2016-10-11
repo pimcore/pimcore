@@ -233,7 +233,7 @@ class ImagickConvert extends Adapter
     }
 
     /**
-     * @TODO find easier way to achievie setting the background image
+     * @TODO find simpler way
      *
      * @param $image
      * @param null $mode
