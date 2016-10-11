@@ -30,6 +30,8 @@ class ImagickConvert extends Adapter
      */
     protected $resource = null;
 
+    protected $filters = [];
+
     public function load($imagePath, $options = [])
     {
         // support image URLs
@@ -107,11 +109,9 @@ class ImagickConvert extends Adapter
      */
     public function resize($width, $height)
     {
-        $this->preModify();
         $this->addOption('resize', "{$width}x{$height}");
         $this->setWidth($width);
         $this->setHeight($height);
-        $this->postModify();
         return $this;
     }
 
@@ -122,7 +122,6 @@ class ImagickConvert extends Adapter
      */
     public function frame($width, $height)
     {
-        $this->preModify();
 
         $this->contain($width, $height);
         $frameWidth = $width - $this->getWidth() == 0 ? 0 : ($width - $this->getWidth()) / 2;
@@ -130,7 +129,7 @@ class ImagickConvert extends Adapter
         $this->addOption('frame', "{$frameWidth}x{$frameHeight}")
             ->addOption('alpha', 'Set');
 
-        $this->postModify();
+
 
         return $this;
     }
@@ -141,9 +140,7 @@ class ImagickConvert extends Adapter
      */
     public function trim($tolerance)
     {
-        $this->preModify();
         $this->addOption('trim', $tolerance);
-        $this->postModify();
 
         return $this;
     }
@@ -154,9 +151,7 @@ class ImagickConvert extends Adapter
      */
     public function rotate($angle)
     {
-        $this->preModify();
         $this->addOption('rotate', $angle)->addOption('alpha', 'Set');
-        $this->postModify();
         return $this;
     }
 
@@ -174,16 +169,71 @@ class ImagickConvert extends Adapter
         return $this;
     }
 
+    /**
+     * @param $color
+     * @return ImagickConvert
+     */
     public function setBackgroundColor($color)
     {
+
+        $this->addOption('background', "\"{$color}\"");
+
+        return $this;
     }
 
+    /**
+     *
+     * @param $width
+     * @param $height
+     * @return ImagickConvert
+     */
     public function roundCorners($width, $height)
     {
+        //creates the mask for rounded corners
+        $mask = new ImagickConvert();
+        $mask->addOption('size', "{$this->getWidth()}x{$this->getHeight()}")
+            ->addOption('draw', "'roundRectangle 0,0 {$this->getWidth()},{$this->getHeight()} {$width},{$height}'");
+        $mask->addFilter('draw', 'xc:none');
+        $tmpFilename = "imagick_mask_" . md5($this->imagePath) . '.png';
+        $maskTargetPath = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . $tmpFilename;
+        exec((string) $mask . ' ' . $maskTargetPath);
+        $this->tmpFiles[] = $maskTargetPath;
+
+        $this
+            ->addOption('matte', $maskTargetPath)
+            ->addOption('compose', 'DstIn')
+            ->addOption('composite', '')
+        ;
+
+        return $this;
     }
 
     public function setBackgroundImage($image, $mode = null)
     {
+
+        /*$image = ltrim($image, "/");
+        $imagePath = PIMCORE_DOCUMENT_ROOT . "/" . $image;
+
+        if (is_file($imagePath)) {
+            $newImage = new ImagickConvert();
+            $newImage->load($imagePath);
+
+            if ($mode == "cropTopLeft") {
+                $newImage->crop($this->getWidth(), $this->getHeight(), 0, 0);
+            } else {
+                // default behavior (fit)
+                $newImage->resize($this->getWidth(), $this->getHeight());
+            }
+
+            $tmpFilename = "imagick_mask_" . md5($this->imagePath) . '.png';
+            $tmpFilepath = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . $tmpFilename;
+            $this->tmpFiles[] = $tmpFilepath;
+
+            $newImage->save($tmpFilepath;)
+        }
+
+
+        return $this;*/
     }
 
     public function addOverlay($image, $x = 0, $y = 0, $alpha = 100, $composite = "COMPOSITE_DEFAULT", $origin = 'top-left')
@@ -200,9 +250,7 @@ class ImagickConvert extends Adapter
      */
     public function applyMask($image)
     {
-        $this->preModify();
         $this->addOption('write-mask', $image);
-        $this->postModify();
 
         return $this;
     }
@@ -216,23 +264,27 @@ class ImagickConvert extends Adapter
      */
     public function grayscale($method = "Rec709Luminance")
     {
-        $this->preModify();
         $this->addOption('grayscale', $method);
-        $this->postModify();
 
         return $this;
     }
 
     public function sepia()
     {
+        $this->addOption('sepia-tone', "85%");
+        return $this;
     }
 
     public function sharpen($radius = 0, $sigma = 1.0, $amount = 1.0, $threshold = 0.05)
     {
+        $this->addOption('sharpen', "'{$radius}x{$sigma}+$amount+$threshold'");
+        return $this;
     }
 
     public function gaussianBlur($radius = 0, $sigma = 1.0)
     {
+        $this->addOption('gaussian-blur', "{$radius}x{$sigma}");
+        return $this;
     }
 
     public function brightnessSaturation($brightness = 100, $saturation = 100, $hue = 100)
@@ -243,11 +295,36 @@ class ImagickConvert extends Adapter
     {
     }
 
-    protected function addOption($name, $value = null)
+    public function addOption($name, $value = null)
     {
         $this->command[$name] = $value;
 
         return $this;
+    }
+
+    /**
+     * @param $optionName
+     * @param $filterValue
+     * @return $this
+     */
+    public function addFilter($optionName, $filterValue)
+    {
+        if(! isset($this->filters[$optionName])) {
+            $this->filters[$optionName] = [];
+        }
+
+        $this->filters[$optionName][] = $filterValue;
+
+        return $this;
+    }
+
+    /**
+     * @param $optionName
+     * @return array
+     */
+    public function getFilters($optionName)
+    {
+        return isset($this->filters[$optionName]) ? $this->filters[$optionName] : [];
     }
 
     /**
@@ -267,26 +344,11 @@ class ImagickConvert extends Adapter
     {
         $options = $this->imagePath . ' ';
         foreach($this->command as $commandKey => $commandValue) {
+            $options .= implode(' ', $this->getFilters($commandKey)) . ' ';
             $options .= "-{$commandKey} {$commandValue} ";
         }
 
         return $options;
     }
 
-    /**
-     * @TODO - change to CLI
-     *
-     * @param $width
-     * @param $height
-     * @param string $color
-     * @return \Imagick
-     */
-    protected function createImage($width, $height, $color = "transparent")
-    {
-        $newImage = new \Imagick();
-        $newImage->newimage($width, $height, $color);
-        $newImage->setImageFormat($this->resource->getImageFormat());
-
-        return $newImage;
-    }
 }
