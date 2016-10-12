@@ -10,20 +10,18 @@ class ImageMagick extends Adapter
     protected $imagePath = null;
 
     /**
-     * Command used by the CLI script
+     * Options used by the convert script
      *
-     * @var string
+     * @var array
      */
-    protected $command = [];
+    protected $convertCommandOptions = [];
 
-
-    protected $outputPath = null;
     /**
-     * available options in the convert tool
+     * Options used by the composite script
      *
-     * @var null|array
+     * @var array
      */
-    protected $availableOptions = null;
+    protected $compositeCommandOptions = [];
 
     /**
      * @var null|\Imagick
@@ -35,16 +33,23 @@ class ImageMagick extends Adapter
      *
      * @var array
      */
-    protected $filters = [];
+    protected $convertFilters = [];
 
+    /**
+     * @var string
+     */
     protected $convertScriptPath = 'convert';
 
+    /**
+     * @var string
+     */
+    protected $compositeScriptPath = 'composite';
 
 
     /**
      * @param $imagePath
      * @param array $options
-     * @return ImagickConvert
+     * @return ImageMagick
      */
     public function load($imagePath, $options = [])
     {
@@ -78,7 +83,7 @@ class ImageMagick extends Adapter
     }
 
     /**
-     * @return ImagickConvert
+     * @return ImageMagick
      */
     protected function initResource()
     {
@@ -102,7 +107,7 @@ class ImageMagick extends Adapter
      */
     public function save($path, $format = null, $quality = null)
     {
-        $command = ((string) $this) . $path;
+        $command = $this->getConvertCommand() . $path;
         recursiveCopy($this->imagePath, $path);
         exec($command);
 
@@ -110,7 +115,7 @@ class ImageMagick extends Adapter
     }
 
     /**
-     * @return ImagickConvert
+     * @return ImageMagick
      */
     protected function destroy()
     {
@@ -130,7 +135,7 @@ class ImageMagick extends Adapter
      */
     public function resize($width, $height)
     {
-        $this->addOption('resize', "{$width}x{$height}");
+        $this->addConvertOption('resize', "{$width}x{$height}");
         $this->setWidth($width);
         $this->setHeight($height);
         return $this;
@@ -141,15 +146,15 @@ class ImageMagick extends Adapter
      *
      * @param $width
      * @param $height
-     * @return ImagickConvert
+     * @return ImageMagick
      */
     public function frame($width, $height)
     {
         $this->contain($width, $height);
         $frameWidth = $width - $this->getWidth() == 0 ? 0 : ($width - $this->getWidth()) / 2;
         $frameHeight = $height - $this->getHeight() == 0 ? 0 : ($height - $this->getHeight()) / 2;
-        $this->addOption('frame', "{$frameWidth}x{$frameHeight}")
-            ->addOption('alpha', 'set')
+        $this->addConvertOption('frame', "{$frameWidth}x{$frameHeight}")
+            ->addConvertOption('alpha', 'set')
         ;
 
         return $this;
@@ -157,11 +162,11 @@ class ImageMagick extends Adapter
 
     /**
      * @param int $tolerance
-     * @return ImagickConvert
+     * @return ImageMagick
      */
     public function trim($tolerance)
     {
-        $this->addOption('trim', $tolerance);
+        $this->addConvertOption('trim', $tolerance);
 
         return $this;
     }
@@ -169,12 +174,12 @@ class ImageMagick extends Adapter
     /**
      * Rotates the image with the given angle.
      * @param $angle
-     * @return ImagickConvert
+     * @return ImageMagick
      */
     public function rotate($angle)
     {
-        $this->addOption('rotate', $angle)
-            ->addOption('alpha', 'set')
+        $this->addConvertOption('rotate', $angle)
+            ->addConvertOption('alpha', 'set')
         ;
         return $this;
     }
@@ -186,11 +191,11 @@ class ImageMagick extends Adapter
      * @param $y
      * @param $width
      * @param $height
-     * @return ImagickConvert
+     * @return ImageMagick
      */
     public function crop($x, $y, $width, $height)
     {
-        $this->addOption('crop', "{$width}x{$height}+{$x}+{$y}");
+        $this->addConvertOption('crop', "{$width}x{$height}+{$x}+{$y}");
 
         return $this;
     }
@@ -199,12 +204,12 @@ class ImageMagick extends Adapter
      * Set the background color of the image.
      *
      * @param $color
-     * @return ImagickConvert
+     * @return ImageMagick
      */
     public function setBackgroundColor($color)
     {
 
-        $this->addOption('background', "\"{$color}\"");
+        $this->addConvertOption('background', "\"{$color}\"");
 
         return $this;
     }
@@ -214,14 +219,14 @@ class ImageMagick extends Adapter
      *
      * @param $width
      * @param $height
-     * @return ImagickConvert
+     * @return ImageMagick
      */
     public function roundCorners($width, $height)
     {
         //creates the mask for rounded corners
-        $mask = new ImagickConvert();
-        $mask->addOption('size', "{$this->getWidth()}x{$this->getHeight()}")
-            ->addOption('draw', "'roundRectangle 0,0 {$this->getWidth()},{$this->getHeight()} {$width},{$height}'");
+        $mask = new ImageMagick();
+        $mask->addConvertOption('size', "{$this->getWidth()}x{$this->getHeight()}")
+            ->addConvertOption('draw', "'roundRectangle 0,0 {$this->getWidth()},{$this->getHeight()} {$width},{$height}'");
         $mask->addFilter('draw', 'xc:none');
         $tmpFilename = "imagick_mask_" . md5($this->imagePath) . '.png';
         $maskTargetPath = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . $tmpFilename;
@@ -229,47 +234,62 @@ class ImageMagick extends Adapter
         $this->tmpFiles[] = $maskTargetPath;
 
         $this
-            ->addOption('matte', $maskTargetPath)
-            ->addOption('compose', 'DstIn')
-            ->addOption('composite')
-            ->addOption('alpha', 'set')
+            ->addConvertOption('matte', $maskTargetPath)
+            ->addConvertOption('compose', 'DstIn')
+            ->addConvertOption('composite')
+            ->addConvertOption('alpha', 'set')
         ;
 
         return $this;
     }
 
     /**
-     * @TODO find simpler way
+     * Set the image background
      *
      * @param $image
      * @param null $mode
+     * @return ImageMagick
      */
     public function setBackgroundImage($image, $mode = null)
     {
 
-        /*$image = ltrim($image, "/");
+        $image = ltrim($image, "/");
         $imagePath = PIMCORE_DOCUMENT_ROOT . "/" . $image;
 
         if (is_file($imagePath)) {
-            $newImage = new ImagickConvert();
+            //if a specified file as a background exists
+            $newImage = new ImageMagick();
             $newImage->load($imagePath);
 
             if ($mode == "cropTopLeft") {
-                $newImage->crop($this->getWidth(), $this->getHeight(), 0, 0);
+                //crop the background image
+                $newImage->crop(0, 0, $this->getWidth(), $this->getHeight());
             } else {
                 // default behavior (fit)
                 $newImage->resize($this->getWidth(), $this->getHeight());
             }
 
-            $tmpFilename = "imagick_mask_" . md5($this->imagePath) . '.png';
+            //creates the temp file for the background
+            $tmpBackgroundFilename = "imagemagick_background_" . md5($this->imagePath) . '.png';
+            $tmpBackgroundFilepath = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . $tmpBackgroundFilename;
+            $this->tmpFiles[] = $tmpBackgroundFilepath;
+            $newImage->save($tmpBackgroundFilepath);
+
+            //save current state of the thumbnail to the tmp file
+            $tmpFilename = "imagemagick_gravity_" . md5($this->imagePath) . '.png';
             $tmpFilepath = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . $tmpFilename;
             $this->tmpFiles[] = $tmpFilepath;
+            $this->save($tmpFilepath);
 
-            $newImage->save($tmpFilepath;)
+            //save the current state of the file (with a background)
+            $this->compositeCommandOptions = [];
+            $this->addCompositeOption('gravity', 'center ' . $tmpFilepath . ' ' . $tmpBackgroundFilepath . ' ' . $tmpFilepath);
+            exec($this->getCompositeCommand());
+            $this->imagePath = $tmpFilepath;
         }
 
 
-        return $this;*/
+        return $this;
     }
 
     public function addOverlay($image, $x = 0, $y = 0, $alpha = 100, $composite = "COMPOSITE_DEFAULT", $origin = 'top-left')
@@ -282,11 +302,11 @@ class ImageMagick extends Adapter
 
     /**
      * @param $image
-     * @return ImagickConvert
+     * @return ImageMagick
      */
     public function applyMask($image)
     {
-        $this->addOption('write-mask', $image);
+        $this->addConvertOption('write-mask', $image);
 
         return $this;
     }
@@ -302,7 +322,7 @@ class ImageMagick extends Adapter
      */
     public function cropPercent($x, $y, $width, $height)
     {
-        $this->addOption('crop-percent', "{$width}%x{$height}%+{$x}+{$y}");
+        $this->addConvertOption('crop-percent', "{$width}%x{$height}%+{$x}+{$y}");
 
         return $this;
     }
@@ -310,11 +330,11 @@ class ImageMagick extends Adapter
     /**
      * Converts the image into a linear-grayscale image.
      *
-     * @return ImagickConvert
+     * @return ImageMagick
      */
     public function grayscale($method = "Rec709Luminance")
     {
-        $this->addOption('grayscale', $method);
+        $this->addConvertOption('grayscale', $method);
 
         return $this;
     }
@@ -322,11 +342,11 @@ class ImageMagick extends Adapter
     /**
      * Applies the sepia effect into the image.
      *
-     * @return ImagickConvert
+     * @return ImageMagick
      */
     public function sepia()
     {
-        $this->addOption('sepia-tone', "85%");
+        $this->addConvertOption('sepia-tone', "85%");
         return $this;
     }
 
@@ -337,11 +357,11 @@ class ImageMagick extends Adapter
      * @param float $sigma
      * @param float $amount
      * @param float $threshold
-     * @return ImagickConvert
+     * @return ImageMagick
      */
     public function sharpen($radius = 0, $sigma = 1.0, $amount = 1.0, $threshold = 0.05)
     {
-        $this->addOption('sharpen', "'{$radius}x{$sigma}+$amount+$threshold'");
+        $this->addConvertOption('sharpen', "'{$radius}x{$sigma}+$amount+$threshold'");
         return $this;
     }
 
@@ -354,7 +374,7 @@ class ImageMagick extends Adapter
      */
     public function gaussianBlur($radius = 0, $sigma = 1.0)
     {
-        $this->addOption('gaussian-blur', "{$radius}x{$sigma}");
+        $this->addConvertOption('gaussian-blur', "{$radius}x{$sigma}");
         return $this;
     }
 
@@ -364,11 +384,11 @@ class ImageMagick extends Adapter
      * @param int $brightness
      * @param int $saturation
      * @param int $hue
-     * @return ImagickConvert
+     * @return ImageMagick
      */
     public function brightnessSaturation($brightness = 100, $saturation = 100, $hue = 100)
     {
-        $this->addOption('modulate', "{$brightness},{$saturation},{$hue}");
+        $this->addConvertOption('modulate', "{$brightness},{$saturation},{$hue}");
         return $this;
     }
 
@@ -376,14 +396,14 @@ class ImageMagick extends Adapter
      * Creates vertical or horizontal mirror of the image.
      *
      * @param $mode
-     * @return ImagickConvert
+     * @return ImageMagick
      */
     public function mirror($mode)
     {
         if ($mode == "vertical") {
-            $this->addOption('flip');
+            $this->addConvertOption('flip');
         } elseif ($mode == "horizontal") {
-            $this->addOption('flop');
+            $this->addConvertOption('flop');
         }
 
         return $this;
@@ -394,11 +414,23 @@ class ImageMagick extends Adapter
      *
      * @param $name
      * @param null $value
-     * @return $this
+     * @return ImageMagick
      */
-    public function addOption($name, $value = null)
+    public function addConvertOption($name, $value = null)
     {
-        $this->command[$name] = $value;
+        $this->convertCommandOptions[$name] = $value;
+
+        return $this;
+    }
+
+    /**
+     * @param $name
+     * @param null $value
+     * @return ImageMagick
+     */
+    public function addCompositeOption($name, $value = null)
+    {
+        $this->compositeCommandOptions[$name] = $value;
 
         return $this;
     }
@@ -410,11 +442,11 @@ class ImageMagick extends Adapter
      */
     public function addFilter($optionName, $filterValue)
     {
-        if(! isset($this->filters[$optionName])) {
-            $this->filters[$optionName] = [];
+        if(! isset($this->convertFilters[$optionName])) {
+            $this->convertFilters[$optionName] = [];
         }
 
-        $this->filters[$optionName][] = $filterValue;
+        $this->convertFilters[$optionName][] = $filterValue;
 
         return $this;
     }
@@ -423,18 +455,26 @@ class ImageMagick extends Adapter
      * @param $optionName
      * @return array
      */
-    public function getFilters($optionName)
+    public function getConvertFilters($optionName)
     {
-        return isset($this->filters[$optionName]) ? $this->filters[$optionName] : [];
+        return isset($this->convertFilters[$optionName]) ? $this->convertFilters[$optionName] : [];
     }
 
     /**
      *
      * @return string
      */
-    public function __toString()
+    public function getConvertCommand()
     {
-        return "{$this->getConvertScriptPath()} {$this->getOptionsAsString()}";
+        return "{$this->getConvertScriptPath()} {$this->getConvertOptionsAsString()}";
+    }
+
+    /**
+     * @return string
+     */
+    public function getCompositeCommand()
+    {
+        return "{$this->getCompositeScriptPath()} {$this->getCompositeOptionsAsString()}";
     }
 
     /**
@@ -442,11 +482,21 @@ class ImageMagick extends Adapter
      *
      * @return string
      */
-    public function getOptionsAsString()
+    public function getConvertOptionsAsString()
     {
         $options = $this->imagePath . ' ';
-        foreach($this->command as $commandKey => $commandValue) {
-            $options .= implode(' ', $this->getFilters($commandKey)) . ' ';
+        foreach($this->convertCommandOptions as $commandKey => $commandValue) {
+            $options .= implode(' ', $this->getConvertFilters($commandKey)) . ' ';
+            $options .= "-{$commandKey} {$commandValue} ";
+        }
+
+        return $options;
+    }
+
+    public function getCompositeOptionsAsString()
+    {
+        $options = '';
+        foreach($this->compositeCommandOptions as $commandKey => $commandValue) {
             $options .= "-{$commandKey} {$commandValue} ";
         }
 
@@ -467,11 +517,34 @@ class ImageMagick extends Adapter
      * Convert script path, as a default the adapter is just using 'convert'.
      *
      * @param $convertScriptPath
-     * @return $this
+     * @return ImageMagick
      */
     public function setConvertScriptPath($convertScriptPath)
     {
         $this->convertScriptPath = $convertScriptPath;
+        return $this;
+    }
+
+    /**
+     * Returns the composite cli script path.
+     *
+     * @return string
+     */
+    public function getCompositeScriptPath()
+    {
+        return $this->compositeScriptPath;
+    }
+
+    /**
+     * Composite script path, as a default the adapter is just using 'composite'.
+     *
+     * @param $convertScriptPath
+     * @return ImageMagick
+     */
+    public function setCompositeScriptPath($compositeScriptPath)
+    {
+        $this->compositeScriptPath = $compositeScriptPath;
+
         return $this;
     }
 }
