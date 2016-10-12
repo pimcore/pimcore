@@ -270,11 +270,21 @@ class Dao extends Model\Element\Dao
     }
 
     /**
+     * @deprecated
+     * @param array $objectTypes
+     * @return bool
+     */
+    public function hasChilds($objectTypes = [Object::OBJECT_TYPE_OBJECT, Object::OBJECT_TYPE_FOLDER])
+    {
+        return $this->hasChildren($objectTypes);
+    }
+
+    /**
      * Quick test if there are childs
      *
      * @return boolean
      */
-    public function hasChilds($objectTypes = [Object::OBJECT_TYPE_OBJECT, Object::OBJECT_TYPE_FOLDER])
+    public function hasChildren($objectTypes = [Object::OBJECT_TYPE_OBJECT, Object::OBJECT_TYPE_FOLDER])
     {
         $c = $this->db->fetchOne("SELECT o_id FROM objects WHERE o_parentId = ? AND o_type IN ('" . implode("','", $objectTypes) . "')", $this->model->getId());
 

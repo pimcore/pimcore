@@ -75,7 +75,7 @@ public function myGalleryAction()
     if($this->getParam('type') == 'asset') {
         $asset = Asset::getById($this->getParam('id'));
         if($asset->getType("folder")) {
-            $this->view->assets = $asset->getChilds();
+            $this->view->assets = $asset->getChildren();
         }
     }
 }

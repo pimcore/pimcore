@@ -20,6 +20,7 @@ use Pimcore\Model;
 
 class GroupConfig extends Model\AbstractModel
 {
+    use Model\Element\ElementTrait\HasChildsTrait;
 
     /** Group id.
      * @var integer
@@ -91,7 +92,7 @@ class GroupConfig extends Model\AbstractModel
         }
     }
 
-    public function hasChilds()
+    public function hasChildren()
     {
         return $this->getDao()->hasChilds();
     }

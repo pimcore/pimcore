@@ -21,6 +21,7 @@ use Pimcore\Logger;
 
 class Dao extends Model\Element\Dao
 {
+    use Model\Element\ElementTrait\HasChildsTrait;
     /**
      * Get the data for the object by id from database and assign it to the object (model)
      * @param $id
@@ -326,7 +327,7 @@ class Dao extends Model\Element\Dao
      *
      * @return boolean
      */
-    public function hasChilds()
+    public function hasChildren()
     {
         $c = $this->db->fetchOne("SELECT id FROM assets WHERE parentId = ?", $this->model->getId());
 

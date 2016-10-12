@@ -22,6 +22,7 @@ use Pimcore\Logger;
 
 class Dao extends Model\Element\Dao
 {
+    use Model\Element\ElementTrait\HasChildsTrait;
     /**
      * Fetch a row by an id from the database and assign variables to the document model.
      *
@@ -335,7 +336,7 @@ class Dao extends Model\Element\Dao
      *
      * @return boolean
      */
-    public function hasChilds()
+    public function hasChildren()
     {
         $c = $this->db->fetchOne("SELECT id FROM documents WHERE parentId = ? LIMIT 1", $this->model->getId());
 

@@ -20,9 +20,11 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Object;
 use Pimcore\Tool;
+use Pimcore\Model\Element\ElementTrait;
 
 class Localizedfields extends Model\Object\ClassDefinition\Data
 {
+    use ElementTrait\GetChildsTrait, ElementTrait\HasChildsTrait, ElementTrait\SetChildsTrait;
 
     /**
      * Static type of this element
@@ -461,18 +463,18 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     /**
      * @return array
      */
-    public function getChilds()
+    public function getChildren()
     {
         return $this->childs;
     }
 
     /**
-     * @param array $childs
+     * @param array $children
      * @return $this
      */
-    public function setChilds($childs)
+    public function setChildren($children)
     {
-        $this->childs = $childs;
+        $this->childs = $children;
         $this->fieldDefinitionsCache = null;
 
         return $this;
@@ -481,7 +483,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     /**
      * @return boolean
      */
-    public function hasChilds()
+    public function hasChildren()
     {
         if (is_array($this->childs) && count($this->childs) > 0) {
             return true;

@@ -26,6 +26,7 @@ use Pimcore\Logger;
 
 class Asset extends Element\AbstractElement
 {
+    use Element\ElementTrait\GetChildsTrait, Element\ElementTrait\HasChildsTrait;
 
     /**
      * possible types of an asset
@@ -819,7 +820,7 @@ class Asset extends Element\AbstractElement
     /**
      * @return array
      */
-    public function getChilds()
+    public function getChildren()
     {
         if ($this->childs === null) {
             $list = new Asset\Listing();
@@ -836,7 +837,7 @@ class Asset extends Element\AbstractElement
     /**
      * @return boolean
      */
-    public function hasChilds()
+    public function hasChildren()
     {
         if ($this->getType() == "folder") {
             if (is_bool($this->hasChilds)) {
