@@ -7,7 +7,15 @@ use Pimcore\Logger;
 
 class ImageMagick extends Adapter
 {
+    /**
+     * @var null|string
+     */
     protected $imagePath = null;
+
+    /**
+     * @var null|string
+     */
+    protected $outputPath = null;
 
     /**
      * Options used by the convert script
@@ -292,8 +300,65 @@ class ImageMagick extends Adapter
         return $this;
     }
 
+    /**
+     * @param string $image
+     * @param int $x
+     * @param int $y
+     * @param int $alpha
+     * @param string $composite
+     * @param string $origin
+     * @return ImageMagick
+     */
     public function addOverlay($image, $x = 0, $y = 0, $alpha = 100, $composite = "COMPOSITE_DEFAULT", $origin = 'top-left')
     {
+        $allowedComposeOptions = [
+            'hardlight', 'exclusion'
+        ];
+        $composite = strtolower(substr(strrchr($composite, "_"),1));
+        $composeVal = in_array($composite, $allowedComposeOptions) ? $composite : null;
+
+        if (is_file($image)) {
+            //if a specified file as a overlay exists
+            $overlayImage = $this->createTmpImage($image, 'overlay');
+            $overlayImage->addConvertOption('channel', 'a')->addConvertOption('evaluate', 'set ' . $alpha);
+
+            //defines the position in order to the origin value
+            switch ($origin) {
+                case "top-right":
+                    $x =  $overlayImage->getWidth() - $this->getWidth() - $x;
+                    break;
+                case "bottom-left":
+                    $y =  $overlayImage->getHeight() - $this->getHeight() - $y;
+                    break;
+                case "bottom-right":
+                    $x = $overlayImage->getWidth() - $this->getWidth()  - $x;
+                    $y = $overlayImage->getHeight() - $this->getHeight() - $y;
+                    break;
+                case "center":
+                    $x = round($overlayImage->getWidth() / 2) -round($this->getWidth() / 2) + $x;
+                    $y = round($overlayImage->getHeight() / 2) - round($this->getHeight() / 2) + $y;
+                    break;
+            }
+            //rop the overlay image
+            $overlayImage->crop($x, $y, $this->getWidth(), $this->getHeight());
+            $overlayImage->save($overlayImage->getOutputPath());
+
+
+            //save current state of the thumbnail to the tmp file
+            $tmpFilename = "imagemagick_compose_" . md5($this->imagePath) . '.png';
+            $tmpFilepath = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . $tmpFilename;
+            $this->tmpFiles[] = $tmpFilepath;
+            $this->save($tmpFilepath);
+
+            //composes images together
+            $this->compositeCommandOptions = [];
+            $this
+                ->addCompositeOption('compose', $composeVal . ' ' . $overlayImage->getOutputPath() . ' ' . $tmpFilepath . ' ' . $tmpFilepath);
+            exec($this->getCompositeCommand());
+            $this->imagePath = $tmpFilepath;
+        }
+
+        return $this;
     }
 
     public function addOverlayFit($image, $composite = "COMPOSITE_DEFAULT")
@@ -545,6 +610,43 @@ class ImageMagick extends Adapter
     {
         $this->compositeScriptPath = $compositeScriptPath;
 
+        return $this;
+    }
+
+    /**
+     * @param $imagePath
+     * @param $suffix
+     * @return ImageMagick
+     */
+    protected function createTmpImage($imagePath, $suffix)
+    {
+        //if a specified file as a overlay exists
+        $tmpImage = new ImageMagick();
+        $tmpImage->load($imagePath);
+        //creates the temp file for the background
+        $tmpFilename = "imagemagick_{$suffix}_" . md5($this->imagePath) . '.png';
+        $tmpFilepath = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . $tmpFilename;
+        $this->tmpFiles[] = $tmpFilepath;
+        $tmpImage->setOutputPath($tmpFilepath);
+
+        return $tmpImage;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getOutputPath()
+    {
+        return $this->outputPath;
+    }
+
+    /**
+     * @param $path
+     * @return ImageMagick
+     */
+    public function setOutputPath($path)
+    {
+        $this->outputPath = $path;
         return $this;
     }
 }
