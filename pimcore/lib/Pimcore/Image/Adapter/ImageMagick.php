@@ -304,16 +304,10 @@ class ImageMagick extends Adapter
      */
     public function addOverlay($image, $x = 0, $y = 0, $alpha = 100, $composite = "COMPOSITE_DEFAULT", $origin = 'top-left')
     {
-        $allowedComposeOptions = [
-            'hardlight', 'exclusion'
-        ];
-        $composite = strtolower(substr(strrchr($composite, "_"),1));
-        $composeVal = in_array($composite, $allowedComposeOptions) ? $composite : null;
-
         if (is_file($image)) {
             //if a specified file as a overlay exists
             $overlayImage = $this->createTmpImage($image, 'overlay');
-            $overlayImage->addConvertOption('channel', 'a')->addConvertOption('evaluate', 'set ' . $alpha);
+            $this->addConvertOption('channel', 'a')->addConvertOption('evaluate', "set {$alpha}%");
 
             //defines the position in order to the origin value
             switch ($origin) {
@@ -336,26 +330,58 @@ class ImageMagick extends Adapter
             $overlayImage->crop($x, $y, $this->getWidth(), $this->getHeight());
             $overlayImage->save($overlayImage->getOutputPath());
 
-
-            //save current state of the thumbnail to the tmp file
-            $tmpFilename = "imagemagick_compose_" . md5($this->imagePath) . '.png';
-            $tmpFilepath = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . $tmpFilename;
-            $this->tmpFiles[] = $tmpFilepath;
-            $this->save($tmpFilepath);
-
-            //composes images together
-            $this->compositeCommandOptions = [];
-            $this
-                ->addCompositeOption('compose', $composeVal . ' ' . $overlayImage->getOutputPath() . ' ' . $tmpFilepath . ' ' . $tmpFilepath);
-            exec($this->getCompositeCommand());
-            $this->imagePath = $tmpFilepath;
+            $this->processOverlay($overlayImage, $composite, $alpha);
         }
 
         return $this;
     }
 
+    /**
+     * @param $image
+     * @param string $composite
+     * @return ImageMagick
+     */
     public function addOverlayFit($image, $composite = "COMPOSITE_DEFAULT")
     {
+
+        if(is_file($image)) {
+            //if a specified file as a overlay exists
+            $overlayImage = $this->createTmpImage($image, 'overlay');
+            $overlayImage->resize($this->getWidth(), $this->getHeight())->save($overlayImage->getOutputPath());
+
+            $this->processOverlay($overlayImage, $composite);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ImageMagick $overlayImage
+     * @param string $composite
+     * @return ImageMagick
+     */
+    protected function processOverlay(ImageMagick $overlayImage, $composite = "COMPOSITE_DEFAULT")
+    {
+        //sets a value used by the compose option
+        $allowedComposeOptions = [
+            'hardlight', 'exclusion'
+        ];
+        $composite = strtolower(substr(strrchr($composite, "_"),1));
+        $composeVal = in_array($composite, $allowedComposeOptions) ? $composite : null;
+
+        //save current state of the thumbnail to the tmp file
+        $this->setTmpPaths($this, 'compose');
+        $this->tmpFiles[] = $this->getOutputPath();
+        $this->save($this->getOutputPath());
+
+        //composes images together
+        $this->compositeCommandOptions = [];
+        $this
+            ->addCompositeOption('compose', $composeVal . ' ' . $overlayImage->getOutputPath() . ' ' . $this->getOutputPath() . ' ' . $this->getOutputPath());
+        exec($this->getCompositeCommand());
+        $this->imagePath = $this->getOutputPath();
+
+        return $this;
     }
 
     /**
