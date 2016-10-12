@@ -20,7 +20,7 @@ use Pimcore\Model;
 
 class Folder extends Model\User\AbstractUser
 {
-    use Model\Element\ElementTrait\HasChildsTrait;
+    use Model\Element\ChildsCompatibilityTrait;
 
     /**
      * @var boolean

@@ -20,12 +20,12 @@ use Pimcore\Model;
 use Pimcore\Cache;
 use Pimcore\Tool;
 use Pimcore\Logger;
-use Pimcore\Model\Element\ElementTrait;
+use Pimcore\Model\Element;
 
 class AbstractObject extends Model\Element\AbstractElement
 {
-    use ElementTrait\SetChildsTrait, ElementTrait\GetHasChildsInObjectsTrait;
-    
+    use Element\ChildsCompatibilityTrait;
+
     const OBJECT_TYPE_FOLDER = "folder";
     const OBJECT_TYPE_OBJECT = "object";
     const OBJECT_TYPE_VARIANT = "variant";

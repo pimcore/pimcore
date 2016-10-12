@@ -20,11 +20,11 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Object;
 use Pimcore\Tool;
-use Pimcore\Model\Element\ElementTrait;
+use Pimcore\Model\Element;
 
 class Localizedfields extends Model\Object\ClassDefinition\Data
 {
-    use ElementTrait\GetChildsTrait, ElementTrait\HasChildsTrait, ElementTrait\SetChildsTrait;
+    use Element\ChildsCompatibilityTrait;
 
     /**
      * Static type of this element

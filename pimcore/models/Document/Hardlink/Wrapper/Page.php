@@ -17,9 +17,9 @@
 namespace Pimcore\Model\Document\Hardlink\Wrapper;
 
 use Pimcore\Model;
-use Pimcore\Model\Element\ElementTrait;
+use Pimcore\Model\Element;
 
 class Page extends Model\Document\Page implements Model\Document\Hardlink\Wrapper\WrapperInterface
 {
-    use Model\Document\Hardlink\Wrapper, ElementTrait\HasChildsTrait, ElementTrait\GetChildsWithFlagTrait;
+    use Model\Document\Hardlink\Wrapper, Element\ChildsCompatibilityTrait;
 }

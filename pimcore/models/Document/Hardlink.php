@@ -19,11 +19,11 @@ namespace Pimcore\Model\Document;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Redirect;
-use Pimcore\Model\Element\ElementTrait;
+use Pimcore\Model\Element;
 
 class Hardlink extends Document
 {
-    use ElementTrait\GetChildsWithFlagTrait, ElementTrait\HasChildsTrait;
+    use Element\ChildsCompatibilityTrait;
 
     /**
      * static type of this object

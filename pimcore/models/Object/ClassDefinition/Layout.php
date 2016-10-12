@@ -17,11 +17,11 @@
 namespace Pimcore\Model\Object\ClassDefinition;
 
 use Pimcore\Model;
-use Pimcore\Model\Element\ElementTrait;
+use Pimcore\Model\Element;
 
 class Layout
 {
-    use Model\Object\ClassDefinition\Helper\VarExport, ElementTrait\HasChildsTrait, ElementTrait\SetChildsTrait, ElementTrait\GetChildsTrait;
+    use Model\Object\ClassDefinition\Helper\VarExport, Element\ChildsCompatibilityTrait;
 
     /**
      * @var string

@@ -26,7 +26,7 @@ use Pimcore\Logger;
 
 class Asset extends Element\AbstractElement
 {
-    use Element\ElementTrait\GetChildsTrait, Element\ElementTrait\HasChildsTrait;
+    use Element\ChildsCompatibilityTrait;
 
     /**
      * possible types of an asset

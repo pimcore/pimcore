@@ -19,12 +19,11 @@ namespace Pimcore\Model\Object\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\Object;
 use Pimcore\Tool;
-use RestImporter\IdMapper;
-use Pimcore\Model\Element\ElementTrait;
+use Pimcore\Model\Element;
 
 class Classificationstore extends Model\Object\ClassDefinition\Data
 {
-    use ElementTrait\GetChildsTrait, ElementTrait\HasChildsTrait, ElementTrait\SetChildsTrait;
+    use Element\ChildsCompatibilityTrait;
 
     /**
      * Static type of this element

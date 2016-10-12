@@ -18,14 +18,14 @@
 namespace Pimcore\Model;
 
 use Pimcore\Model\Document\Listing;
-use Pimcore\Model\Element\ElementTrait;
+use Pimcore\Model\Element;
 use Pimcore\Tool;
 use Pimcore\Tool\Frontend as FrontendTool;
 use Pimcore\Logger;
 
 class Document extends Element\AbstractElement
 {
-    use ElementTrait\SetChildsTrait, ElementTrait\GetChildsWithFlagTrait, ElementTrait\HasChildsTrait;
+    use Element\ChildsCompatibilityTrait;
 
     /**
      * possible types of a document

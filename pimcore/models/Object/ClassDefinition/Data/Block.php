@@ -21,11 +21,10 @@ use Pimcore\Model\Element;
 use Pimcore\Model\Object;
 use Pimcore\Tool\Serialize;
 use Pimcore\Logger;
-use Pimcore\Model\Element\ElementTrait;
 
 class Block extends Model\Object\ClassDefinition\Data
 {
-    use ElementTrait\GetChildsTrait, ElementTrait\HasChildsTrait, ElementTrait\SetChildsTrait;
+    use Element\ChildsCompatibilityTrait;
 
     /**
      * Static type of this element
