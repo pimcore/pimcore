@@ -51,20 +51,20 @@ $objectX->save();
 ## Query Object Variants
 
 #### Get all Object Variants of an object
-Getting all variants of an object is quite simple. Just call `getChilds` and pass the wanted object types as an array. 
+Getting all variants of an object is quite simple. Just call `getChildren` and pass the wanted object types as an array. 
 If only variants should be returned use following line.
 
 ```php
-$objectX->getChilds([Object\AbstractObject::OBJECT_TYPE_VARIANT]);
+$objectX->getChildren([Object\AbstractObject::OBJECT_TYPE_VARIANT]);
 ```
 
-By default, `getChilds` delivers objects and folders but no variants.
+By default, `getChildren` delivers objects and folders but no variants.
 
 
 
 #### Object Variants in Object Lists
 
-Similar to `getChilds`, the object list objects now have an object type property, which defines the object types to 
+Similar to `getChildren`, the object list objects now have an object type property, which defines the object types to 
 deliver. Per default objects and folders are delivered. To deliver object variants, use one of the following code 
 snippets:
 
