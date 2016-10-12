@@ -232,20 +232,8 @@ class Datatrans implements IPayment
             throw new \Exception( $response['errorDetail'], $response['errorCode'] );
         }
 
-
         // check required fields
-        $required = [  'uppTransactionId' => null
-                       , 'responseCode' => null
-                       , 'responseMessage' => null
-                       , 'pmethod' => null
-                       , 'reqtype' => null
-                       , 'acqAuthorizationCode' => null
-                       , 'status' => null
-                       , 'uppMsgType' => null
-                       , 'refno' => null
-                       , 'amount' => null
-                       , 'currency' => null
-        ];
+        $required = $this->getRequiredResponseFields($response);
         $authorizedData = [
             'aliasCC' => null
             , 'expm' => null
@@ -256,25 +244,6 @@ class Datatrans implements IPayment
             , 'currency' => null
             , 'refno' => null
         ];
-
-
-        switch($response['pmethod'])
-        {
-            // creditcard
-            case 'VIS':
-            case 'ECA':
-//                $required['aliasCC'] = null;
-//                $required['maskedCC'] = null;
-                $required['expm'] = null;
-                $required['expy'] = null;
-                break;
-
-            // paypal
-            case 'PAP':
-//                $required['aliasCC'] = null;
-                break;
-        }
-
 
         // check fields
         $response = array_intersect_key($response, $required);
@@ -323,6 +292,38 @@ class Datatrans implements IPayment
                 , 'datatrans_response' => $response
             ]
         );
+    }
+
+    /**
+     * @param $response
+     * @return array
+     */
+    protected function getRequiredResponseFields($response)
+    {
+        $required = [
+            'uppTransactionId'     => null,
+            'responseCode'         => null,
+            'responseMessage'      => null,
+            'pmethod'              => null,
+            'reqtype'              => null,
+            'acqAuthorizationCode' => null,
+            'status'               => null,
+            'uppMsgType'           => null,
+            'refno'                => null,
+            'amount'               => null,
+            'currency'             => null,
+        ];
+
+        switch ($response['pmethod']) {
+            // creditcard
+            case 'VIS':
+            case 'ECA':
+                $required['expm'] = null;
+                $required['expy'] = null;
+                break;
+        }
+
+        return $required;
     }
 
     /**
