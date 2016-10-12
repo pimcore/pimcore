@@ -15,6 +15,11 @@ trait GetHasChildsInObjectsTrait
     }
 
 
+    /**
+     * @deprecated 
+     * @param array $objectTypes
+     * @return mixed
+     */
     public function hasChilds($objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER])
     {
         return $this->hasChildren($objectTypes);
