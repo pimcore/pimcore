@@ -14,14 +14,12 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace OnlineShop\Framework\PaymentManager\Payment;
 
 class Datatrans implements IPayment
 {
     const TRANS_TYPE_DEBIT = '05';
     const TRANS_TYPE_CREDIT = '06';
-
 
     /**
      * @var string
@@ -57,7 +55,6 @@ class Datatrans implements IPayment
      * @var \Zend_Locale
      */
     protected $currencyLocale;
-
 
     /**
      * @param \Zend_Config $config
@@ -100,7 +97,6 @@ class Datatrans implements IPayment
         $this->currencyLocale = \OnlineShop\Framework\Factory::getInstance()->getEnvironment()->getCurrencyLocale();
     }
 
-
     /**
      * @return string
      */
@@ -108,7 +104,6 @@ class Datatrans implements IPayment
     {
         return 'Datatrans';
     }
-
 
     /**
      * start payment
@@ -215,7 +210,6 @@ class Datatrans implements IPayment
 
         return $form;
     }
-
 
     /**
      * handle response / execute payment
@@ -328,7 +322,6 @@ class Datatrans implements IPayment
         );
     }
 
-
     /**
      * @param \OnlineShop\Framework\PriceSystem\IPrice $price
      * @param string                      $reference
@@ -414,7 +407,6 @@ class Datatrans implements IPayment
         return $status;
     }
 
-
     /**
      * gutschrift ausführen
      * @param \OnlineShop\Framework\PriceSystem\IPrice $price
@@ -487,7 +479,6 @@ class Datatrans implements IPayment
         return $status;
     }
 
-
     /**
      * @param array $authorizedData
      */
@@ -503,7 +494,6 @@ class Datatrans implements IPayment
     {
         return $this->authorizedData;
     }
-
 
     /**
      * transmit to datatrans
@@ -560,21 +550,8 @@ XML;
             , $expireYear
         );
 
-
-        $ch = curl_init( $this->endpoint['xmlAuthorize'] );
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: text/xml']);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $xml);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-
-        $output = curl_exec($ch);
-        curl_close($ch);
-
-        return simplexml_load_string($output);
+        return $this->xmlRequest($this->endpoint['xmlAuthorize'], $xml);
     }
-
 
     /**
      * authorisiertes settlement ausführen
@@ -620,9 +597,17 @@ XML;
             , $this->sign
         );
 
-        $ch = curl_init( $this->endpoint['xmlProcessor'] );
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        return $this->xmlRequest($this->endpoint['xmlProcessor'], $xml);
+    }
+
+    /**
+     * @param string $endpoint
+     * @param string $xml
+     * @return \SimpleXMLElement
+     */
+    protected function xmlRequest($endpoint, $xml)
+    {
+        $ch = curl_init($endpoint);
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: text/xml']);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $xml);
