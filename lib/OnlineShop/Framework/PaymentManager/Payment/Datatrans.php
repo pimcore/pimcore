@@ -21,6 +21,9 @@ class Datatrans implements IPayment
     const TRANS_TYPE_DEBIT = '05';
     const TRANS_TYPE_CREDIT = '06';
 
+    const AUTH_TYPE_AUTHORIZATION = 'NOA';
+    const AUTH_TYPE_FINAL_AUTHORIZATION = 'FOA'; // final authorization (MasterCard/Maestro)
+
     /**
      * @var string
      */
@@ -323,6 +326,19 @@ class Datatrans implements IPayment
     }
 
     /**
+     * Get valid authorization types
+     *
+     * @return array
+     */
+    protected function getValidAuthorizationTypes()
+    {
+        return [
+            static::AUTH_TYPE_AUTHORIZATION,
+            static::AUTH_TYPE_FINAL_AUTHORIZATION
+        ];
+    }
+
+    /**
      * @param \OnlineShop\Framework\PriceSystem\IPrice $price
      * @param string                      $reference
      *
@@ -333,9 +349,7 @@ class Datatrans implements IPayment
     {
         $uppTransactionId = null;
 
-
-        if($this->authorizedData['reqtype'] == 'NOA' && $this->authorizedData['uppTransactionId'])
-        {
+        if (in_array($this->authorizedData['reqtype'], $this->getValidAuthorizationTypes()) && $this->authorizedData['uppTransactionId']) {
             // restore price object for payment status
             $price = new \OnlineShop\Framework\PriceSystem\Price($this->authorizedData['amount'] / 100, new \Zend_Currency($this->authorizedData['currency'], $this->currencyLocale));
 
@@ -417,8 +431,7 @@ class Datatrans implements IPayment
      */
     public function executeCredit(\OnlineShop\Framework\PriceSystem\IPrice $price, $reference, $transactionId)
     {
-        if($this->authorizedData['reqtype'] == 'NOA' && $this->authorizedData['uppTransactionId'])
-        {
+        if (in_array($this->authorizedData['reqtype'], $this->getValidAuthorizationTypes()) && $this->authorizedData['uppTransactionId']) {
             // restore price object for payment status
             $price = new \OnlineShop\Framework\PriceSystem\Price($this->authorizedData['amount'] / 100, new \Zend_Currency($this->authorizedData['currency'], $this->currencyLocale));
 
