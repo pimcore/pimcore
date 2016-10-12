@@ -266,9 +266,8 @@ class ImageMagick extends Adapter
 
         if (is_file($imagePath)) {
             //if a specified file as a background exists
-            $newImage = new ImageMagick();
-            $newImage->load($imagePath);
-
+            //creates the temp file for the background
+            $newImage = $this->createTmpImage($imagePath, 'background');
             if ($mode == "cropTopLeft") {
                 //crop the background image
                 $newImage->crop(0, 0, $this->getWidth(), $this->getHeight());
@@ -276,24 +275,18 @@ class ImageMagick extends Adapter
                 // default behavior (fit)
                 $newImage->resize($this->getWidth(), $this->getHeight());
             }
-
-            //creates the temp file for the background
-            $tmpBackgroundFilename = "imagemagick_background_" . md5($this->imagePath) . '.png';
-            $tmpBackgroundFilepath = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . $tmpBackgroundFilename;
-            $this->tmpFiles[] = $tmpBackgroundFilepath;
-            $newImage->save($tmpBackgroundFilepath);
+            $newImage->save($newImage->getOutputPath());
 
             //save current state of the thumbnail to the tmp file
-            $tmpFilename = "imagemagick_gravity_" . md5($this->imagePath) . '.png';
-            $tmpFilepath = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . $tmpFilename;
-            $this->tmpFiles[] = $tmpFilepath;
-            $this->save($tmpFilepath);
+            $this->setTmpPaths($this, 'gravity');
+            $this->tmpFiles[] = $this->getOutputPath();
+            $this->save($this->getOutputPath());
 
             //save the current state of the file (with a background)
             $this->compositeCommandOptions = [];
-            $this->addCompositeOption('gravity', 'center ' . $tmpFilepath . ' ' . $tmpBackgroundFilepath . ' ' . $tmpFilepath);
+            $this->addCompositeOption('gravity', 'center ' . $this->getOutputPath() . ' ' . $newImage->getOutputPath() . ' ' . $this->getOutputPath());
             exec($this->getCompositeCommand());
-            $this->imagePath = $tmpFilepath;
+            $this->imagePath = $this->getOutputPath();
         }
 
 
@@ -624,12 +617,18 @@ class ImageMagick extends Adapter
         $tmpImage = new ImageMagick();
         $tmpImage->load($imagePath);
         //creates the temp file for the background
-        $tmpFilename = "imagemagick_{$suffix}_" . md5($this->imagePath) . '.png';
-        $tmpFilepath = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . $tmpFilename;
-        $this->tmpFiles[] = $tmpFilepath;
-        $tmpImage->setOutputPath($tmpFilepath);
+        $this->setTmpPaths($tmpImage, $suffix);
+        $this->tmpFiles[] = $tmpImage->getOutputPath();
 
         return $tmpImage;
+    }
+
+    protected function setTmpPaths(ImageMagick $image, $suffix)
+    {
+        $tmpFilename = "imagemagick_{$suffix}_" . md5($this->imagePath) . '.png';
+        $tmpFilepath = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . $tmpFilename;
+        $image->setOutputPath($tmpFilepath);
+        return $this;
     }
 
     /**
