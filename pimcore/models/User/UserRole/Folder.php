@@ -20,6 +20,7 @@ use Pimcore\Model;
 
 class Folder extends Model\User\AbstractUser
 {
+    use Model\Element\ElementTrait\HasChildsTrait;
 
     /**
      * @var boolean
@@ -42,7 +43,7 @@ class Folder extends Model\User\AbstractUser
      *
      * @return boolean
      */
-    public function hasChilds()
+    public function hasChildren()
     {
         if ($this->hasChilds !== null) {
             return $this->hasChilds;

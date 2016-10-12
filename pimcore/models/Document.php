@@ -18,12 +18,14 @@
 namespace Pimcore\Model;
 
 use Pimcore\Model\Document\Listing;
+use Pimcore\Model\Element\ElementTrait;
 use Pimcore\Tool;
 use Pimcore\Tool\Frontend as FrontendTool;
 use Pimcore\Logger;
 
 class Document extends Element\AbstractElement
 {
+    use ElementTrait\SetChildsTrait, ElementTrait\GetChildsWithFlagTrait, ElementTrait\HasChildsTrait;
 
     /**
      * possible types of a document
@@ -614,12 +616,12 @@ class Document extends Element\AbstractElement
      *
      * @return array
      */
-    public function setChilds($childs)
+    public function setChildren($children)
     {
-        $this->childs=$childs;
-        if (is_array($childs) and count($childs>0)) {
+        $this->childs=$children;
+        if (is_array($children) and count($children>0)) {
             $this->hasChilds=true;
-        } elseif ($childs === null) {
+        } elseif ($children === null) {
             $this->hasChilds = null;
         } else {
             $this->hasChilds=false;
@@ -633,7 +635,7 @@ class Document extends Element\AbstractElement
      * @param bool
      * @return array
      */
-    public function getChilds($unpublished = false)
+    public function getChildren($unpublished = false)
     {
         if ($this->childs === null) {
             $list = new Document\Listing();
@@ -653,7 +655,7 @@ class Document extends Element\AbstractElement
      *
      * @return boolean
      */
-    public function hasChilds()
+    public function hasChildren()
     {
         if (is_bool($this->hasChilds)) {
             if (($this->hasChilds and empty($this->childs)) or (!$this->hasChilds and !empty($this->childs))) {

@@ -20,6 +20,8 @@ use Pimcore\Model;
 
 class Dao extends Model\Dao\AbstractDao
 {
+    use Model\Element\ElementTrait\HasChildsTrait;
+
     const TABLE_NAME_GROUPS = "classificationstore_groups";
 
     /**
@@ -65,7 +67,7 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    public function hasChilds()
+    public function hasChildren()
     {
         try {
             $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM " . self::TABLE_NAME_GROUPS . " where parentId= " . $this->model->id);
