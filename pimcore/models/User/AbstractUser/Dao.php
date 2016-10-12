@@ -21,7 +21,7 @@ use Pimcore\Logger;
 
 class Dao extends Model\Dao\AbstractDao
 {
-
+    use Model\Element\ElementTrait\HasChildsTrait;
     /**
      * @param $id
      * @throws \Exception
@@ -98,7 +98,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return boolean
      */
-    public function hasChilds()
+    public function hasChildren()
     {
         $c = $this->db->fetchOne("SELECT id FROM users WHERE parentId = ?", $this->model->getId());
 
