@@ -130,11 +130,7 @@ abstract class Frontend extends Action
                 if (!Model\Staticroute::getCurrentRoute() && ($this->getDocument() instanceof Document\Page)) {
                     if (is_array($this->getDocument()->getMetaData())) {
                         foreach ($this->getDocument()->getMetaData() as $meta) {
-                            // only name
-                            if (!empty($meta["idName"]) && !empty($meta["idValue"]) && !empty($meta["contentValue"])) {
-                                $method = "append" . ucfirst($meta["idName"]);
-                                $this->view->headMeta()->$method($meta["idValue"], $meta["contentValue"]);
-                            }
+                            $this->view->headMeta()->addRaw($meta);
                         }
                     }
                 }

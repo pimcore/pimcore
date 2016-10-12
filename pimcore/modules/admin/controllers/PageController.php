@@ -138,13 +138,8 @@ class Admin_PageController extends \Pimcore\Controller\Action\Admin\Document
                 if ($this->getParam("settings") && is_array($settings)) {
                     $metaData = [];
                     for ($i=1; $i<30; $i++) {
-                        if (array_key_exists("metadata_idName_" . $i, $settings)) {
-                            $metaData[] = [
-                                "idName" => $settings["metadata_idName_" . $i],
-                                "idValue" => $settings["metadata_idValue_" . $i],
-                                "contentName" => $settings["metadata_contentName_" . $i],
-                                "contentValue" => $settings["metadata_contentValue_" . $i],
-                            ];
+                        if (array_key_exists("metadata_" . $i, $settings)) {
+                            $metaData[] = $settings["metadata_" . $i];
                         }
                     }
                     $page->setMetaData($metaData);
