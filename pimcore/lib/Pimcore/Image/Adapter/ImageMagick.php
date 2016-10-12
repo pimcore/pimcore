@@ -5,7 +5,7 @@ use Pimcore\File;
 use Pimcore\Image\Adapter;
 use Pimcore\Logger;
 
-class ImagickConvert extends Adapter
+class ImageMagick extends Adapter
 {
     protected $imagePath = null;
 
