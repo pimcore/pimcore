@@ -42,7 +42,7 @@ class Dao extends Model\Document\PageSnippet\Dao
 
             if ($data["id"] > 0) {
                 $data["metaData"] = @unserialize($data["metaData"]);
-                if(!is_array($data["metaData"])) {
+                if (!is_array($data["metaData"])) {
                     $data["metaData"] = [];
                 }
                 $this->assignVariablesToModel($data);

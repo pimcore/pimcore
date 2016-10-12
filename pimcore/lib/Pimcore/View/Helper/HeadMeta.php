@@ -16,7 +16,6 @@ namespace Pimcore\View\Helper;
 
 class HeadMeta extends \Zend_View_Helper_HeadMeta
 {
-
     protected $rawItems = [];
 
     /**
@@ -49,8 +48,10 @@ class HeadMeta extends \Zend_View_Helper_HeadMeta
      * @param string $html
      * @return $this
      */
-    public function addRaw($html) {
+    public function addRaw($html)
+    {
         $this->rawItems[] = $html;
+
         return $this;
     }
 }
