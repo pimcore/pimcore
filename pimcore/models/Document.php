@@ -616,12 +616,12 @@ class Document extends Element\AbstractElement
      *
      * @return array
      */
-    public function setChildren($childs)
+    public function setChildren($children)
     {
-        $this->childs=$childs;
-        if (is_array($childs) and count($childs>0)) {
+        $this->childs=$children;
+        if (is_array($children) and count($children>0)) {
             $this->hasChilds=true;
-        } elseif ($childs === null) {
+        } elseif ($children === null) {
             $this->hasChilds = null;
         } else {
             $this->hasChilds=false;
