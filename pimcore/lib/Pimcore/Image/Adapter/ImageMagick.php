@@ -236,13 +236,12 @@ class ImageMagick extends Adapter
         $mask->addConvertOption('size', "{$this->getWidth()}x{$this->getHeight()}")
             ->addConvertOption('draw', "'roundRectangle 0,0 {$this->getWidth()},{$this->getHeight()} {$width},{$height}'");
         $mask->addFilter('draw', 'xc:none');
-        $tmpFilename = "imagick_mask_" . md5($this->imagePath) . '.png';
-        $maskTargetPath = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . $tmpFilename;
-        exec((string) $mask . ' ' . $maskTargetPath);
-        $this->tmpFiles[] = $maskTargetPath;
+        $this->setTmpPaths($mask, 'mask');
+        exec((string) $mask . ' ' . $mask->getOutputPath());
+        $this->tmpFiles[] = $mask->getOutputPath();
 
         $this
-            ->addConvertOption('matte', $maskTargetPath)
+            ->addConvertOption('matte', $mask->getOutputPath())
             ->addConvertOption('compose', 'DstIn')
             ->addConvertOption('composite')
             ->addConvertOption('alpha', 'set')
