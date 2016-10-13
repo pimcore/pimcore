@@ -16,6 +16,11 @@
 
 namespace OnlineShop\Framework\PaymentManager\Payment;
 
+use OnlineShop\Framework\Model\AbstractOrder;
+use OnlineShop\Framework\PaymentManager\IStatus;
+use OnlineShop\Framework\PaymentManager\Status;
+use OnlineShop\Framework\PriceSystem\IPrice;
+
 class Datatrans implements IPayment
 {
     const TRANS_TYPE_DEBIT = '05';
@@ -494,6 +499,58 @@ class Datatrans implements IPayment
     }
 
     /**
+     * Cancel authorization
+     *
+     * @param IPrice $price
+     * @param string $reference
+     * @param string $transactionId
+     *
+     * @return IStatus
+     */
+    public function executeAuthorizationCancel(IPrice $price, $reference, $transactionId)
+    {
+        $xml = $this->xmlCancelAuthorization(
+            $price->getAmount() * 100,
+            $price->getCurrency()->getShortName(),
+            $reference,
+            $transactionId
+        );
+
+        // handle response
+        $transaction = $xml->body->transaction;
+        $status      = (string)$transaction->attributes()['trxStatus'];
+
+        /* @var \SimpleXMLElement $response */
+        $response = $transaction->{$status};
+
+        $message      = null;
+        $paymentState = null;
+
+        if ($status === 'response' && in_array($response->responseCode, ['01', '02'])) {
+            $paymentState = AbstractOrder::ORDER_STATE_CANCELLED;
+            $message      = (string)$response->responseMessage;
+        } else {
+            $paymentState = AbstractOrder::ORDER_STATE_ABORTED;
+            $message      = (string)$response->errorMessage . ' | ' . (string)$response->errorDetail;
+        }
+
+        // create and return status
+        $status = new Status(
+            (string)$transaction->attributes()['refno'],
+            (string)$response->uppTransactionId,
+            $message,
+            $paymentState,
+            [
+                'datatrans_amount'               => (string)$price,
+                'datatrans_responseXML'          => $transaction->asXML(),
+                'datatrans_acqAuthorizationCode' => (string)$response->acqAuthorizationCode,
+            ]
+        );
+
+        return $status;
+    }
+
+    /**
      * @param array $authorizedData
      */
     public function setAuthorizedData(array $authorizedData)
@@ -609,6 +666,46 @@ XML;
             , $currency
             , $transType
             , $this->sign
+        );
+
+        return $this->xmlRequest($this->endpoint['xmlProcessor'], $xml);
+    }
+
+    /**
+     * Cancel authorization
+     *
+     * @param int    $amount    in kleinster einheit > 1,10 € > 110 !
+     * @param string $currency
+     * @param string $reference
+     * @param string $transactionId
+     *
+     * @return \SimpleXMLElement
+     */
+    protected function xmlCancelAuthorization($amount, $currency, $reference, $transactionId)
+    {
+        $xml = <<<'XML'
+<?xml version="1.0" encoding="UTF-8" ?>
+<paymentService version="1">
+  <body merchantId="%1$s">
+    <transaction refno="%2$s">
+      <request>
+        <uppTransactionId>%3$d</uppTransactionId>
+        <reqtype>DOA</reqtype>
+        <amount>%4$d</amount>
+        <currency>%5$s</currency>
+      </request>
+    </transaction>
+  </body>
+</paymentService>
+XML;
+
+        $xml = sprintf(
+            $xml,
+            $this->merchantId,
+            $reference,
+            $transactionId,
+            $amount,
+            $currency
         );
 
         return $this->xmlRequest($this->endpoint['xmlProcessor'], $xml);
