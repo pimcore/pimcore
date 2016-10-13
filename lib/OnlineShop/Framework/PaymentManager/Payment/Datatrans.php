@@ -55,7 +55,7 @@ class Datatrans implements IPayment
     protected $authorizedData = [];
 
     /**
-     * @var \OnlineShop\Framework\PaymentManager\IStatus
+     * @var IStatus
      */
     protected $paymentStatus;
 
@@ -115,7 +115,7 @@ class Datatrans implements IPayment
 
     /**
      * start payment
-     * @param \OnlineShop\Framework\PriceSystem\IPrice $price
+     * @param IPrice $price
      * @param array                       $config
      *
      * @return \Zend_Form
@@ -124,7 +124,7 @@ class Datatrans implements IPayment
      * @see https://pilot.datatrans.biz/showcase/doc/Technical_Implementation_Guide.pdf
      * @see http://pilot.datatrans.biz/showcase/doc/XML_Authorisation.pdf
      */
-    public function initPayment(\OnlineShop\Framework\PriceSystem\IPrice $price, array $config)
+    public function initPayment(IPrice $price, array $config)
     {
         // check params
         $required = [  'successUrl' => null
@@ -224,7 +224,7 @@ class Datatrans implements IPayment
      *
      * @param mixed $response
      *
-     * @return \OnlineShop\Framework\PaymentManager\IStatus
+     * @return IStatus
      * @throws \Exception
      *
      * @see http://pilot.datatrans.biz/showcase/doc/XML_Authorisation.pdf : Page 7 > 2.3 Authorisation response
@@ -273,20 +273,20 @@ class Datatrans implements IPayment
             // success
             $paymentState = $response['reqtype'] == 'CAA'
                 // CAA - authorization with immediate settlement
-                ? \OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_COMMITTED
-                : \OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_PAYMENT_AUTHORIZED;
+                ? AbstractOrder::ORDER_STATE_COMMITTED
+                : AbstractOrder::ORDER_STATE_PAYMENT_AUTHORIZED;
 
             $message = $response['responseMessage'];
         }
         else
         {
             // failed
-            $paymentState = \OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_ABORTED;
+            $paymentState = AbstractOrder::ORDER_STATE_ABORTED;
             $message = $response['errorDetail'];
         }
 
 
-        return new \OnlineShop\Framework\PaymentManager\Status(
+        return new Status(
             $response['refno']
             , $response['uppTransactionId']
             , $message
@@ -345,13 +345,13 @@ class Datatrans implements IPayment
     }
 
     /**
-     * @param \OnlineShop\Framework\PriceSystem\IPrice $price
-     * @param string                      $reference
+     * @param IPrice $price
+     * @param string $reference
      *
-     * @return \OnlineShop\Framework\PaymentManager\Status|\OnlineShop\Framework\PaymentManager\IStatus
+     * @return Status|IStatus
      * @throws \Exception
      */
-    public function executeDebit(\OnlineShop\Framework\PriceSystem\IPrice $price = null, $reference = null)
+    public function executeDebit(IPrice $price = null, $reference = null)
     {
         $uppTransactionId = null;
 
@@ -401,18 +401,18 @@ class Datatrans implements IPayment
         $paymentState = null;
         if($status == 'response' && in_array($response->responseCode,['01', '02']))
         {
-            $paymentState = \OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_COMMITTED;
+            $paymentState = AbstractOrder::ORDER_STATE_COMMITTED;
             $message = (string)$response->responseMessage;
         }
         else
         {
-            $paymentState = \OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_ABORTED;
+            $paymentState = AbstractOrder::ORDER_STATE_ABORTED;
             $message = (string)$response->errorMessage.' | '.(string)$response->errorDetail;
         }
 
 
         // create and return status
-        $status = new \OnlineShop\Framework\PaymentManager\Status(
+        $status = new Status(
             (string)$transaction->attributes()['refno']
             , (string)$response->uppTransactionId ?: $uppTransactionId
             , $message
@@ -429,13 +429,13 @@ class Datatrans implements IPayment
 
     /**
      * gutschrift ausführen
-     * @param \OnlineShop\Framework\PriceSystem\IPrice $price
-     * @param string                      $reference
-     * @param string                      $transactionId
+     * @param IPrice $price
+     * @param string $reference
+     * @param string $transactionId
      *
-     * @return \OnlineShop\Framework\PaymentManager\IStatus
+     * @return IStatus
      */
-    public function executeCredit(\OnlineShop\Framework\PriceSystem\IPrice $price, $reference, $transactionId)
+    public function executeCredit(IPrice $price, $reference, $transactionId)
     {
         if (in_array($this->authorizedData['reqtype'], $this->getValidAuthorizationTypes()) && $this->authorizedData['uppTransactionId']) {
             // restore price object for payment status
@@ -472,18 +472,18 @@ class Datatrans implements IPayment
         $paymentState = null;
         if($status == 'response' && in_array($response->responseCode,['01', '02']))
         {
-            $paymentState = \OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_COMMITTED;
+            $paymentState = AbstractOrder::ORDER_STATE_COMMITTED;
             $message = (string)$response->responseMessage;
         }
         else
         {
-            $paymentState = \OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_ABORTED;
+            $paymentState = AbstractOrder::ORDER_STATE_ABORTED;
             $message = (string)$response->errorMessage.' | '.(string)$response->errorDetail;
         }
 
 
         // create and return status
-        $status = new \OnlineShop\Framework\PaymentManager\Status(
+        $status = new Status(
             (string)$transaction->attributes()['refno']
             , (string)$response->uppTransactionId
             , $message
