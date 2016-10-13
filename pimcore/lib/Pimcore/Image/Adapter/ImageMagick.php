@@ -128,6 +128,7 @@ class ImageMagick extends Adapter
         $command = $this->getConvertCommand() . $path;
         recursiveCopy($this->imagePath, $path);
         exec($command);
+        $this->convertCommandOptions = [];
 
         return $this;
     }
@@ -169,6 +170,9 @@ class ImageMagick extends Adapter
     public function frame($width, $height)
     {
         $this->contain($width, $height);
+        $this->setTmpPaths($this, 'frame');
+        $this->save($this->getOutputPath());
+        $this->imagePath = $this->getOutputPath();
         $frameWidth = $width - $this->getWidth() == 0 ? 0 : ($width - $this->getWidth()) / 2;
         $frameHeight = $height - $this->getHeight() == 0 ? 0 : ($height - $this->getHeight()) / 2;
         $this
@@ -176,6 +180,8 @@ class ImageMagick extends Adapter
             ->addConvertOption('mattecolor', 'none')
             ->addConvertOption('frame', "{$frameWidth}x{$frameHeight}")
         ;
+        $this->setWidth($width);
+        $this->setHeight($height);
 
         return $this;
     }
@@ -228,18 +234,11 @@ class ImageMagick extends Adapter
      */
     public function setBackgroundColor($color)
     {
-        //creates the background image
-        $backgroundImage = $this->createTmpImage($this->imagePath, 'background_color');
-        $backgroundImage->resize($this->getWidth(), $this->getHeight());
-        $backgroundImage
-            ->addConvertOption('alpha', 'off')
-            ->addConvertOption('fill', "\"$color\"")
-            ->addConvertOption('colorize', '100%')
-        ;
-        $backgroundImage->save($backgroundImage->getOutputPath());
+        //create canvas
+        $canvas = $this->generateCanvas($this->getWidth(), $this->getHeight(), $color);
 
         //merge the background canvas with the main picture
-        $this->setBackgroundImage($backgroundImage->getOutputPath(), null, false);
+        $this->mergeImage($canvas);
 
         return $this;
     }
@@ -259,15 +258,20 @@ class ImageMagick extends Adapter
             ->addConvertOption('draw', "'roundRectangle 0,0 {$this->getWidth()},{$this->getHeight()} {$width},{$height}'");
         $mask->addFilter('draw', 'xc:none');
         $this->setTmpPaths($mask, 'mask');
-        exec((string) $mask . ' ' . $mask->getOutputPath());
+        $mask->save($mask->getOutputPath());
         $this->tmpFiles[] = $mask->getOutputPath();
 
+        //create the temp file with rounded corners
         $this
             ->addConvertOption('matte', $mask->getOutputPath())
             ->addConvertOption('compose', 'DstIn')
             ->addConvertOption('composite')
             ->addConvertOption('alpha', 'set')
         ;
+        $this->setTmpPaths($this, 'round_corners');
+        $this->save($this->getOutputPath());
+        $this->imagePath = $this->getOutputPath();
+        $this->tmpFiles[] = $this->getOutputPath();
 
         return $this;
     }
@@ -693,6 +697,44 @@ class ImageMagick extends Adapter
     public function setOutputPath($path)
     {
         $this->outputPath = $path;
+        return $this;
+    }
+
+    /**
+     * @param $width
+     * @param $height
+     * @param $color
+     * @return ImageMagick
+     */
+    public function generateCanvas($width, $height, $color)
+    {
+        $canvas = new ImageMagick();
+        $canvas->addConvertOption('size', "{$width}x{$height}")
+            ->addConvertOption('fill', "\"$color\"")
+            ->addFilter('fill', "canvas:{$color}");
+
+        $this->setTmpPaths($canvas, 'canvas');
+        $canvas->save($canvas->getOutputPath());
+        $canvas->imagePath = $canvas->getOutputPath();
+        $this->tmpFiles[] = $canvas->getOutputPath();
+        return $canvas;
+    }
+
+    /**
+     * @param ImageMagick $backgroundImage
+     * @return ImageMagick
+     */
+    public function mergeImage(ImageMagick $backgroundImage)
+    {
+        $this->setTmpPaths($this,'merge');
+        $this->save($this->getOutputPath());
+        //save the current state of the file (with a background)
+        $this->compositeCommandOptions = [];
+        $this->addCompositeOption('gravity', 'center ' . $this->getOutputPath() . ' ' . $backgroundImage->getOutputPath() . ' ' . $this->getOutputPath());
+        exec($this->getCompositeCommand());
+        $this->imagePath = $this->getOutputPath();
+        $this->tmpFiles[] = $this->getOutputPath();
+
         return $this;
     }
 }
