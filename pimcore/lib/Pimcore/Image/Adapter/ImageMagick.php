@@ -162,9 +162,6 @@ class ImageMagick extends Adapter
 
     /**
      * Adds frame which cause that the image gets exactly the entered dimensions by adding borders.
-     *
-     * @TODO change the background to the transparent or white
-     *
      * @param $width
      * @param $height
      * @return ImageMagick
@@ -174,8 +171,10 @@ class ImageMagick extends Adapter
         $this->contain($width, $height);
         $frameWidth = $width - $this->getWidth() == 0 ? 0 : ($width - $this->getWidth()) / 2;
         $frameHeight = $height - $this->getHeight() == 0 ? 0 : ($height - $this->getHeight()) / 2;
-        $this->addConvertOption('frame', "{$frameWidth}x{$frameHeight}")
-            ->addConvertOption('alpha', 'set')
+        $this
+            ->addConvertOption('bordercolor', 'none')
+            ->addConvertOption('mattecolor', 'none')
+            ->addConvertOption('frame', "{$frameWidth}x{$frameHeight}")
         ;
 
         return $this;
