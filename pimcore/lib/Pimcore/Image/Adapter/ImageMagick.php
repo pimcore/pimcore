@@ -224,15 +224,23 @@ class ImageMagick extends Adapter
     /**
      * Set the background color of the image.
      *
-     * @TODO fixes, doesn't work with png - use composite
-     *
      * @param $color
      * @return ImageMagick
      */
     public function setBackgroundColor($color)
     {
+        //creates the background image
+        $backgroundImage = $this->createTmpImage($this->imagePath, 'background_color');
+        $backgroundImage->resize($this->getWidth(), $this->getHeight());
+        $backgroundImage
+            ->addConvertOption('alpha', 'off')
+            ->addConvertOption('fill', "\"$color\"")
+            ->addConvertOption('colorize', '100%')
+        ;
+        $backgroundImage->save($backgroundImage->getOutputPath());
 
-        $this->addConvertOption('background', "\"{$color}\"");
+        //merge the background canvas with the main picture
+        $this->setBackgroundImage($backgroundImage->getOutputPath(), null, false);
 
         return $this;
     }
@@ -272,11 +280,11 @@ class ImageMagick extends Adapter
      * @param null $mode
      * @return ImageMagick
      */
-    public function setBackgroundImage($image, $mode = null)
+    public function setBackgroundImage($image, $mode = null, $relativePath = false)
     {
-
-        $image = ltrim($image, "/");
-        $imagePath = PIMCORE_DOCUMENT_ROOT . "/" . $image;
+        $imagePath = $relativePath ?
+            PIMCORE_DOCUMENT_ROOT . "/" . ltrim($image, "/")
+            : $image;
 
         if (is_file($imagePath)) {
             //if a specified file as a background exists
