@@ -336,7 +336,7 @@ class Datatrans implements IPayment
      *
      * @return array
      */
-    protected function getValidAuthorizationTypes()
+    public function getValidAuthorizationTypes()
     {
         return [
             static::AUTH_TYPE_AUTHORIZATION,
