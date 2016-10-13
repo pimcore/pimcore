@@ -537,7 +537,7 @@ class Datatrans implements IPayment
         // create and return status
         $status = new Status(
             (string)$transaction->attributes()['refno'],
-            (string)$response->uppTransactionId,
+            (string)$transactionId,
             $message,
             $paymentState,
             [
