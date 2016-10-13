@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -41,7 +41,10 @@ class Dao extends Model\Document\PageSnippet\Dao
                     WHERE documents.id = ?", $this->model->getId());
 
             if ($data["id"] > 0) {
-                $data["metaData"] = Serialize::unserialize($data["metaData"]);
+                $data["metaData"] = @unserialize($data["metaData"]);
+                if (!is_array($data["metaData"])) {
+                    $data["metaData"] = [];
+                }
                 $this->assignVariablesToModel($data);
             } else {
                 throw new \Exception("Page with the ID " . $this->model->getId() . " doesn't exists");

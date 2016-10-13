@@ -115,6 +115,7 @@ class Video extends Model\Asset
                     foreach ($customSetting[$thumbnail->getName()]["formats"] as &$path) {
                         $fullPath = $this->getVideoThumbnailSavePath() . $path;
                         $path = str_replace(PIMCORE_DOCUMENT_ROOT, "", $fullPath);
+                        $path = urlencode_ignore_slash($path);
 
                         $results = \Pimcore::getEventManager()->trigger("frontend.path.asset.video.thumbnail", $this, [
                             "filesystemPath" => $fullPath,
@@ -124,8 +125,6 @@ class Video extends Model\Asset
                         if ($results->count()) {
                             $path = $results->last();
                         }
-
-                        $path = urlencode_ignore_slash($path);
                     }
 
                     return $customSetting[$thumbnail->getName()];

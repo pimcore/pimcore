@@ -1,5 +1,9 @@
 [
     {
+        "term": "custom_http_headers",
+        "definition": "Custom HTTP Headers"
+    },
+    {
         "term": "file_is_bigger_that_upload_limit",
         "definition": "The following file is bigger than the actual upload limit of your server:"
     },
