@@ -8,6 +8,8 @@ use Pimcore\Logger;
 class ImageMagick extends Adapter
 {
     /**
+     * The base image path
+     *
      * @var null|string
      */
     protected $imagePath = null;
@@ -55,6 +57,8 @@ class ImageMagick extends Adapter
 
 
     /**
+     * loads the image by the specified path
+     *
      * @param $imagePath
      * @param array $options
      * @return ImageMagick
@@ -139,10 +143,10 @@ class ImageMagick extends Adapter
      */
     protected function destroy()
     {
+        //it deletes tmp files when the process is finished
         foreach($this->tmpFiles as $tmpFile) {
             unlink($tmpFile);
         }
-
         return $this;
     }
 
@@ -163,6 +167,7 @@ class ImageMagick extends Adapter
 
     /**
      * Adds frame which cause that the image gets exactly the entered dimensions by adding borders.
+     *
      * @param $width
      * @param $height
      * @return ImageMagick
@@ -187,6 +192,8 @@ class ImageMagick extends Adapter
     }
 
     /**
+     * Trims edges
+     *
      * @param int $tolerance
      * @return ImageMagick
      */
@@ -199,6 +206,7 @@ class ImageMagick extends Adapter
 
     /**
      * Rotates the image with the given angle.
+     *
      * @param $angle
      * @return ImageMagick
      */
@@ -269,6 +277,7 @@ class ImageMagick extends Adapter
             ->addConvertOption('alpha', 'set')
         ;
         $this->setTmpPaths($this, 'round_corners');
+        //image has to be saved before next actions
         $this->save($this->getOutputPath());
         $this->imagePath = $this->getOutputPath();
         $this->tmpFiles[] = $this->getOutputPath();
@@ -355,7 +364,7 @@ class ImageMagick extends Adapter
             $overlayImage->crop($x, $y, $this->getWidth(), $this->getHeight());
             $overlayImage->save($overlayImage->getOutputPath());
 
-            $this->processOverlay($overlayImage, $composite, $alpha);
+            $this->processOverlay($overlayImage, $composite);
         }
 
         return $this;
@@ -410,6 +419,8 @@ class ImageMagick extends Adapter
     }
 
     /**
+     * Add mask to the image
+     *
      * @param $image
      * @return ImageMagick
      */
@@ -533,6 +544,8 @@ class ImageMagick extends Adapter
     }
 
     /**
+     * Add option available in the composite tool
+     *
      * @param $name
      * @param null $value
      * @return ImageMagick
@@ -545,6 +558,8 @@ class ImageMagick extends Adapter
     }
 
     /**
+     * Add a filter to the convert command
+     *
      * @param $optionName
      * @param $filterValue
      * @return $this
@@ -561,6 +576,8 @@ class ImageMagick extends Adapter
     }
 
     /**
+     * Returns the filters array
+     *
      * @param $optionName
      * @return array
      */
@@ -570,6 +587,7 @@ class ImageMagick extends Adapter
     }
 
     /**
+     * Return the command without an output file path
      *
      * @return string
      */
@@ -579,6 +597,8 @@ class ImageMagick extends Adapter
     }
 
     /**
+     * Return the composite command as a string
+     *
      * @return string
      */
     public function getCompositeCommand()
@@ -602,6 +622,11 @@ class ImageMagick extends Adapter
         return $options;
     }
 
+    /**
+     * Returns the composite options as a string
+     *
+     * @return string
+     */
     public function getCompositeOptionsAsString()
     {
         $options = '';
@@ -658,6 +683,8 @@ class ImageMagick extends Adapter
     }
 
     /**
+     * Creates the tmp image, that image will be automatically deleted when the process finishes.
+     *
      * @param $imagePath
      * @param $suffix
      * @return ImageMagick
@@ -683,6 +710,7 @@ class ImageMagick extends Adapter
     }
 
     /**
+     *
      * @return null|string
      */
     public function getOutputPath()
@@ -701,6 +729,8 @@ class ImageMagick extends Adapter
     }
 
     /**
+     * It generates a basic canvas file with specified size and color
+     *
      * @param $width
      * @param $height
      * @param $color
@@ -721,6 +751,8 @@ class ImageMagick extends Adapter
     }
 
     /**
+     * Merges the image specified as the argument into the main picture.
+     *
      * @param ImageMagick $backgroundImage
      * @return ImageMagick
      */
