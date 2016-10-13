@@ -22,7 +22,7 @@ use Pimcore\Logger;
 
 class Dao extends Model\Element\Dao
 {
-    use Model\Element\ElementTrait\HasChildsTrait;
+    use Model\Element\ChildsCompatibilityTrait;
     /**
      * Fetch a row by an id from the database and assign variables to the document model.
      *

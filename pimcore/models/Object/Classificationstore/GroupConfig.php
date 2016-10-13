@@ -20,7 +20,7 @@ use Pimcore\Model;
 
 class GroupConfig extends Model\AbstractModel
 {
-    use Model\Element\ElementTrait\HasChildsTrait;
+    use Model\Element\ChildsCompatibilityTrait;
 
     /** Group id.
      * @var integer

@@ -20,7 +20,7 @@ use Pimcore\Model;
 
 class Folder extends Model\Asset
 {
-    use Model\Element\ElementTrait\SetChildsTrait;
+    use Model\Element\ChildsCompatibilityTrait;
 
     /**
      * @var string

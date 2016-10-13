@@ -21,7 +21,7 @@ use Pimcore\Logger;
 
 class Dao extends Model\Element\Dao
 {
-    use Model\Element\ElementTrait\HasChildsTrait;
+    use Model\Element\ChildsCompatibilityTrait;
     /**
      * Get the data for the object by id from database and assign it to the object (model)
      * @param $id

@@ -21,7 +21,7 @@ use Pimcore\Logger;
 
 class Dao extends Model\Dao\AbstractDao
 {
-    use Model\Element\ElementTrait\HasChildsTrait;
+    use Model\Element\ChildsCompatibilityTrait;
     /**
      * @param $id
      * @throws \Exception
