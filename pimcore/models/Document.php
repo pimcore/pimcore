@@ -872,14 +872,13 @@ class Document extends Element\AbstractElement
     protected function prepareFrontendPath($path)
     {
         if (\Pimcore\Tool::isFrontend()) {
+            $path = urlencode_ignore_slash($path);
             $results = \Pimcore::getEventManager()->trigger("frontend.path.document", $this, [
                 "frontendPath" => $path
             ]);
             if ($results->count()) {
                 $path = $results->last();
             }
-
-            $path = urlencode_ignore_slash($path);
         }
 
         return $path;
