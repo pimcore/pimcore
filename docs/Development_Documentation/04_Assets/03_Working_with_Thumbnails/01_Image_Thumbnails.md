@@ -12,7 +12,6 @@ which are not stored as an asset inside Pimcore.
 > (only PNG, JPG, GIF) and less quality!
 > Using ImageMagick pimcore supports hundreds of formats including: AI, EPS, TIFF, PNG, JPG, GIF, PSD, ...
 
-
 To use the thumbnailing service of Pimcore, you have to create a transformation pipeline first. To do so, open 
 *Settings* > *Thumbnails* and click on *Add Thumbnail* to create a new configuration.
 The fields name, description, format and quality should be self-explanatory, the interesting part are now the transformations. 
@@ -46,6 +45,26 @@ This path can then be directly used to display the image in a `<img />` or `<pic
 
 <?php } ?>
 ```
+
+**An Alternative Adapter**
+Since build **3999** you can use the new adapter: `pimcore/lib/Pimcore/Image/Adapter/ImageMagick.php` instead of the standard `pimcore/lib/Pimcore/Image/Adapter/Imagick.php`. 
+The main difference: `ImageMagick` is using `convert` and `composite` CLI tools to manage thumbnails (it gives a better control of the generation process).
+
+To try the new adapter add a new [dependency injection](../../10_Extending_Pimcore/03_Dependency_Injection.md) declaration in the `website/config/di.php` file. 
+
+If `convert` and `composite` are accessible globally:
+
+```php
+\Pimcore\Image\Adapter::class => DI\object('Pimcore\Image\Adapter\ImageMagick')
+```
+
+You can also specifu the path to tools like, below:
+```php
+\Pimcore\Image\Adapter::class => DI\object('Pimcore\Image\Adapter\ImageMagick')
+        ->method('setConvertScriptPath', '/usr/bin/convert')
+        ->method('setCompositeScriptPath', '/usr/bin/composite')
+```
+
 
 ## Explanation of the Transformations
 
