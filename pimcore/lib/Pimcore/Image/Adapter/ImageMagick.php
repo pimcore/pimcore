@@ -4,6 +4,8 @@ namespace Pimcore\Image\Adapter;
 use Pimcore\File;
 use Pimcore\Image\Adapter;
 use Pimcore\Logger;
+use Pimcore\Tool\Console;
+use Symfony\Component\Process\Process;
 
 class ImageMagick extends Adapter
 {
@@ -131,7 +133,7 @@ class ImageMagick extends Adapter
 
         $command = $this->getConvertCommand() . $path;
         recursiveCopy($this->imagePath, $path);
-        exec($command);
+        $this->processCommand($command);
         $this->convertCommandOptions = [];
 
         return $this;
@@ -319,7 +321,7 @@ class ImageMagick extends Adapter
             //save the current state of the file (with a background)
             $this->compositeCommandOptions = [];
             $this->addCompositeOption('gravity', 'center ' . $this->getOutputPath() . ' ' . $newImage->getOutputPath() . ' ' . $this->getOutputPath());
-            exec($this->getCompositeCommand());
+            $this->processCommand($this->getCompositeCommand());
             $this->imagePath = $this->getOutputPath();
         }
 
@@ -412,7 +414,7 @@ class ImageMagick extends Adapter
         $this->compositeCommandOptions = [];
         $this
             ->addCompositeOption('compose', $composeVal . ' ' . $overlayImage->getOutputPath() . ' ' . $this->getOutputPath() . ' ' . $this->getOutputPath());
-        exec($this->getCompositeCommand());
+        $this->processCommand($this->getCompositeCommand());
         $this->imagePath = $this->getOutputPath();
 
         return $this;
@@ -763,10 +765,20 @@ class ImageMagick extends Adapter
         //save the current state of the file (with a background)
         $this->compositeCommandOptions = [];
         $this->addCompositeOption('gravity', 'center ' . $this->getOutputPath() . ' ' . $backgroundImage->getOutputPath() . ' ' . $this->getOutputPath());
-        exec($this->getCompositeCommand());
+        $this->processCommand($this->getCompositeCommand());
         $this->imagePath = $this->getOutputPath();
         $this->tmpFiles[] = $this->getOutputPath();
 
         return $this;
+    }
+
+    /**
+     * @param $command
+     * @return int
+     */
+    protected function processCommand($command)
+    {
+        $process = new Process($command);
+        return $process->run();
     }
 }

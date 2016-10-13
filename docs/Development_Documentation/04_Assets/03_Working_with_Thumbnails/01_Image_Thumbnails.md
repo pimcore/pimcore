@@ -58,7 +58,7 @@ If `convert` and `composite` are accessible globally:
 \Pimcore\Image\Adapter::class => DI\object('Pimcore\Image\Adapter\ImageMagick')
 ```
 
-You can also specify the path to tools, like below:
+Optionally, you can also specify the path to tools, like below:
 ```php
 \Pimcore\Image\Adapter::class => DI\object('Pimcore\Image\Adapter\ImageMagick')
         ->method('setConvertScriptPath', '/usr/bin/convert')
