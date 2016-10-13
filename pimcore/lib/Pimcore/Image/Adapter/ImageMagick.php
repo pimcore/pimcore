@@ -115,12 +115,23 @@ class ImageMagick extends Adapter
      */
     public function save($path, $format = null, $quality = null)
     {
+        if (null !== $quality) {
+            //set quality of the image
+            $this->addConvertOption('quality', $quality);
+        }
+
+        if(null !== $format) {
+            //set the image format. see: http://www.imagemagick.org/script/formats.php
+            $this->addConvertOption('format', strtoupper($format));
+        }
+
         $command = $this->getConvertCommand() . $path;
         recursiveCopy($this->imagePath, $path);
         exec($command);
 
         return $this;
     }
+
 
     /**
      * @return ImageMagick
@@ -151,6 +162,8 @@ class ImageMagick extends Adapter
 
     /**
      * Adds frame which cause that the image gets exactly the entered dimensions by adding borders.
+     *
+     * @TODO change the background to the transparent or white
      *
      * @param $width
      * @param $height
@@ -210,6 +223,8 @@ class ImageMagick extends Adapter
 
     /**
      * Set the background color of the image.
+     *
+     * @TODO fixes, doesn't work with png - use composite
      *
      * @param $color
      * @return ImageMagick
