@@ -77,7 +77,7 @@ class Date extends Model\Document\Tag
         if ($this->date instanceof \Zend_Date) {
             return $this->date->toString($this->options["format"], "php");
         } elseif ($this->date instanceof \DateTime) {
-            return $this->date->format($this->options["format"]);
+            return $this->date->formatLocalized($this->options["format"]);
         }
     }
 
