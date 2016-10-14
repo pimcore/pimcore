@@ -50,12 +50,12 @@ class ImageMagick extends Adapter
     /**
      * @var string
      */
-    protected $convertScriptPath = 'convert';
+    protected $convertScriptPath = null;
 
     /**
      * @var string
      */
-    protected $compositeScriptPath = 'composite';
+    protected $compositeScriptPath = null;
 
 
     /**
@@ -652,6 +652,10 @@ class ImageMagick extends Adapter
      */
     public function getConvertScriptPath()
     {
+        if(null === $this->convertScriptPath) {
+            //in some cases get_proces_status in \Symfony\Component\Process\Process::updateStatus returns 1, than the default command path is set to convert
+            $this->convertScriptPath = Console::getExecutable('convert') ?: 'convert';
+        }
         return $this->convertScriptPath;
     }
 
@@ -675,6 +679,11 @@ class ImageMagick extends Adapter
      */
     public function getCompositeScriptPath()
     {
+        if(null === $this->compositeScriptPath) {
+            //in some cases get_proces_status in \Symfony\Component\Process\Process::updateStatus returns 1, than the default command path is set to composite
+            $this->compositeScriptPath = Console::getExecutable('composite') ?: 'composite';
+        }
+
         return $this->compositeScriptPath;
     }
 
