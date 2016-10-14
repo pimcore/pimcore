@@ -18,6 +18,9 @@ namespace Pimcore\Model\Element\Recyclebin\Item;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\Element\Recyclebin\Item\Listing\Dao getDao()
+ */
 class Listing extends Model\Listing\AbstractListing
 {
 

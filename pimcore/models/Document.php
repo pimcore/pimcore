@@ -23,6 +23,9 @@ use Pimcore\Tool;
 use Pimcore\Tool\Frontend as FrontendTool;
 use Pimcore\Logger;
 
+/**
+ * @method \Pimcore\Model\Document\Dao getDao()
+ */
 class Document extends Element\AbstractElement
 {
     use Element\ChildsCompatibilityTrait;

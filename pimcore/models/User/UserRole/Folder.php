@@ -18,6 +18,9 @@ namespace Pimcore\Model\User\UserRole;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\User\UserRole\Dao getDao()
+ */
 class Folder extends Model\User\AbstractUser
 {
     use Model\Element\ChildsCompatibilityTrait;

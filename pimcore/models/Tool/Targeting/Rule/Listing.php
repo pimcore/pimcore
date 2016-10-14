@@ -18,6 +18,9 @@ namespace Pimcore\Model\Tool\Targeting\Rule;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\Tool\Targeting\Rule\Listing\Dao getDao()
+ */
 class Listing extends Model\Listing\AbstractListing
 {
 

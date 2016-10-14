@@ -18,6 +18,9 @@ namespace Pimcore\Model\Tool\Qrcode\Config;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\Tool\Qrcode\Config\Listing\Dao getDao()
+ */
 class Listing extends Model\Listing\JsonListing
 {
 

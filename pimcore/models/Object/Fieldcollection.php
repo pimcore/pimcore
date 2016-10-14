@@ -18,6 +18,9 @@ namespace Pimcore\Model\Object;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\Object\Fieldcollection\Dao getDao()
+ */
 class Fieldcollection extends Model\AbstractModel implements \Iterator
 {
 

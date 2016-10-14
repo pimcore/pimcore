@@ -18,6 +18,9 @@ namespace Pimcore\Model\Tool\UUID;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\Tool\UUID\Listing\Dao getDao()
+ */
 class Listing extends Model\Listing\AbstractListing
 {
     public function isValidOrderKey($key)

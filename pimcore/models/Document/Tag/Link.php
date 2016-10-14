@@ -21,6 +21,9 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
 use Pimcore\Logger;
 
+/**
+ * @method \Pimcore\Model\Document\Tag\Dao getDao()
+ */
 class Link extends Model\Document\Tag
 {
 

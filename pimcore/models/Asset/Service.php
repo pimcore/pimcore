@@ -20,6 +20,9 @@ use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
 
+/**
+ * @method \Pimcore\Model\Asset\Dao getDao()
+ */
 class Service extends Model\Element\Service
 {
 

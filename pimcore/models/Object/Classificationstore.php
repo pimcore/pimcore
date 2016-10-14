@@ -19,6 +19,9 @@ namespace Pimcore\Model\Object;
 use Pimcore\Model;
 use Pimcore\Tool;
 
+/**
+ * @method \Pimcore\Model\Object\Classificationstore\Dao getDao()
+ */
 class Classificationstore extends Model\AbstractModel
 {
 

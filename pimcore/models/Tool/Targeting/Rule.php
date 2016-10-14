@@ -19,6 +19,9 @@ namespace Pimcore\Model\Tool\Targeting;
 use Pimcore\Model;
 use Pimcore\Model\Tool;
 
+/**
+ * @method \Pimcore\Model\Tool\Targeting\Rule\Dao getDao()
+ */
 class Rule extends Model\AbstractModel
 {
 

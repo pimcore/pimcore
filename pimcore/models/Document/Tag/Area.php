@@ -21,6 +21,9 @@ use Pimcore\Model;
 use Pimcore\ExtensionManager;
 use Pimcore\Model\Document;
 
+/**
+ * @method \Pimcore\Model\Document\Tag\Dao getDao()
+ */
 class Area extends Model\Document\Tag
 {
 

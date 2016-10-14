@@ -21,7 +21,10 @@ use Pimcore\Config;
 use Pimcore\Model\Document;
 use Pimcore\Logger;
 
-abstract class PageSnippet extends Model\Document
+abstract /**
+ * @method \Pimcore\Model\Document\PageSnippet\Dao getDao()
+ */
+class PageSnippet extends Model\Document
 {
 
     /**

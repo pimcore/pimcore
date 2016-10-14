@@ -25,6 +25,9 @@ use Pimcore\File;
 use Pimcore\Tool;
 use Pimcore\Logger;
 
+/**
+ * @method \Pimcore\Model\Element\Dao getDao()
+ */
 class Service extends Model\AbstractModel
 {
 

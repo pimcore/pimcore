@@ -22,6 +22,9 @@ use Pimcore\Model\Element;
 use Pimcore\Tool\Serialize;
 use Pimcore\View;
 
+/**
+ * @method \Pimcore\Model\Document\Service\Dao getDao()
+ */
 class Service extends Model\Element\Service
 {
 

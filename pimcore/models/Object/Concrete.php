@@ -20,6 +20,9 @@ use Pimcore\Model;
 use Pimcore\Config;
 use Pimcore\Logger;
 
+/**
+ * @method \Pimcore\Model\Object\Concrete\Dao getDao()
+ */
 class Concrete extends AbstractObject
 {
     public static $systemColumnNames = ["id", "fullpath", "published", "creationDate", "modificationDate", "filename", "classname"];

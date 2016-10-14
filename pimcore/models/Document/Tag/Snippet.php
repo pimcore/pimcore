@@ -21,6 +21,9 @@ use Pimcore\Cache;
 use Pimcore\Model\Document;
 use Pimcore\Logger;
 
+/**
+ * @method \Pimcore\Model\Document\Tag\Dao getDao()
+ */
 class Snippet extends Model\Document\Tag
 {
 

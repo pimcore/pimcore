@@ -18,6 +18,9 @@ namespace Pimcore\Model\Asset;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\Asset\Dao getDao()
+ */
 class Text extends Model\Asset
 {
 

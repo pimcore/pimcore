@@ -22,6 +22,9 @@ use Pimcore\Tool;
 use Pimcore\Logger;
 use Pimcore\Model\Element;
 
+/**
+ * @method \Pimcore\Model\Object\AbstractObject\Dao getDao()
+ */
 class AbstractObject extends Model\Element\AbstractElement
 {
     use Element\ChildsCompatibilityTrait;

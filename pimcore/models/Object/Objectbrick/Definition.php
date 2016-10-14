@@ -20,6 +20,9 @@ use Pimcore\Model;
 use Pimcore\Model\Object;
 use Pimcore\File;
 
+/**
+ * @method \Pimcore\Model\Object\Objectbrick\Definition\Dao getDao()
+ */
 class Definition extends Model\Object\Fieldcollection\Definition
 {
     use Model\Object\ClassDefinition\Helper\VarExport;

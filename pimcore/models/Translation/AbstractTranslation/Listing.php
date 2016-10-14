@@ -18,6 +18,9 @@ namespace Pimcore\Model\Translation\AbstractTranslation;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\Translation\AbstractTranslation\Listing\Dao getDao()
+ */
 class Listing extends Model\Listing\AbstractListing
 {
 

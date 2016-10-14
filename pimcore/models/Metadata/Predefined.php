@@ -19,6 +19,9 @@ namespace Pimcore\Model\Metadata;
 use Pimcore\Model;
 use Pimcore\Model\Element;
 
+/**
+ * @method \Pimcore\Model\Metadata\Predefined\Dao getDao()
+ */
 class Predefined extends Model\AbstractModel
 {
 

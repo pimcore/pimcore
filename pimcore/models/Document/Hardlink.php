@@ -21,6 +21,9 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Redirect;
 use Pimcore\Model\Element;
 
+/**
+ * @method \Pimcore\Model\Document\Hardlink\Dao getDao()
+ */
 class Hardlink extends Document
 {
     use Element\ChildsCompatibilityTrait;

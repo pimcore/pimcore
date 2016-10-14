@@ -18,6 +18,9 @@ namespace Pimcore\Model\Tool\CustomReport;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\Tool\CustomReport\Config\Dao getDao()
+ */
 class Config extends Model\AbstractModel
 {
 

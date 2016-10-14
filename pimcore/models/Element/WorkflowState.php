@@ -18,6 +18,9 @@ namespace Pimcore\Model\Element;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\Element\WorkflowState\Dao getDao()
+ */
 class WorkflowState extends Model\AbstractModel
 {
 

@@ -24,6 +24,9 @@ use Pimcore\Model;
 use Pimcore\Model\Element;
 use Pimcore\Logger;
 
+/**
+ * @method \Pimcore\Model\Asset\Dao getDao()
+ */
 class Asset extends Element\AbstractElement
 {
     use Element\ChildsCompatibilityTrait;

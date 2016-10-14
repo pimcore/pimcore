@@ -22,6 +22,9 @@ use Pimcore\File;
 use Pimcore\Cache;
 use Pimcore\Logger;
 
+/**
+ * @method \Pimcore\Model\Object\ClassDefinition\Dao getDao()
+ */
 class ClassDefinition extends Model\AbstractModel
 {
     use Object\ClassDefinition\Helper\VarExport;

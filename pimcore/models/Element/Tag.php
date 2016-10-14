@@ -18,6 +18,9 @@ namespace Pimcore\Model\Element;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\Element\Tag\Dao getDao()
+ */
 class Tag extends Model\AbstractModel
 {
 

@@ -18,6 +18,9 @@ namespace Pimcore\Model\Object\Classificationstore;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\Object\Classificationstore\CollectionConfig\Dao getDao()
+ */
 class CollectionConfig extends Model\AbstractModel
 {
 

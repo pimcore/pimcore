@@ -18,7 +18,10 @@ namespace Pimcore\Model\Element;
 
 use Pimcore\Model;
 
-abstract class AbstractElement extends Model\AbstractModel implements ElementInterface
+abstract /**
+ * @method \Pimcore\Model\Element\Dao getDao()
+ */
+class AbstractElement extends Model\AbstractModel implements ElementInterface
 {
 
 

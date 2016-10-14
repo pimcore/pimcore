@@ -19,6 +19,9 @@ namespace Pimcore\Model\Tool;
 use Pimcore\File;
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\Tool\Setup\Dao getDao()
+ */
 class Setup extends Model\AbstractModel
 {
 

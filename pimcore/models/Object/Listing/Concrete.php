@@ -19,7 +19,10 @@ namespace Pimcore\Model\Object\Listing;
 use Pimcore\Model;
 use Pimcore\Model\Object;
 
-abstract class Concrete extends Model\Object\Listing
+abstract /**
+ * @method \Pimcore\Model\Object\Listing\Concrete\Dao getDao()
+ */
+class Concrete extends Model\Object\Listing
 {
 
     /**

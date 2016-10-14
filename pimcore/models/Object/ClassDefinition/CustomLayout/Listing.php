@@ -18,6 +18,9 @@ namespace Pimcore\Model\Object\ClassDefinition\CustomLayout;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\Object\ClassDefinition\CustomLayout\Listing\Dao getDao()
+ */
 class Listing extends Model\Listing\AbstractListing
 {
 

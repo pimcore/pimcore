@@ -20,6 +20,9 @@ use Pimcore\File;
 use Pimcore\Model;
 use Pimcore\Logger;
 
+/**
+ * @method \Pimcore\Model\Asset\Dao getDao()
+ */
 class Video extends Model\Asset
 {
 

@@ -21,6 +21,9 @@ use Pimcore\Model;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Admin as AdminTool;
 
+/**
+ * @method \Pimcore\Model\Element\Dao getDao()
+ */
 class Service extends Model\Element\Service
 {
 

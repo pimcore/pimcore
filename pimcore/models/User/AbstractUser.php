@@ -18,6 +18,9 @@ namespace Pimcore\Model\User;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\User\AbstractUser\Dao getDao()
+ */
 class AbstractUser extends Model\AbstractModel
 {
 

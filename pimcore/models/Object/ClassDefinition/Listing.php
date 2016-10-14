@@ -18,6 +18,9 @@ namespace Pimcore\Model\Object\ClassDefinition;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\Object\ClassDefinition\Listing\Dao getDao()
+ */
 class Listing extends Model\Listing\AbstractListing
 {
 

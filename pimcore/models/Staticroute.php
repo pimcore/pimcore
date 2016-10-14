@@ -18,6 +18,9 @@ namespace Pimcore\Model;
 
 use Pimcore\Logger;
 
+/**
+ * @method \Pimcore\Model\Staticroute\Dao getDao()
+ */
 class Staticroute extends AbstractModel
 {
 
