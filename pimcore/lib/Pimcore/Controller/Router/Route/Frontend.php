@@ -109,7 +109,7 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
         if ($config->general->http_auth) {
             $username = $config->general->http_auth->username;
             $password = $config->general->http_auth->password;
-            if ($username && $password) {
+            if ($username && $password && (!Tool::isFrontentRequestByAdmin() || !Tool\Authentication::authenticateSession())) {
                 $adapter = new \Zend_Auth_Adapter_Http([
                     "accept_schemes" => "basic",
                     "realm" => Tool::getHostname()
