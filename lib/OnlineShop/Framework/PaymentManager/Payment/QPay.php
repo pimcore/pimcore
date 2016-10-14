@@ -271,7 +271,7 @@ class QPay implements IPayment
             return new \OnlineShop\Framework\PaymentManager\Status(
                 $response['orderIdent']
                 , $response['orderNumber']
-                , $response['avsResponseMessage'] ?: $response['message']
+                , $response['avsResponseMessage'] ?: $response['message'] ?: 'fingerprint error'
                 , \OnlineShop\Framework\PaymentManager\IStatus::STATUS_CANCELLED
             );
         }
