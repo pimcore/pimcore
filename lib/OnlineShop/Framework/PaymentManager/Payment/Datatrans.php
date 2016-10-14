@@ -283,7 +283,7 @@ class Datatrans implements IPayment
         $response = array_intersect_key($response, $required);
         if(count($required) != count($response))
         {
-            throw new \Exception( sprintf('required fields are missing! required: %s', implode(', ', array_keys(array_diff_key($required, $authorizedData)))) );
+            throw new \Exception( sprintf('required fields are missing! required: %s', implode(', ', array_keys(array_diff_key($required, $response)))) );
         }
 
 
