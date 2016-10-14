@@ -69,6 +69,7 @@ class Dao extends Model\Dao\AbstractDao
                     if (is_array($siteDomains) && count($siteDomains) > 0) {
                         foreach ($siteDomains as $siteDomain) {
                             if (strpos($siteDomain, "*") !==  false) {
+                                $siteDomain = str_replace(".*", "*", $siteDomain); // backward compatibility
                                 $wildcardDomains[$siteDomain] = $site["id"];
                             }
                         }
@@ -77,6 +78,8 @@ class Dao extends Model\Dao\AbstractDao
             }
 
             foreach ($wildcardDomains as $wildcardDomain => $siteId) {
+                $wildcardDomain = preg_quote($wildcardDomain, "#");
+                $wildcardDomain = str_replace("\\*", ".*", $wildcardDomain);
                 if (preg_match("#^" . $wildcardDomain . "$#", $domain)) {
                     $data = $this->db->fetchRow("SELECT * FROM sites WHERE id = ?", [$siteId]);
                 }
@@ -144,7 +147,7 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         $this->db->update("sites", $data, $this->db->quoteInto("id = ?", $this->model->getId()));
-        
+
         $this->model->clearDependentCache();
     }
 
@@ -156,7 +159,7 @@ class Dao extends Model\Dao\AbstractDao
     public function delete()
     {
         $this->db->delete("sites", $this->db->quoteInto("id = ?", $this->model->getId()));
-        
+
         $this->model->clearDependentCache();
     }
 }
