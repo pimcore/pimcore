@@ -18,6 +18,9 @@ namespace Pimcore\Model\Object\Classificationstore\KeyGroupRelation;
 
 use Pimcore\Model;
 
+/**
+ * @property \Pimcore\Model\Object\Classificationstore\KeyGroupRelation $model
+ */
 class Dao extends Model\Dao\AbstractDao
 {
     const TABLE_NAME_RELATIONS = "classificationstore_relations";

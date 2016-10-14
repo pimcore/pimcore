@@ -16,6 +16,9 @@ namespace Pimcore\Model\WebsiteSetting;
 
 use Pimcore\Model;
 
+/**
+ * @property \Pimcore\Model\WebsiteSetting $model
+ */
 class Dao extends Model\Dao\AbstractDao
 {
 

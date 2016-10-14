@@ -18,6 +18,9 @@ namespace Pimcore\Model\User\Listing\AbstractListing;
 
 use Pimcore\Model;
 
+/**
+ * @property \Pimcore\Model\User\Listing\AbstractListing $model
+ */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
 

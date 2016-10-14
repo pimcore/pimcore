@@ -18,6 +18,9 @@ namespace Pimcore\Model\Object\Classificationstore\GroupConfig;
 
 use Pimcore\Model;
 
+/**
+ * @property \Pimcore\Model\Object\Classificationstore\GroupConfig $model
+ */
 class Dao extends Model\Dao\AbstractDao
 {
     use Model\Element\ChildsCompatibilityTrait;

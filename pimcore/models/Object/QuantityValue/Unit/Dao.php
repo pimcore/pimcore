@@ -18,6 +18,9 @@ namespace Pimcore\Model\Object\QuantityValue\Unit;
 
 use Pimcore\Model;
 
+/**
+ * @property \Pimcore\Model\Object\QuantityValue\Unit $model
+ */
 class Dao extends Model\Dao\AbstractDao
 {
     const TABLE_NAME = "quantityvalue_units";

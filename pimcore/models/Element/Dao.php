@@ -18,7 +18,10 @@ namespace Pimcore\Model\Element;
 
 use Pimcore\Model;
 
-abstract class Dao extends Model\Dao\AbstractDao
+abstract /**
+ * @property \Pimcore\Model\Element\AbstractElement $model
+ */
+class Dao extends Model\Dao\AbstractDao
 {
 
     /**

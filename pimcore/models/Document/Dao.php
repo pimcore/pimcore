@@ -20,6 +20,9 @@ use Pimcore\Model;
 use Pimcore\Tool\Serialize;
 use Pimcore\Logger;
 
+/**
+ * @property \Pimcore\Model\Document $model
+ */
 class Dao extends Model\Element\Dao
 {
     use Model\Element\ChildsCompatibilityTrait;

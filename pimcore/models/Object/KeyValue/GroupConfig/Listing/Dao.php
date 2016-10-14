@@ -19,6 +19,9 @@ namespace Pimcore\Model\Object\KeyValue\GroupConfig\Listing;
 use Pimcore\Model;
 use Pimcore\Model\Object;
 
+/**
+ * @property \Pimcore\Model\Object\KeyValue\GroupConfig\Listing $model
+ */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
 

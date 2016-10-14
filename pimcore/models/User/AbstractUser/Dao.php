@@ -19,6 +19,9 @@ namespace Pimcore\Model\User\AbstractUser;
 use Pimcore\Model;
 use Pimcore\Logger;
 
+/**
+ * @property \Pimcore\Model\User\AbstractUser $model
+ */
 class Dao extends Model\Dao\AbstractDao
 {
     use Model\Element\ChildsCompatibilityTrait;

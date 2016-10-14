@@ -18,6 +18,9 @@ namespace Pimcore\Model\Object\ClassDefinition\CustomLayout\Listing;
 
 use Pimcore\Model;
 
+/**
+ * @property \Pimcore\Model\Object\ClassDefinition\CustomLayout\Listing $model
+ */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
 

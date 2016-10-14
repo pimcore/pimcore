@@ -19,6 +19,9 @@ namespace Pimcore\Model\Tool\UUID\Listing;
 use Pimcore\Model;
 use Pimcore\Model\Tool\UUID;
 
+/**
+ * @property \Pimcore\Model\Tool\UUID\Listing $model
+ */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
 

@@ -19,6 +19,9 @@ namespace Pimcore\Model\Object\Fieldcollection\Definition;
 use Pimcore\Model;
 use Pimcore\Model\Object;
 
+/**
+ * @property \Pimcore\Model\Object\Fieldcollection\Definition $model
+ */
 class Dao extends Model\Dao\AbstractDao
 {
     use Object\ClassDefinition\Helper\Dao;

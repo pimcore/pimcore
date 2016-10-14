@@ -21,6 +21,9 @@ use Pimcore\Model\Object;
 use Pimcore\Tool;
 use Pimcore\Logger;
 
+/**
+ * @property \Pimcore\Model\Object\Localizedfield $model
+ */
 class Dao extends Model\Dao\AbstractDao
 {
     use Object\ClassDefinition\Helper\Dao;

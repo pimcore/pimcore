@@ -19,6 +19,9 @@ namespace Pimcore\Model\Asset;
 use Pimcore\Model;
 use Pimcore\Logger;
 
+/**
+ * @property \Pimcore\Model\Asset $model
+ */
 class Dao extends Model\Element\Dao
 {
     use Model\Element\ChildsCompatibilityTrait;

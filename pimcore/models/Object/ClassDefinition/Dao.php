@@ -22,6 +22,9 @@ use Pimcore\Tool\Serialize;
 use Pimcore\File;
 use Pimcore\Logger;
 
+/**
+ * @property \Pimcore\Model\Object\ClassDefinition $model
+ */
 class Dao extends Model\Dao\AbstractDao
 {
     use Object\ClassDefinition\Helper\Dao;

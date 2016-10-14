@@ -18,6 +18,9 @@ namespace Pimcore\Model\Asset\Image\Thumbnail\Config;
 
 use Pimcore\Model;
 
+/**
+ * @property \Pimcore\Model\Asset\Image\Thumbnail\Config $model
+ */
 class Dao extends Model\Dao\PhpArrayTable
 {
 

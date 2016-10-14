@@ -18,6 +18,9 @@ namespace Pimcore\Model\Site;
 
 use Pimcore\Model;
 
+/**
+ * @property \Pimcore\Model\Site $model
+ */
 class Dao extends Model\Dao\AbstractDao
 {
 

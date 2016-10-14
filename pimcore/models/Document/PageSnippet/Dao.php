@@ -20,7 +20,10 @@ use Pimcore\Model;
 use Pimcore\Model\Version;
 use Pimcore\Model\Document;
 
-abstract class Dao extends Model\Document\Dao
+abstract /**
+ * @property \Pimcore\Model\Document\PageSnippet $model
+ */
+class Dao extends Model\Document\Dao
 {
 
     /**

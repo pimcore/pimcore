@@ -18,6 +18,9 @@ namespace Pimcore\Model\Property\Predefined;
 
 use Pimcore\Model;
 
+/**
+ * @property \Pimcore\Model\Property\Predefined $model
+ */
 class Dao extends Model\Dao\PhpArrayTable
 {
 

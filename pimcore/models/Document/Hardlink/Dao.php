@@ -18,6 +18,9 @@ namespace Pimcore\Model\Document\Hardlink;
 
 use Pimcore\Model;
 
+/**
+ * @property \Pimcore\Model\Document\Hardlink\Wrapper\Folder $model
+ */
 class Dao extends Model\Document\Dao
 {
 

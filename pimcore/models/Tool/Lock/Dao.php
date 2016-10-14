@@ -19,6 +19,9 @@ namespace Pimcore\Model\Tool\Lock;
 use Pimcore\Model;
 use Pimcore\Logger;
 
+/**
+ * @property \Pimcore\Model\Tool\Lock $model
+ */
 class Dao extends Model\Dao\AbstractDao
 {
 

@@ -20,6 +20,9 @@ use Pimcore\Model;
 use Pimcore\Model\Object;
 use Prophecy\Comparator\ClosureComparator;
 
+/**
+ * @property \Pimcore\Model\Object\Listing $model
+ */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
     /** @var  Callback function */

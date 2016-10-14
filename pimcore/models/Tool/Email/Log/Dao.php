@@ -19,6 +19,9 @@ namespace Pimcore\Model\Tool\Email\Log;
 use Pimcore\Model;
 use Pimcore\Logger;
 
+/**
+ * @property \Pimcore\Model\Tool\Email\Log $model
+ */
 class Dao extends Model\Dao\AbstractDao
 {
 

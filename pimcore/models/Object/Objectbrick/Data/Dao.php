@@ -20,6 +20,9 @@ use Pimcore\Model;
 use Pimcore\Model\Object;
 use Pimcore\Logger;
 
+/**
+ * @property \Pimcore\Model\Object\Objectbrick\Data\AbstractData $model
+ */
 class Dao extends Model\Dao\AbstractDao
 {
 
