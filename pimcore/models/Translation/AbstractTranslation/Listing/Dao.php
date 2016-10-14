@@ -19,10 +19,10 @@ namespace Pimcore\Model\Translation\AbstractTranslation\Listing;
 use Pimcore\Model;
 use Pimcore\Cache;
 
-abstract /**
+/**
  * @property \Pimcore\Model\Translation\AbstractTranslation\Listing $model
  */
-class Dao extends Model\Listing\Dao\AbstractDao implements Dao\DaoInterface
+abstract class Dao extends Model\Listing\Dao\AbstractDao implements Dao\DaoInterface
 {
 
 
@@ -128,7 +128,7 @@ class Dao extends Model\Listing\Dao\AbstractDao implements Dao\DaoInterface
             Cache::save($translations, $cacheKey, ["translator", "translate"], 999);
         }
 
-        
+
         return $translations;
     }
 

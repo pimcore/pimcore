@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -19,10 +19,10 @@ namespace Pimcore\Model\Object\Listing;
 use Pimcore\Model;
 use Pimcore\Model\Object;
 
-abstract /**
+/**
  * @method \Pimcore\Model\Object\Listing\Concrete\Dao getDao()
  */
-class Concrete extends Model\Object\Listing
+abstract class Concrete extends Model\Object\Listing
 {
 
     /**

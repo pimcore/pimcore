@@ -20,10 +20,10 @@ use \Pimcore\Model\Document;
 use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Web2Print\Processor;
 
-abstract /**
+/**
  * @method \Pimcore\Model\Document\PrintAbstract\Dao getDao()
  */
-class PrintAbstract extends Document\PageSnippet
+abstract class PrintAbstract extends Document\PageSnippet
 {
     public $lastGenerated;
     public $lastGenerateMessage;

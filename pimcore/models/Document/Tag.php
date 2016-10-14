@@ -21,10 +21,10 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Webservice;
 use Pimcore\Logger;
 
-abstract /**
+/**
  * @method \Pimcore\Model\Document\Tag\Dao getDao()
  */
-class Tag extends Model\AbstractModel implements Model\Document\Tag\TagInterface
+abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\TagInterface
 {
 
     /**

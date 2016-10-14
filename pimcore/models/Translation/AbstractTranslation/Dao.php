@@ -18,10 +18,10 @@ namespace Pimcore\Model\Translation\AbstractTranslation;
 
 use Pimcore\Model;
 
-abstract /**
+/**
  * @property \Pimcore\Model\Translation\AbstractTranslation $model
  */
-class Dao extends Model\Dao\AbstractDao implements Dao\DaoInterface
+abstract class Dao extends Model\Dao\AbstractDao implements Dao\DaoInterface
 {
 
     /**
