@@ -254,7 +254,7 @@ class QPay implements IPayment
         $check = array_intersect_key($response, $required);
         if(count($required) != count($check))
         {
-            throw new \Exception( sprintf('required fields are missing! required: %s', implode(', ', array_keys(array_diff_key($required, $authorizedData)))) );
+            throw new \Exception( sprintf('required fields are missing! required: %s', implode(', ', array_keys(array_diff_key($required, $check)))) );
         }
 
         // build fingerprint params
