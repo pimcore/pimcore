@@ -126,7 +126,7 @@ class ImageMagick extends Adapter
             $this->addConvertOption('quality', $quality);
         }
 
-        if(null !== $format) {
+        if (null !== $format) {
             //set the image format. see: http://www.imagemagick.org/script/formats.php
             $this->addConvertOption('format', strtoupper($format));
         }
@@ -146,9 +146,10 @@ class ImageMagick extends Adapter
     protected function destroy()
     {
         //it deletes tmp files when the process is finished
-        foreach($this->tmpFiles as $tmpFile) {
+        foreach ($this->tmpFiles as $tmpFile) {
             unlink($tmpFile);
         }
+
         return $this;
     }
 
@@ -164,6 +165,7 @@ class ImageMagick extends Adapter
         $this->addConvertOption('resize', "{$width}x{$height}");
         $this->setWidth($width);
         $this->setHeight($height);
+
         return $this;
     }
 
@@ -217,6 +219,7 @@ class ImageMagick extends Adapter
         $this->addConvertOption('rotate', $angle)
             ->addConvertOption('alpha', 'set')
         ;
+
         return $this;
     }
 
@@ -379,8 +382,7 @@ class ImageMagick extends Adapter
      */
     public function addOverlayFit($image, $composite = "COMPOSITE_DEFAULT")
     {
-
-        if(is_file($image)) {
+        if (is_file($image)) {
             //if a specified file as a overlay exists
             $overlayImage = $this->createTmpImage($image, 'overlay');
             $overlayImage->resize($this->getWidth(), $this->getHeight())->save($overlayImage->getOutputPath());
@@ -402,7 +404,7 @@ class ImageMagick extends Adapter
         $allowedComposeOptions = [
             'hardlight', 'exclusion'
         ];
-        $composite = strtolower(substr(strrchr($composite, "_"),1));
+        $composite = strtolower(substr(strrchr($composite, "_"), 1));
         $composeVal = in_array($composite, $allowedComposeOptions) ? $composite : null;
 
         //save current state of the thumbnail to the tmp file
@@ -469,6 +471,7 @@ class ImageMagick extends Adapter
     public function sepia()
     {
         $this->addConvertOption('sepia-tone', "85%");
+
         return $this;
     }
 
@@ -484,6 +487,7 @@ class ImageMagick extends Adapter
     public function sharpen($radius = 0, $sigma = 1.0, $amount = 1.0, $threshold = 0.05)
     {
         $this->addConvertOption('sharpen', "'{$radius}x{$sigma}+$amount+$threshold'");
+
         return $this;
     }
 
@@ -497,6 +501,7 @@ class ImageMagick extends Adapter
     public function gaussianBlur($radius = 0, $sigma = 1.0)
     {
         $this->addConvertOption('gaussian-blur', "{$radius}x{$sigma}");
+
         return $this;
     }
 
@@ -511,6 +516,7 @@ class ImageMagick extends Adapter
     public function brightnessSaturation($brightness = 100, $saturation = 100, $hue = 100)
     {
         $this->addConvertOption('modulate', "{$brightness},{$saturation},{$hue}");
+
         return $this;
     }
 
@@ -568,7 +574,7 @@ class ImageMagick extends Adapter
      */
     public function addFilter($optionName, $filterValue)
     {
-        if(! isset($this->convertFilters[$optionName])) {
+        if (! isset($this->convertFilters[$optionName])) {
             $this->convertFilters[$optionName] = [];
         }
 
@@ -616,7 +622,7 @@ class ImageMagick extends Adapter
     public function getConvertOptionsAsString()
     {
         $options = $this->imagePath . ' ';
-        foreach($this->convertCommandOptions as $commandKey => $commandValue) {
+        foreach ($this->convertCommandOptions as $commandKey => $commandValue) {
             $options .= implode(' ', $this->getConvertFilters($commandKey)) . ' ';
             $options .= "-{$commandKey} {$commandValue} ";
         }
@@ -632,7 +638,7 @@ class ImageMagick extends Adapter
     public function getCompositeOptionsAsString()
     {
         $options = '';
-        foreach($this->compositeCommandOptions as $commandKey => $commandValue) {
+        foreach ($this->compositeCommandOptions as $commandKey => $commandValue) {
             $options .= "-{$commandKey} {$commandValue} ";
         }
 
@@ -658,6 +664,7 @@ class ImageMagick extends Adapter
     public function setConvertScriptPath($convertScriptPath)
     {
         $this->convertScriptPath = $convertScriptPath;
+
         return $this;
     }
 
@@ -708,6 +715,7 @@ class ImageMagick extends Adapter
         $tmpFilename = "imagemagick_{$suffix}_" . md5($this->imagePath) . '.png';
         $tmpFilepath = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . $tmpFilename;
         $image->setOutputPath($tmpFilepath);
+
         return $this;
     }
 
@@ -727,6 +735,7 @@ class ImageMagick extends Adapter
     public function setOutputPath($path)
     {
         $this->outputPath = $path;
+
         return $this;
     }
 
@@ -749,6 +758,7 @@ class ImageMagick extends Adapter
         $canvas->save($canvas->getOutputPath());
         $canvas->imagePath = $canvas->getOutputPath();
         $this->tmpFiles[] = $canvas->getOutputPath();
+
         return $canvas;
     }
 
@@ -760,7 +770,7 @@ class ImageMagick extends Adapter
      */
     public function mergeImage(ImageMagick $backgroundImage)
     {
-        $this->setTmpPaths($this,'merge');
+        $this->setTmpPaths($this, 'merge');
         $this->save($this->getOutputPath());
         //save the current state of the file (with a background)
         $this->compositeCommandOptions = [];
@@ -779,6 +789,7 @@ class ImageMagick extends Adapter
     protected function processCommand($command)
     {
         $process = new Process($command);
+
         return $process->run();
     }
 }
