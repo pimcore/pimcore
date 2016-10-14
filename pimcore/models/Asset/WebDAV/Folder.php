@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Asset\WebDAV;
 
 use Sabre\DAV;
-use Pimcore\File;
 use Pimcore\Tool\Admin as AdminTool;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
