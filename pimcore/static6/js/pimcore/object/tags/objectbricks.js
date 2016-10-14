@@ -224,7 +224,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
             null,
             {
                 containerType: "objectbrick",
-                containerKey: this.fieldConfig.fieldType,
+                containerKey: type,
                 ownerName: this.fieldConfig.name
             }
         ).items;

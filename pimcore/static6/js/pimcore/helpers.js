@@ -2806,7 +2806,7 @@ pimcore.helpers.requestNicePathDataGridDecorator = function(gridView, targets) {
 };
 
 pimcore.helpers.requestNicePathData = function(source, targets, config, fieldConfig, context, decorator, responseHandler) {
-    if (typeof targets === "undefined" || typeof fieldConfig.pathFormatterClass === "undefined") {
+    if (typeof targets === "undefined" || !fieldConfig.pathFormatterClass) {
         return;
     }
 
