@@ -19,21 +19,22 @@ use Pimcore\Google\Analytics as AnalyticsHelper;
 
 class EuCookieLawNotice extends \Zend_Controller_Plugin_Abstract
 {
-
     protected $templateCode = null;
 
     /**
      * @param $code
      */
-    public function setTemplateCode($code) {
+    public function setTemplateCode($code)
+    {
         $this->templateCode = $code;
     }
 
     /**
      * @return string
      */
-    public function getTemplateCode() {
-        if(!$this->templateCode) {
+    public function getTemplateCode()
+    {
+        if (!$this->templateCode) {
             $this->templateCode = file_get_contents(__DIR__ . "/EuCookieLawNotice/template.html");
         }
 

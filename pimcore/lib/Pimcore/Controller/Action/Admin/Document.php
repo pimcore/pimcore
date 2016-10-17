@@ -196,7 +196,7 @@ abstract class Document extends Admin
         Session::useSession(function ($session) use ($doc, $useForSave) {
             $session->{"document_" . $doc->getId()} = $doc;
 
-            if($useForSave) {
+            if ($useForSave) {
                 $session->{"document_" . $doc->getId() . "_useForSave"} = true;
             }
         }, "pimcore_documents");
