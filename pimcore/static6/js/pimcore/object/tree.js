@@ -624,6 +624,9 @@ pimcore.object.tree = Class.create({
         }
 
         pimcore.helpers.hideRedundantSeparators(menu);
+
+        pimcore.plugin.broker.fireEvent("prepareObjectTreeContextMenu", menu, this, record);
+
         menu.showAt(e.pageX+1, e.pageY+1);
     },
 
