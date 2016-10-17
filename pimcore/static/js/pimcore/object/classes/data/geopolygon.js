@@ -25,6 +25,10 @@ pimcore.object.classes.data.geopolygon = Class.create(pimcore.object.classes.dat
         this.availableSettingsFields = ['name','title','noteditable','invisible','style'];
 
         this.treeNode = treeNode;
+
+        if(!this.checkIfKeyIsAvailable()) {
+            Ext.MessageBox.alert(t("geo_error_title"), t("geo_error_message"));
+        }
     },
 
     getTypeName: function () {
