@@ -558,6 +558,9 @@ class User extends User\UserRole
      */
     public function getActivePerspective()
     {
+        if(!$this->activePerspective) {
+            $this->activePerspective = "default";
+        }
         return $this->activePerspective;
     }
 

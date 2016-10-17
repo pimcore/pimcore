@@ -63,20 +63,6 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-
-    /**
-     * @return bool
-     * @throws \Exception
-     */
-    public function save()
-    {
-        if ($this->model->getId()) {
-            return $this->model->update();
-        }
-
-        return $this->create();
-    }
-
     /**
      * @throws \Exception
      */
@@ -89,8 +75,6 @@ class Dao extends Model\Dao\AbstractDao
             ]);
 
             $this->model->setId($this->db->lastInsertId());
-
-            return $this->save();
         } catch (\Exception $e) {
             throw $e;
         }

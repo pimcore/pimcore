@@ -167,6 +167,29 @@ class AbstractUser extends Model\AbstractModel
     }
 
     /**
+     * @return $this
+     * @throws \Exception
+     */
+    public function save()
+    {
+        $this->beginTransaction();
+        try {
+            if (!$this->getId()) {
+                $this->getDao()->create();
+            }
+
+            $this->update();
+
+            $this->commit();
+        } catch (\Exception $e) {
+            $this->rollBack();
+            throw $e;
+        }
+
+        return $this;
+    }
+
+    /**
      *
      */
     public function delete()
