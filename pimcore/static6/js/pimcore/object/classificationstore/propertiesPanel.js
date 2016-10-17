@@ -68,9 +68,14 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
             }
 
             if (allowed) {
-                allowedDataTypes.push(dataComps[i]);
+                allowedDataTypes.push([dataComps[i], t(dataComps[i])]);
             }
         }
+
+        this.allowedTypesStore = new Ext.data.SimpleStore({
+            fields: ['key', 'name'],
+            data: allowedDataTypes
+        });
 
         var url = "/admin/classificationstore/properties?";
         var proxy = {
@@ -138,7 +143,9 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
             editor: new Ext.form.ComboBox({
                 triggerAction: 'all',
                 editable: false,
-                store: allowedDataTypes
+                store: this.allowedTypesStore,
+                displayField:'name',
+                valueField: "key"
             }),
             renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {
                 return t(value);
