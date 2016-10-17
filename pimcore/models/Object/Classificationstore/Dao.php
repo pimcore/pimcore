@@ -87,14 +87,13 @@ class Dao extends Model\Dao\AbstractDao
 
                     if ($fd instanceof Object\ClassDefinition\Data\Password) {
                         $fakeModel = new class() {
-
-                            public function __call($method, $arguments) {
+                            public function __call($method, $arguments)
+                            {
                                 // nothing to do for now
                             }
                         };
-                        $value = $fd->getDataForResource($value, $this->model->object, array("context" => $fakeModel));
+                        $value = $fd->getDataForResource($value, $this->model->object, ["context" => $fakeModel]);
                         $this->model->setLocalizedKeyValue($groupId, $keyId, $value, $language);
-
                     } else {
                         $value = $fd->getDataForResource($value, $this->model->object);
                     }

@@ -558,9 +558,10 @@ class User extends User\UserRole
      */
     public function getActivePerspective()
     {
-        if(!$this->activePerspective) {
+        if (!$this->activePerspective) {
             $this->activePerspective = "default";
         }
+
         return $this->activePerspective;
     }
 
@@ -600,11 +601,12 @@ class User extends User\UserRole
     public function getFirstAllowedPerspective()
     {
         $perspectives = $this->getMergedPerspectives();
-        if(!empty($perspectives)) {
+        if (!empty($perspectives)) {
             return $perspectives[0];
         } else {
             // all perspectives are allowed
             $perspectives = \Pimcore\Config::getAvailablePerspectives($this);
+
             return $perspectives[0]["name"];
         }
     }
