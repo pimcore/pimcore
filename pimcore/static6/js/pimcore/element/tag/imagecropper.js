@@ -10,7 +10,7 @@
  * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
-
+var globalImagecropper = {};
 pimcore.registerNS("pimcore.element.tag.imagecropper");
 pimcore.element.tag.imagecropper = Class.create({
 
@@ -31,6 +31,8 @@ pimcore.element.tag.imagecropper = Class.create({
     },
 
     open: function (modal) {
+        globalImagecropper.modal = modal;
+        globalImagecropper.obj = this;
         var imageUrl = '/admin/asset/get-image-thumbnail/id/' + this.imageId + '/width/500/height/400/contain/true';
 
         if(typeof modal != "undefined") {
@@ -43,7 +45,21 @@ pimcore.element.tag.imagecropper = Class.create({
             modal: this.modal,
             resizable: false,
             bodyStyle: "background: url(" + imageUrl + ") center center no-repeat;position:relative;",
-            bbar: ["->", {
+            bbar: ["->",
+                {
+                    xtype: "button",
+                    iconCls: "pimcore_icon_revert",
+                    text: t("reset"),
+                    handler: function () {
+                        this.data = {
+                            id: this.imageId
+                        };
+
+                        this.saveCallback(this.data);
+                        this.editWindow.close();
+                    }.bind(this)
+                },
+                {
                 xtype: "button",
                 iconCls: "pimcore_icon_apply",
                 text: t("save"),
