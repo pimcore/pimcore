@@ -14,6 +14,7 @@
 
 use Pimcore\File;
 use Pimcore\Tool;
+use Pimcore\Tool\Session;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Redirect;
@@ -79,9 +80,29 @@ class Admin_PageController extends \Pimcore\Controller\Action\Admin\Document
     {
         try {
             if ($this->getParam("id")) {
+
                 $page = Document\Page::getById($this->getParam("id"));
 
-                $page = $this->getLatestVersion($page);
+                // check if there's a document in session which should be used as data-source
+                // see also self::clearEditableDataAction() | this is necessary to reset all fields and to get rid of
+                // outdated and unused data elements in this document (eg. entries of area-blocks)
+                $pageSession = Session::useSession(function ($session) use ($page) {
+                    if(isset($session->{"document_" . $page->getId()}) && isset($session->{"document_" . $page->getId() . "_useForSave"})) {
+                        if($session->{"document_" . $page->getId() . "_useForSave"}) {
+                            // only use the page from the session once
+                            unset($session->{"document_" . $page->getId() . "_useForSave"});
+                            return $session->{"document_" . $page->getId()};
+                        }
+                    }
+                    return null;
+                }, "pimcore_documents");
+
+                if($pageSession) {
+                    $page = $pageSession;
+                } else {
+                    $page = $this->getLatestVersion($page);
+                }
+
                 $page->setUserModification($this->getUser()->getId());
 
                 if ($this->getParam("task") == "unpublish") {
@@ -316,7 +337,7 @@ class Admin_PageController extends \Pimcore\Controller\Action\Admin\Document
             }
         }
 
-        $this->saveToSession($doc);
+        $this->saveToSession($doc, true);
 
         $this->_helper->json([
             "success" => true
