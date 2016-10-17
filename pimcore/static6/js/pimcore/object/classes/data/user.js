@@ -23,7 +23,7 @@ pimcore.object.classes.data.user = Class.create(pimcore.object.classes.data.data
         objectbrick: true,
         fieldcollection: true,
         localizedfield: true,
-        classificationstore : false,
+        classificationstore : true,
         block: true
     },        
 
