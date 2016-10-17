@@ -6175,5 +6175,13 @@
     {
         "term": "path_formatter_class",
         "definition": "Formatter Class"
+    },
+    {
+        "term": "quantityValue",
+        "definition": "Quantity Value"
+    },
+    {
+        "term": "calculatedValue",
+        "definition": "Calculated Value"
     }
 ]
