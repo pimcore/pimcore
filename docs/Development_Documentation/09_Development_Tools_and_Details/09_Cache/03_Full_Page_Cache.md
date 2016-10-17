@@ -42,7 +42,7 @@ it's not possible to define an exclude-regex, or for similar reasons.
 In this case you can use the following snippet to deactivate the full page cache for the current 
 process/request: 
 ```php
-$front = Zend_Controller_Front::getInstance();
+$front = \Zend_Controller_Front::getInstance();
 $front->unregisterPlugin("Pimcore\\Controller\\Plugin\\Cache");
 ```
 
