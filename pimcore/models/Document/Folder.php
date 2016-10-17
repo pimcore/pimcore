@@ -18,6 +18,9 @@ namespace Pimcore\Model\Document;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\Document\Folder\Dao getDao()
+ */
 class Folder extends Model\Document
 {
 

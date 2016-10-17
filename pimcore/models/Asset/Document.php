@@ -21,6 +21,9 @@ use Pimcore\Model;
 use Pimcore\Tool;
 use Pimcore\Logger;
 
+/**
+ * @method \Pimcore\Model\Asset\Dao getDao()
+ */
 class Document extends Model\Asset
 {
 

@@ -18,6 +18,9 @@ namespace Pimcore\Model\Tool\Setup;
 
 use Pimcore\Model;
 
+/**
+ * @property \Pimcore\Model\Tool\Setup $model
+ */
 class Dao extends Model\Dao\AbstractDao
 {
 

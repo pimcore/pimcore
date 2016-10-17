@@ -188,13 +188,17 @@ abstract class Document extends Admin
 
     /**
      * @param $doc
+     * @param bool $useForSave
      */
-    protected function saveToSession($doc)
+    protected function saveToSession($doc, $useForSave = false)
     {
         // save to session
-        Session::useSession(function ($session) use ($doc) {
-            $key = "document_" . $doc->getId();
-            $session->$key = $doc;
+        Session::useSession(function ($session) use ($doc, $useForSave) {
+            $session->{"document_" . $doc->getId()} = $doc;
+
+            if ($useForSave) {
+                $session->{"document_" . $doc->getId() . "_useForSave"} = true;
+            }
         }, "pimcore_documents");
     }
 

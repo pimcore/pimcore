@@ -19,6 +19,9 @@ namespace Pimcore\Model\Object\Data\ObjectMetadata;
 use Pimcore\Model;
 use Pimcore\Model\Object;
 
+/**
+ * @property \Pimcore\Model\Object\Data\ObjectMetadata $model
+ */
 class Dao extends Model\Dao\AbstractDao
 {
 

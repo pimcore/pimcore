@@ -19,6 +19,9 @@ namespace Pimcore\Model\Object;
 use Pimcore\Model;
 use Pimcore\Tool;
 
+/**
+ * @method \Pimcore\Model\Object\Localizedfield\Dao getDao()
+ */
 class Localizedfield extends Model\AbstractModel
 {
     const STRICT_DISABLED = 0;

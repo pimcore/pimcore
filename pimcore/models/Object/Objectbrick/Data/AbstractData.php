@@ -19,6 +19,9 @@ namespace Pimcore\Model\Object\Objectbrick\Data;
 use Pimcore\Model;
 use Pimcore\Model\Object;
 
+/**
+ * @method \Pimcore\Model\Object\Objectbrick\Data\Dao getDao()
+ */
 class AbstractData extends Model\AbstractModel
 {
 

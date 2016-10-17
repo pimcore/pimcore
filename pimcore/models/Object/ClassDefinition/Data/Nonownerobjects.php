@@ -58,8 +58,6 @@ class Nonownerobjects extends Model\Object\ClassDefinition\Data\Objects
      */
     public $lazyLoading = true;
 
-
-
     /**
      * @param array $classes
      * @return $this

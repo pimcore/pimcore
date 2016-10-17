@@ -18,8 +18,12 @@ namespace Pimcore\Model\User\UserRole;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\User\UserRole\Dao getDao()
+ */
 class Folder extends Model\User\AbstractUser
 {
+    use Model\Element\ChildsCompatibilityTrait;
 
     /**
      * @var boolean
@@ -42,7 +46,7 @@ class Folder extends Model\User\AbstractUser
      *
      * @return boolean
      */
-    public function hasChilds()
+    public function hasChildren()
     {
         if ($this->hasChilds !== null) {
             return $this->hasChilds;

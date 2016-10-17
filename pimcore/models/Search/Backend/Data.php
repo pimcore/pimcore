@@ -21,6 +21,9 @@ use Pimcore\Model\Element;
 use Pimcore\Logger;
 use ForceUTF8\Encoding;
 
+/**
+ * @method \Pimcore\Model\Search\Backend\Data\Dao getDao()
+ */
 class Data extends \Pimcore\Model\AbstractModel
 {
 

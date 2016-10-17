@@ -20,7 +20,10 @@
 pimcore.registerNS("pimcore.object.helpers.edit");
 pimcore.object.helpers.edit = {
 
-    getRecursiveLayout: function (l, noteditable) {
+    getRecursiveLayout: function (l, noteditable, context) {
+        if (typeof context === "undefined") {
+            context = {};
+        }
 
         var panelListenerConfig = {};
 
@@ -142,7 +145,7 @@ pimcore.object.helpers.edit = {
                             childConfig.fieldLabel = l.fieldLabel;
                         }
 
-                        tmpItems = this.getRecursiveLayout(childConfig, noteditable);
+                        tmpItems = this.getRecursiveLayout(childConfig, noteditable, context);
 
                         if (tmpItems) {
                             l.items.push(tmpItems);
@@ -242,6 +245,7 @@ pimcore.object.helpers.edit = {
                 var field = new pimcore.object.tags[l.fieldtype](data, l);
 
                 field.setObject(this.object);
+                field.updateContext(context);
                 field.setName(l.name);
                 field.setTitle(l.titleOriginal);
                 field.setInitialData(data);

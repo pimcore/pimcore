@@ -31,7 +31,7 @@ pimcore.report.custom.panel = Class.create({
 
         return this.panel;
     },
-    
+
     getTree: function () {
         if (!this.tree) {
             var store = Ext.create('Ext.data.TreeStore', {

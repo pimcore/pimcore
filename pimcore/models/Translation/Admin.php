@@ -19,6 +19,9 @@ namespace Pimcore\Model\Translation;
 use Pimcore\Model;
 use Pimcore\Tool;
 
+/**
+ * @method \Pimcore\Model\Translation\Admin\Dao getDao()
+ */
 class Admin extends AbstractTranslation
 {
 

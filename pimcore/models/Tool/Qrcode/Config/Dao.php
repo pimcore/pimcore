@@ -18,6 +18,9 @@ namespace Pimcore\Model\Tool\Qrcode\Config;
 
 use Pimcore\Model;
 
+/**
+ * @property \Pimcore\Model\Tool\Qrcode\Config $model
+ */
 class Dao extends Model\Dao\PhpArrayTable
 {
 

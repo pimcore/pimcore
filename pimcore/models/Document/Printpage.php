@@ -18,6 +18,9 @@ namespace Pimcore\Model\Document;
 
 use \Pimcore\Model\Document;
 
+/**
+ * @method \Pimcore\Model\Document\Printpage\Dao getDao()
+ */
 class Printpage extends Document\PrintAbstract
 {
 

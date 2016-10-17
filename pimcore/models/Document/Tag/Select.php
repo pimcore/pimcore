@@ -18,6 +18,9 @@ namespace Pimcore\Model\Document\Tag;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\Document\Tag\Dao getDao()
+ */
 class Select extends Model\Document\Tag
 {
 

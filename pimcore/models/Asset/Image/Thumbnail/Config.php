@@ -20,6 +20,9 @@ use Pimcore\Tool\Serialize;
 use Pimcore\Model;
 use Pimcore\Logger;
 
+/**
+ * @method \Pimcore\Model\Asset\Image\Thumbnail\Config\Dao getDao()
+ */
 class Config extends Model\AbstractModel
 {
 

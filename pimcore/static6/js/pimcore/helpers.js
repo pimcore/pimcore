@@ -460,24 +460,25 @@ pimcore.helpers.isValidFilename = function (value) {
 
 pimcore.helpers.getValidFilenameCache = {};
 
-pimcore.helpers.getValidFilename = function (value) {
+pimcore.helpers.getValidFilename = function (value, type) {
 
-    if(pimcore.helpers.getValidFilenameCache[value]) {
-        return pimcore.helpers.getValidFilenameCache[value];
+    if(pimcore.helpers.getValidFilenameCache[value + type]) {
+        return pimcore.helpers.getValidFilenameCache[value + type];
     }
 
     // we use jQuery for the synchronous xhr request, because ExtJS doesn't provide this
     var response = jQuery.ajax({
         url: "/admin/misc/get-valid-filename",
         data: {
-            value: value
+            value: value,
+            type: type
         },
         async: false
     });
 
     var res = Ext.decode(response.responseText);
 
-    pimcore.helpers.getValidFilenameCache[value] = res["filename"];
+    pimcore.helpers.getValidFilenameCache[value + type] = res["filename"];
 
     return res["filename"];
 
@@ -587,7 +588,7 @@ pimcore.helpers.showNotification = function (title, text, type, errorText, hideD
             iconCls: "pimcore_icon_error",
             title: title,
             width: 700,
-            height: 500,
+            maxHeight: 500,
             html: text,
             autoScroll: true,
             bodyStyle: "padding: 10px; background:#fff;",
@@ -965,6 +966,7 @@ pimcore.helpers.assetSingleUploadDialog = function (parent, parentType, success,
                         failure: function (el, res) {
                             failure(res);
                             uploadWindowCompatible.close();
+                            pimcore.helpers.showNotification(t("error"), res.response.responseText, "error");
                         }
                     });
                 }
@@ -1391,6 +1393,14 @@ pimcore.helpers.uploadAssetFromFileObject = function (file, url, callbackSuccess
         callbackFailure = function () {};
     }
 
+    if(file["size"]) {
+        if(file["size"] > pimcore.settings["upload_max_filesize"]) {
+            callbackSuccess();
+            pimcore.helpers.showNotification(t("error"), t("file_is_bigger_that_upload_limit") + " " + file.name, "error");
+            return;
+        }
+    }
+
     var data = new FormData();
     data.append('Filedata', file);
     data.append("filename", file.name);
@@ -1576,14 +1586,28 @@ pimcore.helpers.sendTestEmail = function () {
         var params = win.getComponent("form").getForm().getFieldValues();
         params["type"] = type;
 
+        win.disable();
+
         Ext.Ajax.request({
             url: "/admin/email/send-test-email",
             params: params,
-            method: "post"
+            method: "post",
+            success: function () {
+                Ext.Msg.show({
+                    title: t("send_test_email"),
+                    message: t("send_test_email_success"),
+                    buttons: Ext.Msg.YESNO,
+                    icon: Ext.Msg.QUESTION,
+                    fn: function(btn) {
+                        win.enable();
+                        if (btn === 'no') {
+                            win.close();
+                        }
+                    }
+                });
+            }
         });
-
-        win.close();
-    }
+    };
 
     win.show();
 
@@ -2769,3 +2793,87 @@ pimcore.helpers.initMenuTooltips = function(){
 
     items.addClass("initialized", "true");
 };
+
+pimcore.helpers.requestNicePathDataGridDecorator = function(gridView, targets) {
+    targets.each(function(record){
+        var el = gridView.getRow(record);
+        if (el) {
+            el = Ext.fly(el);
+            el.addCls("grid_nicepath_requested");
+        }
+    },this);
+
+};
+
+pimcore.helpers.requestNicePathData = function(source, targets, config, fieldConfig, context, decorator, responseHandler) {
+    if (typeof targets === "undefined" || !fieldConfig.pathFormatterClass) {
+        return;
+    }
+
+    if (!targets.getCount() > 0 ) {
+        return;
+    }
+
+    config = config || {};
+    Ext.applyIf(config, {
+        idProperty: "id"
+    });
+
+    var elementData = {};
+
+    targets.each(function(record){
+        var recordId = record.data[config.idProperty];
+        elementData[recordId] = record.data;
+    },this);
+
+    if (decorator) {
+        decorator(targets);
+    }
+
+    elementData = Ext.encode(elementData);
+
+    Ext.Ajax.request({
+        url: "/admin/element/get-nice-path",
+        params: {
+            source: Ext.encode(source),
+            targets: elementData,
+            context: Ext.encode(context)
+
+        },
+        success: function (response) {
+            try {
+                var rdata = Ext.decode(response.responseText);
+                if (rdata.success) {
+
+                    var responseData = rdata.data;
+                    responseHandler(responseData);
+                }
+            } catch (e) {
+                console.log(e);
+            }
+        }.bind(this)
+    });
+}
+
+
+pimcore.helpers.getNicePathHandlerStore = function(store, config, gridView, responseData) {
+    config = config || {};
+    Ext.applyIf(config, {
+        idProperty: "id",
+        pathProperty: "path"
+    });
+
+    store.each(function (record, id) {
+        var recordId = record.data[config.idProperty];
+        if (typeof responseData[recordId] != "undefined") {
+            record.set(config.pathProperty, responseData[recordId], { dirty: false });
+
+            var el = gridView.getRow(record);
+            if (el) {
+                el = Ext.fly(el);
+                el.removeCls("grid_nicepath_requested");
+            }
+        }
+    }, this);
+
+}

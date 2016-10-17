@@ -122,7 +122,7 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
                 "latitude" => $data->getLatitude()
             ];
         }
-        
+
         return;
     }
 
@@ -207,7 +207,7 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     public function getForWebserviceExport($object, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
-        
+
         if ($data instanceof Object\Data\Geopoint) {
             return [
                 "longitude" => $data->getLongitude(),
@@ -231,7 +231,7 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
         if (empty($value)) {
             return null;
         } else {
-            $value = (array) $value;
+            $value = (array)$value;
             if ($value["longitude"] !== null && $value["latitude"] !== null) {
                 return new Object\Data\Geopoint($value["longitude"], $value["latitude"]);
             } else {
@@ -249,4 +249,38 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     {
         return true;
     }
+
+    /** Encode value for packing it into a single column.
+     * @param mixed $value
+     * @param Model\Object\AbstractObject $object
+     * @param mixed $params
+     * @return mixed
+     */
+    public function marshal($value, $object = null, $params = []) {
+        if ($value) {
+            return [
+                "value" => $value[$this->getName() . "__latitude"],
+                "value2" => $value[$this->getName() . "__longitude"]
+
+            ];
+        }
+    }
+
+    /** See marshal
+     * @param mixed $value
+     * @param Model\Object\AbstractObject $object
+     * @param mixed $params
+     * @return mixed
+     */
+    public function unmarshal($value, $object = null, $params = [])
+    {
+        if (is_array($value)) {
+            $data = array(
+                $this->getName() . "__longitude" => $value["value2"],
+                $this->getName() . "__latitude" => $value["value"]
+            );
+            return $data;
+        }
+    }
+
 }

@@ -134,4 +134,16 @@ class User extends Model\Object\ClassDefinition\Data\Select
             }
         }
     }
+
+    /**
+     * @param $data
+     * @return static
+     */
+    public static function __set_state($data)
+    {
+        $obj = parent::__set_state($data);
+        $obj->configureOptions();
+
+        return $obj;
+    }
 }

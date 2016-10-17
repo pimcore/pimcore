@@ -419,7 +419,7 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
             this.datax.cropHeight = data.cropHeight;
             this.datax.cropTop = data.cropTop;
             this.datax.cropLeft = data.cropLeft;
-            this.datax.cropPercent = true;
+            this.datax.cropPercent = (undefined !== data.cropPercent) ? data.cropPercent : true;
 
             this.updateImage();
         }.bind(this));

@@ -18,6 +18,9 @@ namespace Pimcore\Model\Object\KeyValue\GroupConfig;
 
 use Pimcore\Model;
 
+/**
+ * @property \Pimcore\Model\Object\KeyValue\GroupConfig $model
+ */
 class Dao extends Model\Dao\AbstractDao
 {
     const TABLE_NAME_GROUPS = "keyvalue_groups";

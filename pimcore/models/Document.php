@@ -17,12 +17,18 @@
 
 namespace Pimcore\Model;
 
+use Pimcore\Model\Document\Listing;
+use Pimcore\Model\Element;
 use Pimcore\Tool;
 use Pimcore\Tool\Frontend as FrontendTool;
 use Pimcore\Logger;
 
+/**
+ * @method \Pimcore\Model\Document\Dao getDao()
+ */
 class Document extends Element\AbstractElement
 {
+    use Element\ChildsCompatibilityTrait;
 
     /**
      * possible types of a document
@@ -31,6 +37,8 @@ class Document extends Element\AbstractElement
     public static $types = ["folder", "page", "snippet", "link", "hardlink", "email", "newsletter", "printpage", "printcontainer"];
 
     /**
+     * Add document type to the $types array. It defines additional document types available in Pimcore.
+     *
      * @param $type
      */
     public static function addDocumentType($type)
@@ -46,14 +54,18 @@ class Document extends Element\AbstractElement
     private static $hidePublished = false;
 
     /**
-     * @param $hidePublished
+     * Set true if want to hide documents.
+     *
+     * @param bool $flag
      */
-    public static function setHideUnpublished($hidePublished)
+    public static function setHideUnpublished($flag)
     {
-        self::$hidePublished = $hidePublished;
+        self::$hidePublished = $flag;
     }
 
     /**
+     * Checks if unpublished documents should be hidden.
+     *
      * @return bool
      */
     public static function doHideUnpublished()
@@ -76,6 +88,8 @@ class Document extends Element\AbstractElement
     public $parentId;
 
     /**
+     * The parent document.
+     *
      * @var Document
      */
     public $parent;
@@ -192,6 +206,8 @@ class Document extends Element\AbstractElement
     public $hasSiblings;
 
     /**
+     * Check if the document is locked.
+     *
      * @var string
      */
     public $locked = null;
@@ -313,8 +329,10 @@ class Document extends Element\AbstractElement
 
 
     /**
+     * Returns the documents list instance.
+     *
      * @param array $config
-     * @return mixed
+     * @return Listing
      * @throws \Exception
      */
     public static function getList($config = [])
@@ -332,8 +350,10 @@ class Document extends Element\AbstractElement
     }
 
     /**
+     * Get total count of documents.
+     *
      * @param array $config
-     * @return total count
+     * @return int count
      */
     public static function getTotalCount($config = [])
     {
@@ -349,7 +369,9 @@ class Document extends Element\AbstractElement
 
 
     /**
-     * @return $this
+     * Save the document.
+     *
+     * @return Document
      * @throws \Exception
      */
     public function save()
@@ -450,7 +472,10 @@ class Document extends Element\AbstractElement
     }
 
     /**
+     * Validate the document path.
+     *
      * @throws \Exception
+     * @return void
      */
     public function correctPath()
     {
@@ -546,7 +571,10 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * @param $index
+     * Update the document index.
+     *
+     * @param int $index
+     * @return void
      */
     public function saveIndex($index)
     {
@@ -555,7 +583,10 @@ class Document extends Element\AbstractElement
     }
 
     /**
+     * Clear the cache related to the document.
+     *
      * @param array $additionalTags
+     * @return void
      */
     public function clearDependentCache($additionalTags = [])
     {
@@ -588,12 +619,12 @@ class Document extends Element\AbstractElement
      *
      * @return array
      */
-    public function setChilds($childs)
+    public function setChildren($children)
     {
-        $this->childs=$childs;
-        if (is_array($childs) and count($childs>0)) {
+        $this->childs=$children;
+        if (is_array($children) and count($children>0)) {
             $this->hasChilds=true;
-        } elseif ($childs === null) {
+        } elseif ($children === null) {
             $this->hasChilds = null;
         } else {
             $this->hasChilds=false;
@@ -607,7 +638,7 @@ class Document extends Element\AbstractElement
      * @param bool
      * @return array
      */
-    public function getChilds($unpublished = false)
+    public function getChildren($unpublished = false)
     {
         if ($this->childs === null) {
             $list = new Document\Listing();
@@ -627,7 +658,7 @@ class Document extends Element\AbstractElement
      *
      * @return boolean
      */
-    public function hasChilds()
+    public function hasChildren()
     {
         if (is_bool($this->hasChilds)) {
             if (($this->hasChilds and empty($this->childs)) or (!$this->hasChilds and !empty($this->childs))) {
@@ -694,8 +725,10 @@ class Document extends Element\AbstractElement
     }
 
     /**
+     * Mark the document as locked.
+     *
      * @param  $locked
-     * @return $this
+     * @return Document
      */
     public function setLocked($locked)
     {
@@ -842,20 +875,21 @@ class Document extends Element\AbstractElement
     protected function prepareFrontendPath($path)
     {
         if (\Pimcore\Tool::isFrontend()) {
+            $path = urlencode_ignore_slash($path);
             $results = \Pimcore::getEventManager()->trigger("frontend.path.document", $this, [
                 "frontendPath" => $path
             ]);
             if ($results->count()) {
                 $path = $results->last();
             }
-
-            $path = urlencode_ignore_slash($path);
         }
 
         return $path;
     }
 
     /**
+     * Returns the document creation date.
+     *
      * @return integer
      */
     public function getCreationDate()
@@ -864,6 +898,8 @@ class Document extends Element\AbstractElement
     }
 
     /**
+     * Returns the document id.
+     *
      * @return integer
      */
     public function getId()
@@ -872,6 +908,8 @@ class Document extends Element\AbstractElement
     }
 
     /**
+     * Returns the document key.
+     *
      * @return string
      */
     public function getKey()
@@ -880,6 +918,8 @@ class Document extends Element\AbstractElement
     }
 
     /**
+     * Return the document modification date.
+     *
      * @return integer
      */
     public function getModificationDate()
@@ -888,6 +928,8 @@ class Document extends Element\AbstractElement
     }
 
     /**
+     * Returns the id of the parent document.
+     *
      * @return integer
      */
     public function getParentId()
@@ -896,6 +938,8 @@ class Document extends Element\AbstractElement
     }
 
     /**
+     * Returns the document path.
+     *
      * @return string
      */
     public function getPath()
@@ -923,6 +967,8 @@ class Document extends Element\AbstractElement
     }
 
     /**
+     * Returns the real document path.
+     *
      * @return string
      */
     public function getRealPath()
@@ -931,6 +977,8 @@ class Document extends Element\AbstractElement
     }
 
     /**
+     * Returns the full real path of the document.
+     *
      * @return string
      */
     public function getRealFullPath()
@@ -941,8 +989,10 @@ class Document extends Element\AbstractElement
     }
 
     /**
+     * Set the creation date of the document.
+     *
      * @param integer $creationDate
-     * @return $this
+     * @return Document
      */
     public function setCreationDate($creationDate)
     {
@@ -952,8 +1002,10 @@ class Document extends Element\AbstractElement
     }
 
     /**
+     * Set the id of the document.
+     *
      * @param integer $id
-     * @return $this
+     * @return Document
      */
     public function setId($id)
     {
@@ -963,8 +1015,10 @@ class Document extends Element\AbstractElement
     }
 
     /**
+     * Set the document key.
+     *
      * @param integer $key
-     * @return $this
+     * @return Document
      */
     public function setKey($key)
     {
@@ -975,8 +1029,10 @@ class Document extends Element\AbstractElement
 
 
     /**
+     * Set the document modification date.
+     *
      * @param integer $modificationDate
-     * @return $this
+     * @return Document
      */
     public function setModificationDate($modificationDate)
     {
@@ -987,8 +1043,10 @@ class Document extends Element\AbstractElement
 
 
     /**
+     * Set the parent id of the document.
+     *
      * @param integer $parentId
-     * @return $this
+     * @return Document
      */
     public function setParentId($parentId)
     {
@@ -999,8 +1057,10 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * @param integer $path
-     * @return $this
+     * Set the document path.
+     *
+     * @param string $path
+     * @return Document
      */
     public function setPath($path)
     {
@@ -1010,6 +1070,8 @@ class Document extends Element\AbstractElement
     }
 
     /**
+     * Returns the document index.
+     *
      * @return integer
      */
     public function getIndex()
@@ -1018,8 +1080,10 @@ class Document extends Element\AbstractElement
     }
 
     /**
+     * Set the document index.
+     *
      * @param integer $index
-     * @return $this
+     * @return Document
      */
     public function setIndex($index)
     {
@@ -1029,6 +1093,8 @@ class Document extends Element\AbstractElement
     }
 
     /**
+     * Returns the document type.
+     *
      * @return string
      */
     public function getType()
@@ -1037,8 +1103,10 @@ class Document extends Element\AbstractElement
     }
 
     /**
+     * Set the document type.
+     *
      * @param integer $type
-     * @return $this
+     * @return Document
      */
     public function setType($type)
     {
@@ -1048,6 +1116,8 @@ class Document extends Element\AbstractElement
     }
 
     /**
+     * Returns id of the user last modified the document.
+     *
      * @return integer
      */
     public function getUserModification()
@@ -1056,6 +1126,8 @@ class Document extends Element\AbstractElement
     }
 
     /**
+     * Returns the id of the owner user.
+     *
      * @return integer
      */
     public function getUserOwner()
@@ -1064,8 +1136,10 @@ class Document extends Element\AbstractElement
     }
 
     /**
+     * Set id of the user last modified the document.
+     *
      * @param integer $userModification
-     * @return $this
+     * @return Document
      */
     public function setUserModification($userModification)
     {
@@ -1075,8 +1149,10 @@ class Document extends Element\AbstractElement
     }
 
     /**
+     * Set the id of the owner user.
+     *
      * @param integer $userOwner
-     * @return $this
+     * @return Document
      */
     public function setUserOwner($userOwner)
     {
@@ -1086,6 +1162,8 @@ class Document extends Element\AbstractElement
     }
 
     /**
+     * Checks if the document is published.
+     *
      * @return boolean
      */
     public function isPublished()
@@ -1094,6 +1172,8 @@ class Document extends Element\AbstractElement
     }
 
     /**
+     * Checks if the document is published.
+     *
      * @return boolean
      */
     public function getPublished()
@@ -1102,8 +1182,10 @@ class Document extends Element\AbstractElement
     }
 
     /**
+     * Set the publish status of the document.
+     *
      * @param integer $published
-     * @return $this
+     * @return Document
      */
     public function setPublished($published)
     {
@@ -1137,8 +1219,10 @@ class Document extends Element\AbstractElement
     }
 
     /**
+     * Set document properties.
+     *
      * @param array $properties
-     * @return $this
+     * @return Document
      */
     public function setProperties($properties)
     {
@@ -1148,12 +1232,14 @@ class Document extends Element\AbstractElement
     }
 
     /**
+     * Set the document property.
+     *
      * @param string $name
      * @param string $type
      * @param mixed $data
      * @param bool $inherited
      * @param bool $inheritable
-     * @return $this
+     * @return Document
      */
     public function setProperty($name, $type, $data, $inherited = false, $inheritable = true)
     {
@@ -1174,6 +1260,8 @@ class Document extends Element\AbstractElement
     }
 
     /**
+     * Returns the parent document instance.
+     *
      * @return Document
      */
     public function getParent()
@@ -1186,8 +1274,10 @@ class Document extends Element\AbstractElement
     }
 
     /**
+     * Set the parent document instance.
+     *
      * @param Document $parent
-     * @return $this
+     * @return Document
      */
     public function setParent($parent)
     {
@@ -1251,7 +1341,9 @@ class Document extends Element\AbstractElement
     }
 
     /**
+     *  Removes all inherited properties.
      *
+     * @return void
      */
     public function removeInheritedProperties()
     {
@@ -1268,7 +1360,9 @@ class Document extends Element\AbstractElement
     }
 
     /**
+     * Renews all inherited properties.
      *
+     * @return void
      */
     public function renewInheritedProperties()
     {

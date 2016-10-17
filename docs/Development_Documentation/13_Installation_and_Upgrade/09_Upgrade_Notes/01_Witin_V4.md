@@ -1,5 +1,14 @@
 ##  Upgrade notes for 4.4.0
-- Memcached Adapter is deprecated, please use Redis2 instead. 
+- Memcached adapter is deprecated, please use Redis2 instead. 
+- Whitespace and uppercase letters are now allowed in element's keys, to keep the old policy, add the following code to your `startup.php` : 
+```php 
+\Pimcore::getEventManager()->attach("system.service.preGetValidKey", function (\Zend_EventManager_Event $event) {
+    $key = $event->getParam("key");
+    $key = \Pimcore\File::getValidFilename($key);
+    return $key;
+});
+```
+- Document editable 'Date': if using Carbon (DateTime) the syntax for the config-option `format` changed from `date()` to `strftime()`
 
 ## Upgrade notes for 4.3.0
 #### Newsletter

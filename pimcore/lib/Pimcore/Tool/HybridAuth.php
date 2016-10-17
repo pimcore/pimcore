@@ -24,10 +24,6 @@ class HybridAuth
      */
     public static function init()
     {
-        // register HybridAuth
-        $autoloader = \Zend_Loader_Autoloader::getInstance();
-        $autoloader->registerNamespace('Hybrid');
-
         // disable output-cache
         $front = \Zend_Controller_Front::getInstance();
         $front->unregisterPlugin("Pimcore\\Controller\\Plugin\\Cache");

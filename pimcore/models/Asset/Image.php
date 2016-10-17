@@ -19,6 +19,9 @@ namespace Pimcore\Model\Asset;
 use Pimcore\Model;
 use Pimcore\Logger;
 
+/**
+ * @method \Pimcore\Model\Asset\Dao getDao()
+ */
 class Image extends Model\Asset
 {
 

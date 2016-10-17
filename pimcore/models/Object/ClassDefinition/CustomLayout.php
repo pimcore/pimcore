@@ -21,6 +21,9 @@ use Pimcore\Model\Object;
 use Pimcore\Cache;
 use Pimcore\Logger;
 
+/**
+ * @method \Pimcore\Model\Object\ClassDefinition\CustomLayout\Dao getDao()
+ */
 class CustomLayout extends Model\AbstractModel
 {
 

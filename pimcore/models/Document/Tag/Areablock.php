@@ -22,6 +22,9 @@ use Pimcore\Tool;
 use Pimcore\Model\Document;
 use Pimcore\Logger;
 
+/**
+ * @method \Pimcore\Model\Document\Tag\Dao getDao()
+ */
 class Areablock extends Model\Document\Tag
 {
 

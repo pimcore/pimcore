@@ -18,6 +18,9 @@ namespace Pimcore\Model\Object\Folder;
 
 use Pimcore\Model;
 
+/**
+ * @property \Pimcore\Model\Object\Folder $model
+ */
 class Dao extends Model\Object\AbstractObject\Dao
 {
 }

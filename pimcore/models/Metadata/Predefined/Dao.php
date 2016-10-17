@@ -18,6 +18,9 @@ namespace Pimcore\Model\Metadata\Predefined;
 
 use Pimcore\Model;
 
+/**
+ * @property \Pimcore\Model\Metadata\Predefined $model
+ */
 class Dao extends Model\Dao\PhpArrayTable
 {
 

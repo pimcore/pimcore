@@ -105,6 +105,13 @@ pimcore.object.classes.data.objects = Class.create(pimcore.object.classes.data.d
                 value: t('lazy_loading_warning'),
                 cls: "pimcore_extra_label_bottom",
                 style: "color:red; font-weight: bold;"
+            },
+            {
+                xtype: 'textfield',
+                width: 600,
+                fieldLabel: t("path_formatter_class"),
+                name: 'pathFormatterClass',
+                value: this.datax.pathFormatterClass
             }
         ]);
 

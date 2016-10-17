@@ -258,7 +258,7 @@ pimcore.elementservice.editDocumentKeyComplete =  function (options, button, val
         var record;
         var id = options.id;
         var elementType = options.elementType;
-        value = pimcore.helpers.getValidFilename(value);
+        value = pimcore.helpers.getValidFilename(value, "document");
 
         if (options.sourceTree) {
             var tree = options.sourceTree;
@@ -298,6 +298,11 @@ pimcore.elementservice.editDocumentKeyComplete =  function (options, button, val
                 return;
             }
 
+            if(rdata && rdata.success) {
+                // removes loading indicator added in the applyNewKey method
+                pimcore.helpers.removeTreeNodeLoadingIndicator(elementType, id);
+            }
+
             for (index = 0; index < affectedNodes.length; index++) {
                 record = affectedNodes[index];
                 pimcore.elementservice.refreshNode(record.parentNode);
@@ -325,7 +330,7 @@ pimcore.elementservice.editObjectKeyComplete = function (options, button, value,
         var record;
         var id = options.id;
         var elementType = options.elementType;
-        value = pimcore.helpers.getValidFilename(value);
+        value = pimcore.helpers.getValidFilename(value, "object");
 
         if (options.sourceTree) {
             var tree = options.sourceTree;
@@ -358,6 +363,8 @@ pimcore.elementservice.editObjectKeyComplete = function (options, button, value,
                     var rdata = Ext.decode(response.responseText);
                     if (rdata && rdata.success) {
                         pimcore.elementservice.reopenElement(options);
+                        // removes loading indicator added in the applyNewKey method
+                        pimcore.helpers.removeTreeNodeLoadingIndicator(elementType, id);
                     }  else {
                         pimcore.helpers.showNotification(t("error"), t("error_renaming_object"), "error",
                             t(rdata.message));
@@ -394,7 +401,7 @@ pimcore.elementservice.editAssetKeyComplete = function (options, button, value, 
             var id = options.id;
             var elementType = options.elementType;
 
-            value = pimcore.helpers.getValidFilename(value);
+            value = pimcore.helpers.getValidFilename(value, "asset");
 
             if (options.sourceTree) {
                 var tree = options.sourceTree;
@@ -434,6 +441,11 @@ pimcore.elementservice.editAssetKeyComplete = function (options, button, value, 
                         pimcore.helpers.showNotification(t("error"), t("error_renaming_element"),
                             "error");
                         return;
+                    }
+
+                    if(rdata && rdata.success) {
+                        // removes loading indicator added in the applyNewKey method
+                        pimcore.helpers.removeTreeNodeLoadingIndicator(elementType, id);
                     }
 
                     for (index = 0; index < affectedNodes.length; index++) {
@@ -503,7 +515,7 @@ pimcore.elementservice.isDisallowedDocumentKey = function (parentNodeId, key) {
 
 pimcore.elementservice.isKeyExistingInLevel = function(parentNode, key, node) {
 
-    key = pimcore.helpers.getValidFilename(key);
+    key = pimcore.helpers.getValidFilename(key, parentNode.data.elementType);
     var parentChilds = parentNode.childNodes;
     for (var i = 0; i < parentChilds.length; i++) {
         if (parentChilds[i].data.text == key && node != parentChilds[i]) {

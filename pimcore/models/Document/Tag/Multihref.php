@@ -22,6 +22,9 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Object;
 
+/**
+ * @method \Pimcore\Model\Document\Tag\Dao getDao()
+ */
 class Multihref extends Model\Document\Tag implements \Iterator
 {
 

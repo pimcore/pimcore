@@ -106,7 +106,6 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
      */
     public $documentTypes;
 
-
     /**
      * @return boolean
      */
@@ -442,7 +441,6 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
 
         return $this;
     }
-
 
     /**
      * Checks if data is valid for current data field

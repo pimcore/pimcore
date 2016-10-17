@@ -25,6 +25,9 @@ use Pimcore\File;
 use Pimcore\Tool;
 use Pimcore\Logger;
 
+/**
+ * @method \Pimcore\Model\Element\Dao getDao()
+ */
 class Service extends Model\AbstractModel
 {
 
@@ -685,12 +688,12 @@ class Service extends Model\AbstractModel
 
         $sanitizedPath = "/";
         foreach ($parts as $part) {
-            $sanitizedPath = $sanitizedPath . self::getValidKey($part) . "/";
+            $sanitizedPath = $sanitizedPath . self::getValidKey($part, $type) . "/";
         }
 
         if (!($foundElement = $type::getByPath($sanitizedPath))) {
             foreach ($parts as $part) {
-                $pathsArray[] = $pathsArray[count($pathsArray) - 1] . '/' . self::getValidKey($part);
+                $pathsArray[] = $pathsArray[count($pathsArray) - 1] . '/' . self::getValidKey($part, $type);
             }
 
             for ($i = 0; $i < count($pathsArray); $i++) {
@@ -784,18 +787,34 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @static
-     * @param  $tmpFilename
-     * @param null $language
-     * @return string
+     * @param $key
+     * @param null $type
+     * @return mixed|string
      */
-    public static function getValidKey($tmpFilename, $language = null)
+    public static function getValidKey($key, $type)
     {
-        $tmpFilename = \Pimcore\Tool\Transliteration::toASCII($tmpFilename, $language);
-        $tmpFilename = preg_replace('/[^a-zA-Z0-9\-\.~_ ]+/', '-', $tmpFilename);
-        $tmpFilename = ltrim($tmpFilename, "."); // files shouldn't start with a "." (=hidden file)
+        $results = \Pimcore::getEventManager()->trigger("system.service.preGetValidKey", null, [
+            "key" => $key,
+            "type" => $type
+        ]);
 
-        return $tmpFilename;
+        if ($results->count()) {
+            $key = $results->last();
+        }
+
+        $key = \Pimcore\Tool\Transliteration::toASCII($key);
+        $key = preg_replace('/[^a-zA-Z0-9\-\.~_ ]+/', '-', $key);
+
+        if ($type == "asset") {
+            // keys shouldn't start with a "." (=hidden file) *nix operating systems
+            // keys shouldn't end with a "." - Windows issue: filesystem API trims automatically . at the end of a folder name (no warning ... et al)
+            $key = trim($key, ". ");
+        } else {
+            $key = trim($key);
+            $key = ltrim($key, ".");
+        }
+
+        return $key;
     }
 
     /**

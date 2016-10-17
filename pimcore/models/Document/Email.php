@@ -20,6 +20,9 @@ use Pimcore\Model;
 use Egulias\EmailValidator\EmailValidator;
 use Egulias\EmailValidator\Validation\RFCValidation;
 
+/**
+ * @method \Pimcore\Model\Document\Email\Dao getDao()
+ */
 class Email extends Model\Document\PageSnippet
 {
     /**

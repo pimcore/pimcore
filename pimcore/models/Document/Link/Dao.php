@@ -18,6 +18,9 @@ namespace Pimcore\Model\Document\Link;
 
 use Pimcore\Model;
 
+/**
+ * @property \Pimcore\Model\Document\Link $model
+ */
 class Dao extends Model\Document\Dao
 {
 

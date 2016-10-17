@@ -19,6 +19,9 @@ namespace Pimcore\Model\Tool\Targeting\Persona;
 use Pimcore\Model;
 use Pimcore\Tool\Serialize;
 
+/**
+ * @property \Pimcore\Model\Tool\Targeting\Persona $model
+ */
 class Dao extends Model\Dao\AbstractDao
 {
 

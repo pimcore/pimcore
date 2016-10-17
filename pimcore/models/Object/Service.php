@@ -21,6 +21,9 @@ use Pimcore\Model;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Admin as AdminTool;
 
+/**
+ * @method \Pimcore\Model\Element\Dao getDao()
+ */
 class Service extends Model\Element\Service
 {
 
@@ -785,7 +788,13 @@ class Service extends Model\Element\Service
                     if ($filterField == "fullpath") {
                         $conditionPartsFilters[] = "concat(o_path, o_key) " . $operator . " " . $db->quote("%" . $filter["value"] . "%");
                     } else {
-                        $conditionPartsFilters[] = "`o_" . $filterField . "` " . $operator . " " . $db->quote($filter["value"]);
+                        if ($filter['type'] == 'date' && $operator == '=') {
+                            //if the equal operator is chosen with the date type, condition has to be changed
+                            $maxTime = $filter['value'] + (86400 - 1); //specifies the top point of the range used in the condition
+                            $conditionPartsFilters[] = "`o_" . $filterField . "` BETWEEN " . $db->quote($filter["value"]) . " AND " . $db->quote($maxTime);
+                        } else {
+                            $conditionPartsFilters[] = "`o_" . $filterField . "` " . $operator . " " . $db->quote($filter["value"]);
+                        }
                     }
                 }
             }
@@ -1298,7 +1307,7 @@ class Service extends Model\Element\Service
     {
         $list = new Listing();
         $list->setUnpublished(true);
-        $key = Element\Service::getValidKey($item->getKey());
+        $key = Element\Service::getValidKey($item->getKey(), "object");
         if (!$key) {
             throw new \Exception("No item key set.");
         }

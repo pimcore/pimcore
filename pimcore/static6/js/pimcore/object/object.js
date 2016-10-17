@@ -315,7 +315,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 text: t('save'),
                 iconCls: "pimcore_icon_save",
                 scale: "medium",
-                handler: this.unpublish.bind(this),
+                handler: this.save.bind(this),
                 menu:[{
                     text: t('save_close'),
                     iconCls: "pimcore_icon_save",
@@ -580,22 +580,21 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
 
     publish: function (only, callback) {
-        this.data.general.o_published = true;
-        var state = this.save("publish", only, callback);
+        return this.save("publish", only, callback, function(rdata){
+            if(rdata && rdata.success) {
+                //set the object as published only if in the response error doesn't exist
+                this.data.general.o_published = true;
+                // toggle buttons
+                this.toolbarButtons.unpublish.show();
+                this.toolbarButtons.save.hide();
 
-        if(state) {
-            // toggle buttons
-            this.toolbarButtons.unpublish.show();
-            this.toolbarButtons.save.hide();
-
-            pimcore.elementservice.setElementPublishedState({
-                elementType: "object",
-                id: this.id,
-                published: true
-            });
-        }
-
-        return state;
+                pimcore.elementservice.setElementPublishedState({
+                    elementType: "object",
+                    id: this.id,
+                    published: true
+                });
+            }
+        }.bind(this));
     },
 
     unpublish: function () {
@@ -624,7 +623,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         this.save("session", null, callback);
     },
 
-    save : function (task, only, callback) {
+    save : function (task, only, callback, successCallback) {
 
         var omitMandatoryCheck = false;
 
@@ -662,6 +661,10 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                         if (task != "session") {
                             try {
                                 var rdata = Ext.decode(response.responseText);
+                                if (typeof successCallback == 'function') {
+                                    //the successCallback function retrieves response data information
+                                    successCallback(rdata);
+                                }
                                 if (rdata && rdata.success) {
                                     pimcore.helpers.showNotification(t("success"), t("your_object_has_been_saved"),
                                         "success");
@@ -698,7 +701,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                             callback();
                         }
 
-                }.bind(this),
+                }.bind(this).bind(successCallback),
                 failure: function (response) {
                     this.tab.unmask();
                 }.bind(this)

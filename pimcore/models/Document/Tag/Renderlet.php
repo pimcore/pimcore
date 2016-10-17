@@ -24,6 +24,9 @@ use Pimcore\Model\Object;
 use Pimcore\Model\Element;
 use Pimcore\Logger;
 
+/**
+ * @method \Pimcore\Model\Document\Tag\Dao getDao()
+ */
 class Renderlet extends Model\Document\Tag
 {
 

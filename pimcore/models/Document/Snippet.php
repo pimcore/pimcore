@@ -18,6 +18,9 @@ namespace Pimcore\Model\Document;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\Document\Snippet\Dao getDao()
+ */
 class Snippet extends Model\Document\PageSnippet
 {
 

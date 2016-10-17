@@ -19,6 +19,9 @@ namespace Pimcore\Model\Object\Data\KeyValue;
 use Pimcore\Model;
 use Pimcore\Logger;
 
+/**
+ * @property \Pimcore\Model\Object\Data\KeyValue $model
+ */
 class Dao extends Model\Dao\AbstractDao
 {
 

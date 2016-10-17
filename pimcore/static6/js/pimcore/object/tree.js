@@ -658,7 +658,7 @@ pimcore.object.tree = Class.create({
                 elementType : "object",
                 sourceTree: tree,
                 parentId: record.data.id,
-                key: pimcore.helpers.getValidFilename(value)
+                key: pimcore.helpers.getValidFilename(value, "object")
             };
             pimcore.elementservice.addObject(options);
         }
@@ -679,7 +679,7 @@ pimcore.object.tree = Class.create({
                 parentId: record.data.id,
                 className: className,
                 classId: classId,
-                key: pimcore.helpers.getValidFilename(value)
+                key: pimcore.helpers.getValidFilename(value, "object")
             };
             pimcore.elementservice.addObject(options);
         }
@@ -703,7 +703,7 @@ pimcore.object.tree = Class.create({
                 parentId: record.data.id,
                 variantViaTree: true,
                 objecttype: "variant",
-                key: pimcore.helpers.getValidFilename(value)
+                key: pimcore.helpers.getValidFilename(value, "object")
             };
             pimcore.elementservice.addObject(options);
         }

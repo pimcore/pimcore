@@ -21,6 +21,9 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Object;
 
+/**
+ * @property \Pimcore\Model\Element\WorkflowState $model
+ */
 class Dao extends Model\Dao\AbstractDao
 {
 

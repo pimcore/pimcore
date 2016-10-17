@@ -109,7 +109,7 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
         if ($config->general->http_auth) {
             $username = $config->general->http_auth->username;
             $password = $config->general->http_auth->password;
-            if ($username && $password) {
+            if ($username && $password && (!Tool::isFrontentRequestByAdmin() || !Tool\Authentication::authenticateSession())) {
                 $adapter = new \Zend_Auth_Adapter_Http([
                     "accept_schemes" => "basic",
                     "realm" => Tool::getHostname()
@@ -191,17 +191,6 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
             $matchFound = true;
             //$params["document"] = $this->getNearestDocumentByPath($path);
         }
-
-        // you can also call a page by it's ID /?pimcore_document=XXXX
-        if (!$matchFound) {
-            if (!empty($params["pimcore_document"]) || !empty($params["pdid"])) {
-                $doc = Document::getById($params["pimcore_document"] ? $params["pimcore_document"] : $params["pdid"]);
-                if ($doc instanceof Document) {
-                    $path = $doc->getFullPath();
-                }
-            }
-        }
-
 
         // test if there is a suitable page
         if (!$matchFound) {

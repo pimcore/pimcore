@@ -20,6 +20,9 @@ use Pimcore\Model;
 use Pimcore\Model\Version;
 use Pimcore\Model\Document;
 
+/**
+ * @property \Pimcore\Model\Document\PageSnippet $model
+ */
 abstract class Dao extends Model\Document\Dao
 {
 
@@ -86,8 +89,8 @@ abstract class Dao extends Model\Document\Dao
 
         return $versions;
     }
-    
-    
+
+
     /**
      * Get latest available version, using $force always returns a version no matter if it is the same as the published one
      * @param bool $force
@@ -96,7 +99,7 @@ abstract class Dao extends Model\Document\Dao
     public function getLatestVersion($force = false)
     {
         $versionData = $this->db->fetchRow("SELECT id,date FROM versions WHERE cid = ? AND ctype='document' ORDER BY `id` DESC LIMIT 1", $this->model->getId());
-        
+
         if (($versionData["id"] && $versionData["date"] > $this->model->getModificationDate()) || $force) {
             $version = Version::getById($versionData["id"]);
 
@@ -105,7 +108,7 @@ abstract class Dao extends Model\Document\Dao
 
         return;
     }
-    
+
 
     /**
      * Delete the object from database

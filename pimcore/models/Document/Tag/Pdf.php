@@ -22,6 +22,9 @@ use Pimcore\Model\Element;
 use Pimcore\Model\Document;
 use Pimcore\Logger;
 
+/**
+ * @method \Pimcore\Model\Document\Tag\Dao getDao()
+ */
 class Pdf extends Model\Document\Tag
 {
     /**

@@ -18,6 +18,9 @@ namespace Pimcore\Model;
 
 use Pimcore\File;
 
+/**
+ * @method \Pimcore\Model\User\Dao getDao()
+ */
 class User extends User\UserRole
 {
     /**
@@ -555,6 +558,10 @@ class User extends User\UserRole
      */
     public function getActivePerspective()
     {
+        if (!$this->activePerspective) {
+            $this->activePerspective = "default";
+        }
+
         return $this->activePerspective;
     }
 
@@ -593,6 +600,14 @@ class User extends User\UserRole
      */
     public function getFirstAllowedPerspective()
     {
-        return $this->getMergedPerspectives()[0];
+        $perspectives = $this->getMergedPerspectives();
+        if (!empty($perspectives)) {
+            return $perspectives[0];
+        } else {
+            // all perspectives are allowed
+            $perspectives = \Pimcore\Config::getAvailablePerspectives($this);
+
+            return $perspectives[0]["name"];
+        }
     }
 }

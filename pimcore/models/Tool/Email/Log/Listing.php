@@ -18,6 +18,9 @@ namespace Pimcore\Model\Tool\Email\Log;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\Tool\Email\Log\Listing\Dao getDao()
+ */
 class Listing extends Model\Listing\AbstractListing
 {
 

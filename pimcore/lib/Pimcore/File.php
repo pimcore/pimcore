@@ -60,7 +60,10 @@ class File
         $tmpFilename = \Pimcore\Tool\Transliteration::toASCII($tmpFilename, $language);
         $tmpFilename = strtolower($tmpFilename);
         $tmpFilename = preg_replace('/[^a-z0-9\-\.~_]+/', '-', $tmpFilename);
-        $tmpFilename = ltrim($tmpFilename, "."); // files shouldn't start with a "." (=hidden file)
+
+        // keys shouldn't start with a "." (=hidden file) *nix operating systems
+        // keys shouldn't end with a "." - Windows issue: filesystem API trims automatically . at the end of a folder name (no warning ... et al)
+        $tmpFilename = trim($tmpFilename, ". ");
 
         return $tmpFilename;
     }

@@ -16,7 +16,6 @@
 
 namespace Pimcore\Model\Asset\WebDAV;
 
-use Pimcore\File;
 use Sabre\DAV;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
@@ -35,11 +34,11 @@ class Tree extends DAV\Tree
     public function move($sourcePath, $destinationPath)
     {
         $nameParts = explode("/", $sourcePath);
-        $nameParts[count($nameParts)-1] = Element\Service::getValidKey($nameParts[count($nameParts)-1]);
+        $nameParts[count($nameParts)-1] = Element\Service::getValidKey($nameParts[count($nameParts)-1], "asset");
         $sourcePath = implode("/", $nameParts);
 
         $nameParts = explode("/", $destinationPath);
-        $nameParts[count($nameParts)-1] = Element\Service::getValidKey($nameParts[count($nameParts)-1]);
+        $nameParts[count($nameParts)-1] = Element\Service::getValidKey($nameParts[count($nameParts)-1], "asset");
         $destinationPath = implode("/", $nameParts);
 
         try {

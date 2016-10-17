@@ -18,6 +18,9 @@ namespace Pimcore\Model\Element;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\Element\Note\Dao getDao()
+ */
 class Note extends Model\AbstractModel
 {
 

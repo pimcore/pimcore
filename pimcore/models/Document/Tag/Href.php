@@ -23,6 +23,9 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\Object;
 use Pimcore\Logger;
 
+/**
+ * @method \Pimcore\Model\Document\Tag\Dao getDao()
+ */
 class Href extends Model\Document\Tag
 {
 

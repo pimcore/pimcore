@@ -19,6 +19,9 @@ namespace Pimcore\Model\Object\QuantityValue;
 use Pimcore\Model;
 use Pimcore\Logger;
 
+/**
+ * @method \Pimcore\Model\Object\QuantityValue\Unit\Dao getDao()
+ */
 class Unit extends Model\AbstractModel
 {
 

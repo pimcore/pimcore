@@ -18,6 +18,9 @@ namespace Pimcore\Model\Object\Fieldcollection\Data;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\Object\Fieldcollection\Data\Dao getDao()
+ */
 abstract class AbstractData extends Model\AbstractModel
 {
 

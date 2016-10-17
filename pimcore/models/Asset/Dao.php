@@ -19,8 +19,12 @@ namespace Pimcore\Model\Asset;
 use Pimcore\Model;
 use Pimcore\Logger;
 
+/**
+ * @property \Pimcore\Model\Asset $model
+ */
 class Dao extends Model\Element\Dao
 {
+    use Model\Element\ChildsCompatibilityTrait;
     /**
      * Get the data for the object by id from database and assign it to the object (model)
      * @param $id
@@ -326,7 +330,7 @@ class Dao extends Model\Element\Dao
      *
      * @return boolean
      */
-    public function hasChilds()
+    public function hasChildren()
     {
         $c = $this->db->fetchOne("SELECT id FROM assets WHERE parentId = ?", $this->model->getId());
 

@@ -51,7 +51,7 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
         for (var i = 0; i < this.fields.length; i++) {
             readerFields.push({name: this.fields[i], allowBlank: true});
         }
-        
+
         var dataComps = Object.keys(pimcore.object.classes.data);
         var allowedDataTypes = [];
 
@@ -68,9 +68,14 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
             }
 
             if (allowed) {
-                allowedDataTypes.push(dataComps[i]);
+                allowedDataTypes.push([dataComps[i], t(dataComps[i])]);
             }
         }
+
+        this.allowedTypesStore = new Ext.data.SimpleStore({
+            fields: ['key', 'name'],
+            data: allowedDataTypes
+        });
 
         var url = "/admin/classificationstore/properties?";
         var proxy = {
@@ -130,7 +135,7 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
             }
 
         );
-        
+
         gridColumns.push({header: t("title"), width: 200, sortable: false, dataIndex: 'title',editor: new Ext.form.TextField({}), filter: 'string'});
         gridColumns.push({header: t("description"), width: 300, sortable: true, dataIndex: 'description',editor: new Ext.form.TextField({}), filter: 'string'});
         gridColumns.push({header: t("definition"), width: 300, sortable: true, hidden: true, dataIndex: 'definition',editor: new Ext.form.TextField({})});
@@ -138,10 +143,13 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
             editor: new Ext.form.ComboBox({
                 triggerAction: 'all',
                 editable: false,
-                store: allowedDataTypes
-            })
-        });
-
+                store: this.allowedTypesStore,
+                displayField:'name',
+                valueField: "key"
+            }),
+            renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {
+                return t(value);
+            }});
 
         gridColumns.push({
             hideable: false,
@@ -420,7 +428,7 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
                                if (record) {
                                    selModel.select(record);
                                    this.showDetailedConfig(this.grid, this.store.indexOf(record));
-                               } 
+                               }
                            }.bind(this)
                        });
                    } else {

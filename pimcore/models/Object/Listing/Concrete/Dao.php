@@ -20,6 +20,9 @@ use Pimcore\Model;
 use Pimcore\Model\Object;
 use Pimcore\Tool;
 
+/**
+ * @property \Pimcore\Model\Object\Listing\Concrete $model
+ */
 class Dao extends Model\Object\Listing\Dao
 {
 

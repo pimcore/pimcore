@@ -18,6 +18,9 @@ namespace Pimcore\Model\Tool\Targeting;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\Tool\Targeting\Persona\Dao getDao()
+ */
 class Persona extends Model\AbstractModel
 {
 

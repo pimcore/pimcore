@@ -19,6 +19,14 @@ use Pimcore\Db;
 use Pimcore\Tool;
 use Pimcore\Logger;
 
+/**
+ * @method void beginTransaction()
+ * @method void commit()
+ * @method void rollBack()
+ * @method void configure()
+ * @method array getValidTableColumns(string $table, bool $cache)
+ * @method void resetValidTableColumnsCache(string $table)
+ */
 abstract class AbstractModel
 {
 

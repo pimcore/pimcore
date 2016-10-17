@@ -18,6 +18,9 @@ namespace Pimcore\Model\Object\Classificationstore\StoreConfig;
 
 use Pimcore\Model;
 
+/**
+ * @property \Pimcore\Model\Object\Classificationstore\StoreConfig $model
+ */
 class Dao extends Model\Dao\AbstractDao
 {
     const TABLE_NAME_STORES = "classificationstore_stores";

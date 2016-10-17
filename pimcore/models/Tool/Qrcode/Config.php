@@ -18,6 +18,9 @@ namespace Pimcore\Model\Tool\Qrcode;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\Tool\Qrcode\Config\Dao getDao()
+ */
 class Config extends Model\AbstractModel
 {
 

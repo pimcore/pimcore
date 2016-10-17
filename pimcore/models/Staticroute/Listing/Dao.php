@@ -18,6 +18,9 @@ namespace Pimcore\Model\Staticroute\Listing;
 
 use Pimcore\Model;
 
+/**
+ * @property \Pimcore\Model\Staticroute\Listing $model
+ */
 class Dao extends Model\Dao\PhpArrayTable
 {
 

@@ -18,6 +18,9 @@ namespace Pimcore\Model\User\Workspace;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\User\Workspace\Dao getDao()
+ */
 class Document extends AbstractWorkspace
 {
 

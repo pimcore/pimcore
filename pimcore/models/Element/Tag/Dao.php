@@ -22,6 +22,9 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\Element\Tag;
 use Pimcore\Model\Object;
 
+/**
+ * @property \Pimcore\Model\Element\Tag $model
+ */
 class Dao extends Model\Dao\AbstractDao
 {
 

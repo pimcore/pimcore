@@ -18,6 +18,9 @@ namespace Pimcore\Model\Asset\Video\Thumbnail;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\Asset\Video\Thumbnail\Config\Dao getDao()
+ */
 class Config extends Model\AbstractModel
 {
 

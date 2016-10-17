@@ -164,36 +164,50 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
 
         var topBar = this.buildTopBar(this.drillDownFilterDefinitions);
 
-        topBar.push("->");
-        topBar.push({
-            xtype: "button",
-            text: t("export_csv"),
-            iconCls: "pimcore_icon_export",
-            handler: function () {
-                var query = "";
-                var filterData = this.store.getFilters().items;
+        //export button
+        var exportBtnHandler = function (btn) {
+            var query = "";
+            var filterData = this.store.getFilters().items;
 
-                if(filterData.length > 0) {
-                    query = "filter=" + encodeURIComponent(proxy.encodeFilters(filterData));
-                } else {
-                    query = "filter=";
-                }
+            if(filterData.length > 0) {
+                query = "filter=" + encodeURIComponent(proxy.encodeFilters(filterData));
+            } else {
+                query = "filter=";
+            }
 
-                query += "&extjs6=1&name=" + this.config.name;
+            query += "&extjs6=1&name=" + this.config.name;
 
-                if(this.drillDownFilters) {
-                    var fieldnames = Object.getOwnPropertyNames(this.drillDownFilters);
-                    for(var j = 0; j < fieldnames.length; j++) {
-                        if(this.drillDownFilters[fieldnames[j]] !== null) {
-                            query += "&" + 'drillDownFilters[' + fieldnames[j] + ']='
-                                + this.drillDownFilters[fieldnames[j]];
-                        }
+            if (btn.getItemId() === 'exportWithHeaders') {
+                query += '&headers=1';
+            }
+
+            if(this.drillDownFilters) {
+                var fieldnames = Object.getOwnPropertyNames(this.drillDownFilters);
+                for(var j = 0; j < fieldnames.length; j++) {
+                    if(this.drillDownFilters[fieldnames[j]] !== null) {
+                        query += "&" + 'drillDownFilters[' + fieldnames[j] + ']='
+                            + this.drillDownFilters[fieldnames[j]];
                     }
                 }
+            }
 
-                var downloadUrl = "/admin/reports/custom-report/download-csv?" + query;
-                pimcore.helpers.download(downloadUrl);
-            }.bind(this)
+            var downloadUrl = "/admin/reports/custom-report/download-csv?" + query;
+            pimcore.helpers.download(downloadUrl);
+        };
+
+        topBar.push("->");
+
+        topBar.push({
+            xtype: 'splitbutton',
+            text: t("export_csv"),
+            iconCls: "pimcore_icon_export",
+            handler: exportBtnHandler.bind(this),
+            menu:[{
+                text: t("export_csv_include_headers"),
+                itemId: 'exportWithHeaders',
+                iconCls: "pimcore_icon_export",
+                handler: exportBtnHandler.bind(this)
+            }]
         });
 
         this.grid = new Ext.grid.GridPanel({

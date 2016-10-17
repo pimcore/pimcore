@@ -22,6 +22,9 @@ use Pimcore\Config;
 use Pimcore\File;
 use Pimcore\Logger;
 
+/**
+ * @method \Pimcore\Model\Version\Dao getDao()
+ */
 class Version extends AbstractModel
 {
 

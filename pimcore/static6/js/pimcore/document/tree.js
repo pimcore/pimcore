@@ -1011,7 +1011,7 @@ pimcore.document.tree = Class.create({
                     name: "domains",
                     height: 150,
                     style: "word-wrap: normal;",
-                    fieldLabel: t("additional_domains") + "<br /><br />RegExp are supported. eg. .*example.com",
+                    fieldLabel: t("additional_domains") + "<br /><br />Wildcards are supported. eg. *example.com",
                     value: data.domains.join("\n")
                 }, {
                     xtype: "textfield",
@@ -1250,7 +1250,7 @@ pimcore.document.tree = Class.create({
 
             params["sourceTree"] = tree;
             params["elementType"] = "document";
-            params["key"] = pimcore.helpers.getValidFilename(params["key"]);
+            params["key"] = pimcore.helpers.getValidFilename(params["key"], "document");
             params["index"] = record.childNodes.length;
             params["parentId"] = record.id;
             params["url"] = "/admin/document/add/";

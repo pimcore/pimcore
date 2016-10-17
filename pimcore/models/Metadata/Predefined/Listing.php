@@ -16,6 +16,9 @@
 
 namespace Pimcore\Model\Metadata\Predefined;
 
+/**
+ * @method \Pimcore\Model\Metadata\Predefined\Listing\Dao getDao()
+ */
 class Listing extends \Pimcore\Model\Listing\JsonListing
 {
 

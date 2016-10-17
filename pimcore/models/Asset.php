@@ -24,8 +24,12 @@ use Pimcore\Model;
 use Pimcore\Model\Element;
 use Pimcore\Logger;
 
+/**
+ * @method \Pimcore\Model\Asset\Dao getDao()
+ */
 class Asset extends Element\AbstractElement
 {
+    use Element\ChildsCompatibilityTrait;
 
     /**
      * possible types of an asset
@@ -787,12 +791,11 @@ class Asset extends Element\AbstractElement
         $path = $this->getPath() . $this->getFilename();
 
         if (\Pimcore\Tool::isFrontend()) {
+            $path = urlencode_ignore_slash($path);
             $results = \Pimcore::getEventManager()->trigger("frontend.path.asset", $this);
             if ($results->count()) {
                 $path = $results->last();
             }
-
-            $path = urlencode_ignore_slash($path);
         }
 
         return $path;
@@ -819,7 +822,7 @@ class Asset extends Element\AbstractElement
     /**
      * @return array
      */
-    public function getChilds()
+    public function getChildren()
     {
         if ($this->childs === null) {
             $list = new Asset\Listing();
@@ -836,7 +839,7 @@ class Asset extends Element\AbstractElement
     /**
      * @return boolean
      */
-    public function hasChilds()
+    public function hasChildren()
     {
         if ($this->getType() == "folder") {
             if (is_bool($this->hasChilds)) {

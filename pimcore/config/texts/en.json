@@ -1,5 +1,13 @@
 [
     {
+        "term": "custom_http_headers",
+        "definition": "Custom HTTP Headers"
+    },
+    {
+        "term": "file_is_bigger_that_upload_limit",
+        "definition": "The following file is bigger than the actual upload limit of your server:"
+    },
+    {
         "term": "change_password",
         "definition": "Change Password"
     },
@@ -270,6 +278,10 @@
     {
         "term": "send_test_email",
         "definition": "Send Test-Email"
+    },
+    {
+        "term": "send_test_email_success",
+        "definition": "Your test-email has been sent. Would you like to keep this window open to send the email again?"
     },
     {
         "term": "global",
@@ -6167,5 +6179,17 @@
     {
         "term": "newsletter_email_field_name",
         "definition": "Email field name"
+    },
+    {
+        "term": "path_formatter_class",
+        "definition": "Formatter Class"
+    },
+    {
+        "term": "quantityValue",
+        "definition": "Quantity Value"
+    },
+    {
+        "term": "calculatedValue",
+        "definition": "Calculated Value"
     }
 ]

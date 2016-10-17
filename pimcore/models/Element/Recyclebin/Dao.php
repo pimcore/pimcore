@@ -18,6 +18,9 @@ namespace Pimcore\Model\Element\Recyclebin;
 
 use Pimcore\Model;
 
+/**
+ * @property \Pimcore\Model\Element\Recyclebin $model
+ */
 class Dao extends Model\Dao\AbstractDao
 {
     public function flush()

@@ -101,11 +101,11 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
             }
 
             eConfig.language = pimcore.settings["language"];
-            eConfig.removePlugins = 'bgcolor,' + removePluginsAdd;
+            eConfig.removePlugins = removePluginsAdd;
             eConfig.entities = false;
             eConfig.entities_greek = false;
             eConfig.entities_latin = false;
-            eConfig.allowedContent = true; // disables CKEditor ACF (will remove pimcore_* attributes from links, etc.)
+            eConfig.extraAllowedContent = "*[pimcore_type,pimcore_id]";
 
             this.ckeditor = CKEDITOR.inline(this.textarea, eConfig);
 
@@ -290,13 +290,3 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
 });
 
 CKEDITOR.disableAutoInline = true;
-
-// IE Hack see: http://dev.ckeditor.com/ticket/9958
-// problem is that every button in a CKEDITOR window fires the onbeforeunload event
-CKEDITOR.on('instanceReady', function (event) {
-    event.editor.on('dialogShow', function (dialogShowEvent) {
-        if (CKEDITOR.env.ie) {
-            $(dialogShowEvent.data._.element.$).find('a[href*="void(0)"]').removeAttr('href');
-        }
-    });
-});

@@ -18,6 +18,9 @@ namespace Pimcore\Model\User\Listing;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\User\Listing\AbstractListing\Dao getDao()
+ */
 class AbstractListing extends Model\Listing\AbstractListing
 {
 

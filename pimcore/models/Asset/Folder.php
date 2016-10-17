@@ -18,8 +18,12 @@ namespace Pimcore\Model\Asset;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\Asset\Dao getDao()
+ */
 class Folder extends Model\Asset
 {
+    use Model\Element\ChildsCompatibilityTrait;
 
     /**
      * @var string
@@ -31,10 +35,10 @@ class Folder extends Model\Asset
      *
      * @return array
      */
-    public function setChilds($childs)
+    public function setChildren($children)
     {
-        $this->childs = $childs;
-        if (is_array($childs) and count($childs > 0)) {
+        $this->childs = $children;
+        if (is_array($children) and count($children > 0)) {
             $this->hasChilds = true;
         } else {
             $this->hasChilds = false;

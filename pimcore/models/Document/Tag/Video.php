@@ -21,6 +21,9 @@ use Pimcore\Tool;
 use Pimcore\Model\Asset;
 use Pimcore\Logger;
 
+/**
+ * @method \Pimcore\Model\Document\Tag\Dao getDao()
+ */
 class Video extends Model\Document\Tag
 {
     /**

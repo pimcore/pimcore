@@ -16,16 +16,11 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
 
     type: "objectsMetadata",
     dataChanged:false,
+    idProperty: 'rowId',
 
     initialize: function (data, fieldConfig) {
         this.data = [];
         this.fieldConfig = fieldConfig;
-
-        //var classStore = pimcore.globalmanager.get("object_types_store");
-        //var className = classStore.getById(fieldConfig.allowedClassId);
-        //
-        //var classNameText = (typeof(className) != 'undefined') ? className.data.text : '';
-        //this.fieldConfig.classes = [{classes: classNameText, id: fieldConfig.allowedClassId}];
 
         if (data) {
             this.data = data;
@@ -43,10 +38,6 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
 
         var i;
 
-        //for(i = 0; i < visibleFields.length; i++) {
-        //    fields.push(visibleFields[i]);
-        //}
-
         for(i = 0; i < this.fieldConfig.columns.length; i++) {
             fields.push(this.fieldConfig.columns[i].key);
         }
@@ -56,7 +47,7 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
         if(!Ext.ClassManager.isCreated(modelName) ) {
             Ext.define(modelName, {
                 extend: 'Ext.data.Model',
-                idProperty: 'rowId',
+                idProperty: this.idProperty,
                 fields: fields
             });
         }
@@ -96,7 +87,7 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
 
         var columns = [];
         columns.push({header: 'ID', dataIndex: 'id', width: 50});
-        columns.push({header: 'Path', dataIndex: 'path', flex: 1});
+        columns.push({header: t('reference'), dataIndex: 'path', flex: 1});
 
 
         for (i = 0; i < this.fieldConfig.columns.length; i++) {
@@ -312,7 +303,12 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
                 items: columns
             },
             viewConfig: {
-                markDirty: false
+                markDirty: false,
+                listeners: {
+                    refresh: function (gridview) {
+                        this.requestNicePathData(this.store.data);
+                    }.bind(this)
+                }
             },
             componentCls: cls,
             width: this.fieldConfig.width,
@@ -360,13 +356,16 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
                             var data = record.data;
                             var fromTree = this.isFromTree(dd);
 
+                            var toBeRequested = new Ext.util.Collection();
+
                             if (this.dndAllowed(data, fromTree)) {
                                 if (data["grid"] && data["grid"] == this.component) {
                                     var rowIndex = this.component.getView().findRowIndex(e.target);
                                     if (rowIndex !== false) {
                                         var rec = this.store.getAt(data.rowIndex);
                                         this.store.removeAt(data.rowIndex);
-                                        this.store.insert(rowIndex, [rec]);
+                                        toBeRequested.add(this.store.insert(rowIndex, [rec]));
+                                        this.requestNicePathData(toBeRequested);
                                     }
                                 } else {
                                     var initData = {
@@ -390,7 +389,8 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
 
                                     // check for existing element
                                     if (!this.elementAlreadyExists(initData.id, initData.type)) {
-                                        this.store.add(initData);
+                                        toBeRequested.add(this.store.add(initData));
+                                        this.requestNicePathData(toBeRequested);
                                         return true;
                                     }
                                 }
@@ -489,7 +489,7 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
 
     loadObjectData: function(item, fields) {
 
-        this.store.add(item);
+        var newItem = this.store.add(item);
 
         Ext.Ajax.request({
             url: "/admin/object-helper/load-object-data",
@@ -509,6 +509,8 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
                 }
             }.bind(this)
         });
+
+        return newItem;
     },
 
     empty: function () {
@@ -608,6 +610,9 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
 
     addDataFromSelector: function (items) {
         if (items.length > 0) {
+
+            var toBeRequested = new Ext.util.Collection();
+
             for (var i = 0; i < items.length; i++) {
                 if (!this.elementAlreadyExists(items[i].id, items[i].type)) {
 
@@ -620,14 +625,16 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
                         }
                     }
 
-                    this.store.add({
+                    toBeRequested.add(this.store.add({
                         id: items[i].id,
                         path: items[i].fullpath,
                         type: items[i].type,
                         subtype: subtype
-                    });
+                    }));
                 }
             }
+
+            this.requestNicePathData(toBeRequested);
         }
     },
 
@@ -746,6 +753,26 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
             specific: allowedSpecific
         });
 
+    },
+
+    requestNicePathData: function(targets) {
+        pimcore.helpers.requestNicePathData(
+            {
+                type: "object",
+                id: this.object.id
+            },
+            targets,
+            {
+                idProperty: this.idProperty
+            },
+            this.fieldConfig,
+            this.getContext(),
+            pimcore.helpers.requestNicePathDataGridDecorator.bind(this, this.component.getView()),
+            pimcore.helpers.getNicePathHandlerStore.bind(this, this.store, {
+                idProperty: this.idProperty,
+                pathProperty: this.pathProperty
+            }, this.component.getView())
+        );
     }
 
 });

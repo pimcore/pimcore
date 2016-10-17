@@ -19,9 +19,14 @@ namespace Pimcore\Model\Document;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Redirect;
+use Pimcore\Model\Element;
 
+/**
+ * @method \Pimcore\Model\Document\Hardlink\Dao getDao()
+ */
 class Hardlink extends Document
 {
+    use Element\ChildsCompatibilityTrait;
 
     /**
      * static type of this object
@@ -100,9 +105,9 @@ class Hardlink extends Document
 
     /**
      * @param $childsFromSource
-     * @return $this
+     * @return Hardlink
      */
-    public function setChildsFromSource($childsFromSource)
+    public function setChildrenFromSource($childsFromSource)
     {
         $this->childsFromSource = (bool) $childsFromSource;
 
@@ -110,11 +115,30 @@ class Hardlink extends Document
     }
 
     /**
+     * @deprecated
+     * @param $childsFromSource
+     * @return Hardlink
+     */
+    public function setChildsFromSource($childsFromSource)
+    {
+        return $this->setChildrenFromSource($childsFromSource);
+    }
+
+    /**
      * @return boolean
+     */
+    public function getChildrenFromSource()
+    {
+        return $this->childsFromSource;
+    }
+
+    /**
+     * @deprecated
+     * @return bool
      */
     public function getChildsFromSource()
     {
-        return $this->childsFromSource;
+        return $this->getChildrenFromSource();
     }
 
     /**
@@ -189,23 +213,23 @@ class Hardlink extends Document
      * @param bool $unpublished
      * @return array|null
      */
-    public function getChilds($unpublished = false)
+    public function getChildren($unpublished = false)
     {
         if ($this->childs === null) {
-            $childs = parent::getChilds();
+            $childs = parent::getChildren();
 
-            $sourceChilds = [];
+            $sourceChildren = [];
             if ($this->getChildsFromSource() && $this->getSourceDocument() && !\Pimcore::inAdmin()) {
-                $sourceChilds = $this->getSourceDocument()->getChilds();
-                foreach ($sourceChilds as &$c) {
+                $sourceChildren = $this->getSourceDocument()->getChildren();
+                foreach ($sourceChildren as &$c) {
                     $c = Document\Hardlink\Service::wrap($c);
                     $c->setHardLinkSource($this);
                     $c->setPath(preg_replace("@^" . preg_quote($this->getSourceDocument()->getRealFullPath()) . "@", $this->getRealFullPath(), $c->getRealPath()));
                 }
             }
 
-            $childs = array_merge($sourceChilds, $childs);
-            $this->setChilds($childs);
+            $childs = array_merge($sourceChildren, $childs);
+            $this->setChildren($childs);
         }
 
         return $this->childs;
@@ -215,9 +239,9 @@ class Hardlink extends Document
      * hast to overwrite the resource implementation because there can be inherited childs
      * @return bool
      */
-    public function hasChilds()
+    public function hasChildren()
     {
-        return count($this->getChilds()) > 0;
+        return count($this->getChildren()) > 0;
     }
 
 

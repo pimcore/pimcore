@@ -19,6 +19,9 @@ namespace Pimcore\Model\Object\Data;
 use Pimcore\Model;
 use Pimcore\Model\Object;
 
+/**
+ * @method \Pimcore\Model\Object\Data\KeyValue\Dao getDao()
+ */
 class KeyValue extends Model\AbstractModel
 {
 

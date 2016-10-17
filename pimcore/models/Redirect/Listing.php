@@ -18,6 +18,9 @@ namespace Pimcore\Model\Redirect;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\Redirect\Listing\Dao getDao()
+ */
 class Listing extends Model\Listing\AbstractListing
 {
 

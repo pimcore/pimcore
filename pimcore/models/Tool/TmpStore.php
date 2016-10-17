@@ -18,6 +18,9 @@ namespace Pimcore\Model\Tool;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\Tool\TmpStore\Dao getDao()
+ */
 class TmpStore extends Model\AbstractModel
 {
 

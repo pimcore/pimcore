@@ -18,6 +18,9 @@ namespace Pimcore\Model\Translation\Website;
 
 use Pimcore\Model;
 
+/**
+ * @property \Pimcore\Model\Translation\Website $model
+ */
 class Dao extends Model\Translation\AbstractTranslation\Dao
 {
 

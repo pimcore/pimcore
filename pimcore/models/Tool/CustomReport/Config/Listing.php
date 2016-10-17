@@ -18,6 +18,9 @@ namespace Pimcore\Model\Tool\CustomReport\Config;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\Tool\CustomReport\Config\Listing\Dao getDao()
+ */
 class Listing extends Model\Listing\JsonListing
 {
 

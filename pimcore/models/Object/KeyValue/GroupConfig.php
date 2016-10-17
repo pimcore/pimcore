@@ -18,6 +18,9 @@ namespace Pimcore\Model\Object\KeyValue;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\Object\KeyValue\GroupConfig\Dao getDao()
+ */
 class GroupConfig extends Model\AbstractModel
 {
 

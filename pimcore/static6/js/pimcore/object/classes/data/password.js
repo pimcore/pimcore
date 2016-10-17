@@ -23,7 +23,7 @@ pimcore.object.classes.data.password = Class.create(pimcore.object.classes.data.
         objectbrick: true,
         fieldcollection: true,
         localizedfield: true,
-        classificationstore : false,
+        classificationstore : true,
         block: true
     },
 	statics : {

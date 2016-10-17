@@ -18,6 +18,9 @@ namespace Pimcore\Model\Tool\UUID;
 
 use Pimcore\Model;
 
+/**
+ * @property \Pimcore\Model\Tool\UUID $model
+ */
 class Dao extends Model\Dao\AbstractDao
 {
     const TABLE_NAME = 'uuids';

@@ -219,7 +219,15 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
             this.currentMetaData = blockData.metaData;
         }
 
-        var items = this.getRecursiveLayout(this.layoutDefinitions[type]).items;
+        var items = this.getRecursiveLayout(
+            this.layoutDefinitions[type],
+            null,
+            {
+                containerType: "objectbrick",
+                containerKey: type,
+                ownerName: this.fieldConfig.name
+            }
+        ).items;
 
         if(this.fieldConfig.noteditable && items) {
             items.forEach(function (record) {

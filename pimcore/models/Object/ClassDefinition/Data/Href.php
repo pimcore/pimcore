@@ -98,7 +98,6 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
      */
     public $documentTypes;
 
-
     /**
      * @return boolean
      */
