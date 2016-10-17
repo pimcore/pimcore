@@ -66,6 +66,9 @@ class KeyGroupRelation extends Model\AbstractModel
     /** @var  bool */
     public $mandatory;
 
+    /** @var  bool */
+    public $enabled;
+
     /**
      * @return Model\Object\Classificationstore\KeyGroupRelation
      */
@@ -204,6 +207,24 @@ class KeyGroupRelation extends Model\AbstractModel
     {
         $this->mandatory = intval($mandatory);
     }
+
+    /**
+     * @return boolean
+     */
+    public function isEnabled(): bool
+    {
+        return $this->enabled;
+    }
+
+    /**
+     * @param boolean $enabled
+     */
+    public function setEnabled(bool $enabled)
+    {
+        $this->enabled = $enabled;
+    }
+
+
 
     /**
      * @param $groupId
