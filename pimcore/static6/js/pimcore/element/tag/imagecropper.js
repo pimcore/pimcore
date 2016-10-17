@@ -49,7 +49,11 @@ pimcore.element.tag.imagecropper = Class.create({
                     text: t("reset"),
                     handler: function () {
                         this.data = {
-                            id: this.imageId
+                            cropWidth: null,
+                            cropHeight: null,
+                            cropTop: null,
+                            cropLeft: null,
+                            cropPercent: null
                         };
 
                         this.saveCallback(this.data);
