@@ -74,21 +74,34 @@ class Dao extends Model\Dao\AbstractDao
                 $fd = Service::getFieldDefinitionFromKeyConfig($keyConfig);
 
                 foreach ($keyData as $language => $value) {
-                    $value = $fd->getDataForResource($value, $this->model->object);
-                    $value = $fd->marshal($value, $object);
                     $collectionId = $collectionMapping[$groupId];
-
                     $data = [
                         "o_id" => $objectId,
                         "collectionId" => $collectionId,
                         "groupId" => $groupId,
-                        "value" => $value["value"],
-                        "value2" =>$value["value2"],
                         "keyId" => $keyId,
                         "fieldname" => $fieldname,
                         "language" => $language,
                         "type" => $keyConfig->getType()
                     ];
+
+                    if ($fd instanceof Object\ClassDefinition\Data\Password) {
+                        $fakeModel = new class() {
+
+                            public function __call($method, $arguments) {
+                                // nothing to do for now
+                            }
+                        };
+                        $value = $fd->getDataForResource($value, $this->model->object, array("context" => $fakeModel));
+                        $this->model->setLocalizedKeyValue($groupId, $keyId, $value, $language);
+
+                    } else {
+                        $value = $fd->getDataForResource($value, $this->model->object);
+                    }
+                    $value = $fd->marshal($value, $object);
+
+                    $data["value"] = $value["value"];
+                    $data["value2"] = $value["value2"];
 
                     $this->db->insertOrUpdate($dataTable, $data);
                 }
