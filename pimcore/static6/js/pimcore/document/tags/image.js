@@ -402,7 +402,7 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
         else {
             this.altBar.setStyle({
                 display: "none"
-            });8
+            });
         }
 
         if (this.updateCounter > 20) {
