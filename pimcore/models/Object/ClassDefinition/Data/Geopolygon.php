@@ -282,10 +282,11 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
      * @param mixed $params
      * @return mixed
      */
-    public function marshal($value, $object = null, $params = []) {
+    public function marshal($value, $object = null, $params = [])
+    {
         if ($value) {
             $value = Serialize::unserialize($value);
-            $result = array();
+            $result = [];
             if (is_array($value)) {
                 /** @var  $point Object\Data\Geopoint */
                 foreach ($value as $point) {
@@ -295,10 +296,10 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
                         ];
                 }
             }
-            return array(
-                "value" => json_encode($result)
-            );
 
+            return [
+                "value" => json_encode($result)
+            ];
         }
     }
 
@@ -312,7 +313,7 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     {
         if ($value && $value["value"]) {
             $value = json_decode($value["value"]);
-            $result = array();
+            $result = [];
             if (is_array($value)) {
                 foreach ($value as $point) {
                     $newPoint = new Object\Data\Geopoint($point[1], $point[1]);
@@ -322,8 +323,8 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
                 }
             }
             $result = Serialize::serialize($result);
+
             return $result;
         }
     }
-
 }

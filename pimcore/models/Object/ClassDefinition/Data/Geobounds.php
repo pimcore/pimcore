@@ -284,7 +284,8 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
      * @param mixed $params
      * @return mixed
      */
-    public function marshal($value, $object = null, $params = []) {
+    public function marshal($value, $object = null, $params = [])
+    {
         if ($value) {
             return [
                 "value" =>  json_encode([$value[$this->getName() . "__NElatitude"], $value[$this->getName() . "__NElongitude"]]),
@@ -305,7 +306,7 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
             $dataNE = json_decode($value["value"]);
             $dataSW = json_decode($value["value2"]);
 
-            $result = array();
+            $result = [];
             $result[$this->getName() . "__NElatitude"] = $dataNE[0];
             $result[$this->getName() . "__NElongitude"] = $dataNE[1];
             $result[$this->getName() . "__SWlatitude"] = $dataSW[0];

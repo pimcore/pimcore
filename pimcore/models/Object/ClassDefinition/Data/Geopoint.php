@@ -256,7 +256,8 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
      * @param mixed $params
      * @return mixed
      */
-    public function marshal($value, $object = null, $params = []) {
+    public function marshal($value, $object = null, $params = [])
+    {
         if ($value) {
             return [
                 "value" => $value[$this->getName() . "__latitude"],
@@ -274,12 +275,12 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     public function unmarshal($value, $object = null, $params = [])
     {
         if (is_array($value)) {
-            $data = array(
+            $data = [
                 $this->getName() . "__longitude" => $value["value2"],
                 $this->getName() . "__latitude" => $value["value"]
-            );
+            ];
+
             return $data;
         }
     }
-
 }

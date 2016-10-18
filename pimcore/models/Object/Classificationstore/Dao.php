@@ -86,7 +86,7 @@ class Dao extends Model\Dao\AbstractDao
                     ];
 
                     if ($fd instanceof Object\ClassDefinition\Data\Password) {
-                        $value = $fd->getDataForResource($value, null, array());
+                        $value = $fd->getDataForResource($value, null, []);
                         $this->model->setLocalizedKeyValue($groupId, $keyId, $value, $language);
                     } else {
                         $value = $fd->getDataForResource($value, $this->model->object);
