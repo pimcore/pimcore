@@ -653,8 +653,7 @@ class ImageMagick extends Adapter
     public function getConvertScriptPath()
     {
         if (null === $this->convertScriptPath) {
-            //in some cases get_proces_status in \Symfony\Component\Process\Process::updateStatus returns 1, than the default command path is set to convert
-            $this->convertScriptPath = Console::getExecutable('convert') ?: 'convert';
+            $this->convertScriptPath = Console::getExecutable('convert');
         }
 
         return $this->convertScriptPath;
@@ -681,8 +680,7 @@ class ImageMagick extends Adapter
     public function getCompositeScriptPath()
     {
         if (null === $this->compositeScriptPath) {
-            //in some cases get_proces_status in \Symfony\Component\Process\Process::updateStatus returns 1, than the default command path is set to composite
-            $this->compositeScriptPath = Console::getExecutable('composite') ?: 'composite';
+            $this->compositeScriptPath = Console::getExecutable('composite');
         }
 
         return $this->compositeScriptPath;

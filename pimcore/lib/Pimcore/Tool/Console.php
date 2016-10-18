@@ -177,6 +177,28 @@ class Console
      * @param $process
      * @return bool
      */
+    protected static function checkComposite($process)
+    {
+        return self::checkConvert($process);
+    }
+
+    /**
+     * @param $process
+     * @return bool
+     */
+    protected static function checkConvert($process)
+    {
+        if (strpos($process->getOutput() . $process->getErrorOutput(), "imagemagick.org") !== false) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param $process
+     * @return bool
+     */
     protected static function checkDummy($process)
     {
         return false;
