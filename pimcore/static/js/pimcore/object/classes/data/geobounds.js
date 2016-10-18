@@ -25,6 +25,10 @@ pimcore.object.classes.data.geobounds = Class.create(pimcore.object.classes.data
         this.availableSettingsFields = ["name","title","mandatory","noteditable","invisible","index","style"];
 
         this.treeNode = treeNode;
+
+        if(!this.checkIfKeyIsAvailable()) {
+            Ext.MessageBox.alert(t("geo_error_title"), t("geo_error_message"));
+        }
     },
 
     getTypeName: function () {

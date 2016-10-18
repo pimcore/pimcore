@@ -595,13 +595,15 @@ $googleMapsApiKey = $this->config->services->google->browserapikey;
 
 <?php // 3rd party libraries ?>
 <script type="text/javascript">
-    var gmapInitialize = function () {}; // dummy callback
-    (function() {
-        var script = document.createElement("script");
-        script.type = "text/javascript";
-        script.src = 'https://maps.googleapis.com/maps/api/js?libraries=drawing&callback=gmapInitialize&key=<?= $googleMapsApiKey ?>';
-        document.body.appendChild(script);
-    })();
+    <?php if(isset($googleMapsApiKey) && strlen($googleMapsApiKey)>0){ ?>
+        var gmapInitialize = function () {}; // dummy callback
+        (function() {
+            var script = document.createElement("script");
+            script.type = "text/javascript";
+            script.src = 'https://maps.googleapis.com/maps/api/js?libraries=drawing&callback=gmapInitialize&key=<?= $googleMapsApiKey ?>';
+            document.body.appendChild(script);
+        })();
+    <?php } ?>
 </script>
 
 <script type="text/javascript" src="/admin/misc/json-translations-system/language/<?= $this->language ?>/?_dc=<?= \Pimcore\Version::$revision ?>"></script>
