@@ -111,8 +111,8 @@ pimcore.asset.document = Class.create(pimcore.asset.asset, {
 
     hasNativePDFViewer: function() {
 
-        if(Ext.isChrome || Ext.isGecko) {
-            // Firefox and Chrome have native support, no need to further test anything
+        if(Ext.isChrome || Ext.isGecko || Ext.isSafari) {
+            // Firefox, Chrome and Safari have native support, no need to further test anything
             return true;
         }
 
