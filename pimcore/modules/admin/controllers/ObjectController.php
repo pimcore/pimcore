@@ -329,7 +329,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 
             $objectData["properties"] = Element\Service::minimizePropertiesForEditmode($object->getProperties());
             $objectData["userPermissions"] = $object->getUserPermissions();
-            $objectVersions = $object->getVersions();
+            $objectVersions = Element\Service::getSafeVersionInfo($object->getVersions());
             $objectData["versions"] = array_splice($objectVersions, 0, 1);
             $objectData["scheduledTasks"] = $object->getScheduledTasks();
             $objectData["general"]["allowVariants"] = $object->getClass()->getAllowVariants();

@@ -875,4 +875,23 @@ class Service extends Model\AbstractModel
 
         return $data ? $data : [];
     }
+
+    public static function getSafeVersionInfo($versions) {
+        if (is_array($versions)) {
+            $versions = json_decode(json_encode($versions), true);
+            $result = array();
+            foreach ($versions as $version) {
+                $name = $version["user"]["name"];
+                $id = $version["user"]["id"];
+                unset($version["user"]);
+                $version["user"]["name"] = $name;
+                $version["user"]["id"] = $id;
+
+
+                $result[] = $version;
+
+            }
+            return $result;
+        }
+    }
 }
