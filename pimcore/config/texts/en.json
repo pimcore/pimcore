@@ -4074,7 +4074,7 @@
     },
     {
         "term": "geo_error_title",
-        "definition": "Google API Key error"
+        "definition": "Google API Key Error"
     },
     {
         "term": "geo_error_message",

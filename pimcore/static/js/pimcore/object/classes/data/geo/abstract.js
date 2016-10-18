@@ -78,16 +78,9 @@ pimcore.object.classes.data.geo.abstract = Class.create(pimcore.object.classes.d
         return this.layout;
     },
 
-    /**
-     * Check of the Google Map is initialized
-     *
-     * @returns {boolean}
-     */
-    checkIfKeyIsAvailable: function(){
-        if(typeof gmapInitialize == 'undefined') {
-            return false;
-        }else{
-            return true;
+    checkGoogleMapsAPI: function () {
+        if(!pimcore.settings.google_maps_api_key) {
+            Ext.MessageBox.alert(t("geo_error_title"), t("geo_error_message"));
         }
     }
 });

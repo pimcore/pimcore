@@ -26,9 +26,7 @@ pimcore.object.classes.data.geopolygon = Class.create(pimcore.object.classes.dat
 
         this.treeNode = treeNode;
 
-        if(!this.checkIfKeyIsAvailable()) {
-            Ext.MessageBox.alert(t("geo_error_title"), t("geo_error_message"));
-        }
+        this.checkGoogleMapsAPI();
     },
 
     getTypeName: function () {

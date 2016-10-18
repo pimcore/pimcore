@@ -19,7 +19,7 @@ pimcore.object.tags.geo.abstract = Class.create(pimcore.object.tags.abstract, {
         this.fieldConfig = fieldConfig;
 
         // extend google maps to support the getBounds() method
-        if (!google.maps.Polygon.prototype.getBounds) {
+        if (this.isMapsAvailable() && !google.maps.Polygon.prototype.getBounds) {
 
             google.maps.Polygon.prototype.getBounds = function(latLng) {
 
@@ -39,6 +39,25 @@ pimcore.object.tags.geo.abstract = Class.create(pimcore.object.tags.abstract, {
         }
     },
 
+    isMapsAvailable: function() {
+        if(pimcore.settings.google_maps_api_key) {
+            return true;
+        }
+        return false;
+    },
+
+    getErrorLayout: function() {
+        this.component = new Ext.Panel({
+            title: t("geo_error_title"),
+            height: 370,
+            width: 650,
+            border: true,
+            bodyStyle: "padding: 10px",
+            html: '<span style="color:red">' + t("geo_error_message") + '</span>'
+        });
+
+        return this.component;
+    },
 
     getGridColumnConfig: function(field) {
         return {

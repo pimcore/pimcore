@@ -19,6 +19,10 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
 
     getLayoutEdit: function () {
 
+        if(!this.isMapsAvailable()) {
+            return this.getErrorLayout();
+        }
+
         this.mapImageID = uniqid();
 
         var coordConf = {
@@ -319,6 +323,10 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
             return false;
         }
 
-        return this.longitude.isDirty() || this.latitude.isDirty();
+        if(this.longitude && this.latitude) {
+            return this.longitude.isDirty() || this.latitude.isDirty();
+        }
+
+        return false;
     }
 });

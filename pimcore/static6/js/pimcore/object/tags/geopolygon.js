@@ -20,6 +20,10 @@ pimcore.object.tags.geopolygon = Class.create(pimcore.object.tags.geo.abstract, 
 
     getLayoutEdit: function () {
 
+        if(!this.isMapsAvailable()) {
+            return this.getErrorLayout();
+        }
+
         this.mapImageID = uniqid();
 
         this.component = new Ext.Panel({
