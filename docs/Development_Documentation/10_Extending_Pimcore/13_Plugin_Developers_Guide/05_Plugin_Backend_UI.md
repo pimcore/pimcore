@@ -52,6 +52,9 @@ corresponding method to the javascript plugin class.
 | postOpenDocument | after document is opened, document and type are passed as parameters |
 | preOpenObject | before object is opened, object and type are passed as parameters |
 | postOpenObject | after object is opened, object and type are passed as parameters |
+| prepareAssetTreeContextMenu | before context menu is opened, menu, tree class and asset record are passed as parameters |
+| prepareObjectTreeContextMenu | before context menu is opened, menu, tree class and object record are passed as parameters |
+| prepareDocumentTreeContextMenu | before context menu is opened, menu, tree and document record are passed as parameters |
 
 Uninstall is called after plugin has been uninstalled - this hook can be used to remove plugin features from the UI 
 after uninstall.
