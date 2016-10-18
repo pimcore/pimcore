@@ -57,6 +57,11 @@ class ImageMagick extends Adapter
      */
     protected $compositeScriptPath = null;
 
+    /**
+     * @var null
+     */
+    protected $forceAlpha = false;
+
 
     /**
      * loads the image by the specified path
@@ -126,13 +131,17 @@ class ImageMagick extends Adapter
             $this->addConvertOption('quality', $quality);
         }
 
+        $format = (null === $format) || $this->getForceAlpha() || $format == 'png'
+            ? 'png32' : null;
+
+        recursiveCopy($this->imagePath, $path);
+
         if (null !== $format) {
             //set the image format. see: http://www.imagemagick.org/script/formats.php
-            $this->addConvertOption('format', strtoupper($format));
+            $path = strtoupper($format) . ':' . $path;
         }
 
         $command = $this->getConvertCommand() . $path;
-        recursiveCopy($this->imagePath, $path);
         $this->processCommand($command);
         $this->convertCommandOptions = [];
 
@@ -189,6 +198,7 @@ class ImageMagick extends Adapter
             ->addConvertOption('mattecolor', 'none')
             ->addConvertOption('frame', "{$frameWidth}x{$frameHeight}")
         ;
+        $this->setForceAlpha(true);
         $this->setWidth($width);
         $this->setHeight($height);
 
@@ -216,9 +226,10 @@ class ImageMagick extends Adapter
      */
     public function rotate($angle)
     {
-        $this->addConvertOption('rotate', $angle)
-            ->addConvertOption('alpha', 'set')
-        ;
+        $this->setForceAlpha(true);
+        $this
+            ->addConvertOption('background', 'none')
+            ->addConvertOption('rotate', $angle);
 
         return $this;
     }
@@ -343,6 +354,7 @@ class ImageMagick extends Adapter
      */
     public function addOverlay($image, $x = 0, $y = 0, $alpha = 100, $composite = "COMPOSITE_DEFAULT", $origin = 'top-left')
     {
+        $image = PIMCORE_DOCUMENT_ROOT . "/" . ltrim($image, "/");
         if (is_file($image)) {
             //if a specified file as a overlay exists
             $overlayImage = $this->createTmpImage($image, 'overlay');
@@ -382,6 +394,7 @@ class ImageMagick extends Adapter
      */
     public function addOverlayFit($image, $composite = "COMPOSITE_DEFAULT")
     {
+        $image = PIMCORE_DOCUMENT_ROOT . "/" . ltrim($image, "/");
         if (is_file($image)) {
             //if a specified file as a overlay exists
             $overlayImage = $this->createTmpImage($image, 'overlay');
@@ -415,7 +428,7 @@ class ImageMagick extends Adapter
         //composes images together
         $this->compositeCommandOptions = [];
         $this
-            ->addCompositeOption('compose', $composeVal . ' ' . $overlayImage->getOutputPath() . ' ' . $this->getOutputPath() . ' ' . $this->getOutputPath());
+            ->addCompositeOption('compose', $composeVal . ' ' . $this->getOutputPath() . ' ' . $overlayImage->getOutputPath() . ' ' . $this->getOutputPath());
         $this->processCommand($this->getCompositeCommand());
         $this->imagePath = $this->getOutputPath();
 
@@ -430,6 +443,7 @@ class ImageMagick extends Adapter
      */
     public function applyMask($image)
     {
+        $image = PIMCORE_DOCUMENT_ROOT . "/" . ltrim($image, "/");
         $this->addConvertOption('write-mask', $image);
 
         return $this;
@@ -799,5 +813,24 @@ class ImageMagick extends Adapter
         $process = new Process($command);
 
         return $process->run();
+    }
+
+    /**
+     * @return bool
+     */
+    public function getForceAlpha()
+    {
+        return (bool) $this->forceAlpha;
+    }
+
+    /**
+     * @param bool $forceAlpha
+     * @return ImageMagick
+     */
+    public function setForceAlpha($forceAlpha)
+    {
+        $this->forceAlpha = (bool) $forceAlpha;
+
+        return $this;
     }
 }
