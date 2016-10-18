@@ -549,7 +549,11 @@ class StructuredTable extends Model\Object\ClassDefinition\Data
 
                 $col = new \stdClass();
                 $col->name = $name;
-                $col->type = $this->typeMapper($c['type'], $c['length']);
+                $length = 0;
+                if(isset($c['length']) && $c['length']) {
+                    $length = $c['length'];
+                }
+                $col->type = $this->typeMapper($c['type'], $length);
                 $dbCols[] = $col;
             }
         }
