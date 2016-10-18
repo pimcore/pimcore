@@ -211,7 +211,7 @@ class KeyGroupRelation extends Model\AbstractModel
     /**
      * @return boolean
      */
-    public function isEnabled(): bool
+    public function isEnabled()
     {
         return $this->enabled;
     }
@@ -219,7 +219,7 @@ class KeyGroupRelation extends Model\AbstractModel
     /**
      * @param boolean $enabled
      */
-    public function setEnabled(bool $enabled)
+    public function setEnabled($enabled)
     {
         $this->enabled = $enabled;
     }
