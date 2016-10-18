@@ -261,7 +261,6 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
             return [
                 "value" => $value[$this->getName() . "__latitude"],
                 "value2" => $value[$this->getName() . "__longitude"]
-
             ];
         }
     }
