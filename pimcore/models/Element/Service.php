@@ -803,7 +803,14 @@ class Service extends Model\AbstractModel
         }
 
         $key = \Pimcore\Tool\Transliteration::toASCII($key);
-        $key = preg_replace('/[^a-zA-Z0-9\-\.~_ ]+/', '-', $key);
+
+        if($type == "document") {
+            // no spaces for documents / clean URLs
+            $key = preg_replace('/[^a-zA-Z0-9\-\.~_]+/', '-', $key);
+        } else {
+            // assets & objects including spaces
+            $key = preg_replace('/[^a-zA-Z0-9\-\.~_ ]+/', '-', $key);
+        }
 
         if ($type == "asset") {
             // keys shouldn't start with a "." (=hidden file) *nix operating systems
@@ -815,6 +822,16 @@ class Service extends Model\AbstractModel
         }
 
         return $key;
+    }
+
+    /**
+     * @param $key
+     * @param $type
+     * @return bool
+     */
+    public static function isValidKey($key, $type)
+    {
+        return (self::getValidKey($key, $type) === $key);
     }
 
     /**

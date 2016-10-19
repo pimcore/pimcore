@@ -555,9 +555,6 @@ class AbstractObject extends Model\Element\AbstractElement
             $this->beginTransaction();
 
             try {
-                if (!Tool::isValidKey($this->getKey()) && $this->getId() != 1) {
-                    throw new \Exception("invalid key for object with id [ ".$this->getId()." ] key is: [" . $this->getKey() . "]");
-                }
                 if (!in_array($this->getType(), self::$types)) {
                     throw new \Exception("invalid object type given: [" . $this->getType() . "]");
                 }
@@ -644,6 +641,10 @@ class AbstractObject extends Model\Element\AbstractElement
     {
         // set path
         if ($this->getId() != 1) { // not for the root node
+
+            if (!Element\Service::isValidKey($this->getKey(), "object")) {
+                throw new \Exception("invalid key for object with id [ ".$this->getId()." ] key is: [" . $this->getKey() . "]");
+            }
 
             if ($this->getParentId() == $this->getId()) {
                 throw new \Exception("ParentID and ID is identical, an element can't be the parent of itself.");

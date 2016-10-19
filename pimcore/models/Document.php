@@ -394,11 +394,6 @@ class Document extends Element\AbstractElement
             $this->beginTransaction();
 
             try {
-                // check for a valid key, home has no key, so omit the check
-                if (!Tool::isValidKey($this->getKey()) && $this->getId() != 1) {
-                    throw new \Exception("invalid key for document with id [ " . $this->getId() . " ] key is: [" . $this->getKey() . "]");
-                }
-
                 // set date
                 $this->setModificationDate(time());
 
@@ -481,6 +476,11 @@ class Document extends Element\AbstractElement
     {
         // set path
         if ($this->getId() != 1) { // not for the root node
+
+            // check for a valid key, home has no key, so omit the check
+            if (!Element\Service::isValidKey($this->getKey(), "document")) {
+                throw new \Exception("invalid key for document with id [ " . $this->getId() . " ] key is: [" . $this->getKey() . "]");
+            }
 
             if ($this->getParentId() == $this->getId()) {
                 throw new \Exception("ParentID and ID is identical, an element can't be the parent of itself.");
