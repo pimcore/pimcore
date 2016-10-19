@@ -56,28 +56,25 @@ class Test_SuiteBase extends PHPUnit_Framework_TestSuite
         }
 
         if (!\Pimcore\Model\Object\ClassDefinition::getByName("allfields")) {
-            $conf = new Zend_Config_Xml(TESTS_PATH . "/resources/objects/class-allfields.xml");
-            $importData = $conf->toArray();
+            $json = file_get_contents(TESTS_PATH . "/resources/objects/class-allfields.json");
 
-            $layout = \Pimcore\Model\Object\ClassDefinition\Service::generateLayoutTreeFromArray($importData["layoutDefinitions"]);
-
-            $class = \Pimcore\Model\Object\ClassDefinition::create();
+            $class = new \Pimcore\Model\Object\ClassDefinition();
             $class->setName("allfields");
             $class->setUserOwner(1);
+            \Pimcore\Model\Object\ClassDefinition\Service::importClassDefinitionFromJson($class, $json);
             $class->save();
 
-            $id = $class->getId();
-            $class = Pimcore\Model\Object\ClassDefinition::getById($id);
 
-            $class->setLayoutDefinitions($layout);
+            $id = $class->getId();
+
+            $class = \Pimcore\Model\Object\ClassDefinition::getById($id);
+            $class->setUserModification(1);
+            $class->setModificationDate(time());
 
             $fd = $class->getFieldDefinition("objectswithmetadata");
             if ($fd) {
                 $fd->setAllowedClassId($class->getId());
             }
-
-            $class->setUserModification(1);
-            $class->setModificationDate(time());
 
             $class->save();
         }
