@@ -87,25 +87,26 @@ class Test_SuiteBase extends PHPUnit_Framework_TestSuite
             $objectBrick = new \Pimcore\Model\Object\Objectbrick\Definition();
             $objectBrick->setKey($brickname);
 
-            $conf = new Zend_Config_Xml(TESTS_PATH . "/resources/objects/brick-import.xml");
-            $importData = $conf->toArray();
-
-            $layout = \Pimcore\Model\Object\ClassDefinition\Service::generateLayoutTreeFromArray($importData["layoutDefinitions"]);
-            $objectBrick->setLayoutDefinitions($layout);
-            $clDef = $importData["classDefinitions"];
-            $newClassDef = ["classname" => $unittestClass->getId(),
-                            "fieldname" => $clDef["fieldname"]];
-
-
-            $objectBrick->setClassDefinitions([
-                    $newClassDef]
-
-            );
+            $json = file_get_contents(TESTS_PATH . "/resources/objects/brick-import.json");
             try {
-                $objectBrick->save();
-            } catch (Exception $e) {
-                throw $e;
+                \Pimcore\Model\Object\ClassDefinition\Service::importObjectBrickFromJson($objectBrick, $json);
+            } catch (\Exception $e) {
+
             }
+
+
+            $importData = json_decode($json, true);
+
+            $clDef = $importData["classDefinitions"][0];
+
+            $newClassDef = ["classname" => $unittestClass->getId(),
+                            "fieldname" => $clDef["fieldname"]
+            ]
+
+            ;
+
+            $objectBrick->setClassDefinitions([$newClassDef]);
+            $objectBrick->save();
         }
     }
 
