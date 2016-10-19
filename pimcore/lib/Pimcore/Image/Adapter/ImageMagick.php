@@ -229,6 +229,7 @@ class ImageMagick extends Adapter
         $this->setForceAlpha(true);
         $this
             ->addConvertOption('background', 'none')
+            ->addConvertOption('alpha', 'set')
             ->addConvertOption('rotate', $angle);
 
         return $this;
@@ -276,6 +277,10 @@ class ImageMagick extends Adapter
      */
     public function roundCorners($width, $height)
     {
+        $this->setTmpPaths($this, 'round_corners_canvas');
+        $this->save($this->getOutputPath());
+        $this->imagePath = $this->getOutputPath();
+        $this->tmpFiles[] = $this->getOutputPath();
         //creates the mask for rounded corners
         $mask = new ImageMagick();
         $mask->addConvertOption('size', "{$this->getWidth()}x{$this->getHeight()}")
@@ -355,6 +360,7 @@ class ImageMagick extends Adapter
      */
     public function addOverlay($image, $x = 0, $y = 0, $alpha = 100, $composite = "COMPOSITE_DEFAULT", $origin = 'top-left')
     {
+        return $this;
         $image = PIMCORE_DOCUMENT_ROOT . "/" . ltrim($image, "/");
         if (is_file($image)) {
             //if a specified file as a overlay exists
