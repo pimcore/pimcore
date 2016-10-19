@@ -30,9 +30,8 @@ pimcore.object.keyvalue.columnConfigDialog = Class.create({
     handleSelectionWindowClosed: function() {
         if (this.keysAdded == 0 && !this.requestIsPending) {
             // no keys added, remove the node
-            var store = this.ownerTree.getStore();
-            var targetNode = store.getById(this.node.id);
-            targetNode.remove();
+            this.node.remove();
+
         }
     },
 
@@ -72,8 +71,8 @@ pimcore.object.keyvalue.columnConfigDialog = Class.create({
                 }
 
 
-                this.node.key = encodedKey;
-                this.node.layout.gridType = keyDef.type;
+                this.node.set("key", encodedKey);
+                this.node.data.layout.gridType = keyDef.type;
 
                 //TODo  implement all subtypes
                 if (keyDef.type == "select") {
@@ -90,7 +89,7 @@ pimcore.object.keyvalue.columnConfigDialog = Class.create({
         }
 
         if (this.keysAdded == 0) {
-            targetNode.remove();
+            this.node.remove();
         }
     }
 

@@ -36,16 +36,6 @@ class Tool
     protected static $isFrontend = null;
 
     /**
-     * @static
-     * @param string $key
-     * @return bool
-     */
-    public static function isValidKey($key)
-    {
-        return (bool) preg_match("/^[a-zA-Z0-9_~\.\- ]+$/", $key);
-    }
-
-    /**
      * returns a valid cache key/tag string
      *
      * @param string $key

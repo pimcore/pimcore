@@ -542,16 +542,16 @@ class Asset extends Element\AbstractElement
         // set path
         if ($this->getId() != 1) { // not for the root node
 
+            if (!Element\Service::isValidKey($this->getKey(), "asset")) {
+                throw new \Exception("invalid filename '".$this->getKey()."' for asset with id [ " . $this->getId() . " ]");
+            }
+
             if ($this->getParentId() == $this->getId()) {
                 throw new \Exception("ParentID and ID is identical, an element can't be the parent of itself.");
             }
 
             if ($this->getFilename()  === '..' || $this->getFilename() === '.') {
                 throw new \Exception('Cannot create asset called ".." or "."');
-            }
-
-            if (!Tool::isValidKey($this->getKey())) {
-                throw new \Exception("invalid filename '".$this->getKey()."' for asset with id [ " . $this->getId() . " ]");
             }
 
             $parent = Asset::getById($this->getParentId());

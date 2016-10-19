@@ -256,8 +256,8 @@ class Thumbnail
                 }
             }
 
-            $this->width = $dimensions["width"];
-            $this->height = $dimensions["height"];
+            $this->width = isset($dimensions["width"]) ? $dimensions["width"] : null;
+            $this->height = isset($dimensions["height"]) ? $dimensions["height"] : null;
 
             // the following is only relevant if using high-res option (retina, ...)
             $this->realHeight = $this->height;

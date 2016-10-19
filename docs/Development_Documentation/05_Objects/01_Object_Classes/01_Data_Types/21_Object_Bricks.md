@@ -48,7 +48,10 @@ A field of this data type has to be added to the object class.
 
 * In the Objectbrick definition, the object class and the desired field has to be added to the allowed classes.
 
-![Object class definition](../../../img/ObjectsBricks_data_component.png)
+![Object class definition](../../../img/ObjectsBricks_class_definition.png)
+
+In the object bricks definition, you can also specify a parent class - a way is the same like for 
+classes (you can find more details in the [Parent Class for Objects section](../../../10_Extending_Pimcore/07_Parent_Class_for_Objects.md)).
 
 
 ## Working with PHP api

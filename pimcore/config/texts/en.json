@@ -6191,5 +6191,24 @@
     {
         "term": "calculatedValue",
         "definition": "Calculated Value"
+    },
+    {
+        "term": "keyvalue_tag_col_groupDesc",
+        "definition": "Group Description"
+    },
+    {
+        "term": "keyvalue_tag_col_keyName",
+        "definition": "Key"
+    },
+    {
+        "term": "keyvalue_tag_col_keyDesc",
+        "definition": "Key Description"
+    },
+    {
+        "term": "keyvalue_tag_col_value",
+        "definition": "Value"
     }
+
+
+
 ]

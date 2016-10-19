@@ -37,7 +37,7 @@ class Admin_PageController extends \Pimcore\Controller\Action\Admin\Document
         $page = clone $page;
         $page = $this->getLatestVersion($page);
 
-        $pageVersions = $page->getVersions();
+        $pageVersions = Element\Service::getSafeVersionInfo($page->getVersions());
         $page->setVersions(array_splice($pageVersions, 0, 1));
         $page->getScheduledTasks();
         $page->idPath = Element\Service::getIdPath($page);
