@@ -454,15 +454,16 @@ class ImageMagick extends Adapter
     public function applyMask($image)
     {
         $this->setTmpPaths($this, 'mask');
+        $this->setForceAlpha(true);
         $this->save($this->getOutputPath());
         $this->tmpFiles[] = $this->getOutputPath();
         $this->imagePath = $this->getOutputPath();
         $image = PIMCORE_DOCUMENT_ROOT . "/" . ltrim($image, "/");
-        $this
-            ->addFilter('alpha', $image)
-            ->addConvertOption('alpha', "Off")
-            ->addConvertOption('compose', 'CopyOpacity')
-        ;
+
+        $this->addConvertOption('alpha', 'off')->addConvertOption('compose', 'CopyOpacity')
+            ->addConvertOption('composite')
+            ->addFilter('alpha', $image);
+
 
         return $this;
     }
