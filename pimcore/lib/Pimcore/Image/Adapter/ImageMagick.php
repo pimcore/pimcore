@@ -488,7 +488,7 @@ class ImageMagick extends Adapter
      *
      * @return ImageMagick
      */
-    public function grayscale($method = "Rec709Luminance")
+    public function grayscale($method = "Rec601Luma")
     {
         $this->addConvertOption('grayscale', $method);
 
