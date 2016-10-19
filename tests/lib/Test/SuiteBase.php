@@ -11,38 +11,38 @@ class Test_SuiteBase extends PHPUnit_Framework_TestSuite
     protected function setUp()
     {
         // turn off frontend mode by default
-        Object_Abstract::setHideUnpublished(false);
+        \Pimcore\Model\Object\AbstractObject::setHideUnpublished(false);
 
 
         $collectionName = "unittestfieldcollection";
         try {
-            Object_Fieldcollection_Definition::getByKey($collectionName);
+            \Pimcore\Model\Object\Fieldcollection\Definition::getByKey($collectionName);
         } catch (Exception $e) {
-            $fieldCollection = new Object_Fieldcollection_Definition();
+            $fieldCollection = new \Pimcore\Model\Object\Fieldcollection\Definition();
             $fieldCollection->setKey("$collectionName");
 
-            $conf = new Zend_Config_Xml(TESTS_PATH . "/resources/objects/fieldcollection-import.xml");
-            $importData = $conf->toArray();
+            $json = file_get_contents(TESTS_PATH . "/resources/objects/fieldcollection-import.json");
 
-            $layout = Object_Class_Service::generateLayoutTreeFromArray($importData["layoutDefinitions"]);
-            $fieldCollection->setLayoutDefinitions($layout);
-            $fieldCollection->save();
+            $collection = new \Pimcore\Model\Object\Fieldcollection\Definition();
+            $collection->setKey($collectionName);
+
+            \Pimcore\Model\Object\ClassDefinition\Service::importFieldCollectionFromJson($collection, $json);
         }
 
-        $unittestClass = Object_Class::getByName("unittest");
-        if (!Object_Class::getByName("unittest")) {
+        $unittestClass = \Pimcore\Model\Object\ClassDefinition::getByName("unittest");
+        if (!\Pimcore\Model\Object\ClassDefinition::getByName("unittest")) {
             $conf = new Zend_Config_Xml(TESTS_PATH . "/resources/objects/class-import.xml");
             $importData = $conf->toArray();
 
-            $layout = Object_Class_Service::generateLayoutTreeFromArray($importData["layoutDefinitions"]);
+            $layout = \Pimcore\Model\Object\ClassDefinition\Service::generateLayoutTreeFromArray($importData["layoutDefinitions"]);
 
-            $class = Object_Class::create();
+            $class = \Pimcore\Model\Object\ClassDefinition::create();
             $class->setName("unittest");
             $class->setUserOwner(1);
             $class->save();
 
             $id = $class->getId();
-            $class = Object_Class::getById($id);
+            $class = \Pimcore\Model\Object\ClassDefinition::getById($id);
 
             $class->setLayoutDefinitions($layout);
 
@@ -58,19 +58,19 @@ class Test_SuiteBase extends PHPUnit_Framework_TestSuite
             $unittestClass = $class;
         }
 
-        if (!Object_Class::getByName("allfields")) {
+        if (!\Pimcore\Model\Object\ClassDefinition::getByName("allfields")) {
             $conf = new Zend_Config_Xml(TESTS_PATH . "/resources/objects/class-allfields.xml");
             $importData = $conf->toArray();
 
-            $layout = Object_Class_Service::generateLayoutTreeFromArray($importData["layoutDefinitions"]);
+            $layout = \Pimcore\Model\Object\ClassDefinition\Service::generateLayoutTreeFromArray($importData["layoutDefinitions"]);
 
-            $class = Object_Class::create();
+            $class = \Pimcore\Model\Object\ClassDefinition::create();
             $class->setName("allfields");
             $class->setUserOwner(1);
             $class->save();
 
             $id = $class->getId();
-            $class = Object_Class::getById($id);
+            $class = Pimcore\Model\Object\ClassDefinition::getById($id);
 
             $class->setLayoutDefinitions($layout);
 
@@ -88,15 +88,15 @@ class Test_SuiteBase extends PHPUnit_Framework_TestSuite
         $brickname = "unittestBrick";
 
         try {
-            Object_Objectbrick_Definition::getByKey($brickname);
+            \Pimcore\Model\Object\Objectbrick\Definition::getByKey($brickname);
         } catch (Exception $e) {
-            $objectBrick = new Object_Objectbrick_Definition();
+            $objectBrick = new \Pimcore\Model\Object\Objectbrick\Definition();
             $objectBrick->setKey($brickname);
 
             $conf = new Zend_Config_Xml(TESTS_PATH . "/resources/objects/brick-import.xml");
             $importData = $conf->toArray();
 
-            $layout = Object_Class_Service::generateLayoutTreeFromArray($importData["layoutDefinitions"]);
+            $layout = \Pimcore\Model\Object\ClassDefinition\Service::generateLayoutTreeFromArray($importData["layoutDefinitions"]);
             $objectBrick->setLayoutDefinitions($layout);
             $clDef = $importData["classDefinitions"];
             $newClassDef = ["classname" => $unittestClass->getId(),
