@@ -26,15 +26,14 @@ class TestSuite_Inheritance_AllTests extends Test_SuiteBase
     {
         parent::setUp();
 
-        if (!Object_Class::getByName("inheritance")) {
+        if (!\Pimcore\Model\Object\ClassDefinition::getByName("inheritance")) {
             echo "Create class ...\n";
             $json = file_get_contents(TESTS_PATH . "/resources/objects/inheritance.json");
 
-            $class = new Object_Class();
+            $class = new \Pimcore\Model\Object\ClassDefinition();
             $class->setName("inheritance");
             $class->setUserOwner(1);
-
-            Object_Class_Service::importClassDefinitionFromJson($class, $json);
+            \Pimcore\Model\Object\ClassDefinition\Service::importClassDefinitionFromJson($class, $json);
         }
     }
 }
