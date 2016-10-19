@@ -361,35 +361,33 @@ class ImageMagick extends Adapter
      */
     public function addOverlay($image, $x = 0, $y = 0, $alpha = 100, $composite = "COMPOSITE_DEFAULT", $origin = 'top-left')
     {
-        return $this;
         $image = PIMCORE_DOCUMENT_ROOT . "/" . ltrim($image, "/");
         if (is_file($image)) {
             //if a specified file as a overlay exists
             $overlayImage = $this->createTmpImage($image, 'overlay');
-            $this->addConvertOption('channel', 'a')->addConvertOption('evaluate', "set {$alpha}%");
+            $overlayImage->addConvertOption('channel', 'a')->addConvertOption('evaluate', "set {$alpha}%");
 
             //defines the position in order to the origin value
             switch ($origin) {
                 case "top-right":
-                    $x =  $overlayImage->getWidth() - $this->getWidth() - $x;
+                    $x =  $this->getWidth() - $overlayImage->getWidth() - $x;
                     break;
                 case "bottom-left":
-                    $y =  $overlayImage->getHeight() - $this->getHeight() - $y;
+                    $y =  $this->getHeight() - $overlayImage->getHeight() - $y;
                     break;
                 case "bottom-right":
-                    $x = $overlayImage->getWidth() - $this->getWidth()  - $x;
-                    $y = $overlayImage->getHeight() - $this->getHeight() - $y;
+                    $x = $this->getWidth() - $overlayImage->getWidth()  - $x;
+                    $y = $this->getHeight() - $overlayImage->getHeight() - $y;
                     break;
                 case "center":
-                    $x = round($overlayImage->getWidth() / 2) -round($this->getWidth() / 2) + $x;
-                    $y = round($overlayImage->getHeight() / 2) - round($this->getHeight() / 2) + $y;
+                    $x = round($this->getWidth() / 2)  - round($overlayImage->getWidth() / 2) + $x;
+                    $y = round($this->getHeight() / 2) - round($overlayImage->getHeight() / 2) + $y;
                     break;
             }
-            //rop the overlay image
-            $overlayImage->crop($x, $y, $this->getWidth(), $this->getHeight());
+            //top the overlay image
             $overlayImage->save($overlayImage->getOutputPath());
 
-            $this->processOverlay($overlayImage, $composite);
+            $this->processOverlay($overlayImage, $composite, $x, $y);
         }
 
         return $this;
@@ -419,34 +417,34 @@ class ImageMagick extends Adapter
      * @param string $composite
      * @return ImageMagick
      */
-    protected function processOverlay(ImageMagick $overlayImage, $composite = "COMPOSITE_DEFAULT")
+    protected function processOverlay(ImageMagick $overlayImage, $composite = "COMPOSITE_DEFAULT", $x = 0, $y = 0)
     {
         //sets a value used by the compose option
         $allowedComposeOptions = [
             'hardlight', 'exclusion'
         ];
         $composite = strtolower(substr(strrchr($composite, "_"), 1));
-        $composeVal = in_array($composite, $allowedComposeOptions) ? $composite : null;
+        $composeVal = in_array($composite, $allowedComposeOptions) ? $composite : 'overlay';
 
         //save current state of the thumbnail to the tmp file
         $this->setTmpPaths($this, 'compose');
         $this->tmpFiles[] = $this->getOutputPath();
         $this->save($this->getOutputPath());
 
-        //composes images together
-        $this->compositeCommandOptions = [];
-        $this
-            ->addCompositeOption('compose', $composeVal . ' ' . $this->getOutputPath() . ' ' . $overlayImage->getOutputPath() . ' ' . $this->getOutputPath());
-        $this->processCommand($this->getCompositeCommand());
+        $this->setForceAlpha(true);
+        $this->addConvertOption('compose', $composeVal)
+            ->addConvertOption('geometry', "{$overlayImage->getWidth()}x{$overlayImage->getHeight()}+{$x}+{$y}")
+            ->addConvertOption('composite')
+            ->addFilter('compose', $overlayImage->imagePath);
+
         $this->imagePath = $this->getOutputPath();
+        $this->save($this->getOutputPath());
 
         return $this;
     }
 
     /**
      * Add mask to the image
-     *
-     * @TODO
      *
      * @param $image
      * @return ImageMagick
