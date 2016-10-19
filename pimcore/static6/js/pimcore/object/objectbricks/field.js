@@ -93,7 +93,7 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
             classMenu.push({
                 text: ts(rec.data.translatedText),
                 handler: this.addClassDefinition.bind(this, null, rec.data.id),
-                iconCls: "pimcore_icon_objectbricks"
+                iconCls: "pimcore_icon_class"
             });
         }
 
