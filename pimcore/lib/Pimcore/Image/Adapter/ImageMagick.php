@@ -292,6 +292,7 @@ class ImageMagick extends Adapter
             ->addConvertOption('composite')
             ->addConvertOption('alpha', 'set')
         ;
+        $this->setForceAlpha(true);
         $this->setTmpPaths($this, 'round_corners');
         //image has to be saved before next actions
         $this->save($this->getOutputPath());
