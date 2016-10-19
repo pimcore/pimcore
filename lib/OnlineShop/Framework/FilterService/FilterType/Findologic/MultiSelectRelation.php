@@ -66,6 +66,10 @@ class MultiSelectRelation extends \OnlineShop\Framework\FilterService\FilterType
                 $objects[$v['value']] = \Pimcore\Model\Object\AbstractObject::getById($v['value']);
             }
         }
+
+        // sort result
+        $values = $this->sortResult($filterDefinition, $values);
+
         \Logger::log("done.", \Zend_Log::INFO);
 
         if ($filterDefinition->getScriptPath()) {

@@ -90,4 +90,17 @@ abstract class AbstractFilterType {
     public function prepareGroupByValues(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, \OnlineShop\Framework\IndexService\ProductList\IProductList $productList) {
         //by default do thing here
     }
+
+
+    /**
+     * sort result
+     * @param \OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition
+     * @param array                                                    $result
+     *
+     * @return array
+     */
+    protected function sortResult(\OnlineShop\Framework\Model\AbstractFilterDefinitionType $filterDefinition, array $result)
+    {
+        return $result;
+    }
 }
