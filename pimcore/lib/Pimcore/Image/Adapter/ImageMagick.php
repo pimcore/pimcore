@@ -247,6 +247,7 @@ class ImageMagick extends Adapter
     public function crop($x, $y, $width, $height)
     {
         $this->addConvertOption('crop', "{$width}x{$height}+{$x}+{$y}");
+        $this->setWidth($width)->setHeight($height);
 
         return $this;
     }
