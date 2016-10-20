@@ -238,6 +238,11 @@ class ImageMagick extends Adapter
             ->addConvertOption('alpha', 'set')
             ->addConvertOption('rotate', $angle);
 
+        //an image size has changed after the rotate action, it's required to save it and reinit resource
+        $this->saveIfRequired('after_rotate');
+        $this->resource = null;
+        $this->initResource();
+
         return $this;
     }
 
