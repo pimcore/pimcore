@@ -7,6 +7,12 @@ use Pimcore\Logger;
 use Pimcore\Tool\Console;
 use Symfony\Component\Process\Process;
 
+/**
+ *
+ *
+ * Class ImageMagick
+ * @package Pimcore\Image\Adapter
+ */
 class ImageMagick extends Adapter
 {
     /**
@@ -56,6 +62,11 @@ class ImageMagick extends Adapter
      * @var string
      */
     protected $compositeScriptPath = null;
+
+    /**
+     * @var null
+     */
+    protected $forceAlpha = false;
 
 
     /**
@@ -126,15 +137,20 @@ class ImageMagick extends Adapter
             $this->addConvertOption('quality', $quality);
         }
 
+        $format = (null === $format) || $this->getForceAlpha() || $format == 'png'
+            ? 'png32' : null;
+
+        recursiveCopy($this->imagePath, $path);
+
         if (null !== $format) {
             //set the image format. see: http://www.imagemagick.org/script/formats.php
-            $this->addConvertOption('format', strtoupper($format));
+            $path = strtoupper($format) . ':' . $path;
         }
 
         $command = $this->getConvertCommand() . $path;
-        recursiveCopy($this->imagePath, $path);
         $this->processCommand($command);
         $this->convertCommandOptions = [];
+        $this->convertFilters = [];
 
         return $this;
     }
@@ -179,9 +195,8 @@ class ImageMagick extends Adapter
     public function frame($width, $height)
     {
         $this->contain($width, $height);
-        $this->setTmpPaths($this, 'frame');
-        $this->save($this->getOutputPath());
-        $this->imagePath = $this->getOutputPath();
+        $this->saveIfRequired('frame');
+
         $frameWidth = $width - $this->getWidth() == 0 ? 0 : ($width - $this->getWidth()) / 2;
         $frameHeight = $height - $this->getHeight() == 0 ? 0 : ($height - $this->getHeight()) / 2;
         $this
@@ -189,6 +204,7 @@ class ImageMagick extends Adapter
             ->addConvertOption('mattecolor', 'none')
             ->addConvertOption('frame', "{$frameWidth}x{$frameHeight}")
         ;
+        $this->setForceAlpha(true);
         $this->setWidth($width);
         $this->setHeight($height);
 
@@ -216,9 +232,16 @@ class ImageMagick extends Adapter
      */
     public function rotate($angle)
     {
-        $this->addConvertOption('rotate', $angle)
+        $this->setForceAlpha(true);
+        $this
+            ->addConvertOption('background', 'none')
             ->addConvertOption('alpha', 'set')
-        ;
+            ->addConvertOption('rotate', $angle);
+
+        //an image size has changed after the rotate action, it's required to save it and reinit resource
+        $this->saveIfRequired('after_rotate');
+        $this->resource = null;
+        $this->initResource();
 
         return $this;
     }
@@ -235,6 +258,7 @@ class ImageMagick extends Adapter
     public function crop($x, $y, $width, $height)
     {
         $this->addConvertOption('crop', "{$width}x{$height}+{$x}+{$y}");
+        $this->setWidth($width)->setHeight($height);
 
         return $this;
     }
@@ -265,13 +289,17 @@ class ImageMagick extends Adapter
      */
     public function roundCorners($width, $height)
     {
+        $this->saveIfRequired('round_corners_canvas');
+
         //creates the mask for rounded corners
         $mask = new ImageMagick();
         $mask->addConvertOption('size', "{$this->getWidth()}x{$this->getHeight()}")
             ->addConvertOption('draw', "'roundRectangle 0,0 {$this->getWidth()},{$this->getHeight()} {$width},{$height}'");
         $mask->addFilter('draw', 'xc:none');
+        $mask->setWidth($this->getWidth())->setHeight($this->getHeight());
         $this->setTmpPaths($mask, 'mask');
         $mask->save($mask->getOutputPath());
+        $mask->imagePath = $mask->getOutputPath();
         $this->tmpFiles[] = $mask->getOutputPath();
 
         //create the temp file with rounded corners
@@ -281,11 +309,10 @@ class ImageMagick extends Adapter
             ->addConvertOption('composite')
             ->addConvertOption('alpha', 'set')
         ;
-        $this->setTmpPaths($this, 'round_corners');
+        $this->setForceAlpha(true);
+
         //image has to be saved before next actions
-        $this->save($this->getOutputPath());
-        $this->imagePath = $this->getOutputPath();
-        $this->tmpFiles[] = $this->getOutputPath();
+        $this->saveIfRequired('round_corners');
 
         return $this;
     }
@@ -317,9 +344,7 @@ class ImageMagick extends Adapter
             $newImage->save($newImage->getOutputPath());
 
             //save current state of the thumbnail to the tmp file
-            $this->setTmpPaths($this, 'gravity');
-            $this->tmpFiles[] = $this->getOutputPath();
-            $this->save($this->getOutputPath());
+            $this->saveIfRequired('gravity');
 
             //save the current state of the file (with a background)
             $this->compositeCommandOptions = [];
@@ -343,33 +368,35 @@ class ImageMagick extends Adapter
      */
     public function addOverlay($image, $x = 0, $y = 0, $alpha = 100, $composite = "COMPOSITE_DEFAULT", $origin = 'top-left')
     {
+        $this->saveIfRequired('overlay_first_step');
+
+        $image = PIMCORE_DOCUMENT_ROOT . "/" . ltrim($image, "/");
         if (is_file($image)) {
             //if a specified file as a overlay exists
             $overlayImage = $this->createTmpImage($image, 'overlay');
-            $this->addConvertOption('channel', 'a')->addConvertOption('evaluate', "set {$alpha}%");
+            $overlayImage->setForceAlpha(true)->addConvertOption('evaluate', "set {$alpha}%");
 
             //defines the position in order to the origin value
             switch ($origin) {
                 case "top-right":
-                    $x =  $overlayImage->getWidth() - $this->getWidth() - $x;
+                    $x =  $this->getWidth() - $overlayImage->getWidth() - $x;
                     break;
                 case "bottom-left":
-                    $y =  $overlayImage->getHeight() - $this->getHeight() - $y;
+                    $y =  $this->getHeight() - $overlayImage->getHeight() - $y;
                     break;
                 case "bottom-right":
-                    $x = $overlayImage->getWidth() - $this->getWidth()  - $x;
-                    $y = $overlayImage->getHeight() - $this->getHeight() - $y;
+                    $x = $this->getWidth() - $overlayImage->getWidth()  - $x;
+                    $y = $this->getHeight() - $overlayImage->getHeight() - $y;
                     break;
                 case "center":
-                    $x = round($overlayImage->getWidth() / 2) -round($this->getWidth() / 2) + $x;
-                    $y = round($overlayImage->getHeight() / 2) - round($this->getHeight() / 2) + $y;
+                    $x = round($this->getWidth() / 2)  - round($overlayImage->getWidth() / 2) + $x;
+                    $y = round($this->getHeight() / 2) - round($overlayImage->getHeight() / 2) + $y;
                     break;
             }
-            //rop the overlay image
-            $overlayImage->crop($x, $y, $this->getWidth(), $this->getHeight());
+            //top the overlay image
             $overlayImage->save($overlayImage->getOutputPath());
 
-            $this->processOverlay($overlayImage, $composite);
+            $this->processOverlay($overlayImage, $composite, $x, $y);
         }
 
         return $this;
@@ -382,6 +409,7 @@ class ImageMagick extends Adapter
      */
     public function addOverlayFit($image, $composite = "COMPOSITE_DEFAULT")
     {
+        $image = PIMCORE_DOCUMENT_ROOT . "/" . ltrim($image, "/");
         if (is_file($image)) {
             //if a specified file as a overlay exists
             $overlayImage = $this->createTmpImage($image, 'overlay');
@@ -398,26 +426,25 @@ class ImageMagick extends Adapter
      * @param string $composite
      * @return ImageMagick
      */
-    protected function processOverlay(ImageMagick $overlayImage, $composite = "COMPOSITE_DEFAULT")
+    protected function processOverlay(ImageMagick $overlayImage, $composite = "COMPOSITE_DEFAULT", $x = 0, $y = 0)
     {
         //sets a value used by the compose option
         $allowedComposeOptions = [
             'hardlight', 'exclusion'
         ];
         $composite = strtolower(substr(strrchr($composite, "_"), 1));
-        $composeVal = in_array($composite, $allowedComposeOptions) ? $composite : null;
+        $composeVal = in_array($composite, $allowedComposeOptions) ? $composite : 'screen';
 
         //save current state of the thumbnail to the tmp file
-        $this->setTmpPaths($this, 'compose');
-        $this->tmpFiles[] = $this->getOutputPath();
-        $this->save($this->getOutputPath());
+        $this->saveIfRequired('compose');
 
-        //composes images together
-        $this->compositeCommandOptions = [];
-        $this
-            ->addCompositeOption('compose', $composeVal . ' ' . $overlayImage->getOutputPath() . ' ' . $this->getOutputPath() . ' ' . $this->getOutputPath());
-        $this->processCommand($this->getCompositeCommand());
-        $this->imagePath = $this->getOutputPath();
+        $this->setForceAlpha(true);
+        $this->addConvertOption('compose', $composeVal)
+            ->addConvertOption('geometry', "{$overlayImage->getWidth()}x{$overlayImage->getHeight()}+{$x}+{$y}")
+            ->addConvertOption('composite')
+            ->addFilter('compose', $overlayImage->imagePath);
+
+        $this->save($this->getOutputPath());
 
         return $this;
     }
@@ -430,7 +457,15 @@ class ImageMagick extends Adapter
      */
     public function applyMask($image)
     {
-        $this->addConvertOption('write-mask', $image);
+
+        $this->setForceAlpha(true)->saveIfRequired('mask');
+
+        $image = PIMCORE_DOCUMENT_ROOT . "/" . ltrim($image, "/");
+
+        $this->addConvertOption('alpha', 'off')->addConvertOption('compose', 'CopyOpacity')
+            ->addConvertOption('composite')
+            ->addFilter('alpha', $image);
+
 
         return $this;
     }
@@ -456,7 +491,7 @@ class ImageMagick extends Adapter
      *
      * @return ImageMagick
      */
-    public function grayscale($method = "Rec709Luminance")
+    public function grayscale($method = "Rec601Luma")
     {
         $this->addConvertOption('grayscale', $method);
 
@@ -799,5 +834,42 @@ class ImageMagick extends Adapter
         $process = new Process($command);
 
         return $process->run();
+    }
+
+    /**
+     * @return bool
+     */
+    public function getForceAlpha()
+    {
+        return (bool) $this->forceAlpha;
+    }
+
+    /**
+     * @param bool $forceAlpha
+     * @return ImageMagick
+     */
+    public function setForceAlpha($forceAlpha)
+    {
+        $this->forceAlpha = (bool) $forceAlpha;
+
+        return $this;
+    }
+
+
+    /**
+     * @param string $suffix a thumbnail identifier
+     * @return $this
+     */
+    public function saveIfRequired($suffix)
+    {
+        //saves previuos changes if there are any commands specified
+        if (count($this->convertCommandOptions)) {
+            $this->setTmpPaths($this, $suffix);
+            $this->save($this->getOutputPath());
+            $this->imagePath = $this->getOutputPath();
+            $this->tmpFiles[] = $this->getOutputPath();
+        }
+        
+        return $this;
     }
 }
