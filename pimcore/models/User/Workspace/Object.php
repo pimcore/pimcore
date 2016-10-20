@@ -93,6 +93,7 @@ class Object extends AbstractWorkspace
      */
     public function setLEdit($lEdit)
     {
+        //@TODO - at the moment disallowing all languages is not possible - the empty lEdit value means that every language is allowed to edit...
         $this->lEdit = $lEdit;
     }
 
