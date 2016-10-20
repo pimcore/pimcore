@@ -271,6 +271,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         var gridHelper = new pimcore.object.helpers.grid(selectedClass, fields, "/admin/search/search/find", null, true);
         this.store = gridHelper.getStore();
         this.store.setPageSize(pimcore.helpers.grid.getDefaultPageSize());
+        this.applyExtraParamsToStore();
         var gridColumns = gridHelper.getGridColumns();
         var gridfilters = gridHelper.getGridFilters();
 
@@ -441,7 +442,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         return this.gridPanel;
     },
 
-    search: function () {
+    applyExtraParamsToStore: function () {
         var formValues = this.formPanel.getForm().getFieldValues();
 
         var proxy = this.store.getProxy();
@@ -450,7 +451,10 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         proxy.setExtraParam("query", formValues.query);
         proxy.setExtraParam("subtype", formValues.subtype);
         proxy.setExtraParam("class", formValues.class);
+    },
 
+    search: function () {
+        this.applyExtraParamsToStore();
         this.pagingtoolbar.moveFirst();
     }
 });
