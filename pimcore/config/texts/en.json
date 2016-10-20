@@ -1741,10 +1741,6 @@
         "definition": "Use children from source document"
     },
     {
-        "term": "hardlink_properties",
-        "definition": "Hard Link Settings"
-    },
-    {
         "term": "click_right_for_more_options",
         "definition": "Click right for more options"
     },

@@ -296,7 +296,8 @@ pimcore.document.hardlink = Class.create(pimcore.document.document, {
             });
 
             this.panel = new Ext.form.FormPanel({
-                title: t('hardlink_properties'),
+                title: t('settings'),
+                iconCls: "pimcore_icon_settings",
                 autoHeight:true,
                 labelWidth: 120,
                 defaultType: 'textfield',

@@ -667,7 +667,7 @@ class Service extends Model\AbstractModel
     /**
      * @param $path
      * @param array $options
-     * @return null
+     * @return Asset\Folder|Document\Folder|Object\Folder
      * @throws \Exception
      */
     public static function createFolderByPath($path, $options = [])
