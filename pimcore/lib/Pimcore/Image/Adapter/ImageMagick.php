@@ -374,7 +374,7 @@ class ImageMagick extends Adapter
         if (is_file($image)) {
             //if a specified file as a overlay exists
             $overlayImage = $this->createTmpImage($image, 'overlay');
-            $overlayImage->addConvertOption('channel', 'a')->addConvertOption('evaluate', "set {$alpha}%");
+            $overlayImage->setForceAlpha(true)->addConvertOption('evaluate', "set {$alpha}%");
 
             //defines the position in order to the origin value
             switch ($origin) {
@@ -433,7 +433,7 @@ class ImageMagick extends Adapter
             'hardlight', 'exclusion'
         ];
         $composite = strtolower(substr(strrchr($composite, "_"), 1));
-        $composeVal = in_array($composite, $allowedComposeOptions) ? $composite : 'overlay';
+        $composeVal = in_array($composite, $allowedComposeOptions) ? $composite : 'screen';
 
         //save current state of the thumbnail to the tmp file
         $this->saveIfRequired('compose');
