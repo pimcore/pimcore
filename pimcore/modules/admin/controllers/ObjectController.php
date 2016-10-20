@@ -1320,8 +1320,13 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                     }
 
                     $user = Tool\Admin::getCurrentUser();
+                    $allLanguagesAllowed = false;
                     if (!$user->isAdmin()) {
                         $languagePermissions = $object->getPermissions("lEdit", $user);
+
+                        //sets allowed all languages modification when the lEdit column is empty
+                        $allLanguagesAllowed = $languagePermissions["lEdit"] == '';
+
                         $languagePermissions = explode(",", $languagePermissions["lEdit"]);
                     }
 
@@ -1385,7 +1390,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                                         $field = $localized->getFieldDefinition($key);
                                         if ($field) {
                                             $currentLocale = (string) \Zend_Registry::get("Zend_Locale");
-                                            if (!in_array($currentLocale, $languagePermissions)) {
+                                            if (!$allLanguagesAllowed && !in_array($currentLocale, $languagePermissions)) {
                                                 continue;
                                             }
                                         }
