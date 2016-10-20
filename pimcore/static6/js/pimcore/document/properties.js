@@ -83,64 +83,67 @@ pimcore.document.properties = Class.create(pimcore.element.properties,{
                 items: [language]
             });
 
-            var navigationBasic = new Ext.form.FieldSet({
-                title: t('basic'),
-                autoHeight:true,
-                collapsible: true,
-                collapsed: false,
-                defaults: {
-                    width: 230
-                },
-                items :[{
-                            xtype: "textfield",
-                            fieldLabel: t("name"),
-                            value: this.getPropertyData("navigation_name"),
-                            name: "navigation_name"
-                        },{
-                            xtype: "textfield",
-                            fieldLabel: t('title'),
-                            name: "navigation_title",
-                            value: this.getPropertyData("navigation_title")
-                        },{
-                            xtype: "combo",
-                            fieldLabel: t('navigation_target'),
-                            name: "navigation_target",
-                            store: ["","_blank","_self","_top","_parent"],
-                            value: this.getPropertyData("navigation_target"),
-                            editable: true,
-                            triggerAction: 'all',
-                            mode: "local",
-                            width: 200,
-                            listWidth: 200
-                        },{
-                            xtype: "checkbox",
-                            fieldLabel: t('navigation_exclude'),
-                            name: "navigation_exclude",
-                            checked: this.getPropertyData("navigation_exclude")
+            var systempropertiesItems = [this.languagesPanel];
 
-                }]
+            if(this.element.type == "page" || this.element.type == "link") {
+                var navigationBasic = new Ext.form.FieldSet({
+                    title: t('basic'),
+                    autoHeight:true,
+                    collapsible: true,
+                    collapsed: false,
+                    defaults: {
+                        width: 230
+                    },
+                    items :[{
+                        xtype: "textfield",
+                        fieldLabel: t("name"),
+                        value: this.getPropertyData("navigation_name"),
+                        name: "navigation_name"
+                    },{
+                        xtype: "textfield",
+                        fieldLabel: t('title'),
+                        name: "navigation_title",
+                        value: this.getPropertyData("navigation_title")
+                    },{
+                        xtype: "combo",
+                        fieldLabel: t('navigation_target'),
+                        name: "navigation_target",
+                        store: ["","_blank","_self","_top","_parent"],
+                        value: this.getPropertyData("navigation_target"),
+                        editable: true,
+                        triggerAction: 'all',
+                        mode: "local",
+                        width: 200,
+                        listWidth: 200
+                    },{
+                        xtype: "checkbox",
+                        fieldLabel: t('navigation_exclude'),
+                        name: "navigation_exclude",
+                        checked: this.getPropertyData("navigation_exclude")
 
-            });
+                    }]
 
-            var navigationEnhanced = new Ext.form.FieldSet({
-                title: t('enhanced'),
-                autoHeight:true,
-                collapsible: true,
-                collapsed: true,
-                defaults: {
-                    width: 230
-                },
-                items :[{
-                            xtype: "textfield",
-                            fieldLabel: t('class'),
-                            name: 'navigation_class',
-                            value: this.getPropertyData("navigation_class")
-                        },{
-                            xtype: "textfield",
-                            fieldLabel: t('anchor'),
-                            name: 'navigation_anchor',
-                            value: this.getPropertyData("navigation_anchor")
-                        },
+                });
+
+                var navigationEnhanced = new Ext.form.FieldSet({
+                    title: t('enhanced'),
+                    autoHeight:true,
+                    collapsible: true,
+                    collapsed: true,
+                    defaults: {
+                        width: 230
+                    },
+                    items :[{
+                        xtype: "textfield",
+                        fieldLabel: t('class'),
+                        name: 'navigation_class',
+                        value: this.getPropertyData("navigation_class")
+                    },{
+                        xtype: "textfield",
+                        fieldLabel: t('anchor'),
+                        name: 'navigation_anchor',
+                        value: this.getPropertyData("navigation_anchor")
+                    },
                         {
                             xtype: "textfield",
                             fieldLabel: t('parameters'),
@@ -166,20 +169,18 @@ pimcore.document.properties = Class.create(pimcore.element.properties,{
                             value: this.getPropertyData("navigation_tabindex")
                         }]
 
-            });
+                });
 
-            this.navigationPanel =  new Ext.form.FormPanel({
-                title: t("navigation_settings"),
-                bodyStyle: "padding: 10px;",
-                autoWidth: true,
-                autoHeight:true,
-                collapsible: false,
-                items: [navigationBasic,navigationEnhanced]
-            });
+                this.navigationPanel =  new Ext.form.FormPanel({
+                    title: t("navigation_settings"),
+                    bodyStyle: "padding: 10px;",
+                    autoWidth: true,
+                    autoHeight:true,
+                    collapsible: false,
+                    items: [navigationBasic,navigationEnhanced]
+                });
 
-            var systempropertiesItems = [this.languagesPanel];
-            if(this.element.type == "page" || this.element.type == "link") {
-                systempropertiesItems = [this.languagesPanel,this.navigationPanel];
+                systempropertiesItems.push(this.navigationPanel);
             }
 
             this.systemPropertiesPanel = new Ext.Panel({
@@ -201,10 +202,12 @@ pimcore.document.properties = Class.create(pimcore.element.properties,{
         var values = $super();
         var record;
 
-        var languageValues = this.languagesPanel.getForm().getFieldValues();
-        var navigationValues = this.navigationPanel.getForm().getFieldValues();
+        var systemValues = this.languagesPanel.getForm().getFieldValues();
 
-        var systemValues = array_merge(languageValues,navigationValues);
+        if(this["navigationPanel"]) {
+            var navigationValues = this.navigationPanel.getForm().getFieldValues();
+            systemValues = array_merge(systemValues, navigationValues);
+        }
 
         for(var i=0;i<this.disallowedKeys.length;i++){
 
