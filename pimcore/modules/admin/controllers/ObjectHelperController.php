@@ -749,8 +749,17 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
             $conditionFilters[] = "(" . $this->getParam("condition") . ")";
         }
 
+        /** @var Object\Listing\Concrete $list */
         $list = new $listClass();
         $list->setCondition(implode(" AND ", $conditionFilters));
+
+        //parameters specified in the objects grid
+        $ids = $this->getParam('ids', []);
+        if(! empty($ids)) {
+            //add a condition if id numbers are specified
+            $list->addConditionParam('o_id IN (' . implode(',', $ids) . ')');
+        }
+
         $list->setOrder("ASC");
         $list->setOrderKey("o_id");
 

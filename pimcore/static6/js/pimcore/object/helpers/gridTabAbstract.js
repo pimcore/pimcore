@@ -458,6 +458,13 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
         var fields = this.getGridConfig().columns;
         var fieldKeys = Object.keys(fields);
 
+        //create the ids array which contains chosen rows to export
+        ids = [];
+        var selectedRows = this.grid.getSelectionModel().getSelection();
+        for (var i = 0; i < selectedRows.length; i++) {
+            ids.push(selectedRows[i].data.id);
+        }
+
         var params = {
             extjs6: true,
             filter: filters,
@@ -466,6 +473,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             folderId: this.element.id,
             objecttype: this.objecttype,
             language: this.gridLanguage,
+            "ids[]": ids,
             "fields[]": fieldKeys
         };
 
