@@ -396,7 +396,7 @@ class ImageMagick extends Adapter
             //top the overlay image
             $overlayImage->save($overlayImage->getOutputPath());
 
-            $this->processOverlay($overlayImage, $composite, $x, $y);
+            $this->processOverlay($overlayImage, $composite, $x, $y, $alpha);
         }
 
         return $this;
@@ -426,14 +426,14 @@ class ImageMagick extends Adapter
      * @param string $composite
      * @return ImageMagick
      */
-    protected function processOverlay(ImageMagick $overlayImage, $composite = "COMPOSITE_DEFAULT", $x = 0, $y = 0)
+    protected function processOverlay(ImageMagick $overlayImage, $composite = "COMPOSITE_DEFAULT", $x = 0, $y = 0, $overlayOpacity = 100)
     {
         //sets a value used by the compose option
         $allowedComposeOptions = [
             'hardlight', 'exclusion'
         ];
         $composite = strtolower(substr(strrchr($composite, "_"), 1));
-        $composeVal = in_array($composite, $allowedComposeOptions) ? $composite : 'screen';
+        $composeVal = in_array($composite, $allowedComposeOptions) ? $composite : 'dissolve';
 
         //save current state of the thumbnail to the tmp file
         $this->saveIfRequired('compose');
@@ -441,6 +441,7 @@ class ImageMagick extends Adapter
         $this->setForceAlpha(true);
         $this->addConvertOption('compose', $composeVal)
             ->addConvertOption('geometry', "{$overlayImage->getWidth()}x{$overlayImage->getHeight()}+{$x}+{$y}")
+            ->addConvertOption('define', "compose:args={$overlayOpacity},100")
             ->addConvertOption('composite')
             ->addFilter('compose', $overlayImage->imagePath);
 
