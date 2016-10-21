@@ -118,15 +118,13 @@ class User extends User\UserRole
 
     /**
      * @param string $password
-     * @throws \Exception
      * @return $this
      */
     public function setPassword($password)
     {
-        if (strlen($password) < 5) {
-            throw new \Exception("Password has to be at least 5 characters long");
+        if (strlen($password) > 4) {
+            $this->password = $password;
         }
-        $this->password = $password;
 
         return $this;
     }
