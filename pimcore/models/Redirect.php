@@ -284,7 +284,8 @@ class Redirect extends AbstractModel
         $list->load();
 
         foreach ($list->getRedirects() as $redirect) {
-            $redirect->delete();
+            $redirect->setActive(false);
+            $redirect->save();
         }
     }
 
