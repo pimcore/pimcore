@@ -2833,6 +2833,7 @@ pimcore.helpers.requestNicePathData = function(source, targets, config, fieldCon
     elementData = Ext.encode(elementData);
 
     Ext.Ajax.request({
+        method: 'POST',
         url: "/admin/element/get-nice-path",
         params: {
             source: Ext.encode(source),
