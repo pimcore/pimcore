@@ -162,13 +162,6 @@ class Install_CheckController extends \Pimcore\Controller\Action
             "state" => function_exists("opcache_reset") ? "ok" : "warning"
         ];
 
-        // memcache
-        $checksPHP[] = [
-            "name" => "Memcache",
-            "link" => "http://www.php.net/memcache",
-            "state" => class_exists("Memcache") ? "ok" : "warning"
-        ];
-
         // Redis
         $checksPHP[] = [
             "name" => "Redis",
