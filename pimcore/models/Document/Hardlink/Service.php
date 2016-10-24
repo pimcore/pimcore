@@ -64,7 +64,7 @@ class Service
         $old_serialized_prefix .= ":\"".get_class($doc)."\":";
 
         // unset eventually existing children, because of performance reasons when serializing the document
-        $doc->setChilds(null);
+        $doc->setChildren(null);
 
         $old_serialized_object = Serialize::serialize($doc);
         $new_serialized_object = 'O:'.strlen($to_class).':"'.$to_class . '":';
@@ -86,7 +86,7 @@ class Service
      */
     public static function getChildByPath(Document\Hardlink $hardlink, $path)
     {
-        if ($hardlink->getChildsFromSource() && $hardlink->getSourceDocument()) {
+        if ($hardlink->getChildrenFromSource() && $hardlink->getSourceDocument()) {
             $hardlinkRealPath = preg_replace("@^" . preg_quote($hardlink->getRealFullPath()) . "@", $hardlink->getSourceDocument()->getRealFullPath(), $path);
             $hardLinkedDocument = Document::getByPath($hardlinkRealPath);
             if ($hardLinkedDocument instanceof Document) {
@@ -113,7 +113,7 @@ class Service
      */
     public static function getNearestChildByPath(Document\Hardlink $hardlink, $path)
     {
-        if ($hardlink->getChildsFromSource() && $hardlink->getSourceDocument()) {
+        if ($hardlink->getChildrenFromSource() && $hardlink->getSourceDocument()) {
             $hardlinkRealPath = preg_replace("@^" . preg_quote($hardlink->getRealFullPath()) . "@", $hardlink->getSourceDocument()->getRealFullPath(), $path);
             $pathes = [];
 
