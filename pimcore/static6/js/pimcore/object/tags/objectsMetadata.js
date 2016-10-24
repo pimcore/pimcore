@@ -302,6 +302,10 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                 items: columns
             },
             viewConfig: {
+                plugins: {
+                    ptype: 'gridviewdragdrop',
+                    dragroup: 'element'
+                },
                 markDirty: false,
                 listeners: {
                     refresh: function (gridview) {

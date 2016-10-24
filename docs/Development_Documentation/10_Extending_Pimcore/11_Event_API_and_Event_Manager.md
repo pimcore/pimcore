@@ -122,16 +122,17 @@ attach multiple events
 
 ### Document
 
-| Name                               | Target                   | Parameters                            | Description                                                                                              |
-|------------------------------------|--------------------------|---------------------------------------|----------------------------------------------------------------------------------------------------------|
-| `document.preAdd`                  | `Pimcore\Model\Document` | -                                     |                                                                                                          |
-| `document.postAdd`                 | `Pimcore\Model\Document` | -                                     |                                                                                                          |
-| `document.preUpdate`               | `Pimcore\Model\Document` | (bool) `saveVersionOnly`              | saveVersionOnly is set if method saveVersion() was called instead of save()                              |
-| `document.postUpdate`              | `Pimcore\Model\Document` | (bool) `saveVersionOnly`              | saveVersionOnly is set if method saveVersion() was called instead of save()                              |
-| `document.preDelete`               | `Pimcore\Model\Document` | -                                     |                                                                                                          |
-| `document.postDelete`              | `Pimcore\Model\Document` | -                                     |                                                                                                          |
-| `document.print.postPdfGeneration` | `Pimcore\Model\Document` | (string) `filename`, (string) `pdf`   | filename contains the filename of the generated pdf on filesystem, pdf contains generated pdf as string. |
-| `document.postCopy`                | `Pimcore\Model\Document` | `Pimcore\Model\Document base_element` | base_element contains the base document used in copying process                                          |
+| Name                               | Target                   | Parameters                                              | Description                                                                                             |
+|------------------------------------|--------------------------|---------------------------------------------------------|---------------------------------------------------------------------------------------------------------|
+| `document.preAdd`                  | `Pimcore\Model\Document` | -                                                       |                                                                                                         |
+| `document.postAdd`                 | `Pimcore\Model\Document` | -                                                       |                                                                                                         |
+| `document.preUpdate`               | `Pimcore\Model\Document` | (bool) `saveVersionOnly`                                | saveVersionOnly is set if method saveVersion() was called instead of save()                             |
+| `document.postUpdate`              | `Pimcore\Model\Document` | (bool) `saveVersionOnly`                                | saveVersionOnly is set if method saveVersion() was called instead of save()                             |
+| `document.preDelete`               | `Pimcore\Model\Document` | -                                                       |                                                                                                         |
+| `document.postDelete`              | `Pimcore\Model\Document` | -                                                       |                                                                                                         |
+| `document.print.prePdfGeneration`  | `Pimcore\Model\Document` | `Pimcore\Web2Print\Processor\{ProcessorName} processor` | processor contains the processor object used to generate the PDF                                        |
+| `document.print.postPdfGeneration` | `Pimcore\Model\Document` | (string) `filename`, (string) `pdf`                     | filename contains the filename of the generated pdf on filesystem, pdf contains generated pdf as string |
+| `document.postCopy`                | `Pimcore\Model\Document` | `Pimcore\Model\Document base_element`                   | base_element contains the base document used in copying process                                         |
 
 ### Object
 
