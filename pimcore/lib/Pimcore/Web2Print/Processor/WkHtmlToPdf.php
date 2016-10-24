@@ -104,6 +104,22 @@ class WkHtmlToPdf extends Processor
         return [];
     }
 
+    /**
+     * @param string $options
+     * @return void
+     */
+    public function setOptions($options)
+    {
+        $this->options = $options;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOptions()
+    {
+        return $this->options;
+    }
 
     /**
      * @param string $htmlString
