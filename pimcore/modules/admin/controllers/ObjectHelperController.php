@@ -879,6 +879,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         $objects = [];
         Logger::debug("objects in list:" . count($list->getObjects()));
         foreach ($list->getObjects() as $object) {
+            //add inherited values to the object
             $object->setGetInheritedValues(true);
             if ($fields) {
                 $objectData = [];
