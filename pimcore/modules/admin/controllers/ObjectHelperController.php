@@ -873,14 +873,15 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
 
     protected function getCsvData($list, $fields, $addTitles = true)
     {
+        /** @var \Pimcore\Model\Listing\AbstractListing $requestedLanguage */
         $requestedLanguage = $this->extractLanguage();
         $mappedFieldnames = [];
 
         $objects = [];
         Logger::debug("objects in list:" . count($list->getObjects()));
+        //add inherited values to objects
+        Object\AbstractObject::setGetInheritedValues(true);
         foreach ($list->getObjects() as $object) {
-            //add inherited values to the object
-            $object->setGetInheritedValues(true);
             if ($fields) {
                 $objectData = [];
                 foreach ($fields as $field) {
