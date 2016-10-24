@@ -60,9 +60,9 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
     public $_defaults = [];
 
     /**
-     * @var string
+     * @var array
      */
-    protected $nearestDocumentByPath;
+    protected $nearestDocumentByPath = [];
 
     /**
      * @return int
@@ -189,7 +189,6 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
         // check for direct definition of controller/action
         if (!empty($_REQUEST["controller"]) && !empty($_REQUEST["action"])) {
             $matchFound = true;
-            //$params["document"] = $this->getNearestDocumentByPath($path);
         }
 
         // test if there is a suitable page
@@ -368,8 +367,11 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
      */
     protected function getNearestDocumentByPath($path, $ignoreHardlinks = false, $types = [])
     {
-        if ($this->nearestDocumentByPath instanceof Document) {
-            $document = $this->nearestDocumentByPath;
+        $cacheKey = $ignoreHardlinks . implode("-", $types);
+        $document = null;
+
+        if (isset($this->nearestDocumentByPath[$cacheKey])) {
+            $document = $this->nearestDocumentByPath[$cacheKey];
         } else {
             $pathes = [];
 
@@ -389,7 +391,7 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
             foreach ($pathes as $p) {
                 if ($document = Document::getByPath($p)) {
                     if (empty($types) || in_array($document->getType(), $types)) {
-                        $this->nearestDocumentByPath = $document;
+                        $this->nearestDocumentByPath[$cacheKey] = $document;
                         break;
                     }
                 } elseif (Site::isSiteRequest()) {
@@ -403,7 +405,7 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
                     $sitePrettyDocId = $documentService->getDocumentIdByPrettyUrlInSite($site, $originalPath);
                     if ($sitePrettyDocId) {
                         if ($sitePrettyDoc = Document::getById($sitePrettyDocId)) {
-                            $this->nearestDocumentByPath = $sitePrettyDoc;
+                            $this->nearestDocumentByPath[$cacheKey] = $sitePrettyDoc;
                             break;
                         }
                     }
