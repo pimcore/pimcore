@@ -125,7 +125,7 @@ pimcore.element.properties = Class.create({
                         rootProperty: 'properties'
                     }
                 },
-                fields: ['name','type',{name: "data", type: "string", convert: function (v, rec) {
+                fields: ['name','description', 'type',{name: "data", type: "string", convert: function (v, rec) {
                     if (rec.data.type == "document" || rec.data.type == "asset" || rec.data.type == "object") {
                         var type = rec.data.type;
                         if (type == "document") {
@@ -157,6 +157,19 @@ pimcore.element.properties = Class.create({
                         return true;
                     }.bind(this)
                 ]
+            });
+
+            predefinedPropertiesStore.load({
+                callback: function(records, operation, success) {
+                    $.each(records, function(index, item) {
+                        var key = item.data.key;
+                        var desc = item.data.name;
+                        var record = store.findRecord('name', key);
+                        if (record) {
+                            record.set("description", desc);
+                        }
+                    });
+                }
             });
 
             var checkColumn = Ext.create('Ext.grid.column.Check', {
@@ -251,6 +264,13 @@ pimcore.element.properties = Class.create({
                                 allowBlank: false
                             });
                         },
+                        sortable: true,
+                        width: 230
+                    },
+                    {
+                        header: t("description"),
+                        dataIndex: 'description',
+                        editable: false,
                         sortable: true,
                         width: 230
                     },
