@@ -873,7 +873,6 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
 
     protected function getCsvData($list, $fields, $addTitles = true)
     {
-        /** @var \Pimcore\Model\Listing\AbstractListing $requestedLanguage */
         $requestedLanguage = $this->extractLanguage();
         $mappedFieldnames = [];
 
