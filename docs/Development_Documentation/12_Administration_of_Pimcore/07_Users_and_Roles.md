@@ -11,7 +11,7 @@ Users and roles are configured in Pimcore backend UI at *Settings* > *Users & Ro
 
 ## Permissions
 In Pimcore there are two levels of user permissions. Firstly the permissions on system components and secondly 
-permissions on data elements ()assets, objects and documents). Permissions can be granted to roles or individual users. 
+permissions on data elements (assets, objects and documents). Permissions can be granted to roles or individual users. 
 The following paragraphs describe how and where permissions can be set and how they will or will not affect each other.
 
 It is not mandatory to use roles, permissions can be granted to users directly. However, it is advised to use roles if 
