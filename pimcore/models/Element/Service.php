@@ -455,6 +455,7 @@ class Service extends Model\AbstractModel
 
                 if ($predefined && $predefined->getType() == $p->getType()) {
                     $properties[$key]["config"] = $predefined->getConfig();
+                    $properties[$key]["description"] = $predefined->getDescription();
                 }
             }
         }
