@@ -549,9 +549,9 @@ class Test_Tool
 
         if ($cleanObjects) {
             try {
-                $objectRoot = Object_Abstract::getById(1);
-                if ($objectRoot and $objectRoot->hasChilds()) {
-                    $childs = $objectRoot->getChilds();
+                $objectRoot = \Pimcore\Model\Object\AbstractObject::getById(1);
+                if ($objectRoot and $objectRoot->hasChildren()) {
+                    $childs = $objectRoot->getChildren();
 
                     foreach ($childs as $child) {
                         print("   delete object " . $child->getId());
@@ -565,9 +565,9 @@ class Test_Tool
 
         if ($cleanAssets) {
             try {
-                $assetRoot = Asset::getById(1);
-                if ($assetRoot and $assetRoot->hasChilds()) {
-                    $childs = $assetRoot->getChilds();
+                $assetRoot = \Pimcore\Model\Asset::getById(1);
+                if ($assetRoot and $assetRoot->hasChildren()) {
+                    $childs = $assetRoot->getChildren();
                     foreach ($childs as $child) {
                         $child->delete();
                     }
@@ -579,9 +579,9 @@ class Test_Tool
 
         if ($cleanDocuments) {
             try {
-                $documentRoot = Document::getById(1);
-                if ($documentRoot and $documentRoot->hasChilds()) {
-                    $childs = $documentRoot->getChilds();
+                $documentRoot = \Pimcore\Model\Document::getById(1);
+                if ($documentRoot and $documentRoot->hasChildren()) {
+                    $childs = $documentRoot->getChildren();
                     foreach ($childs as $child) {
                         $child->delete();
                     }

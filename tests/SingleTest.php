@@ -6,8 +6,8 @@ class SingleTest extends Test_SuiteBase
 {
     public static function suite()
     {
-        $suite = new SingleTest('Inheritance');
-        $suite->addTestSuite('TestSuite_Datatypes_AllTests');
+        $suite = new SingleTest('Classificationstore');
+        $suite->addTestSuite('TestSuite_Classificationstore_AllTests');
 
         return $suite;
     }
