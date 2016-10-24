@@ -2879,3 +2879,11 @@ pimcore.helpers.getNicePathHandlerStore = function(store, config, gridView, resp
 
 };
 
+pimcore.helpers.isValidPassword = function (pass) {
+    var passRegExp = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{10,}$/;
+    if(!pass.match(passRegExp)) {
+        return false;
+    }
+    return true;
+};
+

@@ -65,7 +65,7 @@ pimcore.settings.user.user.settings = Class.create({
                     var theEl = el.getEl();
                     var hintItem = this.generalSet.getComponent("password_hint");
 
-                    if(this.isValidPassword(el.getValue())) {
+                    if(pimcore.helpers.isValidPassword(el.getValue())) {
                         theEl.addCls("password_valid");
                         theEl.removeCls("password_invalid");
                         hintItem.hide();
@@ -404,19 +404,11 @@ pimcore.settings.user.user.settings = Class.create({
         return this.panel;
     },
 
-    isValidPassword: function (pass) {
-        var passRegExp = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{10,}$/;
-        if(!pass.match(passRegExp)) {
-            return false;
-        }
-        return true;
-    },
-
     getValues:function () {
 
         var values = this.panel.getForm().getFieldValues();
         if(values["password"]) {
-            if(!this.isValidPassword(values["password"])) {
+            if(!pimcore.helpers.isValidPassword(values["password"])) {
                 delete values["password"];
                 Ext.MessageBox.alert(t('error'), t("password_was_not_changed"));
             }

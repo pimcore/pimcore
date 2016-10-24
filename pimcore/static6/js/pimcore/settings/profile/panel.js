@@ -213,7 +213,7 @@ pimcore.settings.profile.panel = Class.create({
         values.contentLanguages = contentLanguages;
 
         if(values["new_password"]) {
-            if(!/^(?=.*\d)(?=.*[a-zA-Z]).{6,100}$/.test(values["new_password"]) || values["new_password"] != values["retype_password"]) {
+            if(!pimcore.helpers.isValidPassword(values["new_password"]) || values["new_password"] != values["retype_password"]) {
                 delete values["new_password"];
                 delete values["retype_password"];
                 Ext.MessageBox.alert(t('error'), t("password_was_not_changed"));
