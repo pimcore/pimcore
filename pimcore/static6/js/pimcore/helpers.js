@@ -1842,11 +1842,11 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
         enableKeyEvents: true,
         listeners: {
             keyup: function (el) {
-                if(el.getValue().indexOf("you") >= 0 && el.getValue().indexOf("http") >= 0) {
+                if((el.getValue().indexOf("youtu.be") >= 0 || el.getValue().indexOf("youtube.com") >= 0) && el.getValue().indexOf("http") >= 0) {
                     form.getComponent("type").setValue("youtube");
-                } else if (el.getValue().indexOf("vim") >= 0 && el.getValue().indexOf("http") >= 0) {
+                } else if (el.getValue().indexOf("vimeo") >= 0 && el.getValue().indexOf("http") >= 0) {
                     form.getComponent("type").setValue("vimeo");
-                } else if (el.getValue().indexOf("dai") >= 0 && el.getValue().indexOf("http") >= 0) {
+                } else if ((el.getValue().indexOf("dai.ly") >= 0 || el.getValue().indexOf("dailymotion") >= 0) && el.getValue().indexOf("http") >= 0) {
                     form.getComponent("type").setValue("dailymotion");
                 }
             }.bind(this)

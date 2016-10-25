@@ -136,6 +136,29 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
                 var values = this.window.getComponent("form").getForm().getFieldValues();
                 values["data"] = values["path"];
                 delete values["path"];
+
+                var match, regExp;
+
+                if(values["type"] == "youtube") {
+                    regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+                    match = values["data"].match(regExp);
+                    if (match && match[2].length == 11) {
+                        values["data"] = match[2];
+                    }
+                } else if(values["type"] == "vimeo") {
+                    regExp = /vimeo.com\/(\d+)($|\/)/;
+                    match = values["data"].match(regExp);
+                    if (match && match[1]) {
+                        values["data"] = match[1];
+                    }
+                } else if(values["type"] == "dailymotion") {
+                    regExp = /dailymotion.*\/video\/([^_]+)/;
+                    match = values["data"].match(regExp);
+                    if (match && match[1]) {
+                        values["data"] = match[1];
+                    }
+                }
+
                 this.data = values;
 
                 this.dirty = true;
