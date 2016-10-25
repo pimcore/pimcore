@@ -4,6 +4,10 @@
         "definition": "Custom HTTP Headers"
     },
     {
+        "term": "press_crtl_and_select_to_compare",
+        "definition": "Compare: Press CTRL + Click Version"
+    },
+    {
         "term": "file_is_bigger_that_upload_limit",
         "definition": "The following file is bigger than the actual upload limit of your server:"
     },
