@@ -536,8 +536,8 @@
 .pimcore_icon_restore {
     background: url(/pimcore/static6/img/flat-color-icons/redo.svg) center center no-repeat !important;
 }
-
-.pimcore_icon_apply {
+/* to keep compatibility with icon_notification_success - pimcore.helpers.showNotification */
+.pimcore_icon_apply, .pimcore_icon_success {
     background: url(/pimcore/static6/img/flat-color-icons/ok.svg) center center no-repeat !important;
 }
 
