@@ -1487,18 +1487,10 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
         $pimcore = ["version" => \Pimcore\Version::getVersion(),
             "revision" => \Pimcore\Version::getRevision(),
             "instanceIdentifier" => $systemSettings["general"]["instanceIdentifier"],
-            "modules" => [],
             "constants" => $pimcoreConstants,
         ];
 
-
-
-        foreach ((array) \Pimcore\API\Plugin\Broker::getInstance()->getModules() as $module) {
-            $pimcore["modules"][] = get_class($module);
-        }
-
         $plugins = \Pimcore\ExtensionManager::getPluginConfigs();
-
 
         $this->encoder->encode(["success" => true, "system" => $system,
             "pimcore" => $pimcore,
