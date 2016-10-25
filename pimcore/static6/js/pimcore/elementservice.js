@@ -29,6 +29,9 @@ pimcore.elementservice.deleteElementCheckDependencyComplete = function (options,
     try {
         var res = Ext.decode(response.responseText);
         var message = res.batchDelete ? t('delete_message_batch') : t('delete_message');
+        if (res.elementKey) {
+            message += "<br />\" " + res.elementKey + " \"";
+        }
         if (res.hasDependencies) {
             message += "<br />" + t('delete_message_dependencies');
         }
