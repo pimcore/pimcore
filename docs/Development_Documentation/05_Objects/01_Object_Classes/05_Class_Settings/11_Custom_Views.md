@@ -2,6 +2,9 @@
 A custom view is an additional custom tree representing a subset of elements of the corresponing original tree.
 Custom views can be configured for Documents, Assets and Objects. 
 
+> **Security Note**    
+> Perspectives and Custom Views are not intended to be used to restrict access to data
+
 An unlimited number of custom views can be created. Specify the tree type, root node and layout settings. 
 Note that the ID is mandatory and must be unique!
 
