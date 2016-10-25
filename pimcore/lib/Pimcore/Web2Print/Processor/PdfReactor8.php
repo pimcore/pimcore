@@ -33,7 +33,7 @@ class PdfReactor8 extends Processor
         $html = $document->renderDocument($params);
         $this->updateStatus($document->getId(), 40, "finished_html_rendering");
 
-        $filePath = PIMCORE_TEMPORARY_DIRECTORY . DIRECTORY_SEPARATOR . "pdf-reactor-input-" . $document->getId() . ".html";
+        $filePath = PIMCORE_TEMPORARY_DIRECTORY . "/pdf-reactor-input-" . $document->getId() . ".html";
 
         file_put_contents($filePath, $html);
         $html = null;
