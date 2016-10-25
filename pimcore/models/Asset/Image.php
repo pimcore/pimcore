@@ -33,7 +33,7 @@ class Image extends Model\Asset
     /**
      * @return void
      */
-    public function update()
+    protected function update()
     {
 
         // only do this if the file exists and contains data

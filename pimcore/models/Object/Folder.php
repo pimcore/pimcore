@@ -46,7 +46,7 @@ class Folder extends AbstractObject
     /**
      * @return void
      */
-    public function update()
+    protected function update()
     {
         parent::update();
         $this->getDao()->update();
