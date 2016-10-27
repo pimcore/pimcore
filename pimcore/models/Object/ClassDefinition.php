@@ -222,6 +222,22 @@ class ClassDefinition extends Model\AbstractModel
         $this->save();
     }
 
+    public static function recursive_unset(&$data, $unwanted_key) {
+        if (method_exists($data, "clearFieldDefinitionsCache")) {
+            $data->clearFieldDefinitionsCache();
+
+        }
+
+        if (method_exists($data, "getChilds")) {
+            $children = $data->getChilds();
+            if (is_array($children)) {
+                foreach ($children as $child) {
+                    self::recursive_unset($child, $unwanted_key);
+                }
+            }
+
+        }
+    }
 
     /**
      * @throws \Exception
@@ -253,6 +269,9 @@ class ClassDefinition extends Model\AbstractModel
         $clone->setDao(null);
         unset($clone->id);
         unset($clone->fieldDefinitions);
+
+        self::recursive_unset($clone->layoutDefinitions, "fieldDefinitionsCache");
+
 
         $exportedClass = var_export($clone, true);
 

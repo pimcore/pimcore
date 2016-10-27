@@ -103,7 +103,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
     /**
      * @var array
      */
-    private $fieldDefinitionsCache;
+    protected $fieldDefinitionsCache;
 
     /** @var  array */
     public $allowedGroupIds;

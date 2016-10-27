@@ -1210,4 +1210,9 @@ abstract class Data
 
         return null;
     }
+
+    public function clearFieldDefinitionsCache() {
+        unset($this->fieldDefinitionsCache);
+    }
+
 }
