@@ -1012,7 +1012,12 @@ class Pimcore
         Cache::clearTagsOnShutdown();
 
         // write collected items to cache backend and remove the write lock
-        Cache::write();
+        if (php_sapi_name() != "cli") {
+            // makes only sense for HTTP(S)
+            // CLI are normally longer running scripts that tend to produce race conditions
+            // so CLI scripts are not writing to the cache at all
+            Cache::write();
+        }
         Cache::removeWriteLock();
 
         // release all open locks from this process
