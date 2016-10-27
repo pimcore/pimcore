@@ -605,10 +605,13 @@ pimcore.helpers.showNotification = function (title, text, type, errorText, hideD
         errWin.show();
     } else {
         var notification = Ext.create('Ext.window.Toast', {
-            iconCls: 'icon_notification_' + type,
+            iconCls: 'pimcore_icon_' + type,
             title: title,
             html: text,
-            autoShow: true
+            autoShow: true,
+            width: 'auto',
+            maxWidth: 350,
+            closeable: true
             //autoDestroy: true
             //,
             //hideDelay:  hideDelay | 1000
