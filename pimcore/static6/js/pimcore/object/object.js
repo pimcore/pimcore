@@ -564,6 +564,10 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         return data;
     },
 
+    saveUnpublished: function(){
+        this.save('unpublish');
+    },
+
     saveClose: function(only){
         if(this.save()) {
             var tabPanel = Ext.getCmp("pimcore_panel_tabs");
