@@ -315,7 +315,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 text: t('save'),
                 iconCls: "pimcore_icon_save",
                 scale: "medium",
-                handler: this.saveUnpublished.bind(this),
+                handler: this.save.bind(this, "unpublish"),
                 menu:[{
                     text: t('save_close'),
                     iconCls: "pimcore_icon_save",
@@ -562,10 +562,6 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
 
         return data;
-    },
-
-    saveUnpublished: function(){
-        this.save('unpublish');
     },
 
     saveClose: function(only){
