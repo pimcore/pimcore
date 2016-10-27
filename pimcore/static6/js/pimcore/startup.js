@@ -459,6 +459,9 @@ Ext.onReady(function () {
         Ext.get("pimcore_status_debug").show();
     }
 
+    // check new notifications
+    Ext.get("pimcore_status_notification").show();
+
     // check for maintenance
     if (!pimcore.settings.maintenance_active) {
         Ext.get("pimcore_status_maintenance").show();
@@ -762,6 +765,17 @@ pimcore["intervals"]["ping"] = window.setInterval(function () {
         }
     });
 }, (pimcore.settings.session_gc_maxlifetime-60)*1000);
+
+pimcore["intervals"]["checkNewNotification"] = window.setInterval(function () {
+    try {
+        pimcore.notification.helpers.updateUnreadCount();
+        pimcore.notification.helpers.unreadPopup(10);
+    }
+    catch (e) {
+        //for debug
+        console.log(e);
+    }
+}, 10000);
 
 // refreshes the layout
 pimcore.registerNS("pimcore.layout.refresh");

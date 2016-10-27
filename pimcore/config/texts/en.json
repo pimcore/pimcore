@@ -6191,5 +6191,21 @@
     {
         "term": "calculatedValue",
         "definition": "Calculated Value"
+    },
+    {
+        "term": "pimcore_status_notification",
+        "definition": "Notifications"
+    },
+    {
+        "term": "mark_as_read",
+        "definition": "Mark as read"
+    },
+    {
+        "term": "notifications",
+        "definition": "Notifications"
+    },
+    {
+        "term": "delete_all",
+        "definition": "Delete all"
     }
 ]

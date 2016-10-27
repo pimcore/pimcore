@@ -66,6 +66,21 @@
                   transform: scale(1.0);
               }
         }
+
+        #notification_value {
+            background-color: #fa3e3e;
+            border-radius: 2px;
+            color: #fff;
+            font-size: 10px;
+            line-height: 1.3;
+            min-height: 13px;
+            padding: 1px 3px;
+            background-clip: padding-box;
+            display: inline-block;
+            position: relative;
+            right: -27px;
+            bottom: -14px;
+        }
     </style>
 
     <title><?= htmlentities(\Pimcore\Tool::getHostname(), ENT_QUOTES, 'UTF-8') ?> :: pimcore</title>
@@ -114,6 +129,9 @@ $runtimePerspective = \Pimcore\Config::getRuntimePerspective();
 
 <div id="pimcore_status">
     <div id="pimcore_status_dev" data-menu-tooltip="DEV MODE" style="display: none;"></div>
+    <div id="pimcore_status_notification" data-menu-tooltip="<?= $this->translate("pimcore_status_notification") ?>" style="display: none; cursor: pointer;">
+        <span id="notification_value" style="display: none;"></span>
+    </div>
     <div id="pimcore_status_debug" data-menu-tooltip="<?= $this->translate("debug_mode_on") ?>" style="display: none;"></div>
     <div id="pimcore_status_email" data-menu-tooltip="<?= $this->translate("mail_settings_incomplete") ?>" style="display: none;"></div>
     <a id="pimcore_status_maintenance" data-menu-tooltip="<?= $this->translate("maintenance_not_active") ?>" style="display: none;" href="https://www.pimcore.org/wiki/pages/viewpage.action?pageId=16854184#Installation(Apache)-SetuptheMaintenance-Script"></a>
@@ -523,6 +541,7 @@ $scripts = array(
     "pimcore/layout/portlets/feed.js",
     "pimcore/layout/portlets/analytics.js",
     "pimcore/layout/portlets/customreports.js",
+    "pimcore/layout/portlets/notifications.js",
 
     "pimcore/layout/toolbar.js",
     "pimcore/layout/treepanelmanager.js",
@@ -550,6 +569,10 @@ $scripts = array(
 
     //workflow
     "pimcore/workflowmanagement/actionPanel.js",
+
+    //notifications
+    "pimcore/notification/panel.js",
+    "pimcore/notification/helpers.js",
 
 );
 

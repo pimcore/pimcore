@@ -99,6 +99,11 @@
     background-image: url(/pimcore/static6/img/flat-color-icons/medium_priority.svg);
 }
 
+#pimcore_status_notification {
+    background-image: url(/pimcore/static6/img/flat-color-icons/email.svg);
+}
+
+
 #pimcore_status_dev {
     background-image: url(/pimcore/static6/img/flat-color-icons/high_priority.svg);
 }
