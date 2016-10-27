@@ -93,8 +93,8 @@ class Text
 
                         if ((isset($widthAttr[1]) && $widthAttr[1]) || (isset($heightAttr[1]) && $heightAttr[1])) {
                             $config = [
-                                "width" => intval($widthAttr[1]),
-                                "height" => intval($heightAttr[1])
+                                "width" => intval((isset($widthAttr[1]) ? $widthAttr[1] : null)),
+                                "height" => intval((isset($heightAttr[1]) ? $heightAttr[1] : null))
                             ];
                         }
 
