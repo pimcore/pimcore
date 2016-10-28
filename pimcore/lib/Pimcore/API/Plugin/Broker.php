@@ -179,6 +179,7 @@ class Broker
     public function getSystemComponents()
     {
         $plugins = (array)$this->getPlugins();
+
         return $plugins;
     }
 

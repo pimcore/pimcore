@@ -805,7 +805,7 @@ class Service extends Model\AbstractModel
 
         $key = \Pimcore\Tool\Transliteration::toASCII($key);
 
-        if($type == "document") {
+        if ($type == "document") {
             // no spaces for documents / clean URLs
             $key = preg_replace('/[^a-zA-Z0-9\-\.~_]+/', '-', $key);
         } else {
@@ -894,10 +894,11 @@ class Service extends Model\AbstractModel
         return $data ? $data : [];
     }
 
-    public static function getSafeVersionInfo($versions) {
+    public static function getSafeVersionInfo($versions)
+    {
         if (is_array($versions)) {
             $versions = json_decode(json_encode($versions), true);
-            $result = array();
+            $result = [];
             foreach ($versions as $version) {
                 $name = $version["user"]["name"];
                 $id = $version["user"]["id"];
@@ -907,8 +908,8 @@ class Service extends Model\AbstractModel
 
 
                 $result[] = $version;
-
             }
+
             return $result;
         }
     }

@@ -31,7 +31,6 @@ class Test_Base extends PHPUnit_Framework_TestCase
             // either unittest class already exists or it must be created
             $class = \Pimcore\Model\Object\ClassDefinition::getByName("unittest");
             if (!$class) {
-
                 $json = file_get_contents(TESTS_PATH . "/resources/objects/class-import.json");
 
                 $class = new \Pimcore\Model\Object\ClassDefinition();

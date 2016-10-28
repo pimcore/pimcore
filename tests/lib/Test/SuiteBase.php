@@ -91,7 +91,6 @@ class Test_SuiteBase extends PHPUnit_Framework_TestSuite
             try {
                 \Pimcore\Model\Object\ClassDefinition\Service::importObjectBrickFromJson($objectBrick, $json);
             } catch (\Exception $e) {
-
             }
 
 

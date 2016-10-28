@@ -458,7 +458,6 @@ class ImageMagick extends Adapter
      */
     public function applyMask($image)
     {
-
         $this->setForceAlpha(true)->saveIfRequired('mask');
 
         $image = PIMCORE_DOCUMENT_ROOT . "/" . ltrim($image, "/");

@@ -26,8 +26,8 @@ class TestSuite_Classificationstore_AllTests extends Test_SuiteBase
     /**
      * @param $store \Pimcore\Model\Object\Classificationstore\StoreConfig
      */
-    protected function configureStore($store) {
-
+    protected function configureStore($store)
+    {
         $group1= \Pimcore\Model\Object\Classificationstore\GroupConfig::getByName("testgroup1");
         if (!$group1) {
             $group1 = new \Pimcore\Model\Object\Classificationstore\GroupConfig();
@@ -46,7 +46,7 @@ class TestSuite_Classificationstore_AllTests extends Test_SuiteBase
 
 
 
-        $keyNames = array("key1", "key2", "key3", "key4", "key5", "key6");
+        $keyNames = ["key1", "key2", "key3", "key4", "key5", "key6"];
 
         for ($i = 0; $i < count($keyNames); $i++) {
             $keyName = $keyNames[$i];
@@ -76,7 +76,6 @@ class TestSuite_Classificationstore_AllTests extends Test_SuiteBase
             $keygroupconfig->setGroupId($i < 3 ? $group1->getId() : $group2->getId());
             $keygroupconfig->setSorter($i);
             $keygroupconfig->save();
-
         }
     }
 

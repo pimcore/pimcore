@@ -342,11 +342,11 @@ class Cache
      */
     public static function save($data, $key, $tags = [], $lifetime = null, $priority = 0, $force = false)
     {
-        if(!$force && php_sapi_name() == "cli") {
+        if (!$force && php_sapi_name() == "cli") {
             return;
         }
 
-        if(is_object($data)){
+        if (is_object($data)) {
             $data = clone $data;
         }
 

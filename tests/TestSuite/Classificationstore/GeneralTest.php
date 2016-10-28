@@ -64,10 +64,10 @@ class TestSuite_Classificationstore_GeneralTest extends Test_Base
         $this->assertTrue($csField instanceof \Pimcore\Model\Object\Classificationstore, "type mismatch");
 
         $groupConfig = \Pimcore\Model\Object\Classificationstore\GroupConfig::getByName("testgroup1");
-        $keyNames = array("key1", "key2", "key3");
+        $keyNames = ["key1", "key2", "key3"];
 
         $validLanguages = \Pimcore\Tool::getValidLanguages();
-         array_push($validLanguages, "default");
+        array_push($validLanguages, "default");
 
         $idx = 0;
 
@@ -115,9 +115,5 @@ class TestSuite_Classificationstore_GeneralTest extends Test_Base
 
 
         \Pimcore\Cache::enable();
-
-
     }
-
-
 }

@@ -226,8 +226,9 @@ class ClassDefinition extends Model\AbstractModel
     /**
      * @param $data
      */
-    public static function cleanupForExport(&$data) {
-        if(isset($data->fieldDefinitionsCache)) {
+    public static function cleanupForExport(&$data)
+    {
+        if (isset($data->fieldDefinitionsCache)) {
             unset($data->fieldDefinitionsCache);
         }
 
