@@ -227,7 +227,7 @@ class CommitOrderProcessor implements ICommitOrderProcessor {
         foreach($list as $order) {
             $payments = $order->getPaymentInfo();
             foreach($payments as $payment) {
-                if($payment->getPaymentState() == \OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_PAYMENT_PENDING && $payment->getPaymentStart()->get() < $timestamp) {
+                if($payment->getPaymentState() == \OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_PAYMENT_PENDING && $payment->getPaymentStart()->getTimestamp() < $timestamp) {
                     \Logger::warn("Setting order " . $order->getId() . " payment " . $payment->getInternalPaymentId() . " to " . \OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_ABORTED);
                     $payment->setPaymentState(\OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_ABORTED);
                 }
