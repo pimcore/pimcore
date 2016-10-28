@@ -16,7 +16,9 @@ use Pimcore\Model\Element;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
 use Pimcore\Model\Object;
+use Pimcore\Model\Version;
 use Pimcore\Model;
+use Pimcore\Logger;
 
 class Admin_ElementController extends \Pimcore\Controller\Action\Admin
 {
