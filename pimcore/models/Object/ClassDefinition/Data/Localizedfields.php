@@ -96,7 +96,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     /**
      * @var array
      */
-    protected $fieldDefinitionsCache;
+    public $fieldDefinitionsCache;
 
 
     /**

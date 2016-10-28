@@ -222,20 +222,22 @@ class ClassDefinition extends Model\AbstractModel
         $this->save();
     }
 
-    public static function recursive_unset(&$data, $unwanted_key) {
-        if (method_exists($data, "clearFieldDefinitionsCache")) {
-            $data->clearFieldDefinitionsCache();
 
+    /**
+     * @param $data
+     */
+    public static function cleanupForExport(&$data) {
+        if(isset($data->fieldDefinitionsCache)) {
+            unset($data->fieldDefinitionsCache);
         }
 
         if (method_exists($data, "getChilds")) {
             $children = $data->getChilds();
             if (is_array($children)) {
                 foreach ($children as $child) {
-                    self::recursive_unset($child, $unwanted_key);
+                    self::cleanupForExport($child);
                 }
             }
-
         }
     }
 
@@ -270,7 +272,7 @@ class ClassDefinition extends Model\AbstractModel
         unset($clone->id);
         unset($clone->fieldDefinitions);
 
-        self::recursive_unset($clone->layoutDefinitions, "fieldDefinitionsCache");
+        self::cleanupForExport($clone->layoutDefinitions);
 
 
         $exportedClass = var_export($clone, true);
