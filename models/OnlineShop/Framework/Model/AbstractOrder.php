@@ -189,6 +189,20 @@ class AbstractOrder extends \Pimcore\Model\Object\Concrete {
     }
 
     /**
+     * returns latest payment info entry
+     *
+     * @return \OnlineShop\Framework\Model\AbstractPaymentInformation
+     */
+    public function getLastPaymentInfo() {
+        if($this->getPaymentInfo()) {
+            $items = $this->getPaymentInfo()->getItems();
+            return end($items);
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * @return mixed
      */
     public function getComment()
