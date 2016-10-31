@@ -126,9 +126,10 @@ interface IEnvironment extends IComponent {
      * sets current checkout tenant which is used for cart and checkout manager
      *
      * @param $tenant string
+     * @param bool $persistent - if set to false, tenant is not stored to session and only valid for current process
      * @return mixed
      */
-    public function setCurrentCheckoutTenant($tenant);
+    public function setCurrentCheckoutTenant($tenant, $persistent = true);
 
     /**
      * gets current assortment tenant which is used for cart and checkout manager

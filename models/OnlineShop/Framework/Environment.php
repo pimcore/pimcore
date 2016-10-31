@@ -50,6 +50,15 @@ class Environment implements IEnvironment {
     protected $currentAssortmentSubTenant = null;
     protected $currentCheckoutTenant = null;
 
+    /**
+     * current transient checkout tenant
+     * this value will not be stored into the session and is only valid for current process
+     * set with setCurrentCheckoutTenant('tenant', false');
+     *
+     * @var string
+     */
+    protected $currentTransientCheckoutTenant = null;
+
     public function __construct($config) {
         $this->loadFromSession();
 
@@ -83,6 +92,7 @@ class Environment implements IEnvironment {
 
             $key = self::SESSION_KEY_CHECKOUT_TENANT;
             $this->currentCheckoutTenant = $this->session->$key;
+            $this->currentTransientCheckoutTenant = $this->session->$key;
 
             $key = self::SESSION_KEY_USE_GUEST_CART;
             $this->useGuestCart = $this->session->$key;
@@ -180,6 +190,7 @@ class Environment implements IEnvironment {
         $key = self::SESSION_KEY_CHECKOUT_TENANT;
         unset($this->session->$key);
         $this->currentCheckoutTenant = null;
+        $this->currentTransientCheckoutTenant = null;
 
         $key = self::SESSION_KEY_USE_GUEST_CART;
         unset($this->session->$key);
@@ -301,13 +312,20 @@ class Environment implements IEnvironment {
     /**
      * sets current checkout tenant which is used for cart and checkout manager
      *
-     * @param $tenant string
+     * @param string $tenant
+     * @param bool $persistent - if set to false, tenant is not stored to session and only valid for current process
+     *
      * @return mixed
      */
-    public function setCurrentCheckoutTenant($tenant)
+    public function setCurrentCheckoutTenant($tenant, $persistent = true)
     {
         if($this->currentCheckoutTenant != $tenant) {
-            $this->currentCheckoutTenant = $tenant;
+
+            if($persistent) {
+                $this->currentCheckoutTenant = $tenant;
+            }
+            $this->currentTransientCheckoutTenant = $tenant;
+
             \OnlineShop\Framework\Factory::resetInstance();
         }
     }
@@ -319,7 +337,7 @@ class Environment implements IEnvironment {
      */
     public function getCurrentCheckoutTenant()
     {
-        return $this->currentCheckoutTenant;
+        return $this->currentTransientCheckoutTenant;
     }
 
     /**
