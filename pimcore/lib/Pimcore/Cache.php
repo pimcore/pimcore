@@ -346,8 +346,9 @@ class Cache
             return;
         }
 
-        if (is_object($data)) {
-            $data = clone $data;
+        $toSaveDataReference = $data;
+        if (is_object($toSaveDataReference)) {
+            $toSaveDataReference = clone $toSaveDataReference;
         }
 
         if (self::getForceImmediateWrite() || $force) {
@@ -355,9 +356,9 @@ class Cache
                 return;
             }
 
-            return self::storeToCache($data, $key, $tags, $lifetime, $priority, $force);
+            return self::storeToCache($toSaveDataReference, $key, $tags, $lifetime, $priority, $force);
         } else {
-            self::addToSaveStack([$data, $key, $tags, $lifetime, $priority, $force]);
+            self::addToSaveStack([$toSaveDataReference, $key, $tags, $lifetime, $priority, $force]);
         }
     }
 
