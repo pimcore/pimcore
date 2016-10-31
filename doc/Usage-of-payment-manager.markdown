@@ -100,77 +100,7 @@ The configuration takes place in the OnlineShopConfig.php
 
 ## 2 - Provider configuration
 
-#### Wirecard seamless
-
-> For testing creditcards use card-nr. 9500000000000001.
-
-##### Configuration
-
-```php
-<?php
-$url = 'http://'. $_SERVER["HTTP_HOST"] . "/en/payment/complete?state=";
-
- // wirecard seamless
-  $config = [
-                'view' => $this->view, 
-                'orderIdent' => $paymentInformation->getInternalPaymentId()
-            ];
-```
-
-After selection of the payment-type you can then form your redirect url by doing:
-
-```php
-<?php
-
-        $config = [
-            "successURL" => 'http://' .$_SERVER["HTTP_HOST"] . $this->view->url(['action' => 'complete', 'id' => base64_encode($paymentInformation->getObject()->getId()),
-                'state' => \OnlineShop\Framework\PaymentManager\Payment\WirecardSeamless::PAYMENT_RETURN_STATE_SUCCESS, 'prefix' => $this->language], 'action', true),
-            "failureURL" => 'http://' . $_SERVER["HTTP_HOST"] . $this->view->url(['action' => 'complete', 'id' => base64_encode($paymentInformation->getObject()->getId()),
-                    'state' => \OnlineShop\Framework\PaymentManager\Payment\WirecardSeamless::PAYMENT_RETURN_STATE_FAILURE, 'prefix' => $this->language], 'action', true),
-            "cancelURL" => 'http://' . $_SERVER["HTTP_HOST"] . $this->view->url(['action' => 'complete', 'id' => base64_encode($paymentInformation->getObject()->getId()),
-                    'state' => \OnlineShop\Framework\PaymentManager\Payment\WirecardSeamless::PAYMENT_RETURN_STATE_CANCEL, 'prefix' => $this->language], 'action', true),
-            "serviceURL" => Pimcore\Tool::getHostUrl(),
-            "pendingURL" => 'http://' . $_SERVER["HTTP_HOST"] . $this->view->url(['action' => 'complete', 'id' => base64_encode($paymentInformation->getObject()->getId()),
-                    'state' => \OnlineShop\Framework\PaymentManager\Payment\WirecardSeamless::PAYMENT_RETURN_STATE_PENDING, 'prefix' => $this->language], 'action', true),
-            "confirmURL" => 'http://' . $_SERVER["HTTP_HOST"] . $this->view->url(['action' => 'confirm-payment', 'elementsclientauth' => 'disabled'], 'action', true),
-            "paymentInfo" => $paymentInformation,
-            "paymentType" => $this->getParam('paymentType'),
-            "cart" => $this->getCart(),
-            "orderDescription" => $orderNumber,
-            "orderReference" => $orderNumber];
-
-        $this->_helper->json(['url' => $payment->getInitPaymentRedirectUrl($config)]);
-                
-```
-
-In view script of your _completeAction_ you could then handle your response as follows:
-
-```php
-<?php
-$isCommited = $this->order && $this->order->getOrderState() == \OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_COMMITTED;
-$state = $this->getParam('state');
-?>
-
-<?php if($isCommited) { ?>
-
-    <!-- redirect to order completed page -->
-    
-<? } elseif (in_array($state, [
-        \OnlineShop\Framework\PaymentManager\Payment\WirecardSeamless::PAYMENT_RETURN_STATE_FAILURE, 
-        \OnlineShop\Framework\PaymentManager\Payment\WirecardSeamless::PAYMENT_RETURN_STATE_CANCEL
-    ])) { ?>
-    
-    <!-- output errors and handle failures and cancel  -->
-    <!-- give retry possibility -->
-        
-<? } elseif ($state == \OnlineShop\Framework\PaymentManager\Payment\WirecardSeamless::PAYMENT_RETURN_STATE_PENDING) { ?>
-    <!-- handle payment pending state -->
-<? } else { ?>
-    <!-- payment stillt running, poll for status updates (ie. refresh page) -->
-<? } ?>
-```
-
-#### Wirecard
+#### Wirecard QPay
 
 * [Documentation](https://integration.wirecard.at/doku.php)
 * [Day-End clearing](https://www.qenta.at/qpc/faq/faq.php#8)
@@ -279,6 +209,80 @@ $config = [
             ]
         ];
 ```
+
+
+#### Wirecard seamless
+
+> For testing creditcards use card-nr. 9500000000000001.
+
+##### Configuration
+
+```php
+<?php
+$url = 'http://'. $_SERVER["HTTP_HOST"] . "/en/payment/complete?state=";
+
+ // wirecard seamless
+  $config = [
+                'view' => $this->view,
+                'orderIdent' => $paymentInformation->getInternalPaymentId()
+            ];
+```
+
+After selection of the payment-type you can then form your redirect url by doing:
+
+```php
+<?php
+
+        $config = [
+            "successURL" => 'http://' .$_SERVER["HTTP_HOST"] . $this->view->url(['action' => 'complete', 'id' => base64_encode($paymentInformation->getObject()->getId()),
+                'state' => \OnlineShop\Framework\PaymentManager\Payment\WirecardSeamless::PAYMENT_RETURN_STATE_SUCCESS, 'prefix' => $this->language], 'action', true),
+            "failureURL" => 'http://' . $_SERVER["HTTP_HOST"] . $this->view->url(['action' => 'complete', 'id' => base64_encode($paymentInformation->getObject()->getId()),
+                    'state' => \OnlineShop\Framework\PaymentManager\Payment\WirecardSeamless::PAYMENT_RETURN_STATE_FAILURE, 'prefix' => $this->language], 'action', true),
+            "cancelURL" => 'http://' . $_SERVER["HTTP_HOST"] . $this->view->url(['action' => 'complete', 'id' => base64_encode($paymentInformation->getObject()->getId()),
+                    'state' => \OnlineShop\Framework\PaymentManager\Payment\WirecardSeamless::PAYMENT_RETURN_STATE_CANCEL, 'prefix' => $this->language], 'action', true),
+            "serviceURL" => Pimcore\Tool::getHostUrl(),
+            "pendingURL" => 'http://' . $_SERVER["HTTP_HOST"] . $this->view->url(['action' => 'complete', 'id' => base64_encode($paymentInformation->getObject()->getId()),
+                    'state' => \OnlineShop\Framework\PaymentManager\Payment\WirecardSeamless::PAYMENT_RETURN_STATE_PENDING, 'prefix' => $this->language], 'action', true),
+            "confirmURL" => 'http://' . $_SERVER["HTTP_HOST"] . $this->view->url(['action' => 'confirm-payment', 'elementsclientauth' => 'disabled'], 'action', true),
+            "paymentInfo" => $paymentInformation,
+            "paymentType" => $this->getParam('paymentType'),
+            "cart" => $this->getCart(),
+            "orderDescription" => $orderNumber,
+            "orderReference" => $orderNumber];
+
+        $this->_helper->json(['url' => $payment->getInitPaymentRedirectUrl($config)]);
+
+```
+
+In view script of your _completeAction_ you could then handle your response as follows:
+
+```php
+<?php
+$isCommited = $this->order && $this->order->getOrderState() == \OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_COMMITTED;
+$state = $this->getParam('state');
+?>
+
+<?php if($isCommited) { ?>
+
+    <!-- redirect to order completed page -->
+
+<? } elseif (in_array($state, [
+        \OnlineShop\Framework\PaymentManager\Payment\WirecardSeamless::PAYMENT_RETURN_STATE_FAILURE,
+        \OnlineShop\Framework\PaymentManager\Payment\WirecardSeamless::PAYMENT_RETURN_STATE_CANCEL
+    ])) { ?>
+
+    <!-- output errors and handle failures and cancel  -->
+    <!-- give retry possibility -->
+
+<? } elseif ($state == \OnlineShop\Framework\PaymentManager\Payment\WirecardSeamless::PAYMENT_RETURN_STATE_PENDING) { ?>
+    <!-- handle payment pending state -->
+<? } else { ?>
+    <!-- payment still running, poll for status updates (ie. refresh page) -->
+<? } ?>
+```
+
+For more information also have a look at the sample implementation at the [ecommerce demo](https://github.com/pimcore-partner/ecommerce-framework-demo).
+
 
 ## 3 - Recurring payment
 
