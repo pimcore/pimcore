@@ -71,6 +71,10 @@ abstract class AbstractPaymentInformation extends \Pimcore\Model\Object\Fieldcol
      */
     public abstract function getMessage ();
 
+    /**
+     * @return string
+     */
+    public abstract function getProviderData();
 
     /**
      * @param string $message
