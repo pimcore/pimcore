@@ -30,7 +30,7 @@ pimcore.log.detailwindow = Class.create({
             this.detailWindow = new Ext.Window({
 				width: 600,
 				height: 420,
-                iconCls: "errorlog-icon",
+                iconCls: "pimcore_icon_log",
                 title: t('log_detailinformation'),
 				closeAction:'close',
 				plain: true,
