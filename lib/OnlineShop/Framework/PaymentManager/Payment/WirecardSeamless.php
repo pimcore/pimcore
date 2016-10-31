@@ -658,4 +658,21 @@ class WirecardSeamless implements IPayment
         }
         return $requestFingerprint;
     }
+
+    /**
+     * extracts seamless response of provider data from given payment information
+     *
+     * @param \OnlineShop\Framework\Model\AbstractPaymentInformation $paymentInfo
+     * @return null | array
+     */
+    public static function extractSeamlessResponse(\OnlineShop\Framework\Model\AbstractPaymentInformation $paymentInfo) {
+        if ($providerData = $paymentInfo->getProviderData()) {
+            $providerData = \Zend_Json::decode($providerData);
+            if ($providerData['seamless_response']) {
+                return \Zend_Json::decode($providerData['seamless_response']);
+            }
+        }
+
+        return null;
+    }
 }
