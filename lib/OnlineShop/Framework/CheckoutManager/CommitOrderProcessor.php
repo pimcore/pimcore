@@ -17,6 +17,7 @@
 
 namespace OnlineShop\Framework\CheckoutManager;
 use OnlineShop\Framework\Factory;
+use OnlineShop\Framework\Model\AbstractOrder;
 use OnlineShop\Plugin;
 
 /**
@@ -62,7 +63,7 @@ class CommitOrderProcessor implements ICommitOrderProcessor {
     /**
      * @param $paymentResponseParams
      * @param \OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider
-     * @return \OnlineShop\Framework\Model\AbstractOrder
+     * @return AbstractOrder
      * @throws \Exception
      */
     public function handlePaymentResponseAndCommitOrderPayment($paymentResponseParams, \OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider) {
@@ -82,7 +83,7 @@ class CommitOrderProcessor implements ICommitOrderProcessor {
      *
      * @param array|\OnlineShop\Framework\PaymentManager\IStatus $paymentResponseParams
      * @param \OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider
-     * @return null|\OnlineShop\Framework\Model\AbstractOrder
+     * @return null|AbstractOrder
      * @throws \Exception
      * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */
@@ -119,7 +120,7 @@ class CommitOrderProcessor implements ICommitOrderProcessor {
     /**
      * @param \OnlineShop\Framework\PaymentManager\IStatus $paymentStatus
      * @param \OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider
-     * @return \OnlineShop\Framework\Model\AbstractOrder
+     * @return AbstractOrder
      * @throws \Exception
      * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */
@@ -144,8 +145,9 @@ class CommitOrderProcessor implements ICommitOrderProcessor {
         $orderAgent->setPaymentProvider( $paymentProvider );
 
         $order = $orderAgent->updatePayment( $paymentStatus )->getOrder();
+        $this->applyAdditionalDataToOrder($order, $paymentStatus, $paymentProvider);
 
-        if (in_array($paymentStatus->getStatus(), [\OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_COMMITTED, \OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_PAYMENT_AUTHORIZED])) {
+        if (in_array($paymentStatus->getStatus(), [AbstractOrder::ORDER_STATE_COMMITTED, AbstractOrder::ORDER_STATE_PAYMENT_AUTHORIZED])) {
             //only when payment state is committed or authorized -> proceed and commit order
             $order = $this->commitOrder( $order );
         } else {
@@ -158,14 +160,26 @@ class CommitOrderProcessor implements ICommitOrderProcessor {
     }
 
     /**
-     * @param \OnlineShop\Framework\Model\AbstractOrder $order
+     * Method for applying additional data to the order object based on payment information
+     * Called in commitOrderPayment() just after updatePayment on OrderAgent is called
      *
-     * @return \OnlineShop\Framework\Model\AbstractOrder
+     * @param AbstractOrder $order
+     * @param \OnlineShop\Framework\PaymentManager\IStatus $paymentStatus
+     * @param \OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider
+     */
+    protected function applyAdditionalDataToOrder(AbstractOrder $order, \OnlineShop\Framework\PaymentManager\IStatus $paymentStatus, \OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider) {
+        //nothing to do by default
+    }
+
+    /**
+     * @param AbstractOrder $order
+     *
+     * @return AbstractOrder
      * @throws \Exception
      */
-    public function commitOrder(\OnlineShop\Framework\Model\AbstractOrder $order) {
+    public function commitOrder(AbstractOrder $order) {
         $this->processOrder($order);
-        $order->setOrderState(\OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_COMMITTED);
+        $order->setOrderState(AbstractOrder::ORDER_STATE_COMMITTED);
         $order->save();
 
         try {
@@ -176,7 +190,7 @@ class CommitOrderProcessor implements ICommitOrderProcessor {
         return $order;
     }
 
-    protected function sendConfirmationMail(\OnlineShop\Framework\Model\AbstractOrder $order) {
+    protected function sendConfirmationMail(AbstractOrder $order) {
         $params = array();
         $params["order"] = $order;
         $params["customer"] = $order->getCustomer();
@@ -194,9 +208,9 @@ class CommitOrderProcessor implements ICommitOrderProcessor {
     /**
      * implementation-specific processing of order, must be implemented in subclass (e.g. sending order to ERP-system)
      *
-     * @param \OnlineShop\Framework\Model\AbstractOrder $order
+     * @param AbstractOrder $order
      */
-    protected function processOrder(\OnlineShop\Framework\Model\AbstractOrder $order) {
+    protected function processOrder(AbstractOrder $order) {
         //nothing to do
     }
 
@@ -212,24 +226,24 @@ class CommitOrderProcessor implements ICommitOrderProcessor {
         //Abort orders with payment pending
         $list = $orderManager->buildOrderList();
         $list->addFieldCollection("PaymentInfo");
-        $list->setCondition("orderState = ? AND orderdate < ?", array(\OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_PAYMENT_PENDING, $timestamp));
+        $list->setCondition("orderState = ? AND orderdate < ?", array(AbstractOrder::ORDER_STATE_PAYMENT_PENDING, $timestamp));
 
         foreach($list as $order) {
-            \Logger::warn("Setting order " . $order->getId() . " to " . \OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_ABORTED);
-            $order->setOrderState(\OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_ABORTED);
+            \Logger::warn("Setting order " . $order->getId() . " to " . AbstractOrder::ORDER_STATE_ABORTED);
+            $order->setOrderState(AbstractOrder::ORDER_STATE_ABORTED);
             $order->save();
         }
 
         //Abort payments with payment pending
         $list = $orderManager->buildOrderList();
         $list->addFieldCollection("PaymentInfo", "paymentinfo");
-        $list->setCondition("`PaymentInfo~paymentinfo`.paymentState = ? AND `PaymentInfo~paymentinfo`.paymentStart < ?", array(\OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_PAYMENT_PENDING, $timestamp));
+        $list->setCondition("`PaymentInfo~paymentinfo`.paymentState = ? AND `PaymentInfo~paymentinfo`.paymentStart < ?", array(AbstractOrder::ORDER_STATE_PAYMENT_PENDING, $timestamp));
         foreach($list as $order) {
             $payments = $order->getPaymentInfo();
             foreach($payments as $payment) {
-                if($payment->getPaymentState() == \OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_PAYMENT_PENDING && $payment->getPaymentStart()->getTimestamp() < $timestamp) {
-                    \Logger::warn("Setting order " . $order->getId() . " payment " . $payment->getInternalPaymentId() . " to " . \OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_ABORTED);
-                    $payment->setPaymentState(\OnlineShop\Framework\Model\AbstractOrder::ORDER_STATE_ABORTED);
+                if($payment->getPaymentState() == AbstractOrder::ORDER_STATE_PAYMENT_PENDING && $payment->getPaymentStart()->getTimestamp() < $timestamp) {
+                    \Logger::warn("Setting order " . $order->getId() . " payment " . $payment->getInternalPaymentId() . " to " . AbstractOrder::ORDER_STATE_ABORTED);
+                    $payment->setPaymentState(AbstractOrder::ORDER_STATE_ABORTED);
                 }
             }
             $order->save();
