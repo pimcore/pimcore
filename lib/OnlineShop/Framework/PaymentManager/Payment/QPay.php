@@ -296,7 +296,7 @@ class QPay implements IPayment
                 'qpay_amount' => (string)$price
                 , 'qpay_paymentType' => $response['paymentType']
                 , 'qpay_paymentState' => $response['paymentState']
-                , 'qpay_response' => print_r($response, true)
+                , 'qpay_response' => $response
             ]
         );
     }
@@ -416,7 +416,7 @@ class QPay implements IPayment
                 , [
                     'qpay_amount' => (string)$price
                     , 'qpay_command' => $request['command']
-                    , 'qpay_response' => print_r($response, true)
+                    , 'qpay_response' => $response
                 ]
             );
         }
@@ -438,7 +438,7 @@ class QPay implements IPayment
                 , [
                     'qpay_amount' => (string)$price
                     , 'qpay_command' => $request['command']
-                    , 'qpay_response' => print_r($response, true)
+                    , 'qpay_response' => $response
                 ]
             );
         }
@@ -504,7 +504,7 @@ class QPay implements IPayment
                 , [
                     'qpay_amount' => (string)$price
                     , 'qpay_command' => $request['command']
-                    , 'qpay_response' => print_r($response, true)
+                    , 'qpay_response' => $response
                 ]
             );
         }
@@ -520,7 +520,7 @@ class QPay implements IPayment
                 , [
                     'qpay_amount' => (string)$price
                     , 'qpay_command' => $request['command']
-                    , 'qpay_response' => print_r($response, true)
+                    , 'qpay_response' => $response
                 ]
             );
         }
@@ -601,5 +601,14 @@ class QPay implements IPayment
         $r = [];
         parse_str($response, $r);
         return $r;
+    }
+
+
+    public function setPaymentType($paymentType) {
+        $this->paymenttype = $paymentType;
+    }
+
+    public function getPaymentType() {
+        return $this->paymenttype;
     }
 }
