@@ -68,6 +68,8 @@ server {
         fastcgi_index  index.php;
         fastcgi_split_path_info ^(.+\.php)(/.+)$;
         fastcgi_param  SCRIPT_FILENAME    $document_root$fastcgi_script_name;
+        # Set the pimcore environment in order to use multiple sets of configuration files see: https://www.pimcore.org/docs/latest/Deployment/Multi_Environment.html
+        # fastcgi_param  PIMCORE_ENVIRONMENT production
         include        fastcgi_params;
         # Set a maximum execution time. This should be the same as your php_max_exec time and php-fpm pool request_terminate_timeout to prevent
         # any gateway timeouts and/or worker processes being tied up.
@@ -77,7 +79,7 @@ server {
  
     # cache some files
     # ~* = case-insensitive
-    location ~* \.(jpe?g|gif|png|bmp|ico|css|js|pdf|zip|htm|html|docx?|xlsx?|pptx?|txt|wav|swf|avi|mp\d)$ {
+    location ~* \.(jpe?g|gif|png|bmp|ico|css|js|pdf|zip|htm|html|docx?|xlsx?|pptx?|txt|wav|swf|svg|avi|mp\d)$ {
         access_log off;
         log_not_found off;
         try_files $uri $uri/ /website/var/assets$uri /index.php?$args;
