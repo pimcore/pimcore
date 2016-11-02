@@ -247,7 +247,7 @@ class Extensionmanager_AdminController extends \Pimcore\Controller\Action\Admin
         $pluginName = null;
         $files = rscandir($tempPath);
         foreach ($files as $file) {
-            if (preg_match("@/plugin.xml$@", $file)) {
+            if (preg_match("@[\\\/]plugin\.xml$@", $file)) {
                 $rootDir = dirname($file);
 
                 $pluginConfig = new \Zend_Config_Xml($file);
