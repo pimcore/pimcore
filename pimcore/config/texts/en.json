@@ -1,5 +1,9 @@
 [
     {
+        "term": "no_image_assigned",
+        "definition": "No image assigned"
+    },
+    {
         "term": "custom_http_headers",
         "definition": "Custom HTTP Headers"
     },
