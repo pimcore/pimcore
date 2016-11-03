@@ -154,6 +154,8 @@ pimcore.element.selector.selector = Class.create({
         // create new tab-panel
         this.myTabId = "pimcore_search_" + uniqid();
 
+        this.window.remove(this.panel, false);
+
         this.tabpanel = new Ext.Panel({
             id: this.myTabId,
             iconCls: "pimcore_icon_search",
