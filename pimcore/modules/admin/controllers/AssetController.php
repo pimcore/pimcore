@@ -1195,10 +1195,17 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
             }
 
             if (!empty($thumbnailMethod)) {
+
+                $filenameDisplay = $asset->getFilename();
+                if(strlen($filenameDisplay) > 32) {
+                    $filenameDisplay = substr($filenameDisplay, 0, 25) . "..." . \Pimcore\File::getFileExtension($filenameDisplay);
+                }
+
                 $assets[] = [
                     "id" => $asset->getId(),
                     "type" => $asset->getType(),
                     "filename" => $asset->getFilename(),
+                    "filenameDisplay" => $filenameDisplay,
                     "url" => "/admin/asset/get-" . $asset->getType() . "-thumbnail/id/" . $asset->getId() . "/treepreview/true",
                     "idPath" => $data["idPath"] = Element\Service::getIdPath($asset)
                 ];

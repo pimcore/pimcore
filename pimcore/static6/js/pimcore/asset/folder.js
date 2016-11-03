@@ -57,7 +57,7 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
 
         this.store = new Ext.data.Store({
             proxy: proxy,
-            fields: ['url', "filename", "type", "id", "idPath"],
+            fields: ['url', "filename", "filenameDisplay", "type", "id", "idPath"],
             listeners: {
                 "load": function () {
                     try {
@@ -84,7 +84,7 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
                 + 'valign="middle" style="background: url({url}) center center no-repeat; ' +
                 'background-size: contain;" id="{type}_{id}" data-idpath="{idPath}">'
                 + '</td></tr></table></div>',
-            '<span class="filename">{filename}</span></div>',
+            '<span class="filename" title="{filename}">{filenameDisplay}</span></div>',
             '</tpl>',
             '<div class="x-clear"></div>'
         );
