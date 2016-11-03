@@ -65,11 +65,6 @@ pimcore.helpers.registerKeyBindings = function (bindEl, ExtJS) {
             fn: top.pimcore.helpers.openElementByIdDialog.bind(this, "document"),
             ctrl:true,
             shift:true
-        }, {
-            key:"w",
-            fn: top.pimcore.helpers.openWelcomePage.bind(this),
-            ctrl:true,
-            shift:true
         }]
     });
 };
