@@ -30,37 +30,17 @@ pimcore.element.tag.imagecropper = Class.create({
     },
 
     open: function (modal) {
-        var imageUrl = '/admin/asset/get-image-thumbnail/id/' + this.imageId + '/width/500/height/400/contain/true';
+        var validImage = this.imageId !== null,
+            imageUrl = '/admin/asset/get-image-thumbnail/id/' + this.imageId + '/width/500/height/400/contain/true',
+            button = {};
 
         if(typeof modal != "undefined") {
             this.modal = modal;
         }
 
-        this.editWindow = new Ext.Window({
-            width: 500,
-            height: 400,
-            modal: this.modal,
-            resizable: false,
-            bodyStyle: "background: url(" + imageUrl + ") center center no-repeat;position:relative;",
-            bbar: ["->",
-                {
-                    xtype: "button",
-                    iconCls: "pimcore_icon_revert",
-                    text: t("reset"),
-                    handler: function () {
-                        this.data = {
-                            cropWidth: null,
-                            cropHeight: null,
-                            cropTop: null,
-                            cropLeft: null,
-                            cropPercent: null
-                        };
-
-                        this.saveCallback(this.data);
-                        this.editWindow.close();
-                    }.bind(this)
-                },
-                {
+        if( validImage )
+        {
+            button = {
                 xtype: "button",
                 iconCls: "pimcore_icon_apply",
                 text: t("save"),
@@ -90,8 +70,16 @@ pimcore.element.tag.imagecropper = Class.create({
 
                     this.editWindow.close();
                 }.bind(this)
-            }],
-            html: '<img id="selectorImage" src="' + imageUrl + '" />'
+            }
+        }
+        this.editWindow = new Ext.Window({
+            width: 500,
+            height: 400,
+            modal: this.modal,
+            resizable: false,
+            bodyStyle: validImage ? "background: url(" + imageUrl + ") center center no-repeat;position:relative;" : "",
+            bbar: ["->", button],
+            html: validImage ? '<img id="selectorImage" src="' + imageUrl + '" />' : '<span style="padding:10px;">no valid image selected</span>'
         });
 
         var checkSize = function () {
@@ -147,39 +135,45 @@ pimcore.element.tag.imagecropper = Class.create({
             }
         };
 
-        this.editWindow.add({
-            xtype: 'component',
-            id: "selector",
-            resizable: {
-                target: "selector",
-                pinned: true,
-                width: 100,
-                height: 100,
-                preserveRatio: false,
-                dynamic: true,
-                handles: 'all',
-                listeners: {
-                    resize: checkSize.bind(this)
-                }
-            },
-            style: "cursor:move; position: absolute; top: 10px; left: 10px;z-index:9000;",
-            draggable: true,
-            listeners: {
-                afterrender: function (el) {
+        if( validImage ) {
 
+            this.editWindow.add({
+                xtype: 'component',
+                id: "selector",
+                resizable: {
+                    target: "selector",
+                    pinned: true,
+                    width: 100,
+                    height: 100,
+                    preserveRatio: false,
+                    dynamic: true,
+                    handles: 'all',
+                    listeners: {
+                        resize: checkSize.bind(this)
+                    }
+                },
+                style: "cursor:move; position: absolute; top: 10px; left: 10px;z-index:9000;",
+                draggable: true,
+                listeners: {
+                    afterrender: function (el) {
+
+                    }
                 }
-            }
-        });
+            });
+
+        }
 
         this.editWindowInitCount = 0;
 
         this.editWindow.on("afterrender", function ( ){
             this.editWindowInterval = window.setInterval(function () {
                 var el = Ext.get("selectorImage");
-                var imageWidth = el.getWidth();
-                var imageHeight = el.getHeight();
 
                 if(el) {
+
+                    var imageWidth = el.getWidth();
+                    var imageHeight = el.getHeight();
+
                     if(el.getWidth() > 30) {
                         clearInterval(this.editWindowInterval);
                         this.editWindowInitCount = 0;
@@ -210,6 +204,8 @@ pimcore.element.tag.imagecropper = Class.create({
                     }
 
                     this.editWindowInitCount++;
+                } else {
+                    clearInterval(this.editWindowInterval);
                 }
             }.bind(this), 500);
 
