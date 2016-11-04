@@ -167,7 +167,7 @@ pimcore.settings.system = Class.create({
                                 mode: "local",
                                 triggerAction: "all"
                             }, {
-                                fieldLabel: t("additional_path_variable_colon_separated") + " (/x/y:/foo/bar)",
+                                fieldLabel: t("additional_path_variable") + " (" + t(this.data.config.path_separator) + " " + t("separated") + ") (/x/y" + this.data.config.path_separator + "/foo/bar)",
                                 xtype: "textfield",
                                 name: "general.path_variable",
                                 value: this.getValue("general.path_variable"),

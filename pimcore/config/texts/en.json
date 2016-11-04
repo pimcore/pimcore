@@ -4,6 +4,18 @@
         "definition": "No image assigned"
     },
     {
+        "term": "separated",
+        "definition": "separated"
+    },
+    {
+        "term": ":",
+        "definition": "colon"
+    },
+    {
+        "term": ";",
+        "definition": "semicolon"
+    },
+    {
         "term": "custom_http_headers",
         "definition": "Custom HTTP Headers"
     },
@@ -124,8 +136,8 @@
         "definition": "Close Tab"
     },
     {
-        "term": "additional_path_variable_colon_separated",
-        "definition": "Additional $PATH variable (colon separated)"
+        "term": "additional_path_variable",
+        "definition": "Additional $PATH variable"
     },
     {
         "term": "saturation",
