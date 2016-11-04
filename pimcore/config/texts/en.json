@@ -5281,6 +5281,14 @@
         "definition": "Use of an alternative database recommended when huge amounts of logs will be generated."
     },
     {
+        "term": "log_refresh_label",
+        "definition": "Refresh every"
+    },
+    {
+        "term": "log_refresh_seconds",
+        "definition": "seconds"
+    },
+    {
         "term": "classificationstore_menu_config",
         "definition": "Classification Store"
     },
