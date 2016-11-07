@@ -611,7 +611,7 @@ pimcore.helpers.showNotification = function (title, text, type, errorText, hideD
             autoShow: true,
             width: 'auto',
             maxWidth: 350,
-            closable: true
+            closeable: true
             //autoDestroy: true
             //,
             //hideDelay:  hideDelay | 1000

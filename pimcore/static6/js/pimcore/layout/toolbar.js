@@ -973,8 +973,6 @@ pimcore.layout.toolbar = Class.create({
             Ext.get("pimcore_menu_search").on("mousedown", this.showSubMenu.bind(this.searchMenu));
         }
 
-        Ext.get("pimcore_status_notification").on("click", this.showNotificationTab.bind());
-
         Ext.each(Ext.query(".pimcore_menu_item"), function (el) {
             el = Ext.get(el);
 
@@ -1213,15 +1211,6 @@ pimcore.layout.toolbar = Class.create({
         }
         catch (e) {
             pimcore.globalmanager.add("bouncemailinbox", new pimcore.settings.bouncemailinbox());
-        }
-    },
-
-    showNotificationTab: function () {
-        try {
-            pimcore.globalmanager.get("notifications").activate();
-        }
-        catch (e) {
-            pimcore.globalmanager.add("notifications", new pimcore.notification.panel());
         }
     },
 
