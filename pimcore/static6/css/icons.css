@@ -352,6 +352,10 @@
     background: url(/pimcore/static6/img/flat-color-icons/flash_on.svg) center center no-repeat !important;
 }
 
+.pimcore_icon_clear_filters {
+    background: url(/pimcore/static6/img/flat-color-icons/clear_filters.svg) center center no-repeat !important;
+}
+
 .pimcore_icon_fieldcollection, .pimcore_icon_fieldcollections {
     background: url(/pimcore/static6/img/flat-color-icons/fieldcollection.svg) center center no-repeat !important;
 }

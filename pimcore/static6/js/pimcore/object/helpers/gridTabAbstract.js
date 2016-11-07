@@ -16,7 +16,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
 
     objecttype: 'object',
 
-    filterUpdateFunction: function(grid, toolbarFilterInfo) {
+    filterUpdateFunction: function(grid, toolbarFilterInfo, clearFilterButton) {
         var filterStringConfig = [];
         var filterData = grid.getStore().getFilters().items;
 
@@ -56,6 +56,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             toolbarFilterInfo.setHidden(false);
         }
         toolbarFilterInfo.setHidden(filterData.length == 0);
+        clearFilterButton.setHidden(!toolbarFilterInfo.isVisible());
     },
 
 

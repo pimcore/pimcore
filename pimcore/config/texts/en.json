@@ -5714,7 +5714,7 @@
     },
     {
         "term": "filter_active",
-        "definition": "Filter active"
+        "definition": "Filter active!"
     },
     {
         "term": "save_column_configuration",
@@ -6231,8 +6231,11 @@
     {
         "term": "keyvalue_tag_col_value",
         "definition": "Value"
+    },
+    {
+        "term": "clear_filters",
+        "definition": "Clear Filters"
     }
-
 
 
 ]
