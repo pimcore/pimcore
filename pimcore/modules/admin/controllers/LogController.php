@@ -54,7 +54,7 @@ class Admin_LogController extends \Pimcore\Controller\Action\Admin
         if ($this->getParam("fromDate")) {
             $datetime = $this->getParam("fromDate");
             if ($this->getParam("fromTime")) {
-                $datetime =  substr($datetime, 0, 11) . substr($this->getParam("fromTime") , strpos($this->getParam("fromTime"),'T')+1 , strlen($this->getParam("fromTime")));
+                $datetime =  substr($datetime, 0, 11) . substr($this->getParam("fromTime"), strpos($this->getParam("fromTime"), 'T')+1, strlen($this->getParam("fromTime")));
             }
             $queryString .= " AND timestamp >= '" . $datetime . "'";
         }
@@ -62,7 +62,7 @@ class Admin_LogController extends \Pimcore\Controller\Action\Admin
         if ($this->getParam("toDate")) {
             $datetime = $this->getParam("toDate");
             if ($this->getParam("toTime")) {
-                $datetime =  substr($datetime, 0, 11) . substr($this->getParam("toTime") , strpos($this->getParam("toTime"),'T')+1 , strlen($this->getParam("toTime")));
+                $datetime =  substr($datetime, 0, 11) . substr($this->getParam("toTime"), strpos($this->getParam("toTime"), 'T')+1, strlen($this->getParam("toTime")));
             }
             $queryString .= " AND timestamp <= '" . $datetime . "'";
         }

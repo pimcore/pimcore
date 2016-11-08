@@ -1195,9 +1195,8 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
             }
 
             if (!empty($thumbnailMethod)) {
-
                 $filenameDisplay = $asset->getFilename();
-                if(strlen($filenameDisplay) > 32) {
+                if (strlen($filenameDisplay) > 32) {
                     $filenameDisplay = substr($filenameDisplay, 0, 25) . "..." . \Pimcore\File::getFileExtension($filenameDisplay);
                 }
 

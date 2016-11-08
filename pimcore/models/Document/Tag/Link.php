@@ -162,7 +162,7 @@ class Link extends Model\Document\Tag
     protected function updatePathFromInternal($realPath = false)
     {
         $method = "getFullPath";
-        if($realPath) {
+        if ($realPath) {
             $method = "getRealFullPath";
         }
 
