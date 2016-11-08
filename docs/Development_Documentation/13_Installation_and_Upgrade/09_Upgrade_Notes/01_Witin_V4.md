@@ -1,4 +1,5 @@
 ##  Upgrade notes for 4.4.0
+- Dropped support for PHP 5.5 (reached end of life)
 - Memcached adapter is deprecated, please use Redis2 instead. 
 - Whitespace and uppercase letters are now allowed in element's keys, to keep the old policy, add the following code to your `startup.php` : 
 ```php 
