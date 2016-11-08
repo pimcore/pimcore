@@ -42,6 +42,16 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * @param Object\ClassDefinition $class
+     * @return string
+     */
+    public function getLocalizedTableName(Object\ClassDefinition $class)
+    {
+        return "object_collection_" . $this->model->getKey() . "_localized_" . $class->getId();
+    }
+
+
+    /**
+     * @param Object\ClassDefinition $class
      */
     public function delete(Object\ClassDefinition $class)
     {

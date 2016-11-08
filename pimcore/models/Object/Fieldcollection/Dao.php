@@ -120,6 +120,7 @@ class Dao extends Model\Dao\AbstractDao
 
         foreach ($fieldDef->getAllowedTypes() as $type) {
             try {
+                /** @var  $definition Definition */
                 $definition = Object\Fieldcollection\Definition::getByKey($type);
             } catch (\Exception $e) {
                 continue;
@@ -132,6 +133,16 @@ class Dao extends Model\Dao\AbstractDao
             } catch (\Exception $e) {
                 // create definition if it does not exist
                 $definition->createUpdateTable($object->getClass());
+            }
+
+            if ($definition->getFieldDefinition("localizedfields")) {
+                $tableName = $definition->getLocalizedTableName($object->getClass());
+
+                try {
+                    $this->db->delete($tableName, $this->db->quoteInto("ooo_id = ?", $object->getId()) . " AND " . $this->db->quoteInto("fieldname = ?", $this->model->getFieldname()));
+                } catch (\Exception $e) {
+                    \Logger::error($e);
+                }
             }
 
             $childDefinitions = $definition->getFielddefinitions();
