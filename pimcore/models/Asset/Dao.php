@@ -417,7 +417,7 @@ class Dao extends Model\Element\Dao
         if ($this->model->getType() != "folder") {
             $versionData = $this->db->fetchRow("SELECT id,date FROM versions WHERE cid = ? AND ctype='asset' ORDER BY `id` DESC LIMIT 1", $this->model->getId());
 
-            if (($versionData["id"] && $versionData["date"] > $this->model->getModificationDate()) || $force) {
+            if ($versionData && $versionData["id"] && ($versionData["date"] > $this->model->getModificationDate() || $force)) {
                 $version = Model\Version::getById($versionData["id"]);
 
                 return $version;

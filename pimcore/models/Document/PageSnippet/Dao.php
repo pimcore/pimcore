@@ -100,7 +100,7 @@ abstract class Dao extends Model\Document\Dao
     {
         $versionData = $this->db->fetchRow("SELECT id,date FROM versions WHERE cid = ? AND ctype='document' ORDER BY `id` DESC LIMIT 1", $this->model->getId());
 
-        if (($versionData["id"] && $versionData["date"] > $this->model->getModificationDate()) || $force) {
+        if ($versionData && $versionData["id"] && ($versionData["date"] > $this->model->getModificationDate() || $force)) {
             $version = Version::getById($versionData["id"]);
 
             return $version;
