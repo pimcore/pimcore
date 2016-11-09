@@ -44,7 +44,7 @@ class Optimizer
                 foreach ($supportedOptimizers[$format] as $optimizer) {
                     $optimizerMethod = "optimize" . $optimizer;
                     $optimizedFile = self::$optimizerMethod($workingPath);
-                    if ($optimizedFile) {
+                    if ($optimizedFile && file_exists($optimizedFile)) {
                         $optimizedFiles[] = [
                             "filesize" => filesize($optimizedFile),
                             "path" => $optimizedFile,
