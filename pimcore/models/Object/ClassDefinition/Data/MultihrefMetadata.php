@@ -771,11 +771,12 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
 
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $metaElement) {
-                $o = $metaElement->getElement();
-                if ($o instanceof Object\AbstractObject) {
-                    $dependencies["object_" . $o->getId()] = [
-                        "id" => $o->getId(),
-                        "type" => "object"
+                $e = $metaElement->getElement();
+                if ($e instanceof Element\ElementInterface) {
+                    $elementType = Element\Service::getElementType($e);
+                    $dependencies[$elementType . "_" . $e->getId()] = [
+                        "id" => $e->getId(),
+                        "type" => $elementType
                     ];
                 }
             }
