@@ -387,7 +387,7 @@ class Dao extends Model\Object\AbstractObject\Dao
     {
         $versionData = $this->db->fetchRow("SELECT id,date FROM versions WHERE cid = ? AND ctype='object' ORDER BY `id` DESC LIMIT 1", $this->model->getId());
 
-       if (($versionData && $versionData["id"] && ($versionData["date"] > $this->model->getModificationDate()) || $force)) {
+       if ($versionData && $versionData["id"] && ($versionData["date"] > $this->model->getModificationDate() || $force)) {
             $version = Model\Version::getById($versionData["id"]);
 
             return $version;
