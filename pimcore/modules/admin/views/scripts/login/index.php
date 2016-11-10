@@ -2,7 +2,7 @@
 <html>
 <head>
 
-    <title>Welcome to pimcore!</title>
+    <title>Welcome to Pimcore!</title>
 
     <meta charset="UTF-8">
     <meta name="robots" content="noindex, follow" />
@@ -107,7 +107,7 @@ $config = \Pimcore\Config::getSystemConfig();
                     <?php } ?>
 
                     <div class="form-fields">
-                        <input type="text" name="username" placeholder="<?= $this->translate("Username"); ?>" required />
+                        <input type="text" name="username" placeholder="<?= $this->translate("Username"); ?>" required autofocus />
                         <input type="password" name="password" placeholder="<?= $this->translate("Password"); ?>" required />
                     </div>
 

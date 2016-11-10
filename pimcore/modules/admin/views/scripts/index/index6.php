@@ -68,7 +68,7 @@
         }
     </style>
 
-    <title><?= htmlentities(\Pimcore\Tool::getHostname(), ENT_QUOTES, 'UTF-8') ?> :: pimcore</title>
+    <title><?= htmlentities(\Pimcore\Tool::getHostname(), ENT_QUOTES, 'UTF-8') ?> :: Pimcore</title>
 </head>
 
 <body>

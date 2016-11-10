@@ -2,7 +2,7 @@
 <html>
 <head>
 
-    <title>Welcome to pimcore!</title>
+    <title>Welcome to Pimcore!</title>
 
     <meta charset="UTF-8">
     <meta name="robots" content="noindex, follow" />
