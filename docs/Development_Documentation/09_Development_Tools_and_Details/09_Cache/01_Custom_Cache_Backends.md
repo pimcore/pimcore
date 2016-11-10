@@ -10,7 +10,7 @@ your own cache backend.
 To enable a custom cache backend you have to create a new configuration file: `/website/config/cache.php`, 
 there is already a example cache configuration in `/website/config/cache.example.php`. 
 
-### redis backend (recommended)
+### Redis Backend (recommended)
 Note: Requires the phpredis PHP Extension and the Redis Key-Value Store. Precompiled Binaries for 
 Debian (and Debian-based distributions) can be found at the dotdeb Repositories. If you use 
 phpredis as Session-Storage, keep in Mind that db 0 is already in use.
@@ -32,14 +32,14 @@ return [
 ];
 ```
 
-##### Recommended Redis configuration (redis.conf): 
+##### Recommended Redis Configuration (redis.conf): 
 ```
 maxmemory 1gb # depending on your data
 maxmemory-policy allkeys-lru
 save ""
 ```
 
-### mongodb backend
+### MongoDB Backend
 ```
 <?php
  
