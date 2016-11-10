@@ -9,7 +9,7 @@ For production we highly recommend a *nix based system.
 - Nginx
 
 
-### PHP >= 5.5
+### PHP >= 5.6
 Both **mod_php** and **FCGI (FPM)** are supported.  
 **HHVM** should work quite well even though it's not tested.  
 
