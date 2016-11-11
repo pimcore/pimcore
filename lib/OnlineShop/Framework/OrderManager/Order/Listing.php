@@ -154,12 +154,17 @@ class Listing extends AbstractOrderList implements IOrderList
      */
     public function joinPricingRule()
     {
-        $this->getQuery()->join(
-            ['pricingRule' => 'object_collection_PricingRule_' . OnlineShopOrderItem::classId()]
-            , 'pricingRule.o_id = orderItem.o_id AND pricingRule.fieldname = "pricingRules"'
-            , ''
-        );
+        $joins = $this->getQuery()->getPart( \Zend_Db_Select::FROM );
 
+        if(!array_key_exists('pricingRule', $joins)) {
+
+            $this->getQuery()->join(
+                ['pricingRule' => 'object_collection_PricingRule_' . OnlineShopOrderItem::classId()]
+                , 'pricingRule.o_id = orderItem.o_id AND pricingRule.fieldname = "pricingRules"'
+                , ''
+            );
+
+        }
         return $this;
     }
 
@@ -168,29 +173,37 @@ class Listing extends AbstractOrderList implements IOrderList
      */
     public function joinPaymentInfo()
     {
-        // create sub select
-        $paymentQuery = Db::getConnection()->select();
-        $paymentQuery
-            ->from(
-                ['_paymentInfo' => 'object_collection_PaymentInfo_' . OnlineShopOrder::classId()]
-                , [
-                    'paymentReference' => 'GROUP_CONCAT(",", _paymentInfo.paymentReference, "," SEPARATOR ",")'
-                    , 'o_id' => '_order.o_id'
-                ]
-            )
-            ->join(
-                ['_order' => 'object_' . OnlineShopOrder::classId()]
-                , '_order.oo_id = _paymentInfo.o_id'
-                , ''
-            )
-        ;
 
-        // join
-        $this->getQuery()->joinLeft(
-            ['paymentInfo' => new Zend_Db_Expr( '(' . $paymentQuery . ')' )]
-            , 'paymentInfo.o_id = `order`.oo_id'
-            , ''
-        );
+        $joins = $this->getQuery()->getPart( \Zend_Db_Select::FROM );
+
+        if(!array_key_exists('paymentInfo', $joins))
+        {
+            // create sub select
+            $paymentQuery = Db::getConnection()->select();
+
+            $paymentQuery
+                ->from(
+                    ['_paymentInfo' => 'object_collection_PaymentInfo_' . OnlineShopOrder::classId()]
+                    , [
+                        'paymentReference' => 'GROUP_CONCAT(",", _paymentInfo.paymentReference, "," SEPARATOR ",")'
+                        , 'o_id' => '_order.o_id'
+                    ]
+                )
+                ->join(
+                    ['_order' => 'object_' . OnlineShopOrder::classId()]
+                    , '_order.oo_id = _paymentInfo.o_id'
+                    , ''
+                )
+            ;
+
+            // join
+            $this->getQuery()->joinLeft(
+                ['paymentInfo' => new Zend_Db_Expr( '(' . $paymentQuery . ')' )]
+                , 'paymentInfo.o_id = `order`.oo_id'
+                , ''
+            );
+        }
+
 
         return $this;
     }
@@ -201,11 +214,16 @@ class Listing extends AbstractOrderList implements IOrderList
      */
     public function joinOrderItemObjects()
     {
-        $this->getQuery()->join(
-            ['orderItemObjects' => 'objects']
-            , 'orderItemObjects.o_id = orderItem.product__id'
-            , ''
-        );
+        $joins = $this->getQuery()->getPart( \Zend_Db_Select::FROM );
+
+        if(!array_key_exists('orderItemObjects', $joins))
+        {
+            $this->getQuery()->join(
+                ['orderItemObjects' => 'objects']
+                , 'orderItemObjects.o_id = orderItem.product__id'
+                , ''
+            );
+        }
 
         return $this;
     }
@@ -239,11 +257,15 @@ class Listing extends AbstractOrderList implements IOrderList
      */
     public function joinCustomer($classId)
     {
-        $this->getQuery()->join(
-            ['customer' => 'object_' . (int)$classId]
-            , 'customer.o_id = order.customer__id'
-            , ''
-        );
+        $joins = $this->getQuery()->getPart( \Zend_Db_Select::FROM );
+
+        if(!array_key_exists('customer', $joins)) {
+            $this->getQuery()->join(
+                ['customer' => 'object_' . (int)$classId]
+                , 'customer.o_id = order.customer__id'
+                , ''
+            );
+        }
 
         return $this;
     }
