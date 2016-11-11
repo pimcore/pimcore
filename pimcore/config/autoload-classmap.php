@@ -1,7 +1,7 @@
 <?php
 $pdr = PIMCORE_DOCUMENT_ROOT;
 
-return  [
+return array (
   'simple_html_dom_node' => $pdr . '/pimcore/lib/simple_html_dom.php',
   'simple_html_dom' => $pdr . '/pimcore/lib/simple_html_dom.php',
   'Pimcore\\Video\\Adapter\\Ffmpeg' => $pdr . '/pimcore/lib/Pimcore/Video/Adapter/Ffmpeg.php',
@@ -168,6 +168,7 @@ return  [
   'Pimcore\\Console\\Command\\InternalNewsletterDocumentSendCommand' => $pdr . '/pimcore/lib/Pimcore/Console/Command/InternalNewsletterDocumentSendCommand.php',
   'Pimcore\\Console\\Command\\Web2PrintPdfCreationCommand' => $pdr . '/pimcore/lib/Pimcore/Console/Command/Web2PrintPdfCreationCommand.php',
   'Pimcore\\Console\\Command\\DeleteClassificationStoreCommand' => $pdr . '/pimcore/lib/Pimcore/Console/Command/DeleteClassificationStoreCommand.php',
+  'Pimcore\\Console\\Command\\RunUpdateScriptCommand' => $pdr . '/pimcore/lib/Pimcore/Console/Command/RunUpdateScriptCommand.php',
   'Pimcore\\Console\\Command\\InternalUnicodeCldrLanguageTerritoryGeneratorCommand' => $pdr . '/pimcore/lib/Pimcore/Console/Command/InternalUnicodeCldrLanguageTerritoryGeneratorCommand.php',
   'Pimcore\\Console\\Command\\ClassmapGeneratorCommand' => $pdr . '/pimcore/lib/Pimcore/Console/Command/ClassmapGeneratorCommand.php',
   'Pimcore\\Console\\Command\\ThumbnailsOptimizeImagesCommand' => $pdr . '/pimcore/lib/Pimcore/Console/Command/ThumbnailsOptimizeImagesCommand.php',
@@ -222,6 +223,7 @@ return  [
   'Pimcore\\Image\\HtmlToImage' => $pdr . '/pimcore/lib/Pimcore/Image/HtmlToImage.php',
   'Pimcore\\Image\\Adapter\\GD' => $pdr . '/pimcore/lib/Pimcore/Image/Adapter/GD.php',
   'Pimcore\\Image\\Adapter\\InkscapeImagick' => $pdr . '/pimcore/lib/Pimcore/Image/Adapter/InkscapeImagick.php',
+  'Pimcore\\Image\\Adapter\\ImageMagick' => $pdr . '/pimcore/lib/Pimcore/Image/Adapter/ImageMagick.php',
   'Pimcore\\Image\\Adapter\\Imagick' => $pdr . '/pimcore/lib/Pimcore/Image/Adapter/Imagick.php',
   'Pimcore\\Image\\Optimizer' => $pdr . '/pimcore/lib/Pimcore/Image/Optimizer.php',
   'Pimcore\\Image\\Adapter' => $pdr . '/pimcore/lib/Pimcore/Image/Adapter.php',
@@ -616,6 +618,7 @@ return  [
   'Pimcore\\Model\\Object\\Localizedfield\\Dao' => $pdr . '/pimcore/models/Object/Localizedfield/Dao.php',
   'Pimcore\\Model\\Element\\Note' => $pdr . '/pimcore/models/Element/Note.php',
   'Pimcore\\Model\\Element\\Editlock' => $pdr . '/pimcore/models/Element/Editlock.php',
+  'Pimcore\\Model\\Element\\ChildsCompatibilityTrait' => $pdr . '/pimcore/models/Element/ChildsCompatibilityTrait.php',
   'Pimcore\\Model\\Element\\Sanitycheck\\Dao' => $pdr . '/pimcore/models/Element/Sanitycheck/Dao.php',
   'Pimcore\\Model\\Element\\Sanitycheck' => $pdr . '/pimcore/models/Element/Sanitycheck.php',
   'Pimcore\\Model\\Element\\AdminStyle' => $pdr . '/pimcore/models/Element/AdminStyle.php',
@@ -722,10 +725,9 @@ return  [
   'Pimcore\\Model\\Metadata\\Predefined\\Listing\\Dao' => $pdr . '/pimcore/models/Metadata/Predefined/Listing/Dao.php',
   'Pimcore\\Model\\Metadata\\Predefined\\Dao' => $pdr . '/pimcore/models/Metadata/Predefined/Dao.php',
   'Pimcore\\Model\\Metadata\\Predefined' => $pdr . '/pimcore/models/Metadata/Predefined.php',
-  'Pimcore\\Model\\Metadata\\Dao' => $pdr . '/pimcore/models/Metadata/Dao.php',
   'Pimcore\\Model\\Property\\Predefined\\Listing' => $pdr . '/pimcore/models/Property/Predefined/Listing.php',
   'Pimcore\\Model\\Property\\Predefined\\Listing\\Dao' => $pdr . '/pimcore/models/Property/Predefined/Listing/Dao.php',
   'Pimcore\\Model\\Property\\Predefined\\Dao' => $pdr . '/pimcore/models/Property/Predefined/Dao.php',
   'Pimcore\\Model\\Property\\Predefined' => $pdr . '/pimcore/models/Property/Predefined.php',
   'Pimcore\\Model\\Property\\Dao' => $pdr . '/pimcore/models/Property/Dao.php',
-];
+);
