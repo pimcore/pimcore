@@ -156,17 +156,21 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
 
         }
 
+        if(typeof(pimcore.object.tags.wysiwyg.defaultEditorConfig) == 'object'){
+            eConfig = mergeObject(pimcore.object.tags.wysiwyg.defaultEditorConfig,eConfig);
+        }
+
         //prevent override important settings!
-        eConfig.removePlugins = "tableresize";
         eConfig.resize_enabled = false;
         eConfig.entities = false;
         eConfig.entities_greek = false;
         eConfig.entities_latin = false;
         eConfig.extraAllowedContent = "*[pimcore_type,pimcore_id]";
 
-        if(typeof(pimcore.object.tags.wysiwyg.defaultEditorConfig) == 'object'){
-            eConfig = mergeObject(pimcore.object.tags.wysiwyg.defaultEditorConfig,eConfig);
-        }
+        if(eConfig.hasOwnProperty('removePlugins'))
+            eConfig.removePlugins += ",tableresize";
+        else
+            eConfig.removePlugins = "tableresize";
 
         if (intval(this.fieldConfig.width) > 1) {
             eConfig.width = this.fieldConfig.width;
