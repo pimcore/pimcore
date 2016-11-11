@@ -1,7 +1,7 @@
 <?php
 $pdr = PIMCORE_DOCUMENT_ROOT;
 
-return [
+return  [
   'simple_html_dom_node' => $pdr . '/pimcore/lib/simple_html_dom.php',
   'simple_html_dom' => $pdr . '/pimcore/lib/simple_html_dom.php',
   'Pimcore\\Video\\Adapter\\Ffmpeg' => $pdr . '/pimcore/lib/Pimcore/Video/Adapter/Ffmpeg.php',
