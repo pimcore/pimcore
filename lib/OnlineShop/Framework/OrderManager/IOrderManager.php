@@ -14,16 +14,14 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace OnlineShop\Framework\OrderManager;
 
-use OnlineShop\Framework\OrderManager;
 use \OnlineShop\Framework\Model\AbstractOrder as Order;
 
 interface IOrderManager
 {
     /**
-     * @return OrderManager\IOrderList
+     * @return IOrderList
      */
     public function createOrderList();
 
@@ -31,7 +29,7 @@ interface IOrderManager
     /**
      * @param Order $order
      *
-     * @return OrderManager\IOrderAgent
+     * @return IOrderAgent
      */
     public function createOrderAgent(Order $order);
 

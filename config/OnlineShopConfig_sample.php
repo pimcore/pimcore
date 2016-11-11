@@ -221,10 +221,11 @@ return [
                  * placeholder values in this file ("locale" => "%locale%") will be replaced by
                  * the given placeholder value (eg. "de_AT")
                  */
-                [
+
+                /*[
                     "file" => "/website/var/plugins/EcommerceFramework/additional-index.php",
                     "placeholders" => ["%locale%" => "de_AT"]
-                ],
+                ],*/
                 [
                     "name" => "name",
                     "type" => "varchar(255)",
@@ -571,8 +572,8 @@ return [
         "offertool" => [
             "class" => "\\OnlineShop\\Framework\\OfferTool\\DefaultService",
             "orderstorage" => [
-                "offerClass" => "Object_OfferToolOffer",
-                "offerItemClass" => "Object_OfferToolOfferItem",
+                "offerClass" => "\\Pimcore\\Model\\Object\\OfferToolOffer",
+                "offerItemClass" => "\\Pimcore\\Model\\Object\\OfferToolOfferItem",
                 "parentFolderPath" => "/offertool/offers/%Y/%m"
             ]
         ],

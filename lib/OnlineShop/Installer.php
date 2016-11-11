@@ -154,13 +154,14 @@ class Installer {
 
         self::checkInstallPossible();
 
+        self::copyConfigFile();
+
         self::createFieldCollections();
         self::createClasses();
         self::createObjectBricks();
 
         self::createTables();
 
-        self::copyConfigFile();
         self::importTranslations();
         
         self::addPermissions();
