@@ -248,7 +248,7 @@ class Admin_NewsletterController extends \Pimcore\Controller\Action\Admin\Docume
             'progress' => 0
         ], 'newsletter');
 
-        \Pimcore\Tool\Console::runPhpScriptInBackground(realpath(PIMCORE_PATH . DIRECTORY_SEPARATOR . "cli" . DIRECTORY_SEPARATOR . "console.php"), "internal:newsletter-document-send " . escapeshellarg($document->getTmpStoreId()) . " " . escapeshellarg(\Pimcore\Tool::getHostUrl()));
+        \Pimcore\Tool\Console::runPhpScriptInBackground(realpath(PIMCORE_PATH . DIRECTORY_SEPARATOR . "cli" . DIRECTORY_SEPARATOR . "console.php"), "internal:newsletter-document-send " . escapeshellarg($document->getTmpStoreId()) . " " . escapeshellarg(\Pimcore\Tool::getHostUrl()), PIMCORE_LOG_DIRECTORY . DIRECTORY_SEPARATOR . "newsletter-sending-output.log");
         $this->_helper->json(["success" => true]);
     }
 
