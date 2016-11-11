@@ -350,7 +350,7 @@ class Cache
             return;
         }
 
-        if(is_object($data)) {
+        if (is_object($data)) {
             $deepCopy = new DeepCopy();
             $data = $deepCopy->copy($data);
         }

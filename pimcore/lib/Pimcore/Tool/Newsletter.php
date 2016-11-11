@@ -107,7 +107,7 @@ class Newsletter
     public static function sendNewsletterDocumentBasedMail(Mail $mail, SendingParamContainer $sendingContainer)
     {
         $mailAddress = $sendingContainer->getEmail();
-        if(!empty($mailAddress)) {
+        if (!empty($mailAddress)) {
             $mail->setTo($mailAddress);
             $mail->sendWithoutRendering();
 
@@ -115,7 +115,6 @@ class Newsletter
         } else {
             Logger::warn("No E-Mail Address given - cannot send mail. [" . $mail->getDocument()->getId() . "]");
         }
-
     }
 
     protected static function obfuscateEmail($email)
