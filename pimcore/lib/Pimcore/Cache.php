@@ -353,6 +353,8 @@ class Cache
         if (is_object($data)) {
             $deepCopy = new DeepCopy();
             $deepCopy->addFilter(new \DeepCopy\Filter\SetNullFilter(), new \DeepCopy\Matcher\PropertyNameMatcher('dao'));
+            $deepCopy->addFilter(new \DeepCopy\Filter\SetNullFilter(), new \DeepCopy\Matcher\PropertyNameMatcher('resource'));
+            $deepCopy->addFilter(new \DeepCopy\Filter\SetNullFilter(), new \DeepCopy\Matcher\PropertyNameMatcher('writeResource'));
             $data = $deepCopy->copy($data);
         }
 
