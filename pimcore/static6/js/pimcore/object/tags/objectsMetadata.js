@@ -159,8 +159,10 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                         return '<div style="text-align: center"><div role="button" class="x-grid-checkcolumn" style=""></div></div>';
                     }
                 };
-                editor = Ext.create('Ext.form.field.Checkbox', {style: 'margin-top: 2px;'});
 
+                listeners = {
+                    "mousedown": this.cellMousedown.bind(this, this.fieldConfig.columns[i].key, this.fieldConfig.columns[i].type)
+                };
 
                 if(readOnly) {
                     columns.push(Ext.create('Ext.grid.column.Check'), {
@@ -446,6 +448,18 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
             }
 
             this.requestNicePathData(toBeRequested);
+        }
+    },
+
+    cellMousedown: function (key, colType, grid, cell, rowIndex, cellIndex, e) {
+
+        // this is used for the boolean field type
+
+        var store = grid.getStore();
+        var record = store.getAt(rowIndex);
+
+        if (colType == "bool") {
+            record.set(key, !record.data[key]);
         }
     },
 
