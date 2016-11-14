@@ -284,9 +284,9 @@ class Editmode extends \Zend_Controller_Plugin_Abstract
             $html = $this->getResponse()->getBody();
 
             if ($html) {
-                $htmlElement = preg_match("/<html[^a-zA-Z]?( [^>]+)?>/", $html);
-                $headElement = preg_match("/<head[^a-zA-Z]?( [^>]+)?>/", $html);
-                $bodyElement = preg_match("/<body[^a-zA-Z]?( [^>]+)?>/", $html);
+                $htmlElement = !!strpos( $html, '<html' );
+                $headElement = !!strpos( $html, '<head' );
+                $bodyElement = !!strpos( $html, '<body' );
 
                 $skipCheck = false;
 
