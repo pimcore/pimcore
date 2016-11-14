@@ -24,5 +24,7 @@ if(!isset($systemSettings["httpclient"]["adapter"]) || empty($systemSettings["ht
     $systemSettings["httpclient"]["adapter"] = "Zend_Http_Client_Adapter_Socket";
 }
 
-\Pimcore\File::putPhpFile($configFile, to_php_data_file_format($systemSettings));
+$contents = var_export_pretty($systemSettings);
+$contents = "<?php \n\nreturn " . $contents . ";\n";
+\Pimcore\File::putPhpFile($configFile, $contents);
 
