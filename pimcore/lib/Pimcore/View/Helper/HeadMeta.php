@@ -54,4 +54,12 @@ class HeadMeta extends \Zend_View_Helper_HeadMeta
 
         return $this;
     }
+
+    /**
+     * @return array
+     */
+    public function getRaw()
+    {
+        return $this->rawItems;
+    }
 }
