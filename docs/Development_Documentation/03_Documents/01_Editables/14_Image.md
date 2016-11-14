@@ -3,7 +3,7 @@
 ## Description
 
 The image editable adds an placeholder for images out of the assets module.
-The biggest cons of using that instead of (for example) the href editable:
+The biggest advantages of using that instead of (for example) the href editable:
 
 * You are able to specify generated thumbnail properties (including high-res)
 * There is a image preview rendered in the administration panel
