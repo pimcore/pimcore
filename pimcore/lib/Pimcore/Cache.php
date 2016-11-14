@@ -352,6 +352,7 @@ class Cache
 
         if (is_object($data)) {
             $deepCopy = new DeepCopy();
+            $deepCopy->addFilter(new \DeepCopy\Filter\SetNullFilter(), new \DeepCopy\Matcher\PropertyNameMatcher('dao'));
             $data = $deepCopy->copy($data);
         }
 
