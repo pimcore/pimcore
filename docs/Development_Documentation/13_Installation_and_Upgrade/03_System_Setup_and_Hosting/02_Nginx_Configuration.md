@@ -35,7 +35,7 @@ server {
     # You could also use the location directive below, which is MUCH faster then the if statements above
     # However, this doen't check for request method GET
     #location ~* ^/website/var/assets {
-    #   try_files $uri /index.php?$args;
+    #   try_files $uri /index.php$is_args$args;
     #   index index.php;
     #}
  
@@ -49,7 +49,7 @@ server {
     # basic zend-framework setup see: http://framework.zend.com/manual/en/zend.controller.html
     location / {
         # First attempt to serve request as file, then as directory, then fall back to index.php
-        try_files $uri $uri/ /index.php?$args;
+        try_files $uri $uri/ /index.php$is_args$args;
         index index.php;
     }
  
@@ -82,7 +82,7 @@ server {
     location ~* \.(jpe?g|gif|png|bmp|ico|css|js|pdf|zip|htm|html|docx?|xlsx?|pptx?|txt|wav|swf|svg|avi|mp\d)$ {
         access_log off;
         log_not_found off;
-        try_files $uri $uri/ /website/var/assets$uri /index.php?$args;
+        try_files $uri $uri/ /website/var/assets$uri /index.php$is_args$args;
         expires 1w;
     }
     
