@@ -350,7 +350,7 @@ class Cache
             return;
         }
 
-        if (is_object($data) && $data instanceof \Pimcore\Model\AbstractModel) {
+        if (is_object($data) && $data instanceof Element\ElementInterface) {
             $deepCopy = new DeepCopy();
             $deepCopy->addFilter(new \DeepCopy\Filter\SetNullFilter(), new \DeepCopy\Matcher\PropertyNameMatcher('dao'));
             $deepCopy->addFilter(new \DeepCopy\Filter\SetNullFilter(), new \DeepCopy\Matcher\PropertyNameMatcher('resource'));
