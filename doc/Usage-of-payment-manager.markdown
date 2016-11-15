@@ -286,7 +286,7 @@ For more information also have a look at the sample implementation at the [ecomm
 
 ## 3 - Recurring payment
 
-CheckcoutController.php
+CheckoutController.php
 ```php
 <?php
 // commit payment
