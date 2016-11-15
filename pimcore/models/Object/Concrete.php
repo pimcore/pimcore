@@ -706,7 +706,5 @@ class Concrete extends AbstractObject
     public function __clone()
     {
         parent::__clone();
-
-//        Service::loadAllObjectFields($this);
     }
 }
