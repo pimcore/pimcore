@@ -14,7 +14,6 @@ are included).
 #   include       mime.types;
 # }
  
-# mod_status is not (yet) available for nginx, so that directive is skipped
 server {
     root /vagrant/www/pimcore;
     index index.php;
@@ -88,5 +87,30 @@ server {
     
     # cache-buster rule for scripts & stylesheets embedded using view helpers
     rewrite ^\/cache-buster-\d+(.*) $1 break;
+    
+    # FPM Ping
+    # Make sure this location matches your PHP-FPM config: ping.path
+    location /fpm-ping {
+        access_log off;
+        include fastcgi_params;
+        fastcgi_pass unix:/var/run/php5-fpm.sock;
+    }
+    # FPM Status
+    # Make sure this location matches your PHP-FPM config: pm.status_path
+    location /fpm-status {
+        allow 127.0.0.1;
+        deny all;
+        access_log off;
+        include fastcgi_params;
+        fastcgi_pass unix:/var/run/php5-fpm.sock;
+    }
+    # nginx Status
+    # see: https://nginx.org/en/docs/http/ngx_http_stub_status_module.html
+    location /nginx-status {
+        allow 127.0.0.1;
+        deny all;
+        access_log off;
+        stub_status;
+    }
 }
 ``` 
