@@ -25,8 +25,6 @@ pimcore.object.helpers.edit = {
             context = {};
         }
 
-        var panelListenerConfig = {};
-
         var tabpanelCorrection = function (panel) {
             window.setTimeout(function () {
                 try {
@@ -53,22 +51,19 @@ pimcore.object.helpers.edit = {
                 forceLayout: true,
                 hideMode: "offsets",
                 padding: 0,
-                bodyStyle: "padding: 0",
-                listeners: panelListenerConfig
+                bodyStyle: "padding: 0"
             },
             fieldset: {
                 xtype: "fieldset",
                 autoScroll: true,
                 forceLayout: true,
-                hideMode: "offsets",
-                listeners: panelListenerConfig
+                hideMode: "offsets"
             },
             fieldcontainer: {
                 xtype: "fieldcontainer",
                 autoScroll: true,
                 forceLayout: true,
-                hideMode: "offsets",
-                listeners: panelListenerConfig
+                hideMode: "offsets"
             },
             panel: {
                 xtype: "panel",
@@ -80,16 +75,14 @@ pimcore.object.helpers.edit = {
                 defaults: {
                     width: "auto"
                 },
-                hideMode: "offsets",
-                listeners: panelListenerConfig
+                hideMode: "offsets"
             },
             region: {
                 xtype: "panel",
                 layout: "border",
                 forceLayout: true,
                 padding: 0,
-                hideMode: "offsets",
-                listeners: panelListenerConfig
+                hideMode: "offsets"
             },
             tabpanel: {
                 xtype: "tabpanel",
@@ -115,8 +108,7 @@ pimcore.object.helpers.edit = {
                 style: "margin-bottom: 10px;",
                 autoScroll: true,
                 forceLayout: true,
-                monitorResize: true,
-                listeners: panelListenerConfig
+                monitorResize: true
             }
         };
 
