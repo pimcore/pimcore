@@ -483,7 +483,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
             store: this.store,
             columns: [
                 {header: 'ID', dataIndex: 'id', width: 50, sortable: false},
-                {header: t("reference"), dataIndex: 'path', width: 200, sortable: false},
+                {header: t("reference"), dataIndex: 'path', flex: 200, sortable: false},
                 {header: t("type"), dataIndex: 'type', width: 100, sortable: false},
                 {
                     xtype: 'actioncolumn',
