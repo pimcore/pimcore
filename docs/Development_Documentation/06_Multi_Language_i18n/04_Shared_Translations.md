@@ -10,7 +10,7 @@ For using the shared translations in frontend, just use the translate helper of 
 
 
 Once a translation-key is requested Pimcore registers the key in the translation administration, and you can edit all 
-the translations in a grid in Pimcore backend at `Extras` -> `Translation` -> `Shared Translations`.
+the translations in a grid in Pimcore backend at `Extras` > `Translation` > `Shared Translations`.
 
 ![Shared Translations](../img/localization-translations.png)
 
