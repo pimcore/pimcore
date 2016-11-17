@@ -239,10 +239,17 @@ class TrackingManager implements ITrackingManager
      */
     public function trackCheckoutComplete(AbstractOrder $order)
     {
-        $this->ensureDependencies();
-        foreach ($this->trackers as $tracker) {
-            if ($tracker instanceof ICheckoutComplete) {
-                $tracker->trackCheckoutComplete($order);
+        if(!$order->getProperty("os_tracked")) {
+
+            //add property to order object in order to prevent multiple checkout complete tracking
+            $order->setProperty("os_tracked", "bool", true);
+            $order->save();
+
+            $this->ensureDependencies();
+            foreach ($this->trackers as $tracker) {
+                if ($tracker instanceof ICheckoutComplete) {
+                    $tracker->trackCheckoutComplete($order);
+                }
             }
         }
     }
