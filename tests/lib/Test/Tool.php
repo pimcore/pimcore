@@ -57,7 +57,7 @@ class Test_Tool
                         $propertiesStringArray["property_" . $key . "_" . $value->type] = "property_" . $key . "_" . $value->type . ": null";
                     }
                 } elseif ($value->type == 'date') {
-                    if ($value->data instanceof \DateTime) {
+                    if ($value->data instanceof \DateTimeInterface) {
                         $propertiesStringArray["property_" . $key . "_" . $value->type] = "property_" . $key . "_" . $value->type . ":" . $value->data->getTimestamp();
                     }
                 } elseif ($value->type == "bool") {

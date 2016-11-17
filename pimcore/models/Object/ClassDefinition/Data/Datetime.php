@@ -176,7 +176,7 @@ class Datetime extends Model\Object\ClassDefinition\Data
     {
         if ($data instanceof \Zend_Date) {
             return $data->toString("Y-m-d H:i", "php");
-        } elseif ($data instanceof \DateTime) {
+        } elseif ($data instanceof \DateTimeInterface) {
             return $data->format("Y-m-d H:i");
         }
     }
@@ -194,7 +194,7 @@ class Datetime extends Model\Object\ClassDefinition\Data
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof \Zend_Date) {
             return $data->toString("Y-m-d H:i", "php");
-        } elseif ($data instanceof \DateTime) {
+        } elseif ($data instanceof \DateTimeInterface) {
             return $data->format("Y-m-d H:i");
         }
 
