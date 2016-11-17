@@ -69,7 +69,7 @@ class Console
 
         $paths = [];
         if ($pathVariable) {
-            $paths = explode(":", $pathVariable);
+            $paths = explode(PATH_SEPARATOR, $pathVariable);
         }
 
         array_unshift($paths, "");
