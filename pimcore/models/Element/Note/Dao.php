@@ -122,7 +122,7 @@ class Dao extends Model\Dao\AbstractDao
                     $data = $data->getId();
                 }
             } elseif ($type == "date") {
-                if ($data instanceof \DateTime) {
+                if ($data instanceof \DateTimeInterface) {
                     $data = $data->getTimestamp();
                 }
             } elseif ($type == "bool") {
