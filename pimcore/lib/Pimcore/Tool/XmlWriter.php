@@ -229,7 +229,7 @@ class XmlWriter extends \Zend_Config_Writer_Xml
             $attributes = null;
             if ($value instanceof \Zend_Config) {
                 $attributes = $value->get('@attributes');
-                if($attributes || $value->get('@value')){
+                if ($attributes || $value->get('@value')) {
                     $value = $value->get('@value');
                 }
             }
