@@ -212,7 +212,9 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
                     $user->delete();
                 }
             } else {
-                $user->delete();
+                if ($user->getId()) {
+                    $user->delete();
+                }
             }
         }
 

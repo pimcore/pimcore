@@ -228,7 +228,7 @@ pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract
             }));
         }
 
-        if (record.data.id != user.id && (record.data.type != "userfolder" || user.admin)) {
+        if (record.data.id > 0 && record.data.id != user.id && (record.data.type != "userfolder" || user.admin)) {
             menu.add(new Ext.menu.Item({
                 text: t('delete'),
                 iconCls: "pimcore_icon_delete",

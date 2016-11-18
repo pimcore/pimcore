@@ -134,13 +134,15 @@ pimcore.settings.user.role.panel = Class.create(pimcore.settings.user.panels.abs
             }));
         }
 
-        menu.add(new Ext.menu.Item({
-            text: t('delete'),
-            iconCls: "pimcore_icon_delete",
-            listeners: {
-                "click": this.remove.bind(this, tree, record)
-            }
-        }));
+        if (record.data.id > 0) {
+            menu.add(new Ext.menu.Item({
+                text: t('delete'),
+                iconCls: "pimcore_icon_delete",
+                listeners: {
+                    "click": this.remove.bind(this, tree, record)
+                }
+            }));
+        }
 
         if(typeof menu.items != "undefined" && typeof menu.items.items != "undefined"
                                                                     && menu.items.items.length > 0) {
