@@ -203,7 +203,6 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
             }
         } else {
             var panelConf = {
-                autoScroll: true,
                 monitorResize: true,
                 cls: "object_field",
                 activeTab: 0,
