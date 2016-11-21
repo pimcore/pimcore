@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -135,7 +135,7 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
-        if ($data["longitude"] || $data["latitude"]) {
+        if (is_array($data) && ($data["longitude"] || $data["latitude"])) {
             return new Object\Data\Geopoint($data["longitude"], $data["latitude"]);
         }
 
@@ -198,7 +198,7 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     }
 
 
-       /**
+    /**
      * converts data to be exposed via webservices
      * @param string $object
      * @param mixed $params
@@ -231,7 +231,7 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
         if (empty($value)) {
             return null;
         } else {
-            $value = (array)$value;
+            $value = (array) $value;
             if ($value["longitude"] !== null && $value["latitude"] !== null) {
                 return new Object\Data\Geopoint($value["longitude"], $value["latitude"]);
             } else {
