@@ -212,11 +212,15 @@ class Text
 
     /**
      * @static
-     * @param $text
+     * @param string $text
      * @return array
      */
     public static function getElementsTagsInWysiwyg($text)
     {
+        // It only makes sense to create a fingerprint of a wysiwyg text
+        if(!is_string($text) || (is_string($text) && strlen($text) === 0) ){
+            return [];
+        }
         $hash = "elements_raw_wysiwyg_text_" . md5($text);
         if (\Zend_Registry::isRegistered($hash)) {
             return \Zend_Registry::get($hash);
