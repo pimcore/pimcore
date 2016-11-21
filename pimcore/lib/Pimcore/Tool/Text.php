@@ -212,11 +212,15 @@ class Text
 
     /**
      * @static
-     * @param $text
+     * @param string $text
      * @return array
      */
     public static function getElementsTagsInWysiwyg($text)
     {
+        if(!is_string($text) || strlen($text) < 1) {
+            return [];
+        }
+
         $hash = "elements_raw_wysiwyg_text_" . md5($text);
         if (\Zend_Registry::isRegistered($hash)) {
             return \Zend_Registry::get($hash);
