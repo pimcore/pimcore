@@ -389,7 +389,8 @@ class Tool
     public static function getHostname()
     {
         if (isset($_SERVER["HTTP_X_FORWARDED_HOST"]) && !empty($_SERVER["HTTP_X_FORWARDED_HOST"])) {
-            $hostname = $_SERVER["HTTP_X_FORWARDED_HOST"];
+            $hostParts = explode(",", $_SERVER["HTTP_X_FORWARDED_HOST"]);
+            $hostname = trim(end($hostParts));
         } else {
             $hostname = $_SERVER["HTTP_HOST"];
         }
