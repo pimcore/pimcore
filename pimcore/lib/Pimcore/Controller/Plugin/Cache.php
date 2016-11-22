@@ -186,7 +186,7 @@ class Cache extends \Zend_Controller_Plugin_Abstract
             }
         }
 
-        $this->defaultCacheKey = "output_" . md5($request->getHttpHost() . $requestUri . $appendKey);
+        $this->defaultCacheKey = "output_" . md5(\Pimcore\Tool::getHostname() . $requestUri . $appendKey);
         $cacheKeys = [
             $this->defaultCacheKey . "_" . $device,
             $this->defaultCacheKey,
