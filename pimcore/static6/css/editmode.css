@@ -218,14 +218,9 @@
     position: relative;
 }
 
-.pimcore_tag_snippet .x5-panel-body {
-	background:none;
-	overflow:hidden !important;
-}
-
-.pimcore_tag_renderlet .x5-panel-body {
-	overflow:hidden !important;
-	background:none;
+.pimcore_tag_snippet .x-panel-body, .pimcore_tag_renderlet .x-panel-body {
+    overflow:hidden !important;
+    background:none;
 }
 
 .pimcore_tag_table {
