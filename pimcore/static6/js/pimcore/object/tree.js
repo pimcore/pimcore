@@ -32,6 +32,7 @@ pimcore.object.tree = Class.create({
 
         if (!config) {
             this.config = {
+                rootId: 1,
                 rootVisible: true,
                 allowedClasses: null,
                 loaderBaseParams: {},
