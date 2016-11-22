@@ -22,8 +22,8 @@
     background-color: #fff;
 }
 
-.x-tree-view .x-grid-item-container {
-    overflow: visible;
+.x-tree-view {
+    overflow-x: auto !important;
 }
 
 /* Style overrides */
