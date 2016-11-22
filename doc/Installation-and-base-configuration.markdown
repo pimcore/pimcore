@@ -17,13 +17,13 @@ There are two ways of preparing a pimcore class for product-usage in the ecommer
    * the interfaces define methods that are needed for the two use cases and need to be implemented. 
 
 
-> For the abstract class use the parent class functionality of pimcore. For implementing the interfaces use either the parent class functionality or the class map functionality of pimcore (see also <https://www.pimcore.org/wiki/display/PIMCORE3/Class-Mappings+-+Overwrite+pimcore+models>). 
+> For the abstract class use the parent class functionality of pimcore. For implementing the interfaces use either the parent class functionality or the dependency injection functionality of pimcore (see also <https://www.pimcore.org/docs/latest/Extending_Pimcore/Dependency_Injection.html>).
 
 ### Product Category
 When a product category class is used, this class needs to extend the abstract class `\OnlineShop\Framework\Model\AbstractCategory`
 
 
-> For product categories only one pimcore class should be used. For products, several pimcore classes can be used. Eventually the index update scripts need to be adapted. 
+> For product categories only one pimcore class should be used. For products, several pimcore classes can be used. Possibly the index update scripts need to be adapted.
 
 
 ## 3 - Configuring OnlineShopConfig.php
