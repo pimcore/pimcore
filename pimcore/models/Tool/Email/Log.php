@@ -600,6 +600,10 @@ class Log extends Model\AbstractModel
      */
     protected function buildArray($data)
     {
+        if (is_null($data)) {
+            return [];
+        }
+        
         $dataArray = [];
         $tmp = explode(',', trim($data));
 
