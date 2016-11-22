@@ -1,4 +1,14 @@
-/**
+// This is needed until we can refactor all of the locales into individual files
+Ext.define("Ext.locale.es.Component", { 
+    override: "Ext.Component"
+});Ext.define("Ext.locale.es.data.validator.Presence", {
+    override: "Ext.data.validator.Presence",
+    message: "Este campo es obligatorio",
+    getMessage: function() {
+        var me = this;
+        return me.message || me.config.message;
+    }
+});/**
  * Spanish/Latin American Translation by genius551v 04-08-2007
  * Revised by efege, 2007-04-15.
  * Revised by Rafaga2k 10-01-2007 (mm/dd/yyyy)
@@ -68,85 +78,23 @@ Ext.onReady(function() {
         });
     }
 });
-
-Ext.define("Ext.locale.es.view.View", {
-    override: "Ext.view.View",
-    emptyText: ""
-});
-
-Ext.define("Ext.locale.es.grid.plugin.DragDrop", {
-    override: "Ext.grid.plugin.DragDrop",
-    dragText: "{0} fila(s) seleccionada(s)"
-});
-
-// changing the msg text below will affect the LoadMask
-Ext.define("Ext.locale.es.view.AbstractView", {
-    override: "Ext.view.AbstractView",
-    loadingText: "Cargando..."
-});
-
-Ext.define("Ext.locale.es.picker.Date", {
-    override: "Ext.picker.Date",
-    todayText: "Hoy",
-    minText: "Esta fecha es anterior a la fecha mínima",
-    maxText: "Esta fecha es posterior a la fecha máxima",
-    disabledDaysText: "",
-    disabledDatesText: "",
-    nextText: 'Mes Siguiente (Control+Right)',
-    prevText: 'Mes Anterior (Control+Left)',
-    monthYearText: 'Seleccione un mes (Control+Up/Down para desplazar el año)',
-    todayTip: "{0} (Barra espaciadora)",
-    format: "d/m/Y",
-    startDay: 1
-});
-
-Ext.define("Ext.locale.es.picker.Month", {
-    override: "Ext.picker.Month",
-    okText: "&#160;Aceptar&#160;",
-    cancelText: "Cancelar"
-});
-
-Ext.define("Ext.locale.es.toolbar.Paging", {
-    override: "Ext.PagingToolbar",
-    beforePageText: "Página",
-    afterPageText: "de {0}",
-    firstText: "Primera página",
-    prevText: "Página anterior",
-    nextText: "Página siguiente",
-    lastText: "Última página",
-    refreshText: "Actualizar",
-    displayMsg: "Mostrando {0} - {1} de {2}",
-    emptyMsg: 'Sin datos para mostrar'
-});
-
-Ext.define("Ext.locale.es.form.field.Base", {
+Ext.define("Ext.locale.es.form.CheckboxGroup", {
+    override: "Ext.form.CheckboxGroup",
+    blankText: "Debe seleccionar al menos un étem de este grupo"
+});Ext.define("Ext.locale.es.form.RadioGroup", {
+    override: "Ext.form.RadioGroup",
+    blankText: "Debe seleccionar un étem de este grupo"
+});Ext.define("Ext.locale.es.form.field.Base", {
     override: "Ext.form.field.Base",
     invalidText: "El valor en este campo es inválido"
-});
-
-Ext.define("Ext.locale.es.form.field.Text", {
-    override: "Ext.form.field.Text",
-    minLengthText: "El tamaño mínimo para este campo es de {0}",
-    maxLengthText: "El tamaño máximo para este campo es de {0}",
-    blankText: "Este campo es obligatorio",
-    regexText: "",
-    emptyText: null
-});
-
-Ext.define("Ext.locale.es.form.field.Number", {
-    override: "Ext.form.field.Number",
-    decimalPrecision: 2,
-    minText: "El valor mínimo para este campo es de {0}",
-    maxText: "El valor máximo para este campo es de {0}",
-    nanText: "{0} no es un número válido"
-});
-
-Ext.define("Ext.locale.es.form.field.File", { 
-    override: "Ext.form.field.File", 
-    buttonText: "Examinar..." 
-});
-
-Ext.define("Ext.locale.es.form.field.Date", {
+});Ext.define("Ext.locale.es.form.field.ComboBox", {
+    override: "Ext.form.field.ComboBox",
+    valueNotFoundText: undefined
+}, function() {
+    Ext.apply(Ext.form.field.ComboBox.prototype.defaultListConfig, {
+        loadingText: "Cargando..."
+    });
+});Ext.define("Ext.locale.es.form.field.Date", {
     override: "Ext.form.field.Date",
     disabledDaysText: "Deshabilitado",
     disabledDatesText: "Deshabilitado",
@@ -155,26 +103,10 @@ Ext.define("Ext.locale.es.form.field.Date", {
     invalidText: "{0} no es una fecha válida - debe tener el formato {1}",
     format: "d/m/Y",
     altFormats: "d/m/Y|d-m-y|d-m-Y|d/m|d-m|dm|dmy|dmY|d|Y-m-d"
-});
-
-Ext.define("Ext.locale.es.form.field.ComboBox", {
-    override: "Ext.form.field.ComboBox",
-    valueNotFoundText: undefined
-}, function() {
-    Ext.apply(Ext.form.field.ComboBox.prototype.defaultListConfig, {
-        loadingText: "Cargando..."
-    });
-});
-
-Ext.define("Ext.locale.es.form.field.VTypes", {
-    override: "Ext.form.field.VTypes",
-    emailText: 'Este campo debe ser una dirección de correo electrónico con el formato "usuario@dominio.com"',
-    urlText: 'Este campo debe ser una URL con el formato "http:/' + '/www.dominio.com"',
-    alphaText: 'Este campo sólo debe contener letras y _',
-    alphanumText: 'Este campo sólo debe contener letras, números y _'
-});
-
-Ext.define("Ext.locale.es.form.field.HtmlEditor", {
+});Ext.define("Ext.locale.es.form.field.File", { 
+    override: "Ext.form.field.File", 
+    buttonText: "Examinar..." 
+});Ext.define("Ext.locale.es.form.field.HtmlEditor", {
     override: "Ext.form.field.HtmlEditor",
     createLinkText: "Por favor proporcione la URL para el enlace:"
 }, function() {
@@ -252,49 +184,96 @@ Ext.define("Ext.locale.es.form.field.HtmlEditor", {
             }
         }
     });
-});
-
-Ext.define("Ext.locale.es.grid.header.Container", {
-    override: "Ext.grid.header.Container",
-    sortAscText: "Ordenar en forma ascendente",
-    sortDescText: "Ordenar en forma descendente",
-    columnsText: "Columnas"
-});
-
-Ext.define("Ext.locale.es.grid.GroupingFeature", {
-    override: "Ext.grid.feature.Grouping",
-    emptyGroupText: '(Ninguno)',
-    groupByText: 'Agrupar por este campo',
-    showGroupsText: 'Mostrar en grupos'
-});
-
-Ext.define("Ext.locale.es.grid.PropertyColumnModel", {
-    override: "Ext.grid.PropertyColumnModel",
-    nameText: "Nombre",
-    valueText: "Valor",
-    dateFormat: "j/m/Y"
-});
-
-Ext.define("Ext.locale.es.form.field.Time", {
+});Ext.define("Ext.locale.es.form.field.Number", {
+    override: "Ext.form.field.Number",
+    decimalPrecision: 2,
+    minText: "El valor mínimo para este campo es de {0}",
+    maxText: "El valor máximo para este campo es de {0}",
+    nanText: "{0} no es un número válido"
+});Ext.define("Ext.locale.es.form.field.Text", {
+    override: "Ext.form.field.Text",
+    minLengthText: "El tamaño mínimo para este campo es de {0}",
+    maxLengthText: "El tamaño máximo para este campo es de {0}",
+    blankText: "Este campo es obligatorio",
+    regexText: "",
+    emptyText: null
+});Ext.define("Ext.locale.es.form.field.Time", {
     override: "Ext.form.field.Time",
     minText: "La hora en este campo debe ser igual o posterior a {0}",
     maxText: "La hora en este campo debe ser igual o anterior a {0}",
     invalidText: "{0} no es una hora válida",
     format: "g:i A",
     altFormats: "g:ia|g:iA|g:i a|g:i A|h:i|g:i|H:i|ga|ha|gA|h a|g a|g A|gi|hi|gia|hia|g|H"
+});Ext.define("Ext.locale.es.form.field.VTypes", {
+    override: "Ext.form.field.VTypes",
+    emailText: 'Este campo debe ser una dirección de correo electrónico con el formato "usuario@dominio.com"',
+    urlText: 'Este campo debe ser una URL con el formato "http:/' + '/www.dominio.com"',
+    alphaText: 'Este campo sólo debe contener letras y _',
+    alphanumText: 'Este campo sólo debe contener letras, números y _'
+});Ext.define("Ext.locale.es.grid.PropertyColumnModel", {
+    override: "Ext.grid.PropertyColumnModel",
+    nameText: "Nombre",
+    valueText: "Valor",
+    dateFormat: "j/m/Y"
+});Ext.define("Ext.locale.es.grid.feature.Grouping", {
+    override: "Ext.grid.feature.Grouping",
+    emptyGroupText: '(Ninguno)',
+    groupByText: 'Agrupar por este campo',
+    showGroupsText: 'Mostrar en grupos'
+});Ext.define('Ext.locale.es.grid.filters.filter.Boolean', {
+    override: 'Ext.grid.filters.filter.Boolean',
+    yesText: 'Sí',
+    noText : 'No'
 });
-
-Ext.define("Ext.locale.es.form.CheckboxGroup", {
-    override: "Ext.form.CheckboxGroup",
-    blankText: "Debe seleccionar al menos un étem de este grupo"
+Ext.define('Ext.locale.es.grid.filters.filter.List', {
+    override: 'Ext.grid.filters.filter.List',
+    loadingText: 'Cargando...'
 });
-
-Ext.define("Ext.locale.es.form.RadioGroup", {
-    override: "Ext.form.RadioGroup",
-    blankText: "Debe seleccionar un étem de este grupo"
+Ext.define("Ext.locale.es.grid.header.Container", {
+    override: "Ext.grid.header.Container",
+    sortAscText: "Ordenar en forma ascendente",
+    sortDescText: "Ordenar en forma descendente",
+    columnsText: "Columnas"
+});Ext.define("Ext.locale.es.grid.plugin.DragDrop", {
+    override: "Ext.grid.plugin.DragDrop",
+    dragText: "{0} fila(s) seleccionada(s)"
+});Ext.define("Ext.locale.es.picker.Date", {
+    override: "Ext.picker.Date",
+    todayText: "Hoy",
+    minText: "Esta fecha es anterior a la fecha mínima",
+    maxText: "Esta fecha es posterior a la fecha máxima",
+    disabledDaysText: "",
+    disabledDatesText: "",
+    nextText: 'Mes Siguiente (Control+Right)',
+    prevText: 'Mes Anterior (Control+Left)',
+    monthYearText: 'Seleccione un mes (Control+Up/Down para desplazar el año)',
+    todayTip: "{0} (Barra espaciadora)",
+    format: "d/m/Y",
+    startDay: 1
 });
-
-Ext.define("Ext.locale.es.window.MessageBox", {
+Ext.define("Ext.locale.es.picker.Month", {
+    override: "Ext.picker.Month",
+    okText: "&#160;Aceptar&#160;",
+    cancelText: "Cancelar"
+});Ext.define("Ext.locale.es.toolbar.Paging", {
+    override: "Ext.PagingToolbar",
+    beforePageText: "Página",
+    afterPageText: "de {0}",
+    firstText: "Primera página",
+    prevText: "Página anterior",
+    nextText: "Página siguiente",
+    lastText: "Última página",
+    refreshText: "Actualizar",
+    displayMsg: "Mostrando {0} - {1} de {2}",
+    emptyMsg: 'Sin datos para mostrar'
+});// changing the msg text below will affect the LoadMask
+Ext.define("Ext.locale.es.view.AbstractView", {
+    override: "Ext.view.AbstractView",
+    loadingText: "Cargando..."
+});Ext.define("Ext.locale.es.view.View", {
+    override: "Ext.view.View",
+    emptyText: ""
+});Ext.define("Ext.locale.es.window.MessageBox", {
     override: "Ext.window.MessageBox",
     buttonText: {
         ok: "Aceptar",
@@ -302,9 +281,4 @@ Ext.define("Ext.locale.es.window.MessageBox", {
         yes: "Sí",
         no: "No"
     }    
-});
-
-// This is needed until we can refactor all of the locales into individual files
-Ext.define("Ext.locale.es.Component", {	
-    override: "Ext.Component"
 });

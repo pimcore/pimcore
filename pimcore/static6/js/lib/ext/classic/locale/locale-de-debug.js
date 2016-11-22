@@ -63,6 +63,12 @@ Ext.define("Ext.locale.de.view.View", {
     emptyText: ""
 });
 
+Ext.define("Ext.locale.de.panel.Panel", {
+    override: "Ext.panel.Panel",
+    collapseToolText: "reduzieren",
+    expandToolText: "erweitern"
+});
+
 Ext.define("Ext.locale.de.grid.plugin.DragDrop", {
     override: "Ext.grid.plugin.DragDrop",
     dragText: "{0} Zeile(n) ausgewählt"
@@ -317,6 +323,18 @@ Ext.define("Ext.locale.de.window.MessageBox", {
         yes: "Ja",
         no: "Nein"
     }    
+});
+
+Ext.define("Ext.locale.de.view.MultiSelectorSearch", {
+    override: "Ext.view.MultiSelectorSearch" ,
+    searchText: "Suche..."
+});
+
+Ext.define("Ext.locale.de.view.MultiSelector", {
+    override: "Ext.view.MultiSelector",
+    emptyText: "Nichts ausgewählt",
+    removeRowTip: "Dieses Element entfernen",
+    addToolText: "Suche Elemente zum Hinzufügen"
 });
 
 // This is needed until we can refactor all of the locales into individual files

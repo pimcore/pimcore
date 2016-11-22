@@ -7,11 +7,19 @@ Ext.define('Ext.ux.colorpick.Slider', {
     xtype      : 'colorpickerslider',
     controller : 'colorpick-slidercontroller',
 
+    afterRender: function() {
+        this.callParent(arguments);
+
+        var width = this.width,
+            dragCt = this.lookupReference('dragHandleContainer'),
+            dragWidth = dragCt.getWidth();
+
+        dragCt.el.setStyle('left', ((width - dragWidth) / 2) + 'px');
+    },
+
     baseCls : Ext.baseCSSPrefix + 'colorpicker-slider',
-    layout  : 'center',
 
     requires: [
-        'Ext.layout.container.Center',
         'Ext.ux.colorpick.SliderController'
     ],
 

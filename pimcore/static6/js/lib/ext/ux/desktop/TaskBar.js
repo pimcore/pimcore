@@ -246,7 +246,7 @@ Ext.define('Ext.ux.desktop.TrayClock', {
         me.callParent();
     },
 
-    onDestroy: function () {
+    doDestroy: function () {
         var me = this;
 
         if (me.timer) {

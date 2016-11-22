@@ -1,6 +1,6 @@
 /**
  * @class Ext.ux.DataTip
- * @extends Ext.ToolTip.
+ * @extends Ext.tip.ToolTip
  * This plugin implements automatic tooltip generation for an arbitrary number of child nodes *within* a Component.
  *
  * This plugin is applied to a high level Component, which contains repeating elements, and depending on the host Component type,
