@@ -211,7 +211,7 @@ Ext.define('Ext.overrides.grid.View', {
             }
         }
     }, function() {
-        if (!Ext.getVersion().match('6.0.0.640')) {
+        if (!Ext.getVersion().match('6.2.0.981')) {
             console.warn('This patch has not been tested with this version of ExtJS');
         }
 
