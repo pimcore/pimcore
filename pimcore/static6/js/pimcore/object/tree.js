@@ -94,7 +94,8 @@ pimcore.object.tree = Class.create({
                     view: this.config.customViewId
                 }
             },
-            pageSize: itemsPerPage
+            pageSize: itemsPerPage,
+            root: rootNodeConfig
         });
 
 
@@ -133,8 +134,7 @@ pimcore.object.tree = Class.create({
                 type: "left",
                 handler: pimcore.layout.treepanelmanager.toLeft.bind(this),
                 hidden: this.position == "left"
-            }],
-            root: rootNodeConfig
+            }]
         });
 
         store.on("nodebeforeexpand", function (node) {
