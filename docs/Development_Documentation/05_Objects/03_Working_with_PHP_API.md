@@ -1,7 +1,7 @@
 # Working with Objects via PHP API
 
-Pimcore provides and object orientated PHP API to work with Objects. There are several generic functionalities 
-provided by Pimcore and for each Pimcore object class Pimcore generates corresponding php classes for working
+Pimcore provides an object orientated PHP API to work with Objects. There are several generic functionalities 
+provided by Pimcore and for each Pimcore object class Pimcore generates corresponding PHP classes for working
 with these objects via a comfortable PHP API and take full advantage of a IDE (e.g. code completion etc.). 
     
 ## CRUD Operations
