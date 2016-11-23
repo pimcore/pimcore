@@ -253,6 +253,14 @@ body > .x-mask {
     opacity: 0.7;
 }
 
+.x-tree-node-text {
+    font-weight: 400;
+}
+
+.x-menu-item-text-default {
+    font-weight: 400;
+}
+
 /* ExtJS 6.0 bugfixes */
 
 .x-accordion-hd .x-tool-right, .x-accordion-hd .x-tool-left {
