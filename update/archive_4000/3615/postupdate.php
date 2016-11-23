@@ -26,5 +26,4 @@ if(!isset($systemSettings["httpclient"]["adapter"]) || empty($systemSettings["ht
 
 $contents = var_export_pretty($systemSettings);
 $contents = "<?php \n\nreturn " . $contents . ";\n";
-\Pimcore\File::putPhpFile($configFile, $contents);
-
+\Pimcore\File::put($configFile, $contents);
