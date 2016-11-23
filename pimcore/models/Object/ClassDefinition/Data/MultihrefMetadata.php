@@ -847,4 +847,12 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
             return $result;
         }
     }
+
+    /**
+     * @return string
+     */
+    public function getPhpdocType()
+    {
+        return $this->phpdocType;
+    }
 }
