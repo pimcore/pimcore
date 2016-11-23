@@ -275,4 +275,13 @@ class Checkbox extends Model\Object\ClassDefinition\Data
 
         return "IFNULL(" . $key . ", 0) = " . $value . " ";
     }
+    
+    /**
+     * @param Object_Concrete $data
+     * @return bool
+     */
+    public function isEmpty($data)
+    {
+        return empty($data) && !is_bool($data);
+    }
 }
