@@ -64,7 +64,9 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
             input.value = this.data.value;
         } else {
             // wipe invalid data
-            this.data.value = null;
+            if (this.data) {
+                this.data.value = null;
+            }
             valueInvalid = true;
         }
 
