@@ -16,8 +16,6 @@ namespace Pimcore;
 
 use Pimcore\Model\Element;
 use Pimcore\Model\Document;
-use Pimcore\Logger;
-use DeepCopy\DeepCopy;
 
 class Cache
 {
@@ -348,14 +346,6 @@ class Cache
     {
         if (!$force && php_sapi_name() == "cli") {
             return;
-        }
-
-        if (is_object($data) && $data instanceof Element\ElementInterface) {
-            $deepCopy = new DeepCopy();
-            $deepCopy->addFilter(new \DeepCopy\Filter\SetNullFilter(), new \DeepCopy\Matcher\PropertyNameMatcher('dao'));
-            $deepCopy->addFilter(new \DeepCopy\Filter\SetNullFilter(), new \DeepCopy\Matcher\PropertyNameMatcher('resource'));
-            $deepCopy->addFilter(new \DeepCopy\Filter\SetNullFilter(), new \DeepCopy\Matcher\PropertyNameMatcher('writeResource'));
-            $data = $deepCopy->copy($data);
         }
 
         if (self::getForceImmediateWrite() || $force) {
