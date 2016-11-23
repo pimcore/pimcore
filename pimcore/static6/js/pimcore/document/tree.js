@@ -148,9 +148,6 @@ pimcore.document.tree = Class.create({
             listeners: this.getTreeNodeListeners()
         });
 
-
-        //this.tree.on("startdrag", this.onDragStart.bind(this));
-
         this.tree.loadMask = new Ext.LoadMask({
             target: this.tree,
             msg: t("please_wait")
@@ -202,10 +199,6 @@ pimcore.document.tree = Class.create({
         };
 
         return treeNodeListeners;
-    },
-
-    onDragStart : function (tree, node, id) {
-        pimcore.helpers.treeNodeThumbnailPreviewHide();
     },
 
     onTreeNodeClick: function (tree, record, item, index, e, eOpts ) {
