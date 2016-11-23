@@ -45,12 +45,17 @@ class Editmode extends \Zend_Controller_Plugin_Abstract
 
         // add scripts to editmode
 
+        $debugSuffix = "";
+        if (PIMCORE_DEVMODE) {
+            $debugSuffix = "-debug";
+        }
+
         if (\Pimcore\Tool\Admin::isExtJS6()) {
             $editmodeLibraries = [
                 "/pimcore/static6/js/pimcore/namespace.js",
                 "/pimcore/static6/js/lib/prototype-light.js",
                 "/pimcore/static6/js/lib/jquery.min.js",
-                "/pimcore/static6/js/lib/ext/ext-all.js",
+                "/pimcore/static6/js/lib/ext/ext-all" . $debugSuffix . ".js",
                 "/pimcore/static6/js/lib/ckeditor/ckeditor.js"
             ];
 
