@@ -145,9 +145,7 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
 
 
         // test if there is a suitable redirect with override = all (=> priority = 99)
-        if (!$matchFound) {
-            $this->checkForRedirect($originalPath, true);
-        }
+        $this->checkForRedirect($originalPath, true);
 
         // do not allow requests including /index.php/ => SEO
         // this is after the first redirect check, to allow redirects in index.php?xxx
