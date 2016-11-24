@@ -1161,10 +1161,6 @@ span.warning {
     border-color: #000;
 }
 
-.pimcore_navigation_flyout .x-menu-item-active .x-menu-item-text {
-    font-weight: 100 !important;
-}
-
 .x-fieldset-header-tool-right {
     margin-left: 8px;
 }
