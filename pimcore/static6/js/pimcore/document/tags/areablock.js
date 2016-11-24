@@ -368,22 +368,27 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         el.dropZone = new Ext.dd.DropZone(el, {
 
             getTargetFromEvent: function(e) {
+                console.log(el);
                 return el;
             },
 
             onNodeEnter : function(target, dd, e, data){
+                console.log("onNodeEnter");
                 Ext.fly(target).addCls('pimcore_area_dropzone_hover');
             },
 
             onNodeOut : function(target, dd, e, data){
+                console.log("onNodeOut");
                 Ext.fly(target).removeCls('pimcore_area_dropzone_hover');
             },
 
             onNodeOver : function(target, dd, e, data){
+                console.log("onNodeOver");
                 return Ext.dd.DropZone.prototype.dropAllowed;
             },
 
             onNodeDrop : function(target, dd, e, data){
+                console.log("onNodeDrop");
                 if(data.fromToolbar) {
                     this.addBlockAt(data.brick.type, target.getAttribute("index"));
                     return true;
@@ -397,6 +402,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
     removeDropZones: function () {
 
+        return;
         //Ext.get(this.id).removeClass("pimcore_tag_areablock_hide_buttons");
 
         var dropZones = Ext.get(this.id).query("div.pimcore_area_dropzone");

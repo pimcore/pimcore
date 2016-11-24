@@ -17,13 +17,13 @@ Ext.override(Ext.dd.DragDropMgr, {
             // always hide tree-previews on drag start
             pimcore.helpers.treeNodeThumbnailPreviewHide();
 
-            // do not select text during drag & drop
-            Ext.getBody().addCls("do-not-select-text");
             this.callParent(arguments);
         },
 
-        stopDrag: function (e) {
-            Ext.getBody().removeCls("do-not-select-text");
+        handleMouseMove: function (e) {
+            // stops text selection while dragging
+            e.preventDefault();
+
             this.callParent(arguments);
         }
     }
