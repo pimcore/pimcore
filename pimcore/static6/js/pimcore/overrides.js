@@ -11,7 +11,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-Ext.override(Ext.dd.DragDropMgr, {
+Ext.override(Ext.dd.DragDropManager, {
         startDrag: function (x, y) {
 
             // always hide tree-previews on drag start
@@ -21,8 +21,22 @@ Ext.override(Ext.dd.DragDropMgr, {
         },
 
         handleMouseMove: function (e) {
-            // stops text selection while dragging
-            e.preventDefault();
+
+            // stops text selection while dragging an element
+            if(this.dragCurrent) {
+                e.preventDefault();
+            }
+
+            this.callParent(arguments);
+        },
+
+        handleMouseUp: function(e) {
+            // bug fix in 6.2.0 ;-(
+            if(!this.pointerMoveListeners) {
+                this.pointerMoveListeners = {
+                    destroy: function () {}
+                };
+            }
 
             this.callParent(arguments);
         }
