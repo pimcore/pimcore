@@ -169,7 +169,7 @@ class Cache
         }
 
         self::$instance->setLifetime(self::$defaultLifetime);
-        self::$instance->setOption("automatic_serialization", false);
+        self::$instance->setOption("automatic_serialization", true);
         self::$instance->setOption("automatic_cleaning_factor", 0);
 
         // init the write lock once (from other processes etc.)
@@ -224,7 +224,7 @@ class Cache
             "frontendType" => "Core",
             "frontendConfig" => [
                 "lifetime" => self::$defaultLifetime,
-                "automatic_serialization" => false,
+                "automatic_serialization" => true,
                 "automatic_cleaning_factor" => 0
             ],
             "customFrontendNaming" => true,
