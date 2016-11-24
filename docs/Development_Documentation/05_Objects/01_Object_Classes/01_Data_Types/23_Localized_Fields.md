@@ -36,6 +36,15 @@ You can do this in `Settings` -> `System Settings` -> `Localization & Internatio
 
 ## Working with PHP api
 
+### Getting available languages ###
+
+The following code will create an array containing the available languages:
+
+```php
+		$config = \Pimcore\Config::getSystemConfig();
+		$languages = explode(',', $config->general->validLanguages);
+```
+
 ### Accessing the data
 
 Accessing the data is simple as below:
