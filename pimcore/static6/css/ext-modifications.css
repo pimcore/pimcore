@@ -246,6 +246,7 @@ body > .x-mask {
     vertical-align: middle;
 }*/
 
+/*
 .x-tree-drop-ok-above .x-dd-drop-icon {
     background-image: url(../js/lib/ext/classic/theme-triton/resources/images/tree/drop-between.gif);
 }
@@ -257,6 +258,7 @@ body > .x-mask {
 .x-tree-drop-ok-between .x-dd-drop-icon {
     background-image: url(../js/lib/ext/classic/theme-triton/resources/images/tree/drop-between.gif);
 }
+*/
 
 .x-form-item-default.x-item-disabled {
     opacity: 0.7;
