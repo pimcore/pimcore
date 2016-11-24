@@ -21,13 +21,17 @@ Ext.override(Ext.dd.DragDropManager, {
         },
 
         handleMouseMove: function (e) {
+            this.callParent(arguments);
 
-            // stops text selection while dragging an element
-            if(this.dragCurrent) {
-                e.preventDefault();
+            var preventDefault = true;
+            if(e.target && e.target.getAttribute("dragdropmanager-preventdefault")) {
+                preventDefault = false;
             }
 
-            this.callParent(arguments);
+            // stops text selection while dragging an element
+            if(this.dragCurrent && preventDefault) {
+                e.preventDefault();
+            }
         },
 
         handleMouseUp: function(e) {

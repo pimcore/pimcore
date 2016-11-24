@@ -24,6 +24,7 @@ pimcore.document.edit.dnd = Class.create({
         this.dndManager = parentExt.dd.DragDropMgr;
         var iFrameElement = parent.Ext.get('document_iframe_' + window.editWindow.document.id);
 
+        iFrameElement.dom.setAttribute("dragdropmanager-preventdefault", "true");
         body.addListener('mousemove', this.ddMouseMove.bind(this));
         body.addListener('mouseup', this.ddMouseUp.bind(this));
 
