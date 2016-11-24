@@ -47,7 +47,7 @@ class Datetime extends Model\Object\ClassDefinition\Data
      *
      * @var string
      */
-    public $phpdocType = "\\Pimcore\\Date";
+    public $phpdocType = "\\Carbon\\Carbon";
 
 
     /**
