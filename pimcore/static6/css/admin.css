@@ -366,18 +366,6 @@
 
 }
 
-.pimcore_plugin_installed{
-    background: url(/pimcore/static6/img/icon/plugin.png) right top no-repeat !important;
-}
-
-.pimcore_plugin_notinstalled {
-    background: url(/pimcore/static6/img/icon/plugin_disabled.png) right top no-repeat !important;
-}
-
-.pimcore_plugin_update {
-    background: url(/pimcore/static6/img/icon/plugin_go.png) right top no-repeat !important;
-}
-
 .tree_node_error {
     text-decoration: line-through;
     color: #ff0000;
