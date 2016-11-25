@@ -8,11 +8,11 @@ Ext.define('Ext.ux.grid.SubTable', {
 
     alias: 'plugin.subtable',
 
-    rowBodyTpl: ['<table class="' + Ext.baseCSSPrefix + 'grid-subtable">',
+    rowBodyTpl: ['<table class="' + Ext.baseCSSPrefix + 'grid-subtable"><tbody>',
         '{%',
             'this.owner.renderTable(out, values);',
         '%}',
-        '</table>'
+        '</tbody></table>'
     ],
 
     init: function(grid) {
@@ -66,7 +66,7 @@ Ext.define('Ext.ux.grid.SubTable', {
         for (j = 0; j < numColumns; j++) {
             out.push('<th class="' + Ext.baseCSSPrefix + 'grid-subtable-header">', columns[j].text, '</th>');
         }
-        out.push('</thead><tbody>');
+        out.push('</thead>');
         for (i = 0; i < recCount; i++) {
             rec = associatedRecords[i];
             out.push('<tr>');
@@ -84,7 +84,6 @@ Ext.define('Ext.ux.grid.SubTable', {
             }
             out.push('</tr>');
         }
-        out.push('</tbody>');
     },
     
     getRowBodyContentsFn: function(rowBodyTpl) {

@@ -79,9 +79,9 @@ Ext.define('Ext.ux.TabCloseMenu', {
         });
     },
 
-    destroy: function() {
-        Ext.destroy(this.menu);
+    destroy : function(){
         this.callParent();
+        Ext.destroy(this.menu);
     },
 
     /**

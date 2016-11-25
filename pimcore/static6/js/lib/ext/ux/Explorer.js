@@ -68,7 +68,6 @@ Ext.define('Ext.ux.Explorer', {
         /**
          * @cfg {Ext.data.TreeModel} selection
          * The selected node
-         * @accessor
          */
         selection: null
     },

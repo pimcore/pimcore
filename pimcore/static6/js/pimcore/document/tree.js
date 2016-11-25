@@ -106,7 +106,8 @@ pimcore.document.tree = Class.create({
                     view: this.config.customViewId
                 }
             },
-            pageSize: itemsPerPage
+            pageSize: itemsPerPage,
+            root: rootNodeConfig
         });
 
 

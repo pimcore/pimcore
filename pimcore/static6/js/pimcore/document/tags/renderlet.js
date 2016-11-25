@@ -164,9 +164,6 @@ pimcore.document.tags.renderlet = Class.create(pimcore.document.tag, {
         this.getBody().setStyle({
             height: "auto"
         });
-
-        var parent = this.getBody().parent(".x-panel");
-        parent.setStyle("height", "auto");
     },
 
     onContextMenu: function (e) {

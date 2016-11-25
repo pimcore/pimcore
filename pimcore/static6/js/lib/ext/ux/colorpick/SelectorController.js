@@ -9,6 +9,16 @@ Ext.define('Ext.ux.colorpick.SelectorController', {
         'Ext.ux.colorpick.ColorUtils'
     ],
 
+    initViewModel: function () {
+        var me = this,
+            view = me.getView();
+
+        // And ensure that the
+        view.childViewModel.bind('{selectedColor}', function (color) {
+            view.setColor(color);
+        });
+    },
+
     destroy: function () {
         var me = this,
             view = me.getView(),
@@ -113,6 +123,7 @@ Ext.define('Ext.ux.colorpick.SelectorController', {
         s = vm.get('saturation');
         v = vm.get('value');
         a = vm.get('alpha');
+console.log('h=' + h);
         // Reposition the colormap's & sliders' drag handles
         refs.colorMap.setPosition(vm.getData());
         refs.hueSlider.setHue(h);

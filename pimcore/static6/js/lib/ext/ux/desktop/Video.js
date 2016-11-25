@@ -7,6 +7,7 @@
 
 /**
  * From code originally written by David Davis
+ * <http://www.sencha.com/blog/html5-video-canvas-and-ext-js>
  *
  * For HTML5 video to work, your server must
  * send the right content type, for more info see:
@@ -107,7 +108,7 @@ Ext.define('Ext.ux.desktop.Video', {
         me.body.createChild(me.getFallback());
     },
 
-    doDestroy: function () {
+    onDestroy: function () {
         var me = this;
 
         var video = me.video;

@@ -101,14 +101,13 @@ Ext.define('Ext.ux.DataView.Draggable', {
      * Called when the attached DataView is rendered. Sets up the internal DragZone
      */
     onRender: function() {
-        var me = this,
-            config = Ext.apply({}, me.ddConfig || {}, {
-            dvDraggable: me,
-            dataview   : me.dataview,
-            getDragData: me.getDragData,
-            getTreeNode: me.getTreeNode,
-            afterRepair: me.afterRepair,
-            getRepairXY: me.getRepairXY
+        var config = Ext.apply({}, this.ddConfig || {}, {
+            dvDraggable: this,
+            dataview   : this.dataview,
+            getDragData: this.getDragData,
+            getTreeNode: this.getTreeNode,
+            afterRepair: this.afterRepair,
+            getRepairXY: this.getRepairXY
         });
 
         /**
@@ -116,15 +115,7 @@ Ext.define('Ext.ux.DataView.Draggable', {
          * @type Ext.dd.DragZone
          * The attached DragZone instane
          */
-        me.dragZone = Ext.create('Ext.dd.DragZone', me.dataview.getEl(), config);
-
-        // This is for https://www.w3.org/TR/pointerevents/ platforms.
-        // On these platforms, the pointerdown event (single touchstart) is reserved for
-        // initiating a scroll gesture. Setting the items draggable defeats that and
-        // enables the touchstart event to trigger a drag.
-        //
-        // Two finger dragging will still scroll on these platforms.
-        me.dataview.setItemsDraggable(true);
+        this.dragZone = Ext.create('Ext.dd.DragZone', this.dataview.getEl(), config);
     },
 
     getDragData: function(e) {
@@ -135,10 +126,6 @@ Ext.define('Ext.ux.DataView.Draggable', {
             selected, dragData;
 
         if (target) {
-            // preventDefault is needed here to avoid the browser dragging the image
-            // instead of dragging the container like it's supposed to
-            e.preventDefault();
-            
             if (!dataview.isSelected(target)) {
                 selModel.select(dataview.getRecord(target));
             }

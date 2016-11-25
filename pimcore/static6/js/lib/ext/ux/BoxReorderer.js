@@ -2,9 +2,6 @@
  * Base class from Ext.ux.TabReorderer.
  */
 Ext.define('Ext.ux.BoxReorderer', {
-    extend: 'Ext.plugin.Abstract',
-    alias: 'plugin.boxreorderer',
-
     requires: [
         'Ext.dd.DD'
     ],
@@ -66,9 +63,8 @@ Ext.define('Ext.ux.BoxReorderer', {
      * @param {Number} idx The index at which the Component is being dropped.
      */
 
-    constructor: function () {
-        this.callParent(arguments);
-        this.mixins.observable.constructor.call(this);
+    constructor: function() {
+        this.mixins.observable.constructor.apply(this, arguments);
     },
 
     init: function(container) {
@@ -91,8 +87,7 @@ Ext.define('Ext.ux.BoxReorderer', {
     },
 
     /**
-     * @private
-     * Clear up on Container destroy
+     * @private Clear up on Container destroy
      */
     onContainerDestroy: function() {
         var dd = this.dd;

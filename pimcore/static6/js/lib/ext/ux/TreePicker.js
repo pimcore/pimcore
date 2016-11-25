@@ -77,7 +77,6 @@ Ext.define('Ext.ux.TreePicker', {
     createPicker: function() {
         var me = this,
             picker = new Ext.tree.Panel({
-                baseCls: Ext.baseCSSPrefix + 'boundlist',
                 shrinkWrapDock: 2,
                 store: me.store,
                 floating: true,
@@ -89,8 +88,13 @@ Ext.define('Ext.ux.TreePicker', {
                 shadow: false,
                 listeners: {
                     scope: me,
-                    itemclick: me.onItemClick,
-                    itemkeydown: me.onPickerKeyDown
+                    itemclick: me.onItemClick
+                },
+                viewConfig: {
+                    listeners: {
+                        scope: me,
+                        render: me.onViewRender
+                    }
                 }
             }),
             view = picker.getView();
@@ -107,6 +111,10 @@ Ext.define('Ext.ux.TreePicker', {
             });
         }
         return picker;
+    },
+    
+    onViewRender: function(view){
+        view.getEl().on('keypress', this.onPickerKeypress, this);
     },
 
     /**
@@ -138,11 +146,11 @@ Ext.define('Ext.ux.TreePicker', {
      * @param {Ext.event.Event} e
      * @param {HTMLElement} el
      */
-    onPickerKeyDown: function(treeView, record, item, index, e) {
+    onPickerKeypress: function(e, el) {
         var key = e.getKey();
 
-        if (key === e.ENTER || (key === e.TAB && this.selectOnTab)) {
-            this.selectItem(record);
+        if(key === e.ENTER || (key === e.TAB && this.selectOnTab)) {
+            this.selectItem(this.picker.getSelectionModel().getSelection()[0]);
         }
     },
 
@@ -164,9 +172,10 @@ Ext.define('Ext.ux.TreePicker', {
      * @private
      */
     onExpand: function() {
-        var picker = this.picker,
+        var me = this,
+            picker = me.picker,
             store = picker.store,
-            value = this.value,
+            value = me.value,
             node;
 
         
@@ -178,10 +187,7 @@ Ext.define('Ext.ux.TreePicker', {
             node = store.getRoot();
         }
         
-        picker.ensureVisible(node, {
-            select: true,
-            focus: true
-        });
+        picker.selectPath(node.getPath());
     },
 
     /**
