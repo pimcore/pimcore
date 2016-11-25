@@ -8,6 +8,16 @@ Ext.define('Ext.ux.DataView.DragSelector', {
      * Initializes the plugin by setting up the drag tracker
      */
     init: function(dataview) {
+        var scroller = dataview.getScrollable();
+
+        // If the client dataview is scrollable, and this is a PointerEvents device
+        // we cannot intercept the pointer to inplement dragselect.
+        if (scroller && (scroller.getX() || scroller.getY()) && (Ext.supports.PointerEvents || Ext.supports.MSPointerEvents)) {
+            //<debug>
+            Ext.log.warn('DragSelector not available on PointerEvent devices')
+            //</debug>
+            return;
+        }
         /**
          * @property dataview
          * @type Ext.view.View
@@ -41,11 +51,10 @@ Ext.define('Ext.ux.DataView.DragSelector', {
         this.tracker = Ext.create('Ext.dd.DragTracker', {
             dataview: this.dataview,
             el: this.dataview.el,
-            dragSelector: this,
             onBeforeStart: this.onBeforeStart,
-            onStart: this.onStart,
-            onDrag : this.onDrag,
-            onEnd  : this.onEnd
+            onStart: this.onStart.bind(this),
+            onDrag : this.onDrag.bind(this),
+            onEnd  : Ext.Function.createDelayed(this.onEnd, 100, this)
         });
 
         /**
@@ -63,7 +72,7 @@ Ext.define('Ext.ux.DataView.DragSelector', {
      * DataView's el
      */
     onBeforeStart: function(e) {
-        return e.target == this.dataview.getEl().dom;
+        return e.target === this.dataview.getEl().dom;
     },
 
     /**
@@ -73,8 +82,7 @@ Ext.define('Ext.ux.DataView.DragSelector', {
      * @param {Ext.event.Event} e The click event
      */
     onStart: function(e) {
-        var dragSelector = this.dragSelector,
-            dataview     = this.dataview;
+        var dataview = this.dataview;
 
         // Flag which controls whether the cancelClick method vetoes the processing of the DataView's containerclick event.
         // On IE (where else), this needs to remain set for a millisecond after mouseup because even though the mouse has
@@ -82,8 +90,8 @@ Ext.define('Ext.ux.DataView.DragSelector', {
         this.dragging = true;
 
         //here we reset and show the selection proxy element and cache the regions each item in the dataview take up
-        dragSelector.fillRegions();
-        dragSelector.getProxy().show();
+        this.fillRegions();
+        this.getProxy().show();
         dataview.getSelectionModel().deselectAll();
     },
 
@@ -93,7 +101,7 @@ Ext.define('Ext.ux.DataView.DragSelector', {
      * details
      */
     cancelClick: function() {
-        return !this.tracker.dragging;
+        return !this.dragging;
     },
 
     /**
@@ -104,16 +112,15 @@ Ext.define('Ext.ux.DataView.DragSelector', {
      * @param {Ext.event.Event} e The drag event
      */
     onDrag: function(e) {
-        var dragSelector = this.dragSelector,
-            selModel     = dragSelector.dataview.getSelectionModel(),
-            dragRegion   = dragSelector.dragRegion,
-            bodyRegion   = dragSelector.bodyRegion,
-            proxy        = dragSelector.getProxy(),
-            regions      = dragSelector.regions,
+        var selModel     = this.dataview.getSelectionModel(),
+            dragRegion   = this.dragRegion,
+            bodyRegion   = this.bodyRegion,
+            proxy        = this.getProxy(),
+            regions      = this.regions,
             length       = regions.length,
 
-            startXY   = this.startXY,
-            currentXY = this.getXY(),
+            startXY   = this.tracker.startXY,
+            currentXY = this.tracker.getXY(),
             minX      = Math.min(startXY[0], currentXY[0]),
             minY      = Math.min(startXY[1], currentXY[1]),
             width     = Math.abs(startXY[0] - currentXY[0]),
@@ -143,20 +150,20 @@ Ext.define('Ext.ux.DataView.DragSelector', {
     },
 
     /**
+     * @method
      * @private
      * Listener attached to the DragTracker's onEnd event. This is a delayed function which executes 1
      * millisecond after it has been called. This is because the dragging flag must remain active to cancel
      * the containerclick event which the mouseup event will trigger.
      * @param {Ext.event.Event} e The event object
      */
-    onEnd: Ext.Function.createDelayed(function(e) {
+    onEnd: function(e) {
         var dataview = this.dataview,
-            selModel = dataview.getSelectionModel(),
-            dragSelector = this.dragSelector;
+            selModel = dataview.getSelectionModel();
 
         this.dragging = false;
-        dragSelector.getProxy().hide();
-    }, 1),
+        this.getProxy().hide();
+    },
 
     /**
      * @private

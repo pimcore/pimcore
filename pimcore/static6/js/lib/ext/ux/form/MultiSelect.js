@@ -142,17 +142,6 @@ Ext.define('Ext.ux.form.MultiSelect', {
 
         me.bindStore(me.store, true);
 
-        if (me.store.autoCreated) {
-            me.valueField = me.displayField = 'field1';
-            if (!me.store.expanded) {
-                me.displayField = 'field2';
-            }
-        }
-
-        if (!Ext.isDefined(me.valueField)) {
-            me.valueField = me.displayField;
-        }
-
         me.callParent();
         me.initField();
     },
@@ -530,7 +519,7 @@ Ext.define('Ext.ux.form.MultiSelect', {
         return errors;
     },
     
-    onDestroy: function(){
+    doDestroy: function(){
         var me = this;
         
         me.bindStore(null);
@@ -539,11 +528,39 @@ Ext.define('Ext.ux.form.MultiSelect', {
     },
     
     onBindStore: function(store){
-        var boundList = this.boundList;
-        
+        var me = this,
+            boundList = this.boundList;
+
+        if (store.autoCreated) {
+            me.resolveDisplayField();
+        }
+
+        if (!Ext.isDefined(me.valueField)) {
+            me.valueField = me.displayField;
+        }
+
         if (boundList) {
             boundList.bindStore(store);
         }
-    }
-    
+    },
+
+    /**
+     * Applies auto-created store fields to field and boundlist
+     * @private
+     */
+    resolveDisplayField: function() {
+        var me = this,
+            boundList = me.boundList,
+            store = me.getStore();
+
+        me.valueField = me.displayField = 'field1';
+
+        if (!store.expanded) {
+            me.displayField = 'field2';
+        }
+
+        if (boundList) {
+            boundList.setDisplayField(me.displayField);
+        }
+    }    
 });

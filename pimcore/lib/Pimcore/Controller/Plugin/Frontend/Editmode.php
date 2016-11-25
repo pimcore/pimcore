@@ -61,6 +61,7 @@ class Editmode extends \Zend_Controller_Plugin_Abstract
 
             $editmodeScripts = [
                 "/pimcore/static6/js/pimcore/functions.js",
+                "/pimcore/static6/js/pimcore/overrides.js",
                 "/pimcore/static6/js/pimcore/element/tag/imagehotspotmarkereditor.js",
                 "/pimcore/static6/js/pimcore/element/tag/imagecropper.js",
                 "/pimcore/static6/js/pimcore/document/edit/helper.js",

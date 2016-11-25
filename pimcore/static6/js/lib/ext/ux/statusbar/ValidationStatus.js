@@ -4,6 +4,7 @@
  */
 Ext.define('Ext.ux.statusbar.ValidationStatus', {
     extend: 'Ext.Component', 
+    alias: 'plugin.validationstatus',
     requires: ['Ext.util.MixedCollection'],
     /**
      * @cfg {String} errorIconCls
@@ -52,8 +53,7 @@ Ext.define('Ext.ux.statusbar.ValidationStatus', {
         sb.on({
             single: true,
             scope: me,
-            render: me.onStatusbarRender,
-            beforedestroy: me.destroy
+            render: me.onStatusbarRender
         });
         sb.on({
             click: {
@@ -76,15 +76,22 @@ Ext.define('Ext.ux.statusbar.ValidationStatus', {
         me.listAlign = (sb.statusAlign === 'right' ? 'br-tr?' : 'bl-tl?');
 
         if (me.form) {
-            me.formPanel = Ext.getCmp(me.form);
+            // Allow either an id, or a reference to be specified as the form name.
+            me.formPanel = Ext.getCmp(me.form) || me.statusBar.lookupController().lookupReference(me.form);
             me.basicForm = me.formPanel.getForm();
             me.startMonitoring();
-            me.basicForm.on('beforeaction', function(f, action) {
-                if (action.type === 'submit') {
-                    // Ignore monitoring while submitting otherwise the field validation
-                    // events cause the status message to reset too early
-                    me.monitor = false;
+            me.basicForm.on({
+                beforeaction: function(f, action) {
+                    if (action.type === 'submit') {
+                        // Ignore monitoring while submitting otherwise the field validation
+                        // events cause the status message to reset too early
+                        me.monitor = false;
+                    }
                 }
+            });
+            me.formPanel.on({
+                beforedestroy: me.destroy,
+                scope: me
             });
             me.basicForm.on('actioncomplete', startMonitor);
             me.basicForm.on('actionfailed', startMonitor);
@@ -104,18 +111,20 @@ Ext.define('Ext.ux.statusbar.ValidationStatus', {
      * @private
      */
     stopMonitoring : function() {
-        this.basicForm.getFields().each(function(f) {
-            f.un('validitychange', this.onFieldValidation, this);
-        }, this);
+        var form = this.basicForm;
+        
+        if (!form.destroyed) {
+            form.getFields().each(function(f) {
+                f.un('validitychange', this.onFieldValidation, this);
+            }, this);
+        }
     },
 
-    /**
-     * @private
-     */
-    onDestroy : function() {
+    doDestroy: function() {
+        Ext.destroy(this.msgEl);
         this.stopMonitoring();
         this.statusBar.statusEl.un('click', this.onStatusClick, this);
-        this.callParent(arguments);
+        this.callParent();
     },
 
     /**

@@ -6,6 +6,8 @@
 Ext.onReady(function() {
 
     if (Ext.Date) {
+        Ext.Date.defaultFormat = 'd.m.Y';
+        
         Ext.Date.monthNames = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"];
 
         Ext.Date.shortMonthNames = ["Янв", "Февр", "Март", "Апр", "Май", "Июнь", "Июль", "Авг", "Сент", "Окт", "Нояб", "Дек"];
@@ -42,7 +44,7 @@ Ext.onReady(function() {
 
     if (Ext.util && Ext.util.Format) {
         Ext.apply(Ext.util.Format, {
-            thousandSeparator: '.',
+            thousandSeparator: ' ',
             decimalSeparator: ',',
             currencySign: '\u0440\u0443\u0431',
             // Russian Ruble

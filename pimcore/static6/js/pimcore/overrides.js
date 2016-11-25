@@ -11,11 +11,36 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-Ext.override(Ext.dd.DragDropMgr, {
+Ext.override(Ext.dd.DragDropManager, {
         startDrag: function (x, y) {
 
             // always hide tree-previews on drag start
             pimcore.helpers.treeNodeThumbnailPreviewHide();
+
+            this.callParent(arguments);
+        },
+
+        handleMouseMove: function (e) {
+            this.callParent(arguments);
+
+            var preventDefault = true;
+            if(e.target && e.target.getAttribute("dragdropmanager-preventdefault")) {
+                preventDefault = false;
+            }
+
+            // stops text selection while dragging an element
+            if(this.dragCurrent && preventDefault) {
+                e.preventDefault();
+            }
+        },
+
+        handleMouseUp: function(e) {
+            // bug fix in 6.2.0 ;-(
+            if(!this.pointerMoveListeners) {
+                this.pointerMoveListeners = {
+                    destroy: function () {}
+                };
+            }
 
             this.callParent(arguments);
         }
@@ -211,7 +236,7 @@ Ext.define('Ext.overrides.grid.View', {
             }
         }
     }, function() {
-        if (!Ext.getVersion().match('6.0.0.640')) {
+        if (!Ext.getVersion().match('6.2.0.981')) {
             console.warn('This patch has not been tested with this version of ExtJS');
         }
 

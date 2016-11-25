@@ -2,6 +2,8 @@
  * Plugin for PagingToolbar which replaces the textfield input with a slider
  */
 Ext.define('Ext.ux.SlidingPager', {
+    alias: 'plugin.ux-slidingpager',
+
     requires: [
         'Ext.slider.Single',
         'Ext.slider.Tip'

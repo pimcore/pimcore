@@ -90,8 +90,7 @@ pimcore.asset.tree = Class.create({
                     view: this.config.customViewId
                 }
             },
-            pageSize: itemsPerPage,
-            root: rootNodeConfig
+            pageSize: itemsPerPage
         });
 
         // assets

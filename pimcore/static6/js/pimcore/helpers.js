@@ -606,14 +606,11 @@ pimcore.helpers.showNotification = function (title, text, type, errorText, hideD
             autoShow: true,
             width: 'auto',
             maxWidth: 350,
+            align: "br",
             closeable: true
-            //autoDestroy: true
-            //,
-            //hideDelay:  hideDelay | 1000
         });
         notification.show(document);
     }
-
 };
 
 

@@ -4,14 +4,14 @@
  * `float:left` is used to provide the wrapping.
  *
  * To select which of the percentage sizes an item uses, this layout adds a viewport
- * {@link #states size-dependent} class name to the container. The stylesheet must
+ * {@link #states size-dependent} class name to the container. The style sheet must
  * provide the rules to select the desired size using the {@link #responsivecolumn-item}
  * mixin.
  *
  * For example, a panel in a responsive column layout might add the following styles:
  *
  *      .my-panel {
- *          // consume 50% of the avalable space inside the container by default
+ *          // consume 50% of the available space inside the container by default
  *          @include responsivecolumn-item(50%);
  *
  *          .x-responsivecolumn-small & {
@@ -25,7 +25,7 @@
  * classes:
  *
  *      .big-50 {
- *          // consume 50% of the avalable space inside the container by default
+ *          // consume 50% of the available space inside the container by default
  *          @include responsivecolumn-item(50%);
  *      }
  *
