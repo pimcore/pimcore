@@ -222,7 +222,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
             });
 
             // only for videos and images
-            if (this.isAllowed("publish") && in_array(this.data.type,["image","video"])) {
+            if (this.isAllowed("publish") && in_array(this.data.type,["image","video"]) || this.data.mimetype == "application/pdf") {
                 buttons.push({
                     tooltip: t("clear_thumbnails"),
                     iconCls: "pimcore_icon_menu_clear_thumbnails",
