@@ -72,7 +72,7 @@ class Console
             $paths = explode(PATH_SEPARATOR, $pathVariable);
         }
 
-        array_unshift($paths, "");
+        array_push($paths, "");
 
         // allow custom setup routines for certain programs
         $customSetupMethod = "setup" . ucfirst($name);
