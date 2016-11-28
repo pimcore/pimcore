@@ -450,7 +450,10 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
                     this.component.removeCls("grid_nicepath_requested");
 
                     if (typeof responseData[target["nicePathKey"]] !== "undefined") {
-                        this.component.setValue(responseData[target["nicePathKey"]]);
+                        var nicePathKey = responseData[target["nicePathKey"]];
+                        this.component.setValue(nicePathKey);
+                        this.data.path = nicePathKey;
+
                     }
 
                 }.bind(this, target)
