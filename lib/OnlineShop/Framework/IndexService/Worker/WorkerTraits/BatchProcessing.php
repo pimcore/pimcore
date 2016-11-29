@@ -65,22 +65,20 @@ trait BatchProcessing {
         $categoryIdPaths = [];
         if($categories) {
             foreach($categories as $c) {
-                $parent = $c;
 
-                if ($parent != null) {
-                    if($parent->getOSProductsInParentCategoryVisible()) {
-                        $tmpIds[] = $parent->getId();
-                        while($parent && $parent instanceof \OnlineShop\Framework\Model\AbstractCategory) {
-                            $parentCategoryIds[$parent->getId()] = $parent->getId();
-                            $parent = $parent->getParent();
-                        }
-                    } else {
-                        $tmpIds[] = $c->getId();
-
-                        $parentCategoryIds[$parent->getId()] = $parent->getId();
-                    }
-
+                if($c instanceof \OnlineShop\Framework\Model\AbstractCategory) {
                     $categoryIds[$c->getId()] = $c->getId();
+                }
+
+                $currentCategory = $c;
+                while($currentCategory instanceof \OnlineShop\Framework\Model\AbstractCategory) {
+                    $parentCategoryIds[$currentCategory->getId()] = $currentCategory->getId();
+
+                    if($currentCategory->getOSProductsInParentCategoryVisible()) {
+                        $currentCategory = $currentCategory->getParent();
+                    } else {
+                        $currentCategory = null;
+                    }
                 }
 
 

@@ -219,18 +219,15 @@ class DefaultFindologic extends AbstractWorker implements IWorker, IBatchProcess
                             foreach($categories as $c)
                             {
                                 $categoryIds = [];
-                                $parent = \Pimcore\Model\Object\Concrete::getById($c);
-                                if ($parent != null)
-                                {
-                                    if($parent->getOSProductsInParentCategoryVisible())
-                                    {
-                                        while($parent && $parent instanceof \OnlineShop\Framework\Model\AbstractCategory)
-                                        {
-                                            $categoryIds[$parent->getId()] = $parent->getId();
-                                            $parent = $parent->getParent();
-                                        }
+
+                                $currentCategory = \Pimcore\Model\Object\Concrete::getById($c);
+                                while($currentCategory instanceof \OnlineShop\Framework\Model\AbstractCategory) {
+                                    $categoryIds[$currentCategory->getId()] = $currentCategory->getId();
+
+                                    if($currentCategory->getOSProductsInParentCategoryVisible()) {
+                                        $currentCategory = $currentCategory->getParent();
                                     } else {
-                                        $categoryIds[$parent->getId()] = $parent->getId();
+                                        $currentCategory = null;
                                     }
                                 }
 
