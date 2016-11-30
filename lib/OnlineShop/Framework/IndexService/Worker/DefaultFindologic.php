@@ -123,13 +123,13 @@ class DefaultFindologic extends AbstractWorker implements IWorker, IBatchProcess
 
 
         // add optional fields
-        if(in_array('salesFrequency', $data['data']))
+        if(array_key_exists('salesFrequency', $data['data']))
         {
             $xml->addChild('salesFrequencies')
                 ->addChild('salesFrequency', (int)$data['data']['salesFrequency'])
             ;
         }
-        if(in_array('dateAdded', $data['data']))
+        if(array_key_exists('dateAdded', $data['data']))
         {
             $xml->addChild('dateAddeds')
                 ->addChild('dateAdded', date('c', $data['data']['dateAdded']))
