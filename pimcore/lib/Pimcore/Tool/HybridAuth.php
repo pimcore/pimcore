@@ -47,26 +47,36 @@ class HybridAuth
     }
 
     /**
+     * Initialize hybrid auth from configuration
+     */
+    public static function initializeHybridAuth()
+    {
+        \Hybrid_Auth::initialize(static::getConfiguration());
+    }
+
+    /**
      * @return \Hybrid_Auth
      */
     public static function getHybridAuth()
     {
-        return new \Hybrid_Auth(self::getConfiguration());
+        return new \Hybrid_Auth(static::getConfiguration());
     }
 
     /**
-     * @param $provider
+     * @param string $provider
+     * @param array|null $params
      * @return \Hybrid_Provider_Adapter
      */
-    public static function authenticate($provider)
+    public static function authenticate($provider, $params = null)
     {
         self::init();
 
         $adapter = null;
         try {
-            $hybridauth = static::getHybridAuth();
+            static::initializeHybridAuth();
+
             $provider = @trim(strip_tags($provider));
-            $adapter = $hybridauth->authenticate($provider);
+            $adapter = \Hybrid_Auth::authenticate($provider, $params);
         } catch (\Exception $e) {
             Logger::info($e);
         }
