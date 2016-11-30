@@ -259,7 +259,7 @@ attach multiple events
 | `workflowmanagement.preReturnAvailableActions` | allowed actions as associated array `$actionName` => `$actionConfig` | Pimcore\WorkflowManagement\Workflow\Manager `manager` | Fired when returning the available actions to a user in the admin panel. use this to further customise what actions are available to a user. i.e. stop them logging time after 5pm ;) |
 | `workflowmanagement.action.before` | `Pimcore\WorkflowManagement\Workflow\Manager` | array `actionConfig`, array `data`  | |
 | `workflowmanagement.action.success` | `Pimcore\WorkflowManagement\Workflow\Manager` | array `actionConfig`, array `data`  | |
-| `workflowmanagement.action.failur` | `Pimcore\WorkflowManagement\Workflow\Manager` | array `actionConfig`, array `data`, Exception `e` | |
+| `workflowmanagement.action.failure` | `Pimcore\WorkflowManagement\Workflow\Manager` | array `actionConfig`, array `data`, Exception `e` | |
  
 
 ## Example of custom error handling using the Event API
