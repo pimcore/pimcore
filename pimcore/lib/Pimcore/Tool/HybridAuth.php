@@ -18,7 +18,6 @@ use Pimcore\Logger;
 
 class HybridAuth
 {
-
     /**
      * @throws \Zend_Loader_Exception
      */
@@ -48,6 +47,14 @@ class HybridAuth
     }
 
     /**
+     * @return \Hybrid_Auth
+     */
+    public static function getHybridAuth()
+    {
+        return new \Hybrid_Auth(self::getConfiguration());
+    }
+
+    /**
      * @param $provider
      * @return \Hybrid_Provider_Adapter
      */
@@ -57,7 +64,7 @@ class HybridAuth
 
         $adapter = null;
         try {
-            $hybridauth = new \Hybrid_Auth(self::getConfiguration());
+            $hybridauth = static::getHybridAuth();
             $provider = @trim(strip_tags($provider));
             $adapter = $hybridauth->authenticate($provider);
         } catch (\Exception $e) {
