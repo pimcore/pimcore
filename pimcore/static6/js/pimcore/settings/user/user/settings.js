@@ -393,10 +393,16 @@ pimcore.settings.user.user.settings = Class.create({
         });
 
         this.editorSettings = new pimcore.settings.user.editorSettings(this, this.data.user.contentLanguages);
+        this.websiteTranslationSettings = new pimcore.settings.user.websiteTranslationSettings(this, this.data.validLanguages, this.data.user);
+
+        var websiteSettingsPanel = this.websiteTranslationSettings.getPanel();
+        if(this.currentUser.admin) {
+            websiteSettingsPanel.hide();
+        }
 
         this.panel = new Ext.form.FormPanel({
             title:t("settings"),
-            items:[this.generalSet, this.adminSet, this.permissionsSet , this.typesSet, this.editorSettings.getPanel()],
+            items:[this.generalSet, this.adminSet, this.permissionsSet , this.typesSet, this.editorSettings.getPanel(), websiteSettingsPanel],
             bodyStyle:"padding:10px;",
             autoScroll:true
         });
@@ -415,6 +421,8 @@ pimcore.settings.user.user.settings = Class.create({
         }
 
         values.contentLanguages = this.editorSettings.getContentLanguages();
+        values.websiteTranslationLanguagesEdit = this.websiteTranslationSettings.getLanguages("edit");
+        values.websiteTranslationLanguagesView = this.websiteTranslationSettings.getLanguages("view");
 
         return values;
     }

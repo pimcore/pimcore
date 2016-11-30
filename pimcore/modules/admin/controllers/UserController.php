@@ -373,6 +373,7 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
             "permissions" => $user->generatePermissionList(),
             "availablePermissions" => $availableUserPermissions,
             "availablePerspectives" => $availablePerspectives,
+            "validLanguages" => Tool::getValidLanguages(),
             "objectDependencies" => [
                 "hasHidden" => $hasHidden,
                 "dependencies" => $userObjectData
@@ -570,7 +571,8 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
             "classes" => $role->getClasses(),
             "docTypes" => $role->getDocTypes(),
             "availablePermissions" => $availableUserPermissions,
-            "availablePerspectives" => $availablePerspectives
+            "availablePerspectives" => $availablePerspectives,
+            "validLanguages" => Tool::getValidLanguages()
         ]);
     }
 

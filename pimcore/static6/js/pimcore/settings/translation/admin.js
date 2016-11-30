@@ -45,6 +45,8 @@ pimcore.settings.translation.admin = Class.create(pimcore.settings.translations,
                     for(var i=0; i<languages.length; i++){
                         this.languages.push(languages[i]["language"]);
                     }
+                    this.editableLanguages = this.languages;
+
                     this.getTabPanel();
                 }
                 catch (e) {

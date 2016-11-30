@@ -109,7 +109,7 @@ class Dao extends Model\Dao\AbstractDao
                 if (in_array($key, $this->getValidTableColumns("users"))) {
                     if (is_bool($value)) {
                         $value = (int) $value;
-                    } elseif (in_array($key, ["permissions", "roles", "docTypes", "classes", "perspectives"])) {
+                    } elseif (in_array($key, ["permissions", "roles", "docTypes", "classes", "perspectives", "websiteTranslationLanguagesEdit", "websiteTranslationLanguagesView"])) {
                         // permission and roles are stored as csv
                         if (is_array($value)) {
                             $value = implode(",", $value);

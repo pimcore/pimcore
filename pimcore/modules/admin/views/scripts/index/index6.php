@@ -193,9 +193,6 @@ $scripts = array(
     // fixes for browsers
     "pimcore/browserfixes.js",
 
-    // fixes for libraries
-    //    "pimcore/libfixes.js",
-
     // runtime
     "pimcore/namespace.js",
     "pimcore/functions.js",
@@ -221,6 +218,7 @@ $scripts = array(
 
     "pimcore/settings/user/usertab.js",
     "pimcore/settings/user/editorSettings.js",
+    "pimcore/settings/user/websiteTranslationSettings.js",
     "pimcore/settings/user/role/panel.js",
     "pimcore/settings/user/role/tab.js",
     "pimcore/settings/user/user/objectrelations.js",

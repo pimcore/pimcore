@@ -37,7 +37,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
         if ($admin) {
             $delta = Translation\Admin::importTranslationsFromFile($tmpFile, $overwrite, Tool\Admin::getLanguages());
         } else {
-            $delta = Translation\Website::importTranslationsFromFile($tmpFile, $overwrite);
+            $delta = Translation\Website::importTranslationsFromFile($tmpFile, $overwrite, $this->getUser()->getAllowedLanguagesForEditingWebsiteTranslations());
         }
 
         $result =[
@@ -116,7 +116,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
                 $languages = Tool\Admin::getLanguages();
             } else {
                 $t = new Translation\Website();
-                $languages = Tool::getValidLanguages();
+                $languages = $this->getUser()->getAllowedLanguagesForViewingWebsiteTranslations();
             }
 
             foreach ($languages as $language) {
@@ -140,7 +140,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
         if ($admin) {
             $languages = Tool\Admin::getLanguages();
         } else {
-            $languages = Tool::getValidLanguages();
+            $languages = $this->getUser()->getAllowedLanguagesForViewingWebsiteTranslations();
         }
 
         //add language columns which have no translations yet
@@ -311,7 +311,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
                 $list = new Translation\Website\Listing();
             }
 
-            $validLanguages = Tool::getValidLanguages();
+            $validLanguages = $this->getUser()->getAllowedLanguagesForViewingWebsiteTranslations();
 
             $list->setOrder("asc");
             $list->setOrderKey($tableName . ".key", false);
@@ -405,7 +405,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
     {
         $joins = [];
         $conditions = [];
-        $validLanguages = Tool::getValidLanguages();
+        $validLanguages = $this->getUser()->getAllowedLanguagesForViewingWebsiteTranslations();;
 
         $db = \Pimcore\Db::get();
         $conditionFilters = [];
@@ -1257,6 +1257,18 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
 
         $this->_helper->json([
             "success" => true
+        ]);
+    }
+
+
+    public function getWebsiteTranslationLanguagesAction()
+    {
+        $this->_helper->json([
+            'view' => $this->getUser()->getAllowedLanguagesForViewingWebsiteTranslations(),
+
+            //when no view language is defined, all languages are editable. if one view language is defined, it
+            //may be possible that no edit language is set intentionally
+            'edit' => $this->getUser()->getAllowedLanguagesForEditingWebsiteTranslations()
         ]);
     }
 }

@@ -2654,8 +2654,8 @@ INSERT INTO `tree_locks` VALUES ('46','document','self');
 
 
 
-INSERT INTO `users` VALUES ('0','0','user','system','',NULL,NULL,NULL,'','','1','1','','','0','0','0','0','','',NULL,NULL,NULL);
-INSERT INTO `users` VALUES ('2','0','user','admin','$2y$10$nzibZ5Ck0.ZZy.mYhjpjrO.HAMGgWTDsNgGY.KT8KIuY/y1OO.cJ2',NULL,NULL,NULL,'en',NULL,'1','1','','','0','1','1','1','','',NULL,NULL,NULL);
+INSERT INTO `users` VALUES ('0','0','user','system','',NULL,NULL,NULL,'','','1','1','','','0','0','0','0','','',NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `users` VALUES ('2','0','user','admin','$2y$10$nzibZ5Ck0.ZZy.mYhjpjrO.HAMGgWTDsNgGY.KT8KIuY/y1OO.cJ2',NULL,NULL,NULL,'en',NULL,'1','1','','','0','1','1','1','','',NULL,NULL,NULL,NULL,NULL);
 
 
 

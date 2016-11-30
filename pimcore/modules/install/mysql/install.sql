@@ -674,6 +674,8 @@ CREATE TABLE `users` (
   `apiKey` varchar(255) DEFAULT NULL,
 	`activePerspective` VARCHAR(255) NULL DEFAULT NULL,
 	`perspectives` LONGTEXT NULL DEFAULT NULL,
+	`websiteTranslationLanguagesEdit` LONGTEXT NULL DEFAULT NULL,
+  `websiteTranslationLanguagesView` LONGTEXT NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `type_name` (`type`,`name`),
   KEY `parentId` (`parentId`),

@@ -6235,7 +6235,16 @@
     {
         "term": "clear_filters",
         "definition": "Clear Filters"
+    },
+    {
+        "term": "website_translation_settings",
+        "definition": "Shared Translation Settings"
+    },
+    {
+        "term": "language_permissions",
+        "definition": "Language Permissions (no view permission means all)"
     }
+
 
 
 ]
