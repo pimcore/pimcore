@@ -227,19 +227,37 @@ class OrderManager implements IOrderManager
 
 
         //for each cart item and cart sub item create corresponding order items
-        $orderItems = array();
-        $i = 0;
-        foreach($cart->getItems() as $item) {
-            $i++;
+        $orderItems = $this->applyOrderItems($cart->getItems(), $order);
+        $order->setItems($orderItems);
 
-            $orderItem = $this->createOrderItem($item, $order);
+        $this->applyVoucherTokens($order, $cart);
+
+        //for each gift item create corresponding order item
+        $orderGiftItems = $this->applyOrderItems($cart->getGiftItems(), $order, true);
+        $order->setGiftItems($orderGiftItems);
+
+        $order = $this->applyCustomCheckoutDataToOrder($cart, $order);
+        $order->save();
+
+        return $order;
+    }
+
+    /**
+     * @param array $items
+     * @param Order $order
+     * @return array
+     */
+    protected function applyOrderItems(array $items, \OnlineShop\Framework\Model\AbstractOrder $order, $giftItems = false) {
+        $orderItems = [];
+        foreach($items as $item) {
+            $orderItem = $this->createOrderItem($item, $order, $giftItems);
 
             $orderSubItems = array();
             $subItems = $item->getSubItems();
             if(!empty($subItems)) {
 
                 foreach($subItems as $subItem) {
-                    $orderSubItem = $this->createOrderItem($subItem, $orderItem);
+                    $orderSubItem = $this->createOrderItem($subItem, $orderItem, $giftItems);
                     $orderSubItem->save();
 
                     $orderSubItems[] = $orderSubItem;
@@ -253,14 +271,7 @@ class OrderManager implements IOrderManager
 
         }
 
-        $order->setItems($orderItems);
-
-        $this->applyVoucherTokens($order, $cart);
-
-        $order = $this->applyCustomCheckoutDataToOrder($cart, $order);
-        $order->save();
-
-        return $order;
+        return $orderItems;
     }
 
 
@@ -358,13 +369,13 @@ class OrderManager implements IOrderManager
 
     /**
      * @param \OnlineShop\Framework\CartManager\ICartItem $item
-     * @param \OnlineShop\Framework\Model\AbstractOrder | \OnlineShop\Framework\Model\AbstractOrderItem $parent
+     * @param $parent
+     * @param bool $isGiftItem
      *
      * @return \OnlineShop\Framework\Model\AbstractOrderItem
      * @throws \Exception
-     * @throws \OnlineShop\Framework\Exception\UnsupportedException
      */
-    protected function createOrderItem(\OnlineShop\Framework\CartManager\ICartItem $item, $parent) {
+    protected function createOrderItem(\OnlineShop\Framework\CartManager\ICartItem $item, $parent, $isGiftItem = false) {
 
         $key = $this->buildOrderItemKey($item);
 
@@ -394,31 +405,32 @@ class OrderManager implements IOrderManager
         $orderItem->setComment($item->getComment());
 
         $price = 0;
-        if(is_object($item->getTotalPrice())) {
+        if(!$isGiftItem && is_object($item->getTotalPrice())) {
             $price = $item->getTotalPrice()->getAmount();
         }
 
         $orderItem->setTotalPrice($price);
 
 
-        // save active pricing rules
-        $priceInfo = $item->getPriceInfo();
-        if($priceInfo instanceof \OnlineShop\Framework\PricingManager\IPriceInfo && method_exists($orderItem, 'setPricingRules'))
-        {
-            $priceRules = new \Pimcore\Model\Object\Fieldcollection();
-            foreach($priceInfo->getRules() as $rule)
+        if(!$isGiftItem) {
+            // save active pricing rules
+            $priceInfo = $item->getPriceInfo();
+            if($priceInfo instanceof \OnlineShop\Framework\PricingManager\IPriceInfo && method_exists($orderItem, 'setPricingRules'))
             {
-                $priceRule = new \Pimcore\Model\Object\Fieldcollection\Data\PricingRule();
-                $priceRule->setRuleId( $rule->getId() );
-                $priceRule->setName( $rule->getName() );
+                $priceRules = new \Pimcore\Model\Object\Fieldcollection();
+                foreach($priceInfo->getRules() as $rule)
+                {
+                    $priceRule = new \Pimcore\Model\Object\Fieldcollection\Data\PricingRule();
+                    $priceRule->setRuleId( $rule->getId() );
+                    $priceRule->setName( $rule->getName() );
 
-                $priceRules->add( $priceRule );
+                    $priceRules->add( $priceRule );
+                }
+
+                $orderItem->setPricingRules( $priceRules );
+                $orderItem->save();
             }
-
-            $orderItem->setPricingRules( $priceRules );
-            $orderItem->save();
         }
-
 
         return $orderItem;
     }

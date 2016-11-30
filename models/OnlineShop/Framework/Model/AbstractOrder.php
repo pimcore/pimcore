@@ -108,6 +108,15 @@ class AbstractOrder extends \Pimcore\Model\Object\Concrete {
         throw new \OnlineShop\Framework\Exception\UnsupportedException("setItems is not implemented for " . get_class($this));
     }
 
+    public function getGiftItems() {
+        throw new \OnlineShop\Framework\Exception\UnsupportedException("getGiftItems is not implemented for " . get_class($this));
+    }
+
+    public function setGiftItems($giftItems) {
+        //prevent throwing an exception for backward compatibility
+        \Logger::err("setGiftItems not implemented for " . get_class($this));
+    }
+
     /**
      * @throws \OnlineShop\Framework\Exception\UnsupportedException
      * committed

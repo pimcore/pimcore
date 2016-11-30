@@ -15,7 +15,7 @@
 		"title":null,
 		"width":null,
 		"height":null,
-		"collapsible":null,
+		"collapsible":false,
 		"collapsed":null,
 		"bodyStyle":null,
 		"datatype":"layout",
@@ -105,8 +105,8 @@
 										"datatype":"data",
 										"relationType":false,
 										"invisible":false,
-										"visibleGridView":false,
-										"visibleSearch":false
+										"visibleGridView":true,
+										"visibleSearch":true
 									},
 									{
 										"fieldtype":"select",
@@ -145,8 +145,8 @@
 										"datatype":"data",
 										"relationType":false,
 										"invisible":false,
-										"visibleGridView":false,
-										"visibleSearch":false
+										"visibleGridView":true,
+										"visibleSearch":true
 									},
 									{
 										"fieldtype":"datetime",
@@ -167,8 +167,8 @@
 										"datatype":"data",
 										"relationType":false,
 										"invisible":false,
-										"visibleGridView":false,
-										"visibleSearch":false
+										"visibleGridView":true,
+										"visibleSearch":true
 									},
 									{
 										"fieldtype":"objects",
@@ -184,6 +184,7 @@
 												"classes":"OnlineShopOrderItem"
 											}
 										],
+										"pathFormatterClass":"",
 										"name":"items",
 										"title":"Items",
 										"tooltip":"",
@@ -258,8 +259,57 @@
 												"classes":"OnlineShopVoucherToken"
 											}
 										],
+										"pathFormatterClass":null,
 										"name":"voucherTokens",
 										"title":"Voucher Tokens",
+										"tooltip":"",
+										"mandatory":false,
+										"noteditable":true,
+										"index":false,
+										"locked":false,
+										"style":"",
+										"permissions":null,
+										"datatype":"data",
+										"columnType":null,
+										"invisible":false,
+										"visibleGridView":false,
+										"visibleSearch":false
+									}
+								],
+								"locked":false
+							},
+							{
+								"fieldtype":"fieldset",
+								"labelWidth":100,
+								"name":"Gift Items",
+								"type":null,
+								"region":null,
+								"title":"Gift Items",
+								"width":null,
+								"height":null,
+								"collapsible":false,
+								"collapsed":false,
+								"bodyStyle":"",
+								"datatype":"layout",
+								"permissions":null,
+								"childs":[
+									{
+										"fieldtype":"objects",
+										"width":"",
+										"height":"",
+										"maxItems":"",
+										"queryColumnType":"text",
+										"phpdocType":"array",
+										"relationType":true,
+										"lazyLoading":true,
+										"classes":[
+											{
+												"classes":"OnlineShopOrderItem"
+											}
+										],
+										"pathFormatterClass":"",
+										"name":"giftItems",
+										"title":"Gift Items",
 										"tooltip":"",
 										"mandatory":false,
 										"noteditable":true,
@@ -473,15 +523,11 @@
 								"objectsAllowed":true,
 								"assetsAllowed":false,
 								"assetTypes":[
-									{
-										"assetTypes":""
-									}
+
 								],
 								"documentsAllowed":false,
 								"documentTypes":[
-									{
-										"documentTypes":""
-									}
+
 								],
 								"lazyLoading":true,
 								"classes":[
@@ -489,6 +535,7 @@
 										"classes":"Customer"
 									}
 								],
+								"pathFormatterClass":null,
 								"name":"customer",
 								"title":"Customer",
 								"tooltip":"",
@@ -524,8 +571,8 @@
 								"datatype":"data",
 								"relationType":false,
 								"invisible":false,
-								"visibleGridView":false,
-								"visibleSearch":false
+								"visibleGridView":true,
+								"visibleSearch":true
 							},
 							{
 								"fieldtype":"input",
@@ -547,8 +594,8 @@
 								"datatype":"data",
 								"relationType":false,
 								"invisible":false,
-								"visibleGridView":false,
-								"visibleSearch":false
+								"visibleGridView":true,
+								"visibleSearch":true
 							},
 							{
 								"fieldtype":"input",
@@ -570,8 +617,8 @@
 								"datatype":"data",
 								"relationType":false,
 								"invisible":false,
-								"visibleGridView":false,
-								"visibleSearch":false
+								"visibleGridView":true,
+								"visibleSearch":true
 							},
 							{
 								"fieldtype":"input",
@@ -1727,8 +1774,8 @@
 								"datatype":"data",
 								"relationType":false,
 								"invisible":false,
-								"visibleGridView":false,
-								"visibleSearch":false
+								"visibleGridView":true,
+								"visibleSearch":true
 							}
 						],
 						"locked":false
@@ -2994,9 +3041,10 @@
 								"fieldtype":"objectbricks",
 								"phpdocType":"\\Pimcore\\Model\\Object\\Objectbrick",
 								"allowedTypes":[
-									"PaymentProviderDatatrans",
+									"PaymentProviderQpay",
 									"PaymentProviderPayPal",
-									"PaymentProviderQpay"
+									"PaymentProviderDatatrans",
+									"PaymentProviderWirecardSeamless"
 								],
 								"name":"paymentProvider",
 								"title":"Payment Provider",
@@ -3092,23 +3140,23 @@
 				"locked":false
 			}
 		],
-		"locked":null
+		"locked":false
 	},
 	"icon":null,
 	"previewUrl":null,
 	"propertyVisibility":{
 		"grid":{
 			"id":true,
-			"path":true,
-			"published":true,
-			"modificationDate":true,
+			"path":false,
+			"published":false,
+			"modificationDate":false,
 			"creationDate":true
 		},
 		"search":{
 			"id":true,
-			"path":true,
-			"published":true,
-			"modificationDate":true,
+			"path":false,
+			"published":false,
+			"modificationDate":false,
 			"creationDate":true
 		}
 	}

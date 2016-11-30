@@ -1,6 +1,11 @@
 #Update Notices
 Please consider following update notices when updating the e-commerce framework.
- 
+
+## 0.10.1 - 0.10.2
+- Giftitems were added to OnlineShopOrder - if you are updating, you need to add a property giftItems (object relation
+to OnlineShopOrderItem) to your OnlineShopOrder class. Otherwise a error log message will be issued on checkout.
+
+
 ## 0.9.8 - 0.10.0
 - After updating the plugin execute `plugins/EcommerceFramework/cli/updateToPhpConfigs.php`.
   The old xml config files will stay untouched, but will no longer be in use.
