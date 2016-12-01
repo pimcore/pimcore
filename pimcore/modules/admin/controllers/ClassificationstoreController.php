@@ -976,6 +976,50 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
 
             $this->_helper->json(["success" => true, "data" => $item]);
         } else {
+
+            $storeId = $this->getParam("storeId");
+            $frameName = $this->getParam("frameName");
+            $db = \Pimcore\Db::get();
+
+            $conditionParts = [];
+
+            if ($frameName) {
+                $keyCriteria = " FALSE ";
+                $frameConfig = Classificationstore\CollectionConfig::getByName($frameName, $storeId);
+                if ($frameConfig) {
+                    // get all keys within that collection / frame
+                    $frameId = $frameConfig->getId();
+                    $groupList = new Pimcore\Model\Object\Classificationstore\CollectionGroupRelation\Listing();
+                    $groupList->setCondition("colId = " . $db->quote($frameId));
+                    $groupList = $groupList->load();
+                    $groupIdList = array();
+                    foreach ($groupList as $groupEntry) {
+                        $groupIdList[] = $groupEntry->getGroupId();
+                    }
+
+                    if ($groupIdList) {
+                        $keyIdList = new Classificationstore\KeyGroupRelation\Listing();
+                        $keyIdList->setCondition("groupId in (" . implode("," , $groupIdList) . ")");
+                        $keyIdList = $keyIdList->load();
+                        if ($keyIdList) {
+                            $keyIds = array();
+                            /** @var  $keyEntry Classificationstore\KeyGroupRelation */
+                            foreach ($keyIdList as $keyEntry) {
+                                $keyIds[] = $keyEntry->getKeyId();
+                            }
+
+                            if ($keyIds) {
+                                $keyCriteria = " id in (" . implode("," , $keyIds) . ")";
+                            }
+                        }
+                    }
+                }
+
+                if ($keyCriteria) {
+                    $conditionParts[] = $keyCriteria;
+                }
+            }
+
             $start = 0;
             $limit = 15;
             $orderKey = "name";
@@ -1012,16 +1056,13 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
             $list->setOrder($order);
             $list->setOrderKey($orderKey);
 
-            $conditionParts = [];
-            $db = \Pimcore\Db::get();
-
             $searchfilter = $this->getParam("searchfilter");
             if ($searchfilter) {
                 $conditionParts[] = "(name LIKE " . $db->quote("%" . $searchfilter . "%") . " OR description LIKE " . $db->quote("%". $searchfilter . "%") . ")";
             }
 
-            if ($this->getParam("storeId")) {
-                $conditionParts[] = "(storeId = " . $this->getParam("storeId") . ")";
+            if ($storeId) {
+                $conditionParts[] = "(storeId = " . $storeId . ")";
             }
 
             if ($this->getParam("filter")) {
@@ -1036,7 +1077,6 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
                     }
                 }
             }
-
             $condition = implode(" AND ", $conditionParts);
             $list->setCondition($condition);
 

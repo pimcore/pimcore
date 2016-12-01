@@ -52,9 +52,13 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
         });
 
         var resultPanel = this.getResultPanel();
+        var title = t('keyvalue_dialog_keygroup_search');
+        if (this.config.frameName) {
+            title += " - " + t("frame") + " " + this.config.frameName;
+        }
 
         this.searchWindow = new Ext.Window({
-            title: t('keyvalue_dialog_keygroup_search'),
+            title: title,
             width: 850,
             height: 550,
             modal: true,
@@ -362,17 +366,22 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
         gridColumns.push({header: t("name"), width: nameWidth, sortable: true, dataIndex: 'name'});
         gridColumns.push({header: t("description"), width: descWidth, sortable: true, dataIndex: 'description'});
 
+        var extraParams = {
+            storeId: this.config.storeId
+        };
+
+        if (this.config.frameName) {
+            extraParams.frameName = this.config.frameName;
+        }
 
         var proxy = {
             type: 'ajax',
             url: "/admin/classificationstore/" + postFix,
             reader: {
                 type: 'json',
-                rootProperty: 'data',
+                rootProperty: 'data'
             },
-            extraParams: {
-                storeId: this.config.storeId
-            }
+            extraParams: extraParams
         };
 
         if (this.config.object) {
