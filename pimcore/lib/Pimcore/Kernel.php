@@ -2,6 +2,7 @@
 
 namespace Pimcore;
 
+use LegacyBundle\LegacyBundle;
 use Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle;
 use Symfony\Bundle\DebugBundle\DebugBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
@@ -13,7 +14,8 @@ abstract class Kernel extends \DI\Bridge\Symfony\Kernel
     {
         $bundles = [
             new FrameworkBundle(),
-            new SensioFrameworkExtraBundle()
+            new SensioFrameworkExtraBundle(),
+            new LegacyBundle(),
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {
