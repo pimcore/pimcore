@@ -2,6 +2,9 @@
 
 namespace Pimcore;
 
+use Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle;
+use Symfony\Bundle\DebugBundle\DebugBundle;
+use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Component\Config\Loader\LoaderInterface;
 
 abstract class Kernel extends \DI\Bridge\Symfony\Kernel
@@ -9,11 +12,12 @@ abstract class Kernel extends \DI\Bridge\Symfony\Kernel
     public function registerBundles()
     {
         $bundles = [
-            new \Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
+            new FrameworkBundle(),
+            new SensioFrameworkExtraBundle()
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {
-            $bundles[] = new \Symfony\Bundle\DebugBundle\DebugBundle();
+            $bundles[] = new DebugBundle();
             // $bundles[] = new Symfony\Bundle\WebProfilerBundle\WebProfilerBundle();
         }
 
