@@ -55,8 +55,10 @@ class Pimcore
     /**
      * @static
      * @throws Exception|\Zend_Controller_Router_Exception
+     * @param bool $returnResponse
+     * @return \Zend_Controller_Response_Http|null
      */
-    public static function run()
+    public static function run($returnResponse = false)
     {
         $throwExceptions = false;
 
@@ -122,6 +124,10 @@ class Pimcore
         }
 
         self::initControllerFront($front);
+
+        if ($returnResponse) {
+            $front->returnResponse(true);
+        }
 
         // set router
         $router = $front->getRouter();
@@ -247,13 +253,13 @@ class Pimcore
                 @ini_set("display_errors", "Off");
                 @ini_set("display_startup_errors", "Off");
 
-                $front->dispatch();
+                return $front->dispatch();
             } else {
                 @ini_set("display_errors", "On");
                 @ini_set("display_startup_errors", "On");
 
                 $front->throwExceptions(true);
-                $front->dispatch();
+                return $front->dispatch();
             }
         } catch (\Zend_Controller_Router_Exception $e) {
             if (!headers_sent()) {
