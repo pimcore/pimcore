@@ -198,6 +198,41 @@ attach multiple events
 | `object.keyValue.keyConfig.preDelete` | `Pimcore\Model\Object\KeyValue\KeyConfig` | - | |
 | `object.keyValue.keyConfig.preUpdate` | `Pimcore\Model\Object\KeyValue\KeyConfig` | - |  |
 
+### Object Classification Store Collection Configuration
+
+| Name | Target | Parameters | Description | 
+| ---- | ------ | ---------- | ----------- |
+| `object.classificationstore.collectionConfig.postAdd` | `Pimcore\Model\Object\Classificationstore\CollectionConfig` | - |  |
+| `object.classificationstore.collectionConfig.postUpdate` | `Pimcore\Model\Object\Classificationstore\CollectionConfig` | - |  |
+| `object.classificationstore.collectionConfig.postUpdate` | `Pimcore\Model\Object\Classificationstore\CollectionConfig` | - |  |
+| `object.classificationstore.collectionConfig.postDelete` | `Pimcore\Model\Object\Classificationstore\CollectionConfig` | - |  |
+| `object.classificationstore.collectionConfig.preAdd` | `Pimcore\Model\Object\Classificationstore\CollectionConfig` | - |  |
+| `object.classificationstore.collectionConfig.preDelete` | `Pimcore\Model\Object\Classificationstore\CollectionConfig` | - |  |
+| `object.classificationstore.collectionConfig.preUpdate` | `Pimcore\Model\Object\Classificationstore\CollectionConfig` | - |  |
+
+### Object Classification Store Group Configuration
+
+| Name | Target | Parameters | Description | 
+| ---- | ------ | ---------- | ----------- |
+| `object.classificationstore.groupConfig.postAdd` | `Pimcore\Model\Object\Classificationstore\GroupConfig` | - |  |
+| `object.classificationstore.groupConfig.postUpdate` | `Pimcore\Model\Object\Classificationstore\GroupConfig` | - |  |
+| `object.classificationstore.groupConfig.postUpdate` | `Pimcore\Model\Object\Classificationstore\GroupConfig` | - |  |
+| `object.classificationstore.groupConfig.postDelete` | `Pimcore\Model\Object\Classificationstore\GroupConfig` | - |  |
+| `object.classificationstore.groupConfig.preAdd` | `Pimcore\Model\Object\Classificationstore\GroupConfig` | - |  |
+| `object.classificationstore.groupConfig.preDelete` | `Pimcore\Model\Object\Classificationstore\GroupConfig` | - |  |
+| `object.classificationstore.groupConfig.preUpdate` | `Pimcore\Model\Object\Classificationstore\GroupConfig` | - |  |
+
+### Object Classification Store Key Configuration
+
+| Name | Target | Parameters | Description | 
+| ---- | ------ | ---------- | ----------- |
+| `object.classificationstore.keyConfig.postAdd` | `Pimcore\Model\Object\Classificationstore\KeyConfig` | - |  |
+| `object.classificationstore.keyConfig.postUpdate` | `Pimcore\Model\Object\Classificationstore\KeyConfig` | - |  |
+| `object.classificationstore.keyConfig.postUpdate` | `Pimcore\Model\Object\Classificationstore\KeyConfig` | - |  |
+| `object.classificationstore.keyConfig.postDelete` | `Pimcore\Model\Object\Classificationstore\KeyConfig` | - |  |
+| `object.classificationstore.keyConfig.preAdd` | `Pimcore\Model\Object\Classificationstore\KeyConfig` | - |  |
+| `object.classificationstore.keyConfig.preDelete` | `Pimcore\Model\Object\Classificationstore\KeyConfig` | - |  |
+| `object.classificationstore.keyConfig.preUpdate` | `Pimcore\Model\Object\Classificationstore\KeyConfig` | - |  |
 
 ### Versions
 
