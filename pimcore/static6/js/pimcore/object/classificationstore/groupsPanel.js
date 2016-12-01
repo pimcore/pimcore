@@ -389,8 +389,12 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
     },
 
     onAddKey: function() {
-        var window = new pimcore.object.classificationstore.keySelectionWindow(this, false, true, false, this.storeConfig.id);
-        window.show();
+        var keySelectionWindow = new pimcore.object.classificationstore.keySelectionWindow({
+            parent: this,
+            enableKeys: true,
+            storeId: this.storeConfig.id
+        });
+        keySelectionWindow.show();
     },
 
     onAdd: function () {

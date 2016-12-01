@@ -16,24 +16,23 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
 
     acceptEvents: true,
 
-    initialize: function (parent, enableGroups, enableKeys, enableCollections, storeId) {
-        this.parent = parent;
-        this.enableGroups = enableGroups;
-        this.enableKeys = enableKeys;
-        this.enableCollections = enableCollections;
-        this.storeId = storeId;
+    // initialize: function (parent, enableGroups, enableKeys, enableCollections, storeId) {
+    initialize: function (config) {
+        config =  config || {};
 
-        if (enableGroups && !enableCollections) {
-            this.isGroupSearch = true;
-        }
-        if (enableCollections) {
-            this.isCollectionSearch = true;
-        }
-    },
+        // apply defaults
+        Ext.applyIf(config, {
 
-    setRestriction: function(object, fieldname) {
-        this.object = object;
-        this.fieldname = fieldname;
+
+        });
+        this.config = config;
+
+        if (this.config.enableGroups && !this.config.enableCollections) {
+            this.config.isGroupSearch = true;
+        }
+        if (this.config.enableCollections) {
+            this.config.isCollectionSearch = true;
+        }
     },
 
 
@@ -63,10 +62,10 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
             items: [resultPanel],
             listeners: {
                 beforeclose: function() {
-                    this.parent.handleSelectionWindowClosed.call(this.parent);
+                    this.config.parent.handleSelectionWindowClosed.call(this.config.parent);
                 }.bind(this)
             },
-            bbar: [//this.searchfield,
+            bbar: [
                 "->",{
                     xtype: "button",
                     text: t("cancel"),
@@ -80,7 +79,7 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
                     iconCls: "pimcore_icon_apply",
                     handler: function () {
                         var selectionModel = this.gridPanel.getSelectionModel();
-                        if (this.isCollectionSearch) {
+                        if (this.config.isCollectionSearch) {
                             var collectionIds = [];
                             var selected = selectionModel.getSelection();
                             for (var i = 0; i < selected.length; i++) {
@@ -89,7 +88,7 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
                             }
                             this.addCollections(collectionIds);
 
-                        } else if (this.isGroupSearch) {
+                        } else if (this.config.isGroupSearch) {
                             var groupIds = [];
                             var selected = selectionModel.getSelection();
                             for (var i = 0; i < selected.length; i++) {
@@ -120,16 +119,16 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
         }
         this.acceptEvents = false;
         if (collectionIds.length > 0) {
-            this.parent.requestPending.call(this.parent);
+            this.config.parent.requestPending.call(this.config.parent);
             Ext.Ajax.request({
                 url: "/admin/classificationstore/add-collections",
                 params: {
                     collectionIds: Ext.util.JSON.encode(collectionIds),
-                    oid: this.object.id,
-                    fieldname: this.fieldname
+                    oid: this.config.object.id,
+                    fieldname: this.config.fieldname
                 },
                 success: function(response) {
-                    this.parent.handleAddGroups.call(this.parent, response);
+                    this.config.parent.handleAddGroups.call(this.config.parent, response);
                     this.searchWindow.close();
                 }.bind(this),
                 failure: function(response) {
@@ -148,14 +147,14 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
         }
         this.acceptEvents = false;
         if (groupIds.length > 0) {
-            this.parent.requestPending.call(this.parent);
+            this.config.parent.requestPending.call(this.config.parent);
             Ext.Ajax.request({
                 url: "/admin/classificationstore/add-groups",
                 params: {
                     groupIds: Ext.util.JSON.encode(groupIds)
                 },
                 success: function(response) {
-                    this.parent.handleAddGroups.call(this.parent, response);
+                    this.config.parent.handleAddGroups.call(this.config.parent, response);
                     this.searchWindow.close();
                 }.bind(this),
                 failure: function(response) {
@@ -174,14 +173,14 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
         }
         this.acceptEvents = false;
         if (keyIds.length > 0) {
-            this.parent.requestPending.call(this.parent);
+            this.config.parent.requestPending.call(this.config.parent);
             Ext.Ajax.request({
                 url: "/admin/classificationstore/properties",
                 params: {
                     keyIds: Ext.util.JSON.encode(keyIds)
                 },
                 success: function(response) {
-                    this.parent.handleAddKeys.call(this.parent, response);
+                    this.config.parent.handleAddKeys.call(this.config.parent, response);
                     this.searchWindow.close();
                 }.bind(this),
                 failure: function(response) {
@@ -206,8 +205,8 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
             handler: this.searchCollection.bind(this),
             iconCls: "pimcore_icon_classificationstore_icon_cs_collections",
             enableToggle: true,
-            pressed: this.isCollectionSearch,
-            hidden: !this.enableCollections
+            pressed: this.config.isCollectionSearch,
+            hidden: !this.config.enableCollections
         });
         items.push(this.toolbarbuttons.collection);
 
@@ -216,8 +215,8 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
             handler: this.searchGroup.bind(this),
             iconCls: "pimcore_icon_keys",
             enableToggle: true,
-            pressed: this.isGroupSearch,
-            hidden: !this.enableGroups
+            pressed: this.config.isGroupSearch,
+            hidden: !this.config.enableGroups
 
         });
         items.push(this.toolbarbuttons.group);
@@ -227,7 +226,7 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
             handler: this.searchKey.bind(this),
             iconCls: "pimcore_icon_key",
             enableToggle: true,
-            pressed: !this.isGroupSearch && !this.isCollectionSearch,
+            pressed: !this.config.isGroupSearch && !this.config.isCollectionSearch,
             hidden: !this.enableKeys
         });
         items.push(this.toolbarbuttons.key);
@@ -282,24 +281,24 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
     searchCollection: function () {
         this.resetToolbarButtons();
         this.toolbarbuttons.collection.toggle(true);
-        this.isCollectionSearch = true;
-        this.isGroupSearch = false;
+        this.config.isCollectionSearch = true;
+        this.config.isGroupSearch = false;
         this.getGridPanel();
     },
 
     searchGroup: function () {
         this.resetToolbarButtons();
         this.toolbarbuttons.group.toggle(true);
-        this.isGroupSearch = true;
-        this.isCollectionSearch = false;
+        this.config.isGroupSearch = true;
+        this.config.isCollectionSearch = false;
         this.getGridPanel();
     },
 
     searchKey: function () {
         this.resetToolbarButtons();
         this.toolbarbuttons.key.toggle(true);
-        this.isGroupSearch = false;
-        this.isCollectionSearch = false;
+        this.config.isGroupSearch = false;
+        this.config.isCollectionSearch = false;
         this.getGridPanel();
     },
 
@@ -329,10 +328,10 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
         var nameWidth = 200;
         var descWidth = 590;
 
-        if (this.isCollectionSearch) {
+        if (this.config.isCollectionSearch) {
             postFix = "collections";
             this.groupFields = ['id', 'name', 'description'];
-        } else  if (this.isGroupSearch) {
+        } else  if (this.config.isGroupSearch) {
             postFix = "groups";
             this.groupFields = ['id', 'name', 'description'];
         } else {
@@ -372,13 +371,13 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
                 rootProperty: 'data',
             },
             extraParams: {
-                storeId: this.storeId
+                storeId: this.config.storeId
             }
         };
 
-        if (this.object) {
-            proxy.extraParams.oid = this.object.id;
-            proxy.extraParams.fieldname = this.fieldname;
+        if (this.config.object) {
+            proxy.extraParams.oid = this.config.object.id;
+            proxy.extraParams.fieldname = this.config.fieldname;
         }
 
         this.store = new Ext.data.Store({
@@ -389,9 +388,9 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
 
 
         var emptyMsg;
-        if (this.isCollectionSearch) {
+        if (this.config.isCollectionSearch) {
             emptyMsg = "classificationstore_no_collections";
-        } else if (this.isGroupSearch) {
+        } else if (this.config.isGroupSearch) {
             emptyMsg = "classificationstore_no_groups";
         } else {
             emptyMsg = "classificationstore_no_keys";
@@ -416,9 +415,9 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
                 rowdblclick: function (grid, record, tr, rowIndex, e, eOpts ) {
                     var data = [grid.getStore().getAt(rowIndex).id];
 
-                    if (this.isCollectionSearch) {
+                    if (this.config.isCollectionSearch) {
                         this.addCollections(data);
-                    } else if (this.isGroupSearch) {
+                    } else if (this.config.isGroupSearch) {
                         this.addGroups(data);
                     } else {
                         this.addKeys(data);
