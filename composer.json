@@ -91,7 +91,10 @@
       "Pimcore\\Model\\Object\\": "website/var/classes/Object",
       "Pimcore\\Model\\": "pimcore/models",
       "Pimcore\\": "pimcore/lib/Pimcore"
-    }
+    },
+    "classmap": [
+      "app/AppKernel.php"
+    ]
   },
   "scripts": {
     "post-create-project-cmd": "Pimcore\\Composer::postCreateProject",

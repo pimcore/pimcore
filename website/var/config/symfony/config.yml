@@ -1,0 +1,8 @@
+imports:
+    - { resource: parameters.yml }
+
+parameters:
+    locale: en
+
+framework:
+    secret: "%secret%"
