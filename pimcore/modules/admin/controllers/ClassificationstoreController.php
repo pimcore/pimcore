@@ -851,42 +851,45 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
                 }
             }
 
-            $groupCondition = "id in (" . implode(",", $groupIdList) .  ")";
+            if ($groupIdList) {
+                $groupList = new Classificationstore\GroupConfig\Listing();
+                $groupCondition = "id in (" . implode(",", $groupIdList) . ")";
+                $groupList->setCondition($groupCondition);
 
-            $groupList = new Classificationstore\GroupConfig\Listing();
-            $groupList->setCondition($groupCondition);
-            $groupList = $groupList->load();
 
-            $keyCondition = "groupId in (" . implode(",", $groupIdList) . ")";
+                $groupList = $groupList->load();
 
-            $keyList = new Classificationstore\KeyGroupRelation\Listing();
-            $keyList->setCondition($keyCondition);
-            $keyList->setOrderKey(["sorter", "id"]);
-            $keyList->setOrder(["ASC", "ASC"]);
-            $keyList = $keyList->load();
+                $keyCondition = "groupId in (" . implode(",", $groupIdList) . ")";
 
-            foreach ($groupList as $groupData) {
-                $data[$groupData->getId()] = [
-                    "name" => $groupData->getName(),
-                    "id" => $groupData->getId(),
-                    "description" => $groupData->getDescription(),
-                    "keys" => [],
-                    "collectionId" => $mappedData[$groupId]["colId"]
-                ];
-            }
+                $keyList = new Classificationstore\KeyGroupRelation\Listing();
+                $keyList->setCondition($keyCondition);
+                $keyList->setOrderKey(["sorter", "id"]);
+                $keyList->setOrder(["ASC", "ASC"]);
+                $keyList = $keyList->load();
 
-            foreach ($keyList as $keyData) {
-                $groupId = $keyData->getGroupId();
+                foreach ($groupList as $groupData) {
+                    $data[$groupData->getId()] = [
+                        "name" => $groupData->getName(),
+                        "id" => $groupData->getId(),
+                        "description" => $groupData->getDescription(),
+                        "keys" => [],
+                        "collectionId" => $mappedData[$groupId]["colId"]
+                    ];
+                }
 
-                $keyList = $data[$groupId]["keys"];
-                $definition = $keyData->getDefinition();
-                $keyList[] = [
-                    "name" => $keyData->getName(),
-                    "id" => $keyData->getKeyId(),
-                    "description" => $keyData->getDescription(),
-                    "definition" => json_decode($definition)
-                ];
-                $data[$groupId]["keys"] = $keyList;
+                foreach ($keyList as $keyData) {
+                    $groupId = $keyData->getGroupId();
+
+                    $keyList = $data[$groupId]["keys"];
+                    $definition = $keyData->getDefinition();
+                    $keyList[] = [
+                        "name" => $keyData->getName(),
+                        "id" => $keyData->getKeyId(),
+                        "description" => $keyData->getDescription(),
+                        "definition" => json_decode($definition)
+                    ];
+                    $data[$groupId]["keys"] = $keyList;
+                }
             }
         }
 
