@@ -6,3 +6,6 @@ parameters:
 
 framework:
     secret: "%secret%"
+    router:
+        resource: "%kernel.root_dir%/var/config/symfony/routing.yml"
+        strict_requirements: ~

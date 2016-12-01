@@ -1,2 +1,7 @@
 imports:
     - { resource: config.yml }
+
+framework:
+    router:
+        resource: "%kernel.root_dir%/var/config/symfony/routing_dev.yml"
+        strict_requirements: true
