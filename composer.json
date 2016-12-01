@@ -76,7 +76,10 @@
     "egulias/email-validator": "*",
     "neitanod/forceutf8": "~2",
     "symfony/symfony": "^3.1",
-    "php-di/symfony-bridge": "^2.0"
+    "php-di/symfony-bridge": "^2.0",
+    "sensio/framework-extra-bundle": "^3.0",
+    "symfony/psr-http-message-bridge": "^1.0",
+    "zendframework/zend-diactoros": "^1.3"
   },
   "require-dev": {
     "phpunit/phpunit": "*"
@@ -89,6 +92,7 @@
   },
   "autoload": {
     "psr-4": {
+      "": "src/",
       "Pimcore\\Model\\Object\\": "website/var/classes/Object",
       "Pimcore\\Model\\": "pimcore/models",
       "Pimcore\\": "pimcore/lib/Pimcore"
