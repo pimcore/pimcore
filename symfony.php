@@ -6,10 +6,7 @@ use Symfony\Component\Debug\Debug;
 
 require_once __DIR__ . '/pimcore/config/constants.php';
 require __DIR__ . '/app/autoload.php';
-
-// dump('bar');
-// die();
-
+require_once __DIR__ . '/pimcore/config/setup.php';
 
 Debug::enable();
 

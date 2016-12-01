@@ -767,19 +767,20 @@ class Pimcore
         return $debug;
     }
 
-    /**
-     * @static
-     *
-     */
-    public static function setupFramework()
+    public static function setupTempDirectories()
     {
-
         // try to set tmp directoy into superglobals, ZF and other frameworks (PEAR) sometimes relies on that
         foreach (['TMPDIR', 'TEMP', 'TMP', 'windir', 'SystemRoot'] as $key) {
             $_ENV[$key] = PIMCORE_CACHE_DIRECTORY;
             $_SERVER[$key] = PIMCORE_CACHE_DIRECTORY;
         }
+    }
 
+    /**
+     * @static
+     */
+    public static function setupZendViewRenderer()
+    {
         // set custom view renderer
         $pimcoreViewHelper = new Controller\Action\Helper\ViewRenderer();
         \Zend_Controller_Action_HelperBroker::addHelper($pimcoreViewHelper);
