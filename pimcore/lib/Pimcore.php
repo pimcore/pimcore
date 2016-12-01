@@ -843,12 +843,20 @@ class Pimcore
             $builder->useAnnotations(false);
             $builder->ignorePhpDocErrors(true);
 
-            self::getEventManager()->trigger('system.di.init', $builder);
+            static::addDiDefinitions($builder);
 
             self::$diContainer = $builder->build();
         }
 
         return self::$diContainer;
+    }
+
+    /**
+     * @param \DI\Container $container
+     */
+    public static function setDiContainer(\DI\Container $container)
+    {
+        self::$diContainer = $container;
     }
 
     /**
@@ -863,6 +871,8 @@ class Pimcore
         if (file_exists($customFile)) {
             $builder->addDefinitions($customFile);
         }
+
+        self::getEventManager()->trigger('system.di.init', $builder);
     }
 
     /** Add $keepItems to the list of items which are protected from garbage collection.

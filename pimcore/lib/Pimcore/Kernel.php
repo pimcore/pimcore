@@ -48,6 +48,10 @@ abstract class Kernel extends \DI\Bridge\Symfony\Kernel
     {
         \Pimcore::addDiDefinitions($builder);
 
-        return $builder->build();
+        $container = $builder->build();
+
+        \Pimcore::setDiContainer($container);
+
+        return $container;
     }
 }
