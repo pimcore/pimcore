@@ -75,7 +75,8 @@
     "vrana/adminer": "~4.2",
     "egulias/email-validator": "*",
     "neitanod/forceutf8": "~2",
-    "symfony/symfony": "^3.1"
+    "symfony/symfony": "^3.1",
+    "php-di/symfony-bridge": "^2.0"
   },
   "require-dev": {
     "phpunit/phpunit": "*"

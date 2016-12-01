@@ -843,19 +843,26 @@ class Pimcore
             $builder->useAnnotations(false);
             $builder->ignorePhpDocErrors(true);
 
-            $builder->addDefinitions(PIMCORE_PATH . "/config/di.php");
-
-            $customFile = \Pimcore\Config::locateConfigFile("di.php");
-            if (file_exists($customFile)) {
-                $builder->addDefinitions($customFile);
-            }
-
             self::getEventManager()->trigger('system.di.init', $builder);
 
             self::$diContainer = $builder->build();
         }
 
         return self::$diContainer;
+    }
+
+    /**
+     * @param \DI\ContainerBuilder $builder
+     * @return \DI\Container
+     */
+    public static function addDiDefinitions(\DI\ContainerBuilder $builder)
+    {
+        $builder->addDefinitions(PIMCORE_PATH . "/config/di.php");
+
+        $customFile = \Pimcore\Config::locateConfigFile("di.php");
+        if (file_exists($customFile)) {
+            $builder->addDefinitions($customFile);
+        }
     }
 
     /** Add $keepItems to the list of items which are protected from garbage collection.

@@ -3,9 +3,8 @@
 namespace Pimcore;
 
 use Symfony\Component\Config\Loader\LoaderInterface;
-use Symfony\Component\HttpKernel\Kernel as SymfonyKernel;
 
-abstract class Kernel extends SymfonyKernel
+abstract class Kernel extends \DI\Bridge\Symfony\Kernel
 {
     public function registerBundles()
     {
@@ -39,5 +38,12 @@ abstract class Kernel extends SymfonyKernel
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
         $loader->load($this->getRootDir() . '/var/config/symfony/config_' . $this->getEnvironment() . '.yml');
+    }
+
+    protected function buildPHPDIContainer(\DI\ContainerBuilder $builder)
+    {
+        \Pimcore::addDiDefinitions($builder);
+
+        return $builder->build();
     }
 }
