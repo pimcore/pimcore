@@ -175,15 +175,19 @@ class Imagick extends Adapter
         if (in_array($format, ["jpeg", "pjpeg", "jpg"]) && $this->isAlphaPossible) {
             // set white background for transparent pixels
             $i->setImageBackgroundColor("#ffffff");
-
-            // Imagick version compatibility
-            $alphaChannel = 11; // This works at least as far back as version 3.1.0~rc1-1
-            if (defined("Imagick::ALPHACHANNEL_REMOVE")) {
-                // Imagick::ALPHACHANNEL_REMOVE has been added in 3.2.0b2
-                $alphaChannel = \Imagick::ALPHACHANNEL_REMOVE;
+            
+            try {
+                // Imagick version compatibility
+                $alphaChannel = 11; // This works at least as far back as version 3.1.0~rc1-1
+                if (defined("Imagick::ALPHACHANNEL_REMOVE")) {
+                    // Imagick::ALPHACHANNEL_REMOVE has been added in 3.2.0b2
+                    $alphaChannel = \Imagick::ALPHACHANNEL_REMOVE;
+                }
+                $i->setImageAlphaChannel($alphaChannel); 
+            } catch(\ImagickException $e) {
+               Logger::warn("Failed to remove Alpha Channel for image: " . $path);
             }
-
-            $i->setImageAlphaChannel($alphaChannel);
+            
             $i->mergeImageLayers(\Imagick::LAYERMETHOD_FLATTEN);
         }
 
