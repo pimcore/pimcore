@@ -147,7 +147,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                     iconCls: "pimcore_icon_move",
                     style: "cursor: move;"
                 });
-                typeButton.on("afterrender", function (index, v) {
+                typeButton.on("render", function (index, v) {
 
                     var element = this.elements[index];
 
@@ -910,7 +910,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                 : brick.name,
             width: areaBlockToolbarSettings.buttonWidth,
             listeners: {
-                "afterrender": function (brick, v) {
+                "render": function (brick, v) {
 
                     v.dragZone = new Ext.dd.DragZone(v.getEl(), {
                         getDragData: function(e) {
