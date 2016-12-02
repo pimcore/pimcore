@@ -61,29 +61,17 @@ class MultiSelectFromMultiSelect extends \OnlineShop\Framework\FilterService\Fil
         $currentFilter[$field] = $value;
 
         if(!empty($value)) {
-
-
-            $quotedValues = array();
-            foreach($value as $v) {
-                if($v) {
-                    $v =  ".*\"" . \OnlineShop\Framework\IndexService\Worker\IWorker::MULTISELECT_DELIMITER  . $v .  \OnlineShop\Framework\IndexService\Worker\IWorker::MULTISELECT_DELIMITER . "\".*";
-                    $quotedValues[] = $v;
+            if($filterDefinition->getUseAndCondition()) {
+                foreach($value as $entry) {
+                    $productList->addCondition(['term' => ["attributes." . $field => $entry]], $field);
                 }
-            }
-
-            if($quotedValues) {
-                if($filterDefinition->getUseAndCondition()) {
-                    foreach($quotedValues as $value) {
-                        $productList->addCondition(['regexp' => ["attributes." . $field => $value]], $field);
-                    }
-                } else {
-                    $regexArray = [];
-                    foreach($quotedValues as $value) {
-                        $regexArray[] = ['regexp' => ["attributes." . $field => $value]];
-                    }
-
-                    $productList->addCondition(['or' => ['filters' => $regexArray]], $field);
+            } else {
+                $boolArray = [];
+                foreach($value as $entry) {
+                    $boolArray[] = ['term' => ["attributes." . $field => $entry]];
                 }
+
+                $productList->addCondition(['bool' => ['should' => $boolArray, 'minimum_should_match' => 1]], $field);
             }
         }
         return $currentFilter;

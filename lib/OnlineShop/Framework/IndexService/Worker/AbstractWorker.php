@@ -114,4 +114,17 @@ abstract class AbstractWorker implements IWorker {
      */
     abstract protected function doDeleteFromIndex($subObjectId, \OnlineShop\Framework\Model\IIndexable $object = null);
 
+
+    /**
+     * Checks if given data is array and returns converted data suitable for search backend. For mysql it is a string with special delimiter.
+     *
+     * @param $data
+     * @return string
+     */
+    protected function convertArray($data) {
+        if(is_array($data)) {
+            return \OnlineShop\Framework\IndexService\Worker\IWorker::MULTISELECT_DELIMITER . implode($data, \OnlineShop\Framework\IndexService\Worker\IWorker::MULTISELECT_DELIMITER) . \OnlineShop\Framework\IndexService\Worker\IWorker::MULTISELECT_DELIMITER;
+        }
+        return $data;
+    }
 }

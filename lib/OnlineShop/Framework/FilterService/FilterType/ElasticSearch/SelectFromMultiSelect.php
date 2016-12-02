@@ -39,10 +39,8 @@ class SelectFromMultiSelect extends \OnlineShop\Framework\FilterService\FilterTy
 
         $currentFilter[$field] = $value;
 
-
         if(!empty($value)) {
-            $value =  ".*\"" . \OnlineShop\Framework\IndexService\Worker\IWorker::MULTISELECT_DELIMITER  . $value .  \OnlineShop\Framework\IndexService\Worker\IWorker::MULTISELECT_DELIMITER . "\".*";
-            $productList->addCondition(['regexp' => ["attributes." . $field => $value]], $field);
+            $productList->addCondition(['term' => ["attributes." . $field => $value]], $field);
         }
         return $currentFilter;
     }

@@ -275,7 +275,7 @@ class DefaultMysql extends AbstractWorker implements IWorker {
                         }
 
                         if(is_array($data[$column->name])) {
-                            $data[$column->name] = \OnlineShop\Framework\IndexService\Worker\IWorker::MULTISELECT_DELIMITER . implode($data[$column->name], \OnlineShop\Framework\IndexService\Worker\IWorker::MULTISELECT_DELIMITER) . \OnlineShop\Framework\IndexService\Worker\IWorker::MULTISELECT_DELIMITER;
+                            $data[$column->name] = $this->convertArray($data[$column->name]);
                         }
 
                     } catch(\Exception $e) {

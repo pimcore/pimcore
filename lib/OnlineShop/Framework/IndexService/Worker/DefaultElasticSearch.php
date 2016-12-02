@@ -715,4 +715,17 @@ class DefaultElasticSearch extends AbstractWorker implements IBatchProcessingWor
             }
         }
     }
+
+
+    /**
+     * Checks if given data is array and returns converted data suitable for search backend.
+     *
+     * return array in this case
+     *
+     * @param $data
+     * @return string
+     */
+    protected function convertArray($data) {
+        return $data;
+    }
 }
