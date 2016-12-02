@@ -176,14 +176,16 @@ class Imagick extends Adapter
             // set white background for transparent pixels
             $i->setImageBackgroundColor("#ffffff");
 
-            // Imagick version compatibility
-            $alphaChannel = 11; // This works at least as far back as version 3.1.0~rc1-1
-            if (defined("Imagick::ALPHACHANNEL_REMOVE")) {
-                // Imagick::ALPHACHANNEL_REMOVE has been added in 3.2.0b2
-                $alphaChannel = \Imagick::ALPHACHANNEL_REMOVE;
+            if ($i->getImageAlphaChannel() !== 0) { // Note: returns (int) 0 if there's no AlphaChannel, PHP Docs are wrong. See: https://www.imagemagick.org/api/channel.php
+                // Imagick version compatibility
+                $alphaChannel = 11; // This works at least as far back as version 3.1.0~rc1-1
+                if (defined("Imagick::ALPHACHANNEL_REMOVE")) {
+                    // Imagick::ALPHACHANNEL_REMOVE has been added in 3.2.0b2
+                    $alphaChannel = \Imagick::ALPHACHANNEL_REMOVE;
+                }
+                $i->setImageAlphaChannel($alphaChannel); 				
             }
 
-            $i->setImageAlphaChannel($alphaChannel);
             $i->mergeImageLayers(\Imagick::LAYERMETHOD_FLATTEN);
         }
 
