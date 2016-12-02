@@ -15,15 +15,27 @@
  */
 
 
-namespace OnlineShop\Framework\IndexService\Worker\WorkerTraits;
+namespace OnlineShop\Framework\IndexService\Worker;
+use OnlineShop\Framework\Exception\InvalidConfigException;
+use OnlineShop\Framework\IndexService\Config\IMockupConfig;
+use Pimcore\Logger;
+
 
 /**
+ * Class AbstractMockupCacheWorker
+ *
  * provides worker functionality for mockup cache and central store table
  *
- * Class \OnlineShop\Framework\IndexService\Worker\WorkerTraits\MockupCache
+ * @package OnlineShop\Framework\IndexService\Worker
  */
-trait MockupCache {
+abstract class AbstractMockupCacheWorker extends AbstractBatchProcessingWorker {
 
+    /**
+     * returns prefix for cache key
+     *
+     * @return string
+     */
+    protected abstract function getMockupCachePrefix();
 
     /**
      * creates mockup cache key
@@ -42,7 +54,7 @@ trait MockupCache {
      */
     protected function deleteFromMockupCache($objectId) {
         $key = $this->getMockupCachePrefix() . "_" . $this->name . "_" . $objectId;
-        \Pimcore\Model\Cache::remove($key);
+        \Pimcore\Cache::remove($key);
     }
 
     /**
@@ -58,17 +70,23 @@ trait MockupCache {
             $data = json_decode($data, true);
         }
 
-        $mockup = $this->tenantConfig->createMockupObject($objectId, $data['data'], $data['relations']);
+        if($this->tenantConfig instanceof IMockupConfig) {
+            $mockup = $this->tenantConfig->createMockupObject($objectId, $data['data'], $data['relations']);
+        } else {
+            throw new InvalidConfigException("Tenant Config is not instance of IMockupConfig");
+        }
+
 
         $key = $this->createMockupCacheKey($objectId);
+
         //use cache instance directly to aviod cache locking -> in this case force writing to cache is needed
-        $cache = \Pimcore\Model\Cache::getInstance();
-        $success = $cache->save(serialize($mockup), \Pimcore\Model\Cache::$cachePrefix . $key, [$this->getMockupCachePrefix()], null);
-        $result = \Pimcore\Model\Cache::load($key);
+        $cache = \Pimcore\Cache::getInstance();
+        $success = $cache->save(serialize($mockup), \Pimcore\Cache::$cachePrefix . $key, [$this->getMockupCachePrefix()], null);
+        $result = \Pimcore\Cache::load($key);
         if($success && $result) {
             $this->db->query("UPDATE " . $this->getStoreTableName() . " SET crc_index = crc_current WHERE o_id = ? and tenant = ?", array($objectId, $this->name));
         } else {
-            \Logger::err("Element with ID $objectId could not be added to mockup-cache");
+            Logger::err("Element with ID $objectId could not be added to mockup-cache");
         }
 
         return $mockup;
@@ -82,7 +100,7 @@ trait MockupCache {
      */
     public function getMockupFromCache($objectId) {
         $key = $this->createMockupCacheKey($objectId);
-        $cachedItem = \Pimcore\Model\Cache::load($key);
+        $cachedItem = \Pimcore\Cache::load($key);
         if($cachedItem) {
             $mockup = unserialize($cachedItem);
             if($mockup instanceof \OnlineShop\Framework\Model\DefaultMockup) {
@@ -90,7 +108,7 @@ trait MockupCache {
             }
         }
 
-        \Logger::info("Element with ID $objectId was not found in cache, trying to put it there.");
+        Logger::info("Element with ID $objectId was not found in cache, trying to put it there.");
         return $this->saveToMockupCache($objectId);
     }
 

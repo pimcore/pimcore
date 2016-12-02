@@ -17,10 +17,10 @@
 
 namespace OnlineShop\Framework\IndexService\Worker;
 
-class OptimizedMysql extends DefaultMysql implements IBatchProcessingWorker {
-    use \OnlineShop\Framework\IndexService\Worker\WorkerTraits\BatchProcessing;
-    use \OnlineShop\Framework\IndexService\Worker\WorkerTraits\MockupCache;
+use Pimcore\Cache;
+use Pimcore\Logger;
 
+class OptimizedMysql extends AbstractMockupCacheWorker implements IBatchProcessingWorker {
     const STORE_TABLE_NAME = "plugin_onlineshop_productindex_store";
     const MOCKUP_CACHE_PREFIX = "ecommerce_mockup";
 
@@ -29,20 +29,26 @@ class OptimizedMysql extends DefaultMysql implements IBatchProcessingWorker {
      */
     protected $tenantConfig;
 
+    /**
+     * @var Helper\MySql
+     */
+    protected $mySqlHelper;
+
     public function __construct(\OnlineShop\Framework\IndexService\Config\OptimizedMysql $tenantConfig) {
         parent::__construct($tenantConfig);
+
+        $this->mySqlHelper = new Helper\MySql($tenantConfig);
     }
 
 
     public function createOrUpdateIndexStructures() {
-        parent::createOrUpdateIndexStructures();
-
+        $this->mySqlHelper->createOrUpdateIndexStructures();
         $this->createOrUpdateStoreTable();
     }
 
     public function deleteFromIndex(\OnlineShop\Framework\Model\IIndexable $object){
         if(!$this->tenantConfig->isActive($object)) {
-            \Logger::info("Tenant {$this->name} is not active.");
+            Logger::info("Tenant {$this->name} is not active.");
             return;
         }
 
@@ -70,15 +76,13 @@ class OptimizedMysql extends DefaultMysql implements IBatchProcessingWorker {
             $this->db->commit();
         } catch(\Exception $e) {
             $this->db->rollBack();
-            \Logger::warn("Error during deleting from index tables for object $objectId: " . $e->getMessage(), $e);
+            Logger::warn("Error during deleting from index tables for object $objectId: " . $e->getMessage(), $e);
         }
     }
 
-
-
     public function updateIndex(\OnlineShop\Framework\Model\IIndexable $object) {
         if(!$this->tenantConfig->isActive($object)) {
-            \Logger::info("Tenant {$this->name} is not active.");
+            Logger::info("Tenant {$this->name} is not active.");
             return;
         }
 
@@ -110,7 +114,7 @@ class OptimizedMysql extends DefaultMysql implements IBatchProcessingWorker {
             try {
                 $this->db->beginTransaction();
 
-                $this->doInsertData($data['data']);
+                $this->mySqlHelper->doInsertData($data['data']);
 
                 //insert relation data
                 $this->db->delete($this->tenantConfig->getRelationTablename(), "src = " . $this->db->quote($objectId));
@@ -128,13 +132,21 @@ class OptimizedMysql extends DefaultMysql implements IBatchProcessingWorker {
                 $this->db->commit();
             } catch(\Exception $e) {
                 $this->db->rollBack();
-                \Logger::warn("Error during updating index table for object $objectId: " . $e->getMessage(), $e);
+                Logger::warn("Error during updating index table for object $objectId: " . $e->getMessage(), $e);
             }
 
 
         }
     }
 
+    protected function getValidTableColumns($table)
+    {
+        return $this->mySqlHelper->getValidTableColumns($table);
+    }
+
+    protected function getSystemAttributes() {
+        return $this->mySqlHelper->getSystemAttributes();
+    }
 
     protected function getStoreTableName() {
         return self::STORE_TABLE_NAME;
@@ -144,6 +156,21 @@ class OptimizedMysql extends DefaultMysql implements IBatchProcessingWorker {
         return self::MOCKUP_CACHE_PREFIX;
     }
 
+
+
+    public function __destruct()
+    {
+        $this->mySqlHelper->__destruct();
+    }
+
+    /**
+     * returns product list implementation valid and configured for this worker/tenant
+     *
+     * @return mixed
+     */
+    function getProductList() {
+        return new \OnlineShop\Framework\IndexService\ProductList\DefaultMysql($this->getTenantConfig());
+    }
 
 }
 

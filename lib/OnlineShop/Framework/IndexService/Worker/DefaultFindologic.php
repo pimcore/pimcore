@@ -16,21 +16,14 @@
 
 
 namespace OnlineShop\Framework\IndexService\Worker;
+use Pimcore\Logger;
 
 /**
  * Class \OnlineShop\Framework\IndexService\Worker\DefaultFindologic
  * @method \OnlineShop\Framework\IndexService\Config\IFindologicConfig getTenantConfig()
  */
-class DefaultFindologic extends AbstractWorker implements IWorker, IBatchProcessingWorker
+class DefaultFindologic extends AbstractMockupCacheWorker implements IWorker, IBatchProcessingWorker
 {
-    use \OnlineShop\Framework\IndexService\Worker\WorkerTraits\BatchProcessing
-    {
-        \OnlineShop\Framework\IndexService\Worker\WorkerTraits\BatchProcessing::processUpdateIndexQueue as traitProcessUpdateIndexQueue;
-    }
-
-    use \OnlineShop\Framework\IndexService\Worker\WorkerTraits\MockupCache;
-
-
     const STORE_TABLE_NAME = "plugin_onlineshop_productindex_store_findologic";
     const EXPORT_TABLE_NAME = "plugin_onlineshop_productindex_export_findologic";
     const MOCKUP_CACHE_PREFIX = "ecommerce_mockup_findologic";
@@ -90,7 +83,7 @@ class DefaultFindologic extends AbstractWorker implements IWorker, IBatchProcess
     {
         if(!$this->tenantConfig->isActive($object))
         {
-            \Logger::info("Tenant {$this->name} is not active.");
+            Logger::info("Tenant {$this->name} is not active.");
             return;
         }
 
@@ -139,11 +132,11 @@ class DefaultFindologic extends AbstractWorker implements IWorker, IBatchProcess
 
         /**
          * Adds a child with $value inside CDATA
-         * @param SimpleXMLElement $parent
+         * @param \SimpleXMLElement $parent
          * @param string           $name
          * @param null             $value
          *
-         * @return SimpleXMLElement
+         * @return \SimpleXMLElement
          */
         $addChildWithCDATA = function (\SimpleXMLElement $parent, $name, $value = NULL) {
             $new_child = $parent->addChild($name);

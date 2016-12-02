@@ -15,14 +15,38 @@
  */
 
 
-namespace OnlineShop\Framework\IndexService\Worker\WorkerTraits;
+namespace OnlineShop\Framework\IndexService\Worker;
+use Pimcore\Logger;
+
 
 /**
+ * Class AbstractMockupCacheWorker
+ *
  * provides worker functionality for patch preparing data and updating index
  *
- * Class \OnlineShop\Framework\IndexService\Worker\WorkerTraits\BatchProcessing
+ * @package OnlineShop\Framework\IndexService\Worker
  */
-trait BatchProcessing {
+abstract class AbstractBatchProcessingWorker extends AbstractWorker implements IBatchProcessingWorker {
+
+    /**
+     * @var \OnlineShop\Framework\IndexService\Config\AbstractConfig
+     */
+    protected $tenantConfig;
+
+    /**
+     * returns name for store table
+     *
+     * @return string
+     */
+    protected abstract function getStoreTableName();
+
+
+    /**
+     * @param $objectId
+     * @param null $data
+     */
+    protected abstract function doUpdateIndex($objectId, $data = null);
+
 
     /**
      * creates store table
@@ -58,7 +82,12 @@ trait BatchProcessing {
         $this->db->delete($this->getStoreTableName(), "o_id = " . $this->db->quote((string)$objectId) . " AND tenant = " . $this->db->quote($this->name));
     }
 
-    protected function getDefaultDataForIndex($object,$subObjectId){
+    /**
+     * prepare data for index creation and store is in store table
+     *
+     * @param \OnlineShop\Framework\Model\IIndexable $object
+     */
+    protected function getDefaultDataForIndex(\OnlineShop\Framework\Model\IIndexable $object, $subObjectId){
         $categories = $object->getCategories();
         $categoryIds = [];
         $parentCategoryIds =[];
@@ -212,7 +241,7 @@ trait BatchProcessing {
                         }
 
                     } catch(\Exception $e) {
-                        \Logger::err("Exception in IndexService: " . $e->getMessage(), $e);
+                        Logger::err("Exception in IndexService: " . $e->getMessage(), $e);
                     }
 
                 }
@@ -244,7 +273,7 @@ trait BatchProcessing {
 
                 $this->insertDataToIndex($insertData,$subObjectId);
             } else {
-                \Logger::info("Don't adding product " . $subObjectId . " to index " . $this->name . ".");
+                Logger::info("Don't adding product " . $subObjectId . " to index " . $this->name . ".");
                 $this->doDeleteFromIndex($subObjectId, $object);
             }
         }
@@ -317,14 +346,14 @@ trait BatchProcessing {
 
         if($entries) {
             foreach($entries as $objectId) {
-                \Logger::info("Worker $workerId preparing data for index for element " . $objectId);
+                Logger::info("Worker $workerId preparing data for index for element " . $objectId);
 
                 $object = $this->tenantConfig->getObjectById($objectId, true);
                 if($object instanceof \OnlineShop\Framework\Model\IIndexable) {
                     $this->prepareDataForIndex($object);
                 } else {
                     //delete entry with id which was retrieved from index before
-                    \Logger::warn("Element with ID $objectId in product index but cannot be found in pimcore -> deleting element from index.");
+                    Logger::warn("Element with ID $objectId in product index but cannot be found in pimcore -> deleting element from index.");
                     $this->doDeleteFromIndex($objectId, $object);
                 }
             }
@@ -352,9 +381,10 @@ trait BatchProcessing {
 
         if($entries) {
             foreach($entries as $entry) {
-                \Logger::info("Worker $workerId updating index for element " . $entry['id']);
+                Logger::info("Worker $workerId updating index for element " . $entry['id']);
                 $data = json_decode($entry['data'], true);
                 $this->doUpdateIndex($entry['o_id'], $data);
+
             }
             return count($entries);
         } else {

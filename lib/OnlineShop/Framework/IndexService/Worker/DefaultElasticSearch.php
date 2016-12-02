@@ -17,11 +17,9 @@
 
 namespace OnlineShop\Framework\IndexService\Worker;
 
-class DefaultElasticSearch extends AbstractWorker implements IBatchProcessingWorker {
-    use \OnlineShop\Framework\IndexService\Worker\WorkerTraits\BatchProcessing {
-        \OnlineShop\Framework\IndexService\Worker\WorkerTraits\BatchProcessing::processUpdateIndexQueue as traitProcessUpdateIndexQueue;
-    }
-    use \OnlineShop\Framework\IndexService\Worker\WorkerTraits\MockupCache;
+use Pimcore\Logger;
+
+class DefaultElasticSearch extends AbstractMockupCacheWorker implements IBatchProcessingWorker {
 
     const STORE_TABLE_NAME = "plugin_onlineshop_productindex_store_elastic";
     const MOCKUP_CACHE_PREFIX = "ecommerce_mockup_elastic";
@@ -103,7 +101,7 @@ class DefaultElasticSearch extends AbstractWorker implements IBatchProcessingWor
      * @return string
      */
     public function getIndexNameVersion(){
-        return $this->indexName.'-'. $this->getIndexVersion();
+        return $this->indexName . '-' . $this->getIndexVersion();
     }
 
     /**
@@ -191,7 +189,7 @@ class DefaultElasticSearch extends AbstractWorker implements IBatchProcessingWor
         $result = $esClient->indices()->exists(['index' => $this->getIndexNameVersion()]);
         if(!$result) {
             $result = $esClient->indices()->create(['index' => $this->getIndexNameVersion(), 'body' => ['settings' => $this->tenantConfig->getIndexSettings()]]);
-            \Logger::info('Index-Actions - creating new Index. Name: ' . $this->getIndexNameVersion());
+            Logger::info('Index-Actions - creating new Index. Name: ' . $this->getIndexNameVersion());
             if(!$result['acknowledged']) {
                 throw new \Exception("Index creation failed. IndexName: " . $this->getIndexNameVersion());
             }
@@ -203,7 +201,7 @@ class DefaultElasticSearch extends AbstractWorker implements IBatchProcessingWor
             //create alias for new index if alias doesn't exist so far
             $aliasExists = $esClient->indices()->existsAlias(['name' => $this->indexName]);
             if(!$aliasExists) {
-                \Logger::info("Index-Actions - create alias for index since it doesn't exist at all. Name: " . $this->indexName);
+                Logger::info("Index-Actions - create alias for index since it doesn't exist at all. Name: " . $this->indexName);
                 $params['body'] = [
                     'actions' => [
                         [
@@ -224,9 +222,9 @@ class DefaultElasticSearch extends AbstractWorker implements IBatchProcessingWor
 
             try {
                 $result = $esClient->indices()->putMapping($params);
-                \Logger::info('Index-Actions - updated Mapping for Index: ' . $this->getIndexNameVersion());
+                Logger::info('Index-Actions - updated Mapping for Index: ' . $this->getIndexNameVersion());
             } catch(\Exception $e) {
-                \Logger::info($e->getMessage());
+                Logger::info($e->getMessage());
                 if($exceptionOnFailure){
                     throw new \Exception("Can't create Mapping - Exiting to prevent infinit loop");
                 } else {
@@ -320,6 +318,7 @@ class DefaultElasticSearch extends AbstractWorker implements IBatchProcessingWor
         $mappingAttributes['attributes'] = ['type' => 'object', 'dynamic' => true, 'properties' => $customAttributesMapping];
         $mappingAttributes['relations'] = ['type' => 'object', 'dynamic' => false, 'properties' => $relationAttributesMapping];
         $mappingAttributes['subtenants'] = ['type' => 'object', 'dynamic' => true];
+
         return $mappingAttributes;
     }
 
@@ -355,7 +354,7 @@ class DefaultElasticSearch extends AbstractWorker implements IBatchProcessingWor
      */
     public function deleteFromIndex(\OnlineShop\Framework\Model\IIndexable $object) {
         if(!$this->tenantConfig->isActive($object)) {
-            \Logger::info("Tenant {$this->name} is not active.");
+            Logger::info("Tenant {$this->name} is not active.");
             return;
         }
 
@@ -389,7 +388,7 @@ class DefaultElasticSearch extends AbstractWorker implements IBatchProcessingWor
                     $this->deleteFromStoreTable($objectId);
                     $this->deleteFromMockupCache($objectId);
                 } else {
-                    \Logger::emergency('Could not delete item form ES index: ID: ' . $objectId.' Message: ' . $e->getMessage());
+                    Logger::emergency('Could not delete item form ES index: ID: ' . $objectId.' Message: ' . $e->getMessage());
                 }
             }
         } else {
@@ -397,7 +396,7 @@ class DefaultElasticSearch extends AbstractWorker implements IBatchProcessingWor
             try {
                 $esClient->delete(['index' => $this->getIndexNameVersion(), 'type' => \OnlineShop\Framework\IndexService\ProductList\IProductList::PRODUCT_TYPE_OBJECT, 'id' => $objectId]);
             } catch(\Exception $e) {
-                \Logger::warn('Could not delete item form ES index: ID: ' . $objectId.' Message: ' . $e->getMessage());
+                Logger::warn('Could not delete item form ES index: ID: ' . $objectId.' Message: ' . $e->getMessage());
             }
 
             // TODO NOTE: we cannot delete variants from ES when we don't know their parents anymore.
@@ -417,7 +416,7 @@ class DefaultElasticSearch extends AbstractWorker implements IBatchProcessingWor
      */
     public function updateIndex(\OnlineShop\Framework\Model\IIndexable $object) {
         if(!$this->tenantConfig->isActive($object)) {
-            \Logger::info("Tenant {$this->name} is not active.");
+            Logger::info("Tenant {$this->name} is not active.");
             return;
         }
 
@@ -486,7 +485,6 @@ class DefaultElasticSearch extends AbstractWorker implements IBatchProcessingWor
             } else {
                 $this->bulkIndexData[] = ['index' => ['_index' => $this->getIndexNameVersion(), '_type' => $indexSystemData['o_type'], '_id' => $objectId]];
             }
-            #\Logger::info('Added to Bulk index:  ' . $objectId);
             $this->bulkIndexData[] = array_filter(['system' => array_filter($indexSystemData),'type' => $indexSystemData['o_type'], 'attributes' => array_filter($indexAttributeData), 'relations' => $indexRelationData, 'subtenants' => $data['subtenants']]);
 
             //save new indexed element to mockup cache
@@ -526,7 +524,7 @@ class DefaultElasticSearch extends AbstractWorker implements IBatchProcessingWor
                 if($response['index']['error']) {
                     $data['update_error'] = \Zend_Json::encode($response['index']['error']);
                     $data['crc_index'] = 0;
-                    \Logger::error('Failed to Index Object with Id:' . $response['index']['_id']);
+                    Logger::error('Failed to Index Object with Id:' . $response['index']['_id']);
                 }
 
                 $this->db->update($this->getStoreTableName(), $data, ['o_id = ?' => $response['index']['_id']]);
@@ -547,8 +545,8 @@ class DefaultElasticSearch extends AbstractWorker implements IBatchProcessingWor
      * @return int number of entries processed
      */
     public function processUpdateIndexQueue($limit = 100) {
-        $entriesUpdated = $this->traitProcessUpdateIndexQueue($limit);
-        \Logger::info('Entries updated:' . $entriesUpdated);
+        $entriesUpdated = parent::processUpdateIndexQueue($limit);
+        Logger::info('Entries updated:' . $entriesUpdated);
         if($entriesUpdated) {
             $this->commitUpdateIndex();
         }
@@ -593,7 +591,7 @@ class DefaultElasticSearch extends AbstractWorker implements IBatchProcessingWor
 
         // increment version and recreate index structures
         $this->indexVersion++;
-        \Logger::info("Index-Actions - Start Reindex Mode - Version Number: " . $this->indexVersion.' Index Name: ' . $this->getIndexNameVersion());
+        Logger::info("Index-Actions - Start Reindex Mode - Version Number: " . $this->indexVersion.' Index Name: ' . $this->getIndexNameVersion());
 
         //set the new version here so other processes write in the new index
         $result = file_put_contents($this->getVersionFile(),$this->indexVersion);
@@ -614,7 +612,7 @@ class DefaultElasticSearch extends AbstractWorker implements IBatchProcessingWor
         try {
             $result = $esClient->indices()->getAlias(['index' => $this->indexName]);
         } catch (\Exception $e) {
-            \Logger::error($e);
+            Logger::error($e);
             throw new \Exception("Index alias with name " . $this->indexName . " not found! " . $e);
         }
 
@@ -623,10 +621,10 @@ class DefaultElasticSearch extends AbstractWorker implements IBatchProcessingWor
         $currentIndexVersion = str_replace($this->indexName . "-", "", $currentIndexName);
 
         if($currentIndexVersion < $this->getIndexVersion()) {
-            \Logger::info("Index-Actions - currently in reindex mode for " . $this->indexName);
+            Logger::info("Index-Actions - currently in reindex mode for " . $this->indexName);
             return true;
         } else if($currentIndexVersion == $this->getIndexVersion()) {
-            \Logger::info("Index-Actions - currently NOT in reindex mode for " . $this->indexName);
+            Logger::info("Index-Actions - currently NOT in reindex mode for " . $this->indexName);
             return false;
         } else {
             throw new \Exception("Index-Actions - something wired happened - CurrentIndexVersion of Alias is bigger than IndexVersion in File: " . $currentIndexVersion . " vs. " . $this->getIndexVersion());
@@ -637,7 +635,7 @@ class DefaultElasticSearch extends AbstractWorker implements IBatchProcessingWor
      * resets the store table to initiate a re-indexing
      */
     public function resetIndexingQueue() {
-        \Logger::info('Index-Actions - Resetting index queue');
+        Logger::info('Index-Actions - Resetting index queue');
         $query = 'UPDATE '. $this->getStoreTableName() .' SET worker_timestamp = null,
                         worker_id = null,
                         preparation_worker_timestamp = 0,
@@ -655,20 +653,20 @@ class DefaultElasticSearch extends AbstractWorker implements IBatchProcessingWor
      */
     protected function completeReindexMode() {
         if($this->isInReindexMode()) {
-            \Logger::info('Index-Actions - in completeReindexMode');
+            Logger::info('Index-Actions - in completeReindexMode');
 
             // check if all entries are updated
             $query = "SELECT count(*) FROM " . $this->getStoreTableName() . " WHERE tenant = ? AND (in_preparation_queue = 1 OR crc_current != crc_index);";
             $result = $this->db->fetchOne($query, array($this->name));
 
-            \Logger::info('Index-Actions - in completeReindexMode - Open entries: ' . $result);
+            Logger::info('Index-Actions - in completeReindexMode - Open entries: ' . $result);
 
             if($result == 0) {
                 //no entries left --> re-index is finished
                 $this->switchIndexAlias();
             } else {
                 //there are entries left --> re-index not finished yet
-                \Logger::info("Index-Actions - Re-Indexing is not finished, still re-indexing for version number: " . $this->indexVersion);
+                Logger::info("Index-Actions - Re-Indexing is not finished, still re-indexing for version number: " . $this->indexVersion);
             }
         }
     }
@@ -679,7 +677,7 @@ class DefaultElasticSearch extends AbstractWorker implements IBatchProcessingWor
      * @throws \Exception
      */
     public function switchIndexAlias(){
-        \Logger::info('Index-Actions - Switching Alias');
+        Logger::info('Index-Actions - Switching Alias');
         $esClient = $this->getElasticSearchClient();
 
         $params['body'] = array(
@@ -709,7 +707,7 @@ class DefaultElasticSearch extends AbstractWorker implements IBatchProcessingWor
             if(!is_null($matches[1])){
                 $version = (int)$matches[1];
                 if($version != $this->indexVersion){
-                    \Logger::info("Index-Actions - Delete old Index " . $this->indexName.'-'.$version);
+                    Logger::info("Index-Actions - Delete old Index " . $this->indexName.'-'.$version);
                     $esClient->indices()->delete(['index' => $this->indexName.'-'.$version]);
                 }
             }

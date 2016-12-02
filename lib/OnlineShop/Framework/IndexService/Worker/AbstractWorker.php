@@ -25,6 +25,8 @@ abstract class AbstractWorker implements IWorker {
     protected $indexColumns;
     protected $filterGroups;
 
+    protected $db;
+
 
     /**
      * @var \OnlineShop\Framework\IndexService\Config\IConfig

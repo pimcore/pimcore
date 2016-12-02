@@ -17,16 +17,10 @@
 
 namespace OnlineShop\Framework\IndexService\Worker;
 
-class DefaultFactFinder extends AbstractWorker implements IWorker, IBatchProcessingWorker
+use Pimcore\Logger;
+
+class DefaultFactFinder extends AbstractMockupCacheWorker implements IWorker, IBatchProcessingWorker
 {
-    use \OnlineShop\Framework\IndexService\Worker\WorkerTraits\BatchProcessing
-    {
-        \OnlineShop\Framework\IndexService\Worker\WorkerTraits\BatchProcessing::processUpdateIndexQueue as traitProcessUpdateIndexQueue;
-    }
-
-    use \OnlineShop\Framework\IndexService\Worker\WorkerTraits\MockupCache;
-
-
     const STORE_TABLE_NAME = "plugin_onlineshop_productindex_store_factfinder";
     const MOCKUP_CACHE_PREFIX = "ecommerce_mockup_factfinder";
 
@@ -231,7 +225,7 @@ class DefaultFactFinder extends AbstractWorker implements IWorker, IBatchProcess
                         }
 
                     } catch(\Exception $e) {
-                        \Logger::err("Exception in IndexService: " . $e->getMessage(), $e);
+                        Logger::err("Exception in IndexService: " . $e->getMessage(), $e);
                     }
 
                 }
@@ -247,7 +241,7 @@ class DefaultFactFinder extends AbstractWorker implements IWorker, IBatchProcess
                 $data['crc_current'] = crc32(serialize($data));
                 $this->insertDataToIndex($data,$subObjectId);
             } else {
-                \Logger::info("Don't adding product " . $subObjectId . " to index " . $this->name . ".");
+                Logger::info("Don't adding product " . $subObjectId . " to index " . $this->name . ".");
                 $this->doDeleteFromIndex($subObjectId, $object);
             }
         }
@@ -269,7 +263,7 @@ class DefaultFactFinder extends AbstractWorker implements IWorker, IBatchProcess
     {
         if(!$this->tenantConfig->isActive($object))
         {
-            \Logger::info("Tenant {$this->name} is not active.");
+            Logger::info("Tenant {$this->name} is not active.");
             return;
         }
 
@@ -286,7 +280,7 @@ class DefaultFactFinder extends AbstractWorker implements IWorker, IBatchProcess
      */
     public function processUpdateIndexQueue($limit = 200)
     {
-        $entriesUpdated = $this->traitProcessUpdateIndexQueue($limit);
+        $entriesUpdated = parent::processUpdateIndexQueue($limit);
         if($entriesUpdated)
         {
             // TODO csv schreiben?
