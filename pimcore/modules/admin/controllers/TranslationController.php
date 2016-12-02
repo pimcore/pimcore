@@ -405,7 +405,8 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
     {
         $joins = [];
         $conditions = [];
-        $validLanguages = $this->getUser()->getAllowedLanguagesForViewingWebsiteTranslations();;
+        $validLanguages = $this->getUser()->getAllowedLanguagesForViewingWebsiteTranslations();
+        ;
 
         $db = \Pimcore\Db::get();
         $conditionFilters = [];

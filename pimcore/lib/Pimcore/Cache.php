@@ -355,9 +355,10 @@ class Cache
             }
 
             $data = serialize($data);
+
             return self::storeToCache($data, $key, $tags, $lifetime, $force);
         } else {
-            if(count(self::$saveStack) < self::$maxWriteToCacheItems) {
+            if (count(self::$saveStack) < self::$maxWriteToCacheItems) {
                 $data = serialize($data);
                 self::$saveStack[] = [$data, $key, $tags, $lifetime, $force];
             }

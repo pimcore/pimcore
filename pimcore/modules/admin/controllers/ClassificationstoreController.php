@@ -976,7 +976,6 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
 
             $this->_helper->json(["success" => true, "data" => $item]);
         } else {
-
             $storeId = $this->getParam("storeId");
             $frameName = $this->getParam("frameName");
             $db = \Pimcore\Db::get();
@@ -992,24 +991,24 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
                     $groupList = new Pimcore\Model\Object\Classificationstore\CollectionGroupRelation\Listing();
                     $groupList->setCondition("colId = " . $db->quote($frameId));
                     $groupList = $groupList->load();
-                    $groupIdList = array();
+                    $groupIdList = [];
                     foreach ($groupList as $groupEntry) {
                         $groupIdList[] = $groupEntry->getGroupId();
                     }
 
                     if ($groupIdList) {
                         $keyIdList = new Classificationstore\KeyGroupRelation\Listing();
-                        $keyIdList->setCondition("groupId in (" . implode("," , $groupIdList) . ")");
+                        $keyIdList->setCondition("groupId in (" . implode(",", $groupIdList) . ")");
                         $keyIdList = $keyIdList->load();
                         if ($keyIdList) {
-                            $keyIds = array();
+                            $keyIds = [];
                             /** @var  $keyEntry Classificationstore\KeyGroupRelation */
                             foreach ($keyIdList as $keyEntry) {
                                 $keyIds[] = $keyEntry->getKeyId();
                             }
 
                             if ($keyIds) {
-                                $keyCriteria = " id in (" . implode("," , $keyIds) . ")";
+                                $keyCriteria = " id in (" . implode(",", $keyIds) . ")";
                             }
                         }
                     }

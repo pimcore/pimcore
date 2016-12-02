@@ -627,7 +627,8 @@ class User extends User\UserRole
      *
      * @return array|null
      */
-    public function getMergedWebsiteTranslationLanguagesEdit() {
+    public function getMergedWebsiteTranslationLanguagesEdit()
+    {
         if (null === $this->mergedWebsiteTranslationLanguagesEdit) {
             $this->mergedWebsiteTranslationLanguagesEdit = $this->getWebsiteTranslationLanguagesEdit();
             foreach ($this->getRoles() as $role) {
@@ -647,18 +648,16 @@ class User extends User\UserRole
      *
      * @return array|null
      */
-    public function getAllowedLanguagesForEditingWebsiteTranslations() {
+    public function getAllowedLanguagesForEditingWebsiteTranslations()
+    {
         $mergedWebsiteTranslationLanguagesEdit = $this->getMergedWebsiteTranslationLanguagesEdit();
-        if(empty($mergedWebsiteTranslationLanguagesEdit)) {
-
+        if (empty($mergedWebsiteTranslationLanguagesEdit)) {
             $mergedWebsiteTranslationLanguagesView = $this->getMergedWebsiteTranslationLanguagesView();
-            if(empty($mergedWebsiteTranslationLanguagesView)) {
+            if (empty($mergedWebsiteTranslationLanguagesView)) {
                 return Tool::getValidLanguages();
             } else {
                 return $mergedWebsiteTranslationLanguagesEdit;
             }
-
-
         } else {
             return $mergedWebsiteTranslationLanguagesEdit;
         }
@@ -669,7 +668,8 @@ class User extends User\UserRole
      *
      * @return array|null
      */
-    public function getMergedWebsiteTranslationLanguagesView() {
+    public function getMergedWebsiteTranslationLanguagesView()
+    {
         if (null === $this->mergedWebsiteTranslationLanguagesView) {
             $this->mergedWebsiteTranslationLanguagesView = $this->getWebsiteTranslationLanguagesView();
             foreach ($this->getRoles() as $role) {
@@ -689,13 +689,13 @@ class User extends User\UserRole
      *
      * @return array|null
      */
-    public function getAllowedLanguagesForViewingWebsiteTranslations() {
+    public function getAllowedLanguagesForViewingWebsiteTranslations()
+    {
         $mergedWebsiteTranslationLanguagesView = $this->getMergedWebsiteTranslationLanguagesView();
-        if(empty($mergedWebsiteTranslationLanguagesView)) {
+        if (empty($mergedWebsiteTranslationLanguagesView)) {
             return Tool::getValidLanguages();
         } else {
             return $mergedWebsiteTranslationLanguagesView;
         }
     }
-
 }

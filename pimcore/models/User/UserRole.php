@@ -327,7 +327,8 @@ class UserRole extends AbstractUser
      * @param $array
      * @return array|string
      */
-    protected function prepareArray($array) {
+    protected function prepareArray($array)
+    {
         if (is_string($array)) {
             if (strlen($array)) {
                 $array = explode(",", $array);
@@ -337,6 +338,7 @@ class UserRole extends AbstractUser
         if (empty($array)) {
             $array = [];
         }
+
         return $array;
     }
 }
