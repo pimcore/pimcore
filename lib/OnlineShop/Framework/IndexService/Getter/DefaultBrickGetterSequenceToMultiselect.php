@@ -72,14 +72,6 @@ class DefaultBrickGetterSequenceToMultiselect implements IGetter {
             }
 
         }
-        if(!empty($values)) {
-            return \OnlineShop\Framework\IndexService\Worker\IWorker::MULTISELECT_DELIMITER .
-                implode(\OnlineShop\Framework\IndexService\Worker\IWorker::MULTISELECT_DELIMITER, $values) .
-            \OnlineShop\Framework\IndexService\Worker\IWorker::MULTISELECT_DELIMITER;
-        } else {
-            return null;
-        }
-
 
     }
 }
