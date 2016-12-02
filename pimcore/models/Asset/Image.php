@@ -191,6 +191,17 @@ class Image extends Model\Asset
             $path = $this->getFileSystemPath();
         }
 
+        //try to get the dimensions with getimagesize because it is much faster than e.g. the Imagick-Adapter
+        if(is_readable($path)){
+            $dimensions = getimagesize($path);
+            if($dimensions[0] && $dimensions[1]){
+                return [
+                    "width" => $dimensions[0],
+                    "height" => $dimensions[1]
+                ];
+            }
+        }
+
         $image = self::getImageTransformInstance();
 
         $status = $image->load($path);
