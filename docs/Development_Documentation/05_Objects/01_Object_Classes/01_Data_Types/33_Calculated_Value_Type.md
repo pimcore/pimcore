@@ -46,7 +46,7 @@ class CalculatorDemo
 } 
 ```
 
-As we see here the calculator class sums up the x and y values from the corresponding language tab.
+As we see here, the calculator class sums up the x and y values from the corresponding language tab.
 
 It is also possible to provide a different representation for edit mode by providing a second (optional) implementation just for this purpose. An example would be:
 ```php
@@ -68,7 +68,7 @@ The visual outcome would be as follows:
 
 
 
-## Working with PHP api
+## Working with PHP API
 
 Getter methods on the object class are generated as usual. The code to retrieve the values would then be: 
 ```php
@@ -77,7 +77,7 @@ $valueDe =  $object->getSum("de");   // => 38
 $valueEn =  $object->getSum("en");   // => 11
 ```
 
-## Context Information for Cacluation Class
+## Context Information for Calculation Class
 As said before, the richness of the context information depends on the location of the calculated-value field.
 
 
