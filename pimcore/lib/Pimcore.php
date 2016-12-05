@@ -51,14 +51,17 @@ class Pimcore
      */
     private static $globallyProtectedItems;
 
-
     /**
      * @static
-     * @throws Exception|\Zend_Controller_Router_Exception
+
      * @param bool $returnResponse
-     * @return \Zend_Controller_Response_Http|null
+     * @param Zend_Controller_Request_Abstract $request
+     * @param Zend_Controller_Response_Abstract $response
+     * @return null|Zend_Controller_Response_Http
+     * @throws Exception
+     * @throws Zend_Controller_Router_Exception
      */
-    public static function run($returnResponse = false)
+    public static function run($returnResponse = false, Zend_Controller_Request_Abstract $request = null, Zend_Controller_Response_Abstract $response = null)
     {
         $throwExceptions = false;
 
@@ -253,13 +256,13 @@ class Pimcore
                 @ini_set("display_errors", "Off");
                 @ini_set("display_startup_errors", "Off");
 
-                return $front->dispatch();
+                return $front->dispatch($request, $response);
             } else {
                 @ini_set("display_errors", "On");
                 @ini_set("display_startup_errors", "On");
 
                 $front->throwExceptions(true);
-                return $front->dispatch();
+                return $front->dispatch($request, $response);
             }
         } catch (\Zend_Controller_Router_Exception $e) {
             if (!headers_sent()) {
