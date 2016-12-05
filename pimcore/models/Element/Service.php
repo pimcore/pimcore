@@ -832,7 +832,7 @@ class Service extends Model\AbstractModel
      */
     public static function isValidKey($key, $type)
     {
-        return (self::getValidKey($key, $type) === $key);
+        return (self::getValidKey($key, $type) == $key);
     }
 
     /**
