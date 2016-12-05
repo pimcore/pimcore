@@ -383,10 +383,6 @@ Ext.define('Ext.overrides.grid.View', {
     }
 );
 
-Ext.define('pimcore.tree.Panel', {
-    extend: 'Ext.tree.Panel'
-});
-
 Ext.define('pimcore.tree.View', {
     extend: 'Ext.tree.View',
     alias: 'widget.pimcoretreeview',

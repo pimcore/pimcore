@@ -111,7 +111,7 @@ pimcore.document.tree = Class.create({
 
 
         // documents
-        this.tree = Ext.create('pimcore.tree.Panel', {
+        this.tree = Ext.create('Ext.tree.Panel', {
             region: "center",
             id: this.config.treeId,
             title: this.config.treeTitle,

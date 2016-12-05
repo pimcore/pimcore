@@ -100,7 +100,7 @@ pimcore.object.tree = Class.create({
 
 
         // objects
-        this.tree = Ext.create('pimcore.tree.Panel', {
+        this.tree = Ext.create('Ext.tree.Panel', {
             store: store,
             region: "center",
             autoLoad: false,

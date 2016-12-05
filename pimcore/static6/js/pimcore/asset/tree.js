@@ -94,7 +94,7 @@ pimcore.asset.tree = Class.create({
         });
 
         // assets
-        this.tree = Ext.create('pimcore.tree.Panel', {
+        this.tree = Ext.create('Ext.tree.Panel', {
             store: store,
             autoLoad: false,
             id: this.config.treeId,
