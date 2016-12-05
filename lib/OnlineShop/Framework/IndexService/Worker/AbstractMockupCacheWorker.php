@@ -101,11 +101,12 @@ abstract class AbstractMockupCacheWorker extends AbstractBatchProcessingWorker {
     public function getMockupFromCache($objectId) {
         $key = $this->createMockupCacheKey($objectId);
         $cachedItem = \Pimcore\Cache::load($key);
-        if($cachedItem) {
-            $mockup = unserialize($cachedItem);
-            if($mockup instanceof \OnlineShop\Framework\Model\DefaultMockup) {
-                return $mockup;
-            }
+
+        if(is_string($cachedItem)){
+            $cachedItem = unserialize($cachedItem);
+        }
+        if($cachedItem instanceof \OnlineShop\Framework\Model\DefaultMockup) {
+            return $cachedItem;
         }
 
         Logger::info("Element with ID $objectId was not found in cache, trying to put it there.");
