@@ -295,8 +295,6 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
             store: this.store,
             border: true,
             style: "margin-bottom: 10px",
-            enableDragDrop: true,
-            ddGroup: 'element',
             trackMouseOver: true,
             selModel: Ext.create('Ext.selection.CellModel', {}),
             columnLines: true,
@@ -305,8 +303,17 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
                 items: columns
             },
             viewConfig: {
-                markDirty: false,
+            markDirty: false,
+            plugins: [
+                    {
+                        ptype: 'gridviewdragdrop',
+                        dragroup: 'element'
+                    }
+                ],
                 listeners: {
+                    drop: function(node, data, dropRec, dropPosition) {
+                        this.dataChanged = true;
+                    }.bind(this),
                     refresh: function (gridview) {
                         this.requestNicePathData(this.store.data);
                     }.bind(this)
@@ -352,7 +359,6 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
                         }
                     }.bind(this),
                     onNodeDrop : function(target, dd, e, data) {
-
                         try {
                             var record = data.records[0];
                             var data = record.data;
@@ -474,7 +480,6 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
         } else if (type == "document" && this.fieldConfig.documentsAllowed) {
             subType = data.type;
             isAllowed = false;
-            console.log(this.fieldConfig.documentTypes);
             if (this.fieldConfig.documentTypes != null && this.fieldConfig.documentTypes.length > 0) {
                 for (i = 0; i < this.fieldConfig.documentTypes.length; i++) {
                     if (this.fieldConfig.documentTypes[i].documentTypes == subType) {
