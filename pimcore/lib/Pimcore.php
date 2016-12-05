@@ -68,8 +68,10 @@ class Pimcore
         // detect frontend (website)
         $frontend = Tool::isFrontend();
 
-        // enable the output-buffer, why? see in self::outputBufferStart()
-        self::outputBufferStart();
+        if (!$returnResponse) {
+            // enable the output-buffer, why? see in self::outputBufferStart()
+            self::outputBufferStart();
+        }
 
         // initialize cache
         Cache::init();
