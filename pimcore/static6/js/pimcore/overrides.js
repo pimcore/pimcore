@@ -20,25 +20,106 @@ Ext.override(Ext.dd.DragDropManager, {
             this.callParent(arguments);
         },
 
+        /**
+         * PATCH: use getPatchedXY() instead of Ext.dom.Element.getXY()
+         *
+         * Returns a Region object containing the drag and drop element's position
+         * and size, including the padding configured for it
+         * @param {Ext.dd.DragDrop} oDD the drag and drop object to get the location for.
+         * @return {Ext.util.Region} a Region object representing the total area
+         * the element occupies, including any padding
+         * the instance is configured for.
+         */
+        getLocation: function (oDD) {
+            if (!this.isTypeOfDD(oDD)) {
+                return null;
+            }
+            //delegate getLocation method to the
+            //drag and drop target.
+            if (oDD.getRegion) {
+                return oDD.getRegion();
+            }
+            var el = oDD.getEl(),
+                pos, x1, x2, y1, y2, t, r, b, l;
+            try {
+                var theEl = Ext.fly(el);
+                var pos = this.getPatchedXY(theEl.dom);         // PATCHED LINE
+            } catch (e) {
+            }
+            if (!pos) {
+                return null;
+            }
+            x1 = pos[0];
+            x2 = x1 + el.offsetWidth;
+            y1 = pos[1];
+            y2 = y1 + el.offsetHeight;
+            t = y1 - oDD.padding[0];
+            r = x2 + oDD.padding[1];
+            b = y2 + oDD.padding[2];
+            l = x1 - oDD.padding[3];
+            return new Ext.util.Region(t, r, b, l);
+        },
+
+
+        /**
+         * PATCH for calculating the coordinates. This is mainly the original
+         * Ext.dom.Element.getXY from 6.0 adapted in a way so that it can be called directly. See
+         * getLocation() fix above.
+         *
+         * Gets element X and Y positions in page coordinates
+         *
+         * @return {Array} [x, y]
+         */
+        getPatchedXY: function (dom) {
+            var round = Math.round,
+                x = 0,
+                y = 0,
+                box, scroll;
+            var DOC = document;
+            if (dom !== DOC && dom !== DOC.body) {
+                // IE (including IE10) throws an error when getBoundingClientRect
+                // is called on an element not attached to dom
+                try {
+                    box = dom.getBoundingClientRect();
+                } catch (ex) {
+                    console.log(ex);
+                    box = {
+                        left: 0,
+                        top: 0
+                    };
+                }
+                x = round(box.left);
+                y = round(box.top);
+                scroll = Ext.getDoc().getScroll();
+                x += scroll.left;
+                y += scroll.top;
+            }
+            return [
+                x,
+                y
+            ]
+        },
+
         handleMouseMove: function (e) {
             this.callParent(arguments);
 
             var preventDefault = true;
-            if(e.target && e.target.getAttribute("dragdropmanager-preventdefault")) {
+            if (e.target && e.target.getAttribute("dragdropmanager-preventdefault")) {
                 preventDefault = false;
             }
 
             // stops text selection while dragging an element
-            if(this.dragCurrent && preventDefault) {
+            if (this.dragCurrent && preventDefault) {
                 e.preventDefault();
             }
         },
 
-        handleMouseUp: function(e) {
+        handleMouseUp: function (e) {
             // bug fix in 6.2.0 ;-(
-            if(!this.pointerMoveListeners) {
+            if (!this.pointerMoveListeners) {
                 this.pointerMoveListeners = {
-                    destroy: function () {}
+                    destroy: function () {
+                    }
                 };
             }
 
@@ -47,12 +128,72 @@ Ext.override(Ext.dd.DragDropManager, {
     }
 );
 
+
+// adiditional 6.2 fixes
+// adds additional null checks. After dropping something it is very like that the target does not exist anymore.
+Ext.override(Ext.dd.DragSource, {
+    /**
+     * @private
+     */
+    onDragOver: function (e, id) {
+
+        var target = this.cachedTarget || Ext.dd.DragDropManager.getDDById(id),
+            status;
+        if (this.beforeDragOver(target, e, id) !== false) {
+            //PATCH: added additional null check
+            if (target && target.isNotifyTarget) {
+                status = target.notifyOver(this, e, this.dragData);
+                this.proxy.setStatus(status);
+            }
+            if (this.afterDragOver) {
+                /**
+                 * An empty function by default, but provided so that you can perform a custom action
+                 * while the dragged item is over the drop target by providing an implementation.
+                 * @param {Ext.dd.DragDrop} target The drop target
+                 * @param {Event} e The event object
+                 * @param {String} id The id of the dragged element
+                 * @method afterDragOver
+                 */
+                this.afterDragOver(target, e, id);
+            }
+        }
+    },
+
+    onDragOut: function (e, id) {
+
+        var target = this.cachedTarget || Ext.dd.DragDropManager.getDDById(id);
+        if (this.beforeDragOut(target, e, id) !== false) {
+
+            //PATCH: added additional null check
+            if (target && target.isNotifyTarget) {
+                target.notifyOut(this, e, this.dragData);
+            }
+            this.proxy.reset();
+            if (this.afterDragOut) {
+                /**
+                 * An empty function by default, but provided so that you can perform a custom action
+                 * after the dragged item is dragged out of the target without dropping.
+                 * @param {Ext.dd.DragDrop} target The drop target
+                 * @param {Event} e The event object
+                 * @param {String} id The id of the dragged element
+                 * @method afterDragOut
+                 */
+                this.afterDragOut(target, e, id);
+            }
+        }
+        this.cachedTarget = null;
+    }
+
+
+});
+
+
 /**
  * Undesired behaviour: submenu is hidden on clicking owner menu item
  * fix see https://www.sencha.com/forum/showthread.php?305492-Undesired-behaviour-submenu-is-hidden-on-clicking-owner-menu-item
  * @param e
  */
-Ext.menu.Manager.checkActiveMenus = function(e) {
+Ext.menu.Manager.checkActiveMenus = function (e) {
     var allMenus = this.visible,
         len = allMenus.length,
         i, menu,
@@ -88,7 +229,7 @@ Ext.define('pimcore.FieldSetTools', {
     },
 
 
-    createCloseCmp: function(result) {
+    createCloseCmp: function (result) {
         var me = this;
         var tool = me.config.tools[0];
 
@@ -116,12 +257,11 @@ Ext.define('pimcore.FieldSetTools', {
 });
 
 
-
 Ext.define('pimcore.filters', {
     extend: 'Ext.grid.filters.Filters',
     alias: 'plugin.pimcore.gridfilters',
 
-    createColumnFilter: function(column) {
+    createColumnFilter: function (column) {
         this.callSuper(arguments);
         var type = column.filter.type;
         var theFilter = column.filter.filter;
@@ -143,7 +283,7 @@ Ext.define('Ext.overrides.grid.View', {
         alias: 'widget.patchedgridview'
         ,
 
-        handleUpdate: function(store, record, operation, changedFieldNames) {
+        handleUpdate: function (store, record, operation, changedFieldNames) {
             var me = this,
                 rowTpl = me.rowTpl,
                 oldItem, oldItemDom, oldDataRow,
@@ -235,7 +375,7 @@ Ext.define('Ext.overrides.grid.View', {
                 }
             }
         }
-    }, function() {
+    }, function () {
         if (!Ext.getVersion().match('6.2.0.981')) {
             console.warn('This patch has not been tested with this version of ExtJS');
         }
@@ -251,11 +391,11 @@ Ext.define('pimcore.tree.View', {
     extend: 'Ext.tree.View',
     alias: 'widget.pimcoretreeview',
     listeners: {
-        refresh: function() {
+        refresh: function () {
             this.updatePaging();
         },
-        beforeitemupdate: function(record) {
-            if(record.ptb) {
+        beforeitemupdate: function (record) {
+            if (record.ptb) {
                 record.ptb.destroy();
                 delete record.ptb;
             }
@@ -264,7 +404,7 @@ Ext.define('pimcore.tree.View', {
 
     queue: {},
 
-    renderRow: function(record, rowIdx, out) {
+    renderRow: function (record, rowIdx, out) {
         var me = this;
         if (record.needsPaging) {
             me.queue[record.id] = record;
@@ -279,7 +419,7 @@ Ext.define('pimcore.tree.View', {
         this.fireEvent("itemafterrender", record, rowIdx, out);
     },
 
-    doUpdatePaging: function(node) {
+    doUpdatePaging: function (node) {
 
         if (node.data.expanded) {
 
@@ -309,12 +449,12 @@ Ext.define('pimcore.tree.View', {
                 "class": "pimcore_pagingtoolbar_container"
             }, true);
 
-            el.addListener("click", function(e) {
+            el.addListener("click", function (e) {
                 e.stopPropagation();
             });
 
 
-            el.addListener("mousedown", function(e) {
+            el.addListener("mousedown", function (e) {
                 e.stopPropagation();
             });
 
@@ -328,7 +468,7 @@ Ext.define('pimcore.tree.View', {
 
     },
 
-    updatePaging: function() {
+    updatePaging: function () {
         var me = this;
         var queue = me.queue;
 
@@ -349,7 +489,7 @@ Ext.define('pimcore.data.PagingTreeStore', {
 
     ptb: false,
 
-    onProxyLoad: function(operation) {
+    onProxyLoad: function (operation) {
         try {
             var me = this;
             var options = operation.initialConfig
@@ -399,13 +539,13 @@ Ext.define('pimcore.data.PagingTreeStore', {
             }
 
             me.superclass.onProxyLoad.call(this, operation);
-                var proxy = this.getProxy();
-                proxy.setExtraParam("start", 0);
-            } catch (e) {
-                console.log(e);
-            }
+            var proxy = this.getProxy();
+            proxy.setExtraParam("start", 0);
+        } catch (e) {
+            console.log(e);
         }
-    });
+    }
+});
 
 
 Ext.define('pimcore.toolbar.Paging', {
@@ -451,7 +591,7 @@ Ext.define('pimcore.toolbar.Paging', {
         fromRecord: 0
     },
 
-    getPagingItems: function() {
+    getPagingItems: function () {
         var me = this,
             inputListeners = {
                 scope: me,
@@ -549,12 +689,12 @@ Ext.define('pimcore.toolbar.Paging', {
         ];
     },
 
-    getMaxPageNum: function() {
+    getMaxPageNum: function () {
         var me = this;
         return Math.ceil(me.node.pagingData.total / me.node.pagingData.limit)
     },
 
-    initComponent: function(config) {
+    initComponent: function (config) {
         var me = this,
             userItems = me.items || me.buttons || [],
             pagingItems;
@@ -577,12 +717,12 @@ Ext.define('pimcore.toolbar.Paging', {
     },
 
 
-    getInputItem: function() {
+    getInputItem: function () {
         return this.child('#inputItem');
     },
 
 
-    onPagingBlur: function(e) {
+    onPagingBlur: function (e) {
         var inputItem = this.getInputItem(),
             curPage;
         if (inputItem) {
@@ -591,11 +731,11 @@ Ext.define('pimcore.toolbar.Paging', {
         }
     },
 
-    onPagingKeyDown: function(field, e) {
+    onPagingKeyDown: function (field, e) {
         this.processKeyEvent(field, e);
     },
 
-    readPageFromInput: function() {
+    readPageFromInput: function () {
         var inputItem = this.getInputItem(),
             pageNum = false,
             v;
@@ -607,10 +747,10 @@ Ext.define('pimcore.toolbar.Paging', {
     },
 
 
-    processKeyEvent: function(field, e) {
+    processKeyEvent: function (field, e) {
         var me = this,
             k = e.getKey(),
-        //pageData = me.getPageData(),
+            //pageData = me.getPageData(),
             increment = e.shiftKey ? 10 : 1,
             pageNum;
         if (k == e.RETURN) {
@@ -643,21 +783,21 @@ Ext.define('pimcore.toolbar.Paging', {
         }
     },
 
-    moveToPage: function(page) {
+    moveToPage: function (page) {
         var me = this;
         var node = me.node;
         var pagingData = node.pagingData;
         var store = node.getTreeStore();
 
         var proxy = store.getProxy();
-        proxy.setExtraParam("start",  pagingData.limit * (page - 1));
+        proxy.setExtraParam("start", pagingData.limit * (page - 1));
         proxy.setExtraParam("fromPaging", 1);
         store.load({
             node: node
         });
     },
 
-    moveFirst: function() {
+    moveFirst: function () {
         var me = this;
         var node = me.node;
         var pagingData = node.pagingData;
@@ -671,7 +811,7 @@ Ext.define('pimcore.toolbar.Paging', {
         });
     },
 
-    movePrevious: function() {
+    movePrevious: function () {
         var me = this;
         var node = me.node;
         var pagingData = node.pagingData;
@@ -685,7 +825,7 @@ Ext.define('pimcore.toolbar.Paging', {
         });
     },
 
-    moveNext: function() {
+    moveNext: function () {
         var me = this;
         var node = me.node;
         var pagingData = node.pagingData;
@@ -700,7 +840,7 @@ Ext.define('pimcore.toolbar.Paging', {
 
     },
 
-    moveLast: function() {
+    moveLast: function () {
         var me = this;
         var node = me.node;
         var pagingData = node.pagingData;
@@ -714,7 +854,7 @@ Ext.define('pimcore.toolbar.Paging', {
         });
     },
 
-    doRefresh: function() {
+    doRefresh: function () {
         var me = this;
         var node = me.node;
         var pagingData = node.pagingData;
@@ -728,7 +868,7 @@ Ext.define('pimcore.toolbar.Paging', {
         });
     },
 
-    onDestroy: function() {
+    onDestroy: function () {
         //this.bindStore(null);
         this.callParent();
     }
@@ -742,7 +882,7 @@ Ext.define('pimcore.toolbar.Paging', {
 Ext.define('EXTJS-16385.event.publisher.Dom', {
     override: 'Ext.event.publisher.Dom',
 
-    isEventBlocked: function(e) {
+    isEventBlocked: function (e) {
         var me = this,
             type = e.type,
             self = Ext.event.publisher.Dom,
