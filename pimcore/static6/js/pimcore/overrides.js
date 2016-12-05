@@ -453,7 +453,6 @@ Ext.define('pimcore.tree.View', {
                 e.stopPropagation();
             });
 
-
             el.addListener("mousedown", function (e) {
                 e.stopPropagation();
             });
@@ -496,7 +495,6 @@ Ext.define('pimcore.data.PagingTreeStore', {
             var node = options.node;
             var proxy = me.getProxy();
             var extraParams = proxy.getExtraParams();
-
 
             var response = operation.getResponse();
             var data = Ext.decode(response.responseText);
@@ -879,17 +877,17 @@ Ext.define('pimcore.toolbar.Paging', {
  * Already fixed in 6.0.1
  * Inspired from https://www.sencha.com/forum/showthread.php?302760
  */
-Ext.define('EXTJS-16385.event.publisher.Dom', {
-    override: 'Ext.event.publisher.Dom',
-
-    isEventBlocked: function (e) {
-        var me = this,
-            type = e.type,
-            self = Ext.event.publisher.Dom,
-            now = Ext.now();
-
-        if (Ext.isGecko && e.type === 'click' && e.button === 2) {
-            return true;
-        }
-    }
-});
+// Ext.define('EXTJS-16385.event.publisher.Dom', {
+//     override: 'Ext.event.publisher.Dom',
+//
+//     isEventBlocked: function (e) {
+//         var me = this,
+//             type = e.type,
+//             self = Ext.event.publisher.Dom,
+//             now = Ext.now();
+//
+//         if (Ext.isGecko && e.type === 'click' && e.button === 2) {
+//             return true;
+//         }
+//     }
+// });
