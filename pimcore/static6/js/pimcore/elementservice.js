@@ -496,9 +496,11 @@ pimcore.elementservice.editElementKey = function(options) {
 pimcore.elementservice.refreshNode = function (node) {
     var ownerTree = node.getOwnerTree();
 
-    node.data.expanded = true;
     ownerTree.getStore().load({
-        node: node
+        node: node,
+        callback: function (records, operation, success) {
+            node.expand();
+        }
     });
 };
 
@@ -619,7 +621,6 @@ pimcore.elementservice.refreshNodeAllTrees = function(elementType, id) {
             var parentRecord = store.getById(id);
             if (parentRecord) {
                 parentRecord.data.leaf = false;
-                parentRecord.expand();
                 pimcore.elementservice.refreshNode(parentRecord);
             }
         } catch (e) {
