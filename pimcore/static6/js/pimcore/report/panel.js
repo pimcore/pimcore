@@ -59,6 +59,7 @@ pimcore.report.panel = Class.create({
                 autoScroll: true,
                 collapsible: true,
                 rootVisible: false,
+                bodyBorder: false,
                 root: {
                     id: 0
                 },

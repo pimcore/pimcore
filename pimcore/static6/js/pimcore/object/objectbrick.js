@@ -71,6 +71,7 @@ pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
                 containerScroll: true,
                 width: 200,
                 split: true,
+                bodyBorder: false,
                 root: {
                     id: '0'
                 },

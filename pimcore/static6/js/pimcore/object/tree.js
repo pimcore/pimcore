@@ -111,7 +111,7 @@ pimcore.object.tree = Class.create({
             animate: false,
             rootVisible: true,
             bufferedRenderer: false,
-            border: false,
+            bodyBorder: false,
             listeners: this.getTreeNodeListeners(),
             scrollable: true,
             viewConfig: {

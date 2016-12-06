@@ -79,6 +79,7 @@ pimcore.object.klass = Class.create({
                 containerScroll: true,
                 width: 200,
                 split: true,
+                bodyBorder: false,
                 root: {
                     id: '0'
                 },

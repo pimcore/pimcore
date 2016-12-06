@@ -138,6 +138,7 @@ pimcore.document.seopanel = Class.create({
                 border: false,
                 lines: true,
                 cls: "pimcore_document_seo_tree",
+                bodyBorder: false,
                 listeners: {
                     "itemclick": this.openEditPanel.bind(this),
                     "itemcontextmenu": this.onRightClick.bind(this),
