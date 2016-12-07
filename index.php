@@ -12,14 +12,36 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-include_once("pimcore/config/startup.php");
+use Symfony\Component\Debug\Debug;
+use Symfony\Component\HttpFoundation\Request;
 
-try {
-    \Pimcore::run();
-} catch (Exception $e) {
-    // handle exceptions, log to file
-    if(class_exists("Pimcore\\Logger")) {
-        \Pimcore\Logger::emerg($e);
+require_once __DIR__ . '/pimcore/config/constants.php';
+
+if (defined('PIMCORE_SYMFONY_MODE') && PIMCORE_SYMFONY_MODE) {
+    require __DIR__ . '/app/autoload.php';
+    require_once __DIR__ . '/pimcore/config/setup.php';
+
+    Debug::enable();
+
+    $kernel = new AppKernel('dev', true);
+    $kernel->loadClassCache();
+
+    $request  = Request::createFromGlobals();
+    $response = $kernel->handle($request);
+    $response->send();
+
+    $kernel->terminate($request, $response);
+} else {
+    include_once __DIR__ . '/pimcore/config/startup.php';
+
+    try {
+        Pimcore::run();
+    } catch (Exception $e) {
+        // handle exceptions, log to file
+        if (class_exists("Pimcore\\Logger")) {
+            \Pimcore\Logger::emerg($e);
+        }
+
+        throw $e;
     }
-    throw $e;
 }
