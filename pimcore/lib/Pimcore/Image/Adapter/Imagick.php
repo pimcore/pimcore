@@ -183,7 +183,7 @@ class Imagick extends Adapter
                     // Imagick::ALPHACHANNEL_REMOVE has been added in 3.2.0b2
                     $alphaChannel = \Imagick::ALPHACHANNEL_REMOVE;
                 }
-                $i->setImageAlphaChannel($alphaChannel); 				
+                $i->setImageAlphaChannel($alphaChannel);
             }
 
             $i->mergeImageLayers(\Imagick::LAYERMETHOD_FLATTEN);
