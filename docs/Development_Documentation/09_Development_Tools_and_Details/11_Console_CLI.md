@@ -35,7 +35,7 @@ for ($i = 0; $i < 60; $i++) {
 ```
 
 
-## Pimmcore Console
+## Pimcore Console
 
 Pimcore integrates the `Symfony\Console` component and provides `pimcore/cli/console.php` as single 
 entry point to console commands registered to the `Symfony\Console` application. You can add custom
