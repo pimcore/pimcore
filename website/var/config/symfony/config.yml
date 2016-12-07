@@ -9,3 +9,8 @@ framework:
     router:
         resource: "%kernel.root_dir%/var/config/symfony/routing.yml"
         strict_requirements: ~
+
+# Twig Configuration
+twig:
+    debug:            "%kernel.debug%"
+    strict_variables: "%kernel.debug%"

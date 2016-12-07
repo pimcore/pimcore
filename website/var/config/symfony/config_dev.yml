@@ -5,3 +5,9 @@ framework:
     router:
         resource: "%kernel.root_dir%/var/config/symfony/routing_dev.yml"
         strict_requirements: true
+    profiler:
+        only_exceptions: false
+
+web_profiler:
+    toolbar: true
+    intercept_redirects: false

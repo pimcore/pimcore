@@ -6,7 +6,10 @@ use LegacyBundle\LegacyBundle;
 use Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle;
 use Symfony\Bundle\DebugBundle\DebugBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
+use Symfony\Bundle\TwigBundle\TwigBundle;
+use Symfony\Bundle\WebProfilerBundle\WebProfilerBundle;
 use Symfony\Component\Config\Loader\LoaderInterface;
+use Symfony\Component\VarDumper\VarDumper;
 
 abstract class Kernel extends \DI\Bridge\Symfony\Kernel
 {
@@ -14,13 +17,14 @@ abstract class Kernel extends \DI\Bridge\Symfony\Kernel
     {
         $bundles = [
             new FrameworkBundle(),
+            new TwigBundle(),
             new SensioFrameworkExtraBundle(),
             new LegacyBundle(),
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {
             $bundles[] = new DebugBundle();
-            // $bundles[] = new Symfony\Bundle\WebProfilerBundle\WebProfilerBundle();
+            $bundles[] = new WebProfilerBundle();
         }
 
         return $bundles;
