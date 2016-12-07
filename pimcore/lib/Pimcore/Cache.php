@@ -169,7 +169,7 @@ class Cache
         }
 
         self::$instance->setLifetime(self::$defaultLifetime);
-        self::$instance->setOption("automatic_serialization", true);
+        self::$instance->setOption("automatic_serialization", false);
         self::$instance->setOption("automatic_cleaning_factor", 0);
 
         // init the write lock once (from other processes etc.)
@@ -224,7 +224,7 @@ class Cache
             "frontendType" => "Core",
             "frontendConfig" => [
                 "lifetime" => self::$defaultLifetime,
-                "automatic_serialization" => true,
+                "automatic_serialization" => false,
                 "automatic_cleaning_factor" => 0
             ],
             "customFrontendNaming" => true,
@@ -758,13 +758,19 @@ class Cache
 
 
     /**
-     * @param null $cache
+     * @param \Zend_Cache_Core|null $cache
      */
     public static function setZendFrameworkCaches($cache = null)
     {
-        \Zend_Locale::setCache($cache);
-        \Zend_Locale_Data::setCache($cache);
-        \Zend_Db_Table_Abstract::setDefaultMetadataCache($cache);
+        $zendCache = null;
+        if ($cache) {
+            $zendCache = clone $cache;
+            $zendCache->setOption('automatic_serialization', true);
+        }
+
+        \Zend_Locale::setCache($zendCache);
+        \Zend_Locale_Data::setCache($zendCache);
+        \Zend_Db_Table_Abstract::setDefaultMetadataCache($zendCache);
     }
 
     /**
