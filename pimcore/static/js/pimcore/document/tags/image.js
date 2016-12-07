@@ -426,7 +426,7 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
             this.datax.cropPercent = true;
 
             this.updateImage();
-        }.bind(this));
+        }.bind(this), {ratioX: this.options.ratioX, ratioY:this.options.ratioY});
         editor.open(true);
     },
 
