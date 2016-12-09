@@ -81,7 +81,8 @@
     "sensio/framework-extra-bundle": "^3.0",
     "zendframework/zend-diactoros": "^1.3",
     "maff/zf1-psr-7-bridge": "@dev",
-    "symfony/monolog-bundle": "^3.0"
+    "symfony/monolog-bundle": "^3.0",
+    "symfony-cmf/routing-bundle": "@dev"
   },
   "require-dev": {
     "phpunit/phpunit": "*"

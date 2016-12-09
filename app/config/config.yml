@@ -1,5 +1,6 @@
 imports:
     - { resource: parameters.yml }
+    - { resource: services.yml }
 
 parameters:
     locale: en
@@ -9,6 +10,14 @@ framework:
     router:
         resource: "%kernel.root_dir%/config/routing.yml"
         strict_requirements: ~
+
+cmf_routing:
+    chain:
+        routers_by_id:
+            router.default:             100
+            cmf_routing.dynamic_router: 200
+    dynamic:
+        route_provider_service_id: pimcore.router.dynamic_route_provider
 
 # Twig Configuration
 twig:

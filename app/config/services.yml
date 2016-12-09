@@ -1,0 +1,3 @@
+services:
+    pimcore.router.dynamic_route_provider:
+        class: PimcoreBundle\Routing\DocumentRouteProvider

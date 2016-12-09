@@ -9,8 +9,8 @@ use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\MonologBundle\MonologBundle;
 use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Bundle\WebProfilerBundle\WebProfilerBundle;
+use Symfony\Cmf\Bundle\RoutingBundle\CmfRoutingBundle;
 use Symfony\Component\Config\Loader\LoaderInterface;
-use Symfony\Component\VarDumper\VarDumper;
 
 abstract class Kernel extends \DI\Bridge\Symfony\Kernel
 {
@@ -21,6 +21,7 @@ abstract class Kernel extends \DI\Bridge\Symfony\Kernel
             new TwigBundle(),
             new SensioFrameworkExtraBundle(),
             new MonologBundle(),
+            new CmfRoutingBundle(),
             new LegacyBundle(),
         ];
 
