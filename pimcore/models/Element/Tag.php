@@ -58,7 +58,7 @@ class Tag extends Model\AbstractModel
     /**
      * @static
      * @param $id
-     * @return Pimcore\Model\Element\Tag
+     * @return Tag|null
      */
     public static function getById($id)
     {

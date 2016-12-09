@@ -100,7 +100,7 @@ class Warming
     public static function loadElementToCache($element)
     {
         $cacheKey = Element\Service::getElementType($element) . "_" . $element->getId();
-        Cache::storeToCache($element, $cacheKey, [], null, null, true);
+        Cache::save($element, $cacheKey, [], null, null, true);
     }
 
     /**

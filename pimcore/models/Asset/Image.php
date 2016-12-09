@@ -192,9 +192,9 @@ class Image extends Model\Asset
         }
 
         //try to get the dimensions with getimagesize because it is much faster than e.g. the Imagick-Adapter
-        if(is_readable($path)){
+        if (is_readable($path)) {
             $dimensions = getimagesize($path);
-            if($dimensions[0] && $dimensions[1]){
+            if ($dimensions[0] && $dimensions[1]) {
                 return [
                     "width" => $dimensions[0],
                     "height" => $dimensions[1]
