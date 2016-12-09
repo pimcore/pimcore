@@ -6,6 +6,7 @@ use LegacyBundle\LegacyBundle;
 use Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle;
 use Symfony\Bundle\DebugBundle\DebugBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
+use Symfony\Bundle\MonologBundle\MonologBundle;
 use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Bundle\WebProfilerBundle\WebProfilerBundle;
 use Symfony\Component\Config\Loader\LoaderInterface;
@@ -19,6 +20,7 @@ abstract class Kernel extends \DI\Bridge\Symfony\Kernel
             new FrameworkBundle(),
             new TwigBundle(),
             new SensioFrameworkExtraBundle(),
+            new MonologBundle(),
             new LegacyBundle(),
         ];
 

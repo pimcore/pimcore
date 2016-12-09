@@ -80,7 +80,8 @@
     "php-di/symfony-bridge": "^2.0",
     "sensio/framework-extra-bundle": "^3.0",
     "zendframework/zend-diactoros": "^1.3",
-    "maff/zf1-psr-7-bridge": "@dev"
+    "maff/zf1-psr-7-bridge": "@dev",
+    "symfony/monolog-bundle": "^3.0"
   },
   "require-dev": {
     "phpunit/phpunit": "*"
