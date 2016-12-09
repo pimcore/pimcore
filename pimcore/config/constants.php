@@ -96,3 +96,7 @@ if (!defined("PIMCORE_SYSTEM_TEMP_DIRECTORY")) {
 if (!defined("PIMCORE_LOG_MAIL_PERMANENT")) {
     define("PIMCORE_LOG_MAIL_PERMANENT", PIMCORE_WEBSITE_VAR . "/email");
 }
+
+if (!defined('PIMCORE_SYMFONY_APP')) {
+    define("PIMCORE_SYMFONY_APP", PIMCORE_DOCUMENT_ROOT . '/app');
+}

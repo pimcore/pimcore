@@ -7,7 +7,7 @@ parameters:
 framework:
     secret: "%secret%"
     router:
-        resource: "%kernel.root_dir%/var/config/symfony/routing.yml"
+        resource: "%kernel.root_dir%/config/routing.yml"
         strict_requirements: ~
 
 # Twig Configuration

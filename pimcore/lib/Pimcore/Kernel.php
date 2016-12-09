@@ -32,22 +32,12 @@ abstract class Kernel extends \DI\Bridge\Symfony\Kernel
 
     public function getRootDir()
     {
-        return PIMCORE_WEBSITE_PATH;
-    }
-
-    public function getCacheDir()
-    {
-        return PIMCORE_CACHE_DIRECTORY . '/symfony/' . $this->getEnvironment();
-    }
-
-    public function getLogDir()
-    {
-        return PIMCORE_LOG_DIRECTORY . '/symfony';
+        return PIMCORE_SYMFONY_APP;
     }
 
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
-        $loader->load($this->getRootDir() . '/var/config/symfony/config_' . $this->getEnvironment() . '.yml');
+        $loader->load($this->getRootDir() . '/config/config_' . $this->getEnvironment() . '.yml');
     }
 
     protected function buildPHPDIContainer(\DI\ContainerBuilder $builder)
