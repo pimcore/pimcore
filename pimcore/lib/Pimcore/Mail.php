@@ -24,6 +24,11 @@ class Mail extends \Zend_Mail
 {
 
     /**
+     * @var bool
+     */
+    protected static $forceDebugMode = false;
+
+    /**
      * Contains the debug email addresses from settings -> system -> Email Settings -> Debug email addresses
      *
      * @var array
@@ -78,7 +83,6 @@ class Mail extends \Zend_Mail
      * @var string
      */
     protected $html2textOptions = "";
-
 
     /**
      * use html2text from mbayer if it is installed (http://www.mbayer.de/html2text/)
@@ -496,6 +500,15 @@ class Mail extends \Zend_Mail
     }
 
     /**
+     * Forces the debug mode - useful for cli-script which should not send emails to recipients
+     *
+     * @param bool $value
+     */
+    public static function setForceDebugMode($value){
+        self::$forceDebugMode = $value;
+    }
+
+    /**
      * Deletes parameters which were set with "setParams" or "setParam"
      *
      * @param array $params
@@ -631,7 +644,7 @@ class Mail extends \Zend_Mail
             $this->setBodyText($bodyTextRendered);
         }
 
-        if ($this->ignoreDebugMode == false) {
+        if ($this->ignoreDebugMode == false || static::$forceDebugMode == true) {
             $this->checkDebugMode();
         }
 
@@ -688,7 +701,7 @@ class Mail extends \Zend_Mail
      */
     protected function checkDebugMode()
     {
-        if (\Pimcore::inDebugMode()) {
+        if (\Pimcore::inDebugMode() || static::$forceDebugMode) {
             if (empty(self::$debugEmailAddresses)) {
                 throw new \Exception('No valid debug email address given in "Settings" -> "System" -> "Email Settings"');
             }
