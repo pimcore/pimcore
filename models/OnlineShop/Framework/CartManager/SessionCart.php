@@ -58,6 +58,7 @@ class SessionCart extends AbstractCart implements ICart {
 
     /**
      * @return void
+     * @throws \Exception if the cart is not yet saved.
      */
     public function delete() {
         $this->setIgnoreReadonly();
@@ -65,7 +66,7 @@ class SessionCart extends AbstractCart implements ICart {
         $session = $this->getSession();
 
         if(!$this->getId()) {
-            throw new \Exception("Cart saved not yes.");
+            throw new \Exception("Cart saved not yet.");
         }
 
         $this->clear();
