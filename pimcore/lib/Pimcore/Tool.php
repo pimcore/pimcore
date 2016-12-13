@@ -85,7 +85,7 @@ class Tool
     /**
      * Returns an array of language codes that configured for this system
      * in pimcore's system settings at "Localization & Internationalization (i18n/l10n)".
-     * An empty string is returned if no languages are configured.
+     * An empty array is returned if no languages are configured.
      * 
      * @static
      * @return string[]
