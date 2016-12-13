@@ -343,6 +343,7 @@ $scripts = array(
 
     // object
     "pimcore/object/helpers/edit.js",
+    "pimcore/object/helpers/layout.js",
     "pimcore/object/classes/class.js",
     "pimcore/object/class.js",
     "pimcore/object/bulk-export.js",
