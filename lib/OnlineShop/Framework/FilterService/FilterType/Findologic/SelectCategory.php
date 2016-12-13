@@ -51,7 +51,8 @@ class SelectCategory extends \OnlineShop\Framework\FilterService\FilterType\Sele
             "label" => $filterDefinition->getLabel(),
             "currentValue" => $currentFilter[$filterDefinition->getField()],
             "values" => array_values($values),
-            "fieldname" => self::FIELDNAME
+            "fieldname" => self::FIELDNAME,
+            "rootCategory" => $filterDefinition->getRootCategory()
         ));
     }
 
