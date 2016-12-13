@@ -112,6 +112,32 @@ class CustomLayout extends Model\AbstractModel
         return $customLayout;
     }
 
+    /**
+     * @param string $field
+     *
+     * @return \Pimcore\Model\Object\ClassDefinition\Data | null
+     */
+    public function getFieldDefinition($field){
+        $findElement = function ($key,$definition) use(&$findElement){
+            if($definition->getName() == $key){
+                return $definition;
+            }else{
+                if(method_exists($definition,'getChilds')){
+                    foreach($definition->getChilds() as $definition){
+                        if($definition = $findElement($key,$definition)){
+                            return $definition;
+                        }
+                    }
+                }else{
+                    if($definition->getName() == $key){
+                        return $definition;
+                    }
+                }
+            }
+        };
+
+        return $findElement($field,$this->getLayoutDefinitions());
+    }
 
     /**
      * @param array $values
