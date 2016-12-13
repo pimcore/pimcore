@@ -385,6 +385,8 @@ pimcore.object.classes.klass = Class.create({
             block: blockTypes
         };
 
+        pimcore.plugin.broker.fireEvent("prepareClassLayoutContextMenu", allowedTypes);
+
         var parentType = "root";
 
         if (record.data.editor) {
