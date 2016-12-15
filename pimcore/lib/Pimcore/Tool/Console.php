@@ -356,6 +356,17 @@ class Console
             $nohup .= " ";
         }
 
+        /**
+         * mod_php seems to lose the environment variables if we do not set them manually before the child process is started
+         */
+        if(strpos(php_sapi_name(),'apache') !== false){
+            foreach(['PIMCORE_ENVIRONMENT','REDIRECT_PIMCORE_ENVIRONMENT'] as $envKey){
+                if($envValue = getenv($envKey)){
+                    putenv($envKey . '='.$envValue);
+                }
+            }
+        }
+
         $commandWrapped = $nohup . $nice . $cmd . " > ". $outputFile ." 2>&1 & echo $!";
         Logger::debug("Executing command `" . $commandWrapped . "´ on the current shell in background");
         $pid = shell_exec($commandWrapped);
