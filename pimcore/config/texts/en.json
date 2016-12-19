@@ -5893,6 +5893,10 @@
         "definition": "Port"
     },
     {
+        "term": "web2print_protocol",
+        "definition": "Protocol"
+    },
+    {
         "term": "web2print_baseURL",
         "definition": "BaseURL"
     },
@@ -6243,7 +6247,16 @@
     {
         "term": "language_permissions",
         "definition": "Language Permissions (no view permission means all)"
+    },
+    {
+        "term": "rendering_class",
+        "definition": "Custom Renderer class"
+    },
+    {
+        "term": "rendering_data",
+        "definition": "Data passed to renderer"
     }
+
 
 
 
