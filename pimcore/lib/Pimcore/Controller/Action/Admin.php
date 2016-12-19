@@ -128,7 +128,7 @@ abstract class Admin extends Action
                     "server" => $_SERVER,
                     "get" => $_GET,
                     "post" => $_POST,
-                    "session" => $_SESSION,
+                    "session" => isset($_SESSION) ? $_SESSION : null,
                     "cookie" => $_COOKIE
                 ]);
 
