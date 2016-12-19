@@ -982,7 +982,7 @@ class Pimcore
             if ($deviceDetector->wasUsed()) {
                 $vary .= ", User-Agent";
             }
-            header("Vary: " . $vary);
+            header("Vary: " . $vary, false);
 
             header("X-Powered-By: pimcore", true);
         }
