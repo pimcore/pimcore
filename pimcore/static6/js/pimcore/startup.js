@@ -239,35 +239,6 @@ Ext.onReady(function () {
         if (xhrActive < 1) {
             Ext.get("pimcore_loading").hide();
         }
-
-        // redirect to login-page if session is expired
-        if (typeof response.getResponseHeader == "function") {
-            if (response.getResponseHeader("X-Pimcore-Auth") == "required") {
-                //pimcore.settings.showCloseConfirmation = false;
-                //window.location.href = "/admin/login/?session_expired=true";
-
-                var errorMessage = "";
-
-                try {
-                    errorMessage = "Status: " + response.status + " | " + response.statusText + "\n";
-                    errorMessage += "URL: " + options.url + "\n";
-                    if(options["params"]) {
-                        errorMessage += "Params:\n";
-                        Ext.iterate(options.params, function (key, value) {
-                            errorMessage += ( "-> " + key + ": " + value + "\n");
-                        });
-                    }
-                    if(options["method"]) {
-                        errorMessage += "Method: " + options.method + "\n";
-                    }
-                    errorMessage += "Message: \n" + response.responseText;
-                } catch (e) {
-                    errorMessage = response.responseText;
-                }
-
-                pimcore.helpers.showNotification(t("session_error"), t("session_error_text"), "error", errorMessage);
-            }
-        }
     });
 
     var docTypesUrl = '/admin/document/doc-types?';
