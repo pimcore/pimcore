@@ -400,4 +400,14 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
     {
         $this->pathFormatterClass = $pathFormatterClass;
     }
+
+    /**
+     * @param $object
+     * @param mixed $params
+     * @return string
+     */
+    public function getDataForSearchIndex($object, $params = [])
+    {
+        return "";
+    }
 }

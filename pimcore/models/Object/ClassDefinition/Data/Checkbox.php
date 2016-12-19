@@ -275,4 +275,14 @@ class Checkbox extends Model\Object\ClassDefinition\Data
 
         return "IFNULL(" . $key . ", 0) = " . $value . " ";
     }
+
+    /**
+     * @param $object
+     * @param mixed $params
+     * @return string
+     */
+    public function getDataForSearchIndex($object, $params = [])
+    {
+        return "";
+    }
 }

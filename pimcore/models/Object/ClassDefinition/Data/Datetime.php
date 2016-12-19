@@ -217,6 +217,15 @@ class Datetime extends Model\Object\ClassDefinition\Data
         return null;
     }
 
+    /**
+     * @param $object
+     * @param mixed $params
+     * @return string
+     */
+    public function getDataForSearchIndex($object, $params = [])
+    {
+        return "";
+    }
 
     /**
      * converts data to be exposed via webservices

@@ -221,6 +221,15 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
         return $value;
     }
 
+    /**
+     * @param $object
+     * @param mixed $params
+     * @return string
+     */
+    public function getDataForSearchIndex($object, $params = [])
+    {
+        return "";
+    }
 
     /**
      * converts data to be exposed via webservices

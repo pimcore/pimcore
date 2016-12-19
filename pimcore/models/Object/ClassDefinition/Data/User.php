@@ -136,6 +136,16 @@ class User extends Model\Object\ClassDefinition\Data\Select
     }
 
     /**
+     * @param $object
+     * @param mixed $params
+     * @return string
+     */
+    public function getDataForSearchIndex($object, $params = [])
+    {
+        return "";
+    }
+
+    /**
      * @param $data
      * @return static
      */

@@ -192,6 +192,16 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     }
 
     /**
+     * @param $object
+     * @param mixed $params
+     * @return string
+     */
+    public function getDataForSearchIndex($object, $params = [])
+    {
+        return "";
+    }
+
+    /**
      * converts data to be exposed via webservices
      * @param string $object
      * @param mixed $params

@@ -342,6 +342,16 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
     }
 
     /**
+     * @param $object
+     * @param mixed $params
+     * @return string
+     */
+    public function getDataForSearchIndex($object, $params = [])
+    {
+        return "";
+    }
+
+    /**
      * This is a dummy and is mostly implemented by relation types
      *
      * @param mixed $data
