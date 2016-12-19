@@ -2,8 +2,5 @@ app:
     resource: "@AppBundle/Controller/"
     type:     annotation
 
-fallback:
-    path: /{path}
-    defaults: { _controller: LegacyBundle:Fallback:fallback }
-    requirements:
-        path: .*
+_fallback:
+    resource: "@LegacyBundle/Resources/config/routing/fallback.yml"
