@@ -502,8 +502,6 @@ CREATE TABLE `search_backend_data` (
   KEY `type` (`type`),
   KEY `subtype` (`subtype`),
   KEY `published` (`published`),
-  FULLTEXT KEY `data` (`data`),
-  FULLTEXT KEY `properties` (`properties`),
   FULLTEXT KEY `fulltext` (`data`,`properties`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
 /* Engine is changed to InnoDB (if available) in Pimcore\Model\Tool\Setup\Resource::database() - not here because all comments are removed */
