@@ -479,7 +479,7 @@ class Data extends \Pimcore\Model\AbstractModel
 
         $data = html_entity_decode($data, ENT_QUOTES, "UTF-8");
 
-        $data = str_replace([".",",",":",";","'",'"'], " ", $data);
+        $data = str_replace([".", ",", ":", ";", "'", '"'], " ", $data);
         $data = str_replace("\r\n", " ", $data);
         $data = str_replace("\n", " ", $data);
         $data = str_replace("\r", " ", $data);
@@ -487,9 +487,9 @@ class Data extends \Pimcore\Model\AbstractModel
         $data = preg_replace('#[ ]+#', ' ', $data);
 
         // deduplication
-        $arr = explode( " " , $data );
-        $arr = array_unique( $arr );
-        $data = implode(" " , $arr);
+        $arr = explode(" ", $data);
+        $arr = array_unique($arr);
+        $data = implode(" ", $arr);
 
         return $data;
     }

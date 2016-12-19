@@ -504,7 +504,8 @@ class Mail extends \Zend_Mail
      *
      * @param bool $value
      */
-    public static function setForceDebugMode($value){
+    public static function setForceDebugMode($value)
+    {
         self::$forceDebugMode = $value;
     }
 

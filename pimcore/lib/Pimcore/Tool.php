@@ -57,11 +57,11 @@ class Tool
     }
 
     /**
-     * Checks, if the given language is configured in pimcore's system  
+     * Checks, if the given language is configured in pimcore's system
      * settings at "Localization & Internationalization (i18n/l10n)".
-     * Returns true, if the language is valid or no language is 
+     * Returns true, if the language is valid or no language is
      * configured at all, false otherwise.
-     * 
+     *
      * @static
      * @param  string $language
      * @return bool
@@ -86,7 +86,7 @@ class Tool
      * Returns an array of language codes that configured for this system
      * in pimcore's system settings at "Localization & Internationalization (i18n/l10n)".
      * An empty array is returned if no languages are configured.
-     * 
+     *
      * @static
      * @return string[]
      */
@@ -138,7 +138,7 @@ class Tool
      * Returns the default language for this system. If no default is set,
      * returns the first language, or null, if no languages are configured
      * at all.
-     * 
+     *
      * @return null|string
      */
     public static function getDefaultLanguage()

@@ -359,9 +359,9 @@ class Console
         /**
          * mod_php seems to lose the environment variables if we do not set them manually before the child process is started
          */
-        if(strpos(php_sapi_name(),'apache') !== false){
-            foreach(['PIMCORE_ENVIRONMENT','REDIRECT_PIMCORE_ENVIRONMENT'] as $envKey){
-                if($envValue = getenv($envKey)){
+        if (strpos(php_sapi_name(), 'apache') !== false) {
+            foreach (['PIMCORE_ENVIRONMENT', 'REDIRECT_PIMCORE_ENVIRONMENT'] as $envKey) {
+                if ($envValue = getenv($envKey)) {
                     putenv($envKey . '='.$envValue);
                 }
             }

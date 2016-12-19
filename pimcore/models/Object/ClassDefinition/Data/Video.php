@@ -331,6 +331,7 @@ class Video extends Model\Object\ClassDefinition\Data
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof Object\Data\Video) {
             $value = $data->getTitle() . " " . $data->getDescription();
+
             return $value;
         }
 
