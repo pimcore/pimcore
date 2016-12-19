@@ -132,7 +132,7 @@ abstract class Admin extends Action
                     "cookie" => $_COOKIE
                 ]);
 
-                if($this->getRequest()->isXmlHttpRequest()) {
+                if ($this->getRequest()->isXmlHttpRequest()) {
                     header('HTTP/1.0 403 Forbidden', true, 403);
                     echo "Session expired or unauthorized request. Please reload and try again!";
                 } else {
