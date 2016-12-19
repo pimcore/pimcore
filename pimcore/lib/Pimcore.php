@@ -976,7 +976,14 @@ class Pimcore
                 // check here if there is actually content, otherwise readfile() and similar functions are not working anymore
                 header("Content-Length: " . mb_strlen($output, "latin1"));
             }
-            header("Vary: Accept-Encoding", true);
+
+            $vary = "Accept-Encoding";
+            $deviceDetector = Tool\DeviceDetector::getInstance();
+            if ($deviceDetector->wasUsed()) {
+                $vary .= ", User-Agent";
+            }
+            header("Vary: " . $vary);
+
             header("X-Powered-By: pimcore", true);
         }
 
