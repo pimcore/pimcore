@@ -1334,21 +1334,22 @@ class Service extends Model\Element\Service
         return $key;
     }
 
-
     /** Enriches the layout definition before it is returned to the admin interface.
      * @param $layout
+     * @param $object Concrete
+     * @param array $context additional contextual data
      */
-    public static function enrichLayoutDefinition(&$layout, $object = null)
+    public static function enrichLayoutDefinition(&$layout, $object = null, $context = array())
     {
         if (method_exists($layout, "enrichLayoutDefinition")) {
-            $layout->enrichLayoutDefinition($object);
+            $layout->enrichLayoutDefinition($object, $context);
         }
 
         if (method_exists($layout, "getChilds")) {
             $children = $layout->getChilds();
             if (is_array($children)) {
                 foreach ($children as $child) {
-                    self::enrichLayoutDefinition($child, $object);
+                    self::enrichLayoutDefinition($child, $object, $context);
                 }
             }
         }
