@@ -93,13 +93,12 @@ class Text extends Model\Object\ClassDefinition\Layout
      * @param $object Model\Object\Concrete
      * @param array $context additional contextual data
      */
-    public function enrichLayoutDefinition($object, $context = array())
+    public function enrichLayoutDefinition($object, $context = [])
     {
         $renderingClass = $this->getRenderingClass();
 
         if (Tool::classExists($renderingClass)) {
             if (method_exists($renderingClass, 'renderLayoutText')) {
-
                 $context["fieldname"] = $this->getName();
 
                 $result = call_user_func($renderingClass . '::renderLayoutText', $this->renderingData, $object, $context);
@@ -107,5 +106,4 @@ class Text extends Model\Object\ClassDefinition\Layout
             }
         }
     }
-
 }

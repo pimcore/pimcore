@@ -403,8 +403,7 @@ class Layout
      * @param $object Model\Object\Concrete
      * @param array $context additional contextual data
      */
-    public function enrichLayoutDefinition($object, $context = array())
+    public function enrichLayoutDefinition($object, $context = [])
     {
-
     }
 }

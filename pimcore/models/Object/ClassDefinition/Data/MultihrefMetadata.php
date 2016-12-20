@@ -757,7 +757,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
      * @param $object Object\Concrete
      * @param array $context additional contextual data
      */
-    public function enrichLayoutDefinition($object, $context = array())
+    public function enrichLayoutDefinition($object, $context = [])
     {
         // nothing to do
     }

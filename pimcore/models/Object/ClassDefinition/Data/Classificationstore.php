@@ -1078,7 +1078,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
      * @param $object Object\Concrete
      * @param array $context additional contextual data
      */
-    public function enrichLayoutDefinition($object, $context = array())
+    public function enrichLayoutDefinition($object, $context = [])
     {
         $groupCollectionMapping = $this->recursiveGetActiveGroupCollectionMapping($object);
 

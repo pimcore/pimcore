@@ -1339,7 +1339,7 @@ class Service extends Model\Element\Service
      * @param $object Concrete
      * @param array $context additional contextual data
      */
-    public static function enrichLayoutDefinition(&$layout, $object = null, $context = array())
+    public static function enrichLayoutDefinition(&$layout, $object = null, $context = [])
     {
         if (method_exists($layout, "enrichLayoutDefinition")) {
             $layout->enrichLayoutDefinition($object, $context);
