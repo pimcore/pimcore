@@ -4,7 +4,7 @@ To structure object data layout-wise, there are 3 panel types and 4 other layout
 always contained in a panel. Panels can be nested and thereby a data input interface tailored to the users's needs 
 can be designed.
 
-![Layout Elements](../../img/classes-layouts.png)
+![Layout Elements](../../../img/classes-layouts.png)
 
 The three available panel types are:
 * Panel - a plain panel holding fields
