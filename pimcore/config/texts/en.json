@@ -6255,9 +6255,139 @@
     {
         "term": "rendering_data",
         "definition": "Data passed to renderer"
+    },
+    {
+        "term": "workflows",
+        "definition": "Workflows"
+    },
+    {
+        "term": "enabled",
+        "definition": "Enabled"
+    },
+    {
+        "term": "add_workflow",
+        "definition": "Add Workflow"
+    },
+    {
+        "term": "enter_the_name_of_the_new_workflow",
+        "definition": "Enter the name of the new workflow"
+    },
+    {
+        "term":"problem_creating_new_workflow",
+        "definition": "There was a problem during creating a new workflow"
+    },
+    {
+        "term":"allow_unpusblished",
+        "definition": "Allow Unpublished"
+    },
+    {
+        "term":"default_state",
+        "definition": "Default State"
+    },
+    {
+        "term":"default_status",
+        "definition": "Default Status"
+    },
+    {
+        "term":"types",
+        "definition": "Types"
+    },
+    {
+        "term":"statuses",
+        "definition": "Statuses"
+    },
+    {
+        "term":"states",
+        "definition": "States"
+    },
+    {
+        "term":"element_published",
+        "definition": "Element Published"
+    },
+    {
+        "term":"notes_required",
+        "definition": "Notes Required"
+    },
+    {
+        "term":"notes_type",
+        "definition": "Notes Type"
+    },
+    {
+        "term":"notes_title",
+        "definition": "Notes Title"
+    },
+    {
+        "term":"transition_to",
+        "definition": "Transition To"
+    },
+    {
+        "term":"additional_fields",
+        "definition": "Additional Fields"
+    },
+    {
+        "term":"field_type",
+        "definition": "Field Type"
+    },
+    {
+        "term":"blank_text",
+        "definition": "Blank Text"
+    },
+    {
+        "term":"setter_function",
+        "definition": "Setter Function"
+    },
+    {
+        "term":"transition_definition",
+        "definition": "Transition Definition"
+    },
+    {
+        "term":"global_actions",
+        "definition": "Global Actions"
+    },
+    {
+        "term":"add_workflow_action",
+        "definition": "Add Workflow Action"
+    },
+    {
+        "term":"enter_the_name_of_the_new_workflow_action",
+        "definition": "Enter the name of the new workflow action"
+    },
+    {
+        "term":"add_workflow_status",
+        "definition":"Add Workflow Status"
+    },
+    {
+        "term":"enter_the_name_of_the_new_workflow_status",
+        "definition": "Enter the name of the new workflow status"
+    },
+    {
+        "term":"add_workflow_state",
+        "definition":"Add Workflow State"
+    },
+    {
+        "term":"enter_the_name_of_the_new_workflow_state",
+        "definition": "Enter the name of the new workflow State"
+    },
+    {
+        "term":"add_workflow_transition",
+        "definition":"Add Workflow Transition"
+    },
+    {
+        "term":"problem_creating_new_workflow_action_transition",
+        "definition":"Problem creating new workflow action transition"
+    },
+    {
+        "term":"state",
+        "definition":"State"
+    },
+    {
+        "term":"notification_users",
+        "definition":"Notification Users"
+    },
+    {
+        "term":"workflow_saved_successfully",
+        "definition":"Workflow Definition has been saved"
     }
-
-
 
 
 ]

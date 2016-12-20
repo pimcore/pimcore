@@ -14,7 +14,7 @@
 
 namespace Pimcore\WorkflowManagement\Workflow;
 
-use Pimcore\WorkflowManagement\Workflow;
+use Pimcore\Model\Workflow;
 
 class Factory
 {
@@ -22,7 +22,7 @@ class Factory
     /**
      *
      * @param $config
-     * @return \Pimcore\WorkflowManagement\Workflow
+     * @return Workflow
      * @throws \Exception
      */
     public static function getWorkflowFromConfig($config)
@@ -31,6 +31,6 @@ class Factory
             throw new \Exception('Workflow json configuration could not be created, invalid configuration array given');
         }
 
-        return new Workflow($config);
+        return Workflow::getById($config['id']);
     }
 }
