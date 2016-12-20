@@ -1,7 +1,8 @@
 # Dynamic Text Labels (since build 4016)
 
 Similar to the [CalculatedValue](../../../05_Objects/01_Object_Classes/01_Data_Types/33_Calculated_Value_Type.md) data type,
-it is possible to generate the Layout Text dynamically based on the current object and the label's context. This is an alternative to the static text defined in the class definition.
+it is possible to generate the Layout Text dynamically based on the current object and the label's context.
+This is an alternative to the static text defined in the class definition.
 
 Let's consider the following example. It states that we want to use a custom renderer class called
 *\Website\CustomRenderer* and pass some additional data (*some additional data - 12345679* in this example) to the rendering method.
@@ -20,7 +21,7 @@ use Pimcore\Model\Object\Concrete;
 class CustomRenderer
 {
     /**
-     * @param $data string
+     * @param $data string as provided in the class definition
      * @param $object Concrete
      * @param $params mixed
      * @return string

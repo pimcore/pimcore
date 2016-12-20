@@ -20,7 +20,7 @@ And last but not least there are two extra layout elements:
 * Button - with a custom handler
 * Text - to add minimally formatted text to an object layout. This can hold descriptions and hints which don't fit into 
 a field's tooltip. Please note that since release 4.4.2 it is possible to generate this text dynamically.
-Please read this [page](./03_Layout_Elements/01_Dynamic_Text_Labels.md) for further details. 
+Please read this [page](03_Layout_Elements/01_Dynamic_Text_Labels.md) for further details. 
 
 Pimcore uses Ext JS layout components for all object layout elements. For a deeper understanding of the layout elements, 
 please have a look at the [Ext JS documentation pages](http://docs.sencha.com/extjs/6.0/6.0.1-classic/) and 
