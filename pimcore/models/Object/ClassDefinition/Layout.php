@@ -398,4 +398,12 @@ class Layout
 
         return $this;
     }
+
+    /** Override point for Enriching the layout definition before the layout is returned to the admin interface.
+     * @param $object Model\Object\Concrete
+     * @param array $context additional contextual data
+     */
+    public function enrichLayoutDefinition($object, $context = [])
+    {
+    }
 }

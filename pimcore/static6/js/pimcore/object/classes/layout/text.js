@@ -42,6 +42,20 @@ pimcore.object.classes.layout.text = Class.create(pimcore.object.classes.layout.
             style: "margin: 10px 0 10px 0",
             items: [
                 {
+                    xtype: "textfield",
+                    fieldLabel: t("rendering_class"),
+                    value: this.datax.renderingClass,
+                    width: 600,
+                    name: "renderingClass"
+                },
+                {
+                    xtype: "textfield",
+                    fieldLabel: t("rendering_data"),
+                    width: 600,
+                    value: this.datax.renderingData,
+                    name: "renderingData"
+                },
+                {
                     xtype: "htmleditor",
                     height: 300,
                     value: this.datax.html,

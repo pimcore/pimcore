@@ -777,10 +777,11 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
         $this->columns = $masterDefinition->columns;
     }
 
-    /**
-     *
+    /** Override point for Enriching the layout definition before the layout is returned to the admin interface.
+     * @param $object Object\Concrete
+     * @param array $context additional contextual data
      */
-    public function enrichLayoutDefinition($object)
+    public function enrichLayoutDefinition($object, $context = [])
     {
         $classId = $this->allowedClassId;
 

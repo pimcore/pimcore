@@ -25,6 +25,6 @@ Each data type comes with an input widget. For instance, the text input data typ
 image data type comes with a drop area to which a user can drag and drop an image.
  
 For detailed documentation about these data types see [Data Types](./01_Data_Types/README.md).
-Also have a look at [Layout Elements](./03_Layout_Elements.md) for information about the layout elements 
+Also have a look at [Layout Elements](./03_Layout_Elements/README.md) for information about the layout elements 
 and [Class Settings](./05_Class_Settings/README.md) for further details and features of Pimcore classes like 
 inheritance, variants, preview, custom layouts, etc.   

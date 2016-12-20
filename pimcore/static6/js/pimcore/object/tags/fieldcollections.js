@@ -47,9 +47,9 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
             allowedTypes = [];
         }
 
-
         var extraParams = {
-            allowedTypes: allowedTypes.join(",")
+            allowedTypes: allowedTypes.join(","),
+            object_id: this.object.id
         };
 
         if (typeof this.fieldConfig.layoutId !== "undefined") {
