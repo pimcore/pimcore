@@ -330,7 +330,9 @@ class Area extends Model\Document\Tag
         $doc = Model\Document\Page::getById($this->getDocumentId());
         $id = sprintf('%s%s%d', $name, $this->getName(), 1);
         $element = $doc->getElement($id);
-        $element->suffixes = [ $this->getName() ];
+        if($element){
+            $element->suffixes = [ $this->getName() ];
+        }
 
         return $element;
     }
