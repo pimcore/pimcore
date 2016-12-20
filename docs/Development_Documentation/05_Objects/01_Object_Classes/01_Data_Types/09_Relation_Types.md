@@ -62,7 +62,7 @@ use Pimcore\Model\Asset;
   
 $myHrefElement = Document::getById(23);
  
-$myMultihrefElements[] = Asset::getById(350):
+$myMultihrefElements[] = Asset::getById(350);
 $myMultihrefElements[] = Object::getByPath("/products/testproduct");
  
 $myObjectsElements[] = Object\Product::getById(98);
