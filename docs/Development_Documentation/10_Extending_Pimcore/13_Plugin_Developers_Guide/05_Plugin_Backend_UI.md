@@ -56,6 +56,7 @@ corresponding method to the javascript plugin class.
 | prepareObjectTreeContextMenu | before context menu is opened, menu, tree class and object record are passed as parameters |
 | prepareDocumentTreeContextMenu | before context menu is opened, menu, tree and document record are passed as parameters |
 | prepareClassLayoutContextMenu | before context menu is opened, allowedTypes array is passed as parameters |
+| prepareOnRowContextmenu | before context menu is opened object folder grid, menu, folder class and object record are passed as parameters |
 
 Uninstall is called after plugin has been uninstalled - this hook can be used to remove plugin features from the UI 
 after uninstall.

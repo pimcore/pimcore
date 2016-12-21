@@ -440,6 +440,8 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             }));
         }
 
+        pimcore.plugin.broker.fireEvent("prepareOnRowContextmenu", menu, this, selectedRows);
+		
         e.stopEvent();
         menu.showAt(e.pageX, e.pageY);
     }
