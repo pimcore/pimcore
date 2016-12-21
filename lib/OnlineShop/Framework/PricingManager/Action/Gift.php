@@ -87,8 +87,9 @@ class Gift implements IGift
         $json = json_decode($string);
         $product = \OnlineShop\Framework\Model\AbstractProduct::getByPath( $json->product );
 
-        if($product)
+        if($product) {
             $this->setProduct( $product );
+        }
 
         return $this;
     }
@@ -99,8 +100,9 @@ class Gift implements IGift
      */
     public function __sleep()
     {
-        if($this->product)
+        if($this->product) {
             $this->product = $this->product->getFullPath();
+        }
 
         return array('product');
     }
@@ -110,8 +112,9 @@ class Gift implements IGift
      */
     public function __wakeup()
     {
-        if($this->product != '')
+        if($this->product != '') {
             $this->product = \OnlineShop\Framework\Model\AbstractProduct::getByPath( $this->product );
+        }
 
     }
 }
