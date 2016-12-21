@@ -189,7 +189,8 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
             content = '<iframe src="//www.dailymotion.com/embed/video/' + this.data.data + '" width="' + width + '" height="' + height + '" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>';
         }
 
-        this.getBody().update(content);
+        this.component.update(content);
+        
     },
 
     getBody: function () {
