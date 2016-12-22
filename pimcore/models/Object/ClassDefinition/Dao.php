@@ -252,29 +252,29 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->delete("objects", $this->db->quoteInto("o_classId = ?", $this->model->getId()));
 
         // remove fieldcollection tables
-        $allTables = $this->db->fetchAll("SHOW TABLES LIKE 'object_collection_%_" . $this->model->getId() . "'");
+        $allTables = $this->db->fetchAll("SHOW TABLES LIKE 'object\_collection\_%\_" . $this->model->getId() . "'");
         foreach ($allTables as $table) {
             $collectionTable = current($table);
             $this->db->query("DROP TABLE IF EXISTS `".$collectionTable."`");
         }
 
         // remove localized fields tables and views
-        $allViews = $this->db->fetchAll("SHOW TABLES LIKE 'object_localized_" . $this->model->getId() . "_%'");
+        $allViews = $this->db->fetchAll("SHOW TABLES LIKE 'object\_localized\_" . $this->model->getId() . "_%'");
         foreach ($allViews as $view) {
             $localizedView = current($view);
             $this->db->query("DROP VIEW IF EXISTS `".$localizedView."`");
         }
 
-        $allTables = $this->db->fetchAll("SHOW TABLES LIKE 'object_localized_query_" . $this->model->getId() . "_%'");
+        $allTables = $this->db->fetchAll("SHOW TABLES LIKE 'object\_localized\_query\_" . $this->model->getId() . "_%'");
         foreach ($allTables as $table) {
             $queryTable = current($table);
             $this->db->query("DROP TABLE IF EXISTS `".$queryTable."`");
         }
 
-        $this->db->query("DROP TABLE IF EXISTS object_localized_data_" . $this->model->getId());
+        $this->db->query("DROP TABLE IF EXISTS object\_localized\_data\_" . $this->model->getId());
 
         // objectbrick tables
-        $allTables = $this->db->fetchAll("SHOW TABLES LIKE 'object_brick_%_" . $this->model->getId() . "'");
+        $allTables = $this->db->fetchAll("SHOW TABLES LIKE 'object\_brick\_%\_" . $this->model->getId() . "'");
         foreach ($allTables as $table) {
             $brickTable = current($table);
             $this->db->query("DROP TABLE `".$brickTable."`");
