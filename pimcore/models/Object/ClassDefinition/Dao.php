@@ -259,13 +259,13 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         // remove localized fields tables and views
-        $allViews = $this->db->fetchAll("SHOW TABLES LIKE 'object\_localized\_" . $this->model->getId() . "_%'");
+        $allViews = $this->db->fetchAll("SHOW TABLES LIKE 'object\_localized\_" . $this->model->getId() . "\_%'");
         foreach ($allViews as $view) {
             $localizedView = current($view);
             $this->db->query("DROP VIEW IF EXISTS `".$localizedView."`");
         }
 
-        $allTables = $this->db->fetchAll("SHOW TABLES LIKE 'object\_localized\_query\_" . $this->model->getId() . "_%'");
+        $allTables = $this->db->fetchAll("SHOW TABLES LIKE 'object\_localized\_query\_" . $this->model->getId() . "\_%'");
         foreach ($allTables as $table) {
             $queryTable = current($table);
             $this->db->query("DROP TABLE IF EXISTS `".$queryTable."`");
