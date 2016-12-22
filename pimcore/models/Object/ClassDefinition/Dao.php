@@ -271,7 +271,7 @@ class Dao extends Model\Dao\AbstractDao
             $this->db->query("DROP TABLE IF EXISTS `".$queryTable."`");
         }
 
-        $this->db->query("DROP TABLE IF EXISTS object\_localized\_data\_" . $this->model->getId());
+        $this->db->query("DROP TABLE IF EXISTS object_localized_data_" . $this->model->getId());
 
         // objectbrick tables
         $allTables = $this->db->fetchAll("SHOW TABLES LIKE 'object\_brick\_%\_" . $this->model->getId() . "'");
