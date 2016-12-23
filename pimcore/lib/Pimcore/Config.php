@@ -21,6 +21,7 @@ use Pimcore\Logger;
 
 class Config
 {
+    const DEFAULT_ENVIRONMENT = 'prod';
 
     /**
      * @var array
@@ -712,23 +713,30 @@ class Config
      */
     public static function getEnvironment()
     {
-        // null means that it wasn't checked, false means it was checked already, but not environment available
-        if (self::$environment === null) {
-            // check environment variables
-            self::$environment = getenv("PIMCORE_ENVIRONMENT") ?: (getenv("REDIRECT_PIMCORE_ENVIRONMENT") ?: false);
+        if (null === static::$environment) {
+            // check env vars - fall back to default (prod)
+            $environment = getenv("PIMCORE_ENVIRONMENT")
+                ?: (getenv("REDIRECT_PIMCORE_ENVIRONMENT"))
+                ?: false;
 
-            if (!self::$environment && isset($_SERVER["argv"]) && is_array($_SERVER["argv"])) {
+            if (!$environment && php_sapi_name() === 'cli') {
                 // check CLI option: --environment[=ENVIRONMENT]
                 foreach ($_SERVER["argv"] as $argument) {
                     if (preg_match("@\-\-environment=(.*)@", $argument, $matches)) {
-                        self::$environment = $matches[1];
+                        $environment = $matches[1];
                         break;
                     }
                 }
             }
+
+            if (!$environment) {
+                $environment = static::DEFAULT_ENVIRONMENT;
+            }
+
+            static::$environment = $environment;
         }
 
-        return self::$environment;
+        return static::$environment;
     }
 
     /**
@@ -736,6 +744,6 @@ class Config
      */
     public static function setEnvironment($environment)
     {
-        self::$environment = $environment;
+        static::$environment = $environment;
     }
 }
