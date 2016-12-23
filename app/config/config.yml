@@ -10,6 +10,11 @@ framework:
     router:
         resource: "%kernel.root_dir%/config/routing.yml"
         strict_requirements: ~
+    templating:
+        engines: ['twig']
+    default_locale:  "%locale%"
+    php_errors:
+        log: true
 
 cmf_routing:
     chain:
