@@ -100,12 +100,12 @@ class PricingManager implements IPricingManager
         $env->setCategories(array_values($categories));
 
 
-        //clean up discount pricing modificators in car price calculator
+        //clean up discount pricing modificators in cart price calculator
         $priceCalculator = $cart->getPriceCalculator();
         $priceModificators = $priceCalculator->getModificators();
         if($priceModificators) {
             foreach($priceModificators as $priceModificator) {
-                if($priceModificator instanceof  Discount) {
+                if($priceModificator instanceof Discount) {
                     $priceCalculator->removeModificator($priceModificator);
                 }
             }
