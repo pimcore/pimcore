@@ -501,7 +501,7 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
             });
             $actions = array_values(array_map(
                 function (\ReflectionMethod $method) {
-                    return ["name" => $method->getName()];
+	                return ["name" => preg_replace('/Action$/', '', $method->getName())];
                 }, $methods
             ));
         }
