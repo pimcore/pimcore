@@ -324,19 +324,27 @@ class InheritanceHelper
     {
         if (!$parentIdGroups) {
             $object = Object::getById($currentParentId);
+            $query = "SELECT b.o_id AS id $fields, b.o_type AS type, b.o_classId AS classId, b.o_parentId AS parentId, CONCAT(o_path,o_key) as fullpath FROM objects b LEFT JOIN " . $this->storetable . " a ON b.o_id = a." . $this->idField . " WHERE o_path LIKE ".\Pimcore\Db::get()->quote($object->getRealFullPath().'/%') . " GROUP BY b.o_id ORDER BY LENGTH(o_path) ASC";
 
-            $result = $this->db->fetchAll("SELECT b.o_id AS id $fields, b.o_type AS type, b.o_classId AS classId, b.o_parentId AS parentId, CONCAT(o_path,o_key) as fullpath FROM objects b LEFT JOIN " . $this->storetable . " a ON b.o_id = a." . $this->idField . " WHERE o_path LIKE ? GROUP BY b.o_id ORDER BY LENGTH(o_path) ASC", $object->getRealFullPath() . "/%");
+            $queryCacheKey = 'inheritance_query_cache_'.md5($query);
 
-            $objects = [];
+            $parentIdGroups = \Pimcore\Cache\Runtime::load($queryCacheKey);
 
-            // group the results together based on the parent id's
-            $parentIdGroups = [];
-            foreach ($result as $r) {
-                if (!isset($parentIdGroups[$r["parentId"]])) {
-                    $parentIdGroups[$r["parentId"]] = [];
+            if(!$parentIdGroups){
+                $result = $this->db->fetchAll($query);
+
+                $objects = [];
+
+                // group the results together based on the parent id's
+                $parentIdGroups = [];
+                foreach ($result as $r) {
+                    if (!isset($parentIdGroups[$r["parentId"]])) {
+                        $parentIdGroups[$r["parentId"]] = [];
+                    }
+
+                    $parentIdGroups[$r["parentId"]][] = $r;
                 }
-
-                $parentIdGroups[$r["parentId"]][] = $r;
+                \Pimcore\Cache\Runtime::save($parentIdGroups,$queryCacheKey);
             }
         }
 
