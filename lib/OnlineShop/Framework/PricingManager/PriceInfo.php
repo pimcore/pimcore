@@ -17,6 +17,9 @@
 
 namespace OnlineShop\Framework\PricingManager;
 
+use OnlineShop\Framework\PriceSystem\IPrice;
+use OnlineShop\Framework\PriceSystem\TaxManagement\TaxCalculationService;
+
 class PriceInfo implements IPriceInfo
 {
     /**
@@ -177,7 +180,7 @@ class PriceInfo implements IPriceInfo
         }
 
 
-        $price->setAmount( $this->getAmount() );
+        $price->setAmount( $this->getAmount(), IPrice::PRICE_MODE_GROSS, true );
         return $price;
     }
 

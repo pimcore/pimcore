@@ -94,11 +94,13 @@ class CartPriceCalculator implements ICartPriceCalculator {
                 $subTotal += $item->getTotalPrice()->getAmount();
             }
         }
+
         //by default currency is retrieved from item prices. if there are no items, its loaded from the default locale defined in the environment
         if(!$currency) {
             $currency = $this->getDefaultCurrency();
         }
         $this->subTotal = $this->getDefaultPriceObject($subTotal, $currency);
+
 
         //consider all price modificators
         $currentSubTotal = $this->getDefaultPriceObject($subTotal, $currency);
