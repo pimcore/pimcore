@@ -21,9 +21,12 @@ if (defined('PIMCORE_SYMFONY_MODE') && PIMCORE_SYMFONY_MODE) {
     require __DIR__ . '/app/autoload.php';
     require_once __DIR__ . '/pimcore/config/setup.php';
 
-    Debug::enable();
+    $debug = Pimcore::inDebugMode();
+    if ($debug) {
+        Debug::enable();
+    }
 
-    $kernel = new AppKernel('dev', true);
+    $kernel = new AppKernel(\Pimcore\Config::getEnvironment(), $debug);
     $kernel->loadClassCache();
 
     $request  = Request::createFromGlobals();
