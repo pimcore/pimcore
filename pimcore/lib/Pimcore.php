@@ -496,7 +496,6 @@ class Pimcore
 
     /**
      * @static
-     *
      */
     public static function setSystemRequirements()
     {
@@ -670,6 +669,8 @@ class Pimcore
 
     /**
      * @static
+     *
+     * TODO: replace with composer autoloader
      */
     public static function initAutoloader()
     {
@@ -701,9 +702,11 @@ class Pimcore
 
     /**
      * @static
+     * @return Zend_Config|null
      */
     public static function initConfiguration()
     {
+        $conf = null;
 
         // init configuration
         try {
@@ -740,6 +743,8 @@ class Pimcore
         if (PIMCORE_DEVMODE || PIMCORE_DEBUG) {
             error_reporting(E_ALL & ~E_NOTICE);
         }
+
+        return $conf;
     }
 
     /**
@@ -765,15 +770,6 @@ class Pimcore
         }
 
         return $debug;
-    }
-
-    public static function setupTempDirectories()
-    {
-        // try to set tmp directoy into superglobals, ZF and other frameworks (PEAR) sometimes relies on that
-        foreach (['TMPDIR', 'TEMP', 'TMP', 'windir', 'SystemRoot'] as $key) {
-            $_ENV[$key] = PIMCORE_CACHE_DIRECTORY;
-            $_SERVER[$key] = PIMCORE_CACHE_DIRECTORY;
-        }
     }
 
     /**

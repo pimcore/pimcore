@@ -94,17 +94,24 @@ class Config
         if (\Zend_Registry::isRegistered("pimcore_config_system") && !$forceReload) {
             $config = \Zend_Registry::get("pimcore_config_system");
         } else {
+            $file = self::locateConfigFile('system.php');
+
             try {
-                $file = self::locateConfigFile("system.php");
+                // this is just for compatibility reasons, pimcore itself doesn't use this constant anymore
+                if (!defined('PIMCORE_CONFIGURATION_SYSTEM')) {
+                    define('PIMCORE_CONFIGURATION_SYSTEM', $file);
+                }
+
                 if (file_exists($file)) {
                     $config = new \Zend_Config(include($file));
                 } else {
                     throw new \Exception($file . " doesn't exist");
                 }
+
                 self::setSystemConfig($config);
             } catch (\Exception $e) {
-                $file = self::locateConfigFile("system.php");
                 Logger::emergency("Cannot find system configuration, should be located at: " . $file);
+
                 if (is_file($file)) {
                     $m = "Your system.php located at " . $file . " is invalid, please check and correct it manually!";
                     Tool::exitWithError($m);
