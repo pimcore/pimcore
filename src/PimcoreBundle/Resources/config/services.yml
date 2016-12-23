@@ -1,0 +1,6 @@
+services:
+    pimcore.twig.document_tag_extension:
+        class: PimcoreBundle\Twig\DocumentTagExtension
+        public: false
+        tags:
+            - { name: twig.extension }

@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use Pimcore\Model\Document\Page;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,5 +16,10 @@ class ContentController extends Controller
      */
     public function defaultAction(Request $request)
     {
+        $document = $request->get('contentDocument');
+
+        return [
+            'document' => $document
+        ];
     }
 }
