@@ -12,20 +12,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-use Pimcore\Config;
-use Symfony\Component\Debug\Debug;
 use Symfony\Component\HttpFoundation\Request;
 
-require_once __DIR__ . '/pimcore/config/constants.php';
-require_once __DIR__ . '/app/autoload.php';
-
-$debug = Pimcore::inDebugMode();
-if ($debug) {
-    Debug::enable();
-}
-
-$kernel = new AppKernel(Config::getEnvironment(), $debug);
-$kernel->loadClassCache();
+/** @var \Pimcore\Kernel $kernel */
+$kernel = require_once __DIR__ . '/pimcore/config/startup.php';
 
 if (defined('PIMCORE_SYMFONY_MODE') && PIMCORE_SYMFONY_MODE) {
     $request  = Request::createFromGlobals();

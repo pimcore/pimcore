@@ -16,3 +16,7 @@ error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
 
 require_once __DIR__ . '/constants.php';
 require_once __DIR__ . '/autoload.php';
+
+$kernel = require_once  __DIR__ . '/kernel.php';
+
+return $kernel;

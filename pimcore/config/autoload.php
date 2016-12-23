@@ -1,5 +1,7 @@
 <?php
 
+use Doctrine\Common\Annotations\AnnotationRegistry;
+
 // setup include paths
 // include paths defined in php.ini are ignored because they're causing problems with open_basedir, see PIMCORE-1233
 // it also improves the performance when reducing the amount of include paths, you can of course add additional paths anywhere in your code (/website)
@@ -18,6 +20,7 @@ set_include_path(implode(PATH_SEPARATOR, $includePaths) . PATH_SEPARATOR);
 
 // composer autoloader
 $composerLoader = include_once(PIMCORE_DOCUMENT_ROOT . "/vendor/autoload.php");
+AnnotationRegistry::registerLoader([$composerLoader, 'loadClass']);
 
 // helper functions
 include(dirname(__FILE__) . "/helper.php");
