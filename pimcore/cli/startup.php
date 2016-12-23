@@ -12,28 +12,49 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-use Pimcore\Model\Object;
+use Pimcore\Config;
 use Pimcore\Model\Document;
+use Pimcore\Model\Object;
+use Symfony\Component\Console\Input\ArgvInput;
 
 // determines if we're in Pimcore\Console mode
 $pimcoreConsole = (defined('PIMCORE_CONSOLE') && true === PIMCORE_CONSOLE);
+$symfonyMode    = (defined('PIMCORE_SYMFONY_MODE') && PIMCORE_SYMFONY_MODE);
 
 $workingDirectory = getcwd();
 chdir(__DIR__);
-include_once("../config/startup.php");
+
+include_once __DIR__ . '/../config/constants.php';
+include_once __DIR__ . '/../config/autoload.php';
+
+if ($pimcoreConsole) {
+    $input = new ArgvInput();
+    $env   = $input->getParameterOption(['--env', '-e'], Config::getEnvironment());
+    $debug = Pimcore::inDebugMode() && !$input->hasParameterOption(['--no-debug', '']);
+
+    Config::setEnvironment($env);
+    if (!defined('PIMCORE_DEBUG')) {
+        define('PIMCORE_DEBUG', $debug);
+    }
+}
+
+$kernel = include_once __DIR__ . '/../config/kernel.php';
+
 chdir($workingDirectory);
 
-// CLI \Zend_Controller_Front Setup, this is required to make it possible to make use of all rendering features
-// this includes $this->action() in templates, ...
-$front = \Zend_Controller_Front::getInstance();
-Pimcore::initControllerFront($front);
+if (!$symfonyMode) {
+    // CLI \Zend_Controller_Front Setup, this is required to make it possible to make use of all rendering features
+    // this includes $this->action() in templates, ...
+    $front = \Zend_Controller_Front::getInstance();
+    Pimcore::initControllerFront($front);
 
-$request = new \Zend_Controller_Request_Http();
-$request->setModuleName(PIMCORE_FRONTEND_MODULE);
-$request->setControllerName("default");
-$request->setActionName("default");
-$front->setRequest($request);
-$front->setResponse(new \Zend_Controller_Response_Cli());
+    $request = new \Zend_Controller_Request_Http();
+    $request->setModuleName(PIMCORE_FRONTEND_MODULE);
+    $request->setControllerName("default");
+    $request->setActionName("default");
+    $front->setRequest($request);
+    $front->setResponse(new \Zend_Controller_Response_Cli());
+}
 
 //Activate Inheritance for cli-scripts
 \Pimcore::unsetAdminMode();
@@ -60,3 +81,5 @@ if (!$pimcoreConsole) {
         die("in maintenance mode -> skip\nset the flag --ignore-maintenance-mode to force execution \n");
     }
 }
+
+return $kernel;

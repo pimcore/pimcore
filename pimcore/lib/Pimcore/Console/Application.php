@@ -24,11 +24,12 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Console\Event\ConsoleTerminateEvent;
 use Symfony\Component\Console\ConsoleEvents;
 use Pimcore\Tool\Admin;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
  * The console application
  */
-class Application extends \Symfony\Component\Console\Application
+class Application extends \Symfony\Bundle\FrameworkBundle\Console\Application
 {
     /**
      * Autoloaded namespaces
@@ -45,9 +46,12 @@ class Application extends \Symfony\Component\Console\Application
      *
      * @api
      */
-    public function __construct($name = 'UNKNOWN', $version = 'UNKNOWN')
+    public function __construct(KernelInterface $kernel)
     {
-        parent::__construct('Pimcore CLI', Version::getVersion());
+        parent::__construct($kernel);
+
+        $this->setName('Pimcore');
+        $this->setVersion(Version::getVersion());
 
         // init default autoload namespaces
         $this->initDefaultAutoloadNamespaces();
