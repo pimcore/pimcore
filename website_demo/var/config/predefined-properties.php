@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 return [
     1 => [
@@ -52,5 +52,18 @@ return [
         "creationDate" => "0",
         "modificationDate" => "0",
         "id" => "4"
+    ],
+    5 => [
+        "id" => 5,
+        "name" => "Symfony",
+        "description" => "Render document in symfony mode",
+        "key" => "symfony",
+        "type" => "bool",
+        "data" => NULL,
+        "config" => NULL,
+        "ctype" => "document",
+        "inheritable" => TRUE,
+        "creationDate" => 1482501247,
+        "modificationDate" => 1482501278
     ]
 ];
