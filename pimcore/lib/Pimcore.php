@@ -22,6 +22,7 @@ use Pimcore\ExtensionManager;
 use Pimcore\Model\User;
 use Pimcore\Model;
 use Pimcore\Logger;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 class Pimcore
 {
@@ -40,6 +41,11 @@ class Pimcore
      * @var \Zend_EventManager_EventManager
      */
     private static $eventManager;
+
+    /**
+     * @var KernelInterface
+     */
+    private static $kernel;
 
     /**
      * @var \DI\Container
@@ -845,6 +851,22 @@ class Pimcore
         }
 
         return self::$diContainer;
+    }
+
+    /**
+     * @return KernelInterface
+     */
+    public static function getKernel()
+    {
+        return static::$kernel;
+    }
+
+    /**
+     * @param KernelInterface $kernel
+     */
+    public static function setKernel(KernelInterface $kernel)
+    {
+        static::$kernel = $kernel;
     }
 
     /**

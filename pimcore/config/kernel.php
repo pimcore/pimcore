@@ -11,4 +11,6 @@ if ($debug) {
 $kernel = new AppKernel(Config::getEnvironment(), $debug);
 $kernel->loadClassCache();
 
+Pimcore::setKernel($kernel);
+
 return $kernel;
