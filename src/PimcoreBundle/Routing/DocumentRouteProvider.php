@@ -52,12 +52,12 @@ class DocumentRouteProvider implements RouteProviderInterface
     }
 
     /**
-     * @param Document $document
+     * @param Document|Document\Page $document
      * @return DocumentRoute
      */
     protected function buildRouteForDocument(Document $document)
     {
-        if ($document->getId() === 30) { // DEBUG
+        if ($document->getProperty('symfony')) {
             $controller = sprintf(
                 '%s:%s:%s',
                 $document->getModule() ?: 'ContentBundle',
@@ -86,11 +86,9 @@ class DocumentRouteProvider implements RouteProviderInterface
     public function getRouteByName($name)
     {
         if (preg_match('/^document_(\d+)$/', $name, $match)) {
-            if ($match[1] == 30) { // DEBUG
-                $document = Document::getById($match[1]);
-            }
+            $document = Document::getById($match[1]);
 
-            if ($document) {
+            if ($document && $document->getProperty('symfony')) {
                 return $this->buildRouteForDocument($document);
             }
         }
