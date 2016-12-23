@@ -128,7 +128,7 @@ class CartPriceCalculator implements ICartPriceCalculator {
     }
 
     /**
-     * possibility to overwrite the price object with should be used
+     * possibility to overwrite the price object that should be used
      *
      * @param $amount
      * @param \Zend_Currency $currency
