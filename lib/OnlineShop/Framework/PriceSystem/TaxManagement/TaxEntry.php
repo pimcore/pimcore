@@ -18,6 +18,8 @@
 namespace OnlineShop\Framework\PriceSystem\TaxManagement;
 
 
+use Pimcore\Model\Object\OnlineShopTaxClass;
+
 class TaxEntry {
 
     const CALCULATION_MODE_COMBINE = "combine";
@@ -124,5 +126,23 @@ class TaxEntry {
         $this->taxId = $taxId;
     }
 
+
+
+    /**
+     * @param OnlineShopTaxClass $taxClass
+     * @return TaxEntry[]
+     */
+    public static function convertTaxEntries(OnlineShopTaxClass $taxClass) {
+
+        $convertedTaxEntries = [];
+        if($taxClass->getTaxEntries()) {
+            foreach($taxClass->getTaxEntries() as $index => $entry) {
+                $convertedTaxEntries[] = new TaxEntry($entry->getPercent(), 0, $taxClass->getId() . "-" . $index, $entry);
+            }
+        }
+
+        return $convertedTaxEntries;
+
+    }
 
 }

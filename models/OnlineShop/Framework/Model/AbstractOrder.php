@@ -64,6 +64,22 @@ class AbstractOrder extends \Pimcore\Model\Object\Concrete {
      * @throws \OnlineShop\Framework\Exception\UnsupportedException
      * @return float
      */
+    public function getSubTotalNetPrice() {
+        throw new \OnlineShop\Framework\Exception\UnsupportedException("getSubTotalNetPrice is not implemented for " . get_class($this));
+    }
+
+    /**
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @param float $subTotalPrice
+     */
+    public function setSubTotalNetPrice($subTotalPrice) {
+        throw new \OnlineShop\Framework\Exception\UnsupportedException("setSubTotalNetPrice is not implemented for " . get_class($this));
+    }
+
+    /**
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @return float
+     */
     public function getTotalPrice() {
         throw new \OnlineShop\Framework\Exception\UnsupportedException("getTotalPrice is not implemented for " . get_class($this));
     }
@@ -74,6 +90,38 @@ class AbstractOrder extends \Pimcore\Model\Object\Concrete {
      */
     public function setTotalPrice($totalPrice) {
         throw new \OnlineShop\Framework\Exception\UnsupportedException("setTotalPrice is not implemented for " . get_class($this));
+    }
+
+    /**
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @return float
+     */
+    public function getTotalNetPrice() {
+        throw new \OnlineShop\Framework\Exception\UnsupportedException("getTotalNetPrice is not implemented for " . get_class($this));
+    }
+
+    /**
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @param float $totalPrice
+     */
+    public function setTotalNetPrice($totalPrice) {
+        throw new \OnlineShop\Framework\Exception\UnsupportedException("setTotalNetPrice is not implemented for " . get_class($this));
+    }
+
+    /**
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @return array
+     */
+    public function getTaxInfo() {
+        throw new \OnlineShop\Framework\Exception\UnsupportedException("getTaxInfo is not implemented for " . get_class($this));
+    }
+
+    /**
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @param array $taxInfo
+     */
+    public function setTaxInfo($taxInfo) {
+        throw new \OnlineShop\Framework\Exception\UnsupportedException("setTaxInfo is not implemented for " . get_class($this));
     }
 
     /**

@@ -16,6 +16,9 @@
 
 
 namespace OnlineShop\Framework\PriceSystem;
+use OnlineShop\Framework\CartManager\CartPriceModificator\ICartPriceModificator;
+use OnlineShop\Framework\Model\ICheckoutable;
+use Pimcore\Model\Object\OnlineShopTaxClass;
 
 /**
  * Interface IPriceSystem
@@ -45,6 +48,16 @@ interface IPriceSystem {
      */
     public function filterProductIds($productIds, $fromPrice, $toPrice, $order, $offset, $limit);
 
+    /**
+     * @param ICheckoutable $product
+     * @return OnlineShopTaxClass
+     */
+    public function getTaxClassForProduct(ICheckoutable $product);
 
-
+    /**
+     * @param ICartPriceModificator $modificator
+     * @param $environment
+     * @return OnlineShopTaxClass
+     */
+    public function getTaxClassForPriceModification(ICartPriceModificator $modificator);
 }

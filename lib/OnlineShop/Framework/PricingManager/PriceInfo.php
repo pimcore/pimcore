@@ -194,7 +194,7 @@ class PriceInfo implements IPriceInfo
         }
 
         $price = clone $this->priceInfo->getPrice();
-        $price->setAmount($this->getPrice()->getAmount() * $this->getQuantity());
+        $price->setAmount( $this->getPrice()->getAmount() * $this->getQuantity(), IPrice::PRICE_MODE_GROSS, true );
         return $price;
     }
 

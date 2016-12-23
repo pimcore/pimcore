@@ -16,6 +16,12 @@
 
 
 namespace OnlineShop\Framework\PriceSystem;
+use OnlineShop\Framework\CartManager\CartPriceModificator\ICartPriceModificator;
+use OnlineShop\Framework\Model\ICheckoutable;
+use OnlineShop\Framework\PriceSystem\TaxManagement\TaxCalculationService;
+use OnlineShop\Framework\PriceSystem\TaxManagement\TaxEntry;
+use Pimcore\Model\Object\OnlineShopTaxClass;
+use Pimcore\Model\WebsiteSetting;
 
 /**
  * Class AbstractPriceSystem
@@ -81,5 +87,41 @@ abstract class AbstractPriceSystem implements IPriceSystem {
      * @return AbstractPriceInfo
      */
     abstract function createPriceInfoInstance($quantityScale,$product,$products);
+
+    /**
+     * @return OnlineShopTaxClass
+     */
+    protected function getDefaultTaxClass() {
+        $taxClass =  WebsiteSetting::getByName("defaultTaxClass");
+
+        if($taxClass) {
+            $taxClass = OnlineShopTaxClass::getById($taxClass->getData());
+        }
+
+        if(empty($taxClass)) {
+            $taxClass = new OnlineShopTaxClass();
+            $taxClass->setTaxEntryCombinationType(TaxEntry::CALCULATION_MODE_COMBINE);
+        }
+
+        return $taxClass;
+    }
+
+    /**
+     * @param ICheckoutable $product
+     * @param $environment
+     * @return OnlineShopTaxClass
+     */
+    public function getTaxClassForProduct(ICheckoutable $product) {
+        return $this->getDefaultTaxClass();
+    }
+
+    /**
+     * @param ICartPriceModificator $modificator
+     * @param $environment
+     * @return OnlineShopTaxClass
+     */
+    public function getTaxClassForPriceModification(ICartPriceModificator $modificator) {
+        return $this->getDefaultTaxClass();
+    }
 }
 

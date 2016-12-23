@@ -17,7 +17,7 @@
 
 namespace OnlineShop\Framework\PriceSystem;
 use OnlineShop\Framework\PriceSystem\TaxManagement\TaxCalculationService;
-use OnlineShop\Framework\PriceSystem\TaxManagement\TaxClassCalculator;
+use OnlineShop\Framework\PriceSystem\TaxManagement\TaxEntry;
 
 /**
  * Class AttributePriceSystem
@@ -49,7 +49,7 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem {
      */
     function createPriceInfoInstance($quantityScale, $product, $products) {
 
-        $taxClass = TaxClassCalculator::getTaxClass($product, null);
+        $taxClass = $this->getTaxClassForProduct($product);
 
         $amount = $this->calculateAmount($product, $products);
         $price = $this->getPriceClassInstance($amount);
@@ -58,10 +58,10 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem {
 
         if($taxClass) {
             $price->setTaxEntryCombinationMode($taxClass->getTaxEntryCombinationType());
-            $price->setTaxEntries(TaxClassCalculator::convertTaxEntries($taxClass));
+            $price->setTaxEntries(TaxEntry::convertTaxEntries($taxClass));
 
             $totalPrice->setTaxEntryCombinationMode($taxClass->getTaxEntryCombinationType());
-            $totalPrice->setTaxEntries(TaxClassCalculator::convertTaxEntries($taxClass));
+            $totalPrice->setTaxEntries(TaxEntry::convertTaxEntries($taxClass));
         }
 
         TaxCalculationService::updateTaxes($price, TaxCalculationService::CALCULATION_FROM_GROSS);
@@ -128,5 +128,4 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem {
         }
         return $price;
     }
-
 }

@@ -18,6 +18,7 @@
 namespace OnlineShop\Framework\CartManager;
 use OnlineShop\Framework\CartManager\CartPriceModificator\ICartPriceModificator;
 use OnlineShop\Framework\PriceSystem\IModificatedPrice;
+use OnlineShop\Framework\PriceSystem\TaxManagement\TaxEntry;
 
 /**
  * Class CartPriceCalculator
@@ -79,8 +80,17 @@ class CartPriceCalculator implements ICartPriceCalculator {
     public function calculate() {
 
         //sum up all item prices
-        $subTotal = 0;
+        $subTotalNet = 0;
+        $subTotalGross = 0;
         $currency = null;
+
+        /**
+         * @var $subTotalTaxes TaxEntry[]
+         * @var $grandTotalTaxes TaxEntry[]
+         */
+        $subTotalTaxes = [];
+        $grandTotalTaxes = [];
+
         foreach($this->cart->getItems() as $item) {
             if(is_object($item->getPrice())) {
                 if(!$currency) {
@@ -91,7 +101,22 @@ class CartPriceCalculator implements ICartPriceCalculator {
                     throw new \OnlineShop\Framework\Exception\UnsupportedException("Different currencies within one cart are not supported. See cart " . $this->cart->getId() . " and product " . $item->getProduct()->getId() . ")");
                 }
 
-                $subTotal += $item->getTotalPrice()->getAmount();
+                $subTotalNet += $item->getTotalPrice()->getNetAmount();
+                $subTotalGross += $item->getTotalPrice()->getGrossAmount();
+
+                $taxEntries = $item->getTotalPrice()->getTaxEntries();
+                foreach($taxEntries as $taxEntry) {
+
+                    $taxId = $taxEntry->getTaxId();
+                    if(empty($subTotalTaxes[$taxId])) {
+                        $subTotalTaxes[$taxId] = clone $taxEntry;
+                        $grandTotalTaxes[$taxId] = clone $taxEntry;
+                    } else {
+                        $subTotalTaxes[$taxId]->setAmount($subTotalTaxes[$taxId]->getAmount() + $taxEntry->getAmount());
+                        $grandTotalTaxes[$taxId]->setAmount($grandTotalTaxes[$taxId]->getAmount() + $taxEntry->getAmount());
+                    }
+
+                }
             }
         }
 
@@ -99,11 +124,19 @@ class CartPriceCalculator implements ICartPriceCalculator {
         if(!$currency) {
             $currency = $this->getDefaultCurrency();
         }
-        $this->subTotal = $this->getDefaultPriceObject($subTotal, $currency);
+
+        //populate subTotal price, set net and gross amount, set tax entries and set tax entry combination mode to fixed
+        $this->subTotal = $this->getDefaultPriceObject($subTotalGross, $currency);
+        $this->subTotal->setNetAmount($subTotalNet);
+        $this->subTotal->setTaxEntries($subTotalTaxes);
+        $this->subTotal->setTaxEntryCombinationMode(TaxEntry::CALCULATION_MODE_FIXED);
 
 
         //consider all price modificators
-        $currentSubTotal = $this->getDefaultPriceObject($subTotal, $currency);
+        $currentSubTotal = $this->getDefaultPriceObject($subTotalGross, $currency);
+        $currentSubTotal->setNetAmount($subTotalNet);
+        $currentSubTotal->setTaxEntryCombinationMode(TaxEntry::CALCULATION_MODE_FIXED);
+
 
         $this->modifications = array();
         foreach($this->getModificators() as $modificator) {
@@ -111,9 +144,22 @@ class CartPriceCalculator implements ICartPriceCalculator {
             $modification = $modificator->modify($currentSubTotal, $this->cart);
             if($modification !== null) {
                 $this->modifications[$modificator->getName()] = $modification;
-                $currentSubTotal->setAmount($currentSubTotal->getAmount() + $modification->getAmount());
+                $currentSubTotal->setNetAmount($currentSubTotal->getNetAmount() + $modification->getNetAmount());
+                $currentSubTotal->setGrossAmount($currentSubTotal->getGrossAmount() + $modification->getGrossAmount());
+
+                $taxEntries = $modification->getTaxEntries();
+                foreach($taxEntries as $taxEntry) {
+                    $taxId = $taxEntry->getTaxId();
+                    if(empty($grandTotalTaxes[$taxId])) {
+                        $grandTotalTaxes[$taxId] = clone $taxEntry;
+                    } else {
+                        $grandTotalTaxes[$taxId]->setAmount($grandTotalTaxes[$taxId]->getAmount() + $taxEntry->getAmount());
+                    }
+                }
             }
         }
+
+        $currentSubTotal->setTaxEntries($grandTotalTaxes);
 
         $this->gradTotal = $currentSubTotal;
         $this->isCalculated = true;

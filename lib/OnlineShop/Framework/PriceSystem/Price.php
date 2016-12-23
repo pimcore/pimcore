@@ -50,7 +50,7 @@ class Price implements IPrice {
     /**
      * @var TaxEntry[]
      */
-    private $taxEntries;
+    private $taxEntries = [];
 
 
     /**

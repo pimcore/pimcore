@@ -18,6 +18,7 @@
 namespace OnlineShop\Framework\OrderManager;
 
 use \OnlineShop\Framework\Model\AbstractOrder as Order;
+use OnlineShop\Framework\PriceSystem\TaxManagement\TaxEntry;
 use Zend_Config;
 
 class OrderManager implements IOrderManager
@@ -203,14 +204,18 @@ class OrderManager implements IOrderManager
         }
 
         //update order from cart
-        $order->setTotalPrice($cart->getPriceCalculator()->getGrandTotal()->getAmount());
+        $order->setTotalPrice($cart->getPriceCalculator()->getGrandTotal()->getGrossAmount());
+        $order->setTotalNetPrice($cart->getPriceCalculator()->getGrandTotal()->getNetAmount());
         $order->setSubTotalPrice($cart->getPriceCalculator()->getSubTotal()->getAmount());
+        $order->setSubTotalNetPrice($cart->getPriceCalculator()->getSubTotal()->getNetAmount());
+        $order->setTaxInfo($this->buildTaxArray($cart->getPriceCalculator()->getGrandTotal()->getTaxEntries()));
 
         $modificationItems = new \Pimcore\Model\Object\Fieldcollection();
         foreach ($cart->getPriceCalculator()->getPriceModifications() as $name => $modification) {
             $modificationItem = new \Pimcore\Model\Object\Fieldcollection\Data\OrderPriceModifications();
             $modificationItem->setName($modification->getDescription() ? $modification->getDescription() : $name);
-            $modificationItem->setAmount($modification->getAmount());
+            $modificationItem->setAmount($modification->getGrossAmount());
+            $modificationItem->setNetAmount($modification->getNetAmount());
             $modificationItems->add($modificationItem);
         }
 
@@ -405,12 +410,15 @@ class OrderManager implements IOrderManager
         $orderItem->setComment($item->getComment());
 
         $price = 0;
+        $netPrice = 0;
         if(!$isGiftItem && is_object($item->getTotalPrice())) {
-            $price = $item->getTotalPrice()->getAmount();
+            $price = $item->getTotalPrice()->getGrossAmount();
+            $netPrice = $item->getTotalPrice()->getNetAmount();
         }
 
         $orderItem->setTotalPrice($price);
-
+        $orderItem->setTotalNetPrice($netPrice);
+        $orderItem->setTaxInfo($this->buildTaxArray($item->getTotalPrice()->getTaxEntries()));
 
         if(!$isGiftItem) {
             // save active pricing rules
@@ -433,6 +441,22 @@ class OrderManager implements IOrderManager
         }
 
         return $orderItem;
+    }
+
+    /**
+     * @param TaxEntry[] $taxItems
+     * @return array
+     */
+    protected function buildTaxArray(array $taxItems) {
+        $taxArray = [];
+        foreach($taxItems as $taxEntry) {
+            $taxArray[] = [
+                $taxEntry->getEntry()->getName(),
+                $taxEntry->getPercent() . "%",
+                $taxEntry->getAmount()
+            ];
+        }
+        return $taxArray;
     }
 
     /**

@@ -18,6 +18,8 @@
 namespace OnlineShop\Framework\CartManager\CartPriceModificator;
 
 use OnlineShop\Framework\CartManager\ICart;
+use OnlineShop\Framework\Factory;
+use OnlineShop\Framework\PriceSystem\TaxManagement\TaxEntry;
 
 class Discount implements IDiscount
 {
@@ -64,7 +66,18 @@ class Discount implements IDiscount
     public function modify(\OnlineShop\Framework\PriceSystem\IPrice $currentSubTotal, ICart $cart)
     {
         if($this->getAmount() != 0) {
-            return new \OnlineShop\Framework\PriceSystem\ModificatedPrice($this->getAmount(), $currentSubTotal->getCurrency(), false, $this->rule->getLabel());
+            $modificatedPrice = new \OnlineShop\Framework\PriceSystem\ModificatedPrice($this->getAmount(), $currentSubTotal->getCurrency(), false, $this->rule->getLabel());
+
+            $taxClass = Factory::getInstance()->getPriceSystem("default")->getTaxClassForPriceModification($this);
+            if($taxClass) {
+                $modificatedPrice->setTaxEntryCombinationMode($taxClass->getTaxEntryCombinationType());
+                $modificatedPrice->setTaxEntries(TaxEntry::convertTaxEntries($taxClass));
+
+                $modificatedPrice->setGrossAmount($this->getAmount(), true);
+            }
+
+            return $modificatedPrice;
+
         }
     }
 

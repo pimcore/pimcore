@@ -17,7 +17,9 @@
 
 namespace OnlineShop\Framework\CartManager\CartPriceModificator;
 use OnlineShop\Framework\CartManager\ICart;
+use OnlineShop\Framework\Factory;
 use OnlineShop\Framework\PriceSystem\IModificatedPrice;
+use OnlineShop\Framework\PriceSystem\TaxManagement\TaxEntry;
 
 /**
  * Class Shipping
@@ -55,7 +57,18 @@ class Shipping implements IShipping
      */
     public function modify(\OnlineShop\Framework\PriceSystem\IPrice $currentSubTotal, ICart $cart)
     {
-        return new \OnlineShop\Framework\PriceSystem\ModificatedPrice($this->getCharge(), new \Zend_Currency(\OnlineShop\Framework\Factory::getInstance()->getEnvironment()->getCurrencyLocale()));
+        $modificatedPrice = new \OnlineShop\Framework\PriceSystem\ModificatedPrice($this->getCharge(), new \Zend_Currency(\OnlineShop\Framework\Factory::getInstance()->getEnvironment()->getCurrencyLocale()));
+
+        $taxClass = Factory::getInstance()->getPriceSystem("default")->getTaxClassForPriceModification($this);
+        if($taxClass) {
+            $modificatedPrice->setTaxEntryCombinationMode($taxClass->getTaxEntryCombinationType());
+            $modificatedPrice->setTaxEntries(TaxEntry::convertTaxEntries($taxClass));
+
+            $modificatedPrice->setGrossAmount($this->getCharge(), true);
+        }
+
+        return $modificatedPrice;
+
     }
 
     /**
