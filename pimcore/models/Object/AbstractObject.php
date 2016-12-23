@@ -800,6 +800,11 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public function getParentId()
     {
+        // fall back to parent if no ID is set but we have a parent object
+        if (!$this->o_parentId && $this->o_parent) {
+            return $this->o_parent->getId();
+        }
+
         return $this->o_parentId;
     }
 
