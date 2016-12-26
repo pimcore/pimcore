@@ -405,7 +405,10 @@ class Areablock extends Model\Document\Tag
         ');
 
         // set name suffix for the whole block element, this will be addet to all child elements of the block
-        $suffixes = \Zend_Registry::get("pimcore_tag_block_current");
+        $suffixes = [];
+        if (\Zend_Registry::isRegistered('pimcore_tag_block_current')) {
+            $suffixes = \Zend_Registry::get("pimcore_tag_block_current");
+        }
         $suffixes[] = $this->getName();
         \Zend_Registry::set("pimcore_tag_block_current", $suffixes);
 
@@ -429,8 +432,11 @@ class Areablock extends Model\Document\Tag
         $this->current = 0;
 
         // remove the suffix which was set by self::start()
-        $suffixes = \Zend_Registry::get("pimcore_tag_block_current");
-        array_pop($suffixes);
+        $suffixes = [];
+        if (\Zend_Registry::isRegistered('pimcore_tag_block_current')) {
+            $suffixes = \Zend_Registry::get("pimcore_tag_block_current");
+            array_pop($suffixes);
+        }
         \Zend_Registry::set("pimcore_tag_block_current", $suffixes);
 
         $this->outputEditmode("</div>");

@@ -507,11 +507,18 @@ abstract class Frontend extends Action
         // this is for $this->action() in templates when they are inside a block element
         try {
             if (!$this->getParam("disableBlockClearing")) {
-                $this->parentBlockCurrent = \Zend_Registry::get("pimcore_tag_block_current");
-                $this->parentBlockNumeration = \Zend_Registry::get("pimcore_tag_block_numeration");
+                $this->parentBlockCurrent = [];
+                if (\Zend_Registry::isRegistered('pimcore_tag_block_current')) {
+                    $this->parentBlockCurrent = \Zend_Registry::get("pimcore_tag_block_current");
+                }
 
-                \Zend_Registry::set("pimcore_tag_block_current", null);
-                \Zend_Registry::set("pimcore_tag_block_numeration", null);
+                $this->parentBlockNumeration = [];
+                if (\Zend_Registry::isRegistered('pimcore_tag_block_numeration')) {
+                    $this->parentBlockNumeration = \Zend_Registry::get("pimcore_tag_block_numeration");
+                }
+
+                \Zend_Registry::set("pimcore_tag_block_current", []);
+                \Zend_Registry::set("pimcore_tag_block_numeration", []);
             }
         } catch (\Exception $e) {
             Logger::debug($e);
