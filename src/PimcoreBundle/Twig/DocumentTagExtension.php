@@ -3,7 +3,6 @@
 namespace PimcoreBundle\Twig;
 
 use Pimcore\Logger;
-use Pimcore\Model\Document\Page;
 use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Document\Tag;
 
@@ -22,6 +21,9 @@ class DocumentTagExtension extends \Twig_Extension
         ];
     }
 
+    /**
+     * @see \Pimcore\View::tag
+     */
     public function tag($context, $type, $realName, array $options = [])
     {
         $document = $context['document'];
