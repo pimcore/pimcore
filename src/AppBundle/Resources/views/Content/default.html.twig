@@ -5,5 +5,7 @@
     fooblah
 
     {{ pimcore_tag('input', 'foobar') }}
+    DEVICE: {{ zend_device() }}<br>
+    IS DESKTOP: {{ zend_device().isDesktop() ? 'YES' : 'NO' }}<br>
 
 {% endblock %}

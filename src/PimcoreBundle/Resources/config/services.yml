@@ -5,8 +5,18 @@ services:
         tags:
             - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
 
+    pimcore.view.zend_view_helper_bridge:
+        class: PimcoreBundle\View\ZendViewHelperBridge
+
     pimcore.twig.document_tag_extension:
         class: PimcoreBundle\Twig\DocumentTagExtension
+        public: false
+        tags:
+            - { name: twig.extension }
+
+    pimcore.twig.zend_View_helper_extension:
+        class: PimcoreBundle\Twig\ZendViewHelperExtension
+        arguments: ['@pimcore.view.zend_view_helper_bridge']
         public: false
         tags:
             - { name: twig.extension }
