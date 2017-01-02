@@ -38,7 +38,9 @@ if ($pimcoreConsole) {
     }
 }
 
+/** @var \Pimcore\Kernel $kernel */
 $kernel = include_once __DIR__ . '/../config/kernel.php';
+$kernel->boot();
 
 chdir($workingDirectory);
 
@@ -50,8 +52,8 @@ if (!$symfonyMode) {
 
     $request = new \Zend_Controller_Request_Http();
     $request->setModuleName(PIMCORE_FRONTEND_MODULE);
-    $request->setControllerName("default");
-    $request->setActionName("default");
+    $request->setControllerName('default');
+    $request->setActionName('default');
     $front->setRequest($request);
     $front->setResponse(new \Zend_Controller_Response_Cli());
 }
@@ -69,15 +71,15 @@ Object\Localizedfield::setGetFallbackValues(true);
 @ini_set('max_input_time', -1);
 
 // Error reporting is enabled in CLI
-@ini_set("display_errors", "On");
-@ini_set("display_startup_errors", "On");
+@ini_set('display_errors', 'On');
+@ini_set('display_startup_errors', 'On');
 error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
 
 // Pimcore\Console handles maintenance mode through the AbstractCommand
 if (!$pimcoreConsole) {
     // skip if maintenance mode is on and the flag is not set
     // we cannot use \Zend_Console_Getopt here because it doesn't allow to be called twice (unrecognized parameter, ...)
-    if (\Pimcore\Tool\Admin::isInMaintenanceMode() && !in_array("--ignore-maintenance-mode", $_SERVER['argv'])) {
+    if (\Pimcore\Tool\Admin::isInMaintenanceMode() && !in_array('--ignore-maintenance-mode', $_SERVER['argv'])) {
         die("in maintenance mode -> skip\nset the flag --ignore-maintenance-mode to force execution \n");
     }
 }
