@@ -118,7 +118,7 @@ $currency = $orderAgent->getCurrency();
                         <tr>
                             <td colspan="4" class="text-right"><?= $taxEntry[0] ?></td>
                             <td class="text-right">
-                                <?= $taxEntry[1] ?> (<?=  new \OnlineShop\Framework\PriceSystem\Price($taxEntry[2], $currency) ?>)
+                                <?= $taxEntry[1] ?> (<?=  $currency->toCurrency($taxEntry[2]) ?>)
                             </td>
                             <th></th>
                         </tr>

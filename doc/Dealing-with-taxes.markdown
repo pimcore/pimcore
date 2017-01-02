@@ -139,7 +139,7 @@ To print taxes into the frontend use following scripts:
         <td><?= $this->translate("cart.taxes") ?></td>
         <td>
             <?php foreach($order->getTaxInfo() as $taxEntry) { ?>
-                <?= $taxEntry[0] ?>: <?= $taxEntry[1] ?> (<?=  new \OnlineShop\Framework\PriceSystem\Price($taxEntry[2], $currency) ?>)<br/>
+                <?= $taxEntry[0] ?>: <?= $taxEntry[1] ?> (<?=  $currency->toCurrency($taxEntry[2]) ?>)<br/>
             <?php } ?>
         </td>
     </tr>
