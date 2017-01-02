@@ -1,9 +1,28 @@
-#Update Notices
+# Update Notices
 Please consider following update notices when updating the e-commerce framework.
 
-## 0.10.1 - 0.10.2
-- Giftitems were added to OnlineShopOrder - if you are updating, you need to add a property giftItems (object relation
+## 0.10.1 - 0.11
+- Gift items were added to OnlineShopOrder - if you are updating, you need to add a property giftItems (object relation
 to OnlineShopOrderItem) to your OnlineShopOrder class. Otherwise a error log message will be issued on checkout.
+- Tax Management was included:
+   - Add FieldCollection
+     - `TaxEntry`
+   - Update FieldCollection
+     - `OrderPriceModification`: add `netAmount`
+   - Add Classes
+     - `OnlineShopTaxClass`
+   - Update Classes
+      - `OnlineShopOrder`: add `subTotalNetPrice`, `totalNetPrice`, `taxInfo`
+      - `OnlineShopOrderItem`: add `totalNetPrice`, `taxInfo`
+   - Check custom implementations of `IPrice` > implement new methods if necessary, check behavoir of get/setAmount.
+   - Check custom implementations of `IPriceSystem` > `createPriceInfoInstance` needs to calculate and set taxes/tax
+      entries correctly and add implementation of `getTaxClassForProduct` and `getTaxClassForPriceModification`.
+   - Check custom implementations of `OnlineShop\Framework\PricingManager\IPriceInfo` > `getTotalPrice` and `getPrice`
+     need to set gross price and start recalculation of taxes.
+   - Check custom implementations of `ICartPriceCalculator` > calculate method needs to consider gross and net prices.
+   - Check custom implementations of `IOrderManager` > methods `getOrCreateOrderFromCart` and `createOrderItem` need to
+     consider net prices if necessary.
+   - Check custom implementations of `ICartPriceModificator` > `modify` method need to take care of net and gross prices.
 
 
 ## 0.9.8 - 0.10.0
