@@ -4,6 +4,10 @@
 /tools/
 /plugins/
 
+# symfony moving stuff
+/app/cache
+/app/logs
+
 # tests
 /tests/output/*
 /tests/tmp/*
