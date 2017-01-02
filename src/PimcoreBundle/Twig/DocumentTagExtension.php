@@ -2,19 +2,31 @@
 
 namespace PimcoreBundle\Twig;
 
-use Pimcore\Logger;
 use Pimcore\Model\Document\PageSnippet;
-use Pimcore\Model\Document\Tag;
+use PimcoreBundle\Document\TagRenderer;
 
 class DocumentTagExtension extends \Twig_Extension
 {
+    /**
+     * @var TagRenderer
+     */
+    protected $tagRenderer;
+
+    /**
+     * @param TagRenderer $tagRenderer
+     */
+    public function __construct(TagRenderer $tagRenderer)
+    {
+        $this->tagRenderer = $tagRenderer;
+    }
+
     /**
      * {@inheritdoc}
      */
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction('pimcore_tag', [$this, 'tag'], [
+            new \Twig_SimpleFunction('pimcore_tag', [$this, 'renderTag'], [
                 'needs_context' => true,
                 'is_safe'       => ['html'],
             ])
@@ -23,43 +35,20 @@ class DocumentTagExtension extends \Twig_Extension
 
     /**
      * @see \Pimcore\View::tag
+     *
+     * @param array $context
+     * @param string $type
+     * @param string $inputName
+     * @param array $options
+     * @return \Pimcore\Model\Document\Tag|string
      */
-    public function tag($context, $type, $realName, array $options = [])
+    public function renderTag($context, $type, $inputName, array $options = [])
     {
         $document = $context['document'];
         if (!($document instanceof PageSnippet)) {
             return '';
         }
 
-        $type = strtolower($type);
-        $name = Tag::buildTagName($type, $realName, $document);
-
-        try {
-            if ($document instanceof PageSnippet) {
-                $tag = $document->getElement($name);
-                if ($tag instanceof Tag && $tag->getType() == $type) {
-
-                    // call the load() method if it exists to reinitialize the data (eg. from serializing, ...)
-                    if (method_exists($tag, 'load')) {
-                        $tag->load();
-                    }
-
-                    $tag->setEditmode(true);
-                    $tag->setOptions($options);
-                } else {
-                    $tag = Tag::factory($type, $name, $document->getId(), $options, null, null, true);
-                    $document->setElement($name, $tag);
-                }
-
-                // set the real name of this editable, without the prefixes and suffixes from blocks and areablocks
-                $tag->setRealName($realName);
-            }
-
-            return $tag;
-        } catch (\Exception $e) {
-            Logger::warning($e);
-        }
-
-        return '';
+        return $this->tagRenderer->render($document, $type, $inputName, $options);
     }
 }
