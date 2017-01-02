@@ -2,19 +2,39 @@
 
 namespace AppBundle\Controller;
 
-use Pimcore\Model\Document\Page;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 class ContentController extends Controller
 {
     /**
-     * @Template("@App/Content/default.html.twig")
+     * @Template("AppBundle:Content:php.html.php", engine="php")
+     *
      * @param Request $request
+     * @return array
      */
-    public function defaultAction(Request $request)
+    public function phpAction(Request $request)
+    {
+        return $this->resolveContent($request);
+    }
+
+    /**
+     * @Template("AppBundle:Content:twig.html.twig")
+     *
+     * @param Request $request
+     * @return array
+     */
+    public function twigAction(Request $request)
+    {
+        return $this->resolveContent($request);
+    }
+
+    /**
+     * @param Request $request
+     * @return array
+     */
+    protected function resolveContent(Request $request)
     {
         $document = $request->get('contentDocument');
 
