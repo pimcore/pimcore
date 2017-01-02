@@ -224,7 +224,8 @@ class Localizedfield extends Model\AbstractModel
             $containerKey = $context["containerKey"];
             $container = Model\Object\Fieldcollection\Definition::getByKey($containerKey);
         } else {
-            $container = $this->getObject()->getClass();
+            $object = $this->getObject();
+            $container = $object->getClass();
         }
         $fieldDefinition = $container->getFieldDefinition("localizedfields")->getFieldDefinition($name);
 
@@ -356,7 +357,7 @@ class Localizedfield extends Model\AbstractModel
      */
     public function __sleep()
     {
-        return ["items"];
+        return ["items", "context"];
     }
 
         /**
