@@ -8,6 +8,20 @@ services:
     pimcore.view.zend_view_helper_bridge:
         class: PimcoreBundle\View\ZendViewHelperBridge
 
+    pimcore.templating.name_resolver:
+        class: PimcoreBundle\Templating\NameResolver\DelegatingNameResolver
+
+    pimcore.templating.name_resolver.zend_view_helper:
+        class: PimcoreBundle\Templating\NameResolver\ZendViewHelper
+        tags:
+            - { name: templating.name_resolver }
+
+    pimcore.templating.helper.zend:
+        class: PimcoreBundle\Templating\Helper\ZendViewHelper
+        arguments: ['@pimcore.view.zend_view_helper_bridge']
+        tags:
+            - { name: templating.helper, alias: zend }
+
     pimcore.twig.document_tag_extension:
         class: PimcoreBundle\Twig\DocumentTagExtension
         public: false
