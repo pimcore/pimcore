@@ -592,7 +592,8 @@ class Pimcore
 
                 set_include_path(implode(PATH_SEPARATOR, $includePaths));
 
-                $broker = \Pimcore\API\Plugin\Broker::getInstance();
+                /** @var \Pimcore\API\Plugin\Broker $broker */
+                $broker = static::getKernel()->getContainer()->get('pimcore.plugin_broker');
 
                 //registering plugins
                 foreach ($pluginConfigs as $p) {
@@ -665,7 +666,6 @@ class Pimcore
                         Logger::err("Could not instantiate and register plugin [" . $p['plugin']['pluginClassName'] . "]");
                     }
                 }
-                \Zend_Registry::set("Pimcore_API_Plugin_Broker", $broker);
             }
         } catch (\Exception $e) {
             Logger::alert("there is a problem with the plugin configuration");
@@ -945,7 +945,6 @@ class Pimcore
             "Zend_View_Helper_Doctype",
             "Zend_Translate",
             "Zend_Navigation",
-            "Pimcore_API_Plugin_Broker",
             "pimcore_tag_block_current",
             "pimcore_tag_block_numeration",
             "Config_system",

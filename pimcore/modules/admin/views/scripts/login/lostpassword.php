@@ -14,7 +14,7 @@
     <?php
     // load plugin scripts
     try {
-        $pluginBroker = \Zend_Registry::get("Pimcore_API_Plugin_Broker");
+        $pluginBroker = $this->container()->get('pimcore.plugin_broker');
         if ($pluginBroker instanceof \Pimcore\API\Plugin\Broker) {
             foreach ($pluginBroker->getPlugins() as $plugin) {
                 if ($plugin->isInstalled()) {

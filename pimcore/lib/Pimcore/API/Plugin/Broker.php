@@ -36,18 +36,6 @@ class Broker
         $broker = \Pimcore::getKernel()->getContainer()->get('pimcore.plugin_broker');
 
         return $broker;
-
-        if (\Zend_Registry::isRegistered("Pimcore_API_Plugin_Broker")) {
-            $broker = \Zend_Registry::get("Pimcore_API_Plugin_Broker");
-            if ($broker instanceof Broker) {
-                return $broker;
-            }
-        }
-
-        $broker = new Broker();
-        \Zend_Registry::set("Pimcore_API_Plugin_Broker", $broker);
-
-        return $broker;
     }
 
     /**
