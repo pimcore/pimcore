@@ -74,6 +74,8 @@ pimcore.document.tags.link = Class.create(pimcore.document.tag, {
         var text = "[" + t("not_set") + "]";
         if (this.data.text) {
             text = this.data.text;
+        } else if (this.data.path) {
+            text = this.data.path;
         }
         if (this.data.path) {
             return '<a href="' + this.data.path + '" class="' + this.options["class"] + ' ' + this.data["class"] + '">' + text + '</a>';
