@@ -110,7 +110,7 @@ $currency = $orderAgent->getCurrency();
                 <?php if($order->getTaxInfo()) { ?>
 
                     <tr>
-                        <td colspan="4" class="text-right"><?= $this->translate("cart.taxes") ?></td>
+                        <th colspan="4" class="text-right"><?= $this->translate("cart.taxes") ?></th>
                         <th></th>
                         <th></th>
                     </tr>
