@@ -8,7 +8,9 @@ $view->extend('AppBundle::layout.html.php');
     <h1>CONTENT</h1>
     fooblah
 
-    <?php // echo $view['pimcore_tag']->render('input', 'foobar') ?>
+    <hr>
+    <?= $view['pimcore_tag']->render('input', 'foobar') ?>
+    <hr>
 
     DEVICE: <?= $view['zend']->render('device') ?><br>
     IS DESKTOP: <?= $view['zend']->render('device')->isDesktop() ? 'YES' : 'NO' ?><br>
