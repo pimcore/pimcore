@@ -8,4 +8,7 @@
     DEVICE: {{ zend_device() }}<br>
     IS DESKTOP: {{ zend_device().isDesktop() ? 'YES' : 'NO' }}<br>
 
+    <br>
+    URL: {{ zend_url({ id: 4, text: 'In enim justo', 'prefix': '/en/basic-examples/news' }, 'news', true) }}
+
 {% endblock %}

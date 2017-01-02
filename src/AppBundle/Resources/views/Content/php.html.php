@@ -13,4 +13,11 @@ $view->extend('AppBundle::layout.html.php');
     DEVICE: <?= $view['zend']->render('device') ?><br>
     IS DESKTOP: <?= $view['zend']->render('device')->isDesktop() ? 'YES' : 'NO' ?><br>
 
+    <br>
+    URL: <?= $view['zend']->render('url', [
+            'id'     => 4,
+            'text'   => 'In enim justo',
+            'prefix' => '/en/basic-examples/news'
+        ], 'news', true); ?>
+
 <?php $view['slots']->stop() ?>
