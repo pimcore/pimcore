@@ -20,6 +20,11 @@ namespace OnlineShop\Framework\PriceSystem\TaxManagement;
 
 use Pimcore\Model\Object\OnlineShopTaxClass;
 
+/**
+ * Class TaxEntry
+ *
+ * @package OnlineShop\Framework\PriceSystem\TaxManagement
+ */
 class TaxEntry {
 
     const CALCULATION_MODE_COMBINE = "combine";
@@ -129,6 +134,9 @@ class TaxEntry {
 
 
     /**
+     * Converts tax rate configuration of given OnlineShopTaxClass to TaxEntries that can be used for
+     * tax calculation.
+     *
      * @param OnlineShopTaxClass $taxClass
      * @return TaxEntry[]
      */

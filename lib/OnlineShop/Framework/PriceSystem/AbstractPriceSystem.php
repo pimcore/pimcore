@@ -89,6 +89,11 @@ abstract class AbstractPriceSystem implements IPriceSystem {
     abstract function createPriceInfoInstance($quantityScale,$product,$products);
 
     /**
+     * Sample implementation for getting the correct OnlineShopTaxClass. In this case Tax Class is retrieved from
+     * Website Setting and if no Website Setting is set it creates an empty new Tax Class.
+     *
+     * Should be overwritten in custom price systems with suitable implementation.
+     *
      * @return OnlineShopTaxClass
      */
     protected function getDefaultTaxClass() {
@@ -107,6 +112,10 @@ abstract class AbstractPriceSystem implements IPriceSystem {
     }
 
     /**
+     * Returns OnlineShopTaxClass for given ICheckoutable.
+     *
+     * Should be overwritten in custom price systems with suitable implementation.
+     *
      * @param ICheckoutable $product
      * @param $environment
      * @return OnlineShopTaxClass
@@ -116,6 +125,10 @@ abstract class AbstractPriceSystem implements IPriceSystem {
     }
 
     /**
+     * Returns OnlineShopTaxClass for given ICartPriceModificator
+     *
+     * Should be overwritten in custom price systems with suitable implementation.
+     *
      * @param ICartPriceModificator $modificator
      * @param $environment
      * @return OnlineShopTaxClass

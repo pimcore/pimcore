@@ -110,7 +110,8 @@ class AbstractOrderItem extends \Pimcore\Model\Object\Concrete {
      * @return float
      */
     public function getTotalNetPrice() {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException("getTotalNetPrice is not implemented for " . get_class($this));
+        //prevent throwing an exception for backward compatibility
+        \Logger::err("getTotalNetPrice not implemented for " . get_class($this));
     }
 
     /**
@@ -118,7 +119,8 @@ class AbstractOrderItem extends \Pimcore\Model\Object\Concrete {
      * @param float $totalNetPrice
      */
     public function setTotalNetPrice($totalNetPrice) {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException("setTotalNetPrice is not implemented for " . get_class($this));
+        //prevent throwing an exception for backward compatibility
+        \Logger::err("setTotalNetPrice not implemented for " . get_class($this));
     }
 
     /**
@@ -126,7 +128,8 @@ class AbstractOrderItem extends \Pimcore\Model\Object\Concrete {
      * @return array
      */
     public function getTaxInfo() {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException("getTaxInfo is not implemented for " . get_class($this));
+        //prevent throwing an exception for backward compatibility
+        \Logger::err("getTaxInfo not implemented for " . get_class($this));
     }
 
     /**
@@ -134,7 +137,8 @@ class AbstractOrderItem extends \Pimcore\Model\Object\Concrete {
      * @param array $taxInfo
      */
     public function setTaxInfo($taxInfo) {
-        throw new \OnlineShop\Framework\Exception\UnsupportedException("setTaxInfo is not implemented for " . get_class($this));
+        //prevent throwing an exception for backward compatibility
+        \Logger::err("setTaxInfo not implemented for " . get_class($this));
     }
 
 

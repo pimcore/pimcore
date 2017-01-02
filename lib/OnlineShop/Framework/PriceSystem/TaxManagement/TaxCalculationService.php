@@ -29,6 +29,15 @@ class TaxCalculationService {
     const CALCULATION_FROM_NET = "net";
     const CALCULATION_FROM_GROSS = "gross";
 
+    /**
+     * Updates taxes in given price by using its tax entries and net or gross amount based on the given $calculationMode
+     *
+     *
+     * @param IPrice $price
+     * @param string $calculationMode - valid options are TaxCalculationService::CALCULATION_FROM_NET (default) and TaxCalculationService::CALCULATION_FROM_GROSS
+     * @return IPrice
+     * @throws UnsupportedException
+     */
     public static function updateTaxes(IPrice $price, $calculationMode = self::CALCULATION_FROM_NET) {
 
         switch ($calculationMode) {
@@ -42,6 +51,13 @@ class TaxCalculationService {
 
     }
 
+    /**
+     * calculates taxes based on the net amount of the price and the tax entries
+     *
+     * @param IPrice $price
+     * @return IPrice
+     * @throws UnsupportedException
+     */
     protected static function calculationFromNet(IPrice $price) {
 
         switch ($price->getTaxEntryCombinationMode()) {
@@ -100,7 +116,13 @@ class TaxCalculationService {
     }
 
 
-
+    /**
+     * Calculates taxes based on the gross amount of the price and the tax entries
+     *
+     * @param IPrice $price
+     * @return IPrice
+     * @throws UnsupportedException
+     */
     protected static function calculationFromGross(IPrice $price) {
 
         switch ($price->getTaxEntryCombinationMode()) {

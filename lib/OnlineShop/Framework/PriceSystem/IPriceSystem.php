@@ -49,12 +49,20 @@ interface IPriceSystem {
     public function filterProductIds($productIds, $fromPrice, $toPrice, $order, $offset, $limit);
 
     /**
+     * Returns OnlineShopTaxClass for given ICheckoutable.
+     *
+     * Should be overwritten in custom price systems with suitable implementation.
+     *
      * @param ICheckoutable $product
      * @return OnlineShopTaxClass
      */
     public function getTaxClassForProduct(ICheckoutable $product);
 
     /**
+     * Returns OnlineShopTaxClass for given ICartPriceModificator
+     *
+     * Should be overwritten in custom price systems with suitable implementation.
+     *
      * @param ICartPriceModificator $modificator
      * @param $environment
      * @return OnlineShopTaxClass

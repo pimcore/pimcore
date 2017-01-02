@@ -18,7 +18,6 @@
 namespace OnlineShop\Framework\PricingManager;
 
 use OnlineShop\Framework\PriceSystem\IPrice;
-use OnlineShop\Framework\PriceSystem\TaxManagement\TaxCalculationService;
 
 class PriceInfo implements IPriceInfo
 {

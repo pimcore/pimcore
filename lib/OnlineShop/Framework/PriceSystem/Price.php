@@ -77,8 +77,12 @@ class Price implements IPrice {
     }
 
     /**
+     * sets amount of price, depending on $priceMode and $recalc it sets net price or gross price and recalculates the
+     * corresponding net or gross price.
+     *
      * @param float $amount
-     * @return void
+     * @param string $priceMode - default to PRICE_MODE_GROSS
+     * @param bool $recalc - default to false
      */
     public function setAmount($amount, $priceMode = self::PRICE_MODE_GROSS, $recalc = false) {
         switch ($priceMode) {
@@ -97,6 +101,8 @@ class Price implements IPrice {
     }
 
     /**
+     * Returns $grossAmount
+     *
      * @return float
      */
     function getAmount() {
