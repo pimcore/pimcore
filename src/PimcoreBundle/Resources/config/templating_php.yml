@@ -1,0 +1,14 @@
+services:
+    pimcore.templating.helper.pimcore_tag:
+        class: PimcoreBundle\Templating\Helper\DocumentTagHelper
+        arguments:
+            - '@pimcore.document.tag.renderer'
+            - '@request_stack'
+        tags:
+            - { name: templating.helper, alias: pimcore_tag }
+
+    pimcore.templating.helper.zend_view_helper:
+        class: PimcoreBundle\Templating\Helper\ZendViewHelper
+        arguments: ['@pimcore.view.zend_view_helper_bridge']
+        tags:
+            - { name: templating.helper, alias: zend }

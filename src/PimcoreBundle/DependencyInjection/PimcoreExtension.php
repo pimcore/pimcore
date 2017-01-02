@@ -25,5 +25,14 @@ class PimcoreExtension extends Extension
         );
 
         $loader->load('services.yml');
+        $loader->load('templating.yml');
+
+        if ($container->hasParameter('templating.engines')) {
+            $engines = $container->getParameter('templating.engines');
+
+            foreach ($engines as $engine) {
+                $loader->load(sprintf('templating_%s.yml', $engine));
+            }
+        }
     }
 }
