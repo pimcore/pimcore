@@ -1,4 +1,7 @@
 services:
+    pimcore.plugin_broker:
+        class: Pimcore\API\Plugin\Broker
+
     pimcore.event_listener.editmode:
         class: PimcoreBundle\EventListener\Editmode
         arguments: ['@logger']

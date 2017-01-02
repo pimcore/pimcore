@@ -19,7 +19,6 @@ use Pimcore\Logger;
 
 class Broker
 {
-
     /**
      * Array of instance of objects extending Pimcore_API_Plugin_Abstract
      *
@@ -30,9 +29,14 @@ class Broker
     /**
      * @return mixed|Broker
      * @throws \Zend_Exception
+     * @deprecated Use pimcore.plugin_broker service
      */
     public static function getInstance()
     {
+        $broker = \Pimcore::getKernel()->getContainer()->get('pimcore.plugin_broker');
+
+        return $broker;
+
         if (\Zend_Registry::isRegistered("Pimcore_API_Plugin_Broker")) {
             $broker = \Zend_Registry::get("Pimcore_API_Plugin_Broker");
             if ($broker instanceof Broker) {
