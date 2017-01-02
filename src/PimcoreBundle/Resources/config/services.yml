@@ -1,4 +1,10 @@
 services:
+    pimcore.event_listener.editmode:
+        class: PimcoreBundle\EventListener\Editmode
+        arguments: ['@logger']
+        tags:
+            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
+
     pimcore.twig.document_tag_extension:
         class: PimcoreBundle\Twig\DocumentTagExtension
         public: false
