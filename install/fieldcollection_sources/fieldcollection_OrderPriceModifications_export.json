@@ -10,7 +10,7 @@
 		"title":null,
 		"width":null,
 		"height":null,
-		"collapsible":null,
+		"collapsible":false,
 		"collapsed":null,
 		"bodyStyle":null,
 		"datatype":"layout",
@@ -67,11 +67,38 @@
 						"minValue":null,
 						"maxValue":null,
 						"decimalPrecision":null,
+						"name":"netAmount",
+						"title":"NetAmount",
+						"tooltip":"",
+						"mandatory":false,
+						"noteditable":true,
+						"index":false,
+						"locked":false,
+						"style":"",
+						"permissions":null,
+						"datatype":"data",
+						"relationType":false,
+						"invisible":false,
+						"visibleGridView":false,
+						"visibleSearch":false
+					},
+					{
+						"fieldtype":"numeric",
+						"width":300,
+						"defaultValue":null,
+						"queryColumnType":"double",
+						"columnType":"double",
+						"phpdocType":"float",
+						"integer":false,
+						"unsigned":false,
+						"minValue":null,
+						"maxValue":null,
+						"decimalPrecision":null,
 						"name":"amount",
 						"title":"Amount",
 						"tooltip":"",
 						"mandatory":false,
-						"noteditable":false,
+						"noteditable":true,
 						"index":false,
 						"locked":false,
 						"style":"",
@@ -86,6 +113,6 @@
 				"locked":false
 			}
 		],
-		"locked":null
+		"locked":false
 	}
 }
