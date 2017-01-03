@@ -12,19 +12,11 @@ use Zend\Diactoros\Response\JsonResponse;
 class DefaultController extends Controller
 {
     /**
-     * @Route("/", name="homepage")
-     */
-    public function indexAction(Request $request)
-    {
-        return new Response('foobar');
-    }
-
-    /**
      * @Route("/foobar", name="test")
      */
     public function foobarAction(Request $request)
     {
-        return new Response('test it');
+        return new Response('foobar');
     }
 
     /**
