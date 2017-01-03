@@ -1,5 +1,6 @@
 
 # remove this for your own development
+/constants.php
 /website/
 /tools/
 /plugins/
