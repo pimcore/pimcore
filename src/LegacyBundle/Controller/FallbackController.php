@@ -5,7 +5,6 @@ namespace LegacyBundle\Controller;
 use maff\Zend1MvcPsrMessageBridge\Factory\DiactorosFactory;
 use maff\Zend1MvcPsrMessageBridge\Factory\ZendMessageFactory;
 use Psr\Http\Message\ServerRequestInterface;
-use Zend\Diactoros\Response\JsonResponse;
 
 class FallbackController
 {
