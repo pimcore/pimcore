@@ -118,7 +118,7 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem {
      * @throws \Exception
      */
     protected function getPriceClassInstance($amount) {
-        if($this->config->priceclass) {
+        if($this->config->priceClass) {
             $price = new $this->config->priceClass($amount, $this->getDefaultCurrency(), false);
             if(!$price instanceof \OnlineShop\Framework\PriceSystem\IPrice) {
                 throw new \Exception('Price Class does not implement \OnlineShop\Framework\PriceSystem\IPrice');

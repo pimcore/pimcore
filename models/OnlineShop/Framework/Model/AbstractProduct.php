@@ -184,7 +184,7 @@ class AbstractProduct extends \Pimcore\Model\Object\Concrete implements IIndexab
      * price info might contain price and additional information for prices like discounts, ...
      *
      * @param int $quantityScale
-     * @return \OnlineShop\Framework\PriceSystem\AbstractPriceInfo
+     * @return \OnlineShop\Framework\PriceSystem\IPriceInfo
      */
     public function getOSPriceInfo($quantityScale = 1) {
         return $this->getPriceSystemImplementation()->getPriceInfo($this,$quantityScale);

@@ -26,15 +26,12 @@ class SessionCartTest extends \Codeception\Test\Unit
 
     public function testAddToCart()
     {
-
-        /**
-         * @var $product AbstractProduct
-         */
-        $product = $this->getMock(AbstractProduct::class);
+        $product = $this->getMockBuilder(AbstractProduct::class)->getMock();
         $product->method("getId")->willReturn(5);
 
         /**
          * @var $cart SessionCart
+         * @var $product AbstractProduct
          */
         $cart = Stub::construct("OnlineShop\\Framework\\CartManager\\SessionCart", [], [
             "getSession" => function() {

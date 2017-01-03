@@ -38,10 +38,10 @@ abstract class CachingPriceSystem extends AbstractPriceSystem implements ICachin
 
     public function getPriceInfo(\OnlineShop\Framework\Model\ICheckoutable $abstractProduct, $quantityScale = 1, $products = null) {
         $pId = $abstractProduct->getId();
-        if (!is_array($this->priceInfos[$pId])){
+        if (!array_key_exists($pId, $this->priceInfos) || !is_array($this->priceInfos[$pId])){
             $this->priceInfos[$pId] = array();
         }
-        if (!$this->priceInfos[$pId][$quantityScale]){
+        if (!array_key_exists($quantityScale, $this->priceInfos[$pId]) || !$this->priceInfos[$pId][$quantityScale]){
             $priceInfo = $this->initPriceInfoInstance($quantityScale,$abstractProduct,$products);
             $this->priceInfos[$pId][$quantityScale]=$priceInfo;
         }

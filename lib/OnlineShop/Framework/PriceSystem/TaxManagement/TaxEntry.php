@@ -145,7 +145,7 @@ class TaxEntry {
         $convertedTaxEntries = [];
         if($taxClass->getTaxEntries()) {
             foreach($taxClass->getTaxEntries() as $index => $entry) {
-                $convertedTaxEntries[] = new TaxEntry($entry->getPercent(), 0, $taxClass->getId() . "-" . $index, $entry);
+                $convertedTaxEntries[] = new TaxEntry($entry->getPercent(), 0, $entry->getName() . "-" . $entry->getPercent(), $entry);
             }
         }
 
