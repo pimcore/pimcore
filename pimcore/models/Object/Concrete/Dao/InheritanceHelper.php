@@ -330,7 +330,7 @@ class InheritanceHelper
 
             $parentIdGroups = \Pimcore\Cache\Runtime::load($queryCacheKey);
 
-            if(!$parentIdGroups){
+            if (!$parentIdGroups) {
                 $result = $this->db->fetchAll($query);
 
                 $objects = [];
@@ -344,7 +344,7 @@ class InheritanceHelper
 
                     $parentIdGroups[$r["parentId"]][] = $r;
                 }
-                \Pimcore\Cache\Runtime::save($parentIdGroups,$queryCacheKey);
+                \Pimcore\Cache\Runtime::save($parentIdGroups, $queryCacheKey);
             }
         }
 
