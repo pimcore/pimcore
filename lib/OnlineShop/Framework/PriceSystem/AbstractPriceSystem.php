@@ -136,5 +136,12 @@ abstract class AbstractPriceSystem implements IPriceSystem {
     public function getTaxClassForPriceModification(ICartPriceModificator $modificator) {
         return $this->getDefaultTaxClass();
     }
+
+    /**
+     * @return TaxCalculationService
+     */
+    protected function getTaxCalculationService() {
+        return new TaxCalculationService();
+    }
 }
 

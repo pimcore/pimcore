@@ -28,9 +28,11 @@ class TaxCalculationTest extends \Codeception\Test\Unit
     // tests
     public function testTaxCalculationService()
     {
+        $taxCalculationService = new TaxCalculationService();
+
         $price = new Price(100, new \Zend_Currency("EUR"));
         $price->setNetAmount(90);
-        TaxCalculationService::updateTaxes($price);
+        $taxCalculationService->updateTaxes($price);
 
         $this->assertEquals(90, $price->getGrossAmount(), "No tax entries > net and gross should be equal");
 
@@ -40,14 +42,14 @@ class TaxCalculationTest extends \Codeception\Test\Unit
             new TaxEntry(10, 0)
         ];
         $price->setTaxEntries($taxEntries);
-        TaxCalculationService::updateTaxes($price);
+        $taxCalculationService->updateTaxes($price);
         $this->assertEquals(99, $price->getGrossAmount(), "Tax 10%, calc from net price");
 
         $taxEntries = $price->getTaxEntries();
         $this->assertEquals(9, $taxEntries[0]->getAmount(), "Tax 10%, tax entry amount");
 
         $price->setGrossAmount(100);
-        TaxCalculationService::updateTaxes($price, TaxCalculationService::CALCULATION_FROM_GROSS);
+        $taxCalculationService->updateTaxes($price, TaxCalculationService::CALCULATION_FROM_GROSS);
         $this->assertEquals(90.91, round($price->getNetAmount(), 2), "Tax 10%, calc from gross price");
 
 
@@ -77,7 +79,7 @@ class TaxCalculationTest extends \Codeception\Test\Unit
         $price->setNetAmount(90);
         $price->setTaxEntries($taxEntries);
         $price->setTaxEntryCombinationMode(TaxEntry::CALCULATION_MODE_ONE_AFTER_ANOTHER);
-        TaxCalculationService::updateTaxes($price);
+        $taxCalculationService->updateTaxes($price);
         $this->assertEquals(104.83, round($price->getGrossAmount(), 2), "Tax 12% + 4% one-after-another, calc from net price");
 
         $taxEntries = $price->getTaxEntries();
@@ -85,7 +87,7 @@ class TaxCalculationTest extends \Codeception\Test\Unit
         $this->assertEquals(4.03, round($taxEntries[1]->getAmount(), 2), "Tax 12% + 4% one-after-another, tax entry 2 amount");
 
         $price->setGrossAmount(100);
-        TaxCalculationService::updateTaxes($price, TaxCalculationService::CALCULATION_FROM_GROSS);
+        $taxCalculationService->updateTaxes($price, TaxCalculationService::CALCULATION_FROM_GROSS);
         $taxEntries = $price->getTaxEntries();
         $this->assertEquals(85.85, round($price->getNetAmount(), 2), "Tax 12% + 4% one-after-another, calc from gross price");
         $this->assertEquals(10.30, round($taxEntries[0]->getAmount(), 2), "Tax 12% + 4% one-after-another, tax entry 1 amount");
@@ -100,7 +102,7 @@ class TaxCalculationTest extends \Codeception\Test\Unit
         $price->setNetAmount(90);
         $price->setTaxEntries($taxEntries);
         $price->setTaxEntryCombinationMode(TaxEntry::CALCULATION_MODE_COMBINE);
-        TaxCalculationService::updateTaxes($price);
+        $taxCalculationService->updateTaxes($price);
         $this->assertEquals(104.4, round($price->getGrossAmount(), 2), "Tax 12% + 4% combine, calc from net price");
 
         $taxEntries = $price->getTaxEntries();
@@ -108,7 +110,7 @@ class TaxCalculationTest extends \Codeception\Test\Unit
         $this->assertEquals(3.6, round($taxEntries[1]->getAmount(), 2), "Tax 12% + 4% combine, tax entry 2 amount");
 
         $price->setGrossAmount(100);
-        TaxCalculationService::updateTaxes($price, TaxCalculationService::CALCULATION_FROM_GROSS);
+        $taxCalculationService->updateTaxes($price, TaxCalculationService::CALCULATION_FROM_GROSS);
         $taxEntries = $price->getTaxEntries();
         $this->assertEquals(86.21, round($price->getNetAmount(), 2), "Tax 12% + 4% combine, calc from gross price");
         $this->assertEquals(10.34, round($taxEntries[0]->getAmount(), 2), "Tax 12% + 4% combine, tax entry 1 amount");

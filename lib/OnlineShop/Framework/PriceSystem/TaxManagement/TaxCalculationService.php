@@ -38,13 +38,13 @@ class TaxCalculationService {
      * @return IPrice
      * @throws UnsupportedException
      */
-    public static function updateTaxes(IPrice $price, $calculationMode = self::CALCULATION_FROM_NET) {
+    public function updateTaxes(IPrice $price, $calculationMode = self::CALCULATION_FROM_NET) {
 
         switch ($calculationMode) {
             case self::CALCULATION_FROM_NET:
-                return self::calculationFromNet($price);
+                return $this->calculationFromNet($price);
             case self::CALCULATION_FROM_GROSS:
-                return self::calculationFromGross($price);
+                return $this->calculationFromGross($price);
             default:
                 throw new UnsupportedException("Calculation Mode [" . $calculationMode . "] not supported.");
         }
@@ -58,7 +58,7 @@ class TaxCalculationService {
      * @return IPrice
      * @throws UnsupportedException
      */
-    protected static function calculationFromNet(IPrice $price) {
+    protected function calculationFromNet(IPrice $price) {
 
         switch ($price->getTaxEntryCombinationMode()) {
             case TaxEntry::CALCULATION_MODE_COMBINE:
@@ -123,7 +123,7 @@ class TaxCalculationService {
      * @return IPrice
      * @throws UnsupportedException
      */
-    protected static function calculationFromGross(IPrice $price) {
+    protected function calculationFromGross(IPrice $price) {
 
         switch ($price->getTaxEntryCombinationMode()) {
 

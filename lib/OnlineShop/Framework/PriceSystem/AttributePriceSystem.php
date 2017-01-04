@@ -64,9 +64,9 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem {
             $totalPrice->setTaxEntries(TaxEntry::convertTaxEntries($taxClass));
         }
 
-        TaxCalculationService::updateTaxes($price, TaxCalculationService::CALCULATION_FROM_GROSS);
-        TaxCalculationService::updateTaxes($totalPrice, TaxCalculationService::CALCULATION_FROM_GROSS);
-
+        $taxCalculationService =  $this->getTaxCalculationService();
+        $taxCalculationService->updateTaxes($price, TaxCalculationService::CALCULATION_FROM_GROSS);
+        $taxCalculationService->updateTaxes($totalPrice, TaxCalculationService::CALCULATION_FROM_GROSS);
 
         return new AttributePriceInfo($price, $quantityScale, $totalPrice);
     }

@@ -95,7 +95,7 @@ class Price implements IPrice {
         }
 
         if($recalc) {
-            TaxCalculationService::updateTaxes($this, $priceMode);
+            $this->updateTaxes($priceMode);
         }
 
     }
@@ -164,7 +164,7 @@ class Price implements IPrice {
         $this->grossAmount = $grossAmount;
 
         if($recalc) {
-            TaxCalculationService::updateTaxes($this, IPrice::PRICE_MODE_GROSS);
+            $this->updateTaxes(TaxCalculationService::CALCULATION_FROM_GROSS);
         }
     }
 
@@ -177,7 +177,7 @@ class Price implements IPrice {
         $this->netAmount = $netAmount;
 
         if($recalc) {
-            TaxCalculationService::updateTaxes($this, IPrice::PRICE_MODE_NET);
+            $this->updateTaxes(TaxCalculationService::CALCULATION_FROM_NET);
         }
     }
 
@@ -197,5 +197,15 @@ class Price implements IPrice {
     public function setTaxEntryCombinationMode($taxEntryCombinationMode)
     {
         $this->taxEntryCombinationMode = $taxEntryCombinationMode;
+    }
+
+    /**
+     * Calls calculation service and updates taxes
+     *
+     * @param $calculationMode
+     */
+    protected function updateTaxes($calculationMode) {
+        $taxCalculationService = new TaxCalculationService();
+        $taxCalculationService->updateTaxes($this, $calculationMode);
     }
 }
