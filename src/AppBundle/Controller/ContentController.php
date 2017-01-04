@@ -38,6 +38,10 @@ class ContentController extends Controller
     {
         $document = $request->get('contentDocument');
 
+        if ($request->get('debugDocument')) {
+            dump($document);
+        }
+
         return [
             'document' => $document
         ];
