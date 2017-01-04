@@ -41,6 +41,8 @@ class EcommerceFramework_ConfigController extends Pimcore\Controller\Action\Admi
         $javascript.= "pimcore.plugin.OnlineShop.plugin.config = ";
         $javascript.= json_encode($params).";";
 
+        header('Content-Type: application/javascript');
         echo $javascript;
+        exit;
     }
 }
