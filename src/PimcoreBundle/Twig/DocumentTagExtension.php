@@ -26,7 +26,7 @@ class DocumentTagExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction('pimcore_tag', [$this, 'renderTag'], [
+            new \Twig_SimpleFunction('pimcore_*', [$this, 'renderTag'], [
                 'needs_context' => true,
                 'is_safe'       => ['html'],
             ])
@@ -37,18 +37,18 @@ class DocumentTagExtension extends \Twig_Extension
      * @see \Pimcore\View::tag
      *
      * @param array $context
-     * @param string $type
+     * @param string $name
      * @param string $inputName
      * @param array $options
      * @return \Pimcore\Model\Document\Tag|string
      */
-    public function renderTag($context, $type, $inputName, array $options = [])
+    public function renderTag($context, $name, $inputName, array $options = [])
     {
         $document = $context['document'];
         if (!($document instanceof PageSnippet)) {
             return '';
         }
 
-        return $this->tagRenderer->render($document, $type, $inputName, $options);
+        return $this->tagRenderer->render($document, $name, $inputName, $options);
     }
 }
