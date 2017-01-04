@@ -20,7 +20,7 @@ class DefaultController extends Controller
     }
 
     /**
-     * @Route("/p-s-r-7", name="PSR-7")
+     * @Route("/psr7", name="PSR-7")
      */
     public function psr7Action(ServerRequestInterface $request)
     {
