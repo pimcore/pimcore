@@ -17,18 +17,55 @@
 
 namespace OnlineShop\Framework\PriceSystem;
 
+use OnlineShop\Framework\PriceSystem\TaxManagement\TaxCalculationService;
+use OnlineShop\Framework\PriceSystem\TaxManagement\TaxEntry;
+
 class Price implements IPrice {
+
+    /**
+     * @var \Zend_Currency
+     */
     private $currency;
-    private $amount;
+
+    /**
+     * @var float
+     */
+    private $grossAmount;
+
+    /**
+     * @var float
+     */
+    private $netAmount;
+
+    /**
+     * @var string
+     */
+    private $taxEntryCombinationMode = TaxEntry::CALCULATION_MODE_COMBINE;
+
+    /**
+     * @var bool
+     */
     private $minPrice;
 
+    /**
+     * @var TaxEntry[]
+     */
+    private $taxEntries = [];
+
+
+    /**
+     * Price constructor.
+     * @param $amount
+     * @param \Zend_Currency $currency
+     * @param bool $minPrice
+     */
     function __construct($amount, \Zend_Currency $currency, $minPrice = false) {
-        $this->amount = $amount;
+        $this->grossAmount = $amount;
         $this->currency = $currency;
         $this->minPrice = $minPrice;
     }
     function __toString(){
-        return $this->getCurrency()->toCurrency($this->amount);
+        return $this->getCurrency()->toCurrency($this->grossAmount);
     }
 
 
@@ -40,16 +77,36 @@ class Price implements IPrice {
     }
 
     /**
+     * sets amount of price, depending on $priceMode and $recalc it sets net price or gross price and recalculates the
+     * corresponding net or gross price.
+     *
      * @param float $amount
-     * @return void
+     * @param string $priceMode - default to PRICE_MODE_GROSS
+     * @param bool $recalc - default to false
      */
-    public function setAmount($amount) {
-        $this->amount = $amount;
+    public function setAmount($amount, $priceMode = self::PRICE_MODE_GROSS, $recalc = false) {
+        switch ($priceMode) {
+            case self::PRICE_MODE_GROSS:
+                $this->grossAmount = $amount;
+                break;
+            case self::PRICE_MODE_NET:
+                $this->netAmount = $amount;
+                break;
+        }
+
+        if($recalc) {
+            $this->updateTaxes($priceMode);
+        }
+
     }
 
-    /** @return double*/
+    /**
+     * Returns $grossAmount
+     *
+     * @return float
+     */
     function getAmount() {
-        return $this->amount;
+        return $this->grossAmount;
     }
 
     /**
@@ -59,8 +116,96 @@ class Price implements IPrice {
         $this->currency = $currency;
     }
 
-    /** @return \Zend_Currency*/
+    /**
+     * @return \Zend_Currency
+     */
     function getCurrency() {
         return $this->currency;
+    }
+
+    /**
+     * @return float
+     */
+    public function getGrossAmount()
+    {
+        return $this->grossAmount;
+    }
+
+    /**
+     * @return float
+     */
+    public function getNetAmount()
+    {
+        return $this->netAmount;
+    }
+
+    /**
+     * @return TaxEntry[]
+     */
+    public function getTaxEntries()
+    {
+        return $this->taxEntries;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTaxEntryCombinationMode()
+    {
+        return $this->taxEntryCombinationMode;
+    }
+
+    /**
+     * @param float $grossAmount
+     * @return void
+     */
+    public function setGrossAmount($grossAmount, $recalc = false)
+    {
+        $this->grossAmount = $grossAmount;
+
+        if($recalc) {
+            $this->updateTaxes(TaxCalculationService::CALCULATION_FROM_GROSS);
+        }
+    }
+
+    /**
+     * @param float $netAmount
+     * @return void
+     */
+    public function setNetAmount($netAmount, $recalc = false)
+    {
+        $this->netAmount = $netAmount;
+
+        if($recalc) {
+            $this->updateTaxes(TaxCalculationService::CALCULATION_FROM_NET);
+        }
+    }
+
+    /**
+     * @param TaxEntry[] $taxEntries
+     * @return void
+     */
+    public function setTaxEntries($taxEntries)
+    {
+        $this->taxEntries = $taxEntries;
+    }
+
+    /**
+     * @param string $taxEntryCombinationMode
+     * @return void
+     */
+    public function setTaxEntryCombinationMode($taxEntryCombinationMode)
+    {
+        $this->taxEntryCombinationMode = $taxEntryCombinationMode;
+    }
+
+    /**
+     * Calls calculation service and updates taxes
+     *
+     * @param $calculationMode
+     */
+    protected function updateTaxes($calculationMode) {
+        $taxCalculationService = new TaxCalculationService();
+        $taxCalculationService->updateTaxes($this, $calculationMode);
     }
 }

@@ -29,6 +29,7 @@ For more detailed documentation see 'Dev-Doku' chapters and the source code docu
    3. [Working with prices](Working-with-prices.markdown#3---working-with-prices)
    4. [Using pricing rules](Working-with-prices.markdown#4---using-pricing-rules)
    5. [Using vouchers](Working-with-prices.markdown#5---using-vouchers)
+   6. [Dealing with Taxes](Dealing-with-taxes.markdown)
 
 
 ### 5. Usage of cart manager

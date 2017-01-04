@@ -72,7 +72,7 @@ class Environment implements IEnvironment {
 
     protected function loadFromSession() {
         // when $_SESSION[self::SESSION_NAMESPACE] is set, always load environment from session (also within cli scripts)
-        if(php_sapi_name() != "cli" || $_SESSION[$this->sessionNamespace]) {
+        if(php_sapi_name() != "cli" || (isset($_SESSION) && $_SESSION[$this->sessionNamespace])) {
             $this->session = $this->buildSession();
 
             $key = self::SESSION_KEY_CUSTOM_ITEMS;

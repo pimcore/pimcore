@@ -102,10 +102,32 @@ $currency = $orderAgent->getCurrency();
                     </tr>
                 <?php endforeach; ?>
                 <tr class="active">
-                    <td colspan="4" class="text-right">Total</td>
+                    <td colspan="4"  class="text-right">Total</td>
                     <th class="text-right"><?= $currency->toCurrency($order->getTotalPrice()) ?></th>
                     <th></th>
                 </tr>
+
+                <?php if($order->getTaxInfo()) { ?>
+
+                    <tr>
+                        <th colspan="4" class="text-right"><?= $this->translate("cart.taxes") ?></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    <?php foreach($order->getTaxInfo() as $taxEntry) { ?>
+                        <tr>
+                            <td colspan="4" class="text-right"><?= $taxEntry[0] ?></td>
+                            <td class="text-right">
+                                <?= $taxEntry[1] ?> (<?=  $currency->toCurrency($taxEntry[2]) ?>)
+                            </td>
+                            <th></th>
+                        </tr>
+                    <?php } ?>
+
+                <?php } ?>
+
+
+
                 </tfoot>
                 <tbody>
                 <?php foreach($order->getItems() as $item):

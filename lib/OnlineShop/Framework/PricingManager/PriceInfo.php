@@ -17,6 +17,8 @@
 
 namespace OnlineShop\Framework\PricingManager;
 
+use OnlineShop\Framework\PriceSystem\IPrice;
+
 class PriceInfo implements IPriceInfo
 {
     /**
@@ -177,7 +179,7 @@ class PriceInfo implements IPriceInfo
         }
 
 
-        $price->setAmount( $this->getAmount() );
+        $price->setAmount( $this->getAmount(), IPrice::PRICE_MODE_GROSS, true );
         return $price;
     }
 
@@ -191,7 +193,7 @@ class PriceInfo implements IPriceInfo
         }
 
         $price = clone $this->priceInfo->getPrice();
-        $price->setAmount($this->getPrice()->getAmount() * $this->getQuantity());
+        $price->setAmount( $this->getPrice()->getAmount() * $this->getQuantity(), IPrice::PRICE_MODE_GROSS, true );
         return $price;
     }
 

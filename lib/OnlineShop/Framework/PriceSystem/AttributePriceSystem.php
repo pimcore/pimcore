@@ -16,6 +16,8 @@
 
 
 namespace OnlineShop\Framework\PriceSystem;
+use OnlineShop\Framework\PriceSystem\TaxManagement\TaxCalculationService;
+use OnlineShop\Framework\PriceSystem\TaxManagement\TaxEntry;
 
 /**
  * Class AttributePriceSystem
@@ -47,9 +49,24 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem {
      */
     function createPriceInfoInstance($quantityScale, $product, $products) {
 
+        $taxClass = $this->getTaxClassForProduct($product);
+
         $amount = $this->calculateAmount($product, $products);
         $price = $this->getPriceClassInstance($amount);
         $totalPrice = $this->getPriceClassInstance($amount * $quantityScale);
+
+
+        if($taxClass) {
+            $price->setTaxEntryCombinationMode($taxClass->getTaxEntryCombinationType());
+            $price->setTaxEntries(TaxEntry::convertTaxEntries($taxClass));
+
+            $totalPrice->setTaxEntryCombinationMode($taxClass->getTaxEntryCombinationType());
+            $totalPrice->setTaxEntries(TaxEntry::convertTaxEntries($taxClass));
+        }
+
+        $taxCalculationService =  $this->getTaxCalculationService();
+        $taxCalculationService->updateTaxes($price, TaxCalculationService::CALCULATION_FROM_GROSS);
+        $taxCalculationService->updateTaxes($totalPrice, TaxCalculationService::CALCULATION_FROM_GROSS);
 
         return new AttributePriceInfo($price, $quantityScale, $totalPrice);
     }
@@ -101,7 +118,7 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem {
      * @throws \Exception
      */
     protected function getPriceClassInstance($amount) {
-        if($this->config->priceclass) {
+        if($this->config->priceClass) {
             $price = new $this->config->priceClass($amount, $this->getDefaultCurrency(), false);
             if(!$price instanceof \OnlineShop\Framework\PriceSystem\IPrice) {
                 throw new \Exception('Price Class does not implement \OnlineShop\Framework\PriceSystem\IPrice');
@@ -111,5 +128,4 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem {
         }
         return $price;
     }
-
 }

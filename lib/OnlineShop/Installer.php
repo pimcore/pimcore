@@ -108,7 +108,8 @@ class Installer {
         "OnlineShopOrder" => PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/class_source/class_OnlineShopOrder_export.json',
         "OfferToolCustomProduct" => PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/class_source/class_OfferToolCustomProduct_export.json',
         "OfferToolOfferItem" => PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/class_source/class_OfferToolOfferItem_export.json',
-        "OfferToolOffer" => PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/class_source/class_OfferToolOffer_export.json'
+        "OfferToolOffer" => PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/class_source/class_OfferToolOffer_export.json',
+        "OnlineShopTaxClass" => PIMCORE_PLUGINS_PATH . '/EcommerceFramework/install/class_source/class_OnlineShopTaxClass_export.json'
     ];
 
     /**

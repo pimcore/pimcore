@@ -105,6 +105,42 @@ class AbstractOrderItem extends \Pimcore\Model\Object\Concrete {
         throw new \OnlineShop\Framework\Exception\UnsupportedException("setTotalPrice is not implemented for " . get_class($this));
     }
 
+    /**
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @return float
+     */
+    public function getTotalNetPrice() {
+        //prevent throwing an exception for backward compatibility
+        \Logger::err("getTotalNetPrice not implemented for " . get_class($this));
+    }
+
+    /**
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @param float $totalNetPrice
+     */
+    public function setTotalNetPrice($totalNetPrice) {
+        //prevent throwing an exception for backward compatibility
+        \Logger::err("setTotalNetPrice not implemented for " . get_class($this));
+    }
+
+    /**
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @return array
+     */
+    public function getTaxInfo() {
+        //prevent throwing an exception for backward compatibility
+        \Logger::err("getTaxInfo not implemented for " . get_class($this));
+    }
+
+    /**
+     * @throws \OnlineShop\Framework\Exception\UnsupportedException
+     * @param array $taxInfo
+     */
+    public function setTaxInfo($taxInfo) {
+        //prevent throwing an exception for backward compatibility
+        \Logger::err("setTaxInfo not implemented for " . get_class($this));
+    }
+
 
     /**
      * @return AbstractOrderItem[]

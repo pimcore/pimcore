@@ -17,7 +17,10 @@
 
 namespace OnlineShop\Framework\CartManager\CartPriceModificator;
 use OnlineShop\Framework\CartManager\ICart;
+use OnlineShop\Framework\Factory;
 use OnlineShop\Framework\PriceSystem\IModificatedPrice;
+use OnlineShop\Framework\PriceSystem\TaxManagement\TaxEntry;
+use Pimcore\Model\Object\OnlineShopTaxClass;
 
 /**
  * Class Shipping
@@ -28,6 +31,11 @@ class Shipping implements IShipping
      * @var float
      */
     protected $charge = 0;
+
+    /**
+     * @var OnlineShopTaxClass
+     */
+    protected $taxClass = 0;
 
     /**
      * @param \Zend_Config $config
@@ -55,7 +63,18 @@ class Shipping implements IShipping
      */
     public function modify(\OnlineShop\Framework\PriceSystem\IPrice $currentSubTotal, ICart $cart)
     {
-        return new \OnlineShop\Framework\PriceSystem\ModificatedPrice($this->getCharge(), new \Zend_Currency(\OnlineShop\Framework\Factory::getInstance()->getEnvironment()->getCurrencyLocale()));
+        $modificatedPrice = new \OnlineShop\Framework\PriceSystem\ModificatedPrice($this->getCharge(), new \Zend_Currency(\OnlineShop\Framework\Factory::getInstance()->getEnvironment()->getCurrencyLocale()));
+
+        $taxClass = $this->getTaxClass();
+        if($taxClass) {
+            $modificatedPrice->setTaxEntryCombinationMode($taxClass->getTaxEntryCombinationType());
+            $modificatedPrice->setTaxEntries(TaxEntry::convertTaxEntries($taxClass));
+
+            $modificatedPrice->setGrossAmount($this->getCharge(), true);
+        }
+
+        return $modificatedPrice;
+
     }
 
     /**
@@ -77,4 +96,25 @@ class Shipping implements IShipping
     {
         return $this->charge;
     }
+
+    /**
+     * @return OnlineShopTaxClass
+     */
+    public function getTaxClass()
+    {
+        if(empty($this->taxClass)) {
+            $this->taxClass = Factory::getInstance()->getPriceSystem("default")->getTaxClassForPriceModification($this);
+        }
+
+        return $this->taxClass;
+    }
+
+    /**
+     * @param OnlineShopTaxClass $taxClass
+     */
+    public function setTaxClass($taxClass)
+    {
+        $this->taxClass = $taxClass;
+    }
+
 }

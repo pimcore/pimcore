@@ -16,6 +16,12 @@
 
 
 namespace OnlineShop\Framework\PriceSystem;
+use OnlineShop\Framework\CartManager\CartPriceModificator\ICartPriceModificator;
+use OnlineShop\Framework\Model\ICheckoutable;
+use OnlineShop\Framework\PriceSystem\TaxManagement\TaxCalculationService;
+use OnlineShop\Framework\PriceSystem\TaxManagement\TaxEntry;
+use Pimcore\Model\Object\OnlineShopTaxClass;
+use Pimcore\Model\WebsiteSetting;
 
 /**
  * Class AbstractPriceSystem
@@ -81,5 +87,61 @@ abstract class AbstractPriceSystem implements IPriceSystem {
      * @return AbstractPriceInfo
      */
     abstract function createPriceInfoInstance($quantityScale,$product,$products);
+
+    /**
+     * Sample implementation for getting the correct OnlineShopTaxClass. In this case Tax Class is retrieved from
+     * Website Setting and if no Website Setting is set it creates an empty new Tax Class.
+     *
+     * Should be overwritten in custom price systems with suitable implementation.
+     *
+     * @return OnlineShopTaxClass
+     */
+    protected function getDefaultTaxClass() {
+        $taxClass =  WebsiteSetting::getByName("defaultTaxClass");
+
+        if($taxClass) {
+            $taxClass = OnlineShopTaxClass::getById($taxClass->getData());
+        }
+
+        if(empty($taxClass)) {
+            $taxClass = new OnlineShopTaxClass();
+            $taxClass->setTaxEntryCombinationType(TaxEntry::CALCULATION_MODE_COMBINE);
+        }
+
+        return $taxClass;
+    }
+
+    /**
+     * Returns OnlineShopTaxClass for given ICheckoutable.
+     *
+     * Should be overwritten in custom price systems with suitable implementation.
+     *
+     * @param ICheckoutable $product
+     * @param $environment
+     * @return OnlineShopTaxClass
+     */
+    public function getTaxClassForProduct(ICheckoutable $product) {
+        return $this->getDefaultTaxClass();
+    }
+
+    /**
+     * Returns OnlineShopTaxClass for given ICartPriceModificator
+     *
+     * Should be overwritten in custom price systems with suitable implementation.
+     *
+     * @param ICartPriceModificator $modificator
+     * @param $environment
+     * @return OnlineShopTaxClass
+     */
+    public function getTaxClassForPriceModification(ICartPriceModificator $modificator) {
+        return $this->getDefaultTaxClass();
+    }
+
+    /**
+     * @return TaxCalculationService
+     */
+    protected function getTaxCalculationService() {
+        return new TaxCalculationService();
+    }
 }
 
