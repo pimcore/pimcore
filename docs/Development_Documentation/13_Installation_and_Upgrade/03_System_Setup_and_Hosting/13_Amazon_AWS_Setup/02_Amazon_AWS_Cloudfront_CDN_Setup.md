@@ -1,4 +1,4 @@
-# Amazon AWS Cloudfront CSN Setup
+# Amazon AWS Cloudfront CDN Setup
 
 ## When using S3 as Storage Backend
 
