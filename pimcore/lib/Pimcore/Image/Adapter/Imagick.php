@@ -51,6 +51,13 @@ class Imagick extends Adapter
     public function load($imagePath, $options = [])
     {
 
+        if(isset($options["preserveColor"])) {
+            // set this option to TRUE to skip all color transformations during the loading process
+            // this can massively improve performance if the color information doesn't matter, ...
+            // eg. when using this function to obtain dimensions from an image
+            $this->setPreserveColor($options["preserveColor"]);
+        }
+
         // support image URLs
         if (preg_match("@^https?://@", $imagePath)) {
             $tmpFilename = "imagick_auto_download_" . md5($imagePath) . "." . File::getFileExtension($imagePath);

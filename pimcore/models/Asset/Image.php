@@ -204,7 +204,7 @@ class Image extends Model\Asset
 
         $image = self::getImageTransformInstance();
 
-        $status = $image->load($path);
+        $status = $image->load($path, ["preserveColor" => true]);
         if ($status === false) {
             return;
         }
