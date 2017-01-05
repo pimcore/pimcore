@@ -17,16 +17,6 @@ class MailTest extends TestCase
         $this->assertEquals($email, $mail->getFrom());
     }
 
-    public function testLocalFrom()
-    {
-        $email = '"foo-bar"@domain';
-
-        $mail = new Mail();
-        $mail->setFrom($email, 'Sender\'s name');
-
-        $this->assertEquals($email, $mail->getFrom());
-    }
-
     /**
      * See issue #1165 ("pwnscriptum")
      *
