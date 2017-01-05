@@ -5,7 +5,7 @@ class TestSuite_Pimcore_AllTests extends Test_SuiteBase
 {
     public static function suite()
     {
-        $suite = new TestSuite_Basics_AllTests('Pimcore');
+        $suite = new static();
 
         $tests = [
             \TestSuite\Pimcore\MailTest::class
