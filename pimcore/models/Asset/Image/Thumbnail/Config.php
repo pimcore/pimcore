@@ -480,41 +480,49 @@ class Config extends Model\AbstractModel
             $pipe->addItem("cover", [
                 "width" => $config["width"],
                 "height" => $config["height"],
-                "positioning" => "center"
+                "positioning" => ((isset($config["positioning"]) && !empty($config["positioning"])) ? (string)$config["positioning"] : "center"),
+                "doNotScaleUp" => (isset($config["doNotScaleUp"]) ? (bool)$config["doNotScaleUp"] : true)
             ]);
         } elseif (isset($config["contain"])) {
             $pipe->addItem("contain", [
                 "width" => $config["width"],
-                "height" => $config["height"]
+                "height" => $config["height"],
+                "doNotScaleUp" => (isset($config["doNotScaleUp"]) ? (bool)$config["doNotScaleUp"] : true)
             ]);
         } elseif (isset($config["frame"])) {
             $pipe->addItem("frame", [
                 "width" => $config["width"],
-                "height" => $config["height"]
+                "height" => $config["height"],
+                "doNotScaleUp" => (isset($config["doNotScaleUp"]) ? (bool)$config["doNotScaleUp"] : true)
             ]);
         } elseif (isset($config["aspectratio"]) && $config["aspectratio"]) {
             if (isset($config["height"]) && isset($config["width"]) && $config["height"] > 0 && $config["width"] > 0) {
                 $pipe->addItem("contain", [
                     "width" => $config["width"],
-                    "height" => $config["height"]
+                    "height" => $config["height"],
+                    "doNotScaleUp" => (isset($config["doNotScaleUp"]) ? (bool)$config["doNotScaleUp"] : true)
                 ]);
             } elseif (isset($config["height"]) && $config["height"] > 0) {
                 $pipe->addItem("scaleByHeight", [
-                    "height" => $config["height"]
+                    "height" => $config["height"],
+                    "doNotScaleUp" => (isset($config["doNotScaleUp"]) ? (bool)$config["doNotScaleUp"] : true)
                 ]);
             } else {
                 $pipe->addItem("scaleByWidth", [
-                    "width" => $config["width"]
+                    "width" => $config["width"],
+                    "doNotScaleUp" => (isset($config["doNotScaleUp"]) ? (bool)$config["doNotScaleUp"] : true)
                 ]);
             }
         } else {
             if (!isset($config["width"]) && isset($config["height"])) {
                 $pipe->addItem("scaleByHeight", [
-                    "height" => $config["height"]
+                    "height" => $config["height"],
+                    "doNotScaleUp" => (isset($config["doNotScaleUp"]) ? (bool)$config["doNotScaleUp"] : true)
                 ]);
             } elseif (isset($config["width"]) && !isset($config["height"])) {
                 $pipe->addItem("scaleByWidth", [
-                    "width" => $config["width"]
+                    "width" => $config["width"],
+                    "doNotScaleUp" => (isset($config["doNotScaleUp"]) ? (bool)$config["doNotScaleUp"] : true)
                 ]);
             } elseif (isset($config["width"]) && isset($config["height"])) {
                 $pipe->addItem("resize", [

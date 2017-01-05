@@ -377,6 +377,11 @@ pimcore.settings.thumbnail.items = {
                 width: 210,
                 value: data.height
             },{
+                xtype: "checkbox",
+                name: "doNotScaleUp",
+                checked: data["doNotScaleUp"],
+                fieldLabel: t("do_not_scale_up")
+            },{
                 xtype: "hidden",
                 name: "type",
                 value: "scaleByHeight"
@@ -410,6 +415,11 @@ pimcore.settings.thumbnail.items = {
                 fieldLabel: t("width"),
                 width: 210,
                 value: data.width
+            },{
+                xtype: "checkbox",
+                name: "doNotScaleUp",
+                checked: data["doNotScaleUp"],
+                fieldLabel: t("do_not_scale_up")
             },{
                 xtype: "hidden",
                 name: "type",
@@ -459,6 +469,11 @@ pimcore.settings.thumbnail.items = {
                     width: 95,
                     value: data.height
                 }]
+            },{
+                xtype: "checkbox",
+                name: "doNotScaleUp",
+                checked: data["doNotScaleUp"],
+                fieldLabel: t("do_not_scale_up")
             },{
                 xtype: "hidden",
                 name: "type",
@@ -594,7 +609,7 @@ pimcore.settings.thumbnail.items = {
                 name: "doNotScaleUp",
                 checked: data["doNotScaleUp"],
                 fieldLabel: t("do_not_scale_up")
-            }, {
+            },{
                 xtype: "hidden",
                 name: "type",
                 value: "cover"
@@ -643,6 +658,11 @@ pimcore.settings.thumbnail.items = {
                     width: 95,
                     value: data.height
                 }]
+            },{
+                xtype: "checkbox",
+                name: "doNotScaleUp",
+                checked: data["doNotScaleUp"],
+                fieldLabel: t("do_not_scale_up")
             },{
                 xtype: "hidden",
                 name: "type",

@@ -147,9 +147,9 @@ abstract class Adapter
      * @param  $width
      * @return self
      */
-    public function scaleByWidth($width, $forceResize = false)
+    public function scaleByWidth($width, $doNotScaleUp = true)
     {
-        if ($forceResize || $width <= $this->getWidth() || $this->isVectorGraphic()) {
+        if ((!$doNotScaleUp) || $width <= $this->getWidth() || $this->isVectorGraphic()) {
             $height = round(($width / $this->getWidth()) * $this->getHeight(), 0);
             $this->resize(max(1, $width), max(1, $height));
         }
@@ -161,9 +161,9 @@ abstract class Adapter
      * @param  $height
      * @return self
      */
-    public function scaleByHeight($height, $forceResize = false)
+    public function scaleByHeight($height, $doNotScaleUp = true)
     {
-        if ($forceResize || $height < $this->getHeight() || $this->isVectorGraphic()) {
+        if ((!$doNotScaleUp) || $height < $this->getHeight() || $this->isVectorGraphic()) {
             $width = round(($height / $this->getHeight()) * $this->getWidth(), 0);
             $this->resize(max(1, $width), max(1, $height));
         }
@@ -174,18 +174,19 @@ abstract class Adapter
     /**
      * @param  $width
      * @param  $height
+     * @param  bool $doNotScaleUp
      * @return self
      */
-    public function contain($width, $height)
+    public function contain($width, $height, $doNotScaleUp = true)
     {
         $x = $this->getWidth() / $width;
         $y = $this->getHeight() / $height;
-        if ($x <= 1 && $y <= 1 && !$this->isVectorGraphic()) {
+        if ($doNotScaleUp && $x <= 1 && $y <= 1 && !$this->isVectorGraphic()) {
             return $this;
         } elseif ($x > $y) {
-            $this->scaleByWidth($width);
+            $this->scaleByWidth($width, $doNotScaleUp);
         } else {
-            $this->scaleByHeight($height);
+            $this->scaleByHeight($height, $doNotScaleUp);
         }
 
         return $this;
@@ -195,18 +196,18 @@ abstract class Adapter
      * @param  $width
      * @param  $height
      * @param string $orientation
+     * @param  bool $doNotScaleUp
      * @return self
      */
     public function cover($width, $height, $orientation = "center", $doNotScaleUp = true)
     {
-        $scaleUp = $doNotScaleUp ? false : true;
-
+        if (empty($orientation)) $orientation = "center"; // if not set (from GUI for instance) - default value in getByLegacyConfig method of Config object too
         $ratio = $this->getWidth() / $this->getHeight();
 
         if (($width / $height) > $ratio) {
-            $this->scaleByWidth($width, $scaleUp);
+            $this->scaleByWidth($width, $doNotScaleUp);
         } else {
-            $this->scaleByHeight($height, $scaleUp);
+            $this->scaleByHeight($height, $doNotScaleUp);
         }
 
         if ($orientation == "center") {
@@ -253,9 +254,10 @@ abstract class Adapter
     /**
      * @param $width
      * @param $height
+     * @param  bool $doNotScaleUp
      * @return $this
      */
-    public function frame($width, $height)
+    public function frame($width, $height, $doNotScaleUp = true)
     {
         return $this;
     }
