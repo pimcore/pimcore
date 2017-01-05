@@ -50,8 +50,7 @@ class Imagick extends Adapter
      */
     public function load($imagePath, $options = [])
     {
-
-        if(isset($options["preserveColor"])) {
+        if (isset($options["preserveColor"])) {
             // set this option to TRUE to skip all color transformations during the loading process
             // this can massively improve performance if the color information doesn't matter, ...
             // eg. when using this function to obtain dimensions from an image
