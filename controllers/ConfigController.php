@@ -43,6 +43,5 @@ class EcommerceFramework_ConfigController extends Pimcore\Controller\Action\Admi
 
         header('Content-Type: application/javascript');
         echo $javascript;
-        exit;
     }
 }
