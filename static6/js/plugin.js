@@ -105,11 +105,12 @@ pimcore.plugin.OnlineShop.plugin = Class.create(pimcore.plugin.admin,{
                 this.navEl = Ext.get(
                     insertPoint.insertHtml(
                         "afterEnd",
-                        '<li id="pimcore_menu_onlineshop" class="pimcore_menu_item icon-basket">' + t('plugin_onlineshop_mainmenu') + '</li>'
+                        '<li id="pimcore_menu_onlineshop" class="pimcore_menu_item icon-basket" data-menu-tooltip="' + t('plugin_onlineshop_mainmenu') + '"></li>'
                     )
                 );
 
                 this.navEl.on("mousedown", toolbar.showSubMenu.bind(menuItems));
+                pimcore.helpers.initMenuTooltips();
             }
         }
 
