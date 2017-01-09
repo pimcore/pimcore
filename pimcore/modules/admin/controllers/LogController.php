@@ -68,7 +68,7 @@ class Admin_LogController extends \Pimcore\Controller\Action\Admin
         }
         
         if ($this->getParam("component")) {
-            $queryString .= " AND component =  '" . $this->getParam("component") . "'";
+            $queryString .= " AND component =  '" . addslashes($this->getParam("component")) . "'";
         }
          
         if ($this->getParam("relatedobject")) {
