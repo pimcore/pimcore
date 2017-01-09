@@ -5,7 +5,9 @@ namespace Pimcore;
 use LegacyBundle\LegacyBundle;
 use PimcoreAdminBundle\PimcoreAdminBundle;
 use PimcoreBundle\PimcoreBundle;
+use Sensio\Bundle\DistributionBundle\SensioDistributionBundle;
 use Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle;
+use Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle;
 use Symfony\Bundle\DebugBundle\DebugBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\MonologBundle\MonologBundle;
@@ -39,6 +41,11 @@ abstract class Kernel extends \DI\Bridge\Symfony\Kernel
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {
             $bundles[] = new DebugBundle();
             $bundles[] = new WebProfilerBundle();
+            $bundles[] = new SensioDistributionBundle();
+
+            if ('dev' === $this->getEnvironment()) {
+                $bundles[] = new SensioGeneratorBundle();
+            }
         }
 
         return $bundles;
