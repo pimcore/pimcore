@@ -9,7 +9,11 @@ if ($debug) {
 }
 
 $kernel = new AppKernel(Config::getEnvironment(), $debug);
-$kernel->loadClassCache();
+
+// see https://github.com/symfony/symfony/issues/20668
+if (PHP_VERSION_ID < 70000) {
+    $kernel->loadClassCache();
+}
 
 Pimcore::setKernel($kernel);
 
