@@ -197,6 +197,12 @@ class Imagick extends Adapter
 
         if (!$this->isPreserveMetaData()) {
             $i->stripImage();
+            if($format == "png32") {
+                // do not include any meta-data
+                // this is due a bug in -strip, therefore we have to use this custom option
+                // see also: https://github.com/ImageMagick/ImageMagick/issues/156
+                $i->setOption("png:include-chunk", "none");
+            }
         }
         if (!$this->isPreserveColor()) {
             $i->profileImage('*', null);
