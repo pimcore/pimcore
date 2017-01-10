@@ -21,6 +21,7 @@ use Pimcore\Model\Object\Concrete as ConcreteObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Asset;
 use Pimcore\Logger;
+use Pimcore\WorkflowManagement\Workflow;
 
 class Config
 {
@@ -58,7 +59,6 @@ class Config
         return $config;
     }
 
-
     /**
      * @static
      * @param array $config
@@ -72,7 +72,7 @@ class Config
     /**
      * gets workflow config for element. always returns first valid workflow config
      *
-     * @param Asset|Document|ConcreteObject $element
+     * @param AbstractElement $element
      * @return array
      */
     public static function getElementWorkflowConfig(AbstractElement $element)
@@ -85,7 +85,7 @@ class Config
         $elementType = Service::getElementType($element);
         $elementSubType = $element->getType();
 
-        foreach ($config['workflows'] as $workflow) {
+        foreach ($config as $id => $workflow) {
 
             //workflow is not enabled, continue with next
             if (isset($workflow['enabled']) && !$workflow['enabled']) {
