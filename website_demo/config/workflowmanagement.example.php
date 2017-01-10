@@ -195,6 +195,16 @@ return [
                         "blankText"=> "30m",
                         "required"=> true,
                         "setterFn"=> null
+                    ],
+
+                    // define the note date through the special noteDate name (see #743)
+                    // this will set the note datetime to the selected value instead of the datetime the action
+                    // was executed
+                    [
+                        "name"=> "noteDate",
+                        "fieldType" => "datetime",
+                        "title" => "Date of Conversation",
+                        "required" => true
                     ]
                 ]
             ]
