@@ -66,7 +66,7 @@ class Console
         }
 
         // use DI to provide the ability to customize / overwrite paths
-        if(\Pimcore::getDiContainer()->has("executable." . $name)) {
+        if (\Pimcore::getDiContainer()->has("executable." . $name)) {
             return \Pimcore::getDiContainer()->get("executable." . $name);
         }
 

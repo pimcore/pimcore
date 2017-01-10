@@ -46,5 +46,4 @@ class Listing extends Model\Listing\JsonListing
     {
         $this->workflows = $workflows;
     }
-
 }
