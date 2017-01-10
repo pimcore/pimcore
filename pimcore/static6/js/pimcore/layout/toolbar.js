@@ -902,6 +902,15 @@ pimcore.layout.toolbar = Class.create({
                 });
             }
 
+            // workflows
+            if(user.isAllowed("workflows") && perspectiveCfg.inToolbar("settings.workflows")) {
+                settingsItems.push({
+                    text: t("workflows"),
+                    iconCls: "pimcore_icon_workflow",
+                    handler : this.showWorkflows
+                });
+            }
+
             // help menu
             if (settingsItems.length > 0) {
                 this.settingsMenu = new Ext.menu.Menu({
@@ -1300,6 +1309,15 @@ pimcore.layout.toolbar = Class.create({
             }.bind(this));
 
             pimcore.layout.refresh();
+        }
+    },
+
+    showWorkflows: function () {
+        try {
+            pimcore.globalmanager.get("workflows").activate();
+        }
+        catch (e) {
+            pimcore.globalmanager.add("workflows", new pimcore.settings.workflow.panel());
         }
     },
 

@@ -267,6 +267,8 @@ $scripts = array(
     "pimcore/settings/targeting/rules/item.js",
     "pimcore/settings/targeting/personas/panel.js",
     "pimcore/settings/targeting/personas/item.js",
+    "pimcore/settings/workflow/panel.js",
+    "pimcore/settings/workflow/item.js",
 
     // element
     "pimcore/element/abstract.js",
