@@ -934,9 +934,9 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
         if (!$omitMandatoryCheck) {
             foreach ($languages as $language) {
                 foreach ($this->getFieldDefinitions() as $fd) {
-                    if (isset($data[$language]) && isset($data[$language][$fd->getName()]) ) {
+                    if (isset($data[$language]) && isset($data[$language][$fd->getName()])) {
                         $fd->checkValidity($data[$language][$fd->getName()]);
-                    }  else {
+                    } else {
                         $fd->checkValidity(null);
                     }
                 }
