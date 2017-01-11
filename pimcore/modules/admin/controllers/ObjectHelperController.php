@@ -843,9 +843,8 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
 
             readfile($csvFile);
             unlink($csvFile);
-        } else {
-            exit();
         }
+        exit;
     }
 
     protected function mapFieldname($field)
