@@ -5,13 +5,14 @@ namespace Pimcore\Cache\Symfony\Handler;
 use Pimcore\Model\Document\Hardlink\Wrapper\WrapperInterface;
 use Pimcore\Model\Element\ElementInterface;
 use Psr\Cache\CacheItemInterface;
+use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\Cache\Adapter\TagAwareAdapter;
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 use Symfony\Component\Cache\CacheItem;
 
-class CoreHandler
+class CoreHandler implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
