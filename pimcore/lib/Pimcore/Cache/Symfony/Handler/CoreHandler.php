@@ -2,6 +2,8 @@
 
 namespace Pimcore\Cache\Symfony\Handler;
 
+use Pimcore\Model\Document\Hardlink\Wrapper\WrapperInterface;
+use Pimcore\Model\Element\ElementInterface;
 use Psr\Cache\CacheItemInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\Cache\Adapter\TagAwareAdapter;
@@ -50,9 +52,9 @@ class CoreHandler
 
     /**
      * Contains the items which should be written to the cache on shutdown
-     * @var SaveStackItem[]
+     * @var CacheQueueItem[]
      */
-    protected $saveStack = [];
+    protected $saveQueue = [];
 
     /**
      * Tags which were already cleared
@@ -145,6 +147,7 @@ class CoreHandler
      */
     public function load($key)
     {
+        // TODO: omitted ____pimcore_cache_item__ here - is this used anywhere?
         $item = $this->getItem($key);
 
         if ($item->isHit()) {
@@ -201,7 +204,11 @@ class CoreHandler
             return false;
         }
 
-        $item = $this->createCacheItem($this->normalizeCacheKey($key), $data, $tags, $lifetime);
+        $item = $this->prepareCacheItem($key, $data, $tags, $lifetime);
+        if (null === $item) {
+            // logging is done in prepare method if item could not be created
+            return false;
+        }
 
         if ($force || $this->forceImmediateWrite) {
             if ($this->hasWriteLock()) {
@@ -213,15 +220,15 @@ class CoreHandler
                 return false;
             }
 
-            return $this->store($item, $force);
+            return $this->storeCacheItem($item, $force);
         } else {
-            if (count($this->saveStack) < $this->maxWriteToCacheItems) {
-                $this->saveStack[] = new SaveStackItem($item, $force);
+            if (count($this->saveQueue) < $this->maxWriteToCacheItems) {
+                $this->saveQueue[] = new CacheQueueItem($item, $force);
 
                 return true;
             } else {
                 $this->logger->warning(
-                    sprintf('Not saving %s to cache as saveStack reached a maximum of %d items', $key, $this->maxWriteToCacheItems),
+                    sprintf('Not saving %s to cache as saveQueue reached a maximum of %d items', $key, $this->maxWriteToCacheItems),
                     ['key' => $key]
                 );
             }
@@ -231,13 +238,103 @@ class CoreHandler
     }
 
     /**
+     * Prepare data for cache item and handle items we don't want to save (e.g. hardlinks)
+     *
+     * @param string $key
+     * @param mixed $data
+     * @param array $tags
+     * @param int|\DateInterval|null $lifetime
+     * @return CacheItemInterface|null
+     */
+    protected function prepareCacheItem($key, $data, array $tags = [], $lifetime = null)
+    {
+        // do not cache hardlink-wrappers
+        if ($data instanceof WrapperInterface) {
+            $this->logger->debug(
+                sprintf('Not saving %s to cache as it is a hardlink wrapper', $key),
+                ['key' => $key]
+            );
+
+            return null;
+        }
+
+        // clean up and prepare models
+        if ($data instanceof ElementInterface) {
+            // check for corrupt data
+            if ($data->getId() < 1) {
+                return null;
+            }
+
+            // _fulldump is a temp var which is used to trigger a full serialized dump in __sleep eg. in Document, \Object_Abstract
+            if (isset($data->_fulldump)) {
+                unset($data->_fulldump);
+            }
+
+            // get tags for this element
+            $tags = $data->getCacheTags($tags);
+
+            $this->logger->debug(
+                sprintf(
+                    'Prepared %s %d for data cache with tags: %s',
+                    get_class($data),
+                    $data->getId(),
+                    implode(', ', $tags)
+                ),
+                [
+                    'id'   => $data->getId(),
+                    'tags' => $tags
+                ]
+            );
+        }
+
+        // normalize tags to array
+        if (!empty($tags) && !is_array($tags)) {
+            $tags = [$tags];
+        }
+
+        // array_values() because the tags from \Element_Interface and some others are associative eg. array("object_123" => "object_123")
+        $tags = array_values($tags);
+
+        // check if any of our tags is in cleared tags or tags ignored on save lists
+        foreach ($tags as $tag) {
+            if (in_array($tag, $this->clearedTags)) {
+                $this->logger->debug(
+                    sprintf('Aborted caching for key %s because tag %s is in the cleared tags list', $key, $tag),
+                    ['key' => $data->getId(), 'tags' => $tags]
+                );
+
+                return null;
+            }
+
+            if (in_array($tag, $this->tagsIgnoredOnSave)) {
+                $this->logger->debug(
+                    sprintf('Aborted caching for key %s because tag %s is in the ignored tags on save list', $key, $tag),
+                    ['key' => $data->getId(), 'tags' => $tags]
+                );
+
+                return null;
+            }
+        }
+
+        // See #1005 - serialize the element now as we don't know what happens until it is actually persisted on shutdown and we
+        // could end up with corrupt objects in cache
+        //
+        // TODO symfony cache adapters serialize as well - find a way to avoid double serialization
+        $itemData = serialize($data);
+
+        $item = $this->createCacheItem($this->normalizeCacheKey($key), $itemData, $tags, $lifetime);
+
+        return $item;
+    }
+
+    /**
      * Actually store the item in the cache
      *
      * @param CacheItemInterface|CacheItem $item
      * @param bool $force
      * @return bool
      */
-    protected function storeItem(CacheItemInterface $item, $force = false)
+    protected function storeCacheItem(CacheItemInterface $item, $force = false)
     {
         if (!$this->enabled) {
             // TODO return true here as the noop (not storing anything) is basically successful?
@@ -248,15 +345,76 @@ class CoreHandler
         if ($this->cacheCleared && !$force) {
             return false;
         }
+
+        $result = $this->adapter->save($item);
+
+        if ($result) {
+            $this->logger->debug(sprintf('Added entry %s to cache', $item->getKey()), ['key' => $item->getKey()]);
+        } else {
+            $this->logger->error(
+                sprintf(
+                    'Failed to add entry %s to cache. Item size was %s',
+                    $item->getKey(),
+                    formatBytes(strlen($item->get()))
+                )
+            );
+        }
+
+        return $result;
     }
 
     /**
-     * Writes save stack to the cache
+     * Writes save queue to the cache
      *
      * @return bool
      */
-    public function commitSaveStack()
+    public function writeSaveQueue()
     {
+        $totalResult = true;
+
+        if ($this->hasWriteLock()) {
+            if (count($this->saveQueue) > 0) {
+                $this->logger->warning(
+                    sprintf(
+                        'Not writing save queue as there\'s an active write log. Save queue contains %d items',
+                        count($this->saveQueue)
+                    )
+                );
+            }
+
+            return false;
+        }
+
+        $processedKeys = [];
+        foreach ($this->saveQueue as $queueItem) {
+            $key = $queueItem->getCacheItem()->getKey();
+
+            // check if key was already processed and don't save it again
+            if (in_array($key, $processedKeys)) {
+                $this->logger->warning(
+                    sprintf('Not writing item as key %s was already processed', $key),
+                    ['key' => $key]
+                );
+
+                continue;
+            }
+
+
+            $result = $this->storeCacheItem($queueItem->getCacheItem(), $queueItem->getForce());
+
+            if (!$result) {
+                $this->logger->error(sprintf('Unable to write item %s to cache', $key));
+            }
+
+            $processedKeys[] = $key;
+
+            $totalResult = $totalResult && $result;
+        }
+
+        // reset
+        $this->saveQueue = [];
+
+        return $totalResult;
     }
 
     /**
@@ -485,9 +643,7 @@ class CoreHandler
                 function () use ($key, $data, $tags, $lifetime) {
                     $item = new CacheItem();
                     $item->key = $key;
-
-                    // TODO symfony cache adapters serialize as well - find a way to avoid double serialization
-                    $item->value = serialize($data);
+                    $item->value = $data;
 
                     $item->defaultLifetime = $this->defaultLifetime;
                     $item->tag($tags);

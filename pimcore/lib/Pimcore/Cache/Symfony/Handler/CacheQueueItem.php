@@ -4,7 +4,7 @@ namespace Pimcore\Cache\Symfony\Handler;
 
 use Psr\Cache\CacheItemInterface;
 
-class SaveStackItem
+class CacheQueueItem
 {
     /**
      * @var CacheItemInterface
@@ -37,7 +37,7 @@ class SaveStackItem
     /**
      * @return bool
      */
-    public function isForce()
+    public function getForce()
     {
         return $this->force;
     }
