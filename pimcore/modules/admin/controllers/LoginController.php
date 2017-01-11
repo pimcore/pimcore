@@ -40,10 +40,16 @@ class Admin_LoginController extends \Pimcore\Controller\Action\Admin
                         $loginUrl = $uri . "/admin/login/login/?username=" . $username . "&token=" . $token . "&reset=true";
 
                         try {
-                            $mail = Tool::getMail([$user->getEmail()], "Pimcore lost password service");
-                            $mail->setIgnoreDebugMode(true);
-                            $mail->setBodyText("Login to pimcore and change your password using the following link. This temporary login link will expire in 30 minutes: \r\n\r\n" . $loginUrl);
-                            $mail->send();
+                            $results = \Pimcore::getEventManager()->trigger("admin.login.login.lostpassword", $this, [
+                                "user" => $user
+                            ]);
+                            
+                            if ($results->count() === 0) { // no event has been triggered
+                                $mail = Tool::getMail([$user->getEmail()], "Pimcore lost password service");
+                                $mail->setIgnoreDebugMode(true);
+                                $mail->setBodyText("Login to pimcore and change your password using the following link. This temporary login link will expire in 30 minutes: \r\n\r\n" . $loginUrl);
+                                $mail->send();
+                            }
                             $this->view->success = true;
                         } catch (\Exception $e) {
                             $this->view->error = "could not send email";
