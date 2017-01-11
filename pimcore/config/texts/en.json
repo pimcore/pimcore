@@ -6095,5 +6095,9 @@
     {
         "term": "add_object_mbx_title",
         "definition": "Add object of type "
+    },
+    {
+        "term": "force_resize",
+        "definition": "Force resize"
     }
 ]

@@ -439,7 +439,7 @@ class Imagick extends Adapter
      * @param  bool $forceResize
      * @return $this
      */
-    public function frame($width, $height, $forceResize)
+    public function frame($width, $height, $forceResize = false)
     {
         $this->preModify();
 

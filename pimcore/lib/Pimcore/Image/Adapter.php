@@ -193,7 +193,9 @@ abstract class Adapter
      */
     public function cover($width, $height, $orientation = "center", $forceResize = false)
     {
-        if (empty($orientation)) $orientation = "center"; // if not set (from GUI for instance) - default value in getByLegacyConfig method of Config object too
+        if (empty($orientation)) {
+            $orientation = "center"; // if not set (from GUI for instance) - default value in getByLegacyConfig method of Config object too
+        }
         $ratio = $this->getWidth() / $this->getHeight();
 
         if (($width / $height) > $ratio) {
