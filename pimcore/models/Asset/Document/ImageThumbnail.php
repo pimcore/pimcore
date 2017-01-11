@@ -91,6 +91,7 @@ class ImageThumbnail
     {
         $fsPath = $this->getFileSystemPath();
         $path = str_replace(PIMCORE_DOCUMENT_ROOT, "", $fsPath);
+        $path = urlencode_ignore_slash($path);
 
         $results = \Pimcore::getEventManager()->trigger("frontend.path.asset.document.image-thumbnail", $this, [
             "filesystemPath" => $fsPath,

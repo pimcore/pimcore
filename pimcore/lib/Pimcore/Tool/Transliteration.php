@@ -39,10 +39,17 @@ class Transliteration
         }
 
         $value = self::_transliterationProcess($value, "~", $language);
-        
+
+        $value = trim($value);
+
         // then use iconv
-        $value = trim(iconv("utf-8", "ASCII//IGNORE//TRANSLIT", $value));
-        
+        $result = iconv("utf-8", "ASCII//IGNORE//TRANSLIT", $value);
+        if (empty($result)) {
+            // TRANSLIT doesn't work in musl's iconv, see #859.
+            $result = iconv("utf-8", "ASCII//IGNORE", $value);
+        }
+        $value = $result;
+
         return $value;
     }
 

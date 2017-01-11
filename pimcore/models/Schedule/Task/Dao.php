@@ -18,6 +18,9 @@ namespace Pimcore\Model\Schedule\Task;
 
 use Pimcore\Model;
 
+/**
+ * @property \Pimcore\Model\Schedule\Task $model
+ */
 class Dao extends Model\Dao\AbstractDao
 {
 

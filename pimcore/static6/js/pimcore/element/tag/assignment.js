@@ -41,8 +41,6 @@ pimcore.element.tag.assignment = Class.create({
                 ]
             });
 
-            gridStore.load();
-
             var tree = new pimcore.element.tag.tree();
             tree.setAllowAdd(true);
             tree.setAllowDelete(false);
@@ -140,8 +138,12 @@ pimcore.element.tag.assignment = Class.create({
                 region: "center",
                 iconCls: "pimcore_icon_element_tags",
                 layout: 'border',
-                items: [gridPanel, treePanel]
-
+                items: [gridPanel, treePanel],
+                listeners: {
+                    activate: function () {
+                        gridStore.load();
+                    }
+                }
             });
         }
 

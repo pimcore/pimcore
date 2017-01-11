@@ -19,6 +19,9 @@ namespace Pimcore\Model\Property\Predefined\Listing;
 use Pimcore\Model;
 use Pimcore\Model\Property;
 
+/**
+ * @property \Pimcore\Model\Property\Predefined\Listing $model
+ */
 class Dao extends Model\Dao\PhpArrayTable
 {
 

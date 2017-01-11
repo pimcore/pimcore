@@ -18,6 +18,9 @@ namespace Pimcore\Model\Document\DocType\Listing;
 
 use Pimcore\Model;
 
+/**
+ * @property \Pimcore\Model\Document\DocType\Listing $model
+ */
 class Dao extends Model\Dao\PhpArrayTable
 {
 

@@ -18,6 +18,9 @@ namespace Pimcore\Model\User;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\User\AbstractUser\Dao getDao()
+ */
 class AbstractUser extends Model\AbstractModel
 {
 
@@ -161,6 +164,29 @@ class AbstractUser extends Model\AbstractModel
     public function getType()
     {
         return $this->type;
+    }
+
+    /**
+     * @return $this
+     * @throws \Exception
+     */
+    public function save()
+    {
+        $this->beginTransaction();
+        try {
+            if (!$this->getId()) {
+                $this->getDao()->create();
+            }
+
+            $this->update();
+
+            $this->commit();
+        } catch (\Exception $e) {
+            $this->rollBack();
+            throw $e;
+        }
+
+        return $this;
     }
 
     /**

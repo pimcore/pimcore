@@ -18,6 +18,9 @@ namespace Pimcore\Model\Document\Printcontainer;
 
 use \Pimcore\Model\Document;
 
+/**
+ * @property \Pimcore\Model\Document\Printcontainer $model
+ */
 class Dao extends Document\PrintAbstract\Dao
 {
     public function getLastedChildModificationDate()

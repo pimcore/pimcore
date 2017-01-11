@@ -20,6 +20,9 @@ use Pimcore\Model\Object;
 use Pimcore\Model\Search;
 use Pimcore\Logger;
 
+/**
+ * @property \Pimcore\Model\Search\Backend\Data\Listing $model
+ */
 class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
 {
 

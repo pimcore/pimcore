@@ -129,7 +129,7 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
     public function getValidFilenameAction()
     {
         $this->_helper->json([
-            "filename" => File::getValidFilename($this->getParam("value"))
+            "filename" => \Pimcore\Model\Element\Service::getValidKey($this->getParam("value"), $this->getParam("type"))
         ]);
     }
 

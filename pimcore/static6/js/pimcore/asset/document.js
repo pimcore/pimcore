@@ -22,11 +22,17 @@ pimcore.asset.document = Class.create(pimcore.asset.asset, {
 
         pimcore.plugin.broker.fireEvent("preOpenAsset", this, "document");
 
+        var user = pimcore.globalmanager.get("user");
+
         this.properties = new pimcore.element.properties(this, "asset");
         this.versions = new pimcore.asset.versions(this);
         this.scheduler = new pimcore.element.scheduler(this, "asset");
         this.dependencies = new pimcore.element.dependencies(this, "asset");
-        this.notes = new pimcore.element.notes(this, "asset");
+
+        if (user.isAllowed("notes_events")) {
+            this.notes = new pimcore.element.notes(this, "asset");
+        }
+
         this.tagAssignment = new pimcore.element.tag.assignment(this, "asset");
         this.metadata = new pimcore.asset.metadata(this);
 
@@ -36,6 +42,7 @@ pimcore.asset.document = Class.create(pimcore.asset.asset, {
     getTabPanel: function () {
 
         var items = [];
+        var user = pimcore.globalmanager.get("user");
 
         items.push(this.getEditPanel());
 
@@ -55,11 +62,10 @@ pimcore.asset.document = Class.create(pimcore.asset.asset, {
 
         items.push(this.dependencies.getLayout());
 
-        if (this.isAllowed("settings")) {
+        if (user.isAllowed("notes_events")) {
             items.push(this.notes.getLayout());
         }
 
-        var user = pimcore.globalmanager.get("user");
         if (user.isAllowed("tags_assignment")) {
             items.push(this.tagAssignment.getLayout());
         }
@@ -105,8 +111,8 @@ pimcore.asset.document = Class.create(pimcore.asset.asset, {
 
     hasNativePDFViewer: function() {
 
-        if(Ext.isChrome || Ext.isGecko) {
-            // Firefox and Chrome have native support, no need to further test anything
+        if(Ext.isChrome || Ext.isGecko || Ext.isSafari) {
+            // Firefox, Chrome and Safari have native support, no need to further test anything
             return true;
         }
 

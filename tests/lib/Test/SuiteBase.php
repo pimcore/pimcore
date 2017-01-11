@@ -11,76 +11,70 @@ class Test_SuiteBase extends PHPUnit_Framework_TestSuite
     protected function setUp()
     {
         // turn off frontend mode by default
-        Object_Abstract::setHideUnpublished(false);
+        \Pimcore\Model\Object\AbstractObject::setHideUnpublished(false);
 
 
         $collectionName = "unittestfieldcollection";
         try {
-            Object_Fieldcollection_Definition::getByKey($collectionName);
+            \Pimcore\Model\Object\Fieldcollection\Definition::getByKey($collectionName);
         } catch (Exception $e) {
-            $fieldCollection = new Object_Fieldcollection_Definition();
+            $fieldCollection = new \Pimcore\Model\Object\Fieldcollection\Definition();
             $fieldCollection->setKey("$collectionName");
 
-            $conf = new Zend_Config_Xml(TESTS_PATH . "/resources/objects/fieldcollection-import.xml");
-            $importData = $conf->toArray();
+            $json = file_get_contents(TESTS_PATH . "/resources/objects/fieldcollection-import.json");
 
-            $layout = Object_Class_Service::generateLayoutTreeFromArray($importData["layoutDefinitions"]);
-            $fieldCollection->setLayoutDefinitions($layout);
-            $fieldCollection->save();
+            $collection = new \Pimcore\Model\Object\Fieldcollection\Definition();
+            $collection->setKey($collectionName);
+
+            \Pimcore\Model\Object\ClassDefinition\Service::importFieldCollectionFromJson($collection, $json);
         }
 
-        $unittestClass = Object_Class::getByName("unittest");
-        if (!Object_Class::getByName("unittest")) {
-            $conf = new Zend_Config_Xml(TESTS_PATH . "/resources/objects/class-import.xml");
-            $importData = $conf->toArray();
+        $unittestClass = \Pimcore\Model\Object\ClassDefinition::getByName("unittest");
+        if (!\Pimcore\Model\Object\ClassDefinition::getByName("unittest")) {
+            $json = file_get_contents(TESTS_PATH . "/resources/objects/class-import.json");
 
-            $layout = Object_Class_Service::generateLayoutTreeFromArray($importData["layoutDefinitions"]);
-
-            $class = Object_Class::create();
+            $class = new \Pimcore\Model\Object\ClassDefinition();
             $class->setName("unittest");
             $class->setUserOwner(1);
+            \Pimcore\Model\Object\ClassDefinition\Service::importClassDefinitionFromJson($class, $json);
             $class->save();
 
             $id = $class->getId();
-            $class = Object_Class::getById($id);
 
-            $class->setLayoutDefinitions($layout);
+            $class = \Pimcore\Model\Object\ClassDefinition::getById($id);
+            $class->setUserModification(1);
+            $class->setModificationDate(time());
 
             $fd = $class->getFieldDefinition("objectswithmetadata");
             if ($fd) {
                 $fd->setAllowedClassId($class->getId());
             }
 
-            $class->setUserModification(1);
-            $class->setModificationDate(time());
-
             $class->save();
+
             $unittestClass = $class;
         }
 
-        if (!Object_Class::getByName("allfields")) {
-            $conf = new Zend_Config_Xml(TESTS_PATH . "/resources/objects/class-allfields.xml");
-            $importData = $conf->toArray();
+        if (!\Pimcore\Model\Object\ClassDefinition::getByName("allfields")) {
+            $json = file_get_contents(TESTS_PATH . "/resources/objects/class-allfields.json");
 
-            $layout = Object_Class_Service::generateLayoutTreeFromArray($importData["layoutDefinitions"]);
-
-            $class = Object_Class::create();
+            $class = new \Pimcore\Model\Object\ClassDefinition();
             $class->setName("allfields");
             $class->setUserOwner(1);
+            \Pimcore\Model\Object\ClassDefinition\Service::importClassDefinitionFromJson($class, $json);
             $class->save();
 
-            $id = $class->getId();
-            $class = Object_Class::getById($id);
 
-            $class->setLayoutDefinitions($layout);
+            $id = $class->getId();
+
+            $class = \Pimcore\Model\Object\ClassDefinition::getById($id);
+            $class->setUserModification(1);
+            $class->setModificationDate(time());
 
             $fd = $class->getFieldDefinition("objectswithmetadata");
             if ($fd) {
                 $fd->setAllowedClassId($class->getId());
             }
-
-            $class->setUserModification(1);
-            $class->setModificationDate(time());
 
             $class->save();
         }
@@ -88,30 +82,30 @@ class Test_SuiteBase extends PHPUnit_Framework_TestSuite
         $brickname = "unittestBrick";
 
         try {
-            Object_Objectbrick_Definition::getByKey($brickname);
+            \Pimcore\Model\Object\Objectbrick\Definition::getByKey($brickname);
         } catch (Exception $e) {
-            $objectBrick = new Object_Objectbrick_Definition();
+            $objectBrick = new \Pimcore\Model\Object\Objectbrick\Definition();
             $objectBrick->setKey($brickname);
 
-            $conf = new Zend_Config_Xml(TESTS_PATH . "/resources/objects/brick-import.xml");
-            $importData = $conf->toArray();
-
-            $layout = Object_Class_Service::generateLayoutTreeFromArray($importData["layoutDefinitions"]);
-            $objectBrick->setLayoutDefinitions($layout);
-            $clDef = $importData["classDefinitions"];
-            $newClassDef = ["classname" => $unittestClass->getId(),
-                            "fieldname" => $clDef["fieldname"]];
-
-
-            $objectBrick->setClassDefinitions([
-                    $newClassDef]
-
-            );
+            $json = file_get_contents(TESTS_PATH . "/resources/objects/brick-import.json");
             try {
-                $objectBrick->save();
-            } catch (Exception $e) {
-                throw $e;
+                \Pimcore\Model\Object\ClassDefinition\Service::importObjectBrickFromJson($objectBrick, $json);
+            } catch (\Exception $e) {
             }
+
+
+            $importData = json_decode($json, true);
+
+            $clDef = $importData["classDefinitions"][0];
+
+            $newClassDef = ["classname" => $unittestClass->getId(),
+                            "fieldname" => $clDef["fieldname"]
+            ]
+
+            ;
+
+            $objectBrick->setClassDefinitions([$newClassDef]);
+            $objectBrick->save();
         }
     }
 

@@ -18,6 +18,9 @@ namespace Pimcore\Model\Tool\Email;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\Tool\Email\Blacklist\Dao getDao()
+ */
 class Blacklist extends Model\AbstractModel
 {
 

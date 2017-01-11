@@ -167,16 +167,17 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
     }
 
 
-    protected function populateChildNodes($node, &$currentList)
+    protected function populateChildNodes($node, &$currentList, $roleMode)
     {
         $currentUser = \Pimcore\Tool\Admin::getCurrentUser();
-        $list = new User\Listing();
+
+        $list = $roleMode ? new User\Role\Listing() : new User\Listing();
         $list->setCondition("parentId = ?", $node->getId());
         $list->setOrder("ASC");
         $list->setOrderKey("name");
         $list->load();
 
-        $childList = $list->getUsers();
+        $childList = $roleMode ? $list->getRoles() : $list->getUsers();
         if (is_array($childList)) {
             foreach ($childList as $user) {
                 if ($user->getId() == $currentUser->getId()) {
@@ -184,7 +185,7 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
                 }
                 if ($user->getId() && $currentUser->getId() && $user->getName() != "system") {
                     $currentList[] = $user;
-                    $this->populateChildNodes($user, $currentList);
+                    $this->populateChildNodes($user, $currentList, $roleMode);
                 }
             }
         }
@@ -201,9 +202,9 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
         if (($user instanceof User\Folder && !$this->getUser()->isAdmin()) || ($user instanceof User && $user->isAdmin() && !$this->getUser()->isAdmin())) {
             throw new \Exception("You are not allowed to delete this user");
         } else {
-            if ($user instanceof User\Folder) {
+            if ($user instanceof User\Role\Folder) {
                 $list = [$user];
-                $this->populateChildNodes($user, $list);
+                $this->populateChildNodes($user, $list, $user instanceof User\Role\Folder);
                 $listCount = count($list);
                 for ($i = $listCount - 1; $i >= 0; $i--) {
                     // iterate over the list from the so that nothing can get "lost"
@@ -211,7 +212,9 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
                     $user->delete();
                 }
             } else {
-                $user->delete();
+                if ($user->getId()) {
+                    $user->delete();
+                }
             }
         }
 
@@ -370,6 +373,7 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
             "permissions" => $user->generatePermissionList(),
             "availablePermissions" => $availableUserPermissions,
             "availablePerspectives" => $availablePerspectives,
+            "validLanguages" => Tool::getValidLanguages(),
             "objectDependencies" => [
                 "hasHidden" => $hasHidden,
                 "dependencies" => $userObjectData
@@ -567,7 +571,8 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
             "classes" => $role->getClasses(),
             "docTypes" => $role->getDocTypes(),
             "availablePermissions" => $availableUserPermissions,
-            "availablePerspectives" => $availablePerspectives
+            "availablePerspectives" => $availablePerspectives,
+            "validLanguages" => Tool::getValidLanguages()
         ]);
     }
 

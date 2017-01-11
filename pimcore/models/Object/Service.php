@@ -16,11 +16,14 @@
 
 namespace Pimcore\Model\Object;
 
+use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Admin as AdminTool;
-use Pimcore\Logger;
 
+/**
+ * @method \Pimcore\Model\Element\Dao getDao()
+ */
 class Service extends Model\Element\Service
 {
 
@@ -33,6 +36,13 @@ class Service extends Model\Element\Service
      * @var Model\User
      */
     protected $_user;
+
+    /**
+     * System fields used by filter conditions
+     *
+     * @var array
+     */
+    protected static $systemFields = ["o_path", "o_key", "o_id", "o_published", "o_creationDate", "o_modificationDate", "o_fullpath"];
 
     /**
      * @param  Model\User $user
@@ -131,6 +141,11 @@ class Service extends Model\Element\Service
 
         $this->updateChilds($target, $new);
 
+        // triggers actions after the complete document cloning
+        \Pimcore::getEventManager()->trigger('object.postCopy', $new, [
+            'base_element' => $source // the element used to make a copy
+        ]);
+
         return $new;
     }
 
@@ -163,6 +178,11 @@ class Service extends Model\Element\Service
         $new->save();
 
         $this->updateChilds($target, $new);
+
+        // triggers actions after the complete object cloning
+        \Pimcore::getEventManager()->trigger('object.postCopy', $new, [
+            'base_element' => $source // the element used to make a copy
+        ]);
 
         return $new;
     }
@@ -662,7 +682,7 @@ class Service extends Model\Element\Service
      */
     public static function getFilterCondition($filterJson, $class)
     {
-        $systemFields = ["o_path", "o_key", "o_id", "o_published", "o_creationDate", "o_modificationDate", "o_fullpath"];
+        $systemFields = self::getSystemFields();
 
         // create filter condition
         $conditionPartsFilters = [];
@@ -768,7 +788,13 @@ class Service extends Model\Element\Service
                     if ($filterField == "fullpath") {
                         $conditionPartsFilters[] = "concat(o_path, o_key) " . $operator . " " . $db->quote("%" . $filter["value"] . "%");
                     } else {
-                        $conditionPartsFilters[] = "`o_" . $filterField . "` " . $operator . " " . $db->quote($filter["value"]);
+                        if ($filter['type'] == 'date' && $operator == '=') {
+                            //if the equal operator is chosen with the date type, condition has to be changed
+                            $maxTime = $filter['value'] + (86400 - 1); //specifies the top point of the range used in the condition
+                            $conditionPartsFilters[] = "`o_" . $filterField . "` BETWEEN " . $db->quote($filter["value"]) . " AND " . $db->quote($maxTime);
+                        } else {
+                            $conditionPartsFilters[] = "`o_" . $filterField . "` " . $operator . " " . $db->quote($filter["value"]);
+                        }
                     }
                 }
             }
@@ -1281,7 +1307,7 @@ class Service extends Model\Element\Service
     {
         $list = new Listing();
         $list->setUnpublished(true);
-        $key = \Pimcore\File::getValidFilename($item->getKey());
+        $key = Element\Service::getValidKey($item->getKey(), "object");
         if (!$key) {
             throw new \Exception("No item key set.");
         }
@@ -1308,21 +1334,22 @@ class Service extends Model\Element\Service
         return $key;
     }
 
-
     /** Enriches the layout definition before it is returned to the admin interface.
      * @param $layout
+     * @param $object Concrete
+     * @param array $context additional contextual data
      */
-    public static function enrichLayoutDefinition(&$layout, $object = null)
+    public static function enrichLayoutDefinition(&$layout, $object = null, $context = [])
     {
         if (method_exists($layout, "enrichLayoutDefinition")) {
-            $layout->enrichLayoutDefinition($object);
+            $layout->enrichLayoutDefinition($object, $context);
         }
 
         if (method_exists($layout, "getChilds")) {
             $children = $layout->getChilds();
             if (is_array($children)) {
                 foreach ($children as $child) {
-                    self::enrichLayoutDefinition($child, $object);
+                    self::enrichLayoutDefinition($child, $object, $context);
                 }
             }
         }
@@ -1468,5 +1495,13 @@ class Service extends Model\Element\Service
                 }
             });
         }
+    }
+
+    /**
+     * @return array
+     */
+    public static function getSystemFields()
+    {
+        return self::$systemFields;
     }
 }

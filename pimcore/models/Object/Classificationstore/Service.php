@@ -57,6 +57,10 @@ class Service
 
         $dataDefinition->setValues($definition);
 
+        if (method_exists($className, "__set_state")) {
+            $dataDefinition = $className::__set_state($dataDefinition);
+        }
+
         return $dataDefinition;
     }
 }

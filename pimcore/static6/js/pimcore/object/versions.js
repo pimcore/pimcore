@@ -70,10 +70,17 @@ pimcore.object.versions = Class.create({
                 store: this.store,
                 plugins: [this.cellEditing],
                 columns: [
+                    {header: t("published"), width:50, sortable: false, dataIndex: 'date', renderer: function(d, metaData) {
+                        if (d == this.object.data.general.o_modificationDate) {
+                            metaData.tdCls = "pimcore_icon_publish";
+                        }
+                        return "";
+                    }.bind(this), editable: false},
                     {header: t("date"), width:150, sortable: true, dataIndex: 'date', renderer: function(d) {
                         var date = new Date(d * 1000);
                         return Ext.Date.format(date, "Y-m-d H:i:s");
                     }},
+                    {header: "ID", sortable: true, dataIndex: 'id', editable: false, width: 60},
                     {header: t("user"), sortable: true, dataIndex: 'name'},
                     {header: t("scheduled"), width:130, sortable: true, dataIndex: 'scheduled', renderer: function(d) {
                     	if (d != null){
@@ -85,17 +92,9 @@ pimcore.object.versions = Class.create({
                 ],
                 stripeRows: true,
                 width: 450,
-                title: t('available_versions'),
+                title: t('available_versions') + " (" + t("press_crtl_and_select_to_compare") + ")",
                 region: "west",
                 split: true,
-                viewConfig: {
-                    getRowClass: function(record, rowIndex, rp, ds) {
-                        if (record.data.date == this.object.data.general.o_modificationDate) {
-                            return "version_published";
-                        }
-                        return "";
-                    }.bind(this)
-                },
                 selModel: new Ext.selection.RowModel({
                     mode: 'MULTI'
                 })
@@ -223,7 +222,7 @@ pimcore.object.versions = Class.create({
             url: "/admin/object/publish-version",
             params: {id: versionId},
             success: function(response) {
-                this.object.reload.bind(this.object);
+                this.object.reload();
 
                 var rdata = Ext.decode(response.responseText);
                 if (rdata && rdata.success) {

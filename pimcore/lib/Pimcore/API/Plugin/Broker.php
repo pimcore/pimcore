@@ -28,13 +28,6 @@ class Broker
     protected $_plugins = [];
 
     /**
-     * Array of system compontents which need to be notified of hooks
-     *
-     * @var array
-     */
-    protected $_systemModules = [];
-
-    /**
      * @return mixed|Broker
      * @throws \Zend_Exception
      */
@@ -52,22 +45,6 @@ class Broker
 
         return $broker;
     }
-
-    /**
-     * @param $module
-     * @throws \Exception
-     */
-    public function registerModule($module)
-    {
-        if (Tool::classExists($module)) {
-            $moduleInstance = new $module;
-            $moduleInstance->init();
-            $this->_systemModules[] = $moduleInstance;
-        } else {
-            throw new \Exception("unknown module [ $module ].");
-        }
-    }
-
 
     /**
      * @param AbstractPlugin $plugin
@@ -162,24 +139,6 @@ class Broker
     }
 
     /**
-     * Is a module of a particular class registered?
-     *
-     * @param  string $class
-     * @return bool
-     */
-    public function hasModule($class)
-    {
-        foreach ($this->_systemModules as $module) {
-            $type = get_class($module);
-            if ($class == $type) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
      * @param $class
      * @return array|bool
      */
@@ -214,27 +173,15 @@ class Broker
     }
 
     /**
-     * Retrieve all modules
-     *
-     * @return array
-     */
-    public function getModules()
-    {
-        return $this->_systemModules;
-    }
-
-    /**
      * Returns Plugins and Modules
      * @return array
      */
     public function getSystemComponents()
     {
-        $modules = (array)$this->getModules();
         $plugins = (array)$this->getPlugins();
 
-        return array_merge($modules, $plugins);
+        return $plugins;
     }
-
 
     /**
      *

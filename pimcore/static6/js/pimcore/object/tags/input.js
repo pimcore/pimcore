@@ -72,7 +72,8 @@ pimcore.object.tags.input = Class.create(pimcore.object.tags.abstract, {
         input.width += input.labelWidth;
 
         if(this.fieldConfig.columnLength) {
-            input.autoCreate = {tag: 'input', type: 'text', maxlength: this.fieldConfig.columnLength};
+            input.maxLength = this.fieldConfig.columnLength;
+            input.enforceMaxLength = true;
         }
 
         if(this.fieldConfig["regex"]) {

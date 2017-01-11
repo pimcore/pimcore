@@ -19,6 +19,9 @@ namespace Pimcore\Model\Tool\Tag;
 use Pimcore\Model;
 use Pimcore\Cache;
 
+/**
+ * @method \Pimcore\Model\Tool\Tag\Config\Dao getDao()
+ */
 class Config extends Model\AbstractModel
 {
 

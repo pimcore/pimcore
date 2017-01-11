@@ -25,11 +25,14 @@ pimcore.document.hardlink = Class.create(pimcore.document.document, {
     },
 
     init: function () {
+
+        var user = pimcore.globalmanager.get("user");
+
         if (this.isAllowed("properties")) {
             this.properties = new pimcore.document.properties(this, "document");
         }
 
-        if (this.isAllowed("settings")) {
+        if (user.isAllowed("notes_events")) {
             this.notes = new pimcore.element.notes(this, "document");
         }
 
@@ -225,6 +228,7 @@ pimcore.document.hardlink = Class.create(pimcore.document.document, {
     getTabPanel: function () {
 
         var items = [];
+        var user = pimcore.globalmanager.get("user");
 
         items.push(this.getLayoutForm());
 
@@ -234,11 +238,10 @@ pimcore.document.hardlink = Class.create(pimcore.document.document, {
 
         items.push(this.dependencies.getLayout());
 
-        if (this.isAllowed("settings")) {
+        if (user.isAllowed("notes_events")) {
             items.push(this.notes.getLayout());
         }
 
-        var user = pimcore.globalmanager.get("user");
         if (user.isAllowed("tags_assignment")) {
             items.push(this.tagAssignment.getLayout());
         }
@@ -293,7 +296,8 @@ pimcore.document.hardlink = Class.create(pimcore.document.document, {
             });
 
             this.panel = new Ext.form.FormPanel({
-                title: t('hardlink_properties'),
+                title: t('settings'),
+                iconCls: "pimcore_icon_settings",
                 autoHeight:true,
                 labelWidth: 120,
                 defaultType: 'textfield',

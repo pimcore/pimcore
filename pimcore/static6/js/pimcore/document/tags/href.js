@@ -301,6 +301,9 @@ pimcore.document.tags.href = Class.create(pimcore.document.tag, {
             this.data.path = item.fullpath;
 
             this.element.setValue(this.data.path);
+            if (this.options.reload) {
+                this.reloadDocument();
+            }
         }
     },
 

@@ -93,8 +93,8 @@ class Text
 
                         if ((isset($widthAttr[1]) && $widthAttr[1]) || (isset($heightAttr[1]) && $heightAttr[1])) {
                             $config = [
-                                "width" => intval($widthAttr[1]),
-                                "height" => intval($heightAttr[1])
+                                "width" => intval((isset($widthAttr[1]) ? $widthAttr[1] : null)),
+                                "height" => intval((isset($heightAttr[1]) ? $heightAttr[1] : null))
                             ];
                         }
 
@@ -212,11 +212,15 @@ class Text
 
     /**
      * @static
-     * @param $text
+     * @param string $text
      * @return array
      */
     public static function getElementsTagsInWysiwyg($text)
     {
+        if (!is_string($text) || strlen($text) < 1) {
+            return [];
+        }
+
         $hash = "elements_raw_wysiwyg_text_" . md5($text);
         if (\Zend_Registry::isRegistered($hash)) {
             return \Zend_Registry::get($hash);

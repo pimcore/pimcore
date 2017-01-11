@@ -39,44 +39,63 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
         }
 
 
-        this.longitude.on('keyup', this.updatePreviewImage.bind(this));
-        this.latitude.on('keyup', this.updatePreviewImage.bind(this));
+        if(this.isMapsAvailable()) {
+            this.longitude.on('keyup', this.updatePreviewImage.bind(this));
+            this.latitude.on('keyup', this.updatePreviewImage.bind(this));
 
-        this.component = new Ext.Panel({
-            title: this.fieldConfig.title,
-            border: true,
-            style: "margin-bottom: 10px",
-            height: 370,
-            width: 650,
-            componentCls: "object_field object_geo_field",
-            html: '<div id="google_maps_container_' + this.mapImageID + '" align="center"></div>',
-            bbar: [
-                t('latitude'),
-                this.latitude,
-                '-',
-                t('longitude'),
-                this.longitude,
-                '-', {
-                    xtype: 'button',
-                    text: t('empty'),
-                    iconCls: "pimcore_icon_empty",
-                    handler: function () {
-                        this.latitude.setValue(null);
-                        this.longitude.setValue(null);
-                        this.updatePreviewImage();
-                    }.bind(this)
-                }, '->', {
-                    xtype: 'button',
-                    text: t('open_search_editor'),
-                    iconCls: "pimcore_icon_search",
-                    handler: this.openPicker.bind(this)
-                }
-            ]
-        });
+            this.component = new Ext.Panel({
+                title: this.fieldConfig.title,
+                border: true,
+                style: "margin-bottom: 10px",
+                height: 370,
+                width: 650,
+                componentCls: "object_field object_geo_field",
+                html: '<div id="google_maps_container_' + this.mapImageID + '" align="center"></div>',
+                bbar: [
+                    t('latitude'),
+                    this.latitude,
+                    '-',
+                    t('longitude'),
+                    this.longitude,
+                    '-', {
+                        xtype: 'button',
+                        text: t('empty'),
+                        iconCls: "pimcore_icon_empty",
+                        handler: function () {
+                            this.latitude.setValue(null);
+                            this.longitude.setValue(null);
+                            this.updatePreviewImage();
+                        }.bind(this)
+                    }, '->', {
+                        xtype: 'button',
+                        text: t('open_search_editor'),
+                        iconCls: "pimcore_icon_search",
+                        handler: this.openPicker.bind(this)
+                    }
+                ]
+            });
 
-        this.component.on('afterrender', function () {
-            this.updatePreviewImage();
-        }.bind(this));
+            this.component.on('afterrender', function () {
+                this.updatePreviewImage();
+            }.bind(this));
+        } else {
+
+            this.longitude.setFieldLabel(t("longitude"));
+            this.latitude.setFieldLabel(t("latitude"));
+            this.longitude.setWidth(350);
+            this.latitude.setWidth(350);
+
+            this.component = new Ext.Panel({
+                title: this.fieldConfig.title,
+                border: true,
+                style: "margin-bottom: 10px",
+                bodyStyle: "padding: 10px;",
+                height: 370,
+                width: 650,
+                componentCls: "object_field object_geo_field",
+                items: [this.latitude, this.longitude]
+            });
+        }
 
         return this.component;
     },
@@ -319,6 +338,10 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
             return false;
         }
 
-        return this.longitude.isDirty() || this.latitude.isDirty();
+        if(this.longitude && this.latitude) {
+            return this.longitude.isDirty() || this.latitude.isDirty();
+        }
+
+        return false;
     }
 });

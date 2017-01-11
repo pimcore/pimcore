@@ -73,10 +73,8 @@ abstract class Element extends Admin
                     }
 
                     $versions = $element->getVersions();
-                    $versions = object2array($versions);
+                    $versions = Model\Element\Service::getSafeVersionInfo($versions);
                     foreach ($versions as &$version) {
-                        unset($version["user"]["password"]); // remove password hash
-
                         $version["scheduled"] = null;
                         if (array_key_exists($version["id"], $schedules)) {
                             $version["scheduled"] = $schedules[$version["id"]];

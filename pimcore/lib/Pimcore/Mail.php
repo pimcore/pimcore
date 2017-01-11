@@ -24,6 +24,11 @@ class Mail extends \Zend_Mail
 {
 
     /**
+     * @var bool
+     */
+    protected static $forceDebugMode = false;
+
+    /**
      * Contains the debug email addresses from settings -> system -> Email Settings -> Debug email addresses
      *
      * @var array
@@ -78,7 +83,6 @@ class Mail extends \Zend_Mail
      * @var string
      */
     protected $html2textOptions = "";
-
 
     /**
      * use html2text from mbayer if it is installed (http://www.mbayer.de/html2text/)
@@ -496,6 +500,16 @@ class Mail extends \Zend_Mail
     }
 
     /**
+     * Forces the debug mode - useful for cli-script which should not send emails to recipients
+     *
+     * @param bool $value
+     */
+    public static function setForceDebugMode($value)
+    {
+        self::$forceDebugMode = $value;
+    }
+
+    /**
      * Deletes parameters which were set with "setParams" or "setParam"
      *
      * @param array $params
@@ -553,7 +567,9 @@ class Mail extends \Zend_Mail
                     $this->addBcc($bcc);
                 }
             }
+        }
 
+        if ($document instanceof Model\Document\Email || $document instanceof Model\Document\Newsletter) {
             //if more than one "from" email address is defined -> we set the first one
             $fromArray = $document->getFromAsArray();
             if (!empty($fromArray)) {
@@ -585,6 +601,12 @@ class Mail extends \Zend_Mail
      */
     public function setFrom($email, $name = null)
     {
+        // mitigate "pwnscriptum" attack
+        // see https://framework.zend.com/security/advisory/ZF2016-04 for ZF2+ fix
+        if (preg_match('/\\\"/', $email)) {
+            throw new \RuntimeException("Potential code injection in From header");
+        }
+
         $this->_from = null;
         $this->clearHeader("From");
 
@@ -629,7 +651,7 @@ class Mail extends \Zend_Mail
             $this->setBodyText($bodyTextRendered);
         }
 
-        if ($this->ignoreDebugMode == false) {
+        if ($this->ignoreDebugMode == false || static::$forceDebugMode == true) {
             $this->checkDebugMode();
         }
 
@@ -686,7 +708,7 @@ class Mail extends \Zend_Mail
      */
     protected function checkDebugMode()
     {
-        if (\Pimcore::inDebugMode()) {
+        if (\Pimcore::inDebugMode() || static::$forceDebugMode) {
             if (empty(self::$debugEmailAddresses)) {
                 throw new \Exception('No valid debug email address given in "Settings" -> "System" -> "Email Settings"');
             }

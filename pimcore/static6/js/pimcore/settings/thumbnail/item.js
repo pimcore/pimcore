@@ -90,7 +90,7 @@ pimcore.settings.thumbnail.item = Class.create({
                 value: this.data.description,
                 fieldLabel: t("description"),
                 width: 450,
-                height: 100
+                height: 50
             }, {
                 xtype: "combo",
                 name: "format",
@@ -98,22 +98,48 @@ pimcore.settings.thumbnail.item = Class.create({
                 value: this.data.format,
                 triggerAction: 'all',
                 editable: false,
-                store: [["SOURCE", "Auto (Web-optimized - recommended)"], ["PNG","PNG"],["GIF","GIF"], ["JPEG","JPEG"], ["PJPEG","JPEG (progressive)"],["TIFF","TIFF"],
+                store: [["SOURCE", "Auto (Web-optimized - recommended)"], ["ORIGINAL","ORIGINAL"], ["PNG","PNG"],["GIF","GIF"], ["JPEG","JPEG"], ["PJPEG","JPEG (progressive)"],["TIFF","TIFF"],
                         ["PRINT","Print (PNG,JPG,SVG,TIFF)"]],
                 width: 450
             }, {
-                xtype: "numberfield",
-                name: "quality",
-                value: this.data.quality,
-                fieldLabel: t("quality"),
-                width: 210
-            }, {
-                xtype: "numberfield",
-                name: "highResolution",
-                value: this.data.highResolution,
-                fieldLabel: t("high_resolution") + "<br /><small>(2x Retina, 3.2x Print, ...)</small>",
-                width: 210,
-                decimalPrecision: 1
+                xtype: "fieldset",
+                title: t("advanced_settings"),
+                collapsible: true,
+                collapsed: true,
+                items: [{
+                    xtype: "numberfield",
+                    name: "quality",
+                    value: this.data.quality,
+                    fieldLabel: t("quality") + " (JPEG)",
+                    width: 210
+                }, {
+                    xtype: "numberfield",
+                    name: "highResolution",
+                    value: this.data.highResolution,
+                    fieldLabel: t("high_resolution"),
+                    width: 210,
+                    decimalPrecision: 1
+                }, {
+                    xtype: "container",
+                    html: "<small>(" + t("high_resolution_info_text") + ")</small>",
+                    style: "margin-bottom: 20px"
+                }, {
+                    xtype: "checkbox",
+                    name: "preserveColor",
+                    labelWidth: 350,
+                    fieldLabel: t("preserve_color") + " (Imagick, ORIGINAL)",
+                    checked: this.data.preserveColor
+                }, {
+                    xtype: "checkbox",
+                    name: "preserveMetaData",
+                    labelWidth: 350,
+                    fieldLabel: t("preserve_meta_data") + " (Imagick, ORIGINAL)",
+                    checked: this.data.preserveMetaData
+                }, {
+                    xtype: "container",
+                    html: "<small>(" + t("thumbnail_preserve_info_text") + ")</small>",
+                    style: "margin-bottom: 20px"
+                }]
             }]
         });
 
@@ -804,7 +830,7 @@ pimcore.settings.thumbnail.items = {
 
     itemSetBackgroundImage: function (panel, data, getName) {
 
-        var niceName = t("setbackgroundimage") + " (Imagick)";
+        var niceName = t("setbackgroundimage");
         if(typeof getName != "undefined" && getName) {
             return niceName;
         }
@@ -825,8 +851,17 @@ pimcore.settings.thumbnail.items = {
                 fieldLabel: t("path") + " <br />(rel. to doc-root)",
                 name: "path",
                 value: data.path,
-                width: 350
+                width: 450
             },{
+                xtype: "combo",
+                name: "mode",
+                fieldLabel: t("mode"),
+                value: data.mode,
+                triggerAction: 'all',
+                editable: false,
+                store: [["", "fit"], ["cropTopLeft","cropTopLeft"]],
+                width: 300
+            }, {
                 xtype: "hidden",
                 name: "type",
                 value: "setBackgroundImage"

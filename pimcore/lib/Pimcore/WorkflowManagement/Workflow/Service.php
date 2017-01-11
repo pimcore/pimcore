@@ -110,7 +110,15 @@ class Service
 
         if (is_array($noteData)) {
             foreach ($noteData as $row) {
-                $note->addData($row['key'], $row['type'], $row['value']);
+                if ($row['key'] === 'noteDate' && $row['type'] === 'date') {
+                    /**
+                     * @var \Pimcore\Date $date
+                     */
+                    $date = $row['value'];
+                    $note->setDate($date->getTimestamp());
+                } else {
+                    $note->addData($row['key'], $row['type'], $row['value']);
+                }
             }
         }
 

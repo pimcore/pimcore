@@ -18,6 +18,9 @@ namespace Pimcore\Model\Element;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\Element\Tag\Dao getDao()
+ */
 class Tag extends Model\AbstractModel
 {
 
@@ -55,7 +58,7 @@ class Tag extends Model\AbstractModel
     /**
      * @static
      * @param $id
-     * @return Pimcore\Model\Element\Tag
+     * @return Tag|null
      */
     public static function getById($id)
     {
@@ -131,6 +134,23 @@ class Tag extends Model\AbstractModel
     {
         $tag = new Tag();
         $tag->getDao()->batchAssignTagsToElement($cType, $cIds, $tagIds, $replace);
+    }
+
+    /**
+     * Retrieves all elements that have a specific tag or one of its child tags assigned
+     *
+     * @param Tag    $tag               The tag to search for
+     * @param string $type              The type of elements to search for: 'document', 'asset' or 'object'
+     * @param array  $subtypes          Filter by subtypes, eg. page, object, email, folder etc.
+     * @param array  $classNames        For objects only: filter by classnames
+     * @param bool   $considerChildTags Look for elements having one of $tag's children assigned
+     *
+     * @return array
+     */
+    public static function getElementsForTag(
+        Tag $tag, $type, array $subtypes = [], $classNames = [], $considerChildTags = false
+    ) {
+        return $tag->getDao()->getElementsForTag($tag, $type, $subtypes, $classNames, $considerChildTags);
     }
 
     public function save()

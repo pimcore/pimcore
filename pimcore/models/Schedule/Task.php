@@ -18,6 +18,9 @@ namespace Pimcore\Model\Schedule;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\Schedule\Task\Dao getDao()
+ */
 class Task extends Model\AbstractModel
 {
 

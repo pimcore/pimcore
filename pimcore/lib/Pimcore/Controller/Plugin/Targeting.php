@@ -227,14 +227,14 @@ class Targeting extends \Zend_Controller_Plugin_Abstract
     {
         foreach ($personas as $persona) {
             foreach ($persona->getConditions() as $condition) {
-                if ($condition['type'] == "geopoint") {
+                if ($condition['type'] == "geopoint" || $condition['type'] == "country") {
                     return true;
                 }
             }
         }
         foreach ($targets as $target) {
             foreach ($target->getConditions() as $condition) {
-                if ($condition['type'] == "geopoint") {
+                if ($condition['type'] == "geopoint" || $condition['type'] == "country") {
                     return true;
                 }
             }

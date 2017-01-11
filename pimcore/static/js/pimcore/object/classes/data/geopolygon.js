@@ -25,6 +25,8 @@ pimcore.object.classes.data.geopolygon = Class.create(pimcore.object.classes.dat
         this.availableSettingsFields = ['name','title','noteditable','invisible','style'];
 
         this.treeNode = treeNode;
+
+        this.checkGoogleMapsAPI();
     },
 
     getTypeName: function () {

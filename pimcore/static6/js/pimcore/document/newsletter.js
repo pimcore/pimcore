@@ -26,9 +26,10 @@ pimcore.document.newsletter = Class.create(pimcore.document.page_snippet, {
 
     init: function () {
 
+        var user = pimcore.globalmanager.get("user");
+
         this.edit = new pimcore.document.edit(this);
 
-        var user = pimcore.globalmanager.get("user");
         if (user.isAllowed("emails")) {
             this.logs = new pimcore.settings.email.log(this);
         }
@@ -36,6 +37,9 @@ pimcore.document.newsletter = Class.create(pimcore.document.page_snippet, {
         if (this.isAllowed("settings")) {
             this.settings = new pimcore.document.newsletters.settings(this);
             this.scheduler = new pimcore.element.scheduler(this, "document");
+        }
+
+        if (user.isAllowed("notes_events")) {
             this.notes = new pimcore.element.notes(this, "document");
         }
 
@@ -56,9 +60,10 @@ pimcore.document.newsletter = Class.create(pimcore.document.page_snippet, {
     },
 
     getTabPanel: function () {
-        var user = pimcore.globalmanager.get("user");
 
+        var user = pimcore.globalmanager.get("user");
         var items = [];
+
         items.push(this.edit.getLayout());
         items.push(this.preview.getLayout());
         if (this.isAllowed("settings")) {
@@ -85,7 +90,7 @@ pimcore.document.newsletter = Class.create(pimcore.document.page_snippet, {
         //     items.push(reportLayout);
         // }
 
-        if (this.isAllowed("settings")) {
+        if (user.isAllowed("notes_events")) {
             items.push(this.notes.getLayout());
         }
 

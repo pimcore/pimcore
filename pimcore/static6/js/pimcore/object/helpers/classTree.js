@@ -88,7 +88,7 @@ pimcore.object.helpers.classTree = Class.create({
                     if(data[keys[i]].nodeType == "object") {
                         baseNode.expand();
                     } else {
-                        baseNode.collapse();
+                        // baseNode.collapse();
                     }
                 }
             }

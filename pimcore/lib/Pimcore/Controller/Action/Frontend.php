@@ -130,11 +130,7 @@ abstract class Frontend extends Action
                 if (!Model\Staticroute::getCurrentRoute() && ($this->getDocument() instanceof Document\Page)) {
                     if (is_array($this->getDocument()->getMetaData())) {
                         foreach ($this->getDocument()->getMetaData() as $meta) {
-                            // only name
-                            if (!empty($meta["idName"]) && !empty($meta["idValue"]) && !empty($meta["contentValue"])) {
-                                $method = "append" . ucfirst($meta["idName"]);
-                                $this->view->headMeta()->$method($meta["idValue"], $meta["contentValue"]);
-                            }
+                            $this->view->headMeta()->addRaw($meta);
                         }
                     }
                 }
@@ -598,7 +594,10 @@ abstract class Frontend extends Action
 
                         exit;
                     } else {
-                        \Zend_Controller_Front::getInstance()->getPlugin("Pimcore\\Controller\\Plugin\\HttpErrorLog")->setCacheKey($cacheKey);
+                        $errorLogPlugin = \Zend_Controller_Front::getInstance()->getPlugin("Pimcore\\Controller\\Plugin\\HttpErrorLog");
+                        if ($errorLogPlugin) {
+                            $errorLogPlugin->setCacheKey($cacheKey);
+                        }
                         $document = \Zend_Registry::get("pimcore_error_document");
                         $this->setDocument($document);
                         $this->setParam("document", $document);

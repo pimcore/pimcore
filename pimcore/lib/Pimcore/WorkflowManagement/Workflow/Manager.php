@@ -354,11 +354,13 @@ class Manager
     {
         $additionalFields = $this->getWorkflow()->getAdditionalFieldsForAction($actionName, $this->getElementStatus());
 
-        foreach ($additionalFields as &$field) {
-            if ($field['fieldType'] === 'user') {
-                $userdata = new \Pimcore\Model\Object\ClassDefinition\Data\User();
-                $userdata->configureOptions();
-                $field['options'] = $userdata->getOptions();
+        if (is_array($additionalFields)) {
+            foreach ($additionalFields as &$field) {
+                if ($field['fieldType'] === 'user') {
+                    $userdata = new \Pimcore\Model\Object\ClassDefinition\Data\User();
+                    $userdata->configureOptions();
+                    $field['options'] = $userdata->getOptions();
+                }
             }
         }
 

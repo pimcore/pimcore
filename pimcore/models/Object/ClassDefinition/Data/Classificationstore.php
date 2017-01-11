@@ -19,10 +19,11 @@ namespace Pimcore\Model\Object\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\Object;
 use Pimcore\Tool;
-use RestImporter\IdMapper;
+use Pimcore\Model\Element;
 
 class Classificationstore extends Model\Object\ClassDefinition\Data
 {
+    use Element\ChildsCompatibilityTrait;
 
     /**
      * Static type of this element
@@ -102,9 +103,11 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
     /**
      * @var array
      */
-    private $fieldDefinitionsCache;
+    public $fieldDefinitionsCache;
 
-    /** @var  array */
+    /**
+     * @var array
+     */
     public $allowedGroupIds;
 
 
@@ -131,9 +134,10 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
             foreach ($groups as $groupId => &$keys) {
                 foreach ($keys as $keyId => &$keyValue) {
                     $keyConfig = Object\Classificationstore\DefinitionCache::get($keyId);
-                    $fd = Object\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
-
-                    $keyValue = $fd->getDataForEditmode($keyValue, $object, $params);
+                    if ($keyConfig->getEnabled()) {
+                        $fd = Object\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
+                        $keyValue = $fd->getDataForEditmode($keyValue, $object, $params);
+                    }
                 }
             }
         }
@@ -163,8 +167,6 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
             }
         }
 
-
-
         $result["activeGroups"] = $data->getActiveGroups();
         $result["groupCollectionMapping"] = $data->getGroupCollectionMappings();
 
@@ -190,16 +192,18 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
         foreach ($items  as $groupId => $keys) {
             foreach ($keys as $keyId => $languages) {
                 $keyConfig = Object\Classificationstore\DefinitionCache::get($keyId);
-                $fd = Object\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
+                if ($keyConfig->getEnabled()) {
+                    $fd = Object\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
 
 
-                foreach ($languages as $language => $value) {
-                    $fdata = $value;
-                    if (!isset($fieldData[$language][$groupId][$keyId]) || $fd->isEmpty($fieldData[$language][$groupId][$keyId])) {
-                        // never override existing data
-                        $fieldData[$language][$groupId][$keyId] = $fdata;
-                        if (!$fd->isEmpty($fdata)) {
-                            $metaData[$language][$groupId][$keyId] = ["inherited" => $level > 1, "objectid" => $object->getId()];
+                    foreach ($languages as $language => $value) {
+                        $fdata = $value;
+                        if (!isset($fieldData[$language][$groupId][$keyId]) || $fd->isEmpty($fieldData[$language][$groupId][$keyId])) {
+                            // never override existing data
+                            $fieldData[$language][$groupId][$keyId] = $fdata;
+                            if (!$fd->isEmpty($fdata)) {
+                                $metaData[$language][$groupId][$keyId] = ["inherited" => $level > 1, "objectid" => $object->getId()];
+                            }
                         }
                     }
                 }
@@ -538,18 +542,18 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
     /**
      * @return array
      */
-    public function getChilds()
+    public function getChildren()
     {
         return $this->childs;
     }
 
     /**
-     * @param array $childs
+     * @param array $children
      * @return $this
      */
-    public function setChilds($childs)
+    public function setChildren($children)
     {
-        $this->childs = $childs;
+        $this->childs = $children;
         $this->fieldDefinitionsCache = null;
 
         return $this;
@@ -558,7 +562,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
     /**
      * @return boolean
      */
-    public function hasChilds()
+    public function hasChildren()
     {
         if (is_array($this->childs) && count($this->childs) > 0) {
             return true;
@@ -1070,7 +1074,11 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
         return $activeGroups;
     }
 
-    public function enrichLayoutDefinition($object)
+    /** Override point for Enriching the layout definition before the layout is returned to the admin interface.
+     * @param $object Object\Concrete
+     * @param array $context additional contextual data
+     */
+    public function enrichLayoutDefinition($object, $context = [])
     {
         $groupCollectionMapping = $this->recursiveGetActiveGroupCollectionMapping($object);
 
@@ -1106,7 +1114,11 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
             $relation = $relation->load();
             /** @var  $key Object\Classificationstore\KeyGroupRelation */
             foreach ($relation as $key) {
+                if (!$key->isEnabled()) {
+                    continue;
+                }
                 $definition = \Pimcore\Model\Object\Classificationstore\Service::getFieldDefinitionFromKeyConfig($key);
+                $definition->setTooltip($definition->getName() . " - " . $key->getDescription());
 
                 if (method_exists($definition, "__wakeup")) {
                     $definition->__wakeup();

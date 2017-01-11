@@ -18,6 +18,9 @@ namespace Pimcore\Model\Document\Newsletter;
 
 use Pimcore\Model;
 
+/**
+ * @property \Pimcore\Model\Document\Newsletter $model
+ */
 class Dao extends Model\Document\PageSnippet\Dao
 {
 

@@ -111,7 +111,7 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
                 },
                 items: [
                     {header: 'ID', dataIndex: 'id', flex: 50},
-                    {header: t("path"), dataIndex: 'path', flex: 200},
+                    {header: t("reference"), dataIndex: 'path', flex: 200},
                     {header: t("type"), dataIndex: 'type', flex: 100},
                     {
                         xtype: 'actioncolumn',
@@ -182,7 +182,14 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
                 cls: "pimcore_force_auto_width"
             },
             autoHeight: autoHeight,
-            bodyCssClass: "pimcore_object_tag_objects"
+            bodyCssClass: "pimcore_object_tag_objects",
+            viewConfig: {
+                listeners: {
+                    refresh: function (gridview) {
+                        this.requestNicePathData(this.store.data);
+                    }.bind(this)
+                }
+            }
         });
 
         this.component.on("rowcontextmenu", this.onRowContextmenu);
@@ -334,11 +341,13 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
                             url: "/admin/element/lock-element",
                             params: {id: item.id, type: 'object'}
                         });
-                        this.store.add({
+                        var toBeRequested = new Ext.util.Collection();
+                        toBeRequested.add(this.store.add({
                             id: item.id,
                             path: item.fullpath,
                             type: item.classname
-                        });
+                        }));
+                        this.requestNicePathData(toBeRequested);
                     }
 
                 }.bind(this, item)
@@ -364,6 +373,7 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
 
     addDataFromSelector: function (items) {
         if (items.length > 0) {
+
             for (var i = 0; i < items.length; i++) {
                 var item = items[i];
 

@@ -60,9 +60,9 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
     public $_defaults = [];
 
     /**
-     * @var string
+     * @var array
      */
-    protected $nearestDocumentByPath;
+    protected $nearestDocumentByPath = [];
 
     /**
      * @return int
@@ -109,7 +109,7 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
         if ($config->general->http_auth) {
             $username = $config->general->http_auth->username;
             $password = $config->general->http_auth->password;
-            if ($username && $password) {
+            if ($username && $password && (!Tool::isFrontentRequestByAdmin() || !Tool\Authentication::authenticateSession())) {
                 $adapter = new \Zend_Auth_Adapter_Http([
                     "accept_schemes" => "basic",
                     "realm" => Tool::getHostname()
@@ -145,9 +145,7 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
 
 
         // test if there is a suitable redirect with override = all (=> priority = 99)
-        if (!$matchFound) {
-            $this->checkForRedirect($originalPath, true);
-        }
+        $this->checkForRedirect($originalPath, true);
 
         // do not allow requests including /index.php/ => SEO
         // this is after the first redirect check, to allow redirects in index.php?xxx
@@ -189,19 +187,7 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
         // check for direct definition of controller/action
         if (!empty($_REQUEST["controller"]) && !empty($_REQUEST["action"])) {
             $matchFound = true;
-            //$params["document"] = $this->getNearestDocumentByPath($path);
         }
-
-        // you can also call a page by it's ID /?pimcore_document=XXXX
-        if (!$matchFound) {
-            if (!empty($params["pimcore_document"]) || !empty($params["pdid"])) {
-                $doc = Document::getById($params["pimcore_document"] ? $params["pimcore_document"] : $params["pdid"]);
-                if ($doc instanceof Document) {
-                    $path = $doc->getFullPath();
-                }
-            }
-        }
-
 
         // test if there is a suitable page
         if (!$matchFound) {
@@ -281,12 +267,9 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
                                     }
                                 }
 
-                                if ($config->documents->allowcapitals) {
-                                    if ($config->documents->allowcapitals == "no") {
-                                        if (strtolower($redirectTargetUrl) != $redirectTargetUrl) {
-                                            $redirectTargetUrl = strtolower($redirectTargetUrl);
-                                        }
-                                    }
+                                // only allow the original key of a document to be the URL (lowercase/uppercase)
+                                if ($redirectTargetUrl != rawurldecode($document->getFullPath())) {
+                                    $redirectTargetUrl = $document->getFullPath();
                                 }
                             }
 
@@ -382,8 +365,11 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
      */
     protected function getNearestDocumentByPath($path, $ignoreHardlinks = false, $types = [])
     {
-        if ($this->nearestDocumentByPath instanceof Document) {
-            $document = $this->nearestDocumentByPath;
+        $cacheKey = $ignoreHardlinks . implode("-", $types);
+        $document = null;
+
+        if (isset($this->nearestDocumentByPath[$cacheKey])) {
+            $document = $this->nearestDocumentByPath[$cacheKey];
         } else {
             $pathes = [];
 
@@ -403,7 +389,7 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
             foreach ($pathes as $p) {
                 if ($document = Document::getByPath($p)) {
                     if (empty($types) || in_array($document->getType(), $types)) {
-                        $this->nearestDocumentByPath = $document;
+                        $this->nearestDocumentByPath[$cacheKey] = $document;
                         break;
                     }
                 } elseif (Site::isSiteRequest()) {
@@ -417,7 +403,7 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
                     $sitePrettyDocId = $documentService->getDocumentIdByPrettyUrlInSite($site, $originalPath);
                     if ($sitePrettyDocId) {
                         if ($sitePrettyDoc = Document::getById($sitePrettyDocId)) {
-                            $this->nearestDocumentByPath = $sitePrettyDoc;
+                            $this->nearestDocumentByPath[$cacheKey] = $sitePrettyDoc;
                             break;
                         }
                     }
@@ -478,6 +464,9 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
 
             $requestScheme = Tool::getRequestScheme();
             $matchUrl = Tool::getHostUrl() . $matchRequestUri;
+            if (!empty($_SERVER["QUERY_STRING"])) {
+                $matchUrl .= "?" . $_SERVER["QUERY_STRING"];
+            }
 
             foreach ($this->redirects as $redirect) {
                 $matchAgainst = $matchRequestUri;

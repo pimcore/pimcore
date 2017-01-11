@@ -18,6 +18,9 @@ namespace Pimcore\Model;
 
 use Pimcore\Logger;
 
+/**
+ * @method \Pimcore\Model\Site\Dao getDao()
+ */
 class Site extends AbstractModel
 {
 

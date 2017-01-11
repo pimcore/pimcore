@@ -181,9 +181,9 @@ class MysqlTable extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Exte
 
                     $this->getDb()->commit();
                 } catch (\Exception $e) {
+                    Logger::error($e);
                     $this->getDb()->rollBack();
                     $this->truncate();
-                    Logger::error($e);
                 }
             }
         }

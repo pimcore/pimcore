@@ -532,7 +532,7 @@ pimcore["intervals"]["translations_admin_missing"] = window.setInterval(function
     var addedTranslations = pimcore.globalmanager.get("translations_admin_added");
     if (missingTranslations.length > 0) {
         var params = Ext.encode(missingTranslations);
-        for (i = 0; i < missingTranslations.length; i++) {
+        for (var i = 0; i < missingTranslations.length; i++) {
             addedTranslations.push(missingTranslations[i]);
         }
         pimcore.globalmanager.add("translations_admin_missing", new Array());

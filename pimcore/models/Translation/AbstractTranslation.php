@@ -20,6 +20,9 @@ use Pimcore\Model;
 use Pimcore\Tool;
 use Pimcore\File;
 
+/**
+ * @method \Pimcore\Model\Translation\AbstractTranslation\Dao getDao()
+ */
 abstract class AbstractTranslation extends Model\AbstractModel implements TranslationInterface
 {
 

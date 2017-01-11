@@ -99,7 +99,8 @@ pimcore.settings.translations = Class.create({
                 sortable: true,
                 dataIndex: languages[i],
                 filter: 'string',
-                editor: new Ext.form.TextField({}), id: "translation_column_" + this.translationType + "_" + languages[i].toLowerCase()};
+                editor: this.editableLanguages.indexOf(languages[i]) >= 0 ? new Ext.form.TextField({}) : null,
+                id: "translation_column_" + this.translationType + "_" + languages[i].toLowerCase()};
             if (applyInitialSettings) {
                 var hidden = i >= maxLanguages;
                 columnConfig.hidden = hidden;

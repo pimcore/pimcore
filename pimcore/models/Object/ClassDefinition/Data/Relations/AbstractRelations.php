@@ -44,6 +44,11 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
      */
     public $classes;
 
+    /** Optional path formatter class
+     * @var null|string
+     */
+    public $pathFormatterClass;
+
     /**
      * @return array
      */
@@ -378,5 +383,31 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
         }
 
         return $data;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getPathFormatterClass()
+    {
+        return $this->pathFormatterClass;
+    }
+
+    /**
+     * @param null|string $pathFormatterClass
+     */
+    public function setPathFormatterClass($pathFormatterClass)
+    {
+        $this->pathFormatterClass = $pathFormatterClass;
+    }
+
+    /**
+     * @param $object
+     * @param mixed $params
+     * @return string
+     */
+    public function getDataForSearchIndex($object, $params = [])
+    {
+        return "";
     }
 }

@@ -19,9 +19,12 @@ namespace Pimcore\Model\User\AbstractUser;
 use Pimcore\Model;
 use Pimcore\Logger;
 
+/**
+ * @property \Pimcore\Model\User\AbstractUser $model
+ */
 class Dao extends Model\Dao\AbstractDao
 {
-
+    use Model\Element\ChildsCompatibilityTrait;
     /**
      * @param $id
      * @throws \Exception
@@ -60,20 +63,6 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-
-    /**
-     * @return bool
-     * @throws \Exception
-     */
-    public function save()
-    {
-        if ($this->model->getId()) {
-            return $this->model->update();
-        }
-
-        return $this->create();
-    }
-
     /**
      * @throws \Exception
      */
@@ -86,8 +75,6 @@ class Dao extends Model\Dao\AbstractDao
             ]);
 
             $this->model->setId($this->db->lastInsertId());
-
-            return $this->save();
         } catch (\Exception $e) {
             throw $e;
         }
@@ -98,7 +85,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return boolean
      */
-    public function hasChilds()
+    public function hasChildren()
     {
         $c = $this->db->fetchOne("SELECT id FROM users WHERE parentId = ?", $this->model->getId());
 
@@ -122,7 +109,7 @@ class Dao extends Model\Dao\AbstractDao
                 if (in_array($key, $this->getValidTableColumns("users"))) {
                     if (is_bool($value)) {
                         $value = (int) $value;
-                    } elseif (in_array($key, ["permissions", "roles", "docTypes", "classes", "perspectives"])) {
+                    } elseif (in_array($key, ["permissions", "roles", "docTypes", "classes", "perspectives", "websiteTranslationLanguagesEdit", "websiteTranslationLanguagesView"])) {
                         // permission and roles are stored as csv
                         if (is_array($value)) {
                             $value = implode(",", $value);

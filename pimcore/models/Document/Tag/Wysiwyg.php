@@ -21,6 +21,9 @@ use Pimcore\Tool\Text;
 
 include_once("simple_html_dom.php");
 
+/**
+ * @method \Pimcore\Model\Document\Tag\Dao getDao()
+ */
 class Wysiwyg extends Model\Document\Tag
 {
 

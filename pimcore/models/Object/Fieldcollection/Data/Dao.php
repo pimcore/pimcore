@@ -18,6 +18,9 @@ namespace Pimcore\Model\Object\Fieldcollection\Data;
 
 use Pimcore\Model;
 
+/**
+ * @property \Pimcore\Model\Object\Fieldcollection\Data\AbstractData $model
+ */
 class Dao extends Model\Dao\AbstractDao
 {
 

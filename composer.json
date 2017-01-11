@@ -31,7 +31,7 @@
     "optimize-autoloader": true
   },
   "require": {
-    "php": ">=5.5.0",
+    "php": ">=5.6.0",
     "ext-iconv": "*",
     "ext-dom": "*",
     "ext-SimpleXML": "*",
@@ -43,7 +43,7 @@
     "ext-zlib": "*",
     "ext-bz2": "*",
     "ext-openssl": "*",
-    "pimcore/core-version": "4.3.0",
+    "pimcore/core-version": "4.4.1",
     "zendframework/zendframework1": "~1.12",
     "symfony/console": "~3",
     "symfony/finder": "~3",
@@ -71,7 +71,8 @@
     "linfo/linfo": "~3",
     "amnuts/opcache-gui": "~2",
     "vrana/adminer": "~4.2",
-    "egulias/email-validator": "*"
+    "egulias/email-validator": "*",
+    "neitanod/forceutf8": "~2"
   },
   "require-dev": {
     "phpunit/phpunit": "*"

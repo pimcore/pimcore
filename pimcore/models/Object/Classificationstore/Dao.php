@@ -21,6 +21,9 @@ use Pimcore\Model\Object;
 use Pimcore\Tool;
 use Pimcore\Logger;
 
+/**
+ * @property \Pimcore\Model\Object\Classificationstore $model
+ */
 class Dao extends Model\Dao\AbstractDao
 {
 
@@ -71,21 +74,27 @@ class Dao extends Model\Dao\AbstractDao
                 $fd = Service::getFieldDefinitionFromKeyConfig($keyConfig);
 
                 foreach ($keyData as $language => $value) {
-                    $value = $fd->getDataForResource($value, $this->model->object);
-                    $value = $fd->marshal($value, $object);
                     $collectionId = $collectionMapping[$groupId];
-
                     $data = [
                         "o_id" => $objectId,
                         "collectionId" => $collectionId,
                         "groupId" => $groupId,
-                        "value" => $value["value"],
-                        "value2" =>$value["value2"],
                         "keyId" => $keyId,
                         "fieldname" => $fieldname,
                         "language" => $language,
                         "type" => $keyConfig->getType()
                     ];
+
+                    if ($fd instanceof Object\ClassDefinition\Data\Password) {
+                        $value = $fd->getDataForResource($value, null, []);
+                        $this->model->setLocalizedKeyValue($groupId, $keyId, $value, $language);
+                    } else {
+                        $value = $fd->getDataForResource($value, $this->model->object);
+                    }
+                    $value = $fd->marshal($value, $object);
+
+                    $data["value"] = $value["value"];
+                    $data["value2"] = $value["value2"];
 
                     $this->db->insertOrUpdate($dataTable, $data);
                 }
@@ -206,7 +215,7 @@ class Dao extends Model\Dao\AbstractDao
             PRIMARY KEY (`groupId`, `o_id`, `fieldname`),
             INDEX `o_id` (`o_id`),
             INDEX `fieldname` (`fieldname`)
-        ) DEFAULT CHARSET=utf8;");
+        ) DEFAULT CHARSET=utf8mb4;");
 
         $this->db->query("CREATE TABLE IF NOT EXISTS `" . $dataTable . "` (
             `o_id` BIGINT(20) NOT NULL,
@@ -224,7 +233,7 @@ class Dao extends Model\Dao\AbstractDao
             INDEX `keyId` (`keyId`),
             INDEX `fieldname` (`fieldname`),
             INDEX `language` (`language`)
-        ) DEFAULT CHARSET=utf8;");
+        ) DEFAULT CHARSET=utf8mb4;");
 
         $this->tableDefinitions = null;
     }

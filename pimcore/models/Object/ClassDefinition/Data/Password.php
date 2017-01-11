@@ -40,14 +40,14 @@ class Password extends Model\Object\ClassDefinition\Data
      *
      * @var string
      */
-    public $queryColumnType = "varchar(255)";
+    public $queryColumnType = "varchar(190)";
 
     /**
      * Type for the column
      *
      * @var string
      */
-    public $columnType = "varchar(255)";
+    public $columnType = "varchar(190)";
 
     /**
      * Type for the generated phpdoc
@@ -332,6 +332,16 @@ class Password extends Model\Object\ClassDefinition\Data
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
         return $this->getDataFromEditmode($importValue, $object, $params);
+    }
+
+    /**
+     * @param $object
+     * @param mixed $params
+     * @return string
+     */
+    public function getDataForSearchIndex($object, $params = [])
+    {
+        return "";
     }
 
     /**

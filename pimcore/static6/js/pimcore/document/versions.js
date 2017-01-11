@@ -87,11 +87,17 @@ pimcore.document.versions = Class.create({
                 plugins: [this.cellEditing],
                 columns: [
                     checkShow,
-                    {header: "ID", sortable: true, dataIndex: 'id', editable: false, width: 40},
+                    {header: t("published"), width:50, sortable: false, dataIndex: 'date', renderer: function(d, metaData) {
+                        if (d == this.document.data.modificationDate) {
+                            metaData.tdCls = "pimcore_icon_publish";
+                        }
+                        return "";
+                    }.bind(this), editable: false},
                     {header: t("date"), width:150, sortable: true, dataIndex: 'date', renderer: function(d) {
                         var date = new Date(d * 1000);
                         return Ext.Date.format(date, "Y-m-d H:i:s");
                     }, editable: false},
+                    {header: "ID", sortable: true, dataIndex: 'id', editable: false, width: 60},
                     {header: t("user"), sortable: true, dataIndex: 'name', editable: false},
                     {header: t("scheduled"), width:130, sortable: true, dataIndex: 'scheduled', renderer: function(d) {
                         if (d != null){
@@ -110,15 +116,7 @@ pimcore.document.versions = Class.create({
                 width:620,
                 title: t('available_versions'),
                 region: "west",
-                split: true,
-                viewConfig: {
-                    getRowClass: function(record, rowIndex, rp, ds) {
-                        if (record.data.date == this.document.data.modificationDate) {
-                            return "version_published";
-                        }
-                        return "";
-                    }.bind(this)
-                }
+                split: true
             });
 
             //this.grid.on("rowclick", this.onRowClick.bind(this));
@@ -274,6 +272,7 @@ pimcore.document.versions = Class.create({
 
         if (operation == "edit") {
             Ext.Ajax.request({
+                method: "post",
                 url: "/admin/element/version-update",
                 params: {
                     data: Ext.encode(record.data)

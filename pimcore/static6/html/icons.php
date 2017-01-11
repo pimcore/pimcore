@@ -5,12 +5,10 @@
     $iconDir = realpath(__DIR__ . '/../img');
     $icons = rscandir($iconDir . '/flat-color-icons/');
 
-?>
-
-<!DOCTYPE html>
+?><!DOCTYPE html>
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta charset="UTF-8">
     <title>Pimcore :: Icon list</title>
     <style type="text/css">
 
@@ -53,7 +51,8 @@
                 <img style="width:50px;" src="<?= str_replace(PIMCORE_DOCUMENT_ROOT, "", $icon) ?>" title="<?= basename($icon) ?>">
                 <div class="label"><?= basename($icon) ?></div>
             </div>
-        <?php 
+        <?php
+
 } ?>
     </div>
 

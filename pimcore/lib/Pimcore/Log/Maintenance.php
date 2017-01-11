@@ -114,6 +114,25 @@ class Maintenance
      */
     public function cleanupLogFiles()
     {
+        // rotate logs
+        $logs = [
+            PIMCORE_LOG_DEBUG,
+            PIMCORE_LOG_DIRECTORY . "/php.log",
+            PIMCORE_LOG_DIRECTORY . "/redirect.log",
+            PIMCORE_LOG_DIRECTORY . "/legacy-class-names.log",
+            PIMCORE_LOG_DIRECTORY . "/legacy-class-names-admin.log",
+            PIMCORE_LOG_DIRECTORY . "/libreoffice-pdf-convert.log",
+        ];
+
+        foreach ($logs as $log) {
+            if (file_exists($log) && filesize($log) > 200000000) {
+                // archive log (will be cleaned up by maintenance)
+                rename($log, $log . "-archive-" . date("m-d-Y-H-i"));
+                \Pimcore\File::put(PIMCORE_LOG_DEBUG, "");
+            }
+        }
+
+        // archive and cleanup logs
         $files = glob(PIMCORE_LOG_DIRECTORY . "/*.log-archive-*");
         if (is_array($files)) {
             foreach ($files as $file) {

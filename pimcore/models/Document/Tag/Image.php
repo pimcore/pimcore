@@ -21,6 +21,9 @@ use Pimcore\Tool\Serialize;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
 
+/**
+ * @method \Pimcore\Model\Document\Tag\Dao getDao()
+ */
 class Image extends Model\Document\Tag
 {
 

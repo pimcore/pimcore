@@ -91,6 +91,7 @@ class ImageThumbnail
     {
         $fsPath = $this->getFileSystemPath();
         $path = str_replace(PIMCORE_DOCUMENT_ROOT, "", $fsPath);
+        $path = urlencode_ignore_slash($path);
 
         $results = \Pimcore::getEventManager()->trigger("frontend.path.asset.video.image-thumbnail", $this, [
             "filesystemPath" => $fsPath,
@@ -133,58 +134,65 @@ class ImageThumbnail
 
             if ($im || $this->imageAsset) {
                 if ($this->imageAsset) {
+                    $im = $this->imageAsset;
+                } else {
                     $im = Model\Asset::getById($im);
                 }
 
                 if ($im instanceof Image) {
-                    return $im->getThumbnail($this->getConfig());
+                    $imageThumbnail = $im->getThumbnail($this->getConfig());
+                    $this->filesystemPath = $imageThumbnail->getFileSystemPath();
                 }
             }
 
-            $timeOffset = $this->timeOffset;
-            if (!$this->timeOffset && $cs) {
-                $timeOffset = $cs;
-            }
+            if (!$this->filesystemPath) {
+                $timeOffset = $this->timeOffset;
+                if (!$this->timeOffset && $cs) {
+                    $timeOffset = $cs;
+                }
 
-            // fallback
-            if (!$timeOffset) {
-                $timeOffset = ceil($this->asset->getDuration() / 3);
-            }
+                // fallback
+                if (!$timeOffset) {
+                    $timeOffset = ceil($this->asset->getDuration() / 3);
+                }
 
-            $converter = \Pimcore\Video::getInstance();
-            $converter->load($this->asset->getFileSystemPath());
-            $path = PIMCORE_TEMPORARY_DIRECTORY . "/video-image-cache/video_" . $this->asset->getId() . "__thumbnail_" .  $timeOffset . ".png";
+                $converter = \Pimcore\Video::getInstance();
+                $converter->load($this->asset->getFileSystemPath());
+                $path = PIMCORE_TEMPORARY_DIRECTORY . "/video-image-cache/video_" . $this->asset->getId() . "__thumbnail_" . $timeOffset . ".png";
 
-            if (!is_dir(dirname($path))) {
-                File::mkdir(dirname($path));
-            }
+                if (!is_dir(dirname($path))) {
+                    File::mkdir(dirname($path));
+                }
 
-            if (!is_file($path)) {
-                $lockKey = "video_image_thumbnail_" . $this->asset->getId() . "_" . $timeOffset;
-                Model\Tool\Lock::acquire($lockKey);
-
-                // after we got the lock, check again if the image exists in the meantime - if not - generate it
                 if (!is_file($path)) {
-                    $converter->saveImage($path, $timeOffset);
-                    $generated = true;
+                    $lockKey = "video_image_thumbnail_" . $this->asset->getId() . "_" . $timeOffset;
+                    Model\Tool\Lock::acquire($lockKey);
+
+                    // after we got the lock, check again if the image exists in the meantime - if not - generate it
+                    if (!is_file($path)) {
+                        $converter->saveImage($path, $timeOffset);
+                        $generated = true;
+                    }
+
+                    Model\Tool\Lock::release($lockKey);
                 }
 
-                Model\Tool\Lock::release($lockKey);
-            }
+                if ($this->getConfig()) {
+                    $this->getConfig()->setFilenameSuffix("time-" . $timeOffset);
 
-            if ($this->getConfig()) {
-                $this->getConfig()->setFilenameSuffix("time-" . $timeOffset);
-
-                try {
-                    $path = Image\Thumbnail\Processor::process($this->asset, $this->getConfig(), $path, $deferred, true, $generated);
-                } catch (\Exception $e) {
-                    Logger::error("Couldn't create image-thumbnail of video " . $this->asset->getRealFullPath());
-                    Logger::error($e);
-                    $path = $errorImage;
+                    try {
+                        $path = Image\Thumbnail\Processor::process($this->asset, $this->getConfig(), $path, $deferred,
+                            true, $generated);
+                    } catch (\Exception $e) {
+                        Logger::error("Couldn't create image-thumbnail of video " . $this->asset->getRealFullPath());
+                        Logger::error($e);
+                        $path = $errorImage;
+                    }
                 }
+
+                $this->filesystemPath = $path;
             }
 
-            $this->filesystemPath = $path;
             \Pimcore::getEventManager()->trigger("asset.video.image-thumbnail", $this, [
                 "deferred" => $deferred,
                 "generated" => $generated

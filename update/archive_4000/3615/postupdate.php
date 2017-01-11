@@ -15,3 +15,15 @@ foreach($files as $fileName) {
         rename($xmlFile, $legacyFolder . "/" . basename($xmlFile));
     }
 }
+
+
+$configFile = \Pimcore\Config::locateConfigFile("system.php");
+
+$systemSettings = include($configFile);
+if(!isset($systemSettings["httpclient"]["adapter"]) || empty($systemSettings["httpclient"]["adapter"])) {
+    $systemSettings["httpclient"]["adapter"] = "Zend_Http_Client_Adapter_Socket";
+}
+
+$contents = var_export_pretty($systemSettings);
+$contents = "<?php \n\nreturn " . $contents . ";\n";
+\Pimcore\File::put($configFile, $contents);

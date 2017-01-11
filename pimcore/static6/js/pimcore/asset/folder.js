@@ -22,9 +22,15 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
 
         pimcore.plugin.broker.fireEvent("preOpenAsset", this, "folder");
 
+        var user = pimcore.globalmanager.get("user");
+
         this.properties = new pimcore.element.properties(this, "asset");
         this.dependencies = new pimcore.element.dependencies(this, "asset");
-        this.notes = new pimcore.element.notes(this, "asset");
+
+        if (user.isAllowed("notes_events")) {
+            this.notes = new pimcore.element.notes(this, "asset");
+        }
+
         this.tagAssignment = new pimcore.element.tag.assignment(this, "asset");
         this.listfolder = new pimcore.asset.listfolder(this);
 
@@ -35,6 +41,7 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
 
 
         var items = [];
+        var user = pimcore.globalmanager.get("user");
 
         var proxy = {
             type: 'ajax',
@@ -50,7 +57,7 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
 
         this.store = new Ext.data.Store({
             proxy: proxy,
-            fields: ['url', "filename", "type", "id", "idPath"],
+            fields: ['url', "filename", "filenameDisplay", "type", "id", "idPath"],
             listeners: {
                 "load": function () {
                     try {
@@ -77,7 +84,7 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
                 + 'valign="middle" style="background: url({url}) center center no-repeat; ' +
                 'background-size: contain;" id="{type}_{id}" data-idpath="{idPath}">'
                 + '</td></tr></table></div>',
-            '<span class="filename">{filename}</span></div>',
+            '<span class="filename" title="{filename}">{filenameDisplay}</span></div>',
             '</tpl>',
             '<div class="x-clear"></div>'
         );
@@ -124,11 +131,10 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
         items.push(this.dependencies.getLayout());
 
 
-        if (this.isAllowed("settings")) {
+        if (user.isAllowed("notes_events")) {
             items.push(this.notes.getLayout());
         }
 
-        var user = pimcore.globalmanager.get("user");
         if (user.isAllowed("tags_assignment")) {
             items.push(this.tagAssignment.getLayout());
         }

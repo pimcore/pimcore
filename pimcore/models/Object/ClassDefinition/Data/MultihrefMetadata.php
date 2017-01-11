@@ -753,10 +753,11 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
         $this->columns = $masterDefinition->columns;
     }
 
-    /**
-     *
+    /** Override point for Enriching the layout definition before the layout is returned to the admin interface.
+     * @param $object Object\Concrete
+     * @param array $context additional contextual data
      */
-    public function enrichLayoutDefinition($object)
+    public function enrichLayoutDefinition($object, $context = [])
     {
         // nothing to do
     }
@@ -771,11 +772,12 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
 
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $metaElement) {
-                $o = $metaElement->getElement();
-                if ($o instanceof Object\AbstractObject) {
-                    $dependencies["object_" . $o->getId()] = [
-                        "id" => $o->getId(),
-                        "type" => "object"
+                $e = $metaElement->getElement();
+                if ($e instanceof Element\ElementInterface) {
+                    $elementType = Element\Service::getElementType($e);
+                    $dependencies[$elementType . "_" . $e->getId()] = [
+                        "id" => $e->getId(),
+                        "type" => $elementType
                     ];
                 }
             }
@@ -845,5 +847,13 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
 
             return $result;
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function getPhpdocType()
+    {
+        return $this->phpdocType;
     }
 }

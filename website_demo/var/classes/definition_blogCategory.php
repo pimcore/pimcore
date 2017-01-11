@@ -1,16 +1,16 @@
-<?php 
+<?php
 
-/** 
+/**
 * Generated at: 2016-08-09T09:00:04+02:00
 * Inheritance: no
 * Variants: no
 * IP: 192.168.11.111
 
 
-Fields Summary: 
+Fields Summary:
 - localizedfields [localizedfields]
 -- name [input]
-*/ 
+*/
 
 
 return Pimcore\Model\Object\ClassDefinition::__set_state(array(
@@ -25,7 +25,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
    'allowInherit' => false,
    'allowVariants' => false,
    'showVariants' => false,
-   'layoutDefinitions' => 
+   'layoutDefinitions' =>
   Pimcore\Model\Object\ClassDefinition\Layout\Panel::__set_state(array(
      'fieldtype' => 'panel',
      'labelWidth' => 100,
@@ -41,9 +41,9 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
      'bodyStyle' => NULL,
      'datatype' => 'layout',
      'permissions' => NULL,
-     'childs' => 
+     'childs' =>
     array (
-      0 => 
+      0 =>
       Pimcore\Model\Object\ClassDefinition\Layout\Panel::__set_state(array(
          'fieldtype' => 'panel',
          'labelWidth' => 100,
@@ -59,21 +59,21 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
          'bodyStyle' => '',
          'datatype' => 'layout',
          'permissions' => NULL,
-         'childs' => 
+         'childs' =>
         array (
-          0 => 
+          0 =>
           Pimcore\Model\Object\ClassDefinition\Data\Localizedfields::__set_state(array(
              'fieldtype' => 'localizedfields',
              'phpdocType' => '\\Pimcore\\Model\\Object\\Localizedfield',
-             'childs' => 
+             'childs' =>
             array (
-              0 => 
+              0 =>
               Pimcore\Model\Object\ClassDefinition\Data\Input::__set_state(array(
                  'fieldtype' => 'input',
                  'width' => '',
                  'queryColumnType' => 'varchar',
                  'columnType' => 'varchar',
-                 'columnLength' => 255,
+                 'columnLength' => 190,
                  'phpdocType' => 'string',
                  'regex' => '',
                  'name' => 'name',
@@ -100,18 +100,18 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
              'height' => '',
              'maxTabs' => NULL,
              'labelWidth' => NULL,
-             'referencedFields' => 
+             'referencedFields' =>
             array (
             ),
-             'fieldDefinitionsCache' => 
+             'fieldDefinitionsCache' =>
             array (
-              'name' => 
+              'name' =>
               Pimcore\Model\Object\ClassDefinition\Data\Input::__set_state(array(
                  'fieldtype' => 'input',
                  'width' => '',
                  'queryColumnType' => 'varchar',
                  'columnType' => 'varchar',
-                 'columnLength' => 255,
+                 'columnLength' => 190,
                  'phpdocType' => 'string',
                  'regex' => '',
                  'name' => 'name',
@@ -154,9 +154,9 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
    'icon' => '',
    'previewUrl' => '',
    'group' => NULL,
-   'propertyVisibility' => 
+   'propertyVisibility' =>
   array (
-    'grid' => 
+    'grid' =>
     array (
       'id' => true,
       'path' => true,
@@ -164,7 +164,7 @@ return Pimcore\Model\Object\ClassDefinition::__set_state(array(
       'modificationDate' => true,
       'creationDate' => true,
     ),
-    'search' => 
+    'search' =>
     array (
       'id' => true,
       'path' => true,

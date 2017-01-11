@@ -17,11 +17,14 @@
 namespace Pimcore\Model\Document;
 
 use Pimcore\Model;
-use Pimcore\Tool\Serialize;
-use Pimcore\View;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use Pimcore\Tool\Serialize;
+use Pimcore\View;
 
+/**
+ * @method \Pimcore\Model\Document\Service\Dao getDao()
+ */
 class Service extends Model\Element\Service
 {
 
@@ -241,6 +244,11 @@ class Service extends Model\Element\Service
 
         $this->updateChilds($target, $new);
 
+        // triggers actions after the complete document cloning
+        \Pimcore::getEventManager()->trigger('document.postCopy', $new, [
+            'base_element' => $source // the element used to make a copy
+        ]);
+
         return $new;
     }
 
@@ -288,6 +296,11 @@ class Service extends Model\Element\Service
         $new->save();
 
         $this->updateChilds($target, $new);
+
+        // triggers actions after the complete document cloning
+        \Pimcore::getEventManager()->trigger('document.postCopy', $new, [
+            'base_element' => $source // the element used to make a copy
+        ]);
 
         return $new;
     }
@@ -512,7 +525,7 @@ class Service extends Model\Element\Service
     {
         $list = new Listing();
         $list->setUnpublished(true);
-        $key = \Pimcore\File::getValidFilename($item->getKey());
+        $key = Element\Service::getValidKey($item->getKey(), "document");
         if (!$key) {
             throw new \Exception("No item key set.");
         }

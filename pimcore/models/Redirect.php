@@ -18,6 +18,9 @@ namespace Pimcore\Model;
 
 use Pimcore\Logger;
 
+/**
+ * @method \Pimcore\Model\Redirect\Dao getDao()
+ */
 class Redirect extends AbstractModel
 {
 
@@ -281,7 +284,8 @@ class Redirect extends AbstractModel
         $list->load();
 
         foreach ($list->getRedirects() as $redirect) {
-            $redirect->delete();
+            $redirect->setActive(false);
+            $redirect->save();
         }
     }
 

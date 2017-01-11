@@ -12,11 +12,11 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-use Pimcore\Model\Search\Backend\Data;
-use Pimcore\Model\Element;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
+use Pimcore\Model\Element;
 use Pimcore\Model\Object;
+use Pimcore\Model\Search\Backend\Data;
 
 class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin
 {
@@ -146,19 +146,27 @@ class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin
             $params = \Zend_Json::decode($this->getParam('filter'));
             $unlocalizedFieldsFilters = [];
             $localizedFieldsFilters = [];
+
             foreach ($params as $paramConditionObject) {
-                //this lopp divides filter parameters: localazed and unlocalized groups
-                $definition = $class->getFieldDefinition($paramConditionObject['property']);
-                if ($definition) { //TODO: for sure, we can add additional condition like getLocalizedFieldDefinition()->getFieldDefiniton(...
+                //this loop divides filter parameters to localized and unlocalized groups
+                $definitionExists = in_array('o_' . $paramConditionObject['property'], Object\Service::getSystemFields())
+                    || $class->getFieldDefinition($paramConditionObject['property']);
+                if ($definitionExists) { //TODO: for sure, we can add additional condition like getLocalizedFieldDefinition()->getFieldDefiniton(...
                     $unlocalizedFieldsFilters[] = $paramConditionObject;
                 } else {
                     $localizedFieldsFilters[] = $paramConditionObject;
                 }
             }
 
+            //get filter condition only when filters array is not empty
+
             //string statements for divided filters
-            $conditionFilters = Object\Service::getFilterCondition(\Zend_Json::encode($unlocalizedFieldsFilters), $class);
-            $localizedConditionFilters = Object\Service::getFilterCondition(\Zend_Json::encode($localizedFieldsFilters), $class);
+            $conditionFilters = count($unlocalizedFieldsFilters)
+                ? Object\Service::getFilterCondition(\Zend_Json::encode($unlocalizedFieldsFilters), $class)
+                : null;
+            $localizedConditionFilters = count($localizedFieldsFilters)
+                ?  Object\Service::getFilterCondition(\Zend_Json::encode($localizedFieldsFilters), $class)
+                : null;
 
             $join = "";
             foreach ($bricks as $ob) {
@@ -168,13 +176,13 @@ class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin
                 $join .= " ON `" . $ob . "`.o_id = `object_" . $class->getId() . "`.o_id";
             }
 
-            if ($conditionFilters) {
+            if (null !== $conditionFilters) {
                 //add condition query for non localised fields
                 $conditionParts[] = "( id IN (SELECT `object_" . $class->getId() . "`.o_id FROM object_" . $class->getId()
                     . $join . " WHERE " . $conditionFilters . ") )";
             }
 
-            if ($localizedConditionFilters) {
+            if (null !== $localizedConditionFilters) {
                 //add condition query for localised fields
                 $conditionParts[] = "( id IN (SELECT `object_localized_data_" . $class->getId()
                     . "`.ooo_id FROM object_localized_data_" . $class->getId() . $join . " WHERE "
@@ -255,7 +263,7 @@ class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin
             if (array_key_exists($sortingSettings['orderKey'], $sortMapping)) {
                 $sort = $sortMapping[$sortingSettings['orderKey']];
             }
-            $searcherList->setOrderKey($sortingSettings['orderKey']);
+            $searcherList->setOrderKey($sort);
         }
         if ($sortingSettings['order']) {
             $searcherList->setOrder($sortingSettings['order']);

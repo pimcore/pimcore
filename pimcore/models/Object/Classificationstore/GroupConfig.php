@@ -18,8 +18,12 @@ namespace Pimcore\Model\Object\Classificationstore;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\Object\Classificationstore\GroupConfig\Dao getDao()
+ */
 class GroupConfig extends Model\AbstractModel
 {
+    use Model\Element\ChildsCompatibilityTrait;
 
     /** Group id.
      * @var integer
@@ -91,7 +95,7 @@ class GroupConfig extends Model\AbstractModel
         }
     }
 
-    public function hasChilds()
+    public function hasChildren()
     {
         return $this->getDao()->hasChilds();
     }
@@ -186,9 +190,9 @@ class GroupConfig extends Model\AbstractModel
      */
     public function delete()
     {
-        \Pimcore::getEventManager()->trigger("object.Classificationstore.groupConfig.preDelete", $this);
+        \Pimcore::getEventManager()->trigger("object.classificationstore.groupConfig.preDelete", $this);
         parent::delete();
-        \Pimcore::getEventManager()->trigger("object.Classificationstore.groupConfig.postDelete", $this);
+        \Pimcore::getEventManager()->trigger("object.classificationstore.groupConfig.postDelete", $this);
     }
 
     /**
@@ -200,17 +204,17 @@ class GroupConfig extends Model\AbstractModel
 
         if ($this->getId()) {
             $isUpdate = true;
-            \Pimcore::getEventManager()->trigger("object.Classificationstore.groupConfig.preUpdate", $this);
+            \Pimcore::getEventManager()->trigger("object.classificationstore.groupConfig.preUpdate", $this);
         } else {
-            \Pimcore::getEventManager()->trigger("object.Classificationstore.groupConfig.preAdd", $this);
+            \Pimcore::getEventManager()->trigger("object.classificationstore.groupConfig.preAdd", $this);
         }
 
         $model = parent::save();
 
         if ($isUpdate) {
-            \Pimcore::getEventManager()->trigger("object.Classificationstore.groupConfig.postUpdate", $this);
+            \Pimcore::getEventManager()->trigger("object.classificationstore.groupConfig.postUpdate", $this);
         } else {
-            \Pimcore::getEventManager()->trigger("object.Classificationstore.groupConfig.postAdd", $this);
+            \Pimcore::getEventManager()->trigger("object.classificationstore.groupConfig.postAdd", $this);
         }
 
         return $model;

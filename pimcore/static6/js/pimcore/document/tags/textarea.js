@@ -79,7 +79,7 @@ pimcore.document.tags.textarea = Class.create(pimcore.document.tag, {
                 text = window.clipboardData.getData("Text");
             }
 
-            text = htmlentities(text, null, null, false);
+            text = htmlentities(text, 'ENT_NOQUOTES', null, false);
 
             try {
                 pimcore.edithelpers.pasteHtmlAtCaret(text);

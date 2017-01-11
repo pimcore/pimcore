@@ -193,6 +193,13 @@ pimcore.object.classes.data.multihrefMetadata = Class.create(pimcore.object.clas
                 style: "color:red; font-weight: bold;"
             },
             {
+                xtype: 'textfield',
+                width: 600,
+                fieldLabel: t("path_formatter_class"),
+                name: 'pathFormatterClass',
+                value: this.datax.pathFormatterClass
+            },
+            {
                 xtype:'fieldset',
                 title: t('document_restrictions'),
                 collapsible: false,

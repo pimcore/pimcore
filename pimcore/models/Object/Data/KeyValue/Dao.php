@@ -19,6 +19,9 @@ namespace Pimcore\Model\Object\Data\KeyValue;
 use Pimcore\Model;
 use Pimcore\Logger;
 
+/**
+ * @property \Pimcore\Model\Object\Data\KeyValue $model
+ */
 class Dao extends Model\Dao\AbstractDao
 {
 
@@ -127,7 +130,7 @@ class Dao extends Model\Dao\AbstractDao
             `metadata` LONGTEXT NULL,
     	    PRIMARY KEY  (`id`),
 	        INDEX `o_id` (`o_id`)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
 
         $validColumns = $this->getValidTableColumns($table, false); // no caching of table definition
 

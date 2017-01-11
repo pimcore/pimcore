@@ -16,6 +16,9 @@ namespace Pimcore\Model\WebsiteSetting;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\WebsiteSetting\Listing\Dao getDao()
+ */
 class Listing extends Model\Listing\AbstractListing
 {
 

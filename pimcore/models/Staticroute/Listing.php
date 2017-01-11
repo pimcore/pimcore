@@ -18,6 +18,9 @@ namespace Pimcore\Model\Staticroute;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\Staticroute\Listing\Dao getDao()
+ */
 class Listing extends Model\Listing\JsonListing
 {
 

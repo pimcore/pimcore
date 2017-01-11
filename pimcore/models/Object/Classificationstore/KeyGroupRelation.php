@@ -18,6 +18,9 @@ namespace Pimcore\Model\Object\Classificationstore;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\Object\Classificationstore\KeyGroupRelation\Dao getDao()
+ */
 class KeyGroupRelation extends Model\AbstractModel
 {
 
@@ -62,6 +65,9 @@ class KeyGroupRelation extends Model\AbstractModel
 
     /** @var  bool */
     public $mandatory;
+
+    /** @var  bool */
+    public $enabled;
 
     /**
      * @return Model\Object\Classificationstore\KeyGroupRelation
@@ -201,6 +207,24 @@ class KeyGroupRelation extends Model\AbstractModel
     {
         $this->mandatory = intval($mandatory);
     }
+
+    /**
+     * @return boolean
+     */
+    public function isEnabled()
+    {
+        return $this->enabled;
+    }
+
+    /**
+     * @param boolean $enabled
+     */
+    public function setEnabled($enabled)
+    {
+        $this->enabled = $enabled;
+    }
+
+
 
     /**
      * @param $groupId

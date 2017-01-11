@@ -19,6 +19,9 @@ namespace Pimcore\Model\Version;
 use Pimcore\Model;
 use Pimcore\Logger;
 
+/**
+ * @property \Pimcore\Model\Version $model
+ */
 class Dao extends Model\Dao\AbstractDao
 {
 

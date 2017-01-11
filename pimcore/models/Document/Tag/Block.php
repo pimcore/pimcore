@@ -18,6 +18,9 @@ namespace Pimcore\Model\Document\Tag;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\Document\Tag\Dao getDao()
+ */
 class Block extends Model\Document\Tag
 {
 
@@ -152,7 +155,7 @@ class Block extends Model\Document\Tag
             return false;
         }
     }
-    
+
     /**
      * Alias for loop
      * @deprecated
@@ -172,7 +175,7 @@ class Block extends Model\Document\Tag
     public function start()
     {
         $this->setupStaticEnvironment();
-        
+
         // get configuration data for admin
         if (method_exists($this, "getDataEditmode")) {
             $data = $this->getDataEditmode();
@@ -196,13 +199,18 @@ class Block extends Model\Document\Tag
                 editableConfigurations.push('.$options.');
             </script>
         ');
-        
+
         // set name suffix for the whole block element, this will be addet to all child elements of the block
         $suffixes = \Zend_Registry::get("pimcore_tag_block_current");
         $suffixes[] = $this->getName();
         \Zend_Registry::set("pimcore_tag_block_current", $suffixes);
 
-        $this->outputEditmode('<div id="pimcore_editable_' . $this->getName() . '" name="' . $this->getName() . '" class="pimcore_editable pimcore_tag_' . $this->getType() . '" type="' . $this->getType() . '">');
+        $class = "pimcore_editable pimcore_tag_" . $this->getType();
+        if (array_key_exists("class", $this->getOptions())) {
+            $class .= (" " . $this->getOptions()["class"]);
+        }
+
+        $this->outputEditmode('<div id="pimcore_editable_' . $this->getName() . '" name="' . $this->getName() . '" class="' . $class . '" type="' . $this->getType() . '">');
 
         return $this;
     }
@@ -354,7 +362,7 @@ class Block extends Model\Document\Tag
     {
         return $this->current-1;
     }
-    
+
     /**
      * Return current index
      *
@@ -374,7 +382,7 @@ class Block extends Model\Document\Tag
     {
         $this->current = 0;
     }
-    
+
     /**
      * @return bool
      */

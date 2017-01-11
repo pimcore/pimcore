@@ -18,6 +18,9 @@ namespace Pimcore\Model\Element\WorkflowState\Listing;
 
 use Pimcore\Model;
 
+/**
+ * @property \Pimcore\Model\Element\WorkflowState\Listing $model
+ */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
 
@@ -32,7 +35,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
         $workflowStates = [];
         foreach ($workflowStateData as $entry) {
-            if ($workflowState = Model\Element\WorkflowState::getByPrimary($entry['cid'], $entry['ctype'], $entry['workflowid'])) {
+            if ($workflowState = Model\Element\WorkflowState::getByPrimary($entry['cid'], $entry['ctype'], $entry['workflowId'])) {
                 $workflowStates[] = $workflowState;
             }
         }

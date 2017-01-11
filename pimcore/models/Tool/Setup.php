@@ -19,6 +19,9 @@ namespace Pimcore\Model\Tool;
 use Pimcore\File;
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\Tool\Setup\Dao getDao()
+ */
 class Setup extends Model\AbstractModel
 {
 
@@ -78,7 +81,6 @@ class Setup extends Model\AbstractModel
                     ],
                     "createredirectwhenmoved" => "",
                     "allowtrailingslash" => "no",
-                    "allowcapitals" => "no",
                     "generatepreview" => "1"
                 ],
                 "objects" => [

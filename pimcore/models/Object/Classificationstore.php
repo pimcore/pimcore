@@ -19,6 +19,9 @@ namespace Pimcore\Model\Object;
 use Pimcore\Model;
 use Pimcore\Tool;
 
+/**
+ * @method \Pimcore\Model\Object\Classificationstore\Dao getDao()
+ */
 class Classificationstore extends Model\AbstractModel
 {
 
@@ -88,8 +91,11 @@ class Classificationstore extends Model\AbstractModel
      * @param Concrete $object
      * @return $this
      */
-    public function setObject(Concrete $object)
+    public function setObject($object)
     {
+        if (!$object instanceof Concrete) {
+            throw new \Exception("not instance of Concrete");
+        }
         $this->object = $object;
         //$this->setClass($this->getObject()->getClass());
         return $this;
@@ -150,6 +156,14 @@ class Classificationstore extends Model\AbstractModel
      */
     public function setLocalizedKeyValue($groupId, $keyId, $value, $language = null)
     {
+        if (!$groupId) {
+            throw new \Exception("groupId not valid");
+        }
+
+        if (!$keyId) {
+            throw new \Exception("keyId not valid");
+        }
+
         $language  = $this->getLanguage($language);
 
         // treat value "0" nonempty

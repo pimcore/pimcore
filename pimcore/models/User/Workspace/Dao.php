@@ -19,6 +19,9 @@ namespace Pimcore\Model\User\Workspace;
 use Pimcore\Model;
 use Pimcore\Model\User\Workspace;
 
+/**
+ * @property \Pimcore\Model\User\Workspace\Object $model
+ */
 class Dao extends Model\Dao\AbstractDao
 {
 

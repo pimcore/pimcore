@@ -50,7 +50,8 @@ pimcore.element.notes = Class.create({
             this.store = pimcore.helpers.grid.buildDefaultStore(
                 '/admin/element/note-list?',
                 ['id', 'type', 'title', 'description',"user","date","data","cpath","cid","ctype"],
-                itemsPerPage
+                itemsPerPage,
+                {autoLoad: false}
             );
 
             // only when used in element context

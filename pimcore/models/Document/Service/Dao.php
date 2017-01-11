@@ -20,6 +20,9 @@ use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
 
+/**
+ * @property \Pimcore\Model\Document\Service $model
+ */
 class Dao extends Model\Dao\AbstractDao
 {
 

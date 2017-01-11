@@ -21,6 +21,9 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Object;
 
+/**
+ * @property \Pimcore\Model\Element\Note $model
+ */
 class Dao extends Model\Dao\AbstractDao
 {
 
@@ -119,7 +122,7 @@ class Dao extends Model\Dao\AbstractDao
                     $data = $data->getId();
                 }
             } elseif ($type == "date") {
-                if ($data instanceof \DateTime) {
+                if ($data instanceof \DateTimeInterface) {
                     $data = $data->getTimestamp();
                 }
             } elseif ($type == "bool") {

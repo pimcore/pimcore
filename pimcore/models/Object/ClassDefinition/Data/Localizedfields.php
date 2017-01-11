@@ -16,13 +16,15 @@
 
 namespace Pimcore\Model\Object\ClassDefinition\Data;
 
+use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Object;
 use Pimcore\Tool;
-use Pimcore\Logger;
+use Pimcore\Model\Element;
 
 class Localizedfields extends Model\Object\ClassDefinition\Data
 {
+    use Element\ChildsCompatibilityTrait;
 
     /**
      * Static type of this element
@@ -94,7 +96,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     /**
      * @var array
      */
-    private $fieldDefinitionsCache;
+    public $fieldDefinitionsCache;
 
 
     /**
@@ -461,18 +463,18 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     /**
      * @return array
      */
-    public function getChilds()
+    public function getChildren()
     {
         return $this->childs;
     }
 
     /**
-     * @param array $childs
+     * @param array $children
      * @return $this
      */
-    public function setChilds($childs)
+    public function setChildren($children)
     {
-        $this->childs = $childs;
+        $this->childs = $children;
         $this->fieldDefinitionsCache = null;
 
         return $this;
@@ -481,7 +483,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     /**
      * @return boolean
      */
-    public function hasChilds()
+    public function hasChildren()
     {
         if (is_array($this->childs) && count($this->childs) > 0) {
             return true;
@@ -586,7 +588,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
      */
     public function delete($object, $params = [])
     {
-        $localizedFields = $this->getDataFromObjectParam($object);
+        $localizedFields = $this->getDataFromObjectParam($object, $params);
 
         if ($localizedFields instanceof Object\Localizedfield) {
             $localizedFields->setObject($object);
@@ -932,7 +934,11 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
         if (!$omitMandatoryCheck) {
             foreach ($languages as $language) {
                 foreach ($this->getFieldDefinitions() as $fd) {
-                    $fd->checkValidity($data[$language][$fd->getName()]);
+                    if (isset($data[$language]) && isset($data[$language][$fd->getName()])) {
+                        $fd->checkValidity($data[$language][$fd->getName()]);
+                    } else {
+                        $fd->checkValidity(null);
+                    }
                 }
             }
         }
@@ -946,7 +952,9 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     protected function getDataForValidity($localizedObject, array $languages)
     {
         //TODO verify if in any place in the code \Pimcore\Model\Object\ClassDefinition\Data\Localizedfields::checkValidity is used with different parameter then Object\Localizedfield
-        if ($localizedObject->object->getType() != 'variant' || !$localizedObject instanceof Object\Localizedfield) {
+        if (!$localizedObject->object
+            || $localizedObject->object->getType() != 'variant'
+            || !$localizedObject instanceof Object\Localizedfield) {
             return $localizedObject->getItems();
         }
 

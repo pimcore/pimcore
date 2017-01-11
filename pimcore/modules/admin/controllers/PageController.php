@@ -14,6 +14,7 @@
 
 use Pimcore\File;
 use Pimcore\Tool;
+use Pimcore\Tool\Session;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Redirect;
@@ -36,7 +37,7 @@ class Admin_PageController extends \Pimcore\Controller\Action\Admin\Document
         $page = clone $page;
         $page = $this->getLatestVersion($page);
 
-        $pageVersions = $page->getVersions();
+        $pageVersions = Element\Service::getSafeVersionInfo($page->getVersions());
         $page->setVersions(array_splice($pageVersions, 0, 1));
         $page->getScheduledTasks();
         $page->idPath = Element\Service::getIdPath($page);
@@ -81,7 +82,28 @@ class Admin_PageController extends \Pimcore\Controller\Action\Admin\Document
             if ($this->getParam("id")) {
                 $page = Document\Page::getById($this->getParam("id"));
 
-                $page = $this->getLatestVersion($page);
+                // check if there's a document in session which should be used as data-source
+                // see also self::clearEditableDataAction() | this is necessary to reset all fields and to get rid of
+                // outdated and unused data elements in this document (eg. entries of area-blocks)
+                $pageSession = Session::useSession(function ($session) use ($page) {
+                    if (isset($session->{"document_" . $page->getId()}) && isset($session->{"document_" . $page->getId() . "_useForSave"})) {
+                        if ($session->{"document_" . $page->getId() . "_useForSave"}) {
+                            // only use the page from the session once
+                            unset($session->{"document_" . $page->getId() . "_useForSave"});
+
+                            return $session->{"document_" . $page->getId()};
+                        }
+                    }
+
+                    return null;
+                }, "pimcore_documents");
+
+                if ($pageSession) {
+                    $page = $pageSession;
+                } else {
+                    $page = $this->getLatestVersion($page);
+                }
+
                 $page->setUserModification($this->getUser()->getId());
 
                 if ($this->getParam("task") == "unpublish") {
@@ -138,13 +160,8 @@ class Admin_PageController extends \Pimcore\Controller\Action\Admin\Document
                 if ($this->getParam("settings") && is_array($settings)) {
                     $metaData = [];
                     for ($i=1; $i<30; $i++) {
-                        if (array_key_exists("metadata_idName_" . $i, $settings)) {
-                            $metaData[] = [
-                                "idName" => $settings["metadata_idName_" . $i],
-                                "idValue" => $settings["metadata_idValue_" . $i],
-                                "contentName" => $settings["metadata_contentName_" . $i],
-                                "contentValue" => $settings["metadata_contentValue_" . $i],
-                            ];
+                        if (array_key_exists("metadata_" . $i, $settings)) {
+                            $metaData[] = $settings["metadata_" . $i];
                         }
                     }
                     $page->setMetaData($metaData);
@@ -321,7 +338,7 @@ class Admin_PageController extends \Pimcore\Controller\Action\Admin\Document
             }
         }
 
-        $this->saveToSession($doc);
+        $this->saveToSession($doc, true);
 
         $this->_helper->json([
             "success" => true

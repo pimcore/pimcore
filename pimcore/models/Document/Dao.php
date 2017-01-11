@@ -20,9 +20,15 @@ use Pimcore\Model;
 use Pimcore\Tool\Serialize;
 use Pimcore\Logger;
 
+/**
+ * @property \Pimcore\Model\Document $model
+ */
 class Dao extends Model\Element\Dao
 {
+    use Model\Element\ChildsCompatibilityTrait;
     /**
+     * Fetch a row by an id from the database and assign variables to the document model.
+     *
      * @param $id
      * @throws \Exception
      */
@@ -43,6 +49,8 @@ class Dao extends Model\Element\Dao
     }
 
     /**
+     * Fetch a row by a path from the database and assign variables to the model.
+     *
      * @param $path
      * @throws \Exception
      */
@@ -72,6 +80,8 @@ class Dao extends Model\Element\Dao
 
 
     /**
+     * Insert a new row to the database.
+     *
      * @throws \Exception
      */
     public function create()
@@ -96,6 +106,8 @@ class Dao extends Model\Element\Dao
     }
 
     /**
+     * Update the row in the database. (based on the model id)
+     *
      * @throws \Exception
      */
     public function update()
@@ -163,6 +175,8 @@ class Dao extends Model\Element\Dao
     }
 
     /**
+     * Delete the row from the database. (based on the model id)
+     *
      * @throws \Exception
      */
     public function delete()
@@ -175,6 +189,8 @@ class Dao extends Model\Element\Dao
     }
 
     /**
+     * Update document workspaces..
+     *
      * @throws \Zend_Db_Adapter_Exception
      */
     public function updateWorkspaces()
@@ -185,6 +201,8 @@ class Dao extends Model\Element\Dao
     }
 
     /**
+     * Updates children path in order to the old document path specified in the $oldPath parameter.
+     *
      * @param $oldPath
      * @return array
      */
@@ -212,7 +230,9 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @return string retrieves the current full document path from DB
+     * Returns the current full document path from the database.
+     *
+     * @return string
      */
     public function getCurrentFullPath()
     {
@@ -227,7 +247,7 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * Get the properties for the object from database and assign it
+     * Returns properties for the object from the database and assigns these.
      *
      * @return []
      */
@@ -285,7 +305,7 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * deletes all properties for the object from database
+     * Deletes all object properties from the database.
      *
      * @return void
      */
@@ -295,6 +315,8 @@ class Dao extends Model\Element\Dao
     }
 
     /**
+     * Deletes all user permissions based on the document id.
+     *
      * @return void
      */
     public function deleteAllPermissions()
@@ -303,6 +325,8 @@ class Dao extends Model\Element\Dao
     }
 
     /**
+     * Deletes all scheduled tasks assigned to the document.
+     *
      * @return void
      */
     public function deleteAllTasks()
@@ -311,11 +335,11 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * Quick test if there are childs
+     * Checks if there are children.
      *
      * @return boolean
      */
-    public function hasChilds()
+    public function hasChildren()
     {
         $c = $this->db->fetchOne("SELECT id FROM documents WHERE parentId = ? LIMIT 1", $this->model->getId());
 
@@ -323,7 +347,7 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * returns the amount of directly childs (not recursivly)
+     * Returns the amount of children (not recursively),
      *
      * @param User $user
      * @return integer
@@ -345,7 +369,7 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * Quick test if there are siblings
+     * Checks if the document has siblings
      *
      * @return boolean
      */
@@ -357,6 +381,8 @@ class Dao extends Model\Element\Dao
     }
 
     /**
+     * Checks if the document is locked.
+     *
      * @return bool
      * @throws \Exception
      */
@@ -384,6 +410,8 @@ class Dao extends Model\Element\Dao
     }
 
     /**
+     * Update the lock value for the document.
+     *
      * @throws \Zend_Db_Adapter_Exception
      */
     public function updateLocks()
@@ -400,7 +428,7 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     *
+     * Deletes locks from the document and its children.
      */
     public function unlockPropagate()
     {
@@ -411,6 +439,8 @@ class Dao extends Model\Element\Dao
     }
 
     /**
+     * Checks if the action is allowed.
+     *
      * @param $type
      * @param $user
      * @return bool
@@ -460,6 +490,8 @@ class Dao extends Model\Element\Dao
     }
 
     /**
+     * Save the document index.
+     *
      * @param $index
      * @throws \Zend_Db_Adapter_Exception
      */
@@ -469,6 +501,8 @@ class Dao extends Model\Element\Dao
     }
 
     /**
+     * Fetches the maximum index value from siblings.
+     *
      * @return string
      */
     public function getNextIndex()

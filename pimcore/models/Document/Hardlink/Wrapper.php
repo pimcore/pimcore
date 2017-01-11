@@ -90,14 +90,14 @@ trait Wrapper
         return $this->properties;
     }
 
-    public function getChilds($unpublished = false)
+    public function getChildren($unpublished = false)
     {
         if ($this->childs === null) {
             $hardLink = $this->getHardLinkSource();
-            $childs = [];
+            $children = [];
 
-            if ($hardLink->getChildsFromSource() && $hardLink->getSourceDocument() && !\Pimcore::inAdmin()) {
-                foreach (parent::getChilds() as $c) {
+            if ($hardLink->getChildrenFromSource() && $hardLink->getSourceDocument() && !\Pimcore::inAdmin()) {
+                foreach (parent::getChildren() as $c) {
                     $sourceDocument = $c;
                     $c = Service::wrap($c);
 
@@ -106,23 +106,23 @@ trait Wrapper
                         $c->setSourceDocument($sourceDocument);
                         $c->setPath(preg_replace("@^" . preg_quote($hardLink->getSourceDocument()->getRealFullpath()) . "@", $hardLink->getRealFullpath(), $c->getRealPath()));
 
-                        $childs[] = $c;
+                        $children[] = $c;
                     }
                 }
             }
 
-            $this->setChilds($childs);
+            $this->setChildren($children);
         }
 
         return $this->childs;
     }
 
-    public function hasChilds()
+    public function hasChildren()
     {
         $hardLink = $this->getHardLinkSource();
 
-        if ($hardLink->getChildsFromSource() && $hardLink->getSourceDocument() && !\Pimcore::inAdmin()) {
-            return parent::hasChilds();
+        if ($hardLink->getChildrenFromSource() && $hardLink->getSourceDocument() && !\Pimcore::inAdmin()) {
+            return parent::hasChildren();
         }
 
         return false;

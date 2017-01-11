@@ -1,5 +1,89 @@
 [
     {
+        "term": "no_image_assigned",
+        "definition": "No image assigned"
+    },
+    {
+        "term": "separated",
+        "definition": "separated"
+    },
+    {
+        "term": ":",
+        "definition": "colon"
+    },
+    {
+        "term": ";",
+        "definition": "semicolon"
+    },
+    {
+        "term": "custom_http_headers",
+        "definition": "Custom HTTP Headers"
+    },
+    {
+        "term": "press_crtl_and_select_to_compare",
+        "definition": "Compare: Press CTRL + Click Version"
+    },
+    {
+        "term": "file_is_bigger_that_upload_limit",
+        "definition": "The following file is bigger than the actual upload limit of your server:"
+    },
+    {
+        "term": "change_password",
+        "definition": "Change Password"
+    },
+    {
+        "term": "full_page_cache",
+        "definition": "Full Page Cache"
+    },
+    {
+        "term": "original_file",
+        "definition": "Original File"
+    },
+    {
+        "term": "web_format",
+        "definition": "Web Format"
+    },
+    {
+        "term": "print_format",
+        "definition": "Print Format"
+    },
+    {
+        "term": "office_format",
+        "definition": "Office Format"
+    },
+    {
+        "term": "resize_mode",
+        "definition": "Resize Mode"
+    },
+    {
+        "term": "custom_download",
+        "definition": "Custom Download"
+    },
+    {
+        "term": "mode",
+        "definition": "Mode"
+    },
+    {
+        "term": "thumbnail_preserve_info_text",
+        "definition": "'Preserve meta data' and 'preserve color' only works for transitions without compositions (frame, background color, ...) and color modifications (greyscale, sepia, ...)"
+    },
+    {
+        "term": "preserve_meta_data",
+        "definition": "Preserve meta data (don't strip)"
+    },
+    {
+        "term": "preserve_color",
+        "definition": "Preserve color (profile, space)"
+    },
+    {
+        "term": "high_resolution_info_text",
+        "definition": "eg. for Web-to-Print or everywhere where srcset is not possible/sufficient, not necessary for normal web-thumbnails, they automatically get a srcset attribute with 1x and 2x"
+    },
+    {
+        "term": "advanced_settings",
+        "definition": "Advanced settings"
+    },
+    {
         "term": "please_enter_the_id_of_the_asset",
         "definition": "Please enter the ID or Path (e.g. \/images\/logo.jpg) of the asset"
     },
@@ -52,8 +136,8 @@
         "definition": "Close Tab"
     },
     {
-        "term": "additional_path_variable_colon_separated",
-        "definition": "Additional $PATH variable (colon separated)"
+        "term": "additional_path_variable",
+        "definition": "Additional $PATH variable"
     },
     {
         "term": "saturation",
@@ -214,6 +298,10 @@
     {
         "term": "send_test_email",
         "definition": "Send Test-Email"
+    },
+    {
+        "term": "send_test_email_success",
+        "definition": "Your test-email has been sent. Would you like to keep this window open to send the email again?"
     },
     {
         "term": "global",
@@ -1673,16 +1761,12 @@
         "definition": "Use children from source document"
     },
     {
-        "term": "hardlink_properties",
-        "definition": "Hard Link Settings"
-    },
-    {
         "term": "click_right_for_more_options",
         "definition": "Click right for more options"
     },
     {
         "term": "clear_only_output_cache",
-        "definition": "Clear only output-cache"
+        "definition": "Clear only Full Page Cache"
     },
     {
         "term": "move_to_tab",
@@ -1794,7 +1878,7 @@
     },
     {
         "term": "setbackgroundimage",
-        "definition": "Set Backgroundimage"
+        "definition": "Set Background Image"
     },
     {
         "term": "roundcorners",
@@ -1963,10 +2047,6 @@
     {
         "term": "allow_capitals_for_documents",
         "definition": "Allow capitals in URL"
-    },
-    {
-        "term": "exif_data",
-        "definition": "EXIF Data"
     },
     {
         "term": "dimensions",
@@ -2685,10 +2765,6 @@
         "definition": "Preview"
     },
     {
-        "term": "edit_image",
-        "definition": "Edit Image"
-    },
-    {
         "term": "simple",
         "definition": "Simple"
     },
@@ -2875,6 +2951,10 @@
     {
         "term": "path_and_key_settings",
         "definition": "Path and Key Settings"
+    },
+    {
+        "term": "reference",
+        "definition": "Reference"
     },
     {
         "term": "path",
@@ -3937,10 +4017,6 @@
         "definition": "Apply"
     },
     {
-        "term": "output_cache",
-        "definition": "Output-Cache"
-    },
-    {
         "term": "lifetime",
         "definition": "Lifetime"
     },
@@ -4011,6 +4087,14 @@
     {
         "term": "geopoint",
         "definition": "Geographic Point"
+    },
+    {
+        "term": "geo_error_title",
+        "definition": "Google API Key Error"
+    },
+    {
+        "term": "geo_error_message",
+        "definition": "Google API Key is not defined and could not be loaded, go to settings and setup correctly."
     },
     {
         "term": "google_api_key_simple",
@@ -5045,6 +5129,10 @@
         "definition": "Text from CSV"
     },
     {
+        "term": "translation_merger_website",
+        "definition": "Merge website translations."
+    },
+    {
         "term": "nothing_to_merge",
         "definition": "There is nothing to merge"
     },
@@ -5191,6 +5279,14 @@
     {
         "term": "log_config_archive_description",
         "definition": "Use of an alternative database recommended when huge amounts of logs will be generated."
+    },
+    {
+        "term": "log_refresh_label",
+        "definition": "Refresh every"
+    },
+    {
+        "term": "log_refresh_seconds",
+        "definition": "seconds"
     },
     {
         "term": "classificationstore_menu_config",
@@ -5618,7 +5714,7 @@
     },
     {
         "term": "filter_active",
-        "definition": "Filter active"
+        "definition": "Filter active!"
     },
     {
         "term": "save_column_configuration",
@@ -5795,6 +5891,10 @@
     {
         "term": "web2print_port",
         "definition": "Port"
+    },
+    {
+        "term": "web2print_protocol",
+        "definition": "Protocol"
     },
     {
         "term": "web2print_baseURL",
@@ -6095,6 +6195,66 @@
     {
         "term": "add_object_mbx_title",
         "definition": "Add object of type "
+    },
+    {
+        "term": "newsletter_report",
+        "definition": "Column from a report"
+    },
+    {
+        "term": "newsletter_choose_report",
+        "definition": "Choose a report"
+    },
+    {
+        "term": "newsletter_email_field_name",
+        "definition": "Email field name"
+    },
+    {
+        "term": "path_formatter_class",
+        "definition": "Formatter Class"
+    },
+    {
+        "term": "quantityValue",
+        "definition": "Quantity Value"
+    },
+    {
+        "term": "calculatedValue",
+        "definition": "Calculated Value"
+    },
+    {
+        "term": "keyvalue_tag_col_groupDesc",
+        "definition": "Group Description"
+    },
+    {
+        "term": "keyvalue_tag_col_keyName",
+        "definition": "Key"
+    },
+    {
+        "term": "keyvalue_tag_col_keyDesc",
+        "definition": "Key Description"
+    },
+    {
+        "term": "keyvalue_tag_col_value",
+        "definition": "Value"
+    },
+    {
+        "term": "clear_filters",
+        "definition": "Clear Filters"
+    },
+    {
+        "term": "website_translation_settings",
+        "definition": "Shared Translation Settings"
+    },
+    {
+        "term": "language_permissions",
+        "definition": "Language Permissions (no view permission means all)"
+    },
+    {
+        "term": "rendering_class",
+        "definition": "Custom Renderer class"
+    },
+    {
+        "term": "rendering_data",
+        "definition": "Data passed to renderer"
     },
     {
         "term": "force_resize",

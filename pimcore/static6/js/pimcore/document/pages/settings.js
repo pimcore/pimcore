@@ -103,100 +103,33 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
             }
 
             // meta-data
-            var addMetaData = function (idName, idValue, contentName, contentValue) {
+            var addMetaData = function (value) {
 
-                if(typeof idName != "string") {
-                    idName = "";
-                }
-                if(typeof idValue != "string") {
-                    idValue = "";
-                }
-                if(typeof contentName != "string") {
-                    contentName = "";
-                }
-                if(typeof contentValue != "string") {
-                    contentValue = "";
+                if(typeof value != "string") {
+                    value = "";
                 }
 
                 var count = this.metaDataPanel.query("button").length+1;
 
-                var combolisteners = {
-                    "afterrender": function (el) {
-                        el.getEl().parent().applyStyles({
-                            float: "left",
-                            "margin-right": "5px"
-                        });
-                    }
-                };
-
                 var compositeField = new Ext.form.FieldContainer({
                     layout: 'hbox',
                     hideLabel: true,
-                    style: "padding-bottom:5px;",
                     items: [{
-                        xtype: "label",
-                        text: "<meta ",
-                        cls: "pimcore_document_metadata_label"
-                    },{
-                        xtype: "combo",
-                        store: ["name","property"],
-                        editable: true,
-                        triggerAction: "all",
-                        value: idName,
-                        mode: "local",
-                        width: 120,
-                        name: "metadata_idName_" + count,
-                        listeners: combolisteners
-                    },{
-                        xtype: "label",
-                        text: ' = ',
-                        cls: "pimcore_document_metadata_label"
-                    },{
-                        xtype: "combo",
-                        store: ["","robots","og:title","og:type","og:url","og:image","og:description","og:locale",
-                               "twitter:card","twitter:site","twitter:creator"],
-                        value: idValue,
-                        editable: true,
-                        mode: "local",
-                        triggerAction: "all",
-                        width: 120,
-                        name: "metadata_idValue_" + count,
-                        listeners: combolisteners
-                    },{
-                        xtype: "combo",
-                        store: ["content"],
-                        triggerAction: "all",
-                        value: "content",
-                        editable: true,
-                        mode: "local",
-                        width: 120,
-                        name: "metadata_contentName_" + count,
-                        listeners: combolisteners
-                    },{
                         xtype: "textfield",
-                        value: contentValue,
-                        width: 190,
-                        name: "metadata_contentValue_" + count,
-                    },{
-                        xtype: "label",
-                        text: ' />',
-                        cls: "pimcore_document_metadata_label"
+                        value: value,
+                        width: 636,
+                        name: "metadata_" + count,
                     }]
                 });
 
-                compositeField.add([{
+                compositeField.add({
                     xtype: "button",
                     iconCls: "pimcore_icon_delete",
-                    style: "float:left;",
                     handler: function (compositeField, el) {
                         this.metaDataPanel.remove(compositeField);
                         this.metaDataPanel.updateLayout();
                     }.bind(this, compositeField)
-                },{
-                    xtype: "box",
-                    style: "clear:both;"
-                }]);
-
+                });
 
                 this.metaDataPanel.add(compositeField);
                 this.metaDataPanel.updateLayout();
@@ -213,13 +146,8 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
                     style: "margin-bottom: 10px;",
                     items: ["->", {
                         xtype: 'button',
-                        text: t("add"),
                         iconCls: "pimcore_icon_add",
-                        handler: addMetaData,
-                        tooltip: {
-                            title:'',
-                            text: t('add_metadata')
-                        }
+                        handler: addMetaData
                     }]
                 }]
             });
@@ -227,8 +155,7 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
             try {
                 if(typeof this.document.data.metaData == "object" && this.document.data.metaData.length > 0) {
                     for(var r=0; r<this.document.data.metaData.length; r++) {
-                        addMetaData(this.document.data.metaData[r]["idName"], this.document.data.metaData[r]["idValue"],
-                            this.document.data.metaData[r]["contentName"], this.document.data.metaData[r]["contentValue"]);
+                        addMetaData(this.document.data.metaData[r]);
                     }
                 }
             } catch (e) {}

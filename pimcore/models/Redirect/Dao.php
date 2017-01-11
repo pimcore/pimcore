@@ -18,6 +18,9 @@ namespace Pimcore\Model\Redirect;
 
 use Pimcore\Model;
 
+/**
+ * @property \Pimcore\Model\Redirect $model
+ */
 class Dao extends Model\Dao\AbstractDao
 {
 

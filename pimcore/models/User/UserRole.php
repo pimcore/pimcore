@@ -18,6 +18,9 @@ namespace Pimcore\Model\User;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\User\UserRole\Dao getDao()
+ */
 class UserRole extends AbstractUser
 {
 
@@ -51,7 +54,20 @@ class UserRole extends AbstractUser
      */
     public $docTypes = [];
 
+    /**
+     * @var array
+     */
     public $perspectives;
+
+    /**
+     * @var array
+     */
+    public $websiteTranslationLanguagesView;
+
+    /**
+     * @var array
+     */
+    public $websiteTranslationLanguagesEdit;
 
     /**
      *
@@ -218,15 +234,8 @@ class UserRole extends AbstractUser
      */
     public function setClasses($classes)
     {
-        if (is_string($classes)) {
-            if (strlen($classes)) {
-                $classes = explode(",", $classes);
-            }
-        }
+        $classes = $this->prepareArray($classes);
 
-        if (empty($classes)) {
-            $classes = [];
-        }
         $this->classes = $classes;
     }
 
@@ -243,15 +252,7 @@ class UserRole extends AbstractUser
      */
     public function setDocTypes($docTypes)
     {
-        if (is_string($docTypes)) {
-            if (strlen($docTypes)) {
-                $docTypes = explode(",", $docTypes);
-            }
-        }
-
-        if (empty($docTypes)) {
-            $docTypes = [];
-        }
+        $docTypes = $this->prepareArray($docTypes);
 
         $this->docTypes = $docTypes;
     }
@@ -277,17 +278,67 @@ class UserRole extends AbstractUser
      */
     public function setPerspectives($perspectives)
     {
-        if (is_string($perspectives)) {
-            if (strlen($perspectives)) {
-                $perspectives = explode(",", $perspectives);
+        $perspectives = $this->prepareArray($perspectives);
+
+        $this->perspectives = $perspectives;
+    }
+
+    /**
+     * @return array
+     */
+    public function getWebsiteTranslationLanguagesView()
+    {
+        return $this->websiteTranslationLanguagesView;
+    }
+
+    /**
+     * @param array $websiteTranslationLanguagesView
+     */
+    public function setWebsiteTranslationLanguagesView($websiteTranslationLanguagesView)
+    {
+        $websiteTranslationLanguagesView = $this->prepareArray($websiteTranslationLanguagesView);
+
+        $this->websiteTranslationLanguagesView = $websiteTranslationLanguagesView;
+    }
+
+    /**
+     * @return array
+     */
+    public function getWebsiteTranslationLanguagesEdit()
+    {
+        return $this->websiteTranslationLanguagesEdit;
+    }
+
+    /**
+     * @param array $websiteTranslationLanguagesEdit
+     */
+    public function setWebsiteTranslationLanguagesEdit($websiteTranslationLanguagesEdit)
+    {
+        $websiteTranslationLanguagesEdit = $this->prepareArray($websiteTranslationLanguagesEdit);
+
+        $this->websiteTranslationLanguagesEdit = $websiteTranslationLanguagesEdit;
+    }
+
+
+    /**
+     * checks if given parameter is string and if so splits it creates array
+     * returns empty array if empty parameter is given
+     *
+     * @param $array
+     * @return array|string
+     */
+    protected function prepareArray($array)
+    {
+        if (is_string($array)) {
+            if (strlen($array)) {
+                $array = explode(",", $array);
             }
         }
 
-        if (empty($perspectives)) {
-            $perspectives = [];
+        if (empty($array)) {
+            $array = [];
         }
 
-
-        $this->perspectives = $perspectives;
+        return $array;
     }
 }

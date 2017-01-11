@@ -52,7 +52,7 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data
      *
      * @var integer
      */
-    public $columnLength = 255;
+    public $columnLength = 190;
 
     /**
      * Type for the generated phpdoc
@@ -317,6 +317,18 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data
         $code .= '* @return ' . $this->getPhpdocType() . "\n";
         $code .= '*/' . "\n";
         $code .= "public function get" . ucfirst($key) . ' ($language = null) {' . "\n";
+        $code .= "\t" . 'if (!$language) {' . "\n";
+        $code .= "\t\t" . 'try {' . "\n";
+        $code .= "\t\t\t" . '$locale = \Zend_Registry::get("Zend_Locale");'  . "\n";
+        $code .= "\t\t\t" . 'if (\Pimcore\Tool::isValidLanguage((string) $locale)) {'  . "\n";
+        $code .= "\t\t\t\t" . '$language = (string) $locale;'  . "\n";
+        $code .= "\t\t\t" . '} else {'  . "\n";
+        $code .= "\t\t\t\t" . 'throw new \Exception("Not supported language");'  . "\n";
+        $code .= "\t\t\t" . '}'  . "\n";
+        $code .= "\t\t" . '} catch (\Exception $e) {' . "\n";
+        $code .= "\t\t\t" . '$language = \Pimcore\Tool::getDefaultLanguage();' . "\n";
+        $code .= "\t\t" . '}' . "\n";
+        $code .= "\t" . '}'  . "\n";
 
         $code .= "\t" . '$data' . " = new \\Pimcore\\Model\\Object\\Data\\CalculatedValue('" . $key . "');\n";
         $code .= "\t" . '$data->setContextualData("localizedfield", "localizedfields", null, $language);' . "\n";

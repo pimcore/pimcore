@@ -18,11 +18,14 @@ namespace Pimcore\Model\Object\Objectbrick;
 
 use Pimcore\Model;
 use Pimcore\Model\Object;
-use Pimcore\Tool\Serialize;
 use Pimcore\File;
 
+/**
+ * @method \Pimcore\Model\Object\Objectbrick\Definition\Dao getDao()
+ */
 class Definition extends Model\Object\Fieldcollection\Definition
 {
+    use Model\Object\ClassDefinition\Helper\VarExport;
 
     /**
      * @var array()
@@ -71,12 +74,10 @@ class Definition extends Model\Object\Fieldcollection\Definition
             }
         } catch (\Exception $e) {
             $objectBrickFolder = PIMCORE_CLASS_DIRECTORY . "/objectbricks";
+            $fieldFile = $objectBrickFolder . "/" . $key . ".php";
 
-            $fieldFile = $objectBrickFolder . "/" . $key . ".psf";
             if (is_file($fieldFile)) {
-                $fcData = file_get_contents($fieldFile);
-                $brick = Serialize::unserialize($fcData);
-
+                $brick = include $fieldFile;
                 \Zend_Registry::set($cacheKey, $brick);
             }
         }
@@ -98,12 +99,7 @@ class Definition extends Model\Object\Fieldcollection\Definition
             throw new \Exception("A object-brick needs a key to be saved!");
         }
 
-        $objectBrickFolder = PIMCORE_CLASS_DIRECTORY . "/objectbricks";
-
-        // create folder if not exist
-        if (!is_dir($objectBrickFolder)) {
-            File::mkdir($objectBrickFolder);
-        }
+        $definitionFile = $this->getDefinitionFile();
 
         $newClassDefinitions = [];
         $classDefinitionsToDelete = [];
@@ -118,15 +114,25 @@ class Definition extends Model\Object\Fieldcollection\Definition
 
         $this->classDefinitions = $newClassDefinitions;
 
+        $infoDocBlock = $this->getInfoDocBlock();
 
+        $this->cleanupOldFiles($definitionFile);
 
-        $serialized = Serialize::serialize($this);
-        $serializedFilename = $objectBrickFolder . "/" . $this->getKey() . ".psf";
+        $clone = clone $this;
+        $clone->setDao(null);
+        unset($clone->oldClassDefinitions);
+        unset($clone->fieldDefinitions);
 
+        $exportedClass = var_export($clone, true);
 
-        $this->cleanupOldFiles($serializedFilename);
+        $data = '<?php ';
+        $data .= "\n\n";
+        $data .= $infoDocBlock;
+        $data .= "\n\n";
 
-        File::put($serializedFilename, $serialized);
+        $data .= "\nreturn " . $exportedClass . ";\n";
+
+        \Pimcore\File::put($definitionFile, $data);
 
         $extendClass = "Object\\Objectbrick\\Data\\AbstractData";
         if ($this->getParentClass()) {
@@ -137,18 +143,8 @@ class Definition extends Model\Object\Fieldcollection\Definition
         // create class
 
         $cd = '<?php ';
-
         $cd .= "\n\n";
-        $cd .= "/** Generated at " . date('c') . " */";
-        $cd .= "\n\n";
-
-        $cd .= "/**\n";
-
-        if ($_SERVER["REMOTE_ADDR"]) {
-            $cd .= "* IP:          " . $_SERVER["REMOTE_ADDR"] . "\n";
-        }
-
-        $cd .= "*/\n";
+        $cd .= $infoDocBlock;
         $cd .= "\n\n";
         $cd .= "namespace Pimcore\\Model\\Object\\Objectbrick\\Data;";
         $cd .= "\n\n";
@@ -182,18 +178,11 @@ class Definition extends Model\Object\Fieldcollection\Definition
         $cd .= "}\n";
         $cd .= "\n";
 
-        $fieldClassFolder = PIMCORE_CLASS_DIRECTORY . "/Object/Objectbrick/Data";
-        if (!is_dir($fieldClassFolder)) {
-            File::mkdir($fieldClassFolder);
-        }
-
-        $fieldClassFile = $fieldClassFolder . "/" . ucfirst($this->getKey()) . ".php";
-        File::put($fieldClassFile, $cd);
+        File::put($this->getPhpClassFile(), $cd);
 
         $this->createContainerClasses();
         $this->updateDatabase();
     }
-
 
     /**
      * @param $serializedFilename
@@ -201,14 +190,13 @@ class Definition extends Model\Object\Fieldcollection\Definition
      */
     private function cleanupOldFiles($serializedFilename)
     {
+        $oldObject = null;
         $this->oldClassDefinitions = [];
         if (file_exists($serializedFilename)) {
-            $prevSerialized = file_get_contents($serializedFilename);
+            $oldObject = include $serializedFilename;
         }
 
-        $oldObject = Serialize::unserialize($prevSerialized);
-
-        if (!empty($oldObject->classDefinitions)) {
+        if ($oldObject && !empty($oldObject->classDefinitions)) {
             foreach ($oldObject->classDefinitions as $cl) {
                 $this->oldClassDefinitions[$cl['classname']] = $cl['classname'];
                 $class = Object\ClassDefinition::getById($cl['classname']);
@@ -416,16 +404,8 @@ class Definition extends Model\Object\Fieldcollection\Definition
      */
     public function delete()
     {
-        $fieldCollectionFolder = PIMCORE_CLASS_DIRECTORY . "/objectbricks";
-        $fieldFile = $fieldCollectionFolder . "/" . $this->getKey() . ".psf";
-
-        @unlink($fieldFile);
-
-        $fieldClassFolder = PIMCORE_CLASS_DIRECTORY . "/Object/Objectbrick/Data";
-        $fieldClass = $fieldClassFolder . "/" . ucfirst($this->getKey()) . ".php";
-
-        @unlink($fieldClass);
-
+        @unlink($this->getDefinitionFile());
+        @unlink($this->getPhpClassFile());
 
         $processedClasses = [];
         if (!empty($this->classDefinitions)) {
@@ -468,5 +448,27 @@ class Definition extends Model\Object\Fieldcollection\Definition
                 }
             }
         }
+    }
+
+    /**
+     * @return string
+     */
+    protected function getDefinitionFile()
+    {
+        $objectBrickFolder = PIMCORE_CLASS_DIRECTORY . "/objectbricks";
+        $definitionFile = $objectBrickFolder . "/" . $this->getKey() . ".php";
+
+        return $definitionFile;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getPhpClassFile()
+    {
+        $classFolder = PIMCORE_CLASS_DIRECTORY . "/Object/Objectbrick/Data";
+        $classFile = $classFolder . "/" . ucfirst($this->getKey()) . ".php";
+
+        return $classFile;
     }
 }

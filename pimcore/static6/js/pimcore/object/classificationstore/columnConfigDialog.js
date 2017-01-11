@@ -22,7 +22,7 @@ pimcore.object.classificationstore.columnConfigDialog = Class.create({
         this.node = node;
         this.selectionPanel = selectionPanel;
 
-        var selectionWindow = new pimcore.object.classificationstore.relationSelectionWindow(this, node.layout.storeId);
+        var selectionWindow = new pimcore.object.classificationstore.relationSelectionWindow(this, node.data.layout.storeId);
         selectionWindow.show();
     },
 
@@ -31,8 +31,8 @@ pimcore.object.classificationstore.columnConfigDialog = Class.create({
         if (this.keysAdded == 0 && !this.requestIsPending) {
             // no keys added, remove the node
             var store = this.ownerTree.getStore();
-            var targetNode = store.getById(this.node.id);
-            targetNode.remove();
+            var nodeId = this.node.getId()
+            this.node.remove();
         }
     },
 
@@ -43,10 +43,7 @@ pimcore.object.classificationstore.columnConfigDialog = Class.create({
     handleAddKeys: function (response) {
         var data = Ext.decode(response.responseText);
 
-        var originalKey =  this.node.key;
-
-        var store = this.ownerTree.getStore();
-        this.node = store.getById(this.node.id);
+        var originalKey =  this.node.data.key;
 
         if(data && data.success) {
             for (var i=0; i < data.data.length; i++) {
@@ -91,7 +88,7 @@ pimcore.object.classificationstore.columnConfigDialog = Class.create({
         }
 
         if (this.keysAdded == 0) {
-            targetNode.remove();
+            this.node.remove();
         }
     }
 

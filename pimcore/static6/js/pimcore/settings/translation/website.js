@@ -38,10 +38,13 @@ pimcore.settings.translation.website = Class.create(pimcore.settings.translation
 
     getAvailableLanguages: function () {
         Ext.Ajax.request({
-            url: "/admin/settings/get-available-languages",
+            url: "/admin/translation/get-website-translation-languages",
             success: function (response) {
                 try {
-                    this.languages = Ext.decode(response.responseText);
+                    var container = Ext.decode(response.responseText);
+                    this.languages = container.view;
+                    this.editableLanguages = container.edit;
+
                     this.getTabPanel();
                 }
                 catch (e) {

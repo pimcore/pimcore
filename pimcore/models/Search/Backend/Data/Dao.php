@@ -17,6 +17,9 @@ namespace Pimcore\Model\Search\Backend\Data;
 use Pimcore\Model;
 use Pimcore\Logger;
 
+/**
+ * @property \Pimcore\Model\Search\Backend\Data $model
+ */
 class Dao extends \Pimcore\Model\Dao\AbstractDao
 {
 

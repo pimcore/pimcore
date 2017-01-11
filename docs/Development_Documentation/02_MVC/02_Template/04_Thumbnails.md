@@ -6,7 +6,7 @@ When source images are stored as Pimcore Assets (as they should be), Pimcore can
   Just use the Thumbnail functionality and let Pimcore transform the images the way you need them. 
   
 To get all the information about Thumbnails, which possibilities exist and how to configure them, 
-please have a look at [Working with thumbnails](../../04_Assets/03_Working_with_Thumbnails.md). 
+please have a look at [Working with Thumbnails](../../04_Assets/03_Working_with_Thumbnails.md/README.md). 
 
 ## Use Thumbnails in Templates
 

@@ -19,7 +19,6 @@ use Pimcore\Tool;
 use Pimcore\Tool\Session;
 use Pimcore\Config;
 use Pimcore\Model;
-use Pimcore\Model\Element;
 use Pimcore\Model\Property;
 use Pimcore\Model\Schedule;
 use Pimcore\Logger;
@@ -189,13 +188,17 @@ abstract class Document extends Admin
 
     /**
      * @param $doc
+     * @param bool $useForSave
      */
-    protected function saveToSession($doc)
+    protected function saveToSession($doc, $useForSave = false)
     {
         // save to session
-        Session::useSession(function ($session) use ($doc) {
-            $key = "document_" . $doc->getId();
-            $session->$key = $doc;
+        Session::useSession(function ($session) use ($doc, $useForSave) {
+            $session->{"document_" . $doc->getId()} = $doc;
+
+            if ($useForSave) {
+                $session->{"document_" . $doc->getId() . "_useForSave"} = true;
+            }
         }, "pimcore_documents");
     }
 
@@ -218,7 +221,7 @@ abstract class Document extends Admin
      */
     protected function minimizeProperties($document)
     {
-        $properties = Element\Service::minimizePropertiesForEditmode($document->getProperties());
+        $properties = Model\Element\Service::minimizePropertiesForEditmode($document->getProperties());
         $document->setProperties($properties);
     }
 

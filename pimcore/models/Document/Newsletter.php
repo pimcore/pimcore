@@ -18,6 +18,9 @@ namespace Pimcore\Model\Document;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\Document\Newsletter\Dao getDao()
+ */
 class Newsletter extends Model\Document\PageSnippet
 {
     /**
@@ -114,6 +117,18 @@ class Newsletter extends Model\Document\PageSnippet
     public function getFrom()
     {
         return $this->from;
+    }
+
+    /**
+     * Returns the "from" email address as array
+     *
+     * @return array
+     */
+    public function getFromAsArray()
+    {
+        $emailAddresses = preg_split('/,|;/', $this->getFrom());
+
+        return $emailAddresses;
     }
 
     /**

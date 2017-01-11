@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta charset="UTF-8">
     <meta name="robots" content="noindex, nofollow" />
     <link rel="icon" type="image/png" href="/pimcore/static6/img/favicon/favicon-32x32.png" />
 

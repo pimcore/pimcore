@@ -22,6 +22,9 @@ use Pimcore\File;
 use Pimcore\Cache;
 use Pimcore\Logger;
 
+/**
+ * @method \Pimcore\Model\Object\ClassDefinition\Dao getDao()
+ */
 class ClassDefinition extends Model\AbstractModel
 {
     use Object\ClassDefinition\Helper\VarExport;
@@ -221,6 +224,25 @@ class ClassDefinition extends Model\AbstractModel
 
 
     /**
+     * @param $data
+     */
+    public static function cleanupForExport(&$data)
+    {
+        if (isset($data->fieldDefinitionsCache)) {
+            unset($data->fieldDefinitionsCache);
+        }
+
+        if (method_exists($data, "getChilds")) {
+            $children = $data->getChilds();
+            if (is_array($children)) {
+                foreach ($children as $child) {
+                    self::cleanupForExport($child);
+                }
+            }
+        }
+    }
+
+    /**
      * @throws \Exception
      */
     public function save()
@@ -250,6 +272,9 @@ class ClassDefinition extends Model\AbstractModel
         $clone->setDao(null);
         unset($clone->id);
         unset($clone->fieldDefinitions);
+
+        self::cleanupForExport($clone->layoutDefinitions);
+
 
         $exportedClass = var_export($clone, true);
 

@@ -372,18 +372,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
 
         var menu = new Ext.menu.Menu();
 
-        var allowedTypes = {
-            accordion: ["panel","region","tabpanel","text"],
-            fieldset: ["data","text"],
-            fieldcontainer: ["data","text"],
-            panel: ["data","region","tabpanel","button","accordion","fieldset","panel","text","html"],
-            region: ["panel","accordion","tabpanel","text","localizedfields"],
-            tabpanel: ["panel", "region", "accordion","text","localizedfields"],
-            button: [],
-            text: [],
-            root: ["panel","region","tabpanel","accordion","text"],
-            localizedfields: ["panel","tabpanel","accordion","fieldset","text","region","button"]
-        };
+        var allowedTypes = pimcore.object.helpers.layout.getAllowedTypes(this);
 
         var parentType = "root";
 

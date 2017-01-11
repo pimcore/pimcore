@@ -17,9 +17,9 @@
 namespace Pimcore\Model\Asset\WebDAV;
 
 use Sabre\DAV;
-use Pimcore\File;
 use Pimcore\Tool\Admin as AdminTool;
 use Pimcore\Model\Asset;
+use Pimcore\Model\Element;
 use Pimcore\Logger;
 
 class Folder extends DAV\Collection
@@ -72,9 +72,7 @@ class Folder extends DAV\Collection
     public function getChild($name)
     {
         $nameParts = explode("/", $name);
-        $name = File::getValidFilename($nameParts[count($nameParts)-1]);
-
-        //$name = implode("/",$nameParts);
+        $name = Element\Service::getValidKey($nameParts[count($nameParts)-1], "asset");
 
         if (is_string($name)) {
             $parentPath = $this->asset->getRealFullPath();
@@ -122,7 +120,7 @@ class Folder extends DAV\Collection
 
         if ($this->asset->isAllowed("create")) {
             $asset = Asset::create($this->asset->getId(), [
-                "filename" => File::getValidFilename($name),
+                "filename" => Element\Service::getValidKey($name, "asset"),
                 "sourcePath" => $tmpFile,
                 "userModification" => $user->getId(),
                 "userOwner" => $user->getId()
@@ -144,7 +142,7 @@ class Folder extends DAV\Collection
 
         if ($this->asset->isAllowed("create")) {
             $asset = Asset::create($this->asset->getId(), [
-                "filename" => File::getValidFilename($name),
+                "filename" => Element\Service::getValidKey($name, "asset"),
                 "type" => "folder",
                 "userModification" => $user->getId(),
                 "userOwner" => $user->getId()
@@ -176,7 +174,7 @@ class Folder extends DAV\Collection
     public function setName($name)
     {
         if ($this->asset->isAllowed("rename")) {
-            $this->asset->setFilename(File::getValidFilename($name));
+            $this->asset->setFilename(Element\Service::getValidKey($name, "asset"));
             $this->asset->save();
         } else {
             throw new DAV\Exception\Forbidden();

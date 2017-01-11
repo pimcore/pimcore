@@ -19,6 +19,9 @@ namespace Pimcore\Model\Object;
 use Pimcore\Model;
 use Pimcore\Tool;
 
+/**
+ * @method \Pimcore\Model\Object\Localizedfield\Dao getDao()
+ */
 class Localizedfield extends Model\AbstractModel
 {
     const STRICT_DISABLED = 0;
@@ -221,7 +224,8 @@ class Localizedfield extends Model\AbstractModel
             $containerKey = $context["containerKey"];
             $container = Model\Object\Fieldcollection\Definition::getByKey($containerKey);
         } else {
-            $container = $this->getObject()->getClass();
+            $object = $this->getObject();
+            $container = $object->getClass();
         }
         $fieldDefinition = $container->getFieldDefinition("localizedfields")->getFieldDefinition($name);
 
@@ -353,7 +357,7 @@ class Localizedfield extends Model\AbstractModel
      */
     public function __sleep()
     {
-        return ["items"];
+        return ["items", "context"];
     }
 
         /**

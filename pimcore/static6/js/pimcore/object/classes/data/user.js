@@ -20,10 +20,10 @@ pimcore.object.classes.data.user = Class.create(pimcore.object.classes.data.data
      */
     allowIn: {
         object: true, 
-        objectbrick: false,
-        fieldcollection: false,
-        localizedfield: false,
-        classificationstore : false,
+        objectbrick: true,
+        fieldcollection: true,
+        localizedfield: true,
+        classificationstore : true,
         block: true
     },        
 

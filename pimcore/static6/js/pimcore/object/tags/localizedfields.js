@@ -102,6 +102,12 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
             wrapperConfig.title = this.fieldConfig.title;
         }
 
+        if (this.context.containerType == "fieldcollection") {
+            this.context.subContainerType = "localizedfield";
+        } else {
+            this.context.containerType = "localizedfield";
+        }
+
         var nrOfLanguages = this.frontendLanguages.length;
 
         if (this.dropdownLayout) {
@@ -161,7 +167,9 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                 var editable =  !showMode && (pimcore.currentuser.admin ||
                     this.fieldConfig.permissionEdit === undefined ||  this.fieldConfig.permissionEdit.length == 0 || in_array(this.currentLanguage, this.fieldConfig.permissionEdit));
 
-                var items =  this.getRecursiveLayout(this.fieldConfig, !editable).items;
+                var runtimeContext = Ext.clone(this.context);
+                runtimeContext.language = Ext.clone(this.currentLanguage);
+                var items =  this.getRecursiveLayout(this.fieldConfig, !editable, runtimeContext).items;
 
                 var panelConf = {
                     height: "auto",
@@ -195,7 +203,6 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
             }
         } else {
             var panelConf = {
-                autoScroll: true,
                 monitorResize: true,
                 cls: "object_field",
                 activeTab: 0,
@@ -218,7 +225,10 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
 
                 var editable =  (pimcore.currentuser.admin ||
                     this.fieldConfig.permissionEdit === undefined ||  this.fieldConfig.permissionEdit.length == 0 || in_array(this.currentLanguage, this.fieldConfig.permissionEdit));
-                var items = this.getRecursiveLayout(this.fieldConfig, !editable);
+
+                var runtimeContext = Ext.clone(this.context);
+                runtimeContext.language = Ext.clone(this.currentLanguage);
+                var items = this.getRecursiveLayout(this.fieldConfig, !editable, runtimeContext);
 
                 var item = {
                     xtype: "panel",

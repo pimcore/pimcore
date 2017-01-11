@@ -143,7 +143,7 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
                     "published" => false
                 ];
 
-                $createValues["key"] = File::getValidFilename($this->getParam("key"));
+                $createValues["key"] = \Pimcore\Model\Element\Service::getValidKey($this->getParam("key"), "document");
 
                 // check for a docType
                 $docType = Document\DocType::getById(intval($this->getParam("docTypeId")));
@@ -361,10 +361,14 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
             ]];
         }
 
+        // get the element key
+        $elementKey = $document->getKey();
+
         $this->_helper->json([
             "hasDependencies" => $hasDependency,
             "childs" => $childs,
-            "deletejobs" => $deleteJobs
+            "deletejobs" => $deleteJobs,
+            "elementKey" => $elementKey
         ]);
     }
 
@@ -556,12 +560,6 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
         }
 
         $this->_helper->json(["docTypes" => $docTypes]);
-    }
-
-    public function getPathForIdAction()
-    {
-        $document = Document::getById($this->getParam("id"));
-        die($document->getRealFullPath());
     }
 
     public function versionToSessionAction()
@@ -946,6 +944,14 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
             if (file_exists($thumbnailFile) && filemtime($thumbnailFile) > ($childDocument->getModificationDate() - 20)) {
                 $thumbnailPath = str_replace(PIMCORE_DOCUMENT_ROOT, "", $thumbnailFile);
                 $tmpDocument["thumbnail"] = $thumbnailPath;
+            }
+        }
+
+        if ($childDocument instanceof Document\Page) {
+            $tmpDocument["url"] = $childDocument->getFullPath();
+            $site = Tool\Frontend::getSiteForDocument($childDocument);
+            if ($site) {
+                $tmpDocument["url"] = "http://" . $site->getMainDomain() . preg_replace("@^" . $site->getRootPath() . "/?@", "/", $childDocument->getRealFullPath());
             }
         }
 

@@ -18,6 +18,9 @@ namespace Pimcore\Model\Object\Classificationstore\CollectionGroupRelation;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\Object\Classificationstore\CollectionGroupRelation\Listing\Dao getDao()
+ */
 class Listing extends Model\Listing\AbstractListing
 {
 

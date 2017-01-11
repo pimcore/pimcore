@@ -20,6 +20,9 @@ use Pimcore\Model;
 use Pimcore\Config;
 use Pimcore\Logger;
 
+/**
+ * @method \Pimcore\Model\Object\Concrete\Dao getDao()
+ */
 class Concrete extends AbstractObject
 {
     public static $systemColumnNames = ["id", "fullpath", "published", "creationDate", "modificationDate", "filename", "classname"];
@@ -452,7 +455,7 @@ class Concrete extends AbstractObject
 
     /**
      * @param boolean $o_published
-     * @return this
+     * @return $this
      */
     public function setPublished($o_published)
     {
@@ -703,7 +706,5 @@ class Concrete extends AbstractObject
     public function __clone()
     {
         parent::__clone();
-
-        Service::loadAllObjectFields($this);
     }
 }

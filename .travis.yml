@@ -5,7 +5,6 @@ notifications:
     - travis-ci@pimcore.org
 
 php:
-  - 5.5
   - 5.6
   - 7
   - hhvm
@@ -13,6 +12,10 @@ php:
 matrix:
   allow_failures:
     - php: hhvm
+
+before_install:
+  # analyze ZF usage before running anything else
+  - if [[ "$TRAVIS_PHP_VERSION" == "7" ]]; then bash .travis/analyze-zf-usage.sh; fi
 
 install:
   - composer install
@@ -32,7 +35,6 @@ before_script:
   # make tests executable
   - cd tests
   - sudo chmod 0755 alltests.sh hhvm-all.sh
-
 
 script:
   - if [[ "$TRAVIS_PHP_VERSION" != *"hhvm"* ]]; then ./alltests.sh; fi

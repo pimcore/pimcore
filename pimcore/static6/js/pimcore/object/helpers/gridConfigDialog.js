@@ -188,18 +188,24 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                                 if (this.selectionPanel.getRootNode().findChild("key", record.data.key)) {
                                     dropHandlers.cancelDrop();
                                 } else {
-                                    var copy = record.createNode(Ext.apply({}, record.data));
+                                    var copy = Ext.apply({}, record.data)
+                                    delete copy.id;
+                                    copy = record.createNode(copy);
+
+
+                                    var ownerTree = this.selectionPanel;
 
                                     if (record.data.dataType == "keyValue") {
-                                        var ccd = new pimcore.object.keyvalue.columnConfigDialog();
-                                        ccd.getConfigDialog(copy, this.selectionPanel);
-                                        return;
+                                        window.setTimeout(function () {
+                                            var ccd = new pimcore.object.keyvalue.columnConfigDialog();
+                                            ccd.getConfigDialog(ownerTree, copy, this.selectionPanel);
+                                        }.bind(this), 100);
                                     } else if (record.data.dataType == "classificationstore") {
-                                        var ownerTree = this.selectionPanel;
-                                        var ccd = new pimcore.object.classificationstore.columnConfigDialog();
-                                        ccd.getConfigDialog(ownerTree, copy, this.selectionPanel);
+                                        window.setTimeout(function () {
+                                            var ccd = new pimcore.object.classificationstore.columnConfigDialog();
+                                            ccd.getConfigDialog(ownerTree, copy, this.selectionPanel);
+                                        }.bind(this), 100);
                                     }
-
                                     data.records = [copy]; // assign the copy as the new dropNode
                                 }
                             }
@@ -299,17 +305,17 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
 
                 if(this.selectionPanel && !this.selectionPanel.getRootNode().findChild("key", record.data.key)) {
                     delete copy.id;
-                    this.selectionPanel.getRootNode().appendChild(copy);
-                }
+                    copy = this.selectionPanel.getRootNode().appendChild(copy);
 
-                if (record.data.dataType == "keyValue") {
                     var ownerTree = this.selectionPanel;
-                    var ccd = new pimcore.object.keyvalue.columnConfigDialog();
-                    ccd.getConfigDialog(ownerTree, copy, this.selectionPanel);
-                } else if (record.data.dataType == "classificationstore") {
-                    var ownerTree = this.selectionPanel;
-                    var ccd = new pimcore.object.classificationstore.columnConfigDialog();
-                    ccd.getConfigDialog(ownerTree, copy, this.selectionPanel);
+
+                    if (record.data.dataType == "keyValue") {
+                        var ccd = new pimcore.object.keyvalue.columnConfigDialog();
+                        ccd.getConfigDialog(ownerTree, copy, this.selectionPanel);
+                    } else if (record.data.dataType == "classificationstore") {
+                        var ccd = new pimcore.object.classificationstore.columnConfigDialog();
+                        ccd.getConfigDialog(ownerTree, copy, this.selectionPanel);
+                    }
                 }
             }
         }.bind(this));

@@ -20,9 +20,10 @@
 pimcore.registerNS("pimcore.object.helpers.edit");
 pimcore.object.helpers.edit = {
 
-    getRecursiveLayout: function (l, noteditable) {
-
-        var panelListenerConfig = {};
+    getRecursiveLayout: function (l, noteditable, context) {
+        if (typeof context === "undefined") {
+            context = {};
+        }
 
         var tabpanelCorrection = function (panel) {
             window.setTimeout(function () {
@@ -50,22 +51,19 @@ pimcore.object.helpers.edit = {
                 forceLayout: true,
                 hideMode: "offsets",
                 padding: 0,
-                bodyStyle: "padding: 0",
-                listeners: panelListenerConfig
+                bodyStyle: "padding: 0"
             },
             fieldset: {
                 xtype: "fieldset",
                 autoScroll: true,
                 forceLayout: true,
-                hideMode: "offsets",
-                listeners: panelListenerConfig
+                hideMode: "offsets"
             },
             fieldcontainer: {
                 xtype: "fieldcontainer",
                 autoScroll: true,
                 forceLayout: true,
-                hideMode: "offsets",
-                listeners: panelListenerConfig
+                hideMode: "offsets"
             },
             panel: {
                 xtype: "panel",
@@ -77,16 +75,14 @@ pimcore.object.helpers.edit = {
                 defaults: {
                     width: "auto"
                 },
-                hideMode: "offsets",
-                listeners: panelListenerConfig
+                hideMode: "offsets"
             },
             region: {
                 xtype: "panel",
                 layout: "border",
                 forceLayout: true,
                 padding: 0,
-                hideMode: "offsets",
-                listeners: panelListenerConfig
+                hideMode: "offsets"
             },
             tabpanel: {
                 xtype: "tabpanel",
@@ -112,8 +108,7 @@ pimcore.object.helpers.edit = {
                 style: "margin-bottom: 10px;",
                 autoScroll: true,
                 forceLayout: true,
-                monitorResize: true,
-                listeners: panelListenerConfig
+                monitorResize: true
             }
         };
 
@@ -142,7 +137,7 @@ pimcore.object.helpers.edit = {
                             childConfig.fieldLabel = l.fieldLabel;
                         }
 
-                        tmpItems = this.getRecursiveLayout(childConfig, noteditable);
+                        tmpItems = this.getRecursiveLayout(childConfig, noteditable, context);
 
                         if (tmpItems) {
                             l.items.push(tmpItems);
@@ -242,6 +237,7 @@ pimcore.object.helpers.edit = {
                 var field = new pimcore.object.tags[l.fieldtype](data, l);
 
                 field.setObject(this.object);
+                field.updateContext(context);
                 field.setName(l.name);
                 field.setTitle(l.titleOriginal);
                 field.setInitialData(data);

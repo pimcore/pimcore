@@ -19,6 +19,9 @@ namespace Pimcore\Model\Object\KeyValue;
 use Pimcore\Model;
 use Pimcore\Logger;
 
+/**
+ * @method \Pimcore\Model\Object\KeyValue\TranslatorConfig\Dao getDao()
+ */
 class TranslatorConfig extends Model\AbstractModel
 {
 

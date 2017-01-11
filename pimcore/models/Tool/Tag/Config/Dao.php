@@ -18,6 +18,9 @@ namespace Pimcore\Model\Tool\Tag\Config;
 
 use Pimcore\Model;
 
+/**
+ * @property \Pimcore\Model\Tool\Tag\Config $model
+ */
 class Dao extends Model\Dao\PhpArrayTable
 {
 

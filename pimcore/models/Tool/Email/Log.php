@@ -20,6 +20,9 @@ use Pimcore\Model;
 use Pimcore\File;
 use Pimcore\Logger;
 
+/**
+ * @method \Pimcore\Model\Tool\Email\Log\Dao getDao()
+ */
 class Log extends Model\AbstractModel
 {
 
@@ -597,6 +600,10 @@ class Log extends Model\AbstractModel
      */
     protected function buildArray($data)
     {
+        if (is_null($data)) {
+            return [];
+        }
+        
         $dataArray = [];
         $tmp = explode(',', trim($data));
 

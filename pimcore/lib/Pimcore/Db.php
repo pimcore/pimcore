@@ -60,7 +60,7 @@ class Db
             return new Wrapper();
         }
 
-        $charset = "UTF8";
+        $charset = "utf8mb4";
 
         // explicit set charset for connection (to the adapter)
         $config = Config::getSystemConfig()->database->toArray();

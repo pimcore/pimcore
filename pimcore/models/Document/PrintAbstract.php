@@ -20,6 +20,9 @@ use \Pimcore\Model\Document;
 use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Web2Print\Processor;
 
+/**
+ * @method \Pimcore\Model\Document\PrintAbstract\Dao getDao()
+ */
 abstract class PrintAbstract extends Document\PageSnippet
 {
     public $lastGenerated;

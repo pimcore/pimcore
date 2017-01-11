@@ -18,6 +18,9 @@ namespace Pimcore\Model\Asset\Image\Thumbnail\Config;
 
 use Pimcore\Model;
 
+/**
+ * @property \Pimcore\Model\Asset\Image\Thumbnail\Config $model
+ */
 class Dao extends Model\Dao\PhpArrayTable
 {
 
@@ -65,7 +68,7 @@ class Dao extends Model\Dao\PhpArrayTable
             $dataRaw = get_object_vars($this->model);
             $data = [];
             $allowedProperties = ["name", "description", "items", "medias", "format",
-                "quality", "highResolution", "creationDate", "modificationDate"];
+                "quality", "highResolution", "creationDate", "modificationDate", "preserveColor", "preserveMetaData"];
 
             foreach ($dataRaw as $key => $value) {
                 if (in_array($key, $allowedProperties)) {

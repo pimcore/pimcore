@@ -19,6 +19,9 @@ namespace Pimcore\Model\User\Permission;
 use Pimcore\Model;
 use Pimcore\Logger;
 
+/**
+ * @method \Pimcore\Model\User\Permission\Definition\Dao getDao()
+ */
 class Definition extends Model\AbstractModel
 {
     public $key;

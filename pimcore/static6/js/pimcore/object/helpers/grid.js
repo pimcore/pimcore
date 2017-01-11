@@ -90,10 +90,10 @@ pimcore.object.helpers.grid = Class.create({
                 destroy : this.url + "?xaction=destroy"
             },
             actionMethods: {
-                create : 'GET',
-                read   : 'GET',
-                update : 'GET',
-                destroy: 'GET'
+                create : 'POST',
+                read   : 'POST',
+                update : 'POST',
+                destroy: 'POST'
             },
             listeners: {
                 exception: function (proxy, request, operation, eOpts) {
@@ -232,7 +232,6 @@ pimcore.object.helpers.grid = Class.create({
     },
 
     getColumnWidth: function(field, defaultValue) {
-        console.log(field);
         if (field.width) {
             return field.width;
         } else if(field.layout && field.layout.width) {

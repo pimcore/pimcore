@@ -102,9 +102,11 @@ pimcore.settings.user.role.settings = Class.create({
             }]
         });
 
+        this.websiteTranslationSettings = new pimcore.settings.user.websiteTranslationSettings(this, this.data.validLanguages, this.data.role);
+
         this.panel = new Ext.form.FormPanel({
             title: t("settings"),
-            items: [this.generalSet, this.permissionsSet, this.typesSet],
+            items: [this.generalSet, this.permissionsSet, this.typesSet, this.websiteTranslationSettings.getPanel()],
             bodyStyle: "padding:10px;",
             autoScroll: true
         });
@@ -113,6 +115,11 @@ pimcore.settings.user.role.settings = Class.create({
     },
 
     getValues: function () {
-        return this.panel.getForm().getFieldValues();
+        var values = this.panel.getForm().getFieldValues();
+
+        values.websiteTranslationLanguagesEdit = this.websiteTranslationSettings.getLanguages("edit");
+        values.websiteTranslationLanguagesView = this.websiteTranslationSettings.getLanguages("view");
+
+        return values;
     }
 });

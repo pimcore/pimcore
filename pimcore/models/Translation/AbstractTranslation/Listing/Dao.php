@@ -19,6 +19,9 @@ namespace Pimcore\Model\Translation\AbstractTranslation\Listing;
 use Pimcore\Model;
 use Pimcore\Cache;
 
+/**
+ * @property \Pimcore\Model\Translation\AbstractTranslation\Listing $model
+ */
 abstract class Dao extends Model\Listing\Dao\AbstractDao implements Dao\DaoInterface
 {
 
@@ -125,7 +128,7 @@ abstract class Dao extends Model\Listing\Dao\AbstractDao implements Dao\DaoInter
             Cache::save($translations, $cacheKey, ["translator", "translate"], 999);
         }
 
-        
+
         return $translations;
     }
 

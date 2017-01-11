@@ -16,7 +16,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
 
     objecttype: 'object',
 
-    filterUpdateFunction: function(grid, toolbarFilterInfo) {
+    filterUpdateFunction: function(grid, toolbarFilterInfo, clearFilterButton) {
         var filterStringConfig = [];
         var filterData = grid.getStore().getFilters().items;
 
@@ -31,7 +31,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                 if(operator == 'lt') {
                     operator = "&lt;";
                 } else if(operator == 'gt') {
-                    operator = "&lt;";
+                    operator = "&gt;";
                 } else if(operator == 'eq') {
                     operator = "=";
                 }
@@ -56,6 +56,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             toolbarFilterInfo.setHidden(false);
         }
         toolbarFilterInfo.setHidden(filterData.length == 0);
+        clearFilterButton.setHidden(!toolbarFilterInfo.isVisible());
     },
 
 
@@ -458,6 +459,13 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
         var fields = this.getGridConfig().columns;
         var fieldKeys = Object.keys(fields);
 
+        //create the ids array which contains chosen rows to export
+        ids = [];
+        var selectedRows = this.grid.getSelectionModel().getSelection();
+        for (var i = 0; i < selectedRows.length; i++) {
+            ids.push(selectedRows[i].data.id);
+        }
+
         var params = {
             extjs6: true,
             filter: filters,
@@ -466,6 +474,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             folderId: this.element.id,
             objecttype: this.objecttype,
             language: this.gridLanguage,
+            "ids[]": ids,
             "fields[]": fieldKeys
         };
 
@@ -573,11 +582,15 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             listeners: {
                 "keydown" : function (field, key) {
                     if (key.getKey() == key.ENTER) {
-                        this.grid.filters.clearFilters();
-
                         var proxy = this.store.getProxy();
-                        proxy.extraParams = {};
+                        proxy.setExtraParams(
+                            {
+                                class: proxy.extraParams.class,
+                                "fields[]": proxy.extraParams["fields[]"]
+                            }
+                        );
                         proxy.setExtraParam("condition", field.getValue());
+                        this.grid.filters.clearFilters();
 
                         this.pagingtoolbar.moveFirst();
                     }
@@ -591,14 +604,19 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             tooltip: t("direct_sql_query"),
             handler: function (button) {
 
-                this.grid.filters.clearFilters();
-
                 this.sqlEditor.setValue("");
 
                 // reset base params, because of the condition
                 var proxy = this.store.getProxy();
-                proxy.extraParams = {};
-                proxy.setExtraParam("condition", null);
+                proxy.setExtraParams(
+                    {
+                        class: proxy.extraParams.class,
+                        "fields[]": proxy.extraParams["fields[]"]
+                    }
+                );
+
+                this.grid.filters.clearFilters();
+
                 this.pagingtoolbar.moveFirst();
 
                 if(button.pressed) {

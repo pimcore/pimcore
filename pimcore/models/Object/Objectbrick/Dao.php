@@ -19,6 +19,9 @@ namespace Pimcore\Model\Object\Objectbrick;
 use Pimcore\Model;
 use Pimcore\Model\Object;
 
+/**
+ * @property \Pimcore\Model\Object\Objectbrick $model
+ */
 class Dao extends Model\Object\Fieldcollection\Dao
 {
 

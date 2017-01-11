@@ -20,6 +20,9 @@ use Pimcore\Model;
 use Pimcore\Model\Redirect;
 use Pimcore\Logger;
 
+/**
+ * @method \Pimcore\Model\Document\Page\Dao getDao()
+ */
 class Page extends Model\Document\PageSnippet
 {
 

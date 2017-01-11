@@ -342,6 +342,16 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
     }
 
     /**
+     * @param $object
+     * @param mixed $params
+     * @return string
+     */
+    public function getDataForSearchIndex($object, $params = [])
+    {
+        return "";
+    }
+
+    /**
      * This is a dummy and is mostly implemented by relation types
      *
      * @param mixed $data
@@ -439,21 +449,46 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
      */
     public function getForWebserviceExport($object, $params = [])
     {
-        return $this->getForCsvExport($object, $params);
+        $data = $this->getDataFromObjectParam($object, $params);
+
+        $dataForResource = $this->getDataForResource($data, $object, $params);
+
+        if ($dataForResource) {
+            if ($dataForResource['image__hotspots']) {
+                $dataForResource['image__hotspots'] = unserialize($dataForResource['image__hotspots']);
+            }
+
+            return $dataForResource;
+        }
+
+        return null;
     }
 
 
     /**
      * @param mixed $value
-     * @param null $relatedObject
-     * @param mixed $params
+     * @param null $object
+     * @param array $params
      * @param null $idMapper
-     * @return mixed|void
+     * @return null|Asset|Object\Data\Hotspotimage
      * @throws \Exception
      */
-    public function getFromWebserviceImport($value, $relatedObject = null, $params = [], $idMapper = null)
+    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
     {
-        $hotspotImage = $this->getFromCsvImport($value, $relatedObject, $params);
+        if (!is_null($value)) {
+            $value = json_decode(json_encode($value), true);
+
+            if ($value['image__image']) {
+                $value['image__image'] = $idMapper->getMappedId('asset', $value['image__image']);
+            }
+        }
+
+        if (is_array($value) && isset($value['image__hotspots']) && $value['image__hotspots']) {
+            $value['image__hotspots'] = serialize($value['image__hotspots']);
+        }
+        $hotspotImage = $this->getDataFromResource($value);
+
+
         /** @var $hotspotImage Object\Data\Hotspotimage */
 
         if (!$hotspotImage) {
@@ -468,13 +503,8 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
 
         $id = $theImage->getId();
 
-        if ($idMapper && !empty($id)) {
-            $id = $idMapper->getMappedId("asset", $id);
-            $fromMapper = true;
-        }
-
         $asset = Asset::getById($id);
-        if (empty($id) && !$fromMapper) {
+        if (empty($id)) {
             return null;
         } elseif (is_numeric($id) and $asset instanceof Asset) {
             $hotspotImage->setImage($asset);

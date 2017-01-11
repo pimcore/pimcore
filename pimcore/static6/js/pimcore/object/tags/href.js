@@ -140,6 +140,11 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
             border: false,
             style: {
                 padding: 0
+            },
+            listeners: {
+                afterrender: function() {
+                    this.requestNicePathData();
+                }.bind(this)
             }
         });
 
@@ -183,6 +188,11 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
             border: false,
             style: {
                 padding: 0
+            },
+            listeners: {
+                afterrender: function() {
+                    this.requestNicePathData();
+                }.bind(this)
             }
         });
 
@@ -199,8 +209,8 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
                     this.data.type = "asset";
                     this.data.subtype = data["type"];
                     this.dataChanged = true;
-
                     this.component.setValue(data["fullpath"]);
+                    this.requestNicePathData();
                 }
             } catch (e) {
                 console.log(e);
@@ -218,6 +228,7 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
             this.data.subtype = data.type;
             this.dataChanged = true;
             this.component.setValue(data.path);
+            this.requestNicePathData();
 
             return true;
         } else {
@@ -323,8 +334,8 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
         this.data.type = data.type;
         this.data.subtype = data.subtype;
         this.dataChanged = true;
-
         this.component.setValue(data.fullpath);
+        this.requestNicePathData();
     },
 
     openElement: function () {
@@ -408,5 +419,45 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
             return false;
         }
         return true;
+    },
+
+    requestNicePathData: function() {
+        if (this.data.id) {
+            var targets = new Ext.util.Collection();
+            var target = Ext.clone(this.data)
+            target.nicePathKey = target.type + "_" + target.id;
+            var targetRecord = {
+                id: 0,
+                data: target
+            };
+            targets.add(targetRecord);
+
+            pimcore.helpers.requestNicePathData(
+                {
+                    type: "object",
+                    id: this.object.id
+                },
+                targets,
+                {
+                    idProperty: "nicePathKey"
+                },
+                this.fieldConfig,
+                this.getContext(),
+                function() {
+                    this.component.addCls("grid_nicepath_requested");
+                }.bind(this),
+                function (target, responseData) {
+                    this.component.removeCls("grid_nicepath_requested");
+
+                    if (typeof responseData[target["nicePathKey"]] !== "undefined") {
+                        var nicePathKey = responseData[target["nicePathKey"]];
+                        this.component.setValue(nicePathKey);
+                        this.data.path = nicePathKey;
+
+                    }
+
+                }.bind(this, target)
+            );
+        }
     }
 });

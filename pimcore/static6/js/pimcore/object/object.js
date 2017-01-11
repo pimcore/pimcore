@@ -22,6 +22,8 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
         this.options = options;
 
+        var user = pimcore.globalmanager.get("user");
+
         //TODO why do we create all this stuff and decide whether we want to display it or not ????????????????
         this.edit = new pimcore.object.edit(this);
         this.preview = new pimcore.object.preview(this);
@@ -29,7 +31,11 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         this.versions = new pimcore.object.versions(this);
         this.scheduler = new pimcore.element.scheduler(this, "object");
         this.dependencies = new pimcore.element.dependencies(this, "object");
-        this.notes = new pimcore.element.notes(this, "object");
+
+        if (user.isAllowed("notes_events")) {
+            this.notes = new pimcore.element.notes(this, "object");
+        }
+
         this.reports = new pimcore.report.panel("object_concrete", this);
         this.variants = new pimcore.object.variantsTab(this);
         this.tagAssignment = new pimcore.element.tag.assignment(this, "object");
@@ -200,6 +206,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
     getTabPanel: function () {
 
         var items = [];
+        var user = pimcore.globalmanager.get("user");
 
         //try {
         items.push(this.edit.getLayout(this.data.layout));
@@ -255,16 +262,8 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
         }
 
-
-        var user = pimcore.globalmanager.get("user");
-        if (user.admin || (this.isAllowed("settings") && in_array("notes_events", user.permissions))) {
-            if (this.isAllowed("settings")) {
-                try {
-                    items.push(this.notes.getLayout());
-                } catch (e) {
-
-                }
-            }
+        if (user.isAllowed("notes_events")) {
+            items.push(this.notes.getLayout());
         }
 
         if (user.isAllowed("tags_assignment")) {
@@ -316,7 +315,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 text: t('save'),
                 iconCls: "pimcore_icon_save",
                 scale: "medium",
-                handler: this.unpublish.bind(this),
+                handler: this.save.bind(this, "unpublish"),
                 menu:[{
                     text: t('save_close'),
                     iconCls: "pimcore_icon_save",
@@ -581,22 +580,21 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
 
     publish: function (only, callback) {
-        this.data.general.o_published = true;
-        var state = this.save("publish", only, callback);
+        return this.save("publish", only, callback, function(rdata){
+            if(rdata && rdata.success) {
+                //set the object as published only if in the response error doesn't exist
+                this.data.general.o_published = true;
+                // toggle buttons
+                this.toolbarButtons.unpublish.show();
+                this.toolbarButtons.save.hide();
 
-        if(state) {
-            // toggle buttons
-            this.toolbarButtons.unpublish.show();
-            this.toolbarButtons.save.hide();
-
-            pimcore.elementservice.setElementPublishedState({
-                elementType: "object",
-                id: this.id,
-                published: true
-            });
-        }
-
-        return state;
+                pimcore.elementservice.setElementPublishedState({
+                    elementType: "object",
+                    id: this.id,
+                    published: true
+                });
+            }
+        }.bind(this));
     },
 
     unpublish: function () {
@@ -625,7 +623,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         this.save("session", null, callback);
     },
 
-    save : function (task, only, callback) {
+    save : function (task, only, callback, successCallback) {
 
         var omitMandatoryCheck = false;
 
@@ -642,7 +640,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
         var saveData = this.getSaveData(only, omitMandatoryCheck);
 
-        if (saveData.data != false && saveData.data != "false") {
+        if (saveData && saveData.data != false && saveData.data != "false") {
 
             // check for version notification
             if(this.newerVersionNotification) {
@@ -663,6 +661,10 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                         if (task != "session") {
                             try {
                                 var rdata = Ext.decode(response.responseText);
+                                if (typeof successCallback == 'function') {
+                                    //the successCallback function retrieves response data information
+                                    successCallback(rdata);
+                                }
                                 if (rdata && rdata.success) {
                                     pimcore.helpers.showNotification(t("success"), t("your_object_has_been_saved"),
                                         "success");
@@ -699,7 +701,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                             callback();
                         }
 
-                }.bind(this),
+                }.bind(this).bind(successCallback),
                 failure: function (response) {
                     this.tab.unmask();
                 }.bind(this)

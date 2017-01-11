@@ -54,9 +54,17 @@ class Printpage extends \Pimcore\Controller\Action\Admin\Document
 
         // cleanup properties
         $this->minimizeProperties($page);
+        
+        //Hook for modifying return value - e.g. for changing permissions based on object data
+        //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
+        $returnValueContainer = new \Pimcore\Model\Tool\Admin\EventDataContainer(object2array($page));
+        \Pimcore::getEventManager()->trigger("admin.document.get.preSendData", $this, [
+            "document" => $page,
+            "returnValueContainer" => $returnValueContainer
+        ]);
 
         if ($page->isAllowed("view")) {
-            $this->_helper->json($page);
+            $this->_helper->json($returnValueContainer->getData());
         }
 
         $this->_helper->json(false);

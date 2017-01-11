@@ -138,6 +138,19 @@ class Config
             $siteId = null;
             if (Model\Site::isSiteRequest()) {
                 $siteId = Model\Site::getCurrentSite()->getId();
+            } elseif (Tool::isFrontentRequestByAdmin()) {
+                // this is necessary to set the correct settings in editmode/preview (using the main domain)
+                $front = \Zend_Controller_Front::getInstance();
+                $originDocument = $front->getRequest()->getParam("document");
+                if ($originDocument) {
+                    $site = Tool\Frontend::getSiteForDocument($originDocument);
+                    if ($site) {
+                        $siteId = $site->getId();
+                    }
+                }
+            }
+
+            if ($siteId) {
                 $cacheKey = $cacheKey . "_site_" . $siteId;
             }
 
@@ -446,28 +459,20 @@ class Config
     public static function getRuntimePerspective()
     {
         $currentUser = Tool\Admin::getCurrentUser();
-        $currentConfigName = $currentUser->getActivePerspective() ? $currentUser->getActivePerspective() : "default";
+        $currentConfigName = $currentUser->getActivePerspective() ? $currentUser->getActivePerspective() : $currentUser->getFirstAllowedPerspective();
 
         $config = self::getPerspectivesConfig()->toArray();
+        $result = [];
 
         if ($config[$currentConfigName]) {
             $result = $config[$currentConfigName];
         } else {
-            if ($currentUser->isAdmin()) {
-                if ($config["default"]) {
-                    $currentConfigName = "default";
+            $availablePerspectives = self::getAvailablePerspectives($currentUser);
+            if ($availablePerspectives) {
+                $currentPerspective = reset($availablePerspectives);
+                $currentConfigName = $currentPerspective["name"];
+                if ($currentConfigName && $config[$currentConfigName]) {
                     $result = $config[$currentConfigName];
-                } else {
-                    $result = reset($config);
-                }
-            } else {
-                $availablePerspectives = self::getAvailablePerspectives($currentUser);
-                if ($availablePerspectives) {
-                    $currentPerspective = reset($availablePerspectives);
-                    $currentConfigName = $currentPerspective["name"];
-                    if ($currentConfigName && $config[$currentConfigName]) {
-                        $result = $config[$currentConfigName];
-                    }
                 }
             }
         }

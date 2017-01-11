@@ -154,23 +154,36 @@ pimcore.element.selector.selector = Class.create({
         // create new tab-panel
         this.myTabId = "pimcore_search_" + uniqid();
 
+        var moveData = null;
+        if (this.current.prepareForMove) {
+            moveData = this.current.prepareForMove();
+        }
+
+        this.window.remove(this.panel, false);
+
         this.tabpanel = new Ext.Panel({
             id: this.myTabId,
             iconCls: "pimcore_icon_search",
             title: t(this.current.getTabTitle()),
             border: false,
             layout: "fit",
-            closable:true,
-            items: [this.panel]
+            closable:true
         });
 
         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
         tabPanel.add(this.tabpanel);
         tabPanel.setActiveItem(this.myTabId);
 
+        this.tabpanel.add(this.panel);
+
         pimcore.layout.refresh();
 
         this.window.close();
+
+        if (this.current.afterMove) {
+            this.current.afterMove(moveData);
+        }
+
     },
 
     setSearch: function (panel) {

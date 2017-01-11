@@ -27,7 +27,6 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         var i;
 
         var compositeConfig = {
-            xtype: "toolbar",
             items: [{
                 xtype: "textfield",
                 name: "query",
@@ -124,7 +123,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
             filterClassStore.splice(0,0,[selectedClassValue, t("all_types")]);
         }
 
-        this.classChangeCombo = new Ext.form.ComboBox({
+        this.classChangeComboConfig = {
             store: filterClassStore,
             queryMode: "local",
             name: "class",
@@ -137,7 +136,9 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
             listeners: {
                 select: this.changeClass.bind(this)
             }
-        });
+        };
+
+        this.classChangeCombo = new Ext.form.ComboBox(this.classChangeComboConfig);
 
         compositeConfig.items.push(this.classChangeCombo);
 
@@ -150,11 +151,13 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
             handler: this.search.bind(this)
         });
 
+        this.toolbar = new Ext.toolbar.Toolbar(compositeConfig);
+
         if(!this.formPanel) {
             this.formPanel = new Ext.form.FormPanel({
                 region: "north",
                 bodyStyle: "padding: 2px;",
-                items: [compositeConfig]
+                items: [this.toolbar]
             });
         }
 
@@ -166,8 +169,8 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
 
             this.selectionStore = new Ext.data.JsonStore({
                 data: [],
-                fields: ["id", "type", "filename", "fullpath", "subtype", {name:"classname",convert: function(v, rec){
-                    return ts(rec.data.classname);
+                fields: ["id", "type", "filename", "fullpath", "subtype", {name:"classname",renderer: function(v){
+                    return ts(v);
                 }}]
             });
 
@@ -271,6 +274,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         var gridHelper = new pimcore.object.helpers.grid(selectedClass, fields, "/admin/search/search/find", null, true);
         this.store = gridHelper.getStore();
         this.store.setPageSize(pimcore.helpers.grid.getDefaultPageSize());
+        this.applyExtraParamsToStore();
         var gridColumns = gridHelper.getGridColumns();
         var gridfilters = gridHelper.getGridFilters();
 
@@ -441,7 +445,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         return this.gridPanel;
     },
 
-    search: function () {
+    applyExtraParamsToStore: function () {
         var formValues = this.formPanel.getForm().getFieldValues();
 
         var proxy = this.store.getProxy();
@@ -450,7 +454,29 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         proxy.setExtraParam("query", formValues.query);
         proxy.setExtraParam("subtype", formValues.subtype);
         proxy.setExtraParam("class", formValues.class);
+    },
 
+    search: function () {
+        this.applyExtraParamsToStore();
         this.pagingtoolbar.moveFirst();
+    },
+
+    prepareForMove: function() {
+        var value = this.classChangeCombo.getValue();
+        var index = this.toolbar.items.indexOf(this.classChangeCombo);
+        this.toolbar.remove(this.classChangeCombo, true);
+        this.classChangeCombo = null;
+        return {
+            value: value,
+            index: index
+        };
+    },
+
+    afterMove: function(moveData) {
+        this.classChangeCombo = new Ext.form.ComboBox(this.classChangeComboConfig);
+        this.classChangeCombo.setValue(moveData.value);
+        this.toolbar.insert(moveData.index, this.classChangeCombo);
+        this.toolbar.updateLayout();
     }
+
 });

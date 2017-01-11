@@ -26,6 +26,8 @@ pimcore.document.folder = Class.create(pimcore.document.document, {
 
     init: function () {
 
+        var user = pimcore.globalmanager.get("user");
+
         if (this.isAllowed("properties")) {
             try {
                 this.properties = new pimcore.document.properties(this, "document");
@@ -33,12 +35,9 @@ pimcore.document.folder = Class.create(pimcore.document.document, {
                 console.log(e);
             }
         }
-        if (this.isAllowed("settings")) {
-            try {
-                this.notes = new pimcore.element.notes(this, "document");
-            } catch (e) {
-                console.log(e);
-            }
+
+        if (user.isAllowed("notes_events")) {
+            this.notes = new pimcore.element.notes(this, "document");
         }
 
         this.dependencies = new pimcore.element.dependencies(this, "document");
@@ -213,6 +212,7 @@ pimcore.document.folder = Class.create(pimcore.document.document, {
     getTabPanel: function () {
 
         var items = [];
+        var user = pimcore.globalmanager.get("user");
 
         if (this.isAllowed("properties")) {
             items.push(this.properties.getLayout());
@@ -220,7 +220,7 @@ pimcore.document.folder = Class.create(pimcore.document.document, {
 
         items.push(this.dependencies.getLayout());
 
-        if (this.isAllowed("settings")) {
+        if (user.isAllowed("notes_events")) {
             items.push(this.notes.getLayout());
         }
 

@@ -104,7 +104,7 @@ class Persona extends Model\Object\ClassDefinition\Data\Select
         if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
             throw new Model\Element\ValidationException("Empty mandatory field [ ".$this->getName()." ]");
         }
-        
+
         if (!empty($data)) {
             $persona = Tool\Targeting\Persona::getById($data);
             if (!$persona instanceof Tool\Targeting\Persona) {
@@ -114,13 +114,17 @@ class Persona extends Model\Object\ClassDefinition\Data\Select
     }
 
     /**
-     *
+     * @param $data
+     * @return static
      */
-    public function __wakeup()
+    public static function __set_state($data)
     {
-        $options = $this->getOptions();
+        $obj = parent::__set_state($data);
+        $options = $obj->getOptions();
         if (\Pimcore::inAdmin() || empty($options)) {
-            $this->configureOptions();
+            $obj->configureOptions();
         }
+
+        return $obj;
     }
 }

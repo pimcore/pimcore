@@ -18,6 +18,7 @@ namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
 use Pimcore\Model\Object;
+use Pimcore\Tool\Serialize;
 
 class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
 {
@@ -220,6 +221,15 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
         return $value;
     }
 
+    /**
+     * @param $object
+     * @param mixed $params
+     * @return string
+     */
+    public function getDataForSearchIndex($object, $params = [])
+    {
+        return "";
+    }
 
     /**
      * converts data to be exposed via webservices
@@ -275,5 +285,43 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     public function isDiffChangeAllowed($object, $params = [])
     {
         return true;
+    }
+
+    /** Encode value for packing it into a single column.
+     * @param mixed $value
+     * @param Model\Object\AbstractObject $object
+     * @param mixed $params
+     * @return mixed
+     */
+    public function marshal($value, $object = null, $params = [])
+    {
+        if ($value) {
+            return [
+                "value" =>  json_encode([$value[$this->getName() . "__NElatitude"], $value[$this->getName() . "__NElongitude"]]),
+                "value2" => json_encode([$value[$this->getName() . "__SWlatitude"], $value[$this->getName() . "__SWlongitude"]])
+            ];
+        }
+    }
+
+    /** See marshal
+     * @param mixed $value
+     * @param Model\Object\AbstractObject $object
+     * @param mixed $params
+     * @return mixed
+     */
+    public function unmarshal($value, $object = null, $params = [])
+    {
+        if ($value && $value["value"] && $value["value2"]) {
+            $dataNE = json_decode($value["value"]);
+            $dataSW = json_decode($value["value2"]);
+
+            $result = [];
+            $result[$this->getName() . "__NElatitude"] = $dataNE[0];
+            $result[$this->getName() . "__NElongitude"] = $dataNE[1];
+            $result[$this->getName() . "__SWlatitude"] = $dataSW[0];
+            $result[$this->getName() . "__SWlongitude"] = $dataSW[1];
+
+            return $result;
+        }
     }
 }

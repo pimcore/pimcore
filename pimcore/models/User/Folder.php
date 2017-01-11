@@ -18,6 +18,9 @@ namespace Pimcore\Model\User;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\User\Dao getDao()
+ */
 class Folder extends UserRole\Folder
 {
 

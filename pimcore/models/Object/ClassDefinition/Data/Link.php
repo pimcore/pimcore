@@ -295,6 +295,21 @@ class Link extends Model\Object\ClassDefinition\Data
     }
 
     /**
+     * @param $object
+     * @param mixed $params
+     * @return string
+     */
+    public function getDataForSearchIndex($object, $params = [])
+    {
+        $data = $this->getDataFromObjectParam($object, $params);
+        if ($data instanceof Object\Data\Link) {
+            return $data->getText();
+        }
+
+        return "";
+    }
+
+    /**
      * converts data to be exposed via webservices
      * @param string $object
      * @param mixed $params

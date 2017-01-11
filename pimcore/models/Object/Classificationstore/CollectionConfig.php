@@ -18,6 +18,9 @@ namespace Pimcore\Model\Object\Classificationstore;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\Object\Classificationstore\CollectionConfig\Dao getDao()
+ */
 class CollectionConfig extends Model\AbstractModel
 {
 
@@ -160,9 +163,9 @@ class CollectionConfig extends Model\AbstractModel
      */
     public function delete()
     {
-        \Pimcore::getEventManager()->trigger("object.Classificationstore.collectionConfig.preDelete", $this);
+        \Pimcore::getEventManager()->trigger("object.classificationstore.collectionConfig.preDelete", $this);
         parent::delete();
-        \Pimcore::getEventManager()->trigger("object.Classificationstore.collectionConfig.postDelete", $this);
+        \Pimcore::getEventManager()->trigger("object.classificationstore.collectionConfig.postDelete", $this);
     }
 
     /**
@@ -174,17 +177,17 @@ class CollectionConfig extends Model\AbstractModel
 
         if ($this->getId()) {
             $isUpdate = true;
-            \Pimcore::getEventManager()->trigger("object.Classificationstore.collectionConfig.preUpdate", $this);
+            \Pimcore::getEventManager()->trigger("object.classificationstore.collectionConfig.preUpdate", $this);
         } else {
-            \Pimcore::getEventManager()->trigger("object.Classificationstore.collectionConfig.preAdd", $this);
+            \Pimcore::getEventManager()->trigger("object.classificationstore.collectionConfig.preAdd", $this);
         }
 
         $model = parent::save();
 
         if ($isUpdate) {
-            \Pimcore::getEventManager()->trigger("object.Classificationstore.collectionConfig.postUpdate", $this);
+            \Pimcore::getEventManager()->trigger("object.classificationstore.collectionConfig.postUpdate", $this);
         } else {
-            \Pimcore::getEventManager()->trigger("object.Classificationstore.collectionConfig.postAdd", $this);
+            \Pimcore::getEventManager()->trigger("object.classificationstore.collectionConfig.postAdd", $this);
         }
 
         return $model;

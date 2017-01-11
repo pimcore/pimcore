@@ -93,6 +93,10 @@ abstract class Processor
         Model\Tool\Lock::acquire($document->getLockKey(), 0);
 
         try {
+            \Pimcore::getEventManager()->trigger("document.print.prePdfGeneration", $document, [
+                "processor" => $this // can be used to inject dynamicaly generation options for instance
+            ]);
+
             $pdf = $this->buildPdf($document, $jobConfigFile->config);
             file_put_contents($document->getPdfFileName(), $pdf);
 

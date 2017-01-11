@@ -18,6 +18,9 @@ namespace Pimcore\Model\Object;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\Object\Objectbrick\Dao getDao()
+ */
 class Objectbrick extends Model\AbstractModel
 {
 

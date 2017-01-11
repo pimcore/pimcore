@@ -18,6 +18,9 @@ namespace Pimcore\Model\Tool;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\Tool\UUID\Dao getDao()
+ */
 class UUID extends Model\AbstractModel
 {
     public $itemId;

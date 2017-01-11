@@ -69,6 +69,13 @@ pimcore.object.classes.data.nonownerobjects = Class.create(pimcore.object.classe
                 fieldLabel: t("height"),
                 name: "height",
                 value: this.datax.height
+            },
+            {
+                xtype: 'textfield',
+                width: 600,
+                fieldLabel: t("path_formatter_class"),
+                name: 'pathFormatterClass',
+                value: this.datax.pathFormatterClass
             }
         ]);
 

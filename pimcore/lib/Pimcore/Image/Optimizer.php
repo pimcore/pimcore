@@ -44,7 +44,7 @@ class Optimizer
                 foreach ($supportedOptimizers[$format] as $optimizer) {
                     $optimizerMethod = "optimize" . $optimizer;
                     $optimizedFile = self::$optimizerMethod($workingPath);
-                    if ($optimizedFile) {
+                    if ($optimizedFile && file_exists($optimizedFile)) {
                         $optimizedFiles[] = [
                             "filesize" => filesize($optimizedFile),
                             "path" => $optimizedFile,
@@ -84,7 +84,7 @@ class Optimizer
         $bin = \Pimcore\Tool\Console::getExecutable("pngcrush");
         if ($bin) {
             $newFile = self::getTempFile("png");
-            Console::exec($bin . " " . $path . " " . $newFile, null, 60);
+            Console::exec($bin . " " . escapeshellarg($path) . " " . $newFile, null, 60);
             if (file_exists($newFile)) {
                 return $newFile;
             }
@@ -98,7 +98,7 @@ class Optimizer
         $bin = \Pimcore\Tool\Console::getExecutable("zopflipng");
         if ($bin) {
             $newFile = self::getTempFile("png");
-            Console::exec($bin . " " . $path . " " . $newFile, null, 60);
+            Console::exec($bin . " " . escapeshellarg($path) . " " . $newFile, null, 60);
             if (file_exists($newFile)) {
                 return $newFile;
             }
@@ -112,7 +112,7 @@ class Optimizer
         $bin = \Pimcore\Tool\Console::getExecutable("pngout", false);
         if ($bin) {
             $newFile = self::getTempFile("png");
-            Console::exec($bin . " " . $path . " " . $newFile, null, 60);
+            Console::exec($bin . " " . escapeshellarg($path) . " " . $newFile, null, 60);
             if (file_exists($newFile)) {
                 return $newFile;
             }
@@ -140,7 +140,7 @@ class Optimizer
         $bin = \Pimcore\Tool\Console::getExecutable("cjpeg");
         if ($bin) {
             $newFile = self::getTempFile("jpg");
-            Console::exec($bin . " -outfile " . $newFile . " " . $path, null, 60);
+            Console::exec($bin . " -outfile " . $newFile . " " . escapeshellarg($path), null, 60);
             if (file_exists($newFile)) {
                 return $newFile;
             }
@@ -158,7 +158,7 @@ class Optimizer
             if (filesize($path) > 10000) {
                 $additionalParams = " --all-progressive";
             }
-            $content = Console::exec($bin . $additionalParams . " -o --strip-all --max=85 --stdout " . $path, null, 60);
+            $content = Console::exec($bin . $additionalParams . " -o --strip-all --max=85 --stdout " . escapeshellarg($path), null, 60);
             if ($content) {
                 File::put($newFile, $content);
             }

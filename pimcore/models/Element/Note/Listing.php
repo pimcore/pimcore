@@ -18,6 +18,9 @@ namespace Pimcore\Model\Element\Note;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\Element\Note\Listing\Dao getDao()
+ */
 class Listing extends Model\Listing\AbstractListing
 {
 

@@ -18,6 +18,9 @@ namespace Pimcore\Model\Object;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\Object\Folder\Dao getDao()
+ */
 class Folder extends AbstractObject
 {
 
@@ -43,7 +46,7 @@ class Folder extends AbstractObject
     /**
      * @return void
      */
-    public function update()
+    protected function update()
     {
         parent::update();
         $this->getDao()->update();

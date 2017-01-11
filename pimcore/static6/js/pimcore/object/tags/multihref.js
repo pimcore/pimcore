@@ -16,9 +16,11 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
 
     type: "multihref",
     dataChanged:false,
+    idProperty: "rowId",
 
     initialize: function (data, fieldConfig) {
         this.data = [];
+
         this.fieldConfig = fieldConfig;
 
         if (data) {
@@ -29,7 +31,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
         if(!Ext.ClassManager.isCreated(modelName) ) {
             Ext.define(modelName, {
                 extend: 'Ext.data.Model',
-                idProperty: 'rowId',
+                idProperty: this.idProperty,
                 fields: [
                     'id',
                     'path',
@@ -131,14 +133,12 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                 plugins: {
                     ptype: 'gridviewdragdrop',
                     dragroup: 'element'
+                },
+                listeners: {
+                    refresh: function(gridview) {
+                        this.requestNicePathData(this.store.data);
+                    }.bind(this)
                 }
-                //},
-                //listeners: {
-                //    drop: function(node, data, dropRec, dropPosition) {
-                //        var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('name') : ' on empty view';
-                //        //Ext.example.msg('Drag from left to right', 'Dropped ' + data.records[0].get('name') + dropOn);
-                //    }
-                //}
             },
             columns: {
                 defaults: {
@@ -146,7 +146,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                 },
                 items: [
                     {header: 'ID', dataIndex: 'id', width: 50},
-                    {header: t("path"), dataIndex: 'path', flex: 200},
+                    {header: t("reference"), dataIndex: 'path', flex: 200},
                     {header: t("type"), dataIndex: 'type', width: 100},
                     {header: t("subtype"), dataIndex: 'subtype', width: 100},
                     {
@@ -258,13 +258,16 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                         var data = record.data;
                         var fromTree = this.isFromTree(dd);
 
+                        var toBeRequested = new Ext.util.Collection();
+
                         if (this.dndAllowed(data, fromTree)) {
                             if (data["grid"] && data["grid"] == this.component) {
                                 var rowIndex = this.component.getView().findRowIndex(e.target);
                                 if (rowIndex !== false) {
                                     var rec = this.store.getAt(data.rowIndex);
                                     this.store.removeAt(data.rowIndex);
-                                    this.store.insert(rowIndex, [rec]);
+                                    toBeRequested.add(this.store.insert(rowIndex, [rec]));
+                                    this.requestNicePathData(toBeRequested);
                                 }
                             } else {
                                 var initData = {
@@ -288,10 +291,12 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
 
                                 // check for existing element
                                 if (!this.elementAlreadyExists(initData.id, initData.type)) {
-                                    this.store.add(initData);
+                                    toBeRequested.add(this.store.add(initData));
+                                    this.requestNicePathData(toBeRequested);
                                     return true;
                                 }
                             }
+
                             return false;
                         } else {
                             return false;
@@ -321,7 +326,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
             store: this.store,
             columns: [
                 {header: 'ID', dataIndex: 'id', width: 50, sortable: false},
-                {header: t("path"), dataIndex: 'path', width: 200, sortable: false},
+                {header: t("reference"), dataIndex: 'path', width: 200, sortable: false},
                 {header: t("type"), dataIndex: 'type', width: 100, sortable: false},
                 {header: t("subtype"), dataIndex: 'subtype', width: 100, sortable: false},
                 {
@@ -347,7 +352,14 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
             autoExpandColumn: 'path',
             border: true,
             style: "margin-bottom: 10px",
-            title: this.fieldConfig.title
+            title: this.fieldConfig.title,
+            viewConfig: {
+                listeners: {
+                    refresh: function (gridview) {
+                        this.requestNicePathData(this.store.data);
+                    }.bind(this)
+                }
+            }
         });
 
         return this.component;
@@ -482,6 +494,9 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
 
     addDataFromSelector: function (items) {
         if (items.length > 0) {
+
+            toBeRequested = new Ext.util.Collection();
+
             for (var i = 0; i < items.length; i++) {
                 if (!this.elementAlreadyExists(items[i].id, items[i].type)) {
 
@@ -494,14 +509,16 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                         }
                     }
 
-                    this.store.add({
+                    toBeRequested.add(this.store.add({
                         id: items[i].id,
                         path: items[i].fullpath,
                         type: items[i].type,
                         subtype: subtype
-                    });
+                    }));
                 }
             }
+
+            this.requestNicePathData(toBeRequested);
         }
     },
 
@@ -619,5 +636,21 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
         }
 
         return this.dataChanged;
+    },
+
+    requestNicePathData: function(targets) {
+        pimcore.helpers.requestNicePathData(
+            {
+                type: "object",
+                id: this.object.id
+            },
+            targets,
+            {},
+            this.fieldConfig,
+            this.getContext(),
+            pimcore.helpers.requestNicePathDataGridDecorator.bind(this, this.component.getView()),
+            pimcore.helpers.getNicePathHandlerStore.bind(this, this.store, {}, this.component.getView())
+        );
     }
+
 });

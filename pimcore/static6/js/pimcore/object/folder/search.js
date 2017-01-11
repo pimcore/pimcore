@@ -213,6 +213,18 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             }.bind(this)
         });
 
+        this.clearFilterButton =  new Ext.Button({
+            iconCls: "pimcore_icon_clear_filters",
+            hidden: true,
+            text: t("clear_filters"),
+            tooltip: t("clear_filters"),
+            handler: function (button) {
+                this.grid.filters.clearFilters();
+                this.toolbarFilterInfo.hide();
+                this.clearFilterButton.hide();
+            }.bind(this)
+        });
+
 
         this.createSqlEditor();
 
@@ -262,7 +274,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                 xtype: 'patchedgridview'
             },
             cls: 'pimcore_object_grid_panel',
-            tbar: [this.languageInfo, "-", this.toolbarFilterInfo, "->", this.checkboxOnlyDirectChildren, "-", this.sqlEditor, this.sqlButton, "-", {
+            tbar: [this.languageInfo, "-", this.toolbarFilterInfo, this.clearFilterButton, "->", this.checkboxOnlyDirectChildren, "-", this.sqlEditor, this.sqlButton, "-", {
                 text: t("search_and_move"),
                 iconCls: "pimcore_icon_search pimcore_icon_overlay_go",
                 handler: pimcore.helpers.searchAndMove.bind(this, this.object.id,
@@ -311,7 +323,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
 
         // check for filter updates
         this.grid.on("filterchange", function () {
-            this.filterUpdateFunction(this.grid, this.toolbarFilterInfo);
+            this.filterUpdateFunction(this.grid, this.toolbarFilterInfo, this.clearFilterButton);
         }.bind(this));
 
         gridHelper.applyGridEvents(this.grid);
@@ -428,6 +440,8 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             }));
         }
 
+        pimcore.plugin.broker.fireEvent("prepareOnRowContextmenu", menu, this, selectedRows);
+		
         e.stopEvent();
         menu.showAt(e.pageX, e.pageY);
     }

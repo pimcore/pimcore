@@ -329,7 +329,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 
             $objectData["properties"] = Element\Service::minimizePropertiesForEditmode($object->getProperties());
             $objectData["userPermissions"] = $object->getUserPermissions();
-            $objectVersions = $object->getVersions();
+            $objectVersions = Element\Service::getSafeVersionInfo($object->getVersions());
             $objectData["versions"] = array_splice($objectVersions, 0, 1);
             $objectData["scheduledTasks"] = $object->getScheduledTasks();
             $objectData["general"]["allowVariants"] = $object->getClass()->getAllowVariants();
@@ -694,7 +694,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
         if ($parent->isAllowed("create")) {
             $intendedPath = $parent->getRealFullPath() . "/" . $this->getParam("key");
 
-            if (!Object\Service::pathExists($intendedPath) || true) {
+            if (!Object\Service::pathExists($intendedPath)) {
                 $object = \Pimcore::getDiContainer()->make($className);
                 if ($object instanceof Object\Concrete) {
                     $object->setOmitMandatoryCheck(true); // allow to save the object although there are mandatory fields
@@ -895,12 +895,19 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             }
         }
 
+        // get the element key in case of just one
+        $elementKey = false;
+        if (count($ids) === 1) {
+            $elementKey = Object::getById($id)->getKey();
+        }
+
         $deleteJobs = array_merge($recycleJobs, $deleteJobs);
         $this->_helper->json([
             "hasDependencies" => $hasDependency,
             "childs" => $totalChilds,
             "deletejobs" => $deleteJobs,
-            "batchDelete" => count($ids) > 1
+            "batchDelete" => count($ids) > 1,
+            "elementKey" => $elementKey
         ]);
     }
 
@@ -1320,8 +1327,13 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                     }
 
                     $user = Tool\Admin::getCurrentUser();
+                    $allLanguagesAllowed = false;
                     if (!$user->isAdmin()) {
                         $languagePermissions = $object->getPermissions("lEdit", $user);
+
+                        //sets allowed all languages modification when the lEdit column is empty
+                        $allLanguagesAllowed = $languagePermissions["lEdit"] == '';
+
                         $languagePermissions = explode(",", $languagePermissions["lEdit"]);
                     }
 
@@ -1385,7 +1397,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                                         $field = $localized->getFieldDefinition($key);
                                         if ($field) {
                                             $currentLocale = (string) \Zend_Registry::get("Zend_Locale");
-                                            if (!in_array($currentLocale, $languagePermissions)) {
+                                            if (!$allLanguagesAllowed && !in_array($currentLocale, $languagePermissions)) {
                                                 continue;
                                             }
                                         }

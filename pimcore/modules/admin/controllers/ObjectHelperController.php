@@ -12,10 +12,11 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-use Pimcore\Tool;
 use Pimcore\File;
-use Pimcore\Model\Object;
 use Pimcore\Logger;
+use Pimcore\Model\Object;
+use Pimcore\Model\Element;
+use Pimcore\Tool;
 
 class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
 {
@@ -589,7 +590,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         if ($this->getParam("filename") == "id") {
             $objectKey = null;
         } elseif ($this->getParam("filename") != "default") {
-            $objectKey = File::getValidFilename($data[$this->getParam("filename")]);
+            $objectKey = Element\Service::getValidKey($data[$this->getParam("filename")], "object");
         }
 
         $overwrite = false;
@@ -748,8 +749,17 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
             $conditionFilters[] = "(" . $this->getParam("condition") . ")";
         }
 
+        /** @var Object\Listing\Concrete $list */
         $list = new $listClass();
         $list->setCondition(implode(" AND ", $conditionFilters));
+
+        //parameters specified in the objects grid
+        $ids = $this->getParam('ids', []);
+        if (! empty($ids)) {
+            //add a condition if id numbers are specified
+            $list->addConditionParam('o_id IN (' . implode(',', $ids) . ')');
+        }
+
         $list->setOrder("ASC");
         $list->setOrderKey("o_id");
 
@@ -797,7 +807,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
 
     public function doExportAction()
     {
-        $fileHandle = Pimcore\File::getValidFilename($this->getParam("fileHandle"));
+        $fileHandle = \Pimcore\File::getValidFilename($this->getParam("fileHandle"));
         $ids = $this->getParam("ids");
 
         $class = Object\ClassDefinition::getById($this->getParam("classId"));
@@ -823,7 +833,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
 
     public function downloadCsvFileAction()
     {
-        $fileHandle = Pimcore\File::getValidFilename($this->getParam("fileHandle"));
+        $fileHandle = \Pimcore\File::getValidFilename($this->getParam("fileHandle"));
         $csvFile = $this->getCsvFile($fileHandle);
         if (file_exists($csvFile)) {
             header("Content-Type: application/csv");
@@ -833,9 +843,8 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
 
             readfile($csvFile);
             unlink($csvFile);
-        } else {
-            exit();
         }
+        exit;
     }
 
     protected function mapFieldname($field)
@@ -868,6 +877,8 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
 
         $objects = [];
         Logger::debug("objects in list:" . count($list->getObjects()));
+        //add inherited values to objects
+        Object\AbstractObject::setGetInheritedValues(true);
         foreach ($list->getObjects() as $object) {
             if ($fields) {
                 $objectData = [];
@@ -1137,7 +1148,8 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
                             if ($localizedField) {
                                 $field = $localizedField->getFieldDefinition($name);
                                 if ($field) {
-                                    $object->{"set" . $name}($value, $this->getParam("language"));
+                                    /** @var $field Pimcore\Model\Object\ClassDefinition\Data */
+                                    $object->{"set" . $name}($field->getDataFromEditmode($value, $object), $this->getParam("language"));
                                 }
                             }
                         }

@@ -25,6 +25,8 @@ pimcore.object.classes.data.geobounds = Class.create(pimcore.object.classes.data
         this.availableSettingsFields = ["name","title","mandatory","noteditable","invisible","index","style"];
 
         this.treeNode = treeNode;
+
+        this.checkGoogleMapsAPI();
     },
 
     getTypeName: function () {

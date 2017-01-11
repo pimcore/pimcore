@@ -22,6 +22,9 @@ use Pimcore\Model\Element;
 use Pimcore\Model\Document;
 use Pimcore\Logger;
 
+/**
+ * @method \Pimcore\Model\Document\Tag\Dao getDao()
+ */
 class Pdf extends Model\Document\Tag
 {
     /**
@@ -457,7 +460,7 @@ class Pdf extends Model\Document\Tag
                 $data["fullscreen"] = (bool) $options["fullscreen"];
             }
 
-            $jsVarName = "pimcore_pdf_" . $this->getName();
+            $jsVarName = $this->getName();
             $divId = "pimcore-pdf-" . uniqid();
             $jsonData = \Zend_Json::encode($data);
 
@@ -475,7 +478,8 @@ class Pdf extends Model\Document\Tag
             <link rel="stylesheet" type="text/css" href="/pimcore/static/js/frontend/pdfViewer/styles.css" />
             <script type="text/javascript" src="/pimcore/static/js/frontend/pdfViewer/viewer.js"></script>
             <script type="text/javascript">
-                var $jsVarName = new pimcore.pdf({
+                var pimcore_pdf = pimcore_pdf || {};
+                pimcore_pdf["$jsVarName"] = new pimcore.pdf({
                     id: "$divId",
                     data: $jsonData
                 });

@@ -19,6 +19,9 @@ namespace Pimcore\Model\Document\Tag;
 use Pimcore\Model;
 use Pimcore\Config;
 
+/**
+ * @method \Pimcore\Model\Document\Tag\Dao getDao()
+ */
 class Date extends Model\Document\Tag
 {
 
@@ -73,8 +76,8 @@ class Date extends Model\Document\Tag
 
         if ($this->date instanceof \Zend_Date) {
             return $this->date->toString($this->options["format"], "php");
-        } elseif ($this->date instanceof \DateTime) {
-            return $this->date->format($this->options["format"]);
+        } elseif ($this->date instanceof \DateTimeInterface) {
+            return $this->date->formatLocalized($this->options["format"]);
         }
     }
 

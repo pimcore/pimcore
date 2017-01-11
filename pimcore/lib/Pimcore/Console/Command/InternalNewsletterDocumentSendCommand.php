@@ -132,7 +132,7 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
 
             $sendingParamContainers = $addressAdapter->getParamsForSingleSending($limit, $offset);
             foreach ($sendingParamContainers as $sendingParamContainer) {
-                $mail = \Pimcore\Tool\Newsletter::prepareMail($document);
+                $mail = \Pimcore\Tool\Newsletter::prepareMail($document, $sendingParamContainer);
                 \Pimcore\Tool\Newsletter::sendNewsletterDocumentBasedMail($mail, $sendingParamContainer);
 
 

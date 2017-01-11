@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -549,7 +549,11 @@ class StructuredTable extends Model\Object\ClassDefinition\Data
 
                 $col = new \stdClass();
                 $col->name = $name;
-                $col->type = $this->typeMapper($c['type'], $c['length']);
+                $length = 0;
+                if (isset($c['length']) && $c['length']) {
+                    $length = $c['length'];
+                }
+                $col->type = $this->typeMapper($c['type'], $length);
                 $dbCols[] = $col;
             }
         }
@@ -565,7 +569,7 @@ class StructuredTable extends Model\Object\ClassDefinition\Data
     protected function typeMapper($type, $length = null)
     {
         $mapper = [
-            "text" => "varchar(".($length > 0 ? $length : "255").")",
+            "text" => "varchar(".($length > 0 ? $length : "190").")",
             "number" => "double",
             "bool" => "tinyint(1)"
         ];

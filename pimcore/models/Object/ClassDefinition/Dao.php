@@ -22,6 +22,9 @@ use Pimcore\Tool\Serialize;
 use Pimcore\File;
 use Pimcore\Logger;
 
+/**
+ * @property \Pimcore\Model\Object\ClassDefinition $model
+ */
 class Dao extends Model\Dao\AbstractDao
 {
     use Object\ClassDefinition\Helper\Dao;
@@ -104,7 +107,7 @@ class Dao extends Model\Dao\AbstractDao
 			  `oo_classId` int(11) default '" . $this->model->getId() . "',
 			  `oo_className` varchar(255) default '" . $this->model->getName() . "',
 			  PRIMARY KEY  (`oo_id`)
-			) DEFAULT CHARSET=utf8;");
+			) DEFAULT CHARSET=utf8mb4;");
 
         // update default value of classname columns
         $this->db->query('ALTER TABLE `' . $objectTable . "` ALTER COLUMN `oo_className` SET DEFAULT '" . $this->model->getName() . "';");
@@ -112,7 +115,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->query("CREATE TABLE IF NOT EXISTS `" . $objectDatastoreTable . "` (
 			  `oo_id` int(11) NOT NULL default '0',
 			  PRIMARY KEY  (`oo_id`)
-			) DEFAULT CHARSET=utf8;");
+			) DEFAULT CHARSET=utf8mb4;");
 
         $this->db->query("CREATE TABLE IF NOT EXISTS `" . $objectDatastoreTableRelation . "` (
           `src_id` int(11) NOT NULL DEFAULT '0',
@@ -132,7 +135,7 @@ class Dao extends Model\Dao\AbstractDao
           KEY `ownertype` (`ownertype`),
           KEY `type` (`type`),
           KEY `ownername` (`ownername`)
-        ) DEFAULT CHARSET=utf8;");
+        ) DEFAULT CHARSET=utf8mb4;");
 
 
 
@@ -249,20 +252,20 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->delete("objects", $this->db->quoteInto("o_classId = ?", $this->model->getId()));
 
         // remove fieldcollection tables
-        $allTables = $this->db->fetchAll("SHOW TABLES LIKE 'object_collection_%_" . $this->model->getId() . "'");
+        $allTables = $this->db->fetchAll("SHOW TABLES LIKE 'object\_collection\_%\_" . $this->model->getId() . "'");
         foreach ($allTables as $table) {
             $collectionTable = current($table);
             $this->db->query("DROP TABLE IF EXISTS `".$collectionTable."`");
         }
 
         // remove localized fields tables and views
-        $allViews = $this->db->fetchAll("SHOW TABLES LIKE 'object_localized_" . $this->model->getId() . "_%'");
+        $allViews = $this->db->fetchAll("SHOW TABLES LIKE 'object\_localized\_" . $this->model->getId() . "\_%'");
         foreach ($allViews as $view) {
             $localizedView = current($view);
             $this->db->query("DROP VIEW IF EXISTS `".$localizedView."`");
         }
 
-        $allTables = $this->db->fetchAll("SHOW TABLES LIKE 'object_localized_query_" . $this->model->getId() . "_%'");
+        $allTables = $this->db->fetchAll("SHOW TABLES LIKE 'object\_localized\_query\_" . $this->model->getId() . "\_%'");
         foreach ($allTables as $table) {
             $queryTable = current($table);
             $this->db->query("DROP TABLE IF EXISTS `".$queryTable."`");
@@ -271,7 +274,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->query("DROP TABLE IF EXISTS object_localized_data_" . $this->model->getId());
 
         // objectbrick tables
-        $allTables = $this->db->fetchAll("SHOW TABLES LIKE 'object_brick_%_" . $this->model->getId() . "'");
+        $allTables = $this->db->fetchAll("SHOW TABLES LIKE 'object\_brick\_%\_" . $this->model->getId() . "'");
         foreach ($allTables as $table) {
             $brickTable = current($table);
             $this->db->query("DROP TABLE `".$brickTable."`");

@@ -18,6 +18,9 @@ namespace Pimcore\Model\Document\Tag;
 
 use Pimcore\Model;
 
+/**
+ * @property \Pimcore\Model\Document\Tag\Areablock $model
+ */
 class Dao extends Model\Dao\AbstractDao
 {
 

@@ -20,6 +20,9 @@ use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
 
+/**
+ * @method \Pimcore\Model\Asset\Dao getDao()
+ */
 class Service extends Model\Element\Service
 {
 
@@ -85,6 +88,10 @@ class Service extends Model\Element\Service
             $this->updateChilds($target, $new);
         }
 
+        // triggers actions after the complete asset cloning
+        \Pimcore::getEventManager()->trigger('asset.postCopy', $new, [
+            'base_element' => $source // the element used to make a copy
+        ]);
 
         return $new;
     }
@@ -117,6 +124,11 @@ class Service extends Model\Element\Service
         if ($target instanceof Asset\Folder) {
             $this->updateChilds($target, $new);
         }
+
+        // triggers actions after the complete asset cloning
+        \Pimcore::getEventManager()->trigger('asset.postCopy', $new, [
+            'base_element' => $source // the element used to make a copy
+        ]);
 
         return $new;
     }
@@ -312,7 +324,7 @@ class Service extends Model\Element\Service
     public static function getUniqueKey($item, $nr = 0)
     {
         $list = new Listing();
-        $key = \Pimcore\File::getValidFilename($item->getKey());
+        $key = Element\Service::getValidKey($item->getKey(), "asset");
         if (!$key) {
             throw new \Exception("No item key set.");
         }

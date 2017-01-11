@@ -108,7 +108,8 @@ pimcore.element.properties = Class.create({
                             inherited: property.inherited,
                             inheritable: property.inheritable,
                             all: property,
-                            config: property.config
+                            config: property.config,
+                            description: property["description"]
                         });
                     }
                 }
@@ -125,7 +126,7 @@ pimcore.element.properties = Class.create({
                         rootProperty: 'properties'
                     }
                 },
-                fields: ['name','type',{name: "data", type: "string", convert: function (v, rec) {
+                fields: ['name','description','type',{name: "data", type: "string", convert: function (v, rec) {
                     if (rec.data.type == "document" || rec.data.type == "asset" || rec.data.type == "object") {
                         var type = rec.data.type;
                         if (type == "document") {
@@ -251,6 +252,13 @@ pimcore.element.properties = Class.create({
                                 allowBlank: false
                             });
                         },
+                        sortable: true,
+                        width: 230
+                    },
+                    {
+                        header: t("description"),
+                        dataIndex: 'description',
+                        editable: false,
                         sortable: true,
                         width: 230
                     },
@@ -537,7 +545,7 @@ pimcore.element.properties = Class.create({
             }
 
             this.add(selectedData.key, selectedData.type, selectedData.data, selectedData.config, false,
-                selectedData.inheritable);
+                selectedData.inheritable, selectedData.description);
         } catch (e) {
             console.log(e);
         }
@@ -554,10 +562,14 @@ pimcore.element.properties = Class.create({
         }
     },
  
-    add: function (key, type, value, config, inherited, inheritable) {
+    add: function (key, type, value, config, inherited, inheritable, description) {
 
         if(in_array(key, this.disallowedKeys)) {
             return;
+        }
+
+        if(typeof description != "string") {
+            description = "";
         }
 
         var store = this.propertyGrid.getStore();
@@ -609,7 +621,8 @@ pimcore.element.properties = Class.create({
             type: type,
             inherited: false,
             inheritable: inheritable,
-            config: config
+            config: config,
+            description: description
         });
 
 

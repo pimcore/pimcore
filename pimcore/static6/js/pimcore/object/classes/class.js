@@ -347,9 +347,7 @@ pimcore.object.classes.klass = Class.create({
 
         var menu = new Ext.menu.Menu();
 
-        //get all allowed layout types for localized fields
-        var lftypes = ["panel","tabpanel","accordion","fieldset", "fieldcontainer", "text","region","button"];
-        var blockTypes = ["panel","tabpanel","accordion","fieldset", "fieldcontainer", "text","region","button"];
+        var allowedTypes = pimcore.object.helpers.layout.getAllowedTypes(this);
 
         var dataComps = Object.keys(pimcore.object.classes.data);
 
@@ -360,30 +358,17 @@ pimcore.object.classes.klass = Class.create({
             }
             var component = pimcore.object.classes.data[dataCompName];
             if(component.prototype.allowIn['localizedfield']) {
-                lftypes.push(dataCompName);
+                allowedTypes.localizedfields.push(dataCompName);
             }
 
             if(component.prototype.allowIn['block']) {
-                blockTypes.push(dataCompName);
+                allowedTypes.block.push(dataCompName);
             }
         }
 
 
-        // specify which childs a layout can have
         // the child-type "data" is a placehoder for all data components
-        var allowedTypes = {
-            accordion: ["panel","region","tabpanel","text"],
-            fieldset: ["data","text"],
-            fieldcontainer: ["data","text"],
-            panel: ["data","region","tabpanel","button","accordion","fieldset", "fieldcontainer","panel","text","html"],
-            region: ["panel","accordion","tabpanel","text","localizedfields"],
-            tabpanel: ["panel", "region", "accordion","text","localizedfields"],
-            button: [],
-            text: [],
-            root: ["panel","region","tabpanel","accordion","text"],
-            localizedfields: lftypes,
-            block: blockTypes
-        };
+
 
         var parentType = "root";
 

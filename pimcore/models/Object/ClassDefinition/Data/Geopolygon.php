@@ -192,6 +192,16 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     }
 
     /**
+     * @param $object
+     * @param mixed $params
+     * @return string
+     */
+    public function getDataForSearchIndex($object, $params = [])
+    {
+        return "";
+    }
+
+    /**
      * converts data to be exposed via webservices
      * @param string $object
      * @param mixed $params
@@ -274,5 +284,57 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
         }
 
         return;
+    }
+
+    /** Encode value for packing it into a single column.
+     * @param mixed $value
+     * @param Model\Object\AbstractObject $object
+     * @param mixed $params
+     * @return mixed
+     */
+    public function marshal($value, $object = null, $params = [])
+    {
+        if ($value) {
+            $value = Serialize::unserialize($value);
+            $result = [];
+            if (is_array($value)) {
+                /** @var  $point Object\Data\Geopoint */
+                foreach ($value as $point) {
+                    $result[] = [
+                            $point->getLatitude(),
+                            $point->getLongitude()
+                        ];
+                }
+            }
+
+            return [
+                "value" => json_encode($result)
+            ];
+        }
+    }
+
+    /** See marshal
+     * @param mixed $value
+     * @param Model\Object\AbstractObject $object
+     * @param mixed $params
+     * @return mixed
+     */
+    public function unmarshal($value, $object = null, $params = [])
+    {
+        if ($value && $value["value"]) {
+            $value = json_decode($value["value"]);
+            $result = [];
+            if (is_array($value)) {
+                foreach ($value as $point) {
+                    $newPoint = new Object\Data\Geopoint($point[1], $point[1]);
+                    $newPoint->setLatitude($point[0]);
+                    $newPoint->setLongitude($point[1]);
+                    $result[] = $newPoint;
+                }
+            }
+            $result = Serialize::serialize($result);
+
+            return $result;
+        }
     }
 }

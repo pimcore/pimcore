@@ -20,6 +20,9 @@ use Pimcore\File;
 use Pimcore\Model;
 use Pimcore\Logger;
 
+/**
+ * @method \Pimcore\Model\Asset\Dao getDao()
+ */
 class Video extends Model\Asset
 {
 
@@ -115,6 +118,7 @@ class Video extends Model\Asset
                     foreach ($customSetting[$thumbnail->getName()]["formats"] as &$path) {
                         $fullPath = $this->getVideoThumbnailSavePath() . $path;
                         $path = str_replace(PIMCORE_DOCUMENT_ROOT, "", $fullPath);
+                        $path = urlencode_ignore_slash($path);
 
                         $results = \Pimcore::getEventManager()->trigger("frontend.path.asset.video.thumbnail", $this, [
                             "filesystemPath" => $fullPath,

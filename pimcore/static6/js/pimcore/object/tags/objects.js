@@ -16,6 +16,8 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
 
     type: "objects",
     dataChanged:false,
+    idProperty: "id",
+    pathProperty: "path",
 
     initialize: function (data, fieldConfig) {
         this.data = [];
@@ -172,14 +174,14 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
                     className: className,
                     classId: classId,
                     parentId: parentId,
-                    key: pimcore.helpers.getValidFilename(name)
+                    key: pimcore.helpers.getValidFilename(name, "object")
                 },
                 success: function(response) {
                     var data = Ext.decode(response.responseText);
                     if (data.success) {
                         this.store.add({
                             id: data.id,
-                            path: parent + "/" + pimcore.helpers.getValidFilename(name),
+                            path: parent + "/" + pimcore.helpers.getValidFilename(name, "object"),
                             type: className
                         });
                         pimcore.helpers.openElement(data.id, "object", "object");
@@ -278,7 +280,10 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
                     drop: function(node, data, dropRec, dropPosition) {
                         var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('name') : ' on empty view';
                         //Ext.example.msg('Drag from left to right', 'Dropped ' + data.records[0].get('name') + dropOn);
-                    }
+                    },
+                    refresh: function(gridview) {
+                        this.requestNicePathData(this.store.data);
+                    }.bind(this)
                 }
             },
             selModel: Ext.create('Ext.selection.RowModel', {}),
@@ -286,7 +291,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
                 columns: [
                     {header: 'ID', dataIndex: 'id', width: 50}
                     ,
-                    {header: t("path"), dataIndex: 'path', flex: 200},
+                    {header: t("reference"), dataIndex: 'path', flex: 200},
                     {header: t("type"), dataIndex: 'type', width: 100},
                     {
                         xtype:'actioncolumn',
@@ -421,13 +426,16 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
                         var data = record.data;
                         var fromTree = this.isFromTree(dd);
 
+                        var toBeRequested = new Ext.util.Collection();
+
                         if (this.dndAllowed(data, fromTree)) {
                             if(data["grid"] && data["grid"] == this.component) {
                                 var rowIndex = this.component.getView().findRowIndex(e.target);
                                 if(rowIndex !== false) {
                                     var rec = this.store.getAt(data.rowIndex);
                                     this.store.removeAt(data.rowIndex);
-                                    this.store.insert(rowIndex, [rec]);
+                                    toBeRequested.add(this.store.insert(rowIndex, [rec]));
+                                    this.requestNicePathData(toBeRequested);
                                 }
                             } else {
                                 var initData = {
@@ -437,8 +445,8 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
                                 };
 
                                 if (!this.objectAlreadyExists(initData.id)) {
-
-                                    this.store.add(initData);
+                                    toBeRequested.add(this.store.add(initData));
+                                    this.requestNicePathData(toBeRequested);
                                     return true;
                                 }
                             }
@@ -475,7 +483,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
             store: this.store,
             columns: [
                 {header: 'ID', dataIndex: 'id', width: 50, sortable: false},
-                {header: t("path"), dataIndex: 'path', width: 200, sortable: false},
+                {header: t("reference"), dataIndex: 'path', flex: 200, sortable: false},
                 {header: t("type"), dataIndex: 'type', width: 100, sortable: false},
                 {
                     xtype: 'actioncolumn',
@@ -500,7 +508,14 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
             cls: "object_field",
             autoExpandColumn: 'path',
             style: "margin-bottom: 10px",
-            title: this.fieldConfig.title
+            title: this.fieldConfig.title,
+            viewConfig: {
+                listeners: {
+                    refresh: function (gridview) {
+                        this.requestNicePathData(this.store.data);
+                    }.bind(this)
+                }
+            }
         });
 
         return this.component;
@@ -590,15 +605,20 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
     addDataFromSelector: function (items) {
 
         if (items.length > 0) {
+
+            var toBeRequested = new Ext.util.Collection();
+
             for (var i = 0; i < items.length; i++) {
                 if (!this.objectAlreadyExists(items[i].id)) {
-                    this.store.add({
+                    toBeRequested.add(this.store.add({
                         id: items[i].id,
                         path: items[i].fullpath,
                         type: items[i].classname
-                    });
+                    }));
                 }
             }
+
+            this.requestNicePathData(toBeRequested);
         }
     }
     ,
@@ -682,5 +702,42 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
         }
         
         return this.dataChanged;
+    },
+
+    requestNicePathData: function(targets) {
+        targets = this.normalizeTargetData(targets);
+
+
+        if (this.object) {
+            pimcore.helpers.requestNicePathData(
+                {
+                    type: "object",
+                    id: this.object.id
+                },
+                targets,
+                {},
+                this.fieldConfig,
+                this.getContext(),
+                pimcore.helpers.requestNicePathDataGridDecorator.bind(this, this.component.getView()),
+                pimcore.helpers.getNicePathHandlerStore.bind(this, this.store, {
+                    idProperty: this.idProperty,
+                    pathProperty: this.pathProperty
+                }, this.component.getView())
+            );
+        }
+    },
+
+    normalizeTargetData: function(targets) {
+        if (!targets) {
+            return targets;
+        }
+
+        targets.each(function(record){
+            var type = record.data.type;
+            record.data.type = "object";
+            record.data.subtype = type;
+        }, this);
+
+        return targets;
     }
 });

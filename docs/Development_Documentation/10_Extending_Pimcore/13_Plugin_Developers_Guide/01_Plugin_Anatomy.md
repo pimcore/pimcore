@@ -1,6 +1,7 @@
-## Plugin Anatomy and Design
+# Plugin Anatomy and Design
 
-Plugins are situated within the plugins folder in the Pimcore root directory. For each plugin a separate folder must be created.
+Plugins are situated within the plugins folder in the Pimcore root directory. For each plugin a separate 
+folder must be created.
 
 You can generate the structure of the plugin in the administration panel:
 
@@ -42,14 +43,16 @@ plugins
 
 ```
 
-The lib folder should contain all PHP libraries and plugin specific libraries, as well as any other php code required by the plugin.  
-The lib folder is also the place for the plugin class, which needs to extend the abstract plugin class and implement the plugin interface provided by Pimcore. 
-All user interface components should be situated in the static folder. 
-Javascript/CSS files are included when the Pimcore user interface starts up, provided that they are properly specified in the plugin config.  
-Further information on user interface plugin development is given in Ext JS frontend development.
-Plugin needs to be configured in the plugin.xml. 
+The lib folder should contain all PHP libraries and plugin specific libraries, as well as any other php code required by 
+the plugin. The lib folder is also the place for the plugin class, which needs to extend the abstract plugin class and 
+implement the plugin interface provided by Pimcore. 
 
-Parameters:
+All user interface components should be situated in the static folder. Javascript/CSS files are included when the Pimcore 
+user interface starts up, provided that they are properly specified in the plugin config.  
+
+Further information on user interface plugin development is given in Ext JS frontend development.
+
+A plugin needs to be configured in the plugin.xml with the following parameters:
 
 * plugin name (unique identifier = plugin folder) (must not contain spaces)
 * plugin nice name (name to be displayed in Pimcore)

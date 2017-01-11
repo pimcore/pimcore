@@ -96,6 +96,7 @@ class Thumbnail
     {
         $fsPath = $this->getFileSystemPath($deferredAllowed);
         $path = str_replace(PIMCORE_DOCUMENT_ROOT, "", $fsPath);
+        $path = urlencode_ignore_slash($path);
 
         $results = \Pimcore::getEventManager()->trigger("frontend.path.asset.image.thumbnail", $this, [
             "filesystemPath" => $fsPath,
@@ -255,8 +256,8 @@ class Thumbnail
                 }
             }
 
-            $this->width = $dimensions["width"];
-            $this->height = $dimensions["height"];
+            $this->width = isset($dimensions["width"]) ? $dimensions["width"] : null;
+            $this->height = isset($dimensions["height"]) ? $dimensions["height"] : null;
 
             // the following is only relevant if using high-res option (retina, ...)
             $this->realHeight = $this->height;
@@ -315,6 +316,32 @@ class Thumbnail
         }
 
         return $this->mimetype;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFileExtension()
+    {
+        $mapping = [
+            "image/png" => "png",
+            "image/jpeg" => "jpg",
+            "image/gif" => "gif",
+            "image/tiff" => "tif",
+            "image/svg+xml" => "svg",
+        ];
+
+        $mimeType = $this->getMimeType();
+
+        if (isset($mapping[$mimeType])) {
+            return $mapping[$mimeType];
+        }
+
+        if ($this->getAsset()) {
+            return \Pimcore\File::getFileExtension($this->getAsset()->getFilename());
+        }
+
+        return "";
     }
 
     /**

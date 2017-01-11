@@ -192,4 +192,14 @@ class Time extends Model\Object\ClassDefinition\Data\Input
 
         return $this->toTimestamp($subject, $baseTs) < $this->toTimestamp($comparison, $baseTs);
     }
+
+    /**
+     * @param $object
+     * @param mixed $params
+     * @return string
+     */
+    public function getDataForSearchIndex($object, $params = [])
+    {
+        return "";
+    }
 }

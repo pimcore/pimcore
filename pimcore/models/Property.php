@@ -19,6 +19,9 @@ namespace Pimcore\Model;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 
+/**
+ * @method \Pimcore\Model\Property\Dao getDao()
+ */
 class Property extends AbstractModel
 {
 

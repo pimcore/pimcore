@@ -246,6 +246,12 @@
     background: url(/pimcore/static6/img/flat-color-icons/unknown.svg) center center no-repeat !important;
 }
 
+.x-tree-icon-custom.pimcore_icon_asset_default {
+    background-image: url(/pimcore/static6/img/flat-color-icons/unknown.svg);
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+
 .pimcore_icon_pdf {
     background: url(/pimcore/static6/img/flat-color-icons/pdf.svg) center center no-repeat !important;
 }
@@ -346,6 +352,10 @@
     background: url(/pimcore/static6/img/flat-color-icons/flash_on.svg) center center no-repeat !important;
 }
 
+.pimcore_icon_clear_filters {
+    background: url(/pimcore/static6/img/flat-color-icons/clear_filters.svg) center center no-repeat !important;
+}
+
 .pimcore_icon_fieldcollection, .pimcore_icon_fieldcollections {
     background: url(/pimcore/static6/img/flat-color-icons/fieldcollection.svg) center center no-repeat !important;
 }
@@ -402,8 +412,8 @@
     background: url(/pimcore/static6/img/flat-color-icons/kindle.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_text {
-    background: url(/pimcore/static6/img/flat-color-icons/kindle.svg) center center no-repeat !important;
+.pimcore_icon_html {
+    background: url(/pimcore/static6/img/flat-color-icons/wysiwyg.svg) center center no-repeat !important;
 }
 
 
@@ -441,7 +451,7 @@
 }
 
 .pimcore_icon_variant {
-    background: url(/pimcore/static6/img/flat-color-icons/data_protection.svg) center center no-repeat !important;
+    background: url(/pimcore/static6/img/flat-color-icons/variant.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_seemode {
@@ -530,8 +540,8 @@
 .pimcore_icon_restore {
     background: url(/pimcore/static6/img/flat-color-icons/redo.svg) center center no-repeat !important;
 }
-
-.pimcore_icon_apply {
+/* to keep compatibility with icon_notification_success - pimcore.helpers.showNotification */
+.pimcore_icon_apply, .pimcore_icon_success {
     background: url(/pimcore/static6/img/flat-color-icons/ok.svg) center center no-repeat !important;
 }
 
@@ -545,6 +555,10 @@
 
 .pimcore_icon_image_editor_simple {
     background: url(/pimcore/static6/img/flat-color-icons/camera_addon.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_exif {
+    background: url(/pimcore/static6/img/flat-color-icons/camera.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_image_editor_advanced {
@@ -1028,4 +1042,6 @@
     background: url(/pimcore/static6/img/flat-color-icons/filing_cabinet.svg) center center no-repeat !important;
 }
 
-
+.pimcore_icon_print {
+    background: url(/pimcore/static6/img/flat-color-icons/print.svg) center center no-repeat !important;
+}

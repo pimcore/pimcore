@@ -42,10 +42,11 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
         if (field.layout.noteditable) {
             return null;
         }
-        // NUMERIC
+
         if (field.type == "numeric") {
             editorConfig.decimalPrecision = 20;
-            return new Ext.form.field.Spinner(editorConfig);
+            // we have to use Number since the spinner trigger don't work in grid -> seems to be a bug of Ext
+            return new Ext.form.field.Number(editorConfig);
         }
     },
 
@@ -131,7 +132,11 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
 
     getValue:function () {
         if (this.isRendered()) {
-            return this.component.getValue().toString();
+            var value = this.component.getValue();
+            if (value == null) {
+                return value;
+            }
+            return value.toString();
         } else if (this.defaultValue) {
             return this.defaultValue;
         }

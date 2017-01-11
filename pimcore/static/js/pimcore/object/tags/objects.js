@@ -172,14 +172,14 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
                     className: className,
                     classId: classId,
                     parentId: parentId,
-                    key: pimcore.helpers.getValidFilename(name)
+                    key: pimcore.helpers.getValidFilename(name, "object")
                 },
                 success: function(response) {
                     var data = Ext.decode(response.responseText);
                     if (data.success) {
                         this.store.add(new this.store.recordType({
                             id: data.id,
-                            path: parent + "/" + pimcore.helpers.getValidFilename(name),
+                            path: parent + "/" + pimcore.helpers.getValidFilename(name, "object"),
                             type: className
                         }));
                         pimcore.helpers.openElement(data.id, "object", "object");

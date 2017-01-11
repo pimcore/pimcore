@@ -45,9 +45,11 @@ class Admin_External_AdminerController extends \Pimcore\Controller\Action\Admin
         if (preg_match("@\.(css|js|ico|png|jpg|gif)$@", $path)) {
             $filePath = $this->adminerHome . "/" . $path;
 
+            // it seems that css files need the right content-type (Chrome)
             if (preg_match("@.css$@", $path)) {
-                // it seems that css files need the right content-type (Chrome)
                 header("Content-Type: text/css");
+            } elseif (preg_match("@.js$@", $path)) {
+                header("Content-Type: text/javascript");
             }
 
             if (file_exists($filePath)) {

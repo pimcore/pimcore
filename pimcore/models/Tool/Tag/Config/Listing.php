@@ -18,6 +18,9 @@ namespace Pimcore\Model\Tool\Tag\Config;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\Tool\Tag\Config\Listing\Dao getDao()
+ */
 class Listing extends Model\Listing\JsonListing
 {
 

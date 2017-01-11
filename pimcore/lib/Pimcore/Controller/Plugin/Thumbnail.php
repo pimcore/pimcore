@@ -29,7 +29,7 @@ class Thumbnail extends \Zend_Controller_Plugin_Abstract
 
         // this is a filter which checks for common used files (by browser, crawlers, ...) and prevent the default
         // error page, because this is more resource-intensive than exiting right here
-        if (preg_match("@/image-thumbnails(.*)?/([0-9]+)/thumb__([a-zA-Z0-9_\-]+)([^\@]+)(\@[0-9.]+x)?\.([a-zA-Z]{2,5})@", $request->getPathInfo(), $matches)) {
+        if (preg_match("@/image-thumbnails(.*)?/([0-9]+)/thumb__([a-zA-Z0-9_\-]+)([^\@]+)(\@[0-9.]+x)?\.([a-zA-Z]{2,5})@", rawurldecode($request->getPathInfo()), $matches)) {
             $assetId = $matches[2];
             $thumbnailName = $matches[3];
 

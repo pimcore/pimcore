@@ -18,6 +18,9 @@ namespace Pimcore\Model\Object\KeyValue\TranslatorConfig;
 
 use Pimcore\Model;
 
+/**
+ * @property \Pimcore\Model\Object\KeyValue\TranslatorConfig $model
+ */
 class Dao extends Model\Dao\AbstractDao
 {
     const TABLE_NAME_TRANSLATOR = "keyvalue_translator_configuration";

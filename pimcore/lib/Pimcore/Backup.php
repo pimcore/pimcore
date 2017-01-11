@@ -393,7 +393,7 @@ class Backup
 
         $tables = $this->getTables();
 
-        $dumpData = "\nSET NAMES UTF8;\n\n";
+        $dumpData = "\nSET NAMES utf8mb4;\n\n";
 
         // tables
         foreach ($tables as $table) {

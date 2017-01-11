@@ -65,14 +65,19 @@ class Console
             return self::$executableCache[$name];
         }
 
+        // use DI to provide the ability to customize / overwrite paths
+        if (\Pimcore::getDiContainer()->has("executable." . $name)) {
+            return \Pimcore::getDiContainer()->get("executable." . $name);
+        }
+
         $pathVariable = Config::getSystemConfig()->general->path_variable;
 
         $paths = [];
         if ($pathVariable) {
-            $paths = explode(":", $pathVariable);
+            $paths = explode(PATH_SEPARATOR, $pathVariable);
         }
 
-        array_unshift($paths, "");
+        array_push($paths, "");
 
         // allow custom setup routines for certain programs
         $customSetupMethod = "setup" . ucfirst($name);
@@ -168,6 +173,28 @@ class Console
             if (strpos($process->getOutput() . $process->getErrorOutput(), "mozjpeg") !== false) {
                 return true;
             }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param $process
+     * @return bool
+     */
+    protected static function checkComposite($process)
+    {
+        return self::checkConvert($process);
+    }
+
+    /**
+     * @param $process
+     * @return bool
+     */
+    protected static function checkConvert($process)
+    {
+        if (strpos($process->getOutput() . $process->getErrorOutput(), "imagemagick.org") !== false) {
+            return true;
         }
 
         return false;
@@ -332,6 +359,17 @@ class Console
         $nohup = (string) self::getExecutable("nohup");
         if ($nohup) {
             $nohup .= " ";
+        }
+
+        /**
+         * mod_php seems to lose the environment variables if we do not set them manually before the child process is started
+         */
+        if (strpos(php_sapi_name(), 'apache') !== false) {
+            foreach (['PIMCORE_ENVIRONMENT', 'REDIRECT_PIMCORE_ENVIRONMENT'] as $envKey) {
+                if ($envValue = getenv($envKey)) {
+                    putenv($envKey . '='.$envValue);
+                }
+            }
         }
 
         $commandWrapped = $nohup . $nice . $cmd . " > ". $outputFile ." 2>&1 & echo $!";

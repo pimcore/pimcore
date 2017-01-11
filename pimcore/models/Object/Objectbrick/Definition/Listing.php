@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -28,19 +28,12 @@ class Listing
     {
         $fields = [];
         $objectBricksFolder = PIMCORE_CLASS_DIRECTORY . "/objectbricks";
-        
-        if (is_dir($objectBricksFolder)) {
-            $files = scandir($objectBricksFolder);
-            
-            foreach ($files as $file) {
-                $file = $objectBricksFolder . "/" . $file;
-                if (is_file($file)) {
-                    $fieldData = file_get_contents($file);
-                    $fields[] = \Pimcore\Tool\Serialize::unserialize($fieldData);
-                }
-            }
+        $files = glob($objectBricksFolder . "/*.php");
+
+        foreach ($files as $file) {
+            $fields[] = include $file;
         }
-        
+
         return $fields;
     }
 }

@@ -35,7 +35,7 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
         $email = clone $email;
         $email = $this->getLatestVersion($email);
 
-        $versions = $email->getVersions();
+        $versions = Element\Service::getSafeVersionInfo($email->getVersions());
         $email->setVersions(array_splice($versions, 0, 1));
         $email->idPath = Element\Service::getIdPath($email);
         $email->userPermissions = $email->getUserPermissions();

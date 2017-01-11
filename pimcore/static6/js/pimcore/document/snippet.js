@@ -26,13 +26,19 @@ pimcore.document.snippet = Class.create(pimcore.document.page_snippet, {
 
     init: function () {
 
+        var user = pimcore.globalmanager.get("user");
+
         this.edit = new pimcore.document.edit(this);
 
         if (this.isAllowed("settings")) {
             this.settings = new pimcore.document.snippets.settings(this);
             this.scheduler = new pimcore.element.scheduler(this, "document");
+        }
+
+        if (user.isAllowed("notes_events")) {
             this.notes = new pimcore.element.notes(this, "document");
         }
+
         if (this.isAllowed("properties")) {
             this.properties = new pimcore.document.properties(this, "document");
         }
@@ -49,6 +55,8 @@ pimcore.document.snippet = Class.create(pimcore.document.page_snippet, {
     getTabPanel: function () {
 
         var items = [];
+        var user = pimcore.globalmanager.get("user");
+
         items.push(this.edit.getLayout());
 
         if (this.isAllowed("settings")) {
@@ -72,11 +80,10 @@ pimcore.document.snippet = Class.create(pimcore.document.page_snippet, {
             items.push(reportLayout);
         }
 
-        if (this.isAllowed("settings")) {
+        if (user.isAllowed("notes_events")) {
             items.push(this.notes.getLayout());
         }
 
-        var user = pimcore.globalmanager.get("user");
         if (user.isAllowed("tags_assignment")) {
             items.push(this.tagAssignment.getLayout());
         }

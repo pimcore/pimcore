@@ -1052,7 +1052,7 @@ pimcore.document.tree = Class.create({
                 return;
             }
 
-            params["key"] = pimcore.helpers.getValidFilename(params["key"]);
+            params["key"] = pimcore.helpers.getValidFilename(params["key"], "document");
             params["index"] = node.childNodes.length;
             params["parentId"] = node.id;
 
@@ -1102,7 +1102,7 @@ pimcore.document.tree = Class.create({
                 return;
             }
 
-            value = pimcore.helpers.getValidFilename(value);
+            value = pimcore.helpers.getValidFilename(value, "document");
 
             this.setText(value);
             this.attributes.path = this.attributes.basePath + value;
@@ -1141,7 +1141,7 @@ pimcore.document.tree = Class.create({
 
     isExistingKeyInLevel: function (parentNode, key, node) {
 
-        key = pimcore.helpers.getValidFilename(key);
+        key = pimcore.helpers.getValidFilename(key, "document");
         var parentChilds = parentNode.childNodes;
         for (var i = 0; i < parentChilds.length; i++) {
             if (parentChilds[i].text == key && node != parentChilds[i]) {

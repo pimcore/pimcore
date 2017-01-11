@@ -20,6 +20,10 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.geo.abstract, {
 
     getLayoutEdit: function () {
 
+        if(!this.isMapsAvailable()) {
+            return this.getErrorLayout();
+        }
+
         this.mapImageID = uniqid();
 
         if (this.data) {

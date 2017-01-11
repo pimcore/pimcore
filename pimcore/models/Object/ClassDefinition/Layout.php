@@ -17,10 +17,11 @@
 namespace Pimcore\Model\Object\ClassDefinition;
 
 use Pimcore\Model;
+use Pimcore\Model\Element;
 
 class Layout
 {
-    use Model\Object\ClassDefinition\Helper\VarExport;
+    use Model\Object\ClassDefinition\Helper\VarExport, Element\ChildsCompatibilityTrait;
 
     /**
      * @var string
@@ -252,18 +253,18 @@ class Layout
     /**
      * @return array
      */
-    public function getChilds()
+    public function getChildren()
     {
         return $this->childs;
     }
 
     /**
-     * @param array $childs
+     * @param array $children
      * @return void
      */
-    public function setChilds($childs)
+    public function setChildren($children)
     {
-        $this->childs = $childs;
+        $this->childs = $children;
 
         return $this;
     }
@@ -271,7 +272,7 @@ class Layout
     /**
      * @return boolean
      */
-    public function hasChilds()
+    public function hasChildren()
     {
         if (is_array($this->childs) && count($this->childs) > 0) {
             return true;
@@ -396,5 +397,13 @@ class Layout
         $this->collapsible = $this->getCollapsed() || $this->getCollapsible();
 
         return $this;
+    }
+
+    /** Override point for Enriching the layout definition before the layout is returned to the admin interface.
+     * @param $object Model\Object\Concrete
+     * @param array $context additional contextual data
+     */
+    public function enrichLayoutDefinition($object, $context = [])
+    {
     }
 }

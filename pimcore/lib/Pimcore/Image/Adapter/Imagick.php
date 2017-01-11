@@ -50,6 +50,12 @@ class Imagick extends Adapter
      */
     public function load($imagePath, $options = [])
     {
+        if (isset($options["preserveColor"])) {
+            // set this option to TRUE to skip all color transformations during the loading process
+            // this can massively improve performance if the color information doesn't matter, ...
+            // eg. when using this function to obtain dimensions from an image
+            $this->setPreserveColor($options["preserveColor"]);
+        }
 
         // support image URLs
         if (preg_match("@^https?://@", $imagePath)) {
@@ -80,11 +86,11 @@ class Imagick extends Adapter
             $i = new \Imagick();
             $this->imagePath = $imagePath;
 
-            if (method_exists($i, "setcolorspace")) {
+            if (!$this->isPreserveColor() && method_exists($i, "setcolorspace")) {
                 $i->setcolorspace(\Imagick::COLORSPACE_SRGB);
             }
 
-            if ($this->isVectorGraphic($imagePath)) {
+            if (!$this->isPreserveColor() && $this->isVectorGraphic($imagePath)) {
                 // only for vector graphics
                 // the below causes problems with PSDs when target format is PNG32 (nobody knows why ;-))
                 $i->setBackgroundColor(new \ImagickPixel('transparent'));
@@ -121,7 +127,9 @@ class Imagick extends Adapter
                 }
             }
 
-            $this->setColorspaceToRGB();
+            if (!$this->isPreserveColor()) {
+                $this->setColorspaceToRGB();
+            }
         } catch (\Exception $e) {
             Logger::error("Unable to load image: " . $imagePath);
             Logger::error($e);
@@ -139,11 +147,10 @@ class Imagick extends Adapter
      * @param $path
      * @param null $format
      * @param null $quality
-     * @param null $colorProfile
      * @return $this|mixed
      * @throws \Exception
      */
-    public function save($path, $format = null, $quality = null, $colorProfile = null)
+    public function save($path, $format = null, $quality = null)
     {
         if (!$format) {
             $format = "png32";
@@ -155,8 +162,9 @@ class Imagick extends Adapter
             // when used with gray-scale images
             $format = "png32";
         }
-
-        $i = $this->resource; // this is because of HHVM which has problems with $this->resource->writeImage();
+        if ($format == "original") {
+            $format = strtolower($this->resource->getImageFormat());
+        }
 
         $originalFilename = null;
         if (!$this->reinitializing) {
@@ -168,11 +176,40 @@ class Imagick extends Adapter
             }
         }
 
-        $i->stripimage();
-        $i->profileImage('*', null);
+        $i = $this->resource; // this is because of HHVM which has problems with $this->resource->writeImage();
+
+        if (in_array($format, ["jpeg", "pjpeg", "jpg"]) && $this->isAlphaPossible) {
+            // set white background for transparent pixels
+            $i->setImageBackgroundColor("#ffffff");
+
+            if ($i->getImageAlphaChannel() !== 0) { // Note: returns (int) 0 if there's no AlphaChannel, PHP Docs are wrong. See: https://www.imagemagick.org/api/channel.php
+                // Imagick version compatibility
+                $alphaChannel = 11; // This works at least as far back as version 3.1.0~rc1-1
+                if (defined("Imagick::ALPHACHANNEL_REMOVE")) {
+                    // Imagick::ALPHACHANNEL_REMOVE has been added in 3.2.0b2
+                    $alphaChannel = \Imagick::ALPHACHANNEL_REMOVE;
+                }
+                $i->setImageAlphaChannel($alphaChannel);
+            }
+
+            $i->mergeImageLayers(\Imagick::LAYERMETHOD_FLATTEN);
+        }
+
+        if (!$this->isPreserveMetaData()) {
+            $i->stripImage();
+            if ($format == "png32") {
+                // do not include any meta-data
+                // this is due a bug in -strip, therefore we have to use this custom option
+                // see also: https://github.com/ImageMagick/ImageMagick/issues/156
+                $i->setOption("png:include-chunk", "none");
+            }
+        }
+        if (!$this->isPreserveColor()) {
+            $i->profileImage('*', null);
+        }
         $i->setImageFormat($format);
 
-        if ($quality) {
+        if ($quality && !$this->isPreserveColor()) {
             $i->setCompressionQuality((int) $quality);
             $i->setImageCompressionQuality((int) $quality);
         }
@@ -185,7 +222,7 @@ class Imagick extends Adapter
         // normally jpeg images are bigger than 10k so we avoid the double compression (baseline => filesize check => if necessary progressive)
         // and check the dimensions here instead to faster generate the image
         // progressive JPEG - better compression, smaller filesize, especially for web optimization
-        if ($format == "jpeg") {
+        if ($format == "jpeg" && !$this->isPreserveColor()) {
             if (($this->getWidth() * $this->getHeight()) > 35000) {
                 $i->setInterlaceScheme(\Imagick::INTERLACE_PLANE);
             }
@@ -510,6 +547,7 @@ class Imagick extends Adapter
     {
         $newImage = new \Imagick();
         $newImage->newimage($width, $height, $color);
+        $newImage->setImageFormat($this->resource->getImageFormat());
 
         return $newImage;
     }
@@ -556,9 +594,10 @@ class Imagick extends Adapter
 
     /**
      * @param $image
-     * @return $this|Adapter
+     * @param null|string $mode
+     * @return $this
      */
-    public function setBackgroundImage($image)
+    public function setBackgroundImage($image, $mode = null)
     {
         $this->preModify();
 
@@ -568,7 +607,14 @@ class Imagick extends Adapter
         if (is_file($image)) {
             $newImage = new \Imagick();
             $newImage->readimage($image);
-            $newImage->resizeimage($this->getWidth(), $this->getHeight(), \Imagick::FILTER_UNDEFINED, 1, false);
+
+            if ($mode == "cropTopLeft") {
+                $newImage->cropImage($this->getWidth(), $this->getHeight(), 0, 0);
+            } else {
+                // default behavior (fit)
+                $newImage->resizeimage($this->getWidth(), $this->getHeight(), \Imagick::FILTER_UNDEFINED, 1, false);
+            }
+
             $newImage->compositeImage($this->resource, \Imagick::COMPOSITE_DEFAULT, 0, 0);
             $this->resource = $newImage;
         }
@@ -781,8 +827,7 @@ class Imagick extends Adapter
 
         // we need to do this check first, because ImageMagick using the inkscape delegate returns "PNG" when calling
         // getimageformat() onto SVG graphics, this is a workaround to avoid problems
-        if (in_array(File::getFileExtension($imagePath), ["svg", "svgz", "eps", "pdf", "ps", "ai"])) {
-            // use file-extension if filename is provided
+        if (preg_match("@\.(svgz?|eps|pdf|ps|ai|indd)$@", $imagePath)) {
             return true;
         }
 

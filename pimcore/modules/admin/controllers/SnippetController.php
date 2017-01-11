@@ -33,7 +33,7 @@ class Admin_SnippetController extends \Pimcore\Controller\Action\Admin\Document
         $snippet = clone $snippet;
         $snippet = $this->getLatestVersion($snippet);
 
-        $versions = $snippet->getVersions();
+        $versions = Element\Service::getSafeVersionInfo($snippet->getVersions());
         $snippet->setVersions(array_splice($versions, 0, 1));
         $snippet->getScheduledTasks();
         $snippet->idPath = Element\Service::getIdPath($snippet);

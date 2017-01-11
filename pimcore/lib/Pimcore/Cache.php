@@ -16,7 +16,6 @@ namespace Pimcore;
 
 use Pimcore\Model\Element;
 use Pimcore\Model\Document;
-use Pimcore\Logger;
 
 class Cache
 {
@@ -109,7 +108,7 @@ class Cache
             self::init();
         }
 
-        if (!empty($_REQUEST["nocache"])) {
+        if (!empty($_REQUEST["nocache"]) && PIMCORE_DEBUG) {
             self::disable();
         }
 
@@ -170,7 +169,7 @@ class Cache
         }
 
         self::$instance->setLifetime(self::$defaultLifetime);
-        self::$instance->setOption("automatic_serialization", true);
+        self::$instance->setOption("automatic_serialization", false);
         self::$instance->setOption("automatic_cleaning_factor", 0);
 
         // init the write lock once (from other processes etc.)
@@ -225,7 +224,7 @@ class Cache
             "frontendType" => "Core",
             "frontendConfig" => [
                 "lifetime" => self::$defaultLifetime,
-                "automatic_serialization" => true,
+                "automatic_serialization" => false,
                 "automatic_cleaning_factor" => 0
             ],
             "customFrontendNaming" => true,
@@ -287,6 +286,7 @@ class Cache
         if ($cache = self::getInstance()) {
             $key = self::$cachePrefix . $key;
             $data = $cache->load($key, $doNotTestCacheValidity);
+            $data = unserialize($data);
 
             if (is_object($data)) {
                 $data->____pimcore_cache_item__ = $key;
@@ -335,21 +335,33 @@ class Cache
     }
 
     /**
-     * Puts content into the cache
-     * @param mixed $data
-     * @param string $key
-     * @return void
+     * @param $data
+     * @param $key
+     * @param array $tags
+     * @param null $lifetime
+     * @param int $priority
+     * @param bool $force
+     * @return bool|void
      */
     public static function save($data, $key, $tags = [], $lifetime = null, $priority = 0, $force = false)
     {
+        if (!$force && php_sapi_name() == "cli") {
+            return;
+        }
+
         if (self::getForceImmediateWrite() || $force) {
             if (self::hasWriteLock()) {
                 return;
             }
 
-            return self::storeToCache($data, $key, $tags, $lifetime, $priority, $force);
+            $data = serialize($data);
+
+            return self::storeToCache($data, $key, $tags, $lifetime, $force);
         } else {
-            self::addToSaveStack([$data, $key, $tags, $lifetime, $priority, $force]);
+            if (count(self::$saveStack) < self::$maxWriteToCacheItems) {
+                $data = serialize($data);
+                self::$saveStack[] = [$data, $key, $tags, $lifetime, $force];
+            }
         }
     }
 
@@ -359,11 +371,10 @@ class Cache
      * @param $key
      * @param array $tags
      * @param null $lifetime
-     * @param null $priority
      * @param bool $force
      * @return bool|void
      */
-    public static function storeToCache($data, $key, $tags = [], $lifetime = null, $priority = null, $force = false)
+    protected static function storeToCache($data, $key, $tags = [], $lifetime = null, $force = false)
     {
         if (!self::$enabled) {
             return;
@@ -378,9 +389,6 @@ class Cache
         if ($data instanceof Document\Hardlink\Wrapper\WrapperInterface) {
             return;
         }
-
-        // $priority is currently just for sorting the items in self::addToSaveStack()
-        // maybe it will be added to prioritize items for backends with volatile memories
 
         // get cache instance
         if ($cache = self::getInstance()) {
@@ -447,34 +455,6 @@ class Cache
     }
 
     /**
-     * Put the cache item info into the stack
-     * array_unshift because the output cache has priority so the 1st item added to the stack will be for sure in the cache
-     *
-     * @param array $config
-     * @return void
-     */
-    public static function addToSaveStack($config)
-    {
-        $priority = $config[4];
-        $i=0;
-
-        //saveStack is sorted - just find the correct position for the new item
-        foreach (self::$saveStack as $entry) {
-            if ($entry[4] <= $priority) {
-                //we got the position!
-                break;
-            } else {
-                $i++;
-            }
-        }
-        //add new item at the correct position
-        array_splice(self::$saveStack, $i, 0, [$config]);
-
-        // remove items which are too much, and cannot be added to the cache anymore
-        array_splice(self::$saveStack, self::$maxWriteToCacheItems);
-    }
-
-    /**
      *
      */
     public function clearSaveStack()
@@ -494,7 +474,6 @@ class Cache
         }
 
         $processedKeys = [];
-        $count = 0;
         foreach (self::$saveStack as $conf) {
             if (in_array($conf[1], $processedKeys)) {
                 continue;
@@ -508,12 +487,6 @@ class Cache
             }
 
             $processedKeys[] = $conf[1]; // index 1 is the key for the cache item
-
-            // only add $maxWriteToCacheItems items att once to the cache for performance issues
-            $count++;
-            if ($count > self::$maxWriteToCacheItems) {
-                break;
-            }
         }
 
         // reset
@@ -529,7 +502,7 @@ class Cache
         if (!self::$writeLockTimestamp || $force) {
             self::$writeLockTimestamp = time();
             if ($cache = self::getInstance()) {
-                $cache->save(self::$writeLockTimestamp, "system_cache_write_lock", [], 30);
+                $cache->save((string) self::$writeLockTimestamp, "system_cache_write_lock", [], 30);
             }
         }
     }
@@ -785,13 +758,19 @@ class Cache
 
 
     /**
-     * @param null $cache
+     * @param \Zend_Cache_Core|null $cache
      */
     public static function setZendFrameworkCaches($cache = null)
     {
-        \Zend_Locale::setCache($cache);
-        \Zend_Locale_Data::setCache($cache);
-        \Zend_Db_Table_Abstract::setDefaultMetadataCache($cache);
+        $zendCache = null;
+        if ($cache) {
+            $zendCache = clone $cache;
+            $zendCache->setOption('automatic_serialization', true);
+        }
+
+        \Zend_Locale::setCache($zendCache);
+        \Zend_Locale_Data::setCache($zendCache);
+        \Zend_Db_Table_Abstract::setDefaultMetadataCache($zendCache);
     }
 
     /**

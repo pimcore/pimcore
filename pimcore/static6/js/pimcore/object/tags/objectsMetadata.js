@@ -16,6 +16,8 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
 
     type: "objectsMetadata",
     dataChanged:false,
+    idProperty: "id",
+    pathProperty: "fullpath",
 
     initialize: function (data, fieldConfig) {
         this.data = [];
@@ -92,7 +94,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
 
                 var field = {
                     key: visibleFields[i],
-                    label: layout.title,
+                    label: layout.title == "fullpath" ? t("reference") : layout.title,
                     layout: layout,
                     position: i,
                     type: layout.fieldtype
@@ -157,8 +159,10 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                         return '<div style="text-align: center"><div role="button" class="x-grid-checkcolumn" style=""></div></div>';
                     }
                 };
-                editor = Ext.create('Ext.form.field.Checkbox', {style: 'margin-top: 2px;'});
 
+                listeners = {
+                    "mousedown": this.cellMousedown.bind(this, this.fieldConfig.columns[i].key, this.fieldConfig.columns[i].type)
+                };
 
                 if(readOnly) {
                     columns.push(Ext.create('Ext.grid.column.Check'), {
@@ -300,7 +304,16 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                 items: columns
             },
             viewConfig: {
-                markDirty: false
+                plugins: {
+                    ptype: 'gridviewdragdrop',
+                    dragroup: 'element'
+                },
+                markDirty: false,
+                listeners: {
+                    refresh: function (gridview) {
+                        this.requestNicePathData(this.store.data);
+                    }.bind(this)
+                }
             },
             componentCls: cls,
             width: this.fieldConfig.width,
@@ -320,7 +333,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
         if(!readOnly) {
             this.component.on("rowcontextmenu", this.onRowContextmenu);
         }
-        
+
         this.component.reference = this;
 
         if(!readOnly) {
@@ -351,12 +364,16 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                         var fromTree = this.isFromTree(dd);
 
                         if (this.dndAllowed(data, fromTree)) {
+
+                            var toBeRequested = new Ext.util.Collection();
+
                             if(data["grid"] && data["grid"] == this.component) {
                                 var rowIndex = this.component.getView().findRowIndex(e.target);
                                 if(rowIndex !== false) {
                                     var rec = this.store.getAt(data.rowIndex);
                                     this.store.removeAt(data.rowIndex);
-                                    this.store.insert(rowIndex, [rec]);
+                                    toBeRequested.add(this.store.insert(rowIndex, [rec]));
+                                    this.requestNicePathData(toBeRequested);
                                 }
                             } else {
                                 var initData = {
@@ -366,7 +383,8 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                                 };
 
                                 if (!this.objectAlreadyExists(initData.id)) {
-                                    this.loadObjectData(initData, this.fieldConfig.visibleFields.split(","));
+                                    toBeRequested.add(this.loadObjectData(initData, this.fieldConfig.visibleFields.split(",")));
+                                    this.requestNicePathData(toBeRequested);
                                     return true;
                                 }
                             }
@@ -420,18 +438,34 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
     addDataFromSelector: function (items) {
 
         if (items.length > 0) {
+            toBeRequested = new Ext.util.Collection();
+
             for (var i = 0; i < items.length; i++) {
                 var fields = this.fieldConfig.visibleFields.split(",");
                 if (!this.objectAlreadyExists(items[i].id)) {
-                    this.loadObjectData(items[i], fields);
+                    toBeRequested.add(this.loadObjectData(items[i], fields));
                 }
             }
+
+            this.requestNicePathData(toBeRequested);
+        }
+    },
+
+    cellMousedown: function (key, colType, grid, cell, rowIndex, cellIndex, e) {
+
+        // this is used for the boolean field type
+
+        var store = grid.getStore();
+        var record = store.getAt(rowIndex);
+
+        if (colType == "bool") {
+            record.set(key, !record.data[key]);
         }
     },
 
     loadObjectData: function(item, fields) {
 
-        this.store.add(item);
+        var newItem = this.store.add(item);
 
         Ext.Ajax.request({
             url: "/admin/object-helper/load-object-data",
@@ -451,5 +485,23 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                 }
             }.bind(this)
         });
+
+        return newItem;
+    },
+
+    normalizeTargetData: function(targets) {
+        if (!targets) {
+            return targets;
+        }
+
+        targets.each(function(record){
+            var type = record.data.type;
+            record.data.type = "object";
+            record.data.subtype = type;
+            record.data.path = record.data.fullpath;
+        }, this);
+
+        return targets;
+
     }
 });

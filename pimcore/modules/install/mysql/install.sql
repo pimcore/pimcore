@@ -1,5 +1,5 @@
 
-SET NAMES UTF8;
+SET NAMES utf8mb4;
 
 DROP TABLE IF EXISTS `application_logs`;
 CREATE TABLE `application_logs` (
@@ -10,8 +10,8 @@ CREATE TABLE `application_logs` (
   `priority` ENUM('emergency','alert','critical','error','warning','notice','info','debug') DEFAULT NULL,
   `fileobject` varchar(1024) DEFAULT NULL,
   `info` varchar(1024) DEFAULT NULL,
-  `component` varchar(255) DEFAULT NULL,
-  `source` varchar(255) DEFAULT NULL,
+  `component` varchar(190) DEFAULT NULL,
+  `source` varchar(190) DEFAULT NULL,
   `relatedobject` bigint(20) DEFAULT NULL,
   `relatedobjecttype` enum('object','document','asset') DEFAULT NULL,
   `maintenanceChecked` tinyint(4) DEFAULT NULL,
@@ -20,16 +20,16 @@ CREATE TABLE `application_logs` (
   KEY `timestamp` (`timestamp`),
   KEY `relatedobject` (`relatedobject`),
   KEY `priority` (`priority`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `assets`;
 CREATE TABLE `assets` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `parentId` int(11) unsigned DEFAULT NULL,
   `type` varchar(20) DEFAULT NULL,
-  `filename` varchar(255) DEFAULT '',
-  `path` varchar(765) CHARACTER SET ascii DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
-  `mimetype` varchar(255) DEFAULT NULL,
+  `filename` varchar(255) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT '',
+  `path` varchar(765) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
+  `mimetype` varchar(190) DEFAULT NULL,
   `creationDate` bigint(20) unsigned DEFAULT NULL,
   `modificationDate` bigint(20) unsigned DEFAULT NULL,
   `userOwner` int(11) unsigned DEFAULT NULL,
@@ -42,17 +42,18 @@ CREATE TABLE `assets` (
   KEY `filename` (`filename`),
   KEY `path` (`path`),
   KEY `modificationDate` (`modificationDate`)
-) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `assets_metadata`;
 CREATE TABLE `assets_metadata` (
   `cid` int(11) DEFAULT NULL,
-  `name` varchar(255) DEFAULT NULL,
-  `language` varchar(255) DEFAULT NULL,
+  `name` varchar(190) DEFAULT NULL,
+  `language` varchar(190) DEFAULT NULL,
   `type` ENUM('input','textarea','asset','document','object','date','select','checkbox') DEFAULT NULL,
   `data` text,
-  KEY `cid` (`cid`)
-) DEFAULT CHARSET=utf8;
+  KEY `cid` (`cid`),
+	INDEX `name` (`name`)
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `cache`;
 CREATE TABLE `cache` (
@@ -61,7 +62,7 @@ CREATE TABLE `cache` (
   `mtime` bigint(20) DEFAULT NULL,
   `expire` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `cache_tags`;
 CREATE TABLE `cache_tags` (
@@ -75,16 +76,16 @@ CREATE TABLE `cache_tags` (
 DROP TABLE IF EXISTS `classes` ;
 CREATE TABLE `classes` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL DEFAULT '',
+  `name` varchar(190) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `custom_layouts` ;
 CREATE TABLE `custom_layouts` (
 	`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
 	`classId` INT(11) UNSIGNED NOT NULL,
-	`name` VARCHAR(255) NULL DEFAULT NULL,
+	`name` VARCHAR(190) NULL DEFAULT NULL,
 	`description` TEXT NULL,
 	`creationDate` BIGINT(20) UNSIGNED NULL DEFAULT NULL,
 	`modificationDate` BIGINT(20) UNSIGNED NULL DEFAULT NULL,
@@ -93,7 +94,7 @@ CREATE TABLE `custom_layouts` (
 	`default` tinyint(4) NOT NULL DEFAULT '0',
 	PRIMARY KEY (`id`),
 	UNIQUE INDEX `name` (`name`, `classId`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `dependencies` ;
 CREATE TABLE `dependencies` (
@@ -106,15 +107,15 @@ CREATE TABLE `dependencies` (
   KEY `targetid` (`targetid`),
   KEY `sourcetype` (`sourcetype`),
   KEY `targettype` (`targettype`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `documents` ;
 CREATE TABLE `documents` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `parentId` int(11) unsigned DEFAULT NULL,
   `type` enum('page','link','snippet','folder','hardlink','email','newsletter','printpage','printcontainer') DEFAULT NULL,
-  `key` varchar(255) DEFAULT '',
-  `path` varchar(765) CHARACTER SET ascii DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
+  `key` varchar(255) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT '',
+  `path` varchar(765) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
   `index` int(11) unsigned DEFAULT '0',
   `published` tinyint(1) unsigned DEFAULT '1',
   `creationDate` bigint(20) unsigned DEFAULT NULL,
@@ -128,17 +129,17 @@ CREATE TABLE `documents` (
   KEY `path` (`path`),
   KEY `published` (`published`),
   KEY `modificationDate` (`modificationDate`)
-) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `documents_elements`;
 CREATE TABLE `documents_elements` (
   `documentId` int(11) unsigned NOT NULL DEFAULT '0',
-  `name` varchar(750) CHARACTER SET ascii NOT NULL DEFAULT '',
+  `name` varchar(750) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL DEFAULT '',
   `type` varchar(50) DEFAULT NULL,
   `data` longtext,
   PRIMARY KEY (`documentId`,`name`),
   KEY `documentId` (`documentId`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `documents_email`;
 CREATE TABLE `documents_email` (
@@ -153,7 +154,7 @@ CREATE TABLE `documents_email` (
   `bcc` varchar(255) DEFAULT NULL,
   `subject` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `documents_newsletter`;
 CREATE TABLE `documents_newsletter` (
@@ -170,7 +171,7 @@ CREATE TABLE `documents_newsletter` (
   `enableTrackingParameters` tinyint(1) unsigned DEFAULT NULL,
   `sendingMode` varchar(20) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `documents_hardlink`;
 CREATE TABLE `documents_hardlink` (
@@ -179,7 +180,7 @@ CREATE TABLE `documents_hardlink` (
   `propertiesFromSource` tinyint(1) DEFAULT NULL,
   `childsFromSource` tinyint(1) DEFAULT NULL,
   PRIMARY KEY `id` (`id`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `documents_link`;
 CREATE TABLE `documents_link` (
@@ -189,7 +190,7 @@ CREATE TABLE `documents_link` (
   `direct` varchar(1000) default NULL,
   `linktype` enum('direct','internal') default NULL,
   PRIMARY KEY  (`id`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `documents_page` ;
 CREATE TABLE `documents_page` (
@@ -201,12 +202,12 @@ CREATE TABLE `documents_page` (
   `title` varchar(255) DEFAULT NULL,
   `description` varchar(255) DEFAULT NULL,
   `metaData` text,
-  `prettyUrl` varchar(255) DEFAULT NULL,
+  `prettyUrl` varchar(190) DEFAULT NULL,
   `contentMasterDocumentId` int(11) DEFAULT NULL,
   `personas` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `prettyUrl` (`prettyUrl`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `documents_snippet`;
 CREATE TABLE `documents_snippet` (
@@ -217,7 +218,7 @@ CREATE TABLE `documents_snippet` (
   `template` varchar(255) DEFAULT NULL,
   `contentMasterDocumentId` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `documents_translations`;
 CREATE TABLE `documents_translations` (
@@ -228,7 +229,7 @@ CREATE TABLE `documents_translations` (
   KEY `id` (`id`),
   KEY `sourceId` (`sourceId`),
   KEY `language` (`language`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `documents_printpage`;
 CREATE TABLE `documents_printpage` (
@@ -238,10 +239,10 @@ CREATE TABLE `documents_printpage` (
   `action` varchar(255) DEFAULT NULL,
   `template` varchar(255) DEFAULT NULL,
   `lastGenerated` int(11) DEFAULT NULL,
-  `lastGenerateMessage` text CHARACTER SET utf8,
+  `lastGenerateMessage` text,
   `contentMasterDocumentId` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 
 DROP TABLE IF EXISTS `edit_lock`;
@@ -256,16 +257,16 @@ CREATE TABLE `edit_lock` (
   KEY `cid` (`cid`),
   KEY `ctype` (`ctype`),
   KEY `cidtype` (`cid`,`ctype`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 
 DROP TABLE IF EXISTS `email_blacklist`;
 CREATE TABLE `email_blacklist` (
-  `address` varchar(255) NOT NULL DEFAULT '',
+  `address` varchar(190) NOT NULL DEFAULT '',
   `creationDate` int(11) unsigned DEFAULT NULL,
   `modificationDate` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`address`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 
 DROP TABLE IF EXISTS `email_log`;
@@ -281,7 +282,7 @@ CREATE TABLE `email_log` (
   `sentDate` bigint(20) DEFAULT NULL,
   `subject` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `glossary`;
 CREATE TABLE `glossary` (
@@ -299,11 +300,11 @@ CREATE TABLE `glossary` (
   PRIMARY KEY (`id`),
   KEY `language` (`language`),
   KEY `site` (`site`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `http_error_log`;
 CREATE TABLE `http_error_log` (
-  `uri` varchar(3000) CHARACTER SET ascii DEFAULT NULL,
+  `uri` varchar(3000) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL,
   `code` int(3) DEFAULT NULL,
   `parametersGet` longtext,
   `parametersPost` longtext,
@@ -315,7 +316,7 @@ CREATE TABLE `http_error_log` (
   KEY `code` (`code`),
   KEY `date` (`date`),
   KEY `count` (`count`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `keyvalue_groups`;
 CREATE TABLE `keyvalue_groups` (
@@ -325,7 +326,7 @@ CREATE TABLE `keyvalue_groups` (
     `creationDate` bigint(20) unsigned DEFAULT '0',
     `modificationDate` bigint(20) unsigned DEFAULT '0',
     PRIMARY KEY  (`id`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `keyvalue_keys`;
 CREATE TABLE `keyvalue_keys` (
@@ -343,7 +344,7 @@ CREATE TABLE `keyvalue_keys` (
   PRIMARY KEY (`id`),
   KEY `group` (`group`),
   CONSTRAINT `keyvalue_keys_ibfk_1` FOREIGN KEY (`group`) REFERENCES `keyvalue_groups` (`id`) ON DELETE SET NULL
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `keyvalue_translator_configuration`;
 CREATE TABLE `keyvalue_translator_configuration` (
@@ -351,7 +352,7 @@ CREATE TABLE `keyvalue_translator_configuration` (
   `name` VARCHAR(200) NULL DEFAULT NULL,
   `translator` VARCHAR(200) NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 
 DROP TABLE IF EXISTS `locks`;
@@ -359,7 +360,7 @@ CREATE TABLE `locks` (
   `id` varchar(150) NOT NULL DEFAULT '',
   `date` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MEMORY DEFAULT CHARSET=utf8;
+) ENGINE=MEMORY DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `notes`;
 CREATE TABLE `notes` (
@@ -375,7 +376,7 @@ CREATE TABLE `notes` (
   KEY `cid` (`cid`),
   KEY `ctype` (`ctype`),
   KEY `date` (`date`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `notes_data`;
 CREATE TABLE `notes_data` (
@@ -384,15 +385,15 @@ CREATE TABLE `notes_data` (
   `type` enum('text','date','document','asset','object','bool') DEFAULT NULL,
   `data` text,
   KEY `id` (`id`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `objects`;
 CREATE TABLE `objects` (
   `o_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `o_parentId` int(11) unsigned DEFAULT NULL,
   `o_type` enum('object','folder','variant') DEFAULT NULL,
-  `o_key` varchar(255) default '',
-  `o_path` varchar(765) CHARACTER SET ascii DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
+  `o_key` varchar(255) CHARACTER SET ascii COLLATE ascii_general_ci default '',
+  `o_path` varchar(765) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
   `o_index` int(11) unsigned DEFAULT '0',
   `o_published` tinyint(1) unsigned DEFAULT '1',
   `o_creationDate` bigint(20) unsigned DEFAULT NULL,
@@ -409,14 +410,14 @@ CREATE TABLE `objects` (
   KEY `parentId` (`o_parentId`),
   KEY `type` (`o_type`),
   KEY `o_modificationDate` (`o_modificationDate`)
-) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `properties`;
 CREATE TABLE `properties` (
   `cid` int(11) unsigned NOT NULL DEFAULT '0',
   `ctype` enum('document','asset','object') NOT NULL DEFAULT 'document',
-  `cpath` varchar(765) CHARACTER SET ascii DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
-  `name` varchar(255) NOT NULL DEFAULT '',
+  `cpath` varchar(765) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
+  `name` varchar(190) NOT NULL DEFAULT '',
   `type` enum('text','document','asset','object','bool','select') DEFAULT NULL,
   `data` text,
   `inheritable` tinyint(1) unsigned DEFAULT '1',
@@ -425,7 +426,7 @@ CREATE TABLE `properties` (
   KEY `inheritable` (`inheritable`),
   KEY `ctype` (`ctype`),
   KEY `cid` (`cid`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `recyclebin`;
 CREATE TABLE `recyclebin` (
@@ -437,7 +438,7 @@ CREATE TABLE `recyclebin` (
   `date` bigint(20) default NULL,
   `deletedby` varchar(50) DEFAULT NULL,
   PRIMARY KEY  (`id`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `redirects`;
 CREATE TABLE `redirects` (
@@ -457,14 +458,14 @@ CREATE TABLE `redirects` (
   PRIMARY KEY (`id`),
   KEY `priority` (`priority`),
   KEY `active` (`active`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `sanitycheck`;
 CREATE TABLE `sanitycheck` (
   `id` int(11) unsigned NOT NULL,
   `type` enum('document','asset','object') NOT NULL,
   PRIMARY KEY  (`id`,`type`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `schedule_tasks`;
 CREATE TABLE `schedule_tasks` (
@@ -479,12 +480,12 @@ CREATE TABLE `schedule_tasks` (
   KEY `cid` (`cid`),
   KEY `ctype` (`ctype`),
   KEY `active` (`active`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `search_backend_data`;
 CREATE TABLE `search_backend_data` (
   `id` int(11) NOT NULL,
-  `fullpath` varchar(765) CHARACTER SET ascii DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
+  `fullpath` varchar(765) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
   `maintype` varchar(8) NOT NULL DEFAULT '',
   `type` varchar(20) DEFAULT NULL,
   `subtype` varchar(255) DEFAULT NULL,
@@ -502,10 +503,8 @@ CREATE TABLE `search_backend_data` (
   KEY `type` (`type`),
   KEY `subtype` (`subtype`),
   KEY `published` (`published`),
-  FULLTEXT KEY `data` (`data`),
-  FULLTEXT KEY `properties` (`properties`),
   FULLTEXT KEY `fulltext` (`data`,`properties`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
 /* Engine is changed to InnoDB (if available) in Pimcore\Model\Tool\Setup\Resource::database() - not here because all comments are removed */
 
 DROP TABLE IF EXISTS `sites`;
@@ -520,7 +519,7 @@ CREATE TABLE `sites` (
   `modificationDate` bigint(20) unsigned DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `rootId` (`rootId`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS  `tags`;
 CREATE TABLE `tags` (
@@ -531,7 +530,7 @@ CREATE TABLE `tags` (
   PRIMARY KEY (`id`),
   KEY `idpath` (`idPath`),
   KEY `parentid` (`parentId`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS  `tags_assignment`;
 CREATE TABLE `tags_assignment` (
@@ -542,7 +541,7 @@ CREATE TABLE `tags_assignment` (
   KEY `ctype` (`ctype`),
   KEY `ctype_cid` (`cid`,`ctype`),
   KEY `tagid` (`tagid`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `targeting_personas`;
 CREATE TABLE `targeting_personas` (
@@ -553,7 +552,7 @@ CREATE TABLE `targeting_personas` (
   `threshold` int(11) DEFAULT NULL,
   `active` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `targeting_rules`;
 CREATE TABLE `targeting_rules` (
@@ -565,11 +564,11 @@ CREATE TABLE `targeting_rules` (
   `conditions` longtext,
   `actions` longtext,
   PRIMARY KEY (`id`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `tmp_store` (
-  `id` varchar(255) NOT NULL DEFAULT '',
-  `tag` varchar(255) DEFAULT NULL,
+  `id` varchar(190) NOT NULL DEFAULT '',
+  `tag` varchar(190) DEFAULT NULL,
   `data` longtext,
   `serialized` tinyint(2) NOT NULL DEFAULT '0',
   `date` int(10) DEFAULT NULL,
@@ -578,7 +577,7 @@ CREATE TABLE `tmp_store` (
   KEY `tag` (`tag`),
   KEY `date` (`date`),
   KEY `expiryDate` (`expiryDate`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `tracking_events`;
 CREATE TABLE `tracking_events` (
@@ -612,11 +611,11 @@ CREATE TABLE `tracking_events` (
   KEY `action` (`action`),
   KEY `label` (`label`),
   KEY `data` (`data`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `translations_admin`;
 CREATE TABLE `translations_admin` (
-  `key` varchar(255) NOT NULL DEFAULT '',
+  `key` varchar(190) NOT NULL DEFAULT '',
   `language` varchar(10) NOT NULL DEFAULT '',
   `text` text,
   `creationDate` bigint(20) unsigned DEFAULT NULL,
@@ -624,11 +623,11 @@ CREATE TABLE `translations_admin` (
   PRIMARY KEY (`key`,`language`),
   KEY `language` (`language`),
   KEY `key` (`key`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `translations_website`;
 CREATE TABLE `translations_website` (
-  `key` varchar(255) NOT NULL DEFAULT '',
+  `key` varchar(190) NOT NULL DEFAULT '',
   `language` varchar(10) NOT NULL DEFAULT '',
   `text` text,
   `creationDate` bigint(20) unsigned DEFAULT NULL,
@@ -636,7 +635,7 @@ CREATE TABLE `translations_website` (
   PRIMARY KEY (`key`,`language`),
   KEY `language` (`language`),
   KEY `key` (`key`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `tree_locks`;
 CREATE TABLE `tree_locks` (
@@ -647,7 +646,7 @@ CREATE TABLE `tree_locks` (
   KEY `id` (`id`),
   KEY `type` (`type`),
   KEY `locked` (`locked`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
@@ -674,23 +673,25 @@ CREATE TABLE `users` (
   `apiKey` varchar(255) DEFAULT NULL,
 	`activePerspective` VARCHAR(255) NULL DEFAULT NULL,
 	`perspectives` LONGTEXT NULL DEFAULT NULL,
+	`websiteTranslationLanguagesEdit` LONGTEXT NULL DEFAULT NULL,
+  `websiteTranslationLanguagesView` LONGTEXT NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `type_name` (`type`,`name`),
   KEY `parentId` (`parentId`),
   KEY `name` (`name`),
   KEY `password` (`password`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `users_permission_definitions`;
 CREATE TABLE `users_permission_definitions` (
   `key` varchar(50) NOT NULL DEFAULT '',
   PRIMARY KEY (`key`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `users_workspaces_asset`;
 CREATE TABLE `users_workspaces_asset` (
   `cid` int(11) unsigned NOT NULL DEFAULT '0',
-  `cpath` varchar(765) CHARACTER SET ascii DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
+  `cpath` varchar(765) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
   `userId` int(11) NOT NULL DEFAULT '0',
   `list` tinyint(1) DEFAULT '0',
   `view` tinyint(1) DEFAULT '0',
@@ -704,12 +705,12 @@ CREATE TABLE `users_workspaces_asset` (
   PRIMARY KEY (`cid`, `userId`),
   KEY `cid` (`cid`),
   KEY `userId` (`userId`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `users_workspaces_document`;
 CREATE TABLE `users_workspaces_document` (
   `cid` int(11) unsigned NOT NULL DEFAULT '0',
-  `cpath` varchar(765) CHARACTER SET ascii DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
+  `cpath` varchar(765) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
   `userId` int(11) NOT NULL DEFAULT '0',
   `list` tinyint(1) unsigned DEFAULT '0',
   `view` tinyint(1) unsigned DEFAULT '0',
@@ -725,12 +726,12 @@ CREATE TABLE `users_workspaces_document` (
   PRIMARY KEY (`cid`, `userId`),
   KEY `cid` (`cid`),
   KEY `userId` (`userId`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `users_workspaces_object`;
 CREATE TABLE `users_workspaces_object` (
   `cid` int(11) unsigned NOT NULL DEFAULT '0',
-  `cpath` varchar(765) CHARACTER SET ascii DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
+  `cpath` varchar(765) CHARACTER SET ascii COLLATE ascii_general_ci DEFAULT NULL, /* path in ascii using the full key length of 765 bytes (PIMCORE-2654) */
   `userId` int(11) NOT NULL DEFAULT '0',
   `list` tinyint(1) unsigned DEFAULT '0',
   `view` tinyint(1) unsigned DEFAULT '0',
@@ -749,7 +750,7 @@ CREATE TABLE `users_workspaces_object` (
   PRIMARY KEY (`cid`, `userId`),
   KEY `cid` (`cid`),
   KEY `userId` (`userId`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `uuids`;
 CREATE TABLE `uuids` (
@@ -758,7 +759,7 @@ CREATE TABLE `uuids` (
   `type` VARCHAR(25) NOT NULL,
   `instanceIdentifier` VARCHAR(50) NOT NULL,
   PRIMARY KEY (`itemId`, `type`, `uuid`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `versions`;
 CREATE TABLE `versions` (
@@ -773,7 +774,7 @@ CREATE TABLE `versions` (
   PRIMARY KEY  (`id`),
   KEY `cid` (`cid`),
   KEY `ctype` (`ctype`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `website_settings`;
 CREATE TABLE `website_settings` (
@@ -787,7 +788,7 @@ CREATE TABLE `website_settings` (
 	PRIMARY KEY (`id`),
 	INDEX `name` (`name`),
 	INDEX `siteId` (`siteId`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `classificationstore_stores`;
 CREATE TABLE `classificationstore_stores` (
@@ -796,7 +797,7 @@ CREATE TABLE `classificationstore_stores` (
 	`description` LONGTEXT NULL,
 	PRIMARY KEY (`id`),
 	INDEX `name` (`name`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `classificationstore_groups`;
 CREATE TABLE `classificationstore_groups` (
@@ -810,7 +811,7 @@ CREATE TABLE `classificationstore_groups` (
 	PRIMARY KEY (`id`),
 	INDEX `storeId` (`storeId`),
 	INDEX `name` (`name`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `classificationstore_keys`;
 CREATE TABLE `classificationstore_keys` (
@@ -829,7 +830,7 @@ CREATE TABLE `classificationstore_keys` (
 	INDEX `enabled` (`enabled`),
 	INDEX `type` (`type`),
 	INDEX `storeId` (`storeId`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `classificationstore_relations`;
 CREATE TABLE `classificationstore_relations` (
@@ -843,7 +844,7 @@ CREATE TABLE `classificationstore_relations` (
 	INDEX `mandatory` (`mandatory`),
 	CONSTRAINT `FK_classificationstore_relations_classificationstore_groups` FOREIGN KEY (`groupId`) REFERENCES `classificationstore_groups` (`id`) ON DELETE CASCADE,
 	CONSTRAINT `FK_classificationstore_relations_classificationstore_keys` FOREIGN KEY (`keyId`) REFERENCES `classificationstore_keys` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `classificationstore_collections`;
 CREATE TABLE `classificationstore_collections` (
@@ -855,7 +856,7 @@ CREATE TABLE `classificationstore_collections` (
 	`modificationDate` BIGINT(20) UNSIGNED NULL DEFAULT '0',
 	PRIMARY KEY (`id`),
 	INDEX `storeId` (`storeId`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 
 DROP TABLE IF EXISTS `classificationstore_collectionrelations`;
@@ -866,20 +867,20 @@ CREATE TABLE `classificationstore_collectionrelations` (
 	PRIMARY KEY (`colId`, `groupId`),
 	INDEX `colId` (`colId`),
 	CONSTRAINT `FK_classificationstore_collectionrelations_groups` FOREIGN KEY (`groupId`) REFERENCES `classificationstore_groups` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `quantityvalue_units`;
 CREATE TABLE `quantityvalue_units` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `group` varchar(50) COLLATE utf8_bin DEFAULT NULL,
-  `abbreviation` varchar(10) COLLATE utf8_bin NOT NULL,
-  `longname` varchar(250) COLLATE utf8_bin DEFAULT NULL,
-  `baseunit` varchar(10) COLLATE utf8_bin DEFAULT NULL,
+  `group` varchar(50) DEFAULT NULL,
+  `abbreviation` varchar(10) NOT NULL,
+  `longname` varchar(250) DEFAULT NULL,
+  `baseunit` varchar(10) DEFAULT NULL,
   `factor` double DEFAULT NULL,
   `conversionOffset` DOUBLE NULL DEFAULT NULL,
-  `reference` varchar(50) COLLATE utf8_bin DEFAULT NULL,
+  `reference` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `element_workflow_state`;
 CREATE TABLE `element_workflow_state` (
@@ -889,4 +890,4 @@ CREATE TABLE `element_workflow_state` (
   `state` varchar(255) DEFAULT NULL,
   `status` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`cid`,`ctype`,`workflowId`)
-) DEFAULT CHARSET=utf8;
+) DEFAULT CHARSET=utf8mb4;

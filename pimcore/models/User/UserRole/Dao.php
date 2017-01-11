@@ -18,6 +18,9 @@ namespace Pimcore\Model\User\UserRole;
 
 use Pimcore\Model;
 
+/**
+ * @property \Pimcore\Model\User\UserRole\Folder $model
+ */
 class Dao extends Model\User\AbstractUser\Dao
 {
 

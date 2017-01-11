@@ -78,7 +78,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
         if (!this.editPanel) {
 
             this.editPanel = new Ext.Panel({
-                title: t("edit_image"),
+                title: t("edit"),
                 html: '<iframe src="/admin/asset/image-editor/id/' + this.id + '" frameborder="0" ' +
                     'style="width: 100%;" id="asset_image_edit_' + this.id + '"></iframe>',
                 iconCls: "pimcore_icon_tab_edit"
@@ -122,16 +122,16 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                 details.push(dimensionPanel);
             }
 
+            var downloadDefaultWidth = 800;
+
             if(this.data.imageInfo && this.data.imageInfo) {
                 if(this.data.imageInfo.dimensions && this.data.imageInfo.dimensions.width) {
                     downloadDefaultWidth = intval(this.data.imageInfo.dimensions.width);
                 }
             }
 
-            var downloadDefaultWidth = 800;
-
             this.downloadBox = new Ext.form.FormPanel({
-                title: t("convert_to") + " & " + t("download"),
+                title: t("custom_download"),
                 bodyStyle: "padding: 10px;",
                 layout: "pimcoreform",
                 style: "margin: 10px 0 10px 0",
@@ -144,6 +144,18 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                     mode: "local",
                     value: "JPEG",
                     width: 80
+                },{
+                    xtype: "combo",
+                    triggerAction: "all",
+                    width: 120,
+                    name: "resize_mode",
+                    itemId: "resize_mode",
+                    fieldLabel: t("resize_mode"),
+                    forceSelection: true,
+                    store: [["scaleByWidth", t("scalebywidth")], ["scaleByHeight", t("scalebyheight")], ["resize", t("resize")]],
+                    mode: "local",
+                    value: "scaleByWidth",
+                    editable: false
                 }, {
                     xtype: "spinnerfield",
                     name: "width",
@@ -158,19 +170,14 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                     name: "quality",
                     fieldLabel: t("quality"),
                     value: 95
-                },{
-                    xtype: "checkbox",
-                    name: "aspectratio",
-                    fieldLabel: t("aspect_ratio"),
-                    checked: true
                 }],
                 buttons: [{
                     text: t("download"),
                     iconCls: "pimcore_icon_download",
                     handler: function () {
                         var config = this.downloadBox.getForm().getFieldValues();
-                        pimcore.helpers.download("/admin/asset/get-image-thumbnail/id/" + this.id
-                                                                    + "/download/true?config=" + Ext.encode(config));
+                        pimcore.helpers.download("/admin/asset/download-image-thumbnail/id/" + this.id
+                                                                    + "/?config=" + Ext.encode(config));
                     }.bind(this)
                 }]
             });
@@ -178,7 +185,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
 
             if(this.data.imageInfo && this.data.imageInfo.exif) {
                 var exifPanel = new Ext.grid.PropertyGrid({
-                    title: t("exif_data"),
+                    title: "EXIF",
                     source: this.data.imageInfo.exif,
                     clicksToEdit: 1000,
                     autoHeight: true

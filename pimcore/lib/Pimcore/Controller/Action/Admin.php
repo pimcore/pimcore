@@ -132,10 +132,14 @@ abstract class Admin extends Action
                     "cookie" => $_COOKIE
                 ]);
 
-                // send a auth header for the client (is covered by the ajax object in javascript)
-                $this->getResponse()->setHeader("X-Pimcore-Auth", "required");
-                // redirect to login page
-                $this->redirect("/admin/login");
+                if ($this->getRequest()->isXmlHttpRequest()) {
+                    header('HTTP/1.0 403 Forbidden', true, 403);
+                    echo "Session expired or unauthorized request. Please reload and try again!";
+                } else {
+                    // redirect to login page
+                    $this->redirect("/admin/login");
+                }
+
                 // exit the execution -> just to be sure
                 exit;
             }

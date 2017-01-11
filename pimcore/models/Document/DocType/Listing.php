@@ -18,6 +18,9 @@ namespace Pimcore\Model\Document\DocType;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\Document\DocType\Listing\Dao getDao()
+ */
 class Listing extends Model\Listing\JsonListing
 {
 

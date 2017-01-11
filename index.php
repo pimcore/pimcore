@@ -15,12 +15,11 @@
 include_once("pimcore/config/startup.php");
 
 try {
-    Pimcore::run();
-
+    \Pimcore::run();
 } catch (Exception $e) {
     // handle exceptions, log to file
-    if(class_exists("Logger")) {
-        Logger::emerg($e);
+    if(class_exists("Pimcore\\Logger")) {
+        \Pimcore\Logger::emerg($e);
     }
-        throw $e;
+    throw $e;
 }

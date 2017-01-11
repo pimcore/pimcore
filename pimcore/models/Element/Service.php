@@ -25,6 +25,9 @@ use Pimcore\File;
 use Pimcore\Tool;
 use Pimcore\Logger;
 
+/**
+ * @method \Pimcore\Model\Element\Dao getDao()
+ */
 class Service extends Model\AbstractModel
 {
 
@@ -452,6 +455,7 @@ class Service extends Model\AbstractModel
 
                 if ($predefined && $predefined->getType() == $p->getType()) {
                     $properties[$key]["config"] = $predefined->getConfig();
+                    $properties[$key]["description"] = $predefined->getDescription();
                 }
             }
         }
@@ -618,6 +622,10 @@ class Service extends Model\AbstractModel
         // correct wrong path (root-node problem)
         $path = str_replace("//", "/", $path);
 
+        if (strpos($path, "%") !== false) {
+            $path = rawurldecode($path);
+        }
+
         return $path;
     }
 
@@ -660,7 +668,7 @@ class Service extends Model\AbstractModel
     /**
      * @param $path
      * @param array $options
-     * @return null
+     * @return Asset\Folder|Document\Folder|Object\Folder
      * @throws \Exception
      */
     public static function createFolderByPath($path, $options = [])
@@ -681,12 +689,12 @@ class Service extends Model\AbstractModel
 
         $sanitizedPath = "/";
         foreach ($parts as $part) {
-            $sanitizedPath = $sanitizedPath . File::getValidFilename($part) . "/";
+            $sanitizedPath = $sanitizedPath . self::getValidKey($part, $type) . "/";
         }
 
         if (!($foundElement = $type::getByPath($sanitizedPath))) {
             foreach ($parts as $part) {
-                $pathsArray[] = $pathsArray[count($pathsArray) - 1] . '/' . File::getValidFilename($part);
+                $pathsArray[] = $pathsArray[count($pathsArray) - 1] . '/' . self::getValidKey($part, $type);
             }
 
             for ($i = 0; $i < count($pathsArray); $i++) {
@@ -780,6 +788,54 @@ class Service extends Model\AbstractModel
     }
 
     /**
+     * @param $key
+     * @param null $type
+     * @return mixed|string
+     */
+    public static function getValidKey($key, $type)
+    {
+        $results = \Pimcore::getEventManager()->trigger("system.service.preGetValidKey", null, [
+            "key" => $key,
+            "type" => $type
+        ]);
+
+        if ($results->count()) {
+            $key = $results->last();
+        }
+
+        $key = \Pimcore\Tool\Transliteration::toASCII($key);
+
+        if ($type == "document") {
+            // no spaces for documents / clean URLs
+            $key = preg_replace('/[^a-zA-Z0-9\-\.~_]+/', '-', $key);
+        } else {
+            // assets & objects including spaces
+            $key = preg_replace('/[^a-zA-Z0-9\-\.~_ ]+/', '-', $key);
+        }
+
+        if ($type == "asset") {
+            // keys shouldn't start with a "." (=hidden file) *nix operating systems
+            // keys shouldn't end with a "." - Windows issue: filesystem API trims automatically . at the end of a folder name (no warning ... et al)
+            $key = trim($key, ". ");
+        } else {
+            $key = trim($key);
+            $key = ltrim($key, ".");
+        }
+
+        return $key;
+    }
+
+    /**
+     * @param $key
+     * @param $type
+     * @return bool
+     */
+    public static function isValidKey($key, $type)
+    {
+        return (self::getValidKey($key, $type) == $key);
+    }
+
+    /**
      * returns a unique key for an element
      *
      * @param $element
@@ -814,10 +870,47 @@ class Service extends Model\AbstractModel
                     foreach ($parts as $elementType) {
                         $data[] = [$type => $elementType];
                     }
+                } else {
+                    $newList = [];
+                    foreach ($data as $key => $item) {
+                        if ($item) {
+                            if (is_array($item)) {
+                                foreach ($item as $itemKey => $itemValue) {
+                                    if ($itemValue) {
+                                        $newList[$key][$itemKey] = $itemValue;
+                                    }
+                                }
+                            } elseif ($item) {
+                                $newList[$key] = $item;
+                            }
+                        }
+                    }
+
+                    $data = $newList;
                 }
             }
         }
 
         return $data ? $data : [];
+    }
+
+    public static function getSafeVersionInfo($versions)
+    {
+        if (is_array($versions)) {
+            $versions = json_decode(json_encode($versions), true);
+            $result = [];
+            foreach ($versions as $version) {
+                $name = $version["user"]["name"];
+                $id = $version["user"]["id"];
+                unset($version["user"]);
+                $version["user"]["name"] = $name;
+                $version["user"]["id"] = $id;
+
+
+                $result[] = $version;
+            }
+
+            return $result;
+        }
     }
 }

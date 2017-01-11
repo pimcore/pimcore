@@ -136,6 +136,29 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
                 var values = this.window.getComponent("form").getForm().getFieldValues();
                 values["data"] = values["path"];
                 delete values["path"];
+
+                var match, regExp;
+
+                if(values["type"] == "youtube") {
+                    regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+                    match = values["data"].match(regExp);
+                    if (match && match[2].length == 11) {
+                        values["data"] = match[2];
+                    }
+                } else if(values["type"] == "vimeo") {
+                    regExp = /vimeo.com\/(\d+)($|\/)/;
+                    match = values["data"].match(regExp);
+                    if (match && match[1]) {
+                        values["data"] = match[1];
+                    }
+                } else if(values["type"] == "dailymotion") {
+                    regExp = /dailymotion.*\/video\/([^_]+)/;
+                    match = values["data"].match(regExp);
+                    if (match && match[1]) {
+                        values["data"] = match[1];
+                    }
+                }
+
                 this.data = values;
 
                 this.dirty = true;
@@ -149,9 +172,9 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
 
     updateVideo: function () {
 
-        var width = this.getBody().getWidth();
+        var width = this.component.getWidth();
         //need to geht height this way, because element has no hight at afterrender (whyever)
-        var height = this.fieldConfig.height - 55; //this.getBody().getHeight();
+        var height = this.fieldConfig.height - 55;
 
         var content = '';
 
@@ -166,15 +189,7 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
             content = '<iframe src="//www.dailymotion.com/embed/video/' + this.data.data + '" width="' + width + '" height="' + height + '" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>';
         }
 
-        this.getBody().update(content);
-    },
-
-    getBody: function () {
-        // get the id from the body element of the panel because there is no method to set body's html
-        // (only in configure)
-        var result = Ext.get(this.component.getEl().dom).query(".pimcore_video_container");
-        var bodyId = result[0].getAttribute("id");
-        return Ext.get(bodyId);
+        this.component.setHtml(content);
     },
 
     empty: function () {
@@ -183,7 +198,7 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
             data: ""
         };
 
-        this.getBody().update("");
+        this.component.setHtml("");
 
         this.dirty = true;
     },

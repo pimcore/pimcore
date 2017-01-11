@@ -19,6 +19,7 @@ namespace Pimcore\Model\Asset\WebDAV;
 use Sabre\DAV;
 use Pimcore\Tool\Admin as AdminTool;
 use Pimcore\Model\Asset;
+use Pimcore\Model\Element;
 use Pimcore\File as FileHelper;
 
 class File extends DAV\File
@@ -57,7 +58,7 @@ class File extends DAV\File
             $user = AdminTool::getCurrentUser();
             $this->asset->setUserModification($user->getId());
 
-            $this->asset->setFilename(\Pimcore\File::getValidFilename($name));
+            $this->asset->setFilename(Element\Service::getValidKey($name), "asset");
             $this->asset->save();
         } else {
             throw new DAV\Exception\Forbidden();

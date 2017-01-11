@@ -167,7 +167,7 @@ pimcore.settings.system = Class.create({
                                 mode: "local",
                                 triggerAction: "all"
                             }, {
-                                fieldLabel: t("additional_path_variable_colon_separated") + " (/x/y:/foo/bar)",
+                                fieldLabel: t("additional_path_variable") + " (" + t(this.data.config.path_separator) + " " + t("separated") + ") (/x/y" + this.data.config.path_separator + "/foo/bar)",
                                 xtype: "textfield",
                                 name: "general.path_variable",
                                 value: this.getValue("general.path_variable"),
@@ -915,19 +915,6 @@ pimcore.settings.system = Class.create({
                                 forceSelection: true,
                                 triggerAction: "all"
                             }, {
-                                fieldLabel: t("allow_capitals_for_documents"),
-                                xtype: "combo",
-                                name: "documents.allowcapitals",
-                                value: this.getValue("documents.allowcapitals"),
-                                store: [
-                                    ["", t("yes")],
-                                    ["no", t("no")]
-                                ],
-                                mode: "local",
-                                editable: false,
-                                forceSelection: true,
-                                triggerAction: "all"
-                            }, {
                                 fieldLabel: t("generate_previews"),
                                 xtype: "checkbox",
                                 name: "documents.generatepreview",
@@ -1113,7 +1100,7 @@ pimcore.settings.system = Class.create({
                     ,
                     {
                         xtype: 'fieldset',
-                        title: t('output_cache'),
+                        title: t('full_page_cache'),
                         collapsible: true,
                         collapsed: true,
                         autoHeight: true,

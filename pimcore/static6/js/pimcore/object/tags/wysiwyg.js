@@ -156,14 +156,21 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
 
         }
 
-        //prevent override important settings!
-        eConfig.allowedContent = true; // disables CKEditor ACF (will remove pimcore_* attributes from links, etc.)
-        eConfig.removePlugins = "tableresize";
-        eConfig.resize_enabled = false;
-
         if(typeof(pimcore.object.tags.wysiwyg.defaultEditorConfig) == 'object'){
             eConfig = mergeObject(pimcore.object.tags.wysiwyg.defaultEditorConfig,eConfig);
         }
+
+        //prevent override important settings!
+        eConfig.resize_enabled = false;
+        eConfig.entities = false;
+        eConfig.entities_greek = false;
+        eConfig.entities_latin = false;
+        eConfig.extraAllowedContent = "*[pimcore_type,pimcore_id]";
+
+        if(eConfig.hasOwnProperty('removePlugins'))
+            eConfig.removePlugins += ",tableresize";
+        else
+            eConfig.removePlugins = "tableresize";
 
         if (intval(this.fieldConfig.width) > 1) {
             eConfig.width = this.fieldConfig.width;
@@ -310,22 +317,19 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
         if(this.dirty) {
             return this.dirty;
         }
-        
+
         if(this.ckeditor) {
-            return this.ckeditor.checkDirty();
+            var ckeditorDirty = this.ckeditor.checkDirty();
+            if(ckeditorDirty) {
+                // once dirty, always dirty
+                // this is due the way checkDirty() is implemented in CKEditor, because it relies on the initial content
+                this.dirty = ckeditorDirty;
+            }
+            return ckeditorDirty;
         }
+
         return false;
     }
 });
 
 CKEDITOR.disableAutoInline = true;
-
-// IE Hack see: http://dev.ckeditor.com/ticket/9958
-// problem is that every button in a CKEDITOR window fires the onbeforeunload event
-CKEDITOR.on('instanceReady', function (event) {
-    event.editor.on('dialogShow', function (dialogShowEvent) {
-        if (CKEDITOR.env.ie) {
-            $(dialogShowEvent.data._.element.$).find('a[href*="void(0)"]').removeAttr('href');
-        }
-    });
-});

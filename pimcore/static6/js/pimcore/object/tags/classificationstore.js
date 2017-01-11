@@ -126,9 +126,17 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
                     iconCls: "pimcore_icon_add",
                     handler: function() {
                         var storeId = this.fieldConfig.storeId;
-                        var window = new pimcore.object.classificationstore.keySelectionWindow(this, true, false, true, storeId);
-                        window.setRestriction(this.object, this.fieldConfig.name);
-                        window.show();
+                        var keySelectionWindow = new pimcore.object.classificationstore.keySelectionWindow(
+                            {
+                                parent: this,
+                                enableGroups: true,
+                                enableCollections: true,
+                                storeId: storeId,
+                                object: this.object,
+                                fieldname: this.fieldConfig.name
+                            }
+                        );
+                        keySelectionWindow.show();
                     }.bind(this)
                 }
             );
@@ -139,10 +147,8 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
         } else {
             var panelConf = {
                 autoScroll: true,
-                //monitorResize: true,
                 cls: "object_field",
                 activeTab: 0,
-                //autoHeight: true,
                 height: "auto",
                 items: [],
                 deferredRender: true,

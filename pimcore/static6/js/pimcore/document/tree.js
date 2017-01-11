@@ -149,9 +149,6 @@ pimcore.document.tree = Class.create({
             listeners: this.getTreeNodeListeners()
         });
 
-
-        //this.tree.on("startdrag", this.onDragStart.bind(this));
-
         this.tree.loadMask = new Ext.LoadMask({
             target: this.tree,
             msg: t("please_wait")
@@ -203,10 +200,6 @@ pimcore.document.tree = Class.create({
         };
 
         return treeNodeListeners;
-    },
-
-    onDragStart : function (tree, node, id) {
-        pimcore.helpers.treeNodeThumbnailPreviewHide();
     },
 
     onTreeNodeClick: function (tree, record, item, index, e, eOpts ) {
@@ -422,6 +415,12 @@ pimcore.document.tree = Class.create({
                 //don't add emails, newsletters and links below print containers - makes no sense
                 if(addDocuments && record.data.type != "printcontainer") {
                     menu.add(new Ext.menu.Item({
+                        text: t('add_link'),
+                        iconCls: "pimcore_icon_link pimcore_icon_overlay_add",
+                        handler: this.addDocument.bind(this, tree, record, "link")
+                    }));
+
+                    menu.add(new Ext.menu.Item({
                         text: t('add_email'),
                         iconCls: "pimcore_icon_email pimcore_icon_overlay_add",
                         menu: documentMenu.email,
@@ -434,13 +433,6 @@ pimcore.document.tree = Class.create({
                         menu: documentMenu.newsletter,
                         hideOnClick: false
                     }));
-
-                    menu.add(new Ext.menu.Item({
-                        text: t('add_link'),
-                        iconCls: "pimcore_icon_link pimcore_icon_overlay_add",
-                        handler: this.addDocument.bind(this, tree, record, "link")
-                    }));
-
                 }
 
                 menu.add(new Ext.menu.Item({
@@ -597,7 +589,7 @@ pimcore.document.tree = Class.create({
                 text: t('open'),
                 iconCls: "pimcore_icon_cursor",
                 handler: function () {
-                    window.open(record.data.path);
+                    window.open(record.data.url);
                 }.bind(this)
             }));
         }
@@ -775,6 +767,9 @@ pimcore.document.tree = Class.create({
         }
 
         pimcore.helpers.hideRedundantSeparators(menu);
+
+        pimcore.plugin.broker.fireEvent("prepareDocumentTreeContextMenu", menu, this, record);
+
         menu.showAt(e.pageX+1, e.pageY+1);
     },
 
@@ -813,13 +808,13 @@ pimcore.document.tree = Class.create({
             } else if (typeRecord.get("type") == "printpage") {
                 documentMenu.printPage.push({
                     text: ts(typeRecord.get("name")),
-                    iconCls: "pimcore_icon_printpage_add",
+                    iconCls: "pimcore_icon_printpage pimcore_icon_overlay_add",
                     handler: this.addDocument.bind(this, tree, record, "printpage", typeRecord.get("id"))
                 });
             } else if (typeRecord.get("type") == "printcontainer") {
                 documentMenu.printPage.push({
                     text: ts(typeRecord.get("name")),
-                    iconCls: "pimcore_icon_printcontainer_add",
+                    iconCls: "pimcore_icon_printcontainer pimcore_icon_overlay_add",
                     handler: this.addDocument.bind(this, tree, record, "printcontainer", typeRecord.get("id"))
                 });
             }
@@ -1012,7 +1007,7 @@ pimcore.document.tree = Class.create({
                     name: "domains",
                     height: 150,
                     style: "word-wrap: normal;",
-                    fieldLabel: t("additional_domains") + "<br /><br />RegExp are supported. eg. .*example.com",
+                    fieldLabel: t("additional_domains") + "<br /><br />Wildcards are supported. eg. *example.com",
                     value: data.domains.join("\n")
                 }, {
                     xtype: "textfield",
@@ -1251,7 +1246,7 @@ pimcore.document.tree = Class.create({
 
             params["sourceTree"] = tree;
             params["elementType"] = "document";
-            params["key"] = pimcore.helpers.getValidFilename(params["key"]);
+            params["key"] = pimcore.helpers.getValidFilename(params["key"], "document");
             params["index"] = record.childNodes.length;
             params["parentId"] = record.id;
             params["url"] = "/admin/document/add/";

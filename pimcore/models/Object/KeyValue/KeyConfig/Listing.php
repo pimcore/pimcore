@@ -18,6 +18,9 @@ namespace Pimcore\Model\Object\KeyValue\KeyConfig;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\Object\KeyValue\KeyConfig\Listing\Dao getDao()
+ */
 class Listing extends Model\Listing\AbstractListing
 {
 

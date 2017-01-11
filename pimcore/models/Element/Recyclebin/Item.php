@@ -24,6 +24,9 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\Object;
 use Pimcore\Model\Element;
 
+/**
+ * @method \Pimcore\Model\Element\Recyclebin\Item\Dao getDao()
+ */
 class Item extends Model\AbstractModel
 {
 

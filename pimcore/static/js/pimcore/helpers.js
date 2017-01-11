@@ -366,24 +366,25 @@ pimcore.helpers.isValidFilename = function (value) {
 
 pimcore.helpers.getValidFilenameCache = {};
 
-pimcore.helpers.getValidFilename = function (value) {
+pimcore.helpers.getValidFilename = function (value, type) {
 
-    if(pimcore.helpers.getValidFilenameCache[value]) {
-        return pimcore.helpers.getValidFilenameCache[value];
+    if(pimcore.helpers.getValidFilenameCache[value + type]) {
+        return pimcore.helpers.getValidFilenameCache[value + type];
     }
 
     // we use jQuery for the synchronous xhr request, because ExtJS doesn't provide this
     var response = jQuery.ajax({
         url: "/admin/misc/get-valid-filename",
         data: {
-            value: value
+            value: value,
+            type: type
         },
         async: false
     });
 
     var res = Ext.decode(response.responseText);
 
-    pimcore.helpers.getValidFilenameCache[value] = res["filename"];
+    pimcore.helpers.getValidFilenameCache[value + type] = res["filename"];
 
     return res["filename"];
 
@@ -2811,4 +2812,3 @@ pimcore.helpers.editmode.openPdfEditPanel = function () {
 
     this.metaDataWindow.show();
 };
-

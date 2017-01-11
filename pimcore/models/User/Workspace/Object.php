@@ -18,6 +18,9 @@ namespace Pimcore\Model\User\Workspace;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\User\Workspace\Dao getDao()
+ */
 class Object extends AbstractWorkspace
 {
 
@@ -90,6 +93,7 @@ class Object extends AbstractWorkspace
      */
     public function setLEdit($lEdit)
     {
+        //@TODO - at the moment disallowing all languages is not possible - the empty lEdit value means that every language is allowed to edit...
         $this->lEdit = $lEdit;
     }
 

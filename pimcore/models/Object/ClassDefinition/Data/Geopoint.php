@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -122,7 +122,7 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
                 "latitude" => $data->getLatitude()
             ];
         }
-        
+
         return;
     }
 
@@ -135,7 +135,7 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
-        if ($data["longitude"] || $data["latitude"]) {
+        if (is_array($data) && ($data["longitude"] || $data["latitude"])) {
             return new Object\Data\Geopoint($data["longitude"], $data["latitude"]);
         }
 
@@ -197,8 +197,17 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
         return $value;
     }
 
+    /**
+     * @param $object
+     * @param mixed $params
+     * @return string
+     */
+    public function getDataForSearchIndex($object, $params = [])
+    {
+        return "";
+    }
 
-       /**
+    /**
      * converts data to be exposed via webservices
      * @param string $object
      * @param mixed $params
@@ -207,7 +216,7 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     public function getForWebserviceExport($object, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
-        
+
         if ($data instanceof Object\Data\Geopoint) {
             return [
                 "longitude" => $data->getLongitude(),
@@ -248,5 +257,39 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     public function isDiffChangeAllowed($object, $params = [])
     {
         return true;
+    }
+
+    /** Encode value for packing it into a single column.
+     * @param mixed $value
+     * @param Model\Object\AbstractObject $object
+     * @param mixed $params
+     * @return mixed
+     */
+    public function marshal($value, $object = null, $params = [])
+    {
+        if ($value) {
+            return [
+                "value" => $value[$this->getName() . "__latitude"],
+                "value2" => $value[$this->getName() . "__longitude"]
+            ];
+        }
+    }
+
+    /** See marshal
+     * @param mixed $value
+     * @param Model\Object\AbstractObject $object
+     * @param mixed $params
+     * @return mixed
+     */
+    public function unmarshal($value, $object = null, $params = [])
+    {
+        if (is_array($value)) {
+            $data = [
+                $this->getName() . "__longitude" => $value["value2"],
+                $this->getName() . "__latitude" => $value["value"]
+            ];
+
+            return $data;
+        }
     }
 }

@@ -33,7 +33,7 @@ class PdfReactor8 extends Processor
         $html = $document->renderDocument($params);
         $this->updateStatus($document->getId(), 40, "finished_html_rendering");
 
-        $filePath = PIMCORE_TEMPORARY_DIRECTORY . DIRECTORY_SEPARATOR . "pdf-reactor-input-" . $document->getId() . ".html";
+        $filePath = PIMCORE_TEMPORARY_DIRECTORY . "/pdf-reactor-input-" . $document->getId() . ".html";
 
         file_put_contents($filePath, $html);
         $html = null;
@@ -47,8 +47,9 @@ class PdfReactor8 extends Processor
 
 
         $port = ((string) $web2PrintConfig->pdfreactorServerPort) ? (string) $web2PrintConfig->pdfreactorServerPort : "9423";
+        $protocol = ((string) $web2PrintConfig->pdfreactorProtocol) ? (string) $web2PrintConfig->pdfreactorProtocol : "http";
 
-        $pdfreactor = new \PDFreactor("http://" . $web2PrintConfig->pdfreactorServer . ":" . $port . "/service/rest");
+        $pdfreactor = new \PDFreactor($protocol . "://" . $web2PrintConfig->pdfreactorServer . ":" . $port . "/service/rest");
 
         $filePath = str_replace(PIMCORE_DOCUMENT_ROOT, "", $filePath);
 

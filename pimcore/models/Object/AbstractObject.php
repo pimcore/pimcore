@@ -20,9 +20,15 @@ use Pimcore\Model;
 use Pimcore\Cache;
 use Pimcore\Tool;
 use Pimcore\Logger;
+use Pimcore\Model\Element;
 
+/**
+ * @method \Pimcore\Model\Object\AbstractObject\Dao getDao()
+ */
 class AbstractObject extends Model\Element\AbstractElement
 {
+    use Element\ChildsCompatibilityTrait;
+
     const OBJECT_TYPE_FOLDER = "folder";
     const OBJECT_TYPE_OBJECT = "object";
     const OBJECT_TYPE_VARIANT = "variant";
@@ -376,11 +382,11 @@ class AbstractObject extends Model\Element\AbstractElement
     private $lastGetChildsObjectTypes = [];
 
     /**
-     * @param array
-     * @param bool
+     * @param array $objectTypes
+     * @param bool $unpublished
      * @return array
      */
-    public function getChilds($objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $unpublished = false)
+    public function getChildren($objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $unpublished = false)
     {
         if ($this->o_childs === null || $this->lastGetChildsObjectTypes != $objectTypes) {
             $this->lastGetChildsObjectTypes = $objectTypes;
@@ -400,7 +406,7 @@ class AbstractObject extends Model\Element\AbstractElement
     /**
      * @return boolean
      */
-    public function hasChilds($objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER])
+    public function hasChildren($objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER])
     {
         if (is_bool($this->o_hasChilds)) {
             if (($this->o_hasChilds and empty($this->o_childs)) or (!$this->o_hasChilds and !empty($this->o_childs))) {
@@ -549,9 +555,6 @@ class AbstractObject extends Model\Element\AbstractElement
             $this->beginTransaction();
 
             try {
-                if (!Tool::isValidKey($this->getKey()) && $this->getId() != 1) {
-                    throw new \Exception("invalid key for object with id [ ".$this->getId()." ] key is: [" . $this->getKey() . "]");
-                }
                 if (!in_array($this->getType(), self::$types)) {
                     throw new \Exception("invalid object type given: [" . $this->getType() . "]");
                 }
@@ -638,6 +641,10 @@ class AbstractObject extends Model\Element\AbstractElement
     {
         // set path
         if ($this->getId() != 1) { // not for the root node
+
+            if (!Element\Service::isValidKey($this->getKey(), "object")) {
+                throw new \Exception("invalid key for object with id [ ".$this->getId()." ] key is: [" . $this->getKey() . "]");
+            }
 
             if ($this->getParentId() == $this->getId()) {
                 throw new \Exception("ParentID and ID is identical, an element can't be the parent of itself.");
@@ -972,13 +979,13 @@ class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @param array $o_childs
+     * @param array $children
      * @return $this
      */
-    public function setChilds($o_childs)
+    public function setChildren($children)
     {
-        $this->o_childs = $o_childs;
-        if (is_array($o_childs) and count($o_childs)>0) {
+        $this->o_childs = $children;
+        if (is_array($children) and count($children)>0) {
             $this->o_hasChilds=true;
         } else {
             $this->o_hasChilds=false;

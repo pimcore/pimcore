@@ -266,7 +266,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
                     classId: this.element.data.general.o_classId,
                     parentId: this.element.id,
                     objecttype: "variant",
-                    key: pimcore.helpers.getValidFilename(this.element.data.general.o_key + "_" + value)
+                    key: pimcore.helpers.getValidFilename(this.element.data.general.o_key + "_" + value, "object")
                 },
                 success: function(response) {
                     var responseJson = Ext.decode(response.responseText);

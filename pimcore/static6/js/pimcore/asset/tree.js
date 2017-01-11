@@ -307,7 +307,7 @@ pimcore.asset.tree = Class.create({
             for (var i=0; i<dataTransfer["files"].length; i++) {
                 file = dataTransfer["files"][i];
 
-                if (window.FileList && file.name && file.type) { // check for type (folder has no type)
+                if (window.FileList && file.name && file.size) { // check for size (folder has size=0)
                     doFileUpload(file);
                 }
             }
@@ -693,6 +693,8 @@ pimcore.asset.tree = Class.create({
 
         pimcore.helpers.hideRedundantSeparators(menu);
 
+        pimcore.plugin.broker.fireEvent("prepareAssetTreeContextMenu", menu, this, record);
+
         menu.showAt(e.pageX+1, e.pageY+1);
     },
 
@@ -835,7 +837,7 @@ pimcore.asset.tree = Class.create({
                 url: "/admin/asset/add-folder/",
                 params: {
                     parentId: record.data.id,
-                    name: pimcore.helpers.getValidFilename(value)
+                    name: pimcore.helpers.getValidFilename(value, "asset")
                 },
                 success: this.addFolderComplete.bind(this, tree, record)
             });

@@ -20,6 +20,9 @@ use Pimcore\Model;
 use Pimcore\Model\Object;
 use Pimcore\Logger;
 
+/**
+ * @property \Pimcore\Model\Object\Objectbrick\Data\AbstractData $model
+ */
 class Dao extends Model\Dao\AbstractDao
 {
 
@@ -232,6 +235,10 @@ class Dao extends Model\Dao\AbstractDao
                 if ($fd->getQueryColumnType()) {
                     //exclude untouchables if value is not an array - this means data has not been loaded
                     //get changed fields for inheritance
+                    if ($fd instanceof  Object\ClassDefinition\Data\CalculatedValue) {
+                        continue;
+                    }
+
                     if ($fd->isRelationType()) {
                         if ($oldData[$key] != null) {
                             $this->inheritanceHelper->addRelationToCheck($key, $fd);

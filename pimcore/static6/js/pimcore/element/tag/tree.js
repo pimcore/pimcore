@@ -78,7 +78,6 @@ pimcore.element.tag.tree = Class.create({
                     }
                 }
             });
-            store.load();
 
             var user = pimcore.globalmanager.get("user");
             var treePlugins = null;
@@ -121,8 +120,7 @@ pimcore.element.tag.tree = Class.create({
                 root: {
                     id: '0',
                     text: t('element_tag_all_tags'),
-                    iconCls: 'pimcore_icon_folder',
-                    expanded: true
+                    iconCls: 'pimcore_icon_folder'
                 },
                 rootVisible: true,
                 listeners: {
@@ -130,7 +128,10 @@ pimcore.element.tag.tree = Class.create({
                     checkchange: this.checkChangeCallback,
                     beforeitemappend: function (thisNode, newChildNode, index, eOpts) {
                         newChildNode.data.qtip = t('id') +  ": " + newChildNode.data.id;
-                    }
+                    },
+                    afterrender: function () {
+                        this.tree.getRootNode().expand();
+                    }.bind(this)
                 }
 
             });

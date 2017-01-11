@@ -672,10 +672,11 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
     }
 
 
-    /**
-     * Override point for Enriching the layout definition before the layout is returned to the admin interface.
+    /** Override point for Enriching the layout definition before the layout is returned to the admin interface.
+     * @param $object Object\Concrete
+     * @param array $context additional contextual data
      */
-    public function enrichLayoutDefinition($object)
+    public function enrichLayoutDefinition($object, $context = [])
     {
     }
 

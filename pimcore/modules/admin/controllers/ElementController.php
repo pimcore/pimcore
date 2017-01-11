@@ -16,7 +16,9 @@ use Pimcore\Model\Element;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
 use Pimcore\Model\Object;
+use Pimcore\Model\Version;
 use Pimcore\Model;
+use Pimcore\Logger;
 
 class Admin_ElementController extends \Pimcore\Controller\Action\Admin
 {
@@ -334,5 +336,63 @@ class Admin_ElementController extends \Pimcore\Controller\Action\Admin
         $version->save();
 
         $this->_helper->json(["success" => true]);
+    }
+
+    public function getNicePathAction()
+    {
+        $source = \Zend_Json::decode($this->getParam("source"));
+        if ($source["type"] != "object") {
+            throw new \Exception("currently only objects as source elements are supported");
+        }
+
+        $result = [];
+
+        $id = $source["id"];
+        $source = Object\Concrete::getById($id);
+
+        if ($this->getParam("context")) {
+            $context = \Zend_Json::decode($this->getParam("context"));
+        } else {
+            $context = [];
+        }
+
+        $ownerType = $context["containerType"];
+        $fieldname = $context["fieldname"];
+
+        if ($ownerType == "object") {
+            $fd = $source->getClass()->getFieldDefinition($fieldname);
+        } elseif ($ownerType == "localizedfield") {
+            $fd = $source->getClass()->getFieldDefinition("localizedfields")->getFieldDefinition($fieldname);
+        } elseif ($ownerType == "objectbrick") {
+            $fdBrick = Object\Objectbrick\Definition::getByKey($context["containerKey"]);
+            $fd = $fdBrick->getFieldDefinition($fieldname);
+        } elseif ($ownerType == "fieldcollection") {
+            $containerKey = $context["containerKey"];
+            $fdCollection = Object\Fieldcollection\Definition::getByKey($containerKey);
+            if ($context["subContainerType"] == "localizedfield") {
+                $fdLocalizedFields = $fdCollection->getFieldDefinition("localizedfields");
+                $fd = $fdLocalizedFields->getFieldDefinition($fieldname);
+            } else {
+                $fd = $fdCollection->getFieldDefinition($fieldname);
+            }
+        }
+
+
+        if (method_exists($fd, "getPathFormatterClass")) {
+            $formatterClass = $fd->getPathFormatterClass();
+            if (Pimcore\Tool::classExists($formatterClass)) {
+                $targets = \Zend_Json::decode($this->getParam("targets"));
+
+                $result = call_user_func($formatterClass . "::formatPath", $result, $source, $targets,
+                    [
+                        "fd" => $fd,
+                        "context" => $context
+                    ]);
+            } else {
+                Logger::error("Formatter Class does not exist: " . $formatterClass);
+            }
+        }
+
+        $this->_helper->json(["success" => true, "data" => $result]);
     }
 }

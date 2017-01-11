@@ -18,6 +18,9 @@ namespace Pimcore\Model\Glossary;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\Glossary\Listing\Dao getDao()
+ */
 class Listing extends Model\Listing\AbstractListing
 {
 

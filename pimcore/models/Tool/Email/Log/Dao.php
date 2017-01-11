@@ -19,6 +19,9 @@ namespace Pimcore\Model\Tool\Email\Log;
 use Pimcore\Model;
 use Pimcore\Logger;
 
+/**
+ * @property \Pimcore\Model\Tool\Email\Log $model
+ */
 class Dao extends Model\Dao\AbstractDao
 {
 
@@ -156,7 +159,7 @@ class Dao extends Model\Dao\AbstractDao
         if (is_string($value) || is_int($value) || is_null($value)) {
             $class->data = ['type' => 'simple',
                 'value' => $value];
-        } elseif ($value instanceof \DateTime) {
+        } elseif ($value instanceof \DateTimeInterface) {
             $class->data = ['type' => 'simple',
                 'value' => $value->format("Y-m-d H:i")];
         } elseif (is_object($value) && method_exists($value, 'getId')) {

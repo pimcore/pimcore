@@ -29,24 +29,20 @@ class Test_Base extends PHPUnit_Framework_TestCase
     {
         if ($this->needsTestClass) {
             // either unittest class already exists or it must be created
-            $class = Object_Class::getByName("unittest");
+            $class = \Pimcore\Model\Object\ClassDefinition::getByName("unittest");
             if (!$class) {
-                $conf = new Zend_Config_Xml(TESTS_PATH . "/resources/objects/class-import.xml");
-                $importData = $conf->toArray();
+                $json = file_get_contents(TESTS_PATH . "/resources/objects/class-import.json");
 
-                $layout = Object_Class_Service::generateLayoutTreeFromArray($importData["layoutDefinitions"]);
-
-                $class = Object_Class::create();
+                $class = new \Pimcore\Model\Object\ClassDefinition();
                 $class->setName("unittest");
                 $class->setUserOwner(1);
+                \Pimcore\Model\Object\ClassDefinition\Service::importClassDefinitionFromJson($class, $json);
                 $class->save();
+
 
                 $id = $class->getId();
 
-                $class = Object_Class::getById($id);
-
-                $class->setLayoutDefinitions($layout);
-
+                $class = \Pimcore\Model\Object\ClassDefinition::getById($id);
                 $class->setUserModification(1);
                 $class->setModificationDate(time());
 

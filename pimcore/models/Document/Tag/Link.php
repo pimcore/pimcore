@@ -21,6 +21,9 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
 use Pimcore\Logger;
 
+/**
+ * @method \Pimcore\Model\Document\Tag\Dao getDao()
+ */
 class Link extends Model\Document\Tag
 {
 
@@ -47,7 +50,7 @@ class Link extends Model\Document\Tag
     public function getData()
     {
         // update path if internal link
-        $this->updatePathFromInternal();
+        $this->updatePathFromInternal(true);
 
         return $this->data;
     }
@@ -154,22 +157,27 @@ class Link extends Model\Document\Tag
     }
 
     /**
-     *
+     * @param bool $realPath
      */
-    protected function updatePathFromInternal()
+    protected function updatePathFromInternal($realPath = false)
     {
+        $method = "getFullPath";
+        if ($realPath) {
+            $method = "getRealFullPath";
+        }
+
         if (isset($this->data["internal"]) && $this->data["internal"]) {
             if ($this->data["internalType"] == "document") {
                 if ($doc = Document::getById($this->data["internalId"])) {
                     if (!Document::doHideUnpublished() || $doc->isPublished()) {
-                        $this->data["path"] = $doc->getFullPath();
+                        $this->data["path"] = $doc->$method();
                     } else {
                         $this->data["path"] = "";
                     }
                 }
             } elseif ($this->data["internalType"] == "asset") {
                 if ($asset = Asset::getById($this->data["internalId"])) {
-                    $this->data["path"] = $asset->getFullPath();
+                    $this->data["path"] = $asset->$method();
                 }
             }
         }

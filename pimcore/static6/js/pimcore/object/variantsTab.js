@@ -42,11 +42,12 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
                 border: false,
                 iconCls: "pimcore_icon_variant",
                 layout: "fit",
+                /* In order to #953, loading layout has to be also run when the column configuration is changed
                 listeners: {
                     activate: function() {
                         this.store.load();
                     }.bind(this)
-                }
+                }*/
             });
         }
 
@@ -224,7 +225,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
 
         gridHelper.applyGridEvents(this.grid);
 
-        // this.store.load();
+        this.store.load();
 
         this.layout.removeAll();
         this.layout.add(this.grid);
@@ -282,7 +283,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
                     classId: this.element.data.general.o_classId,
                     parentId: this.element.id,
                     objecttype: "variant",
-                    key: pimcore.helpers.getValidFilename(this.element.data.general.o_key + "_" + value)
+                    key: pimcore.helpers.getValidFilename(this.element.data.general.o_key + "_" + value, "object")
                 },
                 success: function(response) {
                     var responseJson = Ext.decode(response.responseText);

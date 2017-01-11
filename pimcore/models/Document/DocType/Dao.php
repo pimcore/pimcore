@@ -18,6 +18,9 @@ namespace Pimcore\Model\Document\DocType;
 
 use Pimcore\Model;
 
+/**
+ * @property \Pimcore\Model\Document\DocType $model
+ */
 class Dao extends Model\Dao\PhpArrayTable
 {
 

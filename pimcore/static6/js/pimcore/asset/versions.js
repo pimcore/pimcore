@@ -73,10 +73,17 @@ pimcore.asset.versions = Class.create({
                 store: this.store,
                 plugins: [this.cellEditing],
                 columns: [
+                    {header: t("published"), width:50, sortable: false, dataIndex: 'date', renderer: function(d, metaData) {
+                        if (d == this.asset.data.modificationDate) {
+                            metaData.tdCls = "pimcore_icon_publish";
+                        }
+                        return "";
+                    }.bind(this), editable: false},
                     {header: t("date"), width:150, sortable: true, dataIndex: 'date', renderer: function(d) {
                         var date = new Date(d * 1000);
                         return Ext.Date.format(date, "Y-m-d H:i:s");
                     }},
+                    {header: "ID", sortable: true, dataIndex: 'id', editable: false, width: 60},
                     {header: t("user"), sortable: true, dataIndex: 'name'},
                     {header: t("scheduled"), width:130, sortable: true, dataIndex: 'scheduled', renderer: function(d) {
                         if (d != null){
@@ -90,15 +97,7 @@ pimcore.asset.versions = Class.create({
                 width: 450,
                 title: t('available_versions'),
                 region: "west",
-                split: true,
-                viewConfig: {
-                    getRowClass: function(record, rowIndex, rp, ds) {
-                        if (record.data.date == this.asset.data.modificationDate) {
-                            return "version_published";
-                        }
-                        return "";
-                    }.bind(this)
-                }
+                split: true
             });
 
             grid.on("rowclick", this.onRowClick.bind(this));

@@ -2,9 +2,9 @@
 <html>
 <head>
 
-    <title>Welcome to pimcore!</title>
+    <title>Welcome to Pimcore!</title>
 
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta charset="UTF-8">
     <meta name="robots" content="noindex, follow" />
 
     <link rel="icon" type="image/png" href="/pimcore/static6/img/favicon/favicon-32x32.png" />
@@ -107,7 +107,7 @@ $config = \Pimcore\Config::getSystemConfig();
                     <?php } ?>
 
                     <div class="form-fields">
-                        <input type="text" name="username" placeholder="<?= $this->translate("Username"); ?>" required />
+                        <input type="text" name="username" placeholder="<?= $this->translate("Username"); ?>" required autofocus />
                         <input type="password" name="password" placeholder="<?= $this->translate("Password"); ?>" required />
                     </div>
 

@@ -65,7 +65,7 @@ class GD extends Adapter
     public function save($path, $format = null, $quality = null)
     {
         $format = strtolower($format);
-        if (!$format) {
+        if (!$format || $format == "png32") {
             $format = "png";
         }
 
@@ -166,7 +166,7 @@ class GD extends Adapter
         $this->preModify();
 
         $newImg = $this->createImage($width, $height);
-        ImageCopyResampled($newImg, $this->resource, 0, 0, 0, 0, $width, $height, $this->getWidth(), $this->getHeight());
+        imagecopyresampled($newImg, $this->resource, 0, 0, 0, 0, $width, $height, $this->getWidth(), $this->getHeight());
         $this->resource = $newImg;
 
         $this->setWidth($width);
@@ -238,7 +238,7 @@ class GD extends Adapter
 
     /**
      * @param  $color
-     * @return Pimcore_Image_Adapter
+     * @return Pimcore\Image\Adapter
      */
     public function setBackgroundColor($color)
     {
@@ -258,6 +258,42 @@ class GD extends Adapter
         $this->postModify();
 
         $this->setIsAlphaPossible(false);
+
+        return $this;
+    }
+
+    /**
+     * @param $image
+     * @param null|string $mode
+     * @return $this
+     */
+    public function setBackgroundImage($image, $mode = null)
+    {
+        $this->preModify();
+
+        $image = ltrim($image, "/");
+        $image = PIMCORE_DOCUMENT_ROOT . "/" . $image;
+
+        if (is_file($image)) {
+            $backgroundImage = imagecreatefromstring(file_get_contents($image));
+            list($backgroundImageWidth, $backgroundImageHeight) = getimagesize($image);
+            if ($mode == "cropTopLeft") {
+                $newImg = $this->createImage($this->getWidth(), $this->getHeight());
+                imagecopyresampled($newImg, $backgroundImage, 0, 0, 0, 0, $this->getWidth(), $this->getHeight(), $this->getWidth(), $this->getHeight());
+                imagealphablending($newImg, true);
+                imagecopyresampled($newImg, $this->resource, 0, 0, 0, 0, $this->getWidth(), $this->getHeight(), $this->getWidth(), $this->getHeight());
+                $this->resource = $newImg;
+            } else {
+                // default behavior (fit)
+                $newImg = $this->createImage($this->getWidth(), $this->getHeight());
+                imagecopyresampled($newImg, $backgroundImage, 0, 0, 0, 0, $this->getWidth(), $this->getHeight(), $backgroundImageWidth, $backgroundImageHeight);
+                imagealphablending($newImg, true);
+                imagecopyresampled($newImg, $this->resource, 0, 0, 0, 0, $this->getWidth(), $this->getHeight(), $this->getWidth(), $this->getHeight());
+                $this->resource = $newImg;
+            }
+        }
+
+        $this->postModify();
 
         return $this;
     }

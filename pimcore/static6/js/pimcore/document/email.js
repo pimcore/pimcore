@@ -36,6 +36,9 @@ pimcore.document.email = Class.create(pimcore.document.page_snippet, {
         if (this.isAllowed("settings")) {
             this.settings = new pimcore.document.emails.settings(this);
             this.scheduler = new pimcore.element.scheduler(this, "document");
+        }
+
+        if (user.isAllowed("notes_events")) {
             this.notes = new pimcore.element.notes(this, "document");
         }
 
@@ -81,7 +84,7 @@ pimcore.document.email = Class.create(pimcore.document.page_snippet, {
             items.push(reportLayout);
         }
 
-        if (this.isAllowed("settings")) {
+        if (user.isAllowed("notes_events")) {
             items.push(this.notes.getLayout());
         }
 

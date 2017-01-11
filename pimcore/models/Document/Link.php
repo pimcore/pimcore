@@ -20,6 +20,9 @@ use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Asset;
 
+/**
+ * @method \Pimcore\Model\Document\Link\Dao getDao()
+ */
 class Link extends Model\Document
 {
 

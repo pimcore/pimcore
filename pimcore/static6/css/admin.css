@@ -108,7 +108,8 @@
 }
 
 #pimcore_status_update {
-    background-image: url(/pimcore/static6/img/flat-color-icons/refresh.svg);
+    cursor: pointer;
+    background-image: url(/pimcore/static6/img/flat-color-icons/process.svg);
 }
 
 #pimcore_status_maintenance {
@@ -363,18 +364,6 @@
     width: 420px;
     height: 340px;
 
-}
-
-.pimcore_plugin_installed{
-    background: url(/pimcore/static6/img/icon/plugin.png) right top no-repeat !important;
-}
-
-.pimcore_plugin_notinstalled {
-    background: url(/pimcore/static6/img/icon/plugin_disabled.png) right top no-repeat !important;
-}
-
-.pimcore_plugin_update {
-    background: url(/pimcore/static6/img/icon/plugin_go.png) right top no-repeat !important;
 }
 
 .tree_node_error {
@@ -1404,4 +1393,8 @@ span.warning {
     border-style: solid;
     display: inline-block;
     outline: 0;
+}
+
+.grid_nicepath_requested {
+    background-color: lightblue;
 }

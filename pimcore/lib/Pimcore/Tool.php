@@ -31,14 +31,9 @@ class Tool
     protected static $validLanguages = [];
 
     /**
-     * @static
-     * @param string $key
-     * @return bool
+     * @var null
      */
-    public static function isValidKey($key)
-    {
-        return (bool) preg_match("/^[a-z0-9_~\.\-]+$/", $key);
-    }
+    protected static $isFrontend = null;
 
     /**
      * returns a valid cache key/tag string
@@ -58,12 +53,17 @@ class Tool
      */
     public static function isValidPath($path)
     {
-        return (bool) preg_match("/^[a-zA-Z0-9_~\.\-\/]+$/", $path, $matches);
+        return (bool) preg_match("/^[a-zA-Z0-9_~\.\-\/ ]+$/", $path, $matches);
     }
 
     /**
+     * Checks, if the given language is configured in pimcore's system
+     * settings at "Localization & Internationalization (i18n/l10n)".
+     * Returns true, if the language is valid or no language is
+     * configured at all, false otherwise.
+     *
      * @static
-     * @param  $language
+     * @param  string $language
      * @return bool
      */
     public static function isValidLanguage($language)
@@ -83,8 +83,12 @@ class Tool
     }
 
     /**
+     * Returns an array of language codes that configured for this system
+     * in pimcore's system settings at "Localization & Internationalization (i18n/l10n)".
+     * An empty array is returned if no languages are configured.
+     *
      * @static
-     * @return array
+     * @return string[]
      */
     public static function getValidLanguages()
     {
@@ -131,6 +135,10 @@ class Tool
     }
 
     /**
+     * Returns the default language for this system. If no default is set,
+     * returns the first language, or null, if no languages are configured
+     * at all.
+     *
      * @return null|string
      */
     public static function getDefaultLanguage()
@@ -233,7 +241,7 @@ class Tool
             "bm" => "ml", "bn" => "bd", "br" => "fr", "brx" => "in", "bs" => "ba", "cs" => "cz", "da" => "dk",
             "de" => "de", "dz" => "bt", "el" => "gr", "en" => "gb", "es" => "es", "et" => "ee", "fi" => "fi",
             "fo" => "fo", "fr" => "fr", "ga" => "ie", "gv" => "im", "he" => "il", "hi" => "in", "hr" => "hr",
-            "hu" => "hu", "hy" => "am", "id" => "id", "ig" => "ng", "is" => "is", "it" => "it", "ja" => "ja",
+            "hu" => "hu", "hy" => "am", "id" => "id", "ig" => "ng", "is" => "is", "it" => "it", "ja" => "jp",
             "ka" => "ge", "os" => "ge", "kea" => "cv", "kk" => "kz", "kl" => "gl", "km" => "kh", "ko" => "kr",
             "lg" => "ug", "lo" => "la", "lt" => "lv", "mg" => "mg", "mk" => "mk", "mn" => "mn", "ms" => "my",
             "mt" => "mt", "my" => "mm", "nb" => "no", "ne" => "np", "nl" => "nl", "nn" => "no", "pl" => "pl",
@@ -297,19 +305,39 @@ class Tool
      */
     public static function isFrontend()
     {
-        $excludePatterns = [
-            "/^\/admin.*/",
-            "/^\/install.*/",
-            "/^\/plugin.*/",
-            "/^\/webservice.*/"
-        ];
-        foreach ($excludePatterns as $pattern) {
-            if (preg_match($pattern, $_SERVER["REQUEST_URI"])) {
-                return false;
+        if (self::$isFrontend !== null) {
+            return self::$isFrontend;
+        }
+
+        $isFrontend = true;
+
+        if ($isFrontend && php_sapi_name() == "cli") {
+            $isFrontend = false;
+        }
+
+        if ($isFrontend && \Pimcore::inAdmin()) {
+            $isFrontend = false;
+        }
+
+        if ($isFrontend) {
+            $excludePatterns = [
+                "/^\/admin.*/",
+                "/^\/install.*/",
+                "/^\/plugin.*/",
+                "/^\/webservice.*/"
+            ];
+
+            foreach ($excludePatterns as $pattern) {
+                if (preg_match($pattern, $_SERVER["REQUEST_URI"])) {
+                    $isFrontend = false;
+                    break;
+                }
             }
         }
 
-        return true;
+        self::$isFrontend = $isFrontend;
+
+        return $isFrontend;
     }
 
     /**
@@ -359,7 +387,7 @@ class Tool
         }
 
         // check for manually disabled ?pimcore_outputfilters_disabled=true
-        if ($request->getParam("pimcore_outputfilters_disabled")) {
+        if ($request->getParam("pimcore_outputfilters_disabled") && PIMCORE_DEBUG) {
             return false;
         }
 
@@ -374,7 +402,8 @@ class Tool
     public static function getHostname()
     {
         if (isset($_SERVER["HTTP_X_FORWARDED_HOST"]) && !empty($_SERVER["HTTP_X_FORWARDED_HOST"])) {
-            $hostname = $_SERVER["HTTP_X_FORWARDED_HOST"];
+            $hostParts = explode(",", $_SERVER["HTTP_X_FORWARDED_HOST"]);
+            $hostname = trim(end($hostParts));
         } else {
             $hostname = $_SERVER["HTTP_HOST"];
         }
@@ -529,7 +558,7 @@ class Tool
     {
         $config = Config::getSystemConfig();
         $clientConfig = $config->httpclient->toArray();
-        $clientConfig["adapter"] =  isset($clientConfig["adapter"]) ? $clientConfig["adapter"] : "Zend_Http_Client_Adapter_Socket";
+        $clientConfig["adapter"] =  (isset($clientConfig["adapter"]) && !empty($clientConfig["adapter"])) ? $clientConfig["adapter"] : "Zend_Http_Client_Adapter_Socket";
         $clientConfig["maxredirects"] =  isset($options["maxredirects"]) ? $options["maxredirects"] : 2;
         $clientConfig["timeout"] =  isset($options["timeout"]) ? $options["timeout"] : 3600;
         $type = empty($type) ? "Zend_Http_Client" : $type;

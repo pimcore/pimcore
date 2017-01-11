@@ -20,6 +20,9 @@ use Pimcore\Model;
 use Pimcore\File;
 use Pimcore\Tool\Serialize;
 
+/**
+ * @property \Pimcore\Model\Object\ClassDefinition\CustomLayout $model
+ */
 class Dao extends Model\Dao\AbstractDao
 {
 

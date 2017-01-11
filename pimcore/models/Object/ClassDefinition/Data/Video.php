@@ -322,6 +322,23 @@ class Video extends Model\Object\ClassDefinition\Data
     }
 
     /**
+     * @param $object
+     * @param mixed $params
+     * @return string
+     */
+    public function getDataForSearchIndex($object, $params = [])
+    {
+        $data = $this->getDataFromObjectParam($object, $params);
+        if ($data instanceof Object\Data\Video) {
+            $value = $data->getTitle() . " " . $data->getDescription();
+
+            return $value;
+        }
+
+        return "";
+    }
+
+    /**
      * This is a dummy and is mostly implemented by relation types
      *
      * @param mixed $data

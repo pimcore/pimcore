@@ -18,6 +18,9 @@ namespace Pimcore\Model\Asset\Image\Thumbnail\Config;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\Asset\Image\Thumbnail\Config\Listing\Dao getDao()
+ */
 class Listing extends Model\Listing\JsonListing
 {
 

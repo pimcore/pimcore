@@ -58,8 +58,16 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
             labelWidth: 100
         };
 
+        var valueInvalid = false;
+
         if (this.data && !isNaN(this.data.value)) {
             input.value = this.data.value;
+        } else {
+            // wipe invalid data
+            if (this.data) {
+                this.data.value = null;
+            }
+            valueInvalid = true;
         }
 
         if (this.fieldConfig.width) {
@@ -104,7 +112,7 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
             items: [this.inputField, this.unitField],
             cls: "object_field",
             isDirty: function() {
-                return this.inputField.isDirty() || this.unitField.isDirty()
+                return this.inputField.isDirty() || this.unitField.isDirty() || valueInvalid
             }.bind(this)
         });
 
@@ -130,7 +138,7 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
             }
 
         }.bind(this, field.key);
-        
+
         return {
             header:ts(field.label),
             sortable:true,

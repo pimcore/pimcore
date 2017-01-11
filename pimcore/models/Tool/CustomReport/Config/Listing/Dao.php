@@ -19,6 +19,9 @@ namespace Pimcore\Model\Tool\CustomReport\Config\Listing;
 use Pimcore\Model;
 use Pimcore\Model\Tool\CustomReport\Config;
 
+/**
+ * @property \Pimcore\Model\Tool\CustomReport\Config\Listing $model
+ */
 class Dao extends Model\Dao\PhpArrayTable
 {
 

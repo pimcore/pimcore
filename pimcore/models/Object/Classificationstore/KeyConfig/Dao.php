@@ -18,6 +18,9 @@ namespace Pimcore\Model\Object\Classificationstore\KeyConfig;
 
 use Pimcore\Model;
 
+/**
+ * @property \Pimcore\Model\Object\Classificationstore\KeyConfig $model
+ */
 class Dao extends Model\Dao\AbstractDao
 {
     const TABLE_NAME_KEYS = "classificationstore_keys";

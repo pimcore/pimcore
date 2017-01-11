@@ -20,7 +20,6 @@ use Pimcore\Model;
 
 class User extends Model\Object\ClassDefinition\Data\Select
 {
-
     /**
      * Static type of this element
      *
@@ -28,6 +27,20 @@ class User extends Model\Object\ClassDefinition\Data\Select
      */
     public $fieldtype = "user";
 
+
+    /**
+     * @return User
+     */
+    protected function init()
+    {
+        //loads select list options
+        $options = $this->getOptions();
+        if (\Pimcore::inAdmin() || empty($options)) {
+            $this->configureOptions();
+        }
+
+        return $this;
+    }
 
     /**
      * @see Object\ClassDefinition\Data::getDataFromResource
@@ -57,6 +70,7 @@ class User extends Model\Object\ClassDefinition\Data\Select
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
+        $this->init();
         if (!empty($data)) {
             try {
                 $this->checkValidity($data, true);
@@ -122,13 +136,24 @@ class User extends Model\Object\ClassDefinition\Data\Select
     }
 
     /**
-     *
+     * @param $object
+     * @param mixed $params
+     * @return string
      */
-    public function __wakeup()
+    public function getDataForSearchIndex($object, $params = [])
     {
-        $options = $this->getOptions();
-        if (\Pimcore::inAdmin() || empty($options)) {
-            $this->configureOptions();
-        }
+        return "";
+    }
+
+    /**
+     * @param $data
+     * @return static
+     */
+    public static function __set_state($data)
+    {
+        $obj = parent::__set_state($data);
+        $obj->configureOptions();
+
+        return $obj;
     }
 }

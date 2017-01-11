@@ -18,6 +18,9 @@ namespace Pimcore\Model\Property;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\Property\Predefined\Dao getDao()
+ */
 class Predefined extends Model\AbstractModel
 {
 

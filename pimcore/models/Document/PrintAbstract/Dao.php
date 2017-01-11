@@ -18,6 +18,9 @@ namespace Pimcore\Model\Document\PrintAbstract;
 
 use \Pimcore\Model\Document;
 
+/**
+ * @property \Pimcore\Model\Document\PrintAbstract $model
+ */
 class Dao extends Document\PageSnippet\Dao
 {
 

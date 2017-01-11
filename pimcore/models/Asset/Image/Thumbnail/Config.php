@@ -20,6 +20,9 @@ use Pimcore\Tool\Serialize;
 use Pimcore\Model;
 use Pimcore\Logger;
 
+/**
+ * @method \Pimcore\Model\Asset\Image\Thumbnail\Config\Dao getDao()
+ */
 class Config extends Model\AbstractModel
 {
 
@@ -69,6 +72,16 @@ class Config extends Model\AbstractModel
      * @var float
      */
     public $highResolution;
+
+    /**
+     * @var bool
+     */
+    public $preserveColor = false;
+
+    /**
+     * @var bool
+     */
+    public $preserveMetaData = false;
 
     /**
      * @var int
@@ -157,8 +170,9 @@ class Config extends Model\AbstractModel
         $thumbnail->addItem("scaleByWidth", [
             "width" => 400
         ]);
-        $thumbnail->addItem("setBackgroundColor", [
-            "color" => "#323232"
+        $thumbnail->addItem("setBackgroundImage", [
+            "path" => "/pimcore/static6/img/tree-preview-transparent-background.png",
+            "mode" => "cropTopLeft"
         ]);
         $thumbnail->setQuality(60);
         $thumbnail->setFormat("PJPEG");
@@ -533,18 +547,6 @@ class Config extends Model\AbstractModel
     {
         $originalWidth = $asset->getWidth();
         $originalHeight = $asset->getHeight();
-        $isVectorFormatStatus = null;
-
-        $isVectorFormat = function () use ($isVectorFormatStatus, $asset) {
-            if ($isVectorFormatStatus === null) {
-                $imageTransformer = \Pimcore\Image::getInstance();
-                $imageTransformer->load($asset->getFileSystemPath());
-                $isVectorFormatStatus = $imageTransformer->isVectorGraphic();
-            }
-
-            return $isVectorFormatStatus;
-        };
-
 
         $dimensions = [];
         $transformations = $this->getItems();
@@ -561,12 +563,12 @@ class Config extends Model\AbstractModel
                             $dimensions["width"] = $arg["width"];
                             $dimensions["height"] = $arg["height"];
                         } elseif ($transformation["method"] == "scaleByWidth") {
-                            if ($arg["width"] <= $dimensions["width"] || $isVectorFormat()) {
+                            if ($arg["width"] <= $dimensions["width"] || $asset->isVectorGraphic()) {
                                 $dimensions["height"] = round(($arg["width"] / $dimensions["width"]) * $dimensions["height"], 0);
                                 $dimensions["width"] = $arg["width"];
                             }
                         } elseif ($transformation["method"] == "scaleByHeight") {
-                            if ($arg["height"] < $dimensions["height"] || $isVectorFormat()) {
+                            if ($arg["height"] < $dimensions["height"] || $asset->isVectorGraphic()) {
                                 $dimensions["width"] = round(($arg["height"] / $dimensions["height"]) * $dimensions["width"], 0);
                                 $dimensions["height"] = $arg["height"];
                             }
@@ -574,7 +576,7 @@ class Config extends Model\AbstractModel
                             $x = $dimensions["width"] / $arg["width"];
                             $y = $dimensions["height"] / $arg["height"];
 
-                            if ($x <= 1 && $y <= 1 && !$isVectorFormat()) {
+                            if ($x <= 1 && $y <= 1 && !$asset->isVectorGraphic()) {
                                 continue;
                             }
 
@@ -666,5 +668,37 @@ class Config extends Model\AbstractModel
     public function setCreationDate($creationDate)
     {
         $this->creationDate = $creationDate;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isPreserveColor()
+    {
+        return $this->preserveColor;
+    }
+
+    /**
+     * @param boolean $preserveColor
+     */
+    public function setPreserveColor($preserveColor)
+    {
+        $this->preserveColor = $preserveColor;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isPreserveMetaData()
+    {
+        return $this->preserveMetaData;
+    }
+
+    /**
+     * @param boolean $preserveMetaData
+     */
+    public function setPreserveMetaData($preserveMetaData)
+    {
+        $this->preserveMetaData = $preserveMetaData;
     }
 }

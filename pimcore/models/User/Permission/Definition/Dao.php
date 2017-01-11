@@ -19,6 +19,9 @@ namespace Pimcore\Model\User\Permission\Definition;
 use Pimcore\Model;
 use Pimcore\Logger;
 
+/**
+ * @property \Pimcore\Model\User\Permission\Definition $model
+ */
 class Dao extends Model\Dao\AbstractDao
 {
 

@@ -18,6 +18,9 @@ namespace Pimcore\Model\Object\KeyValue\KeyConfig;
 
 use Pimcore\Model;
 
+/**
+ * @property \Pimcore\Model\Object\KeyValue\KeyConfig $model
+ */
 class Dao extends Model\Dao\AbstractDao
 {
     const TABLE_NAME_KEYS = "keyvalue_keys";

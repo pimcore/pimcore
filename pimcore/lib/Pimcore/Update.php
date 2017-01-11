@@ -404,9 +404,10 @@ class Update
         try {
             $composerPath = \Pimcore\Tool\Console::getExecutable("composer");
             $process = new Process($composerPath . ' update nothing -d ' . PIMCORE_DOCUMENT_ROOT);
-            $process->setTimeout(60);
+            $process->setTimeout(300);
             $process->mustRun();
         } catch (\Exception $e) {
+            Logger::error($e);
             $outputMessage = "<b style='color:red;'>Important</b>: Failed running <pre>composer update nothing</pre> Please run it manually on commandline!";
         }
 

@@ -178,7 +178,7 @@ class Date extends Model\Object\ClassDefinition\Data
     {
         if ($data instanceof \Zend_Date) {
             return $data->get(\Zend_Date::DATE_MEDIUM);
-        } elseif ($data instanceof \DateTime) {
+        } elseif ($data instanceof \DateTimeInterface) {
             return $data->format("Y-m-d");
         }
     }
@@ -226,7 +226,7 @@ class Date extends Model\Object\ClassDefinition\Data
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof \Zend_Date) {
             return $data->toString("Y-m-d", "php");
-        } elseif ($data instanceof \DateTime) {
+        } elseif ($data instanceof \DateTimeInterface) {
             return $data->format("Y-m-d");
         }
 
@@ -247,6 +247,16 @@ class Date extends Model\Object\ClassDefinition\Data
         }
 
         return null;
+    }
+
+    /**
+     * @param $object
+     * @param mixed $params
+     * @return string
+     */
+    public function getDataForSearchIndex($object, $params = [])
+    {
+        return "";
     }
 
     /**

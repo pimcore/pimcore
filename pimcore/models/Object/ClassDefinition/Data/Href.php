@@ -98,7 +98,6 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
      */
     public $documentTypes;
 
-
     /**
      * @return boolean
      */
@@ -669,9 +668,11 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
      */
     public function unmarshal($value, $object = null, $params = [])
     {
-        $type = $value["type"];
-        $id = $value["id"];
+        if (is_array($value)) {
+            $type = $value["type"];
+            $id = $value["id"];
 
-        return Element\Service::getElementById($type, $id);
+            return Element\Service::getElementById($type, $id);
+        }
     }
 }

@@ -16,7 +16,6 @@
 
 namespace Pimcore\Model\Webservice;
 
-use Pimcore\Tool;
 use Pimcore\Model\Document;
 use Pimcore\Model\Webservice;
 use Pimcore\Model\User;
@@ -28,12 +27,12 @@ class Service
 {
 
     /**
-     * @return Tool\User
+     * @return User
      * @throws \Exception
      */
     public function getUser()
     {
-        if ($user = Tool\Admin::getCurrentUser()) {
+        if ($user = \Pimcore\Tool\Admin::getCurrentUser()) {
             return $user;
         }
 
@@ -862,7 +861,7 @@ class Service
             $listClassName = "\\Pimcore\\Model\\Object";
             if (!empty($objectClass)) {
                 $listClassName = "\\Pimcore\\Model\\Object\\" . ucfirst($objectClass);
-                if (!Tool::classExists($listClassName)) {
+                if (!\Pimcore\Tool::classExists($listClassName)) {
                     $listClassName = "\\Pimcore\\Model\\Object";
                 }
             }

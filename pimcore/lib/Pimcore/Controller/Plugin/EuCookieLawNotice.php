@@ -19,6 +19,27 @@ use Pimcore\Google\Analytics as AnalyticsHelper;
 
 class EuCookieLawNotice extends \Zend_Controller_Plugin_Abstract
 {
+    protected $templateCode = null;
+
+    /**
+     * @param $code
+     */
+    public function setTemplateCode($code)
+    {
+        $this->templateCode = $code;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTemplateCode()
+    {
+        if (!$this->templateCode) {
+            $this->templateCode = file_get_contents(__DIR__ . "/EuCookieLawNotice/template.html");
+        }
+
+        return $this->templateCode;
+    }
 
     /**
      *
@@ -31,7 +52,7 @@ class EuCookieLawNotice extends \Zend_Controller_Plugin_Abstract
             return;
         }
 
-        $template = file_get_contents(__DIR__ . "/EuCookieLawNotice/template.html");
+        $template = $this->getTemplateCode();
 
         // cleanup code
         $template = preg_replace('/[\r\n\t]+/', ' ', $template); //remove new lines, spaces, tabs

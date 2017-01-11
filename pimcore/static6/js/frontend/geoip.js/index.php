@@ -13,7 +13,10 @@
  */
 
 // referrer check
-$referrerHost = parse_url($_SERVER["HTTP_REFERER"], PHP_URL_HOST);
+$referrerHost = "";
+if (isset($_SERVER["HTTP_REFERER"])) {
+    $referrerHost = parse_url($_SERVER["HTTP_REFERER"], PHP_URL_HOST);
+}
 if ($_SERVER["HTTP_HOST"] != $referrerHost) {
     die("Permission denied");
 }
@@ -106,10 +109,12 @@ pimcore["location"] = {
         postalCode: "<?= $record->postal->code ?>",
         city: "<?= $record->city->name ?>"
     }
-<?php 
+<?php
+
 } else {
     ?>
     error: "<?= $exception ?>"
-<?php 
+<?php
+
 } ?>
 };

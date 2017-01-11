@@ -18,6 +18,9 @@ namespace Pimcore\Model\User;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\User\Listing\Dao getDao()
+ */
 class Listing extends Listing\AbstractListing
 {
     public $type = "user";

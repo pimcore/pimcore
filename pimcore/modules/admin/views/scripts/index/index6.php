@@ -68,7 +68,7 @@
         }
     </style>
 
-    <title><?= htmlentities(\Pimcore\Tool::getHostname(), ENT_QUOTES, 'UTF-8') ?> :: pimcore</title>
+    <title><?= htmlentities(\Pimcore\Tool::getHostname(), ENT_QUOTES, 'UTF-8') ?> :: Pimcore</title>
 </head>
 
 <body>
@@ -193,13 +193,6 @@ $scripts = array(
     // fixes for browsers
     "pimcore/browserfixes.js",
 
-    // fixes for libraries
-    //    "pimcore/libfixes.js",
-
-    // small libs
-    "lib/array_merge.js",
-    "lib/array_merge_recursive.js",
-
     // runtime
     "pimcore/namespace.js",
     "pimcore/functions.js",
@@ -225,6 +218,7 @@ $scripts = array(
 
     "pimcore/settings/user/usertab.js",
     "pimcore/settings/user/editorSettings.js",
+    "pimcore/settings/user/websiteTranslationSettings.js",
     "pimcore/settings/user/role/panel.js",
     "pimcore/settings/user/role/tab.js",
     "pimcore/settings/user/user/objectrelations.js",
@@ -316,6 +310,7 @@ $scripts = array(
     "pimcore/document/newsletters/sendingPanel.js",
     "pimcore/document/newsletters/addressSourceAdapters/default.js",
     "pimcore/document/newsletters/addressSourceAdapters/csvList.js",
+    "pimcore/document/newsletters/addressSourceAdapters/report.js",
     "pimcore/document/link.js",
     "pimcore/document/hardlink.js",
     "pimcore/document/folder.js",
@@ -348,6 +343,7 @@ $scripts = array(
 
     // object
     "pimcore/object/helpers/edit.js",
+    "pimcore/object/helpers/layout.js",
     "pimcore/object/classes/class.js",
     "pimcore/object/class.js",
     "pimcore/object/bulk-export.js",
@@ -598,13 +594,15 @@ $googleMapsApiKey = $this->config->services->google->browserapikey;
 
 <?php // 3rd party libraries ?>
 <script type="text/javascript">
-    var gmapInitialize = function () {}; // dummy callback
-    (function() {
-        var script = document.createElement("script");
-        script.type = "text/javascript";
-        script.src = 'https://maps.googleapis.com/maps/api/js?libraries=drawing&callback=gmapInitialize&key=<?= $googleMapsApiKey ?>';
-        document.body.appendChild(script);
-    })();
+    <?php if(isset($googleMapsApiKey) && strlen($googleMapsApiKey) > 0){ ?>
+        var gmapInitialize = function () {}; // dummy callback
+        (function() {
+            var script = document.createElement("script");
+            script.type = "text/javascript";
+            script.src = 'https://maps.googleapis.com/maps/api/js?libraries=drawing&callback=gmapInitialize&key=<?= $googleMapsApiKey ?>';
+            document.body.appendChild(script);
+        })();
+    <?php } ?>
 </script>
 
 <script type="text/javascript" src="/admin/misc/json-translations-system/language/<?= $this->language ?>/?_dc=<?= \Pimcore\Version::$revision ?>"></script>

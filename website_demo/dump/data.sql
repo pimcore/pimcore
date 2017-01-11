@@ -1,23 +1,5 @@
 
-SET NAMES UTF8;
-
-
-
-DROP TABLE IF EXISTS `application_logs_archive_02_2016`;
-CREATE TABLE `application_logs_archive_02_2016` (
-  `id` bigint(20) NOT NULL,
-  `pid` int(11) DEFAULT NULL,
-  `timestamp` datetime NOT NULL,
-  `message` varchar(1024) DEFAULT NULL,
-  `priority` enum('emergency','alert','critical','error','warning','notice','info','debug') DEFAULT NULL,
-  `fileobject` varchar(1024) DEFAULT NULL,
-  `info` varchar(1024) DEFAULT NULL,
-  `component` varchar(255) DEFAULT NULL,
-  `source` varchar(255) DEFAULT NULL,
-  `relatedobject` bigint(20) DEFAULT NULL,
-  `relatedobjecttype` enum('object','document','asset') DEFAULT NULL,
-  `maintenanceChecked` tinyint(4) DEFAULT NULL
-) ENGINE=ARCHIVE DEFAULT CHARSET=utf8;
+SET NAMES utf8mb4;
 
 
 
@@ -25,13 +7,13 @@ DROP TABLE IF EXISTS `object_localized_data_2`;
 CREATE TABLE `object_localized_data_2` (
   `ooo_id` int(11) NOT NULL DEFAULT '0',
   `language` varchar(10) NOT NULL DEFAULT '',
-  `title` varchar(255) DEFAULT NULL,
+  `title` varchar(190) DEFAULT NULL,
   `shortText` longtext,
   `text` longtext,
   PRIMARY KEY (`ooo_id`,`language`),
   KEY `ooo_id` (`ooo_id`),
   KEY `language` (`language`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
 
@@ -39,14 +21,14 @@ DROP TABLE IF EXISTS `object_localized_data_5`;
 CREATE TABLE `object_localized_data_5` (
   `ooo_id` int(11) NOT NULL DEFAULT '0',
   `language` varchar(10) NOT NULL DEFAULT '',
-  `title` varchar(255) DEFAULT NULL,
+  `title` varchar(190) DEFAULT NULL,
   `text` longtext,
-  `tags` varchar(255) DEFAULT NULL,
+  `tags` varchar(190) DEFAULT NULL,
   PRIMARY KEY (`ooo_id`,`language`),
   KEY `ooo_id` (`ooo_id`),
   KEY `language` (`language`),
   KEY `p_index_tags` (`tags`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
 
@@ -54,11 +36,11 @@ DROP TABLE IF EXISTS `object_localized_data_6`;
 CREATE TABLE `object_localized_data_6` (
   `ooo_id` int(11) NOT NULL DEFAULT '0',
   `language` varchar(10) NOT NULL DEFAULT '',
-  `name` varchar(255) DEFAULT NULL,
+  `name` varchar(190) DEFAULT NULL,
   PRIMARY KEY (`ooo_id`,`language`),
   KEY `ooo_id` (`ooo_id`),
   KEY `language` (`language`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
 
@@ -66,13 +48,13 @@ DROP TABLE IF EXISTS `object_localized_query_2_de`;
 CREATE TABLE `object_localized_query_2_de` (
   `ooo_id` int(11) NOT NULL DEFAULT '0',
   `language` varchar(10) NOT NULL DEFAULT '',
-  `title` varchar(255) DEFAULT NULL,
+  `title` varchar(190) DEFAULT NULL,
   `shortText` longtext,
   `text` longtext,
   PRIMARY KEY (`ooo_id`,`language`),
   KEY `ooo_id` (`ooo_id`),
   KEY `language` (`language`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
 
@@ -80,13 +62,13 @@ DROP TABLE IF EXISTS `object_localized_query_2_en`;
 CREATE TABLE `object_localized_query_2_en` (
   `ooo_id` int(11) NOT NULL DEFAULT '0',
   `language` varchar(10) NOT NULL DEFAULT '',
-  `title` varchar(255) DEFAULT NULL,
+  `title` varchar(190) DEFAULT NULL,
   `shortText` longtext,
   `text` longtext,
   PRIMARY KEY (`ooo_id`,`language`),
   KEY `ooo_id` (`ooo_id`),
   KEY `language` (`language`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
 
@@ -94,14 +76,14 @@ DROP TABLE IF EXISTS `object_localized_query_5_de`;
 CREATE TABLE `object_localized_query_5_de` (
   `ooo_id` int(11) NOT NULL DEFAULT '0',
   `language` varchar(10) NOT NULL DEFAULT '',
-  `title` varchar(255) DEFAULT NULL,
+  `title` varchar(190) DEFAULT NULL,
   `text` longtext,
-  `tags` varchar(255) DEFAULT NULL,
+  `tags` varchar(190) DEFAULT NULL,
   PRIMARY KEY (`ooo_id`,`language`),
   KEY `ooo_id` (`ooo_id`),
   KEY `language` (`language`),
   KEY `p_index_tags` (`tags`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
 
@@ -109,14 +91,14 @@ DROP TABLE IF EXISTS `object_localized_query_5_en`;
 CREATE TABLE `object_localized_query_5_en` (
   `ooo_id` int(11) NOT NULL DEFAULT '0',
   `language` varchar(10) NOT NULL DEFAULT '',
-  `title` varchar(255) DEFAULT NULL,
+  `title` varchar(190) DEFAULT NULL,
   `text` longtext,
-  `tags` varchar(255) DEFAULT NULL,
+  `tags` varchar(190) DEFAULT NULL,
   PRIMARY KEY (`ooo_id`,`language`),
   KEY `ooo_id` (`ooo_id`),
   KEY `language` (`language`),
   KEY `p_index_tags` (`tags`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
 
@@ -124,11 +106,11 @@ DROP TABLE IF EXISTS `object_localized_query_6_de`;
 CREATE TABLE `object_localized_query_6_de` (
   `ooo_id` int(11) NOT NULL DEFAULT '0',
   `language` varchar(10) NOT NULL DEFAULT '',
-  `name` varchar(255) DEFAULT NULL,
+  `name` varchar(190) DEFAULT NULL,
   PRIMARY KEY (`ooo_id`,`language`),
   KEY `ooo_id` (`ooo_id`),
   KEY `language` (`language`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
 
@@ -136,11 +118,11 @@ DROP TABLE IF EXISTS `object_localized_query_6_en`;
 CREATE TABLE `object_localized_query_6_en` (
   `ooo_id` int(11) NOT NULL DEFAULT '0',
   `language` varchar(10) NOT NULL DEFAULT '',
-  `name` varchar(255) DEFAULT NULL,
+  `name` varchar(190) DEFAULT NULL,
   PRIMARY KEY (`ooo_id`,`language`),
   KEY `ooo_id` (`ooo_id`),
   KEY `language` (`language`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
 
@@ -154,7 +136,7 @@ CREATE TABLE `object_query_2` (
   `image_2` int(11) DEFAULT NULL,
   `image_3` int(11) DEFAULT NULL,
   PRIMARY KEY (`oo_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
 
@@ -169,7 +151,7 @@ CREATE TABLE `object_query_3` (
   `message` longtext,
   `terms` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`oo_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
 
@@ -178,15 +160,15 @@ CREATE TABLE `object_query_4` (
   `oo_id` int(11) NOT NULL DEFAULT '0',
   `oo_classId` int(11) DEFAULT '4',
   `oo_className` varchar(255) DEFAULT 'persons',
-  `gender` varchar(255) DEFAULT NULL,
-  `firstname` varchar(255) DEFAULT NULL,
-  `lastname` varchar(255) DEFAULT NULL,
-  `email` varchar(255) DEFAULT NULL,
+  `gender` varchar(190) DEFAULT NULL,
+  `firstname` varchar(190) DEFAULT NULL,
+  `lastname` varchar(190) DEFAULT NULL,
+  `email` varchar(190) DEFAULT NULL,
   `newsletterActive` tinyint(1) DEFAULT NULL,
   `newsletterConfirmed` tinyint(1) DEFAULT NULL,
   `dateRegister` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`oo_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
 
@@ -200,7 +182,7 @@ CREATE TABLE `object_query_5` (
   `posterImage__image` int(11) DEFAULT NULL,
   `posterImage__hotspots` text,
   PRIMARY KEY (`oo_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
 
@@ -210,7 +192,7 @@ CREATE TABLE `object_query_6` (
   `oo_classId` int(11) DEFAULT '6',
   `oo_className` varchar(255) DEFAULT 'blogCategory',
   PRIMARY KEY (`oo_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
 
@@ -233,7 +215,7 @@ CREATE TABLE `object_relations_2` (
   KEY `ownertype` (`ownertype`),
   KEY `type` (`type`),
   KEY `ownername` (`ownername`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
 
@@ -256,7 +238,7 @@ CREATE TABLE `object_relations_3` (
   KEY `ownertype` (`ownertype`),
   KEY `type` (`type`),
   KEY `ownername` (`ownername`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
 
@@ -279,7 +261,7 @@ CREATE TABLE `object_relations_4` (
   KEY `ownertype` (`ownertype`),
   KEY `type` (`type`),
   KEY `ownername` (`ownername`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
 
@@ -302,7 +284,7 @@ CREATE TABLE `object_relations_5` (
   KEY `ownertype` (`ownertype`),
   KEY `type` (`type`),
   KEY `ownername` (`ownername`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
 
@@ -325,7 +307,7 @@ CREATE TABLE `object_relations_6` (
   KEY `ownertype` (`ownertype`),
   KEY `type` (`type`),
   KEY `ownername` (`ownername`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
 
@@ -337,7 +319,7 @@ CREATE TABLE `object_store_2` (
   `image_2` int(11) DEFAULT NULL,
   `image_3` int(11) DEFAULT NULL,
   PRIMARY KEY (`oo_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
 
@@ -348,22 +330,22 @@ CREATE TABLE `object_store_3` (
   `message` longtext,
   `terms` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`oo_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
 
 DROP TABLE IF EXISTS `object_store_4`;
 CREATE TABLE `object_store_4` (
   `oo_id` int(11) NOT NULL DEFAULT '0',
-  `gender` varchar(255) DEFAULT NULL,
-  `firstname` varchar(255) DEFAULT NULL,
-  `lastname` varchar(255) DEFAULT NULL,
-  `email` varchar(255) DEFAULT NULL,
+  `gender` varchar(190) DEFAULT NULL,
+  `firstname` varchar(190) DEFAULT NULL,
+  `lastname` varchar(190) DEFAULT NULL,
+  `email` varchar(190) DEFAULT NULL,
   `newsletterActive` tinyint(1) DEFAULT NULL,
   `newsletterConfirmed` tinyint(1) DEFAULT NULL,
   `dateRegister` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`oo_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
 
@@ -374,7 +356,7 @@ CREATE TABLE `object_store_5` (
   `posterImage__image` int(11) DEFAULT NULL,
   `posterImage__hotspots` text,
   PRIMARY KEY (`oo_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
 
@@ -382,7 +364,7 @@ DROP TABLE IF EXISTS `object_store_6`;
 CREATE TABLE `object_store_6` (
   `oo_id` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`oo_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
 
@@ -1139,7 +1121,7 @@ INSERT INTO `documents_elements` VALUES ('15','image','image','a:9:{s:2:\"id\";i
 INSERT INTO `documents_elements` VALUES ('15','link','link','a:15:{s:4:\"text\";s:11:\"Lorem ipsum\";s:4:\"path\";s:15:\"/basic-examples\";s:6:\"target\";s:0:\"\";s:10:\"parameters\";s:0:\"\";s:6:\"anchor\";s:0:\"\";s:5:\"title\";s:0:\"\";s:9:\"accesskey\";s:0:\"\";s:3:\"rel\";s:0:\"\";s:8:\"tabindex\";s:0:\"\";s:5:\"class\";s:0:\"\";s:10:\"attributes\";s:0:\"\";s:8:\"internal\";b:1;s:10:\"internalId\";i:3;s:12:\"internalType\";s:8:\"document\";s:4:\"type\";s:8:\"internal\";}');
 INSERT INTO `documents_elements` VALUES ('15','text','wysiwyg','<p>This demo is based on Bootstrap, the most popular, intuitive, and powerful front-end framework.</p>\n');
 INSERT INTO `documents_elements` VALUES ('16','circle','checkbox','');
-INSERT INTO `documents_elements` VALUES ('16','headline','input','Drag & Drop Interface');
+INSERT INTO `documents_elements` VALUES ('16','headline','input','Drag & Drop Interface 😻');
 INSERT INTO `documents_elements` VALUES ('16','image','image','a:9:{s:2:\"id\";i:20;s:3:\"alt\";s:0:\"\";s:11:\"cropPercent\";N;s:9:\"cropWidth\";N;s:10:\"cropHeight\";N;s:7:\"cropTop\";N;s:8:\"cropLeft\";N;s:8:\"hotspots\";a:0:{}s:6:\"marker\";a:0:{}}');
 INSERT INTO `documents_elements` VALUES ('16','link','link','a:15:{s:4:\"text\";s:12:\"Etiam rhoncu\";s:4:\"path\";s:18:\"/advanced-examples\";s:6:\"target\";s:0:\"\";s:10:\"parameters\";s:0:\"\";s:6:\"anchor\";s:0:\"\";s:5:\"title\";s:0:\"\";s:9:\"accesskey\";s:0:\"\";s:3:\"rel\";s:0:\"\";s:8:\"tabindex\";s:0:\"\";s:5:\"class\";s:0:\"\";s:10:\"attributes\";s:0:\"\";s:8:\"internal\";b:1;s:10:\"internalId\";i:5;s:12:\"internalType\";s:8:\"document\";s:4:\"type\";s:8:\"internal\";}');
 INSERT INTO `documents_elements` VALUES ('16','text','wysiwyg','<p>Content is created by simply dragging &amp; dropping blocks, that can&nbsp;be editited in-place and wysiwyg.&nbsp;</p>\n');
@@ -2672,8 +2654,8 @@ INSERT INTO `tree_locks` VALUES ('46','document','self');
 
 
 
-INSERT INTO `users` VALUES ('0','0','user','system','',NULL,NULL,NULL,'','','1','1','','','0','0','0','0','','',NULL,NULL,NULL);
-INSERT INTO `users` VALUES ('2','0','user','admin','$2y$10$nzibZ5Ck0.ZZy.mYhjpjrO.HAMGgWTDsNgGY.KT8KIuY/y1OO.cJ2',NULL,NULL,NULL,'en',NULL,'1','1','','','0','1','1','1','','',NULL,NULL,NULL);
+INSERT INTO `users` VALUES ('0','0','user','system','',NULL,NULL,NULL,'','','1','1','','','0','0','0','0','','',NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `users` VALUES ('2','0','user','admin','$2y$10$nzibZ5Ck0.ZZy.mYhjpjrO.HAMGgWTDsNgGY.KT8KIuY/y1OO.cJ2',NULL,NULL,NULL,'en',NULL,'1','1','','','0','1','1','1','','',NULL,NULL,NULL,NULL,NULL);
 
 
 

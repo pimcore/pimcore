@@ -67,7 +67,7 @@ class StopWatch
             $lastLap = $time;
         }
 
-        $text .= "Total Time: " . (self::microtime_float() - self::$startTime[$component]) . "\n";
+        $text .= "Total Time (" . $component . "): " . (self::microtime_float() - self::$startTime[$component]) . "\n";
 
         if ($html) {
             $text = "<pre>" . $text . "</pre>";
@@ -93,8 +93,6 @@ class StopWatch
      */
     public static function microtime_float()
     {
-        list($usec, $sec) = explode(" ", microtime());
-
-        return ((float)$usec + (float)$sec);
+        return microtime(true);
     }
 }

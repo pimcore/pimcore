@@ -19,6 +19,9 @@ namespace Pimcore\Model\Object\QuantityValue\Unit\Listing;
 use Pimcore\Model;
 use Pimcore\Model\Object;
 
+/**
+ * @property \Pimcore\Model\Object\QuantityValue\Unit\Listing $model
+ */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
 

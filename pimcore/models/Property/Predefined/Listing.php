@@ -18,6 +18,9 @@ namespace Pimcore\Model\Property\Predefined;
 
 use Pimcore\Model;
 
+/**
+ * @method \Pimcore\Model\Property\Predefined\Listing\Dao getDao()
+ */
 class Listing extends Model\Listing\JsonListing
 {
 

@@ -19,6 +19,9 @@ namespace Pimcore\Model\Element\Recyclebin\Item;
 use Pimcore\Model;
 use Pimcore\Logger;
 
+/**
+ * @property \Pimcore\Model\Element\Recyclebin\Item $model
+ */
 class Dao extends Model\Dao\AbstractDao
 {
 
