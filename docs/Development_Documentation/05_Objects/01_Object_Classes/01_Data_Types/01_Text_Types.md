@@ -76,6 +76,16 @@ More examples and config options for the toolbar and toolbarGroups can be found 
 Please refer to the [CKeditor 4.0 Documentation](http://docs.ckeditor.com/).
   
 ##### Global Configuration
-You can add a Global Configuration for all WYSIWYG Editors by setting ```pimcore.object.tags.wysiwyg.defaultEditorConfig```
+You can add a Global Configuration for all WYSIWYG Editors for all objects by setting ```pimcore.object.tags.wysiwyg.defaultEditorConfig```
+
+For this purpose, you can create a plugin and add the configuration in the new created file `/plugins/MyPlugin/static/js/startup.js` like this:
+
+```
+pimcoreReady: function (params,broker){
+
+    pimcore.object.tags.wysiwyg.defaultEditorConfig.allowedContent = true;
+
+}
+```
 
 

@@ -107,6 +107,10 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
             eConfig.entities_latin = false;
             eConfig.extraAllowedContent = "*[pimcore_type,pimcore_id]";
 
+            if(typeof(pimcore.document.tags.wysiwyg.defaultEditorConfig) == 'object'){
+                eConfig = mergeObject(pimcore.document.tags.wysiwyg.defaultEditorConfig,eConfig);
+            }
+        
             this.ckeditor = CKEDITOR.inline(this.textarea, eConfig);
 
             this.ckeditor.on('focus', function () {
