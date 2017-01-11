@@ -26,16 +26,10 @@ class CoreHandler
     protected $createClosures = [];
 
     /**
-     * Use actual cache adapter or null adapter?
+     * Actually write/load to/from cache?
      * @var bool
      */
     protected $enabled = true;
-
-    /**
-     * Default item lifetime
-     * @var int
-     */
-    protected $defaultLifetime = 2419200; // 28 days
 
     /**
      * @var bool
@@ -98,12 +92,6 @@ class CoreHandler
     protected $shutdownTags = ['output'];
 
     /**
-     * Determine if delete actions should always be done on the actual cache adapter. See comment on getActiveAdapter()
-     * @var bool
-     */
-    protected $handleDeletesOnCacheAdapter = true;
-
-    /**
      * If set to true items are directly written into the cache, and do not get into the queue
      * @var bool
      */
@@ -114,12 +102,6 @@ class CoreHandler
      * @var int
      */
     protected $maxWriteToCacheItems = 50;
-
-    /**
-     * Prefix which will be added to every item-key
-     * @var string
-     */
-    protected $cachePrefix = 'pimcore_';
 
     /**
      * Contains the timestamp of the writeLockTime from the current process
@@ -155,17 +137,6 @@ class CoreHandler
     }
 
     /**
-     * Normalize cache key (add prefix, trim, ...)
-     *
-     * @param string $key
-     * @return string
-     */
-    protected function normalizeCacheKey($key)
-    {
-        return $this->cachePrefix . $key;
-    }
-
-    /**
      * Load data from cache (retrieves data from cache item)
      *
      * @param $key
@@ -191,15 +162,13 @@ class CoreHandler
      */
     public function getItem($key)
     {
-        $normalizedKey = $this->normalizeCacheKey($key);
-
         if (!$this->enabled) {
             $this->logger->debug(sprintf('Key %s doesn\'t exist in cache (deactivated)', $key), ['key' => $key]);
 
-            return $this->createEmptyCacheItem($normalizedKey);
+            return $this->createEmptyCacheItem($key);
         }
 
-        $item = $this->adapter->getItem($normalizedKey);
+        $item = $this->adapter->getItem($key);
         if ($item->isHit()) {
             $this->logger->debug(sprintf('Successfully got data for key %s from cache', $key), ['key' => $key]);
         } else {
@@ -348,7 +317,7 @@ class CoreHandler
         // TODO symfony cache adapters serialize as well - find a way to avoid double serialization
         $itemData = serialize($data);
 
-        $item = $this->createCacheItem($this->normalizeCacheKey($key), $itemData, $tags, $lifetime);
+        $item = $this->createCacheItem($key, $itemData, $tags, $lifetime);
 
         return $item;
     }
@@ -453,7 +422,7 @@ class CoreHandler
     {
         $this->setWriteLock();
 
-        return $this->adapter->deleteItem($this->normalizeCacheKey($key));
+        return $this->adapter->deleteItem($key);
     }
 
     /**
@@ -670,8 +639,6 @@ class CoreHandler
                     $item = new CacheItem();
                     $item->key = $key;
                     $item->value = $data;
-
-                    $item->defaultLifetime = $this->defaultLifetime;
                     $item->tag($tags);
                     $item->expiresAfter($lifetime);
 
