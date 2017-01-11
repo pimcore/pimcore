@@ -41,7 +41,8 @@ class Admin_LoginController extends \Pimcore\Controller\Action\Admin
 
                         try {
                             $results = \Pimcore::getEventManager()->trigger("admin.login.login.lostpassword", $this, [
-                                "user" => $user
+                                "user" => $user,
+                                "loginUrl" => $loginUrl
                             ]);
                             
                             if ($results->count() === 0) { // no event has been triggered
