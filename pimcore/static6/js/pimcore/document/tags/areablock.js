@@ -23,6 +23,8 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
         this.toolbarGlobalVar = this.getType() + "toolbar";
 
+        this.applyFallbackIcons();
+
         if(typeof this.options["toolbar"] == "undefined" || this.options["toolbar"] != false) {
             this.createToolBar();
         }
@@ -211,6 +213,28 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                     Ext.get(this.query(".pimcore_block_buttons")[0]).hide();
                 });
                 */
+            }
+        }
+    },
+
+
+    applyFallbackIcons: function() {
+        // this contains fallback-icons
+        var iconStore = ["circuit","display","biomass","deployment","electrical_sensor","dam",
+            "light_at_the_end_of_tunnel","like","icons8_cup","sports_mode","landscape","selfie","cable_release",
+            "bookmark","briefcase","graduation_cap","in_transit","diploma_2","circuit","display","biomass","deployment",
+            "electrical_sensor","dam",
+            "light_at_the_end_of_tunnel","like","icons8_cup","sports_mode","landscape","selfie","cable_release",
+            "bookmark","briefcase","graduation_cap","in_transit","diploma_2"];
+
+        if (this.options.types) {
+            for (var i = 0; i < this.options.types.length; i++) {
+
+                var brick = this.options.types[i];
+
+                if (!brick.icon) {
+                    brick.icon = "/pimcore/static6/img/flat-color-icons/" + iconStore[i + 1] + ".svg";
+                }
             }
         }
     },
@@ -889,18 +913,6 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
         var areaBlockToolbarSettings = this.options["areablock_toolbar"];
         var maxButtonCharacters = areaBlockToolbarSettings.buttonMaxCharacters;
-        // this contains fallback-icons
-        var iconStore = ["circuit","display","biomass","deployment","electrical_sensor","dam",
-            "light_at_the_end_of_tunnel","like","icons8_cup","sports_mode","landscape","selfie","cable_release",
-            "bookmark","briefcase","graduation_cap","in_transit","diploma_2","circuit","display","biomass","deployment",
-            "electrical_sensor","dam",
-            "light_at_the_end_of_tunnel","like","icons8_cup","sports_mode","landscape","selfie","cable_release",
-            "bookmark","briefcase","graduation_cap","in_transit","diploma_2"];
-
-
-        if(!brick.icon) {
-            brick.icon = "/pimcore/static6/img/flat-color-icons/" + iconStore[itemCount] + ".svg";
-        }
 
         var button = {
             xtype: "button",
