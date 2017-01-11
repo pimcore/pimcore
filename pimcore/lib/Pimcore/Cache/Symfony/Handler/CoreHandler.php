@@ -138,6 +138,33 @@ class CoreHandler implements LoggerAwareInterface
     }
 
     /**
+     * @param bool $enabled
+     * @return $this
+     */
+    public function setEnabled($enabled)
+    {
+        $this->enabled = (bool)$enabled;
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function enable()
+    {
+        return $this->setEnabled(true);
+    }
+
+    /**
+     * @return $this
+     */
+    public function disable()
+    {
+        return $this->setEnabled(false);
+    }
+
+    /**
      * Load data from cache (retrieves data from cache item)
      *
      * @param $key
@@ -541,7 +568,7 @@ class CoreHandler implements LoggerAwareInterface
      * @param string $tag
      * @return $this
      */
-    protected function addTagClearedOnShutdown($tag)
+    public function addTagClearedOnShutdown($tag)
     {
         $this->setWriteLock();
         $this->tagsClearedOnShutdown[] = $tag;
