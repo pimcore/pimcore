@@ -6,7 +6,9 @@ use Pimcore\Model\Document\Hardlink\Wrapper\WrapperInterface;
 use Pimcore\Model\Element\ElementInterface;
 use Psr\Cache\CacheItemInterface;
 use Psr\Log\LoggerAwareTrait;
+use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\Cache\Adapter\TagAwareAdapter;
+use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 use Symfony\Component\Cache\CacheItem;
 
 class CoreHandler
@@ -14,7 +16,7 @@ class CoreHandler
     use LoggerAwareTrait;
 
     /**
-     * @var TagAwareAdapter
+     * @var TagAwareAdapterInterface
      */
     protected $adapter;
 
@@ -127,6 +129,30 @@ class CoreHandler
      * @var int
      */
     protected $writeLockTimestamp;
+
+    /**
+     * @param AdapterInterface $adapter
+     */
+    public function __construct(AdapterInterface $adapter)
+    {
+        $this->setAdapter($adapter);
+    }
+
+    /**
+     * @param AdapterInterface $adapter
+     * @return $this
+     */
+    protected function setAdapter(AdapterInterface $adapter)
+    {
+        // if adapter is not tag aware, wrap it in TagAwareAdapter
+        if (!$adapter instanceof TagAwareAdapterInterface) {
+            $adapter = new TagAwareAdapter($adapter);
+        }
+
+        $this->adapter = $adapter;
+
+        return $this;
+    }
 
     /**
      * Normalize cache key (add prefix, trim, ...)
