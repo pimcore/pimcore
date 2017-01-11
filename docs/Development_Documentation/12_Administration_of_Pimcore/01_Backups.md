@@ -39,7 +39,7 @@ php pimcore/cli/console.php backup -h
 
 #### Just create a single backup into the backup-folder
 ```php
-php pimcore/cli/console.php
+php pimcore/cli/console.php backup
 ``` 
 
 #### Create a backup in a custom folder with a custom filename. 
