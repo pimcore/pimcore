@@ -37,10 +37,10 @@ class Cache
 
     public static function init()
     {
-        /** @var CoreHandlerInterface $handler */
-        $handler = \Pimcore::getDiContainer()->get('pimcore.cache.handler.core');
-
-        static::$handler = $handler;
+        if (null === static::$handler) {
+            /** @var CoreHandlerInterface $handler */
+            static::$handler = \Pimcore::getDiContainer()->get('pimcore.cache.handler.core');
+        }
     }
 
     /**
