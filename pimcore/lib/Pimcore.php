@@ -51,20 +51,27 @@ class Pimcore
      */
     private static $globallyProtectedItems;
 
-
     /**
      * @static
-     * @throws Exception|\Zend_Controller_Router_Exception
+
+     * @param bool $returnResponse
+     * @param Zend_Controller_Request_Abstract $request
+     * @param Zend_Controller_Response_Abstract $response
+     * @return null|Zend_Controller_Response_Http
+     * @throws Exception
+     * @throws Zend_Controller_Router_Exception
      */
-    public static function run()
+    public static function run($returnResponse = false, Zend_Controller_Request_Abstract $request = null, Zend_Controller_Response_Abstract $response = null)
     {
         $throwExceptions = false;
 
         // detect frontend (website)
         $frontend = Tool::isFrontend();
 
-        // enable the output-buffer, why? see in self::outputBufferStart()
-        self::outputBufferStart();
+        if (!$returnResponse) {
+            // enable the output-buffer, why? see in self::outputBufferStart()
+            self::outputBufferStart();
+        }
 
         // initialize cache
         Cache::init();
@@ -84,6 +91,92 @@ class Pimcore
             $throwExceptions = true;
         }
 
+        self::registerWhoopsErrorHandler($conf, $frontend);
+        self::registerFrontControllerPlugins($front, $frontend);
+        self::initControllerFront($front);
+
+        if ($returnResponse) {
+            $front->returnResponse(true);
+        }
+
+        // set router
+        $router = self::initRouter($front);
+
+        // only do this if not frontend => performance issue
+        if (!$frontend) {
+            self::initBackendRouter($router, $conf);
+            self::checkPluginRoutes();
+            self::handleAdminMainDomainRedirect($conf);
+        }
+
+        self::getEventManager()->trigger("system.startup", $front);
+
+        // throw exceptions also when in preview or in editmode (documents) to see it immediately when there's a problem with this page
+        if (Tool::isFrontentRequestByAdmin()) {
+            $user = \Pimcore\Tool\Authentication::authenticateSession();
+            if ($user instanceof User) {
+                $throwExceptions = true;
+            }
+        }
+
+        return self::runDispatcher($front, $throwExceptions, $request, $response);
+    }
+
+    /**
+     * Run dispatcher
+     *
+     * This is also standard for /admin/ requests -> error handling is done in Pimcore_Controller_Action_Admin
+     *
+     * @param Zend_Controller_Front $front
+     * @param bool $throwExceptions
+     * @param Zend_Controller_Request_Abstract|null $request
+     * @param Zend_Controller_Response_Abstract|null $response
+     * @return void|Zend_Controller_Response_Abstract
+     * @throws Exception
+     * @throws Zend_Controller_Router_Exception
+     */
+    protected static function runDispatcher(
+        Zend_Controller_Front $front,
+        $throwExceptions,
+        Zend_Controller_Request_Abstract $request = null,
+        Zend_Controller_Response_Abstract $response = null
+    ) {
+        try {
+            if (!PIMCORE_DEBUG && !$throwExceptions && !PIMCORE_DEVMODE) {
+                @ini_set("display_errors", "Off");
+                @ini_set("display_startup_errors", "Off");
+
+                return $front->dispatch($request, $response);
+            } else {
+                @ini_set("display_errors", "On");
+                @ini_set("display_startup_errors", "On");
+
+                $front->throwExceptions(true);
+
+                return $front->dispatch($request, $response);
+            }
+        } catch (\Zend_Controller_Router_Exception $e) {
+            if (!headers_sent()) {
+                header("HTTP/1.0 404 Not Found");
+            }
+            Logger::err($e);
+            throw new \Zend_Controller_Router_Exception("No route, document, custom route or redirect is matching the request: " . $_SERVER["REQUEST_URI"] . " | \n" . "Specific ERROR: " . $e->getMessage());
+        } catch (\Exception $e) {
+            if (!headers_sent()) {
+                header("HTTP/1.0 500 Internal Server Error");
+            }
+            throw $e;
+        }
+    }
+
+    /**
+     * Register Whoops error handler
+     *
+     * @param Zend_Config $conf
+     * @param bool $frontend
+     */
+    protected static function registerWhoopsErrorHandler(Zend_Config $conf, $frontend)
+    {
         if (self::inDebugMode() && $frontend && !$conf->general->disable_whoops && !defined("HHVM_VERSION")) {
             $whoops = new \Whoops\Run;
             $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
@@ -91,12 +184,22 @@ class Pimcore
                 $jsonErrorHandler = new \Whoops\Handler\JsonResponseHandler;
                 $whoops->pushHandler($jsonErrorHandler);
             }
+
             $whoops->register();
 
             // add event handler before Pimcore::shutdown() to ensure fatal errors are handled by Whoops
             self::getEventManager()->attach("system.shutdown", [$whoops, "handleShutdown"], 10000);
         }
+    }
 
+    /**
+     * Register front controller plugins
+     *
+     * @param Zend_Controller_Front $front
+     * @param bool $frontend
+     */
+    protected static function registerFrontControllerPlugins(Zend_Controller_Front $front, $frontend)
+    {
         $front->registerPlugin(new Controller\Plugin\ErrorHandler(), 1);
         $front->registerPlugin(new Controller\Plugin\Maintenance(), 2);
 
@@ -120,11 +223,36 @@ class Pimcore
             $front->registerPlugin(new Controller\Plugin\HttpErrorLog(), 850);
             $front->registerPlugin(new Controller\Plugin\Cache(), 901); // for caching
         }
+    }
 
-        self::initControllerFront($front);
-
-        // set router
+    /**
+     * Add global routes
+     *
+     * @param Zend_Controller_Front $front
+     * @return Zend_Controller_Router_Interface|Zend_Controller_Router_Rewrite
+     */
+    protected static function initRouter(Zend_Controller_Front $front)
+    {
+        /** @var Zend_Controller_Router_Interface|Zend_Controller_Router_Rewrite $router */
         $router = $front->getRouter();
+
+        // website route => custom router which check for a suitable document
+        $routeFrontend = new Controller\Router\Route\Frontend();
+        $router->addRoute('default', $routeFrontend);
+
+        $front->setRouter($router);
+
+        return $router;
+    }
+
+    /**
+     * Add backend routes
+     *
+     * @param Zend_Controller_Router_Interface|Zend_Controller_Router_Rewrite $router
+     * @param Zend_Config $conf
+     */
+    protected static function initBackendRouter(Zend_Controller_Router_Interface $router, Zend_Config $conf)
+    {
         $routeAdmin = new \Zend_Controller_Router_Route(
             'admin/:controller/:action/*',
             [
@@ -133,6 +261,7 @@ class Pimcore
                 "action" => "index"
             ]
         );
+
         $routeInstall = new \Zend_Controller_Router_Route(
             'install/:controller/:action/*',
             [
@@ -141,6 +270,7 @@ class Pimcore
                 "action" => "index"
             ]
         );
+
         $routeUpdate = new \Zend_Controller_Router_Route(
             'admin/update/:controller/:action/*',
             [
@@ -149,6 +279,7 @@ class Pimcore
                 "action" => "index"
             ]
         );
+
         $routeExtensions = new \Zend_Controller_Router_Route(
             'admin/extensionmanager/:controller/:action/*',
             [
@@ -157,6 +288,7 @@ class Pimcore
                 "action" => "index"
             ]
         );
+
         $routeReports = new \Zend_Controller_Router_Route(
             'admin/reports/:controller/:action/*',
             [
@@ -165,6 +297,7 @@ class Pimcore
                 "action" => "index"
             ]
         );
+
         $routePlugin = new \Zend_Controller_Router_Route(
             'plugin/:module/:controller/:action/*',
             [
@@ -172,6 +305,7 @@ class Pimcore
                 "action" => "index"
             ]
         );
+
         $routeWebservice = new \Zend_Controller_Router_Route(
             'webservice/:controller/:action/*',
             [
@@ -190,82 +324,44 @@ class Pimcore
             ]
         );
 
+        $router->addRoute("install", $routeInstall);
+        $router->addRoute('plugin', $routePlugin);
+        $router->addRoute('admin', $routeAdmin);
+        $router->addRoute('update', $routeUpdate);
+        $router->addRoute('extensionmanager', $routeExtensions);
+        $router->addRoute('reports', $routeReports);
+        $router->addRoute('searchadmin', $routeSearchAdmin);
 
-        // website route => custom router which check for a suitable document
-        $routeFrontend = new Controller\Router\Route\Frontend();
+        if ($conf instanceof \Zend_Config and $conf->webservice and $conf->webservice->enabled) {
+            $router->addRoute('webservice', $routeWebservice);
+        }
+    }
 
-
-        $router->addRoute('default', $routeFrontend);
-
-        // only do this if not frontend => performance issue
-        if (!$frontend) {
-            $router->addRoute("install", $routeInstall);
-            $router->addRoute('plugin', $routePlugin);
-            $router->addRoute('admin', $routeAdmin);
-            $router->addRoute('update', $routeUpdate);
-            $router->addRoute('extensionmanager', $routeExtensions);
-            $router->addRoute('reports', $routeReports);
-            $router->addRoute('searchadmin', $routeSearchAdmin);
-            if ($conf instanceof \Zend_Config and $conf->webservice and $conf->webservice->enabled) {
-                $router->addRoute('webservice', $routeWebservice);
-            }
-
-            // check if this request routes into a plugin, if so check if the plugin is enabled
-            if (preg_match("@^/plugin/([^/]+)/.*@", $_SERVER["REQUEST_URI"], $matches)) {
-                $pluginName = $matches[1];
-                if (!Pimcore\ExtensionManager::isEnabled("plugin", $pluginName)) {
-                    \Pimcore\Tool::exitWithError("Plugin is disabled. To use this plugin please enable it in the extension manager!");
-                }
-            }
-
-            // force the main (default) domain for "admin" requests
-            if ($conf->general->domain && $conf->general->domain != Tool::getHostname()) {
-                $url = (($_SERVER['HTTPS'] == "on") ? "https" : "http") . "://" . $conf->general->domain . $_SERVER["REQUEST_URI"];
-                header("HTTP/1.1 301 Moved Permanently");
-                header("Location: " . $url, true, 301);
-                exit;
+    /**
+     * Check if this request routes into a plugin, if so check if the plugin is enabled
+     */
+    protected static function checkPluginRoutes()
+    {
+        if (preg_match("@^/plugin/([^/]+)/.*@", $_SERVER["REQUEST_URI"], $matches)) {
+            $pluginName = $matches[1];
+            if (!Pimcore\ExtensionManager::isEnabled("plugin", $pluginName)) {
+                \Pimcore\Tool::exitWithError("Plugin is disabled. To use this plugin please enable it in the extension manager!");
             }
         }
+    }
 
-
-        $front->setRouter($router);
-
-        self::getEventManager()->trigger("system.startup", $front);
-
-        // throw exceptions also when in preview or in editmode (documents) to see it immediately when there's a problem with this page
-        if (Tool::isFrontentRequestByAdmin()) {
-            $user = \Pimcore\Tool\Authentication::authenticateSession();
-            if ($user instanceof User) {
-                $throwExceptions = true;
-            }
-        }
-
-        // run dispatcher
-        try {
-            // this is also standard for /admin/ requests -> error handling is done in Pimcore\Controller\Action\Admin
-            if (!PIMCORE_DEBUG && !$throwExceptions && !PIMCORE_DEVMODE) {
-                @ini_set("display_errors", "Off");
-                @ini_set("display_startup_errors", "Off");
-
-                $front->dispatch();
-            } else {
-                @ini_set("display_errors", "On");
-                @ini_set("display_startup_errors", "On");
-
-                $front->throwExceptions(true);
-                $front->dispatch();
-            }
-        } catch (\Zend_Controller_Router_Exception $e) {
-            if (!headers_sent()) {
-                header("HTTP/1.0 404 Not Found");
-            }
-            Logger::err($e);
-            throw new \Zend_Controller_Router_Exception("No route, document, custom route or redirect is matching the request: " . $_SERVER["REQUEST_URI"] . " | \n" . "Specific ERROR: " . $e->getMessage());
-        } catch (\Exception $e) {
-            if (!headers_sent()) {
-                header("HTTP/1.0 500 Internal Server Error");
-            }
-            throw $e;
+    /**
+     * Force the main (default) domain for "admin" requests
+     *
+     * @param Zend_Config $conf
+     */
+    protected static function handleAdminMainDomainRedirect(Zend_Config $conf)
+    {
+        if ($conf->general->domain && $conf->general->domain != Tool::getHostname()) {
+            $url = (($_SERVER['HTTPS'] == "on") ? "https" : "http") . "://" . $conf->general->domain . $_SERVER["REQUEST_URI"];
+            header("HTTP/1.1 301 Moved Permanently");
+            header("Location: " . $url, true, 301);
+            exit;
         }
     }
 

@@ -16,7 +16,7 @@ The numeric editable is very similar to the [input editable](./16_Input.md), but
 
 | Name        | Return      | Description                                                                  |
 |-------------|-------------|------------------------------------------------------------------------------|
-| `getData()` | int|float   | Value of the numeric field, this is useful to get the value even in editmode |
+| `getData()` | int,float   | Value of the numeric field, this is useful to get the value even in editmode |
 | `isEmpty()` | boolean     | Whether the editable is empty or not                                         |
 
 ## Examples

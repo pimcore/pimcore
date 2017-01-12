@@ -35,32 +35,30 @@ Now create the base configuration file: `website/config/workflowmanagement.php`
 ```php
 <?php
 return [
-  "workflows" => [
-        [
-            "name" => "Product workflow",
-            "id" => 1,
-            "workflowSubject" => [
-              "types" => ["object"],
-              "classes" => [13],
-            ],
-            "enabled" => true,
-            "defaultState" => "", //@TODO
-            "defaultStatus" => "", //@TODO
-            "allowUnpublished" => true,
-            "states" => [
-              //@TODO
-            ],
-            "statuses" => [
-              //@TODO
-            ],
-            "actions" => [
-              //@TODO
-            ],
-            "transitionDefinitions" => [
-              //@TODO
-            ]
+    1 => [
+        "name" => "Product workflow",
+        "id" => 1,
+        "workflowSubject" => [
+          "types" => ["object"],
+          "classes" => [13],
+        ],
+        "enabled" => true,
+        "defaultState" => "", //@TODO
+        "defaultStatus" => "", //@TODO
+        "allowUnpublished" => true,
+        "states" => [
+          //@TODO
+        ],
+        "statuses" => [
+          //@TODO
+        ],
+        "actions" => [
+          //@TODO
+        ],
+        "transitionDefinitions" => [
+          //@TODO
         ]
-  ]
+    ]
 ];
 ```
 

@@ -82,7 +82,6 @@ class Admin
         }
 
         $params = [
-            "scriptPath" => "/website/var/system/",
             "scripts" =>  basename($scriptPath),
             "_dc" => \Pimcore\Version::getRevision()
         ];

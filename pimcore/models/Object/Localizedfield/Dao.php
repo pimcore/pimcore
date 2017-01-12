@@ -79,6 +79,11 @@ class Dao extends Model\Dao\AbstractDao
 
         $fieldDefinitions = $container->getFielddefinition("localizedfields")->getFielddefinitions();
 
+        /**
+         * We temporary enable the runtime cache so we don't have to calculate the tree for each language
+         * which is a great performance gain if you have a lot of languages
+         */
+        Object\Concrete\Dao\InheritanceHelper::setUseRuntimeCache(true);
         foreach ($validLanguages as $language) {
             $inheritedValues = Object\AbstractObject::doGetInheritedValues();
             Object\AbstractObject::setGetInheritedValues(false);
@@ -266,6 +271,8 @@ class Dao extends Model\Dao\AbstractDao
 
             Object\AbstractObject::setGetInheritedValues($inheritedValues);
         } // foreach language
+        Object\Concrete\Dao\InheritanceHelper::setUseRuntimeCache(false);
+        Object\Concrete\Dao\InheritanceHelper::clearRuntimeCache();
     }
 
     /**

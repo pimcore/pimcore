@@ -65,6 +65,16 @@ class Console
             return self::$executableCache[$name];
         }
 
+        // use DI to provide the ability to customize / overwrite paths
+        if (\Pimcore::getDiContainer()->has("executable." . $name)) {
+            $value = \Pimcore::getDiContainer()->get("executable." . $name);
+            if(!$value && $throwException) {
+                throw new \Exception("'$name' executable was disabled manually in di.php");
+            }
+
+            return $value;
+        }
+
         $pathVariable = Config::getSystemConfig()->general->path_variable;
 
         $paths = [];

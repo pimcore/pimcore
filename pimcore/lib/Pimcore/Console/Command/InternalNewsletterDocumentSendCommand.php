@@ -35,6 +35,8 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $sendingId = $input->getArgument("sendingId");
+        $hostUrl = $input->getArgument("hostUrl");
+
         $tmpStore = Model\Tool\TmpStore::get($sendingId);
 
         if (empty($tmpStore)) {
@@ -66,17 +68,17 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
 
 
         if ($document->getSendingMode() == Newsletter::SENDING_MODE_BATCH) {
-            $this->doSendMailInBatchMode($document, $addressAdapter, $sendingId);
+            $this->doSendMailInBatchMode($document, $addressAdapter, $sendingId, $hostUrl);
         } else {
-            $this->doSendMailInSingleMode($document, $addressAdapter, $sendingId);
+            $this->doSendMailInSingleMode($document, $addressAdapter, $sendingId, $hostUrl);
         }
 
         Model\Tool\TmpStore::delete($sendingId);
     }
 
-    protected function doSendMailInBatchMode(Model\Document\Newsletter $document, AddressSourceAdapterInterface $addressAdapter, $sendingId)
+    protected function doSendMailInBatchMode(Model\Document\Newsletter $document, AddressSourceAdapterInterface $addressAdapter, $sendingId, $hostUrl)
     {
-        $mail = \Pimcore\Tool\Newsletter::prepareMail($document);
+        $mail = \Pimcore\Tool\Newsletter::prepareMail($document, $hostUrl);
         $sendingParamContainers = $addressAdapter->getMailAddressesForBatchSending();
 
         $currentCount = 0;
@@ -109,7 +111,7 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
         }
     }
 
-    protected function doSendMailInSingleMode(Model\Document\Newsletter $document, AddressSourceAdapterInterface $addressAdapter, $sendingId)
+    protected function doSendMailInSingleMode(Model\Document\Newsletter $document, AddressSourceAdapterInterface $addressAdapter, $sendingId, $hostUrl)
     {
         $totalCount = $addressAdapter->getTotalRecordCount();
 
@@ -132,7 +134,7 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
 
             $sendingParamContainers = $addressAdapter->getParamsForSingleSending($limit, $offset);
             foreach ($sendingParamContainers as $sendingParamContainer) {
-                $mail = \Pimcore\Tool\Newsletter::prepareMail($document, $sendingParamContainer);
+                $mail = \Pimcore\Tool\Newsletter::prepareMail($document, $sendingParamContainer, $hostUrl);
                 \Pimcore\Tool\Newsletter::sendNewsletterDocumentBasedMail($mail, $sendingParamContainer);
 
 

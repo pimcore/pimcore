@@ -41,6 +41,8 @@ return [
 ];
 ```
 
+[Click here for a more advanced example](https://github.com/pimcore/pimcore/blob/master/website_example/config/di.example.php)
+
 ## Overwrite Pimcore Models using Dependency Injection
 It's possible to map a custom class to a Pimcore model. That means that you can use your own classes inside Pimcore, 
 but an example will be more explanatory: 

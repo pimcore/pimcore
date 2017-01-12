@@ -5,7 +5,7 @@ and Commerce.
 As a platform, pimcore provides a solid foundation with generic functionality for all kinds of web applications and therefore 
 allows rapid application development and building customer solutions really fast. 
 
-Its API driven approach makes it easy to develop with pimcore, allows integration into every IT infrastructure and makes it 
+Its API driven approach makes it easy to develop with Pimcore, allows integration into every IT infrastructure and makes it 
 easily extendable. Even headless execution of Pimcore is possible. 
 
 Pimcore is built for developers and should empower them to build great digital experiences easily. As a consequence Pimcore 

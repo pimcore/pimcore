@@ -102,7 +102,10 @@ class Area extends Model\Document\Tag
         }
 
         $this->setupStaticEnvironment();
-        $suffixes = \Zend_Registry::get("pimcore_tag_block_current");
+        $suffixes = [];
+        if (\Zend_Registry::isRegistered('pimcore_tag_block_current')) {
+            $suffixes = \Zend_Registry::get("pimcore_tag_block_current");
+        }
         $suffixes[] = $this->getName();
         \Zend_Registry::set("pimcore_tag_block_current", $suffixes);
 
@@ -238,12 +241,18 @@ class Area extends Model\Document\Tag
         }
 
 
-        $suffixes = \Zend_Registry::get("pimcore_tag_block_numeration");
-        array_pop($suffixes);
+        $suffixes = [];
+        if (\Zend_Registry::isRegistered('pimcore_tag_block_numeration')) {
+            $suffixes = \Zend_Registry::get("pimcore_tag_block_numeration");
+            array_pop($suffixes);
+        }
         \Zend_Registry::set("pimcore_tag_block_numeration", $suffixes);
 
-        $suffixes = \Zend_Registry::get("pimcore_tag_block_current");
-        array_pop($suffixes);
+        $suffixes = [];
+        if (\Zend_Registry::isRegistered('pimcore_tag_block_current')) {
+            $suffixes = \Zend_Registry::get("pimcore_tag_block_current");
+            array_pop($suffixes);
+        }
         \Zend_Registry::set("pimcore_tag_block_current", $suffixes);
     }
 

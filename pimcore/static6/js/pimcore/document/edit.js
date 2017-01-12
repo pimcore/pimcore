@@ -22,7 +22,7 @@ pimcore.document.edit = Class.create({
     getEditLink: function () {
         var date = new Date();
         var link =  this.document.data.path + this.document.data.key + '?extjs6=1&pimcore_editmode=true&systemLocale='
-                                                            + pimcore.settings.language+'&_dc=' + date.getTime();
+            + pimcore.settings.language+'&_dc=' + date.getTime();
 
         if(this.persona && this.persona.getValue()) {
             link += "&_ptp=" + this.persona.getValue();
@@ -38,7 +38,7 @@ pimcore.document.edit = Class.create({
             this.iframeName = 'document_iframe_' + this.document.id;
 
             var html = '<iframe id="' + this.iframeName + '" style="width: 100%;" name="' + this.iframeName
-                                                    + '" src="' + this.getEditLink() + '" frameborder="0"></iframe>';
+                + '" src="' + this.getEditLink() + '" frameborder="0"></iframe>';
 
 
             var cleanupFunction = function () {
@@ -246,13 +246,13 @@ pimcore.document.edit = Class.create({
     },
 
     maskFrames: function () {
-        
+
         // this is for dnd over iframes, with this method it's not nessercery to register the dnd manager in each
         // iframe (wysiwyg)
         var width;
         var height;
-        var offset;
         var element;
+        var iFrameEl;
         var i;
 
 
@@ -265,13 +265,11 @@ pimcore.document.edit = Class.create({
 
             var iFrames = this.frame.document.getElementsByTagName("iframe");
             for (i = 0; i < iFrames.length; i++) {
-                width = Ext.get(iFrames[i]).getWidth();
-                height = Ext.get(iFrames[i]).getHeight();
+                iFrameEl = Ext.get(iFrames[i]);
+                width = iFrameEl.getWidth();
+                height = iFrameEl.getHeight();
 
-                offset = Ext.get(iFrames[i]).getOffsetsTo(this.frame.Ext.getBody());
-
-                var parentElement = this.frame.Ext.get(iFrames[i]).parent();
-
+                var parentElement = iFrameEl.parent();
                 parentElement.applyStyles({
                     position: "relative"
                 });
@@ -286,13 +284,13 @@ pimcore.document.edit = Class.create({
                     height: height + "px",
                     left: 0,
                     top: 0
-                });              
-                
+                });
+
                 element.addCls("pimcore_iframe_mask");
             }
         }
         catch (e) {
-            console.log(e); 
+            console.log(e);
             console.log("there is no frame to mask");
         }
     },
@@ -328,7 +326,4 @@ pimcore.document.edit = Class.create({
     }
 
 });
-
-
-
 
