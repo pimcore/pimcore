@@ -152,6 +152,7 @@ class Pimcore
                 @ini_set("display_startup_errors", "On");
 
                 $front->throwExceptions(true);
+
                 return $front->dispatch($request, $response);
             }
         } catch (\Zend_Controller_Router_Exception $e) {

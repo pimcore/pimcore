@@ -141,14 +141,16 @@ class InheritanceHelper
      *
      * @param bool $value
      */
-    public static function setUseRuntimeCache($value){
+    public static function setUseRuntimeCache($value)
+    {
         self::$useRuntimeCache = $value;
     }
 
     /**
      * clear the runtime cache
      */
-    public static function clearRuntimeCache(){
+    public static function clearRuntimeCache()
+    {
         self::$runtimeCache = [];
     }
 
@@ -248,7 +250,6 @@ class InheritanceHelper
         // parent object has no brick, add child to parent, add brick to parent & click save
         // without this code there will not be an entry in the query table for the child object
         if ($createMissingChildrenRows) {
-
             if (!empty($this->treeIds)) {
                 $idsInTable = $this->db->fetchCol("SELECT " . $this->idField . " FROM " . $this->querytable . " WHERE " . $this->idField . " IN (" . implode(",", $this->treeIds) . ")");
 
@@ -357,17 +358,16 @@ class InheritanceHelper
      */
     protected function buildTree($currentParentId, $fields = "", $parentIdGroups = null)
     {
-
         if (!$parentIdGroups) {
             $object = Object::getById($currentParentId);
             $query = "SELECT b.o_id AS id $fields, b.o_type AS type, b.o_classId AS classId, b.o_parentId AS parentId, o_path, o_key FROM objects b LEFT JOIN " . $this->storetable . " a ON b.o_id = a." . $this->idField . " WHERE o_path LIKE ".\Pimcore\Db::get()->quote($object->getRealFullPath().'/%') . " GROUP BY b.o_id ORDER BY LENGTH(o_path) ASC";
 
-            if(self::$useRuntimeCache){
+            if (self::$useRuntimeCache) {
                 $queryCacheKey = 'tree_'.md5($query);
                 $parentIdGroups = self::$runtimeCache[$queryCacheKey];
             }
 
-            if(!$parentIdGroups){
+            if (!$parentIdGroups) {
                 $result = $this->db->fetchAll($query);
 
                 $objects = [];
@@ -382,7 +382,7 @@ class InheritanceHelper
 
                     $parentIdGroups[$r["parentId"]][] = $r;
                 }
-                if(self::$useRuntimeCache){
+                if (self::$useRuntimeCache) {
                     self::$runtimeCache[$queryCacheKey] = $parentIdGroups;
                 }
             }
