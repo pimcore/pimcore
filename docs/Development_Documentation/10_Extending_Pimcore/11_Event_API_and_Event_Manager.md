@@ -146,6 +146,7 @@ attach multiple events
 | `object.preUpdate`    | `Pimcore\Model\Object\AbstractObject`   | (bool) saveVersionOnly                             | saveVersionOnly is set if method saveVersion() was called instead of save()   |
 | `object.postCopy`     | `Pimcore\Model\Object\AbstractObject`   | `Pimcore\Model\Object\AbstractObject base_element` | base_element contains the base object used in copying process                 |
 
+*in preAdd and preUpdate can give object 'saveActionExtraJSONdata' member to append data to JSON response to browser.
 
 ### Asset
 
