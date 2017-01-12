@@ -430,6 +430,8 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
     {
         $this->writeLock->lock();
 
+        $this->logger->info(sprintf('Clearing the whole cache'));
+
         $result = $this->adapter->clear();
 
         // immediately acquire the write lock again (force), because the lock is in the cache too
@@ -605,7 +607,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
             if (count($this->saveQueue) > 0) {
                 $this->logger->warning(
                     sprintf(
-                        'Not writing save queue as there\'s an active write log. Save queue contains %d items',
+                        'Not writing save queue as there\'s an active write lock. Save queue contains %d items.',
                         count($this->saveQueue)
                     )
                 );
