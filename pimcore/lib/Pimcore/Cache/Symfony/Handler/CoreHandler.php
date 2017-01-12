@@ -176,7 +176,10 @@ class CoreHandler implements LoggerAwareInterface
         $item = $this->getItem($key);
 
         if ($item->isHit()) {
-            return $item->get();
+            $data = $item->get();
+            $data = unserialize($data);
+
+            return $data;
         }
 
         return false;
