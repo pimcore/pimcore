@@ -501,7 +501,10 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
             });
             $actions = array_values(array_map(
                 function (\ReflectionMethod $method) {
-	                return ["name" => preg_replace('/Action$/', '', $method->getName())];
+	                $name = preg_replace('/Action$/', '', $method->getName());
+	                $filter = new \Zend_Filter_Word_CamelCaseToDash();
+	                $name = $filter->filter($name);
+	                return ["name" => $name];
                 }, $methods
             ));
         }
