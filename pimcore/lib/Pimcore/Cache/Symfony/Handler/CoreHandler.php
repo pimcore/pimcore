@@ -138,6 +138,14 @@ class CoreHandler implements LoggerAwareInterface
     }
 
     /**
+     * @return \Psr\Log\LoggerInterface
+     */
+    public function getLogger()
+    {
+        return $this->logger;
+    }
+
+    /**
      * @param bool $enabled
      * @return $this
      */
@@ -162,6 +170,14 @@ class CoreHandler implements LoggerAwareInterface
     public function disable()
     {
         return $this->setEnabled(false);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEnabled()
+    {
+        return $this->enabled;
     }
 
     /**
@@ -623,6 +639,31 @@ class CoreHandler implements LoggerAwareInterface
         $this->tagsIgnoredOnClear = array_filter($this->tagsIgnoredOnClear, function($t) use ($tag) {
             return $t !== $tag;
         });
+
+        return $this;
+    }
+
+    /**
+     * Shut down pimcore - write cache entries and clean up
+     *
+     * @param bool $forceWrite
+     * @return $this
+     */
+    public function shutdown($forceWrite = false)
+    {
+        // clear tags scheduled for the shutdown
+        $this->clearTagsOnShutdown();
+
+        // write collected items to cache backend
+        if (php_sapi_name() !== 'cli' || $forceWrite) {
+            // makes only sense for HTTP(S)
+            // CLI are normally longer running scripts that tend to produce race conditions
+            // so CLI scripts are not writing to the cache at all
+            $this->writeSaveQueue();
+        }
+
+        // remove the write lock
+        $this->removeWriteLock();
 
         return $this;
     }

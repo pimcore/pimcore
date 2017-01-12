@@ -42,10 +42,20 @@ class Cache
     }
 
     /**
+     * Get the cache handler implementation
+     *
+     * @return CoreHandler
+     */
+    public static function getHandler()
+    {
+        return static::$handler;
+    }
+
+    /**
      * Returns the content of the requested cache entry
      *
      * @param string $key
-     * @param bool $doNotTestCacheValidity
+     * @param bool $doNotTestCacheValidity Not used anymore
      * @return mixed
      */
     public static function load($key, $doNotTestCacheValidity = false)
@@ -54,46 +64,13 @@ class Cache
     }
 
     /**
-     * Get the last modified time for the requested cache entry
+     * Save an item to the cache (deferred to shutdown if force is false and forceImmediateWrite is not set)
      *
-     * TODO what to do with this method?
-     *
-     * @param  string $key Cache key
-     * @return int|bool Last modified time of cache entry if it is available, false otherwise
-     */
-    public static function test($key)
-    {
-        // TODO
-        throw new \RuntimeException(__METHOD__ . ' is not implemented anymore');
-
-        if (!self::$enabled) {
-            Logger::debug("Key " . $key . " doesn't exist in cache (deactivated)");
-
-            return;
-        }
-
-        $lastModified = false;
-
-        if ($cache = self::getInstance()) {
-            $key = self::$cachePrefix . $key;
-            $data = $cache->test($key);
-
-            if ($data !== false) {
-                $lastModified = $data;
-            } else {
-                Logger::debug("Key " . $key . " doesn't exist in cache");
-            }
-        }
-
-        return $lastModified;
-    }
-
-    /**
-     * @param $data
-     * @param $key
+     * @param mixed $data
+     * @param string $key
      * @param array $tags
-     * @param null $lifetime
-     * @param int $priority
+     * @param int|\DateInterval|null $lifetime
+     * @param int $priority Not used anymore
      * @param bool $force
      * @return bool
      */
@@ -103,16 +80,8 @@ class Cache
     }
 
     /**
-     * Write the save queue to the cache
+     * Remove an item from the cache
      *
-     * @return bool
-     */
-    public static function write()
-    {
-        return static::$handler->writeSaveQueue();
-    }
-
-    /**
      * @param $key
      * @return bool
      */
@@ -157,22 +126,10 @@ class Cache
         return static::$handler->clearTags($tags);
     }
 
-
     /**
-     * Clears all tags stored in self::$_clearTagsOnShutdown, this function is executed in \Pimcore::shutdown()
-     * @static
-     * @return bool
-     */
-    public static function clearTagsOnShutdown()
-    {
-        return static::$handler->clearTagsOnShutdown();
-    }
-
-    /**
-     * Adds a tag to the shutdown queue, see clearTagsOnShutdown
-     * @static
-     * @param $tag
-     * @return void
+     * Adds a tag to the shutdown queue
+     *
+     * @param string $tag
      */
     public static function addClearTagOnShutdown($tag)
     {
@@ -180,9 +137,29 @@ class Cache
     }
 
     /**
-     * @static
-     * @param $tag
-     * @return void
+     * Add tag to the list ignored on save. Items with this tag won't be saved to cache.
+     *
+     * @param string $tag
+     */
+    public static function addIgnoredTagOnSave($tag)
+    {
+        static::$handler->addTagIgnoredOnSave($tag);
+    }
+
+    /**
+     * Remove tag from the list ignored on save
+     *
+     * @param string $tag
+     */
+    public static function removeIgnoredTagOnSave($tag)
+    {
+        static::$handler->removeTagIgnoredOnSave($tag);
+    }
+
+    /**
+     * Add tag to the list ignored on clear. Tags in this list won't be cleared via clearTags()
+     *
+     * @param string $tag
      */
     public static function addIgnoredTagOnClear($tag)
     {
@@ -190,9 +167,9 @@ class Cache
     }
 
     /**
-     * @static
-     * @param $tag
-     * @return void
+     * Remove tag from the list ignored on clear
+     *
+     * @param string $tag
      */
     public static function removeIgnoredTagOnClear($tag)
     {
@@ -200,21 +177,22 @@ class Cache
     }
 
     /**
-     * @static
-     * @param $tag
-     * @return void
+     * @deprecated Use addIgnoredTagOnSave() instead
+     * @param string $tag
      */
     public static function addClearedTag($tag)
     {
+        static::$handler->getLogger()->warning('addClearedTag is deprecated, please use addIngoredTagOnSave instead', [
+            'tag' => $tag
+        ]);
+
         // instead of messing with the internal cleared tags property, we expose a
         // dedicated property for tags which should be ignored on save
-        static::$handler->addTagIgnoredOnSave($tag);
+        static::addIgnoredTagOnSave($tag);
     }
 
     /**
      * Disables the complete pimcore cache
-     * @static
-     * @return void
      */
     public static function disable()
     {
@@ -222,12 +200,29 @@ class Cache
     }
 
     /**
-     * @static
-     * @return void
+     * Enables the pimcore cache
      */
     public static function enable()
     {
         static::$handler->enable();
+    }
+
+    /**
+     * @return bool
+     */
+    public static function isEnabled()
+    {
+        return static::$handler->isEnabled();
+    }
+
+    /**
+     * Write and clean up cache
+     *
+     * @param bool $forceWrite
+     */
+    public static function shutdown($forceWrite = false)
+    {
+        static::$handler->shutdown($forceWrite);
     }
 
     /**
