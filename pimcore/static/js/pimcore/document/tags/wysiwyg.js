@@ -52,7 +52,6 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
             inactiveContainerWidth = options.width;
         }
 
-        Ext.get(this.textarea).addClass("pimcore_wysiwyg_inactive");
         Ext.get(this.textarea).addClass("pimcore_wysiwyg");
         Ext.get(this.textarea).applyStyles("width: " + inactiveContainerWidth  + "; min-height: " + textareaHeight
                                                                                                 + "px;");
@@ -107,14 +106,6 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
             }
             
             this.ckeditor = CKEDITOR.inline(this.textarea, eConfig);
-
-            this.ckeditor.on('focus', function () {
-                Ext.get(this.textarea).removeClass("pimcore_wysiwyg_inactive");
-            }.bind(this));
-
-            this.ckeditor.on('blur', function () {
-                Ext.get(this.textarea).addClass("pimcore_wysiwyg_inactive");
-            }.bind(this));
 
             this.ckeditor.on('change', this.checkValue.bind(this));
 
