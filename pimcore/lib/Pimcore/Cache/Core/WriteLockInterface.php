@@ -1,5 +1,5 @@
 <?php
-namespace Pimcore\Cache\Symfony\Handler;
+namespace Pimcore\Cache\Core;
 
 interface WriteLockInterface
 {

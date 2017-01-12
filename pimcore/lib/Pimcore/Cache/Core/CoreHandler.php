@@ -1,7 +1,9 @@
 <?php
 
-namespace Pimcore\Cache\Symfony\Handler;
+namespace Pimcore\Cache\Core;
 
+use Pimcore\Cache\CacheItemFactoryInterface;
+use Pimcore\Cache\Core\WriteLockInterface;
 use Pimcore\Model\Document\Hardlink\Wrapper\WrapperInterface;
 use Pimcore\Model\Element\ElementInterface;
 use Psr\Cache\CacheItemInterface;
@@ -13,6 +15,11 @@ use Symfony\Component\Cache\Adapter\TagAwareAdapter;
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 use Symfony\Component\Cache\CacheItem;
 
+/**
+ * Core pimcore cache handler with logic handling deferred save on shutdown (specialized for internal pimcore use). This
+ * explicitely does not expose a PSR-6 API but is intended for internal use from Pimcore\Cache or directly. Actual
+ * cache calls are forwarded to a PSR-6/Symfony Cache implementation though.
+ */
 class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
 {
     use LoggerAwareTrait;

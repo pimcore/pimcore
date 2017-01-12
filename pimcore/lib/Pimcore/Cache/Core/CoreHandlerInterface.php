@@ -1,5 +1,5 @@
 <?php
-namespace Pimcore\Cache\Symfony\Handler;
+namespace Pimcore\Cache\Core;
 
 use Psr\Cache\CacheItemInterface;
 use Psr\Log\LoggerInterface;

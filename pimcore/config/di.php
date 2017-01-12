@@ -2,9 +2,9 @@
 
 use Interop\Container\ContainerInterface;
 use Monolog\Logger;
-use Pimcore\Cache\Symfony\Handler\CacheItemFactory;
-use Pimcore\Cache\Symfony\Handler\CoreHandler;
-use Pimcore\Cache\Symfony\Handler\WriteLock;
+use Pimcore\Cache\CacheItemFactory;
+use Pimcore\Cache\Core\CoreHandler;
+use Pimcore\Cache\Core\WriteLock;
 use Symfony\Component\Cache\Adapter\RedisAdapter;
 
 return [

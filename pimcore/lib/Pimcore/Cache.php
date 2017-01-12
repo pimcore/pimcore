@@ -14,7 +14,7 @@
 
 namespace Pimcore;
 
-use Pimcore\Cache\Symfony\Handler\CoreHandlerInterface;
+use Pimcore\Cache\Core\CoreHandlerInterface;
 
 /**
  * This acts as facade for the actual cache implementation and exists primarily for BC reasons.

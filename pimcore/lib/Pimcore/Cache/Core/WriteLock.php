@@ -1,7 +1,8 @@
 <?php
 
-namespace Pimcore\Cache\Symfony\Handler;
+namespace Pimcore\Cache\Core;
 
+use Pimcore\Cache\CacheItemFactoryInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Pimcore\Cache\Symfony\Handler;
+namespace Pimcore\Cache;
 
 use Psr\Cache\CacheItemInterface;
 use Symfony\Component\Cache\CacheItem;
