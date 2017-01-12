@@ -1103,10 +1103,19 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                 $object->save();
                 $treeData = $this->getTreeNodeConfig($object);
 
-                $this->_helper->json([
+				$json_data = [
                     "success" => true,
                     "general" => ["o_modificationDate" => $object->getModificationDate()],
-                    "treeData" => $treeData]);
+                    "treeData" => $treeData];
+				
+				
+                if(isset($object->saveActionExtraJSONdata) && is_array($object->saveActionExtraJSONdata)){
+                	$json_data = array_merge($json_data,$object->saveActionExtraJSONdata); 
+					unset($object->saveActionExtraJSONdata);
+                }                 
+				
+				
+                $this->_helper->json($json_data);
             } elseif ($this->getParam("task") == "session") {
 
                 //$object->_fulldump = true; // not working yet, donno why
