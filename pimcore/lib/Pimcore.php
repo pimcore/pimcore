@@ -840,6 +840,7 @@ class Pimcore
             $builder->ignorePhpDocErrors(true);
 
             $builder->addDefinitions(PIMCORE_PATH . "/config/di.php");
+            $builder->addDefinitions(PIMCORE_PATH . "/config/di/cache.php");
 
             $customFile = \Pimcore\Config::locateConfigFile("di.php");
             if (file_exists($customFile)) {
