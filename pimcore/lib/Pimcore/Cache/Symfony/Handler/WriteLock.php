@@ -43,7 +43,7 @@ class WriteLock implements WriteLockInterface, LoggerAwareInterface
      *
      * @var int|null
      */
-    protected $timestamp;
+    protected $timestamp = 0;
 
     /**
      * @param CacheItemPoolInterface $adapter
@@ -53,6 +53,23 @@ class WriteLock implements WriteLockInterface, LoggerAwareInterface
     {
         $this->adapter          = $adapter;
         $this->cacheItemFactory = $cacheItemFactory;
+
+        $this->initializeLock();
+    }
+
+    /**
+     * Initialize lock value once from storage
+     */
+    protected function initializeLock()
+    {
+        $item = $this->adapter->getItem($this->cacheKey);
+        if ($item->isHit()) {
+            $lock = $item->get();
+
+            if ($this->isLockValid($lock)) {
+                $this->timestamp = $lock;
+            }
+        }
     }
 
     /**
@@ -107,16 +124,25 @@ class WriteLock implements WriteLockInterface, LoggerAwareInterface
         if ($item->isHit()) {
             $lock = $item->get();
 
-            if ($lock > (time() - $this->lifetime)) {
+            if ($this->isLockValid($lock)) {
                 $this->timestamp = $lock;
                 return true;
             }
         }
 
-        // TODO is this needed?
+        // normalize timestamp
         $this->timestamp = 0;
 
         return false;
+    }
+
+    /**
+     * @param int $lockTime
+     * @return bool
+     */
+    protected function isLockValid($lockTime)
+    {
+        return $lockTime > (time() - $this->lifetime);
     }
 
     /**
@@ -136,7 +162,7 @@ class WriteLock implements WriteLockInterface, LoggerAwareInterface
                 $lock = $item->get();
 
                 // only remove the lock if it was created by this process
-                if ($lock < $this->timestamp) {
+                if ($lock <= $this->timestamp) {
                     $this->logger->debug(
                         sprintf('Removing write lock with timestamp %d', $lock),
                         ['timestamp' => $lock]
@@ -144,10 +170,16 @@ class WriteLock implements WriteLockInterface, LoggerAwareInterface
 
                     $this->adapter->deleteItem($this->cacheKey);
 
-                    // TODO null or 0?
-                    $this->timestamp = null;
+                    $this->timestamp = 0;
 
                     return true;
+                } else {
+                    $this->logger->debug(
+                        sprintf('Not removing write lock as timestamp does not belong to this process (timestamp: %d, lock: %d)', $this->timestamp, $lock),
+                        ['timestamp' => $this->timestamp, 'lock' => $lock]
+                    );
+
+                    return false;
                 }
             }
         }
