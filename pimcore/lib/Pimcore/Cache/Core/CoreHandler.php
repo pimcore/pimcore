@@ -325,6 +325,14 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
             // get tags for this element
             $tags = $data->getCacheTags($tags);
 
+            // normalize tags to array
+            if (!empty($tags) && !is_array($tags)) {
+                $tags = [$tags];
+            }
+
+            // array_values() because the tags from \Element_Interface and some others are associative eg. array("object_123" => "object_123")
+            $tags = array_values($tags);
+
             $this->logger->debug(
                 sprintf(
                     'Prepared %s %d for data cache with tags: %s',
@@ -338,14 +346,6 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
                 ]
             );
         }
-
-        // normalize tags to array
-        if (!empty($tags) && !is_array($tags)) {
-            $tags = [$tags];
-        }
-
-        // array_values() because the tags from \Element_Interface and some others are associative eg. array("object_123" => "object_123")
-        $tags = array_values($tags);
 
         // check if any of our tags is in cleared tags or tags ignored on save lists
         foreach ($tags as $tag) {
