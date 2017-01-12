@@ -16,6 +16,9 @@ namespace Pimcore;
 
 use Pimcore\Cache\Symfony\Handler\CoreHandler;
 
+/**
+ * This acts as facade for the actual cache implementation and exists primarily for BC reasons.
+ */
 class Cache
 {
     /**
@@ -191,6 +194,16 @@ class Cache
     }
 
     /**
+     * Write and clean up cache
+     *
+     * @param bool $forceWrite
+     */
+    public static function shutdown($forceWrite = false)
+    {
+        static::$handler->shutdown($forceWrite);
+    }
+
+    /**
      * Disables the complete pimcore cache
      */
     public static function disable()
@@ -212,16 +225,6 @@ class Cache
     public static function isEnabled()
     {
         return static::$handler->isEnabled();
-    }
-
-    /**
-     * Write and clean up cache
-     *
-     * @param bool $forceWrite
-     */
-    public static function shutdown($forceWrite = false)
-    {
-        static::$handler->shutdown($forceWrite);
     }
 
     /**

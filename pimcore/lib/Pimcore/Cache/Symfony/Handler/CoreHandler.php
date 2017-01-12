@@ -422,60 +422,6 @@ class CoreHandler implements LoggerAwareInterface
     }
 
     /**
-     * Writes save queue to the cache
-     *
-     * @return bool
-     */
-    public function writeSaveQueue()
-    {
-        $totalResult = true;
-
-        if ($this->hasWriteLock()) {
-            if (count($this->saveQueue) > 0) {
-                $this->logger->warning(
-                    sprintf(
-                        'Not writing save queue as there\'s an active write log. Save queue contains %d items',
-                        count($this->saveQueue)
-                    )
-                );
-            }
-
-            return false;
-        }
-
-        $processedKeys = [];
-        foreach ($this->saveQueue as $queueItem) {
-            $key = $queueItem->getCacheItem()->getKey();
-
-            // check if key was already processed and don't save it again
-            if (in_array($key, $processedKeys)) {
-                $this->logger->warning(
-                    sprintf('Not writing item as key %s was already processed', $key),
-                    ['key' => $key]
-                );
-
-                continue;
-            }
-
-
-            $result = $this->storeCacheItem($queueItem->getCacheItem(), $queueItem->getForce());
-
-            if (!$result) {
-                $this->logger->error(sprintf('Unable to write item %s to cache', $key));
-            }
-
-            $processedKeys[] = $key;
-
-            $totalResult = $totalResult && $result;
-        }
-
-        // reset
-        $this->saveQueue = [];
-
-        return $totalResult;
-    }
-
-    /**
      * Remove a cache item
      *
      * @param $key
@@ -657,6 +603,60 @@ class CoreHandler implements LoggerAwareInterface
         });
 
         return $this;
+    }
+
+    /**
+     * Writes save queue to the cache
+     *
+     * @return bool
+     */
+    public function writeSaveQueue()
+    {
+        $totalResult = true;
+
+        if ($this->hasWriteLock()) {
+            if (count($this->saveQueue) > 0) {
+                $this->logger->warning(
+                    sprintf(
+                        'Not writing save queue as there\'s an active write log. Save queue contains %d items',
+                        count($this->saveQueue)
+                    )
+                );
+            }
+
+            return false;
+        }
+
+        $processedKeys = [];
+        foreach ($this->saveQueue as $queueItem) {
+            $key = $queueItem->getCacheItem()->getKey();
+
+            // check if key was already processed and don't save it again
+            if (in_array($key, $processedKeys)) {
+                $this->logger->warning(
+                    sprintf('Not writing item as key %s was already processed', $key),
+                    ['key' => $key]
+                );
+
+                continue;
+            }
+
+
+            $result = $this->storeCacheItem($queueItem->getCacheItem(), $queueItem->getForce());
+
+            if (!$result) {
+                $this->logger->error(sprintf('Unable to write item %s to cache', $key));
+            }
+
+            $processedKeys[] = $key;
+
+            $totalResult = $totalResult && $result;
+        }
+
+        // reset
+        $this->saveQueue = [];
+
+        return $totalResult;
     }
 
     /**
