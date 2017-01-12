@@ -509,6 +509,7 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
 	                $name = preg_replace('/Action$/', '', $method->getName());
 	                $filter = new \Zend_Filter_Word_CamelCaseToDash();
 	                $name = $filter->filter($name);
+	                $name = strtolower($name);
 	                return ["name" => $name];
                 }, $methods
             ));
