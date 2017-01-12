@@ -24,8 +24,7 @@ class Cache
     public static $handler;
 
     /**
-     * Returns a instance of the cache, if the instance isn't available it creates a new one
-     *
+     * @deprecated
      * @return \Zend_Cache_Core|\Zend_Cache_Frontend
      */
     public static function getInstance()
@@ -226,6 +225,22 @@ class Cache
     }
 
     /**
+     * @param bool $forceImmediateWrite
+     */
+    public static function setForceImmediateWrite($forceImmediateWrite)
+    {
+        static::$handler->setForceImmediateWrite($forceImmediateWrite);
+    }
+
+    /**
+     * @return bool
+     */
+    public static function getForceImmediateWrite()
+    {
+        return static::$handler->getForceImmediateWrite();
+    }
+
+    /**
      * @param \Zend_Cache_Core|null $cache
      */
     public static function setZendFrameworkCaches($cache = null)
@@ -243,29 +258,6 @@ class Cache
         \Zend_Locale::setCache($zendCache);
         \Zend_Locale_Data::setCache($zendCache);
         \Zend_Db_Table_Abstract::setDefaultMetadataCache($zendCache);
-    }
-
-    /**
-     * @param boolean $forceImmediateWrite
-     */
-    public static function setForceImmediateWrite($forceImmediateWrite)
-    {
-        // TODO
-
-        return;
-
-        self::$forceImmediateWrite = $forceImmediateWrite;
-    }
-
-    /**
-     * @return boolean
-     */
-    public static function getForceImmediateWrite()
-    {
-        // TODO
-        return false;
-
-        return self::$forceImmediateWrite;
     }
 
     public static function maintenance()

@@ -181,6 +181,22 @@ class CoreHandler implements LoggerAwareInterface
     }
 
     /**
+     * @return bool
+     */
+    public function getForceImmediateWrite()
+    {
+        return $this->forceImmediateWrite;
+    }
+
+    /**
+     * @param bool $forceImmediateWrite
+     */
+    public function setForceImmediateWrite($forceImmediateWrite)
+    {
+        $this->forceImmediateWrite = (bool)$forceImmediateWrite;
+    }
+
+    /**
      * Load data from cache (retrieves data from cache item)
      *
      * @param $key
