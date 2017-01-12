@@ -75,7 +75,7 @@ pimcore.helpers.openClassEditor = function() {
         var toolbar = pimcore.globalmanager.get("layout_toolbar");
         toolbar.editClasses();
     }
-}
+};
 
 pimcore.helpers.openWelcomePage = function(keyCode, e) {
 
@@ -89,7 +89,7 @@ pimcore.helpers.openWelcomePage = function(keyCode, e) {
     catch (e) {
         pimcore.globalmanager.add("layout_portal_welcome", new pimcore.layout.portal());
     }
-}
+};
 
 pimcore.helpers.openAsset = function (id, type, options) {
 

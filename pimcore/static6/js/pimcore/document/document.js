@@ -210,9 +210,12 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
     },
 
     reload: function () {
-        window.setTimeout(function (id, type) {
-            pimcore.helpers.openDocument(id, type);
-        }.bind(window, this.id, this.getType()), 500);
+
+        this.tab.on("close", function() {
+            window.setTimeout(function (id, type) {
+                pimcore.helpers.openDocument(id, type);
+            }.bind(window, this.id, this.getType()), 500);
+        }.bind(this));
 
         pimcore.helpers.closeDocument(this.id);
     },

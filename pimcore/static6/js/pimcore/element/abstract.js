@@ -24,7 +24,6 @@ pimcore.element.abstract = Class.create({
      *
      * @private {boolean}
      */
-    // _allowDirtyClose: false,
     _allowDirtyClose: false,
 
     /**
@@ -65,7 +64,9 @@ pimcore.element.abstract = Class.create({
          * the user disabled it in the settings
          * or the element is not dirty at all
          */
-        if (!preventDirtyClose && (this.allowsDirtyClose() || !this.isDirty())) return true;
+        if (!preventDirtyClose && (this.allowsDirtyClose() || !this.isDirty() || this.confirmedDirtyClose())) {
+            return true;
+        }
 
         this._confirmDirtyClose();
         return false;
@@ -158,6 +159,8 @@ pimcore.element.abstract = Class.create({
             function (buttonValue) {
                 if (buttonValue === "yes") {
                     this._confirmedDirtyClose = true;
+
+                    this.tab.fireEventedAction("close", [this.tab, {}]);
                     var tabPanel = Ext.getCmp("pimcore_panel_tabs");
                     tabPanel.remove(this.tab);
                 }

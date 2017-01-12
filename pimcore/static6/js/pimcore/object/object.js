@@ -728,11 +728,15 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
     },
 
     reload: function (layoutId) {
-        var options = {};
-        options.layoutId = layoutId;
-        window.setTimeout(function (id) {
-            pimcore.helpers.openObject(id, "object", options);
-        }.bind(window, this.id), 500);
+
+        this.tab.on("close", function() {
+            var options = {};
+            options.layoutId = layoutId;
+            window.setTimeout(function (id) {
+                pimcore.helpers.openObject(id, "object", options);
+            }.bind(window, this.id), 500);
+        }.bind(this));
+
 
         pimcore.helpers.closeObject(this.id);
     },
