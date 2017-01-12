@@ -1,10 +1,11 @@
 <?php
 
 use Interop\Container\ContainerInterface;
-use Monolog\Logger;
 use Pimcore\Cache\CacheItemFactory;
 use Pimcore\Cache\Core\CoreHandler;
 use Pimcore\Cache\Core\WriteLock;
+use Pimcore\Logger;
+use Psr\Log\NullLogger;
 use Symfony\Component\Cache\Adapter\RedisAdapter;
 
 return [
@@ -20,24 +21,12 @@ return [
 
     \Pimcore\Image\Adapter::class => DI\factory([\Pimcore\Image::class, 'create']),
 
-    // CACHE
-
-    // hack - hijack the core logger and create a cache logger with the same handlers/processors
-    'pimcore.cache.logger' => function (ContainerInterface $container) {
-        $cacheLogger = null;
-        foreach (\Pimcore\Logger::getLogger() as $logger) {
-            if ($logger instanceof Logger && $logger->getName() === 'core') {
-                $cacheLogger = new Logger(
-                    'cache',
-                    $logger->getHandlers(),
-                    $logger->getProcessors()
-                );
-            }
-        }
-
-        // initialize a null logger to make sure cache has a logger to write
+    // define a distinct cache logger with the same handlers/processors as the core one
+    'pimcore.logger.cache' => function (ContainerInterface $container) {
+        $cacheLogger = Logger::createNamedPsrLogger('cache');
         if (null === $cacheLogger) {
-            $cacheLogger = new \Psr\Log\NullLogger();
+            // initialize a null logger to make sure cache has a logger to write
+            $cacheLogger = new NullLogger();
         }
 
         return $cacheLogger;
@@ -62,7 +51,7 @@ return [
             DI\get('pimcore.cache.config.core.namespace'),
             DI\get('pimcore.cache.config.core.defaultLifetime')
         )
-        ->method('setLogger', DI\get('pimcore.cache.logger')),
+        ->method('setLogger', DI\get('pimcore.logger.cache')),
 
     // alias for the standard core cache adapter
     'pimcore.cache.adapter.core' => DI\get('pimcore.cache.adapter.core.redis'),
@@ -74,7 +63,7 @@ return [
             DI\get('pimcore.cache.adapter.core'),
             DI\get('pimcore.cache.item_factory')
         )
-        ->method('setLogger', DI\get('pimcore.cache.logger')),
+        ->method('setLogger', DI\get('pimcore.logger.cache')),
 
     'pimcore.cache.handler.core' => DI\object(CoreHandler::class)
         ->constructor(
@@ -82,5 +71,5 @@ return [
             DI\get('pimcore.cache.write_lock'),
             DI\get('pimcore.cache.item_factory')
         )
-        ->method('setLogger', DI\get('pimcore.cache.logger')),
+        ->method('setLogger', DI\get('pimcore.logger.cache')),
 ];
