@@ -564,7 +564,7 @@ class CoreHandler implements LoggerAwareInterface
         // the reason is that eg. long running importers will clean the output-cache on every save/update, that's not necessary,
         // only cleaning the output-cache on shutdown should be enough
         foreach ($this->shutdownTags as $shutdownTag) {
-            if (in_array($shutdownTag, $shutdownTag)) {
+            if (in_array($shutdownTag, $tags)) {
                 $this->addTagClearedOnShutdown($shutdownTag);
                 $blacklist[] = $shutdownTag;
             }
