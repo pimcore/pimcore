@@ -625,14 +625,19 @@ $googleMapsApiKey = $this->config->services->google->browserapikey;
 <?php } ?>
 <?php } else { ?>
 <?php
-$scriptContents = "";
-foreach ($scripts as $scriptUrl) {
-    if(is_file(PIMCORE_PATH."/static6/js/".$scriptUrl)) {
-        $scriptContents .= file_get_contents(PIMCORE_PATH."/static6/js/".$scriptUrl) . "\n\n\n";
+$minimizedScriptPath = \Pimcore\Cache::load('minimized_script_path');
+if (!$minimizedScriptPath) {
+    $scriptContents = "";
+    foreach ($scripts as $scriptUrl) {
+        if (is_file(PIMCORE_PATH . "/static6/js/" . $scriptUrl)) {
+            $scriptContents .= file_get_contents(PIMCORE_PATH . "/static6/js/" . $scriptUrl) . "\n\n\n";
+        }
     }
+    $minimizedScriptPath = \Pimcore\Tool\Admin::getMinimizedScriptPath($scriptContents);
+    \Pimcore\Cache::save($minimizedScriptPath, 'minimized_script_path');
 }
 ?>
-    <script type="text/javascript" src="<?= \Pimcore\Tool\Admin::getMinimizedScriptPath($scriptContents) ?>"></script>
+    <script type="text/javascript" src="<?= $minimizedScriptPath ?>"></script>
 <?php } ?>
 
 
