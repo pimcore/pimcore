@@ -102,6 +102,10 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
             eConfig.entities_latin = false;
             eConfig.allowedContent = true; // disables CKEditor ACF (will remove pimcore_* attributes from links, etc.)
 
+            if(typeof(pimcore.document.tags.wysiwyg.defaultEditorConfig) == 'object'){
+                eConfig = mergeObject(pimcore.document.tags.wysiwyg.defaultEditorConfig,eConfig);
+            }
+            
             this.ckeditor = CKEDITOR.inline(this.textarea, eConfig);
 
             this.ckeditor.on('focus', function () {

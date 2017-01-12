@@ -79,6 +79,19 @@ There is also an additional way to specify the configuration by adding `customCo
 </section>
 ```
 
+##### Global Configuration
+You can add a Global Configuration for all WYSIWYG Editors for all documents by setting ```pimcore.document.tags.wysiwyg.defaultEditorConfig```
+
+For this purpose, you can create a plugin and add the configuration in the new created file `/plugins/MyPlugin/static/js/startup.js` like this:
+
+```
+pimcoreReady: function (params,broker){
+
+    pimcore.document.tags.wysiwyg.defaultEditorConfig.allowedContent = true;
+
+}
+```
+
 ### Text Output in Editmode
 
 With the following code you can get the text even in editmode:
