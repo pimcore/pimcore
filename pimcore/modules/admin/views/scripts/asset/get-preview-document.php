@@ -28,7 +28,7 @@ if (strpos($this->asset->getFilename(), ".pdf") !== false) {
 }
 
 if($pdfPath && $this->getParam("native-viewer")) {
-    header("Location: " . $pdfPath, true, 301);
+    header("Location: " . $pdfPath . "?_dc=" . time(), true, 301);
     exit;
 } else {
     // we use the Google Apps Document Viewer instead
