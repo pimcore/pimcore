@@ -338,7 +338,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
                     'Prepared %s %d for data cache with tags: %s',
                     get_class($data),
                     $data->getId(),
-                    implode(', ', $tags)
+                    implode(',', $tags)
                 ),
                 [
                     'id'   => $data->getId(),
@@ -470,7 +470,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
         $originalTags = $tags;
 
         $this->logger->info(
-            sprintf('Clearing cache tags: %s', implode(', ', $tags)),
+            sprintf('Clearing cache tags: %s', implode(',', $tags)),
             ['tags' => $tags]
         );
 
@@ -480,7 +480,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
         }
 
         $this->logger->warning(
-            sprintf('Could not clear tags as tag list is empty after normalization. List was: %s', implode(', ', $tags)),
+            sprintf('Could not clear tags as tag list is empty after normalization. List was: %s', implode(',', $tags)),
             ['tags' => $originalTags]
         );
 
@@ -499,7 +499,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
         }
 
         $this->logger->info(
-            sprintf('Clearing shutdown cache tags: %s', implode(', ', $this->tagsClearedOnShutdown)),
+            sprintf('Clearing shutdown cache tags: %s', implode(',', $this->tagsClearedOnShutdown)),
             ['tags' => $this->tagsClearedOnShutdown]
         );
 
