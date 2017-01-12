@@ -6,11 +6,11 @@ and template creation to document composing within Pimcore backend with areas, d
 
 By default web-to-print documents are disabled. To enable them, you need to activate them in the web-to-print settings:
 
-![Web2Print settings](../img/printdocuments_settings.png)
+![Web2Print settings](../../img/printdocuments_settings.png)
 
 Web to print flow implemented in Pimcore:
 
-![Web2Print Flow](../img/printdocuments_flow.png)
+![Web2Print Flow](../../img/printdocuments_flow.png)
 
 
 Once activated, print documents are integrated into the default documents tree. 
@@ -26,7 +26,7 @@ For more detail-information on the settings see later.
 PrintPages are the documents that contain the actual content - with all the areas, editables, images, and so on. 
 They are based on the normal Pimcore documents and to content editing should be quite self explaining.
 
-![PrintPages - add new](../img/printdocuments_printpages_menu.png)
+![PrintPages - add new](../../img/printdocuments_printpages_menu.png)
 
 ### PrintContainer
 
@@ -37,7 +37,7 @@ pricelists, books, etc.
 Of course, PrintContainers can be nested. So, one can use a root container, that contains several chapter containers 
 that then contain the actual print pages.
 
-![PrintContainer - tree](../img/printdocuments_printcontainers_tree.png)
+![PrintContainer - tree](../../img/printdocuments_printcontainers_tree.png)
 
 Even they don't have content for their own, PrintContainers are based on normal Pimcore documents. 
 Therefore they also need a controller and a view. They have to make sure, that all sub pages are included into one single output view. 
@@ -54,7 +54,7 @@ When rendering, the print are first rendererd to HTML and then rendered to an PD
 third party renderer. Currently we support [wkhtmltopdf](http://wkhtmltopdf.org/) and [pdfreactor](http://www.pdfreactor.com/). 
 Please see their documentation for details concerning template possibilities.
 
-![Web2Print - Container editmode](../img/printdocuments_editmode_preview.png)
+![Web2Print - Container editmode](../../img/printdocuments_editmode_preview.png)
 
 Depending on the renderer, there might be settings possible for the rendering process. 
 The provided settings might be extended in future. 

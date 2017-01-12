@@ -8,7 +8,7 @@ and template creation to document composing within Pimcore backend with areas, d
 ## Additional Settings
 Newsletter documents provide following additional settings compared to default documents:
 
-![Newsletter settings](../img/newsletter_settings.png)
+![Newsletter settings](../../img/newsletter_settings.png)
 
   - Subject: Subject of the newsletter.
   - From: From-Address of the newsletter. As fallback, Pimcore system settings are used. 
@@ -21,7 +21,7 @@ Newsletter documents provide following additional settings compared to default d
 
 ## Newsletter Sending
 The Newsletter Sending Panel provides the functionality for sending the newsletter. 
-![Newsletter sending panel](../img/newsletter_sending_panel.png)
+![Newsletter sending panel](../../img/newsletter_sending_panel.png)
 
 ### Address Source Adapter
 The Address Source Adapter is responsible for extracting the email addresses the newsletter should be sent to. It has to 
