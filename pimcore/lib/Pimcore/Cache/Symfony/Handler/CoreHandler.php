@@ -23,6 +23,11 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
     protected $adapter;
 
     /**
+     * @var WriteLockInterface
+     */
+    protected $writeLock;
+
+    /**
      * @var CacheItemFactoryInterface
      */
     protected $cacheItemFactory;
@@ -32,21 +37,6 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
      * @var bool
      */
     protected $enabled = true;
-
-    /**
-     * @var bool
-     */
-    protected $useWriteLock = true;
-
-    /**
-     * @var string
-     */
-    protected $writeLockKey = 'system_cache_write_lock';
-
-    /**
-     * @var int
-     */
-    protected $writeLockLifetime = 30;
 
     /**
      * Contains the items which should be written to the cache on shutdown
@@ -106,21 +96,15 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
     protected $maxWriteToCacheItems = 50;
 
     /**
-     * Contains the timestamp of the writeLockTime from the current process
-     * this is to recheck when removing the write lock (if the value is different -> higher) do not remove the lock
-     * because then another process has acquired a lock
-     *
-     * @var int
-     */
-    protected $writeLockTimestamp;
-
-    /**
      * @param AdapterInterface $adapter
+     * @param WriteLockInterface $writeLock
      * @param CacheItemFactoryInterface $cacheItemFactory
      */
-    public function __construct(AdapterInterface $adapter, CacheItemFactoryInterface $cacheItemFactory)
+    public function __construct(AdapterInterface $adapter, WriteLockInterface $writeLock, CacheItemFactoryInterface $cacheItemFactory)
     {
         $this->setAdapter($adapter);
+
+        $this->writeLock = $writeLock;
         $this->cacheItemFactory = $cacheItemFactory;
     }
 
@@ -272,7 +256,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
         }
 
         if ($force || $this->forceImmediateWrite) {
-            if ($this->hasWriteLock()) {
+            if ($this->writeLock->hasLock()) {
                 $this->logger->warning(
                     sprintf('Not saving %s to cache as there\'s an active write lock', $key),
                     ['key' => $key]
@@ -432,7 +416,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
      */
     public function remove($key)
     {
-        $this->setWriteLock();
+        $this->writeLock->lock();
 
         return $this->adapter->deleteItem($key);
     }
@@ -444,12 +428,12 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
      */
     public function clearAll()
     {
-        $this->setWriteLock();
+        $this->writeLock->lock();
 
         $result = $this->adapter->clear();
 
         // immediately acquire the write lock again (force), because the lock is in the cache too
-        $this->setWriteLock(true);
+        $this->writeLock->lock(true);
 
         // set state to cache cleared - prevents new items being written to cache
         $this->cacheCleared = true;
@@ -472,7 +456,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
      */
     public function clearTags(array $tags)
     {
-        $this->setWriteLock();
+        $this->writeLock->lock();
 
         $originalTags = $tags;
 
@@ -554,7 +538,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
      */
     public function addTagClearedOnShutdown($tag)
     {
-        $this->setWriteLock();
+        $this->writeLock->lock();
         $this->tagsClearedOnShutdown[] = $tag;
 
         return $this;
@@ -617,7 +601,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
     {
         $totalResult = true;
 
-        if ($this->hasWriteLock()) {
+        if ($this->writeLock->hasLock()) {
             if (count($this->saveQueue) > 0) {
                 $this->logger->warning(
                     sprintf(
@@ -682,98 +666,8 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
         }
 
         // remove the write lock
-        $this->removeWriteLock();
+        $this->writeLock->removeLock();
 
         return $this;
-    }
-
-    /**
-     * Set a write lock (prevents items being written to cache)
-     *
-     * @param bool $force
-     * @return bool
-     */
-    protected function setWriteLock($force = false)
-    {
-        if (!$this->useWriteLock) {
-            return true;
-        }
-
-        if (!$this->writeLockTimestamp || $force) {
-            $this->writeLockTimestamp = time();
-
-            $item = $this->cacheItemFactory->createCacheItem(
-                $this->writeLockKey,
-                $this->writeLockTimestamp,
-                [],
-                $this->writeLockLifetime
-            );
-
-            return $this->adapter->save($item);
-        }
-
-        return false;
-    }
-
-    /**
-     * Check if a write lock is active (prevents items being written to cache)
-     *
-     * @return bool
-     */
-    protected function hasWriteLock()
-    {
-        if (!$this->useWriteLock) {
-            return false;
-        }
-
-        if ($this->writeLockTimestamp && $this->writeLockTimestamp > 0) {
-            return true;
-        }
-
-        $item = $this->adapter->getItem($this->writeLockKey);
-        if ($item->isHit()) {
-            $lock = $item->get();
-
-            if ($lock > (time() - $this->writeLockLifetime)) {
-                $this->writeLockTimestamp = $lock;
-                return true;
-            }
-        }
-
-        // TODO is this needed?
-        $this->writeLockTimestamp = 0;
-
-        return false;
-    }
-
-    /**
-     * Remove write lock from instance and from cache
-     *
-     * @return bool
-     */
-    protected function removeWriteLock()
-    {
-        if (!$this->useWriteLock) {
-            return true;
-        }
-
-        if ($this->writeLockTimestamp) {
-            $item = $this->adapter->getItem($this->writeLockKey);
-            if ($item->isHit()) {
-                $lock = $item->get();
-
-                // only remove the lock if it was created by this process
-                if ($lock < $this->writeLockTimestamp) {
-                    $this->adapter->deleteItem($this->writeLockKey);
-
-                    // TODO null or 0?
-                    $this->writeLockTimestamp = null;
-
-                    return true;
-                }
-            }
-        }
-
-        return false;
     }
 }

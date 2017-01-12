@@ -4,6 +4,7 @@ use Interop\Container\ContainerInterface;
 use Monolog\Logger;
 use Pimcore\Cache\Symfony\Handler\CacheItemFactory;
 use Pimcore\Cache\Symfony\Handler\CoreHandler;
+use Pimcore\Cache\Symfony\Handler\WriteLock;
 use Symfony\Component\Cache\Adapter\RedisAdapter;
 
 return [
@@ -63,11 +64,21 @@ return [
         )
         ->method('setLogger', DI\get('pimcore.cache.logger')),
 
+    // alias for the standard core cache adapter
+    'pimcore.cache.adapter.core' => DI\get('pimcore.cache.adapter.core.redis'),
+
     'pimcore.cache.item_factory' => DI\object(CacheItemFactory::class),
+
+    'pimcore.cache.write_lock' => DI\object(WriteLock::class)
+        ->constructor(
+            DI\get('pimcore.cache.adapter.core'),
+            DI\get('pimcore.cache.item_factory')
+        ),
 
     'pimcore.cache.handler.core' => DI\object(CoreHandler::class)
         ->constructor(
-            DI\get('pimcore.cache.adapter.core.redis'),
+            DI\get('pimcore.cache.adapter.core'),
+            DI\get('pimcore.cache.write_lock'),
             DI\get('pimcore.cache.item_factory')
         )
         ->method('setLogger', DI\get('pimcore.cache.logger')),
