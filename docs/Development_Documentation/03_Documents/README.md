@@ -10,11 +10,11 @@ Pimcore offers different types of documents and each of them offers functionalit
 | Snippet        | Makes it easier to extract often used contents into reusable containers. Can be embedded in pages or nested into other snippets.                            |
 | Link           | A simple web-link to be used in navigations.                                                                                                                |
 | Email          | A document like the page, but with special functionalities for transactional emails.                                                                        |
-| Newsletter     | Like email, but offering additional newsletter functionalities.                                                                                             |
+| [Newsletter](./02_Document_Types/05_Newsletter_Documents.md)     | Like email, but offering additional newsletter functionalities.                                                                                             |
 | Hardlink       | Create links to other document structures and reuse them within a different structure / context. (see [Hard link](https://en.wikipedia.org/wiki/Hard_link)) |
 | Folder         | Just like the folders you know from your local filesystem.                                                                                                  | 
-| PrintPage      | Like pages, but specialized for print (PDF preview, rendering options, ...)                                                                                 | 
-| PrintContainer | Organizing print pages in chapters and render them all together.                                                                                            | 
+| [PrintPage](./02_Document_Types/15_Print_Documents.md)      | Like pages, but specialized for print (PDF preview, rendering options, ...)                                                                                 | 
+| [PrintContainer](./02_Document_Types/15_Print_Documents.md) | Organizing print pages in chapters and render them all together.                                                                                            | 
 
 
 ## Document Configuration
@@ -84,6 +84,6 @@ Working with documents is described in detail in our [Create a First Project](..
 - [Navigation](./03_Navigation.md)
 - [Inheritance](./11_Inheritance.md)
 - [Working with the PHP API](./09_Working_with_PHP_API.md) 
-- [Web-to-Print](./15_Print_Documents.md)
+- [Web-to-Print](./02_Document_Types/15_Print_Documents.md)
 - [Predefined Document Types](./07_Predefined_Document_Types.md)
 
