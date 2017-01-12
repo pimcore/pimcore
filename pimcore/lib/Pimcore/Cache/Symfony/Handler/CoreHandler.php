@@ -7,12 +7,13 @@ use Pimcore\Model\Element\ElementInterface;
 use Psr\Cache\CacheItemInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\Cache\Adapter\TagAwareAdapter;
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 use Symfony\Component\Cache\CacheItem;
 
-class CoreHandler implements LoggerAwareInterface
+class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
 {
     use LoggerAwareTrait;
 
@@ -138,7 +139,7 @@ class CoreHandler implements LoggerAwareInterface
     }
 
     /**
-     * @return \Psr\Log\LoggerInterface
+     * @return LoggerInterface
      */
     public function getLogger()
     {

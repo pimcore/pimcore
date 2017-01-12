@@ -14,7 +14,7 @@
 
 namespace Pimcore;
 
-use Pimcore\Cache\Symfony\Handler\CoreHandler;
+use Pimcore\Cache\Symfony\Handler\CoreHandlerInterface;
 
 /**
  * This acts as facade for the actual cache implementation and exists primarily for BC reasons.
@@ -22,7 +22,7 @@ use Pimcore\Cache\Symfony\Handler\CoreHandler;
 class Cache
 {
     /**
-     * @var CoreHandler
+     * @var CoreHandlerInterface
      */
     public static $handler;
 
@@ -37,7 +37,7 @@ class Cache
 
     public static function init()
     {
-        /** @var CoreHandler $handler */
+        /** @var CoreHandlerInterface $handler */
         $handler = \Pimcore::getDiContainer()->get('pimcore.cache.handler.core');
 
         static::$handler = $handler;
@@ -46,7 +46,7 @@ class Cache
     /**
      * Get the cache handler implementation
      *
-     * @return CoreHandler
+     * @return CoreHandlerInterface
      */
     public static function getHandler()
     {
