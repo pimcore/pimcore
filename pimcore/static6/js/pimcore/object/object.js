@@ -672,7 +672,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                                     Ext.apply(this.data.general,rdata.general);
 
                                     pimcore.helpers.updateObjectStyle(this.id, rdata.treeData);
-                                    pimcore.plugin.broker.fireEvent("postSaveObject", this);
+                                    pimcore.plugin.broker.fireEvent("postSaveObject", this, rdata);
                                 }
                                 else {
                                     pimcore.helpers.showPrettyError(rdata.type, t("error"), t("error_saving_object"),
