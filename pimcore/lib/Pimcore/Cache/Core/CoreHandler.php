@@ -548,7 +548,9 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
     public function addTagClearedOnShutdown($tag)
     {
         $this->writeLock->lock();
+
         $this->tagsClearedOnShutdown[] = $tag;
+        $this->tagsClearedOnShutdown = array_unique($this->tagsClearedOnShutdown);
 
         return $this;
     }
@@ -560,6 +562,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
     public function addTagIgnoredOnSave($tag)
     {
         $this->tagsIgnoredOnSave[] = $tag;
+        $this->tagsIgnoredOnSave = array_unique($this->tagsIgnoredOnSave);
 
         return $this;
     }
@@ -584,6 +587,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
     public function addTagIgnoredOnClear($tag)
     {
         $this->tagsIgnoredOnClear[] = $tag;
+        $this->tagsIgnoredOnClear = array_unique($this->tagsIgnoredOnClear);
 
         return $this;
     }
