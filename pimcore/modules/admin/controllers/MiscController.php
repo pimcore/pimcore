@@ -489,6 +489,7 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
         $controller = $this->getParam("controllerName");
         $controllerClass = str_replace("-", " ", $controller);
         $controllerClass = str_replace(" ", "", ucwords($controllerClass));
+        $reflectionClass = "{$controllerClass}Controller";
         $controllerClass = preg_replace_callback("/([_])([a-z])/i", function ($matches) {
             return "/" . strtoupper($matches[2]);
         }, $controllerClass);
@@ -496,12 +497,21 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
         $controllerDir = $this->getControllerDir();
         $controllerFile = $controllerDir . $controllerClass . "Controller.php";
         if (is_file($controllerFile)) {
-            preg_match_all("/function[ ]+([a-zA-Z0-9]+)Action/i", file_get_contents($controllerFile), $matches);
-            foreach ($matches[1] as $match) {
-                $dat = [];
-                $dat["name"] = strtolower(preg_replace("/[A-Z]/", "-\\0", $match));
-                $actions[] = $dat;
-            }
+            require_once $controllerFile;
+            $oReflectionClass = new \ReflectionClass($reflectionClass);
+            $methods = $oReflectionClass->getMethods(\ReflectionMethod::IS_PUBLIC);
+            $methods = array_filter(
+                $methods, function (\ReflectionMethod $method) {
+                return preg_match('/^([a-zA-Z0-9]+)Action$/', $method->getName());
+            });
+            $actions = array_values(array_map(
+                function (\ReflectionMethod $method) {
+	                $name = preg_replace('/Action$/', '', $method->getName());
+	                $filter = new \Zend_Filter_Word_CamelCaseToDash();
+	                $name = $filter->filter($name);
+	                return ["name" => $name];
+                }, $methods
+            ));
         }
 
         $this->_helper->json([
