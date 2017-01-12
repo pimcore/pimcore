@@ -399,9 +399,12 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
     },
 
     reload: function () {
-        window.setTimeout(function (id, type) {
-            pimcore.helpers.openAsset(id, type);
-        }.bind(window, this.id, this.getType()), 500);
+
+        this.tab.on("close", function() {
+            window.setTimeout(function (id, type) {
+                pimcore.helpers.openAsset(id, type);
+            }.bind(window, this.id, this.getType()), 500);
+        }.bind(this));
 
         pimcore.helpers.closeAsset(this.id);
     },
