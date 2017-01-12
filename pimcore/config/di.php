@@ -73,7 +73,8 @@ return [
         ->constructor(
             DI\get('pimcore.cache.adapter.core'),
             DI\get('pimcore.cache.item_factory')
-        ),
+        )
+        ->method('setLogger', DI\get('pimcore.cache.logger')),
 
     'pimcore.cache.handler.core' => DI\object(CoreHandler::class)
         ->constructor(

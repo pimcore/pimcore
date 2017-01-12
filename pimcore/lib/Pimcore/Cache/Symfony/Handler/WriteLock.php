@@ -3,9 +3,13 @@
 namespace Pimcore\Cache\Symfony\Handler;
 
 use Psr\Cache\CacheItemPoolInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 
-class WriteLock implements WriteLockInterface
+class WriteLock implements WriteLockInterface, LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     /**
      * @var bool
      */
@@ -65,6 +69,11 @@ class WriteLock implements WriteLockInterface
 
         if (!$this->timestamp || $force) {
             $this->timestamp = time();
+
+            $this->logger->debug(
+                sprintf('Setting write lock with timestamp %d', $this->timestamp),
+                ['timestamp' => $this->timestamp]
+            );
 
             $item = $this->cacheItemFactory->createCacheItem(
                 $this->cacheKey,
@@ -128,6 +137,11 @@ class WriteLock implements WriteLockInterface
 
                 // only remove the lock if it was created by this process
                 if ($lock < $this->timestamp) {
+                    $this->logger->debug(
+                        sprintf('Removing write lock with timestamp %d', $lock),
+                        ['timestamp' => $lock]
+                    );
+
                     $this->adapter->deleteItem($this->cacheKey);
 
                     // TODO null or 0?
