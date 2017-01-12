@@ -10,7 +10,6 @@ use Symfony\Component\Cache\Adapter\RedisAdapter;
 
 return [
     // config
-    'pimcore.cache.redis.dsn' => 'redis://localhost/6',
     'pimcore.cache.config.core.namespace'       => 'pimcore',
     'pimcore.cache.config.core.defaultLifetime' => 2419200, // 28 days
 
