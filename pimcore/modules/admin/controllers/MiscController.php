@@ -73,11 +73,16 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
 
         $allowedFileTypes = ["js", "css"];
         $scripts = explode(",", $this->getParam("scripts"));
-        $scriptPath = $this->getParam("scriptPath");
-        $scriptsContent = "";
 
+        if($this->getParam("scriptPath")) {
+            $scriptPath = PIMCORE_DOCUMENT_ROOT . $this->getParam("scriptPath");
+        } else {
+            $scriptPath = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/";
+        }
+
+        $scriptsContent = "";
         foreach ($scripts as $script) {
-            $filePath = PIMCORE_DOCUMENT_ROOT . $scriptPath . $script;
+            $filePath = $scriptPath . $script;
             if (is_file($filePath) && is_readable($filePath) && in_array(\Pimcore\File::getFileExtension($script), $allowedFileTypes)) {
                 $scriptsContent .= file_get_contents($filePath);
             }
