@@ -23,9 +23,9 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
     protected $adapter;
 
     /**
-     * @var \Closure[]
+     * @var CacheItemFactoryInterface
      */
-    protected $createClosures = [];
+    protected $cacheItemFactory;
 
     /**
      * Actually write/load to/from cache?
@@ -116,10 +116,12 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
 
     /**
      * @param AdapterInterface $adapter
+     * @param CacheItemFactoryInterface $cacheItemFactory
      */
-    public function __construct(AdapterInterface $adapter)
+    public function __construct(AdapterInterface $adapter, CacheItemFactoryInterface $cacheItemFactory)
     {
         $this->setAdapter($adapter);
+        $this->cacheItemFactory = $cacheItemFactory;
     }
 
     /**
@@ -229,7 +231,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
         if (!$this->enabled) {
             $this->logger->debug(sprintf('Key %s doesn\'t exist in cache (deactivated)', $key), ['key' => $key]);
 
-            return $this->createEmptyCacheItem($key);
+            return $this->cacheItemFactory->createEmptyCacheItem($key);
         }
 
         $item = $this->adapter->getItem($key);
@@ -381,7 +383,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
         // TODO symfony cache adapters serialize as well - find a way to avoid double serialization
         $itemData = serialize($data);
 
-        $item = $this->createCacheItem($key, $itemData, $tags, $lifetime);
+        $item = $this->cacheItemFactory->createCacheItem($key, $itemData, $tags, $lifetime);
 
         return $item;
     }
@@ -686,64 +688,6 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
     }
 
     /**
-     * @param string $key
-     * @return CacheItemInterface
-     */
-    protected function createEmptyCacheItem($key)
-    {
-        if (isset($this->createClosures['empty'])) {
-            $createClosure = $this->createClosures['empty'];
-        } else {
-            $createClosure = \Closure::bind(
-                function ($key) {
-                    $item = new CacheItem();
-                    $item->key = $key;
-
-                    return $item;
-                },
-                null,
-                CacheItem::class
-            );
-
-            $this->createClosures['empty'] = $createClosure;
-        }
-
-        return $createClosure($key);
-    }
-
-    /**
-     * @param string $key
-     * @param mixed $data
-     * @param string[] $tags
-     * @param int|\DateInterval|null $lifetime
-     * @return mixed
-     */
-    protected function createCacheItem($key, $data, array $tags = [], $lifetime = null)
-    {
-        if (isset($this->createClosures['create'])) {
-            $createClosure = $this->createClosures['create'];
-        } else {
-            $createClosure = \Closure::bind(
-                function () use ($key, $data, $tags, $lifetime) {
-                    $item = new CacheItem();
-                    $item->key = $key;
-                    $item->value = $data;
-                    $item->tag($tags);
-                    $item->expiresAfter($lifetime);
-
-                    return $item;
-                },
-                null,
-                CacheItem::class
-            );
-
-            $this->createClosures['create'] = $createClosure;
-        }
-
-        return $createClosure($key, $data, $tags, $lifetime);
-    }
-
-    /**
      * Set a write lock (prevents items being written to cache)
      *
      * @param bool $force
@@ -758,7 +702,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
         if (!$this->writeLockTimestamp || $force) {
             $this->writeLockTimestamp = time();
 
-            $item = $this->createCacheItem(
+            $item = $this->cacheItemFactory->createCacheItem(
                 $this->writeLockKey,
                 $this->writeLockTimestamp,
                 [],

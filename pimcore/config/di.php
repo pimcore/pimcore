@@ -2,6 +2,7 @@
 
 use Interop\Container\ContainerInterface;
 use Monolog\Logger;
+use Pimcore\Cache\Symfony\Handler\CacheItemFactory;
 use Pimcore\Cache\Symfony\Handler\CoreHandler;
 use Symfony\Component\Cache\Adapter\RedisAdapter;
 
@@ -62,9 +63,12 @@ return [
         )
         ->method('setLogger', DI\get('pimcore.cache.logger')),
 
+    'pimcore.cache.item_factory' => DI\object(CacheItemFactory::class),
+
     'pimcore.cache.handler.core' => DI\object(CoreHandler::class)
         ->constructor(
-            DI\get('pimcore.cache.adapter.core.redis')
+            DI\get('pimcore.cache.adapter.core.redis'),
+            DI\get('pimcore.cache.item_factory')
         )
         ->method('setLogger', DI\get('pimcore.cache.logger')),
 ];
