@@ -1,8 +1,8 @@
 # Print Documents
 
 Print documents are the way to create print-ready PDFs directly within Pimcore. 
-They are based on the normal pimcore documents and therefore support everything as pages do - starting from MVC pattern 
-and template creation to document composing within pimcore backend with areas, drag&drop etc. 
+They are based on the normal Pimcore documents and therefore support everything as pages do - starting from MVC pattern 
+and template creation to document composing within Pimcore backend with areas, drag&drop etc. 
 
 By default web-to-print documents are disabled. To enable them, you need to activate them in the web-to-print settings:
 
@@ -24,7 +24,7 @@ For more detail-information on the settings see later.
 ### PrintPage 
 
 PrintPages are the documents that contain the actual content - with all the areas, editables, images, and so on. 
-They are based on the normal pimcore documents and to content editing should be quite self explaining.
+They are based on the normal Pimcore documents and to content editing should be quite self explaining.
 
 ![PrintPages - add new](../img/printdocuments_printpages_menu.png)
 
@@ -39,10 +39,10 @@ that then contain the actual print pages.
 
 ![PrintContainer - tree](../img/printdocuments_printcontainers_tree.png)
 
-Even they don't have content for their own, PrintContainers are based on normal pimcore documents. 
+Even they don't have content for their own, PrintContainers are based on normal Pimcore documents. 
 Therefore they also need a controller and a view. They have to make sure, that all sub pages are included into one single output view. 
 Pimcore ships with default implementations (Web2PrintController, container-Action) on new installations. 
-If you updated an existing pimcore installation, please get the default implementations here: 
+If you updated an existing Pimcore installation, please get the default implementations here: 
 
 * Controller: `website_example/controllers/Web2printController.php`
 * View: `website_example/views/scripts/web2print`
