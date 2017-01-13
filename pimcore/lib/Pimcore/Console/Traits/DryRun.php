@@ -68,4 +68,20 @@ trait DryRun
             $message
         );
     }
+
+    /**
+     * Prefix message with dry run if in dry-run mode
+     *
+     * @param $message
+     * @param string $prefix
+     * @return string
+     */
+    protected function dryRunMessage($message, $prefix = 'DRY-RUN')
+    {
+        if ($this->isDryRun()) {
+            $message = $this->prefixDryRun($message, $prefix);
+        }
+
+        return $message;
+    }
 }
