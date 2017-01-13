@@ -13,6 +13,7 @@ use Pimcore\Cache\Core\CoreHandler;
 use Pimcore\Cache\Core\CoreHandlerInterface;
 use Pimcore\Cache\Core\WriteLock;
 use Pimcore\Cache\Core\WriteLockInterface;
+use Psr\Cache\CacheItemInterface;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Adapter\TagAwareAdapter;
@@ -156,6 +157,20 @@ class CacheTest extends TestCase
         $this->assertTrue($this->handler->isEnabled());
     }
 
+    public function testLoadReturnsFalseOnMiss()
+    {
+        $this->assertFalse($this->handler->load('not_existing'));
+    }
+
+    public function testGetItemIsCacheMiss()
+    {
+        /** @var CacheItemInterface $item */
+        $item = $this->handler->getItem('not_existing');
+
+        $this->assertInstanceOf(CacheItemInterface::class, $item);
+        $this->assertFalse($item->isHit());
+    }
+
     public function testDeferredWrite()
     {
         $this->handler->save('itemA', 'test');
@@ -165,6 +180,34 @@ class CacheTest extends TestCase
         $this->handler->writeSaveQueue();
 
         $this->assertTrue($this->cacheHasItem('itemA'));
+    }
+
+    public function testWriteQueueIsWrittenOnShutdown()
+    {
+        $this->handler->save('itemA', 'test');
+
+        $this->assertFalse($this->cacheHasItem('itemA'));
+
+        $this->handler->shutdown();
+
+        $this->assertTrue($this->cacheHasItem('itemA'));
+    }
+
+    public function testWriteQueueIsEmptyAfterSave()
+    {
+        $this->buildSampleEntries(false, false);
+
+        $this->assertCount(
+            count($this->sampleEntries),
+            $this->getHandlerPropertyValue('saveQueue')
+        );
+
+        $this->handler->writeSaveQueue();
+
+        $this->assertCount(
+            0,
+            $this->getHandlerPropertyValue('saveQueue')
+        );
     }
 
     public function testImmediateWrite()
@@ -180,6 +223,27 @@ class CacheTest extends TestCase
         $this->handler->save('itemA', 'test', [], null, true);
 
         $this->assertTrue($this->cacheHasItem('itemA'));
+    }
+
+    public function testWriteQueueDoesNotWriteMoreThanMaxItems()
+    {
+        $maxItems = $this->getHandlerPropertyValue('maxWriteToCacheItems');
+
+        for ($i = 1; $i <= $maxItems; $i++) {
+            $this->assertTrue($this->handler->save('item_' . $i, $i));
+
+            $this->assertCount(
+                $i,
+                $this->getHandlerPropertyValue('saveQueue')
+            );
+        }
+
+        $this->assertFalse($this->handler->save('additional_item', 'foo'));
+
+        $this->assertCount(
+            $maxItems,
+            $this->getHandlerPropertyValue('saveQueue')
+        );
     }
 
     public function testDisabledCache()
@@ -323,10 +387,6 @@ class CacheTest extends TestCase
 
         // output is shifted to shutdown tags (see next test)
         $this->assertEquals(['tag_a', 'tag_b'], $this->getHandlerPropertyValue('clearedTags'));
-
-        $this->handler->shutdown();
-
-        $this->assertEquals(['tag_a', 'tag_b', 'output'], $this->getHandlerPropertyValue('clearedTags'));
     }
 
     public function testClearedTagIsShiftedToShutdownList()
@@ -336,6 +396,38 @@ class CacheTest extends TestCase
         $this->handler->clearTags(['tag_a', 'tag_b', 'output']);
 
         $this->assertEquals(['output'], $this->getHandlerPropertyValue('tagsClearedOnShutdown'));
+
+        $this->handler->clearTagsOnShutdown();
+
+        $this->assertEquals(['tag_a', 'tag_b', 'output'], $this->getHandlerPropertyValue('clearedTags'));
+    }
+
+    protected function handleShutdownTagListProcessing($shutdown = false)
+    {
+        $this->assertEmpty($this->getHandlerPropertyValue('clearedTags'));
+        $this->assertEmpty($this->getHandlerPropertyValue('tagsClearedOnShutdown'));
+
+        $this->handler->addTagClearedOnShutdown('foo');
+        $this->assertEquals(['foo'], $this->getHandlerPropertyValue('tagsClearedOnShutdown'));
+
+        // call shutdown which in turn should call the clear tags method or call the method directly
+        if ($shutdown) {
+             $this->handler->shutdown();
+        } else {
+            $this->handler->clearTagsOnShutdown();
+        }
+
+        $this->assertEquals(['foo'], $this->getHandlerPropertyValue('clearedTags'));
+    }
+
+    public function testShutdownTagListIsProcessedOnMethodCall()
+    {
+        $this->handleShutdownTagListProcessing(false);
+    }
+
+    public function testShutdownTagListIsProcessedOnShutdown()
+    {
+        $this->handleShutdownTagListProcessing(true);
     }
 
     public function testWriteLockIsSetOnRemove()
@@ -381,5 +473,18 @@ class CacheTest extends TestCase
         $this->handler->addTagClearedOnShutdown('foo');
 
         $this->assertTrue($this->writeLock->hasLock());
+    }
+
+    public function testWriteLockIsRemovedOnShutdown()
+    {
+        $this->assertFalse($this->writeLock->hasLock());
+
+        $this->handler->clearAll();
+
+        $this->assertTrue($this->writeLock->hasLock());
+
+        $this->handler->shutdown();
+
+        $this->assertFalse($this->writeLock->hasLock());
     }
 }

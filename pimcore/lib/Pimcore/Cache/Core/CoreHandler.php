@@ -511,7 +511,13 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
 
         $tags = $this->normalizeClearTags($tags);
         if (count($tags) > 0) {
-            return $this->adapter->invalidateTags($tags);
+            $result = $this->adapter->invalidateTags($tags);
+
+            if ($result) {
+                $this->addClearedTags($tags);
+            }
+
+            return $result;
         }
 
         $this->logger->warning(
@@ -538,7 +544,14 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
             ['tags' => $this->tagsClearedOnShutdown]
         );
 
-        return $this->adapter->invalidateTags($this->tagsClearedOnShutdown);
+        $result = $this->adapter->invalidateTags($this->tagsClearedOnShutdown);
+
+        if ($result) {
+            $this->addClearedTags($this->tagsClearedOnShutdown);
+            $this->tagsClearedOnShutdown = [];
+        }
+
+        return $result;
     }
 
     /**
@@ -572,6 +585,27 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
         });
 
         return $tags;
+    }
+
+    /**
+     * Add tag to list of cleared tags (internal use only)
+     *
+     * @param string $tags
+     * @return $this
+     */
+    protected function addClearedTags($tags)
+    {
+        if (!is_array($tags)) {
+            $tags = [$tags];
+        }
+
+        foreach ($tags as $tag) {
+            $this->clearedTags[] = $tag;
+        }
+
+        $this->clearedTags = array_unique($this->clearedTags);
+
+        return $this;
     }
 
     /**
