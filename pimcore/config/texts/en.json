@@ -6255,9 +6255,9 @@
     {
         "term": "rendering_data",
         "definition": "Data passed to renderer"
+    },
+    {
+        "term": "force_resize",
+        "definition": "Force resize"
     }
-
-
-
-
 ]

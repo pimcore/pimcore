@@ -377,6 +377,11 @@ pimcore.settings.thumbnail.items = {
                 width: 210,
                 value: data.height
             },{
+                xtype: "checkbox",
+                name: "forceResize",
+                checked: data["forceResize"],
+                fieldLabel: t("force_resize")
+            },{
                 xtype: "hidden",
                 name: "type",
                 value: "scaleByHeight"
@@ -410,6 +415,11 @@ pimcore.settings.thumbnail.items = {
                 fieldLabel: t("width"),
                 width: 210,
                 value: data.width
+            },{
+                xtype: "checkbox",
+                name: "forceResize",
+                checked: data["forceResize"],
+                fieldLabel: t("force_resize")
             },{
                 xtype: "hidden",
                 name: "type",
@@ -459,6 +469,11 @@ pimcore.settings.thumbnail.items = {
                     width: 95,
                     value: data.height
                 }]
+            },{
+                xtype: "checkbox",
+                name: "forceResize",
+                checked: data["forceResize"],
+                fieldLabel: t("force_resize")
             },{
                 xtype: "hidden",
                 name: "type",
@@ -591,10 +606,10 @@ pimcore.settings.thumbnail.items = {
                 width: 250
             },{
                 xtype: "checkbox",
-                name: "doNotScaleUp",
-                checked: data["doNotScaleUp"],
-                fieldLabel: t("do_not_scale_up")
-            }, {
+                name: "forceResize",
+                checked: data["forceResize"],
+                fieldLabel: t("force_resize")
+            },{
                 xtype: "hidden",
                 name: "type",
                 value: "cover"
@@ -643,6 +658,11 @@ pimcore.settings.thumbnail.items = {
                     width: 95,
                     value: data.height
                 }]
+            },{
+                xtype: "checkbox",
+                name: "forceResize",
+                checked: data["forceResize"],
+                fieldLabel: t("force_resize")
             },{
                 xtype: "hidden",
                 name: "type",

@@ -190,11 +190,12 @@ class ImageMagick extends Adapter
      *
      * @param $width
      * @param $height
+     * @param bool $forceResize
      * @return ImageMagick
      */
-    public function frame($width, $height)
+    public function frame($width, $height, $forceResize = false)
     {
-        $this->contain($width, $height);
+        $this->contain($width, $height, $forceResize);
         $this->saveIfRequired('frame');
 
         $frameWidth = $width - $this->getWidth() == 0 ? 0 : ($width - $this->getWidth()) / 2;
