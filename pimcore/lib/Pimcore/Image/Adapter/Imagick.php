@@ -473,13 +473,14 @@ class Imagick extends Adapter
     /**
      * @param $width
      * @param $height
+     * @param  bool $forceResize
      * @return $this
      */
-    public function frame($width, $height)
+    public function frame($width, $height, $forceResize = false)
     {
         $this->preModify();
 
-        $this->contain($width, $height);
+        $this->contain($width, $height, $forceResize);
 
         $x = ($width - $this->getWidth()) / 2;
         $y = ($height - $this->getHeight()) / 2;

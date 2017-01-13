@@ -280,7 +280,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     {
         $container = $this->getDataFromObjectParam($object);
 
-        if(is_null($container)){
+        if (is_null($container)) {
             $container = new Object\Fieldcollection();
             $container->setFieldname($this->getName());
         }
@@ -294,7 +294,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
             ];
 
             $container->save($object, $params);
-        }else{
+        } else {
             throw new \Exception("Invalid value for field \"" . $this->getName()."\" provided. You have to pass a Object\\Fieldcollection or 'null'");
         }
     }
@@ -600,7 +600,6 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
      */
     public function preSetData($object, $data, $params = [])
     {
-
         if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
             $object->addO__loadedLazyField($this->getName());
         }

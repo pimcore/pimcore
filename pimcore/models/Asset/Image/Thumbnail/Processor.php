@@ -26,11 +26,11 @@ class Processor
 {
     protected static $argumentMapping = [
         "resize" => ["width", "height"],
-        "scaleByWidth" => ["width"],
-        "scaleByHeight" => ["height"],
-        "contain" => ["width", "height"],
-        "cover" => ["width", "height", "positioning", "doNotScaleUp"],
-        "frame" => ["width", "height"],
+        "scaleByWidth" => ["width", "forceResize"],
+        "scaleByHeight" => ["height", "forceResize"],
+        "contain" => ["width", "height", "forceResize"],
+        "cover" => ["width", "height", "positioning", "forceResize"],
+        "frame" => ["width", "height", "forceResize"],
         "trim" => ["tolerance"],
         "rotate" => ["angle"],
         "crop" => ["x", "y", "width", "height"],
