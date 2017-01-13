@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Pimcore
  *
@@ -45,11 +45,20 @@ class Table extends Model\Object\ClassDefinition\Data
      */
     public $cols;
 
+    /**
+     * @var bool
+     */
+    public $colsFixed;
 
     /**
      * @var integer
      */
     public $rows;
+
+    /**
+     * @var bool
+     */
+    public $rowsFixed;
 
     /**
      * Default data
@@ -108,7 +117,7 @@ class Table extends Model\Object\ClassDefinition\Data
 
     /**
      * @param integer $height
-     * @return void
+     * @return $this
      */
     public function setHeight($height)
     {
@@ -127,7 +136,7 @@ class Table extends Model\Object\ClassDefinition\Data
 
     /**
      * @param integer $cols
-     * @return void
+     * @return $this
      */
     public function setCols($cols)
     {
@@ -146,7 +155,7 @@ class Table extends Model\Object\ClassDefinition\Data
 
     /**
      * @param integer $rows
-     * @return void
+     * @return $this
      */
     public function setRows($rows)
     {
@@ -155,6 +164,45 @@ class Table extends Model\Object\ClassDefinition\Data
         return $this;
     }
 
+    /**
+     * @return bool
+     */
+    public function getRowsFixed()
+    {
+        return $this->rowsFixed;
+    }
+
+    /**
+     * @param bool $rowsFixed
+     *
+     *@return $this
+     */
+    public function setRowsFixed($rowsFixed)
+    {
+        $this->rowsFixed = (bool)$rowsFixed;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getColsFixed()
+    {
+        return $this->colsFixed;
+    }
+
+    /**
+     * @param bool $colsFixed
+     *
+     * @return $this
+     */
+    public function setColsFixed($colsFixed)
+    {
+        $this->colsFixed = (bool)$colsFixed;
+
+        return $this;
+    }
 
     /**
      * @return integer
@@ -166,7 +214,7 @@ class Table extends Model\Object\ClassDefinition\Data
 
     /**
      * @param integer $data
-     * @return void
+     * @return $this
      */
     public function setData($data)
     {
@@ -246,7 +294,7 @@ class Table extends Model\Object\ClassDefinition\Data
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
-        
+
         // check for empty data
         $checkData = "";
         if (is_array($data)) {
@@ -257,7 +305,7 @@ class Table extends Model\Object\ClassDefinition\Data
             }
         }
         $checkData = str_replace(" ", "", $checkData);
-        
+
         if (empty($checkData)) {
             return null;
         }
@@ -429,7 +477,9 @@ class Table extends Model\Object\ClassDefinition\Data
     public function synchronizeWithMasterDefinition(Object\ClassDefinition\Data $masterDefinition)
     {
         $this->cols = $masterDefinition->cols;
+        $this->colsFixed = $masterDefinition->cols_fixed;
         $this->rows = $masterDefinition->rows;
+        $this->rowsFixed = $masterDefinition->rows_fixed;
         $this->data = $masterDefinition->data;
     }
 }

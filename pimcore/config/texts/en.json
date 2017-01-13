@@ -3873,6 +3873,14 @@
         "definition": "Rows"
     },
     {
+        "term": "rows_fixed",
+        "definition": "Rows fixed"
+    },
+    {
+        "term": "cols_fixed",
+        "definition": "Cols fixed"
+    },
+    {
         "term": "cols",
         "definition": "Columns"
     },

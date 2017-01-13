@@ -77,10 +77,24 @@ pimcore.object.classes.data.table = Class.create(pimcore.object.classes.data.dat
                 disabled: this.isInCustomLayoutEditor()
             },
             {
+                xtype: "checkbox",
+                fieldLabel: t("rows_fixed"),
+                name: "rowsFixed",
+                checked: this.datax.rowsFixed,
+                disabled: this.isInCustomLayoutEditor()
+            },
+            {
                 xtype: "numberfield",
                 fieldLabel: t("cols"),
                 name: "cols",
                 value: this.datax.cols,
+                disabled: this.isInCustomLayoutEditor()
+            },
+            {
+                xtype: "checkbox",
+                fieldLabel: t("cols_fixed"),
+                name: "colsFixed",
+                checked: this.datax.colsFixed,
                 disabled: this.isInCustomLayoutEditor()
             },
             {
@@ -107,7 +121,9 @@ pimcore.object.classes.data.table = Class.create(pimcore.object.classes.data.dat
                     width: source.datax.width,
                     height: source.datax.height,
                     cols: source.datax.cols,
+                    colsFixed: source.datax.colsFixed,
                     rows: source.datax.rows,
+                    rowsFixed: source.datax.rowsFixed,
                     data: source.datax.data
                 });
         }

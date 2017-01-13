@@ -19,7 +19,7 @@ seven|eight|nine
 ![Table settings](../../../img/Objects_Table_settings.png)
 
 The input widget can be preconfigured with default data or a fixed amount of rows and columns. 
-The default amount of rows and columns, as well as the default data, can be changed later when the data is entered, this can not be prevented with predefined settings.
+The default amount of rows and columns, as well as the default data, can be changed later when the data is entered. It's possible to prevent adding/removing additional rows/columns by setting the "Rows fixed"/"Cols fixed" checkbox. If this is set to fixed the add and delete button for rows and columns will disappear.
 
 In order to set table data programmatically, an array needs to be passed to the setter as shown in the code snippet below:
 

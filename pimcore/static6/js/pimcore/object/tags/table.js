@@ -140,6 +140,39 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
 
         this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {});
 
+        var tbar = [];
+
+        if(!this.fieldConfig.colsFixed || columns.length < this.fieldConfig.cols) {
+            tbar.push({
+                iconCls: "pimcore_icon_table_col pimcore_icon_overlay_add",
+                handler: this.addColumn.bind(this)
+            });
+        }
+
+        if(!this.fieldConfig.colsFixed || columns.length > this.fieldConfig.cols) {
+            tbar.push({
+                iconCls: "pimcore_icon_table_col pimcore_icon_overlay_delete",
+                handler: this.deleteColumn.bind(this)
+            });
+        }
+
+        if(!this.fieldConfig.rowsFixed || data.length != this.fieldConfig.rows) {
+            tbar.push({
+                iconCls: "pimcore_icon_table_row pimcore_icon_overlay_delete",
+                handler: this.deleteRow.bind(this)
+            });
+
+            tbar.push({
+                iconCls: "pimcore_icon_table_row pimcore_icon_overlay_add",
+                handler: this.addRow.bind(this)
+            });
+        }
+
+        tbar.push({
+            iconCls: "pimcore_icon_empty",
+            handler: this.emptyStore.bind(this)
+        });
+
         this.grid = Ext.create('Ext.grid.Panel', {
             store: this.store,
             columns:columns,
@@ -152,28 +185,7 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
             plugins: [
                 this.cellEditing
             ],
-            tbar: [
-                {
-                    iconCls: "pimcore_icon_table_col pimcore_icon_overlay_add",
-                    handler: this.addColumn.bind(this)
-                },
-                {
-                    iconCls: "pimcore_icon_table_col pimcore_icon_overlay_delete",
-                    handler: this.deleteColumn.bind(this)
-                },
-                {
-                    iconCls: "pimcore_icon_table_row pimcore_icon_overlay_add",
-                    handler: this.addRow.bind(this)
-                },
-                {
-                    iconCls: "pimcore_icon_table_row pimcore_icon_overlay_delete",
-                    handler: this.deleteRow.bind(this)
-                },
-                {
-                    iconCls: "pimcore_icon_empty",
-                    handler: this.emptyStore.bind(this)
-                }
-            ],
+            tbar: tbar,
             viewConfig: {
                 forceFit: true
             }
@@ -288,7 +300,7 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
         if((this.component && !this.isRendered())) {
             return false;
         }
-        
+
         return this.dirty;
     }
 
