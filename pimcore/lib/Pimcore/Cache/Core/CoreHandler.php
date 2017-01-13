@@ -302,7 +302,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
     {
         // do not cache hardlink-wrappers
         if ($data instanceof WrapperInterface) {
-            $this->logger->debug(
+            $this->logger->warning(
                 sprintf('Not saving %s to cache as it is a hardlink wrapper', $key),
                 ['key' => $key]
             );
@@ -469,7 +469,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
 
         $originalTags = $tags;
 
-        $this->logger->info(
+        $this->logger->debug(
             sprintf('Clearing cache tags: %s', implode(',', $tags)),
             ['tags' => $tags]
         );
@@ -498,7 +498,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
             return true;
         }
 
-        $this->logger->info(
+        $this->logger->debug(
             sprintf('Clearing shutdown cache tags: %s', implode(',', $this->tagsClearedOnShutdown)),
             ['tags' => $this->tagsClearedOnShutdown]
         );
@@ -616,7 +616,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
 
         if ($this->writeLock->hasLock()) {
             if (count($this->saveQueue) > 0) {
-                $this->logger->warning(
+                $this->logger->debug(
                     sprintf(
                         'Not writing save queue as there\'s an active write lock. Save queue contains %d items.',
                         count($this->saveQueue)
