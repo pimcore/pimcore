@@ -35,10 +35,22 @@ interface CoreHandlerInterface
     /**
      * @return bool
      */
+    public function getHandleCli();
+
+    /**
+     * @param bool $handleCli
+     * @return $this
+     */
+    public function setHandleCli($handleCli);
+
+    /**
+     * @return bool
+     */
     public function getForceImmediateWrite();
 
     /**
      * @param bool $forceImmediateWrite
+     * @return $this
      */
     public function setForceImmediateWrite($forceImmediateWrite);
 

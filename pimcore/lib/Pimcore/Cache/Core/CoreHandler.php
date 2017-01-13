@@ -46,6 +46,12 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
     protected $enabled = true;
 
     /**
+     * Is the cache handled in CLI mode?
+     * @var bool
+     */
+    protected $handleCli = false;
+
+    /**
      * Contains the items which should be written to the cache on shutdown
      * @var CacheQueueItem[]
      */
@@ -177,6 +183,25 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
     /**
      * @return bool
      */
+    public function getHandleCli()
+    {
+        return $this->handleCli;
+    }
+
+    /**
+     * @param bool $handleCli
+     * @return $this
+     */
+    public function setHandleCli($handleCli)
+    {
+        $this->handleCli = (bool)$handleCli;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
     public function getForceImmediateWrite()
     {
         return $this->forceImmediateWrite;
@@ -184,10 +209,13 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
 
     /**
      * @param bool $forceImmediateWrite
+     * @return $this
      */
     public function setForceImmediateWrite($forceImmediateWrite)
     {
         $this->forceImmediateWrite = (bool)$forceImmediateWrite;
+
+        return $this;
     }
 
     /**
@@ -247,13 +275,15 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
      */
     public function save($key, $data, array $tags = [], $lifetime = null, $force = false)
     {
-        if (php_sapi_name() === 'cli' && !$force) {
-            $this->logger->debug(
-                sprintf('Not saving %s to cache as process is running in CLI mode (pass force to override)', $key),
-                ['key' => $key]
-            );
+        if ($this->isCli()) {
+            if (!$this->handleCli && !$force) {
+                $this->logger->debug(
+                    sprintf('Not saving %s to cache as process is running in CLI mode (pass force to override or set handleCli to true)', $key),
+                    ['key' => $key]
+                );
 
-            return false;
+                return false;
+            }
         }
 
         $item = $this->prepareCacheItem($key, $data, $tags, $lifetime);
@@ -670,11 +700,26 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
         // clear tags scheduled for the shutdown
         $this->clearTagsOnShutdown();
 
+        $doWrite = true;
+
+        // writes make only sense for HTTP(S)
+        // CLI are normally longer running scripts that tend to produce race conditions
+        // so CLI scripts are not writing to the cache at all
+        if ($this->isCli()) {
+            if (!($this->handleCli || $forceWrite)) {
+                $doWrite = false;
+
+                $this->logger->debug(
+                    sprintf(
+                        'Not writing save queue to cache as process is running in CLI mode. Save queue contains %d items.',
+                        count($this->saveQueue)
+                    )
+                );
+            }
+        }
+
         // write collected items to cache backend
-        if (php_sapi_name() !== 'cli' || $forceWrite) {
-            // makes only sense for HTTP(S)
-            // CLI are normally longer running scripts that tend to produce race conditions
-            // so CLI scripts are not writing to the cache at all
+        if ($doWrite) {
             $this->writeSaveQueue();
         }
 
@@ -682,5 +727,13 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
         $this->writeLock->removeLock();
 
         return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isCli()
+    {
+        return php_sapi_name() === 'cli';
     }
 }
