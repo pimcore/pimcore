@@ -74,7 +74,7 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
         $allowedFileTypes = ["js", "css"];
         $scripts = explode(",", $this->getParam("scripts"));
 
-        if($this->getParam("scriptPath")) {
+        if ($this->getParam("scriptPath")) {
             $scriptPath = PIMCORE_DOCUMENT_ROOT . $this->getParam("scriptPath");
         } else {
             $scriptPath = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/";
@@ -502,15 +502,16 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
             $methods = $oReflectionClass->getMethods(\ReflectionMethod::IS_PUBLIC);
             $methods = array_filter(
                 $methods, function (\ReflectionMethod $method) {
-                return preg_match('/^([a-zA-Z0-9]+)Action$/', $method->getName());
-            });
+                    return preg_match('/^([a-zA-Z0-9]+)Action$/', $method->getName());
+                });
             $actions = array_values(array_map(
                 function (\ReflectionMethod $method) {
-	                $name = preg_replace('/Action$/', '', $method->getName());
-	                $filter = new \Zend_Filter_Word_CamelCaseToDash();
-	                $name = $filter->filter($name);
-	                $name = strtolower($name);
-	                return ["name" => $name];
+                    $name = preg_replace('/Action$/', '', $method->getName());
+                    $filter = new \Zend_Filter_Word_CamelCaseToDash();
+                    $name = $filter->filter($name);
+                    $name = strtolower($name);
+
+                    return ["name" => $name];
                 }, $methods
             ));
         }
