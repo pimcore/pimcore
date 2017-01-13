@@ -70,7 +70,8 @@ class MultiSelect extends \OnlineShop\Framework\FilterService\FilterType\MultiSe
             "label" => $filterDefinition->getLabel(),
             "currentValue" => $currentFilter[$field],
             "values" => $values,
-            "fieldname" => $field
+            "fieldname" => $field,
+            "resultCount" => $productList->count()
         ));
     }
 

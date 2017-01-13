@@ -58,7 +58,8 @@ class MultiSelectCategory extends AbstractFilterType {
             "currentValue" => $currentFilter[$filterDefinition->getField()],
             "values" => array_values($values),
             "fieldname" => $filterDefinition->getField(),
-            "metaData" => $filterDefinition->getMetaData()
+            "metaData" => $filterDefinition->getMetaData(),
+            "resultCount" => $productList->count()
         ));
     }
 

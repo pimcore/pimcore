@@ -55,7 +55,8 @@ class SelectRelation extends \OnlineShop\Framework\FilterService\FilterType\Sele
             "currentValue" => $currentFilter[$field],
             "values" => $values,
             "objects" => $objects,
-            "fieldname" => $field
+            "fieldname" => $field,
+            "resultCount" => $productList->count()
         ));
     }
 

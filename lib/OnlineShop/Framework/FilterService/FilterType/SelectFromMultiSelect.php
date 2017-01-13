@@ -52,7 +52,8 @@ class SelectFromMultiSelect extends AbstractFilterType {
             "currentValue" => $currentFilter[$field],
             "values" => array_values($values),
             "fieldname" => $field,
-            "metaData" => $filterDefinition->getMetaData()
+            "metaData" => $filterDefinition->getMetaData(),
+            "resultCount" => $productList->count()
         ));
     }
 

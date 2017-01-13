@@ -34,7 +34,8 @@ class MultiSelect extends AbstractFilterType {
             "currentValue" => $currentFilter[$field],
             "values" => $productList->getGroupByValues($field, true, !$filterDefinition->getUseAndCondition()),
             "fieldname" => $field,
-            "metaData" => $filterDefinition->getMetaData()
+            "metaData" => $filterDefinition->getMetaData(),
+            "resultCount" => $productList->count()
         ));
     }
 

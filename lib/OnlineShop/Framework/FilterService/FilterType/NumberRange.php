@@ -33,7 +33,8 @@ class NumberRange extends AbstractFilterType {
                                                   "values" => $productList->getGroupByValues($this->getField($filterDefinition), true),
                                                   "definition" => $filterDefinition,
                                                   "fieldname" => $this->getField($filterDefinition),
-                                                  "metaData" => $filterDefinition->getMetaData()
+                                                  "metaData" => $filterDefinition->getMetaData(),
+                                                  "resultCount" => $productList->count()
                                              ));
     }
 

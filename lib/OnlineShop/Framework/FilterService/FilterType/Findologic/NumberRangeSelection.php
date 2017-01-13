@@ -76,7 +76,8 @@ class NumberRangeSelection extends \OnlineShop\Framework\FilterService\FilterTyp
             "unit" => $filterDefinition->getUnit(),
             "values" => $values,
             "definition" => $filterDefinition,
-            "fieldname" => $filterDefinition->getField()
+            "fieldname" => $filterDefinition->getField(),
+            "resultCount" => $productList->count()
         ));
     }
 

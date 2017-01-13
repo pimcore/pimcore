@@ -59,7 +59,8 @@ class SelectCategory extends AbstractFilterType {
             "fieldname" => $filterDefinition->getField(),
             "metaData" => $filterDefinition->getMetaData(),
             "rootCategory" => $filterDefinition->getRootCategory(),
-            "document" => $this->view->document
+            "document" => $this->view->document,
+            "resultCount" => $productList->count()
         ));
     }
 

@@ -110,6 +110,7 @@ class SelectCategory extends \OnlineShop\Framework\FilterService\FilterType\Sele
             , 'values' => array_values($values)
             , 'fieldname' => $filterDefinition->getField()
             , 'metaData' => $filterDefinition->getMetaData()
+            , "resultCount" => $productList->count()
         ]);
     }
 }

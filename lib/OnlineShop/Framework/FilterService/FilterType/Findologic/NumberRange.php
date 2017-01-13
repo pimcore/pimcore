@@ -44,7 +44,8 @@ class NumberRange extends \OnlineShop\Framework\FilterService\FilterType\NumberR
             "currentValue" => $currentFilter[$this->getField($filterDefinition)],
             "values" => $values,
             "definition" => $filterDefinition,
-            "fieldname" => $this->getField($filterDefinition)
+            "fieldname" => $this->getField($filterDefinition),
+            "resultCount" => $productList->count()
         ));
     }
 

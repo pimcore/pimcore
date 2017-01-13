@@ -83,7 +83,8 @@ class MultiSelectRelation extends \OnlineShop\Framework\FilterService\FilterType
             "currentValue" => $currentFilter[$field],
             "values" => $values,
             "objects" => $objects,
-            "fieldname" => $field
+            "fieldname" => $field,
+            "resultCount" => $productList->count()
         ));
     }
 

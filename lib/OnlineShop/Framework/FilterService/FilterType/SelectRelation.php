@@ -52,7 +52,8 @@ class SelectRelation extends AbstractFilterType {
             "values" => $values,
             "objects" => $objects,
             "fieldname" => $field,
-            "metaData" => $filterDefinition->getMetaData()
+            "metaData" => $filterDefinition->getMetaData(),
+            "resultCount" => $productList->count()
         ));
     }
 
