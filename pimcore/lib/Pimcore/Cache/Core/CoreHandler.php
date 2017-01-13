@@ -275,6 +275,11 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
      */
     public function save($key, $data, array $tags = [], $lifetime = null, $force = false)
     {
+        if (!$this->enabled) {
+            $this->logger->debug(sprintf('Not saving object %s to cache (deactivated)', $key), ['key' => $key]);
+            return false;
+        }
+
         if ($this->isCli()) {
             if (!$this->handleCli && !$force) {
                 $this->logger->debug(
