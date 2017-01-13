@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit backupGlobals="false"
+         backupStaticAttributes="false"
+         colors="true"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         bootstrap="pimcore/cli/startup.php"
+>
+    <!--
+    this currently only runs the simple test suite in Pimcore which runs basic unit tests without a dependency on a DB
+    see tests/alltests.sh on how to run all tests
+    -->
+    <testsuites>
+        <testsuite name="PimcoreSuite">
+            <directory>./tests/TestSuite/Pimcore</directory>
+        </testsuite>
+    </testsuites>
+
+    <filter>
+        <whitelist>
+            <directory suffix=".php">src</directory>
+        </whitelist>
+    </filter>
+</phpunit>
