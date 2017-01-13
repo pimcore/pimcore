@@ -153,7 +153,23 @@ class Config extends Model\AbstractModel
     public static function getAdapter($configuration, $fullConfig = null)
     {
         $type = $configuration->type ? ucfirst($configuration->type) : 'Sql';
-        $adapter = "\\Pimcore\\Model\\Tool\\CustomReport\\Adapter\\{$type}";
+        if ($type === 'Custom') {
+            if (@\class_exists($configuration->className, true)) { // can need autoloader, can send warning and break json response so we use @
+                $adapter = $configuration->className;
+                $adpaterInstance = new $adapter($configuration, $fullConfig);
+                // we make some check for security reason (because className can be choosen at the GUI level)
+                if (get_parent_class($adpaterInstance) !== 'Pimcore\\Model\\Tool\\CustomReport\\Adapter\\AbstractAdapter') {
+                    throw new \Exception("Class" . $configuration->className ." doesn't extend AbstractAdapter");
+                }
+                if ((!method_exists($adpaterInstance, 'getData')) || (!method_exists($adpaterInstance, 'getColumns')) || (!method_exists($adpaterInstance, 'getAvailableOptions'))) {
+                    throw new \Exception("Class" . $configuration->className ." must implement methods getData, getColumns and getAvailableOptions");
+                }
+            } else {
+                throw new \Exception("Class" . $configuration->className ." doesn't exist");
+            }
+        } else {
+            $adapter = "\\Pimcore\\Model\\Tool\\CustomReport\\Adapter\\{$type}";
+        }
 
         return new $adapter($configuration, $fullConfig);
     }

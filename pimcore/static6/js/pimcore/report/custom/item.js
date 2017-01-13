@@ -591,6 +591,12 @@ pimcore.report.custom.item = Class.create({
                 handler: this.addSourceDefinition.bind(this, {type: 'analytics'}),
                 iconCls: "pimcore_icon_objectbricks"
             });
+            
+            classMenu.push({
+                text: t("custom_report_adapter_custom"),
+                handler: this.addSourceDefinition.bind(this, {type: 'custom'}),
+                iconCls: "pimcore_icon_objectbricks"
+            });
         }
 
         var items = [];
