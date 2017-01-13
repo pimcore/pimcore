@@ -14,8 +14,6 @@
 
 namespace Pimcore\Model\Tool\CustomReport\Adapter;
 
-use Pimcore\Model;
-
 class Analytics extends AbstractAdapter
 {
 

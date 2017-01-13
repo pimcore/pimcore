@@ -580,17 +580,29 @@ pimcore.report.custom.item = Class.create({
         var classMenu = [];
 
         if (this.currentElementCount < 1) {
-            classMenu.push({
-                text: t("custom_report_adapter_sql"),
-                handler: this.addSourceDefinition.bind(this, {type: 'sql'}),
-                iconCls: "pimcore_icon_objectbricks"
-            });
 
-            classMenu.push({
-                text: t("custom_report_adapter_analytics"),
-                handler: this.addSourceDefinition.bind(this, {type: 'analytics'}),
-                iconCls: "pimcore_icon_objectbricks"
-            });
+            var definitionNames = Object.keys(pimcore.report.custom.definition);
+            for(var i = 0; i < definitionNames.length; i++) {
+                classMenu.push(
+                    {
+                        text: t("custom_report_adapter_" + definitionNames[i]),
+                        handler: this.addSourceDefinition.bind(this, {type: definitionNames[i]}),
+                        iconCls: "pimcore_icon_objectbricks"
+                    }
+                );
+            }
+
+            // classMenu.push({
+            //     text: t("custom_report_adapter_sql"),
+            //     handler: this.addSourceDefinition.bind(this, {type: 'sql'}),
+            //     iconCls: "pimcore_icon_objectbricks"
+            // });
+            //
+            // classMenu.push({
+            //     text: t("custom_report_adapter_analytics"),
+            //     handler: this.addSourceDefinition.bind(this, {type: 'analytics'}),
+            //     iconCls: "pimcore_icon_objectbricks"
+            // });
         }
 
         var items = [];

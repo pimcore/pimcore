@@ -16,8 +16,6 @@
 
 namespace Pimcore\Model\Tool\CustomReport\Adapter;
 
-use Pimcore\Model;
-
 abstract class AbstractAdapter
 {
 
