@@ -154,16 +154,21 @@ class CacheTest extends TestCase
 
     /**
      * @param string $property
+     * @param CoreHandlerInterface $handler
      * @return mixed
      */
-    protected function getHandlerPropertyValue($property)
+    protected function getHandlerPropertyValue($property, CoreHandlerInterface $handler = null)
     {
-        $reflector = new \ReflectionClass($this->handler);
+        if (null === $handler) {
+            $handler = $this->handler;
+        }
+
+        $reflector = new \ReflectionClass($handler);
 
         $property = $reflector->getProperty($property);
         $property->setAccessible(true);
 
-        return $property->getValue($this->handler);
+        return $property->getValue($handler);
     }
 
     /**
@@ -177,6 +182,12 @@ class CacheTest extends TestCase
         return $item->isHit();
     }
 
+    /**
+     * Add sample entries to cache
+     *
+     * @param bool $write
+     * @param bool $assertExisting
+     */
     protected function buildSampleEntries($write = true, $assertExisting = true)
     {
         foreach ($this->sampleEntries as $key => $tags) {
@@ -194,6 +205,17 @@ class CacheTest extends TestCase
         }
     }
 
+    public function testAdapterIsWrappedInCacheAdapter()
+    {
+        $adapter = new ArrayAdapter();
+        $handler = new CoreHandler($adapter, $this->writeLock, $this->itemFactory);
+
+        $this->assertInstanceOf(
+            TagAwareAdapterInterface::class,
+            $this->getHandlerPropertyValue('adapter', $handler)
+        );
+    }
+
     public function testCacheIsEnabledByDefault()
     {
         $this->assertTrue($this->handler->isEnabled());
@@ -202,6 +224,24 @@ class CacheTest extends TestCase
     public function testLoadReturnsFalseOnMiss()
     {
         $this->assertFalse($this->handler->load('not_existing'));
+    }
+
+    public function testLoadReturnsUnserializedItem()
+    {
+        $timestamp = time();
+
+        $date = new \DateTime();
+        $date->setTimestamp($timestamp);
+
+        $this->handler->save('date', $date);
+        $this->handler->writeSaveQueue();
+
+        $this->assertTrue($this->cacheHasItem('date'));
+
+        $fetchedDate = $this->handler->load('date');
+
+        $this->assertInstanceOf(\DateTime::class, $fetchedDate);
+        $this->assertEquals($timestamp, $date->getTimestamp());
     }
 
     public function testGetItemIsCacheMiss()

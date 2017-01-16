@@ -138,6 +138,8 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
     }
 
     /**
+     * @codeCoverageIgnore
+     *
      * @return LoggerInterface
      */
     public function getLogger()
@@ -181,6 +183,8 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
     }
 
     /**
+     * @codeCoverageIgnore
+     *
      * @return bool
      */
     public function getHandleCli()
@@ -189,6 +193,8 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
     }
 
     /**
+     * @codeCoverageIgnore
+     *
      * @param bool $handleCli
      * @return $this
      */
@@ -200,6 +206,8 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
     }
 
     /**
+     * @codeCoverageIgnore
+     *
      * @return bool
      */
     public function getForceImmediateWrite()
@@ -208,6 +216,8 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
     }
 
     /**
+     * @codeCoverageIgnore
+     *
      * @param bool $forceImmediateWrite
      * @return $this
      */
@@ -769,6 +779,8 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
     }
 
     /**
+     * @codeCoverageIgnore
+     *
      * @return bool
      */
     protected function isCli()
