@@ -145,11 +145,17 @@ class CoreHandlerTest extends TestCase
      */
     public static function tearDownAfterClass()
     {
-        echo PHP_EOL;
-
         /** @var BufferHandler $bufferHandler */
         $bufferHandler = static::$logHandlers['buffer'];
-        $bufferHandler->flush();
+
+        // call tests with TEST_LOG=1 if you need logs (e.g. during development)
+        if ((bool)getenv('TEST_LOG')) {
+            echo PHP_EOL;
+            $bufferHandler->flush();
+        } else {
+            // just throw the logs away
+            $bufferHandler->clear();
+        }
     }
 
     /**
