@@ -9,6 +9,7 @@ use Monolog\Handler\TestHandler;
 use Monolog\Logger;
 use PHPUnit\Framework\TestCase;
 use Pimcore\Cache\CacheItemFactory;
+use Pimcore\Cache\CacheItemFactoryInterface;
 use Pimcore\Cache\Core\CoreHandler;
 use Pimcore\Cache\Core\CoreHandlerInterface;
 use Pimcore\Cache\Core\WriteLock;
@@ -42,7 +43,12 @@ class CacheTest extends TestCase
     protected $tagAdapter;
 
     /**
-     * @var CoreHandlerInterface
+     * @var CacheItemFactoryInterface
+     */
+    protected $itemFactory;
+
+    /**
+     * @var CoreHandlerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $handler;
 
@@ -73,14 +79,50 @@ class CacheTest extends TestCase
         $writeLock = new WriteLock($tagAdapter, $itemFactory);
         $writeLock->setLogger(static::$logger);
 
-        $handler = new CoreHandler($tagAdapter, $writeLock, $itemFactory);
-        $handler->setLogger(static::$logger);
-        $handler->setHandleCli(true);
-
         $this->cacheAdapter = $cacheAdapter;
         $this->tagAdapter   = $tagAdapter;
-        $this->handler      = $handler;
+        $this->itemFactory  = $itemFactory;
         $this->writeLock    = $writeLock;
+
+        $this->buildHandlerMock();
+    }
+
+    protected function buildHandlerMock()
+    {
+        $mockMethods = ['isCli'];
+
+        // allow to define additional handler mock methods via custom mockHandlerMethods annotation
+        $annotations = $this->getAnnotations();
+        if (isset($annotations['method']) && isset($annotations['method']['mockHandlerMethods'])) {
+            $mockMethods = array_merge(
+                $mockMethods,
+                explode(',', $annotations['method']['mockHandlerMethods'][0])
+            );
+        }
+
+        /** @var CoreHandler|\PHPUnit_Framework_MockObject_MockObject $handler */
+        $handler = $this->getMockBuilder(CoreHandler::class)
+            ->setMethods($mockMethods)
+            ->setConstructorArgs([
+                $this->tagAdapter,
+                $this->writeLock,
+                $this->itemFactory
+            ])
+            ->getMock();
+
+        $handler->setLogger(static::$logger);
+
+        // mock handler to work in normal (non-cli mode) besides in tests which
+        // explicitely define the cache-cli group
+        if (in_array('cache-cli', $this->getGroups())) {
+            $handler->method('isCli')
+                ->willReturn(true);
+        } else {
+            $handler->method('isCli')
+                ->willReturn(false);
+        }
+
+        $this->handler = $handler;
     }
 
     /**
@@ -246,7 +288,7 @@ class CacheTest extends TestCase
         );
     }
 
-    public function testDisabledCache()
+    public function testNoWriteOnDisabledCache()
     {
         $this->handler->setForceImmediateWrite(true);
 
@@ -274,6 +316,107 @@ class CacheTest extends TestCase
 
         // expect the item not being saved to the cache
         $this->assertFalse($this->cacheHasItem('item_after'));
+    }
+
+    /**
+     * @group cache-cli
+     */
+    public function testNoWriteInCliMode()
+    {
+        $this->assertFalse($this->cacheHasItem('itemA'));
+        $this->assertFalse($this->handler->save('itemA', 'test'));
+
+        $this->assertFalse($this->cacheHasItem('itemA'));
+        $this->handler->writeSaveQueue();
+        $this->assertFalse($this->cacheHasItem('itemA'));
+    }
+
+    /**
+     * @group cache-cli
+     */
+    public function testNoWriteInCliModeWithForceImmediateWrite()
+    {
+        $this->handler->setForceImmediateWrite(true);
+
+        $this->assertFalse($this->cacheHasItem('itemA'));
+        $this->assertFalse($this->handler->save('itemA', 'test'));
+        $this->assertFalse($this->cacheHasItem('itemA'));
+    }
+
+    /**
+     * @group cache-cli
+     */
+    public function testWriteWithForceInCliMode()
+    {
+        // force writes immediately - no need to write save queue
+        $this->assertFalse($this->cacheHasItem('itemA'));
+        $this->assertTrue($this->handler->save('itemA', 'test', [], null, true));
+        $this->assertTrue($this->cacheHasItem('itemA'));
+    }
+
+    /**
+     * @group cache-cli
+     */
+    public function testWriteWithHandleCliOption()
+    {
+        $this->handler->setHandleCli(true);
+
+        $this->assertFalse($this->cacheHasItem('itemA'));
+        $this->assertTrue($this->handler->save('itemA', 'test'));
+
+        $this->assertFalse($this->cacheHasItem('itemA'));
+        $this->handler->writeSaveQueue();
+        $this->assertTrue($this->cacheHasItem('itemA'));
+    }
+
+    /**
+     * @group cache-cli
+     */
+    public function testWriteInCliModeWithHandleCiOptionAndForceImmediateWrite()
+    {
+        $this->handler->setHandleCli(true);
+        $this->handler->setForceImmediateWrite(true);
+
+        $this->assertFalse($this->cacheHasItem('itemA'));
+        $this->assertTrue($this->handler->save('itemA', 'test'));
+        $this->assertTrue($this->cacheHasItem('itemA'));
+    }
+
+    /**
+     * @group cache-cli
+     * @mockHandlerMethods writeSaveQueue
+     */
+    public function testNoWriteInCliShutdown()
+    {
+        // expect that writeSaveQueue is never called
+        $this->handler
+            ->expects($this->never())
+            ->method('writeSaveQueue');
+
+        // enable cli to allow queueing the item
+        $this->handler->setHandleCli(true);
+        $this->assertTrue($this->handler->save('itemA', 'test'));
+        $this->handler->setHandleCli(false);
+
+        $this->handler->shutdown();
+    }
+
+    /**
+     * @group cache-cli
+     * @mockHandlerMethods writeSaveQueue
+     */
+    public function testWriteInCliShutdownWithHandleCliOption()
+    {
+        // expect writeSaveQueue to be called on shutdown
+        $this->handler
+            ->expects($this->once())
+            ->method('writeSaveQueue');
+
+        // enable cli to allow queueing the item
+        $this->handler->setHandleCli(true);
+        $this->assertTrue($this->handler->save('itemA', 'test'));
+
+        $this->handler->shutdown();
     }
 
     public function testRemove()
