@@ -6,6 +6,9 @@ use Pimcore\Cache\Core\CoreHandler;
 use Pimcore\Cache\Core\WriteLock;
 use Pimcore\Logger;
 use Psr\Log\NullLogger;
+use Symfony\Component\Cache\Adapter\ApcuAdapter;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Cache\Adapter\RedisAdapter;
 
 return [
@@ -26,7 +29,8 @@ return [
 
     // alias for the standard core cache adapter - this key will be injected into the core cache
     // if you define your own cache service, make sure you set this alias to your service
-    'pimcore.cache.adapter.core' => DI\get('pimcore.cache.adapter.core.redis'),
+    // you can either define your own adapter (must implement AdapterInterface or use one of the predefined ones (see below)
+    'pimcore.cache.adapter.core' => DI\get('pimcore.cache.adapter.core.filesystem'),
 
     // redis connection
     'pimcore.cache.redis.connection.core' => function (ContainerInterface $container) {
@@ -61,6 +65,30 @@ return [
         )
         ->method('setLogger', DI\get('pimcore.logger.cache')),
 
+    // APCu cache adapter
+    'pimcore.cache.adapter.core.apcu' => DI\object(ApcuAdapter::class)
+        ->constructor(
+            DI\get('pimcore.cache.config.core.namespace'),
+            DI\get('pimcore.cache.config.core.defaultLifetime')
+        )
+        ->method('setLogger', DI\get('pimcore.logger.cache')),
+
+    // filesystem cache adapter
+    'pimcore.cache.adapter.core.filesystem' => DI\object(FilesystemAdapter::class)
+        ->constructor(
+            DI\get('pimcore.cache.config.core.namespace'),
+            DI\get('pimcore.cache.config.core.defaultLifetime'),
+            PIMCORE_CACHE_DIRECTORY . '/symfony'
+        )
+        ->method('setLogger', DI\get('pimcore.logger.cache')),
+
+    // array/in-memory cache adapter
+    'pimcore.cache.adapter.core.array' => DI\object(ArrayAdapter::class)
+        ->constructor(
+            DI\get('pimcore.cache.config.core.defaultLifetime'),
+            false // do not store serialized
+        )
+        ->method('setLogger', DI\get('pimcore.logger.cache')),
 
     // item factory creates cache items
     'pimcore.cache.item_factory' => DI\object(CacheItemFactory::class),
