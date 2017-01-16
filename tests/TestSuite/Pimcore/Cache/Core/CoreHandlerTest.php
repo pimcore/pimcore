@@ -1,6 +1,6 @@
 <?php
 
-namespace TestSuite\Pimcore\Cache;
+namespace TestSuite\Pimcore\Cache\Core;
 
 use Monolog\Handler\BufferHandler;
 use Monolog\Handler\HandlerInterface;
@@ -20,7 +20,7 @@ use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Adapter\TagAwareAdapter;
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 
-class CacheTest extends TestCase
+class CoreHandlerTest extends TestCase
 {
     /**
      * @var Logger

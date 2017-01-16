@@ -8,7 +8,8 @@ class TestSuite_Pimcore_AllTests extends Test_SuiteBase
         $suite = new static();
 
         $tests = [
-            \TestSuite\Pimcore\MailTest::class
+            \TestSuite\Pimcore\MailTest::class,
+            \TestSuite\Pimcore\Cache\Core\CoreHandlerTest::class
         ];
 
         foreach ($tests as $test) {
