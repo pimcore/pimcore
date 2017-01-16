@@ -107,7 +107,7 @@ class Pimcore
         if (!$frontend) {
             self::initBackendRouter($router, $conf);
             self::checkPluginRoutes();
-            if($conf) {
+            if ($conf) {
                 self::handleAdminMainDomainRedirect($conf);
             }
         }
