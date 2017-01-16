@@ -89,9 +89,10 @@ class Pimcore
 
             // not installed, we display all error messages
             $throwExceptions = true;
+        } else {
+            self::registerWhoopsErrorHandler($conf, $frontend);
         }
 
-        self::registerWhoopsErrorHandler($conf, $frontend);
         self::registerFrontControllerPlugins($front, $frontend);
         self::initControllerFront($front);
 
@@ -106,7 +107,9 @@ class Pimcore
         if (!$frontend) {
             self::initBackendRouter($router, $conf);
             self::checkPluginRoutes();
-            self::handleAdminMainDomainRedirect($conf);
+            if($conf) {
+                self::handleAdminMainDomainRedirect($conf);
+            }
         }
 
         self::getEventManager()->trigger("system.startup", $front);
@@ -249,9 +252,9 @@ class Pimcore
      * Add backend routes
      *
      * @param Zend_Controller_Router_Interface|Zend_Controller_Router_Rewrite $router
-     * @param Zend_Config $conf
+     * @param Zend_Config|null $conf
      */
-    protected static function initBackendRouter(Zend_Controller_Router_Interface $router, Zend_Config $conf)
+    protected static function initBackendRouter(Zend_Controller_Router_Interface $router, $conf)
     {
         $routeAdmin = new \Zend_Controller_Router_Route(
             'admin/:controller/:action/*',
