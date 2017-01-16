@@ -70,7 +70,7 @@ class MaintenanceCommand extends AbstractCommand
         $manager->registerJob(new Schedule\Maintenance\Job("cleanupcache", "\\Pimcore\\Cache", "maintenance"));
         $manager->registerJob(new Schedule\Maintenance\Job("tmpstorecleanup", "\\Pimcore\\Model\\Tool\\TmpStore", "cleanup"));
         $manager->registerJob(new Schedule\Maintenance\Job("imageoptimize", "\\Pimcore\\Model\\Asset\\Image\\Thumbnail\\Processor", "processOptimizeQueue"));
-
+        $manager->registerJob(new Schedule\Maintenance\Job("cleanupTmpFiles", "\\Pimcore\\Tool\\Housekeeping", "cleanupTmpFiles"));
 
         \Pimcore::getEventManager()->trigger("system.maintenance", $manager);
 
