@@ -15,7 +15,7 @@
 namespace Pimcore;
 
 use Pimcore\Cache\Core\CoreHandlerInterface;
-use Pimcore\Cache\ZendCacheHandler;
+use Pimcore\Cache\Core\ZendCacheHandler;
 
 /**
  * This acts as facade for the actual cache implementation and exists primarily for BC reasons.
@@ -222,11 +222,8 @@ class Cache
      */
     public static function disable()
     {
+        static::$zendHandler->disable();
         static::$handler->disable();
-
-        if (null !== static::$zendHandler) {
-            static::$zendHandler->disable();
-        }
     }
 
     /**
@@ -234,11 +231,8 @@ class Cache
      */
     public static function enable()
     {
+        static::$zendHandler->enable();
         static::$handler->enable();
-
-        if (null !== static::$zendHandler) {
-            static::$zendHandler->enable();
-        }
     }
 
     /**
@@ -267,12 +261,10 @@ class Cache
 
     public static function maintenance()
     {
-        return;
+        // TODO how to run maintenance for symfony cache?
 
-        // TODO
-
-
-        $cache = self::getInstance();
-        $cache->clean(\Zend_Cache::CLEANING_MODE_OLD);
+        if (null !== static::$zendHandler) {
+            // static::$zendHandler->getCache()->clean(\Zend_Cache::CLEANING_MODE_OLD);
+        }
     }
 }

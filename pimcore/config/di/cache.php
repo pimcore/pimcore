@@ -5,7 +5,7 @@ use Pimcore\Cache\Backend\SymfonyCache;
 use Pimcore\Cache\CacheItemFactory;
 use Pimcore\Cache\Core\CoreHandler;
 use Pimcore\Cache\Core\WriteLock;
-use Pimcore\Cache\ZendCacheHandler;
+use Pimcore\Cache\Core\ZendCacheHandler;
 use Pimcore\Logger;
 use Psr\Log\NullLogger;
 use Symfony\Component\Cache\Adapter\ApcuAdapter;

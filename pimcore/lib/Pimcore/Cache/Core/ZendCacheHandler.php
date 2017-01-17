@@ -1,6 +1,6 @@
 <?php
 
-namespace Pimcore\Cache;
+namespace Pimcore\Cache\Core;
 
 class ZendCacheHandler
 {
