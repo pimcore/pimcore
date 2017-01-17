@@ -24,13 +24,25 @@ class CacheItemFactory implements CacheItemFactoryInterface
      * @param mixed $data
      * @param array $tags
      * @param int|\DateInterval|null|bool $lifetime
+     * @param bool $isHit
      * @return CacheItemInterface
      */
-    public function createCacheItem($key, $data, array $tags = [], $lifetime = null)
+    public function createCacheItem($key, $data, array $tags = [], $lifetime = null, $isHit = false)
     {
         $closure = $this->getClosure();
 
-        return $closure($key, $data, $tags, $lifetime);
+        /** @var CacheItem $item */
+        $item = $closure($key, $isHit);
+        $item->set($data);
+        $item->tag($tags);
+
+        // if lifetime is false, don't set it at all - otherwise set expiry and
+        // run through lifetime generation logic
+        if (false !== $lifetime) {
+            $item->expiresAfter($lifetime);
+        }
+
+        return $item;
     }
 
     /**
@@ -43,7 +55,7 @@ class CacheItemFactory implements CacheItemFactoryInterface
     {
         $closure = $this->getClosure();
 
-        return $closure($key, null, [], false);
+        return $closure($key, false);
     }
 
     /**
@@ -53,23 +65,11 @@ class CacheItemFactory implements CacheItemFactoryInterface
     {
         if (null === $this->closure) {
             $this->closure = \Closure::bind(
-                function ($key, $data, $tags, $lifetime) {
+                function ($key, $isHit) {
                     $item = new CacheItem();
-                    $item->key = $key;
 
-                    if (null !== $data) {
-                        $item->value = $data;
-                    }
-
-                    if (!empty($tags)) {
-                        $item->tag($tags);
-                    }
-
-                    // if lifetime is false, don't set it at all - otherwise set expiry and
-                    // run through lifetime generation logic
-                    if (false !== $lifetime) {
-                        $item->expiresAfter($lifetime);
-                    }
+                    $item->key   = $key;
+                    $item->isHit = $isHit;
 
                     return $item;
                 },
