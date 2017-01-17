@@ -10,6 +10,7 @@ use Symfony\Component\Cache\Adapter\ApcuAdapter;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Cache\Adapter\RedisAdapter;
+use Symfony\Component\Cache\Adapter\TagAwareAdapter;
 
 return [
     // config
@@ -27,10 +28,16 @@ return [
         return $cacheLogger;
     },
 
-    // alias for the standard core cache adapter - this key will be injected into the core cache
+    // alias for the standard core cache adapter - this key will be injected into the core cache (through the taggable cache defined below)
     // if you define your own cache service, make sure you set this alias to your service
     // you can either define your own adapter (must implement AdapterInterface or use one of the predefined ones (see below)
     'pimcore.cache.adapter.core' => DI\get('pimcore.cache.adapter.core.filesystem'),
+
+    // the taggable cache is injected into the core services consuming the cache (CoreHandler, WriteLock, Zend)
+    'pimcore.cache.adapter.core.taggable' => DI\object(TagAwareAdapter::class)
+        ->constructor(
+            DI\get('pimcore.cache.adapter.core')
+        ),
 
     // redis connection
     'pimcore.cache.redis.connection.core' => function (ContainerInterface $container) {
@@ -96,7 +103,7 @@ return [
     // write lock handles locking between processes
     'pimcore.cache.write_lock' => DI\object(WriteLock::class)
         ->constructor(
-            DI\get('pimcore.cache.adapter.core'),
+            DI\get('pimcore.cache.adapter.core.taggable'),
             DI\get('pimcore.cache.item_factory')
         )
         ->method('setLogger', DI\get('pimcore.logger.cache')),
@@ -104,7 +111,7 @@ return [
     // the actual core handler which is used from Pimcore\Cache
     'pimcore.cache.handler.core' => DI\object(CoreHandler::class)
         ->constructor(
-            DI\get('pimcore.cache.adapter.core'),
+            DI\get('pimcore.cache.adapter.core.taggable'),
             DI\get('pimcore.cache.write_lock'),
             DI\get('pimcore.cache.item_factory')
         )
