@@ -311,7 +311,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
                 $list = new Translation\Website\Listing();
             }
 
-            $validLanguages = $this->getUser()->getAllowedLanguagesForViewingWebsiteTranslations();
+            $validLanguages = $admin ? Tool\Admin::getLanguages() : $this->getUser()->getAllowedLanguagesForViewingWebsiteTranslations();
 
             $list->setOrder("asc");
             $list->setOrderKey($tableName . ".key", false);
