@@ -15,6 +15,7 @@
 namespace Pimcore;
 
 use Pimcore\Cache\Core\CoreHandlerInterface;
+use Pimcore\Cache\ZendCacheHandler;
 
 /**
  * This acts as facade for the actual cache implementation and exists primarily for BC reasons.
@@ -27,19 +28,32 @@ class Cache
     public static $handler;
 
     /**
+     * @var ZendCacheHandler
+     */
+    protected static $zendHandler;
+
+    /**
      * @deprecated
-     * @return \Zend_Cache_Core|\Zend_Cache_Frontend
+     * @return \Zend_Cache_Core|null
      */
     public static function getInstance()
     {
-        return null;
+        return static::$zendHandler ? static::$zendHandler->getCache() : null;
     }
 
     public static function init()
     {
+        $container = \Pimcore::getDiContainer();
+
         if (null === static::$handler) {
             /** @var CoreHandlerInterface $handler */
-            static::$handler = \Pimcore::getDiContainer()->get('pimcore.cache.handler.core');
+            static::$handler = $container->get('pimcore.cache.handler.core');
+        }
+
+        // setup ZF cache
+        if ($container->has('pimcore.cache.zend.handler')) {
+            static::$zendHandler = $container->get('pimcore.cache.zend.handler');
+            static::$zendHandler->setZendFrameworkCaches();
         }
     }
 
@@ -209,6 +223,10 @@ class Cache
     public static function disable()
     {
         static::$handler->disable();
+
+        if (null !== static::$zendHandler) {
+            static::$zendHandler->disable();
+        }
     }
 
     /**
@@ -217,6 +235,10 @@ class Cache
     public static function enable()
     {
         static::$handler->enable();
+
+        if (null !== static::$zendHandler) {
+            static::$zendHandler->enable();
+        }
     }
 
     /**
@@ -241,26 +263,6 @@ class Cache
     public static function getForceImmediateWrite()
     {
         return static::$handler->getForceImmediateWrite();
-    }
-
-    /**
-     * @param \Zend_Cache_Core|null $cache
-     */
-    public static function setZendFrameworkCaches($cache = null)
-    {
-        // TODO
-
-        return;
-
-        $zendCache = null;
-        if ($cache) {
-            $zendCache = clone $cache;
-            $zendCache->setOption('automatic_serialization', true);
-        }
-
-        \Zend_Locale::setCache($zendCache);
-        \Zend_Locale_Data::setCache($zendCache);
-        \Zend_Db_Table_Abstract::setDefaultMetadataCache($zendCache);
     }
 
     public static function maintenance()

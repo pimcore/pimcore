@@ -1,9 +1,11 @@
 <?php
 
 use Interop\Container\ContainerInterface;
+use Pimcore\Cache\Backend\SymfonyCache;
 use Pimcore\Cache\CacheItemFactory;
 use Pimcore\Cache\Core\CoreHandler;
 use Pimcore\Cache\Core\WriteLock;
+use Pimcore\Cache\ZendCacheHandler;
 use Pimcore\Logger;
 use Psr\Log\NullLogger;
 use Symfony\Component\Cache\Adapter\ApcuAdapter;
@@ -16,6 +18,10 @@ return [
     // config
     'pimcore.cache.config.core.namespace'       => 'pimcore',
     'pimcore.cache.config.core.defaultLifetime' => 2419200, // 28 days
+
+    // ZF internal cache specifics
+    'pimcore.cache.config.zend.prefix'          => 'zf_',
+    'pimcore.cache.config.zend.defaultLifetime' => DI\get('pimcore.cache.config.core.defaultLifetime'),
 
     // define a distinct cache logger with the same handlers/processors as the core one
     'pimcore.logger.cache' => function (ContainerInterface $container) {
@@ -116,4 +122,31 @@ return [
             DI\get('pimcore.cache.item_factory')
         )
         ->method('setLogger', DI\get('pimcore.logger.cache')),
+
+    // Zend Cache
+    // the SymfonyCache backend delegates caching to the core cache adapter
+    'pimcore.cache.zend.backend' => DI\object(SymfonyCache::class)
+        ->constructor(
+            DI\get('pimcore.cache.adapter.core.taggable')
+        ),
+
+    // set default frontend options including a specific ZF prefix
+    'pimcore.cache.zend.frontend.options' => [
+        'cache_id_prefix'           => DI\get('pimcore.cache.config.zend.prefix'),
+        'lifetime'                  => DI\get('pimcore.cache.config.zend.defaultLifetime'),
+        'automatic_serialization'   => true,
+        'automatic_cleaning_factor' => 0,
+    ],
+
+    // this frontend will be injected into ZF classes if defined
+    'pimcore.cache.zend.frontend' => DI\object(Zend_Cache_Core::class)
+        ->constructor(
+            DI\get('pimcore.cache.zend.frontend.options')
+        )
+        ->method('setBackend', DI\get('pimcore.cache.zend.backend')),
+
+    'pimcore.cache.zend.handler' => DI\object(ZendCacheHandler::class)
+        ->constructor(
+            DI\get('pimcore.cache.zend.frontend')
+        ),
 ];
