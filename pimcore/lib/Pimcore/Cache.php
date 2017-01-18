@@ -25,7 +25,7 @@ class Cache
     /**
      * @var CoreHandlerInterface
      */
-    public static $handler;
+    protected static $handler;
 
     /**
      * @var ZendCacheHandler
