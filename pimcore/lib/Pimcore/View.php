@@ -17,6 +17,7 @@ namespace Pimcore;
 use Pimcore\Model;
 use Pimcore\Model\Element;
 use Pimcore\Logger;
+use Pimcore\Tool\DeviceDetector;
 
 class View extends \Zend_View
 {
@@ -241,7 +242,7 @@ class View extends \Zend_View
         \Zend_Registry::set("pimcore_editmode", $editmodeBackup);
 
         // write contents to the cache, if output-cache is enabled
-        if ($cacheConfig) {
+        if ($cacheConfig && !DeviceDetector::getInstance()->wasUsed()) {
             Cache::save($content, $cacheKey, ["output", "output_inline"], $cacheConfig["lifetime"]);
         }
 

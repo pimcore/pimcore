@@ -203,6 +203,8 @@ class Cache extends \Zend_Controller_Plugin_Abstract
         if (is_array($cacheItem) && !empty($cacheItem)) {
             header("X-Pimcore-Output-Cache-Tag: " . $cacheKey, true, 200);
             header("X-Pimcore-Output-Cache-Date: " . $cacheItem["date"]);
+            $cacheItemDate = strtotime($cacheItem["date"]);
+            header("Age: " . (time()-$cacheItemDate));
 
             foreach ($cacheItem["rawHeaders"] as $header) {
                 header($header);
@@ -249,6 +251,12 @@ class Cache extends \Zend_Controller_Plugin_Abstract
                     $this->getResponse()->setHeader("Expires", $date->format(\DateTime::RFC1123), true);
                 }
 
+                $cacheKey = $this->defaultCacheKey;
+                $deviceDetector = Tool\DeviceDetector::getInstance();
+                if ($deviceDetector->wasUsed()) {
+                    $cacheKey .= "_" . $deviceDetector->getDevice();
+                }
+
                 $now = new \DateTime("now");
                 $cacheItem = [
                     "headers" => $this->getResponse()->getHeaders(),
@@ -256,12 +264,6 @@ class Cache extends \Zend_Controller_Plugin_Abstract
                     "content" => $this->getResponse()->getBody(),
                     "date" => $now->format(\DateTime::ISO8601)
                 ];
-
-                $cacheKey = $this->defaultCacheKey;
-                $deviceDetector = Tool\DeviceDetector::getInstance();
-                if ($deviceDetector->wasUsed()) {
-                    $cacheKey .= "_" . $deviceDetector->getDevice();
-                }
 
                 $tags = ["output"];
                 if ($this->lifetime) {
