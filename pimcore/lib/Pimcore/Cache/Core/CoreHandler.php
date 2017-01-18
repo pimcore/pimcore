@@ -2,8 +2,6 @@
 
 namespace Pimcore\Cache\Core;
 
-use Pimcore\Cache\CacheItemFactoryInterface;
-use Pimcore\Cache\Core\WriteLockInterface;
 use Pimcore\Model\Document\Hardlink\Wrapper\WrapperInterface;
 use Pimcore\Model\Element\ElementInterface;
 use Psr\Cache\CacheItemInterface;
@@ -33,11 +31,6 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
      * @var WriteLockInterface
      */
     protected $writeLock;
-
-    /**
-     * @var CacheItemFactoryInterface
-     */
-    protected $cacheItemFactory;
 
     /**
      * Actually write/load to/from cache?
@@ -109,16 +102,19 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
     protected $maxWriteToCacheItems = 50;
 
     /**
+     * @var \Closure
+     */
+    protected $emptyCacheItemClosure;
+
+    /**
      * @param AdapterInterface $adapter
      * @param WriteLockInterface $writeLock
-     * @param CacheItemFactoryInterface $cacheItemFactory
      */
-    public function __construct(AdapterInterface $adapter, WriteLockInterface $writeLock, CacheItemFactoryInterface $cacheItemFactory)
+    public function __construct(AdapterInterface $adapter, WriteLockInterface $writeLock)
     {
         $this->setAdapter($adapter);
 
         $this->writeLock = $writeLock;
-        $this->cacheItemFactory = $cacheItemFactory;
     }
 
     /**
@@ -260,7 +256,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
         if (!$this->enabled) {
             $this->logger->debug(sprintf('Key %s doesn\'t exist in cache (deactivated)', $key), ['key' => $key]);
 
-            return $this->cacheItemFactory->createEmptyCacheItem($key);
+            return $this->createEmptyCacheItem($key);
         }
 
         $item = $this->adapter->getItem($key);
@@ -271,6 +267,36 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
         }
 
         return $item;
+    }
+
+    /**
+     * This exists only because of the cumbersome way symfony cache defines cache items. As we can't influence the cache
+     * item (final class, no setters), we need to bind closures to the item class which alter object data. The shipped
+     * cache adapters do it the same way.
+     *
+     * @param $key
+     * @return CacheItemInterface
+     */
+    protected function createEmptyCacheItem($key)
+    {
+        if (null === $this->emptyCacheItemClosure) {
+            $this->emptyCacheItemClosure = \Closure::bind(
+                function ($key) {
+                    $item = new CacheItem();
+
+                    $item->key   = $key;
+                    $item->isHit = false;
+
+                    return $item;
+                },
+                null,
+                CacheItem::class
+            );
+        }
+
+        $closure = $this->emptyCacheItemClosure;
+
+        return $closure($key);
     }
 
     /**
@@ -419,7 +445,15 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
         // TODO symfony cache adapters serialize as well - find a way to avoid double serialization
         $itemData = serialize($data);
 
-        $item = $this->cacheItemFactory->createCacheItem($key, $itemData, $tags, $lifetime);
+        // TODO is there a PSR-6 compatible way of generating an item without fetching it?
+        // Stash for example defers reading the item until get() or isHit() is called, Symfony fetches it immediately
+        // which could be a performance hit when saving many objects.
+
+        /** @var CacheItem $item */
+        $item = $this->adapter->getItem($key);
+        $item->set($itemData);
+        $item->tag($tags);
+        $item->expiresAfter($lifetime);
 
         return $item;
     }

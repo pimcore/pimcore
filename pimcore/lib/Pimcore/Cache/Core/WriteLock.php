@@ -2,7 +2,6 @@
 
 namespace Pimcore\Cache\Core;
 
-use Pimcore\Cache\CacheItemFactoryInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -20,11 +19,6 @@ class WriteLock implements WriteLockInterface, LoggerAwareInterface
      * @var CacheItemPoolInterface
      */
     protected $adapter;
-
-    /**
-     * @var CacheItemFactoryInterface
-     */
-    protected $cacheItemFactory;
 
     /**
      * @var string
@@ -48,12 +42,10 @@ class WriteLock implements WriteLockInterface, LoggerAwareInterface
 
     /**
      * @param CacheItemPoolInterface $adapter
-     * @param CacheItemFactoryInterface $cacheItemFactory
      */
-    public function __construct(CacheItemPoolInterface $adapter, CacheItemFactoryInterface $cacheItemFactory)
+    public function __construct(CacheItemPoolInterface $adapter)
     {
-        $this->adapter          = $adapter;
-        $this->cacheItemFactory = $cacheItemFactory;
+        $this->adapter = $adapter;
 
         $this->initializeLock();
     }
@@ -93,12 +85,9 @@ class WriteLock implements WriteLockInterface, LoggerAwareInterface
                 ['timestamp' => $this->timestamp]
             );
 
-            $item = $this->cacheItemFactory->createCacheItem(
-                $this->cacheKey,
-                $this->timestamp,
-                [],
-                $this->lifetime
-            );
+            $item = $this->adapter->getItem($this->cacheKey);
+            $item->set($this->timestamp);
+            $item->expiresAfter($this->lifetime);
 
             return $this->adapter->save($item);
         }

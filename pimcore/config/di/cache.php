@@ -2,7 +2,6 @@
 
 use Interop\Container\ContainerInterface;
 use Pimcore\Cache\Backend\SymfonyCache;
-use Pimcore\Cache\CacheItemFactory;
 use Pimcore\Cache\Core\CoreHandler;
 use Pimcore\Cache\Core\WriteLock;
 use Pimcore\Cache\Core\ZendCacheHandler;
@@ -103,17 +102,10 @@ return [
         )
         ->method('setLogger', DI\get('pimcore.logger.cache')),
 
-    // item factory creates cache items
-    'pimcore.cache.item_factory' => DI\object(CacheItemFactory::class)
-        ->constructor(
-            DI\get('pimcore.cache.config.core.defaultLifetime')
-        ),
-
     // write lock handles locking between processes
     'pimcore.cache.write_lock' => DI\object(WriteLock::class)
         ->constructor(
-            DI\get('pimcore.cache.adapter.core.taggable'),
-            DI\get('pimcore.cache.item_factory')
+            DI\get('pimcore.cache.adapter.core.taggable')
         )
         ->method('setLogger', DI\get('pimcore.logger.cache')),
 
@@ -121,8 +113,7 @@ return [
     'pimcore.cache.handler.core' => DI\object(CoreHandler::class)
         ->constructor(
             DI\get('pimcore.cache.adapter.core.taggable'),
-            DI\get('pimcore.cache.write_lock'),
-            DI\get('pimcore.cache.item_factory')
+            DI\get('pimcore.cache.write_lock')
         )
         ->method('setLogger', DI\get('pimcore.logger.cache')),
 

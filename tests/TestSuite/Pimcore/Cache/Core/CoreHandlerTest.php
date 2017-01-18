@@ -8,8 +8,6 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Handler\TestHandler;
 use Monolog\Logger;
 use PHPUnit\Framework\TestCase;
-use Pimcore\Cache\CacheItemFactory;
-use Pimcore\Cache\CacheItemFactoryInterface;
 use Pimcore\Cache\Core\CoreHandler;
 use Pimcore\Cache\Core\CoreHandlerInterface;
 use Pimcore\Cache\Core\WriteLock;
@@ -43,11 +41,6 @@ class CoreHandlerTest extends TestCase
     protected $tagAdapter;
 
     /**
-     * @var CacheItemFactoryInterface
-     */
-    protected $itemFactory;
-
-    /**
      * @var CoreHandlerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $handler;
@@ -74,14 +67,11 @@ class CoreHandlerTest extends TestCase
         $cacheAdapter = new ArrayAdapter(3600, false);
         $tagAdapter   = new TagAwareAdapter($cacheAdapter);
 
-        $itemFactory = new CacheItemFactory();
-
-        $writeLock = new WriteLock($tagAdapter, $itemFactory);
+        $writeLock = new WriteLock($tagAdapter);
         $writeLock->setLogger(static::$logger);
 
         $this->cacheAdapter = $cacheAdapter;
         $this->tagAdapter   = $tagAdapter;
-        $this->itemFactory  = $itemFactory;
         $this->writeLock    = $writeLock;
 
         $this->buildHandlerMock();
@@ -105,8 +95,7 @@ class CoreHandlerTest extends TestCase
             ->setMethods($mockMethods)
             ->setConstructorArgs([
                 $this->tagAdapter,
-                $this->writeLock,
-                $this->itemFactory
+                $this->writeLock
             ])
             ->getMock();
 
@@ -214,7 +203,7 @@ class CoreHandlerTest extends TestCase
     public function testAdapterIsWrappedInCacheAdapter()
     {
         $adapter = new ArrayAdapter();
-        $handler = new CoreHandler($adapter, $this->writeLock, $this->itemFactory);
+        $handler = new CoreHandler($adapter, $this->writeLock);
 
         $this->assertInstanceOf(
             TagAwareAdapterInterface::class,
