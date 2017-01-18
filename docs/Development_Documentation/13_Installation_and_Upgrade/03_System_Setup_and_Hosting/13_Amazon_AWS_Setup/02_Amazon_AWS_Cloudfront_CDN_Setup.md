@@ -54,7 +54,7 @@ if (!\Pimcore::inAdmin() && !\Pimcore\Tool::isFrontentRequestByAdmin()) {
  
             $path = str_replace(PIMCORE_DOCUMENT_ROOT, "", $fileSystemPath);
             if($fileModTime) {
-                $path = "/cache-buster-" . $fileModTime . $path; // add a cache-buster
+                $path = "/cache-buster-" . $fileModTime . urlencode_ignore_slash($path); // add a cache-buster
             }
             $path = $cloudFrontPrefix . $path;
  
@@ -63,7 +63,7 @@ if (!\Pimcore::inAdmin() && !\Pimcore\Tool::isFrontentRequestByAdmin()) {
  
     \Pimcore::getEventManager()->attach("frontend.path.asset", function ($event) use ($cloudFrontPrefix) {
         $asset = $event->getTarget();
-        $path = $asset->getRealFullPath();
+        $path = $asset->getFullPath();
         $path = "/cache-buster-" . $asset->getModificationDate() . $path; // add a cache-buster
         $path = $cloudFrontPrefix . $path;
  
