@@ -15,8 +15,7 @@ use Symfony\Component\Cache\Adapter\TagAwareAdapter;
 
 return [
     // config
-    'pimcore.cache.config.core.namespace'       => 'pimcore',
-    'pimcore.cache.config.core.defaultLifetime' => 2419200, // 28 days
+    'pimcore.cache.config.core.namespace' => 'pimcore',
 
     // ZF internal cache specifics
     'pimcore.cache.config.zend.prefix'          => 'zf_',
@@ -72,8 +71,7 @@ return [
     'pimcore.cache.adapter.core.redis' => DI\object(RedisAdapter::class)
         ->constructor(
             DI\get('pimcore.cache.redis.connection.core'),
-            DI\get('pimcore.cache.config.core.namespace'),
-            DI\get('pimcore.cache.config.core.defaultLifetime')
+            DI\get('pimcore.cache.config.core.namespace')
         )
         ->method('setLogger', DI\get('pimcore.logger.cache')),
 
@@ -89,7 +87,7 @@ return [
     'pimcore.cache.adapter.core.filesystem' => DI\object(FilesystemAdapter::class)
         ->constructor(
             DI\get('pimcore.cache.config.core.namespace'),
-            DI\get('pimcore.cache.config.core.defaultLifetime'),
+            0,
             PIMCORE_CACHE_DIRECTORY . '/symfony'
         )
         ->method('setLogger', DI\get('pimcore.logger.cache')),
@@ -97,7 +95,7 @@ return [
     // array/in-memory cache adapter
     'pimcore.cache.adapter.core.array' => DI\object(ArrayAdapter::class)
         ->constructor(
-            DI\get('pimcore.cache.config.core.defaultLifetime'),
+            0,
             false // do not store serialized
         )
         ->method('setLogger', DI\get('pimcore.logger.cache')),
@@ -127,7 +125,7 @@ return [
     // set default frontend options including a specific ZF prefix
     'pimcore.cache.zend.frontend.options' => [
         'cache_id_prefix'           => DI\get('pimcore.cache.config.zend.prefix'),
-        'lifetime'                  => DI\get('pimcore.cache.config.zend.defaultLifetime'),
+        'lifetime'                  => 2419200, // 28 days
         'automatic_serialization'   => true,
         'automatic_cleaning_factor' => 0,
     ],
