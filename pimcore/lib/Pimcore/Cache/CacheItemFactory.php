@@ -18,6 +18,19 @@ class CacheItemFactory implements CacheItemFactoryInterface
     protected $closure;
 
     /**
+     * @var int|null
+     */
+    protected $defaultLifetime;
+
+    /**
+     * @param int|null $defaultLifetime
+     */
+    public function __construct($defaultLifetime = null)
+    {
+        $this->defaultLifetime = $defaultLifetime;
+    }
+
+    /**
      * Create a cache item with the given key and data
      *
      * @param string $key
@@ -64,12 +77,15 @@ class CacheItemFactory implements CacheItemFactoryInterface
     protected function getClosure()
     {
         if (null === $this->closure) {
+            $defaultLifetime = $this->defaultLifetime;
+
             $this->closure = \Closure::bind(
-                function ($key, $isHit) {
+                function ($key, $isHit) use ($defaultLifetime) {
                     $item = new CacheItem();
 
                     $item->key   = $key;
                     $item->isHit = $isHit;
+                    $item->defaultLifetime = $defaultLifetime;
 
                     return $item;
                 },

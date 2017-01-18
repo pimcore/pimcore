@@ -104,7 +104,10 @@ return [
         ->method('setLogger', DI\get('pimcore.logger.cache')),
 
     // item factory creates cache items
-    'pimcore.cache.item_factory' => DI\object(CacheItemFactory::class),
+    'pimcore.cache.item_factory' => DI\object(CacheItemFactory::class)
+        ->constructor(
+            DI\get('pimcore.cache.config.core.defaultLifetime')
+        ),
 
     // write lock handles locking between processes
     'pimcore.cache.write_lock' => DI\object(WriteLock::class)
