@@ -191,13 +191,11 @@ pimcore.document.versions = Class.create({
 
         var menu = new Ext.menu.Menu();
 
-        if(this.store.getAt(rowIndex).get("public")) {
-            menu.add(new Ext.menu.Item({
-                text: t('open'),
-                iconCls: "pimcore_icon_cursor",
-                handler: this.openVersion.bind(this, rowIndex, grid)
-            }));
-        }
+        menu.add(new Ext.menu.Item({
+            text: t('open'),
+            iconCls: "pimcore_icon_cursor",
+            handler: this.openVersion.bind(this, rowIndex, grid)
+        }));
 
         menu.add(new Ext.menu.Item({
             text: t('edit'),
