@@ -131,7 +131,7 @@ class Admin_LogController extends \Pimcore\Controller\Action\Admin
 
     public function componentJsonAction()
     {
-        $components[] = ["key" => "-", "value" => ""];
+        $components[] = ["key" => "", "value" => "-"];
         foreach (ApplicationLoggerDb::getComponents() as $p) {
             $components[] = ["key" => $p, "value" => $p];
         }
