@@ -5,11 +5,13 @@ $config = $config['workflows'];
 
 $workflows = [];
 
-foreach($config as $workflow) {
-    $workflow['creationDate'] = \Carbon\Carbon::now()->getTimestamp();
-    $workflow['modificationDate'] = \Carbon\Carbon::now()->getTimestamp();
+if(is_array($config)) {
+    foreach ($config as $workflow) {
+        $workflow['creationDate'] = \Carbon\Carbon::now()->getTimestamp();
+        $workflow['modificationDate'] = \Carbon\Carbon::now()->getTimestamp();
 
-    $workflows[$workflow['id']] = $workflow;
+        $workflows[$workflow['id']] = $workflow;
+    }
 }
 
 $contents = to_php_data_file_format($workflows);
