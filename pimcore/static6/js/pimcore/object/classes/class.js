@@ -1006,10 +1006,25 @@ pimcore.object.classes.klass = Class.create({
                 // check if the name is unique, localizedfields can be used more than once
                 var nodeEl = Ext.fly(view.getNodeByRecord(node));
 
-                if ((fieldValidation && in_arrayi(data.name,this.usedFieldNames) == false) || data.name == "localizedfields") {
+                var containerAwareDataName = data.name;
+                var parentNode = node.parentNode;
+                while (parentNode) {
+                    if (parentNode.data.editor && typeof parentNode.data.editor.getData == "function") {
+                        var parentData = parentNode.data.editor.getData();
+                        if (parentData.datatype == "data" && parentNode.data.editor.type == "block") {
+                            containerAwareDataName = "block-" + parentData.name + "-" + containerAwareDataName;
+                            break;
+                        }
+                    }
+
+                    parentNode = parentNode.parentNode;
+                }
+
+
+                if ((fieldValidation && in_arrayi(containerAwareDataName,this.usedFieldNames) == false) || data.name == "localizedfields") {
 
                     if(data.datatype == "data") {
-                        this.usedFieldNames.push(data.name);
+                        this.usedFieldNames.push(containerAwareDataName);
                     }
 
                     if(nodeEl) {
