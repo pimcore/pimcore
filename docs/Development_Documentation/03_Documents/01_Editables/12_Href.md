@@ -39,7 +39,7 @@ After, the view in the administration panel changes like in the picture:
 
 ![Href editable preview in the administration panel](../../img/href_backend_preview.png)
 
-### Using estriction
+### Using Restriction
 
 If you want specify elements which could be assigned to the href editable, use `types`, `subtypes` and `classes`
 options in the editable configuration.
