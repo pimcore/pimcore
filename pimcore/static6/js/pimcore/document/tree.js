@@ -981,11 +981,14 @@ pimcore.document.tree = Class.create({
             "redirectToMainDomain": false
         };
 
+        var title = "";
+
         if(record.data["site"]) {
             data = record.data["site"];
+            title = t("site_id") + ": " + data["id"];
         }
 
-        var win = new Ext.Window({
+        var windowCfg = {
             width: 600,
             layout: "fit",
             closeAction: "close",
@@ -1075,7 +1078,13 @@ pimcore.document.tree = Class.create({
                     win.close();
                 }.bind(this)
             }]
-        });
+        };
+
+        if (title) {
+            windowCfg.title = title;
+        }
+
+        var win = new Ext.Window(windowCfg);
 
         win.show();
     },
