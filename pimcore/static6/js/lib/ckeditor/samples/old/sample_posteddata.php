@@ -13,4 +13,4 @@
   For licensing, see LICENSE.md or http://ckeditor.com/license
 -------------------------------------------------------------------------------------------
 
-</pre><div style="display:none"></body> */ include "assets/posteddata.php"; ?>
+</pre><div style="display:none"></body> */ include "assets/posteddata.php";
