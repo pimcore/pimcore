@@ -11,7 +11,7 @@ which can profit from inheritance and can be utilized and accessed within your c
 So managing data becomes really easy. Data objects can be instantiated and filled within Pimcore backend or within your
 custom code by using the PHP API and common programming paradigms (create new instances, using getter and setter, ...).
  For saving objects just call the `save`` method and Pimcore takes care of the rest. 
- So it is also really eays to serve object from external systems like CRM, ERP, PIM or asset management systems.
+ So it is also really easy to serve object from external systems like CRM, ERP, PIM or asset management systems.
  
 
 This chapter describes following aspects of objects from a technical point of view: 
