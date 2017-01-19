@@ -6275,5 +6275,9 @@
     {
       "term": "site_ids",
       "definition": "Site IDs"
+    },
+    {
+        "term": "site_ids_tooltip",
+        "definition": "Provide a comma-seperated list of site IDs"
     }
 ]
