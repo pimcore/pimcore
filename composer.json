@@ -72,7 +72,8 @@
     "amnuts/opcache-gui": "~2",
     "vrana/adminer": "~4.2",
     "egulias/email-validator": "*",
-    "neitanod/forceutf8": "~2"
+    "neitanod/forceutf8": "~2",
+    "azuyalabs/yasumi": "dev-master"
   },
   "require-dev": {
     "phpunit/phpunit": "*"

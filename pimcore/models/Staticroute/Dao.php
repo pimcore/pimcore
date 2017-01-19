@@ -67,7 +67,7 @@ class Dao extends Model\Dao\PhpArrayTable
 
         $data = $this->db->fetchAll(function ($row) use ($name, $siteId) {
             if ($row["name"] == $name) {
-                if (empty($row["siteId"]) || $row["siteId"] == $siteId) {
+                if (empty($row["siteId"]) || in_array($siteId, $row["siteId"])) {
                     return true;
                 }
             }
