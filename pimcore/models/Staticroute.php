@@ -70,7 +70,7 @@ class Staticroute extends AbstractModel
     public $defaults;
 
     /**
-     * @var int
+     * @var array
      */
     public $siteId;
 
@@ -415,20 +415,44 @@ class Staticroute extends AbstractModel
     }
 
     /**
-     * @param int $siteId
+     * @param int|array $siteId
      */
     public function setSiteId($siteId)
     {
-        $this->siteId = $siteId ? (int) $siteId : null;
+        $result = array();
 
+        if (!is_array($siteId)) {
+            // backwards compatibility
+            $siteIds = strlen($siteId) ? explode(",", $siteId) : array();
+        } else {
+            $siteIds = $siteId;
+        }
+
+        foreach ($siteIds as $siteId) {
+            $site = null;
+            try {
+                $site = Site::getById($siteId);
+                if ($site) {
+                    $result[] = (int)$siteId;
+                }
+            } catch (\Exception $e) {
+                // cleanup
+            }
+        }
+
+
+        $this->siteId = $result;
         return $this;
     }
 
     /**
-     * @return int
+     * @return array
      */
     public function getSiteId()
     {
+        if ($this->siteId && !is_array($this->siteId)) {
+            $this->siteId = explode("," , $this->siteId);
+        }
         return $this->siteId;
     }
 
@@ -573,7 +597,19 @@ class Staticroute extends AbstractModel
 
             // check for site
             if ($this->getSiteId()) {
-                if (!Site::isSiteRequest() || $this->getSiteId() != Site::getCurrentSite()->getId()) {
+                if (!Site::isSiteRequest()) {
+                    return false;
+                }
+
+                $siteMatched = false;
+                $siteIds = $this->getSiteId();
+                foreach ($siteIds as $siteId) {
+                    if ($siteId == Site::getCurrentSite()->getId()) {
+                        $siteMatched = true;
+                        break;
+                    }
+                }
+                if (!$siteMatched) {
                     return false;
                 }
             }

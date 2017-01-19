@@ -706,7 +706,13 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
             $list->load();
 
             $routes = [];
+            /** @var  $route Staticroute */
             foreach ($list->getRoutes() as $route) {
+                if (is_array($route->getSiteId())) {
+                    $route = json_encode($route);
+                    $route = json_decode($route, true);
+                    $route["siteId"] = implode(",", $route["siteId"]);
+                }
                 $routes[] = $route;
             }
 

@@ -189,19 +189,9 @@ pimcore.settings.staticroutes = Class.create({
                 editor:new Ext.form.TextField({})},
             {header:t("defaults"), width:50, sortable:false, dataIndex:'defaults',
                 editor:new Ext.form.TextField({})},
-            {header:t("site"), width:100, sortable:true, dataIndex:"siteId",
-                editor:new Ext.form.ComboBox({
-                    store:pimcore.globalmanager.get("sites"),
-                    valueField:"id",
-                    displayField:"domain",
-                    triggerAction:"all"
-                }), renderer:function (siteId) {
-                var store = pimcore.globalmanager.get("sites");
-                var pos = store.findExact("id", siteId);
-                if (pos >= 0) {
-                    return store.getAt(pos).get("domain");
-                }
-            }},
+            {header:t("site_ids"), width:100, sortable:true, dataIndex:"siteId",
+                editor:new Ext.form.TextField({})
+            },
             {header:t("priority"), width:50, sortable:true, dataIndex:'priority', editor:new Ext.form.ComboBox({
                 store:[1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
                 mode:"local",

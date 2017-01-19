@@ -6271,5 +6271,9 @@
     {
         "term": "site_id",
         "definition": "Site ID"
+    },
+    {
+      "term": "site_ids",
+      "definition": "Site IDs"
     }
 ]
