@@ -94,13 +94,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
 
             delete eConfig.width;
 
-            var removePluginsAdd = "";
-            if(eConfig.removePlugins) {
-                removePluginsAdd = "," + eConfig.removePlugins;
-            }
-
             eConfig.language = pimcore.settings["language"];
-            eConfig.removePlugins = removePluginsAdd;
             eConfig.entities = false;
             eConfig.entities_greek = false;
             eConfig.entities_latin = false;
@@ -109,7 +103,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
             if(typeof(pimcore.document.tags.wysiwyg.defaultEditorConfig) == 'object'){
                 eConfig = mergeObject(pimcore.document.tags.wysiwyg.defaultEditorConfig,eConfig);
             }
-        
+
             this.ckeditor = CKEDITOR.inline(this.textarea, eConfig);
 
             this.ckeditor.on('change', this.checkValue.bind(this));
