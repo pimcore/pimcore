@@ -419,11 +419,11 @@ class Staticroute extends AbstractModel
      */
     public function setSiteId($siteId)
     {
-        $result = array();
+        $result = [];
 
         if (!is_array($siteId)) {
             // backwards compatibility
-            $siteIds = strlen($siteId) ? explode(",", $siteId) : array();
+            $siteIds = strlen($siteId) ? explode(",", $siteId) : [];
         } else {
             $siteIds = $siteId;
         }
@@ -442,6 +442,7 @@ class Staticroute extends AbstractModel
 
 
         $this->siteId = $result;
+
         return $this;
     }
 
@@ -451,8 +452,9 @@ class Staticroute extends AbstractModel
     public function getSiteId()
     {
         if ($this->siteId && !is_array($this->siteId)) {
-            $this->siteId = explode("," , $this->siteId);
+            $this->siteId = explode(",", $this->siteId);
         }
+
         return $this->siteId;
     }
 

@@ -19,18 +19,18 @@ class Housekeeping
     /**
      * @param int $lastAccessGreaterThanDays
      */
-    public static function cleanupTmpFiles($lastAccessGreaterThanDays = 90) {
-
+    public static function cleanupTmpFiles($lastAccessGreaterThanDays = 90)
+    {
         $directory = new \RecursiveDirectoryIterator(PIMCORE_TEMPORARY_DIRECTORY, \FilesystemIterator::FOLLOW_SYMLINKS);
         $filter = new \RecursiveCallbackFilterIterator($directory, function ($current, $key, $iterator) use ($lastAccessGreaterThanDays) {
 
             // Skip hidden files and directories.
             if ($current->getFilename()[0] === '.' || $current->getFilename()[0] === '..') {
-                return FALSE;
+                return false;
             }
 
             if ($current->isFile()) {
-                if($current->getATime() < (time()-($lastAccessGreaterThanDays * 86400))) {
+                if ($current->getATime() < (time()-($lastAccessGreaterThanDays * 86400))) {
                     return true;
                 }
             } else {
@@ -40,7 +40,7 @@ class Housekeeping
         $iterator = new \RecursiveIteratorIterator($filter);
 
         foreach ($iterator as $file) {
-            if($file->isFile()) {
+            if ($file->isFile()) {
                 @unlink($file->getPathname());
             }
         }
