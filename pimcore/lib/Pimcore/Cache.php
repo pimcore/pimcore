@@ -354,15 +354,67 @@ class Cache
                 return;
             }
 
-            $data = serialize($data);
-
-            return self::storeToCache($data, $key, $tags, $lifetime, $force);
+            $cacheData = static::prepareCacheData($data, $tags);
+            if ($cacheData) {
+                return self::storeToCache($cacheData['data'], $key, $cacheData['tags'], $lifetime, $force);
+            }
         } else {
             if (count(self::$saveStack) < self::$maxWriteToCacheItems) {
-                $data = serialize($data);
-                self::$saveStack[] = [$data, $key, $tags, $lifetime, $force];
+                $cacheData = static::prepareCacheData($data, $tags);
+                if ($cacheData) {
+                    self::$saveStack[] = [$cacheData['data'], $key, $cacheData['tags'], $lifetime, $force];
+                }
             }
         }
+    }
+
+    /**
+     * @param $data
+     * @param array $tags
+     * @return array|bool
+     */
+    protected static function prepareCacheData($data, array $tags = [])
+    {
+        // do not cache hardlink-wrappers
+        if ($data instanceof Document\Hardlink\Wrapper\WrapperInterface) {
+            return false;
+        }
+
+        if ($data instanceof Element\ElementInterface) {
+            // check for currupt data
+            if ($data->getId() < 1) {
+                return false;
+            }
+
+            if (isset($data->_fulldump)) {
+                unset($data->_fulldump);
+            }
+
+            // get dependencies for this element
+            $tags = $data->getCacheTags($tags);
+            $type = get_class($data);
+
+            Logger::debug("prepared " . $type . " " . $data->getId() . " for data cache with tags: " . implode(",", $tags));
+        }
+
+        if (is_object($data) && isset($data->____pimcore_cache_item__)) {
+            unset($data->____pimcore_cache_item__);
+        }
+
+        if (!is_array($tags)) {
+            if ($tags) {
+                $tags = [$tags];
+            } else {
+                $tags = [];
+            }
+        }
+
+        $tags = array_values($tags);
+
+        return [
+            'data' => serialize($data),
+            'tags' => $tags
+        ];
     }
 
     /**
@@ -385,34 +437,12 @@ class Cache
             return;
         }
 
-        // do not cache hardlink-wrappers
-        if ($data instanceof Document\Hardlink\Wrapper\WrapperInterface) {
-            return;
-        }
-
         // get cache instance
         if ($cache = self::getInstance()) {
 
             //if ($lifetime !== null) {
             //    $cache->setLifetime($lifetime);
             //}
-
-            if ($data instanceof Element\ElementInterface) {
-                // check for currupt data
-                if ($data->getId() < 1) {
-                    return;
-                }
-
-                if (isset($data->_fulldump)) {
-                    unset($data->_fulldump);
-                }
-
-                // get dependencies for this element
-                $tags = $data->getCacheTags($tags);
-                $type = get_class($data);
-
-                Logger::debug("prepared " . $type . " " . $data->getId() . " for data cache with tags: " . implode(",", $tags));
-            }
 
             // check for cleared tags, only item which are not cleared within the same session are stored to the cache
             if (is_array($tags)) {
@@ -432,10 +462,6 @@ class Cache
 
             // array_values() because the tags from \Element_Interface and some others are associative eg. array("object_123" => "object_123")
             $tags = array_values($tags);
-
-            if (is_object($data) && isset($data->____pimcore_cache_item__)) {
-                unset($data->____pimcore_cache_item__);
-            }
 
             $key = self::$cachePrefix . $key;
 
