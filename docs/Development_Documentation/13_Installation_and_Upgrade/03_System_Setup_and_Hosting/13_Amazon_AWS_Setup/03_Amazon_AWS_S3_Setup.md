@@ -55,6 +55,7 @@ $s3Client->registerStreamWrapper();
     's3' => ['seekable' => true]
 ]));
  
+// you have to customize this if you'd like to deliver your assets/thumbnails in your S3 bucket by CloudFront
 $s3BaseUrl = "https://s3.eu-central-1.amazonaws.com";
 $s3TmpUrlPrefix = $s3BaseUrl . str_replace("s3:/", "", PIMCORE_TEMPORARY_DIRECTORY);
 $s3AssetUrlPrefix = $s3BaseUrl . str_replace("s3:/", "", PIMCORE_ASSET_DIRECTORY);
