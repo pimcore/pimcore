@@ -936,6 +936,10 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
             "text" => "Type: " . $childDocument->getType()
         ];
 
+        if ($site) {
+            $tmpDocument["qtipCfg"]["text"] .= "<br>" . $this->view->translate("site_id") . ": " . $site->getId();
+        }
+
         // PREVIEWS temporary disabled, need's to be optimized some time
         if ($childDocument instanceof Document\Page && Config::getSystemConfig()->documents->generatepreview) {
             $thumbnailFile = PIMCORE_TEMPORARY_DIRECTORY . "/document-page-previews/document-page-screenshot-" . $childDocument->getId() . ".jpg";
