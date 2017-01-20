@@ -10,6 +10,7 @@ use Psr\Log\NullLogger;
 use Symfony\Component\Cache\Adapter\ApcuAdapter;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Component\Cache\Adapter\PdoAdapter;
 use Symfony\Component\Cache\Adapter\RedisAdapter;
 use Symfony\Component\Cache\Adapter\TagAwareAdapter;
 
@@ -67,6 +68,18 @@ return [
 
         return RedisAdapter::createConnection($dsn, $options);
     },
+
+    // PDO cache adapter
+    'pimcore.cache.adapter.core.pdo' => DI\object(PdoAdapter::class)
+        ->constructor(
+            DI\get('pimcore.db.pdo'),
+            DI\get('pimcore.cache.config.core.namespace'),
+            DI\get('pimcore.cache.config.core.defaultLifetime'),
+            [
+                'db_table' => 'cache_test'
+            ]
+        )
+        ->method('setLogger', DI\get('pimcore.logger.cache')),
 
     // redis cache adapter
     'pimcore.cache.adapter.core.redis' => DI\object(RedisAdapter::class)
