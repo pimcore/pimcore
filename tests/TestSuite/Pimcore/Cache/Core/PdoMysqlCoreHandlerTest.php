@@ -2,14 +2,13 @@
 
 namespace TestSuite\Pimcore\Cache\Core;
 
-use Pimcore\Cache\Adapter\PdoMysqlAdapter;
+use Test\Cache\Traits\PdoMysqlAdapterTrait;
+
+require_once __DIR__ . '/../../../../lib/Test/Cache/Traits/PdoMysqlAdapterTrait.php';
 
 class PdoMysqlCoreHandlerTest extends AbstractCoreHandlerTest
 {
-    /**
-     * @var \PDO
-     */
-    protected static $pdo;
+    use PdoMysqlAdapterTrait;
 
     /**
      * @inheritDoc
@@ -17,14 +16,12 @@ class PdoMysqlCoreHandlerTest extends AbstractCoreHandlerTest
     public static function setUpBeforeClass()
     {
         parent::setUpBeforeClass();
-
-        /** @var \PDO $pdo */
-        static::$pdo = \Pimcore::getDiContainer()->get('pimcore.db.pdo');
+        static::fetchPdo();
     }
 
     protected function setUpCacheAdapters()
     {
-        $cacheAdapter = new PdoMysqlAdapter(static::$pdo, 3600);
+        $cacheAdapter = $this->createPdoAdapter();
         $cacheAdapter->setLogger(static::$logger);
 
         // make sure we start with a clean state

@@ -78,7 +78,9 @@
     "symfony/cache": "^3.2"
   },
   "require-dev": {
-    "phpunit/phpunit": "^5.0"
+    "phpunit/phpunit": "^5.0",
+    "cache/tag-interop": "1.0.x-dev",
+    "cache/integration-tests": "^0.15.0"
   },
   "suggest": {
     "ext-curl": "*",
