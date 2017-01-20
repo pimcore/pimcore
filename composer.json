@@ -43,7 +43,7 @@
     "ext-zlib": "*",
     "ext-bz2": "*",
     "ext-openssl": "*",
-    "pimcore/core-version": "4.4.1",
+    "pimcore/core-version": "4.4.2",
     "zendframework/zendframework1": "~1.12",
     "symfony/console": "~3",
     "symfony/finder": "~3",
