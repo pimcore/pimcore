@@ -192,7 +192,6 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         }
         this.store.getProxy().setExtraParam("only_direct_children", this.onlyDirectChildren);
         this.store.setPageSize(itemsPerPage);
-        this.store.load();
 
         var gridColumns = gridHelper.getGridColumns();
 
