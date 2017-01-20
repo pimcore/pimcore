@@ -656,7 +656,7 @@ class DefaultElasticSearch extends AbstractMockupCacheWorker implements IBatchPr
             Logger::info('Index-Actions - in completeReindexMode');
 
             // check if all entries are updated
-            $query = "SELECT count(*) FROM " . $this->getStoreTableName() . " WHERE tenant = ? AND (in_preparation_queue = 1 OR crc_current != crc_index);";
+            $query = "SELECT EXISTS(SELECT 1 FROM " . $this->getStoreTableName() . " WHERE tenant = ? AND (in_preparation_queue = 1 OR crc_current != crc_index) LIMIT 1);";
             $result = $this->db->fetchOne($query, array($this->name));
 
             Logger::info('Index-Actions - in completeReindexMode - Open entries: ' . $result);
