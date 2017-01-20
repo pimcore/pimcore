@@ -38,6 +38,21 @@ class ContentController extends Controller
      * @param Request $request
      * @return array
      */
+    public function portalAction(Request $request)
+    {
+        $vars = $this->fullContentAction($request);
+
+        $vars['isPortal'] = true;
+
+
+    }
+
+    /**
+     * @Template("AppBundle:Content:full-content.html.twig")
+     *
+     * @param Request $request
+     * @return array
+     */
     public function fullContentAction(Request $request)
     {
         $vars = $this->resolveContent($request);
@@ -57,6 +72,11 @@ class ContentController extends Controller
 
         $vars['mainNavigation']   = $mainNavigation;
         $vars['mainNavStartNode'] = $mainNavStartNode;
+
+        // TODO make this global somewhere
+        if (!$request->get('pimcore_editmode')) {
+            $vars['editmode'] = true;
+        }
 
         return $vars;
     }

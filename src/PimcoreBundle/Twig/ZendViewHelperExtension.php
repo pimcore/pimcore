@@ -35,6 +35,18 @@ class ZendViewHelperExtension extends \Twig_Extension
         ];
     }
 
+    // HACK HACK the ignore filter is just a hack until i found out how to register the function
+    // above so that it can be called with {% %} instead of {{ }}
+    public function getFilters()
+    {
+        return [
+            // ignore the output
+            new \Twig_Filter('ignore', function($input) {
+                return '';
+            })
+        ];
+    }
+
     /**
      * @param $name
      * @param array $arguments

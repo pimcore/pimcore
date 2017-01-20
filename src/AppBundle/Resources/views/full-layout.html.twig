@@ -6,6 +6,31 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    {% if document.getTitle() %}
+        {{ zend_headTitle().set(document.getTitle())|ignore }}
+    {% endif %}
+
+    {% if document.getDescription() %}
+        {{ zend_headMeta().appendName('description', document.getDescription())|ignore }}
+    {% endif %}
+
+    {{ zend_headTitle().append('pimcore Demo')|ignore }}
+    {{ zend_headTitle().setSeparator(' : ')|ignore }}
+
+    {{ zend_headTitle() }}
+    {{ zend_headMeta() }}
+
+    {{ zend_headLink().appendStylesheet('/website/static/bootstrap/css/bootstrap.css')|ignore }}
+    {{ zend_headLink().appendStylesheet('/website/static/css/global.css')|ignore }}
+    {{ zend_headLink().appendStylesheet('/website/static/lib/video-js/video-js.min.css', 'screen')|ignore }}
+    {{ zend_headLink().appendStylesheet('/website/static/lib/magnific/magnific.css', 'screen')|ignore }}
+
+    {% if editmode %}
+        {{ zend_headLink().appendStylesheet('/website/static/css/editmode.css', 'screen')|ignore }}
+    {% endif %}
+
+    {{ zend_headLink()|raw }}
+
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
     <script src="/website/static/js/html5shiv.js"></script>
@@ -33,6 +58,8 @@
                     {{ mainNavigation.menu().renderMenu(null, { "maxDepth": 1, "ulClass": "nav navbar-nav" })|raw }}
                 </div>
             </div>
+
+            <!-- TODO language -->
         </div>
     </div>
 </div>

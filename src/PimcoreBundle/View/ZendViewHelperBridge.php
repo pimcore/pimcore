@@ -53,7 +53,7 @@ class ZendViewHelperBridge
     {
         $helper    = $this->getZendViewHelper($helperName);
         $reflector = new \ReflectionClass($helper);
-        $method    = lcfirst($reflector->getShortName());
+        $method    = $helperName;
 
         if (!$reflector->hasMethod($method)) {
             throw new \RuntimeException(sprintf(
