@@ -53,7 +53,7 @@ class ContentController extends Controller
         /** @var ZendViewHelperBridge $bridge */
         $bridge = $this->container->get('pimcore.view.zend_view_helper_bridge');
 
-        $mainNavigation = $bridge->execute('pimcoreNavigation', $document, $mainNavStartNode);
+        $mainNavigation = $bridge->execute('pimcoreNavigation', [$document, $mainNavStartNode]);
 
         $vars['mainNavigation']   = $mainNavigation;
         $vars['mainNavStartNode'] = $mainNavStartNode;

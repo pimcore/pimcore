@@ -19,6 +19,8 @@ use Pimcore\Model\Document;
 use Pimcore\Cache as CacheManager;
 use Pimcore\Model\Site;
 use Pimcore\Navigation\Page\Uri;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class PimcoreNavigationController
 {
@@ -33,7 +35,7 @@ class PimcoreNavigationController
     protected $_pageClass = '\\Pimcore\\Navigation\\Page\\Uri';
 
     /**
-     * @param $activeDocument
+     * @param Document $activeDocument
      * @param null $navigationRootDocument
      * @param null $htmlMenuIdPrefix
      * @param null $pageCallback
@@ -85,8 +87,19 @@ class PimcoreNavigationController
         }
 
         // set active path
-        $front = \Zend_Controller_Front::getInstance();
-        $request = $front->getRequest();
+
+        // HACK HACK - get request from global request stack
+        /** @var \Zend_Controller_Request_Http|Request $request */
+        $request = null;
+
+        if (PIMCORE_SYMFONY_MODE && $activeDocument->getProperty('symfony')) {
+            /** @var RequestStack $requestStack */
+            $requestStack = \Pimcore::getKernel()->getContainer()->get('request_stack');
+            $request = $requestStack->getCurrentRequest();
+        } else {
+            $front = \Zend_Controller_Front::getInstance();
+            $request = $front->getRequest();
+        }
 
         // try to find a page matching exactly the request uri
         $activePages = $navigation->findAllBy("uri", $request->getRequestUri());

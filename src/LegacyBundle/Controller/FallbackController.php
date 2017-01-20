@@ -13,6 +13,8 @@ class FallbackController
         $diactorosFactory = new DiactorosFactory();
         $zendFactory      = new ZendMessageFactory();
 
+        define('PIMCORE_LEGACY_ZF_MODE', true);
+
         // TODO not implemented yet
         // $zendRequest = $zendFactory->createRequest($psrRequest);
         $zendRequest = new \Zend_Controller_Request_Http();
