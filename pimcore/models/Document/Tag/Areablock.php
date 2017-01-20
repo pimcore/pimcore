@@ -716,7 +716,7 @@ class Areablock extends Model\Document\Tag
         $data = $wsElement->value;
         if (($data->indices === null or is_array($data->indices)) and ($data->current==null or is_numeric($data->current))
             and ($data->currentIndex==null or is_numeric($data->currentIndex))) {
-            $indices = $data["indices"];
+            $indices = $data->indices;
             if ($indices instanceof \stdclass) {
                 $indices = (array) $indices;
             }
