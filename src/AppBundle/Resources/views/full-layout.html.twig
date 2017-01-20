@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <link rel="icon" type="image/png" href="/pimcore/static/img/favicon/favicon-32x32.png" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="/website/static/js/html5shiv.js"></script>
+    <script src="/website/static/js/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body class="">
+
+<div class="navbar-wrapper">
+    <div class="container">
+        <div class="navbar navbar-inverse navbar-static-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="{{ mainNavStartNode }}">
+                        <img src="/website/static/img/logo-white.svg" alt="pimcore Demo">
+                    </a>
+                </div>
+                <div class="navbar-collapse collapse">
+                    {{ mainNavigation.menu().renderMenu(null, { "maxDepth": 1, "ulClass": "nav navbar-nav" }) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block content %}{% endblock %}
+
+</body>
+</html>
