@@ -1491,7 +1491,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                 }
             }
 
-            if($this->getParam("condition") || $this->getParam("filter")) {
+            if ($this->getParam("condition") || $this->getParam("filter")) {
                 $listClass = "\\Pimcore\\Model\\Object\\" . ucfirst($className) . "\\Listing";
             } else {
                 $listClass = "\\Pimcore\\Model\\Object\\Listing";

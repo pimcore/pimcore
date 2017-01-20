@@ -30,5 +30,4 @@ class Website extends AbstractTranslation
     {
         return \Pimcore\Tool::getValidLanguages();
     }
-
 }
