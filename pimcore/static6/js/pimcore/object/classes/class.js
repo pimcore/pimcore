@@ -1009,7 +1009,7 @@ pimcore.object.classes.klass = Class.create({
                 var containerAwareDataName = data.name;
                 var parentNode = node.parentNode;
                 while (parentNode) {
-                    if (parentNode.data.editor && typeof parentNode.data.editor.getData == "function") {
+                    if (parentNode.data.editor && Ext.isFunction(parentNode.data.editor.getData)) {
                         var parentData = parentNode.data.editor.getData();
                         if (parentData.datatype == "data" && parentNode.data.editor.type == "block") {
                             containerAwareDataName = "block-" + parentData.name + "-" + containerAwareDataName;
@@ -1019,7 +1019,6 @@ pimcore.object.classes.klass = Class.create({
 
                     parentNode = parentNode.parentNode;
                 }
-
 
                 if ((fieldValidation && in_arrayi(containerAwareDataName,this.usedFieldNames) == false) || data.name == "localizedfields") {
 
@@ -1036,7 +1035,6 @@ pimcore.object.classes.klass = Class.create({
                         nodeEl.addCls("tree_node_error");
                     }
 
-
                     var invalidFieldsText = t("class_field_name_error") + ": '" + data.name + "'";
 
                     if(node.data.editor.invalidFieldNames){
@@ -1046,8 +1044,6 @@ pimcore.object.classes.klass = Class.create({
 
                     pimcore.helpers.showNotification(t("error"), t("some_fields_cannot_be_saved"), "error",
                         invalidFieldsText);
-
-
 
                     this.getDataSuccess = false;
                     return false;
