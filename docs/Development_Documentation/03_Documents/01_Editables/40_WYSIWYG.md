@@ -90,7 +90,7 @@ pimcore.document.tags.wysiwyg.defaultEditorConfig.allowedContent = true;
 and add the file to your `plugin.xml`: 
 ```xml
 <pluginDocumentEditmodeJsPaths-extjs6>
-    <path>/Frischeis/static6/js/editmode.js</path>
+    <path>/MyPlugin/static/js/editmode.js</path>
 </pluginDocumentEditmodeJsPaths-extjs6>
 ```
 
