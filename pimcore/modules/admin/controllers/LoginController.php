@@ -238,7 +238,8 @@ class Admin_LoginController extends \Pimcore\Controller\Action\Admin
             $matchIp = false;
             $matchUser = false;
 
-            if ($login[0] > (time() - 300)) {
+            $time = strtotime($login[0]);
+            if ($time > (time() - 300)) {
                 if ($user && $login[2] == $user) {
                     $matchesUserOnly++;
                     $matchUser = true;
@@ -284,7 +285,7 @@ class Admin_LoginController extends \Pimcore\Controller\Action\Admin
         $remoteHost = Tool::getAnonymizedClientIp();
 
         $data[] = [
-            time(),
+            date(\DateTime::ISO8601),
             $remoteHost,
             $username
         ];
