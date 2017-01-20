@@ -1,6 +1,10 @@
 <?php
 
 $config = \Pimcore\WorkflowManagement\Workflow\Config::getWorkflowManagementConfig(true);
+if (!$config) {
+    return;
+}
+
 $config = $config['workflows'];
 
 $workflows = [];
