@@ -47,7 +47,7 @@ RewriteRule ^pimcore/.*$ / [F,L]
 RewriteCond %{REQUEST_FILENAME} -d [OR]
 RewriteCond %{REQUEST_FILENAME} -l [OR]
 RewriteCond %{REQUEST_FILENAME} -f
-RewriteRule (^\.|/\.) - [F,L]
+RewriteRule /\.|^\.(?!well-known/) - [F,L]
 
 # restrict access to potentially sensitive directories and files
 RewriteRule ^(vendor|tests|node_modules|phing|docs)/.*$ / [F,L]
