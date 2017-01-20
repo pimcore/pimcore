@@ -193,11 +193,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
         $idOriginal = $id;
         $id = mb_strtolower($id);
 
-        if ($translation instanceof Model\Translation\Admin) {
-            $languages = Tool\Admin::getLanguages();
-        } else {
-            $languages = Tool::getValidLanguages();
-        }
+        $languages = static::getLanguages();
 
         try {
             $translation->getDao()->getByKey(self::getValidTranslationKey($id));
@@ -289,7 +285,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
 
         if (is_readable($file)) {
             if (!$languages || empty($languages) || !is_array($languages)) {
-                $languages = Tool::getValidLanguages();
+                $languages = static::getLanguages();
             }
 
             //read import data

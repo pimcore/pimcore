@@ -23,4 +23,12 @@ use Pimcore\Model;
  */
 class Website extends AbstractTranslation
 {
+    /**
+     * @return array
+     */
+    protected static function getLanguages()
+    {
+        return \Pimcore\Tool::getValidLanguages();
+    }
+
 }

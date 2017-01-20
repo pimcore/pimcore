@@ -24,6 +24,13 @@ use Pimcore\Tool;
  */
 class Admin extends AbstractTranslation
 {
+    /**
+     * @return array
+     */
+    protected static function getLanguages()
+    {
+        return \Pimcore\Tool\Admin::getLanguages();
+    }
 
     /**
      * @param $id
