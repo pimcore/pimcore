@@ -20,7 +20,7 @@ THE OPEN-SOURCE ENTERPRISE CMS/CMF, PIM, DAM, ECOMMERCE-SUITE
 * [StackOverflow](http://stackoverflow.com/questions/tagged/pimcore) - Questions / Support 
 
 
-## Getting started
+## Getting started asd
 
 Download the [latest release](http://www.pimcore.org/download) and extract the archive in document root.
 Create a database for pimcore (charset: utf8). If you have a website_example (empty installation) or a website_demo (boilerplate) folder please rename one of them to website (only if cloning from git).
