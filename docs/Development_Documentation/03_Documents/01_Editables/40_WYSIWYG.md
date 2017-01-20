@@ -82,14 +82,16 @@ There is also an additional way to specify the configuration by adding `customCo
 ##### Global Configuration
 You can add a Global Configuration for all WYSIWYG Editors for all documents by setting ```pimcore.document.tags.wysiwyg.defaultEditorConfig```
 
-For this purpose, you can create a plugin and add the configuration in the new created file `/plugins/MyPlugin/static/js/startup.js` like this:
-
+For this purpose, you can create a plugin and add the configuration in the new created file `/plugins/MyPlugin/static/js/editmode.js` like this:
 ```
-pimcoreReady: function (params,broker){
+pimcore.document.tags.wysiwyg.defaultEditorConfig.allowedContent = true;
+```
 
-    pimcore.document.tags.wysiwyg.defaultEditorConfig.allowedContent = true;
-
-}
+and add the file to your `plugin.xml`: 
+```xml
+<pluginDocumentEditmodeJsPaths-extjs6>
+    <path>/Frischeis/static6/js/editmode.js</path>
+</pluginDocumentEditmodeJsPaths-extjs6>
 ```
 
 ### Text Output in Editmode
