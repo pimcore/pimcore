@@ -63,10 +63,10 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
                 "type" => $this->model->getType(),
                 "subtype" => $this->model->getSubtype(),
                 "published" => $this->model->isPublished(),
-                "creationdate" => $this->model->getCreationDate(),
-                "modificationdate" => $this->model->getmodificationDate(),
-                "userowner" => $this->model->getUserOwner(),
-                "usermodification" => $this->model->getUserModification(),
+                "creationDate" => $this->model->getCreationDate(),
+                "modificationDate" => $this->model->getmodificationDate(),
+                "userOwner" => $this->model->getUserOwner(),
+                "userModification" => $this->model->getUserModification(),
                 "data" => $this->model->getData(),
                 "properties" => $this->model->getProperties()
             ];

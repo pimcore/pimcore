@@ -52,10 +52,10 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
                 $entry->setFullPath($entryData['fullpath']);
                 $entry->setType($entryData['type']);
                 $entry->setSubtype($entryData['subtype']);
-                $entry->setUserOwner($entryData['userowner']);
-                $entry->setUserModification($entryData['usermodification']);
-                $entry->setCreationDate($entryData['creationdate']);
-                $entry->setModificationDate($entryData['modificationdate']);
+                $entry->setUserOwner($entryData['userOwner']);
+                $entry->setUserModification($entryData['userModification']);
+                $entry->setCreationDate($entryData['creationDate']);
+                $entry->setModificationDate($entryData['modificationDate']);
                 $entry->setPublished($entryData['published']=== 0 ? false : true);
                 $entries[]=$entry;
             }
