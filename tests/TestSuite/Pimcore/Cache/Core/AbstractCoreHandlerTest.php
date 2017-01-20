@@ -15,10 +15,9 @@ use Pimcore\Cache\Core\WriteLockInterface;
 use Psr\Cache\CacheItemInterface;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
-use Symfony\Component\Cache\Adapter\TagAwareAdapter;
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 
-class CoreHandlerTest extends TestCase
+abstract class AbstractCoreHandlerTest extends TestCase
 {
     /**
      * @var Logger
@@ -64,17 +63,24 @@ class CoreHandlerTest extends TestCase
      */
     protected function setUp()
     {
-        $cacheAdapter = new ArrayAdapter(3600, false);
-        $tagAdapter   = new TagAwareAdapter($cacheAdapter);
+        $this->setUpCacheAdapters();
+        $this->setUpWriteLock();
+        $this->buildHandlerMock();
+    }
 
-        $writeLock = new WriteLock($tagAdapter);
+    /**
+     * Initializes cacheAdapter and tagAdapter
+     *
+     * @return mixed
+     */
+    abstract protected function setUpCacheAdapters();
+
+    protected function setUpWriteLock()
+    {
+        $writeLock = new WriteLock($this->tagAdapter);
         $writeLock->setLogger(static::$logger);
 
-        $this->cacheAdapter = $cacheAdapter;
-        $this->tagAdapter   = $tagAdapter;
-        $this->writeLock    = $writeLock;
-
-        $this->buildHandlerMock();
+        $this->writeLock = $writeLock;
     }
 
     protected function buildHandlerMock()

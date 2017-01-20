@@ -9,7 +9,8 @@ class TestSuite_Pimcore_AllTests extends Test_SuiteBase
 
         $tests = [
             \TestSuite\Pimcore\MailTest::class,
-            \TestSuite\Pimcore\Cache\Core\CoreHandlerTest::class
+            \TestSuite\Pimcore\Cache\Core\ArrayCoreHandlerTest::class,
+            \TestSuite\Pimcore\Cache\Core\PdoMysqlCoreHandlerTest::class
         ];
 
         foreach ($tests as $test) {
