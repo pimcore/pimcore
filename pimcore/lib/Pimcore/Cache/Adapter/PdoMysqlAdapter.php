@@ -582,6 +582,13 @@ class PdoMysqlAdapter implements TagAwareAdapterInterface, PurgeAwareAdapterInte
         }
     }
 
+    public function __destruct()
+    {
+        if ($this->deferred) {
+            $this->commit();
+        }
+    }
+
     /**
      * @param string $key
      * @return string
