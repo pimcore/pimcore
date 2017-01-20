@@ -211,7 +211,7 @@ class PdoMysqlAdapter implements TagAwareAdapterInterface, PurgeAwareAdapterInte
         $now = time();
 
         $idCondition = str_pad('', (count($ids) << 1) - 1, '?,');
-        $fetchQuery  = 'SELECT id, CASE WHEN expire IS NULL OR expire > ? THEN data ELSE NULL FROM cache WHERE id IN (' . $idCondition . ')';
+        $fetchQuery  = 'SELECT id, CASE WHEN expire IS NULL OR expire > ? THEN data ELSE NULL END FROM cache WHERE id IN (' . $idCondition . ')';
 
         $stmt = $this->db->prepare($fetchQuery);
 
