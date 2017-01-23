@@ -67,6 +67,7 @@ class DocumentRouteProvider implements RouteProviderInterface
 
             $route = new DocumentRoute($document->getRealFullPath());
             $route->setDefault('_controller', $controller);
+            $route->setDefault('_locale', $document->getProperty('language'));
             $route->setDocument($document);
 
             return $route;

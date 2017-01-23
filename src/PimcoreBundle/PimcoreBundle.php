@@ -20,6 +20,7 @@ class PimcoreBundle extends Bundle
      */
     public function getContainerExtension()
     {
+        // TODO this shouldn't be necessary if naming is correct - check bundle names
         return new PimcoreExtension();
     }
 }
