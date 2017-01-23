@@ -12,6 +12,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 
 class Editmode
 {
@@ -23,6 +24,20 @@ class Editmode
     protected $contentTypes = [
         'text/html'
     ];
+
+    public function onKernelRequest(GetResponseEvent $event)
+    {
+        // TODO editmode is available to logged in users only
+
+        $request = $event->getRequest();
+
+        $editmode = false;
+        if ($request->get('pimcore_editmode')) {
+            $editmode = true;
+        }
+
+        \Zend_Registry::set('pimcore_editmode', $editmode);
+    }
 
     public function onKernelResponse(FilterResponseEvent $event)
     {
