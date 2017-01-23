@@ -69,8 +69,9 @@ class ContentController extends Controller
 
         $mainNavigation = $bridge->execute('pimcoreNavigation', [$document, $mainNavStartNode]);
 
-        $vars['mainNavigation']   = $mainNavigation;
-        $vars['mainNavStartNode'] = $mainNavStartNode;
+        $vars['mainNavigation']       = $mainNavigation->menu();
+        $vars['breadcrumbNavigation'] = $mainNavigation->breadcrumbs();
+        $vars['mainNavStartNode']     = $mainNavStartNode;
 
         $hideLeftNav = $vars['hideLeftNav'] = $document->getProperty('leftNavHide');
         if (!$hideLeftNav) {
@@ -81,7 +82,7 @@ class ContentController extends Controller
 
             $leftNavigation = $bridge->execute('pimcoreNavigation', [$document, $leftNavStartNode]);
 
-            $vars['leftNavigation']   = $leftNavigation;
+            $vars['leftNavigation']   = $leftNavigation->menu();
             $vars['leftNavStartNode'] = $leftNavStartNode;
         }
 

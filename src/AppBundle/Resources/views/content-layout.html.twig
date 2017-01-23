@@ -55,7 +55,7 @@
                     </a>
                 </div>
                 <div class="navbar-collapse collapse">
-                    {{ mainNavigation.menu().renderMenu(null, {
+                    {{ mainNavigation.renderMenu(null, {
                         maxDepth: 1,
                         ulClass: 'nav navbar-nav'
                     })|raw }}
@@ -111,7 +111,7 @@
 
             <div>
                 <a href="/">{{ zend_translate('Home') }}</a> &gt;
-                {{ mainNavigation.breadcrumbs().setMinDepth(null)|raw }}
+                {{ breadcrumbNavigation.setMinDepth(null)|raw }}
             </div>
         </div>
 
@@ -121,7 +121,7 @@
                 <div class="bs-sidebar hidden-print affix-top" role="complementary">
                     <h3>{{ leftNavStartNode.getProperty('navigation_name') }}</h3>
 
-                    {{ leftNavigation.menu.renderMenu(null, {
+                    {{ leftNavigation.renderMenu(null, {
                         ulClass: 'nav bs-sidenav',
                         expandSiblingNodesOfActiveBranch: true
                     })|raw }}
