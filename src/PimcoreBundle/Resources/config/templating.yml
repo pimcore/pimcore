@@ -1,7 +1,10 @@
 services:
     pimcore.document.tag.renderer:
         class: PimcoreBundle\Document\TagRenderer
-        arguments: ['@request_stack', '@logger']
+        arguments: ['@request_stack', '@pimcore.zend_view_provider']
+        calls:
+            - [setLogger, ['@logger']]
 
     pimcore.view.zend_view_helper_bridge:
         class: PimcoreBundle\View\ZendViewHelperBridge
+        arguments: ['@pimcore.zend_view_provider']

@@ -2,14 +2,25 @@
 
 namespace PimcoreBundle\View;
 
-use Pimcore\View;
-
 class ZendViewHelperBridge
 {
+    /**
+     * @var ZendViewProvider
+     */
+    protected $viewProvider;
+
     /**
      * @var \Zend_View_Helper_Interface[]
      */
     protected $helpers = [];
+
+    /**
+     * @param ZendViewProvider $viewProvider
+     */
+    public function __construct(ZendViewProvider $viewProvider)
+    {
+        $this->viewProvider = $viewProvider;
+    }
 
     /**
      * Get Zend View helper instance
@@ -23,12 +34,7 @@ class ZendViewHelperBridge
             return $this->helpers[$helperName];
         }
 
-        // TODO use already initialized view from Pimcore::run() (need to run whole MVC initialization?)
-        // $view = \Pimcore::getZendViewRenderer()->getView();
-        $view = new View();
-
-        // TODO add support for additional paths via event
-        $view->addHelperPath(PIMCORE_PATH . '/lib/Pimcore/View/Helper', '\\Pimcore\\View\\Helper\\');
+        $view   = $this->viewProvider->createView();
         $helper = $view->getHelper($helperName);
 
         if ($helper && $helper instanceof \Zend_View_Helper_Interface) {

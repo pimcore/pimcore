@@ -24,14 +24,6 @@ class Editmode
         'text/html'
     ];
 
-    /**
-     * @param LoggerInterface $logger
-     */
-    public function __construct(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
-    }
-
     public function onKernelResponse(FilterResponseEvent $event)
     {
         $request  = $event->getRequest();

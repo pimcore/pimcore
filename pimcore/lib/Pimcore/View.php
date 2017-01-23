@@ -376,7 +376,7 @@ class View extends \Zend_View
         $viewSuffix = "php";
 
         // custom view suffixes are only available for the frontend module (website)
-        if (\Zend_Controller_Front::getInstance()->getRequest()->getModuleName() == PIMCORE_FRONTEND_MODULE) {
+        if (!PIMCORE_SYMFONY_MODE && \Zend_Controller_Front::getInstance()->getRequest()->getModuleName() == PIMCORE_FRONTEND_MODULE) {
             $customViewSuffix = Config::getSystemConfig()->general->viewSuffix;
             if (!empty($customViewSuffix)) {
                 $viewSuffix = $customViewSuffix;

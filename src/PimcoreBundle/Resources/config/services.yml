@@ -14,6 +14,9 @@ services:
         tags:
             - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
 
+    pimcore.zend_view_provider:
+        class: PimcoreBundle\View\ZendViewProvider
+
     # TODO inject user?
     pimcore.document_service:
         class: Pimcore\Model\Document\Service

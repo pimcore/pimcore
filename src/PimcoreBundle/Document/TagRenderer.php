@@ -4,6 +4,8 @@ namespace PimcoreBundle\Document;
 
 use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Document\Tag;
+use Pimcore\View;
+use PimcoreBundle\View\ZendViewProvider;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,13 +21,18 @@ class TagRenderer
     protected $requestStack;
 
     /**
-     * @param RequestStack $requestStack
-     * @param LoggerInterface $logger
+     * @var ZendViewProvider
      */
-    public function __construct(RequestStack $requestStack, LoggerInterface $logger)
+    protected $viewProvider;
+
+    /**
+     * @param RequestStack $requestStack
+     * @param ZendViewProvider $viewProvider
+     */
+    public function __construct(RequestStack $requestStack, ZendViewProvider $viewProvider)
     {
         $this->requestStack = $requestStack;
-        $this->logger = $logger;
+        $this->viewProvider = $viewProvider;
     }
 
     /**
@@ -78,6 +85,12 @@ class TagRenderer
                         $tag->load();
                     }
 
+                    // create dummy view and add needed vars (depending on element)
+                    $view = $this->viewProvider->createView();
+                    $view->editmode = $this->isEditmode();
+                    $view->document = $document;
+
+                    $tag->setView($view);
                     $tag->setEditmode($this->isEditmode());
                     $tag->setOptions($options);
                 } else {
