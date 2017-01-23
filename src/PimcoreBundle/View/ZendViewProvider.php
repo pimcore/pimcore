@@ -52,4 +52,21 @@ class ZendViewProvider
     {
         return $this->getViewRenderer()->getView();
     }
+
+    /**
+     * @return View
+     */
+    public function createView()
+    {
+        $viewRenderer = $this->getViewRenderer();
+
+        $view = new View();
+        $view->setRequest($viewRenderer->getRequest());
+        $view->addHelperPath(PIMCORE_PATH . '/lib/Pimcore/View/Helper', '\\Pimcore\\View\\Helper\\');
+
+        $viewRenderer->setView($view);
+        $viewRenderer->initView();
+
+        return $view;
+    }
 }

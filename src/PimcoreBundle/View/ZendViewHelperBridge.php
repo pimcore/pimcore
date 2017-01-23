@@ -61,12 +61,12 @@ class ZendViewHelperBridge
      */
     public function execute($helperName, array $arguments = [])
     {
-        $view = $this->viewProvider->getView();
+        $view = $this->viewProvider->createView();
         if (method_exists($view, $helperName)) {
             return call_user_func_array([$view, $helperName], $arguments);
         }
 
-        $helper    = $this->getZendViewHelper($helperName);
+        $helper    = $this->getZendViewHelper($helperName, $view);
         $reflector = new \ReflectionClass($helper);
         $method    = $helperName;
 
