@@ -26,15 +26,19 @@ class ZendViewHelperBridge
      * Get Zend View helper instance
      *
      * @param string $helperName
+     * @param \Zend_View $view
      * @return \Zend_View_Helper_Interface
      */
-    public function getZendViewHelper($helperName)
+    public function getZendViewHelper($helperName, \Zend_View $view = null)
     {
         if (isset($this->helpers[$helperName])) {
             return $this->helpers[$helperName];
         }
 
-        $view   = $this->viewProvider->createView();
+        if (null === $view) {
+            $view = $this->viewProvider->createView();
+        }
+
         $helper = $view->getHelper($helperName);
 
         if ($helper && $helper instanceof \Zend_View_Helper_Interface) {
@@ -57,6 +61,11 @@ class ZendViewHelperBridge
      */
     public function execute($helperName, array $arguments = [])
     {
+        $view = $this->viewProvider->createView();
+        if (method_exists($view, $helperName)) {
+            return call_user_func_array([$view, $helperName], $arguments);
+        }
+
         $helper    = $this->getZendViewHelper($helperName);
         $reflector = new \ReflectionClass($helper);
         $method    = $helperName;
