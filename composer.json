@@ -3,7 +3,7 @@
   "type": "pimcore-plugin",
   "require": {
     "pimcore/installer-plugin": ">=1",
-    "pimcore/core-version": "4.4.1"
+    "pimcore/core-version": ">=4.4.1"
   },
   "suggest": {
     "klarna/checkout": "1.2.0"
