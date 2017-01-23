@@ -58,6 +58,11 @@ class Pimcore
     private static $globallyProtectedItems;
 
     /**
+     * @var bool
+     */
+    private static $mvcPrepared = false;
+
+    /**
      * @static
 
      * @param bool $returnResponse
@@ -69,11 +74,6 @@ class Pimcore
      */
     public static function run($returnResponse = false, Zend_Controller_Request_Abstract $request = null, Zend_Controller_Response_Abstract $response = null)
     {
-        $throwExceptions = false;
-
-        // detect frontend (website)
-        $frontend = Tool::isFrontend();
-
         if (!$returnResponse) {
             // enable the output-buffer, why? see in self::outputBufferStart()
             self::outputBufferStart();
@@ -82,9 +82,6 @@ class Pimcore
         // initialize cache
         Cache::init();
 
-        // init front controller
-        $front = \Zend_Controller_Front::getInstance();
-
         $conf = Config::getSystemConfig();
         if (!$conf) {
             // redirect to installer if configuration isn't present
@@ -92,13 +89,42 @@ class Pimcore
                 header("Location: /install/");
                 exit;
             }
-
-            // not installed, we display all error messages
-            $throwExceptions = true;
-        } else {
-            self::registerWhoopsErrorHandler($conf, $frontend);
         }
 
+        // init front controller
+        $front = static::prepareMvc($returnResponse, $conf);
+        $throwExceptions = static::throwMvcExceptions($conf);
+
+        self::getEventManager()->trigger("system.startup", $front);
+
+        return self::runDispatcher($front, $throwExceptions, $request, $response);
+    }
+
+    /**
+     * Prepare the ZF MVC stack
+     *
+     * @param bool $returnResponse
+     * @param null $conf
+     * @return Zend_Controller_Front
+     */
+    public static function prepareMvc($returnResponse = false, $conf = null)
+    {
+        $front = \Zend_Controller_Front::getInstance();
+
+        // make sure this method runs only once
+        if (static::$mvcPrepared) {
+            return $front;
+        }
+
+        if (null === $conf) {
+            $conf = Config::getSystemConfig();
+        }
+
+        // detect frontend (website)
+        $frontend = Tool::isFrontend();
+
+        // init front controller
+        self::registerWhoopsErrorHandler($conf, $frontend);
         self::registerFrontControllerPlugins($front, $frontend);
         self::initControllerFront($front);
 
@@ -113,12 +139,36 @@ class Pimcore
         if (!$frontend) {
             self::initBackendRouter($router, $conf);
             self::checkPluginRoutes();
+
             if ($conf) {
                 self::handleAdminMainDomainRedirect($conf);
             }
         }
 
-        self::getEventManager()->trigger("system.startup", $front);
+        static::setupZendViewRenderer();
+        static::$mvcPrepared = true;
+
+        return $front;
+    }
+
+    /**
+     * Determine if MVC stack should throw exceptions
+     *
+     * @param Zend_Config|mixed|null $conf
+     * @return bool
+     */
+    public function throwMvcExceptions($conf = null)
+    {
+        $throwExceptions = false;
+
+        if (null === $conf) {
+            $conf = Config::getSystemConfig();
+        }
+
+        if (!$conf) {
+            // not installed, we display all error messages
+            $throwExceptions = true;
+        }
 
         // throw exceptions also when in preview or in editmode (documents) to see it immediately when there's a problem with this page
         if (Tool::isFrontentRequestByAdmin()) {
@@ -128,7 +178,7 @@ class Pimcore
             }
         }
 
-        return self::runDispatcher($front, $throwExceptions, $request, $response);
+        return $throwExceptions;
     }
 
     /**

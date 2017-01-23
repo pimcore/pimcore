@@ -1,4 +1,8 @@
 services:
+    pimcore.legacy_kernel:
+        class: PimcoreBundle\HttpKernel\LegacyKernel
+        arguments: ['@kernel']
+
     pimcore.plugin_broker:
         class: Pimcore\API\Plugin\Broker
 
@@ -27,6 +31,7 @@ services:
 
     pimcore.zend_view_provider:
         class: PimcoreBundle\View\ZendViewProvider
+        arguments: ['@pimcore.legacy_kernel']
 
     # TODO inject user?
     pimcore.document_service:

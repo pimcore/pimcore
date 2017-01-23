@@ -83,10 +83,6 @@ abstract class Kernel extends \DI\Bridge\Symfony\Kernel
         // init container
         $this->initializeContainer();
 
-        if ($this->legacySupport) {
-            \Pimcore::setupZendViewRenderer();
-        }
-
         \Pimcore::initLogger();
 
         // run website startup

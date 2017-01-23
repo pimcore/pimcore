@@ -103,6 +103,14 @@ class ViewRenderer extends \Zend_Controller_Action_Helper_ViewRenderer
     {
         return $this->isInitialized;
     }
+
+    /**
+     * @return View|\Zend_View_Interface
+     */
+    public function getView()
+    {
+        return $this->view;
+    }
 }
 
 // unfortunately we need this alias here, since ZF plugin loader isn't able to handle namespaces correctly

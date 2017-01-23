@@ -36,7 +36,7 @@ class ZendViewHelperBridge
         }
 
         if (null === $view) {
-            $view = $this->viewProvider->createView();
+            $view = $this->viewProvider->getView();
         }
 
         $helper = $view->getHelper($helperName);
@@ -61,7 +61,7 @@ class ZendViewHelperBridge
      */
     public function execute($helperName, array $arguments = [])
     {
-        $view = $this->viewProvider->createView();
+        $view = $this->viewProvider->getView();
         if (method_exists($view, $helperName)) {
             return call_user_func_array([$view, $helperName], $arguments);
         }

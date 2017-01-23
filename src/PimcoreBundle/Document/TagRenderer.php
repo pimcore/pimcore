@@ -86,7 +86,7 @@ class TagRenderer
                     }
 
                     // create dummy view and add needed vars (depending on element)
-                    $view = $this->viewProvider->createView();
+                    $view = $this->viewProvider->getView();
                     $view->editmode = $this->isEditmode();
                     $view->document = $document;
 
