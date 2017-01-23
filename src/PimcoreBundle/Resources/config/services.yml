@@ -4,13 +4,23 @@ services:
 
     pimcore.event_listener.editmode:
         class: PimcoreBundle\EventListener\Editmode
-        arguments: ['@logger']
+        calls:
+            - [setLogger, ['@logger']]
         tags:
+            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
+
+    pimcore.event_listener.areablock:
+        class: PimcoreBundle\EventListener\Areablock
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
             - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
 
     pimcore.event_listener.zend_translate:
         class: PimcoreBundle\EventListener\ZendTranslate
-        arguments: ['@logger']
+        calls:
+            - [setLogger, ['@logger']]
         tags:
             - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
 
