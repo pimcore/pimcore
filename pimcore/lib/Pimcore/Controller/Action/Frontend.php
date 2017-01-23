@@ -572,8 +572,10 @@ abstract class Frontend extends Action
                     $this->getResponse()->setHttpResponseCode(503);
                 }
 
-                Logger::error("Unable to find URL: " . $_SERVER["REQUEST_URI"]);
-                Logger::error($error->exception);
+                if(\Pimcore::inDebugMode()) {
+                    Logger::error("Unable to find URL: " . $_SERVER["REQUEST_URI"]);
+                    Logger::error($error->exception);
+                }
 
                 $results = \Pimcore::getEventManager()->trigger("frontend.error", $this, [
                     "exception" => $error->exception
