@@ -91,7 +91,8 @@ class ContentController extends Controller
         $vars['isPortal'] = false;
 
         // TODO make this global somewhere
-        if (!$request->get('pimcore_editmode')) {
+        $vars['editmode'] = false;
+        if ($request->get('pimcore_editmode')) {
             $vars['editmode'] = true;
         }
 
