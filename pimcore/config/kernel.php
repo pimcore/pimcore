@@ -4,7 +4,7 @@ use Pimcore\Config;
 use Symfony\Component\Debug\Debug;
 
 $debug = Pimcore::inDebugMode();
-if ($debug) {
+if ($debug && defined('PIMCORE_SYMFONY_MODE') && PIMCORE_SYMFONY_MODE) {
     Debug::enable();
 }
 
