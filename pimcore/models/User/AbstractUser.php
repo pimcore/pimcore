@@ -172,6 +172,14 @@ class AbstractUser extends Model\AbstractModel
      */
     public function save()
     {
+        $isUpdate = false;
+        if ($this->getId()) {
+            $isUpdate = true;
+            \Pimcore::getEventManager()->trigger("user.preUpdate", $this);
+        } else {
+            \Pimcore::getEventManager()->trigger("user.preAdd", $this);
+        }
+
         $this->beginTransaction();
         try {
             if (!$this->getId()) {
@@ -186,6 +194,12 @@ class AbstractUser extends Model\AbstractModel
             throw $e;
         }
 
+        if ($isUpdate) {
+            \Pimcore::getEventManager()->trigger("user.postUpdate", $this);
+        } else {
+            \Pimcore::getEventManager()->trigger("user.postAdd", $this);
+        }
+
         return $this;
     }
 
@@ -194,6 +208,7 @@ class AbstractUser extends Model\AbstractModel
      */
     public function delete()
     {
+        \Pimcore::getEventManager()->trigger("user.preDelete", $this);
 
         // delete all childs
         $list = new Listing();
@@ -209,6 +224,8 @@ class AbstractUser extends Model\AbstractModel
         // now delete the current user
         $this->getDao()->delete();
         \Pimcore\Cache::clearAll();
+
+        \Pimcore::getEventManager()->trigger("user.postDelete", $this);
     }
 
     /**

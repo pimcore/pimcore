@@ -138,12 +138,12 @@ attach multiple events
 
 | Name                  | Target                                  | Parameters                                         | Description                                                                   |
 |-----------------------|-----------------------------------------|----------------------------------------------------|-------------------------------------------------------------------------------|
-| `object.postAdd`      | `Pimcore\Model\Object\AbstractObject`   | -                                                  |                                                                               |
-| `object.postDelete`   | `Pimcore\Model\Object\AbstractObject`   | -                                                  |                                                                               |
-| `object.postUpdate`   | `Pimcore\Model\Object\AbstractObject`   | (bool) saveVersionOnly                             | saveVersionOnly is set if method saveVersion() was called instead of save()   |
 | `object.preAdd`       | `Pimcore\Model\Object\AbstractObject`   | -                                                  |                                                                               |
-| `object.preDelete`    | `Pimcore\Model\Object\AbstractObject`   | -                                                  |                                                                               |
+| `object.postAdd`      | `Pimcore\Model\Object\AbstractObject`   | -                                                  |                                                                               |
 | `object.preUpdate`    | `Pimcore\Model\Object\AbstractObject`   | (bool) saveVersionOnly                             | saveVersionOnly is set if method saveVersion() was called instead of save()   |
+| `object.postUpdate`   | `Pimcore\Model\Object\AbstractObject`   | (bool) saveVersionOnly                             | saveVersionOnly is set if method saveVersion() was called instead of save()   |
+| `object.preDelete`    | `Pimcore\Model\Object\AbstractObject`   | -                                                  |                                                                               |
+| `object.postDelete`   | `Pimcore\Model\Object\AbstractObject`   | -                                                  |                                                                               |
 | `object.postCopy`     | `Pimcore\Model\Object\AbstractObject`   | `Pimcore\Model\Object\AbstractObject base_element` | base_element contains the base object used in copying process                 |
 
 
@@ -166,73 +166,73 @@ attach multiple events
 
 | Name | Target | Parameters | Description | 
 | ---- | ------ | ---------- | ----------- |
-| `object.class.postAdd` | `Pimcore\Model\Object\ClassDefinition` | - |  |
-| `object.class.postUpdate` | `Pimcore\Model\Object\ClassDefinition` | - |  |
 | `object.class.preAdd` | `Pimcore\Model\Object\ClassDefinition` | - |  |
+| `object.class.postAdd` | `Pimcore\Model\Object\ClassDefinition` | - |  |
 | `object.class.preUpdate` | `Pimcore\Model\Object\ClassDefinition` | - |  |
+| `object.class.postUpdate` | `Pimcore\Model\Object\ClassDefinition` | - |  |
+| `object.class.preDelete` | `Pimcore\Model\Object\ClassDefinition` | - |  |
+| `object.class.postDelete` | `Pimcore\Model\Object\ClassDefinition` | - |  |
 
 
 ### Object KeyValue Group Configuration
 
 | Name | Target | Parameters | Description | 
 | ---- | ------ | ---------- | ----------- |
-| `object.keyValue.groupConfig.postAdd` | `Pimcore\Model\Object\KeyValue\GroupConfig` | - |  |
-| `object.keyValue.groupConfig.postUpdate` | `Pimcore\Model\Object\KeyValue\GroupConfig` | - |  |
-| `object.keyValue.groupConfig.postUpdate` | `Pimcore\Model\Object\KeyValue\GroupConfig` | - |  |
-| `object.keyValue.groupConfig.postDelete` | `Pimcore\Model\Object\KeyValue\GroupConfig` | - |  |
 | `object.keyValue.groupConfig.preAdd` | `Pimcore\Model\Object\KeyValue\GroupConfig` | - |  |
-| `object.keyValue.groupConfig.preDelete` | `Pimcore\Model\Object\KeyValue\GroupConfig` | - |  |
+| `object.keyValue.groupConfig.postAdd` | `Pimcore\Model\Object\KeyValue\GroupConfig` | - |  |
 | `object.keyValue.groupConfig.preUpdate` | `Pimcore\Model\Object\KeyValue\GroupConfig` | - |  |
-
-
+| `object.keyValue.groupConfig.postUpdate` | `Pimcore\Model\Object\KeyValue\GroupConfig` | - |  |
+| `object.keyValue.groupConfig.preDelete` | `Pimcore\Model\Object\KeyValue\GroupConfig` | - |  |
+| `object.keyValue.groupConfig.postDelete` | `Pimcore\Model\Object\KeyValue\GroupConfig` | - |  |
 
 
 ### Object KeyValue Key Configuration
 
 | Name | Target | Parameters | Description | 
 | ---- | ------ | ---------- | ----------- |
-| `object.keyValue.keyConfig.postAdd` | `Pimcore\Model\Object\KeyValue\KeyConfig` | - |  |
-| `object.keyValue.keyConfig.postDelete` | `Pimcore\Model\Object\KeyValue\KeyConfig` | - | |
-| `object.keyValue.keyConfig.postUpdate` | `Pimcore\Model\Object\KeyValue\KeyConfig` | - | |
 | `object.keyValue.keyConfig.preAdd` | `Pimcore\Model\Object\KeyValue\KeyConfig` | - |  |
-| `object.keyValue.keyConfig.preDelete` | `Pimcore\Model\Object\KeyValue\KeyConfig` | - | |
+| `object.keyValue.keyConfig.postAdd` | `Pimcore\Model\Object\KeyValue\KeyConfig` | - |  |
 | `object.keyValue.keyConfig.preUpdate` | `Pimcore\Model\Object\KeyValue\KeyConfig` | - |  |
+| `object.keyValue.keyConfig.postUpdate` | `Pimcore\Model\Object\KeyValue\KeyConfig` | - | |
+| `object.keyValue.keyConfig.preDelete` | `Pimcore\Model\Object\KeyValue\KeyConfig` | - | |
+| `object.keyValue.keyConfig.postDelete` | `Pimcore\Model\Object\KeyValue\KeyConfig` | - | |
+
 
 ### Object Classification Store Collection Configuration
 
 | Name | Target | Parameters | Description | 
 | ---- | ------ | ---------- | ----------- |
-| `object.classificationstore.collectionConfig.postAdd` | `Pimcore\Model\Object\Classificationstore\CollectionConfig` | - |  |
-| `object.classificationstore.collectionConfig.postUpdate` | `Pimcore\Model\Object\Classificationstore\CollectionConfig` | - |  |
-| `object.classificationstore.collectionConfig.postUpdate` | `Pimcore\Model\Object\Classificationstore\CollectionConfig` | - |  |
-| `object.classificationstore.collectionConfig.postDelete` | `Pimcore\Model\Object\Classificationstore\CollectionConfig` | - |  |
 | `object.classificationstore.collectionConfig.preAdd` | `Pimcore\Model\Object\Classificationstore\CollectionConfig` | - |  |
-| `object.classificationstore.collectionConfig.preDelete` | `Pimcore\Model\Object\Classificationstore\CollectionConfig` | - |  |
+| `object.classificationstore.collectionConfig.postAdd` | `Pimcore\Model\Object\Classificationstore\CollectionConfig` | - |  |
 | `object.classificationstore.collectionConfig.preUpdate` | `Pimcore\Model\Object\Classificationstore\CollectionConfig` | - |  |
+| `object.classificationstore.collectionConfig.postUpdate` | `Pimcore\Model\Object\Classificationstore\CollectionConfig` | - |  |
+| `object.classificationstore.collectionConfig.preDelete` | `Pimcore\Model\Object\Classificationstore\CollectionConfig` | - |  |
+| `object.classificationstore.collectionConfig.postDelete` | `Pimcore\Model\Object\Classificationstore\CollectionConfig` | - |  |
+
 
 ### Object Classification Store Group Configuration
 
 | Name | Target | Parameters | Description | 
 | ---- | ------ | ---------- | ----------- |
-| `object.classificationstore.groupConfig.postAdd` | `Pimcore\Model\Object\Classificationstore\GroupConfig` | - |  |
-| `object.classificationstore.groupConfig.postUpdate` | `Pimcore\Model\Object\Classificationstore\GroupConfig` | - |  |
-| `object.classificationstore.groupConfig.postUpdate` | `Pimcore\Model\Object\Classificationstore\GroupConfig` | - |  |
-| `object.classificationstore.groupConfig.postDelete` | `Pimcore\Model\Object\Classificationstore\GroupConfig` | - |  |
 | `object.classificationstore.groupConfig.preAdd` | `Pimcore\Model\Object\Classificationstore\GroupConfig` | - |  |
-| `object.classificationstore.groupConfig.preDelete` | `Pimcore\Model\Object\Classificationstore\GroupConfig` | - |  |
+| `object.classificationstore.groupConfig.postAdd` | `Pimcore\Model\Object\Classificationstore\GroupConfig` | - |  |
 | `object.classificationstore.groupConfig.preUpdate` | `Pimcore\Model\Object\Classificationstore\GroupConfig` | - |  |
+| `object.classificationstore.groupConfig.postUpdate` | `Pimcore\Model\Object\Classificationstore\GroupConfig` | - |  |
+| `object.classificationstore.groupConfig.preDelete` | `Pimcore\Model\Object\Classificationstore\GroupConfig` | - |  |
+| `object.classificationstore.groupConfig.postDelete` | `Pimcore\Model\Object\Classificationstore\GroupConfig` | - |  |
+
 
 ### Object Classification Store Key Configuration
 
 | Name | Target | Parameters | Description | 
 | ---- | ------ | ---------- | ----------- |
-| `object.classificationstore.keyConfig.postAdd` | `Pimcore\Model\Object\Classificationstore\KeyConfig` | - |  |
-| `object.classificationstore.keyConfig.postUpdate` | `Pimcore\Model\Object\Classificationstore\KeyConfig` | - |  |
-| `object.classificationstore.keyConfig.postUpdate` | `Pimcore\Model\Object\Classificationstore\KeyConfig` | - |  |
-| `object.classificationstore.keyConfig.postDelete` | `Pimcore\Model\Object\Classificationstore\KeyConfig` | - |  |
 | `object.classificationstore.keyConfig.preAdd` | `Pimcore\Model\Object\Classificationstore\KeyConfig` | - |  |
-| `object.classificationstore.keyConfig.preDelete` | `Pimcore\Model\Object\Classificationstore\KeyConfig` | - |  |
+| `object.classificationstore.keyConfig.postAdd` | `Pimcore\Model\Object\Classificationstore\KeyConfig` | - |  |
 | `object.classificationstore.keyConfig.preUpdate` | `Pimcore\Model\Object\Classificationstore\KeyConfig` | - |  |
+| `object.classificationstore.keyConfig.postUpdate` | `Pimcore\Model\Object\Classificationstore\KeyConfig` | - |  |
+| `object.classificationstore.keyConfig.preDelete` | `Pimcore\Model\Object\Classificationstore\KeyConfig` | - |  |
+| `object.classificationstore.keyConfig.postDelete` | `Pimcore\Model\Object\Classificationstore\KeyConfig` | - |  |
+
 
 ### Versions
 
@@ -248,8 +248,21 @@ attach multiple events
 
 | Name | Target | Parameters | Description | 
 | ---- | ------ | ---------- | ----------- |
-| `search.backend.postSave` | `Pimcore\Model\Search\Backend\Data` | - | | 
 | `search.backend.preSave` | `Pimcore\Model\Search\Backend\Data` | - |  |
+| `search.backend.postSave` | `Pimcore\Model\Search\Backend\Data` | - | | 
+
+
+### Users and Roles (\Pimcore\Model\User, \Pimcore\Model\User\Folder, \Pimcore\Model\User\Role, \Pimcore\Model\User\Role\Folder)
+
+| Name | Target | Parameters | Description | 
+| ---- | ------ | ---------- | ----------- |
+| `user.preAdd` | `Pimcore\Model\User\AbstractUser` | - |  |
+| `user.postAdd` | `Pimcore\Model\User\AbstractUser` | - |  |
+| `user.preUpdate` | `Pimcore\Model\User\AbstractUser` | - |  |
+| `user.postUpdate` | `Pimcore\Model\User\AbstractUser` | - |  |
+| `user.preDelete` | `Pimcore\Model\User\AbstractUser` | - |  |
+| `user.postDelete` | `Pimcore\Model\User\AbstractUser` | - |  |
+
 
 ### Admin Interface
 
@@ -257,8 +270,8 @@ attach multiple events
 | ---- | ------ | ---------- | ----------- |
 | `admin.asset.get.preSendData` | `Admin_AssetController` | (Pimcore\Model\Tool\Admin\EventDataContainer) `returnValueContainer`, (Pimcore\Model\Asset) `asset` | Fired at the end of Admin_AssetController::getDataById() - (since build 3874) |
 | `admin.class.objectbrickList.preSendData` | `Admin_ClassController` | (Pimcore\Model\Tool\Admin\EventDataContainer) `returnValueContainer`, (int) `objectId` | Fired at the end of Admin_ClassController:objectbrickList() - (since build 3300) |
-| `admin.controller.postInit` | `Zend_Controller_Action` | - | Fired at the end of Pimcore_Controller_Action_Admin::init() - only fired once (2.3.1) |
 | `admin.controller.preInit` | `Zend_Controller_Action` | - | Fired at the beginning of Pimcore\Controller\Action_Admin::init() - only fired once (2.3.1) |
+| `admin.controller.postInit` | `Zend_Controller_Action` | - | Fired at the end of Pimcore_Controller_Action_Admin::init() - only fired once (2.3.1) |
 | `admin.document.get.preSendData` | `Admin_DocumentController` | (Pimcore\Model\Tool\Admin\EventDataContainer) `returnValueContainer`, (Pimcore\Model\Document) `document` | Fired at the end of Admin_DocumentController::getDataById() - (since build 3874) |
 | `admin.login.index.authenticate` | `Zend_Controller_Action` | (string) username,(string) `password` | Fired at the beginning of /admin/login/index if there is no valid user. Use $e-getTarget()->setUser($user); if you want to login a user in your callback |
 | `admin.login.login.authenticate` | `Zend_Controller_Action` | (string) username,(string) `password` | Fired at the beginning of /admin/login/login before any other authentication steps are taken. Use $e-getTarget()->setUser($user); if you want to login a user in your callback |

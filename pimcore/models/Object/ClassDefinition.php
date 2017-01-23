@@ -501,6 +501,7 @@ class ClassDefinition extends Model\AbstractModel
      */
     public function delete()
     {
+        \Pimcore::getEventManager()->trigger("object.class.preDelete", $this);
 
         // delete all objects using this class
         $list = new Listing();
@@ -534,6 +535,8 @@ class ClassDefinition extends Model\AbstractModel
         }
 
         $this->getDao()->delete();
+
+        \Pimcore::getEventManager()->trigger("object.class.postDelete", $this);
     }
 
     /**
