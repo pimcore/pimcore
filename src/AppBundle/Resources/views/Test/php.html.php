@@ -1,6 +1,6 @@
 <?php
 /** @var \Symfony\Component\Templating\PhpEngine $view */
-$view->extend('AppBundle::layout.html.php');
+$view->extend('AppBundle::test-layout.html.php');
 ?>
 
 <?php $view['slots']->start('content') ?>

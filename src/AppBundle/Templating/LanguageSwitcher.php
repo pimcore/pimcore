@@ -3,7 +3,6 @@
 namespace AppBundle\Templating;
 
 use Pimcore\Model\Document;
-use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Document\Service;
 use Pimcore\Tool;
 
@@ -23,10 +22,10 @@ class LanguageSwitcher
     }
 
     /**
-     * @param PageSnippet $document
+     * @param Document $document
      * @return array
      */
-    public function getLocalizedLinks(PageSnippet $document)
+    public function getLocalizedLinks(Document $document)
     {
         $translations = $this->documentService->getTranslations($document);
 

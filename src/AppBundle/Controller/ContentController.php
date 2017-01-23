@@ -11,7 +11,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 class ContentController extends Controller
 {
     /**
-     * @Template("AppBundle:Content:php.html.php", engine="php")
+     * @Template("AppBundle:Test:php.html.php", engine="php")
      *
      * @param Request $request
      * @return array
@@ -22,7 +22,7 @@ class ContentController extends Controller
     }
 
     /**
-     * @Template("AppBundle:Content:twig.html.twig")
+     * @Template("AppBundle:Test:twig.html.twig")
      *
      * @param Request $request
      * @return array
@@ -33,26 +33,26 @@ class ContentController extends Controller
     }
 
     /**
-     * @Template("AppBundle:Content:full-content.html.twig")
+     * @Template("AppBundle:Content:content.html.twig")
      *
      * @param Request $request
      * @return array
      */
     public function portalAction(Request $request)
     {
-        $vars = $this->fullContentAction($request);
+        $vars = $this->contentAction($request);
         $vars['isPortal'] = true;
 
         return $vars;
     }
 
     /**
-     * @Template("AppBundle:Content:full-content.html.twig")
+     * @Template("AppBundle:Content:content.html.twig")
      *
      * @param Request $request
      * @return array
      */
-    public function fullContentAction(Request $request)
+    public function contentAction(Request $request)
     {
         $vars = $this->resolveContent($request);
 

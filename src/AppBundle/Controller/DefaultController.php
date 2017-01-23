@@ -13,6 +13,10 @@ class DefaultController extends Controller
 {
     /**
      * @Route("/foobar", name="test")
+     *
+     * @param Request $request
+     *
+     * @return Response
      */
     public function foobarAction(Request $request)
     {
@@ -21,6 +25,10 @@ class DefaultController extends Controller
 
     /**
      * @Route("/psr7", name="PSR-7")
+     *
+     * @param ServerRequestInterface $request
+     *
+     * @return JsonResponse
      */
     public function psr7Action(ServerRequestInterface $request)
     {
