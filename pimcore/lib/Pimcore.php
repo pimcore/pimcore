@@ -157,7 +157,7 @@ class Pimcore
      * @param Zend_Config|mixed|null $conf
      * @return bool
      */
-    public function throwMvcExceptions($conf = null)
+    public static function throwMvcExceptions($conf = null)
     {
         $throwExceptions = false;
 

@@ -13,7 +13,6 @@ class FallbackController extends Controller
     {
         // initialize
         $legacyKernel = $this->container->get('pimcore.legacy_kernel');
-        $legacyKernel->boot();
 
         $diactorosFactory = new DiactorosFactory();
         $zendFactory      = new ZendMessageFactory();
