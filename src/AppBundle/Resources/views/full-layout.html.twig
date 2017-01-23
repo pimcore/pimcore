@@ -139,6 +139,10 @@
 
 {% endif %}
 
+{# include a document-snippet - in this case the footer document #}
+{% set footerSnippet = '/' ~ app.request.locale ~ '/shared/includes/footer' %}
+{{ zend_inc(footerSnippet) }}
+
 {{ zend_headScript().appendFile('/website/static/js/jquery-1.11.0.min.js')|ignore }}
 {{ zend_headScript().appendFile('/website/static/bootstrap/js/bootstrap.js')|ignore }}
 {{ zend_headScript().appendFile('/website/static/lib/magnific/magnific.js')|ignore }}
