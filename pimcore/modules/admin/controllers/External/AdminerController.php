@@ -77,7 +77,7 @@ class Admin_External_AdminerController extends \Pimcore\Controller\Action\Admin
         chdir($this->adminerHome . "adminer");
         include($this->adminerHome . "adminer/index.php");
 
-        $this->removeViewRenderer();
+        exit;
     }
 }
 
