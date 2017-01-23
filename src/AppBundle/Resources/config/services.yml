@@ -1,0 +1,4 @@
+services:
+    app.templating.language_switcher:
+        class: AppBundle\Templating\LanguageSwitcher
+        arguments: ['@pimcore.document_service']

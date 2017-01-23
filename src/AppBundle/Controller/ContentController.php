@@ -72,6 +72,9 @@ class ContentController extends Controller
         $vars['mainNavigation']   = $mainNavigation;
         $vars['mainNavStartNode'] = $mainNavStartNode;
 
+        $languageSwitcher = $this->container->get('app.templating.language_switcher');
+        $vars['language_links'] = $languageSwitcher->getLocalizedLinks($document);
+
         // TODO make this global somewhere
         if (!$request->get('pimcore_editmode')) {
             $vars['editmode'] = true;

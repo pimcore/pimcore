@@ -14,4 +14,6 @@ services:
         tags:
             - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
 
-
+    # TODO inject user?
+    pimcore.document_service:
+        class: Pimcore\Model\Document\Service
