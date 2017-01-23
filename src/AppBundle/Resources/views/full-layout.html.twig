@@ -38,7 +38,7 @@
     <![endif]-->
 </head>
 
-<body class="{% if isPortal is defined and isPortal %}portal-page{% endif %}">
+<body class="{% if isPortal %}portal-page{% endif %}">
 
 <div class="navbar-wrapper">
     <div class="container">
@@ -55,7 +55,10 @@
                     </a>
                 </div>
                 <div class="navbar-collapse collapse">
-                    {{ mainNavigation.menu().renderMenu(null, { "maxDepth": 1, "ulClass": "nav navbar-nav" })|raw }}
+                    {{ mainNavigation.menu().renderMenu(null, {
+                        maxDepth: 1,
+                        ulClass: 'nav navbar-nav'
+                    })|raw }}
                 </div>
             </div>
 
@@ -64,7 +67,78 @@
     </div>
 </div>
 
-{% block content %}{% endblock %}
+{% if not isPortal %}
+    <header class="jumbotron subhead">
+        <div class="container">
+            <h2>{{ pimcore_input('headTitle') }}</h2>
+            <p class="lead">{{ pimcore_input('headDescription') }}</p>
+        </div>
+    </header>
+
+    {% if document.getProperty('headerColor') %}
+
+        {% with %}
+
+        {% set colorMapping = {
+        blue: ["#258dc1", "#2aabeb"],
+        green: ["#278415", "#1a9f00"]
+        } %}
+
+        {% set activeColor = colorMapping[document.getProperty('headerColor')] %}
+        {% set gradientStart = activeColor[0] %}
+        {% set gradientEnd = activeColor[1] %}
+
+        <style>
+            .jumbotron {
+                background: {{ gradientEnd }}; /* Old browsers */
+                background: -moz-linear-gradient(45deg, {{ gradientStart }} 0%, {{ gradientEnd }} 100%); /* FF3.6+ */
+                background: -webkit-gradient(linear, left bottom, right top, color-stop(0%, {{ gradientStart }}), color-stop(100%, {{ gradientEnd }})); /* Chrome,Safari4+ */
+                background: -webkit-linear-gradient(45deg, {{ gradientStart }} 0%, {{ gradientEnd }} 100%); /* Chrome10+,Safari5.1+ */
+                background: -o-linear-gradient(45deg, {{ gradientStart }} 0%, {{ gradientEnd }} 100%); /* Opera 11.10+ */
+                background: -ms-linear-gradient(45deg, {{ gradientStart }} 0%, {{ gradientEnd }} 100%); /* IE10+ */
+                background: linear-gradient(45deg, {{ gradientStart }} 0%, {{ gradientEnd }} 100%); /* W3C */
+                filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='{{ gradientStart }}', endColorstr='{{ gradientEnd }}', GradientType=1); /* IE6-9 fallback on horizontal gradient */
+            }
+        </style>
+
+        {% endwith %}
+    {% endif %}
+
+    <div id="content" class="container">
+        <div class="{% if hideLeftNav %}col-md-12{% else %}col-md-9 col-md-push-3{% endif %}">
+
+            {{ block('content') }}
+
+            <div>
+                <a href="/">{{ zend_translate('Home') }}</a> &gt;
+                {{ mainNavigation.breadcrumbs().setMinDepth(null)|raw }}
+            </div>
+        </div>
+
+        {% if not hideLeftNav %}
+
+            <div class="col-md-3 col-md-pull-9 sidebar">
+                <div class="bs-sidebar hidden-print affix-top" role="complementary">
+                    <h3>{{ leftNavStartNode.getProperty('navigation_name') }}</h3>
+
+                    {{ leftNavigation.menu.renderMenu(null, {
+                        ulClass: 'nav bs-sidenav',
+                        expandSiblingNodesOfActiveBranch: true
+                    })|raw }}
+                </div>
+
+                <!-- TODO sidebar -->
+            </div>
+
+        {% endif %}
+    </div>
+
+{% else %}
+
+    {{ block('content') }}
+
+{% endif %}
+
 {{ zend_headScript().appendFile('/website/static/js/jquery-1.11.0.min.js')|ignore }}
 {{ zend_headScript().appendFile('/website/static/bootstrap/js/bootstrap.js')|ignore }}
 {{ zend_headScript().appendFile('/website/static/lib/magnific/magnific.js')|ignore }}

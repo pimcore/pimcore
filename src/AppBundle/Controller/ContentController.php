@@ -72,8 +72,23 @@ class ContentController extends Controller
         $vars['mainNavigation']   = $mainNavigation;
         $vars['mainNavStartNode'] = $mainNavStartNode;
 
+        $hideLeftNav = $vars['hideLeftNav'] = $document->getProperty('leftNavHide');
+        if (!$hideLeftNav) {
+            $leftNavStartNode = $document->getProperty('leftNavStartNode');
+            if (!$leftNavStartNode) {
+                $leftNavStartNode = $mainNavStartNode;
+            }
+
+            $leftNavigation = $bridge->execute('pimcoreNavigation', [$document, $leftNavStartNode]);
+
+            $vars['leftNavigation']   = $leftNavigation;
+            $vars['leftNavStartNode'] = $leftNavStartNode;
+        }
+
         $languageSwitcher = $this->container->get('app.templating.language_switcher');
         $vars['language_links'] = $languageSwitcher->getLocalizedLinks($document);
+
+        $vars['isPortal'] = false;
 
         // TODO make this global somewhere
         if (!$request->get('pimcore_editmode')) {
