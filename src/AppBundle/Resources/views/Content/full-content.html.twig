@@ -2,7 +2,7 @@
 
 {% block content %}
 
-    <h1>CONTENT</h1>
-    fooblah
+    {% include '@App/Includes/content-headline.html.twig' %}
+    {{ pimcore_areablock('content')|raw }}
 
 {% endblock %}
