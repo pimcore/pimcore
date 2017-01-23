@@ -41,10 +41,9 @@ class ContentController extends Controller
     public function portalAction(Request $request)
     {
         $vars = $this->fullContentAction($request);
-
         $vars['isPortal'] = true;
 
-
+        return $vars;
     }
 
     /**
