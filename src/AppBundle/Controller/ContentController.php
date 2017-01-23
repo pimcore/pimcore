@@ -40,7 +40,7 @@ class ContentController extends Controller
      */
     public function portalAction(Request $request)
     {
-        $vars = $this->contentAction($request);
+        $vars = $this->defaultAction($request);
         $vars['isPortal'] = true;
 
         return $vars;
@@ -52,7 +52,7 @@ class ContentController extends Controller
      * @param Request $request
      * @return array
      */
-    public function contentAction(Request $request)
+    public function defaultAction(Request $request)
     {
         $vars = $this->resolveContent($request);
 
