@@ -45,7 +45,13 @@ class Editmode
             return;
         }
 
-        $this->addEditmodeAssets($request, $response);
+        /** @var Document $document */
+        $document = $request->get('contentDocument');
+        if (!$document) {
+            return;
+        }
+
+        $this->addEditmodeAssets($document, $response);
     }
 
     /**
@@ -65,14 +71,11 @@ class Editmode
     /**
      * Inject editmode assets into response HTML
      *
-     * @param Request $request
+     * @param Document $document
      * @param Response $response
      */
-    protected function addEditmodeAssets(Request $request, Response $response)
+    protected function addEditmodeAssets(Document $document, Response $response)
     {
-        /** @var Document $document */
-        $document = $request->get('contentDocument');
-
         if (Document\Service::isValidType($document->getType())) {
             $html = $response->getContent();
 
