@@ -57,3 +57,14 @@ services:
     pimcore.service.request.document_resolver:
         class: PimcoreBundle\Service\Request\DocumentResolver
         arguments: ['@request_stack']
+
+    # simple services exposing get() API for documents, objects and assets
+    # this is only necessar if loading objects directly with only access to the container, e.g. templates
+    pimcore.service.document:
+        class: PimcoreBundle\Service\Document\DocumentService
+
+    pimcore.service.asset:
+        class: PimcoreBundle\Service\Asset\AssetService
+
+    pimcore.service.object:
+        class: PimcoreBundle\Service\Object\ObjectService

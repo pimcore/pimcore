@@ -28,3 +28,7 @@ cmf_routing:
 twig:
     debug:            "%kernel.debug%"
     strict_variables: "%kernel.debug%"
+    globals:
+        # avoid fetching and using services from templates if possible
+        # this is only here for compatibility/dev reasons and may be removed later
+        container: '@service_container'
