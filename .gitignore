@@ -1,4 +1,3 @@
-
 # remove this for your own development
 /constants.php
 /website/
@@ -8,6 +7,7 @@
 # symfony moving stuff
 /app/cache
 /app/logs
+/bin/symfony_requirements
 
 # tests
 /tests/output/*
