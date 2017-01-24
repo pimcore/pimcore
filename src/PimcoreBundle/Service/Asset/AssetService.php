@@ -10,7 +10,7 @@ class AssetService
      * @param $id
      * @return Asset
      */
-    public function get($id)
+    public function getById($id)
     {
         return Asset::getById($id);
     }

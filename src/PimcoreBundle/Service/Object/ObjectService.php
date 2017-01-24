@@ -10,7 +10,7 @@ class ObjectService
      * @param $id
      * @return Object\Concrete
      */
-    public function get($id)
+    public function getById($id)
     {
         return Object\Concrete::getById($id);
     }
