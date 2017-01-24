@@ -369,19 +369,22 @@ class Cache
                     // records with serialized data have priority, to save cpu cycles
                     return ($a[0]) ? -1 : 1;
                 }
+
                 return ($a[6] < $b[6]) ? 1 : -1;
             });
 
             // remove overrun
             array_splice(self::$saveStack, self::$maxWriteToCacheItems);
 
-            if(isset(self::$saveStack[$key])) {
+            if (isset(self::$saveStack[$key])) {
                 $serializedData = static::prepareCacheData($data);
-                if(!$serializedData) {
+                if (!$serializedData) {
                     unset(self::$saveStack[$key]);
+
                     return false;
                 } else {
                     self::$saveStack[$key][0] = $serializedData;
+
                     return true;
                 }
             }
@@ -424,8 +427,8 @@ class Cache
      * @param array $tags
      * @return array|bool
      */
-    protected static function prepareCacheTags($data, $tags) {
-
+    protected static function prepareCacheTags($data, $tags)
+    {
         if ($data instanceof Element\ElementInterface) {
             $tags = $data->getCacheTags($tags);
         }
@@ -472,6 +475,7 @@ class Cache
                 foreach ($tags as $t) {
                     if (in_array($t, self::$clearedTagsStack)) {
                         Logger::debug("Aborted caching for key: " . $key . " because it is in the clear stack");
+
                         return false;
                     }
                 }
