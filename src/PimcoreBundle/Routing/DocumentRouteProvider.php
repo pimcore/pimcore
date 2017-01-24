@@ -72,6 +72,30 @@ class DocumentRouteProvider implements RouteProviderInterface
 
             return $route;
         }
+
+        // TODO remove - this is just for testing. Overrides all documents with symfony mode
+        // (allows to test symfony rendering without having to touch all documents)
+        // controller = foo, action = bar becomes AppBundle:Foo:bar
+        if (defined('PIMCORE_SYMFONY_OVERRIDE_DOCUMENTS') && PIMCORE_SYMFONY_OVERRIDE_DOCUMENTS) {
+            $bundle = 'AppBundle';
+            if ($document->getModule()) {
+                $bundle = sprintf('%sBundle', ucfirst($document->getModule()));
+            }
+
+            $controller = sprintf(
+                '%s:%s:%s',
+                $bundle,
+                $document->getController() ? ucfirst($document->getController()) : 'Content',
+                $document->getAction() ?: 'default'
+            );
+
+            $route = new DocumentRoute($document->getRealFullPath());
+            $route->setDefault('_controller', $controller);
+            $route->setDefault('_locale', $document->getProperty('language'));
+            $route->setDocument($document);
+
+            return $route;
+        }
     }
 
     /**
