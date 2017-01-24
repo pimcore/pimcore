@@ -76,8 +76,12 @@ class DocumentRouteProvider implements RouteProviderInterface
             return null;
         }
 
+        $locale = $document->getProperty('language');
+        $locale = explode('_', $locale);
+        $locale = $locale[0];
+
         $route = new DocumentRoute($document->getRealFullPath());
-        $route->setDefault('_locale', $document->getProperty('language'));
+        $route->setDefault('_locale', $locale);
         $route->setDocument($document);
 
         if ($document instanceof Document\Link) {
