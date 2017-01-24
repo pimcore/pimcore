@@ -530,6 +530,8 @@ class Agent implements IOrderAgent
             }
         }
 
+        $this->extractAdditionalPaymentInformation($status, $currentPaymentInformation);
+
 
         // check, if order finger print has changed since start payment - if so, throw exception because something wired is going on
         // but finish update order first in order to have logging information
@@ -547,6 +549,16 @@ class Agent implements IOrderAgent
         }
 
         return $this;
+    }
+
+    /**
+     * Hook to extract and save additional information in payment information
+     *
+     * @param IStatus $status
+     * @param PaymentInfo $currentPaymentInformation
+     */
+    protected function extractAdditionalPaymentInformation(\OnlineShop\Framework\PaymentManager\IStatus $status, PaymentInfo $currentPaymentInformation) {
+
     }
 
 
