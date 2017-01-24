@@ -1,11 +1,11 @@
 # Configuring a custom reports for workflows
 
-You can easily use the custom reports to make workflows states and status reporting, filtering, exporting and directly open related elements.
+You can easily use the custom reports to make workflow states and status reporting, filtering, exporting and directly open related elements.
 This way, you can follow and monitor workflows and the progress of document, asset and object.
 
 ## Create a custom report for objects
 
-Firest, you just have to create a new empty custom report, please see:
+First, you just have to create a new empty custom report, please see:
 [custom reports](../../08_Tools_and_Features/Custom_Reports.html)
 
 After creating it, you can configure it like this for the Source Definition:
@@ -17,5 +17,5 @@ And for the Column Configuration and Chart Settings:
 Save it and you are ready to use it!
 You can filter globally by state and status, order and filter the columns and export results
 
-Here is an exemple of rendered workflow custom report:
+Here is an example of rendered workflow custom report:
 ![Rendered workflow custom report](../img/workflow-report-result.png)
