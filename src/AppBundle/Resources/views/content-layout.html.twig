@@ -20,6 +20,7 @@
     {{ zend_headTitle() }}
     {{ zend_headMeta() }}
 
+    {% block css_defines %}
     {{ zend_headLink().appendStylesheet('/website/static/bootstrap/css/bootstrap.css')|ignore }}
     {{ zend_headLink().appendStylesheet('/website/static/css/global.css')|ignore }}
     {{ zend_headLink().appendStylesheet('/website/static/lib/video-js/video-js.min.css', 'screen')|ignore }}
@@ -28,8 +29,11 @@
     {% if editmode %}
         {{ zend_headLink().appendStylesheet('/website/static/css/editmode.css', 'screen')|ignore }}
     {% endif %}
+    {% endblock %}
 
+    {% block css_output %}
     {{ zend_headLink()|raw }}
+    {% endblock %}
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -40,6 +44,7 @@
 
 <body class="{% if isPortal %}portal-page{% endif %}">
 
+{% block navbar %}
 <div class="navbar-wrapper">
     <div class="container">
         <div class="navbar navbar-inverse navbar-static-top">
@@ -66,9 +71,10 @@
         </div>
     </div>
 </div>
+{% endblock %}
 
+{% block main %}
 {% if not isPortal %}
-
     {% include '@App/Includes/jumbotron.html.twig' %}
 
     <div id="content" class="container">
@@ -105,18 +111,27 @@
     {{ block('content') }}
 
 {% endif %}
+{% endblock %}
 
+{% block footer %}
 {# include a document-snippet - in this case the footer document #}
 {% set footerSnippet = '/' ~ app.request.locale ~ '/shared/includes/footer' %}
 {{ zend_inc(footerSnippet) }}
+{% endblock %}
 
+{% block javascript_defines %}
 {{ zend_headScript().appendFile('/website/static/js/jquery-1.11.0.min.js')|ignore }}
 {{ zend_headScript().appendFile('/website/static/bootstrap/js/bootstrap.js')|ignore }}
 {{ zend_headScript().appendFile('/website/static/lib/magnific/magnific.js')|ignore }}
 {{ zend_headScript().appendFile('/website/static/lib/video-js/video.js')|ignore }}
 {{ zend_headScript().appendFile('/website/static/js/srcset-polyfill.min.js')|ignore }}
-{{ zend_headScript()|raw }}
+{% endblock %}
 
+{% block javascript_output %}
+{{ zend_headScript()|raw }}
+{% endblock %}
+
+{% block javascript_inline %}
 {% verbatim %}
 <script>
     videojs.options.flash.swf = "/website/static/lib/video-js/video-js.swf";
@@ -194,6 +209,7 @@
 
     {% endverbatim %}
 {% endif %}
+{% endblock %}
 
 </body>
 </html>
