@@ -30,6 +30,11 @@ services:
         tags:
             - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
 
+    pimcore.value_resolver.document:
+        class: PimcoreBundle\ArgumentResolver\DocumentValueResolver
+        tags:
+            - { name: controller.argument_value_resolver }
+
     pimcore.service.editmode_resolver:
         class: PimcoreBundle\Service\EditmodeResolver
         arguments: ['@request_stack']
