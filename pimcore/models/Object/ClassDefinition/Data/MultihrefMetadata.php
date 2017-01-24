@@ -839,7 +839,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
                     $fieldname = $elementMetadata["fieldname"];
                     $data = $elementMetadata["data"];
 
-                    $item = new Object\Data\ElementMetadata($fieldname, $columns, $object);
+                    $item = new Object\Data\ElementMetadata($fieldname, $columns, $element);
                     $item->data = $data;
                     $result[] = $item;
                 }
