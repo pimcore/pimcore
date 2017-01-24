@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
 use PimcoreBundle\View\ZendViewHelperBridge;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -95,6 +96,22 @@ class ContentController extends Controller
         if ($request->get('pimcore_editmode')) {
             $vars['editmode'] = true;
         }
+
+        return $vars;
+    }
+
+    /**
+     * @Template("AppBundle:Content:thumbnails.html.twig")
+     *
+     * @param Request $request
+     * @return array
+     */
+    public function thumbnailsAction(Request $request)
+    {
+        $vars = $this->defaultAction($request);
+
+        // this is just used for demonstration
+        $vars['image'] = Asset::getById(53);
 
         return $vars;
     }
