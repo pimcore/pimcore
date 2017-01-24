@@ -114,3 +114,4 @@ server {
     }
 }
 ``` 
+> [RoseHosting](https://www.rosehosting.com/blog/install-pimcore-on-ubuntu/) has a guide on how to install Pimcore on Ubuntu with Nginx. You can use that configuration as a working example. 
