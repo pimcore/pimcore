@@ -44,6 +44,7 @@ class Editmode
     public function __construct(EditmodeResolver $editmodeResolver, DocumentResolver $documentResolver)
     {
         $this->editmodeResolver = $editmodeResolver;
+        $this->documentResolver = $documentResolver;
     }
 
     public function onKernelRequest(GetResponseEvent $event)
