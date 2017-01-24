@@ -19,6 +19,11 @@ class ZendViewProvider
     protected $viewRenderer;
 
     /**
+     * @var \Zend_View
+     */
+    protected $view;
+
+    /**
      * @param LegacyKernel $legacyKernel
      */
     public function __construct(LegacyKernel $legacyKernel)
@@ -39,7 +44,6 @@ class ZendViewProvider
 
             /** @var ViewRenderer $viewRenderer */
             $this->viewRenderer = \Zend_Controller_Action_HelperBroker::getExistingHelper('ViewRenderer');
-            $this->viewRenderer->init();
         }
 
         return $this->viewRenderer;
@@ -50,7 +54,11 @@ class ZendViewProvider
      */
     public function getView()
     {
-        return $this->getViewRenderer()->getView();
+        if (null === $this->view) {
+            $this->view = $this->createView();
+        }
+
+        return $this->view;
     }
 
     /**
