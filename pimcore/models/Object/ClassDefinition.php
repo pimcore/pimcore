@@ -534,6 +534,27 @@ class ClassDefinition extends Model\AbstractModel
             $customLayout->delete();
         }
 
+        $brickListing = new Object\Objectbrick\Definition\Listing();
+        $brickListing = $brickListing->load();
+        /** @var  $brickDefinition Object\Objectbrick\Definition */
+        foreach ($brickListing as $brickDefinition) {
+            $modified = false;
+
+            $classDefinitions = $brickDefinition->getClassDefinitions();
+            if (is_array($classDefinitions)) {
+                foreach ($classDefinitions as $key => $classDefinition) {
+                    if ($classDefinition["classname"] == $this->getId()) {
+                        unset($classDefinitions[$key]);
+                        $modified = true;
+                    }
+                }
+            }
+            if ($modified) {
+                $brickDefinition->setClassDefinitions($classDefinitions);
+                $brickDefinition->save();
+            }
+        }
+
         $this->getDao()->delete();
 
         \Pimcore::getEventManager()->trigger("object.class.postDelete", $this);
