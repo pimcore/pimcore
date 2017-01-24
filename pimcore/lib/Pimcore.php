@@ -124,7 +124,10 @@ class Pimcore
         $frontend = Tool::isFrontend();
 
         // init front controller
-        self::registerWhoopsErrorHandler($conf, $frontend);
+        if ($conf) {
+            self::registerWhoopsErrorHandler($conf, $frontend);
+        }
+
         self::registerFrontControllerPlugins($front, $frontend);
         self::initControllerFront($front);
 
