@@ -85,9 +85,10 @@ class DocumentRouteProvider implements RouteProviderInterface
             $route->setDefault('path', $document->getHref());
             $route->setDefault('permanent', true);
         } else {
-            $bundle     = 'AppBundle';
-            $controller = 'Content';
-            $action     = 'default';
+            // TODO this is only temporary for dev reasons - remove!
+            $bundle = defined('PIMCORE_SYMFONY_DEFAULT_BUNDLE') ? PIMCORE_SYMFONY_DEFAULT_BUNDLE : 'AppBundle';
+            $controller = defined('PIMCORE_SYMFONY_DEFAULT_CONTROLLER') ? PIMCORE_SYMFONY_DEFAULT_CONTROLLER : 'Content';
+            $action = defined('PIMCORE_SYMFONY_DEFAULT_ACTION') ? PIMCORE_SYMFONY_DEFAULT_ACTION : 'default';
 
             if ($document->getModule()) {
                 $bundle = $document->getModule();
