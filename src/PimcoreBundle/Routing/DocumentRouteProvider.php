@@ -90,7 +90,10 @@ class DocumentRouteProvider implements RouteProviderInterface
             $action     = 'default';
 
             if ($document->getModule()) {
-                $bundle = sprintf('%sBundle', ucfirst($document->getModule()));
+                $bundle = $document->getModule();
+                if (strpos($bundle, 'Bundle') === false) {
+                    $bundle = sprintf('%sBundle', $bundle);
+                }
             }
 
             if ($document->getController()) {
