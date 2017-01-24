@@ -2,6 +2,7 @@
 
 namespace PimcoreBundle\Routing;
 
+use Doctrine\Common\Util\Inflector;
 use Pimcore\Model\Document;
 use Symfony\Cmf\Component\Routing\RouteProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -58,11 +59,14 @@ class DocumentRouteProvider implements RouteProviderInterface
     protected function buildRouteForDocument(Document $document)
     {
         if ($document->getProperty('symfony')) {
+            $action = $document->getAction() ?: 'default';
+            $action = Inflector::camelize($action);
+
             $controller = sprintf(
                 '%s:%s:%s',
                 $document->getModule() ?: 'ContentBundle',
                 $document->getController() ?: 'default',
-                $document->getAction() ?: 'default'
+                $action
             );
 
             $route = new DocumentRoute($document->getRealFullPath());
@@ -77,6 +81,9 @@ class DocumentRouteProvider implements RouteProviderInterface
         // (allows to test symfony rendering without having to touch all documents)
         // controller = foo, action = bar becomes AppBundle:Foo:bar
         if (defined('PIMCORE_SYMFONY_OVERRIDE_DOCUMENTS') && PIMCORE_SYMFONY_OVERRIDE_DOCUMENTS) {
+            $action = $document->getAction() ?: 'default';
+            $action = Inflector::camelize($action);
+
             $bundle = 'AppBundle';
             if ($document->getModule()) {
                 $bundle = sprintf('%sBundle', ucfirst($document->getModule()));
@@ -86,7 +93,7 @@ class DocumentRouteProvider implements RouteProviderInterface
                 '%s:%s:%s',
                 $bundle,
                 $document->getController() ? ucfirst($document->getController()) : 'Content',
-                $document->getAction() ?: 'default'
+                $action
             );
 
             $route = new DocumentRoute($document->getRealFullPath());
