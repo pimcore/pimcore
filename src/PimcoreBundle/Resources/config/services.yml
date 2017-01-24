@@ -8,7 +8,7 @@ services:
 
     pimcore.event_listener.editmode:
         class: PimcoreBundle\EventListener\Editmode
-        arguments: ['@pimcore.service.editmode_resolver']
+        arguments: ['@pimcore.service.request.editmode_resolver', '@pimcore.service.request.document_resolver']
         calls:
             - [setLogger, ['@logger']]
         tags:
@@ -32,12 +32,15 @@ services:
 
     pimcore.value_resolver.document:
         class: PimcoreBundle\ArgumentResolver\DocumentValueResolver
+        arguments: ['@pimcore.service.request.document_resolver']
         tags:
             - { name: controller.argument_value_resolver }
 
-    pimcore.service.editmode_resolver:
-        class: PimcoreBundle\Service\EditmodeResolver
-        arguments: ['@request_stack']
+    pimcore.value_resolver.template_vars:
+        class: PimcoreBundle\ArgumentResolver\TemplateVarsValueResolver
+        arguments: ['@pimcore.service.request.editmode_resolver', '@pimcore.service.request.document_resolver']
+        tags:
+            - { name: controller.argument_value_resolver }
 
     pimcore.zend_view_provider:
         class: PimcoreBundle\View\ZendViewProvider
@@ -46,3 +49,11 @@ services:
     # TODO inject user?
     pimcore.document_service:
         class: Pimcore\Model\Document\Service
+
+    pimcore.service.request.editmode_resolver:
+        class: PimcoreBundle\Service\Request\EditmodeResolver
+        arguments: ['@request_stack']
+
+    pimcore.service.request.document_resolver:
+        class: PimcoreBundle\Service\Request\DocumentResolver
+        arguments: ['@request_stack']

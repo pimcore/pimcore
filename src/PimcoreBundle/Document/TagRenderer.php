@@ -6,7 +6,7 @@ use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Document\Tag;
 use Pimcore\View;
 use PimcoreBundle\EventListener\Editmode;
-use PimcoreBundle\Service\EditmodeResolver;
+use PimcoreBundle\Service\Request\EditmodeResolver;
 use PimcoreBundle\View\ZendViewProvider;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;

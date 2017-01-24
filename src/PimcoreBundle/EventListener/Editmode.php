@@ -7,7 +7,8 @@ use Pimcore\ExtensionManager;
 use Pimcore\Model\Document;
 use Pimcore\Tool\Admin;
 use Pimcore\Version;
-use PimcoreBundle\Service\EditmodeResolver;
+use PimcoreBundle\Service\Request\DocumentResolver;
+use PimcoreBundle\Service\Request\EditmodeResolver;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,6 +26,11 @@ class Editmode
     protected $editmodeResolver;
 
     /**
+     * @var DocumentResolver
+     */
+    protected $documentResolver;
+
+    /**
      * @var array
      */
     protected $contentTypes = [
@@ -33,8 +39,9 @@ class Editmode
 
     /**
      * @param EditmodeResolver $editmodeResolver
+     * @param DocumentResolver $documentResolver
      */
-    public function __construct(EditmodeResolver $editmodeResolver)
+    public function __construct(EditmodeResolver $editmodeResolver, DocumentResolver $documentResolver)
     {
         $this->editmodeResolver = $editmodeResolver;
     }
@@ -60,8 +67,7 @@ class Editmode
             return;
         }
 
-        /** @var Document $document */
-        $document = $request->get('contentDocument');
+        $document = $this->documentResolver->getDocument($request);
         if (!$document) {
             return;
         }

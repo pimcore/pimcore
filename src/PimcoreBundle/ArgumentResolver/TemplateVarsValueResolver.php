@@ -2,27 +2,31 @@
 
 namespace PimcoreBundle\ArgumentResolver;
 
-use Pimcore\Model\Document as DocumentModel;
 use PimcoreBundle\Service\Request\DocumentResolver;
+use PimcoreBundle\Service\Request\EditmodeResolver;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 
-/**
- * Adds support for type hinting controller actions against `Document $document` and getting the current document.
- */
-class DocumentValueResolver implements ArgumentValueResolverInterface
+class TemplateVarsValueResolver implements ArgumentValueResolverInterface
 {
+    /**
+     * @var EditmodeResolver
+     */
+    protected $editmodeResolver;
+
     /**
      * @var DocumentResolver
      */
     protected $documentResolver;
 
     /**
+     * @param EditmodeResolver $editmodeResolver
      * @param DocumentResolver $documentResolver
      */
-    public function __construct(DocumentResolver $documentResolver)
+    public function __construct(EditmodeResolver $editmodeResolver, DocumentResolver $documentResolver)
     {
+        $this->editmodeResolver = $editmodeResolver;
         $this->documentResolver = $documentResolver;
     }
 
@@ -33,26 +37,20 @@ class DocumentValueResolver implements ArgumentValueResolverInterface
      */
     public function supports(Request $request, ArgumentMetadata $argument)
     {
-        if ($argument->getType() !== DocumentModel::class) {
-            return false;
-        }
-
-        if ($argument->getName() !== 'document') {
-            return false;
-        }
-
-        $document = $this->documentResolver->getDocument($request);
-
-        return $document && $document instanceof DocumentModel;
+        return $argument->getType() === 'array' && $argument->getName() === 'templateVars';
     }
 
     /**
      * @param Request $request
      * @param ArgumentMetadata $argument
-     * @return \Generator|DocumentModel
+     * @return \Generator|array
      */
     public function resolve(Request $request, ArgumentMetadata $argument)
     {
-        yield $this->documentResolver->getDocument($request);
+        yield [
+            'editmode' => $this->editmodeResolver->isEditmode($request),
+            'document' => $this->documentResolver->getDocument($request)
+        ];
     }
+
 }

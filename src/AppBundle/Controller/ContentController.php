@@ -5,9 +5,9 @@ namespace AppBundle\Controller;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
 use PimcoreBundle\View\ZendViewHelperBridge;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 class ContentController extends Controller
 {
@@ -144,7 +144,9 @@ class ContentController extends Controller
      */
     protected function resolveContent(Request $request)
     {
-        $document = $request->get('contentDocument');
+        $document = $this
+            ->get('pimcore.service.request.document_resolver')
+            ->getDocument($request);
 
         if ($request->get('debugDocument')) {
             dump($document);

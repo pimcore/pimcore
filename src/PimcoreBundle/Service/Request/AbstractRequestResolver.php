@@ -1,11 +1,11 @@
 <?php
 
-namespace PimcoreBundle\Service;
+namespace PimcoreBundle\Service\Request;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class EditmodeResolver
+abstract class AbstractRequestResolver
 {
     /**
      * @var RequestStack
@@ -23,29 +23,12 @@ class EditmodeResolver
     /**
      * @return Request
      */
-    protected function getRequest()
+    protected function getCurrentRequest()
     {
         if (!$this->requestStack->getCurrentRequest()) {
             throw new \LogicException('A Request must be available.');
         }
 
         return $this->requestStack->getCurrentRequest();
-    }
-
-    /**
-     * @return bool
-     */
-    public function isEditmode(Request $request = null)
-    {
-        if (null === $request) {
-            $request = $this->getRequest();
-        }
-
-        // TODO editmode is only available for logged in users
-        if ($request->get('pimcore_editmode')) {
-            return true;
-        }
-
-        return false;
     }
 }

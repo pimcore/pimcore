@@ -3,8 +3,7 @@
 namespace PimcoreBundle\Templating\Helper;
 
 use PimcoreBundle\Document\TagRenderer;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
+use PimcoreBundle\Service\Request\DocumentResolver;
 use Symfony\Component\Templating\Helper\Helper;
 
 class DocumentTagHelper extends Helper
@@ -15,18 +14,18 @@ class DocumentTagHelper extends Helper
     protected $tagRenderer;
 
     /**
-     * @var RequestStack
+     * @var DocumentResolver
      */
-    protected $requestStack;
+    protected $documentResolver;
 
     /**
      * @param TagRenderer $tagRenderer
-     * @param RequestStack $requestStack
+     * @param DocumentResolver $documentResolver
      */
-    public function __construct(TagRenderer $tagRenderer, RequestStack $requestStack)
+    public function __construct(TagRenderer $tagRenderer, DocumentResolver $documentResolver)
     {
         $this->tagRenderer  = $tagRenderer;
-        $this->requestStack = $requestStack;
+        $this->documentResolver = $documentResolver;
     }
 
     /**
@@ -40,18 +39,6 @@ class DocumentTagHelper extends Helper
     }
 
     /**
-     * @return Request
-     */
-    protected function getRequest()
-    {
-        if (!$this->requestStack->getCurrentRequest()) {
-            throw new \LogicException('A Request must be available.');
-        }
-
-        return $this->requestStack->getCurrentRequest();
-    }
-
-    /**
      * @param string $type
      * @param string $inputName
      * @param array $options
@@ -59,7 +46,7 @@ class DocumentTagHelper extends Helper
      */
     public function render($type, $inputName, array $options = [])
     {
-        $document = $this->getRequest()->get('contentDocument');
+        $document = $this->documentResolver->getDocument();
         if (!$document) {
             return '';
         }
