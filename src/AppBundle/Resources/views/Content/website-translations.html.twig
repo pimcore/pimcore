@@ -1,0 +1,26 @@
+{% extends '@App/Content/content.html.twig' %}
+
+{% block content %}
+
+    {{ parent() }}
+
+    <div class="row">
+        <div class="col-lg-6">
+            <h2>{{ zend_translate('Download compiled') }}</h2>
+
+            <p>{{ zend_translate('Fastest way to get started: get the compiled and minified versions of our CSS, JS, and images. No docs or original source files.') }}</p>
+
+            <p><a class="btn btn-large btn-primary" href="#">{{ zend_translate('Download') }}</a></p>
+        </div>
+        <div class="col-lg-6">
+            {# placeholder example #}
+            <h3>{{ zend_translate('Download Now (%s)', 'now'|date('d/m/Y')) }}</h3>
+            <p>{{ zend_translate('Get the original files for all CSS and JavaScript, along with a local copy of the docs by downloading the latest version directly from GitHub.') }}</p>
+
+            <p><a class="btn btn-large btn-default" href="#">{{ zend_translate('Download') }}</a></p>
+        </div>
+    </div>
+
+    {{ pimcore_areablock('contentBottom')|raw }}
+
+{% endblock %}

@@ -117,6 +117,17 @@ class ContentController extends Controller
     }
 
     /**
+     * @Template("AppBundle:Content:website-translations.html.twig")
+     *
+     * @param Request $request
+     * @return array
+     */
+    public function websiteTranslationsAction(Request $request)
+    {
+        return $this->defaultAction($request);
+    }
+
+    /**
      * @param Request $request
      * @return array
      */
