@@ -128,6 +128,17 @@ class ContentController extends Controller
     }
 
     /**
+     * @Template("AppBundle:Content:editable-roundup.html.twig")
+     *
+     * @param Request $request
+     * @return array
+     */
+    public function editableRoundupAction(Request $request)
+    {
+        return $this->defaultAction($request);
+    }
+
+    /**
      * @param Request $request
      * @return array
      */
