@@ -34,7 +34,7 @@ class ContentController extends Controller
     }
 
     /**
-     * @Template("AppBundle:Content:content.html.twig")
+     * @Template("AppBundle:Content:portal.html.twig")
      *
      * @param Request $request
      * @return array
