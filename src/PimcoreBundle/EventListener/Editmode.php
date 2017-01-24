@@ -7,6 +7,7 @@ use Pimcore\ExtensionManager;
 use Pimcore\Model\Document;
 use Pimcore\Tool\Admin;
 use Pimcore\Version;
+use PimcoreBundle\Service\EditmodeResolver;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,22 +20,29 @@ class Editmode
     use LoggerAwareTrait;
 
     /**
+     * @var EditmodeResolver
+     */
+    protected $editmodeResolver;
+
+    /**
      * @var array
      */
     protected $contentTypes = [
         'text/html'
     ];
 
+    /**
+     * @param EditmodeResolver $editmodeResolver
+     */
+    public function __construct(EditmodeResolver $editmodeResolver)
+    {
+        $this->editmodeResolver = $editmodeResolver;
+    }
+
     public function onKernelRequest(GetResponseEvent $event)
     {
         // TODO editmode is available to logged in users only
-
-        $request = $event->getRequest();
-
-        $editmode = false;
-        if ($request->get('pimcore_editmode')) {
-            $editmode = true;
-        }
+        $editmode = $this->editmodeResolver->isEditmode($event->getRequest());
 
         \Zend_Registry::set('pimcore_editmode', $editmode);
     }
@@ -44,7 +52,7 @@ class Editmode
         $request  = $event->getRequest();
         $response = $event->getResponse();
 
-        if (!$request->get('pimcore_editmode')) {
+        if (!$this->editmodeResolver->isEditmode($event->getRequest())) {
             return;
         }
 

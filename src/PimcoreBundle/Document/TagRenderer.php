@@ -5,20 +5,18 @@ namespace PimcoreBundle\Document;
 use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Document\Tag;
 use Pimcore\View;
+use PimcoreBundle\EventListener\Editmode;
+use PimcoreBundle\Service\EditmodeResolver;
 use PimcoreBundle\View\ZendViewProvider;
+use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class TagRenderer
+class TagRenderer implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
-
-    /**
-     * @var RequestStack
-     */
-    protected $requestStack;
 
     /**
      * @var ZendViewProvider
@@ -26,39 +24,18 @@ class TagRenderer
     protected $viewProvider;
 
     /**
-     * @param RequestStack $requestStack
+     * @var EditmodeResolver
+     */
+    protected $editmodeResolver;
+
+    /**
      * @param ZendViewProvider $viewProvider
+     * @param EditmodeResolver $editmodeResolver
      */
-    public function __construct(RequestStack $requestStack, ZendViewProvider $viewProvider)
+    public function __construct(ZendViewProvider $viewProvider, EditmodeResolver $editmodeResolver)
     {
-        $this->requestStack = $requestStack;
-        $this->viewProvider = $viewProvider;
-    }
-
-    /**
-     * @return Request
-     */
-    protected function getRequest()
-    {
-        if (!$this->requestStack->getCurrentRequest()) {
-            throw new \LogicException('A Request must be available.');
-        }
-
-        return $this->requestStack->getCurrentRequest();
-    }
-
-    /**
-     * TODO find a cleaner way to resolve edit mode (or a more central way, maybe an event listener?)
-     *
-     * @return bool
-     */
-    protected function isEditmode()
-    {
-        if ($this->getRequest()->get('pimcore_editmode')) {
-            return true;
-        }
-
-        return false;
+        $this->viewProvider     = $viewProvider;
+        $this->editmodeResolver = $editmodeResolver;
     }
 
     /**
@@ -75,6 +52,8 @@ class TagRenderer
         $type = strtolower($type);
         $name = Tag::buildTagName($type, $inputName, $document);
 
+        $editmode = $this->editmodeResolver->isEditmode();
+
         try {
             if ($document instanceof PageSnippet) {
                 $tag = $document->getElement($name);
@@ -87,14 +66,14 @@ class TagRenderer
 
                     // create dummy view and add needed vars (depending on element)
                     $view = $this->viewProvider->getView();
-                    $view->editmode = $this->isEditmode();
+                    $view->editmode = $editmode;
                     $view->document = $document;
 
                     $tag->setView($view);
-                    $tag->setEditmode($this->isEditmode());
+                    $tag->setEditmode($editmode);
                     $tag->setOptions($options);
                 } else {
-                    $tag = Tag::factory($type, $name, $document->getId(), $options, null, null, $this->isEditmode());
+                    $tag = Tag::factory($type, $name, $document->getId(), $options, null, null, $editmode);
                     $document->setElement($name, $tag);
                 }
 
