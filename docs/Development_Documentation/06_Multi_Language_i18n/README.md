@@ -6,7 +6,7 @@ and has influence on multiple aspects within the system.
 Bottom line is that using Pimcore in a multi language mode is pretty easy for users and developers. Pimcore takes care 
 of all technical aspects and by doing so follows the ZF patterns.
 
-In Pimcore there is a difference between content localization and localization of Pimcore backend. 
+Pimcore has different sets of languages/locales and translations for the back end (CMS) and front end (website). This allows you to have the user interface of Pimcore in different languages than the website. You need to be aware of this when requesting the current and available locales, as they are different depending on the context. If a user is saving an object in Pimcore which is set to English, the current locale is different then when a visitor on your French website triggers a save action.
  
 ## Content Localization 
 
