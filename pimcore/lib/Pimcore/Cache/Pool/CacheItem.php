@@ -30,6 +30,7 @@ class CacheItem implements PimcoreCacheItemInterface
         $this->isHit           = $isHit;
         $this->defaultLifetime = $defaultLifetime;
         $this->previousTags    = $previousTags;
+        $this->tags            = $previousTags;
     }
 
     /**
