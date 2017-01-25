@@ -6,6 +6,12 @@ services:
     pimcore.plugin_broker:
         class: Pimcore\API\Plugin\Broker
 
+    pimcore.event_listener.document_resolver:
+        class: PimcoreBundle\EventListener\DocumentResolver
+        arguments: ['@pimcore.service.request.document_resolver']
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 5 }
+
     pimcore.event_listener.editmode:
         class: PimcoreBundle\EventListener\Editmode
         arguments: ['@pimcore.service.request.editmode_resolver', '@pimcore.service.request.document_resolver']

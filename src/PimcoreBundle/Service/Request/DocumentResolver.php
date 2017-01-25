@@ -18,4 +18,13 @@ class DocumentResolver extends AbstractRequestResolver
 
         return $request->get('contentDocument', null);
     }
+
+    /**
+     * @param Request $request
+     * @param Document $document
+     */
+    public function setDocument(Request $request, Document $document)
+    {
+        $request->attributes->set('contentDocument', $document);
+    }
 }
