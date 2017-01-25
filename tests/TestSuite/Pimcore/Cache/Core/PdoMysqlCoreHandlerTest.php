@@ -2,13 +2,11 @@
 
 namespace TestSuite\Pimcore\Cache\Core;
 
-use Test\Cache\Traits\PdoMysqlAdapterTrait;
-
-require_once __DIR__ . '/../../../../lib/Test/Cache/Traits/PdoMysqlAdapterTrait.php';
+use Test\Cache\Traits\PdoMysqlCacheItemPoolTrait;
 
 class PdoMysqlCoreHandlerTest extends AbstractCoreHandlerTest
 {
-    use PdoMysqlAdapterTrait;
+    use PdoMysqlCacheItemPoolTrait;
 
     /**
      * @inheritDoc
@@ -19,15 +17,14 @@ class PdoMysqlCoreHandlerTest extends AbstractCoreHandlerTest
         static::fetchPdo();
     }
 
-    protected function setUpCacheAdapters()
+    protected function setupItemPool()
     {
-        $cacheAdapter = $this->createPdoAdapter();
-        $cacheAdapter->setLogger(static::$logger);
+        $itemPool = $this->createPdoItemPool();
+        $itemPool->setLogger(static::$logger);
 
         // make sure we start with a clean state
-        $cacheAdapter->clear();
+        $itemPool->clear();
 
-        $this->cacheAdapter = $cacheAdapter;
-        $this->tagAdapter   = $cacheAdapter;
+        $this->itemPool = $itemPool;
     }
 }

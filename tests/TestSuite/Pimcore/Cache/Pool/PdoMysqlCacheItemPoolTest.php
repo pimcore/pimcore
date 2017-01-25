@@ -4,13 +4,11 @@ namespace TestSuite\Pimcore\Cache\Adapter;
 
 use Cache\IntegrationTests\CachePoolTest;
 use Psr\Cache\CacheItemPoolInterface;
-use Test\Cache\Traits\PdoMysqlAdapterTrait;
+use Test\Cache\Traits\PdoMysqlCacheItemPoolTrait;
 
-require_once __DIR__ . '/../../../../lib/Test/Cache/Traits/PdoMysqlAdapterTrait.php';
-
-class PdoMysqlAdapterTest extends CachePoolTest
+class PdoMysqlCacheItemPoolTest extends CachePoolTest
 {
-    use PdoMysqlAdapterTrait;
+    use PdoMysqlCacheItemPoolTrait;
 
     public static function setUpBeforeClass()
     {
@@ -23,9 +21,9 @@ class PdoMysqlAdapterTest extends CachePoolTest
      */
     public function createCachePool()
     {
-        $adapter = $this->createPdoAdapter();
-        $adapter->clear();
+        $itemPool = $this->createPdoItemPool();
+        $itemPool->clear();
 
-        return $adapter;
+        return $itemPool;
     }
 }

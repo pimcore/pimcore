@@ -2,9 +2,9 @@
 
 namespace Test\Cache\Traits;
 
-use Pimcore\Cache\Adapter\PdoMysqlAdapter;
+use Pimcore\Cache\Pool\PdoMysqlCacheItemPool;
 
-trait PdoMysqlAdapterTrait
+trait PdoMysqlCacheItemPoolTrait
 {
     /**
      * @var \PDO
@@ -18,10 +18,10 @@ trait PdoMysqlAdapterTrait
     }
 
     /**
-     * @return PdoMysqlAdapter
+     * @return PdoMysqlCacheItemPool
      */
-    protected function createPdoAdapter()
+    protected function createPdoItemPool()
     {
-        return new PdoMysqlAdapter(static::$pdo, 3600);
+        return new PdoMysqlCacheItemPool(static::$pdo, 3600);
     }
 }

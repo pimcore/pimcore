@@ -5,7 +5,7 @@
          convertErrorsToExceptions="true"
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
-         bootstrap="pimcore/cli/startup.php"
+         bootstrap="tests/unit_bootstrap.php"
 >
     <!--
     this currently only runs the simple test suite in Pimcore which runs basic unit tests without a dependency on a DB

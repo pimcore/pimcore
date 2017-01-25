@@ -4,13 +4,11 @@ namespace TestSuite\Pimcore\Cache\Adapter;
 
 use Cache\IntegrationTests\TaggableCachePoolTest;
 use Psr\Cache\CacheItemPoolInterface;
-use Test\Cache\Traits\PdoMysqlAdapterTrait;
+use Test\Cache\Traits\PdoMysqlCacheItemPoolTrait;
 
-require_once __DIR__ . '/../../../../lib/Test/Cache/Traits/PdoMysqlAdapterTrait.php';
-
-class TagPdoMysqlAdapterTest extends TaggableCachePoolTest
+abstract class TagPdoMysqlCacheItemPoolTest extends TaggableCachePoolTest
 {
-    use PdoMysqlAdapterTrait;
+    use PdoMysqlCacheItemPoolTrait;
 
     public static function setUpBeforeClass()
     {
@@ -23,9 +21,9 @@ class TagPdoMysqlAdapterTest extends TaggableCachePoolTest
      */
     public function createCachePool()
     {
-        $adapter = $this->createPdoAdapter();
-        $adapter->clear();
+        $itemPool = $this->createPdoItemPool();
+        $itemPool->clear();
 
-        return $adapter;
+        return $itemPool;
     }
 }

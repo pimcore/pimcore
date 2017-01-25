@@ -12,10 +12,8 @@ use Pimcore\Cache\Core\CoreHandler;
 use Pimcore\Cache\Core\CoreHandlerInterface;
 use Pimcore\Cache\Core\WriteLock;
 use Pimcore\Cache\Core\WriteLockInterface;
-use Psr\Cache\CacheItemInterface;
-use Symfony\Component\Cache\Adapter\AdapterInterface;
-use Symfony\Component\Cache\Adapter\ArrayAdapter;
-use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
+use Pimcore\Cache\Pool\PimcoreCacheItemInterface;
+use Pimcore\Cache\Pool\PimcoreCacheItemPoolInterface;
 
 abstract class AbstractCoreHandlerTest extends TestCase
 {
@@ -30,14 +28,9 @@ abstract class AbstractCoreHandlerTest extends TestCase
     protected static $logHandlers = [];
 
     /**
-     * @var AdapterInterface
+     * @var PimcoreCacheItemPoolInterface
      */
-    protected $cacheAdapter;
-
-    /**
-     * @var TagAwareAdapterInterface
-     */
-    protected $tagAdapter;
+    protected $itemPool;
 
     /**
      * @var CoreHandlerInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -63,21 +56,21 @@ abstract class AbstractCoreHandlerTest extends TestCase
      */
     protected function setUp()
     {
-        $this->setUpCacheAdapters();
+        $this->setupItemPool();
         $this->setUpWriteLock();
         $this->buildHandlerMock();
     }
 
     /**
-     * Initializes cacheAdapter and tagAdapter
+     * Initializes item pool
      *
      * @return mixed
      */
-    abstract protected function setUpCacheAdapters();
+    abstract protected function setupItemPool();
 
     protected function setUpWriteLock()
     {
-        $writeLock = new WriteLock($this->tagAdapter);
+        $writeLock = new WriteLock($this->itemPool);
         $writeLock->setLogger(static::$logger);
 
         $this->writeLock = $writeLock;
@@ -100,7 +93,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
         $handler = $this->getMockBuilder(CoreHandler::class)
             ->setMethods($mockMethods)
             ->setConstructorArgs([
-                $this->tagAdapter,
+                $this->itemPool,
                 $this->writeLock
             ])
             ->getMock();
@@ -178,7 +171,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
      */
     protected function cacheHasItem($key)
     {
-        $item = $this->tagAdapter->getItem($key);
+        $item = $this->itemPool->getItem($key);
 
         return $item->isHit();
     }
@@ -204,17 +197,6 @@ abstract class AbstractCoreHandlerTest extends TestCase
                 }
             }
         }
-    }
-
-    public function testAdapterIsWrappedInCacheAdapter()
-    {
-        $adapter = new ArrayAdapter();
-        $handler = new CoreHandler($adapter, $this->writeLock);
-
-        $this->assertInstanceOf(
-            TagAwareAdapterInterface::class,
-            $this->getHandlerPropertyValue('adapter', $handler)
-        );
     }
 
     public function testCacheIsEnabledByDefault()
@@ -247,10 +229,10 @@ abstract class AbstractCoreHandlerTest extends TestCase
 
     public function testGetItemIsCacheMiss()
     {
-        /** @var CacheItemInterface $item */
+        /** @var PimcoreCacheItemInterface $item */
         $item = $this->handler->getItem('not_existing');
 
-        $this->assertInstanceOf(CacheItemInterface::class, $item);
+        $this->assertInstanceOf(PimcoreCacheItemInterface::class, $item);
         $this->assertFalse($item->isHit());
     }
 
