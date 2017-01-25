@@ -179,7 +179,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
                 $list->setFilter(function ($row) use ($filter) {
                     foreach ($row as $value) {
                         if ($value) {
-                            $values = is_array($value) ? $value : array($value);
+                            $values = is_array($value) ? $value : [$value];
 
                             foreach ($values as $value) {
                                 if (strpos($value, $filter) !== false) {
@@ -700,11 +700,11 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
                 $filter = $this->getParam("filter");
                 $list->setFilter(function ($row) use ($filter) {
                     foreach ($row as $value) {
-	                    if ( ! is_scalar($value)) {
-		                    continue;
-	                    }
-	                    if (strpos((string)$value, $filter) !== false) {
-		                    return true;
+                        if (! is_scalar($value)) {
+                            continue;
+                        }
+                        if (strpos((string)$value, $filter) !== false) {
+                            return true;
                         }
                     }
 
