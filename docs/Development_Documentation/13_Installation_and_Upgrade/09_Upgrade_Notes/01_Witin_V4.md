@@ -9,6 +9,9 @@
     return $key;
 });
 ```
+
+More examples like a type specific configuration can be found [here](https://github.com/pimcore/pimcore/issues/898#issuecomment-251909498). 
+
 - Document editable 'Date': if using Carbon (DateTime) the syntax for the config-option `format` changed from `date()` to `strftime()`
 
 ## Upgrade notes for 4.3.0
