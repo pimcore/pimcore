@@ -178,8 +178,14 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
                 $filter = $this->getParam("filter");
                 $list->setFilter(function ($row) use ($filter) {
                     foreach ($row as $value) {
-                        if (strpos($value, $filter) !== false) {
-                            return true;
+                        if ($value) {
+                            $values = is_array($value) ? $value : array($value);
+
+                            foreach ($values as $value) {
+                                if (strpos($value, $filter) !== false) {
+                                    return true;
+                                }
+                            }
                         }
                     }
 
