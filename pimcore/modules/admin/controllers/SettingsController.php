@@ -694,8 +694,11 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
                 $filter = $this->getParam("filter");
                 $list->setFilter(function ($row) use ($filter) {
                     foreach ($row as $value) {
-                        if (strpos($value, $filter) !== false) {
-                            return true;
+	                    if ( ! is_scalar($value)) {
+		                    continue;
+	                    }
+	                    if (strpos((string)$value, $filter) !== false) {
+		                    return true;
                         }
                     }
 
