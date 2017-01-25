@@ -66,15 +66,6 @@ abstract class AbstractCacheItemPool implements PimcoreCacheItemPoolInterface, L
     abstract protected function doDelete(array $ids);
 
     /**
-     * Fetches all item keys matching the given tags
-     *
-     * @param array $tags
-     *
-     * @return array
-     */
-    abstract protected function getItemKeysByTags(array $tags);
-
-    /**
      * Transform cache key into storage ID (e.g. prefix with namespace)
      *
      * @param string $key
@@ -398,29 +389,13 @@ abstract class AbstractCacheItemPool implements PimcoreCacheItemPoolInterface, L
      *
      * @param string $tag The tag to invalidate
      *
-     * @throws \Psr\Cache\InvalidArgumentException When $tags is not valid
+     * @throws InvalidArgumentException When $tags is not valid
      *
      * @return bool True on success
      */
     public function invalidateTag($tag)
     {
         return $this->invalidateTags([$tag]);
-    }
-
-    /**
-     * Invalidates cached items using tags.
-     *
-     * @param string[] $tags An array of tags to invalidate
-     *
-     * @throws \Psr\Cache\InvalidArgumentException When $tags is not valid
-     *
-     * @return bool True on success
-     */
-    public function invalidateTags(array $tags)
-    {
-        $keys = $this->getItemKeysByTags($tags);
-
-        return $this->deleteItems($keys);
     }
 
     public function __destruct()

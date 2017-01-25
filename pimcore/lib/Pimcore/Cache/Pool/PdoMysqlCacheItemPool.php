@@ -163,6 +163,22 @@ class PdoMysqlCacheItemPool extends AbstractCacheItemPool
     }
 
     /**
+     * Invalidates cached items using tags.
+     *
+     * @param string[] $tags An array of tags to invalidate
+     *
+     * @throws \Psr\Cache\InvalidArgumentException When $tags is not valid
+     *
+     * @return bool True on success
+     */
+    public function invalidateTags(array $tags)
+    {
+        $keys = $this->getItemKeysByTags($tags);
+
+        return $this->deleteItems($keys);
+    }
+
+    /**
      * Persists any deferred cache items.
      *
      * @return bool
