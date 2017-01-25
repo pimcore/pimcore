@@ -3,6 +3,9 @@ services:
         class: PimcoreBundle\HttpKernel\LegacyKernel
         arguments: ['@kernel']
 
+    pimcore.router.dynamic_route_provider:
+        class: PimcoreBundle\Routing\DocumentRouteProvider
+
     pimcore.plugin_broker:
         class: Pimcore\API\Plugin\Broker
 
