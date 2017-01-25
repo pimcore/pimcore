@@ -2,7 +2,7 @@
 
 namespace Pimcore\Cache\Pool;
 
-use Pimcore\Cache\Exception\CacheException;
+use Pimcore\Cache\Pool\Exception\CacheException;
 
 class PdoMysqlCacheItemPool extends AbstractCacheItemPool
 {
@@ -14,8 +14,10 @@ class PdoMysqlCacheItemPool extends AbstractCacheItemPool
     /**
      * @param \PDO $db
      */
-    public function __construct(\PDO $db)
+    public function __construct(\PDO $db, $defaultLifetime = 0)
     {
+        parent::__construct($defaultLifetime);
+
         $this->db = $db;
     }
 

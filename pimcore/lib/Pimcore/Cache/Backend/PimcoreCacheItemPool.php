@@ -3,26 +3,23 @@
 namespace Pimcore\Cache\Backend;
 
 use Pimcore\Cache\Backend\Exception\NotImplementedException;
-use Psr\Cache\CacheItemPoolInterface;
-use Symfony\Component\Cache\Adapter\AdapterInterface;
-use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
-use Symfony\Component\Cache\CacheItem;
+use Pimcore\Cache\Pool\PimcoreCacheItemPoolInterface;
 use Zend_Cache;
 
-class SymfonyCache extends \Zend_Cache_Backend implements \Zend_Cache_Backend_ExtendedInterface
+class PimcoreCacheItemPool extends \Zend_Cache_Backend implements \Zend_Cache_Backend_ExtendedInterface
 {
     /**
-     * @var AdapterInterface|TagAwareAdapterInterface
+     * @var PimcoreCacheItemPoolInterface
      */
-    protected $adapter;
+    protected $itemPool;
 
     /**
-     * @param AdapterInterface $adapter
+     * @param PimcoreCacheItemPoolInterface $itemPool
      * @param array $options Associative array of options
      */
-    public function __construct(AdapterInterface $adapter, array $options = [])
+    public function __construct(PimcoreCacheItemPoolInterface $itemPool, array $options = [])
     {
-        $this->adapter = $adapter;
+        $this->itemPool = $itemPool;
 
         parent::__construct($options);
     }
@@ -35,7 +32,7 @@ class SymfonyCache extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Ex
         // TODO what to set for automatic_cleaning, expired_read, infinite_lifetime?
         return [
             'automatic_cleaning' => false,
-            'tags'               => $this->adapter instanceof TagAwareAdapterInterface,
+            'tags'               => true,
             'expired_read'       => false,
             'priority'           => false,
             'infinite_lifetime'  => false,
@@ -54,7 +51,7 @@ class SymfonyCache extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Ex
      */
     public function load($id, $doNotTestCacheValidity = false)
     {
-        $item = $this->adapter->getItem($id);
+        $item = $this->itemPool->getItem($id);
 
         if ($item->isHit()) {
             return $item->get();
@@ -77,14 +74,13 @@ class SymfonyCache extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Ex
      */
     public function save($data, $id, $tags = array(), $specificLifetime = false)
     {
-        /** @var CacheItem|CacheItemPoolInterface $item */
-        $item = $this->adapter->getItem($id);
+        $item = $this->itemPool->getItem($id);
 
         $item->set($data);
         $item->expiresAfter($this->getLifetime($specificLifetime));
-        $item->tag($tags);
+        $item->setTags($tags);
 
-        return $this->adapter->save($item);
+        return $this->itemPool->save($item);
     }
 
     /**
@@ -95,7 +91,7 @@ class SymfonyCache extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Ex
      */
     public function remove($id)
     {
-        return $this->adapter->deleteItem($id);
+        return $this->itemPool->deleteItem($id);
     }
 
     /**
@@ -118,16 +114,9 @@ class SymfonyCache extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Ex
     public function clean($mode = Zend_Cache::CLEANING_MODE_ALL, $tags = array())
     {
         if ($mode === Zend_Cache::CLEANING_MODE_ALL) {
-            return $this->adapter->clear();
+            return $this->itemPool->clear();
         } else if ($mode === Zend_Cache::CLEANING_MODE_MATCHING_TAG) {
-            if ($this->adapter instanceof TagAwareAdapterInterface) {
-                return $this->adapter->invalidateTags($tags);
-            } else {
-                throw new NotImplementedException(sprintf(
-                    'Backend does not support tagging and therefore can\'t clear with "%s" mode',
-                    $mode
-                ));
-            }
+            return $this->itemPool->invalidateTags($tags);
         }
 
         throw new NotImplementedException(sprintf(

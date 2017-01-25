@@ -1,7 +1,7 @@
 <?php
 namespace Pimcore\Cache\Core;
 
-use Psr\Cache\CacheItemInterface;
+use Pimcore\Cache\Pool\PimcoreCacheItemInterface;
 use Psr\Log\LoggerInterface;
 
 interface CoreHandlerInterface
@@ -66,7 +66,7 @@ interface CoreHandlerInterface
      * Get PSR-6 cache item
      *
      * @param $key
-     * @return CacheItemInterface
+     * @return PimcoreCacheItemInterface
      */
     public function getItem($key);
 

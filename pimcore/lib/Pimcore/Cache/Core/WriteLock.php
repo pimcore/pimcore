@@ -2,7 +2,7 @@
 
 namespace Pimcore\Cache\Core;
 
-use Psr\Cache\CacheItemPoolInterface;
+use Pimcore\Cache\Pool\PimcoreCacheItemPoolInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 
@@ -16,9 +16,9 @@ class WriteLock implements WriteLockInterface, LoggerAwareInterface
     protected $enabled = true;
 
     /**
-     * @var CacheItemPoolInterface
+     * @var PimcoreCacheItemPoolInterface
      */
-    protected $adapter;
+    protected $itemPool;
 
     /**
      * @var string
@@ -41,11 +41,11 @@ class WriteLock implements WriteLockInterface, LoggerAwareInterface
     protected $timestamp = 0;
 
     /**
-     * @param CacheItemPoolInterface $adapter
+     * @param PimcoreCacheItemPoolInterface $itemPool
      */
-    public function __construct(CacheItemPoolInterface $adapter)
+    public function __construct(PimcoreCacheItemPoolInterface $itemPool)
     {
-        $this->adapter = $adapter;
+        $this->itemPool = $itemPool;
 
         $this->initializeLock();
     }
@@ -55,7 +55,7 @@ class WriteLock implements WriteLockInterface, LoggerAwareInterface
      */
     protected function initializeLock()
     {
-        $item = $this->adapter->getItem($this->cacheKey);
+        $item = $this->itemPool->getItem($this->cacheKey);
         if ($item->isHit()) {
             $lock = $item->get();
 
@@ -85,11 +85,11 @@ class WriteLock implements WriteLockInterface, LoggerAwareInterface
                 ['timestamp' => $this->timestamp]
             );
 
-            $item = $this->adapter->getItem($this->cacheKey);
+            $item = $this->itemPool->getItem($this->cacheKey);
             $item->set($this->timestamp);
             $item->expiresAfter($this->lifetime);
 
-            return $this->adapter->save($item);
+            return $this->itemPool->save($item);
         }
 
         return false;
@@ -110,7 +110,7 @@ class WriteLock implements WriteLockInterface, LoggerAwareInterface
             return true;
         }
 
-        $item = $this->adapter->getItem($this->cacheKey);
+        $item = $this->itemPool->getItem($this->cacheKey);
         if ($item->isHit()) {
             $lock = $item->get();
 
@@ -147,7 +147,7 @@ class WriteLock implements WriteLockInterface, LoggerAwareInterface
         }
 
         if ($this->timestamp) {
-            $item = $this->adapter->getItem($this->cacheKey);
+            $item = $this->itemPool->getItem($this->cacheKey);
             if ($item->isHit()) {
                 $lock = $item->get();
 
@@ -158,7 +158,7 @@ class WriteLock implements WriteLockInterface, LoggerAwareInterface
                         ['timestamp' => $lock]
                     );
 
-                    $this->adapter->deleteItem($this->cacheKey);
+                    $this->itemPool->deleteItem($this->cacheKey);
 
                     $this->timestamp = 0;
 

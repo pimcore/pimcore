@@ -1,6 +1,6 @@
 <?php
 
-namespace Pimcore\Cache\Exception;
+namespace Pimcore\Cache\Pool\Exception;
 
 class CacheException extends \Exception implements \Psr\Cache\CacheException
 {

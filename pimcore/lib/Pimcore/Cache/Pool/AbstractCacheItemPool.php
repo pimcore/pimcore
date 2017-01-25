@@ -3,7 +3,7 @@
 namespace Pimcore\Cache\Pool;
 
 use Psr\Cache\CacheItemInterface;
-use Pimcore\Cache\Exception\InvalidArgumentException;
+use Pimcore\Cache\Pool\Exception\InvalidArgumentException;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 
@@ -19,7 +19,15 @@ abstract class AbstractCacheItemPool implements PimcoreCacheItemPoolInterface, L
     /**
      * @var int
      */
-    protected $defaultLifeTime;
+    protected $defaultLifeTime = 0;
+
+    /**
+     * @param int $defaultLifeTime
+     */
+    public function __construct($defaultLifeTime = 0)
+    {
+        $this->defaultLifeTime = $defaultLifeTime;
+    }
 
     /**
      * Fetches several cache items.
@@ -111,7 +119,7 @@ abstract class AbstractCacheItemPool implements PimcoreCacheItemPoolInterface, L
      * @param bool $isHit
      * @return PimcoreCacheItemInterface
      */
-    protected function createCacheItem($key, $value = null, array $tags = [], $isHit = false)
+    public function createCacheItem($key, $value = null, array $tags = [], $isHit = false)
     {
         $cacheItem = new CacheItem($key, $value, $isHit, $tags, $this->defaultLifeTime);
 

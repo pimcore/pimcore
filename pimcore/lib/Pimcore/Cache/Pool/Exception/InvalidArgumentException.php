@@ -1,6 +1,6 @@
 <?php
 
-namespace Pimcore\Cache\Exception;
+namespace Pimcore\Cache\Pool\Exception;
 
 use Psr\Cache\InvalidArgumentException as InvalidArgumentExceptionInterface;
 

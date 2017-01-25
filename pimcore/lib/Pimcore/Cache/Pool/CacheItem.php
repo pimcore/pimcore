@@ -4,7 +4,7 @@ namespace Pimcore\Cache\Pool;
 
 use Cache\TagInterop\TaggableCacheItemInterface;
 use Psr\Log\LoggerInterface;
-use Pimcore\Cache\Exception\InvalidArgumentException;
+use Pimcore\Cache\Pool\Exception\InvalidArgumentException;
 
 class CacheItem implements PimcoreCacheItemInterface
 {

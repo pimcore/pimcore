@@ -1,10 +1,11 @@
 <?php
 
 use Interop\Container\ContainerInterface;
-use Pimcore\Cache\Backend\SymfonyCache;
+use Pimcore\Cache\Backend\PimcoreCacheItemPool;
 use Pimcore\Cache\Core\CoreHandler;
 use Pimcore\Cache\Core\WriteLock;
 use Pimcore\Cache\Core\ZendCacheHandler;
+use Pimcore\Cache\Pool\PdoMysqlCacheItemPool;
 use Pimcore\Logger;
 use Psr\Log\NullLogger;
 use Symfony\Component\Cache\Adapter\ApcuAdapter;
@@ -34,107 +35,40 @@ return [
         return $cacheLogger;
     },
 
-    // alias for the standard core cache adapter - this key will be injected into the core cache (through the taggable cache defined below)
+    // alias for the standard core cache pool - this key will be injected into the core cache
     // if you define your own cache service, make sure you set this alias to your service
-    // you can either define your own adapter (must implement AdapterInterface or use one of the predefined ones (see below)
-    'pimcore.cache.adapter.core' => DI\get('pimcore.cache.adapter.core.filesystem'),
-
-    // the taggable cache is injected into the core services consuming the cache (CoreHandler, WriteLock, Zend)
-    'pimcore.cache.adapter.core.taggable' => DI\object(TagAwareAdapter::class)
-        ->constructor(
-            DI\get('pimcore.cache.adapter.core')
-        ),
-
-    // redis connection
-    'pimcore.cache.redis.connection.core' => function (ContainerInterface $container) {
-        $dsnKey     = 'pimcore.cache.redis.dsn';
-        $optionsKey = 'pimcore.cache.redis.options';
-
-        if (!$container->has('pimcore.cache.redis.dsn')) {
-            throw new \DI\DependencyException(
-                sprintf(
-                    'Need a Redis DSN configured as parameter "%s" to use the core redis adapter. Please update your DI configuration.',
-                    $dsnKey
-                )
-            );
-        }
-
-        $dsn = $container->get($dsnKey);
-
-        $options = [];
-        if ($container->has($optionsKey)) {
-            $options = $container->get($optionsKey);
-        }
-
-        return RedisAdapter::createConnection($dsn, $options);
-    },
+    // you can either define your own adapter (must implement PimcoreCacheItemPoolInterface or use one of the predefined
+    // ones (see below)
+    'pimcore.cache.pool.core' => DI\get('pimcore.cache.pool.core.pdo'),
 
     // PDO cache adapter
-    'pimcore.cache.adapter.core.pdo' => DI\object(PdoAdapter::class)
+    'pimcore.cache.pool.core.pdo' => DI\object(PdoMysqlCacheItemPool::class)
         ->constructor(
             DI\get('pimcore.db.pdo'),
-            DI\get('pimcore.cache.config.core.namespace'),
-            DI\get('pimcore.cache.config.core.defaultLifetime'),
-            [
-                'db_table' => 'cache_test'
-            ]
-        )
-        ->method('setLogger', DI\get('pimcore.logger.cache')),
-
-    // redis cache adapter
-    'pimcore.cache.adapter.core.redis' => DI\object(RedisAdapter::class)
-        ->constructor(
-            DI\get('pimcore.cache.redis.connection.core'),
-            DI\get('pimcore.cache.config.core.namespace'),
             DI\get('pimcore.cache.config.core.defaultLifetime')
-        )
-        ->method('setLogger', DI\get('pimcore.logger.cache')),
-
-    // APCu cache adapter
-    'pimcore.cache.adapter.core.apcu' => DI\object(ApcuAdapter::class)
-        ->constructor(
-            DI\get('pimcore.cache.config.core.namespace'),
-            DI\get('pimcore.cache.config.core.defaultLifetime')
-        )
-        ->method('setLogger', DI\get('pimcore.logger.cache')),
-
-    // filesystem cache adapter
-    'pimcore.cache.adapter.core.filesystem' => DI\object(FilesystemAdapter::class)
-        ->constructor(
-            DI\get('pimcore.cache.config.core.namespace'),
-            DI\get('pimcore.cache.config.core.defaultLifetime'),
-            PIMCORE_CACHE_DIRECTORY . '/symfony'
-        )
-        ->method('setLogger', DI\get('pimcore.logger.cache')),
-
-    // array/in-memory cache adapter
-    'pimcore.cache.adapter.core.array' => DI\object(ArrayAdapter::class)
-        ->constructor(
-            DI\get('pimcore.cache.config.core.defaultLifetime'),
-            false // do not store serialized
         )
         ->method('setLogger', DI\get('pimcore.logger.cache')),
 
     // write lock handles locking between processes
     'pimcore.cache.write_lock' => DI\object(WriteLock::class)
         ->constructor(
-            DI\get('pimcore.cache.adapter.core.taggable')
+            DI\get('pimcore.cache.pool.core')
         )
         ->method('setLogger', DI\get('pimcore.logger.cache')),
 
     // the actual core handler which is used from Pimcore\Cache
     'pimcore.cache.handler.core' => DI\object(CoreHandler::class)
         ->constructor(
-            DI\get('pimcore.cache.adapter.core.taggable'),
+            DI\get('pimcore.cache.pool.core'),
             DI\get('pimcore.cache.write_lock')
         )
         ->method('setLogger', DI\get('pimcore.logger.cache')),
 
     // Zend Cache
     // the SymfonyCache backend delegates caching to the core cache adapter
-    'pimcore.cache.zend.backend' => DI\object(SymfonyCache::class)
+    'pimcore.cache.zend.backend' => DI\object(PimcoreCacheItemPool::class)
         ->constructor(
-            DI\get('pimcore.cache.adapter.core.taggable')
+            DI\get('pimcore.cache.pool.core')
         ),
 
     // set default frontend options including a specific ZF prefix

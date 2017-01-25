@@ -2,16 +2,13 @@
 
 namespace Pimcore\Cache\Core;
 
+use Pimcore\Cache\Pool\PimcoreCacheItemInterface;
+use Pimcore\Cache\Pool\PimcoreCacheItemPoolInterface;
 use Pimcore\Model\Document\Hardlink\Wrapper\WrapperInterface;
 use Pimcore\Model\Element\ElementInterface;
-use Psr\Cache\CacheItemInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Cache\Adapter\AdapterInterface;
-use Symfony\Component\Cache\Adapter\TagAwareAdapter;
-use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
-use Symfony\Component\Cache\CacheItem;
 
 /**
  * Core pimcore cache handler with logic handling deferred save on shutdown (specialized for internal pimcore use). This
@@ -23,9 +20,9 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
     use LoggerAwareTrait;
 
     /**
-     * @var TagAwareAdapterInterface
+     * @var PimcoreCacheItemPoolInterface
      */
-    protected $adapter;
+    protected $itemPool;
 
     /**
      * @var WriteLockInterface
@@ -107,28 +104,23 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
     protected $emptyCacheItemClosure;
 
     /**
-     * @param AdapterInterface $adapter
+     * @param PimcoreCacheItemPoolInterface $adapter
      * @param WriteLockInterface $writeLock
      */
-    public function __construct(AdapterInterface $adapter, WriteLockInterface $writeLock)
+    public function __construct(PimcoreCacheItemPoolInterface $adapter, WriteLockInterface $writeLock)
     {
-        $this->setAdapter($adapter);
+        $this->setItemPool($adapter);
 
         $this->writeLock = $writeLock;
     }
 
     /**
-     * @param AdapterInterface $adapter
+     * @param PimcoreCacheItemPoolInterface $itemPool
      * @return $this
      */
-    protected function setAdapter(AdapterInterface $adapter)
+    protected function setItemPool(PimcoreCacheItemPoolInterface $itemPool)
     {
-        // if adapter is not tag aware, wrap it in TagAwareAdapter
-        if (!$adapter instanceof TagAwareAdapterInterface) {
-            $adapter = new TagAwareAdapter($adapter);
-        }
-
-        $this->adapter = $adapter;
+        $this->itemPool = $itemPool;
 
         return $this;
     }
@@ -249,17 +241,18 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
      * Get PSR-6 cache item
      *
      * @param $key
-     * @return CacheItemInterface
+     * @return PimcoreCacheItemInterface
      */
     public function getItem($key)
     {
         if (!$this->enabled) {
             $this->logger->debug(sprintf('Key %s doesn\'t exist in cache (deactivated)', $key), ['key' => $key]);
 
-            return $this->createEmptyCacheItem($key);
+            // create empty cache item
+            return $this->itemPool->createCacheItem($key);
         }
 
-        $item = $this->adapter->getItem($key);
+        $item = $this->itemPool->getItem($key);
         if ($item->isHit()) {
             $this->logger->debug(sprintf('Successfully got data for key %s from cache', $key), ['key' => $key]);
         } else {
@@ -267,36 +260,6 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
         }
 
         return $item;
-    }
-
-    /**
-     * This exists only because of the cumbersome way symfony cache defines cache items. As we can't influence the cache
-     * item (final class, no setters), we need to bind closures to the item class which alter object data. The shipped
-     * cache adapters do it the same way.
-     *
-     * @param $key
-     * @return CacheItemInterface
-     */
-    protected function createEmptyCacheItem($key)
-    {
-        if (null === $this->emptyCacheItemClosure) {
-            $this->emptyCacheItemClosure = \Closure::bind(
-                function ($key) {
-                    $item = new CacheItem();
-
-                    $item->key   = $key;
-                    $item->isHit = false;
-
-                    return $item;
-                },
-                null,
-                CacheItem::class
-            );
-        }
-
-        $closure = $this->emptyCacheItemClosure;
-
-        return $closure($key);
     }
 
     /**
@@ -367,7 +330,8 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
      * @param mixed $data
      * @param array $tags
      * @param int|\DateInterval|null $lifetime
-     * @return CacheItemInterface|null
+     *
+     * @return PimcoreCacheItemInterface|null
      */
     protected function prepareCacheItem($key, $data, array $tags = [], $lifetime = null)
     {
@@ -445,14 +409,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
         // TODO symfony cache adapters serialize as well - find a way to avoid double serialization
         $itemData = serialize($data);
 
-        // TODO is there a PSR-6 compatible way of generating an item without fetching it?
-        // Stash for example defers reading the item until get() or isHit() is called, Symfony fetches it immediately
-        // which could be a performance hit when saving many objects.
-
-        /** @var CacheItem $item */
-        $item = $this->adapter->getItem($key);
-        $item->set($itemData);
-        $item->tag($tags);
+        $item = $this->itemPool->createCacheItem($key, $itemData, $tags);
         $item->expiresAfter($lifetime);
 
         return $item;
@@ -461,11 +418,11 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
     /**
      * Actually store the item in the cache
      *
-     * @param CacheItemInterface|CacheItem $item
+     * @param PimcoreCacheItemInterface $item
      * @param bool $force
      * @return bool
      */
-    protected function storeCacheItem(CacheItemInterface $item, $force = false)
+    protected function storeCacheItem(PimcoreCacheItemInterface $item, $force = false)
     {
         if (!$this->enabled) {
             // TODO return true here as the noop (not storing anything) is basically successful?
@@ -477,7 +434,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
             return false;
         }
 
-        $result = $this->adapter->save($item);
+        $result = $this->itemPool->save($item);
 
         if ($result) {
             $this->logger->debug(sprintf('Added entry %s to cache', $item->getKey()), ['key' => $item->getKey()]);
@@ -504,7 +461,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
     {
         $this->writeLock->lock();
 
-        return $this->adapter->deleteItem($key);
+        return $this->itemPool->deleteItem($key);
     }
 
     /**
@@ -518,7 +475,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
 
         $this->logger->info(sprintf('Clearing the whole cache'));
 
-        $result = $this->adapter->clear();
+        $result = $this->itemPool->clear();
 
         // immediately acquire the write lock again (force), because the lock is in the cache too
         $this->writeLock->lock(true);
@@ -555,7 +512,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
 
         $tags = $this->normalizeClearTags($tags);
         if (count($tags) > 0) {
-            $result = $this->adapter->invalidateTags($tags);
+            $result = $this->itemPool->invalidateTags($tags);
 
             if ($result) {
                 $this->addClearedTags($tags);
@@ -588,7 +545,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
             ['tags' => $this->tagsClearedOnShutdown]
         );
 
-        $result = $this->adapter->invalidateTags($this->tagsClearedOnShutdown);
+        $result = $this->itemPool->invalidateTags($this->tagsClearedOnShutdown);
 
         if ($result) {
             $this->addClearedTags($this->tagsClearedOnShutdown);

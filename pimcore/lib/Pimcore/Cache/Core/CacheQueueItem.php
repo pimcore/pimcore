@@ -2,12 +2,12 @@
 
 namespace Pimcore\Cache\Core;
 
-use Psr\Cache\CacheItemInterface;
+use Pimcore\Cache\Pool\PimcoreCacheItemInterface;
 
 class CacheQueueItem
 {
     /**
-     * @var CacheItemInterface
+     * @var PimcoreCacheItemInterface
      */
     protected $cacheItem;
 
@@ -17,17 +17,17 @@ class CacheQueueItem
     protected $force = false;
 
     /**
-     * @param CacheItemInterface $cacheItem
+     * @param PimcoreCacheItemInterface $cacheItem
      * @param bool $force
      */
-    public function __construct(CacheItemInterface $cacheItem, $force = false)
+    public function __construct(PimcoreCacheItemInterface $cacheItem, $force = false)
     {
         $this->cacheItem = $cacheItem;
         $this->force     = (bool)$force;
     }
 
     /**
-     * @return CacheItemInterface
+     * @return PimcoreCacheItemInterface
      */
     public function getCacheItem()
     {
