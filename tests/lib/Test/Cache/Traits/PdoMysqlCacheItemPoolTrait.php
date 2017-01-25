@@ -1,6 +1,6 @@
 <?php
 
-namespace Test\Cache\Traits;
+namespace TestSuite\Pimcore\Cache\Traits;
 
 use Pimcore\Cache\Pool\PdoMysqlCacheItemPool;
 

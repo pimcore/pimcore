@@ -2,11 +2,6 @@
 
 namespace TestSuite\Pimcore\Cache\Core;
 
-use Monolog\Handler\BufferHandler;
-use Monolog\Handler\HandlerInterface;
-use Monolog\Handler\StreamHandler;
-use Monolog\Handler\TestHandler;
-use Monolog\Logger;
 use PHPUnit\Framework\TestCase;
 use Pimcore\Cache\Core\CoreHandler;
 use Pimcore\Cache\Core\CoreHandlerInterface;
@@ -14,18 +9,11 @@ use Pimcore\Cache\Core\WriteLock;
 use Pimcore\Cache\Core\WriteLockInterface;
 use Pimcore\Cache\Pool\PimcoreCacheItemInterface;
 use Pimcore\Cache\Pool\PimcoreCacheItemPoolInterface;
+use TestSuite\Pimcore\Cache\Traits\LogHandlerTrait;
 
 abstract class AbstractCoreHandlerTest extends TestCase
 {
-    /**
-     * @var Logger
-     */
-    protected static $logger;
-
-    /**
-     * @var HandlerInterface[]
-     */
-    protected static $logHandlers = [];
+    use LogHandlerTrait;
 
     /**
      * @var PimcoreCacheItemPoolInterface
@@ -118,14 +106,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
      */
     public static function setUpBeforeClass()
     {
-        static::$logHandlers = [
-            'buffer' => new BufferHandler(new StreamHandler('php://stdout')),
-            'test'   => new TestHandler()
-        ];
-
-        $reflector = new \ReflectionClass(__CLASS__);
-
-        static::$logger = new Logger($reflector->getShortName(), array_values(static::$logHandlers));
+        static::setupLogger((new \ReflectionClass(__CLASS__))->getShortName());
     }
 
     /**
@@ -133,17 +114,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
      */
     public static function tearDownAfterClass()
     {
-        /** @var BufferHandler $bufferHandler */
-        $bufferHandler = static::$logHandlers['buffer'];
-
-        // call tests with TEST_LOG=1 if you need logs (e.g. during development)
-        if ((bool)getenv('TEST_LOG')) {
-            echo PHP_EOL;
-            $bufferHandler->flush();
-        } else {
-            // just throw the logs away
-            $bufferHandler->clear();
-        }
+        static::handleLogOutput();
     }
 
     /**

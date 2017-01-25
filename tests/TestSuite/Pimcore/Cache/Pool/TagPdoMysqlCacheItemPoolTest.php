@@ -3,27 +3,16 @@
 namespace TestSuite\Pimcore\Cache\Adapter;
 
 use Cache\IntegrationTests\TaggableCachePoolTest;
-use Psr\Cache\CacheItemPoolInterface;
-use Test\Cache\Traits\PdoMysqlCacheItemPoolTrait;
+use TestSuite\Pimcore\Cache\Pool\Traits\PdoMysqlCacheItemPoolTestTrait;
 
-abstract class TagPdoMysqlCacheItemPoolTest extends TaggableCachePoolTest
+class TagPdoMysqlCacheItemPoolTest extends TaggableCachePoolTest
 {
-    use PdoMysqlCacheItemPoolTrait;
+    use PdoMysqlCacheItemPoolTestTrait;
 
-    public static function setUpBeforeClass()
-    {
-        parent::setUpBeforeClass();
-        static::fetchPdo();
-    }
+    protected $skippedTests = [
+        'testPreviousTag'              => 'Previous tags are not loaded for performance reasons.',
+        'testPreviousTagDeferred'      => 'Previous tags are not loaded for performance reasons.',
+        'testTagAccessorDuplicateTags' => 'Previous tags are not loaded for performance reasons.',
 
-    /**
-     * @return CacheItemPoolInterface that is used in the tests
-     */
-    public function createCachePool()
-    {
-        $itemPool = $this->createPdoItemPool();
-        $itemPool->clear();
-
-        return $itemPool;
-    }
+    ];
 }

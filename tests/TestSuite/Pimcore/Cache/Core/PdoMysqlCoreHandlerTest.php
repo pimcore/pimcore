@@ -2,7 +2,7 @@
 
 namespace TestSuite\Pimcore\Cache\Core;
 
-use Test\Cache\Traits\PdoMysqlCacheItemPoolTrait;
+use TestSuite\Pimcore\Cache\Traits\PdoMysqlCacheItemPoolTrait;
 
 class PdoMysqlCoreHandlerTest extends AbstractCoreHandlerTest
 {
