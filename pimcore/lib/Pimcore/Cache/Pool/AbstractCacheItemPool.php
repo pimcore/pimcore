@@ -75,31 +75,6 @@ abstract class AbstractCacheItemPool implements PimcoreCacheItemPoolInterface, L
     abstract protected function getItemKeysByTags(array $tags);
 
     /**
-     * @param PimcoreCacheItemInterface[] $items
-     * @param $expiredIds
-     * @return PimcoreCacheItemInterface[][]
-     */
-    protected function itemsByLifetime(array $items, array &$expiredIds = [])
-    {
-        $now        = time();
-        $byLifetime = [];
-
-        foreach ($items as $key => $item) {
-            $id = $this->getId($key);
-
-            if (null === $item->getExpiry()) {
-                $byLifetime[0 < $item->getDefaultLifetime() ? $item->getDefaultLifetime() : 0][$id] = $item;
-            } elseif ($item->getExpiry() > $now) {
-                $byLifetime[$item->getExpiry() - $now][$id] = $item;
-            } else {
-                $expiredIds[] = $id;
-            }
-        }
-
-        return $byLifetime;
-    }
-
-    /**
      * Transform cache key into storage ID (e.g. prefix with namespace)
      *
      * @param string $key

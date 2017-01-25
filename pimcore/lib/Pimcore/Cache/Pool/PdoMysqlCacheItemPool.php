@@ -177,41 +177,37 @@ class PdoMysqlCacheItemPool extends AbstractCacheItemPool
         try {
             $this->db->beginTransaction();
 
-            // get items categorized by lifetime and ignore already expired ones
-            // the symfony pool deletes items with expired lifetime here -> we let the maintenance handle cleanup
-            $byLifetime = $this->itemsByLifetime($this->deferred);
-
-            /** @var PimcoreCacheItemInterface[] $items */
-            foreach ($byLifetime as $lifetime => $items) {
-                foreach ($items as $item) {
-                    $insertQuery = <<<SQL
+            // save every item in the deferred queue, even if expired to make sure expired items are updated
+            // in the DB (see CachePoolTest::testSaveExpired())
+            /** @var PimcoreCacheItemInterface $item */
+            foreach ($this->deferred as $item) {
+                $insertQuery = <<<SQL
 INSERT INTO
     cache (id, data, expire, mtime) VALUES (:id, :data, :expire, :mtime)
     ON DUPLICATE KEY UPDATE data = VALUES(data), expire = VALUES(expire), mtime = VALUES(mtime)
 SQL;
 
-                    $stmt = $this->db->prepare($insertQuery);
+                $stmt = $this->db->prepare($insertQuery);
 
-                    $stmt->bindParam(':id', $item->getKey());
-                    $stmt->bindParam(':data', $this->serializeData($item->get()));
-                    $stmt->bindParam(':expire', $item->getExpiry());
-                    $stmt->bindParam(':mtime', time());
-                    $result = $stmt->execute();
+                $stmt->bindParam(':id', $item->getKey());
+                $stmt->bindParam(':data', $this->serializeData($item->get()));
+                $stmt->bindParam(':expire', $item->getExpiry());
+                $stmt->bindParam(':mtime', time());
+                $result = $stmt->execute();
 
-                    if (!$result) {
-                        throw new CacheException(sprintf('Failed to execute insert query for item %s', $item->getKey()));
-                    }
+                if (!$result) {
+                    throw new CacheException(sprintf('Failed to execute insert query for item %s', $item->getKey()));
+                }
 
-                    $tags = $item->getTags();
-                    if (count($tags) > 0) {
-                        $this->removeNotMatchingTags($item->getKey(), $tags);
+                $tags = $item->getTags();
+                if (count($tags) > 0) {
+                    $this->removeNotMatchingTags($item->getKey(), $tags);
 
-                        $tagQuery = 'INSERT INTO cache_tags (id, tag) VALUES (?, ?) ON DUPLICATE KEY UPDATE tag = VALUES(tag)';
-                        $tagStmt  = $this->db->prepare($tagQuery);
+                    $tagQuery = 'INSERT INTO cache_tags (id, tag) VALUES (?, ?) ON DUPLICATE KEY UPDATE tag = VALUES(tag)';
+                    $tagStmt  = $this->db->prepare($tagQuery);
 
-                        while ($tag = array_shift($tags)) {
-                            $tagStmt->execute([$item->getKey(), $tag]);
-                        }
+                    while ($tag = array_shift($tags)) {
+                        $tagStmt->execute([$item->getKey(), $tag]);
                     }
                 }
             }
