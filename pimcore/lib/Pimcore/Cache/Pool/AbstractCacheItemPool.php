@@ -238,6 +238,10 @@ abstract class AbstractCacheItemPool implements PimcoreCacheItemPoolInterface, L
             $this->commit();
         }
 
+        if (empty($keys)) {
+            return [];
+        }
+
         $ids = [];
         foreach ($keys as $key) {
             $ids[] = $this->getId($key);

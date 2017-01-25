@@ -32,6 +32,10 @@ class PdoMysqlCacheItemPool extends AbstractCacheItemPool
     {
         $now = time();
 
+        if (empty($ids)) {
+            return;
+        }
+
         $idCondition = str_pad('', (count($ids) << 1) - 1, '?,');
         $fetchQuery  = 'SELECT id, CASE WHEN expire IS NULL OR expire > ? THEN data ELSE NULL END FROM cache WHERE id IN (' . $idCondition . ')';
 
