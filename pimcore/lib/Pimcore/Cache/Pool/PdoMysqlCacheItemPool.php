@@ -204,6 +204,8 @@ SQL;
 
                     $tags = $item->getTags();
                     if (count($tags) > 0) {
+                        $this->removeNotMatchingTags($item->getKey(), $tags);
+
                         $tagQuery = 'INSERT INTO cache_tags (id, tag) VALUES (?, ?) ON DUPLICATE KEY UPDATE tag = VALUES(tag)';
                         $tagStmt  = $this->db->prepare($tagQuery);
 
@@ -221,6 +223,29 @@ SQL;
 
             return false;
         }
+    }
+
+    /**
+     * Remove all not matching tags from item
+     *
+     * @param $id
+     * @param array $tags
+     * @return bool
+     */
+    protected function removeNotMatchingTags($id, array $tags)
+    {
+        $condition = str_pad('', (count($tags) << 1) - 1, '?,');
+        $query     = 'DELETE FROM cache_tags WHERE id = ? AND tag NOT IN (' . $condition . ')';
+
+        $stmt = $this->db->prepare($query);
+
+        $i = 1;
+        $stmt->bindValue($i++, $id);
+        foreach ($tags as $tag) {
+            $stmt->bindValue($i++, $tag);
+        }
+
+        return $stmt->execute();
     }
 
     /**
