@@ -37,28 +37,32 @@ class ContentController extends Controller
      * @Template("AppBundle:Content:portal.html.twig")
      *
      * @param Request $request
+     * @param array $templateVars
      * @return array
      */
-    public function portalAction(Request $request)
+    public function portalAction(Request $request, array $templateVars)
     {
-        $vars = $this->defaultAction($request);
-        $vars['isPortal'] = true;
+        $templateVars = $this->defaultAction($request, $templateVars);
+        $templateVars['isPortal'] = true;
 
-        return $vars;
+        return $templateVars;
     }
 
     /**
      * @Template("AppBundle:Content:content.html.twig")
      *
      * @param Request $request
+     * @param array $templateVars
      * @return array
      */
-    public function defaultAction(Request $request)
+    public function defaultAction(Request $request, array $templateVars)
     {
-        $vars = $this->resolveContent($request);
-
         /** @var Document $document */
-        $document = $vars['document'];
+        $document = $templateVars['document'];
+
+        if ($request->get('debugDocument')) {
+            dump($document);
+        }
 
         $mainNavStartNode = $document->getProperty("mainNavStartNode");
         if (!$mainNavStartNode) {
@@ -70,10 +74,10 @@ class ContentController extends Controller
 
         $mainNavigation = $bridge->execute('pimcoreNavigation', [$document, $mainNavStartNode]);
 
-        $vars['mainNavigation']   = $mainNavigation;
-        $vars['mainNavStartNode'] = $mainNavStartNode;
+        $templateVars['mainNavigation']   = $mainNavigation;
+        $templateVars['mainNavStartNode'] = $mainNavStartNode;
 
-        $hideLeftNav = $vars['hideLeftNav'] = $document->getProperty('leftNavHide');
+        $hideLeftNav = $templateVars['hideLeftNav'] = $document->getProperty('leftNavHide');
         if (!$hideLeftNav) {
             $leftNavStartNode = $document->getProperty('leftNavStartNode');
             if (!$leftNavStartNode) {
@@ -82,78 +86,56 @@ class ContentController extends Controller
 
             $leftNavigation = $bridge->execute('pimcoreNavigation', [$document, $leftNavStartNode]);
 
-            $vars['leftNavigation']   = $leftNavigation;
-            $vars['leftNavStartNode'] = $leftNavStartNode;
+            $templateVars['leftNavigation']   = $leftNavigation;
+            $templateVars['leftNavStartNode'] = $leftNavStartNode;
         }
 
         $languageSwitcher = $this->container->get('app.templating.language_switcher');
-        $vars['language_links'] = $languageSwitcher->getLocalizedLinks($document);
+        $templateVars['language_links'] = $languageSwitcher->getLocalizedLinks($document);
 
-        $vars['isPortal'] = false;
+        $templateVars['isPortal'] = false;
 
-        // TODO make this global somewhere
-        $vars['editmode'] = false;
-        if ($request->get('pimcore_editmode')) {
-            $vars['editmode'] = true;
-        }
-
-        return $vars;
+        return $templateVars;
     }
 
     /**
      * @Template("AppBundle:Content:thumbnails.html.twig")
      *
      * @param Request $request
+     * @param array $templateVars
      * @return array
      */
-    public function thumbnailsAction(Request $request)
+    public function thumbnailsAction(Request $request, array $templateVars)
     {
-        $vars = $this->defaultAction($request);
+        $templateVars = $this->defaultAction($request, $templateVars);
 
         // this is just used for demonstration
-        $vars['image'] = Asset::getById(53);
+        $templateVars['image'] = Asset::getById(53);
 
-        return $vars;
+        return $templateVars;
     }
 
     /**
      * @Template("AppBundle:Content:website-translations.html.twig")
      *
      * @param Request $request
+     * @param array $templateVars
      * @return array
      */
-    public function websiteTranslationsAction(Request $request)
+    public function websiteTranslationsAction(Request $request, array $templateVars)
     {
-        return $this->defaultAction($request);
+        return $this->defaultAction($request, $templateVars);
     }
 
     /**
      * @Template("AppBundle:Content:editable-roundup.html.twig")
      *
      * @param Request $request
+     * @param array $templateVars
      * @return array
      */
-    public function editableRoundupAction(Request $request)
+    public function editableRoundupAction(Request $request, array $templateVars)
     {
-        return $this->defaultAction($request);
-    }
-
-    /**
-     * @param Request $request
-     * @return array
-     */
-    protected function resolveContent(Request $request)
-    {
-        $document = $this
-            ->get('pimcore.service.request.document_resolver')
-            ->getDocument($request);
-
-        if ($request->get('debugDocument')) {
-            dump($document);
-        }
-
-        return [
-            'document' => $document
-        ];
+        return $this->defaultAction($request, $templateVars);
     }
 }
