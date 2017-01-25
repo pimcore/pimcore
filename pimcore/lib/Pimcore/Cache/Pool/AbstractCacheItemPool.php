@@ -107,6 +107,8 @@ abstract class AbstractCacheItemPool implements PimcoreCacheItemPoolInterface, L
      */
     protected function getId($key)
     {
+        CacheItem::validateKey($key);
+
         return $key;
     }
 
