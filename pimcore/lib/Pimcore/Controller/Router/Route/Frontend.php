@@ -300,6 +300,15 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
             try {
                 $list = new Staticroute\Listing();
                 $list->setOrder(function ($a, $b) {
+                    
+                    // give site ids a higher priority
+                    if ($a["siteId"] && !$b["siteId"]) {
+                        return -1;
+                    }
+                    if (!$a["siteId"] && $b["siteId"]) {
+                        return 1;
+                    }
+
                     if ($a["priority"] == $b["priority"]) {
                         return 0;
                     }
