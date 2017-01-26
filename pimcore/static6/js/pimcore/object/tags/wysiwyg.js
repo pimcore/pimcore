@@ -149,17 +149,6 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
             { name: 'tools', groups: ['colors', 'tools', 'cleanup', 'mode', 'others'] }
         ];
 
-        if(this.fieldConfig.toolbarConfig) {
-
-            var elementCustomConfig = Ext.decode(this.fieldConfig.toolbarConfig);
-            eConfig = mergeObject(eConfig, elementCustomConfig);
-
-        }
-
-        if(typeof(pimcore.object.tags.wysiwyg.defaultEditorConfig) == 'object'){
-            eConfig = mergeObject(pimcore.object.tags.wysiwyg.defaultEditorConfig,eConfig);
-        }
-
         //prevent override important settings!
         eConfig.resize_enabled = false;
         eConfig.entities = false;
@@ -177,6 +166,15 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
         }
         if (intval(this.fieldConfig.height) > 1) {
             eConfig.height = this.fieldConfig.height;
+        }
+
+        if(this.fieldConfig.toolbarConfig) {
+            var elementCustomConfig = Ext.decode(this.fieldConfig.toolbarConfig);
+            eConfig = mergeObject(eConfig, elementCustomConfig);
+        }
+
+        if(typeof(pimcore.object.tags.wysiwyg.defaultEditorConfig) == 'object'){
+            eConfig = mergeObject(pimcore.object.tags.wysiwyg.defaultEditorConfig,eConfig);
         }
 
         try {

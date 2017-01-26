@@ -81,11 +81,9 @@ You can add a Global Configuration for all WYSIWYG Editors for all objects by se
 For this purpose, you can create a plugin and add the configuration in the new created file `/plugins/MyPlugin/static/js/startup.js` like this:
 
 ```
-pimcoreReady: function (params,broker){
-
-    pimcore.object.tags.wysiwyg.defaultEditorConfig.allowedContent = true;
-
-}
+pimcore.object.tags.wysiwyg.defaultEditorConfig = {
+    allowedContent: true
+};
 ```
 
 
