@@ -749,12 +749,15 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
             if (!($this->handleCli || $forceWrite)) {
                 $doWrite = false;
 
-                $this->logger->debug(
-                    sprintf(
-                        'Not writing save queue to cache as process is running in CLI mode. Save queue contains %d items.',
-                        count($this->saveQueue)
-                    )
-                );
+                $queueCount = count($this->saveQueue);
+                if ($queueCount > 0) {
+                    $this->logger->debug(
+                        sprintf(
+                            'Not writing save queue to cache as process is running in CLI mode. Save queue contains %d items.',
+                            count($this->saveQueue)
+                        )
+                    );
+                }
             }
         }
 
