@@ -15,7 +15,7 @@
 
 ## List of Supported Formats
 
-The list of all currently supported formats ou can find in [the PHP manual](http://php.net/manual/en/function.date.php#function.date).
+The list of all currently supported formats ou can find in [the PHP manual](http://php.net/manual/en/function.strftime.php).
 
 [comment]: #TODOtableOfDates
 
