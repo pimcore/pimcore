@@ -3,6 +3,8 @@
 namespace Pimcore\Cache\Pool;
 
 use Psr\Cache\InvalidArgumentException;
+use Symfony\Component\Cache\Adapter\AdapterInterface;
+use Symfony\Component\Cache\Adapter\TagAwareAdapter;
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 use Symfony\Component\Cache\CacheItem;
 
@@ -19,11 +21,16 @@ class SymfonyAdapterProxy extends AbstractCacheItemPool
     protected $transformItemClosure;
 
     /**
-     * @param TagAwareAdapterInterface $adapter
+     * @param TagAwareAdapterInterface|AdapterInterface $adapter
      */
-    public function __construct(TagAwareAdapterInterface $adapter, $defaultLifetime = 0)
+    public function __construct(AdapterInterface $adapter, $defaultLifetime = 0)
     {
         parent::__construct($defaultLifetime);
+
+        // auto-wrap adapter in tag aware adapter if the passed adapter is not tag aware
+        if (!($adapter instanceof TagAwareAdapterInterface)) {
+            $adapter = new TagAwareAdapter($adapter);
+        }
 
         $this->adapter = $adapter;
     }

@@ -6,10 +6,12 @@ use Pimcore\Cache\Pool\PimcoreCacheItemPoolInterface;
 use Symfony\Component\Cache\Tests\Adapter\FilesystemAdapterTest;
 use TestSuite\Pimcore\Cache\Factory;
 use TestSuite\Pimcore\Cache\Pool\SymfonyProxy\Traits\SymfonyProxyTestTrait;
+use TestSuite\Pimcore\Cache\Pool\Traits\CacheItemPoolTestTrait;
 
 class FilesystemAdapterProxyTest extends FilesystemAdapterTest
 {
-    use SymfonyProxyTestTrait {
+    use SymfonyProxyTestTrait;
+    use CacheItemPoolTestTrait {
         createCachePool as _createCachePool;
     }
 

@@ -5,10 +5,12 @@ namespace TestSuite\Pimcore\Cache\Adapter\SymfonyProxy;
 use Cache\IntegrationTests\TaggableCachePoolTest;
 use Pimcore\Cache\Pool\PimcoreCacheItemPoolInterface;
 use TestSuite\Pimcore\Cache\Factory;
+use TestSuite\Pimcore\Cache\Pool\SymfonyProxy\Traits\SymfonyProxyTestTrait;
 use TestSuite\Pimcore\Cache\Pool\Traits\CacheItemPoolTestTrait;
 
 class TaggableArrayAdapterProxyTest extends TaggableCachePoolTest
 {
+    use SymfonyProxyTestTrait;
     use CacheItemPoolTestTrait;
 
     protected $skippedTests = [

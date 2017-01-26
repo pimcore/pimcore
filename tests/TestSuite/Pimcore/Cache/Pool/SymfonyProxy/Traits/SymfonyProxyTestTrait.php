@@ -5,12 +5,9 @@ namespace TestSuite\Pimcore\Cache\Pool\SymfonyProxy\Traits;
 use Pimcore\Cache\Pool\SymfonyAdapterProxy;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
-use TestSuite\Pimcore\Cache\Pool\Traits\CacheItemPoolTestTrait;
 
 trait SymfonyProxyTestTrait
 {
-    use CacheItemPoolTestTrait;
-
     /**
      * @param SymfonyAdapterProxy|null $itemPool
      * @return TagAwareAdapterInterface
