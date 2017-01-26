@@ -47,7 +47,7 @@ class Cache
 
         if (null === static::$handler) {
             /** @var CoreHandlerInterface $handler */
-            static::$handler = $container->get('pimcore.cache.handler.core');
+            static::$handler = $container->get('pimcore.cache.core.handler');
         }
 
         // setup ZF cache
