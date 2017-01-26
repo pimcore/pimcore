@@ -13,6 +13,5 @@ class TagPdoMysqlCacheItemPoolTest extends TaggableCachePoolTest
         'testPreviousTag'              => 'Previous tags are not loaded for performance reasons.',
         'testPreviousTagDeferred'      => 'Previous tags are not loaded for performance reasons.',
         'testTagAccessorDuplicateTags' => 'Previous tags are not loaded for performance reasons.',
-
     ];
 }

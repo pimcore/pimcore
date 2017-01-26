@@ -13,6 +13,6 @@ class ArrayCoreHandlerTest extends AbstractCoreHandlerTest
         $arrayAdapter = new ArrayAdapter(3600, false);
         $tagAdapter   = new TagAwareAdapter($arrayAdapter);
 
-        $this->itemPool = new SymfonyAdapterProxyCacheItemPool($tagAdapter, 3600);
+        $this->itemPool = new SymfonyAdapterProxyCacheItemPool($tagAdapter);
     }
 }
