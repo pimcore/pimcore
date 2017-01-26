@@ -46,14 +46,15 @@ class SymfonyAdapterProxyCacheItemPool extends AbstractCacheItemPool
             $keys[$id] = $id;
         }
 
-        $items = $this->adapter->getItems($ids);
-
         /** @var CacheItem $item */
         foreach ($this->adapter->getItems($ids) as $item) {
             if ($item->isHit()) {
                 $data = $this->unserializeData($item->get());
 
-                yield $item->getKey() => $data;
+                yield $item->getKey() => [
+                    'value' => $data,
+                    'tags'  => []
+                ];
             }
         }
     }
@@ -155,13 +156,9 @@ class SymfonyAdapterProxyCacheItemPool extends AbstractCacheItemPool
         }
 
         $tags = $cacheItem->getTags();
-        $data = [
-            'value' => $cacheItem->get(),
-            'tags'  => $tags
-        ];
 
         $closure = $this->transformItemClosure;
-        $closure($symfonyItem, $this->serializeData($data), $tags, $cacheItem->getExpiry());
+        $closure($symfonyItem, $this->serializeData($cacheItem->get()), $tags, $cacheItem->getExpiry());
     }
 
     /**
