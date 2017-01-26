@@ -3,6 +3,8 @@
 namespace TestSuite\Pimcore\Cache;
 
 use Pimcore\Cache\Pool\PdoMysql;
+use Pimcore\Cache\Pool\Redis;
+use Pimcore\Cache\Pool\Redis\ConnectionFactory;
 use Pimcore\Cache\Pool\SymfonyAdapterProxy;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
@@ -39,6 +41,31 @@ class Factory
     {
         return new PdoMysql(
             static::getPdo($forceFreshPdo),
+            $defaultLifetime
+        );
+    }
+
+    /**
+     * @param $defaultLifetime
+     * @param array $connectionOptions
+     * @param array $options
+     * @return Redis
+     */
+    public function createRedisItemPool($defaultLifetime, array $connectionOptions = [], array $options = [])
+    {
+        $connectionOptions = array_merge([
+            'server' => 'localhost'
+        ], $connectionOptions);
+
+        if (!isset($connectionOptions['database'])) {
+
+        }
+
+        $connection = ConnectionFactory::createConnection($connectionOptions);
+
+        return new Redis(
+            $connection,
+            $options,
             $defaultLifetime
         );
     }

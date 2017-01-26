@@ -63,7 +63,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
     /**
      * Initializes item pool
      *
-     * @return mixed
+     * @return PimcoreCacheItemPoolInterface
      */
     abstract protected function createCachePool();
 
