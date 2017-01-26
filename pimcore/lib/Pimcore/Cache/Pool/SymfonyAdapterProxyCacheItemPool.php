@@ -148,8 +148,10 @@ class SymfonyAdapterProxyCacheItemPool extends AbstractCacheItemPool
         if (null === $this->transformItemClosure) {
             $closure = function (CacheItem $symfonyItem, $data, array $tags, $expiry) {
                 $symfonyItem->value  = $data;
-                $symfonyItem->tags   = $tags;
                 $symfonyItem->expiry = $expiry;
+                $symfonyItem->tags   = [];
+
+                $symfonyItem->tag($tags);
             };
 
             $this->transformItemClosure = \Closure::bind($closure, null, CacheItem::class);
