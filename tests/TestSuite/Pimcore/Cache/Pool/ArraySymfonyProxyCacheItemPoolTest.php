@@ -7,9 +7,12 @@ use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Adapter\TagAwareAdapter;
 use Symfony\Component\Cache\Tests\Adapter\ArrayAdapterTest;
+use TestSuite\Pimcore\Cache\Pool\Traits\SymfonyProxyTestTrait;
 
 class ArraySymfonyProxyCacheItemPoolTest extends ArrayAdapterTest
 {
+    use SymfonyProxyTestTrait;
+
     /**
      * @return CacheItemPoolInterface that is used in the tests
      */
@@ -19,29 +22,6 @@ class ArraySymfonyProxyCacheItemPoolTest extends ArrayAdapterTest
         $tagAdapter   = new TagAwareAdapter($arrayAdapter);
 
         return new SymfonyAdapterProxyCacheItemPool($tagAdapter);
-    }
-
-    /**
-     * Extracts core symfony adapter from item pool and TagAwareAdapter
-     *
-     * @param SymfonyAdapterProxyCacheItemPool $itemPool
-     * @return ArrayAdapter
-     */
-    protected function getAdapter(SymfonyAdapterProxyCacheItemPool $itemPool)
-    {
-        $poolReflector = new \ReflectionClass($itemPool);
-
-        $adapterProperty  = $poolReflector->getProperty('adapter');
-        $adapterProperty->setAccessible(true);
-
-        $tagAwareAdapter = $adapterProperty->getValue($itemPool);
-
-        $tagAwareReflector = new \ReflectionClass($tagAwareAdapter);
-
-        $itemsAdapterProperty = $tagAwareReflector->getProperty('itemsAdapter');
-        $itemsAdapterProperty->setAccessible(true);
-
-        return $itemsAdapterProperty->getValue($tagAwareAdapter);
     }
 
     public function testGetValuesHitAndMiss()
@@ -62,7 +42,7 @@ class ArraySymfonyProxyCacheItemPoolTest extends ArrayAdapterTest
         $cache->getItem('bar');
 
         /** @var ArrayAdapter $adapter */
-        $adapter = $this->getAdapter($cache);
+        $adapter = $this->getItemsAdapter($this->getTagAwareAdapter($cache));
         $values  = $adapter->getValues();
 
         $this->assertCount(2 * 2, $values); // value + tag = *2
