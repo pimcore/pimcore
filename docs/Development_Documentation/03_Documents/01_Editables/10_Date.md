@@ -30,7 +30,7 @@ Please read the topic [Localization](../../06_Multi_Language_i18n/README.md).
 
 ```php
 <?= $this->date("myDate", [
-     "format" => "d.m.Y"
+     "format" => "%d.%m.%Y"
 ]); ?>
 ```
 
