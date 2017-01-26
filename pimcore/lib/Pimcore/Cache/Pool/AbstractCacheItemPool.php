@@ -151,7 +151,7 @@ abstract class AbstractCacheItemPool implements PimcoreCacheItemPoolInterface
      *   If the $key string is not a legal value a \Psr\Cache\InvalidArgumentException
      *   MUST be thrown.
      *
-     * @return CacheItemInterface
+     * @return PimcoreCacheItemInterface
      *   The corresponding Cache Item.
      */
     public function getItem($key)
@@ -191,7 +191,7 @@ abstract class AbstractCacheItemPool implements PimcoreCacheItemPoolInterface
      *   If any of the keys in $keys are not a legal value a \Psr\Cache\InvalidArgumentException
      *   MUST be thrown.
      *
-     * @return array|\Traversable
+     * @return array|\Traversable|PimcoreCacheItemInterface[]
      *   A traversable collection of Cache Items keyed by the cache keys of
      *   each item. A Cache item will be returned for each key, even if that
      *   key is not found. However, if no keys are specified then an empty
@@ -346,7 +346,7 @@ abstract class AbstractCacheItemPool implements PimcoreCacheItemPoolInterface
     /**
      * Persists a cache item immediately.
      *
-     * @param CacheItemInterface $item
+     * @param CacheItemInterface|PimcoreCacheItemInterface $item
      *   The cache item to save.
      *
      * @return bool
@@ -366,7 +366,7 @@ abstract class AbstractCacheItemPool implements PimcoreCacheItemPoolInterface
     /**
      * Sets a cache item to be persisted later.
      *
-     * @param CacheItemInterface $item
+     * @param CacheItemInterface|PimcoreCacheItemInterface $item
      *   The cache item to save.
      *
      * @return bool
