@@ -32,11 +32,4 @@ interface PimcoreCacheItemPoolInterface extends TaggableCacheItemPoolInterface, 
      * @return PimcoreCacheItemInterface
      */
     public function createCacheItem($key, $value = null, array $tags = [], $isHit = false);
-
-    /**
-     * Runs maintenance tasks which could take a long time. Should only be called from maintenance scripts.
-     *
-     * @return bool True on success
-     */
-    public function purge();
 }

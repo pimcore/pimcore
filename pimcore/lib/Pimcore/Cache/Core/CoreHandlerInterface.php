@@ -162,4 +162,11 @@ interface CoreHandlerInterface
      * @return $this
      */
     public function shutdown($forceWrite = false);
+
+    /**
+     * Purge orphaned/invalid data
+     *
+     * @return bool
+     */
+    public function purge();
 }

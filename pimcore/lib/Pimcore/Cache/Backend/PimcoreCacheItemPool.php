@@ -4,8 +4,13 @@ namespace Pimcore\Cache\Backend;
 
 use Pimcore\Cache\Backend\Exception\NotImplementedException;
 use Pimcore\Cache\Pool\PimcoreCacheItemPoolInterface;
+use Pimcore\Cache\Pool\PurgeableCacheItemPoolInterface;
 use Zend_Cache;
 
+/**
+ * Zend_Cache backend operating on a PSR-6 item pool. Implements only the basic functionality needed by Zend_Locale and
+ * Zend_Db!
+ */
 class PimcoreCacheItemPool extends \Zend_Cache_Backend implements \Zend_Cache_Backend_ExtendedInterface
 {
     /**
@@ -117,6 +122,10 @@ class PimcoreCacheItemPool extends \Zend_Cache_Backend implements \Zend_Cache_Ba
             return $this->itemPool->clear();
         } else if ($mode === Zend_Cache::CLEANING_MODE_MATCHING_TAG) {
             return $this->itemPool->invalidateTags($tags);
+        } else if ($mode === Zend_Cache::CLEANING_MODE_OLD) {
+            if ($this->itemPool instanceof PurgeableCacheItemPoolInterface) {
+                return $this->itemPool->purge();
+            }
         }
 
         throw new NotImplementedException(sprintf(

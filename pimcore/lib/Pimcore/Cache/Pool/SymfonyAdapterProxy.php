@@ -183,14 +183,4 @@ class SymfonyAdapterProxy extends AbstractCacheItemPool
     {
         return $this->adapter->invalidateTags($tags);
     }
-
-    /**
-     * Runs maintenance tasks which could take a long time. Should only be called from maintenance scripts.
-     *
-     * @return bool True on success
-     */
-    public function purge()
-    {
-        return true;
-    }
 }

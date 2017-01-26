@@ -259,12 +259,19 @@ class Cache
         return static::$handler->getForceImmediateWrite();
     }
 
+    /**
+     * @return bool
+     */
     public static function maintenance()
     {
-        // TODO how to run maintenance for symfony cache?
+        $result = static::$handler->purge();
 
         if (null !== static::$zendHandler) {
-            // static::$zendHandler->getCache()->clean(\Zend_Cache::CLEANING_MODE_OLD);
+            // TODO if the ZF backend and the handler itemPool are the same, purge will be called twice. However, not
+            // calling clean would result in ZF cache never being cleaned up if the backend differs from the core item pool.
+            $result = $result && static::$zendHandler->getCache()->clean(\Zend_Cache::CLEANING_MODE_OLD);
         }
+
+        return $result;
     }
 }

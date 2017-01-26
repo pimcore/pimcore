@@ -4,7 +4,7 @@ namespace Pimcore\Cache\Pool;
 
 use Pimcore\Cache\Pool\Exception\CacheException;
 
-class PdoMysql extends AbstractCacheItemPool
+class PdoMysql extends AbstractCacheItemPool implements PurgeableCacheItemPoolInterface
 {
     /**
      * @var \PDO

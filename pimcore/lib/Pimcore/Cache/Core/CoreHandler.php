@@ -4,6 +4,7 @@ namespace Pimcore\Cache\Core;
 
 use Pimcore\Cache\Pool\PimcoreCacheItemInterface;
 use Pimcore\Cache\Pool\PimcoreCacheItemPoolInterface;
+use Pimcore\Cache\Pool\PurgeableCacheItemPoolInterface;
 use Pimcore\Model\Document\Hardlink\Wrapper\WrapperInterface;
 use Pimcore\Model\Element\ElementInterface;
 use Psr\Log\LoggerAwareInterface;
@@ -770,6 +771,20 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
         $this->writeLock->removeLock();
 
         return $this;
+    }
+
+    /**
+     * Purge orphaned/invalid data
+     *
+     * @return bool
+     */
+    public function purge()
+    {
+        if ($this->itemPool instanceof PurgeableCacheItemPoolInterface) {
+            return $this->itemPool->purge();
+        }
+
+        return true;
     }
 
     /**
