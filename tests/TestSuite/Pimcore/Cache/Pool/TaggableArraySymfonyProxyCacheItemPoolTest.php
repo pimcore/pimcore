@@ -3,11 +3,11 @@
 namespace TestSuite\Pimcore\Cache\Adapter;
 
 use Cache\IntegrationTests\TaggableCachePoolTest;
-use TestSuite\Pimcore\Cache\Pool\Traits\PdoMysqlCacheItemPoolTestTrait;
+use TestSuite\Pimcore\Cache\Pool\Traits\SymfonyProxy\ArrayAdapterTrait;
 
-class TagPdoMysqlCacheItemPoolTest extends TaggableCachePoolTest
+class TaggableArraySymfonyProxyCacheItemPoolTest extends TaggableCachePoolTest
 {
-    use PdoMysqlCacheItemPoolTestTrait;
+    use ArrayAdapterTrait;
 
     protected $skippedTests = [
         'testPreviousTag'              => 'Previous tags are not loaded for performance reasons.',
