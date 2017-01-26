@@ -2,13 +2,13 @@
 
 namespace TestSuite\Pimcore\Cache\Core;
 
-use Pimcore\Cache\Pool\SymfonyAdapterProxyCacheItemPool;
+use Pimcore\Cache\Pool\SymfonyAdapterProxy;
 use TestSuite\Pimcore\Cache\Factory;
 
 class ArrayCoreHandlerTest extends AbstractCoreHandlerTest
 {
     /**
-     * @return SymfonyAdapterProxyCacheItemPool
+     * @return SymfonyAdapterProxy
      */
     protected function createCachePool()
     {

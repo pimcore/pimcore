@@ -1,13 +1,13 @@
 <?php
 
-namespace TestSuite\Pimcore\Cache\Adapter;
+namespace TestSuite\Pimcore\Cache\Pool;
 
 use Cache\IntegrationTests\TaggableCachePoolTest;
 use Pimcore\Cache\Pool\PimcoreCacheItemPoolInterface;
 use TestSuite\Pimcore\Cache\Factory;
 use TestSuite\Pimcore\Cache\Pool\Traits\CacheItemPoolTestTrait;
 
-class TaggablePdoMysqlCacheItemPoolTest extends TaggableCachePoolTest
+class TaggablePdoMysqlTest extends TaggableCachePoolTest
 {
     use CacheItemPoolTestTrait;
 

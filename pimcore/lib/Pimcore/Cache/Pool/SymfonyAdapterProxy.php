@@ -6,7 +6,7 @@ use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 use Symfony\Component\Cache\CacheItem;
 
-class SymfonyAdapterProxyCacheItemPool extends AbstractCacheItemPool
+class SymfonyAdapterProxy extends AbstractCacheItemPool
 {
     /**
      * @var TagAwareAdapterInterface

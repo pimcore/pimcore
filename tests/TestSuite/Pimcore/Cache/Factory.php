@@ -2,8 +2,8 @@
 
 namespace TestSuite\Pimcore\Cache;
 
-use Pimcore\Cache\Pool\PdoMysqlCacheItemPool;
-use Pimcore\Cache\Pool\SymfonyAdapterProxyCacheItemPool;
+use Pimcore\Cache\Pool\PdoMysql;
+use Pimcore\Cache\Pool\SymfonyAdapterProxy;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
@@ -33,11 +33,11 @@ class Factory
     /**
      * @param int $defaultLifetime
      * @param bool $forceFreshPdo
-     * @return PdoMysqlCacheItemPool
+     * @return PdoMysql
      */
     public function createPdoMysqlItemPool($defaultLifetime = 0, $forceFreshPdo = false)
     {
-        return new PdoMysqlCacheItemPool(
+        return new PdoMysql(
             static::getPdo($forceFreshPdo),
             $defaultLifetime
         );
@@ -45,7 +45,7 @@ class Factory
 
     /**
      * @param int $defaultLifetime
-     * @return SymfonyAdapterProxyCacheItemPool
+     * @return SymfonyAdapterProxy
      */
     public function createArrayAdapterProxyItemPool($defaultLifetime = 0)
     {
@@ -56,7 +56,7 @@ class Factory
 
     /**
      * @param int $defaultLifetime
-     * @return SymfonyAdapterProxyCacheItemPool
+     * @return SymfonyAdapterProxy
      */
     public function createFilesystemAdapterProxyItemPool($defaultLifetime = 0)
     {
@@ -67,12 +67,12 @@ class Factory
 
     /**
      * @param AdapterInterface $adapter
-     * @return SymfonyAdapterProxyCacheItemPool
+     * @return SymfonyAdapterProxy
      */
     protected function createSymfonyProxyItemPool(AdapterInterface $adapter)
     {
         $tagAdapter = new TagAwareAdapter($adapter);
-        $itemPool   = new SymfonyAdapterProxyCacheItemPool($tagAdapter);
+        $itemPool   = new SymfonyAdapterProxy($tagAdapter);
 
         return $itemPool;
     }

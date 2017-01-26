@@ -3,7 +3,7 @@
 namespace TestSuite\Pimcore\Cache\Adapter\SymfonyProxy;
 
 use Pimcore\Cache\Pool\PimcoreCacheItemPoolInterface;
-use Pimcore\Cache\Pool\SymfonyAdapterProxyCacheItemPool;
+use Pimcore\Cache\Pool\SymfonyAdapterProxy;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Tests\Adapter\ArrayAdapterTest;
 use TestSuite\Pimcore\Cache\Factory;
@@ -32,7 +32,7 @@ class ArrayAdapterProxyTest extends ArrayAdapterTest
 
     public function testGetValuesHitAndMiss()
     {
-        /** @var SymfonyAdapterProxyCacheItemPool $cache */
+        /** @var SymfonyAdapterProxy $cache */
         $cache = $this->createCachePool();
 
         // Hit

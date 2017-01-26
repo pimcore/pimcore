@@ -5,7 +5,7 @@ use Pimcore\Cache\Backend\PimcoreCacheItemPool;
 use Pimcore\Cache\Core\CoreHandler;
 use Pimcore\Cache\Core\WriteLock;
 use Pimcore\Cache\Core\ZendCacheHandler;
-use Pimcore\Cache\Pool\PdoMysqlCacheItemPool;
+use Pimcore\Cache\Pool\PdoMysql;
 use Pimcore\Logger;
 use Psr\Log\NullLogger;
 use Symfony\Component\Cache\Adapter\ApcuAdapter;
@@ -42,7 +42,7 @@ return [
     'pimcore.cache.pool.core' => DI\get('pimcore.cache.pool.core.pdo'),
 
     // PDO cache adapter
-    'pimcore.cache.pool.core.pdo' => DI\object(PdoMysqlCacheItemPool::class)
+    'pimcore.cache.pool.core.pdo' => DI\object(PdoMysql::class)
         ->constructor(
             DI\get('pimcore.db.pdo'),
             DI\get('pimcore.cache.config.core.defaultLifetime')
