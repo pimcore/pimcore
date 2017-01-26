@@ -196,7 +196,10 @@ class PdoMysql extends AbstractCacheItemPool
             // save every item in the deferred queue, even if expired to make sure expired items are updated
             // in the DB (see CachePoolTest::testSaveExpired())
             /** @var PimcoreCacheItemInterface $item */
-            foreach ($this->deferred as $item) {
+            foreach ($this->deferred as $key => $item) {
+                // remove item from queue to make sure it is processed only once
+                unset($this->deferred[$key]);
+
                 $insertQuery = <<<SQL
 INSERT INTO
     cache (id, data, expire, mtime) VALUES (:id, :data, :expire, :mtime)
