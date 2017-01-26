@@ -2,12 +2,11 @@
 
 namespace Pimcore\Cache\Pool;
 
-use Psr\Cache\CacheItemInterface;
 use Pimcore\Cache\Pool\Exception\InvalidArgumentException;
-use Psr\Log\LoggerAwareInterface;
+use Psr\Cache\CacheItemInterface;
 use Psr\Log\LoggerAwareTrait;
 
-abstract class AbstractCacheItemPool implements PimcoreCacheItemPoolInterface, LoggerAwareInterface
+abstract class AbstractCacheItemPool implements PimcoreCacheItemPoolInterface
 {
     use LoggerAwareTrait;
 

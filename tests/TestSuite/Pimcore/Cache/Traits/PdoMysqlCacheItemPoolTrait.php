@@ -22,6 +22,6 @@ trait PdoMysqlCacheItemPoolTrait
      */
     protected function createPdoItemPool()
     {
-        return new PdoMysqlCacheItemPool(static::$pdo, 3600);
+        return new PdoMysqlCacheItemPool(static::$pdo, $this->defaultLifetime);
     }
 }

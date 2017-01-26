@@ -1,29 +1,15 @@
 <?php
 
-namespace TestSuite\Pimcore\Cache\Pool\Traits;
+namespace TestSuite\Pimcore\Cache\Pool\SymfonyProxy\Traits;
 
 use Pimcore\Cache\Pool\SymfonyAdapterProxyCacheItemPool;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
-use TestSuite\Pimcore\Cache\Traits\LogHandlerTrait;
+use TestSuite\Pimcore\Cache\Pool\Traits\CacheItemPoolTestTrait;
 
 trait SymfonyProxyTestTrait
 {
-    use LogHandlerTrait;
-
-    protected $defaultLifetime = 0;
-
-    public static function setUpBeforeClass()
-    {
-        parent::setUpBeforeClass();
-        static::setupLogger((new \ReflectionClass(__CLASS__))->getShortName());
-    }
-
-    public static function tearDownAfterClass()
-    {
-        parent::tearDownAfterClass();
-        static::handleLogOutput();
-    }
+    use CacheItemPoolTestTrait;
 
     /**
      * @param SymfonyAdapterProxyCacheItemPool|null $itemPool

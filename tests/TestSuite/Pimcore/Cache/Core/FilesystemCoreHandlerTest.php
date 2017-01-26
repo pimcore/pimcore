@@ -3,22 +3,15 @@
 namespace TestSuite\Pimcore\Cache\Core;
 
 use Pimcore\Cache\Pool\SymfonyAdapterProxyCacheItemPool;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
-use Symfony\Component\Cache\Adapter\TagAwareAdapter;
+use TestSuite\Pimcore\Cache\Factory;
 
 class FilesystemCoreHandlerTest extends AbstractCoreHandlerTest
 {
-    protected function setupItemPool()
+    /**
+     * @return SymfonyAdapterProxyCacheItemPool
+     */
+    protected function createCachePool()
     {
-        $filesystemAdapter = new FilesystemAdapter('', 3600);
-        $tagAdapter        = new TagAwareAdapter($filesystemAdapter);
-
-        $itemPool = new SymfonyAdapterProxyCacheItemPool($tagAdapter);
-        $itemPool->setLogger(static::$logger);
-
-        // make sure we start with a clean state
-        $itemPool->clear();
-
-        $this->itemPool = $itemPool;
+        return (new Factory())->createFilesystemAdapterProxyItemPool($this->defaultLifetime);
     }
 }

@@ -1,13 +1,13 @@
 <?php
 
-namespace TestSuite\Pimcore\Cache\Adapter;
+namespace TestSuite\Pimcore\Cache\Adapter\SymfonyProxy;
 
 use Cache\IntegrationTests\TaggableCachePoolTest;
 use Pimcore\Cache\Pool\PimcoreCacheItemPoolInterface;
 use TestSuite\Pimcore\Cache\Factory;
 use TestSuite\Pimcore\Cache\Pool\Traits\CacheItemPoolTestTrait;
 
-class TaggablePdoMysqlCacheItemPoolTest extends TaggableCachePoolTest
+class TaggableArrayAdapterProxyTest extends TaggableCachePoolTest
 {
     use CacheItemPoolTestTrait;
 
@@ -22,6 +22,6 @@ class TaggablePdoMysqlCacheItemPoolTest extends TaggableCachePoolTest
      */
     protected function buildCachePool()
     {
-        return (new Factory())->createPdoMysqlItemPool($this->defaultLifetime);
+        return (new Factory())->createArrayAdapterProxyItemPool($this->defaultLifetime);
     }
 }

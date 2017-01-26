@@ -7,6 +7,7 @@ use Pimcore\Cache\Core\CoreHandler;
 use Pimcore\Cache\Core\CoreHandlerInterface;
 use Pimcore\Cache\Core\WriteLock;
 use Pimcore\Cache\Core\WriteLockInterface;
+use Pimcore\Cache\Pool\AbstractCacheItemPool;
 use Pimcore\Cache\Pool\PimcoreCacheItemInterface;
 use Pimcore\Cache\Pool\PimcoreCacheItemPoolInterface;
 use TestSuite\Pimcore\Cache\Traits\LogHandlerTrait;
@@ -16,9 +17,9 @@ abstract class AbstractCoreHandlerTest extends TestCase
     use LogHandlerTrait;
 
     /**
-     * @var PimcoreCacheItemPoolInterface
+     * @var PimcoreCacheItemPoolInterface|AbstractCacheItemPool
      */
-    protected $itemPool;
+    protected $cache;
 
     /**
      * @var CoreHandlerInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -29,6 +30,11 @@ abstract class AbstractCoreHandlerTest extends TestCase
      * @var WriteLockInterface
      */
     protected $writeLock;
+
+    /**
+     * @var int
+     */
+    protected $defaultLifetime = 2419200; // 28 days
 
     /**
      * @var array
@@ -44,9 +50,14 @@ abstract class AbstractCoreHandlerTest extends TestCase
      */
     protected function setUp()
     {
-        $this->setupItemPool();
-        $this->setUpWriteLock();
-        $this->buildHandlerMock();
+        $this->cache = $this->createCachePool();
+        $this->cache->setLogger(static::$logger);
+
+        // make sure we start with a clean state
+        $this->cache->clear();
+
+        $this->writeLock = $this->createWriteLock();
+        $this->handler = $this->createHandlerMock();
     }
 
     /**
@@ -54,17 +65,23 @@ abstract class AbstractCoreHandlerTest extends TestCase
      *
      * @return mixed
      */
-    abstract protected function setupItemPool();
+    abstract protected function createCachePool();
 
-    protected function setUpWriteLock()
+    /**
+     * @return WriteLock
+     */
+    protected function createWriteLock()
     {
-        $writeLock = new WriteLock($this->itemPool);
+        $writeLock = new WriteLock($this->cache);
         $writeLock->setLogger(static::$logger);
 
-        $this->writeLock = $writeLock;
+        return $writeLock;
     }
 
-    protected function buildHandlerMock()
+    /**
+     * @return CoreHandlerInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function createHandlerMock()
     {
         $mockMethods = ['isCli'];
 
@@ -81,7 +98,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
         $handler = $this->getMockBuilder(CoreHandler::class)
             ->setMethods($mockMethods)
             ->setConstructorArgs([
-                $this->itemPool,
+                $this->cache,
                 $this->writeLock
             ])
             ->getMock();
@@ -98,7 +115,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
                 ->willReturn(false);
         }
 
-        $this->handler = $handler;
+        return $handler;
     }
 
     /**
@@ -142,7 +159,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
      */
     protected function cacheHasItem($key)
     {
-        $item = $this->itemPool->getItem($key);
+        $item = $this->cache->getItem($key);
 
         return $item->isHit();
     }

@@ -1,22 +1,33 @@
 <?php
 
-namespace TestSuite\Pimcore\Cache\Adapter;
+namespace TestSuite\Pimcore\Cache\Adapter\SymfonyProxy;
 
+use Pimcore\Cache\Pool\PimcoreCacheItemPoolInterface;
 use Pimcore\Cache\Pool\SymfonyAdapterProxyCacheItemPool;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Tests\Adapter\ArrayAdapterTest;
-use TestSuite\Pimcore\Cache\Pool\Traits\SymfonyProxy\ArrayAdapterTrait;
+use TestSuite\Pimcore\Cache\Factory;
+use TestSuite\Pimcore\Cache\Pool\SymfonyProxy\Traits\SymfonyProxyTestTrait;
 
-class ArraySymfonyProxyCacheItemPoolTest extends ArrayAdapterTest
+class ArrayAdapterProxyTest extends ArrayAdapterTest
 {
-    use ArrayAdapterTrait {
+    use SymfonyProxyTestTrait {
         createCachePool as _createCachePool;
     }
 
     public function createCachePool($defaultLifetime = 0)
     {
         $this->defaultLifetime = $defaultLifetime;
+
         return $this->_createCachePool();
+    }
+
+    /**
+     * @return PimcoreCacheItemPoolInterface
+     */
+    protected function buildCachePool()
+    {
+        return (new Factory())->createArrayAdapterProxyItemPool($this->defaultLifetime);
     }
 
     public function testGetValuesHitAndMiss()

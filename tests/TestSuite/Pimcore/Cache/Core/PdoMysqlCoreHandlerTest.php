@@ -2,29 +2,18 @@
 
 namespace TestSuite\Pimcore\Cache\Core;
 
-use TestSuite\Pimcore\Cache\Traits\PdoMysqlCacheItemPoolTrait;
+use Pimcore\Cache\Pool\PdoMysqlCacheItemPool;
+use TestSuite\Pimcore\Cache\Factory;
 
 class PdoMysqlCoreHandlerTest extends AbstractCoreHandlerTest
 {
-    use PdoMysqlCacheItemPoolTrait;
-
     /**
-     * @inheritDoc
+     * Initializes item pool
+     *
+     * @return PdoMysqlCacheItemPool
      */
-    public static function setUpBeforeClass()
+    protected function createCachePool()
     {
-        parent::setUpBeforeClass();
-        static::fetchPdo();
-    }
-
-    protected function setupItemPool()
-    {
-        $itemPool = $this->createPdoItemPool();
-        $itemPool->setLogger(static::$logger);
-
-        // make sure we start with a clean state
-        $itemPool->clear();
-
-        $this->itemPool = $itemPool;
+        return (new Factory())->createPdoMysqlItemPool($this->defaultLifetime);
     }
 }

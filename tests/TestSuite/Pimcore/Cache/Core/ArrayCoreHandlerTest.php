@@ -3,19 +3,15 @@
 namespace TestSuite\Pimcore\Cache\Core;
 
 use Pimcore\Cache\Pool\SymfonyAdapterProxyCacheItemPool;
-use Symfony\Component\Cache\Adapter\ArrayAdapter;
-use Symfony\Component\Cache\Adapter\TagAwareAdapter;
+use TestSuite\Pimcore\Cache\Factory;
 
 class ArrayCoreHandlerTest extends AbstractCoreHandlerTest
 {
-    protected function setupItemPool()
+    /**
+     * @return SymfonyAdapterProxyCacheItemPool
+     */
+    protected function createCachePool()
     {
-        $arrayAdapter = new ArrayAdapter(3600, false);
-        $tagAdapter   = new TagAwareAdapter($arrayAdapter);
-
-        $itemPool = new SymfonyAdapterProxyCacheItemPool($tagAdapter);
-        $itemPool->setLogger(static::$logger);
-
-        $this->itemPool = $itemPool;
+        return (new Factory())->createArrayAdapterProxyItemPool($this->defaultLifetime);
     }
 }
