@@ -6,7 +6,10 @@ use Cache\IntegrationTests\CachePoolTest;
 use TestSuite\Pimcore\Cache\Pool\Traits\CacheItemPoolTestTrait;
 use TestSuite\Pimcore\Cache\Pool\Traits\RedisItemPoolTrait;
 
-class PdoMysqlTest extends CachePoolTest
+/**
+ * @group Redis
+ */
+class RedisTest extends CachePoolTest
 {
     use CacheItemPoolTestTrait;
     use RedisItemPoolTrait;
