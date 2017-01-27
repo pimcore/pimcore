@@ -3,6 +3,7 @@
 namespace Pimcore\Cache\Pool;
 
 use Pimcore\Cache\Pool\Exception\CacheException;
+use Pimcore\Cache\Pool\Exception\InvalidArgumentException;
 
 class PdoMysql extends AbstractCacheItemPool implements PurgeableCacheItemPoolInterface
 {
@@ -167,11 +168,11 @@ class PdoMysql extends AbstractCacheItemPool implements PurgeableCacheItemPoolIn
      *
      * @param string[] $tags An array of tags to invalidate
      *
-     * @throws \Psr\Cache\InvalidArgumentException When $tags is not valid
+     * @throws InvalidArgumentException When $tags is not valid
      *
      * @return bool True on success
      */
-    public function invalidateTags(array $tags)
+    protected function doInvalidateTags(array $tags)
     {
         $keys = $this->getItemKeysByTags($tags);
 

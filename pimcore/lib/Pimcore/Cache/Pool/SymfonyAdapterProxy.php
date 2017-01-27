@@ -2,7 +2,7 @@
 
 namespace Pimcore\Cache\Pool;
 
-use Psr\Cache\InvalidArgumentException;
+use Pimcore\Cache\Pool\Exception\InvalidArgumentException;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\Cache\Adapter\TagAwareAdapter;
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
@@ -179,7 +179,7 @@ class SymfonyAdapterProxy extends AbstractCacheItemPool
      *
      * @return bool True on success
      */
-    public function invalidateTags(array $tags)
+    protected function doInvalidateTags(array $tags)
     {
         return $this->adapter->invalidateTags($tags);
     }

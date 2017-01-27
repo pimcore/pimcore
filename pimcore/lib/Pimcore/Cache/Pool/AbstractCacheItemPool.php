@@ -65,6 +65,17 @@ abstract class AbstractCacheItemPool implements PimcoreCacheItemPoolInterface
     abstract protected function doDelete(array $ids);
 
     /**
+     * Invalidates cached items using tags.
+     *
+     * @param string[] $tags An array of tags to invalidate
+     *
+     * @throws InvalidArgumentException When $tags is not valid
+     *
+     * @return bool True on success
+     */
+    abstract protected function doInvalidateTags(array $tags);
+
+    /**
      * Transform cache key into storage ID (e.g. prefix with namespace)
      *
      * @param string $key
@@ -394,7 +405,29 @@ abstract class AbstractCacheItemPool implements PimcoreCacheItemPoolInterface
      */
     public function invalidateTag($tag)
     {
-        return $this->invalidateTags([$tag]);
+        if ($this->deferred) {
+            $this->commit();
+        }
+
+        return $this->doInvalidateTags([$tag]);
+    }
+
+    /**
+     * Invalidates cached items using tags.
+     *
+     * @param string[] $tags An array of tags to invalidate
+     *
+     * @throws InvalidArgumentException When $tags is not valid
+     *
+     * @return bool True on success
+     */
+    public function invalidateTags(array $tags)
+    {
+        if ($this->deferred) {
+            $this->commit();
+        }
+
+        return $this->doInvalidateTags($tags);
     }
 
     public function __destruct()
