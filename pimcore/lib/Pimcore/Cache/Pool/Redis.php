@@ -169,6 +169,8 @@ class Redis extends AbstractCacheItemPool
             }
 
             $value = $this->_decodeData($entry[static::FIELD_DATA]);
+            $value = $this->unserializeData($value);
+
             $tags  = explode(',', $this->_decodeData($entry[static::FIELD_TAGS]));
 
             yield $ids[$idx] => [
@@ -282,7 +284,7 @@ class Redis extends AbstractCacheItemPool
 
         $lifetime = null;
         $expiry   = $item->getExpiry();
-        $data     = $item->get();
+        $data     = $this->serializeData($item->get());
         $tags     = $item->getTags();
 
         if ($expiry) {
