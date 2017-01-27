@@ -724,6 +724,7 @@ return  [
   'Pimcore\\Model\\Workflow\\Listing\\Dao' => $pdr . '/pimcore/models/Workflow/Listing/Dao.php',
   'Pimcore\\Model\\Workflow\\Dao' => $pdr . '/pimcore/models/Workflow/Dao.php',
   'Pimcore\\Model\\User' => $pdr . '/pimcore/models/User.php',
+  'Pimcore\\Model\\Workflow' => $pdr . '/pimcore/models/Workflow.php',
   'Pimcore\\Model\\Metadata\\Predefined\\Listing' => $pdr . '/pimcore/models/Metadata/Predefined/Listing.php',
   'Pimcore\\Model\\Metadata\\Predefined\\Listing\\Dao' => $pdr . '/pimcore/models/Metadata/Predefined/Listing/Dao.php',
   'Pimcore\\Model\\Metadata\\Predefined\\Dao' => $pdr . '/pimcore/models/Metadata/Predefined/Dao.php',
