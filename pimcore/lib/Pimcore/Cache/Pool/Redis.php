@@ -194,7 +194,9 @@ class Redis extends AbstractCacheItemPool
      */
     protected function doHave($id)
     {
-        return (bool)$this->_redis->exists($id);
+        $result = $this->_redis->exists(static::PREFIX_KEY . $id);
+
+        return (bool) $result;
     }
 
     /**
