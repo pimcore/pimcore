@@ -196,7 +196,7 @@ class Redis extends AbstractCacheItemPool
     {
         $result = $this->_redis->exists(static::PREFIX_KEY . $id);
 
-        return (bool) $result;
+        return (bool)$result;
     }
 
     /**
@@ -356,23 +356,39 @@ class Redis extends AbstractCacheItemPool
      *
      * @param string[] $tags An array of tags to invalidate
      *
-     * @throws InvalidArgumentException When $tags is not valid
+     * @throws \Psr\Cache\InvalidArgumentException When $tags is not valid
      *
      * @return bool True on success
      */
-    public function invalidateTags(array $tags)
+    protected function doInvalidateTags(array $tags)
     {
-        $ids = $this->getIdsMatchingAnyTags($tags);
-
-        $result = true;
-        if ($ids) {
-            $result = $result && $this->deleteItems($ids);
+        if ($this->_useLua) {
+            // TODO
         }
 
-        // remove invalidated tags from tags set
-        $invalidateResult = $this->_redis->sRem(self::SET_TAGS, $tags);
+        $ids = $this->getIdsMatchingAnyTags($tags);
 
-        return $result && $invalidateResult !== false;
+        $this->_redis->pipeline()->multi();
+
+        if ($ids) {
+            // Remove data
+            $this->_redis->del($this->_preprocessIds($ids));
+
+            // Remove ids from list of all ids
+            if ($this->_notMatchingTags) {
+                $this->_redis->sRem(self::SET_IDS, $ids);
+            }
+        }
+
+        // Remove tag id lists
+        $this->_redis->del($this->_preprocessTagIds($tags));
+
+        // Remove tags from list of tags
+        $this->_redis->sRem(self::SET_TAGS, $tags);
+
+        $this->_redis->exec();
+
+        return true;
     }
 
     /**
@@ -386,7 +402,7 @@ class Redis extends AbstractCacheItemPool
     public function getIdsMatchingAnyTags($tags = [])
     {
         if ($tags) {
-            return (array) $this->_redis->sUnion($this->_preprocessTagIds($tags));
+            return (array)$this->_redis->sUnion($this->_preprocessTagIds($tags));
         }
 
         return [];
