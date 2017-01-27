@@ -171,6 +171,9 @@ function urlencode_ignore_slash($var)
         $var = $scheme . '://' . $var;
     }
 
+    // allow @2x for retina thumbnails, ...
+    $var = preg_replace("/%40([\d]+)x\./", "@$1x.", $var);
+
     return $var;
 }
 
