@@ -362,38 +362,31 @@ class Redis extends AbstractCacheItemPool
      */
     public function invalidateTags(array $tags)
     {
-        $ids = $this->getIdsMatchingTags($tags);
+        $ids = $this->getIdsMatchingAnyTags($tags);
 
+        $result = true;
         if ($ids) {
-            $this->_redis->pipeline()->multi();
-
-            // Remove data
-            $this->_redis->del($this->_preprocessIds($ids));
-
-            // Remove ids from list of all ids
-            if ($this->_notMatchingTags) {
-                $this->_redis->sRem(self::SET_IDS, $ids);
-            }
-
-            $this->_redis->exec();
+            $result = $result && $this->deleteItems($ids);
         }
 
-        // TODO how to check success?
-        return true;
+        // remove invalidated tags from tags set
+        $invalidateResult = $this->_redis->sRem(self::SET_TAGS, $tags);
+
+        return $result && $invalidateResult !== false;
     }
 
     /**
-     * Return an array of stored cache ids which match given tags
+     * Return an array of stored cache ids which match any given tags
      *
-     * In case of multiple tags, a logical AND is made between tags
+     * In case of multiple tags, a logical OR is made between tags
      *
      * @param array $tags array of tags
-     * @return array array of matching cache ids (string)
+     * @return array array of any matching cache ids (string)
      */
-    public function getIdsMatchingTags($tags = [])
+    public function getIdsMatchingAnyTags($tags = [])
     {
         if ($tags) {
-            return (array) $this->_redis->sInter($this->_preprocessTagIds($tags));
+            return (array) $this->_redis->sUnion($this->_preprocessTagIds($tags));
         }
 
         return [];
