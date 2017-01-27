@@ -120,7 +120,7 @@ class Dao extends Model\Dao\AbstractDao
             $tags[] = Model\Element\Tag::getById($tagId);
         }
 
-        array_filter($tags);
+        $tags = array_filter($tags);
         @usort($tags, function ($left, $right) {
             return strcmp($left->getNamePath(), $right->getNamePath());
         });
