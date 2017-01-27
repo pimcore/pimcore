@@ -8,6 +8,9 @@ use Pimcore\Cache\Pool\Exception\InvalidArgumentException;
 /**
  * Redis2 item pool with tagging and LUA support.
  *
+ * TODO this currently handles tag clearing wrong as potentially orphaned tag entries can lead to items being purged
+ * despite being invalid. See the TaggableRedisTest for annotations.
+ *
  * Adapted from https://github.com/colinmollenhour/Cm_Cache_Backend_Redis and from Pimcore\Cache\Backend\Redis2
  */
 class Redis extends AbstractCacheItemPool
