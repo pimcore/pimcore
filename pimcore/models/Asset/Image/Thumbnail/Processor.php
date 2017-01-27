@@ -289,7 +289,7 @@ class Processor
                                         $value *= $highResFactor;
                                         $value = (int) ceil($value);
 
-                                        if(!isset($transformation["arguments"]["forceResize"]) || !$transformation["arguments"]["forceResize"]) {
+                                        if (!isset($transformation["arguments"]["forceResize"]) || !$transformation["arguments"]["forceResize"]) {
                                             // check if source image is big enough otherwise adjust the high-res factor
                                             if (in_array($key, ["width", "x"])) {
                                                 if ($sourceImageWidth < $value) {
