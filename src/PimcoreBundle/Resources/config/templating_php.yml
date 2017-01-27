@@ -1,9 +1,7 @@
 services:
     pimcore.templating.helper.pimcore_tag:
         class: PimcoreBundle\Templating\Helper\DocumentTagHelper
-        arguments:
-            - '@pimcore.document.tag.renderer'
-            - '@request_stack'
+        arguments: ['@pimcore.document.tag.renderer', '@pimcore.service.request.document_resolver']
         tags:
             - { name: templating.helper, alias: pimcore_tag }
 

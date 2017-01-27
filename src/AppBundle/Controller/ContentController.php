@@ -17,9 +17,9 @@ class ContentController extends Controller
      * @param Request $request
      * @return array
      */
-    public function phpAction(Request $request)
+    public function phpAction(Request $request, array $templateVars)
     {
-        return $this->resolveContent($request);
+        return $templateVars;
     }
 
     /**
@@ -28,9 +28,9 @@ class ContentController extends Controller
      * @param Request $request
      * @return array
      */
-    public function twigAction(Request $request)
+    public function twigAction(Request $request, array $templateVars)
     {
-        return $this->resolveContent($request);
+        return $templateVars;
     }
 
     /**
