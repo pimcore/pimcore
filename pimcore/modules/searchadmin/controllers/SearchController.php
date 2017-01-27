@@ -35,6 +35,9 @@ class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin
         }
 
         $query = str_replace("%", "*", $query);
+        // InnoDB full-text search does not support the use of the @ symbol in boolean full-text searches.
+        // The @ symbol is reserved for use by the @distance proximity search operator.
+        $query = str_replace("@", "*", $query);
         $query = preg_replace("@([^ ])\-@", "$1 ", $query);
 
         $types = explode(",", $this->getParam("type"));
