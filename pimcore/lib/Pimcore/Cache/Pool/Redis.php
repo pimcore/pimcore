@@ -171,7 +171,12 @@ class Redis extends AbstractCacheItemPool
             $value = $this->_decodeData($entry[static::FIELD_DATA]);
             $value = $this->unserializeData($value);
 
-            $tags  = explode(',', $this->_decodeData($entry[static::FIELD_TAGS]));
+            $tags    = [];
+            $tagData = $this->_decodeData($entry[static::FIELD_TAGS]);
+
+            if (!empty($tagData)) {
+                $tags = explode(',', $tagData);
+            }
 
             yield $ids[$idx] => [
                 'value' => $value,
