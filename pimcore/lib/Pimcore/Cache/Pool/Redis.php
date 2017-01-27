@@ -243,7 +243,7 @@ class Redis extends AbstractCacheItemPool
             }
 
             $result      = $this->_redis->exec();
-            $totalResult = $totalResult && (bool)$result[0];
+            $totalResult = $totalResult && count($result) > 0 && $result[0] !== false;
         }
 
         return $totalResult;
