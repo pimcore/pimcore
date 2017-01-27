@@ -68,7 +68,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
         $asset->setParent(null);
 
         if ($asset instanceof Asset\Text) {
-            $asset->data = $asset->getData();
+            $asset->data =  \ForceUTF8\Encoding::toUTF8($asset->getData());
         }
 
         if ($asset instanceof Asset\Image) {
