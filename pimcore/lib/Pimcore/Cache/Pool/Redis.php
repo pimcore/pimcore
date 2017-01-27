@@ -149,7 +149,7 @@ class Redis extends AbstractCacheItemPool
         $pipeline = $this->_redis->pipeline()->multi();
 
         foreach ($ids as $id) {
-            $pipeline->hMGet($id, [
+            $pipeline->hMGet(static::PREFIX_KEY . $id, [
                 static::FIELD_DATA,
                 static::FIELD_TAGS,
                 static::FIELD_MTIME
@@ -160,7 +160,7 @@ class Redis extends AbstractCacheItemPool
 
         foreach ($result as $idx => $entry) {
             // we rely on mtime always being set
-            if (empty($entry) || empty($field['mtime'])) {
+            if (empty($entry) || !$entry[static::FIELD_MTIME]) {
                 continue;
             }
 
