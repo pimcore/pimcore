@@ -335,7 +335,7 @@ class UserRole extends AbstractUser
             }
         }
 
-        if (empty($array)) {
+        if (empty($array) || !is_array($array)) {
             $array = [];
         }
 
