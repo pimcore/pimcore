@@ -36,42 +36,42 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
     /**
      * @var \Credis_Client
      */
-    protected $_redis;
+    protected $redis;
 
     /**
      * @var bool
      */
-    protected $_notMatchingTags = false;
+    protected $notMatchingTags = false;
 
     /**
      * @var int
      */
-    protected $_compressTags = 1;
+    protected $compressTags = 1;
 
     /**
      * @var int
      */
-    protected $_compressData = 1;
+    protected $compressData = 1;
 
     /**
      * @var int
      */
-    protected $_compressThreshold = 20480;
+    protected $compressThreshold = 20480;
 
     /**
      * @var string
      */
-    protected $_compressionLib;
+    protected $compressionLib;
 
     /**
      * @var string
      */
-    protected $_compressPrefix;
+    protected $compressPrefix;
 
     /**
      * @var bool
      */
-    protected $_useLua = false;
+    protected $useLua = false;
 
     /**
      * Lua's unpack() has a limit on the size of the table imposed by
@@ -81,7 +81,7 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
      * @see https://github.com/antirez/redis/blob/b903145/deps/lua/src/luaconf.h#L439
      * @var int
      */
-    protected $_luaMaxCStack = 5000;
+    protected $luaMaxCStack = 5000;
 
     /**
      * @param \Credis_Client $redis
@@ -92,44 +92,44 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
     {
         parent::__construct($defaultLifetime);
 
-        $this->_redis = $redis;
+        $this->redis = $redis;
 
         if (isset($options['notMatchingTags'])) {
-            $this->_notMatchingTags = (bool)$options['notMatchingTags'];
+            $this->notMatchingTags = (bool)$options['notMatchingTags'];
         }
 
         if (isset($options['compress_tags'])) {
-            $this->_compressTags = (int)$options['compress_tags'];
+            $this->compressTags = (int)$options['compress_tags'];
         }
 
         if (isset($options['compress_data'])) {
-            $this->_compressData = (int)$options['compress_data'];
+            $this->compressData = (int)$options['compress_data'];
         }
 
         if (isset($options['compress_threshold'])) {
-            $this->_compressThreshold = (int)$options['compress_threshold'];
+            $this->compressThreshold = (int)$options['compress_threshold'];
         }
 
         if (isset($options['compression_lib'])) {
-            $this->_compressionLib = (string)$options['compression_lib'];
+            $this->compressionLib = (string)$options['compression_lib'];
         } elseif (function_exists('snappy_compress')) {
-            $this->_compressionLib = 'snappy';
+            $this->compressionLib = 'snappy';
         } elseif (function_exists('lz4_compress')) {
-            $this->_compressionLib = 'l4z';
+            $this->compressionLib = 'l4z';
         } elseif (function_exists('lzf_compress')) {
-            $this->_compressionLib = 'lzf';
+            $this->compressionLib = 'lzf';
         } else {
-            $this->_compressionLib = 'gzip';
+            $this->compressionLib = 'gzip';
         }
 
-        $this->_compressPrefix = substr($this->_compressionLib, 0, 2) . self::COMPRESS_PREFIX;
+        $this->compressPrefix = substr($this->compressionLib, 0, 2) . static::COMPRESS_PREFIX;
 
         if (isset($options['use_lua'])) {
-            $this->_useLua = (bool)$options['use_lua'];
+            $this->useLua = (bool)$options['use_lua'];
         }
 
         if (isset($options['lua_max_c_stack'])) {
-            $this->_luaMaxCStack = (int)$options['lua_max_c_stack'];
+            $this->luaMaxCStack = (int)$options['lua_max_c_stack'];
         }
     }
 
@@ -148,7 +148,7 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
 
         $ids = array_values($ids);
 
-        $pipeline = $this->_redis->pipeline()->multi();
+        $pipeline = $this->redis->pipeline()->multi();
 
         foreach ($ids as $id) {
             $pipeline->hMGet(static::PREFIX_KEY . $id, [
@@ -170,11 +170,11 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
                 continue;
             }
 
-            $value = $this->_decodeData($entry[static::FIELD_DATA]);
+            $value = $this->decodeData($entry[static::FIELD_DATA]);
             $value = $this->unserializeData($value);
 
             $tags    = [];
-            $tagData = $this->_decodeData($entry[static::FIELD_TAGS]);
+            $tagData = $this->decodeData($entry[static::FIELD_TAGS]);
 
             if (!empty($tagData)) {
                 $tags = explode(',', $tagData);
@@ -196,7 +196,7 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
      */
     protected function doHave($id)
     {
-        $result = $this->_redis->exists(static::PREFIX_KEY . $id);
+        $result = $this->redis->exists(static::PREFIX_KEY . $id);
 
         return (bool)$result;
     }
@@ -210,7 +210,7 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
      */
     protected function doClear($namespace)
     {
-        return $this->_redis->flushDb();
+        return $this->redis->flushDb();
     }
 
     /**
@@ -227,24 +227,24 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
         // TODO implement a better way for multiple items! (multi for whole set?)
         foreach ($ids as $id) {
             // Get list of tags for this id
-            $tags = explode(',', $this->_decodeData($this->_redis->hGet(self::PREFIX_KEY . $id, self::FIELD_TAGS)));
+            $tags = explode(',', $this->decodeData($this->redis->hGet(static::PREFIX_KEY . $id, static::FIELD_TAGS)));
 
-            $this->_redis->pipeline()->multi();
+            $this->redis->pipeline()->multi();
 
             // Remove data
-            $this->_redis->del(self::PREFIX_KEY . $id);
+            $this->redis->del(static::PREFIX_KEY . $id);
 
             // Remove id from list of all ids
-            if ($this->_notMatchingTags) {
-                $this->_redis->sRem(self::SET_IDS, $id);
+            if ($this->notMatchingTags) {
+                $this->redis->sRem(static::SET_IDS, $id);
             }
 
             // Update the id list for each tag
             foreach ($tags as $tag) {
-                $this->_redis->sRem(self::PREFIX_TAG_IDS . $tag, $id);
+                $this->redis->sRem(static::PREFIX_TAG_IDS . $tag, $id);
             }
 
-            $result      = $this->_redis->exec();
+            $result      = $this->redis->exec();
             $totalResult = $totalResult && count($result) > 0 && $result[0] !== false;
         }
 
@@ -297,32 +297,32 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
         }
 
         $values = [
-            self::FIELD_DATA  => $this->_encodeData($data, $this->_compressData),
-            self::FIELD_TAGS  => $this->_encodeData(implode(',', $tags), $this->_compressTags),
-            self::FIELD_MTIME => $now,
-            self::FIELD_INF   => $lifetime ? 0 : 1,
+            static::FIELD_DATA  => $this->encodeData($data, $this->compressData),
+            static::FIELD_TAGS  => $this->encodeData(implode(',', $tags), $this->compressTags),
+            static::FIELD_MTIME => $now,
+            static::FIELD_INF   => $lifetime ? 0 : 1,
         ];
 
-        if ($this->_useLua) {
+        if ($this->useLua) {
             $sArgs = [
-                self::PREFIX_KEY,
-                self::FIELD_DATA,
-                self::FIELD_TAGS,
-                self::FIELD_MTIME,
-                self::FIELD_INF,
-                self::SET_TAGS,
-                self::PREFIX_TAG_IDS,
-                self::SET_IDS,
+                static::PREFIX_KEY,
+                static::FIELD_DATA,
+                static::FIELD_TAGS,
+                static::FIELD_MTIME,
+                static::FIELD_INF,
+                static::SET_TAGS,
+                static::PREFIX_TAG_IDS,
+                static::SET_IDS,
                 $id,
-                $values[self::FIELD_DATA],
-                $values[self::FIELD_TAGS],
-                $values[self::FIELD_MTIME],
-                $values[self::FIELD_INF],
-                min($lifetime, self::MAX_LIFETIME),
-                $this->_notMatchingTags ? 1 : 0
+                $values[static::FIELD_DATA],
+                $values[static::FIELD_TAGS],
+                $values[static::FIELD_MTIME],
+                $values[static::FIELD_INF],
+                min($lifetime, static::MAX_LIFETIME),
+                $this->notMatchingTags ? 1 : 0
             ];
 
-            $res = $this->_redis->evalSha(self::LUA_SAVE_SH1, $tags, $sArgs);
+            $res = $this->redis->evalSha(static::LUA_SAVE_SH1, $tags, $sArgs);
             if (is_null($res)) {
                 $script =
                     "local oldTags = redis.call('HGET', ARGV[1]..ARGV[9], ARGV[3]) " .
@@ -345,16 +345,16 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
                     "return '' " .
                     "end";
 
-                $res = $this->_redis->eval($script, $tags, $sArgs);
+                $res = $this->redis->eval($script, $tags, $sArgs);
             }
 
             // Process removed tags if cache entry already existed
             if ($res) {
-                $oldTags = explode(',', $this->_decodeData($res));
+                $oldTags = explode(',', $this->decodeData($res));
                 if ($remTags = ($oldTags ? array_diff($oldTags, $tags) : false)) {
                     // Update the id list for each tag
                     foreach ($remTags as $tag) {
-                        $this->_redis->sRem(self::PREFIX_TAG_IDS . $tag, $id);
+                        $this->redis->sRem(static::PREFIX_TAG_IDS . $tag, $id);
                     }
                 }
             }
@@ -363,13 +363,13 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
         }
 
         // Get list of tags previously assigned
-        $oldTags = $this->_decodeData($this->_redis->hGet(self::PREFIX_KEY . $id, self::FIELD_TAGS));
+        $oldTags = $this->decodeData($this->redis->hGet(static::PREFIX_KEY . $id, static::FIELD_TAGS));
         $oldTags = $oldTags ? explode(',', $oldTags) : [];
 
-        $this->_redis->pipeline()->multi();
+        $this->redis->pipeline()->multi();
 
         // Set the data
-        $result = $this->_redis->hMSet(self::PREFIX_KEY . $id, $values);
+        $result = $this->redis->hMSet(static::PREFIX_KEY . $id, $values);
 
         if (!$result) {
             throw new CacheException(sprintf('Could not set cache key %s', $id));
@@ -377,17 +377,17 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
 
         // Set expiration if specified
         if ($lifetime) {
-            $this->_redis->expire(self::PREFIX_KEY . $id, min($lifetime, self::MAX_LIFETIME));
+            $this->redis->expire(static::PREFIX_KEY . $id, min($lifetime, static::MAX_LIFETIME));
         }
 
         // Process added tags
         if ($tags) {
             // Update the list with all the tags
-            $this->_redis->sAdd(self::SET_TAGS, $tags);
+            $this->redis->sAdd(static::SET_TAGS, $tags);
 
             // Update the id list for each tag
             foreach ($tags as $tag) {
-                $this->_redis->sAdd(self::PREFIX_TAG_IDS . $tag, $id);
+                $this->redis->sAdd(static::PREFIX_TAG_IDS . $tag, $id);
             }
         }
 
@@ -395,16 +395,16 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
         if ($remTags = ($oldTags ? array_diff($oldTags, $tags) : false)) {
             // Update the id list for each tag
             foreach ($remTags as $tag) {
-                $this->_redis->sRem(self::PREFIX_TAG_IDS . $tag, $id);
+                $this->redis->sRem(static::PREFIX_TAG_IDS . $tag, $id);
             }
         }
 
         // Update the list with all the ids
-        if ($this->_notMatchingTags) {
-            $this->_redis->sAdd(self::SET_IDS, $id);
+        if ($this->notMatchingTags) {
+            $this->redis->sAdd(static::SET_IDS, $id);
         }
 
-        $result = $this->_redis->exec();
+        $result = $this->redis->exec();
 
         // TODO how to check success?
         return !empty($result);
@@ -421,17 +421,17 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
      */
     protected function doInvalidateTags(array $tags)
     {
-        if ($this->_useLua) {
-            $pTags = $this->_preprocessTagIds($tags);
+        if ($this->useLua) {
+            $pTags = $this->preprocessTagIds($tags);
             $sArgs = [
-                self::PREFIX_KEY,
-                self::SET_TAGS,
-                self::SET_IDS,
-                ($this->_notMatchingTags ? 1 : 0),
-                (int)$this->_luaMaxCStack
+                static::PREFIX_KEY,
+                static::SET_TAGS,
+                static::SET_IDS,
+                ($this->notMatchingTags ? 1 : 0),
+                (int)$this->luaMaxCStack
             ];
 
-            if (!$this->_redis->evalSha(self::LUA_CLEAN_SH1, $pTags, $sArgs)) {
+            if (!$this->redis->evalSha(static::LUA_CLEAN_SH1, $pTags, $sArgs)) {
                 $script =
                     "for i = 1, #KEYS, ARGV[5] do " .
                     "local keysToDel = redis.call('SUNION', unpack(KEYS, i, math.min(#KEYS, i + ARGV[5] - 1))) " .
@@ -446,7 +446,7 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
                     "end " .
                     "return true";
 
-                $this->_redis->eval($script, $pTags, $sArgs);
+                $this->redis->eval($script, $pTags, $sArgs);
             }
 
             return true;
@@ -454,25 +454,25 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
 
         $ids = $this->getIdsMatchingAnyTags($tags);
 
-        $this->_redis->pipeline()->multi();
+        $this->redis->pipeline()->multi();
 
         if ($ids) {
             // Remove data
-            $this->_redis->del($this->_preprocessIds($ids));
+            $this->redis->del($this->preprocessIds($ids));
 
             // Remove ids from list of all ids
-            if ($this->_notMatchingTags) {
-                $this->_redis->sRem(self::SET_IDS, $ids);
+            if ($this->notMatchingTags) {
+                $this->redis->sRem(static::SET_IDS, $ids);
             }
         }
 
         // Remove tag id lists
-        $this->_redis->del($this->_preprocessTagIds($tags));
+        $this->redis->del($this->preprocessTagIds($tags));
 
         // Remove tags from list of tags
-        $this->_redis->sRem(self::SET_TAGS, $tags);
+        $this->redis->sRem(static::SET_TAGS, $tags);
 
-        $this->_redis->exec();
+        $this->redis->exec();
 
         return true;
     }
@@ -484,25 +484,25 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
      */
     public function purge()
     {
-        return $this->_collectGarbage();
+        return $this->collectGarbage();
     }
 
     /**
      * Clean up tag id lists since as keys expire the ids remain in the tag id lists
      */
-    protected function _collectGarbage()
+    protected function collectGarbage()
     {
         // Clean up expired keys from tag id set and global id set
 
-        if ($this->_useLua) {
-            $sArgs = [self::PREFIX_KEY,
-                self::SET_TAGS,
-                self::SET_IDS,
-                self::PREFIX_TAG_IDS,
-                ($this->_notMatchingTags ? 1 : 0)
+        if ($this->useLua) {
+            $sArgs = [static::PREFIX_KEY,
+                static::SET_TAGS,
+                static::SET_IDS,
+                static::PREFIX_TAG_IDS,
+                ($this->notMatchingTags ? 1 : 0)
             ];
 
-            $allTags   = (array)$this->_redis->sMembers(self::SET_TAGS);
+            $allTags   = (array)$this->redis->sMembers(static::SET_TAGS);
             $tagsCount = count($allTags);
             $counter   = 0;
             $tagsBatch = [];
@@ -511,7 +511,7 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
                 $tagsBatch[] = $tag;
                 $counter++;
                 if (count($tagsBatch) == 10 || $counter == $tagsCount) {
-                    if (!$this->_redis->evalSha(self::LUA_GC_SH1, $tagsBatch, $sArgs)) {
+                    if (!$this->redis->evalSha(static::LUA_GC_SH1, $tagsBatch, $sArgs)) {
                         $script =
                             "local tagKeys = {} " .
                             "local expired = {} " .
@@ -552,7 +552,7 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
                             "end " .
                             "return true";
 
-                        $this->_redis->eval($script, $tagsBatch, $sArgs);
+                        $this->redis->eval($script, $tagsBatch, $sArgs);
                     }
 
                     $tagsBatch = [];
@@ -566,11 +566,11 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
         }
 
         $exists = [];
-        $tags   = (array)$this->_redis->sMembers(self::SET_TAGS);
+        $tags   = (array)$this->redis->sMembers(static::SET_TAGS);
 
         foreach ($tags as $tag) {
             // Get list of expired ids for each tag
-            $tagMembers    = $this->_redis->sMembers(self::PREFIX_TAG_IDS . $tag);
+            $tagMembers    = $this->redis->sMembers(static::PREFIX_TAG_IDS . $tag);
             $numTagMembers = count($tagMembers);
             $expired       = [];
             $numExpired    = $numNotExpired = 0;
@@ -578,7 +578,7 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
             if ($numTagMembers) {
                 while ($id = array_pop($tagMembers)) {
                     if (!isset($exists[$id])) {
-                        $exists[$id] = $this->_redis->exists(self::PREFIX_KEY . $id);
+                        $exists[$id] = $this->redis->exists(static::PREFIX_KEY . $id);
                     }
                     if ($exists[$id]) {
                         $numNotExpired++;
@@ -588,9 +588,9 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
 
                         // Remove incrementally to reduce memory usage
                         if (count($expired) % 100 == 0 && $numNotExpired > 0) {
-                            $this->_redis->sRem(self::PREFIX_TAG_IDS . $tag, $expired);
-                            if ($this->_notMatchingTags) { // Clean up expired ids from ids set
-                                $this->_redis->sRem(self::SET_IDS, $expired);
+                            $this->redis->sRem(static::PREFIX_TAG_IDS . $tag, $expired);
+                            if ($this->notMatchingTags) { // Clean up expired ids from ids set
+                                $this->redis->sRem(static::SET_IDS, $expired);
                             }
                             $expired = [];
                         }
@@ -603,13 +603,13 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
 
             // Remove empty tags or completely expired tags
             if ($numExpired == $numTagMembers) {
-                $this->_redis->del(self::PREFIX_TAG_IDS . $tag);
-                $this->_redis->sRem(self::SET_TAGS, $tag);
+                $this->redis->del(static::PREFIX_TAG_IDS . $tag);
+                $this->redis->sRem(static::SET_TAGS, $tag);
             } elseif (count($expired)) {
                 // Clean up expired ids from tag ids set
-                $this->_redis->sRem(self::PREFIX_TAG_IDS . $tag, $expired);
-                if ($this->_notMatchingTags) { // Clean up expired ids from ids set
-                    $this->_redis->sRem(self::SET_IDS, $expired);
+                $this->redis->sRem(static::PREFIX_TAG_IDS . $tag, $expired);
+                if ($this->notMatchingTags) { // Clean up expired ids from ids set
+                    $this->redis->sRem(static::SET_IDS, $expired);
                 }
             }
 
@@ -617,7 +617,7 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
         }
 
         // Clean up global list of ids for ids with no tag
-        if ($this->_notMatchingTags) {
+        if ($this->notMatchingTags) {
             // TODO
         }
     }
@@ -633,7 +633,7 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
     protected function getIdsMatchingAnyTags($tags = [])
     {
         if ($tags) {
-            return (array)$this->_redis->sUnion($this->_preprocessTagIds($tags));
+            return (array)$this->redis->sUnion($this->preprocessTagIds($tags));
         }
 
         return [];
@@ -644,7 +644,7 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
      * @param $index
      * @param $prefix
      */
-    protected function _preprocess(&$item, $index, $prefix)
+    protected function preprocess(&$item, $index, $prefix)
     {
         $item = $prefix . $item;
     }
@@ -653,9 +653,9 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
      * @param $ids
      * @return array
      */
-    protected function _preprocessIds($ids)
+    protected function preprocessIds($ids)
     {
-        array_walk($ids, [$this, '_preprocess'], self::PREFIX_KEY);
+        array_walk($ids, [$this, 'preprocess'], static::PREFIX_KEY);
 
         return $ids;
     }
@@ -664,9 +664,9 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
      * @param $tags
      * @return array
      */
-    protected function _preprocessTagIds($tags)
+    protected function preprocessTagIds($tags)
     {
-        array_walk($tags, [$this, '_preprocess'], self::PREFIX_TAG_IDS);
+        array_walk($tags, [$this, 'preprocess'], static::PREFIX_TAG_IDS);
 
         return $tags;
     }
@@ -677,10 +677,10 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
      * @throws \CredisException
      * @return string
      */
-    protected function _encodeData($data, $level)
+    protected function encodeData($data, $level)
     {
-        if ($this->_compressionLib && $level && strlen($data) >= $this->_compressThreshold) {
-            switch ($this->_compressionLib) {
+        if ($this->compressionLib && $level && strlen($data) >= $this->compressThreshold) {
+            switch ($this->compressionLib) {
                 case 'snappy':
                     $data = snappy_compress($data);
                     break;
@@ -700,7 +700,7 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
                 throw new \CredisException("Could not compress cache data.");
             }
 
-            return $this->_compressPrefix . $data;
+            return $this->compressPrefix . $data;
         }
 
         return $data;
@@ -710,9 +710,9 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
      * @param bool|string $data
      * @return string
      */
-    protected function _decodeData($data)
+    protected function decodeData($data)
     {
-        if (substr($data, 2, 3) == self::COMPRESS_PREFIX) {
+        if (substr($data, 2, 3) == static::COMPRESS_PREFIX) {
             switch (substr($data, 0, 2)) {
                 case 'sn':
                     return snappy_uncompress(substr($data, 5));
