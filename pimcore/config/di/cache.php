@@ -38,21 +38,21 @@ return [
     // if you define your own cache service, make sure you set this alias to your service
     // you can either define your own adapter (must implement PimcoreCacheItemPoolInterface) or use one of the predefined
     // ones (see pimcore.cache.core.pool.* below)
-    'pimcore.cache.core.pool' => DI\get('pimcore.cache.core.pool.redis'),
+    'pimcore.cache.core.pool' => DI\get('pimcore.cache.core.pool.pdo'),
+
+    // PDO cache pool
+    'pimcore.cache.core.pool.pdo' => DI\object(PdoMysql::class)
+        ->constructor(
+            DI\get('pimcore.db.pdo'),
+            DI\get('pimcore.cache.config.core.defaultLifetime')
+        )
+        ->method('setLogger', DI\get('pimcore.logger.cache')),
 
     // redis cache pool
     'pimcore.cache.core.pool.redis' => DI\object(Redis::class)
         ->constructor(
             DI\get('pimcore.cache.core.redis.connection'),
             DI\get('pimcore.cache.config.core.redis.options'),
-            DI\get('pimcore.cache.config.core.defaultLifetime')
-        )
-        ->method('setLogger', DI\get('pimcore.logger.cache')),
-
-    // PDO cache pool
-    'pimcore.cache.core.pool.pdo' => DI\object(PdoMysql::class)
-        ->constructor(
-            DI\get('pimcore.db.pdo'),
             DI\get('pimcore.cache.config.core.defaultLifetime')
         )
         ->method('setLogger', DI\get('pimcore.logger.cache')),
