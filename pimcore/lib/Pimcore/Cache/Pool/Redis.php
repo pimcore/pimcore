@@ -13,7 +13,7 @@ use Pimcore\Cache\Pool\Exception\InvalidArgumentException;
  *
  * Adapted from https://github.com/colinmollenhour/Cm_Cache_Backend_Redis and from Pimcore\Cache\Backend\Redis2
  */
-class Redis extends AbstractCacheItemPool
+class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInterface
 {
     const SET_IDS = 'zc:ids';
     const SET_TAGS = 'zc:tags';
@@ -478,6 +478,151 @@ class Redis extends AbstractCacheItemPool
     }
 
     /**
+     * Runs maintenance tasks which could take a long time. Should only be called from maintenance scripts.
+     *
+     * @return bool True on success
+     */
+    public function purge()
+    {
+        return $this->_collectGarbage();
+    }
+
+    /**
+     * Clean up tag id lists since as keys expire the ids remain in the tag id lists
+     */
+    protected function _collectGarbage()
+    {
+        // Clean up expired keys from tag id set and global id set
+
+        if ($this->_useLua) {
+            $sArgs = [self::PREFIX_KEY,
+                self::SET_TAGS,
+                self::SET_IDS,
+                self::PREFIX_TAG_IDS,
+                ($this->_notMatchingTags ? 1 : 0)
+            ];
+
+            $allTags   = (array)$this->_redis->sMembers(self::SET_TAGS);
+            $tagsCount = count($allTags);
+            $counter   = 0;
+            $tagsBatch = [];
+
+            foreach ($allTags as $tag) {
+                $tagsBatch[] = $tag;
+                $counter++;
+                if (count($tagsBatch) == 10 || $counter == $tagsCount) {
+                    if (!$this->_redis->evalSha(self::LUA_GC_SH1, $tagsBatch, $sArgs)) {
+                        $script =
+                            "local tagKeys = {} " .
+                            "local expired = {} " .
+                            "local expiredCount = 0 " .
+                            "local notExpiredCount = 0 " .
+                            "for _, tagName in ipairs(KEYS) do " .
+                            "tagKeys = redis.call('SMEMBERS', ARGV[4]..tagName) " .
+                            "for __, keyName in ipairs(tagKeys) do " .
+                            "if (redis.call('EXISTS', ARGV[1]..keyName) == 0) then " .
+                            "expiredCount = expiredCount + 1 " .
+                            "expired[expiredCount] = keyName " .
+                            /* Redis Lua scripts have a hard limit of 8000 parameters per command */
+                            "if (expiredCount == 7990) then " .
+                            "redis.call('SREM', ARGV[4]..tagName, unpack(expired)) " .
+                            "if (ARGV[5] == '1') then " .
+                            "redis.call('SREM', ARGV[3], unpack(expired)) " .
+                            "end " .
+                            "expiredCount = 0 " .
+                            "expired = {} " .
+                            "end " .
+                            "else " .
+                            "notExpiredCount = notExpiredCount + 1 " .
+                            "end " .
+                            "end " .
+                            "if (expiredCount > 0) then " .
+                            "redis.call('SREM', ARGV[4]..tagName, unpack(expired)) " .
+                            "if (ARGV[5] == '1') then " .
+                            "redis.call('SREM', ARGV[3], unpack(expired)) " .
+                            "end " .
+                            "end " .
+                            "if (notExpiredCount == 0) then " .
+                            "redis.call ('DEL', ARGV[4]..tagName) " .
+                            "redis.call ('SREM', ARGV[2], tagName) " .
+                            "end " .
+                            "expired = {} " .
+                            "expiredCount = 0 " .
+                            "notExpiredCount = 0 " .
+                            "end " .
+                            "return true";
+
+                        $this->_redis->eval($script, $tagsBatch, $sArgs);
+                    }
+
+                    $tagsBatch = [];
+
+                    /* Give Redis some time to handle other requests */
+                    usleep(20000);
+                }
+            }
+
+            return true;
+        }
+
+        $exists = [];
+        $tags   = (array)$this->_redis->sMembers(self::SET_TAGS);
+
+        foreach ($tags as $tag) {
+            // Get list of expired ids for each tag
+            $tagMembers    = $this->_redis->sMembers(self::PREFIX_TAG_IDS . $tag);
+            $numTagMembers = count($tagMembers);
+            $expired       = [];
+            $numExpired    = $numNotExpired = 0;
+
+            if ($numTagMembers) {
+                while ($id = array_pop($tagMembers)) {
+                    if (!isset($exists[$id])) {
+                        $exists[$id] = $this->_redis->exists(self::PREFIX_KEY . $id);
+                    }
+                    if ($exists[$id]) {
+                        $numNotExpired++;
+                    } else {
+                        $numExpired++;
+                        $expired[] = $id;
+
+                        // Remove incrementally to reduce memory usage
+                        if (count($expired) % 100 == 0 && $numNotExpired > 0) {
+                            $this->_redis->sRem(self::PREFIX_TAG_IDS . $tag, $expired);
+                            if ($this->_notMatchingTags) { // Clean up expired ids from ids set
+                                $this->_redis->sRem(self::SET_IDS, $expired);
+                            }
+                            $expired = [];
+                        }
+                    }
+                }
+                if (!count($expired)) {
+                    continue;
+                }
+            }
+
+            // Remove empty tags or completely expired tags
+            if ($numExpired == $numTagMembers) {
+                $this->_redis->del(self::PREFIX_TAG_IDS . $tag);
+                $this->_redis->sRem(self::SET_TAGS, $tag);
+            } elseif (count($expired)) {
+                // Clean up expired ids from tag ids set
+                $this->_redis->sRem(self::PREFIX_TAG_IDS . $tag, $expired);
+                if ($this->_notMatchingTags) { // Clean up expired ids from ids set
+                    $this->_redis->sRem(self::SET_IDS, $expired);
+                }
+            }
+
+            unset($expired);
+        }
+
+        // Clean up global list of ids for ids with no tag
+        if ($this->_notMatchingTags) {
+            // TODO
+        }
+    }
+
+    /**
      * Return an array of stored cache ids which match any given tags
      *
      * In case of multiple tags, a logical OR is made between tags
@@ -485,7 +630,7 @@ class Redis extends AbstractCacheItemPool
      * @param array $tags array of tags
      * @return array array of any matching cache ids (string)
      */
-    public function getIdsMatchingAnyTags($tags = [])
+    protected function getIdsMatchingAnyTags($tags = [])
     {
         if ($tags) {
             return (array)$this->_redis->sUnion($this->_preprocessTagIds($tags));
