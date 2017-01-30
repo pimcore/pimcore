@@ -140,6 +140,13 @@ namespace {
     /**
      * @deprecated
      */
+    class Pimcore_Tool_StopWatch extends \Pimcore\Tool\StopWatch
+    {
+    }
+
+    /**
+     * @deprecated
+     */
     class Pimcore_Tool_Mime extends \Pimcore\Tool\Mime
     {
     }
