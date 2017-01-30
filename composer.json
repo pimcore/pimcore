@@ -43,6 +43,7 @@
     "ext-zlib": "*",
     "ext-bz2": "*",
     "ext-openssl": "*",
+    "ext-mysqli": "*",
     "ext-pdo_mysql": "*",
     "pimcore/core-version": "4.4.3",
     "zendframework/zendframework1": "~1.12",

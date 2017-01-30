@@ -66,7 +66,20 @@ class Dao extends Model\Dao\AbstractDao
         $sql = str_replace("~~DOCUMENTROOT~~", $docRoot, $sql);
 
         // we have to use the raw connection here otherwise \Zend_Db uses prepared statements, which causes problems with inserts (: placeholders)
-        $this->db->getConnection()->exec($sql);
+        // and mysqli causes troubles because it doesn't support multiple queries
+        if ($this->db->getResource() instanceof \Zend_Db_Adapter_Mysqli) {
+            $mysqli = $this->db->getConnection();
+            $mysqli->multi_query($sql);
+
+            // loop through results, because ->multi_query() is asynchronous
+            do {
+                if ($result = $mysqli->store_result()) {
+                    $mysqli->free_result();
+                }
+            } while ($mysqli->next_result());
+        } elseif ($this->db->getResource() instanceof \Zend_Db_Adapter_Pdo_Mysql) {
+            $this->db->getConnection()->exec($sql);
+        }
 
         \Pimcore\Db::reset();
 

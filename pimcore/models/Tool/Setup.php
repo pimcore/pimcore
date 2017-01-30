@@ -63,6 +63,7 @@ class Setup extends Model\AbstractModel
                     "extjs6" => "1",
                 ],
                 "database" => [
+                    "adapter" => "Mysqli",
                     "params" => [
                         "username" => "root",
                         "password" => "",

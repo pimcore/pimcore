@@ -195,12 +195,24 @@ $scripts = array(
                     bodyStyle: "padding: 10px",
                     items: [
                         {
-                            title: "MySQL (PDO) Settings",
+                            title: "MySQL Settings",
                             xtype: "fieldset",
                             defaults: {
                                 width: 380
                             },
                             items: [{
+                                    xtype: "combo",
+                                    name: "mysql_adapter",
+                                    fieldLabel: "Adapter",
+                                    store: [
+                                        ["Mysqli", "Mysqli"],
+                                        ["Pdo_Mysql", "Pdo_Mysql"]
+                                    ],
+                                    mode: "local",
+                                    value: "Pdo_Mysql",
+                                    triggerAction: "all"
+                                },
+                                {
                                     xtype: "textfield",
                                     name: "mysql_host_socket",
                                     id: "mysql_host_socket",
