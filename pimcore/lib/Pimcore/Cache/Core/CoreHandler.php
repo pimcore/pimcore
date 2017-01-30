@@ -225,12 +225,15 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
      */
     public function load($key)
     {
-        // TODO: omitted ____pimcore_cache_item__ here - is this used anywhere?
         $item = $this->getItem($key);
 
         if ($item->isHit()) {
             $data = $item->get();
             $data = unserialize($data);
+
+            if (is_object($data)) {
+                $data->____pimcore_cache_item__ = $key; // TODO where is this used?
+            }
 
             return $data;
         }
@@ -270,10 +273,11 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
      * @param string $data
      * @param array $tags
      * @param int|\DateInterval|null $lifetime
+     * @param int|null $priority
      * @param bool $force
      * @return bool
      */
-    public function save($key, $data, array $tags = [], $lifetime = null, $force = false)
+    public function save($key, $data, array $tags = [], $lifetime = null, $priority = 0, $force = false)
     {
         if (!$this->enabled) {
             $this->logger->debug(sprintf('Not saving object %s to cache (deactivated)', $key), ['key' => $key]);
@@ -291,12 +295,6 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
             }
         }
 
-        $item = $this->prepareCacheItem($key, $data, $tags, $lifetime);
-        if (null === $item) {
-            // logging is done in prepare method if item could not be created
-            return false;
-        }
-
         if ($force || $this->forceImmediateWrite) {
             if ($this->writeLock->hasLock()) {
                 $this->logger->warning(
@@ -307,18 +305,74 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
                 return false;
             }
 
+            $item = $this->prepareCacheItem($key, $data, $lifetime);
+            if (null === $item) {
+                // logging is done in prepare method if item could not be created
+                return false;
+            }
+
+            // add cache tags to item
+            $item = $this->prepareCacheTags($item, $data, $tags);
+            if (null === $item) {
+                return false;
+            }
+
             return $this->storeCacheItem($item, $force);
         } else {
-            if (count($this->saveQueue) < $this->maxWriteToCacheItems) {
-                $this->saveQueue[] = new CacheQueueItem($item, $force);
+            $cacheQueueItem = new CacheQueueItem($key, $data, $tags, $lifetime, $priority, $force);
+
+            return $this->addToSaveQueue($cacheQueueItem);
+        }
+    }
+
+    /**
+     * Add item to save queue, respecting maxWriteToCacheItems setting
+     *
+     * @param CacheQueueItem $item
+     * @return bool
+     */
+    protected function addToSaveQueue(CacheQueueItem $item)
+    {
+        $this->saveQueue[$item->getKey()] = $item;
+
+        // order by priority
+        uasort($this->saveQueue, function(CacheQueueItem $a, CacheQueueItem $b) {
+            if ($a->getPriority() === $b->getPriority()) {
+                // records with serialized data have priority, to save cpu cycles. if the item has a CacheItem set, data
+                // was already serialized
+                if (null !== $a->getCacheItem()) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            }
+
+            return $a->getPriority() < $b->getPriority() ? 1 : -1;
+        });
+
+        // remove overrun
+        array_splice($this->saveQueue, $this->maxWriteToCacheItems);
+
+        // check if item is still on queue and serialize the data into a CacheItem
+        if (isset($this->saveQueue[$item->getKey()])) {
+            $cacheItem = $this->prepareCacheItem($item->getKey(), $item->getData(), $item->getLifetime());
+            if ($cacheItem) {
+                // add cache item with serialized data to queue item
+                $item->setCacheItem($cacheItem);
 
                 return true;
             } else {
-                $this->logger->warning(
-                    sprintf('Not saving %s to cache as saveQueue reached a maximum of %d items', $key, $this->maxWriteToCacheItems),
-                    ['key' => $key]
-                );
+                // cache item could not be created - remove queue item
+                unset($this->saveQueue[$item->getKey()]);
+
+                // logging is done in prepare method if item could not be created
+                return false;
             }
+        } else {
+            $this->logger->warning(
+                sprintf('Not saving %s to cache as it did not fit into the save queue (max items on queue: %d)', $item->getKey(), $this->maxWriteToCacheItems),
+                ['key' => $item->getKey()]
+            );
         }
 
         return false;
@@ -329,12 +383,11 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
      *
      * @param string $key
      * @param mixed $data
-     * @param array $tags
      * @param int|\DateInterval|null $lifetime
      *
      * @return PimcoreCacheItemInterface|null
      */
-    protected function prepareCacheItem($key, $data, array $tags = [], $lifetime = null)
+    protected function prepareCacheItem($key, $data, $lifetime = null)
     {
         // do not cache hardlink-wrappers
         if ($data instanceof WrapperInterface) {
@@ -349,7 +402,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
         // clean up and prepare models
         if ($data instanceof ElementInterface) {
             // check for corrupt data
-            if ($data->getId() < 1) {
+            if (!$data->getId()) {
                 return null;
             }
 
@@ -357,17 +410,38 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
             if (isset($data->_fulldump)) {
                 unset($data->_fulldump);
             }
+        }
 
+        if (is_object($data) && isset($data->____pimcore_cache_item__)) {
+            unset($data->____pimcore_cache_item__);
+        }
+
+        // See #1005 - serialize the element now as we don't know what happens until it is actually persisted on shutdown and we
+        // could end up with corrupt objects in cache
+        //
+        // TODO symfony cache adapters serialize as well - find a way to avoid double serialization
+        $itemData = serialize($data);
+
+        $item = $this->itemPool->createCacheItem($key, $itemData);
+        $item->expiresAfter($lifetime);
+
+        return $item;
+    }
+
+    /**
+     * Create tags for cache item - do this as late as possible as this is potentially expensive (nested items, dependencies)
+     *
+     * @param PimcoreCacheItemInterface $cacheItem
+     * @param $data
+     * @param array $tags
+     * @return null|PimcoreCacheItemInterface
+     */
+    protected function prepareCacheTags(PimcoreCacheItemInterface $cacheItem, $data, array $tags = [])
+    {
+        // clean up and prepare models
+        if ($data instanceof ElementInterface) {
             // get tags for this element
             $tags = $data->getCacheTags($tags);
-
-            // normalize tags to array
-            if (!empty($tags) && !is_array($tags)) {
-                $tags = [$tags];
-            }
-
-            // array_values() because the tags from \Element_Interface and some others are associative eg. array("object_123" => "object_123")
-            $tags = array_values($tags);
 
             $this->logger->debug(
                 sprintf(
@@ -383,11 +457,20 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
             );
         }
 
+        // normalize tags to array
+        if (!empty($tags) && !is_array($tags)) {
+            $tags = [$tags];
+        }
+
+        // array_values() because the tags from \Element_Interface and some others are associative eg. array("object_123" => "object_123")
+        $tags = array_values($tags);
+        $tags = array_unique($tags);
+
         // check if any of our tags is in cleared tags or tags ignored on save lists
         foreach ($tags as $tag) {
             if (in_array($tag, $this->clearedTags)) {
                 $this->logger->debug(
-                    sprintf('Aborted caching for key %s because tag %s is in the cleared tags list', $key, $tag),
+                    sprintf('Aborted caching for key %s because tag %s is in the cleared tags list', $cacheItem->getKey(), $tag),
                     ['key' => $data->getId(), 'tags' => $tags]
                 );
 
@@ -396,7 +479,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
 
             if (in_array($tag, $this->tagsIgnoredOnSave)) {
                 $this->logger->debug(
-                    sprintf('Aborted caching for key %s because tag %s is in the ignored tags on save list', $key, $tag),
+                    sprintf('Aborted caching for key %s because tag %s is in the ignored tags on save list', $cacheItem->getKey(), $tag),
                     ['key' => $data->getId(), 'tags' => $tags]
                 );
 
@@ -404,16 +487,9 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
             }
         }
 
-        // See #1005 - serialize the element now as we don't know what happens until it is actually persisted on shutdown and we
-        // could end up with corrupt objects in cache
-        //
-        // TODO symfony cache adapters serialize as well - find a way to avoid double serialization
-        $itemData = serialize($data);
+        $cacheItem->setTags($tags);
 
-        $item = $this->itemPool->createCacheItem($key, $itemData, $tags);
-        $item->expiresAfter($lifetime);
-
-        return $item;
+        return $cacheItem;
     }
 
     /**
@@ -712,15 +788,21 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
                 continue;
             }
 
+            $cacheItem = $queueItem->getCacheItem();
+            $cacheItem = $this->prepareCacheTags($cacheItem, $queueItem->getData(), $queueItem->getTags());
 
-            $result = $this->storeCacheItem($queueItem->getCacheItem(), $queueItem->getForce());
-
-            if (!$result) {
-                $this->logger->error(sprintf('Unable to write item %s to cache', $key));
+            $result = true;
+            if (null === $cacheItem) {
+                $result = false;
+                $this->logger->error(sprintf('Not writing item %s to cache as prepareCacheTags failed', $key));
+            } else {
+                $result = $this->storeCacheItem($queueItem->getCacheItem(), $queueItem->isForce());
+                if (!$result) {
+                    $this->logger->error(sprintf('Unable to write item %s to cache', $key));
+                }
             }
 
             $processedKeys[] = $key;
-
             $totalResult = $totalResult && $result;
         }
 

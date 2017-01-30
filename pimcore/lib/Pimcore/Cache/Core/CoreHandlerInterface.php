@@ -77,10 +77,11 @@ interface CoreHandlerInterface
      * @param string $data
      * @param array $tags
      * @param int|\DateInterval|null $lifetime
+     * @param int|null $priority
      * @param bool $force
      * @return bool
      */
-    public function save($key, $data, array $tags = [], $lifetime = null, $force = false);
+    public function save($key, $data, array $tags = [], $lifetime = null, $priority = 0, $force = false);
 
     /**
      * Remove a cache item

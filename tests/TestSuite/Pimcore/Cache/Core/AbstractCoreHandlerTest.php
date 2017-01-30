@@ -273,7 +273,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
 
     public function testImmediateWriteOnForce()
     {
-        $this->handler->save('itemA', 'test', [], null, true);
+        $this->handler->save('itemA', 'test', [], null, 0, true);
 
         $this->assertTrue($this->cacheHasItem('itemA'));
     }
@@ -361,7 +361,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
     {
         // force writes immediately - no need to write save queue
         $this->assertFalse($this->cacheHasItem('itemA'));
-        $this->assertTrue($this->handler->save('itemA', 'test', [], null, true));
+        $this->assertTrue($this->handler->save('itemA', 'test', [], null, 0, true));
         $this->assertTrue($this->cacheHasItem('itemA'));
     }
 

@@ -86,13 +86,13 @@ class Cache
      * @param string $key
      * @param array $tags
      * @param int|\DateInterval|null $lifetime
-     * @param int $priority Not used anymore
+     * @param int $priority
      * @param bool $force
      * @return bool
      */
     public static function save($data, $key, $tags = [], $lifetime = null, $priority = 0, $force = false)
     {
-        return static::$handler->save($key, $data, $tags, $lifetime, $force);
+        return static::$handler->save($key, $data, $tags, $lifetime, $priority, $force);
     }
 
     /**
