@@ -29,7 +29,6 @@ class Redis extends AbstractCacheItemPool
     const MAX_LIFETIME = 2592000; // Redis backend limit
     const COMPRESS_PREFIX = ":\x1f\x8b";
 
-
     const LUA_SAVE_SH1 = '1617c9fb2bda7d790bb1aaa320c1099d81825e64';
     const LUA_CLEAN_SH1 = '42ab2fe548aee5ff540123687a2c39a38b54e4a2';
     const LUA_GC_SH1 = 'c00416b970f1aa6363b44965d4cf60ee99a6f065';
@@ -285,10 +284,6 @@ class Redis extends AbstractCacheItemPool
      */
     protected function commitItem(PimcoreCacheItemInterface $item)
     {
-        if ($this->_useLua) {
-            // TODO
-        }
-
         $id  = $item->getKey();
         $now = time();
 
@@ -301,6 +296,72 @@ class Redis extends AbstractCacheItemPool
             $lifetime = $expiry - $now;
         }
 
+        $values = [
+            self::FIELD_DATA  => $this->_encodeData($data, $this->_compressData),
+            self::FIELD_TAGS  => $this->_encodeData(implode(',', $tags), $this->_compressTags),
+            self::FIELD_MTIME => $now,
+            self::FIELD_INF   => $lifetime ? 0 : 1,
+        ];
+
+        if ($this->_useLua) {
+            $sArgs = [
+                self::PREFIX_KEY,
+                self::FIELD_DATA,
+                self::FIELD_TAGS,
+                self::FIELD_MTIME,
+                self::FIELD_INF,
+                self::SET_TAGS,
+                self::PREFIX_TAG_IDS,
+                self::SET_IDS,
+                $id,
+                $values[self::FIELD_DATA],
+                $values[self::FIELD_TAGS],
+                $values[self::FIELD_MTIME],
+                $values[self::FIELD_INF],
+                min($lifetime, self::MAX_LIFETIME),
+                $this->_notMatchingTags ? 1 : 0
+            ];
+
+            $res = $this->_redis->evalSha(self::LUA_SAVE_SH1, $tags, $sArgs);
+            if (is_null($res)) {
+                $script =
+                    "local oldTags = redis.call('HGET', ARGV[1]..ARGV[9], ARGV[3]) " .
+                    "redis.call('HMSET', ARGV[1]..ARGV[9], ARGV[2], ARGV[10], ARGV[3], ARGV[11], ARGV[4], ARGV[12], ARGV[5], ARGV[13]) " .
+                    "if (ARGV[13] == '0') then " .
+                    "redis.call('EXPIRE', ARGV[1]..ARGV[9], ARGV[14]) " .
+                    "end " .
+                    "if next(KEYS) ~= nil then " .
+                    "redis.call('SADD', ARGV[6], unpack(KEYS)) " .
+                    "for _, tagname in ipairs(KEYS) do " .
+                    "redis.call('SADD', ARGV[7]..tagname, ARGV[9]) " .
+                    "end " .
+                    "end " .
+                    "if (ARGV[15] == '1') then " .
+                    "redis.call('SADD', ARGV[8], ARGV[9]) " .
+                    "end " .
+                    "if (oldTags ~= false) then " .
+                    "return oldTags " .
+                    "else " .
+                    "return '' " .
+                    "end";
+
+                $res = $this->_redis->eval($script, $tags, $sArgs);
+            }
+
+            // Process removed tags if cache entry already existed
+            if ($res) {
+                $oldTags = explode(',', $this->_decodeData($res));
+                if ($remTags = ($oldTags ? array_diff($oldTags, $tags) : false)) {
+                    // Update the id list for each tag
+                    foreach ($remTags as $tag) {
+                        $this->_redis->sRem(self::PREFIX_TAG_IDS . $tag, $id);
+                    }
+                }
+            }
+
+            return true;
+        }
+
         // Get list of tags previously assigned
         $oldTags = $this->_decodeData($this->_redis->hGet(self::PREFIX_KEY . $id, self::FIELD_TAGS));
         $oldTags = $oldTags ? explode(',', $oldTags) : [];
@@ -308,12 +369,7 @@ class Redis extends AbstractCacheItemPool
         $this->_redis->pipeline()->multi();
 
         // Set the data
-        $result = $this->_redis->hMSet(self::PREFIX_KEY . $id, [
-            self::FIELD_DATA  => $this->_encodeData($data, $this->_compressData),
-            self::FIELD_TAGS  => $this->_encodeData(implode(',', $tags), $this->_compressTags),
-            self::FIELD_MTIME => $now,
-            self::FIELD_INF   => $lifetime ? 0 : 1,
-        ]);
+        $result = $this->_redis->hMSet(self::PREFIX_KEY . $id, $values);
 
         if (!$result) {
             throw new CacheException(sprintf('Could not set cache key %s', $id));
@@ -366,7 +422,34 @@ class Redis extends AbstractCacheItemPool
     protected function doInvalidateTags(array $tags)
     {
         if ($this->_useLua) {
-            // TODO
+            $pTags = $this->_preprocessTagIds($tags);
+            $sArgs = [
+                self::PREFIX_KEY,
+                self::SET_TAGS,
+                self::SET_IDS,
+                ($this->_notMatchingTags ? 1 : 0),
+                (int)$this->_luaMaxCStack
+            ];
+
+            if (!$this->_redis->evalSha(self::LUA_CLEAN_SH1, $pTags, $sArgs)) {
+                $script =
+                    "for i = 1, #KEYS, ARGV[5] do " .
+                    "local keysToDel = redis.call('SUNION', unpack(KEYS, i, math.min(#KEYS, i + ARGV[5] - 1))) " .
+                    "for _, keyname in ipairs(keysToDel) do " .
+                    "redis.call('DEL', ARGV[1]..keyname) " .
+                    "if (ARGV[4] == '1') then " .
+                    "redis.call('SREM', ARGV[3], keyname) " .
+                    "end " .
+                    "end " .
+                    "redis.call('DEL', unpack(KEYS, i, math.min(#KEYS, i + ARGV[5] - 1))) " .
+                    "redis.call('SREM', ARGV[2], unpack(KEYS, i, math.min(#KEYS, i + ARGV[5] - 1))) " .
+                    "end " .
+                    "return true";
+
+                $this->_redis->eval($script, $pTags, $sArgs);
+            }
+
+            return true;
         }
 
         $ids = $this->getIdsMatchingAnyTags($tags);

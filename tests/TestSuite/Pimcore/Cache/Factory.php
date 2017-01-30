@@ -57,10 +57,6 @@ class Factory
             'server' => 'localhost'
         ], $connectionOptions);
 
-        if (!isset($connectionOptions['database'])) {
-
-        }
-
         $connection = ConnectionFactory::createConnection($connectionOptions);
 
         return new Redis(

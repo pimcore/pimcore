@@ -9,6 +9,11 @@ use TestSuite\Pimcore\Cache\Factory;
 trait RedisItemPoolTrait
 {
     /**
+     * @var array
+     */
+    protected $redisOptions = [];
+
+    /**
      * @return PimcoreCacheItemPoolInterface|Redis
      */
     protected function buildCachePool()
@@ -18,8 +23,10 @@ trait RedisItemPoolTrait
             $this->markTestSkipped('TEST_REDIS_DB env var is not configured');
         }
 
-        return (new Factory())->createRedisItemPool($this->defaultLifetime, [
+        $connectionOptions = [
             'database' => $redisDb
-        ]);
+        ];
+
+        return (new Factory())->createRedisItemPool($this->defaultLifetime, $connectionOptions, $this->redisOptions);
     }
 }
