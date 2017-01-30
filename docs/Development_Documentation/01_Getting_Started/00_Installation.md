@@ -73,7 +73,7 @@ the [Installation Guide](../13_Installation_and_Upgrade/README.md) section.
 
 ## 7. Further Reading
 - [Apache Configuration](../13_Installation_and_Upgrade/03_System_Setup_and_Hosting/01_Apache_Configuration.md)
-- [Nginx Configuration](../13_Installation_and_Upgrade/03_System_Setup_and_Hosting/03_Nginx_Configuration.md)
+- [Nginx Configuration](../13_Installation_and_Upgrade/03_System_Setup_and_Hosting/02_Nginx_Configuration.md)
 - [Database Setup](../13_Installation_and_Upgrade/03_System_Setup_and_Hosting/05_DB_Setup.md)
 - [Additional Tools Installation](../13_Installation_and_Upgrade/03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md)
 
