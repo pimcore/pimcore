@@ -800,11 +800,6 @@ pimcore.settings.system = Class.create({
                         defaults: {width: 150},
                         items :[
                             {
-                                fieldLabel: t('adapter'),
-                                disabled: true,
-                                name: 'database.adapter',
-                                value: this.getValue("database.adapter")
-                            },{
                                 fieldLabel: t('host'),
                                 disabled: true,
                                 name: 'database.params.host',

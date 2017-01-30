@@ -76,7 +76,7 @@ class Db
         $config["params"]["charset"] = $charset;
 
         try {
-            $db = \Zend_Db::factory($config["adapter"], $config["params"]);
+            $db = \Zend_Db::factory("Pdo_Mysql", $config["params"]);
             $db->query("SET NAMES " . $charset);
         } catch (\Exception $e) {
             Logger::emerg($e);

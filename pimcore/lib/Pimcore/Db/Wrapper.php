@@ -128,20 +128,8 @@ class Wrapper
     {
         if ($resource) {
             try {
-                $connectionId = null;
-
-                // unfortunately mysqli doesn't throw an exception in the case the connection is lost (issues a warning)
-                // and when sending a query to the broken connection (eg. when forking)
-                // so we have to handle mysqli and pdo_mysql differently
-                if ($resource instanceof \Zend_Db_Adapter_Mysqli) {
-                    if ($resource->getConnection()) {
-                        $connectionId = $resource->getConnection()->thread_id;
-                    }
-                } elseif ($resource instanceof \Zend_Db_Adapter_Pdo_Mysql) {
-                    $connectionId = $resource->fetchOne("SELECT CONNECTION_ID()");
-                }
-                Logger::debug(get_class($resource) . ": closing MySQL-Server connection with ID: " . $connectionId);
-
+                $connectionId = $resource->fetchOne("SELECT CONNECTION_ID()");
+                Logger::debug("Closing MySQL-Server connection with ID: " . $connectionId);
                 $resource->closeConnection();
             } catch (\Exception $e) {
                 // this is the case when the mysql connection has gone away (eg. when forking using pcntl)

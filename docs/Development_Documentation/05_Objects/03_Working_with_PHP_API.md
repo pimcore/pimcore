@@ -73,9 +73,9 @@ $entries->setOffset($offset);
 $entries->setLimit($perPage);
 $entries->setOrderKey("date");
 $entries->setOrder("desc");
-$entries->setCondition("name LIKE ?", ["%bernie%"]); // use prepared statements! Mysqli only supports ? placeholders
+$entries->setCondition("name LIKE ?", ["%bernie%"]); // use prepared statements! 
 // or
-$entries->setCondition("name LIKE :name", ["name" => "%bernie%"]); // With PDO_Mysql you can use named parameters
+$entries->setCondition("name LIKE :name", ["name" => "%bernie%"]); 
 // to add param to the condition
 $entries->addConditionParam("city = ?", "New York", "AND"); // concatenator can be AND or OR
    

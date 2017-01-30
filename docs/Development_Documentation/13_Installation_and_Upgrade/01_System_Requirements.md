@@ -16,7 +16,7 @@ Both **mod_php** and **FCGI (FPM)** are supported.
 #### Required Settings and Modules & Extensions
 - `memory_limit` >= 128M
 - `upload_max_filesize` and `post_max_size` >= 100M (depending on your data) 
-- [pdo_mysql](http://php.net/pdo-mysql) or [mysqli](http://php.net/mysqli)
+- [pdo_mysql](http://php.net/pdo-mysql)
 - [iconv](http://php.net/iconv)
 - [dom](http://php.net/dom)
 - [simplexml](http://php.net/simplexml)

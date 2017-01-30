@@ -73,8 +73,7 @@ class Install_IndexController extends \Pimcore\Controller\Action
 
         // try to establish a mysql connection
         try {
-            $db = \Zend_Db::factory($this->getParam("mysql_adapter"), $dbConfig);
-
+            $db = \Zend_Db::factory("Pdo_Mysql", $dbConfig);
             $db->getConnection();
 
             // check utf-8 encoding
@@ -108,7 +107,6 @@ class Install_IndexController extends \Pimcore\Controller\Action
 
             $setup->config([
                 "database" => [
-                    "adapter" => $this->getParam("mysql_adapter"),
                     "params" => $dbConfig
                 ],
             ]);

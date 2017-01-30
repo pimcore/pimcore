@@ -27,9 +27,9 @@ class Install_CheckController extends \Pimcore\Controller\Action
             if (!$user instanceof User) {
                 die("Authentication failed!<br />If you don't have access to the admin interface any more, and you want to find out if the server configuration matches the requirements you have to rename the the system.php for the time of the check.");
             }
-        } elseif ($this->getParam("mysql_adapter")) {
+        } elseif ($this->getParam("mysql_username")) {
         } else {
-            die("Not possible... no database settings given.<br />Parameters: mysql_adapter,mysql_host,mysql_username,mysql_password,mysql_database");
+            die("Not possible... no database settings given.<br />Parameters: mysql_host,mysql_username,mysql_password,mysql_database");
         }
     }
 
@@ -62,13 +62,6 @@ class Install_CheckController extends \Pimcore\Controller\Action
             "name" => "PDO_Mysql",
             "link" => "http://www.php.net/pdo_mysql",
             "state" => @constant("PDO::MYSQL_ATTR_FOUND_ROWS") ? "ok" : "error"
-        ];
-
-        // pdo_mysql
-        $checksPHP[] = [
-            "name" => "Mysqli",
-            "link" => "http://www.php.net/mysqli",
-            "state" => class_exists("mysqli") ? "ok" : "error"
         ];
 
         // iconv
@@ -179,7 +172,7 @@ class Install_CheckController extends \Pimcore\Controller\Action
 
         $db = null;
 
-        if ($this->getParam("mysql_adapter")) {
+        if ($this->getParam("mysql_username")) {
             // this is before installing
             try {
                 $dbConfig = [
@@ -196,7 +189,7 @@ class Install_CheckController extends \Pimcore\Controller\Action
                     $dbConfig["port"] = $this->getParam("mysql_port");
                 }
 
-                $db = \Zend_Db::factory($this->getParam("mysql_adapter"), $dbConfig);
+                $db = \Zend_Db::factory("Pdo_Mysql", $dbConfig);
 
                 $db->getConnection();
             } catch (\Exception $e) {

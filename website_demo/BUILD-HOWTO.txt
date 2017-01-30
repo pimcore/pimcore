@@ -8,7 +8,6 @@
 # change db configuration to:
 
   "database" => [
-      "adapter" => "Mysqli",
       "params" => [
           "host" => "localhost",
           "username" => "pimcore_demo",

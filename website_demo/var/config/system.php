@@ -34,7 +34,6 @@ return [
         "show_cookie_notice" => FALSE
     ],
     "database" => [
-        "adapter" => "Mysqli",
         "params" => [
             "host" => "localhost",
             "username" => "pimcore_demo",
