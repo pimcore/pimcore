@@ -14,6 +14,10 @@ class TaggableRedisTest extends TaggableCachePoolTest
     use CacheItemPoolTestTrait;
     use RedisItemPoolTrait;
 
+    /**
+     * The redis pool does not clear all tag -> item relations properly, resulting in added items potentially having
+     * tags which were set in earlier writes as the tag -> cacheItem relation is not cleared properly. See comments below.
+     */
     public function testInvalidateTag()
     {
         if (isset($this->skippedTests[__FUNCTION__])) {
@@ -40,7 +44,7 @@ class TaggableRedisTest extends TaggableCachePoolTest
 
         // key2: tag1
         // -
-        // tag1: key, key2 <-- this is wrong
+        // tag1: key, key2 <-- this is wrong, key shouldn't be in the list anymore
 
         $this->assertFalse($this->cache->hasItem('key'), 'Item should be cleared when tag is invalidated');
         $this->assertTrue($this->cache->hasItem('key2'), 'Item should be cleared when tag is invalidated');
@@ -52,7 +56,7 @@ class TaggableRedisTest extends TaggableCachePoolTest
         // key: <no tags>
         // key2: tag1
         // -
-        // tag1: key, key2 <-- this is wrong
+        // tag1: key, key2 <-- this is wrong, key shouldn't be in the list anymore
 
         $this->cache->invalidateTags(['tag2']);
         $this->assertTrue($this->cache->hasItem('key'), 'Item key list should be removed when clearing the tags');
@@ -60,7 +64,7 @@ class TaggableRedisTest extends TaggableCachePoolTest
         // key: <no tags>
         // key2: tag1
         // -
-        // tag1: key, key2 <-- this is wrong
+        // tag1: key, key2 <-- this is wrong, key shouldn't be in the list anymore
 
         $this->cache->invalidateTags(['tag1']);
 
