@@ -41,13 +41,13 @@ class Cache
         return static::$zendHandler ? static::$zendHandler->getCache() : null;
     }
 
-    public static function init()
+    public static function init($containerKey = 'pimcore.cache.core.handler')
     {
         $container = \Pimcore::getDiContainer();
 
         if (null === static::$handler) {
             /** @var CoreHandlerInterface $handler */
-            static::$handler = $container->get('pimcore.cache.core.handler');
+            static::$handler = $container->get($containerKey);
         }
 
         // setup ZF cache
