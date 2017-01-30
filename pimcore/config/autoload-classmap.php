@@ -137,7 +137,6 @@ return  [
   'Pimcore\\Tool\\Cast' => $pdr . '/pimcore/lib/Pimcore/Tool/Cast.php',
   'Pimcore\\Tool\\Authentication' => $pdr . '/pimcore/lib/Pimcore/Tool/Authentication.php',
   'Pimcore\\Tool\\Transliteration' => $pdr . '/pimcore/lib/Pimcore/Tool/Transliteration.php',
-  'Pimcore\\Tool\\StopWatch' => $pdr . '/pimcore/lib/Pimcore/Tool/StopWatch.php',
   'Pimcore\\Tool\\Housekeeping' => $pdr . '/pimcore/lib/Pimcore/Tool/Housekeeping.php',
   'Pimcore\\Tool\\DeviceDetector' => $pdr . '/pimcore/lib/Pimcore/Tool/DeviceDetector.php',
   'Pimcore\\Tool\\Mime' => $pdr . '/pimcore/lib/Pimcore/Tool/Mime.php',

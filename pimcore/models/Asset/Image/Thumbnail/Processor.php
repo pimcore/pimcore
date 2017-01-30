@@ -18,7 +18,6 @@ namespace Pimcore\Model\Asset\Image\Thumbnail;
 
 use Pimcore\File;
 use Pimcore\Model\Tool\TmpStore;
-use Pimcore\Tool\StopWatch;
 use Pimcore\Model\Asset;
 use Pimcore\Logger;
 
@@ -197,7 +196,7 @@ class Processor
 
         $image->setUseContentOptimizedFormat($contentOptimizedFormat);
 
-        $startTime = StopWatch::microtime_float();
+        $startTime = microtime(true);
 
         $transformations = $config->getItems();
 
@@ -331,7 +330,7 @@ class Processor
 
         clearstatcache();
 
-        Logger::debug("Thumbnail " . $path . " generated in " . (StopWatch::microtime_float() - $startTime) . " seconds");
+        Logger::debug("Thumbnail " . $path . " generated in " . (microtime(true) - $startTime) . " seconds");
 
         // set proper permissions
         @chmod($fsPath, File::getDefaultMode());
