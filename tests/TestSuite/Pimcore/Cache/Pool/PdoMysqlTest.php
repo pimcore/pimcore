@@ -16,6 +16,11 @@ class PdoMysqlTest extends CachePoolTest
      */
     protected function buildCachePool()
     {
+        $db = getenv('TEST_MYSQL_DB');
+        if (!$db) {
+            $this->markTestSkipped('TEST_MYSQL_DB env var is not configured');
+        }
+
         return (new Factory())->createPdoMysqlItemPool($this->defaultLifetime);
     }
 }
