@@ -257,7 +257,9 @@ CONDITION
         return $this;
     }
 
-
+    /**
+     * @param callable $callback
+     */
     public function onCreateQuery(callable $callback)
     {
         $this->onCreateQueryCallback = $callback;

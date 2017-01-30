@@ -36,7 +36,6 @@ class Db
     protected static $_logCaptureActive = false;
 
     /**
-     * @static
      * @return string
      */
     public static function getType()

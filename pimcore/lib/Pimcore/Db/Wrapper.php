@@ -235,6 +235,11 @@ class Wrapper
         return $return;
     }
 
+    /**
+     * @param $sql
+     * @param array $bind
+     * @return mixed|null
+     */
     public function queryIgnoreError($sql, $bind = [])
     {
         try {
