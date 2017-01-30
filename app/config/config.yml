@@ -11,7 +11,7 @@ framework:
         resource: "%kernel.root_dir%/config/routing.yml"
         strict_requirements: ~
     templating:
-        engines: ['php', 'twig']
+        engines: ['php', 'twig', 'zend']
     default_locale:  "%locale%"
     php_errors:
         log: true

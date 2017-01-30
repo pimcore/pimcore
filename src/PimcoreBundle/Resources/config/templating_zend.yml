@@ -1,0 +1,20 @@
+services:
+    pimcore.view.zend_view.resolver:
+        class: PimcoreBundle\Templating\ZendResolver
+        arguments:
+            - '@templating.name_parser'
+            - '@templating.locator'
+
+    pimcore.view.zend_view.php_renderer:
+        class: Zend\View\Renderer\PhpRenderer
+        calls:
+            - [setResolver, ['@pimcore.view.zend_view.resolver']]
+
+    templating.engine.zend:
+        class: PimcoreBundle\Templating\ZendEngine
+        arguments:
+            - '@pimcore.view.zend_view.php_renderer'
+            - '@templating.name_parser'
+            - '@templating.loader.filesystem'
+        tags:
+            - { name: templating.engine }

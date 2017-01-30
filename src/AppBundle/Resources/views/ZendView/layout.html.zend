@@ -1,0 +1,15 @@
+<html>
+<head>
+    <style type="text/css">
+        h1 {
+            color: #ed1943;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Layout</h1>
+<?= $this->content; ?>
+
+</body>
+</html>
