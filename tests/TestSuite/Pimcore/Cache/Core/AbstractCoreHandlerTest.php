@@ -291,12 +291,63 @@ abstract class AbstractCoreHandlerTest extends TestCase
             );
         }
 
+        $this->assertCount(
+            $maxItems,
+            $this->getHandlerPropertyValue('saveQueue')
+        );
+
         $this->assertFalse($this->handler->save('additional_item', 'foo'));
+
+        $queue = $this->getHandlerPropertyValue('saveQueue');
+        for ($i = 1; $i <= $maxItems; $i++) {
+            $this->assertArrayHasKey('item_' . $i, $queue);
+        }
+
+        $this->assertArrayNotHasKey('additional_item', $queue);
 
         $this->assertCount(
             $maxItems,
             $this->getHandlerPropertyValue('saveQueue')
         );
+
+        $this->handler->writeSaveQueue();
+
+        for ($i = 1; $i <= $maxItems; $i++) {
+            $this->assertTrue($this->handler->getItem('item_' . $i)->isHit());
+        }
+    }
+
+    public function testWriteQueueRespectsPriority()
+    {
+        $maxItems = $this->getHandlerPropertyValue('maxWriteToCacheItems');
+
+        for ($i = 1; $i <= $maxItems; $i++) {
+            $this->assertTrue($this->handler->save('item_' . $i, $i));
+
+            $this->assertCount(
+                $i,
+                $this->getHandlerPropertyValue('saveQueue')
+            );
+        }
+
+        $this->assertCount(
+            $maxItems,
+            $this->getHandlerPropertyValue('saveQueue')
+        );
+
+        $this->assertTrue($this->handler->save('additional_item', 'foo', [], null, 10));
+
+        $queue = $this->getHandlerPropertyValue('saveQueue');
+
+        $this->assertArrayHasKey('additional_item', $queue);
+
+        $this->assertCount(
+            $maxItems,
+            $this->getHandlerPropertyValue('saveQueue')
+        );
+
+        $this->handler->writeSaveQueue();
+        $this->assertTrue($this->handler->getItem('additional_item')->isHit());
     }
 
     public function testNoWriteOnDisabledCache()

@@ -14,7 +14,7 @@ use Psr\Log\LoggerInterface;
 /**
  * Core pimcore cache handler with logic handling deferred save on shutdown (specialized for internal pimcore use). This
  * explicitely does not expose a PSR-6 API but is intended for internal use from Pimcore\Cache or directly. Actual
- * cache calls are forwarded to a PSR-6/Symfony Cache implementation though.
+ * cache calls are forwarded to a PSR-6 cache implementation though.
  */
 class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
 {
