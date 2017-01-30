@@ -204,7 +204,7 @@ class Image extends Model\Asset
             }
         }
 
-        if(!$dimensions) {
+        if (!$dimensions) {
             $image = self::getImageTransformInstance();
 
             $status = $image->load($path, ["preserveColor" => true]);
@@ -224,7 +224,7 @@ class Image extends Model\Asset
             if (is_array($exif)) {
                 if (array_key_exists("Orientation", $exif)) {
                     $orientation = intval($exif["Orientation"]);
-                    if (in_array($orientation, [5,6,7,8])) {
+                    if (in_array($orientation, [5, 6, 7, 8])) {
                         // flip height & width
                         $dimensions = [
                             "width" => $dimensions["height"],

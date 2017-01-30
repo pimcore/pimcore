@@ -499,20 +499,20 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
         if (is_file($controllerFile)) {
             require_once $controllerFile;
 
-            if(!Tool::classExists($reflectionClass)){
-                if($this->getParam('moduleName')){
+            if (!Tool::classExists($reflectionClass)) {
+                if ($this->getParam('moduleName')) {
                     $reflectionClass = $this->getParam('moduleName').'_'.$reflectionClass;
                 }
             }
 
-            if(Tool::classExists($reflectionClass)){
+            if (Tool::classExists($reflectionClass)) {
                 $oReflectionClass = new \ReflectionClass($reflectionClass);
 
                 $methods = $oReflectionClass->getMethods(\ReflectionMethod::IS_PUBLIC);
                 $methods = array_filter(
                     $methods, function (\ReflectionMethod $method) {
-                    return preg_match('/^([a-zA-Z0-9]+)Action$/', $method->getName());
-                });
+                        return preg_match('/^([a-zA-Z0-9]+)Action$/', $method->getName());
+                    });
                 $actions = array_values(array_map(
                     function (\ReflectionMethod $method) {
                         $name = preg_replace('/Action$/', '', $method->getName());
