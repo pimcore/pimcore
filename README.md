@@ -1,4 +1,4 @@
-# pimcore
+# Pimcore 4
 
 THE OPEN-SOURCE ENTERPRISE CMS/CMF, PIM, DAM, ECOMMERCE-SUITE
 
@@ -11,11 +11,11 @@ THE OPEN-SOURCE ENTERPRISE CMS/CMF, PIM, DAM, ECOMMERCE-SUITE
 ![Administration Interface](website_demo/static/screenshots/1.png)
 
 * [Documentation](https://www.pimcore.org/wiki/)
-* Homepage: [http://www.pimcore.org/](http://www.pimcore.org/) - Learn more about pimcore
+* Homepage: [http://www.pimcore.org/](http://www.pimcore.org/) - Learn more about Pimcore
 * Like us on [Facebook](https://www.facebook.com/pimcore)
 * Twitter: [@pimcore](https://twitter.com/pimcore) - Get the latest news
 * Issue Tracker: - [Issues](https://github.com/pimcore/pimcore/issues) - Report bugs here
-* Help [translating](https://poeditor.com/join/project/VWmZyvFVMH) pimcore
+* Help [translating](https://poeditor.com/join/project/VWmZyvFVMH) Pimcore
 * [Google Group](https://groups.google.com/forum/#!forum/pimcore) - Discussions 
 * [StackOverflow](http://stackoverflow.com/questions/tagged/pimcore) - Questions / Support 
 
@@ -23,8 +23,8 @@ THE OPEN-SOURCE ENTERPRISE CMS/CMF, PIM, DAM, ECOMMERCE-SUITE
 ## Getting started
 
 Download the [latest release](http://www.pimcore.org/download) and extract the archive in document root.
-Create a database for pimcore (charset: utf8). If you have a website_example (empty installation) or a website_demo (boilerplate) folder please rename one of them to website (only if cloning from git).
-Run the pimcore installation by accessing the URL where you uploaded the pimcore files in a browser.
+Create a database for Pimcore (charset: utf8). If you have a website_example (empty installation) or a website_demo (boilerplate) folder please rename one of them to website (only if cloning from git).
+Run the Pimcore installation by accessing the URL where you uploaded the Pimcore files in a browser.
 
 ```
 cd /your/document/root
@@ -49,7 +49,7 @@ Please have a look at our [contributing guide](CONTRIBUTING.md).
 **Security vulnerabilities:** please contact us (security@pimcore.org)  
 
 ## Copyright and license 
-Copyright: [pimcore](http://www.pimcore.org) GmbH  
+Copyright: [Pimcore](http://www.pimcore.org) GmbH  
 For licensing details please visit [LICENSE.md](LICENSE.md) 
   
   
