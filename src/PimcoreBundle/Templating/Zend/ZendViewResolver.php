@@ -1,13 +1,13 @@
 <?php
 
-namespace PimcoreBundle\Templating;
+namespace PimcoreBundle\Templating\Zend;
 
 use Symfony\Component\Config\FileLocatorInterface;
 use Symfony\Component\Templating\TemplateNameParserInterface;
 use Zend\View\Renderer\RendererInterface as Renderer;
 use Zend\View\Resolver\ResolverInterface;
 
-class ZendResolver implements ResolverInterface
+class ZendViewResolver implements ResolverInterface
 {
     /**
      * @var TemplateNameParserInterface

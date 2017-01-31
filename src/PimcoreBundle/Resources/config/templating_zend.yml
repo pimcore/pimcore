@@ -1,24 +1,24 @@
 services:
-    pimcore.view.zend_view.name_parser:
-        class: PimcoreBundle\Templating\ZendTemplateNameParser
+    pimcore.templating.zend.name_parser:
+        class: PimcoreBundle\Templating\Zend\ZendTemplateNameParser
         arguments: ['@kernel']
 
-    pimcore.view.zend_view.resolver:
-        class: PimcoreBundle\Templating\ZendResolver
+    pimcore.templating.zend.view_resolver:
+        class: PimcoreBundle\Templating\Zend\ZendViewResolver
         arguments:
-            - '@pimcore.view.zend_view.name_parser'
+            - '@pimcore.templating.zend.name_parser'
             - '@templating.locator'
 
-    pimcore.view.zend_view.php_renderer:
+    pimcore.templating.zend.php_renderer:
         class: Zend\View\Renderer\PhpRenderer
         calls:
-            - [setResolver, ['@pimcore.view.zend_view.resolver']]
+            - [setResolver, ['@pimcore.templating.zend.view_resolver']]
 
     templating.engine.zend:
-        class: PimcoreBundle\Templating\ZendEngine
+        class: PimcoreBundle\Templating\Zend\ZendEngine
         arguments:
-            - '@pimcore.view.zend_view.php_renderer'
-            - '@pimcore.view.zend_view.name_parser'
+            - '@pimcore.templating.zend.php_renderer'
+            - '@pimcore.templating.zend.name_parser'
             - '@templating.loader.filesystem'
         tags:
             - { name: templating.engine }

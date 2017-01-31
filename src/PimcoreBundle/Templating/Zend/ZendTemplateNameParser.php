@@ -1,7 +1,8 @@
 <?php
 
-namespace PimcoreBundle\Templating;
+namespace PimcoreBundle\Templating\Zend;
 
+use PimcoreBundle\Templating\Zend\ZendTemplateReference;
 use Symfony\Bundle\FrameworkBundle\Templating\TemplateNameParser;
 use Symfony\Component\Templating\TemplateReferenceInterface;
 
@@ -44,7 +45,7 @@ class ZendTemplateNameParser extends TemplateNameParser
 
     private function isAbsolutePath($file)
     {
-        $isAbsolute = (bool) preg_match('#^(?:/|[a-zA-Z]:)#', $file);
+        $isAbsolute = (bool)preg_match('#^(?:/|[a-zA-Z]:)#', $file);
 
         if ($isAbsolute) {
             @trigger_error('Absolute template path support is deprecated since Symfony 3.1 and will be removed in 4.0.', E_USER_DEPRECATED);
