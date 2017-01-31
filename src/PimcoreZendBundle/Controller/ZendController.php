@@ -1,6 +1,6 @@
 <?php
 
-namespace PimcoreBundle\Controller\Zend;
+namespace PimcoreZendBundle\Controller;
 
 use PimcoreBundle\Controller\DocumentAwareInterface;
 use PimcoreBundle\Controller\FrontendController;

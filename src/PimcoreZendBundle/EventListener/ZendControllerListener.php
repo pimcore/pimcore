@@ -1,10 +1,10 @@
 <?php
 
-namespace PimcoreBundle\EventListener\Zend;
+namespace PimcoreZendBundle\EventListener;
 
-use PimcoreBundle\Controller\Zend\ZendControllerInterface;
+use PimcoreZendBundle\Controller\ZendControllerInterface;
 use PimcoreBundle\Service\Request\TemplateVarsResolver;
-use PimcoreBundle\Templating\Zend\ZendTemplateReference;
+use PimcoreZendBundle\Templating\ZendTemplateReference;
 use Sensio\Bundle\FrameworkExtraBundle\Templating\TemplateGuesser;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;

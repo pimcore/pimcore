@@ -2,7 +2,7 @@
 
 namespace AppBundle\Controller;
 
-use PimcoreBundle\Controller\Zend\ZendController;
+use PimcoreZendBundle\Controller\ZendController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;

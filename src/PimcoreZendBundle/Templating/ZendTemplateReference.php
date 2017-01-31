@@ -1,6 +1,6 @@
 <?php
 
-namespace PimcoreBundle\Templating\Zend;
+namespace PimcoreZendBundle\Templating;
 
 use Symfony\Component\Templating\TemplateReference as BaseTemplateReference;
 

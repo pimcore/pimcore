@@ -33,12 +33,3 @@ services:
             - [setLogger, ['@logger']]
         tags:
             - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
-
-    pimcore.event_listener.zend_controller:
-        class: PimcoreBundle\EventListener\Zend\ZendControllerListener
-        arguments:
-            - '@templating'
-            - '@pimcore.service.request.template_vars_resolver'
-            - '@sensio_framework_extra.view.guesser'
-        tags:
-            - { name: kernel.event_subscriber }

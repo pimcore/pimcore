@@ -1,8 +1,8 @@
 <?php
 
-namespace PimcoreBundle\Templating\Zend;
+namespace PimcoreZendBundle\Templating;
 
-use PimcoreBundle\Templating\Zend\ZendTemplateReference;
+use PimcoreZendBundle\Templating\ZendTemplateReference;
 use Symfony\Bundle\FrameworkBundle\Templating\TemplateNameParser;
 use Symfony\Component\Templating\TemplateReferenceInterface;
 

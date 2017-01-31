@@ -1,6 +1,6 @@
 <?php
 
-namespace PimcoreBundle\DependencyInjection\Compiler;
+namespace PimcoreZendBundle\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -24,7 +24,7 @@ class ZendViewHelperCompilerPass implements CompilerPassInterface
         }
 
         if (count($helpers) > 0) {
-            $pluginManagerDefinition = $container->getDefinition('pimcore.templating.zend.helper_plugin_manager');
+            $pluginManagerDefinition = $container->getDefinition('pimcore.zend.templating.helper_plugin_manager');
 
             foreach ($helpers as $alias => $id) {
                 $pluginManagerDefinition->addMethodCall('setService', [$alias, new Reference($id)]);

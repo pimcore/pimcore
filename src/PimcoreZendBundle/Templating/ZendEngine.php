@@ -1,6 +1,6 @@
 <?php
 
-namespace PimcoreBundle\Templating\Zend;
+namespace PimcoreZendBundle\Templating;
 
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\HttpFoundation\Response;

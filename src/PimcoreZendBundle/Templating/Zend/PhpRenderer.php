@@ -1,6 +1,6 @@
 <?php
 
-namespace PimcoreBundle\Templating\Zend;
+namespace PimcoreZendBundle\Templating\Zend;
 
 use PimcoreBundle\Document\TagRenderer;
 use Zend\View\Renderer\PhpRenderer as BasePhpRenderer;

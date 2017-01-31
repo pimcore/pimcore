@@ -1,6 +1,6 @@
 <?php
 
-namespace PimcoreBundle\Templating\Zend\Helper;
+namespace PimcoreZendBundle\Templating\Zend\Helper;
 
 use PimcoreBundle\Document\TagRenderer;
 use PimcoreBundle\Service\Request\DocumentResolver;

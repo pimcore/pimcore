@@ -1,6 +1,6 @@
 <?php
 
-namespace PimcoreBundle\Templating\Zend;
+namespace PimcoreZendBundle\Templating\Zend;
 
 use Symfony\Component\Config\FileLocatorInterface;
 use Symfony\Component\Templating\TemplateNameParserInterface;

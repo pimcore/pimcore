@@ -1,6 +1,6 @@
 <?php
 
-namespace PimcoreBundle\Controller\Zend;
+namespace PimcoreZendBundle\Controller;
 
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;

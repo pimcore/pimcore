@@ -5,6 +5,7 @@ namespace Pimcore;
 use LegacyBundle\LegacyBundle;
 use PimcoreAdminBundle\PimcoreAdminBundle;
 use PimcoreBundle\PimcoreBundle;
+use PimcoreZendBundle\PimcoreZendBundle;
 use Sensio\Bundle\DistributionBundle\SensioDistributionBundle;
 use Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle;
 use Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle;
@@ -34,6 +35,7 @@ abstract class Kernel extends \DI\Bridge\Symfony\Kernel
             new MonologBundle(),
             new CmfRoutingBundle(),
             new PimcoreBundle(),
+            new PimcoreZendBundle(),
             new PimcoreAdminBundle(),
             new LegacyBundle(),
         ];
