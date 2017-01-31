@@ -1,19 +1,18 @@
 <?php
 
-
 namespace PimcoreBundle\EventListener;
-
 
 use Pimcore\Controller\Router\Route\Frontend;
 use Pimcore\Model\Document;
+use PimcoreBundle\Controller\DocumentAwareInterface;
 use PimcoreBundle\Service\Request\DocumentResolver as DocumentResolverService;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\KernelEvents;
 
-/**
- * Finds the nearest document for the current request if the routing/document router didn't (e.g. static routes)
- */
-class DocumentResolver
+class DocumentResolver implements EventSubscriberInterface
 {
     /**
      * @var DocumentResolverService
@@ -28,6 +27,11 @@ class DocumentResolver
         $this->documentResolverService = $documentResolverService;
     }
 
+    /**
+     * Finds the nearest document for the current request if the routing/document router didn't (e.g. static routes)
+     *
+     * @param GetResponseEvent $event
+     */
     public function onKernelRequest(GetResponseEvent $event)
     {
         if (!$event->isMasterRequest()) {
@@ -47,6 +51,27 @@ class DocumentResolver
     }
 
     /**
+     * Injects document into DocumentAware controllers
+     *
+     * @param FilterControllerEvent $event
+     */
+    public function onKernelController(FilterControllerEvent $event)
+    {
+        $callable = $event->getController();
+
+        if (is_array($callable)) {
+            $controller = $callable[0];
+
+            if ($controller instanceof DocumentAwareInterface) {
+                $document = $this->documentResolverService->getDocument($event->getRequest());
+                if ($document) {
+                    $controller->setDocument($document);
+                }
+            }
+        }
+    }
+
+    /**
      * @param Request $request
      * @return Document|null
      */
@@ -61,5 +86,16 @@ class DocumentResolver
         $nearestDocument = $method->invoke(new Frontend(), $request->getPathInfo());
 
         return $nearestDocument;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedEvents()
+    {
+        return [
+            KernelEvents::REQUEST    => ['onKernelRequest', 5], // higher priority - run before editmode and editable handlers
+            KernelEvents::CONTROLLER => 'onKernelController'
+        ];
     }
 }

@@ -4,14 +4,18 @@ namespace AppBundle\Controller;
 
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
+use PimcoreBundle\Controller\DocumentAwareInterface;
+use PimcoreBundle\Controller\Traits\DocumentAwareTrait;
 use PimcoreBundle\View\ZendViewHelperBridge;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
-class ContentController extends Controller
+class ContentController extends Controller implements DocumentAwareInterface
 {
+    use DocumentAwareTrait;
+
     /**
      * @Route("/content/php")
      * @Template("AppBundle:Test:php.html.php", engine="php")
