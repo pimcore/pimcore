@@ -2,3 +2,8 @@ services:
     app.templating.language_switcher:
         class: AppBundle\Templating\LanguageSwitcher
         arguments: ['@pimcore.document_service']
+
+    app.templating.zend.view_helper.foobar:
+        class: AppBundle\Templating\Zend\View\Helper\FooBar
+        tags:
+            - { name: pimcore.zend.view_helper, alias: fooBar }

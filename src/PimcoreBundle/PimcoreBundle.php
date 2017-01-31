@@ -2,12 +2,21 @@
 
 namespace PimcoreBundle;
 
+use PimcoreBundle\DependencyInjection\Compiler\ZendViewHelperCompilerPass;
 use PimcoreBundle\DependencyInjection\PimcoreExtension;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class PimcoreBundle extends Bundle
 {
+    public function build(ContainerBuilder $container)
+    {
+        parent::build($container);
+
+        $container->addCompilerPass(new ZendViewHelperCompilerPass());
+    }
+
     /**
      * Returns the bundle's container extension.
      *

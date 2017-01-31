@@ -1,4 +1,17 @@
 services:
+    pimcore.templating.zend.helper_service_manager:
+        class: Zend\ServiceManager\ServiceManager
+
+    pimcore.templating.zend.helper_plugin_manager:
+        class: Zend\View\HelperPluginManager
+        arguments: ['@pimcore.templating.zend.helper_service_manager']
+
+    pimcore.templating.zend.php_renderer:
+        class: Zend\View\Renderer\PhpRenderer
+        calls:
+            - [setResolver, ['@pimcore.templating.zend.view_resolver']]
+            - [setHelperPluginManager, ['@pimcore.templating.zend.helper_plugin_manager']]
+
     pimcore.templating.zend.name_parser:
         class: PimcoreBundle\Templating\Zend\ZendTemplateNameParser
         arguments: ['@kernel']
@@ -8,11 +21,6 @@ services:
         arguments:
             - '@pimcore.templating.zend.name_parser'
             - '@templating.locator'
-
-    pimcore.templating.zend.php_renderer:
-        class: Zend\View\Renderer\PhpRenderer
-        calls:
-            - [setResolver, ['@pimcore.templating.zend.view_resolver']]
 
     templating.engine.zend:
         class: PimcoreBundle\Templating\Zend\ZendEngine
