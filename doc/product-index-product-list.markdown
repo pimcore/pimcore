@@ -204,6 +204,7 @@ If you need to create or update the index structures you can use:
 are added to the preparation queue (see later). As a consequence a regular full update should not be necessary any more.
 - Used for optimized mysql, elastic search, ...
 
+![productindex-optimized](images/productindex-optimized.png)
 
 For updating data in index following commands are available:
 - For process the preparation queue and update pimcore objects to the index store use following command. This command should be executed periodically (e.g. all 10 mins)
@@ -239,7 +240,6 @@ For updating data in index following commands are available:
 ```
 
 
-![productindex-optimized](images/productindex-optimized.png)
 
 #### Special aspects with elastic search
 It is possible that elastic search cannot update the mapping if e.g. datatypes attributes change. For this case, a reindex is necessary. 
