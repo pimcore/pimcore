@@ -5,7 +5,8 @@ class AppKernel extends \Pimcore\Kernel
     public function registerBundles()
     {
         $bundles = array_merge(parent::registerBundles(), [
-            new \AppBundle\AppBundle()
+            new \AppBundle\AppBundle(),
+            new \WebsiteDemoBundle\WebsiteDemoBundle()
         ]);
 
         return $bundles;
