@@ -1,0 +1,44 @@
+services:
+    pimcore.event_listener.document_resolver:
+        class: PimcoreBundle\EventListener\DocumentResolver
+        arguments: ['@pimcore.service.request.document_resolver']
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 5 }
+
+    pimcore.event_listener.object_listener:
+        class: PimcoreBundle\EventListener\ObjectListener
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 500 }
+
+    pimcore.event_listener.editmode:
+        class: PimcoreBundle\EventListener\Editmode
+        arguments: ['@pimcore.service.request.editmode_resolver', '@pimcore.service.request.document_resolver']
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
+            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
+
+    pimcore.event_listener.areablock:
+        class: PimcoreBundle\EventListener\Areablock
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
+            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
+
+    pimcore.event_listener.zend_translate:
+        class: PimcoreBundle\EventListener\ZendTranslate
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
+
+    pimcore.event_listener.zend_controller:
+        class: PimcoreBundle\EventListener\Zend\ZendControllerListener
+        arguments:
+            - '@templating'
+            - '@pimcore.service.request.template_vars_resolver'
+            - '@sensio_framework_extra.view.guesser'
+        tags:
+            - { name: kernel.event_subscriber }

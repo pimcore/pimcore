@@ -2,8 +2,7 @@
 
 namespace PimcoreBundle\ArgumentResolver;
 
-use PimcoreBundle\Service\Request\DocumentResolver;
-use PimcoreBundle\Service\Request\EditmodeResolver;
+use PimcoreBundle\Service\Request\TemplateVarsResolver;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
@@ -11,23 +10,16 @@ use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 class TemplateVarsValueResolver implements ArgumentValueResolverInterface
 {
     /**
-     * @var EditmodeResolver
+     * @var TemplateVarsResolver
      */
-    protected $editmodeResolver;
+    protected $templateVarsResolver;
 
     /**
-     * @var DocumentResolver
+     * @param TemplateVarsResolver $templateVarsResolver
      */
-    protected $documentResolver;
-
-    /**
-     * @param EditmodeResolver $editmodeResolver
-     * @param DocumentResolver $documentResolver
-     */
-    public function __construct(EditmodeResolver $editmodeResolver, DocumentResolver $documentResolver)
+    public function __construct(TemplateVarsResolver $templateVarsResolver)
     {
-        $this->editmodeResolver = $editmodeResolver;
-        $this->documentResolver = $documentResolver;
+        $this->templateVarsResolver = $templateVarsResolver;
     }
 
     /**
@@ -47,10 +39,6 @@ class TemplateVarsValueResolver implements ArgumentValueResolverInterface
      */
     public function resolve(Request $request, ArgumentMetadata $argument)
     {
-        yield [
-            'editmode' => $this->editmodeResolver->isEditmode($request),
-            'document' => $this->documentResolver->getDocument($request)
-        ];
+        yield $this->templateVarsResolver->getTemplateVars($request);
     }
-
 }

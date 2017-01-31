@@ -2,10 +2,7 @@
 
 namespace PimcoreBundle;
 
-use PimcoreBundle\DependencyInjection\Compiler\OverrideTemplatingPhpEngineCompilerPass;
-use PimcoreBundle\DependencyInjection\Compiler\TemplatingNameResolversCompilerPass;
 use PimcoreBundle\DependencyInjection\PimcoreExtension;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 

@@ -8,6 +8,7 @@ use Symfony\Component\Templating\Loader\LoaderInterface;
 use Symfony\Component\Templating\Storage\Storage;
 use Symfony\Component\Templating\TemplateNameParserInterface;
 use Symfony\Component\Templating\TemplateReferenceInterface;
+use Zend\View\Model\ModelInterface;
 use Zend\View\Model\ViewModel;
 use Zend\View\Renderer\RendererInterface;
 
@@ -79,24 +80,23 @@ class ZendEngine implements EngineInterface
      */
     public function render($name, array $parameters = [])
     {
-        $layout = null;
+        /** @var ModelInterface $view */
+        $view = null;
+
+        if (isset($parameters['_view'])) {
+            $view = $this->buildModel($parameters['_view']);
+            unset($parameters['_view']);
+        } else {
+            $view = new ViewModel();
+            $view->setTemplate($name);
+        }
+
+        $view->setVariables($parameters);
 
         if (isset($parameters['_layout'])) {
-            $layout = new ViewModel();
-            $layout->setTemplate($parameters['_layout']);
-
+            $layout = $this->buildModel($parameters['_layout']);
             unset($parameters['_layout']);
-        }
 
-        $view = new ViewModel();
-        $view->setCaptureTo('content');
-        $view->setTemplate($name);
-
-        foreach ($parameters as $key => $value) {
-            $view->$key = $value;
-        }
-
-        if (null !== $layout) {
             $layout->addChild($view, 'content');
             $view = $layout;
         }
@@ -104,6 +104,22 @@ class ZendEngine implements EngineInterface
         $result = $this->renderModel($view);
 
         return $result;
+    }
+
+    /**
+     * @param string|ModelInterface $name
+     * @return ModelInterface
+     */
+    protected function buildModel($name)
+    {
+        if ($name instanceof ModelInterface) {
+            return $name;
+        }
+
+        $model = new ViewModel();
+        $model->setTemplate($name);
+
+        return $model;
     }
 
     /**

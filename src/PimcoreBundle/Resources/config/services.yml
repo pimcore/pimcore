@@ -9,41 +9,6 @@ services:
     pimcore.plugin_broker:
         class: Pimcore\API\Plugin\Broker
 
-    pimcore.event_listener.document_resolver:
-        class: PimcoreBundle\EventListener\DocumentResolver
-        arguments: ['@pimcore.service.request.document_resolver']
-        tags:
-            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 5 }
-
-    pimcore.event_listener.object_listener:
-        class: PimcoreBundle\EventListener\ObjectListener
-        tags:
-            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 500 }
-
-    pimcore.event_listener.editmode:
-        class: PimcoreBundle\EventListener\Editmode
-        arguments: ['@pimcore.service.request.editmode_resolver', '@pimcore.service.request.document_resolver']
-        calls:
-            - [setLogger, ['@logger']]
-        tags:
-            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
-            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
-
-    pimcore.event_listener.areablock:
-        class: PimcoreBundle\EventListener\Areablock
-        calls:
-            - [setLogger, ['@logger']]
-        tags:
-            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
-            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
-
-    pimcore.event_listener.zend_translate:
-        class: PimcoreBundle\EventListener\ZendTranslate
-        calls:
-            - [setLogger, ['@logger']]
-        tags:
-            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
-
     pimcore.value_resolver.document:
         class: PimcoreBundle\ArgumentResolver\DocumentValueResolver
         arguments: ['@pimcore.service.request.document_resolver']
@@ -52,7 +17,7 @@ services:
 
     pimcore.value_resolver.template_vars:
         class: PimcoreBundle\ArgumentResolver\TemplateVarsValueResolver
-        arguments: ['@pimcore.service.request.editmode_resolver', '@pimcore.service.request.document_resolver']
+        arguments: ['@pimcore.service.request.template_vars_resolver']
         tags:
             - { name: controller.argument_value_resolver }
 
@@ -71,6 +36,10 @@ services:
     pimcore.service.request.document_resolver:
         class: PimcoreBundle\Service\Request\DocumentResolver
         arguments: ['@request_stack']
+
+    pimcore.service.request.template_vars_resolver:
+        class: PimcoreBundle\Service\Request\TemplateVarsResolver
+        arguments: ['@pimcore.service.request.document_resolver', '@pimcore.service.request.editmode_resolver']
 
     # simple services exposing get() API for documents, objects and assets
     # this is only necessar if loading objects directly with only access to the container, e.g. templates
