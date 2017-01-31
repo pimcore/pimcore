@@ -200,15 +200,35 @@ If you need to create or update the index structures you can use:
    - ... update the product index asynchronously and therefore update also dependent elements of an updated pimcore objects without impact on save performance. 
    - ... rebuild the whole product index out of the store table much faster since no direct interaction with pimcore objects is needed. 
 
-- After every update of a pimcore object, the changes are written into the index store table and all child objects of the updated object are added to the preparation queue. 
-- For manually update all pimcore objects to the index store use following command: 
+- After every update of a pimcore object, the changes are written into the index store table and all child objects of the updated object
+are added to the preparation queue (see later). As a consequence a regular full update should not be necessary any more.
+- Used for optimized mysql, elastic search, ...
+
+
+For updating data in index following commands are available:
+- For process the preparation queue and update pimcore objects to the index store use following command. This command should be executed periodically (e.g. all 10 mins)
+
+```php
+<?php
+\OnlineShop\Framework\IndexService\Tool\IndexUpdater::processPreparationQueue();
+```
+
+- To update the product index based on changes stored in the store table use the following command. This command should be executed periodically (e.g. all 10 mins)
+
+```php
+<?php
+\OnlineShop\Framework\IndexService\Tool\IndexUpdater::processUpdateIndexQueue();
+```
+- For manually update all pimcore objects to the index store use following command.  As stated before, this should only be
+  necessary for an initial fill-up of the index. After that, at least Product Index Store and Pimcore objects should always be in sync.
+  It is important to execute `processPreparationQueue()` and `processUpdateIndexQueue()` periodically though.
 
 ```php
 <?php
 \OnlineShop\Framework\IndexService\Tool\IndexUpdater::updateIndex("Object_Product_List");
 ```
 
-If you need to create or update the index structures you can use:
+- If you need to create or update the index structures you can use:
 
 ```php
 <?php
@@ -218,21 +238,6 @@ If you need to create or update the index structures you can use:
 \OnlineShop\Framework\Factory::getInstance()->getIndexService()->createOrUpdateIndexStructures();
 ```
 
-- For process the preparation queue and update pimcore objects to the index store use following command. This command should be executed periodically (e.g. all 10 mins) 
-
-```php
-<?php
-\OnlineShop\Framework\IndexService\Tool\IndexUpdater::processPreparationQueue();
-```
-
-- To update the product index based on changes stored in the store table use the following command. This command should be executed periodically (e.g. all 10 mins)  
-
-```php
-<?php
-\OnlineShop\Framework\IndexService\Tool\IndexUpdater::processUpdateIndexQueue();
-```
-
-- Used for optimized mysql, elastic search, ...
 
 ![productindex-optimized](images/productindex-optimized.png)
 
