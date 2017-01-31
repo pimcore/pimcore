@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
 use PimcoreBundle\View\ZendViewHelperBridge;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -12,6 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 class ContentController extends Controller
 {
     /**
+     * @Route("/content/php")
      * @Template("AppBundle:Test:php.html.php", engine="php")
      *
      * @param Request $request
@@ -23,6 +25,7 @@ class ContentController extends Controller
     }
 
     /**
+     * @Route("/content/twig")
      * @Template("AppBundle:Test:twig.html.twig")
      *
      * @param Request $request
