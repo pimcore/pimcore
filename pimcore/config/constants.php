@@ -100,3 +100,7 @@ if (!defined("PIMCORE_LOG_MAIL_PERMANENT")) {
 if (!defined('PIMCORE_SYMFONY_APP')) {
     define("PIMCORE_SYMFONY_APP", PIMCORE_DOCUMENT_ROOT . '/app');
 }
+
+if (!defined('PIMCORE_SYMFONY_MODE')) {
+    define('PIMCORE_SYMFONY_MODE', false);
+}

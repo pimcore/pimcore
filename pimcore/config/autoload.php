@@ -19,8 +19,11 @@ $includePaths = [
 set_include_path(implode(PATH_SEPARATOR, $includePaths) . PATH_SEPARATOR);
 
 // composer autoloader
-$composerLoader = include_once(PIMCORE_DOCUMENT_ROOT . "/vendor/autoload.php");
-AnnotationRegistry::registerLoader([$composerLoader, 'loadClass']);
+if (PIMCORE_SYMFONY_MODE) {
+    $composerLoader = require_once PIMCORE_SYMFONY_APP . '/autoload.php';
+} else {
+    $composerLoader = require_once PIMCORE_DOCUMENT_ROOT . '/vendor/autoload.php';
+}
 
 // helper functions
 include(dirname(__FILE__) . "/helper.php");
