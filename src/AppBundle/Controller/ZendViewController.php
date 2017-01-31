@@ -12,8 +12,8 @@ class ZendViewController extends Controller
      */
     public function zendViewAction()
     {
-        return $this->render('AppBundle:ZendView:test.html.zend', [
-            '_layout' => 'AppBundle:ZendView:layout.html.zend',
+        return $this->render('AppBundle:ZendView:test.phtml', [
+            '_layout' => 'AppBundle:ZendView:layout.phtml',
             'foo' => 'bar'
         ]);
     }
