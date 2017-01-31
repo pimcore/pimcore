@@ -3,14 +3,14 @@
 namespace PimcoreBundle\Controller\Zend;
 
 use PimcoreBundle\Controller\DocumentAwareInterface;
+use PimcoreBundle\Controller\FrontendController;
 use PimcoreBundle\Controller\Traits\DocumentAwareTrait;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Zend\View\Model\ModelInterface;
 use Zend\View\Model\ViewModel;
 
-abstract class ZendController extends Controller implements ZendControllerInterface, DocumentAwareInterface
+abstract class ZendController extends FrontendController implements ZendControllerInterface, DocumentAwareInterface
 {
     use DocumentAwareTrait;
 
