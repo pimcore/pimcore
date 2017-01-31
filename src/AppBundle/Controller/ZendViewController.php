@@ -26,6 +26,11 @@ class ZendViewController extends ZendController
         $this->container->get('logger')->debug(__METHOD__);
     }
 
+    public function contentAction()
+    {
+        $this->enableLayout('AppBundle:ZendView:layout.phtml');
+    }
+
     /**
      * @Route("/zf-default")
      */

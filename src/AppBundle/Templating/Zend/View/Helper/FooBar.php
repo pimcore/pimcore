@@ -6,11 +6,13 @@ use Zend\View\Helper\AbstractHelper;
 
 class FooBar extends AbstractHelper
 {
+    protected $count = 0;
+
     /**
      * @return string
      */
     public function __invoke()
     {
-        return 'fooBar: ' . time();
+        return 'fooBar: ' . $this->count++;
     }
 }
