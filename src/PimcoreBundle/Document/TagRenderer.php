@@ -39,6 +39,28 @@ class TagRenderer implements LoggerAwareInterface
     }
 
     /**
+     * @param $type
+     * @return bool
+     */
+    public function tagExists($type)
+    {
+        // TODO register tags on container
+        $class = '\\Pimcore\\Model\\Document\\Tag\\' . ucfirst(strtolower($type));
+
+        $classFound = false;
+        if (\Pimcore\Tool::classExists($class)) { // TODO use ClassUtils
+            $classFound = true;
+        } else {
+            $oldStyleClass = 'Document_Tag_' . ucfirst(strtolower($type));
+            if (\Pimcore\Tool::classExists($oldStyleClass)) {
+                $classFound = true;
+            }
+        }
+
+        return $classFound;
+    }
+
+    /**
      * @param PageSnippet $document
      * @param $type
      * @param $inputName
@@ -65,7 +87,7 @@ class TagRenderer implements LoggerAwareInterface
                     }
 
                     // create dummy view and add needed vars (depending on element)
-                    $view = $this->viewProvider->getView();
+                    $view           = $this->viewProvider->getView();
                     $view->editmode = $editmode;
                     $view->document = $document;
 

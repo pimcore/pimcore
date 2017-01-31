@@ -7,10 +7,11 @@ services:
         arguments: ['@pimcore.templating.zend.helper_service_manager']
 
     pimcore.templating.zend.php_renderer:
-        class: Zend\View\Renderer\PhpRenderer
+        class: PimcoreBundle\Templating\Zend\PhpRenderer
         calls:
             - [setResolver, ['@pimcore.templating.zend.view_resolver']]
             - [setHelperPluginManager, ['@pimcore.templating.zend.helper_plugin_manager']]
+            - [setTagRenderer, ['@pimcore.document.tag.renderer']]
 
     pimcore.templating.zend.name_parser:
         class: PimcoreBundle\Templating\Zend\ZendTemplateNameParser
@@ -21,6 +22,14 @@ services:
         arguments:
             - '@pimcore.templating.zend.name_parser'
             - '@templating.locator'
+
+    pimcore.templating.zend.view_helper.document_tag:
+        class: PimcoreBundle\Templating\Zend\Helper\DocumentTag
+        arguments:
+            - '@pimcore.document.tag.renderer'
+            - '@pimcore.service.request.document_resolver'
+        tags:
+            - { name: pimcore.zend.view_helper, alias: documentTag }
 
     templating.engine.zend:
         class: PimcoreBundle\Templating\Zend\ZendEngine
