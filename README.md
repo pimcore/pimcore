@@ -10,7 +10,7 @@ THE OPEN-SOURCE ENTERPRISE CMS/CMF, PIM, DAM, ECOMMERCE-SUITE
 
 ![Administration Interface](website_demo/static/screenshots/1.png)
 
-* [Documentation](https://www.pimcore.org/wiki/)
+* [Documentation](https://www.pimcore.org/docs/latest)
 * Homepage: [http://www.pimcore.org/](http://www.pimcore.org/) - Learn more about Pimcore
 * Like us on [Facebook](https://www.facebook.com/pimcore)
 * Twitter: [@pimcore](https://twitter.com/pimcore) - Get the latest news
