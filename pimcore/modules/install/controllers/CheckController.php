@@ -346,7 +346,7 @@ class Install_CheckController extends \Pimcore\Controller\Action
             // create view
             $queryCheck = true;
             try {
-                $db->query("CREATE OR REPLACE VIEW __pimcore_req_check_view AS SELECT * FROM __pimcore_req_check");
+                $db->query("CREATE OR REPLACE SQL SECURITY INVOKER VIEW __pimcore_req_check_view AS SELECT * FROM __pimcore_req_check");
             } catch (\Exception $e) {
                 $queryCheck = false;
             }
