@@ -145,7 +145,7 @@ class ReportAdapter implements AddressSourceAdapterInterface
 
         $containers = [];
 
-        for ($i = $offset; $i <= $limit; $i++) {
+        for ($i = $offset; $i < ($offset + $limit); $i++) {
             if (isset($listing[$i][$this->emailFieldName])) {
                 // as $listing is array type we can send all so every column can be used as placeholder in email
                 $containers[] = new SendingParamContainer($listing[$i][$this->emailFieldName], $listing[$i]);
