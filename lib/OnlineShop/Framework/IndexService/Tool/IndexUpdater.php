@@ -125,7 +125,7 @@ class IndexUpdater {
      * @param int $indexItemsPerRound - number of items to index per round
      * @throws \OnlineShop\Framework\Exception\InvalidConfigException
      */
-    public static function processUpdateIndexQueue($tenants = null, $maxRounds = null, $loggername = "indexupdater",$indexItemsPerRound = 100) {
+    public static function processUpdateIndexQueue($tenants = null, $maxRounds = null, $loggername = "indexupdater", $indexItemsPerRound = 200) {
         if($tenants == null) {
             $tenants = \OnlineShop\Framework\Factory::getInstance()->getAllTenants();
         }
@@ -154,7 +154,7 @@ class IndexUpdater {
                     $round++;
                     self::log($loggername, "Starting round: " . $round);
 
-                    $result = $worker->processUpdateIndexQueue();
+                    $result = $worker->processUpdateIndexQueue($indexItemsPerRound);
                     self::log($loggername, "processed update index elements: " . $result);
 
                     \Pimcore::collectGarbage();
