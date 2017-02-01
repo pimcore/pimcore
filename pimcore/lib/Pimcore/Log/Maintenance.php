@@ -101,8 +101,8 @@ class Maintenance
             $data = gzencode(file_get_contents($logFile));
             $response = Tool::getHttpData("https://www.pimcore.org/usage-statistics/", [], ["data" => $data]);
             if (strpos($response, "true") !== false) {
-                @unlink($logFile);
-                Logger::debug("Usage statistics are transmitted and logfile was cleaned");
+                rename($logFile, $logFile . "-archive-" . date("m-d-Y-H-i"));
+                Logger::debug("Usage statistics are transmitted and logfile was archived");
             } else {
                 Logger::debug("Unable to send usage statistics");
             }
@@ -122,6 +122,7 @@ class Maintenance
             PIMCORE_LOG_DIRECTORY . "/legacy-class-names.log",
             PIMCORE_LOG_DIRECTORY . "/legacy-class-names-admin.log",
             PIMCORE_LOG_DIRECTORY . "/libreoffice-pdf-convert.log",
+            PIMCORE_LOG_DIRECTORY . "/usagelog.log",
         ];
 
         foreach ($logs as $log) {
