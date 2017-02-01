@@ -32,6 +32,13 @@ services:
             - '@pimcore.zend.templating.name_parser'
             - '@templating.locator'
 
+    pimcore.zend.templating.view_helper.global_variables:
+        class: PimcoreZendBundle\Templating\Zend\Helper\GlobalVariables
+        arguments:
+            - '@templating.globals'
+        tags:
+            - { name: pimcore.zend.view_helper, alias: app }
+
     pimcore.zend.templating.view_helper.document_tag:
         class: PimcoreZendBundle\Templating\Zend\Helper\DocumentTag
         arguments:
