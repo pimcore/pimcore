@@ -1112,6 +1112,21 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
         ]);
     }
 
+    public function translationDeleteAction()
+    {
+        $sourceDocument = Document::getById($this->getParam("sourceId"));
+        $targetDocument = Document::getById($this->getParam("targetId"));
+
+        if ($sourceDocument && $targetDocument) {
+            $service = new Document\Service;
+            $service->deleteTranslation($sourceDocument, $targetDocument);
+        }
+        
+        $this->_helper->json([
+            "success" => true
+        ]);
+    }
+
     public function translationCheckLanguageAction()
     {
         $success = false;

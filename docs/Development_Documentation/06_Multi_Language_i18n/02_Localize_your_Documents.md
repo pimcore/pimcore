@@ -64,8 +64,26 @@ The localization tool for Pimcore documents is a comfort tool which supports cre
 Following features are supported: 
 * **Creating new documents** for another language - either an empty document or and document using content inheritance (see below)
 * **Link existing documents** in order to have the language link between documents
+* **Unlink existing documents** in order to remove the language link between documents
 * **Open Translation** to quickly navigate to the corresponing document in another language. 
 
+ ```php
+ $service = new \Pimcore\Model\Document\Service();
+ $translations = $service->getTranslations($document); // return an array of all linked languages with associated document ID: Array ( [en] => 2 [fr] => 7 )
+ ```
+  
+ // in your view
+ $language = $this->document->getProperty("language");
+  
+  
+ // any document
+ $doc = \Pimcore\Model\Document::getById(234);
+ $language = $doc->getProperty("language");
+  
+  
+ // accessing anywhere in your code using the registry (the common ZF way)
+ $language = \Zend_Registry::get("Zend_Locale");
+ ```
 
 ### Content Inheritance
 Content inheritance is a Pimcore feature to save duplicate data maintenance within documents. This feature is quite handy
