@@ -1,6 +1,6 @@
 <?php
 
-namespace LegacyBundle\Controller;
+namespace PimcoreLegacyBundle\Controller;
 
 use maff\Zend1MvcPsrMessageBridge\Factory\DiactorosFactory;
 use maff\Zend1MvcPsrMessageBridge\Factory\ZendMessageFactory;

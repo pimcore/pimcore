@@ -3,9 +3,9 @@
 namespace Pimcore;
 
 use DI\Bridge\Symfony\Kernel as PhpDIKernel;
-use LegacyBundle\LegacyBundle;
 use PimcoreAdminBundle\PimcoreAdminBundle;
 use PimcoreBundle\PimcoreBundle;
+use PimcoreLegacyBundle\PimcoreLegacyBundle;
 use PimcoreZendBundle\PimcoreZendBundle;
 use Sensio\Bundle\DistributionBundle\SensioDistributionBundle;
 use Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle;
@@ -45,7 +45,7 @@ abstract class Kernel extends PhpDIKernel
             new PimcoreBundle(),
             new PimcoreZendBundle(),
             new PimcoreAdminBundle(),
-            new LegacyBundle()
+            new PimcoreLegacyBundle()
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {
