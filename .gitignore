@@ -41,6 +41,9 @@
 /var/versions/*
 !var/versions/.gitkeep
 
+# pimcore web var directories
+/web/var
+
 # tests
 /phpunit.xml
 /tests/output/*
