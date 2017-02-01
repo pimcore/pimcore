@@ -16,9 +16,6 @@
 !var/SymfonyRequirements.php
 /web/bundles/
 
-# symfony moving stuff
-/bin/symfony_requirements
-
 # pimcore files
 /app/constants.php
 
