@@ -1,15 +1,48 @@
-# remove this for your own development
-/constants.php
-/website/
-/tools/
-/plugins/
+# symfony default
+/.web-server-pid
+/app/config/parameters.yml
+/build/
+/phpunit.xml
+/var/*
+!/var/cache
+/var/cache/*
+!var/cache/.gitkeep
+!/var/logs
+/var/logs/*
+!var/logs/.gitkeep
+!/var/sessions
+/var/sessions/*
+!var/sessions/.gitkeep
+!var/SymfonyRequirements.php
+/web/bundles/
 
 # symfony moving stuff
-/app/cache
-/app/logs
 /bin/symfony_requirements
 
+# pimcore files
+/app/constants.php
+
+# pimcore legacy (remove this for your own development)
+/legacy/plugins/
+/legacy/tools/
+/legacy/website/
+
+# pimcore var directories
+!/var/tmp
+/var/tmp/*
+!var/tmp/.gitkeep
+!/var/classes
+/var/classes/*
+!var/classes/.gitkeep
+!/var/config
+/var/config/*
+!var/config/.gitkeep
+!/var/versions
+/var/versions/*
+!var/versions/.gitkeep
+
 # tests
+/phpunit.xml
 /tests/output/*
 /tests/tmp/*
 
