@@ -145,7 +145,7 @@ class ZendControllerListener implements EventSubscriberInterface
      */
     protected function guessTemplateName(FilterControllerEvent $event)
     {
-        // template guesser uses the name.<format>.<engine> syntax (foo.html.twig) which differs from zend naming (foo.html)
+        // template guesser uses the name.<format>.<engine> syntax (foo.html.twig) which differs from zend naming (foo.phtml)
         $template = $this->templateGuesser->guessTemplateName(
             $event->getController(),
             $event->getRequest(),
