@@ -12,7 +12,7 @@ class FallbackController extends Controller
     public function fallbackAction(ServerRequestInterface $psrRequest)
     {
         // initialize
-        $legacyKernel = $this->container->get('pimcore.legacy_kernel');
+        $legacyKernel = $this->get('pimcore.legacy_kernel');
 
         $diactorosFactory = new DiactorosFactory();
         $zendFactory      = new ZendMessageFactory();
