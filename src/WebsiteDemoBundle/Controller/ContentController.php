@@ -18,4 +18,10 @@ class ContentController extends ZendController
     public function defaultAction()
     {
     }
+
+    public function portalAction()
+    {
+        $this->view->setTemplate('WebsiteDemoBundle:Content:default.phtml');
+        $this->view->isPortal = true;
+    }
 }
