@@ -1,5 +1,5 @@
 <?php
-$pdr = PIMCORE_DOCUMENT_ROOT;
+$pdr = PIMCORE_PROJECT_ROOT;
 
 return  [
   'simple_html_dom_node' => $pdr . '/pimcore/lib/simple_html_dom.php',

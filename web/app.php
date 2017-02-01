@@ -15,7 +15,7 @@
 use Symfony\Component\HttpFoundation\Request;
 
 /** @var \Pimcore\Kernel $kernel */
-$kernel = require_once __DIR__ . '/pimcore/config/startup.php';
+$kernel = require_once __DIR__ . '/../pimcore/config/startup.php';
 
 if (defined('PIMCORE_SYMFONY_MODE') && PIMCORE_SYMFONY_MODE) {
     $request  = Request::createFromGlobals();
