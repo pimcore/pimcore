@@ -56,13 +56,13 @@ foreach($children as $child) {
     <!-- Le styles -->
     <?php
     // we use the view helper here to have the cache buster functionality
-    $this->headLink()->appendStylesheet('/website/static/bootstrap/css/bootstrap.css');
-    $this->headLink()->appendStylesheet('/website/static/css/global.css');
-    $this->headLink()->appendStylesheet('/website/static/lib/video-js/video-js.min.css', "screen");
-    $this->headLink()->appendStylesheet('/website/static/lib/magnific/magnific.css', "screen");
+    $this->headLink()->appendStylesheet('/bundles/websitedemo/bootstrap/css/bootstrap.css');
+    $this->headLink()->appendStylesheet('/bundles/websitedemo/css/global.css');
+    $this->headLink()->appendStylesheet('/bundles/websitedemo/lib/video-js/video-js.min.css', "screen");
+    $this->headLink()->appendStylesheet('/bundles/websitedemo/lib/magnific/magnific.css', "screen");
 
     if ($child->editmode) {
-        $this->headLink()->appendStylesheet('/website/static/css/editmode.css', "screen");
+        $this->headLink()->appendStylesheet('/bundles/websitedemo/css/editmode.css', "screen");
     }
     ?>
 
@@ -70,8 +70,8 @@ foreach($children as $child) {
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
-    <script src="/website/static/js/html5shiv.js"></script>
-    <script src="/website/static/js/respond.min.js"></script>
+    <script src="/bundles/websitedemo/js/html5shiv.js"></script>
+    <script src="/bundles/websitedemo/js/respond.min.js"></script>
     <![endif]-->
 </head>
 
@@ -96,7 +96,7 @@ foreach($children as $child) {
                         <span class="icon-bar"></span>
                     </button>
                     <a class="navbar-brand" href="<?= $mainNavStartNode; ?>">
-                        <img src="/website/static/img/logo-white.svg" alt="pimcore Demo">
+                        <img src="/bundles/websitedemo/img/logo-white.svg" alt="pimcore Demo">
                     </a>
                 </div>
                 <div class="navbar-collapse collapse">
@@ -168,17 +168,17 @@ foreach($children as $child) {
 echo $this->zf1_inc('/' . $this->app('request')->getLocale() . '/shared/includes/footer');
 
 // global scripts, we use the view helper here to have the cache buster functionality
-$this->headScript()->appendFile('/website/static/js/jquery-1.11.0.min.js');
-$this->headScript()->appendFile('/website/static/bootstrap/js/bootstrap.js');
-$this->headScript()->appendFile('/website/static/lib/magnific/magnific.js');
-$this->headScript()->appendFile('/website/static/lib/video-js/video.js');
-$this->headScript()->appendFile('/website/static/js/srcset-polyfill.min.js');
+$this->headScript()->appendFile('/bundles/websitedemo/js/jquery-1.11.0.min.js');
+$this->headScript()->appendFile('/bundles/websitedemo/bootstrap/js/bootstrap.js');
+$this->headScript()->appendFile('/bundles/websitedemo/lib/magnific/magnific.js');
+$this->headScript()->appendFile('/bundles/websitedemo/lib/video-js/video.js');
+$this->headScript()->appendFile('/bundles/websitedemo/js/srcset-polyfill.min.js');
 
 echo $this->headScript();
 ?>
 
 <script>
-    videojs.options.flash.swf = "/website/static/lib/video-js/video-js.swf";
+    videojs.options.flash.swf = "/bundles/websitedemo/lib/video-js/video-js.swf";
 </script>
 
 <script>
