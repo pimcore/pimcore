@@ -16,6 +16,9 @@
 !var/SymfonyRequirements.php
 /web/bundles/
 
+# pimcore config
+/app/config/pimcore
+
 # pimcore files
 /app/constants.php
 
