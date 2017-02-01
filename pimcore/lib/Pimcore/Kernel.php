@@ -2,6 +2,7 @@
 
 namespace Pimcore;
 
+use DI\Bridge\Symfony\Kernel as PhpDIKernel;
 use LegacyBundle\LegacyBundle;
 use PimcoreAdminBundle\PimcoreAdminBundle;
 use PimcoreBundle\PimcoreBundle;
@@ -15,9 +16,9 @@ use Symfony\Bundle\MonologBundle\MonologBundle;
 use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Bundle\WebProfilerBundle\WebProfilerBundle;
 use Symfony\Cmf\Bundle\RoutingBundle\CmfRoutingBundle;
-use Symfony\Component\Config\Loader\LoaderInterface;
+use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
-abstract class Kernel extends \DI\Bridge\Symfony\Kernel
+abstract class Kernel extends PhpDIKernel
 {
     /**
      * Determines if the ZF1 stack should still be supported
@@ -26,18 +27,25 @@ abstract class Kernel extends \DI\Bridge\Symfony\Kernel
      */
     protected $legacySupport = true;
 
+    /**
+     * Returns an array of bundles to register.
+     *
+     * @return BundleInterface[] An array of bundle instances
+     */
     public function registerBundles()
     {
         $bundles = [
             new FrameworkBundle(),
+            // new \Symfony\Bundle\SecurityBundle\SecurityBundle(),
             new TwigBundle(),
-            new SensioFrameworkExtraBundle(),
             new MonologBundle(),
+            new SensioFrameworkExtraBundle(),
+
             new CmfRoutingBundle(),
             new PimcoreBundle(),
             new PimcoreZendBundle(),
             new PimcoreAdminBundle(),
-            new LegacyBundle(),
+            new LegacyBundle()
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {
@@ -220,7 +228,7 @@ abstract class Kernel extends \DI\Bridge\Symfony\Kernel
         }
 
         // UUID
-        $conf = \Pimcore\Config::getSystemConfig();
+        $conf = Config::getSystemConfig();
         if ($conf->general->instanceIdentifier) {
             foreach (["asset", "object", "document", "object.class"] as $type) {
                 \Pimcore::getEventManager()->attach($type . ".postAdd", function ($e) {
@@ -235,16 +243,6 @@ abstract class Kernel extends \DI\Bridge\Symfony\Kernel
                 });
             }
         }
-    }
-
-    public function getRootDir()
-    {
-        return PIMCORE_SYMFONY_APP;
-    }
-
-    public function registerContainerConfiguration(LoaderInterface $loader)
-    {
-        $loader->load($this->getRootDir() . '/config/config_' . $this->getEnvironment() . '.yml');
     }
 
     protected function buildPHPDIContainer(\DI\ContainerBuilder $builder)
