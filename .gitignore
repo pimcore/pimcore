@@ -27,6 +27,11 @@
 /legacy/tools/
 /legacy/website/
 
+# keep legacy paths ignored for easier migration
+/plugins/
+/tools/
+/website/
+
 # pimcore var directories
 !/var/tmp
 /var/tmp/*
