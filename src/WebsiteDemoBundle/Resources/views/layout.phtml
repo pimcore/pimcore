@@ -1,25 +1,37 @@
 <?php
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Page;
+
+/** @var \PimcoreZendBundle\Templating\Zend\PhpRenderer $view */
+$view = $this;
+
+$children = $this->viewModel()->getCurrent()->getChildren();
+
+/** @var \Zend\View\Model\ViewModel $child */
+foreach($children as $child) {
+    if ($child->captureTo() === 'content') {
+        break;
+    }
+}
 ?>
 <!DOCTYPE html>
-<html lang="<?= $this->language; ?>">
+<html lang="<?= $this->app('request')->getLocale(); ?>">
 <head>
     <meta charset="utf-8">
     <link rel="icon" type="image/png" href="/pimcore/static/img/favicon/favicon-32x32.png"/>
 
     <?php
     // portal detection => portal needs an adapted version of the layout
-    $isPortal = $this->isPortal ?: false;
+    $isPortal = $child->isPortal ?: false;
 
     /** @var Document|Page $document */
-    $document = $this->document;
+    $document = $child->document;
 
     // output the collected meta-data
-    if (!$this->document) {
+    if (!$document) {
         // use "home" document as default if no document is present
-        $this->document = Document::getById(1);
-        $document = $this->document;
+        $child->document = Document::getById(1);
+        $document = $child->document;
     }
 
     if ($document->getTitle()) {
@@ -49,7 +61,7 @@ use Pimcore\Model\Document\Page;
     $this->headLink()->appendStylesheet('/website/static/lib/video-js/video-js.min.css', "screen");
     $this->headLink()->appendStylesheet('/website/static/lib/magnific/magnific.css', "screen");
 
-    if ($this->editmode) {
+    if ($child->editmode) {
         $this->headLink()->appendStylesheet('/website/static/css/editmode.css', "screen");
     }
     ?>
@@ -98,13 +110,17 @@ use Pimcore\Model\Document\Page;
                 </div>
             </div>
 
-            <?= $this->render('WebsiteDemoBundle:Includes:language.phtml'); ?>
+            <?= $this->render('WebsiteDemoBundle:Includes:language.phtml', [
+                'document' => $document
+            ]); ?>
         </div>
     </div>
 </div>
 
 <?php if (!$isPortal): ?>
-    <?= $this->render('WebsiteDemoBundle:includes:jumbotron.phtml') ?>
+    <?= $this->render('WebsiteDemoBundle:includes:jumbotron.phtml', [
+        'document' => $document
+    ]) ?>
 
     <div id="content" class="container">
         <?php
@@ -211,7 +227,7 @@ echo $this->headScript();
 
     $("#portalHeader img, #portalHeader .item, #portalHeader").height($(window).height());
 
-    <?php if(!$this->editmode): ?>
+    <?php if(!$child->editmode): ?>
 
     // center the caption on the portal page
     $("#portalHeader .carousel-caption").css("bottom", Math.round(($(window).height() - $("#portalHeader .carousel-caption").height()) / 3) + "px");
