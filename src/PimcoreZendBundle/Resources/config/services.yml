@@ -20,6 +20,7 @@ services:
         calls:
             - [setResolver, ['@pimcore.zend.templating.view_resolver']]
             - [setHelperPluginManager, ['@pimcore.zend.templating.helper_plugin_manager']]
+            - [setZendViewHelperBridge, ['@pimcore.view.zend_view_helper_bridge']]
             - [setTagRenderer, ['@pimcore.document.tag.renderer']]
 
     pimcore.zend.templating.name_parser:
