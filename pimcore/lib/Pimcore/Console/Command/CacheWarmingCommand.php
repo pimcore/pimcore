@@ -67,7 +67,7 @@ class CacheWarmingCommand extends AbstractCommand
     protected function configure()
     {
         $this
-            ->setName('cache:warming')
+            ->setName('pimcore:cache:warming')
             ->setDescription('Warm up caches')
             ->addOption(
                 'types', 't',

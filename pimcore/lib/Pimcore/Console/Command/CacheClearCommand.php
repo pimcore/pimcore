@@ -25,7 +25,7 @@ class CacheClearCommand extends AbstractCommand
     protected function configure()
     {
         $this
-            ->setName('cache:clear')
+            ->setName('pimcore:cache:clear')
             ->setDescription('Clear caches')
             ->addOption(
                 'tags', 't',
