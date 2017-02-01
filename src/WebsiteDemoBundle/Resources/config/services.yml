@@ -1,0 +1,4 @@
+services:
+    website_demo.language_switcher:
+        class: WebsiteDemoBundle\Templating\LanguageSwitcher
+        arguments: ['@pimcore.document_service']
