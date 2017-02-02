@@ -116,7 +116,7 @@
       "app/AppKernel.php"
     ],
     "exclude-from-classmap": [
-      "src/PimcoreBundle/Resources/install-profiles"
+      "pimcore/lib/Pimcore/Bundle/PimcoreBundle/Resources/install-profiles"
     ]
   },
   "scripts": {

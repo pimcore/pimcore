@@ -3,7 +3,7 @@
 namespace WebsiteDemoBundle\Controller;
 
 use Pimcore\Model\Asset;
-use PimcoreZendBundle\Controller\ZendController;
+use Pimcore\Bundle\PimcoreZendBundle\Controller\ZendController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 

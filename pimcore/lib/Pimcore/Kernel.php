@@ -3,10 +3,10 @@
 namespace Pimcore;
 
 use DI\Bridge\Symfony\Kernel as PhpDIKernel;
-use PimcoreAdminBundle\PimcoreAdminBundle;
-use PimcoreBundle\PimcoreBundle;
-use PimcoreLegacyBundle\PimcoreLegacyBundle;
-use PimcoreZendBundle\PimcoreZendBundle;
+use Pimcore\Bundle\PimcoreAdminBundle\PimcoreAdminBundle;
+use Pimcore\Bundle\PimcoreBundle\PimcoreBundle;
+use Pimcore\Bundle\PimcoreLegacyBundle\PimcoreLegacyBundle;
+use Pimcore\Bundle\PimcoreZendBundle\PimcoreZendBundle;
 use Sensio\Bundle\DistributionBundle\SensioDistributionBundle;
 use Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle;
 use Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle;
@@ -35,13 +35,17 @@ abstract class Kernel extends PhpDIKernel
     public function registerBundles()
     {
         $bundles = [
+            // symfony "core"/standard
             new FrameworkBundle(),
             // new \Symfony\Bundle\SecurityBundle\SecurityBundle(),
             new TwigBundle(),
             new MonologBundle(),
             new SensioFrameworkExtraBundle(),
 
+            // CMF bundles
             new CmfRoutingBundle(),
+
+            // pimcore bundles
             new PimcoreBundle(),
             new PimcoreZendBundle(),
             new PimcoreAdminBundle(),

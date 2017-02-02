@@ -4,9 +4,9 @@ namespace AppBundle\Controller;
 
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
-use PimcoreBundle\Controller\DocumentAwareInterface;
-use PimcoreBundle\Controller\Traits\DocumentAwareTrait;
-use PimcoreBundle\View\ZendViewHelperBridge;
+use Pimcore\Bundle\PimcoreBundle\Controller\DocumentAwareInterface;
+use Pimcore\Bundle\PimcoreBundle\Controller\Traits\DocumentAwareTrait;
+use Pimcore\Bundle\PimcoreBundle\View\ZendViewHelperBridge;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
