@@ -6279,5 +6279,13 @@
     {
         "term": "site_ids_tooltip",
         "definition": "Provide a comma-seperated list of site IDs"
+    },
+    {
+        "term": "limit_to_one_objectbrick",
+        "definition": "Limit to one objectbrick"
+    },
+    {
+        "term": "only_one_objectbrick_can_be_added",
+        "definition": "Only one objectbrick can be added"
     }
 ]

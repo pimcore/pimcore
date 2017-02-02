@@ -53,7 +53,15 @@ pimcore.object.classes.data.objectbricks = Class.create(pimcore.object.classes.d
         $super();
         
         this.specificPanel.removeAll();
-
+        this.specificPanel.add([
+            {
+                xtype: "checkbox",
+                fieldLabel: t("limit_to_one_objectbrick"),
+                name: "limitToOne",
+                checked: this.datax.limitToOne
+            }
+        ]);
+        
         return this.layout;
     },
 
@@ -81,7 +89,8 @@ pimcore.object.classes.data.objectbricks = Class.create(pimcore.object.classes.d
             }
             Ext.apply(this.datax,
                 {
-                    allowedTypes: source.datax.allowedTypes
+                    allowedTypes: source.datax.allowedTypes,
+                    limitToOne: source.datax.limitToOne
                 });
         }
     }

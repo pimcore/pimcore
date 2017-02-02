@@ -45,6 +45,30 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
     public $allowedTypes = [];
 
     /**
+     * @var boolean
+     */
+    public $limitToOne;
+
+    /**
+     * @return boolean
+     */
+    public function getLimitToOne()
+    {
+        return $this->limitToOne;
+    }
+
+    /**
+     * @param boolean $limitToOne
+     * @return void
+     */
+    public function setLimitToOne($limitToOne)
+    {
+        $this->limitToOne = (bool) $limitToOne;
+
+        return $this;
+    }
+
+    /**
      * @see Object\ClassDefinition\Data::getDataForEditmode
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
@@ -906,6 +930,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
     public function synchronizeWithMasterDefinition(Object\ClassDefinition\Data $masterDefinition)
     {
         $this->allowedTypes = $masterDefinition->allowedTypes;
+        $this->limitToOne = $masterDefinition->limitToOne;
     }
 
     /**
