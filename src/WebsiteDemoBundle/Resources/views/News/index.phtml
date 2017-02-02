@@ -1,0 +1,47 @@
+<?= $this->render('WebsiteDemoBundle:Includes:content-headline.phtml'); ?>
+<?= $this->areablock('content'); ?>
+
+<?php
+/** @var \Pimcore\Model\Object\News $news */
+foreach ($this->news as $news) { ?>
+    <div class="media">
+
+        <?php
+        $detailLink = '';
+
+// TODO URL generation does not work yet for static routes
+//        /** @var \Symfony\Component\DependencyInjection\ContainerInterface $container */
+//        $container = $this->app('container');
+//        $router = $container->get('router');
+//
+//        $router->generate('news', [
+//            'id'     => $news->getId(),
+//            'text'   => $news->getTitle(),
+//            'prefix' => $this->document->getFullPath()
+//        ]);
+
+        /*
+        $detailLink = $this->url([
+            "id" => $news->getId(),
+            "text" => $news->getTitle(),
+            "prefix" => $this->document->getFullPath()
+        ], "news", true);
+        */
+        ?>
+
+        <?php if($news->getImage_1()) { ?>
+            <a class="pull-left" href="<?= $detailLink; ?>">
+                <?= $news->getImage_1()->getThumbnail("newsList")->getHTML(["class" => "media-object"]); ?>
+            </a>
+        <?php } ?>
+
+        <div class="media-body">
+            <h4 class="media-heading">
+                <a href="<?= $detailLink; ?>"><?= $news->getTitle(); ?></a>
+                <br />
+                <small><i class="glyphicon glyphicon-calendar"></i> <?= $news->getDate()->format("d/m/Y"); ?></small>
+            </h4>
+            <?= $news->getShortText(); ?>
+        </div>
+    </div>
+<?php } ?>
