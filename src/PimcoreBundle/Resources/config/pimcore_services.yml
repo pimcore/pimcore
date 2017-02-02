@@ -1,0 +1,4 @@
+services:
+    pimcore.tool.request_helper:
+        class: Pimcore\Tool\RequestHelper
+        arguments: ['@request_stack']
