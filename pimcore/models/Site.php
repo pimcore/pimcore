@@ -23,6 +23,11 @@ use Pimcore\Logger;
  */
 class Site extends AbstractModel
 {
+    /**
+     * @var Site
+     */
+    protected static $currentSite;
+
 
     /**
      * @var integer
@@ -164,12 +169,13 @@ class Site extends AbstractModel
 
     /**
      * returns true if the current process/request is inside a site
+     *
      * @static
      * @return bool
      */
     public static function isSiteRequest()
     {
-        if (\Zend_Registry::isRegistered("pimcore_site")) {
+        if (null !== self::$currentSite) {
             return true;
         }
 
@@ -177,18 +183,28 @@ class Site extends AbstractModel
     }
 
     /**
+     * @return Site
+     *
      * @throws \Exception
      * @throws \Zend_Exception
      */
     public static function getCurrentSite()
     {
-        if (\Zend_Registry::isRegistered("pimcore_site")) {
-            $site = \Zend_Registry::get("pimcore_site");
-
-            return $site;
+        if (null !== self::$currentSite) {
+            return self::$currentSite;
         } else {
             throw new \Exception("This request/process is not inside a subsite");
         }
+    }
+
+    /**
+     * Register the current site
+     *
+     * @param Site $site
+     */
+    public static function setCurrentSite(Site $site)
+    {
+        self::$currentSite = $site;
     }
 
     /**
