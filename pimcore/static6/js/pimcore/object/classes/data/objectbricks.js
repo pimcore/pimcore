@@ -55,10 +55,11 @@ pimcore.object.classes.data.objectbricks = Class.create(pimcore.object.classes.d
         this.specificPanel.removeAll();
         this.specificPanel.add([
             {
-                xtype: "checkbox",
-                fieldLabel: t("limit_to_one_objectbrick"),
-                name: "limitToOne",
-                checked: this.datax.limitToOne
+                xtype: "numberfield",
+                fieldLabel: t("maximum_items"),
+                name: "maxItems",
+                value: this.datax.maxItems,
+                minValue: 0
             }
         ]);
         
@@ -90,7 +91,7 @@ pimcore.object.classes.data.objectbricks = Class.create(pimcore.object.classes.d
             Ext.apply(this.datax,
                 {
                     allowedTypes: source.datax.allowedTypes,
-                    limitToOne: source.datax.limitToOne
+                    maxItems: source.datax.maxItems
                 });
         }
     }

@@ -45,27 +45,27 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
     public $allowedTypes = [];
 
     /**
-     * @var boolean
+     * @var int
      */
-    public $limitToOne;
+    public $maxItems;
 
     /**
-     * @return boolean
+     * @param $maxItems
+     * @return $this
      */
-    public function getLimitToOne()
+    public function setMaxItems($maxItems)
     {
-        return $this->limitToOne;
+        $this->maxItems = $this->getAsIntegerCast($maxItems);
+
+        return $this;
     }
 
     /**
-     * @param boolean $limitToOne
-     * @return void
+     * @return int
      */
-    public function setLimitToOne($limitToOne)
+    public function getMaxItems()
     {
-        $this->limitToOne = (bool) $limitToOne;
-
-        return $this;
+        return $this->maxItems;
     }
 
     /**
@@ -930,7 +930,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
     public function synchronizeWithMasterDefinition(Object\ClassDefinition\Data $masterDefinition)
     {
         $this->allowedTypes = $masterDefinition->allowedTypes;
-        $this->limitToOne = $masterDefinition->limitToOne;
+        $this->maxItems = $masterDefinition->maxItems;
     }
 
     /**

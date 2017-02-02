@@ -88,9 +88,6 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         if(this.fieldConfig.title) {
             panelConf.title = this.fieldConfig.title;
         }
-        if (this.fieldConfig.limitToOne) {
-            panelConf.limitToOne = true;
-        }
         this.component = new Ext.Panel(panelConf);
 
         return this.component;
@@ -212,8 +209,8 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         if(!this.layoutDefinitions[type]) {
             return;
         }
-        if (this.fieldConfig.limitToOne && Object.keys(this.currentElements).length >= 1) {
-            Ext.MessageBox.alert(t("warning"), t("only_one_objectbrick_can_be_added"));
+        if (this.fieldConfig.maxItems && Object.keys(this.currentElements).length >= this.fieldConfig.maxItems) {
+            Ext.Msg.alert(t("error"),t("limit_reached"));
             return;
         }
         
