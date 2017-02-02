@@ -836,8 +836,12 @@ class Document extends Element\AbstractElement
             }
 
             $config = \Pimcore\Config::getSystemConfig();
-            $front = \Zend_Controller_Front::getInstance();
-            $scheme = ($front->getRequest()->isSecure() ? "https" : "http") . "://";
+
+            // TODO using the container directly is discouraged, maybe we find a better way (e.g. moving this into a service)?
+            $request = \Pimcore::getContainer()->get('pimcore.tool.request_helper')->getRequest();
+            $scheme  = $request->getScheme() . '://';
+
+            /** @var Site $site */
             if ($site = FrontendTool::getSiteForDocument($this)) {
                 if ($site->getMainDomain()) {
                     // check if current document is the root of the different site, if so, preg_replace below doesn't work, so just return /
