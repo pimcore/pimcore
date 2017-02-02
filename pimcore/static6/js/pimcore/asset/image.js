@@ -249,11 +249,13 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                     editable: false,
                     listeners: {
                         select: function (el) {
-                            var dpiField = this.customDownloadBox.getComponent("dpi");
-                            if(el.getValue() == "JPEG") {
-                                dpiField.enable();
-                            } else {
-                                dpiField.disable();
+                            if (this.data.imageInfo["exiftoolAvailable"]) {
+                                var dpiField = this.customDownloadBox.getComponent("dpi");
+                                if (el.getValue() == "JPEG") {
+                                    dpiField.enable();
+                                } else {
+                                    dpiField.disable();
+                                }
                             }
                         }.bind(this)
                     }
