@@ -5,11 +5,9 @@ namespace Pimcore\Bundle\PimcoreBundle\Routing;
 use Doctrine\Common\Util\Inflector;
 use Pimcore\Bundle\PimcoreBundle\Service\Document\DocumentService;
 use Pimcore\Model\Document;
-use Pimcore\Model\Site;
 use Pimcore\Model\Staticroute;
 use Pimcore\Model\Staticroute\Listing;
 use Pimcore\Tool;
-use Symfony\Cmf\Bundle\RoutingBundle\Model\RedirectRoute;
 use Symfony\Cmf\Component\Routing\RouteProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
@@ -116,28 +114,13 @@ class DocumentRouteProvider implements RouteProviderInterface
             $route->setDefault('path', $document->getHref());
             $route->setDefault('permanent', true);
         } else {
-            // TODO this is only temporary for dev reasons - remove!
-            $bundle = defined('PIMCORE_SYMFONY_DEFAULT_BUNDLE') ? PIMCORE_SYMFONY_DEFAULT_BUNDLE : 'AppBundle';
-            $controller = defined('PIMCORE_SYMFONY_DEFAULT_CONTROLLER') ? PIMCORE_SYMFONY_DEFAULT_CONTROLLER : 'Content';
-            $action = defined('PIMCORE_SYMFONY_DEFAULT_ACTION') ? PIMCORE_SYMFONY_DEFAULT_ACTION : 'default';
+            $controllerVars = $this->normalizeControllerVars(
+                $document->getModule(),
+                $document->getController(),
+                $document->getAction()
+            );
 
-            if ($document->getModule()) {
-                $bundle = $document->getModule();
-                if (strpos($bundle, 'Bundle') === false) {
-                    $bundle = sprintf('%sBundle', $bundle);
-                }
-            }
-
-            if ($document->getController()) {
-                $controller = ucfirst($document->getController());
-            }
-
-            if ($document->getAction()) {
-                $action = $document->getAction();
-                $action = Inflector::camelize($action);
-            }
-
-            $route->setDefault('_controller', implode(':', [$bundle, $controller, $action]));
+            $route->setDefault('_controller', implode(':', $controllerVars));
         }
 
         return $route;
@@ -150,46 +133,45 @@ class DocumentRouteProvider implements RouteProviderInterface
      */
     protected function handleStaticRoute(RouteCollection $collection, Request $request, $path)
     {
-        $routes = $this->getStaticRoutes();
+        $staticRoutes = $this->getStaticRoutes();
 
         $routingDefaults = Tool::getRoutingDefaults();
         $params          = array_merge($routingDefaults, $request->request->all());
 
-        foreach ($routes as $route) {
-            $routeParams = $route->match($path, $params);
+        foreach ($staticRoutes as $staticRoute) {
+            $routeParams = $staticRoute->match($path, $params);
 
             if ($routeParams) {
                 $params = $routeParams;
 
+                // TODO replace module with bundle in admin
                 if (!$params['module'] || $params['module'] === 'website') {
                     $params['module'] = defined('PIMCORE_SYMFONY_DEFAULT_BUNDLE') ? PIMCORE_SYMFONY_DEFAULT_BUNDLE : 'AppBundle';
                 }
 
                 if ($params['controller'] && $params['action']) {
-                    $siteIds = $route->getSiteId();
-                    if (empty($siteIds)) {
-                        // add an entry with an null site id
-                        $siteIds = [null];
-                    }
+                    $route = new StaticrouteRoute($path);
+                    $route->setStaticRoute($staticRoute);
 
-                    foreach ($route->getSiteId() as $siteId) {
-                        $r = new StaticrouteRoute($path);
-                        $r->setStaticRoute($route);
-                        $r->setDefault('_controller', implode(':', [
-                            $params['module'],
-                            $params['controller'],
-                            $params['action']
-                        ]));
+                    $controllerVars = $this->normalizeControllerVars(
+                        $params['module'],
+                        $params['controller'],
+                        $params['action']
+                    );
 
-                        if ($siteId) {
-                            $r->setSiteId($siteId);
+                    $route->setDefault('_controller', implode(':', $controllerVars));
+
+                    // add matching params to route
+                    foreach ($params as $key => $val) {
+                        if (!in_array($key, ['module', 'controller', 'action'])) {
+                            $route->setDefault($key, $val);
                         }
-
-                        $collection->add($r->getRouteKey(), $r);
                     }
+
+                    $collection->add($staticRoute->getName(), $route);
                 }
 
-                Staticroute::setCurrentRoute($route);
+                Staticroute::setCurrentRoute($staticRoute);
 
                 // TODO omitted pimcore_request_source
 
@@ -226,6 +208,44 @@ class DocumentRouteProvider implements RouteProviderInterface
         $routes = $list->load();
 
         return $routes;
+    }
+
+    /**
+     * Fallback helper to normalize module/controller/action names into Symfony notation. To be removed later.
+     *
+     * @param null $bundle
+     * @param null $controller
+     * @param null $action
+     * @return array
+     */
+    protected function normalizeControllerVars($bundle = null, $controller = null, $action = null)
+    {
+        // TODO this is only temporary for dev reasons - remove!
+        $result = [
+            'bundle'     => defined('PIMCORE_SYMFONY_DEFAULT_BUNDLE') ? PIMCORE_SYMFONY_DEFAULT_BUNDLE : 'AppBundle',
+            'controller' => defined('PIMCORE_SYMFONY_DEFAULT_CONTROLLER') ? PIMCORE_SYMFONY_DEFAULT_CONTROLLER : 'Content',
+            'action'     => defined('PIMCORE_SYMFONY_DEFAULT_ACTION') ? PIMCORE_SYMFONY_DEFAULT_ACTION : 'default'
+        ];
+
+        if ($bundle) {
+            if (strpos($bundle, 'Bundle') === false) {
+                $bundle = sprintf('%sBundle', $bundle);
+            }
+
+            $result['bundle'] = $bundle;
+        }
+
+        if ($controller) {
+            $controller = ucfirst($controller);
+            $result['controller'] = $controller;
+        }
+
+        if ($action) {
+            $action = Inflector::camelize($action);
+            $result['action'] = $action;
+        }
+
+        return $result;
     }
 
     /**
