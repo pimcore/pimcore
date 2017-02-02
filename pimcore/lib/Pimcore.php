@@ -22,6 +22,7 @@ use Pimcore\ExtensionManager;
 use Pimcore\Model\User;
 use Pimcore\Model;
 use Pimcore\Logger;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 class Pimcore
@@ -879,6 +880,17 @@ class Pimcore
     public static function getKernel()
     {
         return static::$kernel;
+    }
+
+    /**
+     * Accessing the container this way is discouraged as dependencies should be wired through the container instead of
+     * needing to access the container directly. This exists mainly for compatibility with legacy code.
+     *
+     * @return ContainerInterface
+     */
+    public static function getContainer()
+    {
+        return static::getKernel()->getContainer();
     }
 
     /**
