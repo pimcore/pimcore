@@ -14,11 +14,6 @@
 
 namespace Pimcore;
 
-use Pimcore\Cache;
-use Pimcore\Logger;
-use Pimcore\Logger;
-use Symfony\Component\HttpFoundation\Request;
-
 class Tool
 {
 
