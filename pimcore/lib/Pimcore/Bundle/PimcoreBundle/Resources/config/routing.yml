@@ -7,3 +7,4 @@ _pimcore_admin:
 
 _fallback:
     resource: "@PimcoreLegacyBundle/Resources/config/routing/fallback.yml"
+
