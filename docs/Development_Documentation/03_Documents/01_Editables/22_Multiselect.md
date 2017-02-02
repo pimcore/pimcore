@@ -6,12 +6,13 @@ The Multiselect editable generates a **multiselect** box component in editmode.
 
 ## Configuration
 
-| Name     | Type    | Description                                                                        |
-|----------|---------|------------------------------------------------------------------------------------|
-| `store`  | array   | Key/Value pairs for the available options.                                         |
-| `width`  | integer | Width of a generated block in editmode                                             |
-| `height` | integer | Height of a generated block in editmode                                            |
-| `class`  | string  | A CSS class that is added to the surrounding container of this element in editmode |
+| Name     | Type    | Description                                                                                                    |
+|----------|---------|----------------------------------------------------------------------------------------------------------------|
+| `store`  | array   | Key/Value pairs for the available options.                                                                     |
+| `width`  | integer | Width of a generated block in editmode                                                                         |
+| `height` | integer | Height of a generated block in editmode                                                                        |
+| `class`  | string  | A CSS class that is added to the surrounding container of this element in editmode                             |
+| `tag`    | string  | A tag name that is used instead of the default `div` for the surrounding container of this element in editmode |
 
 ## Methods
 

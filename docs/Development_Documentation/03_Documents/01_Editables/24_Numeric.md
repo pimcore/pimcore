@@ -5,12 +5,13 @@ The numeric editable is very similar to the [input editable](./16_Input.md), but
 
 ## Configuration
 
-| Name       | Type    | Description                                                                        |
-|------------|---------|------------------------------------------------------------------------------------|
-| `maxValue` | float   | Define a maximum value                                                             |
-| `minValue` | float   | Define a minimum value                                                             |
-| `width`    | integer | Width of the field in pixel                                                        |
-| `class`    | string  | A CSS class that is added to the surrounding container of this element in editmode |
+| Name       | Type    | Description                                                                                                    |
+|------------|---------|----------------------------------------------------------------------------------------------------------------|
+| `maxValue` | float   | Define a maximum value                                                                                         |
+| `minValue` | float   | Define a minimum value                                                                                         |
+| `width`    | integer | Width of the field in pixel                                                                                    |
+| `class`    | string  | A CSS class that is added to the surrounding container of this element in editmode                             |
+| `tag`      | string  | A tag name that is used instead of the default `div` for the surrounding container of this element in editmode |
 
 ## Methods
 

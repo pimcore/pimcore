@@ -6,12 +6,13 @@ The select editable generates select-box component in Editmode.
 
 ## Configuration
 
-| Name     | Type    | Description                                                                        |
-|----------|---------|------------------------------------------------------------------------------------|
-| `store`  | array   | Key/Value pairs for the available options.                                         |
-| `reload` | bool    | Set true to reload the page in editmode after selecting an item                    |
-| `width`  | integer | Width of the select box in pixel                                                   |
-| `class`  | string  | A CSS class that is added to the surrounding container of this element in editmode |
+| Name     | Type    | Description                                                                                                    |
+|----------|---------|----------------------------------------------------------------------------------------------------------------|
+| `store`  | array   | Key/Value pairs for the available options.                                                                     |
+| `reload` | bool    | Set true to reload the page in editmode after selecting an item                                                |
+| `width`  | integer | Width of the select box in pixel                                                                               |
+| `class`  | string  | A CSS class that is added to the surrounding container of this element in editmode                             |
+| `tag`    | string  | A tag name that is used instead of the default `div` for the surrounding container of this element in editmode |
 
 ## Methods
 

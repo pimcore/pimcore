@@ -9,13 +9,14 @@ The PDF editable allows you to embed asset documents (pdf, doc, xls, ...) into d
 
 ## Configuration
 
-| Name                | Type      | Description                                                                             |
-|---------------------|-----------|-----------------------------------------------------------------------------------------|
-| `width`             | integer   | Width of the viewer (default 100%)                                                      |
-| `height`            | integer   | Height of the viewerin pixel                                                            |
-| `fullscreen`        | bool      | Allow fullscreen or not                                                                 |
-| `hotspotCallback`   | closure   | Possibility to add custom attributes on hotspot `<div>` tags, ... see example below     |
-| `class`             | string    | A CSS class that is added to the surrounding container of this element in editmode      |
+| Name                | Type      | Description                                                                                                    |
+|---------------------|-----------|----------------------------------------------------------------------------------------------------------------|
+| `width`             | integer   | Width of the viewer (default 100%)                                                                             |
+| `height`            | integer   | Height of the viewerin pixel                                                                                   |
+| `fullscreen`        | bool      | Allow fullscreen or not                                                                                        |
+| `hotspotCallback`   | closure   | Possibility to add custom attributes on hotspot `<div>` tags, ... see example below                            |
+| `class`             | string    | A CSS class that is added to the surrounding container of this element in editmode                             |
+| `tag`               | string    | A tag name that is used instead of the default `div` for the surrounding container of this element in editmode |
 
 ## Methods
 

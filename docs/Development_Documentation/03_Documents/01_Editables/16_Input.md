@@ -7,13 +7,14 @@ For a multi-line alternative have a look at the [textarea editable](./36_Textare
 
 ## Configuration
 
-| Name               | Type    | Configuration                                                                         |
-|--------------------|---------|---------------------------------------------------------------------------------------|
-| `width`            | integer | Width of the input in editmode (in pixels)                                            |
-| `htmlspecialchars` | boolean | Set to false to get the raw value without HTML special chars like & (default to true) |
-| `nowrap`           | boolean | set to false to disable the automatic line break                                      |
-| `class`            | string  | A CSS class that is added to the surrounding container of this element in editmode    |
-| `placeholder`      | string  | A placeholder that is displayed when the field is empty                               |
+| Name               | Type    | Configuration                                                                                                  |
+|--------------------|---------|----------------------------------------------------------------------------------------------------------------|
+| `width`            | integer | Width of the input in editmode (in pixels)                                                                     |
+| `htmlspecialchars` | boolean | Set to false to get the raw value without HTML special chars like & (default to true)                          |
+| `nowrap`           | boolean | set to false to disable the automatic line break                                                               |
+| `class`            | string  | A CSS class that is added to the surrounding container of this element in editmode                             |
+| `tag`              | string  | A tag name that is used instead of the default `div` for the surrounding container of this element in editmode |
+| `placeholder`      | string  | A placeholder that is displayed when the field is empty                                                        |
 
 ## Methods
 

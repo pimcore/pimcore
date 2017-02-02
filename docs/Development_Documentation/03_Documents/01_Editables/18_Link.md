@@ -9,9 +9,10 @@ The link editable is used for dynamic link creation in documents.
 You can pass every valid attribute an `<a>`-tag can have ([w3.org - Link](http://www.w3.org/TR/html401/struct/links.html#h-12.2)), 
 such as: `class`, `target`, `id`, `style`, `accesskey`, `name`, `title` and additionally the following: 
 
-| Name     | Type     | Description                                                             |
-|----------|----------|-------------------------------------------------------------------------|
-| `reload` | boolean  | Set to true to reload the page in editmode after changing the state.    |
+| Name     | Type     | Description                                                                                                    |
+|----------|----------|----------------------------------------------------------------------------------------------------------------|
+| `reload` | boolean  | Set to true to reload the page in editmode after changing the state.                                           |
+| `tag`    | string   | A tag name that is used instead of the default `div` for the surrounding container of this element in editmode |
 
 ## Methods
 

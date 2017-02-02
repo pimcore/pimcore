@@ -20,7 +20,8 @@ Local asset videos support the automatic generation and transcoding of videos us
 | `width`                   | integer   | Width of the video in pixel                                                                                                                                                                                             |
 | `youtube`                 | array     | Parameters for youtube integration. Possible parameters: [https://developers.google.com/youtube/player_parameters](https://developers.google.com/youtube/player_parameters) - only for type ***youtube***               |
 | `class`                   | string    | A CSS class that is added to the surrounding container of this element in editmode                                                                                                                                      |
-  
+| `tag`                     | string    | A tag name that is used instead of the default `div` for the surrounding container of this element in editmode                                                                                                          |
+
 ## Methods
 
 | Name                       | Arguments            | Return                                                  | Description                                                                                   |
