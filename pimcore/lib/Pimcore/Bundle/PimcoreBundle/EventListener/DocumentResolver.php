@@ -3,11 +3,9 @@
 namespace Pimcore\Bundle\PimcoreBundle\EventListener;
 
 use Pimcore\Bundle\PimcoreBundle\Controller\DocumentAwareInterface;
-use Pimcore\Controller\Router\Route\Frontend;
-use Pimcore\Model\Document;
+use Pimcore\Bundle\PimcoreBundle\Service\Document\DocumentService;
 use Pimcore\Bundle\PimcoreBundle\Service\Request\DocumentResolver as DocumentResolverService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -15,15 +13,22 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class DocumentResolver implements EventSubscriberInterface
 {
     /**
+     * @var DocumentService
+     */
+    protected $documentService;
+
+    /**
      * @var DocumentResolverService
      */
     protected $documentResolverService;
 
     /**
+     * @param DocumentService $documentService
      * @param DocumentResolverService $documentResolverService
      */
-    public function __construct(DocumentResolverService $documentResolverService)
+    public function __construct(DocumentService $documentService, DocumentResolverService $documentResolverService)
     {
+        $this->documentService         = $documentService;
         $this->documentResolverService = $documentResolverService;
     }
 
@@ -44,7 +49,7 @@ class DocumentResolver implements EventSubscriberInterface
             return;
         }
 
-        $document = $this->findNearestDocument($request);
+        $document = $this->documentService->getNearestDocumentByPath($request);
         if ($document) {
             $this->documentResolverService->setDocument($request, $document);
         }
@@ -69,23 +74,6 @@ class DocumentResolver implements EventSubscriberInterface
                 }
             }
         }
-    }
-
-    /**
-     * @param Request $request
-     * @return Document|null
-     */
-    protected function findNearestDocument(Request $request)
-    {
-        // HACK HACK use the pimcore route for testing - refactor this into a service
-        $reflector = new \ReflectionClass(Frontend::class);
-
-        $method = $reflector->getMethod('getNearestDocumentByPath');
-        $method->setAccessible(true);
-
-        $nearestDocument = $method->invoke(new Frontend(), $request->getPathInfo());
-
-        return $nearestDocument;
     }
 
     /**

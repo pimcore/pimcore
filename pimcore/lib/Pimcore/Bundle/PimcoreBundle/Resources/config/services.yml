@@ -5,6 +5,7 @@ services:
 
     pimcore.router.dynamic_route_provider:
         class: Pimcore\Bundle\PimcoreBundle\Routing\DocumentRouteProvider
+        arguments: ['@pimcore.service.document']
 
     pimcore.plugin_broker:
         class: Pimcore\API\Plugin\Broker
@@ -41,11 +42,11 @@ services:
         class: Pimcore\Bundle\PimcoreBundle\Service\Request\TemplateVarsResolver
         arguments: ['@pimcore.service.request.document_resolver', '@pimcore.service.request.editmode_resolver']
 
-    # simple services exposing get() API for documents, objects and assets
-    # this is only necessar if loading objects directly with only access to the container, e.g. templates
     pimcore.service.document:
         class: Pimcore\Bundle\PimcoreBundle\Service\Document\DocumentService
 
+    # simple services exposing get() API for documents, objects and assets
+    # this is only necessary if loading objects directly with only access to the container, e.g. templates
     pimcore.service.asset:
         class: Pimcore\Bundle\PimcoreBundle\Service\Asset\AssetService
 
