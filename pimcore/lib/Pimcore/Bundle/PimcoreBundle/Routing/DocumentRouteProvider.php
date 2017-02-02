@@ -3,7 +3,12 @@
 namespace Pimcore\Bundle\PimcoreBundle\Routing;
 
 use Doctrine\Common\Util\Inflector;
+use Pimcore\Bundle\PimcoreBundle\Service\Document\DocumentService;
 use Pimcore\Model\Document;
+use Pimcore\Model\Site;
+use Pimcore\Model\Staticroute;
+use Pimcore\Model\Staticroute\Listing;
+use Pimcore\Tool;
 use Symfony\Cmf\Bundle\RoutingBundle\Model\RedirectRoute;
 use Symfony\Cmf\Component\Routing\RouteProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,6 +18,19 @@ use Symfony\Component\Routing\RouteCollection;
 
 class DocumentRouteProvider implements RouteProviderInterface
 {
+    /**
+     * @var DocumentService
+     */
+    protected $documentService;
+
+    /**
+     * @param DocumentService $documentService
+     */
+    public function __construct(DocumentService $documentService)
+    {
+        $this->documentService = $documentService;
+    }
+
     /**
      * Finds routes that may potentially match the request.
      *
@@ -39,15 +57,23 @@ class DocumentRouteProvider implements RouteProviderInterface
     {
         $collection = new RouteCollection();
 
-        $url      = rawurldecode($request->getPathInfo());
-        $document = Document::getByPath($url);
+        $path = $originalPath = urldecode($request->getPathInfo());
 
+        // handled by SiteListener which runs before routing is started
+        if ($request->attributes->has('_site_path')) {
+            $path = $request->attributes->get('_site_path');
+        }
+
+        $document = Document::getByPath($path);
         if ($document) {
             $route = $this->buildRouteForDocument($document);
 
             if ($route) {
                 $collection->add($route->getRouteKey(), $route);
             }
+        } else {
+            // TODO this might not be the best place, but works for now
+            $this->handleStaticRoute($collection, $request, $originalPath);
         }
 
         return $collection;
@@ -115,6 +141,91 @@ class DocumentRouteProvider implements RouteProviderInterface
         }
 
         return $route;
+    }
+
+    /**
+     * @param RouteCollection $collection
+     * @param Request $request
+     * @param $path
+     */
+    protected function handleStaticRoute(RouteCollection $collection, Request $request, $path)
+    {
+        $routes = $this->getStaticRoutes();
+
+        $routingDefaults = Tool::getRoutingDefaults();
+        $params          = array_merge($routingDefaults, $request->request->all());
+
+        foreach ($routes as $route) {
+            $routeParams = $route->match($path, $params);
+
+            if ($routeParams) {
+                $params = $routeParams;
+
+                if (!$params['module'] || $params['module'] === 'website') {
+                    $params['module'] = defined('PIMCORE_SYMFONY_DEFAULT_BUNDLE') ? PIMCORE_SYMFONY_DEFAULT_BUNDLE : 'AppBundle';
+                }
+
+                if ($params['controller'] && $params['action']) {
+                    $siteIds = $route->getSiteId();
+                    if (empty($siteIds)) {
+                        // add an entry with an null site id
+                        $siteIds = [null];
+                    }
+
+                    foreach ($route->getSiteId() as $siteId) {
+                        $r = new StaticrouteRoute($path);
+                        $r->setStaticRoute($route);
+                        $r->setDefault('_controller', implode(':', [
+                            $params['module'],
+                            $params['controller'],
+                            $params['action']
+                        ]));
+
+                        if ($siteId) {
+                            $r->setSiteId($siteId);
+                        }
+
+                        $collection->add($r->getRouteKey(), $r);
+                    }
+                }
+
+                Staticroute::setCurrentRoute($route);
+
+                // TODO omitted pimcore_request_source
+
+                break;
+            }
+        }
+    }
+
+    /**
+     * Load static routes
+     *
+     * @return Staticroute[]
+     */
+    protected function getStaticRoutes()
+    {
+        $list = new Listing();
+        $list->setOrder(function ($a, $b) {
+
+            // give site ids a higher priority
+            if ($a['siteId'] && !$b['siteId']) {
+                return -1;
+            }
+            if (!$a['siteId'] && $b['siteId']) {
+                return 1;
+            }
+
+            if ($a['priority'] == $b['priority']) {
+                return 0;
+            }
+
+            return ($a['priority'] < $b['priority']) ? 1 : -1;
+        });
+
+        $routes = $list->load();
+
+        return $routes;
     }
 
     /**
