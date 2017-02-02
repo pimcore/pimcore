@@ -1,6 +1,6 @@
 <?php
 
-namespace PimcoreBundle\EventListener;
+namespace Pimcore\Bundle\PimcoreBundle\EventListener;
 
 use Pimcore\Config;
 use Pimcore\Model\Site;
@@ -37,7 +37,7 @@ class SiteListener implements EventSubscriberInterface
         // TODO routing defaults omitted
         // TODO http_auth omitted -> handle in security component
 
-        $path = $this->handleSite($request, $path);
+        $this->handleSite($request, $path);
 
         // TODO omitted redirects - move to another listener
         // TODO omitted index.php SEO check
