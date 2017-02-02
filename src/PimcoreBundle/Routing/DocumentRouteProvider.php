@@ -85,6 +85,7 @@ class DocumentRouteProvider implements RouteProviderInterface
         $route->setDocument($document);
 
         if ($document instanceof Document\Link) {
+            // TODO use RedirectRoute?
             $route->setDefault('_controller', 'FrameworkBundle:Redirect:urlRedirect');
             $route->setDefault('path', $document->getHref());
             $route->setDefault('permanent', true);
@@ -166,6 +167,7 @@ class DocumentRouteProvider implements RouteProviderInterface
     public function getRoutesByNames($names)
     {
         // TODO needs performance optimizations
+        // TODO really return all routes here as documentation states? where is this used?
         $routes = [];
 
         if (is_array($names)) {
