@@ -226,7 +226,7 @@ class DefaultElasticSearch extends AbstractMockupCacheWorker implements IBatchPr
             } catch(\Exception $e) {
                 Logger::info($e->getMessage());
                 if($exceptionOnFailure){
-                    throw new \Exception("Can't create Mapping - Exiting to prevent infinit loop");
+                    throw new \Exception("Can't create Mapping - Exiting to prevent infinite loop");
                 } else {
                     //when update mapping fails, start reindex mode
                     $this->startReindexMode();
@@ -627,7 +627,7 @@ class DefaultElasticSearch extends AbstractMockupCacheWorker implements IBatchPr
             Logger::info("Index-Actions - currently NOT in reindex mode for " . $this->indexName);
             return false;
         } else {
-            throw new \Exception("Index-Actions - something wired happened - CurrentIndexVersion of Alias is bigger than IndexVersion in File: " . $currentIndexVersion . " vs. " . $this->getIndexVersion());
+            throw new \Exception("Index-Actions - something weird happened - CurrentIndexVersion of Alias is bigger than IndexVersion in File: " . $currentIndexVersion . " vs. " . $this->getIndexVersion());
         }
     }
 
@@ -658,8 +658,6 @@ class DefaultElasticSearch extends AbstractMockupCacheWorker implements IBatchPr
             // check if all entries are updated
             $query = "SELECT EXISTS(SELECT 1 FROM " . $this->getStoreTableName() . " WHERE tenant = ? AND (in_preparation_queue = 1 OR crc_current != crc_index) LIMIT 1);";
             $result = $this->db->fetchOne($query, array($this->name));
-
-            Logger::info('Index-Actions - in completeReindexMode - Open entries: ' . $result);
 
             if($result == 0) {
                 //no entries left --> re-index is finished
