@@ -106,9 +106,11 @@
   "autoload": {
     "psr-4": {
       "": "src/",
-      "Pimcore\\Model\\Object\\": "website/var/classes/Object",
+      "Pimcore\\Model\\Object\\": "var/classes/Object",
       "Pimcore\\Model\\": "pimcore/models",
-      "Pimcore\\": "pimcore/lib/Pimcore"
+      "Pimcore\\": "pimcore/lib/Pimcore",
+
+      "Website\\": "legacy/website/lib"
     },
     "classmap": [
       "app/AppKernel.php"

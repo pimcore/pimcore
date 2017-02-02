@@ -84,9 +84,6 @@ abstract class Kernel extends PhpDIKernel
             $this->setupTempDirectories();
         }
 
-        // initialize autoloader
-        \Pimcore::initAutoloader();
-
         // init bundles
         $this->initializeBundles();
 

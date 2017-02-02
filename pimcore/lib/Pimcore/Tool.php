@@ -719,9 +719,7 @@ class Tool
             //Logger::debug(implode(" ", [$errno, $errstr, $errfile, $errline]));
         });
 
-        \Zend_Loader_Autoloader::getInstance()->suppressNotFoundWarnings(true);
         $exists = $functionName($class);
-        \Zend_Loader_Autoloader::getInstance()->suppressNotFoundWarnings(false);
 
         restore_error_handler();
 
