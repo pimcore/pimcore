@@ -33,16 +33,15 @@ services:
             - '@pimcore.zend.templating.name_parser'
             - '@templating.locator'
 
-
     pimcore.zend.templating.view_helper.path:
         class: Pimcore\Bundle\PimcoreZendBundle\Templating\Zend\Helper\Path
-        arguments: ['@router']
+        arguments: ['@router', '@pimcore.tool.request_helper']
         tags:
             - { name: pimcore.zend.view_helper, alias: path }
 
     pimcore.zend.templating.view_helper.url:
         class: Pimcore\Bundle\PimcoreZendBundle\Templating\Zend\Helper\Url
-        arguments: ['@router']
+        arguments: ['@router', '@pimcore.tool.request_helper']
         tags:
             - { name: pimcore.zend.view_helper, alias: url }
 

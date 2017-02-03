@@ -14,6 +14,6 @@ class Path extends AbstractrUrlHelper
      */
     public function __invoke($name, $parameters = [], $relative = false)
     {
-        return $this->generator->generate($name, $parameters, $relative ? UrlGeneratorInterface::RELATIVE_PATH : UrlGeneratorInterface::ABSOLUTE_PATH);
+        return $this->generateUrl($name, $parameters, $relative ? UrlGeneratorInterface::RELATIVE_PATH : UrlGeneratorInterface::ABSOLUTE_PATH);
     }
 }

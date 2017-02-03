@@ -12,8 +12,8 @@ class Url extends AbstractrUrlHelper
      * @param bool $schemeRelative
      * @return string
      */
-    public function __invoke($name, $parameters = [], $schemeRelative = false)
+    public function __invoke($name = null, $parameters = [], $schemeRelative = false)
     {
-        return $this->generator->generate($name, $parameters, $schemeRelative ? UrlGeneratorInterface::NETWORK_PATH : UrlGeneratorInterface::ABSOLUTE_URL);
+        return $this->generateUrl($name, $parameters, $schemeRelative ? UrlGeneratorInterface::NETWORK_PATH : UrlGeneratorInterface::ABSOLUTE_URL);
     }
 }
