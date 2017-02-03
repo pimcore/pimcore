@@ -266,11 +266,6 @@ class Pimcore
         $front->registerPlugin(new Controller\Plugin\ErrorHandler(), 1);
         $front->registerPlugin(new Controller\Plugin\Maintenance(), 2);
 
-        // register general pimcore plugins for frontend
-        if ($frontend) {
-            $front->registerPlugin(new Controller\Plugin\Less(), 799);
-        }
-
         if (Tool::useFrontendOutputFilters(new \Zend_Controller_Request_Http())) {
             $front->registerPlugin(new Controller\Plugin\WysiwygAttributes(), 796);
             $front->registerPlugin(new Controller\Plugin\Webmastertools(), 797);
