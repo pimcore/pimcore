@@ -1206,10 +1206,10 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
 
     /**
      * Returns a list of all tags.
-     *  GET http://[YOUR-DOMAIN]/webservice/rest/tags?apikey=[API-KEY]
+     *  GET http://[YOUR-DOMAIN]/webservice/rest/tag-list?apikey=[API-KEY]
      * @throws \Exception
      */
-    public function tagsAction()
+    public function tagListAction()
     {
         $this->checkUserPermission("tags_search");
 
@@ -1235,14 +1235,14 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
     }
 
     /** Returns a list of all tags for an element.
-     *  GET http://[YOUR-DOMAIN]/webservice/rest/tags-element?apikey=[API-KEY]&id=1281&type=object
+     *  GET http://[YOUR-DOMAIN]/webservice/rest/tags-element-list?apikey=[API-KEY]&id=1281&type=object
      *
      * Parameters:
      *      - element id
      *      - type of element (document | asset | object)
      * @throws \Exception
      */
-    public function tagsElementAction()
+    public function tagsElementListAction()
     {
         $this->checkUserPermission("tags_search");
 
@@ -1298,14 +1298,14 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
     }
 
     /** Returns a list of elements id/type pairs for a tag.
-     *  GET http://[YOUR-DOMAIN]/webservice/rest/elements-tag?apikey=[API-KEY]&id=12&type=object
+     *  GET http://[YOUR-DOMAIN]/webservice/rest/elements-tag-list?apikey=[API-KEY]&id=12&type=object
      *
      * Parameters:
      *      - tag id
      *      - type of element (document | asset | object)
      * @throws \Exception
      */
-    public function elementsTagAction()
+    public function elementsTagListAction()
     {
         $this->checkUserPermission("tags_search");
 

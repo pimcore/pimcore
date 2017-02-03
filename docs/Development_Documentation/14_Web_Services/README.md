@@ -287,13 +287,13 @@ condense parameter is set to true then only non-existing object ids are returned
 
 ### Get List of Tags
 * **Method**: GET
-* **URL**: `http://[YOUR-DOMAIN]/webservice/rest/tags?apikey=[API-KEY]`
+* **URL**: `http://[YOUR-DOMAIN]/webservice/rest/tag-list?apikey=[API-KEY]`
 * **Returns**: The JSON-encoded list of tags.
 
 
 ### Get Tags for an Element
 * **Method**: GET
-* **URL**: `http://[YOUR-DOMAIN]/webservice/rest/tags-element?apikey=[API-KEY]&id=1281&type=object`
+* **URL**: `http://[YOUR-DOMAIN]/webservice/rest/tags-element-list?apikey=[API-KEY]&id=1281&type=object`
 * **Returns**: The JSON-encoded list of tags ids for the element.
 * **Parameters**:
     * **id**: element id
@@ -302,7 +302,7 @@ condense parameter is set to true then only non-existing object ids are returned
 
 ### Get Elements for a Tag
 * **Method**: GET
-* **URL**: `http://[YOUR-DOMAIN]/webservice/rest/elements-tag?apikey=[API-KEY]&id=12&type=object`
+* **URL**: `http://[YOUR-DOMAIN]/webservice/rest/elements-tag-list?apikey=[API-KEY]&id=12&type=object`
 * **Returns**: The JSON-encoded list of elements id/type pairs matching the given tag.
 * **Parameters**:
     * **id**: tag id
