@@ -3,7 +3,7 @@ imports:
 
 framework:
     router:
-        resource: "routing_dev.yml"
+        resource: "@PimcoreBundle/Resources/config/routing_dev.yml"
         strict_requirements: true
     profiler:
         only_exceptions: false

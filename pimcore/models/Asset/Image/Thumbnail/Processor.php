@@ -353,7 +353,7 @@ class Processor
     protected static function returnPath($path, $absolute)
     {
         if (!$absolute) {
-            $path = str_replace(PIMCORE_DOCUMENT_ROOT, "", $path);
+            $path = str_replace(PIMCORE_WEB_ROOT, "", $path);
         }
 
         return $path;

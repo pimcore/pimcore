@@ -3,7 +3,13 @@ app:
     type:     annotation
 
 _pimcore_thumbnail_service:
-
+  path: /var/tmp/image-thumbnails/{assetIdGroup}/{assetId}/thumb__{thumbnailName}/{filename}
+  defaults: { _controller: PimcoreBundle:PublicServices:thumbnail}
+  requirements:
+    assetIdGroup: '\d+'
+    assetId: '\d+'
+    thumbnailName: '[a-zA-Z0-9_\-]+'
+    filename: '.*'
 
 _pimcore_admin:
     resource: "@PimcoreAdminBundle/Resources/config/routing/routing.yml"
