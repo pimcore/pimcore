@@ -33,6 +33,19 @@ services:
             - '@pimcore.zend.templating.name_parser'
             - '@templating.locator'
 
+
+    pimcore.zend.templating.view_helper.path:
+        class: Pimcore\Bundle\PimcoreZendBundle\Templating\Zend\Helper\Path
+        arguments: ['@router']
+        tags:
+            - { name: pimcore.zend.view_helper, alias: path }
+
+    pimcore.zend.templating.view_helper.url:
+        class: Pimcore\Bundle\PimcoreZendBundle\Templating\Zend\Helper\Url
+        arguments: ['@router']
+        tags:
+            - { name: pimcore.zend.view_helper, alias: url }
+
     pimcore.zend.templating.view_helper.global_variables:
         class: Pimcore\Bundle\PimcoreZendBundle\Templating\Zend\Helper\GlobalVariables
         arguments:

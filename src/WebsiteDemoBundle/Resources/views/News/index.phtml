@@ -7,11 +7,7 @@ foreach ($this->news as $news) { ?>
     <div class="media">
 
         <?php
-        /** @var \Symfony\Component\DependencyInjection\ContainerInterface $container */
-        $container = $this->app('container');
-        $router = $container->get('router');
-
-        $detailLink = $router->generate('news', [
+        $detailLink = $this->path('news', [
             'id'     => $news->getId(),
             'text'   => $news->getTitle(),
             'prefix' => ltrim($this->document->getFullPath(), '/')
