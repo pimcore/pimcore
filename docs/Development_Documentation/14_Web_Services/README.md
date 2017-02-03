@@ -34,12 +34,22 @@ Unrestricted access is only granted to admin users. For all other users the foll
 * Asset permission:
     * Asset List
     * Asset Count
+    * Tags for Element (element of type Asset)
+    * Elements for Tag (element of type Asset)
 * Document permission
     * Document List
     * Document Count
+    * Tags for Element (element of type Document)
+    * Elements for Tag (element of type Document)
 * Object permission
     * Object List
     * Object Count
+    * Tags for Element (element of type Object)
+    * Elements for Tag (element of type Object)
+* Tags search permission
+    * Tag List
+    * Tags for Element
+    * Elements for Tag
 * System Settings Permission
     * Get Server Info
 * Workspace View permission
@@ -273,6 +283,30 @@ condense parameter is set to true then only non-existing object ids are returned
     * **condition**: where clause
     * **groupBy**: group by key
     * **objectClass**: the name of the object class (without "Object\"). Note: If the class does not exist the filter criteria will be ignored!
+
+
+### Get List of Tags
+* **Method**: GET
+* **URL**: `http://[YOUR-DOMAIN]/webservice/rest/tags?apikey=[API-KEY]`
+* **Returns**: The JSON-encoded list of tags.
+
+
+### Get Tags for an Element
+* **Method**: GET
+* **URL**: `http://[YOUR-DOMAIN]/webservice/rest/tags-element?apikey=[API-KEY]&id=1281&type=object`
+* **Returns**: The JSON-encoded list of tags ids for the element.
+* **Parameters**:
+    * **id**: element id
+    * **type**: type of element (document | asset | object)
+
+
+### Get Elements for a Tag
+* **Method**: GET
+* **URL**: `http://[YOUR-DOMAIN]/webservice/rest/elements-tag?apikey=[API-KEY]&id=12&type=object`
+* **Returns**: The JSON-encoded list of elements id/type pairs matching the given tag.
+* **Parameters**:
+    * **id**: tag id
+    * **type**: type of element (document | asset | object)
 
 
 ### Get User
