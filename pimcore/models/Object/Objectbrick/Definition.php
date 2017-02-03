@@ -28,7 +28,7 @@ class Definition extends Model\Object\Fieldcollection\Definition
     use Model\Object\ClassDefinition\Helper\VarExport;
 
     /**
-     * @var array()
+     * @var array
      */
     public $classDefinitions = [];
 
@@ -49,7 +49,7 @@ class Definition extends Model\Object\Fieldcollection\Definition
     }
 
     /**
-     * @return array()
+     * @return array
      */
     public function getClassDefinitions()
     {
