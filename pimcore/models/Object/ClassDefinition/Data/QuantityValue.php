@@ -76,6 +76,31 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
     public $phpdocType = "Pimcore\\Model\\Object\\Data\\QuantityValue";
 
     /**
+     * @var bool
+     */
+    public $integer = false;
+
+    /**
+     * @var bool
+     */
+    public $unsigned = false;
+
+    /**
+     * @var float
+     */
+    public $minValue;
+
+    /**
+     * @var float
+     */
+    public $maxValue;
+
+    /**
+     * @var int
+     */
+    public $decimalPrecision;
+
+    /**
      * @return integer
      */
     public function getWidth()
@@ -98,7 +123,7 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
     public function getDefaultValue()
     {
         if ($this->defaultValue !== null) {
-            return (double) $this->defaultValue;
+            return $this->toNumeric($this->defaultValue);
         }
     }
 
@@ -111,6 +136,131 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
         if (strlen(strval($defaultValue)) > 0) {
             $this->defaultValue = $defaultValue;
         }
+    }
+
+    /**
+     * @param boolean $integer
+     */
+    public function setInteger($integer)
+    {
+        $this->integer = $integer;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getInteger()
+    {
+        return $this->integer;
+    }
+
+    /**
+     * @param float $maxValue
+     */
+    public function setMaxValue($maxValue)
+    {
+        $this->maxValue = $maxValue;
+    }
+
+    /**
+     * @return float
+     */
+    public function getMaxValue()
+    {
+        return $this->maxValue;
+    }
+
+    /**
+     * @param float $minValue
+     */
+    public function setMinValue($minValue)
+    {
+        $this->minValue = $minValue;
+    }
+
+    /**
+     * @return float
+     */
+    public function getMinValue()
+    {
+        return $this->minValue;
+    }
+
+    /**
+     * @param boolean $unsigned
+     */
+    public function setUnsigned($unsigned)
+    {
+        $this->unsigned = $unsigned;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getUnsigned()
+    {
+        return $this->unsigned;
+    }
+
+    /**
+     * @param int $decimalPrecision
+     */
+    public function setDecimalPrecision($decimalPrecision)
+    {
+        $this->decimalPrecision = $decimalPrecision;
+    }
+
+    /**
+     * @return int
+     */
+    public function getDecimalPrecision()
+    {
+        return $this->decimalPrecision;
+    }
+
+    /**
+     * @return string
+     */
+    public function getColumnType()
+    {
+        if ($this->getInteger()) {
+            return [
+                "value" => "bigint(20)",
+                "unit" => "bigint(20)"
+            ];
+        }
+
+        if ($this->getDecimalPrecision()) {
+            return [
+                "value" => "decimal(64, " . intval($this->getDecimalPrecision()) . ")",
+                "unit" => "bigint(20)"
+            ];
+        }
+
+        return parent::getColumnType();
+    }
+
+    /**
+     * @return string
+     */
+    public function getQueryColumnType()
+    {
+        if ($this->getInteger()) {
+
+            return [
+                "value" => "bigint(20)",
+                "unit" => "bigint(20)"
+            ];
+        }
+
+        if ($this->getDecimalPrecision()) {
+            return [
+                "value" => "decimal(64, " . intval($this->getDecimalPrecision()) . ")",
+                "unit" => "bigint(20)"
+            ];
+        }
+
+        return parent::getQueryColumnType();
     }
 
     /**
@@ -181,7 +331,12 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
     public function getDataFromResource($data, $object = null, $params = [])
     {
         if ($data[$this->getName() . "__value"] || $data[$this->getName() . "__unit"]) {
-            return new  \Pimcore\Model\Object\Data\QuantityValue($data[$this->getName() . "__value"], $data[$this->getName() . "__unit"]);
+            if (is_numeric($data[$this->getName() . "__value"])) {
+                $number = $this->toNumeric($data[$this->getName() . "__value"]);
+            } else {
+                $number = $data[$this->getName() . "__value"];
+            }
+            return new  \Pimcore\Model\Object\Data\QuantityValue($number, $data[$this->getName() . "__unit"]);
         }
 
         return;
@@ -267,15 +422,43 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
      */
     public function checkValidity($data, $omitMandatoryCheck = false)
     {
-        if (!$omitMandatoryCheck && $this->getMandatory() &&
+        if (!$omitMandatoryCheck && $this->getMandatory() && $this->isEmpty($data->getValue()) &&
            ($data === null || $data->getValue() === null || $data->getUnitId() === null)) {
             throw new Model\Element\ValidationException("Empty mandatory field [ ".$this->getName()." ]");
+        }
+
+        if (!$this->isEmpty($data->getValue()) && !is_numeric($data->getValue())) {
+            throw new Model\Element\ValidationException("invalid numeric data [" . $data->getValue() . "]");
         }
 
         if (!empty($data)) {
             $value = $data->getValue();
             if ((!empty($value) && !is_numeric($data->getValue())) || !($data->getUnitId())) {
                 throw new Model\Element\ValidationException("Invalid dimension unit data " . $this->getName());
+            }
+        }
+
+        if (!$this->isEmpty($data->getValue()) && !$omitMandatoryCheck) {
+            $value = $this->toNumeric($data->getValue());
+
+            if ($value >= PHP_INT_MAX) {
+                throw new Model\Element\ValidationException("Value exceeds PHP_INT_MAX please use an input data type instead of numeric!");
+            }
+
+            if ($this->getInteger() && strpos((string) $value, ".") !== false) {
+                throw new Model\Element\ValidationException("Value in field [ ".$this->getName()." ] is not an integer");
+            }
+
+            if (strlen($this->getMinValue()) && $this->getMinValue() > $value) {
+                throw new Model\Element\ValidationException("Value in field [ ".$this->getName()." ] is not at least " . $this->getMinValue());
+            }
+
+            if (strlen($this->getMaxValue()) && $value > $this->getMaxValue()) {
+                throw new Model\Element\ValidationException("Value in field [ ".$this->getName()." ] is bigger than " . $this->getMaxValue());
+            }
+
+            if ($this->getUnsigned() && $value < 0) {
+                throw new Model\Element\ValidationException("Value in field [ ".$this->getName()." ] is not unsigned (bigger than 0)");
             }
         }
     }
@@ -312,7 +495,7 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
 
         $value = null;
         if ($values[0] && $values[1]) {
-            $number = (double) str_replace(",", ".", $values[0]);
+            $number = $this->toNumeric(str_replace(",", ".", $values[0]));
             $value = new  \Pimcore\Model\Object\Data\QuantityValue($number, $values[1]);
         }
 
@@ -450,5 +633,27 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
         $obj->configureOptions();
 
         return $obj;
+    }
+
+    /**
+     * @param $data
+     * @return bool
+     */
+    public function isEmpty($data)
+    {
+        return (strlen($data) < 1);
+    }
+
+    /**
+     * @param $value
+     * @return double|int
+     */
+    protected function toNumeric($value)
+    {
+        if (strpos((string) $value, ".") === false) {
+            return (int) $value;
+        }
+
+        return (double) $value;
     }
 }

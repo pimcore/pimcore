@@ -78,6 +78,26 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
             input.labelWidth = this.fieldConfig.labelWidth;
         }
 
+        if (this.fieldConfig["unsigned"]) {
+            input.minValue = 0;
+        }
+
+        if (is_numeric(this.fieldConfig["minValue"])) {
+            input.minValue = this.fieldConfig.minValue;
+        }
+
+        if (is_numeric(this.fieldConfig["maxValue"])) {
+            input.maxValue = this.fieldConfig.maxValue;
+        }
+
+        if (this.fieldConfig["integer"]) {
+            input.decimalPrecision = 0;
+        } else if (this.fieldConfig["decimalPrecision"]) {
+            input.decimalPrecision = this.fieldConfig["decimalPrecision"];
+        } else {
+            input.decimalPrecision = 20;
+        }
+        
         var options = {
             width: 100,
             triggerAction: "all",
