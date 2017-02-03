@@ -6,6 +6,7 @@ use Pimcore\Bundle\PimcoreZendBundle\Controller\ZendController;
 use Pimcore\Model\Object\News;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Zend\Paginator\Paginator;
 
 class NewsController extends ZendController
 {
@@ -17,16 +18,18 @@ class NewsController extends ZendController
         $this->enableLayout('WebsiteDemoBundle::layout.phtml');
     }
 
-    public function indexAction()
+    public function indexAction(Request $request)
     {
         // get a list of news objects and order them by date
         $newsList = new News\Listing();
         $newsList->setOrderKey("date");
         $newsList->setOrder("DESC");
 
-        $this->view->news = $newsList;
+        $paginator = new Paginator($newsList);
+        $paginator->setCurrentPageNumber($request->get('page'));
+        $paginator->setItemCountPerPage(5);
 
-        // TODO pagination - evaluate if we want to use Zend\Paginator or something else
+        $this->view->news = $paginator;
     }
 
     public function detailAction(Request $request)

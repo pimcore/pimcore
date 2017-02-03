@@ -209,7 +209,7 @@ class DocumentRouteProvider implements RouteProviderInterface
         if (preg_match('/^document_(\d+)$/', $name, $match)) {
             $document = Document::getById($match[1]);
 
-            if ($document && $document->getProperty('symfony')) {
+            if ($document) {
                 return $this->buildRouteForDocument($document);
             }
         }
