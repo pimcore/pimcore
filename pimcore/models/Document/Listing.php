@@ -18,6 +18,8 @@ namespace Pimcore\Model\Document;
 
 use Pimcore\Model;
 use Pimcore\Model\Document;
+use Zend\Paginator\Adapter\AdapterInterface;
+use Zend\Paginator\AdapterAggregateInterface;
 
 /**
  * @method int getTotalCount()
@@ -27,7 +29,7 @@ use Pimcore\Model\Document;
 /**
  * @method \Pimcore\Model\Document\Listing\Dao getDao()
  */
-class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterAggregate, \Iterator
+class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterAggregate, \Iterator, AdapterInterface, AdapterAggregateInterface
 {
 
     /**
@@ -143,7 +145,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
 
     /**
      *
-     * Methods for \Zend_Paginator_Adapter_Interface
+     * Methods for \Zend_Paginator_Adapter_Interface | AdapterInterface
      */
 
     /**

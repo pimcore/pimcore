@@ -25,7 +25,7 @@
             <div style="margin-top: 20px">
                 Facets:
                 <?php foreach ($facets as $label => $anchor) { ?>
-                    <a class="btn btn-default btn-xs" href="<?= $this->path(array('facet' => $label, "page" => null)); ?>"><?= $anchor ?></a>
+                    <a class="btn btn-default btn-xs" href="<?= $this->zf1_url(array('facet' => $label, "page" => null)); ?>"><?= $anchor ?></a>
                 <?php } ?>
             </div>
             <hr />
@@ -69,7 +69,7 @@
                 </div>
             </div>
         <?php } ?>
-        <?php // echo $this->paginationControl($this->paginator, "Sliding", "includes/paging.php"); ?>
+        <?= $this->render("WebsiteDemoBundle:Includes:paging.phtml", get_object_vars($this->paginator->getPages("Sliding"))); ?>
     <?php } else if ($queryString) { ?>
         <div class="alert alert-error" style="margin-top: 30px">
             Sorry, something seems to went wrong ...

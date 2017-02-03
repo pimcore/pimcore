@@ -7,6 +7,7 @@ use Pimcore\Bundle\PimcoreZendBundle\Controller\ZendController;
 use Pimcore\Model\Object;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Zend\Paginator\Paginator;
 
 class AdvancedController extends ZendController
 {
@@ -56,7 +57,7 @@ class AdvancedController extends ZendController
                     "cx" => "002859715628130885299:baocppu9mii"
                 ], $request->get("facet"));
 
-                $paginator = \Zend_Paginator::factory($result);
+                $paginator = new Paginator($result);
                 $paginator->setCurrentPageNumber($page);
                 $paginator->setItemCountPerPage($perPage);
                 $this->view->paginator = $paginator;

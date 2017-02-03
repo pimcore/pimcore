@@ -1,12 +1,11 @@
 <?php
 // made by Twitter user @remisouverain
-//my_pagination_control.phtml
 if ($this->pageCount): ?>
 	<ul class="pagination">
 	<!-- <li class="desc disabled"><a href="#"><?= $this->firstItemNumber; ?>-<?= $this->lastItemNumber; ?> / <?= $this->totalItemCount; ?></a></li> -->
 	
 	<?php if (isset($this->previous)): ?>
-		<li class="first"><a href="<?= $this->url(['page' => $this->first]); ?>"><?= $this->first; ?> &larr;</a></li>
+		<li class="first"><a href="<?= $this->zf1_url(['page' => $this->first]); ?>"><?= $this->first; ?> &larr;</a></li>
 	<?php endif; ?>
 	
 
@@ -18,14 +17,14 @@ if ($this->pageCount): ?>
 	if( ($this->first < $page) && ($page < $this->last) || $page == $this->current)
 	{
 ?>
-		<li class="<?= $class; ?>"><a href="<?= $this->url(['page' => $page]); ?>"><?= $page; ?></a></li>
+		<li class="<?= $class; ?>"><a href="<?= $this->zf1_url(['page' => $page]); ?>"><?= $page; ?></a></li>
 <?php
 	}
 }
 ?>
 
 	<?php if (isset($this->next)): ?>
-		<li class="last"><a href="<?= $this->url(['page' => $this->last]); ?>">&rarr; <?= $this->last; ?></a></li>
+		<li class="last"><a href="<?= $this->zf1_url(['page' => $this->last]); ?>">&rarr; <?= $this->last; ?></a></li>
 	<?php endif; ?>
 
 	</ul>

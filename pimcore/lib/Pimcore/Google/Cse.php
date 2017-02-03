@@ -18,8 +18,10 @@ use Pimcore\Google\Api;
 use Pimcore\Cache;
 use Pimcore\Google\Cse\Item;
 use Pimcore\Model;
+use Zend\Paginator\Adapter\AdapterInterface;
+use Zend\Paginator\AdapterAggregateInterface;
 
-class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterAggregate, \Iterator
+class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterAggregate, \Iterator, AdapterInterface, AdapterAggregateInterface
 {
 
     /**
@@ -401,8 +403,7 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
     }
 
     /**
-     *
-     * Methods for \Zend_Paginator_Adapter_Interface
+     * Methods for \Zend_Paginator_Adapter_Interface | AdapterInterface
      */
 
     /**
@@ -431,7 +432,7 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
     }
 
     /**
-     * @return $this|\Zend_Paginator_Adapter_Interface
+     * @return $this|\Zend_Paginator_Adapter_Interface | AdapterInterface
      */
     public function getPaginatorAdapter()
     {
