@@ -2,14 +2,16 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\Controller;
 
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Logger;
 use Symfony\Component\HttpFoundation\Response;
+use Pimcore\Model\Tool;
 
-class PublicServicesController {
+class PublicServicesController extends Controller {
 
     /**
      * @param Request $request
@@ -109,5 +111,28 @@ class PublicServicesController {
      */
     public function hybridauthAction(Request $request) {
         \Pimcore\Tool\HybridAuth::process();
+    }
+
+    /**
+     * @param Request $request
+     */
+    public function qrcodeAction(Request $request) {
+        $code = Tool\Qrcode\Config::getByName($request->get("key"));
+        if ($code) {
+            $url = $code->getUrl();
+            if ($code->getGoogleAnalytics()) {
+                $glue = "?";
+                if (strpos($url, "?")) {
+                    $glue = "&";
+                }
+
+                $url .= $glue;
+                $url .= "utm_source=Mobile&utm_medium=QR-Code&utm_campaign=" . $code->getName();
+            }
+
+            return $this->redirect($url);
+        } else {
+            Logger::error("called an QR code but '" . $request->get("key") . " is not a code in the system.");
+        }
     }
 }

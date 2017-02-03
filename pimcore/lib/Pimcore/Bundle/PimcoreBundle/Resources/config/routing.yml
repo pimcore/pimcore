@@ -20,6 +20,12 @@ _pimcore_service_hybridauth:
   requirements:
     placeholder: '.*'
 
+_pimcore_service_qrcode:
+  path: /qr~-~code/{key}
+  defaults: { _controller: PimcoreBundle:PublicServices:qrcode }
+  requirements:
+    key: '[a-zA-Z0-9_\-]+'
+
 _pimcore_service_thumbnail:
   path: /var/tmp/image-thumbnails/{assetIdGroup}/{assetId}/thumb__{thumbnailName}/{filename}
   defaults: { _controller: PimcoreBundle:PublicServices:thumbnail}
