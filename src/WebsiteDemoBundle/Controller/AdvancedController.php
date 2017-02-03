@@ -5,6 +5,7 @@ namespace WebsiteDemoBundle\Controller;
 use Pimcore\Model\Asset;
 use Pimcore\Bundle\PimcoreZendBundle\Controller\ZendController;
 use Pimcore\Model\Object;
+use Pimcore\Tool;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Zend\Paginator\Paginator;
@@ -19,28 +20,52 @@ class AdvancedController extends ZendController
         $this->enableLayout('WebsiteDemoBundle::layout.phtml');
     }
 
-
-    public function assetThumbnailListAction()
+    public function contactFormAction(Request $request)
     {
+        $success = false;
 
-        // try to get the tag where the parent folder is specified
-        $parentFolder = $this->document->getElement("parentFolder");
-        if ($parentFolder) {
-            $parentFolder = $parentFolder->getElement();
+        if ($request->get("provider")) {
+            $adapter = Tool\HybridAuth::authenticate($request->get("provider"));
+            if ($adapter) {
+                $user_data = $adapter->getUserProfile();
+                if ($user_data) {
+                    $this->setParam("firstname", $user_data->firstName);
+                    $this->setParam("lastname", $user_data->lastName);
+                    $this->setParam("email", $user_data->email);
+                    $this->setParam("gender", $user_data->gender);
+                }
+            }
         }
 
-        if (!$parentFolder) {
-            // default is the home folder
-            $parentFolder = Asset::getById(1);
+        // getting parameters is very easy ... just call $request->get("yorParamKey"); regardless if's POST or GET
+        if ($request->get("firstname") && $request->get("lastname") && $request->get("email") && $request->get("message")) {
+            $success = true;
+
+            $mail = new Mail();
+            $mail->setIgnoreDebugMode(true);
+
+            // To is used from the email document, but can also be set manually here (same for subject, CC, BCC, ...)
+            //$mail->addTo("info@pimcore.org");
+
+            $emailDocument = $this->document->getProperty("email");
+            if (!$emailDocument) {
+                $emailDocument = Document::getById(38);
+            }
+
+            $mail->setDocument($emailDocument);
+            $mail->setParams($this->getAllParams());
+            $mail->send();
         }
 
-        // get all children of the parent
-        $list = new Asset\Listing();
-        $list->setCondition("path like ?", $parentFolder->getFullpath() . "%");
+        // do some validation & assign the parameters to the view
+        foreach (["firstname", "lastname", "email", "message", "gender"] as $key) {
+            if ($request->get($key)) {
+                $this->view->$key = htmlentities(strip_tags($request->get($key)));
+            }
+        }
 
-        $this->view->list = $list;
-
-
+        // assign the status to the view
+        $this->view->success = $success;
     }
 
     public function searchAction(Request $request)
@@ -132,5 +157,46 @@ class AdvancedController extends ZendController
         $this->view->success = $success;
     }
 
+    public function sitemapAction(Request $request)
+    {
+        set_time_limit(900);
+
+        $this->view->initial = false;
+
+        if ($request->get("doc")) {
+            $doc = $request->get("doc");
+            $this->disableLayout();
+        } else {
+            $doc = $this->document->getProperty("mainNavStartNode");
+            $this->view->initial = true;
+        }
+
+        \Pimcore::collectGarbage();
+
+        $this->view->doc = $doc;
+    }
+
+    public function assetThumbnailListAction()
+    {
+
+        // try to get the tag where the parent folder is specified
+        $parentFolder = $this->document->getElement("parentFolder");
+        if ($parentFolder) {
+            $parentFolder = $parentFolder->getElement();
+        }
+
+        if (!$parentFolder) {
+            // default is the home folder
+            $parentFolder = Asset::getById(1);
+        }
+
+        // get all children of the parent
+        $list = new Asset\Listing();
+        $list->setCondition("path like ?", $parentFolder->getFullpath() . "%");
+
+        $this->view->list = $list;
+
+
+    }
 
 }
