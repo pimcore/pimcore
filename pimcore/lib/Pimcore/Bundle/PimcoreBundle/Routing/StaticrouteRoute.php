@@ -2,6 +2,7 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\Routing;
 
+use Pimcore\Model\Staticroute;
 use Symfony\Component\Routing\Route;
 
 // TODO this stupid name just exists because otherwise there's a StaticRoute wrapping a Staticroute which is even more weird
@@ -9,12 +10,12 @@ use Symfony\Component\Routing\Route;
 class StaticrouteRoute extends Route
 {
     /**
-     * @var \Pimcore\Model\Staticroute
+     * @var Staticroute
      */
     protected $staticRoute;
 
     /**
-     * @return \Pimcore\Model\Staticroute
+     * @return Staticroute
      */
     public function getStaticRoute()
     {
@@ -22,8 +23,8 @@ class StaticrouteRoute extends Route
     }
 
     /**
-     * @param \Pimcore\Model\Staticroute $staticRoute
-     * @return StaticrouteRoute
+     * @param Staticroute $staticRoute
+     * @return $this
      */
     public function setStaticRoute($staticRoute)
     {

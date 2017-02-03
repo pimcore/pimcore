@@ -7,26 +7,15 @@ foreach ($this->news as $news) { ?>
     <div class="media">
 
         <?php
-        $detailLink = '';
+        /** @var \Symfony\Component\DependencyInjection\ContainerInterface $container */
+        $container = $this->app('container');
+        $router = $container->get('router');
 
-// TODO URL generation does not work yet for static routes
-//        /** @var \Symfony\Component\DependencyInjection\ContainerInterface $container */
-//        $container = $this->app('container');
-//        $router = $container->get('router');
-//
-//        $router->generate('news', [
-//            'id'     => $news->getId(),
-//            'text'   => $news->getTitle(),
-//            'prefix' => $this->document->getFullPath()
-//        ]);
-
-        /*
-        $detailLink = $this->url([
-            "id" => $news->getId(),
-            "text" => $news->getTitle(),
-            "prefix" => $this->document->getFullPath()
-        ], "news", true);
-        */
+        $detailLink = $router->generate('news', [
+            'id'     => $news->getId(),
+            'text'   => $news->getTitle(),
+            'prefix' => ltrim($this->document->getFullPath(), '/')
+        ]);
         ?>
 
         <?php if($news->getImage_1()) { ?>

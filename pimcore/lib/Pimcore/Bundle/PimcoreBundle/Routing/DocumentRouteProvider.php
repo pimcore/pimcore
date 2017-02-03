@@ -5,6 +5,7 @@ namespace Pimcore\Bundle\PimcoreBundle\Routing;
 use Doctrine\Common\Util\Inflector;
 use Pimcore\Bundle\PimcoreBundle\Service\Document\DocumentService;
 use Pimcore\Model\Document;
+use Pimcore\Model\Site;
 use Pimcore\Model\Staticroute;
 use Pimcore\Model\Staticroute\Listing;
 use Pimcore\Tool;
@@ -150,8 +151,7 @@ class DocumentRouteProvider implements RouteProviderInterface
                 }
 
                 if ($params['controller'] && $params['action']) {
-                    $route = new StaticrouteRoute($path);
-                    $route->setStaticRoute($staticRoute);
+                    $route = $this->buildRouteForStaticroute($staticRoute, $path, $params);
 
                     $controllerVars = $this->normalizeControllerVars(
                         $params['module'],
@@ -160,13 +160,6 @@ class DocumentRouteProvider implements RouteProviderInterface
                     );
 
                     $route->setDefault('_controller', implode(':', $controllerVars));
-
-                    // add matching params to route
-                    foreach ($params as $key => $val) {
-                        if (!in_array($key, ['module', 'controller', 'action'])) {
-                            $route->setDefault($key, $val);
-                        }
-                    }
 
                     $collection->add($staticRoute->getName(), $route);
                 }
@@ -178,6 +171,125 @@ class DocumentRouteProvider implements RouteProviderInterface
                 break;
             }
         }
+    }
+
+    /**
+     * @param Staticroute $staticRoute
+     * @param string $path
+     * @param array $params
+     * @return StaticrouteRoute
+     */
+    protected function buildRouteForStaticroute(Staticroute $staticRoute, $path = '/', array $params = [])
+    {
+        $route = new StaticrouteRoute($path);
+        $route->setStaticRoute($staticRoute);
+
+        // add matching params to route
+        foreach ($params as $key => $val) {
+            if (!in_array($key, ['module', 'controller', 'action'])) {
+                $route->setDefault($key, $val);
+            }
+        }
+
+        return $route;
+    }
+
+    /**
+     * Find the route using the provided route name.
+     *
+     * @param string $name The route name to fetch.
+     *
+     * @return Route
+     *
+     * @throws RouteNotFoundException If there is no route with that name in
+     *                                this repository
+     */
+    public function getRouteByName($name)
+    {
+        if (preg_match('/^document_(\d+)$/', $name, $match)) {
+            $document = Document::getById($match[1]);
+
+            if ($document && $document->getProperty('symfony')) {
+                return $this->buildRouteForDocument($document);
+            }
+        }
+
+        $siteId = null;
+        if (Site::isSiteRequest()) {
+            $siteId = Site::getCurrentSite()->getId();
+        }
+
+        if ($staticRoute = Staticroute::getByName($name, $siteId)) {
+            $route = $this->buildRouteForStaticroute($staticRoute, $staticRoute->getPattern());
+
+            $variables = explode(',', $staticRoute->getVariables());
+            $assembleParams = [];
+
+            foreach ($variables as $variable) {
+                $variable = trim($variable);
+
+                // inject the variable in {variable} form to get a clean path
+                $assembleParams[$variable] = sprintf('{%s}', $variable);
+
+                // we don't care about requirements on generation
+                $route->setRequirement($variable, '.+');
+            }
+
+            $url = $staticRoute->assemble($assembleParams, true);
+            $url = urldecode($url);
+
+            $route->setPath($url);
+
+            return $route;
+        }
+
+        throw new RouteNotFoundException(sprintf("Route for name '%s' was not found", $name));
+    }
+
+    /**
+     * Find many routes by their names using the provided list of names.
+     *
+     * Note that this method may not throw an exception if some of the routes
+     * are not found or are not actually Route instances. It will just return the
+     * list of those Route instances it found.
+     *
+     * This method exists in order to allow performance optimizations. The
+     * simple implementation could be to just repeatedly call
+     * $this->getRouteByName() while catching and ignoring eventual exceptions.
+     *
+     * If $names is null, this method SHOULD return a collection of all routes
+     * known to this provider. If there are many routes to be expected, usage of
+     * a lazy loading collection is recommended. A provider MAY only return a
+     * subset of routes to e.g. support paging or other concepts, but be aware
+     * that the DynamicRouter will only call this method once per
+     * DynamicRouter::getRouteCollection() call.
+     *
+     * @param array|null $names The list of names to retrieve, In case of null,
+     *                          the provider will determine what routes to return.
+     *
+     * @return Route[] Iterable list with the keys being the names from the
+     *                 $names array.
+     */
+    public function getRoutesByNames($names)
+    {
+        // TODO needs performance optimizations
+        // TODO really return all routes here as documentation states? where is this used?
+        $routes = [];
+
+        if (is_array($names)) {
+            foreach ($names as $name) {
+                try {
+                    $route = $this->getRouteByName($name);
+                    if ($route) {
+                        $routes[] = $route;
+                    }
+                } catch (RouteNotFoundException $e) {
+                    // noop
+                }
+            }
+        }
+
+        return $routes;
     }
 
     /**
@@ -246,74 +358,5 @@ class DocumentRouteProvider implements RouteProviderInterface
         }
 
         return $result;
-    }
-
-    /**
-     * Find the route using the provided route name.
-     *
-     * @param string $name The route name to fetch.
-     *
-     * @return Route
-     *
-     * @throws RouteNotFoundException If there is no route with that name in
-     *                                this repository
-     */
-    public function getRouteByName($name)
-    {
-        if (preg_match('/^document_(\d+)$/', $name, $match)) {
-            $document = Document::getById($match[1]);
-
-            if ($document && $document->getProperty('symfony')) {
-                return $this->buildRouteForDocument($document);
-            }
-        }
-
-        throw new RouteNotFoundException(sprintf("Route for name '%s' was not found", $name));
-    }
-
-    /**
-     * Find many routes by their names using the provided list of names.
-     *
-     * Note that this method may not throw an exception if some of the routes
-     * are not found or are not actually Route instances. It will just return the
-     * list of those Route instances it found.
-     *
-     * This method exists in order to allow performance optimizations. The
-     * simple implementation could be to just repeatedly call
-     * $this->getRouteByName() while catching and ignoring eventual exceptions.
-     *
-     * If $names is null, this method SHOULD return a collection of all routes
-     * known to this provider. If there are many routes to be expected, usage of
-     * a lazy loading collection is recommended. A provider MAY only return a
-     * subset of routes to e.g. support paging or other concepts, but be aware
-     * that the DynamicRouter will only call this method once per
-     * DynamicRouter::getRouteCollection() call.
-     *
-     * @param array|null $names The list of names to retrieve, In case of null,
-     *                          the provider will determine what routes to return.
-     *
-     * @return Route[] Iterable list with the keys being the names from the
-     *                 $names array.
-     */
-    public function getRoutesByNames($names)
-    {
-        // TODO needs performance optimizations
-        // TODO really return all routes here as documentation states? where is this used?
-        $routes = [];
-
-        if (is_array($names)) {
-            foreach ($names as $name) {
-                try {
-                    $route = $this->getRouteByName($name);
-                    if ($route) {
-                        $routes[] = $route;
-                    }
-                } catch (RouteNotFoundException $e) {
-                    // noop
-                }
-            }
-        }
-
-        return $routes;
     }
 }
