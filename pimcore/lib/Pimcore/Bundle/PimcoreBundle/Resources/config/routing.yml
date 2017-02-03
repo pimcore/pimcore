@@ -2,6 +2,9 @@ app:
     resource: "@AppBundle/Controller/"
     type:     annotation
 
+_pimcore_thumbnail_service:
+
+
 _pimcore_admin:
     resource: "@PimcoreAdminBundle/Resources/config/routing/routing.yml"
 
