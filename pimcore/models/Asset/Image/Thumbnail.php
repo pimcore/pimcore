@@ -95,7 +95,7 @@ class Thumbnail
     public function getPath($deferredAllowed = true)
     {
         $fsPath = $this->getFileSystemPath($deferredAllowed);
-        $path = str_replace(PIMCORE_DOCUMENT_ROOT, "", $fsPath);
+        $path = str_replace(PIMCORE_WEB_ROOT, "", $fsPath);
         $path = urlencode_ignore_slash($path);
 
         $results = \Pimcore::getEventManager()->trigger("frontend.path.asset.image.thumbnail", $this, [
