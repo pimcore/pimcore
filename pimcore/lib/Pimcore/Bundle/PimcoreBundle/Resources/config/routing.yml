@@ -2,7 +2,19 @@ app:
     resource: "@AppBundle/Controller/"
     type:     annotation
 
-_pimcore_thumbnail_service:
+_pimcore_service_common_files:
+  path: /{filename}
+  defaults: { _controller: PimcoreBundle:PublicServices:commonFiles }
+  requirements:
+    filename: '(robobts\.txt|crossdomain\.xml|favicon\.ico|browserconfig\.xml|wpad\.dat|\.crl)'
+
+_pimcore_service_common_files_apple_touch_icon:
+  path: /{filename}
+  defaults: { _controller: PimcoreBundle:PublicServices:commonFiles }
+  requirements:
+    filename: 'apple\-touch\-icon.*'
+
+_pimcore_service_thumbnail:
   path: /var/tmp/image-thumbnails/{assetIdGroup}/{assetId}/thumb__{thumbnailName}/{filename}
   defaults: { _controller: PimcoreBundle:PublicServices:thumbnail}
   requirements:

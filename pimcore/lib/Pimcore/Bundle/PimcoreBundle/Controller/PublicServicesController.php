@@ -7,9 +7,14 @@ use Symfony\Component\HttpFoundation\Request;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Logger;
+use Symfony\Component\HttpFoundation\Response;
 
 class PublicServicesController {
 
+    /**
+     * @param Request $request
+     * @return BinaryFileResponse
+     */
     public function thumbnailAction(Request $request) {
 
 
@@ -88,5 +93,13 @@ class PublicServicesController {
                 Logger::error("Thumbnail with name '" . $thumbnailName . "' doesn't exist");
             }
         }
+    }
+
+    /**
+     * @param Request $request
+     * @return Response
+     */
+    public function commonFilesAction(Request $request) {
+        return new Response("HTTP/1.1 404 Not Found\nFiltered by common files filter", 404);
     }
 }

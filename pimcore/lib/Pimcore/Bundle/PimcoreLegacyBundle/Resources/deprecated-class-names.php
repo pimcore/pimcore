@@ -651,13 +651,6 @@ namespace {
     /**
      * @deprecated
      */
-    class Pimcore_Controller_Plugin_CommonFilesFilter extends \Pimcore\Controller\Plugin\CommonFilesFilter
-    {
-    }
-
-    /**
-     * @deprecated
-     */
     class Pimcore_Controller_Plugin_Webmastertools extends \Pimcore\Controller\Plugin\Webmastertools
     {
     }
