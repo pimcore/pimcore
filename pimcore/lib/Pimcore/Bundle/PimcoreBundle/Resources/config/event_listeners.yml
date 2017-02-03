@@ -39,7 +39,14 @@ services:
             - [setLogger, ['@logger']]
         tags:
             - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
+
     pimcore.event_listener.google_analytics_code:
       class: Pimcore\Bundle\PimcoreBundle\EventListener\GoogleAnalyticsCode
       tags:
-        - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
+        - { name: kernel.event_subscriber }
+
+    pimcore.event_listener.full_page_cache:
+        class: Pimcore\Bundle\PimcoreBundle\EventListener\FullPageCache
+        tags:
+          - { name: kernel.event_subscriber }
+

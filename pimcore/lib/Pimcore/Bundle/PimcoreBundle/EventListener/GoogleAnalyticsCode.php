@@ -5,8 +5,10 @@ namespace Pimcore\Bundle\PimcoreBundle\EventListener;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Pimcore\Bundle\PimcoreBundle\EventListener\AbstractEventListener\ResponseInjection;
 use Pimcore\Google\Analytics as AnalyticsHelper;
+use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class GoogleAnalyticsCode extends ResponseInjection
+class GoogleAnalyticsCode extends ResponseInjection implements EventSubscriberInterface
 {
     /**
      * @var bool
@@ -61,5 +63,21 @@ class GoogleAnalyticsCode extends ResponseInjection
                 $response->setContent($content);
             }
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedEvents()
+    {
+        $events = [];
+
+        if(\Pimcore\Tool::isFrontend() && !\Pimcore\Tool::isFrontentRequestByAdmin()) {
+            $events = [
+                KernelEvents::RESPONSE => ['onKernelResponse']
+            ];
+        }
+
+        return $events;
     }
 }

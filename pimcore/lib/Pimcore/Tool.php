@@ -354,7 +354,16 @@ class Tool
      */
     public static function isFrontentRequestByAdmin()
     {
-        return \Pimcore::getContainer()->get('pimcore.tool.request_helper')->isFrontendRequestByAdmin();
+        if (array_key_exists("pimcore_editmode", $_REQUEST)
+            || array_key_exists("pimcore_preview", $_REQUEST)
+            || array_key_exists("pimcore_admin", $_REQUEST)
+            || array_key_exists("pimcore_object_preview", $_REQUEST)
+            || array_key_exists("pimcore_version", $_REQUEST)
+            || preg_match("@^/pimcore_document_tag_renderlet@", $_SERVER["REQUEST_URI"])) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
