@@ -13,21 +13,16 @@ class ZendViewHelperCompilerPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        $helpers = [];
-        foreach ($container->findTaggedServiceIds('pimcore.zend.view_helper') as $id => $attributes) {
-            $alias = $id;
-            if (isset($attributes[0]['alias'])) {
-                $alias = $attributes[0]['alias'];
-            }
+        $pluginManagerDefinition = $container->getDefinition('pimcore.zend.templating.helper_plugin_manager');
+        $taggedServices          = $container->findTaggedServiceIds('pimcore.zend.view_helper');
 
-            $helpers[$alias] = $id;
-        }
+        foreach ($taggedServices as $id => $tags) {
+            foreach ($tags as $attributes) {
+                if (!isset($attributes['alias'])) {
+                    continue;
+                }
 
-        if (count($helpers) > 0) {
-            $pluginManagerDefinition = $container->getDefinition('pimcore.zend.templating.helper_plugin_manager');
-
-            foreach ($helpers as $alias => $id) {
-                $pluginManagerDefinition->addMethodCall('setService', [$alias, new Reference($id)]);
+                $pluginManagerDefinition->addMethodCall('setService', [$attributes['alias'], new Reference($id)]);
             }
         }
     }
