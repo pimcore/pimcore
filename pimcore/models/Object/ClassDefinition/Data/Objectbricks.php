@@ -45,6 +45,30 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
     public $allowedTypes = [];
 
     /**
+     * @var int
+     */
+    public $maxItems;
+
+    /**
+     * @param $maxItems
+     * @return $this
+     */
+    public function setMaxItems($maxItems)
+    {
+        $this->maxItems = $this->getAsIntegerCast($maxItems);
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMaxItems()
+    {
+        return $this->maxItems;
+    }
+
+    /**
      * @see Object\ClassDefinition\Data::getDataForEditmode
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
@@ -906,6 +930,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
     public function synchronizeWithMasterDefinition(Object\ClassDefinition\Data $masterDefinition)
     {
         $this->allowedTypes = $masterDefinition->allowedTypes;
+        $this->maxItems = $masterDefinition->maxItems;
     }
 
     /**

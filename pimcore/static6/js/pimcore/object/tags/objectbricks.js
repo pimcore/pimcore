@@ -209,7 +209,11 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         if(!this.layoutDefinitions[type]) {
             return;
         }
-
+        if (this.fieldConfig.maxItems && Object.keys(this.currentElements).length >= this.fieldConfig.maxItems) {
+            Ext.Msg.alert(t("error"),t("limit_reached"));
+            return;
+        }
+        
         this.dataFields = [];
         this.currentData = {};
         this.currentMetaData = {};
@@ -228,7 +232,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
                 ownerName: this.fieldConfig.name
             }
         ).items;
-
+        
         if(this.fieldConfig.noteditable && items) {
             items.forEach(function (record) {
                 record.disabled = true;
