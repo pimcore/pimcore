@@ -4,7 +4,7 @@ parameters:
 framework:
     secret: "%secret%"
     router:
-        resource: "@PimcoreBundle/Resources/config/routing.yml"
+        resource: "routing.yml"
         strict_requirements: ~
     templating:
         engines: ['php', 'twig', 'zend']
