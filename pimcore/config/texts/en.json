@@ -5581,6 +5581,10 @@
         "definition": "Tags Search"
     },
     {
+        "term": "tags_configuration",
+        "definition": "Tags Configuration"
+    },
+    {
         "term": "apply_all",
         "definition": "Apply all"
     },
