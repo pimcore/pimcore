@@ -2,6 +2,7 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\Controller;
 
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Tool\TmpStore;
@@ -76,21 +77,11 @@ class PublicServicesController {
                     // set appropriate caching headers
                     // see also: https://github.com/pimcore/pimcore/blob/1931860f0aea27de57e79313b2eb212dcf69ef13/.htaccess#L86-L86
                     $lifetime = 86400 * 7; // 1 week lifetime, same as direct delivery in .htaccess
-                    header("Cache-Control: public, max-age=" . $lifetime);
-                    header("Expires: ". date("D, d M Y H:i:s T", time()+$lifetime));
 
-                    $fileExtension = \Pimcore\File::getFileExtension($thumbnailFile);
-                    if (in_array($fileExtension, ["gif", "jpeg", "jpeg", "png", "pjpeg"])) {
-                        header("Content-Type: image/".$fileExtension, true);
-                    } else {
-                        header("Content-Type: " . $asset->getMimetype(), true);
-                    }
-
-                    header("Content-Length: " . filesize($thumbnailFile), true); while (@ob_end_flush()) ;
-                    flush();
-
-                    readfile($thumbnailFile);
-                    exit;
+                    return new BinaryFileResponse($thumbnailFile, 200, [
+                        "Cache-Control" => "public, max-age=" . $lifetime,
+                        "Expires" => date("D, d M Y H:i:s T", time()+$lifetime)
+                    ]);
                 }
             } catch (\Exception $e) {
                 // nothing to do
