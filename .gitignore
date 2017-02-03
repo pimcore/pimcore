@@ -48,6 +48,12 @@
 
 # pimcore web var directories
 /web/var
+!/web/var/assets
+/web/var/assets/*
+!/web/var/assets/.gitkeep
+!/web/var/tmp
+/web/var/tmp/*
+!/web/var/tmp/.gitkeep
 
 # tests
 /phpunit.xml

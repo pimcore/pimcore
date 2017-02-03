@@ -8,8 +8,6 @@ use Doctrine\Common\Annotations\AnnotationRegistry;
 $includePaths = [
     PIMCORE_PATH . "/lib",
     PIMCORE_PATH . "/models",
-    PIMCORE_WEBSITE_PATH . "/lib",
-    PIMCORE_WEBSITE_PATH . "/models",
     PIMCORE_CLASS_DIRECTORY,
     // we need to include the path to the ZF1, because we cannot remove all require_once() out of the source
     // see also: Pimcore\Composer::zendFrameworkOptimization()
