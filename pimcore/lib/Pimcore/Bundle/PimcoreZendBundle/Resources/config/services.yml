@@ -69,6 +69,14 @@ services:
         tags:
             - { name: pimcore.zend.view_helper, alias: action }
 
+    pimcore.zend.templating.view_helper.getParam:
+        class: Pimcore\Bundle\PimcoreZendBundle\Templating\Zend\Helper\GetParam
+        arguments:
+            - '@service_container'
+        tags:
+            - { name: pimcore.zend.view_helper, alias: getParam }
+
+
 
     templating.engine.zend:
         class: Pimcore\Bundle\PimcoreZendBundle\Templating\ZendEngine
