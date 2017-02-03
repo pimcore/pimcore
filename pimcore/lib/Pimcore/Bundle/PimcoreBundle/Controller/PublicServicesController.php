@@ -102,4 +102,12 @@ class PublicServicesController {
     public function commonFilesAction(Request $request) {
         return new Response("HTTP/1.1 404 Not Found\nFiltered by common files filter", 404);
     }
+
+
+    /**
+     * @param Request $request
+     */
+    public function hybridauthAction(Request $request) {
+        \Pimcore\Tool\HybridAuth::process();
+    }
 }

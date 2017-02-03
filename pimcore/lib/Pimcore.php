@@ -272,7 +272,6 @@ class Pimcore
         }
 
         if (Tool::useFrontendOutputFilters(new \Zend_Controller_Request_Http())) {
-            $front->registerPlugin(new Controller\Plugin\HybridAuth(), 792);
             $front->registerPlugin(new Controller\Plugin\QrCode(), 793);
             $front->registerPlugin(new Controller\Plugin\WysiwygAttributes(), 796);
             $front->registerPlugin(new Controller\Plugin\Webmastertools(), 797);

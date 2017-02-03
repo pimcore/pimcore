@@ -14,6 +14,12 @@ _pimcore_service_common_files_apple_touch_icon:
   requirements:
     filename: 'apple\-touch\-icon.*'
 
+_pimcore_service_hybridauth:
+  path: /hybridauth/{placeholder}
+  defaults: { _controller: PimcoreBundle:PublicServices:hybridauth }
+  requirements:
+    placeholder: '.*'
+
 _pimcore_service_thumbnail:
   path: /var/tmp/image-thumbnails/{assetIdGroup}/{assetId}/thumb__{thumbnailName}/{filename}
   defaults: { _controller: PimcoreBundle:PublicServices:thumbnail}
