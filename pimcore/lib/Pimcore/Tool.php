@@ -516,6 +516,7 @@ class Tool
 
 
     /**
+     * @deprecated
      * @static
      * @param \Zend_Controller_Response_Abstract $response
      * @return bool
