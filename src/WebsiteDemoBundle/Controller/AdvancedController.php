@@ -42,6 +42,34 @@ class AdvancedController extends ZendController
 
     }
 
+    public function searchAction(Request $request)
+    {
+        if ($request->get("q")) {
+            try {
+                $page = $request->get('page');
+                if (empty($page)) {
+                    $page = 1;
+                }
+                $perPage = 10;
+
+                $result = \Pimcore\Google\Cse::search($request->get("q"), (($page - 1) * $perPage), null, [
+                    "cx" => "002859715628130885299:baocppu9mii"
+                ], $request->get("facet"));
+
+                $paginator = \Zend_Paginator::factory($result);
+                $paginator->setCurrentPageNumber($page);
+                $paginator->setItemCountPerPage($perPage);
+                $this->view->paginator = $paginator;
+                $this->view->result = $result;
+            } catch (\Exception $e) {
+                // something went wrong: eg. limit exceeded, wrong configuration, ...
+                \Pimcore\Logger::err($e);
+                echo $e->getMessage();
+                exit;
+            }
+        }
+    }
+
     public function objectFormAction(Request $request)
     {
         $success = false;
