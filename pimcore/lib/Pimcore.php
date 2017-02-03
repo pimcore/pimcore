@@ -268,7 +268,6 @@ class Pimcore
 
         // register general pimcore plugins for frontend
         if ($frontend) {
-            $front->registerPlugin(new Controller\Plugin\Thumbnail(), 795);
             $front->registerPlugin(new Controller\Plugin\Less(), 799);
         }
 
