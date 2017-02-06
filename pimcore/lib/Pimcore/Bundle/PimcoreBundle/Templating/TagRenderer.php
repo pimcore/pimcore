@@ -2,17 +2,13 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\Templating;
 
+use Pimcore\Bundle\PimcoreBundle\Service\Request\EditmodeResolver;
+use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModel;
+use Pimcore\Bundle\PimcoreBundle\View\ZendViewProvider;
 use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Document\Tag;
-use Pimcore\View;
-use Pimcore\Bundle\PimcoreBundle\EventListener\Editmode;
-use Pimcore\Bundle\PimcoreBundle\Service\Request\EditmodeResolver;
-use Pimcore\Bundle\PimcoreBundle\View\ZendViewProvider;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
-use Psr\Log\LoggerInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 class TagRenderer implements LoggerAwareInterface
 {
@@ -65,7 +61,7 @@ class TagRenderer implements LoggerAwareInterface
      * @param $type
      * @param $inputName
      * @param array $options
-     * @return mixed|Tag|string
+     * @return Tag|string|null
      *
      * @see \Pimcore\View::tag
      */
@@ -77,6 +73,8 @@ class TagRenderer implements LoggerAwareInterface
         $editmode = $this->editmodeResolver->isEditmode();
 
         try {
+            $tag = null;
+
             if ($document instanceof PageSnippet) {
                 $tag = $document->getElement($name);
 
@@ -86,10 +84,10 @@ class TagRenderer implements LoggerAwareInterface
                         $tag->load();
                     }
 
-                    // create dummy view and add needed vars (depending on element)
-                    $view           = $this->viewProvider->getView();
-                    $view->editmode = $editmode;
-                    $view->document = $document;
+                    $view = new ViewModel([
+                        'editmode' => $editmode,
+                        'document' => $document
+                    ]);
 
                     $tag->setView($view);
                     $tag->setEditmode($editmode);

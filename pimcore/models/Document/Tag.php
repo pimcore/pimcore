@@ -16,6 +16,7 @@
 
 namespace Pimcore\Model\Document;
 
+use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModelInterface;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Webservice;
@@ -60,7 +61,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     protected $controller;
 
     /**
-     * @var \Pimcore\View
+     * @var ViewModelInterface
      */
     protected $view;
 
@@ -99,6 +100,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
             }
         }
 
+        /** @var Tag $tag */
         $tag = new $tagClass();
         $tag->setName($name);
         $tag->setDocumentId($documentId);
@@ -231,10 +233,10 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     }
 
     /**
-     * @param \Pimcore\View $view
+     * @param ViewModelInterface $view
      * @return $this
      */
-    public function setView($view)
+    public function setView(ViewModelInterface $view)
     {
         $this->view = $view;
 
@@ -242,7 +244,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     }
 
     /**
-     * @return \Pimcore\View
+     * @return ViewModelInterface
      */
     public function getView()
     {
