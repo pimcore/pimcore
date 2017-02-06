@@ -25,6 +25,7 @@ use Pimcore\Tool;
 class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
 {
     const ELEMENT_DOES_NOT_EXIST = -1;
+    const TAG_DOES_NOT_EXIST = -1;
     /**
      * the webservice
      * @var
@@ -1198,6 +1199,161 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                 "name" => $class->getName()
             ];
             $result[] = $item;
+        }
+
+        $this->encoder->encode(["success" => true, "data" => $result]);
+    }
+
+    /**
+     * Returns a list of all tags.
+     *  GET http://[YOUR-DOMAIN]/webservice/rest/tag-list?apikey=[API-KEY]
+     * @throws \Exception
+     */
+    public function tagListAction()
+    {
+        $this->checkUserPermission("tags_search");
+
+        try {
+            $list = new Element\Tag\Listing();
+            $tags = $list->load();
+            $result = [];
+
+            foreach ($tags as $tag) {
+                $item = [
+                    "id" => $tag->getId(),
+                    "parentId" => $tag->getParentId(),
+                    "name" => $tag->getName()
+                ];
+                $result[] = $item;
+            }
+        } catch (\Exception $e) {
+            Logger::error($e);
+            $this->encoder->encode(["success" => false, "msg" => (string) $e]);
+        }
+
+        $this->encoder->encode(["success" => true, "data" => $result]);
+    }
+
+    /** Returns a list of all tags for an element.
+     *  GET http://[YOUR-DOMAIN]/webservice/rest/tags-element-list?apikey=[API-KEY]&id=1281&type=object
+     *
+     * Parameters:
+     *      - element id
+     *      - type of element (document | asset | object)
+     * @throws \Exception
+     */
+    public function tagsElementListAction()
+    {
+        $this->checkUserPermission("tags_search");
+
+        $id = $this->getParam("id");
+        $type = $this->getParam("type");
+
+        try {
+            if ($type === "document") {
+                $this->checkUserPermission("documents");
+                $element = Document::getById($id);
+            }
+            elseif ($type === "asset") {
+                $this->checkUserPermission("assets");
+                $element = Asset::getById($id);
+            }
+            elseif ($type === "object") {
+                $this->checkUserPermission("objects");
+                $element = Object::getById($id);
+            }
+            else {
+                $this->encoder->encode(["success" => false]);
+
+                return;
+            }
+
+            if (!$element) {
+                $this->encoder->encode([  "success" => false,
+                    "msg" => "Element does not exist",
+                    "code" => self::ELEMENT_DOES_NOT_EXIST]);
+
+                return;
+            }
+
+            $this->checkPermission($element, "get");
+
+            $assignedTags = Element\Tag::getTagsForElement($type, $element->getId());
+            $result = [];
+
+            foreach ($assignedTags as $tag) {
+                $item = [
+                    "id" => $tag->getId(),
+                    "parentId" => $tag->getParentId(),
+                    "name" => $tag->getName()
+                ];
+                $result[] = $item;
+            }
+        } catch (\Exception $e) {
+            Logger::error($e);
+            $this->encoder->encode(["success" => false, "msg" => (string) $e]);
+        }
+
+        $this->encoder->encode(["success" => true, "data" => $result]);
+    }
+
+    /** Returns a list of elements id/type pairs for a tag.
+     *  GET http://[YOUR-DOMAIN]/webservice/rest/elements-tag-list?apikey=[API-KEY]&id=12&type=object
+     *
+     * Parameters:
+     *      - tag id
+     *      - type of element (document | asset | object)
+     * @throws \Exception
+     */
+    public function elementsTagListAction()
+    {
+        $this->checkUserPermission("tags_search");
+
+        $id = $this->getParam("id");
+        $type = $this->getParam("type");
+
+        try {
+            $tag = Element\Tag::getById($id);
+
+            if (!$tag) {
+                $this->encoder->encode([  "success" => false,
+                    "msg" => "Tag does not exist",
+                    "code" => self::TAG_DOES_NOT_EXIST]);
+
+                return;
+            }
+
+            if ($type === "document") {
+                $this->checkUserPermission("documents");
+            }
+            elseif ($type === "asset") {
+                $this->checkUserPermission("assets");
+            }
+            elseif ($type === "object") {
+                $this->checkUserPermission("objects");
+            }
+            else {
+                $this->encoder->encode(["success" => false]);
+
+                return;
+            }
+
+            $elementsForTag = Element\Tag::getElementsForTag($tag, $type);
+            $result = [];
+
+            foreach ($elementsForTag as $element) {
+                $item = [
+                    "id" => $element->getId(),
+                    "type" => $element->getType()
+                ];
+                if (method_exists($element, "getPublished")) {
+                    $item['published'] = $element->getPublished();
+                }
+                $result[] = $item;
+            }
+        } catch (\Exception $e) {
+            Logger::error($e);
+            $this->encoder->encode(["success" => false, "msg" => (string) $e]);
         }
 
         $this->encoder->encode(["success" => true, "data" => $result]);
