@@ -240,6 +240,9 @@ class Pimcore
      */
     protected static function registerWhoopsErrorHandler(Zend_Config $conf, $frontend)
     {
+        // TODO remove - we use the symfony error handler
+        return;
+
         if (self::inDebugMode() && $frontend && !$conf->general->disable_whoops && !defined("HHVM_VERSION")) {
             $whoops = new \Whoops\Run;
             $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
