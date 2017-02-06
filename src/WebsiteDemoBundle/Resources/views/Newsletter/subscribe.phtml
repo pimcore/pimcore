@@ -1,0 +1,52 @@
+<?= $this->render("WebsiteDemoBundle:Content:default.phtml"); ?>
+
+<?php if(!$this->success) { ?>
+
+    <?php if($this->getParam("submit")) { ?>
+        <div class="alert alert-danger">
+            <?= $this->zf1_translate("Sorry, something went wrong, please check the data in the form and try again!"); ?>
+        </div>
+        <br />
+        <br />
+    <?php } ?>
+
+    <form class="form-horizontal" role="form" action="" method="post">
+        <div class="form-group">
+            <label class="col-lg-2 control-label"><?= $this->zf1_translate("Gender"); ?></label>
+            <div class="col-lg-10">
+                <select name="gender" class="form-control">
+                    <option value="male"<?php if($this->getParam("gender") == "male") { ?> selected="selected"<?php } ?>>Male</option>
+                    <option value="female"<?php if($this->getParam("gender") == "female") { ?> selected="selected"<?php } ?>>Female</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label"><?= $this->zf1_translate("Firstname"); ?></label>
+            <div class="col-lg-10">
+                <input name="firstname" type="text" class="form-control" placeholder="" value="<?= $this->escapeHtml($this->getParam("firstname")); ?>">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label"><?= $this->zf1_translate("Lastname"); ?></label>
+            <div class="col-lg-10">
+                <input name="lastname" type="text" class="form-control" placeholder="" value="<?= $this->escapeHtml($this->getParam("lastname")); ?>">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-lg-2 control-label"><?= $this->zf1_translate("E-Mail"); ?></label>
+            <div class="col-lg-10">
+                <input name="email" type="text" class="form-control" placeholder="example@example.com" value="<?= $this->escapeHtml($this->getParam("email")); ?>">
+            </div>
+        </div>
+
+        <br />
+
+        <div class="form-group">
+            <div class="col-lg-offset-2 col-lg-10">
+                <input type="submit" name="submit" class="btn btn-default" value="<?= $this->zf1_translate("Submit"); ?>">
+            </div>
+        </div>
+    </form>
+<?php } else { ?>
+    <div class="alert alert-success"><?= $this->zf1_translate("Success, Please check your mailbox!"); ?></div>
+<?php } ?>
