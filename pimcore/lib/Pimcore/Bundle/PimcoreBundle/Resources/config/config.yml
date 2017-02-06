@@ -2,6 +2,8 @@ parameters:
     locale: en
 
 framework:
+    translator:
+        fallbacks: [en]
     secret: "%secret%"
     router:
         resource: "@PimcoreBundle/Resources/config/routing.yml"
