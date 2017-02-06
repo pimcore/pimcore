@@ -77,7 +77,7 @@
     "neitanod/forceutf8": "~2"
   },
   "require-dev": {
-    "phpunit/phpunit": "*"
+    "phpunit/phpunit": "^5.0"
   },
   "suggest": {
     "ext-curl": "*",
