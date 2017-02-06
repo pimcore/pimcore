@@ -1,6 +1,6 @@
 <?php
 
-namespace Pimcore\Bundle\PimcoreBundle\Document;
+namespace Pimcore\Bundle\PimcoreBundle\Templating;
 
 use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Document\Tag;

@@ -84,20 +84,7 @@ class DocumentRouteProvider implements RouteProviderInterface
      */
     protected function buildRouteForDocument(Document $document)
     {
-        $handleDocument = false;
-
-        if ($document->getProperty('symfony')) {
-            $handleDocument = true;
-        }
-
-        // TODO remove - this is just for testing. Overrides all documents with symfony mode
-        // (allows to test symfony rendering without having to touch all documents)
-        // controller = foo, action = bar becomes AppBundle:Foo:bar
-        if (defined('PIMCORE_SYMFONY_OVERRIDE_DOCUMENTS') && PIMCORE_SYMFONY_OVERRIDE_DOCUMENTS) {
-            $handleDocument = true;
-        }
-
-        if (!$handleDocument) {
+        if (!$this->handleDocument($document)) {
             return null;
         }
 
@@ -209,7 +196,7 @@ class DocumentRouteProvider implements RouteProviderInterface
         if (preg_match('/^document_(\d+)$/', $name, $match)) {
             $document = Document::getById($match[1]);
 
-            if ($document) {
+            if ($document && $this->handleDocument($document)) {
                 return $this->buildRouteForDocument($document);
             }
         }
@@ -290,6 +277,22 @@ class DocumentRouteProvider implements RouteProviderInterface
         }
 
         return $routes;
+    }
+
+    // TODO remove - this is just for testing. Overrides all documents with symfony mode
+    // (allows to test symfony rendering without having to touch all documents)
+    // controller = foo, action = bar becomes AppBundle:Foo:bar
+    protected function handleDocument(Document $document)
+    {
+        if ($document->getProperty('symfony')) {
+            return true;
+        }
+
+        if (defined('PIMCORE_SYMFONY_OVERRIDE_DOCUMENTS') && PIMCORE_SYMFONY_OVERRIDE_DOCUMENTS) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

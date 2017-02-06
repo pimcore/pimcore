@@ -2,13 +2,13 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\Twig;
 
-use Pimcore\Bundle\PimcoreBundle\Document\TagRenderer;
+use Pimcore\Bundle\PimcoreBundle\Templating\TagRenderer;
 use Pimcore\Model\Document\PageSnippet;
 
 class DocumentTagExtension extends \Twig_Extension
 {
     /**
-     * @var TagRenderer
+     * @var \Pimcore\Bundle\PimcoreBundle\Templating\TagRenderer
      */
     protected $tagRenderer;
 

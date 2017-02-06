@@ -2,7 +2,7 @@
 
 namespace Pimcore\Bundle\PimcoreZendBundle\Templating\Zend;
 
-use Pimcore\Bundle\PimcoreBundle\Document\TagRenderer;
+use Pimcore\Bundle\PimcoreBundle\Templating\TagRenderer;
 use Pimcore\Bundle\PimcoreBundle\View\ZendViewHelperBridge;
 use Pimcore\Bundle\PimcoreZendBundle\Templating\Zend\Helper\DocumentTag;
 use Zend\View\Renderer\PhpRenderer as BasePhpRenderer;
@@ -10,7 +10,7 @@ use Zend\View\Renderer\PhpRenderer as BasePhpRenderer;
 class PhpRenderer extends BasePhpRenderer
 {
     /**
-     * @var TagRenderer
+     * @var \Pimcore\Bundle\PimcoreBundle\Templating\TagRenderer
      */
     protected $tagRenderer;
 
@@ -20,7 +20,7 @@ class PhpRenderer extends BasePhpRenderer
     protected $zendViewHelperBridge;
 
     /**
-     * @param TagRenderer $tagRenderer
+     * @param \Pimcore\Bundle\PimcoreBundle\Templating\TagRenderer $tagRenderer
      */
     public function setTagRenderer(TagRenderer $tagRenderer)
     {

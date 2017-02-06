@@ -2,7 +2,7 @@
 
 namespace Pimcore\Bundle\PimcoreZendBundle\Templating\Zend\Helper;
 
-use Pimcore\Bundle\PimcoreBundle\Document\TagRenderer;
+use Pimcore\Bundle\PimcoreBundle\Templating\TagRenderer;
 use Pimcore\Bundle\PimcoreBundle\Service\Request\DocumentResolver;
 use Zend\View\Helper\AbstractHelper;
 
@@ -19,7 +19,7 @@ class DocumentTag extends AbstractHelper
     protected $documentResolver;
 
     /**
-     * @param TagRenderer $tagRenderer
+     * @param \Pimcore\Bundle\PimcoreBundle\Templating\TagRenderer $tagRenderer
      * @param DocumentResolver $documentResolver
      */
     public function __construct(TagRenderer $tagRenderer, DocumentResolver $documentResolver)
