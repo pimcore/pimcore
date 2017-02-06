@@ -25,7 +25,7 @@
             <div style="margin-top: 20px">
                 Facets:
                 <?php foreach ($facets as $label => $anchor) { ?>
-                    <a class="btn btn-default btn-xs" href="<?= $this->path(array('facet' => $label, "page" => null, "q" => $this->app("request")->get("q"))); ?>"><?= $anchor ?></a>
+                    <a class="btn btn-default btn-xs" href="<?= $this->pimcoreUrl(['facet' => $label, "page" => null]); ?>"><?= $anchor ?></a>
                 <?php } ?>
             </div>
             <hr />
