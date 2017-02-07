@@ -20,7 +20,6 @@ use Pimcore\Model;
 
 class Info
 {
-
     /**
      * @var Model\Document\Tag
      */
@@ -50,7 +49,6 @@ class Info
      * @var string
      */
     public $path;
-
 
     /**
      * @param \Zend_Config $config

@@ -21,6 +21,7 @@ use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Webservice;
 use Pimcore\Logger;
+use Pimcore\View;
 
 /**
  * @method \Pimcore\Model\Document\Tag\Dao getDao()
@@ -61,7 +62,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     protected $controller;
 
     /**
-     * @var ViewModelInterface
+     * @var ViewModelInterface|View
      */
     protected $view;
 
@@ -233,10 +234,10 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     }
 
     /**
-     * @param ViewModelInterface $view
+     * @param ViewModelInterface|View $view
      * @return $this
      */
-    public function setView(ViewModelInterface $view)
+    public function setView($view)
     {
         $this->view = $view;
 
@@ -244,7 +245,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     }
 
     /**
-     * @return ViewModelInterface
+     * @return ViewModelInterface|View
      */
     public function getView()
     {

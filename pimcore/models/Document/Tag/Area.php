@@ -26,7 +26,6 @@ use Pimcore\Model\Document;
  */
 class Area extends Model\Document\Tag
 {
-
     /**
      * @see Model\Document\Tag\TagInterface::getType
      * @return string

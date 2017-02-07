@@ -16,6 +16,7 @@
 
 namespace Pimcore\Model\Document\Tag;
 
+use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModelInterface;
 use Pimcore\Model;
 use Pimcore\ExtensionManager;
 use Pimcore\Tool;
