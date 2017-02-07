@@ -79,6 +79,4 @@ class Listing extends Model\Listing\AbstractListing
     {
         self::$cacheLimit = $cacheLimit;
     }
-
-
 }

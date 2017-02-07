@@ -363,14 +363,17 @@ class Datetime extends Model\Object\ClassDefinition\Data
      * @param  $params optional params used to change the behavior
      * @return string
      */
-    public function getFilterConditionExt($value, $operator, $params = []) {
+    public function getFilterConditionExt($value, $operator, $params = [])
+    {
         if ($operator == "=") {
             $db = Db::get();
             $maxTime = $value + (86400 - 1); //specifies the top point of the range used in the condition
             $filterField = $params["name"] ? $params["name"] : $this->getName();
             $condition = "`" . $filterField . "` BETWEEN " . $db->quote($value) . " AND " . $db->quote($maxTime);
+
             return $condition;
         }
+
         return parent::getFilterConditionExt($value, $operator, $params);
     }
 }

@@ -1253,16 +1253,13 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
             if ($type === "document") {
                 $this->checkUserPermission("documents");
                 $element = Document::getById($id);
-            }
-            elseif ($type === "asset") {
+            } elseif ($type === "asset") {
                 $this->checkUserPermission("assets");
                 $element = Asset::getById($id);
-            }
-            elseif ($type === "object") {
+            } elseif ($type === "object") {
                 $this->checkUserPermission("objects");
                 $element = Object::getById($id);
-            }
-            else {
+            } else {
                 $this->encoder->encode(["success" => false]);
 
                 return;
@@ -1325,14 +1322,11 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
 
             if ($type === "document") {
                 $this->checkUserPermission("documents");
-            }
-            elseif ($type === "asset") {
+            } elseif ($type === "asset") {
                 $this->checkUserPermission("assets");
-            }
-            elseif ($type === "object") {
+            } elseif ($type === "object") {
                 $this->checkUserPermission("objects");
-            }
-            else {
+            } else {
                 $this->encoder->encode(["success" => false]);
 
                 return;

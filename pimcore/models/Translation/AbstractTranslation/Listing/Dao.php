@@ -232,5 +232,4 @@ abstract class Dao extends Model\Listing\Dao\AbstractDao implements Dao\DaoInter
     {
         $this->onCreateQueryCallback = $callback;
     }
-
 }
