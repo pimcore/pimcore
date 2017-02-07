@@ -8,6 +8,19 @@ use Symfony\Component\Config\FileLocatorInterface;
 
 abstract class AbstractTemplateAreabrick extends AbstractAreabrick
 {
+    const TEMPLATE_LOCATION_GLOBAL = 'global';
+    const TEMPLATE_LOCATION_BUNDLE = 'bundle';
+
+    /**
+     * @var bool
+     */
+    protected $hasViewTemplate = true;
+
+    /**
+     * @var bool
+     */
+    protected $hasEditTemplate = false;
+
     /**
      * @var BundleLocatorInterface
      */
@@ -27,16 +40,6 @@ abstract class AbstractTemplateAreabrick extends AbstractAreabrick
      * @var array
      */
     protected $templateReferences = [];
-
-    /**
-     * @var bool
-     */
-    protected $hasViewTemplate = true;
-
-    /**
-     * @var bool
-     */
-    protected $hasEditTemplate = false;
 
     /**
      * @param BundleLocatorInterface $bundleLocator
@@ -83,6 +86,16 @@ abstract class AbstractTemplateAreabrick extends AbstractAreabrick
     }
 
     /**
+     * Determines if template should be auto-located in area bundle or in app/Resources
+     *
+     * @return string
+     */
+    protected function getTemplateLocation()
+    {
+        return static::TEMPLATE_LOCATION_BUNDLE;
+    }
+
+    /**
      * @param string $type
      * @return string
      */
@@ -123,13 +136,22 @@ abstract class AbstractTemplateAreabrick extends AbstractAreabrick
      */
     protected function getTemplateReference($type)
     {
-        return sprintf(
-            '%s:Areas/%s:%s.%s',
-            $this->getBundleName(),
-            $this->getId(),
-            $type,
-            $this->getTemplateSuffix()
-        );
+        if ($this->getTemplateLocation() === static::TEMPLATE_LOCATION_BUNDLE) {
+            return sprintf(
+                '%s:Areas/%s:%s.%s',
+                $this->getBundleName(),
+                $this->getId(),
+                $type,
+                $this->getTemplateSuffix()
+            );
+        } else {
+            return sprintf(
+                'Areas/%s/%s.%s',
+                $this->getId(),
+                $type,
+                $this->getTemplateSuffix()
+            );
+        }
     }
 
     /**
@@ -138,13 +160,23 @@ abstract class AbstractTemplateAreabrick extends AbstractAreabrick
      */
     protected function getTemplatePath($type)
     {
-        $path = sprintf(
-            '@%s/Resources/views/Areas/%s/%s.%s',
-            $this->getBundleName(),
-            $this->getId(),
-            $type,
-            $this->getTemplateSuffix()
-        );
+        $path = '';
+        if ($this->getTemplateLocation() === static::TEMPLATE_LOCATION_BUNDLE) {
+            $path = sprintf(
+                '@%s/Resources/views/Areas/%s/%s.%s',
+                $this->getBundleName(),
+                $this->getId(),
+                $type,
+                $this->getTemplateSuffix()
+            );
+        } else {
+            $path = sprintf(
+                'views/Areas/%s/%s.%s',
+                $this->getId(),
+                $type,
+                $this->getTemplateSuffix()
+            );
+        }
 
         try {
             return $this->fileLocator->locate($path);
