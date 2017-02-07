@@ -1,8 +1,8 @@
 <?php
 
-namespace Pimcore\Bundle\PimcoreBundle\Area;
+namespace Pimcore\Document\Area;
 
-use Pimcore\Bundle\PimcoreBundle\Area\Exception\ConfigurationException;
+use Pimcore\Document\Area\Exception\ConfigurationException;
 
 class AreaManager
 {

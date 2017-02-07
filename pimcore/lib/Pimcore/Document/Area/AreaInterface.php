@@ -1,6 +1,6 @@
 <?php
 
-namespace Pimcore\Bundle\PimcoreBundle\Area;
+namespace Pimcore\Document\Area;
 
 use Pimcore\Model\Document\Tag\Area\Info;
 

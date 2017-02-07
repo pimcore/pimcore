@@ -1,6 +1,6 @@
 <?php
 
-namespace Pimcore\Bundle\PimcoreBundle\Area\Exception;
+namespace Pimcore\Document\Area\Exception;
 
 class ConfigurationException extends \RuntimeException
 {
