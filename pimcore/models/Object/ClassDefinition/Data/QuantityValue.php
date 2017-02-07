@@ -44,7 +44,7 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
     public $defaultUnit;
 
     /**
-     * @var array()
+     * @var array
      */
     public $validUnits;
 
@@ -114,7 +114,7 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @param  array() $validUnits
+     * @param  array $validUnits
      * @return void
      */
     public function setValidUnits($validUnits)
@@ -123,7 +123,7 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @return array()
+     * @return array
      */
     public function getValidUnits()
     {

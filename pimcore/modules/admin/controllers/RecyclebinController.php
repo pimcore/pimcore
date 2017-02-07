@@ -41,6 +41,8 @@ class Admin_RecyclebinController extends \Pimcore\Controller\Action\Admin
 
             $this->_helper->json(["success" => true, "data" => []]);
         } else {
+            $db = \Pimcore\Db::get();
+
             $list = new Recyclebin\Item\Listing();
             $list->setLimit($this->getParam("limit"));
             $list->setOffset($this->getParam("start"));
@@ -111,7 +113,13 @@ class Admin_RecyclebinController extends \Pimcore\Controller\Action\Admin
                         $field = "CONCAT(path,filename)";
                     }
 
-                    $conditionFilters[] =  $field . $operator . " '" . $value . "' ";
+                    if ($filter["type"] == "date" && $operator == "=") {
+                        $maxTime = $value + (86400 - 1); //specifies the top point of the range used in the condition
+                        $condition =  $field . " BETWEEN " . $db->quote($value) . " AND " . $db->quote($maxTime);
+                        $conditionFilters[] = $condition;
+                    } else {
+                        $conditionFilters[] = $field . $operator . " '" . $value . "' ";
+                    }
                 }
             }
 

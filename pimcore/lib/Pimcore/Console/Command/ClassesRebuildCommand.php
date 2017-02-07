@@ -29,6 +29,11 @@ class ClassesRebuildCommand extends AbstractCommand
         $this
             ->setName('deployment:classes-rebuild')
             ->setDescription('rebuilds db structure for classes, field collections and object bricks based on updated website/var/classes/definition_*.php files')
+            ->addOption(
+                'create-classes', 'c',
+                InputOption::VALUE_NONE,
+                "Create missing Classes (Classes that exists in website/var/classes but not in the database)"
+            )
         ;
     }
 
@@ -43,14 +48,43 @@ class ClassesRebuildCommand extends AbstractCommand
             $output->writeln("---------------------");
             $output->writeln("Saving all classes");
         }
-        foreach ($list->getClasses() as $class) {
-            if ($output->isVerbose()) {
-                $output->writeln($class->getName() . " [" . $class->getId() . "] saved");
+
+        if($input->getOption("create-classes")) {
+            $objectClassesFolder = PIMCORE_CLASS_DIRECTORY ;
+            $files = glob($objectClassesFolder . "/*.php");
+
+            foreach ($files as $file) {
+                $class = include $file;
+
+                if($class instanceof ClassDefinition) {
+                    $existingClass = ClassDefinition::getByName($class->getName());
+
+                    if($existingClass instanceof ClassDefinition) {
+                        if ($output->isVerbose()) {
+                            $output->writeln($class->getName() . " [" . $class->getId() . "] saved");
+                        }
+
+                        $existingClass->save();
+                    }
+                    else {
+                        if ($output->isVerbose()) {
+                            $output->writeln($class->getName() . " [" . $class->getId() . "] created");
+                        }
+
+                        $class->save();
+                    }
+                }
             }
-
-            $class->save();
         }
+        else {
+            foreach ($list->getClasses() as $class) {
+                if ($output->isVerbose()) {
+                    $output->writeln($class->getName() . " [" . $class->getId() . "] saved");
+                }
 
+                $class->save();
+            }
+        }
 
         if ($output->isVerbose()) {
             $output->writeln("---------------------");

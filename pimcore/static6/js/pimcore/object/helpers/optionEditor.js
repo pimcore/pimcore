@@ -26,8 +26,6 @@ pimcore.object.helpers.optionEditor = Class.create({
 
     edit: function() {
 
-
-
         var displayField = {
             xtype: "displayfield",
             region: "north",
@@ -36,14 +34,13 @@ pimcore.object.helpers.optionEditor = Class.create({
         };
 
 
-        var data = "";
+        var data = [];
         this.store.each(function (rec) {
-                if (data.length > 0) {
-                    data += "\n";
-                }
-                data += rec.get("key") + "," + rec.get("value");
+                data.push([rec.get("key"), rec.get("value")]);
             }
         );
+
+        data = Ext.util.CSV.encode(data);
 
         this.textarea = new Ext.form.TextArea({
             region: "center",
@@ -72,17 +69,17 @@ pimcore.object.helpers.optionEditor = Class.create({
                     text: t('apply'),
                     iconCls: "pimcore_icon_save",
                     handler: function(){
-
                         this.store.removeAll();
+                        var content = this.textarea.getValue();
+                        var csvData = Ext.util.CSV.decode(content);
 
-                        var lines = this.textarea.getValue().split('\n');
-                        for(var i = 0;i < lines.length;i++){
-                            line = lines[i];
-                            var pair = lines[i].split(',');
+                        for(var i = 0;i < csvData.length;i++){
+                            var pair = csvData[i];
+                            var key = pair[0];
+                            var value = pair[1];
 
-                            var value = pair[1] ? pair[1] : pair[0];
                             var u = {
-                                key: pair[0],
+                                key: key,
                                 value: value
                             };
                             this.store.add(u);
@@ -103,12 +100,7 @@ pimcore.object.helpers.optionEditor = Class.create({
             ]
         });
 
-
-
         this.window.add(this.configPanel);
         this.window.show();
     }
-
-
-
 });

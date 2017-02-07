@@ -53,7 +53,16 @@ pimcore.object.classes.data.objectbricks = Class.create(pimcore.object.classes.d
         $super();
         
         this.specificPanel.removeAll();
-
+        this.specificPanel.add([
+            {
+                xtype: "numberfield",
+                fieldLabel: t("maximum_items"),
+                name: "maxItems",
+                value: this.datax.maxItems,
+                minValue: 0
+            }
+        ]);
+        
         return this.layout;
     },
 
@@ -81,7 +90,8 @@ pimcore.object.classes.data.objectbricks = Class.create(pimcore.object.classes.d
             }
             Ext.apply(this.datax,
                 {
-                    allowedTypes: source.datax.allowedTypes
+                    allowedTypes: source.datax.allowedTypes,
+                    maxItems: source.datax.maxItems
                 });
         }
     }

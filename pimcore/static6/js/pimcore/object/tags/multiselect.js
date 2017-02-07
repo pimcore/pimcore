@@ -63,7 +63,7 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
         var restrictTo = null;
 
         if (this.fieldConfig.restrictTo) {
-            restrictTo = this.fieldConfig.restrictTo;
+            restrictTo = this.fieldConfig.restrictTo.split(",");
         }
 
         if (this.fieldConfig.options) {

@@ -107,7 +107,13 @@ class Admin_ElementController extends \Pimcore\Controller\Action\Admin
 
         $conditions = [];
         if ($this->getParam("filter")) {
-            $conditions[] = "(`title` LIKE " . $list->quote("%".$this->getParam("filter")."%") . " OR `description` LIKE " . $list->quote("%".$this->getParam("filter")."%") . " OR `type` LIKE " . $list->quote("%".$this->getParam("filter")."%") . ")";
+            $conditions[] = "("
+                . "`title` LIKE " . $list->quote("%".$this->getParam("filter")."%")
+                . " OR `description` LIKE " . $list->quote("%".$this->getParam("filter")."%")
+                . " OR `type` LIKE " . $list->quote("%".$this->getParam("filter")."%")
+                . " OR `user` IN (SELECT `id` FROM `users` WHERE `name` LIKE " . $list->quote("%".$this->getParam("filter")."%") . ")"
+                . " OR DATE_FORMAT(FROM_UNIXTIME(`date`), '%Y-%m-%d') LIKE " . $list->quote("%".$this->getParam("filter")."%")
+                . ")";
         }
 
         if ($this->getParam("cid") && $this->getParam("ctype")) {
