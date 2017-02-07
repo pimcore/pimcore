@@ -1,4 +1,10 @@
 services:
+    website_demo.area.blockquote:
+        class: WebsiteDemoBundle\Area\Blockquote
+        arguments: ['WebsiteDemoBundle', '@file_locator']
+        tags:
+            - { name: pimcore.areabrick }
+
     website_demo.language_switcher:
         class: WebsiteDemoBundle\Templating\LanguageSwitcher
         arguments: ['@pimcore.document_service']
