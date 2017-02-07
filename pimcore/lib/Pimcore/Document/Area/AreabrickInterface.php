@@ -4,7 +4,7 @@ namespace Pimcore\Document\Area;
 
 use Pimcore\Model\Document\Tag\Area\Info;
 
-interface AreaInterface
+interface AreabrickInterface
 {
     /**
      * Area ID - needs to be unique throughout the system.
@@ -56,18 +56,18 @@ interface AreaInterface
     public function postRenderAction(Info $info);
 
     /**
-     * The view HTML open tag.
+     * Returns the brick HTML open tag.
      *
      * @param Info $info
      * @return string
      */
-    public function getBrickHtmlTagOpen(Info $info);
+    public function getHtmlTagOpen(Info $info);
 
     /**
-     * The view HTML close tag.
+     * Returns the brick HTML close tag.
      *
      * @param Info $info
      * @return string
      */
-    public function getBrickHtmlTagClose(Info $info);
+    public function getHtmlTagClose(Info $info);
 }

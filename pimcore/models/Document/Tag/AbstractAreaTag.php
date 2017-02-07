@@ -15,16 +15,16 @@ abstract class AbstractAreaTag extends Tag
     protected function handleFrontend(Info $info, array $params)
     {
         // TODO inject area manager via DI when tags are built through container
-        $areaManager = \Pimcore::getContainer()->get('pimcore.area_manager');
-        $area        = $areaManager->get($info->getId());
+        $areaManager = \Pimcore::getContainer()->get('pimcore.areabrick_manager');
+        $brick        = $areaManager->get($info->getId());
 
         // assign parameters to view
         $this->view->getParameters()->add($params);
 
         // call action
-        $area->action($info);
+        $brick->action($info);
 
-        if (null === $area->getViewTemplate()) {
+        if (null === $brick->getViewTemplate()) {
             return;
         }
 
@@ -32,9 +32,9 @@ abstract class AbstractAreaTag extends Tag
         $templating = \Pimcore::getContainer()->get('templating');
         $editmode   = $this->view->editmode;
 
-        echo $area->getBrickHtmlTagOpen($info);
+        echo $brick->getHtmlTagOpen($info);
 
-        if (null !== $area->getEditTemplate() && $editmode) {
+        if (null !== $brick->getEditTemplate() && $editmode) {
             echo '<div class="pimcore_area_edit_button_' . $this->getName() . ' pimcore_area_edit_button"></div>';
 
             // forces the editmode in view independent if there's an edit or not
@@ -45,28 +45,28 @@ abstract class AbstractAreaTag extends Tag
 
         // render view template
         echo $templating->render(
-            $area->getViewTemplate(),
+            $brick->getViewTemplate(),
             $this->view->getParameters()->all()
         );
 
-        if (null !== $area->getEditTemplate() && $editmode) {
+        if (null !== $brick->getEditTemplate() && $editmode) {
             $this->view->editmode = true;
 
             echo '<div class="pimcore_area_editmode_' . $this->getName() . ' pimcore_area_editmode pimcore_area_editmode_hidden">';
 
             // render edit template
             echo $templating->render(
-                $area->getEditTemplate(),
+                $brick->getEditTemplate(),
                 $this->view->getParameters()->all()
             );
 
             echo '</div>';
         }
 
-        echo $area->getBrickHtmlTagClose($info);
+        echo $brick->getHtmlTagClose($info);
 
         // call post render
-        $area->postRenderAction($info);
+        $brick->postRenderAction($info);
     }
 
     /**
