@@ -17,16 +17,16 @@
 namespace Pimcore\Model\Document\Tag;
 
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModelInterface;
-use Pimcore\Model;
 use Pimcore\ExtensionManager;
-use Pimcore\Tool;
-use Pimcore\Model\Document;
 use Pimcore\Logger;
+use Pimcore\Model;
+use Pimcore\Model\Document;
+use Pimcore\Tool;
 
 /**
  * @method \Pimcore\Model\Document\Tag\Dao getDao()
  */
-class Areablock extends Model\Document\Tag
+class Areablock extends AbstractAreaTag
 {
 
     /**
@@ -174,36 +174,12 @@ class Areablock extends Model\Document\Tag
         // create info object and assign it to the view
         $info = new Area\Info();
         try {
-            $info->setTag($this);
-            $info->setName($this->getName());
             $info->setId($this->currentIndex["type"]);
+            $info->setTag($this);
             $info->setIndex($this->current);
         } catch (\Exception $e) {
             Logger::err($e);
         }
-
-        if ($this->view instanceof \Zend_View) {
-            $info->setPath(str_replace(PIMCORE_DOCUMENT_ROOT, "", $this->getPathForBrick($this->currentIndex["type"])));
-            $info->setConfig($this->getBrickConfig($this->currentIndex["type"]));
-
-            $this->legacyContent($info);
-        } else if ($this->view instanceof ViewModelInterface) {
-            // TODO
-        }
-
-        $this->current++;
-    }
-
-    protected function legacyContent(Document\Tag\Area\Info $info)
-    {
-        $options = $this->getOptions();
-
-        $this->getView()->brick = $info;
-        $areas = $this->getAreaDirs();
-
-        $view = $areas[$this->currentIndex["type"]] . "/view.php";
-        $action = $areas[$this->currentIndex["type"]] . "/action.php";
-        $edit = $areas[$this->currentIndex["type"]] . "/edit.php";
 
         $params = [];
         if (isset($options["params"]) && is_array($options["params"]) && array_key_exists($this->currentIndex["type"], $options["params"])) {
@@ -212,100 +188,17 @@ class Areablock extends Model\Document\Tag
             }
         }
 
-        // assign parameters to view
-        foreach ($params as $key => $value) {
-            $this->getView()->assign($key, $value);
+        if ($this->view instanceof \Zend_View) {
+            $info->setName($this->getName());
+            $info->setPath(str_replace(PIMCORE_DOCUMENT_ROOT, "", $this->getPathForBrick($this->currentIndex["type"])));
+            $info->setConfig($this->getBrickConfig($this->currentIndex["type"]));
+
+            $this->handleLegacyFrontend($info, $params);
+        } else if ($this->view instanceof ViewModelInterface) {
+            $this->handleFrontend($info, $params);
         }
 
-        // check for action file
-        $actionObject = null;
-        if (is_file($action)) {
-            include_once($action);
-
-            $actionClassFound = true;
-
-            $actionClass = preg_replace_callback("/[\-_][a-z]/", function ($matches) {
-                $replacement = str_replace(["-", "_"], "", $matches[0]);
-
-                return strtoupper($replacement);
-            }, ucfirst($this->currentIndex["type"]));
-
-            $actionClassname = "\\Pimcore\\Model\\Document\\Tag\\Area\\" . $actionClass;
-
-            if (!class_exists($actionClassname, false)) {
-                // also check the legacy prefixed class name, as this is used by some plugins
-                $actionClassname = "\\Document_Tag_Area_" . ucfirst($this->currentIndex["type"]);
-                if (!class_exists($actionClassname, false)) {
-                    $actionClassFound = false;
-                }
-            }
-
-            if ($actionClassFound) {
-                $actionObject = new $actionClassname();
-
-                if ($actionObject instanceof Area\AbstractArea) {
-                    $actionObject->setView($this->getView());
-
-                    $areaConfig = new \Zend_Config_Xml($areas[$this->currentIndex["type"]] . "/area.xml");
-                    $actionObject->setConfig($areaConfig);
-
-                    // params
-                    $params = array_merge($this->view->getAllParams(), $params);
-                    $actionObject->setParams($params);
-
-                    if ($info) {
-                        $actionObject->setBrick($info);
-                    }
-
-                    if (method_exists($actionObject, "action")) {
-                        $actionObject->action();
-                    }
-
-                    $this->getView()->assign('actionObject', $actionObject);
-                }
-            } else {
-                $this->getView()->assign('actionObject', null);
-            }
-        }
-
-        if (is_file($view)) {
-            $editmode = $this->getView()->editmode;
-
-            if ($actionObject && method_exists($actionObject, "getBrickHtmlTagOpen")) {
-                echo $actionObject->getBrickHtmlTagOpen($this);
-            } else {
-                echo '<div class="pimcore_area_' . $this->currentIndex["type"] . ' pimcore_area_content">';
-            }
-
-            if (is_file($edit) && $editmode) {
-                echo '<div class="pimcore_area_edit_button_' . $this->getName() . ' pimcore_area_edit_button"></div>';
-
-                // forces the editmode in view.php independent if there's an edit.php or not
-                if (!array_key_exists("forceEditInView", $params) || !$params["forceEditInView"]) {
-                    $this->getView()->editmode = false;
-                }
-            }
-
-            $this->getView()->template($view);
-
-            if (is_file($edit) && $editmode) {
-                $this->getView()->editmode = true;
-
-                echo '<div class="pimcore_area_editmode_' . $this->getName() . ' pimcore_area_editmode pimcore_area_editmode_hidden">';
-                $this->getView()->template($edit);
-                echo '</div>';
-            }
-
-            if ($actionObject && method_exists($actionObject, "getBrickHtmlTagClose")) {
-                echo $actionObject->getBrickHtmlTagClose($this);
-            } else {
-                echo '</div>';
-            }
-
-            if ($actionObject && method_exists($actionObject, "postRenderAction")) {
-                $actionObject->postRenderAction();
-            }
-        }
+        $this->current++;
     }
 
     /**

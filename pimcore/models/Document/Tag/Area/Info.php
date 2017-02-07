@@ -16,29 +16,24 @@
 
 namespace Pimcore\Model\Document\Tag\Area;
 
-use Pimcore\Model;
+use Pimcore\Model\Document\Tag;
 
 class Info
 {
     /**
-     * @var Model\Document\Tag
+     * @var string
+     */
+    public $id;
+
+    /**
+     * @var Tag|Tag\Area|Tag\Areablock
      */
     public $tag;
 
     /**
      * @var string
      */
-    public $name;
-
-    /**
-     * @var \Zend_Config
-     */
-    public $config;
-
-    /**
-     * @var string
-     */
-    public $id;
+    public $type;
 
     /**
      * @var int
@@ -46,27 +41,29 @@ class Info
     public $index;
 
     /**
+     * @deprecated
+     * @var string
+     */
+    public $name;
+
+    /**
+     * @deprecated
+     * @var \Zend_Config
+     */
+    public $config;
+
+    /**
+     * @deprecated Only used for legacy areas as the AreaInterface now handles static Area data.
      * @var string
      */
     public $path;
 
     /**
-     * @param \Zend_Config $config
-     * @return $this
+     * @return string
      */
-    public function setConfig($config)
+    public function getId()
     {
-        $this->config = $config;
-
-        return $this;
-    }
-
-    /**
-     * @return \Zend_Config
-     */
-    public function getConfig()
-    {
-        return $this->config;
+        return $this->id;
     }
 
     /**
@@ -81,11 +78,38 @@ class Info
     }
 
     /**
-     * @return string
+     * @return Tag|Tag\Area|Tag\Areablock
      */
-    public function getId()
+    public function getTag()
     {
-        return $this->id;
+        return $this->tag;
+    }
+
+    /**
+     * @param Tag $tag
+     */
+    public function setTag(Tag $tag)
+    {
+        $this->tag = $tag;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param string $type
+     * @return $this
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+
+        return $this;
     }
 
     /**
@@ -108,6 +132,32 @@ class Info
     }
 
     /**
+     * @deprecated Only used for legacy areas as the AreaInterface now handles static Area data.
+     *
+     * @param \Zend_Config $config
+     * @return $this
+     */
+    public function setConfig($config)
+    {
+        $this->config = $config;
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Only used for legacy areas as the AreaInterface now handles static Area data.
+     *
+     * @return \Zend_Config
+     */
+    public function getConfig()
+    {
+        return $this->config;
+    }
+
+
+    /**
+     * @deprecated Only used for legacy areas as the AreaInterface now handles static Area data.
+     *
      * @param string $path
      * @return $this
      */
@@ -119,6 +169,8 @@ class Info
     }
 
     /**
+     * @deprecated Only used for legacy areas as the AreaInterface now handles static Area data.
+     *
      * @return string
      */
     public function getPath()
@@ -127,6 +179,8 @@ class Info
     }
 
     /**
+     * @deprecated Only used for legacy areas as the AreaInterface now handles static Area data.
+     *
      * @param string $name
      */
     public function setName($name)
@@ -135,26 +189,12 @@ class Info
     }
 
     /**
+     * @deprecated Only used for legacy areas as the AreaInterface now handles static Area data.
+     *
      * @return string
      */
     public function getName()
     {
         return $this->name;
-    }
-
-    /**
-     * @return Model\Document\Tag
-     */
-    public function getTag()
-    {
-        return $this->tag;
-    }
-
-    /**
-     * @param Model\Document\Tag $tag
-     */
-    public function setTag($tag)
-    {
-        $this->tag = $tag;
     }
 }
