@@ -24,6 +24,9 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
 
+    /** @var int maximum number of cacheable items */
+    protected static $cacheLimit = 5000;
+
     /**
      * Contains the results of the list. They are all an instance of Staticroute
      *
@@ -60,4 +63,22 @@ class Listing extends Model\Listing\AbstractListing
 
         return $this;
     }
+
+    /**
+     * @return int
+     */
+    public static function getCacheLimit()
+    {
+        return self::$cacheLimit;
+    }
+
+    /**
+     * @param int $cacheLimit
+     */
+    public static function setCacheLimit($cacheLimit)
+    {
+        self::$cacheLimit = $cacheLimit;
+    }
+
+
 }
