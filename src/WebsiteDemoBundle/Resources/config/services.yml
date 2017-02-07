@@ -1,7 +1,7 @@
 services:
-    website_demo.area.blockquote:
+    website_demo.areabrick.blockquote:
         class: WebsiteDemoBundle\Area\Blockquote
-        arguments: ['WebsiteDemoBundle', '@file_locator']
+        parent: pimcore.areabrick.base_templating_brick
         tags:
             - { name: pimcore.areabrick }
 

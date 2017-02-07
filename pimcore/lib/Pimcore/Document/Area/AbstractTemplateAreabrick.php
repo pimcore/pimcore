@@ -2,20 +2,31 @@
 
 namespace Pimcore\Document\Area;
 
+use Pimcore\Bundle\PimcoreBundle\HttpKernel\BundleLocator\BundleLocatorInterface;
 use Pimcore\Document\Area\Exception\ConfigurationException;
 use Symfony\Component\Config\FileLocatorInterface;
 
 abstract class AbstractTemplateAreabrick extends AbstractAreabrick
 {
     /**
+     * @var BundleLocatorInterface
+     */
+    protected $bundleLocator;
+
+    /**
+     * @var FileLocatorInterface
+     */
+    protected $fileLocator;
+
+    /**
      * @var string
      */
     protected $bundleName;
 
     /**
-     * @var FileLocatorInterface
+     * @var array
      */
-    protected $locator;
+    protected $templateReferences = [];
 
     /**
      * @var bool
@@ -28,13 +39,13 @@ abstract class AbstractTemplateAreabrick extends AbstractAreabrick
     protected $hasEditTemplate = false;
 
     /**
-     * @param $bundleName
+     * @param BundleLocatorInterface $bundleLocator
      * @param FileLocatorInterface $locator
      */
-    public function __construct($bundleName, FileLocatorInterface $locator)
+    public function __construct(BundleLocatorInterface $bundleLocator, FileLocatorInterface $locator)
     {
-        $this->bundleName = $bundleName;
-        $this->locator    = $locator;
+        $this->bundleLocator = $bundleLocator;
+        $this->fileLocator   = $locator;
     }
 
     /**
@@ -77,18 +88,33 @@ abstract class AbstractTemplateAreabrick extends AbstractAreabrick
      */
     protected function resolveTemplateReference($type)
     {
-        $templatePath = $this->getTemplatePath($type);
+        if (!isset($this->templateReferences[$type])) {
+            $templatePath = $this->getTemplatePath($type);
 
-        if (!is_file($templatePath)) {
-            throw new ConfigurationException(sprintf(
-                'Area %s is configured to have an %s template, but template was not found in %s',
-                $this->getId(),
-                $type,
-                $templatePath
-            ));
+            if (null === $templatePath || !is_file($templatePath)) {
+                throw new ConfigurationException(sprintf(
+                    'Area %s is configured to have an %s template, but template was not found',
+                    $this->getId(),
+                    $type
+                ));
+            }
+
+            $this->templateReferences[$type] = $this->getTemplateReference($type);
         }
 
-        return $this->getTemplateReference($type);
+        return $this->templateReferences[$type];
+    }
+
+    /**
+     * @return string
+     */
+    protected function getBundleName()
+    {
+        if (null === $this->bundleName) {
+            $this->bundleName = $this->bundleLocator->getBundle($this)->getName();
+        }
+
+        return $this->bundleName;
     }
 
     /**
@@ -99,7 +125,7 @@ abstract class AbstractTemplateAreabrick extends AbstractAreabrick
     {
         return sprintf(
             '%s:Areas/%s:%s.%s',
-            $this->bundleName,
+            $this->getBundleName(),
             $this->getId(),
             $type,
             $this->getTemplateSuffix()
@@ -114,12 +140,16 @@ abstract class AbstractTemplateAreabrick extends AbstractAreabrick
     {
         $path = sprintf(
             '@%s/Resources/views/Areas/%s/%s.%s',
-            $this->bundleName,
+            $this->getBundleName(),
             $this->getId(),
             $type,
             $this->getTemplateSuffix()
         );
 
-        return $this->locator->locate($path);
+        try {
+            return $this->fileLocator->locate($path);
+        } catch (\Exception $e) {
+            // noop
+        }
     }
 }

@@ -53,5 +53,13 @@ services:
     pimcore.service.object:
         class: Pimcore\Bundle\PimcoreBundle\Service\Object\ObjectService
 
+    pimcore.bundle_locator:
+        class: Pimcore\Bundle\PimcoreBundle\HttpKernel\BundleLocator\BundleLocator
+        arguments: ['@kernel']
+
     pimcore.areabrick_manager:
         class: Pimcore\Document\Area\AreabrickManager
+
+    pimcore.areabrick.base_templating_brick:
+        abstract: true
+        arguments: ['@pimcore.bundle_locator', '@file_locator']
