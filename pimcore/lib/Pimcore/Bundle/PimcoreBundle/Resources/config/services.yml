@@ -52,3 +52,6 @@ services:
 
     pimcore.service.object:
         class: Pimcore\Bundle\PimcoreBundle\Service\Object\ObjectService
+
+    pimcore.area_manager:
+        class: Pimcore\Bundle\PimcoreBundle\Area\AreaManager
