@@ -3,7 +3,7 @@
 namespace Pimcore\Bundle\PimcoreLegacyBundle;
 
 use Pimcore\Bundle\PimcoreLegacyBundle\ClassLoader\LegacyClassLoader;
-use Pimcore\Bundle\PimcoreLegacyBundle\DependencyInjection\Compiler\LegacyAreaRendererPass;
+use Pimcore\Bundle\PimcoreLegacyBundle\DependencyInjection\Compiler\LegacyAreaHandlerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
@@ -14,7 +14,7 @@ class PimcoreLegacyBundle extends Bundle
      */
     public function build(ContainerBuilder $container)
     {
-        $container->addCompilerPass(new LegacyAreaRendererPass());
+        $container->addCompilerPass(new LegacyAreaHandlerPass());
     }
 
     public function boot()

@@ -64,11 +64,11 @@ services:
         abstract: true
         arguments: ['@pimcore.bundle_locator']
 
-    pimcore.area.renderer:
-        class: Pimcore\Document\Area\AreaRenderer
+    pimcore.area.handler:
+        class: Pimcore\Document\Area\AreaHandler
         calls:
-            - [addStrategy, ['@pimcore.area.rendering_strategy.default']]
+            - [addStrategy, ['@pimcore.area.handler_strategy.default']]
 
-    pimcore.area.rendering_strategy.default:
-        class: Pimcore\Document\Area\AreaRenderingStrategy
+    pimcore.area.handler_strategy.default:
+        class: Pimcore\Document\Area\AreaHandlerStrategy
         arguments: ['@pimcore.area.brick_manager', '@templating']

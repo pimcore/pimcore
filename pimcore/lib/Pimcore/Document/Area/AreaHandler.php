@@ -5,20 +5,20 @@ namespace Pimcore\Document\Area;
 use Pimcore\Document\Area\Exception\RuntimeException;
 use Pimcore\Model\Document\Tag\Area\Info;
 
-class AreaRenderer
+class AreaHandler
 {
     /**
-     * @var AreaRenderingStrategyInterface[]
+     * @var AreaHandlerStrategyInterface[]
      */
     protected $strategies = [];
 
     /**
-     * Register a rendering strategy
+     * Register a handler strategy
      *
-     * @param AreaRenderingStrategyInterface $strategy
+     * @param AreaHandlerStrategyInterface $strategy
      * @return $this
      */
-    public function addStrategy(AreaRenderingStrategyInterface $strategy)
+    public function addStrategy(AreaHandlerStrategyInterface $strategy)
     {
         $this->strategies[] = $strategy;
     }
@@ -38,7 +38,7 @@ class AreaRenderer
         }
 
         throw new RuntimeException(sprintf(
-            'No rendering strategy found for area %s with view type %s',
+            'No handler strategy found for area %s with view type %s',
             $info->getId(),
             get_class($info->getTag()->getView())
         ));

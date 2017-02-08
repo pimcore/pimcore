@@ -6,7 +6,7 @@ use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModelInterface;
 use Pimcore\Model\Document\Tag\Area\Info;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 
-class AreaRenderingStrategy implements AreaRenderingStrategyInterface
+class AreaHandlerStrategy implements AreaHandlerStrategyInterface
 {
     /**
      * @var AreabrickManagerInterface
@@ -43,7 +43,7 @@ class AreaRenderingStrategy implements AreaRenderingStrategyInterface
     {
         $tag   = $info->getTag();
         $view  = $tag->getView();
-        $brick = $this->brickManager->get($info->getId());
+        $brick = $this->brickManager->getBrick($info->getId());
 
         // assign parameters to view
         $view->getParameters()->add($params);

@@ -3,10 +3,10 @@ namespace Pimcore\Document\Area;
 
 use Pimcore\Model\Document\Tag\Area\Info;
 
-interface AreaRenderingStrategyInterface
+interface AreaHandlerStrategyInterface
 {
     /**
-     * Determine if rendering strategy supports the tag
+     * Determine if handler strategy supports the tag
      *
      * @param Info $info
      * @return bool

@@ -2,14 +2,14 @@
 
 namespace Pimcore\Bundle\PimcoreLegacyBundle\Document\Area;
 
-use Pimcore\Document\Area\AreaRenderingStrategyInterface;
+use Pimcore\Document\Area\AreaHandlerStrategyInterface;
 use Pimcore\ExtensionManager;
 use Pimcore\Model\Document\Tag\Area\AbstractArea;
 use Pimcore\Model\Document\Tag\Area\Info;
 use Pimcore\Tool;
 use Pimcore\View;
 
-class LegacyAreaRenderingStrategy implements AreaRenderingStrategyInterface
+class LegacyAreaHandlerStrategy implements AreaHandlerStrategyInterface
 {
     /**
      * {@inheritdoc}
