@@ -624,6 +624,8 @@ class Areablock extends Model\Document\Tag
     }
 
     /**
+     * @deprecated Only used in legacy mode
+     *
      * @return bool
      */
     public function isCustomAreaPath()
@@ -639,14 +641,18 @@ class Areablock extends Model\Document\Tag
      */
     public function isBrickEnabled($name)
     {
+        // TODO remove custom area path logic
         if ($this->isCustomAreaPath()) {
             return true;
         }
 
+        // TODO decide what to do with extensions.php
         return ExtensionManager::isEnabled("brick", $name);
     }
 
     /**
+     * @deprecated Only used in legacy mode
+     *
      * @return string
      */
     public function getAreaDirectory()
@@ -657,6 +663,8 @@ class Areablock extends Model\Document\Tag
     }
 
     /**
+     * @deprecated Only used in legacy mode
+     *
      * @param $name
      * @return string
      */
@@ -670,6 +678,8 @@ class Areablock extends Model\Document\Tag
     }
 
     /**
+     * @deprecated Only used in legacy mode
+     *
      * @param $name
      * @throws \Exception
      */
@@ -685,6 +695,8 @@ class Areablock extends Model\Document\Tag
     }
 
     /**
+     * @deprecated Only used in legacy mode
+     *
      * @return array
      */
     public function getAreaDirs()
@@ -697,6 +709,8 @@ class Areablock extends Model\Document\Tag
     }
 
     /**
+     * @deprecated Only used in legacy mode
+     *
      * @return array|mixed
      */
     public function getBrickConfigs()

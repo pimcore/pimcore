@@ -210,6 +210,8 @@ class Area extends Model\Document\Tag
     }
 
     /**
+     * @deprecated Only used in legacy mode
+     *
      * @return array
      */
     public function getAreaDirs()
@@ -217,6 +219,11 @@ class Area extends Model\Document\Tag
         return ExtensionManager::getBrickDirectories();
     }
 
+    /**
+     * @deprecated Only used in legacy mode
+     *
+     * @return array|mixed
+     */
     public function getBrickConfigs()
     {
         return ExtensionManager::getBrickConfigs();
