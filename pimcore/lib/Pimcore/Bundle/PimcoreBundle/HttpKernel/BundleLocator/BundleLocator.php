@@ -82,13 +82,12 @@ class BundleLocator implements BundleLocatorInterface
 
         // walk through parts until we find *Bundle
         while ($part = array_pop($classDirParts)) {
+            if (!$matched && preg_match('/^([a-zA-Z]+Bundle)$/', $part)) {
+                $matched = true;
+            }
+
             if ($matched) {
                 $bundleDirParts[] = $part;
-            } else {
-                if (preg_match('/^([a-zA-Z]+Bundle)$/', $part)) {
-                    $matched          = true;
-                    $bundleDirParts[] = $part;
-                }
             }
         }
 

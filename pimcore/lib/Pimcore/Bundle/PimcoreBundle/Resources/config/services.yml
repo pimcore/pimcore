@@ -62,4 +62,4 @@ services:
 
     pimcore.areabrick.base_templating_brick:
         abstract: true
-        arguments: ['@pimcore.bundle_locator', '@file_locator']
+        arguments: ['@pimcore.bundle_locator']
