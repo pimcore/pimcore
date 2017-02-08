@@ -1,10 +1,10 @@
 <?php
-namespace Pimcore\Document\Area;
+namespace Pimcore\Document\Tag;
 
 use Pimcore\Model\Document\Tag;
 use Pimcore\Model\Document\Tag\Area\Info;
 
-interface AreaHandlerInterface
+interface TagHandlerInterface
 {
     /**
      * Determine if handler strategy supports the tag
@@ -22,7 +22,7 @@ interface AreaHandlerInterface
      *
      * @return array
      */
-    public function getAvailableAreas(Tag\Areablock $tag, array $options);
+    public function getAvailableAreablockAreas(Tag\Areablock $tag, array $options);
 
     /**
      * Render the area frontend
@@ -30,5 +30,5 @@ interface AreaHandlerInterface
      * @param Info $info
      * @param array $params
      */
-    public function renderFrontend(Info $info, array $params);
+    public function renderAreaFrontend(Info $info, array $params);
 }

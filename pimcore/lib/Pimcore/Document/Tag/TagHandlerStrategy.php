@@ -1,17 +1,18 @@
 <?php
 
-namespace Pimcore\Document\Area;
+namespace Pimcore\Document\Tag;
 
 use Pimcore\Bundle\PimcoreBundle\HttpKernel\BundleLocator\BundleLocatorInterface;
 use Pimcore\Bundle\PimcoreBundle\Service\WebPathResolver;
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModel;
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModelInterface;
+use Pimcore\Document\Area\AreabrickManagerInterface;
 use Pimcore\Model\Document\Tag;
 use Pimcore\Model\Document\Tag\Area\Info;
 use Pimcore\Translate;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 
-class AreaHandlerStrategy implements AreaHandlerInterface
+class TagHandlerStrategy implements TagHandlerInterface
 {
     /**
      * @var AreabrickManagerInterface
@@ -36,6 +37,8 @@ class AreaHandlerStrategy implements AreaHandlerInterface
     /**
      * @param AreabrickManagerInterface $brickManager
      * @param EngineInterface $templating
+     * @param BundleLocatorInterface $bundleLocator
+     * @param WebPathResolver $webPathResolver
      */
     public function __construct(
         AreabrickManagerInterface $brickManager,
@@ -44,10 +47,10 @@ class AreaHandlerStrategy implements AreaHandlerInterface
         WebPathResolver $webPathResolver
     )
     {
-        $this->brickManager    = $brickManager;
-        $this->templating      = $templating;
-        $this->bundleLocator   = $bundleLocator;
-        $this->webPathResolver = $webPathResolver;
+        $this->brickManager        = $brickManager;
+        $this->templating          = $templating;
+        $this->bundleLocator       = $bundleLocator;
+        $this->webPathResolver     = $webPathResolver;
     }
 
     /**
@@ -61,7 +64,7 @@ class AreaHandlerStrategy implements AreaHandlerInterface
     /**
      * {@inheritdoc}
      */
-    public function getAvailableAreas(Tag\Areablock $tag, array $options)
+    public function getAvailableAreablockAreas(Tag\Areablock $tag, array $options)
     {
         /** @var ViewModel $view */
         $view = $tag->getView();
@@ -114,7 +117,7 @@ class AreaHandlerStrategy implements AreaHandlerInterface
     /**
      * {@inheritdoc}
      */
-    public function renderFrontend(Info $info, array $params)
+    public function renderAreaFrontend(Info $info, array $params)
     {
         $tag   = $info->getTag();
         $view  = $tag->getView();

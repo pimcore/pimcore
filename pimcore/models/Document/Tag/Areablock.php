@@ -188,8 +188,8 @@ class Areablock extends Model\Document\Tag
         }
 
         // TODO inject area handler via DI when tags are built through container
-        $areaHandler = \Pimcore::getContainer()->get('pimcore.area.handler');
-        $areaHandler->renderFrontend($info, $params);
+        $tagHandler = \Pimcore::getContainer()->get('pimcore.document.tag.handler');
+        $tagHandler->renderAreaFrontend($info, $params);
 
         $this->current++;
     }
@@ -425,9 +425,9 @@ class Areablock extends Model\Document\Tag
         }
 
         // TODO inject area handler via DI when tags are built through container
-        $areaHandler = \Pimcore::getContainer()->get('pimcore.area.handler');
+        $tagHandler = \Pimcore::getContainer()->get('pimcore.document.tag.handler');
 
-        $availableAreas = $areaHandler->getAvailableAreas($this, $options);
+        $availableAreas = $tagHandler->getAvailableAreablockAreas($this, $options);
         $availableAreas = $this->sortAvailableAreas($availableAreas, $options);
 
         $options["types"] = $availableAreas;

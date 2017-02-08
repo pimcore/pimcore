@@ -132,8 +132,8 @@ class Area extends Model\Document\Tag
         }
 
         // TODO inject area handler via DI when tags are built through container
-        $areaHandler = \Pimcore::getContainer()->get('pimcore.area.handler');
-        $areaHandler->renderFrontend($info, $params);
+        $tagHandler = \Pimcore::getContainer()->get('pimcore.document.tag.handler');
+        $tagHandler->renderAreaFrontend($info, $params);
 
         $suffixes = [];
         if (\Zend_Registry::isRegistered('pimcore_tag_block_numeration')) {

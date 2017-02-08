@@ -1,6 +1,6 @@
 <?php
 
-namespace Pimcore\Document\Area\Exception;
+namespace Pimcore\Document\Tag\Exception;
 
 class NotFoundException extends \RuntimeException
 {

@@ -1,25 +1,25 @@
 <?php
 
-namespace Pimcore\Document\Area;
+namespace Pimcore\Document\Tag;
 
-use Pimcore\Document\Area\Exception\NotFoundException;
+use Pimcore\Document\Tag\Exception\NotFoundException;
 use Pimcore\Model\Document\Tag;
 use Pimcore\Model\Document\Tag\Area\Info;
 
-class AreaHandler implements AreaHandlerInterface
+class TagHandler implements TagHandlerInterface
 {
     /**
-     * @var AreaHandlerInterface[]
+     * @var TagHandlerInterface[]
      */
     protected $strategies = [];
 
     /**
      * Register a handler strategy
      *
-     * @param AreaHandlerInterface $strategy
+     * @param TagHandlerInterface $strategy
      * @return $this
      */
-    public function addStrategy(AreaHandlerInterface $strategy)
+    public function addStrategy(TagHandlerInterface $strategy)
     {
         $this->strategies[] = $strategy;
     }
@@ -28,7 +28,7 @@ class AreaHandler implements AreaHandlerInterface
      * Get the matching strategy for a Tag
      *
      * @param Tag|Tag\Area|Tag\Areablock $tag
-     * @return AreaHandlerInterface
+     * @return TagHandlerInterface
      */
     public function getStrategy(Tag $tag)
     {
@@ -46,10 +46,7 @@ class AreaHandler implements AreaHandlerInterface
     }
 
     /**
-     * Determine if handler strategy supports the tag
-     *
-     * @param Tag|Tag\Area|Tag\Areablock $tag
-     * @return bool
+     * {@inheritdoc}
      */
     public function supports(Tag $tag)
     {
@@ -65,30 +62,22 @@ class AreaHandler implements AreaHandlerInterface
     }
 
     /**
-     * Build tag options
-     *
-     * @param Tag\Areablock $tag
-     * @param array $options
-     *
-     * @return array
+     * {@inheritdoc}
      */
-    public function getAvailableAreas(Tag\Areablock $tag, array $options)
+    public function getAvailableAreablockAreas(Tag\Areablock $tag, array $options)
     {
         $strategy = $this->getStrategy($tag);
 
-        return $strategy->getAvailableAreas($tag, $options);
+        return $strategy->getAvailableAreablockAreas($tag, $options);
     }
 
     /**
-     * Render the area frontend
-     *
-     * @param Info $info
-     * @param array $params
+     * {@inheritdoc}
      */
-    public function renderFrontend(Info $info, array $params)
+    public function renderAreaFrontend(Info $info, array $params)
     {
         $strategy = $this->getStrategy($info->getTag());
 
-        return $strategy->renderFrontend($info, $params);
+        return $strategy->renderAreaFrontend($info, $params);
     }
 }

@@ -14,7 +14,7 @@ class LegacyAreaHandlerPass implements CompilerPassInterface
     public function process(ContainerBuilder $container)
     {
         // add legacy handler strategy to area handler
-        $rendererDefinition = $container->getDefinition('pimcore.area.handler');
-        $rendererDefinition->addMethodCall('addStrategy', [new Reference('pimcore.area.handler_strategy.legacy')]);
+        $handlerDefinition = $container->getDefinition('pimcore.document.tag.handler');
+        $handlerDefinition->addMethodCall('addStrategy', [new Reference('pimcore.document.tag.handler_strategy.legacy')]);
     }
 }

@@ -1,8 +1,8 @@
 <?php
 
-namespace Pimcore\Bundle\PimcoreLegacyBundle\Document\Area;
+namespace Pimcore\Bundle\PimcoreLegacyBundle\Document\Tag;
 
-use Pimcore\Document\Area\AreaHandlerInterface;
+use Pimcore\Document\Tag\TagHandlerInterface;
 use Pimcore\ExtensionManager;
 use Pimcore\Model\Document\Tag;
 use Pimcore\Model\Document\Tag\Area\AbstractArea;
@@ -11,7 +11,7 @@ use Pimcore\Tool;
 use Pimcore\Translate;
 use Pimcore\View;
 
-class LegacyAreaHandlerStrategy implements AreaHandlerInterface
+class LegacyTagHandlerStrategy implements TagHandlerInterface
 {
     /**
      * {@inheritdoc}
@@ -24,7 +24,7 @@ class LegacyAreaHandlerStrategy implements AreaHandlerInterface
     /**
      * {@inheritdoc}
      */
-    public function getAvailableAreas(Tag\Areablock $tag, array $options)
+    public function getAvailableAreablockAreas(Tag\Areablock $tag, array $options)
     {
         /** @var View $view */
         $view = $tag->getView();
@@ -76,7 +76,7 @@ class LegacyAreaHandlerStrategy implements AreaHandlerInterface
     /**
      * {@inheritdoc}
      */
-    public function renderFrontend(Info $info, array $params)
+    public function renderAreaFrontend(Info $info, array $params)
     {
         $tag  = $info->getTag();
         $type = $info->getId();
