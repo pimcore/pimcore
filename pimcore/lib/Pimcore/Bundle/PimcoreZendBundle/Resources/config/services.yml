@@ -78,7 +78,7 @@ services:
     pimcore.zend.templating.view_helper.getParam:
         class: Pimcore\Bundle\PimcoreZendBundle\Templating\Zend\Helper\GetParam
         arguments:
-            - '@service_container'
+            - '@pimcore.tool.request_helper'
         tags:
             - { name: pimcore.zend.view_helper, alias: getParam }
 
