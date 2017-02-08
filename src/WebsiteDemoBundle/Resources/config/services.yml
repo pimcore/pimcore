@@ -1,9 +1,9 @@
 services:
-    website_demo.areabrick.blockquote:
+    website_demo.area.brick.blockquote:
         class: WebsiteDemoBundle\Area\Blockquote
-        parent: pimcore.areabrick.base_templating_brick
+        parent: pimcore.area.brick.templating_base
         tags:
-            - { name: pimcore.areabrick }
+            - { name: pimcore.area.brick }
 
     website_demo.language_switcher:
         class: WebsiteDemoBundle\Templating\LanguageSwitcher

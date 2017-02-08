@@ -16,14 +16,13 @@
 
 namespace Pimcore\Model\Document\Tag;
 
-use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModelInterface;
 use Pimcore\ExtensionManager;
 use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\Document\Tag\Dao getDao()
  */
-class Area extends AbstractAreaTag
+class Area extends Model\Document\Tag
 {
     /**
      * @see Model\Document\Tag\TagInterface::getType
@@ -132,14 +131,9 @@ class Area extends AbstractAreaTag
             }
         }
 
-        if ($this->view instanceof \Zend_View) {
-            $info->setPath(str_replace(PIMCORE_DOCUMENT_ROOT, "", ExtensionManager::getPathForExtension($options["type"], "brick")));
-            $info->setConfig(ExtensionManager::getBrickConfig($options["type"]));
-
-            $this->handleLegacyFrontend($info, $params);
-        } else if ($this->view instanceof ViewModelInterface) {
-            $this->handleFrontend($info, $params);
-        }
+        // TODO inject area renderer via DI when tags are built through container
+        $areaRenderer = \Pimcore::getContainer()->get('pimcore.area.renderer');
+        $areaRenderer->renderFrontend($info, $params);
 
         $suffixes = [];
         if (\Zend_Registry::isRegistered('pimcore_tag_block_numeration')) {

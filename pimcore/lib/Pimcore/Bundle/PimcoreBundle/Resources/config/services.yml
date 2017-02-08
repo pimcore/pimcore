@@ -57,9 +57,18 @@ services:
         class: Pimcore\Bundle\PimcoreBundle\HttpKernel\BundleLocator\BundleLocator
         arguments: ['@kernel']
 
-    pimcore.areabrick_manager:
+    pimcore.area.brick_manager:
         class: Pimcore\Document\Area\AreabrickManager
 
-    pimcore.areabrick.base_templating_brick:
+    pimcore.area.brick.templating_base:
         abstract: true
         arguments: ['@pimcore.bundle_locator']
+
+    pimcore.area.renderer:
+        class: Pimcore\Document\Area\AreaRenderer
+        calls:
+            - [addStrategy, ['@pimcore.area.rendering_strategy.default']]
+
+    pimcore.area.rendering_strategy.default:
+        class: Pimcore\Document\Area\AreaRenderingStrategy
+        arguments: ['@pimcore.area.brick_manager', '@templating']

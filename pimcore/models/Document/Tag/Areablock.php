@@ -16,7 +16,6 @@
 
 namespace Pimcore\Model\Document\Tag;
 
-use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModelInterface;
 use Pimcore\ExtensionManager;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -26,9 +25,8 @@ use Pimcore\Tool;
 /**
  * @method \Pimcore\Model\Document\Tag\Dao getDao()
  */
-class Areablock extends AbstractAreaTag
+class Areablock extends Model\Document\Tag
 {
-
     /**
      * Contains an array of indices, which represent the order of the elements in the block
      *
@@ -188,15 +186,9 @@ class Areablock extends AbstractAreaTag
             }
         }
 
-        if ($this->view instanceof \Zend_View) {
-            $info->setName($this->getName());
-            $info->setPath(str_replace(PIMCORE_DOCUMENT_ROOT, "", $this->getPathForBrick($this->currentIndex["type"])));
-            $info->setConfig($this->getBrickConfig($this->currentIndex["type"]));
-
-            $this->handleLegacyFrontend($info, $params);
-        } else if ($this->view instanceof ViewModelInterface) {
-            $this->handleFrontend($info, $params);
-        }
+        // TODO inject area renderer via DI when tags are built through container
+        $areaRenderer = \Pimcore::getContainer()->get('pimcore.area.renderer');
+        $areaRenderer->renderFrontend($info, $params);
 
         $this->current++;
     }

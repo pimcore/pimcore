@@ -4,7 +4,7 @@ namespace Pimcore\Document\Area;
 
 use Pimcore\Document\Area\Exception\ConfigurationException;
 
-class AreabrickManager
+class AreabrickManager implements AreabrickManagerInterface
 {
     /**
      * @var AreabrickInterface[]

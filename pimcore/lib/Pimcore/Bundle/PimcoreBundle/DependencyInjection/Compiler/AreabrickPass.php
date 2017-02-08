@@ -13,8 +13,8 @@ class AreabrickPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        $areaManagerDefinition = $container->getDefinition('pimcore.areabrick_manager');
-        $taggedServices        = $container->findTaggedServiceIds('pimcore.areabrick');
+        $areaManagerDefinition = $container->getDefinition('pimcore.area.brick_manager');
+        $taggedServices        = $container->findTaggedServiceIds('pimcore.area.brick');
 
         foreach ($taggedServices as $id => $tags) {
             $areaManagerDefinition->addMethodCall('register', [new Reference($id)]);

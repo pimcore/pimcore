@@ -1,0 +1,4 @@
+services:
+    # The legacy rendering strategy rendering areas via Pimcore\View. Injected into area renderer in compiler pass.
+    pimcore.area.rendering_strategy.legacy:
+        class: Pimcore\Bundle\PimcoreLegacyBundle\Document\Area\LegacyAreaRenderingStrategy
