@@ -82,7 +82,10 @@ services:
         tags:
             - { name: pimcore.zend.view_helper, alias: getParam }
 
-
+    pimcore.zend.templating.view_helper.glossary:
+        class: Pimcore\Bundle\PimcoreZendBundle\Templating\Zend\Helper\Glossary
+        tags:
+            - { name: pimcore.zend.view_helper, alias: glossary }
 
     templating.engine.zend:
         class: Pimcore\Bundle\PimcoreZendBundle\Templating\ZendEngine
