@@ -28,6 +28,13 @@ interface AreabrickInterface
     public function getDescription();
 
     /**
+     * Icon as absolute path, e.g. /bundles/websitedemo/img/areas/foo/icon.png
+     *
+     * @return string|null
+     */
+    public function getIcon();
+
+    /**
      * Get view template
      *
      * @return string|null

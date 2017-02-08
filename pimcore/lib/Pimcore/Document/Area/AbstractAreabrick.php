@@ -25,6 +25,14 @@ abstract class AbstractAreabrick implements AreabrickInterface
     /**
      * {@inheritdoc}
      */
+    public function getIcon()
+    {
+        return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function action(Info $info)
     {
         // noop - implement as needed

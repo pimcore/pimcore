@@ -2,6 +2,8 @@
 
 namespace Pimcore\Document\Area;
 
+use Pimcore\Bundle\PimcoreBundle\HttpKernel\BundleLocator\BundleLocatorInterface;
+use Pimcore\Bundle\PimcoreBundle\Service\WebPathResolver;
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModel;
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModelInterface;
 use Pimcore\Model\Document\Tag;
@@ -22,13 +24,30 @@ class AreaHandlerStrategy implements AreaHandlerInterface
     protected $templating;
 
     /**
+     * @var BundleLocatorInterface
+     */
+    protected $bundleLocator;
+
+    /**
+     * @var WebPathResolver
+     */
+    protected $webPathResolver;
+
+    /**
      * @param AreabrickManagerInterface $brickManager
      * @param EngineInterface $templating
      */
-    public function __construct(AreabrickManagerInterface $brickManager, EngineInterface $templating)
+    public function __construct(
+        AreabrickManagerInterface $brickManager,
+        EngineInterface $templating,
+        BundleLocatorInterface $bundleLocator,
+        WebPathResolver $webPathResolver
+    )
     {
-        $this->brickManager = $brickManager;
-        $this->templating   = $templating;
+        $this->brickManager    = $brickManager;
+        $this->templating      = $templating;
+        $this->bundleLocator   = $bundleLocator;
+        $this->webPathResolver = $webPathResolver;
     }
 
     /**
@@ -62,7 +81,19 @@ class AreaHandlerStrategy implements AreaHandlerInterface
 
             $name = $brick->getName();
             $desc = $brick->getDescription();
-            $icon = ''; // TODO icons
+            $icon = $brick->getIcon();
+
+            // autoresolve icon as <bundleName>/Resources/public/areas/<id>/icon.png
+            if (null === $icon) {
+                $bundle   = $this->bundleLocator->getBundle($brick);
+
+                // check if file exists
+                $iconPath = sprintf('%s/Resources/public/areas/%s/icon.png', $bundle->getPath(), $brick->getId());
+                if (file_exists($iconPath)) {
+                    // build URL to icon
+                    $icon = $this->webPathResolver->getPath($bundle, 'areas/' . $brick->getId(), 'icon.png');
+                }
+            }
 
             if ($view->editmode) {
                 $name = Translate::transAdmin($name);

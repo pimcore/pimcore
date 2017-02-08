@@ -57,6 +57,9 @@ services:
         class: Pimcore\Bundle\PimcoreBundle\HttpKernel\BundleLocator\BundleLocator
         arguments: ['@kernel']
 
+    pimcore.web_path_resolver:
+        class: Pimcore\Bundle\PimcoreBundle\Service\WebPathResolver
+
     pimcore.area.brick_manager:
         class: Pimcore\Document\Area\AreabrickManager
 
@@ -71,4 +74,8 @@ services:
 
     pimcore.area.handler_strategy.default:
         class: Pimcore\Document\Area\AreaHandlerStrategy
-        arguments: ['@pimcore.area.brick_manager', '@templating']
+        arguments:
+            - '@pimcore.area.brick_manager'
+            - '@templating'
+            - '@pimcore.bundle_locator'
+            - '@pimcore.web_path_resolver'
