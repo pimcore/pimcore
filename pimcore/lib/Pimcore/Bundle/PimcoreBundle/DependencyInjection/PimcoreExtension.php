@@ -14,6 +14,15 @@ class PimcoreExtension extends Extension
      */
     public function load(array $configs, ContainerBuilder $container)
     {
+        // TODO use ConfigurableExtension or getExtension()??
+        $configuration = new Configuration();
+        $config        = $this->processConfiguration($configuration, $configs);
+
+        // register pimcore config on container
+        // TODO is this bad practice?
+        // TODO only extract what we need as parameter?
+        $container->setParameter('pimcore.config', $config);
+
         $loader = new YamlFileLoader(
             $container,
             new FileLocator(__DIR__ . '/../Resources/config')

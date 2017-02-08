@@ -19,6 +19,8 @@ class AreabrickPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
+        $config = $container->getParameter('pimcore.config');
+
         $areaManagerDefinition = $container->getDefinition('pimcore.area.brick_manager');
         $taggedServices        = $container->findTaggedServiceIds('pimcore.area.brick');
 
@@ -32,9 +34,12 @@ class AreabrickPass implements CompilerPassInterface
             $areaManagerDefinition->addMethodCall('register', [new Reference($id)]);
         }
 
-        // autoload areas from bundles if not yet defined via config
-        $autoloadedIds = $this->autoloadAreabricks($container, $taggedAreas);foreach ($autoloadedIds as $autoloadedId) {
-            $areaManagerDefinition->addMethodCall('register', [new Reference($autoloadedId)]);
+        // autoload areas from bundles if not yet defined via service config
+        if ($config['documents']['areas']['autoload']) {
+            $autoloadedIds = $this->autoloadAreabricks($container, $taggedAreas);
+            foreach ($autoloadedIds as $autoloadedId) {
+                $areaManagerDefinition->addMethodCall('register', [new Reference($autoloadedId)]);
+            }
         }
     }
 
