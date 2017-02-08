@@ -80,4 +80,14 @@ class TagHandler implements TagHandlerInterface
 
         return $strategy->renderAreaFrontend($info, $params);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function renderAction(Tag $tag, $controller, $action, $parent = null, array $params = [])
+    {
+        $strategy = $this->getStrategy($tag);
+
+        return $strategy->renderAction($tag, $controller, $action, $parent, $params);
+    }
 }

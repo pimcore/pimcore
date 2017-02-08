@@ -191,4 +191,20 @@ class LegacyTagHandlerStrategy implements TagHandlerInterface
             }
         }
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function renderAction(Tag $tag, $controller, $action, $parent = null, array $params = [])
+    {
+        /** @var View $view */
+        $view = $tag->getView();
+
+        return $view->action(
+            $action,
+            $controller,
+            $parent,
+            $params
+        );
+    }
 }

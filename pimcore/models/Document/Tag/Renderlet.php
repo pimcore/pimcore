@@ -106,6 +106,13 @@ class Renderlet extends Model\Document\Tag
      */
     public function frontend()
     {
+        // TODO inject area handler via DI when tags are built through container
+        $tagHandler = \Pimcore::getContainer()->get('pimcore.document.tag.handler');
+
+        if (!$tagHandler->supports($this)) {
+            return null;
+        }
+
         if (!$this->options["controller"] && !$this->options["action"]) {
             $this->options["controller"] = Config::getSystemConfig()->documents->default_controller;
             $this->options["action"] = Config::getSystemConfig()->documents->default_action;
@@ -143,20 +150,21 @@ class Renderlet extends Model\Document\Tag
                 }
             }
 
-            if ($this->getView() != null) {
-                try {
-                    $content = $this->getView()->action($this->options["action"],
-                        $this->options["controller"],
-                        isset($this->options["module"]) ? $this->options["module"] : null,
-                        $params);
+            try {
+                $content = $tagHandler->renderAction(
+                    $this,
+                    $this->options['controller'],
+                    $this->options['action'],
+                    isset($this->options['module']) ? $this->options['module'] : null,
+                    $params
+                );
 
-                    return $content;
-                } catch (\Exception $e) {
-                    if (\Pimcore::inDebugMode()) {
-                        return "ERROR: " . $e->getMessage() . " (for details see debug.log)";
-                    }
-                    Logger::error($e);
+                return $content;
+            } catch (\Exception $e) {
+                if (\Pimcore::inDebugMode()) {
+                    return "ERROR: " . $e->getMessage() . " (for details see debug.log)";
                 }
+                Logger::error($e);
             }
         }
     }

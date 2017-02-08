@@ -31,4 +31,16 @@ interface TagHandlerInterface
      * @param array $params
      */
     public function renderAreaFrontend(Info $info, array $params);
+
+    /**
+     * Render a sub-action (snippet, renderlet)
+     *
+     * @param Tag $tag
+     * @param string $controller
+     * @param string $action
+     * @param string|null $parent Bundle or module (legacy) name
+     * @param array $params
+     * @return string
+     */
+    public function renderAction(Tag $tag, $controller, $action, $parent = null, array $params = []);
 }

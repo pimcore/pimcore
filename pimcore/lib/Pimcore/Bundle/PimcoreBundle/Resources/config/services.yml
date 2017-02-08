@@ -60,6 +60,9 @@ services:
     pimcore.web_path_resolver:
         class: Pimcore\Bundle\PimcoreBundle\Service\WebPathResolver
 
+    pimcore.controller_formatter:
+        class: Pimcore\Bundle\PimcoreBundle\HttpKernel\ControllerFormatter
+
     pimcore.area.brick_manager:
         class: Pimcore\Document\Area\AreabrickManager
 
@@ -79,3 +82,5 @@ services:
             - '@templating'
             - '@pimcore.bundle_locator'
             - '@pimcore.web_path_resolver'
+            - '@pimcore.controller_formatter'
+            - '@templating.helper.actions'

@@ -3,6 +3,7 @@
 namespace Pimcore\Document\Tag;
 
 use Pimcore\Bundle\PimcoreBundle\HttpKernel\BundleLocator\BundleLocatorInterface;
+use Pimcore\Bundle\PimcoreBundle\HttpKernel\ControllerFormatter;
 use Pimcore\Bundle\PimcoreBundle\Service\WebPathResolver;
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModel;
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModelInterface;
@@ -11,6 +12,7 @@ use Pimcore\Model\Document\Tag;
 use Pimcore\Model\Document\Tag\Area\Info;
 use Pimcore\Translate;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Symfony\Bundle\FrameworkBundle\Templating\Helper\ActionsHelper;
 
 class TagHandlerStrategy implements TagHandlerInterface
 {
@@ -35,22 +37,38 @@ class TagHandlerStrategy implements TagHandlerInterface
     protected $webPathResolver;
 
     /**
+     * @var ControllerFormatter
+     */
+    protected $controllerFormatter;
+
+    /**
+     * @var ActionsHelper
+     */
+    protected $actionsHelper;
+
+    /**
      * @param AreabrickManagerInterface $brickManager
      * @param EngineInterface $templating
      * @param BundleLocatorInterface $bundleLocator
      * @param WebPathResolver $webPathResolver
+     * @param ControllerFormatter $controllerFormatter
+     * @param ActionsHelper $actionsHelper
      */
     public function __construct(
         AreabrickManagerInterface $brickManager,
         EngineInterface $templating,
         BundleLocatorInterface $bundleLocator,
-        WebPathResolver $webPathResolver
+        WebPathResolver $webPathResolver,
+        ControllerFormatter $controllerFormatter,
+        ActionsHelper $actionsHelper
     )
     {
         $this->brickManager        = $brickManager;
         $this->templating          = $templating;
         $this->bundleLocator       = $bundleLocator;
         $this->webPathResolver     = $webPathResolver;
+        $this->controllerFormatter = $controllerFormatter;
+        $this->actionsHelper       = $actionsHelper;
     }
 
     /**
@@ -170,5 +188,25 @@ class TagHandlerStrategy implements TagHandlerInterface
 
         // call post render
         $brick->postRenderAction($info);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function renderAction(Tag $tag, $controller, $action, $parent = null, array $params = [])
+    {
+        $controller = $this->controllerFormatter->format(
+            $controller,
+            $action,
+            $parent
+        );
+
+        // set document as attribute
+        // TODO refine this
+        $params['contentDocument'] = $params['document'] ?: null;
+
+        $reference = $this->actionsHelper->controller($controller, $params);
+
+        return $this->actionsHelper->render($reference);
     }
 }
