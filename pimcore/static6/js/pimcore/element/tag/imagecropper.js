@@ -128,7 +128,7 @@ pimcore.element.tag.imagecropper = Class.create({
 
             // check the ratio if given
             if(this.ratioX && this.ratioY) {
-                dimensions = sel.getStyles("width","height");
+                dimensions = sel.getStyle(["width","height"]);
 
                 var height = intval(dimensions.width) * (this.ratioY / this.ratioX);
                 sel.setStyle("height", (height) + "px");
