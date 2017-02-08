@@ -13,4 +13,13 @@ class Blockquote extends AbstractTemplateAreabrick
     {
         return 'blockquote';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getTemplateSuffix()
+    {
+        // remove this method or set to TEMPLATE_SUFFIX_ZEND_VIEW to use the phtml template
+        return static::TEMPLATE_SUFFIX_TWIG;
+    }
 }

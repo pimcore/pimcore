@@ -1,2 +1,14 @@
 <?= $this->render('WebsiteDemoBundle:Includes:content-headline.phtml'); ?>
-<?= $this->areablock('content'); ?>
+<?= $this->areablock('content', [
+    'sorting' => [
+        'wysiwyg-with-images',
+        'pdf'
+    ],
+
+    /*
+    "group" => [
+        "First Group" => ["video", "headlines"],
+        "Second Group" => ["featurette"]
+    ],
+    */
+]); ?>
