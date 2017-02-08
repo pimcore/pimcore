@@ -1,6 +1,6 @@
 <?php
 
-namespace WebsiteDemoBundle\Area;
+namespace WebsiteDemoBundle\Document\Area;
 
 use Pimcore\Document\Area\AbstractTemplateAreabrick;
 

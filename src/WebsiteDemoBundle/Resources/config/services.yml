@@ -1,6 +1,6 @@
 services:
     website_demo.area.brick.blockquote:
-        class: WebsiteDemoBundle\Area\Blockquote
+        class: WebsiteDemoBundle\Document\Area\Blockquote
         parent: pimcore.area.brick.templating_base
         tags:
             - { name: pimcore.area.brick }
