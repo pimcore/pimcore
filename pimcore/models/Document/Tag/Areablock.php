@@ -188,8 +188,8 @@ class Areablock extends Model\Document\Tag
         }
 
         // TODO inject area handler via DI when tags are built through container
-        $areaRenderer = \Pimcore::getContainer()->get('pimcore.area.handler');
-        $areaRenderer->renderFrontend($info, $params);
+        $areaHandler = \Pimcore::getContainer()->get('pimcore.area.handler');
+        $areaHandler->renderFrontend($info, $params);
 
         $this->current++;
     }
