@@ -16,6 +16,9 @@ abstract class AbstractTemplateAreabrick extends AbstractAreabrick
     const TEMPLATE_LOCATION_GLOBAL = 'global';
     const TEMPLATE_LOCATION_BUNDLE = 'bundle';
 
+    const TEMPLATE_SUFFIX_ZEND_VIEW = 'phtml';
+    const TEMPLATE_SUFFIX_TWIG      = 'html.twig';
+
     /**
      * @var bool
      */
@@ -61,7 +64,7 @@ abstract class AbstractTemplateAreabrick extends AbstractAreabrick
      */
     protected function getTemplateSuffix()
     {
-        return 'phtml';
+        return static::TEMPLATE_SUFFIX_ZEND_VIEW;
     }
 
     /**
