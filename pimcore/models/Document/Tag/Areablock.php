@@ -21,6 +21,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Tool;
+use Pimcore\Translate;
 
 /**
  * @method \Pimcore\Model\Document\Tag\Dao getDao()
@@ -412,11 +413,10 @@ class Areablock extends Model\Document\Tag
 
     /**
      * @param array $options
-     * @return void
+     * @return $this
      */
     public function setOptions($options)
     {
-
         // we need to set this here otherwise custom areaDir's won't work
         $this->options = $options;
 
@@ -451,6 +451,7 @@ class Areablock extends Model\Document\Tag
             if (empty($options["allowed"]) || in_array($areaName, $options["allowed"])) {
                 $n = (string) $areaConfig->name;
                 $d = (string) $areaConfig->description;
+
                 $icon = (string) $areaConfig->icon;
 
                 if ($this->view->editmode) {
@@ -462,10 +463,8 @@ class Areablock extends Model\Document\Tag
                         }
                     }
 
-                    if ($this->view) {
-                        $n = $this->view->translateAdmin((string) $areaConfig->name);
-                        $d = $this->view->translateAdmin((string) $areaConfig->description);
-                    }
+                    $n = Translate::transAdmin((string) $areaConfig->name);
+                    $d = Translate::transAdmin((string) $areaConfig->description);
                 }
 
                 $sortIndex = false;
@@ -515,8 +514,8 @@ class Areablock extends Model\Document\Tag
             $groups = [];
             foreach ($options["group"] as $name => $areas) {
                 $n = $name;
-                if ($this->view && $this->editmode) {
-                    $n = $this->view->translateAdmin($name);
+                if ($this->editmode) {
+                    $n = Translate::transAdmin($name);
                 }
                 $groups[$n] = $areas;
 
@@ -531,8 +530,8 @@ class Areablock extends Model\Document\Tag
                     $uncatAreas[] = $area;
                 }
                 $n = "Uncategorized";
-                if ($this->view && $this->editmode) {
-                    $n = $this->view->translateAdmin($n);
+                if ($this->editmode) {
+                    $n = Translate::transAdmin($n);
                 }
                 $groups[$n] = $uncatAreas;
             }
