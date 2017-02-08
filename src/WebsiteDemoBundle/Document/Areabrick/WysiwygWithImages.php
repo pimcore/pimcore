@@ -1,17 +1,17 @@
 <?php
 
-namespace WebsiteDemoBundle\Document\Area;
+namespace WebsiteDemoBundle\Document\Areabrick;
 
 use Pimcore\Document\Area\AbstractTemplateAreabrick;
 
-class ImageHotspotMarker extends AbstractTemplateAreabrick
+class WysiwygWithImages extends AbstractTemplateAreabrick
 {
     /**
      * {@inheritdoc}
      */
     public function getId()
     {
-        return 'image-hotspot-marker';
+        return 'wysiwyg-with-images';
     }
 
     /**
@@ -19,6 +19,6 @@ class ImageHotspotMarker extends AbstractTemplateAreabrick
      */
     public function getName()
     {
-        return 'Image Hotspot & Marker';
+        return 'WYSIWYG w. Images';
     }
 }

@@ -1,16 +1,16 @@
 <?php
 
-namespace WebsiteDemoBundle\Document\Area;
+namespace WebsiteDemoBundle\Document\Areabrick;
 
 use Pimcore\Document\Area\AbstractTemplateAreabrick;
 
-class Featurette extends AbstractTemplateAreabrick
+class Video extends AbstractTemplateAreabrick
 {
     /**
      * {@inheritdoc}
      */
     public function getId()
     {
-        return 'featurette';
+        return 'video';
     }
 }

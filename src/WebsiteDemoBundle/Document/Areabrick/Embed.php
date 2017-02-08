@@ -1,16 +1,16 @@
 <?php
 
-namespace WebsiteDemoBundle\Document\Area;
+namespace WebsiteDemoBundle\Document\Areabrick;
 
 use Pimcore\Document\Area\AbstractTemplateAreabrick;
 
-class Image extends AbstractTemplateAreabrick
+class Embed extends AbstractTemplateAreabrick
 {
     /**
      * {@inheritdoc}
      */
     public function getId()
     {
-        return 'image';
+        return 'embed';
     }
 }

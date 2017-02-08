@@ -1,17 +1,17 @@
 <?php
 
-namespace WebsiteDemoBundle\Document\Area;
+namespace WebsiteDemoBundle\Document\Areabrick;
 
 use Pimcore\Document\Area\AbstractTemplateAreabrick;
 
-class GalleryCarousel extends AbstractTemplateAreabrick
+class TabbedSliderText extends AbstractTemplateAreabrick
 {
     /**
      * {@inheritdoc}
      */
     public function getId()
     {
-        return 'gallery-carousel';
+        return 'tabbed-slider-text';
     }
 
     /**
@@ -19,6 +19,6 @@ class GalleryCarousel extends AbstractTemplateAreabrick
      */
     public function getName()
     {
-        return 'Gallery (Carousel)';
+        return 'Slider (Tabs/Text)';
     }
 }

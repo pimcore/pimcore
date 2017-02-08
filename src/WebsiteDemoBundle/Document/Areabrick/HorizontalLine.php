@@ -1,17 +1,17 @@
 <?php
 
-namespace WebsiteDemoBundle\Document\Area;
+namespace WebsiteDemoBundle\Document\Areabrick;
 
 use Pimcore\Document\Area\AbstractTemplateAreabrick;
 
-class Wysiwyg extends AbstractTemplateAreabrick
+class HorizontalLine extends AbstractTemplateAreabrick
 {
     /**
      * {@inheritdoc}
      */
     public function getId()
     {
-        return 'wysiwyg';
+        return 'horizontal-line';
     }
 
     /**
@@ -19,6 +19,6 @@ class Wysiwyg extends AbstractTemplateAreabrick
      */
     public function getName()
     {
-        return 'WYSIWYG';
+        return 'Horiz. Line';
     }
 }

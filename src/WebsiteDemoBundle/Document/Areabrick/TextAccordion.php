@@ -1,17 +1,17 @@
 <?php
 
-namespace WebsiteDemoBundle\Document\Area;
+namespace WebsiteDemoBundle\Document\Areabrick;
 
 use Pimcore\Document\Area\AbstractTemplateAreabrick;
 
-class WysiwygWithImages extends AbstractTemplateAreabrick
+class TextAccordion extends AbstractTemplateAreabrick
 {
     /**
      * {@inheritdoc}
      */
     public function getId()
     {
-        return 'wysiwyg-with-images';
+        return 'text-accordion';
     }
 
     /**
@@ -19,6 +19,6 @@ class WysiwygWithImages extends AbstractTemplateAreabrick
      */
     public function getName()
     {
-        return 'WYSIWYG w. Images';
+        return 'Text Accordion';
     }
 }

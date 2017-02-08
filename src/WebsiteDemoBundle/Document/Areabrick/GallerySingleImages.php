@@ -1,17 +1,17 @@
 <?php
 
-namespace WebsiteDemoBundle\Document\Area;
+namespace WebsiteDemoBundle\Document\Areabrick;
 
 use Pimcore\Document\Area\AbstractTemplateAreabrick;
 
-class Pdf extends AbstractTemplateAreabrick
+class GallerySingleImages extends AbstractTemplateAreabrick
 {
     /**
      * {@inheritdoc}
      */
     public function getId()
     {
-        return 'pdf';
+        return 'gallery-single-images';
     }
 
     /**
@@ -19,6 +19,6 @@ class Pdf extends AbstractTemplateAreabrick
      */
     public function getName()
     {
-        return 'PDF';
+        return 'Gallery (Single)';
     }
 }

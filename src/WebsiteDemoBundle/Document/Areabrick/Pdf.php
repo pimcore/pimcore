@@ -1,17 +1,17 @@
 <?php
 
-namespace WebsiteDemoBundle\Document\Area;
+namespace WebsiteDemoBundle\Document\Areabrick;
 
 use Pimcore\Document\Area\AbstractTemplateAreabrick;
 
-class StandardTeaserRow extends AbstractTemplateAreabrick
+class Pdf extends AbstractTemplateAreabrick
 {
     /**
      * {@inheritdoc}
      */
     public function getId()
     {
-        return 'standard-teaser-row';
+        return 'pdf';
     }
 
     /**
@@ -19,6 +19,6 @@ class StandardTeaserRow extends AbstractTemplateAreabrick
      */
     public function getName()
     {
-        return 'Standard Teaser';
+        return 'PDF';
     }
 }

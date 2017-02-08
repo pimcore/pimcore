@@ -1,17 +1,17 @@
 <?php
 
-namespace WebsiteDemoBundle\Document\Area;
+namespace WebsiteDemoBundle\Document\Areabrick;
 
 use Pimcore\Document\Area\AbstractTemplateAreabrick;
 
-class TextAccordion extends AbstractTemplateAreabrick
+class IconTeaserRow extends AbstractTemplateAreabrick
 {
     /**
      * {@inheritdoc}
      */
     public function getId()
     {
-        return 'text-accordion';
+        return 'icon-teaser-row';
     }
 
     /**
@@ -19,6 +19,6 @@ class TextAccordion extends AbstractTemplateAreabrick
      */
     public function getName()
     {
-        return 'Text Accordion';
+        return 'Icon Teaser';
     }
 }

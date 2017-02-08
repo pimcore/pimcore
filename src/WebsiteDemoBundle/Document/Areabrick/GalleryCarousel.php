@@ -1,17 +1,17 @@
 <?php
 
-namespace WebsiteDemoBundle\Document\Area;
+namespace WebsiteDemoBundle\Document\Areabrick;
 
 use Pimcore\Document\Area\AbstractTemplateAreabrick;
 
-class GalleryFolder extends AbstractTemplateAreabrick
+class GalleryCarousel extends AbstractTemplateAreabrick
 {
     /**
      * {@inheritdoc}
      */
     public function getId()
     {
-        return 'gallery-folder';
+        return 'gallery-carousel';
     }
 
     /**
@@ -19,6 +19,6 @@ class GalleryFolder extends AbstractTemplateAreabrick
      */
     public function getName()
     {
-        return 'Gallery (Folder)';
+        return 'Gallery (Carousel)';
     }
 }

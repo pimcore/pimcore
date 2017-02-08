@@ -1,17 +1,17 @@
 <?php
 
-namespace WebsiteDemoBundle\Document\Area;
+namespace WebsiteDemoBundle\Document\Areabrick;
 
 use Pimcore\Document\Area\AbstractTemplateAreabrick;
 
-class HorizontalLine extends AbstractTemplateAreabrick
+class StandardTeaserRow extends AbstractTemplateAreabrick
 {
     /**
      * {@inheritdoc}
      */
     public function getId()
     {
-        return 'horizontal-line';
+        return 'standard-teaser-row';
     }
 
     /**
@@ -19,6 +19,6 @@ class HorizontalLine extends AbstractTemplateAreabrick
      */
     public function getName()
     {
-        return 'Horiz. Line';
+        return 'Standard Teaser';
     }
 }

@@ -1,17 +1,17 @@
 <?php
 
-namespace WebsiteDemoBundle\Document\Area;
+namespace WebsiteDemoBundle\Document\Areabrick;
 
 use Pimcore\Document\Area\AbstractTemplateAreabrick;
 
-class TabbedSliderText extends AbstractTemplateAreabrick
+class Wysiwyg extends AbstractTemplateAreabrick
 {
     /**
      * {@inheritdoc}
      */
     public function getId()
     {
-        return 'tabbed-slider-text';
+        return 'wysiwyg';
     }
 
     /**
@@ -19,6 +19,6 @@ class TabbedSliderText extends AbstractTemplateAreabrick
      */
     public function getName()
     {
-        return 'Slider (Tabs/Text)';
+        return 'WYSIWYG';
     }
 }

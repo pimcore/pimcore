@@ -1,17 +1,17 @@
 <?php
 
-namespace WebsiteDemoBundle\Document\Area;
+namespace WebsiteDemoBundle\Document\Areabrick;
 
 use Pimcore\Document\Area\AbstractTemplateAreabrick;
 
-class GallerySingleImages extends AbstractTemplateAreabrick
+class ImageHotspotMarker extends AbstractTemplateAreabrick
 {
     /**
      * {@inheritdoc}
      */
     public function getId()
     {
-        return 'gallery-single-images';
+        return 'image-hotspot-marker';
     }
 
     /**
@@ -19,6 +19,6 @@ class GallerySingleImages extends AbstractTemplateAreabrick
      */
     public function getName()
     {
-        return 'Gallery (Single)';
+        return 'Image Hotspot & Marker';
     }
 }

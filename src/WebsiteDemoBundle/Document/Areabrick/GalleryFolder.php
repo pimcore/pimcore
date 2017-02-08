@@ -1,17 +1,17 @@
 <?php
 
-namespace WebsiteDemoBundle\Document\Area;
+namespace WebsiteDemoBundle\Document\Areabrick;
 
 use Pimcore\Document\Area\AbstractTemplateAreabrick;
 
-class IconTeaserRow extends AbstractTemplateAreabrick
+class GalleryFolder extends AbstractTemplateAreabrick
 {
     /**
      * {@inheritdoc}
      */
     public function getId()
     {
-        return 'icon-teaser-row';
+        return 'gallery-folder';
     }
 
     /**
@@ -19,6 +19,6 @@ class IconTeaserRow extends AbstractTemplateAreabrick
      */
     public function getName()
     {
-        return 'Icon Teaser';
+        return 'Gallery (Folder)';
     }
 }
