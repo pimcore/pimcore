@@ -3,10 +3,11 @@
 namespace Pimcore\Document\Area;
 
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModelInterface;
+use Pimcore\Model\Document\Tag;
 use Pimcore\Model\Document\Tag\Area\Info;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 
-class AreaHandlerStrategy implements AreaHandlerStrategyInterface
+class AreaHandlerStrategy implements AreaHandlerInterface
 {
     /**
      * @var AreabrickManagerInterface
@@ -31,9 +32,17 @@ class AreaHandlerStrategy implements AreaHandlerStrategyInterface
     /**
      * {@inheritdoc}
      */
-    public function supports(Info $info)
+    public function supports(Tag $tag)
     {
-        return $info->getTag()->getView() instanceof ViewModelInterface;
+        return $tag->getView() instanceof ViewModelInterface;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildOptions(Tag $tag, array $options)
+    {
+        // TODO: Implement buildOptions() method.
     }
 
     /**

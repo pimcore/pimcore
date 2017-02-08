@@ -28,12 +28,20 @@ class AreabrickManager implements AreabrickManagerInterface
      *
      * @return AreabrickInterface
      */
-    public function get($id)
+    public function getBrick($id)
     {
         if (!isset($this->bricks[$id])) {
             throw new ConfigurationException(sprintf('Areabrick %s is not registered', $id));
         }
 
         return $this->bricks[$id];
+    }
+
+    /**
+     * @return AreabrickInterface[]
+     */
+    public function getBricks()
+    {
+        return $this->bricks;
     }
 }

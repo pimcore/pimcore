@@ -13,5 +13,10 @@ interface AreabrickManagerInterface
      *
      * @return AreabrickInterface
      */
-    public function get($id);
+    public function getBrick($id);
+
+    /**
+     * @return AreabrickInterface[]
+     */
+    public function getBricks();
 }

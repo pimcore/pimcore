@@ -2,25 +2,81 @@
 
 namespace Pimcore\Document\Area;
 
-use Pimcore\Document\Area\Exception\RuntimeException;
+use Pimcore\Document\Area\Exception\NotFoundException;
+use Pimcore\Model\Document\Tag;
 use Pimcore\Model\Document\Tag\Area\Info;
 
-class AreaHandler
+class AreaHandler implements AreaHandlerInterface
 {
     /**
-     * @var AreaHandlerStrategyInterface[]
+     * @var AreaHandlerInterface[]
      */
     protected $strategies = [];
 
     /**
      * Register a handler strategy
      *
-     * @param AreaHandlerStrategyInterface $strategy
+     * @param AreaHandlerInterface $strategy
      * @return $this
      */
-    public function addStrategy(AreaHandlerStrategyInterface $strategy)
+    public function addStrategy(AreaHandlerInterface $strategy)
     {
         $this->strategies[] = $strategy;
+    }
+
+    /**
+     * Get the matching strategy for a Tag
+     *
+     * @param Tag|Tag\Area|Tag\Areablock $tag
+     * @return AreaHandlerInterface
+     */
+    public function getStrategy(Tag $tag)
+    {
+        foreach ($this->strategies as $strategy) {
+            if ($strategy->supports($tag)) {
+                return $strategy;
+            }
+        }
+
+        throw new NotFoundException(sprintf(
+            'No handler strategy found for tag %s with view type %s',
+            $tag->getName(),
+            get_class($tag->getView())
+        ));
+    }
+
+    /**
+     * Determine if handler strategy supports the tag
+     *
+     * @param Tag|Tag\Area|Tag\Areablock $tag
+     * @return bool
+     */
+    public function supports(Tag $tag)
+    {
+        try {
+            $this->getStrategy($tag);
+
+            return true;
+        } catch (NotFoundException $e) {
+            // noop
+        }
+
+        return false;
+    }
+
+    /**
+     * Build tag options
+     *
+     * @param Tag|Tag\Area|Tag\Areablock $tag
+     * @param array $options
+     *
+     * @return array
+     */
+    public function buildOptions(Tag $tag, array $options)
+    {
+        $strategy = $this->getStrategy($tag);
+
+        return $strategy->buildOptions($tag, $options);
     }
 
     /**
@@ -31,16 +87,8 @@ class AreaHandler
      */
     public function renderFrontend(Info $info, array $params)
     {
-        foreach ($this->strategies as $strategy) {
-            if ($strategy->supports($info)) {
-                return $strategy->renderFrontend($info, $params);
-            }
-        }
+        $strategy = $this->getStrategy($info->getTag());
 
-        throw new RuntimeException(sprintf(
-            'No handler strategy found for area %s with view type %s',
-            $info->getId(),
-            get_class($info->getTag()->getView())
-        ));
+        return $strategy->renderFrontend($info, $params);
     }
 }

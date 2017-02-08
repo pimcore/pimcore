@@ -2,21 +2,30 @@
 
 namespace Pimcore\Bundle\PimcoreLegacyBundle\Document\Area;
 
-use Pimcore\Document\Area\AreaHandlerStrategyInterface;
+use Pimcore\Document\Area\AreaHandlerInterface;
 use Pimcore\ExtensionManager;
+use Pimcore\Model\Document\Tag;
 use Pimcore\Model\Document\Tag\Area\AbstractArea;
 use Pimcore\Model\Document\Tag\Area\Info;
 use Pimcore\Tool;
 use Pimcore\View;
 
-class LegacyAreaHandlerStrategy implements AreaHandlerStrategyInterface
+class LegacyAreaHandlerStrategy implements AreaHandlerInterface
 {
     /**
      * {@inheritdoc}
      */
-    public function supports(Info $info)
+    public function supports(Tag $tag)
     {
-        return $info->getTag()->getView() instanceof View;
+        return $tag->getView() instanceof View;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildOptions(Tag $tag, array $options)
+    {
+        // TODO: Implement buildOptions() method.
     }
 
     /**
