@@ -40,9 +40,10 @@ class AreaHandlerStrategy implements AreaHandlerInterface
     /**
      * {@inheritdoc}
      */
-    public function buildOptions(Tag $tag, array $options)
+    public function getAvailableAreas(Tag\Areablock $tag, array $options)
     {
-        // TODO: Implement buildOptions() method.
+        // TODO
+        return [];
     }
 
     /**

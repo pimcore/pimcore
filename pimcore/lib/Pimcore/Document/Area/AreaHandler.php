@@ -67,16 +67,16 @@ class AreaHandler implements AreaHandlerInterface
     /**
      * Build tag options
      *
-     * @param Tag|Tag\Area|Tag\Areablock $tag
+     * @param Tag\Areablock $tag
      * @param array $options
      *
      * @return array
      */
-    public function buildOptions(Tag $tag, array $options)
+    public function getAvailableAreas(Tag\Areablock $tag, array $options)
     {
         $strategy = $this->getStrategy($tag);
 
-        return $strategy->buildOptions($tag, $options);
+        return $strategy->getAvailableAreas($tag, $options);
     }
 
     /**

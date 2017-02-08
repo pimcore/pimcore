@@ -8,6 +8,7 @@ use Pimcore\Model\Document\Tag;
 use Pimcore\Model\Document\Tag\Area\AbstractArea;
 use Pimcore\Model\Document\Tag\Area\Info;
 use Pimcore\Tool;
+use Pimcore\Translate;
 use Pimcore\View;
 
 class LegacyAreaHandlerStrategy implements AreaHandlerInterface
@@ -23,9 +24,53 @@ class LegacyAreaHandlerStrategy implements AreaHandlerInterface
     /**
      * {@inheritdoc}
      */
-    public function buildOptions(Tag $tag, array $options)
+    public function getAvailableAreas(Tag\Areablock $tag, array $options)
     {
-        // TODO: Implement buildOptions() method.
+        /** @var View $view */
+        $view = $tag->getView();
+
+        // read available types
+        $areaConfigs = $tag->getBrickConfigs();
+
+        $availableAreas = [];
+        foreach ($areaConfigs as $areaName => $areaConfig) {
+            // don't show disabled bricks
+            if (!isset($options['dontCheckEnabled']) || !$options['dontCheckEnabled']) {
+                if (!$tag->isBrickEnabled($areaName)) {
+                    continue;
+                }
+            }
+
+            if (empty($options["allowed"]) || in_array($areaName, $options["allowed"])) {
+                $n = (string)$areaConfig->name;
+                $d = (string)$areaConfig->description;
+
+                $icon = (string)$areaConfig->icon;
+
+                if ($view->editmode) {
+                    if (empty($icon)) {
+                        $path     = $tag->getPathForBrick($areaName);
+                        $iconPath = $path . "/icon.png";
+
+                        if (file_exists($iconPath)) {
+                            $icon = str_replace(PIMCORE_DOCUMENT_ROOT, "", $iconPath);
+                        }
+                    }
+
+                    $n = Translate::transAdmin((string)$areaConfig->name);
+                    $d = Translate::transAdmin((string)$areaConfig->description);
+                }
+
+                $availableAreas[$areaName] = [
+                    "name"        => $n,
+                    "description" => $d,
+                    "type"        => $areaName,
+                    "icon"        => $icon,
+                ];
+            }
+        }
+
+        return $availableAreas;
     }
 
     /**

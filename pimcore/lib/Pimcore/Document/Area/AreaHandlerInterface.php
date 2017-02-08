@@ -15,14 +15,14 @@ interface AreaHandlerInterface
     public function supports(Tag $tag);
 
     /**
-     * Build tag options
+     * Get available areas for an areablock
      *
-     * @param Tag|Tag\Area|Tag\Areablock $tag
+     * @param Tag\Areablock $tag
      * @param array $options
      *
      * @return array
      */
-    public function buildOptions(Tag $tag, array $options);
+    public function getAvailableAreas(Tag\Areablock $tag, array $options);
 
     /**
      * Render the area frontend

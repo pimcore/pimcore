@@ -420,89 +420,16 @@ class Areablock extends Model\Document\Tag
         // we need to set this here otherwise custom areaDir's won't work
         $this->options = $options;
 
-        // read available types
-        $areaConfigs = $this->getBrickConfigs();
-        $availableAreas = ["name" => [], "index" => []];
-
-        if (isset($options["sorting"]) && is_array($options["sorting"]) && count($options["sorting"])) {
-            $availableAreasSort = $options["sorting"];
-        } else {
-            if (isset($options["allowed"]) && is_array($options["allowed"]) && count($options["allowed"])) {
-                $availableAreasSort = $options["allowed"];
-            } else {
-                $availableAreasSort = false;
-            }
-        }
-
         if (!isset($options["allowed"]) || !is_array($options["allowed"])) {
             $options["allowed"] = [];
         }
 
-        foreach ($areaConfigs as $areaName => $areaConfig) {
+        // TODO inject area handler via DI when tags are built through container
+        $areaHandler = \Pimcore::getContainer()->get('pimcore.area.handler');
 
-            // don't show disabled bricks
-            if (!isset($options['dontCheckEnabled']) || !$options['dontCheckEnabled']) {
-                if (!$this->isBrickEnabled($areaName)) {
-                    continue;
-                }
-            }
+        $availableAreas = $areaHandler->getAvailableAreas($this, $options);
+        $availableAreas = $this->sortAvailableAreas($availableAreas, $options);
 
-
-            if (empty($options["allowed"]) || in_array($areaName, $options["allowed"])) {
-                $n = (string) $areaConfig->name;
-                $d = (string) $areaConfig->description;
-
-                $icon = (string) $areaConfig->icon;
-
-                if ($this->view->editmode) {
-                    if (empty($icon)) {
-                        $path = $this->getPathForBrick($areaName);
-                        $iconPath = $path . "/icon.png";
-                        if (file_exists($iconPath)) {
-                            $icon = str_replace(PIMCORE_DOCUMENT_ROOT, "", $iconPath);
-                        }
-                    }
-
-                    $n = Translate::transAdmin((string) $areaConfig->name);
-                    $d = Translate::transAdmin((string) $areaConfig->description);
-                }
-
-                $sortIndex = false;
-                $sortKey = "name"; //allowed and sorting is not set || areaName is not in allowed
-                if ($availableAreasSort) {
-                    $sortIndex = array_search($areaName, $availableAreasSort);
-                    $sortKey   = $sortIndex === false ? $sortKey : "index";
-                }
-
-                $availableAreas[$sortKey][] = [
-                    "name" => $n,
-                    "description" => $d,
-                    "type" => $areaName,
-                    "icon" => $icon,
-                    "sortIndex" => $sortIndex
-                ];
-            }
-        }
-
-        if (count($availableAreas["name"])) {
-            // sort with translated names
-            usort($availableAreas["name"], function ($a, $b) {
-                if ($a["name"] == $b["name"]) {
-                    return 0;
-                }
-
-                return ($a["name"] < $b["name"]) ? -1 : 1;
-            });
-        }
-
-        if (count($availableAreas["index"])) {
-            // sort by allowed brick config order
-            usort($availableAreas["index"], function ($a, $b) {
-                return $a["sortIndex"] - $b["sortIndex"];
-            });
-        }
-
-        $availableAreas = array_merge($availableAreas["index"], $availableAreas["name"]);
         $options["types"] = $availableAreas;
 
         if (isset($options["group"]) && is_array($options["group"])) {
@@ -547,6 +474,70 @@ class Areablock extends Model\Document\Tag
         $this->options = $options;
 
         return $this;
+    }
+
+    /**
+     * Sorts areas by index (sorting option) first, then by name
+     *
+     * @param array $areas
+     * @param array $options
+     *
+     * @return array
+     */
+    protected function sortAvailableAreas(array $areas, array $options)
+    {
+        if (isset($options["sorting"]) && is_array($options["sorting"]) && count($options["sorting"])) {
+            $sorting = $options["sorting"];
+        } else {
+            if (isset($options["allowed"]) && is_array($options["allowed"]) && count($options["allowed"])) {
+                $sorting = $options["allowed"];
+            } else {
+                $sorting = [];
+            }
+        }
+
+        $result = [
+            'name'  => [],
+            'index' => []
+        ];
+
+        foreach ($areas as $area) {
+            $sortIndex = false;
+            $sortKey   = "name"; //allowed and sorting is not set || areaName is not in allowed
+
+            if (!empty($sorting)) {
+                $sortIndex = array_search($area['type'], $sorting);
+                $sortKey   = $sortIndex === false ? $sortKey : "index";
+            }
+
+            if ($sortIndex) {
+                $area['sortIndex'] = $sortIndex;
+            }
+
+            $result[$sortKey][] = $area;
+        }
+
+        // sort with translated names
+        if (count($result["name"])) {
+            usort($result["name"], function ($a, $b) {
+                if ($a["name"] == $b["name"]) {
+                    return 0;
+                }
+
+                return ($a["name"] < $b["name"]) ? -1 : 1;
+            });
+        }
+
+        // sort by allowed brick config order
+        if (count($result["index"])) {
+            usort($result["index"], function ($a, $b) {
+                return $a["sortIndex"] - $b["sortIndex"];
+            });
+        }
+
+        $result = array_merge($result["index"], $result["name"]);
+
+        return $result;
     }
 
     /**
