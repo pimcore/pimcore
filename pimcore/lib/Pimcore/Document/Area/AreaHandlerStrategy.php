@@ -2,9 +2,11 @@
 
 namespace Pimcore\Document\Area;
 
+use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModel;
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModelInterface;
 use Pimcore\Model\Document\Tag;
 use Pimcore\Model\Document\Tag\Area\Info;
+use Pimcore\Translate;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 
 class AreaHandlerStrategy implements AreaHandlerInterface
@@ -42,8 +44,40 @@ class AreaHandlerStrategy implements AreaHandlerInterface
      */
     public function getAvailableAreas(Tag\Areablock $tag, array $options)
     {
-        // TODO
-        return [];
+        /** @var ViewModel $view */
+        $view = $tag->getView();
+
+        $areas = [];
+        foreach ($this->brickManager->getBricks() as $brick) {
+            // don't show disabled bricks
+            if (!isset($options['dontCheckEnabled']) || !$options['dontCheckEnabled']) {
+                if (!$tag->isBrickEnabled($brick->getId())) {
+                    continue;
+                }
+            }
+
+            if (!(empty($options['allowed']) || in_array($brick->getId(), $options['allowed']))) {
+                continue;
+            }
+
+            $name = $brick->getName();
+            $desc = $brick->getDescription();
+            $icon = ''; // TODO icons
+
+            if ($view->editmode) {
+                $name = Translate::transAdmin($name);
+                $desc = Translate::transAdmin($desc);
+            }
+
+            $areas[$brick->getId()] = [
+                'name'        => $name,
+                'description' => $desc,
+                'type'        => $brick->getId(),
+                'icon'        => $icon,
+            ];
+        }
+
+        return $areas;
     }
 
     /**
