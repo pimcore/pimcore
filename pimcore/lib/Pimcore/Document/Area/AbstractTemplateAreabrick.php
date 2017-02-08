@@ -4,6 +4,13 @@ namespace Pimcore\Document\Area;
 
 use Pimcore\Bundle\PimcoreBundle\HttpKernel\BundleLocator\BundleLocatorInterface;
 
+/**
+ * Auto-resolves view and edit templates if has*Template properties are set. Depending on the result of getTemplateLocation
+ * and getTemplateSuffix it builds the following template references:
+ *
+ * - <currentBundle>:Areas/<brickId>/(view|edit).<suffix>
+ * - Areas/<brickId>/(view|edit).<suffix> -> resolves to app/Resources
+ */
 abstract class AbstractTemplateAreabrick extends AbstractAreabrick
 {
     const TEMPLATE_LOCATION_GLOBAL = 'global';
@@ -38,6 +45,26 @@ abstract class AbstractTemplateAreabrick extends AbstractAreabrick
     }
 
     /**
+     * Determines if template should be auto-located in area bundle or in app/Resources
+     *
+     * @return string
+     */
+    protected function getTemplateLocation()
+    {
+        return static::TEMPLATE_LOCATION_BUNDLE;
+    }
+
+    /**
+     * Returns view suffix used to auto-build view names
+     *
+     * @return string
+     */
+    protected function getTemplateSuffix()
+    {
+        return 'phtml';
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getViewTemplate()
@@ -59,26 +86,6 @@ abstract class AbstractTemplateAreabrick extends AbstractAreabrick
         }
 
         return $this->resolveTemplateReference('edit');
-    }
-
-    /**
-     * Returns view suffix used to auto-build view names
-     *
-     * @return string
-     */
-    protected function getTemplateSuffix()
-    {
-        return 'phtml';
-    }
-
-    /**
-     * Determines if template should be auto-located in area bundle or in app/Resources
-     *
-     * @return string
-     */
-    protected function getTemplateLocation()
-    {
-        return static::TEMPLATE_LOCATION_BUNDLE;
     }
 
     /**
