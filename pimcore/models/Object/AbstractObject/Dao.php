@@ -525,4 +525,17 @@ class Dao extends Model\Element\Dao
 
         return $permissions;
     }
+
+    /**
+     * @return bool
+     */
+    public function __isBasedOnLatestData() {
+
+        $currentDataTimestamp = $this->db->fetchOne("SELECT o_modificationDate from objects WHERE o_id = ?", $this->model->getId());
+        if($currentDataTimestamp == $this->model->__getDataVersionTimestamp()) {
+            return true;
+        }
+
+        return false;
+    }
 }

@@ -471,4 +471,17 @@ class Dao extends Model\Element\Dao
 
         return false;
     }
+
+    /**
+     * @return bool
+     */
+    public function __isBasedOnLatestData() {
+
+        $currentDataTimestamp = $this->db->fetchOne("SELECT modificationDate from assets WHERE id = ?", $this->model->getId());
+        if($currentDataTimestamp == $this->model->__getDataVersionTimestamp()) {
+            return true;
+        }
+
+        return false;
+    }
 }
