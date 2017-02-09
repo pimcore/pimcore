@@ -21,12 +21,11 @@ namespace {
 
 
 // the following is for IDEs to support auto-complete
-namespace Pimcore\Model {
-    if(!\Pimcore\Tool::classExists("Pimcore\\Model\\Object")) {
 
+namespace Pimcore\Model {
+    if (!\Pimcore\Tool::classExists("Pimcore\\Model\\Object")) {
         class Object extends \Pimcore\Model\Object\AbstractObject
         {
-
         }
     }
 }

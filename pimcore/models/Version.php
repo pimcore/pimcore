@@ -145,7 +145,7 @@ class Version extends AbstractModel
         // get stack trace
         try {
             throw new \Exception("not a real exception ... ;-)");
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->stackTrace = $e->getTraceAsString();
         }
 

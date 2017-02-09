@@ -494,8 +494,8 @@ class Cache
                 $lifetime = false; // set to false otherwise the lifetime stays at null (\Zend_Cache_Backend::getLifetime())
             }
 
-            if($data instanceof Element\ElementInterface) {
-                if(!$data->__isBasedOnLatestData()) {
+            if ($data instanceof Element\ElementInterface) {
+                if (!$data->__isBasedOnLatestData()) {
                     //@TODO: this check needs to be done recursive, especially for Objects (like cache tags)
                     // all other entities shouldn't have references at all in the cache so it shouldn't matter
                     return false;
