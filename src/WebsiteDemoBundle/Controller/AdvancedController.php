@@ -3,23 +3,14 @@
 namespace WebsiteDemoBundle\Controller;
 
 use Pimcore\Model\Asset;
-use Pimcore\Bundle\PimcoreZendBundle\Controller\ZendController;
 use Pimcore\Model\Object;
 use Pimcore\Tool;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Zend\Paginator\Paginator;
 
-class AdvancedController extends ZendController
+class AdvancedController extends AbstractController
 {
-    /**
-     * @param FilterControllerEvent $event
-     */
-    public function preDispatch(FilterControllerEvent $event)
-    {
-        $this->enableLayout('WebsiteDemoBundle::layout.phtml');
-    }
-
     public function contactFormAction(Request $request)
     {
         $success = false;

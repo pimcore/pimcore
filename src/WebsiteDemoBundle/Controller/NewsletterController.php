@@ -2,17 +2,14 @@
 
 namespace WebsiteDemoBundle\Controller;
 
-use Pimcore\Bundle\PimcoreZendBundle\Controller\ZendController;
-use Pimcore\Tool\Newsletter;
 use Pimcore\Model;
+use Pimcore\Tool\Newsletter;
 use Symfony\Component\HttpFoundation\Request;
 
-class NewsletterController extends ZendController
+class NewsletterController extends AbstractController
 {
     public function subscribeAction(Request $request)
     {
-        $this->enableLayout('WebsiteDemoBundle::layout.phtml');
-
         $newsletter = new Newsletter("person"); // replace "crm" with the class name you have used for your class above (mailing list)
         $params = $request->request->all();
 
@@ -46,8 +43,6 @@ class NewsletterController extends ZendController
 
     public function confirmAction(Request $request)
     {
-        $this->enableLayout('WebsiteDemoBundle::layout.phtml');
-
         $this->view->success = false;
 
         $newsletter = new Newsletter("person"); // replace "crm" with the class name you have used for your class above (mailing list)
@@ -59,8 +54,6 @@ class NewsletterController extends ZendController
 
     public function unsubscribeAction(Request $request)
     {
-        $this->enableLayout('WebsiteDemoBundle::layout.phtml');
-
         $newsletter = new Newsletter("person"); // replace "crm" with the class name you have used for your class above (mailing list)
 
         $unsubscribeMethod = null;
