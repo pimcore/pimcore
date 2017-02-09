@@ -426,7 +426,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     {
         $tags = is_array($tags) ? $tags : [];
 
-        if($this->getLazyLoading()) {
+        if ($this->getLazyLoading()) {
             return $tags;
         }
 

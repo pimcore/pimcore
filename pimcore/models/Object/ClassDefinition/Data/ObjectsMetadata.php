@@ -364,7 +364,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
     {
         $tags = is_array($tags) ? $tags : [];
 
-        if($this->getLazyLoading()) {
+        if ($this->getLazyLoading()) {
             return $tags;
         }
 

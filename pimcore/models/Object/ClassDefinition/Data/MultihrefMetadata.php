@@ -408,7 +408,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
     {
         $tags = is_array($tags) ? $tags : [];
 
-        if($this->getLazyLoading()) {
+        if ($this->getLazyLoading()) {
             return $tags;
         }
 
