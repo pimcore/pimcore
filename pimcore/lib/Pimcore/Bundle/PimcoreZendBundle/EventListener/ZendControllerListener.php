@@ -25,7 +25,7 @@ class ZendControllerListener implements EventSubscriberInterface
     /**
      * @var TemplateVarsResolver
      */
-    protected $templateVarsResolver;
+    protected $varsResolver;
 
     /**
      * @var TemplateGuesser
@@ -34,14 +34,14 @@ class ZendControllerListener implements EventSubscriberInterface
 
     /**
      * @param EngineInterface $templating
-     * @param TemplateVarsResolver $templateVarsResolver
+     * @param TemplateVarsResolver $varsResolver
      * @param TemplateGuesser $templateGuesser
      */
-    public function __construct(EngineInterface $templating, TemplateVarsResolver $templateVarsResolver, TemplateGuesser $templateGuesser)
+    public function __construct(EngineInterface $templating, TemplateVarsResolver $varsResolver, TemplateGuesser $templateGuesser)
     {
-        $this->templating           = $templating;
-        $this->templateVarsResolver = $templateVarsResolver;
-        $this->templateGuesser      = $templateGuesser;
+        $this->templating      = $templating;
+        $this->varsResolver    = $varsResolver;
+        $this->templateGuesser = $templateGuesser;
     }
 
     /**
@@ -83,6 +83,9 @@ class ZendControllerListener implements EventSubscriberInterface
             return;
         }
 
+        // document, editmode
+        $standardVars = $this->varsResolver->getTemplateVars();
+
         $view   = $renderView = $controller->getView();
         $result = $event->getControllerResult();
 
@@ -96,9 +99,12 @@ class ZendControllerListener implements EventSubscriberInterface
             }
 
             if (null !== $layout = $controller->getLayout()) {
+                $view->setVariables($standardVars);
                 $renderView = $layout;
             }
         }
+
+        $renderView->setVariables($standardVars);
 
         $event->setResponse($this->templating->renderResponse(
             $renderView->getTemplate(), [
@@ -139,7 +145,7 @@ class ZendControllerListener implements EventSubscriberInterface
             $template = $this->guessTemplateName($event);
         }
 
-        $vars = $this->templateVarsResolver->getTemplateVars($event->getRequest());
+        $vars = $this->varsResolver->getTemplateVars($event->getRequest());
 
         $viewModel = new ViewModel($vars);
         $viewModel->setTemplate($template);
