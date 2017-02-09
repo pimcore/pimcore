@@ -15,13 +15,9 @@
 namespace Pimcore;
 
 use Pimcore\Model;
-use Pimcore\Model\Element;
-use Pimcore\Logger;
-use Pimcore\Tool\DeviceDetector;
 
 class View extends \Zend_View
 {
-
     /**
      * @var \Zend_Controller_Request_Abstract
      */
@@ -149,102 +145,8 @@ class View extends \Zend_View
             $params = [];
         }
 
-        // check if output-cache is enabled, if so, we're also using the cache here
-        $cacheKey = null;
-        $cacheConfig = false;
-
-        if ($cacheEnabled) {
-            if ($cacheConfig = Tool\Frontend::isOutputCacheEnabled()) {
-
-                // cleanup params to avoid serializing Element\ElementInterface objects
-                $cacheParams = $params;
-                $cacheParams["~~include-document"] = $include;
-                array_walk($cacheParams, function (&$value, $key) {
-                    if ($value instanceof Element\ElementInterface) {
-                        $value = $value->getId();
-                    } elseif (is_object($value) && method_exists($value, "__toString")) {
-                        $value = (string) $value;
-                    }
-                });
-
-                $cacheKey = "tag_inc__" . md5(serialize($cacheParams));
-                if ($content = Cache::load($cacheKey)) {
-                    return $content;
-                }
-            }
-        }
-
-
-        $editmodeBackup = \Zend_Registry::get("pimcore_editmode");
-        \Zend_Registry::set("pimcore_editmode", false);
-
-        $includeBak = $include;
-
-        // this is if $this->inc is called eg. with $this->href() as argument
-        if (!$include instanceof Model\Document\PageSnippet && is_object($include) && method_exists($include, "__toString")) {
-            $include = (string) $include;
-        }
-
-        if (is_numeric($include)) {
-            try {
-                $include = Model\Document::getById($include);
-            } catch (\Exception $e) {
-                $include = $includeBak;
-            }
-        } elseif (is_string($include)) {
-            try {
-                $include = Model\Document::getByPath($include);
-            } catch (\Exception $e) {
-                $include = $includeBak;
-            }
-        }
-
-        $params = array_merge($params, ["document" => $include]);
-        $content = "";
-
-        if ($include instanceof Model\Document\PageSnippet && $include->isPublished()) {
-            if ($include->getAction() && $include->getController()) {
-                $content = $this->action($include->getAction(), $include->getController(), $include->getModule(), $params);
-            } elseif ($include->getTemplate()) {
-                $content = $this->action("default", "default", null, $params);
-            }
-
-            // in editmode, we need to parse the returned html from the document include
-            // add a class and the pimcore id / type so that it can be opened in editmode using the context menu
-            // if there's no first level HTML container => add one (wrapper)
-            if ($this->editmode) {
-                include_once("simple_html_dom.php");
-
-                $editmodeClass = " pimcore_editable pimcore_tag_inc ";
-
-                // this is if the content that is included does already contain markup/html
-                // this is needed by the editmode to highlight included documents
-                if ($html = str_get_html($content)) {
-                    $childs = $html->find("*");
-                    if (is_array($childs)) {
-                        foreach ($childs as $child) {
-                            $child->class = $child->class . $editmodeClass;
-                            $child->pimcore_type = $include->getType();
-                            $child->pimcore_id = $include->getId();
-                        }
-                    }
-                    $content = $html->save();
-
-                    $html->clear();
-                    unset($html);
-                } else {
-                    // add a div container if the include doesn't contain markup/html
-                    $content = '<div class="' . $editmodeClass . '" pimcore_id="' . $include->getId() . '" pimcore_type="' . $include->getType() . '">' . $content . '</div>';
-                }
-            }
-        }
-
-        \Zend_Registry::set("pimcore_editmode", $editmodeBackup);
-
-        // write contents to the cache, if output-cache is enabled
-        if ($cacheConfig && !DeviceDetector::getInstance()->wasUsed()) {
-            Cache::save($content, $cacheKey, ["output", "output_inline"], $cacheConfig["lifetime"]);
-        }
+        $renderer = \Pimcore::getContainer()->get('pimcore.templating.include_renderer');
+        $content  = $renderer->render($this, $include, $params, $cacheEnabled);
 
         return $content;
     }

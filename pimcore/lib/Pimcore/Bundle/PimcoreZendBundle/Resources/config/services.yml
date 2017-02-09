@@ -58,6 +58,12 @@ services:
         tags:
             - { name: pimcore.zend.view_helper, alias: app }
 
+    pimcore.zend.templating.view_helper.inc:
+        class: Pimcore\Bundle\PimcoreZendBundle\Templating\Zend\Helper\Inc
+        arguments: ['@pimcore.templating.include_renderer']
+        tags:
+            - { name: pimcore.zend.view_helper, alias: inc }
+
     pimcore.zend.templating.view_helper.action:
         class: Pimcore\Bundle\PimcoreZendBundle\Templating\Zend\Helper\Action
         arguments:

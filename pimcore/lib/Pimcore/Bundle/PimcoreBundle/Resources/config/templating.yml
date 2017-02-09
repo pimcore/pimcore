@@ -3,6 +3,10 @@ services:
         class: Pimcore\Bundle\PimcoreBundle\Templating\Renderer\ActionRenderer
         arguments: ['@templating.helper.actions', '@pimcore.mvc_config_normalizer']
 
+    pimcore.templating.include_renderer:
+        class: Pimcore\Bundle\PimcoreBundle\Templating\Renderer\IncludeRenderer
+        arguments: ['@pimcore.templating.action_renderer']
+
     pimcore.templating.tag_renderer:
         class: Pimcore\Bundle\PimcoreBundle\Templating\Renderer\TagRenderer
         arguments: ['@pimcore.service.request.editmode_resolver']
