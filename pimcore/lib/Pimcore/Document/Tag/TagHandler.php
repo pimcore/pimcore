@@ -3,16 +3,18 @@
 namespace Pimcore\Document\Tag;
 
 use Pimcore\Bundle\PimcoreBundle\HttpKernel\BundleLocator\BundleLocatorInterface;
-use Pimcore\Bundle\PimcoreBundle\HttpKernel\ControllerFormatter;
+use Pimcore\Bundle\PimcoreBundle\Service\MvcConfigNormalizer;
 use Pimcore\Bundle\PimcoreBundle\Service\WebPathResolver;
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModel;
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModelInterface;
 use Pimcore\Document\Area\AreabrickManagerInterface;
+use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Document\Tag;
 use Pimcore\Model\Document\Tag\Area\Info;
 use Pimcore\Translate;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Bundle\FrameworkBundle\Templating\Helper\ActionsHelper;
+use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 
 class TagHandler implements TagHandlerInterface
 {
@@ -37,9 +39,9 @@ class TagHandler implements TagHandlerInterface
     protected $webPathResolver;
 
     /**
-     * @var ControllerFormatter
+     * @var MvcConfigNormalizer
      */
-    protected $controllerFormatter;
+    protected $configNormalizer;
 
     /**
      * @var ActionsHelper
@@ -51,7 +53,7 @@ class TagHandler implements TagHandlerInterface
      * @param EngineInterface $templating
      * @param BundleLocatorInterface $bundleLocator
      * @param WebPathResolver $webPathResolver
-     * @param ControllerFormatter $controllerFormatter
+     * @param MvcConfigNormalizer $configNormalizer
      * @param ActionsHelper $actionsHelper
      */
     public function __construct(
@@ -59,16 +61,16 @@ class TagHandler implements TagHandlerInterface
         EngineInterface $templating,
         BundleLocatorInterface $bundleLocator,
         WebPathResolver $webPathResolver,
-        ControllerFormatter $controllerFormatter,
+        MvcConfigNormalizer $configNormalizer,
         ActionsHelper $actionsHelper
     )
     {
-        $this->brickManager        = $brickManager;
-        $this->templating          = $templating;
-        $this->bundleLocator       = $bundleLocator;
-        $this->webPathResolver     = $webPathResolver;
-        $this->controllerFormatter = $controllerFormatter;
-        $this->actionsHelper       = $actionsHelper;
+        $this->brickManager     = $brickManager;
+        $this->templating       = $templating;
+        $this->bundleLocator    = $bundleLocator;
+        $this->webPathResolver  = $webPathResolver;
+        $this->configNormalizer = $configNormalizer;
+        $this->actionsHelper    = $actionsHelper;
     }
 
     /**
@@ -106,7 +108,7 @@ class TagHandler implements TagHandlerInterface
 
             // autoresolve icon as <bundleName>/Resources/public/areas/<id>/icon.png
             if (null === $icon) {
-                $bundle   = $this->bundleLocator->getBundle($brick);
+                $bundle = $this->bundleLocator->getBundle($brick);
 
                 // check if file exists
                 $iconPath = sprintf('%s/Resources/public/areas/%s/icon.png', $bundle->getPath(), $brick->getId());
@@ -195,15 +197,27 @@ class TagHandler implements TagHandlerInterface
      */
     public function renderAction($view, $controller, $action, $parent = null, array $params = [])
     {
-        $controller = $this->controllerFormatter->format(
+        $controller = $this->configNormalizer->formatController(
+            $parent,
             $controller,
-            $action,
-            $parent
+            $action
         );
 
         // set document as attribute
-        // TODO refine this
-        $params['contentDocument'] = $params['document'] ?: null;
+        $document = $params['document'];
+
+        // The CMF dynamic router sets the 2 attributes contentDocument and contentTemplate to set
+        // a route's document and template. Those attributes are later used by controller listeners to
+        // determine what to render. By injecting those attributes into the sub-request we can rely on
+        // the same rendering logic as in the routed request.
+        if ($document && $document instanceof PageSnippet) {
+            $params[DynamicRouter::CONTENT_KEY] = $document;
+
+            if ($document->getTemplate()) {
+                $template = $this->configNormalizer->normalizeTemplate($document->getTemplate());
+                $params[DynamicRouter::CONTENT_TEMPLATE] = $template;
+            }
+        }
 
         $reference = $this->actionsHelper->controller($controller, $params);
 
