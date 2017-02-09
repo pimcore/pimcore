@@ -103,7 +103,7 @@ class Snippet extends Model\Document\Tag
         // TODO inject area handler via DI when tags are built through container
         $tagHandler = \Pimcore::getContainer()->get('pimcore.document.tag.handler');
 
-        if (!$tagHandler->supports($this)) {
+        if (!$tagHandler->supports($this->view)) {
             return null;
         }
 
@@ -133,7 +133,7 @@ class Snippet extends Model\Document\Tag
                     }
 
                     $content = $tagHandler->renderAction(
-                        $this,
+                        $this->view,
                         $this->snippet->getController(),
                         $this->snippet->getAction(),
                         $this->snippet->getModule(),

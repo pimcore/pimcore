@@ -1,18 +1,20 @@
 <?php
 namespace Pimcore\Document\Tag;
 
+use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModelInterface;
 use Pimcore\Model\Document\Tag;
 use Pimcore\Model\Document\Tag\Area\Info;
+use Pimcore\View;
 
 interface TagHandlerInterface
 {
     /**
      * Determine if handler strategy supports the tag
      *
-     * @param Tag|Tag\Area|Tag\Areablock $tag
+     * @param ViewModelInterface|View $view
      * @return bool
      */
-    public function supports(Tag $tag);
+    public function supports($view);
 
     /**
      * Get available areas for an areablock
@@ -35,12 +37,12 @@ interface TagHandlerInterface
     /**
      * Render a sub-action (snippet, renderlet)
      *
-     * @param Tag $tag
+     * @param ViewModelInterface|View $view
      * @param string $controller
      * @param string $action
      * @param string|null $parent Bundle or module (legacy) name
      * @param array $params
      * @return string
      */
-    public function renderAction(Tag $tag, $controller, $action, $parent = null, array $params = []);
+    public function renderAction($view, $controller, $action, $parent = null, array $params = []);
 }

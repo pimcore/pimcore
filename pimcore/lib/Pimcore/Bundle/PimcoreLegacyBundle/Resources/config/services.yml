@@ -1,4 +1,4 @@
 services:
-    # The legacy tag handler strategy supporting Pimcore\View. Injected into tag handler in compiler pass.
-    pimcore.document.tag.handler_strategy.legacy:
-        class: Pimcore\Bundle\PimcoreLegacyBundle\Document\Tag\LegacyTagHandlerStrategy
+    # legacy tag handler supporting Pimcore\View - injected into delegating tag handler in compiler pass
+    pimcore.document.tag.handler.legacy:
+        class: Pimcore\Bundle\PimcoreLegacyBundle\Document\Tag\LegacyTagHandler

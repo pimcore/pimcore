@@ -11,14 +11,14 @@ use Pimcore\Tool;
 use Pimcore\Translate;
 use Pimcore\View;
 
-class LegacyTagHandlerStrategy implements TagHandlerInterface
+class LegacyTagHandler implements TagHandlerInterface
 {
     /**
      * {@inheritdoc}
      */
-    public function supports(Tag $tag)
+    public function supports($view)
     {
-        return $tag->getView() instanceof View;
+        return $view instanceof View;
     }
 
     /**
@@ -195,11 +195,9 @@ class LegacyTagHandlerStrategy implements TagHandlerInterface
     /**
      * {@inheritdoc}
      */
-    public function renderAction(Tag $tag, $controller, $action, $parent = null, array $params = [])
+    public function renderAction($view, $controller, $action, $parent = null, array $params = [])
     {
         /** @var View $view */
-        $view = $tag->getView();
-
         return $view->action(
             $action,
             $controller,

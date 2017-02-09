@@ -71,12 +71,12 @@ services:
         arguments: ['@pimcore.bundle_locator']
 
     pimcore.document.tag.handler:
-        class: Pimcore\Document\Tag\TagHandler
+        class: Pimcore\Document\Tag\DelegatingTagHandler
         calls:
-            - [addStrategy, ['@pimcore.document.tag.handler_strategy.default']]
+            - [addHandler, ['@pimcore.document.tag.handler.default']]
 
-    pimcore.document.tag.handler_strategy.default:
-        class: Pimcore\Document\Tag\TagHandlerStrategy
+    pimcore.document.tag.handler.default:
+        class: Pimcore\Document\Tag\TagHandler
         arguments:
             - '@pimcore.area.brick_manager'
             - '@templating'

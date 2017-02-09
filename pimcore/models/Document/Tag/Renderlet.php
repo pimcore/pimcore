@@ -109,7 +109,7 @@ class Renderlet extends Model\Document\Tag
         // TODO inject area handler via DI when tags are built through container
         $tagHandler = \Pimcore::getContainer()->get('pimcore.document.tag.handler');
 
-        if (!$tagHandler->supports($this)) {
+        if (!$tagHandler->supports($this->view)) {
             return null;
         }
 
@@ -152,7 +152,7 @@ class Renderlet extends Model\Document\Tag
 
             try {
                 $content = $tagHandler->renderAction(
-                    $this,
+                    $this->view,
                     $this->options['controller'],
                     $this->options['action'],
                     isset($this->options['module']) ? $this->options['module'] : null,
