@@ -1,7 +1,7 @@
 services:
     pimcore.document.tag.renderer:
         class: Pimcore\Bundle\PimcoreBundle\Templating\TagRenderer
-        arguments: ['@pimcore.zend_view_provider', '@pimcore.service.request.editmode_resolver']
+        arguments: ['@pimcore.service.request.editmode_resolver']
         calls:
             - [setLogger, ['@logger']]
 

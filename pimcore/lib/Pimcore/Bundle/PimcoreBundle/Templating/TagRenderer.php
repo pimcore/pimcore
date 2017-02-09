@@ -15,22 +15,15 @@ class TagRenderer implements LoggerAwareInterface
     use LoggerAwareTrait;
 
     /**
-     * @var ZendViewProvider
-     */
-    protected $viewProvider;
-
-    /**
      * @var EditmodeResolver
      */
     protected $editmodeResolver;
 
     /**
-     * @param ZendViewProvider $viewProvider
      * @param EditmodeResolver $editmodeResolver
      */
-    public function __construct(ZendViewProvider $viewProvider, EditmodeResolver $editmodeResolver)
+    public function __construct(EditmodeResolver $editmodeResolver)
     {
-        $this->viewProvider     = $viewProvider;
         $this->editmodeResolver = $editmodeResolver;
     }
 
