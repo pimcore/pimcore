@@ -151,11 +151,19 @@ class Renderlet extends Model\Document\Tag
             }
 
             try {
+                $moduleOrBundle = null;
+
+                if (isset($this->options['bundle'])) {
+                    $moduleOrBundle = $this->options['bundle'];
+                } else if (isset($this->options['module'])) {
+                    $moduleOrBundle = $this->options['module'];
+                }
+
                 $content = $tagHandler->renderAction(
                     $this->view,
                     $this->options['controller'],
                     $this->options['action'],
-                    isset($this->options['module']) ? $this->options['module'] : null,
+                    $moduleOrBundle,
                     $params
                 );
 
