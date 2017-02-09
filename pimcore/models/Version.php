@@ -79,6 +79,11 @@ class Version extends AbstractModel
     public $serialized = false;
 
     /**
+     * @var string
+     */
+    public $stackTrace = "";
+
+    /**
      * @var bool
      */
     public static $disabled = false;
@@ -122,7 +127,7 @@ class Version extends AbstractModel
 
 
     /**
-     * @return void
+     * @throws \Exception
      */
     public function save()
     {
@@ -135,6 +140,13 @@ class Version extends AbstractModel
 
         if (!$this->date) {
             $this->setDate(time());
+        }
+
+        // get stack trace
+        try {
+            throw new \Exception("not a real exception ... ;-)");
+        } catch(\Exception $e) {
+            $this->stackTrace = $e->getTraceAsString();
         }
 
         $data = $this->getData();
