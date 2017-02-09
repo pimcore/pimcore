@@ -3,7 +3,6 @@
 namespace Pimcore\Document\Tag;
 
 use Pimcore\Bundle\PimcoreBundle\HttpKernel\BundleLocator\BundleLocatorInterface;
-use Pimcore\Bundle\PimcoreBundle\Service\MvcConfigNormalizer;
 use Pimcore\Bundle\PimcoreBundle\Service\WebPathResolver;
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModel;
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModelInterface;
@@ -11,10 +10,9 @@ use Pimcore\Document\Area\AreabrickManagerInterface;
 use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Document\Tag;
 use Pimcore\Model\Document\Tag\Area\Info;
+use Pimcore\Service\RenderService;
 use Pimcore\Translate;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
-use Symfony\Bundle\FrameworkBundle\Templating\Helper\ActionsHelper;
-use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 
 class TagHandler implements TagHandlerInterface
 {
@@ -39,38 +37,30 @@ class TagHandler implements TagHandlerInterface
     protected $webPathResolver;
 
     /**
-     * @var MvcConfigNormalizer
+     * @var RenderService
      */
-    protected $configNormalizer;
-
-    /**
-     * @var ActionsHelper
-     */
-    protected $actionsHelper;
+    protected $renderService;
 
     /**
      * @param AreabrickManagerInterface $brickManager
      * @param EngineInterface $templating
      * @param BundleLocatorInterface $bundleLocator
      * @param WebPathResolver $webPathResolver
-     * @param MvcConfigNormalizer $configNormalizer
-     * @param ActionsHelper $actionsHelper
+     * @param RenderService $renderService
      */
     public function __construct(
         AreabrickManagerInterface $brickManager,
         EngineInterface $templating,
         BundleLocatorInterface $bundleLocator,
         WebPathResolver $webPathResolver,
-        MvcConfigNormalizer $configNormalizer,
-        ActionsHelper $actionsHelper
+        RenderService $renderService
     )
     {
-        $this->brickManager     = $brickManager;
-        $this->templating       = $templating;
-        $this->bundleLocator    = $bundleLocator;
-        $this->webPathResolver  = $webPathResolver;
-        $this->configNormalizer = $configNormalizer;
-        $this->actionsHelper    = $actionsHelper;
+        $this->brickManager    = $brickManager;
+        $this->templating      = $templating;
+        $this->bundleLocator   = $bundleLocator;
+        $this->webPathResolver = $webPathResolver;
+        $this->renderService   = $renderService;
     }
 
     /**
@@ -197,30 +187,18 @@ class TagHandler implements TagHandlerInterface
      */
     public function renderAction($view, $controller, $action, $parent = null, array $params = [])
     {
-        $controller = $this->configNormalizer->formatController(
-            $parent,
-            $controller,
-            $action
-        );
-
-        // set document as attribute
         $document = $params['document'];
-
-        // The CMF dynamic router sets the 2 attributes contentDocument and contentTemplate to set
-        // a route's document and template. Those attributes are later used by controller listeners to
-        // determine what to render. By injecting those attributes into the sub-request we can rely on
-        // the same rendering logic as in the routed request.
         if ($document && $document instanceof PageSnippet) {
-            $params[DynamicRouter::CONTENT_KEY] = $document;
-
-            if ($document->getTemplate()) {
-                $template = $this->configNormalizer->normalizeTemplate($document->getTemplate());
-                $params[DynamicRouter::CONTENT_TEMPLATE] = $template;
-            }
+            $params = $this->renderService->addDocumentParams($document, $params);
         }
 
-        $reference = $this->actionsHelper->controller($controller, $params);
+        $controller = $this->renderService->createControllerReference(
+            $parent,
+            $controller,
+            $action,
+            $params
+        );
 
-        return $this->actionsHelper->render($reference);
+        return $this->renderService->render($controller);
     }
 }
