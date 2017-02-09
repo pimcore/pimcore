@@ -155,7 +155,7 @@ foreach($children as $child) {
                         'expandSiblingNodesOfActiveBranch' => true
                     ]); ?>
                 </div>
-                <?= $this->zf1_inc($document->getProperty('sidebar')); ?>
+                <?= $this->inc($document->getProperty('sidebar')); ?>
             </div>
         <?php endif; ?>
     </div>
@@ -165,7 +165,7 @@ foreach($children as $child) {
 
 <?php
 // include a document-snippet - in this case the footer document
-echo $this->zf1_inc('/' . $this->app('request')->getLocale() . '/shared/includes/footer');
+echo $this->inc('/' . $this->app('request')->getLocale() . '/shared/includes/footer');
 
 // global scripts, we use the view helper here to have the cache buster functionality
 $this->headScript()->appendFile('/bundles/websitedemo/js/jquery-1.11.0.min.js');
