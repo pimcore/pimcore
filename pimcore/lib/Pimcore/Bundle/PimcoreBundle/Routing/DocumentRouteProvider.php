@@ -99,6 +99,12 @@ class DocumentRouteProvider implements RouteProviderInterface
         $locale = explode('_', $locale);
         $locale = $locale[0];
 
+        // check for direct hardlink
+        if ($document instanceof Document\Hardlink) {
+            $hardlinkParentDocument = $document;
+            $document = Document\Hardlink\Service::wrap($hardlinkParentDocument);
+        }
+
         $route = new DocumentRoute($document->getRealFullPath());
         $route->setDefault('_locale', $locale);
         $route->setDocument($document);
