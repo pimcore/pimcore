@@ -130,8 +130,16 @@ class ZendControllerListener implements EventSubscriberInterface
      */
     protected function generateViewModel(FilterControllerEvent $event)
     {
-        $template = $this->guessTemplateName($event);
-        $vars     = $this->templateVarsResolver->getTemplateVars($event->getRequest());
+        $attributeTemplate = $event->getRequest()->attributes->get('contentTemplate');
+
+        $template = null;
+        if ($attributeTemplate) {
+            $template = $attributeTemplate;
+        } else {
+            $template = $this->guessTemplateName($event);
+        }
+
+        $vars = $this->templateVarsResolver->getTemplateVars($event->getRequest());
 
         $viewModel = new ViewModel($vars);
         $viewModel->setTemplate($template);
