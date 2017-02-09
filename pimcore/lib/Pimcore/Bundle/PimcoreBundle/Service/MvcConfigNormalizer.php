@@ -82,15 +82,41 @@ class MvcConfigNormalizer
             return $template;
         }
 
+        // if we find Bundle in the template name we assume it's properly formatted
+        if (false !== strpos($template, 'Bundle')) {
+            return $template;
+        }
+
+        // replace .php with .phtml
         $suffixPattern = '/\.php$/i';
         if (preg_match($suffixPattern, $template)) {
             $template = preg_replace($suffixPattern, '.phtml', $template);
         }
 
+        // split template into path and filename
         if (substr($template, 0, 1) === '/') {
             $template = substr($template, 1);
         }
 
-        return $template;
+        $path = '';
+        if (false !== strpos($template, '/')) {
+            $parts    = explode('/', $template);
+            $template = array_pop($parts);
+
+            // ucfirst to match views/Content - TODO should we remove this?
+            $path = implode('/', $parts);
+            $path = ucfirst($path);
+        }
+
+        // TODO move to config
+        // TODO add support for non-bundled templates
+        $bundle = defined('PIMCORE_SYMFONY_DEFAULT_BUNDLE') ? PIMCORE_SYMFONY_DEFAULT_BUNDLE : 'AppBundle';
+
+        return sprintf(
+            '%s:%s:%s',
+            $bundle,
+            $path,
+            $template
+        );
     }
 }
