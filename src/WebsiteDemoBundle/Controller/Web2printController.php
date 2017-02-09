@@ -1,4 +1,5 @@
 <?php
+
 namespace WebsiteDemoBundle\Controller;
 
 use Pimcore\Bundle\PimcoreZendBundle\Controller\ZendController;

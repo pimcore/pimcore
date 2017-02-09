@@ -3,9 +3,12 @@ services:
         class: Pimcore\Bundle\PimcoreBundle\HttpKernel\LegacyKernel
         arguments: ['@kernel']
 
+    pimcore.mvc_config_normalizer:
+        class: Pimcore\Bundle\PimcoreBundle\Service\MvcConfigNormalizer
+
     pimcore.router.dynamic_route_provider:
         class: Pimcore\Bundle\PimcoreBundle\Routing\DocumentRouteProvider
-        arguments: ['@pimcore.service.document']
+        arguments: ['@pimcore.service.document', '@pimcore.mvc_config_normalizer']
 
     pimcore.plugin_broker:
         class: Pimcore\API\Plugin\Broker
@@ -52,3 +55,32 @@ services:
 
     pimcore.service.object:
         class: Pimcore\Bundle\PimcoreBundle\Service\Object\ObjectService
+
+    pimcore.bundle_locator:
+        class: Pimcore\Bundle\PimcoreBundle\HttpKernel\BundleLocator\BundleLocator
+        arguments: ['@kernel']
+
+    pimcore.web_path_resolver:
+        class: Pimcore\Bundle\PimcoreBundle\Service\WebPathResolver
+
+    pimcore.area.brick_manager:
+        class: Pimcore\Document\Area\AreabrickManager
+
+    pimcore.area.brick.templating_base:
+        abstract: true
+        arguments: ['@pimcore.bundle_locator']
+
+    pimcore.document.tag.handler:
+        class: Pimcore\Document\Tag\DelegatingTagHandler
+        calls:
+            - [addHandler, ['@pimcore.document.tag.handler.default']]
+
+    pimcore.document.tag.handler.default:
+        class: Pimcore\Document\Tag\TagHandler
+        arguments:
+            - '@pimcore.area.brick_manager'
+            - '@templating'
+            - '@pimcore.bundle_locator'
+            - '@pimcore.web_path_resolver'
+            - '@pimcore.mvc_config_normalizer'
+            - '@templating.helper.actions'

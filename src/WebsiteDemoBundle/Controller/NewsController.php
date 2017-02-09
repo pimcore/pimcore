@@ -2,22 +2,12 @@
 
 namespace WebsiteDemoBundle\Controller;
 
-use Pimcore\Bundle\PimcoreZendBundle\Controller\ZendController;
 use Pimcore\Model\Object\News;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Zend\Paginator\Paginator;
 
-class NewsController extends ZendController
+class NewsController extends AbstractController
 {
-    /**
-     * @param FilterControllerEvent $event
-     */
-    public function preDispatch(FilterControllerEvent $event)
-    {
-        $this->enableLayout('WebsiteDemoBundle::layout.phtml');
-    }
-
     public function indexAction(Request $request)
     {
         // get a list of news objects and order them by date

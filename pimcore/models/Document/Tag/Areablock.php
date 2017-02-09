@@ -16,18 +16,18 @@
 
 namespace Pimcore\Model\Document\Tag;
 
-use Pimcore\Model;
 use Pimcore\ExtensionManager;
-use Pimcore\Tool;
-use Pimcore\Model\Document;
 use Pimcore\Logger;
+use Pimcore\Model;
+use Pimcore\Model\Document;
+use Pimcore\Tool;
+use Pimcore\Translate;
 
 /**
  * @method \Pimcore\Model\Document\Tag\Dao getDao()
  */
 class Areablock extends Model\Document\Tag
 {
-
     /**
      * Contains an array of indices, which represent the order of the elements in the block
      *
@@ -170,130 +170,26 @@ class Areablock extends Model\Document\Tag
      */
     public function content()
     {
-
         // create info object and assign it to the view
         $info = new Area\Info();
         try {
-            $info->setTag($this);
-            $info->setName($this->getName());
             $info->setId($this->currentIndex["type"]);
+            $info->setTag($this);
             $info->setIndex($this->current);
-            $info->setPath(str_replace(PIMCORE_DOCUMENT_ROOT, "", $this->getPathForBrick($this->currentIndex["type"])));
-            $info->setConfig($this->getBrickConfig($this->currentIndex["type"]));
         } catch (\Exception $e) {
             Logger::err($e);
         }
 
-        if ($this->getView() instanceof \Zend_View) {
-            $this->getView()->brick = $info;
-            $areas = $this->getAreaDirs();
-
-            $view = $areas[$this->currentIndex["type"]] . "/view.php";
-            $action = $areas[$this->currentIndex["type"]] . "/action.php";
-            $edit = $areas[$this->currentIndex["type"]] . "/edit.php";
-            $options = $this->getOptions();
-            $params = [];
-            if (isset($options["params"]) && is_array($options["params"]) && array_key_exists($this->currentIndex["type"], $options["params"])) {
-                if (is_array($options["params"][$this->currentIndex["type"]])) {
-                    $params = $options["params"][$this->currentIndex["type"]];
-                }
-            }
-
-            // assign parameters to view
-            foreach ($params as $key => $value) {
-                $this->getView()->assign($key, $value);
-            }
-
-            // check for action file
-            $actionObject = null;
-            if (is_file($action)) {
-                include_once($action);
-
-                $actionClassFound = true;
-
-                $actionClass = preg_replace_callback("/[\-_][a-z]/", function ($matches) {
-                    $replacement = str_replace(["-", "_"], "", $matches[0]);
-
-                    return strtoupper($replacement);
-                }, ucfirst($this->currentIndex["type"]));
-
-                $actionClassname = "\\Pimcore\\Model\\Document\\Tag\\Area\\" . $actionClass;
-
-                if (!class_exists($actionClassname, false)) {
-                    // also check the legacy prefixed class name, as this is used by some plugins
-                    $actionClassname = "\\Document_Tag_Area_" . ucfirst($this->currentIndex["type"]);
-                    if (!class_exists($actionClassname, false)) {
-                        $actionClassFound = false;
-                    }
-                }
-
-                if ($actionClassFound) {
-                    $actionObject = new $actionClassname();
-
-                    if ($actionObject instanceof Area\AbstractArea) {
-                        $actionObject->setView($this->getView());
-
-                        $areaConfig = new \Zend_Config_Xml($areas[$this->currentIndex["type"]] . "/area.xml");
-                        $actionObject->setConfig($areaConfig);
-
-                        // params
-                        $params = array_merge($this->view->getAllParams(), $params);
-                        $actionObject->setParams($params);
-
-                        if ($info) {
-                            $actionObject->setBrick($info);
-                        }
-
-                        if (method_exists($actionObject, "action")) {
-                            $actionObject->action();
-                        }
-
-                        $this->getView()->assign('actionObject', $actionObject);
-                    }
-                } else {
-                    $this->getView()->assign('actionObject', null);
-                }
-            }
-
-            if (is_file($view)) {
-                $editmode = $this->getView()->editmode;
-
-                if ($actionObject && method_exists($actionObject, "getBrickHtmlTagOpen")) {
-                    echo $actionObject->getBrickHtmlTagOpen($this);
-                } else {
-                    echo '<div class="pimcore_area_' . $this->currentIndex["type"] . ' pimcore_area_content">';
-                }
-
-                if (is_file($edit) && $editmode) {
-                    echo '<div class="pimcore_area_edit_button_' . $this->getName() . ' pimcore_area_edit_button"></div>';
-
-                    // forces the editmode in view.php independent if there's an edit.php or not
-                    if (!array_key_exists("forceEditInView", $params) || !$params["forceEditInView"]) {
-                        $this->getView()->editmode = false;
-                    }
-                }
-
-                $this->getView()->template($view);
-
-                if (is_file($edit) && $editmode) {
-                    $this->getView()->editmode = true;
-
-                    echo '<div class="pimcore_area_editmode_' . $this->getName() . ' pimcore_area_editmode pimcore_area_editmode_hidden">';
-                    $this->getView()->template($edit);
-                    echo '</div>';
-                }
-
-                if ($actionObject && method_exists($actionObject, "getBrickHtmlTagClose")) {
-                    echo $actionObject->getBrickHtmlTagClose($this);
-                } else {
-                    echo '</div>';
-                }
-
-                if ($actionObject && method_exists($actionObject, "postRenderAction")) {
-                    $actionObject->postRenderAction();
-                }
+        $params = [];
+        if (isset($options["params"]) && is_array($options["params"]) && array_key_exists($this->currentIndex["type"], $options["params"])) {
+            if (is_array($options["params"][$this->currentIndex["type"]])) {
+                $params = $options["params"][$this->currentIndex["type"]];
             }
         }
+
+        // TODO inject area handler via DI when tags are built through container
+        $tagHandler = \Pimcore::getContainer()->get('pimcore.document.tag.handler');
+        $tagHandler->renderAreaFrontend($info, $params);
 
         $this->current++;
     }
@@ -517,98 +413,23 @@ class Areablock extends Model\Document\Tag
 
     /**
      * @param array $options
-     * @return void
+     * @return $this
      */
     public function setOptions($options)
     {
-
         // we need to set this here otherwise custom areaDir's won't work
         $this->options = $options;
-
-        // read available types
-        $areaConfigs = $this->getBrickConfigs();
-        $availableAreas = ["name" => [], "index" => []];
-
-        if (isset($options["sorting"]) && is_array($options["sorting"]) && count($options["sorting"])) {
-            $availableAreasSort = $options["sorting"];
-        } else {
-            if (isset($options["allowed"]) && is_array($options["allowed"]) && count($options["allowed"])) {
-                $availableAreasSort = $options["allowed"];
-            } else {
-                $availableAreasSort = false;
-            }
-        }
 
         if (!isset($options["allowed"]) || !is_array($options["allowed"])) {
             $options["allowed"] = [];
         }
 
-        foreach ($areaConfigs as $areaName => $areaConfig) {
+        // TODO inject area handler via DI when tags are built through container
+        $tagHandler = \Pimcore::getContainer()->get('pimcore.document.tag.handler');
 
-            // don't show disabled bricks
-            if (!isset($options['dontCheckEnabled']) || !$options['dontCheckEnabled']) {
-                if (!$this->isBrickEnabled($areaName)) {
-                    continue;
-                }
-            }
+        $availableAreas = $tagHandler->getAvailableAreablockAreas($this, $options);
+        $availableAreas = $this->sortAvailableAreas($availableAreas, $options);
 
-
-            if (empty($options["allowed"]) || in_array($areaName, $options["allowed"])) {
-                $n = (string) $areaConfig->name;
-                $d = (string) $areaConfig->description;
-                $icon = (string) $areaConfig->icon;
-
-                if ($this->view->editmode) {
-                    if (empty($icon)) {
-                        $path = $this->getPathForBrick($areaName);
-                        $iconPath = $path . "/icon.png";
-                        if (file_exists($iconPath)) {
-                            $icon = str_replace(PIMCORE_DOCUMENT_ROOT, "", $iconPath);
-                        }
-                    }
-
-                    if ($this->view) {
-                        $n = $this->view->translateAdmin((string) $areaConfig->name);
-                        $d = $this->view->translateAdmin((string) $areaConfig->description);
-                    }
-                }
-
-                $sortIndex = false;
-                $sortKey = "name"; //allowed and sorting is not set || areaName is not in allowed
-                if ($availableAreasSort) {
-                    $sortIndex = array_search($areaName, $availableAreasSort);
-                    $sortKey   = $sortIndex === false ? $sortKey : "index";
-                }
-
-                $availableAreas[$sortKey][] = [
-                    "name" => $n,
-                    "description" => $d,
-                    "type" => $areaName,
-                    "icon" => $icon,
-                    "sortIndex" => $sortIndex
-                ];
-            }
-        }
-
-        if (count($availableAreas["name"])) {
-            // sort with translated names
-            usort($availableAreas["name"], function ($a, $b) {
-                if ($a["name"] == $b["name"]) {
-                    return 0;
-                }
-
-                return ($a["name"] < $b["name"]) ? -1 : 1;
-            });
-        }
-
-        if (count($availableAreas["index"])) {
-            // sort by allowed brick config order
-            usort($availableAreas["index"], function ($a, $b) {
-                return $a["sortIndex"] - $b["sortIndex"];
-            });
-        }
-
-        $availableAreas = array_merge($availableAreas["index"], $availableAreas["name"]);
         $options["types"] = $availableAreas;
 
         if (isset($options["group"]) && is_array($options["group"])) {
@@ -620,8 +441,8 @@ class Areablock extends Model\Document\Tag
             $groups = [];
             foreach ($options["group"] as $name => $areas) {
                 $n = $name;
-                if ($this->view && $this->editmode) {
-                    $n = $this->view->translateAdmin($name);
+                if ($this->editmode) {
+                    $n = Translate::transAdmin($name);
                 }
                 $groups[$n] = $areas;
 
@@ -636,8 +457,8 @@ class Areablock extends Model\Document\Tag
                     $uncatAreas[] = $area;
                 }
                 $n = "Uncategorized";
-                if ($this->view && $this->editmode) {
-                    $n = $this->view->translateAdmin($n);
+                if ($this->editmode) {
+                    $n = Translate::transAdmin($n);
                 }
                 $groups[$n] = $uncatAreas;
             }
@@ -653,6 +474,70 @@ class Areablock extends Model\Document\Tag
         $this->options = $options;
 
         return $this;
+    }
+
+    /**
+     * Sorts areas by index (sorting option) first, then by name
+     *
+     * @param array $areas
+     * @param array $options
+     *
+     * @return array
+     */
+    protected function sortAvailableAreas(array $areas, array $options)
+    {
+        if (isset($options["sorting"]) && is_array($options["sorting"]) && count($options["sorting"])) {
+            $sorting = $options["sorting"];
+        } else {
+            if (isset($options["allowed"]) && is_array($options["allowed"]) && count($options["allowed"])) {
+                $sorting = $options["allowed"];
+            } else {
+                $sorting = [];
+            }
+        }
+
+        $result = [
+            'name'  => [],
+            'index' => []
+        ];
+
+        foreach ($areas as $area) {
+            $sortIndex = false;
+            $sortKey   = "name"; //allowed and sorting is not set || areaName is not in allowed
+
+            if (!empty($sorting)) {
+                $sortIndex = array_search($area['type'], $sorting);
+                $sortKey   = $sortIndex === false ? $sortKey : "index";
+            }
+
+            if ($sortIndex) {
+                $area['sortIndex'] = $sortIndex;
+            }
+
+            $result[$sortKey][] = $area;
+        }
+
+        // sort with translated names
+        if (count($result["name"])) {
+            usort($result["name"], function ($a, $b) {
+                if ($a["name"] == $b["name"]) {
+                    return 0;
+                }
+
+                return ($a["name"] < $b["name"]) ? -1 : 1;
+            });
+        }
+
+        // sort by allowed brick config order
+        if (count($result["index"])) {
+            usort($result["index"], function ($a, $b) {
+                return $a["sortIndex"] - $b["sortIndex"];
+            });
+        }
+
+        $result = array_merge($result["index"], $result["name"]);
+
+        return $result;
     }
 
     /**
@@ -730,6 +615,8 @@ class Areablock extends Model\Document\Tag
     }
 
     /**
+     * @deprecated Only used in legacy mode
+     *
      * @return bool
      */
     public function isCustomAreaPath()
@@ -745,14 +632,18 @@ class Areablock extends Model\Document\Tag
      */
     public function isBrickEnabled($name)
     {
+        // TODO remove custom area path logic
         if ($this->isCustomAreaPath()) {
             return true;
         }
 
+        // TODO decide what to do with extensions.php
         return ExtensionManager::isEnabled("brick", $name);
     }
 
     /**
+     * @deprecated Only used in legacy mode
+     *
      * @return string
      */
     public function getAreaDirectory()
@@ -763,6 +654,8 @@ class Areablock extends Model\Document\Tag
     }
 
     /**
+     * @deprecated Only used in legacy mode
+     *
      * @param $name
      * @return string
      */
@@ -776,6 +669,8 @@ class Areablock extends Model\Document\Tag
     }
 
     /**
+     * @deprecated Only used in legacy mode
+     *
      * @param $name
      * @throws \Exception
      */
@@ -791,6 +686,8 @@ class Areablock extends Model\Document\Tag
     }
 
     /**
+     * @deprecated Only used in legacy mode
+     *
      * @return array
      */
     public function getAreaDirs()
@@ -803,6 +700,8 @@ class Areablock extends Model\Document\Tag
     }
 
     /**
+     * @deprecated Only used in legacy mode
+     *
      * @return array|mixed
      */
     public function getBrickConfigs()

@@ -100,52 +100,61 @@ class Snippet extends Model\Document\Tag
      */
     public function frontend()
     {
-        if ($this->getView() instanceof \Zend_View) {
-            try {
-                if ($this->snippet instanceof Document\Snippet) {
-                    $params = $this->options;
-                    $params["document"] = $this->snippet;
+        // TODO inject area handler via DI when tags are built through container
+        $tagHandler = \Pimcore::getContainer()->get('pimcore.document.tag.handler');
 
-                    if ($this->snippet->isPublished()) {
+        if (!$tagHandler->supports($this->view)) {
+            return null;
+        }
 
-                        // check if output-cache is enabled, if so, we're also using the cache here
-                        $cacheKey = null;
-                        if ($cacheConfig = \Pimcore\Tool\Frontend::isOutputCacheEnabled()) {
+        try {
+            if ($this->snippet instanceof Document\Snippet) {
+                $params = $this->options;
+                $params["document"] = $this->snippet;
 
-                            // cleanup params to avoid serializing Element\ElementInterface objects
-                            $cacheParams = $params;
-                            array_walk($cacheParams, function (&$value, $key) {
-                                if ($value instanceof Model\Element\ElementInterface) {
-                                    $value = $value->getId();
-                                }
-                            });
+                if ($this->snippet->isPublished()) {
 
-                            $cacheKey = "tag_snippet__" . md5(serialize($cacheParams));
-                            if ($content = Cache::load($cacheKey)) {
-                                return $content;
+                    // check if output-cache is enabled, if so, we're also using the cache here
+                    $cacheKey = null;
+                    if ($cacheConfig = \Pimcore\Tool\Frontend::isOutputCacheEnabled()) {
+
+                        // cleanup params to avoid serializing Element\ElementInterface objects
+                        $cacheParams = $params;
+                        array_walk($cacheParams, function (&$value, $key) {
+                            if ($value instanceof Model\Element\ElementInterface) {
+                                $value = $value->getId();
                             }
+                        });
+
+                        $cacheKey = "tag_snippet__" . md5(serialize($cacheParams));
+                        if ($content = Cache::load($cacheKey)) {
+                            return $content;
                         }
-
-                        $content = $this->getView()->action($this->snippet->getAction(), $this->snippet->getController(), $this->snippet->getModule(), $params);
-
-                        // write contents to the cache, if output-cache is enabled
-                        if ($cacheConfig && !DeviceDetector::getInstance()->wasUsed()) {
-                            Cache::save($content, $cacheKey, ["output", "output_inline"], $cacheConfig["lifetime"]);
-                        }
-
-                        return $content;
                     }
 
-                    return "";
+                    $content = $tagHandler->renderAction(
+                        $this->view,
+                        $this->snippet->getController(),
+                        $this->snippet->getAction(),
+                        $this->snippet->getModule(),
+                        $params
+                    );
+
+                    // write contents to the cache, if output-cache is enabled
+                    if ($cacheConfig && !DeviceDetector::getInstance()->wasUsed()) {
+                        Cache::save($content, $cacheKey, ["output", "output_inline"], $cacheConfig["lifetime"]);
+                    }
+
+                    return $content;
                 }
-            } catch (\Exception $e) {
-                if (\Pimcore::inDebugMode()) {
-                    return "ERROR: " . $e->getMessage() . " (for details see debug.log)";
-                }
-                Logger::error($e);
+
+                return "";
             }
-        } else {
-            return null;
+        } catch (\Exception $e) {
+            if (\Pimcore::inDebugMode()) {
+                return "ERROR: " . $e->getMessage() . " (for details see debug.log)";
+            }
+            Logger::error($e);
         }
     }
 

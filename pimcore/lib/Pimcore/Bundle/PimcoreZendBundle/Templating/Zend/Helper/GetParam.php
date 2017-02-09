@@ -14,39 +14,31 @@
 
 namespace Pimcore\Bundle\PimcoreZendBundle\Templating\Zend\Helper;
 
-use Symfony\Bundle\FrameworkBundle\Templating\Helper\ActionsHelper;
-use Symfony\Component\DependencyInjection\Container;
-use Symfony\Component\HttpKernel\KernelInterface;
+use Pimcore\Tool\RequestHelper;
 use Zend\View\Helper\AbstractHelper;
-use Zend\View\Renderer\RendererInterface;
 
 class GetParam extends AbstractHelper
 {
     /**
-     * @var Container
+     * @var RequestHelper
      */
-    protected $container;
+    protected $requestHelper;
 
     /**
-     * Action constructor.
-     * @param RendererInterface $renderer
-     * @param KernelInterface $kernel
+     * @param RequestHelper $requestHelper
      */
-    public function __construct(Container $container)
+    public function __construct(RequestHelper $requestHelper)
     {
-        $this->container = $container;
+        $this->requestHelper = $requestHelper;
     }
 
     /**
-     * @param $action
-     * @param $controller
-     * @param $module
-     * @param array $params
+     * @param string $name
+     * @param mixed|null $default
      * @return mixed
      */
     public function __invoke($name, $default = null)
     {
-        return $this->container->get("request_stack")->getCurrentRequest()->get($name, $default);
+        return $this->requestHelper->getCurrentRequest()->get($name, $default);
     }
-
 }

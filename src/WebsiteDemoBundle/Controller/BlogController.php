@@ -1,17 +1,14 @@
 <?php
+
 namespace WebsiteDemoBundle\Controller;
 
-
-use Pimcore\Bundle\PimcoreZendBundle\Controller\ZendController;
 use Pimcore\Model\Object;
 use Symfony\Component\HttpFoundation\Request;
 
-class BlogController extends ZendController
+class BlogController extends AbstractController
 {
     public function indexAction(Request $request)
     {
-        $this->enableLayout('WebsiteDemoBundle::layout.phtml');
-
         // get a list of news objects and order them by date
         $blogList = new Object\BlogArticle\Listing();
         $blogList->setOrderKey("date");
@@ -49,8 +46,6 @@ class BlogController extends ZendController
 
     public function detailAction(Request $request)
     {
-        $this->enableLayout('WebsiteDemoBundle::layout.phtml');
-
         // "id" is the named parameters in "Static Routes"
         $article = Object\BlogArticle::getById($request->get("id"));
 

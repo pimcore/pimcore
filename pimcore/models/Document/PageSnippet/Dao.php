@@ -59,6 +59,7 @@ abstract class Dao extends Model\Document\Dao
                 }
             }
 
+            /** @var Document\Tag $element */
             $element = new $class();
             $element->setName($elementRaw["name"]);
             $element->setDocumentId($this->model->getId());

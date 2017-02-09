@@ -2,11 +2,21 @@
 
 namespace Pimcore\Bundle\PimcoreLegacyBundle;
 
-use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Pimcore\Bundle\PimcoreLegacyBundle\ClassLoader\LegacyClassLoader;
+use Pimcore\Bundle\PimcoreLegacyBundle\DependencyInjection\Compiler\LegacyAreaHandlerPass;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class PimcoreLegacyBundle extends Bundle
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function build(ContainerBuilder $container)
+    {
+        $container->addCompilerPass(new LegacyAreaHandlerPass());
+    }
+
     public function boot()
     {
         $loader = new LegacyClassLoader();
@@ -15,9 +25,8 @@ class PimcoreLegacyBundle extends Bundle
         $this->defineConstants();
     }
 
-    protected function defineConstants() {
-
-
+    protected function defineConstants()
+    {
         if (!defined('PIMCORE_DOCUMENT_ROOT')) {
             /**
              * @deprecated
@@ -60,5 +69,4 @@ class PimcoreLegacyBundle extends Bundle
             define('PIMCORE_WEBSITE_VAR', PIMCORE_DOCUMENT_ROOT . '/var');
         }
     }
-
 }
