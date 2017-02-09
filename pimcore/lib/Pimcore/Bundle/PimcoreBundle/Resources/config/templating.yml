@@ -7,4 +7,4 @@ services:
 
     pimcore.view.zend_view_helper_bridge:
         class: Pimcore\Bundle\PimcoreBundle\View\ZendViewHelperBridge
-        arguments: ['@pimcore.zend_view_provider']
+        arguments: ['@pimcore.zend_view_provider', '@pimcore.service.request.template_vars_resolver']

@@ -4,7 +4,7 @@ namespace Pimcore\Bundle\PimcoreZendBundle\Templating\Zend;
 
 use Pimcore\Bundle\PimcoreBundle\Templating\TagRenderer;
 use Pimcore\Bundle\PimcoreBundle\View\ZendViewHelperBridge;
-use Pimcore\Bundle\PimcoreZendBundle\Templating\Zend\Helper\DocumentTag;
+use Pimcore\Model\Document\PageSnippet;
 use Zend\View\Renderer\PhpRenderer as BasePhpRenderer;
 
 class PhpRenderer extends BasePhpRenderer
@@ -45,21 +45,26 @@ class PhpRenderer extends BasePhpRenderer
             return $this->renderLegacyViewHelper(substr($method, 4), $argv);
         }
 
-        if ($this->tagRenderer->tagExists($method)) {
-            if (!isset($argv[0])) {
-                throw new \Exception('You have to set a name for the called tag (editable): ' . $method);
+        if ($this->document instanceof PageSnippet) {
+            $document = $this->document;
+
+            if ($this->tagRenderer->tagExists($method)) {
+                if (!isset($argv[0])) {
+                    throw new \Exception('You have to set a name for the called tag (editable): ' . $method);
+                }
+
+                // set default if there is no editable configuration provided
+                if (!isset($argv[1])) {
+                    $argv[1] = [];
+                }
+
+                return $this->tagRenderer->render($document, $method, $argv[0], $argv[1]);
             }
 
-            // set default if there is no editable configuration provided
-            if (!isset($argv[1])) {
-                $argv[1] = [];
+            // call method on the current document if it exists
+            if (method_exists($document, $method)) {
+                return call_user_func_array([$document, $method], $argv);
             }
-
-            /** @var DocumentTag $helper */
-            $helper = $this->plugin('documentTag');
-
-            // delegate to documentTag view helper - calls __invoke
-            return $helper($method, $argv[0], $argv[1]);
         }
 
         return parent::__call($method, $argv);

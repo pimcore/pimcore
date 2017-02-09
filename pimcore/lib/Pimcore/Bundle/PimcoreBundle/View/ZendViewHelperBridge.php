@@ -2,6 +2,8 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\View;
 
+use Pimcore\Bundle\PimcoreBundle\Service\Request\TemplateVarsResolver;
+
 class ZendViewHelperBridge
 {
     /**
@@ -10,11 +12,17 @@ class ZendViewHelperBridge
     protected $viewProvider;
 
     /**
+     * @var TemplateVarsResolver
+     */
+    protected $varsResolver;
+
+    /**
      * @param ZendViewProvider $viewProvider
      */
-    public function __construct(ZendViewProvider $viewProvider)
+    public function __construct(ZendViewProvider $viewProvider, TemplateVarsResolver $varsResolver)
     {
         $this->viewProvider = $viewProvider;
+        $this->varsResolver = $varsResolver;
     }
 
     /**
@@ -46,6 +54,11 @@ class ZendViewHelperBridge
     public function execute($helperName, array $arguments = [])
     {
         $view = $this->viewProvider->createView();
+
+        // set global variables (document, editmode) on the new view
+        foreach ($this->varsResolver->getTemplateVars() as $key => $value) {
+            $view->$key = $value;
+        }
 
         return call_user_func_array([$view, $helperName], $arguments);
     }
