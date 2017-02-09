@@ -768,6 +768,7 @@ CREATE TABLE `versions` (
   `ctype` enum('document','asset','object') default NULL,
   `userId` int(11) unsigned default NULL,
   `note` text,
+  `stackTrace` text,
   `date` bigint(1) unsigned default NULL,
   `public` tinyint(1) unsigned NOT NULL default '0',
   `serialized` tinyint(1) unsigned default '0',

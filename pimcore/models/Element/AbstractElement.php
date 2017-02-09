@@ -23,7 +23,10 @@ use Pimcore\Model;
  */
 abstract class AbstractElement extends Model\AbstractModel implements ElementInterface
 {
-
+    /**
+     * @var int
+     */
+    protected $__dataVersionTimestamp = null;
 
     /**
      * Get specific property data or the property object itself ($asContainer=true) by its name, if the
@@ -198,5 +201,29 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     public function __toString()
     {
         return $this->getFullPath();
+    }
+
+    /**
+     * @return int
+     */
+    public function __getDataVersionTimestamp()
+    {
+        return $this->__dataVersionTimestamp;
+    }
+
+    /**
+     * @param int $_dataVersionTimestamp
+     */
+    public function __setDataVersionTimestamp($_dataVersionTimestamp)
+    {
+        $this->__dataVersionTimestamp = $_dataVersionTimestamp;
+    }
+
+    /**
+     * @return bool
+     */
+    public function __isBasedOnLatestData()
+    {
+        return $this->getDao()->__isBasedOnLatestData();
     }
 }

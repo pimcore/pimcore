@@ -24,6 +24,7 @@ use Pimcore\Model\Element;
 
 /**
  * @method \Pimcore\Model\Object\AbstractObject\Dao getDao()
+ * @method bool __isBasedOnLatestData()
  */
 class AbstractObject extends Model\Element\AbstractElement
 {
@@ -263,6 +264,7 @@ class AbstractObject extends Model\Element\AbstractElement
                         $object = \Pimcore::getDiContainer()->make($className);
                         \Zend_Registry::set($cacheKey, $object);
                         $object->getDao()->getById($id);
+                        $object->__setDataVersionTimestamp($object->getModificationDate());
 
                         Cache::save($object, $cacheKey);
                     } else {

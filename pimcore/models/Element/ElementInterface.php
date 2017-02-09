@@ -143,4 +143,9 @@ interface ElementInterface
      * @return array
      */
     public function getCacheTags($tags = []);
+
+    /**
+     * @return bool
+     */
+    public function __isBasedOnLatestData();
 }

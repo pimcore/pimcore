@@ -494,6 +494,14 @@ class Cache
                 $lifetime = false; // set to false otherwise the lifetime stays at null (\Zend_Cache_Backend::getLifetime())
             }
 
+            if ($data instanceof Element\ElementInterface) {
+                if (!$data->__isBasedOnLatestData()) {
+                    //@TODO: this check needs to be done recursive, especially for Objects (like cache tags)
+                    // all other entities shouldn't have references at all in the cache so it shouldn't matter
+                    return false;
+                }
+            }
+
             $success = $cache->save($dataSerialized, $key, $tags, $lifetime);
             if ($success !== true) {
                 Logger::error("Failed to add entry $key to the cache, item-size was " . formatBytes(strlen(serialize($dataSerialized))));

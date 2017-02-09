@@ -49,24 +49,23 @@ class ClassesRebuildCommand extends AbstractCommand
             $output->writeln("Saving all classes");
         }
 
-        if($input->getOption("create-classes")) {
+        if ($input->getOption("create-classes")) {
             $objectClassesFolder = PIMCORE_CLASS_DIRECTORY ;
             $files = glob($objectClassesFolder . "/*.php");
 
             foreach ($files as $file) {
                 $class = include $file;
 
-                if($class instanceof ClassDefinition) {
+                if ($class instanceof ClassDefinition) {
                     $existingClass = ClassDefinition::getByName($class->getName());
 
-                    if($existingClass instanceof ClassDefinition) {
+                    if ($existingClass instanceof ClassDefinition) {
                         if ($output->isVerbose()) {
                             $output->writeln($class->getName() . " [" . $class->getId() . "] saved");
                         }
 
                         $existingClass->save();
-                    }
-                    else {
+                    } else {
                         if ($output->isVerbose()) {
                             $output->writeln($class->getName() . " [" . $class->getId() . "] created");
                         }
@@ -75,8 +74,7 @@ class ClassesRebuildCommand extends AbstractCommand
                     }
                 }
             }
-        }
-        else {
+        } else {
             foreach ($list->getClasses() as $class) {
                 if ($output->isVerbose()) {
                     $output->writeln($class->getName() . " [" . $class->getId() . "] saved");

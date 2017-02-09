@@ -25,6 +25,7 @@ use Pimcore\Logger;
 
 /**
  * @method \Pimcore\Model\Document\Dao getDao()
+ * @method bool __isBasedOnLatestData()
  */
 class Document extends Element\AbstractElement
 {
@@ -285,6 +286,7 @@ class Document extends Element\AbstractElement
                     $document = \Pimcore::getDiContainer()->make($className);
                     \Zend_Registry::set($cacheKey, $document);
                     $document->getDao()->getById($id);
+                    $document->__setDataVersionTimestamp($document->getModificationDate());
 
                     \Pimcore\Cache::save($document, $cacheKey);
                 } else {
