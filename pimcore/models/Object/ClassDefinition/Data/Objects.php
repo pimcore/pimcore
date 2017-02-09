@@ -385,6 +385,10 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
     {
         $tags = is_array($tags) ? $tags : [];
 
+        if($this->getLazyLoading()) {
+            return $tags;
+        }
+
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $object) {
                 if ($object instanceof Element\ElementInterface && !array_key_exists($object->getCacheTag(), $tags)) {

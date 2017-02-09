@@ -426,6 +426,10 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     {
         $tags = is_array($tags) ? $tags : [];
 
+        if($this->getLazyLoading()) {
+            return $tags;
+        }
+
         if ($data instanceof Element\ElementInterface) {
             if (!array_key_exists($data->getCacheTag(), $tags)) {
                 $tags = $data->getCacheTags($tags);

@@ -546,6 +546,10 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
     {
         $tags = is_array($tags) ? $tags : [];
 
+        if($this->getLazyLoading()) {
+            return $tags;
+        }
+
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $element) {
                 if ($element instanceof Element\ElementInterface && !array_key_exists($element->getCacheTag(), $tags)) {

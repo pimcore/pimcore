@@ -408,6 +408,10 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
     {
         $tags = is_array($tags) ? $tags : [];
 
+        if($this->getLazyLoading()) {
+            return $tags;
+        }
+
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $metaObject) {
                 $element = $metaObject->getElement();
