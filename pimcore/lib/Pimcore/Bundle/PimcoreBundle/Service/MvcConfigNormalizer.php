@@ -1,45 +1,26 @@
 <?php
 
-namespace Pimcore\Bundle\PimcoreBundle\HttpKernel;
+namespace Pimcore\Bundle\PimcoreBundle\Service;
 
 use Doctrine\Common\Util\Inflector;
 
-class ControllerFormatter
+/**
+ * This service exists only as integration point between legacy module/controller/action <-> new bundle/controller/action
+ * and template configuration and can be removed at a later point.
+ */
+class MvcConfigNormalizer
 {
     /**
-     * @var bool
-     */
-    protected $supportLegacy;
-
-    /**
-     * @param $supportLegacy
-     */
-    public function __construct($supportLegacy = true)
-    {
-        $this->supportLegacy = (bool)$supportLegacy;
-    }
-
-    /**
-     * @param string $controller
-     * @param string $action
-     * @param string $parent
+     * Transform parent/controller/action into a controller reference string
+     *
+     * @param string|null $parent Bundle or (legacy) module
+     * @param string|null $controller
+     * @param string|null $action
      * @return string
      */
-    public function format($controller, $action, $parent = null)
+    public function formatController($parent = null, $controller = null, $action = null)
     {
-        if ($this->supportLegacy) {
-            $result = $this->normalizeController($parent, $controller, $action);
-        } else {
-            if (null === $parent) {
-                throw new \RuntimeException('Missing bundle');
-            }
-
-            $result = [
-                'bundle'     => $parent,
-                'controller' => $controller,
-                'action'     => $action
-            ];
-        }
+        $result = $this->normalizeController($parent, $controller, $action);
 
         return sprintf(
             '%s:%s:%s',
@@ -60,6 +41,7 @@ class ControllerFormatter
     public function normalizeController($parent = null, $controller = null, $action = null)
     {
         // TODO this is only temporary for backwards compatibility - remove when removing legacy support
+        // TODO move constants to config
         $result = [
             'bundle'     => defined('PIMCORE_SYMFONY_DEFAULT_BUNDLE') ? PIMCORE_SYMFONY_DEFAULT_BUNDLE : 'AppBundle',
             'controller' => defined('PIMCORE_SYMFONY_DEFAULT_CONTROLLER') ? PIMCORE_SYMFONY_DEFAULT_CONTROLLER : 'Content',
@@ -86,5 +68,29 @@ class ControllerFormatter
         }
 
         return $result;
+    }
+
+    /**
+     * Normalize template from .php to .phtml and remove leading slash
+     *
+     * @param string|null $template
+     * @return string|null
+     */
+    public function normalizeTemplate($template = null)
+    {
+        if (empty($template)) {
+            return $template;
+        }
+
+        $suffixPattern = '/\.php$/i';
+        if (preg_match($suffixPattern, $template)) {
+            $template = preg_replace($suffixPattern, '.phtml', $template);
+        }
+
+        if (substr($template, 0, 1) === '/') {
+            $template = substr($template, 1);
+        }
+
+        return $template;
     }
 }

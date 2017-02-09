@@ -3,9 +3,12 @@ services:
         class: Pimcore\Bundle\PimcoreBundle\HttpKernel\LegacyKernel
         arguments: ['@kernel']
 
+    pimcore.mvc_config_normalizer:
+        class: Pimcore\Bundle\PimcoreBundle\Service\MvcConfigNormalizer
+
     pimcore.router.dynamic_route_provider:
         class: Pimcore\Bundle\PimcoreBundle\Routing\DocumentRouteProvider
-        arguments: ['@pimcore.service.document']
+        arguments: ['@pimcore.service.document', '@pimcore.mvc_config_normalizer']
 
     pimcore.plugin_broker:
         class: Pimcore\API\Plugin\Broker
@@ -60,9 +63,6 @@ services:
     pimcore.web_path_resolver:
         class: Pimcore\Bundle\PimcoreBundle\Service\WebPathResolver
 
-    pimcore.controller_formatter:
-        class: Pimcore\Bundle\PimcoreBundle\HttpKernel\ControllerFormatter
-
     pimcore.area.brick_manager:
         class: Pimcore\Document\Area\AreabrickManager
 
@@ -82,5 +82,5 @@ services:
             - '@templating'
             - '@pimcore.bundle_locator'
             - '@pimcore.web_path_resolver'
-            - '@pimcore.controller_formatter'
+            - '@pimcore.mvc_config_normalizer'
             - '@templating.helper.actions'
