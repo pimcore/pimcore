@@ -1,6 +1,6 @@
 <?php
 
-namespace Pimcore\Service;
+namespace Pimcore\Bundle\PimcoreBundle\Templating\Renderer;
 
 use Pimcore\Bundle\PimcoreBundle\Service\MvcConfigNormalizer;
 use Pimcore\Model\Document;
@@ -8,7 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Templating\Helper\ActionsHelper;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\HttpKernel\Controller\ControllerReference;
 
-class RenderService
+class ActionRenderer
 {
     /**
      * @var ActionsHelper

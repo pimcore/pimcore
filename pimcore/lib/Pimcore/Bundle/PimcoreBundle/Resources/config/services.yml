@@ -29,10 +29,6 @@ services:
         class: Pimcore\Bundle\PimcoreBundle\View\ZendViewProvider
         arguments: ['@pimcore.legacy_kernel']
 
-    pimcore.service.render_service:
-        class: Pimcore\Service\RenderService
-        arguments: ['@templating.helper.actions', '@pimcore.mvc_config_normalizer']
-
     # TODO inject user?
     pimcore.document_service:
         class: Pimcore\Model\Document\Service
@@ -86,4 +82,4 @@ services:
             - '@templating'
             - '@pimcore.bundle_locator'
             - '@pimcore.web_path_resolver'
-            - '@pimcore.service.render_service'
+            - '@pimcore.templating.action_renderer'

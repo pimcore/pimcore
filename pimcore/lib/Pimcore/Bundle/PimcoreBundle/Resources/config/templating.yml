@@ -1,6 +1,10 @@
 services:
-    pimcore.document.tag.renderer:
-        class: Pimcore\Bundle\PimcoreBundle\Templating\TagRenderer
+    pimcore.templating.action_renderer:
+        class: Pimcore\Bundle\PimcoreBundle\Templating\Renderer\ActionRenderer
+        arguments: ['@templating.helper.actions', '@pimcore.mvc_config_normalizer']
+
+    pimcore.templating.tag_renderer:
+        class: Pimcore\Bundle\PimcoreBundle\Templating\Renderer\TagRenderer
         arguments: ['@pimcore.service.request.editmode_resolver']
         calls:
             - [setLogger, ['@logger']]

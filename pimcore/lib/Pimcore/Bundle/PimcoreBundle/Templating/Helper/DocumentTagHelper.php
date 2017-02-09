@@ -2,14 +2,14 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\Templating\Helper;
 
-use Pimcore\Bundle\PimcoreBundle\Templating\TagRenderer;
+use Pimcore\Bundle\PimcoreBundle\Templating\Renderer\TagRenderer;
 use Pimcore\Bundle\PimcoreBundle\Service\Request\DocumentResolver;
 use Symfony\Component\Templating\Helper\Helper;
 
 class DocumentTagHelper extends Helper
 {
     /**
-     * @var \Pimcore\Bundle\PimcoreBundle\Templating\TagRenderer
+     * @var \Pimcore\Bundle\PimcoreBundle\Templating\Renderer\TagRenderer
      */
     protected $tagRenderer;
 
@@ -19,7 +19,7 @@ class DocumentTagHelper extends Helper
     protected $documentResolver;
 
     /**
-     * @param \Pimcore\Bundle\PimcoreBundle\Templating\TagRenderer $tagRenderer
+     * @param \Pimcore\Bundle\PimcoreBundle\Templating\Renderer\TagRenderer $tagRenderer
      * @param DocumentResolver $documentResolver
      */
     public function __construct(TagRenderer $tagRenderer, DocumentResolver $documentResolver)

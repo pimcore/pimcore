@@ -1,7 +1,7 @@
 services:
     pimcore.twig.document_tag_extension:
         class: Pimcore\Bundle\PimcoreBundle\Twig\DocumentTagExtension
-        arguments: ['@pimcore.document.tag.renderer']
+        arguments: ['@pimcore.templating.tag_renderer']
         public: false
         tags:
             - { name: twig.extension }

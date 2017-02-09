@@ -1,6 +1,6 @@
 <?php
 
-namespace Pimcore\Bundle\PimcoreBundle\Templating;
+namespace Pimcore\Bundle\PimcoreBundle\Templating\Renderer;
 
 use Pimcore\Bundle\PimcoreBundle\Service\Request\EditmodeResolver;
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModel;

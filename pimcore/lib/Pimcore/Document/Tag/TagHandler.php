@@ -10,7 +10,7 @@ use Pimcore\Document\Area\AreabrickManagerInterface;
 use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Document\Tag;
 use Pimcore\Model\Document\Tag\Area\Info;
-use Pimcore\Service\RenderService;
+use Pimcore\Bundle\PimcoreBundle\Templating\Renderer\ActionRenderer;
 use Pimcore\Translate;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 
@@ -37,30 +37,30 @@ class TagHandler implements TagHandlerInterface
     protected $webPathResolver;
 
     /**
-     * @var RenderService
+     * @var ActionRenderer
      */
-    protected $renderService;
+    protected $actionRenderer;
 
     /**
      * @param AreabrickManagerInterface $brickManager
      * @param EngineInterface $templating
      * @param BundleLocatorInterface $bundleLocator
      * @param WebPathResolver $webPathResolver
-     * @param RenderService $renderService
+     * @param ActionRenderer $renderService
      */
     public function __construct(
         AreabrickManagerInterface $brickManager,
         EngineInterface $templating,
         BundleLocatorInterface $bundleLocator,
         WebPathResolver $webPathResolver,
-        RenderService $renderService
+        ActionRenderer $actionRenderer
     )
     {
         $this->brickManager    = $brickManager;
         $this->templating      = $templating;
         $this->bundleLocator   = $bundleLocator;
         $this->webPathResolver = $webPathResolver;
-        $this->renderService   = $renderService;
+        $this->actionRenderer  = $actionRenderer;
     }
 
     /**
@@ -189,16 +189,16 @@ class TagHandler implements TagHandlerInterface
     {
         $document = $params['document'];
         if ($document && $document instanceof PageSnippet) {
-            $params = $this->renderService->addDocumentParams($document, $params);
+            $params = $this->actionRenderer->addDocumentParams($document, $params);
         }
 
-        $controller = $this->renderService->createControllerReference(
+        $controller = $this->actionRenderer->createControllerReference(
             $parent,
             $controller,
             $action,
             $params
         );
 
-        return $this->renderService->render($controller);
+        return $this->actionRenderer->render($controller);
     }
 }
