@@ -130,7 +130,7 @@ class CommitOrderProcessor implements ICommitOrderProcessor {
     public function commitOrderPayment(\OnlineShop\Framework\PaymentManager\IStatus $paymentStatus, \OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider) {
 
         //acquire lock to make sure only one process is committing order payment
-        Lock::acquire(self::LOCK_KEY);
+        Lock::acquire(self::LOCK_KEY . $paymentStatus->getInternalPaymentId());
 
         //check if order is already committed and payment information with same internal payment id has same state
         //if so, do nothing and return order
@@ -161,7 +161,7 @@ class CommitOrderProcessor implements ICommitOrderProcessor {
             $order->save();
         }
 
-        Lock::release(self::LOCK_KEY);
+        Lock::release(self::LOCK_KEY . $paymentStatus->getInternalPaymentId());
 
         return $order;
 
