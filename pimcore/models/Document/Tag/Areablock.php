@@ -503,14 +503,13 @@ class Areablock extends Model\Document\Tag
 
         foreach ($areas as $area) {
             $sortIndex = false;
-            $sortKey   = "name"; //allowed and sorting is not set || areaName is not in allowed
-
             if (!empty($sorting)) {
                 $sortIndex = array_search($area['type'], $sorting);
-                $sortKey   = $sortIndex === false ? $sortKey : "index";
             }
 
-            if ($sortIndex) {
+            $sortKey = 'name'; // allowed and sorting is not set || areaName is not in allowed
+            if (false !== $sortIndex) {
+                $sortKey = 'index';
                 $area['sortIndex'] = $sortIndex;
             }
 
