@@ -66,9 +66,7 @@ services:
 
     pimcore.zend.templating.view_helper.action:
         class: Pimcore\Bundle\PimcoreZendBundle\Templating\Zend\Helper\Action
-        arguments:
-            - '@templating.helper.actions'
-            - '@kernel'
+        arguments: ['@pimcore.templating.action_renderer']
         tags:
             - { name: pimcore.zend.view_helper, alias: action }
 

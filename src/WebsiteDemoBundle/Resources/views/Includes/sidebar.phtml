@@ -40,7 +40,7 @@
 <?php } else {
         $count = $this->select("blogArticles")->getData();
         if($count) {
-            echo $this->action("sidebarBox", "blog", 'websitedemo', ["items" => (int) $count, 'document' => $this->document, 'editmode' => $this->editmode]);
+            echo $this->action("sidebarBox", "blog", 'websitedemo', ["items" => (int) $count]);
         }
     }
 ?>

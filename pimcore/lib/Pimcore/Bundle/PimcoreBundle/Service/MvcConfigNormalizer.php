@@ -3,6 +3,7 @@
 namespace Pimcore\Bundle\PimcoreBundle\Service;
 
 use Doctrine\Common\Util\Inflector;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
  * This service exists only as integration point between legacy module/controller/action <-> new bundle/controller/action
@@ -10,6 +11,24 @@ use Doctrine\Common\Util\Inflector;
  */
 class MvcConfigNormalizer
 {
+    /**
+     * @var KernelInterface
+     */
+    protected $kernel;
+
+    /**
+     * @var array
+     */
+    protected $bundleCache = [];
+
+    /**
+     * @param KernelInterface $kernel
+     */
+    public function __construct(KernelInterface $kernel)
+    {
+        $this->kernel = $kernel;
+    }
+
     /**
      * Transform parent/controller/action into a controller reference string
      *
@@ -49,10 +68,7 @@ class MvcConfigNormalizer
         ];
 
         if ($parent) {
-            $bundle = $parent;
-            if (strpos($parent, 'Bundle') === false) {
-                $bundle = sprintf('%sBundle', Inflector::camelize($parent));
-            }
+            $bundle = $this->normalizeBundle($parent);
 
             $result['bundle'] = $bundle;
         }
@@ -68,6 +84,37 @@ class MvcConfigNormalizer
         }
 
         return $result;
+    }
+
+    /**
+     * Normalize bundle string into a valid bundle name
+     *
+     * @param string $bundle
+     * @return string
+     */
+    public function normalizeBundle($bundle)
+    {
+        $originalBundle = $bundle;
+
+        // bundle name contains Bundle - we assume it's properly formatted
+        if (false !== strpos($bundle, 'Bundle')) {
+            return $bundle;
+        }
+
+        $bundle = strtolower($bundle);
+        if (isset($this->bundleCache[$bundle])) {
+            return $this->bundleCache[$bundle];
+        }
+
+        foreach ($this->kernel->getBundles() as $bundleInstance) {
+            if ($bundle . 'bundle' === strtolower($bundleInstance->getName())) {
+                $this->bundleCache[$bundle] = $bundleInstance->getName();
+
+                return $this->bundleCache[$bundle];
+            }
+        }
+
+        throw new \RuntimeException(sprintf('Unable to normalize string %s into a valid bundle name', $originalBundle));
     }
 
     /**

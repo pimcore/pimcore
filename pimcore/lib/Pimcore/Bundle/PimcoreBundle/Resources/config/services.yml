@@ -5,6 +5,7 @@ services:
 
     pimcore.mvc_config_normalizer:
         class: Pimcore\Bundle\PimcoreBundle\Service\MvcConfigNormalizer
+        arguments: ['@kernel']
 
     pimcore.router.dynamic_route_provider:
         class: Pimcore\Bundle\PimcoreBundle\Routing\DocumentRouteProvider

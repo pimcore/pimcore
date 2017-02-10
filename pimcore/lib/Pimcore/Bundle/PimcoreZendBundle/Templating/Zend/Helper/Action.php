@@ -14,37 +14,23 @@
 
 namespace Pimcore\Bundle\PimcoreZendBundle\Templating\Zend\Helper;
 
-use Symfony\Bundle\FrameworkBundle\Templating\Helper\ActionsHelper;
-use Symfony\Component\HttpKernel\KernelInterface;
+use Pimcore\Bundle\PimcoreBundle\Templating\Renderer\ActionRenderer;
+use Pimcore\Model\Document\PageSnippet;
 use Zend\View\Helper\AbstractHelper;
-use Zend\View\Renderer\RendererInterface;
 
 class Action extends AbstractHelper
 {
     /**
-     * @var ActionsHelper
+     * @var ActionRenderer
      */
-    protected $actionsHelper;
+    protected $actionRenderer;
 
     /**
-     * @var KernelInterface
+     * @param ActionRenderer $actionRenderer
      */
-    protected $kernel;
-
-    /**
-     * @var array
-     */
-    private $moduleCache = [];
-
-    /**
-     * Action constructor.
-     * @param RendererInterface $renderer
-     * @param KernelInterface $kernel
-     */
-    public function __construct(ActionsHelper $actionsHelper, KernelInterface $kernel)
+    public function __construct(ActionRenderer $actionRenderer)
     {
-        $this->actionsHelper = $actionsHelper;
-        $this->kernel = $kernel;
+        $this->actionRenderer = $actionRenderer;
     }
 
     /**
@@ -54,45 +40,20 @@ class Action extends AbstractHelper
      * @param array $params
      * @return mixed
      */
-    public function __invoke($action, $controller, $module, array $params = array())
+    public function __invoke($action, $controller, $module, array $params = [])
     {
+        $document = $params['document'];
+        if ($document && $document instanceof PageSnippet) {
+            $params = $this->actionRenderer->addDocumentParams($document, $params);
+        }
 
-        $options['attributes'] = $params;
-        $symfonyController = sprintf('%sBundle:%s:%s',
-            $this->formatModule($module), $this->formatController($controller), $action
+        $controller = $this->actionRenderer->createControllerReference(
+            $module,
+            $controller,
+            $action,
+            $params
         );
 
-        // TODO check if this is the best way to do  that
-        return $this->actionsHelper->render(
-            new \Symfony\Component\HttpKernel\Controller\ControllerReference($symfonyController, $params)
-        );
-
+        return $this->actionRenderer->render($controller);
     }
-
-    /**
-     * Get correct casing of the module which is based on the bundle.
-     *
-     * @param  string $module
-     * @return string
-     */
-    protected function formatModule($module)
-    {
-        $module = strtolower($module);
-        if (isset($this->moduleCache[$module])) {
-            return $this->moduleCache[$module];
-        }
-        foreach ($this->kernel->getBundles() AS $bundle) {
-            if ($module."bundle" == strtolower($bundle->getName())) {
-                return $this->moduleCache[$module] = str_replace("Bundle", "", $bundle->getName());
-            }
-        }
-        throw new \RuntimeException("Couldnt find a matching bundle for the module $module");
-    }
-
-    protected function formatController($controller)
-    {
-        return ucfirst($controller);
-    }
-
-
 }
