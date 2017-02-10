@@ -27,6 +27,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         var i;
 
         var compositeConfig = {
+            xtype: "toolbar",
             items: [{
                 xtype: "textfield",
                 name: "query",
@@ -123,7 +124,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
             filterClassStore.splice(0,0,[selectedClassValue, t("all_types")]);
         }
 
-        this.classChangeComboConfig = {
+        this.classChangeCombo = new Ext.form.ComboBox({
             store: filterClassStore,
             queryMode: "local",
             name: "class",
@@ -136,9 +137,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
             listeners: {
                 select: this.changeClass.bind(this)
             }
-        };
-
-        this.classChangeCombo = new Ext.form.ComboBox(this.classChangeComboConfig);
+        });
 
         compositeConfig.items.push(this.classChangeCombo);
 
@@ -151,13 +150,11 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
             handler: this.search.bind(this)
         });
 
-        this.toolbar = new Ext.toolbar.Toolbar(compositeConfig);
-
         if(!this.formPanel) {
             this.formPanel = new Ext.form.FormPanel({
                 region: "north",
                 bodyStyle: "padding: 2px;",
-                items: [this.toolbar]
+                items: [compositeConfig]
             });
         }
 
@@ -454,29 +451,14 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         proxy.setExtraParam("query", formValues.query);
         proxy.setExtraParam("subtype", formValues.subtype);
         proxy.setExtraParam("class", formValues.class);
+
+        if (this.parent.config && this.parent.config.context) {
+            proxy.setExtraParam("context", Ext.encode(this.parent.config.context));
+        }
     },
 
     search: function () {
         this.applyExtraParamsToStore();
         this.pagingtoolbar.moveFirst();
-    },
-
-    prepareForMove: function() {
-        var value = this.classChangeCombo.getValue();
-        var index = this.toolbar.items.indexOf(this.classChangeCombo);
-        this.toolbar.remove(this.classChangeCombo, true);
-        this.classChangeCombo = null;
-        return {
-            value: value,
-            index: index
-        };
-    },
-
-    afterMove: function(moveData) {
-        this.classChangeCombo = new Ext.form.ComboBox(this.classChangeComboConfig);
-        this.classChangeCombo.setValue(moveData.value);
-        this.toolbar.insert(moveData.index, this.classChangeCombo);
-        this.toolbar.updateLayout();
     }
-
 });

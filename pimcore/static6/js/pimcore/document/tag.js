@@ -107,6 +107,16 @@ pimcore.document.tag = Class.create({
              var data = data.grid.getCustomPimcoreDropData(record);
          }
         return data;
+    },
+
+    getContext: function() {
+        var context = {
+            scope: "documentEditor",
+            containerType: "document",
+            documentId: pimcore_document_id,
+            fieldname: this.name
+        }
+        return context;
     }
 });
 

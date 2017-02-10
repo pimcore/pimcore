@@ -14,11 +14,14 @@
 pimcore.registerNS("pimcore.element.tag.imagehotspotmarkereditor");
 pimcore.element.tag.imagehotspotmarkereditor = Class.create({
 
-    initialize: function (imageId, data, saveCallback) {
+    initialize: function (imageId, data, saveCallback, config) {
         this.imageId = imageId;
         this.data = data;
         this.saveCallback = saveCallback;
         this.modal = true;
+        this.config = typeof config != "undefined" ? config : {};
+        this.context = this.config.context ? this.config.context : {};
+        this.context.scope = "hotspotEditor";
 
         // we need some space for the surrounding area (button, dialog frame, etc...)
         this.width = Math.min(1000, window.innerWidth - 100);
@@ -304,6 +307,12 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
     },
 
     editMarkerHotspotData: function (id) {
+        var nameField = new Ext.form.field.Text(
+            {
+                id: "name-field-" + id,
+                value: Ext.get(id).getAttribute("title")
+            }
+        );
         var hotspotMetaDataWin = new Ext.Window({
             width: 600,
             height: 440,
@@ -358,11 +367,9 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
             }, "->", {
                 xtype: "tbtext",
                 text: t("name") + ":"
-            }, {
-                xtype: "textfield",
-                id: "name-field-" + id,
-                value: Ext.get(id).getAttribute("title")
-            }],
+            },
+                nameField
+            ],
             buttons: [{
                 text: t("save"),
                 iconCls: "pimcore_icon_apply",
@@ -472,7 +479,7 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
                 },{
                     xtype: "button",
                     iconCls: "pimcore_icon_search",
-                    handler: this.openSearchEditor.bind(this, textField, type)
+                    handler: this.openSearchEditor.bind(this, textField, type, hotspotMetaDataWin, nameField)
                 }];
 
                 valueField = new Ext.form.FieldContainer({
@@ -564,7 +571,7 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
         }
     },
 
-    openSearchEditor: function (textfield, type) {
+    openSearchEditor: function (textfield, type, hotspotMetaDataWin, nameField) {
         var allowedTypes = [];
         var allowedSpecific = {};
         var allowedSubtypes = {};
@@ -575,11 +582,24 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
             allowedSubtypes.object = ["object","folder","variant"];
         }
 
+        var form = hotspotMetaDataWin.getComponent("form").getForm();
+        var hotspotData = form.getFieldValues();
+
+        var hotspotName = nameField.getValue();
+
+
         pimcore.helpers.itemselector(false, this.addDataFromSelector.bind(this, textfield), {
             type: allowedTypes,
             subtype: allowedSubtypes,
             specific: allowedSpecific
-        });
+        },
+            {
+                context: Ext.apply(
+                    {
+                        hotspotName: hotspotName,
+                        hotspotData: hotspotData
+                    }, this.context)
+            });
     },
 
     addDataFromSelector: function (textfield, data) {

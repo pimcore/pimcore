@@ -82,7 +82,10 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
                     specific: {
                         classes: null
                     }
-                });
+                },
+            {
+                context: this.getContext()
+            });
     },
 
     create: function(className) {
@@ -483,7 +486,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
             store: this.store,
             columns: [
                 {header: 'ID', dataIndex: 'id', width: 50, sortable: false},
-                {header: t("reference"), dataIndex: 'path', flex: 200, sortable: false},
+                {header: t("reference"), dataIndex: 'path', width: 200, sortable: false},
                 {header: t("type"), dataIndex: 'type', width: 100, sortable: false},
                 {
                     xtype: 'actioncolumn',
@@ -574,7 +577,10 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
             specific: { 
                 classes: allowedClasses
             }
-        });
+        },
+            {
+                context: Ext.apply({scope: "objectEditor"}, this.getContext())
+            });
     }
     ,
 
@@ -707,24 +713,21 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
     requestNicePathData: function(targets) {
         targets = this.normalizeTargetData(targets);
 
-
-        if (this.object) {
-            pimcore.helpers.requestNicePathData(
-                {
-                    type: "object",
-                    id: this.object.id
-                },
-                targets,
-                {},
-                this.fieldConfig,
-                this.getContext(),
-                pimcore.helpers.requestNicePathDataGridDecorator.bind(this, this.component.getView()),
-                pimcore.helpers.getNicePathHandlerStore.bind(this, this.store, {
-                    idProperty: this.idProperty,
-                    pathProperty: this.pathProperty
-                }, this.component.getView())
-            );
-        }
+        pimcore.helpers.requestNicePathData(
+            {
+                type: "object",
+                id: this.object.id
+            },
+            targets,
+            {},
+            this.fieldConfig,
+            this.getContext(),
+            pimcore.helpers.requestNicePathDataGridDecorator.bind(this, this.component.getView()),
+            pimcore.helpers.getNicePathHandlerStore.bind(this, this.store, {
+                idProperty: this.idProperty,
+                pathProperty: this.pathProperty
+            }, this.component.getView())
+        );
     },
 
     normalizeTargetData: function(targets) {

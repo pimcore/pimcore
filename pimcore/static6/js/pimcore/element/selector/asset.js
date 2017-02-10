@@ -88,20 +88,15 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
             filterStore.splice(0,0,[selectedValue, t("all_types")]);
         }
 
-        this.filterComboConfig = {
+        compositeConfig.items.push({
+            xtype: "combo",
             store: filterStore,
             mode: "local",
             name: "subtype",
             triggerAction: "all",
             editable: false,
             value: selectedValue
-        };
-
-        this.filterCombo = new Ext.form.ComboBox(this.filterComboConfig);
-
-        compositeConfig.items.push(this.filterCombo);
-
-
+        });
 
         // add button
         compositeConfig.items.push({
@@ -111,13 +106,11 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
             handler: this.search.bind(this)
         });
 
-        this.toolbar = new Ext.toolbar.Toolbar(compositeConfig);
-
         if(!this.formPanel) {
             this.formPanel = new Ext.form.FormPanel({
                 region: "north",
                 bodyStyle: "padding: 2px;",
-                items: [this.toolbar]
+                items: [compositeConfig]
             });
         }
 
@@ -266,26 +259,11 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
         proxy.setExtraParam("type", "asset");
         proxy.setExtraParam("query", formValues.query);
         proxy.setExtraParam("subtype", formValues.subtype);
-        //this.store.load();
+
+        if (this.parent.config && this.parent.config.context) {
+            proxy.setExtraParam("context", Ext.encode(this.parent.config.context));
+        }
 
         this.pagingtoolbar.moveFirst();
-    },
-
-    prepareForMove: function() {
-        var value = this.filterCombo.getValue();
-        var index = this.toolbar.items.indexOf(this.filterCombo);
-        this.toolbar.remove(this.filterCombo, true);
-        this.filterCombo = null;
-        return {
-            value: value,
-            index: index
-        };
-    },
-
-    afterMove: function(moveData) {
-        this.filterCombo = new Ext.form.ComboBox(this.filterComboConfig);
-        this.filterCombo.setValue(moveData.value);
-        this.toolbar.insert(moveData.index, this.filterCombo);
-        this.toolbar.updateLayout();
     }
 });

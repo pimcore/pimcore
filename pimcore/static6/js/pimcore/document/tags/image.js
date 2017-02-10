@@ -253,7 +253,10 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
             subtype: {
                 asset: ["image"]
             }
-        });
+        }, {
+                context: this.getContext()
+            }
+        );
     },
 
     addDataFromSelector: function (item) {
@@ -422,7 +425,7 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
             this.datax.cropPercent = (undefined !== data.cropPercent) ? data.cropPercent : true;
 
             this.updateImage();
-        }.bind(this), {ratioX: this.options.ratioX, ratioY:this.options.ratioY});
+        }.bind(this));
         editor.open(true);
     },
 

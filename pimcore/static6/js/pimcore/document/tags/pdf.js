@@ -186,7 +186,10 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
             subtype: {
                 asset: ["document"]
             }
-        });
+        },
+            {
+                context: this.getContext()
+            });
     },
 
     addDataFromSelector: function (item) {

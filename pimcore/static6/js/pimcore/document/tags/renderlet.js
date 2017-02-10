@@ -242,7 +242,9 @@ pimcore.document.tags.renderlet = Class.create(pimcore.document.tag, {
             };
         }
 
-        pimcore.helpers.itemselector(false, this.addDataFromSelector.bind(this), restrictions);
+        pimcore.helpers.itemselector(false, this.addDataFromSelector.bind(this), restrictions, {
+            context: this.getContext()
+        });
     },
 
     addDataFromSelector: function (item) {

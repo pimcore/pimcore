@@ -250,7 +250,9 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
                 this.showPreview();
 
                 this.dirty = true;
-            }.bind(this));
+            }.bind(this), {
+                    context: Ext.apply({scope: "objectEditor"}, this.getContext())
+                });
             editor.open(false);
         }
     },

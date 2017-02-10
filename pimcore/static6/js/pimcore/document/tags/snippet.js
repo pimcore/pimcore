@@ -232,7 +232,10 @@ pimcore.document.tags.snippet = Class.create(pimcore.document.tag, {
             subtype: {
                 document: ["snippet"]
             }
-        });
+        },
+            {
+                context: this.getContext()
+            });
     },
     
     addDataFromSelector: function (item) {

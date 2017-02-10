@@ -176,7 +176,10 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
             subtype: {
                 asset: ["image"]
             }
-        });
+        },
+            {
+                context: Ext.apply({scope: "objectEditor"}, this.getContext())
+            });
     },
 
     uploadDialog: function () {
@@ -229,7 +232,6 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
         var path = "/admin/asset/get-image-thumbnail/id/" + this.data + "/width/" + width + "/height/" + height
             + "/contain/true";
 
-        body.removeCls("pimcore_droptarget_image");
         body = body.down('.x-autocontainer-innerCt');
         body.setStyle({
             backgroundImage: "url(" + path + ")",
@@ -326,13 +328,11 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
     empty: function () {
         this.data = null;
 
-        var body = this.getBody();
-        body.addCls("pimcore_droptarget_image");
-        body.down('.x-autocontainer-innerCt').setStyle({
+        this.getBody().down('.x-autocontainer-innerCt').setStyle({
             backgroundImage: ""
         });
         this.dirty = true;
-        body.repaint();
+        this.getBody().repaint();
     },
 
     getValue: function () {
