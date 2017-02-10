@@ -231,8 +231,8 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
             resizable: {
                 target: hotspotId,
                 pinned: true,
-                minWidth: 50,
-                minHeight: 50,
+                minWidth: 20,
+                minHeight: 20,
                 preserveRatio: false,
                 dynamic: true,
                 handles: 'all'
@@ -246,8 +246,8 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
 
         // default dimensions
         hotspotEl.applyStyles({
-            width: "50px",
-            height: "50px"
+            width: "20px",
+            height: "20px"
         });
 
         if(typeof config == "object" && config["top"]) {
