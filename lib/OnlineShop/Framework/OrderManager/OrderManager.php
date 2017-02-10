@@ -552,6 +552,9 @@ class OrderManager implements IOrderManager
      */
     public function getOrderByPaymentStatus(\OnlineShop\Framework\PaymentManager\IStatus $paymentStatus)
     {
+        //this call is needed in order to really load most updated object from cache or DB (otherwise it could be loaded from process)
+        \Pimcore::collectGarbage();
+
         $orderId = explode("~", $paymentStatus->getInternalPaymentId());
         $orderId = $orderId[1];
         $orderClass = $this->getOrderClassName();
