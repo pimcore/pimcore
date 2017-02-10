@@ -8,6 +8,18 @@ $view->extend('AppBundle::test-layout.html.php');
     <h1>CONTENT</h1>
     fooblah
 
+    <?php echo $view->render('AppBundle:Test:partial.html.php', ['index' => 0]) ?>
+
+    <?php echo $this->foo() ?>
+
+    <?php /*
+    <?php var_dump($document) ?>
+    <?php var_dump($editmode) ?>
+    <?php var_dump($this->foo) ?>
+    <?php var_dump($this->document) ?>
+    <?php var_dump($this->editmode) ?>
+    */ ?>
+
     <hr>
     <?= $view['pimcore_tag']->render('input', 'foobar') ?>
     <hr>
