@@ -18,67 +18,24 @@ class PhpEngine extends BasePhpEngine
     private $viewModels = [];
 
     /**
-     * @var array
-     */
-    private $currentIndexes = [];
-
-    /**
      * In addition to the core method, this keeps parameters in a ViewModel instance which is accessible from
      * view helpers and via $this->$variable.
-     *
-     * This keeps a an internal counter of templates rendered (template type identified by $this->current) to make sure
-     * the correct ViewModel instance is used when looking up vars via __get()
      *
      * {@inheritdoc}
      */
     protected function evaluate(Storage $template, array $parameters = array())
     {
-        $currentKey    = $this->current;
-        $currentIndex  = 0;
-        $previousIndex = null;
-
-        if (isset($this->currentIndexes[$currentKey])) {
-            $previousIndex = $currentIndex = $this->currentIndexes[$currentKey];
-            $currentIndex++;
-        }
-
-        $this->currentIndexes[$currentKey] = $currentIndex;
-
-        // create view model and register it for the current key and index
-        $this->viewModels[$currentKey . '-' . $currentIndex] = new ViewModel($parameters);
+        // create view model push it onto the model stack
+        $this->viewModels[] = new ViewModel($parameters);
 
         // render the template
         $result = parent::evaluate($template, $parameters);
 
-        // clean up
-        unset($this->viewModels[$currentKey . '-' . $currentIndex]);
-
-        // set index to previous value
-        if (null !== $previousIndex) {
-            $this->currentIndexes[$currentKey] = $previousIndex;
-        } else {
-            unset($this->currentIndexes[$currentKey]);
-        }
+        // remove current view model from stack and destroy it
+        $viewModel = array_pop($this->viewModels);
+        unset($viewModel);
 
         return $result;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function __get($name)
-    {
-        return $this->getViewParameter($name);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function __call($method, $arguments)
-    {
-        // TODO: implement view helper delegation
-
-        return '<code>__call: ' . $method . '</code>';
     }
 
     /**
@@ -88,11 +45,9 @@ class PhpEngine extends BasePhpEngine
      */
     public function getViewModel()
     {
-        $index    = isset($this->currentIndexes[$this->current]) ? $this->currentIndexes[$this->current] : 0;
-        $modelKey = $this->current . '-' . $index;
-
-        if (isset($this->viewModels[$modelKey])) {
-            return $this->viewModels[$modelKey];
+        $count = count($this->viewModels);
+        if ($count > 0) {
+            return $this->viewModels[$count - 1];
         }
     }
 
@@ -112,5 +67,23 @@ class PhpEngine extends BasePhpEngine
         }
 
         return $default;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function __get($name)
+    {
+        return $this->getViewParameter($name);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function __call($method, $arguments)
+    {
+        // TODO: implement view helper delegation
+
+        return '<code>__call: ' . $method . '</code>';
     }
 }
