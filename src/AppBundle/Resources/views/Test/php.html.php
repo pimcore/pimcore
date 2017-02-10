@@ -1,5 +1,6 @@
 <?php
-/** @var \Symfony\Component\Templating\PhpEngine $view */
+/** @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $this */
+/** @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $view */
 $view->extend('AppBundle::test-layout.html.php');
 ?>
 
@@ -8,9 +9,17 @@ $view->extend('AppBundle::test-layout.html.php');
     <h1>CONTENT</h1>
     fooblah
 
-    <?php echo $view->render('AppBundle:Test:partial.html.php', ['index' => 0]) ?>
+    <hr>
 
-    <?php echo $this->foo() ?>
+    <?php echo $view->render('AppBundle:Test:partial.html.php', ['index' => 0, 'document' => $document]) ?>
+
+    <hr>
+
+    <?php var_dump($document ? get_class($document) : null); ?>
+    <?php var_dump($this->document ? get_class($this->document) : null); ?>
+    <?php var_dump($document === $this->document) ?>
+
+    <?php // echo $this->foo() ?>
 
     <?php /*
     <?php var_dump($document) ?>
@@ -21,7 +30,7 @@ $view->extend('AppBundle::test-layout.html.php');
     */ ?>
 
     <hr>
-    <?= $view['pimcore_tag']->render('input', 'foobar') ?>
+    <?= $view->input('foobar') ?>
     <hr>
     <?= $view['pimcore_tag']->render('wysiwyg', 'wysiwyg') ?>
     <hr>

@@ -53,4 +53,12 @@ class DocumentTagHelper extends Helper
 
         return $this->tagRenderer->render($document, $type, $inputName, $options);
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function __invoke($type, $inputName, array $options = [])
+    {
+        return $this->render($type, $inputName, $options);
+    }
 }

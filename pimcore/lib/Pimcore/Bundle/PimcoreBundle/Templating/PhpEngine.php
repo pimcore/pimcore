@@ -4,6 +4,8 @@ namespace Pimcore\Bundle\PimcoreBundle\Templating;
 
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModel;
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModelInterface;
+use Pimcore\Bundle\PimcoreBundle\Templating\Renderer\TagRenderer;
+use Pimcore\Model\Document\PageSnippet;
 use Symfony\Bundle\FrameworkBundle\Templating\PhpEngine as BasePhpEngine;
 use Symfony\Component\Templating\Storage\Storage;
 
@@ -13,9 +15,22 @@ use Symfony\Component\Templating\Storage\Storage;
 class PhpEngine extends BasePhpEngine
 {
     /**
+     * @var TagRenderer
+     */
+    protected $tagRenderer;
+
+    /**
      * @var ViewModelInterface[]
      */
     private $viewModels = [];
+
+    /**
+     * @param TagRenderer $tagRenderer
+     */
+    public function setTagRenderer(TagRenderer $tagRenderer)
+    {
+        $this->tagRenderer = $tagRenderer;
+    }
 
     /**
      * In addition to the core method, this keeps parameters in a ViewModel instance which is accessible from
@@ -82,8 +97,34 @@ class PhpEngine extends BasePhpEngine
      */
     public function __call($method, $arguments)
     {
-        // TODO: implement view helper delegation
+        if ($this->getViewParameter('document') instanceof PageSnippet) {
+            $document = $this->document;
 
-        return '<code>__call: ' . $method . '</code>';
+            if (null !== $this->tagRenderer && $this->tagRenderer->tagExists($method)) {
+                if (!isset($arguments[0])) {
+                    throw new \Exception('You have to set a name for the called tag (editable): ' . $method);
+                }
+
+                // set default if there is no editable configuration provided
+                if (!isset($arguments[1])) {
+                    $arguments[1] = [];
+                }
+
+                return $this->tagRenderer->render($document, $method, $arguments[0], $arguments[1]);
+            }
+
+            // call method on the current document if it exists
+            if (method_exists($document, $method)) {
+                return call_user_func_array([$document, $method], $arguments);
+            }
+        }
+
+        // try to call view helper
+        $helper = $this->get($method);
+        if (is_callable($helper)) {
+            return call_user_func_array($helper, $arguments);
+        }
+
+        return $helper;
     }
 }

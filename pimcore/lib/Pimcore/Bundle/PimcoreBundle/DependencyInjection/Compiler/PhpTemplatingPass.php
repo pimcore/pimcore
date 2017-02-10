@@ -26,6 +26,9 @@ class PhpTemplatingPass implements CompilerPassInterface
             } else if ($engine->getClass() === BaseTimedPhpEngine::class) {
                 $engine->setClass(TimedPhpEngine::class);
             }
+
+            // add tag renderer dependency
+            $engine->addMethodCall('setTagRenderer', [$container->findDefinition('pimcore.templating.tag_renderer')]);
         }
     }
 }

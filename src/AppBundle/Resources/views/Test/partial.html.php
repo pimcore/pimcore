@@ -18,12 +18,15 @@ $iteration++;
 Zend_Registry::set($regKey, $iteration);
 ?>
 
+<?php var_dump($document) ?>
+
 <ul>
     <li>
         <div>
             Ix: <code><?= $index ?></code>
             Vx: <code><?= $view->index ?></code>
             It: <code><?= $outputIteration ?></code>
+            <code><?= ($index === $this->index) ? 'true' : 'false' ?></code>
         </div>
 
         <?php if ($renderPartial): ?>
@@ -34,6 +37,7 @@ Zend_Registry::set($regKey, $iteration);
             Ix: <code><?= $index ?></code>
             Vx: <code><?= $view->index ?></code>
             It: <code><?= $outputIteration ?></code>
+            <code><?= ($index === $this->index) ? 'true' : 'false' ?></code>
         </div>
     </li>
 </ul>
