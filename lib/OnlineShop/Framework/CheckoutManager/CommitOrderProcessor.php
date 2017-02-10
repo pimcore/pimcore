@@ -19,11 +19,14 @@ namespace OnlineShop\Framework\CheckoutManager;
 use OnlineShop\Framework\Factory;
 use OnlineShop\Framework\Model\AbstractOrder;
 use OnlineShop\Plugin;
+use Pimcore\Model\Tool\Lock;
 
 /**
  * Class \OnlineShop\Framework\CheckoutManager\CommitOrderProcessor
  */
 class CommitOrderProcessor implements ICommitOrderProcessor {
+
+    const LOCK_KEY = "ecommerce-framework-commitorder-lock";
 
     /**
      * @var string
@@ -126,6 +129,9 @@ class CommitOrderProcessor implements ICommitOrderProcessor {
      */
     public function commitOrderPayment(\OnlineShop\Framework\PaymentManager\IStatus $paymentStatus, \OnlineShop\Framework\PaymentManager\Payment\IPayment $paymentProvider) {
 
+        //acquire lock to make sure only one process is committing order payment
+        Lock::acquire(self::LOCK_KEY);
+
         //check if order is already committed and payment information with same internal payment id has same state
         //if so, do nothing and return order
         if($committedOrder = $this->committedOrderWithSamePaymentExists($paymentStatus, $paymentProvider)) {
@@ -154,6 +160,8 @@ class CommitOrderProcessor implements ICommitOrderProcessor {
             $order->setOrderState(null);
             $order->save();
         }
+
+        Lock::release(self::LOCK_KEY);
 
         return $order;
 
