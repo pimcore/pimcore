@@ -11,6 +11,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Pimcore\Bundle\PimcoreBundle\Configuration\PhpTemplate;
 
 class ContentController extends Controller implements DocumentAwareInterface
 {
@@ -18,7 +19,7 @@ class ContentController extends Controller implements DocumentAwareInterface
 
     /**
      * @Route("/content/php")
-     * @Template("AppBundle:Test:php.html.php", engine="php")
+     * @PhpTemplate("AppBundle:Test:php.html.php")
      *
      * @param Request $request
      * @return array
