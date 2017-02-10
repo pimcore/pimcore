@@ -19,6 +19,8 @@ namespace OnlineShop\Framework\CheckoutManager;
 use OnlineShop\Framework\Factory;
 use OnlineShop\Framework\Model\AbstractOrder;
 use OnlineShop\Plugin;
+use Pimcore\Log\ApplicationLogger;
+use Pimcore\Log\FileObject;
 use Pimcore\Model\Tool\Lock;
 
 /**
@@ -27,6 +29,7 @@ use Pimcore\Model\Tool\Lock;
 class CommitOrderProcessor implements ICommitOrderProcessor {
 
     const LOCK_KEY = "ecommerce-framework-commitorder-lock";
+    const LOGGER_NAME = "commit-order-processor";
 
     /**
      * @var string
@@ -154,11 +157,23 @@ class CommitOrderProcessor implements ICommitOrderProcessor {
         $this->applyAdditionalDataToOrder($order, $paymentStatus, $paymentProvider);
 
         if (in_array($paymentStatus->getStatus(), [AbstractOrder::ORDER_STATE_COMMITTED, AbstractOrder::ORDER_STATE_PAYMENT_AUTHORIZED])) {
+
             //only when payment state is committed or authorized -> proceed and commit order
-            $order = $this->commitOrder( $order );
+            $order = $this->commitOrder($order);
+
+        } else if($order->getOrderState() == $order::ORDER_STATE_COMMITTED) {
+
+            //do not overwrite status if order is already committed. normally this shouldn't happen at all.
+            $logger = ApplicationLogger::getDbLogger(self::LOGGER_NAME);
+            $logger->setRelatedObject($order);
+            $logger->setFileObject(new FileObject(print_r($paymentStatus, true)));
+            $logger->critical("Order with ID " . $order->getId() . " got payment status after it was already committed.");
+
         } else {
+
             $order->setOrderState(null);
             $order->save();
+
         }
 
         Lock::release(self::LOCK_KEY . $paymentStatus->getInternalPaymentId());
