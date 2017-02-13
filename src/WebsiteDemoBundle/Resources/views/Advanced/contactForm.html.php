@@ -1,6 +1,6 @@
+<?php $this->extend('WebsiteDemoBundle::layout.html.php') ?>
 
-<?= $this->render("WebsiteDemoBundle:Content:default.phtml"); ?>
-
+<?= $this->template('WebsiteDemoBundle:Includes:content-default.html.php') ?>
 
 <?php if(!$this->success) { ?>
     <form class="form-horizontal" role="form" action="" method="post">

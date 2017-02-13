@@ -2,9 +2,13 @@
 
 namespace WebsiteDemoBundle\Controller;
 
+use Pimcore\Bundle\PimcoreBundle\Configuration\PhpTemplate;
 use Pimcore\Model\Object;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * @PhpTemplate()
+ */
 class BlogController extends AbstractController
 {
     public function indexAction(Request $request)

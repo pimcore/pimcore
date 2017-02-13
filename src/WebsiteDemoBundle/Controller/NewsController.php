@@ -2,10 +2,14 @@
 
 namespace WebsiteDemoBundle\Controller;
 
+use Pimcore\Bundle\PimcoreBundle\Configuration\PhpTemplate;
 use Pimcore\Model\Object\News;
 use Symfony\Component\HttpFoundation\Request;
 use Zend\Paginator\Paginator;
 
+/**
+ * @PhpTemplate()
+ */
 class NewsController extends AbstractController
 {
     public function indexAction(Request $request)

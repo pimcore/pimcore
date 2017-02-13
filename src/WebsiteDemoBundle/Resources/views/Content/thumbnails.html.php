@@ -1,9 +1,10 @@
+<?php $this->extend('WebsiteDemoBundle::layout.html.php') ?>
+
 <?php
 use Pimcore\Model\Asset;
 ?>
 
-<?= $this->render('WebsiteDemoBundle:Includes:content-headline.phtml'); ?>
-<?= $this->areablock('content'); ?>
+<?= $this->template('WebsiteDemoBundle:Includes:content-default.html.php') ?>
 
 <?php
 // this is just used for demonstration

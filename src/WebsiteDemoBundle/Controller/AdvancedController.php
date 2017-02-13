@@ -2,13 +2,16 @@
 
 namespace WebsiteDemoBundle\Controller;
 
+use Pimcore\Bundle\PimcoreBundle\Configuration\PhpTemplate;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Object;
 use Pimcore\Tool;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Zend\Paginator\Paginator;
 
+/**
+ * @PhpTemplate()
+ */
 class AdvancedController extends AbstractController
 {
     public function contactFormAction(Request $request)

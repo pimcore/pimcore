@@ -1,4 +1,6 @@
-<?= $this->render('WebsiteDemoBundle:Includes:content-headline.phtml'); ?>
+<?php $this->extend('WebsiteDemoBundle::layout.html.php') ?>
+
+<?= $this->template('WebsiteDemoBundle:Includes:content-headline.html.php'); ?>
 <?= $this->areablock('content'); ?>
 
 <?php
@@ -33,7 +35,7 @@ foreach ($this->news as $news) { ?>
 
 <!-- pagination start -->
 <?= $this->render(
-        "WebsiteDemoBundle:Includes:paging.phtml",
-        get_object_vars($this->news->getPages("Sliding"))
+    "WebsiteDemoBundle:Includes:paging.html.php",
+    get_object_vars($this->news->getPages("Sliding"))
 ); ?>
 <!-- pagination end -->

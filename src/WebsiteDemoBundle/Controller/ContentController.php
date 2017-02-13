@@ -2,9 +2,13 @@
 
 namespace WebsiteDemoBundle\Controller;
 
+use Pimcore\Bundle\PimcoreBundle\Configuration\PhpTemplate;
 use Pimcore\Model\Asset;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * @PhpTemplate()
+ */
 class ContentController extends AbstractController
 {
     public function defaultAction()

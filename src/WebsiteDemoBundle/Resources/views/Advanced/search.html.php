@@ -1,12 +1,13 @@
+<?php $this->extend('WebsiteDemoBundle::layout.html.php') ?>
+
 <?php
     $queryString = $this->app("request")->get("q");
 ?>
 
+<?= $this->template('WebsiteDemoBundle:Includes:content-headline.html.php'); ?>
 
 <?php if(!$queryString) { ?>
-    <?= $this->render("WebsiteDemoBundle:Content:default.phtml"); ?>
-<?php } else { ?>
-    <?= $this->render("WebsiteDemoBundle:Includes:content-headline.phtml"); ?>
+    <?= $this->areablock('content'); ?>
 <?php } ?>
 
 <div>
@@ -69,7 +70,7 @@
                 </div>
             </div>
         <?php } ?>
-        <?= $this->render("WebsiteDemoBundle:Includes:paging.phtml", get_object_vars($this->paginator->getPages("Sliding"))); ?>
+        <?= $this->render("WebsiteDemoBundle:Includes:paging.html.php", get_object_vars($this->paginator->getPages("Sliding"))); ?>
     <?php } else if ($queryString) { ?>
         <div class="alert alert-error" style="margin-top: 30px">
             Sorry, something seems to went wrong ...

@@ -2,10 +2,14 @@
 
 namespace WebsiteDemoBundle\Controller;
 
+use Pimcore\Bundle\PimcoreBundle\Configuration\PhpTemplate;
 use Pimcore\Model;
 use Pimcore\Tool\Newsletter;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * @PhpTemplate()
+ */
 class NewsletterController extends AbstractController
 {
     public function subscribeAction(Request $request)

@@ -1,3 +1,5 @@
+<?php $this->extend('WebsiteDemoBundle::layout.html.php') ?>
+
 <?php
     // set page meta-data
     $this->headTitle()->set($this->article->getTitle());
@@ -13,7 +15,7 @@
         <h1><?= $this->article->getTitle(); ?></h1>
     </div>
 
-    <?= $this->render("WebsiteDemoBundle:Blog:meta.phtml"); ?>
+    <?= $this->render("WebsiteDemoBundle:Blog:meta.html.php", ['article' => $article]); ?>
 
     <hr />
 

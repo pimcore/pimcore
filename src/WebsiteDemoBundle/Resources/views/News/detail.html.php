@@ -1,3 +1,5 @@
+<?php $this->extend('WebsiteDemoBundle::layout.html.php') ?>
+
 <?php
 // set page meta-data
 $this->headTitle()->set($this->news->getTitle());

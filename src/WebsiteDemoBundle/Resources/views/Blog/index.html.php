@@ -1,10 +1,10 @@
+<?php $this->extend('WebsiteDemoBundle::layout.html.php') ?>
+
 <?php
 $request = $this->app("request");
 ?>
 
-<?= $this->render("WebsiteDemoBundle:Includes:content-headline.phtml"); ?>
-
-<?= $this->areablock("content"); ?>
+<?= $this->template('WebsiteDemoBundle:Includes:content-default.html.php') ?>
 
 <hr />
 
@@ -28,7 +28,7 @@ $request = $this->app("request");
                         <a href="<?= $detailLink; ?>"><?= $article->getTitle(); ?></a>
                     </h2>
 
-                    <?= $this->render("WebsiteDemoBundle:Blog:meta.phtml", ["article" => $article]); ?>
+                    <?= $this->render("WebsiteDemoBundle:Blog:meta.html.php", ["article" => $article]); ?>
 
                     <hr />
 
@@ -45,7 +45,7 @@ $request = $this->app("request");
 
         <!-- pagination start -->
         <?= $this->render(
-            "WebsiteDemoBundle:Includes:paging.phtml",
+            "WebsiteDemoBundle:Includes:paging.html.php",
             get_object_vars($this->articles->getPages("Sliding")));
         ?>
         <!-- pagination end -->

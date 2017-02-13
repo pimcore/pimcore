@@ -1,6 +1,6 @@
 
 <?php if((!$this->error && !$this->success)|| $this->editmode) { ?>
-    <?= $this->render("WebsiteDemoBundle:Content:default.phtml"); ?>
+    <?= $this->template('WebsiteDemoBundle:Includes:content-default.html.php') ?>
 <?php } ?>
 
 <?php if($this->error || $this->editmode) { ?>

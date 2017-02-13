@@ -1,3 +1,5 @@
+<?php $this->extend('WebsiteDemoBundle::layout.html.php') ?>
+
 <div id="portalHeader" class="carousel header slide" data-ride="carousel" <?= ($this->editmode) ? 'data-interval="false"' : '' ?>>
 
     <!-- Indicators -->

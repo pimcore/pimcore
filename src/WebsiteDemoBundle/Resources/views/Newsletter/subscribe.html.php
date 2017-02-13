@@ -1,4 +1,4 @@
-<?= $this->render("WebsiteDemoBundle:Content:default.phtml"); ?>
+<?= $this->template("WebsiteDemoBundle:Content:default.html.php"); ?>
 
 <?php if(!$this->success) { ?>
 

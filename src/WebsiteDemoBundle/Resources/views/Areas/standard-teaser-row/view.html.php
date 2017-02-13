@@ -16,10 +16,7 @@
                 <?php
                     $type = $this->select("type_".$t)->getData();
                     if($type == "direct") {
-                        $this->render("WebsiteDemoBundle:Snippets:standard-teaser.phtml", array_merge(
-                            $this->vars()->getArrayCopy(),
-                            ["suffix" => $t+1]
-                        ));
+                        $this->template("WebsiteDemoBundle:Snippets:standard-teaser.html.php", ["suffix" => $t+1]);
                     } else {
                         echo $this->snippet("teaser_".$t);
                     }

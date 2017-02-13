@@ -1,5 +1,6 @@
+<?php $this->extend('WebsiteDemoBundle::layout.html.php') ?>
 
-<?= $this->render("WebsiteDemoBundle:Content:default.phtml"); ?>
+<?= $this->template('WebsiteDemoBundle:Includes:content-default.html.php') ?>
 
 <?php if($this->editmode) { ?>
     <div class="alert alert-info">
