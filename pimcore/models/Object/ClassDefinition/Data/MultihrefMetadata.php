@@ -44,7 +44,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
      *
      * @var string
      */
-    public $phpdocType = "\\Pimcore\\Model\\Object\\Data\\ElemenentMetadata[]";
+    public $phpdocType = "\\Pimcore\\Model\\Object\\Data\\ElementMetadata[]";
 
 
     /**
