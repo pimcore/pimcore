@@ -13,6 +13,7 @@ use Symfony\Component\Templating\Storage\Storage;
  * Symfony PHP engine with pimcore additions:
  *
  *  - property access - $this->variable and $this->helper()
+ *  - helper brokers integrate other view helpers (ZF) on __call
  *  - tag integration
  */
 class PhpEngine extends BasePhpEngine
@@ -43,7 +44,7 @@ class PhpEngine extends BasePhpEngine
      */
     protected function evaluate(Storage $template, array $parameters = array())
     {
-        // create view model push it onto the model stack
+        // create view model and push it onto the model stack
         $this->viewModels[] = new ViewModel($parameters);
 
         // render the template
