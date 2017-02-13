@@ -210,7 +210,7 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
             }
         }
 
-        this.addMarkerHotspotContextMenu(markerId, markerEl);
+        this.addMarkerHotspotContextMenu(markerId, "marker", markerEl);
 
         var markerDD = new Ext.dd.DD(markerEl);
         this.hotspotStore.push({
@@ -268,7 +268,7 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
             }
         }
 
-        this.addMarkerHotspotContextMenu(hotspotId, hotspotEl);
+        this.addMarkerHotspotContextMenu(hotspotId, "hotspot", hotspotEl);
 
         this.hotspotStore.push({
             id: hotspotId,
@@ -278,7 +278,7 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
         return hotspotId;
     },
 
-    addMarkerHotspotContextMenu: function (id, el) {
+    addMarkerHotspotContextMenu: function (id, type, el) {
         el.on("contextmenu", function (id, e) {
             var menu = new Ext.menu.Menu();
 
@@ -295,10 +295,17 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
             menu.add(new Ext.menu.Item({
                 text: t("remove"),
                 iconCls: "pimcore_icon_delete",
-                handler: function (id, item) {
+                handler: function (id, type, item) {
                     item.parentMenu.destroy();
-                    Ext.get(id).remove();
-                }.bind(this, id)
+                    if (type == "hotspot") {
+                        var cmp  = Ext.getCmp(id);
+                        this.hotspotWindow.remove(cmp);
+                    } else {
+                        var el  = Ext.get(id);
+                        el.remove();
+                    }
+
+                }.bind(this, id, type)
             }));
 
             menu.showAt(e.getXY());
