@@ -42,7 +42,7 @@ class Dao extends Model\Dao\AbstractDao
             $sql = trim($m);
             if (strlen($sql) > 0) {
                 $sql .= ";";
-                $this->db->query($m);
+                $this->db->query($sql);
             }
         }
 
