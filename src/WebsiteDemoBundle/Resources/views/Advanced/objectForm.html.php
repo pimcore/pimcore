@@ -1,3 +1,4 @@
+<?php $this->extend('WebsiteDemoBundle::layout.html.php') ?>
 
 <?php if((!$this->error && !$this->success)|| $this->editmode) { ?>
     <?= $this->template('WebsiteDemoBundle:Includes:content-default.html.php') ?>

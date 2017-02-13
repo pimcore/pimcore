@@ -1,5 +1,7 @@
+<?php $this->extend('WebsiteDemoBundle::layout.html.php') ?>
+
 <?php if($this->initial) { ?>
-    <?php $this->extend('WebsiteDemoBundle::layout.html.php') ?>
+
 
 <ul>
     <?php } ?>
