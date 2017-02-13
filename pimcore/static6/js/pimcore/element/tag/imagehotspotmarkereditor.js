@@ -194,16 +194,18 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
 
         var markerEl = Ext.get(markerId);
 
-        if(typeof config == "object" && config["top"]) {
-            var windowId = this.hotspotWindow.getId();
-            var windowEl = Ext.getCmp(windowId).body;
-            var originalWidth = windowEl.getWidth(true);
-            var originalHeight = windowEl.getHeight(true);
+        if(typeof config == "object" ) {
+            if (config["top"]) {
+                var windowId = this.hotspotWindow.getId();
+                var windowEl = Ext.getCmp(windowId).body;
+                var originalWidth = windowEl.getWidth(true);
+                var originalHeight = windowEl.getHeight(true);
 
-            markerEl.applyStyles({
-                top: (originalHeight * (config["top"]/100) - 35) + "px",
-                left: (originalWidth * (config["left"]/100) - 12) + "px"
-            });
+                markerEl.applyStyles({
+                    top: (originalHeight * (config["top"] / 100) - 35) + "px",
+                    left: (originalWidth * (config["left"] / 100) - 12) + "px"
+                });
+            }
 
             if(config["name"]) {
                 markerEl.dom.setAttribute("title", config["name"]);
@@ -250,18 +252,20 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
             height: "50px"
         });
 
-        if(typeof config == "object" && config["top"]) {
-            var windowId = this.hotspotWindow.getId();
-            var windowEl = Ext.getCmp(windowId).body;
-            var originalWidth = windowEl.getWidth(true);
-            var originalHeight = windowEl.getHeight(true);
+        if(typeof config == "object") {
+            if (config["top"]) {
+                var windowId = this.hotspotWindow.getId();
+                var windowEl = Ext.getCmp(windowId).body;
+                var originalWidth = windowEl.getWidth(true);
+                var originalHeight = windowEl.getHeight(true);
 
-            hotspotEl.applyStyles({
-                top: (originalHeight * (config["top"]/100)) + "px",
-                left: (originalWidth * (config["left"]/100)) + "px",
-                width: (originalWidth * (config["width"]/100)) + "px",
-                height: (originalHeight * (config["height"]/100)) + "px"
-            });
+                hotspotEl.applyStyles({
+                    top: (originalHeight * (config["top"] / 100)) + "px",
+                    left: (originalWidth * (config["left"] / 100)) + "px",
+                    width: (originalWidth * (config["width"] / 100)) + "px",
+                    height: (originalHeight * (config["height"] / 100)) + "px"
+                });
+            }
 
             if(config["name"]) {
                 hotspotEl.dom.setAttribute("title", config["name"]);
@@ -304,6 +308,44 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
                         var el  = Ext.get(id);
                         el.remove();
                     }
+
+                }.bind(this, id, type)
+            }));
+
+
+            menu.add(new Ext.menu.Item({
+                text: t("duplicate"),
+                iconCls: "pimcore_icon_copy",
+                handler: function (id, type, item) {
+                    item.parentMenu.destroy();
+
+                    var el = Ext.get(id);
+                    var copiedData = this.hotspotMetaData[id] ? this.hotspotMetaData[id].slice() : [];
+
+                    var windowId = this.hotspotWindow.getId();
+                    var windowEl = Ext.getCmp(windowId).body;
+                    var originalWidth = windowEl.getWidth(true);
+                    var originalHeight = windowEl.getHeight(true);
+
+                    var dimensions = el.getStyle(["top","left","width","height"]);
+
+                    var config = {
+                        data: copiedData,
+                        name: el.getAttribute("title"),
+                    };
+
+                    if (type == "hotspot") {
+                        config["top"] = (intval(dimensions.top) + 30) * 100 / originalHeight;
+                        config["left"] = (intval(dimensions.left) + 30) * 100 / originalWidth;
+                        config["width"] = intval(dimensions.width) * 100 / originalWidth;
+                        config["height"] = intval(dimensions.height) * 100 / originalHeight;
+                        var elId = this.addHotspot(config);
+                    } else {
+                        config["top"] = (intval(dimensions.top) + 30 + 35) * 100 / originalHeight;
+                        config["left"] = (intval(dimensions.left ) +  30 + 12) * 100 / originalWidth;
+                        var elId = this.addMarker(config);
+                    }
+                    this.hotspotMetaData[elId] = copiedData;
 
                 }.bind(this, id, type)
             }));
