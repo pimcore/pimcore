@@ -28,6 +28,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
         this.referencedFields = [];
         this.availablePanels = [];
         this.dropdownLayout = false;
+        this.atAGlance = false;
 
         if (pimcore.currentuser.admin || fieldConfig.permissionView === undefined) {
             this.frontendLanguages = pimcore.settings.websiteLanguages;
@@ -42,6 +43,14 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
 
         if (this.frontendLanguages.length > maxTabs) {
             this.dropdownLayout = true;
+        }
+
+        if(fieldConfig.atAGlance){
+            this.atAGlance = true;
+        }
+
+        if(fieldConfig.atAGlance){
+            this.atAGlance = true;
         }
 
         if (data) {
@@ -201,6 +210,67 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                     text: t("language")
                 }), this.countrySelect];
             }
+        } else if (this.atAGlance){
+            
+            var glancePanelConf = {
+                items: [],
+                width: 'auto',
+                height: 'auto',
+                layout: {
+                    type: 'table',
+                    columns: nrOfLanguages
+                },
+                defaults: {
+                    border: true,
+                    bodyPadding: 10
+                }
+            };
+
+            if(this.fieldConfig.height) {
+                glancePanelConf.height = this.fieldConfig.height;
+                glancePanelConf.autoHeight = false;
+            }
+
+            for (var i = 0; i < nrOfLanguages; i++) {
+                this.currentLanguage = this.frontendLanguages[i];
+                this.languageElements[this.currentLanguage] = [];
+
+                var editable = (pimcore.currentuser.admin || this.fieldConfig.permissionEdit === undefined || this.fieldConfig.permissionEdit.length == 0 || in_array(this.currentLanguage, this.fieldConfig.permissionEdit));
+                var runtimeContext = Ext.clone(this.context);
+                runtimeContext.language = Ext.clone(this.currentLanguage);
+                
+                var items = this.getRecursiveLayout(this.fieldConfig, !editable, runtimeContext);
+                var item = {
+                    flex: 1,
+                    xtype: 'panel',
+                    autoScroll: true,
+                    padding: '0',
+                    margin: '10px',
+                    deferredRender: false,
+                    iconCls: "pimcore_icon_language_" + this.frontendLanguages[i].toLowerCase(),
+                    title: pimcore.available_languages[this.frontendLanguages[i]],
+                    items: items.items
+                };
+
+                if (this.fieldConfig.labelWidth) {
+                    item.labelWidth = this.fieldConfig.labelWidth;
+                }
+
+                glancePanelConf.items.push(item);
+            }
+
+
+            wrapperConfig.autoScroll = true;
+            wrapperConfig.layout = {
+                type: 'hbox',
+                pack: 'start',
+                align: 'stretchmax',
+                flex: 'all even'
+            };
+
+            var tablePanel = new Ext.Panel(glancePanelConf);
+            wrapperConfig.items = [tablePanel];
+
         } else {
             var panelConf = {
                 monitorResize: true,
