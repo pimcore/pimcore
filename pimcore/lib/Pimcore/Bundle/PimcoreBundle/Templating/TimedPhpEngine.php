@@ -3,10 +3,10 @@
 namespace Pimcore\Bundle\PimcoreBundle\Templating;
 
 use Symfony\Bundle\FrameworkBundle\Templating\GlobalVariables;
-use Symfony\Component\Templating\TemplateNameParserInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Stopwatch\Stopwatch;
 use Symfony\Component\Templating\Loader\LoaderInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Templating\TemplateNameParserInterface;
 
 /**
  * Times the time spent to render a template. This is the same class as the core TimedPhpEngine, but extends our custom
@@ -45,10 +45,5 @@ class TimedPhpEngine extends PhpEngine
         $e->stop();
 
         return $ret;
-    }
-
-    public function template()
-    {
-        return '';
     }
 }
