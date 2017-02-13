@@ -2,14 +2,12 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\Templating;
 
+use Pimcore\Bundle\PimcoreBundle\Templating\HelperBroker\HelperBrokerInterface;
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModel;
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModelInterface;
-use Pimcore\Bundle\PimcoreBundle\Templating\Renderer\TagRenderer;
-use Pimcore\Bundle\PimcoreBundle\View\ZendViewHelperBridge;
 use Pimcore\Model\Document\PageSnippet;
 use Symfony\Bundle\FrameworkBundle\Templating\PhpEngine as BasePhpEngine;
 use Symfony\Component\Templating\Storage\Storage;
-use Zend\View\HelperPluginManager;
 
 /**
  * Symfony PHP engine with pimcore additions:
@@ -20,19 +18,9 @@ use Zend\View\HelperPluginManager;
 class PhpEngine extends BasePhpEngine
 {
     /**
-     * @var TagRenderer
+     * @var HelperBrokerInterface[]
      */
-    protected $tagRenderer;
-
-    /**
-     * @var HelperPluginManager
-     */
-    protected $zendHelperManager;
-
-    /**
-     * @var ZendViewHelperBridge
-     */
-    protected $zendViewHelperBridge;
+    protected $helperBrokers = [];
 
     /**
      * @var ViewModelInterface[]
@@ -40,27 +28,11 @@ class PhpEngine extends BasePhpEngine
     protected $viewModels = [];
 
     /**
-     * @param TagRenderer $tagRenderer
+     * @param HelperBrokerInterface $helperBroker
      */
-    public function setTagRenderer(TagRenderer $tagRenderer)
+    public function addHelperBroker(HelperBrokerInterface $helperBroker)
     {
-        $this->tagRenderer = $tagRenderer;
-    }
-
-    /**
-     * @param HelperPluginManager $zendHelperManager
-     */
-    public function setZendHelperManager(HelperPluginManager $zendHelperManager)
-    {
-        $this->zendHelperManager = $zendHelperManager;
-    }
-
-    /**
-     * @param ZendViewHelperBridge $zendViewHelperBridge
-     */
-    public function setZendViewHelperBridge(ZendViewHelperBridge $zendViewHelperBridge)
-    {
-        $this->zendViewHelperBridge = $zendViewHelperBridge;
+        $this->helperBrokers[] = $helperBroker;
     }
 
     /**
@@ -158,52 +130,34 @@ class PhpEngine extends BasePhpEngine
     }
 
     /**
+     * @param string $name
+     * @param mixed $value
+     */
+    public function __set($name, $value)
+    {
+        $viewModel = $this->getViewModel();
+        if ($viewModel) {
+            $viewModel->getParameters()->set($name, $value);
+        } else {
+            throw new \RuntimeException(sprintf('Can\'t set variable %s as there is no active view model', $name));
+        }
+    }
+
+    /**
      * @inheritDoc
      */
     public function __call($method, $arguments)
     {
-        $document = null;
-        if ($this->getViewParameter('document') instanceof PageSnippet) {
-            $document = $this->document;
-        }
-
-        if (null !== $this->tagRenderer && $this->tagRenderer->tagExists($method)) {
-            if (!isset($arguments[0])) {
-                throw new \Exception('You have to set a name for the called tag (editable): ' . $method);
-            }
-
-            // set default if there is no editable configuration provided
-            if (!isset($arguments[1])) {
-                $arguments[1] = [];
-            }
-
-            if (null === $document) {
-                throw new \RuntimeException(sprintf('Trying to render the tag "%s", but no document was found', $method));
-            }
-
-            return $this->tagRenderer->render($document, $method, $arguments[0], $arguments[1]);
-        }
-
-        if (null !== $document) {
-            // call method on the current document if it exists
-            if (method_exists($document, $method)) {
-                return call_user_func_array([$document, $method], $arguments);
-            }
-        }
-
         // try to call native view helper
         if ($this->has($method)) {
             return $this->renderViewHelper($method, $arguments);
         }
 
-        // try to call zend view helper
-        if ($this->zendHelperManager->has($method)) {
-            return $this->renderZendViewHelper($method, $arguments);
-        }
-
-        // TODO zf1 view helpers are used until we ported them to Zend\View 3
-        if ('zf1_' === substr($method, 0, 4)) {
-            return $this->renderLegacyZendViewHelper(substr($method, 4), $arguments);
+        // try to run helper from helper broker (document tag, zend view, ...)
+        foreach ($this->helperBrokers as $helperBroker) {
+            if ($helperBroker->supports($this, $method)) {
+                return $helperBroker->helper($this, $method, $arguments);
+            }
         }
 
         throw new \InvalidArgumentException('Call to undefined method ' . $method);
@@ -217,21 +171,5 @@ class PhpEngine extends BasePhpEngine
         }
 
         return $helper;
-    }
-
-    protected function renderZendViewHelper($method, $arguments)
-    {
-        $zendHelper = $this->zendHelperManager->get($method);
-
-        if (is_callable($zendHelper)) {
-            return call_user_func_array($zendHelper, $arguments);
-        }
-
-        return $zendHelper;
-    }
-
-    protected function renderLegacyZendViewHelper($method, $arguments)
-    {
-        return $this->zendViewHelperBridge->execute($method, $arguments);
     }
 }

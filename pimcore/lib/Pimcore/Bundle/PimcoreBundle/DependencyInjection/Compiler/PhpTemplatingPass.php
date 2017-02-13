@@ -8,11 +8,12 @@ use Symfony\Bundle\FrameworkBundle\Templating\PhpEngine as BasePhpEngine;
 use Symfony\Bundle\FrameworkBundle\Templating\TimedPhpEngine as BaseTimedPhpEngine;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Reference;
 
 class PhpTemplatingPass implements CompilerPassInterface
 {
     /**
-     * Replace PHP and Timed PHP engine with our implementations
+     * Replace PHP and Timed PHP engine with our implementations and register helper brokers
      *
      * @inheritDoc
      */
@@ -27,14 +28,44 @@ class PhpTemplatingPass implements CompilerPassInterface
                 $engine->setClass(TimedPhpEngine::class);
             }
 
-            // add tag renderer dependency
-            $engine->addMethodCall('setTagRenderer', [$container->findDefinition('pimcore.templating.tag_renderer')]);
-
-            // add zend helper manager dependency
-            $engine->addMethodCall('setZendHelperManager', [$container->findDefinition('pimcore.zend.templating.helper_plugin_manager')]);
-
-            // and ZF1 helper bridge
-            $engine->addMethodCall('setZendViewHelperBridge', [$container->findDefinition('pimcore.view.zend_view_helper_bridge')]);
+            // add tagged helper brokers
+            $helperBrokers = $this->findHelperBrokers($container);
+            foreach ($helperBrokers as $helperBroker) {
+                $engine->addMethodCall('addHelperBroker', [new Reference($helperBroker)]);
+            }
         }
+    }
+
+    /**
+     * Find registered brokers by tag
+     *
+     * @param ContainerBuilder $container
+     * @return array
+     */
+    protected function findHelperBrokers(ContainerBuilder $container)
+    {
+        $taggedServices = $container->findTaggedServiceIds('pimcore.templating.helper_broker');
+
+        $list = [];
+        foreach ($taggedServices as $id => $tags) {
+            foreach ($tags as $attributes) {
+                $priority = isset($attributes['priority']) ? (int)$attributes['priority'] : 0;
+                $list[$priority][] = $id;
+            }
+        }
+
+        ksort($list);
+
+        $brokers = [];
+        foreach ($list as $priority => $ids) {
+            foreach ($ids as $id) {
+                $brokers[] = $id;
+            }
+        }
+
+        $brokers = array_unique($brokers);
+        $brokers = array_reverse($brokers); // highest priority first
+
+        return $brokers;
     }
 }
