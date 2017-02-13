@@ -44,11 +44,9 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
         if (this.frontendLanguages.length > maxTabs) {
             this.dropdownLayout = true;
         }
-
         if(fieldConfig.atAGlance){
             this.atAGlance = true;
         }
-
         if (data) {
             if (data.data) {
                 this.data = data.data;
