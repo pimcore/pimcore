@@ -3,26 +3,18 @@
 namespace Pimcore\Bundle\PimcoreZendBundle\Controller;
 
 use Pimcore\Bundle\PimcoreBundle\Controller\DocumentAwareInterface;
-use Pimcore\Bundle\PimcoreBundle\Controller\FrontendController;
 use Pimcore\Bundle\PimcoreBundle\Controller\Traits\DocumentAwareTrait;
+use Pimcore\Bundle\PimcoreBundle\Controller\Traits\ViewAwareTrait;
+use Pimcore\Bundle\PimcoreBundle\Controller\ViewAwareInterface;
+use Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Zend\View\Model\ModelInterface;
-use Zend\View\Model\ViewModel;
 
-abstract class ZendController extends FrontendController implements ZendControllerInterface, DocumentAwareInterface
+abstract class ZendController extends Controller implements EventedControllerInterface, DocumentAwareInterface, ViewAwareInterface
 {
     use DocumentAwareTrait;
-
-    /**
-     * @var ModelInterface
-     */
-    protected $view;
-
-    /**
-     * @var ModelInterface|null
-     */
-    protected $layout;
+    use ViewAwareTrait;
 
     /**
      * @param FilterControllerEvent $event
@@ -39,74 +31,12 @@ abstract class ZendController extends FrontendController implements ZendControll
     }
 
     /**
-     * @param ModelInterface $view
-     * @return $this
-     */
-    public function setView(ModelInterface $view)
-    {
-        $this->view = $view;
-
-        return $this;
-    }
-
-    /**
-     * @return ModelInterface
-     */
-    public function getView()
-    {
-        return $this->view;
-    }
-
-    /**
-     * @return null|ModelInterface
-     */
-    public function getLayout()
-    {
-        return $this->layout;
-    }
-
-    /**
-     * @param string $name
-     * @param ModelInterface $child
-     * @param string $childName
-     *
-     * @return $this
-     */
-    public function enableLayout($name, ModelInterface $child = null, $childName = 'content')
-    {
-        if (null === $child) {
-            $child = $this->view;
-        }
-
-        $layout = $this->createLayout($child, $childName);
-        $layout->setTemplate($name);
-
-        $this->layout = $layout;
-
-        return $this;
-    }
-
-    /**
      * @return $this
      */
     public function disableLayout()
     {
-        $this->layout = null;
+        $this->view->getParameters()->set(PhpEngine::PARAM_NO_LAYOUT, true);
 
         return $this;
-    }
-
-    /**
-     * @param ModelInterface $child
-     * @param string $childName
-     *
-     * @return ViewModel
-     */
-    protected function createLayout(ModelInterface $child, $childName = 'content')
-    {
-        $layout = new ViewModel();
-        $layout->addChild($child, $childName);
-
-        return $layout;
     }
 }
