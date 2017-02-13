@@ -40,6 +40,14 @@ class ViewModel implements ViewModelInterface
     }
 
     /**
+     * @return array
+     */
+    public function getAllParameters()
+    {
+        return $this->parameters->all();
+    }
+
+    /**
      * @param $name
      * @return mixed
      */
