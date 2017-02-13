@@ -5,8 +5,8 @@ namespace Pimcore\Bundle\PimcoreBundle\Templating;
 use Pimcore\Bundle\PimcoreBundle\Templating\HelperBroker\HelperBrokerInterface;
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModel;
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModelInterface;
-use Pimcore\Model\Document\PageSnippet;
 use Symfony\Bundle\FrameworkBundle\Templating\PhpEngine as BasePhpEngine;
+use Symfony\Component\Templating\Helper\HelperInterface;
 use Symfony\Component\Templating\Storage\Storage;
 
 /**
@@ -150,7 +150,7 @@ class PhpEngine extends BasePhpEngine
     {
         // try to call native view helper
         if ($this->has($method)) {
-            return $this->renderViewHelper($method, $arguments);
+            return $this->helper($method, $arguments);
         }
 
         // try to run helper from helper broker (document tag, zend view, ...)
@@ -163,9 +163,18 @@ class PhpEngine extends BasePhpEngine
         throw new \InvalidArgumentException('Call to undefined method ' . $method);
     }
 
-    protected function renderViewHelper($method, $arguments)
+    /**
+     * Run or return a native view helper
+     *
+     * @param string $name
+     * @param array $arguments
+     * @return mixed|HelperInterface
+     */
+    public function helper($name, array $arguments = [])
     {
-        $helper = $this->get($method);
+        $helper = $this->get($name);
+
+        // helper implements __invoke -> run it directly
         if (is_callable($helper)) {
             return call_user_func_array($helper, $arguments);
         }
