@@ -5,9 +5,11 @@ namespace Pimcore\Bundle\PimcoreBundle\Templating;
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModel;
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModelInterface;
 use Pimcore\Bundle\PimcoreBundle\Templating\Renderer\TagRenderer;
+use Pimcore\Bundle\PimcoreBundle\View\ZendViewHelperBridge;
 use Pimcore\Model\Document\PageSnippet;
 use Symfony\Bundle\FrameworkBundle\Templating\PhpEngine as BasePhpEngine;
 use Symfony\Component\Templating\Storage\Storage;
+use Zend\View\HelperPluginManager;
 
 /**
  * Symfony PHP engine with pimcore additions:
@@ -23,6 +25,16 @@ class PhpEngine extends BasePhpEngine
     protected $tagRenderer;
 
     /**
+     * @var HelperPluginManager
+     */
+    protected $zendHelperManager;
+
+    /**
+     * @var ZendViewHelperBridge
+     */
+    protected $zendViewHelperBridge;
+
+    /**
      * @var ViewModelInterface[]
      */
     protected $viewModels = [];
@@ -33,6 +45,22 @@ class PhpEngine extends BasePhpEngine
     public function setTagRenderer(TagRenderer $tagRenderer)
     {
         $this->tagRenderer = $tagRenderer;
+    }
+
+    /**
+     * @param HelperPluginManager $zendHelperManager
+     */
+    public function setZendHelperManager(HelperPluginManager $zendHelperManager)
+    {
+        $this->zendHelperManager = $zendHelperManager;
+    }
+
+    /**
+     * @param ZendViewHelperBridge $zendViewHelperBridge
+     */
+    public function setZendViewHelperBridge(ZendViewHelperBridge $zendViewHelperBridge)
+    {
+        $this->zendViewHelperBridge = $zendViewHelperBridge;
     }
 
     /**
@@ -163,12 +191,47 @@ class PhpEngine extends BasePhpEngine
             }
         }
 
-        // try to call view helper
+        // try to call native view helper
+        if ($this->has($method)) {
+            return $this->renderViewHelper($method, $arguments);
+        }
+
+        // try to call zend view helper
+        if ($this->zendHelperManager->has($method)) {
+            return $this->renderZendViewHelper($method, $arguments);
+        }
+
+        // TODO zf1 view helpers are used until we ported them to Zend\View 3
+        if ('zf1_' === substr($method, 0, 4)) {
+            return $this->renderLegacyZendViewHelper(substr($method, 4), $arguments);
+        }
+
+        throw new \InvalidArgumentException('Call to undefined method ' . $method);
+    }
+
+    protected function renderViewHelper($method, $arguments)
+    {
         $helper = $this->get($method);
         if (is_callable($helper)) {
             return call_user_func_array($helper, $arguments);
         }
 
         return $helper;
+    }
+
+    protected function renderZendViewHelper($method, $arguments)
+    {
+        $zendHelper = $this->zendHelperManager->get($method);
+
+        if (is_callable($zendHelper)) {
+            return call_user_func_array($zendHelper, $arguments);
+        }
+
+        return $zendHelper;
+    }
+
+    protected function renderLegacyZendViewHelper($method, $arguments)
+    {
+        return $this->zendViewHelperBridge->execute($method, $arguments);
     }
 }

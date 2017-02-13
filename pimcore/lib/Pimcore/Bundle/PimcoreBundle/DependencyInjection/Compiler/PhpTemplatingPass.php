@@ -29,6 +29,12 @@ class PhpTemplatingPass implements CompilerPassInterface
 
             // add tag renderer dependency
             $engine->addMethodCall('setTagRenderer', [$container->findDefinition('pimcore.templating.tag_renderer')]);
+
+            // add zend helper manager dependency
+            $engine->addMethodCall('setZendHelperManager', [$container->findDefinition('pimcore.zend.templating.helper_plugin_manager')]);
+
+            // and ZF1 helper bridge
+            $engine->addMethodCall('setZendViewHelperBridge', [$container->findDefinition('pimcore.view.zend_view_helper_bridge')]);
         }
     }
 }
