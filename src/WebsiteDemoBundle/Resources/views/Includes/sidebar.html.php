@@ -1,4 +1,8 @@
-<?php if($this->editmode) {
+<?php
+
+use Symfony\Component\HttpKernel\Controller\ControllerReference;
+
+if($this->editmode) {
         // add some wrapping HTML to make it looking nicer in the editmode
     ?>
     <!DOCTYPE html>
@@ -40,7 +44,11 @@
 <?php } else {
         $count = $this->select("blogArticles")->getData();
         if($count) {
-            echo $this->action("sidebarBox", "blog", 'websitedemo', ["items" => (int) $count]);
+            echo $this['actions']->render(
+                new ControllerReference('WebsiteDemoBundle:Blog:sidebarBox', [
+                    'items' => (int) $count
+                ])
+            );
         }
     }
 ?>
