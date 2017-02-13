@@ -49,10 +49,6 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
             this.atAGlance = true;
         }
 
-        if(fieldConfig.atAGlance){
-            this.atAGlance = true;
-        }
-
         if (data) {
             if (data.data) {
                 this.data = data.data;
