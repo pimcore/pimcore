@@ -246,8 +246,8 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
 
         // default dimensions
         hotspotEl.applyStyles({
-            width: "20px",
-            height: "20px"
+            width: "50px",
+            height: "50px"
         });
 
         if(typeof config == "object" && config["top"]) {
