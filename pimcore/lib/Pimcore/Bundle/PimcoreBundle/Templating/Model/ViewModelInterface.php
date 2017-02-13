@@ -10,9 +10,4 @@ interface ViewModelInterface extends \Countable, \IteratorAggregate, \ArrayAcces
      * @return ParameterBag
      */
     public function getParameters();
-
-    /**
-     * @return ParameterBag
-     */
-    public function getAttributes();
 }

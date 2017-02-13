@@ -12,29 +12,21 @@ class ViewModel implements ViewModelInterface
     protected $parameters;
 
     /**
-     * @var ParameterBag
-     */
-    protected $attributes;
-
-    /**
      * @param array $parameters
-     * @param array $attributes
      */
-    public function __construct(array $parameters = [], array $attributes = [])
+    public function __construct(array $parameters = [])
     {
-        $this->initialize($parameters, $attributes);
+        $this->initialize($parameters);
     }
 
     /**
      * @param array $parameters
-     * @param array $attributes
      *
      * @return $this
      */
-    public function initialize(array $parameters = [], array $attributes = [])
+    public function initialize(array $parameters = [])
     {
         $this->parameters = new ParameterBag($parameters);
-        $this->attributes = new ParameterBag($attributes);
 
         return $this;
     }
@@ -45,14 +37,6 @@ class ViewModel implements ViewModelInterface
     public function getParameters()
     {
         return $this->parameters;
-    }
-
-    /**
-     * @return ParameterBag
-     */
-    public function getAttributes()
-    {
-        return $this->attributes;
     }
 
     /**
