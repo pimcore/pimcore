@@ -3,6 +3,7 @@
 namespace WebsiteDemoBundle\Controller;
 
 use Pimcore\Bundle\PimcoreBundle\Configuration\PhpTemplate;
+use Pimcore\Bundle\PimcoreZendBundle\Controller\ZendController;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Object;
 use Pimcore\Tool;
@@ -12,7 +13,7 @@ use Zend\Paginator\Paginator;
 /**
  * @PhpTemplate()
  */
-class AdvancedController extends AbstractController
+class AdvancedController extends ZendController
 {
     public function contactFormAction(Request $request)
     {

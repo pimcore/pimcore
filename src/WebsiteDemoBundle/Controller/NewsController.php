@@ -3,6 +3,7 @@
 namespace WebsiteDemoBundle\Controller;
 
 use Pimcore\Bundle\PimcoreBundle\Configuration\PhpTemplate;
+use Pimcore\Bundle\PimcoreZendBundle\Controller\ZendController;
 use Pimcore\Model\Object\News;
 use Symfony\Component\HttpFoundation\Request;
 use Zend\Paginator\Paginator;
@@ -10,7 +11,7 @@ use Zend\Paginator\Paginator;
 /**
  * @PhpTemplate()
  */
-class NewsController extends AbstractController
+class NewsController extends ZendController
 {
     public function indexAction(Request $request)
     {

@@ -3,13 +3,14 @@
 namespace WebsiteDemoBundle\Controller;
 
 use Pimcore\Bundle\PimcoreBundle\Configuration\PhpTemplate;
+use Pimcore\Bundle\PimcoreZendBundle\Controller\ZendController;
 use Pimcore\Model\Object;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @PhpTemplate()
  */
-class BlogController extends AbstractController
+class BlogController extends ZendController
 {
     public function indexAction(Request $request)
     {
