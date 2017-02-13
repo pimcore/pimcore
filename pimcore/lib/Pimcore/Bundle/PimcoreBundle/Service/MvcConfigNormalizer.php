@@ -134,10 +134,10 @@ class MvcConfigNormalizer
             return $template;
         }
 
-        // replace .php with .phtml
-        $suffixPattern = '/\.php$/i';
+        // replace .php with .html.php
+        $suffixPattern = '/(?<!\.html)\.php$/i';
         if (preg_match($suffixPattern, $template)) {
-            $template = preg_replace($suffixPattern, '.phtml', $template);
+            $template = preg_replace($suffixPattern, '.html.php', $template);
         }
 
         // split template into path and filename

@@ -16,6 +16,18 @@ services:
         tags:
             - { name: kernel.event_subscriber }
 
+    pimcore.event_listener.controller_view_model:
+        class: Pimcore\Bundle\PimcoreBundle\EventListener\ControllerViewModel
+        arguments: ['@pimcore.service.request.template_vars_resolver']
+        tags:
+            - { name: kernel.event_subscriber }
+
+    pimcore.event_listener.controller_template:
+        class: Pimcore\Bundle\PimcoreBundle\EventListener\ControllerTemplate
+        arguments: ['@pimcore.service.request.template_resolver']
+        tags:
+            - { name: kernel.event_subscriber }
+
     pimcore.event_listener.editmode:
         class: Pimcore\Bundle\PimcoreBundle\EventListener\Editmode
         arguments: ['@pimcore.service.request.editmode_resolver', '@pimcore.service.request.document_resolver']

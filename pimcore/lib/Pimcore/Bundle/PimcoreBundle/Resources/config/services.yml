@@ -42,6 +42,10 @@ services:
         class: Pimcore\Bundle\PimcoreBundle\Service\Request\DocumentResolver
         arguments: ['@request_stack']
 
+    pimcore.service.request.template_resolver:
+        class: Pimcore\Bundle\PimcoreBundle\Service\Request\TemplateResolver
+        arguments: ['@request_stack', '@pimcore.mvc_config_normalizer']
+
     pimcore.service.request.template_vars_resolver:
         class: Pimcore\Bundle\PimcoreBundle\Service\Request\TemplateVarsResolver
         arguments: ['@pimcore.service.request.document_resolver', '@pimcore.service.request.editmode_resolver']
