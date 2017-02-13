@@ -16,6 +16,14 @@ services:
         tags:
             - { name: kernel.event_subscriber }
 
+    pimcore.event_listener.templating_globals:
+        class: Pimcore\Bundle\PimcoreBundle\EventListener\TemplatingGlobals
+        arguments: ['@pimcore.service.request.template_vars_resolver']
+        calls:
+            - [setContainer, ['@service_container']]
+        tags:
+            - { name: kernel.event_subscriber }
+
     pimcore.event_listener.controller_view_model:
         class: Pimcore\Bundle\PimcoreBundle\EventListener\ControllerViewModel
         arguments: ['@pimcore.service.request.template_vars_resolver']
