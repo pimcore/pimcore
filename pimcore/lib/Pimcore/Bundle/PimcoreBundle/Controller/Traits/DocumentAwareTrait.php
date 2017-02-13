@@ -7,7 +7,7 @@ use Pimcore\Model\Document;
 trait DocumentAwareTrait
 {
     /**
-     * @var Document
+     * @var Document|Document\PageSnippet
      */
     protected $document;
 
@@ -17,5 +17,13 @@ trait DocumentAwareTrait
     public function setDocument(Document $document)
     {
         $this->document = $document;
+    }
+
+    /**
+     * @return Document
+     */
+    public function getDocument()
+    {
+        return $this->document;
     }
 }

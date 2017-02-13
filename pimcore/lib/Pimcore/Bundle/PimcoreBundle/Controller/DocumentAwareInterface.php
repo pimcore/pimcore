@@ -10,4 +10,9 @@ interface DocumentAwareInterface
      * @param Document $document
      */
     public function setDocument(Document $document);
+
+    /**
+     * @return Document
+     */
+    public function getDocument();
 }
