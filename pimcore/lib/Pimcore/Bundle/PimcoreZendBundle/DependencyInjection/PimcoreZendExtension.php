@@ -24,7 +24,6 @@ class PimcoreZendExtension extends Extension
             new FileLocator(__DIR__ . '/../Resources/config')
         );
 
-        $loader->load('services.yml');
         $loader->load('event_listeners.yml');
         $loader->load('view_helpers.yml');
     }
