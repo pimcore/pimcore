@@ -3,6 +3,7 @@
 namespace Pimcore\Bundle\PimcoreBundle\Service\Request;
 
 use Pimcore\Model\Document;
+use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\HttpFoundation\Request;
 
 class DocumentResolver extends AbstractRequestResolver
@@ -16,7 +17,7 @@ class DocumentResolver extends AbstractRequestResolver
             $request = $this->getCurrentRequest();
         }
 
-        return $request->get('contentDocument', null);
+        return $request->get(DynamicRouter::CONTENT_KEY, null);
     }
 
     /**
@@ -25,6 +26,6 @@ class DocumentResolver extends AbstractRequestResolver
      */
     public function setDocument(Request $request, Document $document)
     {
-        $request->attributes->set('contentDocument', $document);
+        $request->attributes->set(DynamicRouter::CONTENT_KEY, $document);
     }
 }
