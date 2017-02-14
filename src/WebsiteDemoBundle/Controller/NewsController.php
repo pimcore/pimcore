@@ -2,14 +2,14 @@
 
 namespace WebsiteDemoBundle\Controller;
 
-use Pimcore\Bundle\PimcoreBundle\Configuration\PhpTemplate;
+use Pimcore\Bundle\PimcoreBundle\Configuration\TemplatePhp;
 use Pimcore\Bundle\PimcoreZendBundle\Controller\ZendController;
 use Pimcore\Model\Object\News;
 use Symfony\Component\HttpFoundation\Request;
 use Zend\Paginator\Paginator;
 
 /**
- * @PhpTemplate()
+ * @TemplatePhp()
  */
 class NewsController extends ZendController
 {

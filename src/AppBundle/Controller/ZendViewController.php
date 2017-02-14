@@ -2,7 +2,7 @@
 
 namespace AppBundle\Controller;
 
-use Pimcore\Bundle\PimcoreBundle\Configuration\PhpTemplate;
+use Pimcore\Bundle\PimcoreBundle\Configuration\TemplatePhp;
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModel;
 use Pimcore\Bundle\PimcoreZendBundle\Controller\ZendController;
 use Pimcore\Model\Document;
@@ -29,14 +29,14 @@ class ZendViewController extends ZendController
     }
 
     /**
-     * @PhpTemplate()
+     * @TemplatePhp()
      */
     public function contentAction()
     {
     }
 
     /**
-     * @PhpTemplate()
+     * @TemplatePhp()
      * @Route("/zf-default")
      */
     public function defaultAction()
@@ -46,7 +46,7 @@ class ZendViewController extends ZendController
     }
 
     /**
-     * @PhpTemplate("AppBundle:ZendView:default.html.php")
+     * @TemplatePhp("AppBundle:ZendView:default.html.php")
      * @Route("/zf-default-layout")
      */
     public function defaultLayoutAction()
@@ -56,7 +56,7 @@ class ZendViewController extends ZendController
     }
 
     /**
-     * @PhpTemplate("AppBundle:ZendView:extra-view.html.php")
+     * @TemplatePhp("AppBundle:ZendView:extra-view.html.php")
      * @Route("/zf-extra-view")
      */
     public function extraViewAction()

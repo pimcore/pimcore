@@ -2,14 +2,14 @@
 
 namespace WebsiteDemoBundle\Controller;
 
-use Pimcore\Bundle\PimcoreBundle\Configuration\PhpTemplate;
+use Pimcore\Bundle\PimcoreBundle\Configuration\TemplatePhp;
 use Pimcore\Bundle\PimcoreZendBundle\Controller\ZendController;
 use Pimcore\Model;
 use Pimcore\Tool\Newsletter;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * @PhpTemplate()
+ * @TemplatePhp()
  */
 class NewsletterController extends ZendController
 {

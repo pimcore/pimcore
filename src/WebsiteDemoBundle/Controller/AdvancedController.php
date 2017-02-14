@@ -2,7 +2,7 @@
 
 namespace WebsiteDemoBundle\Controller;
 
-use Pimcore\Bundle\PimcoreBundle\Configuration\PhpTemplate;
+use Pimcore\Bundle\PimcoreBundle\Configuration\TemplatePhp;
 use Pimcore\Bundle\PimcoreZendBundle\Controller\ZendController;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Object;
@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Zend\Paginator\Paginator;
 
 /**
- * @PhpTemplate()
+ * @TemplatePhp()
  */
 class AdvancedController extends ZendController
 {

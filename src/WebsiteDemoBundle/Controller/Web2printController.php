@@ -2,12 +2,12 @@
 
 namespace WebsiteDemoBundle\Controller;
 
-use Pimcore\Bundle\PimcoreBundle\Configuration\PhpTemplate;
+use Pimcore\Bundle\PimcoreBundle\Configuration\TemplatePhp;
 use Pimcore\Bundle\PimcoreZendBundle\Controller\ZendController;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * @PhpTemplate()
+ * @TemplatePhp()
  */
 class Web2printController extends ZendController
 {

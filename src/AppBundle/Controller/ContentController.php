@@ -11,13 +11,13 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use Pimcore\Bundle\PimcoreBundle\Configuration\PhpTemplate;
+use Pimcore\Bundle\PimcoreBundle\Configuration\TemplatePhp;
 
 class ContentController extends Controller
 {
     /**
      * @Route("/content/php")
-     * @PhpTemplate("AppBundle:Test:php.html.php")
+     * @TemplatePhp("AppBundle:Test:php.html.php")
      *
      * @param Request $request
      * @return array

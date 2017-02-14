@@ -2,14 +2,14 @@
 
 namespace WebsiteDemoBundle\Controller;
 
-use Pimcore\Bundle\PimcoreBundle\Configuration\PhpTemplate;
+use Pimcore\Bundle\PimcoreBundle\Configuration\TemplatePhp;
 use Pimcore\Bundle\PimcoreZendBundle\Controller\ZendController;
 use Pimcore\Model\Asset;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * @PhpTemplate()
+ * @TemplatePhp()
  */
 class ContentController extends ZendController
 {
@@ -59,7 +59,7 @@ class ContentController extends ZendController
     }
 
     /**
-     * TODO find out why the @PhpTemplate annotation is not properly working here! If not set, it will render with
+     * TODO find out why the @TemplatePhp annotation is not properly working here! If not set, it will render with
      * the content/default template, if set it will sometimes complain because it found multiple annotations. Is there
      * an issue with sub-requests?
      *
