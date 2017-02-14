@@ -1,7 +1,7 @@
 <?php $this->extend('WebsiteDemoBundle::layout.html.php') ?>
 
 <?php
-$request = $this->app("request");
+$request = $this->app->getRequest();
 ?>
 
 <?= $this->template('WebsiteDemoBundle:Includes:content-default.html.php') ?>

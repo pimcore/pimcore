@@ -1,6 +1,6 @@
 <?php
 /** @var \WebsiteDemoBundle\Templating\LanguageSwitcher $languageSwitcher */
-$languageSwitcher = $this->app('container')->get('website_demo.language_switcher');
+$languageSwitcher = $this->app->getContainer()->get('website_demo.language_switcher');
 ?>
 
 <div class="languages">

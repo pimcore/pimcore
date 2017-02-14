@@ -17,13 +17,6 @@ services:
         tags:
             - { name: pimcore.zend.view_helper, alias: pimcoreUrl }
 
-    pimcore.zend.templating.view_helper.global_variables:
-        class: Pimcore\Bundle\PimcoreZendBundle\Templating\Zend\Helper\GlobalVariables
-        arguments:
-            - '@templating.globals'
-        tags:
-            - { name: pimcore.zend.view_helper, alias: app }
-
     pimcore.zend.templating.view_helper.inc:
         class: Pimcore\Bundle\PimcoreZendBundle\Templating\Zend\Helper\Inc
         arguments: ['@pimcore.templating.include_renderer']
