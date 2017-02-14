@@ -2,11 +2,13 @@
 
 namespace AppBundle\Controller;
 
+use Pimcore\Bundle\PimcoreBundle\Configuration\PhpTemplate;
+use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModel;
 use Pimcore\Bundle\PimcoreZendBundle\Controller\ZendController;
+use Pimcore\Model\Document;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Zend\View\Model\ViewModel;
 
 class ZendViewController extends ZendController
 {
@@ -26,12 +28,15 @@ class ZendViewController extends ZendController
         $this->container->get('logger')->debug(__METHOD__);
     }
 
+    /**
+     * @PhpTemplate()
+     */
     public function contentAction()
     {
-        $this->enableLayout('AppBundle:ZendView:layout.phtml');
     }
 
     /**
+     * @PhpTemplate()
      * @Route("/zf-default")
      */
     public function defaultAction()
@@ -41,24 +46,24 @@ class ZendViewController extends ZendController
     }
 
     /**
+     * @PhpTemplate("AppBundle:ZendView:default.html.php")
      * @Route("/zf-default-layout")
      */
     public function defaultLayoutAction()
     {
-        $this->enableLayout('AppBundle:ZendView:layout.phtml');
-        $this->view->setTemplate('AppBundle:ZendView:default.phtml');
+        $this->view->_layout = 'AppBundle:ZendView:layout.html.php';
         $this->view->john = 'doe';
     }
 
     /**
+     * @PhpTemplate("AppBundle:ZendView:extra-view.html.php")
      * @Route("/zf-extra-view")
      */
     public function extraViewAction()
     {
-        // render a completely custom view model (independent of instance view);
+        // render a completely custom view model (independent of request view)
         $view = new ViewModel();
-        $view->setVariables($this->view->getVariables());
-        $view->setTemplate('AppBundle:ZendView:extra-view.phtml');
+        $view->getParameters()->add($this->view->getAllParameters());
 
         return $view;
     }
@@ -66,12 +71,13 @@ class ZendViewController extends ZendController
     /**
      * @Route("/zf-direct-render")
      */
-    public function directRenderAction()
+    public function directRenderAction(Document $document)
     {
         // render template directly
-        return $this->render('AppBundle:ZendView:direct-render.phtml', [
-            '_layout' => 'AppBundle:ZendView:layout.phtml',
-            'foo' => 'bar'
+        return $this->render('AppBundle:ZendView:direct-render.html.php', [
+            '_layout'  => 'AppBundle:ZendView:layout.html.php',
+            'foo'      => 'bar',
+            'document' => $document
         ]);
     }
 }

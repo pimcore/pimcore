@@ -21,7 +21,7 @@
 
 <div class="container">
     <h1>Layout</h1>
-    <?= $this->content; ?>
+    <?php $this['slots']->output('_content') ?>
 </div>
 
 </body>

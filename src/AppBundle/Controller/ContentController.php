@@ -13,10 +13,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Pimcore\Bundle\PimcoreBundle\Configuration\PhpTemplate;
 
-class ContentController extends Controller implements DocumentAwareInterface
+class ContentController extends Controller
 {
-    use DocumentAwareTrait;
-
     /**
      * @Route("/content/php")
      * @PhpTemplate("AppBundle:Test:php.html.php")
