@@ -1,7 +1,7 @@
 <?php $this->extend('WebsiteDemoBundle::layout.html.php') ?>
 
 <?php
-    $queryString = $this->app->getRequest()->get("q");
+    $queryString = $view['request']->getParameter("q");
 ?>
 
 <?= $this->template('WebsiteDemoBundle:Includes:content-headline.html.php'); ?>

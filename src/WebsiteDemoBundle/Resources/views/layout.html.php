@@ -6,7 +6,7 @@ use Pimcore\Model\Document\Page;
 /** @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $this */
 ?>
 <!DOCTYPE html>
-<html lang="<?= $this->app->getRequest()->getLocale() ?>">
+<html lang="<?= $view['request']->getLocale() ?>">
 <head>
     <meta charset="utf-8">
     <link rel="icon" type="image/png" href="/pimcore/static/img/favicon/favicon-32x32.png"/>
@@ -155,7 +155,7 @@ use Pimcore\Model\Document\Page;
 
 <?php
 // include a document-snippet - in this case the footer document
-echo $this->inc('/' . $this->app->getRequest()->getLocale() . '/shared/includes/footer');
+echo $this->inc('/' . $view['request']->getLocale() . '/shared/includes/footer');
 
 // global scripts, we use the view helper here to have the cache buster functionality
 $this->headScript()->appendFile('/bundles/websitedemo/js/jquery-1.11.0.min.js');
