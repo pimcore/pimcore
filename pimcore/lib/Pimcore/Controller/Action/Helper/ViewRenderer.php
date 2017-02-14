@@ -51,14 +51,12 @@ class ViewRenderer extends \Zend_Controller_Action_Helper_ViewRenderer
     {
         if (null === $this->view) {
             $view = new View();
-            $view->setRequest($this->getRequest());
-            $view->addHelperPath(PIMCORE_PATH . "/lib/Pimcore/View/Helper", "\\Pimcore\\View\\Helper\\");
+            $this->configureView($view);
 
             $this->setView($view);
         }
 
         parent::initView($path, $prefix, $options);
-
 
         $this->setViewSuffix(View::getViewScriptSuffix());
 
@@ -83,6 +81,22 @@ class ViewRenderer extends \Zend_Controller_Action_Helper_ViewRenderer
                 $this->view->addScriptPath($path);
             }
         }
+    }
+
+    /**
+     * Configure view request and helpers. Also called from Symfony ZendViewProvider
+     *
+     * @param View $view
+     * @param \Zend_Controller_Request_Http|null $request
+     */
+    public function configureView(View $view, \Zend_Controller_Request_Http $request = null)
+    {
+        if (null === $request) {
+            $request = $this->getRequest();
+        }
+
+        $view->setRequest($request);
+        $view->addHelperPath(PIMCORE_PATH . "/lib/Pimcore/View/Helper", "\\Pimcore\\View\\Helper\\");
     }
 
     /**

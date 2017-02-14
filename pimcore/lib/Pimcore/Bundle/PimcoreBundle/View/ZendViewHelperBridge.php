@@ -3,6 +3,7 @@
 namespace Pimcore\Bundle\PimcoreBundle\View;
 
 use Pimcore\Bundle\PimcoreBundle\Service\Request\TemplateVarsResolver;
+use Pimcore\View;
 
 class ZendViewHelperBridge
 {
@@ -17,6 +18,11 @@ class ZendViewHelperBridge
     protected $varsResolver;
 
     /**
+     * @var View
+     */
+    protected $defaultView;
+
+    /**
      * @param ZendViewProvider $viewProvider
      */
     public function __construct(ZendViewProvider $viewProvider, TemplateVarsResolver $varsResolver)
@@ -26,22 +32,53 @@ class ZendViewHelperBridge
     }
 
     /**
-     * Get Zend View helper instance
-     *
-     * @param string $helperName
-     * @param \Zend_View $view
-     * @return \Zend_View_Helper_Interface
+     * @return View
      */
-    public function getZendViewHelper($helperName, \Zend_View $view = null)
+    protected function getDefaultView()
     {
-        if (null === $view) {
-            $view = $this->viewProvider->getView();
+        if (null === $this->defaultView) {
+            $this->defaultView = $this->createView();
         }
 
-        /** @var \Zend_View_Helper_Interface $helper */
-        $helper = $view->getHelper($helperName);
+        return $this->defaultView;
+    }
 
-        return $helper;
+    /**
+     * @return View
+     */
+    protected function createView()
+    {
+        return $this->viewProvider->createView($this->varsResolver->getTemplateVars());
+    }
+
+    /**
+     * Test if a view helper exists
+     *
+     * @param string $name
+     * @return bool
+     */
+    public function hasHelper($name)
+    {
+        try {
+            $helper = $this->getDefaultView()->getHelper($name);
+
+            return $helper instanceof \Zend_View_Helper_Interface;
+        } catch (\Zend_Loader_PluginLoader_Exception $e) {
+            // noop
+        }
+
+        return false;
+    }
+
+    /**
+     * Get a view helper
+     *
+     * @param string $name
+     * @return \Zend_View_Helper_Interface|object
+     */
+    public function getHelper($name)
+    {
+        return $this->getDefaultView()->getHelper($name);
     }
 
     /**

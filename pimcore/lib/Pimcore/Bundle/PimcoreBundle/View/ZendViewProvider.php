@@ -4,76 +4,51 @@ namespace Pimcore\Bundle\PimcoreBundle\View;
 
 use Pimcore\Controller\Action\Helper\ViewRenderer;
 use Pimcore\View;
-use Pimcore\Bundle\PimcoreBundle\HttpKernel\LegacyKernel;
 
 class ZendViewProvider
 {
-    /**
-     * @var LegacyKernel
-     */
-    protected $legacyKernel;
-
     /**
      * @var ViewRenderer
      */
     protected $viewRenderer;
 
     /**
-     * @var \Zend_View
-     */
-    protected $view;
-
-    /**
-     * @param LegacyKernel $legacyKernel
-     */
-    public function __construct(LegacyKernel $legacyKernel)
-    {
-        $this->legacyKernel = $legacyKernel;
-    }
-
-    /**
-     * Get the view renderer instance from
+     * Create a basic view renderer
      *
      * @return ViewRenderer
      */
-    public function getViewRenderer()
+    protected function getViewRenderer()
     {
         if (null === $this->viewRenderer) {
-            // make sure the MVC is initialized
-            $this->legacyKernel->boot();
+            // mini-MVC boot
+            $request = new \Zend_Controller_Request_Http();
+
+            $frontController = \Zend_Controller_Front::getInstance();
+            $frontController->setRequest($request);
+
+            // set custom view renderer
+            $viewRenderer = new ViewRenderer();
 
             /** @var ViewRenderer $viewRenderer */
-            $this->viewRenderer = \Zend_Controller_Action_HelperBroker::getExistingHelper('ViewRenderer');
+            $this->viewRenderer = $viewRenderer;
         }
 
         return $this->viewRenderer;
     }
 
     /**
+     * @param array $params
      * @return View
      */
-    public function getView()
+    public function createView(array $params = [])
     {
-        if (null === $this->view) {
-            $this->view = $this->createView();
+        $view = new View();
+        foreach ($params as $key => $value) {
+            $view->$key = $value;
         }
 
-        return $this->view;
-    }
-
-    /**
-     * @return View
-     */
-    public function createView()
-    {
         $viewRenderer = $this->getViewRenderer();
-
-        $view = new View();
-        $view->setRequest($viewRenderer->getRequest());
-        $view->addHelperPath(PIMCORE_PATH . '/lib/Pimcore/View/Helper', '\\Pimcore\\View\\Helper\\');
-
-        $viewRenderer->setView($view);
-        $viewRenderer->initView();
+        $viewRenderer->configureView($view);
 
         return $view;
     }
