@@ -2775,18 +2775,18 @@ pimcore.helpers.initMenuTooltips = function(){
     var items = $("[data-menu-tooltip]:not(.initialized)");
 
     items.mouseenter(function (e) {
-        $("#pimcore_menu_tooltip").show();
-        $("#pimcore_menu_tooltip").html($(this).data("menu-tooltip"));
+        $("#pimcore_tooltip").show();
+        $("#pimcore_tooltip").html($(this).data("menu-tooltip"));
 
         var offset = $(e.target).offset();
         var top = offset.top;
         top = top + ($(e.target).height() / 2);
 
-        $("#pimcore_menu_tooltip").css({top: top});
+        $("#pimcore_tooltip").css({top: top, left: 60});
     });
 
     items.mouseleave(function () {
-        $("#pimcore_menu_tooltip").hide();
+        $("#pimcore_tooltip").hide();
     });
 
     items.addClass("initialized", "true");
