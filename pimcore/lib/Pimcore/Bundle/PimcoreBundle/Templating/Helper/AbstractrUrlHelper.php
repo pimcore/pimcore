@@ -1,16 +1,13 @@
 <?php
 
-namespace Pimcore\Bundle\PimcoreZendBundle\Templating\Zend\Helper;
+namespace Pimcore\Bundle\PimcoreBundle\Templating\Helper;
 
 use Pimcore\Tool\RequestHelper;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Zend\View\Helper\AbstractHelper;
 
 /**
- * Helper generating URLs through symfony routing. The methods below were taken from the Twig RoutingExtension.
- *
- * TODO find out how to register Zend View helpers with multiple methods on the service container. This would eliminate
- * the need for 2 invokable helper classes (Path, Url)
+ * Helper generating URLs through symfony routing
  */
 abstract class AbstractrUrlHelper extends AbstractHelper
 {

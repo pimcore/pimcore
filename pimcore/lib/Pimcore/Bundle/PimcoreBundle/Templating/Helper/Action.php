@@ -1,24 +1,12 @@
 <?php
-/**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in
- * LICENSE.md which is distributed with this source code.
- *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
- */
 
-namespace Pimcore\Bundle\PimcoreZendBundle\Templating\Zend\Helper;
+namespace Pimcore\Bundle\PimcoreBundle\Templating\Helper;
 
 use Pimcore\Bundle\PimcoreBundle\Templating\Renderer\ActionRenderer;
 use Pimcore\Model\Document\PageSnippet;
-use Zend\View\Helper\AbstractHelper;
+use Symfony\Component\Templating\Helper\Helper;
 
-class Action extends AbstractHelper
+class Action extends Helper
 {
     /**
      * @var ActionRenderer
@@ -31,6 +19,14 @@ class Action extends AbstractHelper
     public function __construct(ActionRenderer $actionRenderer)
     {
         $this->actionRenderer = $actionRenderer;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getName()
+    {
+        return 'action';
     }
 
     /**

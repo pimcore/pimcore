@@ -23,7 +23,6 @@ class HelperShortcuts implements HelperBrokerInterface
      * @var array
      */
     protected $shortcuts = [
-        'getParam',
         'getLocale',
         'getRequest',
         'path',
@@ -52,18 +51,6 @@ class HelperShortcuts implements HelperBrokerInterface
     public function helper(PhpEngine $engine, $method, array $arguments)
     {
         return call_user_func_array([$this, $method], [$engine, $arguments]);
-    }
-
-    /**
-     * @param PhpEngine $engine
-     * @param array $arguments
-     * @return mixed
-     */
-    protected function getParam(PhpEngine $engine, array $arguments)
-    {
-        $request = $this->requestHelper->getCurrentRequest();
-
-        return call_user_func_array([$request, 'get'], $arguments);
     }
 
     /**

@@ -25,6 +25,5 @@ class PimcoreZendExtension extends Extension
         );
 
         $loader->load('event_listeners.yml');
-        $loader->load('view_helpers.yml');
     }
 }

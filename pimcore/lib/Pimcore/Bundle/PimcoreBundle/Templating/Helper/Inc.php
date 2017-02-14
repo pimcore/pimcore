@@ -7,7 +7,7 @@ use Pimcore\Bundle\PimcoreBundle\Templating\Renderer\IncludeRenderer;
 use Pimcore\Model\Document\PageSnippet;
 use Symfony\Component\Templating\Helper\Helper;
 
-class IncludeHelper extends Helper
+class Inc extends Helper
 {
     /**
      * @var IncludeRenderer
