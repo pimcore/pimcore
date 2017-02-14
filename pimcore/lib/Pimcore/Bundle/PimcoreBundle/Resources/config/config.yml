@@ -9,7 +9,7 @@ framework:
         resource: "@PimcoreBundle/Resources/config/routing.yml"
         strict_requirements: ~
     templating:
-        engines: ['php', 'twig', 'zend']
+        engines: ['php', 'twig']
     default_locale:  "%locale%"
     php_errors:
         log: true

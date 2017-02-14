@@ -3,12 +3,3 @@ services:
         class: Pimcore\Bundle\PimcoreZendBundle\EventListener\EventedControllerListener
         tags:
             - { name: kernel.event_subscriber }
-
-    #pimcore.zend.event_listener.zend_controller:
-    #    class: Pimcore\Bundle\PimcoreZendBundle\EventListener\ZendControllerListener
-    #    arguments:
-    #        - '@templating'
-    #        - '@pimcore.service.request.template_vars_resolver'
-    #        - '@sensio_framework_extra.view.guesser'
-    #    tags:
-    #        - { name: kernel.event_subscriber }

@@ -6,35 +6,8 @@ services:
         class: Zend\View\HelperPluginManager
         arguments: ['@pimcore.zend.templating.helper_service_manager']
 
-    pimcore.zend.templating.php_renderer:
-        class: Pimcore\Bundle\PimcoreZendBundle\Templating\Zend\PhpRenderer
-        calls:
-            - [setResolver, ['@pimcore.zend.templating.view_resolver']]
-            - [setHelperPluginManager, ['@pimcore.zend.templating.helper_plugin_manager']]
-            - [setTagRenderer, ['@pimcore.templating.tag_renderer']]
-            - [setZendViewHelperBridge, ['@pimcore.view.zend_view_helper_bridge']]
-
-    pimcore.zend.templating.name_parser:
-        class: Pimcore\Bundle\PimcoreZendBundle\Templating\ZendTemplateNameParser
-        arguments: ['@kernel']
-
-    pimcore.zend.templating.view_resolver:
-        class: Pimcore\Bundle\PimcoreZendBundle\Templating\Zend\ZendViewResolver
-        arguments:
-            - '@pimcore.zend.templating.name_parser'
-            - '@templating.locator'
-
     pimcore.templating.helper_broker.zend_view:
         class: Pimcore\Bundle\PimcoreZendBundle\Templating\HelperBroker\ZendViewHelper
         arguments: ['@pimcore.zend.templating.helper_plugin_manager']
         tags:
             - { name: pimcore.templating.helper_broker, priority: -5 }
-
-    templating.engine.zend:
-        class: Pimcore\Bundle\PimcoreZendBundle\Templating\ZendEngine
-        arguments:
-            - '@pimcore.zend.templating.php_renderer'
-            - '@pimcore.zend.templating.name_parser'
-            - '@templating.loader.filesystem'
-        tags:
-            - { name: templating.engine }
