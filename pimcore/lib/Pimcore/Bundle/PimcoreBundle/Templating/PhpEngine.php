@@ -6,7 +6,7 @@ use Pimcore\Bundle\PimcoreBundle\Templating\HelperBroker\HelperBrokerInterface;
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModel;
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModelInterface;
 use Symfony\Bundle\FrameworkBundle\Templating\PhpEngine as BasePhpEngine;
-use Symfony\Component\Templating\Helper\HelperInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Templating\Storage\Storage;
 
 /**
@@ -15,6 +15,10 @@ use Symfony\Component\Templating\Storage\Storage;
  *  - property access - $this->variable and $this->helper()
  *  - helper brokers integrate other view helpers (ZF) on __call
  *  - tag integration
+ *
+ * @method mixed getParam($key, $default = null)
+ * @method string getLocale()
+ * @method Request getRequest()
  */
 class PhpEngine extends BasePhpEngine
 {

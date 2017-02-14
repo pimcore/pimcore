@@ -1,4 +1,10 @@
 services:
+    pimcore.templating.helper_broker.helper_shortcuts:
+        class: Pimcore\Bundle\PimcoreBundle\Templating\HelperBroker\HelperShortcuts
+        arguments: ['@pimcore.tool.request_helper']
+        tags:
+            - { name: pimcore.templating.helper_broker, priority: 25 }
+
     pimcore.templating.helper_broker.templating_helper:
         class: Pimcore\Bundle\PimcoreBundle\Templating\HelperBroker\TemplatingHelper
         tags:
