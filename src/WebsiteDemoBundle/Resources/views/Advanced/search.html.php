@@ -1,7 +1,7 @@
 <?php $this->extend('WebsiteDemoBundle::layout.html.php') ?>
 
 <?php
-    $queryString = $view['request']->getParameter("q");
+    $queryString = $this->getParam("q");
 ?>
 
 <?= $this->template('WebsiteDemoBundle:Includes:content-headline.html.php'); ?>
@@ -14,7 +14,7 @@
 
     <form class="form-inline" role="form">
         <div class="form-group">
-            <input type="text" name="q" class="form-control" placeholder="<?= $this->zf1_translate("Keyword"); ?>">
+            <input type="text" name="q" class="form-control" placeholder="<?= $this->zf1_translate("Keyword"); ?>" value="<?= $this->escape($queryString ?: '') ?>">
         </div>
         <button type="submit" name="submit" class="btn btn-default"><?= $this->zf1_translate("Search"); ?></button>
     </form>
