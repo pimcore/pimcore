@@ -5,8 +5,12 @@ namespace Pimcore\Bundle\PimcoreBundle\Templating\HelperBroker;
 
 use Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine;
 use Pimcore\Tool\RequestHelper;
+use Symfony\Bundle\FrameworkBundle\Templating\Helper\RouterHelper;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Shortcuts available as $this->method() on the engine
+ */
 class HelperShortcuts implements HelperBrokerInterface
 {
     /**
@@ -22,6 +26,8 @@ class HelperShortcuts implements HelperBrokerInterface
         'getParam',
         'getLocale',
         'getRequest',
+        'path',
+        'url'
     ];
 
     /**
@@ -45,19 +51,19 @@ class HelperShortcuts implements HelperBrokerInterface
      */
     public function helper(PhpEngine $engine, $method, array $arguments)
     {
-        return call_user_func_array([$this, $method], $arguments);
+        return call_user_func_array([$this, $method], [$engine, $arguments]);
     }
 
     /**
-     * @param $key
-     * @param null $default
+     * @param PhpEngine $engine
+     * @param array $arguments
      * @return mixed
      */
-    protected function getParam($key, $default = null)
+    protected function getParam(PhpEngine $engine, array $arguments)
     {
         $request = $this->requestHelper->getCurrentRequest();
 
-        return $request->get($key, $default);
+        return call_user_func_array([$request, 'get'], $arguments);
     }
 
     /**
@@ -74,5 +80,31 @@ class HelperShortcuts implements HelperBrokerInterface
     protected function getRequest()
     {
         return $this->requestHelper->getCurrentRequest();
+    }
+
+    /**
+     * @param PhpEngine $engine
+     * @param array $arguments
+     * @return string
+     */
+    protected function url(PhpEngine $engine, array $arguments)
+    {
+        /** @var RouterHelper $helper */
+        $helper = $engine->get('router');
+
+        return call_user_func_array([$helper, 'url'], $arguments);
+    }
+
+    /**
+     * @param PhpEngine $engine
+     * @param array $arguments
+     * @return string
+     */
+    protected function path(PhpEngine $engine, array $arguments)
+    {
+        /** @var RouterHelper $helper */
+        $helper = $engine->get('router');
+
+        return call_user_func_array([$helper, 'path'], $arguments);
     }
 }

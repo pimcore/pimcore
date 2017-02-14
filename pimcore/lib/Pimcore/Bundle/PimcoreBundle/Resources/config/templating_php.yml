@@ -21,6 +21,12 @@ services:
         tags:
             - { name: pimcore.templating.helper_broker, priority: 5 }
 
+    pimcore.templating.helper.include:
+        class: Pimcore\Bundle\PimcoreBundle\Templating\Helper\IncludeHelper
+        arguments: ['@pimcore.templating.include_renderer']
+        tags:
+            - { name: templating.helper, alias: inc }
+
     pimcore.templating.helper.pimcore_tag:
         class: Pimcore\Bundle\PimcoreBundle\Templating\Helper\DocumentTagHelper
         arguments: ['@pimcore.templating.tag_renderer', '@pimcore.service.request.document_resolver']
