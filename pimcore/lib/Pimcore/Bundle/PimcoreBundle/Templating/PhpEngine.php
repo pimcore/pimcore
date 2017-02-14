@@ -149,12 +149,7 @@ class PhpEngine extends BasePhpEngine
      */
     public function __call($method, $arguments)
     {
-        // try to call native view helper
-        if ($this->has($method)) {
-            return $this->helper($method, $arguments);
-        }
-
-        // try to run helper from helper broker (document tag, zend view, ...)
+        // try to run helper from helper broker (native helper, document tag, zend view, ...)
         foreach ($this->helperBrokers as $helperBroker) {
             if ($helperBroker->supports($this, $method)) {
                 return $helperBroker->helper($this, $method, $arguments);
@@ -162,24 +157,5 @@ class PhpEngine extends BasePhpEngine
         }
 
         throw new \InvalidArgumentException('Call to undefined method ' . $method);
-    }
-
-    /**
-     * Run or return a native view helper
-     *
-     * @param string $name
-     * @param array $arguments
-     * @return mixed|HelperInterface
-     */
-    public function helper($name, array $arguments = [])
-    {
-        $helper = $this->get($name);
-
-        // helper implements __invoke -> run it directly
-        if (is_callable($helper)) {
-            return call_user_func_array($helper, $arguments);
-        }
-
-        return $helper;
     }
 }

@@ -1,14 +1,19 @@
 services:
-    pimcore.templating.helper_broker.document_method:
-        class: Pimcore\Bundle\PimcoreBundle\Templating\HelperBroker\DocumentMethod
+    pimcore.templating.helper_broker.templating_helper:
+        class: Pimcore\Bundle\PimcoreBundle\Templating\HelperBroker\TemplatingHelper
         tags:
-            - { name: pimcore.templating.helper_broker, priority: 5 }
+            - { name: pimcore.templating.helper_broker, priority: 20 }
 
     pimcore.templating.helper_broker.document_tag:
         class: Pimcore\Bundle\PimcoreBundle\Templating\HelperBroker\DocumentTag
         arguments: ['@pimcore.templating.tag_renderer']
         tags:
             - { name: pimcore.templating.helper_broker, priority: 10 }
+
+    pimcore.templating.helper_broker.document_method:
+        class: Pimcore\Bundle\PimcoreBundle\Templating\HelperBroker\DocumentMethod
+        tags:
+            - { name: pimcore.templating.helper_broker, priority: 5 }
 
     pimcore.templating.helper.pimcore_tag:
         class: Pimcore\Bundle\PimcoreBundle\Templating\Helper\DocumentTagHelper
