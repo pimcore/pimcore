@@ -45,6 +45,10 @@ class ThumbnailsVideoCommand extends AbstractCommand
             );
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         // disable versioning
@@ -108,6 +112,10 @@ class ThumbnailsVideoCommand extends AbstractCommand
         }
     }
 
+    /**
+     * @param $videoId
+     * @param $thumbnail
+     */
     protected function waitTillFinished($videoId, $thumbnail)
     {
         $finished = false;

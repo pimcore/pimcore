@@ -29,6 +29,10 @@ class InternalVideoConverterCommand extends AbstractCommand
             ->addArgument("processId");
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         Asset\Video\Thumbnail\Processor::execute($input->getArgument("processId"));

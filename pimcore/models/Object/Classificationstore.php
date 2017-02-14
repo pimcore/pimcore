@@ -232,7 +232,13 @@ class Classificationstore extends Model\AbstractModel
         $this->activeGroups = $activeGroups;
     }
 
-
+    /**
+     * @param $groupId
+     * @param $keyId
+     * @param $language
+     * @param $fielddefinition
+     * @return null
+     */
     protected function getFallbackValue($groupId, $keyId, $language, $fielddefinition)
     {
         $fallbackLanguages = Tool::getFallbackLanguagesFor($language);

@@ -44,8 +44,13 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $layouts;
     }
 
+    /**
+     * @return int
+     */
     public function getTotalCount()
     {
+        $amount = 0;
+
         try {
             $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM custom_layouts " . $this->getCondition(), $this->model->getConditionVariables());
         } catch (\Exception $e) {

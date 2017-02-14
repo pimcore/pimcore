@@ -309,7 +309,9 @@ class Video extends Model\Document\Tag
         return $this;
     }
 
-
+    /**
+     * @return string
+     */
     public function getWidth()
     {
         $options = $this->getOptions();
@@ -320,6 +322,9 @@ class Video extends Model\Document\Tag
         return "100%";
     }
 
+    /**
+     * @return int
+     */
     public function getHeight()
     {
         $options = $this->getOptions();
@@ -330,7 +335,10 @@ class Video extends Model\Document\Tag
         return 300;
     }
 
-
+    /**
+     * @param bool $inAdmin
+     * @return string
+     */
     public function getAssetCode($inAdmin = false)
     {
         $asset = Asset::getById($this->id);
@@ -398,11 +406,18 @@ class Video extends Model\Document\Tag
         }
     }
 
+    /**
+     * @return string
+     */
     public function getUrlCode()
     {
         return $this->getHtml5Code(["mp4" => (string) $this->id]);
     }
 
+    /**
+     * @param string $message
+     * @return string
+     */
     public function getErrorCode($message = "")
     {
         $width = $this->getWidth();
@@ -425,6 +440,9 @@ class Video extends Model\Document\Tag
         return $code;
     }
 
+    /**
+     * @return string
+     */
     public function getYoutubeCode()
     {
         if (!$this->id) {
@@ -526,6 +544,9 @@ class Video extends Model\Document\Tag
         return $code;
     }
 
+    /**
+     * @return string
+     */
     public function getVimeoCode()
     {
         if (!$this->id) {
@@ -599,6 +620,9 @@ class Video extends Model\Document\Tag
         return $this->getEmptyCode();
     }
 
+    /**
+     * @return string
+     */
     public function getDailymotionCode()
     {
         if (!$this->id) {
@@ -672,6 +696,11 @@ class Video extends Model\Document\Tag
         return $this->getEmptyCode();
     }
 
+    /**
+     * @param array $urls
+     * @param null $thumbnail
+     * @return string
+     */
     public function getHtml5Code($urls = [], $thumbnail = null)
     {
         $code = "";
@@ -765,6 +794,10 @@ class Video extends Model\Document\Tag
         return $code;
     }
 
+    /**
+     * @param null $thumbnail
+     * @return string
+     */
     public function getProgressCode($thumbnail = null)
     {
         $uid = "video_" . uniqid();
@@ -807,6 +840,9 @@ class Video extends Model\Document\Tag
         return $code;
     }
 
+    /**
+     * @return string
+     */
     public function getEmptyCode()
     {
         $uid = "video_" . uniqid();

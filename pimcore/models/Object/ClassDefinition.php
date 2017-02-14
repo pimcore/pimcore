@@ -71,6 +71,9 @@ class ClassDefinition extends Model\AbstractModel
      */
     public $parentClass;
 
+    /**
+     * @var boolean
+     */
     public $useTraits;
 
     /**

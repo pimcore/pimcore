@@ -310,7 +310,8 @@ class Dao extends Model\Element\Dao
     /**
      * returns the amount of directly childs (not recursivly)
      *
-     * @param User $user
+     * @param array $objectTypes
+     * @param Model\User $user
      * @return integer
      */
     public function getChildAmount($objectTypes = [Object::OBJECT_TYPE_OBJECT, Object::OBJECT_TYPE_FOLDER], $user = null)
@@ -330,7 +331,10 @@ class Dao extends Model\Element\Dao
         return $c;
     }
 
-
+    /**
+     * @param $id
+     * @return mixed
+     */
     public function getTypeById($id)
     {
         $t = $this->db->fetchRow("SELECT o_type,o_className,o_classId FROM objects WHERE o_id = ?", $id);
@@ -338,10 +342,11 @@ class Dao extends Model\Element\Dao
         return $t;
     }
 
-
+    /**
+     * @return bool
+     */
     public function isLocked()
     {
-
         // check for an locked element below this element
         $belowLocks = $this->db->fetchOne("SELECT tree_locks.id FROM tree_locks INNER JOIN objects ON tree_locks.id = objects.o_id WHERE objects.o_path LIKE ? AND tree_locks.type = 'object' AND tree_locks.locked IS NOT NULL AND tree_locks.locked != '' LIMIT 1", $this->model->getRealFullPath() . "/%");
 
@@ -371,6 +376,9 @@ class Dao extends Model\Element\Dao
         return $lockIds;
     }
 
+    /**
+     * @return array
+     */
     public function getClasses()
     {
         if ($this->getChildAmount()) {
@@ -391,6 +399,9 @@ class Dao extends Model\Element\Dao
         }
     }
 
+    /**
+     * @return array
+     */
     protected function collectParentIds()
     {
         // collect properties via parent - ids
@@ -408,6 +419,11 @@ class Dao extends Model\Element\Dao
         return $parentIds;
     }
 
+    /**
+     * @param $type
+     * @param $user
+     * @return bool
+     */
     public function isAllowed($type, $user)
     {
         $parentIds = $this->collectParentIds();
@@ -442,6 +458,12 @@ class Dao extends Model\Element\Dao
         return false;
     }
 
+    /**
+     * @param $type
+     * @param $user
+     * @param bool $quote
+     * @return mixed|null
+     */
     public function getPermissions($type, $user, $quote = true)
     {
         $parentIds = $this->collectParentIds();
@@ -502,6 +524,12 @@ class Dao extends Model\Element\Dao
         }
     }
 
+    /**
+     * @param $type
+     * @param $user
+     * @param bool $quote
+     * @return array
+     */
     public function getChildPermissions($type, $user, $quote = true)
     {
         //        $parentIds = $this->collectParentIds();

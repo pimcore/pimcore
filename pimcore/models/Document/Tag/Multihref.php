@@ -47,8 +47,8 @@ class Multihref extends Model\Document\Tag implements \Iterator
         return "multihref";
     }
 
-    /*
-     *
+    /**
+     * @return $this
      */
     public function setElements()
     {
@@ -77,8 +77,7 @@ class Multihref extends Model\Document\Tag implements \Iterator
     }
 
     /**
-     * @see Document\Tag\TagInterface::getDataForResource
-     * @return void
+     * @return array
      */
     public function getDataForResource()
     {
@@ -234,16 +233,16 @@ class Multihref extends Model\Document\Tag implements \Iterator
 
     /**
      * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param mixed $params
+     * @param null $document
+     * @param array $params
      * @param null $idMapper
-     * @throws \Exception
+     * @return array
      */
     public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
     {
         // currently unsupported
         return [];
     }
-
 
     /**
      * @return array
@@ -280,6 +279,9 @@ class Multihref extends Model\Document\Tag implements \Iterator
         reset($this->elements);
     }
 
+    /**
+     * @return mixed
+     */
     public function current()
     {
         $this->setElements();
@@ -288,6 +290,9 @@ class Multihref extends Model\Document\Tag implements \Iterator
         return $var;
     }
 
+    /**
+     * @return mixed
+     */
     public function key()
     {
         $this->setElements();
@@ -296,6 +301,9 @@ class Multihref extends Model\Document\Tag implements \Iterator
         return $var;
     }
 
+    /**
+     * @return mixed
+     */
     public function next()
     {
         $this->setElements();
@@ -304,6 +312,9 @@ class Multihref extends Model\Document\Tag implements \Iterator
         return $var;
     }
 
+    /**
+     * @return bool
+     */
     public function valid()
     {
         $this->setElements();

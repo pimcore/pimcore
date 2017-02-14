@@ -34,6 +34,9 @@ class AbstractObject extends Model\Element\AbstractElement
     const OBJECT_TYPE_OBJECT = "object";
     const OBJECT_TYPE_VARIANT = "variant";
 
+    /**
+     * @var bool
+     */
     public static $doNotRestoreKeyAndPath = false;
 
     /**
@@ -171,7 +174,6 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public $o_userModification = 0;
 
-
     /**
      * @var array
      */
@@ -197,7 +199,6 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public $o_hasSiblings;
 
-
     /**
      * @var Model\Dependency[]
      */
@@ -213,12 +214,20 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public $o_locked;
 
-
     /**
      * @var Model\Element\AdminStyle
      */
     public $o_elementAdminStyle;
 
+    /**
+     * @var array
+     */
+    private $lastGetChildsObjectTypes = [];
+
+    /**
+     * @var array
+     */
+    private $lastGetSiblingObjectTypes = [];
 
     /**
      * get possible types
@@ -385,8 +394,6 @@ class AbstractObject extends Model\Element\AbstractElement
         }
     }
 
-    private $lastGetChildsObjectTypes = [];
-
     /**
      * @param array $objectTypes
      * @param bool $unpublished
@@ -424,9 +431,6 @@ class AbstractObject extends Model\Element\AbstractElement
 
         return $this->getDao()->hasChilds($objectTypes);
     }
-
-
-    private $lastGetSiblingObjectTypes = [];
 
     /**
      * Get a list of the sibling documents

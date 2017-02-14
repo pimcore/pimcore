@@ -247,61 +247,109 @@ class Logger
      * $l is for backward compatibility
      **/
 
-     public static function emergency($m, $context = [])
-     {
+    /**
+     * @param $m
+     * @param array $context
+     */
+    public static function emergency($m, $context = [])
+    {
          self::log($m, "emergency", $context);
-     }
+    }
 
+    /**
+     * @param $m
+     * @param array $context
+     */
     public static function emerg($m, $context = [])
     {
         self::log($m, "emergency", $context);
     }
 
+    /**
+     * @param $m
+     * @param array $context
+     */
     public static function alert($m, $context = [])
     {
         self::log($m, "alert", $context);
     }
 
+    /**
+     * @param $m
+     * @param array $context
+     */
     public static function critical($m, $context = [])
     {
         self::log($m, "critical", $context);
     }
 
+    /**
+     * @param $m
+     * @param array $context
+     */
     public static function crit($m, $context = [])
     {
         self::log($m, "critical", $context);
     }
 
+    /**
+     * @param $m
+     * @param array $context
+     */
     public static function error($m, $context = [])
     {
         self::log($m, "error", $context);
     }
 
+    /**
+     * @param $m
+     * @param array $context
+     */
     public static function err($m, $context = [])
     {
         self::log($m, "error", $context);
     }
 
+    /**
+     * @param $m
+     * @param array $context
+     */
     public static function warning($m, $context = [])
     {
         self::log($m, "warning", $context);
     }
 
+    /**
+     * @param $m
+     * @param array $context
+     */
     public static function warn($m, $context = [])
     {
         self::log($m, "warning", $context);
     }
 
+    /**
+     * @param $m
+     * @param array $context
+     */
     public static function notice($m, $context = [])
     {
         self::log($m, "notice", $context);
     }
 
+    /**
+     * @param $m
+     * @param array $context
+     */
     public static function info($m, $context = [])
     {
         self::log($m, "info", $context);
     }
 
+    /**
+     * @param $m
+     * @param array $context
+     */
     public static function debug($m, $context = [])
     {
         self::log($m, "debug", $context);

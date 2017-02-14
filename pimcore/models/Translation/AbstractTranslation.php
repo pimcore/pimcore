@@ -104,6 +104,9 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
         return $this;
     }
 
+    /**
+     * @return int
+     */
     public function getCreationDate()
     {
         return $this->creationDate;
@@ -120,6 +123,9 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
         return $this;
     }
 
+    /**
+     * @return int
+     */
     public function getModificationDate()
     {
         return $this->modificationDate;

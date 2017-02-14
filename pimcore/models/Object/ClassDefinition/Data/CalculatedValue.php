@@ -265,15 +265,25 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data
         return $this->queryColumnType . "(" . $this->getColumnLength() . ")";
     }
 
+    /**
+     * @return null
+     */
     public function getColumnType()
     {
         return null;
     }
+
+    /**
+     *
+     */
     public function save()
     {
         // nothing to do
     }
 
+    /**
+     *
+     */
     public function load()
     {
     }

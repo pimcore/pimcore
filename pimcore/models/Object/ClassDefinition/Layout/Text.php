@@ -29,12 +29,19 @@ class Text extends Model\Object\ClassDefinition\Layout
      */
     public $fieldtype = "text";
 
+    /**
+     * @var string
+     */
     public $html = "";
 
-    /** @var  string */
+    /**
+     * @var string
+     */
     public $renderingClass;
 
-    /** @var  string */
+    /**
+     * @var string
+     */
     public $renderingData;
 
     /**

@@ -117,6 +117,10 @@ class Newsletter
         }
     }
 
+    /**
+     * @param $email
+     * @return mixed
+     */
     protected static function obfuscateEmail($email)
     {
         $email = substr_replace($email, ".xxx", strrpos($email, "."));
@@ -124,10 +128,11 @@ class Newsletter
         return $email;
     }
 
-
     /**
-     * @param Model\Tool\Newsletter\Config $newsletter
-     * @param Object\Concrete $object
+     * @param $newsletter
+     * @param $object
+     * @param null $emailAddress
+     * @param null $hostUrl
      */
     public static function sendMail($newsletter, $object, $emailAddress = null, $hostUrl = null)
     {

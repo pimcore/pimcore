@@ -464,7 +464,10 @@ class Link
 
         return $this->object;
     }
-    
+
+    /**
+     * @return string
+     */
     public function getHtml()
     {
         $attributes = ["rel", "tabindex", "accesskey", "title", "target", "class"];

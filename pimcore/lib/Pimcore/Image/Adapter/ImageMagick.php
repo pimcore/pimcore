@@ -754,6 +754,11 @@ class ImageMagick extends Adapter
         return $tmpImage;
     }
 
+    /**
+     * @param ImageMagick $image
+     * @param $suffix
+     * @return $this
+     */
     protected function setTmpPaths(ImageMagick $image, $suffix)
     {
         $tmpFilename = "imagemagick_{$suffix}_" . md5($this->imagePath) . '.png';

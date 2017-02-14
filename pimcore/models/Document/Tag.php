@@ -268,7 +268,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     /**
      * Returns only the properties which should be serialized
      *
-     * @return void
+     * @return array
      */
     public function __sleep()
     {

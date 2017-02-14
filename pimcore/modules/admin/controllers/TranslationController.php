@@ -362,6 +362,12 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
         }
     }
 
+    /**
+     * @param $joins
+     * @param $list
+     * @param $tableName
+     * @param $filters
+     */
     protected function extendTranslationQuery($joins, $list, $tableName, $filters)
     {
         if ($joins) {
@@ -400,7 +406,11 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
         }
     }
 
-
+    /**
+     * @param $tableName
+     * @param bool $languageMode
+     * @return array|null|string
+     */
     protected function getGridFilterCondition($tableName, $languageMode = false)
     {
         $joins = [];
@@ -894,6 +904,12 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
         ]);
     }
 
+    /**
+     * @param $xml
+     * @param $name
+     * @param $content
+     * @param $source
+     */
     protected function addTransUnitNode($xml, $name, $content, $source)
     {
         $transUnit = $xml->addChild('trans-unit');
@@ -909,6 +925,10 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
         @$node->appendChild($f);
     }
 
+    /**
+     * @param $content
+     * @return mixed|string
+     */
     protected function unescapeXliff($content)
     {
         $content = preg_replace("/<\/?(target|mrk)([^>.]+)?>/i", "", $content);
@@ -930,6 +950,10 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
         return $content;
     }
 
+    /**
+     * @param $content
+     * @return mixed|string
+     */
     protected function escapeXliff($content)
     {
         $count = 1;

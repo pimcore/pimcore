@@ -517,10 +517,16 @@ class Service extends Model\Element\Service
                 }
             }
         }
-
+        //TODO: $document is not definied here, shouldn't be null returned here?
         return $document;
     }
 
+    /**
+     * @param $item
+     * @param int $nr
+     * @return mixed|string
+     * @throws \Exception
+     */
     public static function getUniqueKey($item, $nr = 0)
     {
         $list = new Listing();

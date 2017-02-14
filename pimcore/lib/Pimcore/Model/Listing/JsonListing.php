@@ -24,7 +24,14 @@ use Pimcore\Model\AbstractModel;
  */
 abstract class JsonListing extends AbstractModel
 {
+    /**
+     * @var mixed
+     */
     protected $filter;
+
+    /**
+     * @var mixed
+     */
     protected $order;
 
     /**

@@ -176,6 +176,10 @@ class Dao extends Model\Element\Dao
         ], "cid = " . $this->model->getId());
     }
 
+    /**
+     * @param $oldPath
+     * @return array
+     */
     public function updateChildsPaths($oldPath)
     {
         //get assets to empty their cache
@@ -202,7 +206,8 @@ class Dao extends Model\Element\Dao
     /**
      * Get the properties for the object from database and assign it
      *
-     * @return []
+     * @param bool $onlyInherited
+     * @return array
      */
     public function getProperties($onlyInherited = false)
     {
@@ -311,10 +316,12 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @return string retrieves the current full sset path from DB
+     * @return string retrieves the current full set path from DB
      */
     public function getCurrentFullPath()
     {
+        $path = null;
+
         try {
             $path = $this->db->fetchOne("SELECT CONCAT(path,filename) as path FROM assets WHERE id = ?", $this->model->getId());
         } catch (\Exception $e) {
@@ -352,7 +359,7 @@ class Dao extends Model\Element\Dao
     /**
      * returns the amount of directly childs (not recursivly)
      *
-     * @param User $user
+     * @param Model\User $user
      * @return integer
      */
     public function getChildAmount($user = null)
@@ -374,10 +381,11 @@ class Dao extends Model\Element\Dao
         return $c;
     }
 
-
+    /**
+     * @return bool
+     */
     public function isLocked()
     {
-
         // check for an locked element below this element
         $belowLocks = $this->db->fetchOne("SELECT tree_locks.id FROM tree_locks INNER JOIN assets ON tree_locks.id = assets.id WHERE assets.path LIKE ? AND tree_locks.type = 'asset' AND tree_locks.locked IS NOT NULL AND tree_locks.locked != '' LIMIT 1", $this->model->getRealFullPath() . "/%");
 
@@ -427,6 +435,11 @@ class Dao extends Model\Element\Dao
         return;
     }
 
+    /**
+     * @param $type
+     * @param $user
+     * @return bool
+     */
     public function isAllowed($type, $user)
     {
 

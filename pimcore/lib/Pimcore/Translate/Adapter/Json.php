@@ -16,6 +16,9 @@ namespace Pimcore\Translate\Adapter;
 
 class Json extends \Zend_Translate_Adapter
 {
+    /**
+     * @var array
+     */
     private $_data    = [];
 
     /**

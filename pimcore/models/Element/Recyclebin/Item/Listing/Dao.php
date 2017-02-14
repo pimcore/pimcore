@@ -43,8 +43,13 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $items;
     }
 
+    /**
+     * @return int
+     */
     public function getTotalCount()
     {
+        $amount = 0;
+
         try {
             $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM recyclebin " . $this->getCondition(), $this->model->getConditionVariables());
         } catch (\Exception $e) {

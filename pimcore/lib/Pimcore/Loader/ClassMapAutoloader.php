@@ -18,6 +18,11 @@ use Pimcore\Tool;
 
 class ClassMapAutoloader extends \Zend_Loader_ClassMapAutoloader
 {
+    /**
+     * Autoload Pimcore Classes
+     *
+     * @param string $class
+     */
     public function autoload($class)
     {
 
@@ -127,6 +132,10 @@ class ClassMapAutoloader extends \Zend_Loader_ClassMapAutoloader
         }
     }
 
+    /**
+     * @param $class
+     * @return bool
+     */
     protected function loadModel($class)
     {
         if (strpos($class, "Pimcore\\Model\\") === 0) {

@@ -32,6 +32,9 @@ class Document extends Model\Asset
      */
     public $type = "document";
 
+    /**
+     *
+     */
     protected function update()
     {
         $this->clearThumbnails();
@@ -53,6 +56,10 @@ class Document extends Model\Asset
         parent::update();
     }
 
+    /**
+     * @param null $path
+     * @return null
+     */
     protected function readPageCount($path = null)
     {
         $pageCount = null;
@@ -81,6 +88,9 @@ class Document extends Model\Asset
         return $pageCount;
     }
 
+    /**
+     * @return null
+     */
     public function getPageCount()
     {
         if (!$pageCount = $this->getCustomSetting("document_page_count")) {
@@ -107,6 +117,10 @@ class Document extends Model\Asset
         return new Document\ImageThumbnail($this, $thumbnailName, $page, $deferred);
     }
 
+    /**
+     * @param null $page
+     * @return mixed|null
+     */
     public function getText($page = null)
     {
         if (\Pimcore\Document::isAvailable() && \Pimcore\Document::isFileTypeSupported($this->getFilename())) {
@@ -126,7 +140,7 @@ class Document extends Model\Asset
     }
 
     /**
-     * @return void
+     * @param bool $force
      */
     public function clearThumbnails($force = false)
     {

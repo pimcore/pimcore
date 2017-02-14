@@ -346,6 +346,9 @@ class Areablock extends Model\Document\Tag
         \Zend_Registry::set("pimcore_tag_block_numeration", $suffixes);
     }
 
+    /**
+     * @return array
+     */
     protected function getToolBarDefaultConfig()
     {
         $buttonWidth = 168;

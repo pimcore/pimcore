@@ -775,6 +775,10 @@ class Service extends Model\AbstractModel
         }
     }
 
+    /**
+     * @param $id
+     * @return mixed
+     */
     public static function getCustomViewById($id)
     {
         $customViews = Tool::getCustomViewConfig();
@@ -852,6 +856,11 @@ class Service extends Model\AbstractModel
         }
     }
 
+    /**
+     * @param $data
+     * @param $type
+     * @return array|string
+     */
     public static function fixAllowedTypes($data, $type)
     {
         // this is the new method with Ext.form.MultiSelect
@@ -894,6 +903,10 @@ class Service extends Model\AbstractModel
         return $data ? $data : [];
     }
 
+    /**
+     * @param $versions
+     * @return array
+     */
     public static function getSafeVersionInfo($versions)
     {
         if (is_array($versions)) {

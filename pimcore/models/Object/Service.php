@@ -1013,7 +1013,9 @@ class Service extends Model\Element\Service
         return $superLayout;
     }
 
-
+    /**
+     * @param $layout
+     */
     public static function createSuperLayout(&$layout)
     {
         if ($layout instanceof ClassDefinition\Data) {
@@ -1095,6 +1097,11 @@ class Service extends Model\Element\Service
         }
     }
 
+    /**
+     * @param $classId
+     * @param $objectId
+     * @return mixed|null
+     */
     public static function getCustomGridFieldDefinitions($classId, $objectId)
     {
         $object = AbstractObject::getById($objectId);
@@ -1303,6 +1310,12 @@ class Service extends Model\Element\Service
         return $result;
     }
 
+    /**
+     * @param $item
+     * @param int $nr
+     * @return mixed|string
+     * @throws \Exception
+     */
     public static function getUniqueKey($item, $nr = 0)
     {
         $list = new Listing();

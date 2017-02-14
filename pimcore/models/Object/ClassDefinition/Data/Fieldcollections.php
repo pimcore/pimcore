@@ -887,6 +887,10 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
         $this->collapsible = $collapsible;
     }
 
+    /**
+     * @param $container
+     * @param array $list
+     */
     public static function collectCalculatedValueItems($container, &$list = [])
     {
         if (is_array($container)) {

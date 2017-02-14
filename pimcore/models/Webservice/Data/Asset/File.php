@@ -25,8 +25,11 @@ class File extends Model\Webservice\Data\Asset
      * @var string
      */
     public $data;
-    
-    
+
+    /**
+     * @param $object
+     * @param null $options
+     */
     public function map($object, $options = null)
     {
         parent::map($object, $options);
@@ -38,7 +41,11 @@ class File extends Model\Webservice\Data\Asset
         $this->data = base64_encode($object->getData());
     }
 
-
+    /**
+     * @param $object
+     * @param bool $disableMappingExceptions
+     * @param null $idMapper
+     */
     public function reverseMap($object, $disableMappingExceptions = false, $idMapper = null)
     {
         $data = base64_decode($this->data);

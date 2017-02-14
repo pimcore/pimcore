@@ -25,6 +25,9 @@ use Pimcore\Logger;
  */
 class Concrete extends AbstractObject
 {
+    /**
+     * @var array
+     */
     public static $systemColumnNames = ["id", "fullpath", "published", "creationDate", "modificationDate", "filename", "classname"];
 
     /**

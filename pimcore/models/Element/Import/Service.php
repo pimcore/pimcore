@@ -38,11 +38,14 @@ class Service
     protected $importInfo;
 
     /**
-     * @var User
+     * @var Model\User
      */
     protected $user;
 
-
+    /**
+     * Service constructor.
+     * @param $user
+     */
     public function __construct($user)
     {
         $this->webService = new Webservice\Service();
@@ -50,7 +53,9 @@ class Service
         $this->user = $user;
     }
 
-
+    /**
+     * @return Webservice\Service
+     */
     public function getWebservice()
     {
         return $this->webService;

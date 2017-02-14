@@ -94,6 +94,9 @@ class Admin_HardlinkController extends \Pimcore\Controller\Action\Admin\Document
         $this->_helper->json(false);
     }
 
+    /**
+     * @param Document\Hardlink $link
+     */
     protected function setValuesToDocument(Document\Hardlink $link)
     {
 

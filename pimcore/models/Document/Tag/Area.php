@@ -323,6 +323,9 @@ class Area extends Model\Document\Tag
         return ExtensionManager::getBrickDirectories();
     }
 
+    /**
+     * @return array|mixed
+     */
     public function getBrickConfigs()
     {
         return ExtensionManager::getBrickConfigs();

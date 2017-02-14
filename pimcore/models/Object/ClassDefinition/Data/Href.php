@@ -296,7 +296,12 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
         return null;
     }
 
-
+    /**
+     * @param $data
+     * @param null $object
+     * @param array $params
+     * @return string
+     */
     public function getDataForGrid($data, $object = null, $params = [])
     {
         if ($data instanceof Element\ElementInterface) {

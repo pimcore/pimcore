@@ -38,16 +38,68 @@ namespace Pimcore;
 
 class Browser
 {
+    /**
+     * @var string
+     */
     private $_agent = '';
+
+    /**
+     * @var string
+     */
     private $_browser_name = '';
+
+    /**
+     * @var string
+     *
+     */
     private $_version = '';
+
+    /**
+     * @var string
+     *
+     */
     private $_platform = '';
+
+    /**
+     * @var string
+     *
+     */
     private $_os = '';
+
+    /**
+     * @var bool
+     *
+     */
     private $_is_aol = false;
+
+    /**
+     * @var bool
+     *
+     */
     private $_is_mobile = false;
+
+    /**
+     * @var bool
+     *
+     */
     private $_is_tablet = false;
+
+    /**
+     * @var bool
+     *
+     */
     private $_is_robot = false;
+
+    /**
+     * @var bool
+     *
+     */
     private $_is_facebook = false;
+
+    /**
+     * @var string
+     *
+     */
     private $_aol_version = '';
 
     const BROWSER_UNKNOWN = 'unknown';
@@ -111,6 +163,10 @@ class Browser
 
     const OPERATING_SYSTEM_UNKNOWN = 'unknown';
 
+    /**
+     * Browser constructor.
+     * @param string $userAgent
+     */
     public function __construct($userAgent = "")
     {
         $this->reset();

@@ -28,6 +28,9 @@ abstract class AbstractStructureImportCommand extends AbstractCommand
 {
     use DryRun;
 
+    /**
+     *
+     */
     protected function configure()
     {
         $type = $this->getType();
@@ -47,6 +50,11 @@ abstract class AbstractStructureImportCommand extends AbstractCommand
         $this->configureDryRunOption();
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $path = $this->getPath();

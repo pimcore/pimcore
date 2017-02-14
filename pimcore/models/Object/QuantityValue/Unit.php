@@ -24,7 +24,6 @@ use Pimcore\Logger;
  */
 class Unit extends Model\AbstractModel
 {
-
     /**
      * @var int
      */
@@ -35,18 +34,15 @@ class Unit extends Model\AbstractModel
      */
     public $abbreviation;
 
-
     /**
      * @var string
      */
     public $group;
 
-
     /**
      * @var string
      */
     public $longname;
-
 
     /**
      * @var string
@@ -58,7 +54,6 @@ class Unit extends Model\AbstractModel
      */
     public $reference;
 
-
     /**
      * @var double
      */
@@ -68,7 +63,6 @@ class Unit extends Model\AbstractModel
      * @var double
      */
     public $conversionOffset;
-
 
     /**
      * @param string $abbreviation
@@ -150,70 +144,92 @@ class Unit extends Model\AbstractModel
         $this->getDao()->delete();
     }
 
-
+    /**
+     * @return string
+     */
     public function __toString()
     {
         return ucfirst($this->getAbbreviation() . " (" . $this->getId() . ")");
     }
 
-    public function setAbbreviation($abbreviation)
-    {
-        $this->abbreviation = $abbreviation;
-    }
-
-    public function getAbbreviation()
-    {
-        return $this->abbreviation;
-    }
-
-    public function setBaseunit($baseunit)
-    {
-        $this->baseunit = $baseunit;
-    }
-
-    public function getBaseunit()
-    {
-        return $this->baseunit;
-    }
-
-    public function setFactor($factor)
-    {
-        $this->factor = $factor;
-    }
-
-    public function getFactor()
-    {
-        return $this->factor;
-    }
-
-    public function setGroup($group)
-    {
-        $this->group = $group;
-    }
-
-    public function getGroup()
-    {
-        return $this->group;
-    }
-
-    public function setId($id)
-    {
-        $this->id = $id;
-    }
-
+    /**
+     * @return int
+     */
     public function getId()
     {
         return $this->id;
     }
 
+    /**
+     * @param int $id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAbbreviation()
+    {
+        return $this->abbreviation;
+    }
+
+    /**
+     * @param string $abbreviation
+     */
+    public function setAbbreviation($abbreviation)
+    {
+        $this->abbreviation = $abbreviation;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGroup()
+    {
+        return $this->group;
+    }
+
+    /**
+     * @param string $group
+     */
+    public function setGroup($group)
+    {
+        $this->group = $group;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLongname()
+    {
+        return $this->longname;
+    }
+
+    /**
+     * @param string $longname
+     */
     public function setLongname($longname)
     {
         $this->longname = $longname;
     }
 
-    public function getLongname()
+    /**
+     * @return string
+     */
+    public function getBaseunit()
     {
-        return $this->longname;
+        return $this->baseunit;
+    }
+
+    /**
+     * @param string $baseunit
+     */
+    public function setBaseunit($baseunit)
+    {
+        $this->baseunit = $baseunit;
     }
 
     /**
@@ -230,6 +246,22 @@ class Unit extends Model\AbstractModel
     public function setReference($reference)
     {
         $this->reference = $reference;
+    }
+
+    /**
+     * @return float
+     */
+    public function getFactor()
+    {
+        return $this->factor;
+    }
+
+    /**
+     * @param float $factor
+     */
+    public function setFactor($factor)
+    {
+        $this->factor = $factor;
     }
 
     /**

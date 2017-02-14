@@ -31,6 +31,10 @@ class InternalUpdateProcessorCommand extends AbstractCommand
             ->addArgument("config");
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $status = ["success" => true];

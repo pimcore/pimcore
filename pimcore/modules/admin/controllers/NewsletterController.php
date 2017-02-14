@@ -124,6 +124,9 @@ class Admin_NewsletterController extends \Pimcore\Controller\Action\Admin\Docume
         $this->_helper->json(false);
     }
 
+    /**
+     * @param Document $page
+     */
     protected function setValuesToDocument(Document $page)
     {
         $this->addSettingsToDocument($page);

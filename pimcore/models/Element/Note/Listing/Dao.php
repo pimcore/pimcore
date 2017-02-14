@@ -45,7 +45,9 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $notes;
     }
 
-
+    /**
+     * @return array
+     */
     public function loadIdList()
     {
         $notesIds = $this->db->fetchCol("SELECT id FROM notes" . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
@@ -53,8 +55,13 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $notesIds;
     }
 
+    /**
+     * @return int
+     */
     public function getTotalCount()
     {
+        $amount = 0;
+
         try {
             $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM notes " . $this->getCondition(), $this->model->getConditionVariables());
         } catch (\Exception $e) {

@@ -43,6 +43,9 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $glossary;
     }
 
+    /**
+     * @return array
+     */
     public function getDataArray()
     {
         $glossarysData = $this->db->fetchAll("SELECT * FROM glossary" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
@@ -50,8 +53,13 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $glossarysData;
     }
 
+    /**
+     * @return int
+     */
     public function getTotalCount()
     {
+        $amount = 0;
+
         try {
             $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM glossary " . $this->getCondition(), $this->model->getConditionVariables());
         } catch (\Exception $e) {

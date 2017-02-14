@@ -33,21 +33,33 @@ trait Wrapper
     protected $sourceDocument;
 
     // OVERWRITTEN METHODS
+    /**
+     *
+     */
     public function save()
     {
         $this->raiseHardlinkError();
     }
 
+    /**
+     *
+     */
     protected function update()
     {
         $this->raiseHardlinkError();
     }
 
+    /**
+     *
+     */
     public function delete()
     {
         $this->raiseHardlinkError();
     }
 
+    /**
+     * @return mixed
+     */
     public function getProperties()
     {
         if ($this->properties == null) {
@@ -90,6 +102,10 @@ trait Wrapper
         return $this->properties;
     }
 
+    /**
+     * @param bool $unpublished
+     * @return null
+     */
     public function getChildren($unpublished = false)
     {
         if ($this->childs === null) {
@@ -117,6 +133,9 @@ trait Wrapper
         return $this->childs;
     }
 
+    /**
+     * @return bool
+     */
     public function hasChildren()
     {
         $hardLink = $this->getHardLinkSource();

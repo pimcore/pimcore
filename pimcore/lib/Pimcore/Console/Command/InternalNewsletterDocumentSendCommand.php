@@ -32,6 +32,10 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
             ->addArgument("sendingId")->addArgument("hostUrl");
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $sendingId = $input->getArgument("sendingId");
@@ -76,6 +80,12 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
         Model\Tool\TmpStore::delete($sendingId);
     }
 
+    /**
+     * @param Model\Document\Newsletter $document
+     * @param AddressSourceAdapterInterface $addressAdapter
+     * @param $sendingId
+     * @param $hostUrl
+     */
     protected function doSendMailInBatchMode(Model\Document\Newsletter $document, AddressSourceAdapterInterface $addressAdapter, $sendingId, $hostUrl)
     {
         $mail = \Pimcore\Tool\Newsletter::prepareMail($document, $hostUrl);
@@ -111,6 +121,12 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
         }
     }
 
+    /**
+     * @param Model\Document\Newsletter $document
+     * @param AddressSourceAdapterInterface $addressAdapter
+     * @param $sendingId
+     * @param $hostUrl
+     */
     protected function doSendMailInSingleMode(Model\Document\Newsletter $document, AddressSourceAdapterInterface $addressAdapter, $sendingId, $hostUrl)
     {
         $totalCount = $addressAdapter->getTotalRecordCount();

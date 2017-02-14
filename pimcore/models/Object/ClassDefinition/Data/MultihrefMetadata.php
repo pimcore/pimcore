@@ -583,6 +583,11 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
         parent::save($object, $params);
     }
 
+    /**
+     * @param $object
+     * @param array $params
+     * @return array|mixed|null
+     */
     public function preGetData($object, $params = [])
     {
         $data = null;

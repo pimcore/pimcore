@@ -20,11 +20,23 @@ use \Pimcore\Model\Webservice\Data\Document;
 
 class Printpage extends Document\PageSnippet
 {
+    /**
+     * @var int
+     */
     public $lastGenerated;
 
+    /**
+     * @var boolean
+     */
     public $inProgress;
 
+    /**
+     * @var string
+     */
     public $css;
 
+    /**
+     * @var string
+     */
     public $lastGenerateMessage;
 }

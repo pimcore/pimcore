@@ -19,6 +19,9 @@ use Pimcore\Google\Analytics as AnalyticsHelper;
 
 class EuCookieLawNotice extends \Zend_Controller_Plugin_Abstract
 {
+    /**
+     * @var string
+     */
     protected $templateCode = null;
 
     /**
@@ -109,7 +112,9 @@ class EuCookieLawNotice extends \Zend_Controller_Plugin_Abstract
         $this->getResponse()->setBody($body);
     }
 
-
+    /**
+     * @return array
+     */
     protected function getTranslations()
     {
 

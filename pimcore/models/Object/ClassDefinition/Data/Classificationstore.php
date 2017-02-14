@@ -1004,12 +1004,17 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
         $this->localized = $localized;
     }
 
-
+    /**
+     * @param $object
+     * @param array $mergedMapping
+     * @return array|boolean
+     */
     public function recursiveGetActiveGroupCollectionMapping($object, $mergedMapping = [])
     {
         if (!$object) {
-            return;
+            return false;
         }
+
         $getter = "get" . ucfirst($this->getName());
         /** @var  $classificationStore Object\Classificationstore */
         $classificationStore = $object->$getter();
@@ -1038,14 +1043,14 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
 
 
     /**
-     * @param $object \Object_Abstract
+     * @param $object Object\Concrete
      * @param array $activeGroups
-     * @return array
+     * @return array|boolean
      */
     public function recursiveGetActiveGroupsIds($object, $activeGroups = [])
     {
         if (!$object) {
-            return;
+            return false;
         }
 
         $getter = "get" . ucfirst($this->getName());
@@ -1186,6 +1191,8 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
      */
     public function setAllowedGroupIds($allowedGroupIds)
     {
+        $parts = [];
+
         if (is_string($allowedGroupIds) && !empty($allowedGroupIds)) {
             $allowedGroupIds = str_replace([" ", "\n"], "", $allowedGroupIds);
             $parts = explode(",", $allowedGroupIds);
@@ -1210,6 +1217,9 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
         $this->storeId = $storeId ? $storeId : 1;
     }
 
+    /**
+     * @return array|\string[]
+     */
     public function getValidLanguages()
     {
         if ($this->localized) {

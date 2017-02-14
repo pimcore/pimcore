@@ -28,6 +28,9 @@ class Localizedfield extends Model\AbstractModel
 
     const STRICT_ENABLED = 1;
 
+    /**
+     * @var bool
+     */
     private static $getFallbackValues = false;
 
     /**

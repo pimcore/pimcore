@@ -102,6 +102,11 @@ class CacheWarmingCommand extends AbstractCommand
         ;
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         if ($input->getOption("maintenance-mode")) {
@@ -137,6 +142,10 @@ class CacheWarmingCommand extends AbstractCommand
         }
     }
 
+    /**
+     * @param $type
+     * @param $types
+     */
     protected function writeWarmingMessage($type, $types)
     {
         $output = sprintf('Warming <comment>%s</comment> cache', $type);

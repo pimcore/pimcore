@@ -23,9 +23,15 @@ use Pimcore\Model;
  */
 class Dao extends Model\Dao\AbstractDao
 {
+    /**
+     *
+     */
     const TABLE_NAME_RELATIONS = "classificationstore_collectionrelations";
 
-
+    /**
+     * @param null $colId
+     * @param null $groupId
+     */
     public function getById($colId = null, $groupId = null)
     {
         if ($colId != null) {

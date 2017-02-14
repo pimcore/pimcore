@@ -79,6 +79,10 @@ class Optimizer
         }
     }
 
+    /**
+     * @param $path
+     * @return null|string
+     */
     public static function optimizePngcrush($path)
     {
         $bin = \Pimcore\Tool\Console::getExecutable("pngcrush");
@@ -93,6 +97,10 @@ class Optimizer
         return null;
     }
 
+    /**
+     * @param $path
+     * @return null|string
+     */
     public static function optimizeZopflipng($path)
     {
         $bin = \Pimcore\Tool\Console::getExecutable("zopflipng");
@@ -107,6 +115,10 @@ class Optimizer
         return null;
     }
 
+    /**
+     * @param $path
+     * @return null|string
+     */
     public static function optimizePngout($path)
     {
         $bin = \Pimcore\Tool\Console::getExecutable("pngout", false);
@@ -121,6 +133,10 @@ class Optimizer
         return null;
     }
 
+    /**
+     * @param $path
+     * @return null|string
+     */
     public static function optimizeAdvpng($path)
     {
         $bin = \Pimcore\Tool\Console::getExecutable("advpng");
@@ -135,6 +151,10 @@ class Optimizer
         return null;
     }
 
+    /**
+     * @param $path
+     * @return null|string
+     */
     public static function optimizeCjpeg($path)
     {
         $bin = \Pimcore\Tool\Console::getExecutable("cjpeg");
@@ -149,6 +169,10 @@ class Optimizer
         return null;
     }
 
+    /**
+     * @param $path
+     * @return null|string
+     */
     public static function optimizeJpegoptim($path)
     {
         $bin = \Pimcore\Tool\Console::getExecutable("jpegoptim");

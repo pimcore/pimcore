@@ -64,7 +64,11 @@ class Service
         return $data;
     }
 
-
+    /**
+     * @param $data
+     * @param $pimcoreTagName
+     * @return mixed|null
+     */
     public static function getDataFromEditmode($data, $pimcoreTagName)
     {
         $tagClass = '\\Pimcore\\Model\\Object\\ClassDefinition\\Data\\' . ucfirst($pimcoreTagName);

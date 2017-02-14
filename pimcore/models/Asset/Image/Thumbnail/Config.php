@@ -163,6 +163,9 @@ class Config extends Model\AbstractModel
         return $clone;
     }
 
+    /**
+     * @return Config
+     */
     public static function getPreviewConfig()
     {
         $thumbnail = new self();
@@ -543,6 +546,10 @@ class Config extends Model\AbstractModel
     }
 
 
+    /**
+     * @param $asset
+     * @return array
+     */
     public function getEstimatedDimensions($asset)
     {
         $originalWidth = $asset->getWidth();

@@ -526,7 +526,11 @@ class InheritanceHelper
         }
     }
 
-
+    /**
+     * @param $oo_id
+     * @param $ids
+     * @param $fieldname
+     */
     protected function updateQueryTableOnDelete($oo_id, $ids, $fieldname)
     {
         if (!empty($ids)) {

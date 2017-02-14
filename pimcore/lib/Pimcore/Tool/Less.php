@@ -177,7 +177,11 @@ class Less
         return $compiledContent;
     }
 
-
+    /**
+     * @param $base
+     * @param $content
+     * @return mixed
+     */
     protected static function correctReferences($base, $content)
     {
         // check for url references
@@ -199,7 +203,11 @@ class Less
         return $content;
     }
 
-
+    /**
+     * @param $rel
+     * @param $base
+     * @return mixed|string
+     */
     protected static function correctUrl($rel, $base)
     {
         /* return if already absolute URL */

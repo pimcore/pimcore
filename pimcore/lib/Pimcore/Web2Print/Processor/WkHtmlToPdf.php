@@ -65,6 +65,12 @@ class WkHtmlToPdf extends Processor
         }
     }
 
+    /**
+     * @param Document\PrintAbstract $document
+     * @param $config
+     * @return string
+     * @throws \Exception
+     */
     protected function buildPdf(Document\PrintAbstract $document, $config)
     {
         $web2printConfig = Config::getWeb2PrintConfig();
@@ -99,6 +105,9 @@ class WkHtmlToPdf extends Processor
         return $pdf;
     }
 
+    /**
+     * @return array
+     */
     public function getProcessingOptions()
     {
         return [];
@@ -184,6 +193,9 @@ class WkHtmlToPdf extends Processor
         return $dstFile;
     }
 
+    /**
+     * @return string
+     */
     public static function getTempFileUrl()
     {
         $web2printConfig = Config::getWeb2PrintConfig();

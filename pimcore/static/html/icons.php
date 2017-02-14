@@ -22,6 +22,12 @@ if ($handle) {
 }
 
 $iconsGrouped = [];
+/**
+ * @param $icon
+ * @param $iconCss
+ * @param $pimcoreIconClasses
+ * @return array
+ */
 function getIconData($icon, $iconCss, $pimcoreIconClasses)
 {
     $data = [];

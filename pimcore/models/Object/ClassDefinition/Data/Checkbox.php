@@ -207,6 +207,11 @@ class Checkbox extends Model\Object\ClassDefinition\Data
         return (bool)$importValue;
     }
 
+    /**
+     * @param Object\AbstractObject $object
+     * @param array $params
+     * @return bool
+     */
     public function getForWebserviceExport($object, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);

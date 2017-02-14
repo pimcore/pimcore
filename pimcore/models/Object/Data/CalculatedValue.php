@@ -20,7 +20,6 @@ use Pimcore\Model;
 
 class CalculatedValue
 {
-
     /** @var  string */
     public $fieldname;
 
@@ -42,9 +41,16 @@ class CalculatedValue
     /** @var int */
     public $keyId;
 
-
+    /**
+     * @var mixed
+     */
     public $keyDefinition;
 
+    /**
+     * CalculatedValue constructor.
+     *
+     * @param $fieldname
+     */
     public function __construct($fieldname)
     {
         $this->fieldname = $fieldname;

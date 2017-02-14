@@ -61,7 +61,11 @@ class Tool
 
         return $classMap;
     }
-    
+
+    /**
+     * @param $data
+     * @return array
+     */
     public static function keyValueReverseMapping($data)
     {
         if (is_array($data)) {

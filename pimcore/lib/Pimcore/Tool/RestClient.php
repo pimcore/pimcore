@@ -574,6 +574,13 @@ class RestClient
         return $this->profilingInfo;
     }
 
+    /**
+     * @param $id
+     * @param bool $decode
+     * @param null $idMapper
+     * @return mixed|Object\Folder
+     * @throws Exception
+     */
     public function getObjectById($id, $decode = true, $idMapper = null)
     {
         $url = $this->buildEndpointUrl("object/id/" . $id);
@@ -681,6 +688,17 @@ class RestClient
         return $filename;
     }
 
+    /**
+     * @param $id
+     * @param bool $decode
+     * @param null $idMapper
+     * @param bool $light
+     * @param null $thumbnail
+     * @param bool $tolerant
+     * @param string $protocol
+     * @return mixed|Asset\Folder
+     * @throws Exception
+     */
     public function getAssetById($id, $decode = true, $idMapper = null, $light = false, $thumbnail = null, $tolerant = false, $protocol = "http://")
     {
         $uri = $this->buildEndpointUrl("asset/id/" . $id);

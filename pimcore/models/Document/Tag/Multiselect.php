@@ -58,6 +58,9 @@ class Multiselect extends Model\Document\Tag
         return implode(",", $this->values);
     }
 
+    /**
+     * @return string
+     */
     public function getDataEditmode()
     {
         return implode(",", $this->values);

@@ -35,7 +35,11 @@ class QuantityValue
      */
     public $unit;
 
-
+    /**
+     * QuantityValue constructor.
+     * @param null $value
+     * @param null $unitId
+     */
     public function __construct($value = null, $unitId = null)
     {
         $this->value = $value;
@@ -66,7 +70,9 @@ class QuantityValue
         return $this->unitId;
     }
 
-
+    /**
+     * @return Unit
+     */
     public function getUnit()
     {
         if (empty($this->unit)) {

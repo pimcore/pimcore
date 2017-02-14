@@ -127,6 +127,9 @@ class Printpage extends \Pimcore\Controller\Action\Admin\Document
         $this->_helper->json(false);
     }
 
+    /**
+     * @param Document\PrintAbstract $page
+     */
     protected function setValuesToDocument(Document\PrintAbstract $page)
     {
         $this->addSettingsToDocument($page);
@@ -246,6 +249,10 @@ class Printpage extends \Pimcore\Controller\Action\Admin\Document
         $this->_helper->json(["options" => $returnValue]);
     }
 
+    /**
+     * @param $documentId
+     * @return array|mixed
+     */
     private function getStoredProcessingOptions($documentId)
     {
         $filename = PIMCORE_TEMPORARY_DIRECTORY . DIRECTORY_SEPARATOR . "web2print-processingoptions-" . $documentId . "_" . $this->getUser()->getId() . ".psf";
@@ -256,11 +263,18 @@ class Printpage extends \Pimcore\Controller\Action\Admin\Document
         }
     }
 
+    /**
+     * @param $documentId
+     * @param $options
+     */
     private function saveProcessingOptions($documentId, $options)
     {
         file_put_contents(PIMCORE_TEMPORARY_DIRECTORY . DIRECTORY_SEPARATOR . "web2print-processingoptions-" . $documentId . "_" . $this->getUser()->getId() . ".psf", \Pimcore\Tool\Serialize::serialize($options));
     }
 
+    /**
+     *
+     */
     public function cancelGenerationAction()
     {
         Processor::getInstance()->cancelGeneration(intval($this->getParam("id")));

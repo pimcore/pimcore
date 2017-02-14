@@ -307,6 +307,9 @@ class Mongodb extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Extende
         return $res;
     }
 
+    /**
+     * @return array
+     */
     public function drop()
     {
         return $this->_collection->drop();

@@ -124,6 +124,9 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
         $this->_helper->json(false);
     }
 
+    /**
+     * @param Document $page
+     */
     protected function setValuesToDocument(Document $page)
     {
         $this->addSettingsToDocument($page);
@@ -470,7 +473,9 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
         $this->_helper->json(false);
     }
 
-
+    /**
+     * @return null|\Zend_Mail_Storage_Abstract
+     */
     protected function getBounceMailbox()
     {
         $mail = null;

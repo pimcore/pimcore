@@ -274,6 +274,8 @@ class ExtensionManager
     /**
      * @param $id
      * @throws \Exception
+     *
+     * @return mixed|array
      */
     public static function getBrickConfig($id, $path = null)
     {

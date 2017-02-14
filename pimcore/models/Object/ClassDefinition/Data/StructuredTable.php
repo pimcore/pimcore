@@ -196,8 +196,8 @@ class StructuredTable extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @param object $rows
-     * @return void
+     * @param $rows
+     * @return $this
      */
     public function setRows($rows)
     {
@@ -218,6 +218,11 @@ class StructuredTable extends Model\Object\ClassDefinition\Data
         return $this;
     }
 
+    /**
+     * @param $a
+     * @param $b
+     * @return int|mixed
+     */
     public function sort($a, $b)
     {
         if (is_array($a) && is_array($b)) {

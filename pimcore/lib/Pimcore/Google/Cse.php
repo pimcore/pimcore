@@ -21,7 +21,6 @@ use Pimcore\Model;
 
 class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterAggregate, \Iterator
 {
-
     /**
      * @param $query
      * @param int $offset
@@ -443,12 +442,17 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
      * Methods for Iterator
      */
 
-
+    /**
+     *
+     */
     public function rewind()
     {
         reset($this->results);
     }
 
+    /**
+     * @return mixed
+     */
     public function current()
     {
         $this->getResults();
@@ -457,6 +461,9 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
         return $var;
     }
 
+    /**
+     * @return mixed
+     */
     public function key()
     {
         $this->getResults();
@@ -465,6 +472,9 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
         return $var;
     }
 
+    /**
+     * @return mixed
+     */
     public function next()
     {
         $this->getResults();
@@ -473,6 +483,9 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
         return $var;
     }
 
+    /**
+     * @return bool
+     */
     public function valid()
     {
         $this->getResults();

@@ -673,6 +673,11 @@ class Config
         return $result;
     }
 
+    /**
+     * @param $runtimeConfig
+     * @param $key
+     * @return bool
+     */
     public static function inPerspective($runtimeConfig, $key)
     {
         if (!isset($runtimeConfig["toolbar"]) || !$runtimeConfig["toolbar"]) {

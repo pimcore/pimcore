@@ -343,25 +343,25 @@ class Image extends Model\Document\Tag
         return $this;
     }
 
-    /*
-      * @return string
-      */
+    /**
+     * @return string
+     */
     public function getText()
     {
         return $this->alt;
     }
 
-    /*
-      * @return string
-      */
+    /**
+     * @return string
+     */
     public function getAlt()
     {
         return $this->getText();
     }
 
-    /*
-      * @return string
-      */
+    /**
+     * @return string
+     */
     public function getSrc()
     {
         $image = $this->getImage();
@@ -479,7 +479,8 @@ class Image extends Model\Document\Tag
 
     /**
      * @param $ownerDocument
-     * @param array $blockedTags
+     * @param array $tags
+     * @return array|mixed
      */
     public function getCacheTags($ownerDocument, $tags = [])
     {
@@ -565,7 +566,8 @@ class Image extends Model\Document\Tag
 
     /**
      * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param mixed $params
+     * @param null $document
+     * @param array $params
      * @param null $idMapper
      * @throws \Exception
      */

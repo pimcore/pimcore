@@ -206,10 +206,19 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
         }
     }
 
-
+    /**
+     * @param $root
+     * @param $thumbnailName
+     */
     private function deleteThumbnailFolders($root, $thumbnailName)
     {
         // delete all thumbnails which are using this config
+        /**
+         * @param $dir
+         * @param $thumbnail
+         * @param array $matches
+         * @return array
+         */
         function delete($dir, $thumbnail, &$matches = [])
         {
             $dirs = glob($dir . '/*', GLOB_ONLYDIR);
@@ -226,11 +235,17 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
         delete($root, $thumbnailName);
     }
 
+    /**
+     * @param Asset\Image\Thumbnail\Config $thumbnail
+     */
     private function deleteThumbnailTmpFiles(Asset\Image\Thumbnail\Config $thumbnail)
     {
         $this->deleteThumbnailFolders(PIMCORE_TEMPORARY_DIRECTORY . "/image-thumbnails", $thumbnail->getName());
     }
 
+    /**
+     * @param Asset\Video\Thumbnail\Config $thumbnail
+     */
     private function deleteVideoThumbnailTmpFiles(Asset\Video\Thumbnail\Config $thumbnail)
     {
         $this->deleteThumbnailFolders(PIMCORE_TEMPORARY_DIRECTORY . "/video-thumbnails", $thumbnail->getName());
@@ -516,6 +531,12 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
         $this->_helper->json(["success" => true]);
     }
 
+    /**
+     * @param $source
+     * @param $definitions
+     * @param array $fallbacks
+     * @throws Exception
+     */
     protected function checkFallbackLanguageLoop($source, $definitions, $fallbacks = [])
     {
         if (isset($definitions[$source])) {
@@ -1479,6 +1500,10 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
         $this->_helper->json(false);
     }
 
+    /**
+     * @param $item
+     * @return array
+     */
     private function getWebsiteSettingForEditMode($item)
     {
         $resultItem = [

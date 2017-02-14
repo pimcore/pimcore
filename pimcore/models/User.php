@@ -542,7 +542,7 @@ class User extends User\UserRole
     }
 
     /**
-     * @return null|string
+     * @return array
      */
     public function getContentLanguages()
     {
