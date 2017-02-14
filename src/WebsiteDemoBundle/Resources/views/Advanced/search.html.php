@@ -14,9 +14,9 @@
 
     <form class="form-inline" role="form">
         <div class="form-group">
-            <input type="text" name="q" class="form-control" placeholder="<?= $this->zf1_translate("Keyword"); ?>" value="<?= $this->escape($queryString ?: '') ?>">
+            <input type="text" name="q" class="form-control" placeholder="<?= $this->translate("Keyword"); ?>" value="<?= $this->escape($queryString ?: '') ?>">
         </div>
-        <button type="submit" name="submit" class="btn btn-default"><?= $this->zf1_translate("Search"); ?></button>
+        <button type="submit" name="submit" class="btn btn-default"><?= $this->translate("Search"); ?></button>
     </form>
 
     <?php if ($this->paginator) { ?>

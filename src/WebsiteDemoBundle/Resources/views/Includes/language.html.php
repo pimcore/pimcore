@@ -6,7 +6,7 @@ $languageSwitcher = $this->app->getContainer()->get('website_demo.language_switc
 <div class="languages">
     <div class="dropdown">
         <button class="btn btn-default btn-xs dropdown-toggle" type="button" id="languageSelector" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-            <?= $this->zf1_translate('Language') ?>
+            <?= $this->translate('Language') ?>
             <span class="caret"></span>
         </button>
         <ul class="dropdown-menu" aria-labelledby="languageSelector">

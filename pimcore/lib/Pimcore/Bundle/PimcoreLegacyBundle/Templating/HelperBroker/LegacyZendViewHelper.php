@@ -26,7 +26,7 @@ class LegacyZendViewHelper implements HelperBrokerInterface
      */
     public function supports(PhpEngine $engine, $method)
     {
-        return 'zf1_' === substr($method, 0, 4);
+        return $this->zendViewHelperBridge->hasHelper($method);
     }
 
     /**
@@ -34,8 +34,6 @@ class LegacyZendViewHelper implements HelperBrokerInterface
      */
     public function helper(PhpEngine $engine, $method, array $arguments)
     {
-        $helper = substr($method, 4);
-
-        return $this->zendViewHelperBridge->execute($helper, $arguments);
+        return $this->zendViewHelperBridge->execute($method, $arguments);
     }
 }

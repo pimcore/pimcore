@@ -16,7 +16,7 @@
     <form class="form-horizontal" role="form" action="" method="post">
 
         <div class="form-group">
-            <label class="col-lg-2 control-label"><?= $this->zf1_translate("E-Mail"); ?></label>
+            <label class="col-lg-2 control-label"><?= $this->translate("E-Mail"); ?></label>
             <div class="col-lg-10">
                 <input name="email" type="text" class="form-control" placeholder="example@example.com" value="<?= $this->escapeHtml($this->getParam("email")); ?>">
             </div>
@@ -26,7 +26,7 @@
 
         <div class="form-group">
             <div class="col-lg-offset-2 col-lg-10">
-                <input type="submit" name="submit" class="btn btn-default" value="<?= $this->zf1_translate("Submit"); ?>">
+                <input type="submit" name="submit" class="btn btn-default" value="<?= $this->translate("Submit"); ?>">
             </div>
         </div>
     </form>

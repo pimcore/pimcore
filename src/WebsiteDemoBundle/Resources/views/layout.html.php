@@ -95,7 +95,7 @@ use Pimcore\Model\Document\Page;
                 </div>
                 <div class="navbar-collapse collapse">
                     <?php
-                    $mainNavigation = $this->zf1_pimcoreNavigation($document, $mainNavStartNode);
+                    $mainNavigation = $this->pimcoreNavigation($document, $mainNavStartNode);
                     echo $mainNavigation->menu()->renderMenu(null, [
                         'maxDepth' => 1,
                         'ulClass'  => 'nav navbar-nav'
@@ -124,7 +124,7 @@ use Pimcore\Model\Document\Page;
             <?php $this['slots']->output('_content') ?>
 
             <div>
-                <a href="/"><?= $this->zf1_translate('Home'); ?></a> &gt;
+                <a href="/"><?= $this->translate('Home'); ?></a> &gt;
                 <?= $mainNavigation->breadcrumbs()->setMinDepth(null); ?>
             </div>
         </div>
@@ -140,7 +140,7 @@ use Pimcore\Model\Document\Page;
                     ?>
 
                     <h3><?= $startNode->getProperty('navigation_name'); ?></h3>
-                    <?= $this->zf1_pimcoreNavigation($document, $startNode)->menu()->renderMenu(null, [
+                    <?= $this->pimcoreNavigation($document, $startNode)->menu()->renderMenu(null, [
                         'ulClass'                          => 'nav bs-sidenav',
                         'expandSiblingNodesOfActiveBranch' => true
                     ]); ?>

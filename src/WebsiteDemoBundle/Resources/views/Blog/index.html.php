@@ -48,10 +48,10 @@
     </div>
     <div class="col-md-4 filters">
         <div class="box">
-        <h4><?= $this->zf1_translate("Categories") ?></h4>
+        <h4><?= $this->translate("Categories") ?></h4>
             <ul class="nav nav-pills nav-stacked">
                 <li <?php if(!$this->getParam("category")) { ?> class="active"<?php } ?>>
-                    <a href="<?= $this->document ?>"><?= $this->zf1_translate("All Categories"); ?></a>
+                    <a href="<?= $this->document ?>"><?= $this->translate("All Categories"); ?></a>
                 </li>
                 <?php foreach ($this->categories as $category) { ?>
                     <li <?php if($this->getParam("category") == $category->getId()) { ?> class="active"<?php } ?>>
@@ -64,10 +64,10 @@
         </div>
 
         <div class="box">
-            <h4><?= $this->zf1_translate("Archive"); ?></h4>
+            <h4><?= $this->translate("Archive"); ?></h4>
             <ul class="nav nav-pills nav-stacked">
                 <li <?php if(!$this->getParam("archive")) { ?> class="active"<?php } ?>>
-                    <a href="<?= $this->document ?>"><?= $this->zf1_translate("All Dates"); ?></a>
+                    <a href="<?= $this->document ?>"><?= $this->translate("All Dates"); ?></a>
                 </li>
                 <?php foreach ($this->archiveRanges as $range) { ?>
                     <li <?php if($this->getParam("archive") == $range) { ?> class="active"<?php } ?>>

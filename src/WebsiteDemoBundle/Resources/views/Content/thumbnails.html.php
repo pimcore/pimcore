@@ -12,7 +12,7 @@ $image = Asset::getById(53);
 ?>
 
 <h2>
-    <?= $this->zf1_translate('Original Dimensions of the Image'); ?>:
+    <?= $this->translate('Original Dimensions of the Image'); ?>:
     <?php
     echo $image->getWidth() . 'x' . $image->getHeight();
     ?>
@@ -55,10 +55,10 @@ $image = Asset::getById(53);
                 <?= $thumbnail->getHTML() ?>
             </div>
 
-            <h3><?= $this->zf1_translate($title); ?></h3>
+            <h3><?= $this->translate($title); ?></h3>
 
             <div>
-                <?= $this->zf1_translate('Dimensions'); ?>:
+                <?= $this->translate('Dimensions'); ?>:
                 <?php
                 echo $thumbnail->getWidth() . 'x' . $thumbnail->getHeight()
                 ?>

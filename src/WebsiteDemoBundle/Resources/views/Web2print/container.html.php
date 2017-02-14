@@ -6,5 +6,5 @@
         }
     ?>
 
-    <?= $this->zf1_inc($child) ?>
+    <?= $this->inc($child) ?>
 <?php } ?>

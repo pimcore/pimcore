@@ -4,7 +4,7 @@
 
 <!-- FOOTER -->
 <footer>
-    <p class="pull-right"><a href="#"><?= $this->zf1_translate("Back to top"); ?></a></p>
+    <p class="pull-right"><a href="#"><?= $this->translate("Back to top"); ?></a></p>
     <p class="links">&copy; <?= date("Y"); ?> pimcore GmbH &middot;
         <?php while($this->block("links")->loop()) { ?>
             <?= $this->link("link"); ?>
