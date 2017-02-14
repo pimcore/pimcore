@@ -2,12 +2,10 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\EventListener;
 
-use Pimcore\Bundle\PimcoreBundle\Controller\DocumentAwareInterface;
 use Pimcore\Bundle\PimcoreBundle\Service\Document\DocumentService;
 use Pimcore\Bundle\PimcoreBundle\Service\Request\DocumentResolver as DocumentResolverService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
@@ -78,34 +76,12 @@ class DocumentResolver implements EventSubscriberInterface
     }
 
     /**
-     * Injects document into DocumentAware controllers
-     *
-     * @param FilterControllerEvent $event
-     */
-    public function onKernelController(FilterControllerEvent $event)
-    {
-        $callable = $event->getController();
-
-        if (is_array($callable)) {
-            $controller = $callable[0];
-
-            if ($controller instanceof DocumentAwareInterface) {
-                $document = $this->documentResolverService->getDocument($event->getRequest());
-                if ($document) {
-                    $controller->setDocument($document);
-                }
-            }
-        }
-    }
-
-    /**
      * {@inheritdoc}
      */
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::REQUEST    => ['onKernelRequest', 5], // higher priority - run before editmode and editable handlers
-            KernelEvents::CONTROLLER => 'onKernelController'
+            KernelEvents::REQUEST => ['onKernelRequest', 5], // higher priority - run before editmode and editable handlers
         ];
     }
 }

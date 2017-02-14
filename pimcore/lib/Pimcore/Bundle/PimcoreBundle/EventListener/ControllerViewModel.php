@@ -2,91 +2,54 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\EventListener;
 
-use Pimcore\Bundle\PimcoreBundle\Controller\ViewAwareInterface;
-use Pimcore\Bundle\PimcoreBundle\Service\Request\TemplateVarsResolver;
-use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModel;
+use Pimcore\Bundle\PimcoreBundle\Service\Request\ViewModelResolver;
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModelInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 class ControllerViewModel implements EventSubscriberInterface
 {
     /**
-     * @var TemplateVarsResolver
+     * @var ViewModelResolver
      */
-    protected $varsResolver;
+    protected $viewModelResolver;
 
     /**
-     * @param TemplateVarsResolver $varsResolver
+     * @param ViewModelResolver $viewModelResolver
      */
-    public function __construct(TemplateVarsResolver $varsResolver)
+    public function __construct(ViewModelResolver $viewModelResolver)
     {
-        $this->varsResolver = $varsResolver;
+        $this->viewModelResolver = $viewModelResolver;
     }
 
     /**
-     * If the called controller implements ViewAwareInterface, add a view variable to the controller and populate it
-     * with default template vars.
-     *
-     * @param FilterControllerEvent $event
-     */
-    public function onKernelController(FilterControllerEvent $event)
-    {
-        $callable = $event->getController();
-        if (!is_array($callable)) {
-            return;
-        }
-
-        $request    = $event->getRequest();
-        $controller = $callable[0];
-
-        if ($controller instanceof ViewAwareInterface) {
-            $controller->setView($this->generateViewModel($request));
-            $request->attributes->set('_view_aware_controller', $controller);
-        }
-    }
-
-    /**
-     * @param Request $request
-     * @return ViewModel
-     */
-    protected function generateViewModel(Request $request)
-    {
-        // create view model and add default template vars (document, editmode)
-        $vars = $this->varsResolver->getTemplateVars($request);
-        $view = new ViewModel($vars);
-
-        return $view;
-    }
-
-    /**
-     * Handle controller returning a ViewModel or implementing ViewModelInterface
+     * When action uses the Template annotation, add ViewModel variables to the controller result
+     * before proceeding to render the template.
      *
      * @param GetResponseForControllerResultEvent $event
      */
     public function onKernelView(GetResponseForControllerResultEvent $event)
     {
+        $request = $event->getRequest();
+
+        // only alter requests with a @Template annotation
+        $template = $request->attributes->get('_template');
+        if (null === $template) {
+            return;
+        }
+
         $result = $event->getControllerResult();
 
-        // controller returned a ViewModel instance -> just transform the model to array and return
+        // controller returned a ViewModel instance -> transform the model to array and return
         if ($result instanceof ViewModelInterface) {
             $event->setControllerResult($result->getParameters()->all());
-
             return;
         }
 
-        // handle ViewAwareInterface controllers
-        $controller = $event->getRequest()->attributes->get('_view_aware_controller');
-        if (!$controller || !($controller instanceof ViewAwareInterface)) {
-            return;
-        }
-
-        // view has no params -> nothing to do
-        $view = $controller->getView();
-        if ($view->getParameters()->count() === 0) {
+        // view model is empty -> nothing to do
+        $view = $this->viewModelResolver->getViewModel($event->getRequest());
+        if (null === $view || $view->count() === 0) {
             return;
         }
 
@@ -109,11 +72,9 @@ class ControllerViewModel implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::CONTROLLER => 'onKernelController',
-
             // set a higher priority to make this run before the @Template annotation
             // handler kicks in (SensioFrameworkExtraBundle) to make sure the ViewModel
-            // is processed before
+            // is processed before template is rendered
             KernelEvents::VIEW => ['onKernelView', 10]
         ];
     }

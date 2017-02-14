@@ -18,7 +18,7 @@ services:
 
     pimcore.event_listener.controller_view_model:
         class: Pimcore\Bundle\PimcoreBundle\EventListener\ControllerViewModel
-        arguments: ['@pimcore.service.request.template_vars_resolver']
+        arguments: ['@pimcore.service.request.view_model_resolver']
         tags:
             - { name: kernel.event_subscriber }
 

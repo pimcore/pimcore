@@ -20,6 +20,12 @@ services:
         tags:
             - { name: controller.argument_value_resolver }
 
+    pimcore.value_resolver.view_model:
+        class: Pimcore\Bundle\PimcoreBundle\ArgumentResolver\ViewModelValueResolver
+        arguments: ['@pimcore.service.request.view_model_resolver']
+        tags:
+            - { name: controller.argument_value_resolver }
+
     pimcore.value_resolver.template_vars:
         class: Pimcore\Bundle\PimcoreBundle\ArgumentResolver\TemplateVarsValueResolver
         arguments: ['@pimcore.service.request.template_vars_resolver']
@@ -49,6 +55,10 @@ services:
     pimcore.service.request.template_vars_resolver:
         class: Pimcore\Bundle\PimcoreBundle\Service\Request\TemplateVarsResolver
         arguments: ['@pimcore.service.request.document_resolver', '@pimcore.service.request.editmode_resolver']
+
+    pimcore.service.request.view_model_resolver:
+        class: Pimcore\Bundle\PimcoreBundle\Service\Request\ViewModelResolver
+        arguments: ['@request_stack', '@pimcore.service.request.template_vars_resolver']
 
     pimcore.service.document:
         class: Pimcore\Bundle\PimcoreBundle\Service\Document\DocumentService
