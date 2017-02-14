@@ -7,7 +7,9 @@
     $description = strip_tags($this->article->getText());
     $description = \Website\Tool\Text::getStringAsOneLine($description);
     $description = \Website\Tool\Text::cutStringRespectingWhitespace($description, 160);
-    $this->headMeta($description, "description");
+
+    // TODO HEAD META HELPER
+    // $this->headMeta($description, "description");
 ?>
 <section class="area-wysiwyg">
 

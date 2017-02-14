@@ -32,14 +32,17 @@ use Pimcore\Model\Document\Page;
 
     if ($document->getDescription()) {
         // use the manually set description if available
-        $this->headMeta()->appendName('description', $document->getDescription());
+        // TODO HEAD META HELPER
+        // $this->headMeta()->appendName('description', $document->getDescription());
     }
 
     $this->headTitle()->append("pimcore Demo");
     $this->headTitle()->setSeparator(" : ");
 
     echo $this->headTitle();
-    echo $this->headMeta();
+
+    // TODO HEAD META HELPER
+    // echo $this->headMeta();
     ?>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

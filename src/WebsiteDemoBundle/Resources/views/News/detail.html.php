@@ -3,7 +3,9 @@
 <?php
 // set page meta-data
 $this->headTitle()->set($this->news->getTitle());
-$this->headMeta($this->news->getShortText(), "description");
+
+// TODO HEAD META HELPER
+// $this->headMeta($this->news->getShortText(), "description");
 
 /** @var \Pimcore\Model\Object\News $news */
 $news = $this->news;
