@@ -31,7 +31,23 @@ abstract class ZendController extends Controller implements EventedControllerInt
             return $this->get('pimcore.service.request.editmode_resolver')->isEditmode();
         }
 
-        throw new \InvalidArgumentException(sprintf('Trying to read undefined property "%s"', $name));
+        throw new \RuntimeException(sprintf('Trying to read undefined property "%s"', $name));
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function __set($name, $value)
+    {
+        $requestAttributes = ['view', 'document', 'editmode'];
+        if (in_array($name, $requestAttributes)) {
+            throw new \RuntimeException(sprintf(
+                'Property "%s" is a request attribute and can\'t be set on the controller instance',
+                $name
+            ));
+        }
+
+        throw new \RuntimeException(sprintf('Trying to set unknown property "%s"', $name));
     }
 
     /**
