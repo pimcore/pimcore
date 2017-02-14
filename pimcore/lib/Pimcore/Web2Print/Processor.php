@@ -181,6 +181,7 @@ abstract class Processor
 
     /**
      * @param $documentId
+     * @param $status
      * @param $statusUpdate
      */
     protected function updateStatus($documentId, $status, $statusUpdate)

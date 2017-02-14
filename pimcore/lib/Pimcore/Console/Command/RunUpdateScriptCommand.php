@@ -30,6 +30,9 @@ class RunUpdateScriptCommand extends AbstractCommand
             ->addArgument("buildNumber", InputArgument::REQUIRED, "Build number of the script you want to run again");
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $build = intval($input->getArgument("buildNumber"));

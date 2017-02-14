@@ -73,6 +73,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     * @param $objectFromVersion
      * @return string
      */
     public function getDataForEditmode($data, $object = null, $params = [], $objectFromVersion = null)
@@ -92,7 +93,9 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
     }
 
     /**
+     * @param $getter
      * @param $data
+     * @param $params
      * @param $allowedBrickType
      * @param $objectFromVersion
      * @param int $level
@@ -160,9 +163,13 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
     /**
      * gets recursively attribute data from parent and fills objectData and metaData
      *
-     * @param  $item
-     * @param  $key
-     * @param  $fielddefinition
+     * @param $item
+     * @param $key
+     * @param $fielddefinition
+     * @param $level
+     * @param $baseObject
+     * @param $getter
+     * @param $objectFromVersion
      * @return mixed
      */
     private function getDataForField($item, $key, $fielddefinition, $level, $baseObject, $getter, $objectFromVersion)
@@ -628,7 +635,10 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
         return $tags;
     }
 
-
+    /**
+     * @param $class
+     * @return string
+     */
     public function getGetterCode($class)
     {
         // getter
@@ -723,7 +733,16 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
         return "NOT SUPPORTED";
     }
 
-
+    /**
+     * @param $item
+     * @param $key
+     * @param $fielddefinition
+     * @param $level
+     * @param $baseObject
+     * @param $getter
+     * @param $objectFromVersion
+     * @return mixed
+     */
     private function getDiffDataForField($item, $key, $fielddefinition, $level, $baseObject, $getter, $objectFromVersion)
     {
         $valueGetter = "get" . ucfirst($key);
@@ -798,6 +817,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
      * @param mixed $data
      * @param null $object
      * @param mixed $params
+     * @param null $objectFromVersion
      * @return array|null
      */
     public function getDiffDataForEditMode($data, $object = null, $params = [], $objectFromVersion = null)
@@ -935,7 +955,9 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
 
     /**
      * This method is called in Object|Class::save() and is used to create the database table for the localized data
-     * @return void
+     *
+     * @param $class
+     * @param array $params
      */
     public function classSaved($class, $params = [])
     {
@@ -947,6 +969,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
                     Logger::info("Unknown allowed type [ $allowedType ] ignored.");
                 }
 
+                //TODO: Shouldn't this moved inside the try block?
                 if ($definition) {
                     $fieldDefinition = $definition->getFieldDefinitions();
 
@@ -960,6 +983,10 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
         }
     }
 
+    /**
+     * @param $container
+     * @param array $list
+     */
     public static function collectCalculatedValueItems($container, &$list = [])
     {
         if (is_array($container)) {

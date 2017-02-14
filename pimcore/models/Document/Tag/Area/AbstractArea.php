@@ -122,7 +122,6 @@ abstract class AbstractArea
     /**
      * @param $key
      * @param $value
-     * @return void
      */
     public function addParam($key, $value)
     {

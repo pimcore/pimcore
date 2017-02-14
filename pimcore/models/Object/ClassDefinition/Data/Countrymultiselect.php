@@ -20,7 +20,6 @@ use Pimcore\Model;
 
 class Countrymultiselect extends Model\Object\ClassDefinition\Data\Multiselect
 {
-
     /**
      * Static type of this element
      *

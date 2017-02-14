@@ -100,6 +100,7 @@ abstract class Adapter
 
     /**
      * @abstract
+     * @param $file
      * @param $timeOffset
      */
     abstract public function saveImage($file, $timeOffset = null);

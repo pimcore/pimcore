@@ -29,6 +29,9 @@ class ThumbnailsOptimizeImagesCommand extends AbstractCommand
             ->setDescription('Optimize filesize of all images in ' . PIMCORE_TEMPORARY_DIRECTORY);
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $files = rscandir(PIMCORE_TEMPORARY_DIRECTORY . "/image-thumbnails/");

@@ -74,6 +74,7 @@ class CollectionConfig extends Model\AbstractModel
 
     /**
      * @param $name
+     * @param int $storeId
      * @return CollectionConfig
      */
     public static function getByName($name, $storeId = 1)

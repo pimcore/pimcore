@@ -83,7 +83,9 @@ class Reports_AnalyticsController extends \Pimcore\Controller\Action\Admin\Repor
         }
     }
 
-
+    /**
+     * @return \Pimcore\Model\Site|void
+     */
     private function getSite()
     {
         $siteId = $this->getParam("site");
@@ -91,12 +93,16 @@ class Reports_AnalyticsController extends \Pimcore\Controller\Action\Admin\Repor
         try {
             $site = Site::getById($siteId);
         } catch (\Exception $e) {
-            return;
+            return; //TODO: Shouldn't be null returned here?
         }
 
         return $site;
+
     }
 
+    /**
+     * @return mixed|string
+     */
     protected function getFilterPath()
     {
         if ($this->getParam("type") == "document" && $this->getParam("id")) {
@@ -400,7 +406,11 @@ class Reports_AnalyticsController extends \Pimcore\Controller\Action\Admin\Repor
         $this->_helper->json(["data" => $data]);
     }
 
-
+    /**
+     * @param $type
+     * @param $value
+     * @return string
+     */
     protected function formatDimension($type, $value)
     {
         if (strpos($type, "date") !== false) {
@@ -413,6 +423,12 @@ class Reports_AnalyticsController extends \Pimcore\Controller\Action\Admin\Repor
         return $value;
     }
 
+    /**
+     * @param $sec
+     * @return string
+     *
+     * @todo: still needed?
+     */
     private function formatDuration($sec)
     {
         $minutes = intval(($sec / 60) % 60);

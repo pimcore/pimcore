@@ -47,6 +47,9 @@ class ThumbnailsImageCommand extends AbstractCommand
             );
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $list = new Asset\Image\Thumbnail\Config\Listing();

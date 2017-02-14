@@ -45,9 +45,6 @@ class Memcached extends \Zend_Cache_Backend_Memcached
         parent::__construct($options);
     }
 
-    /**
-     * @return void
-     */
     protected function checkCacheConsistency()
     {
         // if the cache_tags table is empty, flush the cache
@@ -67,7 +64,7 @@ class Memcached extends \Zend_Cache_Backend_Memcached
     /**
      * @param $id
      * @param bool $doNotTestCacheValidity
-     * @return void
+     * @return null
      */
     public function load($id, $doNotTestCacheValidity = false)
     {
@@ -95,11 +92,9 @@ class Memcached extends \Zend_Cache_Backend_Memcached
     /**
      * @param string $id
      * @param array $tags
-     * @return void
      */
     protected function saveTags($id, $tags)
     {
-
         //$this->getDb()->beginTransaction();
 
         try {
@@ -135,9 +130,6 @@ class Memcached extends \Zend_Cache_Backend_Memcached
         }
     }
 
-    /**
-     * @return void
-     */
     protected function clearTags()
     {
         $this->getDb()->query("TRUNCATE TABLE `cache_tags`");

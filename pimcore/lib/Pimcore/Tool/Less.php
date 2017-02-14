@@ -136,6 +136,11 @@ class Less
         return $body;
     }*/
 
+    /**
+     * @param $path
+     * @param null $source
+     * @return mixed|string
+     */
     public static function compile($path, $source = null)
     {
         $conf = \Pimcore\Config::getSystemConfig();
@@ -180,7 +185,11 @@ class Less
         return $compiledContent;
     }
 
-
+    /**
+     * @param $base
+     * @param $content
+     * @return mixed
+     */
     protected static function correctReferences($base, $content)
     {
         // check for url references
@@ -202,7 +211,11 @@ class Less
         return $content;
     }
 
-
+    /**
+     * @param $rel
+     * @param $base
+     * @return mixed|string
+     */
     protected static function correctUrl($rel, $base)
     {
         /* return if already absolute URL */

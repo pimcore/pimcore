@@ -92,6 +92,9 @@ class Admin_LinkController extends \Pimcore\Controller\Action\Admin\Document
         $this->_helper->json(false);
     }
 
+    /**
+     * @param Document\Link $link
+     */
     protected function setValuesToDocument(Document\Link $link)
     {
 

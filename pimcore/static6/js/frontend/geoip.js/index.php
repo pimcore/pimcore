@@ -55,7 +55,12 @@ if (file_exists($geoDbFile)) {
 }
 
 /* SOME FUNCTIONS */
-
+/**
+ * Check if ip is from an private network
+ *
+ * @param $ip
+ * @return bool
+ */
 function ip_is_private($ip)
 {
     $pri_addrs = [

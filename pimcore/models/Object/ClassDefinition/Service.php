@@ -51,6 +51,7 @@ class Service
     /**
      * @param $class
      * @param $json
+     * @param bool $throwException
      * @return bool
      */
     public static function importClassDefinitionFromJson($class, $json, $throwException = false)
@@ -108,6 +109,7 @@ class Service
     /**
      * @param $fieldCollection
      * @param $json
+     * @param bool $throwException
      * @return bool
      */
     public static function importFieldCollectionFromJson($fieldCollection, $json, $throwException = false)
@@ -154,6 +156,7 @@ class Service
     /**
      * @param $objectBrick
      * @param $json
+     * @param bool $throwException
      * @return bool
      */
     public static function importObjectBrickFromJson($objectBrick, $json, $throwException = false)

@@ -441,7 +441,6 @@ class Block extends Model\Object\ClassDefinition\Data
 
     /**
      * @param mixed $child
-     * @return void
      */
     public function addChild($child)
     {
@@ -471,7 +470,7 @@ class Block extends Model\Object\ClassDefinition\Data
     /**
      * @param mixed $data
      * @param array $blockedKeys
-     * @return void
+     * @return $this
      */
     public function setValues($data = [], $blockedKeys = [])
     {

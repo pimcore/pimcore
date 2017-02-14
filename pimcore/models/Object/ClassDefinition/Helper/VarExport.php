@@ -20,6 +20,10 @@ use Pimcore\Model\Object;
 
 trait VarExport
 {
+    /**
+     * @param $data
+     * @return static
+     */
     public static function __set_state($data)
     {
         $obj = new static();

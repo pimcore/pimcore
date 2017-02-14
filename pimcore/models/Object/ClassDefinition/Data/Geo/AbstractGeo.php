@@ -40,11 +40,18 @@ abstract class AbstractGeo extends Model\Object\ClassDefinition\Data
      */
     public $mapType = 'roadmap';
 
+    /**
+     * @return float
+     */
     public function getLat()
     {
         return $this->lat;
     }
 
+    /**
+     * @param $lat
+     * @return $this
+     */
     public function setLat($lat)
     {
         $this->lat = (float) $lat;
@@ -52,11 +59,18 @@ abstract class AbstractGeo extends Model\Object\ClassDefinition\Data
         return $this;
     }
 
+    /**
+     * @return float
+     */
     public function getLng()
     {
         return $this->lng;
     }
 
+    /**
+     * @param $lng
+     * @return $this
+     */
     public function setLng($lng)
     {
         $this->lng = (float) $lng;
@@ -64,11 +78,18 @@ abstract class AbstractGeo extends Model\Object\ClassDefinition\Data
         return $this;
     }
 
+    /**
+     * @return int
+     */
     public function getZoom()
     {
         return $this->zoom;
     }
 
+    /**
+     * @param $zoom
+     * @return $this
+     */
     public function setZoom($zoom)
     {
         $this->zoom = (int) $zoom;
@@ -76,11 +97,18 @@ abstract class AbstractGeo extends Model\Object\ClassDefinition\Data
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getMapType()
     {
         return $this->mapType;
     }
 
+    /**
+     * @param $mapType
+     * @return $this
+     */
     public function setMapType($mapType)
     {
         $this->mapType = $mapType;

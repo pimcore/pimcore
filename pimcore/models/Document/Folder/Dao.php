@@ -26,8 +26,6 @@ class Dao extends Model\Document\Dao
 
     /**
      * Deletes the folder
-     *
-     * @return void
      */
     public function delete()
     {

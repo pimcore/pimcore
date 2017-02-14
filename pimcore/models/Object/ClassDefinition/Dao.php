@@ -34,8 +34,14 @@ class Dao extends Model\Dao\AbstractDao
      */
     protected $model;
 
+    /**
+     * @var array
+     */
     protected $_sqlChangeLog = [];
 
+    /**
+     * @var mixed
+     */
     protected $tableDefinitions = null;
 
     /**
@@ -64,7 +70,9 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Save object to database
      *
-     * @return void
+     * @return boolean
+     *
+     * @todo: update() or create() don't return anything
      */
     public function save()
     {
@@ -228,8 +236,6 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * Deletes object from database
-     *
-     * @return void
      */
     public function delete()
     {
@@ -284,7 +290,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Update the class name in all object
      *
-     * @return void
+     * @param $newName
      */
     public function updateClassNameInObjects($newName)
     {

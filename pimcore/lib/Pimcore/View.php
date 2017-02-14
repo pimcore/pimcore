@@ -141,6 +141,7 @@ class View extends \Zend_View
      *
      * @param $include
      * @param array $params
+     * @param bool $cacheEnabled
      * @return string
      */
     public function inc($include, $params = null, $cacheEnabled = true)

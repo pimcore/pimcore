@@ -149,6 +149,7 @@ class Ghostscript extends Adapter
     /**
      * @param $path
      * @param int $page
+     * @param int $resolution
      * @return $this|bool
      */
     public function saveImage($path, $page = 1, $resolution = 200)

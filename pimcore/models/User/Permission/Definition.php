@@ -24,6 +24,9 @@ use Pimcore\Logger;
  */
 class Definition extends Model\AbstractModel
 {
+    /**
+     * @var string
+     */
     public $key;
 
     /**

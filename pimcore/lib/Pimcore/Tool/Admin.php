@@ -15,6 +15,7 @@
 namespace Pimcore\Tool;
 
 use Pimcore\File;
+use Pimcore\Model\User;
 use Pimcore\Tool\Text\Csv;
 
 class Admin
@@ -155,7 +156,6 @@ class Admin
 
     /**
      * @static
-     * @return void
      */
     public static function deactivateMaintenanceMode()
     {
@@ -230,6 +230,12 @@ class Admin
         return false;
     }
 
+    /**
+     * @param User $user
+     * @param string|array $languages
+     * @param bool $returnLanguageArray
+     * @return string
+     */
     public static function reorderWebsiteLanguages($user, $languages, $returnLanguageArray = false)
     {
         if (!is_array($languages)) {

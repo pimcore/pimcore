@@ -295,7 +295,10 @@ class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
         }
     }
 
-
+    /**
+     * @param $config
+     * @return array
+     */
     protected function getConfigItem($config)
     {
         $name = $config->getName();

@@ -102,6 +102,7 @@ class Link extends Model\Document
     /**
      * Resolves dependencies and create tags for caching out of them
      *
+     * @param array $tags
      * @return array
      */
     public function getCacheTags($tags = [])
@@ -319,6 +320,7 @@ class Link extends Model\Document
     }
 
     /**
+     * @param $object
      * @return $this
      */
     public function setObject($object)

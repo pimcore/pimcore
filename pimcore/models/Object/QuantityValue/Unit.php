@@ -24,7 +24,6 @@ use Pimcore\Logger;
  */
 class Unit extends Model\AbstractModel
 {
-
     /**
      * @var int
      */
@@ -35,18 +34,15 @@ class Unit extends Model\AbstractModel
      */
     public $abbreviation;
 
-
     /**
      * @var string
      */
     public $group;
 
-
     /**
      * @var string
      */
     public $longname;
-
 
     /**
      * @var string
@@ -58,7 +54,6 @@ class Unit extends Model\AbstractModel
      */
     public $reference;
 
-
     /**
      * @var double
      */
@@ -68,7 +63,6 @@ class Unit extends Model\AbstractModel
      * @var double
      */
     public $conversionOffset;
-
 
     /**
      * @param string $abbreviation
@@ -131,17 +125,11 @@ class Unit extends Model\AbstractModel
         return $unit;
     }
 
-    /**
-     * @return void
-     */
     public function save()
     {
         $this->getDao()->save();
     }
 
-    /**
-     * @return void
-     */
     public function delete()
     {
         $cacheKey = Unit\Dao::TABLE_NAME . "_" . $this->getId();
@@ -150,7 +138,9 @@ class Unit extends Model\AbstractModel
         $this->getDao()->delete();
     }
 
-
+    /**
+     * @return string
+     */
     public function __toString()
     {
         return ucfirst($this->getAbbreviation() . " (" . $this->getId() . ")");

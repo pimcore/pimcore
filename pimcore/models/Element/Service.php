@@ -99,7 +99,8 @@ class Service extends Model\AbstractModel
 
     /**
      * @static
-     * @param  $list array | \Pimcore\Model\Listing\AbstractListing
+     * @param $list array | \Pimcore\Model\Listing\AbstractListing
+     * @param string $idGetter
      * @return array
      */
     public static function getIdList($list, $idGetter = 'getId')
@@ -343,7 +344,6 @@ class Service extends Model\AbstractModel
      *
      * @static
      * @param  ElementInterface $element
-     * @return void
      */
     public static function scheduleForSanityCheck($element)
     {
@@ -386,8 +386,9 @@ class Service extends Model\AbstractModel
 
     /**
      * @static
-     * @param  ElementInterface $element
-     * @return void
+     * @param ElementInterface $element
+     *
+     * @todo: I think ElementInterface is the wrong type here, it has no getter latestVersion
      */
     protected static function performSanityCheck($element)
     {
@@ -465,9 +466,10 @@ class Service extends Model\AbstractModel
 
 
     /**
-     * @param  ElementInterface $target the parent element
-     * @param  ElementInterface $new the newly inserted child
-     * @return void
+     * @param ElementInterface $target the parent element
+     * @param ElementInterface $new the newly inserted child
+     *
+     * @todo: I think ElementInterface is the wrong type here, it has no method getChilds
      */
     protected function updateChilds($target, $new)
     {
@@ -528,7 +530,8 @@ class Service extends Model\AbstractModel
 
     /**
      * find all elements which the user may not list and therefore may never be shown to the user
-     * @param  string $type asset|object|document
+     * @param string $type asset|object|document
+     * @param $user
      * @return array
      */
     public static function findForbiddenPaths($type, $user)
@@ -560,7 +563,8 @@ class Service extends Model\AbstractModel
 
     /**
      * renews all references, for example after unserializing an ElementInterface
-     * @param  Document|Asset|Object\AbstractObject $data
+     * @param Document|Asset|Object\AbstractObject $data
+     * @param bool $initial
      * @return mixed
      */
     public static function renewReferences($data, $initial = true)
@@ -775,6 +779,10 @@ class Service extends Model\AbstractModel
         }
     }
 
+    /**
+     * @param $id
+     * @return mixed
+     */
     public static function getCustomViewById($id)
     {
         $customViews = Tool::getCustomViewConfig();
@@ -852,6 +860,11 @@ class Service extends Model\AbstractModel
         }
     }
 
+    /**
+     * @param $data
+     * @param $type
+     * @return array|string
+     */
     public static function fixAllowedTypes($data, $type)
     {
         // this is the new method with Ext.form.MultiSelect
@@ -894,6 +907,10 @@ class Service extends Model\AbstractModel
         return $data ? $data : [];
     }
 
+    /**
+     * @param $versions
+     * @return array
+     */
     public static function getSafeVersionInfo($versions)
     {
         if (is_array($versions)) {

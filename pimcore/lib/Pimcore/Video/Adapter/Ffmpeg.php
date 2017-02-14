@@ -148,6 +148,7 @@ class Ffmpeg extends Adapter
     }
 
     /**
+     * @param $file
      * @param null $timeOffset
      */
     public function saveImage($file, $timeOffset = null)

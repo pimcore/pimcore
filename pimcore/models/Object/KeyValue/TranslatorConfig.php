@@ -114,11 +114,17 @@ class TranslatorConfig extends Model\AbstractModel
         return $this;
     }
 
+    /**
+     * @param $translator
+     */
     public function setTranslator($translator)
     {
         $this->translator = $translator;
     }
 
+    /**
+     * @return mixed
+     */
     public function getTranslator()
     {
         return $this->translator;

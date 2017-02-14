@@ -34,6 +34,9 @@ class MysqlToolsCommand extends AbstractCommand
             );
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         // display error message

@@ -16,6 +16,9 @@ namespace Pimcore\View\Helper;
 
 class HeadMeta extends \Zend_View_Helper_HeadMeta
 {
+    /**
+     * @var array
+     */
     protected $rawItems = [];
 
     /**

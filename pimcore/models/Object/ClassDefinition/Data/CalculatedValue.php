@@ -71,7 +71,6 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data
 
     /**
      * @param integer $width
-     * @return void
      */
     public function setWidth($width)
     {
@@ -246,11 +245,12 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data
     }
 
      /**
-     * converts data to be imported via webservices
-     * @param mixed $value
-     * @param null|Model\Object\AbstractObject $object
-     * @param mixed $params
-     * @return mixed
+      * converts data to be imported via webservices
+      * @param mixed $value
+      * @param null|Model\Object\AbstractObject $object
+      * @param mixed $params
+      * @param $idMapper
+      * @return mixed
      */
     public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
     {
@@ -265,10 +265,14 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data
         return $this->queryColumnType . "(" . $this->getColumnLength() . ")";
     }
 
+    /**
+     * @return null
+     */
     public function getColumnType()
     {
         return null;
     }
+
     public function save()
     {
         // nothing to do

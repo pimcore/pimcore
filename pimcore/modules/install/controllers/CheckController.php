@@ -596,6 +596,12 @@ class Install_CheckController extends \Pimcore\Controller\Action
         $this->view->checksFS = $checksFS;
     }
 
+    /**
+     * @param string $base
+     * @param array $data
+     * @return array
+     * @throws Exception
+     */
     protected function rscandir($base = '', &$data = [])
     {
         if (substr($base, -1, 1) != DIRECTORY_SEPARATOR) { //add trailing slash if it doesn't exists

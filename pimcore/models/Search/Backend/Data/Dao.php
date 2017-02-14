@@ -79,8 +79,6 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
 
     /**
      * Deletes from database
-     *
-     * @return void
      */
     public function delete()
     {

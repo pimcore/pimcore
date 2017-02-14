@@ -45,6 +45,9 @@ class CacheClearCommand extends AbstractCommand
         ;
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         if ($input->getOption("tags")) {

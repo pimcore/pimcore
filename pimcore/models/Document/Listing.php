@@ -65,7 +65,8 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     /**
      * Tests if the given key is an valid order key to sort the results
      *
-     * @return boolean
+     * @param $key
+     * @return bool
      */
     public function isValidOrderKey($key)
     {
@@ -112,6 +113,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     /**
      * Set the unpublished flag for the document.
      *
+     * @param $unpublished
      * @return bool
      */
     public function setUnpublished($unpublished)

@@ -95,7 +95,6 @@ class Dao extends Model\Object\Fieldcollection\Dao
     /**
      * @throws \Exception
      * @param Object\Concrete $object
-     * @return void
      */
     public function delete(Object\Concrete $object)
     {

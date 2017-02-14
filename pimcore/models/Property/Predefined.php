@@ -193,7 +193,7 @@ class Predefined extends Model\AbstractModel
 
     /**
      * @param string $type
-     * @return void
+     * @return $this
      */
     public function setType($type)
     {
@@ -204,7 +204,7 @@ class Predefined extends Model\AbstractModel
 
     /**
      * @param string $data
-     * @return void
+     * @return $this
      */
     public function setData($data)
     {
@@ -223,7 +223,7 @@ class Predefined extends Model\AbstractModel
 
     /**
      * @param integer $id
-     * @return void
+     * @return $this
      */
     public function setId($id)
     {
@@ -242,7 +242,7 @@ class Predefined extends Model\AbstractModel
 
     /**
      * @param string $config
-     * @return void
+     * @return $this
      */
     public function setConfig($config)
     {
@@ -261,7 +261,7 @@ class Predefined extends Model\AbstractModel
 
     /**
      * @param string $ctype
-     * @return void
+     * @return $this
      */
     public function setCtype($ctype)
     {
@@ -280,7 +280,7 @@ class Predefined extends Model\AbstractModel
 
     /**
      * @param string $inheritable
-     * @return void
+     * @return $this
      */
     public function setInheritable($inheritable)
     {
@@ -291,7 +291,7 @@ class Predefined extends Model\AbstractModel
 
     /**
      * @param string $description
-     * @return void
+     * @return $this
      */
     public function setDescription($description)
     {

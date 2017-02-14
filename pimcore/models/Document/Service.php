@@ -352,8 +352,8 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param  Document $document
-     * @return void
+     * @param Document $document
+     * @return array
      */
     public static function gridDocumentData($document)
     {
@@ -394,6 +394,7 @@ class Service extends Model\Element\Service
     /**
      * @static
      * @param $path
+     * @param $type
      * @return bool
      */
     public static function pathExists($path, $type = null)
@@ -435,6 +436,7 @@ class Service extends Model\Element\Service
      * )
      * @param $document
      * @param $rewriteConfig
+     * @param array $params
      * @return Document
      */
     public static function rewriteIds($document, $rewriteConfig, $params = [])
@@ -517,10 +519,16 @@ class Service extends Model\Element\Service
                 }
             }
         }
-
+        //TODO: $document is not definied here, shouldn't be null returned here?
         return $document;
     }
 
+    /**
+     * @param $item
+     * @param int $nr
+     * @return mixed|string
+     * @throws \Exception
+     */
     public static function getUniqueKey($item, $nr = 0)
     {
         $list = new Listing();

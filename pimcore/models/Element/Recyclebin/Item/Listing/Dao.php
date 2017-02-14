@@ -43,6 +43,11 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $items;
     }
 
+    /**
+     * @return int
+     *
+     * @todo: $amount could not be defined, so this could cause an issue
+     */
     public function getTotalCount()
     {
         try {

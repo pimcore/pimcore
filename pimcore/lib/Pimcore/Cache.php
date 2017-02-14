@@ -273,6 +273,7 @@ class Cache
     /**
      * Returns the content of the requested cache entry
      * @param string $key
+     * @param boolean $doNotTestCacheValidity
      * @return mixed
      */
     public static function load($key, $doNotTestCacheValidity = false)

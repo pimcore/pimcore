@@ -137,8 +137,9 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @param  $name
-     * @param  $parameters
+     * @param $position
+     * @param $name
+     * @param $parameters
      * @return bool
      */
     public function addItemAt($position, $name, $parameters)
@@ -151,10 +152,6 @@ class Config extends Model\AbstractModel
         return true;
     }
 
-
-    /**
-     * @return void
-     */
     public function resetItems()
     {
         $this->items = [];

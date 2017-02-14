@@ -264,6 +264,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
     /**
      * @param $data
      * @param null $object
+     * @param array $params
      * @return array
      */
     public function getDataForGrid($data, $object = null, $params = [])
@@ -515,7 +516,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
 
     /**
      * @param Object\Concrete $object
-     * @return void
+     * @param array $params
      */
     public function save($object, $params = [])
     {
@@ -583,6 +584,11 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
         parent::save($object, $params);
     }
 
+    /**
+     * @param $object
+     * @param array $params
+     * @return array|mixed|null
+     */
     public function preGetData($object, $params = [])
     {
         $data = null;
@@ -622,7 +628,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
 
     /**
      * @param Object\Concrete $object
-     * @return void
+     * @param array $params
      */
     public function delete($object, $params = [])
     {
@@ -701,7 +707,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
     }
 
     /**
-     * @return void
+     * @param $class
      */
     public function classSaved($class)
     {

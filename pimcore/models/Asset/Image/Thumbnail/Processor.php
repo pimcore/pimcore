@@ -23,6 +23,9 @@ use Pimcore\Logger;
 
 class Processor
 {
+    /**
+     * @var array
+     */
     protected static $argumentMapping = [
         "resize" => ["width", "height"],
         "scaleByWidth" => ["width", "forceResize"],

@@ -233,6 +233,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
     /**
      * @param $data
      * @param null $object
+     * @param array $params
      * @return array
      */
     public function getDataForGrid($data, $object = null, $params = [])
@@ -491,10 +492,9 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
     }
 
 
-
     /**
      * @param Element\AbstractElement $object
-     * @return void
+     * @param array $params
      */
     public function save($object, $params = [])
     {
@@ -562,6 +562,11 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
         parent::save($object, $params);
     }
 
+    /**
+     * @param $object
+     * @param array $params
+     * @return array|mixed|null
+     */
     public function preGetData($object, $params = [])
     {
         $data = null;
@@ -600,7 +605,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
 
     /**
      * @param Element\AbstractElement $object
-     * @return void
+     * @param array $params
      */
     public function delete($object, $params = [])
     {
@@ -724,7 +729,8 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
     }
 
     /**
-     * @return void
+     * @param $class
+     * @param array $params
      */
     public function classSaved($class, $params = [])
     {

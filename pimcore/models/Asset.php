@@ -295,6 +295,7 @@ class Asset extends Element\AbstractElement
      *
      * @param integer $parentId
      * @param array $data
+     * @param boolean $save
      * @return Asset
      */
     public static function create($parentId, $data = [], $save = true)
@@ -1577,6 +1578,8 @@ class Asset extends Element\AbstractElement
     }
 
     /**
+     * @param null $name
+     * @param null $language
      * @return array
      */
     public function getMetadata($name = null, $language = null)
@@ -1675,6 +1678,7 @@ class Asset extends Element\AbstractElement
      * Get filesize
      *
      * @param string $format ('GB','MB','KB','B')
+     * @param int $precision
      * @return string
      */
     public function getFileSize($format = 'noformatting', $precision = 2)

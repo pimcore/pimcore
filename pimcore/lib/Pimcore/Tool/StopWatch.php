@@ -32,7 +32,6 @@ class StopWatch
     /**
      * @param $component string
      * @static
-     * @return void
      */
     public static function start($component = 'default')
     {
@@ -44,7 +43,6 @@ class StopWatch
      * @static
      * @param $label
      * @param string $component
-     * @return void
      */
     public static function lap($label, $component = 'default')
     {
@@ -82,7 +80,6 @@ class StopWatch
      * @static
      * @param string $component
      * @param bool $html
-     * @return void
      */
     public static function display($html = false, $component = 'default')
     {

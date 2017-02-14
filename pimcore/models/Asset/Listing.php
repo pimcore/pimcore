@@ -28,7 +28,6 @@ use Pimcore\Model;
  */
 class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterAggregate, \Iterator
 {
-
     /**
      * List of assets
      *
@@ -64,7 +63,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     }
 
     /**
-     * @return array
+     * @return Model\Asset[]
      */
     public function getAssets()
     {
@@ -86,17 +85,24 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
         return $this;
     }
 
-
     /**
      *
      * Methods for \Zend_Paginator_Adapter_Interface
      */
 
+    /**
+     * @return int
+     */
     public function count()
     {
         return $this->getTotalCount();
     }
 
+    /**
+     * @param int $offset
+     * @param int $itemCountPerPage
+     * @return Model\Asset[]
+     */
     public function getItems($offset, $itemCountPerPage)
     {
         $this->setOffset($offset);
@@ -105,11 +111,13 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
         return $this->load();
     }
 
+    /**
+     * @return $this
+     */
     public function getPaginatorAdapter()
     {
         return $this;
     }
-
 
     /**
      * Methods for Iterator
@@ -121,6 +129,9 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
         reset($this->assets);
     }
 
+    /**
+     * @return Model\Asset
+     */
     public function current()
     {
         $this->getAssets();
@@ -129,6 +140,9 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
         return $var;
     }
 
+    /**
+     * @return mixed
+     */
     public function key()
     {
         $this->getAssets();
@@ -137,6 +151,9 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
         return $var;
     }
 
+    /**
+     * @return Model\Asset
+     */
     public function next()
     {
         $this->getAssets();
@@ -145,6 +162,9 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
         return $var;
     }
 
+    /**
+     * @return bool
+     */
     public function valid()
     {
         $this->getAssets();

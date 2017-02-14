@@ -61,6 +61,10 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
         }
     }
 
+    /**
+     * @param Element\AbstractElement $element
+     * @param $category
+     */
     private function checkPermission($element, $category)
     {
         if ($category == "get") {
@@ -86,6 +90,9 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
         }
     }
 
+    /**
+     * @param $permission
+     */
     private function checkUserPermission($permission)
     {
         if ($user = Tool\Admin::getCurrentUser()) {
@@ -1353,6 +1360,9 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
         $this->encoder->encode(["success" => true, "data" => $result]);
     }
 
+    /**
+     * @param $type
+     */
     private function inquire($type)
     {
         try {
@@ -1484,7 +1494,11 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
         $this->encoder->encode(["success" => true, "data" => $result]);
     }
 
-
+    /**
+     * @param $wsData
+     * @param $data
+     * @return Webservice\Data\Asset
+     */
     private static function map($wsData, $data)
     {
         foreach ($data as $key => $value) {
@@ -1520,13 +1534,17 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
         return $wsData;
     }
 
+    /**
+     * @param $class
+     * @param $data
+     * @return Webservice\Data\Asset
+     */
     public static function fillWebserviceData($class, $data)
     {
         $wsData = new $class();
 
         return self::map($wsData, $data);
     }
-
 
     /** Returns true if this is a DELETE request. Can be overridden by providing a
      * a method=delete parameter.
@@ -1648,8 +1666,9 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
         ]);
     }
 
-
-
+    /**
+     * @return array|mixed
+     */
     private function phpinfo_array()
     {
         ob_start();
@@ -1690,13 +1709,16 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
         return $pi;
     }
 
+    /**
+     * @return mixed
+     */
     protected function getQueryParams()
     {
         return $this->getRequest()->getQuery();
     }
 
-
-    /** Returns the classification store feature definition as JSON. Could be useful to provide separate endpoints
+    /**
+     * Returns the classification store feature definition as JSON. Could be useful to provide separate endpoints
      * for the various sub-configs.
      * @return mixed
      */

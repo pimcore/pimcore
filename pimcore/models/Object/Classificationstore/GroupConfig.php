@@ -80,6 +80,7 @@ class GroupConfig extends Model\AbstractModel
 
     /**
      * @param $name
+     * @param int $storeId
      * @return GroupConfig
      */
     public static function getByName($name, $storeId = 1)
@@ -93,11 +94,16 @@ class GroupConfig extends Model\AbstractModel
             return $config;
         } catch (\Exception $e) {
         }
+
+        return null;
     }
 
+    /**
+     * @return int
+     */
     public function hasChildren()
     {
-        return $this->getDao()->hasChilds();
+        return $this->getDao()->hasChildren();
     }
 
     /**
@@ -148,8 +154,7 @@ class GroupConfig extends Model\AbstractModel
 
 
     /**
-     * @param string name
-     * @return void
+     * @param string $name
      */
     public function setName($name)
     {

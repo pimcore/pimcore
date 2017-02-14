@@ -30,9 +30,6 @@ class Image extends Model\Asset
      */
     public $type = "image";
 
-    /**
-     * @return void
-     */
     protected function update()
     {
 
@@ -80,7 +77,7 @@ class Image extends Model\Asset
     }
 
     /**
-     * @return void
+     * @param bool $force
      */
     public function clearThumbnails($force = false)
     {

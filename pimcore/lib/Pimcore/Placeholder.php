@@ -120,9 +120,8 @@ class Placeholder
     /**
      * Set a custom Placeholder prefix
      *
-     * @throws Exception
+     * @throws \Exception
      * @param string $prefix
-     * @return void
      * @deprecated deprecated since version 1.4.6
      */
     public static function setPlaceholderPrefix($prefix)
@@ -218,6 +217,7 @@ class Placeholder
      * @param string | Model\Document $mixed
      * @param array $params
      * @param null | Model\Document $document
+     * @param bool $enableLayoutOnPlaceholderReplacement
      * @return string
      */
     public function replacePlaceholders($mixed, $params = [], $document = null, $enableLayoutOnPlaceholderReplacement = true)

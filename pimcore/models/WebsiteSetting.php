@@ -75,6 +75,7 @@ class WebsiteSetting extends AbstractModel
 
     /**
      * @param string $name
+     * @param null $siteId
      * @return WebsiteSetting
      */
     public static function getByName($name, $siteId = null)
@@ -229,9 +230,6 @@ class WebsiteSetting extends AbstractModel
         return $this->type;
     }
 
-    /**
-     * @return void
-     */
     public function clearDependentCache()
     {
         \Pimcore\Cache::clearTag("website_config");

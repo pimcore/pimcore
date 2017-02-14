@@ -242,6 +242,7 @@ class Wysiwyg extends Model\Object\ClassDefinition\Data
 
     /**
      * @param Object\Concrete $object
+     * @param array $params
      * @return string
      */
     public function preGetData($object, $params = [])

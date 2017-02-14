@@ -541,6 +541,7 @@ class Imagick extends Adapter
     /**
      * @param $width
      * @param $height
+     * @param string $color
      * @return Imagick
      */
     protected function createImage($width, $height, $color = "transparent")
@@ -629,8 +630,9 @@ class Imagick extends Adapter
      * @param int $x Amount of horizontal pixels the overlay should be offset from the origin
      * @param int $y Amount of vertical pixels the overlay should be offset from the origin
      * @param int $alpha Opacity in a scale of 0 (transparent) to 100 (opaque)
+     * @param string $composite
      * @param string $origin Origin of the X and Y coordinates (top-left, top-right, bottom-left, bottom-right or center)
-     * @return self
+     * @return Imagick
      */
     public function addOverlay($image, $x = 0, $y = 0, $alpha = 100, $composite = "COMPOSITE_DEFAULT", $origin = 'top-left')
     {

@@ -52,7 +52,6 @@ interface TagInterface
      * Receives the data from the editmode and convert this to the internal data in the object eg. image-id to Asset\Image
      *
      * @param mixed $data
-     * @return void
      */
     public function setDataFromEditmode($data);
 
@@ -71,7 +70,6 @@ interface TagInterface
      * @abstract
      * @param  object $wsElement
      * @param IdMapper $idMapper
-     * @return void
      */
 //    JAIC: $idMapper is needed for REST webservice import. However, cannot just add this to
 //    the interface as otherwise all tags would have to implement it including those defined
@@ -81,6 +79,7 @@ interface TagInterface
 
     /**
      * Returns the current tag's data for web service export
+     * @param $document
      * @param mixed $params
      * @abstract
      * @return array
