@@ -318,8 +318,7 @@ CREATE TABLE `http_error_log` (
   KEY `count` (`count`)
 ) DEFAULT CHARSET=utf8mb4;
 
--- Drop keyvalue_keys before keyvalue_groups to work around foreign key
--- constraints
+
 DROP TABLE IF EXISTS `keyvalue_keys`;
 DROP TABLE IF EXISTS `keyvalue_groups`;
 CREATE TABLE `keyvalue_groups` (
@@ -794,9 +793,7 @@ CREATE TABLE `website_settings` (
 	INDEX `siteId` (`siteId`)
 ) DEFAULT CHARSET=utf8mb4;
 
--- Drop classificationstore_relations and
--- classificationstore_collectionrelations before classificationstore_stores and
--- classificationstore_keys to work around foreign key constraints
+
 DROP TABLE IF EXISTS `classificationstore_relations`;
 DROP TABLE IF EXISTS `classificationstore_collectionrelations`;
 
