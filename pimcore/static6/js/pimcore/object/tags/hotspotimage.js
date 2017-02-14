@@ -26,6 +26,14 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
         this.hotspots = [];
         this.marker = [];
         this.crop = [];
+        this.predefinedDataTemplates = {};
+        if (fieldConfig.predefinedDataTemplates) {
+            try {
+                this.predefinedDataTemplates = Ext.decode(fieldConfig.predefinedDataTemplates);
+            } catch(e) {
+                console.log(e);
+            }
+        }
 
         this.data = null;
         if (data) {
@@ -251,7 +259,8 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
 
                 this.dirty = true;
             }.bind(this), {
-                    context: Ext.apply({scope: "objectEditor"}, this.getContext())
+                    context: Ext.apply({scope: "objectEditor"}, this.getContext()),
+                    predefinedDataTemplates: this.predefinedDataTemplates
                 });
             editor.open(false);
         }

@@ -21,6 +21,7 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
         this.modal = true;
         this.config = typeof config != "undefined" ? config : {};
         this.context = this.config.context ? this.config.context : {};
+        this.predefinedDataTemplates = this.config.predefinedDataTemplates ? this.config.predefinedDataTemplates : {};
         this.context.scope = "hotspotEditor";
 
         // we need some space for the surrounding area (button, dialog frame, etc...)
@@ -40,6 +41,9 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
         this.hotspotStore = [];
         this.hotspotMetaData = {};
 
+        var markerConfig = this.getButtonConfig("marker", "pimcore_icon_overlay_add");
+        var hotspotConfig = this.getButtonConfig("hotspot", "pimcore_icon_image_region pimcore_icon_overlay_add");
+
         this.hotspotWindow = new Ext.Window({
             width: this.width + 100,
             height: this.height + 100,
@@ -48,22 +52,10 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
             autoDestroy: true,
             resizable: false,
             bodyStyle: "background: url(" + imageUrl + ") center center no-repeat; position:relative; ",
-            tbar: [{
-                xtype: "button",
-                text: t("add_marker"),
-                iconCls: "pimcore_icon_marker pimcore_icon_overlay_add",
-                handler: function () {
-                    this.addMarker();
-
-                }.bind(this)
-            }, {
-                xtype: "button",
-                text: t("add_hotspot"),
-                iconCls: "pimcore_icon_image_region pimcore_icon_overlay_add",
-                handler: function () {
-                    this.addHotspot();
-                }.bind(this)
-            }],
+            tbar: [
+                markerConfig,
+                hotspotConfig
+            ],
             bbar: ["->", {
                 xtype: "button",
                 iconCls: "pimcore_icon_apply",
@@ -78,7 +70,6 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
                     var windowEl = Ext.getCmp(windowId).body;
                     var originalWidth = windowEl.getWidth(true);
                     var originalHeight = windowEl.getHeight(true);
-
 
                     for(var i=0; i<this.hotspotStore.length; i++) {
                         el = this.hotspotStore[i];
@@ -655,6 +646,52 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
         if (data) {
             textfield.setValue(data.fullpath);
         }
+    }
+
+    ,
+
+    getButtonConfig: function(type, iconCls) {
+
+
+        var callbackFunctionName = "add" + ucfirst(type);
+        var callbackFunction = this[callbackFunctionName].bind(this);
+        var textKey = "add_" + type;
+
+        var buttonConfig = {
+            xtype: "button",
+            text: t(textKey),
+            iconCls: iconCls,
+            handler: function () {
+                callbackFunction();
+            }.bind(this)
+        };
+
+        if (this.predefinedDataTemplates[type] && this.predefinedDataTemplates[type].length > 0) {
+            buttonConfig.xtype = "splitbutton";
+            var menu = [];
+            for (var i = 0; i < this.predefinedDataTemplates[type].length; i++) {
+                var templateConfig = this.predefinedDataTemplates[type][i];
+                var templateConfigName = templateConfig.name;
+                var templateMenuName = templateConfig.menuName ? templateConfig.menuName : templateConfigName;
+                if (!templateConfigName) {
+                    templateConfigName = "&nbsp";
+                }
+                menu.push(
+                    {
+                        text: ts(templateMenuName),
+                        iconCls: "pimcore_icon_hotspotmarker_template",
+                        handler: function (templateConfig) {
+                            var elId = callbackFunction(templateConfig);
+                            var copiedData = templateConfig.data ? templateConfig.data.slice() : [];
+                            this.hotspotMetaData[elId] = copiedData;
+                        }.bind(this, templateConfig)
+                    }
+                );
+            }
+            buttonConfig.menu = menu;
+        }
+
+        return buttonConfig;
     }
 
 

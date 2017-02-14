@@ -66,7 +66,26 @@ pimcore.object.classes.data.hotspotimage = Class.create(pimcore.object.classes.d
                 fieldLabel: t("ratio") + " Y",
                 name: "ratioY",
                 value: this.datax.ratioY
-            }]
+            },
+            {
+                xtype: "textarea",
+                name: "predefinedDataTemplates",
+                height: 300,
+                width: "100%",
+                value: this.datax.predefinedDataTemplates,
+                validator: function(value) {
+                    try {
+                        Ext.decode(value);
+                        return true;
+                    } catch(e) {
+                        return false;
+                    }
+                },
+                fieldLabel: t("predefined_hotspot_data_templates")
+            }
+
+
+            ]
         });
 
         return this.layout;

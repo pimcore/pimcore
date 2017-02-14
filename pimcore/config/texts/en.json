@@ -6283,5 +6283,9 @@
     {
         "term": "site_ids_tooltip",
         "definition": "Provide a comma-seperated list of site IDs"
+    },
+    {
+        "term": "predefined_hotspot_data_templates",
+        "definition": "Predefined data templates"
     }
 ]
