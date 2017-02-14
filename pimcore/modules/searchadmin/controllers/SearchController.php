@@ -27,7 +27,6 @@ class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin
      */
     public function findAction()
     {
-
         $allParams = $this->getAllParams();
 
         $returnValueContainer = new \Pimcore\Model\Tool\Admin\EventDataContainer($allParams);
