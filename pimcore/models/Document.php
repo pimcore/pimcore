@@ -262,7 +262,7 @@ class Document extends Element\AbstractElement
 
         $cacheKey = "document_" . $id;
 
-        if(!$force && \Zend_Registry::isRegistered($cacheKey)) {
+        if (!$force && \Zend_Registry::isRegistered($cacheKey)) {
             $document = \Zend_Registry::get($cacheKey);
             if ($document) {
                 return $document;

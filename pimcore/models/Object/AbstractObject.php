@@ -245,7 +245,7 @@ class AbstractObject extends Model\Element\AbstractElement
 
         $cacheKey = "object_" . $id;
 
-        if(!$force && \Zend_Registry::isRegistered($cacheKey)) {
+        if (!$force && \Zend_Registry::isRegistered($cacheKey)) {
             $object = \Zend_Registry::get($cacheKey);
             if ($object) {
                 return $object;

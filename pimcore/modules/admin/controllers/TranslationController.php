@@ -658,7 +658,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
 
                 foreach ($elements as $tag) {
                     if (in_array($tag->getType(), ["wysiwyg", "input", "textarea", "image", "link"])) {
-                        if (in_array($tag->getType(), ["image","link"])) {
+                        if (in_array($tag->getType(), ["image", "link"])) {
                             $content = $tag->getText();
                         } else {
                             $content = $tag->getData();
@@ -844,7 +844,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
                     if ($fieldType == "tag" && method_exists($element, "getElement")) {
                         $tag = $element->getElement($name);
                         if ($tag) {
-                            if(in_array($tag->getType(), ["image","link"])) {
+                            if (in_array($tag->getType(), ["image", "link"])) {
                                 $tag->setText($content);
                             } else {
                                 $tag->setDataFromEditmode($content);

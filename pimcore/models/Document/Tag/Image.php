@@ -354,7 +354,8 @@ class Image extends Model\Document\Tag
     /**
      * @param string $text
      */
-    public function setText($text) {
+    public function setText($text)
+    {
         $this->alt = $text;
     }
 
