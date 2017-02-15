@@ -17,7 +17,6 @@ interface TemplateControllerInterface
      * @param Request $request
      * @param bool $autoRender
      * @param string|null $engine
-     * @return
      */
     public function setViewAutoRender(Request $request, $autoRender, $engine = null);
 

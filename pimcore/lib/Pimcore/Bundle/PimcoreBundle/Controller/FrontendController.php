@@ -6,6 +6,7 @@ use Pimcore\Bundle\PimcoreBundle\Controller\Traits\TemplateControllerTrait;
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModel;
 use Pimcore\Model\Document;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 
@@ -74,21 +75,28 @@ abstract class FrontendController extends Controller implements EventedControlle
     /**
      * Enable view autorendering for the current request
      *
+     * @param Request $request
      * @param string $engine
      */
-    protected function enableViewAutoRender($engine = 'php')
+    protected function enableViewAutoRender(Request $request = null, $engine = 'php')
     {
-        $request = $this->get('request_stack')->getCurrentRequest();
+        if (null === $request) {
+            $request = $this->get('request_stack')->getCurrentRequest();
+        }
 
         $this->setViewAutoRender($request, true, $engine);
     }
 
     /**
      * Disable view autorendering for the current request
+     *
+     * @param Request $request
      */
-    protected function disableViewAutoRender()
+    protected function disableViewAutoRender(Request $request = null)
     {
-        $request = $this->get('request_stack')->getCurrentRequest();
+        if (null === $request) {
+            $request = $this->get('request_stack')->getCurrentRequest();
+        }
 
         $this->setViewAutoRender($request, false);
     }
