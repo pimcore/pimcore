@@ -6,6 +6,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 class EditmodeResolver extends AbstractRequestResolver
 {
+    const ATTRIUTE_EDITMODE = '_editmode';
+
     /**
      * @param Request $request
      * @return bool
@@ -14,6 +16,10 @@ class EditmodeResolver extends AbstractRequestResolver
     {
         if (null === $request) {
             $request = $this->getCurrentRequest();
+        }
+
+        if ($request->attributes->has(static::ATTRIUTE_EDITMODE)) {
+            return $request->attributes->get(static::ATTRIUTE_EDITMODE);
         }
 
         // TODO editmode is only available for logged in users
