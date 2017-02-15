@@ -30,7 +30,7 @@ class Admin_IndexController extends \Pimcore\Controller\Action\Admin
 
         $lastExecution = $manager->getLastExecution();
         if ($lastExecution) {
-            if ((time() - $lastExecution) < 610) { // maintenance script should run at least every 10 minutes + a little tolerance
+            if ((time() - $lastExecution) < 3660) { // maintenance script should run at least every hour + a little tolerance
                 $maintenance_enabled = true;
             }
         }
