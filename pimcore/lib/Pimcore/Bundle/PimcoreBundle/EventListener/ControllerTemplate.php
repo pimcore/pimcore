@@ -5,7 +5,7 @@ namespace Pimcore\Bundle\PimcoreBundle\EventListener;
 use Pimcore\Bundle\PimcoreBundle\Service\Request\TemplateResolver;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 class ControllerTemplate implements EventSubscriberInterface
@@ -28,9 +28,9 @@ class ControllerTemplate implements EventSubscriberInterface
      * the router or from the sub-action renderer and takes precedence over the auto-resolved and manually configured
      * template.
      *
-     * @param FilterControllerEvent $event
+     * @param GetResponseForControllerResultEvent $event
      */
-    public function onKernelController(FilterControllerEvent $event)
+    public function onKernelView(GetResponseForControllerResultEvent $event)
     {
         $request = $event->getRequest();
 
@@ -56,8 +56,9 @@ class ControllerTemplate implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            // this must run after the ControllerListener annotation reader from SensioFrameworkExtraBundle
-            KernelEvents::CONTROLLER => ['onKernelController', -10]
+            // this must run after the TemplateControllerListener set a potential template and before the TemplateListener
+            // renders the view
+            KernelEvents::VIEW => ['onKernelView', 16]
         ];
     }
 }
