@@ -1,0 +1,30 @@
+security:
+    providers:
+        in_memory:
+            memory:
+                users:
+                    admin:
+                        password: admin
+                        roles: ROLE_PIMCORE_ADMIN
+
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+        admin:
+            anonymous: ~
+            pattern: ^/admin
+            logout:
+                path: /admin/logout
+                target: /admin
+            guard:
+                authenticators:
+                    - pimcore_admin.security.form_authenticator
+
+    access_control:
+        - { path: ^/admin/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/admin, roles: ROLE_PIMCORE_USER }
+
+    role_hierarchy:
+        ROLE_PIMCORE_ADMIN: [ROLE_PIMCORE_USER]

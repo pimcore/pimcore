@@ -12,6 +12,7 @@ use Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle;
 use Symfony\Bundle\DebugBundle\DebugBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\MonologBundle\MonologBundle;
+use Symfony\Bundle\SecurityBundle\SecurityBundle;
 use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Bundle\WebProfilerBundle\WebProfilerBundle;
 use Symfony\Cmf\Bundle\RoutingBundle\CmfRoutingBundle;
@@ -36,7 +37,7 @@ abstract class Kernel extends PhpDIKernel
         $bundles = [
             // symfony "core"/standard
             new FrameworkBundle(),
-            // new \Symfony\Bundle\SecurityBundle\SecurityBundle(),
+            new SecurityBundle(),
             new TwigBundle(),
             new MonologBundle(),
             new SensioFrameworkExtraBundle(),
