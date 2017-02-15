@@ -2,9 +2,7 @@
 
 namespace WebsiteDemoBundle\Controller;
 
-use Pimcore\Bundle\PimcoreZendBundle\Controller\ZendController;
-
-class DefaultController extends ZendController
+class DefaultController extends AbstractController
 {
     public function defaultAction()
     {

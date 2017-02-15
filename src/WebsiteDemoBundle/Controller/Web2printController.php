@@ -2,10 +2,9 @@
 
 namespace WebsiteDemoBundle\Controller;
 
-use Pimcore\Bundle\PimcoreZendBundle\Controller\ZendController;
 use Symfony\Component\HttpFoundation\Request;
 
-class Web2printController extends ZendController
+class Web2printController extends AbstractController
 {
     public function defaultAction()
     {

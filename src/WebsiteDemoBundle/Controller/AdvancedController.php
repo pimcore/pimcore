@@ -2,14 +2,13 @@
 
 namespace WebsiteDemoBundle\Controller;
 
-use Pimcore\Bundle\PimcoreZendBundle\Controller\ZendController;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Object;
 use Pimcore\Tool;
 use Symfony\Component\HttpFoundation\Request;
 use Zend\Paginator\Paginator;
 
-class AdvancedController extends ZendController
+class AdvancedController extends AbstractController
 {
     public function contactFormAction(Request $request)
     {

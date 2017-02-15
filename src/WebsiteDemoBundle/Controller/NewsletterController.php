@@ -2,12 +2,11 @@
 
 namespace WebsiteDemoBundle\Controller;
 
-use Pimcore\Bundle\PimcoreZendBundle\Controller\ZendController;
 use Pimcore\Model;
 use Pimcore\Tool\Newsletter;
 use Symfony\Component\HttpFoundation\Request;
 
-class NewsletterController extends ZendController
+class NewsletterController extends AbstractController
 {
     public function subscribeAction(Request $request)
     {

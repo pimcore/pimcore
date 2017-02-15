@@ -2,11 +2,10 @@
 
 namespace WebsiteDemoBundle\Controller;
 
-use Pimcore\Bundle\PimcoreZendBundle\Controller\ZendController;
 use Pimcore\Model\Object;
 use Symfony\Component\HttpFoundation\Request;
 
-class BlogController extends ZendController
+class BlogController extends AbstractController
 {
     public function indexAction(Request $request)
     {
