@@ -192,6 +192,13 @@ class Link extends Model\Document\Tag
     }
 
     /**
+     * @param string $text
+     */
+    public function setText($text) {
+        $this->data["text"] = $text;
+    }
+
+    /**
      * @return string
      */
     public function getTarget()
