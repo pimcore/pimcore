@@ -34,6 +34,8 @@ class BundleLocator implements BundleLocatorInterface
      */
     public function getBundle($className)
     {
+        // TODO there's a simpler method in TemplateGuesser - check we can use that
+
         $classBundlePath = $this->resolveBundlePath($className);
 
         if (isset($this->bundlePathCache[$classBundlePath])) {
