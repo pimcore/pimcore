@@ -3,7 +3,7 @@ services:
         class: AppBundle\Templating\LanguageSwitcher
         arguments: ['@pimcore.document_service']
 
-    app.templating.zend.view_helper.foobar:
-        class: AppBundle\Templating\Zend\View\Helper\FooBar
+    app.templating..helper.foobar:
+        class: AppBundle\Templating\Helper\FooBar
         tags:
-            - { name: pimcore.zend.view_helper, alias: fooBar }
+            - { name: templating.helper, alias: fooBar }

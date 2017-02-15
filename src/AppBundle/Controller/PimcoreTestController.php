@@ -3,20 +3,25 @@
 namespace AppBundle\Controller;
 
 use Pimcore\Bundle\PimcoreBundle\Configuration\TemplatePhp;
+use Pimcore\Bundle\PimcoreBundle\Controller\FrontendController;
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModel;
-use Pimcore\Bundle\PimcoreZendBundle\Controller\ZendController;
 use Pimcore\Model\Document;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 
-class ZendViewController extends ZendController
+class PimcoreTestController extends FrontendController
 {
     /**
      * @param FilterControllerEvent $event
      */
     public function onKernelController(FilterControllerEvent $event)
     {
+        // enable view auto-rendering
+        $this->setViewAutoRender($event->getRequest(), true, 'php');
+
         $this->container->get('logger')->debug(__METHOD__);
     }
 
@@ -36,27 +41,28 @@ class ZendViewController extends ZendController
     }
 
     /**
-     * @TemplatePhp()
      * @Route("/zf-default")
      */
     public function defaultAction()
     {
         $this->view->foo = 'bar';
         $this->view->baz = 'inga';
+
+        $this->enableViewAutoRender();
     }
 
     /**
-     * @TemplatePhp("AppBundle:ZendView:default.html.php")
+     * @TemplatePhp("AppBundle:PimcoreTest:default.html.php")
      * @Route("/zf-default-layout")
      */
     public function defaultLayoutAction()
     {
-        $this->view->_layout = 'AppBundle:ZendView:layout.html.php';
-        $this->view->john = 'doe';
+        $this->view->_layout = 'AppBundle:PimcoreTest:layout.html.php';
+        $this->view->john    = 'doe';
     }
 
     /**
-     * @TemplatePhp("AppBundle:ZendView:extra-view.html.php")
+     * @TemplatePhp("AppBundle:PimcoreTest:extraView.html.php")
      * @Route("/zf-extra-view")
      */
     public function extraViewAction()
@@ -70,12 +76,17 @@ class ZendViewController extends ZendController
 
     /**
      * @Route("/zf-direct-render")
+     *
+     * @param Request $request
+     * @param Document $document
+     *
+     * @return Response
      */
-    public function directRenderAction(Document $document)
+    public function directRenderAction(Request $request, Document $document)
     {
         // render template directly
-        return $this->render('AppBundle:ZendView:direct-render.html.php', [
-            '_layout'  => 'AppBundle:ZendView:layout.html.php',
+        return $this->render($this->getTemplateReference($request, 'php'), [
+            '_layout'  => 'AppBundle:PimcoreTest:layout.html.php',
             'foo'      => 'bar',
             'document' => $document
         ]);
