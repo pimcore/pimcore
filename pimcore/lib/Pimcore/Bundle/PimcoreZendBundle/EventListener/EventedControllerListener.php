@@ -3,7 +3,6 @@
 namespace Pimcore\Bundle\PimcoreZendBundle\EventListener;
 
 use Pimcore\Bundle\PimcoreZendBundle\Controller\EventedControllerInterface;
-use Pimcore\Bundle\PimcoreZendBundle\Controller\ZendControllerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
@@ -12,8 +11,6 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class EventedControllerListener implements EventSubscriberInterface
 {
     /**
-     * Calls preDispatch()
-     *
      * @param FilterControllerEvent $event
      */
     public function onKernelController(FilterControllerEvent $event)
@@ -28,13 +25,11 @@ class EventedControllerListener implements EventSubscriberInterface
 
         if ($controller instanceof EventedControllerInterface) {
             $request->attributes->set('_evented_controller', $controller);
-            $controller->preDispatch($event);
+            $controller->onKernelController($event);
         }
     }
 
     /**
-     * Calls postDispatch()
-     *
      * @param FilterResponseEvent $event
      */
     public function onKernelResponse(FilterResponseEvent $event)
@@ -46,7 +41,7 @@ class EventedControllerListener implements EventSubscriberInterface
             return;
         }
 
-        $controller->postDispatch($event);
+        $controller->onKernelResponse($event);
     }
 
     public static function getSubscribedEvents()

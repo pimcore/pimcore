@@ -10,10 +10,10 @@ interface EventedControllerInterface
     /**
      * @param FilterControllerEvent $event
      */
-    public function preDispatch(FilterControllerEvent $event);
+    public function onKernelController(FilterControllerEvent $event);
 
     /**
      * @param FilterResponseEvent $event
      */
-    public function postDispatch(FilterResponseEvent $event);
+    public function onKernelResponse(FilterResponseEvent $event);
 }

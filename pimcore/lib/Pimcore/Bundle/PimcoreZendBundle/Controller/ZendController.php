@@ -51,9 +51,16 @@ abstract class ZendController extends Controller implements EventedControllerInt
     }
 
     /**
-     * @param FilterControllerEvent $event
+     * @inheritDoc
      */
-    public function preDispatch(FilterControllerEvent $event)
+    public function onKernelController(FilterControllerEvent $event)
+    {
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function onKernelResponse(FilterResponseEvent $event)
     {
     }
 

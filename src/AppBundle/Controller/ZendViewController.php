@@ -15,7 +15,7 @@ class ZendViewController extends ZendController
     /**
      * @param FilterControllerEvent $event
      */
-    public function preDispatch(FilterControllerEvent $event)
+    public function onKernelController(FilterControllerEvent $event)
     {
         $this->container->get('logger')->debug(__METHOD__);
     }
@@ -23,7 +23,7 @@ class ZendViewController extends ZendController
     /**
      * @param FilterResponseEvent $event
      */
-    public function postDispatch(FilterResponseEvent $event)
+    public function onKernelResponse(FilterResponseEvent $event)
     {
         $this->container->get('logger')->debug(__METHOD__);
     }
