@@ -100,7 +100,7 @@
                     })|raw }}
                 </div>
 
-                {{ zend_inc(document.getProperty('sidebar')) }}
+                {{ pimcore_inc(document.getProperty('sidebar')) }}
             </div>
 
         {% endif %}
@@ -116,7 +116,7 @@
 {% block footer %}
 {# include a document-snippet - in this case the footer document #}
 {% set footerSnippet = '/' ~ app.request.locale ~ '/shared/includes/footer' %}
-{{ zend_inc(footerSnippet) }}
+{{ pimcore_inc(footerSnippet) }}
 {% endblock %}
 
 {% block javascript_defines %}
