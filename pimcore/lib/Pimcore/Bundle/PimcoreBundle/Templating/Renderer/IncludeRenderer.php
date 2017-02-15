@@ -31,13 +31,15 @@ class IncludeRenderer
      *
      * TODO move legacy part to legacy bundle
      *
-     * @param ViewModelInterface|View $view
      * @param $include
      * @param array $params
+     * @param bool $editmode
+     * @param bool $cacheEnabled
+     * @param View $legacyView
      *
      * @return string
      */
-    public function render($view, $include, array $params = [], $cacheEnabled = true)
+    public function render($include, array $params = [], $editmode = false, $cacheEnabled = true, View $legacyView = null)
     {
         if (!is_array($params)) {
             $params = [];
@@ -68,6 +70,7 @@ class IncludeRenderer
             }
         }
 
+        // TODO remove dependency on registry setting
         $editmodeBackup = \Zend_Registry::get("pimcore_editmode");
         \Zend_Registry::set("pimcore_editmode", false);
 
@@ -97,15 +100,13 @@ class IncludeRenderer
 
         if ($include instanceof PageSnippet && $include->isPublished()) {
             // TODO move this to delegating structure and add Pimcore\View support from legacy bundle
-            if ($view instanceof ViewModelInterface) {
-                $content = $this->renderAction($view, $include, $params);
-            } else if ($view instanceof View) {
-                $content = $this->renderLegacyAction($view, $include, $params);
+            if (null !== $legacyView) {
+                $content = $this->renderLegacyAction($legacyView, $include, $params);
             } else {
-                throw new \RuntimeException(sprintf('Couldn\'t handle include for view type %s', get_class($view)));
+                $content = $this->renderAction($include, $params);
             }
 
-            if ($view->editmode) {
+            if ($editmode) {
                 $content = $this->modifyEditmodeContent($include, $content);
             }
         }
@@ -121,12 +122,11 @@ class IncludeRenderer
     }
 
     /**
-     * @param ViewModelInterface $view
      * @param PageSnippet $include
      * @param $params
      * @return string
      */
-    protected function renderAction(ViewModelInterface $view, PageSnippet $include, $params)
+    protected function renderAction(PageSnippet $include, $params)
     {
         $controller = $this->actionRenderer->createDocumentReference($include, $params);
 

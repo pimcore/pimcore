@@ -50,7 +50,7 @@ services:
 
     pimcore.zend.templating.view_helper.inc:
         class: Pimcore\Bundle\PimcoreBundle\Templating\Helper\Inc
-        arguments: ['@pimcore.templating.include_renderer']
+        arguments: ['@pimcore.templating.include_renderer', '@pimcore.service.request.editmode_resolver']
         tags:
             - { name: templating.helper, alias: inc }
 

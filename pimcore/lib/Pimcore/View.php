@@ -146,7 +146,7 @@ class View extends \Zend_View
         }
 
         $renderer = \Pimcore::getContainer()->get('pimcore.templating.include_renderer');
-        $content  = $renderer->render($this, $include, $params, $cacheEnabled);
+        $content  = $renderer->render($include, $params, $this->editmode, $cacheEnabled, $this);
 
         return $content;
     }

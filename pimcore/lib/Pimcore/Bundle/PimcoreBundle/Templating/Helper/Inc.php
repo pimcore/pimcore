@@ -2,7 +2,7 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\Templating\Helper;
 
-use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModel;
+use Pimcore\Bundle\PimcoreBundle\Service\Request\EditmodeResolver;
 use Pimcore\Bundle\PimcoreBundle\Templating\Renderer\IncludeRenderer;
 use Pimcore\Model\Document\PageSnippet;
 use Symfony\Component\Templating\Helper\Helper;
@@ -15,11 +15,18 @@ class Inc extends Helper
     protected $includeRenderer;
 
     /**
-     * @param IncludeRenderer $includeRenderer
+     * @var EditmodeResolver
      */
-    public function __construct(IncludeRenderer $includeRenderer)
+    protected $editmodeResolver;
+
+    /**
+     * @param IncludeRenderer $includeRenderer
+     * @param EditmodeResolver $editmodeResolver
+     */
+    public function __construct(IncludeRenderer $includeRenderer, EditmodeResolver $editmodeResolver)
     {
-        $this->includeRenderer = $includeRenderer;
+        $this->includeRenderer  = $includeRenderer;
+        $this->editmodeResolver = $editmodeResolver;
     }
 
     /**
@@ -37,11 +44,12 @@ class Inc extends Helper
      *
      * @return string
      */
-    public function __invoke($include, array $params = [], $cacheEnabled = true)
+    public function __invoke($include, array $params = [], $cacheEnabled = true, $editmode = null)
     {
-        // TODO remove dependency on ViewModel as it isn't really needed here (just used to switch between legacy and new rendering)
-        $view = new ViewModel($params);
+        if (null === $editmode) {
+            $editmode = $this->editmodeResolver->isEditmode();
+        }
 
-        return $this->includeRenderer->render($view, $include, $params, $cacheEnabled);
+        return $this->includeRenderer->render($include, $params, $editmode, $cacheEnabled);
     }
 }
