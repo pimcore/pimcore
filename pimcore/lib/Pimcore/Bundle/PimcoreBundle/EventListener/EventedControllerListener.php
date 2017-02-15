@@ -1,8 +1,8 @@
 <?php
 
-namespace Pimcore\Bundle\PimcoreZendBundle\EventListener;
+namespace Pimcore\Bundle\PimcoreBundle\EventListener;
 
-use Pimcore\Bundle\PimcoreZendBundle\Controller\EventedControllerInterface;
+use Pimcore\Bundle\PimcoreBundle\Controller\EventedControllerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;

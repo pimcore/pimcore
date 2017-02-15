@@ -1,6 +1,6 @@
 <?php
 
-namespace Pimcore\Bundle\PimcoreZendBundle\Controller;
+namespace Pimcore\Bundle\PimcoreBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Templating\TemplateReferenceInterface;
@@ -8,8 +8,8 @@ use Symfony\Component\Templating\TemplateReferenceInterface;
 interface TemplateControllerInterface
 {
     const ATTRIBUTE_TEMPLATE_CONTROLLER = '_template_controller';
-    const ATTRIBUTE_AUTO_RENDER         = '_template_controller_auto_render';
-    const ATTRIBUTE_AUTO_RENDER_ENGINE  = '_template_controller_auto_render_engine';
+    const ATTRIBUTE_AUTO_RENDER = '_template_controller_auto_render';
+    const ATTRIBUTE_AUTO_RENDER_ENGINE = '_template_controller_auto_render_engine';
 
     /**
      * Enable view auto-rendering without depending on the Template annotation

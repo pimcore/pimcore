@@ -1,8 +1,8 @@
 <?php
 
-namespace Pimcore\Bundle\PimcoreZendBundle\Controller\Traits;
+namespace Pimcore\Bundle\PimcoreBundle\Controller\Traits;
 
-use Pimcore\Bundle\PimcoreZendBundle\Controller\TemplateControllerInterface;
+use Pimcore\Bundle\PimcoreBundle\Controller\TemplateControllerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Templating\TemplateGuesser;
 use Symfony\Component\HttpFoundation\Request;
 

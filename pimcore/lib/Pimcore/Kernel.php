@@ -6,7 +6,6 @@ use DI\Bridge\Symfony\Kernel as PhpDIKernel;
 use Pimcore\Bundle\PimcoreAdminBundle\PimcoreAdminBundle;
 use Pimcore\Bundle\PimcoreBundle\PimcoreBundle;
 use Pimcore\Bundle\PimcoreLegacyBundle\PimcoreLegacyBundle;
-use Pimcore\Bundle\PimcoreZendBundle\PimcoreZendBundle;
 use Sensio\Bundle\DistributionBundle\SensioDistributionBundle;
 use Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle;
 use Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle;
@@ -47,7 +46,6 @@ abstract class Kernel extends PhpDIKernel
 
             // pimcore bundles
             new PimcoreBundle(),
-            new PimcoreZendBundle(),
             new PimcoreAdminBundle(),
             new PimcoreLegacyBundle()
         ];

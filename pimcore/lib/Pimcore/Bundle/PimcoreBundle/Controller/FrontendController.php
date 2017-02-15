@@ -1,9 +1,9 @@
 <?php
 
-namespace Pimcore\Bundle\PimcoreZendBundle\Controller;
+namespace Pimcore\Bundle\PimcoreBundle\Controller;
 
+use Pimcore\Bundle\PimcoreBundle\Controller\Traits\TemplateControllerTrait;
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModel;
-use Pimcore\Bundle\PimcoreZendBundle\Controller\Traits\TemplateControllerTrait;
 use Pimcore\Model\Document;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
@@ -14,7 +14,7 @@ use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
  * @property Document|Document\PageSnippet $document
  * @property bool $editmode
  */
-abstract class ZendController extends Controller implements EventedControllerInterface, TemplateControllerInterface
+abstract class FrontendController extends Controller implements EventedControllerInterface, TemplateControllerInterface
 {
     use TemplateControllerTrait;
 

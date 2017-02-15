@@ -28,6 +28,17 @@ services:
         tags:
             - { name: kernel.event_subscriber }
 
+    pimcore.event_listener.evented_controller:
+        class: Pimcore\Bundle\PimcoreBundle\EventListener\EventedControllerListener
+        tags:
+            - { name: kernel.event_subscriber }
+
+    pimcore.event_listener.template_controller:
+        class: Pimcore\Bundle\PimcoreBundle\EventListener\TemplateControllerListener
+        arguments: ['@service_container']
+        tags:
+            - { name: kernel.event_subscriber }
+
     pimcore.event_listener.editmode:
         class: Pimcore\Bundle\PimcoreBundle\EventListener\Editmode
         arguments: ['@pimcore.service.request.editmode_resolver', '@pimcore.service.request.document_resolver']

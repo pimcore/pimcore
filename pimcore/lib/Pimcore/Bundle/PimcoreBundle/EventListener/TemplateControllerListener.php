@@ -1,8 +1,8 @@
 <?php
 
-namespace Pimcore\Bundle\PimcoreZendBundle\EventListener;
+namespace Pimcore\Bundle\PimcoreBundle\EventListener;
 
-use Pimcore\Bundle\PimcoreZendBundle\Controller\TemplateControllerInterface;
+use Pimcore\Bundle\PimcoreBundle\Controller\TemplateControllerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
