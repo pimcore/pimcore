@@ -9,7 +9,7 @@ use Pimcore\View;
 interface TagHandlerInterface
 {
     /**
-     * Determine if handler strategy supports the tag
+     * Determine if handler supports the tag
      *
      * @param ViewModelInterface|View $view
      * @return bool

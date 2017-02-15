@@ -12,7 +12,3 @@ services:
         arguments: ['@pimcore.service.request.editmode_resolver']
         calls:
             - [setLogger, ['@logger']]
-
-    pimcore.view.zend_view_helper_bridge:
-        class: Pimcore\Bundle\PimcoreBundle\View\ZendViewHelperBridge
-        arguments: ['@pimcore.zend_view_provider', '@pimcore.service.request.template_vars_resolver']

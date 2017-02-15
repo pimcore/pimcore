@@ -2,16 +2,14 @@
 
 namespace AppBundle\Controller;
 
+use Pimcore\Bundle\PimcoreBundle\Configuration\TemplatePhp;
+use Pimcore\Bundle\PimcoreLegacyBundle\Zend\View\ViewHelperBridge;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
-use Pimcore\Bundle\PimcoreBundle\Controller\DocumentAwareInterface;
-use Pimcore\Bundle\PimcoreBundle\Controller\Traits\DocumentAwareTrait;
-use Pimcore\Bundle\PimcoreBundle\View\ZendViewHelperBridge;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use Pimcore\Bundle\PimcoreBundle\Configuration\TemplatePhp;
 
 class ContentController extends Controller
 {
@@ -75,8 +73,8 @@ class ContentController extends Controller
             $mainNavStartNode = Document::getById(1);
         }
 
-        /** @var ZendViewHelperBridge $bridge */
-        $bridge = $this->container->get('pimcore.view.zend_view_helper_bridge');
+        /** @var ViewHelperBridge $bridge */
+        $bridge = $this->container->get('pimcore.legacy.zend_view_helper_bridge');
 
         $mainNavigation = $bridge->execute('pimcoreNavigation', [$document, $mainNavStartNode]);
 

@@ -1,11 +1,11 @@
 <?php
 
-namespace Pimcore\Bundle\PimcoreBundle\View;
+namespace Pimcore\Bundle\PimcoreLegacyBundle\Zend\View;
 
 use Pimcore\Controller\Action\Helper\ViewRenderer;
 use Pimcore\View;
 
-class ZendViewProvider
+class ViewProvider
 {
     /**
      * @var ViewRenderer
@@ -37,6 +37,8 @@ class ZendViewProvider
     }
 
     /**
+     * Create a new view instance
+     *
      * @param array $params
      * @return View
      */

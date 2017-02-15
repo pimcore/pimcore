@@ -1,22 +1,22 @@
 <?php
 
-namespace Pimcore\Bundle\PimcoreBundle\Twig;
+namespace Pimcore\Bundle\PimcoreLegacyBundle\Twig;
 
-use Pimcore\Bundle\PimcoreBundle\View\ZendViewHelperBridge;
+use Pimcore\Bundle\PimcoreLegacyBundle\Zend\View\ViewHelperBridge;
 
 class ZendViewHelperExtension extends \Twig_Extension
 {
     /**
-     * @var ZendViewHelperBridge
+     * @var ViewHelperBridge
      */
-    protected $zendViewHelperBridge;
+    protected $viewHelperBridge;
 
     /**
-     * @param ZendViewHelperBridge $zendViewHelperBridge
+     * @param ViewHelperBridge $zendViewHelperBridge
      */
-    public function __construct(ZendViewHelperBridge $zendViewHelperBridge)
+    public function __construct(ViewHelperBridge $zendViewHelperBridge)
     {
-        $this->zendViewHelperBridge = $zendViewHelperBridge;
+        $this->viewHelperBridge = $zendViewHelperBridge;
     }
 
     /**
@@ -51,6 +51,6 @@ class ZendViewHelperExtension extends \Twig_Extension
      */
     public function zendViewHelper($name, array $arguments = [])
     {
-        return $this->zendViewHelperBridge->execute($name, $arguments);
+        return $this->viewHelperBridge->execute($name, $arguments);
     }
 }

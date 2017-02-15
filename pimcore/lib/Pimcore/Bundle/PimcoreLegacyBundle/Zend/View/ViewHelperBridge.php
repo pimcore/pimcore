@@ -1,14 +1,14 @@
 <?php
 
-namespace Pimcore\Bundle\PimcoreBundle\View;
+namespace Pimcore\Bundle\PimcoreLegacyBundle\Zend\View;
 
 use Pimcore\Bundle\PimcoreBundle\Service\Request\TemplateVarsResolver;
 use Pimcore\View;
 
-class ZendViewHelperBridge
+class ViewHelperBridge
 {
     /**
-     * @var ZendViewProvider
+     * @var ViewProvider
      */
     protected $viewProvider;
 
@@ -23,9 +23,10 @@ class ZendViewHelperBridge
     protected $defaultView;
 
     /**
-     * @param ZendViewProvider $viewProvider
+     * @param ViewProvider $viewProvider
+     * @param TemplateVarsResolver $varsResolver
      */
-    public function __construct(ZendViewProvider $viewProvider, TemplateVarsResolver $varsResolver)
+    public function __construct(ViewProvider $viewProvider, TemplateVarsResolver $varsResolver)
     {
         $this->viewProvider = $viewProvider;
         $this->varsResolver = $varsResolver;

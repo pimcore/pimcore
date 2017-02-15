@@ -8,7 +8,7 @@ use Pimcore\Model\Document\PageSnippet;
 class DocumentTagExtension extends \Twig_Extension
 {
     /**
-     * @var \Pimcore\Bundle\PimcoreBundle\Templating\Renderer\TagRenderer
+     * @var TagRenderer
      */
     protected $tagRenderer;
 
