@@ -711,6 +711,11 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
     {
         $this->setModificationDateTimestamp( time() );
 
+        //don't use getter here because reset is only necessary if price calculator is already there
+        if($this->priceCalcuator) {
+            $this->priceCalcuator->reset();
+        }
+
         $this->validateVoucherTokenReservations();
 
         $this->giftItems = array();
