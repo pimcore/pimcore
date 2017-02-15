@@ -3,6 +3,7 @@
 namespace Pimcore\Bundle\PimcoreZendBundle\Controller;
 
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModel;
+use Pimcore\Bundle\PimcoreZendBundle\Controller\Traits\TemplateControllerTrait;
 use Pimcore\Model\Document;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
@@ -11,10 +12,16 @@ use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 /**
  * @property ViewModel $view
  * @property Document|Document\PageSnippet $document
+ * @property bool $editmode
  */
-abstract class ZendController extends Controller implements EventedControllerInterface
+class ZendController extends Controller implements EventedControllerInterface, TemplateControllerInterface
 {
+    use TemplateControllerTrait;
+
     /**
+     * Expose view, document and editmode as properties and proxy them to request attributes through
+     * their resolvers.
+     *
      * @inheritDoc
      */
     public function __get($name)
@@ -65,9 +72,27 @@ abstract class ZendController extends Controller implements EventedControllerInt
     }
 
     /**
-     * @param FilterResponseEvent $event
+     * @param string $engine
      */
-    public function postDispatch(FilterResponseEvent $event)
+    protected function enableViewAutoRender($engine = 'php')
     {
+        $request = $this->get('request_stack')->getCurrentRequest();
+
+        $this->setViewAutoRender($request, true, $engine);
+    }
+
+    protected function disableViewAutoRender()
+    {
+        $request = $this->get('request_stack')->getCurrentRequest();
+
+        $this->setViewAutoRender($request, false);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getTemplateGuesser()
+    {
+        return $this->get('sensio_framework_extra.view.guesser');
     }
 }

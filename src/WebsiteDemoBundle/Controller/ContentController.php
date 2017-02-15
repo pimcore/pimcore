@@ -2,17 +2,23 @@
 
 namespace WebsiteDemoBundle\Controller;
 
-use Pimcore\Bundle\PimcoreBundle\Configuration\TemplatePhp;
 use Pimcore\Bundle\PimcoreZendBundle\Controller\ZendController;
 use Pimcore\Model\Asset;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 
-/**
- * @TemplatePhp()
- */
 class ContentController extends ZendController
 {
+    /**
+     * @inheritDoc
+     */
+    public function onKernelController(FilterControllerEvent $event)
+    {
+        // $this->setViewAutoRender($event->getRequest(), true, 'php');
+        $this->enableViewAutoRender();
+    }
+
     public function defaultAction()
     {
     }
@@ -59,10 +65,6 @@ class ContentController extends ZendController
     }
 
     /**
-     * TODO find out why the @TemplatePhp annotation is not properly working here! If not set, it will render with
-     * the content/default template, if set it will sometimes complain because it found multiple annotations. Is there
-     * an issue with sub-requests?
-     *
      * @param Request $request
      * @return Response
      */
@@ -71,7 +73,5 @@ class ContentController extends ZendController
         if ($request->get('id') && $request->get('type') === 'asset') {
             $this->view->asset = Asset::getById($request->get('id'));
         }
-
-        return $this->render('WebsiteDemoBundle:Content:galleryRenderlet.html.php', $this->view->getAllParameters());
     }
 }

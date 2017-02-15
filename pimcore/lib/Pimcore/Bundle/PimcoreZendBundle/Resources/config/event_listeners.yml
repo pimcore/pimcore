@@ -3,3 +3,9 @@ services:
         class: Pimcore\Bundle\PimcoreZendBundle\EventListener\EventedControllerListener
         tags:
             - { name: kernel.event_subscriber }
+
+    pimcore.zend.event_listener.template_controller:
+        class: Pimcore\Bundle\PimcoreZendBundle\EventListener\TemplateControllerListener
+        arguments: ['@service_container']
+        tags:
+            - { name: kernel.event_subscriber }
