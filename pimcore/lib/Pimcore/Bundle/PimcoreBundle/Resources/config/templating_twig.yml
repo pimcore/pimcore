@@ -5,3 +5,10 @@ services:
         public: false
         tags:
             - { name: twig.extension }
+
+    pimcore.twig.subrequest_extension:
+        class: Pimcore\Bundle\PimcoreBundle\Twig\SubrequestExtension
+        arguments: ['@pimcore.templating.view_helper.inc', '@pimcore.templating.view_helper.action']
+        public: false
+        tags:
+            - { name: twig.extension }
