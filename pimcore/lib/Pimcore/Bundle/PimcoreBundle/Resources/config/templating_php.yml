@@ -28,33 +28,33 @@ services:
     #
     # VIEW HELPERS
     #
-    pimcore.zend.templating.view_helper.action:
+    pimcore.templating.view_helper.action:
         class: Pimcore\Bundle\PimcoreBundle\Templating\Helper\Action
         arguments: ['@pimcore.templating.action_renderer']
         tags:
             - { name: templating.helper, alias: action }
 
-    pimcore.zend.templating.view_helper.getParam:
+    pimcore.templating.view_helper.getParam:
         class: Pimcore\Bundle\PimcoreBundle\Templating\Helper\GetParam
         arguments:
             - '@pimcore.tool.request_helper'
         tags:
             - { name: templating.helper, alias: getParam }
 
-    pimcore.zend.templating.view_helper.glossary:
+    pimcore.templating.view_helper.glossary:
         class: Pimcore\Bundle\PimcoreBundle\Templating\Helper\Glossary
         calls:
             - [setLogger, ['@logger']]
         tags:
             - { name: templating.helper, alias: glossary }
 
-    pimcore.zend.templating.view_helper.inc:
+    pimcore.templating.view_helper.inc:
         class: Pimcore\Bundle\PimcoreBundle\Templating\Helper\Inc
         arguments: ['@pimcore.templating.include_renderer', '@pimcore.service.request.editmode_resolver']
         tags:
             - { name: templating.helper, alias: inc }
 
-    pimcore.zend.templating.view_helper.pimcoreUrl:
+    pimcore.templating.view_helper.pimcoreUrl:
         class: Pimcore\Bundle\PimcoreBundle\Templating\Helper\PimcoreUrl
         arguments: ['@router', '@pimcore.tool.request_helper']
         tags:
