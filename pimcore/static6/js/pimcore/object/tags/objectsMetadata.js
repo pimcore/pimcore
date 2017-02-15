@@ -304,10 +304,13 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                 items: columns
             },
             viewConfig: {
-                plugins: {
-                    ptype: 'gridviewdragdrop',
-                    dragroup: 'element'
-                },
+                // reverted this, see https://github.com/pimcore/pimcore/issues/979
+                // probably a ExtJS 6.0 bug. dropdowns not working anymore if plugin is enabled
+                // TODO: investigate if there this is already fixed 6.2
+                // plugins: {
+                //     ptype: 'gridviewdragdrop',
+                //     dragroup: 'element'
+                // },
                 markDirty: false,
                 listeners: {
                     refresh: function (gridview) {
