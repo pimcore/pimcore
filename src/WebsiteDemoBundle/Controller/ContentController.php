@@ -6,19 +6,9 @@ use Pimcore\Bundle\PimcoreZendBundle\Controller\ZendController;
 use Pimcore\Model\Asset;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 
 class ContentController extends ZendController
 {
-    /**
-     * @inheritDoc
-     */
-    public function onKernelController(FilterControllerEvent $event)
-    {
-        // $this->setViewAutoRender($event->getRequest(), true, 'php');
-        $this->enableViewAutoRender();
-    }
-
     public function defaultAction()
     {
     }

@@ -14,7 +14,7 @@ use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
  * @property Document|Document\PageSnippet $document
  * @property bool $editmode
  */
-class ZendController extends Controller implements EventedControllerInterface, TemplateControllerInterface
+abstract class ZendController extends Controller implements EventedControllerInterface, TemplateControllerInterface
 {
     use TemplateControllerTrait;
 
@@ -72,6 +72,8 @@ class ZendController extends Controller implements EventedControllerInterface, T
     }
 
     /**
+     * Enable view autorendering for the current request
+     *
      * @param string $engine
      */
     protected function enableViewAutoRender($engine = 'php')
@@ -81,6 +83,9 @@ class ZendController extends Controller implements EventedControllerInterface, T
         $this->setViewAutoRender($request, true, $engine);
     }
 
+    /**
+     * Disable view autorendering for the current request
+     */
     protected function disableViewAutoRender()
     {
         $request = $this->get('request_stack')->getCurrentRequest();

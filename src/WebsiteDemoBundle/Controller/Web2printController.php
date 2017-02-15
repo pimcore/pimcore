@@ -2,13 +2,9 @@
 
 namespace WebsiteDemoBundle\Controller;
 
-use Pimcore\Bundle\PimcoreBundle\Configuration\TemplatePhp;
 use Pimcore\Bundle\PimcoreZendBundle\Controller\ZendController;
 use Symfony\Component\HttpFoundation\Request;
 
-/**
- * @TemplatePhp()
- */
 class Web2printController extends ZendController
 {
     public function defaultAction()
