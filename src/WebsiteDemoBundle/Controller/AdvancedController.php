@@ -155,7 +155,6 @@ class AdvancedController extends AbstractController
 
         if ($request->get("doc")) {
             $doc = $request->get("doc");
-            $this->disableLayout();
         } else {
             $doc = $this->document->getProperty("mainNavStartNode");
             $this->view->initial = true;

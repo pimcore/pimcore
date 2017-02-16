@@ -1,7 +1,9 @@
-<?php $this->extend('WebsiteDemoBundle::layout.html.php') ?>
-
 <?php if($this->initial) { ?>
-
+    <?php
+    // TODO a template can either extend a template or not (not conditionally on the sub-request)
+    // move the list rendering to a partial which is called from here
+    // $this->extend('WebsiteDemoBundle::layout.html.php')
+    ?>
 
 <ul>
     <?php } ?>
