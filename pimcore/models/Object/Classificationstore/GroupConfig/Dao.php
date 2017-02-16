@@ -72,11 +72,11 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * @return int
+     *
+     * @todo $amount could be undefined here
      */
     public function hasChildren()
     {
-        $amount = 0;
-
         try {
             $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM " . self::TABLE_NAME_GROUPS . " where parentId= " . $this->model->id);
         } catch (\Exception $e) {

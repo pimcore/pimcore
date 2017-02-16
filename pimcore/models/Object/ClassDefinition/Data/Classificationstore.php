@@ -1008,11 +1008,13 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
      * @param $object
      * @param array $mergedMapping
      * @return array|boolean
+     *
+     * @todo: should return explicit false or null
      */
     public function recursiveGetActiveGroupCollectionMapping($object, $mergedMapping = [])
     {
         if (!$object) {
-            return false;
+            return;
         }
 
         $getter = "get" . ucfirst($this->getName());
@@ -1046,11 +1048,13 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
      * @param $object Object\Concrete
      * @param array $activeGroups
      * @return array|boolean
+     *
+     * @todo: should return explicit false or null
      */
     public function recursiveGetActiveGroupsIds($object, $activeGroups = [])
     {
         if (!$object) {
-            return false;
+            return;
         }
 
         $getter = "get" . ucfirst($this->getName());
@@ -1188,11 +1192,11 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
 
     /**
      * @param array $allowedGroupIds
+     *
+     * @todo $parts is undefined
      */
     public function setAllowedGroupIds($allowedGroupIds)
     {
-        $parts = [];
-
         if (is_string($allowedGroupIds) && !empty($allowedGroupIds)) {
             $allowedGroupIds = str_replace([" ", "\n"], "", $allowedGroupIds);
             $parts = explode(",", $allowedGroupIds);

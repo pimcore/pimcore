@@ -158,6 +158,8 @@ class GroupConfig extends Model\AbstractModel
     public function setName($name)
     {
         $this->name = $name;
+
+        return $this;
     }
 
     /**

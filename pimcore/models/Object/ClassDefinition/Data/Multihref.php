@@ -375,11 +375,13 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
      * @param null $object
      * @param array $params
      * @return array
+     *
+     * @todo: $pathes is undefined
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
         if (is_array($data)) {
-            $pathes = [];
+
             foreach ($data as $eo) {
                 if ($eo instanceof Element\ElementInterface) {
                     $pathes[] = $eo->getRealFullPath();
