@@ -161,7 +161,7 @@ class Dashboard
      */
     public function getDisabledPortlets()
     {
-        $perspectiveCfg = Config::getRuntimePerspective();
+        $perspectiveCfg = Config::getRuntimePerspective($this->user);
         $dasboardCfg = $perspectiveCfg["dashboards"] ? $perspectiveCfg["dashboards"] : [];
 
         return isset($dasboardCfg["disabledPortlets"]) ? $dasboardCfg["disabledPortlets"] : [];

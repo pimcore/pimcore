@@ -464,9 +464,12 @@ class Config
     /** Gets the active perspective for the current user
      * @return array
      */
-    public static function getRuntimePerspective()
+    public static function getRuntimePerspective(Model\User $currentUser = null)
     {
-        $currentUser = Tool\Admin::getCurrentUser();
+        if (null === $currentUser) {
+            $currentUser = Tool\Admin::getCurrentUser();
+        }
+
         $currentConfigName = $currentUser->getActivePerspective() ? $currentUser->getActivePerspective() : $currentUser->getFirstAllowedPerspective();
 
         $config = self::getPerspectivesConfig()->toArray();

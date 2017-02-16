@@ -2,9 +2,11 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\Templating;
 
+use Pimcore\Bundle\PimcoreBundle\Templating\GlobalVariables\GlobalVariables;
 use Pimcore\Bundle\PimcoreBundle\Templating\HelperBroker\HelperBrokerInterface;
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModel;
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModelInterface;
+use Symfony\Bundle\FrameworkBundle\Templating\Helper\RouterHelper;
 use Symfony\Bundle\FrameworkBundle\Templating\PhpEngine as BasePhpEngine;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Templating\Storage\Storage;
@@ -19,6 +21,9 @@ use Symfony\Component\Templating\Storage\Storage;
  * @method mixed getParam($key, $default = null)
  * @method string getLocale()
  * @method Request getRequest()
+ * @method RouterHelper router()
+ *
+ * @property GlobalVariables $app
  */
 class PhpEngine extends BasePhpEngine
 {
