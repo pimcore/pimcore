@@ -1,7 +1,3 @@
-app:
-    resource: "@AppBundle/Controller/"
-    type:     annotation
-
 _pimcore_service_common_files:
   path: /{filename}
   defaults: { _controller: PimcoreBundle:PublicServices:commonFiles }
@@ -36,8 +32,4 @@ _pimcore_service_thumbnail:
     filename: '.*'
 
 _pimcore_admin:
-    resource: "@PimcoreAdminBundle/Resources/config/routing/routing.yml"
-
-_fallback:
-    resource: "@PimcoreLegacyBundle/Resources/config/routing/fallback.yml"
-
+    resource: "@PimcoreAdminBundle/Resources/config/routing.yml"

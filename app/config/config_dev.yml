@@ -1,4 +1,4 @@
 imports:
     - { resource: parameters.yml }
-    - { resource: services.yml }
     - { resource: "@PimcoreBundle/Resources/config/config_dev.yml" }
+    - { resource: services.yml }
