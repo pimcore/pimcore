@@ -127,6 +127,10 @@ class FullPageCacheListener implements EventSubscriberInterface
      */
     public function onKernelRequest(GetResponseEvent $event)
     {
+        if(!$event->isMasterRequest()) {
+            return false;
+        }
+
         $request = $event->getRequest();
         $requestUri = $request->getRequestUri();
         $excludePatterns = [];
@@ -248,6 +252,10 @@ class FullPageCacheListener implements EventSubscriberInterface
      */
     public function onKernelResponse(FilterResponseEvent $event)
     {
+        if(!$event->isMasterRequest()) {
+            return false;
+        }
+
         $response = $event->getResponse();
 
         if ($this->enabled && session_id()) {
