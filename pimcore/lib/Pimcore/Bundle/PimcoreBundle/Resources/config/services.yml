@@ -132,3 +132,4 @@ services:
 
     pimcore.plugin_broker:
         class: Pimcore\API\Plugin\Broker
+
