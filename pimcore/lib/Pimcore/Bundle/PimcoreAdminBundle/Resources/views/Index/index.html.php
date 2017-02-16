@@ -3,6 +3,8 @@
 /** @var \Pimcore\Bundle\PimcoreBundle\Templating\GlobalVariables\GlobalVariables $app */
 $app = $view->app;
 
+$language = $app->getRequest()->getLocale();
+
 /** @var \Pimcore\Bundle\PimcoreAdminBundle\Security\User\User $userProxy */
 $userProxy = $app->getUser();
 $user      = $userProxy->getUser();
@@ -196,7 +198,7 @@ $scriptLibs = array(
     "lib/ckeditor/ckeditor.js",
 
     // locale
-    "lib/ext/classic/locale/locale-" . $this->language . ".js",
+    "lib/ext/classic/locale/locale-" . $language . ".js",
 );
 
 // PIMCORE SCRIPTS
@@ -586,7 +588,7 @@ $googleMapsApiKey = $this->config->services->google->browserapikey;
         devmode: <?= PIMCORE_DEVMODE || $extjsDev ? "true" : "false"; ?>,
         google_analytics_enabled: <?= \Zend_Json::encode((bool)\Pimcore\Google\Analytics::isConfigured()) ?>,
         google_webmastertools_enabled: <?= \Zend_Json::encode((bool)\Pimcore\Google\Webmastertools::isConfigured()) ?>,
-        language: '<?= $this->language; ?>',
+        language: '<?= $language; ?>',
         websiteLanguages: <?= \Zend_Json::encode(explode(",", \Pimcore\Tool\Admin::reorderWebsiteLanguages($user, $this->config->general->validLanguages))); ?>,
         google_maps_api_key: "<?= $googleMapsApiKey ?>",
         showCloseConfirmation: true,
@@ -618,8 +620,8 @@ $googleMapsApiKey = $this->config->services->google->browserapikey;
     <?php } ?>
 </script>
 
-<script type="text/javascript" src="/admin/misc/json-translations-system/language/<?= $this->language ?>/?_dc=<?= \Pimcore\Version::$revision ?>"></script>
-<script type="text/javascript" src="/admin/misc/json-translations-admin/language/<?= $this->language ?>/?_dc=<?= \Pimcore\Version::$revision ?>"></script>
+<script type="text/javascript" src="/admin/misc/json-translations-system/language/<?= $language ?>/?_dc=<?= \Pimcore\Version::$revision ?>"></script>
+<script type="text/javascript" src="/admin/misc/json-translations-admin/language/<?= $language ?>/?_dc=<?= \Pimcore\Version::$revision ?>"></script>
 <script type="text/javascript" src="/admin/user/get-current-user/?_dc=<?= \Pimcore\Version::$revision ?>"></script>
 <script type="text/javascript" src="/admin/misc/available-languages?_dc=<?= \Pimcore\Version::$revision ?>"></script>
 
