@@ -6,9 +6,16 @@ use Pimcore\Tool;
 use Pimcore\Translate;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\KernelEvents;
 
-class ZendTranslate implements LoggerAwareInterface
+/**
+ * Initializes Zend_Translate
+ *
+ * TODO this can be removed as soon as we use Symfony Translations
+ */
+class ZendTranslateListener implements EventSubscriberInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
@@ -16,6 +23,16 @@ class ZendTranslate implements LoggerAwareInterface
      * @var bool
      */
     protected $initialized = false;
+
+    /**
+     * @inheritDoc
+     */
+    public static function getSubscribedEvents()
+    {
+        return [
+            KernelEvents::REQUEST => 'onKernelRequest'
+        ];
+    }
 
     /**
      * @param GetResponseEvent $event

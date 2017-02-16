@@ -28,6 +28,17 @@ class SiteListener implements EventSubscriberInterface
         $this->requestHelper = $requestHelper;
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedEvents()
+    {
+        return [
+            // run with high priority as we need to set the site early
+            KernelEvents::REQUEST => ['onKernelRequest', 512]
+        ];
+    }
+
     public function onKernelRequest(GetResponseEvent $event)
     {
         $request = $event->getRequest();
@@ -119,15 +130,5 @@ class SiteListener implements EventSubscriberInterface
             $redirect = new RedirectResponse($url, Response::HTTP_MOVED_PERMANENTLY);
             $event->setResponse($redirect);
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedEvents()
-    {
-        return [
-            KernelEvents::REQUEST => ['onKernelRequest', 512]
-        ];
     }
 }

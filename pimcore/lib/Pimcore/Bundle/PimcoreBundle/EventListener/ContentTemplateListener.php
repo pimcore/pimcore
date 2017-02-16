@@ -8,7 +8,11 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class ControllerTemplate implements EventSubscriberInterface
+/**
+ * If a contentTemplate attribute was set on the request (done by router when building a document route), extract the
+ * value and set it on the Template annotation. This handles custom template files being configured on documents.
+ */
+class ContentTemplateListener implements EventSubscriberInterface
 {
     /**
      * @var TemplateResolver
@@ -21,6 +25,18 @@ class ControllerTemplate implements EventSubscriberInterface
     public function __construct(TemplateResolver $templateResolver)
     {
         $this->templateResolver = $templateResolver;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function getSubscribedEvents()
+    {
+        return [
+            // this must run after the TemplateControllerListener set a potential template and before the TemplateListener
+            // renders the view
+            KernelEvents::VIEW => ['onKernelView', 16]
+        ];
     }
 
     /**
@@ -48,17 +64,5 @@ class ControllerTemplate implements EventSubscriberInterface
         }
 
         $template->setTemplate($resolvedTemplate);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function getSubscribedEvents()
-    {
-        return [
-            // this must run after the TemplateControllerListener set a potential template and before the TemplateListener
-            // renders the view
-            KernelEvents::VIEW => ['onKernelView', 16]
-        ];
     }
 }

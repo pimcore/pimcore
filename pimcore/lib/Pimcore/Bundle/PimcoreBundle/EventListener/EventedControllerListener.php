@@ -11,6 +11,17 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class EventedControllerListener implements EventSubscriberInterface
 {
     /**
+     * @inheritdoc
+     */
+    public static function getSubscribedEvents()
+    {
+        return [
+            KernelEvents::CONTROLLER => 'onKernelController',
+            KernelEvents::RESPONSE   => 'onKernelResponse'
+        ];
+    }
+
+    /**
      * @param FilterControllerEvent $event
      */
     public function onKernelController(FilterControllerEvent $event)
@@ -42,13 +53,5 @@ class EventedControllerListener implements EventSubscriberInterface
         }
 
         $controller->onKernelResponse($event);
-    }
-
-    public static function getSubscribedEvents()
-    {
-        return [
-            KernelEvents::CONTROLLER => 'onKernelController',
-            KernelEvents::RESPONSE   => 'onKernelResponse'
-        ];
     }
 }

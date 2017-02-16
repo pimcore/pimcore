@@ -13,16 +13,6 @@ use Symfony\Component\HttpKernel\KernelEvents;
  */
 class ObjectListener implements EventSubscriberInterface
 {
-    public function onKernelRequest(GetResponseEvent $event)
-    {
-        // TODO run this only in frontend context!
-        \Pimcore::unsetAdminMode();
-        Document::setHideUnpublished(true);
-        Object\AbstractObject::setHideUnpublished(true);
-        Object\AbstractObject::setGetInheritedValues(true);
-        Object\Localizedfield::setGetFallbackValues(true);
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -31,5 +21,15 @@ class ObjectListener implements EventSubscriberInterface
         return [
             KernelEvents::REQUEST => ['onKernelRequest', 5]
         ];
+    }
+
+    public function onKernelRequest(GetResponseEvent $event)
+    {
+        // TODO run this only in frontend context!
+        \Pimcore::unsetAdminMode();
+        Document::setHideUnpublished(true);
+        Object\AbstractObject::setHideUnpublished(true);
+        Object\AbstractObject::setGetInheritedValues(true);
+        Object\Localizedfield::setGetFallbackValues(true);
     }
 }

@@ -10,6 +10,10 @@ use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
+/**
+ * Handles the attributes set by TemplateControllerInterface and injects them into the Template annotation which is
+ * then processed by SensioFrameworkExtraBundle. This allows us to add view auto-rendering without depending on annotations.
+ */
 class TemplateControllerListener implements EventSubscriberInterface
 {
     /**

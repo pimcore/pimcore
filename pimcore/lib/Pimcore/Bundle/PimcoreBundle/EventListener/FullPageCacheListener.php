@@ -11,7 +11,7 @@ use Pimcore\Tool;
 use Pimcore\Cache as CacheManager;
 use Pimcore\Logger;
 
-class FullPageCache implements EventSubscriberInterface
+class FullPageCacheListener implements EventSubscriberInterface
 {
     /**
      * @var bool
@@ -33,11 +33,27 @@ class FullPageCache implements EventSubscriberInterface
      */
     protected $disableReason;
 
-
     /**
      * @var string
      */
     protected $defaultCacheKey;
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedEvents()
+    {
+        $events = [];
+
+        if(\Pimcore\Tool::isFrontend() && !\Pimcore\Tool::isFrontentRequestByAdmin()) {
+            $events = [
+                KernelEvents::REQUEST => ['onKernelRequest', -999], // the first
+                KernelEvents::RESPONSE => ['onKernelResponse', 9999] // the last
+            ];
+        }
+
+        return $events;
+    }
 
     /**
      * @param null $reason
@@ -281,22 +297,5 @@ class FullPageCache implements EventSubscriberInterface
             // like the inc and snippet cache get into the cache
             CacheManager::addClearedTag("output_inline");
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedEvents()
-    {
-        $events = [];
-
-        if(\Pimcore\Tool::isFrontend() && !\Pimcore\Tool::isFrontentRequestByAdmin()) {
-            $events = [
-                KernelEvents::REQUEST => ['onKernelRequest', -999], // the first
-                KernelEvents::RESPONSE => ['onKernelResponse', 9999] // the last
-            ];
-        }
-
-        return $events;
     }
 }

@@ -8,7 +8,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class ControllerViewModel implements EventSubscriberInterface
+class ControllerViewModelListener implements EventSubscriberInterface
 {
     /**
      * @var ViewModelResolver
@@ -21,6 +21,19 @@ class ControllerViewModel implements EventSubscriberInterface
     public function __construct(ViewModelResolver $viewModelResolver)
     {
         $this->viewModelResolver = $viewModelResolver;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function getSubscribedEvents()
+    {
+        return [
+            // set a higher priority to make this run before the @Template annotation
+            // handler kicks in (SensioFrameworkExtraBundle) to make sure the ViewModel
+            // is processed before template is rendered
+            KernelEvents::VIEW => ['onKernelView', 10]
+        ];
     }
 
     /**
@@ -64,18 +77,5 @@ class ControllerViewModel implements EventSubscriberInterface
                 $event->setControllerResult($result);
             }
         }
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function getSubscribedEvents()
-    {
-        return [
-            // set a higher priority to make this run before the @Template annotation
-            // handler kicks in (SensioFrameworkExtraBundle) to make sure the ViewModel
-            // is processed before template is rendered
-            KernelEvents::VIEW => ['onKernelView', 10]
-        ];
     }
 }

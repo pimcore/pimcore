@@ -1,29 +1,46 @@
 services:
-    pimcore.event_listener.site_listener:
+    # routing specific listeners
+    pimcore.event_listener.site:
         class: Pimcore\Bundle\PimcoreBundle\EventListener\SiteListener
         arguments: ['@pimcore.tool.request_helper']
         tags:
             - { name: kernel.event_subscriber }
 
-    pimcore.event_listener.document_resolver:
-        class: Pimcore\Bundle\PimcoreBundle\EventListener\DocumentResolver
+    pimcore.event_listener.document_fallback:
+        class: Pimcore\Bundle\PimcoreBundle\EventListener\DocumentFallbackListener
         arguments: ['@pimcore.service.document', '@pimcore.service.request.document_resolver', '@request_stack']
         tags:
             - { name: kernel.event_subscriber }
 
+    # state initializing listeners
     pimcore.event_listener.object_listener:
         class: Pimcore\Bundle\PimcoreBundle\EventListener\ObjectListener
         tags:
             - { name: kernel.event_subscriber }
 
+    pimcore.event_listener.areablock_state:
+        class: Pimcore\Bundle\PimcoreBundle\EventListener\AreablockStateListener
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: kernel.event_subscriber }
+
+    pimcore.event_listener.zend_translate:
+        class: Pimcore\Bundle\PimcoreBundle\EventListener\ZendTranslateListener
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+          - { name: kernel.event_subscriber }
+
+    # controller handling listeners
     pimcore.event_listener.controller_view_model:
-        class: Pimcore\Bundle\PimcoreBundle\EventListener\ControllerViewModel
+        class: Pimcore\Bundle\PimcoreBundle\EventListener\ControllerViewModelListener
         arguments: ['@pimcore.service.request.view_model_resolver']
         tags:
             - { name: kernel.event_subscriber }
 
-    pimcore.event_listener.controller_template:
-        class: Pimcore\Bundle\PimcoreBundle\EventListener\ControllerTemplate
+    pimcore.event_listener.content_template:
+        class: Pimcore\Bundle\PimcoreBundle\EventListener\ContentTemplateListener
         arguments: ['@pimcore.service.request.template_resolver']
         tags:
             - { name: kernel.event_subscriber }
@@ -39,37 +56,22 @@ services:
         tags:
             - { name: kernel.event_subscriber }
 
-    pimcore.event_listener.editmode:
-        class: Pimcore\Bundle\PimcoreBundle\EventListener\Editmode
+    # response transformers
+    pimcore.event_listener.editmode_listener:
+        class: Pimcore\Bundle\PimcoreBundle\EventListener\EditmodeListener
         arguments: ['@pimcore.service.request.editmode_resolver', '@pimcore.service.request.document_resolver']
         calls:
             - [setLogger, ['@logger']]
         tags:
-            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
-            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
-
-    pimcore.event_listener.areablock:
-        class: Pimcore\Bundle\PimcoreBundle\EventListener\Areablock
-        calls:
-            - [setLogger, ['@logger']]
-        tags:
-            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
-            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
-
-    pimcore.event_listener.zend_translate:
-        class: Pimcore\Bundle\PimcoreBundle\EventListener\ZendTranslate
-        calls:
-            - [setLogger, ['@logger']]
-        tags:
-            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
+            - { name: kernel.event_subscriber }
 
     pimcore.event_listener.google_analytics_code:
-      class: Pimcore\Bundle\PimcoreBundle\EventListener\GoogleAnalyticsCode
+      class: Pimcore\Bundle\PimcoreBundle\EventListener\GoogleAnalyticsCodeListener
       tags:
         - { name: kernel.event_subscriber }
 
     pimcore.event_listener.full_page_cache:
-        class: Pimcore\Bundle\PimcoreBundle\EventListener\FullPageCache
+        class: Pimcore\Bundle\PimcoreBundle\EventListener\FullPageCacheListener
         tags:
           - { name: kernel.event_subscriber }
 

@@ -4,10 +4,17 @@ namespace Pimcore\Bundle\PimcoreBundle\EventListener;
 
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\KernelEvents;
 
-class Areablock implements LoggerAwareInterface
+/**
+ * Integrates areablock/block handling with Zend_Registry
+ *
+ * TODO can this be removed later? who is in charge of handling block state?
+ */
+class AreablockStateListener implements EventSubscriberInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
@@ -20,6 +27,17 @@ class Areablock implements LoggerAwareInterface
      * @var array
      */
     protected $parentBlockNumeration = [];
+
+    /**
+     * @inheritDoc
+     */
+    public static function getSubscribedEvents()
+    {
+        return [
+            KernelEvents::REQUEST  => 'onKernelRequest',
+            KernelEvents::RESPONSE => 'onKernelResponse'
+        ];
+    }
 
     /**
      * @param GetResponseEvent $event

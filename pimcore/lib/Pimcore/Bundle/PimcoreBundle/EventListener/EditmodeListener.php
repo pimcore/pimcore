@@ -2,21 +2,24 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\EventListener;
 
+use Pimcore\Bundle\PimcoreBundle\Service\Request\DocumentResolver;
+use Pimcore\Bundle\PimcoreBundle\Service\Request\EditmodeResolver;
 use Pimcore\Config;
 use Pimcore\ExtensionManager;
 use Pimcore\Model\Document;
 use Pimcore\Tool\Admin;
 use Pimcore\Version;
-use Pimcore\Bundle\PimcoreBundle\Service\Request\DocumentResolver;
-use Pimcore\Bundle\PimcoreBundle\Service\Request\EditmodeResolver;
 use Psr\Log\LoggerAwareTrait;
-use Psr\Log\LoggerInterface;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\KernelEvents;
 
-class Editmode
+/**
+ * Modifies responses for editmode
+ */
+class EditmodeListener implements EventSubscriberInterface
 {
     use LoggerAwareTrait;
 
@@ -26,7 +29,7 @@ class Editmode
     protected $editmodeResolver;
 
     /**
-     * @var DocumentResolver
+     * @var DocumentFallbackListener
      */
     protected $documentResolver;
 
@@ -39,7 +42,7 @@ class Editmode
 
     /**
      * @param EditmodeResolver $editmodeResolver
-     * @param DocumentResolver $documentResolver
+     * @param DocumentFallbackListener $documentResolver
      */
     public function __construct(EditmodeResolver $editmodeResolver, DocumentResolver $documentResolver)
     {
@@ -47,11 +50,24 @@ class Editmode
         $this->documentResolver = $documentResolver;
     }
 
+    /**
+     * @inheritdoc
+     */
+    public static function getSubscribedEvents()
+    {
+        return [
+            KernelEvents::REQUEST  => 'onKernelRequest',
+            KernelEvents::RESPONSE => 'onKernelResponse'
+        ];
+    }
+
+
     public function onKernelRequest(GetResponseEvent $event)
     {
         // TODO editmode is available to logged in users only
         $editmode = $this->editmodeResolver->isEditmode($event->getRequest());
 
+        // TODO this can be removed later
         \Zend_Registry::set('pimcore_editmode', $editmode);
     }
 
@@ -114,7 +130,7 @@ class Editmode
             // if there's no head and no body, create a wrapper including these elements
             // add html headers for snippets in editmode, so there is no problem with javascript
             if (!$headElement && !$bodyElement && !$htmlElement) {
-                $html = "<!DOCTYPE html>\n<html>\n<head></head><body>" . $html . "</body></html>";
+                $html      = "<!DOCTYPE html>\n<html>\n<head></head><body>" . $html . "</body></html>";
                 $skipCheck = true;
             }
 

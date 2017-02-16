@@ -2,18 +2,34 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\EventListener;
 
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Pimcore\Bundle\PimcoreBundle\EventListener\AbstractEventListener\ResponseInjection;
 use Pimcore\Google\Analytics as AnalyticsHelper;
-use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\KernelEvents;
 
-class GoogleAnalyticsCode extends ResponseInjection implements EventSubscriberInterface
+class GoogleAnalyticsCodeListener extends ResponseInjection implements EventSubscriberInterface
 {
     /**
      * @var bool
      */
     protected $enabled = true;
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedEvents()
+    {
+        $events = [];
+
+        if (\Pimcore\Tool::isFrontend() && !\Pimcore\Tool::isFrontentRequestByAdmin()) {
+            $events = [
+                KernelEvents::RESPONSE => ['onKernelResponse']
+            ];
+        }
+
+        return $events;
+    }
 
     /**
      * @return bool
@@ -36,7 +52,8 @@ class GoogleAnalyticsCode extends ResponseInjection implements EventSubscriberIn
     /**
      * @return bool
      */
-    public function isEnabled() {
+    public function isEnabled()
+    {
         return $this->enabled;
     }
 
@@ -47,7 +64,7 @@ class GoogleAnalyticsCode extends ResponseInjection implements EventSubscriberIn
     {
         $response = $event->getResponse();
 
-        if($this->isHtmlResponse($response)) {
+        if ($this->isHtmlResponse($response)) {
             if ($this->enabled && $code = AnalyticsHelper::getCode()) {
 
                 // analytics
@@ -57,27 +74,11 @@ class GoogleAnalyticsCode extends ResponseInjection implements EventSubscriberIn
                 // this method is much faster than using simple_html_dom and uses less memory
                 $headEndPosition = strripos($content, "</head>");
                 if ($headEndPosition !== false) {
-                    $content = substr_replace($content, $code."</head>", $headEndPosition, 7);
+                    $content = substr_replace($content, $code . "</head>", $headEndPosition, 7);
                 }
 
                 $response->setContent($content);
             }
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedEvents()
-    {
-        $events = [];
-
-        if(\Pimcore\Tool::isFrontend() && !\Pimcore\Tool::isFrontentRequestByAdmin()) {
-            $events = [
-                KernelEvents::RESPONSE => ['onKernelResponse']
-            ];
-        }
-
-        return $events;
     }
 }

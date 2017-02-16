@@ -9,7 +9,14 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class DocumentResolver implements EventSubscriberInterface
+/**
+ * If no document was found on the active request (not set by router or by initiator of a sub-request), try to find and
+ * set a fallback document:
+ *
+ *  - if request is a sub-request, try to read document from master request
+ *  - if all fails, try to find the nearest document by path
+ */
+class DocumentFallbackListener implements EventSubscriberInterface
 {
     /**
      * @var DocumentService
@@ -36,6 +43,16 @@ class DocumentResolver implements EventSubscriberInterface
         $this->documentService         = $documentService;
         $this->documentResolverService = $documentResolverService;
         $this->requestStack            = $requestStack;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedEvents()
+    {
+        return [
+            KernelEvents::REQUEST => ['onKernelRequest', 5], // higher priority - run before editmode and editable handlers
+        ];
     }
 
     /**
@@ -73,15 +90,5 @@ class DocumentResolver implements EventSubscriberInterface
                 $this->documentResolverService->setDocument($request, $document);
             }
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedEvents()
-    {
-        return [
-            KernelEvents::REQUEST => ['onKernelRequest', 5], // higher priority - run before editmode and editable handlers
-        ];
     }
 }
