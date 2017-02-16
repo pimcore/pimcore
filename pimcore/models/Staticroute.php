@@ -160,6 +160,7 @@ class Staticroute extends AbstractModel
 
     /**
      * @param string $name
+     * @param null $siteId
      * @return Staticroute
      */
     public static function getByName($name, $siteId = null)

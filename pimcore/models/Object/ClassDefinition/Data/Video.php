@@ -410,6 +410,7 @@ class Video extends Model\Object\ClassDefinition\Data
      * @param mixed $value
      * @param mixed $relatedObject
      * @param mixed $params
+     * @param $idMapper
      * @return mixed
      */
     public function getFromWebserviceImport($value, $relatedObject = null, $params = [], $idMapper = null)

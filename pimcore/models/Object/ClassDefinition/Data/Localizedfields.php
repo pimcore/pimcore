@@ -585,6 +585,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
 
     /**
      * @param $object
+     * @param array $params
      */
     public function delete($object, $params = [])
     {
@@ -600,6 +601,8 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
 
     /**
      * This method is called in Object|Class::save() and is used to create the database table for the localized data
+     * @param $class
+     * @param array $params
      * @return void
      */
     public function classSaved($class, $params = [])
@@ -618,7 +621,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @param $object
+     * @param $container
      * @param array $params
      * @return Object\Localizedfield
      * @throws \Exception

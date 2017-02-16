@@ -343,6 +343,7 @@ class Concrete extends AbstractObject
     }
 
     /**
+     * @param array $tags
      * @return array
      */
     public function getCacheTags($tags = [])
@@ -510,7 +511,12 @@ class Concrete extends AbstractObject
     }
 
     /**
+     * @param $key
+     * @param $params
+     *
      * @return mixed
+     *
+     * @todo: return explicit null or false
      */
     public function getValueFromParent($key, $params = null)
     {
@@ -561,6 +567,7 @@ class Concrete extends AbstractObject
      *
      * @param string $fieldName
      * @param bool $forOwner
+     * @param $remoteClassId
      * @return array
      */
     public function getRelationData($fieldName, $forOwner, $remoteClassId)

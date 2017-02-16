@@ -69,7 +69,8 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param string $abbreviation
+     * @param int $id
+     * @throws \Exception
      * @return void
      */
     public function getById($id)

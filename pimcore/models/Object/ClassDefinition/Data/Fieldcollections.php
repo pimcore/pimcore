@@ -414,6 +414,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return mixed|Object\Fieldcollection
+     * @param $idMapper
      * @throws \Exception
      */
     public function getFromWebserviceImport($data, $object = null, $params = [], $idMapper = null)
@@ -734,6 +735,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     /**
      * @param $data
      * @param null $object
+     * @param array $params
      * @return mixed
      */
     public function getDiffDataFromEditmode($data, $object = null, $params = [])
@@ -800,6 +802,8 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
 
     /**
      * This method is called in Object|Class::save() and is used to create the database table for the localized data
+     * @param $class
+     * @param array $params
      * @return void
      */
     public function classSaved($class, $params = [])

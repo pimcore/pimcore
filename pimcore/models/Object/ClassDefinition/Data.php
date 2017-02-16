@@ -253,7 +253,10 @@ abstract class Data
      * @param mixed $value
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     * @param $idMapper
      * @return mixed
+     *
+     * @todo: most of the implementations don't return anything
      */
     public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
     {
@@ -638,9 +641,9 @@ abstract class Data
 
     /**
      * returns sql query statement to filter according to this data types value(s)
-     * @param  $value
-     * @param  $operator
-     * @param  $params optional params used to change the behavior
+     * @param $value
+     * @param $operator
+     * @param array $params optional params used to change the behavior
      * @return string
      */
     public function getFilterConditionExt($value, $operator, $params = [])
@@ -1194,8 +1197,9 @@ abstract class Data
     }
 
     /** See marshal
-     * @param mixed $value
+     * @param mixed $data
      * @param Model\Object\AbstractObject $object
+     * @param array $params
      * @return mixed
      */
     public function unmarshal($data, $object = null, $params = [])

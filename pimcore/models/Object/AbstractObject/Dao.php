@@ -211,7 +211,8 @@ class Dao extends Model\Element\Dao
     /**
      * Get the properties for the object from database and assign it
      *
-     * @return []
+     * @param boolean $onlyInherited
+     * @return array
      */
     public function getProperties($onlyInherited = false)
     {
@@ -285,6 +286,7 @@ class Dao extends Model\Element\Dao
     /**
      * Quick test if there are childs
      *
+     * @param array $objectTypes
      * @return boolean
      */
     public function hasChildren($objectTypes = [Object::OBJECT_TYPE_OBJECT, Object::OBJECT_TYPE_FOLDER])

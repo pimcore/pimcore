@@ -164,10 +164,10 @@ class WkHtmlToPdf extends Processor
 
 
     /**
-     * @throws \Exception
-     * @param string $srcFile
+     * @param string $srcUrl
      * @param string $dstFile
      * @return string
+     * @throws \Exception
      */
     protected function convert($srcUrl, $dstFile = null)
     {

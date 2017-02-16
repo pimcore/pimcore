@@ -59,7 +59,7 @@ class Mongodb extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Extende
     ];
 
     /**
-     * @return void
+     * @param array $options
      */
     public function __construct($options)
     {
@@ -144,11 +144,11 @@ class Mongodb extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Extende
      * Note : $data is always "string" (serialization is done by the
      * core not by the backend)
      *
-     * @param  string $data             Datas to cache
-     * @param  string $id               Cache id
-     * @param  array  $tags             Array of strings, the cache record will be tagged by each string entry
-     * @param  int    $specificLifetime If != false, set a specific lifetime for this cache record (null => infinite lifetime)
-     * @return boolean True if no problem
+     * @param string $data Datas to cache
+     * @param string $id Cache id
+     * @param array $tags Array of strings, the cache record will be tagged by each string entry
+     * @param bool|int $specificLifetime If != false, set a specific lifetime for this cache record (null => infinite lifetime)
+     * @return bool True if no problem
      */
     public function save($data, $id, $tags = [], $specificLifetime = false)
     {
@@ -192,7 +192,6 @@ class Mongodb extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Extende
      * \Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG => remove cache entries matching any given tags
      *                                               ($tags can be an array of strings or a single string)
      *
-     * @param  string $dir  Directory to clean
      * @param  string $mode Clean mode
      * @param  array  $tags Array of tags
      * @throws \Zend_Cache_Exception

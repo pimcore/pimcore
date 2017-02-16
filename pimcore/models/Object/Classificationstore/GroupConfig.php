@@ -80,6 +80,7 @@ class GroupConfig extends Model\AbstractModel
 
     /**
      * @param $name
+     * @param int $storeId
      * @return GroupConfig
      */
     public static function getByName($name, $storeId = 1)

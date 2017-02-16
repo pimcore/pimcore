@@ -96,7 +96,8 @@ class Item extends Model\AbstractModel
     }
 
     /**
-     *
+     * @param null $user
+     * @throws \Exception
      */
     public function restore($user = null)
     {

@@ -213,6 +213,7 @@ class Db
 
     /**
      * @static
+     * @param $connection
      * @param string $method
      * @param array $args
      */
@@ -235,7 +236,7 @@ class Db
 
     /**
      * @static
-     *
+     * @param $connection
      */
     public static function stopCapturingDefinitionModifications($connection)
     {

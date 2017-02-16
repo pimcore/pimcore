@@ -369,6 +369,7 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
     }
 
     /**
+     * @param boolean $retry
      * @return array
      */
     public function getResults($retry=true)

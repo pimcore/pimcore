@@ -80,6 +80,7 @@ class Image extends Model\Asset
     }
 
     /**
+     * @param bool $force
      * @return void
      */
     public function clearThumbnails($force = false)

@@ -273,6 +273,7 @@ class Service
 
     /**
      * @param  Webservice\Data\Object\Concrete $apiElement
+     * @param $idMapping
      * @return void
      */
     public function correctObjectRelations($apiElement, $idMapping)

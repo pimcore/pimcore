@@ -101,6 +101,8 @@ class Redis2 extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Extended
      * Contruct Zend_Cache Redis backend
      * @param array $options
      * @return \Cm_Cache_Backend_Redis
+     *
+     * @todo: returns nothing, well, actually nothing
      */
     public function __construct($options = [])
     {

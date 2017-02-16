@@ -169,6 +169,7 @@ class InheritanceHelper
 
     /**
      * @param $fieldname
+     * @param $fieldDefinition
      */
     public function addFieldToCheck($fieldname, $fieldDefinition)
     {
@@ -179,6 +180,7 @@ class InheritanceHelper
 
     /**
      * @param $fieldname
+     * @param $fieldDefinition
      * @param null $queryfields
      */
     public function addRelationToCheck($fieldname, $fieldDefinition, $queryfields = null)
@@ -354,6 +356,7 @@ class InheritanceHelper
     /**
      * @param $currentParentId
      * @param string $fields
+     * @param null $parentIdGroups
      * @return array
      */
     protected function buildTree($currentParentId, $fields = "", $parentIdGroups = null)

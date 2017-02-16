@@ -56,6 +56,7 @@ class Warming
     /**
      * @static
      * @param array $types
+     * @param null $classes
      * @return void
      */
     public static function objects($types = null, $classes = null)

@@ -899,8 +899,9 @@ class RestClient
     }
 
 
-    /** Creates a new document folder.
-     * @param $objectFolder document folder.
+    /**
+     * Creates a new document folder.
+     * @param $documentFolder document folder.
      * @return mixed
      */
     public function createDocumentFolder($documentFolder)

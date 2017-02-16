@@ -44,6 +44,7 @@ abstract class Element extends Admin
     }
 
     /**
+     * @param $element
      * @return array
      */
     protected function getTreeNodeConfig($element)

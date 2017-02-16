@@ -133,6 +133,11 @@ class Less
         return $body;
     }*/
 
+    /**
+     * @param $path
+     * @param null $source
+     * @return mixed|string
+     */
     public static function compile($path, $source = null)
     {
         $conf = \Pimcore\Config::getSystemConfig();

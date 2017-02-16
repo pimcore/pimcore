@@ -57,6 +57,7 @@ class Objectbrick extends Model\AbstractModel
     }
 
     /**
+     * @param bool $withInheritedValues
      * @return array
      */
     public function getItems($withInheritedValues = false)

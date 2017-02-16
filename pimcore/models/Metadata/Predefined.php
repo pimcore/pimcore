@@ -106,7 +106,8 @@ class Predefined extends Model\AbstractModel
     }
 
     /**
-     * @param string $key
+     * @param string $name
+     * @param string $language
      * @return self
      */
     public static function getByName($name, $language = "")

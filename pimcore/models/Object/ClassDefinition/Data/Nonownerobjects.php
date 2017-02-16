@@ -283,6 +283,7 @@ class Nonownerobjects extends Model\Object\ClassDefinition\Data\Objects
      * @param mixed $value
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     * @param $idMapper
      * @return mixed
      */
     public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)

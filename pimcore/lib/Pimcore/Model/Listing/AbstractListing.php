@@ -346,7 +346,8 @@ abstract class AbstractListing extends AbstractModel
     }
 
     /**
-     * @param  $value
+     * @param $value
+     * @param $type
      * @return string
      */
     public function quote($value, $type = null)

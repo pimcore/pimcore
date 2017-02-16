@@ -703,7 +703,7 @@ class Manager
 
     /**
      * Returns whether or not an element has a workflow
-     * @param AbstractElement $element
+     * @param AbstractElement|Asset|ConcreteObject|Document $element
      * @return bool
      */
     public static function elementHasWorkflow(AbstractElement $element)

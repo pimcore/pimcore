@@ -894,6 +894,7 @@ class Pimcore
     /**
      * Forces a garbage collection.
      * @static
+     * @param array $keepItems
      * @return void
      */
     public static function collectGarbage($keepItems = [])
@@ -977,6 +978,7 @@ class Pimcore
      * if this method is called in self::shutdown() it forces the browser to close the connection an allows the
      * shutdown-function to run in the background
      * @static
+     * @param $data
      * @return string
      */
     public static function outputBufferEnd($data)

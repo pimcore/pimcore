@@ -264,7 +264,9 @@ class Dao extends Model\Dao\AbstractDao
 
 
     /**
-     * @param  string $field
+     * @param string $field
+     * @param $forOwner
+     * @param $remoteClassId
      * @return array
      */
     public function getRelationData($field, $forOwner, $remoteClassId)

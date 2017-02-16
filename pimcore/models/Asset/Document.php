@@ -57,8 +57,10 @@ class Document extends Model\Asset
     }
 
     /**
+     * @todo: Shouldnt' this always return an int?
+     *
      * @param null $path
-     * @return null
+     * @return int|null
      */
     protected function readPageCount($path = null)
     {
@@ -89,7 +91,9 @@ class Document extends Model\Asset
     }
 
     /**
-     * @return null
+     * @todo: Shouldn't this always return an int?
+     *
+     * @return int|null
      */
     public function getPageCount()
     {

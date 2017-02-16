@@ -152,8 +152,9 @@ class Slider extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @param float $minValue
+     * @param $maxValue
      * @return void
+     * @internal param float $minValue
      */
     public function setMaxValue($maxValue)
     {

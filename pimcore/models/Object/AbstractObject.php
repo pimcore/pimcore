@@ -104,6 +104,7 @@ class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @static
+     * @param Concrete $object
      * @return bool
      */
     public static function doGetInheritedValues(Concrete $object = null)
@@ -417,6 +418,7 @@ class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
+     * @param array $objectTypes
      * @return boolean
      */
     public function hasChildren($objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER])

@@ -60,6 +60,7 @@ class Video extends Model\Asset
     }
 
     /**
+     * @param bool $force
      * @return void
      */
     public function clearThumbnails($force = false)
@@ -101,7 +102,8 @@ class Video extends Model\Asset
     /**
      * Returns a path to a given thumbnail or an thumbnail configuration
      *
-     * @param mixed
+     * @param $thumbnailName
+     * @param array $onlyFormats
      * @return string
      */
     public function getThumbnail($thumbnailName, $onlyFormats = [])

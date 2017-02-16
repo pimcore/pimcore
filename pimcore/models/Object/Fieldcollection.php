@@ -164,6 +164,8 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator
     /**
      * @param $index
      * @return
+     *
+     * @todo: no return type definied here
      */
     public function get($index)
     {

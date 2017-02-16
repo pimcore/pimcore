@@ -323,6 +323,7 @@ class ImageMagick extends Adapter
      *
      * @param $image
      * @param null $mode
+     * @param bool $relativePath
      * @return ImageMagick
      */
     public function setBackgroundImage($image, $mode = null, $relativePath = false)
@@ -425,6 +426,9 @@ class ImageMagick extends Adapter
     /**
      * @param ImageMagick $overlayImage
      * @param string $composite
+     * @param int $x
+     * @param int $y
+     * @param int $overlayOpacity
      * @return ImageMagick
      */
     protected function processOverlay(ImageMagick $overlayImage, $composite = "COMPOSITE_DEFAULT", $x = 0, $y = 0, $overlayOpacity = 100)
@@ -490,6 +494,7 @@ class ImageMagick extends Adapter
     /**
      * Converts the image into a linear-grayscale image.
      *
+     * @param string $method
      * @return ImageMagick
      */
     public function grayscale($method = "Rec601Luma")
@@ -725,8 +730,9 @@ class ImageMagick extends Adapter
     /**
      * Composite script path, as a default the adapter is just using 'composite'.
      *
-     * @param $convertScriptPath
+     * @param $compositeScriptPath
      * @return ImageMagick
+     * @internal param $convertScriptPath
      */
     public function setCompositeScriptPath($compositeScriptPath)
     {

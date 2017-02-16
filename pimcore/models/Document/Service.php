@@ -394,6 +394,7 @@ class Service extends Model\Element\Service
     /**
      * @static
      * @param $path
+     * @param $type
      * @return bool
      */
     public static function pathExists($path, $type = null)
@@ -435,6 +436,7 @@ class Service extends Model\Element\Service
      * )
      * @param $document
      * @param $rewriteConfig
+     * @param array $params
      * @return Document
      */
     public static function rewriteIds($document, $rewriteConfig, $params = [])

@@ -273,6 +273,7 @@ class Cache
     /**
      * Returns the content of the requested cache entry
      * @param string $key
+     * @param boolean $doNotTestCacheValidity
      * @return mixed
      */
     public static function load($key, $doNotTestCacheValidity = false)
@@ -549,7 +550,7 @@ class Cache
 
 
     /**
-     *
+     * @param bool $force
      */
     public static function setWriteLock($force = false)
     {

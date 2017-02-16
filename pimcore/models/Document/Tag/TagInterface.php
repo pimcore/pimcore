@@ -81,6 +81,7 @@ interface TagInterface
 
     /**
      * Returns the current tag's data for web service export
+     * @param $document
      * @param mixed $params
      * @abstract
      * @return array

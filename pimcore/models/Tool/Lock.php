@@ -58,6 +58,8 @@ class Lock extends Model\AbstractModel
 
     /**
      * @param string $key
+     * @param int $expire
+     * @param int $refreshInterval
      */
     public static function acquire($key, $expire = 120, $refreshInterval = 1)
     {

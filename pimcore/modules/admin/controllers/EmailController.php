@@ -231,7 +231,7 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
      * Helper to build the correct Json array for the treeGrid
      *
      * @param array $data
-     * @param null|$data $fullEntry
+     * @param $fullEntry
      */
     protected function enhanceLoggingData(&$data, &$fullEntry = null)
     {

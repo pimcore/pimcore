@@ -124,6 +124,8 @@ class AbstractData extends Model\AbstractModel
     }
 
     /**
+     * @param $key
+     *
      * @return mixed
      */
     public function getValueFromParent($key)

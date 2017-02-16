@@ -222,8 +222,11 @@ class Service extends Model\Element\Service
     }
 
 
-    /** Language only user for classification store !!!
+    /**
+     * Language only user for classification store !!!
      * @param  AbstractObject $object
+     * @param null $fields
+     * @param null $requestedLanguage
      * @return array
      */
     public static function gridObjectData($object, $fields = null, $requestedLanguage = null)
@@ -506,6 +509,11 @@ class Service extends Model\Element\Service
      * gets value for given object and getter, including inherited values
      *
      * @static
+     * @param $object
+     * @param $key
+     * @param null $brickType
+     * @param null $brickKey
+     * @param null $fieldDefinition
      * @return \stdclass, value and objectid where the value comes from
      */
     private static function getValueForObject($object, $key, $brickType = null, $brickKey = null, $fieldDefinition = null)
@@ -859,6 +867,7 @@ class Service extends Model\Element\Service
     /**
      * @static
      * @param $path
+     * @param null $type
      * @return bool
      */
     public static function pathExists($path, $type = null)
@@ -1370,6 +1379,7 @@ class Service extends Model\Element\Service
 
     /**
      * @param $object
+     * @param array $params
      * @param $data Model\Object\Data\CalculatedValue
      * @return mixed|null
      */

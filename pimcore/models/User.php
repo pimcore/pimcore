@@ -298,8 +298,9 @@ class User extends User\UserRole
     }
 
     /**
-     * @param String $key
-     * @return boolean
+     * @param string $key
+     * @param string $type
+     * @return bool
      */
     public function isAllowed($key, $type = "permission")
     {
@@ -513,6 +514,8 @@ class User extends User\UserRole
     }
 
     /**
+     * @param null $width
+     * @param null $height
      * @return string
      */
     public function getImage($width = null, $height = null)

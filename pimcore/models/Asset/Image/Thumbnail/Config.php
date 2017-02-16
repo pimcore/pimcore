@@ -206,8 +206,9 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @param  $name
-     * @param  $parameters
+     * @param $name
+     * @param $parameters
+     * @param $media
      * @return bool
      */
     public function addItem($name, $parameters, $media = null)
@@ -229,8 +230,10 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @param  $name
-     * @param  $parameters
+     * @param $position
+     * @param $name
+     * @param $parameters
+     * @param $media
      * @return bool
      */
     public function addItemAt($position, $name, $parameters, $media = null)

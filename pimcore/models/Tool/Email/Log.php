@@ -597,6 +597,8 @@ class Log extends Model\AbstractModel
 
     /**
      * Helper to get the recipients as array
+     * @param $data
+     * @return array
      */
     protected function buildArray($data)
     {

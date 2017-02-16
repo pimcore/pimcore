@@ -107,6 +107,7 @@ class ClassDefinition extends Model\Webservice\Data
 
     /**
      * @param $class
+     * @param $options
      */
     public function map($class, $options = null)
     {

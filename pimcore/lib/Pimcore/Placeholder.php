@@ -218,6 +218,7 @@ class Placeholder
      * @param string | Model\Document $mixed
      * @param array $params
      * @param null | Model\Document $document
+     * @param bool $enableLayoutOnPlaceholderReplacement
      * @return string
      */
     public function replacePlaceholders($mixed, $params = [], $document = null, $enableLayoutOnPlaceholderReplacement = true)

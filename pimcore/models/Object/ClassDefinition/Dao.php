@@ -290,6 +290,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Update the class name in all object
      *
+     * @param $newName
      * @return void
      */
     public function updateClassNameInObjects($newName)

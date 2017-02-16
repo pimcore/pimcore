@@ -91,7 +91,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
      */
 
     /**
-     * @return mixed
+     * @return int
      */
     public function count()
     {
@@ -101,7 +101,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     /**
      * @param int $offset
      * @param int $itemCountPerPage
-     * @return mixed
+     * @return Model\Asset[]
      */
     public function getItems($offset, $itemCountPerPage)
     {
@@ -123,9 +123,6 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
      * Methods for Iterator
      */
 
-    /**
-     *
-     */
     public function rewind()
     {
         $this->getAssets();
@@ -133,7 +130,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     }
 
     /**
-     * @return mixed
+     * @return Model\Asset
      */
     public function current()
     {
@@ -155,7 +152,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     }
 
     /**
-     * @return mixed
+     * @return Model\Asset
      */
     public function next()
     {

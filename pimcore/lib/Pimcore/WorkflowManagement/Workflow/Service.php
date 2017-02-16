@@ -95,6 +95,7 @@ class Service
      * @param string $title
      * @param string $description
      * @param array $noteData
+     * @param null $user
      * @return Element\Note $note
      */
     public static function createActionNote($element, $type, $title, $description, $noteData, $user=null)

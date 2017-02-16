@@ -372,6 +372,7 @@ class KeyValue extends Model\Object\ClassDefinition\Data
     /**
      * @param mixed $data
      * @param null $object
+     * @param array $params
      * @return mixed|Object\Data\KeyValue
      * @throws \Exception
      */

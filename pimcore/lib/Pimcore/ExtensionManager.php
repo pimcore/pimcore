@@ -273,6 +273,7 @@ class ExtensionManager
 
     /**
      * @param $id
+     * @param $path
      * @throws \Exception
      *
      * @return mixed|array

@@ -71,11 +71,11 @@ class MysqlTable extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Exte
      * Note : $data is always "string" (serialization is done by the
      * core not by the backend)
      *
-     * @param  string $data             Datas to cache
-     * @param  string $id               Cache id
-     * @param  array  $tags             Array of strings, the cache record will be tagged by each string entry
-     * @param  int    $specificLifetime If != false, set a specific lifetime for this cache record (null => infinite lifetime)
-     * @return boolean True if no problem
+     * @param string $data Datas to cache
+     * @param string $id Cache id
+     * @param array $tags Array of strings, the cache record will be tagged by each string entry
+     * @param bool|int $specificLifetime If != false, set a specific lifetime for this cache record (null => infinite lifetime)
+     * @return bool True if no problem
      */
     public function save($data, $id, $tags = [], $specificLifetime = false)
     {

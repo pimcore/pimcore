@@ -394,6 +394,7 @@ class Version extends AbstractModel
     }
 
     /**
+     * @param $cid
      * @return $this
      */
     public function setCid($cid)

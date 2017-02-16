@@ -268,7 +268,10 @@ class Classificationstore extends Model\AbstractModel
      * @param $groupId
      * @param string $language
      * @param bool|false $ignoreFallbackLanguage
+     * @param bool|false $ignoreDefaultLanguage
      * @return null
+     *
+     * @todo: not sure if bool|false is actually allowed in phpdoc?
      */
     public function getLocalizedKeyValue($groupId, $keyId, $language = "default", $ignoreFallbackLanguage = false, $ignoreDefaultLanguage = false)
     {

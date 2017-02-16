@@ -182,8 +182,9 @@ class Logger
 
     /**
      * @param $message
-     * @param string $code
+     * @param string $level
      * @param array $context
+     * @internal param string $code
      */
     public static function log($message, $level = "info", $context = [])
     {

@@ -440,8 +440,9 @@ class Link
 
         return false;
     }
-    
+
     /**
+     * @param $object
      * @return $this
      */
     public function setObject($object)

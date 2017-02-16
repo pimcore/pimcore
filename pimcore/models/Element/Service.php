@@ -99,7 +99,8 @@ class Service extends Model\AbstractModel
 
     /**
      * @static
-     * @param  $list array | \Pimcore\Model\Listing\AbstractListing
+     * @param $list array | \Pimcore\Model\Listing\AbstractListing
+     * @param string $idGetter
      * @return array
      */
     public static function getIdList($list, $idGetter = 'getId')
@@ -528,7 +529,8 @@ class Service extends Model\AbstractModel
 
     /**
      * find all elements which the user may not list and therefore may never be shown to the user
-     * @param  string $type asset|object|document
+     * @param string $type asset|object|document
+     * @param $user
      * @return array
      */
     public static function findForbiddenPaths($type, $user)
@@ -560,7 +562,8 @@ class Service extends Model\AbstractModel
 
     /**
      * renews all references, for example after unserializing an ElementInterface
-     * @param  Document|Asset|Object\AbstractObject $data
+     * @param Document|Asset|Object\AbstractObject $data
+     * @param bool $initial
      * @return mixed
      */
     public static function renewReferences($data, $initial = true)

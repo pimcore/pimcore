@@ -73,6 +73,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     * @param $objectFromVersion
      * @return string
      */
     public function getDataForEditmode($data, $object = null, $params = [], $objectFromVersion = null)
@@ -92,7 +93,9 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
     }
 
     /**
+     * @param $getter
      * @param $data
+     * @param $params
      * @param $allowedBrickType
      * @param $objectFromVersion
      * @param int $level
@@ -160,9 +163,13 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
     /**
      * gets recursively attribute data from parent and fills objectData and metaData
      *
-     * @param  $item
-     * @param  $key
-     * @param  $fielddefinition
+     * @param $item
+     * @param $key
+     * @param $fielddefinition
+     * @param $level
+     * @param $baseObject
+     * @param $getter
+     * @param $objectFromVersion
      * @return mixed
      */
     private function getDataForField($item, $key, $fielddefinition, $level, $baseObject, $getter, $objectFromVersion)
@@ -810,6 +817,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
      * @param mixed $data
      * @param null $object
      * @param mixed $params
+     * @param null $objectFromVersion
      * @return array|null
      */
     public function getDiffDataForEditMode($data, $object = null, $params = [], $objectFromVersion = null)

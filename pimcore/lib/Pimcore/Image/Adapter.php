@@ -331,6 +331,7 @@ abstract class Adapter
      * @param int $x
      * @param int $y
      * @param int $alpha
+     * @param string $composite
      * @param string $origin Origin of the X and Y coordinates (top-left, top-right, bottom-left, bottom-right or center)
      * @return self
      */
@@ -409,6 +410,7 @@ abstract class Adapter
     }
 
     /**
+     * @param $mode
      * @return self
      */
     public function mirror($mode)
@@ -439,7 +441,8 @@ abstract class Adapter
 
     /**
      * @abstract
-     * @param  $imagePath
+     * @param $imagePath
+     * @param array $options
      * @return self
      */
     abstract public function load($imagePath, $options = []);

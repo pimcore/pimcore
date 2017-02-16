@@ -710,9 +710,12 @@ class Areablock extends Model\Document\Tag
 
     /**
      * @param Model\Webservice\Data\Document\Element $wsElement
+     * @param $document
      * @param mixed $params
      * @param null $idMapper
      * @throws \Exception
+     *
+     * @todo replace and with &&
      */
     public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
     {

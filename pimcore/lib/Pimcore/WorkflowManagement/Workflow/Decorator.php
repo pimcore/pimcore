@@ -132,6 +132,7 @@ class Decorator
     /**
      * Returns the note type title
      * @param $actionName
+     * @param $formData
      * @return string
      */
     public function getNoteType($actionName, $formData)

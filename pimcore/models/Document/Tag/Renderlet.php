@@ -231,8 +231,9 @@ class Renderlet extends Model\Document\Tag
 
     /**
      * get correct type of object as string
-     * @param mixed $data
+     * @param null $object
      * @return void
+     * @internal param mixed $data
      */
     public function getObjectType($object = null)
     {
@@ -265,6 +266,7 @@ class Renderlet extends Model\Document\Tag
 
     /**
      * @param Model\Webservice\Data\Document\Element $wsElement
+     * @param $document
      * @param mixed $params
      * @param null $idMapper
      * @throws \Exception

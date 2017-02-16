@@ -73,7 +73,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @return int
      *
-     * @todo $amount could be undefined here
+     * @todo: $amount could not be defined, so this could cause an issue
      */
     public function hasChildren()
     {

@@ -129,8 +129,8 @@ class Newsletter
     }
 
     /**
-     * @param $newsletter
-     * @param $object
+     * @param Model\Tool\Newsletter\Config $newsletter
+     * @param Object\Concrete $object
      * @param null $emailAddress
      * @param null $hostUrl
      */

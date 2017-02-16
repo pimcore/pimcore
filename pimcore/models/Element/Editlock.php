@@ -176,6 +176,7 @@ class Editlock extends Model\AbstractModel
     }
 
     /**
+     * @param int $cid
      * @return $this
      */
     public function setCid($cid)

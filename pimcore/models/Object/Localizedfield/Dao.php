@@ -342,7 +342,8 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     *
+     * @param $object
+     * @param array $params
      */
     public function load($object, $params = [])
     {

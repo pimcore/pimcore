@@ -215,7 +215,8 @@ class Localizedfield extends Model\AbstractModel
     /**
      * @param $name
      * @param null $language
-     * @return
+     * @param bool $ignoreFallbackLanguage
+     * @return mixed
      */
     public function getLocalizedValue($name, $language = null, $ignoreFallbackLanguage = false)
     {

@@ -106,6 +106,7 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * @param $elementTypes
+     * @param array $ignoreIds
      * @return array
      */
     public function maintenanceGetOutdatedVersions($elementTypes, $ignoreIds = [])

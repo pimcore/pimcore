@@ -134,6 +134,7 @@ class Definition extends Model\AbstractModel
     }
 
     /**
+     * @param $key
      * @return Object\ClassDefinition\Data
      */
     public function getFieldDefinition($key)

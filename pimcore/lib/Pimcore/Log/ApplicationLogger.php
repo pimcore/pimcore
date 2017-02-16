@@ -55,6 +55,7 @@ class ApplicationLogger /*implements LoggerInterface*/
 
     /**
      * @param string $component
+     * @param boolean $initDbHandler
      * @return ApplicationLogger
      */
     public static function getInstance($component = "default", $initDbHandler = false)
@@ -345,7 +346,9 @@ class ApplicationLogger /*implements LoggerInterface*/
     }
 
     /**
-     *
+     * @param $level
+     * @param $message
+     * @param $params
      */
     protected function handleLog($level, $message, $params)
     {

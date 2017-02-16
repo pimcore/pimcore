@@ -100,6 +100,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
+     * @param $class
      * @return void
      */
     public function createOrUpdateTable($class)

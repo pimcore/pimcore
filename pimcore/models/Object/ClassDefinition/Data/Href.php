@@ -224,6 +224,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
      * @param array $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     * @param bool $notRelationTable
      * @return Asset|Document|Object\AbstractObject
      */
     public function getDataFromResource($data, $object = null, $params = [], $notRelationTable = false)

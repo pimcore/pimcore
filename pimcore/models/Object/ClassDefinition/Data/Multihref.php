@@ -398,12 +398,12 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
      * @param null|Object\AbstractObject $object
      * @param mixed $params
      * @return string
+     *
+     * @todo $pathes is not defined, should be definied as empty array
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
         if (is_array($data) && count($data) > 0) {
-            $pathes = [];
-
             foreach ($data as $e) {
                 if ($e instanceof Element\ElementInterface) {
                     $pathes[] = get_class($e) . $e->getRealFullPath();

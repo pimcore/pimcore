@@ -313,6 +313,7 @@ class Document extends Element\AbstractElement
      *
      * @param integer $parentId
      * @param array $data
+     * @param boolean $save
      * @return Document
      */
     public static function create($parentId, $data = [], $save = true)
@@ -621,7 +622,10 @@ class Document extends Element\AbstractElement
     /**
      * set the children of the document
      *
+     * @param $children
      * @return array
+     *
+     * @todo: replace and with &&
      */
     public function setChildren($children)
     {

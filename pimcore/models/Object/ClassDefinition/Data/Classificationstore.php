@@ -347,6 +347,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
 
     /**
      * @see Object\ClassDefinition\Data::getVersionPreview
+     * @param $data
      * @param null|Object\AbstractObject $object
      * @param mixed $params
      * @return string
@@ -668,6 +669,8 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
 
     /**
      * This method is called in Object|Class::save() and is used to create the database table for the classification data
+     * @param $class
+     * @param array $params
      * @return void
      */
     public function classSaved($class, $params = [])
@@ -1007,9 +1010,9 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
     /**
      * @param $object
      * @param array $mergedMapping
-     * @return array|boolean
+     * @return array|null
      *
-     * @todo: should return explicit false or null
+     * @todo: Method returns void/null, should be boolean or null
      */
     public function recursiveGetActiveGroupCollectionMapping($object, $mergedMapping = [])
     {
@@ -1049,7 +1052,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
      * @param array $activeGroups
      * @return array|boolean
      *
-     * @todo: should return explicit false or null
+     * @todo: Method returns void/null, should be boolean or null
      */
     public function recursiveGetActiveGroupsIds($object, $activeGroups = [])
     {
@@ -1193,7 +1196,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
     /**
      * @param array $allowedGroupIds
      *
-     * @todo $parts is undefined
+     * @todo: $parts is not definied here, should it be definied as empty array or null
      */
     public function setAllowedGroupIds($allowedGroupIds)
     {

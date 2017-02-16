@@ -34,7 +34,7 @@ abstract class AbstractPluginUpdater
      */
     protected $db;
 
-    /**s 
+    /**
      * @param $revision
      */
     public function __construct($revision)
