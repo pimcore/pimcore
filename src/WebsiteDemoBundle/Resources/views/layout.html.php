@@ -5,6 +5,7 @@ use Pimcore\Model\Document\Page;
 /** @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $view */
 /** @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $this */
 ?>
+
 <!DOCTYPE html>
 <html lang="<?= $this->getLocale() ?>">
 <head>
@@ -32,8 +33,7 @@ use Pimcore\Model\Document\Page;
 
     if ($document->getDescription()) {
         // use the manually set description if available
-        // TODO HEAD META HELPER
-        // $this->headMeta()->appendName('description', $document->getDescription());
+        $this->headMeta()->appendName('description', $document->getDescription());
     }
 
     $this->headTitle()->append("pimcore Demo");
@@ -41,8 +41,7 @@ use Pimcore\Model\Document\Page;
 
     echo $this->headTitle();
 
-    // TODO HEAD META HELPER
-    // echo $this->headMeta();
+    echo $this->headMeta();
     ?>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

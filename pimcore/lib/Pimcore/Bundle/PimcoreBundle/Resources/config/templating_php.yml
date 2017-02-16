@@ -81,3 +81,27 @@ services:
         arguments: ['@pimcore.templating.view_helper.placeholder.container_service']
         tags:
             - { name: templating.helper, alias: headLink }
+
+    pimcore.templating.view_helper.headScript:
+        class: Pimcore\Bundle\PimcoreBundle\Templating\Helper\HeadScript
+        arguments: ['@pimcore.templating.view_helper.placeholder.container_service']
+        tags:
+            - { name: templating.helper, alias: headScript }
+
+    pimcore.templating.view_helper.inlineScript:
+        class: Pimcore\Bundle\PimcoreBundle\Templating\Helper\InlineScript
+        arguments: ['@pimcore.templating.view_helper.placeholder.container_service']
+        tags:
+            - { name: templating.helper, alias: inlineScript }
+
+    pimcore.templating.view_helper.headStyle:
+        class: Pimcore\Bundle\PimcoreBundle\Templating\Helper\HeadStyle
+        arguments: ['@pimcore.templating.view_helper.placeholder.container_service']
+        tags:
+            - { name: templating.helper, alias: headStyle }
+
+    pimcore.templating.view_helper.headMeta:
+        class: Pimcore\Bundle\PimcoreBundle\Templating\Helper\HeadMeta
+        arguments: ['@pimcore.templating.view_helper.placeholder.container_service']
+        tags:
+            - { name: templating.helper, alias: headMeta }

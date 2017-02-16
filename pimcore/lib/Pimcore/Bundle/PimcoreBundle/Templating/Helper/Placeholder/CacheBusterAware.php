@@ -30,24 +30,7 @@ abstract class CacheBusterAware extends AbstractHelper
     /**
      * prepares entries with cache buster prefix
      */
-    public function prepareEntries()
-    {
-        foreach ($this as &$item) {
-            if ($this->isCacheBuster()) {
-                // adds the automatic cache buster functionality
-                if (isset($item->href)) {
-                    $realFile = PIMCORE_DOCUMENT_ROOT . $item->href;
-                    if (file_exists($realFile)) {
-                        $item->href = "/cache-buster-" . filemtime($realFile) . $item->href;
-                    }
-                }
-            }
-
-            \Pimcore::getEventManager()->trigger($this->getEventManagerKey(), $this, [
-                "item" => $item
-            ]);
-        }
-    }
+    protected abstract function prepareEntries();
 
     /**
      * @return boolean
@@ -64,12 +47,5 @@ abstract class CacheBusterAware extends AbstractHelper
     {
         $this->cacheBuster = $cacheBuster;
     }
-
-    /**
-     * key for event that is triggered on every item in prepareEntries()
-     *
-     * @return string
-     */
-    abstract protected function getEventManagerKey();
 
 }

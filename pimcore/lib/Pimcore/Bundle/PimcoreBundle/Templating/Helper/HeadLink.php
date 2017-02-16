@@ -330,7 +330,7 @@ class HeadLink extends CacheBusterAware
      */
     public function toString($indent = null)
     {
-        parent::prepareEntries();
+        $this->prepareEntries();
 
         $indent = (null !== $indent)
             ? $this->getWhitespace($indent)
@@ -346,13 +346,25 @@ class HeadLink extends CacheBusterAware
     }
 
     /**
-     * key for event that is triggered on every item in prepareEntries()
-     *
-     * @return string
+     * prepares entries with cache buster prefix
      */
-    protected function getEventManagerKey()
+    protected function prepareEntries()
     {
-        return "frontend.view.helper.head-link";
+        foreach ($this as &$item) {
+            if ($this->isCacheBuster()) {
+                // adds the automatic cache buster functionality
+                if (isset($item->href)) {
+                    $realFile = PIMCORE_DOCUMENT_ROOT . $item->href;
+                    if (file_exists($realFile)) {
+                        $item->href = "/cache-buster-" . filemtime($realFile) . $item->href;
+                    }
+                }
+            }
+
+            \Pimcore::getEventManager()->trigger("frontend.view.helper.head-link", $this, [
+                "item" => $item
+            ]);
+        }
     }
 
     /**
