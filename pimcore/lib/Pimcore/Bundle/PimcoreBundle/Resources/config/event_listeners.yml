@@ -1,5 +1,8 @@
 services:
-    # routing specific listeners
+    #
+    # ROUTING
+    #
+
     pimcore.event_listener.site:
         class: Pimcore\Bundle\PimcoreBundle\EventListener\SiteListener
         arguments: ['@pimcore.tool.request_helper']
@@ -12,7 +15,11 @@ services:
         tags:
             - { name: kernel.event_subscriber }
 
-    # state initializing listeners
+
+    #
+    # STATE HANDLING/INITIALIZING
+    #
+
     pimcore.event_listener.object_listener:
         class: Pimcore\Bundle\PimcoreBundle\EventListener\ObjectListener
         tags:
@@ -32,7 +39,11 @@ services:
         tags:
           - { name: kernel.event_subscriber }
 
-    # controller handling listeners
+
+    #
+    # CONTROLLER HANDLING
+    #
+
     pimcore.event_listener.controller_view_model:
         class: Pimcore\Bundle\PimcoreBundle\EventListener\ControllerViewModelListener
         arguments: ['@pimcore.service.request.view_model_resolver']
@@ -56,7 +67,11 @@ services:
         tags:
             - { name: kernel.event_subscriber }
 
-    # response transformers
+
+    #
+    # RESPONSE TRANSFORMING
+    #
+
     pimcore.event_listener.editmode_listener:
         class: Pimcore\Bundle\PimcoreBundle\EventListener\EditmodeListener
         arguments: ['@pimcore.service.request.editmode_resolver', '@pimcore.service.request.document_resolver']

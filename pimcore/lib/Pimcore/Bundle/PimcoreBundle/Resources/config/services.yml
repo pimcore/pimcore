@@ -7,34 +7,26 @@ services:
         class: Pimcore\Bundle\PimcoreBundle\Service\MvcConfigNormalizer
         arguments: ['@kernel']
 
+    pimcore.bundle_locator:
+        class: Pimcore\Bundle\PimcoreBundle\HttpKernel\BundleLocator\BundleLocator
+        arguments: ['@kernel']
+
+    pimcore.web_path_resolver:
+        class: Pimcore\Bundle\PimcoreBundle\Service\WebPathResolver
+
+    #
+    # ROUTING
+    #
+
     pimcore.router.dynamic_route_provider:
         class: Pimcore\Bundle\PimcoreBundle\Routing\DocumentRouteProvider
         arguments: ['@pimcore.service.document', '@pimcore.mvc_config_normalizer']
 
-    pimcore.plugin_broker:
-        class: Pimcore\API\Plugin\Broker
-
-    pimcore.value_resolver.document:
-        class: Pimcore\Bundle\PimcoreBundle\ArgumentResolver\DocumentValueResolver
-        arguments: ['@pimcore.service.request.document_resolver']
-        tags:
-            - { name: controller.argument_value_resolver }
-
-    pimcore.value_resolver.view_model:
-        class: Pimcore\Bundle\PimcoreBundle\ArgumentResolver\ViewModelValueResolver
-        arguments: ['@pimcore.service.request.view_model_resolver']
-        tags:
-            - { name: controller.argument_value_resolver }
-
-    pimcore.value_resolver.template_vars:
-        class: Pimcore\Bundle\PimcoreBundle\ArgumentResolver\TemplateVarsValueResolver
-        arguments: ['@pimcore.service.request.template_vars_resolver']
-        tags:
-            - { name: controller.argument_value_resolver }
-
-    # TODO inject user?
-    pimcore.document_service:
-        class: Pimcore\Model\Document\Service
+    #
+    # REQUEST RESOLVERS
+    #
+    # Read/write/normalize defined request attributes (e.g. document)
+    #
 
     pimcore.service.request.editmode_resolver:
         class: Pimcore\Bundle\PimcoreBundle\Service\Request\EditmodeResolver
@@ -56,23 +48,48 @@ services:
         class: Pimcore\Bundle\PimcoreBundle\Service\Request\ViewModelResolver
         arguments: ['@request_stack', '@pimcore.service.request.template_vars_resolver']
 
+
+    #
+    # ARGUMENT RESOLVERS
+    #
+
+    pimcore.argument_resolver.document:
+        class: Pimcore\Bundle\PimcoreBundle\ArgumentResolver\DocumentValueResolver
+        arguments: ['@pimcore.service.request.document_resolver']
+        tags:
+            - { name: controller.argument_value_resolver }
+
+    pimcore.argument_resolver.view_model:
+        class: Pimcore\Bundle\PimcoreBundle\ArgumentResolver\ViewModelValueResolver
+        arguments: ['@pimcore.service.request.view_model_resolver']
+        tags:
+            - { name: controller.argument_value_resolver }
+
+    pimcore.argument_resolver.template_vars:
+        class: Pimcore\Bundle\PimcoreBundle\ArgumentResolver\TemplateVarsValueResolver
+        arguments: ['@pimcore.service.request.template_vars_resolver']
+        tags:
+            - { name: controller.argument_value_resolver }
+
+    #
+    # OBJECT SERVICES
+    #
+    # simple services exposing get() API for documents, objects and assets
+    # this is only necessary if loading objects directly with only access to the container, e.g. templates
+
     pimcore.service.document:
         class: Pimcore\Bundle\PimcoreBundle\Service\Document\DocumentService
 
-    # simple services exposing get() API for documents, objects and assets
-    # this is only necessary if loading objects directly with only access to the container, e.g. templates
     pimcore.service.asset:
         class: Pimcore\Bundle\PimcoreBundle\Service\Asset\AssetService
 
     pimcore.service.object:
         class: Pimcore\Bundle\PimcoreBundle\Service\Object\ObjectService
 
-    pimcore.bundle_locator:
-        class: Pimcore\Bundle\PimcoreBundle\HttpKernel\BundleLocator\BundleLocator
-        arguments: ['@kernel']
 
-    pimcore.web_path_resolver:
-        class: Pimcore\Bundle\PimcoreBundle\Service\WebPathResolver
+    #
+    # AREABRICKS
+    #
 
     pimcore.area.brick_manager:
         class: Pimcore\Document\Area\AreabrickManager
@@ -80,6 +97,11 @@ services:
     pimcore.area.brick.templating_base:
         abstract: true
         arguments: ['@pimcore.bundle_locator']
+
+
+    #
+    # DOCUMENT TAG HANDLING (EDITABLES)
+    #
 
     pimcore.document.tag.handler:
         class: Pimcore\Document\Tag\DelegatingTagHandler
@@ -94,3 +116,19 @@ services:
             - '@pimcore.bundle_locator'
             - '@pimcore.web_path_resolver'
             - '@pimcore.templating.action_renderer'
+
+
+    #
+    # PIMCORE SERVICES
+    #
+
+    pimcore.tool.request_helper:
+        class: Pimcore\Tool\RequestHelper
+        arguments: ['@request_stack']
+
+    # TODO inject user?
+    pimcore.document_service:
+        class: Pimcore\Model\Document\Service
+
+    pimcore.plugin_broker:
+        class: Pimcore\API\Plugin\Broker
