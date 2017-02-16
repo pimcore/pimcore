@@ -31,8 +31,7 @@ class RunUpdateScriptCommand extends AbstractCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
+     * @inheritDoc
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
