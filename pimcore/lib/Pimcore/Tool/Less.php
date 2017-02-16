@@ -16,6 +16,9 @@ namespace Pimcore\Tool;
 
 use Pimcore\File;
 
+/**
+ * @deprecated
+ */
 class Less
 {
 

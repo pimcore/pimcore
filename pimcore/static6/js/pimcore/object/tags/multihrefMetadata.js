@@ -139,10 +139,8 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
                         return '<div style="text-align: center"><div role="button" class="x-grid-checkcolumn" style=""></div></div>';
                     }
                 };
+                editor = Ext.create('Ext.form.field.Checkbox', {style: 'margin-top: 2px;'});
 
-                listeners = {
-                    "mousedown": this.cellMousedown.bind(this, this.fieldConfig.columns[i].key, this.fieldConfig.columns[i].type)
-                };
 
                 if(readOnly) {
                     columns.push(Ext.create('Ext.grid.column.Check'), {
@@ -298,7 +296,7 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
             enableDragDrop: true,
             ddGroup: 'element',
             trackMouseOver: true,
-            selModel: Ext.create('Ext.selection.CellModel', {}),
+            selModel: Ext.create('Ext.selection.RowModel', {}),
             columnLines: true,
             stripeRows: true,
             columns : {
@@ -421,8 +419,6 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
         return this.createLayout(true);
     },
 
-
-
     dndAllowed: function(data, fromTree) {
 
         var i;
@@ -488,19 +484,7 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
             }
         }
         return isAllowed;
-    },
 
-
-    cellMousedown: function (key, colType, grid, cell, rowIndex, cellIndex, e) {
-
-        // this is used for the boolean field type
-
-        var store = grid.getStore();
-        var record = store.getAt(rowIndex);
-
-        if (colType == "bool") {
-            record.set(key, !record.data[key]);
-        }
     },
 
     loadObjectData: function(item, fields) {
@@ -574,7 +558,10 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
             type: allowedTypes,
             subtype: allowedSubtypes,
             specific: allowedSpecific
-        });
+        },
+            {
+                context: this.getContext()
+            });
     },
 
     onRowContextmenu: function (grid, record, tr, rowIndex, e, eOpts ) {
@@ -767,7 +754,10 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
             type: allowedTypes,
             subtype: allowedSubtypes,
             specific: allowedSpecific
-        });
+        },
+            {
+                context: Ext.apply({scope: "objectEditor"}, this.getContext())
+            });
 
     },
 

@@ -13,6 +13,9 @@
 
 namespace Pimcore\Cache\Backend;
 
+/**
+ * @deprecated
+ */
 class Mongodb extends \Zend_Cache_Backend implements \Zend_Cache_Backend_ExtendedInterface
 {
     const DEFAULT_HOST = '127.0.0.1';

@@ -318,6 +318,8 @@ CREATE TABLE `http_error_log` (
   KEY `count` (`count`)
 ) DEFAULT CHARSET=utf8mb4;
 
+
+DROP TABLE IF EXISTS `keyvalue_keys`;
 DROP TABLE IF EXISTS `keyvalue_groups`;
 CREATE TABLE `keyvalue_groups` (
     `id` INT(11) NOT NULL AUTO_INCREMENT,
@@ -328,7 +330,6 @@ CREATE TABLE `keyvalue_groups` (
     PRIMARY KEY  (`id`)
 ) DEFAULT CHARSET=utf8mb4;
 
-DROP TABLE IF EXISTS `keyvalue_keys`;
 CREATE TABLE `keyvalue_keys` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL DEFAULT '',
@@ -566,6 +567,7 @@ CREATE TABLE `targeting_rules` (
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8mb4;
 
+DROP TABLE IF EXISTS `tmp_store`;
 CREATE TABLE `tmp_store` (
   `id` varchar(190) NOT NULL DEFAULT '',
   `tag` varchar(190) DEFAULT NULL,
@@ -791,6 +793,10 @@ CREATE TABLE `website_settings` (
 	INDEX `siteId` (`siteId`)
 ) DEFAULT CHARSET=utf8mb4;
 
+
+DROP TABLE IF EXISTS `classificationstore_relations`;
+DROP TABLE IF EXISTS `classificationstore_collectionrelations`;
+
 DROP TABLE IF EXISTS `classificationstore_stores`;
 CREATE TABLE `classificationstore_stores` (
 	`id` INT(11) NOT NULL AUTO_INCREMENT,
@@ -833,7 +839,6 @@ CREATE TABLE `classificationstore_keys` (
 	INDEX `storeId` (`storeId`)
 ) DEFAULT CHARSET=utf8mb4;
 
-DROP TABLE IF EXISTS `classificationstore_relations`;
 CREATE TABLE `classificationstore_relations` (
 	`groupId` BIGINT(20) NOT NULL,
 	`keyId` BIGINT(20) NOT NULL,
@@ -860,7 +865,6 @@ CREATE TABLE `classificationstore_collections` (
 ) DEFAULT CHARSET=utf8mb4;
 
 
-DROP TABLE IF EXISTS `classificationstore_collectionrelations`;
 CREATE TABLE `classificationstore_collectionrelations` (
 	`colId` BIGINT(20) NOT NULL,
 	`groupId` BIGINT(20) NOT NULL,

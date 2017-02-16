@@ -230,10 +230,12 @@ class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
+     * Static helper to get an object by the passed ID
      * @param integer $id
+     * @param bool $force
      * @return static
      */
-    public static function getById($id)
+    public static function getById($id, $force = false)
     {
         $id = intval($id);
 
@@ -243,42 +245,44 @@ class AbstractObject extends Model\Element\AbstractElement
 
         $cacheKey = "object_" . $id;
 
-        try {
+        if (!$force && \Zend_Registry::isRegistered($cacheKey)) {
             $object = \Zend_Registry::get($cacheKey);
-            if (!$object) {
-                throw new \Exception("Object\\AbstractObject: object in registry is null");
-            }
-        } catch (\Exception $e) {
-            try {
-                if (!$object = Cache::load($cacheKey)) {
-                    $object = new Model\Object();
-                    $typeInfo = $object->getDao()->getTypeById($id);
-
-                    if ($typeInfo["o_type"] == "object" || $typeInfo["o_type"] == "variant" || $typeInfo["o_type"] == "folder") {
-                        if ($typeInfo["o_type"] == "folder") {
-                            $className = "Pimcore\\Model\\Object\\Folder";
-                        } else {
-                            $className = "Pimcore\\Model\\Object\\" . ucfirst($typeInfo["o_className"]);
-                        }
-
-                        $object = \Pimcore::getDiContainer()->make($className);
-                        \Zend_Registry::set($cacheKey, $object);
-                        $object->getDao()->getById($id);
-                        $object->__setDataVersionTimestamp($object->getModificationDate());
-
-                        Cache::save($object, $cacheKey);
-                    } else {
-                        throw new \Exception("No entry for object id " . $id);
-                    }
-                } else {
-                    \Zend_Registry::set($cacheKey, $object);
-                }
-            } catch (\Exception $e) {
-                Logger::warning($e->getMessage());
-
-                return null;
+            if ($object) {
+                return $object;
             }
         }
+
+
+        try {
+            if ($force || !($object = Cache::load($cacheKey))) {
+                $object = new Model\Object();
+                $typeInfo = $object->getDao()->getTypeById($id);
+
+                if ($typeInfo["o_type"] == "object" || $typeInfo["o_type"] == "variant" || $typeInfo["o_type"] == "folder") {
+                    if ($typeInfo["o_type"] == "folder") {
+                        $className = "Pimcore\\Model\\Object\\Folder";
+                    } else {
+                        $className = "Pimcore\\Model\\Object\\" . ucfirst($typeInfo["o_className"]);
+                    }
+
+                    $object = \Pimcore::getDiContainer()->make($className);
+                    \Zend_Registry::set($cacheKey, $object);
+                    $object->getDao()->getById($id);
+                    $object->__setDataVersionTimestamp($object->getModificationDate());
+
+                    Cache::save($object, $cacheKey);
+                } else {
+                    throw new \Exception("No entry for object id " . $id);
+                }
+            } else {
+                \Zend_Registry::set($cacheKey, $object);
+            }
+        } catch (\Exception $e) {
+            Logger::warning($e->getMessage());
+
+            return null;
+        }
+
 
         // check for type
         $staticType = get_called_class();

@@ -351,6 +351,14 @@ class Image extends Model\Document\Tag
         return $this->alt;
     }
 
+    /**
+     * @param string $text
+     */
+    public function setText($text)
+    {
+        $this->alt = $text;
+    }
+
     /*
       * @return string
       */

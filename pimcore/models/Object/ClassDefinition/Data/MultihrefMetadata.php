@@ -44,7 +44,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
      *
      * @var string
      */
-    public $phpdocType = "\\Pimcore\\Model\\Object\\Data\\ElemenentMetadata[]";
+    public $phpdocType = "\\Pimcore\\Model\\Object\\Data\\ElementMetadata[]";
 
 
     /**
@@ -407,6 +407,10 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
     public function getCacheTags($data, $tags = [])
     {
         $tags = is_array($tags) ? $tags : [];
+
+        if ($this->getLazyLoading()) {
+            return $tags;
+        }
 
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $metaObject) {

@@ -464,7 +464,10 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
             type: allowedTypes,
             subtype: allowedSubtypes,
             specific: allowedSpecific
-        });
+        },
+            {
+                context: Ext.apply({scope: "objectEditor"}, this.getContext())
+            });
 
     },
 

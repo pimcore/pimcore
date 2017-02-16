@@ -27,29 +27,35 @@ class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin
      */
     public function findAction()
     {
+        $allParams = $this->getAllParams();
+
+        $returnValueContainer = new \Pimcore\Model\Tool\Admin\EventDataContainer($allParams);
+
+        \Pimcore::getEventManager()->trigger("admin.search.list.beforeFilterPrepare", $this, [
+            "requestParams" => $returnValueContainer
+        ]);
+
+        $allParams = $returnValueContainer->getData();
         $user = $this->getUser();
 
-        $query = $this->getParam("query");
+        $query = $allParams["query"];
         if ($query == "*") {
             $query = "";
         }
 
         $query = str_replace("%", "*", $query);
-        // InnoDB full-text search does not support the use of the @ symbol in boolean full-text searches.
-        // The @ symbol is reserved for use by the @distance proximity search operator.
-        $query = str_replace("@", "*", $query);
         $query = preg_replace("@([^ ])\-@", "$1 ", $query);
 
-        $types = explode(",", $this->getParam("type"));
-        $subtypes = explode(",", $this->getParam("subtype"));
-        $classnames = explode(",", $this->getParam("class"));
+        $types = explode(",", $allParams["type"]);
+        $subtypes = explode(",", $allParams["subtype"]);
+        $classnames = explode(",", $allParams["class"]);
 
-        if ($this->getParam("type") == "object" && is_array($classnames) && empty($classnames[0])) {
+        if ($allParams["type"] == "object" && is_array($classnames) && empty($classnames[0])) {
             $subtypes = ["object", "variant", "folder"];
         }
 
-        $offset = intval($this->getParam("start"));
-        $limit = intval($this->getParam("limit"));
+        $offset = intval($allParams["start"]);
+        $limit = intval($allParams["limit"]);
 
         $offset = $offset ? $offset : 0;
         $limit = $limit ? $limit : 50;
@@ -115,7 +121,7 @@ class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin
             // the following should be done with an exact-search now "ID", because the Element-ID is now in the fulltext index
             // if the query is numeric the user might want to search by id
             //if(is_numeric($query)) {
-                //$queryCondition = "(" . $queryCondition . " OR id = " . $db->quote($query) ." )";
+            //$queryCondition = "(" . $queryCondition . " OR id = " . $db->quote($query) ." )";
             //}
 
             $conditionParts[] = $queryCondition;
@@ -125,8 +131,8 @@ class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin
         //For objects - handling of bricks
         $fields = [];
         $bricks = [];
-        if ($this->getParam("fields")) {
-            $fields = $this->getParam("fields");
+        if ($allParams["fields"]) {
+            $fields = $allParams["fields"];
 
             foreach ($fields as $f) {
                 $parts = explode("~", $f);
@@ -142,11 +148,11 @@ class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin
         }
 
         // filtering for objects
-        if ($this->getParam("filter") && $this->getParam("class")) {
-            $class = Object\ClassDefinition::getByName($this->getParam("class"));
+        if ($allParams["filter"] && $allParams["class"]) {
+            $class = Object\ClassDefinition::getByName($allParams["class"]);
 
             // add Localized Fields filtering
-            $params = \Zend_Json::decode($this->getParam('filter'));
+            $params = \Zend_Json::decode($allParams['filter']);
             $unlocalizedFieldsFilters = [];
             $localizedFieldsFilters = [];
 
@@ -222,11 +228,11 @@ class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin
 
 
         //filtering for tags
-        $tagIds = $this->getParam("tagIds");
+        $tagIds = $allParams["tagIds"];
         if ($tagIds) {
             foreach ($tagIds as $tagId) {
                 foreach ($types as $type) {
-                    if ($this->getParam("considerChildTags") =="true") {
+                    if ($allParams["considerChildTags"] =="true") {
                         $tag = Pimcore\Model\Element\Tag::getById($tagId);
                         if ($tag) {
                             $tagPath = $tag->getFullIdPath();
@@ -266,12 +272,20 @@ class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin
             if (array_key_exists($sortingSettings['orderKey'], $sortMapping)) {
                 $sort = $sortMapping[$sortingSettings['orderKey']];
             }
-            $searcherList->setOrderKey($sort);
+            $searcherList->setOrderKey($sortingSettings['orderKey']);
         }
         if ($sortingSettings['order']) {
             $searcherList->setOrder($sortingSettings['order']);
         }
 
+
+        $returnValueContainer = new \Pimcore\Model\Tool\Admin\EventDataContainer($searcherList);
+
+        \Pimcore::getEventManager()->trigger("admin.search.list.beforeListLoad", $this, [
+            "list" => $returnValueContainer
+        ]);
+
+        $searcherList = $returnValueContainer->getData();
 
         $hits = $searcherList->load();
 
@@ -295,13 +309,24 @@ class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin
         }
 
         // only get the real total-count when the limit parameter is given otherwise use the default limit
-        if ($this->getParam("limit")) {
+        if ($allParams["limit"]) {
             $totalMatches = $searcherList->getTotalCount();
         } else {
             $totalMatches = count($elements);
         }
 
-        $this->_helper->json(["data" => $elements, "success" => true, "total" => $totalMatches]);
+        $result = ["data" => $elements, "success" => true, "total" => $totalMatches];
+
+        $returnValueContainer = new \Pimcore\Model\Tool\Admin\EventDataContainer($result);
+
+        \Pimcore::getEventManager()->trigger("admin.search.list.afterListLoad", $this, [
+            "list" => $returnValueContainer
+        ]);
+
+        $result = $returnValueContainer->getData();
+
+
+        $this->_helper->json($result);
 
         $this->removeViewRenderer();
     }

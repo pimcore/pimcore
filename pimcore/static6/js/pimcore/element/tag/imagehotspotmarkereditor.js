@@ -14,11 +14,15 @@
 pimcore.registerNS("pimcore.element.tag.imagehotspotmarkereditor");
 pimcore.element.tag.imagehotspotmarkereditor = Class.create({
 
-    initialize: function (imageId, data, saveCallback) {
+    initialize: function (imageId, data, saveCallback, config) {
         this.imageId = imageId;
         this.data = data;
         this.saveCallback = saveCallback;
         this.modal = true;
+        this.config = typeof config != "undefined" ? config : {};
+        this.context = this.config.context ? this.config.context : {};
+        this.predefinedDataTemplates = this.config.predefinedDataTemplates ? this.config.predefinedDataTemplates : {};
+        this.context.scope = "hotspotEditor";
 
         // we need some space for the surrounding area (button, dialog frame, etc...)
         this.width = Math.min(1000, window.innerWidth - 100);
@@ -37,6 +41,9 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
         this.hotspotStore = [];
         this.hotspotMetaData = {};
 
+        var markerConfig = this.getButtonConfig("marker", "pimcore_icon_overlay_add");
+        var hotspotConfig = this.getButtonConfig("hotspot", "pimcore_icon_image_region pimcore_icon_overlay_add");
+
         this.hotspotWindow = new Ext.Window({
             width: this.width + 100,
             height: this.height + 100,
@@ -45,22 +52,10 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
             autoDestroy: true,
             resizable: false,
             bodyStyle: "background: url(" + imageUrl + ") center center no-repeat; position:relative; ",
-            tbar: [{
-                xtype: "button",
-                text: t("add_marker"),
-                iconCls: "pimcore_icon_marker pimcore_icon_overlay_add",
-                handler: function () {
-                    this.addMarker();
-
-                }.bind(this)
-            }, {
-                xtype: "button",
-                text: t("add_hotspot"),
-                iconCls: "pimcore_icon_image_region pimcore_icon_overlay_add",
-                handler: function () {
-                    this.addHotspot();
-                }.bind(this)
-            }],
+            tbar: [
+                markerConfig,
+                hotspotConfig
+            ],
             bbar: ["->", {
                 xtype: "button",
                 iconCls: "pimcore_icon_apply",
@@ -75,7 +70,6 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
                     var windowEl = Ext.getCmp(windowId).body;
                     var originalWidth = windowEl.getWidth(true);
                     var originalHeight = windowEl.getHeight(true);
-
 
                     for(var i=0; i<this.hotspotStore.length; i++) {
                         el = this.hotspotStore[i];
@@ -191,23 +185,25 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
 
         var markerEl = Ext.get(markerId);
 
-        if(typeof config == "object" && config["top"]) {
-            var windowId = this.hotspotWindow.getId();
-            var windowEl = Ext.getCmp(windowId).body;
-            var originalWidth = windowEl.getWidth(true);
-            var originalHeight = windowEl.getHeight(true);
+        if(typeof config == "object" ) {
+            if (config["top"]) {
+                var windowId = this.hotspotWindow.getId();
+                var windowEl = Ext.getCmp(windowId).body;
+                var originalWidth = windowEl.getWidth(true);
+                var originalHeight = windowEl.getHeight(true);
 
-            markerEl.applyStyles({
-                top: (originalHeight * (config["top"]/100) - 35) + "px",
-                left: (originalWidth * (config["left"]/100) - 12) + "px"
-            });
+                markerEl.applyStyles({
+                    top: (originalHeight * (config["top"] / 100) - 35) + "px",
+                    left: (originalWidth * (config["left"] / 100) - 12) + "px"
+                });
+            }
 
             if(config["name"]) {
                 markerEl.dom.setAttribute("title", config["name"]);
             }
         }
 
-        this.addMarkerHotspotContextMenu(markerId, markerEl);
+        this.addMarkerHotspotContextMenu(markerId, "marker", markerEl);
 
         var markerDD = new Ext.dd.DD(markerEl);
         this.hotspotStore.push({
@@ -228,8 +224,8 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
             resizable: {
                 target: hotspotId,
                 pinned: true,
-                minWidth: 50,
-                minHeight: 50,
+                minWidth: 20,
+                minHeight: 20,
                 preserveRatio: false,
                 dynamic: true,
                 handles: 'all'
@@ -247,25 +243,27 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
             height: "50px"
         });
 
-        if(typeof config == "object" && config["top"]) {
-            var windowId = this.hotspotWindow.getId();
-            var windowEl = Ext.getCmp(windowId).body;
-            var originalWidth = windowEl.getWidth(true);
-            var originalHeight = windowEl.getHeight(true);
+        if(typeof config == "object") {
+            if (config["top"]) {
+                var windowId = this.hotspotWindow.getId();
+                var windowEl = Ext.getCmp(windowId).body;
+                var originalWidth = windowEl.getWidth(true);
+                var originalHeight = windowEl.getHeight(true);
 
-            hotspotEl.applyStyles({
-                top: (originalHeight * (config["top"]/100)) + "px",
-                left: (originalWidth * (config["left"]/100)) + "px",
-                width: (originalWidth * (config["width"]/100)) + "px",
-                height: (originalHeight * (config["height"]/100)) + "px"
-            });
+                hotspotEl.applyStyles({
+                    top: (originalHeight * (config["top"] / 100)) + "px",
+                    left: (originalWidth * (config["left"] / 100)) + "px",
+                    width: (originalWidth * (config["width"] / 100)) + "px",
+                    height: (originalHeight * (config["height"] / 100)) + "px"
+                });
+            }
 
             if(config["name"]) {
                 hotspotEl.dom.setAttribute("title", config["name"]);
             }
         }
 
-        this.addMarkerHotspotContextMenu(hotspotId, hotspotEl);
+        this.addMarkerHotspotContextMenu(hotspotId, "hotspot", hotspotEl);
 
         this.hotspotStore.push({
             id: hotspotId,
@@ -275,7 +273,7 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
         return hotspotId;
     },
 
-    addMarkerHotspotContextMenu: function (id, el) {
+    addMarkerHotspotContextMenu: function (id, type, el) {
         el.on("contextmenu", function (id, e) {
             var menu = new Ext.menu.Menu();
 
@@ -292,10 +290,55 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
             menu.add(new Ext.menu.Item({
                 text: t("remove"),
                 iconCls: "pimcore_icon_delete",
-                handler: function (id, item) {
+                handler: function (id, type, item) {
                     item.parentMenu.destroy();
-                    Ext.get(id).remove();
-                }.bind(this, id)
+                    if (type == "hotspot") {
+                        var cmp  = Ext.getCmp(id);
+                        this.hotspotWindow.remove(cmp);
+                    } else {
+                        var el  = Ext.get(id);
+                        el.remove();
+                    }
+
+                }.bind(this, id, type)
+            }));
+
+
+            menu.add(new Ext.menu.Item({
+                text: t("duplicate"),
+                iconCls: "pimcore_icon_copy",
+                handler: function (id, type, item) {
+                    item.parentMenu.destroy();
+
+                    var el = Ext.get(id);
+                    var copiedData = this.hotspotMetaData[id] ? this.hotspotMetaData[id].slice() : [];
+
+                    var windowId = this.hotspotWindow.getId();
+                    var windowEl = Ext.getCmp(windowId).body;
+                    var originalWidth = windowEl.getWidth(true);
+                    var originalHeight = windowEl.getHeight(true);
+
+                    var dimensions = el.getStyle(["top","left","width","height"]);
+
+                    var config = {
+                        data: copiedData,
+                        name: el.getAttribute("title"),
+                    };
+
+                    if (type == "hotspot") {
+                        config["top"] = (intval(dimensions.top) + 30) * 100 / originalHeight;
+                        config["left"] = (intval(dimensions.left) + 30) * 100 / originalWidth;
+                        config["width"] = intval(dimensions.width) * 100 / originalWidth;
+                        config["height"] = intval(dimensions.height) * 100 / originalHeight;
+                        var elId = this.addHotspot(config);
+                    } else {
+                        config["top"] = (intval(dimensions.top) + 30 + 35) * 100 / originalHeight;
+                        config["left"] = (intval(dimensions.left ) +  30 + 12) * 100 / originalWidth;
+                        var elId = this.addMarker(config);
+                    }
+                    this.hotspotMetaData[elId] = copiedData;
+
+                }.bind(this, id, type)
             }));
 
             menu.showAt(e.getXY());
@@ -304,6 +347,12 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
     },
 
     editMarkerHotspotData: function (id) {
+        var nameField = new Ext.form.field.Text(
+            {
+                id: "name-field-" + id,
+                value: Ext.get(id).getAttribute("title")
+            }
+        );
         var hotspotMetaDataWin = new Ext.Window({
             width: 600,
             height: 440,
@@ -358,11 +407,9 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
             }, "->", {
                 xtype: "tbtext",
                 text: t("name") + ":"
-            }, {
-                xtype: "textfield",
-                id: "name-field-" + id,
-                value: Ext.get(id).getAttribute("title")
-            }],
+            },
+                nameField
+            ],
             buttons: [{
                 text: t("save"),
                 iconCls: "pimcore_icon_apply",
@@ -472,7 +519,7 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
                 },{
                     xtype: "button",
                     iconCls: "pimcore_icon_search",
-                    handler: this.openSearchEditor.bind(this, textField, type)
+                    handler: this.openSearchEditor.bind(this, textField, type, hotspotMetaDataWin, nameField)
                 }];
 
                 valueField = new Ext.form.FieldContainer({
@@ -564,7 +611,7 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
         }
     },
 
-    openSearchEditor: function (textfield, type) {
+    openSearchEditor: function (textfield, type, hotspotMetaDataWin, nameField) {
         var allowedTypes = [];
         var allowedSpecific = {};
         var allowedSubtypes = {};
@@ -575,17 +622,76 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
             allowedSubtypes.object = ["object","folder","variant"];
         }
 
+        var form = hotspotMetaDataWin.getComponent("form").getForm();
+        var hotspotData = form.getFieldValues();
+
+        var hotspotName = nameField.getValue();
+
+
         pimcore.helpers.itemselector(false, this.addDataFromSelector.bind(this, textfield), {
             type: allowedTypes,
             subtype: allowedSubtypes,
             specific: allowedSpecific
-        });
+        },
+            {
+                context: Ext.apply(
+                    {
+                        hotspotName: hotspotName,
+                        hotspotData: hotspotData
+                    }, this.context)
+            });
     },
 
     addDataFromSelector: function (textfield, data) {
         if (data) {
             textfield.setValue(data.fullpath);
         }
+    }
+
+    ,
+
+    getButtonConfig: function(type, iconCls) {
+
+
+        var callbackFunctionName = "add" + ucfirst(type);
+        var callbackFunction = this[callbackFunctionName].bind(this);
+        var textKey = "add_" + type;
+
+        var buttonConfig = {
+            xtype: "button",
+            text: t(textKey),
+            iconCls: iconCls,
+            handler: function () {
+                callbackFunction();
+            }.bind(this)
+        };
+
+        if (this.predefinedDataTemplates[type] && this.predefinedDataTemplates[type].length > 0) {
+            buttonConfig.xtype = "splitbutton";
+            var menu = [];
+            for (var i = 0; i < this.predefinedDataTemplates[type].length; i++) {
+                var templateConfig = this.predefinedDataTemplates[type][i];
+                var templateConfigName = templateConfig.name;
+                var templateMenuName = templateConfig.menuName ? templateConfig.menuName : templateConfigName;
+                if (!templateConfigName) {
+                    templateConfigName = "&nbsp";
+                }
+                menu.push(
+                    {
+                        text: ts(templateMenuName),
+                        iconCls: "pimcore_icon_hotspotmarker_template",
+                        handler: function (templateConfig) {
+                            var elId = callbackFunction(templateConfig);
+                            var copiedData = templateConfig.data ? templateConfig.data.slice() : [];
+                            this.hotspotMetaData[elId] = copiedData;
+                        }.bind(this, templateConfig)
+                    }
+                );
+            }
+            buttonConfig.menu = menu;
+        }
+
+        return buttonConfig;
     }
 
 

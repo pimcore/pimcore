@@ -326,6 +326,8 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
             type: allowedTypes,
             subtype: allowedSubtypes,
             specific: allowedSpecific
+        }, {
+            context: Ext.apply({scope: "objectEditor"}, this.getContext())
         });
     },
 
@@ -450,10 +452,7 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
                     this.component.removeCls("grid_nicepath_requested");
 
                     if (typeof responseData[target["nicePathKey"]] !== "undefined") {
-                        var nicePathKey = responseData[target["nicePathKey"]];
-                        this.component.setValue(nicePathKey);
-                        this.data.path = nicePathKey;
-
+                        this.component.setValue(responseData[target["nicePathKey"]]);
                     }
 
                 }.bind(this, target)

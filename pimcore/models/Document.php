@@ -249,9 +249,10 @@ class Document extends Element\AbstractElement
     /**
      * Static helper to get a Document by it's ID
      * @param integer $id
+     * @param bool $force
      * @return Document|Document\Email|Document\Folder|Document\Hardlink|Document\Link|Document\Page|Document\Printcontainer|Document\Printpage|Document\Snippet|Document\Newsletter
      */
-    public static function getById($id)
+    public static function getById($id, $force = false)
     {
         $id = intval($id);
 
@@ -261,43 +262,44 @@ class Document extends Element\AbstractElement
 
         $cacheKey = "document_" . $id;
 
-        try {
+        if (!$force && \Zend_Registry::isRegistered($cacheKey)) {
             $document = \Zend_Registry::get($cacheKey);
-            if (!$document) {
-                throw new \Exception("Document in registry is null");
-            }
-        } catch (\Exception $e) {
-            try {
-                if (!$document = \Pimcore\Cache::load($cacheKey)) {
-                    $document = new Document();
-                    $document->getDao()->getById($id);
-
-                    $className = "Pimcore\\Model\\Document\\" . ucfirst($document->getType());
-
-                    // this is the fallback for custom document types using prefixes
-                    // so we need to check if the class exists first
-                    if (!Tool::classExists($className)) {
-                        $oldStyleClass = "Document_" . ucfirst($document->getType());
-                        if (Tool::classExists($oldStyleClass)) {
-                            $className = $oldStyleClass;
-                        }
-                    }
-
-                    $document = \Pimcore::getDiContainer()->make($className);
-                    \Zend_Registry::set($cacheKey, $document);
-                    $document->getDao()->getById($id);
-                    $document->__setDataVersionTimestamp($document->getModificationDate());
-
-                    \Pimcore\Cache::save($document, $cacheKey);
-                } else {
-                    \Zend_Registry::set($cacheKey, $document);
-                }
-            } catch (\Exception $e) {
-                Logger::warning($e->getMessage());
-
-                return null;
+            if ($document) {
+                return $document;
             }
         }
+
+        try {
+            if ($force || !($document = \Pimcore\Cache::load($cacheKey))) {
+                $document = new Document();
+                $document->getDao()->getById($id);
+
+                $className = "Pimcore\\Model\\Document\\" . ucfirst($document->getType());
+
+                // this is the fallback for custom document types using prefixes
+                // so we need to check if the class exists first
+                if (!Tool::classExists($className)) {
+                    $oldStyleClass = "Document_" . ucfirst($document->getType());
+                    if (Tool::classExists($oldStyleClass)) {
+                        $className = $oldStyleClass;
+                    }
+                }
+
+                $document = \Pimcore::getDiContainer()->make($className);
+                \Zend_Registry::set($cacheKey, $document);
+                $document->getDao()->getById($id);
+                $document->__setDataVersionTimestamp($document->getModificationDate());
+
+                \Pimcore\Cache::save($document, $cacheKey);
+            } else {
+                \Zend_Registry::set($cacheKey, $document);
+            }
+        } catch (\Exception $e) {
+            Logger::warning($e->getMessage());
+
+            return null;
+        }
+
 
         if (!$document) {
             return null;

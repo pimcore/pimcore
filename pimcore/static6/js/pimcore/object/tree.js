@@ -171,18 +171,29 @@ pimcore.object.tree = Class.create({
             "itemcontextmenu": this.onTreeNodeContextmenu.bind(this),
             "itemmove": this.onTreeNodeMove.bind(this),
             "beforeitemmove": this.onTreeNodeBeforeMove.bind(this),
-            'beforeitemappend': function (thisNode, newChildNode, index, eOpts) {
-                //TODO temporary, until changed on server side
-                if (newChildNode.data.qtipCfg) {
-                    if (newChildNode.data.qtipCfg.title) {
-                        newChildNode.data.qtitle = newChildNode.data.qtipCfg.title;
-                    }
-                    if (newChildNode.data.qtipCfg.text) {
-                        newChildNode.data.qtip = newChildNode.data.qtipCfg.text;
+            "itemmouseenter": function (el, record, item, index, e, eOpts) {
+
+                if (record.data.qtipCfg) {
+                    var text = "<b>" + record.data.qtipCfg.title + "</b> | ";
+
+                    if (record.data.qtipCfg.text) {
+                        text += record.data.qtipCfg.text;
                     } else {
-                        newChildNode.data.qtip = t("type") + ": "+ t(newChildNode.data.type);
+                        text += (t("type") + ": "+ t(record.data.type));
                     }
+
+
+                    $("#pimcore_tooltip").show();
+                    $("#pimcore_tooltip").html(text);
+
+                    var offsetTabPanel = $("#pimcore_panel_tabs").offset();
+                    var offsetTreeNode = $(item).offset();
+
+                    $("#pimcore_tooltip").css({top: offsetTreeNode.top + 8, left: offsetTabPanel.left});
                 }
+            },
+            "itemmouseleave": function () {
+                $("#pimcore_tooltip").hide();
             }
         };
 

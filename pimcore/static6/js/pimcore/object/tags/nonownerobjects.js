@@ -306,7 +306,10 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
             specific: {
                 classes: allowedClasses
             }
-        });
+        },
+            {
+                context: Ext.apply({scope: "objectEditor"}, this.getContext())
+            });
     },
 
     addObject: function(item) {

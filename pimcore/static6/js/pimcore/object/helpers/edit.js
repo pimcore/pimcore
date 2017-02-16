@@ -24,6 +24,9 @@ pimcore.object.helpers.edit = {
         if (typeof context === "undefined") {
             context = {};
         }
+        context.objectId = this.object.id;
+
+        var panelListenerConfig = {};
 
         var tabpanelCorrection = function (panel) {
             window.setTimeout(function () {
@@ -51,19 +54,22 @@ pimcore.object.helpers.edit = {
                 forceLayout: true,
                 hideMode: "offsets",
                 padding: 0,
-                bodyStyle: "padding: 0"
+                bodyStyle: "padding: 0",
+                listeners: panelListenerConfig
             },
             fieldset: {
                 xtype: "fieldset",
                 autoScroll: true,
                 forceLayout: true,
-                hideMode: "offsets"
+                hideMode: "offsets",
+                listeners: panelListenerConfig
             },
             fieldcontainer: {
                 xtype: "fieldcontainer",
                 autoScroll: true,
                 forceLayout: true,
-                hideMode: "offsets"
+                hideMode: "offsets",
+                listeners: panelListenerConfig
             },
             panel: {
                 xtype: "panel",
@@ -75,14 +81,16 @@ pimcore.object.helpers.edit = {
                 defaults: {
                     width: "auto"
                 },
-                hideMode: "offsets"
+                hideMode: "offsets",
+                listeners: panelListenerConfig
             },
             region: {
                 xtype: "panel",
                 layout: "border",
                 forceLayout: true,
                 padding: 0,
-                hideMode: "offsets"
+                hideMode: "offsets",
+                listeners: panelListenerConfig
             },
             tabpanel: {
                 xtype: "tabpanel",
@@ -108,7 +116,8 @@ pimcore.object.helpers.edit = {
                 style: "margin-bottom: 10px;",
                 autoScroll: true,
                 forceLayout: true,
-                monitorResize: true
+                monitorResize: true,
+                listeners: panelListenerConfig
             }
         };
 

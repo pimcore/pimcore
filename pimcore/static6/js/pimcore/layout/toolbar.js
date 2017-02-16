@@ -920,7 +920,12 @@ pimcore.layout.toolbar = Class.create({
             var searchAction = function (type) {
                 pimcore.helpers.itemselector(false, function (selection) {
                     pimcore.helpers.openElement(selection.id, selection.type, selection.subtype);
-                }, {type: [type]}, {moveToTab: true});
+                }, {type: [type]},
+                    {moveToTab: true,
+                        context: {
+                            scope: "globalSearch"
+                        }
+                });
             };
 
             if (user.isAllowed("documents") && perspectiveCfg.inToolbar("search.documents")) {

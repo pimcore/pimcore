@@ -290,6 +290,8 @@ pimcore.document.tags.href = Class.create(pimcore.document.tag, {
             specific: {
                 classes: this.options["classes"]
             }
+        }, {
+            context: this.getContext()
         });
     },
 

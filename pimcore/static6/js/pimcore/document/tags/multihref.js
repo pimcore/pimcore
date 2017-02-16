@@ -373,7 +373,10 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
             specific: {
                 classes: this.options["classes"]
             }
-        });
+        },
+            {
+                context: this.getContext()
+            });
 
     },
 

@@ -118,7 +118,10 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
     openSearchEditor: function () {
         pimcore.helpers.itemselector(false, this.addDataFromSelector.bind(this), {
             type: ["asset","document"]
-        });
+        },
+            {
+                context: Ext.apply({scope: "objectEditor"}, this.getContext())
+            });
     },
 
     save: function () {

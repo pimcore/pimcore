@@ -66,6 +66,11 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
     public $ratioY;
 
     /**
+     * @var string
+     */
+    public $predefinedDataTemplates;
+
+    /**
      * @param int $ratioX
      */
     public function setRatioX($ratioX)
@@ -96,6 +101,24 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
     {
         return $this->ratioY;
     }
+
+    /**
+     * @return string
+     */
+    public function getPredefinedDataTemplates()
+    {
+        return $this->predefinedDataTemplates;
+    }
+
+    /**
+     * @param string $predefinedDataTemplates
+     */
+    public function setPredefinedDataTemplates($predefinedDataTemplates)
+    {
+        $this->predefinedDataTemplates = $predefinedDataTemplates;
+    }
+
+
 
     /**
      * @see Object\ClassDefinition\Data::getDataForResource

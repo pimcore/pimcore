@@ -169,7 +169,7 @@
     height: 10px;
 }
 
-#pimcore_menu_tooltip {
+#pimcore_tooltip {
     position: absolute;
     color: #FFFFFF;
     background: #000000;
@@ -181,14 +181,13 @@
     padding: 0 10px;
 
     opacity: 0.8;
-    left: 60px;
     top: 50%;
     margin-top: -15px;
     margin-left: 15px;
-    z-index: 999;
+    z-index: 10001;
 }
 
-#pimcore_menu_tooltip:after {
+#pimcore_tooltip:after {
     content: '';
     position: absolute;
     top: 50%;

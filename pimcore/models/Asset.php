@@ -240,9 +240,10 @@ class Asset extends Element\AbstractElement
     /**
      * Static helper to get an asset by the passed ID
      * @param integer $id
+     * @param bool $force
      * @return Asset|Asset\Archive|Asset\Audio|Asset\Document|Asset\Folder|Asset\Image|Asset\Text|Asset\Unknown|Asset\Video
      */
-    public static function getById($id)
+    public static function getById($id, $force = false)
     {
         $id = intval($id);
 
@@ -252,34 +253,35 @@ class Asset extends Element\AbstractElement
 
         $cacheKey = "asset_" . $id;
 
-        try {
+        if (!$force && \Zend_Registry::isRegistered($cacheKey)) {
             $asset = \Zend_Registry::get($cacheKey);
-            if (!$asset) {
-                throw new \Exception("Asset in registry is null");
-            }
-        } catch (\Exception $e) {
-            try {
-                if (!$asset = \Pimcore\Cache::load($cacheKey)) {
-                    $asset = new Asset();
-                    $asset->getDao()->getById($id);
-
-                    $className = "Pimcore\\Model\\Asset\\" . ucfirst($asset->getType());
-
-                    $asset = \Pimcore::getDiContainer()->make($className);
-                    \Zend_Registry::set($cacheKey, $asset);
-                    $asset->getDao()->getById($id);
-                    $asset->__setDataVersionTimestamp($asset->getModificationDate());
-
-                    \Pimcore\Cache::save($asset, $cacheKey);
-                } else {
-                    \Zend_Registry::set($cacheKey, $asset);
-                }
-            } catch (\Exception $e) {
-                Logger::warning($e->getMessage());
-
-                return null;
+            if ($asset) {
+                return $asset;
             }
         }
+
+        try {
+            if ($force || !($asset = \Pimcore\Cache::load($cacheKey))) {
+                $asset = new Asset();
+                $asset->getDao()->getById($id);
+
+                $className = "Pimcore\\Model\\Asset\\" . ucfirst($asset->getType());
+
+                $asset = \Pimcore::getDiContainer()->make($className);
+                \Zend_Registry::set($cacheKey, $asset);
+                $asset->getDao()->getById($id);
+                $asset->__setDataVersionTimestamp($asset->getModificationDate());
+
+                \Pimcore\Cache::save($asset, $cacheKey);
+            } else {
+                \Zend_Registry::set($cacheKey, $asset);
+            }
+        } catch (\Exception $e) {
+            Logger::warning($e->getMessage());
+
+            return null;
+        }
+
 
         if (!$asset) {
             return null;
