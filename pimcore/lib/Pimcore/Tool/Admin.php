@@ -156,7 +156,6 @@ class Admin
 
     /**
      * @static
-     * @return void
      */
     public static function deactivateMaintenanceMode()
     {

@@ -404,7 +404,6 @@ function recursiveCopy($source, $destination)
 
 /**
  * @param  $var
- * @return void
  */
 function p_r($var)
 {

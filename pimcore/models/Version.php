@@ -106,7 +106,6 @@ class Version extends AbstractModel
      * There are no new versions created, the read continues to operate normally
      *
      * @static
-     * @return void
      */
     public static function disable()
     {
@@ -118,7 +117,6 @@ class Version extends AbstractModel
      * just enabled the creation of versioning in the current process
      *
      * @static
-     * @return void
      */
     public static function enable()
     {
@@ -199,7 +197,7 @@ class Version extends AbstractModel
     }
 
     /**
-     * @return void
+     * Delete this Version
      */
     public function delete()
     {
@@ -322,7 +320,6 @@ class Version extends AbstractModel
     /**
      * the cleanup is now done in the maintenance see self::maintenanceCleanUp()
      * @deprecated
-     * @return void
      */
     public function cleanHistory()
     {
@@ -417,7 +414,7 @@ class Version extends AbstractModel
 
     /**
      * @param integer $id
-     * @return void
+     * @return $this
      */
     public function setId($id)
     {
@@ -428,7 +425,7 @@ class Version extends AbstractModel
 
     /**
      * @param string $note
-     * @return void
+     * @return $this
      */
     public function setNote($note)
     {
@@ -439,7 +436,7 @@ class Version extends AbstractModel
 
     /**
      * @param integer $userId
-     * @return void
+     * @return $this
      */
     public function setUserId($userId)
     {
@@ -467,7 +464,7 @@ class Version extends AbstractModel
 
     /**
      * @param mixed $data
-     * @return void
+     * @return $this
      */
     public function setData($data)
     {
@@ -486,7 +483,7 @@ class Version extends AbstractModel
 
     /**
      * @param boolean $serialized
-     * @return void
+     * @return $this
      */
     public function setSerialized($serialized)
     {
@@ -505,7 +502,7 @@ class Version extends AbstractModel
 
     /**
      * @param string $ctype
-     * @return void
+     * @return $this
      */
     public function setCtype($ctype)
     {
@@ -524,7 +521,7 @@ class Version extends AbstractModel
 
     /**
      * @param User $user
-     * @return void
+     * @return $this
      */
     public function setUser($user)
     {
@@ -551,7 +548,7 @@ class Version extends AbstractModel
 
     /**
      * @param bool $public
-     * @return void
+     * @return $this
      */
     public function setPublic($public)
     {

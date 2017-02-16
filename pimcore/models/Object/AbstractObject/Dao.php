@@ -88,6 +88,14 @@ class Dao extends Model\Element\Dao
     }
 
     /**
+     * Deletes object from database
+     */
+    public function delete()
+    {
+        $this->db->delete("objects", $this->db->quoteInto("o_id = ?", $this->model->getId()));
+    }
+
+    /**
      * @throws \Exception
      * @throws \Zend_Db_Adapter_Exception
      */
@@ -132,16 +140,6 @@ class Dao extends Model\Element\Dao
         }
     }
 
-    /**
-     * Deletes object from database
-     *
-     * @return void
-     */
-    public function delete()
-    {
-        $this->db->delete("objects", $this->db->quoteInto("o_id = ?", $this->model->getId()));
-    }
-
 
     public function updateWorkspaces()
     {
@@ -151,10 +149,21 @@ class Dao extends Model\Element\Dao
     }
 
     /**
+     * deletes all properties for the object from database
+     */
+    public function deleteAllProperties()
+    {
+        $this->db->delete("properties", $this->db->quoteInto("cid = ? AND ctype = 'object'", $this->model->getId()));
+    }
+
+
+    /**
      * Updates the paths for children, children's properties and children's permissions in the database
      *
      * @param string $oldPath
-     * @return void
+     * @return null|array
+     *
+     * @todo: calls deprecated ::hasChilds
      */
     public function updateChildsPaths($oldPath)
     {
@@ -179,17 +188,6 @@ class Dao extends Model\Element\Dao
 
             return $objects;
         }
-    }
-
-
-    /**
-     * deletes all properties for the object from database
-     *
-     * @return void
-     */
-    public function deleteAllProperties()
-    {
-        $this->db->delete("properties", $this->db->quoteInto("cid = ? AND ctype = 'object'", $this->model->getId()));
     }
 
     /**
@@ -264,10 +262,6 @@ class Dao extends Model\Element\Dao
         return $properties;
     }
 
-    /**
-     *
-     * @return void
-     */
     public function deleteAllPermissions()
     {
         $this->db->delete("users_workspaces_object", $this->db->quoteInto("cid = ?", $this->model->getId()));

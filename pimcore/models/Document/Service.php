@@ -352,8 +352,8 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param  Document $document
-     * @return void
+     * @param Document $document
+     * @return array
      */
     public static function gridDocumentData($document)
     {

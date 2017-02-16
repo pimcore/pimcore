@@ -31,9 +31,6 @@ class Video extends Model\Asset
      */
     public $type = "video";
 
-    /**
-     * @return void
-     */
     protected function update()
     {
 
@@ -61,7 +58,6 @@ class Video extends Model\Asset
 
     /**
      * @param bool $force
-     * @return void
      */
     public function clearThumbnails($force = false)
     {

@@ -120,9 +120,8 @@ class Placeholder
     /**
      * Set a custom Placeholder prefix
      *
-     * @throws Exception
+     * @throws \Exception
      * @param string $prefix
-     * @return void
      * @deprecated deprecated since version 1.4.6
      */
     public static function setPlaceholderPrefix($prefix)

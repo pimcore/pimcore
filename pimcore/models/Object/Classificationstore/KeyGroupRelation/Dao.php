@@ -58,8 +58,6 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * Deletes object from database
-     *
-     * @return void
      */
     public function delete()
     {

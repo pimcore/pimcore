@@ -102,9 +102,8 @@ abstract class Adapter
         return $this->width;
     }
 
-
     /**
-     * @return void
+     * @todo: duplication found? (pimcore/lib/Pimcore/Document/Adapter.php::removeTmpFiles)
      */
     protected function removeTmpFiles()
     {
@@ -459,13 +458,9 @@ abstract class Adapter
 
     /**
      * @abstract
-     * @return void
      */
     abstract protected function destroy();
 
-    /**
-     *
-     */
     public function preModify()
     {
         if ($this->getModified()) {
@@ -473,17 +468,11 @@ abstract class Adapter
         }
     }
 
-    /**
-     *
-     */
     public function postModify()
     {
         $this->setModified(true);
     }
 
-    /**
-     * @return void
-     */
     protected function reinitializeImage()
     {
         $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . uniqid() . "_pimcore_image_tmp_file.png";
@@ -503,9 +492,6 @@ abstract class Adapter
         $this->modified = false;
     }
 
-    /**
-     *
-     */
     public function __destruct()
     {
         $this->destroy();

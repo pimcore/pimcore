@@ -109,7 +109,6 @@ class Localizedfield extends Model\AbstractModel
 
     /**
      * @param  $item
-     * @return void
      */
     public function addItem($item)
     {
@@ -137,7 +136,7 @@ class Localizedfield extends Model\AbstractModel
 
     /**
      * @param Concrete $object
-     * @return void
+     * @return $this
      */
     public function setObject($object)
     {
@@ -159,7 +158,7 @@ class Localizedfield extends Model\AbstractModel
 
     /**
      * @param Model\Object\ClassDefinition $class
-     * @return void
+     * @return $this
      */
     public function setClass(ClassDefinition $class)
     {
@@ -307,7 +306,7 @@ class Localizedfield extends Model\AbstractModel
      * @param $name
      * @param $value
      * @param null $language
-     * @return void
+     * @return $this
      */
     public function setLocalizedValue($name, $value, $language = null)
     {

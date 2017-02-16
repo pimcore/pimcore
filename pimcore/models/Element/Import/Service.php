@@ -225,7 +225,6 @@ class Service
      * @param Webservice\Data $apiElement
      * @param string $type
      * @param array $idMapping
-     * @return void
      */
     public function correctElementIdRelations($apiElement, $type, $idMapping)
     {
@@ -246,7 +245,6 @@ class Service
     /**
      * @param  Webservice\Data\Document\PageSnippet $apiElement
      * @param  array $idMapping
-     * @return void
      */
     public function correctDocumentRelations($apiElement, $idMapping)
     {
@@ -274,7 +272,6 @@ class Service
     /**
      * @param  Webservice\Data\Object\Concrete $apiElement
      * @param $idMapping
-     * @return void
      */
     public function correctObjectRelations($apiElement, $idMapping)
     {

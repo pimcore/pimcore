@@ -694,7 +694,6 @@ HTML;
      *  "asset" => array(...)
      * )
      * @param array $idMapping
-     * @return void
      */
     public function rewriteIds($idMapping)
     {

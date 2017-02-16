@@ -43,7 +43,6 @@ class Dao extends Model\Object\AbstractObject\Dao
      * Get the data for the object from database for the given id
      *
      * @param integer $id
-     * @return void
      */
     public function getById($id)
     {
@@ -139,8 +138,6 @@ class Dao extends Model\Object\AbstractObject\Dao
 
     /**
      * Get the data-elements for the object from database for the given path
-     *
-     * @return void
      */
     public function getData()
     {
@@ -170,8 +167,6 @@ class Dao extends Model\Object\AbstractObject\Dao
 
     /**
      * Save changes to database, it's an good idea to use save() instead
-     *
-     * @return void
      */
     public function update()
     {
@@ -342,8 +337,6 @@ class Dao extends Model\Object\AbstractObject\Dao
 
     /**
      * Save object to database
-     *
-     * @return void
      */
     public function delete()
     {
@@ -383,7 +376,10 @@ class Dao extends Model\Object\AbstractObject\Dao
     /**
      * Get latest available version, using $force always returns a version no matter if it is the same as the published one
      * @param bool $force
-     * @return array
+     *
+     * @return Model\Version|null
+     *
+     * @todo: should return null or false explicit
      */
     public function getLatestVersion($force = false)
     {
@@ -398,9 +394,6 @@ class Dao extends Model\Object\AbstractObject\Dao
         return;
     }
 
-    /**
-     * @return void
-     */
     public function deleteAllTasks()
     {
         $this->db->delete("schedule_tasks", "cid='" . $this->model->getId() . "' AND ctype='object'");

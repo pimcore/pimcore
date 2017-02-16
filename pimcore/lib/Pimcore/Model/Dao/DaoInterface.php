@@ -19,12 +19,8 @@ interface DaoInterface
 
     /**
      * @param \Pimcore\Model\AbstractModel $model
-     * @return void
      */
     public function setModel($model);
 
-    /**
-     * @return void
-     */
     public function configure();
 }

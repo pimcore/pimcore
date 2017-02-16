@@ -107,7 +107,7 @@ class Objectbrick extends Model\AbstractModel
 
     /**
      * @param $fieldname
-     * @return void
+     * @return $this
      */
     public function setFieldname($fieldname)
     {
@@ -152,11 +152,9 @@ class Objectbrick extends Model\AbstractModel
 
     /**
      * @param Concrete $object
-     * @return void
      */
     public function save($object)
     {
-
         // set the current object again, this is necessary because the related object in $this->object can change (eg. clone & copy & paste, etc.)
         $this->setObject($object);
 
@@ -229,7 +227,7 @@ class Objectbrick extends Model\AbstractModel
 
     /**
      * @param AbstractObject $object
-     * @return void
+     * @return $this
      */
     public function setObject($object)
     {
@@ -249,7 +247,6 @@ class Objectbrick extends Model\AbstractModel
 
     /**
      * @param Concrete $object
-     * @return void
      */
     public function delete(Concrete $object)
     {

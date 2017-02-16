@@ -43,9 +43,6 @@ class Folder extends AbstractObject
         return $object;
     }
 
-    /**
-     * @return void
-     */
     protected function update()
     {
         parent::update();

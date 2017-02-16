@@ -87,7 +87,6 @@ class Job
 
     /**
      * create lock file
-     * @return void
      */
     public function lock()
     {
@@ -96,7 +95,6 @@ class Job
 
     /**
      * delete lock file
-     * @return void
      */
     public function unlock()
     {

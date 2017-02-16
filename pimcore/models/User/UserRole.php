@@ -141,7 +141,9 @@ class UserRole extends AbstractUser
     /**
      * Generates the permission list required for frontend display
      *
-     * @return void
+     * @return array
+     *
+     * @todo: $permissionInfo should be array, but is declared as null
      */
     public function generatePermissionList()
     {

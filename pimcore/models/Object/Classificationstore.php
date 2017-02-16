@@ -61,7 +61,6 @@ class Classificationstore extends Model\AbstractModel
 
     /**
      * @param  $item
-     * @return void
      */
     public function addItem($item)
     {

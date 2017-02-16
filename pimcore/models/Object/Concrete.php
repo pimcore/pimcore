@@ -99,7 +99,6 @@ class Concrete extends AbstractObject
 
     /**
      * @param  string $fieldName
-     * @return void
      */
     public function addLazyLoadedField($fieldName)
     {
@@ -135,7 +134,6 @@ class Concrete extends AbstractObject
 
     /**
      * @param string $o___loadedLazyField
-     * @return void
      */
     public function addO__loadedLazyField($o___loadedLazyField)
     {
@@ -205,9 +203,6 @@ class Concrete extends AbstractObject
         $this->saveChildData();
     }
 
-    /**
-     * @return void
-     */
     protected function saveChildData()
     {
         if ($this->getClass()->getAllowInherit()) {
@@ -215,9 +210,6 @@ class Concrete extends AbstractObject
         }
     }
 
-    /**
-     * @return void
-     */
     public function saveScheduledTasks()
     {
         // update scheduled tasks
@@ -235,9 +227,6 @@ class Concrete extends AbstractObject
         }
     }
 
-    /**
-     * @return void
-     */
     public function delete()
     {
 
@@ -668,10 +657,6 @@ class Concrete extends AbstractObject
         throw new \Exception("Call to undefined static method " . $method . " in class Object\\Concrete");
     }
 
-
-    /**
-     *
-     */
     public function __sleep()
     {
         $parentVars = parent::__sleep();
@@ -693,9 +678,6 @@ class Concrete extends AbstractObject
         return $finalVars;
     }
 
-    /**
-     *
-     */
     public function __wakeup()
     {
         parent::__wakeup();
@@ -708,10 +690,8 @@ class Concrete extends AbstractObject
         }
     }
 
-
     /**
      * load lazy loaded fields before cloning
-     * @return void
      */
     public function __clone()
     {

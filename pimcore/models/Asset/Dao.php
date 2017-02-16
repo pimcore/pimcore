@@ -261,8 +261,6 @@ class Dao extends Model\Element\Dao
 
     /**
      * deletes all properties for the object from database
-     *
-     * @return void
      */
     public function deleteAllProperties()
     {
@@ -271,8 +269,6 @@ class Dao extends Model\Element\Dao
 
     /**
      * deletes all metadata for the object from database
-     *
-     * @return void
      */
     public function deleteAllMetadata()
     {
@@ -298,18 +294,11 @@ class Dao extends Model\Element\Dao
         return $versions;
     }
 
-    /**
-     * @return void
-     */
     public function deleteAllPermissions()
     {
         $this->db->delete("users_workspaces_asset", $this->db->quoteInto("cid = ?", $this->model->getId()));
     }
 
-
-    /**
-     * @return void
-     */
     public function deleteAllTasks()
     {
         $this->db->delete("schedule_tasks", $this->db->quoteInto("cid = ? AND ctype='asset'", $this->model->getId()));

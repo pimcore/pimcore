@@ -71,7 +71,6 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data
 
     /**
      * @param integer $width
-     * @return void
      */
     public function setWidth($width)
     {

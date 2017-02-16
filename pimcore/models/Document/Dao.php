@@ -308,8 +308,6 @@ class Dao extends Model\Element\Dao
 
     /**
      * Deletes all object properties from the database.
-     *
-     * @return void
      */
     public function deleteAllProperties()
     {
@@ -318,8 +316,6 @@ class Dao extends Model\Element\Dao
 
     /**
      * Deletes all user permissions based on the document id.
-     *
-     * @return void
      */
     public function deleteAllPermissions()
     {
@@ -328,8 +324,6 @@ class Dao extends Model\Element\Dao
 
     /**
      * Deletes all scheduled tasks assigned to the document.
-     *
-     * @return void
      */
     public function deleteAllTasks()
     {

@@ -54,7 +54,6 @@ class QuantityValue
 
     /**
      * @param  $unitId
-     * @return void
      */
     public function setUnitId($unitId)
     {
@@ -84,7 +83,6 @@ class QuantityValue
 
     /**
      * @param  $value
-     * @return void
      */
     public function setValue($value)
     {

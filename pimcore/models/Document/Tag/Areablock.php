@@ -374,7 +374,7 @@ class Areablock extends Model\Document\Tag
     /**
      * Is executed at the beginning of the loop and setup some general settings
      *
-     * @return void
+     * @return $this
      */
     public function start()
     {
@@ -427,8 +427,6 @@ class Areablock extends Model\Document\Tag
 
     /**
      * Is executed at the end of the loop and removes the settings set in start()
-     *
-     * @return void
      */
     public function end()
     {
@@ -447,8 +445,6 @@ class Areablock extends Model\Document\Tag
 
     /**
      * Is called evertime a new iteration starts (new entry of the block while looping)
-     *
-     * @return void
      */
     public function blockStart()
     {
@@ -466,8 +462,6 @@ class Areablock extends Model\Document\Tag
 
     /**
      * Is called evertime a new iteration ends (new entry of the block while looping)
-     *
-     * @return void
      */
     public function blockEnd()
     {
@@ -478,7 +472,6 @@ class Areablock extends Model\Document\Tag
      * Sends data to the output stream
      *
      * @param string $v
-     * @return void
      */
     public function outputEditmode($v)
     {
@@ -489,8 +482,6 @@ class Areablock extends Model\Document\Tag
 
     /**
      * Setup some settings that are needed for blocks
-     *
-     * @return void
      */
     public function setupStaticEnvironment()
     {
@@ -520,7 +511,7 @@ class Areablock extends Model\Document\Tag
 
     /**
      * @param array $options
-     * @return void
+     * @return $this
      */
     public function setOptions($options)
     {
@@ -690,8 +681,6 @@ class Areablock extends Model\Document\Tag
 
     /**
      * If object was serialized, set the counter back to 0
-     *
-     * @return void
      */
     public function __wakeup()
     {

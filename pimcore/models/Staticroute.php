@@ -113,7 +113,6 @@ class Staticroute extends AbstractModel
     /**
      * @static
      * @param $route
-     * @return void
      */
     public static function setCurrentRoute($route)
     {
@@ -316,7 +315,7 @@ class Staticroute extends AbstractModel
 
     /**
      * @param string $controller
-     * @return void
+     * @return $this
      */
     public function setController($controller)
     {
@@ -327,7 +326,7 @@ class Staticroute extends AbstractModel
 
     /**
      * @param string $action
-     * @return void
+     * @return $this
      */
     public function setAction($action)
     {
@@ -338,7 +337,7 @@ class Staticroute extends AbstractModel
 
     /**
      * @param string $variables
-     * @return void
+     * @return $this
      */
     public function setVariables($variables)
     {
@@ -349,7 +348,7 @@ class Staticroute extends AbstractModel
 
     /**
      * @param string $defaults
-     * @return void
+     * @return $this
      */
     public function setDefaults($defaults)
     {
@@ -360,7 +359,7 @@ class Staticroute extends AbstractModel
 
     /**
      * @param integer $priority
-     * @return void
+     * @return $this
      */
     public function setPriority($priority)
     {
@@ -379,7 +378,7 @@ class Staticroute extends AbstractModel
 
     /**
      * @param string $name
-     * @return void
+     * @return $this
      */
     public function setName($name)
     {
@@ -398,7 +397,7 @@ class Staticroute extends AbstractModel
 
     /**
      * @param string $reverse
-     * @return void
+     * @return $this
      */
     public function setReverse($reverse)
     {
@@ -417,6 +416,7 @@ class Staticroute extends AbstractModel
 
     /**
      * @param int|array $siteId
+     * @return $this
      */
     public function setSiteId($siteId)
     {

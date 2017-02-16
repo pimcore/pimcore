@@ -82,7 +82,6 @@ class Mongodb extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Extende
     /**
      * Expires a record (mostly used for testing purposes)
      * @param string $id
-     * @return void
      */
     public function ___expire($id)
     {

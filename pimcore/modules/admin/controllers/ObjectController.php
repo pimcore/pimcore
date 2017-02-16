@@ -1828,7 +1828,6 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
      * @param  array $toDelete
      * @param  array $toAdd
      * @param  string $ownerFieldName
-     * @return void
      */
     protected function processRemoteOwnerRelations($object, $toDelete, $toAdd, $ownerFieldName)
     {

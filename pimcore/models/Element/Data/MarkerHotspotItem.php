@@ -146,7 +146,6 @@ class MarkerHotspotItem implements \ArrayAccess
      * @param mixed $value <p>
      * The value to set.
      * </p>
-     * @return void
      */
     public function offsetSet($offset, $value)
     {
@@ -166,7 +165,6 @@ class MarkerHotspotItem implements \ArrayAccess
      * @param mixed $offset <p>
      * The offset to unset.
      * </p>
-     * @return void
      */
     public function offsetUnset($offset)
     {

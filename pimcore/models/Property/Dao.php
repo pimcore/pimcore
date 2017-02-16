@@ -43,8 +43,6 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * Save object to database
-     *
-     * @return void
      */
     public function save()
     {

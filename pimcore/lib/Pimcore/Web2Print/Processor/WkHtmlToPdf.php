@@ -115,7 +115,6 @@ class WkHtmlToPdf extends Processor
 
     /**
      * @param string $options
-     * @return void
      */
     public function setOptions($options)
     {

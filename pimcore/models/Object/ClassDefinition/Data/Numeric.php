@@ -115,7 +115,7 @@ class Numeric extends Model\Object\ClassDefinition\Data
 
     /**
      * @param integer $defaultValue
-     * @return void
+     * @return $this
      */
     public function setDefaultValue($defaultValue)
     {

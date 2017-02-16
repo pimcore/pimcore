@@ -130,7 +130,6 @@ class KeyValue extends Model\Object\ClassDefinition\Data
      * This method is called in Object\\ClassDefinition::save() and is used to create the database table for the localized data
      * @param Object\ClassDefinition $class
      * @param mixed $params
-     * @return void
      */
     public function classSaved($class, $params = [])
     {
@@ -214,7 +213,7 @@ class KeyValue extends Model\Object\ClassDefinition\Data
 
     /**
      * @param integer $width
-     * @return void
+     * @return $this
      */
     public function setGroupDescWidth($width)
     {
@@ -225,7 +224,7 @@ class KeyValue extends Model\Object\ClassDefinition\Data
 
     /** Sets the width of the description column.
      * @param $width
-     * @return Object\ClassDefinition\Data_KeyValue
+     * @return Object\ClassDefinition\Data\KeyValue
      */
     public function setDescWidth($width)
     {
@@ -236,7 +235,7 @@ class KeyValue extends Model\Object\ClassDefinition\Data
 
     /**
      * @param integer $width
-     * @return void
+     * @return $this
      */
     public function setUnitWidth($width)
     {
@@ -290,7 +289,7 @@ class KeyValue extends Model\Object\ClassDefinition\Data
 
     /**
      * @param integer $width
-     * @return void
+     * @return $this
      */
     public function setValueWidth($width)
     {

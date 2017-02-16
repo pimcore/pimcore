@@ -214,7 +214,6 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * @param string $name
-     * @return void
      */
     public function rename($name)
     {
@@ -499,9 +498,6 @@ class ClassDefinition extends Model\AbstractModel
         return $text;
     }
 
-    /**
-     * @return void
-     */
     public function delete()
     {
         \Pimcore::getEventManager()->trigger("object.class.preDelete", $this);
@@ -564,7 +560,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @return void
+     * Deletes PHP files from Filesystem
      */
     protected function deletePhpClasses()
     {
@@ -663,7 +659,7 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * @param int $creationDate
-     * @return void
+     * @return $this
      */
     public function setCreationDate($creationDate)
     {
@@ -674,7 +670,7 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * @param int $modificationDate
-     * @return void
+     * @return $this
      */
     public function setModificationDate($modificationDate)
     {
@@ -685,7 +681,7 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * @param int $userOwner
-     * @return void
+     * @return $this
      */
     public function setUserOwner($userOwner)
     {
@@ -696,7 +692,7 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * @param int $userModification
-     * @return void
+     * @return $this
      */
     public function setUserModification($userModification)
     {
@@ -723,7 +719,7 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * @param array $fieldDefinitions
-     * @return void
+     * @return $this
      */
     public function setFieldDefinitions($fieldDefinitions)
     {
@@ -735,7 +731,7 @@ class ClassDefinition extends Model\AbstractModel
     /**
      * @param string $key
      * @param Object\ClassDefinition\Data $data
-     * @return void
+     * @return $this
      */
     public function addFieldDefinition($key, $data)
     {
@@ -746,7 +742,7 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * @param $key
-     * @return Object\ClassDefinition\Data
+     * @return Object\ClassDefinition\Data|boolean
      */
     public function getFieldDefinition($key)
     {
@@ -759,7 +755,7 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * @param array $layoutDefinitions
-     * @return void
+     * @return $this
      */
     public function setLayoutDefinitions($layoutDefinitions)
     {
@@ -773,7 +769,6 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * @param array|Object\ClassDefinition\Layout|Object\ClassDefinition\Data $def
-     * @return void
      */
     public function extractDataDefinitions($def)
     {
@@ -810,7 +805,7 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * @param mixed $parent
-     * @return void
+     * @return $this
      */
     public function setParent($parent)
     {
@@ -864,7 +859,7 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * @param string $parentClass
-     * @return void
+     * @return $this
      */
     public function setParentClass($parentClass)
     {
@@ -875,7 +870,7 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * @param boolean $allowInherit
-     * @return void
+     * @return $this
      */
     public function setAllowInherit($allowInherit)
     {
@@ -886,7 +881,7 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * @param boolean $allowVariants
-     * @return void
+     * @return $this
      */
     public function setAllowVariants($allowVariants)
     {

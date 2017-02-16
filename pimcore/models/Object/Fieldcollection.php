@@ -102,7 +102,6 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator
     /**
      * @throws \Exception
      * @param $object
-     * @return void
      */
     public function save($object)
     {
@@ -143,7 +142,6 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator
 
     /**
      * @param $item
-     * @return void
      */
     public function add($item)
     {
@@ -152,7 +150,6 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator
 
     /**
      * @param $index
-     * @return void
      */
     public function remove($index)
     {

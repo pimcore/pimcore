@@ -131,9 +131,6 @@ class GD extends Adapter
         return false;
     }
 
-    /**
-     * @return void
-     */
     protected function destroy()
     {
         imagedestroy($this->resource);

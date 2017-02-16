@@ -20,10 +20,12 @@ use Pimcore\Model\Search\Backend\Data;
 
 class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin
 {
-
-
     /**
-     * @return void
+     * @todo: $forbiddenConditions could be undefined
+     * @todo: $conditionTypeParts could be undefined
+     * @todo: $conditionSubtypeParts could be undefined
+     * @todo: $conditionClassnameParts could be undefined
+     * @todo: $data could be undefined
      */
     public function findAction()
     {

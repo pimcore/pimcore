@@ -804,7 +804,6 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
      * This method is called in Object|Class::save() and is used to create the database table for the localized data
      * @param $class
      * @param array $params
-     * @return void
      */
     public function classSaved($class, $params = [])
     {

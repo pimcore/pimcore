@@ -71,7 +71,7 @@ class Dao extends Model\Dao\AbstractDao
      * @param $ownername
      * @param $position
      * @param $type
-     * @return null|Model\Dao\Pimcore_Model_Abstract
+     * @return null|Model\Dao\\Pimcore\Model\Object\AbstractObject
      */
     public function load(Object\Concrete $source, $destination, $fieldname, $ownertype, $ownername, $position, $type = "object")
     {
@@ -101,7 +101,6 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * @param $class
-     * @return void
      */
     public function createOrUpdateTable($class)
     {

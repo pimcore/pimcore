@@ -49,7 +49,6 @@ class ExtensionManager
     /**
      * @static
      * @param \Zend_Config $config
-     * @return void
      */
     public static function setConfig(\Zend_Config $config)
     {
@@ -90,7 +89,6 @@ class ExtensionManager
      * @static
      * @param  $type
      * @param  $id
-     * @return void
      */
     public static function enable($type, $id)
     {
@@ -113,7 +111,6 @@ class ExtensionManager
      * @static
      * @param  $type
      * @param  $id
-     * @return void
      */
     public static function disable($type, $id)
     {

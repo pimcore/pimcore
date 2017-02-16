@@ -253,10 +253,6 @@ class Config extends Model\AbstractModel
         return true;
     }
 
-
-    /**
-     * @return void
-     */
     public function resetItems()
     {
         $this->items = [];

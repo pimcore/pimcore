@@ -173,7 +173,6 @@ class Db
 
     /**
      * @static
-     * @return void
      */
     public static function close()
     {

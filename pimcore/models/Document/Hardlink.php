@@ -248,7 +248,6 @@ class Hardlink extends Document
 
     /**
      * @see Document::delete
-     * @return void
      */
     public function delete()
     {

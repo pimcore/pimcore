@@ -266,7 +266,7 @@ class Link extends Model\Document\Tag
     /**
      * @see Document\Tag\TagInterface::setDataFromEditmode
      * @param mixed $data
-     * @return void
+     * @return $this
      */
     public function setDataFromEditmode($data)
     {
@@ -437,7 +437,6 @@ class Link extends Model\Document\Tag
      *  "asset" => array(...)
      * )
      * @param array $idMapping
-     * @return void
      */
     public function rewriteIds($idMapping)
     {

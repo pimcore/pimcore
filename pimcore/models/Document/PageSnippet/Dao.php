@@ -28,8 +28,6 @@ abstract class Dao extends Model\Document\Dao
 
     /**
      * Delete all elements containing the content (tags) from the database
-     *
-     * @return void
      */
     public function deleteAllElements()
     {
@@ -39,7 +37,7 @@ abstract class Dao extends Model\Document\Dao
     /**
      * Get all elements containing the content (tags) from the database
      *
-     * @return void
+     * @return Document\Tag[]
      */
     public function getElements()
     {

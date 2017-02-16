@@ -125,7 +125,7 @@ class Href extends Model\Document\Tag
     /**
      * @see Document\Tag\TagInterface::setDataFromResource
      * @param mixed $data
-     * @return void
+     * @return $this
      */
     public function setDataFromResource($data)
     {
@@ -145,7 +145,7 @@ class Href extends Model\Document\Tag
     /**
      * @see Document\Tag\TagInterface::setDataFromEditmode
      * @param mixed $data
-     * @return void
+     * @return $this
      */
     public function setDataFromEditmode($data)
     {
@@ -161,7 +161,7 @@ class Href extends Model\Document\Tag
     /**
      * Sets the element by the data stored for the object
      *
-     * @return void
+     * @return $this
      */
     private function setElement()
     {
@@ -345,7 +345,6 @@ class Href extends Model\Document\Tag
 
     /**
      * this method is called by Document\Service::loadAllDocumentFields() to load all lazy loading fields
-     * @return void
      */
     public function load()
     {
@@ -403,7 +402,6 @@ class Href extends Model\Document\Tag
      *  "asset" => array(...)
      * )
      * @param array $idMapping
-     * @return void
      */
     public function rewriteIds($idMapping)
     {

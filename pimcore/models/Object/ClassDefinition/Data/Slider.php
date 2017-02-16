@@ -114,7 +114,7 @@ class Slider extends Model\Object\ClassDefinition\Data
 
     /**
      * @param integer $height
-     * @return void
+     * @return $this
      */
     public function setHeight($height)
     {
@@ -134,7 +134,7 @@ class Slider extends Model\Object\ClassDefinition\Data
 
     /**
      * @param float $minValue
-     * @return void
+     * @return $this
      */
     public function setMinValue($minValue)
     {
@@ -153,7 +153,7 @@ class Slider extends Model\Object\ClassDefinition\Data
 
     /**
      * @param $maxValue
-     * @return void
+     * @return $this
      * @internal param float $minValue
      */
     public function setMaxValue($maxValue)
@@ -182,7 +182,7 @@ class Slider extends Model\Object\ClassDefinition\Data
 
     /**
      * @param boolean $vertical
-     * @return void
+     * @return $this
      */
     public function setVertical($vertical)
     {
@@ -201,7 +201,7 @@ class Slider extends Model\Object\ClassDefinition\Data
 
     /**
      * @param float $increment
-     * @return void
+     * @return $this
      */
     public function setIncrement($increment)
     {
@@ -221,7 +221,7 @@ class Slider extends Model\Object\ClassDefinition\Data
 
     /**
      * @param int $decimalPrecision
-     * @return void
+     * @return $this
      */
     public function setDecimalPrecision($decimalPrecision)
     {

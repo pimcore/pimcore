@@ -80,7 +80,6 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @see Document::update
-     * @return void
      */
     protected function update()
     {
@@ -165,7 +164,6 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @see Document::delete
-     * @return void
      */
     public function delete()
     {

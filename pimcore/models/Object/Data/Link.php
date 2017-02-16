@@ -426,7 +426,9 @@ class Link
     }
     
     /**
-     * @return Document|Asset
+     * @return Document|Asset|boolean
+     *
+     * @todo: $this->object not found in class
      */
     public function getObject()
     {
@@ -453,7 +455,9 @@ class Link
     }
 
     /**
-     * @return void
+     * @return Asset|Document
+     *
+     * @todo: $this->object not found in class
      */
     public function setObjectFromId()
     {

@@ -30,7 +30,8 @@ class Listing extends Model\Listing\AbstractListing
     public $units;
 
     /**
-     * @var array
+     * @param $key
+     * @return boolean
      */
     public function isValidOrderKey($key)
     {
@@ -55,7 +56,6 @@ class Listing extends Model\Listing\AbstractListing
 
     /**
      * @param array $units
-     * @return void
      */
     public function setUnits($units)
     {

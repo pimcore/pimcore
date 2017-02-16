@@ -344,7 +344,6 @@ class Service extends Model\AbstractModel
      *
      * @static
      * @param  ElementInterface $element
-     * @return void
      */
     public static function scheduleForSanityCheck($element)
     {
@@ -387,8 +386,9 @@ class Service extends Model\AbstractModel
 
     /**
      * @static
-     * @param  ElementInterface $element
-     * @return void
+     * @param ElementInterface $element
+     *
+     * @todo: I think ElementInterface is the wrong type here, it has no getter latestVersion
      */
     protected static function performSanityCheck($element)
     {
@@ -466,9 +466,10 @@ class Service extends Model\AbstractModel
 
 
     /**
-     * @param  ElementInterface $target the parent element
-     * @param  ElementInterface $new the newly inserted child
-     * @return void
+     * @param ElementInterface $target the parent element
+     * @param ElementInterface $new the newly inserted child
+     *
+     * @todo: I think ElementInterface is the wrong type here, it has no method getChilds
      */
     protected function updateChilds($target, $new)
     {

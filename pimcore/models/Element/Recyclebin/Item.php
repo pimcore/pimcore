@@ -134,8 +134,7 @@ class Item extends Model\AbstractModel
     }
 
     /**
-     * @param  User $user
-     * @return void
+     * @param Model\User $user
      */
     public function save($user=null)
     {

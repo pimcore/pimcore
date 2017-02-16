@@ -149,7 +149,6 @@ trait Wrapper
 
     /**
      * @throws \Exception
-     * @return void
      */
     protected function raiseHardlinkError()
     {

@@ -570,7 +570,6 @@ class Service extends Model\Element\Service
      *
      * @static
      * @param  Concrete $object
-     * @return void
      */
     public static function loadAllObjectFields($object)
     {

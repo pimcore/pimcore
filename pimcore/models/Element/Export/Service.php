@@ -40,7 +40,9 @@ class Service
 
     /**
      * @param  Element\ElementInterface $element
-     * @return void
+     * @return mixed
+     *
+     * @todo: I dont know the return type here
      */
     public function getApiElement($element)
     {

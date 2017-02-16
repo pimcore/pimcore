@@ -67,7 +67,6 @@ class AbstractObject extends Model\Element\AbstractElement
     /**
      * @static
      * @param  $hidePublished
-     * @return void
      */
     public static function setHideUnpublished($hidePublished)
     {
@@ -86,7 +85,6 @@ class AbstractObject extends Model\Element\AbstractElement
     /**
      * @static
      * @param  $getInheritedValues
-     * @return void
      */
     public static function setGetInheritedValues($getInheritedValues)
     {
@@ -489,7 +487,7 @@ class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @param bool $o_locked
-     * @return $this|void
+     * @return $this
      */
     public function setLocked($o_locked)
     {
@@ -498,9 +496,6 @@ class AbstractObject extends Model\Element\AbstractElement
         return $this;
     }
 
-    /**
-     * @return void
-     */
     public function delete()
     {
         \Pimcore::getEventManager()->trigger("object.preDelete", $this);

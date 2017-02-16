@@ -495,7 +495,6 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
     /**
      * @param Element\AbstractElement $object
      * @param array $params
-     * @return void
      */
     public function save($object, $params = [])
     {
@@ -607,7 +606,6 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
     /**
      * @param Element\AbstractElement $object
      * @param array $params
-     * @return void
      */
     public function delete($object, $params = [])
     {
@@ -733,7 +731,6 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
     /**
      * @param $class
      * @param array $params
-     * @return void
      */
     public function classSaved($class, $params = [])
     {

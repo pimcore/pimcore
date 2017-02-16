@@ -670,8 +670,7 @@ class Redis2 extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Extended
      * Set the frontend directives
      *
      * @param  array $directives Assoc of directives
-     * @throws Zend_Cache_Exception
-     * @return void
+     * @throws \Zend_Cache_Exception
      */
     public function setDirectives($directives)
     {
@@ -929,7 +928,6 @@ class Redis2 extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Extended
      * Required to pass unit tests
      *
      * @param  string $id
-     * @return void
      */
     public function ___expire($id)
     {

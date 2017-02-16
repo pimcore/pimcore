@@ -85,7 +85,6 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
 
     /**
      * @param integer $width
-     * @return void
      */
     public function setWidth($width)
     {
@@ -104,7 +103,6 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
 
     /**
      * @param integer $defaultValue
-     * @return void
      */
     public function setDefaultValue($defaultValue)
     {
@@ -115,7 +113,6 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
 
     /**
      * @param  array $validUnits
-     * @return void
      */
     public function setValidUnits($validUnits)
     {

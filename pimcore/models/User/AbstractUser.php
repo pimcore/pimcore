@@ -130,7 +130,7 @@ class AbstractUser extends Model\AbstractModel
 
     /**
      * @param integer $parentId
-     * @return void
+     * @return $this
      */
     public function setParentId($parentId)
     {
@@ -149,7 +149,7 @@ class AbstractUser extends Model\AbstractModel
 
     /**
      * @param string $name
-     * @return void
+     * @return $this
      */
     public function setName($name)
     {

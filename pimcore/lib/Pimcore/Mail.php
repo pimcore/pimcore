@@ -191,7 +191,6 @@ class Mail extends \Zend_Mail
      * Initializes the mailer with the settings form Settings -> System -> Email Settings
      *
      * @param string $type
-     * @return void
      */
     public function init($type = "email")
     {

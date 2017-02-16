@@ -113,8 +113,6 @@ class Dao extends Model\Dao\PhpArrayTable
 
     /**
      * Deletes object from database
-     *
-     * @return void
      */
     public function delete()
     {

@@ -35,7 +35,6 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Get the valid columns from the database
      *
-     * @return void
      */
     public function init()
     {
@@ -44,7 +43,7 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * @param string $abbreviation
-     * @return void
+     * @throws \Exception
      */
     public function getByAbbreviation($abbreviation)
     {
@@ -57,7 +56,7 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * @param string $reference
-     * @return void
+     * @throws \Exception
      */
     public function getByReference($reference)
     {
@@ -71,7 +70,6 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param int $id
      * @throws \Exception
-     * @return void
      */
     public function getById($id)
     {
@@ -99,7 +97,9 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Save object to database
      *
-     * @return void
+     * @return boolean
+     *
+     * @todo update() don't returns anything
      */
     public function save()
     {
@@ -110,9 +110,6 @@ class Dao extends Model\Dao\AbstractDao
         return $this->create();
     }
 
-    /**
-     * @return void
-     */
     public function update()
     {
         $class = get_object_vars($this->model);
@@ -133,8 +130,6 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * Deletes object from database
-     *
-     * @return void
      */
     public function delete()
     {

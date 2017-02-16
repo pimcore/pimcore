@@ -231,7 +231,7 @@ class User extends User\UserRole
 
     /**
      * @param string $language
-     * @return void
+     * @return $this
      */
     public function setLanguage($language)
     {
@@ -261,7 +261,7 @@ class User extends User\UserRole
 
     /**
      * @param boolean $admin
-     * @return void
+     * @return $this
      */
     public function setAdmin($admin)
     {
@@ -280,7 +280,7 @@ class User extends User\UserRole
 
     /**
      * @param boolean $active
-     * @return void
+     * @return $this
      */
     public function setActive($active)
     {

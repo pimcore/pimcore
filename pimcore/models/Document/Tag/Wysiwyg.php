@@ -154,7 +154,9 @@ class Wysiwyg extends Model\Document\Tag
      *  "asset" => array(...)
      * )
      * @param array $idMapping
-     * @return void
+     * @return string|null
+     *
+     * @todo: no rewriteIds method ever returns anything, why this one?
      */
     public function rewriteIds($idMapping)
     {

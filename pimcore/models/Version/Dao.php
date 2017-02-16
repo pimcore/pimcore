@@ -43,7 +43,9 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Save object to database
      *
-     * @return void
+     * @return int
+     *
+     * @todo: $data could be undefined
      */
     public function save()
     {
@@ -71,8 +73,6 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * Deletes object from database
-     *
-     * @return void
      */
     public function delete()
     {

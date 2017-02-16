@@ -125,17 +125,11 @@ class Unit extends Model\AbstractModel
         return $unit;
     }
 
-    /**
-     * @return void
-     */
     public function save()
     {
         $this->getDao()->save();
     }
 
-    /**
-     * @return void
-     */
     public function delete()
     {
         $cacheKey = Unit\Dao::TABLE_NAME . "_" . $this->getId();

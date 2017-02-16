@@ -183,7 +183,7 @@ class DocType extends Model\AbstractModel
 
     /**
      * @param integer $id
-     * @return void
+     * @return $this
      */
     public function setId($id)
     {
@@ -194,7 +194,7 @@ class DocType extends Model\AbstractModel
 
     /**
      * @param string $name
-     * @return void
+     * @return $this
      */
     public function setName($name)
     {
@@ -205,7 +205,7 @@ class DocType extends Model\AbstractModel
 
     /**
      * @param string $template
-     * @return void
+     * @return $this
      */
     public function setTemplate($template)
     {
@@ -224,7 +224,7 @@ class DocType extends Model\AbstractModel
 
     /**
      * @param string $type
-     * @return void
+     * @return $this
      */
     public function setType($type)
     {
@@ -236,7 +236,7 @@ class DocType extends Model\AbstractModel
 
      /**
      * @param integer $priority
-     * @return void
+     * @return $this
      */
     public function setPriority($priority)
     {
