@@ -64,7 +64,7 @@ class GoogleAnalyticsCodeListener extends ResponseInjection implements EventSubs
     {
         $response = $event->getResponse();
 
-        if ($this->isHtmlResponse($response)) {
+        if ($event->isMasterRequest() && $this->isHtmlResponse($response)) {
             if ($this->enabled && $code = AnalyticsHelper::getCode()) {
 
                 // analytics
