@@ -163,7 +163,7 @@ class Processor
         if ($deferred) {
             // only add the config to the TmpStore if necessary (the config is auto-generated)
             if (!Config::getByName($config->getName())) {
-                $configId = "thumb_" . $id . "__" . md5(str_replace(PIMCORE_TEMPORARY_DIRECTORY, "", $fsPath));
+                $configId = "thumb_" . $id . "__" . md5(self::returnPath($fsPath, false));
                 TmpStore::add($configId, $config, "thumbnail_deferred");
             }
 
