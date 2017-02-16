@@ -2,6 +2,9 @@
 
 namespace Pimcore\Bundle\PimcoreAdminBundle\Security;
 
+use Pimcore\Bundle\PimcoreAdminBundle\Security\User\User;
+use Pimcore\Bundle\PimcoreAdminBundle\Security\User\UserProvider;
+use Pimcore\Tool\Authentication;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\RouterInterface;
@@ -10,7 +13,6 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\Security;
-use Symfony\Component\Security\Core\User\InMemoryUserProvider;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
@@ -62,7 +64,7 @@ class FormAuthenticator extends AbstractGuardAuthenticator
      */
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
-        if (!$userProvider instanceof InMemoryUserProvider) {
+        if (!$userProvider instanceof UserProvider) {
             return null;
         }
 
@@ -75,10 +77,12 @@ class FormAuthenticator extends AbstractGuardAuthenticator
 
     /**
      * @inheritDoc
+     *
+     * @param User $user
      */
     public function checkCredentials($credentials, UserInterface $user)
     {
-        if ($user->getPassword() === $credentials['password']) {
+        if (Authentication::verifyPassword($user->getUser(), $credentials['password'])) {
             return true;
         }
 

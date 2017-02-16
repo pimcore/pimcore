@@ -2,3 +2,6 @@ services:
     pimcore_admin.security.form_authenticator:
         class: Pimcore\Bundle\PimcoreAdminBundle\Security\FormAuthenticator
         arguments: ['@router']
+
+    pimcore_admin.security.user_provider:
+        class: Pimcore\Bundle\PimcoreAdminBundle\Security\User\UserProvider

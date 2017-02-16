@@ -1,11 +1,7 @@
 security:
     providers:
-        in_memory:
-            memory:
-                users:
-                    admin:
-                        password: admin
-                        roles: ROLE_PIMCORE_ADMIN
+        pimcore_admin:
+            id: pimcore_admin.security.user_provider
 
     firewalls:
         dev:
@@ -15,6 +11,7 @@ security:
         admin:
             anonymous: ~
             pattern: ^/admin
+            provider: pimcore_admin
             logout:
                 path: /admin/logout
                 target: /admin
