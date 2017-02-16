@@ -57,11 +57,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
 
     public function getTreeAction()
     {
-        $defaultIcon = "/pimcore/static6/img/flat-color-icons/timeline.svg";
-        if (!\Pimcore\Tool\Admin::isExtJS6()) {
-            $defaultIcon = '/pimcore/static6/img/icon/database_gear.png';
-        }
-
+        $defaultIcon = '/pimcore/static6/img/icon/database_gear.png';
 
         $classesList = new Object\ClassDefinition\Listing();
         $classesList->setOrderKey("name");
@@ -885,7 +881,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
 
                 if ($groupName == "class") {
                     $name = $groupItem["name"];
-                    $icon = \Pimcore\Tool\Admin::isExtJS6() ? "class" : "database_gear";
+                    $icon = "class";
                 } elseif ($groupName == "customlayout") {
                     $className = $groupItem["className"];
 
@@ -895,9 +891,9 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
                     $icon = "database_lightning";
                 } else {
                     if ($groupName == "objectbrick") {
-                        $icon = \Pimcore\Tool\Admin::isExtJS6() ? "objectbricks" : "bricks";
+                        $icon = "objectbricks";
                     } elseif ($groupName == "fieldcollection") {
-                        $icon = \Pimcore\Tool\Admin::isExtJS6() ? "fieldcollection" : "table_multiple";
+                        $icon = "fieldcollection";
                     }
                     $name = $groupItem["key"];
                 }

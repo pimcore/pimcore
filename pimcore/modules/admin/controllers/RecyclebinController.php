@@ -70,12 +70,8 @@ class Admin_RecyclebinController extends \Pimcore\Controller\Action\Admin
                 foreach ($filters as $filter) {
                     $operator = "=";
 
-                    $filterField = $filter["field"];
-                    $filterOperator = $filter["comparison"];
-                    if (\Pimcore\Tool\Admin::isExtJS6()) {
-                        $filterField = $filter["property"];
-                        $filterOperator = $filter["operator"];
-                    }
+                    $filterField = $filter["property"];
+                    $filterOperator = $filter["operator"];
 
                     if ($filter["type"] == "string") {
                         $operator = "LIKE";

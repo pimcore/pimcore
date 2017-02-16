@@ -250,11 +250,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
 
             if ($this->getParam("xaction") == "destroy") {
                 $data = \Zend_Json::decode($this->getParam("data"));
-                if (\Pimcore\Tool\Admin::isExtJS6()) {
-                    $t = $class::getByKey($data["key"]);
-                } else {
-                    $t = $class::getByKey($data);
-                }
+                $t = $class::getByKey($data["key"]);
                 $t->delete();
 
                 $this->_helper->json(["success" => true, "data" => []]);
@@ -413,14 +409,8 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
 
         $filterJson = $this->getParam("filter");
         if ($filterJson) {
-            $isExtJs6 = \Pimcore\Tool\Admin::isExtJS6();
-            if ($isExtJs6) {
-                $propertyField = "property";
-                $operatorField = "operator";
-            } else {
-                $propertyField = "field";
-                $operatorField = "comparison";
-            }
+            $propertyField = "property";
+            $operatorField = "operator";
 
             $filters = \Zend_Json::decode($filterJson);
             foreach ($filters as $filter) {
@@ -444,7 +434,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
                     $field = $fieldname;
                     $value = "%" . $filter["value"] . "%";
                 } elseif ($filter["type"] == "date" ||
-                    ($isExtJs6 && in_array($fieldname, ["modificationDate", "creationdate"]))) {
+                    (in_array($fieldname, ["modificationDate", "creationdate"]))) {
                     if ($filter[$operatorField] == "lt") {
                         $operator = "<";
                     } elseif ($filter[$operatorField] == "gt") {

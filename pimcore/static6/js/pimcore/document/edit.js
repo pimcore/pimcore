@@ -21,7 +21,7 @@ pimcore.document.edit = Class.create({
 
     getEditLink: function () {
         var date = new Date();
-        var link =  this.document.data.path + this.document.data.key + '?extjs6=1&pimcore_editmode=true&systemLocale='
+        var link =  this.document.data.path + this.document.data.key + '?pimcore_editmode=true&systemLocale='
             + pimcore.settings.language+'&_dc=' + date.getTime();
 
         if(this.persona && this.persona.getValue()) {

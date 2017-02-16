@@ -50,108 +50,51 @@ class Editmode extends \Zend_Controller_Plugin_Abstract
             $debugSuffix = "-debug";
         }
 
-        if (\Pimcore\Tool\Admin::isExtJS6()) {
-            $editmodeLibraries = [
-                "/pimcore/static6/js/pimcore/namespace.js",
-                "/pimcore/static6/js/lib/prototype-light.js",
-                "/pimcore/static6/js/lib/jquery.min.js",
-                "/pimcore/static6/js/lib/ext/ext-all" . $debugSuffix . ".js",
-                "/pimcore/static6/js/lib/ckeditor/ckeditor.js"
-            ];
+        $editmodeLibraries = [
+            "/pimcore/static6/js/pimcore/namespace.js",
+            "/pimcore/static6/js/lib/prototype-light.js",
+            "/pimcore/static6/js/lib/jquery.min.js",
+            "/pimcore/static6/js/lib/ext/ext-all" . $debugSuffix . ".js",
+            "/pimcore/static6/js/lib/ckeditor/ckeditor.js"
+        ];
 
-            $editmodeScripts = [
-                "/pimcore/static6/js/pimcore/functions.js",
-                "/pimcore/static6/js/pimcore/element/tag/imagehotspotmarkereditor.js",
-                "/pimcore/static6/js/pimcore/element/tag/imagecropper.js",
-                "/pimcore/static6/js/pimcore/document/edit/helper.js",
-                "/pimcore/static6/js/pimcore/elementservice.js",
-                "/pimcore/static6/js/pimcore/document/edit/dnd.js",
-                "/pimcore/static6/js/pimcore/document/tag.js",
-                "/pimcore/static6/js/pimcore/document/tags/block.js",
-                "/pimcore/static6/js/pimcore/document/tags/date.js",
-                "/pimcore/static6/js/pimcore/document/tags/href.js",
-                "/pimcore/static6/js/pimcore/document/tags/multihref.js",
-                "/pimcore/static6/js/pimcore/document/tags/checkbox.js",
-                "/pimcore/static6/js/pimcore/document/tags/image.js",
-                "/pimcore/static6/js/pimcore/document/tags/input.js",
-                "/pimcore/static6/js/pimcore/document/tags/link.js",
-                "/pimcore/static6/js/pimcore/document/tags/select.js",
-                "/pimcore/static6/js/pimcore/document/tags/snippet.js",
-                "/pimcore/static6/js/pimcore/document/tags/textarea.js",
-                "/pimcore/static6/js/pimcore/document/tags/numeric.js",
-                "/pimcore/static6/js/pimcore/document/tags/wysiwyg.js",
-                "/pimcore/static6/js/pimcore/document/tags/renderlet.js",
-                "/pimcore/static6/js/pimcore/document/tags/table.js",
-                "/pimcore/static6/js/pimcore/document/tags/video.js",
-                "/pimcore/static6/js/pimcore/document/tags/multiselect.js",
-                "/pimcore/static6/js/pimcore/document/tags/areablock.js",
-                "/pimcore/static6/js/pimcore/document/tags/area.js",
-                "/pimcore/static6/js/pimcore/document/tags/pdf.js",
-                "/pimcore/static6/js/pimcore/document/tags/embed.js",
-                "/pimcore/static6/js/pimcore/document/edit/helper.js"
-            ];
+        $editmodeScripts = [
+            "/pimcore/static6/js/pimcore/functions.js",
+            "/pimcore/static6/js/pimcore/element/tag/imagehotspotmarkereditor.js",
+            "/pimcore/static6/js/pimcore/element/tag/imagecropper.js",
+            "/pimcore/static6/js/pimcore/document/edit/helper.js",
+            "/pimcore/static6/js/pimcore/elementservice.js",
+            "/pimcore/static6/js/pimcore/document/edit/dnd.js",
+            "/pimcore/static6/js/pimcore/document/tag.js",
+            "/pimcore/static6/js/pimcore/document/tags/block.js",
+            "/pimcore/static6/js/pimcore/document/tags/date.js",
+            "/pimcore/static6/js/pimcore/document/tags/href.js",
+            "/pimcore/static6/js/pimcore/document/tags/multihref.js",
+            "/pimcore/static6/js/pimcore/document/tags/checkbox.js",
+            "/pimcore/static6/js/pimcore/document/tags/image.js",
+            "/pimcore/static6/js/pimcore/document/tags/input.js",
+            "/pimcore/static6/js/pimcore/document/tags/link.js",
+            "/pimcore/static6/js/pimcore/document/tags/select.js",
+            "/pimcore/static6/js/pimcore/document/tags/snippet.js",
+            "/pimcore/static6/js/pimcore/document/tags/textarea.js",
+            "/pimcore/static6/js/pimcore/document/tags/numeric.js",
+            "/pimcore/static6/js/pimcore/document/tags/wysiwyg.js",
+            "/pimcore/static6/js/pimcore/document/tags/renderlet.js",
+            "/pimcore/static6/js/pimcore/document/tags/table.js",
+            "/pimcore/static6/js/pimcore/document/tags/video.js",
+            "/pimcore/static6/js/pimcore/document/tags/multiselect.js",
+            "/pimcore/static6/js/pimcore/document/tags/areablock.js",
+            "/pimcore/static6/js/pimcore/document/tags/area.js",
+            "/pimcore/static6/js/pimcore/document/tags/pdf.js",
+            "/pimcore/static6/js/pimcore/document/tags/embed.js",
+            "/pimcore/static6/js/pimcore/document/edit/helper.js"
+        ];
 
-            $editmodeStylesheets = [
-                "/pimcore/static6/css/icons.css",
-                "/pimcore/static6/css/editmode.css?_dc=" . time()
-            ];
-        } else {
-            $editmodeLibraries = [
-                "/pimcore/static/js/pimcore/namespace.js",
+        $editmodeStylesheets = [
+            "/pimcore/static6/css/icons.css",
+            "/pimcore/static6/css/editmode.css?_dc=" . time()
+        ];
 
-                "/pimcore/static/js/lib/prototype-light.js",
-                "/pimcore/static/js/lib/jquery.min.js",
-                "/pimcore/static/js/lib/ext/adapter/jquery/ext-jquery-adapter-debug.js",
-
-                "/pimcore/static/js/lib/ext/ext-all-debug.js",
-                "/pimcore/static/js/lib/ext-plugins/ux/Spinner.js",
-                "/pimcore/static/js/lib/ext-plugins/ux/SpinnerField.js",
-                "/pimcore/static/js/lib/ext-plugins/ux/MultiSelect.js",
-                "/pimcore/static/js/lib/ext-plugins/GridRowOrder/roworder.js",
-                "/pimcore/static/js/lib/ckeditor/ckeditor.js",
-                "/pimcore/static/js/pimcore/libfixes.js"
-            ];
-
-            $editmodeScripts = [
-                "/pimcore/static/js/pimcore/functions.js",
-                "/pimcore/static/js/pimcore/element/tag/imagehotspotmarkereditor.js",
-                "/pimcore/static/js/pimcore/element/tag/imagecropper.js",
-                "/pimcore/static/js/pimcore/document/edit/helper.js",
-                "/pimcore/static/js/pimcore/document/edit/dnd.js",
-                "/pimcore/static/js/pimcore/document/tag.js",
-                "/pimcore/static/js/pimcore/document/tags/block.js",
-                "/pimcore/static/js/pimcore/document/tags/date.js",
-                "/pimcore/static/js/pimcore/document/tags/href.js",
-                "/pimcore/static/js/pimcore/document/tags/multihref.js",
-                "/pimcore/static/js/pimcore/document/tags/checkbox.js",
-                "/pimcore/static/js/pimcore/document/tags/image.js",
-                "/pimcore/static/js/pimcore/document/tags/input.js",
-                "/pimcore/static/js/pimcore/document/tags/link.js",
-                "/pimcore/static/js/pimcore/document/tags/select.js",
-                "/pimcore/static/js/pimcore/document/tags/snippet.js",
-                "/pimcore/static/js/pimcore/document/tags/textarea.js",
-                "/pimcore/static/js/pimcore/document/tags/numeric.js",
-                "/pimcore/static/js/pimcore/document/tags/wysiwyg.js",
-                "/pimcore/static/js/pimcore/document/tags/renderlet.js",
-                "/pimcore/static/js/pimcore/document/tags/table.js",
-                "/pimcore/static/js/pimcore/document/tags/video.js",
-                "/pimcore/static/js/pimcore/document/tags/multiselect.js",
-                "/pimcore/static/js/pimcore/document/tags/areablock.js",
-                "/pimcore/static/js/pimcore/document/tags/area.js",
-                "/pimcore/static/js/pimcore/document/tags/pdf.js",
-                "/pimcore/static/js/pimcore/document/edit/helper.js"
-            ];
-
-            $editmodeStylesheets = [
-                /*"/pimcore/static/js/lib/ext/resources/css/ext-all.css",
-                "/pimcore/static/js/lib/ext/resources/css/xtheme-gray.css",
-                "/pimcore/static/js/lib/ext-plugins/ux/css/Spinner.css",
-                "/pimcore/static/js/lib/ext-plugins/ux/css/MultiSelect.css",
-                "/pimcore/static/css/ext-admin-overwrite.css",*/
-                "/pimcore/static/css/icons.css",
-                "/pimcore/static/css/editmode.css?asd=" . time(),
-            ];
-        }
 
         //add plugin editmode JS and CSS
         try {
@@ -163,11 +106,7 @@ class Editmode extends \Zend_Controller_Plugin_Abstract
                 //registering plugins
                 foreach ($pluginConfigs as $p) {
                     $pluginJsPaths = [];
-
-                    $pluginVersions = [""];
-                    if (\Pimcore\Tool\Admin::isExtJS6()) {
-                        $pluginVersions = ["-extjs6", ""];
-                    }
+                    $pluginVersions = ["-extjs6", ""];
 
                     foreach ($pluginVersions as $pluginVersion) {
                         if (array_key_exists("pluginDocumentEditmodeJsPaths".$pluginVersion, $p['plugin'])
@@ -306,9 +245,6 @@ class Editmode extends \Zend_Controller_Plugin_Abstract
                     $html = preg_replace("@</head>@i", $editmodeHeadHtml . "\n\n</head>", $html, 1);
 
                     $startupJavascript = "/pimcore/static6/js/pimcore/document/edit/startup.js";
-                    if (!\Pimcore\Tool\Admin::isExtJS6()) {
-                        $startupJavascript = "/pimcore/static/js/pimcore/document/edit/startup.js";
-                    }
 
                     $editmodeBodyHtml = "\n\n" . '<script type="text/javascript" src="' . $startupJavascript . '?_dc=' . Version::$revision . '"></script>' . "\n\n";
                     $html = preg_replace("@</body>@i", $editmodeBodyHtml . "\n\n</body>", $html, 1);

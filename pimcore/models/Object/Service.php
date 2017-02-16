@@ -693,15 +693,8 @@ class Service extends Model\Element\Service
             foreach ($filters as $filter) {
                 $operator = "=";
 
-                /**
-                 * @extjs
-                 */
-                $filterField = $filter["field"];
-                $filterOperator = $filter["comparison"];
-                if (\Pimcore\Tool\Admin::isExtJS6()) {
-                    $filterField = $filter["property"];
-                    $filterOperator = $filter["operator"];
-                }
+                $filterField = $filter["property"];
+                $filterOperator = $filter["operator"];
 
                 if ($filter["type"] == "string") {
                     $operator = "LIKE";

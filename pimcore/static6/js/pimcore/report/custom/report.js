@@ -175,7 +175,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                 query = "filter=";
             }
 
-            query += "&extjs6=1&name=" + this.config.name;
+            query += "&name=" + this.config.name;
 
             if (btn.getItemId() === 'exportWithHeaders') {
                 query += '&headers=1';

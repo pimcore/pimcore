@@ -43,7 +43,7 @@ class Maintenance extends \Zend_Controller_Plugin_Abstract
         if ($maintenance && !in_array(\Pimcore\Tool::getClientIp(), $serverIps)) {
             header("HTTP/1.1 503 Service Temporarily Unavailable", 503);
 
-            $file = PIMCORE_PATH . "/static/html/maintenance.html";
+            $file = PIMCORE_PATH . "/static6/html/maintenance.html";
 
             $customFile = PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . "/maintenance.html";
             if (file_exists($customFile)) {

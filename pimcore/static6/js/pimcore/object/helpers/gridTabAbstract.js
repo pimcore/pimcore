@@ -467,7 +467,6 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
         }
 
         var params = {
-            extjs6: true,
             filter: filters,
             condition: condition,
             classId: this.classId,

@@ -218,13 +218,7 @@ class Multiselect extends Model\Object\ClassDefinition\Data
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
-        if (\Pimcore\Tool\Admin::isExtJS6()) {
-            return $data;
-        } elseif (strlen($data)) {
-            return explode(",", $data);
-        }
-
-        return null;
+        return $data;
     }
 
     /**

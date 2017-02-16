@@ -243,10 +243,7 @@ class EditmodeListener implements EventSubscriberInterface
             return $assets;
         }
 
-        $pluginVersions = [''];
-        if (Admin::isExtJS6()) {
-            $pluginVersions = ['-extjs6', ''];
-        }
+        $pluginVersions = ['-extjs6'];
 
         foreach ($pluginConfigs as $pluginConfig) {
             try {

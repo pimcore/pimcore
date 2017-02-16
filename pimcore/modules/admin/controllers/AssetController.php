@@ -789,7 +789,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
                         $asset->getData();
                         $success = true;
                     } catch (\Exception $e) {
-                        if (Tool\Admin::isExtJS6() && $e instanceof Element\ValidationException) {
+                        if ($e instanceof Element\ValidationException) {
                             throw $e;
                         }
                         $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
@@ -804,7 +804,7 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
             $this->_helper->json(false);
         } catch (\Exception $e) {
             Logger::log($e);
-            if (Tool\Admin::isExtJS6() && $e instanceof Element\ValidationException) {
+            if ($e instanceof Element\ValidationException) {
                 $this->_helper->json(["success" => false, "type" => "ValidationException", "message" => $e->getMessage(), "stack" => $e->getTraceAsString(), "code" => $e->getCode()]);
             }
             throw $e;

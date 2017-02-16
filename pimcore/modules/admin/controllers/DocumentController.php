@@ -486,12 +486,7 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
 
             if ($this->getParam("xaction") == "destroy") {
                 $data = \Zend_Json::decode($this->getParam("data"));
-                if (\Pimcore\Tool\Admin::isExtJS6()) {
-                    $id = $data["id"];
-                } else {
-                    $id = $data;
-                }
-
+                $id = $data["id"];
                 $type = Document\DocType::getById($id);
                 $type->delete();
 
@@ -898,10 +893,8 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
 
         // add icon
         $tmpDocument["iconCls"] = "pimcore_icon_" . $childDocument->getType();
-        if (\Pimcore\Tool\Admin::isExtJS6()) {
-            $tmpDocument["expandable"] = $childDocument->hasChilds();
-            $tmpDocument["loaded"] = !$childDocument->hasChilds();
-        }
+        $tmpDocument["expandable"] = $childDocument->hasChilds();
+        $tmpDocument["loaded"] = !$childDocument->hasChilds();
 
         // set type specific settings
         if ($childDocument->getType() == "page") {

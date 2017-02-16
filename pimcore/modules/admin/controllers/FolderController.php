@@ -72,7 +72,7 @@ class Admin_FolderController extends \Pimcore\Controller\Action\Admin\Document
             }
         } catch (\Exception $e) {
             Logger::log($e);
-            if (Pimcore\Tool\Admin::isExtJS6() && $e instanceof Element\ValidationException) {
+            if ($e instanceof Element\ValidationException) {
                 $this->_helper->json(["success" => false, "type" => "ValidationException", "message" => $e->getMessage(), "stack" => $e->getTraceAsString(), "code" => $e->getCode()]);
             }
             throw $e;

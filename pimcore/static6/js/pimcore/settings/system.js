@@ -220,20 +220,6 @@ pimcore.settings.system = Class.create({
                                 width: 600,
                                 value: t('instance_identifier_info'),
                                 cls: "pimcore_extra_label_bottom"
-                            },
-                            {
-                                fieldLabel: t("user_interface") + " / " + t("extjs_version"),
-                                xtype: "combo",
-                                width: 600,
-                                editable: false,
-                                name: "general.extjs6",
-                                value: this.getValue("general.extjs6"),
-                                store: [
-                                    ["", t("legacy_user_interface") + " (" + t("extjs_34") + ")"],
-                                    ["1", t("new_user_interface") + " (" + t("extjs_6") + ")"]
-                                ],
-                                mode: "local",
-                                triggerAction: "all"
                             }
                         ]
                     }

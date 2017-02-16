@@ -109,13 +109,5 @@ class Admin_IndexController extends \Pimcore\Controller\Action\Admin
 
             return $adminSession->csrfToken;
         });
-
-        if (\Pimcore\Tool\Admin::isExtJS6()) {
-            $this->forward("index6");
-        }
-    }
-
-    public function index6Action()
-    {
     }
 }

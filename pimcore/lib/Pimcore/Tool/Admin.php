@@ -205,29 +205,7 @@ class Admin
      */
     public static function isExtJS6()
     {
-        if (isset($_SERVER["HTTP_X_PIMCORE_EXTJS_VERSION_MAJOR"]) && $_SERVER["HTTP_X_PIMCORE_EXTJS_VERSION_MAJOR"] == 6) {
-            return true;
-        }
-
-        if (isset($_SERVER["HTTP_X_PIMCORE_EXTJS_VERSION_MAJOR"]) && $_SERVER["HTTP_X_PIMCORE_EXTJS_VERSION_MAJOR"] < 6) {
-            return false;
-        }
-
-        if (isset($_REQUEST["extjs3"])) {
-            return false;
-        }
-
-        if (isset($_REQUEST["extjs6"])) {
-            return true;
-        }
-
-        $config = \Pimcore\Config::getSystemConfig();
-        $mainSwitch = $config->general->extjs6;
-        if ($mainSwitch) {
-            return true;
-        }
-
-        return false;
+        return true;
     }
 
     public static function reorderWebsiteLanguages($user, $languages, $returnLanguageArray = false)

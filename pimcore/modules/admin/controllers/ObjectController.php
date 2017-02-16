@@ -176,12 +176,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
         }
 
         $tmpObject["allowChildren"] = true;
-
-        if (\Pimcore\Tool\Admin::isExtJS6()) {
-            $tmpObject["leaf"] = !$hasChildren;
-        } else {
-            $tmpObject["leaf"] = false;
-        }
+        $tmpObject["leaf"] = !$hasChildren;
         $tmpObject["cls"] = "";
 
         $tmpObject["qtipCfg"] = $child->getElementAdminStyle()->getElementQtipConfig();
@@ -225,15 +220,12 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             $tmpObject["cls"] .= "pimcore_treenode_lockOwner ";
         }
 
-        if (\Pimcore\Tool\Admin::isExtJS6()) {
-            if ($tmpObject["leaf"]) {
-                $tmpObject["expandable"] = false;
-                $tmpObject["expanded"] = true;
-                $tmpObject["leaf"] = false;
-                $tmpObject["loaded"] = true;
-            }
+        if ($tmpObject["leaf"]) {
+            $tmpObject["expandable"] = false;
+            $tmpObject["expanded"] = true;
+            $tmpObject["leaf"] = false;
+            $tmpObject["loaded"] = true;
         }
-
 
         return $tmpObject;
     }
@@ -1130,7 +1122,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             }
         } catch (\Exception $e) {
             Logger::log($e);
-            if (Tool\Admin::isExtJS6() && $e instanceof Element\ValidationException) {
+            if ($e instanceof Element\ValidationException) {
                 $this->_helper->json(["success" => false, "type" => "ValidationException", "message" => $e->getMessage(), "stack" => $e->getTraceAsString(), "code" => $e->getCode()]);
             }
             throw $e;

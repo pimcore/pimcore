@@ -268,11 +268,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
                 $filters = json_decode($filterString);
 
                 foreach ($filters as $f) {
-                    if (\Pimcore\Tool\Admin::isExtJS6()) {
-                        $conditionParts[]= $db->getQuoteIdentifierSymbol() . $f->property . $db->getQuoteIdentifierSymbol() . " LIKE " . $db->quote("%" . $f->value . "%");
-                    } else {
-                        $conditionParts[]= $db->getQuoteIdentifierSymbol() . $f->field . $db->getQuoteIdentifierSymbol() . " LIKE " . $db->quote("%" . $f->value . "%");
-                    }
+                    $conditionParts[]= $db->getQuoteIdentifierSymbol() . $f->property . $db->getQuoteIdentifierSymbol() . " LIKE " . $db->quote("%" . $f->value . "%");
                 }
             }
 
@@ -399,11 +395,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
                 $filters = json_decode($filterString);
 
                 foreach ($filters as $f) {
-                    if (\Pimcore\Tool\Admin::isExtJS6()) {
-                        $conditionParts[]= $db->getQuoteIdentifierSymbol() . $f->property . $db->getQuoteIdentifierSymbol() . " LIKE " . $db->quote("%" . $f->value . "%");
-                    } else {
-                        $conditionParts[]= $db->getQuoteIdentifierSymbol() . $f->field . $db->getQuoteIdentifierSymbol() . " LIKE " . $db->quote("%" . $f->value . "%");
-                    }
+                    $conditionParts[]= $db->getQuoteIdentifierSymbol() . $f->property . $db->getQuoteIdentifierSymbol() . " LIKE " . $db->quote("%" . $f->value . "%");
                 }
             }
 
@@ -1070,11 +1062,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
                 $filters = json_decode($filterString);
 
                 foreach ($filters as $f) {
-                    if (\Pimcore\Tool\Admin::isExtJS6()) {
-                        $conditionParts[]= $db->getQuoteIdentifierSymbol() . $f->property . $db->getQuoteIdentifierSymbol() . " LIKE " . $db->quote("%" . $f->value . "%");
-                    } else {
-                        $conditionParts[]= $db->getQuoteIdentifierSymbol() . $f->field . $db->getQuoteIdentifierSymbol() . " LIKE " . $db->quote("%" . $f->value . "%");
-                    }
+                    $conditionParts[]= $db->getQuoteIdentifierSymbol() . $f->property . $db->getQuoteIdentifierSymbol() . " LIKE " . $db->quote("%" . $f->value . "%");
                 }
             }
             $condition = implode(" AND ", $conditionParts);

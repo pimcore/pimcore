@@ -855,39 +855,31 @@ class Service extends Model\AbstractModel
     public static function fixAllowedTypes($data, $type)
     {
         // this is the new method with Ext.form.MultiSelect
-        if ((is_string($data) && !empty($data)) || (\Pimcore\Tool\Admin::isExtJS6() && is_array($data) && count($data))) {
-            if (!\Pimcore\Tool\Admin::isExtJS6()) {
-                $parts = explode(",", $data);
+        if ((is_string($data) && !empty($data)) || (is_array($data) && count($data))) {
+            $first = reset($data);
+            if (!is_array($first)) {
+                $parts = $data;
                 $data = [];
                 foreach ($parts as $elementType) {
                     $data[] = [$type => $elementType];
                 }
             } else {
-                $first = reset($data);
-                if (!is_array($first)) {
-                    $parts = $data;
-                    $data = [];
-                    foreach ($parts as $elementType) {
-                        $data[] = [$type => $elementType];
-                    }
-                } else {
-                    $newList = [];
-                    foreach ($data as $key => $item) {
-                        if ($item) {
-                            if (is_array($item)) {
-                                foreach ($item as $itemKey => $itemValue) {
-                                    if ($itemValue) {
-                                        $newList[$key][$itemKey] = $itemValue;
-                                    }
+                $newList = [];
+                foreach ($data as $key => $item) {
+                    if ($item) {
+                        if (is_array($item)) {
+                            foreach ($item as $itemKey => $itemValue) {
+                                if ($itemValue) {
+                                    $newList[$key][$itemKey] = $itemValue;
                                 }
-                            } elseif ($item) {
-                                $newList[$key] = $item;
                             }
+                        } elseif ($item) {
+                            $newList[$key] = $item;
                         }
                     }
-
-                    $data = $newList;
                 }
+
+                $data = $newList;
             }
         }
 

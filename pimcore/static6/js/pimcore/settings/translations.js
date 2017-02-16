@@ -268,7 +268,7 @@ pimcore.settings.translations = Class.create({
                 if (buttonValue == "yes") {
                     var queryString = "searchString=" + this.filterField.getValue();
                     var encodedFilters = proxy.encodeFilters(storeFilters);
-                    queryString += "&filter=" + encodedFilters + "&extjs6=1";
+                    queryString += "&filter=" + encodedFilters;
                     pimcore.helpers.download(Ext.urlAppend(this.exportUrl, queryString));
                 } else {
                     pimcore.helpers.download(this.exportUrl);

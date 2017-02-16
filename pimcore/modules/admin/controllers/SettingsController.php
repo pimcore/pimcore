@@ -37,12 +37,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
 
             if ($this->getParam("xaction") == "destroy") {
                 $data = \Zend_Json::decode($this->getParam("data"));
-                if (\Pimcore\Tool\Admin::isExtJS6()) {
-                    $id = $data["id"];
-                } else {
-                    $id = $data;
-                }
-
+                $id = $data["id"];
                 $metadata = Metadata\Predefined::getById($id);
                 $metadata->delete();
 
@@ -138,12 +133,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
 
             if ($this->getParam("xaction") == "destroy") {
                 $data = \Zend_Json::decode($this->getParam("data"));
-                if (\Pimcore\Tool\Admin::isExtJS6()) {
-                    $id = $data["id"];
-                } else {
-                    $id = $data;
-                }
-
+                $id = $data["id"];
                 $property = Property\Predefined::getById($id);
                 $property->delete();
 
@@ -371,7 +361,6 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
                 "validLanguages" => implode(",", $filteredLanguages),
                 "fallbackLanguages" => $fallbackLanguages,
                 "defaultLanguage" => $values["general.defaultLanguage"],
-                "extjs6" => $values["general.extjs6"],
                 "loginscreencustomimage" => $values["general.loginscreencustomimage"],
                 "disableusagestatistics" => $values["general.disableusagestatistics"],
                 "debug" => $values["general.debug"],
@@ -662,12 +651,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
 
             if ($this->getParam("xaction") == "destroy") {
                 $data = \Zend_Json::decode($this->getParam("data"));
-                if (\Pimcore\Tool\Admin::isExtJS6()) {
-                    $id = $data["id"];
-                } else {
-                    $id = $data;
-                }
-
+                $id = $data["id"];
                 $route = Staticroute::getById($id);
                 $route->delete();
 
@@ -766,12 +750,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
 
             if ($this->getParam("xaction") == "destroy") {
                 $data = \Zend_Json::decode($this->getParam("data"));
-                if (\Pimcore\Tool\Admin::isExtJS6()) {
-                    $id = $data["id"];
-                } else {
-                    $id = $data;
-                }
-
+                $id = $data["id"];
                 $redirect = Redirect::getById($id);
                 $redirect->delete();
 
@@ -873,12 +852,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
 
             if ($this->getParam("xaction") == "destroy") {
                 $data = \Zend_Json::decode($this->getParam("data"));
-                if (\Pimcore\Tool\Admin::isExtJS6()) {
-                    $id = $data["id"];
-                } else {
-                    $id = $data;
-                }
-
+                $id = $data["id"];
                 $glossary = Glossary::getById($id);
                 $glossary->delete();
 
@@ -981,7 +955,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
         $sitesList = new Model\Site\Listing();
         $sitesObjects = $sitesList->load();
         $sites = [[
-            "id" => \Pimcore\Tool\Admin::isExtJS6() ? "default" : "",
+            "id" => "default",
             "rootId" => 1,
             "domains" => "",
             "rootPath" => "/",
@@ -1395,12 +1369,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
                 }
 
                 if ($this->getParam("xaction") == "destroy") {
-                    if (\Pimcore\Tool\Admin::isExtJS6()) {
-                        $id = $data["id"];
-                    } else {
-                        $id = $data;
-                    }
-
+                    $id = $data["id"];
                     $setting = WebsiteSetting::getById($id);
                     $setting->delete();
 

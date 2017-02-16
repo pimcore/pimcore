@@ -649,7 +649,7 @@ class Pimcore
                     }
 
                     $jsPaths = [];
-                    $isExtJs6 = \Pimcore\Tool\Admin::isExtJS6();
+                    $isExtJs6 = true;
 
                     if ($isExtJs6 && is_array($p['plugin']['pluginJsPaths-extjs6'])
                         && isset($p['plugin']['pluginJsPaths-extjs6']['path'])

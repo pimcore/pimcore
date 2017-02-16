@@ -167,7 +167,7 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
                 if (is_dir($file)) {
                     $itemConfig["leaf"] = false;
                     $itemConfig["type"] = "folder";
-                    if (\Pimcore\Tool\Admin::isExtJS6() && is_dir_empty($file)) {
+                    if (is_dir_empty($file)) {
                         $itemConfig["loaded"] = true;
                     }
                     $itemConfig["expandable"] = true;
@@ -553,13 +553,8 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
     public function getLanguageFlagAction()
     {
         $iconPath = Tool::getLanguageFlagFile($this->getParam("language"));
-        if (Tool\Admin::isExtJS6()) {
-            header("Content-Type: image/svg+xml");
-        } else {
-            header("Content-Type: image/png");
-        }
+        header("Content-Type: image/svg+xml");
         echo file_get_contents($iconPath);
-
         exit;
     }
 

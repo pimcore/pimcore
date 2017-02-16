@@ -156,19 +156,13 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
                 }
 
                 if ($t) {
-                    if (Admin::isExtJS6()) {
-                        if (is_string($t)) {
-                            $allowedTypes[] = $t;
-                        } elseif (is_array($t) && count($t) > 0) {
-                            if (isset($t["assetTypes"])) {
-                                $allowedTypes []= $t["assetTypes"];
-                            } else {
-                                $allowedTypes[]= $t;
-                            }
-                        }
-                    } else {
-                        if (is_string($t)) {
-                            $allowedTypes[] = $t;
+                    if (is_string($t)) {
+                        $allowedTypes[] = $t;
+                    } elseif (is_array($t) && count($t) > 0) {
+                        if (isset($t["assetTypes"])) {
+                            $allowedTypes []= $t["assetTypes"];
+                        } else {
+                            $allowedTypes[]= $t;
                         }
                     }
                 }

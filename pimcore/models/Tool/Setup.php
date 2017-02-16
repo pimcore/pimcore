@@ -60,7 +60,6 @@ class Setup extends Model\AbstractModel
                     "debug" => "1",
                     "debugloglevel" => "debug",
                     "custom_php_logfile" => "1",
-                    "extjs6" => "1",
                 ],
                 "database" => [
                     "adapter" => "Mysqli",

@@ -5177,14 +5177,6 @@
         "definition": "No data to display"
     },
     {
-        "term": "extjs_version",
-        "definition": "Ext JS Version"
-    },
-    {
-        "term": "extjs_34",
-        "definition": "Ext JS 3.4"
-    },
-    {
         "term": "log_applicationlog",
         "definition": "Application Logger"
     },
@@ -5413,10 +5405,6 @@
         "definition": "Collection"
     },
     {
-        "term": "extjs_6",
-        "definition": "Ext JS 6"
-    },
-    {
         "term": "classificationstore_mbx_entercollection_title",
         "definition": "New Collection"
     },
@@ -5431,18 +5419,6 @@
     {
         "term": "replacing",
         "definition": "replacing"
-    },
-    {
-        "term": "legacy_user_interface",
-        "definition": "Legacy User Interface (deprecated)"
-    },
-    {
-        "term": "new_user_interface",
-        "definition": "Modern User Interface"
-    },
-    {
-        "term": "user_interface",
-        "definition": "User Interface"
     },
     {
         "term": "quantityValue_field",
