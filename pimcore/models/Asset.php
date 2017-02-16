@@ -253,7 +253,7 @@ class Asset extends Element\AbstractElement
 
         $cacheKey = "asset_" . $id;
 
-        if(!$force && \Zend_Registry::isRegistered($cacheKey)) {
+        if (!$force && \Zend_Registry::isRegistered($cacheKey)) {
             $asset = \Zend_Registry::get($cacheKey);
             if ($asset) {
                 return $asset;

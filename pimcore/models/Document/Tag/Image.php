@@ -352,6 +352,14 @@ class Image extends Model\Document\Tag
     }
 
     /**
+     * @param string $text
+     */
+    public function setText($text)
+    {
+        $this->alt = $text;
+    }
+
+    /**
      * @return string
      */
     public function getAlt()
@@ -479,8 +487,7 @@ class Image extends Model\Document\Tag
 
     /**
      * @param $ownerDocument
-     * @param array $tags
-     * @return array|mixed
+     * @param array $blockedTags
      */
     public function getCacheTags($ownerDocument, $tags = [])
     {
@@ -566,8 +573,7 @@ class Image extends Model\Document\Tag
 
     /**
      * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param null $document
-     * @param array $params
+     * @param mixed $params
      * @param null $idMapper
      * @throws \Exception
      */
@@ -739,6 +745,7 @@ class Image extends Model\Document\Tag
      *  "asset" => array(...)
      * )
      * @param array $idMapping
+     * @return void
      */
     public function rewriteIds($idMapping)
     {

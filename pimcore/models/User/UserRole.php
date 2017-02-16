@@ -57,17 +57,17 @@ class UserRole extends AbstractUser
     /**
      * @var array
      */
-    public $perspectives;
+    public $perspectives = [];
 
     /**
      * @var array
      */
-    public $websiteTranslationLanguagesView;
+    public $websiteTranslationLanguagesView = [];
 
     /**
      * @var array
      */
-    public $websiteTranslationLanguagesEdit;
+    public $websiteTranslationLanguagesEdit = [];
 
     /**
      *

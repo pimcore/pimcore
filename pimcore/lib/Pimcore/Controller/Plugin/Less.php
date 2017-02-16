@@ -14,6 +14,9 @@
 
 namespace Pimcore\Controller\Plugin;
 
+/**
+ * @deprecated
+ */
 class Less extends \Zend_Controller_Plugin_Abstract
 {
 
