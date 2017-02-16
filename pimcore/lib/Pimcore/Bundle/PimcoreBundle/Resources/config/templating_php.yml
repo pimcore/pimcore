@@ -105,3 +105,8 @@ services:
         arguments: ['@pimcore.templating.view_helper.placeholder.container_service']
         tags:
             - { name: templating.helper, alias: headMeta }
+
+    pimcore.templating.view_helper.device:
+        class: Pimcore\Bundle\PimcoreBundle\Templating\Helper\Device
+        tags:
+            - { name: templating.helper, alias: device }
