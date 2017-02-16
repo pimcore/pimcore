@@ -8,6 +8,15 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
+        # webdav http basic
+        # TODO check if this config is enough
+        # TODO use http_digest?
+        admin_webdav:
+            pattern: ^/admin/asset/webdav
+            provider: pimcore_admin
+            http_basic: ~
+
+        # admin form login
         admin:
             anonymous: ~
             pattern: ^/admin

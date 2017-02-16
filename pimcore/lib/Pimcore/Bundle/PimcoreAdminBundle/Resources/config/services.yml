@@ -1,7 +1,20 @@
 services:
+    #
+    # SECURITY
+    #
+
     pimcore_admin.security.form_authenticator:
         class: Pimcore\Bundle\PimcoreAdminBundle\Security\FormAuthenticator
         arguments: ['@router']
 
     pimcore_admin.security.user_provider:
         class: Pimcore\Bundle\PimcoreAdminBundle\Security\User\UserProvider
+
+    # decorate the symfony encoder factory with our own
+    # this allows us to use our password encoder including the user context
+    # for pimcore users
+    pimcore_admin.security.encoder_factory:
+        class: Pimcore\Bundle\PimcoreAdminBundle\Security\Encoder\EncoderFactory
+        decorates: security.encoder_factory
+        arguments: ['@pimcore_admin.security.encoder_factory.inner']
+        public: false
