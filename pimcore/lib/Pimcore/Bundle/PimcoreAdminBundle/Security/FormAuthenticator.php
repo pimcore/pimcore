@@ -45,14 +45,16 @@ class FormAuthenticator extends AbstractGuardAuthenticator
      */
     public function getCredentials(Request $request)
     {
-        if ($request->getPathInfo() != '/login' || !$request->isMethod('POST')) {
+        if ($request->getPathInfo() != '/admin/login' || !$request->isMethod('POST')) {
             return null;
         }
 
-        return [
+        $credentials = [
             'username' => $request->request->get('username'),
             'password' => $request->request->get('password')
         ];
+
+        return $credentials;
     }
 
     /**
