@@ -2,6 +2,7 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\EventListener;
 
+use Pimcore\API\Bundle\PimcoreBundleManager;
 use Pimcore\Bundle\PimcoreBundle\Service\Request\DocumentResolver;
 use Pimcore\Bundle\PimcoreBundle\Service\Request\EditmodeResolver;
 use Pimcore\Config;
@@ -34,6 +35,11 @@ class EditmodeListener implements EventSubscriberInterface
     protected $documentResolver;
 
     /**
+     * @var PimcoreBundleManager
+     */
+    protected $bundleManager;
+
+    /**
      * @var array
      */
     protected $contentTypes = [
@@ -43,11 +49,13 @@ class EditmodeListener implements EventSubscriberInterface
     /**
      * @param EditmodeResolver $editmodeResolver
      * @param DocumentResolver $documentResolver
+     * @param PimcoreBundleManager $bundleManager
      */
-    public function __construct(EditmodeResolver $editmodeResolver, DocumentResolver $documentResolver)
+    public function __construct(EditmodeResolver $editmodeResolver, DocumentResolver $documentResolver, PimcoreBundleManager $bundleManager)
     {
         $this->editmodeResolver = $editmodeResolver;
         $this->documentResolver = $documentResolver;
+        $this->bundleManager    = $bundleManager;
     }
 
     /**
@@ -174,15 +182,6 @@ class EditmodeListener implements EventSubscriberInterface
         $scripts     = $this->getEditmodeScripts();
         $stylesheets = $this->getEditmodeStylesheets();
 
-        $pluginAssets = $this->getPluginAssets();
-        if (!empty($pluginAssets['js'])) {
-            $scripts = array_merge($scripts, $pluginAssets['js']);
-        }
-
-        if (!empty($pluginAssets['css'])) {
-            $stylesheets = array_merge($stylesheets, $pluginAssets['css']);
-        }
-
         $headHtml = "\n\n\n<!-- pimcore editmode -->\n";
         $headHtml .= '<meta name="google" value="notranslate">';
         $headHtml .= "\n\n";
@@ -240,100 +239,6 @@ class EditmodeListener implements EventSubscriberInterface
     }
 
     /**
-     * Add plugin editmode JS and CSS
-     *
-     * @return array
-     */
-    protected function getPluginAssets()
-    {
-        $assets = [
-            'js'  => [],
-            'css' => []
-        ];
-
-        $pluginConfigs = ExtensionManager::getPluginConfigs();
-        if (empty($pluginConfigs)) {
-            return $assets;
-        }
-
-        $pluginVersions = ['-extjs6'];
-
-        foreach ($pluginConfigs as $pluginConfig) {
-            try {
-                $assets = $this->processPluginConfig($pluginConfig, $pluginVersions, $assets);
-            } catch (\Exception $e) {
-                $this->logger->alert('There is a problem with the plugin configuration');
-                $this->logger->alert($e);
-            }
-        }
-    }
-
-    /**
-     * Load plugin editmode files
-     *
-     * @param array $pluginConfig
-     * @param array $pluginVersions
-     * @param array $assets
-     * @return array
-     */
-    protected function processPluginConfig(array $pluginConfig, array $pluginVersions, array $assets)
-    {
-        foreach (array_keys($assets) as $assetType) {
-            $assets[$assetType] = array_merge(
-                $assets[$assetType],
-                $this->getPluginAssetTypeFiles($assetType, $pluginConfig, $pluginVersions)
-            );
-        }
-
-        return $assets;
-    }
-
-    /**
-     * Load plugin editmode files for an asset type (e.g. JS)
-     *
-     * @param $type
-     * @param array $pluginConfig
-     * @param array $pluginVersions
-     * @return array
-     */
-    protected function getPluginAssetTypeFiles($type, array $pluginConfig, array $pluginVersions)
-    {
-        $baseConfigKey = sprintf('pluginDocumentEditmode%sPaths', ucfirst($type));
-
-        $files = [];
-        foreach ($pluginVersions as $pluginVersion) {
-            $configKey = $baseConfigKey . $pluginVersion;
-
-            if (array_key_exists($configKey, $pluginConfig['plugin'])
-                && is_array($pluginConfig['plugin'][$configKey])
-                && isset($pluginConfig['plugin'][$configKey]['path'])
-            ) {
-                $path = $pluginConfig['plugin'][$configKey]['path'];
-
-                if (is_array($path)) {
-                    $files = $path;
-                    break;
-                } elseif (null !== $path) {
-                    $files[] = $path;
-                    break;
-                }
-            }
-        }
-
-        // manipulate path for frontend
-        $result = [];
-        if (is_array($files) and count($files) > 0) {
-            foreach ($files as $file) {
-                if (is_file(PIMCORE_PLUGINS_PATH . $file)) {
-                    $result[] = '/plugins' . $file;
-                }
-            }
-        }
-
-        return $result;
-    }
-
-    /**
      * @return array
      */
     protected function getEditmodeLibraries()
@@ -352,37 +257,40 @@ class EditmodeListener implements EventSubscriberInterface
      */
     protected function getEditmodeScripts()
     {
-        return [
-            '/pimcore/static6/js/pimcore/functions.js',
-            '/pimcore/static6/js/pimcore/element/tag/imagehotspotmarkereditor.js',
-            '/pimcore/static6/js/pimcore/element/tag/imagecropper.js',
-            '/pimcore/static6/js/pimcore/document/edit/helper.js',
-            '/pimcore/static6/js/pimcore/elementservice.js',
-            '/pimcore/static6/js/pimcore/document/edit/dnd.js',
-            '/pimcore/static6/js/pimcore/document/tag.js',
-            '/pimcore/static6/js/pimcore/document/tags/block.js',
-            '/pimcore/static6/js/pimcore/document/tags/date.js',
-            '/pimcore/static6/js/pimcore/document/tags/href.js',
-            '/pimcore/static6/js/pimcore/document/tags/multihref.js',
-            '/pimcore/static6/js/pimcore/document/tags/checkbox.js',
-            '/pimcore/static6/js/pimcore/document/tags/image.js',
-            '/pimcore/static6/js/pimcore/document/tags/input.js',
-            '/pimcore/static6/js/pimcore/document/tags/link.js',
-            '/pimcore/static6/js/pimcore/document/tags/select.js',
-            '/pimcore/static6/js/pimcore/document/tags/snippet.js',
-            '/pimcore/static6/js/pimcore/document/tags/textarea.js',
-            '/pimcore/static6/js/pimcore/document/tags/numeric.js',
-            '/pimcore/static6/js/pimcore/document/tags/wysiwyg.js',
-            '/pimcore/static6/js/pimcore/document/tags/renderlet.js',
-            '/pimcore/static6/js/pimcore/document/tags/table.js',
-            '/pimcore/static6/js/pimcore/document/tags/video.js',
-            '/pimcore/static6/js/pimcore/document/tags/multiselect.js',
-            '/pimcore/static6/js/pimcore/document/tags/areablock.js',
-            '/pimcore/static6/js/pimcore/document/tags/area.js',
-            '/pimcore/static6/js/pimcore/document/tags/pdf.js',
-            '/pimcore/static6/js/pimcore/document/tags/embed.js',
-            '/pimcore/static6/js/pimcore/document/edit/helper.js'
-        ];
+        return array_merge(
+            [
+                '/pimcore/static6/js/pimcore/functions.js',
+                '/pimcore/static6/js/pimcore/element/tag/imagehotspotmarkereditor.js',
+                '/pimcore/static6/js/pimcore/element/tag/imagecropper.js',
+                '/pimcore/static6/js/pimcore/document/edit/helper.js',
+                '/pimcore/static6/js/pimcore/elementservice.js',
+                '/pimcore/static6/js/pimcore/document/edit/dnd.js',
+                '/pimcore/static6/js/pimcore/document/tag.js',
+                '/pimcore/static6/js/pimcore/document/tags/block.js',
+                '/pimcore/static6/js/pimcore/document/tags/date.js',
+                '/pimcore/static6/js/pimcore/document/tags/href.js',
+                '/pimcore/static6/js/pimcore/document/tags/multihref.js',
+                '/pimcore/static6/js/pimcore/document/tags/checkbox.js',
+                '/pimcore/static6/js/pimcore/document/tags/image.js',
+                '/pimcore/static6/js/pimcore/document/tags/input.js',
+                '/pimcore/static6/js/pimcore/document/tags/link.js',
+                '/pimcore/static6/js/pimcore/document/tags/select.js',
+                '/pimcore/static6/js/pimcore/document/tags/snippet.js',
+                '/pimcore/static6/js/pimcore/document/tags/textarea.js',
+                '/pimcore/static6/js/pimcore/document/tags/numeric.js',
+                '/pimcore/static6/js/pimcore/document/tags/wysiwyg.js',
+                '/pimcore/static6/js/pimcore/document/tags/renderlet.js',
+                '/pimcore/static6/js/pimcore/document/tags/table.js',
+                '/pimcore/static6/js/pimcore/document/tags/video.js',
+                '/pimcore/static6/js/pimcore/document/tags/multiselect.js',
+                '/pimcore/static6/js/pimcore/document/tags/areablock.js',
+                '/pimcore/static6/js/pimcore/document/tags/area.js',
+                '/pimcore/static6/js/pimcore/document/tags/pdf.js',
+                '/pimcore/static6/js/pimcore/document/tags/embed.js',
+                '/pimcore/static6/js/pimcore/document/edit/helper.js'
+            ],
+            $this->bundleManager->getJsPaths()
+        );
     }
 
     /**
@@ -390,9 +298,12 @@ class EditmodeListener implements EventSubscriberInterface
      */
     protected function getEditmodeStylesheets()
     {
-        return [
-            '/pimcore/static6/css/icons.css',
-            '/pimcore/static6/css/editmode.css?_dc=' . time()
-        ];
+        return array_merge(
+            [
+                '/pimcore/static6/css/icons.css',
+                '/pimcore/static6/css/editmode.css?_dc=' . time()
+            ],
+            $this->bundleManager->getCssPaths()
+        );
     }
 }

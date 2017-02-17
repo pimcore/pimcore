@@ -30,7 +30,8 @@ class IndexController extends AdminController
 
         $this
             ->addRuntimePerspective($view, $user)
-            ->addReportConfig($view);
+            ->addReportConfig($view)
+            ->addPluginAssets($view);
 
         $settings = $this->buildPimcoreSettings($request, $view, $user);
         $view->settings = $settings;
@@ -61,6 +62,20 @@ class IndexController extends AdminController
     {
         // TODO where is this used?
         $view->report_config = Config::getReportConfig();
+
+        return $this;
+    }
+
+    /**
+     * @param ViewModel $view
+     * @return $this
+     */
+    protected function addPluginAssets(ViewModel $view)
+    {
+        $bundleManager = $this->get('pimcore.extension.bundle_manager');
+
+        $view->pluginJsPaths  = $bundleManager->getJsPaths();
+        $view->pluginCssPaths = $bundleManager->getCssPaths();
 
         return $this;
     }

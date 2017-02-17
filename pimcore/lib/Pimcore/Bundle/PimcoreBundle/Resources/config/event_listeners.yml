@@ -82,7 +82,7 @@ services:
 
     pimcore.event_listener.editmode_listener:
         class: Pimcore\Bundle\PimcoreBundle\EventListener\EditmodeListener
-        arguments: ['@pimcore.service.request.editmode_resolver', '@pimcore.service.request.document_resolver']
+        arguments: ['@pimcore.service.request.editmode_resolver', '@pimcore.service.request.document_resolver', '@pimcore.extension.bundle_manager']
         calls:
             - [setLogger, ['@logger']]
         tags:

@@ -636,6 +636,18 @@ if (PIMCORE_DEVMODE || $extjsDev) {
     $pluginDcValue = 1;
 }
 
+?>
+
+<?php foreach ($this->pluginJsPaths as $pluginJsPath): ?>
+    <script type="text/javascript" src="<?= $pluginJsPath ?>?_dc=<?= $pluginDcValue; ?>"></script>
+<?php endforeach; ?>
+
+<?php foreach ($this->pluginCssPaths as $pluginCssPath): ?>
+    <link rel="stylesheet" type="text/css" href="<?= $cssPath ?>?_dc=<?= $pluginDcValue; ?>"/>
+<?php endforeach; ?>
+
+
+<?php
 try {
     $pluginBroker = $this->container()->get('pimcore.plugin_broker');
     if ($pluginBroker instanceof \Pimcore\API\Plugin\Broker) {
