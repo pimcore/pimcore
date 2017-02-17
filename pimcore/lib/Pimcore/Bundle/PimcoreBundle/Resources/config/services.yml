@@ -14,6 +14,15 @@ services:
     pimcore.web_path_resolver:
         class: Pimcore\Bundle\PimcoreBundle\Service\WebPathResolver
 
+
+    #
+    # PIMCORE BUNDLES/EXTENSIONS
+    #
+
+    pimcore.extension.bundle_manager:
+        class: Pimcore\API\Bundle\PimcoreBundleManager
+        arguments: ['@service_container']
+
     #
     # ROUTING
     #
