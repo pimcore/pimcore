@@ -2,11 +2,12 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\Service\Request;
 
+use Pimcore\Tool\Authentication;
 use Symfony\Component\HttpFoundation\Request;
 
 class EditmodeResolver extends AbstractRequestResolver
 {
-    const ATTRIUTE_EDITMODE = '_editmode';
+    const ATTRIBUTE_EDITMODE = '_editmode';
 
     /**
      * @param Request $request
@@ -14,16 +15,24 @@ class EditmodeResolver extends AbstractRequestResolver
      */
     public function isEditmode(Request $request = null)
     {
+        // TODO how to load user from outside admin firewall?
+        $user = Authentication::getUser();
+        if (!$user) {
+            // return false;
+        }
+
         if (null === $request) {
             $request = $this->getCurrentRequest();
         }
 
-        if ($request->attributes->has(static::ATTRIUTE_EDITMODE)) {
-            return $request->attributes->get(static::ATTRIUTE_EDITMODE);
+        // try to ready attribute from request - this allows sub-requests to define their
+        // own editmode state
+        if ($request->attributes->has(static::ATTRIBUTE_EDITMODE)) {
+            return $request->attributes->get(static::ATTRIBUTE_EDITMODE);
         }
 
-        // TODO editmode is only available for logged in users
-        if ($request->get('pimcore_editmode')) {
+        // read editmode from request params
+        if ($request->query->get('pimcore_editmode')) {
             return true;
         }
 

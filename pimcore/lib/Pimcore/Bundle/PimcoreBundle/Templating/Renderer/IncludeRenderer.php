@@ -71,7 +71,11 @@ class IncludeRenderer
         }
 
         // TODO remove dependency on registry setting
-        $editmodeBackup = \Zend_Registry::get("pimcore_editmode");
+        $editmodeBackup = false;
+        if (\Zend_Registry::isRegistered('pimcore_editmode')) {
+            $editmodeBackup = \Zend_Registry::get("pimcore_editmode");
+        }
+
         \Zend_Registry::set("pimcore_editmode", false);
 
         $includeBak = $include;

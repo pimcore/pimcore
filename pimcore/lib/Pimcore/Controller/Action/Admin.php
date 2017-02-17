@@ -174,20 +174,9 @@ abstract class Admin extends Action
      */
     protected function loadUser()
     {
-        $container = \Pimcore::getContainer();
-        if (null === $token = $container->get('security.token_storage')->getToken()) {
-            throw new \Exception('User was not found');
+        if ($user = Authentication::getUser()) {
+            $this->setUser($user);
         }
-
-        if (!is_object($user = $token->getUser())) {
-            // e.g. anonymous authentication
-            throw new \Exception('User is invalid');
-        }
-
-        /** @var User $user */
-        $pimcoreUser = $user->getUser();
-
-        $this->setUser($pimcoreUser);
     }
 
     /**

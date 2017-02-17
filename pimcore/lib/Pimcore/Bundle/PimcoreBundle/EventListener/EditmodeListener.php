@@ -7,7 +7,7 @@ use Pimcore\Bundle\PimcoreBundle\Service\Request\EditmodeResolver;
 use Pimcore\Config;
 use Pimcore\ExtensionManager;
 use Pimcore\Model\Document;
-use Pimcore\Tool\Admin;
+use Pimcore\Tool\Authentication;
 use Pimcore\Version;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -29,7 +29,7 @@ class EditmodeListener implements EventSubscriberInterface
     protected $editmodeResolver;
 
     /**
-     * @var DocumentFallbackListener
+     * @var DocumentResolver
      */
     protected $documentResolver;
 
@@ -42,7 +42,7 @@ class EditmodeListener implements EventSubscriberInterface
 
     /**
      * @param EditmodeResolver $editmodeResolver
-     * @param DocumentFallbackListener $documentResolver
+     * @param DocumentResolver $documentResolver
      */
     public function __construct(EditmodeResolver $editmodeResolver, DocumentResolver $documentResolver)
     {
@@ -61,9 +61,12 @@ class EditmodeListener implements EventSubscriberInterface
         ];
     }
 
-
     public function onKernelRequest(GetResponseEvent $event)
     {
+        if (!$event->isMasterRequest()) {
+            return; // only master requests inject editmode assets
+        }
+
         // TODO editmode is available to logged in users only
         $editmode = $this->editmodeResolver->isEditmode($event->getRequest());
 
@@ -73,6 +76,10 @@ class EditmodeListener implements EventSubscriberInterface
 
     public function onKernelResponse(FilterResponseEvent $event)
     {
+        if (!$event->isMasterRequest()) {
+            return; // only master requests inject editmode assets
+        }
+
         $request  = $event->getRequest();
         $response = $event->getResponse();
 
@@ -99,8 +106,15 @@ class EditmodeListener implements EventSubscriberInterface
     protected function contentTypeMatches(Response $response)
     {
         $contentType = $response->headers->get('Content-Type');
-        if (!$contentType || in_array($contentType, $this->contentTypes)) {
+        if (!$contentType) {
             return true;
+        }
+
+        // check for substring as the content type could define attributes (e.g. charset)
+        foreach ($this->contentTypes as $ct) {
+            if (false !== strpos($contentType, $ct)) {
+                return true;
+            }
         }
 
         return false;
@@ -204,8 +218,11 @@ class EditmodeListener implements EventSubscriberInterface
             $headHtml .= '<script type="text/javascript" src="' . \Pimcore\Tool\Admin::getMinimizedScriptPath($scriptContents) . '"></script>' . "\n";
         }
 
-        $user = \Pimcore\Tool\Authentication::authenticateSession();
-        $lang = $user->getLanguage();
+        // TODO this if and fallback is only in place until we can safely access the user from outside the admin firewall
+        $lang = 'en';
+        if ($user = Authentication::getUser()) {
+            $lang = $user->getLanguage();
+        }
 
         $headHtml .= '<script type="text/javascript" src="/admin/misc/json-translations-system/language/' . $lang . '/?_dc=' . Version::$revision . '"></script>' . "\n";
         $headHtml .= '<script type="text/javascript" src="/admin/misc/json-translations-admin/language/' . $lang . '/?_dc=' . Version::$revision . '"></script>' . "\n";
