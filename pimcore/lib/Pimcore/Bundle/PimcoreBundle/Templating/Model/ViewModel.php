@@ -124,4 +124,12 @@ class ViewModel implements ViewModelInterface
     {
         $this->getIterator()->offsetUnset($offset);
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function jsonSerialize()
+    {
+        return $this->parameters->all();
+    }
 }

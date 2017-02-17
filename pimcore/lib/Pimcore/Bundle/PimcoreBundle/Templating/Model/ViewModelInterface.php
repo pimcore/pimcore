@@ -4,7 +4,7 @@ namespace Pimcore\Bundle\PimcoreBundle\Templating\Model;
 
 use Symfony\Component\HttpFoundation\ParameterBag;
 
-interface ViewModelInterface extends \Countable, \IteratorAggregate, \ArrayAccess
+interface ViewModelInterface extends \Countable, \IteratorAggregate, \ArrayAccess, \JsonSerializable
 {
     /**
      * @return ParameterBag

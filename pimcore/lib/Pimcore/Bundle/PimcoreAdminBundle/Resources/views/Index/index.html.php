@@ -574,37 +574,8 @@ $googleMapsApiKey = $this->config->services->google->browserapikey;
 <!-- some javascript -->
 <?php // pimcore constants ?>
 <script type="text/javascript">
-    pimcore.settings = {
-        upload_max_filesize: <?= $this->upload_max_filesize; ?>,
-        session_gc_maxlifetime: <?= $this->session_gc_maxlifetime ?>,
-        sessionId: "<?= htmlentities($_COOKIE["pimcore_admin_sid"], ENT_QUOTES, 'UTF-8') ?>",
-        csrfToken: "<?= $this->csrfToken ?>",
-        version: "<?= \Pimcore\Version::getVersion() ?>",
-        build: "<?= \Pimcore\Version::$revision ?>",
-        maintenance_active: <?= $this->maintenance_enabled; ?>,
-        maintenance_mode: <?= \Pimcore\Tool\Admin::isInMaintenanceMode() ? "true" : "false"; ?>,
-        mail: <?= $this->mail_settings_complete ?>,
-        debug: <?= \Pimcore::inDebugMode() ? "true" : "false"; ?>,
-        devmode: <?= PIMCORE_DEVMODE || $extjsDev ? "true" : "false"; ?>,
-        google_analytics_enabled: <?= json_encode((bool)\Pimcore\Google\Analytics::isConfigured()) ?>,
-        google_webmastertools_enabled: <?= json_encode((bool)\Pimcore\Google\Webmastertools::isConfigured()) ?>,
-        language: '<?= $language; ?>',
-        websiteLanguages: <?= json_encode(explode(",", \Pimcore\Tool\Admin::reorderWebsiteLanguages($user, $this->config->general->validLanguages))); ?>,
-        google_maps_api_key: "<?= $googleMapsApiKey ?>",
-        showCloseConfirmation: true,
-        debug_admin_translations: <?= json_encode((bool)$this->config->general->debug_admin_translations) ?>,
-        document_generatepreviews: <?= json_encode((bool)$this->config->documents->generatepreview) ?>,
-        asset_disable_tree_preview: <?= json_encode((bool)$this->config->assets->disable_tree_preview) ?>,
-        htmltoimage: <?= json_encode(\Pimcore\Image\HtmlToImage::isSupported()) ?>,
-        videoconverter: <?= json_encode(\Pimcore\Video::isAvailable()) ?>,
-        asset_hide_edit: <?= $this->config->assets->hide_edit_image ? "true" : "false" ?>,
-        perspective: <?= json_encode($runtimePerspective) ?>,
-        availablePerspectives: <?= json_encode(\Pimcore\Config::getAvailablePerspectives($user)) ?>,
-        customviews: <?= json_encode($this->customview_config) ?>,
-        disabledPortlets: <?= json_encode((new \Pimcore\Helper\Dashboard($user))->getDisabledPortlets()) ?>
-    };
+    pimcore.settings = <?= json_encode($this->settings, JSON_PRETTY_PRINT) ?>;
 </script>
-
 
 <?php // 3rd party libraries ?>
 <script type="text/javascript">

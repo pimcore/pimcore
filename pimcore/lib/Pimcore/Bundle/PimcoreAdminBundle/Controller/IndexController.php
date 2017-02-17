@@ -5,36 +5,176 @@ namespace Pimcore\Bundle\PimcoreAdminBundle\Controller;
 use Pimcore\Bundle\PimcoreBundle\Configuration\TemplatePhp;
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModel;
 use Pimcore\Config;
+use Pimcore\Google;
 use Pimcore\Model;
 use Pimcore\Model\Element\Service;
+use Pimcore\Model\User;
 use Pimcore\Tool;
+use Pimcore\Tool\Admin;
+use Pimcore\Version;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 
-class IndexController extends Controller
+class IndexController extends AdminController
 {
     /**
      * @Route("/", name="admin_index")
      * @TemplatePhp()
      */
-    public function indexAction()
+    public function indexAction(Request $request)
     {
+        $user = $this->getUser();
         $view = new ViewModel([
             'config' => $this->getParameter('pimcore.config')
         ]);
 
         $this
-            ->addMaintenanceConfig($view)
-            ->addMailConfig($view)
-            ->addReportConfig($view)
-            ->addCustomViewConfig($view)
-            ->addSystemVars($view)
-            ->addCsrfToken($view);
+            ->addRuntimePerspective($view, $user)
+            ->addReportConfig($view);
+
+        $settings = $this->buildPimcoreSettings($request, $view, $user);
+        $view->settings = $settings;
 
         return $view;
     }
 
-    protected function addMaintenanceConfig(ViewModel $view)
+    /**
+     * @param ViewModel $view
+     * @param User $user
+     * @return $this
+     */
+    protected function addRuntimePerspective(ViewModel $view, User $user)
+    {
+        $runtimePerspective = Config::getRuntimePerspective($user);
+
+        $view->runtimePerspective = $runtimePerspective;
+        $view->extjsDev           = isset($runtimePerspective["extjsDev"]) ? $runtimePerspective["extjsDev"] : false;
+
+        return $this;
+    }
+
+    /**
+     * @param ViewModel $view
+     * @return $this
+     */
+    protected function addReportConfig(ViewModel $view)
+    {
+        // TODO where is this used?
+        $view->report_config = Config::getReportConfig();
+
+        return $this;
+    }
+
+    /**
+     * Build pimcore.settings data
+     *
+     * @param Request $request
+     * @param ViewModel $view
+     * @param User $user
+     *
+     * @return ViewModel
+     */
+    protected function buildPimcoreSettings(Request $request, ViewModel $view, User $user)
+    {
+        $config = $view->config;
+
+        $settings = new ViewModel([
+            'version'   => Version::getVersion(),
+            'build'     => Version::getRevision(),
+            'debug'     => \Pimcore::inDebugMode(),
+            'devmode'   => PIMCORE_DEVMODE || $view->extjsDev,
+            'sessionId' => htmlentities($request->cookies->get('pimcore_admin_sid'), ENT_QUOTES, 'UTF-8'),
+
+        ]);
+
+        // languages
+        $settings->getParameters()->add([
+            'language'         => $request->getLocale(),
+            'websiteLanguages' => Admin::reorderWebsiteLanguages(
+                $this->getUser(),
+                $config->general->validLanguages,
+                true
+            )
+        ]);
+
+        // flags
+        $settings->getParameters()->add([
+            'showCloseConfirmation' => true,
+            'debug_admin_translations' => (bool)$config->general->debug_admin_translations,
+            'document_generatepreviews' => (bool)$config->documents->generatepreview,
+            'asset_disable_tree_preview' => (bool)$config->assets->disable_tree_preview,
+            'htmltoimage' => \Pimcore\Image\HtmlToImage::isSupported(),
+            'videoconverter' => \Pimcore\Video::isAvailable(),
+            'asset_hide_edit' => (bool)$config->assets->hide_edit_image,
+        ]);
+
+        $dashboardHelper = new \Pimcore\Helper\Dashboard($user);
+
+        // perspective and portlets
+        $settings->getParameters()->add([
+            'perspective'           => $view->runtimePerspective,
+            'availablePerspectives' => Config::getAvailablePerspectives($user),
+            'disabledPortlets'      => $dashboardHelper->getDisabledPortlets(),
+        ]);
+
+        // google settings
+        $settings->getParameters()->add([
+            'google_analytics_enabled'      => (bool)Google\Analytics::isConfigured(),
+            'google_webmastertools_enabled' => (bool)Google\Webmastertools::isConfigured(),
+            'google_maps_api_key'           => $config->services->google->browserapikey ?: ''
+        ]);
+
+        $this
+            ->addSystemVarSettings($settings)
+            ->addCsrfToken($settings)
+            ->addMaintenanceSettings($settings)
+            ->addMailSettings($settings, $config)
+            ->addCustomViewSettings($settings);
+
+        return $settings;
+    }
+
+    /**
+     * @param ViewModel $settings
+     * @return $this
+     */
+    protected function addSystemVarSettings(ViewModel $settings)
+    {
+        // upload limit
+        $max_upload = filesize2bytes(ini_get("upload_max_filesize") . "B");
+        $max_post   = filesize2bytes(ini_get("post_max_size") . "B");
+        $upload_mb  = min($max_upload, $max_post);
+
+        $settings->upload_max_filesize = (int)$upload_mb;
+
+        // session lifetime (gc)
+        $session_gc_maxlifetime = ini_get("session.gc_maxlifetime");
+        if (empty($session_gc_maxlifetime)) {
+            $session_gc_maxlifetime = 120;
+        }
+
+        $settings->session_gc_maxlifetime = (int)$session_gc_maxlifetime;
+
+        return $this;
+    }
+
+    /**
+     * @param ViewModel $settings
+     * @return $this
+     */
+    protected function addCsrfToken(ViewModel $settings)
+    {
+        // TODO add CSRF token
+        $settings->csrfToken = 'foo';
+
+        return $this;
+    }
+
+    /**
+     * @param ViewModel $settings
+     * @return $this
+     */
+    protected function addMaintenanceSettings(ViewModel $settings)
     {
         // check maintenance
         $maintenance_enabled = false;
@@ -48,52 +188,43 @@ class IndexController extends Controller
             }
         }
 
-        $view->maintenance_enabled = json_encode($maintenance_enabled);
+        $settings->maintenance_enabled = $maintenance_enabled;
+        $settings->maintenance_mode    = Admin::isInMaintenanceMode();
 
         return $this;
     }
 
     /**
-     * @param ViewModel $view
+     * @param ViewModel $settings
+     * @param \stdClass $config
      * @return $this
      */
-    protected function addMailConfig(ViewModel $view)
+    protected function addMailSettings(ViewModel $settings, $config)
     {
         //mail settings
         $mailIncomplete = false;
-        if ($view->config->email) {
-            if (!$view->config->email->debug->emailaddresses) {
+        if ($config->email) {
+            if (!$config->email->debug->emailaddresses) {
                 $mailIncomplete = true;
             }
-            if (!$view->config->email->sender->email) {
+            if (!$config->email->sender->email) {
                 $mailIncomplete = true;
             }
-            if ($view->config->email->method == "smtp" && !$view->config->email->smtp->host) {
+            if ($config->email->method == "smtp" && !$config->email->smtp->host) {
                 $mailIncomplete = true;
             }
         }
 
-        $view->mail_settings_complete = json_encode(!$mailIncomplete);
+        $settings->mail = !$mailIncomplete;
 
         return $this;
     }
 
     /**
-     * @param ViewModel $view
+     * @param ViewModel $settings
      * @return $this
      */
-    protected function addReportConfig(ViewModel $view)
-    {
-        $view->report_config = Config::getReportConfig();
-
-        return $this;
-    }
-
-    /**
-     * @param ViewModel $view
-     * @return $this
-     */
-    protected function addCustomViewConfig(ViewModel $view)
+    protected function addCustomViewSettings(ViewModel $settings)
     {
         $cvData = [];
 
@@ -120,43 +251,7 @@ class IndexController extends Controller
             }
         }
 
-        $view->customview_config = $cvData;
-
-        return $this;
-    }
-
-    /**
-     * @param ViewModel $view
-     * @return $this
-     */
-    protected function addSystemVars(ViewModel $view)
-    {
-        // upload limit
-        $max_upload = filesize2bytes(ini_get("upload_max_filesize") . "B");
-        $max_post   = filesize2bytes(ini_get("post_max_size") . "B");
-        $upload_mb  = min($max_upload, $max_post);
-
-        $view->upload_max_filesize = $upload_mb;
-
-        // session lifetime (gc)
-        $session_gc_maxlifetime = ini_get("session.gc_maxlifetime");
-        if (empty($session_gc_maxlifetime)) {
-            $session_gc_maxlifetime = 120;
-        }
-
-        $view->session_gc_maxlifetime = $session_gc_maxlifetime;
-
-        return $this;
-    }
-
-    /**
-     * @param ViewModel $view
-     * @return $this
-     */
-    protected function addCsrfToken(ViewModel $view)
-    {
-        // TODO add CSRF token
-        $view->csrfToken = 'foo';
+        $settings->customviews = $cvData;
 
         return $this;
     }
