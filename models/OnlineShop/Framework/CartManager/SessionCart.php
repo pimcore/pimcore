@@ -165,6 +165,13 @@ class SessionCart extends AbstractCart implements ICart {
         foreach($this->getItems() as $item)
         {
             $item->setCart( $this );
+
+            if($item->getSubItems()) {
+                foreach($item->getSubItems() as $subItem) {
+                    $subItem->setCart( $this );
+                }
+            }
+
         }
 
         $this->modified();
