@@ -1,5 +1,12 @@
 services:
     #
+    # SESSION
+    #
+
+    pimcore_admin.session.configurator.admin_session_bags:
+        class: Pimcore\Bundle\PimcoreAdminBundle\Session\AdminSessionBagConfigurator
+
+    #
     # SECURITY
     #
 
