@@ -349,6 +349,9 @@ abstract class Admin extends Action
      */
     protected function protectCSRF()
     {
+        // TODO use symfony CSRF implementation
+        return;
+
         $csrfToken = Session::useSession(function ($adminSession) {
             return $adminSession->csrfToken;
         });

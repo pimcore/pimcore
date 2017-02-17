@@ -15,6 +15,8 @@
 namespace Pimcore\Tool;
 
 use Pimcore\Logger;
+use Symfony\Component\HttpFoundation\Session\Session as SymfonySession;
+use Symfony\Component\HttpFoundation\Session\SessionBagInterface;
 
 class Session
 {
@@ -81,16 +83,39 @@ class Session
     }
 
     /**
-     * @param $func
-     * @param string $namespace
+     * @param callable $func
+     * @param string $name
+     *
      * @return mixed
      */
-    public static function useSession($func, $namespace = "pimcore_admin")
+    public static function useSession($func, $name = "pimcore_admin")
     {
-        $ret = $func(self::get($namespace));
+        $bag = static::getSessionBag($name);
+        $ret = $func($bag);
+
         self::writeClose();
 
         return $ret;
+    }
+
+    /**
+     * @return object|SymfonySession
+     */
+    public static function getSession()
+    {
+        return \Pimcore::getContainer()->get('session');
+    }
+
+    /**
+     * @param string $name
+     * @return SessionBagInterface
+     */
+    public static function getSessionBag($name)
+    {
+        $bag = static::getSession()->getBag($name);
+        self::$openedSessions++;
+
+        return $bag;
     }
 
     /**
@@ -101,6 +126,8 @@ class Session
      */
     public static function get($namespace = "pimcore_admin", $readOnly = false)
     {
+        throw new \RuntimeException(__METHOD__ . ' is not supported');
+
         $initSession = !\Zend_Session::isStarted();
         $forceStart = !$readOnly; // we don't force the session to start in read-only mode (default behavior)
         $sName = self::getOption("name");
@@ -153,7 +180,6 @@ class Session
         }
 
         self::$openedSessions++;
-
         self::$sessions[$namespace]->unlock();
 
         return self::$sessions[$namespace];
@@ -165,6 +191,8 @@ class Session
      */
     public static function getReadOnly($namespace = "pimcore_admin")
     {
+        throw new \RuntimeException(__METHOD__ . ' is not supported');
+
         $session = self::get($namespace, true);
         $session->lock();
         self::writeClose();
@@ -180,9 +208,10 @@ class Session
         self::$openedSessions--;
 
         if (!self::$openedSessions) { // do not write session data if there's still an open session
-            session_write_close();
+            static::getSession()->save();
 
-            self::restoreForeignSession();
+            // session_write_close();
+            // self::restoreForeignSession();
         }
     }
 
@@ -191,7 +220,8 @@ class Session
      */
     public static function regenerateId()
     {
-        \Zend_Session::regenerateId();
+        static::getSession()->migrate();
+        // \Zend_Session::regenerateId();
     }
 
     /**
@@ -207,6 +237,8 @@ class Session
      */
     protected static function backupForeignSession()
     {
+        throw new \RuntimeException(__METHOD__ . ' is not supported');
+
         $sName = self::getOption("name");
         if ($sName != session_name()) {
             // there's a different session in use, stop it and restart the admin session
@@ -233,6 +265,8 @@ class Session
      */
     protected static function restoreForeignSession()
     {
+        throw new \RuntimeException(__METHOD__ . ' is not supported');
+
         if (!empty(self::$restoreSession)) {
             session_write_close();
 
