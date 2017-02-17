@@ -40,6 +40,14 @@ services:
           - { name: kernel.event_subscriber }
 
 
+    # Adds Meta Data entries of document to HeadMeta view helper
+    pimcore.event_listener.document_meta_data:
+        class: Pimcore\Bundle\PimcoreBundle\EventListener\DocumentMetaDataListener
+        arguments: ['@pimcore.service.request.document_resolver', '@pimcore.templating.view_helper.headMeta']
+        tags:
+          - { name: kernel.event_subscriber }
+
+
     #
     # CONTROLLER HANDLING
     #
@@ -89,4 +97,3 @@ services:
         class: Pimcore\Bundle\PimcoreBundle\EventListener\FullPageCacheListener
         tags:
           - { name: kernel.event_subscriber }
-

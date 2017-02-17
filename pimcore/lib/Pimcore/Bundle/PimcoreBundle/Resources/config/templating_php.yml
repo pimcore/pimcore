@@ -1,4 +1,14 @@
 services:
+
+    #
+    # TOOLS
+    #
+
+    # container service for placeholder view helpers > creates placeholder container for every view helper type
+    pimcore.templating.view_helper.placeholder.container_service:
+        class: Pimcore\Bundle\PimcoreBundle\Templating\Helper\Placeholder\ContainerService
+
+
     #
     # HELPER BROKERS
     #
@@ -43,6 +53,7 @@ services:
 
     pimcore.templating.view_helper.glossary:
         class: Pimcore\Bundle\PimcoreBundle\Templating\Helper\Glossary
+        arguments: ['@pimcore.service.request.document_resolver', '@pimcore.service.request.editmode_resolver']
         calls:
             - [setLogger, ['@logger']]
         tags:
@@ -59,3 +70,44 @@ services:
         arguments: ['@router', '@pimcore.tool.request_helper']
         tags:
             - { name: templating.helper, alias: pimcoreUrl }
+
+    pimcore.templating.view_helper.headTitle:
+        class: Pimcore\Bundle\PimcoreBundle\Templating\Helper\HeadTitle
+        arguments: ['@pimcore.templating.view_helper.placeholder.container_service']
+        tags:
+            - { name: templating.helper, alias: headTitle }
+
+    pimcore.templating.view_helper.headLink:
+        class: Pimcore\Bundle\PimcoreBundle\Templating\Helper\HeadLink
+        arguments: ['@pimcore.templating.view_helper.placeholder.container_service']
+        tags:
+            - { name: templating.helper, alias: headLink }
+
+    pimcore.templating.view_helper.headScript:
+        class: Pimcore\Bundle\PimcoreBundle\Templating\Helper\HeadScript
+        arguments: ['@pimcore.templating.view_helper.placeholder.container_service']
+        tags:
+            - { name: templating.helper, alias: headScript }
+
+    pimcore.templating.view_helper.inlineScript:
+        class: Pimcore\Bundle\PimcoreBundle\Templating\Helper\InlineScript
+        arguments: ['@pimcore.templating.view_helper.placeholder.container_service']
+        tags:
+            - { name: templating.helper, alias: inlineScript }
+
+    pimcore.templating.view_helper.headStyle:
+        class: Pimcore\Bundle\PimcoreBundle\Templating\Helper\HeadStyle
+        arguments: ['@pimcore.templating.view_helper.placeholder.container_service']
+        tags:
+            - { name: templating.helper, alias: headStyle }
+
+    pimcore.templating.view_helper.headMeta:
+        class: Pimcore\Bundle\PimcoreBundle\Templating\Helper\HeadMeta
+        arguments: ['@pimcore.templating.view_helper.placeholder.container_service']
+        tags:
+            - { name: templating.helper, alias: headMeta }
+
+    pimcore.templating.view_helper.device:
+        class: Pimcore\Bundle\PimcoreBundle\Templating\Helper\Device
+        tags:
+            - { name: templating.helper, alias: device }
