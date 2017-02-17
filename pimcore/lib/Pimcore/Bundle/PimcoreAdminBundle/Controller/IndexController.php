@@ -5,6 +5,7 @@ namespace Pimcore\Bundle\PimcoreAdminBundle\Controller;
 use Pimcore\Bundle\PimcoreBundle\Configuration\TemplatePhp;
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModel;
 use Pimcore\Config;
+use Pimcore\Model;
 use Pimcore\Model\Element\Service;
 use Pimcore\Tool;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -23,12 +24,58 @@ class IndexController extends Controller
         ]);
 
         $this
+            ->addMaintenanceConfig($view)
+            ->addMailConfig($view)
             ->addReportConfig($view)
             ->addCustomViewConfig($view)
             ->addSystemVars($view)
             ->addCsrfToken($view);
 
         return $view;
+    }
+
+    protected function addMaintenanceConfig(ViewModel $view)
+    {
+        // check maintenance
+        $maintenance_enabled = false;
+
+        $manager = Model\Schedule\Manager\Factory::getManager("maintenance.pid");
+
+        $lastExecution = $manager->getLastExecution();
+        if ($lastExecution) {
+            if ((time() - $lastExecution) < 3660) { // maintenance script should run at least every hour + a little tolerance
+                $maintenance_enabled = true;
+            }
+        }
+
+        $view->maintenance_enabled = json_encode($maintenance_enabled);
+
+        return $this;
+    }
+
+    /**
+     * @param ViewModel $view
+     * @return $this
+     */
+    protected function addMailConfig(ViewModel $view)
+    {
+        //mail settings
+        $mailIncomplete = false;
+        if ($view->config->email) {
+            if (!$view->config->email->debug->emailaddresses) {
+                $mailIncomplete = true;
+            }
+            if (!$view->config->email->sender->email) {
+                $mailIncomplete = true;
+            }
+            if ($view->config->email->method == "smtp" && !$view->config->email->smtp->host) {
+                $mailIncomplete = true;
+            }
+        }
+
+        $view->mail_settings_complete = json_encode(!$mailIncomplete);
+
+        return $this;
     }
 
     /**
