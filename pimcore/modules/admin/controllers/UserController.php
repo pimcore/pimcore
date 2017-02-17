@@ -616,6 +616,7 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
             $id = $this->getUser()->getId();
         }
 
+        /** @var User $userObj */
         $userObj = User::getById($id);
         $thumb = $userObj->getImage();
 

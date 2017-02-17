@@ -538,7 +538,7 @@ class User extends User\UserRole
             return $thumb;
         }
 
-        return PIMCORE_PATH . "/static/img/avatar.png";
+        return PIMCORE_PATH . "/static6/img/avatar.png";
     }
 
     /**
