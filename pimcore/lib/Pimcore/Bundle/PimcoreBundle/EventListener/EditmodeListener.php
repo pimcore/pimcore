@@ -67,7 +67,6 @@ class EditmodeListener implements EventSubscriberInterface
             return; // only master requests inject editmode assets
         }
 
-        // TODO editmode is available to logged in users only
         $editmode = $this->editmodeResolver->isEditmode($event->getRequest());
 
         // TODO this can be removed later
@@ -218,11 +217,8 @@ class EditmodeListener implements EventSubscriberInterface
             $headHtml .= '<script type="text/javascript" src="' . \Pimcore\Tool\Admin::getMinimizedScriptPath($scriptContents) . '"></script>' . "\n";
         }
 
-        // TODO this if and fallback is only in place until we can safely access the user from outside the admin firewall
-        $lang = 'en';
-        if ($user = Authentication::getUser()) {
-            $lang = $user->getLanguage();
-        }
+        $user = Authentication::getUserFromFirewall('admin');
+        $lang = $user->getLanguage();
 
         $headHtml .= '<script type="text/javascript" src="/admin/misc/json-translations-system/language/' . $lang . '/?_dc=' . Version::$revision . '"></script>' . "\n";
         $headHtml .= '<script type="text/javascript" src="/admin/misc/json-translations-admin/language/' . $lang . '/?_dc=' . Version::$revision . '"></script>' . "\n";

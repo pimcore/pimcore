@@ -19,52 +19,61 @@ use Pimcore\Bundle\PimcoreAdminBundle\Security\User\User as ProxyUser;
 use Pimcore\Logger;
 use Pimcore\Model\User;
 use Pimcore\Tool;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class Authentication
 {
     /**
-     * Wrap reading and checking user from the security system
+     * Wrap reading and checking user from the security system. Reading the user from the token
+     * storage is the correct way as the firewall/context listener sets the matching token
+     * for the path.
      *
      * @return User|null
      */
     public static function getUser()
     {
         $storage = \Pimcore::getContainer()->get('security.token_storage');
-        $checker = \Pimcore::getContainer()->get('security.authorization_checker');
 
         if (null === $token = $storage->getToken()) {
             return null;
         }
 
+        return static::getUserFromToken($token);
+    }
+
+    /**
+     * Get user from other firewall by reading the session directly. This is the hacky way.
+     *
+     * @param string $firewall
+     * @return null|User
+     */
+    public static function getUserFromFirewall($firewall = 'admin')
+    {
+        $tokenLoader = \Pimcore::getContainer()->get('pimcore.security.token_loader');
+
+        if (null === $token = $tokenLoader->getToken($firewall)) {
+            return null;
+        }
+
+        return static::getUserFromToken($token);
+    }
+
+    /**
+     * Transform a token to a pimcore user
+     *
+     * @param TokenInterface $token
+     * @return null|User
+     */
+    public static function getUserFromToken(TokenInterface $token)
+    {
         if (!is_object($user = $token->getUser())) {
             // e.g. anonymous authentication
             return null;
         }
 
-        if ($user instanceof ProxyUser && $checker->isGranted('ROLE_PIMCORE_USER')) {
+        if ($user instanceof ProxyUser) {
             return $user->getUser();
         }
-    }
-
-    /**
-     * Check if current user is granted access
-     *
-     * @param mixed $attributes
-     * @param mixed $object
-     * @return bool
-     */
-    public static function isGranted($attributes, $object = null)
-    {
-        // TODO check if we can remove this safely
-        // this is probably superfluous, as the firewall demands ROLE_PIMCORE_USER, but just to make sure for now
-        $user = static::getUser();
-        if (null === $user) {
-            return false;
-        }
-
-        $checker = \Pimcore::getContainer()->get('security.authorization_checker');
-
-        return $checker->isGranted($attributes, $object);
     }
 
     /**

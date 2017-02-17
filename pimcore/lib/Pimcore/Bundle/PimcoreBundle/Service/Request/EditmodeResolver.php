@@ -15,10 +15,14 @@ class EditmodeResolver extends AbstractRequestResolver
      */
     public function isEditmode(Request $request = null)
     {
-        // TODO how to load user from outside admin firewall?
         $user = Authentication::getUser();
         if (!$user) {
-            // return false;
+            // try to read user from admin firewall directly
+            $user = Authentication::getUserFromFirewall('admin');
+
+            if (!$user) {
+                return false;
+            }
         }
 
         if (null === $request) {

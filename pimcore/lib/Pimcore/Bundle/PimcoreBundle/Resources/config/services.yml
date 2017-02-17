@@ -32,6 +32,21 @@ services:
         calls:
             - [addConfigurator, ['@pimcore_admin.session.configurator.admin_session_bags']]
 
+
+    #
+    # SECURITY
+    #
+
+    # user providers are injected via compiler pass as they are copied from the Firewall\ContextListener
+    # definition
+    pimcore.security.token_loader:
+        class: Pimcore\Bundle\PimcoreBundle\Security\Firewall\TokenLoader
+        arguments: ['@session', '@request_stack']
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: monolog.logger, channel: security }
+
     #
     # REQUEST RESOLVERS
     #
