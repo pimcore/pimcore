@@ -190,7 +190,7 @@ class Mail extends \Zend_Mail
     /**
      * Initializes the mailer with the settings form Settings -> System -> Email Settings
      *
-     * @return void
+     * @param string $type
      */
     public function init($type = "email")
     {
@@ -614,7 +614,8 @@ class Mail extends \Zend_Mail
     }
 
     /**
-     *
+     * @param $email
+     * @param string $name
      */
     public function setTo($email, $name = '')
     {

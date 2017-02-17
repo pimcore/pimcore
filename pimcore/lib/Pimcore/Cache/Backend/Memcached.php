@@ -45,9 +45,6 @@ class Memcached extends \Zend_Cache_Backend_Memcached
         parent::__construct($options);
     }
 
-    /**
-     * @return void
-     */
     protected function checkCacheConsistency()
     {
         // if the cache_tags table is empty, flush the cache
@@ -67,7 +64,7 @@ class Memcached extends \Zend_Cache_Backend_Memcached
     /**
      * @param $id
      * @param bool $doNotTestCacheValidity
-     * @return void
+     * @return null
      */
     public function load($id, $doNotTestCacheValidity = false)
     {
@@ -95,11 +92,9 @@ class Memcached extends \Zend_Cache_Backend_Memcached
     /**
      * @param string $id
      * @param array $tags
-     * @return void
      */
     protected function saveTags($id, $tags)
     {
-
         //$this->getDb()->beginTransaction();
 
         try {
@@ -135,9 +130,6 @@ class Memcached extends \Zend_Cache_Backend_Memcached
         }
     }
 
-    /**
-     * @return void
-     */
     protected function clearTags()
     {
         $this->getDb()->query("TRUNCATE TABLE `cache_tags`");
@@ -162,11 +154,11 @@ class Memcached extends \Zend_Cache_Backend_Memcached
      * Note : $data is always "string" (serialization is done by the
      * core not by the backend)
      *
-     * @param  string $data             Datas to cache
-     * @param  string $id               Cache id
-     * @param  array  $tags             Array of strings, the cache record will be tagged by each string entry
-     * @param  int    $specificLifetime If != false, set a specific lifetime for this cache record (null => infinite lifetime)
-     * @return boolean True if no problem
+     * @param  string $data Datas to cache
+     * @param  string $id Cache id
+     * @param  array $tags Array of strings, the cache record will be tagged by each string entry
+     * @param bool|int $specificLifetime If != false, set a specific lifetime for this cache record (null => infinite lifetime)
+     * @return bool True if no problem
      */
     public function save($data, $id, $tags = [], $specificLifetime = false)
     {

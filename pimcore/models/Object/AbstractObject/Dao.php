@@ -88,6 +88,14 @@ class Dao extends Model\Element\Dao
     }
 
     /**
+     * Deletes object from database
+     */
+    public function delete()
+    {
+        $this->db->delete("objects", $this->db->quoteInto("o_id = ?", $this->model->getId()));
+    }
+
+    /**
      * @throws \Exception
      * @throws \Zend_Db_Adapter_Exception
      */
@@ -132,16 +140,6 @@ class Dao extends Model\Element\Dao
         }
     }
 
-    /**
-     * Deletes object from database
-     *
-     * @return void
-     */
-    public function delete()
-    {
-        $this->db->delete("objects", $this->db->quoteInto("o_id = ?", $this->model->getId()));
-    }
-
 
     public function updateWorkspaces()
     {
@@ -151,10 +149,21 @@ class Dao extends Model\Element\Dao
     }
 
     /**
+     * deletes all properties for the object from database
+     */
+    public function deleteAllProperties()
+    {
+        $this->db->delete("properties", $this->db->quoteInto("cid = ? AND ctype = 'object'", $this->model->getId()));
+    }
+
+
+    /**
      * Updates the paths for children, children's properties and children's permissions in the database
      *
      * @param string $oldPath
-     * @return void
+     * @return null|array
+     *
+     * @todo: calls deprecated ::hasChilds
      */
     public function updateChildsPaths($oldPath)
     {
@@ -181,17 +190,6 @@ class Dao extends Model\Element\Dao
         }
     }
 
-
-    /**
-     * deletes all properties for the object from database
-     *
-     * @return void
-     */
-    public function deleteAllProperties()
-    {
-        $this->db->delete("properties", $this->db->quoteInto("cid = ? AND ctype = 'object'", $this->model->getId()));
-    }
-
     /**
      * @return string retrieves the current full object path from DB
      */
@@ -211,7 +209,8 @@ class Dao extends Model\Element\Dao
     /**
      * Get the properties for the object from database and assign it
      *
-     * @return []
+     * @param boolean $onlyInherited
+     * @return array
      */
     public function getProperties($onlyInherited = false)
     {
@@ -263,10 +262,6 @@ class Dao extends Model\Element\Dao
         return $properties;
     }
 
-    /**
-     *
-     * @return void
-     */
     public function deleteAllPermissions()
     {
         $this->db->delete("users_workspaces_object", $this->db->quoteInto("cid = ?", $this->model->getId()));
@@ -285,6 +280,7 @@ class Dao extends Model\Element\Dao
     /**
      * Quick test if there are childs
      *
+     * @param array $objectTypes
      * @return boolean
      */
     public function hasChildren($objectTypes = [Object::OBJECT_TYPE_OBJECT, Object::OBJECT_TYPE_FOLDER])
@@ -310,7 +306,8 @@ class Dao extends Model\Element\Dao
     /**
      * returns the amount of directly childs (not recursivly)
      *
-     * @param User $user
+     * @param array $objectTypes
+     * @param Model\User $user
      * @return integer
      */
     public function getChildAmount($objectTypes = [Object::OBJECT_TYPE_OBJECT, Object::OBJECT_TYPE_FOLDER], $user = null)
@@ -330,7 +327,10 @@ class Dao extends Model\Element\Dao
         return $c;
     }
 
-
+    /**
+     * @param $id
+     * @return mixed
+     */
     public function getTypeById($id)
     {
         $t = $this->db->fetchRow("SELECT o_type,o_className,o_classId FROM objects WHERE o_id = ?", $id);
@@ -338,10 +338,11 @@ class Dao extends Model\Element\Dao
         return $t;
     }
 
-
+    /**
+     * @return bool
+     */
     public function isLocked()
     {
-
         // check for an locked element below this element
         $belowLocks = $this->db->fetchOne("SELECT tree_locks.id FROM tree_locks INNER JOIN objects ON tree_locks.id = objects.o_id WHERE objects.o_path LIKE ? AND tree_locks.type = 'object' AND tree_locks.locked IS NOT NULL AND tree_locks.locked != '' LIMIT 1", $this->model->getRealFullPath() . "/%");
 
@@ -371,6 +372,9 @@ class Dao extends Model\Element\Dao
         return $lockIds;
     }
 
+    /**
+     * @return array
+     */
     public function getClasses()
     {
         if ($this->getChildAmount()) {
@@ -391,6 +395,9 @@ class Dao extends Model\Element\Dao
         }
     }
 
+    /**
+     * @return array
+     */
     protected function collectParentIds()
     {
         // collect properties via parent - ids
@@ -408,6 +415,11 @@ class Dao extends Model\Element\Dao
         return $parentIds;
     }
 
+    /**
+     * @param $type
+     * @param $user
+     * @return bool
+     */
     public function isAllowed($type, $user)
     {
         $parentIds = $this->collectParentIds();
@@ -442,6 +454,12 @@ class Dao extends Model\Element\Dao
         return false;
     }
 
+    /**
+     * @param $type
+     * @param $user
+     * @param bool $quote
+     * @return mixed|null
+     */
     public function getPermissions($type, $user, $quote = true)
     {
         $parentIds = $this->collectParentIds();
@@ -502,6 +520,12 @@ class Dao extends Model\Element\Dao
         }
     }
 
+    /**
+     * @param $type
+     * @param $user
+     * @param bool $quote
+     * @return array
+     */
     public function getChildPermissions($type, $user, $quote = true)
     {
         //        $parentIds = $this->collectParentIds();

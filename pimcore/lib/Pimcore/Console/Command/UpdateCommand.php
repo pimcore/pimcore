@@ -53,6 +53,9 @@ class UpdateCommand extends AbstractCommand
             );
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $currentRevision = null;

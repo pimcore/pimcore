@@ -38,6 +38,9 @@ class ClassmapGeneratorCommand extends AbstractCommand
             );
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $excludePatterns = [];

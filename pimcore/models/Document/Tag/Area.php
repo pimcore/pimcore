@@ -278,8 +278,6 @@ class Area extends Model\Document\Tag
 
     /**
      * Setup some settings that are needed for blocks
-     *
-     * @return void
      */
     public function setupStaticEnvironment()
     {
@@ -323,6 +321,9 @@ class Area extends Model\Document\Tag
         return ExtensionManager::getBrickDirectories();
     }
 
+    /**
+     * @return array|mixed
+     */
     public function getBrickConfigs()
     {
         return ExtensionManager::getBrickConfigs();

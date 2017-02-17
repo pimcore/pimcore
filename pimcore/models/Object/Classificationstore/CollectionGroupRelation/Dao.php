@@ -23,9 +23,15 @@ use Pimcore\Model;
  */
 class Dao extends Model\Dao\AbstractDao
 {
+    /**
+     *
+     */
     const TABLE_NAME_RELATIONS = "classificationstore_collectionrelations";
 
-
+    /**
+     * @param null $colId
+     * @param null $groupId
+     */
     public function getById($colId = null, $groupId = null)
     {
         if ($colId != null) {
@@ -46,7 +52,9 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Save object to database
      *
-     * @return void
+     * @return boolean
+     *
+     * @todo: update don't returns anything
      */
     public function save()
     {
@@ -55,8 +63,6 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * Deletes object from database
-     *
-     * @return void
      */
     public function delete()
     {

@@ -414,6 +414,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return mixed|Object\Fieldcollection
+     * @param $idMapper
      * @throws \Exception
      */
     public function getFromWebserviceImport($data, $object = null, $params = [], $idMapper = null)
@@ -734,6 +735,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     /**
      * @param $data
      * @param null $object
+     * @param array $params
      * @return mixed
      */
     public function getDiffDataFromEditmode($data, $object = null, $params = [])
@@ -800,7 +802,8 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
 
     /**
      * This method is called in Object|Class::save() and is used to create the database table for the localized data
-     * @return void
+     * @param $class
+     * @param array $params
      */
     public function classSaved($class, $params = [])
     {
@@ -887,6 +890,10 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
         $this->collapsible = $collapsible;
     }
 
+    /**
+     * @param $container
+     * @param array $list
+     */
     public static function collectCalculatedValueItems($container, &$list = [])
     {
         if (is_array($container)) {

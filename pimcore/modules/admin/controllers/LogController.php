@@ -112,6 +112,10 @@ class Admin_LogController extends \Pimcore\Controller\Action\Admin
         $this->_helper->json($results);
     }
 
+    /**
+     * @param $priority
+     * @return mixed
+     */
     private function getPriorityName($priority)
     {
         $p = ApplicationLoggerDb::getPriorities();

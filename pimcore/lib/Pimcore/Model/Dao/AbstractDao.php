@@ -21,6 +21,7 @@ abstract class AbstractDao implements DaoInterface
 {
     use DaoTrait;
 
+
     const CACHEKEY = "system_resource_columns_";
 
     /**

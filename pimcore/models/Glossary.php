@@ -125,7 +125,7 @@ class Glossary extends AbstractModel
 
     /**
      * @param string $text
-     * @return void
+     * @return $this
      */
     public function setText($text)
     {
@@ -144,7 +144,7 @@ class Glossary extends AbstractModel
 
     /**
      * @param string $link
-     * @return void
+     * @return $this
      */
     public function setLink($link)
     {
@@ -161,10 +161,9 @@ class Glossary extends AbstractModel
         return $this->link;
     }
 
-
     /**
      * @param string $abbr
-     * @return void
+     * @return $this
      */
     public function setAbbr($abbr)
     {
@@ -181,10 +180,9 @@ class Glossary extends AbstractModel
         return $this->abbr;
     }
 
-
     /**
      * @param string $acronym
-     * @return void
+     * @return $this
      */
     public function setAcronym($acronym)
     {
@@ -201,10 +199,9 @@ class Glossary extends AbstractModel
         return $this->acronym;
     }
 
-
     /**
      * @param string $language
-     * @return void
+     * @return $this
      */
     public function setLanguage($language)
     {

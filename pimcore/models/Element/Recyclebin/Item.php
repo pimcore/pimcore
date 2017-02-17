@@ -96,7 +96,8 @@ class Item extends Model\AbstractModel
     }
 
     /**
-     *
+     * @param null $user
+     * @throws \Exception
      */
     public function restore($user = null)
     {
@@ -133,8 +134,7 @@ class Item extends Model\AbstractModel
     }
 
     /**
-     * @param  User $user
-     * @return void
+     * @param Model\User $user
      */
     public function save($user=null)
     {

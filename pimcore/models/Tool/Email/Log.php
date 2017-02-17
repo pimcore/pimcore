@@ -285,7 +285,7 @@ class Log extends Model\AbstractModel
      * Sets the sent date and time
      *
      * @param integer $sentDate - Timestamp
-     * @return void
+     * @return $this
      */
     public function setSentDate($sentDate)
     {
@@ -385,7 +385,9 @@ class Log extends Model\AbstractModel
      * Sets the creation date (unix timestamp)
      *
      * @param integer $creationDate
-     * @return void
+     * @return $this
+     *
+     * @todo: creationDate not found in class
      */
     public function setCreationDate($creationDate)
     {
@@ -597,6 +599,8 @@ class Log extends Model\AbstractModel
 
     /**
      * Helper to get the recipients as array
+     * @param $data
+     * @return array
      */
     protected function buildArray($data)
     {

@@ -61,7 +61,6 @@ class Classificationstore extends Model\AbstractModel
 
     /**
      * @param  $item
-     * @return void
      */
     public function addItem($item)
     {
@@ -232,7 +231,13 @@ class Classificationstore extends Model\AbstractModel
         $this->activeGroups = $activeGroups;
     }
 
-
+    /**
+     * @param $groupId
+     * @param $keyId
+     * @param $language
+     * @param $fielddefinition
+     * @return null
+     */
     protected function getFallbackValue($groupId, $keyId, $language, $fielddefinition)
     {
         $fallbackLanguages = Tool::getFallbackLanguagesFor($language);
@@ -262,7 +267,10 @@ class Classificationstore extends Model\AbstractModel
      * @param $groupId
      * @param string $language
      * @param bool|false $ignoreFallbackLanguage
+     * @param bool|false $ignoreDefaultLanguage
      * @return null
+     *
+     * @todo: not sure if bool|false is actually allowed in phpdoc?
      */
     public function getLocalizedKeyValue($groupId, $keyId, $language = "default", $ignoreFallbackLanguage = false, $ignoreDefaultLanguage = false)
     {

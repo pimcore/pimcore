@@ -41,6 +41,9 @@ class MaintenanceCommand extends AbstractCommand
         ;
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $validJobs = [];

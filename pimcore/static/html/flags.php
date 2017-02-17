@@ -15,6 +15,10 @@ foreach ($locales as $short => $translation) {
     }
 }
 
+/**
+ * @param $language
+ * @return mixed|string
+ */
 function getIconPath($language)
 {
     $iconBasePath = PIMCORE_PATH . '/static/img/flags';

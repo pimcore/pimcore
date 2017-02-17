@@ -71,11 +71,11 @@ class MysqlTable extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Exte
      * Note : $data is always "string" (serialization is done by the
      * core not by the backend)
      *
-     * @param  string $data             Datas to cache
-     * @param  string $id               Cache id
-     * @param  array  $tags             Array of strings, the cache record will be tagged by each string entry
-     * @param  int    $specificLifetime If != false, set a specific lifetime for this cache record (null => infinite lifetime)
-     * @return boolean True if no problem
+     * @param string $data Datas to cache
+     * @param string $id Cache id
+     * @param array $tags Array of strings, the cache record will be tagged by each string entry
+     * @param bool|int $specificLifetime If != false, set a specific lifetime for this cache record (null => infinite lifetime)
+     * @return bool True if no problem
      */
     public function save($data, $id, $tags = [], $specificLifetime = false)
     {
@@ -253,6 +253,10 @@ class MysqlTable extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Exte
         return $itemIds;
     }
 
+    /**
+     * @param string $id
+     * @return array|bool
+     */
     public function getMetadatas($id)
     {
         $data = $this->getDb()->fetchRow("SELECT mtime,expire FROM cache WHERE id = ?", $id);
@@ -293,6 +297,10 @@ class MysqlTable extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Exte
         return $this->getDb()->fetchAll("SELECT DISTINCT (id) FROM cache_tags");
     }
 
+    /**
+     * @param string $id
+     * @return bool
+     */
     public function test($id)
     {
         $data = $this->getDb()->fetchRow("SELECT mtime,expire FROM cache WHERE id = ?", $id);
@@ -332,11 +340,18 @@ class MysqlTable extends \Zend_Cache_Backend implements \Zend_Cache_Backend_Exte
         return true;
     }
 
+    /**
+     * @return array
+     */
     public function getIds()
     {
         return $this->getDb()->fetchAll("SELECT id from cache");
     }
 
+    /**
+     * @param array $tags
+     * @return array
+     */
     public function getIdsNotMatchingTags($tags = [])
     {
         return [];

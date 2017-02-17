@@ -206,7 +206,6 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * @param Object\Concrete $object
-     * @return void
      */
     public function delete(Object\Concrete $object)
     {
@@ -264,7 +263,9 @@ class Dao extends Model\Dao\AbstractDao
 
 
     /**
-     * @param  string $field
+     * @param string $field
+     * @param $forOwner
+     * @param $remoteClassId
      * @return array
      */
     public function getRelationData($field, $forOwner, $remoteClassId)

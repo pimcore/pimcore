@@ -176,7 +176,7 @@ class Layout
 
     /**
      * @param string $region
-     * @return void
+     * @return $this
      */
     public function setRegion($region)
     {
@@ -187,7 +187,7 @@ class Layout
 
     /**
      * @param string $title
-     * @return void
+     * @return $this
      */
     public function setTitle($title)
     {
@@ -198,7 +198,7 @@ class Layout
 
     /**
      * @param integer $width
-     * @return void
+     * @return $this
      */
     public function setWidth($width)
     {
@@ -213,7 +213,7 @@ class Layout
 
     /**
      * @param integer $height
-     * @return void
+     * @return $this
      */
     public function setHeight($height)
     {
@@ -228,7 +228,7 @@ class Layout
 
     /**
      * @param boolean $collapsible
-     * @return void
+     * @return $this
      */
     public function setCollapsible($collapsible)
     {
@@ -241,7 +241,7 @@ class Layout
 
     /**
      * @param array $permissions
-     * @return void
+     * @return $this
      */
     public function setPermissions($permissions)
     {
@@ -260,7 +260,7 @@ class Layout
 
     /**
      * @param array $children
-     * @return void
+     * @return $this
      */
     public function setChildren($children)
     {
@@ -283,7 +283,6 @@ class Layout
 
     /**
      * @param mixed $child
-     * @return void
      */
     public function addChild($child)
     {
@@ -293,7 +292,7 @@ class Layout
     /**
      * @param mixed $data
      * @param array $blockedKeys
-     * @return void
+     * @return $this
      */
     public function setValues($data = [], $blockedKeys = [])
     {
@@ -319,7 +318,7 @@ class Layout
 
     /**
      * @param mixed $datatype
-     * @return void
+     * @return $this
      */
     public function setDatatype($datatype)
     {

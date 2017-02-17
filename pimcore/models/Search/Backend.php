@@ -108,14 +108,15 @@ class Backend
     }
 
     /**
-     * @param  $queryStr
-     * @param  $webResourceType
-     * @param  $subtype
-     * @param  $modifiedRange
-     * @param  $createdRange
-     * @param  $userOwner
-     * @param  $userModification
-     * @param  $classname
+     * @param $queryStr
+     * @param $webResourceType
+     * @param $type
+     * @param $subtype
+     * @param $modifiedRange
+     * @param $createdRange
+     * @param $userOwner
+     * @param $userModification
+     * @param $classname
      * @return int
      */
     public function getTotalSearchMatches($queryStr, $webResourceType, $type, $subtype, $modifiedRange = null, $createdRange = null, $userOwner = null, $userModification = null, $classname = null)

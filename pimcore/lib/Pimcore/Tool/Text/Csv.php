@@ -18,6 +18,11 @@ namespace Pimcore\Tool\Text;
 
 class Csv
 {
+    /**
+     * @param $data
+     * @return \stdClass
+     * @throws \Exception
+     */
     public function detect($data)
     {
         $linefeed = $this->guessLinefeed($data);
@@ -48,6 +53,10 @@ class Csv
         return $dialect;
     }
 
+    /**
+     * @param $data
+     * @return string
+     */
     protected function guessLinefeed($data)
     {
         $charcount = count_chars($data);

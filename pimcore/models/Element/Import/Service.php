@@ -38,11 +38,14 @@ class Service
     protected $importInfo;
 
     /**
-     * @var User
+     * @var Model\User
      */
     protected $user;
 
-
+    /**
+     * Service constructor.
+     * @param $user
+     */
     public function __construct($user)
     {
         $this->webService = new Webservice\Service();
@@ -50,7 +53,9 @@ class Service
         $this->user = $user;
     }
 
-
+    /**
+     * @return Webservice\Service
+     */
     public function getWebservice()
     {
         return $this->webService;
@@ -220,7 +225,6 @@ class Service
      * @param Webservice\Data $apiElement
      * @param string $type
      * @param array $idMapping
-     * @return void
      */
     public function correctElementIdRelations($apiElement, $type, $idMapping)
     {
@@ -241,7 +245,6 @@ class Service
     /**
      * @param  Webservice\Data\Document\PageSnippet $apiElement
      * @param  array $idMapping
-     * @return void
      */
     public function correctDocumentRelations($apiElement, $idMapping)
     {
@@ -268,7 +271,7 @@ class Service
 
     /**
      * @param  Webservice\Data\Object\Concrete $apiElement
-     * @return void
+     * @param $idMapping
      */
     public function correctObjectRelations($apiElement, $idMapping)
     {

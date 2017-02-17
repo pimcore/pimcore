@@ -176,6 +176,7 @@ class Editlock extends Model\AbstractModel
     }
 
     /**
+     * @param int $cid
      * @return $this
      */
     public function setCid($cid)
@@ -198,7 +199,7 @@ class Editlock extends Model\AbstractModel
 
     /**
      * @param integer $userId
-     * @return void
+     * @return $this
      */
     public function setUserId($userId)
     {
@@ -222,7 +223,7 @@ class Editlock extends Model\AbstractModel
 
     /**
      * @param string $ctype
-     * @return void
+     * @return $this
      */
     public function setCtype($ctype)
     {
@@ -241,7 +242,7 @@ class Editlock extends Model\AbstractModel
 
     /**
      * @param string $sessionId
-     * @return void
+     * @return $this
      */
     public function setSessionId($sessionId)
     {
@@ -251,7 +252,7 @@ class Editlock extends Model\AbstractModel
     }
 
     /**
-     * @return User
+     * @return Model\User
      */
     public function getUser()
     {
@@ -259,8 +260,8 @@ class Editlock extends Model\AbstractModel
     }
 
     /**
-     * @param User $user
-     * @return void
+     * @param Model\User $user
+     * @return $this
      */
     public function setUser($user)
     {
@@ -279,7 +280,7 @@ class Editlock extends Model\AbstractModel
 
     /**
      * @param integer $date
-     * @return void
+     * @return $this
      */
     public function setDate($date)
     {

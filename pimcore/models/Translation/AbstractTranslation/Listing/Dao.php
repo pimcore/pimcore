@@ -228,6 +228,9 @@ abstract class Dao extends Model\Listing\Dao\AbstractDao implements Dao\DaoInter
         }
     }
 
+    /**
+     * @param callable $callback
+     */
     public function onCreateQuery(callable $callback)
     {
         $this->onCreateQueryCallback = $callback;

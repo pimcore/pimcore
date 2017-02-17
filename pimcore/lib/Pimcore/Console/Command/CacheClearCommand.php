@@ -22,6 +22,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class CacheClearCommand extends AbstractCommand
 {
+    /**
+     *
+     */
     protected function configure()
     {
         $this
@@ -45,6 +48,9 @@ class CacheClearCommand extends AbstractCommand
         ;
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         if ($input->getOption("tags")) {

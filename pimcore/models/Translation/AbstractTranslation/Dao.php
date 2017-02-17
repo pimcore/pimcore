@@ -46,8 +46,6 @@ abstract class Dao extends Model\Dao\AbstractDao implements Dao\DaoInterface
 
     /**
      * Save object to database
-     *
-     * @return void
      */
     public function save()
     {
@@ -70,8 +68,6 @@ abstract class Dao extends Model\Dao\AbstractDao implements Dao\DaoInterface
 
     /**
      * Deletes object from database
-     *
-     * @return void
      */
     public function delete()
     {

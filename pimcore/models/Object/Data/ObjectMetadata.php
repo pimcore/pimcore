@@ -150,8 +150,9 @@ class ObjectMetadata extends Model\AbstractModel
     }
 
     /**
-     * @param $object
+     * @param $element
      * @return $this
+     * @internal param $object
      */
     public function setElement($element)
     {

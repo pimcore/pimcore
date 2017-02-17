@@ -1123,6 +1123,12 @@ class Service
         }
     }
 
+    /**
+     * @param $type
+     * @param $params
+     * @return array
+     * @throws \Exception
+     */
     public function getTranslations($type, $params)
     {
         if (in_array($type, ['website', 'admin'])) {

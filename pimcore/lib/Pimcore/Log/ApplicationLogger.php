@@ -55,6 +55,7 @@ class ApplicationLogger /*implements LoggerInterface*/
 
     /**
      * @param string $component
+     * @param boolean $initDbHandler
      * @return ApplicationLogger
      */
     public static function getInstance($component = "default", $initDbHandler = false)
@@ -118,7 +119,6 @@ class ApplicationLogger /*implements LoggerInterface*/
 
     /**
      * @param string $component
-     * @return void
      */
     public function setComponent($component)
     {
@@ -127,7 +127,6 @@ class ApplicationLogger /*implements LoggerInterface*/
 
     /**
      * @param \Pimcore\Log\FileObject | string $fileObject
-     * @return void
      */
     public function setFileObject($fileObject)
     {
@@ -136,7 +135,6 @@ class ApplicationLogger /*implements LoggerInterface*/
 
     /**
      * @param \\Pimcore\Model\Object\AbstractObject | \Pimcore\Model\Document | \Pimcore\Model\Asset | int $relatedObject
-     * @return void
      */
     public function setRelatedObject($relatedObject)
     {
@@ -345,7 +343,9 @@ class ApplicationLogger /*implements LoggerInterface*/
     }
 
     /**
-     *
+     * @param $level
+     * @param $message
+     * @param $params
      */
     protected function handleLog($level, $message, $params)
     {

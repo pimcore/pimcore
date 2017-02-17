@@ -18,8 +18,15 @@ namespace Pimcore\Model\Tool\Admin;
 
 class EventDataContainer
 {
+    /**
+     * @var mixed
+     */
     protected $data;
 
+    /**
+     * EventDataContainer constructor.
+     * @param $data
+     */
     public function __construct($data)
     {
         $this->data = $data;

@@ -86,6 +86,7 @@ class Hardlink extends Document
     /**
      * Resolves dependencies and create tags for caching out of them
      *
+     * @param array $tags
      * @return array
      */
     public function getCacheTags($tags = [])
@@ -247,7 +248,6 @@ class Hardlink extends Document
 
     /**
      * @see Document::delete
-     * @return void
      */
     public function delete()
     {

@@ -117,7 +117,7 @@ class Setup extends Model\AbstractModel
     }
 
     /**
-     *
+     * @param array $config
      */
     public function contents($config = [])
     {

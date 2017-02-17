@@ -26,7 +26,7 @@ trait DaoTrait
 
     /**
      * @param \Pimcore\Model\AbstractModel $model
-     * @return void
+     * @return $this
      */
     public function setModel($model)
     {
@@ -37,7 +37,6 @@ trait DaoTrait
 
     /**
      * @param array $data
-     * @return void
      */
     protected function assignVariablesToModel($data)
     {

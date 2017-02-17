@@ -21,7 +21,6 @@ use Pimcore\Model\Webservice;
 
 class PageSnippet extends Model\Webservice\Data\Document
 {
-    
     /**
      * @var string
      */
@@ -42,7 +41,10 @@ class PageSnippet extends Model\Webservice\Data\Document
      */
     public $elements;
 
-
+    /**
+     * @param $object
+     * @param null $options
+     */
     public function map($object, $options = null)
     {
         $originalElements = [];

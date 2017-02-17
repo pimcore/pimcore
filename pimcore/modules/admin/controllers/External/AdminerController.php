@@ -84,6 +84,9 @@ class Admin_External_AdminerController extends \Pimcore\Controller\Action\Admin
 
 
 // adminer plugin
+/**
+ * @return AdminerPimcore
+ */
 function adminer_object()
 {
     $pluginDir = PIMCORE_DOCUMENT_ROOT . "/vendor/vrana/adminer/plugins";
@@ -108,22 +111,37 @@ function adminer_object()
 
     class AdminerPimcore extends AdminerPlugin
     {
+        /**
+         * @return string
+         */
         public function name()
         {
             return "";
         }
 
+        /**
+         * @param bool $create
+         * @return string
+         */
         public function permanentLogin($create = false)
         {
             // key used for permanent login
             return \Zend_Session::getId();
         }
 
+        /**
+         * @param $login
+         * @param $password
+         * @return bool
+         */
         public function login($login, $password)
         {
             return true;
         }
 
+        /**
+         * @return array
+         */
         public function credentials()
         {
             $conf = \Pimcore\Config::getSystemConfig()->database->params;
@@ -139,6 +157,9 @@ function adminer_object()
             ];
         }
 
+        /**
+         * @return mixed
+         */
         public function database()
         {
             $conf = \Pimcore\Config::getSystemConfig()->database->params;

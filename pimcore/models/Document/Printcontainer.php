@@ -35,7 +35,14 @@ class Printcontainer extends Document\PrintAbstract
      */
     public $action = "container";
 
+    /**
+     * @var
+     */
+    private $allChildren = [];
 
+    /**
+     * @return array
+     */
     public function getTreeNodeConfig()
     {
         $tmpDocument = [];
@@ -54,8 +61,9 @@ class Printcontainer extends Document\PrintAbstract
         return $tmpDocument;
     }
 
-
-    private $allChildren;
+    /**
+     * @return array
+     */
     public function getAllChildren()
     {
         $this->allChildren = [];
@@ -64,9 +72,12 @@ class Printcontainer extends Document\PrintAbstract
         return $this->allChildren;
     }
 
+    /**
+     * @param Document $document
+     */
     private function doGetChildren(Document $document)
     {
-        $children = $document->getChilds();
+        $children = $document->getChildren();
         foreach ($children as $child) {
             if ($child instanceof Document\Printpage) {
                 $this->allChildren[] = $child;
@@ -86,7 +97,9 @@ class Printcontainer extends Document\PrintAbstract
         }
     }
 
-
+    /**
+     * @return bool
+     */
     public function pdfIsDirty()
     {
         $dirty = parent::pdfIsDirty();

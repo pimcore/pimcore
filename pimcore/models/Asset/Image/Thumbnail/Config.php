@@ -163,6 +163,9 @@ class Config extends Model\AbstractModel
         return $clone;
     }
 
+    /**
+     * @return Config
+     */
     public static function getPreviewConfig()
     {
         $thumbnail = new self();
@@ -203,8 +206,9 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @param  $name
-     * @param  $parameters
+     * @param $name
+     * @param $parameters
+     * @param $media
      * @return bool
      */
     public function addItem($name, $parameters, $media = null)
@@ -226,8 +230,10 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * @param  $name
-     * @param  $parameters
+     * @param $position
+     * @param $name
+     * @param $parameters
+     * @param $media
      * @return bool
      */
     public function addItemAt($position, $name, $parameters, $media = null)
@@ -247,10 +253,6 @@ class Config extends Model\AbstractModel
         return true;
     }
 
-
-    /**
-     * @return void
-     */
     public function resetItems()
     {
         $this->items = [];
@@ -543,6 +545,10 @@ class Config extends Model\AbstractModel
     }
 
 
+    /**
+     * @param $asset
+     * @return array
+     */
     public function getEstimatedDimensions($asset)
     {
         $originalWidth = $asset->getWidth();

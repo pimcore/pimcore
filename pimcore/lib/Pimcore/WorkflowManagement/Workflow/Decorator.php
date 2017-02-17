@@ -32,6 +32,10 @@ class Decorator
         $this->workflow = $workflow;
     }
 
+    /**
+     * @param $key
+     * @return string
+     */
     private function translateLabel($key)
     {
         try {
@@ -41,6 +45,10 @@ class Decorator
         }
     }
 
+    /**
+     * @param $actionConfigs
+     * @return array
+     */
     public function getAvailableActionsForForm($actionConfigs)
     {
         $availableActions = [];
@@ -54,7 +62,10 @@ class Decorator
         return $availableActions;
     }
 
-
+    /**
+     * @param $stateConfigs
+     * @return array
+     */
     public function getAvailableStatesForForm($stateConfigs)
     {
         $availableStates = [];
@@ -69,6 +80,10 @@ class Decorator
         return $availableStates;
     }
 
+    /**
+     * @param $statusConfigs
+     * @return array
+     */
     public function getAvailableStatusesForForm($statusConfigs)
     {
         $availableStatuses = [];
@@ -82,7 +97,11 @@ class Decorator
         return $availableStatuses;
     }
 
-
+    /**
+     * @param $statusName
+     * @return string
+     * @throws \Exception
+     */
     public function getStatusLabel($statusName)
     {
         if (!$this->workflow) {
@@ -94,7 +113,11 @@ class Decorator
         return $this->translateLabel($config['label']);
     }
 
-
+    /**
+     * @param $actionName
+     * @return string
+     * @throws \Exception
+     */
     public function getActionLabel($actionName)
     {
         if (!$this->workflow) {
@@ -109,6 +132,7 @@ class Decorator
     /**
      * Returns the note type title
      * @param $actionName
+     * @param $formData
      * @return string
      */
     public function getNoteType($actionName, $formData)
@@ -125,7 +149,11 @@ class Decorator
         return 'Status update';
     }
 
-
+    /**
+     * @param $actionName
+     * @param $formData
+     * @return string
+     */
     public function getNoteTitle($actionName, $formData)
     {
         $config = $this->workflow->getActionConfig($actionName);

@@ -93,23 +93,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * Save object to database
-     *
-     * @return void
-     */
-    public function save()
-    {
-        if ($this->model->getId()) {
-            return $this->update();
-        }
-
-        return $this->create();
-    }
-
-    /**
      * Create a new record for the object in database
-     *
-     * @return boolean
      */
     public function create()
     {
@@ -123,9 +107,23 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * Save changes to database, it's an good idea to use save() instead
+     * Save object to database
      *
-     * @return void
+     * @return boolean
+     *
+     * @todo: update and create don't return anything
+     */
+    public function save()
+    {
+        if ($this->model->getId()) {
+            return $this->update();
+        }
+
+        return $this->create();
+    }
+
+    /**
+     * Save changes to database, it's an good idea to use save() instead
      */
     public function update()
     {
@@ -153,8 +151,6 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * Deletes object from database
-     *
-     * @return void
      */
     public function delete()
     {

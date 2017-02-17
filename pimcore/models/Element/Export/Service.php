@@ -25,23 +25,24 @@ use Pimcore\Model\Document;
 
 class Service
 {
-
     /**
      * @var Webservice\Service
      */
     protected $webService;
 
-
-
+    /**
+     * Service constructor.
+     */
     public function __construct()
     {
         $this->webService = new Webservice\Service();
     }
 
-
     /**
      * @param  Element\ElementInterface $element
-     * @return void
+     * @return mixed
+     *
+     * @todo: I dont know the return type here
      */
     public function getApiElement($element)
     {
@@ -65,10 +66,16 @@ class Service
         }
     }
 
+    /**
+     * @param $element
+     * @param $apiElementKeys
+     * @param $recursive
+     * @param $includeRelations
+     * @return array
+     */
     public function extractRelations($element, $apiElementKeys, $recursive, $includeRelations)
     {
         $foundRelations = [];
-
 
         if ($includeRelations) {
             $dependency = $element->getDependencies();
@@ -82,7 +89,6 @@ class Service
                 }
             }
         }
-
 
         $childs = $element->getChilds();
         if ($recursive and $childs) {

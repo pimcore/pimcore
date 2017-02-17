@@ -25,7 +25,14 @@ use Pimcore\Web2Print\Processor;
  */
 abstract class PrintAbstract extends Document\PageSnippet
 {
+    /**
+     * @var int
+     */
     public $lastGenerated;
+
+    /**
+     * @var string
+     */
     public $lastGenerateMessage;
 
     /**
@@ -33,11 +40,17 @@ abstract class PrintAbstract extends Document\PageSnippet
      */
     public $controller = "web2print";
 
+    /**
+     * @param \Zend_Date $lastGenerated
+     */
     public function setLastGeneratedDate(\Zend_Date $lastGenerated)
     {
         $this->lastGenerated = $lastGenerated->get(\Zend_Date::TIMESTAMP);
     }
 
+    /**
+     * @return null|\Zend_Date
+     */
     public function getLastGeneratedDate()
     {
         if ($this->lastGenerated) {
@@ -47,26 +60,41 @@ abstract class PrintAbstract extends Document\PageSnippet
         return null;
     }
 
+    /**
+     * @return null|TmpStore
+     */
     public function getInProgress()
     {
         return TmpStore::get($this->getLockKey());
     }
 
+    /**
+     * @param $lastGenerated
+     */
     public function setLastGenerated($lastGenerated)
     {
         $this->lastGenerated = $lastGenerated;
     }
 
+    /**
+     * @return int
+     */
     public function getLastGenerated()
     {
         return $this->lastGenerated;
     }
 
+    /**
+     * @param $lastGenerateMessage
+     */
     public function setLastGenerateMessage($lastGenerateMessage)
     {
         $this->lastGenerateMessage = $lastGenerateMessage;
     }
 
+    /**
+     * @return string
+     */
     public function getLastGenerateMessage()
     {
         return $this->lastGenerateMessage;
@@ -81,6 +109,10 @@ abstract class PrintAbstract extends Document\PageSnippet
         Processor::getInstance()->preparePdfGeneration($this->getId(), $config);
     }
 
+    /**
+     * @param $params
+     * @return string
+     */
     public function renderDocument($params)
     {
         $html = Document\Service::render($this, $params, true);
@@ -88,16 +120,25 @@ abstract class PrintAbstract extends Document\PageSnippet
         return $html;
     }
 
+    /**
+     * @return string
+     */
     public function getPdfFileName()
     {
         return PIMCORE_TEMPORARY_DIRECTORY . DIRECTORY_SEPARATOR . "web2print-document-" . $this->getId() . ".pdf";
     }
 
+    /**
+     * @return bool
+     */
     public function pdfIsDirty()
     {
         return $this->getLastGenerated() < $this->getModificationDate();
     }
 
+    /**
+     * @return string
+     */
     public function getLockKey()
     {
         return "web2print_pdf_generation_" . $this->getId();

@@ -426,7 +426,9 @@ class Link
     }
     
     /**
-     * @return Document|Asset
+     * @return Document|Asset|boolean
+     *
+     * @todo: $this->object not found in class
      */
     public function getObject()
     {
@@ -440,8 +442,9 @@ class Link
 
         return false;
     }
-    
+
     /**
+     * @param $object
      * @return $this
      */
     public function setObject($object)
@@ -452,7 +455,9 @@ class Link
     }
 
     /**
-     * @return void
+     * @return Asset|Document
+     *
+     * @todo: $this->object not found in class
      */
     public function setObjectFromId()
     {
@@ -464,7 +469,10 @@ class Link
 
         return $this->object;
     }
-    
+
+    /**
+     * @return string
+     */
     public function getHtml()
     {
         $attributes = ["rel", "tabindex", "accesskey", "title", "target", "class"];

@@ -343,9 +343,9 @@ class Image extends Model\Document\Tag
         return $this;
     }
 
-    /*
-      * @return string
-      */
+    /**
+     * @return string
+     */
     public function getText()
     {
         return $this->alt;
@@ -359,17 +359,17 @@ class Image extends Model\Document\Tag
         $this->alt = $text;
     }
 
-    /*
-      * @return string
-      */
+    /**
+     * @return string
+     */
     public function getAlt()
     {
         return $this->getText();
     }
 
-    /*
-      * @return string
-      */
+    /**
+     * @return string
+     */
     public function getSrc()
     {
         $image = $this->getImage();

@@ -31,7 +31,6 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @param integer $id
      * @param string $type
-     * @return void
      */
     public function getBySourceId($id = null, $type = null)
     {
@@ -94,8 +93,6 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * Clear all relations in the database for current source id
-     *
-     * @return void
      */
     public function clear()
     {
@@ -108,8 +105,6 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * Save to database
-     *
-     * @return void
      */
     public function save()
     {

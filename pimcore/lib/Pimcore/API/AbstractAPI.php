@@ -18,6 +18,9 @@ use Pimcore\Model\Schedule;
 
 class AbstractAPI
 {
+    /**
+     * @var array
+     */
     protected static $legacyMappings = [
         "maintenance" => "system.maintenance",
         "maintenanceForce" => "system.maintenanceForce",

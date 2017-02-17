@@ -134,7 +134,8 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     * @return Object\ClassDefinition\Data
+     * @param $key
+     * @return Object\ClassDefinition\Data|boolean
      */
     public function getFieldDefinition($key)
     {
@@ -147,7 +148,6 @@ class Definition extends Model\AbstractModel
 
     /**
      * @param array|Object\ClassDefinition\Layout|Object\ClassDefinition\Data $def
-     * @return void
      */
     public function extractDataDefinitions($def)
     {

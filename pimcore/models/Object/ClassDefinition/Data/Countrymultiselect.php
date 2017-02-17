@@ -20,7 +20,6 @@ use Pimcore\Model;
 
 class Countrymultiselect extends Model\Object\ClassDefinition\Data\Multiselect
 {
-
     /**
      * Static type of this element
      *
@@ -33,7 +32,9 @@ class Countrymultiselect extends Model\Object\ClassDefinition\Data\Multiselect
      */
     public $restrictTo = null;
 
-
+    /**
+     * Countrymultiselect constructor.
+     */
     public function __construct()
     {
         $countries = \Zend_Locale::getTranslationList('territory');

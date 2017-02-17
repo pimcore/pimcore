@@ -182,7 +182,7 @@ class Renderlet extends Model\Document\Tag
     /**
      * @see Document\Tag\TagInterface::setDataFromEditmode
      * @param mixed $data
-     * @return void
+     * @return $this
      */
     public function setDataFromEditmode($data)
     {
@@ -198,7 +198,7 @@ class Renderlet extends Model\Document\Tag
     /**
      * Sets the element by the data stored for the object
      *
-     * @return void
+     * @return $this
      */
     public function setElement()
     {
@@ -231,8 +231,9 @@ class Renderlet extends Model\Document\Tag
 
     /**
      * get correct type of object as string
-     * @param mixed $data
-     * @return void
+     * @param null $object
+     * @return bool|string
+     * @internal param mixed $data
      */
     public function getObjectType($object = null)
     {
@@ -265,6 +266,7 @@ class Renderlet extends Model\Document\Tag
 
     /**
      * @param Model\Webservice\Data\Document\Element $wsElement
+     * @param $document
      * @param mixed $params
      * @param null $idMapper
      * @throws \Exception
@@ -357,8 +359,6 @@ class Renderlet extends Model\Document\Tag
 
     /**
      * this method is called by Document\Service::loadAllDocumentFields() to load all lazy loading fields
-     *
-     * @return void
      */
     public function load()
     {
@@ -435,7 +435,6 @@ class Renderlet extends Model\Document\Tag
      *  "asset" => array(...)
      * )
      * @param array $idMapping
-     * @return void
      */
     public function rewriteIds($idMapping)
     {

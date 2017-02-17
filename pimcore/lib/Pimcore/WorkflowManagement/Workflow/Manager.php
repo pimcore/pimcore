@@ -109,21 +109,29 @@ class Manager
         }
     }
 
+    /**
+     *
+     */
     private function initUserIds()
     {
         $this->userIds = array_merge([$this->user->getId()], $this->user->getRoles());
     }
 
+    /**
+     * @return Asset|Document|Concrete
+     */
     public function getElement()
     {
         return $this->element;
     }
 
+    /**
+     * @return null|\Pimcore\Model\User
+     */
     public function getUser()
     {
         return $this->user;
     }
-
 
     /**
      * @return null|WorkflowState
@@ -182,6 +190,10 @@ class Manager
         }
     }
 
+    /**
+     * @param $newState
+     * @throws \Exception
+     */
     public function setElementState($newState)
     {
         try {
@@ -193,6 +205,10 @@ class Manager
         }
     }
 
+    /**
+     * @param $newStatus
+     * @throws \Exception
+     */
     public function setElementStatus($newStatus)
     {
         try {
@@ -213,17 +229,21 @@ class Manager
         return $this->workflow;
     }
 
-
+    /**
+     * @param $data
+     */
     public function setActionData($data)
     {
         $this->actionData = $data;
     }
 
+    /**
+     * @return null
+     */
     public function getActionData()
     {
         return $this->actionData;
     }
-
 
     /**
      * Get the available actions that can be performed on an element
@@ -400,12 +420,14 @@ class Manager
         return false;
     }
 
+    /**
+     * @param $actionConfig
+     * @return bool
+     */
     public function actionHasTransition($actionConfig)
     {
         return isset($actionConfig['transitionTo']) && is_array($actionConfig['transitionTo']);
     }
-
-
 
     /**
      * Validates that a transition between requested states can be done on an element
@@ -456,6 +478,9 @@ class Manager
         return true;
     }
 
+    /**
+     * @return mixed
+     */
     public function getError()
     {
         return $this->error;
@@ -678,7 +703,7 @@ class Manager
 
     /**
      * Returns whether or not an element has a workflow
-     * @param Asset|ConcreteObject|Document $element
+     * @param AbstractElement|Asset|ConcreteObject|Document $element
      * @return bool
      */
     public static function elementHasWorkflow(AbstractElement $element)
@@ -690,7 +715,6 @@ class Manager
 
         return false;
     }
-
 
     /**
      * Returns whether or not an element can be actioned

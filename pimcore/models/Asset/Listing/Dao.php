@@ -53,6 +53,10 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $assets;
     }
 
+    /**
+     * @param $columns
+     * @return \Zend_Db_Select
+     */
     public function getQuery($columns)
     {
         $select = $this->db->select();
@@ -85,6 +89,9 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $assetIds;
     }
 
+    /**
+     * @return int
+     */
     public function getCount()
     {
         $select = (string) $this->getQuery([new \Zend_Db_Expr('COUNT(*)')]);
@@ -93,6 +100,9 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $amount;
     }
 
+    /**
+     * @return int
+     */
     public function getTotalCount()
     {
         $select = $this->getQuery([new \Zend_Db_Expr('COUNT(*)')]);
@@ -104,6 +114,9 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $amount;
     }
 
+    /**
+     * @param callable $callback
+     */
     public function onCreateQuery(callable $callback)
     {
         $this->onCreateQueryCallback = $callback;

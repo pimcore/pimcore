@@ -20,7 +20,6 @@ use Pimcore\Logger;
 
 class Admin_PortalController extends \Pimcore\Controller\Action\Admin
 {
-
     /**
      * @var \\Pimcore\\Helper\\Dashboard
      */
@@ -32,11 +31,17 @@ class Admin_PortalController extends \Pimcore\Controller\Action\Admin
         $this->dashboardHelper = new \Pimcore\Helper\Dashboard($this->getUser());
     }
 
+    /**
+     * @return mixed
+     */
     protected function getCurrentConfiguration()
     {
         return $this->dashboardHelper->getDashboard($this->getParam("key"));
     }
 
+    /**
+     * @param $config
+     */
     protected function saveConfiguration($config)
     {
         $this->dashboardHelper->saveDashboard($this->getParam("key"), $config);

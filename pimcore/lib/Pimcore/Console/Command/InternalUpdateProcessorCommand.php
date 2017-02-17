@@ -31,6 +31,9 @@ class InternalUpdateProcessorCommand extends AbstractCommand
             ->addArgument("config");
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $status = ["success" => true];

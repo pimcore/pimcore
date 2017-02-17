@@ -451,7 +451,7 @@ class Workflow extends AbstractModel
      * @param $actionName
      * @param $statusName
      *
-     * @return $array|null
+     * @return array|null
      *
      * @throws \Exception
      */

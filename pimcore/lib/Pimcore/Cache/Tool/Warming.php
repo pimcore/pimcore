@@ -39,7 +39,6 @@ class Warming
     /**
      * @static
      * @param array $types
-     * @return void
      */
     public static function documents($types = null)
     {
@@ -56,7 +55,7 @@ class Warming
     /**
      * @static
      * @param array $types
-     * @return void
+     * @param null $classes
      */
     public static function objects($types = null, $classes = null)
     {
@@ -78,7 +77,6 @@ class Warming
     /**
      * @static
      * @param array $types
-     * @return void
      */
     public static function assets($types = null)
     {

@@ -16,16 +16,20 @@ namespace Pimcore\Translate\Adapter;
 
 class Json extends \Zend_Translate_Adapter
 {
+    /**
+     * @var array
+     */
     private $_data    = [];
 
     /**
      * Load translation data
      *
-     * @param  string|array  $filename  Filename and full path to the translation source
-     * @param  string        $locale    Locale/Language to add data for, identical with locale identifier,
+     * @param  string|array $filename Filename and full path to the translation source
+     * @param  string $locale Locale/Language to add data for, identical with locale identifier,
      *                                  see Zend_Locale for more information
-     * @param  array         $option    OPTIONAL Options to use
+     * @param array $options
      * @return array
+     * @internal param array $option OPTIONAL Options to use
      */
     protected function _loadTranslationData($filename, $locale, array $options = [])
     {

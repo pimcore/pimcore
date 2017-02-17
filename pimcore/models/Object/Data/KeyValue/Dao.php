@@ -27,8 +27,6 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * Get the valid columns from the database
-     *
-     * @return void
      */
     public function init()
     {
@@ -36,8 +34,6 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * Save object to database
-     *
-     * @return void
      */
     public function save()
     {
@@ -64,8 +60,6 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * Deletes object from database
-     *
-     * @return void
      */
     public function delete()
     {
@@ -78,8 +72,6 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * Save changes to database, it's an good idea to use save() instead
-     *
-     * @return void
      */
     public function update()
     {

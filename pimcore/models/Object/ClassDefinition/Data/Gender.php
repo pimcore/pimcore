@@ -28,7 +28,9 @@ class Gender extends Model\Object\ClassDefinition\Data\Select
      */
     public $fieldtype = "gender";
 
-
+    /**
+     * Gender constructor.
+     */
     public function __construct()
     {
         $options = [

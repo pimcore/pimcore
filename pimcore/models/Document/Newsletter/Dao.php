@@ -28,7 +28,7 @@ class Dao extends Model\Document\PageSnippet\Dao
      * Get the data for the object by the given id, or by the id which is set in the object
      *
      * @param integer $id
-     * @return void
+     * @throws \Exception
      */
     public function getById($id = null)
     {
@@ -55,7 +55,7 @@ class Dao extends Model\Document\PageSnippet\Dao
     /**
      * Create a new record for the object in the database
      *
-     * @return void
+     * @throws \Exception
      */
     public function create()
     {
@@ -73,7 +73,7 @@ class Dao extends Model\Document\PageSnippet\Dao
     /**
      * Deletes the object (and data) from database
      *
-     * @return void
+     * @throws \Exception
      */
     public function delete()
     {

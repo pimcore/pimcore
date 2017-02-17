@@ -268,7 +268,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     /**
      * Returns only the properties which should be serialized
      *
-     * @return void
+     * @return array
      */
     public function __sleep()
     {
@@ -368,7 +368,10 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      * Receives a standard class object from webservice import and fills the current tag's data
      *
      * @abstract
-     * @param  Webservice\Data\Document\Element $wsElement
+     * @param Webservice\Data\Document\Element $wsElement
+     * @param $document
+     * @param array $params,
+     * @param $idMapper
      * @param mixed $params
      * @return Webservice\Data\Document\Element
      */
@@ -380,6 +383,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
 
     /**
      * Returns the current tag's data for web service export
+     * @param $document
      * @param mixed $params
      * @abstract
      * @return array

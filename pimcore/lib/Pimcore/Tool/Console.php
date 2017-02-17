@@ -411,6 +411,7 @@ class Console
     /**
      * Returns a hash with all options passed to a cli script
      *
+     * @param boolean $onlyFullNotationArgs
      * @return array
      */
     public static function getOptions($onlyFullNotationArgs = false)

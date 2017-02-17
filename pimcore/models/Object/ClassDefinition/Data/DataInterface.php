@@ -16,6 +16,8 @@
 
 namespace Pimcore\Model\Object\ClassDefinition\Data;
 
+use Pimcore\Model\Object\AbstractObject;
+
 interface DataInterface
 {
 
@@ -23,7 +25,6 @@ interface DataInterface
      * converts object data to a simple string value or CSV Export
      * @abstract
      * @param null|AbstractObject $object
-     * @param mixed $params
      * @param array $params
      * @return string
      */
@@ -31,6 +32,8 @@ interface DataInterface
 
     /**
      * @param $importValue
+     * @param null $object
+     * @param array $params
      * @return mixed
      */
     public function getFromCsvImport($importValue, $object = null, $params = []);

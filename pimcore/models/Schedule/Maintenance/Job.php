@@ -21,7 +21,6 @@ use Pimcore\Model\Tool;
 
 class Job
 {
-
     /**
      * @var string
      */
@@ -46,7 +45,14 @@ class Job
      */
     public $arguments;
 
-    public function __construct($id, $object, $method, $arguments=null)
+    /**
+     * Job constructor.
+     * @param $id
+     * @param $object
+     * @param $method
+     * @param null $arguments
+     */
+    public function __construct($id, $object, $method, $arguments = null)
     {
         $this->setId($id);
         $this->setObject($object);
@@ -68,8 +74,12 @@ class Job
 
             return call_user_func_array([$this->getObject(), $this->getMethod()], $arguments);
         }
+        //TODO: Shouldn't we return null here?
     }
 
+    /**
+     * @return string
+     */
     public function getLockKey()
     {
         return "maintenance-job-" . $this->getId();
@@ -77,7 +87,6 @@ class Job
 
     /**
      * create lock file
-     * @return void
      */
     public function lock()
     {
@@ -86,7 +95,6 @@ class Job
 
     /**
      * delete lock file
-     * @return void
      */
     public function unlock()
     {
@@ -121,8 +129,8 @@ class Job
     }
 
     /**
-     * @param  object $object
-     * @return void
+     * @param $object
+     * @return $this
      */
     public function setObject($object)
     {
@@ -140,8 +148,8 @@ class Job
     }
 
     /**
-     * @param  string $method
-     * @return void
+     * @param $method
+     * @return $this
      */
     public function setMethod($method)
     {
@@ -167,8 +175,8 @@ class Job
     }
 
     /**
-     * @param  array $args
-     * @return void
+     * @param $args
+     * @return $this
      */
     public function setArguments($args)
     {

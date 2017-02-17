@@ -23,10 +23,9 @@ use Pimcore\Model\Asset;
 
 class Factory
 {
-
     /**
      * @static
-     * @param Asset|Document|ConcreteObject  $element
+     * @param AbstractElement|Asset|Document|ConcreteObject $element
      * @param User $user
      * @return \Pimcore\WorkflowManagement\Workflow\Manager
      */

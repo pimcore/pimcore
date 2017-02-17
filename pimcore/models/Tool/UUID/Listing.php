@@ -23,6 +23,10 @@ use Pimcore\Model;
  */
 class Listing extends Model\Listing\AbstractListing
 {
+    /**
+     * @param $key
+     * @return bool
+     */
     public function isValidOrderKey($key)
     {
         $resource = new Model\Tool\UUID\Dao();

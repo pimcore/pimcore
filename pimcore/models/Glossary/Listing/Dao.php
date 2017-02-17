@@ -43,6 +43,9 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $glossary;
     }
 
+    /**
+     * @return array
+     */
     public function getDataArray()
     {
         $glossarysData = $this->db->fetchAll("SELECT * FROM glossary" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
@@ -50,6 +53,11 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $glossarysData;
     }
 
+    /**
+     * @return int
+     *
+     * @todo: $amount could not be defined, so this could cause an issue
+     */
     public function getTotalCount()
     {
         try {

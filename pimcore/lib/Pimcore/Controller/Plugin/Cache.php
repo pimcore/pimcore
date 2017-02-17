@@ -63,6 +63,7 @@ class Cache extends \Zend_Controller_Plugin_Abstract
     }
 
     /**
+     * @param $reason
      * @return bool
      */
     public function disable($reason = null)

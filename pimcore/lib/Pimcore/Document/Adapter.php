@@ -41,9 +41,6 @@ abstract class Adapter
         return $path;
     }
 
-    /**
-     * @return void
-     */
     protected function removeTmpFiles()
     {
         // remove tmp files

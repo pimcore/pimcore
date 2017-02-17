@@ -153,7 +153,7 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
-     * @return void
+     * @todo: $isUpdate is not needed
      */
     public function save()
     {
@@ -182,9 +182,6 @@ class CustomLayout extends Model\AbstractModel
         }
     }
 
-    /**
-     * @return void
-     */
     public function delete()
     {
         // empty object cache
@@ -296,7 +293,7 @@ class CustomLayout extends Model\AbstractModel
 
     /**
      * @param int $creationDate
-     * @return void
+     * @return $this
      */
     public function setCreationDate($creationDate)
     {
@@ -307,7 +304,7 @@ class CustomLayout extends Model\AbstractModel
 
     /**
      * @param int $modificationDate
-     * @return void
+     * @return $this
      */
     public function setModificationDate($modificationDate)
     {
@@ -318,7 +315,7 @@ class CustomLayout extends Model\AbstractModel
 
     /**
      * @param int $userOwner
-     * @return void
+     * @return $this
      */
     public function setUserOwner($userOwner)
     {
@@ -329,7 +326,7 @@ class CustomLayout extends Model\AbstractModel
 
     /**
      * @param int $userModification
-     * @return void
+     * @return $this
      */
     public function setUserModification($userModification)
     {
@@ -341,6 +338,7 @@ class CustomLayout extends Model\AbstractModel
 
     /**
      * @param string $description
+     * @return $this
      */
     public function setDescription($description)
     {

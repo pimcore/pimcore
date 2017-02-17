@@ -39,6 +39,9 @@ class ResetPasswordCommand extends AbstractCommand
             );
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $user = $input->getOption("user");
@@ -71,6 +74,10 @@ class ResetPasswordCommand extends AbstractCommand
         $this->output->writeln("Password for user " . $user->getName() . " reset successfully.");
     }
 
+    /**
+     * @param string $prompt
+     * @return string|void
+     */
     protected function promtSilent($prompt = "Enter new password:")
     {
         if (preg_match('/^win/i', PHP_OS)) {

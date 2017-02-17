@@ -23,6 +23,9 @@ use \Pimcore\Model\Document;
  */
 class Dao extends Document\PrintAbstract\Dao
 {
+    /**
+     * @return string
+     */
     public function getLastedChildModificationDate()
     {
         $path = $this->model->getFullPath();

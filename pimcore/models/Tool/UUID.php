@@ -23,12 +23,35 @@ use Pimcore\Model;
  */
 class UUID extends Model\AbstractModel
 {
+    /**
+     * @var int
+     */
     public $itemId;
+
+    /**
+     * @var string
+     */
     public $type;
+
+    /**
+     * @var string
+     */
     public $uuid;
+
+    /**
+     * @var string
+     */
     public $instanceIdentifier;
+
+    /**
+     * @var mixed
+     */
     protected $item;
 
+    /**
+     * @param $instanceIdentifier
+     * @return $this
+     */
     public function setInstanceIdentifier($instanceIdentifier)
     {
         $this->instanceIdentifier = $instanceIdentifier;
@@ -36,11 +59,18 @@ class UUID extends Model\AbstractModel
         return $this;
     }
 
+    /**
+     * @return mixed
+     */
     public function getInstanceIdentifier()
     {
         return $this->instanceIdentifier;
     }
 
+    /**
+     * @return $this
+     * @throws \Exception
+     */
     public function setSystemInstanceIdentifier()
     {
         $instanceIdentifier = \Pimcore\Config::getSystemConfig()->general->instanceIdentifier;
