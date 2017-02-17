@@ -15,12 +15,57 @@
 namespace Pimcore\Tool;
 
 use Defuse\Crypto\Crypto;
+use Pimcore\Bundle\PimcoreAdminBundle\Security\User\User as ProxyUser;
+use Pimcore\Logger;
 use Pimcore\Model\User;
 use Pimcore\Tool;
-use Pimcore\Logger;
 
 class Authentication
 {
+    /**
+     * Wrap reading and checking user from the security system
+     *
+     * @return User|null
+     */
+    public static function getUser()
+    {
+        $storage = \Pimcore::getContainer()->get('security.token_storage');
+        $checker = \Pimcore::getContainer()->get('security.authorization_checker');
+
+        if (null === $token = $storage->getToken()) {
+            return null;
+        }
+
+        if (!is_object($user = $token->getUser())) {
+            // e.g. anonymous authentication
+            return null;
+        }
+
+        if ($user instanceof ProxyUser && $checker->isGranted('ROLE_PIMCORE_USER')) {
+            return $user->getUser();
+        }
+    }
+
+    /**
+     * Check if current user is granted access
+     *
+     * @param mixed $attributes
+     * @param mixed $object
+     * @return bool
+     */
+    public static function isGranted($attributes, $object = null)
+    {
+        // TODO check if we can remove this safely
+        // this is probably superfluous, as the firewall demands ROLE_PIMCORE_USER, but just to make sure for now
+        $user = static::getUser();
+        if (null === $user) {
+            return false;
+        }
+
+        $checker = \Pimcore::getContainer()->get('security.authorization_checker');
+
+        return $checker->isGranted($attributes, $object);
+    }
 
     /**
      * @param $username
