@@ -80,7 +80,7 @@ class StructuredTable extends Model\Object\ClassDefinition\Data
      *
      * @var string
      */
-    public $phpdocType = "array";
+    public $phpdocType = "Data\StructuredTable";
 
     /**
      * @return integer
