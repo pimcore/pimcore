@@ -14,6 +14,7 @@
 
 namespace Pimcore\Controller\Action;
 
+use Pimcore\Bundle\PimcoreAdminBundle\Security\User\User;
 use Pimcore\Controller\Action;
 use Pimcore\Config;
 use Pimcore\Tool\Authentication;
@@ -65,6 +66,8 @@ abstract class Admin extends Action
             }
         }
 
+        $this->loadUser();
+
         if (self::$adminInitialized) {
             // this will be executed on every call to this init() method
             try {
@@ -98,51 +101,51 @@ abstract class Admin extends Action
                 $_REQUEST["pimcore_admin_sid"] = $this->getParam("pimcore_admin_sid");
             }
 
-            // authenticate user, first try to authenticate with session information
-            $user = Authentication::authenticateSession();
-            if ($user instanceof Model\User) {
-                $this->setUser($user);
-                if ($this->getUser()->getLanguage()) {
-                    $this->setLanguage($this->getUser()->getLanguage());
-                }
-            } else {
-                // try to authenticate with http basic auth, but this is only allowed for WebDAV
-                if ($this->getParam("module") == "admin" && $this->getParam("controller") == "asset" && $this->getParam("action") == "webdav") {
-                    $user = Authentication::authenticateHttpBasic();
-                    if ($user instanceof Model\User) {
-                        $this->setUser($user);
+//            // authenticate user, first try to authenticate with session information
+//            $user = Authentication::authenticateSession();
+//            if ($user instanceof Model\User) {
+//                $this->setUser($user);
+//                if ($this->getUser()->getLanguage()) {
+//                    $this->setLanguage($this->getUser()->getLanguage());
+//                }
+//            } else {
+//                // try to authenticate with http basic auth, but this is only allowed for WebDAV
+//                if ($this->getParam("module") == "admin" && $this->getParam("controller") == "asset" && $this->getParam("action") == "webdav") {
+//                    $user = Authentication::authenticateHttpBasic();
+//                    if ($user instanceof Model\User) {
+//                        $this->setUser($user);
+//
+//                        \Zend_Registry::set("pimcore_admin_user", $this->getUser());
+//                        self::$adminInitialized = true;
+//
+//                        return;
+//                    }
+//                }
+//            }
 
-                        \Zend_Registry::set("pimcore_admin_user", $this->getUser());
-                        self::$adminInitialized = true;
-
-                        return;
-                    }
-                }
-            }
-
-            // redirect to the login-page if the user isn't authenticated
-            if (!$this->getUser() instanceof Model\User && !($this->getParam("module") == "admin" && $this->getParam("controller") == "login")) {
-
-                // put a detailed message into the debug.log
-                Logger::error("Prevented access to " . $_SERVER["REQUEST_URI"] . " because there is no user in the session!", [
-                    "server" => $_SERVER,
-                    "get" => $_GET,
-                    "post" => $_POST,
-                    "session" => isset($_SESSION) ? $_SESSION : null,
-                    "cookie" => $_COOKIE
-                ]);
-
-                if ($this->getRequest()->isXmlHttpRequest()) {
-                    header('HTTP/1.0 403 Forbidden', true, 403);
-                    echo "Session expired or unauthorized request. Please reload and try again!";
-                } else {
-                    // redirect to login page
-                    $this->redirect("/admin/login");
-                }
-
-                // exit the execution -> just to be sure
-                exit;
-            }
+//            // redirect to the login-page if the user isn't authenticated
+//            if (!$this->getUser() instanceof Model\User && !($this->getParam("module") == "admin" && $this->getParam("controller") == "login")) {
+//
+//                // put a detailed message into the debug.log
+//                Logger::error("Prevented access to " . $_SERVER["REQUEST_URI"] . " because there is no user in the session!", [
+//                    "server" => $_SERVER,
+//                    "get" => $_GET,
+//                    "post" => $_POST,
+//                    "session" => isset($_SESSION) ? $_SESSION : null,
+//                    "cookie" => $_COOKIE
+//                ]);
+//
+//                if ($this->getRequest()->isXmlHttpRequest()) {
+//                    header('HTTP/1.0 403 Forbidden', true, 403);
+//                    echo "Session expired or unauthorized request. Please reload and try again!";
+//                } else {
+//                    // redirect to login page
+//                    $this->redirect("/admin/login");
+//                }
+//
+//                // exit the execution -> just to be sure
+//                exit;
+//            }
 
             // we're now authenticated so we can remove the default error handler so that we get just the normal PHP errors
             if ($this->getParam("controller") != "login") {
@@ -162,6 +165,29 @@ abstract class Admin extends Action
 
             \Pimcore::getEventManager()->trigger("admin.controller.postInit", $this);
         }
+    }
+
+    /**
+     * Loads the user from the symfony security storage instead of handling authentication in init()
+     *
+     * @throws \Exception
+     */
+    protected function loadUser()
+    {
+        $container = \Pimcore::getContainer();
+        if (null === $token = $container->get('security.token_storage')->getToken()) {
+            throw new \Exception('User was not found');
+        }
+
+        if (!is_object($user = $token->getUser())) {
+            // e.g. anonymous authentication
+            throw new \Exception('User is invalid');
+        }
+
+        /** @var User $user */
+        $pimcoreUser = $user->getUser();
+
+        $this->setUser($pimcoreUser);
     }
 
     /**
