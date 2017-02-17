@@ -444,13 +444,14 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
                     $field = $fieldname;
                     $value = "%" . $filter["value"] . "%";
                 } elseif ($filter["type"] == "date" ||
-                    ($isExtJs6 && in_array($fieldname, ["modificationDate", "creationdate"]))) {
+                    ($isExtJs6 && in_array($fieldname, ["modificationDate", "creationDate"]))) {
                     if ($filter[$operatorField] == "lt") {
                         $operator = "<";
                     } elseif ($filter[$operatorField] == "gt") {
                         $operator = ">";
                     } elseif ($filter[$operatorField] == "eq") {
                         $operator = "=";
+                        $fieldname = "UNIX_TIMESTAMP(DATE(FROM_UNIXTIME({$fieldname})))";
                     }
                     $filter["value"] = strtotime($filter["value"]);
                     $field = $fieldname;
