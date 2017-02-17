@@ -1556,8 +1556,31 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 
             Object\Service::addGridFeatureJoins($list, $featureJoins, $class, $featureFilters, $requestedLanguage);
 
-            $list->load();
-
+            try{
+            	$list->load();            
+            }
+            catch(Exception $ex){
+            	$err_msg = $ex->getMessage();
+            	/** removing sorted brick column was causing 'Unknown column' error */
+            	if(strpos($err_msg,'Unknown column') !== false &&
+            		strpos($err_msg,'order clause') !== false){
+            		$this->setParam("sort",false);
+            		$backtrace = debug_backtrace();
+						if(isset($backtrace[0]) && isset($backtrace[0]['function'])){
+							$this_method_str = $backtrace[0]['function'];
+							$caller_method_str = false;
+							if(isset($backtrace[1]) && isset($backtrace[1]['function'])){
+								$caller_method_str = $backtrace[1]['function'];
+							}
+							/** prevent recursing more than once */
+							if($this_method_str != $caller_method_str){
+								return $this->gridProxyAction();														
+							}
+						}
+            	}
+            	throw $ex;
+            }
+            
             $objects = [];
             foreach ($list->getObjects() as $object) {
                 $o = Object\Service::gridObjectData($object, $fields, $requestedLanguage);
