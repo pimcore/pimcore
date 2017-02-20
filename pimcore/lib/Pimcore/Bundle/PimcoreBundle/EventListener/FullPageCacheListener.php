@@ -111,8 +111,6 @@ class FullPageCacheListener
      */
     public function onKernelRequest(KernelEvent $event)
     {
-        return false;
-
         if(!\Pimcore\Tool::isFrontend() || \Pimcore\Tool::isFrontentRequestByAdmin()) {
             return false;
         }
@@ -243,7 +241,6 @@ class FullPageCacheListener
      */
     public function onKernelResponse(KernelEvent $event)
     {
-        return false;
         if(!\Pimcore\Tool::isFrontend() || \Pimcore\Tool::isFrontentRequestByAdmin()) {
             return false;
         }
