@@ -10,6 +10,13 @@ services:
     # SECURITY
     #
 
+    pimcore_admin.security.authentication.provider:
+        class: Pimcore\Bundle\PimcoreAdminBundle\Security\Authentication\Provider\PimcoreAdminProvider
+
+    pimcore_admin.security.firewall.listener:
+        class: Pimcore\Bundle\PimcoreAdminBundle\Security\Firewall\PimcoreAdminListener
+        arguments: ['@security.token_storage']
+
     pimcore_admin.security.form_authenticator:
         class: Pimcore\Bundle\PimcoreAdminBundle\Security\FormAuthenticator
         arguments: ['@router']
@@ -25,3 +32,13 @@ services:
         decorates: security.encoder_factory
         arguments: ['@pimcore_admin.security.encoder_factory.inner']
         public: false
+
+    #pimcore_admin.event_listener.authentication:
+    #    class: Pimcore\Bundle\PimcoreAdminBundle\EventListener\AuthenticationListener
+    #    arguments: ['@security.token_storage', '@router']
+    #    tags:
+    #        - { name: kernel.event_subscriber }
+    #    calls:
+    #        - [setLogger, ['@logger']]
+    #    tags:
+    #        - { name: monolog.logger, channel: security }

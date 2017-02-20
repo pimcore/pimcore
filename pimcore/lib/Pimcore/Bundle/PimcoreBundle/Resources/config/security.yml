@@ -20,13 +20,8 @@ security:
         admin:
             anonymous: ~
             pattern: ^/admin
-            provider: pimcore_admin
-            logout:
-                path: /admin/logout
-                target: /admin
-            guard:
-                authenticators:
-                    - pimcore_admin.security.form_authenticator
+            stateless: true
+            pimcore_admin: true
 
     access_control:
         - { path: ^/admin/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
