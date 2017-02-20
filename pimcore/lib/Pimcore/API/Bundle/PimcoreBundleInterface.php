@@ -16,7 +16,7 @@ interface PimcoreBundleInterface
     public function getInstaller(ContainerInterface $container);
 
     /**
-     * Get path to include in admn iframe
+     * Get path to include in admin iframe
      *
      * @return string|RouteReferenceInterface|null
      */
