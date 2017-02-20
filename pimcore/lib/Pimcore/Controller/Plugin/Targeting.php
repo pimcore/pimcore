@@ -217,29 +217,5 @@ class Targeting extends \Zend_Controller_Plugin_Abstract
         }
     }
 
-    /**
-     * Checks if the passed List of Personas and List of Targets use geopoints as condition
-     * @param $personas
-     * @param $targets
-     * @return bool
-     */
-    private function checkPersonasAndTargetGroupForGeoIPRequirement($personas, $targets)
-    {
-        foreach ($personas as $persona) {
-            foreach ($persona->getConditions() as $condition) {
-                if ($condition['type'] == "geopoint" || $condition['type'] == "country") {
-                    return true;
-                }
-            }
-        }
-        foreach ($targets as $target) {
-            foreach ($target->getConditions() as $condition) {
-                if ($condition['type'] == "geopoint" || $condition['type'] == "country") {
-                    return true;
-                }
-            }
-        }
 
-        return false;
-    }
 }
