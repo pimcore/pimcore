@@ -2,6 +2,7 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\Service\Request;
 
+use Pimcore\Tool;
 use Pimcore\Tool\Authentication;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -16,6 +17,10 @@ class EditmodeResolver extends AbstractRequestResolver
     public function isEditmode(Request $request = null)
     {
         // editmode is only allowed for logged in users
+        if (!Tool::isFrontentRequestByAdmin()) {
+            return false;
+        }
+
         $user = Authentication::authenticateSession();
         if (!$user) {
             return false;
