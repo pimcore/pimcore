@@ -16,18 +16,18 @@ class PimcoreAdminProvider implements AuthenticationProviderInterface
      */
     public function authenticate(TokenInterface $token)
     {
-        /** @var User $user */
-        $user = $token->getUser();
+        // this is only here as double check - actually the token is already authenticated as soon as it's set
+        // in firewall listener
+        if ($token instanceof PimcoreAdminToken) {
+            $pimcoreUser = $token->getUser()->getUser();
+            if (Authentication::isValidUser($pimcoreUser)) {
+                $token->setAuthenticated(true);
 
-        $pimcoreUser = Authentication::authenticateSession();
-        if ($pimcoreUser && $user->getId() === $pimcoreUser->getId()) {
-            $authenticatedToken = new PimcoreAdminToken(new User($pimcoreUser));
-            $authenticatedToken->setAuthenticated(true);
-
-            return $authenticatedToken;
+                return $token;
+            }
         }
 
-        throw new AuthenticationException('Failed to load pimcore user from session');
+        throw new AuthenticationException('Failed to authenticate pimcore admin token');
     }
 
     /**

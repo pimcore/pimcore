@@ -15,12 +15,13 @@ services:
 
     pimcore_admin.security.firewall.listener:
         class: Pimcore\Bundle\PimcoreAdminBundle\Security\Firewall\PimcoreAdminListener
-        arguments: ['@security.token_storage']
+        arguments: ['@security.token_storage', '@router', '@security.http_utils']
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: monolog.logger, channel: security }
 
-    pimcore_admin.security.form_authenticator:
-        class: Pimcore\Bundle\PimcoreAdminBundle\Security\FormAuthenticator
-        arguments: ['@router']
-
+    # the services below are only needed to use the build-in http auth for webdav - not fully working yet!
     pimcore_admin.security.user_provider:
         class: Pimcore\Bundle\PimcoreAdminBundle\Security\User\UserProvider
 
@@ -32,13 +33,3 @@ services:
         decorates: security.encoder_factory
         arguments: ['@pimcore_admin.security.encoder_factory.inner']
         public: false
-
-    #pimcore_admin.event_listener.authentication:
-    #    class: Pimcore\Bundle\PimcoreAdminBundle\EventListener\AuthenticationListener
-    #    arguments: ['@security.token_storage', '@router']
-    #    tags:
-    #        - { name: kernel.event_subscriber }
-    #    calls:
-    #        - [setLogger, ['@logger']]
-    #    tags:
-    #        - { name: monolog.logger, channel: security }

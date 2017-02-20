@@ -5,6 +5,9 @@ namespace Pimcore\Bundle\PimcoreAdminBundle\Security\Authentication\Token;
 use Pimcore\Bundle\PimcoreAdminBundle\Security\User\User;
 use Symfony\Component\Security\Core\Authentication\Token\AbstractToken;
 
+/**
+ * @method User getUser()
+ */
 class PimcoreAdminToken extends AbstractToken
 {
     /**
