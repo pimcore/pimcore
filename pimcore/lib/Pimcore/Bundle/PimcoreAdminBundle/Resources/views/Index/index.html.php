@@ -643,7 +643,7 @@ if (PIMCORE_DEVMODE || $extjsDev) {
 <?php endforeach; ?>
 
 <?php foreach ($this->pluginCssPaths as $pluginCssPath): ?>
-    <link rel="stylesheet" type="text/css" href="<?= $cssPath ?>?_dc=<?= $pluginDcValue; ?>"/>
+    <link rel="stylesheet" type="text/css" href="<?= $pluginCssPath ?>?_dc=<?= $pluginDcValue; ?>"/>
 <?php endforeach; ?>
 
 
