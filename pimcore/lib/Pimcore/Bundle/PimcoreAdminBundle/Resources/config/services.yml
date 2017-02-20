@@ -10,11 +10,8 @@ services:
     # SECURITY
     #
 
-    pimcore_admin.security.authentication.provider:
-        class: Pimcore\Bundle\PimcoreAdminBundle\Security\Authentication\Provider\PimcoreAdminProvider
-
-    pimcore_admin.security.firewall.listener:
-        class: Pimcore\Bundle\PimcoreAdminBundle\Security\Firewall\PimcoreAdminListener
+    pimcore_admin.security.guard_authenticator:
+        class: Pimcore\Bundle\PimcoreAdminBundle\Security\PimcoreAdminAuthenticator
         arguments: ['@security.token_storage', '@router', '@security.http_utils']
         calls:
             - [setLogger, ['@logger']]
