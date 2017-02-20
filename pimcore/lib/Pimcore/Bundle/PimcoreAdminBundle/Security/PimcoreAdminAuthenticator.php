@@ -92,12 +92,10 @@ class PimcoreAdminAuthenticator extends AbstractGuardAuthenticator implements Lo
             $pimcoreUser = Authentication::authenticateSession();
 
             if ($pimcoreUser) {
-                return $pimcoreUser;
+                return [
+                    'user' => $pimcoreUser
+                ];
             }
-        }
-
-        if ($pimcoreUser) {
-            return $pimcoreUser;
         }
     }
 
@@ -109,9 +107,13 @@ class PimcoreAdminAuthenticator extends AbstractGuardAuthenticator implements Lo
         /** @var User|null $user */
         $user = null;
 
-        if ($credentials instanceof UserModel) {
-            $user = new User($credentials);
-        } else if (is_array($credentials)) {
+        if (!is_array($credentials)) {
+            throw new AuthenticationException('Invalid credentials');
+        }
+
+        if (isset($credentials['user']) && $credentials['user'] instanceof UserModel) {
+            $user = new User($credentials['user']);
+        } else {
             if (!isset($credentials['username'])) {
                 throw new AuthenticationException('Missing username');
             }
@@ -144,15 +146,15 @@ class PimcoreAdminAuthenticator extends AbstractGuardAuthenticator implements Lo
             } else {
                 throw new AuthenticationException('Invalid authentication method, must be either password or token');
             }
-        }
 
-        if ($user && Authentication::isValidUser($user->getUser())) {
-            $pimcoreUser = $user->getUser();
+            if ($user && Authentication::isValidUser($user->getUser())) {
+                $pimcoreUser = $user->getUser();
 
-            Session::useSession(function ($adminSession) use ($pimcoreUser) {
-                $adminSession->user = $pimcoreUser;
-                Session::regenerateId();
-            });
+                Session::useSession(function ($adminSession) use ($pimcoreUser) {
+                    $adminSession->user = $pimcoreUser;
+                    Session::regenerateId();
+                });
+            }
         }
 
         return $user;
@@ -190,7 +192,7 @@ class PimcoreAdminAuthenticator extends AbstractGuardAuthenticator implements Lo
      */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
-        // as all requests run through authentication (stateless) only redirect when currently on login route
+        // as all requests run through authentication only redirect when currently on login route
         if ($request->attributes->get('_route') !== 'admin_login') {
             return null;
         }
@@ -228,7 +230,6 @@ class PimcoreAdminAuthenticator extends AbstractGuardAuthenticator implements Lo
 
         // cleanup pimcore-cookies => 315554400 => strtotime('1980-01-01')
         setcookie("pimcore_opentabs", false, 315554400, "/");
-
     }
 
     /**
