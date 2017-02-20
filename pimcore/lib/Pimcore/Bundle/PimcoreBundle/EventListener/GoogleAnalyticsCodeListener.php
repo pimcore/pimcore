@@ -48,7 +48,7 @@ class GoogleAnalyticsCodeListener extends ResponseInjection
     {
         $response = $event->getResponse();
 
-        if (\Pimcore\Tool::isFrontend() && !\Pimcore\Tool::isFrontentRequestByAdmin()) {
+        if (\Pimcore\Tool::useFrontendOutputFilters()) {
             if ($event->isMasterRequest() && $this->isHtmlResponse($response)) {
                 if ($this->enabled && $code = AnalyticsHelper::getCode()) {
 

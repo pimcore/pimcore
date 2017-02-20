@@ -7,6 +7,7 @@ use Pimcore\Google\Analytics as AnalyticsHelper;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Pimcore\Tool;
 
 class GoogleTagManager extends ResponseInjection
 {
@@ -52,8 +53,7 @@ class GoogleTagManager extends ResponseInjection
         $reportConfig = \Pimcore\Config::getReportConfig();
 
         if ($this->isEnabled() && $event->isMasterRequest() && $this->isHtmlResponse($response) &&
-            !\Pimcore\Tool::isFrontentRequestByAdmin() &&
-            isset($reportConfig->tagmanager->sites->$siteKey->containerId)) {
+             Tool::useFrontendOutputFilters() && isset($reportConfig->tagmanager->sites->$siteKey->containerId)) {
 
             $containerId = $reportConfig->tagmanager->sites->$siteKey->containerId;
 

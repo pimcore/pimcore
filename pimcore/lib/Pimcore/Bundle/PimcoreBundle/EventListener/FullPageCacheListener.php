@@ -111,7 +111,7 @@ class FullPageCacheListener
      */
     public function onKernelRequest(KernelEvent $event)
     {
-        if(!\Pimcore\Tool::isFrontend() || \Pimcore\Tool::isFrontentRequestByAdmin()) {
+        if(!\Pimcore\Tool::useFrontendOutputFilters()) {
             return false;
         }
 
