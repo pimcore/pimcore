@@ -88,6 +88,11 @@ services:
         tags:
             - { name: kernel.event_subscriber }
 
+    pimcore.event_listener.internal_wysiwyg_html_attribute_filter:
+      class: Pimcore\Bundle\PimcoreBundle\EventListener\InternalWysiwygHtmlAttributeFilter
+      tags:
+          - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
+
     pimcore.event_listener.google_analytics_code:
       class: Pimcore\Bundle\PimcoreBundle\EventListener\GoogleAnalyticsCodeListener
       tags:

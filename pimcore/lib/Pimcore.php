@@ -270,7 +270,6 @@ class Pimcore
         $front->registerPlugin(new Controller\Plugin\Maintenance(), 2);
 
         if (Tool::useFrontendOutputFilters(new \Zend_Controller_Request_Http())) {
-            $front->registerPlugin(new Controller\Plugin\WysiwygAttributes(), 796);
             $front->registerPlugin(new Controller\Plugin\Webmastertools(), 797);
             $front->registerPlugin(new Controller\Plugin\TagManagement(), 804);
             $front->registerPlugin(new Controller\Plugin\Targeting(), 805);
