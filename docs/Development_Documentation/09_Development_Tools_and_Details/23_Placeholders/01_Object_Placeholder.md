@@ -7,6 +7,7 @@ Valid config parameter:
 | --------- | ----------- |
 | callMethod | The method of the object which sould be called (the call is localized) |
 | locale | The Locale to use (optional) |
+| nl2br | Convert content to HTML (optional) |
 
 ### Example Usage
 ```php

@@ -45,6 +45,9 @@ class Object extends AbstractPlaceholder
                 $string = $object->{$this->getPlaceholderConfig()->method}($this->getLocale());
             }
         }
+        if (is_bool($this->getPlaceholderConfig()->nl2br)) {
+            $string = nl2br($string);
+        }
 
         return $string;
     }
