@@ -368,10 +368,9 @@ class Tool
 
     /**
      * @static
-     * @param \Zend_Controller_Request_Abstract $request
      * @return bool
      */
-    public static function useFrontendOutputFilters(\Zend_Controller_Request_Abstract $request)
+    public static function useFrontendOutputFilters()
     {
 
         // check for module
@@ -384,7 +383,7 @@ class Tool
         }
 
         // check for manually disabled ?pimcore_outputfilters_disabled=true
-        if ($request->getParam("pimcore_outputfilters_disabled") && PIMCORE_DEBUG) {
+        if (array_key_exists("pimcore_outputfilters_disabled", $_REQUEST) && PIMCORE_DEBUG) {
             return false;
         }
 
