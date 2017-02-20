@@ -22,8 +22,6 @@ use Pimcore\Model;
 use Pimcore\Model\Property;
 use Pimcore\Model\Schedule;
 use Pimcore\Logger;
-use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag;
-use Symfony\Component\HttpFoundation\Session\SessionBagInterface;
 
 abstract class Document extends Admin
 {
@@ -169,18 +167,20 @@ abstract class Document extends Admin
         if ($this->getParam("id")) {
             $key = "document_" . $this->getParam("id");
 
-            Session::useSession(function (AttributeBag $session) use ($key) {
-                if (!$document = $session->get($key)) {
-                    $document = Model\Document::getById($this->getParam("id"));
-                    $document = $this->getLatestVersion($document);
-                }
+            $session = Session::get("pimcore_documents");
 
-                // set _fulldump otherwise the properties will be removed because of the session-serialize
-                $document->_fulldump = true;
-                $this->setValuesToDocument($document);
+            if (!$document = $session->$key) {
+                $document = Model\Document::getById($this->getParam("id"));
+                $document = $this->getLatestVersion($document);
+            }
 
-                $session->set($key, $document);
-            }, "pimcore_documents");
+            // set _fulldump otherwise the properties will be removed because of the session-serialize
+            $document->_fulldump = true;
+            $this->setValuesToDocument($document);
+
+            $session->$key = $document;
+
+            Session::writeClose();
         }
 
         $this->_helper->json(["success" => true]);
@@ -193,11 +193,11 @@ abstract class Document extends Admin
     protected function saveToSession($doc, $useForSave = false)
     {
         // save to session
-        Session::useSession(function (AttributeBag $session) use ($doc, $useForSave) {
-            $session->set("document_" . $doc->getId(), $doc);
+        Session::useSession(function ($session) use ($doc, $useForSave) {
+            $session->{"document_" . $doc->getId()} = $doc;
 
             if ($useForSave) {
-                $session->set("document_" . $doc->getId() . "_useForSave", true);
+                $session->{"document_" . $doc->getId() . "_useForSave"} = true;
             }
         }, "pimcore_documents");
     }
@@ -209,8 +209,8 @@ abstract class Document extends Admin
     {
         $key = "document_" . $this->getParam("id");
 
-        Session::useSession(function (AttributeBag $session) use ($key) {
-            $session->set($key, null);
+        Session::useSession(function ($session) use ($key) {
+            $session->$key = null;
         }, "pimcore_documents");
 
         $this->_helper->json(["success" => true]);
