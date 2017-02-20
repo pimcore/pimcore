@@ -47,9 +47,8 @@ class InternalWysiwygHtmlAttributeFilter extends ResponseInjection
      */
     public function onKernelResponse(FilterResponseEvent $event)
     {
-        $response = $event->getResponse();
-
-        if (Tool::useFrontendOutputFilters()) {
+        if ($event->isMasterRequest() && Tool::useFrontendOutputFilters()) {
+            $response = $event->getResponse();
             $content = $response->getContent();
             $content = preg_replace("/ pimcore_(id|type|disable_thumbnail)=\\\"([0-9a-z]+)\\\"/", "", $content);
             $response->setContent($content);
