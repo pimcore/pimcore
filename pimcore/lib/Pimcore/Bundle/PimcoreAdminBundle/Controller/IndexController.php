@@ -25,7 +25,7 @@ class IndexController extends AdminController
     {
         $user = $this->getUser();
         $view = new ViewModel([
-            'config' => $this->getParameter('pimcore.config')
+            'config' => Config::getSystemConfig()
         ]);
 
         $this
