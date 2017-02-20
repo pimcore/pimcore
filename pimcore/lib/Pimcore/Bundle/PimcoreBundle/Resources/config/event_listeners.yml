@@ -91,9 +91,10 @@ services:
     pimcore.event_listener.google_analytics_code:
       class: Pimcore\Bundle\PimcoreBundle\EventListener\GoogleAnalyticsCodeListener
       tags:
-        - { name: kernel.event_subscriber }
+          - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse, priority: -888 }
 
     pimcore.event_listener.full_page_cache:
         class: Pimcore\Bundle\PimcoreBundle\EventListener\FullPageCacheListener
         tags:
-          - { name: kernel.event_subscriber }
+          - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 600 }
+          - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse, priority: -999 }

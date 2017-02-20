@@ -6,12 +6,13 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\KernelEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Pimcore\Tool;
 use Pimcore\Cache as CacheManager;
 use Pimcore\Logger;
 
-class FullPageCacheListener implements EventSubscriberInterface
+class FullPageCacheListener
 {
     /**
      * @var bool
@@ -37,23 +38,6 @@ class FullPageCacheListener implements EventSubscriberInterface
      * @var string
      */
     protected $defaultCacheKey;
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedEvents()
-    {
-        $events = [];
-
-        if(\Pimcore\Tool::isFrontend() && !\Pimcore\Tool::isFrontentRequestByAdmin()) {
-            $events = [
-                KernelEvents::REQUEST => ['onKernelRequest', -999], // the first
-                KernelEvents::RESPONSE => ['onKernelResponse', 9999] // the last
-            ];
-        }
-
-        return $events;
-    }
 
     /**
      * @param null $reason
@@ -122,11 +106,17 @@ class FullPageCacheListener implements EventSubscriberInterface
     }
 
     /**
-     * @param GetResponseEvent $event
+     * @param KernelEvent $event
      * @return bool
      */
-    public function onKernelRequest(GetResponseEvent $event)
+    public function onKernelRequest(KernelEvent $event)
     {
+        return false;
+
+        if(!\Pimcore\Tool::isFrontend() || \Pimcore\Tool::isFrontentRequestByAdmin()) {
+            return false;
+        }
+
         if(!$event->isMasterRequest()) {
             return false;
         }
@@ -248,15 +238,25 @@ class FullPageCacheListener implements EventSubscriberInterface
     }
 
     /**
-     * @param FilterResponseEvent $event
+     * @param KernelEvent $event
+     * @return bool|void
      */
-    public function onKernelResponse(FilterResponseEvent $event)
+    public function onKernelResponse(KernelEvent $event)
     {
+        return false;
+        if(!\Pimcore\Tool::isFrontend() || \Pimcore\Tool::isFrontentRequestByAdmin()) {
+            return false;
+        }
+
         if(!$event->isMasterRequest()) {
             return false;
         }
 
         $response = $event->getResponse();
+
+        if(!$response) {
+            return false;
+        }
 
         if ($this->enabled && session_id()) {
             $this->disable("session in use");

@@ -8,28 +8,12 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class GoogleAnalyticsCodeListener extends ResponseInjection implements EventSubscriberInterface
+class GoogleAnalyticsCodeListener extends ResponseInjection
 {
     /**
      * @var bool
      */
     protected $enabled = true;
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedEvents()
-    {
-        $events = [];
-
-        if (\Pimcore\Tool::isFrontend() && !\Pimcore\Tool::isFrontentRequestByAdmin()) {
-            $events = [
-                KernelEvents::RESPONSE => ['onKernelResponse']
-            ];
-        }
-
-        return $events;
-    }
 
     /**
      * @return bool
@@ -64,20 +48,22 @@ class GoogleAnalyticsCodeListener extends ResponseInjection implements EventSubs
     {
         $response = $event->getResponse();
 
-        if ($event->isMasterRequest() && $this->isHtmlResponse($response)) {
-            if ($this->enabled && $code = AnalyticsHelper::getCode()) {
+        if (\Pimcore\Tool::isFrontend() && !\Pimcore\Tool::isFrontentRequestByAdmin()) {
+            if ($event->isMasterRequest() && $this->isHtmlResponse($response)) {
+                if ($this->enabled && $code = AnalyticsHelper::getCode()) {
 
-                // analytics
-                $content = $response->getContent();
+                    // analytics
+                    $content = $response->getContent();
 
-                // search for the end <head> tag, and insert the google analytics code before
-                // this method is much faster than using simple_html_dom and uses less memory
-                $headEndPosition = strripos($content, "</head>");
-                if ($headEndPosition !== false) {
-                    $content = substr_replace($content, $code . "</head>", $headEndPosition, 7);
+                    // search for the end <head> tag, and insert the google analytics code before
+                    // this method is much faster than using simple_html_dom and uses less memory
+                    $headEndPosition = strripos($content, "</head>");
+                    if ($headEndPosition !== false) {
+                        $content = substr_replace($content, $code . "</head>", $headEndPosition, 7);
+                    }
+
+                    $response->setContent($content);
                 }
-
-                $response->setContent($content);
             }
         }
     }
