@@ -274,7 +274,6 @@ class Pimcore
             $front->registerPlugin(new Controller\Plugin\Webmastertools(), 797);
             $front->registerPlugin(new Controller\Plugin\TagManagement(), 804);
             $front->registerPlugin(new Controller\Plugin\Targeting(), 805);
-            $front->registerPlugin(new Controller\Plugin\GoogleTagManager(), 810);
             $front->registerPlugin(new Controller\Plugin\HttpErrorLog(), 850);
         }
     }

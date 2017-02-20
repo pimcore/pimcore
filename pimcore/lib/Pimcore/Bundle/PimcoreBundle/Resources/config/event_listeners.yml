@@ -102,6 +102,11 @@ services:
       tags:
           - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse, priority: -109 }
 
+    pimcore.event_listener.google_tag_manager:
+      class: Pimcore\Bundle\PimcoreBundle\EventListener\GoogleTagManager
+      tags:
+          - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse, priority: -108 }
+
     pimcore.event_listener.full_page_cache:
         class: Pimcore\Bundle\PimcoreBundle\EventListener\FullPageCacheListener
         tags:

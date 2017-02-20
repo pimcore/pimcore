@@ -1,40 +1,19 @@
 <?php
-/**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in
- * LICENSE.md which is distributed with this source code.
- *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
- */
 
-namespace Pimcore\Controller\Plugin;
+namespace Pimcore\Bundle\PimcoreBundle\EventListener;
 
-use Pimcore\Tool;
+use Pimcore\Bundle\PimcoreBundle\EventListener\AbstractEventListener\ResponseInjection;
 use Pimcore\Google\Analytics as AnalyticsHelper;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\KernelEvents;
 
-class GoogleTagManager extends \Zend_Controller_Plugin_Abstract
+class GoogleTagManager extends ResponseInjection
 {
-
     /**
      * @var bool
      */
     protected $enabled = true;
-
-    /**
-     * @param \Zend_Controller_Request_Abstract $request
-     * @return bool|void
-     */
-    public function routeShutdown(\Zend_Controller_Request_Abstract $request)
-    {
-        if (!Tool::useFrontendOutputFilters($request)) {
-            return $this->disable();
-        }
-    }
 
     /**
      * @return bool
@@ -42,23 +21,40 @@ class GoogleTagManager extends \Zend_Controller_Plugin_Abstract
     public function disable()
     {
         $this->enabled = false;
-
         return true;
     }
 
     /**
-     *
+     * @return bool
      */
-    public function dispatchLoopShutdown()
+    public function enable()
     {
-        if (!Tool::isHtmlResponse($this->getResponse())) {
-            return;
-        }
+        $this->enabled = true;
+        return true;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEnabled()
+    {
+        return $this->enabled;
+    }
+
+    /**
+     * @param FilterResponseEvent $event
+     */
+    public function onKernelResponse(FilterResponseEvent $event)
+    {
+        $response = $event->getResponse();
 
         $siteKey = \Pimcore\Tool\Frontend::getSiteKey();
         $reportConfig = \Pimcore\Config::getReportConfig();
 
-        if ($this->enabled && isset($reportConfig->tagmanager->sites->$siteKey->containerId)) {
+        if ($this->isEnabled() && $event->isMasterRequest() && $this->isHtmlResponse($response) &&
+            !\Pimcore\Tool::isFrontentRequestByAdmin() &&
+            isset($reportConfig->tagmanager->sites->$siteKey->containerId)) {
+
             $containerId = $reportConfig->tagmanager->sites->$siteKey->containerId;
 
             if ($containerId) {
@@ -80,19 +76,19 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 CODE;
 
 
-                $body = $this->getResponse()->getBody();
+                $content = $response->getContent();
 
                 // search for the end <head> tag, and insert the google tag manager code before
                 // this method is much faster than using simple_html_dom and uses less memory
-                $headEndPosition = stripos($body, "</head>");
+                $headEndPosition = stripos($content, "</head>");
                 if ($headEndPosition !== false) {
-                    $body = substr_replace($body, $codeHead."</head>", $headEndPosition, 7);
+                    $content = substr_replace($content, $codeHead."</head>", $headEndPosition, 7);
                 }
 
                 // insert code after the opening <body> tag
-                $body = preg_replace("@<body(>|.*?[^?]>)@", "<body$1\n\n" . $codeBody, $body);
+                $content = preg_replace("@<body(>|.*?[^?]>)@", "<body$1\n\n" . $codeBody, $content);
 
-                $this->getResponse()->setBody($body);
+                $response->setContent($content);
             }
         }
     }
