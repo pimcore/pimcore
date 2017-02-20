@@ -21,6 +21,5 @@ class PimcoreBundle extends Bundle
         $container->addCompilerPass(new AreabrickPass());
         $container->addCompilerPass(new PimcoreGlobalTemplatingVariablesPass());
         $container->addCompilerPass(new SessionConfiguratorPass());
-        $container->addCompilerPass(new SecurityTokenLoaderUserProvidersPass());
     }
 }

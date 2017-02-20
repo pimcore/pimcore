@@ -15,14 +15,10 @@ class EditmodeResolver extends AbstractRequestResolver
      */
     public function isEditmode(Request $request = null)
     {
-        $user = Authentication::getUser();
+        // editmode is only allowed for logged in users
+        $user = Authentication::authenticateSession();
         if (!$user) {
-            // try to read user from admin firewall directly
-            $user = Authentication::getUserFromFirewall('admin');
-
-            if (!$user) {
-                return false;
-            }
+            return false;
         }
 
         if (null === $request) {

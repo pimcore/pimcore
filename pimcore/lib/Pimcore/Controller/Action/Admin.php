@@ -174,7 +174,7 @@ abstract class Admin extends Action
      */
     protected function loadUser()
     {
-        if ($user = Authentication::getUser()) {
+        if ($user = Authentication::authenticateSession()) {
             $this->setUser($user);
         }
     }
