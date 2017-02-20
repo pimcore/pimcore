@@ -8,6 +8,7 @@ use Pimcore\Bundle\PimcoreBundle\Service\Request\EditmodeResolver;
 use Pimcore\Config;
 use Pimcore\ExtensionManager;
 use Pimcore\Model\Document;
+use Pimcore\Model\User;
 use Pimcore\Tool\Authentication;
 use Pimcore\Version;
 use Psr\Log\LoggerAwareTrait;
@@ -142,6 +143,8 @@ class EditmodeListener implements EventSubscriberInterface
                 return;
             }
 
+            $user = Authentication::authenticateSession();
+
             $htmlElement = preg_match("/<html[^a-zA-Z]?( [^>]+)?>/", $html);
             $headElement = preg_match("/<head[^a-zA-Z]?( [^>]+)?>/", $html);
             $bodyElement = preg_match("/<body[^a-zA-Z]?( [^>]+)?>/", $html);
@@ -158,7 +161,7 @@ class EditmodeListener implements EventSubscriberInterface
             if ($skipCheck || ($headElement && $bodyElement && $htmlElement)) {
                 $startupJavascript = "/pimcore/static6/js/pimcore/document/edit/startup.js";
 
-                $headHtml = $this->buildHeadHtml($document);
+                $headHtml = $this->buildHeadHtml($document, $user->getLanguage());
                 $bodyHtml = "\n\n" . '<script type="text/javascript" src="' . $startupJavascript . '?_dc=' . Version::$revision . '"></script>' . "\n\n";
 
                 $html = preg_replace("@</head>@i", $headHtml . "\n\n</head>", $html, 1);
@@ -173,9 +176,11 @@ class EditmodeListener implements EventSubscriberInterface
 
     /**
      * @param Document $document
+     * @param User $user
+     * @param string $language
      * @return string
      */
-    protected function buildHeadHtml(Document $document)
+    protected function buildHeadHtml(Document $document, $language)
     {
         $config      = Config::getSystemConfig();
         $libraries   = $this->getEditmodeLibraries();
@@ -216,11 +221,8 @@ class EditmodeListener implements EventSubscriberInterface
             $headHtml .= '<script type="text/javascript" src="' . \Pimcore\Tool\Admin::getMinimizedScriptPath($scriptContents) . '"></script>' . "\n";
         }
 
-        $user = Authentication::getUserFromFirewall('admin');
-        $lang = $user->getLanguage();
-
-        $headHtml .= '<script type="text/javascript" src="/admin/misc/json-translations-system/language/' . $lang . '/?_dc=' . Version::$revision . '"></script>' . "\n";
-        $headHtml .= '<script type="text/javascript" src="/admin/misc/json-translations-admin/language/' . $lang . '/?_dc=' . Version::$revision . '"></script>' . "\n";
+        $headHtml .= '<script type="text/javascript" src="/admin/misc/json-translations-system/language/' . $language . '/?_dc=' . Version::$revision . '"></script>' . "\n";
+        $headHtml .= '<script type="text/javascript" src="/admin/misc/json-translations-admin/language/' . $language . '/?_dc=' . Version::$revision . '"></script>' . "\n";
         $headHtml .= "\n\n";
 
         // set var for editable configurations which is filled by Document\Tag::admin()
