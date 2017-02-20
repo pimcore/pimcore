@@ -18,6 +18,14 @@ services:
         tags:
             - { name: monolog.logger, channel: security }
 
+    pimcore_admin.security.logout_success_handler:
+        class: Pimcore\Bundle\PimcoreAdminBundle\Security\LogoutSuccessHandler
+        arguments: ['@security.token_storage', '@router']
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: monolog.logger, channel: security }
+
     # the services below are only needed to use the build-in http auth for webdav - not fully working yet!
     pimcore_admin.security.user_provider:
         class: Pimcore\Bundle\PimcoreAdminBundle\Security\User\UserProvider

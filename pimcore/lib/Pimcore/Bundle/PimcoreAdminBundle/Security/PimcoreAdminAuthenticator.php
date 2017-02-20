@@ -3,7 +3,6 @@
 namespace Pimcore\Bundle\PimcoreAdminBundle\Security;
 
 use Pimcore\Bundle\PimcoreAdminBundle\Security\User\User;
-use Pimcore\Model\Element\Editlock;
 use Pimcore\Model\User as UserModel;
 use Pimcore\Tool\Authentication;
 use Pimcore\Tool\Session;
@@ -210,26 +209,6 @@ class PimcoreAdminAuthenticator extends AbstractGuardAuthenticator implements Lo
         if ($url) {
             return new RedirectResponse($url);
         }
-    }
-
-    public function logout()
-    {
-        $this->tokenStorage->setToken(null);
-
-        // clear open edit locks for this session
-        Editlock::clearSession(session_id());
-
-        // TODO trigger admin.login.logout event
-        Session::useSession(function ($adminSession) {
-            if ($adminSession->user instanceof User) {
-                $adminSession->user = null;
-            }
-
-            \Zend_Session::destroy();
-        });
-
-        // cleanup pimcore-cookies => 315554400 => strtotime('1980-01-01')
-        setcookie("pimcore_opentabs", false, 315554400, "/");
     }
 
     /**

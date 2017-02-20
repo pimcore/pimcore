@@ -21,6 +21,10 @@ security:
             anonymous: ~
             pattern: ^/admin
             stateless: true
+            logout:
+                path:   /admin/logout
+                target: /admin/login
+                success_handler: pimcore_admin.security.logout_success_handler
             guard:
                 authenticators:
                     - pimcore_admin.security.guard_authenticator

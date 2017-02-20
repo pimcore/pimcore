@@ -5,7 +5,6 @@ namespace Pimcore\Bundle\PimcoreAdminBundle\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -29,16 +28,6 @@ class LoginController extends Controller
         return [
             'error' => $exception ? $exception->getMessage() : null,
         ];
-    }
-
-    /**
-     * @Route("/logout", name="admin_logout")
-     */
-    public function logoutAction()
-    {
-        $this->get('pimcore_admin.security.guard_authenticator')->logout();
-
-        return new RedirectResponse($this->generateUrl('admin_login'));
     }
 
     /**

@@ -1,4 +1,7 @@
-pimcore_admin:
+admin_logout:
+    path: /admin/logout
+
+_pimcore_admin:
     resource: "@PimcoreAdminBundle/Controller/"
     type:     annotation
     prefix:   /admin
