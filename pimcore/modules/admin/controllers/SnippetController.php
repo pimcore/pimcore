@@ -121,6 +121,9 @@ class Admin_SnippetController extends \Pimcore\Controller\Action\Admin\Document
         $this->_helper->json(false);
     }
 
+    /**
+     * @param Document $snippet
+     */
     protected function setValuesToDocument(Document $snippet)
     {
         $this->addSettingsToDocument($snippet);

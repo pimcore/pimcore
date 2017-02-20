@@ -1111,7 +1111,10 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
         }
     }
 
-
+    /**
+     * @param $config
+     * @return array
+     */
     protected function getConfigItem($config)
     {
         $name = $config->getName();

@@ -16,6 +16,9 @@ namespace Pimcore\Tool;
 
 class Mime
 {
+    /**
+     * @var array
+     */
     public static $extensionMapping = [
         'ez'        => 'application/andrew-inset',
         'atom'      => 'application/atom+xml',

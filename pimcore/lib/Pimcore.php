@@ -194,7 +194,7 @@ class Pimcore
      * @param bool $throwExceptions
      * @param Zend_Controller_Request_Abstract|null $request
      * @param Zend_Controller_Response_Abstract|null $response
-     * @return void|Zend_Controller_Response_Abstract
+     * @return null|Zend_Controller_Response_Abstract
      * @throws Exception
      * @throws Zend_Controller_Router_Exception
      */
@@ -589,7 +589,6 @@ class Pimcore
 
     /**
      * @static
-     * @return void
      * @deprecated
      */
     public static function initModules()
@@ -805,7 +804,6 @@ class Pimcore
     /**
      * switches pimcore into the admin mode - there you can access also unpublished elements, ....
      * @static
-     * @return void
      */
     public static function setAdminMode()
     {
@@ -815,7 +813,6 @@ class Pimcore
     /**
      * switches back to the non admin mode, where unpublished elements are invisible
      * @static
-     * @return void
      */
     public static function unsetAdminMode()
     {
@@ -955,7 +952,7 @@ class Pimcore
     /**
      * Forces a garbage collection.
      * @static
-     * @return void
+     * @param array $keepItems
      */
     public static function collectGarbage($keepItems = [])
     {
@@ -1022,7 +1019,6 @@ class Pimcore
      * This method is only called in Pimcore_Controller_Action_Frontend::init() to enable it only for frontend/website HTTP requests
      * - more infos see also self::outputBufferEnd()
      * @static
-     * @return void
      */
     public static function outputBufferStart()
     {
@@ -1037,6 +1033,7 @@ class Pimcore
      * if this method is called in self::shutdown() it forces the browser to close the connection an allows the
      * shutdown-function to run in the background
      * @static
+     * @param $data
      * @return string
      */
     public static function outputBufferEnd($data)
@@ -1153,7 +1150,6 @@ class Pimcore
     /**
      * this method is called with register_shutdown_function() and writes all data queued into the cache
      * @static
-     * @return void
      */
     public static function shutdown()
     {

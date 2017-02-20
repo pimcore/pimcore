@@ -58,6 +58,7 @@ trait DryRun
      * Prefix message with DRY-RUN
      *
      * @param $message
+     * @param string $prefix
      * @return string
      */
     protected function prefixDryRun($message, $prefix = 'DRY-RUN')

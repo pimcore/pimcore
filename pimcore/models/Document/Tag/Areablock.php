@@ -242,6 +242,9 @@ class Areablock extends Model\Document\Tag
         \Zend_Registry::set("pimcore_tag_block_numeration", $suffixes);
     }
 
+    /**
+     * @return array
+     */
     protected function getToolBarDefaultConfig()
     {
         return [
@@ -260,7 +263,7 @@ class Areablock extends Model\Document\Tag
     /**
      * Is executed at the beginning of the loop and setup some general settings
      *
-     * @return void
+     * @return $this
      */
     public function start()
     {
@@ -313,8 +316,6 @@ class Areablock extends Model\Document\Tag
 
     /**
      * Is executed at the end of the loop and removes the settings set in start()
-     *
-     * @return void
      */
     public function end()
     {
@@ -333,8 +334,6 @@ class Areablock extends Model\Document\Tag
 
     /**
      * Is called evertime a new iteration starts (new entry of the block while looping)
-     *
-     * @return void
      */
     public function blockStart()
     {
@@ -352,8 +351,6 @@ class Areablock extends Model\Document\Tag
 
     /**
      * Is called evertime a new iteration ends (new entry of the block while looping)
-     *
-     * @return void
      */
     public function blockEnd()
     {
@@ -364,7 +361,6 @@ class Areablock extends Model\Document\Tag
      * Sends data to the output stream
      *
      * @param string $v
-     * @return void
      */
     public function outputEditmode($v)
     {
@@ -375,8 +371,6 @@ class Areablock extends Model\Document\Tag
 
     /**
      * Setup some settings that are needed for blocks
-     *
-     * @return void
      */
     public function setupStaticEnvironment()
     {
@@ -564,8 +558,6 @@ class Areablock extends Model\Document\Tag
 
     /**
      * If object was serialized, set the counter back to 0
-     *
-     * @return void
      */
     public function __wakeup()
     {
@@ -584,9 +576,12 @@ class Areablock extends Model\Document\Tag
 
     /**
      * @param Model\Webservice\Data\Document\Element $wsElement
+     * @param $document
      * @param mixed $params
      * @param null $idMapper
      * @throws \Exception
+     *
+     * @todo replace and with &&
      */
     public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
     {

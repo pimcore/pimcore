@@ -73,7 +73,6 @@ class Dependency extends AbstractModel
      *
      * @param integer $id
      * @param string $type
-     * @return void
      */
     public function addRequirement($id, $type)
     {
@@ -85,7 +84,6 @@ class Dependency extends AbstractModel
 
     /**
      * @param  Element\ELementInterface $element
-     * @return void
      */
     public function cleanAllForElement($element)
     {
@@ -94,8 +92,6 @@ class Dependency extends AbstractModel
 
     /**
      * Cleanup the dependencies for current source id
-     *
-     * @return void
      */
     public function clean()
     {
@@ -151,7 +147,7 @@ class Dependency extends AbstractModel
 
     /**
      * @param array $requiredBy
-     * @return void
+     * @return $this
      */
     public function setRequiredBy($requiredBy)
     {
@@ -170,7 +166,7 @@ class Dependency extends AbstractModel
 
     /**
      * @param string $sourceType
-     * @return void
+     * @return $this
      */
     public function setSourceType($sourceType)
     {
@@ -182,7 +178,7 @@ class Dependency extends AbstractModel
     /**
      * Check if the source object is required by an other object (an other object depends on this object)
      *
-     * @return void
+     * @return boolean
      */
     public function isRequired()
     {

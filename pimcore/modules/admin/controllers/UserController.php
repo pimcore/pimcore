@@ -50,6 +50,10 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
         $this->_helper->json($users);
     }
 
+    /**
+     * @param $user
+     * @return array
+     */
     protected function getTreeNodeConfig($user)
     {
         $tmpUser = [
@@ -166,7 +170,13 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
         $this->_helper->json(false);
     }
 
-
+    /**
+     * @param $node
+     * @param $currentList
+     * @param $roleMode
+     * @return array
+     * @throws Exception
+     */
     protected function populateChildNodes($node, &$currentList, $roleMode)
     {
         $currentUser = \Pimcore\Tool\Admin::getCurrentUser();
@@ -509,6 +519,10 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
         $this->_helper->json($roles);
     }
 
+    /**
+     * @param $role
+     * @return array
+     */
     protected function getRoleTreeNodeConfig($role)
     {
         $tmpUser = [

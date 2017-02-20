@@ -131,9 +131,6 @@ class GD extends Adapter
         return false;
     }
 
-    /**
-     * @return void
-     */
     protected function destroy()
     {
         imagedestroy($this->resource);
@@ -327,6 +324,15 @@ class GD extends Adapter
         return $this;
     }
 
+    /**
+     * @param string $image
+     * @param int $x
+     * @param int $y
+     * @param int $alpha
+     * @param string $composite
+     * @param string $origin
+     * @return $this
+     */
     public function addOverlay($image, $x = 0, $y = 0, $alpha = 100, $composite = "COMPOSITE_DEFAULT", $origin = 'top-left')
     {
         $this->preModify();

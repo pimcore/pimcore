@@ -262,6 +262,9 @@ class Admin_LoginController extends \Pimcore\Controller\Action\Admin
         }
     }
 
+    /**
+     * @return array
+     */
     protected function readLogFile()
     {
         $data = $this->getLogFile();
@@ -277,6 +280,10 @@ class Admin_LoginController extends \Pimcore\Controller\Action\Admin
         return $entries;
     }
 
+    /**
+     * @param $username
+     * @param $error
+     */
     protected function writeLogFile($username, $error)
     {
         $logfile = PIMCORE_LOG_DIRECTORY . "/loginerror.log";

@@ -36,6 +36,9 @@ class Web2PrintPdfCreationCommand extends AbstractCommand
         ;
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         ini_set('memory_limit', '2048M');

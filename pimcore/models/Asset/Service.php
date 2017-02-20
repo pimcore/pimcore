@@ -174,6 +174,7 @@ class Service extends Model\Element\Service
     /**
      * @static
      * @param $path
+     * @param null $type
      * @return bool
      */
     public static function pathExists($path, $type = null)

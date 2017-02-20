@@ -313,6 +313,7 @@ class Document extends Element\AbstractElement
      *
      * @param integer $parentId
      * @param array $data
+     * @param boolean $save
      * @return Document
      */
     public static function create($parentId, $data = [], $save = true)
@@ -474,7 +475,6 @@ class Document extends Element\AbstractElement
      * Validate the document path.
      *
      * @throws \Exception
-     * @return void
      */
     public function correctPath()
     {
@@ -578,7 +578,6 @@ class Document extends Element\AbstractElement
      * Update the document index.
      *
      * @param int $index
-     * @return void
      */
     public function saveIndex($index)
     {
@@ -590,7 +589,6 @@ class Document extends Element\AbstractElement
      * Clear the cache related to the document.
      *
      * @param array $additionalTags
-     * @return void
      */
     public function clearDependentCache($additionalTags = [])
     {
@@ -621,7 +619,10 @@ class Document extends Element\AbstractElement
     /**
      * set the children of the document
      *
+     * @param $children
      * @return array
+     *
+     * @todo: replace and with &&
      */
     public function setChildren($children)
     {
@@ -743,8 +744,6 @@ class Document extends Element\AbstractElement
 
     /**
      * Deletes the document
-     *
-     * @return void
      */
     public function delete()
     {
@@ -1350,8 +1349,6 @@ class Document extends Element\AbstractElement
 
     /**
      *  Removes all inherited properties.
-     *
-     * @return void
      */
     public function removeInheritedProperties()
     {
@@ -1369,8 +1366,6 @@ class Document extends Element\AbstractElement
 
     /**
      * Renews all inherited properties.
-     *
-     * @return void
      */
     public function renewInheritedProperties()
     {

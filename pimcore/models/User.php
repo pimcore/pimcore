@@ -231,7 +231,7 @@ class User extends User\UserRole
 
     /**
      * @param string $language
-     * @return void
+     * @return $this
      */
     public function setLanguage($language)
     {
@@ -261,7 +261,7 @@ class User extends User\UserRole
 
     /**
      * @param boolean $admin
-     * @return void
+     * @return $this
      */
     public function setAdmin($admin)
     {
@@ -280,7 +280,7 @@ class User extends User\UserRole
 
     /**
      * @param boolean $active
-     * @return void
+     * @return $this
      */
     public function setActive($active)
     {
@@ -298,8 +298,9 @@ class User extends User\UserRole
     }
 
     /**
-     * @param String $key
-     * @return boolean
+     * @param string $key
+     * @param string $type
+     * @return bool
      */
     public function isAllowed($key, $type = "permission")
     {
@@ -513,6 +514,8 @@ class User extends User\UserRole
     }
 
     /**
+     * @param null $width
+     * @param null $height
      * @return string
      */
     public function getImage($width = null, $height = null)
@@ -542,7 +545,7 @@ class User extends User\UserRole
     }
 
     /**
-     * @return null|string
+     * @return array
      */
     public function getContentLanguages()
     {

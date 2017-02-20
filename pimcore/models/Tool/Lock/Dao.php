@@ -57,6 +57,7 @@ class Dao extends Model\Dao\AbstractDao
      * @param $key
      * @param int $expire
      * @param int $refreshInterval
+     * @return bool
      */
     public function acquire($key, $expire = 120, $refreshInterval = 1)
     {
@@ -107,6 +108,9 @@ class Dao extends Model\Dao\AbstractDao
         ]);
     }
 
+    /**
+     * @param $key
+     */
     public function getById($key)
     {
         $lock = $this->db->fetchRow("SELECT * FROM locks WHERE id = ?", $key);

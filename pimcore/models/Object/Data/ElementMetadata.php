@@ -106,6 +106,7 @@ class ElementMetadata extends Model\AbstractModel
      * @param $ownertype
      * @param $ownername
      * @param $position
+     * @param $type
      * @return mixed
      */
     public function load(Object\Concrete $source, $destination, $fieldname, $ownertype, $ownername, $position, $type)

@@ -43,8 +43,8 @@ class PimcoreNavigation extends \Zend_View_Helper_Navigation
      * @param null $navigationRootDocument
      * @param null $htmlMenuIdPrefix
      * @param callable $pageCallback
+     * @param bool $cache
      * @return $this|PimcoreNavigationController
-     * @throws \Zend_View_Exception
      */
     public function pimcoreNavigation($activeDocument = null, $navigationRootDocument = null, $htmlMenuIdPrefix = null, $pageCallback = null, $cache = true)
     {

@@ -60,6 +60,9 @@ class BackupCommand extends AbstractCommand
         ;
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         // defaults
@@ -164,6 +167,9 @@ class BackupCommand extends AbstractCommand
         $this->output->writeln("Done!");
     }
 
+    /**
+     * @param $m
+     */
     protected function verboseMessage($m)
     {
         if ($this->output->isVerbose()) {

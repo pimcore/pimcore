@@ -12,7 +12,12 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
+/**
+ * @param $source
+ * @param null $level
+ * @param null $target
+ * @return bool|null|string
+ */
 function gzcompressfile($source, $level=null, $target = null)
 {
     // this is a very memory efficient way of gzipping files
@@ -46,6 +51,10 @@ function gzcompressfile($source, $level=null, $target = null)
     }
 }
 
+/**
+ * @param $string
+ * @return bool
+ */
 function is_json($string)
 {
     if (is_string($string)) {
@@ -57,6 +66,10 @@ function is_json($string)
     }
 }
 
+/**
+ * @param $path
+ * @return int
+ */
 function foldersize($path)
 {
     $total_size = 0;
@@ -79,6 +92,11 @@ function foldersize($path)
     return $total_size;
 }
 
+/**
+ * @param $string
+ * @param $values
+ * @return mixed
+ */
 function replace_pcre_backreferences($string, $values)
 {
     array_unshift($values, "");
@@ -386,7 +404,6 @@ function recursiveCopy($source, $destination)
 
 /**
  * @param  $var
- * @return void
  */
 function p_r($var)
 {
@@ -412,6 +429,12 @@ function pimcore_error_handler($errno, $errstr, $errfile, $errline, $errcontext)
     return false;
 }
 
+/**
+ * @param $array
+ * @param string $prefix
+ * @param string $suffix
+ * @return mixed
+ */
 function wrapArrayElements($array, $prefix = "'", $suffix = "'")
 {
     foreach ($array as $key => $value) {

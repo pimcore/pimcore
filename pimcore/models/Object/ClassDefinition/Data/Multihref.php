@@ -370,6 +370,14 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
         return $elements;
     }
 
+    /**
+     * @param $data
+     * @param null $object
+     * @param array $params
+     * @return array
+     *
+     * @todo: $pathes is undefined
+     */
     public function getDataForGrid($data, $object = null, $params = [])
     {
         if (is_array($data)) {
@@ -390,6 +398,8 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
      * @param null|Object\AbstractObject $object
      * @param mixed $params
      * @return string
+     *
+     * @todo $pathes is not defined, should be definied as empty array
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
@@ -658,6 +668,11 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
         }
     }
 
+    /**
+     * @param $object
+     * @param array $params
+     * @return array|mixed|null
+     */
     public function preGetData($object, $params = [])
     {
         $data = null;
@@ -694,6 +709,12 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
         return is_array($data) ? $data : [];
     }
 
+    /**
+     * @param $object
+     * @param $data
+     * @param array $params
+     * @return array|null
+     */
     public function preSetData($object, $data, $params = [])
     {
         if ($data === null) {

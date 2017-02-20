@@ -101,7 +101,7 @@ class Config extends Model\AbstractModel
 
 
     /**
-     * @return void
+     * Delete from Database
      */
     public function delete()
     {
@@ -134,10 +134,6 @@ class Config extends Model\AbstractModel
         return true;
     }
 
-
-    /**
-     * @return void
-     */
     public function resetItems()
     {
         $this->items = [];

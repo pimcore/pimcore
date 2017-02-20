@@ -275,9 +275,6 @@ abstract class AbstractModel
         }
     }
 
-    /**
-     * @return void
-     */
     public function __clone()
     {
         $this->dao = null;

@@ -18,7 +18,14 @@ use Pimcore\File;
 
 class FileObject
 {
+    /**
+     * @var string
+     */
     protected $filename;
+
+    /**
+     * @var string
+     */
     protected $data;
 
     /**

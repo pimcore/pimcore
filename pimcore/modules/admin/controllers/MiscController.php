@@ -296,6 +296,11 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
         ]);
     }
 
+    /**
+     * @param string $paramName
+     * @return mixed|string
+     * @throws Exception
+     */
     private function getFileexplorerPath($paramName = 'node')
     {
         $path = preg_replace("/^\/fileexplorer/", "", $this->getParam($paramName));

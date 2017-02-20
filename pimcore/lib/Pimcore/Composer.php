@@ -21,6 +21,9 @@ use Composer\Installer\PackageEvent;
 
 class Composer
 {
+    /**
+     * @param Event $event
+     */
     public static function postCreateProject(Event $event)
     {
         $config = $event->getComposer()->getConfig();
@@ -45,6 +48,9 @@ class Composer
         $filesystem->removeDirectory($rootPath . '/.git');
     }
 
+    /**
+     * @param Event $event
+     */
     public static function postInstall(Event $event)
     {
         $config = $event->getComposer()->getConfig();
@@ -53,6 +59,9 @@ class Composer
         self::zendFrameworkOptimization($rootPath);
     }
 
+    /**
+     * @param Event $event
+     */
     public static function postUpdate(Event $event)
     {
         $config = $event->getComposer()->getConfig();
@@ -61,6 +70,9 @@ class Composer
         self::zendFrameworkOptimization($rootPath);
     }
 
+    /**
+     * @param $rootPath
+     */
     public static function zendFrameworkOptimization($rootPath)
     {
 

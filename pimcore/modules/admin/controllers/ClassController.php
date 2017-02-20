@@ -310,7 +310,10 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
         }
     }
 
-
+    /**
+     * @param $name
+     * @return mixed
+     */
     protected function correctClassname($name)
     {
         $name = preg_replace('/[^a-zA-Z0-9]+/', '', $name);

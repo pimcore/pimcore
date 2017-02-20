@@ -168,6 +168,7 @@ class PimcoreNavigationController
 
     /**
      * @param \Pimcore\Navigation\Page\Uri $page
+     * @param bool $isActive
      */
     protected function addActiveCssClasses($page, $isActive = false)
     {

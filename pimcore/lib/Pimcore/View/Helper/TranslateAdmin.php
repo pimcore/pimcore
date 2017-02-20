@@ -59,7 +59,7 @@ class TranslateAdmin extends \Zend_View_Helper_Translate
 
     /**
      * @param \Zend_Translate|\Zend_Translate_Adapter $translator
-     * @return void|\Zend_View_Helper_Translate
+     * @return null|\Zend_View_Helper_Translate
      */
     public function setTranslator($translator)
     {

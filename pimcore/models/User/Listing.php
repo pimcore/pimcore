@@ -23,6 +23,9 @@ use Pimcore\Model;
  */
 class Listing extends Listing\AbstractListing
 {
+    /**
+     * @var string
+     */
     public $type = "user";
 
     /**

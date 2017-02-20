@@ -18,9 +18,24 @@ use Pimcore\File;
 
 class PhpArrayFileTable
 {
+    /**
+     * @var array
+     */
     protected static $tables = [];
+
+    /**
+     * @var string
+     */
     protected $filePath;
+
+    /**
+     * @var array
+     */
     protected $data = [];
+
+    /**
+     * @var int
+     */
     protected $lastInsertId;
 
     /**

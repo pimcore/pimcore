@@ -130,8 +130,9 @@ class KeyConfig extends Model\AbstractModel
 
     /**
      * @param $name
-     * @param null $groupId
+     * @param int $storeId
      * @return KeyConfig
+     * @internal param null $groupId
      */
     public static function getByName($name, $storeId = 1)
     {

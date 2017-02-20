@@ -266,7 +266,7 @@ class Site extends AbstractModel
 
     /**
      * @param integer $rootId
-     * @return void
+     * @return $this
      */
     public function setRootId($rootId)
     {
@@ -280,7 +280,7 @@ class Site extends AbstractModel
 
     /**
      * @param Document\Page $rootDocument
-     * @return void
+     * @return $this
      */
     public function setRootDocument($rootDocument)
     {
@@ -360,9 +360,6 @@ class Site extends AbstractModel
         return $this->redirectToMainDomain;
     }
 
-    /**
-     * @return void
-     */
     public function clearDependentCache()
     {
 

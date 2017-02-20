@@ -26,8 +26,6 @@ class Dao extends UserRole\Dao
 
     /**
      * Deletes object from database
-     *
-     * @return void
      */
     public function delete()
     {

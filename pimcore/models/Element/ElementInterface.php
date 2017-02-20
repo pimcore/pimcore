@@ -61,7 +61,7 @@ interface ElementInterface
 
     /**
      * @param integer $creationDate
-     * @return void
+     * @return $this
      */
     public function setCreationDate($creationDate);
 
@@ -72,7 +72,7 @@ interface ElementInterface
 
     /**
      * @param integer $modificationDate
-     * @return void
+     * @return $this
      */
     public function setModificationDate($modificationDate);
 
@@ -83,7 +83,7 @@ interface ElementInterface
 
     /**
      * @param integer $userOwner
-     * @return void
+     * @return $this
      */
     public function setUserOwner($userOwner);
 
@@ -94,7 +94,7 @@ interface ElementInterface
 
     /**
      * @param integer $userModification
-     * @return void
+     * @return $this
      */
     public function setUserModification($userModification);
 
@@ -118,13 +118,13 @@ interface ElementInterface
 
     /**
      * returns true if the element is locked
-     * @return void
+     * @return $this
      */
     public function isLocked();
 
     /**
      * @param  bool $locked
-     * @return void
+     * @return $this
      */
     public function setLocked($locked);
 

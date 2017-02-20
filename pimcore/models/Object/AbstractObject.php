@@ -34,6 +34,9 @@ class AbstractObject extends Model\Element\AbstractElement
     const OBJECT_TYPE_OBJECT = "object";
     const OBJECT_TYPE_VARIANT = "variant";
 
+    /**
+     * @var bool
+     */
     public static $doNotRestoreKeyAndPath = false;
 
     /**
@@ -64,7 +67,6 @@ class AbstractObject extends Model\Element\AbstractElement
     /**
      * @static
      * @param  $hidePublished
-     * @return void
      */
     public static function setHideUnpublished($hidePublished)
     {
@@ -83,7 +85,6 @@ class AbstractObject extends Model\Element\AbstractElement
     /**
      * @static
      * @param  $getInheritedValues
-     * @return void
      */
     public static function setGetInheritedValues($getInheritedValues)
     {
@@ -101,6 +102,7 @@ class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @static
+     * @param Concrete $object
      * @return bool
      */
     public static function doGetInheritedValues(Concrete $object = null)
@@ -171,7 +173,6 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public $o_userModification = 0;
 
-
     /**
      * @var array
      */
@@ -197,7 +198,6 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public $o_hasSiblings;
 
-
     /**
      * @var Model\Dependency[]
      */
@@ -213,12 +213,20 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public $o_locked;
 
-
     /**
      * @var Model\Element\AdminStyle
      */
     public $o_elementAdminStyle;
 
+    /**
+     * @var array
+     */
+    private $lastGetChildsObjectTypes = [];
+
+    /**
+     * @var array
+     */
+    private $lastGetSiblingObjectTypes = [];
 
     /**
      * get possible types
@@ -385,8 +393,6 @@ class AbstractObject extends Model\Element\AbstractElement
         }
     }
 
-    private $lastGetChildsObjectTypes = [];
-
     /**
      * @param array $objectTypes
      * @param bool $unpublished
@@ -410,6 +416,7 @@ class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
+     * @param array $objectTypes
      * @return boolean
      */
     public function hasChildren($objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER])
@@ -424,9 +431,6 @@ class AbstractObject extends Model\Element\AbstractElement
 
         return $this->getDao()->hasChilds($objectTypes);
     }
-
-
-    private $lastGetSiblingObjectTypes = [];
 
     /**
      * Get a list of the sibling documents
@@ -483,7 +487,7 @@ class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @param bool $o_locked
-     * @return $this|void
+     * @return $this
      */
     public function setLocked($o_locked)
     {
@@ -492,9 +496,6 @@ class AbstractObject extends Model\Element\AbstractElement
         return $this;
     }
 
-    /**
-     * @return void
-     */
     public function delete()
     {
         \Pimcore::getEventManager()->trigger("object.preDelete", $this);

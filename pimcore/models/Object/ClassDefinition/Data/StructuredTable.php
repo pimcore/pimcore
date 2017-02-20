@@ -80,7 +80,7 @@ class StructuredTable extends Model\Object\ClassDefinition\Data
      *
      * @var string
      */
-    public $phpdocType = "array";
+    public $phpdocType = "\\Pimcore\\Model\\Object\\Data\\StructuredTable";
 
     /**
      * @return integer
@@ -111,7 +111,7 @@ class StructuredTable extends Model\Object\ClassDefinition\Data
 
     /**
      * @param integer $height
-     * @return void
+     * @return $this
      */
     public function setHeight($height)
     {
@@ -130,7 +130,7 @@ class StructuredTable extends Model\Object\ClassDefinition\Data
 
     /**
      * @param integer $labelWidth
-     * @return void
+     * @return $this
      */
     public function setLabelWidth($labelWidth)
     {
@@ -168,7 +168,7 @@ class StructuredTable extends Model\Object\ClassDefinition\Data
 
     /**
      * @param object $cols
-     * @return void
+     * @return $this
      */
     public function setCols($cols)
     {
@@ -196,8 +196,8 @@ class StructuredTable extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @param object $rows
-     * @return void
+     * @param $rows
+     * @return $this
      */
     public function setRows($rows)
     {
@@ -218,6 +218,11 @@ class StructuredTable extends Model\Object\ClassDefinition\Data
         return $this;
     }
 
+    /**
+     * @param $a
+     * @param $b
+     * @return int|mixed
+     */
     public function sort($a, $b)
     {
         if (is_array($a) && is_array($b)) {

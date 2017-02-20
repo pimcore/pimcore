@@ -25,7 +25,10 @@ class Dao extends Model\Dao\AbstractDao
 {
     const TABLE_NAME_RELATIONS = "classificationstore_relations";
 
-
+    /**
+     * @param null $keyId
+     * @param null $groupId
+     */
     public function getById($keyId = null, $groupId = null)
     {
         if ($keyId != null) {
@@ -46,7 +49,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Save object to database
      *
-     * @return void
+     * @return Model\Object\Classificationstore\KeyGroupRelation
      */
     public function save()
     {
@@ -55,8 +58,6 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * Deletes object from database
-     *
-     * @return void
      */
     public function delete()
     {
@@ -66,6 +67,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
+     * @return Model\Object\Classificationstore\KeyGroupRelation
      * @throws \Exception
      */
     public function update()

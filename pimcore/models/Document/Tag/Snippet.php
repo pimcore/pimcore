@@ -176,7 +176,7 @@ class Snippet extends Model\Document\Tag
     /**
      * @see Document\Tag\TagInterface::setDataFromEditmode
      * @param mixed $data
-     * @return void
+     * @return $this
      */
     public function setDataFromEditmode($data)
     {
@@ -223,6 +223,7 @@ class Snippet extends Model\Document\Tag
 
     /**
      * @param Model\Webservice\Data\Document\Element $wsElement
+     * @param $document
      * @param mixed $params
      * @param null $idMapper
      * @throws \Exception
@@ -263,8 +264,6 @@ class Snippet extends Model\Document\Tag
 
     /**
      * this method is called by Document\Service::loadAllDocumentFields() to load all lazy loading fields
-     *
-     * @return void
      */
     public function load()
     {
@@ -284,7 +283,6 @@ class Snippet extends Model\Document\Tag
      *  "asset" => array(...)
      * )
      * @param array $idMapping
-     * @return void
      */
     public function rewriteIds($idMapping)
     {

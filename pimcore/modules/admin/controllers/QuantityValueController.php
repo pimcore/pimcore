@@ -97,6 +97,10 @@ class Admin_QuantityValueController extends Admin
         }
     }
 
+    /**
+     * @param $comparison
+     * @return mixed
+     */
     private function getOperator($comparison)
     {
         $mapper = [

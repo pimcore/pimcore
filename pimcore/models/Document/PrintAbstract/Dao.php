@@ -33,8 +33,6 @@ class Dao extends Document\PageSnippet\Dao
 
     /**
      * Get the valid columns from the database
-     *
-     * @return void
      */
     public function init()
     {
@@ -46,7 +44,7 @@ class Dao extends Document\PageSnippet\Dao
      * Get the data for the object by the given id, or by the id which is set in the object
      *
      * @param integer $id
-     * @return void
+     * @throws \Exception
      */
     public function getById($id = null)
     {
@@ -73,7 +71,7 @@ class Dao extends Document\PageSnippet\Dao
     /**
      * Create a new record for the object in the database
      *
-     * @return void
+     * @throws \Exception
      */
     public function create()
     {
@@ -91,7 +89,7 @@ class Dao extends Document\PageSnippet\Dao
     /**
      * Updates the data in the object to the database
      *
-     * @return void
+     * @throws \Exception
      */
     public function update()
     {
@@ -136,7 +134,7 @@ class Dao extends Document\PageSnippet\Dao
     /**
      * Deletes the object (and data) from database
      *
-     * @return void
+     * @throws \Exception
      */
     public function delete()
     {

@@ -72,11 +72,8 @@ class Sanitycheck extends Model\AbstractModel
         return $this;
     }
 
-
     /**
      * saves sanity check to db
-     *
-     * @return void
      */
     public function save()
     {
@@ -85,14 +82,11 @@ class Sanitycheck extends Model\AbstractModel
 
     /**
      * deletes sanity check from db
-     *
-     * @return void
      */
     public function delete()
     {
         $this->getDao()->delete();
     }
-
 
     /**
      * @static

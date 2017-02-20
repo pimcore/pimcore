@@ -106,7 +106,8 @@ class Predefined extends Model\AbstractModel
     }
 
     /**
-     * @param string $key
+     * @param string $name
+     * @param string $language
      * @return self
      */
     public static function getByName($name, $language = "")
@@ -183,7 +184,7 @@ class Predefined extends Model\AbstractModel
 
     /**
      * @param string $data
-     * @return void
+     * @return $this
      */
     public function setData($data)
     {
@@ -202,7 +203,7 @@ class Predefined extends Model\AbstractModel
 
     /**
      * @param integer $id
-     * @return void
+     * @return $this
      */
     public function setId($id)
     {
@@ -211,10 +212,9 @@ class Predefined extends Model\AbstractModel
         return $this;
     }
 
-
     /**
      * @param string $description
-     * @return void
+     * @return $this
      */
     public function setDescription($description)
     {

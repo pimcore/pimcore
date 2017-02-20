@@ -87,6 +87,7 @@ class Listing extends \Pimcore\Model\Listing\JsonListing
     /**
      * @param $key
      * @param $language
+     * @param null $targetSubtype
      * @return \Pimcore\Model\Metadata\Predefined
      */
     public static function getByKeyAndLanguage($key, $language, $targetSubtype = null)

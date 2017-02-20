@@ -198,6 +198,10 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
         ]);
     }
 
+    /**
+     * @return array
+     * @throws Exception
+     */
     protected function addAsset()
     {
         $success = false;
@@ -288,6 +292,11 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
         ];
     }
 
+    /**
+     * @param $targetPath
+     * @param $filename
+     * @return mixed
+     */
     protected function getSafeFilename($targetPath, $filename)
     {
         $originalFilename = $filename;
@@ -595,6 +604,10 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
         return $tmpAsset;
     }
 
+    /**
+     * @param $asset
+     * @return null|string
+     */
     protected function getThumbnailUrl($asset)
     {
         if ($asset instanceof Asset\Image) {

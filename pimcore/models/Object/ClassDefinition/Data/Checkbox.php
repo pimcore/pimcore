@@ -207,6 +207,11 @@ class Checkbox extends Model\Object\ClassDefinition\Data
         return (bool)$importValue;
     }
 
+    /**
+     * @param Object\AbstractObject $object
+     * @param array $params
+     * @return bool
+     */
     public function getForWebserviceExport($object, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
@@ -219,6 +224,7 @@ class Checkbox extends Model\Object\ClassDefinition\Data
      * @param mixed $value
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
+     * @param $idMapper
      * @return mixed
      */
     public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
@@ -261,9 +267,9 @@ class Checkbox extends Model\Object\ClassDefinition\Data
 
     /**
      * returns sql query statement to filter according to this data types value(s)
-     * @param  $value
-     * @param  $operator
-     * @param  $params optional params used to change the behavior
+     * @param $value
+     * @param $operator
+     * @param array $params optional params used to change the behavior
      * @return string
      */
     public function getFilterConditionExt($value, $operator, $params = [])

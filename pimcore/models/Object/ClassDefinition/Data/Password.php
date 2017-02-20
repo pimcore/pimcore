@@ -313,13 +313,16 @@ class Password extends Model\Object\ClassDefinition\Data
         return "******";
     }
 
+    /**
+     * @param $data
+     * @param $object
+     * @param array $params
+     * @return string
+     */
     public function getDataForGrid($data, $object, $params = [])
     {
         return "******";
     }
-
-
-
 
     /**
      * fills object field data values from CSV Import String

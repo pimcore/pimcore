@@ -53,6 +53,10 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $documents;
     }
 
+    /**
+     * @param $columns
+     * @return \Zend_Db_Select
+     */
     public function getQuery($columns)
     {
         $select = $this->db->select();
@@ -85,6 +89,9 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $documentIds;
     }
 
+    /**
+     * @return array
+     */
     public function loadIdPathList()
     {
         $select = (string) $this->getQuery(['id', "CONCAT(path,`key`)"]);
@@ -93,6 +100,9 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $documentIds;
     }
 
+    /**
+     * @return int
+     */
     public function getCount()
     {
         $select = $this->getQuery([new \Zend_Db_Expr('COUNT(*)')]);
@@ -101,6 +111,9 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $amount;
     }
 
+    /**
+     * @return int
+     */
     public function getTotalCount()
     {
         $select = $this->getQuery([new \Zend_Db_Expr('COUNT(*)')]);
@@ -111,6 +124,9 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $amount;
     }
 
+    /**
+     * @param callable $callback
+     */
     public function onCreateQuery(callable $callback)
     {
         $this->onCreateQueryCallback = $callback;

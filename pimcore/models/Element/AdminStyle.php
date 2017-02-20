@@ -20,11 +20,30 @@ use Pimcore\Model;
 
 class AdminStyle
 {
+    /**
+     * @var string
+     */
     protected $elementCssClass;
+
+    /**
+     * @var string
+     */
     protected $elementIcon;
+
+    /**
+     * @var string string
+     */
     protected $elementIconClass;
+
+    /**
+     * @var array sring
+     */
     protected $elementQtipConfig;
 
+    /**
+     * AdminStyle constructor.
+     * @param Model\Object\Concrete $element
+     */
     public function __construct($element)
     {
         if ($element->getType() == "folder") {
@@ -46,6 +65,10 @@ class AdminStyle
         }
     }
 
+    /**
+     * @param $elementCssClass
+     * @return $this
+     */
     public function setElementCssClass($elementCssClass)
     {
         $this->elementCssClass = $elementCssClass;
@@ -53,11 +76,18 @@ class AdminStyle
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getElementCssClass()
     {
         return $this->elementCssClass;
     }
 
+    /**
+     * @param $elementIcon
+     * @return $this
+     */
     public function setElementIcon($elementIcon)
     {
         $this->elementIcon = $elementIcon;
@@ -65,11 +95,18 @@ class AdminStyle
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getElementIcon()
     {
         return $this->elementIcon;
     }
 
+    /**
+     * @param $elementIconClass
+     * @return $this
+     */
     public function setElementIconClass($elementIconClass)
     {
         $this->elementIconClass = $elementIconClass;
@@ -77,16 +114,25 @@ class AdminStyle
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getElementIconClass()
     {
         return $this->elementIconClass;
     }
 
+    /**
+     * @return array
+     */
     public function getElementQtipConfig()
     {
         return $this->elementQtipConfig;
     }
 
+    /**
+     * @param $elementQtipConfig
+     */
     public function setElementQtipConfig($elementQtipConfig)
     {
         $this->elementQtipConfig = $elementQtipConfig;

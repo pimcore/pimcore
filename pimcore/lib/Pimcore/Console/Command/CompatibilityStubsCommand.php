@@ -27,6 +27,9 @@ class CompatibilityStubsCommand extends AbstractCommand
             ->setDescription('Generate stub files for non-namespaced (before pimcore 3) class names');
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $paths = [

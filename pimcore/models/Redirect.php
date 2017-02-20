@@ -174,7 +174,7 @@ class Redirect extends AbstractModel
 
     /**
      * @param string $target
-     * @return void
+     * @return $this
      */
     public function setTarget($target)
     {
@@ -185,7 +185,7 @@ class Redirect extends AbstractModel
 
     /**
      * @param integer $priority
-     * @return void
+     * @return $this
      */
     public function setPriority($priority)
     {
@@ -206,7 +206,7 @@ class Redirect extends AbstractModel
 
     /**
      * @param integer $statusCode
-     * @return void
+     * @return $this
      */
     public function setStatusCode($statusCode)
     {
@@ -238,9 +238,6 @@ class Redirect extends AbstractModel
         return "HTTP/1.1 " . $statusCode . " " . self::$statusCodes[$statusCode];
     }
 
-    /**
-     * @return void
-     */
     public function clearDependentCache()
     {
 

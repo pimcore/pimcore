@@ -1124,6 +1124,10 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
         ]);
     }
 
+    /**
+     * @param $document
+     * @return array
+     */
     private function getSeoNodeConfig($document)
     {
         $nodeConfig = $this->getTreeNodeConfig($document);

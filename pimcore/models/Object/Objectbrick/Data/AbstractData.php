@@ -115,7 +115,6 @@ class AbstractData extends Model\AbstractModel
 
     /**
      * @param $object
-     * @return void
      */
     public function delete($object)
     {
@@ -124,6 +123,8 @@ class AbstractData extends Model\AbstractModel
     }
 
     /**
+     * @param $key
+     *
      * @return mixed
      */
     public function getValueFromParent($key)
@@ -145,7 +146,7 @@ class AbstractData extends Model\AbstractModel
 
     /**
      * @param Object\Concrete $object
-     * @return void
+     * @return $this
      */
     public function setObject($object)
     {
@@ -164,7 +165,7 @@ class AbstractData extends Model\AbstractModel
 
     /**
      * @param string $key
-     * @return void
+     * @return mixed
      */
     public function getValueForFieldName($key)
     {

@@ -172,8 +172,6 @@ class Area extends Model\Document\Tag
 
     /**
      * Setup some settings that are needed for blocks
-     *
-     * @return void
      */
     public function setupStaticEnvironment()
     {

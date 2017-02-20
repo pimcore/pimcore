@@ -105,6 +105,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     }
 
     /**
+     * @param $unpublished
      * @return bool
      */
     public function setUnpublished($unpublished)

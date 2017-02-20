@@ -22,8 +22,16 @@ use Pimcore\Tool;
 
 class DefinitionCache
 {
+    /**
+     * @var array
+     */
     public static $cache = [];
 
+    /**
+     * @param $id
+     * @param string $type
+     * @return mixed|KeyConfig
+     */
     public static function get($id, $type = "key")
     {
         $key = $type . $id;
@@ -33,6 +41,7 @@ class DefinitionCache
         }
 
         $config = KeyConfig::getById($id);
+
         if (!$config) {
             return;
         }
@@ -41,6 +50,9 @@ class DefinitionCache
         return $config;
     }
 
+    /**
+     * @param $config
+     */
     public static function put($config)
     {
         $type = self::getType($config);
@@ -51,6 +63,9 @@ class DefinitionCache
         self::$cache[$key] = $config;
     }
 
+    /**
+     * @param $config
+     */
     public static function clear($config)
     {
         if ($config) {
@@ -66,6 +81,10 @@ class DefinitionCache
         }
     }
 
+    /**
+     * @param $config
+     * @return string
+     */
     protected static function getType($config)
     {
         if ($config instanceof KeyConfig) {

@@ -345,6 +345,9 @@ class Admin_PageController extends \Pimcore\Controller\Action\Admin\Document
         ]);
     }
 
+    /**
+     * @param Document $page
+     */
     protected function setValuesToDocument(Document $page)
     {
         $this->addSettingsToDocument($page);

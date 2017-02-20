@@ -52,6 +52,10 @@ class QueryParams
         return ['orderKey' => $orderKey, "order" => $order];
     }
 
+    /**
+     * @param $param
+     * @return int
+     */
     public static function getRecordIdForGridRequest($param)
     {
         $param = json_decode($param, true);

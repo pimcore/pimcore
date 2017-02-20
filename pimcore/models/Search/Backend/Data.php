@@ -227,7 +227,7 @@ class Data extends \Pimcore\Model\AbstractModel
 
     /**
      * @param integer $modificationDate
-     * @return void
+     * @return $this
      */
     public function setModificationDate($modificationDate)
     {
@@ -246,7 +246,7 @@ class Data extends \Pimcore\Model\AbstractModel
 
     /**
      * @param integer $userModification
-     * @return void
+     * @return $this
      */
     public function setUserModification($userModification)
     {
@@ -265,7 +265,7 @@ class Data extends \Pimcore\Model\AbstractModel
 
     /**
      * @param integer $userOwner
-     * @return void
+     * @return $this
      */
     public function setUserOwner($userOwner)
     {
@@ -292,7 +292,7 @@ class Data extends \Pimcore\Model\AbstractModel
 
     /**
      * @param integer $published
-     * @return void
+     * @return $this
      */
     public function setPublished($published)
     {
@@ -311,7 +311,7 @@ class Data extends \Pimcore\Model\AbstractModel
 
     /**
      * @param  string $data
-     * @return void
+     * @return $this
      */
     public function setData($data)
     {
@@ -330,7 +330,7 @@ class Data extends \Pimcore\Model\AbstractModel
 
     /**
      * @param  string $properties
-     * @return void
+     * @return $this
      */
     public function setProperties($properties)
     {

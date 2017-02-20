@@ -46,7 +46,9 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Save object to database
      *
-     * @return void
+     * @return boolean
+     *
+     * @todo: not all save methods return a boolean, why this one?
      */
     public function save()
     {
@@ -66,8 +68,6 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * Deletes object from database
-     *
-     * @return void
      */
     public function delete()
     {

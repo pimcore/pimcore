@@ -161,6 +161,9 @@ class EventHandler
         \Zend_Registry::set('workflow_events_disable_cur_process', false);
     }
 
+    /**
+     * @return bool
+     */
     public static function isDisabled()
     {
         return (\Zend_Registry::isRegistered('workflow_events_disable_cur_process') && \Zend_Registry::get('workflow_events_disable_cur_process'));

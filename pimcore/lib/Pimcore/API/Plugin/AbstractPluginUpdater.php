@@ -19,7 +19,6 @@ use Pimcore\Db;
 
 abstract class AbstractPluginUpdater
 {
-
     /**
      * runs all Revision Updates
      */
@@ -35,6 +34,9 @@ abstract class AbstractPluginUpdater
      */
     protected $db;
 
+    /**
+     * @param $revision
+     */
     public function __construct($revision)
     {
         $this->revision = $revision;

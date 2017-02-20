@@ -494,7 +494,6 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
 
     /**
      * @param mixed $child
-     * @return void
      */
     public function addChild($child)
     {
@@ -529,7 +528,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     /**
      * @param mixed $data
      * @param array $blockedKeys
-     * @return void
+     * @return $this
      */
     public function setValues($data = [], $blockedKeys = [])
     {
@@ -585,6 +584,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
 
     /**
      * @param $object
+     * @param array $params
      */
     public function delete($object, $params = [])
     {
@@ -600,7 +600,8 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
 
     /**
      * This method is called in Object|Class::save() and is used to create the database table for the localized data
-     * @return void
+     * @param $class
+     * @param array $params
      */
     public function classSaved($class, $params = [])
     {
@@ -618,7 +619,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @param $object
+     * @param $container
      * @param array $params
      * @return Object\Localizedfield
      * @throws \Exception

@@ -92,7 +92,6 @@ class Profiler extends \Zend_Db_Profiler
      *
      * @param  integer $queryId
      * @throws \Zend_Db_Profiler_Exception
-     * @return void
      */
     public function queryEnd($queryId)
     {
@@ -165,8 +164,6 @@ class Profiler extends \Zend_Db_Profiler
 
     /**
      * Update the label of the message holding the profile info.
-     *
-     * @return void
      */
     protected function updateMessageLabel()
     {

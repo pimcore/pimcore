@@ -91,7 +91,6 @@ class Definition extends Model\Object\Fieldcollection\Definition
 
     /**
      * @throws \Exception
-     * @return void
      */
     public function save()
     {
@@ -186,7 +185,6 @@ class Definition extends Model\Object\Fieldcollection\Definition
 
     /**
      * @param $serializedFilename
-     * @return void
      */
     private function cleanupOldFiles($serializedFilename)
     {
@@ -223,7 +221,7 @@ class Definition extends Model\Object\Fieldcollection\Definition
     }
 
     /**
-     * @return void
+     * Update Database according to class-definition
      */
     private function updateDatabase()
     {
@@ -265,6 +263,8 @@ class Definition extends Model\Object\Fieldcollection\Definition
 
     /**
      * @throws \Exception
+     *
+     * @todo: creates a PHP-Dock with "@return void" (line 351)
      */
     private function createContainerClasses()
     {
@@ -400,7 +400,7 @@ class Definition extends Model\Object\Fieldcollection\Definition
     }
 
     /**
-     * @return void
+     * Delete Brick Definition
      */
     public function delete()
     {

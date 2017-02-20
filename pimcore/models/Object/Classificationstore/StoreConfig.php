@@ -23,19 +23,22 @@ use Pimcore\Model;
  */
 class StoreConfig extends Model\AbstractModel
 {
-
-    /* Store ID
-     * @var integer
+    /**
+     * @var int
      */
     public $id;
 
-    /** The store name.
+    /**
+     * The store name.
+     *
      * @var string
      */
     public $name;
 
-    /** The store description.
-     * @var
+    /**
+     * The store description.
+     *
+     * @var string
      */
     public $description;
 

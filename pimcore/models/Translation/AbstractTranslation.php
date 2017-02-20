@@ -104,6 +104,9 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
         return $this;
     }
 
+    /**
+     * @return int
+     */
     public function getCreationDate()
     {
         return $this->creationDate;
@@ -120,6 +123,9 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
         return $this;
     }
 
+    /**
+     * @return int
+     */
     public function getModificationDate()
     {
         return $this->modificationDate;
@@ -155,9 +161,6 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
         return $this->translations[$language];
     }
 
-    /**
-     * @return void
-     */
     public static function clearDependentCache()
     {
         \Pimcore\Cache::clearTags(["translator", "translate"]);
@@ -237,6 +240,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
      * @param $id - translation key
      * @param bool $create - creates an empty translation entry if the key doesn't exists
      * @param bool $returnIdIfEmpty - returns $id if no translation is available
+     * @param string $language
      * @return string
      * @throws \Exception
      */
@@ -277,6 +281,8 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
      * @static
      * @param $file - path to the csv file
      * @param bool $replaceExistingTranslations
+     * @param array $languages
+     * @return mixed
      * @throws \Exception
      */
     public static function importTranslationsFromFile($file, $replaceExistingTranslations = true, $languages = null)

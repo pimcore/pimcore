@@ -125,7 +125,6 @@ class Config
     /**
      * @static
      * @param \Zend_Config $config
-     * @return void
      */
     public static function setSystemConfig(\Zend_Config $config)
     {
@@ -219,7 +218,6 @@ class Config
     /**
      * @static
      * @param \Zend_Config $config
-     * @return void
      */
     public static function setWebsiteConfig(\Zend_Config $config)
     {
@@ -256,14 +254,11 @@ class Config
     /**
      * @static
      * @param \Zend_Config $config
-     * @return void
      */
     public static function setReportConfig(\Zend_Config $config)
     {
         \Zend_Registry::set("pimcore_config_report", $config);
     }
-
-
 
     /**
      * @static
@@ -294,7 +289,6 @@ class Config
     /**
      * @static
      * @param \Zend_Config $config
-     * @return void
      */
     public static function setWeb2PrintConfig(\Zend_Config $config)
     {
@@ -304,7 +298,6 @@ class Config
     /**
      * @static
      * @param \Zend_Config $config
-     * @return void
      */
     public static function setModelClassMappingConfig($config)
     {
@@ -598,7 +591,6 @@ class Config
     /**
      * @static
      * @param \Zend_Config $config
-     * @return void
      */
     public static function setPerspectivesConfig(\Zend_Config $config)
     {
@@ -684,6 +676,11 @@ class Config
         return $result;
     }
 
+    /**
+     * @param $runtimeConfig
+     * @param $key
+     * @return bool
+     */
     public static function inPerspective($runtimeConfig, $key)
     {
         if (!isset($runtimeConfig["toolbar"]) || !$runtimeConfig["toolbar"]) {

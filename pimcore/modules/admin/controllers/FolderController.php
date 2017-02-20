@@ -81,6 +81,9 @@ class Admin_FolderController extends \Pimcore\Controller\Action\Admin\Document
         $this->_helper->json(false);
     }
 
+    /**
+     * @param Document\Folder $folder
+     */
     protected function setValuesToDocument(Document\Folder $folder)
     {
         $this->addPropertiesToDocument($folder);

@@ -88,6 +88,13 @@ class Admin_TagsController extends \Pimcore\Controller\Action\Admin
         $this->_helper->json($tags);
     }
 
+    /**
+     * @param Tag $tag
+     * @param $showSelection
+     * @param $assignedTagIds
+     * @param bool $loadChildren
+     * @return array
+     */
     protected function convertTagToArray(Tag $tag, $showSelection, $assignedTagIds, $loadChildren = false)
     {
         $tagArray = [
@@ -114,7 +121,6 @@ class Admin_TagsController extends \Pimcore\Controller\Action\Admin
 
         return $tagArray;
     }
-
 
     public function loadTagsForElementAction()
     {
@@ -203,6 +209,10 @@ class Admin_TagsController extends \Pimcore\Controller\Action\Admin
         $this->_helper->json(['success' => true, 'idLists' => $idListParts, 'totalCount' => count($idList)]);
     }
 
+    /**
+     * @param \Pimcore\Model\Object\AbstractObject $object
+     * @return mixed
+     */
     private function getSubObjectIds(\Pimcore\Model\Object\AbstractObject $object)
     {
         $childsList = new Pimcore\Model\Object\Listing();
@@ -222,6 +232,10 @@ class Admin_TagsController extends \Pimcore\Controller\Action\Admin
         return $childsList->loadIdList();
     }
 
+    /**
+     * @param \Pimcore\Model\Asset $asset
+     * @return mixed
+     */
     private function getSubAssetIds(\Pimcore\Model\Asset $asset)
     {
         $childsList = new Pimcore\Model\Asset\Listing();
@@ -241,6 +255,10 @@ class Admin_TagsController extends \Pimcore\Controller\Action\Admin
         return $childsList->loadIdList();
     }
 
+    /**
+     * @param \Pimcore\Model\Document $document
+     * @return mixed
+     */
     private function getSubDocumentIds(\Pimcore\Model\Document $document)
     {
         $childsList = new Pimcore\Model\Document\Listing();

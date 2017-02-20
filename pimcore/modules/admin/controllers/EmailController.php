@@ -124,6 +124,9 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
         $this->_helper->json(false);
     }
 
+    /**
+     * @param Document $page
+     */
     protected function setValuesToDocument(Document $page)
     {
         $this->addSettingsToDocument($page);
@@ -228,7 +231,7 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
      * Helper to build the correct Json array for the treeGrid
      *
      * @param array $data
-     * @param null|$data $fullEntry
+     * @param $fullEntry
      */
     protected function enhanceLoggingData(&$data, &$fullEntry = null)
     {
@@ -470,7 +473,9 @@ class Admin_EmailController extends \Pimcore\Controller\Action\Admin\Document
         $this->_helper->json(false);
     }
 
-
+    /**
+     * @return null|\Zend_Mail_Storage_Abstract
+     */
     protected function getBounceMailbox()
     {
         $mail = null;
