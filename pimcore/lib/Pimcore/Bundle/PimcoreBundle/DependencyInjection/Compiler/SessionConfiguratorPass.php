@@ -14,6 +14,10 @@ class SessionConfiguratorPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
+        if (!$container->hasDefinition('session')) {
+            return;
+        }
+
         // configure the core session through our configurator service (mainly to register custom attribute bags)
         $session = $container->getDefinition('session');
 
