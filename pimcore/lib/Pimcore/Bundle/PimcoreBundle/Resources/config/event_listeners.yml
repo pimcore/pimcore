@@ -119,6 +119,7 @@ services:
 
     pimcore.event_listener.targeting:
       class: Pimcore\Bundle\PimcoreBundle\EventListener\Targeting
+      arguments: ['@pimcore.service.request.document_resolver']
       tags:
           - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse, priority: -106 }
 

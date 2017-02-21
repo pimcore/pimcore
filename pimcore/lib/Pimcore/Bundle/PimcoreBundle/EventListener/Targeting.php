@@ -3,6 +3,7 @@
 namespace Pimcore\Bundle\PimcoreBundle\EventListener;
 
 use Pimcore\Bundle\PimcoreBundle\EventListener\AbstractEventListener\ResponseInjection;
+use Pimcore\Bundle\PimcoreBundle\Service\Request\DocumentResolver;
 use Pimcore\Google\Analytics as AnalyticsHelper;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -28,6 +29,19 @@ class Targeting extends ResponseInjection
      */
     protected $personas = [];
 
+    /**
+     * @var DocumentResolver
+     */
+    protected $documentResolver;
+
+    /**
+     * Targeting constructor.
+     * @param DocumentResolver $documentResolver
+     */
+    public function __construct(DocumentResolver $documentResolver)
+    {
+        $this->documentResolver = $documentResolver;
+    }
 
     /**
      * @param $key
@@ -93,7 +107,7 @@ class Targeting extends ResponseInjection
                     "method" => strtolower($request->getMethod())
                 ];
 
-                $document = $request->get("contentDocument");
+                $document = $this->documentResolver->getDocument();
 
                 if (count($this->events) > 0) {
                     $dataPush["events"] = $this->events;
