@@ -105,7 +105,7 @@ pimcore.object.quantityValue.unitsettings = Class.create({
             width: 30,
             items: [{
                 tooltip: t('delete'),
-                icon: "/pimcore/static/img/icon/cross.png",
+                iconCls: "pimcore_icon_delete",
                 handler: function (grid, rowIndex) {
                     grid.getStore().removeAt(rowIndex);
                 }.bind(this)

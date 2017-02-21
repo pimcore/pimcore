@@ -15,6 +15,7 @@
 use \Linfo\Exceptions\FatalException;
 use \Linfo\Linfo;
 use \Linfo\Common;
+use Pimcore\Tool\Session;
 
 class Admin_External_AdminerController extends \Pimcore\Controller\Action\Admin
 {
@@ -35,7 +36,7 @@ class Admin_External_AdminerController extends \Pimcore\Controller\Action\Admin
         $this->checkPermission("adminer");
 
         // call this to keep the session 'open' so that Adminer can write to it
-        $session = \Pimcore\Tool\Session::get();
+        $session = Session::get();
 
         $this->adminerHome = PIMCORE_DOCUMENT_ROOT . '/vendor/vrana/adminer/';
 
@@ -126,7 +127,7 @@ function adminer_object()
         public function permanentLogin($create = false)
         {
             // key used for permanent login
-            return \Zend_Session::getId();
+            return Session::getSession()->getId();
         }
 
         /**

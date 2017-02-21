@@ -2,7 +2,9 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\Session\Attribute;
 
-interface LockableAttributeBagInterface
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
+
+interface LockableAttributeBagInterface extends AttributeBagInterface
 {
     /**
      * Lock the attribute bag (disallow modifications)

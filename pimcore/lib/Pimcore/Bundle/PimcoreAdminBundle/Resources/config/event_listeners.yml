@@ -1,0 +1,6 @@
+services:
+    pimcore_admin.event_listener.admin_controller:
+        class: Pimcore\Bundle\PimcoreAdminBundle\EventListener\AdminControllerListener
+        arguments: ['@service_container']
+        tags:
+            - { name: kernel.event_subscriber }

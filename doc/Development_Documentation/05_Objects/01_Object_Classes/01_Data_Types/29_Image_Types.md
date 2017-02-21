@@ -162,3 +162,31 @@ $advancedImage->setImage($image);
  
 $object->setMyAdvancedImage($advancedImage);
 ```
+
+#### Predefined Data Templates
+
+In addition to the empty standard data template you can provide a JSON config in the classdefinition describing additional custom templates.
+These will show up as split button entries in the "add marker/add hotspot" menu.
+
+```json
+{
+	"marker": [{
+		"menuName": "marker config 1",
+		"name": "hotspot name",
+		"data": [{
+			"name": "my asset href",
+			"type": "asset",
+            "value": "/screenshots/glossary.png"
+		}, {
+			"name": "my textfield",
+			"type": "textfield"
+		}]
+	}],
+	"hotspot": [{
+		"menuName": "hotspot config 1"
+	}]
+}
+```
+
+
+

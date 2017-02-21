@@ -8,7 +8,7 @@ if [ -z "$SEARCHPATH" ]; then
 fi
 
 echo "Downloading ack 2 to /tmp/ack"
-curl http://beyondgrep.com/ack-2.14-single-file > /tmp/ack && chmod 0755 /tmp/ack
+curl -L https://beyondgrep.com/ack-2.14-single-file > /tmp/ack && chmod 0755 /tmp/ack
 /tmp/ack --version
 
 echo "Analyzing ZF1 usage in $SEARCHPATH"

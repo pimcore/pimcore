@@ -6,11 +6,10 @@ use Pimcore\Bundle\PimcoreBundle\Configuration\TemplatePhp;
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModel;
 use Pimcore\Config;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class LoginController extends Controller
+class LoginController extends AdminController
 {
     /**
      * @Route("/login", name="admin_login")
