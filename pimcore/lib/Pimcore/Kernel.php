@@ -2,7 +2,6 @@
 
 namespace Pimcore;
 
-use DI\Bridge\Symfony\Kernel as PhpDIKernel;
 use Pimcore\Bundle\PimcoreAdminBundle\PimcoreAdminBundle;
 use Pimcore\Bundle\PimcoreBundle\PimcoreBundle;
 use Pimcore\Bundle\PimcoreLegacyBundle\PimcoreLegacyBundle;
@@ -18,7 +17,7 @@ use Symfony\Bundle\WebProfilerBundle\WebProfilerBundle;
 use Symfony\Cmf\Bundle\RoutingBundle\CmfRoutingBundle;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
-abstract class Kernel extends PhpDIKernel
+abstract class Kernel extends \Symfony\Component\HttpKernel\Kernel
 {
     /**
      * Determines if the ZF1 stack should still be supported
@@ -243,16 +242,5 @@ abstract class Kernel extends PhpDIKernel
                 });
             }
         }
-    }
-
-    protected function buildPHPDIContainer(\DI\ContainerBuilder $builder)
-    {
-        \Pimcore::addDiDefinitions($builder);
-
-        $container = $builder->build();
-
-        \Pimcore::setDiContainer($container);
-
-        return $container;
     }
 }
