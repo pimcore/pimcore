@@ -13,6 +13,18 @@
  */
 
 /**
+ * @param string $file
+ * @return array
+ */
+function xmlToArray($file) {
+
+    $xml = simplexml_load_file($file, null, LIBXML_NOCDATA);
+    $json = json_encode((array) $xml);
+    $array = json_decode($json, true);
+    return $array;
+}
+
+/**
  * @param $source
  * @param null $level
  * @param null $target

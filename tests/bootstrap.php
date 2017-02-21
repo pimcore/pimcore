@@ -27,7 +27,7 @@ recursiveDelete(PIMCORE_WEBSITE_VAR);
 mkdir(PIMCORE_WEBSITE_VAR, 0777, true);
 
 // get default configuration for the test
-$testConfig = new Zend_Config_Xml(TESTS_PATH . "/config/testconfig.xml");
+$testConfig = new \Pimcore\Config\Config(xmlToArray(TESTS_PATH . "/config/testconfig.xml"));
 Zend_Registry::set("pimcore_config_test", $testConfig);
 $testConfig = $testConfig->toArray();
 

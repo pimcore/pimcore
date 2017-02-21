@@ -367,9 +367,7 @@ class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
      */
     public function importAction()
     {
-        $tmpFile = file_get_contents($_FILES["Filedata"]["tmp_name"]);
-        $conf = new \Zend_Config_Xml($tmpFile);
-        $importData = $conf->toArray();
+        $importData = xmlToArray($_FILES["Filedata"]["tmp_name"]);
         Object\KeyValue\Helper::import($importData);
 
         $this->_helper->json(["success" => true], false);

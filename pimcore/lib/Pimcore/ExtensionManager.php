@@ -144,7 +144,8 @@ class ExtensionManager
                     if ($d != "." and $d != ".." and is_dir(PIMCORE_PLUGINS_PATH . "//" . $d)) {
                         if (file_exists(PIMCORE_PLUGINS_PATH . "/" . $d . "/plugin.xml")) {
                             try {
-                                $pluginConf = new \Zend_Config_Xml(PIMCORE_PLUGINS_PATH . "/" . $d . "/plugin.xml");
+                                $pluginConfArray = xmlToArray(PIMCORE_PLUGINS_PATH . "/" . $d . "/plugin.xml");
+                                $pluginConf = new \Pimcore\Config\Config($pluginConfArray);
                                 if ($pluginConf != null) {
                                     $pluginConfigs[] = $pluginConf->toArray();
                                 }
@@ -255,7 +256,8 @@ class ExtensionManager
 
             foreach (self::getBrickDirectories($customPath) as $areaName => $path) {
                 try {
-                    $configs[$areaName] = new \Zend_Config_Xml($path . "/area.xml");
+                    $configArray = xmlToArray($path . "/area.xml");
+                    $configs[$areaName] = new \Pimcore\Config\Config($configArray);
                 } catch (\Exception $e) {
                     Logger::error("Unable to initalize brick with id: " . $areaName);
                     Logger::error($e);

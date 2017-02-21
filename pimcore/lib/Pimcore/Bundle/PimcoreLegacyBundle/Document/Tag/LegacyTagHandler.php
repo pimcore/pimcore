@@ -130,7 +130,7 @@ class LegacyTagHandler implements TagHandlerInterface
                 if ($actionObject instanceof AbstractArea) {
                     $actionObject->setView($view);
 
-                    $areaConfig = new \Zend_Config_Xml($areas[$type] . "/area.xml");
+                    $areaConfig = new \Pimcore\Config\Config($areas[$type] . "/area.xml");
                     $actionObject->setConfig($areaConfig);
 
                     // params

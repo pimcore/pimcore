@@ -188,14 +188,14 @@ class Placeholder
                     //try to create the json config object
                     try {
                         $configJsonString = str_replace(["&quot;", "'"], '"', $placeholderConfigString);
-                        $placeholderConfig = new \Zend_Config_Json($configJsonString, null, ['ignoreconstants' => true]);
+                        $placeholderConfig = new \Pimcore\Config\Config(json_decode($configJsonString, true), null, ['ignoreconstants' => true]);
                     } catch (\Exception $e) {
                         Logger::warn('PlaceholderConfig is not a valid JSON string. PlaceholderConfig for ' . $placeholderClass . ' ignored.');
                         continue;
                     }
                 } else {
                     //create an empty config object if no config object was passed
-                    $placeholderConfig = new \Zend_Config_Json("{}");
+                    $placeholderConfig = new \Pimcore\Config\Config([]);
                 }
 
                 $placeholderStack[] = ['placeholderString' => $placeholderString,

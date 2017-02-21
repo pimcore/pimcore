@@ -48,7 +48,7 @@ class Info
 
     /**
      * @deprecated
-     * @var \Zend_Config
+     * @var \Pimcore\Config\Config
      */
     public $config;
 
@@ -134,7 +134,7 @@ class Info
     /**
      * @deprecated Only used for legacy areas as the AreaInterface now handles static Area data.
      *
-     * @param \Zend_Config $config
+     * @param \Pimcore\Config\Config $config
      * @return $this
      */
     public function setConfig($config)
@@ -147,7 +147,7 @@ class Info
     /**
      * @deprecated Only used for legacy areas as the AreaInterface now handles static Area data.
      *
-     * @return \Zend_Config
+     * @return \Pimcore\Config\Config
      */
     public function getConfig()
     {

@@ -34,9 +34,9 @@ abstract class AbstractPlaceholder
 
     /**
      * The config object passed from the placeholder
-     * If no config object was passed a empty \Zend_Config_Json is passed
+     * If no config object was passed a empty \Pimcore\Config\Config is passed
      *
-     * @var \Zend_Config_Json
+     * @var \Pimcore\Config\Config
      */
     protected $placeholderConfig = null;
 
@@ -107,10 +107,10 @@ abstract class AbstractPlaceholder
     }
 
     /**
-     * @param \Zend_Config_Json $config
+     * @param \Pimcore\Config\Config $config
      * @return $this
      */
-    public function setPlaceholderConfig(\Zend_Config_Json $config)
+    public function setPlaceholderConfig(\Pimcore\Config\Config $config)
     {
         $this->placeholderConfig = $config;
 
@@ -120,7 +120,7 @@ abstract class AbstractPlaceholder
     /**
      * Returns the Placeholder config object
      *
-     * @return \Zend_Config_Json
+     * @return \Pimcore\Config\Config
      */
     public function getPlaceholderConfig()
     {

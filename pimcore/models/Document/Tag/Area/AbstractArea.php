@@ -27,7 +27,7 @@ abstract class AbstractArea
     protected $view;
 
     /**
-     * @var \Zend_Config
+     * @var \Pimcore\Config\Config
      */
     protected $config;
 
@@ -72,7 +72,7 @@ abstract class AbstractArea
     }
 
     /**
-     * @return \Zend_Config
+     * @return \Pimcore\Config\Config
      */
     public function getConfig()
     {

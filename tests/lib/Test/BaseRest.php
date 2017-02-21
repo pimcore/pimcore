@@ -27,7 +27,7 @@ class Test_BaseRest extends Test_Base
     public static function getTestConfig()
     {
         if (!self::$testConfig) {
-            $testConfig = new Zend_Config_Xml(TESTS_PATH . "/config/testconfig.xml");
+            $testConfig = new \Pimcore\Config\Config(xmlToArray(TESTS_PATH . "/config/testconfig.xml"));
             $testConfig = $testConfig->toArray();
             self::$testConfig = $testConfig;
         }

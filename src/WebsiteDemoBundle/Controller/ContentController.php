@@ -10,6 +10,7 @@ class ContentController extends AbstractController
 {
     public function defaultAction()
     {
+
     }
 
     public function portalAction()
