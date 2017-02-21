@@ -1,56 +1,42 @@
 <?php
-/**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in
- * LICENSE.md which is distributed with this source code.
- *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
- */
 
+namespace Pimcore\Bundle\PimcoreAdminBundle\Controller;
+use Pimcore\Bundle\PimcoreBundle\Controller\EventedControllerInterface;
+use Pimcore\Controller\Action\Helper\Json;
 use Pimcore\Model\Element\Recyclebin;
 use Pimcore\Model\Element;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\Routing\Annotation\Route;
 
-class Admin_RecyclebinController extends \Pimcore\Controller\Action\Admin
+class RecyclebinController extends AdminController implements EventedControllerInterface
 {
-    public function init()
+
+    /**
+     * @Route("/recyclebin/list", name="admin_recyclebin_list")
+     * @param Request $request
+     */
+    public function listAction(Request $request)
     {
-        parent::init();
 
-        // recyclebin actions might take some time (save & restore)
-        $timeout = 600; // 10 minutes
-        @ini_set("max_execution_time", $timeout);
-        set_time_limit($timeout);
-
-        // check permissions
-        $notRestrictedActions = ["add"];
-        if (!in_array($this->getParam("action"), $notRestrictedActions)) {
-            $this->checkPermission("recyclebin");
-        }
-    }
-
-    public function listAction()
-    {
-        if ($this->getParam("xaction") == "destroy") {
-            $item = Recyclebin\Item::getById(\Pimcore\Admin\Helper\QueryParams::getRecordIdForGridRequest($this->getParam("data")));
+        if ($request->get("xaction") == "destroy") {
+            $item = Recyclebin\Item::getById(\Pimcore\Admin\Helper\QueryParams::getRecordIdForGridRequest($request->get("data")));
             $item->delete();
 
-            $this->_helper->json(["success" => true, "data" => []]);
+            return new JsonResponse(["success" => true, "data" => []]);
         } else {
             $db = \Pimcore\Db::get();
 
             $list = new Recyclebin\Item\Listing();
-            $list->setLimit($this->getParam("limit"));
-            $list->setOffset($this->getParam("start"));
+            $list->setLimit($request->get("limit"));
+            $list->setOffset($request->get("start"));
 
             $list->setOrderKey("date");
             $list->setOrder("DESC");
 
-            $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($this->getAllParams());
+            $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($request->request->all());
             if ($sortingSettings['orderKey']) {
                 $list->setOrderKey($sortingSettings['orderKey']);
                 $list->setOrder($sortingSettings['order']);
@@ -59,11 +45,11 @@ class Admin_RecyclebinController extends \Pimcore\Controller\Action\Admin
 
             $conditionFilters = [];
 
-            if ($this->getParam("filterFullText")) {
-                $conditionFilters[] = "path LIKE " . $list->quote("%".$this->getParam("filterFullText")."%");
+            if ($request->get("filterFullText")) {
+                $conditionFilters[] = "path LIKE " . $list->quote("%".$request->get("filterFullText")."%");
             }
 
-            $filters = $this->getParam("filter");
+            $filters = $request->get("filter");
             if ($filters) {
                 $filters = \Zend_Json::decode($filters);
 
@@ -126,29 +112,41 @@ class Admin_RecyclebinController extends \Pimcore\Controller\Action\Admin
 
             $items = $list->load();
 
-            $this->_helper->json(["data" => $items, "success" => true, "total" => $list->getTotalCount()]);
+            return new JsonResponse(["data" => $items, "success" => true, "total" => $list->getTotalCount()]);
         }
     }
 
-    public function restoreAction()
+    /**
+     * @Route("/recyclebin/restore", name="admin_recyclebin_restore")
+     * @param Request $request
+     */
+    public function restoreAction(Request $request)
     {
-        $item = Recyclebin\Item::getById($this->getParam("id"));
+        $item = Recyclebin\Item::getById($request->get("id"));
         $item->restore();
 
-        $this->_helper->json(["success" => true]);
+        return new JsonResponse(["success" => true]);
     }
 
+    /**
+     * @Route("/recyclebin/flush", name="admin_recyclebin_flush")
+     * @param Request $request
+     */
     public function flushAction()
     {
         $bin = new Element\Recyclebin();
         $bin->flush();
 
-        $this->_helper->json(["success" => true]);
+        return new JsonResponse(["success" => true]);
     }
 
-    public function addAction()
+    /**
+     * @Route("/recyclebin/add", name="admin_recyclebin_add")
+     * @param Request $request
+     */
+    public function addAction(Request $request)
     {
-        $element = Element\Service::getElementById($this->getParam("type"), $this->getParam("id"));
+        $element = Element\Service::getElementById($request->get("type"), $request->get("id"));
 
         if ($element) {
             $type = Element\Service::getElementType($element);
@@ -161,9 +159,42 @@ class Admin_RecyclebinController extends \Pimcore\Controller\Action\Admin
                 Recyclebin\Item::create($element, $this->getUser());
             }
 
-            $this->_helper->json(["success" => true]);
+            return new JsonResponse(["success" => true]);
         } else {
-            $this->_helper->json(["success" => false]);
+            return new JsonResponse(["success" => false]);
         }
     }
+
+    /**
+     * @param FilterControllerEvent $event
+     */
+    public function onKernelController(FilterControllerEvent $event)
+    {
+        $isMasterRequest = $event->isMasterRequest();
+        if (!$isMasterRequest) {
+            return;
+        }
+
+        // recyclebin actions might take some time (save & restore)
+        $timeout = 600; // 10 minutes
+        @ini_set("max_execution_time", $timeout);
+        set_time_limit($timeout);
+
+        $request = $event->getRequest();
+
+        // check permissions
+        $notRestrictedActions = ["add"];
+        if (!in_array($request->get("action"), $notRestrictedActions)) {
+            $this->checkPermission("recyclebin");
+        }
+    }
+
+    /**
+     * @param FilterResponseEvent $event
+     */
+    public function onKernelResponse(FilterResponseEvent $event)
+    {
+        // nothing to do
+    }
+
 }
