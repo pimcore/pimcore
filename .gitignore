@@ -73,3 +73,6 @@
 .idea
 # NetBeans
 nbproject
+
+# temp.
+git-update.sh
