@@ -85,9 +85,7 @@ class MaintenancePage extends ResponseInjection
 
             if ($maintenance && !in_array(\Pimcore\Tool::getClientIp(), $serverIps)) {
                 $response = new Response($this->getTemplateCode(), 503);
-                $response->send();
-
-                $event->stopPropagation();
+                $event->setResponse($response);
             }
         }
     }
