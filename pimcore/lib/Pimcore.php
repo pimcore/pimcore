@@ -269,7 +269,6 @@ class Pimcore
         $front->registerPlugin(new Controller\Plugin\ErrorHandler(), 1);
 
         if (Tool::useFrontendOutputFilters(new \Zend_Controller_Request_Http())) {
-            $front->registerPlugin(new Controller\Plugin\Webmastertools(), 797);
             $front->registerPlugin(new Controller\Plugin\HttpErrorLog(), 850);
         }
     }

@@ -136,3 +136,9 @@ services:
             - [loadTemplateFromResource, ['@@PimcoreBundle/Resources/misc/maintenance.html']]
         tags:
           - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 620 }
+
+    pimcore.event_listener.google_search_console_verification:
+        class: Pimcore\Bundle\PimcoreBundle\EventListener\GoogleSearchConsoleVerification
+        tags:
+          - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
+
