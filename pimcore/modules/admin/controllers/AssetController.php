@@ -996,7 +996,8 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
         }
 
         if ($this->getParam("treepreview")) {
-            $thumbnail = Asset\Image\Thumbnail\Config::getPreviewConfig();
+            $thumbnail = \Pimcore::getDiContainer()->get('Pimcore\Model\Asset\Image\Thumbnail\Config');
+            $thumbnail = $thumbnail::getPreviewConfig();
         }
 
         if ($this->getParam("cropPercent")) {
@@ -1041,7 +1042,8 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
         $thumbnail = $this->getAllParams();
 
         if ($this->getParam("treepreview")) {
-            $thumbnail = Asset\Image\Thumbnail\Config::getPreviewConfig();
+            $thumbnail = \Pimcore::getDiContainer()->get('Pimcore\Model\Asset\Image\Thumbnail\Config');
+            $thumbnail = $thumbnail::getPreviewConfig();
         }
 
         $time = null;
@@ -1089,7 +1091,8 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
         }
 
         if ($this->getParam("treepreview")) {
-            $thumbnail = Asset\Image\Thumbnail\Config::getPreviewConfig();
+            $thumbnail = \Pimcore::getDiContainer()->get('Pimcore\Model\Asset\Image\Thumbnail\Config');
+            $thumbnail = $thumbnail::getPreviewConfig();
         }
 
         $page = 1;
@@ -1137,7 +1140,8 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
 
         $this->view->asset = $asset;
 
-        $config = Asset\Video\Thumbnail\Config::getPreviewConfig();
+        $config = \Pimcore::getDiContainer()->get('Pimcore\Model\Asset\Video\Thumbnail\Config');
+        $config = $config::getPreviewConfig();
 
         $thumbnail = $asset->getThumbnail($config, ["mp4"]);
 

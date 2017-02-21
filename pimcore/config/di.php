@@ -8,4 +8,6 @@ return [
     'Pimcore\Model\Object\*' => DI\object('Pimcore\Model\Object\*'),
 
     \Pimcore\Image\Adapter::class => DI\factory([\Pimcore\Image::class, 'create']),
+	'Pimcore\Model\Asset\Image\Thumbnail\Config' => DI\object('Pimcore\Model\Asset\Image\Thumbnail\Config'),
+	'Pimcore\Model\Asset\Video\Thumbnail\Config' => DI\object('Pimcore\Model\Asset\Video\Thumbnail\Config'),
 ];

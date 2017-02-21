@@ -103,7 +103,8 @@ class ThumbnailsVideoCommand extends AbstractCommand
 
                 if ($input->getOption("system")) {
                     $this->output->writeln("generating thumbnail for video: " . $video->getRealFullPath() . " | " . $video->getId() . " | Thumbnail: System Preview : " . formatBytes(memory_get_usage()));
-                    $thumbnail = Asset\Video\Thumbnail\Config::getPreviewConfig();
+                    $thumbnail = \Pimcore::getDiContainer()->get('Pimcore\Model\Asset\Video\Thumbnail\Config');
+                    $thumbnail = $thumbnail::getPreviewConfig();
                     $video->getThumbnail($thumbnail);
                     $this->waitTillFinished($video->getId(), $thumbnail);
                 }
