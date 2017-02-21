@@ -13,51 +13,59 @@
  * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
+namespace Pimcore\Bundle\PimcoreAdminBundle\Controller;
 
-use Pimcore\Controller\Action\Admin;
+use Pimcore\Model\Object\QuantityValue\Unit;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
-class Admin_QuantityValueController extends Admin
+class QuantityValueController extends AdminController
 {
-    public function unitProxyAction()
+    /**
+     * @Route("/quantity-value/unit-proxy", name="admin_quantityvalue_unitproxy")
+     * @param Request $request
+     * @throws \Exception
+     */
+    public function unitProxyAction(Request $request)
     {
-        if ($this->getParam("data")) {
-            if ($this->getParam("xaction") == "destroy") {
-                $data = Zend_Json::decode($this->getParam("data"));
+        if ($request->get("data")) {
+            if ($request->get("xaction") == "destroy") {
+                $data = json_decode($request->get("data"), true);
                 $id = $data["id"];
                 $unit = \Pimcore\Model\Object\QuantityValue\Unit::getById($id);
                 if (!empty($unit)) {
                     $unit->delete();
-                    $this->_helper->json(["data" => [], "success" => true]);
+                    return new JsonResponse(["data" => [], "success" => true]);
                 } else {
                     throw new \Exception("Unit with id " . $id . " not found.");
                 }
-            } elseif ($this->getParam("xaction") == "update") {
-                $data = Zend_Json::decode($this->getParam("data"));
-                $unit = Pimcore\Model\Object\QuantityValue\Unit::getById($data['id']);
+            } elseif ($request->get("xaction") == "update") {
+                $data = json_decode($request->get("data"), true);
+                $unit = Unit::getById($data['id']);
                 if (!empty($unit)) {
                     $unit->setValues($data);
                     $unit->save();
-                    $this->_helper->json(["data" => get_object_vars($unit), "success" => true]);
+                    return new JsonResponse(["data" => get_object_vars($unit), "success" => true]);
                 } else {
                     throw new \Exception("Unit with id " . $data['id'] . " not found.");
                 }
-            } elseif ($this->getParam("xaction") == "create") {
-                $data = Zend_Json::decode($this->getParam("data"));
+            } elseif ($request->get("xaction") == "create") {
+                $data = json_decode($request->get("data"), true);
                 unset($data['id']);
-                $unit = new Pimcore\Model\Object\QuantityValue\Unit();
+                $unit = new Unit();
                 $unit->setValues($data);
                 $unit->save();
-                $this->_helper->json(["data" => get_object_vars($unit), "success" => true]);
+                return new JsonResponse(["data" => get_object_vars($unit), "success" => true]);
             }
         } else {
-            $list = new Pimcore\Model\Object\QuantityValue\Unit\Listing();
-
+            $list = new Unit\Listing();
 
             $orderKey = "abbreviation";
             $order = "asc";
 
-
-            $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($this->getAllParams());
+            $allParams = $request->request->all();
+            $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($allParams);
             if ($sortingSettings['orderKey']) {
                 $orderKey = $sortingSettings['orderKey'];
             }
@@ -68,12 +76,12 @@ class Admin_QuantityValueController extends Admin
             $list->setOrder($order);
             $list->setOrderKey($orderKey);
 
-            $list->setLimit($this->getParam("limit"));
-            $list->setOffset($this->getParam("start"));
+            $list->setLimit($request->get("limit"));
+            $list->setOffset($request->get("start"));
 
             $condition = "1 = 1";
-            if ($this->getParam("filter")) {
-                $filterString = $this->getParam("filter");
+            if ($request->get("filter")) {
+                $filterString = $request->get("filter");
                 $filters = json_decode($filterString);
                 $db = \Pimcore\Db::get();
                 foreach ($filters as $f) {
@@ -93,7 +101,8 @@ class Admin_QuantityValueController extends Admin
                 $units[] = get_object_vars($u);
             }
 
-            $this->_helper->json(["data" => $units, "success" => true, "total" => $list->getTotalCount()]);
+            $response = new JsonResponse(["data" => $units, "success" => true, "total" => $list->getTotalCount()]);
+            return $response;
         }
     }
 
@@ -113,13 +122,17 @@ class Admin_QuantityValueController extends Admin
     }
 
 
-    public function unitListAction()
+    /**
+     * @Route("/quantity-value/unit-list", name="admin_quantityvalue_unitlist")
+     * @param Request $request
+     */
+    public function unitListAction(Request $request)
     {
-        $list = new \Pimcore\Model\Object\QuantityValue\Unit\Listing();
+        $list = new Unit\Listing();
         $list->setOrderKey("abbreviation");
         $list->setOrder("ASC");
-        if ($this->getParam("filter")) {
-            $array = explode(",", $this->getParam("filter"));
+        if ($request->get("filter")) {
+            $array = explode(",", $request->get("filter"));
             $quotedArray = [];
             $db = \Pimcore\Db::get();
             foreach ($array as $a) {
@@ -130,6 +143,6 @@ class Admin_QuantityValueController extends Admin
         }
 
         $units = $list->getUnits();
-        $this->_helper->json(["data" => $units, "success" => true, "total" => $list->getTotalCount()]);
+        return new JsonResponse(["data" => $units, "success" => true, "total" => $list->getTotalCount()]);
     }
 }
