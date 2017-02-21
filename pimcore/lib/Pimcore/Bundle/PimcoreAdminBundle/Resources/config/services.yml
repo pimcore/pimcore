@@ -11,7 +11,7 @@ services:
     #
 
     pimcore_admin.security.guard_authenticator:
-        class: Pimcore\Bundle\PimcoreAdminBundle\Security\PimcoreAdminAuthenticator
+        class: Pimcore\Bundle\PimcoreAdminBundle\Security\Guard\AdminAuthenticator
         arguments: ['@security.token_storage', '@router', '@security.http_utils']
         calls:
             - [setLogger, ['@logger']]
