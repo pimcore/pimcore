@@ -50,6 +50,7 @@ class AreablockStateListener implements EventSubscriberInterface, LoggerAwareInt
             return;
         }
 
+        // TODO handle state in some kind of service/container instead of Zend_Registry!
         // this is for $this->action() in templates when they are inside a block element
         try {
             $this->parentBlockCurrent = [];
