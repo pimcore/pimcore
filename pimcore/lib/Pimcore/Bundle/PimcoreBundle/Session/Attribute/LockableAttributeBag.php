@@ -17,6 +17,12 @@ class LockableAttributeBag extends AttributeBag implements LockableAttributeBagI
      */
     public function lock()
     {
+        /*
+        \Pimcore::getContainer()->get('logger')->warning('LOCK ' . $this->getName(), [
+            'trace' => (new \Exception())->getTraceAsString()
+        ]);
+        */
+
         $this->locked = true;
     }
 
@@ -25,6 +31,12 @@ class LockableAttributeBag extends AttributeBag implements LockableAttributeBagI
      */
     public function unlock()
     {
+        /*
+        \Pimcore::getContainer()->get('logger')->warning('UNLOCK ' . $this->getName(), [
+            'trace' => (new \Exception())->getTraceAsString()
+        ]);
+        */
+
         $this->locked = false;
     }
 
@@ -86,10 +98,18 @@ class LockableAttributeBag extends AttributeBag implements LockableAttributeBagI
         return parent::clear();
     }
 
+    /**
+     * @throws AttributeBagLockedException
+     *      if lock is set
+     */
     protected function checkLock()
     {
         if ($this->locked) {
-            throw new AttributeBagLockedException('Attribute bag is locked');
+            \Pimcore::getContainer()->get('logger')->warning('CHECK LOCK FAIL ' . $this->getName(), [
+                'trace' => (new \Exception())->getTraceAsString()
+            ]);
+
+            // throw new AttributeBagLockedException('Attribute bag is locked');
         }
     }
 }
