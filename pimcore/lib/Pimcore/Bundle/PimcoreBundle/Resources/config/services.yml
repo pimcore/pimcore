@@ -46,8 +46,8 @@ services:
     # REQUEST SPECIFICS
     #
 
-    pimcore.service.request.request_type_guesser:
-        class: Pimcore\Bundle\PimcoreBundle\Service\Request\RequestTypeGuesser
+    pimcore.service.request.request_context_guesser:
+        class: Pimcore\Bundle\PimcoreBundle\Service\Request\RequestContextGuesser
         arguments: ['%pimcore.admin.routes%']
 
     #
@@ -56,9 +56,9 @@ services:
     # Read/write/normalize defined request attributes (e.g. document)
     #
 
-    pimcore.service.request.request_type_resolver:
-        class: Pimcore\Bundle\PimcoreBundle\Service\Request\RequestTypeResolver
-        arguments: ['@request_stack', '@pimcore.service.request.request_type_guesser']
+    pimcore.service.request.request_context_resolver:
+        class: Pimcore\Bundle\PimcoreBundle\Service\Request\RequestContextResolver
+        arguments: ['@request_stack', '@pimcore.service.request.request_context_guesser']
 
     pimcore.service.request.editmode_resolver:
         class: Pimcore\Bundle\PimcoreBundle\Service\Request\EditmodeResolver

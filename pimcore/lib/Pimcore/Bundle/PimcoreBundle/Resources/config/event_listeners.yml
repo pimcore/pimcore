@@ -10,8 +10,8 @@ services:
             - { name: kernel.event_subscriber }
 
     pimcore.event_listener.request_type:
-        class: Pimcore\Bundle\PimcoreBundle\EventListener\RequestTypeListener
-        arguments: ['@pimcore.service.request.request_type_resolver', '@request_stack']
+        class: Pimcore\Bundle\PimcoreBundle\EventListener\RequestContextListener
+        arguments: ['@pimcore.service.request.request_context_resolver', '@request_stack']
         calls:
             - [setLogger, ['@logger']]
         tags:

@@ -18,7 +18,7 @@ class PimcoreExtension extends Extension
         $configuration = new Configuration();
         $config        = $this->processConfiguration($configuration, $configs);
 
-        // admin routes are used by RequestTypeGuesser to determine the request type
+        // admin routes are used by RequestContextGuesser to determine the request context
         $container->setParameter('pimcore.admin.routes', $config['admin']['routes']);
 
         // register pimcore config on container

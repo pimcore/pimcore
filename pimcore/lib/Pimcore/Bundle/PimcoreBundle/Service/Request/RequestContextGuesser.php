@@ -6,7 +6,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestMatcher;
 use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 
-class RequestTypeGuesser
+class RequestContextGuesser
 {
     /**
      * @var array
@@ -27,7 +27,7 @@ class RequestTypeGuesser
     }
 
     /**
-     * Guess the request type
+     * Guess the request context
      *
      * @param Request $request
      * @return string
@@ -35,14 +35,14 @@ class RequestTypeGuesser
     public function guess(Request $request)
     {
         if ($this->isAdminRequest($request)) {
-            return RequestTypeResolver::REQUEST_TYPE_ADMIN;
+            return RequestContextResolver::REQUEST_CONTEXT_ADMIN;
         }
 
-        return RequestTypeResolver::REQUEST_TYPE_DEFAULT;
+        return RequestContextResolver::REQUEST_CONTEXT_DEFAULT;
     }
 
     /**
-     * Get request matchers to query admin request type from
+     * Get request matchers to query admin request context from
      *
      * @return RequestMatcherInterface[]
      */
