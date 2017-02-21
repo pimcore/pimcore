@@ -3,8 +3,20 @@ services:
     # SESSION
     #
 
+    pimcore_admin.session.storage_factory:
+        class: Pimcore\Bundle\PimcoreAdminBundle\Session\AdminSessionStorageFactory
+
+    pimcore_admin.session.storage:
+        class: Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorage
+        factory: ['@pimcore_admin.session.storage_factory', 'createStorage']
+
     pimcore_admin.session.configurator.admin_session_bags:
         class: Pimcore\Bundle\PimcoreAdminBundle\Session\AdminSessionBagConfigurator
+
+    pimcore_admin.session:
+        class: Symfony\Component\HttpFoundation\Session\Session
+        configurator: ['@pimcore_admin.session.configurator.admin_session_bags', 'configure']
+        arguments: ['@pimcore_admin.session.storage']
 
     #
     # SECURITY

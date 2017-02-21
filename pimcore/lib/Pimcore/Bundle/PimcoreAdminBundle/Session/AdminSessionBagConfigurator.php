@@ -2,8 +2,8 @@
 
 namespace Pimcore\Bundle\PimcoreAdminBundle\Session;
 
+use Pimcore\Bundle\PimcoreBundle\Session\Attribute\LockableAttributeBag;
 use Pimcore\Bundle\PimcoreBundle\Session\SessionConfiguratorInterface;
-use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class AdminSessionBagConfigurator implements SessionConfiguratorInterface
@@ -25,7 +25,7 @@ class AdminSessionBagConfigurator implements SessionConfiguratorInterface
      */
     protected function registerBag(SessionInterface $session, $name)
     {
-        $bag = new AttributeBag('_' . $name);
+        $bag = new LockableAttributeBag('_' . $name);
         $bag->setName($name);
 
         $session->registerBag($bag);

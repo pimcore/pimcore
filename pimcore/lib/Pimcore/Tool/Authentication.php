@@ -54,7 +54,8 @@ class Authentication
         }
 
         $session = Session::getReadOnly();
-        $user = $session->user;
+        $user = $session->get('user');
+
         if ($user instanceof User) {
             // renew user
             $user = User::getById($user->getId());

@@ -14,17 +14,12 @@
 
 namespace Pimcore\Tool;
 
+use Pimcore\Bundle\PimcoreBundle\Session\Attribute\LockableAttributeBagInterface;
 use Pimcore\Logger;
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
 class Session
 {
-
-    /**
-     * contains the session namespace objects
-     * @var array
-     */
-    protected static $sessions = [];
-
     /**
      * contains how many sessions are currently open, this is important, because writeClose() must not be called if
      * there is still an open session, this is especially important if something doesn't use the method use() but get()
@@ -45,9 +40,11 @@ class Session
      * @var array
      */
     protected static $options = [
-        "throw_startup_exceptions" => false,
-        "name" => "pimcore_admin_sid",
         "strict" => false,
+        "throw_startup_exceptions" => false,
+
+
+        "name" => "pimcore_admin_sid",
         "use_trans_sid" => false,
         "use_only_cookies" => false,
         "cookie_httponly" => true
@@ -94,16 +91,45 @@ class Session
     }
 
     /**
+     * @return \Symfony\Component\HttpFoundation\Session\Session
+     */
+    public static function getSession()
+    {
+        return \Pimcore::getContainer()->get('pimcore_admin.session');
+    }
+
+    /**
+     * @return \Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorage
+     */
+    public static function getSessionStorage()
+    {
+        return \Pimcore::getContainer()->get('pimcore_admin.session.storage');
+    }
+
+    /**
+     * @return \Pimcore\Bundle\PimcoreAdminBundle\Session\AdminSessionStorageFactory
+     */
+    public static function getSessionStorageFactory()
+    {
+        return \Pimcore::getContainer()->get('pimcore_admin.session.storage_factory');
+    }
+
+    /**
+     * Start session and get an attribute bag
+     *
      * @param string $namespace
      * @param bool $readOnly
-     * @return \Zend_Session_Namespace
-     * @throws \Zend_Session_Exception
+     * @return AttributeBagInterface
      */
     public static function get($namespace = "pimcore_admin", $readOnly = false)
     {
-        $initSession = !\Zend_Session::isStarted();
+        $session = static::getSession();
+        $storage = static::getSessionStorage();
+        $factory = static::getSessionStorageFactory();
+
+        $initSession = !$session->isStarted();
         $forceStart = !$readOnly; // we don't force the session to start in read-only mode (default behavior)
-        $sName = self::getOption("name");
+        $sName = $factory->getOption('name');
 
         if (self::backupForeignSession()) {
             $initSession = true;
@@ -111,7 +137,7 @@ class Session
         }
 
         if ($initSession) {
-            \Zend_Session::setOptions(self::$options);
+            $factory->initializeStorage($storage);
         }
 
         try {
@@ -119,8 +145,8 @@ class Session
                 if ($initSession) {
                     // only set the session id if the cookie isn't present, otherwise Set-Cookie is always in the headers
                     if (array_key_exists($sName, $_REQUEST) && !empty($_REQUEST[$sName]) && (!array_key_exists($sName, $_COOKIE) || empty($_COOKIE[$sName]))) {
-                        // get zend_session work with session-id via get (since SwfUpload doesn't support cookies)
-                        \Zend_Session::setId($_REQUEST[$sName]);
+                        // get session work with session-id via get (since SwfUpload doesn't support cookies)
+                        $session->setId($sName);
                     }
                 }
             } catch (\Exception $e) {
@@ -133,7 +159,7 @@ class Session
         }
 
         if ($initSession) {
-            \Zend_Session::start();
+            $session->start();
         }
 
         if ($forceStart) {
@@ -141,32 +167,42 @@ class Session
             self::$sessionCookieCleanupNeeded = true;
         }
 
+        // TODO handle exceptions and migrate session here as before?
+        $attributeBag = $session->getBag($namespace);
+        if ($attributeBag instanceof LockableAttributeBagInterface) {
+            $attributeBag->unlock();
+        }
+
+        /*
         if (!array_key_exists($namespace, self::$sessions) || !self::$sessions[$namespace] instanceof \Zend_Session_Namespace) {
             try {
                 self::$sessions[$namespace] = new Session\Container($namespace);
             } catch (\Exception $e) {
                 // invalid session, regenerate the session, and return a dummy object
-                \Zend_Session::regenerateId();
+                $session->migrate(true);
 
                 return new \stdClass();
             }
         }
+        */
 
         self::$openedSessions++;
 
-        self::$sessions[$namespace]->unlock();
-
-        return self::$sessions[$namespace];
+        return $attributeBag;
     }
 
     /**
      * @param string $namespace
-     * @return \stdClass
+     * @return AttributeBagInterface
      */
     public static function getReadOnly($namespace = "pimcore_admin")
     {
         $session = self::get($namespace, true);
-        $session->lock();
+
+        if ($session instanceof LockableAttributeBagInterface) {
+            $session->lock();
+        }
+
         self::writeClose();
 
         return $session;
@@ -180,18 +216,14 @@ class Session
         self::$openedSessions--;
 
         if (!self::$openedSessions) { // do not write session data if there's still an open session
-            session_write_close();
-
+            static::getSession()->save();
             self::restoreForeignSession();
         }
     }
 
-    /**
-     * @throws \Zend_Session_Exception
-     */
     public static function regenerateId()
     {
-        \Zend_Session::regenerateId();
+        static::getSession()->migrate(true);
     }
 
     /**
@@ -207,7 +239,7 @@ class Session
      */
     protected static function backupForeignSession()
     {
-        $sName = self::getOption("name");
+        $sName = static::getSessionStorageFactory()->getOption('name');
         if ($sName != session_name()) {
             // there's a different session in use, stop it and restart the admin session
             self::$restoreSession = [
@@ -218,6 +250,7 @@ class Session
             if (session_id()) {
                 @session_write_close();
             }
+
             if (isset($_COOKIE[$sName])) {
                 session_id($_COOKIE[$sName]);
             }
