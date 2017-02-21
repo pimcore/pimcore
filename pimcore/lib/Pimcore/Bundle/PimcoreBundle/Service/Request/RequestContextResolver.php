@@ -43,7 +43,7 @@ class RequestContextResolver extends AbstractRequestResolver
             $request = $this->getCurrentRequest();
         }
 
-        $request->attributes->get(static::ATTRIBUTE_REQUEST_CONTEXT);
+        return $request->attributes->get(static::ATTRIBUTE_REQUEST_CONTEXT);
     }
 
     /**
