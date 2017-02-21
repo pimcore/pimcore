@@ -18,6 +18,9 @@ class PimcoreExtension extends Extension
         $configuration = new Configuration();
         $config        = $this->processConfiguration($configuration, $configs);
 
+        // admin routes are used by RequestTypeGuesser to determine the request type
+        $container->setParameter('pimcore.admin.routes', $config['admin']['routes']);
+
         // register pimcore config on container
         // TODO is this bad practice?
         // TODO only extract what we need as parameter?

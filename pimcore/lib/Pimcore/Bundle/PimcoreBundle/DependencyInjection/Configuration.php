@@ -19,6 +19,23 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
+                ->arrayNode('admin')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        // routes determine which requests should be treated as admin requests
+                        ->arrayNode('routes')
+                            ->prototype('array')
+                                ->children()
+                                    ->scalarNode('path')->defaultFalse()->end()
+                                    ->scalarNode('route')->defaultFalse()->end()
+                                    ->scalarNode('host')->defaultFalse()->end()
+                                    ->arrayNode('methods')->prototype('scalar')->end()->end()
+                                ->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+
                 ->arrayNode('documents')
                     ->addDefaultsIfNotSet()
                     ->children()

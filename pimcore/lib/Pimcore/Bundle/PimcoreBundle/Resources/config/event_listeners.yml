@@ -1,6 +1,6 @@
 services:
     #
-    # ROUTING
+    # REQUEST + ROUTING
     #
 
     pimcore.event_listener.site:
@@ -9,12 +9,19 @@ services:
         tags:
             - { name: kernel.event_subscriber }
 
+    pimcore.event_listener.request_type:
+        class: Pimcore\Bundle\PimcoreBundle\EventListener\RequestTypeListener
+        arguments: ['@pimcore.service.request.request_type_resolver', '@request_stack']
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: kernel.event_subscriber }
+
     pimcore.event_listener.document_fallback:
         class: Pimcore\Bundle\PimcoreBundle\EventListener\DocumentFallbackListener
         arguments: ['@pimcore.service.document', '@pimcore.service.request.document_resolver', '@request_stack']
         tags:
             - { name: kernel.event_subscriber }
-
 
     #
     # STATE HANDLING/INITIALIZING

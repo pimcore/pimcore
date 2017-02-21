@@ -41,11 +41,24 @@ services:
         calls:
             - [addConfigurator, ['@pimcore_admin.session.configurator.admin_session_bags']]
 
+
+    #
+    # REQUEST SPECIFICS
+    #
+
+    pimcore.service.request.request_type_guesser:
+        class: Pimcore\Bundle\PimcoreBundle\Service\Request\RequestTypeGuesser
+        arguments: ['%pimcore.admin.routes%']
+
     #
     # REQUEST RESOLVERS
     #
     # Read/write/normalize defined request attributes (e.g. document)
     #
+
+    pimcore.service.request.request_type_resolver:
+        class: Pimcore\Bundle\PimcoreBundle\Service\Request\RequestTypeResolver
+        arguments: ['@request_stack', '@pimcore.service.request.request_type_guesser']
 
     pimcore.service.request.editmode_resolver:
         class: Pimcore\Bundle\PimcoreBundle\Service\Request\EditmodeResolver
