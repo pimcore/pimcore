@@ -7,7 +7,7 @@ use Pimcore\Logger;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
-abstract class AdminController extends Controller
+abstract class AdminController extends Controller implements AdminControllerInterface
 {
     /**
      * Get user from user proxy object which is registered on security component
