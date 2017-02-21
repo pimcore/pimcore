@@ -22,6 +22,7 @@ use Pimcore\Model;
 use Pimcore\Model\Property;
 use Pimcore\Model\Schedule;
 use Pimcore\Logger;
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
 abstract class Document extends Admin
 {
@@ -187,17 +188,17 @@ abstract class Document extends Admin
     }
 
     /**
-     * @param $doc
+     * @param Model\Document $doc
      * @param bool $useForSave
      */
     protected function saveToSession($doc, $useForSave = false)
     {
         // save to session
-        Session::useSession(function ($session) use ($doc, $useForSave) {
-            $session->{"document_" . $doc->getId()} = $doc;
+        Session::useSession(function (AttributeBagInterface $session) use ($doc, $useForSave) {
+            $session->set("document_" . $doc->getId(), $doc);
 
             if ($useForSave) {
-                $session->{"document_" . $doc->getId() . "_useForSave"} = true;
+                $session->set("document_" . $doc->getId() . "_useForSave", true);
             }
         }, "pimcore_documents");
     }
@@ -209,8 +210,8 @@ abstract class Document extends Admin
     {
         $key = "document_" . $this->getParam("id");
 
-        Session::useSession(function ($session) use ($key) {
-            $session->$key = null;
+        Session::useSession(function (AttributeBagInterface $session) use ($key) {
+            $session->remove($key);
         }, "pimcore_documents");
 
         $this->_helper->json(["success" => true]);

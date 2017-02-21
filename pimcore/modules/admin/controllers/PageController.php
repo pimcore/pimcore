@@ -13,12 +13,13 @@
  */
 
 use Pimcore\File;
-use Pimcore\Tool;
-use Pimcore\Tool\Session;
+use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Redirect;
-use Pimcore\Logger;
+use Pimcore\Tool;
+use Pimcore\Tool\Session;
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
 class Admin_PageController extends \Pimcore\Controller\Action\Admin\Document
 {
@@ -85,13 +86,16 @@ class Admin_PageController extends \Pimcore\Controller\Action\Admin\Document
                 // check if there's a document in session which should be used as data-source
                 // see also self::clearEditableDataAction() | this is necessary to reset all fields and to get rid of
                 // outdated and unused data elements in this document (eg. entries of area-blocks)
-                $pageSession = Session::useSession(function ($session) use ($page) {
-                    if (isset($session->{"document_" . $page->getId()}) && isset($session->{"document_" . $page->getId() . "_useForSave"})) {
-                        if ($session->{"document_" . $page->getId() . "_useForSave"}) {
-                            // only use the page from the session once
-                            unset($session->{"document_" . $page->getId() . "_useForSave"});
+                $pageSession = Session::useSession(function (AttributeBagInterface $session) use ($page) {
+                    $documentKey   = "document_" . $page->getId();
+                    $useForSaveKey = "document_" . $page->getId() . "_useForSave";
 
-                            return $session->{"document_" . $page->getId()};
+                    if ($session->has($documentKey) && $session->has($useForSaveKey)) {
+                        if ($session->get($useForSaveKey)) {
+                            // only use the page from the session once
+                            $session->remove($useForSaveKey);
+
+                            return $session->get($documentKey);
                         }
                     }
 

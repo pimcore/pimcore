@@ -17,6 +17,7 @@ use Pimcore\Model\User;
 use Pimcore\Model\Element;
 use Pimcore\Model\Object;
 use Pimcore\Logger;
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
 class Admin_UserController extends \Pimcore\Controller\Action\Admin
 {
@@ -444,8 +445,8 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
 
                     if (empty($values["old_password"])) {
                         // if the user want to reset the password, the old password isn't required
-                        $oldPasswordCheck = Tool\Session::useSession(function ($adminSession) use ($oldPasswordCheck) {
-                            if ($adminSession->password_reset) {
+                        $oldPasswordCheck = Tool\Session::useSession(function (AttributeBagInterface $adminSession) use ($oldPasswordCheck) {
+                            if ($adminSession->get('password_reset')) {
                                 return true;
                             }
 

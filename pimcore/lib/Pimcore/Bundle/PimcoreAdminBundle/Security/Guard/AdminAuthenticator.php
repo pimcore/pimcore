@@ -10,6 +10,7 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -138,8 +139,8 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
                     // save the information to session when the user want's to reset the password
                     // this is because otherwise the old password is required => see also PIMCORE-1468
 
-                    Session::useSession(function ($adminSession) {
-                        $adminSession->password_reset = true;
+                    Session::useSession(function (AttributeBagInterface $adminSession) {
+                        $adminSession->set('password_reset', true);
                     });
                 }
             } else {
@@ -149,8 +150,8 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
             if ($user && Authentication::isValidUser($user->getUser())) {
                 $pimcoreUser = $user->getUser();
 
-                Session::useSession(function ($adminSession) use ($pimcoreUser) {
-                    $adminSession->user = $pimcoreUser;
+                Session::useSession(function (AttributeBagInterface $adminSession) use ($pimcoreUser) {
+                    $adminSession->set('user', $pimcoreUser);
                     Session::regenerateId();
                 });
             }

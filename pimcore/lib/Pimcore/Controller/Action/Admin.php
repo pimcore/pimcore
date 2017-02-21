@@ -23,6 +23,7 @@ use Pimcore\Tool\Session;
 use Pimcore\Tool\Admin as AdminTool;
 use Pimcore\Model;
 use Pimcore\Logger;
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
 abstract class Admin extends Action
 {
@@ -338,11 +339,8 @@ abstract class Admin extends Action
      */
     protected function protectCSRF()
     {
-        // TODO use symfony CSRF implementation
-        return;
-
-        $csrfToken = Session::useSession(function ($adminSession) {
-            return $adminSession->csrfToken;
+        $csrfToken = Session::useSession(function (AttributeBagInterface $adminSession) {
+            return $adminSession->get('csrfToken');
         });
 
         if ($csrfToken != $_SERVER["HTTP_X_PIMCORE_CSRF_TOKEN"]) {

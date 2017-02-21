@@ -15,6 +15,7 @@
 use Pimcore\Config;
 use Pimcore\Tool;
 use Pimcore\Model;
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
 class Admin_IndexController extends \Pimcore\Controller\Action\Admin
 {
@@ -102,12 +103,12 @@ class Admin_IndexController extends \Pimcore\Controller\Action\Admin
 
         // csrf token
         $user = $this->getUser();
-        $this->view->csrfToken = Tool\Session::useSession(function ($adminSession) use ($user) {
-            if (!isset($adminSession->csrfToken) && !$adminSession->csrfToken) {
-                $adminSession->csrfToken = sha1(microtime() . $user->getName() . uniqid());
+        $this->view->csrfToken = Tool\Session::useSession(function (AttributeBagInterface $adminSession) use ($user) {
+            if (!$adminSession->has('csrfToken') && !$adminSession->get('csrfToken')) {
+                $adminSession->set('csrfToken', sha1(microtime() . $user->getName() . uniqid()));
             }
 
-            return $adminSession->csrfToken;
+            return $adminSession->get('csrfToken');
         });
     }
 }

@@ -18,6 +18,7 @@ use Pimcore\Model\Object;
 use Pimcore\Model\Element;
 use Pimcore\Model;
 use Pimcore\Logger;
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
 class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 {
@@ -1137,9 +1138,9 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 
                 //$object->_fulldump = true; // not working yet, donno why
 
-                Tool\Session::useSession(function ($session) use ($object) {
+                Tool\Session::useSession(function (AttributeBagInterface $session) use ($object) {
                     $key = "object_" . $object->getId();
-                    $session->$key = $object;
+                    $session->set($key, $object);
                 }, "pimcore_objects");
 
                 $this->_helper->json(["success" => true]);
@@ -1607,8 +1608,8 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
         $transactionId = time();
         $pasteJobs = [];
 
-        Tool\Session::useSession(function ($session) use ($transactionId) {
-            $session->$transactionId = ["idMapping" => []];
+        Tool\Session::useSession(function (AttributeBagInterface $session) use ($transactionId) {
+            $session->set($transactionId, ["idMapping" => []]);
         }, "pimcore_copy");
 
         if ($this->getParam("type") == "recursive" || $this->getParam("type") == "recursive-update-references") {
@@ -1686,8 +1687,8 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
     {
         $transactionId = $this->getParam("transactionId");
 
-        $idStore = Tool\Session::useSession(function ($session) use ($transactionId) {
-            return $session->$transactionId;
+        $idStore = Tool\Session::useSession(function (AttributeBagInterface $session) use ($transactionId) {
+            return $session->get($transactionId);
         }, "pimcore_copy");
 
         if (!array_key_exists("rewrite-stack", $idStore)) {
@@ -1707,8 +1708,8 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 
 
         // write the store back to the session
-        Tool\Session::useSession(function ($session) use ($transactionId, $idStore) {
-            $session->$transactionId = $idStore;
+        Tool\Session::useSession(function (AttributeBagInterface $session) use ($transactionId, $idStore) {
+            $session->set($transactionId, $idStore);
         }, "pimcore_copy");
 
         $this->_helper->json([

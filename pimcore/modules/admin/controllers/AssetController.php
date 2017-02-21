@@ -18,6 +18,7 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
 use Pimcore\Model;
 use Pimcore\Logger;
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
 class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
 {
@@ -1237,8 +1238,8 @@ class Admin_AssetController extends \Pimcore\Controller\Action\Admin\Element
         $transactionId = time();
         $pasteJobs = [];
 
-        Tool\Session::useSession(function ($session) use ($transactionId) {
-            $session->$transactionId = [];
+        Tool\Session::useSession(function (AttributeBagInterface $session) use ($transactionId) {
+            $session->set($transactionId, []);
         }, "pimcore_copy");
 
 

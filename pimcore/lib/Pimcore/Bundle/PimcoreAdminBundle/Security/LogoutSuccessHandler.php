@@ -10,6 +10,7 @@ use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Security\Http\Logout\LogoutSuccessHandlerInterface;
@@ -58,12 +59,12 @@ class LogoutSuccessHandler implements LogoutSuccessHandlerInterface, LoggerAware
         Editlock::clearSession(session_id());
 
         // TODO trigger admin.login.logout event
-        Session::useSession(function ($adminSession) {
-            if ($adminSession->user instanceof User) {
-                $adminSession->user = null;
+        Session::useSession(function (AttributeBagInterface $adminSession) {
+            if ($adminSession->get('user') instanceof User) {
+                $adminSession->remove('user');
             }
 
-            \Zend_Session::destroy();
+            Session::getSession()->invalidate();
         });
 
         $response = new RedirectResponse($this->router->generate('admin_index'));

@@ -20,6 +20,7 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Version;
 use Pimcore\Model\Site;
 use Pimcore\Logger;
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
 class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
 {
@@ -562,9 +563,9 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
         $version = Version::getById($this->getParam("id"));
         $document = $version->loadData();
 
-        Session::useSession(function ($session) use ($document) {
+        Session::useSession(function (AttributeBagInterface $session) use ($document) {
             $key = "document_" . $document->getId();
-            $session->$key = $document;
+            $session->set($key, $document);
         }, "pimcore_documents");
 
         $this->removeViewRenderer();
@@ -631,8 +632,8 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
         $transactionId = time();
         $pasteJobs = [];
 
-        Session::useSession(function ($session) use ($transactionId) {
-            $session->$transactionId = ["idMapping" => []];
+        Session::useSession(function (AttributeBagInterface $session) use ($transactionId) {
+            $session->set($transactionId, ["idMapping" => []]);
         }, "pimcore_copy");
 
         if ($this->getParam("type") == "recursive" || $this->getParam("type") == "recursive-update-references") {
@@ -718,8 +719,8 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
     {
         $transactionId = $this->getParam("transactionId");
 
-        $idStore = Session::useSession(function ($session) use ($transactionId) {
-            return $session->$transactionId;
+        $idStore = Session::useSession(function (AttributeBagInterface $session) use ($transactionId) {
+            return $session->get($transactionId);
         }, "pimcore_copy");
 
         if (!array_key_exists("rewrite-stack", $idStore)) {
@@ -742,8 +743,8 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
         }
 
         // write the store back to the session
-        Session::useSession(function ($session) use ($transactionId, $idStore) {
-            $session->$transactionId = $idStore;
+        Session::useSession(function (AttributeBagInterface $session) use ($transactionId, $idStore) {
+            $session->set($transactionId, $idStore);
         }, "pimcore_copy");
 
         $this->_helper->json([

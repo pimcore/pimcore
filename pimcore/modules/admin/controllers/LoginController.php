@@ -16,6 +16,7 @@ use Pimcore\Tool;
 use Pimcore\File;
 use Pimcore\Model\User;
 use Pimcore\Logger;
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
 class Admin_LoginController extends \Pimcore\Controller\Action\Admin
 {
@@ -79,8 +80,8 @@ class Admin_LoginController extends \Pimcore\Controller\Action\Admin
             $user = $this->getUser();
 
             if ($user instanceof User && $user->getId() && $user->isActive() && $user->getPassword()) {
-                Tool\Session::useSession(function ($adminSession) use ($user) {
-                    $adminSession->user = $user;
+                Tool\Session::useSession(function (AttributeBagInterface $adminSession) use ($user) {
+                    $adminSession->set('user', $user);
                 });
             }
         }
@@ -139,8 +140,8 @@ class Admin_LoginController extends \Pimcore\Controller\Action\Admin
                     // save the information to session when the user want's to reset the password
                     // this is because otherwise the old password is required => see also PIMCORE-1468
                     if ($this->getParam("reset")) {
-                        Tool\Session::useSession(function ($adminSession) {
-                            $adminSession->password_reset = true;
+                        Tool\Session::useSession(function (AttributeBagInterface $adminSession) {
+                            $adminSession->set('password_reset', true);
                         });
                     }
                 } else {
@@ -164,8 +165,8 @@ class Admin_LoginController extends \Pimcore\Controller\Action\Admin
         }
 
         if ($user instanceof User && $user->getId() && $user->isActive() && $user->getPassword()) {
-            Tool\Session::useSession(function ($adminSession) use ($user) {
-                $adminSession->user = $user;
+            Tool\Session::useSession(function (AttributeBagInterface $adminSession) use ($user) {
+                $adminSession->set('user', $user);
 
                 Tool\Session::regenerateId();
             });
@@ -188,13 +189,13 @@ class Admin_LoginController extends \Pimcore\Controller\Action\Admin
         // clear open edit locks for this session
         \Pimcore\Model\Element\Editlock::clearSession(session_id());
 
-        Tool\Session::useSession(function ($adminSession) use ($controller) {
-            if ($adminSession->user instanceof User) {
+        Tool\Session::useSession(function (AttributeBagInterface $adminSession) use ($controller) {
+            if ($adminSession->get('user') instanceof User) {
                 \Pimcore::getEventManager()->trigger("admin.login.logout", $controller, ["user" => $adminSession->user]);
-                $adminSession->user = null;
+                $adminSession->remove('user');
             }
 
-            \Zend_Session::destroy();
+            Tool\Session::getSession()->invalidate();
         });
 
         // cleanup pimcore-cookies => 315554400 => strtotime('1980-01-01')
