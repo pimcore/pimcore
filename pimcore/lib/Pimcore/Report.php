@@ -20,7 +20,7 @@ class Report
     /**
      * @static
      * @depricated
-     * @return \Zend_Config
+     * @return \Pimcore\Config\Config
      */
     public static function getConfig()
     {

@@ -153,7 +153,7 @@ class Pimcore
     /**
      * Determine if MVC stack should throw exceptions
      *
-     * @param Zend_Config|mixed|null $conf
+     * @param \Pimcore\Config\Config|mixed|null $conf
      * @return bool
      */
     public static function throwMvcExceptions($conf = null)
@@ -266,7 +266,7 @@ class Pimcore
      * Add backend routes
      *
      * @param Zend_Controller_Router_Interface|Zend_Controller_Router_Rewrite $router
-     * @param Zend_Config|null $conf
+     * @param \Pimcore\Config\Config|null $conf
      */
     protected static function initBackendRouter(Zend_Controller_Router_Interface $router, $conf)
     {
@@ -349,7 +349,7 @@ class Pimcore
         $router->addRoute('reports', $routeReports);
         $router->addRoute('searchadmin', $routeSearchAdmin);
 
-        if ($conf instanceof \Zend_Config and $conf->webservice and $conf->webservice->enabled) {
+        if ($conf instanceof \Pimcore\Config\Config and $conf->webservice and $conf->webservice->enabled) {
             $router->addRoute('webservice', $routeWebservice);
         }
     }
@@ -370,9 +370,9 @@ class Pimcore
     /**
      * Force the main (default) domain for "admin" requests
      *
-     * @param Zend_Config $conf
+     * @param \Pimcore\Config\Config $conf
      */
-    protected static function handleAdminMainDomainRedirect(Zend_Config $conf)
+    protected static function handleAdminMainDomainRedirect(\Pimcore\Config\Config $conf)
     {
         if ($conf->general->domain && $conf->general->domain != Tool::getHostname()) {
             $url = (($_SERVER['HTTPS'] == "on") ? "https" : "http") . "://" . $conf->general->domain . $_SERVER["REQUEST_URI"];
@@ -682,7 +682,7 @@ class Pimcore
 
     /**
      * @static
-     * @return Zend_Config|null
+     * @return \Pimcore\Config\Config|null
      */
     public static function initConfiguration()
     {
@@ -693,7 +693,7 @@ class Pimcore
             $conf = Config::getSystemConfig(true);
 
             // set timezone
-            if ($conf instanceof \Zend_Config) {
+            if ($conf instanceof \Pimcore\Config\Config) {
                 if ($conf->general->timezone) {
                     date_default_timezone_set($conf->general->timezone);
                 }

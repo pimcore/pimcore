@@ -34,7 +34,7 @@ class Reports extends Admin
     }
 
     /**
-     * @return \Zend_Config
+     * @return \Pimcore\Config\Config
      */
     public function getConfig()
     {

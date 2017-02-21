@@ -84,7 +84,7 @@ class Config
 
     /**
      * @param bool $forceReload
-     * @return mixed|null|\Zend_Config
+     * @return mixed|null|\Pimcore\Config\Config
      * @throws \Zend_Exception
      */
     public static function getSystemConfig($forceReload = false)
@@ -103,7 +103,7 @@ class Config
                 }
 
                 if (file_exists($file)) {
-                    $config = new \Zend_Config(include($file));
+                    $config = new \Pimcore\Config\Config(include($file));
                 } else {
                     throw new \Exception($file . " doesn't exist");
                 }
@@ -124,16 +124,16 @@ class Config
 
     /**
      * @static
-     * @param \Zend_Config $config
+     * @param \Pimcore\Config\Config $config
      */
-    public static function setSystemConfig(\Zend_Config $config)
+    public static function setSystemConfig(\Pimcore\Config\Config $config)
     {
         \Zend_Registry::set("pimcore_config_system", $config);
     }
 
     /**
      * @static
-     * @return mixed|\Zend_Config
+     * @return mixed|\Pimcore\Config\Config
      */
     public static function getWebsiteConfig()
     {
@@ -204,7 +204,7 @@ class Config
                     }
                 }
 
-                $config = new \Zend_Config($settingsArray, true);
+                $config = new \Pimcore\Config\Config($settingsArray, true);
 
                 Cache::save($config, $cacheKey, $cacheTags, null, 998);
             }
@@ -217,9 +217,9 @@ class Config
 
     /**
      * @static
-     * @param \Zend_Config $config
+     * @param \Pimcore\Config\Config $config
      */
-    public static function setWebsiteConfig(\Zend_Config $config)
+    public static function setWebsiteConfig(\Pimcore\Config\Config $config)
     {
         \Zend_Registry::set("pimcore_config_website", $config);
     }
@@ -227,7 +227,7 @@ class Config
 
     /**
      * @static
-     * @return \Zend_Config
+     * @return \Pimcore\Config\Config
      */
     public static function getReportConfig()
     {
@@ -237,12 +237,12 @@ class Config
             try {
                 $file = self::locateConfigFile("reports.php");
                 if (file_exists($file)) {
-                    $config = new \Zend_Config(include($file));
+                    $config = new \Pimcore\Config\Config(include($file));
                 } else {
                     throw new \Exception("Config-file " . $file . " doesn't exist.");
                 }
             } catch (\Exception $e) {
-                $config = new \Zend_Config([]);
+                $config = new \Pimcore\Config\Config([]);
             }
 
             self::setReportConfig($config);
@@ -253,16 +253,16 @@ class Config
 
     /**
      * @static
-     * @param \Zend_Config $config
+     * @param \Pimcore\Config\Config $config
      */
-    public static function setReportConfig(\Zend_Config $config)
+    public static function setReportConfig(\Pimcore\Config\Config $config)
     {
         \Zend_Registry::set("pimcore_config_report", $config);
     }
 
     /**
      * @static
-     * @return \Zend_Config
+     * @return \Pimcore\Config\Config
      */
     public static function getWeb2PrintConfig()
     {
@@ -272,12 +272,12 @@ class Config
             try {
                 $file = self::locateConfigFile("web2print.php");
                 if (file_exists($file)) {
-                    $config = new \Zend_Config(include($file));
+                    $config = new \Pimcore\Config\Config(include($file));
                 } else {
                     throw new \Exception("Config-file " . $file . " doesn't exist.");
                 }
             } catch (\Exception $e) {
-                $config = new \Zend_Config([]);
+                $config = new \Pimcore\Config\Config([]);
             }
 
             self::setWeb2PrintConfig($config);
@@ -288,16 +288,16 @@ class Config
 
     /**
      * @static
-     * @param \Zend_Config $config
+     * @param \Pimcore\Config\Config $config
      */
-    public static function setWeb2PrintConfig(\Zend_Config $config)
+    public static function setWeb2PrintConfig(\Pimcore\Config\Config $config)
     {
         \Zend_Registry::set("pimcore_config_web2print", $config);
     }
 
     /**
      * @static
-     * @param \Zend_Config $config
+     * @param \Pimcore\Config\Config $config
      */
     public static function setModelClassMappingConfig($config)
     {
@@ -341,7 +341,7 @@ class Config
 
     /**
      * @static
-     * @return mixed|\Zend_Config
+     * @return mixed|\Pimcore\Config\Config
      */
     public static function getPerspectivesConfig()
     {
@@ -351,7 +351,7 @@ class Config
             try {
                 $file = self::locateConfigFile("perspectives.php");
                 if (file_exists($file)) {
-                    $config = new \Zend_Config(include($file));
+                    $config = new \Pimcore\Config\Config(include($file));
                 } else {
                     throw new \Exception($file . " doesn't exist");
                 }
@@ -362,7 +362,7 @@ class Config
                     $m = "Your perspectives.php located at " . $file . " is invalid, please check and correct it manually!";
                     Tool::exitWithError($m);
                 }
-                $config = new \Zend_Config(self::getStandardPerspective());
+                $config = new \Pimcore\Config\Config(self::getStandardPerspective());
                 self::setPerspectivesConfig($config);
             }
         }
@@ -590,9 +590,9 @@ class Config
 
     /**
      * @static
-     * @param \Zend_Config $config
+     * @param \Pimcore\Config\Config $config
      */
-    public static function setPerspectivesConfig(\Zend_Config $config)
+    public static function setPerspectivesConfig(\Pimcore\Config\Config $config)
     {
         \Zend_Registry::set("pimcore_config_perspectives", $config);
     }

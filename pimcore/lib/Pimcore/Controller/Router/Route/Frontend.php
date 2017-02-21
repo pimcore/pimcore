@@ -73,7 +73,6 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
     }
 
     /**
-     * @static
      * @param \Zend_Config $config
      * @return Frontend
      */

@@ -22,7 +22,7 @@ class Frontend
 
     /**
      * Returns the Website-Config
-     * @return \Zend_Config
+     * @return \Pimcore\Config\Config
      * @depricated
      */
     public static function getWebsiteConfig()

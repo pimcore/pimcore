@@ -39,7 +39,7 @@ abstract class Frontend extends Action
     public $editmode;
 
     /**
-     * @var \Zend_Config
+     * @var \Pimcore\Config\Config
      */
     public $config;
 
@@ -291,7 +291,7 @@ abstract class Frontend extends Action
     }
 
     /**
-     * @return \Zend_Config
+     * @return \Pimcore\Config\Config
      */
     public function getConfig()
     {

@@ -20,13 +20,13 @@ class ExtensionManager
 {
 
     /**
-     * @var \Zend_Config
+     * @var \Pimcore\Config\Config
      */
     private static $config;
 
     /**
      * @static
-     * @return \Zend_Config
+     * @return \Pimcore\Config\Config
      */
     public static function getConfig()
     {
@@ -34,12 +34,12 @@ class ExtensionManager
             try {
                 $file = \Pimcore\Config::locateConfigFile("extensions.php");
                 if (file_exists($file)) {
-                    self::$config = new \Zend_Config(include($file), true);
+                    self::$config = new \Pimcore\Config\Config(include($file), true);
                 } else {
                     throw new \Exception($file . " doesn't exist");
                 }
             } catch (\Exception $e) {
-                self::$config = new \Zend_Config([], true);
+                self::$config = new \Pimcore\Config\Config([], true);
             }
         }
 
@@ -48,9 +48,9 @@ class ExtensionManager
 
     /**
      * @static
-     * @param \Zend_Config $config
+     * @param \Pimcore\Config\Config $config
      */
-    public static function setConfig(\Zend_Config $config)
+    public static function setConfig(\Pimcore\Config\Config $config)
     {
         self::$config = $config;
 
@@ -94,7 +94,7 @@ class ExtensionManager
     {
         $config = self::getConfig();
         if (!isset($config->$type)) {
-            $config->$type = new \Zend_Config([], true);
+            $config->$type = new \Pimcore\Config\Config([], true);
         }
         $config->$type->$id = true;
         self::setConfig($config);
@@ -116,7 +116,7 @@ class ExtensionManager
     {
         $config = self::getConfig();
         if (!isset($config->$type)) {
-            $config->$type = new \Zend_Config([], true);
+            $config->$type = new \Pimcore\Config\Config([], true);
         }
         $config->$type->$id = false;
         self::setConfig($config);

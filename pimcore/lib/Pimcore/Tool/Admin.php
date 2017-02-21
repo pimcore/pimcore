@@ -133,7 +133,6 @@ class Admin
     /**
      * @param null $sessionId
      * @throws \Exception
-     * @throws \Zend_Config_Exception
      */
     public static function activateMaintenanceMode($sessionId = null)
     {
