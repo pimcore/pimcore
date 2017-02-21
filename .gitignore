@@ -23,9 +23,9 @@
 /app/constants.php
 
 # pimcore legacy (remove this for your own development)
-/legacy/plugins/
-/legacy/tools/
-/legacy/website/
+!/legacy
+/legacy/*
+!legacy/.gitkeep
 
 # keep legacy paths ignored for easier migration
 /plugins/
