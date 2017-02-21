@@ -101,11 +101,11 @@ services:
           - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
 
     pimcore.event_listener.google_analytics_code:
-      class: Pimcore\Bundle\PimcoreBundle\EventListener\GoogleAnalyticsCodeListener
+        class: Pimcore\Bundle\PimcoreBundle\EventListener\GoogleAnalyticsCodeListener
         calls:
             - [setRequestContextResolver, ['@pimcore.service.request.request_context_resolver']]
-      tags:
-          - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse, priority: -110 }
+        tags:
+            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse, priority: -110 }
 
     pimcore.event_listener.cookie_policy_notice:
       class: Pimcore\Bundle\PimcoreBundle\EventListener\CookiePolicyNotice
