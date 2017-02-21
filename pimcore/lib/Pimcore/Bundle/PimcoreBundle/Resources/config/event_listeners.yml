@@ -102,6 +102,8 @@ services:
 
     pimcore.event_listener.google_analytics_code:
       class: Pimcore\Bundle\PimcoreBundle\EventListener\GoogleAnalyticsCodeListener
+        calls:
+            - [setRequestContextResolver, ['@pimcore.service.request.request_context_resolver']]
       tags:
           - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse, priority: -110 }
 
