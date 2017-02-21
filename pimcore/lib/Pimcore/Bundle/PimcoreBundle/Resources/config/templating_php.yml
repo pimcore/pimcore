@@ -111,3 +111,9 @@ services:
         class: Pimcore\Bundle\PimcoreBundle\Templating\Helper\Device
         tags:
             - { name: templating.helper, alias: device }
+
+    pimcore.templating.view_helper.cache:
+        class: Pimcore\Bundle\PimcoreBundle\Templating\Helper\Cache
+        arguments: ['@pimcore.service.request.editmode_resolver']
+        tags:
+            - { name: templating.helper, alias: cache }
