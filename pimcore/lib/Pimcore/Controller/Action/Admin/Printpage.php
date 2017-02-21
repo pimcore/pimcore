@@ -17,8 +17,10 @@ namespace Pimcore\Controller\Action\Admin;
 use Pimcore\Config;
 use \Pimcore\Model\Document;
 use Pimcore\Model\Element\Service;
+use Pimcore\Tool\Session;
 use Pimcore\Web2Print\Processor;
 use Pimcore\Logger;
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
 class Printpage extends \Pimcore\Controller\Action\Admin\Document
 {
@@ -80,8 +82,10 @@ class Printpage extends \Pimcore\Controller\Action\Admin\Document
 
             // save to session
             $key = "document_" . $this->getParam("id");
-            $session = new \Zend_Session_Namespace("pimcore_documents");
-            $session->$key = $page;
+
+            Session::useSession(function(AttributeBagInterface $session) use ($key, $page) {
+                $session->set($key, $page);
+            }, 'pimcore_documents');
 
             if ($this->getParam("task") == "unpublish") {
                 $page->setPublished(false);
