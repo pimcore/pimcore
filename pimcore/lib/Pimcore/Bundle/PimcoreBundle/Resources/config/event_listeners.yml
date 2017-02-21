@@ -128,3 +128,11 @@ services:
         tags:
           - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 600 }
           - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse, priority: -120 }
+
+    pimcore.event_listener.maintenance_page:
+        class: Pimcore\Bundle\PimcoreBundle\EventListener\MaintenancePage
+        arguments: ['@kernel']
+        calls:
+            - [loadTemplateFromResource, ['@@PimcoreBundle/Resources/misc/maintenance.html']]
+        tags:
+          - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 600 }
