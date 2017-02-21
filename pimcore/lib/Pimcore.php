@@ -267,10 +267,8 @@ class Pimcore
     protected static function registerFrontControllerPlugins(Zend_Controller_Front $front, $frontend)
     {
         $front->registerPlugin(new Controller\Plugin\ErrorHandler(), 1);
-        $front->registerPlugin(new Controller\Plugin\Maintenance(), 2);
 
         if (Tool::useFrontendOutputFilters(new \Zend_Controller_Request_Http())) {
-            $front->registerPlugin(new Controller\Plugin\Webmastertools(), 797);
             $front->registerPlugin(new Controller\Plugin\HttpErrorLog(), 850);
         }
     }

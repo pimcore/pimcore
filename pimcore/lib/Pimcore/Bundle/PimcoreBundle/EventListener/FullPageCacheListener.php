@@ -106,10 +106,10 @@ class FullPageCacheListener
     }
 
     /**
-     * @param KernelEvent $event
+     * @param GetResponseEvent $event
      * @return bool
      */
-    public function onKernelRequest(KernelEvent $event)
+    public function onKernelRequest(GetResponseEvent $event)
     {
         if(!\Pimcore\Tool::useFrontendOutputFilters()) {
             return false;
@@ -230,8 +230,7 @@ class FullPageCacheListener
             $cacheItemDate = strtotime($response->headers->get("X-Pimcore-Cache-Date"));
             $response->headers->set("Age", (time()-$cacheItemDate));
 
-            $response->send();
-            exit;
+            $event->setResponse($response);
         }
     }
 
