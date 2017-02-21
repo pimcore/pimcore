@@ -15,6 +15,7 @@ class AdminSessionBagConfigurator implements SessionConfiguratorInterface
     {
         $this->registerBag($session, 'pimcore_admin');
         $this->registerBag($session, 'pimcore_documents');
+        $this->registerBag($session, 'pimcore_copy');
     }
 
     /**
