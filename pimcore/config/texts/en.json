@@ -196,10 +196,6 @@
         "definition": "Ratio"
     },
     {
-        "term": "disable_whoops_error_handler",
-        "definition": "Disable Whoops error handler"
-    },
-    {
         "term": "decimal_precision",
         "definition": "Decimal precision"
     },

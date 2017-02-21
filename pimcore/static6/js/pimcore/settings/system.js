@@ -469,11 +469,6 @@ pimcore.settings.system = Class.create({
                                 width: 600,
                                 value: t('log_config_archive_description'),
                                 cls: "pimcore_extra_label_bottom"
-                            }, {
-                                fieldLabel: t("disable_whoops_error_handler"),
-                                xtype: "checkbox",
-                                name: "general.disable_whoops",
-                                checked: this.getValue("general.disable_whoops")
                             },
                             {
                                 fieldLabel: t("debug_admin_translations"),

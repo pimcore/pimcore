@@ -24,7 +24,6 @@ return [
         ],
         "custom_php_logfile" => TRUE,
         "debugloglevel" => "error",
-        "disable_whoops" => FALSE,
         "debug_admin_translations" => FALSE,
         "devmode" => FALSE,
         "logrecipient" => NULL,

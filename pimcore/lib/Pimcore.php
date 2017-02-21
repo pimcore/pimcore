@@ -124,11 +124,6 @@ class Pimcore
         // detect frontend (website)
         $frontend = Tool::isFrontend();
 
-        // init front controller
-        if ($conf) {
-            self::registerWhoopsErrorHandler($conf, $frontend);
-        }
-
         self::registerFrontControllerPlugins($front, $frontend);
         self::initControllerFront($front);
 
@@ -229,32 +224,6 @@ class Pimcore
                 header("HTTP/1.0 500 Internal Server Error");
             }
             throw $e;
-        }
-    }
-
-    /**
-     * Register Whoops error handler
-     *
-     * @param Zend_Config $conf
-     * @param bool $frontend
-     */
-    protected static function registerWhoopsErrorHandler(Zend_Config $conf, $frontend)
-    {
-        // TODO remove - we use the symfony error handler
-        return;
-
-        if (self::inDebugMode() && $frontend && !$conf->general->disable_whoops && !defined("HHVM_VERSION")) {
-            $whoops = new \Whoops\Run;
-            $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
-            if (\Whoops\Util\Misc::isAjaxRequest()) {
-                $jsonErrorHandler = new \Whoops\Handler\JsonResponseHandler;
-                $whoops->pushHandler($jsonErrorHandler);
-            }
-
-            $whoops->register();
-
-            // add event handler before Pimcore::shutdown() to ensure fatal errors are handled by Whoops
-            self::getEventManager()->attach("system.shutdown", [$whoops, "handleShutdown"], 10000);
         }
     }
 

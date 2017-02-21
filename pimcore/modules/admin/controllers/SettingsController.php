@@ -386,7 +386,6 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
                 ],
                 "custom_php_logfile" => $values["general.custom_php_logfile"],
                 "debugloglevel" => $values["general.debugloglevel"],
-                "disable_whoops" => $values["general.disable_whoops"],
                 "debug_admin_translations" => $values["general.debug_admin_translations"],
                 "devmode" => $values["general.devmode"],
                 "logrecipient" => $values["general.logrecipient"],
