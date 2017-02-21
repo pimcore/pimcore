@@ -35,7 +35,7 @@ $testConfig = $testConfig->toArray();
 $systemConfigFile = realpath(__DIR__ . "/../website/var/config/system.php");
 $systemConfig = null;
 if (is_file($systemConfigFile)) {
-    $systemConfig = new Zend_Config(include $systemConfigFile);
+    $systemConfig = new \Pimcore\Config\Config(include $systemConfigFile);
     $systemConfig = $systemConfig->toArray();
 
     // this is to allow localhost tests
