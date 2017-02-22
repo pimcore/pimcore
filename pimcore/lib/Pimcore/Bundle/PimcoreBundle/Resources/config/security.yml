@@ -20,6 +20,8 @@ security:
         admin:
             anonymous: ~
             pattern: ^/admin
+            # admin firewall is stateless as we open the admin
+            # session on demand for non-blocking parallel requests
             stateless: true
             logout:
                 path:   /admin/logout
@@ -31,7 +33,7 @@ security:
 
     access_control:
         - { path: ^/admin/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/admin/login/, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/admin/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/admin, roles: ROLE_PIMCORE_USER }
 
     role_hierarchy:
