@@ -20,3 +20,11 @@ services:
         tags:
             - { name: kernel.event_subscriber }
             - { name: monolog.logger, channel: admin }
+
+    pimcore_admin.event_listener.usage_statistics:
+        class: Pimcore\Bundle\PimcoreAdminBundle\EventListener\UsageStatisticsListener
+        arguments: ['@pimcore_admin.security.user_resolver']
+        calls:
+            - [setPimcoreContextResolver, ['@pimcore.service.request.pimcore_context_resolver']]
+        tags:
+            - { name: kernel.event_subscriber }
