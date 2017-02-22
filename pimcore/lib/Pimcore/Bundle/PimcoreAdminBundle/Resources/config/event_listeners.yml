@@ -7,6 +7,16 @@ services:
 
     pimcore_admin.event_listener.authentication_double_check:
         class: Pimcore\Bundle\PimcoreAdminBundle\EventListener\AdminAuthenticationDoubleCheckListener
+        arguments: ['@pimcore.service.request_matcher_factory', '%pimcode.admin.unauthenticated_routes%']
         tags:
             - { name: kernel.event_subscriber }
-        arguments: ['@pimcore.service.request_matcher_factory', '%pimcode.admin.unauthenticated_routes%']
+
+    pimcore_admin.event_listener.user_perspective:
+        class: Pimcore\Bundle\PimcoreAdminBundle\EventListener\UserPerspectiveListener
+        arguments: ['@security.token_storage']
+        calls:
+            - [setPimcoreContextResolver, ['@pimcore.service.request.pimcore_context_resolver']]
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: kernel.event_subscriber }
+            - { name: monolog.logger, channel: admin }

@@ -201,6 +201,9 @@ abstract class Admin extends Action
 
         $this->setLanguage($this->user->getLanguage());
 
+
+        // the following is handled in UserPerspectiveListener
+        /*
         // update perspective settings
         $requestedPerspective = $this->getParam("perspective");
         if ($requestedPerspective) {
@@ -223,6 +226,7 @@ abstract class Admin extends Action
             $user->setActivePerspective($requestedPerspective);
             $user->save();
         }
+        */
 
         return $this;
     }
