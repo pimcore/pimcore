@@ -1,6 +1,12 @@
 services:
-    pimcore_admin.event_listener.admin_controller:
-        class: Pimcore\Bundle\PimcoreAdminBundle\EventListener\AdminControllerListener
+    pimcore_admin.event_listener.admin_session:
+        class: Pimcore\Bundle\PimcoreAdminBundle\EventListener\AdminSessionListener
         arguments: ['@service_container']
         tags:
             - { name: kernel.event_subscriber }
+
+    pimcore_admin.event_listener.authentication_double_check:
+        class: Pimcore\Bundle\PimcoreAdminBundle\EventListener\AdminAuthenticationDoubleCheckListener
+        tags:
+            - { name: kernel.event_subscriber }
+        arguments: ['@pimcore.service.request_matcher_factory', '%pimcode.admin.unauthenticated_routes%']

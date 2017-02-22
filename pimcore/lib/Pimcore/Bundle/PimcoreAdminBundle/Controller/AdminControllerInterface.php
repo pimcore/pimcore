@@ -2,12 +2,12 @@
 
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller;
 
-use Pimcore\Bundle\PimcoreAdminBundle\EventListener\AdminControllerListener;
+use Pimcore\Bundle\PimcoreAdminBundle\EventListener\AdminAuthenticationDoubleCheckListener;
 
 /**
  * Tagging interface defining controller as admin controller.
  *
- * @see AdminControllerListener
+ * @see AdminAuthenticationDoubleCheckListener
  */
 interface AdminControllerInterface
 {

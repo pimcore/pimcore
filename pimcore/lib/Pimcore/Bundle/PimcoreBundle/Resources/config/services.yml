@@ -46,9 +46,12 @@ services:
     # REQUEST SPECIFICS
     #
 
+    pimcore.service.request_matcher_factory:
+        class: Pimcore\Bundle\PimcoreBundle\Service\RequestMatcherFactory
+
     pimcore.service.request.request_context_guesser:
         class: Pimcore\Bundle\PimcoreBundle\Service\Request\RequestContextGuesser
-        arguments: ['%pimcore.admin.routes%']
+        arguments: ['@pimcore.service.request_matcher_factory', '%pimcore.admin.routes%']
 
     #
     # REQUEST RESOLVERS

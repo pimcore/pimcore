@@ -37,3 +37,8 @@ pimcore:
         routes:
             - { path: ^/admin }
             - { route: ^admin_ }
+
+        # the following routes won't be double checked for authentication
+        # this usually applies to login routes
+        unauthenticated_routes:
+            - { route: admin_login }

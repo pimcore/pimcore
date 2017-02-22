@@ -2,8 +2,8 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\Service\Request;
 
+use Pimcore\Bundle\PimcoreBundle\Service\RequestMatcherFactory;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestMatcher;
 use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 
 class RequestContextGuesser
@@ -19,11 +19,18 @@ class RequestContextGuesser
     protected $adminMatchers;
 
     /**
+     * @var RequestMatcherFactory
+     */
+    protected $requestMatcherFactory;
+
+    /**
+     * @param RequestMatcherFactory $factory
      * @param array $adminRoutes
      */
-    public function __construct(array $adminRoutes)
+    public function __construct(RequestMatcherFactory $factory, array $adminRoutes)
     {
-        $this->adminRoutes = $adminRoutes;
+        $this->requestMatcherFactory = $factory;
+        $this->adminRoutes           = $adminRoutes;
     }
 
     /**
@@ -42,53 +49,6 @@ class RequestContextGuesser
     }
 
     /**
-     * Get request matchers to query admin request context from
-     *
-     * @return RequestMatcherInterface[]
-     */
-    protected function getAdminMatchers()
-    {
-        // TODO use generators to save memory?
-        if (null === $this->adminMatchers) {
-            $this->adminMatchers = [];
-            foreach ($this->adminRoutes as $route) {
-                $this->adminMatchers[] = $this->buildAdminMatcher($route);
-            }
-        }
-
-        return $this->adminMatchers;
-    }
-
-    /**
-     * Build a request matcher for a config route
-     *
-     * @param array $route
-     * @return RequestMatcherInterface
-     */
-    protected function buildAdminMatcher(array $route)
-    {
-        $matcher = new RequestMatcher();
-
-        if ($route['path']) {
-            $matcher->matchPath($route['path']);
-        }
-
-        if ($route['host']) {
-            $matcher->matchHost($route['host']);
-        }
-
-        if ($route['methods']) {
-            $matcher->matchMethod($route['methods']);
-        }
-
-        if ($route['route']) {
-            $matcher->matchAttribute('_route', $route['route']);
-        }
-
-        return $matcher;
-    }
-
-    /**
      * Match request against admin patterns
      *
      * @param Request $request
@@ -103,5 +63,19 @@ class RequestContextGuesser
         }
 
         return false;
+    }
+
+    /**
+     * Get request matchers to query admin request context from
+     *
+     * @return RequestMatcherInterface[]
+     */
+    protected function getAdminMatchers()
+    {
+        if (null === $this->adminMatchers) {
+            $this->adminMatchers = $this->requestMatcherFactory->buildRequestMatchers($this->adminRoutes);
+        }
+
+        return $this->adminMatchers;
     }
 }
