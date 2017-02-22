@@ -1381,4 +1381,14 @@ class Document extends Element\AbstractElement
         $inheritedProperties = $this->getDao()->getProperties(true);
         $this->setProperties(array_merge($inheritedProperties, $myProperties));
     }
+
+
+    /**
+     * returns true if document should be rendered with legacy stack
+     *
+     * @return bool
+     */
+    public function doRenderWithLegacyStack() {
+        return false;
+    }
 }

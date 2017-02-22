@@ -12,3 +12,7 @@ services:
         arguments: ['@pimcore.service.request.editmode_resolver']
         calls:
             - [setLogger, ['@logger']]
+
+    pimcore.templating.document_renderer:
+              class: Pimcore\Bundle\PimcoreBundle\Templating\Renderer\DocumentRenderer
+              arguments: ['@pimcore.templating.action_renderer', '@fragment.renderer.inline']

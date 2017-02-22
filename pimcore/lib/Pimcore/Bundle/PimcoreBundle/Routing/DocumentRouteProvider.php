@@ -306,6 +306,10 @@ class DocumentRouteProvider implements RouteProviderInterface
             return true;
         }
 
+        if($document->doRenderWithLegacyStack()) {
+            return false;
+        }
+
         if (defined('PIMCORE_SYMFONY_OVERRIDE_DOCUMENTS') && PIMCORE_SYMFONY_OVERRIDE_DOCUMENTS) {
             return true;
         }

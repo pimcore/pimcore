@@ -586,4 +586,19 @@ abstract class PageSnippet extends Model\Document
 
         return $finalVars;
     }
+
+    /**
+     * returns true if document should be rendered with legacy stack
+     *
+     * @return bool
+     */
+    public function doRenderWithLegacyStack() {
+
+        //TODO re-think this and refactor it!!
+        if(substr($this->getModule(), 0, 4) == "zf1-") {
+            return true;
+        }
+
+        return parent::doRenderWithLegacyStack();
+    }
 }
