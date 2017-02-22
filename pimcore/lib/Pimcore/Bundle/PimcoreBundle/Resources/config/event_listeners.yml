@@ -23,6 +23,31 @@ services:
         tags:
             - { name: kernel.event_subscriber }
 
+
+    #
+    # PIMCORE OBJECTS/PARAMS LOGIC
+    #
+
+    pimcore.event_listener.frontend.document_listener:
+        class: Pimcore\Bundle\PimcoreBundle\EventListener\Frontend\DocumentListener
+        arguments:
+            - '@pimcore.service.request.document_resolver'
+            - '@pimcore.service.request.editmode_resolver'
+            - '@pimcore.http.request_helper'
+            - '@pimcore_admin.security.user_loader'
+        calls:
+            - [setPimcoreContextResolver, ['@pimcore.service.request.pimcore_context_resolver']]
+        tags:
+            - { name: kernel.event_subscriber }
+
+    pimcore.event_listener.frontend.hardlink_canonical_listener:
+        class: Pimcore\Bundle\PimcoreBundle\EventListener\Frontend\HardlinkCanonicalListener
+        arguments: ['@pimcore.service.request.document_resolver']
+        calls:
+            - [setPimcoreContextResolver, ['@pimcore.service.request.pimcore_context_resolver']]
+        tags:
+            - { name: kernel.event_subscriber }
+
     #
     # STATE HANDLING/INITIALIZING
     #

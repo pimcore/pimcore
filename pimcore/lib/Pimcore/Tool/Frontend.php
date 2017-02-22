@@ -92,6 +92,7 @@ class Frontend
 
     /**
      * @param Document $document
+     * @return Site
      */
     public static function getSiteForDocument($document)
     {

@@ -78,7 +78,7 @@ services:
 
     pimcore.service.request.editmode_resolver:
         class: Pimcore\Bundle\PimcoreBundle\Service\Request\EditmodeResolver
-        arguments: ['@request_stack']
+        arguments: ['@request_stack', '@pimcore_admin.security.user_loader', '@pimcore.http.request_helper']
 
     pimcore.service.request.document_resolver:
         class: Pimcore\Bundle\PimcoreBundle\Service\Request\DocumentResolver

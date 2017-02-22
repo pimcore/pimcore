@@ -46,6 +46,19 @@ class RequestHelper
     }
 
     /**
+     * @return Request
+     */
+    public function getMasterRequest()
+    {
+        $masterRequest = $this->requestStack->getMasterRequest();
+        if (null === $masterRequest) {
+            throw new \LogicException('There is no master request available.');
+        }
+
+        return $masterRequest;
+    }
+
+    /**
      * E.g. editmode, preview, version preview, always when it is a "frontend-request", but called out of the admin
      *
      * @param Request|null $request
