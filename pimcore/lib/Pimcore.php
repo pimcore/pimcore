@@ -1117,18 +1117,7 @@ class Pimcore
 
         // set inShutdown to true so that the output-buffer knows that he is allowed to send the headers
         self::$inShutdown = true;
-
-        // flush all custom output buffers
-        while (ob_get_level()) {
-            ob_end_flush();
-        }
-
-        // flush everything
-        flush();
-
-        if (function_exists("fastcgi_finish_request")) {
-            fastcgi_finish_request();
-        }
+        
 
         // clear tags scheduled for the shutdown
         Cache::clearTagsOnShutdown();
