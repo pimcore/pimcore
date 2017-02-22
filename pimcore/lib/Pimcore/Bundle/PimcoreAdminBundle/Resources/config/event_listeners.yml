@@ -7,6 +7,7 @@ services:
 
     pimcore_admin.event_listener.http_cache:
         class: Pimcore\Bundle\PimcoreAdminBundle\EventListener\HttpCacheListener
+        arguments: ['@pimcore.tool.request_helper', '@pimcore.tool.response_helper']
         calls:
             - [setPimcoreContextResolver, ['@pimcore.service.request.pimcore_context_resolver']]
         tags:

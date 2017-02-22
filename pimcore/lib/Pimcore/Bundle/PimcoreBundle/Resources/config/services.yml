@@ -161,6 +161,9 @@ services:
         class: Pimcore\Tool\RequestHelper
         arguments: ['@request_stack']
 
+    pimcore.tool.response_helper:
+        class: Pimcore\Tool\ResponseHelper
+
     # TODO inject user?
     pimcore.document_service:
         class: Pimcore\Model\Document\Service
