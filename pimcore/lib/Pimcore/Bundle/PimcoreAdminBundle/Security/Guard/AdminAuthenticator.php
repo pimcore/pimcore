@@ -10,6 +10,7 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -56,6 +57,14 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
      */
     public function start(Request $request, AuthenticationException $authException = null)
     {
+        if ($request->isXmlHttpRequest()) {
+            // TODO use a JSON formatted error response?
+            $response = new Response('Session expired or unauthorized request. Please reload and try again!');
+            $response->setStatusCode(Response::HTTP_FORBIDDEN);
+
+            return $response;
+        }
+
         $url = $this->router->generate('admin_login');
 
         return new RedirectResponse($url);

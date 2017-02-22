@@ -97,6 +97,7 @@ abstract class Admin extends Action
             // init zend action helpers, we need to leave the prefixed class name here as the plugin loader isn't able to handle namespaces
             \Zend_Controller_Action_HelperBroker::addPrefix('Pimcore_Controller_Action_Helper');
 
+            // TODO is the following needed for symfony? see afe133db43bf081f86732b2fdf9ff24361ec6995
             // this is to make it possible to use the session id as a part of the route (ZF default route) used for external editors, etc.
             if ($this->getParam("pimcore_admin_sid")) {
                 $_REQUEST["pimcore_admin_sid"] = $this->getParam("pimcore_admin_sid");
