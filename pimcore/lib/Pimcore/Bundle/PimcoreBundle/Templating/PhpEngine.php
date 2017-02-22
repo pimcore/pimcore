@@ -27,6 +27,8 @@ use Symfony\Component\Templating\Storage\Storage;
  */
 class PhpEngine extends BasePhpEngine
 {
+    const PARAM_NO_PARENT = '_no_parent';
+
     /**
      * @var HelperBrokerInterface[]
      */
@@ -66,6 +68,13 @@ class PhpEngine extends BasePhpEngine
      */
     protected function evaluate(Storage $template, array $parameters = array())
     {
+        // disable parent with "magic" _no_parent parameter
+        $disableParent = false;
+        if (isset($parameters[static::PARAM_NO_PARENT])) {
+            $disableParent = (bool)($parameters[static::PARAM_NO_PARENT]);
+            unset($parameters[static::PARAM_NO_PARENT]);
+        }
+
         // create view model and push it onto the model stack
         $this->viewModels[] = new ViewModel($parameters);
 
@@ -75,6 +84,10 @@ class PhpEngine extends BasePhpEngine
         // remove current view model from stack and destroy it
         $viewModel = array_pop($this->viewModels);
         unset($viewModel);
+
+        if ($disableParent) {
+            $this->parents[$this->current] = null;
+        }
 
         return $result;
     }

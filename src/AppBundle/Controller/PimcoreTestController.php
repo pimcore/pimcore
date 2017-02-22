@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use Pimcore\Bundle\PimcoreBundle\Configuration\TemplatePhp;
 use Pimcore\Bundle\PimcoreBundle\Controller\FrontendController;
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModel;
+use Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine;
 use Pimcore\Model\Document;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -55,10 +56,14 @@ class PimcoreTestController extends FrontendController
      * @TemplatePhp("AppBundle:PimcoreTest:default.html.php")
      * @Route("/zf-default-layout")
      */
-    public function defaultLayoutAction()
+    public function defaultLayoutAction(Request $request)
     {
         $this->view->_layout = 'AppBundle:PimcoreTest:layout.html.php';
         $this->view->john    = 'doe';
+
+        if ($request->get('no-parent')) {
+            $this->view->getParameters()->set(PhpEngine::PARAM_NO_PARENT, true);
+        }
     }
 
     /**
