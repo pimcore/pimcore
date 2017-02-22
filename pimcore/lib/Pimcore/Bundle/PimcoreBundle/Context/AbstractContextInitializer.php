@@ -2,18 +2,16 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\Context;
 
+use Symfony\Component\HttpKernel\HttpKernelInterface;
+
 abstract class AbstractContextInitializer implements ContextInitializerInterface
 {
     /**
-     * {@inheritdoc}
+     * @param int $requestType
+     * @return bool
      */
-    public function supports($context)
+    protected function isMasterRequest($requestType)
     {
-        return in_array($context, $this->getSupportedContexts());
+        return $requestType === HttpKernelInterface::MASTER_REQUEST;
     }
-
-    /**
-     * @return array
-     */
-    abstract protected function getSupportedContexts();
 }

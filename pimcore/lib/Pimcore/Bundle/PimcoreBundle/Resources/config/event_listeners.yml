@@ -27,11 +27,6 @@ services:
     # STATE HANDLING/INITIALIZING
     #
 
-    pimcore.event_listener.object_listener:
-        class: Pimcore\Bundle\PimcoreBundle\EventListener\ObjectListener
-        tags:
-            - { name: kernel.event_subscriber }
-
     pimcore.event_listener.areablock_state:
         class: Pimcore\Bundle\PimcoreBundle\EventListener\AreablockStateListener
         calls:

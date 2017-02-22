@@ -2,3 +2,18 @@ services:
     pimcore.context_initializer:
         class: Pimcore\Bundle\PimcoreBundle\Context\DelegatingContextInitializer
 
+    pimcore.context_initializer.object_state:
+        class: Pimcore\Bundle\PimcoreBundle\Context\ObjectStateInitializer
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: pimcore.context_initializer }
+            - { name: monolog.logger, channel: init }
+
+    pimcore.context_initializer.admin_mode:
+        class: Pimcore\Bundle\PimcoreBundle\Context\AdminModeInitializer
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: pimcore.context_initializer }
+            - { name: monolog.logger, channel: init }
