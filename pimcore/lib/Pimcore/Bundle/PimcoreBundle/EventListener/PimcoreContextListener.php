@@ -2,7 +2,7 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\EventListener;
 
-use Pimcore\Bundle\PimcoreBundle\Context\ContextInitializerInterface;
+use Pimcore\Bundle\PimcoreBundle\Context\Initializer\ContextInitializerInterface;
 use Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolver;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;

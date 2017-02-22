@@ -1,6 +1,6 @@
 <?php
 
-namespace Pimcore\Bundle\PimcoreBundle\Context;
+namespace Pimcore\Bundle\PimcoreBundle\Context\Initializer;
 
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
