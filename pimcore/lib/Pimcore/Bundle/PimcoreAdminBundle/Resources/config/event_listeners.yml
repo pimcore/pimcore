@@ -5,6 +5,13 @@ services:
         tags:
             - { name: kernel.event_subscriber }
 
+    pimcore_admin.event_listener.http_cache:
+        class: Pimcore\Bundle\PimcoreAdminBundle\EventListener\HttpCacheListener
+        calls:
+            - [setPimcoreContextResolver, ['@pimcore.service.request.pimcore_context_resolver']]
+        tags:
+            - { name: kernel.event_subscriber }
+
     pimcore_admin.event_listener.authentication_double_check:
         class: Pimcore\Bundle\PimcoreAdminBundle\EventListener\AdminAuthenticationDoubleCheckListener
         arguments: ['@pimcore.service.request_matcher_factory', '%pimcode.admin.unauthenticated_routes%']
