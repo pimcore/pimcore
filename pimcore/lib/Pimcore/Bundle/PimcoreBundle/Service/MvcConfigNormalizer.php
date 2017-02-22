@@ -118,7 +118,7 @@ class MvcConfigNormalizer
     }
 
     /**
-     * Normalize template from .php to .phtml and remove leading slash
+     * Normalize template from .php to .html.php and remove leading slash
      *
      * @param string|null $template
      * @return string|null

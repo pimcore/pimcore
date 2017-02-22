@@ -46,7 +46,7 @@ class TagHandler implements TagHandlerInterface
      * @param EngineInterface $templating
      * @param BundleLocatorInterface $bundleLocator
      * @param WebPathResolver $webPathResolver
-     * @param ActionRenderer $renderService
+     * @param ActionRenderer $actionRenderer
      */
     public function __construct(
         AreabrickManagerInterface $brickManager,
