@@ -199,7 +199,7 @@ class WkHtmlToPdf extends Processor
     {
         $web2printConfig = Config::getWeb2PrintConfig();
         if ($web2printConfig->wkhtml2pdfHostname) {
-            return $web2printConfig->wkhtml2pdfHostname . "/website/var/tmp/";
+            return $web2printConfig->wkhtml2pdfHostname . PIMCORE_TEMPORARY_DIRECTORY;
         } elseif (\Pimcore\Config::getSystemConfig()->general->domain) {
             $hostname = \Pimcore\Config::getSystemConfig()->general->domain;
         } else {
@@ -208,6 +208,6 @@ class WkHtmlToPdf extends Processor
 
         $protocol = $_SERVER['HTTPS'] == 'on' ? 'https' : 'http';
 
-        return $protocol . "://" . $hostname . "/website/var/tmp/";
+        return $protocol . "://" . $hostname . PIMCORE_TEMPORARY_DIRECTORY;
     }
 }
