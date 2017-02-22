@@ -9,7 +9,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Resolves the current pimcore user from the token storage.
  */
-class UserResolver
+class TokenStorageUserResolver
 {
     /**
      * @var ContainerInterface

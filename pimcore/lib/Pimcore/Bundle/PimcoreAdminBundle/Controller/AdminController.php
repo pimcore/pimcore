@@ -22,7 +22,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
      */
     protected function getUser($proxyUser = false)
     {
-        $resolver = $this->get('pimcore_admin.security.user_resolver');
+        $resolver = $this->get('pimcore_admin.security.token_storage_user_resolver');
 
         if ($proxyUser) {
             return $resolver->getUserProxy();

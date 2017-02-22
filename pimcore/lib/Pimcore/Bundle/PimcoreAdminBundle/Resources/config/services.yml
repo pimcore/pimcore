@@ -38,9 +38,13 @@ services:
         tags:
             - { name: monolog.logger, channel: security }
 
-    pimcore_admin.security.user_resolver:
-        class: Pimcore\Bundle\PimcoreAdminBundle\Security\User\UserResolver
+    pimcore_admin.security.token_storage_user_resolver:
+        class: Pimcore\Bundle\PimcoreAdminBundle\Security\User\TokenStorageUserResolver
         arguments: ['@service_container']
+
+    pimcore_admin.security.user_loader:
+        class: Pimcore\Bundle\PimcoreAdminBundle\Security\User\UserLoader
+        arguments: ['@pimcore_admin.security.token_storage_user_resolver', '@pimcore.tool.request_helper']
 
     # the services below are only needed to use the build-in http auth for webdav - not fully working yet!
     pimcore_admin.security.user_provider:

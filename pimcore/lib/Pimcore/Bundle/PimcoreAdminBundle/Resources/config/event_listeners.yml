@@ -21,7 +21,7 @@ services:
 
     pimcore_admin.event_listener.user_perspective:
         class: Pimcore\Bundle\PimcoreAdminBundle\EventListener\UserPerspectiveListener
-        arguments: ['@pimcore_admin.security.user_resolver']
+        arguments: ['@pimcore_admin.security.token_storage_user_resolver']
         calls:
             - [setPimcoreContextResolver, ['@pimcore.service.request.pimcore_context_resolver']]
             - [setLogger, ['@logger']]
@@ -31,7 +31,7 @@ services:
 
     pimcore_admin.event_listener.usage_statistics:
         class: Pimcore\Bundle\PimcoreAdminBundle\EventListener\UsageStatisticsListener
-        arguments: ['@pimcore_admin.security.user_resolver']
+        arguments: ['@pimcore_admin.security.token_storage_user_resolver']
         calls:
             - [setPimcoreContextResolver, ['@pimcore.service.request.pimcore_context_resolver']]
         tags:

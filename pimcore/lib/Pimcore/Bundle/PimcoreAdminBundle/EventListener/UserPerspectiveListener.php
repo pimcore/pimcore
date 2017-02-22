@@ -2,7 +2,7 @@
 
 namespace Pimcore\Bundle\PimcoreAdminBundle\EventListener;
 
-use Pimcore\Bundle\PimcoreAdminBundle\Security\User\UserResolver;
+use Pimcore\Bundle\PimcoreAdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Bundle\PimcoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolver;
 use Pimcore\Config;
@@ -20,14 +20,14 @@ class UserPerspectiveListener implements EventSubscriberInterface, LoggerAwareIn
     use LoggerAwareTrait;
 
     /**
-     * @var UserResolver
+     * @var TokenStorageUserResolver
      */
     protected $userResolver;
 
     /**
-     * @param UserResolver $userResolver
+     * @param TokenStorageUserResolver $userResolver
      */
-    public function __construct(UserResolver $userResolver)
+    public function __construct(TokenStorageUserResolver $userResolver)
     {
         $this->userResolver = $userResolver;
     }
