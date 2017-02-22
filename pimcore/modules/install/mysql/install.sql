@@ -617,7 +617,7 @@ CREATE TABLE `tracking_events` (
 
 DROP TABLE IF EXISTS `translations_admin`;
 CREATE TABLE `translations_admin` (
-  `key` varchar(190) NOT NULL DEFAULT '',
+  `key` varchar(190) NOT NULL DEFAULT '' COLLATE 'utf8mb4_bin',
   `language` varchar(10) NOT NULL DEFAULT '',
   `text` text,
   `creationDate` bigint(20) unsigned DEFAULT NULL,
@@ -629,7 +629,7 @@ CREATE TABLE `translations_admin` (
 
 DROP TABLE IF EXISTS `translations_website`;
 CREATE TABLE `translations_website` (
-  `key` varchar(190) NOT NULL DEFAULT '',
+  `key` varchar(190) NOT NULL DEFAULT '' COLLATE 'utf8mb4_bin',
   `language` varchar(10) NOT NULL DEFAULT '',
   `text` text,
   `creationDate` bigint(20) unsigned DEFAULT NULL,

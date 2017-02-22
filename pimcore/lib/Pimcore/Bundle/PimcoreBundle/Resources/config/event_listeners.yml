@@ -34,13 +34,6 @@ services:
         tags:
             - { name: kernel.event_subscriber }
 
-    pimcore.event_listener.zend_translate:
-        class: Pimcore\Bundle\PimcoreBundle\EventListener\ZendTranslateListener
-        calls:
-            - [setLogger, ['@logger']]
-        tags:
-          - { name: kernel.event_subscriber }
-
 
     # Adds Meta Data entries of document to HeadMeta view helper
     pimcore.event_listener.document_meta_data:

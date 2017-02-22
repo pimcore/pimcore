@@ -173,7 +173,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
      */
     protected static function getValidTranslationKey($key)
     {
-        return mb_strtolower($key);
+        return $key;
     }
 
     /**
@@ -194,7 +194,6 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
         $translation = new static();
 
         $idOriginal = $id;
-        $id = mb_strtolower($id);
 
         $languages = static::getLanguages();
 

@@ -43,6 +43,16 @@ services:
 
 
     #
+    # TRANSLATOR
+    #
+
+    pimcore.translator:
+      class: Pimcore\Bundle\PimcoreBundle\Component\Translation\Translator
+      decorates: translator
+      arguments: ['@pimcore.translator.inner']
+
+
+    #
     # REQUEST SPECIFICS
     #
 
