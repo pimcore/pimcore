@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\PimcoreBundle\EventListener;
 use Pimcore\Bundle\PimcoreBundle\Service\Document\DocumentService;
 use Pimcore\Bundle\PimcoreBundle\Service\Request\DocumentResolver as DocumentResolverService;
 use Pimcore\Bundle\PimcoreBundle\Templating\Helper\HeadMeta;
+use Pimcore\Model\Document\Page;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
@@ -76,7 +77,7 @@ class DocumentMetaDataListener implements EventSubscriberInterface
 
         //check if document is set and if route is a document route for exactly that document
         if($document && $request->get("_route") == "document_" . $document->getId()) {
-            if (is_array($document->getMetaData())) {
+            if ($document instanceof Page && is_array($document->getMetaData())) {
                 foreach ($document->getMetaData() as $meta) {
                     $this->headMeta->addRaw($meta);
                 }
