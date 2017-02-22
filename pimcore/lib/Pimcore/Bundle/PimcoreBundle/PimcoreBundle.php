@@ -3,6 +3,7 @@
 namespace Pimcore\Bundle\PimcoreBundle;
 
 use Pimcore\Bundle\PimcoreBundle\DependencyInjection\Compiler\AreabrickPass;
+use Pimcore\Bundle\PimcoreBundle\DependencyInjection\Compiler\ContextInitializerPass;
 use Pimcore\Bundle\PimcoreBundle\DependencyInjection\Compiler\PimcoreGlobalTemplatingVariablesPass;
 use Pimcore\Bundle\PimcoreBundle\DependencyInjection\Compiler\PhpTemplatingPass;
 use Pimcore\Bundle\PimcoreBundle\DependencyInjection\Compiler\SecurityTokenLoaderUserProvidersPass;
@@ -17,6 +18,7 @@ class PimcoreBundle extends Bundle
      */
     public function build(ContainerBuilder $container)
     {
+        $container->addCompilerPass(new ContextInitializerPass());
         $container->addCompilerPass(new PhpTemplatingPass());
         $container->addCompilerPass(new AreabrickPass());
         $container->addCompilerPass(new PimcoreGlobalTemplatingVariablesPass());

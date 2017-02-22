@@ -36,6 +36,7 @@ class PimcoreExtension extends Extension
 
         $loader->load('services.yml');
         $loader->load('event_listeners.yml');
+        $loader->load('context_initializers.yml');
         $loader->load('templating.yml');
         $loader->load('profiler.yml');
 

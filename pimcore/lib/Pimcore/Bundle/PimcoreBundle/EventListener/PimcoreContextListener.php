@@ -2,13 +2,16 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\EventListener;
 
+use Pimcore\Bundle\PimcoreBundle\Context\ContextInitializerInterface;
 use Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolver;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInterface
 {
@@ -25,13 +28,24 @@ class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInt
     protected $requestStack;
 
     /**
+     * @var ContextInitializerInterface
+     */
+    protected $contextInitializer;
+
+    /**
      * @param PimcoreContextResolver $resolver
      * @param RequestStack $requestStack
+     * @param ContextInitializerInterface $contextInitializer
      */
-    public function __construct(PimcoreContextResolver $resolver, RequestStack $requestStack)
+    public function __construct(
+        PimcoreContextResolver $resolver,
+        RequestStack $requestStack,
+        ContextInitializerInterface $contextInitializer
+    )
     {
-        $this->resolver     = $resolver;
-        $this->requestStack = $requestStack;
+        $this->resolver           = $resolver;
+        $this->requestStack       = $requestStack;
+        $this->contextInitializer = $contextInitializer;
     }
 
     /**
@@ -71,10 +85,26 @@ class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInt
         } else {
             // copy master pimcore context to sub-request if available
             if (!$this->resolver->getPimcoreContext($request)) {
-                if ($masterType = $this->resolver->getPimcoreContext($this->requestStack->getMasterRequest())) {
-                    $this->resolver->setPimcoreContext($request, $masterType);
+                if ($masterContext = $this->resolver->getPimcoreContext($this->requestStack->getMasterRequest())) {
+                    $this->resolver->setPimcoreContext($request, $masterContext);
                 }
             }
+        }
+
+        $this->initializeContext($request, $event->getRequestType());
+    }
+
+    /**
+     * Run context specific initializers
+     *
+     * @param Request $request
+     * @param int $requestType
+     */
+    protected function initializeContext(Request $request, $requestType = KernelInterface::MASTER_REQUEST)
+    {
+        $context = $this->resolver->getPimcoreContext($request);
+        if ($context) {
+            $this->contextInitializer->initialize($request, $context, $requestType);
         }
     }
 }

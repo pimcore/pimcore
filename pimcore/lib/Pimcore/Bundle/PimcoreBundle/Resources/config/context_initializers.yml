@@ -1,0 +1,4 @@
+services:
+    pimcore.context_initializer:
+        class: Pimcore\Bundle\PimcoreBundle\Context\DelegatingContextInitializer
+
