@@ -37,6 +37,7 @@ class PimcoreExtension extends Extension
         $loader->load('services.yml');
         $loader->load('event_listeners.yml');
         $loader->load('templating.yml');
+        $loader->load('profiler.yml');
 
         // load engine specific configuration only if engine is active
         $configuredEngines = ['twig', 'php'];

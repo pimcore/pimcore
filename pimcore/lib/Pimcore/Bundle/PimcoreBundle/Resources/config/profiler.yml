@@ -1,0 +1,15 @@
+services:
+    #
+    # DEVELOPMENT/PROFILER
+    #
+
+    pimcore.profiler.collector.context:
+        class: Pimcore\Bundle\PimcoreBundle\DataCollector\PimcoreDataCollector
+        arguments: ['@pimcore.service.request.pimcore_context_resolver']
+        public: false
+        tags:
+            -
+                name:     data_collector
+                template: 'PimcoreBundle:Profiler:data_collector.html.twig'
+                id:       'pimcore.data_collector'
+                priority: 500
