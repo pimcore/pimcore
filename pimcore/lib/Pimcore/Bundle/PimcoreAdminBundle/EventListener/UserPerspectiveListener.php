@@ -2,7 +2,7 @@
 
 namespace Pimcore\Bundle\PimcoreAdminBundle\EventListener;
 
-use Pimcore\Bundle\PimcoreAdminBundle\Security\User\User as UserProxy;
+use Pimcore\Bundle\PimcoreAdminBundle\Security\User\UserResolver;
 use Pimcore\Bundle\PimcoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolver;
 use Pimcore\Config;
@@ -13,7 +13,6 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class UserPerspectiveListener implements EventSubscriberInterface, LoggerAwareInterface
 {
@@ -21,16 +20,16 @@ class UserPerspectiveListener implements EventSubscriberInterface, LoggerAwareIn
     use LoggerAwareTrait;
 
     /**
-     * @var TokenStorageInterface
+     * @var UserResolver
      */
-    protected $tokenStorage;
+    protected $userResolver;
 
     /**
-     * @param TokenStorageInterface $tokenStorage
+     * @param UserResolver $userResolver
      */
-    public function __construct(TokenStorageInterface $tokenStorage)
+    public function __construct(UserResolver $userResolver)
     {
-        $this->tokenStorage = $tokenStorage;
+        $this->userResolver = $userResolver;
     }
 
     /**
@@ -55,7 +54,7 @@ class UserPerspectiveListener implements EventSubscriberInterface, LoggerAwareIn
             return;
         }
 
-        if ($user = $this->getUser()) {
+        if ($user = $this->userResolver->getUser()) {
             $this->setRequestedPerspective($user, $request);
         }
     }
@@ -113,25 +112,6 @@ class UserPerspectiveListener implements EventSubscriberInterface, LoggerAwareIn
 
             $user->setActivePerspective($requestedPerspective);
             $user->save();
-        }
-    }
-
-    /**
-     * @return null|User
-     */
-    protected function getUser()
-    {
-        if (null === $token = $this->tokenStorage->getToken()) {
-            return null;
-        }
-
-        if (!is_object($user = $token->getUser())) {
-            // e.g. anonymous authentication
-            return null;
-        }
-
-        if ($user instanceof UserProxy) {
-            return $user->getUser();
         }
     }
 }

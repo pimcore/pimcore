@@ -2,8 +2,9 @@
 
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller;
 
-use Pimcore\Bundle\PimcoreAdminBundle\Security\User\User;
+use Pimcore\Bundle\PimcoreAdminBundle\Security\User\User as UserProxy;
 use Pimcore\Logger;
+use Pimcore\Model\User;
 use Pimcore\Tool\Session;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,13 +16,18 @@ abstract class AdminController extends Controller implements AdminControllerInte
     /**
      * Get user from user proxy object which is registered on security component
      *
-     * @return \Pimcore\Model\User
+     * @param bool $proxyUser Return the proxy user (UserInterface) instead of the pimcore model
+     *
+     * @return UserProxy|User
      */
-    protected function getUser()
+    protected function getUser($proxyUser = false)
     {
-        $user = parent::getUser();
-        if ($user && $user instanceof User) {
-            return $user->getUser();
+        $resolver = $this->get('pimcore_admin.security.user_resolver');
+
+        if ($proxyUser) {
+            return $resolver->getUserProxy();
+        } else {
+            return $resolver->getUser();
         }
     }
 
