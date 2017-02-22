@@ -9,9 +9,9 @@ services:
         tags:
             - { name: kernel.event_subscriber }
 
-    pimcore.event_listener.request_type:
-        class: Pimcore\Bundle\PimcoreBundle\EventListener\RequestContextListener
-        arguments: ['@pimcore.service.request.request_context_resolver', '@request_stack']
+    pimcore.event_listener.pimcore_context:
+        class: Pimcore\Bundle\PimcoreBundle\EventListener\PimcoreContextListener
+        arguments: ['@pimcore.service.request.pimcore_context_resolver', '@request_stack']
         calls:
             - [setLogger, ['@logger']]
         tags:
@@ -103,7 +103,7 @@ services:
     pimcore.event_listener.google_analytics_code:
         class: Pimcore\Bundle\PimcoreBundle\EventListener\GoogleAnalyticsCodeListener
         calls:
-            - [setRequestContextResolver, ['@pimcore.service.request.request_context_resolver']]
+            - [setPimcoreContextResolver, ['@pimcore.service.request.pimcore_context_resolver']]
         tags:
             - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse, priority: -110 }
 

@@ -49,8 +49,8 @@ services:
     pimcore.service.request_matcher_factory:
         class: Pimcore\Bundle\PimcoreBundle\Service\RequestMatcherFactory
 
-    pimcore.service.request.request_context_guesser:
-        class: Pimcore\Bundle\PimcoreBundle\Service\Request\RequestContextGuesser
+    pimcore.service.context.pimcore_context_guesser:
+        class: Pimcore\Bundle\PimcoreBundle\Service\Context\PimcoreContextGuesser
         arguments: ['@pimcore.service.request_matcher_factory', '%pimcore.admin.routes%']
 
     #
@@ -59,9 +59,9 @@ services:
     # Read/write/normalize defined request attributes (e.g. document)
     #
 
-    pimcore.service.request.request_context_resolver:
-        class: Pimcore\Bundle\PimcoreBundle\Service\Request\RequestContextResolver
-        arguments: ['@request_stack', '@pimcore.service.request.request_context_guesser']
+    pimcore.service.request.pimcore_context_resolver:
+        class: Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolver
+        arguments: ['@request_stack', '@pimcore.service.context.pimcore_context_guesser']
 
     pimcore.service.request.editmode_resolver:
         class: Pimcore\Bundle\PimcoreBundle\Service\Request\EditmodeResolver

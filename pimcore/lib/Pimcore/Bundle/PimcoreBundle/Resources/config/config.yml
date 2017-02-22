@@ -33,7 +33,7 @@ twig:
 pimcore:
     admin:
         # the routes below are used to classify admin requests
-        # in RequestContextGuesser
+        # in PimcoreContextGuesser
         routes:
             - { path: ^/admin }
             - { route: ^admin_ }

@@ -17,7 +17,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
  *
  * TODO: the double authentication check is currently running for every AdminControllerInterface, independent of the request
  * context, to ensure third party bundles using the AdminController handle authentication as well. Should we do this on the
- * request context instead?
+ * pimcore context instead?
  */
 class AdminAuthenticationDoubleCheckListener extends AbstractAdminControllerListener implements EventSubscriberInterface
 {

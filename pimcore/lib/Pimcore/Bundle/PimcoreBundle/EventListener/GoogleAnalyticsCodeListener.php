@@ -3,16 +3,14 @@
 namespace Pimcore\Bundle\PimcoreBundle\EventListener;
 
 use Pimcore\Bundle\PimcoreBundle\EventListener\AbstractEventListener\ResponseInjection;
-use Pimcore\Bundle\PimcoreBundle\EventListener\Traits\RequestContextAwareTrait;
-use Pimcore\Bundle\PimcoreBundle\Service\Request\RequestContextResolver;
+use Pimcore\Bundle\PimcoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
+use Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolver;
 use Pimcore\Google\Analytics as AnalyticsHelper;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\HttpKernel\KernelEvents;
 
 class GoogleAnalyticsCodeListener extends ResponseInjection
 {
-    use RequestContextAwareTrait;
+    use PimcoreContextAwareTrait;
 
     /**
      * @var bool
@@ -51,7 +49,7 @@ class GoogleAnalyticsCodeListener extends ResponseInjection
     public function onKernelResponse(FilterResponseEvent $event)
     {
         // only inject analytics code on non-admin requests
-        if (!$this->matchesRequestContext($event->getRequest(), RequestContextResolver::REQUEST_CONTEXT_DEFAULT)) {
+        if (!$this->matchesPimcoreContext($event->getRequest(), PimcoreContextResolver::CONTEXT_DEFAULT)) {
             return;
         }
 

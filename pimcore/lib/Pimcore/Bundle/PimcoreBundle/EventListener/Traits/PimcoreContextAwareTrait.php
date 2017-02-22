@@ -2,36 +2,36 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\EventListener\Traits;
 
-use Pimcore\Bundle\PimcoreBundle\Service\Request\RequestContextResolver;
+use Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolver;
 use Symfony\Component\DependencyInjection\Exception\RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
 
-trait RequestContextAwareTrait
+trait PimcoreContextAwareTrait
 {
     /**
-     * @var RequestContextResolver
+     * @var PimcoreContextResolver
      */
-    protected $requestContextResolver;
+    protected $pimcoreContextResolver;
 
     /**
-     * @param RequestContextResolver $requestContextResolver
+     * @param PimcoreContextResolver $contextResolver
      */
-    public function setRequestContextResolver($requestContextResolver)
+    public function setPimcoreContextResolver(PimcoreContextResolver $contextResolver)
     {
-        $this->requestContextResolver = $requestContextResolver;
+        $this->pimcoreContextResolver = $contextResolver;
     }
 
     /**
-     * Check if the request matches the given request context (e.g. admin)
+     * Check if the request matches the given pimcore context (e.g. admin)
      *
      * @param Request $request
      * @param string|array $context
      * @return bool
      */
-    protected function matchesRequestContext(Request $request, $context)
+    protected function matchesPimcoreContext(Request $request, $context)
     {
-        if (null === $this->requestContextResolver) {
-            throw new RuntimeException('Missing request context resolver. Is the listener properly configured?');
+        if (null === $this->pimcoreContextResolver) {
+            throw new RuntimeException('Missing pimcore context resolver. Is the listener properly configured?');
         }
 
         if (!is_array($context)) {
@@ -43,10 +43,10 @@ trait RequestContextAwareTrait
         }
 
         if (empty($context)) {
-            throw new \InvalidArgumentException('Can\'t match against empty request context');
+            throw new \InvalidArgumentException('Can\'t match against empty pimcore context');
         }
 
-        $resolvedContext = $this->requestContextResolver->getRequestContext($request);
+        $resolvedContext = $this->pimcoreContextResolver->getPimcoreContext($request);
         if (!$resolvedContext) {
             // no context available to match -> false
             return false;

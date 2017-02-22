@@ -1,12 +1,13 @@
 <?php
 
-namespace Pimcore\Bundle\PimcoreBundle\Service\Request;
+namespace Pimcore\Bundle\PimcoreBundle\Service\Context;
 
+use Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolver;
 use Pimcore\Bundle\PimcoreBundle\Service\RequestMatcherFactory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 
-class RequestContextGuesser
+class PimcoreContextGuesser
 {
     /**
      * @var array
@@ -34,7 +35,7 @@ class RequestContextGuesser
     }
 
     /**
-     * Guess the request context
+     * Guess the pimcore context
      *
      * @param Request $request
      * @return string
@@ -42,10 +43,10 @@ class RequestContextGuesser
     public function guess(Request $request)
     {
         if ($this->isAdminRequest($request)) {
-            return RequestContextResolver::REQUEST_CONTEXT_ADMIN;
+            return PimcoreContextResolver::CONTEXT_ADMIN;
         }
 
-        return RequestContextResolver::REQUEST_CONTEXT_DEFAULT;
+        return PimcoreContextResolver::CONTEXT_DEFAULT;
     }
 
     /**
@@ -66,7 +67,7 @@ class RequestContextGuesser
     }
 
     /**
-     * Get request matchers to query admin request context from
+     * Get request matchers to query admin pimcore context from
      *
      * @return RequestMatcherInterface[]
      */
