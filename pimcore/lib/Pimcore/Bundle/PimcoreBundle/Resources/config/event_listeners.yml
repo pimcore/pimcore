@@ -5,7 +5,7 @@ services:
 
     pimcore.event_listener.site:
         class: Pimcore\Bundle\PimcoreBundle\EventListener\SiteListener
-        arguments: ['@pimcore.tool.request_helper']
+        arguments: ['@pimcore.http.request_helper']
         tags:
             - { name: kernel.event_subscriber }
 

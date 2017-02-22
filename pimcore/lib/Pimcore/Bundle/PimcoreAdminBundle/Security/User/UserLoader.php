@@ -2,9 +2,9 @@
 
 namespace Pimcore\Bundle\PimcoreAdminBundle\Security\User;
 
+use Pimcore\Http\RequestHelper;
 use Pimcore\Model\User as UserModel;
 use Pimcore\Tool\Authentication;
-use Pimcore\Tool\RequestHelper;
 
 /**
  * Loads user either from token storage (when inside admin firewall) or directly from session and keeps it in cache. This

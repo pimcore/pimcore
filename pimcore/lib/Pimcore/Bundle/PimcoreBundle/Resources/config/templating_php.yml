@@ -14,7 +14,7 @@ services:
     #
     pimcore.templating.helper_broker.helper_shortcuts:
         class: Pimcore\Bundle\PimcoreBundle\Templating\HelperBroker\HelperShortcuts
-        arguments: ['@pimcore.tool.request_helper']
+        arguments: ['@pimcore.http.request_helper']
         tags:
             - { name: pimcore.templating.helper_broker, priority: 25 }
 
@@ -47,7 +47,7 @@ services:
     pimcore.templating.view_helper.getParam:
         class: Pimcore\Bundle\PimcoreBundle\Templating\Helper\GetParam
         arguments:
-            - '@pimcore.tool.request_helper'
+            - '@pimcore.http.request_helper'
         tags:
             - { name: templating.helper, alias: getParam }
 
@@ -67,7 +67,7 @@ services:
 
     pimcore.templating.view_helper.pimcoreUrl:
         class: Pimcore\Bundle\PimcoreBundle\Templating\Helper\PimcoreUrl
-        arguments: ['@router', '@pimcore.tool.request_helper']
+        arguments: ['@router', '@pimcore.http.request_helper']
         tags:
             - { name: templating.helper, alias: pimcoreUrl }
 

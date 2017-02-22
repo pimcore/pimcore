@@ -4,7 +4,7 @@
 namespace Pimcore\Bundle\PimcoreBundle\Templating\HelperBroker;
 
 use Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine;
-use Pimcore\Tool\RequestHelper;
+use Pimcore\Http\RequestHelper;
 use Symfony\Bundle\FrameworkBundle\Templating\Helper\RouterHelper;
 use Symfony\Component\HttpFoundation\Request;
 

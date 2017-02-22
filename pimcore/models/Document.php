@@ -841,7 +841,7 @@ class Document extends Element\AbstractElement
             $config = \Pimcore\Config::getSystemConfig();
 
             // TODO using the container directly is discouraged, maybe we find a better way (e.g. moving this into a service)?
-            $request = \Pimcore::getContainer()->get('pimcore.tool.request_helper')->getRequest();
+            $request = \Pimcore::getContainer()->get('pimcore.http.request_helper')->getRequest();
             $scheme  = $request->getScheme() . '://';
 
             /** @var Site $site */

@@ -3,9 +3,9 @@
 namespace Pimcore\Bundle\PimcoreBundle\EventListener;
 
 use Pimcore\Config;
+use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Site;
 use Pimcore\Tool;
-use Pimcore\Tool\RequestHelper;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;

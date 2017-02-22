@@ -2,7 +2,7 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\Templating\Helper;
 
-use Pimcore\Tool\RequestHelper;
+use Pimcore\Http\RequestHelper;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Zend\View\Helper\AbstractHelper;
 

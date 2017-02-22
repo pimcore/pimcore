@@ -170,12 +170,12 @@ services:
     # PIMCORE SERVICES
     #
 
-    pimcore.tool.request_helper:
-        class: Pimcore\Tool\RequestHelper
+    pimcore.http.request_helper:
+        class: Pimcore\Http\RequestHelper
         arguments: ['@request_stack']
 
-    pimcore.tool.response_helper:
-        class: Pimcore\Tool\ResponseHelper
+    pimcore.http.response_helper:
+        class: Pimcore\Http\ResponseHelper
 
     # TODO inject user?
     pimcore.document_service:

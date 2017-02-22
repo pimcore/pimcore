@@ -44,7 +44,7 @@ services:
 
     pimcore_admin.security.user_loader:
         class: Pimcore\Bundle\PimcoreAdminBundle\Security\User\UserLoader
-        arguments: ['@pimcore_admin.security.token_storage_user_resolver', '@pimcore.tool.request_helper']
+        arguments: ['@pimcore_admin.security.token_storage_user_resolver', '@pimcore.http.request_helper']
 
     # the services below are only needed to use the build-in http auth for webdav - not fully working yet!
     pimcore_admin.security.user_provider:

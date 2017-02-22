@@ -4,10 +4,9 @@ namespace Pimcore\Bundle\PimcoreAdminBundle\EventListener;
 
 use Pimcore\Bundle\PimcoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolver;
-use Pimcore\Tool\RequestHelper;
-use Pimcore\Tool\ResponseHelper;
+use Pimcore\Http\RequestHelper;
+use Pimcore\Http\ResponseHelper;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 

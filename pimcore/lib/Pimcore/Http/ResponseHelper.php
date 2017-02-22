@@ -1,6 +1,6 @@
 <?php
 
-namespace Pimcore\Tool;
+namespace Pimcore\Http;
 
 use Symfony\Component\HttpFoundation\Response;
 

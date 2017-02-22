@@ -2,7 +2,7 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\Templating\Helper;
 
-use Pimcore\Tool\RequestHelper;
+use Pimcore\Http\RequestHelper;
 use Symfony\Component\Templating\Helper\Helper;
 
 class GetParam extends Helper
