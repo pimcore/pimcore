@@ -96,7 +96,7 @@ class ViewRenderer extends \Zend_Controller_Action_Helper_ViewRenderer
         }
 
         $view->setRequest($request);
-        $view->addHelperPath(PIMCORE_PATH . "/lib/Pimcore/View/Helper", "\\Pimcore\\View\\Helper\\");
+        $view->addHelperPath(__DIR__ . "/../../../View/Helper", "\\Pimcore\\View\\Helper\\");
     }
 
     /**
