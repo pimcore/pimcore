@@ -57,6 +57,13 @@ class Configuration implements ConfigurationInterface
 
         // unauthenticated routes won't be double checked for authentication in AdminControllerListener
         $this->addRoutesChild($adminNode, 'unauthenticated_routes');
+
+        $adminNode->children()
+            ->arrayNode("translations")
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->scalarNode("path")->defaultNull()->end()
+            ->end();
     }
 
     /**

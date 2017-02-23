@@ -43,3 +43,7 @@ pimcore:
         # this usually applies to login routes
         unauthenticated_routes:
             - { route: admin_login }
+
+        translations:
+          path: "@PimcoreBundle/Resources/translations"
+

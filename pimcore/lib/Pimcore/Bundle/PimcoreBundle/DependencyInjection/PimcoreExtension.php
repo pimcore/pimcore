@@ -20,9 +20,10 @@ class PimcoreExtension extends Extension
 
         // admin routes are used by PimcoreContextGuesser to determine the pimcore context (e.g. admin)
         $container->setParameter('pimcore.admin.routes', $config['admin']['routes']);
-
         // unauthenticated routes do not double-check for authentication
         $container->setParameter('pimcode.admin.unauthenticated_routes', $config['admin']['unauthenticated_routes']);
+
+        $container->setParameter('pimcore.admin.translations.path', $config['admin']['translations']["path"]);
 
         // register pimcore config on container
         // TODO is this bad practice?

@@ -16,21 +16,10 @@ class TestController extends Controller
     public function testAction(Request $request)
     {
 
-        $foo = new \Pimcore\Translate("en");
+        $foo = \Pimcore\Tool\Admin::getLanguages();
+        dump($foo); exit;
 
-        $content = $request->getLocale() . " | ";
-
-        $content .= $this->get("translator")->trans("categories");
-        $content .= " | ";
-        $content .= $this->get("translator")->trans("categories", [], "admin");
-        $content .= " | ";
-        $content .= $this->get("translator")->trans("archive");
-        $content .= " | ";
-        $content .= $this->get("translator")->trans("check me out");
-        $content .= " | ";
-        $content .= $this->get("translator")->trans("content page");
-        $content .= " | ";
-        $content .= $this->get("translator")->trans("Meow");
+        $content = "Foo | Bar";
 
 
         return new Response($content);

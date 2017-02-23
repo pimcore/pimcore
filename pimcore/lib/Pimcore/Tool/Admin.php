@@ -20,7 +20,6 @@ use Pimcore\Tool\Text\Csv;
 
 class Admin
 {
-
     /**
      * Finds the translation file for a given language
      *
@@ -30,12 +29,8 @@ class Admin
      */
     public static function getLanguageFile($language)
     {
-
-        //first try website languages dir, as fallback the core dir
-        $languageFile = PIMCORE_CONFIGURATION_DIRECTORY . "/texts/" . $language . ".json";
-        if (!is_file($languageFile)) {
-            $languageFile =  PIMCORE_PATH . "/config/texts/" . $language . ".json";
-        }
+        $baseResource = \Pimcore::getContainer()->getParameter("pimcore.admin.translations.path");
+        $languageFile = \Pimcore::getKernel()->locateResource($baseResource . "/" . $language . ".json");
 
         return $languageFile;
     }
@@ -48,16 +43,19 @@ class Admin
      */
     public static function getLanguages()
     {
+        $baseResource = \Pimcore::getContainer()->getParameter("pimcore.admin.translations.path");
+        $languageDir = \Pimcore::getKernel()->locateResource($baseResource);
+
         $languages = [];
-        $languageDirs = [PIMCORE_PATH . "/config/texts/", PIMCORE_CONFIGURATION_DIRECTORY . "/texts/"];
+        $languageDirs = [$languageDir];
         foreach ($languageDirs as $filesDir) {
             if (is_dir($filesDir)) {
                 $files = scandir($filesDir);
                 foreach ($files as $file) {
-                    if (is_file($filesDir . $file)) {
+                    if (is_file($filesDir . "/" . $file)) {
                         $parts = explode(".", $file);
                         if ($parts[1] == "json") {
-                            if (\Zend_Locale::isLocale($parts[0])) {
+                            if (\Pimcore\Locale::isLocale($parts[0])) {
                                 $languages[] = $parts[0];
                             }
                         }

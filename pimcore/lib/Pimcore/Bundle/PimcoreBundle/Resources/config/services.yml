@@ -52,7 +52,7 @@ services:
       arguments: ['@pimcore.translator.inner']
       calls:
         - [setKernel, ['@kernel']]
-        - [setAdminPath, ['@@PimcoreBundle/Resources/translations']]
+        - [setAdminPath, ['%pimcore.admin.translations.path%']]
 
 
     #
