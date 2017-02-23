@@ -4,7 +4,7 @@ namespace Pimcore;
 
 use Pimcore\Bundle\PimcoreAdminBundle\PimcoreAdminBundle;
 use Pimcore\Bundle\PimcoreBundle\PimcoreBundle;
-use Pimcore\Bundle\PimcoreLegacyBundle\PimcoreLegacyBundle;
+use PimcoreLegacyBundle\PimcoreLegacyBundle;
 use Sensio\Bundle\DistributionBundle\SensioDistributionBundle;
 use Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle;
 use Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle;

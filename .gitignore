@@ -26,6 +26,7 @@
 !/legacy
 /legacy/*
 !legacy/.gitkeep
+!legacy/bundle
 
 # keep legacy paths ignored for easier migration
 /plugins/

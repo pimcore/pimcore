@@ -1,0 +1,7 @@
+services:
+    pimcore.twig.zend_view_helper_extension:
+        class: PimcoreLegacyBundle\Twig\ZendViewHelperExtension
+        arguments: ['@pimcore.legacy.zend_view_helper_bridge']
+        public: false
+        tags:
+            - { name: twig.extension }

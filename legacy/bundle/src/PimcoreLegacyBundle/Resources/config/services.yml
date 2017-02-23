@@ -1,0 +1,18 @@
+services:
+    # executes ZF1 view helpers
+    pimcore.legacy.zend_view_helper_bridge:
+        class: PimcoreLegacyBundle\Zend\View\ViewHelperBridge
+        arguments: ['@pimcore.legacy.zend_view_provider', '@pimcore.service.request.template_vars_resolver']
+
+    # creates configured Pimcore\View instances
+    pimcore.legacy.zend_view_provider:
+        class: PimcoreLegacyBundle\Zend\View\ViewProvider
+
+    # legacy tag handler supporting Pimcore\View - injected into delegating tag handler in compiler pass
+    pimcore.document.tag.handler.legacy:
+        class: PimcoreLegacyBundle\Document\Tag\LegacyTagHandler
+
+    # provides rendering of documents with legacy ZF1 stack
+    pimcore.templating.legacy_document_renderer:
+      class: PimcoreLegacyBundle\Templating\Renderer\DocumentRenderer
+      arguments: ['@pimcore.legacy_kernel']

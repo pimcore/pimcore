@@ -3,7 +3,7 @@
 namespace AppBundle\Controller;
 
 use Pimcore\Bundle\PimcoreBundle\Configuration\TemplatePhp;
-use Pimcore\Bundle\PimcoreLegacyBundle\Zend\View\ViewHelperBridge;
+use PimcoreLegacyBundle\Zend\View\ViewHelperBridge;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;

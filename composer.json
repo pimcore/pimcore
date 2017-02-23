@@ -105,7 +105,7 @@
   },
   "autoload": {
     "psr-4": {
-      "": "src/",
+      "": ["src/", "legacy/bundle/src/"],
       "Pimcore\\Model\\Object\\": "var/classes/Object",
       "Pimcore\\Model\\": "pimcore/models",
       "Pimcore\\": "pimcore/lib/Pimcore",
