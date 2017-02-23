@@ -96,8 +96,6 @@ class DocumentRouteProvider implements RouteProviderInterface
         }
 
         $locale = $document->getProperty('language');
-        $locale = explode('_', $locale);
-        $locale = $locale[0];
 
         // check for direct hardlink
         if ($document instanceof Document\Hardlink) {
