@@ -1,12 +1,13 @@
 <?php
 
-namespace Pimcore\Bundle\PimcoreBundle\EventListener;
+namespace Pimcore\Bundle\PimcoreBundle\EventListener\Frontend;
 
 use Pimcore\API\Bundle\PimcoreBundleManager;
+use Pimcore\Bundle\PimcoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Bundle\PimcoreBundle\Service\Request\DocumentResolver;
 use Pimcore\Bundle\PimcoreBundle\Service\Request\EditmodeResolver;
+use Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolver;
 use Pimcore\Config;
-use Pimcore\ExtensionManager;
 use Pimcore\Model\Document;
 use Pimcore\Model\User;
 use Pimcore\Tool\Authentication;
@@ -23,6 +24,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
  */
 class EditmodeListener implements EventSubscriberInterface
 {
+    use PimcoreContextAwareTrait;
     use LoggerAwareTrait;
 
     /**
@@ -72,25 +74,35 @@ class EditmodeListener implements EventSubscriberInterface
 
     public function onKernelRequest(GetResponseEvent $event)
     {
+        $request = $event->getRequest();
+
         if (!$event->isMasterRequest()) {
-            return; // only master requests inject editmode assets
+            return; // only resolve editmode in frontend
+        }
+
+        if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
+            return;
         }
 
         // trigger this once to make sure it is resolved properly (and set for legacy)
         // TODO is this needed?
-        $this->editmodeResolver->isEditmode($event->getRequest());
+        $this->editmodeResolver->isEditmode($request);
     }
 
     public function onKernelResponse(FilterResponseEvent $event)
     {
+        $request  = $event->getRequest();
+        $response = $event->getResponse();
+
         if (!$event->isMasterRequest()) {
             return; // only master requests inject editmode assets
         }
 
-        $request  = $event->getRequest();
-        $response = $event->getResponse();
+        if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
+            return;
+        }
 
-        if (!$this->editmodeResolver->isEditmode($event->getRequest())) {
+        if (!$this->editmodeResolver->isEditmode($request)) {
             return;
         }
 
@@ -102,6 +114,10 @@ class EditmodeListener implements EventSubscriberInterface
         if (!$document) {
             return;
         }
+
+        $this->logger->info('Injecting editmode assets into request {request}', [
+            'request' => $request->getPathInfo()
+        ]);
 
         $this->addEditmodeAssets($document, $response);
     }

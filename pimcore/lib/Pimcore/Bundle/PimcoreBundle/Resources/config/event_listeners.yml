@@ -103,9 +103,10 @@ services:
     #
 
     pimcore.event_listener.editmode_listener:
-        class: Pimcore\Bundle\PimcoreBundle\EventListener\EditmodeListener
+        class: Pimcore\Bundle\PimcoreBundle\EventListener\Frontend\EditmodeListener
         arguments: ['@pimcore.service.request.editmode_resolver', '@pimcore.service.request.document_resolver', '@pimcore.extension.bundle_manager']
         calls:
+            - [setPimcoreContextResolver, ['@pimcore.service.request.pimcore_context_resolver']]
             - [setLogger, ['@logger']]
         tags:
             - { name: kernel.event_subscriber }
