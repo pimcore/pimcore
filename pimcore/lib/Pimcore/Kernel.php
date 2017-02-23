@@ -174,7 +174,7 @@ abstract class Kernel extends \Symfony\Component\HttpKernel\Kernel
      */
     protected function initializePlugins()
     {
-        \Pimcore::initPlugins(); // TODO move somewhere else?
+        \Pimcore\Legacy::initPlugins(); // TODO move somewhere else?
     }
 
     /**

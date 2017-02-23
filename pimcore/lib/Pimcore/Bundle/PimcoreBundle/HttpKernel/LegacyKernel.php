@@ -60,7 +60,7 @@ class LegacyKernel implements KernelInterface
             Cache::init();
 
             // prepare the ZF MVC stack - needed for more advanced view helpers like action()
-            \Pimcore::prepareMvc(true);
+            \Pimcore\Legacy::prepareMvc(true);
 
             // set a default request
             $front = \Zend_Controller_Front::getInstance();
@@ -99,7 +99,7 @@ class LegacyKernel implements KernelInterface
     {
         $this->boot();
 
-        return \Pimcore::run(true, $zendRequest);
+        return \Pimcore\Legacy::run(true, $zendRequest);
     }
 
     /**

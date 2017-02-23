@@ -48,7 +48,7 @@ if (!$symfonyMode) {
     // CLI \Zend_Controller_Front Setup, this is required to make it possible to make use of all rendering features
     // this includes $this->action() in templates, ...
     $front = \Zend_Controller_Front::getInstance();
-    Pimcore::initControllerFront($front);
+    \Pimcore\Legacy::initControllerFront($front);
 
     $request = new \Zend_Controller_Request_Http();
     $request->setModuleName(PIMCORE_FRONTEND_MODULE);

@@ -373,7 +373,7 @@ class Test_Tool
         Zend_Registry::_unsetInstance();
         Zend_Registry::set('pimcore_config_test', $conf);
         Pimcore::initConfiguration();
-        Pimcore::initPlugins();
+        Pimcore\Legacy::initPlugins();
     }
 
     /**

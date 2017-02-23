@@ -28,7 +28,7 @@ if (defined('PIMCORE_SYMFONY_MODE') && PIMCORE_SYMFONY_MODE) {
         // initialize environment
         $kernel->boot();
 
-        Pimcore::run();
+        Pimcore\Legacy::run();
     } catch (Exception $e) {
         // handle exceptions, log to file
         if (class_exists("Pimcore\\Logger")) {

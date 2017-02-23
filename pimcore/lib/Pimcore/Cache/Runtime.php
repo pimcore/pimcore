@@ -44,10 +44,18 @@ class Runtime
     }
 
     /**
-     *
+     * @param array $keepItems
      */
-    public static function clear()
+    public static function clear($keepItems = [])
     {
-        static::$_cache = [];
+        $newStore = [];
+
+        foreach($keepItems as $key) {
+            if(isset(static::$_cache[$key])) {
+                $newStore = static::$_cache[$key];
+            }
+        }
+
+        static::$_cache = $newStore;
     }
 }

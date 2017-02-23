@@ -58,455 +58,6 @@ class Pimcore
      */
     private static $globallyProtectedItems;
 
-    /**
-     * @var bool
-     */
-    private static $mvcPrepared = false;
-
-    /**
-     * @static
-
-     * @param bool $returnResponse
-     * @param Zend_Controller_Request_Abstract $request
-     * @param Zend_Controller_Response_Abstract $response
-     * @return null|Zend_Controller_Response_Http
-     * @throws Exception
-     * @throws Zend_Controller_Router_Exception
-     */
-    public static function run($returnResponse = false, Zend_Controller_Request_Abstract $request = null, Zend_Controller_Response_Abstract $response = null)
-    {
-        if (!$returnResponse) {
-            // enable the output-buffer, why? see in self::outputBufferStart()
-            self::outputBufferStart();
-        }
-
-        // initialize cache
-        Cache::init();
-
-        $conf = Config::getSystemConfig();
-        if (!$conf) {
-            // redirect to installer if configuration isn't present
-            if (!Tool::isInstaller()) {
-                header("Location: /install/");
-                exit;
-            }
-        }
-
-        // init front controller
-        $front = static::prepareMvc($returnResponse, $conf);
-        $throwExceptions = static::throwMvcExceptions($conf);
-
-        self::getEventManager()->trigger("system.startup", $front);
-
-        return self::runDispatcher($front, $throwExceptions, $request, $response);
-    }
-
-    /**
-     * Prepare the ZF MVC stack
-     *
-     * @param bool $returnResponse
-     * @param null $conf
-     * @return Zend_Controller_Front
-     */
-    public static function prepareMvc($returnResponse = false, $conf = null)
-    {
-        $front = \Zend_Controller_Front::getInstance();
-
-        // make sure this method runs only once
-        if (static::$mvcPrepared) {
-            return $front;
-        }
-
-        if (null === $conf) {
-            $conf = Config::getSystemConfig();
-        }
-
-        // detect frontend (website)
-        $frontend = Tool::isFrontend();
-
-        self::registerFrontControllerPlugins($front, $frontend);
-        self::initControllerFront($front);
-
-        if ($returnResponse) {
-            $front->returnResponse(true);
-        }
-
-        // set router
-        $router = self::initRouter($front);
-
-        // only do this if not frontend => performance issue
-        if (!$frontend) {
-            self::initBackendRouter($router, $conf);
-            self::checkPluginRoutes();
-
-            if ($conf) {
-                self::handleAdminMainDomainRedirect($conf);
-            }
-        }
-
-        static::setupZendViewRenderer();
-        static::$mvcPrepared = true;
-
-        return $front;
-    }
-
-    /**
-     * Determine if MVC stack should throw exceptions
-     *
-     * @param \Pimcore\Config\Config|mixed|null $conf
-     * @return bool
-     */
-    public static function throwMvcExceptions($conf = null)
-    {
-        $throwExceptions = false;
-
-        if (null === $conf) {
-            $conf = Config::getSystemConfig();
-        }
-
-        if (!$conf) {
-            // not installed, we display all error messages
-            $throwExceptions = true;
-        }
-
-        // throw exceptions also when in preview or in editmode (documents) to see it immediately when there's a problem with this page
-        if (Tool::isFrontentRequestByAdmin()) {
-            $user = \Pimcore\Tool\Authentication::authenticateSession();
-            if ($user instanceof User) {
-                $throwExceptions = true;
-            }
-        }
-
-        return $throwExceptions;
-    }
-
-    /**
-     * Run dispatcher
-     *
-     * This is also standard for /admin/ requests -> error handling is done in Pimcore_Controller_Action_Admin
-     *
-     * @param Zend_Controller_Front $front
-     * @param bool $throwExceptions
-     * @param Zend_Controller_Request_Abstract|null $request
-     * @param Zend_Controller_Response_Abstract|null $response
-     * @return null|Zend_Controller_Response_Abstract
-     * @throws Exception
-     * @throws Zend_Controller_Router_Exception
-     */
-    protected static function runDispatcher(
-        Zend_Controller_Front $front,
-        $throwExceptions,
-        Zend_Controller_Request_Abstract $request = null,
-        Zend_Controller_Response_Abstract $response = null
-    ) {
-        try {
-            if (!PIMCORE_DEBUG && !$throwExceptions && !PIMCORE_DEVMODE) {
-                @ini_set("display_errors", "Off");
-                @ini_set("display_startup_errors", "Off");
-
-                return $front->dispatch($request, $response);
-            } else {
-                @ini_set("display_errors", "On");
-                @ini_set("display_startup_errors", "On");
-
-                $front->throwExceptions(true);
-
-                return $front->dispatch($request, $response);
-            }
-        } catch (\Zend_Controller_Router_Exception $e) {
-            if (!headers_sent()) {
-                header("HTTP/1.0 404 Not Found");
-            }
-            Logger::err($e);
-            throw new \Zend_Controller_Router_Exception("No route, document, custom route or redirect is matching the request: " . $_SERVER["REQUEST_URI"] . " | \n" . "Specific ERROR: " . $e->getMessage());
-        } catch (\Exception $e) {
-            if (!headers_sent()) {
-                header("HTTP/1.0 500 Internal Server Error");
-            }
-            throw $e;
-        }
-    }
-
-    /**
-     * Register front controller plugins
-     *
-     * @param Zend_Controller_Front $front
-     * @param bool $frontend
-     */
-    protected static function registerFrontControllerPlugins(Zend_Controller_Front $front, $frontend)
-    {
-        $front->registerPlugin(new Controller\Plugin\ErrorHandler(), 1);
-
-        if (Tool::useFrontendOutputFilters(new \Zend_Controller_Request_Http())) {
-            $front->registerPlugin(new Controller\Plugin\HttpErrorLog(), 850);
-        }
-    }
-
-    /**
-     * Add global routes
-     *
-     * @param Zend_Controller_Front $front
-     * @return Zend_Controller_Router_Interface|Zend_Controller_Router_Rewrite
-     */
-    protected static function initRouter(Zend_Controller_Front $front)
-    {
-        /** @var Zend_Controller_Router_Interface|Zend_Controller_Router_Rewrite $router */
-        $router = $front->getRouter();
-
-        // website route => custom router which check for a suitable document
-        $routeFrontend = new Controller\Router\Route\Frontend();
-        $router->addRoute('default', $routeFrontend);
-
-        $front->setRouter($router);
-
-        return $router;
-    }
-
-    /**
-     * Add backend routes
-     *
-     * @param Zend_Controller_Router_Interface|Zend_Controller_Router_Rewrite $router
-     * @param \Pimcore\Config\Config|null $conf
-     */
-    protected static function initBackendRouter(Zend_Controller_Router_Interface $router, $conf)
-    {
-        $routeAdmin = new \Zend_Controller_Router_Route(
-            'admin/:controller/:action/*',
-            [
-                'module' => 'admin',
-                "controller" => "index",
-                "action" => "index"
-            ]
-        );
-
-        $routeInstall = new \Zend_Controller_Router_Route(
-            'install/:controller/:action/*',
-            [
-                'module' => 'install',
-                "controller" => "index",
-                "action" => "index"
-            ]
-        );
-
-        $routeUpdate = new \Zend_Controller_Router_Route(
-            'admin/update/:controller/:action/*',
-            [
-                'module' => 'update',
-                "controller" => "index",
-                "action" => "index"
-            ]
-        );
-
-        $routeExtensions = new \Zend_Controller_Router_Route(
-            'admin/extensionmanager/:controller/:action/*',
-            [
-                'module' => 'extensionmanager',
-                "controller" => "index",
-                "action" => "index"
-            ]
-        );
-
-        $routeReports = new \Zend_Controller_Router_Route(
-            'admin/reports/:controller/:action/*',
-            [
-                'module' => 'reports',
-                "controller" => "index",
-                "action" => "index"
-            ]
-        );
-
-        $routePlugin = new \Zend_Controller_Router_Route(
-            'plugin/:module/:controller/:action/*',
-            [
-                "controller" => "index",
-                "action" => "index"
-            ]
-        );
-
-        $routeWebservice = new \Zend_Controller_Router_Route(
-            'webservice/:controller/:action/*',
-            [
-                "module" => "webservice",
-                "controller" => "index",
-                "action" => "index"
-            ]
-        );
-
-        $routeSearchAdmin = new \Zend_Controller_Router_Route(
-            'admin/search/:controller/:action/*',
-            [
-                "module" => "searchadmin",
-                "controller" => "index",
-                "action" => "index",
-            ]
-        );
-
-        $router->addRoute("install", $routeInstall);
-        $router->addRoute('plugin', $routePlugin);
-        $router->addRoute('admin', $routeAdmin);
-        $router->addRoute('update', $routeUpdate);
-        $router->addRoute('extensionmanager', $routeExtensions);
-        $router->addRoute('reports', $routeReports);
-        $router->addRoute('searchadmin', $routeSearchAdmin);
-
-        if ($conf instanceof \Pimcore\Config\Config and $conf->webservice and $conf->webservice->enabled) {
-            $router->addRoute('webservice', $routeWebservice);
-        }
-    }
-
-    /**
-     * Check if this request routes into a plugin, if so check if the plugin is enabled
-     */
-    protected static function checkPluginRoutes()
-    {
-        if (preg_match("@^/plugin/([^/]+)/.*@", $_SERVER["REQUEST_URI"], $matches)) {
-            $pluginName = $matches[1];
-            if (!Pimcore\ExtensionManager::isEnabled("plugin", $pluginName)) {
-                \Pimcore\Tool::exitWithError("Plugin is disabled. To use this plugin please enable it in the extension manager!");
-            }
-        }
-    }
-
-    /**
-     * Force the main (default) domain for "admin" requests
-     *
-     * @param \Pimcore\Config\Config $conf
-     */
-    protected static function handleAdminMainDomainRedirect(\Pimcore\Config\Config $conf)
-    {
-        if ($conf->general->domain && $conf->general->domain != Tool::getHostname()) {
-            $url = (($_SERVER['HTTPS'] == "on") ? "https" : "http") . "://" . $conf->general->domain . $_SERVER["REQUEST_URI"];
-            header("HTTP/1.1 301 Moved Permanently");
-            header("Location: " . $url, true, 301);
-            exit;
-        }
-    }
-
-    /**
-     * @static
-     * @param \Zend_Controller_Front $front
-     */
-    public static function initControllerFront(\Zend_Controller_Front $front)
-    {
-
-        // disable build-in error handler
-        $front->setParam('noErrorHandler', true);
-
-        // for admin an other modules directly in the core
-        $front->addModuleDirectory(PIMCORE_PATH . "/modules");
-        // for plugins
-        if (is_dir(PIMCORE_PLUGINS_PATH) && is_readable(PIMCORE_PLUGINS_PATH)) {
-            $front->addModuleDirectory(PIMCORE_PLUGINS_PATH);
-        }
-
-        // for frontend (default: website)
-        $front->addControllerDirectory(PIMCORE_WEBSITE_PATH . "/controllers", PIMCORE_FRONTEND_MODULE);
-        $front->setDefaultModule(PIMCORE_FRONTEND_MODULE);
-    }
-
-    /**
-     * @static
-     *
-     */
-    public static function initLogger()
-    {
-
-        // for forks, etc ...
-        Logger::resetLoggers();
-
-        // try to load configuration
-        $conf = Config::getSystemConfig();
-
-        if ($conf) {
-            // redirect php error_log to /website/var/log/php.log
-            if ($conf->general->custom_php_logfile) {
-                $phpLog = PIMCORE_LOG_DIRECTORY . "/php.log";
-                if (!file_exists($phpLog)) {
-                    touch($phpLog);
-                }
-                if (is_writable($phpLog)) {
-                    ini_set("error_log", $phpLog);
-                    ini_set("log_errors", "1");
-                }
-            }
-        }
-
-        if (!is_file(PIMCORE_LOG_DEBUG)) {
-            if (is_writable(dirname(PIMCORE_LOG_DEBUG))) {
-                File::put(PIMCORE_LOG_DEBUG, "AUTOCREATE\n");
-            }
-        }
-
-        $prios = [];
-        $availablePrios = Logger::getAvailablePriorities();
-
-        if ($conf && $conf->general->debugloglevel) {
-            foreach ($availablePrios as $level) {
-                $prios[] = $level;
-                if ($level == $conf->general->debugloglevel) {
-                    break;
-                }
-            }
-            Logger::setPriorities($prios);
-        } else {
-            Logger::setVerbosePriorities();
-        }
-
-        if (is_writable(PIMCORE_LOG_DEBUG)) {
-            // set default core logger (debug.log)
-            if (!empty($prios)) {
-                $loggerFile = new \Monolog\Logger('core');
-                $loggerFile->pushHandler(new \Monolog\Handler\StreamHandler(PIMCORE_LOG_DEBUG));
-                Logger::addLogger($loggerFile);
-            }
-
-            $conf = Config::getSystemConfig();
-            if ($conf) {
-                //email logger
-                if (!empty($conf->general->logrecipient)) {
-                    $user = User::getById($conf->general->logrecipient);
-                    if ($user instanceof User && $user->isAdmin()) {
-                        $email = $user->getEmail();
-                        if (!empty($email)) {
-                            $loggerMail = new \Monolog\Logger('email');
-                            $mailHandler = new \Pimcore\Log\Handler\Mail($email);
-                            $loggerMail->pushHandler(new \Monolog\Handler\BufferHandler($mailHandler));
-                            Logger::addLogger($loggerMail);
-                        }
-                    }
-                }
-            }
-        } else {
-            // try to use syslog instead
-            try {
-                $loggerSyslog = new \Monolog\Logger('core');
-                $loggerSyslog->pushHandler(new \Monolog\Handler\SyslogHandler("pimcore"));
-                Logger::addLogger($loggerSyslog);
-            } catch (\Exception $e) {
-                // nothing to do here
-            }
-        }
-
-        // special request log -> if parameter pimcore_log is set
-        if (array_key_exists("pimcore_log", $_REQUEST) && self::inDebugMode()) {
-            if (empty($_REQUEST["pimcore_log"])) {
-                $requestLogName = date("Y-m-d_H-i-s");
-            } else {
-                $requestLogName = $_REQUEST["pimcore_log"];
-            }
-
-            $requestLogFile = dirname(PIMCORE_LOG_DEBUG) . "/request-" . $requestLogName . ".log";
-            if (!file_exists($requestLogFile)) {
-                File::put($requestLogFile, "");
-            }
-
-            $loggerRequest = new \Monolog\Logger('request');
-            $loggerRequest->pushHandler(new \Monolog\Handler\StreamHandler($requestLogFile));
-            Logger::addLogger($loggerRequest);
-
-            Logger::setVerbosePriorities();
-        }
-    }
 
     /**
      * @static
@@ -545,138 +96,6 @@ class Pimcore
         if (version_compare(PHP_VERSION, '5.6', "<")) {
             $m = "pimcore requires at least PHP version 5.6.0 your PHP version is: " . PHP_VERSION;
             Tool::exitWithError($m);
-        }
-    }
-
-    /**
-     * @static
-     * @deprecated
-     */
-    public static function initModules()
-    {
-        // only for compatibility reasons, will be removed in pimcore 5
-    }
-
-    /**
-     *
-     */
-    public static function initPlugins()
-    {
-        // add plugin include paths
-
-        $autoloader = \Zend_Loader_Autoloader::getInstance();
-
-        try {
-            $pluginConfigs = ExtensionManager::getPluginConfigs();
-            if (!empty($pluginConfigs)) {
-                $includePaths = [
-                    get_include_path()
-                ];
-
-                //adding plugin include paths and namespaces
-                if (count($pluginConfigs) > 0) {
-                    foreach ($pluginConfigs as $p) {
-                        if (!ExtensionManager::isEnabled("plugin", $p["plugin"]["pluginName"])) {
-                            continue;
-                        }
-
-                        if (is_array($p['plugin']['pluginIncludePaths']['path'])) {
-                            foreach ($p['plugin']['pluginIncludePaths']['path'] as $path) {
-                                $includePaths[] = PIMCORE_PLUGINS_PATH . $path;
-                            }
-                        } elseif ($p['plugin']['pluginIncludePaths']['path'] != null) {
-                            $includePaths[] = PIMCORE_PLUGINS_PATH . $p['plugin']['pluginIncludePaths']['path'];
-                        }
-                        if (is_array($p['plugin']['pluginNamespaces']['namespace'])) {
-                            foreach ($p['plugin']['pluginNamespaces']['namespace'] as $namespace) {
-                                $autoloader->registerNamespace($namespace);
-                            }
-                        } elseif ($p['plugin']['pluginNamespaces']['namespace'] != null) {
-                            $autoloader->registerNamespace($p['plugin']['pluginNamespaces']['namespace']);
-                        }
-                    }
-                }
-
-                set_include_path(implode(PATH_SEPARATOR, $includePaths));
-
-                /** @var \Pimcore\API\Plugin\Broker $broker */
-                $broker = static::getKernel()->getContainer()->get('pimcore.plugin_broker');
-
-                //registering plugins
-                foreach ($pluginConfigs as $p) {
-                    if (!ExtensionManager::isEnabled("plugin", $p["plugin"]["pluginName"])) {
-                        continue;
-                    }
-
-                    $jsPaths = [];
-                    $isExtJs6 = true;
-
-                    if ($isExtJs6 && is_array($p['plugin']['pluginJsPaths-extjs6'])
-                        && isset($p['plugin']['pluginJsPaths-extjs6']['path'])
-                        && is_array($p['plugin']['pluginJsPaths-extjs6']['path'])) {
-                        $jsPaths = $p['plugin']['pluginJsPaths-extjs6']['path'];
-                    } elseif ($isExtJs6 && is_array($p['plugin']['pluginJsPaths-extjs6'])
-                        && $p['plugin']['pluginJsPaths-extjs6']['path'] != null) {
-                        $jsPaths[0] = $p['plugin']['pluginJsPaths-extjs6']['path'];
-                    } elseif (is_array($p['plugin']['pluginJsPaths'])
-                        && isset($p['plugin']['pluginJsPaths']['path'])
-                        && is_array($p['plugin']['pluginJsPaths']['path'])) {
-                        $jsPaths = $p['plugin']['pluginJsPaths']['path'];
-                    } elseif (is_array($p['plugin']['pluginJsPaths'])
-                        && $p['plugin']['pluginJsPaths']['path'] != null) {
-                        $jsPaths[0] = $p['plugin']['pluginJsPaths']['path'];
-                    }
-                    //manipulate path for frontend
-                    if (is_array($jsPaths) and count($jsPaths) > 0) {
-                        for ($i = 0; $i < count($jsPaths); $i++) {
-                            if (is_file(PIMCORE_PLUGINS_PATH . $jsPaths[$i])) {
-                                $jsPaths[$i] = "/plugins" . $jsPaths[$i];
-                            }
-                        }
-                    }
-
-                    $cssPaths = [];
-                    if ($isExtJs6 && is_array($p['plugin']['pluginCssPaths-extjs6'])
-                        && isset($p['plugin']['pluginCssPaths-extjs6']['path'])
-                        && is_array($p['plugin']['pluginCssPaths-extjs6']['path'])) {
-                        $cssPaths = $p['plugin']['pluginCssPaths-extjs6']['path'];
-                    } elseif ($isExtJs6 && is_array($p['plugin']['pluginCssPaths-extjs6'])
-                        && $p['plugin']['pluginCssPaths-extjs6']['path'] != null) {
-                        $cssPaths[0] = $p['plugin']['pluginCssPaths-extjs6']['path'];
-                    } elseif (is_array($p['plugin']['pluginCssPaths'])
-                        && isset($p['plugin']['pluginCssPaths']['path'])
-                        && is_array($p['plugin']['pluginCssPaths']['path'])) {
-                        $cssPaths = $p['plugin']['pluginCssPaths']['path'];
-                    } elseif (is_array($p['plugin']['pluginCssPaths'])
-                        && $p['plugin']['pluginCssPaths']['path'] != null) {
-                        $cssPaths[0] = $p['plugin']['pluginCssPaths']['path'];
-                    }
-
-                    //manipulate path for frontend
-                    if (is_array($cssPaths) and count($cssPaths) > 0) {
-                        for ($i = 0; $i < count($cssPaths); $i++) {
-                            if (is_file(PIMCORE_PLUGINS_PATH . $cssPaths[$i])) {
-                                $cssPaths[$i] = "/plugins" . $cssPaths[$i];
-                            }
-                        }
-                    }
-
-                    try {
-                        $className = $p['plugin']['pluginClassName'];
-                        if (!empty($className) && Tool::classExists($className)) {
-                            $plugin = new $className($jsPaths, $cssPaths);
-                            if ($plugin instanceof \Pimcore\API\Plugin\AbstractPlugin) {
-                                $broker->registerPlugin($plugin);
-                            }
-                        }
-                    } catch (\Exception $e) {
-                        Logger::err("Could not instantiate and register plugin [" . $p['plugin']['pluginClassName'] . "]");
-                    }
-                }
-            }
-        } catch (\Exception $e) {
-            Logger::alert("there is a problem with the plugin configuration");
-            Logger::alert($e);
         }
     }
 
@@ -750,16 +169,6 @@ class Pimcore
         }
 
         return $debug;
-    }
-
-    /**
-     * @static
-     */
-    public static function setupZendViewRenderer()
-    {
-        // set custom view renderer
-        $pimcoreViewHelper = new Controller\Action\Helper\ViewRenderer();
-        \Zend_Controller_Action_HelperBroker::addHelper($pimcoreViewHelper);
     }
 
     /**
@@ -920,7 +329,6 @@ class Pimcore
 
         // close mysql-connection
         Db::close();
-        Cache\Runtime::clear();
 
         $protectedItems = [
             "Zend_Locale",
@@ -947,18 +355,11 @@ class Pimcore
             $protectedItems = array_merge($protectedItems, self::$globallyProtectedItems);
         }
 
-        $registryBackup = [];
+        Cache\Runtime::clear($protectedItems);
 
-        foreach ($protectedItems as $item) {
-            if (\Zend_Registry::isRegistered($item)) {
-                $registryBackup[$item] = \Zend_Registry::get($item);
-            }
-        }
-
-        \Zend_Registry::_unsetInstance();
-
-        foreach ($registryBackup as $key => $value) {
-            \Zend_Registry::set($key, $value);
+        if(class_exists("Pimcore\\Legacy")) {
+            // @TODO: should be removed
+            Pimcore\Legacy::collectGarbage($protectedItems);
         }
 
         Db::reset();
@@ -968,144 +369,6 @@ class Pimcore
         $collectedCycles = gc_collect_cycles();
 
         Logger::debug("garbage collection finished, collected cycles: " . $collectedCycles);
-    }
-
-    /**
-     * this initiates the pimcore output-buffer, which is used to allow the registered shutdown-function
-     * (created with register_shutdown_function) to run in the background without blocking the browser (loading indicator).
-     * This is useful because the cache is written in the shutdown function and it takes sometimes a while to write the
-     * max. 50 items into the cache (~ 1-10 secs depending on the backend and the data). Although all the content is
-     * already arrived at the browser, he blocks the javascript execution (eg. jQuery's $(document).ready() ), because
-     * the request is not finished or wasn't closed (sure the script is still running), what is really not necessary
-     * This method is only called in Pimcore_Controller_Action_Frontend::init() to enable it only for frontend/website HTTP requests
-     * - more infos see also self::outputBufferEnd()
-     * @static
-     */
-    public static function outputBufferStart()
-    {
-
-        // only for HTTP(S)
-        if (php_sapi_name() != "cli") {
-            ob_start("\\Pimcore::outputBufferEnd");
-        }
-    }
-
-    /**
-     * if this method is called in self::shutdown() it forces the browser to close the connection an allows the
-     * shutdown-function to run in the background
-     * @static
-     * @param $data
-     * @return string
-     */
-    public static function outputBufferEnd($data)
-    {
-        $output = null;
-        $contentEncoding = null;
-
-        if (headers_sent()) {
-            return $data;
-        }
-
-        // cleanup admin session Set-Cookie headers if needed
-        // a detailed description why this is necessary can be found in the doc-block of \Pimcore\Tool\Session::$sessionCookieCleanupNeeded
-        if (Tool\Session::isSessionCookieCleanupNeeded()) {
-            $headers = headers_list();
-            $headers = array_reverse($headers);
-            foreach ($headers as $header) {
-                if (strpos($header, Tool\Session::getOption("name")) !== false) {
-                    header($header, true); // setting the header again with 2nd arg = true, overrides all duplicates
-                    break;
-                }
-            }
-        }
-
-        // only send this headers in the shutdown-function, so that it is also possible to get the contents of this buffer earlier without sending headers
-        if (self::$inShutdown) {
-
-            // force closing the connection at the client, this enables to do certain tasks (writing the cache) in the "background"
-            header("Connection: close\r\n");
-
-            // check for supported content-encodings
-            if (strpos($_SERVER["HTTP_ACCEPT_ENCODING"], "gzip") !== false) {
-                $contentEncoding = "gzip";
-            }
-
-            if (!empty($data) && $contentEncoding) {
-                ignore_user_abort(true);
-
-                // find the content-type of the response
-                $front = \Zend_Controller_Front::getInstance();
-                $a = $front->getResponse()->getHeaders();
-                $b = array_merge(headers_list(), $front->getResponse()->getRawHeaders());
-
-                $contentType = null;
-
-                // first check headers in headers_list() because they overwrite all other headers => see SOAP controller
-                foreach ($b as $header) {
-                    if (stripos($header, "content-type") !== false) {
-                        $parts = explode(":", $header);
-                        if (strtolower(trim($parts[0])) == "content-type") {
-                            $contentType = trim($parts[1]);
-                            break;
-                        }
-                    }
-                }
-
-                if (!$contentType) {
-                    foreach ($a as $header) {
-                        if (strtolower(trim($header["name"])) == "content-type") {
-                            $contentType = $header["value"];
-                            break;
-                        }
-                    }
-                }
-
-                // prepare the response to be sent (gzip or not)
-                // do not add text/xml or a wildcard for text/* here because this causes problems with the SOAP server
-                $gzipContentTypes = ["@text/html@i", "@application/json@", "@text/javascript@", "@text/css@"];
-                $gzipIt = false;
-                foreach ($gzipContentTypes as $type) {
-                    if (@preg_match($type, $contentType)) {
-                        $gzipIt = true;
-                        break;
-                    }
-                }
-
-                // gzip the contents and send connection close tthat the process can run in the background to finish
-                // some tasks like writing the cache ...
-                // using mb_strlen() because of PIMCORE-1509
-                if ($gzipIt) {
-                    $output = "\x1f\x8b\x08\x00\x00\x00\x00\x00" .
-                        substr(gzcompress($data, 2), 0, -4) .
-                        pack('V', crc32($data)) . // packing the CRC and the strlen is still required
-                        pack('V', mb_strlen($data, "latin1")); // (although all modern browsers don't need it anymore) to work properly with google adwords check & co.
-
-                    header("Content-Encoding: $contentEncoding\r\n");
-                }
-            }
-
-            // no gzip/deflate encoding
-            if (!$output) {
-                $output = $data;
-            }
-
-            if (strlen($output) > 0) {
-                // check here if there is actually content, otherwise readfile() and similar functions are not working anymore
-                header("Content-Length: " . mb_strlen($output, "latin1"));
-            }
-
-            $vary = "Accept-Encoding";
-            $deviceDetector = Tool\DeviceDetector::getInstance();
-            if ($deviceDetector->wasUsed()) {
-                $vary .= ", User-Agent";
-            }
-            header("Vary: " . $vary, false);
-
-            header("X-Powered-By: pimcore", true);
-        }
-
-        // return the data unchanged
-        return $output;
     }
 
     /**
@@ -1136,5 +399,124 @@ class Pimcore
 
         // disable logging - otherwise this will cause problems in the ongoing shutdown process (session write, __destruct(), ...)
         Logger::resetLoggers();
+    }
+
+    /**
+     * @static
+     *
+     */
+    public static function initLogger()
+    {
+
+        // for forks, etc ...
+        Logger::resetLoggers();
+
+        // try to load configuration
+        $conf = Config::getSystemConfig();
+
+        if ($conf) {
+            // redirect php error_log to /website/var/log/php.log
+            if ($conf->general->custom_php_logfile) {
+                $phpLog = PIMCORE_LOG_DIRECTORY . "/php.log";
+                if (!file_exists($phpLog)) {
+                    touch($phpLog);
+                }
+                if (is_writable($phpLog)) {
+                    ini_set("error_log", $phpLog);
+                    ini_set("log_errors", "1");
+                }
+            }
+        }
+
+        if (!is_file(PIMCORE_LOG_DEBUG)) {
+            if (is_writable(dirname(PIMCORE_LOG_DEBUG))) {
+                File::put(PIMCORE_LOG_DEBUG, "AUTOCREATE\n");
+            }
+        }
+
+        $prios = [];
+        $availablePrios = Logger::getAvailablePriorities();
+
+        if ($conf && $conf->general->debugloglevel) {
+            foreach ($availablePrios as $level) {
+                $prios[] = $level;
+                if ($level == $conf->general->debugloglevel) {
+                    break;
+                }
+            }
+            Logger::setPriorities($prios);
+        } else {
+            Logger::setVerbosePriorities();
+        }
+
+        if (is_writable(PIMCORE_LOG_DEBUG)) {
+            // set default core logger (debug.log)
+            if (!empty($prios)) {
+                $loggerFile = new \Monolog\Logger('core');
+                $loggerFile->pushHandler(new \Monolog\Handler\StreamHandler(PIMCORE_LOG_DEBUG));
+                Logger::addLogger($loggerFile);
+            }
+
+            $conf = Config::getSystemConfig();
+            if ($conf) {
+                //email logger
+                if (!empty($conf->general->logrecipient)) {
+                    $user = User::getById($conf->general->logrecipient);
+                    if ($user instanceof User && $user->isAdmin()) {
+                        $email = $user->getEmail();
+                        if (!empty($email)) {
+                            $loggerMail = new \Monolog\Logger('email');
+                            $mailHandler = new \Pimcore\Log\Handler\Mail($email);
+                            $loggerMail->pushHandler(new \Monolog\Handler\BufferHandler($mailHandler));
+                            Logger::addLogger($loggerMail);
+                        }
+                    }
+                }
+            }
+        } else {
+            // try to use syslog instead
+            try {
+                $loggerSyslog = new \Monolog\Logger('core');
+                $loggerSyslog->pushHandler(new \Monolog\Handler\SyslogHandler("pimcore"));
+                Logger::addLogger($loggerSyslog);
+            } catch (\Exception $e) {
+                // nothing to do here
+            }
+        }
+
+        // special request log -> if parameter pimcore_log is set
+        if (array_key_exists("pimcore_log", $_REQUEST) && self::inDebugMode()) {
+            if (empty($_REQUEST["pimcore_log"])) {
+                $requestLogName = date("Y-m-d_H-i-s");
+            } else {
+                $requestLogName = $_REQUEST["pimcore_log"];
+            }
+
+            $requestLogFile = dirname(PIMCORE_LOG_DEBUG) . "/request-" . $requestLogName . ".log";
+            if (!file_exists($requestLogFile)) {
+                File::put($requestLogFile, "");
+            }
+
+            $loggerRequest = new \Monolog\Logger('request');
+            $loggerRequest->pushHandler(new \Monolog\Handler\StreamHandler($requestLogFile));
+            Logger::addLogger($loggerRequest);
+
+            Logger::setVerbosePriorities();
+        }
+    }
+
+    /**
+     * @param $name
+     * @param $arguments
+     * @return mixed
+     * @throws Exception
+     */
+    public static function __callStatic($name, $arguments)
+    {
+        if(class_exists("Pimcore\\Legacy")) {
+            return forward_static_call_array("Pimcore\\Legacy::" . $name, $arguments);
+        }
+
+        throw new \Exception("Call to undefined static method " . $name . " on class Pimcore");
     }
 }
