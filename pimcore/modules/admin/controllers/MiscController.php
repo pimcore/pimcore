@@ -405,7 +405,7 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
 
     public function countryListAction()
     {
-        $countries = \Zend_Locale::getTranslationList('territory');
+        $countries = \Pimcore::getContainer()->get("pimcore.locale")->getDisplayRegions();
         asort($countries);
         $options = [];
 

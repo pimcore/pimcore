@@ -53,7 +53,7 @@ services:
 
     pimcore.templating.view_helper.glossary:
         class: Pimcore\Bundle\PimcoreBundle\Templating\Helper\Glossary
-        arguments: ['@pimcore.service.request.document_resolver', '@pimcore.service.request.editmode_resolver']
+        arguments: ['@pimcore.service.request.document_resolver', '@pimcore.service.request.editmode_resolver', '@pimcore.http.request_helper']
         calls:
             - [setLogger, ['@logger']]
         tags:

@@ -36,7 +36,7 @@ abstract class Concrete extends Model\Object\Listing
     public $className;
 
     /**
-     * @var string|\Zend_Locale
+     * @var string|
      */
     public $locale;
 
@@ -127,7 +127,7 @@ abstract class Concrete extends Model\Object\Listing
     }
 
     /**
-     * @return string|\Zend_Locale
+     * @return string
      */
     public function getLocale()
     {

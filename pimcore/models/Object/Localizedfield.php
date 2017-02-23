@@ -190,10 +190,10 @@ class Localizedfield extends Model\AbstractModel
             return (string) $language;
         }
 
-        // try to get the language from the registry
+        // try to get the language from the service container
         try {
-            $locale = \Zend_Registry::get("Zend_Locale");
-            if (Tool::isValidLanguage((string) $locale)) {
+            $locale = \Pimcore::getContainer()->get("pimcore.locale")->findLocale();
+            if (Tool::isValidLanguage($locale)) {
                 return (string) $locale;
             }
             throw new \Exception("Not supported language");

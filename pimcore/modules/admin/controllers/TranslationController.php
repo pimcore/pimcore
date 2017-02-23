@@ -48,7 +48,8 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
 
             foreach ($delta as $item) {
                 $lg = $item["lg"];
-                $item["lgname"] =  \Zend_Locale::getTranslation($lg, "language");
+                $currentLocale = \Pimcore::getContainer()->get("pimcore.locale")->findLocale();
+                $item["lgname"] =  \Locale::getDisplayLanguage($lg, $currentLocale);
                 $item["icon"] = "/admin/misc/get-language-flag?language=" . $lg;
                 $item["current"] = $item["text"];
                 $enrichedDelta[]= $item;
@@ -524,26 +525,6 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
         $target = $this->getParam("target");
         $type = $this->getParam("type");
 
-        // XLIFF requires region in language code
-        /*$languages = \Zend_Locale::getLocaleList();
-        if(strlen($source) < 5) {
-            foreach ($languages as $key => $value) {
-                if(strlen($key) > 4 && strpos($key, $source . "_") === 0) {
-                    $source = $key;
-                    break;
-                }
-            }
-        }
-
-        if(strlen($target) < 5) {
-            foreach ($languages as $key => $value) {
-                if(strlen($key) > 4 && strpos($key, $target . "_") === 0) {
-                    $target = $key;
-                    break;
-                }
-            }
-        }*/
-
         $source = str_replace("_", "-", $source);
         $target = str_replace("_", "-", $target);
 
@@ -693,11 +674,9 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
                 if ($fd = $element->getClass()->getFieldDefinition("localizedfields")) {
                     $definitions = $fd->getFielddefinitions();
 
-                    $locale = new \Zend_Locale(str_replace("-", "_", $source));
-                    if (Tool::isValidLanguage((string) $locale)) {
-                        $locale = (string) $locale;
-                    } else {
-                        $locale = $locale->getLanguage();
+                    $locale = str_replace("-", "_", $source);
+                    if (!Tool::isValidLanguage($locale)) {
+                        $locale = \Locale::getPrimaryLanguage($locale);
                     }
 
                     foreach ($definitions as $definition) {
@@ -823,8 +802,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
         $target = str_replace("-", "_", $target);
 
         if (!Tool::isValidLanguage($target)) {
-            $locale = new \Zend_Locale($target);
-            $target = $locale->getLanguage();
+            $target = \Locale::getPrimaryLanguage($target);
             if (!Tool::isValidLanguage($target)) {
                 $this->_helper->json([
                     "success" => false
@@ -1158,11 +1136,9 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
                     if ($fd = $element->getClass()->getFieldDefinition("localizedfields")) {
                         $definitions = $fd->getFielddefinitions();
 
-                        $locale = new \Zend_Locale(str_replace("-", "_", $source));
-                        if (Tool::isValidLanguage((string) $locale)) {
-                            $locale = (string) $locale;
-                        } else {
-                            $locale = $locale->getLanguage();
+                        $locale = str_replace("-", "_", $source);
+                        if (!Tool::isValidLanguage($locale)) {
+                            $locale = \Locale::getPrimaryLanguage($locale);
                         }
 
                         $output .= '

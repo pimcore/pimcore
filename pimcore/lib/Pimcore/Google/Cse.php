@@ -59,11 +59,7 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
             $search = new \Google_Service_Customsearch($client);
 
             // determine language
-            $language = "";
-            if (\Zend_Registry::isRegistered("Zend_Locale")) {
-                $locale = \Zend_Registry::get("Zend_Locale");
-                $language = $locale->getLanguage();
-            }
+            $language = \Pimcore::getContainer()->get("pimcore.locale")->findLocale();
 
             if (!array_key_exists("hl", $config) && !empty($language)) {
                 $config["hl"] = $language;

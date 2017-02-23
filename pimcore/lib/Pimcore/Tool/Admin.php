@@ -55,7 +55,7 @@ class Admin
                     if (is_file($filesDir . "/" . $file)) {
                         $parts = explode(".", $file);
                         if ($parts[1] == "json") {
-                            if (\Pimcore\Locale::isLocale($parts[0])) {
+                            if (\Pimcore::getContainer()->get("pimcore.locale")->isLocale($parts[0])) {
                                 $languages[] = $parts[0];
                             }
                         }

@@ -41,7 +41,7 @@ class Country extends Model\Object\ClassDefinition\Data\Select
 
     private function buildOptions()
     {
-        $countries = \Zend_Locale::getTranslationList('territory');
+        $countries = \Pimcore::getContainer()->get("pimcore.locale")->getDisplayRegions();
         asort($countries);
         $options = [];
 

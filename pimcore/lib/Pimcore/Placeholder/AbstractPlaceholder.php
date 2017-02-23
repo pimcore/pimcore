@@ -62,7 +62,7 @@ abstract class AbstractPlaceholder
     protected $contentString = null;
 
     /**
-     * @var \Zend_Locale
+     * @var string
      */
     protected $locale = null;
 
@@ -224,7 +224,7 @@ abstract class AbstractPlaceholder
     /**
      * Returns the current locale
      *
-     * @return \Zend_Locale
+     * @return string
      */
     public function getLocale()
     {
@@ -243,10 +243,8 @@ abstract class AbstractPlaceholder
      */
     public function setLocale($locale = null)
     {
-        if ($locale instanceof \Zend_Locale) {
+        if (is_string($locale)) {
             $this->locale = $locale;
-        } elseif (is_string($locale)) {
-            $this->locale = new \Zend_Locale($locale);
         } elseif ($this->getParam('locale') || $this->getParam('language')) {
             $this->setLocale(($this->getParam('locale')) ? $this->getParam('locale') : $this->getParam('language'));
         } else {
@@ -255,12 +253,11 @@ abstract class AbstractPlaceholder
                 $this->setLocale($document->getProperty("language"));
             }
 
-            if (is_null($this->locale)) { //last chance -> get it from registry or use the first Language defined in the system settings
-                if (\Zend_Registry::isRegistered("Zend_Locale")) {
-                    $this->locale = \Zend_Registry::get("Zend_Locale");
-                } else {
+            if (is_null($this->locale)) { //last chance -> get it from service container or use the first Language defined in the system settings
+                $this->locale = \Pimcore::getContainer()->get("pimcore.locale")->findLocale();
+                if (!$this->locale) {
                     list($language) = \Pimcore\Tool::getValidLanguages();
-                    $this->locale = new \Zend_Locale($language);
+                    $this->locale = $language;
                 }
             }
         }

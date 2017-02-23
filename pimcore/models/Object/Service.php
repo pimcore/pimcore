@@ -386,8 +386,7 @@ class Service extends Model\Element\Service
 
                     if ($needLocalizedPermissions) {
                         if (!$user->isAdmin()) {
-                            /** @var  $locale \Zend_Locale */
-                            $locale = (string) \Zend_Registry::get("Zend_Locale");
+                            $locale = \Pimcore::getContainer()->get("pimcore.locale")->findLocale();
 
                             $permissionTypes = ["View", "Edit"];
                             foreach ($permissionTypes as $permissionType) {

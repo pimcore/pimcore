@@ -299,7 +299,7 @@ class CookiePolicyNotice extends ResponseInjection
             }
         }
 
-        // set defaults in en or the language in Zend_Locale if registered (fallback)
+        // set defaults in en
         foreach ($defaultTranslations as $key => $values) {
             if (!array_key_exists($key, $translations)) {
                 $translations[$key] = $values[$language];

@@ -54,6 +54,13 @@ services:
         - [setKernel, ['@kernel']]
         - [setAdminPath, ['%pimcore.admin.translations.path%']]
 
+    #
+    # LOCALE
+    #
+
+    pimcore.locale:
+      class: Pimcore\Locale
+      arguments: ['@request_stack']
 
     #
     # REQUEST SPECIFICS

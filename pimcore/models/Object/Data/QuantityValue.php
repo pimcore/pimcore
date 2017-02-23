@@ -99,20 +99,17 @@ class QuantityValue
 
     /**
      * @return string
-     * @throws \Zend_Locale_Exception
+     * @throws \Exception
      */
     public function __toString()
     {
         $value = $this->getValue();
         if (is_numeric($value)) {
-            $locale = null;
-            try {
-                $locale = \Zend_Registry::get("Zend_Locale");
-            } catch (\Exception $e) {
-            }
+            $locale = \Pimcore::getContainer()->get("pimcore.locale")->findLocale();
 
             if ($locale) {
-                $value = \Zend_Locale_Format::toNumber($value, ['locale' => $locale]);
+                $formatter = new \NumberFormatter($locale, \NumberFormatter::DECIMAL);
+                $value = $formatter->format($value);
             }
         }
 

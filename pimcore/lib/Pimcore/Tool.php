@@ -65,6 +65,7 @@ class Tool
      */
     public static function isValidLanguage($language)
     {
+        $language = (string) $language; // cast to string
         $languages = self::getValidLanguages();
 
         // if not configured, every language is valid
@@ -155,48 +156,32 @@ class Tool
 
     /**
      * @return array|mixed
-     * @throws \Zend_Locale_Exception
+     * @throws \Exception
      */
     public static function getSupportedLocales()
     {
+        $localeService = \Pimcore::getContainer()->get("pimcore.locale");
+        $locale = $localeService->findLocale();
 
-        // List of locales that are no longer part of CLDR
-        // this was also changed in the Zend Framework, but here we need to provide an appropriate alternative
-        // since this information isn't public in \Zend_Locale :-(
-        $aliases = ['az_AZ' => true, 'bs_BA' => true, 'ha_GH' => true, 'ha_NE' => true, 'ha_NG' => true,
-            'kk_KZ' => true, 'ks_IN' => true, 'mn_MN' => true, 'ms_BN' => true, 'ms_MY' => true,
-            'ms_SG' => true, 'pa_IN' => true, 'pa_PK' => true, 'shi_MA' => true, 'sr_BA' => true, 'sr_ME' => true,
-            'sr_RS' => true, 'sr_XK' => true, 'tg_TJ' => true, 'tzm_MA' => true, 'uz_AF' => true, 'uz_UZ' => true,
-            'vai_LR' => true, 'zh_CN' => true, 'zh_HK' => true, 'zh_MO' => true, 'zh_SG' => true, 'zh_TW' => true, ];
-
-        $locale = \Zend_Locale::findLocale();
         $cacheKey = "system_supported_locales_" . strtolower((string) $locale);
         if (!$languageOptions = Cache::load($cacheKey)) {
             // we use the locale here, because \Zend_Translate only supports locales not "languages"
-            $languages = \Zend_Locale::getLocaleList();
-
-            $languages = array_merge($languages, $aliases);
+            $languages = $localeService->getLocaleList();
 
             $languageOptions = [];
-            foreach ($languages as $code => $active) {
-                if ($active) {
-                    $translation = \Zend_Locale::getTranslation($code, "language");
-                    if (!$translation) {
-                        $tmpLocale = new \Zend_Locale($code);
-                        $lt = \Zend_Locale::getTranslation($tmpLocale->getLanguage(), "language");
-                        $tt = \Zend_Locale::getTranslation($tmpLocale->getRegion(), "territory");
+            foreach ($languages as $code) {
+                $translation = \Locale::getDisplayLanguage($code, $locale);
+                $displayRegion = \Locale::getDisplayRegion($code, $locale);
 
-                        if ($lt && $tt) {
-                            $translation = $lt ." (" . $tt . ")";
-                        }
-                    }
-
-                    if (!$translation) {
-                        $translation = $code;
-                    }
-
-                    $languageOptions[$code] = $translation;
+                if ($displayRegion) {
+                    $translation .= " (" . $displayRegion . ")";
                 }
+
+                if (!$translation) {
+                    $translation = $code;
+                }
+
+                $languageOptions[$code] = $translation;
             }
 
             asort($languageOptions);

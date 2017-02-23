@@ -35,7 +35,7 @@ class Countrymultiselect extends Model\Object\ClassDefinition\Data\Multiselect
 
     public function __construct()
     {
-        $countries = \Zend_Locale::getTranslationList('territory');
+        $countries = \Pimcore::getContainer()->get("pimcore.locale")->getDisplayRegions();
         asort($countries);
         $options = [];
 

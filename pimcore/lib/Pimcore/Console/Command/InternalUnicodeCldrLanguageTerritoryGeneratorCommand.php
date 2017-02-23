@@ -43,14 +43,14 @@ class InternalUnicodeCldrLanguageTerritoryGeneratorCommand extends AbstractComma
         foreach ($xml->territoryInfo->territory as $territory) {
             foreach ($territory->languagePopulation as $language) {
                 $languageCode = (string) $language["type"];
-                if (\Zend_Locale::isLocale($languageCode)) {
+                if (\Pimcore::getContainer()->get("pimcore.locale")->isLocale($languageCode)) {
                     $populationAbsolute = $territory["population"] * $language["populationPercent"] / 100;
 
                     if (!isset($languageRawData[$languageCode])) {
                         $languageRawData[$languageCode] = [];
                     }
 
-                    if (\Zend_Locale::isLocale($languageCode . "_" . $territory["type"], true)) {
+                    if (\Pimcore::getContainer()->get("pimcore.locale")->isLocale($languageCode . "_" . $territory["type"])) {
                         $languageRawData[$languageCode][] = [
                             "country" => (string)$territory["type"],
                             "population" => $populationAbsolute

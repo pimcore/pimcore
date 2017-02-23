@@ -341,7 +341,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
                 $fallbackLanguages[$language] = str_replace(" ", "", $values["general.fallbackLanguages." . $language]);
             }
 
-            if (\Zend_Locale::isLocale($language)) {
+            if (\Pimcore::getContainer()->get("pimcore.locale")->isLocale($language)) {
                 $filteredLanguages[] = $language;
             }
         }
@@ -1004,7 +1004,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
 
     public function getAvailableCountriesAction()
     {
-        $countries = \Zend_Locale::getTranslationList('territory');
+        $countries = \Pimcore::getContainer()->get("pimcore.locale")->getDisplayRegions();
         asort($countries);
 
         $options = [];

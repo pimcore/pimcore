@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\PimcoreBundle\Templating\Helper;
 
 use Pimcore\Bundle\PimcoreBundle\Service\Request\DocumentResolver;
 use Pimcore\Bundle\PimcoreBundle\Service\Request\EditmodeResolver;
+use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
 use Psr\Log\LoggerAwareInterface;
@@ -37,12 +38,17 @@ class Glossary extends Helper implements LoggerAwareInterface
      */
     protected $editmodeResolver;
 
-    public function __construct(DocumentResolver $documentResolverService, EditmodeResolver $editmodeResolver)
+    /**
+     * @var RequestHelper
+     */
+    protected $requestHelper;
+
+    public function __construct(DocumentResolver $documentResolverService, EditmodeResolver $editmodeResolver, RequestHelper $requestHelper)
     {
         $this->documentResolverService = $documentResolverService;
         $this->editmodeResolver = $editmodeResolver;
+        $this->requestHelper = $requestHelper;
     }
-
 
     /**
      * @inheritDoc
@@ -158,9 +164,8 @@ class Glossary extends Helper implements LoggerAwareInterface
      */
     protected function getData()
     {
-        if (\Zend_Registry::isRegistered("Zend_Locale")) {
-            $locale = (string) \Zend_Registry::get("Zend_Locale");
-        } else {
+        $locale = $this->requestHelper->getMasterRequest()->getLocale();
+        if(!$locale) {
             return [];
         }
 

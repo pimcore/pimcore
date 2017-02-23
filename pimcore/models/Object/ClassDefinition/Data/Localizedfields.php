@@ -329,12 +329,6 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
             $items = $data->getItems();
         }
 
-        if (\Zend_Registry::isRegistered("Zend_Locale")) {
-            $localeBak = \Zend_Registry::get("Zend_Locale");
-        } else {
-            $localeBak = null;
-        }
-
         $user = Tool\Admin::getCurrentUser();
 
         $languagesAllowed = null;
@@ -351,11 +345,11 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
         if ($validLanguages) {
             foreach ($validLanguages as $language) {
                 foreach ($this->getFieldDefinitions() as $fd) {
-                    \Zend_Registry::set("Zend_Locale", new \Zend_Locale($language));
-
                     if ($languagesAllowed && !in_array($language, $languagesAllowed)) {
                         continue;
                     }
+
+                    $params["locale"] = $language;
 
                     $el = new Model\Webservice\Data\Object\Element();
                     $el->name = $fd->getName();
@@ -368,9 +362,6 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
                     $wsData[] = $el;
                 }
             }
-        }
-        if ($localeBak) {
-            \Zend_Registry::set("Zend_Locale", $localeBak);
         }
 
         return $wsData;

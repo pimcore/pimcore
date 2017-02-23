@@ -1595,9 +1595,7 @@ class Asset extends Element\AbstractElement
 
         if ($name) {
             if ($language === null) {
-                if (\Zend_Registry::isRegistered("Zend_Locale")) {
-                    $language = (string) \Zend_Registry::get("Zend_Locale");
-                }
+                $language = \Pimcore::getContainer()->get("pimcore.locale")->findLocale();
             }
 
             $data = null;

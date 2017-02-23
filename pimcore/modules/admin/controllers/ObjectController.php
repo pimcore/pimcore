@@ -1432,7 +1432,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                                     if ($localized instanceof Object\ClassDefinition\Data\Localizedfields) {
                                         $field = $localized->getFieldDefinition($key);
                                         if ($field) {
-                                            $currentLocale = (string) \Zend_Registry::get("Zend_Locale");
+                                            $currentLocale = \Pimcore::getContainer()->get("pimcore.locale")->findLocale();
                                             if (!$allLanguagesAllowed && !in_array($currentLocale, $languagePermissions)) {
                                                 continue;
                                             }

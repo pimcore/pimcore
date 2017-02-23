@@ -323,8 +323,8 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data
         $code .= "public function get" . ucfirst($key) . ' ($language = null) {' . "\n";
         $code .= "\t" . 'if (!$language) {' . "\n";
         $code .= "\t\t" . 'try {' . "\n";
-        $code .= "\t\t\t" . '$locale = \Zend_Registry::get("Zend_Locale");'  . "\n";
-        $code .= "\t\t\t" . 'if (\Pimcore\Tool::isValidLanguage((string) $locale)) {'  . "\n";
+        $code .= "\t\t\t" . '$locale = \Pimcore::getContainer()->get("pimcore.locale")->findLocale();'  . "\n";
+        $code .= "\t\t\t" . 'if (\Pimcore\Tool::isValidLanguage($locale)) {'  . "\n";
         $code .= "\t\t\t\t" . '$language = (string) $locale;'  . "\n";
         $code .= "\t\t\t" . '} else {'  . "\n";
         $code .= "\t\t\t\t" . 'throw new \Exception("Not supported language");'  . "\n";

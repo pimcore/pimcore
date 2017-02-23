@@ -29,12 +29,13 @@ class Transliteration
         // the transliteration is based on the locale
         // äüö is in EN auo in DE  aeueoe
         if (!$language) {
-            if (\Zend_Registry::isRegistered("Zend_Locale")) {
-                $locale = \Zend_Registry::get("Zend_Locale");
-                $language = $locale->getLanguage();
-            } else {
-                // there is no locale use default
-                $language = "en";
+            $locale = \Pimcore::getContainer()->get("pimcore.locale")->findLocale();
+            if($locale) {
+                $language = \Locale::getPrimaryLanguage($locale);
+            }
+
+            if (!$language) {
+                $language = "en"; // default is "en"
             }
         }
 

@@ -151,8 +151,8 @@ class Dao extends Model\Object\Listing\Dao
                         }
                     }
 
-                    if (!$language && \Zend_Registry::isRegistered("Zend_Locale")) {
-                        $locale = \Zend_Registry::get("Zend_Locale");
+                    if (!$language) {
+                        $locale = \Pimcore::getContainer()->get("pimcore.locale")->findLocale();
                         if (Tool::isValidLanguage((string) $locale)) {
                             $language = (string) $locale;
                         }

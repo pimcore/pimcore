@@ -16,11 +16,10 @@ class TestController extends Controller
     public function testAction(Request $request)
     {
 
-        $foo = \Pimcore\Tool\Admin::getLanguages();
+        $foo = \Zend_Locale::getTranslation("en", "language");
         dump($foo); exit;
 
         $content = "Foo | Bar";
-
 
         return new Response($content);
     }

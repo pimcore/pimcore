@@ -246,9 +246,8 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
     public static function getByKeyLocalized($id, $create = false, $returnIdIfEmpty = false, $language = null)
     {
         if (!$language) {
-            try {
-                $language = (string) \Zend_Registry::get('Zend_Locale');
-            } catch (\Exception $e) {
+            $language = \Pimcore::getContainer()->get("pimcore.locale")->findLocale();
+            if(!$language) {
                 throw new \Exception("Couldn't determine current language.");
             }
         }
