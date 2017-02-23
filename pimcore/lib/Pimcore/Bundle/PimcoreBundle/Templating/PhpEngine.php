@@ -9,6 +9,7 @@ use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModelInterface;
 use Symfony\Bundle\FrameworkBundle\Templating\Helper\RouterHelper;
 use Symfony\Bundle\FrameworkBundle\Templating\PhpEngine as BasePhpEngine;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Templating\Helper\SlotsHelper;
 use Symfony\Component\Templating\Storage\Storage;
 
 /**
@@ -22,6 +23,7 @@ use Symfony\Component\Templating\Storage\Storage;
  * @method string getLocale()
  * @method Request getRequest()
  * @method RouterHelper router()
+ * @method SlotsHelper slots()
  *
  * @property GlobalVariables $app
  */
