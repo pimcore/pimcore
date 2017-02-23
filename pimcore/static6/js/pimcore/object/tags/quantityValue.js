@@ -93,7 +93,7 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
             queryMode: 'local'
         };
 
-        if(this.data) {
+        if(this.data && this.data.unit != null && !isNaN(this.data.unit)) {
             options.value = this.data.unit;
         } else {
             options.value = -1;
