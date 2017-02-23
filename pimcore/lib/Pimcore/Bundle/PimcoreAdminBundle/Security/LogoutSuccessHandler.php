@@ -73,9 +73,9 @@ class LogoutSuccessHandler implements LogoutSuccessHandlerInterface, LoggerAware
         Editlock::clearSession(session_id());
 
         /** @var LogoutEvent $event */
-        $event = null;
+        $event = Session::useSession(function (AttributeBagInterface $adminSession) use ($request) {
+            $event = null;
 
-        Session::useSession(function (AttributeBagInterface $adminSession) use ($request) {
             $user = $adminSession->get('user');
             if ($user && $user instanceof User) {
                 $event = new LogoutEvent($request, $user);
@@ -85,6 +85,8 @@ class LogoutSuccessHandler implements LogoutSuccessHandlerInterface, LoggerAware
             }
 
             Session::getSession()->invalidate();
+
+            return $event;
         });
 
         $response = null;
