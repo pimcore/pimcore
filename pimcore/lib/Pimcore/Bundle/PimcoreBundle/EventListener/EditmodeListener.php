@@ -76,10 +76,9 @@ class EditmodeListener implements EventSubscriberInterface
             return; // only master requests inject editmode assets
         }
 
-        $editmode = $this->editmodeResolver->isEditmode($event->getRequest());
-
-        // TODO this can be removed later
-        \Zend_Registry::set('pimcore_editmode', $editmode);
+        // trigger this once to make sure it is resolved properly (and set for legacy)
+        // TODO is this needed?
+        $this->editmodeResolver->isEditmode($event->getRequest());
     }
 
     public function onKernelResponse(FilterResponseEvent $event)
