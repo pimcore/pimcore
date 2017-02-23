@@ -5,9 +5,13 @@ namespace Pimcore\Bundle\PimcoreAdminBundle\Controller;
 use Pimcore\Bundle\PimcoreBundle\Configuration\TemplatePhp;
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModel;
 use Pimcore\Config;
+use Pimcore\Model\User;
+use Pimcore\Tool;
+use Pimcore\Tool\Authentication;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class LoginController extends AdminController
@@ -23,9 +27,7 @@ class LoginController extends AdminController
             return $this->redirectToRoute('admin_index');
         }
 
-        $view = new ViewModel([
-            'config' => Config::getSystemConfig()
-        ]);
+        $view = $this->buildLoginPageViewModel();
 
         if ($request->get('auth_failed')) {
             $view->error = 'error_auth_failed';
@@ -33,8 +35,6 @@ class LoginController extends AdminController
         if ($request->get('session_expired')) {
             $view->error = 'error_session_expired';
         }
-
-        $this->addPluginAssets($view);
 
         return $view;
     }
@@ -51,25 +51,58 @@ class LoginController extends AdminController
     }
 
     /**
-     * @param ViewModel $view
-     * @return $this
+     * @Route("/login/lostpassword", name="admin_login_lostpassword")
+     * @TemplatePhp()
      */
-    protected function addPluginAssets(ViewModel $view)
+    public function lostpasswordAction(Request $request)
     {
-        $bundleManager = $this->get('pimcore.extension.bundle_manager');
+        $view = $this->buildLoginPageViewModel();
+        $view->success = false;
 
-        $view->pluginCssPaths = $bundleManager->getCssPaths();
+        // TODO is the error on the view used somewhere?
+        if ($request->getMethod() === 'POST' && $username = $request->get("username")) {
+            $user = User::getByName($username);
 
-        return $this;
-    }
+            if (!$user instanceof User) {
+                $view->error = "user unknown";
+            } else {
+                if ($user->isActive()) {
+                    if ($user->getEmail()) {
+                        $token = Authentication::generateToken($username, $user->getPassword());
 
-    /**
-     * @Route("/login/lostpassword", name="admin_login_lost_password")
-     */
-    public function lostPasswordAction()
-    {
-        // TODO implement
-        throw new \RuntimeException('Not implemented yet');
+                        $loginUrl = $this->generateUrl('admin_login_check', [
+                            'username' => $username,
+                            'token'    => $token,
+                            'reset'    => 'true'
+                        ], UrlGeneratorInterface::ABSOLUTE_URL);
+
+                        try {
+                            // TODO trigger a symfony event
+                            $results = \Pimcore::getEventManager()->trigger("admin.login.login.lostpassword", $this, [
+                                "user" => $user,
+                                "loginUrl" => $loginUrl
+                            ]);
+
+                            if ($results->count() === 0) { // no event has been triggered
+                                $mail = Tool::getMail([$user->getEmail()], "Pimcore lost password service");
+                                $mail->setIgnoreDebugMode(true);
+                                $mail->setBodyText("Login to pimcore and change your password using the following link. This temporary login link will expire in 30 minutes: \r\n\r\n" . $loginUrl);
+                                $mail->send();
+                            }
+                            $view->success = true;
+                        } catch (\Exception $e) {
+                            $view->error = "could not send email";
+                        }
+                    } else {
+                        $view->error = "user has no email address";
+                    }
+                } else {
+                    $view->error = "user inactive";
+                }
+            }
+        }
+
+        return $view;
     }
 
     /**
@@ -97,5 +130,20 @@ class LoginController extends AdminController
                 ]);
             }
         }
+    }
+
+    /**
+     * @return ViewModel
+     */
+    protected function buildLoginPageViewModel()
+    {
+        $bundleManager = $this->get('pimcore.extension.bundle_manager');
+
+        $view = new ViewModel([
+            'config'         => Config::getSystemConfig(),
+            'pluginCssPaths' => $bundleManager->getCssPaths()
+        ]);
+
+        return $view;
     }
 }

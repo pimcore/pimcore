@@ -1,54 +1,6 @@
 <?php
 /** @var $view \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine */
-?>
-<!DOCTYPE html>
-<html>
-<head>
-
-    <title>Welcome to Pimcore!</title>
-
-    <meta charset="UTF-8">
-    <meta name="robots" content="noindex, follow"/>
-
-    <link rel="icon" type="image/png" href="/pimcore/static6/img/favicon/favicon-32x32.png"/>
-
-    <link rel="stylesheet" href="/pimcore/static6/css/login.css" type="text/css"/>
-    <script type="text/javascript" src="/pimcore/static6/js/lib/jquery.min.js"></script>
-
-    <?php foreach ($this->pluginCssPaths as $pluginCssPath): ?>
-        <link rel="stylesheet" type="text/css" href="<?= $pluginCssPath ?>?_dc=<?= $pluginDcValue; ?>"/>
-    <?php endforeach; ?>
-
-    <?php
-    // load plugin scripts
-    try {
-        $pluginBroker = $this->container()->get('pimcore.plugin_broker');
-        if ($pluginBroker instanceof \Pimcore\API\Plugin\Broker) {
-            foreach ($pluginBroker->getPlugins() as $plugin) {
-                if ($plugin->isInstalled()) {
-                    $cssPaths = $plugin->getCssPaths();
-                    if (!empty($cssPaths)) {
-                        foreach ($cssPaths as $cssPath) {
-                            $cssPath = trim($cssPath);
-                            if (!empty($cssPath)) {
-                                ?>
-                                <link rel="stylesheet" type="text/css" href="<?= $cssPath ?>?_dc=<?= time() ?>"/>
-                                <?php
-
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    } catch (\Exception $e) {
-    }
-    ?>
-
-</head>
-<body>
-
-<?php
+$view->extend('PimcoreAdminBundle:Login:layout.html.php');
 
 //detect browser
 $supported      = false;
@@ -123,7 +75,7 @@ $config = $this->config;
                 </form>
 
                 <div class="body lostpassword">
-                    <a href="<?= $view->router()->path('admin_login_lost_password') ?>" class="lostpassword"><?= $this->translate("Forgot your password"); ?>?</a>
+                    <a href="<?= $view->router()->path('admin_login_lostpassword') ?>" class="lostpassword"><?= $this->translate("Forgot your password"); ?>?</a>
                 </div>
             </div>
 
@@ -161,25 +113,22 @@ $config = $this->config;
         </div>
     </div>
 </div>
-<div id="footer">
-    &copy; 2009-<?= date("Y") ?> <a href="http://www.pimcore.org/">pimcore GmbH</a>, a proud member of the
-    <a href="http://www.elements.at/">elements group</a>
-</div>
 
-<?php if (!$config->general->loginscreencustomimage) { ?>
-    <div id="background"></div>
-    <div id="backgroundImageInfo"></div>
-<?php } ?>
+<?php $view->slots()->start('below_footer') ?>
 
-<script type="text/javascript">
-    <?php if(!$view->getParam("deeplink")) { ?>
-    // clear opened tabs store
-    localStorage.removeItem("pimcore_opentabs");
+    <?php if (!$config->general->loginscreencustomimage) { ?>
+        <div id="background"></div>
+        <div id="backgroundImageInfo"></div>
     <?php } ?>
-    $("#username").select();
-</script>
 
-<script type="text/javascript" src="https://www.pimcore.org/imageservice/"></script>
+    <script type="text/javascript">
+        <?php if(!$view->getParam("deeplink")) { ?>
+        // clear opened tabs store
+        localStorage.removeItem("pimcore_opentabs");
+        <?php } ?>
+        $("#username").select();
+    </script>
 
-</body>
-</html>
+    <script type="text/javascript" src="https://www.pimcore.org/imageservice/"></script>
+
+<?php $view->slots()->stop() ?>
