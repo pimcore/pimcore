@@ -3,11 +3,14 @@
 namespace Pimcore\Event\Admin\Login;
 
 use Pimcore\Event\AdminEvent;
+use Pimcore\Event\Traits\RequestAwareTrait;
 use Pimcore\Event\Traits\ResponseAwareTrait;
 use Pimcore\Model\User;
+use Symfony\Component\HttpFoundation\Request;
 
 class LogoutEvent extends AdminEvent
 {
+    use RequestAwareTrait;
     use ResponseAwareTrait;
 
     /**
@@ -16,11 +19,13 @@ class LogoutEvent extends AdminEvent
     protected $user;
 
     /**
+     * @param Request $request
      * @param User $user
      */
-    public function __construct(User $user)
+    public function __construct(Request $request, User $user)
     {
-        $this->user = $user;
+        $this->request = $request;
+        $this->user    = $user;
     }
 
     /**
