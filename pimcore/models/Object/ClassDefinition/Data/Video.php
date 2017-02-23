@@ -544,9 +544,12 @@ class Video extends Model\Object\ClassDefinition\Data
             }
 
             if ($value["data"]) {
-                $video->setData(Model\Element\Service::getElementById($value["data"]["type"], $value["data"]["id"]));
+                if (is_array($value["data"])) {
+                    $video->setData(Model\Element\Service::getElementById($value["data"]["type"], $value["data"]["id"]));
+                } else {
+                    $video->setData($value["data"]);
+                }
             }
-
 
             return $video;
         }
