@@ -27,6 +27,7 @@
 /legacy/*
 !legacy/.gitkeep
 !legacy/bundle
+!legacy/install-profiles
 
 # keep legacy paths ignored for easier migration
 /plugins/
