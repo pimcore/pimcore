@@ -619,6 +619,8 @@ class Tool
     }
 
     /**
+     * @deprecated Use Request::getClientIp() instead
+     *
      * @static
      * @return mixed
      */
@@ -639,6 +641,8 @@ class Tool
     }
 
     /**
+     * @deprecated Use RequestHelper::getAnonymizedClientIp() instead
+     *
      * @return string
      */
     public static function getAnonymizedClientIp()

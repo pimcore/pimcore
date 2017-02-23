@@ -24,7 +24,12 @@ services:
 
     pimcore_admin.security.guard_authenticator:
         class: Pimcore\Bundle\PimcoreAdminBundle\Security\Guard\AdminAuthenticator
-        arguments: ['@security.token_storage', '@router', '@security.http_utils']
+        arguments:
+            - '@security.token_storage'
+            - '@router'
+            - '@security.http_utils'
+            - '@pimcore_admin.security.bruteforce_protection_handler'
+
         calls:
             - [setLogger, ['@logger']]
         tags:
@@ -45,6 +50,14 @@ services:
     pimcore_admin.security.user_loader:
         class: Pimcore\Bundle\PimcoreAdminBundle\Security\User\UserLoader
         arguments: ['@pimcore_admin.security.token_storage_user_resolver', '@pimcore.http.request_helper']
+
+    pimcore_admin.security.bruteforce_protection_handler:
+        class: Pimcore\Bundle\PimcoreAdminBundle\Security\BruteforceProtectionHandler
+        arguments: ['@pimcore.http.request_helper']
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: monolog.logger, channel: security }
 
     # the services below are only needed to use the build-in http auth for webdav - not fully working yet!
     pimcore_admin.security.user_provider:

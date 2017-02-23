@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class LoginController extends AdminController
+class LoginController extends AdminController implements BruteforceProtectedControllerInterface
 {
     /**
      * @Route("/login", name="admin_login")
@@ -40,9 +40,11 @@ class LoginController extends AdminController
     }
 
     /**
-     * Dummy route used to check authentication (see guard)
+     * Dummy route used to check authentication
      *
      * @Route("/login/login", name="admin_login_check")
+     *
+     * @see AdminAuthenticator for the security implementation
      */
     public function loginCheckAction()
     {

@@ -1,13 +1,22 @@
 services:
+    #
+    # SESSION
+    #
+
     pimcore_admin.event_listener.admin_session:
         class: Pimcore\Bundle\PimcoreAdminBundle\EventListener\AdminSessionListener
         arguments: ['@service_container']
         tags:
             - { name: kernel.event_subscriber }
 
-    pimcore_admin.event_listener.http_cache:
-        class: Pimcore\Bundle\PimcoreAdminBundle\EventListener\HttpCacheListener
-        arguments: ['@pimcore.http.request_helper', '@pimcore.http.response_helper']
+
+    #
+    # SECURITY
+    #
+
+    pimcore_admin.event_listener.bruteforce_protection:
+        class: Pimcore\Bundle\PimcoreAdminBundle\EventListener\BruteforceProtectionListener
+        arguments: ['@pimcore_admin.security.bruteforce_protection_handler']
         calls:
             - [setPimcoreContextResolver, ['@pimcore.service.request.pimcore_context_resolver']]
         tags:
@@ -16,6 +25,18 @@ services:
     pimcore_admin.event_listener.authentication_double_check:
         class: Pimcore\Bundle\PimcoreAdminBundle\EventListener\AdminAuthenticationDoubleCheckListener
         arguments: ['@pimcore.service.request_matcher_factory', '%pimcode.admin.unauthenticated_routes%']
+        tags:
+            - { name: kernel.event_subscriber }
+
+    #
+    #
+    #
+
+    pimcore_admin.event_listener.http_cache:
+        class: Pimcore\Bundle\PimcoreAdminBundle\EventListener\HttpCacheListener
+        arguments: ['@pimcore.http.request_helper', '@pimcore.http.response_helper']
+        calls:
+            - [setPimcoreContextResolver, ['@pimcore.service.request.pimcore_context_resolver']]
         tags:
             - { name: kernel.event_subscriber }
 

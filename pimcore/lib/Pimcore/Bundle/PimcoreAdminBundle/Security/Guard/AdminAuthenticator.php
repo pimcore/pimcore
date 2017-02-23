@@ -2,6 +2,7 @@
 
 namespace Pimcore\Bundle\PimcoreAdminBundle\Security\Guard;
 
+use Pimcore\Bundle\PimcoreAdminBundle\Security\BruteforceProtectionHandler;
 use Pimcore\Bundle\PimcoreAdminBundle\Security\User\User;
 use Pimcore\Model\User as UserModel;
 use Pimcore\Tool\Authentication;
@@ -41,15 +42,28 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
     protected $httpUtils;
 
     /**
+     * @var BruteforceProtectionHandler
+     */
+    protected $bruteforceProtectionHandler;
+
+    /**
      * @param TokenStorageInterface $tokenStorage
      * @param RouterInterface $router
      * @param HttpUtils $httpUtils
+     * @param BruteforceProtectionHandler $bruteforceProtectionHandler
      */
-    public function __construct(TokenStorageInterface $tokenStorage, RouterInterface $router, HttpUtils $httpUtils)
+    public function __construct(
+        TokenStorageInterface $tokenStorage,
+        RouterInterface $router,
+        HttpUtils $httpUtils,
+        BruteforceProtectionHandler $bruteforceProtectionHandler
+    )
     {
         $this->tokenStorage = $tokenStorage;
         $this->router       = $router;
         $this->httpUtils    = $httpUtils;
+
+        $this->bruteforceProtectionHandler = $bruteforceProtectionHandler;
     }
 
     /**
@@ -80,6 +94,8 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
             if (!null === $username = $request->get('username')) {
                 throw new AuthenticationException('Missing username');
             }
+
+            $this->bruteforceProtectionHandler->checkProtection($username);
 
             if ($request->getMethod() === 'POST' && $password = $request->get('password')) {
                 return [
@@ -183,6 +199,8 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
      */
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
     {
+        $this->bruteforceProtectionHandler->addEntry($request->get('username'), $request);
+
         $url = $this->router->generate('admin_login', [
             'auth_failed' => 'true'
         ]);

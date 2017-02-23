@@ -88,4 +88,31 @@ class RequestHelper
 
         return false;
     }
+
+    /**
+     * Get an anonymized client IP from the request
+     *
+     * @param Request|null $request
+     * @return string
+     */
+    public function getAnonymizedClientIp(Request $request = null)
+    {
+        $request = $this->getRequest($request);
+
+        return $this->anonymizeIp($request->getClientIp());
+    }
+
+    /**
+     * Anonymize IP: replace the last octet with 255
+     *
+     * @param string $ip
+     * @return string
+     */
+    public function anonymizeIp($ip)
+    {
+        $aip = substr($ip, 0, strrpos($ip, ".") + 1);
+        $aip .= "255";
+
+        return $aip;
+    }
 }
