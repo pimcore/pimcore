@@ -1,6 +1,6 @@
 <?php
 
-namespace Pimcore;
+namespace Pimcore\Bundle\PimcoreBundle\Service;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 

@@ -59,7 +59,7 @@ services:
     #
 
     pimcore.locale:
-      class: Pimcore\Locale
+      class: Pimcore\Bundle\PimcoreBundle\Service\Locale
       arguments: ['@request_stack']
 
     #
