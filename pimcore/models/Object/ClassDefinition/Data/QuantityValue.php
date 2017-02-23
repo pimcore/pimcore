@@ -228,7 +228,7 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
 
             if(is_numeric($data["unit"])) {
 
-                if($data["unit"] == '-1' || $data['unit'] == null || empty($data['unit'])) {
+                if($data["unit"] == -1 || $data['unit'] == null || empty($data['unit'])) {
                     return new \Pimcore\Model\Object\Data\QuantityValue($data["value"], null);
                 } else {
                     return new \Pimcore\Model\Object\Data\QuantityValue($data["value"], $data["unit"]);
@@ -269,12 +269,11 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
      *
      * @param mixed $data
      * @param boolean $omitMandatoryCheck
-     * @throws Exception
+     * @throws \Exception
      */
     public function checkValidity($data, $omitMandatoryCheck = false)
     {
-        if (!$omitMandatoryCheck && $this->getMandatory() &&
-            ($data === null || $data->getValue() === null || $data->getUnitId() === null)) {
+        if (!$omitMandatoryCheck && $this->getMandatory() && ($data === null || $data->getValue() === null)) {
             throw new Model\Element\ValidationException("Empty mandatory field [ ".$this->getName()." ]");
         }
 

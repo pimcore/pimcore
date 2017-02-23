@@ -42,7 +42,7 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
 
     setData: function(data) {
         var storeData = data.data;
-        storeData.unshift({'id': "-1", 'abbreviation' : "(" + t("empty") + ")"});
+        storeData.unshift({'id': -1, 'abbreviation' : "(" + t("empty") + ")"});
 
         this.store.loadData(storeData);
 
