@@ -77,7 +77,7 @@ class RequestHelper
         ];
 
         foreach ($keys as $key) {
-            if ($request->request->has($key)) {
+            if ($request->query->get($key) || $request->request->get($key)) {
                 return true;
             }
         }
