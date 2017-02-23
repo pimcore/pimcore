@@ -41,13 +41,14 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
     },
 
     setData: function(data) {
-        this.storeData = data;
-        this.store.loadData(data.data);
+        var storeData = data.data;
+        storeData.unshift({'id': "-1", 'abbreviation' : "(" + t("empty") + ")"});
+
+        this.store.loadData(storeData);
 
         if (this.unitField) {
             this.unitField.reset();
         }
-
     },
 
     getLayoutEdit: function () {
@@ -85,7 +86,7 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
             editable: true,
             selectOnFocus: true,
             allowBlank: true,
-            forceSelection: false,
+            forceSelection: true,
             store: this.store,
             valueField: 'id',
             displayField: 'abbreviation',
@@ -94,6 +95,8 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
 
         if(this.data) {
             options.value = this.data.unit;
+        } else {
+            options.value = -1;
         }
 
         this.unitField = new Ext.form.ComboBox(options);
