@@ -10,6 +10,7 @@ use Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolver;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Asset\Dao;
 use Pimcore\Model\Document;
+use Pimcore\Model\Object\Concrete;
 use Pimcore\Model\Version;
 use Pimcore\Tool\Session;
 use Psr\Log\LoggerAwareInterface;
@@ -21,6 +22,10 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 
+/**
+ * Handles element setup logic from request. Basically this does what the init() method
+ * on the ZF frontend controller did.
+ */
 class DocumentListener implements EventSubscriberInterface, LoggerAwareInterface
 {
     use PimcoreContextAwareTrait;
@@ -105,7 +110,9 @@ class DocumentListener implements EventSubscriberInterface, LoggerAwareInterface
         if ($event->isMasterRequest()) {
             // editmode, pimcore_preview & pimcore_version
             if ($user) {
-                $document = $this->handleAdminUserParams($request, $document);
+                $document = $this->handleAdminUserDocumentParams($request, $document);
+
+                $this->handleObjectParams($request);
             }
 
             // for public versions
@@ -179,7 +186,7 @@ class DocumentListener implements EventSubscriberInterface, LoggerAwareInterface
      *
      * @return Document
      */
-    protected function handleAdminUserParams(Request $request, Document $document)
+    protected function handleAdminUserDocumentParams(Request $request, Document $document)
     {
         // editmode document
         if ($this->editmodeResolver->isEditmode($request)) {
@@ -266,5 +273,31 @@ class DocumentListener implements EventSubscriberInterface, LoggerAwareInterface
         }
 
         return $document;
+    }
+
+    /**
+     * @param Request $request
+     */
+    protected function handleObjectParams(Request $request)
+    {
+        // object preview
+        if ($request->get('pimcore_object_preview')) {
+            $key = 'object_' . $request->get('pimcore_object_preview');
+
+            $session = Session::getReadOnly('pimcore_objects');
+            if ($session->has($key)) {
+                /** @var Object|Concrete $object */
+                $object = $session->get($key);
+
+                $this->logger->debug('Loading object {object} ({objectId}) from session', [
+                    'object'   => $object->getFullPath(),
+                    'objectId' => $object->getId()
+                ]);
+
+                // TODO remove Zend_Registry
+                // add the object to the registry so every call to Object::getById() will return this object instead of the real one
+                \Zend_Registry::set("object_" . $object->getId(), $object);
+            }
+        }
     }
 }
