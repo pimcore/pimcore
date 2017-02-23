@@ -37,8 +37,10 @@ services:
             - '@pimcore_admin.security.user_loader'
         calls:
             - [setPimcoreContextResolver, ['@pimcore.service.request.pimcore_context_resolver']]
+            - [setLogger, ['@logger']]
         tags:
             - { name: kernel.event_subscriber }
+            - { name: monolog.logger, channel: init }
 
     pimcore.event_listener.frontend.hardlink_canonical_listener:
         class: Pimcore\Bundle\PimcoreBundle\EventListener\Frontend\HardlinkCanonicalListener

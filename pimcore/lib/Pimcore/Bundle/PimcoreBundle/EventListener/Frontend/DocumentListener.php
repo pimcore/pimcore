@@ -129,11 +129,19 @@ class DocumentListener implements EventSubscriberInterface, LoggerAwareInterface
         if ($request->get('v')) {
             try {
                 $version = Version::getById($request->get('v'));
-
                 if ($version->getPublic()) {
+                    $this->logger->info('Setting version to {version} for document {document}', [
+                        'version'  => $version->getId(),
+                        'document' => $document->getFullPath()
+                    ]);
+
                     $document = $version->getData();
                 }
             } catch (\Exception $e) {
+                $this->logger->notice('Failed to load {version} for document {document}', [
+                    'version'  => $request->get('v'),
+                    'document' => $document->getFullPath()
+                ]);
             }
         }
 
@@ -153,6 +161,11 @@ class DocumentListener implements EventSubscriberInterface, LoggerAwareInterface
             $document->setUsePersona(null);
 
             if ($request->get('_ptp')) {
+                $this->logger->info('Setting persona to {persona} for document {document}', [
+                    'persona'  => $request->get('_ptp'),
+                    'document' => $document->getFullPath()
+                ]);
+
                 $document->setUsePersona($request->get('_ptp'));
             }
         }
@@ -185,6 +198,10 @@ class DocumentListener implements EventSubscriberInterface, LoggerAwareInterface
             $docSession = Session::getReadOnly('pimcore_documents');
 
             if ($docSession->has($docKey)) {
+                $this->logger->debug('Loading preview document {document} from session', [
+                    'document' => $document->getFullPath()
+                ]);
+
                 // if there is a document in the session use it
                 $document = $docSession->get($docKey);
             }
@@ -196,7 +213,17 @@ class DocumentListener implements EventSubscriberInterface, LoggerAwareInterface
             try {
                 $version  = Version::getById($request->get('pimcore_version'));
                 $document = $version->getData();
+
+                $this->logger->debug('Loading version {version} for document {document} from pimcore_version parameter', [
+                    'version'  => $version->getId(),
+                    'document' => $document->getFullPath()
+                ]);
             } catch (\Exception $e) {
+                $this->logger->warning('Failed to load {version} for document {document} from pimcore_version parameter', [
+                    'version'  => $request->get('pimcore_version'),
+                    'document' => $document->getFullPath()
+                ]);
+
                 // TODO throw a less generic excdption in getById() and only catch that one here
                 throw new NotFoundHttpException($e->getMessage());
             }
@@ -216,9 +243,17 @@ class DocumentListener implements EventSubscriberInterface, LoggerAwareInterface
         $docSession = Session::getReadOnly('pimcore_documents');
 
         if ($docSession->has($docKey)) {
+            $this->logger->debug('Loading editmode document {document} from session', [
+                'document' => $document->getFullPath()
+            ]);
+
             // if there is a document in the session use it
             $document = $docSession->get($docKey);
         } else {
+            $this->logger->debug('Loading editmode document {document} from latest version', [
+                'document' => $document->getFullPath()
+            ]);
+
             // set the latest available version for editmode if there is no doc in the session
             $latestVersion = $document->getLatestVersion();
             if ($latestVersion) {
