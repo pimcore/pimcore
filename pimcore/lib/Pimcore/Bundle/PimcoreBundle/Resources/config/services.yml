@@ -50,6 +50,9 @@ services:
       class: Pimcore\Bundle\PimcoreBundle\Component\Translation\Translator
       decorates: translator
       arguments: ['@pimcore.translator.inner']
+      calls:
+        - [setKernel, ['@kernel']]
+        - [setAdminPath, ['@@PimcoreBundle/Resources/translations']]
 
 
     #

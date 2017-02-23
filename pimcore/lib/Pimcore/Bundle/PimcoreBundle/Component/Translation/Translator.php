@@ -2,6 +2,7 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\Component\Translation;
 
+use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Translation\MessageCatalogue;
 use Symfony\Component\Translation\MessageSelector;
 use Symfony\Component\Translation\TranslatorBagInterface;
@@ -20,12 +21,22 @@ class Translator implements TranslatorInterface, TranslatorBagInterface {
     /**
      * @var array
      */
-    protected $initializedCatalogues= [];
+    protected $initializedCatalogues = [];
 
     /**
      * @var MessageSelector
      */
     private $selector;
+
+    /**
+     * @var string
+     */
+    protected $adminPath = "";
+
+    /**
+     * @var Kernel
+     */
+    protected $kernel;
 
     /**
      * @param TranslatorInterface $translator The translator must implement TranslatorBagInterface
@@ -135,6 +146,23 @@ class Translator implements TranslatorInterface, TranslatorBagInterface {
 
             if (!$catalogue = Cache::load($cacheKey)) {
                 $data = ["__pimcore_dummy" => "only_a_dummy"];
+
+                if($domain == "admin") {
+                    // add json catalogue
+                    try {
+                        $jsonPath = $this->getKernel()->locateResource($this->getAdminPath() . "/" . $locale . ".json");
+                    } catch (\Exception $e) {
+                        $jsonPath = $this->getKernel()->locateResource($this->getAdminPath() . "/en.json");
+                    }
+
+                    $jsonTranslations = json_decode(file_get_contents($jsonPath), true);
+                    if(is_array($jsonTranslations)) {
+                        foreach($jsonTranslations as $jsonTranslation) {
+                            $data[$jsonTranslation["term"]] = $jsonTranslation["definition"];
+                        }
+                    }
+                }
+
                 $listClass = "\\Pimcore\\Model\\Translation\\" . ucfirst($backend) . "\\Listing";
                 $list = new $listClass();
 
@@ -207,7 +235,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface {
         }
 
         // now check for custom fallback locales, only for shared translations
-        if(empty($translated) && $domain == "messages") {
+        if(empty($translated) && ($domain == "messages" || $domain == "admin")) {
             foreach (Tool::getFallbackLanguagesFor($locale) as $fallbackLanguage) {
                 $this->lazyInitialize($domain, $fallbackLanguage);
                 $catalogue = $this->getCatalogue($fallbackLanguage);
@@ -237,6 +265,38 @@ class Translator implements TranslatorInterface, TranslatorBagInterface {
         }
 
         return false;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAdminPath()
+    {
+        return $this->adminPath;
+    }
+
+    /**
+     * @param string $adminPath
+     */
+    public function setAdminPath($adminPath)
+    {
+        $this->adminPath = $adminPath;
+    }
+
+    /**
+     * @return Kernel
+     */
+    public function getKernel()
+    {
+        return $this->kernel;
+    }
+
+    /**
+     * @param Kernel $kernel
+     */
+    public function setKernel($kernel)
+    {
+        $this->kernel = $kernel;
     }
 
     /**
