@@ -187,7 +187,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
         $inheritanceAllowed = $class->getAllowInherit();
         $inherited = false;
 
-        $items = $data->getItems();
+        $items = $data->items;
 
         foreach ($items  as $groupId => $keys) {
             foreach ($keys as $keyId => $languages) {
@@ -211,7 +211,6 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
         }
 
 
-        // TODO
         if ($inheritanceAllowed) {
             // check if there is a parent with the same type
             $parent = Object\Service::hasInheritableParentObject($object);
@@ -392,7 +391,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
         $dataString = "";
         $getter = "get" . ucfirst($this->getName());
         $classificationStore = $object->$getter();
-        $items = $classificationStore->getItems();
+        $items = $classificationStore->items;
         if ($items) {
             foreach ($items as $groupId => $keys) {
                 foreach ($keys as $keyId => $values) {
@@ -444,7 +443,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
             }
 
             $result["activeGroups" ] = $activeGroups;
-            $items = $data->getItems();
+            $items = $data->items;
 
             foreach ($items as $groupId => $groupData) {
                 $groupResult = [];
@@ -865,7 +864,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
         if (!$activeGroups) {
             return;
         }
-        $items = $data->getItems();
+        $items = $data->items;
         $validLanguages = $this->getValidLanguages();
         $errors = [];
 

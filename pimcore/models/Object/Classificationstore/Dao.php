@@ -65,7 +65,7 @@ class Dao extends Model\Dao\AbstractDao
 
         $items = $this->model->getItems();
 
-        $collectionMapping = $this->model->getGroupCollectionMappings();
+        $collectionMapping = $this->model->items;
 
 
         foreach ($items as $groupId => $group) {
