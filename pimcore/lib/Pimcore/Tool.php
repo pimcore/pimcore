@@ -165,7 +165,6 @@ class Tool
 
         $cacheKey = "system_supported_locales_" . strtolower((string) $locale);
         if (!$languageOptions = Cache::load($cacheKey)) {
-            // we use the locale here, because \Zend_Translate only supports locales not "languages"
             $languages = $localeService->getLocaleList();
 
             $languageOptions = [];

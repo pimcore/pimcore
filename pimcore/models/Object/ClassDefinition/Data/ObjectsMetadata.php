@@ -807,7 +807,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
 
         $this->visibleFieldDefinitions = [];
 
-        $t = \Zend_Registry::get("Zend_Translate");
+        $translator = \Pimcore::getContainer()->get("translator");
 
         $visibleFields = explode(',', $this->visibleFields);
         foreach ($visibleFields as $field) {
@@ -831,7 +831,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
 
                 if (!$fieldFound) {
                     $this->visibleFieldDefinitions[$field]["name"] = $field;
-                    $this->visibleFieldDefinitions[$field]["title"] = $t->translate($field);
+                    $this->visibleFieldDefinitions[$field]["title"] = $translator->trans($field, [], "admin");
                     $this->visibleFieldDefinitions[$field]["fieldtype"] = "input";
                 }
             } else {

@@ -1216,36 +1216,37 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
             $nodeConfig["description_length"] = mb_strlen($description);
 
             $qtip = "";
-            /** @var \Zend_Translate_Adapter $t */
-            $t = \Zend_Registry::get("Zend_Translate");
+
+            $translator = \Pimcore::getContainer()->get("translator");
+            
             if (mb_strlen($title) > 80) {
                 $nodeConfig["cls"] = "pimcore_document_seo_warning";
-                $qtip .= $t->translate("The title is too long, it should have 5 to 80 characters.<br>");
+                $qtip .= $translator->trans("The title is too long, it should have 5 to 80 characters.", [], "admin") . "<br>";
             }
 
             if (mb_strlen($title) < 5) {
                 $nodeConfig["cls"] = "pimcore_document_seo_warning";
-                $qtip .= $t->translate("The title is too short, it should have 5 to 80 characters.<br>");
+                $qtip .= $translator->trans("The title is too short, it should have 5 to 80 characters.", [], "admin") . "<br>";
             }
 
             if (mb_strlen($description) > 180) {
                 $nodeConfig["cls"] = "pimcore_document_seo_warning";
-                $qtip .= $t->translate("The description is too long, it should have 20 to 180 characters.<br>");
+                $qtip .= $translator->trans("The description is too long, it should have 20 to 180 characters.", [], "admin") . "<br>";
             }
 
             if (mb_strlen($description) < 20) {
                 $nodeConfig["cls"] = "pimcore_document_seo_warning";
-                $qtip .= $t->translate("The description is too short, it should have 20 to 180 characters.<br>");
+                $qtip .= $translator->trans("The description is too short, it should have 20 to 180 characters.", [], "admin") . "<br>";
             }
 
             if ($nodeConfig["h1"] != 1) {
                 $nodeConfig["cls"] = "pimcore_document_seo_warning";
-                $qtip .= sprintf($t->translate("The document should have one h1, but has %s.<br>"), $nodeConfig["h1"]);
+                $qtip .= sprintf($translator->trans("The document should have one h1, but has %s.", [], "admin"), $nodeConfig["h1"]) . "<br>";
             }
 
             if ($nodeConfig["hx"] < 1) {
                 $nodeConfig["cls"] = "pimcore_document_seo_warning";
-                $qtip .= $t->translate("The document should some headlines other than h1, but has none.<br>");
+                $qtip .= $translator->trans("The document should some headlines other than h1, but has none.", [], "admin") . "<br>";
             }
 
             if ($qtip) {

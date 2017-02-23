@@ -355,13 +355,13 @@ class Admin_PortalController extends \Pimcore\Controller\Action\Admin
 
     public function portletAnalyticsSitesAction()
     {
-        $t = \Zend_Registry::get("Zend_Translate");
+        $translator = \Pimcore::getContainer()->get("translator");
 
         $sites = new Site\Listing();
         $data = [
             [
                 "id" => 0,
-                "site" => $t->translate("main_site")
+                "site" => $translator->trans("main_site", [], "admin")
             ]
         ];
 

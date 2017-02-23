@@ -212,14 +212,14 @@ class Api
     protected static function getAnalyticsMetadataByType($type)
     {
         $data = self::getAnalyticsMetadata();
-        $t = \Zend_Registry::get("Zend_Translate");
+        $translator = \Pimcore::getContainer()->get("translator");
 
         $result = [];
         foreach ($data['items'] as $item) {
             if ($item['attributes']['type'] == $type) {
                 if (strpos($item['id'], 'XX') !== false) {
                     for ($i = 1; $i<=5; $i++) {
-                        $name = str_replace('1', $i, str_replace('01', $i, $t->translate($item['attributes']['uiName'])));
+                        $name = str_replace('1', $i, str_replace('01', $i, $translator->trans($item['attributes']['uiName'], [], "admin")));
 
                         if (in_array($item['id'], ['ga:dimensionXX', 'ga:metricXX'])) {
                             $name .= ' '.$i;
@@ -232,7 +232,7 @@ class Api
                 } else {
                     $result[] = [
                         'id'=>$item['id'],
-                        'name'=>$t->translate($item['attributes']['uiName'])
+                        'name' => $translator->trans($item['attributes']['uiName'], [], "admin")
                     ];
                 }
             }
