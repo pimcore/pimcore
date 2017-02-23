@@ -26,7 +26,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
  * Handles element setup logic from request. Basically this does what the init() method
  * on the ZF frontend controller did.
  */
-class DocumentListener implements EventSubscriberInterface, LoggerAwareInterface
+class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
 {
     use PimcoreContextAwareTrait;
     use LoggerAwareTrait;

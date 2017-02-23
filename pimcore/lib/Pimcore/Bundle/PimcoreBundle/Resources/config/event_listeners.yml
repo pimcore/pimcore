@@ -28,8 +28,8 @@ services:
     # PIMCORE OBJECTS/PARAMS LOGIC
     #
 
-    pimcore.event_listener.frontend.document_listener:
-        class: Pimcore\Bundle\PimcoreBundle\EventListener\Frontend\DocumentListener
+    pimcore.event_listener.frontend.element_listener:
+        class: Pimcore\Bundle\PimcoreBundle\EventListener\Frontend\ElementListener
         arguments:
             - '@pimcore.service.request.document_resolver'
             - '@pimcore.service.request.editmode_resolver'
