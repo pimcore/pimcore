@@ -37,7 +37,7 @@ services:
 
     pimcore_admin.security.logout_success_handler:
         class: Pimcore\Bundle\PimcoreAdminBundle\Security\LogoutSuccessHandler
-        arguments: ['@security.token_storage', '@router']
+        arguments: ['@security.token_storage', '@router', '@event_dispatcher']
         calls:
             - [setLogger, ['@logger']]
         tags:

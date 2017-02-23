@@ -2,11 +2,14 @@
 
 namespace Pimcore\Bundle\PimcoreAdminBundle\Security;
 
+use Pimcore\Event\Admin\Login\LogoutEvent;
+use Pimcore\Event\AdminEvents;
 use Pimcore\Model\Element\Editlock;
 use Pimcore\Model\User;
 use Pimcore\Tool\Session;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -37,13 +40,24 @@ class LogoutSuccessHandler implements LogoutSuccessHandlerInterface, LoggerAware
     protected $router;
 
     /**
+     * @var EventDispatcherInterface
+     */
+    protected $eventDispatcher;
+
+    /**
      * @param TokenStorage $tokenStorage
      * @param RouterInterface $router
+     * @param EventDispatcherInterface $eventDispatcher
      */
-    public function __construct(TokenStorage $tokenStorage, RouterInterface $router)
+    public function __construct(
+        TokenStorage $tokenStorage,
+        RouterInterface $router,
+        EventDispatcherInterface $eventDispatcher
+    )
     {
-        $this->tokenStorage = $tokenStorage;
-        $this->router       = $router;
+        $this->tokenStorage    = $tokenStorage;
+        $this->router          = $router;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -58,16 +72,27 @@ class LogoutSuccessHandler implements LogoutSuccessHandlerInterface, LoggerAware
         // clear open edit locks for this session
         Editlock::clearSession(session_id());
 
-        // TODO trigger admin.login.logout event
+        /** @var LogoutEvent $event */
+        $event = null;
+
         Session::useSession(function (AttributeBagInterface $adminSession) {
-            if ($adminSession->get('user') instanceof User) {
+            $user = $adminSession->get('user');
+            if ($user && $user instanceof User) {
+                $event = new LogoutEvent($user);
+                $this->eventDispatcher->dispatch(AdminEvents::LOGIN_LOGOUT, $event);
+
                 $adminSession->remove('user');
             }
 
             Session::getSession()->invalidate();
         });
 
-        $response = new RedirectResponse($this->router->generate('admin_index'));
+        $response = null;
+        if ($event && $event->hasResponse()) {
+            $response = $event->getResponse();
+        } else {
+            $response = new RedirectResponse($this->router->generate('admin_index'));
+        }
 
         // cleanup pimcore-cookies => 315554400 => strtotime('1980-01-01')
         $response->headers->setCookie(new Cookie('pimcore_opentabs', false, 315554400, '/'));

@@ -5,6 +5,8 @@ namespace Pimcore\Bundle\PimcoreAdminBundle\Controller;
 use Pimcore\Bundle\PimcoreBundle\Configuration\TemplatePhp;
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModel;
 use Pimcore\Config;
+use Pimcore\Event\Admin\Login\LostPasswordEvent;
+use Pimcore\Event\AdminEvents;
 use Pimcore\Model\User;
 use Pimcore\Tool;
 use Pimcore\Tool\Authentication;
@@ -79,18 +81,22 @@ class LoginController extends AdminController implements BruteforceProtectedCont
                         ], UrlGeneratorInterface::ABSOLUTE_URL);
 
                         try {
-                            // TODO trigger a symfony event
-                            $results = \Pimcore::getEventManager()->trigger("admin.login.login.lostpassword", $this, [
-                                "user" => $user,
-                                "loginUrl" => $loginUrl
-                            ]);
+                            $event = new LostPasswordEvent($user, $loginUrl);
+                            $this->get('event_dispatcher')->dispatch(AdminEvents::LOGIN_LOSTPASSWORD, $event);
 
-                            if ($results->count() === 0) { // no event has been triggered
+                            // only send mail if it wasn't prevented in event
+                            if ($event->getSendMail()) {
                                 $mail = Tool::getMail([$user->getEmail()], "Pimcore lost password service");
                                 $mail->setIgnoreDebugMode(true);
                                 $mail->setBodyText("Login to pimcore and change your password using the following link. This temporary login link will expire in 30 minutes: \r\n\r\n" . $loginUrl);
                                 $mail->send();
                             }
+
+                            // directly return event response
+                            if ($event->hasResponse()) {
+                                return $event->getResponse();
+                            }
+
                             $view->success = true;
                         } catch (\Exception $e) {
                             $view->error = "could not send email";
