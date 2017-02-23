@@ -76,14 +76,12 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
     public function getCredentials(Request $request)
     {
         // TODO trigger admin.login.login.authenticate event
-
-        $pimcoreUser = null;
-        if ($request->getMethod() === 'POST' && $request->attributes->get('_route') === 'admin_login') {
+        if ($request->attributes->get('_route') === 'admin_login_check') {
             if (!null === $username = $request->get('username')) {
-                return null;
+                throw new AuthenticationException('Missing username');
             }
 
-            if ($password = $request->get('password')) {
+            if ($request->getMethod() === 'POST' && $password = $request->get('password')) {
                 return [
                     'username' => $username,
                     'password' => $password
@@ -98,9 +96,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
 
             return null;
         } else {
-            $pimcoreUser = Authentication::authenticateSession();
-
-            if ($pimcoreUser) {
+            if ($pimcoreUser = Authentication::authenticateSession()) {
                 return [
                     'user' => $pimcoreUser
                 ];
@@ -187,13 +183,11 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
      */
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
     {
-        if ($request->attributes->get('_route') !== 'admin_login') {
-            $url = $this->router->generate('admin_login', [
-                'auth_failed' => true
-            ]);
+        $url = $this->router->generate('admin_login', [
+            'auth_failed' => 'true'
+        ]);
 
-            return new RedirectResponse($url);
-        }
+        return new RedirectResponse($url);
     }
 
     /**
@@ -201,8 +195,12 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
      */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
-        // as all requests run through authentication only redirect when currently on login route
-        if ($request->attributes->get('_route') !== 'admin_login') {
+        // as we authenticate statelessly (short lived sessions) the authentication is called for
+        // every request. therefore we only redirect if we're on the login page
+        if (!in_array($request->attributes->get('_route'), [
+            'admin_login',
+            'admin_login_check'
+        ])) {
             return null;
         }
 

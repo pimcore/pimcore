@@ -104,7 +104,7 @@ $config = $this->config;
         </div>
         <div id="content">
             <div id="loginform">
-                <form method="post" action="<?= $view->router()->path('admin_login') ?>" autocomplete="off">
+                <form method="post" action="<?= $view->router()->path('admin_login_check') ?>" autocomplete="off">
 
                     <?php if ($this->error) { ?>
                         <div class="body error">

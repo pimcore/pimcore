@@ -6,6 +6,7 @@ use Pimcore\Bundle\PimcoreBundle\Configuration\TemplatePhp;
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModel;
 use Pimcore\Config;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -36,6 +37,17 @@ class LoginController extends AdminController
         $this->addPluginAssets($view);
 
         return $view;
+    }
+
+    /**
+     * Dummy route used to check authentication (see guard)
+     *
+     * @Route("/login/login", name="admin_login_check")
+     */
+    public function loginCheckAction()
+    {
+        // just in case the authenticator didn't redirect
+        return new RedirectResponse($this->generateUrl('admin_login'));
     }
 
     /**
