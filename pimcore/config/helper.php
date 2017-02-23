@@ -419,9 +419,13 @@ function recursiveCopy($source, $destination)
  */
 function p_r($var)
 {
-    echo "<pre>";
-    print_r($var);
-    echo "</pre>";
+    if(function_exists("dump")) {
+        dump($var);
+    } else {
+        echo "<pre>";
+        print_r($var);
+        echo "</pre>";
+    }
 }
 
 /**
