@@ -180,7 +180,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface {
             }
 
             if ($catalogue) {
-                $this->getCatalogue()->addCatalogue($catalogue);
+                $this->getCatalogue($locale)->addCatalogue($catalogue);
             }
         }
     }
@@ -240,7 +240,10 @@ class Translator implements TranslatorInterface, TranslatorBagInterface {
                 $this->lazyInitialize($domain, $fallbackLanguage);
                 $catalogue = $this->getCatalogue($fallbackLanguage);
                 if($catalogue->has($id, $domain)) {
-                    return $catalogue->get($id, $domain);
+                    $fallbackValue = $catalogue->get($id, $domain);
+                    if($fallbackValue) {
+                        return $fallbackValue;
+                    }
                 }
             }
 
