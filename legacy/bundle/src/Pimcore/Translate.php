@@ -42,11 +42,6 @@ class Translate extends \Zend_Translate_Adapter
 
         $locale = (string) $locale;
 
-        parent::__construct([
-            "locale" => $locale,
-            "content" => []
-        ]);
-
         $this->translator = \Pimcore::getContainer()->get("translator");
     }
 
@@ -79,7 +74,11 @@ class Translate extends \Zend_Translate_Adapter
     public function translate($messageId, $locale = null)
     {
         if(!$locale) {
-            $locale = $this->getLocale();
+            if (\Zend_Registry::isRegistered("Zend_Locale")) {
+                $locale = (string) \Zend_Registry::get("Zend_Locale");
+            } else {
+                $locale = $this->getLocale();
+            }
         }
 
         $term = $this->translator->trans($messageId, [], static::$domain, $locale);
