@@ -117,3 +117,19 @@ services:
         arguments: ['@pimcore.service.request.editmode_resolver']
         tags:
             - { name: templating.helper, alias: cache }
+
+    pimcore.templating.view_helper.translate:
+      class: Pimcore\Bundle\PimcoreBundle\Templating\Helper\Translate
+      arguments: ['@pimcore.translator']
+      tags:
+            - { name: templating.helper, alias: translate }
+      calls:
+        - [setDomain, ['messages']]
+
+    pimcore.templating.view_helper.translateAdmin:
+      class: Pimcore\Bundle\PimcoreBundle\Templating\Helper\Translate
+      arguments: ['@pimcore.translator']
+      tags:
+            - { name: templating.helper, alias: translateAdmin }
+      calls:
+        - [setDomain, ['admin']]
