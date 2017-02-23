@@ -1,18 +1,16 @@
 <?php
 
-namespace Pimcore\Bundle\PimcoreBundle\EventListener;
+namespace Pimcore\Bundle\PimcoreBundle\EventListener\Frontend;
 
-use Pimcore\Bundle\PimcoreBundle\EventListener\AbstractEventListener\ResponseInjection;
-use Pimcore\Google\Analytics as AnalyticsHelper;
+use Pimcore\Bundle\PimcoreBundle\EventListener\Traits\ResponseInjectionTrait;
 use Symfony\Bundle\FrameworkBundle\Translation\Translator;
-use Symfony\Component\Config\FileLocator;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Kernel;
-use Symfony\Component\HttpKernel\KernelEvents;
 
-class CookiePolicyNotice extends ResponseInjection
+class CookiePolicyNoticeListener extends AbstractFrontendListener
 {
+    use ResponseInjectionTrait;
+
     /**
      * @var bool
      */
@@ -87,9 +85,10 @@ class CookiePolicyNotice extends ResponseInjection
     /**
      * @param string $path
      */
-    public function loadTemplateFromResource($path) {
+    public function loadTemplateFromResource($path)
+    {
         $templateFile = $this->kernel->locateResource($path);
-        if(file_exists($templateFile)) {
+        if (file_exists($templateFile)) {
             $this->setTemplateCode(file_get_contents($templateFile));
         }
     }
@@ -115,37 +114,37 @@ class CookiePolicyNotice extends ResponseInjection
      */
     public function onKernelResponse(FilterResponseEvent $event)
     {
-        $request = $event->getRequest();
+        $request  = $event->getRequest();
         $response = $event->getResponse();
-        $config = \Pimcore\Config::getSystemConfig();
-        $locale = $request->getLocale();
+        $config   = \Pimcore\Config::getSystemConfig();
+        $locale   = $request->getLocale();
 
         if ($this->enabled && $config->general->show_cookie_notice && \Pimcore\Tool::useFrontendOutputFilters()) {
             if ($event->isMasterRequest() && $this->isHtmlResponse($response)) {
 
-                    $template = $this->getTemplateCode();
+                $template = $this->getTemplateCode();
 
-                    // cleanup code
-                    $template = preg_replace('/[\r\n\t]+/', ' ', $template); //remove new lines, spaces, tabs
-                    $template = preg_replace('/>[\s]+</', '><', $template); //remove new lines, spaces, tabs
-                    $template = preg_replace('/[\s]+/', ' ', $template); //remove new lines, spaces, tabs
+                // cleanup code
+                $template = preg_replace('/[\r\n\t]+/', ' ', $template); //remove new lines, spaces, tabs
+                $template = preg_replace('/>[\s]+</', '><', $template); //remove new lines, spaces, tabs
+                $template = preg_replace('/[\s]+/', ' ', $template); //remove new lines, spaces, tabs
 
-                    $translations = $this->getTranslations($locale);
+                $translations = $this->getTranslations($locale);
 
-                    foreach ($translations as $key => &$value) {
-                        $value = htmlentities($value, ENT_COMPAT, "UTF-8");
-                        $template = str_replace("%" . $key . "%", $value, $template);
-                    }
+                foreach ($translations as $key => &$value) {
+                    $value    = htmlentities($value, ENT_COMPAT, "UTF-8");
+                    $template = str_replace("%" . $key . "%", $value, $template);
+                }
 
-                    $linkContent = "";
-                    if (array_key_exists("linkTarget", $translations)) {
-                        $linkContent = '<a href="' . $translations["linkTarget"] . '" data-content="' . $translations["linkText"] . '"></a>';
-                    }
-                    $template = str_replace("%link%", $linkContent, $template);
+                $linkContent = "";
+                if (array_key_exists("linkTarget", $translations)) {
+                    $linkContent = '<a href="' . $translations["linkTarget"] . '" data-content="' . $translations["linkText"] . '"></a>';
+                }
+                $template = str_replace("%link%", $linkContent, $template);
 
-                    $templateCode = json_encode($template);
+                $templateCode = json_encode($template);
 
-                    $code = '
+                $code = '
                         <script>
                             (function () {
                                 var ls = window["localStorage"];
@@ -174,7 +173,7 @@ class CookiePolicyNotice extends ResponseInjection
                 // this method is much faster than using simple_html_dom and uses less memory
                 $headEndPosition = stripos($content, "</head>");
                 if ($headEndPosition !== false) {
-                    $content = substr_replace($content, $code."</head>", $headEndPosition, 7);
+                    $content = substr_replace($content, $code . "</head>", $headEndPosition, 7);
                 }
 
                 $response->setContent($content);
@@ -192,7 +191,7 @@ class CookiePolicyNotice extends ResponseInjection
 
         // most common translations
         $defaultTranslations = [
-            "text" => [
+            "text"     => [
                 "en" => "Cookies help us deliver our services. By using our services, you agree to our use of cookies.",
                 "de" => "Cookies helfen uns bei der Bereitstellung unserer Dienste. Durch die Nutzung unserer Dienste erklären Sie sich mit dem Einsatz von Cookies einverstanden.",
                 "it" => "I cookie ci aiutano a fornire i nostri servizi. Utilizzando tali servizi, accetti l'utilizzo dei cookie da parte.",
@@ -248,7 +247,7 @@ class CookiePolicyNotice extends ResponseInjection
                 "lt" => "Sužinoti daugiau",
                 "ro" => "Aflați mai multe",
             ],
-            "ok" => [
+            "ok"       => [
                 "en" => "OK",
                 "de" => "Ok",
                 "it" => "Ho capito",
@@ -284,7 +283,7 @@ class CookiePolicyNotice extends ResponseInjection
         if ($this->getTranslator()) {
             foreach (["text", "linkText", "ok", "linkTarget"] as $key) {
                 $translationKey = "cookie-policy-" . $key;
-                $translation = $this->getTranslator()->trans($translationKey);
+                $translation    = $this->getTranslator()->trans($translationKey);
                 if ($translation != $translationKey) {
                     $translations[$key] = $translation;
                 }

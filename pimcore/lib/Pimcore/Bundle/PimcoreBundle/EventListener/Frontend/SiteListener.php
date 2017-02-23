@@ -1,6 +1,6 @@
 <?php
 
-namespace Pimcore\Bundle\PimcoreBundle\EventListener;
+namespace Pimcore\Bundle\PimcoreBundle\EventListener\Frontend;
 
 use Pimcore\Config;
 use Pimcore\Http\RequestHelper;
@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class SiteListener implements EventSubscriberInterface
+class SiteListener extends AbstractFrontendListener implements EventSubscriberInterface
 {
     /**
      * @var RequestHelper

@@ -1,15 +1,14 @@
 <?php
 
-namespace Pimcore\Bundle\PimcoreBundle\EventListener;
+namespace Pimcore\Bundle\PimcoreBundle\EventListener\Frontend;
 
-use Pimcore\Bundle\PimcoreBundle\EventListener\AbstractEventListener\ResponseInjection;
-use Pimcore\Google\Analytics as AnalyticsHelper;
+use Pimcore\Bundle\PimcoreBundle\EventListener\AbstractResponseInjectionListener;
+use Pimcore\Bundle\PimcoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
+use Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolverAwareInterface;
 use Pimcore\Tool;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\HttpKernel\KernelEvents;
 
-class InternalWysiwygHtmlAttributeFilter extends ResponseInjection
+class InternalWysiwygHtmlAttributeFilterListener extends AbstractFrontendListener
 {
     /**
      * @var bool

@@ -1,18 +1,15 @@
 <?php
 
-namespace Pimcore\Bundle\PimcoreBundle\EventListener;
+namespace Pimcore\Bundle\PimcoreBundle\EventListener\Frontend;
 
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
-use Symfony\Component\HttpKernel\Event\KernelEvent;
-use Symfony\Component\HttpKernel\KernelEvents;
-use Pimcore\Tool;
 use Pimcore\Cache as CacheManager;
 use Pimcore\Logger;
+use Pimcore\Tool;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\KernelEvent;
 
-class FullPageCacheListener
+class FullPageCacheListener extends AbstractFrontendListener
 {
     /**
      * @var bool

@@ -3,7 +3,6 @@
 namespace Pimcore\Bundle\PimcoreBundle\EventListener\Frontend;
 
 use Pimcore\API\Bundle\PimcoreBundleManager;
-use Pimcore\Bundle\PimcoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Bundle\PimcoreBundle\Service\Request\DocumentResolver;
 use Pimcore\Bundle\PimcoreBundle\Service\Request\EditmodeResolver;
 use Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolver;
@@ -22,9 +21,8 @@ use Symfony\Component\HttpKernel\KernelEvents;
 /**
  * Modifies responses for editmode
  */
-class EditmodeListener implements EventSubscriberInterface
+class EditmodeListener extends AbstractFrontendListener implements EventSubscriberInterface
 {
-    use PimcoreContextAwareTrait;
     use LoggerAwareTrait;
 
     /**
@@ -54,7 +52,11 @@ class EditmodeListener implements EventSubscriberInterface
      * @param DocumentResolver $documentResolver
      * @param PimcoreBundleManager $bundleManager
      */
-    public function __construct(EditmodeResolver $editmodeResolver, DocumentResolver $documentResolver, PimcoreBundleManager $bundleManager)
+    public function __construct(
+        EditmodeResolver $editmodeResolver,
+        DocumentResolver $documentResolver,
+        PimcoreBundleManager $bundleManager
+    )
     {
         $this->editmodeResolver = $editmodeResolver;
         $this->documentResolver = $documentResolver;

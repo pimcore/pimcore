@@ -1,10 +1,10 @@
 <?php
 
-namespace Pimcore\Bundle\PimcoreBundle\EventListener\AbstractEventListener;
+namespace Pimcore\Bundle\PimcoreBundle\EventListener\Traits;
 
 use Symfony\Component\HttpFoundation\Response;
 
-abstract class ResponseInjection
+trait ResponseInjectionTrait
 {
     /**
      * @param Response $response

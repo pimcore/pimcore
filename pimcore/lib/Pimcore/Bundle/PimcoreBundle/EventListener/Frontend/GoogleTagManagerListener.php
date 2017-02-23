@@ -1,16 +1,15 @@
 <?php
 
-namespace Pimcore\Bundle\PimcoreBundle\EventListener;
+namespace Pimcore\Bundle\PimcoreBundle\EventListener\Frontend;
 
-use Pimcore\Bundle\PimcoreBundle\EventListener\AbstractEventListener\ResponseInjection;
-use Pimcore\Google\Analytics as AnalyticsHelper;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\HttpKernel\KernelEvents;
+use Pimcore\Bundle\PimcoreBundle\EventListener\Traits\ResponseInjectionTrait;
 use Pimcore\Tool;
+use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 
-class GoogleTagManager extends ResponseInjection
+class GoogleTagManagerListener extends AbstractFrontendListener
 {
+    use ResponseInjectionTrait;
+
     /**
      * @var bool
      */

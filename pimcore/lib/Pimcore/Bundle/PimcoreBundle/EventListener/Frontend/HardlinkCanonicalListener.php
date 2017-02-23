@@ -2,7 +2,6 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\EventListener\Frontend;
 
-use Pimcore\Bundle\PimcoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Bundle\PimcoreBundle\Service\Request\DocumentResolver;
 use Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolver;
 use Pimcore\Model\Document;
@@ -18,10 +17,8 @@ use Symfony\Component\HttpKernel\KernelEvents;
 /**
  * Sets canonical headers for hardlink documents
  */
-class HardlinkCanonicalListener implements EventSubscriberInterface
+class HardlinkCanonicalListener extends AbstractFrontendListener implements EventSubscriberInterface
 {
-    use PimcoreContextAwareTrait;
-
     /**
      * @var DocumentResolver
      */

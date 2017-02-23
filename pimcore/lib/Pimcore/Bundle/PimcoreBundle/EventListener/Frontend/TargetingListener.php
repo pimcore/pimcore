@@ -1,19 +1,18 @@
 <?php
 
-namespace Pimcore\Bundle\PimcoreBundle\EventListener;
+namespace Pimcore\Bundle\PimcoreBundle\EventListener\Frontend;
 
-use Pimcore\Bundle\PimcoreBundle\EventListener\AbstractEventListener\ResponseInjection;
+use Pimcore\Bundle\PimcoreBundle\EventListener\Traits\ResponseInjectionTrait;
 use Pimcore\Bundle\PimcoreBundle\Service\Request\DocumentResolver;
-use Pimcore\Google\Analytics as AnalyticsHelper;
-use Pimcore\Tool;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\HttpKernel\KernelEvents;
-use Pimcore\Model\Document;
 use Pimcore\Model;
+use Pimcore\Model\Document;
+use Pimcore\Tool;
+use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 
-class Targeting extends ResponseInjection
+class TargetingListener extends AbstractFrontendListener
 {
+    use ResponseInjectionTrait;
+
     /**
      * @var bool
      */

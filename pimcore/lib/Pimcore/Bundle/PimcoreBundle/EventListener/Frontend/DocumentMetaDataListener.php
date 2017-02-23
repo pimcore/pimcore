@@ -12,10 +12,12 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Bundle\PimcoreBundle\EventListener;
+namespace Pimcore\Bundle\PimcoreBundle\EventListener\Frontend;
 
+use Pimcore\Bundle\PimcoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Bundle\PimcoreBundle\Service\Document\DocumentService;
 use Pimcore\Bundle\PimcoreBundle\Service\Request\DocumentResolver as DocumentResolverService;
+use Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolverAwareInterface;
 use Pimcore\Bundle\PimcoreBundle\Templating\Helper\HeadMeta;
 use Pimcore\Model\Document\Page;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -26,7 +28,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 /**
  * Adds Meta Data entries of document to HeadMeta view helper
  */
-class DocumentMetaDataListener implements EventSubscriberInterface
+class DocumentMetaDataListener extends AbstractFrontendListener implements EventSubscriberInterface
 {
     /**
      * @var DocumentResolverService
@@ -38,16 +40,14 @@ class DocumentMetaDataListener implements EventSubscriberInterface
      */
     protected $headMeta;
 
-
     /**
-     * @param DocumentService $documentService
      * @param DocumentResolverService $documentResolverService
-     * @param RequestStack $requestStack
+     * @param HeadMeta $headMeta
      */
     public function __construct(DocumentResolverService $documentResolverService, HeadMeta $headMeta)
     {
         $this->documentResolverService = $documentResolverService;
-        $this->headMeta = $headMeta;
+        $this->headMeta                = $headMeta;
     }
 
     /**

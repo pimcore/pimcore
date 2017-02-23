@@ -2,18 +2,15 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\EventListener;
 
-use Pimcore\Bundle\PimcoreBundle\EventListener\AbstractEventListener\ResponseInjection;
-use Pimcore\Google\Analytics as AnalyticsHelper;
-use Pimcore\Tool;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Pimcore\Bundle\PimcoreBundle\EventListener\Traits\ResponseInjectionTrait;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\Kernel;
-use Symfony\Component\HttpKernel\KernelEvents;
 
-class MaintenancePage extends ResponseInjection
+class MaintenancePageListener
 {
+    use ResponseInjectionTrait;
+
     /**
      * @var Kernel
      */

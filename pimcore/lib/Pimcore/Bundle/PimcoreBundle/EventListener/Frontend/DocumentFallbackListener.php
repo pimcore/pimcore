@@ -1,9 +1,10 @@
 <?php
 
-namespace Pimcore\Bundle\PimcoreBundle\EventListener;
+namespace Pimcore\Bundle\PimcoreBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\PimcoreBundle\Service\Document\DocumentService;
 use Pimcore\Bundle\PimcoreBundle\Service\Request\DocumentResolver as DocumentResolverService;
+use Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolver;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
@@ -16,7 +17,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
  *  - if request is a sub-request, try to read document from master request
  *  - if all fails, try to find the nearest document by path
  */
-class DocumentFallbackListener implements EventSubscriberInterface
+class DocumentFallbackListener extends AbstractFrontendListener implements EventSubscriberInterface
 {
     /**
      * @var DocumentService
@@ -63,6 +64,9 @@ class DocumentFallbackListener implements EventSubscriberInterface
     public function onKernelRequest(GetResponseEvent $event)
     {
         $request = $event->getRequest();
+        if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
+            return;
+        }
 
         if ($this->documentResolverService->getDocument($request)) {
             // we already have a document (e.g. set through the document router)
