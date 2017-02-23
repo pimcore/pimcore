@@ -20,13 +20,6 @@ use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 abstract class Kernel extends \Symfony\Component\HttpKernel\Kernel
 {
     /**
-     * Determines if the ZF1 stack should still be supported
-     *
-     * @var bool
-     */
-    protected $legacySupport = true;
-
-    /**
      * Returns an array of bundles to register.
      *
      * @return BundleInterface[] An array of bundle instances
@@ -82,10 +75,6 @@ abstract class Kernel extends \Symfony\Component\HttpKernel\Kernel
         // force load config
         $config = \Pimcore::initConfiguration();
 
-        if ($this->legacySupport) {
-            $this->setupTempDirectories();
-        }
-
         // init bundles
         $this->initializeBundles();
 
@@ -108,10 +97,6 @@ abstract class Kernel extends \Symfony\Component\HttpKernel\Kernel
         foreach ($this->getBundles() as $bundle) {
             $bundle->setContainer($this->container);
             $bundle->boot();
-        }
-
-        if ($config) {
-            $this->initializePlugins();
         }
 
         $this->booted = true;
@@ -156,25 +141,6 @@ abstract class Kernel extends \Symfony\Component\HttpKernel\Kernel
             $m = "pimcore requires at least PHP version 5.6.0 your PHP version is: " . PHP_VERSION;
             Tool::exitWithError($m);
         }
-    }
-
-    /**
-     * Try to set tmp directoy into superglobals, ZF and other frameworks (PEAR) sometimes relies on that
-     */
-    public function setupTempDirectories()
-    {
-        foreach (['TMPDIR', 'TEMP', 'TMP', 'windir', 'SystemRoot'] as $key) {
-            $_ENV[$key] = PIMCORE_CACHE_DIRECTORY;
-            $_SERVER[$key] = PIMCORE_CACHE_DIRECTORY;
-        }
-    }
-
-    /**
-     * Initialize legacy plugins
-     */
-    protected function initializePlugins()
-    {
-        \Pimcore\Legacy::initPlugins(); // TODO move somewhere else?
     }
 
     /**

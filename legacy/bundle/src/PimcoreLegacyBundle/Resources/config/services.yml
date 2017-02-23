@@ -1,4 +1,8 @@
 services:
+    pimcore.legacy_kernel:
+        class: PimcoreLegacyBundle\HttpKernel\Kernel
+        arguments: ['@kernel']
+
     # executes ZF1 view helpers
     pimcore.legacy.zend_view_helper_bridge:
         class: PimcoreLegacyBundle\Zend\View\ViewHelperBridge

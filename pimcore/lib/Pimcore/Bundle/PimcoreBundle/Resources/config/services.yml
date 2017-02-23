@@ -1,8 +1,4 @@
 services:
-    pimcore.legacy_kernel:
-        class: Pimcore\Bundle\PimcoreBundle\HttpKernel\LegacyKernel
-        arguments: ['@kernel']
-
     pimcore.mvc_config_normalizer:
         class: Pimcore\Bundle\PimcoreBundle\Service\MvcConfigNormalizer
         arguments: ['@kernel']

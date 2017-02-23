@@ -1,6 +1,6 @@
 <?php
 
-namespace Pimcore\Bundle\PimcoreBundle\HttpKernel;
+namespace PimcoreLegacyBundle\HttpKernel;
 
 use Pimcore\Cache;
 use Pimcore\Config;
@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 
-class LegacyKernel implements KernelInterface
+class Kernel implements KernelInterface
 {
     /**
      * @var KernelInterface
@@ -56,8 +56,13 @@ class LegacyKernel implements KernelInterface
     public function boot()
     {
         if (!$this->booted) {
+
+            $this->setupTempDirectories();
+
             // initialize cache
             Cache::init();
+
+            $this->initializePlugins();
 
             // prepare the ZF MVC stack - needed for more advanced view helpers like action()
             \Pimcore\Legacy::prepareMvc(true);
@@ -68,6 +73,25 @@ class LegacyKernel implements KernelInterface
             $front->setResponse(new \Zend_Controller_Response_Http());
 
             $this->booted = true;
+        }
+    }
+
+    /**
+     * Initialize legacy plugins
+     */
+    protected function initializePlugins()
+    {
+        \Pimcore\Legacy::initPlugins(); // TODO move somewhere else?
+    }
+
+    /**
+     * Try to set tmp directoy into superglobals, ZF and other frameworks (PEAR) sometimes relies on that
+     */
+    public function setupTempDirectories()
+    {
+        foreach (['TMPDIR', 'TEMP', 'TMP', 'windir', 'SystemRoot'] as $key) {
+            $_ENV[$key] = PIMCORE_CACHE_DIRECTORY;
+            $_SERVER[$key] = PIMCORE_CACHE_DIRECTORY;
         }
     }
 
