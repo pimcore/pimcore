@@ -63,9 +63,9 @@ class Dao extends Model\Dao\AbstractDao
             . " AND " . $this->db->quoteInto("fieldname = ?", $fieldname);
         $this->db->delete($dataTable, $condition);
 
-        $items = $this->model->getItems();
+        $items = $this->model->items;
 
-        $collectionMapping = $this->model->items;
+        $collectionMapping = $this->model->getGroupCollectionMappings();
 
 
         foreach ($items as $groupId => $group) {
