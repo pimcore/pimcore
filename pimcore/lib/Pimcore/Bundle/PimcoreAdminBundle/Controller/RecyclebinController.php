@@ -2,7 +2,6 @@
 
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller;
 use Pimcore\Bundle\PimcoreBundle\Controller\EventedControllerInterface;
-use Pimcore\Controller\Action\Helper\Json;
 use Pimcore\Model\Element\Recyclebin;
 use Pimcore\Model\Element;
 use Symfony\Component\HttpFoundation\JsonResponse;
