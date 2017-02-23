@@ -22,5 +22,5 @@ class Website extends Translate
     /**
      * @var string
      */
-    protected static $backend = "\\Pimcore\\Model\\Translation\\Website";
+    protected static $domain = "messages";
 }

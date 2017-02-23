@@ -22,5 +22,5 @@ class Admin extends Translate
     /**
      * @var string
      */
-    protected static $backend = "\\Pimcore\\Model\\Translation\\Admin";
+    protected static $domain = "admin";
 }
