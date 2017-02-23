@@ -254,7 +254,7 @@ class Logger
      */
     public static function emergency($m, $context = [])
     {
-         self::log($m, "emergency", $context);
+        self::log($m, "emergency", $context);
     }
 
     /**

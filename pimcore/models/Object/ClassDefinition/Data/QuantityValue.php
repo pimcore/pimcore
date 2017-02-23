@@ -225,15 +225,14 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
         if ($data["value"] || $data["unit"]) {
-
-            if(is_numeric($data["unit"])) {
-
-                if($data["unit"] == '-1' || $data['unit'] == null || empty($data['unit'])) {
+            if (is_numeric($data["unit"])) {
+                if ($data["unit"] == '-1' || $data['unit'] == null || empty($data['unit'])) {
                     return new \Pimcore\Model\Object\Data\QuantityValue($data["value"], null);
                 } else {
                     return new \Pimcore\Model\Object\Data\QuantityValue($data["value"], $data["unit"]);
                 }
             }
+
             return;
         }
 
@@ -284,8 +283,8 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
                 throw new Model\Element\ValidationException("Invalid dimension unit data " . $this->getName());
             }
 
-            if(!empty($data->getUnitId())) {
-                if(!is_numeric($data->getUnitId())) {
+            if (!empty($data->getUnitId())) {
+                if (!is_numeric($data->getUnitId())) {
                     throw new Model\Element\ValidationException("Unit id has to be empty or numeric " . $data->getUnitId());
                 }
             }
