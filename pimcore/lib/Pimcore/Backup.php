@@ -149,7 +149,7 @@ class Backup
             $this->zipArchive = null;
         }
 
-        return formatBytes(filesize($this->getBackupFile()));
+        return @formatBytes(filesize($this->getBackupFile()));
     }
 
     /**
@@ -250,7 +250,7 @@ class Backup
 
 
             // check permissions
-            $filesIn = rscandir(PIMCORE_DOCUMENT_ROOT . "/");
+            $filesIn = rscandir(PIMCORE_PROJECT_ROOT . "/");
             clearstatcache();
 
             foreach ($filesIn as $fileIn) {
@@ -312,13 +312,20 @@ class Backup
         $files = $filesContainer[$step];
 
         $excludePatterns = [
-            PIMCORE_FRONTEND_MODULE . "/var/backup/.*",
-            PIMCORE_FRONTEND_MODULE . "/var/cache/.*",
-            PIMCORE_FRONTEND_MODULE . "/var/log/.*",
-            PIMCORE_FRONTEND_MODULE . "/var/system/.*",
-            PIMCORE_FRONTEND_MODULE . "/var/tmp/.*",
-            PIMCORE_FRONTEND_MODULE . "/var/webdav/.*"
+            "/.editorconfig.*",
+            "/.git.*",
+            "/.travis.*",
+            "/var/assets/tmp/.*",
+            "/web/var/assets/tmp/.*",
+             "/var/backup/.*",
+            "/var/cache/.*",
+            "/var/log/.*",
+            "/var/system/.*",
+            "/var/tmp/.*",
+            "/var/webdav/.*"
         ];
+
+        //TODO composer ?
 
         if (!empty($this->additionalExcludePatterns) && is_array($this->additionalExcludePatterns)) {
             $excludePatterns = array_merge($excludePatterns, $this->additionalExcludePatterns);
@@ -334,7 +341,7 @@ class Backup
             if ($file) {
                 if (file_exists($file) && is_readable($file)) {
                     $exclude = false;
-                    $relPath = str_replace(PIMCORE_DOCUMENT_ROOT, "", $file);
+                    $relPath = str_replace(PIMCORE_PROJECT_ROOT, "", $file);
                     $relPath = str_replace(DIRECTORY_SEPARATOR, "/", $relPath); // windows compatibility
 
                     foreach ($excludePatterns as $pattern) {
@@ -508,20 +515,21 @@ class Backup
      */
     public function complete()
     {
-        $this->getArchive()->addFromString(PIMCORE_FRONTEND_MODULE . "/var/cache/.dummy", "dummy");
-        $this->getArchive()->addFromString(PIMCORE_FRONTEND_MODULE . "/var/tmp/.dummy", "dummy");
-        $this->getArchive()->addFromString(PIMCORE_FRONTEND_MODULE . "/var/backup/.dummy", "dummy");
-        $this->getArchive()->addFromString(PIMCORE_FRONTEND_MODULE . "/var/log/.dummy", "dummy");
-        $this->getArchive()->addFromString(PIMCORE_FRONTEND_MODULE . "/var/system/.dummy", "dummy");
-        $this->getArchive()->addFromString(PIMCORE_FRONTEND_MODULE . "/var/webdav/.dummy", "dummy");
-        $this->getArchive()->addFromString(PIMCORE_FRONTEND_MODULE . "/var/log/debug.log", "dummy");
+        $this->getArchive()->addFromString("var/cache/.dummy", "dummy");
+        $this->getArchive()->addFromString("var/tmp/.dummy", "dummy");
+        $this->getArchive()->addFromString("var/backup/.dummy", "dummy");
+        $this->getArchive()->addFromString("var/log/.dummy", "dummy");
+        $this->getArchive()->addFromString("var/system/.dummy", "dummy");
+        $this->getArchive()->addFromString("var/webdav/.dummy", "dummy");
+        $this->getArchive()->addFromString("var/log/dev.log", "dummy");
+        $this->getArchive()->addFromString("var/log/prod.log", "dummy");
 
-        $this->getArchive()->addFile(PIMCORE_DOCUMENT_ROOT . "/index.php", "index.php");
-        $this->getArchive()->addFile(PIMCORE_DOCUMENT_ROOT . "/.htaccess", ".htaccess");
+        $this->getArchive()->addFile(PIMCORE_PROJECT_ROOT . "/index.php", "index.php");
+        $this->getArchive()->addFile(PIMCORE_PROJECT_ROOT . "/.htaccess", ".htaccess");
 
         return [
             "success" => true,
-            "download" => str_replace(PIMCORE_DOCUMENT_ROOT, "", $this->getBackupFile()),
+            "download" => str_replace(PIMCORE_PROJECT_ROOT, "", $this->getBackupFile()),
             "filesystem" => $this->getBackupFile()
         ];
     }
