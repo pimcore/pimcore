@@ -207,8 +207,8 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
         }
 
         $url = null;
-        if ($request->get('deeplink')) {
-            $url = $this->router->generate('admin_deeplink');
+        if ($request->get('deeplink') && $request->get('deeplink') !== 'true') {
+            $url = $this->router->generate('admin_login_deeplink');
             $url .= '?' . $request->get('deeplink');
         } else {
             $url = $this->router->generate('admin_index', [

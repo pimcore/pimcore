@@ -62,10 +62,28 @@ class LoginController extends AdminController
 
     /**
      * @Route("/login/deeplink", name="admin_login_deeplink")
+     * @TemplatePhp()
      */
     public function deeplinkAction()
     {
-        // TODO implement
-        throw new \RuntimeException('Not implemented yet');
+        // check for deeplink
+        $queryString = $_SERVER["QUERY_STRING"];
+
+        if (preg_match("/(document|asset|object)_([0-9]+)_([a-z]+)/", $queryString, $deeplink)) {
+            if (strpos($queryString, "token")) {
+                $deeplink = $deeplink[0];
+                $url = $this->generateUrl('admin_login', [
+                    'deeplink' => $deeplink
+                ]);
+
+                $url .= '&' . $queryString;
+
+                return $this->redirect($url);
+            } elseif ($queryString) {
+                return new ViewModel([
+                    'tab' => $queryString
+                ]);
+            }
+        }
     }
 }
