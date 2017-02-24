@@ -42,7 +42,7 @@ class DelegatingTagHandler implements TagHandlerInterface
 
         throw new NotFoundException(sprintf(
             'No handler found for view type %s',
-            get_class($view)
+            $view ? get_class($view) : 'null'
         ));
     }
 
@@ -54,13 +54,15 @@ class DelegatingTagHandler implements TagHandlerInterface
      */
     public function getHandlerForTag(Tag $tag)
     {
+        $view = $tag->getView();
+
         try {
-            return $this->getHandlerForView($tag->getView());
+            return $this->getHandlerForView($view);
         } catch (NotFoundException $e) {
             throw new NotFoundException(sprintf(
-                'No handler found for tag %s',
+                'No handler found for tag %s and view type %s',
                 $tag->getName(),
-                get_class($tag->getView())
+                $view ? get_class($view) : 'null'
             ), 0, $e);
         }
     }
