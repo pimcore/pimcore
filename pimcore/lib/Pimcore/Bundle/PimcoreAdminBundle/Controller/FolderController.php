@@ -1,35 +1,29 @@
 <?php
-/**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in
- * LICENSE.md which is distributed with this source code.
- *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
- */
 
+namespace Pimcore\Bundle\PimcoreAdminBundle\Controller;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Logger;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
-class Admin_FolderController extends \Pimcore\Controller\Action\Admin\Document
+class FolderController extends \Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminController
 {
-    public function getDataByIdAction()
+    /**
+     * @Route("/folder/get-data-by-id")
+     * @param Request $request
+     */
+    public function getDataByIdAction(Request $request)
     {
-
         // check for lock
-        if (Element\Editlock::isLocked($this->getParam("id"), "document")) {
-            $this->_helper->json([
-                "editlock" => Element\Editlock::getByElement($this->getParam("id"), "document")
+        if (Element\Editlock::isLocked($request->get("id"), "document")) {
+            return $this->json([
+                "editlock" => Element\Editlock::getByElement($request->get("id"), "document")
             ]);
         }
-        Element\Editlock::lock($this->getParam("id"), "document");
+        Element\Editlock::lock($request->get("id"), "document");
 
-        $folder = Document\Folder::getById($this->getParam("id"));
+        $folder = Document\Folder::getById($request->get("id"));
         $folder = clone $folder;
 
         $folder->idPath = Element\Service::getIdPath($folder);
@@ -49,17 +43,21 @@ class Admin_FolderController extends \Pimcore\Controller\Action\Admin\Document
         ]);
 
         if ($folder->isAllowed("view")) {
-            $this->_helper->json($returnValueContainer->getData());
+            return $this->json($returnValueContainer->getData());
         }
 
-        $this->_helper->json(false);
+        return $this->json(false);
     }
 
-    public function saveAction()
+    /**
+     * @Route("/folder/save")
+     * @param Request $request
+     */
+    public function saveAction(Request $request)
     {
         try {
-            if ($this->getParam("id")) {
-                $folder = Document\Folder::getById($this->getParam("id"));
+            if ($request->get("id")) {
+                $folder = Document\Folder::getById($request->get("id"));
                 $folder->setModificationDate(time());
                 $folder->setUserModification($this->getUser()->getId());
 
@@ -67,18 +65,18 @@ class Admin_FolderController extends \Pimcore\Controller\Action\Admin\Document
                     $this->setValuesToDocument($folder);
                     $folder->save();
 
-                    $this->_helper->json(["success" => true]);
+                    return $this->json(["success" => true]);
                 }
             }
         } catch (\Exception $e) {
             Logger::log($e);
             if ($e instanceof Element\ValidationException) {
-                $this->_helper->json(["success" => false, "type" => "ValidationException", "message" => $e->getMessage(), "stack" => $e->getTraceAsString(), "code" => $e->getCode()]);
+                return $this->json(["success" => false, "type" => "ValidationException", "message" => $e->getMessage(), "stack" => $e->getTraceAsString(), "code" => $e->getCode()]);
             }
             throw $e;
         }
 
-        $this->_helper->json(false);
+        return $this->json(false);
     }
 
     /**
