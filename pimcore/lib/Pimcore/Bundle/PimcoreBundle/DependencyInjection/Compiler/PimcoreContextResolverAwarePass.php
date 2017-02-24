@@ -7,6 +7,9 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
+/**
+ * Adds a setPimcoreContextResolver() call on event listeners implementing PimcoreContextResolverAwareInterface.
+ */
 class PimcoreContextResolverAwarePass implements CompilerPassInterface
 {
     /**
