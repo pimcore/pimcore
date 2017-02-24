@@ -19,7 +19,7 @@ class Test_Tool
     public static function getSoapClient()
     {
         ini_set("soap.wsdl_cache_enabled", "0");
-        $conf = Zend_Registry::get("pimcore_config_test");
+        $conf = \Pimcore\Cache\Runtime::get("pimcore_config_test");
 
         $user = User::getById($conf->user);
         if (!$user instanceof User) {
@@ -284,21 +284,21 @@ class Test_Tool
             }
 
             try {
-                $localeBak = Zend_Registry::get("Zend_Locale");
+                $localeBak = \Pimcore\Cache\Runtime::get("Zend_Locale");
             } catch (Exception $e) {
                 $localeBak = null;
             }
 
             foreach ($data->getItems() as $language => $values) {
                 foreach ($fd->getFieldDefinitions() as $fd) {
-                    Zend_Registry::set("Zend_Locale", new Zend_Locale($language));
+                    \Pimcore\Cache\Runtime::set("Zend_Locale", new Zend_Locale($language));
 
                     $lData[$language][$fd->getName()] = self::getComparisonDataForField($fd->getName(), $fd, $object);
                     ;
                 }
             }
             if ($localeBak) {
-                Zend_Registry::set("Zend_Locale", $localeBak);
+                \Pimcore\Cache\Runtime::set("Zend_Locale", $localeBak);
             }
 
             return serialize($lData);
@@ -369,9 +369,9 @@ class Test_Tool
      */
     public static function resetRegistry()
     {
-        $conf = Zend_Registry::get('pimcore_config_test');
-        Zend_Registry::_unsetInstance();
-        Zend_Registry::set('pimcore_config_test', $conf);
+        $conf = \Pimcore\Cache\Runtime::get('pimcore_config_test');
+        \Pimcore\Cache\Runtime::_unsetInstance();
+        \Pimcore\Cache\Runtime::set('pimcore_config_test', $conf);
         Pimcore::initConfiguration();
         Pimcore\Legacy::initPlugins();
     }

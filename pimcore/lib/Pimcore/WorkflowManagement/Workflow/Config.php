@@ -35,8 +35,8 @@ class Config
     {
         $config = null;
 
-        if (\Zend_Registry::isRegistered("pimcore_config_workflowmanagement") && !$forceReload) {
-            $config = \Zend_Registry::get("pimcore_config_workflowmanagement");
+        if (\Pimcore\Cache\Runtime::isRegistered("pimcore_config_workflowmanagement") && !$forceReload) {
+            $config = \Pimcore\Cache\Runtime::get("pimcore_config_workflowmanagement");
         } else {
             try {
                 $file = \Pimcore\Config::locateConfigFile("workflowmanagement.php");
@@ -65,7 +65,7 @@ class Config
      */
     public static function setWorkflowManagementConfig($config)
     {
-        \Zend_Registry::set("pimcore_config_workflowmanagement", $config);
+        \Pimcore\Cache\Runtime::set("pimcore_config_workflowmanagement", $config);
     }
 
 

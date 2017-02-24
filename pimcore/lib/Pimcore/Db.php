@@ -131,8 +131,8 @@ class Db
     public static function get()
     {
         try {
-            if (\Zend_Registry::isRegistered("Pimcore_Db")) {
-                $connection = \Zend_Registry::get("Pimcore_Db");
+            if (\Pimcore\Cache\Runtime::isRegistered("Pimcore_Db")) {
+                $connection = \Pimcore\Cache\Runtime::get("Pimcore_Db");
                 if ($connection instanceof Wrapper) {
                     return $connection;
                 }
@@ -168,7 +168,7 @@ class Db
         }
 
         // register globally
-        \Zend_Registry::set("Pimcore_Db", $connection);
+        \Pimcore\Cache\Runtime::set("Pimcore_Db", $connection);
     }
 
     /**
@@ -177,8 +177,8 @@ class Db
     public static function close()
     {
         try {
-            if (\Zend_Registry::isRegistered("Pimcore_Db")) {
-                $db = \Zend_Registry::get("Pimcore_Db");
+            if (\Pimcore\Cache\Runtime::isRegistered("Pimcore_Db")) {
+                $db = \Pimcore\Cache\Runtime::get("Pimcore_Db");
 
                 if ($db instanceof Wrapper) {
                     // the following select causes an infinite loop (eg. when the connection is lost -> error handler)

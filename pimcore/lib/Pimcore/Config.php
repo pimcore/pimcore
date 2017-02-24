@@ -91,8 +91,8 @@ class Config
     {
         $config = null;
 
-        if (\Zend_Registry::isRegistered("pimcore_config_system") && !$forceReload) {
-            $config = \Zend_Registry::get("pimcore_config_system");
+        if (\Pimcore\Cache\Runtime::isRegistered("pimcore_config_system") && !$forceReload) {
+            $config = \Pimcore\Cache\Runtime::get("pimcore_config_system");
         } else {
             $file = self::locateConfigFile('system.php');
 
@@ -128,7 +128,7 @@ class Config
      */
     public static function setSystemConfig(\Pimcore\Config\Config $config)
     {
-        \Zend_Registry::set("pimcore_config_system", $config);
+        \Pimcore\Cache\Runtime::set("pimcore_config_system", $config);
     }
 
     /**
@@ -137,8 +137,8 @@ class Config
      */
     public static function getWebsiteConfig()
     {
-        if (\Zend_Registry::isRegistered("pimcore_config_website")) {
-            $config = \Zend_Registry::get("pimcore_config_website");
+        if (\Pimcore\Cache\Runtime::isRegistered("pimcore_config_website")) {
+            $config = \Pimcore\Cache\Runtime::get("pimcore_config_website");
         } else {
             $cacheKey = "website_config";
 
@@ -221,7 +221,7 @@ class Config
      */
     public static function setWebsiteConfig(\Pimcore\Config\Config $config)
     {
-        \Zend_Registry::set("pimcore_config_website", $config);
+        \Pimcore\Cache\Runtime::set("pimcore_config_website", $config);
     }
 
 
@@ -231,8 +231,8 @@ class Config
      */
     public static function getReportConfig()
     {
-        if (\Zend_Registry::isRegistered("pimcore_config_report")) {
-            $config = \Zend_Registry::get("pimcore_config_report");
+        if (\Pimcore\Cache\Runtime::isRegistered("pimcore_config_report")) {
+            $config = \Pimcore\Cache\Runtime::get("pimcore_config_report");
         } else {
             try {
                 $file = self::locateConfigFile("reports.php");
@@ -257,7 +257,7 @@ class Config
      */
     public static function setReportConfig(\Pimcore\Config\Config $config)
     {
-        \Zend_Registry::set("pimcore_config_report", $config);
+        \Pimcore\Cache\Runtime::set("pimcore_config_report", $config);
     }
 
     /**
@@ -266,8 +266,8 @@ class Config
      */
     public static function getWeb2PrintConfig()
     {
-        if (\Zend_Registry::isRegistered("pimcore_config_web2print")) {
-            $config = \Zend_Registry::get("pimcore_config_web2print");
+        if (\Pimcore\Cache\Runtime::isRegistered("pimcore_config_web2print")) {
+            $config = \Pimcore\Cache\Runtime::get("pimcore_config_web2print");
         } else {
             try {
                 $file = self::locateConfigFile("web2print.php");
@@ -292,7 +292,7 @@ class Config
      */
     public static function setWeb2PrintConfig(\Pimcore\Config\Config $config)
     {
-        \Zend_Registry::set("pimcore_config_web2print", $config);
+        \Pimcore\Cache\Runtime::set("pimcore_config_web2print", $config);
     }
 
     /**
@@ -301,7 +301,7 @@ class Config
      */
     public static function setModelClassMappingConfig($config)
     {
-        \Zend_Registry::set("pimcore_config_model_classmapping", $config);
+        \Pimcore\Cache\Runtime::set("pimcore_config_model_classmapping", $config);
     }
 
     /**
@@ -345,8 +345,8 @@ class Config
      */
     public static function getPerspectivesConfig()
     {
-        if (\Zend_Registry::isRegistered("pimcore_config_perspectives")) {
-            $config = \Zend_Registry::get("pimcore_config_perspectives");
+        if (\Pimcore\Cache\Runtime::isRegistered("pimcore_config_perspectives")) {
+            $config = \Pimcore\Cache\Runtime::get("pimcore_config_perspectives");
         } else {
             try {
                 $file = self::locateConfigFile("perspectives.php");
@@ -594,7 +594,7 @@ class Config
      */
     public static function setPerspectivesConfig(\Pimcore\Config\Config $config)
     {
-        \Zend_Registry::set("pimcore_config_perspectives", $config);
+        \Pimcore\Cache\Runtime::set("pimcore_config_perspectives", $config);
     }
 
 

@@ -108,14 +108,14 @@ class Workflow extends AbstractModel
         $cacheKey = "workflow_" . $id;
 
         try {
-            $workflow = \Zend_Registry::get($cacheKey);
+            $workflow = \Pimcore\Cache\Runtime::get($cacheKey);
             if (!$workflow) {
                 throw new \Exception("Workflow in registry is null");
             }
         } catch (\Exception $e) {
             try {
                 $workflow = new self();
-                \Zend_Registry::set($cacheKey, $workflow);
+                \Pimcore\Cache\Runtime::set($cacheKey, $workflow);
                 $workflow->setId(intval($id));
                 $workflow->getDao()->getById();
             } catch (\Exception $e) {

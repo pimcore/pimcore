@@ -107,7 +107,7 @@ class Predefined extends Model\AbstractModel
         $cacheKey = "property_predefined_" . $key;
 
         try {
-            $property = \Zend_Registry::get($cacheKey);
+            $property = \Pimcore\Cache\Runtime::get($cacheKey);
             if (!$property) {
                 throw new \Exception("Predefined property in registry is null");
             }
@@ -117,7 +117,7 @@ class Predefined extends Model\AbstractModel
                 $property->setKey($key);
                 $property->getDao()->getByKey();
 
-                \Zend_Registry::set($cacheKey, $property);
+                \Pimcore\Cache\Runtime::set($cacheKey, $property);
             } catch (\Exception $e) {
                 return null;
             }

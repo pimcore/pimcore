@@ -262,8 +262,8 @@ class Document extends Element\AbstractElement
 
         $cacheKey = "document_" . $id;
 
-        if (!$force && \Zend_Registry::isRegistered($cacheKey)) {
-            $document = \Zend_Registry::get($cacheKey);
+        if (!$force && \Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
+            $document = \Pimcore\Cache\Runtime::get($cacheKey);
             if ($document) {
                 return $document;
             }
@@ -286,13 +286,13 @@ class Document extends Element\AbstractElement
                 }
 
                 $document = \Pimcore::getDiContainer()->make($className);
-                \Zend_Registry::set($cacheKey, $document);
+                \Pimcore\Cache\Runtime::set($cacheKey, $document);
                 $document->getDao()->getById($id);
                 $document->__setDataVersionTimestamp($document->getModificationDate());
 
                 \Pimcore\Cache::save($document, $cacheKey);
             } else {
-                \Zend_Registry::set($cacheKey, $document);
+                \Pimcore\Cache\Runtime::set($cacheKey, $document);
             }
         } catch (\Exception $e) {
             Logger::warning($e->getMessage());
@@ -457,7 +457,7 @@ class Document extends Element\AbstractElement
                 $additionalTags[] = $tag;
 
                 // remove the child also from registry (internal cache) to avoid path inconsistencies during long running scripts, such as CLI
-                \Zend_Registry::set($tag, null);
+                \Pimcore\Cache\Runtime::set($tag, null);
             }
         }
         $this->clearDependentCache($additionalTags);
@@ -571,7 +571,7 @@ class Document extends Element\AbstractElement
         $this->getDao()->update();
 
         //set object to registry
-        \Zend_Registry::set("document_" . $this->getId(), $this);
+        \Pimcore\Cache\Runtime::set("document_" . $this->getId(), $this);
     }
 
     /**
@@ -780,7 +780,7 @@ class Document extends Element\AbstractElement
         $this->clearDependentCache();
 
         //set object to registry
-        \Zend_Registry::set("document_" . $this->getId(), null);
+        \Pimcore\Cache\Runtime::set("document_" . $this->getId(), null);
 
         \Pimcore::getEventManager()->trigger("document.postDelete", $this);
     }
@@ -1373,8 +1373,8 @@ class Document extends Element\AbstractElement
 
         // add to registry to avoid infinite regresses in the following $this->getDao()->getProperties()
         $cacheKey = "document_" . $this->getId();
-        if (!\Zend_Registry::isRegistered($cacheKey)) {
-            \Zend_Registry::set($cacheKey, $this);
+        if (!\Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
+            \Pimcore\Cache\Runtime::set($cacheKey, $this);
         }
 
         $myProperties = $this->getProperties();

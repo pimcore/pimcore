@@ -91,7 +91,7 @@ class EditmodeResolver extends AbstractRequestResolver implements LoggerAwareInt
         $request->attributes->set(static::ATTRIBUTE_EDITMODE, $result);
 
         // TODO this can be removed later
-        \Zend_Registry::set('pimcore_editmode', $result);
+        \Pimcore\Cache\Runtime::set('pimcore_editmode', $result);
 
         return $result;
     }

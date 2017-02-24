@@ -253,8 +253,8 @@ class Asset extends Element\AbstractElement
 
         $cacheKey = "asset_" . $id;
 
-        if (!$force && \Zend_Registry::isRegistered($cacheKey)) {
-            $asset = \Zend_Registry::get($cacheKey);
+        if (!$force && \Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
+            $asset = \Pimcore\Cache\Runtime::get($cacheKey);
             if ($asset) {
                 return $asset;
             }
@@ -268,13 +268,13 @@ class Asset extends Element\AbstractElement
                 $className = "Pimcore\\Model\\Asset\\" . ucfirst($asset->getType());
 
                 $asset = \Pimcore::getDiContainer()->make($className);
-                \Zend_Registry::set($cacheKey, $asset);
+                \Pimcore\Cache\Runtime::set($cacheKey, $asset);
                 $asset->getDao()->getById($id);
                 $asset->__setDataVersionTimestamp($asset->getModificationDate());
 
                 \Pimcore\Cache::save($asset, $cacheKey);
             } else {
-                \Zend_Registry::set($cacheKey, $asset);
+                \Pimcore\Cache\Runtime::set($cacheKey, $asset);
             }
         } catch (\Exception $e) {
             Logger::warning($e->getMessage());
@@ -524,7 +524,7 @@ class Asset extends Element\AbstractElement
                 $additionalTags[] = $tag;
 
                 // remove the child also from registry (internal cache) to avoid path inconsistencies during long running scripts, such as CLI
-                \Zend_Registry::set($tag, null);
+                \Pimcore\Cache\Runtime::set($tag, null);
             }
         }
         $this->clearDependentCache($additionalTags);
@@ -715,14 +715,14 @@ class Asset extends Element\AbstractElement
         $this->getDao()->update();
 
         //set object to registry
-        \Zend_Registry::set("asset_" . $this->getId(), $this);
+        \Pimcore\Cache\Runtime::set("asset_" . $this->getId(), $this);
         if (get_class($this) == "Asset" || $typeChanged) {
             // get concrete type of asset
             // this is important because at the time of creating an asset it's not clear which type (resp. class) it will have
             // the type (image, document, ...) depends on the mime-type
-            \Zend_Registry::set("asset_" . $this->getId(), null);
+            \Pimcore\Cache\Runtime::set("asset_" . $this->getId(), null);
             $asset = self::getById($this->getId());
-            \Zend_Registry::set("asset_" . $this->getId(), $asset);
+            \Pimcore\Cache\Runtime::set("asset_" . $this->getId(), $asset);
         }
 
         // lastly create a new version if necessary
@@ -993,7 +993,7 @@ class Asset extends Element\AbstractElement
         $this->clearDependentCache();
 
         //set object to registry
-        \Zend_Registry::set("asset_" . $this->getId(), null);
+        \Pimcore\Cache\Runtime::set("asset_" . $this->getId(), null);
 
         \Pimcore::getEventManager()->trigger("asset.postDelete", $this);
     }
@@ -1843,8 +1843,8 @@ class Asset extends Element\AbstractElement
 
         // add to registry to avoid infinite regresses in the following $this->getDao()->getProperties()
         $cacheKey = "asset_" . $this->getId();
-        if (!\Zend_Registry::isRegistered($cacheKey)) {
-            \Zend_Registry::set($cacheKey, $this);
+        if (!\Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
+            \Pimcore\Cache\Runtime::set($cacheKey, $this);
         }
 
         $myProperties = $this->getProperties();

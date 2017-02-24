@@ -70,8 +70,8 @@ abstract class AbstractDao implements DaoInterface
     {
         $cacheKey = self::CACHEKEY . $table;
 
-        if (\Zend_Registry::isRegistered($cacheKey)) {
-            $columns = \Zend_Registry::get($cacheKey);
+        if (\Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
+            $columns = \Pimcore\Cache\Runtime::get($cacheKey);
         } else {
             $columns = Cache::load($cacheKey);
 
@@ -84,7 +84,7 @@ abstract class AbstractDao implements DaoInterface
                 Cache::save($columns, $cacheKey, ["system", "resource"], null, 997);
             }
 
-            \Zend_Registry::set($cacheKey, $columns);
+            \Pimcore\Cache\Runtime::set($cacheKey, $columns);
         }
 
         return $columns;
@@ -96,7 +96,7 @@ abstract class AbstractDao implements DaoInterface
     public function resetValidTableColumnsCache($table)
     {
         $cacheKey = self::CACHEKEY . $table;
-        \Zend_Registry::getInstance()->offsetUnset($cacheKey);
+        \Pimcore\Cache\Runtime::getInstance()->offsetUnset($cacheKey);
         Cache::clearTags(["system", "resource"]);
     }
 }

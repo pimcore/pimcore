@@ -187,8 +187,8 @@ class Admin
      */
     public static function getCurrentUser()
     {
-        if (\Zend_Registry::isRegistered("pimcore_admin_user")) {
-            $user = \Zend_Registry::get("pimcore_admin_user");
+        if (\Pimcore\Cache\Runtime::isRegistered("pimcore_admin_user")) {
+            $user = \Pimcore\Cache\Runtime::get("pimcore_admin_user");
 
             return $user;
         }

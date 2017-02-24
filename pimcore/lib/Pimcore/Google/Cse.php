@@ -82,13 +82,13 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
                 $cacheKey = "google_cse_" . md5($query . serialize($config));
 
                 // this is just a protection so that no query get's sent twice in a request (loops, ...)
-                if (\Zend_Registry::isRegistered($cacheKey)) {
-                    $result = \Zend_Registry::get($cacheKey);
+                if (\Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
+                    $result = \Pimcore\Cache\Runtime::get($cacheKey);
                 } else {
                     if (!$result = Cache::load($cacheKey)) {
                         $result = $search->cse->listCse($query, $config);
                         Cache::save($result, $cacheKey, ["google_cse"], 3600, 999);
-                        \Zend_Registry::set($cacheKey, $result);
+                        \Pimcore\Cache\Runtime::set($cacheKey, $result);
                     }
                 }
 

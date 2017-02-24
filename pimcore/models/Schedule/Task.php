@@ -68,7 +68,7 @@ class Task extends Model\AbstractModel
         $cacheKey = "scheduled_task_" . $id;
 
         try {
-            $task = \Zend_Registry::get($cacheKey);
+            $task = \Pimcore\Cache\Runtime::get($cacheKey);
             if (!$task) {
                 throw new \Exception("Scheduled Task in Registry is not valid");
             }
@@ -76,7 +76,7 @@ class Task extends Model\AbstractModel
             $task = new self();
             $task->getDao()->getById(intval($id));
 
-            \Zend_Registry::set($cacheKey, $task);
+            \Pimcore\Cache\Runtime::set($cacheKey, $task);
         }
 
         return $task;

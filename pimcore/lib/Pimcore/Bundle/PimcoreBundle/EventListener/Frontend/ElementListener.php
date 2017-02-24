@@ -294,9 +294,9 @@ class ElementListener extends AbstractFrontendListener implements EventSubscribe
                     'objectId' => $object->getId()
                 ]);
 
-                // TODO remove Zend_Registry
+                // TODO remove \Pimcore\Cache\Runtime
                 // add the object to the registry so every call to Object::getById() will return this object instead of the real one
-                \Zend_Registry::set("object_" . $object->getId(), $object);
+                \Pimcore\Cache\Runtime::set("object_" . $object->getId(), $object);
             }
         }
     }

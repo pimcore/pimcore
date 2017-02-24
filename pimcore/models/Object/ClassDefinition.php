@@ -151,7 +151,7 @@ class ClassDefinition extends Model\AbstractModel
         $cacheKey = "class_" . $id;
 
         try {
-            $class = \Zend_Registry::get($cacheKey);
+            $class = \Pimcore\Cache\Runtime::get($cacheKey);
             if (!$class) {
                 throw new \Exception("Class in registry is null");
             }
@@ -168,7 +168,7 @@ class ClassDefinition extends Model\AbstractModel
 
                 $class->setId($id);
 
-                \Zend_Registry::set($cacheKey, $class);
+                \Pimcore\Cache\Runtime::set($cacheKey, $class);
             } catch (\Exception $e) {
                 Logger::error($e);
 

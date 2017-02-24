@@ -4,8 +4,8 @@ $renderPartial = true;
 $regKey = 'tpl_iteration';
 
 $iteration = 0;
-if (Zend_Registry::isRegistered($regKey)) {
-    $iteration = Zend_Registry::get($regKey);
+if (\Pimcore\Cache\Runtime::isRegistered($regKey)) {
+    $iteration = \Pimcore\Cache\Runtime::get($regKey);
 }
 
 $outputIteration = $iteration;
@@ -15,7 +15,7 @@ if ($iteration >= 3) {
 }
 
 $iteration++;
-Zend_Registry::set($regKey, $iteration);
+\Pimcore\Cache\Runtime::set($regKey, $iteration);
 ?>
 
 <?php var_dump($document) ?>

@@ -243,6 +243,25 @@ class Pimcore
     }
 
     /**
+     * @return bool
+     */
+    public static function hasKernel() {
+        if(static::$kernel) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param KernelInterface $kernel
+     */
+    public static function setKernel(KernelInterface $kernel)
+    {
+        static::$kernel = $kernel;
+    }
+
+    /**
      * Accessing the container this way is discouraged as dependencies should be wired through the container instead of
      * needing to access the container directly. This exists mainly for compatibility with legacy code.
      *
@@ -254,11 +273,17 @@ class Pimcore
     }
 
     /**
-     * @param KernelInterface $kernel
+     * @return bool
      */
-    public static function setKernel(KernelInterface $kernel)
-    {
-        static::$kernel = $kernel;
+    public static function hasContainer() {
+        if(static::hasKernel()) {
+            $container = static::getContainer();
+            if ($container) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

@@ -137,7 +137,7 @@ class Config extends Model\AbstractModel
         $cacheKey = "imagethumb_" . crc32($name);
 
         try {
-            $thumbnail = \Zend_Registry::get($cacheKey);
+            $thumbnail = \Pimcore\Cache\Runtime::get($cacheKey);
             $thumbnail->setName($name);
             if (!$thumbnail) {
                 throw new \Exception("Thumbnail in registry is null");
@@ -148,7 +148,7 @@ class Config extends Model\AbstractModel
                 $thumbnail->setName($name);
                 $thumbnail->getDao()->getByName();
 
-                \Zend_Registry::set($cacheKey, $thumbnail);
+                \Pimcore\Cache\Runtime::set($cacheKey, $thumbnail);
             } catch (\Exception $e) {
                 return null;
             }

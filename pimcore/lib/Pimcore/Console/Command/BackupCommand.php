@@ -80,7 +80,7 @@ class BackupCommand extends AbstractCommand
             }
         }
         $config = $tmpConfig;
-        \Zend_Registry::set("config", $config);
+        \Pimcore\Cache\Runtime::set("config", $config);
 
         $backupFile = $config["directory"] . "/" . $config["filename"] . ".zip";
 

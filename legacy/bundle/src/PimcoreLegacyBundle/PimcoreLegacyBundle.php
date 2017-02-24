@@ -23,6 +23,9 @@ class PimcoreLegacyBundle extends Bundle
         $loader->register();
 
         $this->defineConstants();
+
+        \Zend_Registry::_unsetInstance();
+        \Zend_Registry::setClassName("\\PimcoreLegacyBundle\\Zend\\Registry\\Proxy");
     }
 
     protected function defineConstants()

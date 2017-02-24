@@ -97,12 +97,12 @@ class Unit extends Model\AbstractModel
         $cacheKey = Unit\Dao::TABLE_NAME . "_" . $id;
 
         try {
-            $unit = \Zend_Registry::get($cacheKey);
+            $unit = \Pimcore\Cache\Runtime::get($cacheKey);
         } catch (\Exception $e) {
             try {
                 $unit = new self();
                 $unit->getDao()->getById($id);
-                \Zend_Registry::set($cacheKey, $unit);
+                \Pimcore\Cache\Runtime::set($cacheKey, $unit);
             } catch (\Exception $ex) {
                 Logger::debug($ex->getMessage());
 
@@ -133,7 +133,7 @@ class Unit extends Model\AbstractModel
     public function delete()
     {
         $cacheKey = Unit\Dao::TABLE_NAME . "_" . $this->getId();
-        \Zend_Registry::set($cacheKey, null);
+        \Pimcore\Cache\Runtime::set($cacheKey, null);
 
         $this->getDao()->delete();
     }

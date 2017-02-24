@@ -1044,7 +1044,7 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
             $new = new $class;
 
             // overwrite internal store to avoid "duplicate full path" error
-            \Zend_Registry::set("document_" . $document->getId(), $new);
+            \Pimcore\Cache\Runtime::set("document_" . $document->getId(), $new);
 
             $props = get_object_vars($document);
             foreach ($props as $name => $value) {

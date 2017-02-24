@@ -253,8 +253,8 @@ class AbstractObject extends Model\Element\AbstractElement
 
         $cacheKey = "object_" . $id;
 
-        if (!$force && \Zend_Registry::isRegistered($cacheKey)) {
-            $object = \Zend_Registry::get($cacheKey);
+        if (!$force && \Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
+            $object = \Pimcore\Cache\Runtime::get($cacheKey);
             if ($object) {
                 return $object;
             }
@@ -274,7 +274,7 @@ class AbstractObject extends Model\Element\AbstractElement
                     }
 
                     $object = \Pimcore::getDiContainer()->make($className);
-                    \Zend_Registry::set($cacheKey, $object);
+                    \Pimcore\Cache\Runtime::set($cacheKey, $object);
                     $object->getDao()->getById($id);
                     $object->__setDataVersionTimestamp($object->getModificationDate());
 
@@ -283,7 +283,7 @@ class AbstractObject extends Model\Element\AbstractElement
                     throw new \Exception("No entry for object id " . $id);
                 }
             } else {
-                \Zend_Registry::set($cacheKey, $object);
+                \Pimcore\Cache\Runtime::set($cacheKey, $object);
             }
         } catch (\Exception $e) {
             Logger::warning($e->getMessage());
@@ -527,7 +527,7 @@ class AbstractObject extends Model\Element\AbstractElement
         $this->clearDependentCache();
 
         //set object to registry
-        \Zend_Registry::set("object_" . $this->getId(), null);
+        \Pimcore\Cache\Runtime::set("object_" . $this->getId(), null);
 
         \Pimcore::getEventManager()->trigger("object.postDelete", $this);
     }
@@ -629,7 +629,7 @@ class AbstractObject extends Model\Element\AbstractElement
                 $additionalTags[] = $tag;
 
                 // remove the child also from registry (internal cache) to avoid path inconsistencies during long running scripts, such as CLI
-                \Zend_Registry::set($tag, null);
+                \Pimcore\Cache\Runtime::set($tag, null);
             }
         }
         $this->clearDependentCache($additionalTags);
@@ -737,7 +737,7 @@ class AbstractObject extends Model\Element\AbstractElement
         $d->save();
 
         //set object to registry
-        \Zend_Registry::set("object_" . $this->getId(), $this);
+        \Pimcore\Cache\Runtime::set("object_" . $this->getId(), $this);
     }
 
     /**
@@ -1181,8 +1181,8 @@ class AbstractObject extends Model\Element\AbstractElement
 
         // add to registry to avoid infinite regresses in the following $this->getDao()->getProperties()
         $cacheKey = "object_" . $this->getId();
-        if (!\Zend_Registry::isRegistered($cacheKey)) {
-            \Zend_Registry::set($cacheKey, $this);
+        if (!\Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
+            \Pimcore\Cache\Runtime::set($cacheKey, $this);
         }
 
         $myProperties = $this->getProperties();

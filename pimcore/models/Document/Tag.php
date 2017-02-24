@@ -465,10 +465,10 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
 
         // @todo add document-id to registry key | for example for embeded snippets
         // set suffixes if the tag is inside a block
-        if (\Zend_Registry::isRegistered("pimcore_tag_block_current")) {
-            $blocks = \Zend_Registry::get("pimcore_tag_block_current");
+        if (\Pimcore\Cache\Runtime::isRegistered("pimcore_tag_block_current")) {
+            $blocks = \Pimcore\Cache\Runtime::get("pimcore_tag_block_current");
 
-            $numeration = \Zend_Registry::get("pimcore_tag_block_numeration");
+            $numeration = \Pimcore\Cache\Runtime::get("pimcore_tag_block_numeration");
             if (is_array($blocks) and count($blocks) > 0) {
                 if ($type == "block") {
                     $tmpBlocks = $blocks;

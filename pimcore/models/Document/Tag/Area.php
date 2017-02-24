@@ -101,11 +101,11 @@ class Area extends Model\Document\Tag
 
         $this->setupStaticEnvironment();
         $suffixes = [];
-        if (\Zend_Registry::isRegistered('pimcore_tag_block_current')) {
-            $suffixes = \Zend_Registry::get("pimcore_tag_block_current");
+        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_tag_block_current')) {
+            $suffixes = \Pimcore\Cache\Runtime::get("pimcore_tag_block_current");
         }
         $suffixes[] = $this->getName();
-        \Zend_Registry::set("pimcore_tag_block_current", $suffixes);
+        \Pimcore\Cache\Runtime::set("pimcore_tag_block_current", $suffixes);
 
         $this->current = $count;
 
@@ -120,9 +120,9 @@ class Area extends Model\Document\Tag
             $info = null;
         }
 
-        $suffixes = \Zend_Registry::get("pimcore_tag_block_numeration");
+        $suffixes = \Pimcore\Cache\Runtime::get("pimcore_tag_block_numeration");
         $suffixes[] = 1;
-        \Zend_Registry::set("pimcore_tag_block_numeration", $suffixes);
+        \Pimcore\Cache\Runtime::set("pimcore_tag_block_numeration", $suffixes);
 
         $params = [];
         if (is_array($options["params"]) && array_key_exists($options["type"], $options["params"])) {
@@ -136,18 +136,18 @@ class Area extends Model\Document\Tag
         $tagHandler->renderAreaFrontend($info, $params);
 
         $suffixes = [];
-        if (\Zend_Registry::isRegistered('pimcore_tag_block_numeration')) {
-            $suffixes = \Zend_Registry::get("pimcore_tag_block_numeration");
+        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_tag_block_numeration')) {
+            $suffixes = \Pimcore\Cache\Runtime::get("pimcore_tag_block_numeration");
             array_pop($suffixes);
         }
-        \Zend_Registry::set("pimcore_tag_block_numeration", $suffixes);
+        \Pimcore\Cache\Runtime::set("pimcore_tag_block_numeration", $suffixes);
 
         $suffixes = [];
-        if (\Zend_Registry::isRegistered('pimcore_tag_block_current')) {
-            $suffixes = \Zend_Registry::get("pimcore_tag_block_current");
+        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_tag_block_current')) {
+            $suffixes = \Pimcore\Cache\Runtime::get("pimcore_tag_block_current");
             array_pop($suffixes);
         }
-        \Zend_Registry::set("pimcore_tag_block_current", $suffixes);
+        \Pimcore\Cache\Runtime::set("pimcore_tag_block_current", $suffixes);
     }
 
     /**
@@ -177,8 +177,8 @@ class Area extends Model\Document\Tag
     {
 
         // setup static environment for blocks
-        if (\Zend_Registry::isRegistered("pimcore_tag_block_current")) {
-            $current = \Zend_Registry::get("pimcore_tag_block_current");
+        if (\Pimcore\Cache\Runtime::isRegistered("pimcore_tag_block_current")) {
+            $current = \Pimcore\Cache\Runtime::get("pimcore_tag_block_current");
             if (!is_array($current)) {
                 $current = [];
             }
@@ -186,8 +186,8 @@ class Area extends Model\Document\Tag
             $current = [];
         }
 
-        if (\Zend_Registry::isRegistered("pimcore_tag_block_numeration")) {
-            $numeration = \Zend_Registry::get("pimcore_tag_block_numeration");
+        if (\Pimcore\Cache\Runtime::isRegistered("pimcore_tag_block_numeration")) {
+            $numeration = \Pimcore\Cache\Runtime::get("pimcore_tag_block_numeration");
             if (!is_array($numeration)) {
                 $numeration = [];
             }
@@ -195,8 +195,8 @@ class Area extends Model\Document\Tag
             $numeration = [];
         }
 
-        \Zend_Registry::set("pimcore_tag_block_numeration", $numeration);
-        \Zend_Registry::set("pimcore_tag_block_current", $current);
+        \Pimcore\Cache\Runtime::set("pimcore_tag_block_numeration", $numeration);
+        \Pimcore\Cache\Runtime::set("pimcore_tag_block_current", $current);
     }
 
     /**

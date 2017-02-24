@@ -52,8 +52,8 @@ class AbstractUser extends Model\AbstractModel
     {
         $cacheKey = "user_" . $id;
         try {
-            if (\Zend_Registry::isRegistered($cacheKey)) {
-                $user =  \Zend_Registry::get($cacheKey);
+            if (\Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
+                $user =  \Pimcore\Cache\Runtime::get($cacheKey);
             } else {
                 $user = new static();
                 $user->getDao()->getById($id);
@@ -63,7 +63,7 @@ class AbstractUser extends Model\AbstractModel
                     $user = $className::getById($user->getId());
                 }
 
-                \Zend_Registry::set($cacheKey, $user);
+                \Pimcore\Cache\Runtime::set($cacheKey, $user);
             }
 
             return $user;

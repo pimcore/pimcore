@@ -153,12 +153,12 @@ class EventHandler
      */
     public static function disable()
     {
-        \Zend_Registry::set('workflow_events_disable_cur_process', true);
+        \Pimcore\Cache\Runtime::set('workflow_events_disable_cur_process', true);
     }
 
     public static function enable()
     {
-        \Zend_Registry::set('workflow_events_disable_cur_process', false);
+        \Pimcore\Cache\Runtime::set('workflow_events_disable_cur_process', false);
     }
 
     /**
@@ -166,6 +166,6 @@ class EventHandler
      */
     public static function isDisabled()
     {
-        return (\Zend_Registry::isRegistered('workflow_events_disable_cur_process') && \Zend_Registry::get('workflow_events_disable_cur_process'));
+        return (\Pimcore\Cache\Runtime::isRegistered('workflow_events_disable_cur_process') && \Pimcore\Cache\Runtime::get('workflow_events_disable_cur_process'));
     }
 }

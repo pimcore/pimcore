@@ -91,7 +91,7 @@ class CustomLayout extends Model\AbstractModel
         $cacheKey = "customlayout_" . $id;
 
         try {
-            $customLayout = \Zend_Registry::get($cacheKey);
+            $customLayout = \Pimcore\Cache\Runtime::get($cacheKey);
             if (!$customLayout) {
                 throw new \Exception("Custom Layout in registry is null");
             }
@@ -101,7 +101,7 @@ class CustomLayout extends Model\AbstractModel
                 $customLayout->getDao()->getById($id);
 
                 Object\Service::synchronizeCustomLayout($customLayout);
-                \Zend_Registry::set($cacheKey, $customLayout);
+                \Pimcore\Cache\Runtime::set($cacheKey, $customLayout);
             } catch (\Exception $e) {
                 Logger::error($e);
 

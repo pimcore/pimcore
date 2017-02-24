@@ -192,7 +192,7 @@ class ExtensionManager
 
         $areas = [];
         try {
-            $areas = \Zend_Registry::get($cacheKey);
+            $areas = \Pimcore\Cache\Runtime::get($cacheKey);
         } catch (\Exception $e) {
             if ($customPath) {
                 $areaRepositories = [$customPath];
@@ -232,7 +232,7 @@ class ExtensionManager
                     }
                 }
             }
-            \Zend_Registry::set($cacheKey, $areas);
+            \Pimcore\Cache\Runtime::set($cacheKey, $areas);
         }
 
         return $areas;
@@ -250,7 +250,7 @@ class ExtensionManager
         }
 
         try {
-            $configs = \Zend_Registry::get($cacheKey);
+            $configs = \Pimcore\Cache\Runtime::get($cacheKey);
         } catch (\Exception $e) {
             $configs = [];
 
@@ -264,7 +264,7 @@ class ExtensionManager
                 }
             }
 
-            \Zend_Registry::set($cacheKey, $configs);
+            \Pimcore\Cache\Runtime::set($cacheKey, $configs);
         }
 
         return $configs;

@@ -222,14 +222,14 @@ class Text
         }
 
         $hash = "elements_raw_wysiwyg_text_" . md5($text);
-        if (\Zend_Registry::isRegistered($hash)) {
-            return \Zend_Registry::get($hash);
+        if (\Pimcore\Cache\Runtime::isRegistered($hash)) {
+            return \Pimcore\Cache\Runtime::get($hash);
         }
 
         //$text = Pimcore_Tool_Text::removeLineBreaks($text);
         preg_match_all("@\<(a|img)[^>]*((?:pimcore_id|pimcore_type)+=\"[0-9]+\")[^>]*((?:pimcore_id|pimcore_type)+=\"[asset|document|object]+\")[^>]*\>@msUi", $text, $matches);
 
-        \Zend_Registry::set($hash, $matches);
+        \Pimcore\Cache\Runtime::set($hash, $matches);
 
         return $matches;
     }
@@ -242,8 +242,8 @@ class Text
     public static function getElementsInWysiwyg($text)
     {
         $hash = "elements_wysiwyg_text_" . md5($text);
-        if (\Zend_Registry::isRegistered($hash)) {
-            return \Zend_Registry::get($hash);
+        if (\Pimcore\Cache\Runtime::isRegistered($hash)) {
+            return \Pimcore\Cache\Runtime::get($hash);
         }
 
         $elements = [];
@@ -269,7 +269,7 @@ class Text
             }
         }
 
-        \Zend_Registry::set($hash, $elements);
+        \Pimcore\Cache\Runtime::set($hash, $elements);
 
         return $elements;
     }

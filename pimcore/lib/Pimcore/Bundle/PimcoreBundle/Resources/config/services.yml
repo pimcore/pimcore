@@ -59,6 +59,13 @@ services:
       arguments: ['@request_stack']
 
     #
+    # RUNTIME CACHE
+    #
+
+    pimcore.cache.runtime:
+      class: Pimcore\Cache\Runtime
+
+    #
     # REQUEST SPECIFICS
     #
 

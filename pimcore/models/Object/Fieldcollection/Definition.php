@@ -174,7 +174,7 @@ class Definition extends Model\AbstractModel
         $cacheKey = "fieldcollection_" . $key;
 
         try {
-            $fc = \Zend_Registry::get($cacheKey);
+            $fc = \Pimcore\Cache\Runtime::get($cacheKey);
             if (!$fc) {
                 throw new \Exception("FieldCollection in registry is not valid");
             }
@@ -184,7 +184,7 @@ class Definition extends Model\AbstractModel
 
             if (is_file($fieldFile)) {
                 $fc = include $fieldFile;
-                \Zend_Registry::set($cacheKey, $fc);
+                \Pimcore\Cache\Runtime::set($cacheKey, $fc);
             }
         }
 

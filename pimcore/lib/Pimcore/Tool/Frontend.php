@@ -97,12 +97,12 @@ class Frontend
     public static function getSiteForDocument($document)
     {
         $cacheKey = "sites_full_list";
-        if (\Zend_Registry::isRegistered($cacheKey)) {
-            $sites = \Zend_Registry::get($cacheKey);
+        if (\Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
+            $sites = \Pimcore\Cache\Runtime::get($cacheKey);
         } else {
             $sites = new Site\Listing();
             $sites = $sites->load();
-            \Zend_Registry::set($cacheKey, $sites);
+            \Pimcore\Cache\Runtime::set($cacheKey, $sites);
         }
 
         foreach ($sites as $site) {

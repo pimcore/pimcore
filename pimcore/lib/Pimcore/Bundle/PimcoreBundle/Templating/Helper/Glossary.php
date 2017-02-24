@@ -182,7 +182,7 @@ class Glossary extends Helper implements LoggerAwareInterface
         $cacheKey = "glossary_" . $locale . "_" . $siteId;
 
         try {
-            $data = \Zend_Registry::get($cacheKey);
+            $data = \Pimcore\Cache\Runtime::get($cacheKey);
 
             return $data;
         } catch (\Exception $e) {
@@ -199,7 +199,7 @@ class Glossary extends Helper implements LoggerAwareInterface
             $data = $this->prepareData($data);
 
             CacheManger::save($data, $cacheKey, ["glossary"], null, 995);
-            \Zend_Registry::set($cacheKey, $data);
+            \Pimcore\Cache\Runtime::set($cacheKey, $data);
         }
 
         return $data;

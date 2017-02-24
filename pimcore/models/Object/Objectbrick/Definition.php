@@ -68,7 +68,7 @@ class Definition extends Model\Object\Fieldcollection\Definition
         $cacheKey = "objectbrick_" . $key;
 
         try {
-            $brick = \Zend_Registry::get($cacheKey);
+            $brick = \Pimcore\Cache\Runtime::get($cacheKey);
             if (!$brick) {
                 throw new \Exception("ObjectBrick in Registry is not valid");
             }
@@ -78,7 +78,7 @@ class Definition extends Model\Object\Fieldcollection\Definition
 
             if (is_file($fieldFile)) {
                 $brick = include $fieldFile;
-                \Zend_Registry::set($cacheKey, $brick);
+                \Pimcore\Cache\Runtime::set($cacheKey, $brick);
             }
         }
 

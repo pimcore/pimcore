@@ -72,11 +72,11 @@ class IncludeRenderer
 
         // TODO remove dependency on registry setting
         $editmodeBackup = false;
-        if (\Zend_Registry::isRegistered('pimcore_editmode')) {
-            $editmodeBackup = \Zend_Registry::get("pimcore_editmode");
+        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_editmode')) {
+            $editmodeBackup = \Pimcore\Cache\Runtime::get("pimcore_editmode");
         }
 
-        \Zend_Registry::set("pimcore_editmode", false);
+        \Pimcore\Cache\Runtime::set("pimcore_editmode", false);
 
         $includeBak = $include;
 
@@ -115,7 +115,7 @@ class IncludeRenderer
             }
         }
 
-        \Zend_Registry::set("pimcore_editmode", $editmodeBackup);
+        \Pimcore\Cache\Runtime::set("pimcore_editmode", $editmodeBackup);
 
         // write contents to the cache, if output-cache is enabled
         if ($cacheConfig && !DeviceDetector::getInstance()->wasUsed()) {

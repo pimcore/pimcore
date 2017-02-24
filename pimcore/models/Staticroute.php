@@ -137,14 +137,14 @@ class Staticroute extends AbstractModel
         $cacheKey = "staticroute_" . $id;
 
         try {
-            $route = \Zend_Registry::get($cacheKey);
+            $route = \Pimcore\Cache\Runtime::get($cacheKey);
             if (!$route) {
                 throw new \Exception("Route in registry is null");
             }
         } catch (\Exception $e) {
             try {
                 $route = new self();
-                \Zend_Registry::set($cacheKey, $route);
+                \Pimcore\Cache\Runtime::set($cacheKey, $route);
                 $route->setId(intval($id));
                 $route->getDao()->getById();
             } catch (\Exception $e) {

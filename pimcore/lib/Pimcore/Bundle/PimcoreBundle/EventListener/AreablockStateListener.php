@@ -10,7 +10,7 @@ use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
- * Integrates areablock/block handling with Zend_Registry
+ * Integrates areablock/block handling with \Pimcore\Cache\Runtime
  *
  * TODO can this be removed later? who is in charge of handling block state?
  */
@@ -50,21 +50,20 @@ class AreablockStateListener implements EventSubscriberInterface, LoggerAwareInt
             return;
         }
 
-        // TODO handle state in some kind of service/container instead of Zend_Registry!
         // this is for $this->action() in templates when they are inside a block element
         try {
             $this->parentBlockCurrent = [];
-            if (\Zend_Registry::isRegistered('pimcore_tag_block_current')) {
-                $this->parentBlockCurrent = \Zend_Registry::get('pimcore_tag_block_current');
+            if (\Pimcore\Cache\Runtime::isRegistered('pimcore_tag_block_current')) {
+                $this->parentBlockCurrent = \Pimcore\Cache\Runtime::get('pimcore_tag_block_current');
             }
 
             $this->parentBlockNumeration = [];
-            if (\Zend_Registry::isRegistered('pimcore_tag_block_numeration')) {
-                $this->parentBlockNumeration = \Zend_Registry::get('pimcore_tag_block_numeration');
+            if (\Pimcore\Cache\Runtime::isRegistered('pimcore_tag_block_numeration')) {
+                $this->parentBlockNumeration = \Pimcore\Cache\Runtime::get('pimcore_tag_block_numeration');
             }
 
-            \Zend_Registry::set('pimcore_tag_block_current', []);
-            \Zend_Registry::set('pimcore_tag_block_numeration', []);
+            \Pimcore\Cache\Runtime::set('pimcore_tag_block_current', []);
+            \Pimcore\Cache\Runtime::set('pimcore_tag_block_numeration', []);
         } catch (\Exception $e) {
             $this->logger->error($e);
         }
@@ -83,8 +82,8 @@ class AreablockStateListener implements EventSubscriberInterface, LoggerAwareInt
 
         // restore parent block data
         if (!empty($this->parentBlockCurrent)) {
-            \Zend_Registry::set('pimcore_tag_block_current', $this->parentBlockCurrent);
-            \Zend_Registry::set('pimcore_tag_block_numeration', $this->parentBlockNumeration);
+            \Pimcore\Cache\Runtime::set('pimcore_tag_block_current', $this->parentBlockCurrent);
+            \Pimcore\Cache\Runtime::set('pimcore_tag_block_numeration', $this->parentBlockNumeration);
         }
     }
 }

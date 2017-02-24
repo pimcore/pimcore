@@ -202,11 +202,11 @@ class Block extends Model\Document\Tag
 
         // set name suffix for the whole block element, this will be addet to all child elements of the block
         $suffixes = [];
-        if (\Zend_Registry::isRegistered('pimcore_tag_block_current')) {
-            $suffixes = \Zend_Registry::get("pimcore_tag_block_current");
+        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_tag_block_current')) {
+            $suffixes = \Pimcore\Cache\Runtime::get("pimcore_tag_block_current");
         }
         $suffixes[] = $this->getName();
-        \Zend_Registry::set("pimcore_tag_block_current", $suffixes);
+        \Pimcore\Cache\Runtime::set("pimcore_tag_block_current", $suffixes);
 
         $class = "pimcore_editable pimcore_tag_" . $this->getType();
         if (array_key_exists("class", $this->getOptions())) {
@@ -227,11 +227,11 @@ class Block extends Model\Document\Tag
 
         // remove the suffix which was set by self::start()
         $suffixes = [];
-        if (\Zend_Registry::isRegistered('pimcore_tag_block_current')) {
-            $suffixes = \Zend_Registry::get("pimcore_tag_block_current");
+        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_tag_block_current')) {
+            $suffixes = \Pimcore\Cache\Runtime::get("pimcore_tag_block_current");
             array_pop($suffixes);
         }
-        \Zend_Registry::set("pimcore_tag_block_current", $suffixes);
+        \Pimcore\Cache\Runtime::set("pimcore_tag_block_current", $suffixes);
 
         $this->outputEditmode("</div>");
     }
@@ -243,9 +243,9 @@ class Block extends Model\Document\Tag
     {
 
         // set the current block suffix for the child elements (0, 1, 3, ...) | this will be removed in Pimcore_View_Helper_Tag::tag
-        $suffixes = \Zend_Registry::get("pimcore_tag_block_numeration");
+        $suffixes = \Pimcore\Cache\Runtime::get("pimcore_tag_block_numeration");
         $suffixes[] = $this->indices[$this->current];
-        \Zend_Registry::set("pimcore_tag_block_numeration", $suffixes);
+        \Pimcore\Cache\Runtime::set("pimcore_tag_block_numeration", $suffixes);
     }
 
     /**
@@ -253,9 +253,9 @@ class Block extends Model\Document\Tag
      */
     public function blockDestruct()
     {
-        $suffixes = \Zend_Registry::get("pimcore_tag_block_numeration");
+        $suffixes = \Pimcore\Cache\Runtime::get("pimcore_tag_block_numeration");
         array_pop($suffixes);
-        \Zend_Registry::set("pimcore_tag_block_numeration", $suffixes);
+        \Pimcore\Cache\Runtime::set("pimcore_tag_block_numeration", $suffixes);
     }
 
     /**
@@ -303,8 +303,8 @@ class Block extends Model\Document\Tag
     {
 
         // setup static environment for blocks
-        if (\Zend_Registry::isRegistered("pimcore_tag_block_current")) {
-            $current = \Zend_Registry::get("pimcore_tag_block_current");
+        if (\Pimcore\Cache\Runtime::isRegistered("pimcore_tag_block_current")) {
+            $current = \Pimcore\Cache\Runtime::get("pimcore_tag_block_current");
             if (!is_array($current)) {
                 $current = [];
             }
@@ -312,8 +312,8 @@ class Block extends Model\Document\Tag
             $current = [];
         }
 
-        if (\Zend_Registry::isRegistered("pimcore_tag_block_numeration")) {
-            $numeration = \Zend_Registry::get("pimcore_tag_block_numeration");
+        if (\Pimcore\Cache\Runtime::isRegistered("pimcore_tag_block_numeration")) {
+            $numeration = \Pimcore\Cache\Runtime::get("pimcore_tag_block_numeration");
             if (!is_array($numeration)) {
                 $numeration = [];
             }
@@ -321,8 +321,8 @@ class Block extends Model\Document\Tag
             $numeration = [];
         }
 
-        \Zend_Registry::set("pimcore_tag_block_numeration", $numeration);
-        \Zend_Registry::set("pimcore_tag_block_current", $current);
+        \Pimcore\Cache\Runtime::set("pimcore_tag_block_numeration", $numeration);
+        \Pimcore\Cache\Runtime::set("pimcore_tag_block_current", $current);
     }
 
     /**

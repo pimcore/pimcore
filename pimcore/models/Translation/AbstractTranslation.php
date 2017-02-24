@@ -187,8 +187,8 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
     public static function getByKey($id, $create = false, $returnIdIfEmpty = false)
     {
         $cacheKey = "translation_" . $id;
-        if (\Zend_Registry::isRegistered($cacheKey)) {
-            return \Zend_Registry::get($cacheKey);
+        if (\Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
+            return \Pimcore\Cache\Runtime::get($cacheKey);
         }
 
         $translation = new static();
@@ -227,7 +227,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
         }
 
         // add to key cache
-        \Zend_Registry::set($cacheKey, $translation);
+        \Pimcore\Cache\Runtime::set($cacheKey, $translation);
 
         return $translation;
     }

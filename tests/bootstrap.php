@@ -28,7 +28,7 @@ mkdir(PIMCORE_WEBSITE_VAR, 0777, true);
 
 // get default configuration for the test
 $testConfig = new \Pimcore\Config\Config(xmlToArray(TESTS_PATH . "/config/testconfig.xml"));
-Zend_Registry::set("pimcore_config_test", $testConfig);
+\Pimcore\Cache\Runtime::set("pimcore_config_test", $testConfig);
 $testConfig = $testConfig->toArray();
 
 // get configuration from main project
