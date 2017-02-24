@@ -411,6 +411,15 @@ class Data extends \Pimcore\Model\AbstractModel
                 }
             }
 
+            if ($element instanceof Asset\Text) {
+                try {
+                    $contentText = $element->getText();
+                    if ($contentText) $this->data .= " " . $contentText;
+                } catch (\Exception $e) {
+                    Logger::error($e);
+                }
+            }
+
             if ($element instanceof Asset\Document && \Pimcore\Document::isAvailable()) {
                 if (\Pimcore\Document::isFileTypeSupported($element->getFilename())) {
                     try {
