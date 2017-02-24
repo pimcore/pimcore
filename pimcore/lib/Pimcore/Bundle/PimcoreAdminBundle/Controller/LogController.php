@@ -1,49 +1,38 @@
 <?php
-/**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in
- * LICENSE.md which is distributed with this source code.
- *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
- */
+
+namespace Pimcore\Bundle\PimcoreAdminBundle\Controller;
 
 use Pimcore\Db;
-use Pimcore\Log;
-use Pimcore\Log\Writer;
 use Pimcore\Log\Handler\ApplicationLoggerDb;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
-class Admin_LogController extends \Pimcore\Controller\Action\Admin
+class LogController extends \Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminController
 {
-    public function init()
-    {
-        parent::init();
-    }
 
-    public function showAction()
+    /**
+     * @Route("/log/show", name="admin_log_show")
+     * @param Request $request
+     */
+    public function showAction(Request $request)
     {
-        $offset = $this->getParam("start");
-        $limit = $this->getParam("limit");
+        $offset = $request->get("start");
+        $limit = $request->get("limit");
 
         $orderby = "ORDER BY id DESC";
-        $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($this->getAllParams());
+        $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($request->request->all());
         if ($sortingSettings['orderKey']) {
             $orderby = "ORDER BY " . $sortingSettings['orderKey'] . " " . $sortingSettings['order'];
         }
 
-
         $queryString = " WHERE 1=1";
 
-        if ($this->getParam("priority") != "-1" && ($this->getParam("priority") == "0" || $this->getParam("priority"))) {
+        if ($request->get("priority") != "-1" && ($request->get("priority") == "0" || $request->get("priority"))) {
             $levels = [];
             foreach (["emergency", "alert", "critical", "error", "warning", "notice", "info", "debug"] as $level) {
                 $levels[] = "priority = '" . $level . "'";
                 
-                if ($this->getParam("priority") == $level) {
+                if ($request->get("priority") == $level) {
                     break;
                 }
             }
@@ -51,32 +40,32 @@ class Admin_LogController extends \Pimcore\Controller\Action\Admin
             $queryString .= " AND (" . implode(" OR ", $levels) . ")";
         }
 
-        if ($this->getParam("fromDate")) {
-            $datetime = $this->getParam("fromDate");
-            if ($this->getParam("fromTime")) {
-                $datetime =  substr($datetime, 0, 11) . substr($this->getParam("fromTime"), strpos($this->getParam("fromTime"), 'T')+1, strlen($this->getParam("fromTime")));
+        if ($request->get("fromDate")) {
+            $datetime = $request->get("fromDate");
+            if ($request->get("fromTime")) {
+                $datetime =  substr($datetime, 0, 11) . substr($request->get("fromTime"), strpos($request->get("fromTime"), 'T')+1, strlen($request->get("fromTime")));
             }
             $queryString .= " AND timestamp >= '" . $datetime . "'";
         }
 
-        if ($this->getParam("toDate")) {
-            $datetime = $this->getParam("toDate");
-            if ($this->getParam("toTime")) {
-                $datetime =  substr($datetime, 0, 11) . substr($this->getParam("toTime"), strpos($this->getParam("toTime"), 'T')+1, strlen($this->getParam("toTime")));
+        if ($request->get("toDate")) {
+            $datetime = $request->get("toDate");
+            if ($request->get("toTime")) {
+                $datetime =  substr($datetime, 0, 11) . substr($request->get("toTime"), strpos($request->get("toTime"), 'T')+1, strlen($request->get("toTime")));
             }
             $queryString .= " AND timestamp <= '" . $datetime . "'";
         }
         
-        if ($this->getParam("component")) {
-            $queryString .= " AND component =  '" . addslashes($this->getParam("component")) . "'";
+        if ($request->get("component")) {
+            $queryString .= " AND component =  '" . addslashes($request->get("component")) . "'";
         }
          
-        if ($this->getParam("relatedobject")) {
-            $queryString .= " AND relatedobject = " . $this->getParam("relatedobject");
+        if ($request->get("relatedobject")) {
+            $queryString .= " AND relatedobject = " . $request->get("relatedobject");
         }
 
-        if ($this->getParam("message")) {
-            $queryString .= " AND message like '%" . $this->getParam("message") ."%'";
+        if ($request->get("message")) {
+            $queryString .= " AND message like '%" . $request->get("message") ."%'";
         }
 
 
@@ -108,8 +97,7 @@ class Admin_LogController extends \Pimcore\Controller\Action\Admin
             }
         }
 
-        $results = ["p_totalCount"=>$total, "p_results"=>$errorDataList];
-        $this->_helper->json($results);
+        return $this->json(["p_totalCount"=>$total, "p_results"=>$errorDataList]);
     }
 
     /**
@@ -122,24 +110,32 @@ class Admin_LogController extends \Pimcore\Controller\Action\Admin
 
         return $p[$priority];
     }
-    
-    public function priorityJsonAction()
+
+    /**
+     * @Route("/log/priority-json", name="admin_log_priorityjson")
+     * @param Request $request
+     */
+    public function priorityJsonAction(Request $request)
     {
         $priorities[] = ["key" => "-1", "value" => "-"];
         foreach (ApplicationLoggerDb::getPriorities() as $key => $p) {
             $priorities[] = ["key" => $key, "value" => $p];
         }
 
-        $this->_helper->json(["priorities" => $priorities]);
+        return $this->json(["priorities" => $priorities]);
     }
 
-    public function componentJsonAction()
+    /**
+     * @Route("/log/component-json", name="admin_log_componentjson")
+     * @param Request $request
+     */
+    public function componentJsonAction(Request $request)
     {
         $components[] = ["key" => "", "value" => "-"];
         foreach (ApplicationLoggerDb::getComponents() as $p) {
             $components[] = ["key" => $p, "value" => $p];
         }
 
-        $this->_helper->json(["components" => $components]);
+        return $this->json(["components" => $components]);
     }
 }
