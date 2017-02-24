@@ -16,7 +16,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
 
     getData: function () {
         Ext.Ajax.request({
-            url: "/admin/asset/get-data-by-id/",
+            url: "/admin/asset/get-data-by-id",
             success: this.getDataComplete.bind(this),
             params: {
                 id: this.id,
