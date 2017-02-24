@@ -2,6 +2,7 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\EventListener\Frontend;
 
+use Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolver;
 use Pimcore\Config;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Site;
@@ -42,6 +43,10 @@ class SiteListener extends AbstractFrontendListener implements EventSubscriberIn
     public function onKernelRequest(GetResponseEvent $event)
     {
         $request = $event->getRequest();
+        if ($this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
+            return;
+        }
+
         $path    = $originalPath = urldecode($request->getPathInfo());
         $config  = Config::getSystemConfig();
 

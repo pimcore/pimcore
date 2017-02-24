@@ -2,6 +2,7 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\EventListener\Frontend;
 
+use Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolver;
 use Pimcore\Cache as CacheManager;
 use Pimcore\Logger;
 use Pimcore\Tool;
@@ -104,19 +105,24 @@ class FullPageCacheListener extends AbstractFrontendListener
 
     /**
      * @param GetResponseEvent $event
-     * @return bool
+     * @return mixed
      */
     public function onKernelRequest(GetResponseEvent $event)
     {
+        $request = $event->getRequest();
+
+        if (!$event->isMasterRequest()) {
+            return;
+        }
+
+        if ($this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
+            return;
+        }
+
         if(!\Pimcore\Tool::useFrontendOutputFilters()) {
             return false;
         }
 
-        if(!$event->isMasterRequest()) {
-            return false;
-        }
-
-        $request = $event->getRequest();
         $requestUri = $request->getRequestUri();
         $excludePatterns = [];
 

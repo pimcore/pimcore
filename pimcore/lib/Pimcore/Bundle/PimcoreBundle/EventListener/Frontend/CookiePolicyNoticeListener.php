@@ -3,6 +3,7 @@
 namespace Pimcore\Bundle\PimcoreBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\PimcoreBundle\EventListener\Traits\ResponseInjectionTrait;
+use Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolver;
 use Symfony\Bundle\FrameworkBundle\Translation\Translator;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Kernel;
@@ -114,7 +115,16 @@ class CookiePolicyNoticeListener extends AbstractFrontendListener
      */
     public function onKernelResponse(FilterResponseEvent $event)
     {
-        $request  = $event->getRequest();
+        $request = $event->getRequest();
+
+        if (!$event->isMasterRequest()) {
+            return;
+        }
+
+        if ($this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
+            return;
+        }
+
         $response = $event->getResponse();
         $config   = \Pimcore\Config::getSystemConfig();
         $locale   = $request->getLocale();

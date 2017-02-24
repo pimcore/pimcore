@@ -3,6 +3,7 @@
 namespace Pimcore\Bundle\PimcoreBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\PimcoreBundle\EventListener\Traits\ResponseInjectionTrait;
+use Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolver;
 use Pimcore\Model\Site;
 use Pimcore\Model\Tool\Tag;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
@@ -47,10 +48,17 @@ class TagManagerListener extends AbstractFrontendListener
      */
     public function onKernelResponse(FilterResponseEvent $event)
     {
-        $response = $event->getResponse();
         $request = $event->getRequest();
+        if (!$event->isMasterRequest()) {
+            return;
+        }
 
-        if (!$this->isHtmlResponse($response) || !$this->isEnabled() || !$event->isMasterRequest()) {
+        if ($this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
+            return;
+        }
+
+        $response = $event->getResponse();
+        if (!$this->isHtmlResponse($response) || !$this->isEnabled()) {
             return;
         }
 

@@ -4,6 +4,7 @@ namespace Pimcore\Bundle\PimcoreBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\PimcoreBundle\EventListener\Traits\ResponseInjectionTrait;
 use Pimcore\Bundle\PimcoreBundle\Service\Request\DocumentResolver;
+use Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolver;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Tool;
@@ -90,12 +91,19 @@ class TargetingListener extends AbstractFrontendListener
      */
     public function onKernelResponse(FilterResponseEvent $event)
     {
-        $response = $event->getResponse();
         $request = $event->getRequest();
 
-        if ($this->isEnabled() && $event->isMasterRequest() &&
-            Tool::useFrontendOutputFilters() && $this->isHtmlResponse($response)) {
+        if (!$event->isMasterRequest()) {
+            return;
+        }
 
+        if ($this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
+            return;
+        }
+
+        $response = $event->getResponse();
+
+        if ($this->isEnabled() && Tool::useFrontendOutputFilters() && $this->isHtmlResponse($response)) {
             $db = \Pimcore\Db::get();
             $personasAvailable = $db->fetchOne("SELECT id FROM targeting_personas UNION SELECT id FROM targeting_rules LIMIT 1");
             if($personasAvailable) {

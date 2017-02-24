@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\PimcoreBundle\EventListener\Frontend;
 use Pimcore\Bundle\PimcoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Bundle\PimcoreBundle\Service\Document\DocumentService;
 use Pimcore\Bundle\PimcoreBundle\Service\Request\DocumentResolver as DocumentResolverService;
+use Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolver;
 use Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolverAwareInterface;
 use Pimcore\Bundle\PimcoreBundle\Templating\Helper\HeadMeta;
 use Pimcore\Model\Document\Page;
@@ -67,12 +68,17 @@ class DocumentMetaDataListener extends AbstractFrontendListener implements Event
      */
     public function onKernelRequest(GetResponseEvent $event)
     {
-        //just add meta data on master request
+        $request = $event->getRequest();
+
+        // just add meta data on master request
         if (!$event->isMasterRequest()) {
            return;
         }
 
-        $request = $event->getRequest();
+        if ($this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
+            return;
+        }
+
         $document = $this->documentResolverService->getDocument($request);
 
         //check if document is set and if route is a document route for exactly that document

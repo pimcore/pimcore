@@ -3,6 +3,7 @@
 namespace Pimcore\Bundle\PimcoreBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\PimcoreBundle\EventListener\Traits\ResponseInjectionTrait;
+use Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolver;
 use Pimcore\Tool;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 
@@ -46,6 +47,15 @@ class GoogleTagManagerListener extends AbstractFrontendListener
      */
     public function onKernelResponse(FilterResponseEvent $event)
     {
+        $request = $event->getRequest();
+        if (!$event->isMasterRequest()) {
+            return;
+        }
+
+        if ($this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
+            return;
+        }
+
         $response = $event->getResponse();
 
         $siteKey = \Pimcore\Tool\Frontend::getSiteKey();

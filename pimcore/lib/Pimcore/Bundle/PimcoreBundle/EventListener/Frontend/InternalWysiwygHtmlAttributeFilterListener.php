@@ -4,6 +4,7 @@ namespace Pimcore\Bundle\PimcoreBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\PimcoreBundle\EventListener\AbstractResponseInjectionListener;
 use Pimcore\Bundle\PimcoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
+use Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolver;
 use Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolverAwareInterface;
 use Pimcore\Tool;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
@@ -46,11 +47,25 @@ class InternalWysiwygHtmlAttributeFilterListener extends AbstractFrontendListene
      */
     public function onKernelResponse(FilterResponseEvent $event)
     {
-        if ($event->isMasterRequest() && Tool::useFrontendOutputFilters()) {
-            $response = $event->getResponse();
-            $content = $response->getContent();
-            $content = preg_replace("/ pimcore_(id|type|disable_thumbnail)=\\\"([0-9a-z]+)\\\"/", "", $content);
-            $response->setContent($content);
+        $request = $event->getRequest();
+
+        if (!$event->isMasterRequest()) {
+            return;
         }
+
+        if ($this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
+            return;
+        }
+
+        if (!Tool::useFrontendOutputFilters()) {
+            return;
+        }
+
+        $response = $event->getResponse();
+
+        $content = $response->getContent();
+        $content = preg_replace("/ pimcore_(id|type|disable_thumbnail)=\\\"([0-9a-z]+)\\\"/", "", $content);
+
+        $response->setContent($content);
     }
 }

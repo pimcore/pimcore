@@ -61,29 +61,31 @@ class MaintenancePageListener
      */
     public function onKernelRequest(GetResponseEvent  $event)
     {
-        if ($event->isMasterRequest()) {
-            $maintenance = false;
-            $file = \Pimcore\Tool\Admin::getMaintenanceModeFile();
+        if (!$event->isMasterRequest()) {
+            return;
+        }
 
-            if (is_file($file)) {
-                $conf = include($file);
-                if (isset($conf["sessionId"])) {
-                    if ($conf["sessionId"] != $_COOKIE["pimcore_admin_sid"]) {
-                        $maintenance = true;
-                    }
-                } else {
-                    @unlink($file);
+        $maintenance = false;
+        $file = \Pimcore\Tool\Admin::getMaintenanceModeFile();
+
+        if (is_file($file)) {
+            $conf = include($file);
+            if (isset($conf["sessionId"])) {
+                if ($conf["sessionId"] != $_COOKIE["pimcore_admin_sid"]) {
+                    $maintenance = true;
                 }
+            } else {
+                @unlink($file);
             }
+        }
 
-            // do not activate the maintenance for the server itself
-            // this is to avoid problems with monitoring agents
-            $serverIps = ["127.0.0.1"];
+        // do not activate the maintenance for the server itself
+        // this is to avoid problems with monitoring agents
+        $serverIps = ["127.0.0.1"];
 
-            if ($maintenance && !in_array(\Pimcore\Tool::getClientIp(), $serverIps)) {
-                $response = new Response($this->getTemplateCode(), 503);
-                $event->setResponse($response);
-            }
+        if ($maintenance && !in_array(\Pimcore\Tool::getClientIp(), $serverIps)) {
+            $response = new Response($this->getTemplateCode(), 503);
+            $event->setResponse($response);
         }
     }
 }
