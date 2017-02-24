@@ -225,7 +225,16 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
         if ($data["value"] || $data["unit"]) {
-            return new \Pimcore\Model\Object\Data\QuantityValue($data["value"], $data["unit"]);
+
+            if(is_numeric($data["unit"])) {
+
+                if($data["unit"] == -1 || $data['unit'] == null || empty($data['unit'])) {
+                    return new \Pimcore\Model\Object\Data\QuantityValue($data["value"], null);
+                } else {
+                    return new \Pimcore\Model\Object\Data\QuantityValue($data["value"], $data["unit"]);
+                }
+            }
+            return;
         }
 
         return;
@@ -260,19 +269,24 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
      *
      * @param mixed $data
      * @param boolean $omitMandatoryCheck
-     * @throws Exception
+     * @throws \Exception
      */
     public function checkValidity($data, $omitMandatoryCheck = false)
     {
-        if (!$omitMandatoryCheck && $this->getMandatory() &&
-           ($data === null || $data->getValue() === null || $data->getUnitId() === null)) {
+        if (!$omitMandatoryCheck && $this->getMandatory() && ($data === null || $data->getValue() === null)) {
             throw new Model\Element\ValidationException("Empty mandatory field [ ".$this->getName()." ]");
         }
 
         if (!empty($data)) {
             $value = $data->getValue();
-            if ((!empty($value) && !is_numeric($data->getValue())) || !($data->getUnitId())) {
+            if ((!empty($value) && !is_numeric($data->getValue()))) {
                 throw new Model\Element\ValidationException("Invalid dimension unit data " . $this->getName());
+            }
+
+            if(!empty($data->getUnitId())) {
+                if(!is_numeric($data->getUnitId())) {
+                    throw new Model\Element\ValidationException("Unit id has to be empty or numeric " . $data->getUnitId());
+                }
             }
         }
     }

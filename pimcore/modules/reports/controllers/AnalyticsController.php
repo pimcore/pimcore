@@ -97,7 +97,6 @@ class Reports_AnalyticsController extends \Pimcore\Controller\Action\Admin\Repor
         }
 
         return $site;
-
     }
 
     /**
