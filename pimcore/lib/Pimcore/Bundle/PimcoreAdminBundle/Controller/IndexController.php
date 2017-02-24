@@ -11,9 +11,11 @@ use Pimcore\Model\Element\Service;
 use Pimcore\Model\User;
 use Pimcore\Tool;
 use Pimcore\Tool\Admin;
+use Pimcore\Tool\Session;
 use Pimcore\Version;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
 class IndexController extends AdminController
 {
@@ -141,7 +143,7 @@ class IndexController extends AdminController
 
         $this
             ->addSystemVarSettings($settings)
-            ->addCsrfToken($settings)
+            ->addCsrfToken($settings, $user)
             ->addMaintenanceSettings($settings)
             ->addMailSettings($settings, $config)
             ->addCustomViewSettings($settings);
@@ -175,12 +177,20 @@ class IndexController extends AdminController
 
     /**
      * @param ViewModel $settings
+     * @param User $user
      * @return $this
      */
-    protected function addCsrfToken(ViewModel $settings)
+    protected function addCsrfToken(ViewModel $settings, User $user)
     {
-        // TODO add CSRF token
-        $settings->csrfToken = 'foo';
+        $csrfToken = Session::useSession(function (AttributeBagInterface $adminSession) use ($user) {
+            if (!$adminSession->has('csrfToken') && !$adminSession->get('csrfToken')) {
+                $adminSession->set('csrfToken', sha1(microtime() . $user->getName() . uniqid()));
+            }
+
+            return $adminSession->get('csrfToken');
+        });
+
+        $settings->csrfToken = $csrfToken;
 
         return $this;
     }
