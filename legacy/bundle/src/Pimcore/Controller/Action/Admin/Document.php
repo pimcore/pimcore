@@ -165,12 +165,12 @@ abstract class Document extends Admin
      */
     public function saveToSessionAction()
     {
-        if ($this->getParam("id")) {
-            $key = "document_" . $this->getParam("id");
+        if ($id = $this->getParam("id")) {
+            $key = "document_" . $id;
 
             $session = Session::get("pimcore_documents");
 
-            if (!$document = $session->$key) {
+            if (!$document = $session->get($key)) {
                 $document = Model\Document::getById($this->getParam("id"));
                 $document = $this->getLatestVersion($document);
             }
@@ -179,7 +179,7 @@ abstract class Document extends Admin
             $document->_fulldump = true;
             $this->setValuesToDocument($document);
 
-            $session->$key = $document;
+            $session->set($key, $document);
 
             Session::writeClose();
         }
