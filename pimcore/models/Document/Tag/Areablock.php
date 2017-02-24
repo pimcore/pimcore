@@ -17,11 +17,11 @@
 namespace Pimcore\Model\Document\Tag;
 
 use Pimcore\ExtensionManager;
+use Pimcore\Facade\Translate;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Tool;
-use Pimcore\Translate;
 
 /**
  * @method \Pimcore\Model\Document\Tag\Dao getDao()

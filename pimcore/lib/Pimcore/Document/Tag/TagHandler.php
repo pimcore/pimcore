@@ -7,11 +7,11 @@ use Pimcore\Bundle\PimcoreBundle\Service\WebPathResolver;
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModel;
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModelInterface;
 use Pimcore\Document\Area\AreabrickManagerInterface;
+use Pimcore\Facade\Translate;
 use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Document\Tag;
 use Pimcore\Model\Document\Tag\Area\Info;
 use Pimcore\Bundle\PimcoreBundle\Templating\Renderer\ActionRenderer;
-use Pimcore\Translate;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 
 class TagHandler implements TagHandlerInterface

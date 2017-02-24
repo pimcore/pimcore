@@ -4,11 +4,11 @@ namespace PimcoreLegacyBundle\Document\Tag;
 
 use Pimcore\Document\Tag\TagHandlerInterface;
 use Pimcore\ExtensionManager;
+use Pimcore\Facade\Translate;
 use Pimcore\Model\Document\Tag;
 use Pimcore\Model\Document\Tag\Area\AbstractArea;
 use Pimcore\Model\Document\Tag\Area\Info;
 use Pimcore\Tool;
-use Pimcore\Translate;
 use Pimcore\View;
 
 class LegacyTagHandler implements TagHandlerInterface
