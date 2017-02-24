@@ -31,6 +31,9 @@ twig:
         # this is only here for compatibility/dev reasons and may be removed later
         container: '@service_container'
 
+monolog:
+    channels: ['pimcore']
+
 pimcore:
     admin:
         # the routes below are used to classify admin requests
