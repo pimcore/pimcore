@@ -41,10 +41,14 @@ abstract class AdminController extends Controller implements AdminControllerInte
     protected function checkPermission($permission)
     {
         if (!$this->getUser() || !$this->getUser()->isAllowed($permission)) {
-            $message = "Attempt to access " . $permission . ", but has no permission to do so.";
-            Logger::err($message);
+            $this->get('monolog.logger.security')->error(
+                'User {user} attempted to access {permission}, but has no permission to do so', [
+                    'user'       => $this->getUser()->getName(),
+                    'permission' => $permission
+                ]
+            );
 
-            throw new AccessDeniedHttpException($message);
+            throw new AccessDeniedHttpException("Attempt to access " . $permission . ", but has no permission to do so.");
         }
     }
 
@@ -65,6 +69,10 @@ abstract class AdminController extends Controller implements AdminControllerInte
         });
 
         if (!$csrfToken || $csrfToken !== $request->headers->get('x_pimcore_csrf_token')) {
+            $this->get('monolog.logger.security')->error('Detected CSRF attack on {request}', [
+                'request' => $request->getPathInfo()
+            ]);
+
             throw new AccessDeniedHttpException('Detected CSRF Attack! Do not do evil things with pimcore ... ;-)');
         }
     }
