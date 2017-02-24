@@ -187,15 +187,10 @@ class Admin
      */
     public static function getCurrentUser()
     {
-        if (\Pimcore\Cache\Runtime::isRegistered("pimcore_admin_user")) {
-            $user = \Pimcore\Cache\Runtime::get("pimcore_admin_user");
-
-            return $user;
-        }
-
-        return null;
+        return \Pimcore::getContainer()
+            ->get('pimcore_admin.security.token_storage_user_resolver')
+            ->getUser();
     }
-
 
     /**
      * @return true if in EXT JS5 mode

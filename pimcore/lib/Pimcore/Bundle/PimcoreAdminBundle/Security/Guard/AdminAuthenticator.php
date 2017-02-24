@@ -4,6 +4,7 @@ namespace Pimcore\Bundle\PimcoreAdminBundle\Security\Guard;
 
 use Pimcore\Bundle\PimcoreAdminBundle\Security\BruteforceProtectionHandler;
 use Pimcore\Bundle\PimcoreAdminBundle\Security\User\User;
+use Pimcore\Cache\Runtime;
 use Pimcore\Model\User as UserModel;
 use Pimcore\Tool\Authentication;
 use Pimcore\Tool\Session;
@@ -213,6 +214,9 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
      */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
+        // set user on runtime cache for legacy compatibility
+        Runtime::set('pimcore_admin_user', $token->getUser());
+
         // as we authenticate statelessly (short lived sessions) the authentication is called for
         // every request. therefore we only redirect if we're on the login page
         if (!in_array($request->attributes->get('_route'), [
