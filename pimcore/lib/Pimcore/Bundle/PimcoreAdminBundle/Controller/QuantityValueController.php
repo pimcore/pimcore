@@ -23,7 +23,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class QuantityValueController extends AdminController
 {
     /**
-     * @Route("/quantity-value/unit-proxy", name="admin_quantityvalue_unit_proxy")
+     * @Route("/quantity-value/unit-proxy")
      * @param Request $request
      * @throws \Exception
      */
@@ -123,7 +123,7 @@ class QuantityValueController extends AdminController
 
 
     /**
-     * @Route("/quantity-value/unit-list", name="admin_quantityvalue_unit_list")
+     * @Route("/quantity-value/unit-list")
      * @param Request $request
      */
     public function unitListAction(Request $request)

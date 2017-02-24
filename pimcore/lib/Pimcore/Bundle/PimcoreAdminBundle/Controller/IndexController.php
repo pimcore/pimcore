@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 class IndexController extends AdminController
 {
     /**
-     * @Route("/", name="admin_index")
+     * @Route("/", name="pimcore_admin_index")
      * @TemplatePhp()
      */
     public function indexAction(Request $request)

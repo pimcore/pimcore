@@ -19,7 +19,7 @@ class UserController extends AdminController implements EventedControllerInterfa
 {
 
     /**
-     * @Route("/user/tree-get-childs-by-id", name="admin_user_tree_get_childs_by_id")
+     * @Route("/user/tree-get-childs-by-id")
      * @param Request $request
      */
     public function treeGetChildsByIdAction(Request $request)
@@ -83,7 +83,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
-     * @Route("/user/add", name="admin_user_add")
+     * @Route("/user/add")
      * @param Request $request
      */
     public function addAction(Request $request)
@@ -199,7 +199,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
-     * @Route("/user/delete", name="admin_user_delete")
+     * @Route("/user/delete")
      * @param Request $request
      */
     public function deleteAction(Request $request)
@@ -231,7 +231,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
-     * @Route("/user/update", name="admin_user_update")
+     * @Route("/user/update")
      * @param Request $request
      */
     public function updateAction(Request $request)
@@ -311,7 +311,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
-     * @Route("/user/get", name="admin_user_get")
+     * @Route("/user/get")
      * @param Request $request
      */
     public function getAction(Request $request)
@@ -399,7 +399,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
-     * @Route("/user/get-minimal", name="admin_user_get_minimal")
+     * @Route("/user/get-minimal")
      * @param Request $request
      */
     public function getMinimalAction(Request $request)
@@ -418,7 +418,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
-     * @Route("/user/upload-current-user-image", name="admin_user_upload_current_user_image")
+     * @Route("/user/upload-current-user-image")
      * @param Request $request
      */
     public function uploadCurrentUserImageAction(Request $request)
@@ -438,7 +438,7 @@ class UserController extends AdminController implements EventedControllerInterfa
 
 
     /**
-     * @Route("/user/update-current-user", name="admin_user_update_current_user")
+     * @Route("/user/update-current-user")
      * @param Request $request
      */
     public function updateCurrentUserAction(Request $request)
@@ -498,7 +498,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
-     * @Route("/user/get-current-user", name="admin_user_get_current_user")
+     * @Route("/user/get-current-user")
      * @param Request $request
      */
     public function getCurrentUserAction(Request $request)
@@ -527,7 +527,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     /* ROLES */
 
     /**
-     * @Route("/user/roles-tree-get-childs-by-id", name="admin_user_roles_tree_get_childs_by_id")
+     * @Route("/user/roles-tree-get-childs-by-id")
      * @param Request $request
      */
     public function roleTreeGetChildsByIdAction(Request $request)
@@ -582,7 +582,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
-     * @Route("/user/role-get", name="admin_user_role_get")
+     * @Route("/user/role-get")
      * @param Request $request
      */
     public function roleGetAction(Request $request)
@@ -621,7 +621,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
-     * @Route("/user/upload-image", name="admin_user_upload_image")
+     * @Route("/user/upload-image")
      * @param Request $request
      */
     public function uploadImageAction(Request $request)
@@ -654,7 +654,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
-     * @Route("/user/get-image", name="admin_user_get_image")
+     * @Route("/user/get-image")
      * @param Request $request
      */
     public function getImageAction(Request $request)
@@ -678,7 +678,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
-     * @Route("/user/get-token-login-link", name="admin_user_get_token_login_link")
+     * @Route("/user/get-token-login-link")
      * @param Request $request
      */
     public function getTokenLoginLinkAction(Request $request)
@@ -701,7 +701,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
-     * @Route("/user/search", name="admin_user_search")
+     * @Route("/user/search")
      * @param Request $request
      */
     public function searchAction(Request $request)

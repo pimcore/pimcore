@@ -17,7 +17,7 @@ class BackupController extends AdminController implements EventedControllerInter
 {
 
     /**
-     * @Route("/backup/init", name="admin_backup_init")
+     * @Route("/backup/init")
      * @param Request $request
      */
     public function initAction(Request $request)
@@ -33,7 +33,7 @@ class BackupController extends AdminController implements EventedControllerInter
     }
 
     /**
-     * @Route("/backup/files", name="admin_backup_files")
+     * @Route("/backup/files")
      * @param Request $request
      */
     public function filesAction(Request $request)
@@ -46,7 +46,7 @@ class BackupController extends AdminController implements EventedControllerInter
     }
 
     /**
-     * @Route("/backup/mysql-tables", name="admin_backup_mysql_tables")
+     * @Route("/backup/mysql-tables")
      * @param Request $request
      */
     public function mysqlTablesAction(Request $request)
@@ -62,7 +62,7 @@ class BackupController extends AdminController implements EventedControllerInter
 
 
     /**
-     * @Route("/backup/mysql", name="admin_backup_mysql")
+     * @Route("/backup/mysql")
      * @param Request $request
      */
     public function mysqlAction(Request $request)
@@ -80,7 +80,7 @@ class BackupController extends AdminController implements EventedControllerInter
     }
 
     /**
-     * @Route("/backup/mysql-complete", name="admin_backup_mysql_complete")
+     * @Route("/backup/mysql-complete")
      * @param Request $request
      */
     public function mysqlCompleteAction(Request $request)
@@ -95,7 +95,7 @@ class BackupController extends AdminController implements EventedControllerInter
     }
 
     /**
-     * @Route("/backup/complete", name="admin_backup_complete")
+     * @Route("/backup/complete")
      * @param Request $request
      */
     public function completeAction(Request $request)
@@ -110,7 +110,7 @@ class BackupController extends AdminController implements EventedControllerInter
     }
 
     /**
-     * @Route("/backup/download", name="admin_backup_download")
+     * @Route("/backup/download")
      * @param Request $request
      */
     public function downloadAction(Request $request)

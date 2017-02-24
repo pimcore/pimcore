@@ -79,7 +79,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
             return $response;
         }
 
-        $url = $this->router->generate('admin_login');
+        $url = $this->router->generate('pimcore_admin_login');
 
         return new RedirectResponse($url);
     }
@@ -90,7 +90,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
     public function getCredentials(Request $request)
     {
         // TODO trigger admin.login.login.authenticate event
-        if ($request->attributes->get('_route') === 'admin_login_check') {
+        if ($request->attributes->get('_route') === 'pimcore_admin_login_check') {
             if (!null === $username = $request->get('username')) {
                 throw new AuthenticationException('Missing username');
             }
@@ -201,7 +201,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
     {
         $this->bruteforceProtectionHandler->addEntry($request->get('username'), $request);
 
-        $url = $this->router->generate('admin_login', [
+        $url = $this->router->generate('pimcore_admin_login', [
             'auth_failed' => 'true'
         ]);
 
@@ -216,18 +216,18 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
         // as we authenticate statelessly (short lived sessions) the authentication is called for
         // every request. therefore we only redirect if we're on the login page
         if (!in_array($request->attributes->get('_route'), [
-            'admin_login',
-            'admin_login_check'
+            'pimcore_admin_login',
+            'pimcore_admin_login_check'
         ])) {
             return null;
         }
 
         $url = null;
         if ($request->get('deeplink') && $request->get('deeplink') !== 'true') {
-            $url = $this->router->generate('admin_login_deeplink');
+            $url = $this->router->generate('pimcore_admin_login_deeplink');
             $url .= '?' . $request->get('deeplink');
         } else {
-            $url = $this->router->generate('admin_index', [
+            $url = $this->router->generate('pimcore_admin_index', [
                 '_dc' => time()
             ]);
         }

@@ -93,7 +93,7 @@ class LogoutSuccessHandler implements LogoutSuccessHandlerInterface, LoggerAware
         if ($event && $event->hasResponse()) {
             $response = $event->getResponse();
         } else {
-            $response = new RedirectResponse($this->router->generate('admin_index'));
+            $response = new RedirectResponse($this->router->generate('pimcore_admin_index'));
         }
 
         // cleanup pimcore-cookies => 315554400 => strtotime('1980-01-01')

@@ -3,7 +3,7 @@
 <head>
     <?php
     /** @var \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine $view */
-    $redirect = $view->router()->path('admin_login', [
+    $redirect = $view->router()->path('pimcore_admin_login', [
         'deeplink' => 'true'
     ]);
     ?>

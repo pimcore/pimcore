@@ -19,14 +19,14 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class LoginController extends AdminController implements BruteforceProtectedControllerInterface
 {
     /**
-     * @Route("/login", name="admin_login")
+     * @Route("/login", name="pimcore_admin_login")
      * @TemplatePhp()
      */
     public function loginAction(Request $request)
     {
         $user = $this->getUser();
         if ($user instanceof UserInterface) {
-            return $this->redirectToRoute('admin_index');
+            return $this->redirectToRoute('pimcore_admin_index');
         }
 
         $view = $this->buildLoginPageViewModel();
@@ -44,18 +44,18 @@ class LoginController extends AdminController implements BruteforceProtectedCont
     /**
      * Dummy route used to check authentication
      *
-     * @Route("/login/login", name="admin_login_check")
+     * @Route("/login/login", name="pimcore_admin_login_check")
      *
      * @see AdminAuthenticator for the security implementation
      */
     public function loginCheckAction()
     {
         // just in case the authenticator didn't redirect
-        return new RedirectResponse($this->generateUrl('admin_login'));
+        return new RedirectResponse($this->generateUrl('pimcore_admin_login'));
     }
 
     /**
-     * @Route("/login/lostpassword", name="admin_login_lostpassword")
+     * @Route("/login/lostpassword")
      * @TemplatePhp()
      */
     public function lostpasswordAction(Request $request)
@@ -74,7 +74,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
                     if ($user->getEmail()) {
                         $token = Authentication::generateToken($username, $user->getPassword());
 
-                        $loginUrl = $this->generateUrl('admin_login_check', [
+                        $loginUrl = $this->generateUrl('pimcore_admin_login_check', [
                             'username' => $username,
                             'token'    => $token,
                             'reset'    => 'true'
@@ -114,7 +114,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
     }
 
     /**
-     * @Route("/login/deeplink", name="admin_login_deeplink")
+     * @Route("/login/deeplink")
      * @TemplatePhp()
      */
     public function deeplinkAction()
@@ -125,7 +125,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
         if (preg_match("/(document|asset|object)_([0-9]+)_([a-z]+)/", $queryString, $deeplink)) {
             if (strpos($queryString, "token")) {
                 $deeplink = $deeplink[0];
-                $url = $this->generateUrl('admin_login', [
+                $url = $this->generateUrl('pimcore_admin_login', [
                     'deeplink' => $deeplink
                 ]);
 

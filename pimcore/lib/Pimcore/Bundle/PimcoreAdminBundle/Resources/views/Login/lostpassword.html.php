@@ -20,7 +20,7 @@ $view->extend('PimcoreAdminBundle:Login:layout.html.php');
 
                 <div id="loginform">
 
-                    <form method="post" action="<?= $view->router()->path('admin_login_lostpassword') ?>">
+                    <form method="post" action="<?= $view->router()->path('pimcore_admin_login_lostpassword') ?>">
                         <div class="form-fields">
                             <input type="text" name="username" placeholder="<?= $this->translate("Username"); ?>"/>
                         </div>
@@ -33,7 +33,7 @@ $view->extend('PimcoreAdminBundle:Login:layout.html.php');
             <?php } ?>
 
             <div class="body lostpassword" style="padding-top: 30px;">
-                <a href="<?= $view->router()->path('admin_login') ?>"><?= $this->translate("Back to Login"); ?></a>
+                <a href="<?= $view->router()->path('pimcore_admin_login') ?>"><?= $this->translate("Back to Login"); ?></a>
             </div>
         </div>
     </div>

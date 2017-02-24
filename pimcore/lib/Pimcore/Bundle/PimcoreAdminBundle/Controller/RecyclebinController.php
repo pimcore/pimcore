@@ -14,7 +14,7 @@ class RecyclebinController extends AdminController implements EventedControllerI
 {
 
     /**
-     * @Route("/recyclebin/list", name="admin_recyclebin_list")
+     * @Route("/recyclebin/list")
      * @param Request $request
      */
     public function listAction(Request $request)
@@ -116,7 +116,7 @@ class RecyclebinController extends AdminController implements EventedControllerI
     }
 
     /**
-     * @Route("/recyclebin/restore", name="admin_recyclebin_restore")
+     * @Route("/recyclebin/restore")
      * @param Request $request
      */
     public function restoreAction(Request $request)
@@ -128,7 +128,7 @@ class RecyclebinController extends AdminController implements EventedControllerI
     }
 
     /**
-     * @Route("/recyclebin/flush", name="admin_recyclebin_flush")
+     * @Route("/recyclebin/flush")
      * @param Request $request
      */
     public function flushAction()
@@ -140,7 +140,7 @@ class RecyclebinController extends AdminController implements EventedControllerI
     }
 
     /**
-     * @Route("/recyclebin/add", name="admin_recyclebin_add")
+     * @Route("/recyclebin/add")
      * @param Request $request
      */
     public function addAction(Request $request)

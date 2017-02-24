@@ -42,12 +42,12 @@ pimcore:
         # in PimcoreContextGuesser
         routes:
             - { path: ^/admin }
-            - { route: ^admin_ }
+            - { route: ^pimcore_admin_ }
 
         # the following routes won't be double checked for authentication
         # this usually applies to login routes
         unauthenticated_routes:
-            - { route: admin_login }
+            - { route: pimcore_admin_login }
 
         translations:
           path: "@PimcoreBundle/Resources/translations"

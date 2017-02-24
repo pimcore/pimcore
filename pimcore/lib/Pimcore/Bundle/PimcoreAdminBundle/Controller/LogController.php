@@ -11,7 +11,7 @@ class LogController extends \Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminC
 {
 
     /**
-     * @Route("/log/show", name="admin_log_show")
+     * @Route("/log/show")
      * @param Request $request
      */
     public function showAction(Request $request)
@@ -112,7 +112,7 @@ class LogController extends \Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminC
     }
 
     /**
-     * @Route("/log/priority-json", name="admin_log_priority_json")
+     * @Route("/log/priority-json")
      * @param Request $request
      */
     public function priorityJsonAction(Request $request)
@@ -126,7 +126,7 @@ class LogController extends \Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminC
     }
 
     /**
-     * @Route("/log/component-json", name="admin_log_component_json")
+     * @Route("/log/component-json")
      * @param Request $request
      */
     public function componentJsonAction(Request $request)
