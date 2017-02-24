@@ -5,7 +5,6 @@ namespace Pimcore\Bundle\PimcoreBundle\Controller;
 use Pimcore\Bundle\PimcoreBundle\Controller\Traits\TemplateControllerTrait;
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModel;
 use Pimcore\Model\Document;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;

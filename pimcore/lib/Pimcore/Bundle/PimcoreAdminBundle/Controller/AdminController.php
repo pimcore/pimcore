@@ -3,10 +3,9 @@
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller;
 
 use Pimcore\Bundle\PimcoreAdminBundle\Security\User\User as UserProxy;
-use Pimcore\Logger;
+use Pimcore\Bundle\PimcoreBundle\Controller\Controller;
 use Pimcore\Model\User;
 use Pimcore\Tool\Session;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
