@@ -17,7 +17,7 @@ pimcore.object.classes.data.data = Class.create({
     invalidFieldNames: false,
     forbiddenNames: [
                 "id","key","path","type","index","classname","creationdate","userowner","value","class","list",
-                "fullpath","childs","values","cachetag","cachetags","parent","published","valuefromparent",
+                "fullpath","childs","children","values","cachetag","cachetags","parent","published","valuefromparent",
                 "userpermissions","dependencies","modificationdate","usermodification","byid","bypath","data",
                 "versions","properties","permissions","permissionsforuser","childamount","apipluginbroker","resource",
                 "parentClass","definition","locked","language","omitmandatorycheck", "idpath", "object", "fieldname",
