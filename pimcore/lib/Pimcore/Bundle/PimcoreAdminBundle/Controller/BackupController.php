@@ -46,7 +46,7 @@ class BackupController extends AdminController implements EventedControllerInter
     }
 
     /**
-     * @Route("/backup/mysql-tables", name="admin_backup_mysqltables")
+     * @Route("/backup/mysql-tables", name="admin_backup_mysql_tables")
      * @param Request $request
      */
     public function mysqlTablesAction(Request $request)
@@ -80,7 +80,7 @@ class BackupController extends AdminController implements EventedControllerInter
     }
 
     /**
-     * @Route("/backup/mysql-complete", name="admin_backup_mysqlcomplete")
+     * @Route("/backup/mysql-complete", name="admin_backup_mysql_complete")
      * @param Request $request
      */
     public function mysqlCompleteAction(Request $request)
