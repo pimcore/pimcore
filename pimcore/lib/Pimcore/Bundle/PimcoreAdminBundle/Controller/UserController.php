@@ -1,41 +1,31 @@
 <?php
-/**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in
- * LICENSE.md which is distributed with this source code.
- *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
- */
 
+namespace Pimcore\Bundle\PimcoreAdminBundle\Controller;
+use Pimcore\Bundle\PimcoreBundle\Controller\EventedControllerInterface;
 use Pimcore\Tool;
 use Pimcore\Model\User;
 use Pimcore\Model\Element;
 use Pimcore\Model\Object;
 use Pimcore\Logger;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
+use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\Routing\Annotation\Route;
 
-class Admin_UserController extends \Pimcore\Controller\Action\Admin
+class UserController extends AdminController implements EventedControllerInterface
 {
-    public function init()
-    {
-        parent::init();
 
-        // check permissions
-        $notRestrictedActions = ["get-current-user", "update-current-user", "get-available-permissions", "get-minimal", "get-image", "upload-current-user-image"];
-        if (!in_array($this->getParam("action"), $notRestrictedActions)) {
-            $this->checkPermission("users");
-        }
-    }
-
-    public function treeGetChildsByIdAction()
+    /**
+     * @Route("/user/tree-get-childs-by-id", name="admin_user_tree_get_childs_by_id")
+     * @param Request $request
+     */
+    public function treeGetChildsByIdAction(Request $request)
     {
         $list = new User\Listing();
-        $list->setCondition("parentId = ?", intval($this->getParam("node")));
+        $list->setCondition("parentId = ?", intval($request->get("node")));
         $list->setOrder("ASC");
         $list->setOrderKey("name");
         $list->load();
@@ -48,7 +38,7 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
                 }
             }
         }
-        $this->_helper->json($users);
+        return $this->json($users);
     }
 
     /**
@@ -92,23 +82,27 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
         return $tmpUser;
     }
 
-    public function addAction()
+    /**
+     * @Route("/user/add", name="admin_user_add")
+     * @param Request $request
+     */
+    public function addAction(Request $request)
     {
-        $this->protectCSRF();
+        $this->protectCsrf($request);
 
         try {
-            $type = $this->getParam("type");
+            $type = $request->get("type");
             ;
             $className = User\Service::getClassNameForType($type);
             $user = $className::create([
-                "parentId" => intval($this->getParam("parentId")),
-                "name" => trim($this->getParam("name")),
+                "parentId" => intval($request->get("parentId")),
+                "name" => trim($request->get("name")),
                 "password" => "",
-                "active" => $this->getParam("active")
+                "active" => $request->get("active")
             ]);
 
-            if ($this->getParam("rid")) {
-                $rid = $this->getParam("rid");
+            if ($request->get("rid")) {
+                $rid = $request->get("rid");
                 $rObject = $className::getById($rid);
                 if ($rObject) {
                     if ($type == "user" || $type == "role") {
@@ -160,15 +154,15 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
                     }
                 }
             }
-            $this->_helper->json([
+            return $this->json([
                 "success" => true,
                 "id" => $user->getId()
             ]);
         } catch (\Exception $e) {
-            $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
+            return $this->json(["success" => false, "message" => $e->getMessage()]);
         }
 
-        $this->_helper->json(false);
+        return $this->json(false);
     }
 
     /**
@@ -204,9 +198,13 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
         return $currentList;
     }
 
-    public function deleteAction()
+    /**
+     * @Route("/user/delete", name="admin_user_delete")
+     * @param Request $request
+     */
+    public function deleteAction(Request $request)
     {
-        $user = User\AbstractUser::getById(intval($this->getParam("id")));
+        $user = User\AbstractUser::getById(intval($request->get("id")));
 
         // only admins are allowed to delete admins and folders
         // because a folder might contain an admin user, so it is simply not allowed for users with the "users" permission
@@ -229,21 +227,25 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
             }
         }
 
-        $this->_helper->json(["success" => true]);
+        return $this->json(["success" => true]);
     }
 
-    public function updateAction()
+    /**
+     * @Route("/user/update", name="admin_user_update")
+     * @param Request $request
+     */
+    public function updateAction(Request $request)
     {
-        $this->protectCSRF();
+        $this->protectCsrf($request);
 
-        $user = User\AbstractUser::getById(intval($this->getParam("id")));
+        $user = User\AbstractUser::getById(intval($request->get("id")));
 
         if ($user instanceof User && $user->isAdmin() && !$this->getUser()->isAdmin()) {
             throw new \Exception("Only admin users are allowed to modify admin users");
         }
 
-        if ($this->getParam("data")) {
-            $values = \Zend_Json::decode($this->getParam("data"));
+        if ($request->get("data")) {
+            $values = $this->decodeJson($request->get("data"), true);
 
             if (!empty($values["password"])) {
                 $values["password"] = Tool\Authentication::getPasswordHash($user->getName(), $values["password"]);
@@ -280,8 +282,8 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
             }
 
             // check for workspaces
-            if ($this->getParam("workspaces")) {
-                $workspaces = \Zend_Json::decode($this->getParam("workspaces"));
+            if ($request->get("workspaces")) {
+                $workspaces = $this->decodeJson($request->get("workspaces"), true);
                 foreach ($workspaces as $type => $spaces) {
                     $newWorkspaces = [];
                     foreach ($spaces as $space) {
@@ -305,16 +307,20 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
 
         $user->save();
 
-        $this->_helper->json(["success" => true]);
+        return $this->json(["success" => true]);
     }
 
-    public function getAction()
+    /**
+     * @Route("/user/get", name="admin_user_get")
+     * @param Request $request
+     */
+    public function getAction(Request $request)
     {
-        if (intval($this->getParam("id")) < 1) {
-            $this->_helper->json(["success" => false]);
+        if (intval($request->get("id")) < 1) {
+            return $this->json(["success" => false]);
         }
 
-        $user = User::getById(intval($this->getParam("id")));
+        $user = User::getById(intval($request->get("id")));
 
         if ($user->isAdmin() && !$this->getUser()->isAdmin()) {
             throw new \Exception("Only admin users are allowed to modify admin users");
@@ -376,7 +382,7 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
         $availablePerspectives = \Pimcore\Config::getAvailablePerspectives(null);
 
         $conf = \Pimcore\Config::getSystemConfig();
-        $this->_helper->json([
+        return $this->json([
             "success" => true,
             "wsenabled" => $conf->webservice->enabled,
             "user" => $userData,
@@ -392,9 +398,13 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
         ]);
     }
 
-    public function getMinimalAction()
+    /**
+     * @Route("/user/get-minimal", name="admin_user_get_minimal")
+     * @param Request $request
+     */
+    public function getMinimalAction(Request $request)
     {
-        $user = User::getById(intval($this->getParam("id")));
+        $user = User::getById(intval($request->get("id")));
         $user->setPassword(null);
 
         $minimalUserData['id'] = $user->getId();
@@ -404,33 +414,41 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
         $minimalUserData['permissionInfo']['documents'] = $user->isAllowed("documents");
         $minimalUserData['permissionInfo']['objects'] = $user->isAllowed("objects");
 
-        $this->_helper->json($minimalUserData);
+        return $this->json($minimalUserData);
     }
 
-    public function uploadCurrentUserImageAction()
+    /**
+     * @Route("/user/upload-current-user-image", name="admin_user_upload_current_user_image")
+     * @param Request $request
+     */
+    public function uploadCurrentUserImageAction(Request $request)
     {
         $user = $this->getUser();
         if ($user != null) {
-            if ($user->getId() == $this->getParam("id")) {
+            if ($user->getId() == $request->get("id")) {
                 $this->uploadImageAction();
             } else {
                 Logger::warn("prevented save current user, because ids do not match. ");
-                $this->_helper->json(false);
+                return $this->json(false);
             }
         } else {
-            $this->_helper->json(false);
+            return $this->json(false);
         }
     }
 
 
-    public function updateCurrentUserAction()
+    /**
+     * @Route("/user/update-current-user", name="admin_user_update_current_user")
+     * @param Request $request
+     */
+    public function updateCurrentUserAction(Request $request)
     {
-        $this->protectCSRF();
+        $this->protectCsrf($request);
 
         $user = $this->getUser();
         if ($user != null) {
-            if ($user->getId() == $this->getParam("id")) {
-                $values = \Zend_Json::decode($this->getParam("data"));
+            if ($user->getId() == $request->get("id")) {
+                $values = $this->decodeJson($request->get("data"), true);
 
                 unset($values["name"]);
                 unset($values["id"]);
@@ -463,26 +481,28 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
                     if ($oldPasswordCheck && $values["new_password"] == $values["retype_password"]) {
                         $values["password"] = Tool\Authentication::getPasswordHash($user->getName(), $values["new_password"]);
                     } else {
-                        $this->_helper->json(["success" => false, "message" => "password_cannot_be_changed"]);
+                        return $this->json(["success" => false, "message" => "password_cannot_be_changed"]);
                     }
                 }
 
                 $user->setValues($values);
                 $user->save();
-                $this->_helper->json(["success" => true]);
+                return $this->json(["success" => true]);
             } else {
                 Logger::warn("prevented save current user, because ids do not match. ");
-                $this->_helper->json(false);
+                return $this->json(false);
             }
         } else {
-            $this->_helper->json(false);
+            return $this->json(false);
         }
     }
 
-    public function getCurrentUserAction()
+    /**
+     * @Route("/user/get-current-user", name="admin_user_get_current_user")
+     * @param Request $request
+     */
+    public function getCurrentUserAction(Request $request)
     {
-        header("Content-Type: text/javascript");
-
         $user = $this->getUser();
 
         $list = new User\Permission\Definition\Listing();
@@ -498,17 +518,22 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
         $userData["contentLanguages"] = $contentLanguages;
         unset($userData["password"]);
 
-        echo "pimcore.currentuser = " . \Zend_Json::encode($userData);
-        exit;
+        $response = new Response("pimcore.currentuser = " . $this->encodeJson($userData));
+        $response->headers->set("Content-Type", "text/javascript");
+        return $response;
     }
 
 
     /* ROLES */
 
-    public function roleTreeGetChildsByIdAction()
+    /**
+     * @Route("/user/roles-tree-get-childs-by-id", name="admin_user_roles_tree_get_childs_by_id")
+     * @param Request $request
+     */
+    public function roleTreeGetChildsByIdAction(Request $request)
     {
         $list = new User\Role\Listing();
-        $list->setCondition("parentId = ?", intval($this->getParam("node")));
+        $list->setCondition("parentId = ?", intval($request->get("node")));
         $list->load();
 
         $roles = [];
@@ -517,7 +542,7 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
                 $roles[] = $this->getRoleTreeNodeConfig($role);
             }
         }
-        $this->_helper->json($roles);
+        return $this->json($roles);
     }
 
     /**
@@ -556,9 +581,13 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
         return $tmpUser;
     }
 
-    public function roleGetAction()
+    /**
+     * @Route("/user/role-get", name="admin_user_role_get")
+     * @param Request $request
+     */
+    public function roleGetAction(Request $request)
     {
-        $role = User\Role::getById(intval($this->getParam("id")));
+        $role = User\Role::getById(intval($request->get("id")));
 
         // workspaces
         $types = ["asset", "document", "object"];
@@ -579,7 +608,7 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
 
         $availablePerspectives = \Pimcore\Config::getAvailablePerspectives(null);
 
-        $this->_helper->json([
+        return $this->json([
             "success" => true,
             "role" => $role,
             "permissions" => $role->generatePermissionList(),
@@ -591,13 +620,17 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
         ]);
     }
 
-    public function uploadImageAction()
+    /**
+     * @Route("/user/upload-image", name="admin_user_upload_image")
+     * @param Request $request
+     */
+    public function uploadImageAction(Request $request)
     {
-        if ($this->getParam("id")) {
-            if ($this->getUser()->getId() != $this->getParam("id")) {
+        if ($request->get("id")) {
+            if ($this->getUser()->getId() != $request->get("id")) {
                 $this->checkPermission("users");
             }
-            $id = $this->getParam("id");
+            $id = $request->get("id");
         } else {
             $id = $this->getUser()->getId();
         }
@@ -610,23 +643,27 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
 
         $userObj->setImage($_FILES["Filedata"]["tmp_name"]);
 
-
-        $this->_helper->json([
-            "success" => true
-        ], false);
-
         // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
         // Ext.form.Action.Submit and mark the submission as failed
-        $this->getResponse()->setHeader("Content-Type", "text/html");
+
+        $response = $this->json(["success" => true]);
+        $response->headers->set("Content-Type", "text/html");
+        return $response;
+
+
     }
 
-    public function getImageAction()
+    /**
+     * @Route("/user/get-image", name="admin_user_get_image")
+     * @param Request $request
+     */
+    public function getImageAction(Request $request)
     {
-        if ($this->getParam("id")) {
-            if ($this->getUser()->getId() != $this->getParam("id")) {
+        if ($request->get("id")) {
+            if ($this->getUser()->getId() != $request->get("id")) {
                 $this->checkPermission("users");
             }
-            $id = $this->getParam("id");
+            $id = $request->get("id");
         } else {
             $id = $this->getUser()->getId();
         }
@@ -635,15 +672,18 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
         $userObj = User::getById($id);
         $thumb = $userObj->getImage();
 
-        header("Content-type: image/png", true); while (@ob_end_flush());
-        flush();
-        readfile($thumb);
-        exit;
+        $response = new BinaryFileResponse($thumb);
+        $response->headers->set('Content-Type', 'image/png');
+        return $response;
     }
 
-    public function getTokenLoginLinkAction()
+    /**
+     * @Route("/user/get-token-login-link", name="admin_user_get_token_login_link")
+     * @param Request $request
+     */
+    public function getTokenLoginLinkAction(Request $request)
     {
-        $user = User::getById($this->getParam("id"));
+        $user = User::getById($request->get("id"));
 
         if ($user->isAdmin() && !$this->getUser()->isAdmin()) {
             throw new \Exception("Only admin users are allowed to login as an admin user");
@@ -651,21 +691,25 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
 
         if ($user) {
             $token = Tool\Authentication::generateToken($user->getName(), $user->getPassword());
-            $r = $this->getRequest();
-            $link = $r->getScheme() . "://" . $r->getHttpHost() . "/admin/login/login/?username=" . $user->getName() . "&token=" . $token;
 
-            $this->_helper->json([
+            $link = $request->getScheme() . "://" . $request->getHttpHost() . "/admin/login/login/?username=" . $user->getName() . "&token=" . $token;
+
+            return $this->json([
                 "link" => $link
             ]);
         }
     }
 
-    public function searchAction()
+    /**
+     * @Route("/user/search", name="admin_user_search")
+     * @param Request $request
+     */
+    public function searchAction(Request $request)
     {
-        $q = "%" . $this->getParam("query") . "%";
+        $q = "%" . $request->get("query") . "%";
 
         $list = new User\Listing();
-        $list->setCondition("name LIKE ? OR firstname LIKE ? OR lastname LIKE ? OR email LIKE ? OR id = ?", [$q, $q, $q, $q, intval($this->getParam("query"))]);
+        $list->setCondition("name LIKE ? OR firstname LIKE ? OR lastname LIKE ? OR email LIKE ? OR id = ?", [$q, $q, $q, $q, intval($request->get("query"))]);
         $list->setOrder("ASC");
         $list->setOrderKey("name");
         $list->load();
@@ -684,9 +728,36 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
                 }
             }
         }
-        $this->_helper->json([
+        return $this->json([
             "success" => true,
             "users" => $users
         ]);
+    }
+
+    /**
+     * @param FilterControllerEvent $event
+     */
+    public function onKernelController(FilterControllerEvent $event)
+    {
+        $isMasterRequest = $event->isMasterRequest();
+        if (!$isMasterRequest) {
+            return;
+        }
+
+        $request = $event->getRequest();
+
+        // check permissions
+        $notRestrictedActions = ["get-current-user", "update-current-user", "get-available-permissions", "get-minimal", "get-image", "upload-current-user-image"];
+        if (!in_array($request->get("action"), $notRestrictedActions)) {
+            $this->checkPermission("users");
+        }
+    }
+
+    /**
+     * @param FilterResponseEvent $event
+     */
+    public function onKernelResponse(FilterResponseEvent $event)
+    {
+        // nothing to do
     }
 }
