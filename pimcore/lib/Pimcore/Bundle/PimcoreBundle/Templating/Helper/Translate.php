@@ -42,12 +42,6 @@ class Translate extends Helper
     public function __invoke($key, $parameters = [])
     {
         $term = $this->translator->trans($key, $parameters, $this->domain);
-
-        // check for an indexed array, that used the ZF1 vsprintf() notation for parameters
-        if(isset($parameters[0])) {
-            $term = vsprintf($key, $parameters);
-        }
-
         return $term;
     }
 

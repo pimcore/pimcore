@@ -66,7 +66,14 @@ class Translator implements TranslatorInterface, TranslatorBagInterface {
 
         $term = $catalogue->get((string) $id, $domain);
         $term = $this->checkForEmptyTranslation($id, $term, $domain, $locale);
-        return strtr($term, $parameters);
+        $term = strtr($term, $parameters);
+
+        // check for an indexed array, that used the ZF1 vsprintf() notation for parameters
+        if(isset($parameters[0])) {
+            $term = vsprintf($id, $parameters);
+        }
+
+        return $term;
     }
 
     /**
