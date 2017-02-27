@@ -69,7 +69,7 @@ class HttpCacheListener implements EventSubscriberInterface
 
         if ($response && $disable) {
             // set headers to avoid problems with proxies, ...
-            $this->responseHelper->disableCache($response);
+            $this->responseHelper->disableCache($response, false);
         }
     }
 }
