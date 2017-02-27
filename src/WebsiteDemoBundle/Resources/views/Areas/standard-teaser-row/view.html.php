@@ -16,7 +16,7 @@
                 <?php
                     $type = $this->select("type_".$t)->getData();
                     if($type == "direct") {
-                        $this->template("WebsiteDemoBundle:Snippets:standard-teaser.html.php", ["suffix" => $t+1]);
+                        echo $this->template("WebsiteDemoBundle:Snippets:standard-teaser.html.php", ["suffix" => $t+1]);
                     } else {
                         echo $this->snippet("teaser_".$t);
                     }
