@@ -20,8 +20,6 @@ class PimcoreExtension extends Extension
         $configuration = new Configuration();
         $config        = $this->processConfiguration($configuration, $configs);
 
-        // admin routes are used by PimcoreContextGuesser to determine the pimcore context (e.g. admin)
-        $container->setParameter('pimcore.admin.routes', $config['admin']['routes']);
         // unauthenticated routes do not double-check for authentication
         $container->setParameter('pimcode.admin.unauthenticated_routes', $config['admin']['unauthenticated_routes']);
 
@@ -56,6 +54,23 @@ class PimcoreExtension extends Extension
                     $loader->load(sprintf('templating_%s.yml', $engine));
                 }
             }
+        }
+
+        $this->addContextRoutes($container, $config['context']);
+    }
+
+    /**
+     * Add context specific routes to context guesser
+     *
+     * @param ContainerBuilder $container
+     * @param array $config
+     */
+    protected function addContextRoutes(ContainerBuilder $container, array $config)
+    {
+        $guesser = $container->getDefinition('pimcore.service.context.pimcore_context_guesser');
+
+        foreach ($config as $context => $contextConfig) {
+            $guesser->addMethodCall('addContextRoutes', [$context, $contextConfig['routes']]);
         }
     }
 

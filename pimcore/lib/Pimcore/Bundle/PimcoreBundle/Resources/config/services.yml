@@ -74,7 +74,7 @@ services:
 
     pimcore.service.context.pimcore_context_guesser:
         class: Pimcore\Bundle\PimcoreBundle\Service\Context\PimcoreContextGuesser
-        arguments: ['@pimcore.service.request_matcher_factory', '%pimcore.admin.routes%']
+        arguments: ['@pimcore.service.request_matcher_factory']
 
     #
     # REQUEST RESOLVERS
