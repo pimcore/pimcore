@@ -124,7 +124,7 @@ pimcore.document.newsletters.sendingPanel = Class.create({
                     iconCls: "pimcore_icon_stop",
                     handler: function() {
                         Ext.Ajax.request({
-                            url: "/admin/newsletter/stop-send/",
+                            url: "/admin/newsletter/stop-send",
                             params: {id: this.document.id}
                         });
                     }.bind(this)
@@ -239,7 +239,7 @@ pimcore.document.newsletters.sendingPanel = Class.create({
 
     checkForActiveSendingProcess: function() {
         Ext.Ajax.request({
-            url: "/admin/newsletter/get-send-status/",
+            url: "/admin/newsletter/get-send-status",
             params: {id: this.document.id},
             success: function(response) {
                 var result = Ext.decode(response.responseText);
