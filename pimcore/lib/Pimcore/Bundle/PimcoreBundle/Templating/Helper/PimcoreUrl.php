@@ -19,6 +19,14 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class PimcoreUrl extends AbstractrUrlHelper
 {
     /**
+     * @inheritDoc
+     */
+    public function getName()
+    {
+        return 'pimcoreUrl';
+    }
+
+    /**
      * @param array $urlOptions
      * @param null $name
      * @param bool $reset

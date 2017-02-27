@@ -4,12 +4,12 @@ namespace Pimcore\Bundle\PimcoreBundle\Templating\Helper;
 
 use Pimcore\Http\RequestHelper;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Zend\View\Helper\AbstractHelper;
+use Symfony\Component\Templating\Helper\Helper;
 
 /**
  * Helper generating URLs through symfony routing
  */
-abstract class AbstractrUrlHelper extends AbstractHelper
+abstract class AbstractrUrlHelper extends Helper
 {
     /**
      * @var UrlGeneratorInterface
