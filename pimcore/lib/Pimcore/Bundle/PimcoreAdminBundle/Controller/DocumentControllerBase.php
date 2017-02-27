@@ -192,7 +192,7 @@ abstract class DocumentControllerBase extends AdminController implements Evented
     }
 
     /**
-     * @Route("/remove-from-sesssion")
+     * @Route("/remove-from-session")
      * @param Request $request
      */
     public function removeFromSessionAction(Request $request)
