@@ -29,12 +29,20 @@ security:
                 success_handler: pimcore_admin.security.logout_success_handler
             guard:
                 authenticators:
-                    - pimcore_admin.security.guard_authenticator
+                    - pimcore_admin.security.admin_authenticator
+
+        webservice:
+            pattern: ^/webservice
+            stateless: true
+            guard:
+                authenticators:
+                    - pimcore_admin.security.webservice_authenticator
 
     access_control:
         - { path: ^/admin/login$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/admin/login/(login|lostpassword|deeplink)$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/admin, roles: ROLE_PIMCORE_USER }
+        - { path: ^/webservice, roles: ROLE_PIMCORE_USER }
 
     role_hierarchy:
         ROLE_PIMCORE_ADMIN: [ROLE_PIMCORE_USER]

@@ -22,7 +22,7 @@ services:
     # SECURITY
     #
 
-    pimcore_admin.security.guard_authenticator:
+    pimcore_admin.security.admin_authenticator:
         class: Pimcore\Bundle\PimcoreAdminBundle\Security\Guard\AdminAuthenticator
         arguments:
             - '@security.token_storage'
@@ -30,6 +30,13 @@ services:
             - '@security.http_utils'
             - '@pimcore_admin.security.bruteforce_protection_handler'
 
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: monolog.logger, channel: security }
+
+    pimcore_admin.security.webservice_authenticator:
+        class: Pimcore\Bundle\PimcoreAdminBundle\Security\Guard\WebserviceAuthenticator
         calls:
             - [setLogger, ['@logger']]
         tags:
