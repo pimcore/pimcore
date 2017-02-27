@@ -928,7 +928,7 @@ pimcore.helpers.assetSingleUploadDialog = function (parent, parentType, success,
         var failure = function () {};
     }
 
-    var url = '/admin/asset/add-asset-compatibility/?parent' + ucfirst(parentType) + '=' + parent;
+    var url = '/admin/asset/add-asset-compatibility?parent' + ucfirst(parentType) + '=' + parent;
 
     var uploadWindowCompatible = new Ext.Window({
         autoHeight: true,
@@ -2498,9 +2498,9 @@ pimcore.helpers.editmode.openPdfEditPanel = function () {
         var pageContainer = this.metaDataWindow.getComponent("pageContainer");
         pageContainer.removeAll();
 
-        var thumbUrl = "/admin/asset/get-document-thumbnail/id/"
+        var thumbUrl = "/admin/asset/get-document-thumbnail?id="
             + this.data.id +
-            "/width/400/height/400/contain/true/page/" + page;
+            "&width=400&height=400&contain=true&page=" + page;
         var page = new Ext.Panel({
             border: false,
             bodyStyle: "background: #e5e5e5; ",
@@ -2603,8 +2603,8 @@ pimcore.helpers.editmode.openPdfEditPanel = function () {
     this.currentPage = null;
 
     for(var i=1; i<=this.data.pageCount; i++) {
-        thumbUrl = "/admin/asset/get-document-thumbnail/id/"
-        + this.data.id + "/width/400/height/400/contain/true/page/" + i;
+        thumbUrl = "/admin/asset/get-document-thumbnail?id="
+        + this.data.id + "&width=400&height=400&contain=true&page=" + i;
 
 
         pages.push({

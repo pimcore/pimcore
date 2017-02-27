@@ -22,7 +22,7 @@
 
 <div id="editor"></div>
 
-<img style="visibility: hidden" id='image' src='/admin/asset/get-image-thumbnail/id/<?= $this->asset->getId() ?>/width/1000/height/1000/contain/true/image.png'/>
+<img style="visibility: hidden" id='image' src='/admin/asset/get-image-thumbnail?id=<?= $this->asset->getId() ?>&width=1000&height=1000&contain=true'/>
 
 <script type='text/javascript'>
     var featherEditor = new Aviary.Feather({
@@ -35,7 +35,7 @@
         noCloseButton: true,
         onSave: function(imageID, newURL) {
             $.ajax({
-                url: "/admin/asset/image-editor-save/id/<?= $this->asset->getId() ?>",
+                url: "/admin/asset/image-editor-save?id=<?= $this->asset->getId() ?>",
                 method: "GET",
                 data: { url : newURL },
                 dataType: "json"

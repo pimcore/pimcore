@@ -246,7 +246,7 @@ pimcore.document.seopanel = Class.create({
         this.editWindow.close();
 
         Ext.Ajax.request({
-            url: "/admin/document/update/",
+            url: "/admin/document/update",
             method: "post",
             params: values,
             success: function (node) {

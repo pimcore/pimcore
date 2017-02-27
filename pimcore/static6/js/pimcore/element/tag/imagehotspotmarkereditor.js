@@ -31,8 +31,8 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
     },
 
     open: function (modal) {
-        var imageUrl = '/admin/asset/get-image-thumbnail/id/' + this.imageId + '/width/' + this.width + '/height/'
-            + this.height + '/contain/true';
+        var imageUrl = '/admin/asset/get-image-thumbnail?id=' + this.imageId + '&width=' + this.width + '&height='
+            + this.height + '&contain=true';
 
         if(typeof modal != "undefined") {
             this.modal = modal;

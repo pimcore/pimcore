@@ -46,7 +46,7 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
 
     getData: function () {
         Ext.Ajax.request({
-            url: "/admin/object/get-folder/",
+            url: "/admin/object/get-folder",
             params: {id: this.id},
             success: this.getDataComplete.bind(this)
         });
@@ -313,7 +313,7 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
         this.tab.mask();
 
         Ext.Ajax.request({
-            url: '/admin/object/save-folder/task/' + task,
+            url: '/admin/object/save-folder?task=' + task,
             method: "post",
             params: this.getSaveData(),
             success: function (response) {

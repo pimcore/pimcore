@@ -304,23 +304,23 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
 
         if (!this.options["thumbnail"]) {
             if(!this.originalDimensions["width"] && !this.originalDimensions["height"]) {
-                path = "/admin/asset/get-image-thumbnail/id/" + this.datax.id + "/width/" + this.element.getWidth()
-                    + "/aspectratio/true?" + Ext.urlEncode(this.datax);
+                path = "/admin/asset/get-image-thumbnail?id=" + this.datax.id + "&width=" + this.element.getWidth()
+                    + "&aspectratio=true&" + Ext.urlEncode(this.datax);
             } else if (this.originalDimensions["width"]) {
-                path = "/admin/asset/get-image-thumbnail/id/" + this.datax.id + "/width/" + this.originalDimensions["width"]
-                    + "/aspectratio/true?" + Ext.urlEncode(this.datax);
+                path = "/admin/asset/get-image-thumbnail?id=" + this.datax.id + "&width=" + this.originalDimensions["width"]
+                    + "&aspectratio=true&" + Ext.urlEncode(this.datax);
             } else if (this.originalDimensions["height"]) {
-                path = "/admin/asset/get-image-thumbnail/id/" + this.datax.id + "/height/"
-                + this.originalDimensions["height"] + "/aspectratio/true?" + Ext.urlEncode(this.datax);
+                path = "/admin/asset/get-image-thumbnail?id=" + this.datax.id + "&height="
+                + this.originalDimensions["height"] + "&aspectratio=true&" + Ext.urlEncode(this.datax);
             }
         } else {
             if (typeof this.options.thumbnail == "string") {
-                path = "/admin/asset/get-image-thumbnail/id/" + this.datax.id + "/thumbnail/" + this.options.thumbnail
-                    + "?" + Ext.urlEncode(this.datax) + "&pimcore_editmode=1";
+                path = "/admin/asset/get-image-thumbnail?id=" + this.datax.id + "&thumbnail=" + this.options.thumbnail
+                    + "&" + Ext.urlEncode(this.datax) + "&pimcore_editmode=1";
             }
             else if (this.options.thumbnail.width || this.options.thumbnail.height) {
-                path = "/admin/asset/get-image-thumbnail/id/" + this.datax.id + "/width/"
-                    + this.options.thumbnail.width + "/height/" + this.options.thumbnail.height + "?"
+                path = "/admin/asset/get-image-thumbnail?id=" + this.datax.id + "&width="
+                    + this.options.thumbnail.width + "&height=" + this.options.thumbnail.height + "&"
                     + Ext.urlEncode(this.datax);
             }
         }

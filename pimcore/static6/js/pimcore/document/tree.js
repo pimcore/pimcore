@@ -27,7 +27,7 @@ Ext.define('documentreemodel', {
 pimcore.registerNS("pimcore.document.tree");
 pimcore.document.tree = Class.create({
 
-    treeDataUrl: "/admin/document/tree-get-childs-by-id/",
+    treeDataUrl: "/admin/document/tree-get-childs-by-id",
 
     initialize: function(config, perspectiveCfg) {
 
@@ -63,7 +63,8 @@ pimcore.document.tree = Class.create({
             url: "/admin/document/tree-get-root",
             params: {
                 id: this.config.rootId,
-                view: this.config.customViewId
+                view: this.config.customViewId,
+                elementType: "document"
             },
             success: function (response) {
                 var res = Ext.decode(response.responseText);
@@ -883,7 +884,7 @@ pimcore.document.tree = Class.create({
         }
 
         Ext.Ajax.request({
-            url: "/admin/document/copy-info/",
+            url: "/admin/document/copy-info",
             params: {
                 targetId: record.data.id,
                 sourceId: pimcore.cachedDocumentId,
@@ -969,7 +970,7 @@ pimcore.document.tree = Class.create({
 
     removeSite: function (tree, record) {
         Ext.Ajax.request({
-            url: "/admin/document/remove-site/",
+            url: "/admin/document/remove-site",
             params: {
                 id: record.data.id
             },
@@ -1073,7 +1074,7 @@ pimcore.document.tree = Class.create({
                     data["id"] = record.id;
 
                     Ext.Ajax.request({
-                        url: "/admin/document/update-site/",
+                        url: "/admin/document/update-site",
                         params: data,
                         success: function (response) {
                             var site = Ext.decode(response.responseText);
@@ -1219,7 +1220,7 @@ pimcore.document.tree = Class.create({
         parameters.id = id;
 
         Ext.Ajax.request({
-            url: '/admin/' + type + '/save/task/' + task,
+            url: '/admin/' + type + '/save?task=' + task,
             method: "post",
             params: parameters,
             success: function (task, response) {
@@ -1268,7 +1269,7 @@ pimcore.document.tree = Class.create({
             params["key"] = pimcore.helpers.getValidFilename(params["key"], "document");
             params["index"] = record.childNodes.length;
             params["parentId"] = record.id;
-            params["url"] = "/admin/document/add/";
+            params["url"] = "/admin/document/add";
             pimcore.elementservice.addDocument(params);
         }
     },

@@ -14,7 +14,7 @@
 pimcore.registerNS("pimcore.object.tree");
 pimcore.object.tree = Class.create({
 
-    treeDataUrl: "/admin/object/tree-get-childs-by-id/",
+    treeDataUrl: "/admin/object/tree-get-childs-by-id",
 
     initialize: function (config, perspectiveCfg) {
 
@@ -52,7 +52,8 @@ pimcore.object.tree = Class.create({
             url: "/admin/object/tree-get-root",
             params: {
                 id: this.config.rootId,
-                view: this.config.customViewId
+                view: this.config.customViewId,
+                elementType: "object"
             },
             success: function (response) {
                 var res = Ext.decode(response.responseText);
@@ -82,7 +83,7 @@ pimcore.object.tree = Class.create({
             //model: 'pimcore.data.PagingTreeModel',
             proxy: {
                 type: 'ajax',
-                url: "/admin/object/tree-get-childs-by-id/",
+                url: "/admin/object/tree-get-childs-by-id",
                 reader: {
                     type: 'json',
                     totalProperty : 'total',
@@ -782,7 +783,7 @@ pimcore.object.tree = Class.create({
         pimcore.helpers.addTreeNodeLoadingIndicator("object", record.data.id);
 
         Ext.Ajax.request({
-            url: "/admin/object/copy-info/",
+            url: "/admin/object/copy-info",
             params: {
                 targetId: record.data.id,
                 sourceId: pimcore.cachedObjectId,
@@ -907,7 +908,7 @@ pimcore.object.tree = Class.create({
         parameters.id = record.data.id;
 
         Ext.Ajax.request({
-            url: '/admin/object/save/task/' + task,
+            url: '/admin/object/save?task=' + task,
             method: "post",
             params: parameters,
             success: function (tree, record, task, response) {

@@ -7,10 +7,13 @@ use Pimcore\Logger;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class FolderController extends \Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminController
+/**
+ * @Route("/folder")
+ */
+class FolderController extends DocumentControllerBase
 {
     /**
-     * @Route("/folder/get-data-by-id")
+     * @Route("/get-data-by-id")
      * @param Request $request
      */
     public function getDataByIdAction(Request $request)
@@ -50,7 +53,7 @@ class FolderController extends \Pimcore\Bundle\PimcoreAdminBundle\Controller\Adm
     }
 
     /**
-     * @Route("/folder/save")
+     * @Route("/save")
      * @param Request $request
      */
     public function saveAction(Request $request)

@@ -49,7 +49,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         }
 
         Ext.Ajax.request({
-            url: "/admin/object/get/",
+            url: "/admin/object/get",
             params: params,
             success: this.getDataComplete.bind(this)
         });
@@ -654,7 +654,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             pimcore.plugin.broker.fireEvent("preSaveObject", this);
 
             Ext.Ajax.request({
-                url: '/admin/object/save/task/' + task,
+                url: '/admin/object/save?task=' + task,
                 method: "post",
                 params: saveData,
                 success: function (response) {

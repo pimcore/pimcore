@@ -263,7 +263,7 @@ class Video extends Model\Object\ClassDefinition\Data
     public function getVersionPreview($data, $object = null, $params = [])
     {
         if ($data && $data->getType() == "asset" && $data->getData() instanceof Asset) {
-            return '<img src="/admin/asset/get-video-thumbnail/id/' . $data->getData()->getId() . '/width/100/height/100/aspectratio/true" />';
+            return '<img src="/admin/asset/get-video-thumbnail?id=' . $data->getData()->getId() . '&width=100&height=100&aspectratio=true" />';
         }
 
         return parent::getVersionPreview($data, $object, $params);
@@ -442,7 +442,7 @@ class Video extends Model\Object\ClassDefinition\Data
         $versionPreview = null;
 
         if ($data && $data->getData() instanceof Asset) {
-            $versionPreview = '/admin/asset/get-video-thumbnail/id/' . $data->getData()->getId() . '/width/100/height/100/aspectratio/true';
+            $versionPreview = '/admin/asset/get-video-thumbnail?id=' . $data->getData()->getId() . '&width=100&height=100&aspectratio=true';
         }
 
         if ($versionPreview) {

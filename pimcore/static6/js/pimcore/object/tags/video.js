@@ -39,8 +39,8 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
                                     }
 
                                     if (value) {
-                                        return '<img src="/admin/asset/get-video-thumbnail/id/' + value
-                                            + '/width/88/height/88/frame/true" />';
+                                        return '<img src="/admin/asset/get-video-thumbnail?id=' + value
+                                            + '&width=88&height=88&frame=true" />';
                                     }
                                 }.bind(this, field.key)};
     },
@@ -179,8 +179,8 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
         var content = '';
 
         if(this.data.type == "asset" && pimcore.settings.videoconverter) {
-            content = '<img src="/admin/asset/get-video-thumbnail/width/'
-                + width + "/height/" + height + '/frame/true?' +  Ext.urlEncode({path: this.data.data}) + '" />';
+            content = '<img src="/admin/asset/get-video-thumbnail?width='
+                + width + "&height=" + height + '&frame=true&' +  Ext.urlEncode({path: this.data.data}) + '" />';
         } else if(this.data.type == "youtube") {
             content = '<iframe width="' + width + '" height="' + height + '" src="//www.youtube.com/embed/' + this.data.data + '" frameborder="0" allowfullscreen></iframe>';
         } else if (this.data.type == "vimeo") {

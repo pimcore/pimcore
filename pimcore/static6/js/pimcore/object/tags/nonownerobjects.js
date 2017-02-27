@@ -20,7 +20,7 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
         if (pimcore.globalmanager.exists("object_" + this.getStore().getAt(index).data.id) == false) {
 
             Ext.Ajax.request({
-                url: "/admin/object/get/",
+                url: "/admin/object/get",
                 params: {id: this.getStore().getAt(index).data.id},
                 success: function(item, index, response) {
                     this.data = Ext.decode(response.responseText);
@@ -317,7 +317,7 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
         if (pimcore.globalmanager.exists("object_" + item.id) == false) {
 
             Ext.Ajax.request({
-                url: "/admin/object/get/",
+                url: "/admin/object/get",
                 params: {id: item.id},
                 success: function(item, response) {
                     this.data = Ext.decode(response.responseText);

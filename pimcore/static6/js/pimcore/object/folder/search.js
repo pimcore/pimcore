@@ -171,7 +171,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         var gridHelper = new pimcore.object.helpers.grid(
             klass.data.text,
             fields,
-            "/admin/object/grid-proxy/classId/" + this.classId + "/folderId/" + this.object.id,
+            "/admin/object/grid-proxy?classId=" + this.classId + "&folderId=" + this.object.id,
             {
                 language: this.gridLanguage,
                 // limit: itemsPerPage

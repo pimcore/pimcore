@@ -47,9 +47,10 @@ pimcore.object.versions = Class.create({
                 }],
                 proxy: {
                     type: 'ajax',
-                    url: "/admin/object/get-versions",
+                    url: "/admin/element/get-versions",
                     extraParams: {
-                        id: this.object.id
+                        id: this.object.id,
+                        elementType: "object"
                     },
                     // Reader is now on the proxy, as the message was explaining
                     reader: {
@@ -167,7 +168,7 @@ pimcore.object.versions = Class.create({
         var data = store.getAt(rowIndex).data;
         var versionId = data.id;
 
-        var path = "/admin/object/preview-version/?id=" + versionId;
+        var path = "/admin/object/preview-version?id=" + versionId;
         Ext.get("object_version_iframe_" + this.object.id).dom.src = path;
     },
 
@@ -202,7 +203,7 @@ pimcore.object.versions = Class.create({
         var versionId = data.id;
 
         Ext.Ajax.request({
-            url: "/admin/object/delete-version",
+            url: "/admin/element/delete-version",
             params: {id: versionId}
         });
 

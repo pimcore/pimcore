@@ -42,7 +42,7 @@ pimcore.asset.listfolder = Class.create({
 
         var proxy = new Ext.data.HttpProxy({
             type: 'ajax',
-            url: "/admin/asset/grid-proxy/",
+            url: "/admin/asset/grid-proxy",
             reader: {
                 type: 'json',
                 rootProperty: 'data',

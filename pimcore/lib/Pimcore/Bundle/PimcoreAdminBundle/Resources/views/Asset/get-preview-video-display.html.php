@@ -41,7 +41,7 @@
 <?php
     $thumbnail = "";
     if(\Pimcore\Video::isAvailable()) {
-        $thumbnail = "/admin/asset/get-video-thumbnail/id/" . $this->asset->getId() . "/treepreview/true";
+        $thumbnail = "/admin/asset/get-video-thumbnail?id=" . $this->asset->getId() . "&treepreview=true";
     }
 ?>
 

@@ -310,7 +310,7 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
     },
 
     downloadZip: function () {
-        //pimcore.helpers.download('/admin/asset/download-as-zip/?id='+ this.id);
+        //pimcore.helpers.download('/admin/asset/download-as-zip?id='+ this.id);
 
         Ext.Ajax.request({
             url: "/admin/asset/download-as-zip-jobs",
@@ -345,7 +345,7 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
                         this.downloadProgressBar = null;
                         this.downloadProgressWin = null;
 
-                        pimcore.helpers.download('/admin/asset/download-as-zip/?jobId='+ jobId + "&id=" + this.id);
+                        pimcore.helpers.download('/admin/asset/download-as-zip?jobId='+ jobId + "&id=" + this.id);
                     }.bind(this, res.jobId),
                     update: function (currentStep, steps, percent) {
                         if(this.downloadProgressBar) {

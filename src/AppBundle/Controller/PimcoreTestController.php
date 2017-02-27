@@ -96,4 +96,20 @@ class PimcoreTestController extends FrontendController
             'document' => $document
         ]);
     }
+
+    /**
+     * @Route("/testxyz")
+     */
+    public function testAction()
+    {
+
+            $logger = new \Pimcore\Log\ApplicationLogger();
+            $logger->addWriter(new \Pimcore\Log\Handler\ApplicationLoggerDb());
+            $logger->setComponent("example");
+            $logger->info("Test " . date('c'));
+
+        die("done");
+
+    }
+
 }

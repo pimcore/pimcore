@@ -41,7 +41,7 @@ pimcore.element.properties = Class.create({
 
                 proxy: {
                     type: 'ajax',
-                    url: '/admin/' + this.type + '/get-predefined-properties',
+                    url: '/admin/element/get-predefined-properties?elementType=' + this.type,
                     reader: {
                         type: 'json',
                         rootProperty: "properties"

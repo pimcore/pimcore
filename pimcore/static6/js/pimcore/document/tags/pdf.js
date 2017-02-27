@@ -238,8 +238,8 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
             return;
         }
 
-        path = "/admin/asset/get-document-thumbnail/id/" + this.data.id + "/width/" + this.element.getEl().getWidth()
-                        + "/aspectratio/true?" + Ext.urlEncode(this.data);
+        path = "/admin/asset/get-document-thumbnail?id=" + this.data.id + "&width=" + this.element.getEl().getWidth()
+                        + "&aspectratio=true&" + Ext.urlEncode(this.data);
 
         var image = document.createElement("img");
         image.src = path;
