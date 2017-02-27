@@ -159,7 +159,7 @@ pimcore.settings.email.log = Class.create({
                             layout: 'fit',
                             items : [{
                                 xtype : "box",
-                                autoEl: {tag: 'iframe', src: "/admin/email/show-email-log/?id=" + rec.get('id')
+                                autoEl: {tag: 'iframe', src: "/admin/email/show-email-log?id=" + rec.get('id')
                                 + "&type=html"}
                             }]
                         });
@@ -191,7 +191,7 @@ pimcore.settings.email.log = Class.create({
                             layout: 'fit',
                             items : [{
                                 xtype : "box",
-                                autoEl: {tag: 'iframe', src: "/admin/email/show-email-log/?id=" + rec.get('id')
+                                autoEl: {tag: 'iframe', src: "/admin/email/show-email-log?id=" + rec.get('id')
                                 + "&type=text"}
                             }]
                         });
@@ -220,7 +220,7 @@ pimcore.settings.email.log = Class.create({
                         var store = Ext.create('Ext.data.TreeStore', {
                             proxy: {
                                 type: 'ajax',
-                                url: '/admin/email/show-email-log/?id=' + rec.get('id') + '&type=params',
+                                url: '/admin/email/show-email-log?id=' + rec.get('id') + '&type=params',
                                 reader: {
                                     type: 'json'
                                 },
@@ -296,7 +296,7 @@ pimcore.settings.email.log = Class.create({
                                 function(btn){
                                     if (btn == 'yes'){
                                         Ext.Ajax.request({
-                                            url: '/admin/email/resend-email/',
+                                            url: '/admin/email/resend-email',
                                             success: function(response){
                                                 var data = Ext.decode( response.responseText );
                                                 if(data.success){
@@ -332,7 +332,7 @@ pimcore.settings.email.log = Class.create({
                     handler: function (grid, rowIndex) {
                         var rec = grid.getStore().getAt(rowIndex);
                         Ext.Ajax.request({
-                            url: '/admin/email/delete-email-log/',
+                            url: '/admin/email/delete-email-log',
                             success: function(response){
                                 var data = Ext.decode( response.responseText );
                                 if(!data.success){
