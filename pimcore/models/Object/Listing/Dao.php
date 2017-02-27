@@ -40,12 +40,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $select = $this->db->select();
 
         // create base
-        $select->from(
-            [ 'objects' ], [
-                new \Zend_Db_Expr('SQL_CALC_FOUND_ROWS objects.o_id'), 'objects.o_type'
-            ]
-        );
-
+        $select->from([ 'objects' ]);
 
         // add joins
         $this->addJoins($select);
@@ -66,7 +61,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
             $closure = $this->onCreateQueryCallback;
             $closure($select);
         }
-
 
         return $select;
     }
@@ -102,23 +96,15 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getTotalCount()
     {
-        $limit = $this->model->getLimit();
-        $hasLimit = !empty($limit);
         $query = $this->getQuery();
+        $query->reset(\Zend_Db_Select::COLUMNS);
+        $query->reset(\Zend_Db_Select::LIMIT_COUNT);
+        $query->reset(\Zend_Db_Select::LIMIT_OFFSET);
+        $query->columns(['totalCount' => new \Zend_Db_Expr('COUNT(*)')]);
+        $totalCount = $this->db->fetchOne($query, $this->model->getConditionVariables());
 
-        if (!$hasLimit) {
-            $query->limit(1);
-        }
-
-        $this->loadIdList();
-
-        if (!$hasLimit) {
-            $query->reset(\Zend_Db_Select::LIMIT_COUNT);
-        }
-
-        return (int)$this->totalCount;
+        return (int) $totalCount;
     }
-
 
     /**
      * @return int
@@ -139,9 +125,8 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function loadIdList()
     {
-        $query = $this->getQuery(true);
+        $query = $this->getQuery();
         $objectIds = $this->db->fetchCol($query, $this->model->getConditionVariables());
-        $this->totalCount = (int)$this->db->fetchOne('SELECT FOUND_ROWS()');
 
         return $objectIds;
     }
@@ -189,16 +174,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
         if ($condition) {
             $select->where($condition);
         }
-
-        return $this;
-    }
-
-    /**
-     * @return $this
-     */
-    public function reset()
-    {
-        $this->totalCount = 0;
 
         return $this;
     }
