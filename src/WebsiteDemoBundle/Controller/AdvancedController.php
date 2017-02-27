@@ -149,20 +149,20 @@ class AdvancedController extends AbstractController
 
     public function sitemapAction(Request $request)
     {
+        $this->view->doc = $this->document->getProperty("mainNavStartNode");;
+    }
+
+    public function sitemapPartialAction(Request $request)
+    {
         set_time_limit(900);
 
         $this->view->initial = false;
 
         if ($request->get("doc")) {
-            $doc = $request->get("doc");
-        } else {
-            $doc = $this->document->getProperty("mainNavStartNode");
-            $this->view->initial = true;
+            $this->view->doc = $request->get("doc");
         }
 
         \Pimcore::collectGarbage();
-
-        $this->view->doc = $doc;
     }
 
     public function assetThumbnailListAction()
