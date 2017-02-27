@@ -13,8 +13,8 @@ if ($this->pageCount): ?>
 <?php foreach ($this->pagesInRange as $page)
 {
 	$class = '';
-	if ($page == $this->current) $class = 'active';
-	if( ($this->first < $page) && ($page < $this->last) || $page == $this->current)
+	if ($page == $current) $class = 'active';
+	if( ($this->first < $page) && ($page < $this->last) || $page == $current)
 	{
 ?>
 		<li class="<?= $class; ?>"><a href="<?= $this->pimcoreUrl(['page' => $page]); ?>"><?= $page; ?></a></li>

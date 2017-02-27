@@ -168,6 +168,15 @@ class PhpEngine extends BasePhpEngine
     }
 
     /**
+     * Magic isset checks variable from ViewModel
+     *
+     * @inheritDoc
+     */
+    public function __isset($name) {
+        return $this->getViewParameter($name) !== null;
+    }
+
+    /**
      * @param string $name
      * @param mixed $value
      */
