@@ -799,8 +799,8 @@ class ObjectController extends ElementControllerBase implements EventedControlle
                 $folder = Object\Folder::create([
                     "o_parentId" => $request->get("parentId"),
                     "o_creationDate" => time(),
-                    "o_userOwner" => $this->user->getId(),
-                    "o_userModification" => $this->user->getId(),
+                    "o_userOwner" => $this->getUser()->getId(),
+                    "o_userModification" => $this->getUser()->getId(),
                     "o_key" => $request->get("key"),
                     "o_published" => true
                 ]);
