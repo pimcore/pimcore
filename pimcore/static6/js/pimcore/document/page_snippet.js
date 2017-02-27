@@ -314,7 +314,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
         }
 
         Ext.Ajax.request({
-            url: this.urlprefix + this.getType() + '/save-to-session/',
+            url: this.urlprefix + this.getType() + '/save-to-session',
             method: "post",
             params: this.getSaveData(),
             success: onComplete
@@ -323,7 +323,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
 
     removeFromSession: function () {
         Ext.Ajax.request({
-            url: this.urlprefix + this.getType() + '/remove-from-session/',
+            url: this.urlprefix + this.getType() + '/remove-from-session',
             params: {id: this.data.id}
         });
     },

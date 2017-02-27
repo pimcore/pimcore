@@ -326,7 +326,7 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
     public function getVersionPreview($data, $object = null, $params = [])
     {
         if ($data instanceof Object\Data\Hotspotimage && $data->getImage() instanceof Asset\Image) {
-            return '<img src="/admin/asset/get-image-thumbnail/id/' . $data->getImage()->getId() . '/width/100/height/100/aspectratio/true" />';
+            return '<img src="/admin/asset/get-image-thumbnail?id=' . $data->getImage()->getId() . '&width=100&height=100&aspectratio=true" />';
         }
     }
 

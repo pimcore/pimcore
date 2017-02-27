@@ -51,9 +51,10 @@ pimcore.document.versions = Class.create({
                 }],
                 proxy: {
                     type: 'ajax',
-                    url: "/admin/document/get-versions",
+                    url: "/admin/element/get-versions",
                     extraParams: {
-                        id: this.document.id
+                        id: this.document.id,
+                        elementType: "document"
                     },
                     // Reader is now on the proxy, as the message was explaining
                     reader: {
@@ -227,7 +228,7 @@ pimcore.document.versions = Class.create({
         var versionId = data.id;
 
         Ext.Ajax.request({
-            url: "/admin/document/delete-version",
+            url: "/admin/element/delete-version",
             params: {id: versionId}
         });
 

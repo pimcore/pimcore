@@ -31,7 +31,7 @@ pimcore.element.tag.imagecropper = Class.create({
 
     open: function (modal) {
         var validImage = this.imageId !== null,
-            imageUrl = '/admin/asset/get-image-thumbnail/id/' + this.imageId + '/width/500/height/400/contain/true',
+            imageUrl = '/admin/asset/get-image-thumbnail?id=' + this.imageId + '&width=500&height=400&contain=true',
             button = {};
 
         if(typeof modal != "undefined") {

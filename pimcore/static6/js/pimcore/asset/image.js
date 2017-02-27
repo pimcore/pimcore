@@ -97,7 +97,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
         if (!this.editPanel) {
             this.editPanel = new Ext.Panel({
                 title: t("edit"),
-                html: '<iframe src="/admin/asset/image-editor/id/' + this.id + '" frameborder="0" ' +
+                html: '<iframe src="/admin/asset/image-editor?id=' + this.id + '" frameborder="0" ' +
                 'style="width: 100%;" id="asset_image_edit_' + this.id + '"></iframe>',
                 iconCls: "pimcore_icon_edit"
             });
@@ -188,7 +188,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
             }
 
             var downloadShortcutsHandler = function (type) {
-                pimcore.helpers.download("/admin/asset/download-image-thumbnail/id/" + this.id   + "/?type=" + type);
+                pimcore.helpers.download("/admin/asset/download-image-thumbnail?id=" + this.id   + "&type=" + type);
             };
 
             this.downloadBox = new Ext.Panel({
@@ -203,7 +203,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                     style: "margin-bottom: 5px",
                     text: t("original_file"),
                     handler: function () {
-                        pimcore.helpers.download("/admin/asset/download/id/" + this.data.id);
+                        pimcore.helpers.download("/admin/asset/download?id=" + this.data.id);
                     }.bind(this)
                 },{
                     xtype: "button",
@@ -317,8 +317,8 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                     iconCls: "pimcore_icon_download",
                     handler: function () {
                         var config = this.customDownloadBox.getForm().getFieldValues();
-                        pimcore.helpers.download("/admin/asset/download-image-thumbnail/id/" + this.id
-                            + "/?config=" + Ext.encode(config));
+                        pimcore.helpers.download("/admin/asset/download-image-thumbnail?id=" + this.id
+                            + "&config=" + Ext.encode(config));
                     }.bind(this)
                 }]
             });
@@ -331,8 +331,8 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
                 items: [{
                     region: "center",
                     html: '&nbsp;',
-                    bodyStyle: "background: url(/admin/asset/get-image-thumbnail/id/" + this.id +
-                    "/treepreview/true_dc=" + dc + ") center center no-repeat;"
+                    bodyStyle: "background: url(/admin/asset/get-image-thumbnail?id=" + this.id +
+                    "&treepreview=true&_dc=" + dc + ") center center no-repeat;"
                 }, {
                     region: "east",
                     width: 300,

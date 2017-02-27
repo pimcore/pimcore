@@ -48,6 +48,22 @@ class ViewModel implements ViewModelInterface
     }
 
     /**
+     * @inheritDoc
+     */
+    public function get($key, $default = null)
+    {
+        return $this->getParameters()->get($key, $default);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function has($key)
+    {
+        return $this->parameters->has($key);
+    }
+
+    /**
      * @param $name
      * @return mixed
      */

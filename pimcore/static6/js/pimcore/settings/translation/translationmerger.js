@@ -121,7 +121,7 @@ pimcore.settings.translation.translationmerger = Class.create({
                                 if (rec.get("dirty") == -1) {
                                     var newData = Ext.encode([rec.data]);
                                     Ext.Ajax.request({
-                                        url: "/admin/translation/merge-item/",
+                                        url: "/admin/translation/merge-item",
                                         method: "post",
                                         params: {
                                             data: newData,
@@ -210,7 +210,7 @@ pimcore.settings.translation.translationmerger = Class.create({
         if (newData.length > 0) {
             var encodedData = Ext.encode(newData);
             Ext.Ajax.request({
-                url: "/admin/translation/merge-item/",
+                url: "/admin/translation/merge-item",
                 method: "post",
                 params: {
                     data: encodedData,

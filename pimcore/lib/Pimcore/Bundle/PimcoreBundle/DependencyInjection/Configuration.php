@@ -19,6 +19,7 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode    = $treeBuilder->root('pimcore');
 
+        $this->addContextNode($rootNode);
         $this->addAdminNode($rootNode);
 
         $rootNode
@@ -42,6 +43,23 @@ class Configuration implements ConfigurationInterface
     }
 
     /**
+     * Add context config
+     *
+     * @param ArrayNodeDefinition $rootNode
+     */
+    protected function addContextNode(ArrayNodeDefinition $rootNode)
+    {
+        $contextNode = $rootNode->children()
+            ->arrayNode('context');
+
+        /** @var ArrayNodeDefinition|NodeDefinition $prototype */
+        $prototype = $contextNode->prototype('array');
+
+        // define routes child on each context entry
+        $this->addRoutesChild($prototype, 'routes');
+    }
+
+    /**
      * Add admin config
      *
      * @param ArrayNodeDefinition $rootNode
@@ -51,9 +69,6 @@ class Configuration implements ConfigurationInterface
         $adminNode = $rootNode->children()
             ->arrayNode('admin')
             ->addDefaultsIfNotSet();
-
-        // routes determine which requests should be treated as admin requests
-        $this->addRoutesChild($adminNode, 'routes');
 
         // unauthenticated routes won't be double checked for authentication in AdminControllerListener
         $this->addRoutesChild($adminNode, 'unauthenticated_routes');

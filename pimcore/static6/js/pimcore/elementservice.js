@@ -15,7 +15,7 @@ pimcore.registerNS("pimcore.elementservice.x");
 
 pimcore.elementservice.deleteElement = function (options) {
     var elementType = options.elementType;
-    var url = "/admin/"  + elementType + "/delete-info/";
+    var url = "/admin/"  + elementType + "/delete-info?";
     // check for dependencies
     Ext.Ajax.request({
         url: url,
@@ -178,7 +178,7 @@ pimcore.elementservice.updateAsset = function (id, data, callback) {
     data.id = id;
 
     Ext.Ajax.request({
-        url: "/admin/asset/update/",
+        url: "/admin/asset/update",
         method: "post",
         params: data,
         success: callback
@@ -195,7 +195,7 @@ pimcore.elementservice.updateDocument = function (id, data, callback) {
     data.id = id;
 
     Ext.Ajax.request({
-        url: "/admin/document/update/",
+        url: "/admin/document/update",
         method: "post",
         params: data,
         success: callback

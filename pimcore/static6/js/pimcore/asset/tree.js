@@ -14,7 +14,7 @@
 pimcore.registerNS("pimcore.asset.tree");
 pimcore.asset.tree = Class.create({
 
-    treeDataUrl: "/admin/asset/tree-get-childs-by-id/",
+    treeDataUrl: "/admin/asset/tree-get-childs-by-id",
 
     initialize: function(config, perspectiveCfg) {
 
@@ -50,7 +50,8 @@ pimcore.asset.tree = Class.create({
             url: "/admin/asset/tree-get-root",
             params: {
                 id: this.config.rootId,
-                view: this.config.customViewId
+                view: this.config.customViewId,
+                elementType: "asset"
             },
             success: function (response) {
                 var res = Ext.decode(response.responseText);
@@ -257,7 +258,7 @@ pimcore.asset.tree = Class.create({
             }.bind(this);
 
             pimcore.helpers.uploadAssetFromFileObject(file,
-                "/admin/asset/add-asset/?parentId=" + parentNode.id + "&dir=" + path,
+                "/admin/asset/add-asset?parentId=" + parentNode.id + "&dir=" + path,
                 finishedErrorHandler,
                 function (evt) {
                     //progress
@@ -755,7 +756,7 @@ pimcore.asset.tree = Class.create({
         pimcore.helpers.addTreeNodeLoadingIndicator("asset", record.id);
 
         Ext.Ajax.request({
-            url: "/admin/asset/copy-info/",
+            url: "/admin/asset/copy-info",
             params: {
                 targetId: record.id,
                 sourceId: pimcore.cachedAssetId,
@@ -845,7 +846,7 @@ pimcore.asset.tree = Class.create({
 
         if (button == "ok") {
             Ext.Ajax.request({
-                url: "/admin/asset/add-folder/",
+                url: "/admin/asset/add-folder",
                 params: {
                     parentId: record.data.id,
                     name: pimcore.helpers.getValidFilename(value, "asset")
@@ -1136,7 +1137,7 @@ pimcore.asset.tree = Class.create({
                 win.show();
 
                 Ext.Ajax.request({
-                    url: "/admin/asset/import-url/",
+                    url: "/admin/asset/import-url",
                     params: {
                         id: record.data.id,
                         url: value

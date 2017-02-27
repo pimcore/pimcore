@@ -1,37 +1,35 @@
 <?php
-/**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in
- * LICENSE.md which is distributed with this source code.
- *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
- */
+
+namespace Pimcore\Bundle\PimcoreAdminBundle\Controller;
 
 use Pimcore\Model\Element;
 use Pimcore\Model\Document;
 use Pimcore\Model\Tool;
 use Pimcore\Model\Tool\Newsletter;
 use Pimcore\Logger;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
-class Admin_NewsletterController extends \Pimcore\Controller\Action\Admin\Document
+/**
+ * @Route("/newsletter")
+ */
+class NewsletterController extends DocumentControllerBase
 {
-    public function getDataByIdAction()
+    /**
+     * @Route("/get-data-by-id")
+     * @param Request $request
+     */
+    public function getDataByIdAction(Request $request)
     {
-
         // check for lock
-        if (Element\Editlock::isLocked($this->getParam("id"), "document")) {
-            $this->_helper->json([
-                "editlock" => Element\Editlock::getByElement($this->getParam("id"), "document")
+        if (Element\Editlock::isLocked($request->get("id"), "document")) {
+            return $this->json([
+                "editlock" => Element\Editlock::getByElement($request->get("id"), "document")
             ]);
         }
-        Element\Editlock::lock($this->getParam("id"), "document");
+        Element\Editlock::lock($request->get("id"), "document");
 
-        $email = Document\Newsletter::getById($this->getParam("id"));
+        $email = Document\Newsletter::getById($request->get("id"));
         $email = clone $email;
         $email = $this->getLatestVersion($email);
 
@@ -59,39 +57,43 @@ class Admin_NewsletterController extends \Pimcore\Controller\Action\Admin\Docume
         ]);
 
         if ($email->isAllowed("view")) {
-            $this->_helper->json($returnValueContainer->getData());
+            return $this->json($returnValueContainer->getData());
         }
 
-        $this->_helper->json(false);
+        return $this->json(false);
     }
 
-    public function saveAction()
+    /**
+     * @Route("/save")
+     * @param Request $request
+     */
+    public function saveAction(Request $request)
     {
         try {
-            if ($this->getParam("id")) {
-                $page = Document\Newsletter::getById($this->getParam("id"));
+            if ($request->get("id")) {
+                $page = Document\Newsletter::getById($request->get("id"));
 
                 $page = $this->getLatestVersion($page);
                 $page->setUserModification($this->getUser()->getId());
 
-                if ($this->getParam("task") == "unpublish") {
+                if ($request->get("task") == "unpublish") {
                     $page->setPublished(false);
                 }
-                if ($this->getParam("task") == "publish") {
+                if ($request->get("task") == "publish") {
                     $page->setPublished(true);
                 }
                 // only save when publish or unpublish
-                if (($this->getParam("task") == "publish" && $page->isAllowed("publish")) or ($this->getParam("task") == "unpublish" && $page->isAllowed("unpublish"))) {
+                if (($request->get("task") == "publish" && $page->isAllowed("publish")) or ($request->get("task") == "unpublish" && $page->isAllowed("unpublish"))) {
                     $this->setValuesToDocument($page);
 
 
                     try {
                         $page->save();
                         $this->saveToSession($page);
-                        $this->_helper->json(["success" => true]);
+                        return $this->json(["success" => true]);
                     } catch (\Exception $e) {
                         Logger::err($e);
-                        $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
+                        return $this->json(["success" => false, "message" => $e->getMessage()]);
                     }
                 } else {
                     if ($page->isAllowed("save")) {
@@ -101,14 +103,14 @@ class Admin_NewsletterController extends \Pimcore\Controller\Action\Admin\Docume
                         try {
                             $page->saveVersion();
                             $this->saveToSession($page);
-                            $this->_helper->json(["success" => true]);
+                            return $this->json(["success" => true]);
                         } catch (\Exception $e) {
                             if ($e instanceof Element\ValidationException) {
                                 throw $e;
                             }
 
                             Logger::err($e);
-                            $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
+                            return $this->json(["success" => false, "message" => $e->getMessage()]);
                         }
                     }
                 }
@@ -116,12 +118,12 @@ class Admin_NewsletterController extends \Pimcore\Controller\Action\Admin\Docume
         } catch (\Exception $e) {
             Logger::log($e);
             if ($e instanceof Element\ValidationException) {
-                $this->_helper->json(["success" => false, "type" => "ValidationException", "message" => $e->getMessage(), "stack" => $e->getTraceAsString(), "code" => $e->getCode()]);
+                return $this->json(["success" => false, "type" => "ValidationException", "message" => $e->getMessage(), "stack" => $e->getTraceAsString(), "code" => $e->getCode()]);
             }
             throw $e;
         }
 
-        $this->_helper->json(false);
+        return $this->json(false);
     }
 
     /**
@@ -134,18 +136,21 @@ class Admin_NewsletterController extends \Pimcore\Controller\Action\Admin\Docume
         $this->addPropertiesToDocument($page);
     }
 
-
-    public function checksqlAction()
+    /**
+     * @Route("/checksql")
+     * @param Request $request
+     */
+    public function checksqlAction(Request $request)
     {
         $count = 0;
         $success = false;
         try {
-            $className = "\\Pimcore\\Model\\Object\\" . ucfirst($this->getParam("class")) . "\\Listing";
+            $className = "\\Pimcore\\Model\\Object\\" . ucfirst($request->get("class")) . "\\Listing";
             $list = new $className();
 
             $conditions = ["(newsletterActive = 1 AND newsletterConfirmed = 1)"];
-            if ($this->getParam("objectFilterSQL")) {
-                $conditions[] = $this->getParam("objectFilterSQL");
+            if ($request->get("objectFilterSQL")) {
+                $conditions[] = $request->get("objectFilterSQL");
             }
             $list->setCondition(implode(" AND ", $conditions));
 
@@ -154,13 +159,17 @@ class Admin_NewsletterController extends \Pimcore\Controller\Action\Admin\Docume
         } catch (\Exception $e) {
         }
 
-        $this->_helper->json([
+        return $this->json([
             "count" => $count,
             "success" => $success
         ]);
     }
 
-    public function getAvailableClassesAction()
+    /**
+     * @Route("/get-available-classes")
+     * @param Request $request
+     */
+    public function getAvailableClassesAction(Request $request)
     {
         $classList = new \Pimcore\Model\Object\ClassDefinition\Listing();
 
@@ -180,12 +189,16 @@ class Admin_NewsletterController extends \Pimcore\Controller\Action\Admin\Docume
             }
         }
 
-        $this->_helper->json(['data' => $availableClasses]);
+        return $this->json(['data' => $availableClasses]);
     }
 
-    public function getAvailableReportsAction()
+    /**
+     * @Route("/get-available-reports")
+     * @param Request $request
+     */
+    public function getAvailableReportsAction(Request $request)
     {
-        $task = $this->getParam("task");
+        $task = $request->get("task");
 
         if ($task === 'list') {
             $reportList = \Pimcore\Model\Tool\CustomReport\Config::getReportsList();
@@ -195,9 +208,9 @@ class Admin_NewsletterController extends \Pimcore\Controller\Action\Admin\Docume
                 $availableReports[] = ['id' => $report['id'], 'text' => $report['text']];
             }
 
-            $this->_helper->json(['data' => $availableReports]);
+            return $this->json(['data' => $availableReports]);
         } elseif ($task === 'fieldNames') {
-            $reportId = $this->getParam("reportId");
+            $reportId = $request->get("reportId");
             $report = \Pimcore\Model\Tool\CustomReport\Config::getByName($reportId);
             $columnConfiguration = $report->getColumnConfiguration();
 
@@ -208,59 +221,75 @@ class Admin_NewsletterController extends \Pimcore\Controller\Action\Admin\Docume
                 }
             }
 
-            $this->_helper->json(['data' => $availableColumns]);
+            return $this->json(['data' => $availableColumns]);
         }
     }
 
-    public function getSendStatusAction()
+    /**
+     * @Route("/get-send-status")
+     * @param Request $request
+     */
+    public function getSendStatusAction(Request $request)
     {
-        $document = Document\Newsletter::getById($this->getParam("id"));
+        $document = Document\Newsletter::getById($request->get("id"));
         $data = Tool\TmpStore::get($document->getTmpStoreId());
 
-        $this->_helper->json([
+        return $this->json([
             "data" => $data ? $data->getData() : null,
             "success" => true
         ]);
     }
 
-    public function stopSendAction()
+    /**
+     * @Route("/stop-send")
+     * @param Request $request
+     */
+    public function stopSendAction(Request $request)
     {
-        $document = Document\Newsletter::getById($this->getParam("id"));
+        $document = Document\Newsletter::getById($request->get("id"));
         Tool\TmpStore::delete($document->getTmpStoreId());
 
-        $this->_helper->json([
+        return $this->json([
             "success" => true
         ]);
     }
 
-    public function sendAction()
+    /**
+     * @Route("/send")
+     * @param Request $request
+     */
+    public function sendAction(Request $request)
     {
-        $document = Document\Newsletter::getById($this->getParam("id"));
+        $document = Document\Newsletter::getById($request->get("id"));
 
         if (Tool\TmpStore::get($document->getTmpStoreId())) {
             throw new Exception("newsletter sending already in progress, need to finish first.");
         }
 
-        $document = Document\Newsletter::getById($this->getParam("id"));
+        $document = Document\Newsletter::getById($request->get("id"));
 
         Tool\TmpStore::add($document->getTmpStoreId(), [
             'documentId' => $document->getId(),
-            'addressSourceAdapterName' => $this->getParam("addressAdapterName"),
-            'adapterParams' => json_decode($this->getParam("adapterParams"), true),
+            'addressSourceAdapterName' => $request->get("addressAdapterName"),
+            'adapterParams' => json_decode($request->get("adapterParams"), true),
             'inProgress' => false,
             'progress' => 0
         ], 'newsletter');
 
         \Pimcore\Tool\Console::runPhpScriptInBackground(realpath(PIMCORE_PATH . DIRECTORY_SEPARATOR . "cli" . DIRECTORY_SEPARATOR . "console.php"), "internal:newsletter-document-send " . escapeshellarg($document->getTmpStoreId()) . " " . escapeshellarg(\Pimcore\Tool::getHostUrl()), PIMCORE_LOG_DIRECTORY . DIRECTORY_SEPARATOR . "newsletter-sending-output.log");
-        $this->_helper->json(["success" => true]);
+        return $this->json(["success" => true]);
     }
 
 
-    public function sendTestAction()
+    /**
+     * @Route("/send-test")
+     * @param Request $request
+     */
+    public function sendTestAction(Request $request)
     {
-        $document = Document\Newsletter::getById($this->getParam("id"));
-        $addressSourceAdapterName = $this->getParam("addressAdapterName");
-        $adapterParams = json_decode($this->getParam("adapterParams"), true);
+        $document = Document\Newsletter::getById($request->get("id"));
+        $addressSourceAdapterName = $request->get("addressAdapterName");
+        $adapterParams = json_decode($request->get("adapterParams"), true);
 
         $adapterClass = "\\Pimcore\\Document\\Newsletter\\AddressSourceAdapter\\" . ucfirst($addressSourceAdapterName);
 
@@ -269,11 +298,11 @@ class Admin_NewsletterController extends \Pimcore\Controller\Action\Admin\Docume
          */
         $addressAdapter = new $adapterClass($adapterParams);
 
-        $sendingContainer = $addressAdapter->getParamsForTestSending($this->getParam("testMailAddress"));
+        $sendingContainer = $addressAdapter->getParamsForTestSending($request->get("testMailAddress"));
 
         $mail = \Pimcore\Tool\Newsletter::prepareMail($document);
         \Pimcore\Tool\Newsletter::sendNewsletterDocumentBasedMail($mail, $sendingContainer);
 
-        $this->_helper->json(["success" => true]);
+        return $this->json(["success" => true]);
     }
 }

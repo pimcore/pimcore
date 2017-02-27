@@ -89,9 +89,10 @@ pimcore.element.scheduler = Class.create({
                 autoDestroy: true,
                 proxy: {
                     type: 'ajax',
-                    url: "/admin/" + this.type + "/get-versions",
+                    url: "/admin/element/get-versions",
                     extraParams: {
-                        id: this.element.id
+                        id: this.element.id,
+                        elementType: this.type
                     },
                     reader: {
                         type: 'json',

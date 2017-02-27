@@ -1,6 +1,7 @@
 <?php
 
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller;
+
 use Pimcore\Bundle\PimcoreBundle\Controller\EventedControllerInterface;
 use Pimcore\Tool;
 use Pimcore\Model\User;

@@ -194,7 +194,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                 iconCls: "pimcore_icon_download",
                 scale: "medium",
                 handler: function () {
-                    pimcore.helpers.download("/admin/asset/download/id/" + this.data.id);
+                    pimcore.helpers.download("/admin/asset/download?id=" + this.data.id);
                 }.bind(this)
             });
 
@@ -326,7 +326,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
         pimcore.plugin.broker.fireEvent("preSaveAsset", this.id);
 
         Ext.Ajax.request({
-            url: '/admin/asset/save/',
+            url: '/admin/asset/save',
             method: "post",
             success: function (response) {
                 try{
@@ -379,7 +379,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
     },
 
     upload: function () {
-        pimcore.helpers.uploadDialog('/admin/asset/replace-asset/id/' + this.data.id, "Filedata", function() {
+        pimcore.helpers.uploadDialog('/admin/asset/replace-asset?id=' + this.data.id, "Filedata", function() {
             this.reload();
         }.bind(this), function () {
             Ext.MessageBox.alert(t("error"), t("error"));

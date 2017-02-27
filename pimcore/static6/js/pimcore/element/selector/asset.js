@@ -201,9 +201,9 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                     renderer: function (value, metaData, record, rowIndex, colIndex, store) {
                         if(record.data.subtype == "image") {
                             return '<div name="' + t(record.data.subtype)
-                                + '"><img src="/admin/asset/get-image-thumbnail/id/'
+                                + '"><img src="/admin/asset/get-image-thumbnail?id='
                                 + record.data.id
-                                + '/width/100/height/100/cover/true/aspectratio/true" /></div>';
+                                + '&width=100&height=100&cover=true&aspectratio=true" /></div>';
                         }
                     }
                 }

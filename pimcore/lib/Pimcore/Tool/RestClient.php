@@ -1125,7 +1125,7 @@ class RestClient
      */
     public function getImageThumbnail($id)
     {
-        $response = $this->doRequest($this->buildEndpointUrl("image-thumbnail/id/" . $id), "GET");
+        $response = $this->doRequest($this->buildEndpointUrl("image-thumbnail?id=" . $id), "GET");
 
         return $response;
     }

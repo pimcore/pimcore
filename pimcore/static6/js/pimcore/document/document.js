@@ -93,7 +93,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
             pimcore.plugin.broker.fireEvent("preSaveDocument", this, this.getType(), task, only);
 
             Ext.Ajax.request({
-                url: this.urlprefix + this.getType() + '/save/task/' + task,
+                url: this.urlprefix + this.getType() + '/save?task=' + task,
                 method: "post",
                 params: saveData,
                 success: function (response) {
@@ -472,7 +472,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                                     }
 
                                     Ext.Ajax.request({
-                                        url: "/admin/document/add/",
+                                        url: "/admin/document/add",
                                         params: params,
                                         success: function (response) {
                                             response = Ext.decode(response.responseText);

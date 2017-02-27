@@ -37,13 +37,20 @@ monolog:
     channels: ['pimcore']
 
 pimcore:
+    # the routes below are used to determine the request context in PimcoreContextGuesser
+    context:
+        admin:
+            routes:
+                - { path: ^/admin }
+                - { route: ^pimcore_admin_ }
+        webservice:
+            routes:
+                - { path: ^/webservice }
+                - { route: ^pimcore_webservice }
+        plugin:
+            routes:
+                - { path: ^/plugin }
     admin:
-        # the routes below are used to classify admin requests
-        # in PimcoreContextGuesser
-        routes:
-            - { path: ^/admin }
-            - { route: ^pimcore_admin_ }
-
         # the following routes won't be double checked for authentication
         # this usually applies to login routes
         unauthenticated_routes:
@@ -51,4 +58,3 @@ pimcore:
 
         translations:
           path: "@PimcoreBundle/Resources/translations"
-

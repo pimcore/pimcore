@@ -188,7 +188,7 @@ class Image extends Model\Object\ClassDefinition\Data
     public function getVersionPreview($data, $object = null, $params = [])
     {
         if ($data instanceof Asset\Image) {
-            return '<img src="/admin/asset/get-image-thumbnail/id/' . $data->getId() . '/width/100/height/100/aspectratio/true" />';
+            return '<img src="/admin/asset/get-image-thumbnail?id=' . $data->getId() . '&width=100&height=100&aspectratio=true" />';
         }
     }
 
@@ -362,7 +362,7 @@ class Image extends Model\Object\ClassDefinition\Data
     {
         $versionPreview = null;
         if ($data instanceof Asset\Image) {
-            $versionPreview = "/admin/asset/get-image-thumbnail/id/" . $data->getId() . "/width/150/height/150/aspectratio/true";
+            $versionPreview = "/admin/asset/get-image-thumbnail?id=" . $data->getId() . "&width=150&height=150&aspectratio=true";
         }
 
         if ($versionPreview) {

@@ -12,12 +12,12 @@ class PimcoreContextGuesser
     /**
      * @var array
      */
-    protected $adminRoutes = [];
+    protected $routes = [];
 
     /**
-     * @var RequestMatcherInterface
+     * @var RequestMatcherInterface[]
      */
-    protected $adminMatchers;
+    protected $matchers;
 
     /**
      * @var RequestMatcherFactory
@@ -26,12 +26,21 @@ class PimcoreContextGuesser
 
     /**
      * @param RequestMatcherFactory $factory
-     * @param array $adminRoutes
      */
-    public function __construct(RequestMatcherFactory $factory, array $adminRoutes)
+    public function __construct(RequestMatcherFactory $factory)
     {
         $this->requestMatcherFactory = $factory;
-        $this->adminRoutes           = $adminRoutes;
+    }
+
+    /**
+     * Add context specific routes
+     *
+     * @param string $context
+     * @param array $routes
+     */
+    public function addContextRoutes($context, array $routes)
+    {
+        $this->routes[$context] = $routes;
     }
 
     /**
@@ -42,28 +51,16 @@ class PimcoreContextGuesser
      */
     public function guess(Request $request)
     {
-        if ($this->isAdminRequest($request)) {
-            return PimcoreContextResolver::CONTEXT_ADMIN;
-        }
-
-        return PimcoreContextResolver::CONTEXT_DEFAULT;
-    }
-
-    /**
-     * Match request against admin patterns
-     *
-     * @param Request $request
-     * @return bool
-     */
-    protected function isAdminRequest(Request $request)
-    {
-        foreach ($this->getAdminMatchers() as $adminMatcher) {
-            if ($adminMatcher->matches($request)) {
-                return true;
+        /** @var RequestMatcherInterface[] $matchers */
+        foreach ($this->getMatchers() as $context => $matchers) {
+            foreach ($matchers as $matcher) {
+                if ($matcher->matches($request)) {
+                    return $context;
+                }
             }
         }
 
-        return false;
+        return PimcoreContextResolver::CONTEXT_DEFAULT;
     }
 
     /**
@@ -71,12 +68,14 @@ class PimcoreContextGuesser
      *
      * @return RequestMatcherInterface[]
      */
-    protected function getAdminMatchers()
+    protected function getMatchers()
     {
-        if (null === $this->adminMatchers) {
-            $this->adminMatchers = $this->requestMatcherFactory->buildRequestMatchers($this->adminRoutes);
+        if (null === $this->matchers) {
+            foreach ($this->routes as $context => $routes) {
+                $this->matchers[$context] = $this->requestMatcherFactory->buildRequestMatchers($routes);
+            }
         }
 
-        return $this->adminMatchers;
+        return $this->matchers;
     }
 }

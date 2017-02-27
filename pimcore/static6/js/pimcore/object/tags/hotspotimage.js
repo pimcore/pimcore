@@ -57,8 +57,8 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
                 }
 
                 if (value && value.id) {
-                    return '<img src="/admin/asset/get-image-thumbnail/id/' + value.id
-                        + '/width/88/height/88/frame/true" />';
+                    return '<img src="/admin/asset/get-image-thumbnail?id=' + value.id
+                        + '&width=88&height=88&frame=true" />';
                 }
             }.bind(this, field.key)};
     },
@@ -194,8 +194,8 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
             height = body.getHeight()-10;
         }
 
-        var path = "/admin/asset/get-image-thumbnail/id/" + this.data + "/width/" + width
-            + "/height/" + height + "/contain/true" + "?" + Ext.urlEncode(this.crop);
+        var path = "/admin/asset/get-image-thumbnail?id=" + this.data + "&width=" + width
+            + "&height=" + height + "&contain=true" + "&" + Ext.urlEncode(this.crop);
 
 
         body.setStyle({
