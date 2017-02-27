@@ -348,7 +348,7 @@ class ObjectHelperController extends AdminController
                 $postfix =  $searchType && $searchType != "folder" ? "_" . $request->get("searchType") : "";
 
                 // grid config
-                $gridConfig = \Zend_Json::decode($request->get("gridconfig"));
+                $gridConfig = $this->decodeJson($request->get("gridconfig"));
                 if ($classId) {
                     $configFile = PIMCORE_CONFIGURATION_DIRECTORY . "/object/grid/" . $object->getId() . "_" . $classId . $postfix . "-user_" . $this->getUser()->getId() . ".psf";
                 } else {
@@ -571,7 +571,7 @@ class ObjectHelperController extends AdminController
         $parentId = $request->get("parentId");
         $job = $request->get("job");
         $id = $request->get("id");
-        $mappingRaw = \Zend_Json::decode($request->get("mapping"));
+        $mappingRaw = $this->decodeJson($request->get("mapping"));
         $class = Object\ClassDefinition::getById($request->get("classId"));
         $skipFirstRow = $request->get("skipHeadRow") == "true";
         $fields = $class->getFieldDefinitions();
@@ -1183,7 +1183,7 @@ class ObjectHelperController extends AdminController
                 $class = Object\ClassDefinition::getByName($className);
                 $value = $request->get("value");
                 if ($request->get("valueType") == "object") {
-                    $value = \Zend_Json::decode($value);
+                    $value = $this->decodeJson($value);
                 }
 
                 $name = $request->get("name");
