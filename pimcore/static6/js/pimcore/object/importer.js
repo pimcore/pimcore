@@ -27,7 +27,7 @@ pimcore.object.importer = Class.create({
 
     showUpload: function () {
 
-        pimcore.helpers.uploadDialog('/admin/object-helper/import-upload/?id=' + this.importId, "Filedata", function(res) {
+        pimcore.helpers.uploadDialog('/admin/object-helper/import-upload?id=' + this.importId, "Filedata", function(res) {
             this.getFileInfo();
         }.bind(this), function () {
             Ext.MessageBox.alert(t("error"), t("error"));

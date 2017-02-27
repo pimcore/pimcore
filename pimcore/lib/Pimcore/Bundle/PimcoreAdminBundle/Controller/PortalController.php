@@ -1,53 +1,50 @@
 <?php
-/**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in
- * LICENSE.md which is distributed with this source code.
- *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
- */
+namespace Pimcore\Bundle\PimcoreAdminBundle\Controller;
 
+use Pimcore\Bundle\PimcoreBundle\Controller\EventedControllerInterface;
 use Pimcore\Model\Document;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Object;
 use Pimcore\Model\Site;
 use Pimcore\Logger;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\Routing\Annotation\Route;
 
-class Admin_PortalController extends \Pimcore\Controller\Action\Admin
+/**
+ * @Route("/portal")
+ */
+class PortalController extends AdminController implements EventedControllerInterface
 {
     /**
      * @var \\Pimcore\\Helper\\Dashboard
      */
     protected $dashboardHelper = null;
 
-    public function init()
-    {
-        parent::init();
-        $this->dashboardHelper = new \Pimcore\Helper\Dashboard($this->getUser());
-    }
-
     /**
+     * @param Request $request
      * @return mixed
      */
-    protected function getCurrentConfiguration()
+    protected function getCurrentConfiguration(Request $request)
     {
-        return $this->dashboardHelper->getDashboard($this->getParam("key"));
+        return $this->dashboardHelper->getDashboard($request->get("key"));
     }
 
     /**
+     * @param Request $request
      * @param $config
      */
-    protected function saveConfiguration($config)
+    protected function saveConfiguration(Request $request, $config)
     {
-        $this->dashboardHelper->saveDashboard($this->getParam("key"), $config);
+        $this->dashboardHelper->saveDashboard($request->get("key"), $config);
     }
 
-    public function dashboardListAction()
+    /**
+     * @Route("/dashboard-list")
+     * @param Request $request
+     */
+    public function dashboardListAction(Request $request)
     {
         $dashboards = $this->dashboardHelper->getAllDashboards();
 
@@ -58,47 +55,63 @@ class Admin_PortalController extends \Pimcore\Controller\Action\Admin
             }
         }
 
-        $this->_helper->json($data);
+        return $this->json($data);
     }
 
-    public function createDashboardAction()
+    /**
+     * @Route("/create-dashboard")
+     * @param Request $request
+     */
+    public function createDashboardAction(Request $request)
     {
-        $this->protectCSRF();
+        $this->protectCsrf($request);
 
         $dashboards = $this->dashboardHelper->getAllDashboards();
-        $key = trim($this->getParam("key"));
+        $key = trim($request->get("key"));
 
         if ($dashboards[$key]) {
-            $this->_helper->json(["success" => false, "message" => "dashboard_already_exists"]);
+            return $this->json(["success" => false, "message" => "dashboard_already_exists"]);
         } elseif (!empty($key)) {
             $this->dashboardHelper->saveDashboard($key);
-            $this->_helper->json(["success" => true]);
+            return $this->json(["success" => true]);
         } else {
-            $this->_helper->json(["success" => false, "message" => "empty"]);
+            return $this->json(["success" => false, "message" => "empty"]);
         }
     }
 
-    public function deleteDashboardAction()
+    /**
+     * @Route("/delete-dashboard")
+     * @param Request $request
+     */
+    public function deleteDashboardAction(Request $request)
     {
-        $key = $this->getParam("key");
+        $key = $request->get("key");
         $this->dashboardHelper->deleteDashboard($key);
-        $this->_helper->json(["success" => true]);
+        return $this->json(["success" => true]);
     }
 
-    public function getConfigurationAction()
+    /**
+     * @Route("/get-configuration")
+     * @param Request $request
+     */
+    public function getConfigurationAction(Request $request)
     {
-        $this->_helper->json($this->getCurrentConfiguration());
+        return $this->json($this->getCurrentConfiguration($request));
     }
 
-    public function removeWidgetAction()
+    /**
+     * @Route("/remove-widget")
+     * @param Request $request
+     */
+    public function removeWidgetAction(Request $request)
     {
-        $config = $this->getCurrentConfiguration();
+        $config = $this->getCurrentConfiguration($request);
         $newConfig = [[], []];
         $colCount = 0;
 
         foreach ($config["positions"] as $col) {
             foreach ($col as $row) {
-                if ($row['id'] != $this->getParam("id")) {
+                if ($row['id'] != $request->get("id")) {
                     $newConfig[$colCount][] = $row;
                 }
             }
@@ -106,14 +119,18 @@ class Admin_PortalController extends \Pimcore\Controller\Action\Admin
         }
 
         $config["positions"] = $newConfig;
-        $this->saveConfiguration($config);
+        $this->saveConfiguration($request, $config);
 
-        $this->_helper->json(["success" => true]);
+        return $this->json(["success" => true]);
     }
 
-    public function addWidgetAction()
+    /**
+     * @Route("/add-widget")
+     * @param Request $request
+     */
+    public function addWidgetAction(Request $request)
     {
-        $config = $this->getCurrentConfiguration();
+        $config = $this->getCurrentConfiguration($request);
 
         $nextId = 0;
         foreach ($config['positions'] as $col) {
@@ -123,22 +140,26 @@ class Admin_PortalController extends \Pimcore\Controller\Action\Admin
         }
 
         $nextId = $nextId+1;
-        $config["positions"][0][] = ["id" => $nextId, "type" => $this->getParam("type"), "config" => null];
+        $config["positions"][0][] = ["id" => $nextId, "type" => $request->get("type"), "config" => null];
 
-        $this->saveConfiguration($config);
+        $this->saveConfiguration($request, $config);
 
-        $this->_helper->json(["success" => true, "id" => $nextId]);
+        return $this->json(["success" => true, "id" => $nextId]);
     }
 
-    public function reorderWidgetAction()
+    /**
+     * @Route("/reorder-widget")
+     * @param Request $request
+     */
+    public function reorderWidgetAction(Request $request)
     {
-        $config = $this->getCurrentConfiguration();
+        $config = $this->getCurrentConfiguration($request);
         $newConfig = [[], []];
         $colCount = 0;
 
         foreach ($config["positions"] as $col) {
             foreach ($col as $row) {
-                if ($row['id'] != $this->getParam("id")) {
+                if ($row['id'] != $request->get("id")) {
                     $newConfig[$colCount][] = $row;
                 } else {
                     $toMove = $row;
@@ -147,20 +168,24 @@ class Admin_PortalController extends \Pimcore\Controller\Action\Admin
             $colCount++;
         }
 
-        array_splice($newConfig[$this->getParam("column")], $this->getParam("row"), 0, [$toMove]);
+        array_splice($newConfig[$request->get("column")], $request->get("row"), 0, [$toMove]);
 
         $config["positions"] = $newConfig;
-        $this->saveConfiguration($config);
+        $this->saveConfiguration($request, $config);
 
-        $this->_helper->json(["success" => true]);
+        return $this->json(["success" => true]);
     }
 
 
-    public function updatePortletConfigAction()
+    /**
+     * @Route("/update-portlet-config")
+     * @param Request $request
+     */
+    public function updatePortletConfigAction(Request $request)
     {
-        $key = $this->getParam("key");
-        $id = $this->getParam("id");
-        $configuration = $this->getParam("config");
+        $key = $request->get("key");
+        $id = $request->get("id");
+        $configuration = $request->get("config");
 
         $dashboard = $this->dashboardHelper->getDashboard($key);
         foreach ($dashboard["positions"] as &$col) {
@@ -173,14 +198,18 @@ class Admin_PortalController extends \Pimcore\Controller\Action\Admin
         }
         $this->dashboardHelper->saveDashboard($key, $dashboard);
 
-        $this->_helper->json(["success" => true]);
+        return $this->json(["success" => true]);
     }
 
 
-    public function portletFeedAction()
+    /**
+     * @Route("/portlet-feed")
+     * @param Request $request
+     */
+    public function portletFeedAction(Request $request)
     {
-        $dashboard = $this->getCurrentConfiguration();
-        $id = $this->getParam("id");
+        $dashboard = $this->getCurrentConfiguration($request);
+        $id = $request->get("id");
 
         $cache = \Pimcore\Cache::getInstance();
         if ($cache) {
@@ -237,12 +266,16 @@ class Admin_PortalController extends \Pimcore\Controller\Action\Admin
             }
         }
 
-        $this->_helper->json([
+        return $this->json([
             "entries" => $entries
         ]);
     }
 
-    public function portletModifiedDocumentsAction()
+    /**
+     * @Route("/portlet-modified-documents")
+     * @param Request $request
+     */
+    public function portletModifiedDocumentsAction(Request $request)
     {
         $list = Document::getList([
             "limit" => 10,
@@ -264,10 +297,14 @@ class Admin_PortalController extends \Pimcore\Controller\Action\Admin
             ];
         }
 
-        $this->_helper->json($response);
+        return $this->json($response);
     }
 
-    public function portletModifiedAssetsAction()
+    /**
+     * @Route("/portlet-modified-assets")
+     * @param Request $request
+     */
+    public function portletModifiedAssetsAction(Request $request)
     {
         $list = Asset::getList([
             "limit" => 10,
@@ -289,10 +326,14 @@ class Admin_PortalController extends \Pimcore\Controller\Action\Admin
             ];
         }
 
-        $this->_helper->json($response);
+        return $this->json($response);
     }
 
-    public function portletModifiedObjectsAction()
+    /**
+     * @Route("/portlet-modified-objects")
+     * @param Request $request
+     */
+    public function portletModifiedObjectsAction(Request $request)
     {
         $list = Object::getList([
             "limit" => 10,
@@ -314,10 +355,14 @@ class Admin_PortalController extends \Pimcore\Controller\Action\Admin
             ];
         }
 
-        $this->_helper->json($response);
+        return $this->json($response);
     }
 
-    public function portletModificationStatisticsAction()
+    /**
+     * @Route("/portlet-modification-statistics")
+     * @param Request $request
+     */
+    public function portletModificationStatisticsAction(Request $request)
     {
         $db = \Pimcore\Db::get();
 
@@ -350,10 +395,14 @@ class Admin_PortalController extends \Pimcore\Controller\Action\Admin
 
         $data = array_reverse($data);
 
-        $this->_helper->json(["data" => $data]);
+        return $this->json(["data" => $data]);
     }
 
-    public function portletAnalyticsSitesAction()
+    /**
+     * @Route("/portlet-analytics-sites")
+     * @param Request $request
+     */
+    public function portletAnalyticsSitesAction(Request $request)
     {
         $translator = \Pimcore::getContainer()->get("translator");
 
@@ -374,6 +423,28 @@ class Admin_PortalController extends \Pimcore\Controller\Action\Admin
             }
         }
 
-        $this->_helper->json(["data" => $data]);
+        return $this->json(["data" => $data]);
     }
+
+    /**
+     * @param FilterControllerEvent $event
+     */
+    public function onKernelController(FilterControllerEvent $event)
+    {
+        $isMasterRequest = $event->isMasterRequest();
+        if (!$isMasterRequest) {
+            return;
+        }
+
+        $this->dashboardHelper = new \Pimcore\Helper\Dashboard($this->getUser());
+    }
+
+    /**
+     * @param FilterResponseEvent $event
+     */
+    public function onKernelResponse(FilterResponseEvent $event)
+    {
+        // nothing to do
+    }
+
 }
