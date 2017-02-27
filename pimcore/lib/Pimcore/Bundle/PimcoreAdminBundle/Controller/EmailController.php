@@ -9,6 +9,7 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Tool;
 use Pimcore\Logger;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class EmailController extends AdminController
@@ -214,13 +215,11 @@ class EmailController extends AdminController
         $emailLog = Tool\Email\Log::getById($request->get('id'));
 
         if ($request->get('type') == 'text') {
-            $this->disableViewAutoRender();
-            echo '<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><style>body{background-color:#fff;}</style></head><body><pre>' . $emailLog->getTextLog() . '</pre></body></html>';
+
+            return new Response('<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><style>body{background-color:#fff;}</style></head><body><pre>' . $emailLog->getTextLog() . '</pre></body></html>');
         } elseif ($request->get('type') == 'html') {
-            $this->disableViewAutoRender();
-            echo $emailLog->getHtmlLog();
+            return new Response($emailLog->getHtmlLog());
         } elseif ($request->get('type') == 'params') {
-            $this->disableViewAutoRender();
             try {
                 $params = \Zend_Json::decode($emailLog->getParams());
             } catch (\Exception $e) {
