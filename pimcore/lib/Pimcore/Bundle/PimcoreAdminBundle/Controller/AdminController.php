@@ -13,6 +13,22 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 abstract class AdminController extends Controller implements AdminControllerInterface
 {
     /**
+     * @inheritDoc
+     */
+    public function needsSessionDoubleAuthenticationCheck()
+    {
+        return true;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function needsStorageDoubleAuthenticationCheck()
+    {
+        return true;
+    }
+
+    /**
      * Get user from user proxy object which is registered on security component
      *
      * @param bool $proxyUser Return the proxy user (UserInterface) instead of the pimcore model

@@ -13,17 +13,26 @@ abstract class AbstractAdminControllerListener
      */
     protected function isAdminController(FilterControllerEvent $event)
     {
+        $controller = $this->getAdminController($event);
+
+        return $controller && $controller instanceof AdminControllerInterface;
+    }
+
+    /**
+     * @param FilterControllerEvent $event
+     * @return AdminControllerInterface|null
+     */
+    protected function getAdminController(FilterControllerEvent $event)
+    {
         $callable = $event->getController();
 
         if (!is_array($callable) || count($callable) === 0) {
-            return false;
+            return null;
         }
 
         $controller = $callable[0];
         if ($controller instanceof AdminControllerInterface) {
-            return true;
+            return $controller;
         }
-
-        return false;
     }
 }

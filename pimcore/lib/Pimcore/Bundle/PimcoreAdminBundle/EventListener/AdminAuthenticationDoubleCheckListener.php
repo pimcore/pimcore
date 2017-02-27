@@ -2,6 +2,7 @@
 
 namespace Pimcore\Bundle\PimcoreAdminBundle\EventListener;
 
+use Pimcore\Bundle\PimcoreAdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Bundle\PimcoreBundle\Service\RequestMatcherFactory;
 use Pimcore\Tool\Authentication;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -37,12 +38,23 @@ class AdminAuthenticationDoubleCheckListener extends AbstractAdminControllerList
     protected $unauthenticatedMatchers;
 
     /**
+     * @var TokenStorageUserResolver
+     */
+    protected $tokenResolver;
+
+    /**
      * @param RequestMatcherFactory $factory
+     * @param TokenStorageUserResolver $tokenResolver
      * @param array $unauthenticatedRoutes
      */
-    public function __construct(RequestMatcherFactory $factory, array $unauthenticatedRoutes)
+    public function __construct(
+        RequestMatcherFactory $factory,
+        TokenStorageUserResolver $tokenResolver,
+        array $unauthenticatedRoutes
+    )
     {
         $this->requestMatcherFactory = $factory;
+        $this->tokenResolver         = $tokenResolver;
         $this->unauthenticatedRoutes = $unauthenticatedRoutes;
     }
 
@@ -62,12 +74,19 @@ class AdminAuthenticationDoubleCheckListener extends AbstractAdminControllerList
             return;
         }
 
-        $request = $event->getRequest();
+        $request    = $event->getRequest();
+        $controller = $this->getAdminController($event);
 
         // double check we have a valid user to make sure there is no invalid security config
         // opening admin interface to the public
         if ($this->requestNeedsAuthentication($request)) {
-            $this->checkSecurityUser();
+            if ($controller->needsSessionDoubleAuthenticationCheck()) {
+                $this->checkSessionUser();
+            }
+
+            if ($controller->needsStorageDoubleAuthenticationCheck()) {
+                $this->checkTokenStorageUser();
+            }
         }
     }
 
@@ -106,11 +125,24 @@ class AdminAuthenticationDoubleCheckListener extends AbstractAdminControllerList
      * @throws AccessDeniedHttpException
      *      if there's no current user in the session
      */
-    protected function checkSecurityUser()
+    protected function checkSessionUser()
     {
         $user = Authentication::authenticateSession();
         if (null === $user) {
-            throw new AccessDeniedHttpException('Invalid user');
+            throw new AccessDeniedHttpException('User is invalid.');
+        }
+    }
+
+    /**
+     * @throws AccessDeniedHttpException
+     *      if there's no current user in the token storage
+     */
+    protected function checkTokenStorageUser()
+    {
+        $user = $this->tokenResolver->getUser();
+
+        if (null === $user || !Authentication::isValidUser($user)) {
+            throw new AccessDeniedHttpException('User is invalid.');
         }
     }
 }
