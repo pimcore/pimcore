@@ -1,4 +1,6 @@
-<?= $this->template("WebsiteDemoBundle:Content:default.html.php"); ?>
+<?php $this->extend('WebsiteDemoBundle::layout.html.php') ?>
+
+<?= $this->template('WebsiteDemoBundle:Includes:content-default.html.php') ?>
 
 <?php if(!$this->success) { ?>
 
@@ -18,7 +20,7 @@
         <div class="form-group">
             <label class="col-lg-2 control-label"><?= $this->translate("E-Mail"); ?></label>
             <div class="col-lg-10">
-                <input name="email" type="text" class="form-control" placeholder="example@example.com" value="<?= $this->escapeHtml($this->getParam("email")); ?>">
+                <input name="email" type="text" class="form-control" placeholder="example@example.com" value="<?= $this->escape($this->getParam("email")); ?>">
             </div>
         </div>
 
