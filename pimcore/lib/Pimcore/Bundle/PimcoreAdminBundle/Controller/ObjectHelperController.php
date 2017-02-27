@@ -1,54 +1,60 @@
 <?php
-/**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in
- * LICENSE.md which is distributed with this source code.
- *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
- */
+
+namespace Pimcore\Bundle\PimcoreAdminBundle\Controller;
 
 use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model\Object;
 use Pimcore\Model\Element;
 use Pimcore\Tool;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\Routing\Annotation\Route;
 
-class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
+/**
+ * @Route("/object-helper")
+ */
+class ObjectHelperController extends AdminController
 {
-    public function loadObjectDataAction()
+    /**
+     * @Route("/load-object-data")
+     * @param Request $request
+     */
+    public function loadObjectDataAction(Request $request)
     {
-        $object = Object\AbstractObject::getById($this->getParam("id"));
+        $object = Object\AbstractObject::getById($request->get("id"));
         $result = [];
         if ($object) {
             $result['success'] = true;
-            $fields = $this->getParam("fields");
+            $fields = $request->get("fields");
             $result['fields'] = Object\Service::gridObjectData($object, $fields);
         } else {
             $result['success'] = false;
         }
-        $this->_helper->json($result);
+        return $this->json($result);
     }
 
 
-    public function gridGetColumnConfigAction()
+    /**
+     * @Route("/grid-get-column-config")
+     * @param Request $request
+     */
+    public function gridGetColumnConfigAction(Request $request)
     {
-        if ($this->getParam("id")) {
-            $class = Object\ClassDefinition::getById($this->getParam("id"));
-        } elseif ($this->getParam("name")) {
-            $class = Object\ClassDefinition::getByName($this->getParam("name"));
+        if ($request->get("id")) {
+            $class = Object\ClassDefinition::getById($request->get("id"));
+        } elseif ($request->get("name")) {
+            $class = Object\ClassDefinition::getByName($request->get("name"));
         }
 
         $gridType = "search";
-        if ($this->getParam("gridtype")) {
-            $gridType = $this->getParam("gridtype");
+        if ($request->get("gridtype")) {
+            $gridType = $request->get("gridtype");
         }
 
-        $objectId = $this->getParam("objectId");
+        $objectId = $request->get("objectId");
 
         if ($objectId) {
             $fields = Object\Service::getCustomGridFieldDefinitions($class->getId(), $objectId);
@@ -59,18 +65,18 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         }
 
         $types = [];
-        if ($this->getParam("types")) {
-            $types = explode(",", $this->getParam("types"));
+        if ($request->get("types")) {
+            $types = explode(",", $request->get("types"));
         }
 
         // grid config
         $gridConfig = [];
         if ($objectId) {
-            $searchType = $this->getParam("searchType");
-            $postfix =  $searchType && $searchType != "folder" ? "_" . $this->getParam("searchType") : "";
+            $searchType = $request->get("searchType");
+            $postfix =  $searchType && $searchType != "folder" ? "_" . $request->get("searchType") : "";
 
-            $configFiles["configFileClassUser"] = PIMCORE_CONFIGURATION_DIRECTORY . "/object/grid/" . $this->getParam("objectId") . "_" . $class->getId() . $postfix . "-user_" . $this->getUser()->getId() . ".psf";
-            $configFiles["configFileUser"] = PIMCORE_CONFIGURATION_DIRECTORY . "/object/grid/" . $this->getParam("objectId") . $postfix . "-user_" . $this->getUser()->getId() . ".psf";
+            $configFiles["configFileClassUser"] = PIMCORE_CONFIGURATION_DIRECTORY . "/object/grid/" . $request->get("objectId") . "_" . $class->getId() . $postfix . "-user_" . $this->getUser()->getId() . ".psf";
+            $configFiles["configFileUser"] = PIMCORE_CONFIGURATION_DIRECTORY . "/object/grid/" . $request->get("objectId") . $postfix . "-user_" . $this->getUser()->getId() . ".psf";
 
             foreach ($configFiles as $configFile) {
                 if (is_file($configFile)) {
@@ -103,7 +109,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         if (empty($gridConfig)) {
             $count = 0;
 
-            if (!$this->getParam("no_system_columns")) {
+            if (!$request->get("no_system_columns")) {
                 $vis = $class->getPropertyVisibility();
                 foreach ($systemColumns as $sc) {
                     $key = $sc;
@@ -122,7 +128,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
                 }
             }
 
-            $includeBricks = !$this->getParam("no_brick_columns");
+            $includeBricks = !$request->get("no_brick_columns");
 
             foreach ($fields as $key => $field) {
                 if ($field instanceof Object\ClassDefinition\Data\Localizedfields) {
@@ -276,7 +282,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         if (!empty($gridConfig) && !empty($gridConfig['language'])) {
             $language = $gridConfig['language'];
         }
-        $this->_helper->json([
+        return $this->json([
             "sortinfo" => isset($gridConfig['sortinfo']) ? $gridConfig['sortinfo'] : false,
             "language" => $language,
             "availableFields" => $availableFields,
@@ -286,17 +292,21 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
     }
 
 
-    public function gridDeleteColumnConfigAction()
+    /**
+     * @Route("/grid-delete-column-config")
+     * @param Request $request
+     */
+    public function gridDeleteColumnConfigAction(Request $request)
     {
-        $object = Object::getById($this->getParam("id"));
+        $object = Object::getById($request->get("id"));
 
 
         if ($object->isAllowed("publish")) {
             try {
-                $classId = $this->getParam("class_id");
+                $classId = $request->get("class_id");
 
-                $searchType = $this->getParam("searchType");
-                $postfix =  $searchType && $searchType != "folder" ? "_" . $this->getParam("searchType") : "";
+                $searchType = $request->get("searchType");
+                $postfix =  $searchType && $searchType != "folder" ? "_" . $request->get("searchType") : "";
 
                 $configFiles = [];
                 $configFiles[]= PIMCORE_CONFIGURATION_DIRECTORY . "/object/grid/" . $object->getId() . "_" . $classId . $postfix . "-user_" . $this->getUser()->getId() . ".psf";
@@ -312,29 +322,33 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
                     }
                 }
 
-                $this->_helper->json(["success" => true]);
+                return $this->json(["success" => true]);
             } catch (\Exception $e) {
-                $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
+                return $this->json(["success" => false, "message" => $e->getMessage()]);
             }
         }
 
-        $this->_helper->json(["success" => false, "message" => "missing_permission"]);
+        return $this->json(["success" => false, "message" => "missing_permission"]);
     }
 
-    public function gridSaveColumnConfigAction()
+    /**
+     * @Route("/grid-save-column-config")
+     * @param Request $request
+     */
+    public function gridSaveColumnConfigAction(Request $request)
     {
-        $object = Object::getById($this->getParam("id"));
+        $object = Object::getById($request->get("id"));
 
 
         if ($object->isAllowed("publish")) {
             try {
-                $classId = $this->getParam("class_id");
+                $classId = $request->get("class_id");
 
-                $searchType = $this->getParam("searchType");
-                $postfix =  $searchType && $searchType != "folder" ? "_" . $this->getParam("searchType") : "";
+                $searchType = $request->get("searchType");
+                $postfix =  $searchType && $searchType != "folder" ? "_" . $request->get("searchType") : "";
 
                 // grid config
-                $gridConfig = \Zend_Json::decode($this->getParam("gridconfig"));
+                $gridConfig = \Zend_Json::decode($request->get("gridconfig"));
                 if ($classId) {
                     $configFile = PIMCORE_CONFIGURATION_DIRECTORY . "/object/grid/" . $object->getId() . "_" . $classId . $postfix . "-user_" . $this->getUser()->getId() . ".psf";
                 } else {
@@ -347,13 +361,13 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
                 }
                 File::put($configFile, Tool\Serialize::serialize($gridConfig));
 
-                $this->_helper->json(["success" => true]);
+                return $this->json(["success" => true]);
             } catch (\Exception $e) {
-                $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
+                return $this->json(["success" => false, "message" => $e->getMessage()]);
             }
         }
 
-        $this->_helper->json(["success" => false, "message" => "missing_permission"]);
+        return $this->json(["success" => false, "message" => "missing_permission"]);
     }
 
     /**
@@ -417,35 +431,44 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
      * IMPORTER
      */
 
-    public function importUploadAction()
+    /**
+     * @Route("/import-upload")
+     * @param Request $request
+     */
+    public function importUploadAction(Request $request)
     {
         $data = file_get_contents($_FILES["Filedata"]["tmp_name"]);
         $data = Tool\Text::convertToUTF8($data);
 
-        $importFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_" . $this->getParam("id");
+        $importFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_" . $request->get("id");
         File::put($importFile, $data);
 
-        $importFileOriginal = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_" . $this->getParam("id") . "_original";
+        $importFileOriginal = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_" . $request->get("id") . "_original";
         File::put($importFileOriginal, $data);
 
-        $this->_helper->json([
+        $response = $this->json([
             "success" => true
         ], false);
 
         // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
         // Ext.form.Action.Submit and mark the submission as failed
-        $this->getResponse()->setHeader("Content-Type", "text/html");
+        $response->headers->set("Content-Type", "text/html");
+        return $response;
     }
 
-    public function importGetFileInfoAction()
+    /**
+     * @Route("/import-get-file-info")
+     * @param Request $request
+     */
+    public function importGetFileInfoAction(Request $request)
     {
         $success = true;
         $supportedFieldTypes = ["checkbox", "country", "date", "datetime", "href", "image", "input", "language", "table", "multiselect", "numeric", "password", "select", "slider", "textarea", "wysiwyg", "objects", "multihref", "geopoint", "geopolygon", "geobounds", "link", "user", "email", "gender", "firstname", "lastname", "newsletterActive", "newsletterConfirmed", "countrymultiselect", "objectsMetadata"];
 
-        $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_" . $this->getParam("id");
+        $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_" . $request->get("id");
 
         // determine type
-        $dialect = Tool\Admin::determineCsvDialect(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_" . $this->getParam("id") . "_original");
+        $dialect = Tool\Admin::determineCsvDialect(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_" . $request->get("id") . "_original");
 
         $count = 0;
         if (($handle = fopen($file, "r")) !== false) {
@@ -470,7 +493,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         }
 
         // get class data
-        $class = Object\ClassDefinition::getById($this->getParam("classId"));
+        $class = Object\ClassDefinition::getById($request->get("classId"));
         $fields = $class->getFieldDefinitions();
 
         $availableFields = [];
@@ -526,7 +549,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
             }
         }
 
-        $this->_helper->json([
+        return $this->json([
             "success" => $success,
             "dataPreview" => $data,
             "dataFields" => array_keys($data[0]),
@@ -537,16 +560,20 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         ]);
     }
 
-    public function importProcessAction()
+    /**
+     * @Route("/import-process")
+     * @param Request $request
+     */
+    public function importProcessAction(Request $request)
     {
         $success = true;
 
-        $parentId = $this->getParam("parentId");
-        $job = $this->getParam("job");
-        $id = $this->getParam("id");
-        $mappingRaw = \Zend_Json::decode($this->getParam("mapping"));
-        $class = Object\ClassDefinition::getById($this->getParam("classId"));
-        $skipFirstRow = $this->getParam("skipHeadRow") == "true";
+        $parentId = $request->get("parentId");
+        $job = $request->get("job");
+        $id = $request->get("id");
+        $mappingRaw = \Zend_Json::decode($request->get("mapping"));
+        $class = Object\ClassDefinition::getById($request->get("classId"));
+        $skipFirstRow = $request->get("skipHeadRow") == "true";
         $fields = $class->getFieldDefinitions();
 
         $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/import_" . $id;
@@ -590,18 +617,18 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         }
 
         // create new object
-        $className = "Pimcore\\Model\\Object\\" . ucfirst($this->getParam("className"));
-        $parent = Object::getById($this->getParam("parentId"));
+        $className = "Pimcore\\Model\\Object\\" . ucfirst($request->get("className"));
+        $parent = Object::getById($request->get("parentId"));
 
         $objectKey = "object_" . $job;
-        if ($this->getParam("filename") == "id") {
+        if ($request->get("filename") == "id") {
             $objectKey = null;
-        } elseif ($this->getParam("filename") != "default") {
-            $objectKey = Element\Service::getValidKey($data[$this->getParam("filename")], "object");
+        } elseif ($request->get("filename") != "default") {
+            $objectKey = Element\Service::getValidKey($data[$request->get("filename")], "object");
         }
 
         $overwrite = false;
-        if ($this->getParam("overwrite") == "true") {
+        if ($request->get("overwrite") == "true") {
             $overwrite = true;
         }
 
@@ -633,9 +660,9 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
                 }
                 $object = new $className();
             }
-            $object->setClassId($this->getParam("classId"));
-            $object->setClassName($this->getParam("className"));
-            $object->setParentId($this->getParam("parentId"));
+            $object->setClassId($request->get("classId"));
+            $object->setClassName($request->get("className"));
+            $object->setParentId($request->get("parentId"));
             $object->setKey($objectKey);
             $object->setCreationDate(time());
             $object->setUserOwner($this->getUser()->getId());
@@ -667,57 +694,64 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
 
             try {
                 $object->save();
-                $this->_helper->json(["success" => true]);
+                return $this->json(["success" => true]);
             } catch (\Exception $e) {
-                $this->_helper->json(["success" => false, "message" => $object->getKey() . " - " . $e->getMessage()]);
+                return $this->json(["success" => false, "message" => $object->getKey() . " - " . $e->getMessage()]);
             }
         }
 
 
-        $this->_helper->json(["success" => $success]);
+        return $this->json(["success" => $success]);
     }
 
 
-
-    public function exportAction()
+    /**
+     * @Route("/export")
+     * @param Request $request
+     */
+    public function exportAction(Request $request)
     {
         list($list, $fields, $requestedLanguage) = $this->prepareExportList();
 
         $list->load();
-        $csv = $this->getCsvData($list, $fields);
+        $csv = $this->getCsvData($request, $list, $fields);
 
-        header("Content-type: text/csv");
-        header("Content-Disposition: attachment; filename=\"export.csv\"");
+        $response = new Response($csv);
+        $response->headers->set("Content-type", "text/csv");
+        $response->headers->set("Content-Disposition", "attachment; filename=\"export.csv\"");
         echo $csv;
         exit;
     }
 
     /**
+     * @param Request $request
      * @return mixed|string
      */
-    protected function extractLanguage()
+    protected function extractLanguage(Request $request)
     {
-        $requestedLanguage = $this->getParam("language");
+        $requestedLanguage = $request->get("language");
         if ($requestedLanguage) {
             if ($requestedLanguage != "default") {
-                $this->setLanguage($requestedLanguage, true);
+//                $this->get('translator')->setLocale($requestedLanguage);
+                $request->setLocale($requestedLanguage);
             }
         } else {
-            $requestedLanguage = $this->getLanguage();
+            $requestedLanguage = $request->getLocale();
         }
 
         return $requestedLanguage;
     }
 
     /**
+     * @param Request $request
      * @return array
      */
-    protected function extractFieldsAndBricks()
+    protected function extractFieldsAndBricks(Request $request)
     {
         $fields = [];
         $bricks = [];
-        if ($this->getParam("fields")) {
-            $fields = $this->getParam("fields");
+        if ($request->get("fields")) {
+            $fields = $request->get("fields");
 
             foreach ($fields as $f) {
                 $parts = explode("~", $f);
@@ -733,14 +767,15 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
     }
 
     /**
+     * @param Request $request
      * @return array
      */
-    protected function prepareExportList()
+    protected function prepareExportList(Request $request)
     {
-        $requestedLanguage = $this->extractLanguage();
+        $requestedLanguage = $this->extractLanguage($request);
 
-        $folder = Pimcore\Model\Object\AbstractObject::getById($this->getParam("folderId"));
-        $class = Object\ClassDefinition::getById($this->getParam("classId"));
+        $folder = Object\AbstractObject::getById($request->get("folderId"));
+        $class = Object\ClassDefinition::getById($request->get("classId"));
 
         $className = $class->getName();
 
@@ -754,15 +789,15 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
 
         $featureJoins = [];
 
-        if ($this->getParam("filter")) {
-            $conditionFilters[] = Object\Service::getFilterCondition($this->getParam("filter"), $class);
-            $featureFilters = Object\Service::getFeatureFilters($this->getParam("filter"), $class);
+        if ($request->get("filter")) {
+            $conditionFilters[] = Object\Service::getFilterCondition($request->get("filter"), $class);
+            $featureFilters = Object\Service::getFeatureFilters($request->get("filter"), $class);
             if ($featureFilters) {
                 $featureJoins = array_merge($featureJoins, $featureFilters["joins"]);
             }
         }
-        if ($this->getParam("condition")) {
-            $conditionFilters[] = "(" . $this->getParam("condition") . ")";
+        if ($request->get("condition")) {
+            $conditionFilters[] = "(" . $request->get("condition") . ")";
         }
 
         /** @var Object\Listing\Concrete $list */
@@ -771,7 +806,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         $list->setCondition(implode(" AND ", $conditionFilters));
 
         //parameters specified in the objects grid
-        $ids = $this->getParam('ids', []);
+        $ids = $request->get('ids', []);
         if (! empty($ids)) {
             //add a condition if id numbers are specified
             $list->addConditionParam("{$objectTableName}.o_id IN (" . implode(',', $ids) . ')');
@@ -780,7 +815,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         $list->setOrder("ASC");
         $list->setOrderKey("o_id");
 
-        $objectType = $this->getParam("objecttype");
+        $objectType = $request->get("objecttype");
         if ($objectType) {
             if ($objectType == Object\AbstractObject::OBJECT_TYPE_OBJECT && $class->getShowVariants()) {
                 $list->setObjectTypes([Object\AbstractObject::OBJECT_TYPE_OBJECT, Object\AbstractObject::OBJECT_TYPE_VARIANT]);
@@ -789,7 +824,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
             }
         }
 
-        list($fields, $bricks) = $this->extractFieldsAndBricks();
+        list($fields, $bricks) = $this->extractFieldsAndBricks($request);
 
         if (!empty($bricks)) {
             foreach ($bricks as $b) {
@@ -812,9 +847,13 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         return PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . $fileHandle . ".csv";
     }
 
-    public function getExportJobsAction()
+    /**
+     * @Route("/get-export-jobs")
+     * @param Request $request
+     */
+    public function getExportJobsAction(Request $request)
     {
-        list($list, $fields, $requestedLanguage) = $this->prepareExportList();
+        list($list, $fields, $requestedLanguage) = $this->prepareExportList($request);
 
         $ids = $list->loadIdList();
 
@@ -823,15 +862,19 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         $fileHandle = uniqid("export-");
         file_put_contents($this->getCsvFile($fileHandle), "");
 
-        $this->_helper->json(["success"=>true, "jobs"=> $jobs, "fileHandle" => $fileHandle]);
+        return $this->json(["success"=>true, "jobs"=> $jobs, "fileHandle" => $fileHandle]);
     }
 
-    public function doExportAction()
+    /**
+     * @Route("/do-export")
+     * @param Request $request
+     */
+    public function doExportAction(Request $request)
     {
-        $fileHandle = \Pimcore\File::getValidFilename($this->getParam("fileHandle"));
-        $ids = $this->getParam("ids");
+        $fileHandle = \Pimcore\File::getValidFilename($request->get("fileHandle"));
+        $ids = $request->get("ids");
 
-        $class = Object\ClassDefinition::getById($this->getParam("classId"));
+        $class = Object\ClassDefinition::getById($request->get("classId"));
         $className = $class->getName();
         $listClass = "\\Pimcore\\Model\\Object\\" . ucfirst($className) . "\\Listing";
 
@@ -843,29 +886,31 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         $list->setCondition("o_id IN (" . implode(",", $ids) . ")");
         $list->setOrderKey(" FIELD(o_id, " . implode(",", $ids) . ")", false);
 
-        list($fields, $bricks) = $this->extractFieldsAndBricks();
+        list($fields, $bricks) = $this->extractFieldsAndBricks($request);
 
-        $csv = $this->getCsvData($list, $fields, $this->getParam("initial"));
+        $csv = $this->getCsvData($request, $list, $fields, $request->get("initial"));
 
         file_put_contents($this->getCsvFile($fileHandle), $csv, FILE_APPEND);
 
-        $this->_helper->json(["success" => true]);
+        return $this->json(["success" => true]);
     }
 
-    public function downloadCsvFileAction()
+    /**
+     * @Route("/download-csv-file")
+     * @param Request $request
+     */
+    public function downloadCsvFileAction(Request $request)
     {
-        $fileHandle = \Pimcore\File::getValidFilename($this->getParam("fileHandle"));
+        $fileHandle = \Pimcore\File::getValidFilename($request->get("fileHandle"));
         $csvFile = $this->getCsvFile($fileHandle);
         if (file_exists($csvFile)) {
-            header("Content-Type: application/csv");
-            header("Content-Length: " . filesize($csvFile));
-            header('Content-Disposition: attachment; filename="export.csv"'); while (@ob_end_flush()) ;
-            flush();
 
-            readfile($csvFile);
-            unlink($csvFile);
+            $response = new BinaryFileResponse($csvFile);
+            $response->headers->set("Content-Type", "application/csv");
+            $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, "export.csv");
+            $response->deleteFileAfterSend(true);
+            return $response;
         }
-        exit;
     }
 
     /**
@@ -895,14 +940,15 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
     }
 
     /**
+     * @param Request $request
      * @param $list
      * @param $fields
      * @param bool $addTitles
      * @return string
      */
-    protected function getCsvData($list, $fields, $addTitles = true)
+    protected function getCsvData(Request $request, $list, $fields, $addTitles = true)
     {
-        $requestedLanguage = $this->extractLanguage();
+        $requestedLanguage = $this->extractLanguage($request);
         $mappedFieldnames = [];
 
         $objects = [];
@@ -913,7 +959,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
             if ($fields) {
                 $objectData = [];
                 foreach ($fields as $field) {
-                    $fieldData = $this->getCsvFieldData($field, $object, $requestedLanguage);
+                    $fieldData = $this->getCsvFieldData($request, $field, $object, $requestedLanguage);
                     if (!$mappedFieldnames[$field]) {
                         $mappedFieldnames[$field] = $this->mapFieldname($field);
                     }
@@ -962,12 +1008,13 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
     }
 
     /**
+     * @param Request $request
      * @param $field
      * @param $object
      * @param $requestedLanguage
      * @return mixed
      */
-    protected function getCsvFieldData($field, $object, $requestedLanguage)
+    protected function getCsvFieldData(Request $request, $field, $object, $requestedLanguage)
     {
 
         //check if field is systemfield
@@ -1002,7 +1049,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
                         $getter = "get" . ucfirst($fieldname);
                         if (method_exists($object, $getter)) {
                             /** @var  $classificationStoreData Classificationstore */
-                            $keyConfig = Pimcore\Model\Object\Classificationstore\KeyConfig::getById($keyId);
+                            $keyConfig = Object\Classificationstore\KeyConfig::getById($keyId);
                             $type = $keyConfig->getType();
                             $definition = json_decode($keyConfig->getDefinition());
                             $fieldDefinition = \Pimcore\Model\Object\Classificationstore\Service::getFieldDefinitionFromJson($definition, $type);
@@ -1025,7 +1072,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
                     $brickKey = $fieldParts[1];
                     $key = Object\Service::getFieldForBrickType($object->getClass(), $brickType);
 
-                    $brickClass = Pimcore\Model\Object\Objectbrick\Definition::getByKey($brickType);
+                    $brickClass = Object\Objectbrick\Definition::getByKey($brickType);
                     $fieldDefinition = $brickClass->getFieldDefinition($brickKey);
 
                     if ($fieldDefinition) {
@@ -1044,7 +1091,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
                     if ($fieldDefinition) {
                         $needLocalizedPermissions = true;
 
-                        return $fieldDefinition->getForCsvExport($object->getLocalizedFields(), ["language" => $this->getParam("language")]);
+                        return $fieldDefinition->getForCsvExport($object->getLocalizedFields(), ["language" => $request->get("language")]);
                     }
                 }
             }
@@ -1081,23 +1128,27 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         return $o;
     }
 
-
-    public function getBatchJobsAction()
+    /**
+     * @Route("/get-batch-jobs")
+     * @param Request $request
+     */
+    public function getBatchJobsAction(Request $request)
     {
-        if ($this->getParam("language")) {
-            $this->setLanguage($this->getParam("language"), true);
+        if ($request->get("language")) {
+//            $this->get('translator')->setLocale($request->get("language"));
+            $request->setLocale($request->get("language"));
         }
 
-        $folder = Object::getById($this->getParam("folderId"));
-        $class = Object\ClassDefinition::getById($this->getParam("classId"));
+        $folder = Object::getById($request->get("folderId"));
+        $class = Object\ClassDefinition::getById($request->get("classId"));
 
         $conditionFilters = ["o_path = ? OR o_path LIKE '" . str_replace("//", "/", $folder->getRealFullPath() . "/") . "%'"];
 
-        if ($this->getParam("filter")) {
-            $conditionFilters[] = Object\Service::getFilterCondition($this->getParam("filter"), $class);
+        if ($request->get("filter")) {
+            $conditionFilters[] = Object\Service::getFilterCondition($request->get("filter"), $class);
         }
-        if ($this->getParam("condition")) {
-            $conditionFilters[] = " (" . $this->getParam("condition") . ")";
+        if ($request->get("condition")) {
+            $conditionFilters[] = " (" . $request->get("condition") . ")";
         }
 
         $className = $class->getName();
@@ -1107,31 +1158,35 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         $list->setOrder("ASC");
         $list->setOrderKey("o_id");
 
-        if ($this->getParam("objecttype")) {
-            $list->setObjectTypes([$this->getParam("objecttype")]);
+        if ($request->get("objecttype")) {
+            $list->setObjectTypes([$request->get("objecttype")]);
         }
 
         $jobs = $list->loadIdList();
 
-        $this->_helper->json(["success"=>true, "jobs"=>$jobs]);
+        return $this->json(["success"=>true, "jobs"=>$jobs]);
     }
 
-    public function batchAction()
+    /**
+     * @Route("/batch")
+     * @param Request $request
+     */
+    public function batchAction(Request $request)
     {
         $success = true;
 
         try {
-            $object = Object::getById($this->getParam("job"));
+            $object = Object::getById($request->get("job"));
 
             if ($object) {
                 $className = $object->getClassName();
                 $class = Object\ClassDefinition::getByName($className);
-                $value = $this->getParam("value");
-                if ($this->getParam("valueType") == "object") {
+                $value = $request->get("value");
+                if ($request->get("valueType") == "object") {
                     $value = \Zend_Json::decode($value);
                 }
 
-                $name = $this->getParam("name");
+                $name = $request->get("name");
                 $parts = explode("~", $name);
 
                 if (substr($name, 0, 1) == "~") {
@@ -1179,13 +1234,13 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
                         $object->setValue($name, $field->getDataFromEditmode($value, $object));
                     } else {
                         // check if it is a localized field
-                        if ($this->getParam("language")) {
+                        if ($request->get("language")) {
                             $localizedField = $class->getFieldDefinition("localizedfields");
                             if ($localizedField) {
                                 $field = $localizedField->getFieldDefinition($name);
                                 if ($field) {
-                                    /** @var $field Pimcore\Model\Object\ClassDefinition\Data */
-                                    $object->{"set" . $name}($field->getDataFromEditmode($value, $object), $this->getParam("language"));
+                                    /** @var $field Object\ClassDefinition\Data */
+                                    $object->{"set" . $name}($field->getDataFromEditmode($value, $object), $request->get("language"));
                                 }
                             }
                         }
@@ -1208,17 +1263,17 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
                     $object->save();
                     $success = true;
                 } catch (\Exception $e) {
-                    $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
+                    return $this->json(["success" => false, "message" => $e->getMessage()]);
                 }
             } else {
                 Logger::debug("ObjectController::batchAction => There is no object left to update.");
-                $this->_helper->json(["success" => false, "message" => "ObjectController::batchAction => There is no object left to update."]);
+                return $this->json(["success" => false, "message" => "ObjectController::batchAction => There is no object left to update."]);
             }
         } catch (\Exception $e) {
             Logger::err($e);
-            $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
+            return $this->json(["success" => false, "message" => $e->getMessage()]);
         }
 
-        $this->_helper->json(["success" => $success]);
+        return $this->json(["success" => $success]);
     }
 }

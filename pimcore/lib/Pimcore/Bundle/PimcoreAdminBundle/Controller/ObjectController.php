@@ -1396,7 +1396,8 @@ class ObjectController extends ElementControllerBase implements EventedControlle
         $requestedLanguage = $request->get("language");
         if ($requestedLanguage) {
             if ($requestedLanguage != "default") {
-                $this->get('translator')->setLocale($requestedLanguage);
+//                $this->get('translator')->setLocale($requestedLanguage);
+                $request->setLocale($requestedLanguage);
             }
         } else {
             $requestedLanguage = $request->getLocale();
