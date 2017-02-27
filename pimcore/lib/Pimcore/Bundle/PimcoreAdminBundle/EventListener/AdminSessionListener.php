@@ -2,6 +2,8 @@
 
 namespace Pimcore\Bundle\PimcoreAdminBundle\EventListener;
 
+use Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminControllerInterface;
+use Pimcore\Bundle\PimcoreAdminBundle\EventListener\Traits\ControllerTypeTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
@@ -13,8 +15,10 @@ use Symfony\Component\HttpKernel\KernelEvents;
  * TODO: if `$request->getSession()` is used before this is called there will be a reference to the global symfony session
  * (or null if sessions are not configured). Is this early enough here or do we need to adapt the SessionListener (core)?
  */
-class AdminSessionListener extends AbstractAdminControllerListener implements EventSubscriberInterface
+class AdminSessionListener implements EventSubscriberInterface
 {
+    use ControllerTypeTrait;
+
     /**
      * @var ContainerInterface
      */
@@ -40,7 +44,7 @@ class AdminSessionListener extends AbstractAdminControllerListener implements Ev
 
     public function onKernelController(FilterControllerEvent $event)
     {
-        if (!$this->isAdminController($event)) {
+        if (!$this->isControllerType($event, AdminControllerInterface::class)) {
             return;
         }
 

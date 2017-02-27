@@ -2,26 +2,13 @@
 
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller;
 
-use Pimcore\Bundle\PimcoreAdminBundle\EventListener\AdminAuthenticationDoubleCheckListener;
+use Pimcore\Bundle\PimcoreAdminBundle\EventListener\AdminSessionListener;
 
 /**
  * Tagging interface defining controller as admin controller.
  *
- * @see AdminAuthenticationDoubleCheckListener
+ * @see AdminSessionListener
  */
-interface AdminControllerInterface
+interface AdminControllerInterface extends DoubleAuthenticationControllerInterface
 {
-    /**
-     * Determines if session should be checked for a valid user in authentication double check
-     *
-     * @return bool
-     */
-    public function needsSessionDoubleAuthenticationCheck();
-
-    /**
-     * Determines if token storage should be checked for a valid user in authentication double check
-     *
-     * @return bool
-     */
-    public function needsStorageDoubleAuthenticationCheck();
 }
