@@ -75,7 +75,7 @@ class DocumentMetaDataListener extends AbstractFrontendListener implements Event
            return;
         }
 
-        if ($this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
+        if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
             return;
         }
 

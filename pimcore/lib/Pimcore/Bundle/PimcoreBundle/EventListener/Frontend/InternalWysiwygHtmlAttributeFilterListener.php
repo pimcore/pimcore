@@ -53,7 +53,7 @@ class InternalWysiwygHtmlAttributeFilterListener extends AbstractFrontendListene
             return;
         }
 
-        if ($this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
+        if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
             return;
         }
 

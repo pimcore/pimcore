@@ -53,7 +53,7 @@ class TagManagerListener extends AbstractFrontendListener
             return;
         }
 
-        if ($this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
+        if (!$this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_DEFAULT)) {
             return;
         }
 
