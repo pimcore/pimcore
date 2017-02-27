@@ -41,6 +41,11 @@ class Translate extends Helper
      */
     public function __invoke($key, $parameters = [])
     {
+        //compatibility for legacy views
+        if(is_string($parameters)) {
+            $parameters = [$parameters];
+        }
+
         $term = $this->translator->trans($key, $parameters, $this->domain);
         return $term;
     }
