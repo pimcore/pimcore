@@ -319,7 +319,7 @@ class EmailController extends AdminController
     /**
      * Deletes a single log entry
      *
-     * @Route("/email/delete-email")
+     * @Route("/email/delete-email-log")
      * @param Request $request
      */
     public function deleteEmailLogAction(Request $request)
