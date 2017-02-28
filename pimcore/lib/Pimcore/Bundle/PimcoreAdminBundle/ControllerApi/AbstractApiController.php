@@ -5,11 +5,13 @@ namespace Pimcore\Bundle\PimcoreAdminBundle\ControllerApi;
 use Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminController;
 use Pimcore\Bundle\PimcoreBundle\Http\Exception\ResponseException;
 use Pimcore\Model\Element\AbstractElement;
+use Pimcore\Model\Webservice\Data;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Stopwatch\Stopwatch;
-use Symfony\Component\Stopwatch\StopwatchEvent;
 
 abstract class AbstractApiController extends AdminController
 {
@@ -81,30 +83,45 @@ abstract class AbstractApiController extends AdminController
     }
 
     /**
-     * @param array $data
+     * @param array|string $data
      * @return array
      */
-    protected function createSuccessData(array $data = [])
+    protected function createSuccessData($data = null)
     {
-        return array_merge(['success' => true], $data);
+        return array_merge(['success' => true], $this->normalizeResponseData($data));
     }
 
     /**
-     * @param array $data
+     * @param array|string $data
      * @return array
      */
-    protected function createErrorData(array $data = [])
+    protected function createErrorData($data = null)
     {
-        return array_merge(['success' => false], $data);
+        return array_merge(['success' => false], $this->normalizeResponseData($data));
     }
 
     /**
-     * @param array $data
+     * @param array|string $data
+     * @return array
+     */
+    protected function normalizeResponseData($data = null)
+    {
+        if (null === $data) {
+            $data = [];
+        } else if (is_string($data)) {
+            $data = ['msg' => $data];
+        }
+
+        return $data;
+    }
+
+    /**
+     * @param array|string $data
      * @param int|null $status
      *
      * @return JsonResponse
      */
-    protected function createSuccessResponse(array $data = [], $status = Response::HTTP_OK)
+    protected function createSuccessResponse($data = null, $status = Response::HTTP_OK)
     {
         return new JsonResponse(
             $this->createSuccessData($data),
@@ -113,17 +130,63 @@ abstract class AbstractApiController extends AdminController
     }
 
     /**
-     * @param array $data
+     * @param array|string $data
      * @param int|null $status
      *
      * @return JsonResponse
      */
-    protected function createErrorResponse(array $data = [], $status = Response::HTTP_BAD_REQUEST)
+    protected function createErrorResponse($data = null, $status = Response::HTTP_BAD_REQUEST)
     {
         return new JsonResponse(
             $this->createErrorData($data),
             $status
         );
+    }
+
+    /**
+     * Get decoded JSON request data
+     *
+     * @param Request $request
+     * @return array
+     *
+     * @throws ResponseException
+     */
+    protected function getJsonData(Request $request)
+    {
+        $data  = null;
+        $error = null;
+
+        try {
+            $data = $this->decodeJson($request->getContent());
+        } catch (\Exception $e) {
+            $this->getLogger()->error('Failed to decode JSON data for request {request}', [
+                'request' => $request->getPathInfo()
+            ]);
+
+            $data  = null;
+            $error = $e->getMessage();
+        }
+
+        if (!is_array($data)) {
+            $message = 'Invalid data';
+            if (\Pimcore::inDebugMode()) {
+                $message .= ': ' . $error;
+            }
+
+            throw new ResponseException($this->createErrorResponse([
+                'msg' => $message
+            ]));
+        }
+
+        return $data;
+    }
+
+    /**
+     * @return LoggerInterface
+     */
+    protected function getLogger()
+    {
+        return $this->get('monolog.logger.pimcore_api');
     }
 
     /**
@@ -172,5 +235,60 @@ abstract class AbstractApiController extends AdminController
         }
 
         return $data;
+    }
+
+    /**
+     * @param $wsData
+     * @param $data
+     *
+     * @return \Pimcore\Model\Webservice\Data
+     */
+    protected function map($wsData, $data)
+    {
+        foreach ($data as $key => $value) {
+            if (is_array($value)) {
+                $tmp = [];
+
+                foreach ($value as $subkey => $subvalue) {
+                    if (is_array($subvalue)) {
+                        $object = new \stdClass();
+                        $object = $this->map($object, $subvalue);
+
+                        $tmp[$subkey] = $object;
+                    } else {
+                        $tmp[$subkey] = $subvalue;
+                    }
+                }
+                $value = $tmp;
+
+            }
+            $wsData->$key = $value;
+        }
+
+        if ($wsData instanceof \Pimcore\Model\Webservice\Data\Object) {
+            /** @var \Pimcore\Model\Webservice\Data\Object key */
+            $wsData->key = \Pimcore\Model\Element\Service::getValidKey($wsData->key, "object");
+        } elseif ($wsData instanceof \Pimcore\Model\Webservice\Data\Document) {
+            /** @var \Pimcore\Model\Webservice\Data\Document key */
+            $wsData->key = \Pimcore\Model\Element\Service::getValidKey($wsData->key, "document");
+        } elseif ($wsData instanceof \Pimcore\Model\Webservice\Data\Asset) {
+            /** @var \Pimcore\Model\Webservice\Data\Asset $wsData */
+            $wsData->filename = \Pimcore\Model\Element\Service::getValidKey($wsData->filename, "asset");
+        }
+
+        return $wsData;
+    }
+
+    /**
+     * @param $class
+     * @param $data
+     *
+     * @return \Pimcore\Model\Webservice\Data
+     */
+    protected function fillWebserviceData($class, $data)
+    {
+        $wsData = new $class();
+
+        return self::map($wsData, $data);
     }
 }

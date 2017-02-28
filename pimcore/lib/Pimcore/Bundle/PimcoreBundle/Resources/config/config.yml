@@ -34,7 +34,7 @@ twig:
         container: '@service_container'
 
 monolog:
-    channels: ['pimcore']
+    channels: ['pimcore', 'pimcore_api']
 
 pimcore:
     # the routes below are used to determine the request context in PimcoreContextGuesser

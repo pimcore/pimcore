@@ -28,7 +28,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
     const TAG_DOES_NOT_EXIST = -1;
     /**
      * the webservice
-     * @var
+     * @var Webservice\Service
      */
     private $service;
 
