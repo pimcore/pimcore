@@ -19,6 +19,11 @@ use Pimcore\Model;
 class View extends \Zend_View
 {
     /**
+     * @var string
+     */
+    protected static $viewScriptSuffix = "php";
+
+    /**
      * @var \Zend_Controller_Request_Abstract
      */
     protected $request;
@@ -275,17 +280,13 @@ class View extends \Zend_View
      */
     public static function getViewScriptSuffix()
     {
-        // default is php
-        $viewSuffix = "php";
+        return self::$viewScriptSuffix;
+    }
 
-        // custom view suffixes are only available for the frontend module (website)
-        if (!PIMCORE_SYMFONY_MODE && \Zend_Controller_Front::getInstance()->getRequest()->getModuleName() == PIMCORE_FRONTEND_MODULE) {
-            $customViewSuffix = Config::getSystemConfig()->general->viewSuffix;
-            if (!empty($customViewSuffix)) {
-                $viewSuffix = $customViewSuffix;
-            }
-        }
-
-        return $viewSuffix;
+    /**
+     * @param $suffix
+     */
+    public static function setViewScriptSuffix($suffix) {
+        self::$viewScriptSuffix = $suffix;
     }
 }

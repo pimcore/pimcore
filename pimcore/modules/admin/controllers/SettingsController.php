@@ -384,12 +384,10 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
                     "username" => $values["general.http_auth.username"],
                     "password" => $values["general.http_auth.password"]
                 ],
-                "custom_php_logfile" => $values["general.custom_php_logfile"],
                 "debugloglevel" => $values["general.debugloglevel"],
                 "debug_admin_translations" => $values["general.debug_admin_translations"],
                 "devmode" => $values["general.devmode"],
                 "logrecipient" => $values["general.logrecipient"],
-                "viewSuffix" => $values["general.viewSuffix"],
                 "instanceIdentifier" => $values["general.instanceIdentifier"],
                 "show_cookie_notice" => $values["general.show_cookie_notice"],
             ],

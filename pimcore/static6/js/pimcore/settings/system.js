@@ -154,19 +154,6 @@ pimcore.settings.system = Class.create({
                                 width: 600
                             },
                             {
-                                fieldLabel: t("view_suffix"),
-                                xtype: "combo",
-                                width: 600,
-                                editable: false,
-                                name: "general.viewSuffix",
-                                value: this.getValue("general.viewSuffix"),
-                                store: [
-                                    ["", ".php (pimcore standard)"],
-                                    ["phtml", "phtml (zend framework standard)"]
-                                ],
-                                mode: "local",
-                                triggerAction: "all"
-                            }, {
                                 fieldLabel: t("additional_path_variable") + " (" + t(this.data.config.path_separator) + " " + t("separated") + ") (/x/y" + this.data.config.path_separator + "/foo/bar)",
                                 xtype: "textfield",
                                 name: "general.path_variable",
@@ -364,12 +351,6 @@ pimcore.settings.system = Class.create({
                                 hideLabel: true,
                                 width: 600,
                                 value: "<b>" + t("logger") + "</b>"
-                            },
-                            {
-                                fieldLabel: "PHP error_log = /website/var/log/php.log",
-                                xtype: "checkbox",
-                                name: "general.custom_php_logfile",
-                                checked: this.getValue("general.custom_php_logfile")
                             },
                             {
                                 fieldLabel: "debug.log Log-Level",
