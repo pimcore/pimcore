@@ -22,7 +22,6 @@ return [
             "username" => "",
             "password" => ""
         ],
-        "custom_php_logfile" => TRUE,
         "debugloglevel" => "error",
         "debug_admin_translations" => FALSE,
         "devmode" => FALSE,

@@ -439,20 +439,6 @@ class Pimcore
         // try to load configuration
         $conf = Config::getSystemConfig();
 
-        if ($conf) {
-            // redirect php error_log to /website/var/log/php.log
-            if ($conf->general->custom_php_logfile) {
-                $phpLog = PIMCORE_LOG_DIRECTORY . "/php.log";
-                if (!file_exists($phpLog)) {
-                    touch($phpLog);
-                }
-                if (is_writable($phpLog)) {
-                    ini_set("error_log", $phpLog);
-                    ini_set("log_errors", "1");
-                }
-            }
-        }
-
         if (!is_file(PIMCORE_LOG_DEBUG)) {
             if (is_writable(dirname(PIMCORE_LOG_DEBUG))) {
                 File::put(PIMCORE_LOG_DEBUG, "AUTOCREATE\n");

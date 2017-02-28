@@ -353,12 +353,6 @@ pimcore.settings.system = Class.create({
                                 value: "<b>" + t("logger") + "</b>"
                             },
                             {
-                                fieldLabel: "PHP error_log = /website/var/log/php.log",
-                                xtype: "checkbox",
-                                name: "general.custom_php_logfile",
-                                checked: this.getValue("general.custom_php_logfile")
-                            },
-                            {
                                 fieldLabel: "debug.log Log-Level",
                                 xtype: "combo",
                                 name: "general.debugloglevel",
