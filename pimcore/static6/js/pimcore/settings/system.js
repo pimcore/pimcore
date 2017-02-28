@@ -154,19 +154,6 @@ pimcore.settings.system = Class.create({
                                 width: 600
                             },
                             {
-                                fieldLabel: t("view_suffix"),
-                                xtype: "combo",
-                                width: 600,
-                                editable: false,
-                                name: "general.viewSuffix",
-                                value: this.getValue("general.viewSuffix"),
-                                store: [
-                                    ["", ".php (pimcore standard)"],
-                                    ["phtml", "phtml (zend framework standard)"]
-                                ],
-                                mode: "local",
-                                triggerAction: "all"
-                            }, {
                                 fieldLabel: t("additional_path_variable") + " (" + t(this.data.config.path_separator) + " " + t("separated") + ") (/x/y" + this.data.config.path_separator + "/foo/bar)",
                                 xtype: "textfield",
                                 name: "general.path_variable",

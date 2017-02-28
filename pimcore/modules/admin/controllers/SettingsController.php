@@ -389,7 +389,6 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
                 "debug_admin_translations" => $values["general.debug_admin_translations"],
                 "devmode" => $values["general.devmode"],
                 "logrecipient" => $values["general.logrecipient"],
-                "viewSuffix" => $values["general.viewSuffix"],
                 "instanceIdentifier" => $values["general.instanceIdentifier"],
                 "show_cookie_notice" => $values["general.show_cookie_notice"],
             ],

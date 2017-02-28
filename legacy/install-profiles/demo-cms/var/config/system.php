@@ -27,7 +27,6 @@ return [
         "debug_admin_translations" => FALSE,
         "devmode" => FALSE,
         "logrecipient" => NULL,
-        "viewSuffix" => "",
         "instanceIdentifier" => "",
         "show_cookie_notice" => FALSE
     ],
