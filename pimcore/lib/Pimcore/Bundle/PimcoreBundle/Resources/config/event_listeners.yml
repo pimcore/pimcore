@@ -99,6 +99,15 @@ services:
 
 
     #
+    # EXCEPTION HANDLING
+    #
+
+    pimcore.event_listener.response_exception:
+        class: Pimcore\Bundle\PimcoreBundle\EventListener\ResponseExceptionListener
+        tags:
+            - { name: kernel.event_subscriber }
+
+    #
     # RESPONSE TRANSFORMING
     #
 
