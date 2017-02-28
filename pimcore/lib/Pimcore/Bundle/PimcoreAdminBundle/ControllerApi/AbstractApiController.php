@@ -30,9 +30,8 @@ abstract class AbstractApiController extends AdminController
         try {
             parent::checkPermission($permission);
         } catch (AccessDeniedHttpException $ex) {
-            throw new AccessDeniedHttpException($this->encodeJson([
-                "success" => false,
-                "msg" => "not allowed"
+            throw new ResponseException($this->createErrorResponse([
+                'msg' => sprintf('Not allowed: permission %s is needed', $permission)
             ]));
         }
     }
@@ -43,7 +42,7 @@ abstract class AbstractApiController extends AdminController
      *
      * @throws ResponseException
      */
-    protected function checkElementPermission($element, $type)
+    protected function checkElementPermission(AbstractElement $element, $type)
     {
         $map = [
             'get'    => 'view',
@@ -58,6 +57,15 @@ abstract class AbstractApiController extends AdminController
 
         $permission = $map[$type];
         if (!$element->isAllowed($permission)) {
+            $this->get('monolog.logger.security')->error(
+                'User {user} attempted to access {permission} on {elementType} {elementId}, but has no permission to do so', [
+                    'user'        => $this->getUser()->getName(),
+                    'permission'  => $permission,
+                    'elementType' => $element->getType(),
+                    'elementId'   => $element->getId(),
+                ]
+            );
+
             throw new ResponseException($this->createErrorResponse([
                 'msg' => sprintf('Not allowed: permission %s is needed', $permission)
             ]));
