@@ -12,6 +12,16 @@ use Zend\Paginator\Paginator;
 
 class AdvancedController extends AbstractController
 {
+
+    public function indexAction()
+    {
+        $list = new Document\Listing();
+        $list->setCondition("parentId = ? AND type IN ('link','page')", [$this->document->getId()]);
+        $list->load();
+
+        $this->view->documents = $list;
+    }
+
     public function contactFormAction(Request $request)
     {
         $success = false;
