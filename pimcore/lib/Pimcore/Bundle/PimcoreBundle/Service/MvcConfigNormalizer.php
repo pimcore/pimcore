@@ -74,7 +74,14 @@ class MvcConfigNormalizer
         }
 
         if ($controller) {
-            $controller           = ucfirst($controller);
+            //split submodules with _ and uppercase first character
+            $controllerParts = explode("_", $controller);
+            foreach($controllerParts as &$part) {
+                $part = ucfirst($part);
+            }
+
+            $controller = implode("/", $controllerParts);
+
             $result['controller'] = $controller;
         }
 
