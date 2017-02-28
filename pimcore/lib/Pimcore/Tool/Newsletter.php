@@ -285,7 +285,7 @@ class Newsletter
         }
 
         // generate token
-        $token = base64_encode(\Zend_Json::encode([
+        $token = base64_encode(json_encode([
             "salt" => md5(microtime()),
             "email" => $object->getEmail(),
             "id" => $object->getId()
@@ -333,14 +333,13 @@ class Newsletter
     /**
      * @param $token
      * @return bool
-     * @throws \Zend_Json_Exception
      */
     public function getObjectByToken($token)
     {
         $originalToken = $token;
         $token = str_replace("~", "=", $token); // base64 can contain = which isn't safe in URL's
 
-        $data = \Zend_Json::decode(base64_decode($token));
+        $data = json_decode(base64_decode($token), true);
         if ($data) {
             if ($object = Object::getById($data["id"])) {
                 if ($version = $object->getLatestVersion()) {

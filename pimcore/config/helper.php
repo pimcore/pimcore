@@ -149,9 +149,9 @@ function array_htmlspecialchars($array)
 function object2array($node)
 {
     // dirty hack, should be replaced
-    $paj = @Zend_Json::encode($node);
+    $paj = json_encode($node);
 
-    return @Zend_Json::decode($paj);
+    return @json_decode($paj, true);
 }
 
 /**

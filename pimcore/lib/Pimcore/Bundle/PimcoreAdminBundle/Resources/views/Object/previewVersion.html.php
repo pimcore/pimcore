@@ -35,7 +35,7 @@
     <tr class="system">
         <td>Published</td>
         <td>o_published</td>
-        <td><?= \Zend_Json::encode($this->object->getPublished()); ?></td>
+        <td><?= json_encode($this->object->getPublished()); ?></td>
     </tr>
 
     <tr class="">

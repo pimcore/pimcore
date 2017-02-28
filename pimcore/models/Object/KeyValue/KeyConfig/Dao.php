@@ -110,7 +110,7 @@ class Dao extends Model\Dao\AbstractDao
                     }
                     if (is_array($value) || is_object($value)) {
                         if ($this->model->getType() == 'select') {
-                            $value = \Zend_Json::encode($value);
+                            $value = json_encode($value);
                         } else {
                             $value = \Pimcore\Tool\Serialize::serialize($value);
                         }

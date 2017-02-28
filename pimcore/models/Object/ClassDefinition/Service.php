@@ -42,8 +42,7 @@ class Service
         //add propertyVisibility to export data
         $data->propertyVisibility = $class->propertyVisibility;
 
-        $json = \Zend_Json::encode($data);
-        $json = \Zend_Json::prettyPrint($json);
+        $json = json_encode($data, JSON_PRETTY_PRINT);
 
         return $json;
     }
@@ -62,7 +61,7 @@ class Service
             $userId = $user->getId();
         }
 
-        $importData = \Zend_Json::decode($json);
+        $importData = json_decode($json, true);
 
         if (!is_null($importData["layoutDefinitions"])) {
             // set layout-definition
@@ -100,8 +99,7 @@ class Service
         unset($fieldCollection->key);
         unset($fieldCollection->fieldDefinitions);
 
-        $json = \Zend_Json::encode($fieldCollection);
-        $json = \Zend_Json::prettyPrint($json);
+        $json = json_encode($fieldCollection, JSON_PRETTY_PRINT);
 
         return $json;
     }
@@ -114,7 +112,7 @@ class Service
      */
     public static function importFieldCollectionFromJson($fieldCollection, $json, $throwException = false)
     {
-        $importData = \Zend_Json::decode($json);
+        $importData = json_decode($json, true);
 
         if (!is_null($importData["layoutDefinitions"])) {
             $layout = self::generateLayoutTreeFromArray($importData["layoutDefinitions"], $throwException);
@@ -147,8 +145,7 @@ class Service
             }
         }
 
-        $json = \Zend_Json::encode($objectBrick);
-        $json = \Zend_Json::prettyPrint($json);
+        $json = json_encode($objectBrick, JSON_PRETTY_PRINT);
 
         return $json;
     }
@@ -161,7 +158,7 @@ class Service
      */
     public static function importObjectBrickFromJson($objectBrick, $json, $throwException = false)
     {
-        $importData = \Zend_Json::decode($json);
+        $importData = json_decode($json, true);
 
         // reverse map the class name to the class ID, see: self::generateObjectBrickJson()
         $toAssignClassDefinitions = [];

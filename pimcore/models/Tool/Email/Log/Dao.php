@@ -72,7 +72,7 @@ class Dao extends Model\Dao\AbstractDao
                 } elseif (is_array($value)) {
                     //converts the dynamic params to a basic json string
                     $preparedData = self::createJsonLoggingObject($value);
-                    $value = \Zend_Json::encode($preparedData);
+                    $value = json_encode($preparedData);
                 }
 
                 $data[$key] = $value;
@@ -127,7 +127,7 @@ class Dao extends Model\Dao\AbstractDao
     protected function createJsonLoggingObject($data)
     {
         if (!is_array($data)) {
-            return \Zend_Json::encode(new \stdClass());
+            return json_encode(new \stdClass());
         } else {
             $loggingData = [];
             foreach ($data as $key => $value) {

@@ -483,7 +483,7 @@ class Pdf extends Model\Document\Tag
 
             $jsVarName = $this->getName();
             $divId = "pimcore-pdf-" . uniqid();
-            $jsonData = \Zend_Json::encode($data);
+            $jsonData = json_encode($data);
 
             $code = <<<HTML
 

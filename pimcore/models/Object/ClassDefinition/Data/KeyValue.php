@@ -460,7 +460,6 @@ class KeyValue extends Model\Object\ClassDefinition\Data
      * @param null $object
      * @param mixed $params
      * @return array|null
-     * @throws \Zend_Json_Exception
      */
     public function getDiffDataForEditMode($data, $object = null, $params = [])
     {
@@ -489,7 +488,7 @@ class KeyValue extends Model\Object\ClassDefinition\Data
 
             $prettyValue = $property["value"];
             if ($keyConfig->getType() == "select") {
-                $possibleValues = \Zend_Json::decode($keyConfig->getPossibleValues());
+                $possibleValues = json_decode($keyConfig->getPossibleValues(), true);
 
                 foreach ($possibleValues as $pValue) {
                     if ($pValue["key"] == $property["value"]) {

@@ -54,7 +54,7 @@ class UsageStatisticsListener implements EventSubscriberInterface
     }
 
     /**
-     * @throws \Zend_Json_Exception
+     * @param Request $request
      */
     protected function logUsageStatistics(Request $request)
     {

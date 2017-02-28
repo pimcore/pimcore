@@ -37,8 +37,8 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
     <tr class="system">
         <td>Published</td>
         <td>o_published</td>
-        <td><?= \Zend_Json::encode($this->object1->getPublished()); ?></td>
-        <td><?= \Zend_Json::encode($this->object2->getPublished()); ?></td>
+        <td><?= json_encode($this->object1->getPublished()); ?></td>
+        <td><?= json_encode($this->object2->getPublished()); ?></td>
     </tr>
 
     <tr class="">

@@ -26,7 +26,7 @@ class JsonEncoder
     public function encode($data, $returnData = false)
     {
         $data = \Pimcore\Tool\Serialize::removeReferenceLoops($data);
-        $data = \Zend_Json::encode($data, null, []);
+        $data = json_encode($data, JSON_PRETTY_PRINT);
 
         if ($returnData) {
             return $data;
@@ -45,7 +45,7 @@ class JsonEncoder
      */
     public function decode($data)
     {
-        $data = \Zend_Json::decode($data);
+        $data = json_decode($data, true);
 
         return $data;
     }

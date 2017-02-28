@@ -242,7 +242,7 @@ class KeyConfig extends Model\AbstractModel
 
         $isUpdate = false;
 
-        $def = \Zend_Json::decode($this->definition);
+        $def = json_decode($this->definition, true);
         if ($def && isset($def["title"])) {
             $this->title = $def["title"];
         } else {

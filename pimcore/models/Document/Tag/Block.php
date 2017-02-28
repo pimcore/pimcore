@@ -191,8 +191,7 @@ class Block extends Model\Document\Tag
             "type" => $this->getType(),
             "inherited" => $this->getInherited()
         ];
-        $options = @\Zend_Json::encode($options);
-        //$options = base64_encode($options);
+        $options = json_encode($options);
 
         $this->outputEditmode('
             <script type="text/javascript">

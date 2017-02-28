@@ -100,7 +100,6 @@ class Api
     /**
      * @param null $scope
      * @return bool|\Google_Client
-     * @throws \Zend_Json_Exception
      */
     public static function getServiceClient($scope = null)
     {
@@ -134,7 +133,7 @@ class Api
         $hash = crc32(serialize([$scope]));
         $tokenId =  "google-api.token." . $hash;
         if ($tokenData = TmpStore::get($tokenId)) {
-            $tokenInfo = \Zend_Json::decode($tokenData->getData());
+            $tokenInfo = json_decode($tokenData->getData(), true);
             if (($tokenInfo["created"] + $tokenInfo["expires_in"]) > (time()-900)) {
                 $token = $tokenData->getData();
             }
@@ -192,7 +191,6 @@ class Api
      * @return mixed
      * @throws \Exception
      * @throws \Zend_Http_Client_Exception
-     * @throws \Zend_Json_Exception
      */
     public static function getAnalyticsMetadata()
     {
@@ -201,7 +199,7 @@ class Api
 
         $result = $client->request();
 
-        return \Zend_Json::decode($result->getBody());
+        return json_decode($result->getBody(), true);
     }
 
     /**

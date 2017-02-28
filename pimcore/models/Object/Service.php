@@ -598,12 +598,8 @@ class Service extends Model\Element\Service
         $joins = [];
         $conditions = [];
 
-        // create filter condition
-        $conditionPartsFilters = [];
-
         if ($filterJson) {
-            $db = \Pimcore\Db::get();
-            $filters = \Zend_Json::decode($filterJson);
+            $filters = json_decode($filterJson, true);
             foreach ($filters as $filter) {
                 $operator = "=";
 
@@ -695,7 +691,7 @@ class Service extends Model\Element\Service
 
         if ($filterJson) {
             $db = \Pimcore\Db::get();
-            $filters = \Zend_Json::decode($filterJson);
+            $filters = json_decode($filterJson, true);
             foreach ($filters as $filter) {
                 $operator = "=";
 

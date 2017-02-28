@@ -62,7 +62,7 @@ class Area extends Model\Document\Tag
             "type" => $this->getType(),
             "inherited" => $this->getInherited()
         ];
-        $options = @\Zend_Json::encode($options, false, ['enableJsonExprFinder' => true]);
+        $options = $options = json_encode($options);
 
         if ($this->editmode) {
             $class = "pimcore_editable pimcore_tag_" . $this->getType();

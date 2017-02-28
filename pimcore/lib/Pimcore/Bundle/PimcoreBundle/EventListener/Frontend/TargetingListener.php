@@ -196,9 +196,9 @@ class TargetingListener extends AbstractFrontendListener
                 $code .= '<script type="text/javascript">';
                 $code .= 'var pimcore = pimcore || {};';
                 $code .= 'pimcore["targeting"] = {};';
-                $code .= 'pimcore["targeting"]["dataPush"] = ' . \Zend_Json::encode($dataPush) . ';';
-                $code .= 'pimcore["targeting"]["targetingRules"] = ' . \Zend_Json::encode($targets) . ';';
-                $code .= 'pimcore["targeting"]["personas"] = ' . \Zend_Json::encode($personas) . ';';
+                $code .= 'pimcore["targeting"]["dataPush"] = ' . json_encode($dataPush) . ';';
+                $code .= 'pimcore["targeting"]["targetingRules"] = ' . json_encode($targets) . ';';
+                $code .= 'pimcore["targeting"]["personas"] = ' . json_encode($personas) . ';';
                 $code .= '</script>';
                 $code .= '<script type="text/javascript" src="/pimcore/static6/js/frontend/targeting.js"></script>';
                 $code .= "\n";
