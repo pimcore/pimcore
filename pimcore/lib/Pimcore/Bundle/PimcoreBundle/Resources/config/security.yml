@@ -28,6 +28,7 @@ security:
                 target: /admin/login
                 success_handler: pimcore_admin.security.logout_success_handler
             guard:
+                entry_point: pimcore_admin.security.admin_authenticator
                 authenticators:
                     - pimcore_admin.security.admin_authenticator
 
