@@ -94,18 +94,15 @@ class ObjectController extends AbstractApiController
      */
     public function getAction(Request $request, $id)
     {
-        $profile   = $request->get("profiling");
-        $stopwatch = $this->get('debug.stopwatch');
+        $profile     = $request->get('profiling');
+        $profileName = 'rest_object_get';
 
-        /** @var StopwatchEvent[] $profiling */
-        $profiling = [];
-
+        /** @var Stopwatch $stopwatch */
+        $stopwatch = null;
         if ($profile) {
-            $stopwatch->openSection();
-            $stopwatch->start('get');
+            $stopwatch = $this->startProfiling();
+            $stopwatch->start('get', $profileName);
         }
-
-        sleep(3);
 
         $object = Object::getById($id);
         if (!$object) {
@@ -117,16 +114,14 @@ class ObjectController extends AbstractApiController
 
         if ($profile) {
             $stopwatch->stop('get');
-            $stopwatch->start('perm');
+            $stopwatch->start('perm', $profileName);
         }
 
         $this->checkElementPermission($object, "get");
 
         if ($profile) {
-            // $stopwatch->stopSection('perm');
-            // $stopwatch->openSection();
             $stopwatch->stop('perm');
-            $stopwatch->start('ws');
+            $stopwatch->start('ws', $profileName);
         }
 
         if ($object instanceof Object\Folder) {
@@ -144,16 +139,7 @@ class ObjectController extends AbstractApiController
         ]);
 
         if ($profile) {
-            $stopwatch->stopSection('rest-object-get');
-
-            $data['profiling'] = [];
-            foreach ($stopwatch->getSectionEvents('rest-object-get') as $name => $event) {
-                $data['profiling'][$name] = $event->getDuration();
-            }
-        } else {
-            return $this->createSuccessResponse([
-                'data' => $object
-            ]);
+            $data['profiling'] = $this->getProfilingData($profileName);
         }
 
         return new JsonResponse($data);

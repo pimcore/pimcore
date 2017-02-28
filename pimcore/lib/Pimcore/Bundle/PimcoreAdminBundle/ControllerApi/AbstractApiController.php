@@ -8,6 +8,8 @@ use Pimcore\Model\Element\AbstractElement;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\Stopwatch\Stopwatch;
+use Symfony\Component\Stopwatch\StopwatchEvent;
 
 abstract class AbstractApiController extends AdminController
 {
@@ -15,10 +17,16 @@ abstract class AbstractApiController extends AdminController
     const TAG_DOES_NOT_EXIST = -1;
 
     /**
+     * @var Stopwatch
+     */
+    protected $stopwatch;
+
+    /**
      * @inheritDoc
      */
     public function needsSessionDoubleAuthenticationCheck()
     {
+        // do not double-check session as api key auth is possible
         return false;
     }
 
@@ -116,5 +124,53 @@ abstract class AbstractApiController extends AdminController
             $this->createErrorData($data),
             $status
         );
+    }
+
+    /**
+     * @return Stopwatch
+     */
+    protected function getStopwatch()
+    {
+        if (null === $this->stopwatch) {
+            if ($this->container->has('debug.stopwatch')) {
+                $this->stopwatch = $this->container->get('debug.stopwatch');
+            } else {
+                $this->stopwatch = new Stopwatch();
+            }
+        }
+
+        return $this->stopwatch;
+    }
+
+    /**
+     * @return Stopwatch
+     */
+    protected function startProfiling()
+    {
+        $stopwatch = $this->getStopwatch();
+        $stopwatch->openSection();
+
+        return $stopwatch;
+    }
+
+    /**
+     * @param string $sectionName
+     * @return array
+     */
+    protected function getProfilingData($sectionName)
+    {
+        $stopwatch = $this->getStopwatch();
+        $stopwatch->stopSection($sectionName);
+
+        $data = [];
+        foreach ($this->getStopwatch()->getSectionEvents($sectionName) as $name => $event) {
+            if ($name === '__section__') {
+                $name = 'total';
+            }
+
+            $data[$name] = $event->getDuration();
+        }
+
+        return $data;
     }
 }
