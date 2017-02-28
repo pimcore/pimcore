@@ -3,7 +3,10 @@
 namespace Pimcore\Bundle\PimcoreBundle\DependencyInjection;
 
 use Pimcore\Bundle\PimcoreBundle\Routing\Loader\AnnotatedRouteControllerLoader;
+use Pimcore\Config;
+use Pimcore\HttpKernel\Config\PimcoreConfigResource;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Exception\RuntimeException;
 use Symfony\Component\DependencyInjection\Extension\Extension;
@@ -16,6 +19,10 @@ class PimcoreExtension extends Extension
      */
     public function load(array $configs, ContainerBuilder $container)
     {
+        // load system config as container params and rebuild
+        // container in dev when pimcore config changes
+        $this->loadPimcoreConfigParams($container);
+
         // TODO use ConfigurableExtension or getExtension()??
         $configuration = new Configuration();
         $config        = $this->processConfiguration($configuration, $configs);
@@ -57,6 +64,23 @@ class PimcoreExtension extends Extension
         }
 
         $this->addContextRoutes($container, $config['context']);
+    }
+
+    /**
+     * Add pimcore config as container parameter
+     *
+     * @param ContainerBuilder $container
+     */
+    protected function loadPimcoreConfigParams(ContainerBuilder $container)
+    {
+        $configResource = new PimcoreConfigResource();
+
+        $container->addResource(new FileResource(Config::locateConfigFile('system.php')));
+        $container->addResource($configResource);
+
+        foreach ($configResource->getParameters() as $key => $value) {
+            $container->setParameter($key, $value);
+        }
     }
 
     /**
