@@ -5,11 +5,15 @@ namespace Pimcore\Bundle\PimcoreAdminBundle\Security\Guard;
 use Pimcore\Bundle\PimcoreAdminBundle\Security\BruteforceProtectionHandler;
 use Pimcore\Bundle\PimcoreAdminBundle\Security\User\User;
 use Pimcore\Cache\Runtime;
+use Pimcore\Event\Admin\Login\LoginCredentialsEvent;
+use Pimcore\Event\Admin\Login\LoginFailedEvent;
+use Pimcore\Event\AdminEvents;
 use Pimcore\Model\User as UserModel;
 use Pimcore\Tool\Authentication;
 use Pimcore\Tool\Session;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -38,6 +42,11 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
     protected $router;
 
     /**
+     * @var EventDispatcherInterface
+     */
+    protected $dispatcher;
+
+    /**
      * @var HttpUtils
      */
     protected $httpUtils;
@@ -50,18 +59,21 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
     /**
      * @param TokenStorageInterface $tokenStorage
      * @param RouterInterface $router
+     * @param EventDispatcherInterface $dispatcher
      * @param HttpUtils $httpUtils
      * @param BruteforceProtectionHandler $bruteforceProtectionHandler
      */
     public function __construct(
         TokenStorageInterface $tokenStorage,
         RouterInterface $router,
+        EventDispatcherInterface $dispatcher,
         HttpUtils $httpUtils,
         BruteforceProtectionHandler $bruteforceProtectionHandler
     )
     {
         $this->tokenStorage = $tokenStorage;
         $this->router       = $router;
+        $this->dispatcher   = $dispatcher;
         $this->httpUtils    = $httpUtils;
 
         $this->bruteforceProtectionHandler = $bruteforceProtectionHandler;
@@ -90,7 +102,8 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
      */
     public function getCredentials(Request $request)
     {
-        // TODO trigger admin.login.login.authenticate event
+        $credentials = null;
+
         if ($request->attributes->get('_route') === 'pimcore_admin_login_check') {
             if (!null === $username = $request->get('username')) {
                 throw new AuthenticationException('Missing username');
@@ -99,19 +112,22 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
             $this->bruteforceProtectionHandler->checkProtection($username);
 
             if ($request->getMethod() === 'POST' && $password = $request->get('password')) {
-                return [
+                $credentials = [
                     'username' => $username,
                     'password' => $password
                 ];
             } else if ($token = $request->get('token')) {
-                return [
+                $credentials = [
                     'username' => $username,
                     'token'    => $token,
                     'reset'    => (bool)$request->get('reset', false)
                 ];
             }
 
-            return null;
+            $event = new LoginCredentialsEvent($request, $credentials);
+            $this->dispatcher->dispatch(AdminEvents::LOGIN_CREDENTIALS, $event);
+
+            return $event->getCredentials();
         } else {
             if ($pimcoreUser = Authentication::authenticateSession()) {
                 return [
@@ -146,7 +162,15 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
                 if ($pimcoreUser) {
                     $user = new User($pimcoreUser);
                 } else {
-                    throw new AuthenticationException('Failed to authenticate with username and password');
+                    // trigger LOGIN_FAILED event if user could not be authenticated via username/password
+                    $event = new LoginFailedEvent($credentials);
+                    $this->dispatcher->dispatch(AdminEvents::LOGIN_FAILED, $event);
+
+                    if ($event->hasUser()) {
+                        $user = new User($event->getUser());
+                    } else {
+                        throw new AuthenticationException('Failed to authenticate with username and password');
+                    }
                 }
             } else if (isset($credentials['token'])) {
                 $pimcoreUser = Authentication::authenticateToken($credentials['username'], $credentials['token']);

@@ -5,6 +5,30 @@ namespace Pimcore\Event;
 final class AdminEvents
 {
     /**
+     * The LOGIN_CREDENTIALS event is triggered after login credentials were resolved from request.
+     *
+     * This event allows you to influence the credentials resolved in the authenticator before
+     * they are passed to getUser().
+     *
+     * @Event("Pimcore\Event\Admin\Login\LoginCredentialsEvent")
+     *
+     * @var string
+     */
+    const LOGIN_CREDENTIALS = 'pimcore.admin.login.credentials';
+
+    /**
+     * The LOGIN_FAILED event is triggered when credentials were invalid.
+     *
+     * This event allows you to set a custom user which is resolved from the given credentials
+     * from a third-party authentication system (e.g. an external service).
+     *
+     * @Event("Pimcore\Event\Admin\Login\LoginFailedEvent")
+     *
+     * @var string
+     */
+    const LOGIN_FAILED = 'pimcore.admin.login.failed';
+
+    /**
      * The LOGIN_LOSTPASSWORD event is triggered before the lost password email
      * is sent.
      *

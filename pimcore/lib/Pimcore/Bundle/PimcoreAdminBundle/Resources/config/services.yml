@@ -27,6 +27,7 @@ services:
         arguments:
             - '@security.token_storage'
             - '@router'
+            - '@event_dispatcher'
             - '@security.http_utils'
             - '@pimcore_admin.security.bruteforce_protection_handler'
 
