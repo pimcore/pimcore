@@ -1,67 +1,78 @@
 <?php
-/**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in
- * LICENSE.md which is distributed with this source code.
- *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
- */
+
+namespace Pimcore\Bundle\PimcoreAdminBundle\Controller;
 
 use Pimcore\Model\Element\Tag;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
-class Admin_TagsController extends \Pimcore\Controller\Action\Admin
+/**
+ * @Route("/tags")
+ */
+class TagsController extends AdminController
 {
-    public function addAction()
+    /**
+     * @Route("/add")
+     * @param Request $request
+     */
+    public function addAction(Request $request)
     {
-        $tag = new Pimcore\Model\Element\Tag();
-        $tag->setName(strip_tags($this->getParam('text')));
-        $tag->setParentId(intval($this->getParam('parentId')));
+        $tag = new Tag();
+        $tag->setName(strip_tags($request->get('text')));
+        $tag->setParentId(intval($request->get('parentId')));
         $tag->save();
 
-        $this->_helper->json(['success' => true, 'id' => $tag->getId()]);
+        return $this->json(['success' => true, 'id' => $tag->getId()]);
     }
 
-    public function deleteAction()
+    /**
+     * @Route("/delete")
+     * @param Request $request
+     */
+    public function deleteAction(Request $request)
     {
-        $tag = Pimcore\Model\Element\Tag::getById($this->getParam("id"));
+        $tag = Tag::getById($request->get("id"));
         if ($tag) {
             $tag->delete();
-            $this->_helper->json(['success' => true]);
+            return $this->json(['success' => true]);
         } else {
-            throw new \Exception("Tag with ID " . $this->getParam("id") . " not found.");
+            throw new \Exception("Tag with ID " . $request->get("id") . " not found.");
         }
     }
 
-    public function updateAction()
+    /**
+     * @Route("/update")
+     * @param Request $request
+     */
+    public function updateAction(Request $request)
     {
-        $tag = Pimcore\Model\Element\Tag::getById($this->getParam("id"));
+        $tag = Tag::getById($request->get("id"));
         if ($tag) {
-            $parentId = $this->getParam("parentId");
+            $parentId = $request->get("parentId");
             if ($parentId || $parentId === "0") {
                 $tag->setParentId(intval($parentId));
             }
-            if ($this->getParam("text")) {
-                $tag->setName(strip_tags($this->getParam("text")));
+            if ($request->get("text")) {
+                $tag->setName(strip_tags($request->get("text")));
             }
 
             $tag->save();
 
-            $this->_helper->json(['success' => true]);
+            return $this->json(['success' => true]);
         } else {
-            throw new \Exception("Tag with ID " . $this->getParam("id") . " not found.");
+            throw new \Exception("Tag with ID " . $request->get("id") . " not found.");
         }
     }
 
-    public function treeGetChildrenByIdAction()
+    /**
+     * @Route("/tree-get-children-by-id")
+     * @param Request $request
+     */
+    public function treeGetChildrenByIdAction(Request $request)
     {
-        $showSelection = $this->getParam("showSelection") == "true";
-        $assginmentCId = intval($this->getParam("assignmentCId"));
-        $assginmentCType = strip_tags($this->getParam("assignmentCType"));
+        $showSelection = $request->get("showSelection") == "true";
+        $assginmentCId = intval($request->get("assignmentCId"));
+        $assginmentCType = strip_tags($request->get("assignmentCType"));
 
         $assignedTagIds = [];
         if ($assginmentCId && $assginmentCType) {
@@ -72,9 +83,9 @@ class Admin_TagsController extends \Pimcore\Controller\Action\Admin
             }
         }
 
-        $tagList = new Pimcore\Model\Element\Tag\Listing();
-        if ($this->getParam("node")) {
-            $tagList->setCondition("parentId = ?", intval($this->getParam("node")));
+        $tagList = new Tag\Listing();
+        if ($request->get("node")) {
+            $tagList->setCondition("parentId = ?", intval($request->get("node")));
         } else {
             $tagList->setCondition("ISNULL(parentId) OR parentId = 0");
         }
@@ -85,7 +96,7 @@ class Admin_TagsController extends \Pimcore\Controller\Action\Admin
             $tags[] = $this->convertTagToArray($tag, $showSelection, $assignedTagIds, true);
         }
 
-        $this->_helper->json($tags);
+        return $this->json($tags);
     }
 
     /**
@@ -122,10 +133,14 @@ class Admin_TagsController extends \Pimcore\Controller\Action\Admin
         return $tagArray;
     }
 
-    public function loadTagsForElementAction()
+    /**
+     * @Route("/load-tags-for-element")
+     * @param Request $request
+     */
+    public function loadTagsForElementAction(Request $request)
     {
-        $assginmentCId = intval($this->getParam("assignmentCId"));
-        $assginmentCType = strip_tags($this->getParam("assignmentCType"));
+        $assginmentCId = intval($request->get("assignmentCId"));
+        $assginmentCType = strip_tags($request->get("assignmentCType"));
 
         $assignedTagArray = [];
         if ($assginmentCId && $assginmentCType) {
@@ -136,45 +151,55 @@ class Admin_TagsController extends \Pimcore\Controller\Action\Admin
             }
         }
 
-        $this->_helper->json($assignedTagArray);
+        return $this->json($assignedTagArray);
     }
 
-    public function addTagToElementAction()
+    /**
+     * @Route("/add-tag-to-element")
+     * @param Request $request
+     */
+    public function addTagToElementAction(Request $request)
     {
-        $assginmentCId = intval($this->getParam("assignmentElementId"));
-        $assginmentCType = strip_tags($this->getParam("assignmentElementType"));
-        $tagId = intval($this->getParam("tagId"));
+        $assginmentCId = intval($request->get("assignmentElementId"));
+        $assginmentCType = strip_tags($request->get("assignmentElementType"));
+        $tagId = intval($request->get("tagId"));
 
         $tag = Tag::getById($tagId);
         if ($tag) {
             Tag::addTagToElement($assginmentCType, $assginmentCId, $tag);
-            $this->_helper->json(['success' => true, 'id' => $tag->getId()]);
+            return $this->json(['success' => true, 'id' => $tag->getId()]);
         } else {
-            $this->_helper->json(['success' => false]);
+            return $this->json(['success' => false]);
         }
     }
 
-    public function removeTagFromElementAction()
+    /**
+     * @Route("/remove-tag-from-element")
+     * @param Request $request
+     */
+    public function removeTagFromElementAction(Request $request)
     {
-        $assginmentCId = intval($this->getParam("assignmentElementId"));
-        $assginmentCType = strip_tags($this->getParam("assignmentElementType"));
-        $tagId = intval($this->getParam("tagId"));
+        $assginmentCId = intval($request->get("assignmentElementId"));
+        $assginmentCType = strip_tags($request->get("assignmentElementType"));
+        $tagId = intval($request->get("tagId"));
 
         $tag = Tag::getById($tagId);
         if ($tag) {
             Tag::removeTagFromElement($assginmentCType, $assginmentCId, $tag);
-            $this->_helper->json(['success' => true, 'id' => $tag->getId()]);
+            return $this->json(['success' => true, 'id' => $tag->getId()]);
         } else {
-            $this->_helper->json(['success' => false]);
+            return $this->json(['success' => false]);
         }
     }
 
-
-    public function getBatchAssignmentJobsAction()
+    /**
+     * @Route("/get-batch-assignment-jobs")
+     * @param Request $request
+     */
+    public function getBatchAssignmentJobsAction(Request $request)
     {
-        $elementId = intval($this->getParam("elementId"));
-        $elementType = strip_tags($this->getParam("elementType"));
-
+        $elementId = intval($request->get("elementId"));
+        $elementType = strip_tags($request->get("elementType"));
 
         $idList = [];
         switch ($elementType) {
@@ -206,7 +231,7 @@ class Admin_TagsController extends \Pimcore\Controller\Action\Admin
             $offset += $size;
         }
 
-        $this->_helper->json(['success' => true, 'idLists' => $idListParts, 'totalCount' => count($idList)]);
+        return $this->json(['success' => true, 'idLists' => $idListParts, 'totalCount' => count($idList)]);
     }
 
     /**
@@ -215,7 +240,7 @@ class Admin_TagsController extends \Pimcore\Controller\Action\Admin
      */
     private function getSubObjectIds(\Pimcore\Model\Object\AbstractObject $object)
     {
-        $childsList = new Pimcore\Model\Object\Listing();
+        $childsList = new \Pimcore\Model\Object\Listing();
         $condition = "o_path LIKE ?";
         if (!$this->getUser()->isAdmin()) {
             $userIds = $this->getUser()->getRoles();
@@ -238,7 +263,7 @@ class Admin_TagsController extends \Pimcore\Controller\Action\Admin
      */
     private function getSubAssetIds(\Pimcore\Model\Asset $asset)
     {
-        $childsList = new Pimcore\Model\Asset\Listing();
+        $childsList = new \Pimcore\Model\Asset\Listing();
         $condition = "path LIKE ?";
         if (!$this->getUser()->isAdmin()) {
             $userIds = $this->getUser()->getRoles();
@@ -261,7 +286,7 @@ class Admin_TagsController extends \Pimcore\Controller\Action\Admin
      */
     private function getSubDocumentIds(\Pimcore\Model\Document $document)
     {
-        $childsList = new Pimcore\Model\Document\Listing();
+        $childsList = new \Pimcore\Model\Document\Listing();
         $condition = "path LIKE ?";
         if (!$this->getUser()->isAdmin()) {
             $userIds = $this->getUser()->getRoles();
@@ -278,15 +303,19 @@ class Admin_TagsController extends \Pimcore\Controller\Action\Admin
         return $childsList->loadIdList();
     }
 
-    public function doBatchAssignmentAction()
+    /**
+     * @Route("/do-batch-assignment")
+     * @param Request $request
+     */
+    public function doBatchAssignmentAction(Request $request)
     {
-        $cType = strip_tags($this->getParam("elementType"));
-        $assignedTags = json_decode($this->getParam("assignedTags"));
-        $elementIds = json_decode($this->getParam("childrenIds"));
-        $doCleanupTags = $this->getParam("removeAndApply") == "true";
+        $cType = strip_tags($request->get("elementType"));
+        $assignedTags = json_decode($request->get("assignedTags"));
+        $elementIds = json_decode($request->get("childrenIds"));
+        $doCleanupTags = $request->get("removeAndApply") == "true";
 
         Tag::batchAssignTagsToElement($cType, $elementIds, $assignedTags, $doCleanupTags);
 
-        $this->_helper->json(['success' => true]);
+        return $this->json(['success' => true]);
     }
 }

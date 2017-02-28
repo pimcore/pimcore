@@ -62,7 +62,7 @@ pimcore.element.tag.tree = Class.create({
             var store = Ext.create('Ext.data.TreeStore', {
                 proxy: {
                     type: 'ajax',
-                    url: '/admin/tags/tree-get-children-by-id/',
+                    url: '/admin/tags/tree-get-children-by-id',
                         extraParams: {
                             showSelection: this.showSelection,
                             assignmentCId: this.assignmentCId,
