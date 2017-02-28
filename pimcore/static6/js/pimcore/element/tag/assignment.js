@@ -26,7 +26,7 @@ pimcore.element.tag.assignment = Class.create({
             var gridStore = Ext.create("Ext.data.Store", {
                 proxy: {
                     type: 'ajax',
-                    url: '/admin/tags/load-tags-for-element/',
+                    url: '/admin/tags/load-tags-for-element',
                     extraParams: {
                         assignmentCId: this.element.id,
                         assignmentCType: this.elementType
