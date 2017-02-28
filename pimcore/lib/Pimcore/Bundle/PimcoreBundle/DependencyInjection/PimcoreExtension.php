@@ -76,7 +76,7 @@ class PimcoreExtension extends Extension
         $container->addResource(new FileResource(Config::locateConfigFile('system.php')));
 
         $config = Config::getSystemConfig(true);
-        $this->processPimcoreConfig($container, 'pimcore_config', $config->toArray());
+        $this->processPimcoreConfig($container, 'pimcore_system_config', $config->toArray());
     }
 
     /**
