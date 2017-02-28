@@ -2,7 +2,8 @@
 
 ## General
 
-The application logger is a tool, which developers can use to log certain events and errors within a pimcore powered application. 
+The application logger is a tool, which developers can use to log 
+certain events and errors within a pimcore powered application. 
 
 <div class="inline-imgs">
 
@@ -17,48 +18,32 @@ The logs are visible and searchable within the Pimcore backend GUI ![Tools menu]
 
 ## How to create log entries
 
-The application logger is a PSR-3 compatible component and therefore it can be used the usual way:
+The application logger is a PSR-3 compatible component and available on the service container (`pimcore.app_logger`)
+and therefore it can be used the usual way:
 
-### Basic usage - example
+### Basic Usage - Example
 
+#### Controller / Action
 ```php
-$logger = \Pimcore\Log\ApplicationLogger::getInstance("my component", true); // returns a PSR-3 compatible logger
-$logger->error("this is just a simple test");
-$logger->alert("another message");
-$logger->emergency("this is just a simple test");
- 
-$logger->log("info", "my message");
+$this->get("pimcore.app_logger")->error("Your error message");
+$this->get("pimcore.app_logger")->alert("Your alert");
+$this->get("pimcore.app_logger")->debug("Your alert", ["foo" => "bar"); // additional context information
 ```
 
-### Advanced usage - example
-
+#### Dependency Injection / Container
 ```php
-$logger = new \Pimcore\Log\ApplicationLogger();
-$logger->setComponent("example");
-  
-// addWriter() takes PSR-3 compatible loggers, Monolog handlers and ZF writers
-  
-// standard application logger writer (database)
-$logger->addWriter(new \Pimcore\Log\Handler\ApplicationLoggerDb());
- 
-//additional log writer (ZF1)
-$logger->addWriter(new \Zend_Log_Writer_Stream('php://output'));
- 
-//additional log handler (Monolog)
-$logger->addWriter(new \Monolog\Handler\StreamHandler('php://output'));
-  
-//additional logger (PSR-compatible)
-$customLog= new \Monolog\Logger('test');
-$customLog->pushHandler(new \Monolog\Handler\StreamHandler('php://output'));
-$logger->addWriter($customLog);
+app.your_service:
+  class: AppBundle\Service\YourService
+  calls:
+    - [setLogger, ['pimcore.app_logger']]
 ```
 
-### Attaching additional data - example
+### Advanced Usage - Example
 
 There are some context variables with a special functionality: fileObject, relatedObject, component.
 
 ```php
-$logger = \Pimcore\Log\ApplicationLogger::getInstance("my component", true); // returns a PSR-3 compatible logger
+$logger = \Pimcore::getContainer()->get("pimcore.app_logger"); 
  
 $fileObject = new \Pimcore\Log\FileObject("some interesting data");
 $myObject = \Pimcore\Model\Object\AbstractObject::getById(73);
@@ -81,12 +66,9 @@ If you click on the row you can go to the object editor by clicking on the *Rela
 Adds a console logger and sets the minimum logging level to *INFO* (overwrites log level in Pimcore system settings):
 
 ```php
-
-$logger = \Pimcore\Log\ApplicationLogger::getInstance("my component", true); // returns a PSR-3 compatible logger
- 
-$customLog= new \Monolog\Logger('SAP_exporter');
-$customLog->pushHandler(new \Monolog\Handler\StreamHandler('php://output', \Monolog\Logger::INFO));
-$logger->addWriter($customLog);
+$logger = \Pimcore\Log\ApplicationLogger::getInstance("SAP_exporter", true); 
+// returns a PSR-3 compatible logger, registers a custom app logger as `pimcore.app_logger.SAP_exporter` on the service container
+$logger->addWriter(new \Monolog\Handler\StreamHandler('php://output', \Monolog\Logger::INFO));
 ```
 
 ## Configuration

@@ -421,9 +421,6 @@ class Pimcore
 
         // release all open locks from this process
         Model\Tool\Lock::releaseAll();
-
-        // disable logging - otherwise this will cause problems in the ongoing shutdown process (session write, __destruct(), ...)
-        Logger::resetLoggers();
     }
 
     /**
@@ -432,69 +429,6 @@ class Pimcore
      */
     public static function initLogger()
     {
-
-        // for forks, etc ...
-        Logger::resetLoggers();
-
-        // try to load configuration
-        $conf = Config::getSystemConfig();
-
-        if (!is_file(PIMCORE_LOG_DEBUG)) {
-            if (is_writable(dirname(PIMCORE_LOG_DEBUG))) {
-                File::put(PIMCORE_LOG_DEBUG, "AUTOCREATE\n");
-            }
-        }
-
-        $prios = [];
-        $availablePrios = Logger::getAvailablePriorities();
-
-        if ($conf && $conf->general->debugloglevel) {
-            foreach ($availablePrios as $level) {
-                $prios[] = $level;
-                if ($level == $conf->general->debugloglevel) {
-                    break;
-                }
-            }
-            Logger::setPriorities($prios);
-        } else {
-            Logger::setVerbosePriorities();
-        }
-
-        if (is_writable(PIMCORE_LOG_DEBUG)) {
-            // set default core logger (debug.log)
-            if (!empty($prios)) {
-                $loggerFile = new \Monolog\Logger('core');
-                $loggerFile->pushHandler(new \Monolog\Handler\StreamHandler(PIMCORE_LOG_DEBUG));
-                Logger::addLogger($loggerFile);
-            }
-
-            $conf = Config::getSystemConfig();
-            if ($conf) {
-                //email logger
-                if (!empty($conf->general->logrecipient)) {
-                    $user = User::getById($conf->general->logrecipient);
-                    if ($user instanceof User && $user->isAdmin()) {
-                        $email = $user->getEmail();
-                        if (!empty($email)) {
-                            $loggerMail = new \Monolog\Logger('email');
-                            $mailHandler = new \Pimcore\Log\Handler\Mail($email);
-                            $loggerMail->pushHandler(new \Monolog\Handler\BufferHandler($mailHandler));
-                            Logger::addLogger($loggerMail);
-                        }
-                    }
-                }
-            }
-        } else {
-            // try to use syslog instead
-            try {
-                $loggerSyslog = new \Monolog\Logger('core');
-                $loggerSyslog->pushHandler(new \Monolog\Handler\SyslogHandler("pimcore"));
-                Logger::addLogger($loggerSyslog);
-            } catch (\Exception $e) {
-                // nothing to do here
-            }
-        }
-
         // special request log -> if parameter pimcore_log is set
         if (array_key_exists("pimcore_log", $_REQUEST) && self::inDebugMode()) {
             if (empty($_REQUEST["pimcore_log"])) {
@@ -503,16 +437,22 @@ class Pimcore
                 $requestLogName = $_REQUEST["pimcore_log"];
             }
 
-            $requestLogFile = dirname(PIMCORE_LOG_DEBUG) . "/request-" . $requestLogName . ".log";
+            $requestLogFile = PIMCORE_LOG_DIRECTORY . "/request-" . $requestLogName . ".log";
             if (!file_exists($requestLogFile)) {
                 File::put($requestLogFile, "");
             }
 
-            $loggerRequest = new \Monolog\Logger('request');
-            $loggerRequest->pushHandler(new \Monolog\Handler\StreamHandler($requestLogFile));
-            Logger::addLogger($loggerRequest);
+            $requestDebugHandler = new \Monolog\Handler\StreamHandler($requestLogFile);
 
-            Logger::setVerbosePriorities();
+            foreach (self::getContainer()->getServiceIds() as $id) {
+                if(strpos($id, "monolog.logger.") === 0) {
+                    $logger = self::getContainer()->get($id);
+                    if($logger->getName() != "event") {
+                        // replace all handlers
+                        $logger->setHandlers([$requestDebugHandler]);
+                    }
+                }
+            }
         }
     }
 

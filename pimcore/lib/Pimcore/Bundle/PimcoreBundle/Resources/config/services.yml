@@ -59,6 +59,21 @@ services:
       arguments: ['@request_stack']
 
     #
+    # APPLICATION LOGGER
+    #
+
+    pimcore.app_logger:
+      alias: pimcore.app_logger.default
+
+    pimcore.app_logger.default:
+      class: Pimcore\Log\ApplicationLogger
+      calls:
+        - [addWriter, ['@pimcore.app_logger.db_writer']]
+
+    pimcore.app_logger.db_writer:
+      class: Pimcore\Log\Handler\ApplicationLoggerDb
+
+    #
     # RUNTIME CACHE
     #
 

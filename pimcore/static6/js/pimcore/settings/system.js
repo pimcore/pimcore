@@ -26,26 +26,6 @@ pimcore.settings.system = Class.create({
 
                 this.data = Ext.decode(response.responseText);
 
-                //admin users
-                try {
-                    this.adminUsersStore = new Ext.data.JsonStore({
-                        autoDestroy: true,
-                        data: this.data,
-                        proxy: {
-                            type: 'memory',
-                            reader: {
-                                rootProperty: 'adminUsers'
-                            }
-                        },
-                        fields: ['id', 'username']
-                    });
-                } catch (e) {
-                    this.adminUsersStore = new Ext.data.JsonStore({
-                        autoDestroy: true,
-                        fields: ['id', 'username']
-                    });
-                }
-
                 //valid languages
                 try {
                     this.languagesStore = new Ext.data.JsonStore({
@@ -344,51 +324,6 @@ pimcore.settings.system = Class.create({
                                 hideLabel: true,
                                 width: 600,
                                 value: "<b style='color:red;'>" + t("http_auth_warning") + "</b>",
-                                cls: "pimcore_extra_label_bottom"
-                            },
-                            {
-                                xtype: "displayfield",
-                                hideLabel: true,
-                                width: 600,
-                                value: "<b>" + t("logger") + "</b>"
-                            },
-                            {
-                                fieldLabel: "debug.log Log-Level",
-                                xtype: "combo",
-                                name: "general.debugloglevel",
-                                id: "system_settings_general_debugloglevel",
-                                width: 400,
-                                value: this.getValue("general.debugloglevel"),
-                                store: [
-                                    ["debug", "DEBUG"],
-                                    ["info", "INFO"],
-                                    ["notice", "NOTICE"],
-                                    ["warning", "WARNING"],
-                                    ["error", "ERROR"]
-                                ],
-                                mode: "local",
-                                triggerAction: "all",
-                                editable: false,
-                                forceSelection: true
-                            },
-                            {
-                                fieldLabel: t('log_messages_user_mail_recipient'),
-                                xtype: "combo",
-                                triggerAction: 'all',
-                                store: this.adminUsersStore,
-                                value: this.getValue("general.logrecipient"),
-                                listWidth: 200,
-                                displayField: 'username',
-                                valueField: 'id',
-                                name: 'general.logrecipient',
-                                mode: 'local',
-                                forceSelection: true
-                            },
-                            {
-                                xtype: "displayfield",
-                                hideLabel: true,
-                                width: 600,
-                                value: t('log_messages_user_mail_description'),
                                 cls: "pimcore_extra_label_bottom"
                             },
                             {

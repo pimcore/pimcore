@@ -22,10 +22,8 @@ return [
             "username" => "",
             "password" => ""
         ],
-        "debugloglevel" => "error",
         "debug_admin_translations" => FALSE,
         "devmode" => FALSE,
-        "logrecipient" => NULL,
         "instanceIdentifier" => "",
         "show_cookie_notice" => FALSE
     ],

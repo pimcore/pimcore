@@ -294,21 +294,8 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
         //remove password from values sent to frontend
         $valueArray['database']["params"]['password'] = "##SECRET_PASS##";
 
-        //admin users as array
-        $adminUsers = [];
-        $userList = new Model\User\Listing();
-        $userList->setCondition("admin = 1 and email is not null and email != ''");
-        $users = $userList->load();
-        if (is_array($users)) {
-            foreach ($users as $user) {
-                $adminUsers[] = ["id" => $user->getId(), "username" => $user->getName()];
-            }
-        }
-        $adminUsers[] = ["id" => "", "username" => "-"];
-
         $response = [
             "values" => $valueArray,
-            "adminUsers" => $adminUsers,
             "config" => [
                 "timezones" => $timezones,
                 "languages" => $languageOptions,
@@ -384,10 +371,8 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
                     "username" => $values["general.http_auth.username"],
                     "password" => $values["general.http_auth.password"]
                 ],
-                "debugloglevel" => $values["general.debugloglevel"],
                 "debug_admin_translations" => $values["general.debug_admin_translations"],
                 "devmode" => $values["general.devmode"],
-                "logrecipient" => $values["general.logrecipient"],
                 "instanceIdentifier" => $values["general.instanceIdentifier"],
                 "show_cookie_notice" => $values["general.show_cookie_notice"],
             ],

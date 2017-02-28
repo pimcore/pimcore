@@ -21,58 +21,6 @@ use Pimcore\Logger;
 
 class Maintenance
 {
-
-    /**
-     *
-     */
-    public function mail()
-    {
-        $conf = Config::getSystemConfig();
-        if (!empty($conf->general->logrecipient)) {
-            Logger::debug(get_class($this).": detected log recipient:".$conf->general->logrecipient);
-            $user = User::getById($conf->general->logrecipient);
-            Logger::debug(get_class($this).": detected log recipient:".$user->getEmail());
-            if ($user instanceof User && $user->isAdmin()) {
-                $email = $user->getEmail();
-                Logger::debug(get_class($this).": user is valid");
-                if (!empty($email)) {
-                    if (is_dir(PIMCORE_LOG_MAIL_TEMP)) {
-                        Logger::debug(get_class($this).": detected mail log dir");
-                        Logger::debug(get_class($this).": opening dir ".PIMCORE_LOG_MAIL_TEMP);
-                        if ($handle = opendir(PIMCORE_LOG_MAIL_TEMP)) {
-                            Logger::debug(get_class($this).": reading dir ".PIMCORE_LOG_MAIL_TEMP);
-                            while (false !== ($file = readdir($handle))) {
-                                Logger::debug(get_class($this).": detected file ".$file);
-                                if (is_file(PIMCORE_LOG_MAIL_TEMP."/".$file) and is_writable(PIMCORE_LOG_MAIL_TEMP."/".$file)) {
-                                    $now = time();
-                                    $threshold = 1 * 60 * 15;
-                                    $fileModified = filemtime(PIMCORE_LOG_MAIL_TEMP."/".$file);
-                                    Logger::debug(get_class($this).": file is writeable and was last modified: ".$fileModified);
-                                    if ($fileModified!==false and $fileModified<($now-$threshold)) {
-                                        $mail = Tool::getMail([$email], "pimcore log notification - ".$file);
-                                        $mail->setIgnoreDebugMode(true);
-                                        $mail->setBodyText(file_get_contents(PIMCORE_LOG_MAIL_TEMP."/".$file));
-                                        $mail->send();
-                                        @unlink(PIMCORE_LOG_MAIL_TEMP."/".$file);
-                                        Logger::debug(get_class($this).": sent mail and deleted temp log file ".$file);
-                                    } elseif ($fileModified>($now-$threshold)) {
-                                        Logger::debug(get_class($this).": leaving temp log file alone because file [ $file ] was written to within the last 15 minutes");
-                                    }
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    Logger::err(get_class($this).": Cannot send mail to configured log user [".$user->getName()."] because email is empty");
-                }
-            } else {
-                Logger::err(get_class($this).": Cannot send mail to configured log user. User is either null or not an admin");
-            }
-        } else {
-            Logger::debug(get_class($this).": No log recipient configured");
-        }
-    }
-
     /**
      *
      */
@@ -114,21 +62,13 @@ class Maintenance
      */
     public function cleanupLogFiles()
     {
-        // rotate logs
-        $logs = [
-            PIMCORE_LOG_DEBUG,
-            PIMCORE_LOG_DIRECTORY . "/php.log",
-            PIMCORE_LOG_DIRECTORY . "/redirect.log",
-            PIMCORE_LOG_DIRECTORY . "/legacy-class-names.log",
-            PIMCORE_LOG_DIRECTORY . "/legacy-class-names-admin.log",
-            PIMCORE_LOG_DIRECTORY . "/libreoffice-pdf-convert.log",
-        ];
+        // we don't use the RotatingFileHandler of Monolog, since rotating asynchronously is recommended + compression
+        $logFiles = glob(PIMCORE_LOG_DIRECTORY . "/*.log");
 
-        foreach ($logs as $log) {
+        foreach ($logFiles as $log) {
             if (file_exists($log) && filesize($log) > 200000000) {
                 // archive log (will be cleaned up by maintenance)
                 rename($log, $log . "-archive-" . date("m-d-Y-H-i"));
-                \Pimcore\File::put(PIMCORE_LOG_DEBUG, "");
             }
         }
 

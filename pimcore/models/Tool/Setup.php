@@ -58,7 +58,6 @@ class Setup extends Model\AbstractModel
                     "language" => "en",
                     "validLanguages" => "en",
                     "debug" => "1",
-                    "debugloglevel" => "debug",
                 ],
                 "database" => [
                     "adapter" => "Mysqli",

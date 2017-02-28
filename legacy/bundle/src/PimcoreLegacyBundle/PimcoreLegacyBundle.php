@@ -71,5 +71,12 @@ class PimcoreLegacyBundle extends Bundle
              */
             define('PIMCORE_WEBSITE_VAR', PIMCORE_DOCUMENT_ROOT . '/var');
         }
+
+        if (!defined('PIMCORE_LOG_DEBUG')) {
+            /**
+             * @deprecated
+             */
+            define('PIMCORE_LOG_DEBUG', PIMCORE_LOG_DIRECTORY . '/debug.log');
+        }
     }
 }

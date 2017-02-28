@@ -41,7 +41,7 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
     {
 
         // Zend_Log compatibility
-        $zendLoggerPsr3Mapping = Logger::getZendLoggerPsr3Mapping();
+        $zendLoggerPsr3Mapping = \Pimcore\Log\ApplicationLogger::getZendLoggerPsr3Mapping();
         if (isset($zendLoggerPsr3Mapping[$level])) {
             $level = $zendLoggerPsr3Mapping[$level];
         }
@@ -79,7 +79,7 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
     public function setFilterPriority($level)
     {
         // legacy ZF method
-        $zendLoggerPsr3Mapping = Logger::getZendLoggerPsr3Mapping();
+        $zendLoggerPsr3Mapping = \Pimcore\Log\ApplicationLogger::getZendLoggerPsr3Mapping();
         if (isset($zendLoggerPsr3Mapping[$level])) {
             $level = $zendLoggerPsr3Mapping[$level];
             $this->setLevel($level);
