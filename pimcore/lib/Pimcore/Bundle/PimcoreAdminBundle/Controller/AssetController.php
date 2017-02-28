@@ -1586,7 +1586,7 @@ class AssetController extends ElementControllerBase implements EventedController
         //TODO
 
         $this->disableViewAutoRender();
-        echo \Zend_Json::encode([
+        echo $this->encodeJson([
             "success" => true,
             "jobs" => $jobs,
             "jobId" => $jobId
@@ -1847,7 +1847,7 @@ class AssetController extends ElementControllerBase implements EventedController
             $conditionFilters[] = "type != 'folder'";
             $filterJson = $request->get("filter");
             if ($filterJson) {
-                $filters = \Zend_Json::decode($filterJson);
+                $filters = $this->decodeJson($filterJson);
                 foreach ($filters as $filter) {
                     $operator = "=";
 
