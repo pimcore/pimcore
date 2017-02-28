@@ -54,7 +54,7 @@ class Translate extends Helper
     public function __invoke($key, $parameters = [])
     {
         //compatibility for legacy views
-        if(is_string($parameters)) {
+        if(is_string($parameters) || is_numeric($parameters)) {
             $parameters = [$parameters];
         }
 
