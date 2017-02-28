@@ -2,7 +2,9 @@
 
 namespace WebsiteDemoBundle\Controller;
 
+use Pimcore\Mail;
 use Pimcore\Model\Asset;
+use Pimcore\Model\Document;
 use Pimcore\Model\Object;
 use Pimcore\Tool;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,10 +21,10 @@ class AdvancedController extends AbstractController
             if ($adapter) {
                 $user_data = $adapter->getUserProfile();
                 if ($user_data) {
-                    $this->setParam("firstname", $user_data->firstName);
-                    $this->setParam("lastname", $user_data->lastName);
-                    $this->setParam("email", $user_data->email);
-                    $this->setParam("gender", $user_data->gender);
+                    $request->request->set("firstname", $user_data->firstName);
+                    $request->request->set("lastname", $user_data->lastName);
+                    $request->request->set("email", $user_data->email);
+                    $request->request->set("gender", $user_data->gender);
                 }
             }
         }
@@ -43,7 +45,7 @@ class AdvancedController extends AbstractController
             }
 
             $mail->setDocument($emailDocument);
-            $mail->setParams($this->getAllParams());
+            $mail->setParams($request->request->all());
             $mail->send();
         }
 
