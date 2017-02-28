@@ -12,11 +12,14 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class EmailController extends AdminController
+/**
+ * @Route("/email")
+ */
+class EmailController extends DocumentControllerBase
 {
 
     /**
-     * @Route("/email/get-data-by-id")
+     * @Route("/get-data-by-id")
      * @param Request $request
      */
     public function getDataByIdAction(Request $request)
@@ -65,7 +68,7 @@ class EmailController extends AdminController
     }
 
     /**
-     * @Route("/email/save")
+     * @Route("/save")
      * @param Request $request
      */
     public function saveAction(Request $request)
@@ -85,7 +88,7 @@ class EmailController extends AdminController
                 }
                 // only save when publish or unpublish
                 if (($request->get("task") == "publish" && $page->isAllowed("publish")) or ($request->get("task") == "unpublish" && $page->isAllowed("unpublish"))) {
-                    $this->setValuesToDocument($page);
+                    $this->setValuesToDocument($request, $page);
 
 
                     try {
@@ -98,7 +101,7 @@ class EmailController extends AdminController
                     }
                 } else {
                     if ($page->isAllowed("save")) {
-                        $this->setValuesToDocument($page);
+                        $this->setValuesToDocument($request, $page);
 
 
                         try {
@@ -128,20 +131,21 @@ class EmailController extends AdminController
     }
 
     /**
+     * @param Request $request
      * @param Document $page
      */
-    protected function setValuesToDocument(Document $page)
+    protected function setValuesToDocument(Request $request, Document $page)
     {
-        $this->addSettingsToDocument($page);
-        $this->addDataToDocument($page);
-        $this->addPropertiesToDocument($page);
-        $this->addSchedulerToDocument($page);
+        $this->addSettingsToDocument($request, $page);
+        $this->addDataToDocument($request, $page);
+        $this->addPropertiesToDocument($request, $page);
+        $this->addSchedulerToDocument($request, $page);
     }
 
     /**
      * Returns the a list of log files for the data grid
      *
-     * @Route("/email/email-logs")
+     * @Route("/email-logs")
      * @param Request $request
      */
     public function emailLogsAction(Request $request)
@@ -202,7 +206,7 @@ class EmailController extends AdminController
     /**
      * Shows the email logs and returns the Json object for the dynamic params
      *
-     * @Route("/email/show-email-log")
+     * @Route("/show-email-log")
      * @param Request $request
      */
     public function showEmailLogAction(Request $request)
@@ -319,7 +323,7 @@ class EmailController extends AdminController
     /**
      * Deletes a single log entry
      *
-     * @Route("/email/delete-email-log")
+     * @Route("/delete-email-log")
      * @param Request $request
      */
     public function deleteEmailLogAction(Request $request)
@@ -340,7 +344,7 @@ class EmailController extends AdminController
     }
 
     /**
-     * @Route("/email/resend-email")
+     * @Route("/resend-email")
      * @param Request $request
      */
     public function resendEmailAction(Request $request)
@@ -393,7 +397,7 @@ class EmailController extends AdminController
     /**
      * Sends a test email
      *
-     * @Route("/email/send-test-email")
+     * @Route("/send-test-email")
      * @param Request $request
      */
     public function sendTestEmailAction(Request $request)
@@ -422,7 +426,7 @@ class EmailController extends AdminController
 
 
     /**
-     * @Route("/email/blacklist")
+     * @Route("/blacklist")
      * @param Request $request
      */
     public function blacklistAction(Request $request)
@@ -541,7 +545,7 @@ class EmailController extends AdminController
     }
 
     /**
-     * @Route("/email/bounce-mail-inbox-list")
+     * @Route("/bounce-mail-inbox-list")
      * @param Request $request
      */
     public function bounceMailInboxListAction(Request $request)
@@ -592,7 +596,7 @@ class EmailController extends AdminController
     }
 
     /**
-     * @Route("/email/bounce-mail-inbox-detail")
+     * @Route("/bounce-mail-inbox-detail")
      * @TemplatePhp()
      *
      * @param Request $request

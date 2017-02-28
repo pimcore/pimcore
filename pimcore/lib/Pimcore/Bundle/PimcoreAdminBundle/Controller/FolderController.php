@@ -65,7 +65,7 @@ class FolderController extends DocumentControllerBase
                 $folder->setUserModification($this->getUser()->getId());
 
                 if ($folder->isAllowed("publish")) {
-                    $this->setValuesToDocument($folder);
+                    $this->setValuesToDocument($request, $folder);
                     $folder->save();
 
                     return $this->json(["success" => true]);
@@ -83,10 +83,11 @@ class FolderController extends DocumentControllerBase
     }
 
     /**
-     * @param Document\Folder $folder
+     * @param Request $request
+     * @param Document $folder
      */
-    protected function setValuesToDocument(Document\Folder $folder)
+    protected function setValuesToDocument(Request $request, Document $folder)
     {
-        $this->addPropertiesToDocument($folder);
+        $this->addPropertiesToDocument($request, $folder);
     }
 }

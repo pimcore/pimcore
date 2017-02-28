@@ -84,7 +84,7 @@ class NewsletterController extends DocumentControllerBase
                 }
                 // only save when publish or unpublish
                 if (($request->get("task") == "publish" && $page->isAllowed("publish")) or ($request->get("task") == "unpublish" && $page->isAllowed("unpublish"))) {
-                    $this->setValuesToDocument($page);
+                    $this->setValuesToDocument($request, $page);
 
 
                     try {
@@ -97,7 +97,7 @@ class NewsletterController extends DocumentControllerBase
                     }
                 } else {
                     if ($page->isAllowed("save")) {
-                        $this->setValuesToDocument($page);
+                        $this->setValuesToDocument($request, $page);
 
 
                         try {
@@ -129,11 +129,11 @@ class NewsletterController extends DocumentControllerBase
     /**
      * @param Document $page
      */
-    protected function setValuesToDocument(Document $page)
+    protected function setValuesToDocument(Request $request, Document $page)
     {
-        $this->addSettingsToDocument($page);
-        $this->addDataToDocument($page);
-        $this->addPropertiesToDocument($page);
+        $this->addSettingsToDocument($request, $page);
+        $this->addDataToDocument($request, $page);
+        $this->addPropertiesToDocument($request, $page);
     }
 
     /**

@@ -165,7 +165,7 @@ abstract class DocumentControllerBase extends AdminController implements Evented
 
             // set _fulldump otherwise the properties will be removed because of the session-serialize
             $document->_fulldump = true;
-            $this->setValuesToDocument($document);
+            $this->setValuesToDocument($request, $document);
 
             $session->$key = $document;
 
@@ -276,4 +276,10 @@ abstract class DocumentControllerBase extends AdminController implements Evented
     {
         // nothing to do
     }
+
+    /**
+     * @param Request $request
+     * @param Model\Document $page
+     */
+    protected abstract function setValuesToDocument(Request $request, Model\Document $page);
 }
