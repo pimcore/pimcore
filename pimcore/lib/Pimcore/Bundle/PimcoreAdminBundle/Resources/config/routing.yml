@@ -3,10 +3,10 @@ _pimcore_admin:
     type:     annotation
     prefix:   /admin
 
-_pimcore_api:
-    resource: "@PimcoreAdminBundle/ControllerApi/"
+_pimcore_api_rest:
+    resource: "@PimcoreAdminBundle/ControllerApi/Rest/"
     type:     annotation
-    prefix:   /webservice
+    prefix:   /webservice/rest
 
 # route for logout handler
 pimcore_admin_logout:
