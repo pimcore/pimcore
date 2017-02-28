@@ -19,9 +19,6 @@ class PimcoreExtension extends Extension
      */
     public function load(array $configs, ContainerBuilder $container)
     {
-        // load system config as container params
-        $this->loadPimcoreConfigParams($container);
-
         // TODO use ConfigurableExtension or getExtension()??
         $configuration = new Configuration();
         $config        = $this->processConfiguration($configuration, $configs);
@@ -63,42 +60,6 @@ class PimcoreExtension extends Extension
         }
 
         $this->addContextRoutes($container, $config['context']);
-    }
-
-    /**
-     * Add pimcore config as container parameter
-     *
-     * @param ContainerBuilder $container
-     */
-    protected function loadPimcoreConfigParams(ContainerBuilder $container)
-    {
-        // register system.php as resource to rebuild container in dev on change
-        $container->addResource(new FileResource(Config::locateConfigFile('system.php')));
-
-        $config = Config::getSystemConfig(true);
-        $this->processPimcoreConfig($container, 'pimcore_system_config', $config->toArray());
-    }
-
-    /**
-     * Iterate and flatten pimcore config and add it as parameters on the container
-     *
-     * @param ContainerBuilder $container
-     * @param string $prefix
-     * @param array $config
-     *
-     * @return array
-     */
-    protected function processPimcoreConfig(ContainerBuilder $container, $prefix, array $config)
-    {
-        foreach ($config as $key => $value) {
-            $paramName = $prefix . '.' . $key;
-
-            if (is_array($value)) {
-                $this->processPimcoreConfig($container, $paramName, $value);
-            } else {
-                $container->setParameter($paramName, $value);
-            }
-        }
     }
 
     /**

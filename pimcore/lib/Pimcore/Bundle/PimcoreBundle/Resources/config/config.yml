@@ -1,3 +1,6 @@
+imports:
+    - { resource: system_config.php }
+
 parameters:
     locale: en
 
