@@ -1,4 +1,6 @@
-# Key Vaile Pairs
+# Key Value Pairs (deprecated)
+
+**IMPORTANT NOTE: Will be removed in Pimcore 5 !!!** 
 
 ## Overview
 
