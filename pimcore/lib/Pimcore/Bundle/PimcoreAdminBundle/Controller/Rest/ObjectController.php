@@ -1,8 +1,7 @@
 <?php
 
-namespace Pimcore\Bundle\PimcoreAdminBundle\ControllerApi\Rest;
+namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Rest;
 
-use Pimcore\Bundle\PimcoreAdminBundle\ControllerApi\AbstractApiController;
 use Pimcore\Bundle\PimcoreBundle\Http\Exception\ResponseException;
 use Pimcore\Model\Object;
 use Pimcore\Model\Webservice\Data\Object\Concrete\In as WebserviceObjectIn;
@@ -36,7 +35,7 @@ use Symfony\Component\Stopwatch\Stopwatch;
  *      body: same as for create object. object id can be either in URI or as request payload
  *      returns json encoded success value
  */
-class ObjectController extends AbstractApiController
+class ObjectController extends AbstractRestController
 {
     /**
      * @var Service

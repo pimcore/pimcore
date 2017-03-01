@@ -13,9 +13,8 @@ _pimcore_search:
     type:     annotation
     prefix:   /admin/search
 
-
 _pimcore_api_rest:
-    resource: "@PimcoreAdminBundle/ControllerApi/Rest/"
+    resource: "@PimcoreAdminBundle/Controller/Rest/"
     type:     annotation
     prefix:   /webservice/rest
 

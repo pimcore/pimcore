@@ -17,13 +17,17 @@ class AnnotatedRouteControllerLoader extends BaseAnnotatedRouteControllerLoader
     {
         $routeName = parent::getDefaultRouteName($class, $method);
 
-        $routeName = str_replace([
-            'pimcore_pimcoreadmin_controllerapi_',
-            'pimcore_pimcoreadmin_admin_'
-        ], [
-            'pimcore_api_',
-            'pimcore_admin_',
-        ], $routeName);
+        $replacements = [
+            'pimcore_pimcoreadmin_rest_'  => 'pimcore_api_rest_',
+            'pimcore_pimcoreadmin_admin_' => 'pimcore_admin_',
+            'pimcore_pimcoreadmin_'       => 'pimcore_admin_',
+        ];
+
+        $routeName = str_replace(
+            array_keys($replacements),
+            array_values($replacements),
+            $routeName
+        );
 
         return $routeName;
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Pimcore\Bundle\PimcoreAdminBundle\ControllerApi;
+namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Rest;
 
 use Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminController;
 use Pimcore\Bundle\PimcoreBundle\Http\Exception\ResponseException;
@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Stopwatch\Stopwatch;
 
-abstract class AbstractApiController extends AdminController
+abstract class AbstractRestController extends AdminController
 {
     const ELEMENT_DOES_NOT_EXIST = -1;
     const TAG_DOES_NOT_EXIST = -1;
