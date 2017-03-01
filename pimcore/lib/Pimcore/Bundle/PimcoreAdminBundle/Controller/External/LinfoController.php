@@ -12,11 +12,19 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
+namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\External;
+
 use \Linfo\Exceptions\FatalException;
 use \Linfo\Linfo;
 use \Linfo\Common;
+use Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminController;
+use Pimcore\Bundle\PimcoreBundle\Controller\EventedControllerInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\Routing\Annotation\Route;
 
-class Admin_External_LinfoController extends \Pimcore\Controller\Action\Admin
+class LinfoController extends AdminController implements EventedControllerInterface
 {
 
     /**
@@ -24,17 +32,11 @@ class Admin_External_LinfoController extends \Pimcore\Controller\Action\Admin
      */
     protected $linfoHome = "";
 
-    public function init()
-    {
-        parent::init();
-
-        // only for admins
-        $this->checkPermission("linfo");
-
-        $this->linfoHome = PIMCORE_DOCUMENT_ROOT . '/vendor/linfo/linfo/';
-    }
-
-    public function indexAction()
+    /**
+     * @Route("/external_linfo/")
+     * @param Request $request
+     */
+    public function indexAction(Request $request)
     {
         try {
             $settings = Common::getVarFromFile($this->linfoHome . 'sample.config.inc.php', 'settings');
@@ -48,16 +50,18 @@ class Admin_External_LinfoController extends \Pimcore\Controller\Action\Admin
             echo $e->getMessage()."\n";
             exit(1);
         }
-
-        $this->removeViewRenderer();
+        exit();
     }
 
-    public function layoutAction()
+    /**
+     * @Route("/external_linfo/layout/{anything}", defaults={"anything" = null}, requirements={"anything"=".+"})
+     * @param Request $request
+     */
+    public function layoutAction(Request $request)
     {
-
         // proxy for resources
 
-        $path = $this->getRequest()->getPathInfo();
+        $path = $request->getPathInfo();
         $path = str_replace("/admin/external_linfo/", "", $path);
 
         if (preg_match("@\.(css|js|ico|png|jpg|gif)$@", $path)) {
@@ -81,5 +85,29 @@ class Admin_External_LinfoController extends \Pimcore\Controller\Action\Admin
         }
 
         exit;
+    }
+
+    /**
+     * @param FilterControllerEvent $event
+     */
+    public function onKernelController(FilterControllerEvent $event)
+    {
+        $isMasterRequest = $event->isMasterRequest();
+        if (!$isMasterRequest) {
+            return;
+        }
+
+        // only for admins
+        $this->checkPermission("linfo");
+
+        $this->linfoHome = PIMCORE_PROJECT_ROOT . '/vendor/linfo/linfo/';
+    }
+
+    /**
+     * @param FilterResponseEvent $event
+     */
+    public function onKernelResponse(FilterResponseEvent $event)
+    {
+        // nothing to do
     }
 }

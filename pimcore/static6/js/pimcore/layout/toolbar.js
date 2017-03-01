@@ -1519,7 +1519,7 @@ pimcore.layout.toolbar = Class.create({
     },
 
     showServerInfo: function () {
-        pimcore.helpers.openGenericIframeWindow("serverinfo", "/admin/external_linfo", "pimcore_icon_server_info", "Server Info");
+        pimcore.helpers.openGenericIframeWindow("serverinfo", "/admin/external_linfo/", "pimcore_icon_server_info", "Server Info");
     },
 
     showOpcacheStatus: function () {
