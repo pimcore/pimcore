@@ -75,3 +75,7 @@ nbproject
 
 # temp.
 git-update.sh
+
+# codeception
+tests/_output/*
+tests/_support/_generated/*
