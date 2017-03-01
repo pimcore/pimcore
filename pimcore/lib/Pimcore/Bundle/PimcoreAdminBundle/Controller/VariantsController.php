@@ -1,51 +1,56 @@
 <?php
-/**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in
- * LICENSE.md which is distributed with this source code.
- *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
- */
+
+namespace Pimcore\Bundle\PimcoreAdminBundle\Controller;
 
 use Pimcore\Model\Object;
-use Pimcore\Model\Element;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
-class Admin_VariantsController extends \Pimcore\Controller\Action\Admin
+/**
+ * @Route("/variants")
+ */
+class VariantsController extends AdminController
 {
-    public function updateKeyAction()
+    /**
+     * @Route("/update-key")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function updateKeyAction(Request $request)
     {
-        $id = $this->getParam("id");
-        $key = $this->getParam("key");
+        $id = $request->get("id");
+        $key = $request->get("key");
         $object = Object\Concrete::getById($id);
 
         try {
             if (!empty($object)) {
                 $object->setKey($key);
                 $object->save();
-                $this->_helper->json(["success" => true]);
+                return $this->json(["success" => true]);
             } else {
                 throw new \Exception("No Object found for given id.");
             }
         } catch (\Exception $e) {
-            $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
+            return $this->json(["success" => false, "message" => $e->getMessage()]);
         }
     }
 
-    public function getVariantsAction()
+    /**
+     * @Route("/get-variants")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getVariantsAction(Request $request)
     {
         // get list of variants
 
-        if ($this->getParam("language")) {
-            $this->setLanguage($this->getParam("language"), true);
+        if ($request->get("language")) {
+            $request->setLocale($request->get("language"));
         }
 
-        if ($this->getParam("xaction") == "update") {
-            $data = \Zend_Json::decode($this->getParam("data"));
+        if ($request->get("xaction") == "update") {
+            $data = $this->decodeJson($request->get("data"));
 
             // save
             $object = Object::getById($data["id"]);
@@ -97,18 +102,18 @@ class Admin_VariantsController extends \Pimcore\Controller\Action\Admin
 
                 try {
                     $object->save();
-                    $this->_helper->json(["data" => Object\Service::gridObjectData($object, $this->getParam("fields")), "success" => true]);
+                    return $this->json(["data" => Object\Service::gridObjectData($object, $request->get("fields")), "success" => true]);
                 } catch (\Exception $e) {
-                    $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
+                    return $this->json(["success" => false, "message" => $e->getMessage()]);
                 }
             } else {
                 throw new \Exception("Permission denied");
             }
         } else {
-            $parentObject = Object\Concrete::getById($this->getParam("objectId"));
+            $parentObject = Object\Concrete::getById($request->get("objectId"));
 
             if (empty($parentObject)) {
-                throw new \Exception("No Object found with id " . $this->getParam("objectId"));
+                throw new \Exception("No Object found with id " . $request->get("objectId"));
             }
 
             if ($parentObject->isAllowed("view")) {
@@ -122,8 +127,8 @@ class Admin_VariantsController extends \Pimcore\Controller\Action\Admin
 
                 $fields = [];
                 $bricks = [];
-                if ($this->getParam("fields")) {
-                    $fields = $this->getParam("fields");
+                if ($request->get("fields")) {
+                    $fields = $request->get("fields");
 
                     foreach ($fields as $f) {
                         $parts = explode("~", $f);
@@ -133,11 +138,11 @@ class Admin_VariantsController extends \Pimcore\Controller\Action\Admin
                     }
                 }
 
-                if ($this->getParam("limit")) {
-                    $limit = $this->getParam("limit");
+                if ($request->get("limit")) {
+                    $limit = $request->get("limit");
                 }
-                if ($this->getParam("start")) {
-                    $start = $this->getParam("start");
+                if ($request->get("start")) {
+                    $start = $request->get("start");
                 }
 
                 $orderKey = "o_id";
@@ -152,7 +157,7 @@ class Admin_VariantsController extends \Pimcore\Controller\Action\Admin
                     "creationDate" => "o_creationDate"
                 ];
 
-                $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($this->getAllParams());
+                $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($request->request->all());
                 if ($sortingSettings['orderKey'] && $sortingSettings['order']) {
                     $orderKey = $sortingSettings['orderKey'];
                     if (array_key_exists($orderKey, $colMappings)) {
@@ -161,19 +166,19 @@ class Admin_VariantsController extends \Pimcore\Controller\Action\Admin
                     $order = $sortingSettings['order'];
                 }
 
-                if ($this->getParam("dir")) {
-                    $order = $this->getParam("dir");
+                if ($request->get("dir")) {
+                    $order = $request->get("dir");
                 }
 
                 $listClass = "\\Pimcore\\Model\\Object\\" . ucfirst($className) . "\\Listing";
 
                 $conditionFilters = ["o_parentId = " . $parentObject->getId()];
                 // create filter condition
-                if ($this->getParam("filter")) {
-                    $conditionFilters[] =  Object\Service::getFilterCondition($this->getParam("filter"), $class);
+                if ($request->get("filter")) {
+                    $conditionFilters[] =  Object\Service::getFilterCondition($request->get("filter"), $class);
                 }
-                if ($this->getParam("condition")) {
-                    $conditionFilters[] = "(" . $this->getParam("condition") . ")";
+                if ($request->get("condition")) {
+                    $conditionFilters[] = "(" . $request->get("condition") . ")";
                 }
 
                 $list = new $listClass();
@@ -199,7 +204,7 @@ class Admin_VariantsController extends \Pimcore\Controller\Action\Admin
                     }
                 }
 
-                $this->_helper->json(["data" => $objects, "success" => true, "total" => $list->getTotalCount()]);
+                return $this->json(["data" => $objects, "success" => true, "total" => $list->getTotalCount()]);
             } else {
                 throw new \Exception("Permission denied");
             }
