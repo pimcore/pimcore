@@ -86,7 +86,7 @@ class Config
     /**
      * @param bool $forceReload
      * @return mixed|null|\Pimcore\Config\Config
-     * @throws \Zend_Exception
+     * @throws \Exception
      */
     public static function getSystemConfig($forceReload = false)
     {

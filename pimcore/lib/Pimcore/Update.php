@@ -194,7 +194,7 @@ class Update
     /**
      * @param $revision
      * @param $url
-     * @throws \Zend_Db_Adapter_Exception
+     * @throws \Exception
      */
     public static function downloadData($revision, $url)
     {

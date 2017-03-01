@@ -14,6 +14,8 @@
 
 namespace Pimcore;
 
+use Symfony\Component\HttpFoundation\Request;
+
 class Tool
 {
 
@@ -401,9 +403,9 @@ class Tool
      */
     public static function getRequestScheme()
     {
-        $requestScheme = \Zend_Controller_Request_Http::SCHEME_HTTP;
+        $requestScheme = "http";
         if (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on") {
-            $requestScheme = \Zend_Controller_Request_Http::SCHEME_HTTPS;
+            $requestScheme = "https";
         }
 
         return $requestScheme;
@@ -483,7 +485,7 @@ class Tool
      * @param null $subject
      * @param null $charset
      * @return Mail
-     * @throws \Zend_Mail_Exception
+     * @throws \Exception
      */
     public static function getMail($recipients = null, $subject = null, $charset = null)
     {
@@ -504,28 +506,6 @@ class Tool
         }
 
         return $mail;
-    }
-
-
-    /**
-     * @deprecated
-     * @static
-     * @param \Zend_Controller_Response_Abstract $response
-     * @return bool
-     */
-    public static function isHtmlResponse(\Zend_Controller_Response_Abstract $response)
-    {
-        // check if response is html
-        $headers = $response->getHeaders();
-        foreach ($headers as $header) {
-            if ($header["name"] == "Content-Type") {
-                if (strpos($header["value"], "html") === false) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
     }
 
     /**

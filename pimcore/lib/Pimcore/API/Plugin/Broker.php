@@ -28,7 +28,7 @@ class Broker
 
     /**
      * @return mixed|Broker
-     * @throws \Zend_Exception
+     * @throws \Exception
      * @deprecated Use pimcore.plugin_broker service
      */
     public static function getInstance()

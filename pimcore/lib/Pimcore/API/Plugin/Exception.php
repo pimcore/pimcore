@@ -14,6 +14,6 @@
 
 namespace Pimcore\API\Plugin;
 
-class Exception extends \Zend_Exception
+class Exception extends \Exception
 {
 }
