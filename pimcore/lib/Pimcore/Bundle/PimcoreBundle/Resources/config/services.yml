@@ -23,6 +23,14 @@ services:
     # ROUTING
     #
 
+    pimcore.router.staticroute:
+        class: Pimcore\Bundle\PimcoreBundle\Routing\Staticroute\Router
+        arguments: ['@router.request_context']
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: router, priority: 100 }
+
     pimcore.router.dynamic_route_provider:
         class: Pimcore\Bundle\PimcoreBundle\Routing\DocumentRouteProvider
         arguments: ['@pimcore.service.document', '@pimcore.mvc_config_normalizer']

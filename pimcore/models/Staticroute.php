@@ -42,6 +42,16 @@ class Staticroute extends AbstractModel
     /**
      * @var string
      */
+    public $path;
+
+    /**
+     * @var array
+     */
+    public $requirements = [];
+
+    /**
+     * @var string
+     */
     public $reverse;
 
     /**
@@ -238,6 +248,21 @@ class Staticroute extends AbstractModel
         return $this->pattern;
     }
 
+    /**
+     * @return string
+     */
+    public function getPath()
+    {
+        return $this->path;
+    }
+
+    /**
+     * @return array
+     */
+    public function getRequirements()
+    {
+        return $this->requirements;
+    }
 
     /**
      * @return string
@@ -299,6 +324,22 @@ class Staticroute extends AbstractModel
         $this->pattern = $pattern;
 
         return $this;
+    }
+
+    /**
+     * @param string $path
+     */
+    public function setPath($path)
+    {
+        $this->path = $path;
+    }
+
+    /**
+     * @param array $requirements
+     */
+    public function setRequirements(array $requirements)
+    {
+        $this->requirements = $requirements;
     }
 
     /**

@@ -89,6 +89,30 @@ class Dao extends Model\Dao\PhpArrayTable
     }
 
     /**
+     * @return Model\Staticroute[]
+     */
+    public function getAll()
+    {
+        $data = $this->db->fetchAll(null, function ($a, $b) {
+            if ($a["siteId"] == $b["siteId"]) {
+                return 0;
+            }
+
+            return ($a["siteId"] < $b["siteId"]) ? 1 : -1;
+        });
+
+        $routes = [];
+        foreach ($data as $row) {
+            $route = new Model\Staticroute();
+            $route->setValues($row);
+
+            $routes[] = $route;
+        }
+
+        return $routes;
+    }
+
+    /**
      * @throws \Exception
      */
     public function save()
@@ -102,7 +126,7 @@ class Dao extends Model\Dao\PhpArrayTable
         try {
             $dataRaw = get_object_vars($this->model);
             $data = [];
-            $allowedProperties = ["id", "name", "pattern", "reverse", "module", "controller",
+            $allowedProperties = ["id", "name", "pattern", "path", "requirements", "reverse", "module", "controller",
                 "action", "variables", "defaults", "siteId", "priority", "creationDate", "modificationDate"];
 
             foreach ($dataRaw as $key => $value) {

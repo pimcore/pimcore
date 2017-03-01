@@ -22,8 +22,8 @@ framework:
 cmf_routing:
     chain:
         routers_by_id:
-            router.default:             200
-            cmf_routing.dynamic_router: 100
+            router.default:             300
+            cmf_routing.dynamic_router: 200
     dynamic:
         route_provider_service_id: pimcore.router.dynamic_route_provider
 
