@@ -940,7 +940,7 @@ class Admin_DocumentController extends \Pimcore\Controller\Action\Admin\Element
 
             // only if the thumbnail exists and isn't out of time
             if (file_exists($thumbnailFile) && filemtime($thumbnailFile) > ($childDocument->getModificationDate() - 20)) {
-                $thumbnailPath = str_replace(PIMCORE_DOCUMENT_ROOT, "", $thumbnailFile);
+                $thumbnailPath = str_replace(PIMCORE_WEB_ROOT, "", $thumbnailFile);
                 $tmpDocument["thumbnail"] = $thumbnailPath;
             }
         }

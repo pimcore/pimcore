@@ -75,7 +75,7 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
         $scripts = explode(",", $this->getParam("scripts"));
 
         if ($this->getParam("scriptPath")) {
-            $scriptPath = PIMCORE_DOCUMENT_ROOT . $this->getParam("scriptPath");
+            $scriptPath = PIMCORE_WEB_ROOT . $this->getParam("scriptPath");
         } else {
             $scriptPath = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/";
         }
@@ -158,7 +158,7 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
 
             if (is_dir($file) || is_file($file)) {
                 $itemConfig = [
-                    "id" => "/fileexplorer" . str_replace(PIMCORE_DOCUMENT_ROOT, "", $file),
+                    "id" => "/fileexplorer" . str_replace(PIMCORE_PROJECT_ROOT, "", $file),
                     "text" => $item,
                     "leaf" => true,
                     "writeable" => is_writable($file)
@@ -201,7 +201,7 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
             "success" => $success,
             "content" => $content,
             "writeable" => $writeable,
-            "path" => preg_replace("@^" . preg_quote(PIMCORE_DOCUMENT_ROOT) . "@", "", $file)
+            "path" => preg_replace("@^" . preg_quote(PIMCORE_PROJECT_ROOT) . "@", "", $file)
         ]);
     }
 
@@ -236,7 +236,7 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
             $file = $path . "/" . $this->getParam("filename");
 
             $file= resolvePath($file);
-            if (strpos($file, PIMCORE_DOCUMENT_ROOT) !== 0) {
+            if (strpos($file, PIMCORE_PROJECT_ROOT) !== 0) {
                 throw new \Exception("not allowed");
             }
 
@@ -263,7 +263,7 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
             $file = $path . "/" . $this->getParam("filename");
 
             $file= resolvePath($file);
-            if (strpos($file, PIMCORE_DOCUMENT_ROOT) !== 0) {
+            if (strpos($file, PIMCORE_PROJECT_ROOT) !== 0) {
                 throw new \Exception("not allowed");
             }
 
@@ -304,9 +304,9 @@ class Admin_MiscController extends \Pimcore\Controller\Action\Admin
     private function getFileexplorerPath($paramName = 'node')
     {
         $path = preg_replace("/^\/fileexplorer/", "", $this->getParam($paramName));
-        $path = resolvePath(PIMCORE_DOCUMENT_ROOT . $path);
+        $path = resolvePath(PIMCORE_PROJECT_ROOT . $path);
 
-        if (strpos($path, PIMCORE_DOCUMENT_ROOT) !== 0) {
+        if (strpos($path, PIMCORE_PROJECT_ROOT) !== 0) {
             throw new \Exception('operation permitted, permission denied');
         }
 

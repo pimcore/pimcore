@@ -500,7 +500,7 @@ class User extends User\UserRole
      */
     public function setImage($path)
     {
-        $userImageDir = PIMCORE_WEBSITE_VAR . "/user-image";
+        $userImageDir = PIMCORE_PRIVATE_VAR . "/user-image";
         if (!is_dir($userImageDir)) {
             File::mkdir($userImageDir);
         }
@@ -528,7 +528,7 @@ class User extends User\UserRole
         }
 
         $id = $this->getId();
-        $user = PIMCORE_WEBSITE_VAR . "/user-image/user-" . $id . ".png";
+        $user = PIMCORE_PRIVATE_VAR . "/user-image/user-" . $id . ".png";
         if (file_exists($user)) {
             $thumb = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/user-thumbnail-" . $id . ".png";
             if (!file_exists($thumb)) {

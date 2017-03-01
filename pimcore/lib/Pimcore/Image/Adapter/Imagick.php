@@ -603,7 +603,7 @@ class Imagick extends Adapter
         $this->preModify();
 
         $image = ltrim($image, "/");
-        $image = PIMCORE_DOCUMENT_ROOT . "/" . $image;
+        $image = PIMCORE_PROJECT_ROOT . "/" . $image;
 
         if (is_file($image)) {
             $newImage = new \Imagick();
@@ -653,7 +653,7 @@ class Imagick extends Adapter
 
         if (is_string($image)) {
             $image = ltrim($image, "/");
-            $image = PIMCORE_DOCUMENT_ROOT . "/" . $image;
+            $image = PIMCORE_PROJECT_ROOT . "/" . $image;
 
             $newImage = new \Imagick();
             $newImage->readimage($image);
@@ -691,7 +691,7 @@ class Imagick extends Adapter
     public function addOverlayFit($image, $composite = "COMPOSITE_DEFAULT")
     {
         $image = ltrim($image, "/");
-        $image = PIMCORE_DOCUMENT_ROOT . "/" . $image;
+        $image = PIMCORE_PROJECT_ROOT . "/" . $image;
 
         $newImage = new \Imagick();
         $newImage->readimage($image);
@@ -710,7 +710,7 @@ class Imagick extends Adapter
     {
         $this->preModify();
         $image = ltrim($image, "/");
-        $image = PIMCORE_DOCUMENT_ROOT . "/" . $image;
+        $image = PIMCORE_PROJECT_ROOT . "/" . $image;
 
         if (is_file($image)) {
             $this->resource->setImageMatte(1);

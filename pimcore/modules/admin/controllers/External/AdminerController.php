@@ -38,7 +38,7 @@ class Admin_External_AdminerController extends \Pimcore\Controller\Action\Admin
         // call this to keep the session 'open' so that Adminer can write to it
         $session = Session::get();
 
-        $this->adminerHome = PIMCORE_DOCUMENT_ROOT . '/vendor/vrana/adminer/';
+        $this->adminerHome = PIMCORE_PROJECT_ROOT . '/vendor/vrana/adminer/';
 
         // proxy for resources
         $path = $this->getRequest()->getPathInfo();
@@ -59,7 +59,7 @@ class Admin_External_AdminerController extends \Pimcore\Controller\Action\Admin
                 if (preg_match("@default.css$@", $path)) {
                     // append custom styles, because in Adminer everything is hardcoded
                     echo file_get_contents($this->adminerHome . "designs/konya/adminer.css");
-                    echo file_get_contents(PIMCORE_DOCUMENT_ROOT . "/pimcore/static6/css/adminer-modifications.css");
+                    echo file_get_contents(PIMCORE_WEB_ROOT . "/pimcore/static6/css/adminer-modifications.css");
                 }
             }
 
@@ -90,7 +90,7 @@ class Admin_External_AdminerController extends \Pimcore\Controller\Action\Admin
  */
 function adminer_object()
 {
-    $pluginDir = PIMCORE_DOCUMENT_ROOT . "/vendor/vrana/adminer/plugins";
+    $pluginDir = PIMCORE_PROJECT_ROOT . "/vendor/vrana/adminer/plugins";
 
     // required to run any plugin
     include_once $pluginDir . "/plugin.php";

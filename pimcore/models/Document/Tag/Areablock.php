@@ -637,7 +637,7 @@ class Areablock extends Model\Document\Tag
     {
         $options = $this->getOptions();
 
-        return PIMCORE_DOCUMENT_ROOT . "/" . trim($options["areaDir"], "/");
+        return PIMCORE_PROJECT_ROOT . "/" . trim($options["areaDir"], "/");
     }
 
     /**

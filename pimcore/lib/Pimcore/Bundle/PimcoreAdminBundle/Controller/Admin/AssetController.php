@@ -1712,7 +1712,7 @@ class AssetController extends ElementControllerBase implements EventedController
         $success = true;
         $filesPerJob = 5;
         $jobs = [];
-        $importDirectory = str_replace("/fileexplorer", PIMCORE_DOCUMENT_ROOT, $request->get("serverPath"));
+        $importDirectory = str_replace("/fileexplorer", PIMCORE_PROJECT_ROOT, $request->get("serverPath"));
         if (is_dir($importDirectory)) {
             $files = rscandir($importDirectory . "/");
             $count = count($files);

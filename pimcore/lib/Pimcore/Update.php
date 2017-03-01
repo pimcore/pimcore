@@ -262,9 +262,9 @@ class Update
 
         foreach ($files as $file) {
             if ($file["action"] == "update" || $file["action"] == "add") {
-                if (!is_dir(dirname(PIMCORE_DOCUMENT_ROOT . $file["path"]))) {
+                if (!is_dir(dirname(PIMCORE_PROJECT_ROOT . $file["path"]))) {
                     if (!self::$dryRun) {
-                        File::mkdir(dirname(PIMCORE_DOCUMENT_ROOT . $file["path"]));
+                        File::mkdir(dirname(PIMCORE_PROJECT_ROOT . $file["path"]));
                     }
                 }
 
@@ -277,7 +277,7 @@ class Update
                     $srcFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/update/".$revision."/files/" . str_replace("/", "~~~", $file["path"]);
                 }
 
-                $destFile = PIMCORE_DOCUMENT_ROOT . $file["path"];
+                $destFile = PIMCORE_PROJECT_ROOT . $file["path"];
 
                 if (!self::$dryRun) {
                     if ($file["path"] == "/composer.json") {
@@ -289,15 +289,15 @@ class Update
                 }
             } elseif ($file["action"] == "delete") {
                 if (!self::$dryRun) {
-                    if (file_exists(PIMCORE_DOCUMENT_ROOT . $file["path"])) {
-                        unlink(PIMCORE_DOCUMENT_ROOT . $file["path"]);
+                    if (file_exists(PIMCORE_PROJECT_ROOT . $file["path"])) {
+                        unlink(PIMCORE_PROJECT_ROOT . $file["path"]);
                     }
 
                     clearstatcache();
 
                     // remove also directory if its empty
-                    if (count(glob(dirname(PIMCORE_DOCUMENT_ROOT . $file["path"]) . "/*")) === 0) {
-                        recursiveDelete(dirname(PIMCORE_DOCUMENT_ROOT . $file["path"]), true);
+                    if (count(glob(dirname(PIMCORE_PROJECT_ROOT . $file["path"]) . "/*")) === 0) {
+                        recursiveDelete(dirname(PIMCORE_PROJECT_ROOT . $file["path"]), true);
                     }
                 }
             }
@@ -393,7 +393,7 @@ class Update
      */
     public static function composerDumpAutoload()
     {
-        $composerLock = PIMCORE_DOCUMENT_ROOT . "/composer.lock";
+        $composerLock = PIMCORE_PROJECT_ROOT . "/composer.lock";
         if (file_exists($composerLock)) {
             @unlink($composerLock);
         }
@@ -403,7 +403,7 @@ class Update
         // dump autoload and regenerate composer.lock
         try {
             $composerPath = \Pimcore\Tool\Console::getExecutable("composer");
-            $process = new Process($composerPath . ' update nothing -d ' . PIMCORE_DOCUMENT_ROOT);
+            $process = new Process($composerPath . ' update nothing -d ' . PIMCORE_PROJECT_ROOT);
             $process->setTimeout(300);
             $process->mustRun();
         } catch (\Exception $e) {

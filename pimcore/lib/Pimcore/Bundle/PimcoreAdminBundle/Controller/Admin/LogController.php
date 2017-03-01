@@ -85,7 +85,7 @@ class LogController extends AdminController
             foreach ($result as $r) {
                 $parts = explode("/", $r['filelink']);
                 $filename = $parts[count($parts)-1];
-                $fileobject = str_replace(PIMCORE_DOCUMENT_ROOT, "", $r['fileobject']);
+                $fileobject = str_replace(PIMCORE_PROJECT_ROOT, "", $r['fileobject']);
 
                 $errorData =  ["id"=>$r['id'],
                                     "pid" => $r['pid'],

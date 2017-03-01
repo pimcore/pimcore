@@ -35,7 +35,7 @@ class CompatibilityStubsCommand extends AbstractCommand
         $paths = [
             PIMCORE_CLASS_DIRECTORY,
         ];
-        $output = PIMCORE_WEBSITE_VAR . "/compatibility-2.x-stubs.php";
+        $output = PIMCORE_PRIVATE_VAR . "/compatibility-2.x-stubs.php";
 
         $excludePatterns = [
 

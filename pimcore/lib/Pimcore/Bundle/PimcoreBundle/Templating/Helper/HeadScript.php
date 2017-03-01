@@ -526,7 +526,7 @@ class HeadScript extends CacheBusterAware
                 // adds the automatic cache buster functionality
                 if (is_array($item->attributes)) {
                     if (isset($item->attributes["src"])) {
-                        $realFile = PIMCORE_DOCUMENT_ROOT . $item->attributes["src"];
+                        $realFile = PIMCORE_WEB_ROOT . $item->attributes["src"];
                         if (file_exists($realFile)) {
                             $item->attributes["src"] = "/cache-buster-" . filemtime($realFile) . $item->attributes["src"];
                         }

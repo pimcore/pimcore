@@ -7,7 +7,7 @@ if(\Pimcore\Document::isAvailable() && \Pimcore\Document::isFileTypeSupported($t
     $document = \Pimcore\Document::getInstance();
     try {
         $pdfFsPath = $document->getPdf($this->asset->getFileSystemPath());
-        $pdfPath = str_replace(PIMCORE_DOCUMENT_ROOT, "", $pdfFsPath);
+        $pdfPath = str_replace(PIMCORE_WEB_ROOT, "", $pdfFsPath);
 
         $results = \Pimcore::getEventManager()->trigger("frontend.path.asset.document.image-thumbnail", $this, [
             "filesystemPath" => $pdfFsPath,

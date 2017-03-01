@@ -145,7 +145,7 @@ class Console
     {
         // composer needs either COMPOSER_HOME or HOME to be set
         if (!getenv("COMPOSER_HOME") && !getenv("HOME")) {
-            $composerHome = PIMCORE_WEBSITE_VAR . "/composer";
+            $composerHome = PIMCORE_PRIVATE_VAR . "/composer";
             if (!is_dir($composerHome)) {
                 mkdir($composerHome, 0777, true);
             }

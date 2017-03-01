@@ -445,7 +445,7 @@ class Install_CheckController extends \Pimcore\Controller\Action
         $websiteVarWritable = true;
 
         try {
-            $files = $this->rscandir(PIMCORE_WEBSITE_VAR);
+            $files = array_merge($this->rscandir(PIMCORE_PRIVATE_VAR), $this->rscandir(PIMCORE_PUBLIC_VAR));
 
             foreach ($files as $file) {
                 if (!is_writable($file)) {

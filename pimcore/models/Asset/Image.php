@@ -161,7 +161,7 @@ class Image extends Model\Asset
      */
     public function getRelativeFileSystemPath()
     {
-        return str_replace(PIMCORE_DOCUMENT_ROOT, "", $this->getFileSystemPath());
+        return str_replace(PIMCORE_WEB_ROOT, "", $this->getFileSystemPath());
     }
 
     /**

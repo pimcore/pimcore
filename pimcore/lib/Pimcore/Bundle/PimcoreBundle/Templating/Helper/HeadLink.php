@@ -354,7 +354,7 @@ class HeadLink extends CacheBusterAware
             if ($this->isCacheBuster()) {
                 // adds the automatic cache buster functionality
                 if (isset($item->href)) {
-                    $realFile = PIMCORE_DOCUMENT_ROOT . $item->href;
+                    $realFile = PIMCORE_WEB_ROOT . $item->href;
                     if (file_exists($realFile)) {
                         $item->href = "/cache-buster-" . filemtime($realFile) . $item->href;
                     }

@@ -41,11 +41,11 @@ class Install_IndexController extends \Pimcore\Controller\Action
         $errors = [];
 
         // check permissions
-        $files = rscandir(PIMCORE_WEBSITE_VAR . "/");
+        $files = array_merge(rscandir(PIMCORE_PRIVATE_VAR . "/"),rscandir(PIMCORE_PUBLIC_VAR . "/"));
 
         foreach ($files as $file) {
             if (is_dir($file) && !is_writable($file)) {
-                $errors[] = "Please ensure that the entire /" . PIMCORE_WEBSITE_VAR . " directory is recursively writeable.";
+                $errors[] = "Please ensure that both " . PIMCORE_PRIVATE_VAR . " and " . PIMCORE_PUBLIC_VAR . " directories are recursively writeable.";
                 break;
             }
         }
@@ -96,15 +96,16 @@ class Install_IndexController extends \Pimcore\Controller\Action
 
             // check if /website folder already exists, if not, look for /website_demo & /website_example
             // /website_install is just for testing in dev environment
-            if (!is_dir(PIMCORE_WEBSITE_PATH)) {
+            // @TODO needs to be migrated to Symfony
+            /*if (!is_dir(PIMCORE_APP_ROOT)) {
                 foreach (["website_install", "website_demo", "website_example"] as $websiteDir) {
-                    $dir = PIMCORE_DOCUMENT_ROOT . "/" . $websiteDir;
+                    $dir = PIMCORE_PROJECT_ROOT . "/" . $websiteDir;
                     if (is_dir($dir)) {
-                        rename($dir, PIMCORE_WEBSITE_PATH);
+                        rename($dir, PIMCORE_APP_ROOT);
                         break;
                     }
                 }
-            }
+            }*/
 
             $setup->config([
                 "database" => [

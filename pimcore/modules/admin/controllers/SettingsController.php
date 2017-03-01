@@ -1245,7 +1245,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
             $this->_helper->json([
                 "success" => true,
                 "data" => $data,
-                "onFileSystem" => file_exists(PIMCORE_DOCUMENT_ROOT . "/robots.txt")
+                "onFileSystem" => file_exists(PIMCORE_WEB_ROOT . "/robots.txt")
             ]);
         }
     }

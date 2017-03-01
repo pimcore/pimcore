@@ -28,7 +28,7 @@ foreach ($locales as $short => $translation) {
     <?php foreach ($languageOptions as $lang) {
     ?>
         <tr>
-            <td><img style="width:16px" src="<?= str_replace(PIMCORE_DOCUMENT_ROOT, "", \Pimcore\Tool::getLanguageFlagFile($lang["language"])) ?>"></td>
+            <td><img style="width:16px" src="<?= str_replace(PIMCORE_WEB_ROOT, "", \Pimcore\Tool::getLanguageFlagFile($lang["language"])) ?>"></td>
             <td><?= $lang["language"] ?></td>
             <td><?= $lang["display"] ?></td>
         </tr>

@@ -102,13 +102,6 @@ class Setup extends Model\AbstractModel
 
         $settings = array_replace_recursive($settings, $config);
 
-        // create initial /website/var folder structure
-        // @TODO: should use values out of startup.php (Constants)
-        $varFolders = ["areas", "assets", "backup", "cache", "classes", "config", "email", "log", "plugins", "recyclebin", "search", "system", "tmp", "versions", "webdav"];
-        foreach ($varFolders as $folder) {
-            \Pimcore\File::mkdir(PIMCORE_WEBSITE_VAR . "/" . $folder);
-        }
-
         $configFile = \Pimcore\Config::locateConfigFile("system.php");
         File::putPhpFile($configFile, to_php_data_file_format($settings));
     }

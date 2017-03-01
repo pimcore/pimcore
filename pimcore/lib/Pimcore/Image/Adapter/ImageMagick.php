@@ -329,7 +329,7 @@ class ImageMagick extends Adapter
     public function setBackgroundImage($image, $mode = null, $relativePath = false)
     {
         $imagePath = $relativePath ?
-            PIMCORE_DOCUMENT_ROOT . "/" . ltrim($image, "/")
+            PIMCORE_PROJECT_ROOT . "/" . ltrim($image, "/")
             : $image;
 
         if (is_file($imagePath)) {
@@ -372,7 +372,7 @@ class ImageMagick extends Adapter
     {
         $this->saveIfRequired('overlay_first_step');
 
-        $image = PIMCORE_DOCUMENT_ROOT . "/" . ltrim($image, "/");
+        $image = PIMCORE_PROJECT_ROOT . "/" . ltrim($image, "/");
         if (is_file($image)) {
             //if a specified file as a overlay exists
             $overlayImage = $this->createTmpImage($image, 'overlay');
@@ -411,7 +411,7 @@ class ImageMagick extends Adapter
      */
     public function addOverlayFit($image, $composite = "COMPOSITE_DEFAULT")
     {
-        $image = PIMCORE_DOCUMENT_ROOT . "/" . ltrim($image, "/");
+        $image = PIMCORE_PROJECT_ROOT . "/" . ltrim($image, "/");
         if (is_file($image)) {
             //if a specified file as a overlay exists
             $overlayImage = $this->createTmpImage($image, 'overlay');
@@ -465,7 +465,7 @@ class ImageMagick extends Adapter
     {
         $this->setForceAlpha(true)->saveIfRequired('mask');
 
-        $image = PIMCORE_DOCUMENT_ROOT . "/" . ltrim($image, "/");
+        $image = PIMCORE_PROJECT_ROOT . "/" . ltrim($image, "/");
 
         $this->addConvertOption('alpha', 'off')->addConvertOption('compose', 'CopyOpacity')
             ->addConvertOption('composite')

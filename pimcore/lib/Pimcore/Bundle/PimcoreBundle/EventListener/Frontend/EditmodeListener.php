@@ -232,7 +232,7 @@ class EditmodeListener extends AbstractFrontendListener implements EventSubscrib
         } else {
             $scriptContents = '';
             foreach ($scripts as $scriptUrl) {
-                $scriptContents .= file_get_contents(PIMCORE_DOCUMENT_ROOT . $scriptUrl) . "\n\n\n";
+                $scriptContents .= file_get_contents(PIMCORE_WEB_ROOT . $scriptUrl) . "\n\n\n";
             }
 
             $headHtml .= '<script type="text/javascript" src="' . \Pimcore\Tool\Admin::getMinimizedScriptPath($scriptContents) . '"></script>' . "\n";

@@ -48,7 +48,7 @@
         <?php foreach ($icons as $icon) {
     ?>
             <div class="icon">
-                <img style="width:50px;" src="<?= str_replace(PIMCORE_DOCUMENT_ROOT, "", $icon) ?>" title="<?= basename($icon) ?>">
+                <img style="width:50px;" src="<?= str_replace(PIMCORE_WEB_ROOT, "", $icon) ?>" title="<?= basename($icon) ?>">
                 <div class="label"><?= basename($icon) ?></div>
             </div>
         <?php

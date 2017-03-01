@@ -55,7 +55,7 @@ class Extensionmanager_AdminController extends \Pimcore\Controller\Action\Admin
                     "version" => isset($config["plugin"]["pluginVersion"]) ? $config["plugin"]["pluginVersion"] : null
                 ];
 
-                if (isset($config["plugin"]["pluginXmlEditorFile"]) && is_readable(PIMCORE_DOCUMENT_ROOT . $config["plugin"]["pluginXmlEditorFile"])) {
+                if (isset($config["plugin"]["pluginXmlEditorFile"]) && is_readable(PIMCORE_PROJECT_ROOT . $config["plugin"]["pluginXmlEditorFile"])) {
                     $plugin['xmlEditorFile'] = $config["plugin"]["pluginXmlEditorFile"];
                 }
 

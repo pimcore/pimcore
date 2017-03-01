@@ -269,7 +269,7 @@ class GD extends Adapter
         $this->preModify();
 
         $image = ltrim($image, "/");
-        $image = PIMCORE_DOCUMENT_ROOT . "/" . $image;
+        $image = PIMCORE_PROJECT_ROOT . "/" . $image;
 
         if (is_file($image)) {
             $backgroundImage = imagecreatefromstring(file_get_contents($image));
@@ -338,7 +338,7 @@ class GD extends Adapter
         $this->preModify();
 
         $image = ltrim($image, "/");
-        $image = PIMCORE_DOCUMENT_ROOT . "/" . $image;
+        $image = PIMCORE_PROJECT_ROOT . "/" . $image;
 
         // 100 alpha is default
         if (empty($alpha)) {
