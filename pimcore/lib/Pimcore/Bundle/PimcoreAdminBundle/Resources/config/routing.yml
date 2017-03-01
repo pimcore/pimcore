@@ -3,6 +3,11 @@ _pimcore_admin:
     type:     annotation
     prefix:   /admin
 
+_pimcore_reports:
+    resource: "@PimcoreAdminBundle/Controller/Reports/"
+    type:     annotation
+    prefix:   /admin/reports
+
 _pimcore_api_rest:
     resource: "@PimcoreAdminBundle/ControllerApi/Rest/"
     type:     annotation

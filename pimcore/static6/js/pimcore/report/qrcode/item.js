@@ -303,7 +303,7 @@ pimcore.report.qrcode.item = Class.create({
         params["_dc"] = d.getTime();
         params["name"] = this.data.name;
 
-        var codeUrl = "/admin/reports/qrcode/code/?url=" + url + '&' + Ext.urlEncode(params);
+        var codeUrl = "/admin/reports/qrcode/code?url=" + url + '&' + Ext.urlEncode(params);
         this.codePanel.update('<img src="' + codeUrl + '" style="padding:10px; width:100%;" />');
     },
 
@@ -335,7 +335,7 @@ pimcore.report.qrcode.item = Class.create({
         params["download"] = "true";
         params["name"] = this.data.name;
 
-        var codeUrl = "/admin/reports/qrcode/code/?" + Ext.urlEncode(params);
+        var codeUrl = "/admin/reports/qrcode/code?" + Ext.urlEncode(params);
         pimcore.helpers.download(codeUrl);
     }
 });
