@@ -76,7 +76,7 @@ class ElementListener extends AbstractFrontendListener implements EventSubscribe
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::REQUEST => 'onKernelRequest'
+            KernelEvents::REQUEST => ['onKernelRequest', 3], // has to be right after DocumentFallbackListener
         ];
     }
 

@@ -27,5 +27,8 @@ class DocumentResolver extends AbstractRequestResolver
     public function setDocument(Request $request, Document $document)
     {
         $request->attributes->set(DynamicRouter::CONTENT_KEY, $document);
+        if($document->getProperty("language")) {
+            $request->setLocale($document->getProperty("language"));
+        }
     }
 }

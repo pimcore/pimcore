@@ -23,6 +23,11 @@ services:
         tags:
             - { name: kernel.event_subscriber }
 
+    pimcore.event_listener.frontend.locale:
+      class: Pimcore\Bundle\PimcoreBundle\EventListener\Frontend\LocaleListener
+      tags:
+        - { name: kernel.event_subscriber }
+
     #
     # PIMCORE OBJECTS/PARAMS LOGIC
     #
