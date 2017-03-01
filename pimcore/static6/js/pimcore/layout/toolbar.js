@@ -1519,19 +1519,19 @@ pimcore.layout.toolbar = Class.create({
     },
 
     showServerInfo: function () {
-        pimcore.helpers.openGenericIframeWindow("serverinfo", "/admin/external_linfo/", "pimcore_icon_server_info", "Server Info");
+        pimcore.helpers.openGenericIframeWindow("serverinfo", "/admin/external_linfo", "pimcore_icon_server_info", "Server Info");
     },
 
     showOpcacheStatus: function () {
-        pimcore.helpers.openGenericIframeWindow("opcachestatus", "/admin/external_opcache/", "pimcore_icon_reports", "PHP OPcache Status");
+        pimcore.helpers.openGenericIframeWindow("opcachestatus", "/admin/external_opcache", "pimcore_icon_reports", "PHP OPcache Status");
     },
 
     showSystemRequirementsCheck: function () {
-        pimcore.helpers.openGenericIframeWindow("systemrequirementscheck", "/install/check/", "pimcore_icon_systemrequirements", "System-Requirements Check");
+        pimcore.helpers.openGenericIframeWindow("systemrequirementscheck", "/install/check", "pimcore_icon_systemrequirements", "System-Requirements Check");
     },
 
     showAdminer: function () {
-        pimcore.helpers.openGenericIframeWindow("adminer", "/admin/external_adminer/adminer/", "pimcore_icon_mysql", "Database Admin");
+        pimcore.helpers.openGenericIframeWindow("adminer", "/admin/external_adminer/adminer", "pimcore_icon_mysql", "Database Admin");
     },
 
     showElementHistory: function() {
