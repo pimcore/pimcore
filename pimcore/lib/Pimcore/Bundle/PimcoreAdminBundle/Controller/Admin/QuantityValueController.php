@@ -15,13 +15,12 @@
  */
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin;
 
-use Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminController;
 use Pimcore\Model\Object\QuantityValue\Unit;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class QuantityValueController extends AdminController
+class QuantityValueController extends AdminControlle
 {
     /**
      * @Route("/quantity-value/unit-proxy")
@@ -66,7 +65,7 @@ class QuantityValueController extends AdminController
             $orderKey = "abbreviation";
             $order = "asc";
 
-            $allParams = $request->request->all();
+            $allParams = array_merge($request->request->all(), $request->query->all());
             $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($allParams);
             if ($sortingSettings['orderKey']) {
                 $orderKey = $sortingSettings['orderKey'];

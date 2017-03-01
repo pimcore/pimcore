@@ -1580,7 +1580,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
             }
 
 
-            $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($request->request->all());
+            $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
 
             $doNotQuote = false;
 

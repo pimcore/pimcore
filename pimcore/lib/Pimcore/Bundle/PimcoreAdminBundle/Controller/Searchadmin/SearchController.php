@@ -236,7 +236,7 @@ class SearchController extends AdminController
             foreach ($tagIds as $tagId) {
                 foreach ($types as $type) {
                     if ($allParams["considerChildTags"] =="true") {
-                        $tag = Pimcore\Model\Element\Tag::getById($tagId);
+                        $tag = Element\Tag::getById($tagId);
                         if ($tag) {
                             $tagPath = $tag->getFullIdPath();
                             $conditionParts[] = "id IN (SELECT cId FROM tags_assignment INNER JOIN tags ON tags.id = tags_assignment.tagid WHERE ctype = " . $db->quote($type) . " AND (id = " . intval($tagId) . " OR idPath LIKE " . $db->quote($tagPath . "%") . "))";
@@ -264,7 +264,7 @@ class SearchController extends AdminController
         //$searcherList->setOrder("desc");
         //$searcherList->setOrderKey("modificationdate");
 
-        $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($request->request->all());
+        $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
         if ($sortingSettings['orderKey']) {
             // we need a special mapping for classname as this is stored in subtype column
             $sortMapping = [

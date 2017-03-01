@@ -677,7 +677,7 @@ class AssetController extends ElementControllerBase implements EventedController
         $success = false;
         $allowUpdate = true;
 
-        $updateData = $request->request->all();
+        $updateData = array_merge($request->request->all(), $request->query->all());
 
         $asset = Asset::getById($request->get("id"));
         if ($asset->isAllowed("settings")) {
@@ -1056,7 +1056,7 @@ class AssetController extends ElementControllerBase implements EventedController
             if ($request->get("config")) {
                 $thumbnail = $image->getThumbnailConfig($this->decodeJson($request->get("config")));
             } else {
-                $thumbnail = $image->getThumbnailConfig($request->request->all());
+                $thumbnail = $image->getThumbnailConfig(array_merge($request->request->all(), $request->query->all()));
             }
         } else {
             // no high-res images in admin mode (editmode)
@@ -1082,7 +1082,7 @@ class AssetController extends ElementControllerBase implements EventedController
                 "x" => $request->get("cropLeft")
             ]);
 
-            $hash = md5(Tool\Serialize::serialize($request->request->all()));
+            $hash = md5(Tool\Serialize::serialize(array_merge($request->request->all(), $request->query->all())));
             $thumbnail->setName($thumbnail->getName() . "_auto_" . $hash);
         }
 
@@ -1117,7 +1117,7 @@ class AssetController extends ElementControllerBase implements EventedController
             $video = Asset::getByPath($request->get("path"));
         }
 
-        $thumbnail = $request->request->all();
+        $thumbnail = array_merge($request->request->all(), $request->query->all());
 
         if ($request->get("treepreview")) {
             $thumbnail = Asset\Image\Thumbnail\Config::getPreviewConfig();
@@ -1163,7 +1163,7 @@ class AssetController extends ElementControllerBase implements EventedController
     public function getDocumentThumbnailAction(Request $request)
     {
         $document = Asset::getById(intval($request->get("id")));
-        $thumbnail = Asset\Image\Thumbnail\Config::getByAutoDetect($request->request->all());
+        $thumbnail = Asset\Image\Thumbnail\Config::getByAutoDetect(array_merge($request->request->all(), $request->query->all()));
 
         $format = strtolower($thumbnail->getFormat());
         if ($format == "source") {
@@ -1876,7 +1876,7 @@ class AssetController extends ElementControllerBase implements EventedController
                 $start = $request->get("start");
             }
 
-            $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($request->request->all());
+            $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
             if ($sortingSettings['orderKey']) {
                 $orderKey = $sortingSettings['orderKey'];
                 if ($orderKey == "fullpath") {

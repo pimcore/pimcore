@@ -113,7 +113,7 @@ class ElementController extends AdminController
         $list->setLimit($request->get("limit"));
         $list->setOffset($request->get("start"));
 
-        $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($request->request->all());
+        $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
         if ($sortingSettings['orderKey'] && $sortingSettings['order']) {
             $list->setOrderKey($sortingSettings['orderKey']);
             $list->setOrder($sortingSettings['order']);
