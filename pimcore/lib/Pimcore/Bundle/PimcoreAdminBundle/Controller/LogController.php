@@ -5,6 +5,7 @@ namespace Pimcore\Bundle\PimcoreAdminBundle\Controller;
 use Pimcore\Db;
 use Pimcore\Log\Handler\ApplicationLoggerDb;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class LogController extends \Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminController
@@ -137,5 +138,27 @@ class LogController extends \Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminC
         }
 
         return $this->json(["components" => $components]);
+    }
+
+    /**
+     * @Route("/log/show-file-object-action")
+     * @param Request $request
+     * @return Response
+     */
+    public function showFileObjectAction(Request $request)
+    {
+        $filePath = $request->get("filePath");
+        $filePath = PIMCORE_PROJECT_ROOT . "/" . $filePath;
+
+        $response = new Response();
+        $response->headers->set("Content-Type", "text/plain");
+
+        if(file_exists($filePath)) {
+            $response->setContent(file_get_contents($filePath));
+        } else {
+            $response->setContent("Path `" . $filePath . "` not found.");
+        }
+
+        return $response;
     }
 }
