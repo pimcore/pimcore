@@ -3,6 +3,10 @@ services:
         class: PimcoreLegacyBundle\HttpKernel\Kernel
         arguments: ['@kernel']
 
+    pimcore.legacy.fallback_router:
+        class: PimcoreLegacyBundle\Routing\FallbackRouter
+        arguments: ['@router.request_context']
+
     # executes ZF1 view helpers
     pimcore.legacy.zend_view_helper_bridge:
         class: PimcoreLegacyBundle\Zend\View\ViewHelperBridge

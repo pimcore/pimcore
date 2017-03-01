@@ -5,6 +5,3 @@ app:
     resource: "@AppBundle/Controller/"
     type:     annotation
 
-_fallback:
-    resource: "@PimcoreLegacyBundle/Resources/config/routing.yml"
-

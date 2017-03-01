@@ -3,6 +3,7 @@
 namespace PimcoreLegacyBundle;
 
 use PimcoreLegacyBundle\ClassLoader\LegacyClassLoader;
+use PimcoreLegacyBundle\DependencyInjection\Compiler\FallbackRouterPass;
 use PimcoreLegacyBundle\DependencyInjection\Compiler\LegacyAreaHandlerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -14,6 +15,7 @@ class PimcoreLegacyBundle extends Bundle
      */
     public function build(ContainerBuilder $container)
     {
+        $container->addCompilerPass(new FallbackRouterPass());
         $container->addCompilerPass(new LegacyAreaHandlerPass());
     }
 
