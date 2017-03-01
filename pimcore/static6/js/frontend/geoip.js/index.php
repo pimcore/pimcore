@@ -28,7 +28,7 @@ include_once("../../../../../vendor/autoload.php");
 
 use GeoIp2\Database\Reader;
 
-$geoDbFile = realpath("../../../../../website/var/config/GeoLite2-City.mmdb");
+$geoDbFile = realpath("../../../../../var/config/GeoLite2-City.mmdb");
 $exception = "";
 $record = null;
 

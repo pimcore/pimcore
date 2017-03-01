@@ -742,7 +742,7 @@ class RestClient
 
                     if ($assetType == "image" && strlen($thumbnail) > 0) {
                         // try to retrieve thumbnail first
-                        // http://example.com/website/var/tmp/thumb_9__fancybox_thumb
+                        // http://example.com/var/tmp/thumb_9__fancybox_thumb
                         $tmpPath = preg_replace("@^" . preg_quote(PIMCORE_WEB_ROOT, "@") . "@", "", PIMCORE_TEMPORARY_DIRECTORY);
                         $uri = $protocol . $this->getHost() . $tmpPath . "/thumb_" . $asset->getId() . "__" . $thumbnail;
                         $client->setUri($uri);
@@ -782,7 +782,7 @@ class RestClient
                     if (!$data) {
                         $path = $wsDocument->path;
                         $filename = $wsDocument->filename;
-                        $uri = $protocol . $this->getHost() . "/website/var/assets" . $path . $filename;
+                        $uri = $protocol . $this->getHost() . "/var/assets" . $path . $filename;
                         $client->setUri($uri);
                         $result = $client->request();
                         if ($result->getStatus() != 200 && !$tolerant) {

@@ -288,7 +288,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
         if ($parentAsset->isAllowed("create")) {
             if (!is_file($sourcePath) || filesize($sourcePath) < 1) {
-                throw new \Exception("Something went wrong, please check upload_max_filesize and post_max_size in your php.ini and write permissions of /website/var/");
+                throw new \Exception("Something went wrong, please check upload_max_filesize and post_max_size in your php.ini and write permissions of " . PIMCORE_PUBLIC_VAR);
             }
 
             $asset = Asset::create($request->get("parentId"), [

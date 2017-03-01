@@ -440,28 +440,28 @@ class Install_CheckController extends \Pimcore\Controller\Action
 
 
         // filesystem checks
+        foreach([PIMCORE_PUBLIC_VAR, PIMCORE_PRIVATE_VAR] as $varDir) {
+            $varWritable = true;
 
-        // website/var writable
-        $websiteVarWritable = true;
+            try {
+                $files = $this->rscandir($varDir);
 
-        try {
-            $files = array_merge($this->rscandir(PIMCORE_PRIVATE_VAR), $this->rscandir(PIMCORE_PUBLIC_VAR));
-
-            foreach ($files as $file) {
-                if (!is_writable($file)) {
-                    $websiteVarWritable = false;
+                foreach ($files as $file) {
+                    if (!is_writable($file)) {
+                        $varWritable = false;
+                    }
                 }
-            }
 
-            $checksFS[] = [
-                "name" => "/website/var/ writeable",
-                "state" => $websiteVarWritable ? "ok" : "error"
-            ];
-        } catch (\Exception $e) {
-            $checksFS[] = [
-                "name" => "/website/var/ (not checked - too many files)",
-                "state" => "warning"
-            ];
+                $checksFS[] = [
+                    "name" => str_replace(PIMCORE_PROJECT_ROOT, "", $varDir) . " writeable",
+                    "state" => $varWritable ? "ok" : "error"
+                ];
+            } catch (\Exception $e) {
+                $checksFS[] = [
+                    "name" => str_replace(PIMCORE_PROJECT_ROOT, "", $varDir) . " (not checked - too many files)",
+                    "state" => "warning"
+                ];
+            }
         }
 
         // pimcore writeable
