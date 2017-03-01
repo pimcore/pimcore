@@ -8,6 +8,12 @@ _pimcore_reports:
     type:     annotation
     prefix:   /admin/reports
 
+_pimcore_search:
+    resource: "@PimcoreAdminBundle/Controller/Searchadmin/"
+    type:     annotation
+    prefix:   /admin/search
+
+
 _pimcore_api_rest:
     resource: "@PimcoreAdminBundle/ControllerApi/Rest/"
     type:     annotation

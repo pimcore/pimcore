@@ -1,35 +1,36 @@
 <?php
-/**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in
- * LICENSE.md which is distributed with this source code.
- *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
- */
 
+namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Searchadmin;
+
+use Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminController;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Object;
 use Pimcore\Model\Search\Backend\Data;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
-class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin
+/**
+ * @Route("/search")
+ */
+class SearchController extends AdminController
 {
     /**
+     * @Route("/find")
+     * @param Request $request
+     * @return JsonResponse
+     *
      * @todo: $forbiddenConditions could be undefined
      * @todo: $conditionTypeParts could be undefined
      * @todo: $conditionSubtypeParts could be undefined
      * @todo: $conditionClassnameParts could be undefined
      * @todo: $data could be undefined
      */
-    public function findAction()
+    public function findAction(Request $request)
     {
-        $allParams = $this->getAllParams();
+        $allParams = array_merge($request->request->all(), $request->query->all());
 
         $returnValueContainer = new \Pimcore\Model\Tool\Admin\EventDataContainer($allParams);
 
@@ -263,7 +264,7 @@ class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin
         //$searcherList->setOrder("desc");
         //$searcherList->setOrderKey("modificationdate");
 
-        $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($this->getAllParams());
+        $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($request->request->all());
         if ($sortingSettings['orderKey']) {
             // we need a special mapping for classname as this is stored in subtype column
             $sortMapping = [
@@ -327,9 +328,6 @@ class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin
 
         $result = $returnValueContainer->getData();
 
-
-        $this->_helper->json($result);
-
-        $this->removeViewRenderer();
+        return $this->json($result);
     }
 }
