@@ -105,8 +105,7 @@ abstract class Processor
                 "pdf" => $pdf
             ]);
 
-            $creationDate = \Zend_Date::now();
-            $document->setLastGenerated(($creationDate->get() + 1));
+            $document->setLastGenerated((time() + 1));
             $document->save();
         } catch (\Exception $e) {
             $document->save();

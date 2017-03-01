@@ -160,7 +160,6 @@ class Glossary extends Helper implements LoggerAwareInterface
 
     /**
      * @return array|mixed
-     * @throws \Zend_Exception
      */
     protected function getData()
     {

@@ -74,9 +74,7 @@ class Date extends Model\Document\Tag
             $this->options["format"] = \DateTime::ISO8601;
         }
 
-        if ($this->date instanceof \Zend_Date) {
-            return $this->date->toString($this->options["format"], "php");
-        } elseif ($this->date instanceof \DateTimeInterface) {
+        if ($this->date instanceof \DateTimeInterface) {
             return $this->date->formatLocalized($this->options["format"]);
         }
     }

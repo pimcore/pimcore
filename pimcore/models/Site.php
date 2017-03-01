@@ -184,9 +184,7 @@ class Site extends AbstractModel
 
     /**
      * @return Site
-     *
      * @throws \Exception
-     * @throws \Zend_Exception
      */
     public static function getCurrentSite()
     {
