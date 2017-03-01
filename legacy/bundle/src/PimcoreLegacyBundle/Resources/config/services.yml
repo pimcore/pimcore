@@ -6,6 +6,8 @@ services:
     pimcore.legacy.fallback_router:
         class: PimcoreLegacyBundle\Routing\FallbackRouter
         arguments: ['@router.request_context']
+        tags:
+            - { name: router, priority: -200 }
 
     # executes ZF1 view helpers
     pimcore.legacy.zend_view_helper_bridge:

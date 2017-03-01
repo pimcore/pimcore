@@ -2,6 +2,8 @@
 
 namespace PimcoreLegacyBundle\Routing;
 
+use Symfony\Cmf\Component\Routing\VersatileGeneratorInterface;
+use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\Matcher\UrlMatcherInterface;
 use Symfony\Component\Routing\RequestContext;
@@ -9,7 +11,7 @@ use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\RouterInterface;
 
-class FallbackRouter implements RouterInterface
+class FallbackRouter implements RouterInterface, VersatileGeneratorInterface
 {
     /**
      * @var RequestContext
@@ -124,8 +126,24 @@ class FallbackRouter implements RouterInterface
     /**
      * @inheritDoc
      */
+    public function supports($name)
+    {
+        return false;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getRouteDebugMessage($name, array $parameters = [])
+    {
+        return $name;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function generate($name, $parameters = array(), $referenceType = self::ABSOLUTE_PATH)
     {
-        throw new \RuntimeException('Legacy route generation is not supported');
+        throw new RouteNotFoundException('Legacy route generation is not supported');
     }
 }

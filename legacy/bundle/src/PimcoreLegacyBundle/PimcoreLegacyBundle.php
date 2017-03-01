@@ -15,7 +15,6 @@ class PimcoreLegacyBundle extends Bundle
      */
     public function build(ContainerBuilder $container)
     {
-        $container->addCompilerPass(new FallbackRouterPass());
         $container->addCompilerPass(new LegacyAreaHandlerPass());
     }
 
