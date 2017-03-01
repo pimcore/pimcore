@@ -11,6 +11,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
@@ -24,21 +25,22 @@ class LocaleListener extends AbstractFrontendListener implements EventSubscriber
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::REQUEST => ['onKernelRequest', 1] // need to be after ElementListener
+            KernelEvents::REQUEST => ['onKernelRequest', 1], // need to be after ElementListener
+            KernelEvents::RESPONSE => ['onKernelResponse'], // need to be after ElementListener
         ];
     }
 
+    /**
+     * @param GetResponseEvent $event
+     */
     public function onKernelRequest(GetResponseEvent $event)
     {
         $request = $event->getRequest();
-        $response = $event->getResponse();
 
         $locale = $request->getLocale();
 
         if($locale && $locale != $this->lastLocale) {
             $this->lastLocale = $locale;
-
-            $response->headers->set("Content-Language", strtolower(str_replace("_", "-", $locale)), true);
 
             // now we prepare everything for setlocale()
             $localeList = [$locale . ".utf8"];
@@ -62,6 +64,14 @@ class LocaleListener extends AbstractFrontendListener implements EventSubscriber
             // Zend_Currency -> see also https://github.com/zendframework/zf1/issues/706
             // once this is resolved we can safely set the locale for LC_MONETARY as well.
             setlocale(LC_ALL & ~LC_MONETARY, $localeList);
+        }
+    }
+
+    public function onKernelResponse(FilterResponseEvent $event)
+    {
+        if($this->lastLocale && $event->isMasterRequest()) {
+            $response = $event->getResponse();
+            $response->headers->set("Content-Language", strtolower(str_replace("_", "-", $this->lastLocale)), true);
         }
     }
 }
