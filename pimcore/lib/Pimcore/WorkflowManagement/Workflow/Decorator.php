@@ -12,7 +12,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\WorkflowManagement\WorkFlow;
+namespace Pimcore\WorkflowManagement\Workflow;
 
 use Pimcore\WorkflowManagement\Workflow;
 
