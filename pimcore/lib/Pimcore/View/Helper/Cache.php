@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Pimcore
  *
@@ -38,8 +39,8 @@ class Cache extends \Zend_View_Helper_Abstract {
 
         return self::$_caches[$name];
     }
-}
 
+}
 
 class CacheController {
 
@@ -75,11 +76,11 @@ class CacheController {
      * @param bool $force
      */
     public function __construct($name, $lifetime, $editmode = true, $force = false) {
-        
+
         $this->key = "pimcore_viewcache_" . $name;
         $this->editmode = $editmode;
         $this->force = $force;
-        
+
         if (!$lifetime) {
             $lifetime = null;
         }
@@ -91,36 +92,36 @@ class CacheController {
      * @return bool
      */
     public function start() {
-                
-        if(\Pimcore\Tool::isFrontentRequestByAdmin() && !$this->force) {
+
+        if (\Pimcore\Tool::isFrontentRequestByAdmin() && !$this->force) {
             return false;
         }
-        
+
         if ($content = CacheManager::load($this->key)) {
             echo $content;
             return true;
         }
-        
+
         $this->captureEnabled = true;
         ob_start();
-        
+
         return false;
     }
 
     /**
-     *
+     * 
+     * @param array $tags Optional tags
      */
-    public function end() {
-        
-        if($this->captureEnabled) {
-            
+    public function end($tags = []) {
+
+        if ($this->captureEnabled) {
+
             $this->captureEnabled = false;
-            
-            $tags = array("in_template");
+            $tags[] = "in_template";
             if (!$this->lifetime) {
                 $tags[] = "output";
             }
-    
+
             $content = ob_get_clean();
             CacheManager::save($content, $this->key, $tags, $this->lifetime, 996, true);
             echo $content;
@@ -130,7 +131,8 @@ class CacheController {
     /**
      *
      */
-    public function stop() {
-        $this->end();
+    public function stop($tags = []) {
+        $this->end($tags);
     }
+
 }
