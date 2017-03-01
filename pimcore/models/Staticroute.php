@@ -90,6 +90,11 @@ class Staticroute extends AbstractModel
     public $priority = 1;
 
     /**
+     * @var bool
+     */
+    public $legacy = false;
+
+    /**
      * @var integer
      */
     public $creationDate;
@@ -415,6 +420,22 @@ class Staticroute extends AbstractModel
     public function getPriority()
     {
         return $this->priority;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getLegacy()
+    {
+        return $this->legacy;
+    }
+
+    /**
+     * @param bool $legacy
+     */
+    public function setLegacy($legacy)
+    {
+        $this->legacy = (bool)$legacy;
     }
 
     /**

@@ -245,8 +245,17 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
         if (null === $this->staticRoutes) {
             /** @var Staticroute\Listing|Staticroute\Listing\Dao $list */
             $list = new Staticroute\Listing();
-            $list->setOrder(function ($a, $b) {
 
+            // do not handle legacy routes
+            $list->setFilter(function (array $row) {
+                if (isset($row['legacy']) && $row['legacy']) {
+                    return false;
+                }
+
+                return true;
+            });
+
+            $list->setOrder(function ($a, $b) {
                 // give site ids a higher priority
                 if ($a["siteId"] && !$b["siteId"]) {
                     return -1;
