@@ -50,11 +50,11 @@ if (is_array($_SERVER)
 
 // pimcore config files
 if (!defined('PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY')) {
-    define('PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY', PIMCORE_APP_ROOT . '/config/pimcore/custom');
+    define('PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY', PIMCORE_APP_ROOT . '/config/pimcore');
 }
 
 if (!defined('PIMCORE_CONFIGURATION_DIRECTORY')) {
-    define('PIMCORE_CONFIGURATION_DIRECTORY', PIMCORE_APP_ROOT . '/config/pimcore/system');
+    define('PIMCORE_CONFIGURATION_DIRECTORY', PIMCORE_PRIVATE_VAR . '/config');
 }
 
 if (!defined('PIMCORE_ASSET_DIRECTORY')) {
