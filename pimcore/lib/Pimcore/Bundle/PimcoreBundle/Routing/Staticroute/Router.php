@@ -9,7 +9,6 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Cmf\Component\Routing\VersatileGeneratorInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\Generator\UrlGenerator;
 use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
@@ -33,9 +32,16 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     protected $supportedNames = [];
 
     /**
+     * Contains a mapping between route names (news_site_2) and static routes
+     *
+     * @var array
+     */
+    protected $staticRouteMap = [];
+
+    /**
      * @var RouteCollection
      */
-    protected $routes;
+    protected $collection;
 
     /**
      * @var UrlMatcher
@@ -94,7 +100,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
      */
     public function getRouteCollection()
     {
-        if (null === $this->routes) {
+        if (null === $this->collection) {
             $collection   = new RouteCollection();
             $staticroutes = $this->getDao()->getAll();
 
@@ -105,18 +111,23 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
                 if (empty($siteIds)) {
                     $name = $this->getRouteName($sr->getName());
                     $collection->add($name, $this->buildRouteForStaticRoute($sr));
+
+                    $this->staticRouteMap[$name] = $sr->getId();
                 } else {
                     foreach ($siteIds as $siteId) {
                         $name = $this->getRouteName($sr->getName(), $siteId);
                         $collection->add($name, $this->buildRouteForStaticRoute($sr, $siteId));
+
+                        $this->staticRouteMap[$name] = $sr->getId();
                     }
                 }
             }
 
-            $this->routes = $collection;
+            $this->supportedNames = array_unique($this->supportedNames);
+            $this->collection     = $collection;
         }
 
-        return $this->routes;
+        return $this->collection;
     }
 
     /**
@@ -183,6 +194,9 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
         return $this->matcher;
     }
 
+    /**
+     * @return UrlGenerator
+     */
     protected function getGenerator()
     {
         if (null === $this->generator) {
@@ -201,8 +215,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
      */
     public function supports($name)
     {
-        dump($name);
-        die(__METHOD__);
+        $this->getRouteCollection();
 
         return is_string($name) && in_array($name, $this->supportedNames);
     }
@@ -251,13 +264,13 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
         }
 
         if ($domain) {
-            $referenceType = static::ABSOLUTE_URL;
+            $referenceType        = static::ABSOLUTE_URL;
             $parameters['domain'] = $domain;
         }
 
         $routeName = $this->getRouteName($name, $siteId);
 
-        $url = $this->generator->generate($routeName, $parameters, $referenceType);
+        $url = $this->getGenerator()->generate($routeName, $parameters, $referenceType);
 
         return $url;
     }
@@ -269,10 +282,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     {
         $result = $this->getMatcher()->matchRequest($request);
 
-        dump($result);
-        die(__METHOD__);
-
-        return $result;
+        return $this->handleMatchResult($result);
     }
 
     /**
@@ -282,8 +292,18 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     {
         $result = $this->getMatcher()->match($pathinfo);
 
-        dump($result);
-        die(__METHOD__);
+        return $this->handleMatchResult($result);
+    }
+
+    /**
+     * @param array $result
+     * @return array
+     */
+    protected function handleMatchResult(array $result)
+    {
+        // set the matched static route
+        $staticRouteId = $this->staticRouteMap[$result['_route']];
+        Staticroute::setCurrentRoute(Staticroute::getById($staticRouteId));
 
         return $result;
     }
