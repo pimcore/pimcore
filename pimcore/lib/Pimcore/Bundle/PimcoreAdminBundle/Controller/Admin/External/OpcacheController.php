@@ -12,7 +12,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\External;
+namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin\External;
 
 use \Linfo\Exceptions\FatalException;
 use \Linfo\Linfo;

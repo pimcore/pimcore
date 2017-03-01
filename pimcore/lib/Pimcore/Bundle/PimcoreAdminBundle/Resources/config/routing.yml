@@ -1,5 +1,5 @@
 _pimcore_admin:
-    resource: "@PimcoreAdminBundle/Controller/"
+    resource: "@PimcoreAdminBundle/Controller/Admin/"
     type:     annotation
     prefix:   /admin
 

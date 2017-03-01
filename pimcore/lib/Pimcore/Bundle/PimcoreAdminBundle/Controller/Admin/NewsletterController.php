@@ -1,6 +1,6 @@
 <?php
 
-namespace Pimcore\Bundle\PimcoreAdminBundle\Controller;
+namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin;
 
 use Pimcore\Model\Element;
 use Pimcore\Model\Document;

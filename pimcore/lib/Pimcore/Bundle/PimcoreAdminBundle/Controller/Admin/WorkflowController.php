@@ -1,7 +1,8 @@
 <?php
 
-namespace Pimcore\Bundle\PimcoreAdminBundle\Controller;
+namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin;
 
+use Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminController;
 use Pimcore\Bundle\PimcoreBundle\Controller\EventedControllerInterface;
 use Pimcore\WorkflowManagement\Workflow;
 use Pimcore\Model\Object;

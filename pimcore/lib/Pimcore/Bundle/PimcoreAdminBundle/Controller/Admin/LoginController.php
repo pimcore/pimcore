@@ -1,7 +1,9 @@
 <?php
 
-namespace Pimcore\Bundle\PimcoreAdminBundle\Controller;
+namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin;
 
+use Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminController;
+use Pimcore\Bundle\PimcoreAdminBundle\Controller\BruteforceProtectedControllerInterface;
 use Pimcore\Bundle\PimcoreBundle\Configuration\TemplatePhp;
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModel;
 use Pimcore\Config;

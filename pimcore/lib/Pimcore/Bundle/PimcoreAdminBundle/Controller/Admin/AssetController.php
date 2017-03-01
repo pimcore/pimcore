@@ -10,7 +10,7 @@
  * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
  */
 
-namespace Pimcore\Bundle\PimcoreAdminBundle\Controller;
+namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\PimcoreBundle\Configuration\TemplatePhp;
 use Pimcore\Bundle\PimcoreBundle\Controller\EventedControllerInterface;

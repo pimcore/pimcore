@@ -19,7 +19,7 @@ class AnnotatedRouteControllerLoader extends BaseAnnotatedRouteControllerLoader
 
         $routeName = str_replace([
             'pimcore_pimcoreadmin_controllerapi_',
-            'pimcore_pimcoreadmin_'
+            'pimcore_pimcoreadmin_admin_'
         ], [
             'pimcore_api_',
             'pimcore_admin_',

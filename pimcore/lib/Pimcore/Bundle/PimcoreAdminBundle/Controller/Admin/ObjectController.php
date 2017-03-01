@@ -1,6 +1,6 @@
 <?php
 
-namespace Pimcore\Bundle\PimcoreAdminBundle\Controller;
+namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin;
 use Pimcore\Bundle\PimcoreBundle\Configuration\TemplatePhp;
 use Pimcore\Bundle\PimcoreBundle\Controller\EventedControllerInterface;
 use Pimcore\Controller\Action\Helper\Json;
