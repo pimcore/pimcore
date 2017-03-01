@@ -1,4 +1,14 @@
 <?php
+/**
+ * Pimcore
+ *
+ * This source file is subject to the GNU General Public License version 3 (GPLv3)
+ * For the full copyright and license information, please view the LICENSE.md and gpl-3.0.txt
+ * files that are distributed with this source code.
+ *
+ * @copyright  Copyright (c) 2009-2017 pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     GNU General Public License version 3 (GPLv3)
+ */
 
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller;
 
@@ -11,6 +21,7 @@ use Pimcore\Model\Element;
 use Pimcore\Model;
 use Pimcore\Logger;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
@@ -33,6 +44,7 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @Route("/get-data-by-id")
      * @param Request $request
+     * @return JsonResponse
      */
     public function getDataByIdAction(Request $request)
     {
@@ -110,6 +122,7 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @Route("/tree-get-childs-by-id")
      * @param Request $request
+     * @return JsonResponse
      */
     public function treeGetChildsByIdAction(Request $request)
     {
@@ -117,13 +130,13 @@ class AssetController extends ElementControllerBase implements EventedController
         $cv = false;
         $asset = Asset::getById($request->get("node"));
 
-        if ($asset->hasChilds()) {
-            $limit = intval($request->get("limit"));
-            if (!$request->get("limit")) {
-                $limit = 100000000;
-            }
-            $offset = intval($request->get("start"));
+        $limit = intval($request->get("limit"));
+        if (!$request->get("limit")) {
+            $limit = 100000000;
+        }
+        $offset = intval($request->get("start"));
 
+        if ($asset->hasChilds()) {
 
             if ($request->get("view")) {
                 $cv = \Pimcore\Model\Element\Service::getCustomViewById($request->get("view"));
@@ -168,23 +181,23 @@ class AssetController extends ElementControllerBase implements EventedController
         } else {
             return $this->json($assets);
         }
-
-        return $this->json(false);
     }
 
     /**
      * @Route("/add-asset")
      * @param Request $request
+     * @return JsonResponse
      */
     public function addAssetAction(Request $request)
     {
-        $res = $this->addAsset();
+        $res = $this->addAsset($request);
         return $this->json(["success" => $res["success"], "msg" => "Success"]);
     }
 
     /**
      * @Route("/add-asset-compatibility")
      * @param Request $request
+     * @return JsonResponse
      */
     public function addAssetCompatibilityAction(Request $request)
     {
@@ -203,8 +216,9 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/add-asset")
      * @param Request $request
+     * @return array
+     * @throws \Exception
      */
     protected function addAsset(Request $request)
     {
@@ -299,7 +313,7 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @param $targetPath
      * @param $filename
-     * @return mixed
+     * @return string
      */
     protected function getSafeFilename($targetPath, $filename)
     {
@@ -323,6 +337,8 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @Route("/replace-asset")
      * @param Request $request
+     * @return JsonResponse
+     * @throws \Exception
      */
     public function replaceAssetAction(Request $request)
     {
@@ -353,6 +369,7 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @Route("/add-folder")
      * @param Request $request
+     * @return JsonResponse
      */
     public function addFolderAction(Request $request)
     {
@@ -380,6 +397,7 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @Route("/delete")
      * @param Request $request
+     * @return JsonResponse
      */
     public function deleteAction(Request $request)
     {
@@ -396,6 +414,9 @@ class AssetController extends ElementControllerBase implements EventedController
 
             $deletedItems = [];
             foreach ($assets as $asset) {
+                /**
+                 * @var $asset Asset
+                 */
                 $deletedItems[] = $asset->getRealFullPath();
                 if ($asset->isAllowed("delete")) {
                     $asset->delete();
@@ -419,6 +440,7 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @Route("/delete-info")
      * @param Request $request
+     * @return JsonResponse
      */
     public function deleteInfoAction(Request $request)
     {
@@ -516,6 +538,9 @@ class AssetController extends ElementControllerBase implements EventedController
      */
     protected function getTreeNodeConfig($element)
     {
+        /**
+         * @var $asset Asset
+         */
         $asset = $element;
 
         $tmpAsset = [
@@ -625,10 +650,10 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @param $asset
+     * @param Asset $asset
      * @return null|string
      */
-    protected function getThumbnailUrl($asset)
+    protected function getThumbnailUrl(Asset $asset)
     {
         if ($asset instanceof Asset\Image) {
             return "/admin/asset/get-image-thumbnail?id=" . $asset->getId() . "&treepreview=true";
@@ -644,6 +669,8 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @Route("/update")
      * @param Request $request
+     * @return JsonResponse
+     * @throws \Exception
      */
     public function updateAction(Request $request)
     {
@@ -761,6 +788,8 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @Route("/save")
      * @param Request $request
+     * @return JsonResponse
+     * @throws \Exception
      */
     public function saveAction(Request $request)
     {
@@ -822,7 +851,7 @@ class AssetController extends ElementControllerBase implements EventedController
                         $asset->setScheduledTasks($tasks);
                     }
 
-                    if ($this->hasParam("data")) {
+                    if ($request->get("data")) {
                         $asset->setData($request->get("data"));
                     }
 
@@ -858,6 +887,7 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @Route("/publish-version")
      * @param Request $request
+     * @return JsonResponse
      */
     public function publishVersionAction(Request $request)
     {
@@ -882,6 +912,8 @@ class AssetController extends ElementControllerBase implements EventedController
      * @Route("/show-version")
      * @TemplatePhp()
      * @param Request $request
+     * @return Response
+     * @throws \Exception
      */
     public function showVersionAction(Request $request)
     {
@@ -890,7 +922,7 @@ class AssetController extends ElementControllerBase implements EventedController
         $asset = $version->loadData();
 
         if ($asset->isAllowed("versions")) {
-            return $this->render("PimcoreAdminBundle:Asset:show-version-" . $asset->getType() . ".html.php",
+            return $this->render("PimcoreAdminBundle:Asset:showVersion" . ucfirst($asset->getType()) . ".html.php",
                 array("asset" => $asset));
         } else {
             throw new \Exception("Permission denied, version id [" . $id . "]");
@@ -900,26 +932,24 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @Route("/download")
      * @param Request $request
+     * @return BinaryFileResponse
      */
     public function downloadAction(Request $request)
     {
         $asset = Asset::getById($request->get("id"));
 
         if ($asset->isAllowed("view")) {
-
             $response = new BinaryFileResponse($asset->getFileSystemPath());
             $response->headers->set("Content-Type", $asset->getMimetype());
             $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $asset->getFilename());
             return $response;
-
         }
-
-        $this->removeViewRenderer();
     }
 
     /**
      * @Route("/download-image-thumbnail")
      * @param Request $request
+     * @return BinaryFileResponse
      */
     public function downloadImageThumbnailAction(Request $request)
     {
@@ -1003,12 +1033,15 @@ class AssetController extends ElementControllerBase implements EventedController
             $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $downloadFilename);
             $this->addThumbnailCacheHeaders($response);
             $response->deleteFileAfterSend(true);
+
+            return $response;
         }
     }
 
     /**
      * @Route("/get-image-thumbnail")
      * @param Request $request
+     * @return BinaryFileResponse|JsonResponse
      */
     public function getImageThumbnailAction(Request $request)
     {
@@ -1074,6 +1107,7 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @Route("/get-video-thumbnail")
      * @param Request $request
+     * @return BinaryFileResponse
      */
     public function getVideoThumbnailAction(Request $request)
     {
@@ -1124,6 +1158,7 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @Route("/get-document-thumbnail")
      * @param Request $request
+     * @return BinaryFileResponse
      */
     public function getDocumentThumbnailAction(Request $request)
     {
@@ -1156,6 +1191,9 @@ class AssetController extends ElementControllerBase implements EventedController
         return $response;
     }
 
+    /**
+     * @param Response $response
+     */
     protected function addThumbnailCacheHeaders(Response $response)
     {
         $lifetime = 300;
@@ -1172,19 +1210,20 @@ class AssetController extends ElementControllerBase implements EventedController
      * @Route("/get-preview-document")
      * @TemplatePhp()
      * @param Request $request
+     * @return array
      */
     public function getPreviewDocumentAction(Request $request)
     {
         $asset = Asset::getById($request->get("id"));
-        return array("asset" => $asset);
+        return ["asset" => $asset];
     }
 
 
     /**
      * @Route("/get-preview-video")
      * @TemplatePhp()
-     *
      * @param Request $request
+     * @return Response
      */
     public function getPreviewVideoAction(Request $request)
     {
@@ -1200,23 +1239,23 @@ class AssetController extends ElementControllerBase implements EventedController
             $previewData["thumbnail"] = $thumbnail;
 
             if ($thumbnail["status"] == "finished") {
-                return $this->render("PimcoreAdminBundle:Asset:get-preview-video-display.html.php",
+                return $this->render("PimcoreAdminBundle:Asset:getPreviewVideoDisplay.html.php",
                     $previewData);
             } else {
-                return $this->render("PimcoreAdminBundle:Asset:get-preview-video-error.html.php",
+                return $this->render("PimcoreAdminBundle:Asset:getPreviewVideoError.html.php",
                     $previewData);
             }
         } else {
-            return $this->render("PimcoreAdminBundle:Asset:get-preview-video-error.html.php",
+            return $this->render("PimcoreAdminBundle:Asset:getPreviewVideoError.html.php",
                 $previewData);
         }
-        return $result;
     }
 
     /**
      * @Route("/image-editor")
      * @param Request $request
      * @TemplatePhp()
+     * @return array
      */
     public function imageEditorAction(Request $request)
     {
@@ -1227,6 +1266,7 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @Route("/image-editor-save")
      * @param Request $request
+     * @return JsonResponse
      */
     public function imageEditorSaveAction(Request $request)
     {
@@ -1241,6 +1281,7 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @Route("/get-folder-content-preview")
      * @param Request $request
+     * @return JsonResponse
      */
     public function getFolderContentPreviewAction(Request $request)
     {
@@ -1306,6 +1347,7 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @Route("/copy-info")
      * @param Request $request
+     * @return JsonResponse
      */
     public function copyInfoAction(Request $request)
     {
@@ -1376,6 +1418,7 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @Route("/copy")
      * @param Request $request
+     * @return JsonResponse
      */
     public function copyAction(Request $request)
     {
@@ -1433,6 +1476,7 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @Route("/download-as-zip-jobs")
      * @param Request $request
+     * @return JsonResponse
      */
     public function downloadAsZipJobsAction(Request $request)
     {
@@ -1476,6 +1520,7 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @Route("/download-as-zip-add-files")
      * @param Request $request
+     * @return JsonResponse
      */
     public function downloadAsZipAddFilesAction(Request $request)
     {
@@ -1525,7 +1570,7 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @Route("/download-as-zip")
      * @param Request $request
-     *
+     * @return BinaryFileResponse
      * Download all assets contained in the folder with parameter id as ZIP file.
      * The suggested filename is either [folder name].zip or assets.zip for the root folder.
      */
@@ -1538,7 +1583,6 @@ class AssetController extends ElementControllerBase implements EventedController
             $suggestedFilename = "assets";
         }
 
-
         $response = new BinaryFileResponse($zipFile);
         $response->headers->set("Content-Type", "application/zip");
         $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $suggestedFilename . '.zip');
@@ -1549,6 +1593,7 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @Route("/import-zip")
      * @param Request $request
+     * @return Response
      */
     public function importZipAction(Request $request)
     {
@@ -1581,21 +1626,19 @@ class AssetController extends ElementControllerBase implements EventedController
         // here we have to use this method and not the JSON action helper ($this->_helper->json()) because this will add
         // Content-Type: application/json which fires a download window in most browsers, because this is a normal POST
         // request and not XHR where the content-type doesn't matter
-
-
-        //TODO
-
-        $this->disableViewAutoRender();
-        echo $this->encodeJson([
+        $responseJson = $this->encodeJson([
             "success" => true,
             "jobs" => $jobs,
             "jobId" => $jobId
         ]);
+
+        return new Response($responseJson);
     }
 
     /**
      * @Route("/import-zip-files")
      * @param Request $request
+     * @return JsonResponse
      */
     public function importZipFilesAction(Request $request)
     {
@@ -1662,6 +1705,7 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @Route("/import-server")
      * @param Request $request
+     * @return JsonResponse
      */
     public function importServerAction(Request $request)
     {
@@ -1704,6 +1748,7 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @Route("/import-server-files")
      * @param Request $request
+     * @return JsonResponse
      */
     public function importServerFilesAction(Request $request)
     {
@@ -1743,6 +1788,8 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @Route("/import-url")
      * @param Request $request
+     * @return JsonResponse
+     * @throws \Exception
      */
     public function importUrlAction(Request $request)
     {
@@ -1781,6 +1828,7 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @Route("/clear-thumbnails")
      * @param Request $request
+     * @return JsonResponse
      */
     public function clearThumbnailAction(Request $request)
     {
@@ -1801,6 +1849,7 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @Route("/grid-proxy")
      * @param Request $request
+     * @return JsonResponse
      */
     public function gridProxyAction(Request $request)
     {
@@ -1926,6 +1975,7 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @Route("/get-text")
      * @param Request $request
+     * @return JsonResponse
      */
     public function getTextAction(Request $request)
     {
