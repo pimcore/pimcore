@@ -9,6 +9,7 @@ use Pimcore\Model\Version;
 use Pimcore\Model;
 use Pimcore\Logger;
 use Pimcore\Tool;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -38,6 +39,7 @@ class ElementController extends AdminController
     /**
      * @Route("/element/get-id-path")
      * @param Request $request
+     * @return JsonResponse
      */
     public function getIdPathAction(Request $request)
     {
@@ -58,8 +60,9 @@ class ElementController extends AdminController
      *
      * @Route("/element/get-sub-type")
      * @param Request $request
+     * @return JsonResponse
      */
-    public function getSubtypeAction(´Request $request)
+    public function getSubtypeAction(Request $request)
     {
         $idOrPath = trim($request->get("id"));
         $type = $request->get("type");
@@ -98,6 +101,7 @@ class ElementController extends AdminController
     /**
      * @Route("/element/note-list")
      * @param Request $request
+     * @return JsonResponse
      */
     public function noteListAction(Request $request)
     {
@@ -219,6 +223,7 @@ class ElementController extends AdminController
     /**
      * @Route("/element/note-add")
      * @param Request $request
+     * @return JsonResponse
      */
     public function noteAddAction(Request $request)
     {
@@ -241,6 +246,7 @@ class ElementController extends AdminController
     /**
      * @Route("/element/find-usages")
      * @param Request $request
+     * @return JsonResponse
      */
     public function findUsagesAction(Request $request)
     {
@@ -274,6 +280,7 @@ class ElementController extends AdminController
     /**
      * @Route("/element/replace-assignments")
      * @param Request $request
+     * @return JsonResponse
      */
     public function replaceAssignmentsAction(Request $request)
     {
@@ -318,6 +325,7 @@ class ElementController extends AdminController
     /**
      * @Route("/element/unlock-propagate")
      * @param Request $request
+     * @return JsonResponse
      */
     public function unlockPropagateAction(Request $request)
     {
@@ -337,6 +345,7 @@ class ElementController extends AdminController
     /**
      * @Route("/element/type-path")
      * @param Request $request
+     * @return JsonResponse
      */
     public function typePathAction(Request $request)
     {
@@ -367,6 +376,7 @@ class ElementController extends AdminController
     /**
      * @Route("/element/version-update")
      * @param Request $request
+     * @return JsonResponse
      */
     public function versionUpdateAction(Request $request)
     {
@@ -383,6 +393,8 @@ class ElementController extends AdminController
     /**
      * @Route("/element/get-nice-path")
      * @param Request $request
+     * @return JsonResponse
+     * @throws \Exception
      */
     public function getNicePathAction(Request $request)
     {
@@ -445,6 +457,7 @@ class ElementController extends AdminController
     /**
      * @Route("/element/get-versions")
      * @param Request $request
+     * @return JsonResponse
      * @throws \Exception
      */
     public function getVersionsAction(Request $request)
@@ -487,6 +500,7 @@ class ElementController extends AdminController
     /**
      * @Route("/element/delete-version")
      * @param Request $request
+     * @return JsonResponse
      */
     public function deleteVersionAction(Request $request)
     {
@@ -500,6 +514,7 @@ class ElementController extends AdminController
     /**
      * @Route("/element/get-requires-dependencies")
      * @param Request $request
+     * @return JsonResponse
      */
     public function getRequiresDependenciesAction(Request $request)
     {
@@ -522,6 +537,7 @@ class ElementController extends AdminController
     /**
      * @Route("/element/get-required-by-dependencies")
      * @param Request $request
+     * @return JsonResponse
      */
     public function getRequiredByDependenciesAction(Request $request)
     {
@@ -542,6 +558,7 @@ class ElementController extends AdminController
     /**
      * @Route("/element/get-predefined-properties")
      * @param Request $request
+     * @return JsonResponse
      */
     public function getPredefinedPropertiesAction(Request $request)
     {
@@ -568,5 +585,4 @@ class ElementController extends AdminController
 
         return $this->json(["properties" => $properties]);
     }
-
 }

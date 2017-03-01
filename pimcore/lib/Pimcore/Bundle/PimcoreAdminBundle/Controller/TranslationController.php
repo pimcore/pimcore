@@ -11,6 +11,7 @@ use Pimcore\Model\Element;
 use Pimcore\Model;
 use Pimcore\Logger;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
@@ -25,6 +26,7 @@ class TranslationController extends AdminController
     /**
      * @Route("/import")
      * @param Request $request
+     * @return JsonResponse
      */
     public function importAction(Request $request)
     {
@@ -72,6 +74,7 @@ class TranslationController extends AdminController
     /**
      * @Route("/export")
      * @param Request $request
+     * @return Response
      */
     public function exportAction(Request $request)
     {
@@ -202,6 +205,7 @@ class TranslationController extends AdminController
     /**
      * @Route("/add-admin-translation-keys")
      * @param Request $request
+     * @return JsonResponse
      */
     public function addAdminTranslationKeysAction(Request $request)
     {
@@ -242,6 +246,7 @@ class TranslationController extends AdminController
     /**
      * @Route("/translations")
      * @param Request $request
+     * @return JsonResponse
      */
     public function translationsAction(Request $request)
     {
@@ -513,6 +518,7 @@ class TranslationController extends AdminController
     /**
      * @Route("/cleanup")
      * @param Request $request
+     * @return JsonResponse
      */
     public function cleanupAction(Request $request)
     {
@@ -531,11 +537,16 @@ class TranslationController extends AdminController
 
 
     /**
-     * @Route("/content-export-jobs")
-     * @param Request $request
-     *
+     * -----------------------------------------------------------------------------------
      * THE FOLLOWING ISN'T RELATED TO THE SHARED TRANSLATIONS OR ADMIN-TRANSLATIONS
      * XLIFF CONTENT-EXPORT & MS WORD CONTENT-EXPORT
+     * -----------------------------------------------------------------------------------
+     */
+
+    /**
+     * @Route("/content-export-jobs")
+     * @param Request $request
+     * @return JsonResponse
      */
     public function contentExportJobsAction(Request $request)
     {
@@ -614,6 +625,7 @@ class TranslationController extends AdminController
     /**
      * @Route("/xliff-export")
      * @param Request $request
+     * @return JsonResponse
      */
     public function xliffExportAction(Request $request)
     {
@@ -770,6 +782,7 @@ class TranslationController extends AdminController
     /**
      * @Route("/xliff-export-download")
      * @param Request $request
+     * @return BinaryFileResponse
      */
     public function xliffExportDownloadAction(Request $request)
     {
@@ -786,6 +799,7 @@ class TranslationController extends AdminController
     /**
      * @Route("/xliff-import-upload")
      * @param Request $request
+     * @return JsonResponse
      */
     public function xliffImportUploadAction(Request $request)
     {
@@ -822,6 +836,8 @@ class TranslationController extends AdminController
     /**
      * @Route("/xliff-import-element")
      * @param Request $request
+     * @return JsonResponse
+     * @throws \Exception
      */
     public function xliffImportElementAction(Request $request)
     {
@@ -1020,6 +1036,7 @@ class TranslationController extends AdminController
     /**
      * @Route("/word-export")
      * @param Request $request
+     * @return JsonResponse
      */
     public function wordExportAction(Request $request)
     {
@@ -1239,6 +1256,7 @@ class TranslationController extends AdminController
     /**
      * @Route("/word-export-download")
      * @param Request $request
+     * @return BinaryFileResponse
      */
     public function wordExportDownloadAction(Request $request)
     {
@@ -1283,6 +1301,7 @@ class TranslationController extends AdminController
     /**
      * @Route("/merge-item")
      * @param Request $request
+     * @return JsonResponse
      */
     public function mergeItemAction(Request $request)
     {
@@ -1307,6 +1326,7 @@ class TranslationController extends AdminController
     /**
      * @Route("/get-website-translation-languages")
      * @param Request $request
+     * @return JsonResponse
      */
     public function getWebsiteTranslationLanguagesAction(Request $request)
     {

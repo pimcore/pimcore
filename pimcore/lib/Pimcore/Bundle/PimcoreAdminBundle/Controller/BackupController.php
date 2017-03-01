@@ -15,10 +15,10 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class BackupController extends AdminController implements EventedControllerInterface
 {
-
     /**
      * @Route("/backup/init")
      * @param Request $request
+     * @return JsonResponse
      */
     public function initAction(Request $request)
     {
@@ -35,6 +35,7 @@ class BackupController extends AdminController implements EventedControllerInter
     /**
      * @Route("/backup/files")
      * @param Request $request
+     * @return JsonResponse
      */
     public function filesAction(Request $request)
     {
@@ -48,6 +49,7 @@ class BackupController extends AdminController implements EventedControllerInter
     /**
      * @Route("/backup/mysql-tables")
      * @param Request $request
+     * @return JsonResponse
      */
     public function mysqlTablesAction(Request $request)
     {
@@ -60,10 +62,10 @@ class BackupController extends AdminController implements EventedControllerInter
         return new JsonResponse($return);
     }
 
-
     /**
      * @Route("/backup/mysql")
      * @param Request $request
+     * @return JsonResponse
      */
     public function mysqlAction(Request $request)
     {
@@ -82,6 +84,7 @@ class BackupController extends AdminController implements EventedControllerInter
     /**
      * @Route("/backup/mysql-complete")
      * @param Request $request
+     * @return JsonResponse
      */
     public function mysqlCompleteAction(Request $request)
     {
@@ -97,6 +100,7 @@ class BackupController extends AdminController implements EventedControllerInter
     /**
      * @Route("/backup/complete")
      * @param Request $request
+     * @return JsonResponse
      */
     public function completeAction(Request $request)
     {
@@ -112,6 +116,7 @@ class BackupController extends AdminController implements EventedControllerInter
     /**
      * @Route("/backup/download")
      * @param Request $request
+     * @return BinaryFileResponse
      */
     public function downloadAction(Request $request)
     {
@@ -120,8 +125,8 @@ class BackupController extends AdminController implements EventedControllerInter
         $response = new BinaryFileResponse($backup->getBackupFile());
         $response->headers->set('Content-Type', 'application/zip');
         $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, basename($backup->getBackupFile()));
-        return $response;
 
+        return $response;
     }
 
     /**

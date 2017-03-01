@@ -4,6 +4,7 @@ namespace Pimcore\Bundle\PimcoreAdminBundle\Controller;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Logger;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -15,6 +16,7 @@ class FolderController extends DocumentControllerBase
     /**
      * @Route("/get-data-by-id")
      * @param Request $request
+     * @return JsonResponse
      */
     public function getDataByIdAction(Request $request)
     {
@@ -55,6 +57,8 @@ class FolderController extends DocumentControllerBase
     /**
      * @Route("/save")
      * @param Request $request
+     * @return JsonResponse
+     * @throws \Exception
      */
     public function saveAction(Request $request)
     {

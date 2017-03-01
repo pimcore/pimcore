@@ -7,6 +7,7 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Tool;
 use Pimcore\Model\Tool\Newsletter;
 use Pimcore\Logger;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -18,6 +19,7 @@ class NewsletterController extends DocumentControllerBase
     /**
      * @Route("/get-data-by-id")
      * @param Request $request
+     * @return JsonResponse
      */
     public function getDataByIdAction(Request $request)
     {
@@ -66,6 +68,8 @@ class NewsletterController extends DocumentControllerBase
     /**
      * @Route("/save")
      * @param Request $request
+     * @return JsonResponse
+     * @throws \Exception
      */
     public function saveAction(Request $request)
     {
@@ -139,6 +143,7 @@ class NewsletterController extends DocumentControllerBase
     /**
      * @Route("/checksql")
      * @param Request $request
+     * @return JsonResponse
      */
     public function checksqlAction(Request $request)
     {
@@ -168,6 +173,7 @@ class NewsletterController extends DocumentControllerBase
     /**
      * @Route("/get-available-classes")
      * @param Request $request
+     * @return JsonResponse
      */
     public function getAvailableClassesAction(Request $request)
     {
@@ -195,6 +201,7 @@ class NewsletterController extends DocumentControllerBase
     /**
      * @Route("/get-available-reports")
      * @param Request $request
+     * @return JsonResponse
      */
     public function getAvailableReportsAction(Request $request)
     {
@@ -228,6 +235,7 @@ class NewsletterController extends DocumentControllerBase
     /**
      * @Route("/get-send-status")
      * @param Request $request
+     * @return JsonResponse
      */
     public function getSendStatusAction(Request $request)
     {
@@ -243,6 +251,7 @@ class NewsletterController extends DocumentControllerBase
     /**
      * @Route("/stop-send")
      * @param Request $request
+     * @return JsonResponse
      */
     public function stopSendAction(Request $request)
     {
@@ -257,6 +266,7 @@ class NewsletterController extends DocumentControllerBase
     /**
      * @Route("/send")
      * @param Request $request
+     * @return JsonResponse
      */
     public function sendAction(Request $request)
     {
@@ -284,6 +294,7 @@ class NewsletterController extends DocumentControllerBase
     /**
      * @Route("/send-test")
      * @param Request $request
+     * @return JsonResponse
      */
     public function sendTestAction(Request $request)
     {

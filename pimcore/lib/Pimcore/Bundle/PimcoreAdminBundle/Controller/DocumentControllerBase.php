@@ -20,6 +20,7 @@ use Pimcore\Model;
 use Pimcore\Model\Property;
 use Pimcore\Model\Schedule;
 use Pimcore\Logger;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
@@ -150,6 +151,7 @@ abstract class DocumentControllerBase extends AdminController implements Evented
     /**
      * @Route("/save-to-session")
      * @param Request $request
+     * @return JsonResponse
      */
     public function saveToSessionAction(Request $request)
     {
@@ -194,6 +196,7 @@ abstract class DocumentControllerBase extends AdminController implements Evented
     /**
      * @Route("/remove-from-session")
      * @param Request $request
+     * @return JsonResponse
      */
     public function removeFromSessionAction(Request $request)
     {
@@ -234,9 +237,10 @@ abstract class DocumentControllerBase extends AdminController implements Evented
     }
 
     /**
-     * this is used for pages and snippets to change the master document (which is not saved with the normal save button)
+     * This is used for pages and snippets to change the master document (which is not saved with the normal save button)
      * @Route("/change-master-document")
      * @param Request $request
+     * @return JsonResponse
      */
     public function changeMasterDocumentAction(Request $request)
     {

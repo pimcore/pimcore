@@ -25,6 +25,7 @@ class QuantityValueController extends AdminController
     /**
      * @Route("/quantity-value/unit-proxy")
      * @param Request $request
+     * @return JsonResponse
      * @throws \Exception
      */
     public function unitProxyAction(Request $request)
@@ -101,8 +102,7 @@ class QuantityValueController extends AdminController
                 $units[] = get_object_vars($u);
             }
 
-            $response = new JsonResponse(["data" => $units, "success" => true, "total" => $list->getTotalCount()]);
-            return $response;
+            return $this->json(["data" => $units, "success" => true, "total" => $list->getTotalCount()]);
         }
     }
 
@@ -125,6 +125,7 @@ class QuantityValueController extends AdminController
     /**
      * @Route("/quantity-value/unit-list")
      * @param Request $request
+     * @return JsonResponse
      */
     public function unitListAction(Request $request)
     {
@@ -143,6 +144,6 @@ class QuantityValueController extends AdminController
         }
 
         $units = $list->getUnits();
-        return new JsonResponse(["data" => $units, "success" => true, "total" => $list->getTotalCount()]);
+        return $this->json(["data" => $units, "success" => true, "total" => $list->getTotalCount()]);
     }
 }

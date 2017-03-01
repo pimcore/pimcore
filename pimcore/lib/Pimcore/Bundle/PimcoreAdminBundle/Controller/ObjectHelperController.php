@@ -8,6 +8,7 @@ use Pimcore\Model\Object;
 use Pimcore\Model\Element;
 use Pimcore\Tool;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
@@ -21,6 +22,7 @@ class ObjectHelperController extends AdminController
     /**
      * @Route("/load-object-data")
      * @param Request $request
+     * @return JsonResponse
      */
     public function loadObjectDataAction(Request $request)
     {
@@ -40,6 +42,7 @@ class ObjectHelperController extends AdminController
     /**
      * @Route("/grid-get-column-config")
      * @param Request $request
+     * @return JsonResponse
      */
     public function gridGetColumnConfigAction(Request $request)
     {
@@ -295,6 +298,7 @@ class ObjectHelperController extends AdminController
     /**
      * @Route("/grid-delete-column-config")
      * @param Request $request
+     * @return JsonResponse
      */
     public function gridDeleteColumnConfigAction(Request $request)
     {
@@ -334,6 +338,7 @@ class ObjectHelperController extends AdminController
     /**
      * @Route("/grid-save-column-config")
      * @param Request $request
+     * @return JsonResponse
      */
     public function gridSaveColumnConfigAction(Request $request)
     {
@@ -434,6 +439,7 @@ class ObjectHelperController extends AdminController
     /**
      * @Route("/import-upload")
      * @param Request $request
+     * @return JsonResponse
      */
     public function importUploadAction(Request $request)
     {
@@ -459,6 +465,7 @@ class ObjectHelperController extends AdminController
     /**
      * @Route("/import-get-file-info")
      * @param Request $request
+     * @return JsonResponse
      */
     public function importGetFileInfoAction(Request $request)
     {
@@ -563,6 +570,7 @@ class ObjectHelperController extends AdminController
     /**
      * @Route("/import-process")
      * @param Request $request
+     * @return JsonResponse
      */
     public function importProcessAction(Request $request)
     {
@@ -732,7 +740,6 @@ class ObjectHelperController extends AdminController
         $requestedLanguage = $request->get("language");
         if ($requestedLanguage) {
             if ($requestedLanguage != "default") {
-//                $this->get('translator')->setLocale($requestedLanguage);
                 $request->setLocale($requestedLanguage);
             }
         } else {
@@ -850,6 +857,7 @@ class ObjectHelperController extends AdminController
     /**
      * @Route("/get-export-jobs")
      * @param Request $request
+     * @return JsonResponse
      */
     public function getExportJobsAction(Request $request)
     {
@@ -868,6 +876,7 @@ class ObjectHelperController extends AdminController
     /**
      * @Route("/do-export")
      * @param Request $request
+     * @return JsonResponse
      */
     public function doExportAction(Request $request)
     {
@@ -898,6 +907,7 @@ class ObjectHelperController extends AdminController
     /**
      * @Route("/download-csv-file")
      * @param Request $request
+     * @return BinaryFileResponse
      */
     public function downloadCsvFileAction(Request $request)
     {
@@ -1131,11 +1141,11 @@ class ObjectHelperController extends AdminController
     /**
      * @Route("/get-batch-jobs")
      * @param Request $request
+     * @return JsonResponse
      */
     public function getBatchJobsAction(Request $request)
     {
         if ($request->get("language")) {
-//            $this->get('translator')->setLocale($request->get("language"));
             $request->setLocale($request->get("language"));
         }
 
@@ -1170,6 +1180,7 @@ class ObjectHelperController extends AdminController
     /**
      * @Route("/batch")
      * @param Request $request
+     * @return JsonResponse
      */
     public function batchAction(Request $request)
     {

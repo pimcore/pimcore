@@ -16,6 +16,7 @@ class RecyclebinController extends AdminController implements EventedControllerI
     /**
      * @Route("/recyclebin/list")
      * @param Request $request
+     * @return JsonResponse
      */
     public function listAction(Request $request)
     {
@@ -111,37 +112,40 @@ class RecyclebinController extends AdminController implements EventedControllerI
 
             $items = $list->load();
 
-            return new JsonResponse(["data" => $items, "success" => true, "total" => $list->getTotalCount()]);
+            return $this->json(["data" => $items, "success" => true, "total" => $list->getTotalCount()]);
         }
     }
 
     /**
      * @Route("/recyclebin/restore")
      * @param Request $request
+     * @return JsonResponse
      */
     public function restoreAction(Request $request)
     {
         $item = Recyclebin\Item::getById($request->get("id"));
         $item->restore();
 
-        return new JsonResponse(["success" => true]);
+        return $this->json(["success" => true]);
     }
 
     /**
      * @Route("/recyclebin/flush")
      * @param Request $request
+     * @return JsonResponse
      */
     public function flushAction()
     {
         $bin = new Element\Recyclebin();
         $bin->flush();
 
-        return new JsonResponse(["success" => true]);
+        return $this->json(["success" => true]);
     }
 
     /**
      * @Route("/recyclebin/add")
      * @param Request $request
+     * @return JsonResponse
      */
     public function addAction(Request $request)
     {
@@ -158,9 +162,9 @@ class RecyclebinController extends AdminController implements EventedControllerI
                 Recyclebin\Item::create($element, $this->getUser());
             }
 
-            return new JsonResponse(["success" => true]);
+            return $this->json(["success" => true]);
         } else {
-            return new JsonResponse(["success" => false]);
+            return $this->json(["success" => false]);
         }
     }
 

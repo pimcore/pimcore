@@ -3,6 +3,7 @@ namespace Pimcore\Bundle\PimcoreAdminBundle\Controller;
 
 
 use Pimcore\Model\Element\Service;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -21,6 +22,7 @@ class ElementControllerBase extends AdminController
     /**
      * @Route("/tree-get-root")
      * @param Request $request
+     * @return JsonResponse
      */
     public function treeGetRootAction(Request $request)
     {
@@ -41,6 +43,4 @@ class ElementControllerBase extends AdminController
 
         return $this->json(["success" => false, "message" => "missing_permission"]);
     }
-
-
 }

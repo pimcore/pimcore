@@ -8,6 +8,7 @@ use Pimcore\Model\Element;
 use Pimcore\Model\Document;
 use Pimcore\Model\Tool;
 use Pimcore\Logger;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -21,6 +22,7 @@ class EmailController extends DocumentControllerBase
     /**
      * @Route("/get-data-by-id")
      * @param Request $request
+     * @return JsonResponse
      */
     public function getDataByIdAction(Request $request)
     {
@@ -70,6 +72,8 @@ class EmailController extends DocumentControllerBase
     /**
      * @Route("/save")
      * @param Request $request
+     * @return JsonResponse
+     * @throws \Exception
      */
     public function saveAction(Request $request)
     {
@@ -143,10 +147,10 @@ class EmailController extends DocumentControllerBase
     }
 
     /**
-     * Returns the a list of log files for the data grid
-     *
      * @Route("/email-logs")
      * @param Request $request
+     * @return JsonResponse
+     * @throws \Exception
      */
     public function emailLogsAction(Request $request)
     {
@@ -204,10 +208,10 @@ class EmailController extends DocumentControllerBase
 
 
     /**
-     * Shows the email logs and returns the Json object for the dynamic params
-     *
      * @Route("/show-email-log")
      * @param Request $request
+     * @return JsonResponse|Response
+     * @throws \Exception
      */
     public function showEmailLogAction(Request $request)
     {
@@ -235,13 +239,11 @@ class EmailController extends DocumentControllerBase
             }
             return $this->json($params);
         } else {
-            die('No Type specified');
+            return new Response('No Type specified');
         }
     }
 
     /**
-     * Helper to build the correct Json array for the treeGrid
-     *
      * @param array $data
      * @param $fullEntry
      */
@@ -321,10 +323,10 @@ class EmailController extends DocumentControllerBase
 
 
     /**
-     * Deletes a single log entry
-     *
      * @Route("/delete-email-log")
      * @param Request $request
+     * @return JsonResponse
+     * @throws \Exception
      */
     public function deleteEmailLogAction(Request $request)
     {
@@ -346,6 +348,8 @@ class EmailController extends DocumentControllerBase
     /**
      * @Route("/resend-email")
      * @param Request $request
+     * @return JsonResponse
+     * @throws \Exception
      */
     public function resendEmailAction(Request $request)
     {
@@ -395,10 +399,10 @@ class EmailController extends DocumentControllerBase
 
 
     /**
-     * Sends a test email
-     *
      * @Route("/send-test-email")
      * @param Request $request
+     * @return JsonResponse
+     * @throws \Exception
      */
     public function sendTestEmailAction(Request $request)
     {
@@ -428,6 +432,8 @@ class EmailController extends DocumentControllerBase
     /**
      * @Route("/blacklist")
      * @param Request $request
+     * @return JsonResponse
+     * @throws \Exception
      */
     public function blacklistAction(Request $request)
     {
@@ -547,6 +553,7 @@ class EmailController extends DocumentControllerBase
     /**
      * @Route("/bounce-mail-inbox-list")
      * @param Request $request
+     * @return JsonResponse
      */
     public function bounceMailInboxListAction(Request $request)
     {
@@ -598,8 +605,8 @@ class EmailController extends DocumentControllerBase
     /**
      * @Route("/bounce-mail-inbox-detail")
      * @TemplatePhp()
-     *
      * @param Request $request
+     * @return array
      */
     public function bounceMailInboxDetailAction(Request $request)
     {
@@ -610,9 +617,9 @@ class EmailController extends DocumentControllerBase
         $message = $mail->getMessage((int) $request->get("id"));
         $message->getContent();
 
-        return array(
+        return [
             "mail" => $mail,
             "message" => $message
-        );
+        ];
     }
 }

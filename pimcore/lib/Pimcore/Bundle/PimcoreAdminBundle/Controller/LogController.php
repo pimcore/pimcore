@@ -4,6 +4,7 @@ namespace Pimcore\Bundle\PimcoreAdminBundle\Controller;
 
 use Pimcore\Db;
 use Pimcore\Log\Handler\ApplicationLoggerDb;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -14,6 +15,7 @@ class LogController extends \Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminC
     /**
      * @Route("/log/show")
      * @param Request $request
+     * @return JsonResponse
      */
     public function showAction(Request $request)
     {
@@ -115,6 +117,7 @@ class LogController extends \Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminC
     /**
      * @Route("/log/priority-json")
      * @param Request $request
+     * @return JsonResponse
      */
     public function priorityJsonAction(Request $request)
     {
@@ -129,6 +132,7 @@ class LogController extends \Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminC
     /**
      * @Route("/log/component-json")
      * @param Request $request
+     * @return JsonResponse
      */
     public function componentJsonAction(Request $request)
     {

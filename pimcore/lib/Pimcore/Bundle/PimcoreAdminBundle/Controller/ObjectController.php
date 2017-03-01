@@ -3,11 +3,13 @@
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller;
 use Pimcore\Bundle\PimcoreBundle\Configuration\TemplatePhp;
 use Pimcore\Bundle\PimcoreBundle\Controller\EventedControllerInterface;
+use Pimcore\Controller\Action\Helper\Json;
 use Pimcore\Tool;
 use Pimcore\Model\Object;
 use Pimcore\Model\Element;
 use Pimcore\Model;
 use Pimcore\Logger;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
@@ -27,6 +29,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
     /**
      * @Route("/tree-get-childs-by-id")
      * @param Request $request
+     * @return JsonResponse
      */
     public function treeGetChildsByIdAction(Request $request)
     {
@@ -222,6 +225,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
     /**
      * @Route("/get-id-path-paging-info")
      * @param Request $request
+     * @return JsonResponse
      */
     public function getIdPathPagingInfoAction(Request $request)
     {
@@ -270,6 +274,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
     /**
      * @Route("/get")
      * @param Request $request
+     * @return JsonResponse
      */
     public function getAction(Request $request)
     {
@@ -528,7 +533,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
     /**
      * @param $object
      * @param $key
-     * @return stdClass
+     * @return mixed
      */
     private function getParentValue($object, $key)
     {
@@ -642,6 +647,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
     /**
      * @Route("/get-folder")
      * @param Request $request
+     * @return JsonResponse
      */
     public function getFolderAction(Request $request)
     {
@@ -716,6 +722,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
     /**
      * @Route("/add")
      * @param Request $request
+     * @return JsonResponse
      */
     public function addAction(Request $request)
     {
@@ -788,6 +795,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
     /**
      * @Route("/add-folder")
      * @param Request $request
+     * @return JsonResponse
      */
     public function addFolderAction(Request $request)
     {
@@ -826,6 +834,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
     /**
      * @Route("/delete")
      * @param Request $request
+     * @return JsonResponse
      */
     public function deleteAction(Request $request)
     {
@@ -867,6 +876,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
     /**
      * @Route("/delete-info")
      * @param Request $request
+     * @return JsonResponse
      */
     public function deleteInfoAction(Request $request)
     {
@@ -960,6 +970,8 @@ class ObjectController extends ElementControllerBase implements EventedControlle
     /**
      * @Route("/update")
      * @param Request $request
+     * @return JsonResponse
+     * @throws \Exception
      */
     public function updateAction(Request $request)
     {
@@ -1052,6 +1064,8 @@ class ObjectController extends ElementControllerBase implements EventedControlle
     /**
      * @Route("/save")
      * @param Request $request
+     * @return JsonResponse
+     * @throws \Exception
      */
     public function saveAction(Request $request)
     {
@@ -1194,6 +1208,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
      * @param Object\Concrete $object
      * @param $originalModificationDate
      * @param $data
+     * @return JsonResponse
      */
     public function performFieldcollectionModificationCheck(Request $request, Object\Concrete $object, $originalModificationDate, $data)
     {
@@ -1224,6 +1239,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
     /**
      * @Route("/save-folder")
      * @param Request $request
+     * @return JsonResponse
      */
     public function saveFolderAction(Request $request)
     {
@@ -1296,6 +1312,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
     /**
      * @Route("/publish-version")
      * @param Request $request
+     * @return JsonResponse
      */
     public function publishVersionAction(Request $request)
     {
@@ -1327,6 +1344,8 @@ class ObjectController extends ElementControllerBase implements EventedControlle
      * @Route("/preview-version")
      * @param Request $request
      * @TemplatePhp()
+     * @throws \Exception
+     * @return array
      */
     public function previewVersionAction(Request $request)
     {
@@ -1356,6 +1375,8 @@ class ObjectController extends ElementControllerBase implements EventedControlle
      * @param Request $request
      * @param from
      * @param to
+     * @return array
+     * @throws \Exception
      */
     public function diffVersionsAction(Request $request, $from, $to)
     {
@@ -1390,6 +1411,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
     /**
      * @Route("/grid-proxy")
      * @param Request $request
+     * @return JsonResponse
      */
     public function gridProxyAction(Request $request)
     {
@@ -1661,6 +1683,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
     /**
      * @Route("/copy-info")
      * @param Request $request
+     * @return JsonResponse
      */
     public function copyInfoAction(Request $request)
     {
@@ -1745,6 +1768,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
     /**
      * @Route("/copy-rewrite-ids")
      * @param Request $request
+     * @return JsonResponse
      */
     public function copyRewriteIdsAction(Request $request)
     {
@@ -1784,6 +1808,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
     /**
      * @Route("/copy")
      * @param Request $request
+     * @return JsonResponse
      */
     public function copyAction(Request $request)
     {

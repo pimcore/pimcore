@@ -7,6 +7,7 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\Object;
 use Pimcore\Model\Site;
 use Pimcore\Logger;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
@@ -43,6 +44,7 @@ class PortalController extends AdminController implements EventedControllerInter
     /**
      * @Route("/dashboard-list")
      * @param Request $request
+     * @return JsonResponse
      */
     public function dashboardListAction(Request $request)
     {
@@ -61,6 +63,7 @@ class PortalController extends AdminController implements EventedControllerInter
     /**
      * @Route("/create-dashboard")
      * @param Request $request
+     * @return JsonResponse
      */
     public function createDashboardAction(Request $request)
     {
@@ -82,6 +85,7 @@ class PortalController extends AdminController implements EventedControllerInter
     /**
      * @Route("/delete-dashboard")
      * @param Request $request
+     * @return JsonResponse
      */
     public function deleteDashboardAction(Request $request)
     {
@@ -93,6 +97,7 @@ class PortalController extends AdminController implements EventedControllerInter
     /**
      * @Route("/get-configuration")
      * @param Request $request
+     * @return JsonResponse
      */
     public function getConfigurationAction(Request $request)
     {
@@ -102,6 +107,7 @@ class PortalController extends AdminController implements EventedControllerInter
     /**
      * @Route("/remove-widget")
      * @param Request $request
+     * @return JsonResponse
      */
     public function removeWidgetAction(Request $request)
     {
@@ -127,6 +133,7 @@ class PortalController extends AdminController implements EventedControllerInter
     /**
      * @Route("/add-widget")
      * @param Request $request
+     * @return JsonResponse
      */
     public function addWidgetAction(Request $request)
     {
@@ -150,6 +157,7 @@ class PortalController extends AdminController implements EventedControllerInter
     /**
      * @Route("/reorder-widget")
      * @param Request $request
+     * @return JsonResponse
      */
     public function reorderWidgetAction(Request $request)
     {
@@ -180,6 +188,7 @@ class PortalController extends AdminController implements EventedControllerInter
     /**
      * @Route("/update-portlet-config")
      * @param Request $request
+     * @return JsonResponse
      */
     public function updatePortletConfigAction(Request $request)
     {
@@ -205,6 +214,7 @@ class PortalController extends AdminController implements EventedControllerInter
     /**
      * @Route("/portlet-feed")
      * @param Request $request
+     * @return JsonResponse
      */
     public function portletFeedAction(Request $request)
     {
@@ -274,6 +284,7 @@ class PortalController extends AdminController implements EventedControllerInter
     /**
      * @Route("/portlet-modified-documents")
      * @param Request $request
+     * @return JsonResponse
      */
     public function portletModifiedDocumentsAction(Request $request)
     {
@@ -303,6 +314,7 @@ class PortalController extends AdminController implements EventedControllerInter
     /**
      * @Route("/portlet-modified-assets")
      * @param Request $request
+     * @return JsonResponse
      */
     public function portletModifiedAssetsAction(Request $request)
     {
@@ -332,6 +344,7 @@ class PortalController extends AdminController implements EventedControllerInter
     /**
      * @Route("/portlet-modified-objects")
      * @param Request $request
+     * @return JsonResponse
      */
     public function portletModifiedObjectsAction(Request $request)
     {
@@ -361,6 +374,7 @@ class PortalController extends AdminController implements EventedControllerInter
     /**
      * @Route("/portlet-modification-statistics")
      * @param Request $request
+     * @return JsonResponse
      */
     public function portletModificationStatisticsAction(Request $request)
     {
@@ -401,6 +415,7 @@ class PortalController extends AdminController implements EventedControllerInter
     /**
      * @Route("/portlet-analytics-sites")
      * @param Request $request
+     * @return JsonResponse
      */
     public function portletAnalyticsSitesAction(Request $request)
     {

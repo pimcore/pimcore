@@ -22,6 +22,7 @@ class IndexController extends AdminController
     /**
      * @Route("/", name="pimcore_admin_index")
      * @TemplatePhp()
+     * @return ViewModel
      */
     public function indexAction(Request $request)
     {

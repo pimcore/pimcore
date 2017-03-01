@@ -40,6 +40,7 @@ class VariantsController extends AdminController
      * @Route("/get-variants")
      * @param Request $request
      * @return JsonResponse
+     * @throws \Exception
      */
     public function getVariantsAction(Request $request)
     {
