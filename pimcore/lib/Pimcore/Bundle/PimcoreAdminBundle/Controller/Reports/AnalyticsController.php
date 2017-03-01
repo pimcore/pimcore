@@ -1,21 +1,22 @@
 <?php
-/**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in
- * LICENSE.md which is distributed with this source code.
- *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
- */
 
+namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Reports;
+
+use Pimcore\Bundle\PimcoreBundle\Controller\EventedControllerInterface;
 use Pimcore\Google;
 use Pimcore\Model\Document;
+use Pimcore\Model\Site;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\Routing\Annotation\Route;
 
-class Reports_AnalyticsController extends \Pimcore\Controller\Action\Admin\Reports
+/**
+ * @Route("/analytics")
+ */
+class AnalyticsController extends ReportsControllerBase implements EventedControllerInterface
 {
 
     /**
@@ -23,31 +24,29 @@ class Reports_AnalyticsController extends \Pimcore\Controller\Action\Admin\Repor
      */
     protected $service;
 
-
-    public function init()
-    {
-        parent::init();
-
-        $client = Google\Api::getServiceClient();
-        if (!$client) {
-            die("Google Analytics is not configured");
-        }
-
-        $this->service = new Google_Service_Analytics($client);
-    }
-
-    public function deeplinkAction()
+    /**
+     * @Route("/deeplink")
+     * @param Request $request
+     * @return RedirectResponse
+     */
+    public function deeplinkAction(Request $request)
     {
         $config = Google\Analytics::getSiteConfig();
 
-        $url = $this->getParam("url");
+        $url = $request->get("url");
         $url = str_replace(["{accountId}", "{internalWebPropertyId}", "{id}"], [$config->accountid, $config->internalid, $config->profile], $url);
         $url = "https://www.google.com/analytics/web/" . $url;
 
-        $this->redirect($url);
+        return $this->redirect($url);
     }
 
-    public function getProfilesAction()
+
+    /**
+     * @Route("/get-profiles")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getProfilesAction(Request $request)
     {
         try {
             $data = ["data" => []];
@@ -77,18 +76,19 @@ class Reports_AnalyticsController extends \Pimcore\Controller\Action\Admin\Repor
             }
 
 
-            $this->_helper->json($data);
+            return $this->json($data);
         } catch (\Exception $e) {
-            $this->_helper->json(false);
+            return $this->json(false);
         }
     }
 
     /**
+     * @param Request $request
      * @return \Pimcore\Model\Site|void
      */
-    private function getSite()
+    private function getSite(Request $request)
     {
-        $siteId = $this->getParam("site");
+        $siteId = $request->get("site");
 
         try {
             $site = Site::getById($siteId);
@@ -100,62 +100,68 @@ class Reports_AnalyticsController extends \Pimcore\Controller\Action\Admin\Repor
     }
 
     /**
+     * @param Request $request
      * @return mixed|string
      */
-    protected function getFilterPath()
+    protected function getFilterPath(Request $request)
     {
-        if ($this->getParam("type") == "document" && $this->getParam("id")) {
-            $doc = Document::getById($this->getParam("id"));
+        if ($request->get("type") == "document" && $request->get("id")) {
+            $doc = Document::getById($request->get("id"));
             $path = $doc->getFullPath();
 
             if ($doc instanceof Document\Page && $doc->getPrettyUrl()) {
                 $path = $doc->getPrettyUrl();
             }
 
-            if ($this->getParam("site")) {
-                $site = Site::getById($this->getParam("site"));
+            if ($request->get("site")) {
+                $site = Site::getById($request->get("site"));
                 $path = preg_replace("@^" . preg_quote($site->getRootPath(), "@") . "/@", "/", $path);
             }
 
             return $path;
         }
 
-        return $this->getParam("path");
+        return $request->get("path");
     }
 
 
-    public function chartmetricdataAction()
+    /**
+     * @Route("/chartmetricdata")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function chartmetricdataAction(Request $request)
     {
-        $config = Google\Analytics::getSiteConfig($this->getSite());
+        $config = Google\Analytics::getSiteConfig($this->getSite($request));
         $startDate = date("Y-m-d", (time()-(86400*31)));
         $endDate = date("Y-m-d");
 
-        if ($this->getParam("dateFrom") && $this->getParam("dateTo")) {
-            $startDate = date("Y-m-d", strtotime($this->getParam("dateFrom")));
-            $endDate = date("Y-m-d", strtotime($this->getParam("dateTo")));
+        if ($request->get("dateFrom") && $request->get("dateTo")) {
+            $startDate = date("Y-m-d", strtotime($request->get("dateFrom")));
+            $endDate = date("Y-m-d", strtotime($request->get("dateTo")));
         }
 
         $metrics = ["ga:pageviews"];
-        if ($this->getParam("metric")) {
+        if ($request->get("metric")) {
             $metrics = [];
 
-            if (is_array($this->getParam("metric"))) {
-                foreach ($this->getParam("metric") as $m) {
+            if (is_array($request->get("metric"))) {
+                foreach ($request->get("metric") as $m) {
                     $metrics[] = "ga:" . $m;
                 }
             } else {
-                $metrics[] = "ga:" . $this->getParam("metric");
+                $metrics[] = "ga:" . $request->get("metric");
             }
         }
 
         $filters = [];
 
-        if ($filterPath = $this->getFilterPath()) {
+        if ($filterPath = $this->getFilterPath($request)) {
             $filters[] = "ga:pagePath==".$filterPath;
         }
 
-        if ($this->getParam("filters")) {
-            $filters[] = $this->getParam("filters");
+        if ($request->get("filters")) {
+            $filters[] = $request->get("filters");
         }
 
         $opts = [
@@ -185,33 +191,37 @@ class Reports_AnalyticsController extends \Pimcore\Controller\Action\Admin\Repor
             ];
 
             foreach ($result["columnHeaders"] as $index => $metric) {
-                if (!$this->getParam("dataField")) {
+                if (!$request->get("dataField")) {
                     $tmpData[str_replace("ga:", "", $metric["name"])] = $row[$index];
                 } else {
-                    $tmpData[$this->getParam("dataField")] = $row[$index];
+                    $tmpData[$request->get("dataField")] = $row[$index];
                 }
             }
 
             $data[] = $tmpData;
         }
 
-        $this->_helper->json(["data" => $data]);
+        return $this->json(["data" => $data]);
     }
 
-
-    public function summaryAction()
+    /**
+     * @Route("/summary")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function summaryAction(Request $request)
     {
-        $config = Google\Analytics::getSiteConfig($this->getSite());
+        $config = Google\Analytics::getSiteConfig($this->getSite($request));
         $startDate = date("Y-m-d", (time()-(86400*31)));
         $endDate = date("Y-m-d");
 
-        if ($this->getParam("dateFrom") && $this->getParam("dateTo")) {
-            $startDate = date("Y-m-d", strtotime($this->getParam("dateFrom")));
-            $endDate = date("Y-m-d", strtotime($this->getParam("dateTo")));
+        if ($request->get("dateFrom") && $request->get("dateTo")) {
+            $startDate = date("Y-m-d", strtotime($request->get("dateFrom")));
+            $endDate = date("Y-m-d", strtotime($request->get("dateTo")));
         }
 
 
-        if ($filterPath = $this->getFilterPath()) {
+        if ($filterPath = $this->getFilterPath($request)) {
             $filters[] = "ga:pagePath==".$filterPath;
         }
 
@@ -265,23 +275,27 @@ class Reports_AnalyticsController extends \Pimcore\Controller\Action\Admin\Repor
 
         ksort($outputData);
 
-        $this->_helper->json(["data" => $outputData]);
+        return $this->json(["data" => $outputData]);
     }
 
 
-
-    public function sourceAction()
+    /**
+     * @Route("/source")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function sourceAction(Request $request)
     {
-        $config = Google\Analytics::getSiteConfig($this->getSite());
+        $config = Google\Analytics::getSiteConfig($this->getSite($request));
         $startDate = date("Y-m-d", (time()-(86400*31)));
         $endDate = date("Y-m-d");
 
-        if ($this->getParam("dateFrom") && $this->getParam("dateTo")) {
-            $startDate = date("Y-m-d", strtotime($this->getParam("dateFrom")));
-            $endDate = date("Y-m-d", strtotime($this->getParam("dateTo")));
+        if ($request->get("dateFrom") && $request->get("dateTo")) {
+            $startDate = date("Y-m-d", strtotime($request->get("dateFrom")));
+            $endDate = date("Y-m-d", strtotime($request->get("dateTo")));
         }
 
-        if ($filterPath = $this->getFilterPath()) {
+        if ($filterPath = $this->getFilterPath($request)) {
             $filters[] = "ga:pagePath==".$filterPath;
         }
 
@@ -312,12 +326,17 @@ class Reports_AnalyticsController extends \Pimcore\Controller\Action\Admin\Repor
             ];
         }
 
-        $this->_helper->json(["data" => $data]);
+        return $this->json(["data" => $data]);
     }
 
-    public function dataExplorerAction()
+    /**
+     * @Route("/data-explorer")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function dataExplorerAction(Request $request)
     {
-        $config = Google\Analytics::getSiteConfig($this->getSite());
+        $config = Google\Analytics::getSiteConfig($this->getSite($request));
         $startDate = date("Y-m-d", (time()-(86400*31)));
         $endDate = date("Y-m-d");
         $metric = "ga:pageviews";
@@ -325,26 +344,26 @@ class Reports_AnalyticsController extends \Pimcore\Controller\Action\Admin\Repor
         $descending = true;
         $limit = 10;
 
-        if ($this->getParam("dateFrom") && $this->getParam("dateTo")) {
-            $startDate = date("Y-m-d", strtotime($this->getParam("dateFrom")));
-            $endDate = date("Y-m-d", strtotime($this->getParam("dateTo")));
+        if ($request->get("dateFrom") && $request->get("dateTo")) {
+            $startDate = date("Y-m-d", strtotime($request->get("dateFrom")));
+            $endDate = date("Y-m-d", strtotime($request->get("dateTo")));
         }
-        if ($this->getParam("dimension")) {
-            $dimension = $this->getParam("dimension");
+        if ($request->get("dimension")) {
+            $dimension = $request->get("dimension");
         }
-        if ($this->getParam("metric")) {
-            $metric = $this->getParam("metric");
+        if ($request->get("metric")) {
+            $metric = $request->get("metric");
         }
-        if ($this->getParam("sort")) {
-            if ($this->getParam("sort") == "asc") {
+        if ($request->get("sort")) {
+            if ($request->get("sort") == "asc") {
                 $descending = false;
             }
         }
-        if ($this->getParam("limit")) {
-            $limit = $this->getParam("limit");
+        if ($request->get("limit")) {
+            $limit = $request->get("limit");
         }
 
-        if ($filterPath = $this->getFilterPath()) {
+        if ($filterPath = $this->getFilterPath($request)) {
             $filters[] = "ga:pagePath==".$filterPath;
         }
 
@@ -374,22 +393,35 @@ class Reports_AnalyticsController extends \Pimcore\Controller\Action\Admin\Repor
             ];
         }
 
-        $this->_helper->json(["data" => $data]);
+        return $this->json(["data" => $data]);
     }
 
-
-    public function getDimensionsAction()
+    /**
+     * @Route("/get-dimensions")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getDimensionsAction(Request $request)
     {
-        $this->_helper->json(["data" => Google\Api::getAnalyticsDimensions()]);
+        return $this->json(["data" => Google\Api::getAnalyticsDimensions()]);
     }
 
-
-    public function getMetricsAction()
+    /**
+     * @Route("/get-metrics")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getMetricsAction(Request $request)
     {
-        $this->_helper->json(["data" => Google\Api::getAnalyticsMetrics()]);
+        return $this->json(["data" => Google\Api::getAnalyticsMetrics()]);
     }
 
-    public function getSegmentsAction()
+    /**
+     * @Route("/get-segments")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getSegmentsAction(Request $request)
     {
         $result = $this->service->management_segments->listManagementSegments();
 
@@ -402,7 +434,7 @@ class Reports_AnalyticsController extends \Pimcore\Controller\Action\Admin\Repor
             ];
         }
 
-        $this->_helper->json(["data" => $data]);
+        return $this->json(["data" => $data]);
     }
 
     /**
@@ -434,5 +466,31 @@ class Reports_AnalyticsController extends \Pimcore\Controller\Action\Admin\Repor
         $seconds = intval($sec % 60);
 
         return str_pad($minutes, 2, "0", STR_PAD_LEFT).":".str_pad($seconds, 2, "0", STR_PAD_LEFT);
+    }
+
+    /**
+     * @param FilterControllerEvent $event
+     */
+    public function onKernelController(FilterControllerEvent $event)
+    {
+        $isMasterRequest = $event->isMasterRequest();
+        if (!$isMasterRequest) {
+            return;
+        }
+
+        $client = Google\Api::getServiceClient();
+        if (!$client) {
+            die("Google Analytics is not configured");
+        }
+
+        $this->service = new \Google_Service_Analytics($client);
+    }
+
+    /**
+     * @param FilterResponseEvent $event
+     */
+    public function onKernelResponse(FilterResponseEvent $event)
+    {
+        // nothing to do
     }
 }
