@@ -19,10 +19,9 @@ services:
 
     pimcore.event_listener.frontend.document_fallback:
         class: Pimcore\Bundle\PimcoreBundle\EventListener\Frontend\DocumentFallbackListener
-        arguments: ['@pimcore.service.document', '@pimcore.service.request.document_resolver', '@request_stack']
+        arguments: ['@pimcore.document.nearest_path_resolver', '@pimcore.service.request.document_resolver', '@request_stack']
         tags:
             - { name: kernel.event_subscriber }
-
 
     #
     # PIMCORE OBJECTS/PARAMS LOGIC

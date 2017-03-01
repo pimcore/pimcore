@@ -33,7 +33,7 @@ services:
 
     pimcore.router.dynamic_route_provider:
         class: Pimcore\Bundle\PimcoreBundle\Routing\DocumentRouteProvider
-        arguments: ['@pimcore.service.document', '@pimcore.mvc_config_normalizer']
+        arguments: ['@pimcore.document.nearest_path_resolver', '@pimcore.mvc_config_normalizer']
 
     #
     # SESSION
@@ -213,6 +213,10 @@ services:
 
     pimcore.http.response_helper:
         class: Pimcore\Http\ResponseHelper
+
+    pimcore.document.nearest_path_resolver:
+        class: Pimcore\Bundle\PimcoreBundle\Service\Document\NearestPathResolver
+        arguments: ['@pimcore.document_service']
 
     # TODO inject user?
     pimcore.document_service:

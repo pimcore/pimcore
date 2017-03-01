@@ -2,8 +2,8 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\EventListener\Frontend;
 
-use Pimcore\Bundle\PimcoreBundle\Service\Document\DocumentService;
-use Pimcore\Bundle\PimcoreBundle\Service\Request\DocumentResolver as DocumentResolverService;
+use Pimcore\Bundle\PimcoreBundle\Service\Document\NearestPathResolver;
+use Pimcore\Bundle\PimcoreBundle\Service\Request\DocumentResolver;
 use Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolver;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -20,14 +20,14 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class DocumentFallbackListener extends AbstractFrontendListener implements EventSubscriberInterface
 {
     /**
-     * @var DocumentService
+     * @var NearestPathResolver
      */
-    protected $documentService;
+    protected $nearestPathResolver;
 
     /**
-     * @var DocumentResolverService
+     * @var DocumentResolver
      */
-    protected $documentResolverService;
+    protected $documentResolver;
 
     /**
      * @var RequestStack
@@ -35,15 +35,15 @@ class DocumentFallbackListener extends AbstractFrontendListener implements Event
     protected $requestStack;
 
     /**
-     * @param DocumentService $documentService
-     * @param DocumentResolverService $documentResolverService
+     * @param NearestPathResolver $nearestPathResolver
+     * @param DocumentResolver $documentResolver
      * @param RequestStack $requestStack
      */
-    public function __construct(DocumentService $documentService, DocumentResolverService $documentResolverService, RequestStack $requestStack)
+    public function __construct(NearestPathResolver $nearestPathResolver, DocumentResolver $documentResolver, RequestStack $requestStack)
     {
-        $this->documentService         = $documentService;
-        $this->documentResolverService = $documentResolverService;
-        $this->requestStack            = $requestStack;
+        $this->nearestPathResolver = $nearestPathResolver;
+        $this->documentResolver    = $documentResolver;
+        $this->requestStack        = $requestStack;
     }
 
     /**
@@ -68,7 +68,7 @@ class DocumentFallbackListener extends AbstractFrontendListener implements Event
             return;
         }
 
-        if ($this->documentResolverService->getDocument($request)) {
+        if ($this->documentResolver->getDocument($request)) {
             // we already have a document (e.g. set through the document router)
             return;
         } else {
@@ -77,8 +77,8 @@ class DocumentFallbackListener extends AbstractFrontendListener implements Event
             if (!$event->isMasterRequest()) {
                 $masterRequest = $this->requestStack->getMasterRequest();
 
-                if ($document = $this->documentResolverService->getDocument($masterRequest)) {
-                    $this->documentResolverService->setDocument($request, $document);
+                if ($document = $this->documentResolver->getDocument($masterRequest)) {
+                    $this->documentResolver->setDocument($request, $document);
 
                     return;
                 }
@@ -89,9 +89,9 @@ class DocumentFallbackListener extends AbstractFrontendListener implements Event
         // this is only done on the master request as a sub-request's pathInfo is _fragment when
         // rendered via actions helper
         if ($event->isMasterRequest()) {
-            $document = $this->documentService->getNearestDocumentByPath($request);
+            $document = $this->nearestPathResolver->getNearestDocumentByPath($request);
             if ($document) {
-                $this->documentResolverService->setDocument($request, $document);
+                $this->documentResolver->setDocument($request, $document);
             }
         }
     }
