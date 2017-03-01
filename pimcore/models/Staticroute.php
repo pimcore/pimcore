@@ -337,7 +337,7 @@ class Staticroute extends AbstractModel
     /**
      * @param array $requirements
      */
-    public function setRequirements(array $requirements)
+    public function setRequirements($requirements)
     {
         $this->requirements = $requirements;
     }
@@ -508,11 +508,8 @@ class Staticroute extends AbstractModel
      */
     public function assemble(array $urlOptions = [], $reset=false, $encode=true)
     {
-
         // get request parameters
         $blockedRequestParams = ["controller", "action", "module", "document"];
-        $front = \Zend_Controller_Front::getInstance();
-
 
         // allow blocked params if we use it as variables
         $variables = explode(",", $this->getVariables());
@@ -527,7 +524,7 @@ class Staticroute extends AbstractModel
         if ($reset) {
             $requestParameters = [];
         } else {
-            $requestParameters = $front->getRequest()->getParams();
+            $requestParameters = \Pimcore::getContainer()->get('router.request_context')->getParameters();
             // remove blocked parameters from request
             foreach ($blockedRequestParams as $key) {
                 if (array_key_exists($key, $requestParameters)) {

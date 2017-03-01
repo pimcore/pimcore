@@ -2,21 +2,25 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\Routing\Staticroute;
 
+use Pimcore\Bundle\PimcoreBundle\Service\MvcConfigNormalizer;
 use Pimcore\Config;
 use Pimcore\Model\Site;
 use Pimcore\Model\Staticroute;
+use Pimcore\Tool;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Cmf\Component\Routing\VersatileGeneratorInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Generator\UrlGenerator;
+use Symfony\Component\Routing\Exception\ResourceNotFoundException;
+use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
-use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\RequestContext;
-use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\RouterInterface;
 
+/**
+ * A custom router implementation handling pimcore static routes.
+ */
 class Router implements RouterInterface, RequestMatcherInterface, VersatileGeneratorInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
@@ -27,43 +31,28 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     protected $context;
 
     /**
+     * @var MvcConfigNormalizer
+     */
+    protected $configNormalizer;
+
+    /**
+     * @var Staticroute[]
+     */
+    protected $staticRoutes;
+
+    /**
      * @var array
      */
-    protected $supportedNames = [];
-
-    /**
-     * Contains a mapping between route names (news_site_2) and static routes
-     *
-     * @var array
-     */
-    protected $staticRouteMap = [];
-
-    /**
-     * @var RouteCollection
-     */
-    protected $collection;
-
-    /**
-     * @var UrlMatcher
-     */
-    protected $matcher;
-
-    /**
-     * @var UrlGenerator
-     */
-    protected $generator;
-
-    /**
-     * @var Staticroute\Dao
-     */
-    protected $dao;
+    protected $supportedNames;
 
     /**
      * @param RequestContext $context
+     * @param MvcConfigNormalizer $configNormalizer
      */
-    public function __construct(RequestContext $context)
+    public function __construct(RequestContext $context, MvcConfigNormalizer $configNormalizer)
     {
-        $this->context = $context;
+        $this->context          = $context;
+        $this->configNormalizer = $configNormalizer;
     }
 
     /**
@@ -83,16 +72,11 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     }
 
     /**
-     * @return Staticroute\Dao
+     * @inheritDoc
      */
-    protected function getDao()
+    public function supports($name)
     {
-        if (null === $this->dao) {
-            $this->dao = new Staticroute\Dao();
-            $this->dao->configure();
-        }
-
-        return $this->dao;
+        return is_string($name) && in_array($name, $this->getSupportedNames());
     }
 
     /**
@@ -100,124 +84,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
      */
     public function getRouteCollection()
     {
-        if (null === $this->collection) {
-            $collection   = new RouteCollection();
-            $staticroutes = $this->getDao()->getAll();
-
-            foreach ($staticroutes as $sr) {
-                $this->supportedNames[] = $sr->getName();
-
-                $siteIds = $sr->getSiteId();
-                if (empty($siteIds)) {
-                    $name = $this->getRouteName($sr->getName());
-                    $collection->add($name, $this->buildRouteForStaticRoute($sr));
-
-                    $this->staticRouteMap[$name] = $sr->getId();
-                } else {
-                    foreach ($siteIds as $siteId) {
-                        $name = $this->getRouteName($sr->getName(), $siteId);
-                        $collection->add($name, $this->buildRouteForStaticRoute($sr, $siteId));
-
-                        $this->staticRouteMap[$name] = $sr->getId();
-                    }
-                }
-            }
-
-            $this->supportedNames = array_unique($this->supportedNames);
-            $this->collection     = $collection;
-        }
-
-        return $this->collection;
-    }
-
-    /**
-     * @param string $name
-     * @param int|null $siteId
-     * @return string
-     */
-    protected function getRouteName($name, $siteId = null)
-    {
-        if (null === $siteId) {
-            return $name;
-        }
-
-        return sprintf('%s_site_%d', $name, $siteId);
-    }
-
-    /**
-     * @param Staticroute $staticRoute
-     * @param int|null $siteId
-     * @return Route
-     */
-    protected function buildRouteForStaticRoute(Staticroute $staticRoute, $siteId = null)
-    {
-        $route = new Route(
-            $staticRoute->getPath(),
-            $staticRoute->getDefaults(),
-            $staticRoute->getRequirements()
-        );
-
-        if (null !== $siteId) {
-            $site = Site::getById($siteId);
-            $route->setHost($site->getMainDomain());
-
-            $domains = [];
-            if (!empty($site->getMainDomain())) {
-                $domains[] = $site->getMainDomain();
-            }
-
-            foreach ($site->getDomains() as $domain) {
-                $domains[] = $domain;
-            }
-
-            $route->setHost('{domain}');
-            $route->setRequirement('domain', implode('|', $domains));
-        } else {
-            $route->setHost($this->context->getHost());
-        }
-
-        return $route;
-    }
-
-    /**
-     * @return UrlMatcher
-     */
-    protected function getMatcher()
-    {
-        if (null === $this->matcher) {
-            $this->matcher = new UrlMatcher(
-                $this->getRouteCollection(),
-                $this->getContext()
-            );
-        }
-
-        return $this->matcher;
-    }
-
-    /**
-     * @return UrlGenerator
-     */
-    protected function getGenerator()
-    {
-        if (null === $this->generator) {
-            $this->generator = new UrlGenerator(
-                $this->getRouteCollection(),
-                $this->getContext(),
-                $this->logger
-            );
-        }
-
-        return $this->generator;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function supports($name)
-    {
-        $this->getRouteCollection();
-
-        return is_string($name) && in_array($name, $this->supportedNames);
+        return new RouteCollection();
     }
 
     /**
@@ -225,54 +92,67 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
      */
     public function getRouteDebugMessage($name, array $parameters = [])
     {
-        return $name;
+        return (string)$name;
     }
 
     /**
      * @inheritDoc
      */
-    public function generate($name, $parameters = array(), $referenceType = self::ABSOLUTE_PATH)
+    public function generate($name, $parameters = [], $referenceType = self::ABSOLUTE_PATH)
     {
+        // when using $name = false we don't use the default route (happens when $name = null / ZF default behavior)
+        // but just the query string generation using the given parameters
+        // eg. $this->url(["foo" => "bar"], false) => /?foo=bar
+        if ($name === null) {
+            if (Staticroute::getCurrentRoute() instanceof Staticroute) {
+                $name = Staticroute::getCurrentRoute()->getName();
+            }
+        }
+
         $siteId = null;
         if (Site::isSiteRequest()) {
             $siteId = Site::getCurrentSite()->getId();
         }
 
         // check for a site in the options, if valid remove it from the options
-        $domain = null;
-        if (isset($parameters['site'])) {
+        $hostname = null;
+        if (isset($parameters["site"])) {
             $config = Config::getSystemConfig();
-            $site   = $parameters['site'];
-
+            $site   = $parameters["site"];
             if (!empty($site)) {
                 try {
                     $site = Site::getBy($site);
                     unset($parameters["site"]);
-
-                    $domain = $site->getMainDomain();
-                    $siteId = $site->getId();
+                    $hostname = $site->getMainDomain();
+                    $siteId   = $site->getId();
                 } catch (\Exception $e) {
-                    $this->logger->warning('Site {site} doesn\'t exist while trying to generate route {name}', [
-                        'site'      => $site,
-                        'name'      => $name,
+                    $this->logger->warning('The site {site} does not exist for route {route}', [
+                        'site'      => $siteId,
+                        'route'     => $name,
                         'exception' => $e
                     ]);
                 }
             } elseif ($config->general->domain) {
-                $domain = $config->general->domain;
+                $hostname = $config->general->domain;
             }
         }
 
-        if ($domain) {
-            $referenceType        = static::ABSOLUTE_URL;
-            $parameters['domain'] = $domain;
+        if ($name && $route = Staticroute::getByName($name, $siteId)) {
+            $reset  = isset($parameters['reset']) ? (bool)$parameters['reset'] : false;
+            $encode = isset($parameters['encode']) ? (bool)$parameters['encode'] : true;
+
+            // assemble the route / url in Staticroute::assemble()
+            $url = $route->assemble($parameters, $reset, $encode);
+
+            // if there's a site, prepend the host to the generated URL
+            if ($hostname && !preg_match("/^https?:/i", $url)) {
+                $url = "//" . $hostname . $url;
+            }
+
+            return $url;
         }
 
-        $routeName = $this->getRouteName($name, $siteId);
-
-        $url = $this->getGenerator()->generate($routeName, $parameters, $referenceType);
-
-        return $url;
+        throw new RouteNotFoundException(sprintf('Could not generate URL for route %s as the static route wasn\'t found', $name));
     }
 
     /**
@@ -280,9 +160,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
      */
     public function matchRequest(Request $request)
     {
-        $result = $this->getMatcher()->matchRequest($request);
-
-        return $this->handleMatchResult($result);
+        return $this->doMatch($request->getPathInfo());
     }
 
     /**
@@ -290,21 +168,121 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
      */
     public function match($pathinfo)
     {
-        $result = $this->getMatcher()->match($pathinfo);
-
-        return $this->handleMatchResult($result);
+        return $this->doMatch($pathinfo);
     }
 
     /**
-     * @param array $result
+     * @param string $pathinfo
      * @return array
      */
-    protected function handleMatchResult(array $result)
+    protected function doMatch($pathinfo)
     {
-        // set the matched static route
-        $staticRouteId = $this->staticRouteMap[$result['_route']];
-        Staticroute::setCurrentRoute(Staticroute::getById($staticRouteId));
+        $params = $this->context->getParameters();
+        $params = array_merge(Tool::getRoutingDefaults(), $params);
 
-        return $result;
+        foreach ($this->getStaticRoutes() as $route) {
+            if ($routeParams = $route->match($pathinfo, $params)) {
+                // TODO nearest document
+
+                Staticroute::setCurrentRoute($route);
+
+                // add the route object also as parameter to the request object, this is needed in
+                // Pimcore_Controller_Action_Frontend::getRenderScript()
+                // to determine if a call to an action was made through a staticroute or not
+                // more on that infos see Pimcore_Controller_Action_Frontend::getRenderScript()
+                $routeParams["pimcore_request_source"] = "staticroute";
+                $routeParams['_route']                 = $route->getName();
+
+                $routeParams = $this->processRouteParams($routeParams);
+
+                return $routeParams;
+            }
+        }
+
+        throw new ResourceNotFoundException(sprintf('No routes found for "%s".', $pathinfo));
+    }
+
+    /**
+     * @param array $routeParams
+     * @return array
+     */
+    protected function processRouteParams(array $routeParams)
+    {
+        $keys = [
+            'module',
+            'controller',
+            'action'
+        ];
+
+        $controllerParams = [];
+        foreach ($keys as $key) {
+            $value = null;
+
+            if (isset($routeParams[$key])) {
+                $value = $routeParams[$key];
+                unset($routeParams[$key]);
+            }
+
+            $controllerParams[$key] = $value;
+        }
+
+        $controller = $this->configNormalizer->formatController(
+            $controllerParams['module'],
+            $controllerParams['controller'],
+            $controllerParams['action']
+        );
+
+        $routeParams['_controller'] = $controller;
+
+        return $routeParams;
+    }
+
+    /**
+     * @return Staticroute[]
+     */
+    protected function getStaticRoutes()
+    {
+        if (null === $this->staticRoutes) {
+            /** @var Staticroute\Listing|Staticroute\Listing\Dao $list */
+            $list = new Staticroute\Listing();
+            $list->setOrder(function ($a, $b) {
+
+                // give site ids a higher priority
+                if ($a["siteId"] && !$b["siteId"]) {
+                    return -1;
+                }
+                if (!$a["siteId"] && $b["siteId"]) {
+                    return 1;
+                }
+
+                if ($a["priority"] == $b["priority"]) {
+                    return 0;
+                }
+
+                return ($a["priority"] < $b["priority"]) ? 1 : -1;
+            });
+
+            $this->staticRoutes = $list->load();
+        }
+
+        return $this->staticRoutes;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getSupportedNames()
+    {
+        if (null === $this->supportedNames) {
+            $this->supportedNames = [];
+
+            foreach ($this->getStaticRoutes() as $route) {
+                $this->supportedNames[] = $route->getName();
+            }
+
+            $this->supportedNames = array_unique($this->supportedNames);
+        }
+
+        return $this->supportedNames;
     }
 }

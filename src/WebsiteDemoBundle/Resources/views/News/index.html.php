@@ -12,7 +12,7 @@ foreach ($this->news as $news) { ?>
         $detailLink = $this->path('news', [
             'id'     => $news->getId(),
             'text'   => $news->getTitle(),
-            'prefix' => ltrim($this->document->getFullPath(), '/')
+            'prefix' => $this->document->getFullPath(),
         ]);
         ?>
 

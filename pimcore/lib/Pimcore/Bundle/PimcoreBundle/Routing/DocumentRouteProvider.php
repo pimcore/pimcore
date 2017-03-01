@@ -2,14 +2,9 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\Routing;
 
-use Doctrine\Common\Util\Inflector;
 use Pimcore\Bundle\PimcoreBundle\Service\Document\DocumentService;
 use Pimcore\Bundle\PimcoreBundle\Service\MvcConfigNormalizer;
 use Pimcore\Model\Document;
-use Pimcore\Model\Site;
-use Pimcore\Model\Staticroute;
-use Pimcore\Model\Staticroute\Listing;
-use Pimcore\Tool;
 use Symfony\Cmf\Component\Routing\RouteProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
@@ -62,8 +57,7 @@ class DocumentRouteProvider implements RouteProviderInterface
     public function getRouteCollectionForRequest(Request $request)
     {
         $collection = new RouteCollection();
-
-        $path = $originalPath = urldecode($request->getPathInfo());
+        $path       = urldecode($request->getPathInfo());
 
         // handled by SiteListener which runs before routing is started
         if ($request->attributes->has('_site_path')) {
@@ -77,9 +71,6 @@ class DocumentRouteProvider implements RouteProviderInterface
             if ($route) {
                 $collection->add($route->getRouteKey(), $route);
             }
-        } else {
-            // TODO this might not be the best place, but works for now
-            $this->handleStaticRoute($collection, $request, $originalPath);
         }
 
         return $collection;
@@ -131,73 +122,6 @@ class DocumentRouteProvider implements RouteProviderInterface
     }
 
     /**
-     * @param RouteCollection $collection
-     * @param Request $request
-     * @param $path
-     */
-    protected function handleStaticRoute(RouteCollection $collection, Request $request, $path)
-    {
-        $staticRoutes = $this->getStaticRoutes();
-
-        $routingDefaults = Tool::getRoutingDefaults();
-        $params          = array_merge($routingDefaults, $request->request->all());
-
-        foreach ($staticRoutes as $staticRoute) {
-            $routeParams = $staticRoute->match($path, $params);
-
-            if ($routeParams) {
-                $params = $routeParams;
-
-                // TODO replace module with bundle in admin
-                if (!$params['module'] || $params['module'] === 'website') {
-                    $params['module'] = defined('PIMCORE_SYMFONY_DEFAULT_BUNDLE') ? PIMCORE_SYMFONY_DEFAULT_BUNDLE : 'AppBundle';
-                }
-
-                if ($params['controller'] && $params['action']) {
-                    $route = $this->buildRouteForStaticroute($staticRoute, $path, $params);
-
-                    $controller = $this->configNormalizer->formatController(
-                        $params['module'],
-                        $params['controller'],
-                        $params['action']
-                    );
-
-                    $route->setDefault('_controller', $controller);
-
-                    $collection->add($staticRoute->getName(), $route);
-                }
-
-                Staticroute::setCurrentRoute($staticRoute);
-
-                // TODO omitted pimcore_request_source
-
-                break;
-            }
-        }
-    }
-
-    /**
-     * @param Staticroute $staticRoute
-     * @param string $path
-     * @param array $params
-     * @return StaticrouteRoute
-     */
-    protected function buildRouteForStaticroute(Staticroute $staticRoute, $path = '/', array $params = [])
-    {
-        $route = new StaticrouteRoute($path);
-        $route->setStaticRoute($staticRoute);
-
-        // add matching params to route
-        foreach ($params as $key => $val) {
-            if (!in_array($key, ['module', 'controller', 'action'])) {
-                $route->setDefault($key, $val);
-            }
-        }
-
-        return $route;
-    }
-
-    /**
      * Find the route using the provided route name.
      *
      * @param string $name The route name to fetch.
@@ -215,35 +139,6 @@ class DocumentRouteProvider implements RouteProviderInterface
             if ($document && $this->handleDocument($document)) {
                 return $this->buildRouteForDocument($document);
             }
-        }
-
-        $siteId = null;
-        if (Site::isSiteRequest()) {
-            $siteId = Site::getCurrentSite()->getId();
-        }
-
-        if ($staticRoute = Staticroute::getByName($name, $siteId)) {
-            $route = $this->buildRouteForStaticroute($staticRoute, $staticRoute->getPattern());
-
-            $variables      = explode(',', $staticRoute->getVariables());
-            $assembleParams = [];
-
-            foreach ($variables as $variable) {
-                $variable = trim($variable);
-
-                // inject the variable in {variable} form to get a clean path
-                $assembleParams[$variable] = sprintf('{%s}', $variable);
-
-                // we don't care about requirements on generation
-                $route->setRequirement($variable, '.+');
-            }
-
-            $url = $staticRoute->assemble($assembleParams, true);
-            $url = urldecode($url);
-
-            $route->setPath($url);
-
-            return $route;
         }
 
         throw new RouteNotFoundException(sprintf("Route for name '%s' was not found", $name));
@@ -304,7 +199,7 @@ class DocumentRouteProvider implements RouteProviderInterface
             return true;
         }
 
-        if($document->doRenderWithLegacyStack()) {
+        if ($document->doRenderWithLegacyStack()) {
             return false;
         }
 
@@ -313,35 +208,5 @@ class DocumentRouteProvider implements RouteProviderInterface
         }
 
         return false;
-    }
-
-    /**
-     * Load static routes
-     *
-     * @return Staticroute[]
-     */
-    protected function getStaticRoutes()
-    {
-        $list = new Listing();
-        $list->setOrder(function ($a, $b) {
-
-            // give site ids a higher priority
-            if ($a['siteId'] && !$b['siteId']) {
-                return -1;
-            }
-            if (!$a['siteId'] && $b['siteId']) {
-                return 1;
-            }
-
-            if ($a['priority'] == $b['priority']) {
-                return 0;
-            }
-
-            return ($a['priority'] < $b['priority']) ? 1 : -1;
-        });
-
-        $routes = $list->load();
-
-        return $routes;
     }
 }

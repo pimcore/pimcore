@@ -25,7 +25,7 @@ services:
 
     pimcore.router.staticroute:
         class: Pimcore\Bundle\PimcoreBundle\Routing\Staticroute\Router
-        arguments: ['@router.request_context']
+        arguments: ['@router.request_context', '@pimcore.mvc_config_normalizer']
         calls:
             - [setLogger, ['@logger']]
         tags:

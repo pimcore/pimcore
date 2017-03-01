@@ -9,14 +9,11 @@
         <?php foreach ($this->articles as $article) { ?>
             <div class="media">
                 <?php
-                    $detailLink = $this->path(
-                        "blog",
-                        [
-                            "id" => $article->getId(),
-                            "text" => $article->getTitle(),
-                            "prefix" => ltrim($this->document->getFullPath(), "/")
-                        ]
-                    );
+                    $detailLink = $this->path("blog", [
+                        "id"     => $article->getId(),
+                        "text"   => $article->getTitle(),
+                        "prefix" => $this->document->getFullPath()
+                    ]);
                 ?>
 
                 <div class="media-body">

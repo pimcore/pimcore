@@ -6,14 +6,11 @@
         <div class="list-group">
             <?php foreach ($this->articles as $article) { ?>
                 <?php
-                $detailLink = $this->path(
-                    "blog",
-                    [
-                        "id" => $article->getId(),
-                        "text" => $article->getTitle(),
-                        "prefix" => ltrim($this->document->getProperty("blog")->getFullPath(), "/")
-                    ]
-                    );
+                $detailLink = $this->path("blog", [
+                    "id"     => $article->getId(),
+                    "text"   => $article->getTitle(),
+                    "prefix" => $this->document->getProperty("blog")->getFullPath()
+                ]);
                 ?>
                 <a href="<?= $detailLink ?>" class="list-group-item">
                     <h5 class="list-group-item-heading"><?= $article->getTitle(); ?></h5>
