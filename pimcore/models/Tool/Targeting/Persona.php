@@ -77,11 +77,8 @@ class Persona extends Model\AbstractModel
      */
     public static function fire($id)
     {
-        $front = \Zend_Controller_Front::getInstance();
-        $plugin = $front->getPlugin("Pimcore\\Controller\\Plugin\\Targeting");
-        if ($plugin instanceof \Pimcore\Controller\Plugin\Targeting) {
-            $plugin->addPersona($id);
-        }
+        $targetingService = \Pimcore::getContainer()->get("pimcore.event_listener.frontend.targeting");
+        $targetingService->addPersona($id);
     }
 
     /**

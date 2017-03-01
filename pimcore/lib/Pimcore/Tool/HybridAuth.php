@@ -23,9 +23,8 @@ class HybridAuth
      */
     public static function init()
     {
-        // disable output-cache
-        $front = \Zend_Controller_Front::getInstance();
-        $front->unregisterPlugin("Pimcore\\Controller\\Plugin\\Cache");
+        $cacheService = \Pimcore::getContainer()->get("pimcore.event_listener.frontend.full_page_cache");
+        $cacheService->disable("HybridAuth");
     }
 
     /**

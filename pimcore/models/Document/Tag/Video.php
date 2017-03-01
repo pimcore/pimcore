@@ -391,8 +391,8 @@ class Video extends Model\Document\Tag
                     return $this->getHtml5Code($thumbnail["formats"], $image);
                 } elseif ($thumbnail["status"] == "inprogress") {
                     // disable the output-cache if enabled
-                    $front = \Zend_Controller_Front::getInstance();
-                    $front->unregisterPlugin("Pimcore\\Controller\\Plugin\\Cache");
+                    $cacheService = \Pimcore::getContainer()->get("pimcore.event_listener.frontend.full_page_cache");
+                    $cacheService->disable("Video rendering in progress");
 
                     return $this->getProgressCode($image);
                 } else {

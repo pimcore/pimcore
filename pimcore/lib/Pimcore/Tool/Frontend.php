@@ -119,12 +119,11 @@ class Frontend
      */
     public static function isOutputCacheEnabled()
     {
-        $front = \Zend_Controller_Front::getInstance();
-        $cachePlugin = $front->getPlugin("Pimcore\\Controller\\Plugin\\Cache");
-        if ($cachePlugin && $cachePlugin->isEnabled()) {
+        $cacheService = \Pimcore::getContainer()->get("pimcore.event_listener.frontend.full_page_cache");
+        if ($cacheService && $cacheService->isEnabled()) {
             return [
                 "enabled" => true,
-                "lifetime" => $cachePlugin->getLifetime()
+                "lifetime" => $cacheService->getLifetime()
             ];
         }
 

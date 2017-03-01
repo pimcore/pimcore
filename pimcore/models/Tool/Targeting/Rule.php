@@ -96,11 +96,8 @@ class Rule extends Model\AbstractModel
             $value = true;
         }
 
-        $front = \Zend_Controller_Front::getInstance();
-        $plugin = $front->getPlugin("Pimcore\\Controller\\Plugin\\Targeting");
-        if ($plugin instanceof \Pimcore\Controller\Plugin\Targeting) {
-            $plugin->addEvent($key, $value);
-        }
+        $targetingService = \Pimcore::getContainer()->get("pimcore.event_listener.frontend.targeting");
+        $targetingService->addEvent($key, $value);
     }
 
     /**

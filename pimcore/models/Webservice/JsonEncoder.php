@@ -16,6 +16,8 @@
 
 namespace Pimcore\Model\Webservice;
 
+use Symfony\Component\HttpFoundation\Response;
+
 class JsonEncoder
 {
     /**
@@ -31,10 +33,9 @@ class JsonEncoder
         if ($returnData) {
             return $data;
         } else {
-            $response = \Zend_Controller_Front::getInstance()->getResponse();
-            $response->setHeader('Content-Type', 'application/json', true);
-            $response->setBody($data);
-            $response->sendResponse();
+            $response = new Response($data);
+            $response->headers->set('Content-Type', 'application/json', true);
+            $response->send();
             exit;
         }
     }
