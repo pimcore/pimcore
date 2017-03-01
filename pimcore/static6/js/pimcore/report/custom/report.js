@@ -245,7 +245,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
             });
 
             var drillDownStore = pimcore.helpers.grid.buildDefaultStore(
-                '/admin/reports/custom-report/drill-down-options/?',
+                '/admin/reports/custom-report/drill-down-options?',
                 ['value'],
                 400
             );
@@ -319,7 +319,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
             }
 
             this.chartStore = pimcore.helpers.grid.buildDefaultStore(
-                '/admin/reports/custom-report/chart/?',
+                '/admin/reports/custom-report/chart?',
                 storeFields,
                 400000000
             );
@@ -392,7 +392,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
             }
 
             this.chartStore = pimcore.helpers.grid.buildDefaultStore(
-                '/admin/reports/custom-report/chart/?',
+                '/admin/reports/custom-report/chart?',
                 chartFields,
                 400000000
             );

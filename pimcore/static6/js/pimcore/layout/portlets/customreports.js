@@ -201,7 +201,7 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
                 autoDestroy: true,
                 proxy: {
                     type: 'ajax',
-                    url: "/admin/reports/custom-report/chart/?",
+                    url: "/admin/reports/custom-report/chart?",
                     extraParams: {
                         name: this.config
                     },
@@ -279,7 +279,7 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
             }
 
             var chartStore = pimcore.helpers.grid.buildDefaultStore(
-                '/admin/reports/custom-report/chart/?',
+                '/admin/reports/custom-report/chart?',
                 chartFields,
                 400000000
             );

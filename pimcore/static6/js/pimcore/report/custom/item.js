@@ -536,9 +536,11 @@ pimcore.report.custom.item = Class.create({
             ]
         });
 
-        for (var i = 0; i < this.data.dataSourceConfig.length; i++) {
-            if (this.data.dataSourceConfig[i]) {
-                this.addSourceDefinition(this.data.dataSourceConfig[i]);
+        if (this.data.dataSourceConfig) {
+            for (var i = 0; i < this.data.dataSourceConfig.length; i++) {
+                if (this.data.dataSourceConfig[i]) {
+                    this.addSourceDefinition(this.data.dataSourceConfig[i]);
+                }
             }
         }
         return sourceDefinitionFieldset;
