@@ -11,6 +11,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
+ * @TODO NEEDS TO BE MIGRATED to DocumentController, after migration: DELETE!
+ *
  * @Route("/autocomplete/document-mvc")
  * @Method("GET")
  */
