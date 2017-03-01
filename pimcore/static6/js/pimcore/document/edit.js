@@ -97,7 +97,7 @@ pimcore.document.edit = Class.create({
                         xtype: "jsonstore",
                         proxy: {
                             type: 'ajax',
-                            url: "/admin/reports/targeting/persona-list/?add-default=true"
+                            url: "/admin/reports/targeting/persona-list?add-default=true"
                         },
                         fields: ["id", "text"]
                     },

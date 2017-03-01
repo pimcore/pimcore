@@ -15,7 +15,7 @@ pimcore.registerNS("pimcore.settings.targeting.rules.panel");
 pimcore.settings.targeting.rules.panel= Class.create({
 
     initialize: function() {
-        this.treeDataUrl = '/admin/reports/targeting/rule-list/';
+        this.treeDataUrl = '/admin/reports/targeting/rule-list';
     },
 
 

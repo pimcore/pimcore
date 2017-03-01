@@ -15,7 +15,7 @@ pimcore.registerNS("pimcore.settings.targeting.personas.panel");
 pimcore.settings.targeting.personas.panel= Class.create({
 
     initialize: function() {
-        this.treeDataUrl = '/admin/reports/targeting/persona-list/';
+        this.treeDataUrl = '/admin/reports/targeting/persona-list';
     },
 
 

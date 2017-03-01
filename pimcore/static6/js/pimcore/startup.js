@@ -409,7 +409,7 @@ Ext.onReady(function () {
         model: "pimcore.model.personas",
         proxy: {
             type: 'ajax',
-            url: '/admin/reports/targeting/persona-list/',
+            url: '/admin/reports/targeting/persona-list',
             reader: {
                 type: 'json'
             }
