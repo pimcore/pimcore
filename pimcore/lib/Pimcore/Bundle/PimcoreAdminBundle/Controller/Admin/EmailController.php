@@ -446,12 +446,14 @@ class EmailController extends DocumentControllerBase
 
             if (is_array($data)) {
                 foreach ($data as &$value) {
-                    $value = trim($value);
+                    if(is_string($value)) {
+                        $value = trim($value);
+                    }
                 }
             }
 
             if ($request->get("xaction") == "destroy") {
-                $address = Tool\Email\Blacklist::getByAddress($data);
+                $address = Tool\Email\Blacklist::getByAddress($data['address']);
                 $address->delete();
 
                 return $this->json(["success" => true, "data" => []]);
@@ -478,7 +480,7 @@ class EmailController extends DocumentControllerBase
             $list->setLimit($request->get("limit"));
             $list->setOffset($request->get("start"));
 
-            $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($this->getAllParams());
+            $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($request->query->all());
             if ($sortingSettings['orderKey']) {
                 $orderKey = $sortingSettings['orderKey'];
             }

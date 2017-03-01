@@ -18,9 +18,8 @@ use Pimcore\Helper\Mail as MailHelper;
 use Pimcore\Model;
 use Egulias\EmailValidator\EmailValidator;
 use Egulias\EmailValidator\Validation\RFCValidation;
-use Pimcore\Logger;
 
-class Mail extends \Zend_Mail
+class Mail extends \Swift_Message
 {
 
     /**
@@ -40,13 +39,6 @@ class Mail extends \Zend_Mail
      * @var object Pimcore_Placeholder
      */
     protected $placeholderObject;
-
-    /**
-     * Contains data that has to be stored temporary e.g. email receivers for logging
-     *
-     * @var array
-     */
-    protected $temporaryStorage = [];
 
     /**
      * If true - emails are logged in the database and on the file-system
@@ -127,6 +119,36 @@ class Mail extends \Zend_Mail
     protected $hostUrl = null;
 
     /**
+     * if true: prevent setting the recipients from the Document - set in $this->clearRecipients()
+     *
+     * @var bool
+     */
+    protected $recipientsCleared = false;
+
+    /**
+     * body plain text
+     *
+     * @var string
+     */
+    protected $bodyText;
+
+    /**
+     * plain text mime part
+     * this is created and attached to mail on send
+     *
+     * @var \Swift_MimePart
+     */
+    protected $bodyTextMimePart;
+
+    /**
+     * place to store original data before modifying message when sending in debug mode
+     *
+     * @var array
+     */
+    protected $originalData;
+
+
+    /**
      * @param $url
      * @return $this
      */
@@ -145,24 +167,21 @@ class Mail extends \Zend_Mail
         return $this->hostUrl;
     }
 
-    // true - prevent setting the recipients from the Document - set in $this->clearRecipients()
-    /**
-     * @var bool
-     */
-    protected $recipientsCleared = false;
-
 
     /**
+     * Mail constructor.
+     * @param null $subject
+     * @param null $body
+     * @param null $contentType
      * @param null $charset
-     * @throws \Exception
-     * @throws \Zend_Mail_Exception
      */
-    public function __construct($charset = null)
+    public function __construct($subject = null, $body = null, $contentType = null, $charset = null)
     {
-        // using $charset as param to be compatible with \Zend_Mail
-        if (is_array($charset) || self::$forcePimcoreMode) {
-            $options = $charset;
-            parent::__construct($options["charset"] ? $options["charset"] : "UTF-8");
+        // using $charset as param to be compatible with old Pimcore Mail
+        if (is_array($subject) || self::$forcePimcoreMode) {
+            $options = $subject;
+
+            parent::__construct($options['subject'], $body, $contentType, $options["charset"] ? $options["charset"] : "UTF-8");
 
             if ($options["document"]) {
                 $this->setDocument($options["document"]);
@@ -170,17 +189,11 @@ class Mail extends \Zend_Mail
             if ($options['params']) {
                 $this->setParams($options['params']);
             }
-            if ($options['subject']) {
-                $this->setSubject($options['subject']);
-            }
             if ($options['hostUrl']) {
                 $this->setHostUrl($options['hostUrl']);
             }
         } else {
-            if ($charset === null) {
-                $charset = "UTF-8";
-            }
-            parent::__construct($charset);
+            parent::__construct($subject, $body, $contentType, ($charset !== null ? $charset : "UTF-8"));
         }
 
         $this->init();
@@ -198,41 +211,11 @@ class Mail extends \Zend_Mail
         $emailSettings =& $systemConfig[$type];
 
         if ($emailSettings['sender']['email']) {
-            \Zend_Mail::setDefaultFrom($emailSettings['sender']['email'], $emailSettings['sender']['name']);
+            $this->setFrom($emailSettings['sender']['email'], $emailSettings['sender']['name']);
         }
 
         if ($emailSettings['return']['email']) {
-            \Zend_Mail::setDefaultReplyTo($emailSettings['return']['email'], $emailSettings['return']['name']);
-        }
-
-        if ($emailSettings['method'] == "smtp") {
-            $config = [];
-            if ($emailSettings['smtp']['name']) {
-                $config['name'] = $emailSettings['smtp']['name'];
-            }
-            if ($emailSettings['smtp']['ssl']) {
-                $config['ssl'] = $emailSettings['smtp']['ssl'];
-            }
-            if ($emailSettings['smtp']['port']) {
-                $config['port'] = $emailSettings['smtp']['port'];
-            }
-            if ($emailSettings['smtp']['auth']['method']) {
-                $config['auth'] = $emailSettings['smtp']['auth']['method'];
-                $config['username'] = $emailSettings['smtp']['auth']['username'];
-                $config['password'] = $emailSettings['smtp']['auth']['password'];
-            }
-
-            $transport = new \Zend_Mail_Transport_Smtp($emailSettings['smtp']['host'], $config);
-            \Zend_Mail::setDefaultTransport($transport);
-        }
-
-        //setting debug email addresses
-        if ($type == "email" && empty(self::$debugEmailAddresses)) {
-            if ($emailSettings['debug']['emailaddresses']) {
-                foreach (explode(',', $emailSettings['debug']['emailaddresses']) as $emailAddress) {
-                    self::$debugEmailAddresses[] = $emailAddress;
-                }
-            }
+            $this->setReplyTo($emailSettings['return']['email'], $emailSettings['return']['name']);
         }
 
         $this->placeholderObject = new \Pimcore\Placeholder();
@@ -259,6 +242,20 @@ class Mail extends \Zend_Mail
         return $this->ignoreDebugMode;
     }
 
+
+    /**
+     * returns if redirecting to debug mail addresses should take place when sending the mail
+     *
+     * @return bool
+     */
+    public function doRedirectMailsToDebugMailAddresses() {
+
+        if(static::$forceDebugMode) {
+            return true;
+        }
+
+        return \Pimcore::inDebugMode() && $this->ignoreDebugMode === false;
+    }
 
     /**
      * @param $value
@@ -320,95 +317,18 @@ class Mail extends \Zend_Mail
     }
 
 
-    // overwriting \Zend_Mail methods - necessary for logging... - start
-
-    /**
-     * Adds To-header and recipient, $email can be an array, or a single string address
-     * Additionally adds recipients to temporary storage
-     *
-     * @param  string|array $email
-     * @param  string $name
-     * @return \Pimcore\Mail Provides fluent interface
-     */
-    public function addTo($email, $name = '')
-    {
-        $this->addToTemporaryStorage('To', $email, $name);
-
-        return parent::addTo($email, $name);
-    }
-
-    /**
-     * Adds Cc-header and recipient, $email can be an array, or a single string address
-     * Additionally adds recipients to temporary storage
-     *
-     * @param  string|array    $email
-     * @param  string    $name
-     * @return Pimcore_Mail Provides fluent interface
-     */
-    public function addCc($email, $name = '')
-    {
-        $this->addToTemporaryStorage('Cc', $email, $name);
-
-        return parent::addCc($email, $name);
-    }
-
-    /**
-     * Adds Bcc recipient, $email can be an array, or a single string address
-     * Additionally adds recipients to temporary storage
-     *
-     * @param  string|array    $email
-     * @return \Pimcore\Mail Provides fluent interface
-     */
-    public function addBcc($email)
-    {
-        $this->addToTemporaryStorage('Bcc', $email, '');
-
-        return parent::addBcc($email);
-    }
-
     /**
      * Clears list of recipient email addresses
-     * and resets the temporary storage
      *
      * @return \Pimcore\Mail Provides fluent interface
      */
     public function clearRecipients()
     {
-        unset($this->temporaryStorage['To']);
-        unset($this->temporaryStorage['Cc']);
-        unset($this->temporaryStorage['Bcc']);
         $this->recipientsCleared = true;
 
-        return parent::clearRecipients();
-    }
-
-    // overwriting \Zend_Mail methods - end
-
-    /**
-     * Helper to add receivers to the temporary storage
-     *
-     * @param string $key
-     * @param string | array $email
-     * @param string $name
-     */
-    protected function addToTemporaryStorage($key, $email, $name)
-    {
-        if (!is_array($email)) {
-            $email = [$name => $email];
-        }
-        foreach ($email as $n => $recipient) {
-            $this->temporaryStorage[$key][] = ['email' => $recipient, 'name' => is_int($n) ? '' : $n];
-        }
-    }
-
-    /**
-     * Returns the temporary storage
-     *
-     * @return array
-     */
-    public function getTemporaryStorage()
-    {
-        return $this->temporaryStorage;
+        $this->getHeaders()->removeAll("to");
+        $this->getHeaders()->removeAll("cc");
+        $this->getHeaders()->removeAll("bcc");
     }
 
     /**
@@ -554,17 +474,23 @@ class Mail extends \Zend_Mail
             if (!$this->recipientsCleared) {
                 $to = $document->getToAsArray();
                 if (!empty($to)) {
-                    $this->addTo($to);
+                    foreach ($to as $toEntry) {
+                        $this->addTo($toEntry);
+                    }
                 }
 
                 $cc = $document->getCcAsArray();
                 if (!empty($cc)) {
-                    $this->addCc($cc);
+                    foreach($cc as $ccEntry) {
+                        $this->addCc($ccEntry);
+                    }
                 }
 
                 $bcc = $document->getBccAsArray();
                 if (!empty($bcc)) {
-                    $this->addBcc($bcc);
+                    foreach($bcc as $bccEntry) {
+                        $this->addBcc($bccEntry);
+                    }
                 }
             }
         }
@@ -575,7 +501,6 @@ class Mail extends \Zend_Mail
             if (!empty($fromArray)) {
                 list($from) = $fromArray;
                 if ($from) {
-                    $this->clearFrom();
 
                     $fromAddress = $from;
                     $fromName = null;
@@ -594,10 +519,11 @@ class Mail extends \Zend_Mail
     }
 
     /**
+     * resets all from headers before setting the new one.
+     *
      * @param string $email
      * @param null $name
-     * @return \Zend_Mail
-     * @throws \Zend_Mail_Exception
+     * @return \Pimcore\Mail
      */
     public function setFrom($email, $name = null)
     {
@@ -607,23 +533,51 @@ class Mail extends \Zend_Mail
             throw new \RuntimeException("Potential code injection in From header");
         }
 
-        $this->_from = null;
-        $this->clearHeader("From");
+        $this->getHeaders()->removeAll("from");
 
-        return parent::setFrom($email, $name); // TODO: Change the autogenerated stub
+        return parent::setFrom($email, $name);
     }
 
     /**
+     * resets all to headers before setting the new one.
+     *
      * @param $email
      * @param string $name
      */
     public function setTo($email, $name = '')
     {
-        $this->_to = [];
-        $this->_recipients = [];
-        $this->clearHeader("To");
+        $this->getHeaders()->removeAll("to");
+        if($email) {
+            parent::setTo($email, $name);
+        }
+    }
 
-        $this->addTo($email, $name);
+    /**
+     * resets all to headers before setting the new one.
+     *
+     * @param $email
+     * @param string $name
+     */
+    public function setCc($email, $name = '')
+    {
+        $this->getHeaders()->removeAll("cc");
+        if($email) {
+            parent::setCc($email, $name);
+        }
+    }
+
+    /**
+     * resets all to headers before setting the new one.
+     *
+     * @param $email
+     * @param string $name
+     */
+    public function setBcc($email, $name = '')
+    {
+        $this->getHeaders()->removeAll("bcc");
+        if($email) {
+            parent::setBcc($email, $name);
+        }
     }
 
     /**
@@ -635,61 +589,66 @@ class Mail extends \Zend_Mail
      * set DefaultTransport or the internal mail function if no
      * default transport had been set.
      *
-     * @param  \Zend_Mail_Transport_Abstract $transport
+     * @param  \Swift_Mailer $mailer
      * @return \Pimcore\Mail Provides fluent interface
      */
-    public function send($transport = null)
+    public function send(\Swift_Mailer $mailer = null)
     {
         $this->setSubject($this->getSubjectRendered());
 
         $bodyHtmlRendered = $this->getBodyHtmlRendered();
         if ($bodyHtmlRendered) {
-            $this->setBodyHtml($bodyHtmlRendered);
+            $this->setBody($bodyHtmlRendered, 'text/html');
         }
 
+        if($this->bodyTextMimePart) {
+            $this->detach($this->bodyTextMimePart);
+        }
         $bodyTextRendered = $this->getBodyTextRendered();
         if ($bodyTextRendered) {
-            $this->setBodyText($bodyTextRendered);
+            //create mime part for plain text body
+            $this->bodyTextMimePart = \Swift_MimePart::newInstance($bodyTextRendered, 'text/plain');
+            $this->attach($this->bodyTextMimePart);
         }
 
-        if ($this->ignoreDebugMode == false || static::$forceDebugMode == true) {
-            $this->checkDebugMode();
-        }
-
-        return $this->sendWithoutRendering($transport);
+        return $this->sendWithoutRendering($mailer);
     }
 
     /**
      * sends mail without (re)rendering the content.
      * see also comments of send() method
      *
-     * @param null $transport
-     * @return \Zend_Mail
+     * @param \Swift_Mailer $mailer
+     * @return \Pimcore\Mail
      */
-    public function sendWithoutRendering($transport = null)
+    public function sendWithoutRendering(\Swift_Mailer $mailer = null)
     {
         // filter email addresses
-        $blockedAddresses = [];
-        foreach ($this->getRecipients() as $recipient) {
-            if (Model\Tool\Email\Blacklist::getByAddress($recipient)) {
-                $blockedAddresses[] = $recipient;
-            }
-        }
-        if (!empty($blockedAddresses)) {
-            foreach ($blockedAddresses as $blockedAddress) {
-                foreach (["To", "Cc", "Bcc"] as $type) {
-                    $tmp = $this->_headers[$type];
-                    foreach ($tmp as $key => &$value) {
-                        if (strpos($value, $blockedAddress) !== false) {
-                            unset($this->_headers[$type][$key]);
-                            unset($this->_recipients[$value]);
-                        }
+        foreach (['To', 'Cc', 'Bcc'] as $key) {
+
+            $getterName = "get" . $key;
+            $setterName = "set" . $key;
+            $addresses = $this->$getterName();
+            if($addresses) {
+                foreach(array_keys($addresses) as $address) {
+
+                    //remove address if blacklisted
+                    if (Model\Tool\Email\Blacklist::getByAddress($address)) {
+                        unset($addresses[$address]);
                     }
                 }
             }
+
+            $this->$setterName($addresses);
+
         }
 
-        $result = parent::send($transport);
+        if($mailer == null) {
+            //if no mailer given, get default mailer from container
+            $mailer = \Pimcore::getContainer()->get("mailer");
+        }
+
+        $result = $mailer->send($this);
 
         if ($this->loggingIsEnabled()) {
             try {
@@ -699,55 +658,9 @@ class Mail extends \Zend_Mail
             }
         }
 
-        return $result;
+        return $this;
     }
 
-
-    /**
-     * @throws \Exception
-     * @throws \Zend_Mail_Exception
-     */
-    protected function checkDebugMode()
-    {
-        if (\Pimcore::inDebugMode() || static::$forceDebugMode) {
-            if (empty(self::$debugEmailAddresses)) {
-                throw new \Exception('No valid debug email address given in "Settings" -> "System" -> "Email Settings"');
-            }
-
-            if ($this->preventDebugInformationAppending != true) {
-                //adding the debug information to the html email
-                $html = $this->getBodyHtml();
-                if ($html instanceof \Zend_Mime_Part) {
-                    $rawHtml = $html->getRawContent();
-
-                    $debugInformation = MailHelper::getDebugInformation('html', $this);
-                    $debugInformationStyling = MailHelper::getDebugInformationCssStyle();
-
-                    $rawHtml = preg_replace("!(</\s*body\s*>)!is", "$debugInformation\\1", $rawHtml);
-                    $rawHtml = preg_replace("!(<\s*head\s*>)!is", "\\1$debugInformationStyling", $rawHtml);
-
-
-                    $this->setBodyHtml($rawHtml);
-                }
-
-                $text = $this->getBodyText();
-
-                if ($text instanceof \Zend_Mime_Part) {
-                    $rawText = $text->getRawContent();
-                    $debugInformation = MailHelper::getDebugInformation('text', $this);
-                    $rawText .= $debugInformation;
-                    $this->setBodyText($rawText);
-                }
-
-                //setting debug subject
-                $subject = $this->getSubject();
-                $this->clearSubject();
-                $this->setSubject('Debug email: ' . $subject);
-            }
-            $this->clearRecipients();
-            $this->addTo(self::$debugEmailAddresses);
-        }
-    }
 
     /**
      * Static helper to validate a email address
@@ -771,7 +684,6 @@ class Mail extends \Zend_Mail
     public function getSubjectRendered()
     {
         $subject = $this->getSubject();
-        $this->clearSubject();
 
         if (!$subject && $this->getDocument()) {
             $subject = $this->getDocument()->getSubject();
@@ -787,13 +699,12 @@ class Mail extends \Zend_Mail
      */
     public function getBodyHtmlRendered()
     {
-        $html = $this->getBodyHtml();
+        $html = $this->getBody();
 
-        //if the content was manually set with $obj->setBodyHtml(); this content will be used
+        //if the content was manually set with $obj->setBody(); this content will be used
         //and not the content of the Document!
-        if ($html instanceof \Zend_Mime_Part) {
-            $rawHtml = $html->getRawContent();
-            $content = $this->placeholderObject->replacePlaceholders($rawHtml, $this->getParams(), $this->getDocument(), $this->getEnableLayoutOnPlaceholderRendering());
+        if ($html) {
+            $content = $this->placeholderObject->replacePlaceholders($html, $this->getParams(), $this->getDocument(), $this->getEnableLayoutOnPlaceholderRendering());
         } elseif ($this->getDocument() instanceof Model\Document) {
             $content = $this->placeholderObject->replacePlaceholders($this->getDocument(), $this->getParams(), $this->getDocument(), $this->getEnableLayoutOnPlaceholderRendering());
         } else {
@@ -819,9 +730,8 @@ class Mail extends \Zend_Mail
         $text = $this->getBodyText();
 
         //if the content was manually set with $obj->setBodyText(); this content will be used
-        if ($text instanceof \Zend_Mime_Part) {
-            $rawText = $text->getRawContent();
-            $content = $this->placeholderObject->replacePlaceholders($rawText, $this->getParams(), $this->getDocument(), $this->getEnableLayoutOnPlaceholderRendering());
+        if ($text) {
+            $content = $this->placeholderObject->replacePlaceholders($text, $this->getParams(), $this->getDocument(), $this->getEnableLayoutOnPlaceholderRendering());
         } else {
             //creating text version from html email if html2text is installed
             try {
@@ -896,6 +806,14 @@ class Mail extends \Zend_Mail
         return $this;
     }
 
+    /**
+     * Returns, if debug information is not added
+     *
+     * @return bool
+     */
+    public function isPreventingDebugInformationAppending() {
+        return $this->preventDebugInformationAppending;
+    }
 
     /**
      *
@@ -962,17 +880,78 @@ class Mail extends \Zend_Mail
     }
 
     /**
-     * Sets From-header and sender of the message
-     *
-     * @param  string $email
-     * @return \Zend_Mail Provides fluent interface
+     * @return string
      */
-    public function setSender($email)
+    public function getBodyText()
     {
-        $email = $this->_filterEmail($email);
-        $this->sender = $email;
-        $this->_storeHeader('Sender', $this->_formatAddress($email, null), true);
+        return $this->bodyText;
+    }
 
+    /**
+     * @param $bodyText
+     * @return $this
+     */
+    public function setBodyText($bodyText)
+    {
+        $this->bodyText = $bodyText;
         return $this;
     }
+
+    /**
+     * @param $body
+     * @return \Pimcore\Mail
+     */
+    public function setBodyHtml($body) {
+        return $this->setBody($body, 'text/html');
+    }
+
+    /**
+     * @return \Swift_MimePart
+     */
+    public function getBodyTextMimePart() {
+        return $this->bodyTextMimePart;
+    }
+
+    /**
+     * @return array
+     */
+    public function getOriginalData()
+    {
+        return $this->originalData;
+    }
+
+    /**
+     * @param array $originalData
+     */
+    public function setOriginalData($originalData)
+    {
+        $this->originalData = $originalData;
+    }
+
+    /**
+     * @param \Swift_Mime_Attachment $attachment
+     * @return $this
+     */
+    public function addAttachment(\Swift_Mime_Attachment $attachment) {
+        return $this->attach($attachment);
+    }
+
+    /**
+     *
+     *
+     * @param $data
+     * @param null $mimeType
+     * @param null $disposition
+     * @param null $filename
+     * @return \Swift_Mime_Attachment
+     */
+    public function createAttachment($data, $mimeType = null, $filename = null, $disposition = null) {
+        $attachment = \Swift_Attachment::newInstance($data, $filename, $mimeType);
+        if($disposition) {
+            $attachment->setDisposition($disposition);
+        }
+        $this->addAttachment($attachment);
+        return $attachment;
+    }
+
 }

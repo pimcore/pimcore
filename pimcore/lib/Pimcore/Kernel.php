@@ -12,6 +12,7 @@ use Symfony\Bundle\DebugBundle\DebugBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\MonologBundle\MonologBundle;
 use Symfony\Bundle\SecurityBundle\SecurityBundle;
+use Symfony\Bundle\SwiftmailerBundle\SwiftmailerBundle;
 use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Bundle\WebProfilerBundle\WebProfilerBundle;
 use Symfony\Cmf\Bundle\RoutingBundle\CmfRoutingBundle;
@@ -33,6 +34,7 @@ abstract class Kernel extends \Symfony\Component\HttpKernel\Kernel
             new TwigBundle(),
             new MonologBundle(),
             new SensioFrameworkExtraBundle(),
+            new SwiftmailerBundle(),
 
             // CMF bundles
             new CmfRoutingBundle(),

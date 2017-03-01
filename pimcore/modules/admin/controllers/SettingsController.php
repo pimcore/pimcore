@@ -449,10 +449,10 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
                 "smtp" => [
                     "host" => $values[$type . ".smtp.host"],
                     "port" => $values[$type . ".smtp.port"],
-                    "ssl" => $values[$type . ".smtp.ssl"],
+                    "ssl" => $values[$type . ".smtp.ssl"] ? $values[$type . ".smtp.ssl"] : null,
                     "name" => $values[$type . ".smtp.name"],
                     "auth" => [
-                        "method" => $values[$type . ".smtp.auth.method"],
+                        "method" => $values[$type . ".smtp.auth.method"] ? $values[$type . ".smtp.auth.method"] : null,
                         "username" => $values[$type . ".smtp.auth.username"],
                     ]
                 ]
@@ -461,10 +461,14 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
             $smtpPassword = $values[$type . ".smtp.auth.password"];
             if (!empty($smtpPassword)) {
                 $settings[$type]['smtp']['auth']['password'] = $smtpPassword;
+            } else {
+                $settings[$type]['smtp']['auth']['password'] = null;
             }
 
             if (array_key_exists($type . ".debug.emailAddresses", $values)) {
                 $settings[$type]["debug"] = ["emailaddresses" => $values[$type . ".debug.emailAddresses"]];
+            } else {
+                $settings[$type]["debug"] = null;
             }
 
             if (array_key_exists($type . ".bounce.type", $values)) {

@@ -76,6 +76,7 @@
     "symfony/symfony": "3.2.*",
     "symfony/monolog-bundle": "^3.0.2",
     "symfony/polyfill-apcu": "^1.0",
+    "symfony/swiftmailer-bundle": "^2.4",
 
     "symfony-cmf/routing-bundle": "@dev",
 
@@ -88,9 +89,7 @@
 
     "zendframework/zendframework1": "~1.12",
     "zendframework/zend-diactoros": "^1.3",
-    "zendframework/zend-view": "^2.8",
     "zendframework/zend-servicemanager": "^3.2",
-    "zendframework/zend-escaper": "^2.5",
     "zendframework/zend-paginator": "^2.7"
   },
   "require-dev": {

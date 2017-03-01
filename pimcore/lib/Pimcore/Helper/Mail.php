@@ -35,8 +35,6 @@ class Mail
             throw new \Exception('$type has to be "html" or "text"');
         }
 
-        $temporaryStorage = $mail->getTemporaryStorage();
-
         //generating html debug info
         if ($type == 'html') {
             $debugInformation = '<br/><br/><table class="pimcore_debug_information">
@@ -45,17 +43,18 @@ class Mail
             $debugInformation .= '<tr><td class="pimcore_label_column">From:</td><td>';
 
             if ($mail->getFrom()) {
-                $debugInformation .= $mail->getFrom();
-            } else {
-                $defaultFrom = $mail->getDefaultFrom();
-                $debugInformation .= $defaultFrom["email"] . '<br/>Info: No "from" email address given so the default "from" email address is used from "Settings" -> "System" -> "Email Settings" )';
+                $debugInformation .= self::formatDebugReceivers($mail->getFrom());
             }
             $debugInformation .= '</td></tr>';
 
             foreach (['To', 'Cc', 'Bcc'] as $key) {
-                if (isset($temporaryStorage[$key]) && is_array($temporaryStorage[$key])) {
+
+                $getterName = "get" . $key;
+                $addresses = $mail->$getterName();
+
+                if ($addresses) {
                     $debugInformation .= '<tr><td class="pimcore_label_column">' . $key . ': </td>';
-                    $debugInformation .= '<td>' . self::formatDebugReceivers($temporaryStorage[$key]) . '</td></tr>';
+                    $debugInformation .= '<td>' . self::formatDebugReceivers($addresses) . '</td></tr>';
                 }
             }
 
@@ -64,17 +63,17 @@ class Mail
             //generating text debug info
             $debugInformation = "\r\n  \r\nDebug Information:  \r\n  \r\n";
             if ($mail->getFrom()) {
-                $debugInformation .= 'From: ' . $mail->getFrom(). "\r\n";
-            } else {
-                $defaultFrom = $mail->getDefaultFrom();
-                $debugInformation .= 'From: ' . $defaultFrom["email"] . ' (Info: No "from" email address given so the default "from" email address is used from "Settings" -> "System" -> "Email Settings" )'. "\r\n";
+                $debugInformation .= 'From: ' . self::formatDebugReceivers($mail->getFrom()) . "\r\n";;
             }
 
             //generating text debug info
-            $debugInformation = "\r\n  \r\nDebug Information:  \r\n  \r\n";
             foreach (['To', 'Cc', 'Bcc'] as $key) {
-                if (isset($temporaryStorage[$key]) && is_array($temporaryStorage[$key])) {
-                    $debugInformation .= "$key: " . self::formatDebugReceivers($temporaryStorage[$key]) . "\r\n";
+
+                $getterName = "get" . $key;
+                $addresses = $mail->$getterName();
+
+                if ($addresses) {
+                    $debugInformation .= "$key: " . self::formatDebugReceivers($addresses) . "\r\n";
                 }
             }
         }
@@ -130,14 +129,12 @@ CSS;
     protected static function formatDebugReceivers(array $receivers)
     {
         $tmpString = '';
-        foreach ($receivers as $entry) {
-            if (isset($entry['email'])) {
-                $tmpString .= $entry['email'];
-                if (isset($entry['name'])) {
-                    $tmpString .= " (" . $entry["name"] . ")";
-                }
-                $tmpString .= ", ";
+        foreach ($receivers as $mail => $name) {
+            $tmpString .= $mail;
+            if (isset($name)) {
+                $tmpString .= " (" . $name . ")";
             }
+            $tmpString .= ", ";
         }
         $tmpString = substr($tmpString, 0, strrpos($tmpString, ','));
 
@@ -173,32 +170,28 @@ CSS;
 
         $mailFrom = $mail->getFrom();
         if ($mailFrom) {
-            $emailLog->setFrom($mailFrom);
-        } else {
-            $defaultFrom = $mail->getDefaultFrom();
-            $tmpString = $defaultFrom['email'];
-            if ($defaultFrom['name']) {
-                $tmpString .= " (" . $defaultFrom["name"] . ")";
-            }
-            $emailLog->setFrom($tmpString);
+            $emailLog->setFrom(self::formatDebugReceivers($mailFrom));
         }
 
 
-        $html = $mail->getBodyHtml();
-        if ($html instanceof \Zend_Mime_Part) {
-            $emailLog->setBodyHtml($html->getRawContent());
+        $html = $mail->getBody();
+        if ($html) {
+            $emailLog->setBodyHtml($html);
         }
 
-        $text = $mail->getBodyText();
-        if ($text instanceof \Zend_Mime_Part) {
-            $emailLog->setBodyText($text->getRawContent());
+        $text = $mail->getBodyTextMimePart();
+        if ($text) {
+            $emailLog->setBodyText($text->getBody());
         }
 
-        $temporaryStorage = $mail->getTemporaryStorage();
+
         foreach (['To', 'Cc', 'Bcc'] as $key) {
-            if (isset($temporaryStorage[$key]) && is_array($temporaryStorage[$key])) {
+            $getterName = "get" . $key;
+            $addresses = $mail->$getterName();
+
+            if ($addresses) {
                 if (method_exists($emailLog, 'set' . $key)) {
-                    $emailLog->{"set$key"}(self::formatDebugReceivers($temporaryStorage[$key]));
+                    $emailLog->{"set$key"}(self::formatDebugReceivers($addresses));
                 }
             }
         }

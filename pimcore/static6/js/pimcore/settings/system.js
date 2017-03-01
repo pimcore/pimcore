@@ -431,7 +431,7 @@ pimcore.settings.system = Class.create({
                                     name: "email.method",
                                     value: this.getValue("email.method"),
                                     store: [
-                                        ["sendmail", "sendmail"],
+                                        ["mail", "mail"],
                                         ["smtp", "smtp"]
                                     ],
                                     listeners: {
@@ -1195,7 +1195,7 @@ pimcore.settings.system = Class.create({
                                     name: "newsletter.method",
                                     value: this.getValue("newsletter.method"),
                                     store: [
-                                        ["sendmail", "sendmail"],
+                                        ["mail", "mail"],
                                         ["smtp", "smtp"]
                                     ],
                                     listeners: {

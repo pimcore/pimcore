@@ -3,6 +3,7 @@ imports:
 
 parameters:
     locale: en
+    swiftmailer.plugin.redirecting.class: 'Pimcore\Bundle\PimcoreBundle\Mail\Plugins\RedirectingPlugin'
 
 framework:
     translator:
@@ -61,3 +62,25 @@ pimcore:
 
         translations:
           path: "@PimcoreBundle/Resources/translations"
+
+swiftmailer:
+    default_mailer: pimcore_mailer
+    mailers:
+        pimcore_mailer:
+            transport: '%pimcore_system_config.email.method%'
+            delivery_addresses: ['%pimcore_system_config.email.debug.emailAddresses%']
+            host:      '%pimcore_system_config.email.smtp.host%'
+            username:  '%pimcore_system_config.email.smtp.auth.username%'
+            password:  '%pimcore_system_config.email.smtp.auth.password%'
+            port: '%pimcore_system_config.email.smtp.port%'
+            encryption: '%pimcore_system_config.email.smtp.ssl%'
+            auth_mode: '%pimcore_system_config.email.smtp.auth.method%'
+        newsletter_mailer:
+            transport: '%pimcore_system_config.newsletter.method%'
+            delivery_addresses: ['%pimcore_system_config.email.debug.emailAddresses%']
+            host:      '%pimcore_system_config.newsletter.smtp.host%'
+            username:  '%pimcore_system_config.newsletter.smtp.auth.username%'
+            password:  '%pimcore_system_config.newsletter.smtp.auth.password%'
+            port: '%pimcore_system_config.newsletter.smtp.port%'
+            encryption: '%pimcore_system_config.newsletter.smtp.ssl%'
+            auth_mode: '%pimcore_system_config.newsletter.smtp.auth.method%'

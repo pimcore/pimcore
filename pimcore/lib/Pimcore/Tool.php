@@ -489,7 +489,8 @@ class Tool
      */
     public static function getMail($recipients = null, $subject = null, $charset = null)
     {
-        $mail = new Mail($charset);
+        $mail = new Mail();
+        $mail->setCharset($charset);
 
         if ($recipients) {
             if (is_string($recipients)) {
