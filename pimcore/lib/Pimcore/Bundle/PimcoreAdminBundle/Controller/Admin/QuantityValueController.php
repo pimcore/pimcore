@@ -15,12 +15,13 @@
  */
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin;
 
+use Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminController;
 use Pimcore\Model\Object\QuantityValue\Unit;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class QuantityValueController extends AdminControlle
+class QuantityValueController extends AdminController
 {
     /**
      * @Route("/quantity-value/unit-proxy")
