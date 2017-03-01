@@ -300,14 +300,9 @@ CSS;
                 $fileInfo = [];
                 if (stream_is_local($path)) {
                     $fileInfo = self::getNormalizedFileInfo($path, $document);
-                    if (in_array($fileInfo['fileExtension'], ['css', 'less'])) {
-                        if (is_readable($fileInfo['filePathNormalized'])) {
-                            if ($fileInfo['fileExtension'] == 'css') {
-                                $fileContent = file_get_contents($fileInfo['filePathNormalized']);
-                            } else {
-                                $fileContent = \Pimcore\Tool\Less::compile($fileInfo['filePathNormalized']);
-                                $fileContent = str_replace('/**** compiled with lessphp ****/', '', $fileContent);
-                            }
+                    if ($fileInfo['fileExtension'] == "css" && is_readable($fileInfo['filePathNormalized'])) {
+                        if ($fileInfo['fileExtension'] == 'css') {
+                            $fileContent = file_get_contents($fileInfo['filePathNormalized']);
                         }
                     }
                 } elseif (strpos($path, "http") === 0) {
@@ -396,7 +391,7 @@ CSS;
         $fileInfo['fileExtension'] = substr($path, strrpos($path, '.') + 1);
         $netUrl = new \Net_URL2($fileInfo['fileUrl']);
         $fileInfo['fileUrlNormalized'] = $netUrl->getNormalizedURL();
-        $fileInfo['filePathNormalized'] = PIMCORE_DOCUMENT_ROOT . str_replace($hostUrl, '', $fileInfo['fileUrlNormalized']);
+        $fileInfo['filePathNormalized'] = PIMCORE_WEB_ROOT . str_replace($hostUrl, '', $fileInfo['fileUrlNormalized']);
 
         return $fileInfo;
     }

@@ -1929,10 +1929,6 @@
         "definition": "Disable Cookies (comma separated)"
     },
     {
-        "term": "path_to_lessc_optional",
-        "definition": "Path to lessc (optional)"
-    },
-    {
         "term": "details",
         "definition": "Details"
     },
@@ -3915,10 +3911,6 @@
     {
         "term": "stop",
         "definition": "Stop"
-    },
-    {
-        "term": "outputfilters",
-        "definition": "Outputfilters"
     },
     {
         "term": "dependencies",

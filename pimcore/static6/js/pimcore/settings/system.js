@@ -1063,31 +1063,6 @@ pimcore.settings.system = Class.create({
                     },
                     {
                         xtype: 'fieldset',
-                        title: t('outputfilters'),
-                        collapsible: true,
-                        collapsed: true,
-                        autoHeight: true,
-                        labelWidth: 200,
-                        defaultType: 'checkbox',
-                        defaults: {width: 600},
-                        items: [
-                            {
-                                fieldLabel: "LESS",
-                                xtype: "checkbox",
-                                name: "outputfilters.less",
-                                checked: this.getValue("outputfilters.less")
-                            },
-                            {
-                                fieldLabel: t("path_to_lessc_optional"),
-                                xtype: "textfield",
-                                name: "outputfilters.lesscpath",
-                                value: this.getValue("outputfilters.lesscpath"),
-                                style: "margin-bottom: 15px;"
-                            }
-                        ]
-                    }
-                    , {
-                        xtype: 'fieldset',
                         title: t('webservice'),
                         collapsible: true,
                         collapsed: true,

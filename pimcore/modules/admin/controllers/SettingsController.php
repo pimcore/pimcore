@@ -420,10 +420,6 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
                 "excludePatterns" => $cacheExcludePatterns,
                 "excludeCookie" => $values["cache.excludeCookie"]
             ],
-            "outputfilters" => [
-                "less" => $values["outputfilters.less"],
-                "lesscpath" => $values["outputfilters.lesscpath"]
-            ],
             "webservice" => [
                 "enabled" => $values["webservice.enabled"]
             ],
