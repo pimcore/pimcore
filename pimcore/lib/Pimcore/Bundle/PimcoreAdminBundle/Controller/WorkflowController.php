@@ -1,25 +1,23 @@
 <?php
-/**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in
- * LICENSE.md which is distributed with this source code.
- *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
- */
 
+namespace Pimcore\Bundle\PimcoreAdminBundle\Controller;
 
+use Pimcore\Bundle\PimcoreBundle\Controller\EventedControllerInterface;
 use Pimcore\WorkflowManagement\Workflow;
 use Pimcore\Model\Object;
 use Pimcore\Model\Object\Concrete as ConcreteObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Asset;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\Routing\Annotation\Route;
 
-class Admin_WorkflowController extends \Pimcore\Controller\Action\Admin\Element
+/**
+ * @Route("/workflow")
+ */
+class WorkflowController extends AdminController implements EventedControllerInterface
 {
 
     /**
@@ -52,35 +50,15 @@ class Admin_WorkflowController extends \Pimcore\Controller\Action\Admin\Element
      */
     private $newStatus;
 
-
-    public function preDispatch()
-    {
-        parent::preDispatch();
-
-        if ($this->getParam('ctype') === 'document') {
-            $this->element = Document::getById((int) $this->getParam('cid', 0));
-        } elseif ($this->getParam('ctype') === 'asset') {
-            $this->element = Asset::getById((int) $this->getParam('cid', 0));
-        } elseif ($this->getParam('ctype') === 'object') {
-            $this->element = ConcreteObject::getById((int) $this->getParam('cid', 0));
-        }
-
-        if (!$this->element) {
-            throw new \Exception('Cannot load element' . $this->getParam('cid') . ' of type \'' . $this->getParam('ctype') . '\'');
-        }
-
-        //get the latest available version of the element -
-        $this->element = $this->getLatestVersion($this->element);
-        $this->element->setUserModification($this->getUser()->getId());
-    }
-
-
     /**
      * Returns a JSON of the available workflow actions to the admin panel
+     * @Route("/get-workflow-form")
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function getWorkflowFormAction()
+    public function getWorkflowFormAction(Request $request)
     {
-        $params = $this->getParam('workflow', []);
+        $params = $request->get('workflow', []);
         $manager = $this->getWorkflowManager();
         $workflow = $manager->getWorkflow();
 
@@ -145,14 +123,18 @@ class Admin_WorkflowController extends \Pimcore\Controller\Action\Admin\Element
             $wfConfig['message'] = $e->getMessage();
         }
 
-        $this->_helper->json($wfConfig);
+        return $this->json($wfConfig);
     }
 
-
-    public function submitWorkflowTransitionAction()
+    /**
+     * @Route("/submit-workflow-transition")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function submitWorkflowTransitionAction(Request $request)
     {
         $manager = $this->getWorkflowManager();
-        $params = $this->getParam('workflow', []);
+        $params = $request->get('workflow', []);
 
         if ($manager->validateAction($params['action'], $params['newState'], $params['newStatus'])) {
 
@@ -180,7 +162,7 @@ class Admin_WorkflowController extends \Pimcore\Controller\Action\Admin\Element
         }
 
 
-        $this->_helper->json($data, true);
+        return $this->json($data, true);
     }
 
 
@@ -244,5 +226,43 @@ class Admin_WorkflowController extends \Pimcore\Controller\Action\Admin\Element
         }
 
         return $element;
+    }
+
+    /**
+     * @param FilterControllerEvent $event
+     */
+    public function onKernelController(FilterControllerEvent $event)
+    {
+        $isMasterRequest = $event->isMasterRequest();
+        if (!$isMasterRequest) {
+            return;
+        }
+
+        $request = $event->getRequest();
+
+        if ($request->get('ctype') === 'document') {
+            $this->element = Document::getById((int) $request->get('cid', 0));
+        } elseif ($request->get('ctype') === 'asset') {
+            $this->element = Asset::getById((int) $request->get('cid', 0));
+        } elseif ($request->get('ctype') === 'object') {
+            $this->element = ConcreteObject::getById((int) $request->get('cid', 0));
+        }
+
+        if (!$this->element) {
+            throw new \Exception('Cannot load element' . $request->get('cid') . ' of type \'' . $request->get('ctype') . '\'');
+        }
+
+        //get the latest available version of the element -
+        $this->element = $this->getLatestVersion($this->element);
+        $this->element->setUserModification($this->getUser()->getId());
+
+    }
+
+    /**
+     * @param FilterResponseEvent $event
+     */
+    public function onKernelResponse(FilterResponseEvent $event)
+    {
+        // nothing to do
     }
 }
