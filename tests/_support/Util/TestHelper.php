@@ -1,20 +1,12 @@
 <?php
-/**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in
- * LICENSE.md which is distributed with this source code.
- *
- * @category   Pimcore
- * @package    Asset
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
- */
 
-class Test_Tool
+namespace Pimcore\Tests\Util;
+
+use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\User;
+use Pimcore\Model\Webservice\Tool as WebserviceTool;
+
+class TestHelper
 {
     public static function getSoapClient()
     {
@@ -23,14 +15,14 @@ class Test_Tool
 
         $user = User::getById($conf->user);
         if (!$user instanceof User) {
-            throw new Exception("invalid user id");
+            throw new \Exception("invalid user id");
         }
 
-        $client = new Zend_Soap_Client($conf->webservice->wsdl . "&username=" . $user->getUsername() . "&apikey=" . $user->getPassword(),
+        $client = new \Zend_Soap_Client($conf->webservice->wsdl . "&username=" . $user->getUsername() . "&apikey=" . $user->getPassword(),
             [
                    "cache_wsdl" => false,
                    "soap_version" => SOAP_1_2,
-                   "classmap" => Webservice_Tool::createClassMappings()
+                   "classmap" => WebserviceTool::createClassMappings()
               ]);
 
         $client->setLocation($conf->webservice->serviceEndpoint . "?username=" . $user->getUsername() . "&apikey=" . $user->getPassword());
@@ -51,7 +43,7 @@ class Test_Tool
         if (is_array($properties)) {
             foreach ($properties as $key => $value) {
                 if ($value->type == "asset" || $value->type == "object" || $value->type == "document") {
-                    if ($value->data instanceof Element_Interface) {
+                    if ($value->data instanceof ElementInterface) {
                         $propertiesStringArray["property_" . $key . "_" . $value->type] = "property_" . $key . "_" . $value->type . ":" . $value->data->getId();
                     } else {
                         $propertiesStringArray["property_" . $key . "_" . $value->type] = "property_" . $key . "_" . $value->type . ": null";
@@ -65,7 +57,7 @@ class Test_Tool
                 } elseif ($value->type == "text" || $value->type == "select") {
                     $propertiesStringArray["property_" . $key . "_" . $value->type] = "property_" . $key . "_" . $value->type . ":" . $value->data;
                 } else {
-                    throw new Exception("Unknow property of type [ " . $value->type . " ]");
+                    throw new \Exception("Unknown property of type [ " . $value->type . " ]");
                 }
             }
         }

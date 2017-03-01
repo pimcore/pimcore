@@ -110,11 +110,11 @@
       "Pimcore\\Model\\Object\\": "var/classes/Object",
       "Pimcore\\Model\\": "pimcore/models",
       "Pimcore\\": "pimcore/lib/Pimcore",
-
       "Website\\": "legacy/website/lib"
     },
     "classmap": [
-      "app/AppKernel.php"
+      "app/AppKernel.php",
+      "pimcore/lib/Pimcore.php"
     ],
     "exclude-from-classmap": [
       "pimcore/lib/Pimcore/Bundle/PimcoreBundle/Resources/install-profiles"
