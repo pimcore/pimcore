@@ -18,6 +18,7 @@ use Pimcore\Tool;
 use Pimcore\Cache;
 use Pimcore\Model;
 use Pimcore\Logger;
+use Pimcore\Model\Document;
 
 class Config
 {
@@ -141,6 +142,16 @@ class Config
                 // this is necessary to set the correct settings in editmode/preview (using the main domain)
                 $front = \Zend_Controller_Front::getInstance();
                 $originDocument = $front->getRequest()->getParam("document");
+                if ($originDocument) {
+                    $site = Tool\Frontend::getSiteForDocument($originDocument);
+                    if ($site) {
+                        $siteId = $site->getId();
+                    }
+                }
+            } elseif (Tool::isNewsletterRequest()) {
+                // this is necessary to set the correct settings in newsletter mailings
+                $front = \Zend_Controller_Front::getInstance();
+                $originDocument = Document\Newsletter::getById($front->getRequest()->getParam("id"));
                 if ($originDocument) {
                     $site = Tool\Frontend::getSiteForDocument($originDocument);
                     if ($site) {

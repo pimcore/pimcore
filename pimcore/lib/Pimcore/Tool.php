@@ -16,6 +16,7 @@ namespace Pimcore;
 
 use Pimcore\Cache;
 use Pimcore\Logger;
+use Pimcore\Model\Document;
 
 class Tool
 {
@@ -363,6 +364,21 @@ class Tool
             || array_key_exists("pimcore_object_preview", $_REQUEST)
             || array_key_exists("pimcore_version", $_REQUEST)
             || preg_match("@^/pimcore_document_tag_renderlet@", $_SERVER["REQUEST_URI"])) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * detects a newsletter send request
+     * @static
+     * @return bool
+     */
+    public static function isNewsletterRequest()
+    {
+        $document = Document::getById($_REQUEST["id"]);
+        if ($document instanceof Document\Newsletter) {
             return true;
         }
 
