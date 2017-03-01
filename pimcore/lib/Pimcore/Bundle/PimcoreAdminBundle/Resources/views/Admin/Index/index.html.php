@@ -135,7 +135,7 @@ $runtimePerspective = \Pimcore\Config::getRuntimePerspective($user);
     <div id="pimcore_status_update" data-menu-tooltip="<?= $this->translate("update_available") ?>" style="display: none;"></div>
 </div>
 
-<div id="pimcore_menu_tooltip" style="display: none;"></div>
+<div id="pimcore_tooltip" style="display: none;"></div>
 
 <script type="text/javascript">
     var pimcore = {}; // namespace
