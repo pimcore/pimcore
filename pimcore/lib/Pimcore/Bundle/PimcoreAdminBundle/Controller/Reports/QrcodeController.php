@@ -2,7 +2,6 @@
 
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Reports;
 
-use Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminController;
 use Pimcore\Bundle\PimcoreBundle\Controller\EventedControllerInterface;
 use Pimcore\Model\Tool\Qrcode;
 use Pimcore\Model\Document;
@@ -119,11 +118,11 @@ class QrcodeController extends ReportsControllerBase implements EventedControlle
         $url = "";
 
         if ($request->get("name")) {
-            $url = $this->getRequest()->getScheme() . "://" . $this->getRequest()->getHttpHost() . "/qr~-~code/" .
+            $url = $request->getScheme() . "://" . $request->getHttpHost() . "/qr~-~code/" .
                 $request->get("name");
         } elseif ($request->get("documentId")) {
             $doc = Document::getById($request->get("documentId"));
-            $url = $this->getRequest()->getScheme() . "://" . $this->getRequest()->getHttpHost()
+            $url = $request->getScheme() . "://" . $request->getHttpHost()
                 . $doc->getFullPath();
         } elseif ($request->get("url")) {
             $url = $request->get("url");
