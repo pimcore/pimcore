@@ -1,6 +1,6 @@
 <?php
 /** @var $view \Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine */
-$view->extend('PimcoreAdminBundle:Login:layout.html.php');
+$view->extend('PimcoreAdminBundle:Admin/Login:layout.html.php');
 
 //detect browser
 $supported      = false;
