@@ -15,7 +15,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route("/qrcode")
  */
-class QrcodeController extends AdminController implements EventedControllerInterface
+class QrcodeController extends ReportsControllerBase implements EventedControllerInterface
 {
 
     /**
