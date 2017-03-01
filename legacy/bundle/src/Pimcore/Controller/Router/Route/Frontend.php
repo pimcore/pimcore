@@ -22,6 +22,7 @@ use Pimcore\Model\Site;
 use Pimcore\Model\Redirect;
 use Pimcore\Model\Staticroute;
 use Pimcore\Logger;
+use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 
 class Frontend extends \Zend_Controller_Router_Route_Abstract
 {
@@ -354,6 +355,10 @@ class Frontend extends \Zend_Controller_Router_Route_Abstract
 
         if (!$matchFound) {
             return false;
+        }
+
+        if(isset($params["document"])) {
+            \Pimcore::getContainer()->get("request_stack")->getMasterRequest()->attributes->set(DynamicRouter::CONTENT_KEY, $params["document"]);
         }
 
         // remove pimcore magic parameters

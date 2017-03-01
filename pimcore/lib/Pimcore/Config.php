@@ -18,6 +18,7 @@ use Pimcore\Tool;
 use Pimcore\Cache;
 use Pimcore\Model;
 use Pimcore\Logger;
+use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 
 class Config
 {
@@ -147,8 +148,8 @@ class Config
                 $siteId = Model\Site::getCurrentSite()->getId();
             } elseif (Tool::isFrontentRequestByAdmin()) {
                 // this is necessary to set the correct settings in editmode/preview (using the main domain)
-                $front = \Zend_Controller_Front::getInstance();
-                $originDocument = $front->getRequest()->getParam("document");
+                // we cannot use the document resolver service here, because we need the document on the master request
+                $originDocument = \Pimcore::getContainer()->get("request_stack")->getMasterRequest()->get(DynamicRouter::CONTENT_KEY);
                 if ($originDocument) {
                     $site = Tool\Frontend::getSiteForDocument($originDocument);
                     if ($site) {
