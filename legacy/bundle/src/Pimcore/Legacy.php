@@ -493,6 +493,13 @@ class Legacy {
     public static function collectGarbage($keepItems = []) {
 
         $registryBackup = [];
+        $keepItems = array_merge($keepItems, [
+            "Zend_Locale",
+            "Zend_View_Helper_Placeholder_Registry",
+            "Zend_View_Helper_Doctype",
+            "Zend_Translate",
+            "Zend_Navigation",
+        ]);
 
         foreach ($keepItems as $item) {
             if (\Zend_Registry::isRegistered($item)) {

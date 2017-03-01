@@ -356,11 +356,6 @@ class Pimcore
         Db::close();
 
         $protectedItems = [
-            "Zend_Locale",
-            "Zend_View_Helper_Placeholder_Registry",
-            "Zend_View_Helper_Doctype",
-            "Zend_Translate",
-            "Zend_Navigation",
             "pimcore_tag_block_current",
             "pimcore_tag_block_numeration",
             "Config_system",
