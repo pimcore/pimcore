@@ -1,17 +1,8 @@
 <?php
-/**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in
- * LICENSE.md which is distributed with this source code.
- *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
- */
 
+namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin;
+
+use Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminController;
 use Pimcore\Cache;
 use Pimcore\Tool;
 use Pimcore\Config;
@@ -27,23 +18,34 @@ use Pimcore\Model\Element;
 use Pimcore\Model;
 use Pimcore\Model\Tool\Tag;
 use Pimcore\File;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
-class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
+/**
+ * @Route("/settings")
+ */
+class SettingsController extends AdminController
 {
-    public function metadataAction()
+    /**
+     * @Route("/metadata")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function metadataAction(Request $request)
     {
-        if ($this->getParam("data")) {
+        if ($request->get("data")) {
             $this->checkPermission("asset_metadata");
 
-            if ($this->getParam("xaction") == "destroy") {
-                $data = \Zend_Json::decode($this->getParam("data"));
+            if ($request->get("xaction") == "destroy") {
+                $data = $this->decodeJson($request->get("data"));
                 $id = $data["id"];
                 $metadata = Metadata\Predefined::getById($id);
                 $metadata->delete();
 
-                $this->_helper->json(["success" => true, "data" => []]);
-            } elseif ($this->getParam("xaction") == "update") {
-                $data = \Zend_Json::decode($this->getParam("data"));
+                return $this->json(["success" => true, "data" => []]);
+            } elseif ($request->get("xaction") == "update") {
+                $data = $this->decodeJson($request->get("data"));
 
                 // save type
                 $metadata = Metadata\Predefined::getById($data["id"]);
@@ -52,16 +54,16 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
 
                 $existingItem = Metadata\Predefined\Listing::getByKeyAndLanguage($metadata->getName(), $metadata->getLanguage(), $metadata->getTargetSubtype());
                 if ($existingItem && $existingItem->getId() != $metadata->getId()) {
-                    $this->_helper->json(["message" => "rule_violation", "success" => false]);
+                    return $this->json(["message" => "rule_violation", "success" => false]);
                 }
 
                 $metadata->minimize();
                 $metadata->save();
                 $metadata->expand();
 
-                $this->_helper->json(["data" => $metadata, "success" => true]);
-            } elseif ($this->getParam("xaction") == "create") {
-                $data = \Zend_Json::decode($this->getParam("data"));
+                return $this->json(["data" => $metadata, "success" => true]);
+            } elseif ($request->get("xaction") == "create") {
+                $data = $this->decodeJson($request->get("data"));
                 unset($data["id"]);
 
                 // save type
@@ -71,20 +73,20 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
 
                 $existingItem = Metadata\Predefined\Listing::getByKeyAndLanguage($metadata->getName(), $metadata->getLanguage(), $metadata->getTargetSubtype());
                 if ($existingItem) {
-                    $this->_helper->json(["message" => "rule_violation", "success" => false]);
+                    return $this->json(["message" => "rule_violation", "success" => false]);
                 }
 
                 $metadata->save();
 
-                $this->_helper->json(["data" => $metadata, "success" => true]);
+                return $this->json(["data" => $metadata, "success" => true]);
             }
         } else {
             // get list of types
 
             $list = new Metadata\Predefined\Listing();
 
-            if ($this->getParam("filter")) {
-                $filter = $this->getParam("filter");
+            if ($request->get("filter")) {
+                $filter = $request->get("filter");
                 $list->setFilter(function ($row) use ($filter) {
                     foreach ($row as $value) {
                         if (strpos($value, $filter) !== false) {
@@ -106,14 +108,19 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
                 }
             }
 
-            $this->_helper->json(["data" => $properties, "success" => true, "total" => $list->getTotalCount()]);
+            return $this->json(["data" => $properties, "success" => true, "total" => $list->getTotalCount()]);
         }
     }
 
-    public function getPredefinedMetadataAction()
+    /**
+     * @Route("/get-predefined-metadata")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getPredefinedMetadataAction(Request $request)
     {
-        $type = $this->getParam("type");
-        $subType = $this->getParam("subType");
+        $type = $request->get("type");
+        $subType = $request->get("subType");
         $list = Metadata\Predefined\Listing::getByTargetType($type, [$subType]);
         $result = [];
         foreach ($list as $item) {
@@ -123,23 +130,28 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
         }
 
 
-        $this->_helper->json(["data" => $result, "success" => true]);
+        return $this->json(["data" => $result, "success" => true]);
     }
 
-    public function propertiesAction()
+    /**
+     * @Route("/properties")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function propertiesAction(Request $request)
     {
-        if ($this->getParam("data")) {
+        if ($request->get("data")) {
             $this->checkPermission("predefined_properties");
 
-            if ($this->getParam("xaction") == "destroy") {
-                $data = \Zend_Json::decode($this->getParam("data"));
+            if ($request->get("xaction") == "destroy") {
+                $data = $this->decodeJson($request->get("data"));
                 $id = $data["id"];
                 $property = Property\Predefined::getById($id);
                 $property->delete();
 
-                $this->_helper->json(["success" => true, "data" => []]);
-            } elseif ($this->getParam("xaction") == "update") {
-                $data = \Zend_Json::decode($this->getParam("data"));
+                return $this->json(["success" => true, "data" => []]);
+            } elseif ($request->get("xaction") == "update") {
+                $data = $this->decodeJson($request->get("data"));
 
                 // save type
                 $property = Property\Predefined::getById($data["id"]);
@@ -147,9 +159,9 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
 
                 $property->save();
 
-                $this->_helper->json(["data" => $property, "success" => true]);
-            } elseif ($this->getParam("xaction") == "create") {
-                $data = \Zend_Json::decode($this->getParam("data"));
+                return $this->json(["data" => $property, "success" => true]);
+            } elseif ($request->get("xaction") == "create") {
+                $data = $this->decodeJson($request->get("data"));
                 unset($data["id"]);
 
                 // save type
@@ -158,14 +170,14 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
 
                 $property->save();
 
-                $this->_helper->json(["data" => $property, "success" => true]);
+                return $this->json(["data" => $property, "success" => true]);
             }
         } else {
             // get list of types
             $list = new Property\Predefined\Listing();
 
-            if ($this->getParam("filter")) {
-                $filter = $this->getParam("filter");
+            if ($request->get("filter")) {
+                $filter = $request->get("filter");
                 $list->setFilter(function ($row) use ($filter) {
                     foreach ($row as $value) {
                         if ($value) {
@@ -192,7 +204,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
                 }
             }
 
-            $this->_helper->json(["data" => $properties, "success" => true, "total" => $list->getTotalCount()]);
+            return $this->json(["data" => $properties, "success" => true, "total" => $list->getTotalCount()]);
         }
     }
 
@@ -241,7 +253,12 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
         $this->deleteThumbnailFolders(PIMCORE_TEMPORARY_DIRECTORY . "/video-thumbnails", $thumbnail->getName());
     }
 
-    public function getSystemAction()
+    /**
+     * @Route("/get-system")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getSystemAction(Request $request)
     {
         $this->checkPermission("system_settings");
 
@@ -301,14 +318,19 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
             ]
         ];
 
-        $this->_helper->json($response);
+        return $this->json($response);
     }
 
-    public function setSystemAction()
+    /**
+     * @Route("/set-system")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function setSystemAction(Request $request)
     {
         $this->checkPermission("system_settings");
 
-        $values = \Zend_Json::decode($this->getParam("data"));
+        $values = $this->decodeJson($request->get("data"));
 
         // email settings
         $existingConfig = Config::getSystemConfig();
@@ -494,14 +516,14 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
         $configFile = \Pimcore\Config::locateConfigFile("system.php");
         File::putPhpFile($configFile, to_php_data_file_format($settings));
 
-        $this->_helper->json(["success" => true]);
+        return $this->json(["success" => true]);
     }
 
     /**
      * @param $source
      * @param $definitions
      * @param array $fallbacks
-     * @throws Exception
+     * @throws \Exception
      */
     protected function checkFallbackLanguageLoop($source, $definitions, $fallbacks = [])
     {
@@ -523,7 +545,12 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
         }
     }
 
-    public function getWeb2printAction()
+    /**
+     * @Route("/get-web2print")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getWeb2printAction(Request $request)
     {
         $this->checkPermission("web2print_settings");
 
@@ -546,14 +573,19 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
             "values" => $valueArray
         ];
 
-        $this->_helper->json($response);
+        return $this->json($response);
     }
 
-    public function setWeb2printAction()
+    /**
+     * @Route("/set-web2print")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function setWeb2printAction(Request $request)
     {
         $this->checkPermission("web2print_settings");
 
-        $values = \Zend_Json::decode($this->getParam("data"));
+        $values = $this->decodeJson($request->get("data"));
 
         if ($values['wkhtml2pdfOptions']) {
             $optionArray = [];
@@ -573,10 +605,15 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
         $configFile = \Pimcore\Config::locateConfigFile("web2print.php");
         File::putPhpFile($configFile, to_php_data_file_format($values));
 
-        $this->_helper->json(["success" => true]);
+        return $this->json(["success" => true]);
     }
 
-    public function clearCacheAction()
+    /**
+     * @Route("/clear-cache")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function clearCacheAction(Request $request)
     {
         $this->checkPermission("clear_cache");
 
@@ -594,10 +631,15 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
 
         \Pimcore::getEventDispatcher()->dispatch(\Pimcore\Event\SystemEvents::CACHE_CLEAR);
 
-        $this->_helper->json(["success" => true]);
+        return $this->json(["success" => true]);
     }
 
-    public function clearOutputCacheAction()
+    /**
+     * @Route("/clear-output-cache")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function clearOutputCacheAction(Request $request)
     {
         $this->checkPermission("clear_cache");
 
@@ -609,10 +651,15 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
 
         \Pimcore::getEventDispatcher()->dispatch(\Pimcore\Event\SystemEvents::CACHE_CLEAR_FULLPAGE_CACHE);
 
-        $this->_helper->json(["success" => true]);
+        return $this->json(["success" => true]);
     }
 
-    public function clearTemporaryFilesAction()
+    /**
+     * @Route("/clear-temporary-files")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function clearTemporaryFilesAction(Request $request)
     {
         $this->checkPermission("clear_temp_files");
 
@@ -628,16 +675,20 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
 
         \Pimcore::getEventDispatcher()->dispatch(\Pimcore\Event\SystemEvents::CACHE_CLEAR_TEMPORARY_FILES);
 
-        $this->_helper->json(["success" => true]);
+        return $this->json(["success" => true]);
     }
 
-
-    public function staticroutesAction()
+    /**
+     * @Route("/staticroutes")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function staticroutesAction(Request $request)
     {
-        if ($this->getParam("data")) {
+        if ($request->get("data")) {
             $this->checkPermission("routes");
 
-            $data = \Zend_Json::decode($this->getParam("data"));
+            $data = $this->decodeJson($request->get("data"));
 
             if (is_array($data)) {
                 foreach ($data as &$value) {
@@ -647,22 +698,22 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
                 }
             }
 
-            if ($this->getParam("xaction") == "destroy") {
-                $data = \Zend_Json::decode($this->getParam("data"));
+            if ($request->get("xaction") == "destroy") {
+                $data = $this->decodeJson($request->get("data"));
                 $id = $data["id"];
                 $route = Staticroute::getById($id);
                 $route->delete();
 
-                $this->_helper->json(["success" => true, "data" => []]);
-            } elseif ($this->getParam("xaction") == "update") {
+                return $this->json(["success" => true, "data" => []]);
+            } elseif ($request->get("xaction") == "update") {
                 // save routes
                 $route = Staticroute::getById($data["id"]);
                 $route->setValues($data);
 
                 $route->save();
 
-                $this->_helper->json(["data" => $route, "success" => true]);
-            } elseif ($this->getParam("xaction") == "create") {
+                return $this->json(["data" => $route, "success" => true]);
+            } elseif ($request->get("xaction") == "create") {
                 unset($data["id"]);
 
                 // save route
@@ -671,15 +722,15 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
 
                 $route->save();
 
-                $this->_helper->json(["data" => $route, "success" => true]);
+                return $this->json(["data" => $route, "success" => true]);
             }
         } else {
             // get list of routes
 
             $list = new Staticroute\Listing();
 
-            if ($this->getParam("filter")) {
-                $filter = $this->getParam("filter");
+            if ($request->get("filter")) {
+                $filter = $request->get("filter");
                 $list->setFilter(function ($row) use ($filter) {
                     foreach ($row as $value) {
                         if (! is_scalar($value)) {
@@ -707,23 +758,33 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
                 $routes[] = $route;
             }
 
-            $this->_helper->json(["data" => $routes, "success" => true, "total" => $list->getTotalCount()]);
+            return $this->json(["data" => $routes, "success" => true, "total" => $list->getTotalCount()]);
         }
 
-        $this->_helper->json(false);
+        return $this->json(false);
     }
 
-    public function getAvailableLanguagesAction()
+    /**
+     * @Route("/get-available-languages")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getAvailableLanguagesAction(Request $request)
     {
         if ($languages = Tool::getValidLanguages()) {
-            $this->_helper->json($languages);
+            return $this->json($languages);
         }
 
         $t = new Model\Translation\Website();
-        $this->_helper->json($t->getAvailableLanguages());
+        return $this->json($t->getAvailableLanguages());
     }
 
-    public function getAvailableAdminLanguagesAction()
+    /**
+     * @Route("/get-available-admin-languages")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getAvailableAdminLanguagesAction(Request $request)
     {
         $langs = [];
         $availableLanguages = Tool\Admin::getLanguages();
@@ -738,23 +799,28 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
             }
         }
 
-        $this->_helper->json($langs);
+        return $this->json($langs);
     }
 
-    public function redirectsAction()
+    /**
+     * @Route("/redirects")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function redirectsAction(Request $request)
     {
-        if ($this->getParam("data")) {
+        if ($request->get("data")) {
             $this->checkPermission("redirects");
 
-            if ($this->getParam("xaction") == "destroy") {
-                $data = \Zend_Json::decode($this->getParam("data"));
+            if ($request->get("xaction") == "destroy") {
+                $data = $this->decodeJson($request->get("data"));
                 $id = $data["id"];
                 $redirect = Redirect::getById($id);
                 $redirect->delete();
 
-                $this->_helper->json(["success" => true, "data" => []]);
-            } elseif ($this->getParam("xaction") == "update") {
-                $data = \Zend_Json::decode($this->getParam("data"));
+                return $this->json(["success" => true, "data" => []]);
+            } elseif ($request->get("xaction") == "update") {
+                $data = $this->decodeJson($request->get("data"));
 
                 // save redirect
                 $redirect = Redirect::getById($data["id"]);
@@ -775,9 +841,9 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
                         $redirect->setTarget($doc->getRealFullPath());
                     }
                 }
-                $this->_helper->json(["data" => $redirect, "success" => true]);
-            } elseif ($this->getParam("xaction") == "create") {
-                $data = \Zend_Json::decode($this->getParam("data"));
+                return $this->json(["data" => $redirect, "success" => true]);
+            } elseif ($request->get("xaction") == "create") {
+                $data = $this->decodeJson($request->get("data"));
                 unset($data["id"]);
 
                 // save route
@@ -799,23 +865,23 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
                         $redirect->setTarget($doc->getRealFullPath());
                     }
                 }
-                $this->_helper->json(["data" => $redirect, "success" => true]);
+                return $this->json(["data" => $redirect, "success" => true]);
             }
         } else {
             // get list of routes
 
             $list = new Redirect\Listing();
-            $list->setLimit($this->getParam("limit"));
-            $list->setOffset($this->getParam("start"));
+            $list->setLimit($request->get("limit"));
+            $list->setOffset($request->get("start"));
 
-            $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($this->getAllParams());
+            $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
             if ($sortingSettings['orderKey']) {
                 $list->setOrderKey($sortingSettings['orderKey']);
                 $list->setOrder($sortingSettings['order']);
             }
 
-            if ($this->getParam("filter")) {
-                $list->setCondition("`source` LIKE " . $list->quote("%".$this->getParam("filter")."%") . " OR `target` LIKE " . $list->quote("%".$this->getParam("filter")."%"));
+            if ($request->get("filter")) {
+                $list->setCondition("`source` LIKE " . $list->quote("%".$request->get("filter")."%") . " OR `target` LIKE " . $list->quote("%".$request->get("filter")."%"));
             }
 
 
@@ -834,29 +900,33 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
                 $redirects[] = $redirect;
             }
 
-            $this->_helper->json(["data" => $redirects, "success" => true, "total" => $list->getTotalCount()]);
+            return $this->json(["data" => $redirects, "success" => true, "total" => $list->getTotalCount()]);
         }
 
-        $this->_helper->json(false);
+        return $this->json(false);
     }
 
-
-    public function glossaryAction()
+    /**
+     * @Route("/glossary")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function glossaryAction(Request $request)
     {
-        if ($this->getParam("data")) {
+        if ($request->get("data")) {
             $this->checkPermission("glossary");
 
             Cache::clearTag("glossary");
 
-            if ($this->getParam("xaction") == "destroy") {
-                $data = \Zend_Json::decode($this->getParam("data"));
+            if ($request->get("xaction") == "destroy") {
+                $data = $this->decodeJson($request->get("data"));
                 $id = $data["id"];
                 $glossary = Glossary::getById($id);
                 $glossary->delete();
 
-                $this->_helper->json(["success" => true, "data" => []]);
-            } elseif ($this->getParam("xaction") == "update") {
-                $data = \Zend_Json::decode($this->getParam("data"));
+                return $this->json(["success" => true, "data" => []]);
+            } elseif ($request->get("xaction") == "update") {
+                $data = $this->decodeJson($request->get("data"));
 
                 // save glossary
                 $glossary = Glossary::getById($data["id"]);
@@ -881,9 +951,9 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
                     }
                 }
 
-                $this->_helper->json(["data" => $glossary, "success" => true]);
-            } elseif ($this->getParam("xaction") == "create") {
-                $data = \Zend_Json::decode($this->getParam("data"));
+                return $this->json(["data" => $glossary, "success" => true]);
+            } elseif ($request->get("xaction") == "create") {
+                $data = $this->decodeJson($request->get("data"));
                 unset($data["id"]);
 
                 // save glossary
@@ -908,23 +978,23 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
                     }
                 }
 
-                $this->_helper->json(["data" => $glossary, "success" => true]);
+                return $this->json(["data" => $glossary, "success" => true]);
             }
         } else {
             // get list of glossaries
 
             $list = new Glossary\Listing();
-            $list->setLimit($this->getParam("limit"));
-            $list->setOffset($this->getParam("start"));
+            $list->setLimit($request->get("limit"));
+            $list->setOffset($request->get("start"));
 
-            $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($this->getAllParams());
+            $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
             if ($sortingSettings['orderKey']) {
                 $list->setOrderKey($sortingSettings['orderKey']);
                 $list->setOrder($sortingSettings['order']);
             }
 
-            if ($this->getParam("filter")) {
-                $list->setCondition("`text` LIKE " . $list->quote("%".$this->getParam("filter")."%"));
+            if ($request->get("filter")) {
+                $list->setCondition("`text` LIKE " . $list->quote("%".$request->get("filter")."%"));
             }
 
             $list->load();
@@ -942,13 +1012,18 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
                 $glossaries[] = $glossary;
             }
 
-            $this->_helper->json(["data" => $glossaries, "success" => true, "total" => $list->getTotalCount()]);
+            return $this->json(["data" => $glossaries, "success" => true, "total" => $list->getTotalCount()]);
         }
 
-        $this->_helper->json(false);
+        return $this->json(false);
     }
 
-    public function getAvailableSitesAction()
+    /**
+     * @Route("/get-available-sites")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getAvailableSitesAction(Request $request)
     {
         $sitesList = new Model\Site\Listing();
         $sitesObjects = $sitesList->load();
@@ -957,7 +1032,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
             "rootId" => 1,
             "domains" => "",
             "rootPath" => "/",
-            "domain" => $this->view->translate("main_site")
+            "domain" => $this->trans("main_site")
         ]];
 
         foreach ($sitesObjects as $site) {
@@ -977,10 +1052,15 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
             }
         }
 
-        $this->_helper->json($sites);
+        return $this->json($sites);
     }
 
-    public function getAvailableCountriesAction()
+    /**
+     * @Route("/get-available-countries")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getAvailableCountriesAction(Request $request)
     {
         $countries = \Pimcore::getContainer()->get("pimcore.locale")->getDisplayRegions();
         asort($countries);
@@ -998,27 +1078,36 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
 
         $result = ["data" => $options, "success" => true, "total" => count($options)];
 
-        $this->_helper->json($result);
+        return $this->json($result);
     }
 
 
-    public function thumbnailAdapterCheckAction()
+    /**
+     * @Route("/thumbnail-adapter-check")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function thumbnailAdapterCheckAction(Request $request)
     {
-        echo $this->view->translate("important_use_imagick_pecl_extensions_for_best_results_gd_is_just_a_fallback_with_less_quality") ;
+        echo $this->trans("important_use_imagick_pecl_extensions_for_best_results_gd_is_just_a_fallback_with_less_quality") ;
         exit;
-
-        $instance = \Pimcore\Image::getInstance();
-        if ($instance instanceof \Pimcore\Image\Adapter\GD) {
-            echo '<span style="color: red; font-weight: bold;padding: 10px;margin:0 0 20px 0;border:1px solid red;display:block;">' .
-                $this->view->translate("important_use_imagick_pecl_extensions_for_best_results_gd_is_just_a_fallback_with_less_quality") .
-                '</span>';
-        }
-
-        exit;
+//
+//        $instance = \Pimcore\Image::getInstance();
+//        if ($instance instanceof \Pimcore\Image\Adapter\GD) {
+//            echo '<span style="color: red; font-weight: bold;padding: 10px;margin:0 0 20px 0;border:1px solid red;display:block;">' .
+//                $this->trans("important_use_imagick_pecl_extensions_for_best_results_gd_is_just_a_fallback_with_less_quality") .
+//                '</span>';
+//        }
+//
+//        exit;
     }
 
-
-    public function thumbnailTreeAction()
+    /**
+     * @Route("/thumbnail-tree")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function thumbnailTreeAction(Request $request)
     {
         $this->checkPermission("thumbnails");
 
@@ -1034,56 +1123,74 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
             ];
         }
 
-        $this->_helper->json($thumbnails);
+        return $this->json($thumbnails);
     }
 
-    public function thumbnailAddAction()
+    /**
+     * @Route("/thumbnail-add")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function thumbnailAddAction(Request $request)
     {
         $this->checkPermission("thumbnails");
 
         $success = false;
 
-        $pipe = Asset\Image\Thumbnail\Config::getByName($this->getParam("name"));
+        $pipe = Asset\Image\Thumbnail\Config::getByName($request->get("name"));
 
         if (!$pipe) {
             $pipe = new Asset\Image\Thumbnail\Config();
-            $pipe->setName($this->getParam("name"));
+            $pipe->setName($request->get("name"));
             $pipe->save();
 
             $success = true;
         }
 
-        $this->_helper->json(["success" => $success, "id" => $pipe->getName()]);
+        return $this->json(["success" => $success, "id" => $pipe->getName()]);
     }
 
-    public function thumbnailDeleteAction()
+    /**
+     * @Route("/thumbnail-delete")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function thumbnailDeleteAction(Request $request)
     {
         $this->checkPermission("thumbnails");
 
-        $pipe = Asset\Image\Thumbnail\Config::getByName($this->getParam("name"));
+        $pipe = Asset\Image\Thumbnail\Config::getByName($request->get("name"));
         $pipe->delete();
 
-        $this->_helper->json(["success" => true]);
+        return $this->json(["success" => true]);
     }
 
-
-    public function thumbnailGetAction()
+    /**
+     * @Route("/thumbnail-get")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function thumbnailGetAction(Request $request)
     {
         $this->checkPermission("thumbnails");
 
-        $pipe = Asset\Image\Thumbnail\Config::getByName($this->getParam("name"));
+        $pipe = Asset\Image\Thumbnail\Config::getByName($request->get("name"));
 
-        $this->_helper->json($pipe);
+        return $this->json($pipe);
     }
 
-
-    public function thumbnailUpdateAction()
+    /**
+     * @Route("/thumbnail-update")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function thumbnailUpdateAction(Request $request)
     {
         $this->checkPermission("thumbnails");
 
-        $pipe = Asset\Image\Thumbnail\Config::getByName($this->getParam("name"));
-        $settingsData = \Zend_Json::decode($this->getParam("settings"));
-        $mediaData = \Zend_Json::decode($this->getParam("medias"));
+        $pipe = Asset\Image\Thumbnail\Config::getByName($request->get("name"));
+        $settingsData = $this->decodeJson($request->get("settings"));
+        $mediaData = $this->decodeJson($request->get("medias"));
 
         foreach ($settingsData as $key => $value) {
             $setter = "set" . ucfirst($key);
@@ -1107,23 +1214,32 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
 
         $this->deleteThumbnailTmpFiles($pipe);
 
-        $this->_helper->json(["success" => true]);
+        return $this->json(["success" => true]);
     }
 
 
-    public function videoThumbnailAdapterCheckAction()
+    /**
+     * @Route("/video-thumbnail-adapter-check")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function videoThumbnailAdapterCheckAction(Request $request)
     {
         if (!\Pimcore\Video::isAvailable()) {
             echo '<span style="color: red; font-weight: bold;padding: 10px;margin:0 0 20px 0;border:1px solid red;display:block;">' .
-                $this->view->translate("php_cli_binary_and_or_ffmpeg_binary_setting_is_missing") .
+                $this->trans("php_cli_binary_and_or_ffmpeg_binary_setting_is_missing") .
                 '</span>';
         }
 
         exit;
     }
 
-
-    public function videoThumbnailTreeAction()
+    /**
+     * @Route("/video-thumbnail-tree")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function videoThumbnailTreeAction(Request $request)
     {
         $this->checkPermission("thumbnails");
 
@@ -1139,54 +1255,72 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
             ];
         }
 
-        $this->_helper->json($thumbnails);
+        return $this->json($thumbnails);
     }
 
-    public function videoThumbnailAddAction()
+    /**
+     * @Route("/video-thumbnail-add")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function videoThumbnailAddAction(Request $request)
     {
         $this->checkPermission("thumbnails");
 
         $success = false;
 
-        $pipe = Asset\Video\Thumbnail\Config::getByName($this->getParam("name"));
+        $pipe = Asset\Video\Thumbnail\Config::getByName($request->get("name"));
 
         if (!$pipe) {
             $pipe = new Asset\Video\Thumbnail\Config();
-            $pipe->setName($this->getParam("name"));
+            $pipe->setName($request->get("name"));
             $pipe->save();
 
             $success = true;
         }
 
-        $this->_helper->json(["success" => $success, "id" => $pipe->getName()]);
+        return $this->json(["success" => $success, "id" => $pipe->getName()]);
     }
 
-    public function videoThumbnailDeleteAction()
+    /**
+     * @Route("/video-thumbnail-delete")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function videoThumbnailDeleteAction(Request $request)
     {
         $this->checkPermission("thumbnails");
 
-        $pipe = Asset\Video\Thumbnail\Config::getByName($this->getParam("name"));
+        $pipe = Asset\Video\Thumbnail\Config::getByName($request->get("name"));
         $pipe->delete();
 
-        $this->_helper->json(["success" => true]);
+        return $this->json(["success" => true]);
     }
 
-
-    public function videoThumbnailGetAction()
+    /**
+     * @Route("/video-thumbnail-get")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function videoThumbnailGetAction(Request $request)
     {
         $this->checkPermission("thumbnails");
 
-        $pipe = Asset\Video\Thumbnail\Config::getByName($this->getParam("name"));
-        $this->_helper->json($pipe);
+        $pipe = Asset\Video\Thumbnail\Config::getByName($request->get("name"));
+        return $this->json($pipe);
     }
 
-
-    public function videoThumbnailUpdateAction()
+    /**
+     * @Route("/video-thumbnail-update")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function videoThumbnailUpdateAction(Request $request)
     {
         $this->checkPermission("thumbnails");
 
-        $pipe = Asset\Video\Thumbnail\Config::getByName($this->getParam("name"));
-        $data = \Zend_Json::decode($this->getParam("configuration"));
+        $pipe = Asset\Video\Thumbnail\Config::getByName($request->get("name"));
+        $data = $this->decodeJson($request->get("configuration"));
 
         $items = [];
         foreach ($data as $key => $value) {
@@ -1213,25 +1347,30 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
 
         $this->deleteVideoThumbnailTmpFiles($pipe);
 
-        $this->_helper->json(["success" => true]);
+        return $this->json(["success" => true]);
     }
 
-    public function robotsTxtAction()
+    /**
+     * @Route("/robots-txt")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function robotsTxtAction(Request $request)
     {
         $this->checkPermission("robots.txt");
 
         $siteSuffix = "";
-        if ($this->getParam("site")) {
-            $siteSuffix = "-" . $this->getParam("site");
+        if ($request->get("site")) {
+            $siteSuffix = "-" . $request->get("site");
         }
 
         $robotsPath = PIMCORE_CONFIGURATION_DIRECTORY . "/robots" . $siteSuffix . ".txt";
 
-        if ($this->getParam("data") !== null) {
+        if ($request->get("data") !== null) {
             // save data
-            \Pimcore\File::put($robotsPath, $this->getParam("data"));
+            \Pimcore\File::put($robotsPath, $request->get("data"));
 
-            $this->_helper->json([
+            return $this->json([
                 "success" => true
             ]);
         } else {
@@ -1241,7 +1380,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
                 $data = file_get_contents($robotsPath);
             }
 
-            $this->_helper->json([
+            return $this->json([
                 "success" => true,
                 "data" => $data,
                 "onFileSystem" => file_exists(PIMCORE_WEB_ROOT . "/robots.txt")
@@ -1249,9 +1388,12 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
         }
     }
 
-
-
-    public function tagManagementTreeAction()
+    /**
+     * @Route("/tag-management-tree")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function tagManagementTreeAction(Request $request)
     {
         $this->checkPermission("tag_snippet_management");
 
@@ -1267,54 +1409,73 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
             ];
         }
 
-        $this->_helper->json($tags);
+        return $this->json($tags);
     }
 
-    public function tagManagementAddAction()
+    /**
+     * @Route("/tag-management-add")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function tagManagementAddAction(Request $request)
     {
         $this->checkPermission("tag_snippet_management");
 
         $success = false;
 
-        $tag = Model\Tool\Tag\Config::getByName($this->getParam("name"));
+        $tag = Model\Tool\Tag\Config::getByName($request->get("name"));
 
         if (!$tag) {
             $tag = new Model\Tool\Tag\Config();
-            $tag->setName($this->getParam("name"));
+            $tag->setName($request->get("name"));
             $tag->save();
 
             $success = true;
         }
 
-        $this->_helper->json(["success" => $success, "id" => $tag->getName()]);
+        return $this->json(["success" => $success, "id" => $tag->getName()]);
     }
 
-    public function tagManagementDeleteAction()
+    /**
+     * @Route("/tag-management-delete")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function tagManagementDeleteAction(Request $request)
     {
         $this->checkPermission("tag_snippet_management");
 
-        $tag = Model\Tool\Tag\Config::getByName($this->getParam("name"));
+        $tag = Model\Tool\Tag\Config::getByName($request->get("name"));
         $tag->delete();
 
-        $this->_helper->json(["success" => true]);
+        return $this->json(["success" => true]);
     }
 
-
-    public function tagManagementGetAction()
+    /**
+     * @Route("/tag-management-get")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function tagManagementGetAction(Request $request)
     {
         $this->checkPermission("tag_snippet_management");
 
-        $tag = Model\Tool\Tag\Config::getByName($this->getParam("name"));
-        $this->_helper->json($tag);
+        $tag = Model\Tool\Tag\Config::getByName($request->get("name"));
+        return $this->json($tag);
     }
 
 
-    public function tagManagementUpdateAction()
+    /**
+     * @Route("/tag-management-update")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function tagManagementUpdateAction(Request $request)
     {
         $this->checkPermission("tag_snippet_management");
 
-        $tag = Model\Tool\Tag\Config::getByName($this->getParam("name"));
-        $data = \Zend_Json::decode($this->getParam("configuration"));
+        $tag = Model\Tool\Tag\Config::getByName($request->get("name"));
+        $data = $this->decodeJson($request->get("configuration"));
 
         $items = [];
         foreach ($data as $key => $value) {
@@ -1344,24 +1505,29 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
         }
         $tag->setParams($params);
 
-        if ($this->getParam("name") != $data["name"]) {
-            $tag->setName($this->getParam("name")); // set the old name again, so that the old file get's deleted
+        if ($request->get("name") != $data["name"]) {
+            $tag->setName($request->get("name")); // set the old name again, so that the old file get's deleted
             $tag->delete(); // delete the old config / file
             $tag->setName($data["name"]);
         }
 
         $tag->save();
 
-        $this->_helper->json(["success" => true]);
+        return $this->json(["success" => true]);
     }
 
-    public function websiteSettingsAction()
+    /**
+     * @Route("/website-settings")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function websiteSettingsAction(Request $request)
     {
         try {
-            if ($this->getParam("data")) {
+            if ($request->get("data")) {
                 $this->checkPermission("website_settings");
 
-                $data = \Zend_Json::decode($this->getParam("data"));
+                $data = $this->decodeJson($request->get("data"));
 
                 if (is_array($data)) {
                     foreach ($data as &$value) {
@@ -1369,13 +1535,13 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
                     }
                 }
 
-                if ($this->getParam("xaction") == "destroy") {
+                if ($request->get("xaction") == "destroy") {
                     $id = $data["id"];
                     $setting = WebsiteSetting::getById($id);
                     $setting->delete();
 
-                    $this->_helper->json(["success" => true, "data" => []]);
-                } elseif ($this->getParam("xaction") == "update") {
+                    return $this->json(["success" => true, "data" => []]);
+                } elseif ($request->get("xaction") == "update") {
                     // save routes
                     $setting = WebsiteSetting::getById($data["id"]);
 
@@ -1397,8 +1563,8 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
 
                     $data = $this->getWebsiteSettingForEditMode($setting);
 
-                    $this->_helper->json(["data" => $data, "success" => true]);
-                } elseif ($this->getParam("xaction") == "create") {
+                    return $this->json(["data" => $data, "success" => true]);
+                } elseif ($request->get("xaction") == "create") {
                     unset($data["id"]);
 
                     // save route
@@ -1407,17 +1573,17 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
 
                     $setting->save();
 
-                    $this->_helper->json(["data" => $setting, "success" => true]);
+                    return $this->json(["data" => $setting, "success" => true]);
                 }
             } else {
                 // get list of routes
 
                 $list = new WebsiteSetting\Listing();
 
-                $list->setLimit($this->getParam("limit"));
-                $list->setOffset($this->getParam("start"));
+                $list->setLimit($request->get("limit"));
+                $list->setOffset($request->get("start"));
 
-                $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($this->getAllParams());
+                $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
                 if ($sortingSettings['orderKey']) {
                     $list->setOrderKey($sortingSettings['orderKey']);
                     $list->setOrder($sortingSettings['order']);
@@ -1426,8 +1592,8 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
                     $list->setOrder("asc");
                 }
 
-                if ($this->getParam("filter")) {
-                    $list->setCondition("`name` LIKE " . $list->quote("%".$this->getParam("filter")."%"));
+                if ($request->get("filter")) {
+                    $list->setCondition("`name` LIKE " . $list->quote("%".$request->get("filter")."%"));
                 }
 
                 $totalCount = $list->getTotalCount();
@@ -1439,14 +1605,14 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
                     $settings[] = $resultItem;
                 }
 
-                $this->_helper->json(["data" => $settings, "success" => true, "total" => $totalCount]);
+                return $this->json(["data" => $settings, "success" => true, "total" => $totalCount]);
             }
         } catch (\Exception $e) {
             throw $e;
-            $this->_helper->json(false);
+            return $this->json(false);
         }
 
-        $this->_helper->json(false);
+        return $this->json(false);
     }
 
     /**
@@ -1483,7 +1649,12 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
         return $resultItem;
     }
 
-    public function getAvailableAlgorithmsAction()
+    /**
+     * @Route("/get-available-algorithms")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getAvailableAlgorithmsAction(Request $request)
     {
         $options = [
             [
@@ -1502,7 +1673,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
 
         $result = ["data" => $options, "success" => true, "total" => count($options)];
 
-        $this->_helper->json($result);
+        return $this->json($result);
     }
 
     /**
