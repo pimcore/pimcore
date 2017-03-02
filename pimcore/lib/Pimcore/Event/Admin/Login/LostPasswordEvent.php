@@ -4,8 +4,9 @@ namespace Pimcore\Event\Admin\Login;
 
 use Pimcore\Event\Traits\ResponseAwareTrait;
 use Pimcore\Model\User;
+use Symfony\Component\EventDispatcher\Event;
 
-class LostPasswordEvent
+class LostPasswordEvent extends Event
 {
     use ResponseAwareTrait;
 

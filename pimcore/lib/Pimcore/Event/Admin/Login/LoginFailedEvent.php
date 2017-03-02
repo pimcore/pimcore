@@ -3,8 +3,9 @@
 namespace Pimcore\Event\Admin\Login;
 
 use Pimcore\Model\User;
+use Symfony\Component\EventDispatcher\Event;
 
-class LoginFailedEvent
+class LoginFailedEvent extends Event
 {
     /**
      * @var string
