@@ -7,6 +7,9 @@ class ObjectTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
+        if (!TestHelper::supportsDbTests()) {
+            $this->markTestSkipped('DB credentials are missing - test is disabled');
+        }
     }
 
     /**

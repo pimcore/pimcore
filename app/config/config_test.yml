@@ -3,3 +3,15 @@ imports:
     - { resource: "@PimcoreBundle/Resources/config/config_test.yml" }
     - { resource: security.yml }
     - { resource: services.yml }
+
+parameters:
+    pimcore_system_config.database.params.host: '%env(PIMCORE_TEST_DB_HOST)%'
+    pimcore_system_config.database.params.username: '%env(PIMCORE_TEST_DB_USERNAME)%'
+    pimcore_system_config.database.params.password: '%env(PIMCORE_TEST_DB_PASSWORD)%'
+    pimcore_system_config.database.params.dbname: '%env(PIMCORE_TEST_DB_DBNAME)%'
+    pimcore_system_config.database.params.port: '%env(PIMCORE_TEST_DB_PORT)%'
+    env(PIMCORE_TEST_DB_HOST): localhost
+    env(PIMCORE_TEST_DB_PORT): 3306
+    env(PIMCORE_TEST_DB_USERNAME): ~
+    env(PIMCORE_TEST_DB_PASSWORD): ~
+    env(PIMCORE_TEST_DB_DBNAME): ~

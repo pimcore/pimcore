@@ -8,6 +8,17 @@ use Pimcore\Model\Webservice\Tool as WebserviceTool;
 
 class TestHelper
 {
+    /**
+     * Constant will be defined upon suite initialization and will result to true
+     * if we have a valid DB configuration.
+     *
+     * @return bool
+     */
+    public static function supportsDbTests()
+    {
+        return defined('PIMCORE_TEST_DB_CONNECTED') ? PIMCORE_TEST_DB_CONNECTED : false;
+    }
+
     public static function getSoapClient()
     {
         ini_set("soap.wsdl_cache_enabled", "0");

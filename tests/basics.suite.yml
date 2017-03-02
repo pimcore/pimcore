@@ -2,4 +2,3 @@ class_name: BasicsTester
 modules:
     enabled:
         - \Pimcore\Tests\Helper\Basics
-        - \Pimcore\Tests\Helper\Pimcore
