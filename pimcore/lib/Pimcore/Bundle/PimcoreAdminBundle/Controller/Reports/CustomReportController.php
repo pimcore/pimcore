@@ -77,10 +77,8 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
     public function getAction(Request $request)
     {
         $report = CustomReport\Config::getByName($request->get("name"));
-        // either assemble the result manually or use json_encode. $this->json returns garbage
-        $report = json_encode($report);
-        $result = new Response($report);
-        return $result;
+
+        return $this->json($report);
     }
 
     /**

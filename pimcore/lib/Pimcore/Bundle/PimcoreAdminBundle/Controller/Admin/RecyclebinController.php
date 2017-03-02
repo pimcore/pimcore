@@ -26,7 +26,7 @@ class RecyclebinController extends AdminController implements EventedControllerI
             $item = Recyclebin\Item::getById(\Pimcore\Admin\Helper\QueryParams::getRecordIdForGridRequest($request->get("data")));
             $item->delete();
 
-            return new JsonResponse(["success" => true, "data" => []]);
+            return $this->json(["success" => true, "data" => []]);
         } else {
             $db = \Pimcore\Db::get();
 

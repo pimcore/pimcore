@@ -30,7 +30,7 @@ class BackupController extends AdminController implements EventedControllerInter
             $session->set('backup', $backup);
         }, "pimcore_backup");
 
-        return new JsonResponse($initInfo);
+        return $this->json($initInfo);
     }
 
     /**
@@ -44,7 +44,7 @@ class BackupController extends AdminController implements EventedControllerInter
         $backup = $session->get("backup");
         $return = $backup->fileStep($request->get("step"));
 
-        return new JsonResponse($return);
+        return $this->json($return);
     }
 
     /**
@@ -60,7 +60,7 @@ class BackupController extends AdminController implements EventedControllerInter
         $return = $backup->mysqlTables();
         $session->set("backup", $backup);
 
-        return new JsonResponse($return);
+        return $this->json($return);
     }
 
     /**
@@ -79,7 +79,7 @@ class BackupController extends AdminController implements EventedControllerInter
         $return = $backup->mysqlData($name, $type);
         $session->set("backup", $backup);
 
-        return new JsonResponse($return);
+        return $this->json($return);
     }
 
     /**
@@ -95,7 +95,7 @@ class BackupController extends AdminController implements EventedControllerInter
         $return = $backup->mysqlComplete();
         $session->set("backup", $backup);
 
-        return new JsonResponse($return);
+        return $this->json($return);
     }
 
     /**
@@ -111,7 +111,7 @@ class BackupController extends AdminController implements EventedControllerInter
         $return = $backup->complete();
         $session->set("backup", $backup);
 
-        return new JsonResponse($return);
+        return $this->json($return);
     }
 
     /**

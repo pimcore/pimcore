@@ -38,7 +38,7 @@ class QuantityValueController extends AdminController
                 $unit = \Pimcore\Model\Object\QuantityValue\Unit::getById($id);
                 if (!empty($unit)) {
                     $unit->delete();
-                    return new JsonResponse(["data" => [], "success" => true]);
+                    return $this->json(["data" => [], "success" => true]);
                 } else {
                     throw new \Exception("Unit with id " . $id . " not found.");
                 }
@@ -48,7 +48,7 @@ class QuantityValueController extends AdminController
                 if (!empty($unit)) {
                     $unit->setValues($data);
                     $unit->save();
-                    return new JsonResponse(["data" => get_object_vars($unit), "success" => true]);
+                    return $this->json(["data" => get_object_vars($unit), "success" => true]);
                 } else {
                     throw new \Exception("Unit with id " . $data['id'] . " not found.");
                 }
@@ -58,7 +58,7 @@ class QuantityValueController extends AdminController
                 $unit = new Unit();
                 $unit->setValues($data);
                 $unit->save();
-                return new JsonResponse(["data" => get_object_vars($unit), "success" => true]);
+                return $this->json(["data" => get_object_vars($unit), "success" => true]);
             }
         } else {
             $list = new Unit\Listing();
