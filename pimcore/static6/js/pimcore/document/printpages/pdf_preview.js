@@ -59,7 +59,7 @@ pimcore.document.printpages.pdfpreview = Class.create({
                     iconCls: "pimcore_icon_cancel",
                     handler: function() {
                         Ext.Ajax.request({
-                            url: "/admin/printpage/cancel-generation/",
+                            url: "/admin/printpage/cancel-generation",
                             params: {id: this.page.id},
                             success: function(response) {
                                 var result = Ext.decode(response.responseText);
@@ -88,7 +88,7 @@ pimcore.document.printpages.pdfpreview = Class.create({
                 style: "float: right; margin-top: 10px",
                 handler: function () {
                     var date = new Date();
-                    pimcore.helpers.download("/admin/printpage/pdf-download/download/1/id/" + this.page.id + "?time=" + date.getTime());
+                    pimcore.helpers.download("/admin/printpage/pdf-download?download=1&id=" + this.page.id + "&time=" + date.getTime());
                 }.bind(this)
             });
             this.generatedDateField = new Ext.form.TextField({
@@ -333,7 +333,7 @@ pimcore.document.printpages.pdfpreview = Class.create({
         params.id = this.page.id;
 
         Ext.Ajax.request({
-            url: "/admin/printpage/start-pdf-generation/",
+            url: "/admin/printpage/start-pdf-generation",
             params: params,
             success: function(response) {
                 result = Ext.decode(response.responseText);
@@ -364,7 +364,7 @@ pimcore.document.printpages.pdfpreview = Class.create({
     loadCurrentPreview: function () {
         var date = new Date();
         var path;
-        path = "/admin/printpage/pdf-download/id/" + this.page.id + "?time=" + date.getTime();
+        path = "/admin/printpage/pdf-download?id=" + this.page.id + "&time=" + date.getTime();
 
         try {
             Ext.get(this.iframeName).dom.src = path;
@@ -384,7 +384,7 @@ pimcore.document.printpages.pdfpreview = Class.create({
 
     checkForActiveGenerateProcess: function() {
         Ext.Ajax.request({
-            url: "/admin/printpage/active-generate-process/",
+            url: "/admin/printpage/active-generate-process",
             params: {id: this.page.id},
             success: function(response) {
                 var result = Ext.decode(response.responseText);
@@ -421,7 +421,7 @@ pimcore.document.printpages.pdfpreview = Class.create({
 
     checkPdfDirtyState: function() {
         Ext.Ajax.request({
-            url: "/admin/printpage/check-pdf-dirty/",
+            url: "/admin/printpage/check-pdf-dirty",
             params: {id: this.page.id},
             success: function(response) {
                 result = Ext.decode(response.responseText);
