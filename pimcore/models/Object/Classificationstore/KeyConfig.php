@@ -16,6 +16,8 @@
 
 namespace Pimcore\Model\Object\Classificationstore;
 
+use Pimcore\Event\Model\Object\ClassificationStore\KeyConfigEvent;
+use Pimcore\Event\ObjectClassificationStoreEvents;
 use Pimcore\Model;
 
 /**
@@ -225,12 +227,12 @@ class KeyConfig extends Model\AbstractModel
     {
         DefinitionCache::clear($this);
 
-        \Pimcore::getEventManager()->trigger("object.classificationstore.keyConfig.preDelete", $this);
+        \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::KEY_CONFIG_PRE_DELETE, new KeyConfigEvent($this));
         if ($this->getId()) {
             unset(self::$cache[$this->getId()]);
         }
         parent::delete();
-        \Pimcore::getEventManager()->trigger("object.classificationstore.keyConfig.postDelete", $this);
+        \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::KEY_CONFIG_POST_DELETE, new KeyConfigEvent($this));
     }
 
     /**
@@ -252,17 +254,17 @@ class KeyConfig extends Model\AbstractModel
         if ($this->getId()) {
             unset(self::$cache[$this->getId()]);
             $isUpdate = true;
-            \Pimcore::getEventManager()->trigger("object.classificationstore.keyConfig.preUpdate", $this);
+            \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::KEY_CONFIG_PRE_UPDATE, new KeyConfigEvent($this));
         } else {
-            \Pimcore::getEventManager()->trigger("object.classificationstore.keyConfig.preAdd", $this);
+            \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::KEY_CONFIG_PRE_ADD, new KeyConfigEvent($this));
         }
 
         $model = parent::save();
 
         if ($isUpdate) {
-            \Pimcore::getEventManager()->trigger("object.classificationstore.keyConfig.postUpdate", $this);
+            \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::KEY_CONFIG_POST_UPDATE, new KeyConfigEvent($this));
         } else {
-            \Pimcore::getEventManager()->trigger("object.classificationstore.keyConfig.postAdd", $this);
+            \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::KEY_CONFIG_POST_ADD, new KeyConfigEvent($this));
         }
 
         return $model;

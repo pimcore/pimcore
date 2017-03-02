@@ -16,6 +16,8 @@
 
 namespace Pimcore\Model\Object\Classificationstore;
 
+use Pimcore\Event\Model\Object\ClassificationStore\GroupConfigEvent;
+use Pimcore\Event\ObjectClassificationStoreEvents;
 use Pimcore\Model;
 
 /**
@@ -195,9 +197,9 @@ class GroupConfig extends Model\AbstractModel
      */
     public function delete()
     {
-        \Pimcore::getEventManager()->trigger("object.classificationstore.groupConfig.preDelete", $this);
+        \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::GROUP_CONFIG_PRE_DELETE, new GroupConfigEvent($this));
         parent::delete();
-        \Pimcore::getEventManager()->trigger("object.classificationstore.groupConfig.postDelete", $this);
+        \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::GROUP_CONFIG_POST_DELETE, new GroupConfigEvent($this));
     }
 
     /**
@@ -209,17 +211,17 @@ class GroupConfig extends Model\AbstractModel
 
         if ($this->getId()) {
             $isUpdate = true;
-            \Pimcore::getEventManager()->trigger("object.classificationstore.groupConfig.preUpdate", $this);
+            \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::GROUP_CONFIG_PRE_UPDATE, new GroupConfigEvent($this));
         } else {
-            \Pimcore::getEventManager()->trigger("object.classificationstore.groupConfig.preAdd", $this);
+            \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::GROUP_CONFIG_PRE_ADD, new GroupConfigEvent($this));
         }
 
         $model = parent::save();
 
         if ($isUpdate) {
-            \Pimcore::getEventManager()->trigger("object.classificationstore.groupConfig.postUpdate", $this);
+            \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::GROUP_CONFIG_POST_UPDATE, new GroupConfigEvent($this));
         } else {
-            \Pimcore::getEventManager()->trigger("object.classificationstore.groupConfig.postAdd", $this);
+            \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::GROUP_CONFIG_POST_ADD, new GroupConfigEvent($this));
         }
 
         return $model;

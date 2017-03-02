@@ -16,6 +16,8 @@
 
 namespace Pimcore\Model\Object\Classificationstore;
 
+use Pimcore\Event\Model\Object\ClassificationStore\StoreConfigEvent;
+use Pimcore\Event\ObjectClassificationStoreEvents;
 use Pimcore\Model;
 
 /**
@@ -130,9 +132,9 @@ class StoreConfig extends Model\AbstractModel
      */
     public function delete()
     {
-        \Pimcore::getEventManager()->trigger("object.Classificationstore.storeConfig.preDelete", $this);
+        \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::STORE_CONFIG_PRE_DELETE, new StoreConfigEvent($this));
         parent::delete();
-        \Pimcore::getEventManager()->trigger("object.Classificationstore.storeConfig.postDelete", $this);
+        \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::STORE_CONFIG_POST_DELETE, new StoreConfigEvent($this));
     }
 
     /**
@@ -144,17 +146,17 @@ class StoreConfig extends Model\AbstractModel
 
         if ($this->getId()) {
             $isUpdate = true;
-            \Pimcore::getEventManager()->trigger("object.Classificationstore.storeConfig.preUpdate", $this);
+            \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::STORE_CONFIG_PRE_UPDATE, new StoreConfigEvent($this));
         } else {
-            \Pimcore::getEventManager()->trigger("object.Classificationstore.storeConfig.preAdd", $this);
+            \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::STORE_CONFIG_PRE_ADD, new StoreConfigEvent($this));
         }
 
         $model = parent::save();
 
         if ($isUpdate) {
-            \Pimcore::getEventManager()->trigger("object.Classificationstore.storeConfig.postUpdate", $this);
+            \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::STORE_CONFIG_POST_UPDATE, new StoreConfigEvent($this));
         } else {
-            \Pimcore::getEventManager()->trigger("object.Classificationstore.storeConfig.postAdd", $this);
+            \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::STORE_CONFIG_POST_ADD, new StoreConfigEvent($this));
         }
 
         return $model;

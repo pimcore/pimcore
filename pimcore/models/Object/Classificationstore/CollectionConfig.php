@@ -16,6 +16,8 @@
 
 namespace Pimcore\Model\Object\Classificationstore;
 
+use Pimcore\Event\Model\Object\ClassificationStore\CollectionConfigEvent;
+use Pimcore\Event\ObjectClassificationStoreEvents;
 use Pimcore\Model;
 
 /**
@@ -164,9 +166,9 @@ class CollectionConfig extends Model\AbstractModel
      */
     public function delete()
     {
-        \Pimcore::getEventManager()->trigger("object.classificationstore.collectionConfig.preDelete", $this);
+        \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::COLLECTION_CONFIG_PRE_DELETE, new CollectionConfigEvent($this));
         parent::delete();
-        \Pimcore::getEventManager()->trigger("object.classificationstore.collectionConfig.postDelete", $this);
+        \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::COLLECTION_CONFIG_POST_DELETE, new CollectionConfigEvent($this));
     }
 
     /**
@@ -178,17 +180,17 @@ class CollectionConfig extends Model\AbstractModel
 
         if ($this->getId()) {
             $isUpdate = true;
-            \Pimcore::getEventManager()->trigger("object.classificationstore.collectionConfig.preUpdate", $this);
+            \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::COLLECTION_CONFIG_PRE_UPDATE, new CollectionConfigEvent($this));
         } else {
-            \Pimcore::getEventManager()->trigger("object.classificationstore.collectionConfig.preAdd", $this);
+            \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::COLLECTION_CONFIG_PRE_ADD, new CollectionConfigEvent($this));
         }
 
         $model = parent::save();
 
         if ($isUpdate) {
-            \Pimcore::getEventManager()->trigger("object.classificationstore.collectionConfig.postUpdate", $this);
+            \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::COLLECTION_CONFIG_POST_UPDATE, new CollectionConfigEvent($this));
         } else {
-            \Pimcore::getEventManager()->trigger("object.classificationstore.collectionConfig.postAdd", $this);
+            \Pimcore::getEventDispatcher()->dispatch(ObjectClassificationStoreEvents::COLLECTION_CONFIG_POST_ADD, new CollectionConfigEvent($this));
         }
 
         return $model;
