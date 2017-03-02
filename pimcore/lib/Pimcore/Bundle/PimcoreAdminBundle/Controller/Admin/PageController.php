@@ -1,16 +1,6 @@
 <?php
-/**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in
- * LICENSE.md which is distributed with this source code.
- *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
- */
+
+namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin;
 
 use Pimcore\File;
 use Pimcore\Logger;
@@ -19,22 +9,33 @@ use Pimcore\Model\Element;
 use Pimcore\Model\Redirect;
 use Pimcore\Tool;
 use Pimcore\Tool\Session;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
+use Symfony\Component\Routing\Annotation\Route;
 
-class Admin_PageController extends \Pimcore\Controller\Action\Admin\Document
+/**
+ * @Route("/page")
+ */
+class PageController extends DocumentControllerBase
 {
-    public function getDataByIdAction()
+    /**
+     * @Route("/get-data-by-id")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getDataByIdAction(Request $request)
     {
 
         // check for lock
-        if (Element\Editlock::isLocked($this->getParam("id"), "document")) {
-            $this->_helper->json([
-                "editlock" => Element\Editlock::getByElement($this->getParam("id"), "document")
+        if (Element\Editlock::isLocked($request->get("id"), "document")) {
+            return $this->json([
+                "editlock" => Element\Editlock::getByElement($request->get("id"), "document")
             ]);
         }
-        Element\Editlock::lock($this->getParam("id"), "document");
+        Element\Editlock::lock($request->get("id"), "document");
 
-        $page = Document\Page::getById($this->getParam("id"));
+        $page = Document\Page::getById($request->get("id"));
         $page = clone $page;
         $page = $this->getLatestVersion($page);
 
@@ -71,17 +72,22 @@ class Admin_PageController extends \Pimcore\Controller\Action\Admin\Document
         ]);
 
         if ($page->isAllowed("view")) {
-            $this->_helper->json($returnValueContainer->getData());
+            return $this->json($returnValueContainer->getData());
         }
 
-        $this->_helper->json(false);
+        return $this->json(false);
     }
 
-    public function saveAction()
+    /**
+     * @Route("/save")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function saveAction(Request $request)
     {
         try {
-            if ($this->getParam("id")) {
-                $page = Document\Page::getById($this->getParam("id"));
+            if ($request->get("id")) {
+                $page = Document\Page::getById($request->get("id"));
 
                 // check if there's a document in session which should be used as data-source
                 // see also self::clearEditableDataAction() | this is necessary to reset all fields and to get rid of
@@ -110,20 +116,20 @@ class Admin_PageController extends \Pimcore\Controller\Action\Admin\Document
 
                 $page->setUserModification($this->getUser()->getId());
 
-                if ($this->getParam("task") == "unpublish") {
+                if ($request->get("task") == "unpublish") {
                     $page->setPublished(false);
                 }
-                if ($this->getParam("task") == "publish") {
+                if ($request->get("task") == "publish") {
                     $page->setPublished(true);
                 }
 
                 $settings = [];
-                if ($this->getParam("settings")) {
-                    $settings = \Zend_Json::decode($this->getParam("settings"));
+                if ($request->get("settings")) {
+                    $settings = $this->decodeJson($request->get("settings"));
                 }
 
                 // check for redirects
-                if ($this->getUser()->isAllowed("redirects") && $this->getParam("settings")) {
+                if ($this->getUser()->isAllowed("redirects") && $request->get("settings")) {
                     if (is_array($settings)) {
                         $redirectList = new Redirect\Listing();
                         $redirectList->setCondition("target = ?", $page->getId());
@@ -161,7 +167,7 @@ class Admin_PageController extends \Pimcore\Controller\Action\Admin\Document
                 }
 
                 // check if settings exist, before saving meta data
-                if ($this->getParam("settings") && is_array($settings)) {
+                if ($request->get("settings") && is_array($settings)) {
                     $metaData = [];
                     for ($i=1; $i<30; $i++) {
                         if (array_key_exists("metadata_" . $i, $settings)) {
@@ -172,32 +178,32 @@ class Admin_PageController extends \Pimcore\Controller\Action\Admin\Document
                 }
 
                 // only save when publish or unpublish
-                if (($this->getParam("task") == "publish" && $page->isAllowed("publish")) or ($this->getParam("task") == "unpublish" && $page->isAllowed("unpublish"))) {
-                    $this->setValuesToDocument($page);
+                if (($request->get("task") == "publish" && $page->isAllowed("publish")) or ($request->get("task") == "unpublish" && $page->isAllowed("unpublish"))) {
+                    $this->setValuesToDocument($request, $page);
 
 
                     try {
                         $page->save();
                         $this->saveToSession($page);
-                        $this->_helper->json(["success" => true]);
+                        return $this->json(["success" => true]);
                     } catch (\Exception $e) {
                         if ($e instanceof Element\ValidationException) {
                             throw $e;
                         }
                         Logger::err($e);
-                        $this->_helper->json(["success" => false, "message"=>$e->getMessage()]);
+                        return $this->json(["success" => false, "message"=>$e->getMessage()]);
                     }
                 } else {
                     if ($page->isAllowed("save")) {
-                        $this->setValuesToDocument($page);
+                        $this->setValuesToDocument($request, $page);
 
                         try {
                             $page->saveVersion();
                             $this->saveToSession($page);
-                            $this->_helper->json(["success" => true]);
+                            return $this->json(["success" => true]);
                         } catch (\Exception $e) {
                             Logger::err($e);
-                            $this->_helper->json(["success" => false, "message"=>$e->getMessage()]);
+                            return $this->json(["success" => false, "message"=>$e->getMessage()]);
                         }
                     }
                 }
@@ -205,33 +211,43 @@ class Admin_PageController extends \Pimcore\Controller\Action\Admin\Document
         } catch (\Exception $e) {
             Logger::log($e);
             if ($e instanceof Element\ValidationException) {
-                $this->_helper->json(["success" => false, "type" => "ValidationException", "message" => $e->getMessage(), "stack" => $e->getTraceAsString(), "code" => $e->getCode()]);
+                return $this->json(["success" => false, "type" => "ValidationException", "message" => $e->getMessage(), "stack" => $e->getTraceAsString(), "code" => $e->getCode()]);
             }
             throw $e;
         }
 
-        $this->_helper->json(false);
+        return $this->json(false);
     }
 
-    public function getListAction()
+    /**
+     * @Route("/get-list")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getListAction(Request $request)
     {
         $list = new Document\Listing();
         $list->setCondition("type = ?", ["page"]);
         $data = $list->loadIdPathList();
 
-        $this->_helper->json([
+        return $this->json([
             "success" => true,
             "data" => $data
         ]);
     }
 
-    public function uploadScreenshotAction()
+    /**
+     * @Route("/upload-screenshot")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function uploadScreenshotAction(Request $request)
     {
-        if ($this->getParam("data") && $this->getParam("id")) {
-            $data = substr($this->getParam("data"), strpos($this->getParam("data"), ",")+1);
+        if ($request->get("data") && $request->get("id")) {
+            $data = substr($request->get("data"), strpos($request->get("data"), ",")+1);
             $data = base64_decode($data);
 
-            $file = PIMCORE_TEMPORARY_DIRECTORY . "/document-page-previews/document-page-screenshot-" . $this->getParam("id") . ".jpg";
+            $file = PIMCORE_TEMPORARY_DIRECTORY . "/document-page-previews/document-page-screenshot-" . $request->get("id") . ".jpg";
             $dir = dirname($file);
             if (!is_dir($dir)) {
                 File::mkdir($dir);
@@ -240,14 +256,19 @@ class Admin_PageController extends \Pimcore\Controller\Action\Admin\Document
             File::put($file, $data);
         }
 
-        $this->_helper->json(["success" => true]);
+        return $this->json(["success" => true]);
     }
 
-    public function generateScreenshotAction()
+    /**
+     * @Route("/generate-screenshot")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function generateScreenshotAction(Request $request)
     {
         $success = false;
-        if ($this->getParam("id")) {
-            $doc = Document::getById($this->getParam("id"));
+        if ($request->get("id")) {
+            $doc = Document::getById($request->get("id"));
             $url = Tool::getHostUrl() . $doc->getRealFullPath();
 
             $config = \Pimcore\Config::getSystemConfig();
@@ -283,13 +304,18 @@ class Admin_PageController extends \Pimcore\Controller\Action\Admin\Document
             }
         }
 
-        $this->_helper->json(["success" => $success]);
+        return $this->json(["success" => $success]);
     }
 
-    public function checkPrettyUrlAction()
+    /**
+     * @Route("/check-pretty-url")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function checkPrettyUrlAction(Request $request)
     {
-        $docId = $this->getParam("id");
-        $path = trim($this->getParam("path"));
+        $docId = $request->get("id");
+        $path = trim($request->get("path"));
         $path = rtrim($path, "/");
 
         $success = true;
@@ -317,15 +343,20 @@ class Admin_PageController extends \Pimcore\Controller\Action\Admin\Document
             $success = false;
         }
 
-        $this->_helper->json([
+        return $this->json([
             "success" => $success
         ]);
     }
 
-    public function clearEditableDataAction()
+    /**
+     * @Route("/clear-editable-data")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function clearEditableDataAction(Request $request)
     {
-        $personaId = $this->getParam("persona");
-        $docId = $this->getParam("id");
+        $personaId = $request->get("persona");
+        $docId = $request->get("id");
 
         $doc = Document::getById($docId);
 
@@ -344,19 +375,20 @@ class Admin_PageController extends \Pimcore\Controller\Action\Admin\Document
 
         $this->saveToSession($doc, true);
 
-        $this->_helper->json([
+        return $this->json([
             "success" => true
         ]);
     }
 
     /**
+     * @param Request $request
      * @param Document $page
      */
-    protected function setValuesToDocument(Document $page)
+    protected function setValuesToDocument(Request $request, Document $page)
     {
-        $this->addSettingsToDocument($page);
-        $this->addDataToDocument($page);
-        $this->addPropertiesToDocument($page);
-        $this->addSchedulerToDocument($page);
+        $this->addSettingsToDocument($request, $page);
+        $this->addDataToDocument($request, $page);
+        $this->addPropertiesToDocument($request, $page);
+        $this->addSchedulerToDocument($request, $page);
     }
 }
