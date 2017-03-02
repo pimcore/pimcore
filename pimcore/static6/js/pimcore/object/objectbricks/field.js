@@ -17,7 +17,7 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
     allowedInType: 'objectbrick',
     disallowedDataTypes: ["nonownerobjects","user","fieldcollections","localizedfields", "objectbricks",
                                                 "objectsMetadata", "keyValue"],
-    uploadUrl: '/admin/class/import-objectbrick/',
+    uploadUrl: '/admin/class/import-objectbrick',
     exportUrl: "/admin/class/export-objectbrick",
 
     

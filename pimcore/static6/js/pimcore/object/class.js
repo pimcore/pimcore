@@ -58,7 +58,7 @@ pimcore.object.klass = Class.create({
                 autoSync: true,
                 proxy: {
                     type: 'ajax',
-                    url: '/admin/class/get-tree/',
+                    url: '/admin/class/get-tree',
                     reader: {
                         type: 'json'
 

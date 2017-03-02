@@ -1,37 +1,33 @@
 <?php
-/**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in
- * LICENSE.md which is distributed with this source code.
- *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
- */
 
+namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin;
+
+use Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminController;
+use Pimcore\Bundle\PimcoreAdminBundle\HttpFoundation\JsonResponse;
+use Pimcore\Bundle\PimcoreBundle\Controller\EventedControllerInterface;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Object;
 use Pimcore\Logger;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\Routing\Annotation\Route;
 
-class Admin_ClassController extends \Pimcore\Controller\Action\Admin
+/**
+ * @Route("/class")
+ */
+class ClassController extends AdminController implements EventedControllerInterface
 {
-    public function init()
-    {
-        parent::init();
 
-        // check permissions
-        $notRestrictedActions = ["get-tree", "fieldcollection-list", "fieldcollection-tree", "fieldcollection-get", "get-class-definition-for-column-config", "objectbrick-list", "objectbrick-tree", "objectbrick-get"];
-        if (!in_array($this->getParam("action"), $notRestrictedActions)) {
-            $this->checkPermission("classes");
-        }
-    }
-
-    public function getDocumentTypesAction()
+    /**
+     * @Route("/get-document-types")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getDocumentTypesAction(Request $request)
     {
         $documentTypes = Document::getTypes();
         $typeItems = [];
@@ -40,10 +36,15 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
                 "text" => $documentType
             ];
         }
-        $this->_helper->json($typeItems);
+        return $this->json($typeItems);
     }
 
-    public function getAssetTypesAction()
+    /**
+     * @Route("/get-asset-types")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getAssetTypesAction(Request $request)
     {
         $assetTypes = Asset::getTypes();
         $typeItems = [];
@@ -52,10 +53,15 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
                 "text" => $assetType
             ];
         }
-        $this->_helper->json($typeItems);
+        return $this->json($typeItems);
     }
 
-    public function getTreeAction()
+    /**
+     * @Route("/get-tree")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getTreeAction(Request $request)
     {
         $defaultIcon = '/pimcore/static6/img/icon/database_gear.png';
 
@@ -65,7 +71,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
         $classes = $classesList->load();
 
         // filter classes
-        if ($this->getParam("createAllowed")) {
+        if ($request->get("createAllowed")) {
             $tmpClasses = [];
             foreach ($classes as $class) {
                 if ($this->getUser()->isAllowed($class->getId(), "class")) {
@@ -113,7 +119,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
 
         $treeNodes = [];
 
-        if (!$this->getParam('grouped')) {
+        if (!$request->get('grouped')) {
             // list output
             foreach ($groups as $groupName => $groupData) {
                 foreach ($groupData["classes"] as $class) {
@@ -151,80 +157,112 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
             }
         }
 
-        $this->_helper->json($treeNodes);
+        return $this->json($treeNodes);
     }
 
-    public function getAction()
+    /**
+     * @Route("/get")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getAction(Request $request)
     {
-        $class = Object\ClassDefinition::getById(intval($this->getParam("id")));
+        $class = Object\ClassDefinition::getById(intval($request->get("id")));
         $class->setFieldDefinitions(null);
 
-        $this->_helper->json($class);
+        return $this->json($class);
     }
 
-    public function getCustomLayoutAction()
+    /**
+     * @Route("/get-custom-layout")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getCustomLayoutAction(Request $request)
     {
-        $customLayout = Object\ClassDefinition\CustomLayout::getById(intval($this->getParam("id")));
+        $customLayout = Object\ClassDefinition\CustomLayout::getById(intval($request->get("id")));
 
-        $this->_helper->json(["success" => true, "data" => $customLayout]);
+        return $this->json(["success" => true, "data" => $customLayout]);
     }
 
-    public function addAction()
+    /**
+     * @Route("/add")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function addAction(Request $request)
     {
-        $class = Object\ClassDefinition::create(['name' => $this->correctClassname($this->getParam("name")),
-                'userOwner' => $this->user->getId()]
+        $class = Object\ClassDefinition::create(['name' => $this->correctClassname($request->get("name")),
+                'userOwner' => $this->getUser()->getId()]
         );
 
         $class->save();
 
-        $this->_helper->json(["success" => true, "id" => $class->getId()]);
+        return $this->json(["success" => true, "id" => $class->getId()]);
     }
 
-    public function addCustomLayoutAction()
+    /**
+     * @Route("/add-custom-layout")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function addCustomLayoutAction(Request $request)
     {
-        $customLayout = Object\ClassDefinition\CustomLayout::create(['name' => $this->getParam("name"),
-                'userOwner' => $this->user->getId(),
-                "classId" => $this->getParam("classId")]
+        $customLayout = Object\ClassDefinition\CustomLayout::create(['name' => $request->get("name"),
+                'userOwner' => $this->getUser()->getId(),
+                "classId" => $request->get("classId")]
         );
 
         $customLayout->save();
 
-        $this->_helper->json(["success" => true, "id" => $customLayout->getId(), "name" => $customLayout->getName(),
+        return $this->json(["success" => true, "id" => $customLayout->getId(), "name" => $customLayout->getName(),
             "data" => $customLayout]);
     }
 
-
-
-    public function deleteAction()
+    /**
+     * @Route("/delete")
+     * @param Request $request
+     * @return Response
+     */
+    public function deleteAction(Request $request)
     {
-        $class = Object\ClassDefinition::getById(intval($this->getParam("id")));
+        $class = Object\ClassDefinition::getById(intval($request->get("id")));
         $class->delete();
-
-        $this->removeViewRenderer();
+        return new Response();
     }
 
-    public function deleteCustomLayoutAction()
+    /**
+     * @Route("/delete-custom-layout")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function deleteCustomLayoutAction(Request $request)
     {
-        $customLayout = Object\ClassDefinition\CustomLayout::getById(intval($this->getParam("id")));
+        $customLayout = Object\ClassDefinition\CustomLayout::getById(intval($request->get("id")));
         if ($customLayout) {
             $customLayout->delete();
         }
 
-        $this->_helper->json(["success" => true]);
+        return $this->json(["success" => true]);
     }
 
 
-    public function saveCustomLayoutAction()
+    /**
+     * @Route("/save-custom-layout")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function saveCustomLayoutAction(Request $request)
     {
-        $customLayout = Object\ClassDefinition\CustomLayout::getById($this->getParam("id"));
+        $customLayout = Object\ClassDefinition\CustomLayout::getById($request->get("id"));
         $class = Object\ClassDefinition::getById($customLayout->getClassId());
 
-        $configuration = \Zend_Json::decode($this->getParam("configuration"));
-        $values = \Zend_Json::decode($this->getParam("values"));
+        $configuration = $this->decodeJson($request->get("configuration"));
+        $values = $this->decodeJson($request->get("values"));
 
         $modificationDate = intval($values["modificationDate"]);
         if ($modificationDate < $customLayout->getModificationDate()) {
-            $this->_helper->json(["success" => false, "msg" => "custom_layout_changed"]);
+            return $this->json(["success" => false, "msg" => "custom_layout_changed"]);
         }
 
 
@@ -240,19 +278,24 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
             $customLayout->setDefault($values["default"]);
             $customLayout->save();
 
-            $this->_helper->json(["success" => true, "id" => $customLayout->getId(), "data" => $customLayout]);
+            return $this->json(["success" => true, "id" => $customLayout->getId(), "data" => $customLayout]);
         } catch (\Exception $e) {
             Logger::error($e->getMessage());
-            $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
+            return $this->json(["success" => false, "message" => $e->getMessage()]);
         }
     }
 
-    public function saveAction()
+    /**
+     * @Route("/save")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function saveAction(Request $request)
     {
-        $class = Object\ClassDefinition::getById(intval($this->getParam("id")));
+        $class = Object\ClassDefinition::getById(intval($request->get("id")));
 
-        $configuration = \Zend_Json::decode($this->getParam("configuration"));
-        $values = \Zend_Json::decode($this->getParam("values"));
+        $configuration = $this->decodeJson($request->get("configuration"));
+        $values = $this->decodeJson($request->get("values"));
 
         // check if the class was changed during editing in the frontend
         if ($class->getModificationDate() != $values["modificationDate"]) {
@@ -281,7 +324,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
 
             $class->setLayoutDefinitions($layout);
 
-            $class->setUserModification($this->user->getId());
+            $class->setUserModification($this->getUser()->getId());
             $class->setModificationDate(time());
 
             $propertyVisibility = [];
@@ -303,10 +346,10 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
             // set the fielddefinitions to null because we don't need them in the response
             $class->setFieldDefinitions(null);
 
-            $this->_helper->json(["success" => true, "class" => $class]);
+            return $this->json(["success" => true, "class" => $class]);
         } catch (\Exception $e) {
             Logger::error($e->getMessage());
-            $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
+            return $this->json(["success" => false, "message" => $e->getMessage()]);
         }
     }
 
@@ -322,34 +365,40 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
         return $name;
     }
 
-
-    public function importClassAction()
+    /**
+     * @Route("/import-class")
+     * @param Request $request
+     * @return Response
+     */
+    public function importClassAction(Request $request)
     {
-        $class = Object\ClassDefinition::getById(intval($this->getParam("id")));
+        $class = Object\ClassDefinition::getById(intval($request->get("id")));
         $json = file_get_contents($_FILES["Filedata"]["tmp_name"]);
 
         $success = Object\ClassDefinition\Service::importClassDefinitionFromJson($class, $json);
 
-        $this->removeViewRenderer();
-
-        $this->_helper->json([
+        $response = $this->json([
             "success" => $success
-        ], false);
-
+        ]);
         // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
         // Ext.form.Action.Submit and mark the submission as failed
-        $this->getResponse()->setHeader("Content-Type", "text/html");
+        $response->headers->set("Content-Type", "text/html");
+        return $response;
     }
 
-
-    public function importCustomLayoutDefinitionAction()
+    /**
+     * @Route("/import-custom-layout")
+     * @param Request $request
+     * @return Response
+     */
+    public function importCustomLayoutDefinitionAction(Request $request)
     {
         $success = false;
         $json = file_get_contents($_FILES["Filedata"]["tmp_name"]);
-        $importData = \Zend_Json::decode($json);
+        $importData = $this->decodeJson($json);
 
 
-        $customLayoutId = $this->getParam("id");
+        $customLayoutId = $request->get("id");
         $customLayout = Object\ClassDefinition\CustomLayout::getById($customLayoutId);
         if ($customLayout) {
             try {
@@ -363,20 +412,24 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
             }
         }
 
-        $this->removeViewRenderer();
-
-        $this->_helper->json([
+        $response = $this->json([
             "success" => $success
-        ], false);
+        ]);
 
         // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
         // Ext.form.Action.Submit and mark the submission as failed
-        $this->getResponse()->setHeader("Content-Type", "text/html");
+        $response->headers->set("Content-Type", "text/html");
+        return $response;
     }
 
-    public function getCustomLayoutDefinitionsAction()
+    /**
+     * @Route("/get-custom-layout-definitions")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getCustomLayoutDefinitionsAction(Request $request)
     {
-        $classId = $this->getParam("classId");
+        $classId = $request->get("classId");
         $list = new Object\ClassDefinition\CustomLayout\Listing();
 
         $list->setCondition("classId = " . $list->quote($classId));
@@ -390,10 +443,15 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
             ];
         }
 
-        $this->_helper->json(["success" => true, "data" => $result]);
+        return $this->json(["success" => true, "data" => $result]);
     }
 
-    public function getAllLayoutsAction()
+    /**
+     * @Route("/get-all-layouts")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getAllLayoutsAction(Request $request)
     {
         // get all classes
         $resultList = [];
@@ -431,14 +489,17 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
             }
         }
 
-        $this->_helper->json(["data" => $resultList]);
+        return $this->json(["data" => $resultList]);
     }
 
-    public function exportClassAction()
+    /**
+     * @Route("/export-class")
+     * @param Request $request
+     * @return Response
+     */
+    public function exportClassAction(Request $request)
     {
-        $this->removeViewRenderer();
-
-        $id = intval($this->getParam("id"));
+        $id = intval($request->get("id"));
         $class = Object\ClassDefinition::getById($id);
 
         if (!$class instanceof Object\ClassDefinition) {
@@ -447,17 +508,22 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
             echo $errorMessage;
         } else {
             $json = Object\ClassDefinition\Service::generateClassDefinitionJson($class);
-            header("Content-type: application/json");
-            header("Content-Disposition: attachment; filename=\"class_" . $class->getName() . "_export.json\"");
-            echo $json;
+
+            $response = new Response($json);
+            $response->headers->set("Content-type", "application/json");
+            $response->headers->set("Content-Disposition", "attachment; filename=\"class_" . $class->getName() . "_export.json\"");
+            return $response;
         }
     }
 
-
-    public function exportCustomLayoutDefinitionAction()
+    /**
+     * @Route("/export-custom-layout-definitions")
+     * @param Request $request
+     * @return Response
+     */
+    public function exportCustomLayoutDefinitionAction(Request $request)
     {
-        $this->removeViewRenderer();
-        $id = intval($this->getParam("id"));
+        $id = intval($request->get("id"));
 
         if ($id) {
             $customLayout = Object\ClassDefinition\CustomLayout::getById($id);
@@ -472,15 +538,14 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
                 unset($customLayout->userModification);
                 unset($customLayout->fieldDefinitions);
 
-                header("Content-type: application/json");
-                header("Content-Disposition: attachment; filename=\"custom_definition_" . $name . "_export.json\"");
-                $json = json_encode($customLayout);
-                $json = \Zend_Json::prettyPrint($json);
-                echo $json;
-                die();
+                $json = json_encode($customLayout, JSON_PRETTY_PRINT);
+
+                $response = new Response($json);
+                $response->headers->set("Content-type", "application/json");
+                $response->headers->set("Content-Disposition", "attachment; filename=\"custom_definition_" . $name . "_export.json\"");
+                return $response;
             }
         }
-
 
         $errorMessage = ": Custom Layout with id [ " . $id . " not found. ]";
         Logger::error($errorMessage);
@@ -493,18 +558,28 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
      * FIELDCOLLECTIONS
      */
 
-    public function fieldcollectionGetAction()
+    /**
+     * @Route("/fieldcollections-get")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function fieldcollectionGetAction(Request $request)
     {
-        $fc = Object\Fieldcollection\Definition::getByKey($this->getParam("id"));
-        $this->_helper->json($fc);
+        $fc = Object\Fieldcollection\Definition::getByKey($request->get("id"));
+        return $this->json($fc);
     }
 
-    public function fieldcollectionUpdateAction()
+    /**
+     * @Route("/fieldcollections-update")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function fieldcollectionUpdateAction(Request $request)
     {
         try {
-            $key = $this->getParam("key");
+            $key = $request->get("key");
 
-            if ($this->getParam("task") == "add") {
+            if ($request->get("task") == "add") {
                 // check for existing fieldcollection with same name with different lower/upper cases
                 $list = new Object\Fieldcollection\Definition\Listing();
                 $list = $list->load();
@@ -519,13 +594,13 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
             $fc = new Object\Fieldcollection\Definition();
             $fc->setKey($key);
 
-            if ($this->getParam("values")) {
-                $values = \Zend_Json::decode($this->getParam("values"));
+            if ($request->get("values")) {
+                $values = $this->decodeJson($request->get("values"));
                 $fc->setParentClass($values["parentClass"]);
             }
 
-            if ($this->getParam("configuration")) {
-                $configuration = \Zend_Json::decode($this->getParam("configuration"));
+            if ($request->get("configuration")) {
+                $configuration = $this->decodeJson($request->get("configuration"));
 
                 $configuration["datatype"] = "layout";
                 $configuration["fieldtype"] = "panel";
@@ -536,58 +611,77 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
 
             $fc->save();
 
-            $this->_helper->json(["success" => true, "id" => $fc->getKey()]);
+            return $this->json(["success" => true, "id" => $fc->getKey()]);
         } catch (\Exception $e) {
             Logger::error($e->getMessage());
-            $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
+            return $this->json(["success" => false, "message" => $e->getMessage()]);
         }
     }
 
-    public function importFieldcollectionAction()
+    /**
+     * @Route("/import-fieldcollection")
+     * @param Request $request
+     * @return Response
+     */
+    public function importFieldcollectionAction(Request $request)
     {
-        $fieldCollection = Object\Fieldcollection\Definition::getByKey($this->getParam("id"));
+        $fieldCollection = Object\Fieldcollection\Definition::getByKey($request->get("id"));
 
         $data = file_get_contents($_FILES["Filedata"]["tmp_name"]);
 
         $success = Object\ClassDefinition\Service::importFieldCollectionFromJson($fieldCollection, $data);
 
-        $this->removeViewRenderer();
-
-        $this->_helper->json([
+        $response = $this->json([
             "success" => $success
-        ], false);
+        ]);
 
         // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
         // Ext.form.Action.Submit and mark the submission as failed
-        $this->getResponse()->setHeader("Content-Type", "text/html");
+        $response->headers->set("Content-Type", "text/html");
+        return $response;
     }
 
-    public function exportFieldcollectionAction()
+    /**
+     * @Route("/export-fieldcollection")
+     * @param Request $request
+     * @return Response
+     */
+    public function exportFieldcollectionAction(Request $request)
     {
-        $this->removeViewRenderer();
-        $fieldCollection = Object\Fieldcollection\Definition::getByKey($this->getParam("id"));
+        $fieldCollection = Object\Fieldcollection\Definition::getByKey($request->get("id"));
         $key = $fieldCollection->getKey();
         if (!$fieldCollection instanceof Object\Fieldcollection\Definition) {
-            $errorMessage = ": Field-Collection with id [ " . $this->getParam("id") . " not found. ]";
+            $errorMessage = ": Field-Collection with id [ " . $request->get("id") . " not found. ]";
             Logger::error($errorMessage);
             echo $errorMessage;
         } else {
             $json = Object\ClassDefinition\Service::generateFieldCollectionJson($fieldCollection);
-            header("Content-type: application/json");
-            header("Content-Disposition: attachment; filename=\"fieldcollection_" . $key . "_export.json\"");
-            echo $json;
+            $response = new Response($json);
+            $response->headers->set("Content-type", "application/json");
+            $response->headers->set("Content-Disposition", "attachment; filename=\"fieldcollection_" . $key . "_export.json\"");
+            return $response;
         }
     }
 
-    public function fieldcollectionDeleteAction()
+    /**
+     * @Route("/fieldcollection-delete")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function fieldcollectionDeleteAction(Request $request)
     {
-        $fc = Object\Fieldcollection\Definition::getByKey($this->getParam("id"));
+        $fc = Object\Fieldcollection\Definition::getByKey($request->get("id"));
         $fc->delete();
 
-        $this->_helper->json(["success" => true]);
+        return $this->json(["success" => true]);
     }
 
-    public function fieldcollectionTreeAction()
+    /**
+     * @Route("/fieldcollection-tree")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function fieldcollectionTreeAction(Request $request)
     {
         $list = new Object\Fieldcollection\Definition\Listing();
         $list = $list->load();
@@ -601,20 +695,25 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
             ];
         }
 
-        $this->_helper->json($items);
+        return $this->json($items);
     }
 
-    public function fieldcollectionListAction()
+    /**
+     * @Route("/fieldcollection-list")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function fieldcollectionListAction(Request $request)
     {
         $user = \Pimcore\Tool\Admin::getCurrentUser();
-        $currentLayoutId = $this->getParam("layoutId");
+        $currentLayoutId = $request->get("layoutId");
 
         $list = new Object\Fieldcollection\Definition\Listing();
         $list = $list->load();
 
         if ($this->hasParam("allowedTypes")) {
             $filteredList = [];
-            $allowedTypes = explode(",", $this->getParam("allowedTypes"));
+            $allowedTypes = explode(",", $request->get("allowedTypes"));
             /** @var $type Object\Fieldcollection\Definition */
             foreach ($list as $type) {
                 if (in_array($type->getKey(), $allowedTypes)) {
@@ -627,7 +726,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
                         "containerKey" => $type->getKey()
                     ];
 
-                    $object = Object\AbstractObject::getById($this->getParam("object_id"));
+                    $object = Object\AbstractObject::getById($request->get("object_id"));
 
                     Object\Service::enrichLayoutDefinition($layoutDefinitions, $object, $context);
 
@@ -641,15 +740,19 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
         }
 
 
-        $this->_helper->json(["fieldcollections" => $list]);
+        return $this->json(["fieldcollections" => $list]);
     }
 
 
-
-    public function getClassDefinitionForColumnConfigAction()
+    /**
+     * @Route("/get-class-definition-for-column-config")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getClassDefinitionForColumnConfigAction(Request $request)
     {
-        $class = Object\ClassDefinition::getById(intval($this->getParam("id")));
-        $objectId = intval($this->getParam("oid"));
+        $class = Object\ClassDefinition::getById(intval($request->get("id")));
+        $objectId = intval($request->get("oid"));
 
         $filteredDefinitions = Object\Service::getCustomLayoutDefinitionForGridColumnConfig($class, $objectId);
 
@@ -698,7 +801,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
             }
         }
 
-        $this->_helper->json($result);
+        return $this->json($result);
     }
 
 
@@ -706,18 +809,28 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
      * OBJECT BRICKS
      */
 
-    public function objectbrickGetAction()
+    /**
+     * @Route("/objectbrick-get")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function objectbrickGetAction(Request $request)
     {
-        $fc = Object\Objectbrick\Definition::getByKey($this->getParam("id"));
-        $this->_helper->json($fc);
+        $fc = Object\Objectbrick\Definition::getByKey($request->get("id"));
+        return $this->json($fc);
     }
 
-    public function objectbrickUpdateAction()
+    /**
+     * @Route("/objectbrick-update")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function objectbrickUpdateAction(Request $request)
     {
         try {
-            $key = $this->getParam("key");
+            $key = $request->get("key");
 
-            if ($this->getParam("task") == "add") {
+            if ($request->get("task") == "add") {
                 // check for existing brick with same name with different lower/upper cases
                 $list = new Object\Objectbrick\Definition\Listing();
                 $list = $list->load();
@@ -733,15 +846,15 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
             $fc = new Object\Objectbrick\Definition();
             $fc->setKey($key);
 
-            if ($this->getParam("values")) {
-                $values = \Zend_Json::decode($this->getParam("values"));
+            if ($request->get("values")) {
+                $values = $this->decodeJson($request->get("values"));
 
                 $fc->setParentClass($values["parentClass"]);
                 $fc->setClassDefinitions($values["classDefinitions"]);
             }
 
-            if ($this->getParam("configuration")) {
-                $configuration = \Zend_Json::decode($this->getParam("configuration"));
+            if ($request->get("configuration")) {
+                $configuration = $this->decodeJson($request->get("configuration"));
 
                 $configuration["datatype"] = "layout";
                 $configuration["fieldtype"] = "panel";
@@ -752,57 +865,76 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
 
             $fc->save();
 
-            $this->_helper->json(["success" => true, "id" => $fc->getKey()]);
+            return $this->json(["success" => true, "id" => $fc->getKey()]);
         } catch (\Exception $e) {
             Logger::error($e->getMessage());
-            $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
+            return $this->json(["success" => false, "message" => $e->getMessage()]);
         }
     }
 
-    public function importObjectbrickAction()
+    /**
+     * @Route("/import-objectbrick")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function importObjectbrickAction(Request $request)
     {
-        $objectBrick = Object\Objectbrick\Definition::getByKey($this->getParam("id"));
+        $objectBrick = Object\Objectbrick\Definition::getByKey($request->get("id"));
 
         $data = file_get_contents($_FILES["Filedata"]["tmp_name"]);
         $success = Object\ClassDefinition\Service::importObjectBrickFromJson($objectBrick, $data);
 
-        $this->removeViewRenderer();
-
-        $this->_helper->json([
+        $response = $this->json([
             "success" => $success
-        ], false);
+        ]);
 
         // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
         // Ext.form.Action.Submit and mark the submission as failed
-        $this->getResponse()->setHeader("Content-Type", "text/html");
+        $response->headers->set("Content-Type", "text/html");
+        return $response;
     }
 
-    public function exportObjectbrickAction()
+    /**
+     * @Route("/export-objectbrick")
+     * @param Request $request
+     * @return Response
+     */
+    public function exportObjectbrickAction(Request $request)
     {
-        $this->removeViewRenderer();
-        $objectBrick = Object\Objectbrick\Definition::getByKey($this->getParam("id"));
+        $objectBrick = Object\Objectbrick\Definition::getByKey($request->get("id"));
         $key = $objectBrick->getKey();
         if (!$objectBrick instanceof Object\Objectbrick\Definition) {
-            $errorMessage = ": Object-Brick with id [ " . $this->getParam("id") . " not found. ]";
+            $errorMessage = ": Object-Brick with id [ " . $request->get("id") . " not found. ]";
             Logger::error($errorMessage);
             echo $errorMessage;
         } else {
             $xml = Object\ClassDefinition\Service::generateObjectBrickJson($objectBrick);
-            header("Content-type: application/json");
-            header("Content-Disposition: attachment; filename=\"objectbrick_" . $key . "_export.json\"");
-            echo $xml;
+            $response = new Response($xml);
+            $response->headers->set("Content-type", "application/json");
+            $response->headers->set("Content-Disposition", "attachment; filename=\"objectbrick_" . $key . "_export.json\"");
+            return $response;
         }
     }
 
-    public function objectbrickDeleteAction()
+    /**
+     * @Route("/objectbrick-delete")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function objectbrickDeleteAction(Request $request)
     {
-        $fc = Object\Objectbrick\Definition::getByKey($this->getParam("id"));
+        $fc = Object\Objectbrick\Definition::getByKey($request->get("id"));
         $fc->delete();
 
-        $this->_helper->json(["success" => true]);
+        return $this->json(["success" => true]);
     }
 
-    public function objectbrickTreeAction()
+    /**
+     * @Route("/objectbrick-tree")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function objectbrickTreeAction(Request $request)
     {
         $list = new Object\Objectbrick\Definition\Listing();
         $list = $list->load();
@@ -816,18 +948,23 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
             ];
         }
 
-        $this->_helper->json($items);
+        return $this->json($items);
     }
 
-    public function objectbrickListAction()
+    /**
+     * @Route("/objectbrick-list")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function objectbrickListAction(Request $request)
     {
         $list = new Object\Objectbrick\Definition\Listing();
         $list = $list->load();
 
         if ($this->hasParam("class_id") && $this->hasParam("field_name")) {
             $filteredList = [];
-            $classId = $this->getParam("class_id");
-            $fieldname = $this->getParam("field_name");
+            $classId = $request->get("class_id");
+            $fieldname = $request->get("field_name");
             foreach ($list as $type) {
                 /** @var  $type Object\Objectbrick\Definition */
                 $clsDefs = $type->getClassDefinitions();
@@ -847,7 +984,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
                     "containerKey" => $type->getKey()
                 ];
 
-                $object = Object\AbstractObject::getById($this->getParam("object_id"));
+                $object = Object\AbstractObject::getById($request->get("object_id"));
 
                 Object\Service::enrichLayoutDefinition($layout, $object, $context);
                 $type->setLayoutDefinitions($layout);
@@ -857,16 +994,22 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
         }
 
         $returnValueContainer = new Model\Tool\Admin\EventDataContainer($list);
-        \Pimcore::getEventManager()->trigger("admin.class.objectbrickList.preSendData", $this, ["returnValueContainer" => $returnValueContainer, "objectId"=>$this->getParam('object_id')]);
+        \Pimcore::getEventManager()->trigger("admin.class.objectbrickList.preSendData", $this, ["returnValueContainer" => $returnValueContainer, "objectId"=>$request->get('object_id')]);
 
-        $this->_helper->json(["objectbricks" => $list]);
+        return $this->json(["objectbricks" => $list]);
     }
 
     /**
      * See http://www.pimcore.org/issues/browse/PIMCORE-2358
      * Add option to export/import all class definitions/brick definitions etc. at once
      */
-    public function bulkImportAction()
+
+    /**
+     * @Route("/bulk-import")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function bulkImportAction(Request $request)
     {
         $result = [];
 
@@ -908,18 +1051,25 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
             }
         }
 
-        $this->_helper->json(["success" => true, "filename" => $tmpName, "data" => $result], false);
-        $this->getResponse()->setHeader("Content-Type", "text/html");
+        $response = $this->json(["success" => true, "filename" => $tmpName, "data" => $result]);
+        $response->headers->set("Content-Type", "text/html");
+        return $response;
     }
 
     /**
      * See http://www.pimcore.org/issues/browse/PIMCORE-2358
      * Add option to export/import all class definitions/brick definitions etc. at once
      */
-    public function bulkCommitAction()
+
+    /**
+     * @Route("/bulk-commit")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function bulkCommitAction(Request $request)
     {
-        $filename = $this->getParam("filename");
-        $data = json_decode($this->getParam("data"), true);
+        $filename = $request->get("filename");
+        $data = json_decode($request->get("data"), true);
 
         $json = @file_get_contents($filename);
         $json = json_decode($json, true);
@@ -944,7 +1094,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
                     $class->setName($name);
                 }
                 $success = Object\ClassDefinition\Service::importClassDefinitionFromJson($class, json_encode($item), true);
-                $this->_helper->json(["success" => $success !== false]);
+                return $this->json(["success" => $success !== false]);
             } elseif ($type == "objectbrick" && $item["key"] == $name) {
                 try {
                     $brick = Object\Objectbrick\Definition::getByKey($name);
@@ -954,7 +1104,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
                 }
 
                 $success = Object\ClassDefinition\Service::importObjectBrickFromJson($brick, json_encode($item), true);
-                $this->_helper->json(["success" => $success !== false]);
+                return $this->json(["success" => $success !== false]);
             } elseif ($type == "fieldcollection" && $item["key"] == $name) {
                 try {
                     $fieldCollection = Object\Fieldcollection\Definition::getByKey($name);
@@ -963,7 +1113,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
                     $fieldCollection->setKey($name);
                 }
                 $success = Object\ClassDefinition\Service::importFieldCollectionFromJson($fieldCollection, json_encode($item), true);
-                $this->_helper->json(["success" => $success !== false]);
+                return $this->json(["success" => $success !== false]);
             } elseif ($type == "customlayout") {
                 $layoutData = unserialize($data["name"]);
                 $className = $layoutData["className"];
@@ -1001,24 +1151,29 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
                         $layoutDefinition->save();
                     } catch (\Exception $e) {
                         Logger::error($e->getMessage());
-                        $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
+                        return $this->json(["success" => false, "message" => $e->getMessage()]);
                     }
                 }
             }
         }
 
 
-        $this->_helper->json(["success" => true]);
+        return $this->json(["success" => true]);
     }
 
     /**
      * See http://www.pimcore.org/issues/browse/PIMCORE-2358
      * Add option to export/import all class definitions/brick definitions etc. at once
      */
-    public function bulkExportAction()
+
+    /**
+     * @Route("/bulk-export")
+     * @param Request $request
+     * @return Response
+     */
+    public function bulkExportAction(Request $request)
     {
         $result = [];
-        $this->removeViewRenderer();
 
         $fieldCollections = new Object\Fieldcollection\Definition\Listing();
         $fieldCollections = $fieldCollections->load();
@@ -1062,10 +1217,37 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
             $result["customlayout"][] = $customLayout;
         }
 
-
-        header("Content-type: application/json");
-        header("Content-Disposition: attachment; filename=\"bulk_export.json\"");
         $result = json_encode($result);
-        echo $result;
+        $response = new Response($result);
+        $response->headers->set("Content-type", "application/json");
+        $response->headers->set("Content-Disposition", "attachment; filename=\"bulk_export.json\"");
+        return $response;
+    }
+
+    /**
+     * @param FilterControllerEvent $event
+     */
+    public function onKernelController(FilterControllerEvent $event)
+    {
+        $isMasterRequest = $event->isMasterRequest();
+        if (!$isMasterRequest) {
+            return;
+        }
+
+        $request = $event->getRequest();
+
+        // check permissions
+        $notRestrictedActions = ["get-tree", "fieldcollection-list", "fieldcollection-tree", "fieldcollection-get", "get-class-definition-for-column-config", "objectbrick-list", "objectbrick-tree", "objectbrick-get"];
+        if (!in_array($request->get("action"), $notRestrictedActions)) {
+            $this->checkPermission("classes");
+        }
+    }
+
+    /**
+     * @param FilterResponseEvent $event
+     */
+    public function onKernelResponse(FilterResponseEvent $event)
+    {
+        // nothing to do
     }
 }
