@@ -5,16 +5,23 @@ namespace Pimcore\Tests\Unit\Mail;
 use Pimcore\Mail;
 use Pimcore\Tests\Test\TestCase;
 
+/**
+ * TODO how valid is this test now that we use swiftmailer?
+ */
 class PwnscriptumTest extends TestCase
 {
     public function testNormalFrom()
     {
         $email = 'foo@example.com';
+        $name  = 'Sender\'s name';
 
         $mail = new Mail();
-        $mail->setFrom($email, 'Sender\'s name');
+        $mail->setFrom($email, $name);
 
-        $this->assertEquals($email, $mail->getFrom());
+        $expected = [];
+        $expected[$email] = $name;
+
+        $this->assertEquals($expected, $mail->getFrom());
     }
 
     /**
