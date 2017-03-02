@@ -16,6 +16,8 @@
 
 namespace Pimcore\Model\Object;
 
+use Pimcore\Event\Element\ObjectEvent;
+use Pimcore\Event\ObjectEvents;
 use Pimcore\Model;
 use Pimcore\Config;
 use Pimcore\Logger;
@@ -255,9 +257,9 @@ class Concrete extends AbstractObject
 
         // hook should be also called if "save only new version" is selected
         if ($callPluginHook) {
-            \Pimcore::getEventManager()->trigger("object.preUpdate", $this, [
+            \Pimcore::getEventDispatcher()->dispatch(ObjectEvents::PRE_UPDATE, new ObjectEvent($this, [
                 "saveVersionOnly" => true
-            ]);
+            ]));
         }
 
         // scheduled tasks are saved always, they are not versioned!
@@ -282,9 +284,9 @@ class Concrete extends AbstractObject
 
         // hook should be also called if "save only new version" is selected
         if ($callPluginHook) {
-            \Pimcore::getEventManager()->trigger("object.postUpdate", $this, [
+            \Pimcore::getEventDispatcher()->dispatch(ObjectEvents::POST_UPDATE, new ObjectEvent($this, [
                 "saveVersionOnly" => true
-            ]);
+            ]));
         }
 
         return $version;

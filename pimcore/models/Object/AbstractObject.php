@@ -16,6 +16,8 @@
 
 namespace Pimcore\Model\Object;
 
+use Pimcore\Event\Element\ObjectEvent;
+use Pimcore\Event\ObjectEvents;
 use Pimcore\Model;
 use Pimcore\Cache;
 use Pimcore\Tool;
@@ -498,7 +500,7 @@ class AbstractObject extends Model\Element\AbstractElement
 
     public function delete()
     {
-        \Pimcore::getEventManager()->trigger("object.preDelete", $this);
+        \Pimcore::getEventDispatcher()->dispatch(ObjectEvents::PRE_DELETE, new ObjectEvent($this));
 
         // delete childs
         if ($this->hasChilds([self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER, self::OBJECT_TYPE_VARIANT])) {
@@ -529,7 +531,7 @@ class AbstractObject extends Model\Element\AbstractElement
         //set object to registry
         \Pimcore\Cache\Runtime::set("object_" . $this->getId(), null);
 
-        \Pimcore::getEventManager()->trigger("object.postDelete", $this);
+        \Pimcore::getEventDispatcher()->dispatch(ObjectEvents::POST_DELETE, new ObjectEvent($this));
     }
 
 
@@ -542,9 +544,9 @@ class AbstractObject extends Model\Element\AbstractElement
         $isUpdate = false;
         if ($this->getId()) {
             $isUpdate = true;
-            \Pimcore::getEventManager()->trigger("object.preUpdate", $this);
+            \Pimcore::getEventDispatcher()->dispatch(ObjectEvents::PRE_UPDATE, new ObjectEvent($this));
         } else {
-            \Pimcore::getEventManager()->trigger("object.preAdd", $this);
+            \Pimcore::getEventDispatcher()->dispatch(ObjectEvents::PRE_ADD, new ObjectEvent($this));
         }
 
         $this->correctPath();
@@ -635,9 +637,9 @@ class AbstractObject extends Model\Element\AbstractElement
         $this->clearDependentCache($additionalTags);
 
         if ($isUpdate) {
-            \Pimcore::getEventManager()->trigger("object.postUpdate", $this);
+            \Pimcore::getEventDispatcher()->dispatch(ObjectEvents::POST_UPDATE, new ObjectEvent($this));
         } else {
-            \Pimcore::getEventManager()->trigger("object.postAdd", $this);
+            \Pimcore::getEventDispatcher()->dispatch(ObjectEvents::POST_ADD, new ObjectEvent($this));
         }
 
         return $this;
