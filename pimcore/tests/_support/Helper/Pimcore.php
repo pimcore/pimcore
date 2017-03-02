@@ -28,7 +28,8 @@ class Pimcore extends Module\Symfony
         // way faster if no DB has to be initialized first, so
         // we enable DB support on a suite level
         $this->config = array_merge($this->config, [
-            'initialize_db'         => false,
+            'connect_db'            => false,
+            'initialize_db'         => true,
             'force_reinitialize_db' => false,
         ]);
 
@@ -61,12 +62,22 @@ class Pimcore extends Module\Symfony
             $this->initializeKernel();
         }
 
-        // (re-)initialize DB if DB support was requested when
-        // loading the module
-        if ($this->config['initialize_db']) {
-            if (!static::$dbInitialized || $this->config['force_reinitialize_db']) {
-                $this->initializeDb();
-                static::$dbInitialized = true;
+        if ($this->config['connect_db']) {
+            // (re-)initialize DB if DB support was requested when
+            // loading the module
+            if ($this->config['initialize_db']) {
+                if (!static::$dbInitialized || $this->config['force_reinitialize_db']) {
+                    if ($this->initializeDb()) {
+                        define('PIMCORE_TEST_DB_INITIALIZED', true);
+                        static::$dbInitialized = true;
+                    }
+                }
+            } else {
+                // just try to connect without initializing the DB
+                $connection = $this->connectDb();
+                if ($connection) {
+                    define('PIMCORE_TEST_DB_INITIALIZED', true);
+                }
             }
         }
     }
@@ -130,7 +141,7 @@ class Pimcore extends Module\Symfony
 
         $this->debug(sprintf('[DB] Set up the test DB %s', $connection->getDatabase()));
 
-        define('PIMCORE_TEST_DB_INITIALIZED', true);
+        return true;
     }
 
     /**
