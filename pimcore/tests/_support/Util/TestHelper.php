@@ -2,10 +2,12 @@
 
 namespace Pimcore\Tests\Util;
 
+use Pimcore\Model\Asset;
+use Pimcore\Model\Document;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\User;
 use Pimcore\Model\Webservice\Tool as WebserviceTool;
-use Pimcore\Model\Object\Unittest;
+use Pimcore\Model\Object as ObjectModel;
 
 class TestHelper
 {
@@ -42,10 +44,10 @@ class TestHelper
 
         $client = new \Zend_Soap_Client($conf->webservice->wsdl . "&username=" . $user->getUsername() . "&apikey=" . $user->getPassword(),
             [
-                   "cache_wsdl" => false,
-                   "soap_version" => SOAP_1_2,
-                   "classmap" => WebserviceTool::createClassMappings()
-              ]);
+                "cache_wsdl"   => false,
+                "soap_version" => SOAP_1_2,
+                "classmap"     => WebserviceTool::createClassMappings()
+            ]);
 
         $client->setLocation($conf->webservice->serviceEndpoint . "?username=" . $user->getUsername() . "&apikey=" . $user->getPassword());
 
@@ -107,23 +109,21 @@ class TestHelper
             }
 
             if (!$ignoreCopyDifferences) {
-                $a["filename"] = $asset->getFilename();
-                $a["id"] = $asset->getId();
+                $a["filename"]     = $asset->getFilename();
+                $a["id"]           = $asset->getId();
                 $a["modification"] = $asset->getModificationDate();
-                $a["creation"] = $asset->getCreationDate();
+                $a["creation"]     = $asset->getCreationDate();
                 $a["userModified"] = $asset->getUserModification();
-                $a["parentId"] = $asset->getParentId();
-                $a["path"] = $asset->getPath;
+                $a["parentId"]     = $asset->getParentId();
+                $a["path"]         = $asset->getPath;
             }
 
 
             $a["userOwner"] = $asset->getUserOwner();
 
 
-
-
             $properties = $asset->getProperties();
-            $a = array_merge($a, self::createPropertiesComparisonString($properties));
+            $a          = array_merge($a, self::createPropertiesComparisonString($properties));
 
             return implode(",", $a);
         } else {
@@ -147,12 +147,12 @@ class TestHelper
             }
 
             $myFile = TESTS_PATH . "/output/asset1-" . $id . ".txt";
-            $fh = fopen($myFile, 'w');
+            $fh     = fopen($myFile, 'w');
             fwrite($fh, $a1Hash);
             fclose($fh);
 
             $myFile = TESTS_PATH . "/output/asset2-" . $id . ".txt";
-            $fh = fopen($myFile, 'w');
+            $fh     = fopen($myFile, 'w');
             fwrite($fh, $a2Hash);
             fclose($fh);
 
@@ -187,9 +187,9 @@ class TestHelper
                 }
 
                 if ($document instanceof Document_Page) {
-                    $d["name"] = $document->getName();
-                    $d["keywords"] = $document->getKeywords();
-                    $d["title"] = $document->getTitle();
+                    $d["name"]        = $document->getName();
+                    $d["keywords"]    = $document->getKeywords();
+                    $d["title"]       = $document->getTitle();
                     $d["description"] = $document->getDescription();
                 }
 
@@ -201,19 +201,19 @@ class TestHelper
             }
 
             if (!$ignoreCopyDifferences) {
-                $d["key"] = $document->getKey();
-                $d["id"] = $document->getId();
+                $d["key"]          = $document->getKey();
+                $d["id"]           = $document->getId();
                 $d["modification"] = $document->getModificationDate();
-                $d["creation"] = $document->getCreationDate();
+                $d["creation"]     = $document->getCreationDate();
                 $d["userModified"] = $document->getUserModification();
-                $d["parentId"] = $document->getParentId();
-                $d["path"] = $document->getPath();
+                $d["parentId"]     = $document->getParentId();
+                $d["path"]         = $document->getPath();
             }
 
             $d["userOwner"] = $document->getUserOwner();
 
             $properties = $document->getProperties();
-            $d = array_merge($d, self::createPropertiesComparisonString($properties));
+            $d          = array_merge($d, self::createPropertiesComparisonString($properties));
 
             return implode(",", $d);
         } else {
@@ -234,17 +234,17 @@ class TestHelper
 
             $id = uniqid();
 
-/*
-            $myFile = TESTS_PATH . "/output/document1-" . $id . ".txt";
-            $fh = fopen($myFile, 'w');
-            fwrite($fh, $d1Hash);
-            fclose($fh);
+            /*
+                        $myFile = TESTS_PATH . "/output/document1-" . $id . ".txt";
+                        $fh = fopen($myFile, 'w');
+                        fwrite($fh, $d1Hash);
+                        fclose($fh);
 
-            $myFile = TESTS_PATH . "/output/document2-" . $id . ".txt";
-            $fh = fopen($myFile, 'w');
-            fwrite($fh, $d2Hash);
-            fclose($fh);
-  */
+                        $myFile = TESTS_PATH . "/output/document2-" . $id . ".txt";
+                        $fh = fopen($myFile, 'w');
+                        fwrite($fh, $d2Hash);
+                        fclose($fh);
+              */
             return $d1Hash === $d2Hash ? true : false;
         } else {
             return false;
@@ -262,21 +262,21 @@ class TestHelper
         if (method_exists($object, $getter) and $fd instanceof Object_Class_Data_Fieldcollections) {
             if ($object->$getter()) {
                 $collection = $object->$getter();
-                $items = $collection->getItems();
+                $items      = $collection->getItems();
                 if (is_array($items)) {
                     $returnValue = [];
-                    $counter = 0;
+                    $counter     = 0;
                     foreach ($items as $item) {
                         $def = $item->getDefinition();
 
                         foreach ($def->getFieldDefinitions() as $k => $v) {
-                            $getter = "get" . ucfirst($v->getName());
+                            $getter     = "get" . ucfirst($v->getName());
                             $fieldValue = $item->$getter();
 
                             if ($v instanceof Object_Class_Data_Link) {
                                 $fieldValue = serialize($v);
                             } elseif ($v instanceof Object_Class_Data_Password or $fd instanceof Object_Class_Data_Nonownerobjects) {
-                                $fieldValue=null;
+                                $fieldValue = null;
                             } else {
                                 $fieldValue = $v->getForCsvExport($item);
                             }
@@ -290,7 +290,7 @@ class TestHelper
                 }
             }
         } elseif (method_exists($object, $getter) and $fd instanceof Object_Class_Data_Localizedfields) {
-            $data = $object->$getter();
+            $data  = $object->$getter();
             $lData = [];
 
             if (!$data instanceof Object_Localizedfield) {
@@ -307,8 +307,7 @@ class TestHelper
                 foreach ($fd->getFieldDefinitions() as $fd) {
                     \Pimcore\Cache\Runtime::set("Zend_Locale", new Zend_Locale($language));
 
-                    $lData[$language][$fd->getName()] = self::getComparisonDataForField($fd->getName(), $fd, $object);
-                    ;
+                    $lData[$language][$fd->getName()] = self::getComparisonDataForField($fd->getName(), $fd, $object);;
                 }
             }
             if ($localeBak) {
@@ -340,13 +339,13 @@ class TestHelper
                 $o["published"] = $object->isPublished();
             }
             if (!$ignoreCopyDifferences) {
-                $o["id"] = $object->getId();
-                $o["key"] = $object->getKey();
+                $o["id"]           = $object->getId();
+                $o["key"]          = $object->getKey();
                 $o["modification"] = $object->getModificationDate();
-                $o["creation"] = $object->getCreationDate();
+                $o["creation"]     = $object->getCreationDate();
                 $o["userModified"] = $object->getUserModification();
-                $o["parentId"] = $object->getParentId();
-                $o["path"] = $object->getPath;
+                $o["parentId"]     = $object->getParentId();
+                $o["path"]         = $object->getPath;
             }
 
 
@@ -354,7 +353,7 @@ class TestHelper
 
 
             $properties = $object->getProperties();
-            $o = array_merge($o, self::createPropertiesComparisonString($properties));
+            $o          = array_merge($o, self::createPropertiesComparisonString($properties));
 
             return implode(",", $o);
         } else {
@@ -493,7 +492,6 @@ class TestHelper
     }
 
 
-
     /**
      * @param string $keyPrefix
      * @param bool $save
@@ -517,7 +515,6 @@ class TestHelper
 
         return $document;
     }
-
 
 
     /**
@@ -555,11 +552,9 @@ class TestHelper
         return $asset;
     }
 
-
-
     public static function cleanUp($cleanAssets = true, $cleanDocuments = true, $cleanObjects = true)
     {
-        Pimcore::collectGarbage();
+        \Pimcore::collectGarbage();
 
         if ($cleanObjects) {
             try {
@@ -572,7 +567,7 @@ class TestHelper
                         $child->delete();
                     }
                 }
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 print($e);
             }
         }
@@ -586,7 +581,7 @@ class TestHelper
                         $child->delete();
                     }
                 }
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 print($e);
             }
         }
@@ -600,12 +595,14 @@ class TestHelper
                         $child->delete();
                     }
                 }
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 print($e);
             }
         }
-        Pimcore::collectGarbage();
-        print("    number of objects is " . Test_Tool::getObjectCount() . "\n");
+
+        \Pimcore::collectGarbage();
+
+        print("    number of objects is " . static::getObjectCount() . "\n");
         print("\n");
     }
 
@@ -614,7 +611,7 @@ class TestHelper
      */
     public static function getObjectCount()
     {
-        $list = new Object_List();
+        $list   = new ObjectModel\Listing();
         $childs = $list->load();
 
         return count($childs);
@@ -625,7 +622,7 @@ class TestHelper
      */
     public static function getAssetCount()
     {
-        $list = new Asset_List();
+        $list   = new Asset\Listing();
         $childs = $list->load();
 
         return count($childs);
@@ -636,7 +633,7 @@ class TestHelper
      */
     public static function getDocoumentCount()
     {
-        $list = new Document_List();
+        $list   = new Document\Listing();
         $childs = $list->load();
 
         return count($childs);

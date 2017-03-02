@@ -8,6 +8,20 @@ use Pimcore\Model\Object\ClassDefinition;
 class ClassManager extends Module
 {
     /**
+     *
+     * @param string $name
+     * @return bool
+     */
+    public function hasClass($name)
+    {
+        if (ClassDefinition::getByName($name)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Create or load a class definition
      *
      * @param $name
@@ -41,17 +55,12 @@ class ClassManager extends Module
             $class->setUserModification(1);
             $class->setModificationDate(time());
 
-            /** @var ClassDefinition\Data\ObjectsMetadata $fd */
-            $fd = $class->getFieldDefinition('objectswithmetadata');
-            if ($fd) {
-                $fd->setAllowedClassId($class->getId());
-            }
-
             $class->save();
+
             $class = ClassDefinition::getByName($name);
         }
 
-        $this->assertNotNull($class, "test class does not exist");
+        $this->assertNotNull($class, sprintf("Test class %s does not exist and could not be created", $name));
         $this->assertInstanceOf(ClassDefinition::class, $class);
 
         return $class;

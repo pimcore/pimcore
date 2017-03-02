@@ -17,23 +17,15 @@ abstract class ModelTestCase extends TestCase
         parent::setUp();
 
         if ($this->needsDb()) {
-            $testClasses = $this->needsTestClasses();
-            if (is_array($testClasses)) {
-                foreach ($testClasses as $testClass => $jsonFile) {
-                    $this->tester->createClass($testClass, $jsonFile);
-                }
-            }
+            $this->setUpTestClasses();
         }
     }
 
     /**
-     * Determine if the test needs test classes
-     *
-     * @return array|bool
+     * Set up test classes before running tests
      */
-    protected function needsTestClasses()
+    protected function setUpTestClasses()
     {
-        return ['unittest' => 'class-import.json'];
     }
 
     /**
@@ -41,12 +33,6 @@ abstract class ModelTestCase extends TestCase
      */
     protected function needsDb()
     {
-        $testClasses = $this->needsTestClasses();
-
-        if (is_array($testClasses) && count($testClasses) > 0) {
-            return true;
-        }
-
-        return false;
+        return true;
     }
 }
