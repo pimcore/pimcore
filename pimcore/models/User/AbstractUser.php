@@ -16,6 +16,8 @@
 
 namespace Pimcore\Model\User;
 
+use Pimcore\Event\Model\UserRoleEvent;
+use Pimcore\Event\UserRoleEvents;
 use Pimcore\Model;
 
 /**
@@ -175,9 +177,9 @@ class AbstractUser extends Model\AbstractModel
         $isUpdate = false;
         if ($this->getId()) {
             $isUpdate = true;
-            \Pimcore::getEventManager()->trigger("user.preUpdate", $this);
+            \Pimcore::getEventDispatcher()->dispatch(UserRoleEvents::PRE_UPDATE, new UserRoleEvent($this));
         } else {
-            \Pimcore::getEventManager()->trigger("user.preAdd", $this);
+            \Pimcore::getEventDispatcher()->dispatch(UserRoleEvents::PRE_ADD, new UserRoleEvent($this));
         }
 
         $this->beginTransaction();
@@ -195,9 +197,9 @@ class AbstractUser extends Model\AbstractModel
         }
 
         if ($isUpdate) {
-            \Pimcore::getEventManager()->trigger("user.postUpdate", $this);
+            \Pimcore::getEventDispatcher()->dispatch(UserRoleEvents::POST_UPDATE, new UserRoleEvent($this));
         } else {
-            \Pimcore::getEventManager()->trigger("user.postAdd", $this);
+            \Pimcore::getEventDispatcher()->dispatch(UserRoleEvents::POST_ADD, new UserRoleEvent($this));
         }
 
         return $this;
@@ -208,7 +210,7 @@ class AbstractUser extends Model\AbstractModel
      */
     public function delete()
     {
-        \Pimcore::getEventManager()->trigger("user.preDelete", $this);
+        \Pimcore::getEventDispatcher()->dispatch(UserRoleEvents::PRE_DELETE, new UserRoleEvent($this));
 
         // delete all childs
         $list = new Listing();
@@ -225,7 +227,7 @@ class AbstractUser extends Model\AbstractModel
         $this->getDao()->delete();
         \Pimcore\Cache::clearAll();
 
-        \Pimcore::getEventManager()->trigger("user.postDelete", $this);
+        \Pimcore::getEventDispatcher()->dispatch(UserRoleEvents::POST_DELETE, new UserRoleEvent($this));
     }
 
     /**
