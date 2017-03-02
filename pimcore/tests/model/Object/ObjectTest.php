@@ -1,11 +1,11 @@
 <?php
 
-namespace Pimcore\Tests\Models\Object;
+namespace Pimcore\Tests\Model\Object;
 
-use Pimcore\Tests\Test\DbTest;
+use Pimcore\Tests\Test\ModelTestCase;
 use Pimcore\Tests\Util\TestHelper;
 
-class ObjectTest extends DbTest
+class ObjectTest extends ModelTestCase
 {
     /**
      * Verifies that a object with the same parent ID cannot be created.

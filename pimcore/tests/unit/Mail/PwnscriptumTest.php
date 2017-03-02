@@ -1,11 +1,11 @@
 <?php
 
-namespace TestSuite\Pimcore;
+namespace Pimcore\Tests\Unit\Mail;
 
-use PHPUnit\Framework\TestCase;
 use Pimcore\Mail;
+use Pimcore\Tests\Test\TestCase;
 
-class MailTest extends TestCase
+class PwnscriptumTest extends TestCase
 {
     public function testNormalFrom()
     {

@@ -12,7 +12,3 @@ settings:
 extensions:
     enabled:
         - Codeception\Extension\RunFailed
-modules:
-    enabled:
-        - \Pimcore\Tests\Helper\Pimcore
-        - \Pimcore\Tests\Helper\ClassManager

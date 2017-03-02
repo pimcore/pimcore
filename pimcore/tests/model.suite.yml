@@ -1,0 +1,6 @@
+class_name: ModelTester
+modules:
+    enabled:
+        - \Pimcore\Tests\Helper\Pimcore
+        - \Pimcore\Tests\Helper\ClassManager
+        - \Pimcore\Tests\Helper\Model
