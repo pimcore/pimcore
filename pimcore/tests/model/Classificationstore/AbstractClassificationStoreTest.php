@@ -19,7 +19,8 @@ abstract class AbstractClassificationStoreTest extends ModelTestCase
         $class = ClassDefinition::getByName($name);
 
         if (!$class) {
-            $class = $this->tester->createClass($name, $file);
+            /** @var ClassDefinition $class */
+            $class = $this->tester->setupClass($name, $file);
 
             /** @var $fd ClassificationStoreDefinition */
             $fd = $class->getFieldDefinition("csstore");
@@ -82,7 +83,7 @@ abstract class AbstractClassificationStoreTest extends ModelTestCase
 
                 $definition->setName($keyName);
                 $definition = json_encode($definition);
-//                var_dump($definition);
+
                 $keyConfig->setDefinition($definition); // The definition is used in object editor to render fields
                 $keyConfig->save();
             }

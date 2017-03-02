@@ -4,65 +4,233 @@ namespace Pimcore\Tests\Helper;
 
 use Codeception\Module;
 use Pimcore\Model\Object\ClassDefinition;
+use Pimcore\Model\Object\Fieldcollection\Definition as FieldcollectionDefinition;
+use Pimcore\Model\Object\Objectbrick\Definition as ObjectbrickDefinition;
 
 class ClassManager extends Module
 {
     /**
-     *
+     * @param string $name
+     * @return ClassDefinition|null
+     */
+    public function getClass($name)
+    {
+        if ($class = ClassDefinition::getByName($name)) {
+            return $class;
+        }
+    }
+
+    /**
      * @param string $name
      * @return bool
      */
     public function hasClass($name)
     {
-        if (ClassDefinition::getByName($name)) {
-            return true;
-        }
-
-        return false;
+        return null !== $this->getClass($name);
     }
 
     /**
      * Create or load a class definition
      *
-     * @param $name
-     * @param $jsonFile
+     * @param string $name
+     * @param string $filename
      *
      * @return ClassDefinition
      */
-    public function createClass($name, $jsonFile)
+    public function setupClass($name, $filename)
     {
         // class either already exists or it must be created
-        $class = ClassDefinition::getByName($name);
+        if (!$this->hasClass($name)) {
+            $this->debug(sprintf('[CLASSMANAGER] Setting up class %s', $name));
 
-        if (!$class) {
-            $jsonPath = __DIR__ . '/../Resources/objects/' . $jsonFile;
-            $this->assertFileExists($jsonPath);
-
-            $json = file_get_contents($jsonPath);
-            $this->assertNotEmpty($json);
+            $json = $this->loadJson($filename);
 
             $class = new ClassDefinition();
             $class->setName($name);
             $class->setUserOwner(1);
 
-            ClassDefinition\Service::importClassDefinitionFromJson($class, $json);
+            ClassDefinition\Service::importClassDefinitionFromJson($class, $json, true);
 
             $class->save();
 
-            $id = $class->getId();
-
-            $class = ClassDefinition::getById($id);
+            $class = ClassDefinition::getById($class->getId());
             $class->setUserModification(1);
             $class->setModificationDate(time());
 
             $class->save();
-
-            $class = ClassDefinition::getByName($name);
         }
 
-        $this->assertNotNull($class, sprintf("Test class %s does not exist and could not be created", $name));
+        $class = $this->getClass($name);
+
+        $this->assertNotNull($class, sprintf('Test class %s does not exist and could not be created', $name));
         $this->assertInstanceOf(ClassDefinition::class, $class);
 
         return $class;
+    }
+
+    /**
+     * @param string $name
+     * @return FieldcollectionDefinition
+     */
+    public function getFieldcollection($name)
+    {
+        try {
+            if ($fc = FieldcollectionDefinition::getByKey($name)) {
+                return $fc;
+            }
+        } catch (\Exception $e) {
+        }
+    }
+
+    /**
+     * @param string $name
+     * @return bool
+     */
+    public function hasFieldCollection($name)
+    {
+        return null !== $this->getFieldcollection($name);
+    }
+
+    /**
+     * Create or load a fieldcollection
+     *
+     * @param string $name
+     * @param string $filename
+     *
+     * @return FieldcollectionDefinition
+     */
+    public function setupFieldcollection($name, $filename)
+    {
+        if (!$this->hasFieldCollection($name)) {
+            $this->debug(sprintf('[CLASSMANAGER] Setting up fieldcollection %s', $name));
+
+            $fieldCollection = new FieldcollectionDefinition();
+            $fieldCollection->setKey($name);
+
+            $json = $this->loadJson($filename);
+
+            ClassDefinition\Service::importFieldCollectionFromJson($fieldCollection, $json, true);
+        }
+
+        $fieldCollection = $this->getFieldcollection($name);
+
+        $this->assertNotNull($fieldCollection, sprintf('Test fieldcollection %s does not exist and could not be created', $name));
+        $this->assertInstanceOf(FieldcollectionDefinition::class, $fieldCollection);
+
+        return $fieldCollection;
+    }
+
+    /**
+     * @param $name
+     * @return ObjectbrickDefinition|null
+     */
+    public function getObjectbrick($name)
+    {
+        try {
+            if ($ob = ObjectbrickDefinition::getByKey($name)) {
+                return $ob;
+            }
+        } catch (\Exception $e) {
+        }
+    }
+
+    /**
+     * @param string $name
+     * @return bool
+     */
+    public function hasObjectbrick($name)
+    {
+        return null !== $this->getObjectbrick($name);
+    }
+
+    /**
+     * Create or load a fieldcollection. Needs an array of class IDs which are mapped to the classDefinitions
+     * field in the export file.
+     *
+     * @param string $name
+     * @param string $filename
+     * @param array $classIds
+     *
+     * @return ObjectbrickDefinition
+     */
+    public function setupObjectbrick($name, $filename, array $classIds = [])
+    {
+        if (!$this->hasObjectbrick($name)) {
+            $this->debug(sprintf('[CLASSMANAGER] Setting up objectbrick %s', $name));
+
+            $objectBrick = new ObjectbrickDefinition();
+            $objectBrick->setKey($name);
+
+            $json = $this->loadJson($filename);
+
+            ClassDefinition\Service::importObjectBrickFromJson($objectBrick, $json, true);
+
+            $importData       = json_decode($json, true);
+
+            $classIds         = array_values($classIds);
+            $classDefinitions = is_array($importData['classDefinitions'])
+                ? array_values($importData['classDefinitions'])
+                : [];
+
+            $newClassDefinitions = [];
+
+            // map class definitions from json to class ids
+            // throw an exception if class / definition count doesn't match
+            foreach ($classDefinitions as $i => $classDefinition) {
+                if (!isset($classIds[$i])) {
+                    throw new \RuntimeException(sprintf(
+                        'Failed to build test objectbrick %s. Missing class ID for definition %s',
+                        $name,
+                        $classDefinition['classname']
+                    ));
+                }
+
+                $newClassDefinitions[] = [
+                    'classname' => $classIds[$i],
+                    'fieldname' => $classDefinition['fieldname']
+                ];
+            }
+
+            $objectBrick->setClassDefinitions($newClassDefinitions);
+            $objectBrick->save();
+        }
+
+        $objectBrick = $this->getObjectbrick($name);
+
+        $this->assertNotNull($objectBrick, sprintf('Test objectbrick %s does not exist and could not be created', $name));
+        $this->assertInstanceOf(ObjectbrickDefinition::class, $objectBrick);
+
+        return $objectBrick;
+    }
+
+    /**
+     * Load JSON for file
+     *
+     * @param string $filename
+     * @return string
+     */
+    protected function loadJson($filename)
+    {
+        $path = $this->resolveFilePath($filename);
+        $json = file_get_contents($path);
+
+        $this->assertNotEmpty($json);
+
+        return $json;
+    }
+
+    /**
+     * Resolve filename to reource path
+     *
+     * @param string $filename
+     * @return string
+     */
+    protected function resolveFilePath($filename)
+    {
+        $path = __DIR__ . '/../Resources/objects/' . $filename;
+
+        $this->assertFileExists($path);
+
+        return $path;
     }
 }

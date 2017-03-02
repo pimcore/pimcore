@@ -8,22 +8,6 @@ use Pimcore\Tests\Util\TestHelper;
 class ObjectTest extends ModelTestCase
 {
     /**
-     * @inheritDoc
-     */
-    protected function setUpTestClasses()
-    {
-        $this->tester->setupUnittestClass();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function needsTestClasses()
-    {
-        return [];
-    }
-
-    /**
      * Verifies that a object with the same parent ID cannot be created.
      */
     public function testParentIdentical()

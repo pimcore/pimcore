@@ -2,7 +2,6 @@
 
 namespace Pimcore\Tests;
 use Pimcore\Model\Object\ClassDefinition;
-use Pimcore\Model\Object\ClassDefinition\Data\ObjectsMetadata;
 
 /**
  * Inherited Methods
@@ -18,36 +17,8 @@ use Pimcore\Model\Object\ClassDefinition\Data\ObjectsMetadata;
  * @method \Codeception\Lib\Friend haveFriend($name, $actorClass = NULL)
  *
  * @SuppressWarnings(PHPMD)
- *
- * @method ClassDefinition createClass($name, $jsonFile)
  */
 class ModelTester extends \Codeception\Actor
 {
     use _generated\ModelTesterActions;
-
-    /**
-     * Setup standard Unittest class
-     *
-     * @param string $name
-     * @param string $file
-     * @return ClassDefinition
-     */
-    public function setupUnittestClass($name = 'unittest', $file = 'class-import.json')
-    {
-        if (!$this->hasClass($name)) {
-            /** @var ClassDefinition $class */
-            $class = $this->createClass($name, $file);
-
-            /** @var ObjectsMetadata $fd */
-            $fd = $class->getFieldDefinition('objectswithmetadata');
-            if ($fd) {
-                $fd->setAllowedClassId($class->getId());
-                $class->save();
-            }
-
-            return $class;
-        }
-
-        return ClassDefinition::getByName($name);
-    }
 }

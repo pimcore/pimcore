@@ -1,6 +1,6 @@
 <?php
 
-namespace Pimcore\Tests\Model\Datatype\Datatype;
+namespace Pimcore\Tests\Model\Datatype;
 
 use Pimcore\Model\Object\Localizedfield;
 use Pimcore\Tests\Test\ModelTestCase;
@@ -8,11 +8,6 @@ use Pimcore\Tests\Util\TestHelper;
 
 class LocalizedFieldTest extends ModelTestCase
 {
-    protected function setUpTestClasses()
-    {
-        $this->tester->setupUnittestClass();
-    }
-
     public function tearDown()
     {
         Localizedfield::setStrictMode(Localizedfield::STRICT_DISABLED);

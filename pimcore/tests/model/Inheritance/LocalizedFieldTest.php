@@ -1,28 +1,36 @@
 <?php
-/**
- * Created by IntelliJ IDEA.
- * User: josef.aichhorn@elements.at
- * Date: 11.11.2013
- */
 
+namespace Pimcore\Tests\Model\Inheritance;
 
-class TestSuite_Inheritance_LocalizedFieldTest extends Test_Base
+use Pimcore\Tests\Test\ModelTestCase;
+use Pimcore\Tests\Util\TestHelper;
+
+class LocalizedFieldTest extends ModelTestCase
 {
+    /**
+     * @var bool
+     */
+    protected $inAdminMode;
+
     public function setUp()
     {
-        $this->inAdminMode = Pimcore::inAdmin();
-        Pimcore::setAdminMode();
-        Test_Tool::cleanUp();
+        $this->inAdminMode = \Pimcore::inAdmin();
+
+        \Pimcore::setAdminMode();
+        TestHelper::cleanUp();
+
         parent::setUp();
     }
 
     public function tearDown()
     {
         if ($this->inAdminMode) {
-            Pimcore::setAdminMode();
+            \Pimcore::setAdminMode();
         } else {
-            Pimcore::unsetAdminMode();
+            \Pimcore::unsetAdminMode();
         }
+
+        parent::tearDown();
     }
 
     /**
@@ -36,7 +44,6 @@ class TestSuite_Inheritance_LocalizedFieldTest extends Test_Base
      */
     public function testInheritance()
     {
-        $this->printTestName();
         // According to the bootstrap file en and de are valid website languages
 
         $one = new Object_Inheritance();

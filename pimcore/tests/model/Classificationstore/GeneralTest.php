@@ -31,6 +31,8 @@ class GeneralTest extends AbstractClassificationStoreTest
             \Pimcore::unsetAdminMode();
         }
 
+        TestHelper::cleanUp();
+
         parent::tearDown();
     }
 
