@@ -2,13 +2,10 @@
 
 namespace Pimcore\Event\Model;
 
-use Pimcore\Event\Traits\ArgumentsAwareTrait;
 use Pimcore\Model\Version;
 use Symfony\Component\EventDispatcher\Event;
 
 class VersionEvent extends Event {
-
-    use ArgumentsAwareTrait;
 
     /**
      * @var Version

@@ -14,6 +14,8 @@
 
 namespace Pimcore\Model\Search\Backend;
 
+use Pimcore\Event\Model\SearchBackendEvent;
+use Pimcore\Event\SearchBackendEvents;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
 use Pimcore\Model\Object;
@@ -520,9 +522,9 @@ class Data extends \Pimcore\Model\AbstractModel
     public function save()
     {
         if ($this->id instanceof Data\Id) {
-            \Pimcore::getEventManager()->trigger("search.backend.preSave", $this);
+            \Pimcore::getEventDispatcher()->dispatch(SearchBackendEvents::PRE_SAVE, new SearchBackendEvent($this));
             $this->getDao()->save();
-            \Pimcore::getEventManager()->trigger("search.backend.postSave", $this);
+            \Pimcore::getEventDispatcher()->dispatch(SearchBackendEvents::POST_SAVE, new SearchBackendEvent($this));
         } else {
             throw new \Exception("Search\\Backend\\Data cannot be saved - no id set!");
         }
