@@ -17,12 +17,18 @@ final class DocumentEvents
     const POST_ADD = 'pimcore.document.postAdd';
 
     /**
+     * Arguments:
+     *  - saveVersionOnly | is set if method saveVersion() was called instead of save()
+     *
      * @Event("Pimcore\Event\Model\DocumentEvent")
      * @var string
      */
     const PRE_UPDATE = 'pimcore.document.preUpdate';
 
     /**
+     * Arguments:
+     *  - saveVersionOnly | is set if method saveVersion() was called instead of save()
+     *
      * @Event("Pimcore\Event\Model\DocumentEvent")
      * @var string
      */
@@ -41,18 +47,32 @@ final class DocumentEvents
     const POST_DELETE = 'pimcore.document.postDelete';
 
     /**
+     * Processor contains the processor object used to generate the PDF
+     *
+     * Arguments:
+     *  - processor | instance of the PDF processor Pimcore\Web2Print\Processor\{ProcessorName}
+     *
      * @Event("Pimcore\Event\Model\DocumentEvent")
      * @var string
      */
     const PRINT_PRE_PDF_GENERATION = 'pimcore.document.print.prePdfGeneration';
 
     /**
+     * Filename contains the filename of the generated pdf on filesystem, pdf contains generated pdf as string
+     *
+     * Arguments:
+     *  - filename | contains the path of the generated pdf on filesystem
+     *  - pdf | contains generated pdf as string
+     *
      * @Event("Pimcore\Event\Model\DocumentEvent")
      * @var string
      */
     const PRINT_POST_PDF_GENERATION = 'pimcore.document.print.postPdfGeneration';
 
     /**
+     * Arguments:
+     *  - base_element | Pimcore\Model\Document | contains the base document used in copying process
+     *
      * @Event("Pimcore\Event\Model\DocumentEvent")
      * @var string
      */
