@@ -163,7 +163,7 @@ class MiscController extends AdminController
     }
 
     /**
-     * @Route("/available-languages")
+     * @Route("/get-valid-filename")
      * @param Request $request
      * @return JsonResponse
      */
