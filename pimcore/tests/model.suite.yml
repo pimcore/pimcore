@@ -1,6 +1,7 @@
 class_name: ModelTester
 modules:
     enabled:
-        - \Pimcore\Tests\Helper\Pimcore
+        - \Pimcore\Tests\Helper\Pimcore:
+            initialize_db: true
         - \Pimcore\Tests\Helper\ClassManager
         - \Pimcore\Tests\Helper\Model

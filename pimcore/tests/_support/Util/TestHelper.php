@@ -17,7 +17,7 @@ class TestHelper
      */
     public static function supportsDbTests()
     {
-        return defined('PIMCORE_TEST_DB_CONNECTED') ? PIMCORE_TEST_DB_CONNECTED : false;
+        return defined('PIMCORE_TEST_DB_INITIALIZED') ? PIMCORE_TEST_DB_INITIALIZED : false;
     }
 
     /**
