@@ -1,0 +1,18 @@
+namespace: Pimcore\Tests
+actor: Tester
+paths:
+    tests: tests
+    log: tests/_output
+    data: tests/_data
+    support: tests/_support
+    envs: tests/_envs
+settings:
+    bootstrap: _bootstrap.php
+    colors: true
+extensions:
+    enabled:
+        - Codeception\Extension\RunFailed
+modules:
+    enabled:
+        - \Pimcore\Tests\Helper\Pimcore
+        - \Pimcore\Tests\Helper\ClassManager

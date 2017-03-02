@@ -29,7 +29,7 @@ class Pimcore extends Module\Symfony
             ini_set($xdebugMaxLevelKey, $maxNestingLevel);
         }
 
-        $this->kernel = require_once __DIR__ . '/../../../pimcore/config/startup.php';
+        $this->kernel = require_once __DIR__ . '/../../../config/startup.php';
         $this->kernel->boot();
 
         if ($this->config['cache_router'] === true) {
