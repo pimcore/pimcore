@@ -35,8 +35,12 @@ class Locale {
      * @return string
      */
     public function findLocale() {
-        if($this->requestStack) {
-            return $this->requestStack->getMasterRequest()->getLocale();
+        if ($this->requestStack) {
+            $masterRequest = $this->requestStack->getMasterRequest();
+
+            if ($masterRequest) {
+                return $masterRequest->getLocale();
+            }
         }
 
         $defaultLocale = \Pimcore\Tool::getDefaultLanguage();
