@@ -2,6 +2,7 @@
 
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller;
 
+use Pimcore\Bundle\PimcoreAdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Bundle\PimcoreAdminBundle\Security\User\User as UserProxy;
 use Pimcore\Bundle\PimcoreBundle\Controller\Controller;
 use Pimcore\Model\User;
@@ -65,6 +66,60 @@ abstract class AdminController extends Controller implements AdminControllerInte
 
             throw new AccessDeniedHttpException("Attempt to access " . $permission . ", but has no permission to do so.");
         }
+    }
+
+    /**
+     * Encodes data into JSON string
+     *
+     * @param mixed $data       The data to be encoded
+     * @param array $context    Context to pass to serializer when using serializer component
+     * @param int $options      Options passed to json_encode
+     * @return string
+     */
+    protected function encodeJson($data, array $context = [], $options = JsonResponse::DEFAULT_ENCODING_OPTIONS)
+    {
+        $serializer = $this->container->get('pimcore_admin.serializer');
+
+        return $serializer->serialize($data, 'json', array_merge([
+            'json_encode_options' => $options
+        ], $context));
+    }
+
+    /**
+     * Decodes a JSON string into an array/object
+     *
+     * @param mixed $json           The data to be decoded
+     * @param bool  $associative    Whether to decode into associative array or object
+     * @param array $context        Context to pass to serializer when using serializer component
+     *
+     * @return array|\stdClass
+     */
+    protected function decodeJson($json, $associative = true, array $context = [])
+    {
+        $serializer = $this->container->get('pimcore_admin.serializer');
+
+        if ($associative) {
+            $context['json_decode_associative'] = true;
+        }
+
+        return $serializer->decode($json, 'json', $context);
+    }
+
+    /**
+     * Returns a JsonResponse that uses the serializer component if enabled, or json_encode.
+     *
+     * @param mixed $data    The response data
+     * @param int   $status  The status code to use for the Response
+     * @param array $headers Array of extra headers to add
+     * @param array $context Context to pass to serializer when using serializer component
+     *
+     * @return JsonResponse
+     */
+    protected function json($data, $status = 200, $headers = array(), $context = array())
+    {
+        $json = $this->encodeJson($data, $context);
+
+        return new JsonResponse($json, $status, $headers, true);
     }
 
     /**

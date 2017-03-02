@@ -16,7 +16,10 @@ namespace Pimcore\Tool;
 
 class Serialize
 {
-
+    /**
+     * @var array
+     */
+    protected static $loopFilterProcessedObjects = [];
 
     /**
      * @static
@@ -42,11 +45,15 @@ class Serialize
         return $data;
     }
 
-
     /**
-     * @var array
+     * Shortcut to access the admin serializer
+     *
+     * @return \Symfony\Component\Serializer\Serializer
      */
-    protected static $loopFilterProcessedObjects = [];
+    public static function getAdminSerializer()
+    {
+        return \Pimcore::getContainer()->get('pimcore_admin.serializer');
+    }
 
     /**
      * this is a special json encoder that avoids recursion errors
