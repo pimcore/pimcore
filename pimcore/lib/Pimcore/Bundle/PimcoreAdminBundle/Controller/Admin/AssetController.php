@@ -922,7 +922,7 @@ class AssetController extends ElementControllerBase implements EventedController
         $asset = $version->loadData();
 
         if ($asset->isAllowed("versions")) {
-            return $this->render("PimcoreAdminBundle:Asset:showVersion" . ucfirst($asset->getType()) . ".html.php",
+            return $this->render("PimcoreAdminBundle:Admin/Asset:showVersion" . ucfirst($asset->getType()) . ".html.php",
                 array("asset" => $asset));
         } else {
             throw new \Exception("Permission denied, version id [" . $id . "]");
@@ -1239,14 +1239,14 @@ class AssetController extends ElementControllerBase implements EventedController
             $previewData["thumbnail"] = $thumbnail;
 
             if ($thumbnail["status"] == "finished") {
-                return $this->render("PimcoreAdminBundle:Asset:getPreviewVideoDisplay.html.php",
+                return $this->render("PimcoreAdminBundle:Admin/Asset:getPreviewVideoDisplay.html.php",
                     $previewData);
             } else {
-                return $this->render("PimcoreAdminBundle:Asset:getPreviewVideoError.html.php",
+                return $this->render("PimcoreAdminBundle:Admin/Asset:getPreviewVideoError.html.php",
                     $previewData);
             }
         } else {
-            return $this->render("PimcoreAdminBundle:Asset:getPreviewVideoError.html.php",
+            return $this->render("PimcoreAdminBundle:Admin/Asset:getPreviewVideoError.html.php",
                 $previewData);
         }
     }
