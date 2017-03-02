@@ -4,9 +4,13 @@ namespace Pimcore\Tests\Util;
 
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
+use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Object as ObjectModel;
+use Pimcore\Model\Object\AbstractObject;
+use Pimcore\Model\Object\Concrete;
 use Pimcore\Model\Object\Unittest;
+use Pimcore\Model\Property;
 use Pimcore\Model\User;
 use Pimcore\Model\Webservice\Tool as WebserviceTool;
 
@@ -57,14 +61,17 @@ class TestHelper
 
 
     /**
-     * @static
      * @param  array $properties
      * @return array
+     *
+     * @throws \Exception
      */
-    protected static function createPropertiesComparisonString($properties)
+    protected static function createPropertiesComparisonString(array $properties)
     {
         $propertiesStringArray = [];
+
         ksort($properties);
+
         if (is_array($properties)) {
             foreach ($properties as $key => $value) {
                 if ($value->type == "asset" || $value->type == "object" || $value->type == "document") {
@@ -92,15 +99,17 @@ class TestHelper
 
 
     /**
-     * @param  Asset $asset
-     * @return string
+     * @param Asset $asset
+     * @param bool $ignoreCopyDifferences
+     *
+     * @return string|null
      */
-    public static function createAssetComparisonString($asset, $ignoreCopyDifferences = false)
+    public static function createAssetComparisonString(Asset $asset, $ignoreCopyDifferences = false)
     {
         if ($asset instanceof Asset) {
             $a = [];
 
-            //custom settings
+            // custom settings
             if (is_array($asset->getCustomSettings())) {
                 $a["customSettings"] = serialize($asset->getCustomSettings());
             }
@@ -116,15 +125,14 @@ class TestHelper
                 $a["creation"]     = $asset->getCreationDate();
                 $a["userModified"] = $asset->getUserModification();
                 $a["parentId"]     = $asset->getParentId();
-                $a["path"]         = $asset->getPath;
+                $a["path"]         = $asset->getPath();
             }
-
 
             $a["userOwner"] = $asset->getUserOwner();
 
-
             $properties = $asset->getProperties();
-            $a          = array_merge($a, self::createPropertiesComparisonString($properties));
+
+            $a = array_merge($a, self::createPropertiesComparisonString($properties));
 
             return implode(",", $a);
         } else {
@@ -135,9 +143,13 @@ class TestHelper
     /**
      * @param  Asset $asset1
      * @param  Asset $asset2
+     *
+     * @param bool $ignoreCopyDifferences
+     * @param bool $id
+     *
      * @return bool
      */
-    public static function assetsAreEqual($asset1, $asset2, $ignoreCopyDifferences = false, $id = false)
+    public static function assetsAreEqual(Asset $asset1, Asset $asset2, $ignoreCopyDifferences = false, $id = false)
     {
         if ($asset1 instanceof Asset and $asset2 instanceof Asset) {
             $a1Hash = self::createAssetComparisonString($asset1, $ignoreCopyDifferences);
@@ -157,7 +169,6 @@ class TestHelper
             fwrite($fh, $a2Hash);
             fclose($fh);
 
-
             return $a1Hash === $a2Hash ? true : false;
         } else {
             return false;
@@ -165,29 +176,34 @@ class TestHelper
     }
 
     /**
-     * @param  Document $document
+     * @param Document $document
+     * @param bool $ignoreCopyDifferences
+     *
      * @return string
      */
-    protected static function createDocumentComparisonString($document, $ignoreCopyDifferences = false)
+    protected static function createDocumentComparisonString(Document $document, $ignoreCopyDifferences = false)
     {
         if ($document instanceof Document) {
             $d = [];
 
-            if ($document instanceof Document_PageSnippet) {
+            if ($document instanceof Document\PageSnippet) {
                 $elements = $document->getElements();
+
                 ksort($elements);
+
+                /** @var Document\Tag $value */
                 foreach ($elements as $key => $value) {
-                    if ($value instanceof Document_Tag_Video) {
-                        //with video can't use frontend(), it includes random id
+                    if ($value instanceof Document\Tag\Video) {
+                        // with video can't use frontend(), it includes random id
                         $d["element_" . $key] = $value->getName() . ":" . $value->type . "_" . $value->id;
-                    } elseif (!$value instanceof Document_Tag_Block) {
+                    } elseif (!$value instanceof Document\Tag\Block) {
                         $d["element_" . $key] = $value->getName() . ":" . $value->frontend();
                     } else {
                         $d["element_" . $key] = $value->getName();
                     }
                 }
 
-                if ($document instanceof Document_Page) {
+                if ($document instanceof Document\Page) {
                     $d["name"]        = $document->getName();
                     $d["keywords"]    = $document->getKeywords();
                     $d["title"]       = $document->getTitle();
@@ -197,7 +213,7 @@ class TestHelper
                 $d["published"] = $document->isPublished();
             }
 
-            if ($document instanceof Document_Link) {
+            if ($document instanceof Document\Link) {
                 $d['link'] = $document->getHtml();
             }
 
@@ -214,7 +230,8 @@ class TestHelper
             $d["userOwner"] = $document->getUserOwner();
 
             $properties = $document->getProperties();
-            $d          = array_merge($d, self::createPropertiesComparisonString($properties));
+
+            $d = array_merge($d, self::createPropertiesComparisonString($properties));
 
             return implode(",", $d);
         } else {
@@ -223,11 +240,13 @@ class TestHelper
     }
 
     /**
-     * @param  Document $doc1
-     * @param  Document $doc2
+     * @param Document $doc1
+     * @param Document $doc2
+     * @param bool $ignoreCopyDifferences
+     *
      * @return bool
      */
-    public static function documentsAreEqual($doc1, $doc2, $ignoreCopyDifferences = false)
+    public static function documentsAreEqual(Document $doc1, Document $doc2, $ignoreCopyDifferences = false)
     {
         if ($doc1 instanceof Document and $doc2 instanceof Document) {
             $d1Hash = self::createDocumentComparisonString($doc1, $ignoreCopyDifferences);
@@ -236,47 +255,63 @@ class TestHelper
             $id = uniqid();
 
             /*
-                        $myFile = TESTS_PATH . "/output/document1-" . $id . ".txt";
-                        $fh = fopen($myFile, 'w');
-                        fwrite($fh, $d1Hash);
-                        fclose($fh);
+            $myFile = TESTS_PATH . "/output/document1-" . $id . ".txt";
+            $fh = fopen($myFile, 'w');
+            fwrite($fh, $d1Hash);
+            fclose($fh);
 
-                        $myFile = TESTS_PATH . "/output/document2-" . $id . ".txt";
-                        $fh = fopen($myFile, 'w');
-                        fwrite($fh, $d2Hash);
-                        fclose($fh);
-              */
+            $myFile = TESTS_PATH . "/output/document2-" . $id . ".txt";
+            $fh = fopen($myFile, 'w');
+            fwrite($fh, $d2Hash);
+            fclose($fh);
+             */
+
             return $d1Hash === $d2Hash ? true : false;
         } else {
             return false;
         }
     }
 
-
-    public static function getComparisonDataForField($key, $fd, $object)
+    /**
+     * @param string $key
+     * @param ObjectModel\ClassDefinition\Data $fd
+     * @param AbstractObject $object
+     *
+     * @return string
+     */
+    public static function getComparisonDataForField($key, ObjectModel\ClassDefinition\Data $fd, AbstractObject $object)
     {
-
         // omit password, this one we don't get through WS,
         // omit non owner objects, they don't get through WS,
         // plus omit fields which don't have get method
         $getter = "get" . ucfirst($key);
-        if (method_exists($object, $getter) and $fd instanceof Object_Class_Data_Fieldcollections) {
+
+        if (method_exists($object, $getter) and $fd instanceof ObjectModel\ClassDefinition\Data\Fieldcollections) {
             if ($object->$getter()) {
+                /** @var ObjectModel\Fieldcollection $collection */
                 $collection = $object->$getter();
                 $items      = $collection->getItems();
+
                 if (is_array($items)) {
                     $returnValue = [];
                     $counter     = 0;
+
+                    /** @var ObjectModel\Fieldcollection\Data\AbstractData $item */
                     foreach ($items as $item) {
+                        /** @var ObjectModel\Fieldcollection\Definition $def */
                         $def = $item->getDefinition();
 
+                        /**
+                         * @var string $k
+                         * @var ObjectModel\ClassDefinition\Data $v
+                         */
                         foreach ($def->getFieldDefinitions() as $k => $v) {
                             $getter     = "get" . ucfirst($v->getName());
                             $fieldValue = $item->$getter();
 
-                            if ($v instanceof Object_Class_Data_Link) {
+                            if ($v instanceof ObjectModel\ClassDefinition\Data\Link) {
                                 $fieldValue = serialize($v);
-                            } elseif ($v instanceof Object_Class_Data_Password or $fd instanceof Object_Class_Data_Nonownerobjects) {
+                            } elseif ($v instanceof ObjectModel\ClassDefinition\Data\Password or $fd instanceof ObjectModel\ClassDefinition\Data\Nonownerobjects) {
                                 $fieldValue = null;
                             } else {
                                 $fieldValue = $v->getForCsvExport($item);
@@ -284,55 +319,59 @@ class TestHelper
 
                             $returnValue[$counter][$k] = $fieldValue;
                         }
+
                         $counter++;
                     }
 
                     return serialize($returnValue);
                 }
             }
-        } elseif (method_exists($object, $getter) and $fd instanceof Object_Class_Data_Localizedfields) {
+        } elseif (method_exists($object, $getter) and $fd instanceof ObjectModel\ClassDefinition\Data\Localizedfields) {
             $data  = $object->$getter();
             $lData = [];
 
-            if (!$data instanceof Object_Localizedfield) {
+            if (!$data instanceof ObjectModel\Localizedfield) {
                 return [];
             }
 
             try {
                 $localeBak = \Pimcore\Cache\Runtime::get("Zend_Locale");
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $localeBak = null;
             }
 
             foreach ($data->getItems() as $language => $values) {
                 foreach ($fd->getFieldDefinitions() as $fd) {
-                    \Pimcore\Cache\Runtime::set("Zend_Locale", new Zend_Locale($language));
+                    \Pimcore\Cache\Runtime::set("Zend_Locale", new \Zend_Locale($language));
 
                     $lData[$language][$fd->getName()] = self::getComparisonDataForField($fd->getName(), $fd, $object);;
                 }
             }
+
             if ($localeBak) {
                 \Pimcore\Cache\Runtime::set("Zend_Locale", $localeBak);
             }
 
             return serialize($lData);
-        } elseif (method_exists($object, $getter) and $fd instanceof Object_Class_Data_Link) {
+        } elseif (method_exists($object, $getter) and $fd instanceof ObjectModel\Data\Link) {
             return serialize($fd);
-        } elseif (method_exists($object, $getter) and !$fd instanceof Object_Class_Data_Password and !$fd instanceof Object_Class_Data_Nonownerobjects) {
+        } elseif (method_exists($object, $getter) and !$fd instanceof ObjectModel\ClassDefinition\Data\Password and !$fd instanceof ObjectModel\ClassDefinition\Data\Nonownerobjects) {
             return $fd->getForCsvExport($object);
         }
     }
 
     /**
-     * @param  Object_Abstract $object
+     * @param AbstractObject $object
+     * @param bool $ignoreCopyDifferences
+     *
      * @return string
      */
-    protected static function createObjectComparisonString($object, $ignoreCopyDifferences)
+    protected static function createObjectComparisonString(AbstractObject $object, $ignoreCopyDifferences = false)
     {
-        if ($object instanceof Object_Abstract) {
+        if ($object instanceof AbstractObject) {
             $o = [];
 
-            if ($object instanceof Object_Concrete) {
+            if ($object instanceof Concrete) {
                 foreach ($object->getClass()->getFieldDefinitions() as $key => $value) {
                     $o[$key] = self::getComparisonDataForField($key, $value, $object);
                 }
@@ -346,15 +385,14 @@ class TestHelper
                 $o["creation"]     = $object->getCreationDate();
                 $o["userModified"] = $object->getUserModification();
                 $o["parentId"]     = $object->getParentId();
-                $o["path"]         = $object->getPath;
+                $o["path"]         = $object->getPath();
             }
-
 
             $o["userOwner"] = $object->getUserOwner();
 
-
             $properties = $object->getProperties();
-            $o          = array_merge($o, self::createPropertiesComparisonString($properties));
+
+            $o = array_merge($o, self::createPropertiesComparisonString($properties));
 
             return implode(",", $o);
         } else {
@@ -362,9 +400,16 @@ class TestHelper
         }
     }
 
-    public static function objectsAreEqual($object1, $object2, $ignoreCopyDifferences)
+    /**
+     * @param AbstractObject $object1
+     * @param AbstractObject $object2
+     * @param bool $ignoreCopyDifferences
+     *
+     * @return bool
+     */
+    public static function objectsAreEqual(AbstractObject $object1, AbstractObject $object2, $ignoreCopyDifferences = false)
     {
-        if ($object1 instanceof Object_Abstract and $object2 instanceof Object_Abstract) {
+        if ($object1 instanceof AbstractObject and $object2 instanceof AbstractObject) {
             $o1Hash = self::createObjectComparisonString($object1, $ignoreCopyDifferences);
             $o2Hash = self::createObjectComparisonString($object2, $ignoreCopyDifferences);
 
@@ -393,13 +438,15 @@ class TestHelper
     /**
      * @param string $keyPrefix
      * @param bool $save
+     *
      * @return Unittest
      */
-    public static function createEmptyObject($keyPrefix = "", $save = true)
+    public static function createEmptyObject($keyPrefix = '', $save = true)
     {
-        if ($keyPrefix == null) {
-            $keyPrefix = "";
+        if (null === $keyPrefix) {
+            $keyPrefix = '';
         }
+
         $emptyObject = new Unittest();
         $emptyObject->setOmitMandatoryCheck(true);
         $emptyObject->setParentId(1);
@@ -407,6 +454,7 @@ class TestHelper
         $emptyObject->setUserModification(1);
         $emptyObject->setCreationDate(time());
         $emptyObject->setKey($keyPrefix . uniqid() . rand(10, 99));
+
         if ($save) {
             $emptyObject->save();
         }
@@ -414,7 +462,14 @@ class TestHelper
         return $emptyObject;
     }
 
-    public static function createEmptyObjects($keyPrefix = "", $save = true, $count = 10)
+    /**
+     * @param string $keyPrefix
+     * @param bool $save
+     * @param int $count
+     *
+     * @return Unittest[]
+     */
+    public static function createEmptyObjects($keyPrefix = '', $save = true, $count = 10)
     {
         $result = [];
         for ($i = 0; $i < $count; $i++) {
@@ -424,17 +479,19 @@ class TestHelper
         return $result;
     }
 
-
     /**
      * @param string $keyPrefix
      * @param bool $save
+     * @param int $seed
+     *
      * @return Unittest
      */
-    public static function createFullyFledgedObject($keyPrefix = "", $save = true, $seed = 1)
+    public static function createFullyFledgedObject($keyPrefix = '', $save = true, $seed = 1)
     {
-        if ($keyPrefix == null) {
-            $keyPrefix = "";
+        if (null === $keyPrefix) {
+            $keyPrefix = '';
         }
+
         $object = new Unittest();
         $object->setOmitMandatoryCheck(true);
         $object->setParentId(1);
@@ -442,7 +499,6 @@ class TestHelper
         $object->setUserModification(1);
         $object->setCreationDate(time());
         $object->setKey($keyPrefix . uniqid() . rand(10, 99));
-
 
         try {
             Test_Data::fillInput($object, "input", $seed);
@@ -481,7 +537,7 @@ class TestHelper
             Test_Data::fillKeyValue($object, "keyvaluepairs", $seed);
             Test_Data::fillBricks($object, "mybricks", $seed);
             Test_Data::fillFieldCollection($object, "myfieldcollection", $seed);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             print($e . "\n");
         }
 
@@ -492,24 +548,26 @@ class TestHelper
         return $object;
     }
 
-
     /**
      * @param string $keyPrefix
      * @param bool $save
-     * @return Document_Page
+     *
+     * @return Document\Page
      */
-    public static function createEmptyDocumentPage($keyPrefix = "", $save = true)
+    public static function createEmptyDocumentPage($keyPrefix = '', $save = true)
     {
-        if ($keyPrefix == null) {
-            $keyPrefix = "";
+        if (null === $keyPrefix) {
+            $keyPrefix = '';
         }
-        $document = new Document_Page();
+
+        $document = new Document\Page();
         $document->setType("page");
         $document->setParentId(1);
         $document->setUserOwner(1);
         $document->setUserModification(1);
         $document->setCreationDate(time());
         $document->setKey($keyPrefix . uniqid() . rand(10, 99));
+
         if ($save) {
             $document->save();
         }
@@ -517,35 +575,45 @@ class TestHelper
         return $document;
     }
 
-
     /**
      * @param string $keyPrefix
      * @param bool $save
-     * @return Asset_Image
+     *
+     * @return Asset\Image
      */
     public static function createImageAsset($keyPrefix = "", $data, $save = true)
     {
-        if ($keyPrefix == null) {
-            $keyPrefix = "";
+        if (null === $keyPrefix) {
+            $keyPrefix = '';
         }
+
         if (!$data) {
-            $data = file_get_contents(TESTS_PATH . "/resources/assets/images/image5.jpg");
+            $path = static::resolveFilePath('assets/images/image5.jpg');
+            if (!file_exists($path)) {
+                throw new \RuntimeException(sprintf('Path %s was not found', $path));
+            }
+
+            $data = file_get_contents($path);
         }
-        $asset = new Asset_Image();
+
+        $asset = new Asset\Image();
         $asset->setParentId(1);
         $asset->setUserOwner(1);
         $asset->setUserModification(1);
         $asset->setCreationDate(time());
         $asset->setData($data);
         $asset->setType("image");
-        $property = new Property();
 
+        $property = new Property();
         $property->setName("propname");
         $property->setType("text");
         $property->setData("bla");
+
         $properties = [$property];
         $asset->setProperties($properties);
+
         $asset->setFilename($keyPrefix . uniqid() . rand(10, 99) . ".jpg");
+
         if ($save) {
             $asset->save();
         }
@@ -553,62 +621,63 @@ class TestHelper
         return $asset;
     }
 
-    public static function cleanUp($cleanAssets = true, $cleanDocuments = true, $cleanObjects = true)
+    /**
+     * @param bool $cleanAssets
+     * @param bool $cleanDocuments
+     * @param bool $cleanObjects
+     */
+    public static function cleanUp($cleanObjects = true, $cleanDocuments = true, $cleanAssets = true)
     {
         \Pimcore::collectGarbage();
 
         if ($cleanObjects) {
-            try {
-                $objectRoot = \Pimcore\Model\Object\AbstractObject::getById(1);
-                if ($objectRoot and $objectRoot->hasChildren()) {
-                    $childs = $objectRoot->getChildren();
-
-                    foreach ($childs as $child) {
-                        print("   delete object " . $child->getId());
-                        $child->delete();
-                    }
-                }
-            } catch (\Exception $e) {
-                print($e);
-            }
+            static::cleanUpTree(AbstractObject::getById(1), 'object');
+            codecept_debug(sprintf('Number of objects is: %d', static::getObjectCount()));
         }
 
         if ($cleanAssets) {
-            try {
-                $assetRoot = \Pimcore\Model\Asset::getById(1);
-                if ($assetRoot and $assetRoot->hasChildren()) {
-                    $childs = $assetRoot->getChildren();
-                    foreach ($childs as $child) {
-                        $child->delete();
-                    }
-                }
-            } catch (\Exception $e) {
-                print($e);
-            }
+            static::cleanUpTree(Asset::getById(1), 'asset');
+            codecept_debug(sprintf('Number of assets is: %d', static::getAssetCount()));
         }
 
         if ($cleanDocuments) {
-            try {
-                $documentRoot = \Pimcore\Model\Document::getById(1);
-                if ($documentRoot and $documentRoot->hasChildren()) {
-                    $childs = $documentRoot->getChildren();
-                    foreach ($childs as $child) {
-                        $child->delete();
-                    }
-                }
-            } catch (\Exception $e) {
-                print($e);
-            }
+            static::cleanUpTree(Document::getById(1), 'document');
+            codecept_debug(sprintf('Number of documents is: %d', static::getDocumentCount()));
         }
 
         \Pimcore::collectGarbage();
-
-        print("    number of objects is " . static::getObjectCount() . "\n");
-        print("\n");
     }
 
-    /** Returns the total number of objects.
-     * @return int object count.
+    /**
+     * @param AbstractElement|null $root
+     * @param string $type
+     */
+    public static function cleanUpTree(AbstractElement $root = null, $type)
+    {
+        if (!$root) {
+            return;
+        }
+
+        if (!($root instanceof AbstractObject || $root instanceof Document || $root instanceof Asset)) {
+            throw new \InvalidArgumentException(sprintf('Cleanup root type for %s needs to be one of: AbstractObject, Document, Asset', $type));
+        }
+
+        if ($root and $root->hasChildren()) {
+            $childs = $root->getChildren();
+
+            /** @var AbstractElement|AbstractObject|Document|Asset $child */
+            foreach ($childs as $child) {
+                codecept_debug(sprintf('Deleting %s %s (%d)', $type, $child->getFullPath(), $child->getId()));
+                $child->delete();
+            }
+        }
+
+    }
+
+    /**
+     * Returns the total number of objects.
+     *
+     * @return int
      */
     public static function getObjectCount()
     {
@@ -618,8 +687,10 @@ class TestHelper
         return count($childs);
     }
 
-    /** Returns the total number of assets.
-     * @return int object count.
+    /**
+     * Returns the total number of assets.
+     *
+     * @return int
      */
     public static function getAssetCount()
     {
@@ -629,14 +700,29 @@ class TestHelper
         return count($childs);
     }
 
-    /** Returns the total number of documents.
-     * @return int object count.
+    /**
+     * Returns the total number of documents.
+     *
+     * @return int
      */
-    public static function getDocoumentCount()
+    public static function getDocumentCount()
     {
         $list   = new Document\Listing();
         $childs = $list->load();
 
         return count($childs);
+    }
+
+    /**
+     * Resolve path to resource path
+     *
+     * @param string $path
+     * @return string
+     */
+    protected function resolveFilePath($path)
+    {
+        $path = __DIR__ . '/../Resources/' . ltrim($path, '/');
+
+        return $path;
     }
 }
