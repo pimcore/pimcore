@@ -106,7 +106,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
     }
 
     /**
-     * Returns a JsonResponse that uses the serializer component if enabled, or json_encode.
+     * Returns a JsonResponse that uses the admin serializer
      *
      * @param mixed $data    The response data
      * @param int   $status  The status code to use for the Response
@@ -115,7 +115,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
      *
      * @return JsonResponse
      */
-    protected function json($data, $status = 200, $headers = array(), $context = array())
+    protected function json($data, $status = 200, $headers = [], $context = [])
     {
         $json = $this->encodeJson($data, $context);
 
