@@ -2,11 +2,10 @@
 
 namespace Pimcore\Event\Admin\Login;
 
-use Pimcore\Event\AdminEvent;
 use Pimcore\Event\Traits\RequestAwareTrait;
 use Symfony\Component\HttpFoundation\Request;
 
-class LoginCredentialsEvent extends AdminEvent
+class LoginCredentialsEvent
 {
     use RequestAwareTrait;
 

@@ -2,13 +2,12 @@
 
 namespace Pimcore\Event\Admin\Login;
 
-use Pimcore\Event\AdminEvent;
 use Pimcore\Event\Traits\RequestAwareTrait;
 use Pimcore\Event\Traits\ResponseAwareTrait;
 use Pimcore\Model\User;
 use Symfony\Component\HttpFoundation\Request;
 
-class LogoutEvent extends AdminEvent
+class LogoutEvent
 {
     use RequestAwareTrait;
     use ResponseAwareTrait;

@@ -2,10 +2,9 @@
 
 namespace Pimcore\Event\Admin\Login;
 
-use Pimcore\Event\AdminEvent;
 use Pimcore\Model\User;
 
-class LoginFailedEvent extends AdminEvent
+class LoginFailedEvent
 {
     /**
      * @var string

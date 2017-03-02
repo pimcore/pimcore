@@ -2,11 +2,10 @@
 
 namespace Pimcore\Event\Admin\Login;
 
-use Pimcore\Event\AdminEvent;
 use Pimcore\Event\Traits\ResponseAwareTrait;
 use Pimcore\Model\User;
 
-class LostPasswordEvent extends AdminEvent
+class LostPasswordEvent
 {
     use ResponseAwareTrait;
 

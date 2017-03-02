@@ -43,10 +43,6 @@ class LinkController extends DocumentControllerBase
         $this->addTranslationsData($link);
         $this->minimizeProperties($link);
 
-        $test = object2array($link);
-        var_dump($test);
-        die();
-
         //Hook for modifying return value - e.g. for changing permissions based on object data
         //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
         $returnValueContainer = new \Pimcore\Model\Tool\Admin\EventDataContainer(object2array($link));
