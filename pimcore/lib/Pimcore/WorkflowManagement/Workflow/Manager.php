@@ -14,6 +14,8 @@
 
 namespace Pimcore\WorkflowManagement\Workflow;
 
+use Pimcore\Event\Model\WorkflowEvent;
+use Pimcore\Event\WorkflowEvents;
 use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Element\WorkflowState;
@@ -267,16 +269,11 @@ class Manager
             }
         }
 
-        $result = \Pimcore::getEventManager()->trigger("workflowmanagement.preReturnAvailableActions", $allowedActions, [
-            'manager' => $this
+        $event = new WorkflowEvent($this, [
+            'actions' => $allowedActions
         ]);
-
-        if (!$result->isEmpty()) {
-            //get the last set of available actions only
-            //todo maybe allow multiple events to controll available actions
-            $last = $result->last();
-            $allowedActions = $last['availableActions'] ?: $allowedActions;
-        }
+        \Pimcore::getEventDispatcher()->dispatch(WorkflowEvents::PRE_RETURN_AVAILABLE_ACTIONS, $event);
+        $allowedActions = $event->getArgument("actions");
 
         return $allowedActions;
     }
@@ -496,10 +493,10 @@ class Manager
         //store the current action data
         $this->setActionData($formData);
 
-        \Pimcore::getEventManager()->trigger("workflowmanagement.preAction", $this, [
+        \Pimcore::getEventDispatcher()->dispatch(WorkflowEvents::PRE_ACTION, new WorkflowEvent($this, [
             'actionName' => $actionName
-        ]);
-        
+        ]));
+
         //refresh the local copy after the event
         $formData = $this->getActionData();
 
@@ -586,10 +583,10 @@ class Manager
 
 
         try {
-            $response = \Pimcore::getEventManager()->trigger("workflowmanagement.action.before", $this, [
+            \Pimcore::getEventDispatcher()->dispatch(WorkflowEvents::ACTION_BEFORE, new WorkflowEvent($this, [
                 'actionConfig' => $actionConfig,
                 'data' => $formData
-            ]);
+            ]));
 
             //todo add some support to stop the action given the result from the event
 
@@ -627,23 +624,23 @@ class Manager
                 );
             }
 
-            \Pimcore::getEventManager()->trigger("workflowmanagement.action.success", $this, [
+            \Pimcore::getEventDispatcher()->dispatch(WorkflowEvents::ACTION_SUCCESS, new WorkflowEvent($this, [
                 'actionConfig' => $actionConfig,
                 'data' => $formData
-            ]);
+            ]));
         } catch (\Exception $e) {
-            \Pimcore::getEventManager()->trigger("workflowmanagement.action.failure", $this, [
+            \Pimcore::getEventDispatcher()->dispatch(WorkflowEvents::ACTION_FAILURE, new WorkflowEvent($this, [
                 'actionConfig' => $actionConfig,
                 'data' => $formData,
                 'exception' => $e
-            ]);
+            ]));
         }
 
         $this->unregisterActionEvents();
 
-        \Pimcore::getEventManager()->trigger("workflowmanagement.postAction", $this, [
+        \Pimcore::getEventDispatcher()->dispatch(WorkflowEvents::POST_ACTION, new WorkflowEvent($this, [
             'actionName' => $actionName
-        ]);
+        ]));
     }
 
     /**
