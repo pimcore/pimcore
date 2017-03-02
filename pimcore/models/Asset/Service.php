@@ -17,7 +17,7 @@
 namespace Pimcore\Model\Asset;
 
 use Pimcore\Event\AssetEvents;
-use Pimcore\Event\Element\AssetEvent;
+use Pimcore\Event\Model\AssetEvent;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;

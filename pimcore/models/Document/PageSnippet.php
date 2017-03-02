@@ -17,7 +17,7 @@
 namespace Pimcore\Model\Document;
 
 use Pimcore\Event\DocumentEvents;
-use Pimcore\Event\Element\DocumentEvent;
+use Pimcore\Event\Model\DocumentEvent;
 use Pimcore\Model;
 use Pimcore\Config;
 use Pimcore\Model\Document;

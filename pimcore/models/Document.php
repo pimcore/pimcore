@@ -18,7 +18,7 @@
 namespace Pimcore\Model;
 
 use Pimcore\Event\DocumentEvents;
-use Pimcore\Event\Element\DocumentEvent;
+use Pimcore\Event\Model\DocumentEvent;
 use Pimcore\Model\Document\Listing;
 use Pimcore\Model\Element;
 use Pimcore\Tool;

@@ -16,7 +16,7 @@
 
 namespace Pimcore\Model\Object;
 
-use Pimcore\Event\Element\ObjectEvent;
+use Pimcore\Event\Model\ObjectEvent;
 use Pimcore\Event\ObjectEvents;
 use Pimcore\Model;
 use Pimcore\Cache;

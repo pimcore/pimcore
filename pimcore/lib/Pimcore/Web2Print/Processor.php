@@ -16,7 +16,7 @@ namespace Pimcore\Web2Print;
 
 use Pimcore\Config;
 use Pimcore\Event\DocumentEvents;
-use Pimcore\Event\Element\DocumentEvent;
+use Pimcore\Event\Model\DocumentEvent;
 use \Pimcore\Tool;
 use \Pimcore\Model;
 use \Pimcore\Model\Document;

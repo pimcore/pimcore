@@ -17,7 +17,7 @@
 namespace Pimcore\Model;
 
 use Pimcore\Event\AssetEvents;
-use Pimcore\Event\Element\AssetEvent;
+use Pimcore\Event\Model\AssetEvent;
 use Pimcore\Tool;
 use Pimcore\Tool\Mime;
 use Pimcore\File;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Pimcore\Event\Element;
+namespace Pimcore\Event\Model;
 
 use Pimcore\Event\Traits\ArgumentsAwareTrait;
 use Pimcore\Model\Asset;
