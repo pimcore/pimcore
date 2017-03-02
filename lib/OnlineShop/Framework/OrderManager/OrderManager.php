@@ -430,7 +430,10 @@ class OrderManager implements IOrderManager
                 {
                     $priceRule = new \Pimcore\Model\Object\Fieldcollection\Data\PricingRule();
                     $priceRule->setRuleId( $rule->getId() );
-                    $priceRule->setName( $rule->getName() );
+
+                    foreach(\Pimcore\Tool::getValidLanguages() as $language) {
+                        $priceRule->setName( $rule->getLabel(), $language );
+                    }
 
                     $priceRules->add( $priceRule );
                 }

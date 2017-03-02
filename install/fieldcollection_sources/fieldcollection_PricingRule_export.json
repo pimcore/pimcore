@@ -10,7 +10,7 @@
 		"title":null,
 		"width":null,
 		"height":null,
-		"collapsible":null,
+		"collapsible":false,
 		"collapsed":null,
 		"bodyStyle":null,
 		"datatype":"layout",
@@ -60,32 +60,61 @@
 						"visibleSearch":false
 					},
 					{
-						"fieldtype":"input",
-						"width":300,
-						"queryColumnType":"varchar",
-						"columnType":"varchar",
-						"columnLength":255,
-						"phpdocType":"string",
-						"regex":"",
-						"name":"name",
-						"title":"Name",
+						"fieldtype":"localizedfields",
+						"phpdocType":"\\Pimcore\\Model\\Object\\Localizedfield",
+						"childs":[
+							{
+								"fieldtype":"input",
+								"width":300,
+								"queryColumnType":"varchar",
+								"columnType":"varchar",
+								"columnLength":255,
+								"phpdocType":"string",
+								"regex":"",
+								"name":"name",
+								"title":"Name",
+								"tooltip":"",
+								"mandatory":false,
+								"noteditable":false,
+								"index":false,
+								"locked":false,
+								"style":"",
+								"permissions":null,
+								"datatype":"data",
+								"relationType":false,
+								"invisible":false,
+								"visibleGridView":false,
+								"visibleSearch":false
+							}
+						],
+						"name":"localizedfields",
+						"region":null,
+						"layout":null,
+						"title":"",
+						"width":"",
+						"height":"",
+						"maxTabs":null,
+						"labelWidth":null,
+						"fieldDefinitionsCache":null,
 						"tooltip":"",
 						"mandatory":false,
 						"noteditable":false,
-						"index":false,
+						"index":null,
 						"locked":false,
 						"style":"",
 						"permissions":null,
 						"datatype":"data",
+						"columnType":null,
+						"queryColumnType":null,
 						"relationType":false,
 						"invisible":false,
-						"visibleGridView":false,
-						"visibleSearch":false
+						"visibleGridView":true,
+						"visibleSearch":true
 					}
 				],
 				"locked":false
 			}
 		],
-		"locked":null
+		"locked":false
 	}
 }
