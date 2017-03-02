@@ -109,7 +109,15 @@ class Newsletter
         $mailAddress = $sendingContainer->getEmail();
         if (!empty($mailAddress)) {
             $mail->setTo($mailAddress);
-            $mail->sendWithoutRendering();
+
+
+            $mailer = null;
+            //check if newsletter specific mailer is needed
+            if (\Pimcore\Config::getSystemConfig()->newsletter->usespecific) {
+                $mailer = \Pimcore::getContainer()->get("swiftmailer.mailer.newsletter_mailer");
+            }
+
+            $mail->sendWithoutRendering($mailer);
 
             Logger::info("Sent newsletter to: " . self::obfuscateEmail($mailAddress) . " [" . $mail->getDocument()->getId() . "]");
         } else {
