@@ -20,14 +20,6 @@ framework:
     php_errors:
         log: true
 
-cmf_routing:
-    chain:
-        routers_by_id:
-            router.default:             300
-            cmf_routing.dynamic_router: 200
-    dynamic:
-        route_provider_service_id: pimcore.router.dynamic_route_provider
-
 # Twig Configuration
 twig:
     debug:            "%kernel.debug%"
@@ -37,9 +29,37 @@ twig:
         # this is only here for compatibility/dev reasons and may be removed later
         container: '@service_container'
 
+# Doctrine Configuration
+doctrine:
+    dbal:
+        default_connection: default
+        connections:
+            default:
+                driver: pdo_mysql
+                host: '%pimcore_system_config.database.params.host%'
+                port: '%pimcore_system_config.database.params.port%'
+                dbname: '%pimcore_system_config.database.params.dbname%'
+                user: '%pimcore_system_config.database.params.username%'
+                password: '%pimcore_system_config.database.params.password%'
+                charset: UTF8MB4
+                default_table_options:
+                    charset: UTF8MB4
+                    collate: utf8mb4_unicode_ci
+
+# Monolog Configuration
 monolog:
     channels: ['pimcore', 'pimcore_api']
 
+# CMF routing
+cmf_routing:
+    chain:
+        routers_by_id:
+            router.default:             300
+            cmf_routing.dynamic_router: 200
+    dynamic:
+        route_provider_service_id: pimcore.router.dynamic_route_provider
+
+# Pimcore
 pimcore:
     # the routes below are used to determine the request context in PimcoreContextGuesser
     context:

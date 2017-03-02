@@ -59,10 +59,20 @@ class Db
             return new Wrapper();
         }
 
+        // explicit set charset for connection (to the adapter)
         $charset = "utf8mb4";
 
-        // explicit set charset for connection (to the adapter)
-        $config = Config::getSystemConfig()->database->toArray();
+        // TODO this is only in place until we migrate to doctrine - reads DB config from params
+        // to be able to alter db connection for tests
+        $container = \Pimcore::getContainer();
+        $config = [
+            'adapter' => $container->getParameter('pimcore_system_config.database.adapter'),
+            'params' => []
+        ];
+
+        foreach (['host', 'username', 'password', 'dbname', 'port'] as $param) {
+            $config['params'][$param] = $container->getParameter('pimcore_system_config.database.params.' . $param);
+        }
 
         // write only handling
         if ($writeOnly && isset($config["writeOnly"])) {

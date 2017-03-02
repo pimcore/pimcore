@@ -2,6 +2,7 @@
 
 namespace Pimcore;
 
+use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Pimcore\Bundle\PimcoreAdminBundle\PimcoreAdminBundle;
 use Pimcore\Bundle\PimcoreBundle\PimcoreBundle;
 use Pimcore\Event\SystemEvents;
@@ -34,8 +35,9 @@ abstract class Kernel extends \Symfony\Component\HttpKernel\Kernel
             new SecurityBundle(),
             new TwigBundle(),
             new MonologBundle(),
-            new SensioFrameworkExtraBundle(),
             new SwiftmailerBundle(),
+            new DoctrineBundle(),
+            new SensioFrameworkExtraBundle(),
 
             // CMF bundles
             new CmfRoutingBundle(),
