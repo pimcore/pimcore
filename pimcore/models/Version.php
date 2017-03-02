@@ -16,6 +16,8 @@
 
 namespace Pimcore\Model;
 
+use Pimcore\Event\Model\VersionEvent;
+use Pimcore\Event\VersionEvents;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Tool\Serialize;
 use Pimcore\Config;
@@ -129,7 +131,7 @@ class Version extends AbstractModel
      */
     public function save()
     {
-        \Pimcore::getEventManager()->trigger("version.preSave", $this);
+        \Pimcore::getEventDispatcher()->dispatch(VersionEvents::PRE_SAVE, new VersionEvent($this));
 
         // check if versioning is disabled for this process
         if (self::$disabled) {
@@ -193,7 +195,7 @@ class Version extends AbstractModel
                 fclose($handle);
             }
         }
-        \Pimcore::getEventManager()->trigger("version.postSave", $this);
+        \Pimcore::getEventDispatcher()->dispatch(VersionEvents::POST_SAVE, new VersionEvent($this));
     }
 
     /**
@@ -201,7 +203,7 @@ class Version extends AbstractModel
      */
     public function delete()
     {
-        \Pimcore::getEventManager()->trigger("version.preDelete", $this);
+        \Pimcore::getEventDispatcher()->dispatch(VersionEvents::PRE_DELETE, new VersionEvent($this));
 
         foreach ([$this->getFilePath(), $this->getLegacyFilePath()] as $path) {
             if (is_file($path)) {
@@ -219,7 +221,7 @@ class Version extends AbstractModel
         }
 
         $this->getDao()->delete();
-        \Pimcore::getEventManager()->trigger("version.postDelete", $this);
+        \Pimcore::getEventDispatcher()->dispatch(VersionEvents::POST_DELETE, new VersionEvent($this));
     }
 
     /**
