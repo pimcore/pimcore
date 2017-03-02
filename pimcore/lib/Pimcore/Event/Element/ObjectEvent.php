@@ -24,7 +24,6 @@ class ObjectEvent extends Event {
     {
         $this->object = $object;
         $this->arguments = $arguments;
-
     }
 
     /**

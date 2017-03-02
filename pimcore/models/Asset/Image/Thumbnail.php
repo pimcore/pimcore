@@ -16,7 +16,9 @@
 
 namespace Pimcore\Model\Asset\Image;
 
+use Pimcore\Event\AssetEvents;
 use Pimcore\Logger;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 class Thumbnail
 {
@@ -150,10 +152,10 @@ class Thumbnail
             }
         }
 
-        \Pimcore::getEventManager()->trigger("asset.image.thumbnail", $this, [
+        \Pimcore::getEventDispatcher()->dispatch(AssetEvents::IMAGE_THUMBNAIL, new GenericEvent($this, [
             "deferred" => $deferred,
             "generated" => $generated
-        ]);
+        ]));
     }
 
     /**

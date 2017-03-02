@@ -16,10 +16,12 @@
 
 namespace Pimcore\Model\Asset\Video;
 
+use Pimcore\Event\AssetEvents;
 use Pimcore\Model\Asset\Image;
 use Pimcore\Model;
 use Pimcore\File;
 use Pimcore\Logger;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 class ImageThumbnail
 {
@@ -193,10 +195,10 @@ class ImageThumbnail
                 $this->filesystemPath = $path;
             }
 
-            \Pimcore::getEventManager()->trigger("asset.video.image-thumbnail", $this, [
+            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::VIDEO_IMAGE_THUMBNAIL, new GenericEvent($this, [
                 "deferred" => $deferred,
                 "generated" => $generated
-            ]);
+            ]));
         }
     }
 

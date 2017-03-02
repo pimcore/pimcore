@@ -16,10 +16,12 @@
 
 namespace Pimcore\Model\Asset\Document;
 
+use Pimcore\Event\AssetEvents;
 use Pimcore\Model\Asset\Image;
 use Pimcore\Model;
 use Pimcore\File;
 use Pimcore\Logger;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 class ImageThumbnail
 {
@@ -164,10 +166,10 @@ class ImageThumbnail
                 $this->filesystemPath = $errorImage;
             }
 
-            \Pimcore::getEventManager()->trigger("asset.document.image-thumbnail", $this, [
+            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::DOCUMENT_IMAGE_THUMBNAIL, new GenericEvent($this, [
                 "deferred" => $this->deferred,
                 "generated" => $generated
-            ]);
+            ]));
         }
     }
 

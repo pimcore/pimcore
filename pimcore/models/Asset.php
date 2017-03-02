@@ -16,6 +16,8 @@
 
 namespace Pimcore\Model;
 
+use Pimcore\Event\AssetEvents;
+use Pimcore\Event\Element\AssetEvent;
 use Pimcore\Tool;
 use Pimcore\Tool\Mime;
 use Pimcore\File;
@@ -451,9 +453,9 @@ class Asset extends Element\AbstractElement
         $isUpdate = false;
         if ($this->getId()) {
             $isUpdate = true;
-            \Pimcore::getEventManager()->trigger("asset.preUpdate", $this);
+            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::PRE_UPDATE, new AssetEvent($this));
         } else {
-            \Pimcore::getEventManager()->trigger("asset.preAdd", $this);
+            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::PRE_ADD, new AssetEvent($this));
         }
 
         $this->correctPath();
@@ -531,9 +533,9 @@ class Asset extends Element\AbstractElement
         $this->setDataChanged(false);
 
         if ($isUpdate) {
-            \Pimcore::getEventManager()->trigger("asset.postUpdate", $this);
+            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_UPDATE, new AssetEvent($this));
         } else {
-            \Pimcore::getEventManager()->trigger("asset.postAdd", $this);
+            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_ADD, new AssetEvent($this));
         }
 
         return $this;
@@ -746,9 +748,9 @@ class Asset extends Element\AbstractElement
 
         // hook should be also called if "save only new version" is selected
         if ($callPluginHook) {
-            \Pimcore::getEventManager()->trigger("asset.preUpdate", $this, [
+            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::PRE_UPDATE, new AssetEvent($this, [
                 "saveVersionOnly" => true
-            ]);
+            ]));
         }
 
         // set date
@@ -778,9 +780,9 @@ class Asset extends Element\AbstractElement
 
         // hook should be also called if "save only new version" is selected
         if ($callPluginHook) {
-            \Pimcore::getEventManager()->trigger("asset.postUpdate", $this, [
+            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_UPDATE, new AssetEvent($this, [
                 "saveVersionOnly" => true
-            ]);
+            ]));
         }
 
         return $version;
@@ -946,7 +948,7 @@ class Asset extends Element\AbstractElement
             throw new \Exception("root-node cannot be deleted");
         }
 
-        \Pimcore::getEventManager()->trigger("asset.preDelete", $this);
+        \Pimcore::getEventDispatcher()->dispatch(AssetEvents::PRE_DELETE, new AssetEvent($this));
 
         $this->closeStream();
 
@@ -995,7 +997,7 @@ class Asset extends Element\AbstractElement
         //set object to registry
         \Pimcore\Cache\Runtime::set("asset_" . $this->getId(), null);
 
-        \Pimcore::getEventManager()->trigger("asset.postDelete", $this);
+        \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_DELETE, new AssetEvent($this));
     }
 
     /**

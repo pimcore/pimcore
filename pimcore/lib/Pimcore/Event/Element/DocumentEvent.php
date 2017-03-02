@@ -24,7 +24,6 @@ class DocumentEvent extends Event {
     {
         $this->document = $document;
         $this->arguments = $arguments;
-
     }
 
     /**

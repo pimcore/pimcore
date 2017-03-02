@@ -16,6 +16,8 @@
 
 namespace Pimcore\Model\Asset;
 
+use Pimcore\Event\AssetEvents;
+use Pimcore\Event\Element\AssetEvent;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
@@ -89,9 +91,9 @@ class Service extends Model\Element\Service
         }
 
         // triggers actions after the complete asset cloning
-        \Pimcore::getEventManager()->trigger('asset.postCopy', $new, [
+        \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_COPY, new AssetEvent($new, [
             'base_element' => $source // the element used to make a copy
-        ]);
+        ]));
 
         return $new;
     }
@@ -126,9 +128,9 @@ class Service extends Model\Element\Service
         }
 
         // triggers actions after the complete asset cloning
-        \Pimcore::getEventManager()->trigger('asset.postCopy', $new, [
+        \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_COPY, new AssetEvent($new, [
             'base_element' => $source // the element used to make a copy
-        ]);
+        ]));
 
         return $new;
     }
