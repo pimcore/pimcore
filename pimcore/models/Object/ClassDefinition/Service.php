@@ -214,7 +214,7 @@ class Service
 
                     $item->setValues($array, ["childs"]);
 
-                    if (is_array($array) && is_array($array["childs"]) && $array["childs"]["datatype"]) {
+                    if (is_array($array) && is_array($array["childs"]) && isset($array['childs']['datatype']) && $array["childs"]["datatype"]) {
                         $childO = self::generateLayoutTreeFromArray($array["childs"], $throwException);
                         $item->addChild($childO);
                     } elseif (is_array($array["childs"]) && count($array["childs"]) > 0) {

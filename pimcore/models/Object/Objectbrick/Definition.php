@@ -104,7 +104,7 @@ class Definition extends Model\Object\Fieldcollection\Definition
         $classDefinitionsToDelete = [];
 
         foreach ($this->classDefinitions as $cl) {
-            if (!$cl['deleted']) {
+            if (!isset($cl['deleted']) || !$cl['deleted']) {
                 $newClassDefinitions[] = $cl;
             } else {
                 $classDefinitionsToDelete[] = $cl;
@@ -230,7 +230,7 @@ class Definition extends Model\Object\Fieldcollection\Definition
             foreach ($this->classDefinitions as $cl) {
                 unset($this->oldClassDefinitions[$cl['classname']]);
 
-                if (!$processedClasses[$cl['classname']]) {
+                if (!isset($processedClasses[$cl['classname']]) || !$processedClasses[$cl['classname']]) {
                     $class = Object\ClassDefinition::getById($cl['classname']);
                     $this->getDao()->createUpdateTable($class);
                     $processedClasses[$cl['classname']] = true;
