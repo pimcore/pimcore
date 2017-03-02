@@ -15,11 +15,13 @@
 namespace Pimcore\Controller\Action\Admin;
 
 use Pimcore\Config;
+use Pimcore\Event\AdminEvents;
 use \Pimcore\Model\Document;
 use Pimcore\Model\Element\Service;
 use Pimcore\Tool\Session;
 use Pimcore\Web2Print\Processor;
 use Pimcore\Logger;
+use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
 class Printpage extends \Pimcore\Controller\Action\Admin\Document
@@ -59,14 +61,16 @@ class Printpage extends \Pimcore\Controller\Action\Admin\Document
         
         //Hook for modifying return value - e.g. for changing permissions based on object data
         //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
-        $returnValueContainer = new \Pimcore\Model\Tool\Admin\EventDataContainer(object2array($page));
-        \Pimcore::getEventManager()->trigger("admin.document.get.preSendData", $this, [
-            "document" => $page,
-            "returnValueContainer" => $returnValueContainer
+        $data = object2array($page);
+        $event = new GenericEvent($this, [
+            "data" => $data,
+            "document" => $page
         ]);
+        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::DOCUMENT_GET_PRE_SEND_DATA, $event);
+        $data = $event->getArgument("data");
 
         if ($page->isAllowed("view")) {
-            $this->_helper->json($returnValueContainer->getData());
+            $this->_helper->json($data);
         }
 
         $this->_helper->json(false);
