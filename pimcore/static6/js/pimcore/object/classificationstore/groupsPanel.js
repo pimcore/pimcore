@@ -316,7 +316,7 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
                         this.relationsPanel.disable();
 
                         Ext.Ajax.request({
-                            url: "/admin/classificationstore/deletegroup",
+                            url: "/admin/classificationstore/delete-group",
                             params: {
                                 id: id
                             },
