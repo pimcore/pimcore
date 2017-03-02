@@ -14,6 +14,8 @@
 
 namespace Pimcore\Console;
 
+use Pimcore\Event\System\ConsoleEvent;
+use Pimcore\Event\SystemEvents;
 use Pimcore\Version;
 use Symfony\Component\Console\Event\ConsoleCommandEvent;
 use Symfony\Component\Console\Input\InputDefinition;
@@ -57,9 +59,10 @@ class Application extends \Symfony\Bundle\FrameworkBundle\Console\Application
         $this->initDefaultAutoloadNamespaces();
 
         // allow to register commands here (e.g. through plugins)
-        \Pimcore::getEventManager()->trigger('system.console.init', $this);
+        $dispatcher = \Pimcore::getEventDispatcher();
+        $event = new ConsoleEvent($this);
+        $dispatcher->dispatch(SystemEvents::CONSOLE_INIT, $event);
 
-        $dispatcher = new EventDispatcher();
         $this->setDispatcher($dispatcher);
 
         $dispatcher->addListener(ConsoleEvents::COMMAND, function (ConsoleCommandEvent $event) {

@@ -14,6 +14,7 @@
 
 namespace Pimcore\Tool;
 
+use Pimcore\Event\SystemEvents;
 use Pimcore\File;
 use Pimcore\Model\User;
 use Pimcore\Tool\Text\Csv;
@@ -148,7 +149,7 @@ class Admin
 
         @chmod(self::getMaintenanceModeFile(), 0777); // so it can be removed also via FTP, ...
 
-        \Pimcore::getEventManager()->trigger("system.maintenance.activate");
+        \Pimcore::getEventDispatcher()->dispatch(SystemEvents::MAINTENANCE_MODE_ACTIVATE);
     }
 
     /**
@@ -158,7 +159,7 @@ class Admin
     {
         @unlink(self::getMaintenanceModeFile());
 
-        \Pimcore::getEventManager()->trigger("system.maintenance.deactivate");
+        \Pimcore::getEventDispatcher()->dispatch(SystemEvents::MAINTENANCE_MODE_DEACTIVATE);
     }
 
     /**

@@ -16,6 +16,7 @@
 
 namespace Pimcore\Model\Element;
 
+use Pimcore\Event\SystemEvents;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Asset;
@@ -24,6 +25,8 @@ use Pimcore\Model\Dependency;
 use Pimcore\File;
 use Pimcore\Tool;
 use Pimcore\Logger;
+use Symfony\Component\EventDispatcher\Event;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
  * @method \Pimcore\Model\Element\Dao getDao()
@@ -802,14 +805,12 @@ class Service extends Model\AbstractModel
      */
     public static function getValidKey($key, $type)
     {
-        $results = \Pimcore::getEventManager()->trigger("system.service.preGetValidKey", null, [
+        $event = new GenericEvent(null, [
             "key" => $key,
             "type" => $type
         ]);
-
-        if ($results->count()) {
-            $key = $results->last();
-        }
+        \Pimcore::getEventDispatcher()->dispatch(SystemEvents::SERVICE_PRE_GET_VALID_KEY, $event);
+        $key = $event->getArgument("key");
 
         $key = \Pimcore\Tool\Transliteration::toASCII($key);
 

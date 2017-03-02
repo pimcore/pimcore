@@ -5,6 +5,11 @@ namespace Pimcore;
 class Legacy {
 
     /**
+     * @var \Zend_EventManager_EventManager
+     */
+    private static $eventManager;
+
+    /**
      * @var bool
      */
     private static $mvcPrepared = false;
@@ -512,5 +517,17 @@ class Legacy {
         foreach ($registryBackup as $key => $value) {
             \Zend_Registry::set($key, $value);
         }
+    }
+
+    /**
+     * @return \Zend_EventManager_EventManager
+     */
+    public static function getEventManager()
+    {
+        if (!self::$eventManager) {
+            self::$eventManager = new \Zend_EventManager_EventManager();
+        }
+
+        return self::$eventManager;
     }
 }

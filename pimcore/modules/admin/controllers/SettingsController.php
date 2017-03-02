@@ -592,7 +592,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
         // PIMCORE-1854 - recreate .dummy file => should remain
         \Pimcore\File::put(PIMCORE_CACHE_DIRECTORY . "/.dummy", "");
 
-        \Pimcore::getEventManager()->trigger("system.cache.clear", $this);
+        \Pimcore::getEventDispatcher()->dispatch(\Pimcore\Event\SystemEvents::CACHE_CLEAR);
 
         $this->_helper->json(["success" => true]);
     }
@@ -607,7 +607,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
         // empty document cache
         Cache::clearTags(["output", "output_lifetime"]);
 
-        \Pimcore::getEventManager()->trigger("system.cache.clearOutputCache", $this);
+        \Pimcore::getEventDispatcher()->dispatch(\Pimcore\Event\SystemEvents::CACHE_CLEAR_FULLPAGE_CACHE);
 
         $this->_helper->json(["success" => true]);
     }
@@ -626,7 +626,7 @@ class Admin_SettingsController extends \Pimcore\Controller\Action\Admin
         \Pimcore\File::put(PIMCORE_TEMPORARY_DIRECTORY . "/.dummy", "");
         \Pimcore\File::put(PIMCORE_SYSTEM_TEMP_DIRECTORY . "/.dummy", "");
 
-        \Pimcore::getEventManager()->trigger("system.cache.clearTemporaryFiles", $this);
+        \Pimcore::getEventDispatcher()->dispatch(\Pimcore\Event\SystemEvents::CACHE_CLEAR_TEMPORARY_FILES);
 
         $this->_helper->json(["success" => true]);
     }

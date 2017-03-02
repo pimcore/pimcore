@@ -4,6 +4,7 @@ namespace Pimcore;
 
 use Pimcore\Bundle\PimcoreAdminBundle\PimcoreAdminBundle;
 use Pimcore\Bundle\PimcoreBundle\PimcoreBundle;
+use Pimcore\Event\SystemEvents;
 use PimcoreLegacyBundle\PimcoreLegacyBundle;
 use Sensio\Bundle\DistributionBundle\SensioDistributionBundle;
 use Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle;
@@ -89,7 +90,7 @@ abstract class Kernel extends \Symfony\Component\HttpKernel\Kernel
 
         // on pimcore shutdown
         register_shutdown_function(function () {
-            \Pimcore::getEventManager()->trigger("system.shutdown");
+            \Pimcore::getEventDispatcher()->dispatch(SystemEvents::SHUTDOWN);
         });
 
         // set up event handlers

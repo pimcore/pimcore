@@ -39,11 +39,6 @@ class Pimcore
     private static $inShutdown = false;
 
     /**
-     * @var \Zend_EventManager_EventManager
-     */
-    private static $eventManager;
-
-    /**
      * @var KernelInterface
      */
     private static $kernel;
@@ -204,15 +199,11 @@ class Pimcore
     }
 
     /**
-     * @return \Zend_EventManager_EventManager
+     * @return object|\Symfony\Component\EventDispatcher\ContainerAwareEventDispatcher
      */
-    public static function getEventManager()
+    public static function getEventDispatcher()
     {
-        if (!self::$eventManager) {
-            self::$eventManager = new \Zend_EventManager_EventManager();
-        }
-
-        return self::$eventManager;
+        return self::getContainer()->get("event_dispatcher");
     }
 
     /**
@@ -307,7 +298,8 @@ class Pimcore
             $builder->addDefinitions($customFile);
         }
 
-        self::getEventManager()->trigger('system.di.init', $builder);
+        $event = new \Pimcore\Event\System\PhpDiBuilderEvent($builder);
+        self::getEventDispatcher()->dispatch(\Pimcore\Event\SystemEvents::PHP_DI_INIT, $event);
     }
 
     /** Add $keepItems to the list of items which are protected from garbage collection.

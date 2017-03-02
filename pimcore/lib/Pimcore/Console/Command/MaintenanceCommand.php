@@ -15,6 +15,8 @@
 namespace Pimcore\Console\Command;
 
 use Pimcore\Console\AbstractCommand;
+use Pimcore\Event\System\MaintenanceEvent;
+use Pimcore\Event\SystemEvents;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -75,7 +77,8 @@ class MaintenanceCommand extends AbstractCommand
         $manager->registerJob(new Schedule\Maintenance\Job("imageoptimize", "\\Pimcore\\Model\\Asset\\Image\\Thumbnail\\Processor", "processOptimizeQueue"));
         $manager->registerJob(new Schedule\Maintenance\Job("cleanupTmpFiles", "\\Pimcore\\Tool\\Housekeeping", "cleanupTmpFiles"));
 
-        \Pimcore::getEventManager()->trigger("system.maintenance", $manager);
+        $event = new MaintenanceEvent($manager);
+        \Pimcore::getEventDispatcher()->dispatch(SystemEvents::MAINTENANCE, $event);
 
         $manager->run();
 
