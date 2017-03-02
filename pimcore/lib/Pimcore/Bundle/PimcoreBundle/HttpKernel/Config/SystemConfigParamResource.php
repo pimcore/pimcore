@@ -49,7 +49,9 @@ class SystemConfigParamResource
             if (is_array($value)) {
                 $this->processConfig($paramName, $value);
             } else {
-                $this->container->setParameter($paramName, $value);
+                if (!$this->container->hasParameter($paramName)) {
+                    $this->container->setParameter($paramName, $value);
+                }
             }
         }
     }
