@@ -144,6 +144,7 @@ final class AdminEvents
      * Subject: \Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin\ClassController
      * Arguments:
      *  - list | array | the list of object bricks
+     *  - objectId | int | id of the origin object
      *
      * @Event("Pimcore\Event\Model\GenericEvent")
      * @var string

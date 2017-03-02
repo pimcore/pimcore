@@ -16,6 +16,8 @@
 
 namespace Pimcore\Model\Object\ClassDefinition;
 
+use Pimcore\Event\Model\Object\CustomLayoutEvent;
+use Pimcore\Event\ObjectCustomLayoutEvents;
 use Pimcore\Model;
 use Pimcore\Model\Object;
 use Pimcore\Cache;
@@ -160,9 +162,9 @@ class CustomLayout extends Model\AbstractModel
         $isUpdate = false;
         if ($this->getId()) {
             $isUpdate = true;
-            \Pimcore::getEventManager()->trigger("object.customLayout.preUpdate", $this);
+            \Pimcore::getEventDispatcher()->dispatch(ObjectCustomLayoutEvents::PRE_UPDATE, new CustomLayoutEvent($this));
         } else {
-            \Pimcore::getEventManager()->trigger("object.customLayout.preAdd", $this);
+            \Pimcore::getEventDispatcher()->dispatch(ObjectCustomLayoutEvents::PRE_ADD, new CustomLayoutEvent($this));
         }
 
         $this->setModificationDate(time());

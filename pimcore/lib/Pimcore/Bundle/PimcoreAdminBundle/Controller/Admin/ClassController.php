@@ -5,11 +5,13 @@ namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin;
 use Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminController;
 use Pimcore\Bundle\PimcoreAdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Bundle\PimcoreBundle\Controller\EventedControllerInterface;
+use Pimcore\Event\AdminEvents;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Object;
 use Pimcore\Logger;
+use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
@@ -993,8 +995,12 @@ class ClassController extends AdminController implements EventedControllerInterf
             $list = $filteredList;
         }
 
-        $returnValueContainer = new Model\Tool\Admin\EventDataContainer($list);
-        \Pimcore::getEventManager()->trigger("admin.class.objectbrickList.preSendData", $this, ["returnValueContainer" => $returnValueContainer, "objectId"=>$request->get('object_id')]);
+        $event = new GenericEvent($this, [
+            "list" => $list,
+            "objectId"=>$request->get('object_id')
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::CLASS_OBJECTBRICK_LIST_PRE_SEND_DATA, $event);
+        $list = $event->getArgument("list");
 
         return $this->json(["objectbricks" => $list]);
     }
