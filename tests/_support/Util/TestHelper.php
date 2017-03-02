@@ -5,6 +5,7 @@ namespace Pimcore\Tests\Util;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\User;
 use Pimcore\Model\Webservice\Tool as WebserviceTool;
+use Pimcore\Model\Object\Unittest;
 
 class TestHelper
 {
@@ -17,6 +18,16 @@ class TestHelper
     public static function supportsDbTests()
     {
         return defined('PIMCORE_TEST_DB_CONNECTED') ? PIMCORE_TEST_DB_CONNECTED : false;
+    }
+
+    /**
+     * Check DB support and mark test skipped if DB connection wasn't established
+     */
+    public static function checkDbSupport()
+    {
+        if (!static::supportsDbTests()) {
+            throw new \PHPUnit_Framework_SkippedTestError('Not running test as DB connection couldn\'t be established');
+        }
     }
 
     public static function getSoapClient()
@@ -382,14 +393,14 @@ class TestHelper
     /**
      * @param string $keyPrefix
      * @param bool $save
-     * @return Object_Unittest
+     * @return Unittest
      */
     public static function createEmptyObject($keyPrefix = "", $save = true)
     {
         if ($keyPrefix == null) {
             $keyPrefix = "";
         }
-        $emptyObject = new Object_Unittest();
+        $emptyObject = new Unittest();
         $emptyObject->setOmitMandatoryCheck(true);
         $emptyObject->setParentId(1);
         $emptyObject->setUserOwner(1);
@@ -417,14 +428,14 @@ class TestHelper
     /**
      * @param string $keyPrefix
      * @param bool $save
-     * @return Object_Unittest
+     * @return Unittest
      */
     public static function createFullyFledgedObject($keyPrefix = "", $save = true, $seed = 1)
     {
         if ($keyPrefix == null) {
             $keyPrefix = "";
         }
-        $object = new Object_Unittest();
+        $object = new Unittest();
         $object->setOmitMandatoryCheck(true);
         $object->setParentId(1);
         $object->setUserOwner(1);

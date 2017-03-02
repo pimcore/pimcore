@@ -1,17 +1,11 @@
 <?php
 namespace Pimcore\Tests;
 
+use Pimcore\Tests\Test\DbTest;
 use Pimcore\Tests\Util\TestHelper;
 
-class ObjectTest extends \PHPUnit_Framework_TestCase
+class ObjectTest extends DbTest
 {
-    protected function setUp()
-    {
-        if (!TestHelper::supportsDbTests()) {
-            $this->markTestSkipped('DB credentials are missing - test is disabled');
-        }
-    }
-
     /**
      * Verifies that a object with the same parent ID cannot be created.
      */
@@ -24,7 +18,7 @@ class ObjectTest extends \PHPUnit_Framework_TestCase
         try {
             $savedObject->save();
             $this->fail("Expected an exception");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
         }
     }
 
@@ -40,7 +34,7 @@ class ObjectTest extends \PHPUnit_Framework_TestCase
         try {
             $savedObject->save();
             $this->fail("Expected an exception");
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
         }
     }
 }

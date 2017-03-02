@@ -10,4 +10,4 @@ if (!defined('TESTS_PATH')) {
 define('PIMCORE_ADMIN', true);
 define('PIMCORE_DEBUG', true);
 define('PIMCORE_DEVMODE', true);
-define('PIMCORE_WEBSITE_VAR', TESTS_PATH . '/_output/var');
+define('PIMCORE_WEBSITE_VAR', codecept_output_dir());
