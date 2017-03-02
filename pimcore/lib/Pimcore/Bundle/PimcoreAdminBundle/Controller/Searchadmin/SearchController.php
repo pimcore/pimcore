@@ -3,11 +3,13 @@
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Searchadmin;
 
 use Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminController;
+use Pimcore\Event\AdminEvents;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Object;
 use Pimcore\Model\Search\Backend\Data;
+use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -32,13 +34,12 @@ class SearchController extends AdminController
     {
         $allParams = array_merge($request->request->all(), $request->query->all());
 
-        $returnValueContainer = new \Pimcore\Model\Tool\Admin\EventDataContainer($allParams);
-
-        \Pimcore::getEventManager()->trigger("admin.search.list.beforeFilterPrepare", $this, [
-            "requestParams" => $returnValueContainer
+        $filterPrepareEvent = new GenericEvent($this, [
+            "requestParams" => $allParams
         ]);
+        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::SEARCH_LIST_BEFORE_FILTER_PREPARE, $filterPrepareEvent);
 
-        $allParams = $returnValueContainer->getData();
+        $allParams = $filterPrepareEvent->getArgument("requestParams");
         $user = $this->getUser();
 
         $query = $allParams["query"];
@@ -282,13 +283,12 @@ class SearchController extends AdminController
         }
 
 
-        $returnValueContainer = new \Pimcore\Model\Tool\Admin\EventDataContainer($searcherList);
 
-        \Pimcore::getEventManager()->trigger("admin.search.list.beforeListLoad", $this, [
-            "list" => $returnValueContainer
+        $beforeListLoadEvent = new GenericEvent($this, [
+            "list" => $searcherList
         ]);
-
-        $searcherList = $returnValueContainer->getData();
+        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::SEARCH_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+        $searcherList = $beforeListLoadEvent->getArgument("list");
 
         $hits = $searcherList->load();
 
@@ -320,13 +320,12 @@ class SearchController extends AdminController
 
         $result = ["data" => $elements, "success" => true, "total" => $totalMatches];
 
-        $returnValueContainer = new \Pimcore\Model\Tool\Admin\EventDataContainer($result);
 
-        \Pimcore::getEventManager()->trigger("admin.search.list.afterListLoad", $this, [
-            "list" => $returnValueContainer
+        $afterListLoadEvent = new GenericEvent($this, [
+            "list" => $result
         ]);
-
-        $result = $returnValueContainer->getData();
+        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::SEARCH_LIST_AFTER_LIST_LOAD, $afterListLoadEvent);
+        $result = $afterListLoadEvent->getArgument("list");
 
         return $this->json($result);
     }

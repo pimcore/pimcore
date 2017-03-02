@@ -6,6 +6,7 @@ final class SystemEvents
 {
     /**
      * This event is fired on shutdown (register_shutdown_function)
+     *
      * @Event()
      * @var string
      */
@@ -13,6 +14,7 @@ final class SystemEvents
 
     /**
      * Use this event to register your own maintenance jobs, this event is triggered just before the jobs are executed
+     *
      * @Event("Pimcore\Event\System\MaintenanceEvent")
      * @var string
      */
@@ -20,6 +22,7 @@ final class SystemEvents
 
     /**
      * 	See Console / CLI | allow to register console commands (e.g. through plugins)
+     *
      * @Event("Pimcore\Event\System\ConsoleEvent")
      * @var string
      */
@@ -27,6 +30,7 @@ final class SystemEvents
 
     /**
      * Fires when the PHP-DI Container is built, used for building Assets, Documents and Objects
+     *
      * @Event("Pimcore\Event\System\PhpDiBuilderEvent")
      * @var string
      */
@@ -34,6 +38,7 @@ final class SystemEvents
 
     /**
      * This event is fired on maintenance mode activation
+     *
      * @Event()
      * @var string
      */
@@ -41,6 +46,7 @@ final class SystemEvents
 
     /**
      * This event is fired on maintenance mode deactivation
+     *
      * @Event()
      * @var string
      */
@@ -48,6 +54,7 @@ final class SystemEvents
 
     /**
      * This event is fired on Full-Page Cache clear
+     *
      * @Event()
      * @var string
      */
@@ -55,6 +62,7 @@ final class SystemEvents
 
     /**
      * This event is fired on Cache clear
+     *
      * @Event()
      * @var string
      */
@@ -62,6 +70,7 @@ final class SystemEvents
 
     /**
      * This event is fired on Temporary Files clear
+     *
      * @Event()
      * @var string
      */
@@ -69,6 +78,7 @@ final class SystemEvents
 
     /**
      * This event is fired on Temporary Files clear
+     *
      * @Event("\Symfony\Component\EventDispatcher\GenericEvent")
      * @var string
      */
