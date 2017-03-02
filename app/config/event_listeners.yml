@@ -1,2 +1,7 @@
 
 services:
+#  app.event_listener.test:
+#    class: AppBundle\EventListener\TestListener
+#    tags:
+#      - { name: kernel.event_listener, event: pimcore.object.preUpdate, method: onObjectPreUpdate}
+
