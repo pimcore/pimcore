@@ -6,7 +6,7 @@ use Pimcore\Event\Traits\ArgumentsAwareTrait;
 use Pimcore\Model\Asset;
 use Symfony\Component\EventDispatcher\Event;
 
-class AssetEvent extends Event {
+class AssetEvent extends Event implements ElementEventInterface {
 
     use ArgumentsAwareTrait;
 
@@ -40,5 +40,13 @@ class AssetEvent extends Event {
     public function setAsset($asset)
     {
         $this->asset = $asset;
+    }
+
+    /**
+     * @return Asset
+     */
+    public function getElement()
+    {
+        return $this->getAsset();
     }
 }

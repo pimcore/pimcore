@@ -12,8 +12,13 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\WorkflowManagement;
+namespace Pimcore\Bundle\PimcoreBundle\EventListener;
 
+use Pimcore\Event\AdminEvents;
+use Pimcore\Event\AssetEvents;
+use Pimcore\Event\DocumentEvents;
+use Pimcore\Event\Model\ElementEventInterface;
+use Pimcore\Event\ObjectEvents;
 use Pimcore\Model\Element\AbstractElement;
 use Pimcore\WorkflowManagement\Workflow;
 use Pimcore\Tool\Admin;
@@ -22,22 +27,48 @@ use Pimcore\Model\Object\Concrete as ConcreteObject;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
 use Pimcore\Model\Object\ClassDefinition;
+use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class EventHandler
+class WorkflowManagementListener implements EventSubscriberInterface
 {
+    /**
+     * @var bool
+     */
+    protected $enabled = true;
+
+    /**
+     * @inheritDoc
+     */
+    public static function getSubscribedEvents()
+    {
+        return [
+            ObjectEvents::POST_ADD  => 'onElementPostAdd',
+            DocumentEvents::POST_ADD  => 'onElementPostAdd',
+            AssetEvents::POST_ADD  => 'onElementPostAdd',
+
+            ObjectEvents::POST_DELETE => 'onElementPostDelete',
+            DocumentEvents::POST_DELETE => 'onElementPostDelete',
+            AssetEvents::POST_DELETE => 'onElementPostDelete',
+
+            AdminEvents::OBJECT_GET_PRE_SEND_DATA => 'onAdminElementGetPreSendData',
+            AdminEvents::ASSET_GET_PRE_SEND_DATA => 'onAdminElementGetPreSendData',
+            AdminEvents::DOCUMENT_GET_PRE_SEND_DATA => 'onAdminElementGetPreSendData',
+        ];
+    }
 
     /**
      * Ensures that any elements which support workflows are given the correct default state / status
-     * @param \Zend_EventManager_Event $e
+     * @param ElementEventInterface $e
      */
-    public static function elementPostAdd(\Zend_EventManager_Event $e)
+    public function onElementPostAdd(ElementEventInterface $e)
     {
         /**
          * @var Asset|Document|ConcreteObject $element
          */
-        $element = $e->getTarget();
+        $element = $e->getElement();
 
-        if (!self::isDisabled() && Workflow\Manager::elementHasWorkflow($element)) {
+        if ($this->isEnabled() && Workflow\Manager::elementHasWorkflow($element)) {
             $manager = Workflow\Manager\Factory::getManager($element);
             $manager->setElementState($manager->getWorkflow()->getDefaultState());
             $manager->setElementStatus($manager->getWorkflow()->getDefaultStatus());
@@ -47,14 +78,14 @@ class EventHandler
     /**
      * Cleanup status information on element delete
      *
-     * @param \Zend_EventManager_Event $e
+     * @param ElementEventInterface $e
      */
-    public static function elementPostDelete(\Zend_EventManager_Event $e)
+    public function onElementPostDelete(ElementEventInterface $e)
     {
         /**
          * @var Asset|Document|ConcreteObject $element
          */
-        $element = $e->getTarget();
+        $element = $e->getElement();
 
         if (Workflow\Manager::elementHasWorkflow($element)) {
             $manager = Workflow\Manager\Factory::getManager($element);
@@ -68,14 +99,13 @@ class EventHandler
 
     /**
      * Fired before information is sent back to the admin UI about an element
-     * @param \Zend_EventManager_Event $e
+     * @param GenericEvent $e
      * @throws \Exception
      */
-    public static function adminElementGetPreSendData($e)
+    public function onAdminElementGetPreSendData(GenericEvent $e)
     {
         $element = self::extractElementFromEvent($e);
-        $returnValueContainer = $e->getParam('returnValueContainer');
-        $data = $returnValueContainer->getData();
+        $data = $e->getArgument("data");
 
         //create a new namespace for WorkflowManagement
         //set some defaults
@@ -123,24 +153,24 @@ class EventHandler
             }
         }
 
-        $returnValueContainer->setData($data);
+        $e->setArgument("data", $data);
     }
 
-
     /**
-     * @param \Zend_EventManager_Event $e
+     * @param GenericEvent $e
      * @return AbstractElement
      * @throws \Exception
      */
-    private static function extractElementFromEvent(\Zend_EventManager_Event $e)
+    private static function extractElementFromEvent(GenericEvent $e)
     {
-        $element = $e->getParam("object");
-        if (empty($element)) {
-            $element = $e->getParam("asset");
+        $element = null;
+
+        foreach(["object","asset","document"] as $type) {
+            if($e->hasArgument($type)) {
+                $element = $e->getArgument($type);
+            }
         }
-        if (empty($element)) {
-            $element = $e->getParam("document");
-        }
+
         if (empty($element)) {
             throw new \Exception("No element found in event");
         }
@@ -149,23 +179,23 @@ class EventHandler
     }
 
     /**
-     * Disables events for the current request
+     *
      */
-    public static function disable()
-    {
-        \Pimcore\Cache\Runtime::set('workflow_events_disable_cur_process', true);
+    public function enable() {
+        $this->enabled = true;
     }
 
-    public static function enable()
-    {
-        \Pimcore\Cache\Runtime::set('workflow_events_disable_cur_process', false);
+    /**
+     *
+     */
+    public function disable() {
+        $this->enabled = false;
     }
 
     /**
      * @return bool
      */
-    public static function isDisabled()
-    {
-        return (\Pimcore\Cache\Runtime::isRegistered('workflow_events_disable_cur_process') && \Pimcore\Cache\Runtime::get('workflow_events_disable_cur_process'));
+    public function isEnabled() {
+        return $this->enabled;
     }
 }

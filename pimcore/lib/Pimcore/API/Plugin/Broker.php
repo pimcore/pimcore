@@ -204,7 +204,7 @@ class Broker
                         }
                     }
                 }
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 Logger::error("Plugin " . get_class($plugin) . " threw Exception when trying to get translations");
             }
         }

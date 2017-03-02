@@ -93,10 +93,8 @@ abstract class Kernel extends \Symfony\Component\HttpKernel\Kernel
         // on pimcore shutdown
         register_shutdown_function(function () {
             \Pimcore::getEventDispatcher()->dispatch(SystemEvents::SHUTDOWN);
+            \Pimcore::shutdown();
         });
-
-        // set up event handlers
-        $this->setupEventHandlers();
 
         foreach ($this->getBundles() as $bundle) {
             $bundle->setContainer($this->container);
@@ -155,62 +153,6 @@ abstract class Kernel extends \Symfony\Component\HttpKernel\Kernel
         $websiteStartup = Config::locateConfigFile('startup.php');
         if (@is_file($websiteStartup)) {
             include_once $websiteStartup;
-        }
-    }
-
-    /**
-     * Register pimcore event handlers - TODO how to handle ZF1/Symfony event dispatcher?
-     */
-    protected function setupEventHandlers()
-    {
-        // attach global shutdown event
-        \Pimcore::getEventManager()->attach("system.shutdown", ["Pimcore", "shutdown"], 9999);
-
-        // remove tags on asset delete
-        \Pimcore::getEventManager()->attach("asset.postDelete", function (\Zend_EventManager_Event $e) {
-            $asset = $e->getTarget();
-            \Pimcore\Model\Element\Tag::setTagsForElement("asset", $asset->getId(), []);
-        }, 9999);
-
-
-        // attach workflow events to event handler
-        \Pimcore::getEventManager()->attach(
-            ["object.postAdd", "document.postAdd", "asset.postAdd"],
-            ["\\Pimcore\\WorkflowManagement\\EventHandler", "elementPostAdd"]
-        );
-
-        \Pimcore::getEventManager()->attach(
-            ["object.postDelete", "document.postDelete", "asset.postDelete"],
-            ["\\Pimcore\\WorkflowManagement\\EventHandler", "elementPostDelete"]
-        );
-
-        \Pimcore::getEventManager()->attach(
-            ["admin.object.get.preSendData", "admin.asset.get.preSendData", "admin.document.get.preSendData"],
-            ["\\Pimcore\\WorkflowManagement\\EventHandler", "adminElementGetPreSendData"]
-        );
-
-        // backed search
-        foreach (["asset", "object", "document"] as $type) {
-            \Pimcore::getEventManager()->attach($type . ".postAdd", ["Pimcore\\Search\\EventHandler", "postAddElement"]);
-            \Pimcore::getEventManager()->attach($type . ".postUpdate", ["Pimcore\\Search\\EventHandler", "postUpdateElement"]);
-            \Pimcore::getEventManager()->attach($type . ".preDelete", ["Pimcore\\Search\\EventHandler", "preDeleteElement"]);
-        }
-
-        // UUID
-        $conf = Config::getSystemConfig();
-        if ($conf->general->instanceIdentifier) {
-            foreach (["asset", "object", "document", "object.class"] as $type) {
-                \Pimcore::getEventManager()->attach($type . ".postAdd", function ($e) {
-                    \Pimcore\Model\Tool\UUID::create($e->getTarget());
-                });
-
-                \Pimcore::getEventManager()->attach($type . ".postDelete", function ($e) {
-                    $uuidObject = \Pimcore\Model\Tool\UUID::getByItem($e->getTarget());
-                    if ($uuidObject instanceof \Pimcore\Model\Tool\UUID) {
-                        $uuidObject->delete();
-                    }
-                });
-            }
         }
     }
 }

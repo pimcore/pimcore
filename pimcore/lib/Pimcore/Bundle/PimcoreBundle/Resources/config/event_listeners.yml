@@ -103,6 +103,29 @@ services:
 
 
     #
+    # VARIOUS MODEL SPECIFIC LISTENERS
+    #
+    pimcore.event_listener.workflow_management:
+      class: Pimcore\Bundle\PimcoreBundle\EventListener\WorkflowManagementListener
+      tags:
+        - { name: kernel.event_subscriber }
+
+    pimcore.event_listener.element_tags:
+      class: Pimcore\Bundle\PimcoreBundle\EventListener\ElementTagsListener
+      tags:
+        - { name: kernel.event_subscriber }
+
+    pimcore.event_listener.search_backend:
+          class: Pimcore\Bundle\PimcoreBundle\EventListener\SearchBackendListener
+          tags:
+            - { name: kernel.event_subscriber }
+
+    pimcore.event_listener.uuid:
+          class: Pimcore\Bundle\PimcoreBundle\EventListener\UUIDListener
+          tags:
+            - { name: kernel.event_subscriber }
+
+    #
     # EXCEPTION HANDLING
     #
 

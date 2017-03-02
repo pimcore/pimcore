@@ -70,14 +70,6 @@ class Manager
      */
     protected $userIds = [];
 
-
-    /**
-     * An array of the event triggers that are registered with an action
-     * @var array
-     */
-    protected $registeredActionEvents = [];
-
-
     /**
      *
      * @param      $element
@@ -636,7 +628,7 @@ class Manager
             ]));
         }
 
-        $this->unregisterActionEvents();
+        $this->unregisterActionEvents($actionConfig);
 
         \Pimcore::getEventDispatcher()->dispatch(WorkflowEvents::POST_ACTION, new WorkflowEvent($this, [
             'actionName' => $actionName
@@ -666,31 +658,36 @@ class Manager
      */
     private function registerActionEvents($actionConfig)
     {
-        $this->registeredActionEvents = [];
-
         if (isset($actionConfig['events'])) {
             if (isset($actionConfig['events']['before'])) {
-                $this->registeredActionEvents[] = \Pimcore::getEventManager()->attach('workflowmanagement.action.before', $actionConfig['events']['before']);
+                \Pimcore::getEventDispatcher()->addListener(WorkflowEvents::ACTION_BEFORE, $actionConfig['events']['before']);
             }
             if (isset($actionConfig['events']['success'])) {
-                $this->registeredActionEvents[] = \Pimcore::getEventManager()->attach('workflowmanagement.action.success', $actionConfig['events']['success']);
+                \Pimcore::getEventDispatcher()->addListener(WorkflowEvents::ACTION_SUCCESS, $actionConfig['events']['success']);
             }
             if (isset($actionConfig['events']['failure'])) {
-                $this->registeredActionEvents[] = \Pimcore::getEventManager()->attach('workflowmanagement.action.failure', $actionConfig['events']['failure']);
+                \Pimcore::getEventDispatcher()->addListener(WorkflowEvents::ACTION_FAILURE, $actionConfig['events']['failure']);
             }
         }
     }
 
     /**
      * Unregisters events (before, success, failure)
+     * @param $actionConfig
      */
-    private function unregisterActionEvents()
+    private function unregisterActionEvents($actionConfig)
     {
-        foreach ($this->registeredActionEvents as $listener) {
-            \Pimcore::getEventManager()->detach($listener);
+        if (isset($actionConfig['events'])) {
+            if (isset($actionConfig['events']['before'])) {
+                \Pimcore::getEventDispatcher()->removeListener(WorkflowEvents::ACTION_BEFORE, $actionConfig['events']['before']);
+            }
+            if (isset($actionConfig['events']['success'])) {
+                \Pimcore::getEventDispatcher()->removeListener(WorkflowEvents::ACTION_SUCCESS, $actionConfig['events']['success']);
+            }
+            if (isset($actionConfig['events']['failure'])) {
+                \Pimcore::getEventDispatcher()->removeListener(WorkflowEvents::ACTION_FAILURE, $actionConfig['events']['failure']);
+            }
         }
-
-        $this->registeredActionEvents = [];
     }
 
 

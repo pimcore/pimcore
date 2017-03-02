@@ -6,7 +6,7 @@ use Pimcore\Event\Traits\ArgumentsAwareTrait;
 use Pimcore\Model\Document;
 use Symfony\Component\EventDispatcher\Event;
 
-class DocumentEvent extends Event {
+class DocumentEvent extends Event implements ElementEventInterface {
 
     use ArgumentsAwareTrait;
 
@@ -40,5 +40,13 @@ class DocumentEvent extends Event {
     public function setDocument($document)
     {
         $this->document = $document;
+    }
+
+    /**
+     * @return Document
+     */
+    public function getElement()
+    {
+        return $this->getDocument();
     }
 }

@@ -6,7 +6,7 @@ use Pimcore\Event\Traits\ArgumentsAwareTrait;
 use Pimcore\Model\Object\AbstractObject;
 use Symfony\Component\EventDispatcher\Event;
 
-class ObjectEvent extends Event {
+class ObjectEvent extends Event implements ElementEventInterface {
 
     use ArgumentsAwareTrait;
 
@@ -40,5 +40,13 @@ class ObjectEvent extends Event {
     public function setObject($object)
     {
         $this->object = $object;
+    }
+
+    /**
+     * @return AbstractObject
+     */
+    public function getElement()
+    {
+        return $this->getObject();
     }
 }
