@@ -381,6 +381,7 @@ class ClassDefinition extends Model\AbstractModel
                 }
 
                 // collect lazyloaded fields
+                $lazyLoadedFields = [];
                 if (method_exists($def, "getLazyLoading") and $def->getLazyLoading()) {
                     $lazyLoadedFields[] = $key;
                 }
