@@ -52,6 +52,8 @@ class Model extends Module
         $unittestClass  = $this->setupUnittestClass('unittest', 'class-import.json');
         $allFieldsClass = $this->setupUnittestClass('allfields', 'class-allfields.json');
 
+        $cm->setupClass('inheritance', 'inheritance.json');
+
         $cm->setupObjectbrick('unittestBrick', 'brick-import.json', [$unittestClass->getId()]);
     }
 
