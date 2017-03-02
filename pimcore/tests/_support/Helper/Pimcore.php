@@ -21,6 +21,12 @@ class Pimcore extends Module\Symfony
 
     public function _initialize()
     {
+        if (null !== $kernel = \Pimcore::getKernel()) {
+            $this->kernel = $kernel;
+
+            return;
+        }
+
         Config::setEnvironment($this->config['environment']);
 
         $maxNestingLevel = 200; // Symfony may have very long nesting level
