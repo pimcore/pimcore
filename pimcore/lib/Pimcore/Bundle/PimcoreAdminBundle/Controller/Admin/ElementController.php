@@ -59,7 +59,7 @@ class ElementController extends AdminController
     /**
      * Returns the element data denoted by the given type and ID or path.
      *
-     * @Route("/element/get-sub-type")
+     * @Route("/element/get-subtype")
      * @param Request $request
      * @return JsonResponse
      */
