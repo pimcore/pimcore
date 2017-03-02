@@ -89,4 +89,59 @@ final class AdminEvents
      * @var string
      */
     const SEARCH_LIST_AFTER_LIST_LOAD = "pimcore.admin.search.list.afterListLoad";
+
+
+    /**
+     * Fired before the request params are parsed.
+     *
+     * Subject: \Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin\AssetController
+     * Arguments:
+     *  - data | array | the response data, this can be modified
+     *  - asset | Asset | the current asset
+     *
+     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @var string
+     */
+    const ASSET_GET_PRE_SEND_DATA = "pimcore.admin.asset.get.preSendData";
+
+    /**
+     * Fired before the request params are parsed.
+     *
+     * Subject: \Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin\ElementControllerBase
+     * Arguments:
+     *  - data | array | the response data, this can be modified
+     *  - document | Document | the current document
+     *
+     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @var string
+     */
+    const DOCUMENT_GET_PRE_SEND_DATA = "pimcore.admin.document.get.preSendData";
+
+    /**
+     * Fired before the request params are parsed.
+     *
+     * Subject: \Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin\ObjectController
+     * Arguments:
+     *  - data | array | the response data, this can be modified
+     *  - object | AbstractObject | the current object
+     *
+     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @var string
+     */
+    const OBJECT_GET_PRE_SEND_DATA = "pimcore.admin.object.get.preSendData";
+
+
+    const OBJECT_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA = "pimcore.admin.object.treeGetChildsById.preSendData";
+
+    /**
+     * Subject: \Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin\ClassController
+     * Arguments:
+     *  - list | array | the list of object bricks
+     *
+     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @var string
+     */
+    const CLASS_OBJECTBRICK_LIST_PRE_SEND_DATA = "pimcore.admin.class.objectbrickList.preSendData";
+
+
 }

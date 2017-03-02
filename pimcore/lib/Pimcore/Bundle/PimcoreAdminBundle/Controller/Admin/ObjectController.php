@@ -4,11 +4,13 @@ namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin;
 use Pimcore\Bundle\PimcoreBundle\Configuration\TemplatePhp;
 use Pimcore\Bundle\PimcoreBundle\Controller\EventedControllerInterface;
 use Pimcore\Controller\Action\Helper\Json;
+use Pimcore\Event\AdminEvents;
 use Pimcore\Tool;
 use Pimcore\Model\Object;
 use Pimcore\Model\Element;
 use Pimcore\Model;
 use Pimcore\Logger;
+use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
@@ -118,8 +120,11 @@ class ObjectController extends ElementControllerBase implements EventedControlle
 
         //Hook for modifying return value - e.g. for changing permissions based on object data
         //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
-        $returnValueContainer = new Model\Tool\Admin\EventDataContainer($objects);
-        \Pimcore::getEventManager()->trigger("admin.object.treeGetChildsById.preSendData", $this, ["returnValueContainer" => $returnValueContainer]);
+        $event = new GenericEvent($this, [
+            "objects" => $objects,
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::ASSET_GET_PRE_SEND_DATA, $event);
+        $objects = $event->getArgument("objects");
 
 
         if ($request->get("limit")) {
@@ -127,11 +132,11 @@ class ObjectController extends ElementControllerBase implements EventedControlle
                 "offset" => $offset,
                 "limit" => $limit,
                 "total" => $total,
-                "nodes" => $returnValueContainer->getData(),
+                "nodes" => $objects,
                 "fromPaging" => intval($request->get("fromPaging"))
             ]);
         } else {
-            return $this->json($returnValueContainer->getData());
+            return $this->json($objects);
         }
     }
 
@@ -392,13 +397,14 @@ class ObjectController extends ElementControllerBase implements EventedControlle
 
             //Hook for modifying return value - e.g. for changing permissions based on object data
             //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
-            $returnValueContainer = new Model\Tool\Admin\EventDataContainer($objectData);
-            \Pimcore::getEventManager()->trigger("admin.object.get.preSendData", $this, [
+            $event = new GenericEvent($this, [
+                "data" => $objectData,
                 "object" => $object,
-                "returnValueContainer" => $returnValueContainer
             ]);
+            \Pimcore::getEventDispatcher()->dispatch(AdminEvents::OBJECT_GET_PRE_SEND_DATA, $event);
+            $data = $event->getArgument("data");
 
-            return $this->json($returnValueContainer->getData());
+            return $this->json($data);
         } else {
             Logger::debug("prevented getting object id [ " . $object->getId() . " ] because of missing permissions");
             return $this->json(["success" => false, "message" => "missing_permission"]);

@@ -2,6 +2,7 @@
 
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin;
 
+use Pimcore\Event\AdminEvents;
 use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
@@ -9,6 +10,7 @@ use Pimcore\Model\Element;
 use Pimcore\Model\Redirect;
 use Pimcore\Tool;
 use Pimcore\Tool\Session;
+use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
@@ -65,14 +67,16 @@ class PageController extends DocumentControllerBase
 
         //Hook for modifying return value - e.g. for changing permissions based on object data
         //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
-        $returnValueContainer = new \Pimcore\Model\Tool\Admin\EventDataContainer(object2array($page));
-        \Pimcore::getEventManager()->trigger("admin.document.get.preSendData", $this, [
-            "document" => $page,
-            "returnValueContainer" => $returnValueContainer
+        $data = object2array($page);
+        $event = new GenericEvent($this, [
+            "data" => $data,
+            "document" => $page
         ]);
+        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::DOCUMENT_GET_PRE_SEND_DATA, $event);
+        $data = $event->getArgument("data");
 
         if ($page->isAllowed("view")) {
-            return $this->json($returnValueContainer->getData());
+            return $this->json($data);
         }
 
         return $this->json(false);

@@ -3,6 +3,7 @@
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\PimcoreBundle\Controller\EventedControllerInterface;
+use Pimcore\Event\AdminEvents;
 use Pimcore\Tool\Session;
 use Pimcore\Tool;
 use Pimcore\Config;
@@ -10,6 +11,7 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Version;
 use Pimcore\Model\Site;
 use Pimcore\Logger;
+use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -42,14 +44,16 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
         //Hook for modifying return value - e.g. for changing permissions based on object data
         //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
-        $returnValueContainer = new \Pimcore\Model\Tool\Admin\EventDataContainer(object2array($document));
-        \Pimcore::getEventManager()->trigger("admin.document.get.preSendData", $this, [
-            "document" => $document,
-            "returnValueContainer" => $returnValueContainer
+        $data = object2array($document);
+        $event = new GenericEvent($this, [
+            "data" => $data,
+            "document" => $document
         ]);
+        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::DOCUMENT_GET_PRE_SEND_DATA, $event);
+        $data = $event->getArgument("data");
 
         if ($document->isAllowed("view")) {
-            return $this->json($returnValueContainer->getData());
+            return $this->json($data);
         }
 
         return $this->json(["success" => false, "message" => "missing_permission"]);

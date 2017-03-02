@@ -2,9 +2,11 @@
 
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin;
 
+use Pimcore\Event\AdminEvents;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Logger;
+use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -48,14 +50,16 @@ class HardlinkController extends DocumentControllerBase
 
         //Hook for modifying return value - e.g. for changing permissions based on object data
         //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
-        $returnValueContainer = new \Pimcore\Model\Tool\Admin\EventDataContainer(object2array($link));
-        \Pimcore::getEventManager()->trigger("admin.document.get.preSendData", $this, [
-            "document" => $link,
-            "returnValueContainer" => $returnValueContainer
+        $data = object2array($link);
+        $event = new GenericEvent($this, [
+            "data" => $data,
+            "document" => $link
         ]);
+        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::DOCUMENT_GET_PRE_SEND_DATA, $event);
+        $data = $event->getArgument("data");
 
         if ($link->isAllowed("view")) {
-            return $this->json($returnValueContainer->getData());
+            return $this->json($data);
         }
 
         return $this->json(false);

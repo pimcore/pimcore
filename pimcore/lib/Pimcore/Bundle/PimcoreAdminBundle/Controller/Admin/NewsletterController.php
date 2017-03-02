@@ -2,11 +2,13 @@
 
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin;
 
+use Pimcore\Event\AdminEvents;
 use Pimcore\Model\Element;
 use Pimcore\Model\Document;
 use Pimcore\Model\Tool;
 use Pimcore\Model\Tool\Newsletter;
 use Pimcore\Logger;
+use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -52,14 +54,16 @@ class NewsletterController extends DocumentControllerBase
 
         //Hook for modifying return value - e.g. for changing permissions based on object data
         //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
-        $returnValueContainer = new \Pimcore\Model\Tool\Admin\EventDataContainer(object2array($email));
-        \Pimcore::getEventManager()->trigger("admin.document.get.preSendData", $this, [
-            "document" => $email,
-            "returnValueContainer" => $returnValueContainer
+        $data = object2array($email);
+        $event = new GenericEvent($this, [
+            "data" => $data,
+            "document" => $email
         ]);
+        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::DOCUMENT_GET_PRE_SEND_DATA, $event);
+        $data = $event->getArgument("data");
 
         if ($email->isAllowed("view")) {
-            return $this->json($returnValueContainer->getData());
+            return $this->json($data);
         }
 
         return $this->json(false);
