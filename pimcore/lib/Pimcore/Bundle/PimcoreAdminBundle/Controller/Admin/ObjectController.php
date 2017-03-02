@@ -123,7 +123,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
         $event = new GenericEvent($this, [
             "objects" => $objects,
         ]);
-        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::ASSET_GET_PRE_SEND_DATA, $event);
+        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::OBJECT_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA, $event);
         $objects = $event->getArgument("objects");
 
 

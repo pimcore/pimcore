@@ -130,7 +130,14 @@ final class AdminEvents
      */
     const OBJECT_GET_PRE_SEND_DATA = "pimcore.admin.object.get.preSendData";
 
-
+    /**
+     * Subject: \Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin\ObjectController
+     * Arguments:
+     *  - objects | array | the list of object tree nodes
+     *
+     * @Event("Pimcore\Event\Model\GenericEvent")
+     * @var string
+     */
     const OBJECT_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA = "pimcore.admin.object.treeGetChildsById.preSendData";
 
     /**
