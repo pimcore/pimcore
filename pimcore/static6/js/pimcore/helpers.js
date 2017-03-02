@@ -796,7 +796,7 @@ pimcore.helpers.itemselector = function (muliselect, callback, restrictions, con
 pimcore.helpers.activateMaintenance = function () {
 
     Ext.Ajax.request({
-        url: "/admin/misc/maintenance/activate/true"
+        url: "/admin/misc/maintenance?activate=true"
     });
 
     var button = Ext.get("pimcore_menu_maintenance");
@@ -808,7 +808,7 @@ pimcore.helpers.activateMaintenance = function () {
 pimcore.helpers.deactivateMaintenance = function () {
 
     Ext.Ajax.request({
-        url: "/admin/misc/maintenance/deactivate/true"
+        url: "/admin/misc/maintenance?deactivate=true"
     });
 
     var button = Ext.get("pimcore_menu_maintenance");

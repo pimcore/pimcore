@@ -591,8 +591,8 @@ $googleMapsApiKey = $this->config->services->google->browserapikey;
     <?php } ?>
 </script>
 
-<script type="text/javascript" src="/admin/misc/json-translations-system/language/<?= $language ?>?_dc=<?= \Pimcore\Version::$revision ?>"></script>
-<script type="text/javascript" src="/admin/misc/json-translations-admin/language/<?= $language ?>?_dc=<?= \Pimcore\Version::$revision ?>"></script>
+<script type="text/javascript" src="/admin/misc/json-translations-system?language=<?= $language ?>&_dc=<?= \Pimcore\Version::$revision ?>"></script>
+<script type="text/javascript" src="/admin/misc/json-translations-admin?language=<?= $language ?>&_dc=<?= \Pimcore\Version::$revision ?>"></script>
 <script type="text/javascript" src="<?= $view->router()->path('pimcore_admin_user_getcurrentuser') ?>?_dc=<?= \Pimcore\Version::$revision ?>"></script>
 <script type="text/javascript" src="/admin/misc/available-languages?_dc=<?= \Pimcore\Version::$revision ?>"></script>
 

@@ -203,8 +203,8 @@ class Editmode extends \Zend_Controller_Plugin_Abstract
         $user = \Pimcore\Tool\Authentication::authenticateSession();
         $lang = $user->getLanguage();
 
-        $editmodeHeadHtml .= '<script type="text/javascript" src="/admin/misc/json-translations-system/language/'.$lang.'/?_dc=' . Version::$revision . '"></script>'."\n";
-        $editmodeHeadHtml .= '<script type="text/javascript" src="/admin/misc/json-translations-admin/language/'.$lang.'/?_dc=' . Version::$revision . '"></script>'."\n";
+        $editmodeHeadHtml .= '<script type="text/javascript" src="/admin/misc/json-translations-system?language='.$lang.'&_dc=' . Version::$revision . '"></script>'."\n";
+        $editmodeHeadHtml .= '<script type="text/javascript" src="/admin/misc/json-translations-admin?language='.$lang.'&_dc=' . Version::$revision . '"></script>'."\n";
 
 
         $editmodeHeadHtml .= "\n\n";
