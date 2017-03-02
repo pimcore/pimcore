@@ -2,7 +2,6 @@
 
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin;
 
-use Pimcore\Bundle\PimcoreBundle\Configuration\TemplatePhp;
 use Pimcore\Bundle\PimcoreBundle\Controller\EventedControllerInterface;
 use Pimcore\Tool\Session;
 use Pimcore\Tool;

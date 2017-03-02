@@ -1,35 +1,36 @@
 <?php
-/**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in
- * LICENSE.md which is distributed with this source code.
- *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
- */
+
+namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin;
 
 use Pimcore\Model\Element;
 use Pimcore\Model\Document;
 use Pimcore\Logger;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
-class Admin_SnippetController extends \Pimcore\Controller\Action\Admin\Document
+/**
+ * @Route("/snippet")
+ */
+class SnippetController extends DocumentControllerBase
 {
-    public function getDataByIdAction()
-    {
 
+    /**
+     * @Route("/get-data-by-id")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getDataByIdAction(Request $request)
+    {
         // check for lock
-        if (Element\Editlock::isLocked($this->getParam("id"), "document")) {
-            $this->_helper->json([
-                "editlock" => Element\Editlock::getByElement($this->getParam("id"), "document")
+        if (Element\Editlock::isLocked($request->get("id"), "document")) {
+            return $this->json([
+                "editlock" => Element\Editlock::getByElement($request->get("id"), "document")
             ]);
         }
-        Element\Editlock::lock($this->getParam("id"), "document");
+        Element\Editlock::lock($request->get("id"), "document");
 
-        $snippet = Document\Snippet::getById($this->getParam("id"));
+        $snippet = Document\Snippet::getById($request->get("id"));
         $snippet = clone $snippet;
         $snippet = $this->getLatestVersion($snippet);
 
@@ -60,52 +61,57 @@ class Admin_SnippetController extends \Pimcore\Controller\Action\Admin\Document
         ]);
 
         if ($snippet->isAllowed("view")) {
-            $this->_helper->json($returnValueContainer->getData());
+            return $this->json($returnValueContainer->getData());
         }
 
-        $this->_helper->json(false);
+        return $this->json(false);
     }
 
-    public function saveAction()
+    /**
+     * @Route("/save")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function saveAction(Request $request)
     {
         try {
-            if ($this->getParam("id")) {
-                $snippet = Document\Snippet::getById($this->getParam("id"));
+            if ($request->get("id")) {
+                $snippet = Document\Snippet::getById($request->get("id"));
                 $snippet = $this->getLatestVersion($snippet);
 
                 $snippet->setUserModification($this->getUser()->getId());
 
-                if ($this->getParam("task") == "unpublish") {
+                if ($request->get("task") == "unpublish") {
                     $snippet->setPublished(false);
                 }
-                if ($this->getParam("task") == "publish") {
+                if ($request->get("task") == "publish") {
                     $snippet->setPublished(true);
                 }
 
 
-                if (($this->getParam("task") == "publish" && $snippet->isAllowed("publish")) or ($this->getParam("task") == "unpublish" && $snippet->isAllowed("unpublish"))) {
-                    $this->setValuesToDocument($snippet);
+                if (($request->get("task") == "publish" && $snippet->isAllowed("publish")) or ($request->get("task") == "unpublish" && $snippet->isAllowed("unpublish"))) {
+                    $this->setValuesToDocument($request, $snippet);
 
                     try {
                         $snippet->save();
                         $this->saveToSession($snippet);
-                        $this->_helper->json(["success" => true]);
+                        return $this->json(["success" => true]);
                     } catch (\Exception $e) {
                         if ($e instanceof Element\ValidationException) {
                             throw $e;
                         }
-                        $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
+                        return $this->json(["success" => false, "message" => $e->getMessage()]);
                     }
                 } else {
                     if ($snippet->isAllowed("save")) {
-                        $this->setValuesToDocument($snippet);
+                        $this->setValuesToDocument($request, $snippet);
 
                         try {
                             $snippet->saveVersion();
                             $this->saveToSession($snippet);
-                            $this->_helper->json(["success" => true]);
+                            return $this->json(["success" => true]);
                         } catch (\Exception $e) {
-                            $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
+                            return $this->json(["success" => false, "message" => $e->getMessage()]);
                         }
                     }
                 }
@@ -113,22 +119,23 @@ class Admin_SnippetController extends \Pimcore\Controller\Action\Admin\Document
         } catch (\Exception $e) {
             Logger::log($e);
             if ($e instanceof Element\ValidationException) {
-                $this->_helper->json(["success" => false, "type" => "ValidationException", "message" => $e->getMessage(), "stack" => $e->getTraceAsString(), "code" => $e->getCode()]);
+                return $this->json(["success" => false, "type" => "ValidationException", "message" => $e->getMessage(), "stack" => $e->getTraceAsString(), "code" => $e->getCode()]);
             }
             throw $e;
         }
 
-        $this->_helper->json(false);
+        return $this->json(false);
     }
 
     /**
+     * @param $request
      * @param Document $snippet
      */
-    protected function setValuesToDocument(Document $snippet)
+    protected function setValuesToDocument(Request $request, Document $snippet)
     {
-        $this->addSettingsToDocument($snippet);
-        $this->addDataToDocument($snippet);
-        $this->addSchedulerToDocument($snippet);
-        $this->addPropertiesToDocument($snippet);
+        $this->addSettingsToDocument($request, $snippet);
+        $this->addDataToDocument($request, $snippet);
+        $this->addSchedulerToDocument($request, $snippet);
+        $this->addPropertiesToDocument($request, $snippet);
     }
 }
