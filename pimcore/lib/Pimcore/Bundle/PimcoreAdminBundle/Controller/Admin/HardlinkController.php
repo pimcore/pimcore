@@ -1,35 +1,37 @@
 <?php
-/**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in
- * LICENSE.md which is distributed with this source code.
- *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
- */
+
+namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin;
 
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Logger;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
-class Admin_HardlinkController extends \Pimcore\Controller\Action\Admin\Document
+/**
+ * @Route("/hardlink")
+ */
+class HardlinkController extends DocumentControllerBase
 {
-    public function getDataByIdAction()
+
+    /**
+     * @Route("/get-data-by-id")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getDataByIdAction(Request $request)
     {
 
         // check for lock
-        if (Element\Editlock::isLocked($this->getParam("id"), "document")) {
-            $this->_helper->json([
-                "editlock" => Element\Editlock::getByElement($this->getParam("id"), "document")
+        if (Element\Editlock::isLocked($request->get("id"), "document")) {
+            return $this->json([
+                "editlock" => Element\Editlock::getByElement($request->get("id"), "document")
             ]);
         }
-        Element\Editlock::lock($this->getParam("id"), "document");
+        Element\Editlock::lock($request->get("id"), "document");
 
-        $link = Document\Hardlink::getById($this->getParam("id"));
+        $link = Document\Hardlink::getById($request->get("id"));
         $link = clone $link;
 
         $link->idPath = Element\Service::getIdPath($link);
@@ -53,56 +55,62 @@ class Admin_HardlinkController extends \Pimcore\Controller\Action\Admin\Document
         ]);
 
         if ($link->isAllowed("view")) {
-            $this->_helper->json($returnValueContainer->getData());
+            return $this->json($returnValueContainer->getData());
         }
 
-        $this->_helper->json(false);
+        return $this->json(false);
     }
 
-    public function saveAction()
+    /**
+     * @Route("/save")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function saveAction(Request $request)
     {
         try {
-            if ($this->getParam("id")) {
-                $link = Document\Hardlink::getById($this->getParam("id"));
-                $this->setValuesToDocument($link);
+            if ($request->get("id")) {
+                $link = Document\Hardlink::getById($request->get("id"));
+                $this->setValuesToDocument($request, $link);
 
                 $link->setModificationDate(time());
                 $link->setUserModification($this->getUser()->getId());
 
-                if ($this->getParam("task") == "unpublish") {
+                if ($request->get("task") == "unpublish") {
                     $link->setPublished(false);
                 }
-                if ($this->getParam("task") == "publish") {
+                if ($request->get("task") == "publish") {
                     $link->setPublished(true);
                 }
 
                 // only save when publish or unpublish
-                if (($this->getParam("task") == "publish" && $link->isAllowed("publish")) || ($this->getParam("task") == "unpublish" && $link->isAllowed("unpublish"))) {
+                if (($request->get("task") == "publish" && $link->isAllowed("publish")) || ($request->get("task") == "unpublish" && $link->isAllowed("unpublish"))) {
                     $link->save();
 
-                    $this->_helper->json(["success" => true]);
+                    return $this->json(["success" => true]);
                 }
             }
         } catch (\Exception $e) {
             Logger::log($e);
             if ($e instanceof Element\ValidationException) {
-                $this->_helper->json(["success" => false, "type" => "ValidationException", "message" => $e->getMessage(), "stack" => $e->getTraceAsString(), "code" => $e->getCode()]);
+                return $this->json(["success" => false, "type" => "ValidationException", "message" => $e->getMessage(), "stack" => $e->getTraceAsString(), "code" => $e->getCode()]);
             }
             throw $e;
         }
 
-        $this->_helper->json(false);
+        return $this->json(false);
     }
 
     /**
+     * @param Request $request
      * @param Document\Hardlink $link
      */
-    protected function setValuesToDocument(Document\Hardlink $link)
+    protected function setValuesToDocument(Request $request, Document $link)
     {
 
         // data
-        if ($this->getParam("data")) {
-            $data = \Zend_Json::decode($this->getParam("data"));
+        if ($request->get("data")) {
+            $data = $this->decodeJson($request->get("data"));
 
             $sourceId = null;
             if ($sourceDocument = Document::getByPath($data["sourcePath"])) {
@@ -112,6 +120,6 @@ class Admin_HardlinkController extends \Pimcore\Controller\Action\Admin\Document
             $link->setValues($data);
         }
 
-        $this->addPropertiesToDocument($link);
+        $this->addPropertiesToDocument($request, $link);
     }
 }
