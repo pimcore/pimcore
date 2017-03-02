@@ -16,6 +16,8 @@
 
 namespace Pimcore\Model\Object;
 
+use Pimcore\Event\Model\Object\ClassDefinitionEvent;
+use Pimcore\Event\ObjectClassDefinitionEvents;
 use Pimcore\Model;
 use Pimcore\Model\Object;
 use Pimcore\File;
@@ -252,9 +254,9 @@ class ClassDefinition extends Model\AbstractModel
         $isUpdate = false;
         if ($this->getId()) {
             $isUpdate = true;
-            \Pimcore::getEventManager()->trigger("object.class.preUpdate", $this);
+            \Pimcore::getEventDispatcher()->dispatch(ObjectClassDefinitionEvents::PRE_UPDATE, new ClassDefinitionEvent($this));
         } else {
-            \Pimcore::getEventManager()->trigger("object.class.preAdd", $this);
+            \Pimcore::getEventDispatcher()->dispatch(ObjectClassDefinitionEvents::PRE_ADD, new ClassDefinitionEvent($this));
         }
 
         $this->setModificationDate(time());
@@ -434,9 +436,9 @@ class ClassDefinition extends Model\AbstractModel
         }
 
         if ($isUpdate) {
-            \Pimcore::getEventManager()->trigger("object.class.postUpdate", $this);
+            \Pimcore::getEventDispatcher()->dispatch(ObjectClassDefinitionEvents::POST_UPDATE, new ClassDefinitionEvent($this));
         } else {
-            \Pimcore::getEventManager()->trigger("object.class.postAdd", $this);
+            \Pimcore::getEventDispatcher()->dispatch(ObjectClassDefinitionEvents::POST_ADD, new ClassDefinitionEvent($this));
         }
     }
 
@@ -500,7 +502,7 @@ class ClassDefinition extends Model\AbstractModel
 
     public function delete()
     {
-        \Pimcore::getEventManager()->trigger("object.class.preDelete", $this);
+        \Pimcore::getEventDispatcher()->dispatch(ObjectClassDefinitionEvents::PRE_DELETE, new ClassDefinitionEvent($this));
 
         // delete all objects using this class
         $list = new Listing();
@@ -556,7 +558,7 @@ class ClassDefinition extends Model\AbstractModel
 
         $this->getDao()->delete();
 
-        \Pimcore::getEventManager()->trigger("object.class.postDelete", $this);
+        \Pimcore::getEventDispatcher()->dispatch(ObjectClassDefinitionEvents::POST_DELETE, new ClassDefinitionEvent($this));
     }
 
     /**
