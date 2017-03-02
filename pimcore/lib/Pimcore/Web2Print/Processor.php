@@ -15,6 +15,8 @@
 namespace Pimcore\Web2Print;
 
 use Pimcore\Config;
+use Pimcore\Event\DocumentEvents;
+use Pimcore\Event\Element\DocumentEvent;
 use \Pimcore\Tool;
 use \Pimcore\Model;
 use \Pimcore\Model\Document;
@@ -93,17 +95,17 @@ abstract class Processor
         Model\Tool\Lock::acquire($document->getLockKey(), 0);
 
         try {
-            \Pimcore::getEventManager()->trigger("document.print.prePdfGeneration", $document, [
-                "processor" => $this // can be used to inject dynamicaly generation options for instance
-            ]);
+            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRINT_PRE_PDF_GENERATION, new DocumentEvent($document, [
+                "processor" => $this
+            ]));
 
             $pdf = $this->buildPdf($document, $jobConfigFile->config);
             file_put_contents($document->getPdfFileName(), $pdf);
 
-            \Pimcore::getEventManager()->trigger("document.print.postPdfGeneration", $document, [
+            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRINT_POST_PDF_GENERATION, new DocumentEvent($document, [
                 "filename" => $document->getPdfFileName(),
                 "pdf" => $pdf
-            ]);
+            ]));
 
             $document->setLastGenerated((time() + 1));
             $document->save();

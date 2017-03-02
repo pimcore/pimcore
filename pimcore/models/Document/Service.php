@@ -16,6 +16,8 @@
 
 namespace Pimcore\Model\Document;
 
+use Pimcore\Event\DocumentEvents;
+use Pimcore\Event\Element\DocumentEvent;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
@@ -152,9 +154,10 @@ class Service extends Model\Element\Service
         $this->updateChilds($target, $new);
 
         // triggers actions after the complete document cloning
-        \Pimcore::getEventManager()->trigger('document.postCopy', $new, [
+        \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_COPY, new DocumentEvent($new, [
             'base_element' => $source // the element used to make a copy
-        ]);
+        ]));
+
 
         return $new;
     }
@@ -205,9 +208,9 @@ class Service extends Model\Element\Service
         $this->updateChilds($target, $new);
 
         // triggers actions after the complete document cloning
-        \Pimcore::getEventManager()->trigger('document.postCopy', $new, [
+        \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_COPY, new DocumentEvent($new, [
             'base_element' => $source // the element used to make a copy
-        ]);
+        ]));
 
         return $new;
     }

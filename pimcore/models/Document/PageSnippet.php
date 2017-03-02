@@ -16,6 +16,8 @@
 
 namespace Pimcore\Model\Document;
 
+use Pimcore\Event\DocumentEvents;
+use Pimcore\Event\Element\DocumentEvent;
 use Pimcore\Model;
 use Pimcore\Config;
 use Pimcore\Model\Document;
@@ -122,9 +124,9 @@ abstract class PageSnippet extends Model\Document
 
         // hook should be also called if "save only new version" is selected
         if ($callPluginHook) {
-            \Pimcore::getEventManager()->trigger("document.preUpdate", $this, [
+            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRE_UPDATE, new DocumentEvent($this, [
                 "saveVersionOnly" => true
-            ]);
+            ]));
         }
 
         // set date
@@ -154,9 +156,9 @@ abstract class PageSnippet extends Model\Document
 
         // hook should be also called if "save only new version" is selected
         if ($callPluginHook) {
-            \Pimcore::getEventManager()->trigger("document.postUpdate", $this, [
+            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_UPDATE, new DocumentEvent($this, [
                 "saveVersionOnly" => true
-            ]);
+            ]));
         }
 
         return $version;

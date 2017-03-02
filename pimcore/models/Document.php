@@ -17,6 +17,8 @@
 
 namespace Pimcore\Model;
 
+use Pimcore\Event\DocumentEvents;
+use Pimcore\Event\Element\DocumentEvent;
 use Pimcore\Model\Document\Listing;
 use Pimcore\Model\Element;
 use Pimcore\Tool;
@@ -384,9 +386,9 @@ class Document extends Element\AbstractElement
         $isUpdate = false;
         if ($this->getId()) {
             $isUpdate = true;
-            \Pimcore::getEventManager()->trigger("document.preUpdate", $this);
+            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRE_UPDATE, new DocumentEvent($this));
         } else {
-            \Pimcore::getEventManager()->trigger("document.preAdd", $this);
+            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRE_ADD, new DocumentEvent($this));
         }
 
         $this->correctPath();
@@ -463,9 +465,9 @@ class Document extends Element\AbstractElement
         $this->clearDependentCache($additionalTags);
 
         if ($isUpdate) {
-            \Pimcore::getEventManager()->trigger("document.postUpdate", $this);
+            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_UPDATE, new DocumentEvent($this));
         } else {
-            \Pimcore::getEventManager()->trigger("document.postAdd", $this);
+            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_ADD, new DocumentEvent($this));
         }
 
         return $this;
@@ -747,7 +749,7 @@ class Document extends Element\AbstractElement
      */
     public function delete()
     {
-        \Pimcore::getEventManager()->trigger("document.preDelete", $this);
+        \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRE_DELETE, new DocumentEvent($this));
 
         // remove childs
         if ($this->hasChilds()) {
@@ -782,7 +784,7 @@ class Document extends Element\AbstractElement
         //set object to registry
         \Pimcore\Cache\Runtime::set("document_" . $this->getId(), null);
 
-        \Pimcore::getEventManager()->trigger("document.postDelete", $this);
+        \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_DELETE, new DocumentEvent($this));
     }
 
     /**
