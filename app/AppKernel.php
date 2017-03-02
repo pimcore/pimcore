@@ -9,7 +9,8 @@ class AppKernel extends Kernel
     {
         $bundles = array_merge(parent::registerBundles(), [
             new \AppBundle\AppBundle(),
-            new \WebsiteDemoBundle\WebsiteDemoBundle()
+            new \WebsiteDemoBundle\WebsiteDemoBundle(),
+            new \PimcoreLegacyBundle\PimcoreLegacyBundle()
         ]);
 
         return $bundles;

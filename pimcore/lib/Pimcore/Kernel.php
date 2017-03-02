@@ -42,7 +42,6 @@ abstract class Kernel extends \Symfony\Component\HttpKernel\Kernel
             // pimcore bundles
             new PimcoreBundle(),
             new PimcoreAdminBundle(),
-            new PimcoreLegacyBundle()
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {
