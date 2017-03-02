@@ -44,6 +44,8 @@ namespace Pimcore\Bundle\PimcoreBundle\Templating\Helper;
 use Pimcore\Bundle\PimcoreBundle\Templating\Helper\Placeholder\CacheBusterAware;
 use Pimcore\Bundle\PimcoreBundle\Templating\Helper\Placeholder\Container;
 use Pimcore\Bundle\PimcoreBundle\Templating\Helper\Placeholder\ContainerService;
+use Pimcore\Event\FrontendEvents;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
  * HeadLink
@@ -361,9 +363,9 @@ class HeadLink extends CacheBusterAware
                 }
             }
 
-            \Pimcore::getEventManager()->trigger("frontend.view.helper.head-link", $this, [
+            \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::VIEW_HELPER_HEAD_LINK, new GenericEvent($this, [
                 "item" => $item
-            ]);
+            ]));
         }
     }
 

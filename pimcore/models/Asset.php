@@ -17,6 +17,7 @@
 namespace Pimcore\Model;
 
 use Pimcore\Event\AssetEvents;
+use Pimcore\Event\FrontendEvents;
 use Pimcore\Event\Model\AssetEvent;
 use Pimcore\Tool;
 use Pimcore\Tool\Mime;
@@ -25,6 +26,7 @@ use Pimcore\Config;
 use Pimcore\Model;
 use Pimcore\Model\Element;
 use Pimcore\Logger;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
  * @method \Pimcore\Model\Asset\Dao getDao()
@@ -799,10 +801,12 @@ class Asset extends Element\AbstractElement
 
         if (\Pimcore\Tool::isFrontend()) {
             $path = urlencode_ignore_slash($path);
-            $results = \Pimcore::getEventManager()->trigger("frontend.path.asset", $this);
-            if ($results->count()) {
-                $path = $results->last();
-            }
+
+            $event = new GenericEvent($this, [
+                "frontendPath" => $path
+            ]);
+            \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::ASSET_PATH, $event);
+            $path = $event->getArgument("frontendPath");
         }
 
         return $path;

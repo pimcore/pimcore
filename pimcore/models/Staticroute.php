@@ -16,7 +16,9 @@
 
 namespace Pimcore\Model;
 
+use Pimcore\Event\FrontendEvents;
 use Pimcore\Logger;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
  * @method \Pimcore\Model\Staticroute\Dao getDao()
@@ -633,16 +635,14 @@ class Staticroute extends AbstractModel
         // convert tmp urlencode escape char back to real escape char
         $url = str_replace($urlEncodeEscapeCharacters, "%", $url);
 
-
-        $results = \Pimcore::getEventManager()->trigger("frontend.path.staticroute", $this, [
+        $event = new GenericEvent($this, [
             "frontendPath" => $url,
             "params" => $urlParams,
             "reset" => $reset,
             "encode" => $encode
         ]);
-        if ($results->count()) {
-            $url = $results->last();
-        }
+        \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::STATICROUTE_PATH, $event);
+        $url = $event->getArgument("frontendPath");
 
         return $url;
     }

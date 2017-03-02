@@ -44,6 +44,7 @@ namespace Pimcore\Bundle\PimcoreBundle\Templating\Helper;
 use Pimcore\Bundle\PimcoreBundle\Templating\Helper\Placeholder\CacheBusterAware;
 use Pimcore\Bundle\PimcoreBundle\Templating\Helper\Placeholder\Container;
 use Pimcore\Bundle\PimcoreBundle\Templating\Helper\Placeholder\ContainerService;
+use Pimcore\Event\FrontendEvents;
 
 /**
  * Helper for setting and retrieving script elements for HTML head section
@@ -534,9 +535,9 @@ class HeadScript extends CacheBusterAware
                 }
             }
 
-            \Pimcore::getEventManager()->trigger("frontend.view.helper.head-script", $this, [
+            \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::VIEW_HELPER_HEAD_SCRIPT, new GenericEvent($this, [
                 "item" => $item
-            ]);
+            ]));
         }
     }
 

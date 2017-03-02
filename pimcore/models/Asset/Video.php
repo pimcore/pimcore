@@ -16,9 +16,11 @@
 
 namespace Pimcore\Model\Asset;
 
+use Pimcore\Event\FrontendEvents;
 use Pimcore\File;
 use Pimcore\Model;
 use Pimcore\Logger;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
  * @method \Pimcore\Model\Asset\Dao getDao()
@@ -118,14 +120,12 @@ class Video extends Model\Asset
                         $path = str_replace(PIMCORE_WEB_ROOT, "", $fullPath);
                         $path = urlencode_ignore_slash($path);
 
-                        $results = \Pimcore::getEventManager()->trigger("frontend.path.asset.video.thumbnail", $this, [
+                        $event = new GenericEvent($this, [
                             "filesystemPath" => $fullPath,
                             "frontendPath" => $path
                         ]);
-
-                        if ($results->count()) {
-                            $path = $results->last();
-                        }
+                        \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::ASSET_VIDEO_THUMBNAIL, $event);
+                        $path = $event->getArgument("frontendPath");
                     }
 
                     return $customSetting[$thumbnail->getName()];

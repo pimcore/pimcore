@@ -9,14 +9,12 @@ if(\Pimcore\Document::isAvailable() && \Pimcore\Document::isFileTypeSupported($t
         $pdfFsPath = $document->getPdf($this->asset->getFileSystemPath());
         $pdfPath = str_replace(PIMCORE_WEB_ROOT, "", $pdfFsPath);
 
-        $results = \Pimcore::getEventManager()->trigger("frontend.path.asset.document.image-thumbnail", $this, [
+        $event = new \Symfony\Component\EventDispatcher\GenericEvent($this, [
             "filesystemPath" => $pdfFsPath,
             "frontendPath" => $pdfPath
         ]);
-
-        if($results->count()) {
-            $pdfPath = $results->last();
-        }
+        \Pimcore::getEventDispatcher()->dispatch(\Pimcore\Event\FrontendEvents::ASSET_DOCUMENT_IMAGE_THUMBNAIL, $event);
+        $pdfPath = $event->getArgument("frontendPath");
 
     } catch (\Exception $e) {
         // nothing to do

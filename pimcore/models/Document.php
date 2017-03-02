@@ -18,12 +18,14 @@
 namespace Pimcore\Model;
 
 use Pimcore\Event\DocumentEvents;
+use Pimcore\Event\FrontendEvents;
 use Pimcore\Event\Model\DocumentEvent;
 use Pimcore\Model\Document\Listing;
 use Pimcore\Model\Element;
 use Pimcore\Tool;
 use Pimcore\Tool\Frontend as FrontendTool;
 use Pimcore\Logger;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
  * @method \Pimcore\Model\Document\Dao getDao()
@@ -885,12 +887,12 @@ class Document extends Element\AbstractElement
     {
         if (\Pimcore\Tool::isFrontend()) {
             $path = urlencode_ignore_slash($path);
-            $results = \Pimcore::getEventManager()->trigger("frontend.path.document", $this, [
+
+            $event = new GenericEvent($this, [
                 "frontendPath" => $path
             ]);
-            if ($results->count()) {
-                $path = $results->last();
-            }
+            \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::DOCUMENT_PATH, $event);
+            $path = $event->getArgument("frontendPath");
         }
 
         return $path;

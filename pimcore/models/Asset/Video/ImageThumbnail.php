@@ -17,6 +17,7 @@
 namespace Pimcore\Model\Asset\Video;
 
 use Pimcore\Event\AssetEvents;
+use Pimcore\Event\FrontendEvents;
 use Pimcore\Model\Asset\Image;
 use Pimcore\Model;
 use Pimcore\File;
@@ -95,14 +96,12 @@ class ImageThumbnail
         $path = str_replace(PIMCORE_WEB_ROOT, "", $fsPath);
         $path = urlencode_ignore_slash($path);
 
-        $results = \Pimcore::getEventManager()->trigger("frontend.path.asset.video.image-thumbnail", $this, [
+        $event = new GenericEvent($this, [
             "filesystemPath" => $fsPath,
             "frontendPath" => $path
         ]);
-
-        if ($results->count()) {
-            $path = $results->last();
-        }
+        \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::ASSET_VIDEO_IMAGE_THUMBNAIL, $event);
+        $path = $event->getArgument("frontendPath");
 
         return $path;
     }
