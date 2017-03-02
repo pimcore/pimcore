@@ -1,43 +1,57 @@
 <?php
-/**
- * Created by IntelliJ IDEA.
- * User: josef.aichhorn@elements.at
- * Date: 11.11.2013
- */
 
+namespace Pimcore\Tests\Model\Datatype\Datatype;
 
-class TestSuite_Datatypes_LocalizedFieldTest extends Test_Base
+use Pimcore\Model\Object\Localizedfield;
+use Pimcore\Tests\Test\ModelTestCase;
+use Pimcore\Tests\Util\TestHelper;
+
+class LocalizedFieldTest extends ModelTestCase
 {
-    public function tearDown()
+    protected function setUpTestClasses()
     {
-        \Pimcore\Model\Object\Localizedfield::setStrictMode(Pimcore\Model\Object\Localizedfield::STRICT_DISABLED);
+        $this->tester->setupUnittestClass();
     }
 
+    public function tearDown()
+    {
+        Localizedfield::setStrictMode(Localizedfield::STRICT_DISABLED);
+    }
 
     public function testStrictMode()
     {
-        $this->printTestName();
-        $object = Test_Tool::createEmptyObject();
-        try {
-            $object->setLinput("Test");
-            $object->setLinput("Test", "ko");
-        } catch (Exception $e) {
-            $this->fail("Did not expect an exception");
-        }
+        $object = TestHelper::createEmptyObject();
 
-        \Pimcore\Model\Object\Localizedfield::setStrictMode(Pimcore\Model\Object\Localizedfield::STRICT_ENABLED);
+        $object->setLinput("Test");
+        $this->assertEquals("Test", $object->getLinput());
 
-        try {
-            $object->setLinput("Test");
-            $this->fail("Expected an exception");
-        } catch (Exception $e) {
-        }
+        $object->setLinput("TestKo", "ko");
+        $this->assertEquals("TestKo", $object->getLinput("ko"));
+    }
 
+    /**
+     * @expectedException \Exception
+     * @expectedExceptionMessage Language  not accepted in strict mode
+     */
+    public function testExceptionInStrictMode()
+    {
+        $object = TestHelper::createEmptyObject();
 
-        try {
-            $object->setLinput("Test", "ko");
-            $this->fail("Expected an exception");
-        } catch (Exception $e) {
-        }
+        Localizedfield::setStrictMode(Localizedfield::STRICT_ENABLED);
+
+        $object->setLinput("Test");
+    }
+
+    /**
+     * @expectedException \Exception
+     * @expectedExceptionMessage Language ko not accepted in strict mode
+     */
+    public function testExceptionWithLocaleInStrictMode()
+    {
+        $object = TestHelper::createEmptyObject();
+
+        Localizedfield::setStrictMode(Localizedfield::STRICT_ENABLED);
+
+        $object->setLinput("Test", "ko");
     }
 }

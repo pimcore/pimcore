@@ -7,7 +7,7 @@ use Pimcore\Model\Object\ClassDefinition\Data\Classificationstore as Classificat
 use Pimcore\Model\Object\Classificationstore;
 use Pimcore\Tests\Test\ModelTestCase;
 
-class AbstractClassificationStoreTest extends ModelTestCase
+abstract class AbstractClassificationStoreTest extends ModelTestCase
 {
     /**
      * @inheritDoc

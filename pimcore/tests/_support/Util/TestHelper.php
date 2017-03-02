@@ -5,9 +5,10 @@ namespace Pimcore\Tests\Util;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\Object as ObjectModel;
+use Pimcore\Model\Object\Unittest;
 use Pimcore\Model\User;
 use Pimcore\Model\Webservice\Tool as WebserviceTool;
-use Pimcore\Model\Object as ObjectModel;
 
 class TestHelper
 {
