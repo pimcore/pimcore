@@ -27,7 +27,7 @@ use Pimcore\Logger;
  * @method array getValidTableColumns(string $table, bool $cache)
  * @method void resetValidTableColumnsCache(string $table)
  */
-abstract class AbstractModel implements \JsonSerializable
+abstract class AbstractModel
 {
 
     /**
@@ -243,19 +243,6 @@ abstract class AbstractModel implements \JsonSerializable
         }
 
         return $finalVars;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function jsonSerialize()
-    {
-        $data = [];
-        foreach ($this->__sleep() as $var) {
-            $data[$var] = $this->$var;
-        }
-
-        return $data;
     }
 
     /**
