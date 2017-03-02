@@ -10,6 +10,7 @@ use Pimcore\Tool\Session;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\Translation\Exception\InvalidArgumentException;
 
 abstract class AdminController extends Controller implements AdminControllerInterface
 {
@@ -159,8 +160,10 @@ abstract class AdminController extends Controller implements AdminControllerInte
      *
      * @throws InvalidArgumentException If the locale contains invalid characters
      */
-    public function trans($id, array $parameters = array(), $domain = null, $locale = null) {
-        $translator = $this->get("translator");
-        return $translator->trans($id, $parameters, "admin", $locale);
+    public function trans($id, array $parameters = [], $domain = 'admin', $locale = null)
+    {
+        $translator = $this->get('translator');
+
+        return $translator->trans($id, $parameters, $domain, $locale);
     }
 }
