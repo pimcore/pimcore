@@ -3,7 +3,6 @@
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminController;
-use Pimcore\Controller\Action\Helper\Json;
 use Pimcore\Tool;
 use Pimcore\File;
 use Pimcore\Db;
