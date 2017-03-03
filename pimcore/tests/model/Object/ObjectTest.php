@@ -9,6 +9,9 @@ class ObjectTest extends ModelTestCase
 {
     /**
      * Verifies that a object with the same parent ID cannot be created.
+     *
+     * @expectedException \Exception
+     * @expectedExceptionMessage ParentID and ID is identical, an element can't be the parent of itself.
      */
     public function testParentIdentical()
     {
@@ -16,15 +19,14 @@ class ObjectTest extends ModelTestCase
         $this->assertTrue($savedObject->getId() > 0);
 
         $savedObject->setParentId($savedObject->getId());
-        try {
-            $savedObject->save();
-            $this->fail("Expected an exception");
-        } catch (\Exception $e) {
-        }
+        $savedObject->save();
     }
 
     /**
      * Parent ID of a new object cannot be 0
+     *
+     * @expectedException \Exception
+     * @expectedExceptionMessage ParentID and ID is identical, an element can't be the parent of itself.
      */
     public function testParentIs0()
     {
@@ -32,10 +34,6 @@ class ObjectTest extends ModelTestCase
         $this->assertTrue($savedObject->getId() == 0);
 
         $savedObject->setParentId(0);
-        try {
-            $savedObject->save();
-            $this->fail("Expected an exception");
-        } catch (\Exception $e) {
-        }
+        $savedObject->save();
     }
 }
