@@ -300,10 +300,6 @@ class Service extends Model\Element\Service
                     // some of the not editable field require a special response
 
                     $getter = "get".ucfirst($key);
-                    $brickGetter = null;
-                    if (!empty($brickKey)) {
-                        $brickGetter = "get".ucfirst($brickKey);
-                    }
 
                     $needLocalizedPermissions = false;
 
