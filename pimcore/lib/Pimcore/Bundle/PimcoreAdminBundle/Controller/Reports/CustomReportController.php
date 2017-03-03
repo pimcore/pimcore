@@ -89,7 +89,7 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
     public function updateAction(Request $request)
     {
         $report = CustomReport\Config::getByName($request->get("name"));
-        $data = \Zend_Json::decode($request->get("configuration"));
+        $data = $this->decodeJson($request->get("configuration"));
 
         if (!is_array($data["yAxis"])) {
             $data["yAxis"] = strlen($data["yAxis"]) ? [$data["yAxis"]] : [];

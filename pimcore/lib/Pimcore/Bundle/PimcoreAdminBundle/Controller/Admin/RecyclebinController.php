@@ -52,7 +52,7 @@ class RecyclebinController extends AdminController implements EventedControllerI
 
             $filters = $request->get("filter");
             if ($filters) {
-                $filters = \Zend_Json::decode($filters);
+                $filters = $this->decodeJson($filters);
 
                 foreach ($filters as $filter) {
                     $operator = "=";

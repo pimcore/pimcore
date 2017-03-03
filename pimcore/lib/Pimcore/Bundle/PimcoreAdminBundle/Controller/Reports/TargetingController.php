@@ -99,7 +99,7 @@ class TargetingController extends AdminController implements EventedControllerIn
      */
     public function ruleSaveAction(Request $request)
     {
-        $data = \Zend_Json::decode($request->get("data"));
+        $data = $this->decodeJson($request->get("data"));
 
         $target = Targeting\Rule::getById($request->get("id"));
         $target->setValues($data["settings"]);
@@ -202,7 +202,7 @@ class TargetingController extends AdminController implements EventedControllerIn
      */
     public function personaSaveAction(Request $request)
     {
-        $data = \Zend_Json::decode($request->get("data"));
+        $data = $this->decodeJson($request->get("data"));
 
         $persona = Targeting\Persona::getById($request->get("id"));
         $persona->setValues($data["settings"]);

@@ -233,7 +233,7 @@ class EmailController extends DocumentControllerBase
             return new Response($emailLog->getHtmlLog());
         } elseif ($request->get('type') == 'params') {
             try {
-                $params = \Zend_Json::decode($emailLog->getParams());
+                $params = $this->decodeJson($emailLog->getParams());
             } catch (\Exception $e) {
                 Logger::warning("Could not decode JSON param string");
                 $params = [];
@@ -446,7 +446,7 @@ class EmailController extends DocumentControllerBase
         }
 
         if ($request->get("data")) {
-            $data = \Zend_Json::decode($request->get("data"));
+            $data = $this->decodeJson($request->get("data"));
 
             if (is_array($data)) {
                 foreach ($data as &$value) {

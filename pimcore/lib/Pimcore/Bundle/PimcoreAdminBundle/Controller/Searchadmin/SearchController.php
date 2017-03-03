@@ -156,7 +156,7 @@ class SearchController extends AdminController
             $class = Object\ClassDefinition::getByName($allParams["class"]);
 
             // add Localized Fields filtering
-            $params = \Zend_Json::decode($allParams['filter']);
+            $params = $this->decodeJson($allParams['filter']);
             $unlocalizedFieldsFilters = [];
             $localizedFieldsFilters = [];
 
