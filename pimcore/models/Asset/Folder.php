@@ -34,7 +34,7 @@ class Folder extends Model\Asset
      * set the children of the document
      *
      * @param $children
-     * @return array
+     * @return Folder
      */
     public function setChildren($children)
     {
