@@ -137,6 +137,7 @@ class Localizedfield extends Model\AbstractModel
     /**
      * @param Concrete $object
      * @return $this
+     * @throws \Exception
      */
     public function setObject($object)
     {
@@ -307,6 +308,7 @@ class Localizedfield extends Model\AbstractModel
      * @param $value
      * @param null $language
      * @return $this
+     * @throws \Exception
      */
     public function setLocalizedValue($name, $value, $language = null)
     {

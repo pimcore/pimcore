@@ -61,8 +61,9 @@ class Service extends Model\AbstractModel
 
     /**
      * @static
-     * @param  $element
+     * @param $element
      * @return string
+     * @throws \Exception
      */
     public static function getTypePath($element)
     {

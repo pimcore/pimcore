@@ -357,6 +357,7 @@ class QuantityValue extends Model\Object\ClassDefinition\Data
      * @param mixed $params
      * @param $idMapper
      * @return mixed
+     * @throws \Exception
      */
     public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
     {

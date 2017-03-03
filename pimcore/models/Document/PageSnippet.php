@@ -405,6 +405,8 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @param int|null $contentMasterDocumentId
+     * @return $this
+     * @throws \Exception
      */
     public function setContentMasterDocumentId($contentMasterDocumentId)
     {

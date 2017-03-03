@@ -1060,6 +1060,7 @@ abstract class Data
      * @param $object
      * @param array $params
      * @return mixed
+     * @throws \Exception
      */
     protected function getDataFromObjectParam($object, $params = [])
     {

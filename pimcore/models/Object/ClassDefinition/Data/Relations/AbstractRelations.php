@@ -20,7 +20,6 @@ use Pimcore\Model;
 use Pimcore\Model\Object;
 use Pimcore\Model\Element;
 use Pimcore\Db;
-use Pimcore\Tool\Admin;
 use Pimcore\Logger;
 
 abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
