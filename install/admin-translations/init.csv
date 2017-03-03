@@ -1,6 +1,6 @@
 "key";"creationDate";"modificationDate";"de";"de_AT";"en";"en_GB";"fr_FR"
 "plugin_onlineshop_voucherservice_apply-filter-button";1432278859;1432279698;"Filter anwenden";"";"Apply filter";"";""
-"plugin_onlineshop_voucherservice_assign-config";1432279837;1432280179;"Konfiguraiton anwenden";"";"Assign Configurations";"";""
+"plugin_onlineshop_voucherservice_assign-config";1432279837;1432280179;"Konfiguration anwenden";"";"Assign Configurations";"";""
 "plugin_onlineshop_voucherservice_cleanup-button";1432278733;1432279686;"Tokens aufräumen";"";"Cleanup";"";""
 "plugin_onlineshop_voucherservice_cleanup-reservations-button";1432278872;1432279655;"Reservierungen aufheben";"";"Cleanup Reservations";"";""
 "plugin_onlineshop_voucherservice_export-button";1432278742;1432279638;"CSV Export";"";"Export CSV";"";""
