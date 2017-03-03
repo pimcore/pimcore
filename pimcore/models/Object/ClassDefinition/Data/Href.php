@@ -528,7 +528,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     /**
      * @param $object
      * @param array $params
-     * @return null|AbstractData|Object\Concrete|Object\Objectbrick\Data\
+     * @return null|Object\Fieldcollection\Data\AbstractData|Object\Concrete|Object\Objectbrick\Data\
      */
     public function preGetData($object, $params = [])
     {

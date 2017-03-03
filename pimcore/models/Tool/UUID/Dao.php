@@ -55,7 +55,7 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * @param $uuid
-     * @return Tool\UUID
+     * @return Model\Tool\UUID
      */
     public function getByUuid($uuid)
     {

@@ -32,7 +32,7 @@ class Service extends Model\Element\Service
 {
 
     /**
-     * @var User
+     * @var Model\User
      */
     protected $_user;
     /**

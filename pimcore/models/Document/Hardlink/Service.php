@@ -26,7 +26,7 @@ class Service
     /**
      * @param Document $doc
      * @return Document
-     * @throws Model\Exception
+     * @throws \Exception
      */
     public static function wrap(Document $doc)
     {

@@ -210,7 +210,7 @@ class Log extends Model\AbstractModel
      *
      * @static
      * @param integer $id
-     * @return EmailLog|null
+     * @return Log|null
      */
     public static function getById($id)
     {
