@@ -390,6 +390,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
      * @Route("/update")
      * @param Request $request
      * @return JsonResponse
+     * @throws \Exception
      */
     public function updateAction(Request $request)
     {
