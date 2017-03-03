@@ -58,7 +58,7 @@ class File extends DAV\File
             $user = AdminTool::getCurrentUser();
             $this->asset->setUserModification($user->getId());
 
-            $this->asset->setFilename(Element\Service::getValidKey($name), "asset");
+            $this->asset->setFilename(Element\Service::getValidKey($name, "asset"));
             $this->asset->save();
         } else {
             throw new DAV\Exception\Forbidden();
