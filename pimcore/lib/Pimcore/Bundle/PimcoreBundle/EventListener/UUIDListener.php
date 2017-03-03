@@ -48,10 +48,12 @@ class UUIDListener implements EventSubscriberInterface {
      */
     public function onPostAdd(Event $e) {
 
-        $element = $this->extractElement($e);
+        if($this->isEnabled()) {
+            $element = $this->extractElement($e);
 
-        if($element) {
-            \Pimcore\Model\Tool\UUID::create($element);
+            if ($element) {
+                \Pimcore\Model\Tool\UUID::create($element);
+            }
         }
     }
 
@@ -60,14 +62,29 @@ class UUIDListener implements EventSubscriberInterface {
      */
     public function onPostDelete(Event $e) {
 
-        $element = $this->extractElement($e);
+        if($this->isEnabled()) {
+            $element = $this->extractElement($e);
 
-        if($element) {
-            $uuidObject = \Pimcore\Model\Tool\UUID::getByItem($element);
-            if ($uuidObject instanceof \Pimcore\Model\Tool\UUID) {
-                $uuidObject->delete();
+            if ($element) {
+                $uuidObject = \Pimcore\Model\Tool\UUID::getByItem($element);
+                if ($uuidObject instanceof \Pimcore\Model\Tool\UUID) {
+                    $uuidObject->delete();
+                }
             }
         }
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isEnabled() {
+
+        $conf = \Pimcore\Config::getSystemConfig();
+        if ($conf->general->instanceIdentifier) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
