@@ -770,14 +770,6 @@ pimcore.layout.toolbar = Class.create({
                         });
                     }
 
-                    if (perspectiveCfg.inToolbar("settings.objects.keyValue")) {
-                        objectMenu.menu.items.push({
-                            text: t("keyvalue_menu_config"),
-                            iconCls: "pimcore_icon_key",
-                            handler: this.keyValueSettings
-                        });
-                    }
-
                     if (perspectiveCfg.inToolbar("settings.objects.classificationstore")) {
                         objectMenu.menu.items.push({
                             text: t("classificationstore_menu_config"),
@@ -1350,15 +1342,6 @@ pimcore.layout.toolbar = Class.create({
         }
         catch (e) {
             pimcore.globalmanager.add("settings_web2print", new pimcore.settings.web2print());
-        }
-    },
-
-    keyValueSettings: function () {
-        try {
-            pimcore.globalmanager.get("keyvalue_config").activate();
-        }
-        catch (e) {
-            pimcore.globalmanager.add("keyvalue_config", new pimcore.object.keyvalue.configpanel());
         }
     },
 

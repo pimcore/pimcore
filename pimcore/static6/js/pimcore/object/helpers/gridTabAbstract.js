@@ -192,19 +192,6 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
         }
 
         var tagType = fieldInfo.layout.type;
-        if (tagType == "keyValue") {
-            var gridType = fieldInfo.layout.layout.gridType;
-            if (gridType == "select") {
-                tagType ="select";
-            } else if (gridType == "number") {
-                tagType = "numeric";
-            } else if (gridType == "bool") {
-                tagType = "checkbox";
-            }  else {
-                tagType ="input";
-            }
-        }
-
         var editor = new pimcore.object.tags[tagType](null, fieldInfo.layout.layout);
         var formPanel = Ext.create('Ext.form.Panel', {
             xtype: "form",

@@ -16,7 +16,7 @@ pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klas
 
     allowedInType: 'fieldcollection',
     disallowedDataTypes: ["nonownerobjects","user","fieldcollections","localizedfields", "objectbricks",
-                                                                "objectsMetadata", "keyValue"],
+                                                                "objectsMetadata"],
     uploadUrl: '/admin/class/import-fieldcollection',
     exportUrl: "/admin/class/export-fieldcollection",
 

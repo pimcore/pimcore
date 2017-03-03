@@ -1475,19 +1475,6 @@ class ObjectController extends ElementControllerBase implements EventedControlle
                                     $classificationStoreData = $object->$getter();
                                     $classificationStoreData->setLocalizedKeyValue($groupId, $keyid, $value, $requestedLanguage);
                                 }
-                            } else {
-                                $getter = "get" . ucfirst($field);
-                                $setter = "set" . ucfirst($field);
-                                $keyValuePairs = $object->$getter();
-
-                                if (!$keyValuePairs) {
-                                    $keyValuePairs = new Object\Data\KeyValue();
-                                    $keyValuePairs->setObjectId($object->getId());
-                                    $keyValuePairs->setClass($object->getClass());
-                                }
-
-                                $keyValuePairs->setPropertyWithId($keyid, $value, true);
-                                $object->$setter($keyValuePairs);
                             }
                         } elseif (count($parts) > 1) {
                             $brickType = $parts[0];

@@ -401,7 +401,6 @@ $scripts = array(
     "pimcore/object/classes/data/localizedfields.js",
     "pimcore/object/classes/data/countrymultiselect.js",
     "pimcore/object/classes/data/languagemultiselect.js",
-    "pimcore/object/classes/data/keyValue.js",
     "pimcore/object/classes/data/firstname.js",
     "pimcore/object/classes/data/lastname.js",
     "pimcore/object/classes/data/email.js",
@@ -465,7 +464,6 @@ $scripts = array(
     "pimcore/object/tags/countrymultiselect.js",
     "pimcore/object/tags/languagemultiselect.js",
     "pimcore/object/tags/objectbricks.js",
-    "pimcore/object/tags/keyValue.js",
     "pimcore/object/tags/firstname.js",
     "pimcore/object/tags/lastname.js",
     "pimcore/object/tags/email.js",
@@ -539,15 +537,6 @@ $scripts = array(
     "pimcore/layout/toolbar.js",
     "pimcore/layout/treepanelmanager.js",
     "pimcore/document/seemode.js",
-
-    // keyvalue datatype
-    "pimcore/object/keyvalue/panel.js",
-    "pimcore/object/keyvalue/groupsPanel.js",
-    "pimcore/object/keyvalue/propertiesPanel.js",
-    "pimcore/object/keyvalue/selectionWindow.js",
-    "pimcore/object/keyvalue/specialConfigWindow.js",
-    "pimcore/object/keyvalue/columnConfigDialog.js",
-    "pimcore/object/keyvalue/translatorConfigWindow.js",
 
     // classification store
     "pimcore/object/classificationstore/groupsPanel.js",

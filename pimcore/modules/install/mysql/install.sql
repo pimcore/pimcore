@@ -318,44 +318,6 @@ CREATE TABLE `http_error_log` (
   KEY `count` (`count`)
 ) DEFAULT CHARSET=utf8mb4;
 
-
-DROP TABLE IF EXISTS `keyvalue_keys`;
-DROP TABLE IF EXISTS `keyvalue_groups`;
-CREATE TABLE `keyvalue_groups` (
-    `id` INT(11) NOT NULL AUTO_INCREMENT,
-    `name` VARCHAR(255) NOT NULL DEFAULT '',
-    `description` VARCHAR(255),
-    `creationDate` bigint(20) unsigned DEFAULT '0',
-    `modificationDate` bigint(20) unsigned DEFAULT '0',
-    PRIMARY KEY  (`id`)
-) DEFAULT CHARSET=utf8mb4;
-
-CREATE TABLE `keyvalue_keys` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL DEFAULT '',
-  `description` text,
-  `type` enum('bool','number','select','text','translated','translatedSelect','range') DEFAULT NULL,
-  `unit` varchar(255) DEFAULT NULL,
-  `possiblevalues` text,
-  `group` int(11) DEFAULT NULL,
-  `creationDate` bigint(20) unsigned DEFAULT '0',
-  `modificationDate` bigint(20) unsigned DEFAULT '0',
-  `translator` int(11) DEFAULT NULL,
-	`mandatory` TINYINT(1) NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `group` (`group`),
-  CONSTRAINT `keyvalue_keys_ibfk_1` FOREIGN KEY (`group`) REFERENCES `keyvalue_groups` (`id`) ON DELETE SET NULL
-) DEFAULT CHARSET=utf8mb4;
-
-DROP TABLE IF EXISTS `keyvalue_translator_configuration`;
-CREATE TABLE `keyvalue_translator_configuration` (
-  `id` INT(10) NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(200) NULL DEFAULT NULL,
-  `translator` VARCHAR(200) NULL DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) DEFAULT CHARSET=utf8mb4;
-
-
 DROP TABLE IF EXISTS `locks`;
 CREATE TABLE `locks` (
   `id` varchar(150) NOT NULL DEFAULT '',

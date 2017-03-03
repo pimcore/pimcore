@@ -908,14 +908,6 @@ span.warning {
     clear: both;
 }
 
-.keyvalue_mandatory_violation {
-    background: #fff3f3 !important;
-}
-
-.keyvalue_mandatory_violation.x-grid3-cell-selected {
-    background: #ff7373 !important;
-}
-
 /* hide multiupload field / handler that is inserted automatically by asset/tree.js when multi-upload is selected in context menu */
 #multiUploadField {
     position: absolute;

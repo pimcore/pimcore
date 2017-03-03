@@ -284,48 +284,6 @@ class Service extends Model\Element\Service
                             }
                             $data[$key] = $fielddata;
                         }
-                    } elseif ($type == "keyvalue") {
-                        $field = $keyParts[2];
-                        $keyid = $keyParts[3];
-
-                        $getter = "get" . ucfirst($field);
-                        if (method_exists($object, $getter)) {
-                            $keyValuePairs = $object->$getter();
-                            if ($keyValuePairs) {
-                                // get with inheritance
-                                $props = $keyValuePairs->getProperties();
-
-                                foreach ($props as $pair) {
-                                    if ($pair["key"] == $keyid) {
-                                        if (isset($pair["translated"])) {
-                                            if (isset($data['#kv-tr'][$dataKey])) {
-                                                if (!is_array($data['#kv-tr'][$dataKey])) {
-                                                    $arr = [$data['#kv-tr'][$dataKey]];
-                                                    $data['#kv-tr'][$dataKey] = $arr;
-                                                }
-                                                $data['#kv-tr'][$dataKey][] = $pair["translated"];
-                                            } else {
-                                                $data['#kv-tr'][$dataKey] = $pair["translated"];
-                                            }
-                                        }
-
-                                        if (isset($data[$dataKey])) {
-                                            if (!is_array($data[$dataKey])) {
-                                                $arr = [$data[$dataKey]];
-                                                $data[$dataKey] = $arr;
-                                            }
-                                            $data[$dataKey][] = $pair["value"];
-                                        } else {
-                                            $data[$dataKey] = $pair["value"];
-                                        }
-
-                                        if ($pair["inherited"]) {
-                                            $data['inheritedFields'][$dataKey] = ["inherited" => $pair["inherited"], "objectid" => $pair["source"]];
-                                        }
-                                    }
-                                }
-                            }
-                        }
                     }
                 } elseif (count($keyParts) > 1) {
                     // brick

@@ -4613,186 +4613,6 @@
         "definition": "Change type"
     },
     {
-        "term": "keyvalue_menu_config",
-        "definition": "KeyValue Config"
-    },
-    {
-        "term": "keyValue_datatype",
-        "definition": "Key\/Value"
-    },
-    {
-        "term": "keyValue_groups",
-        "definition": "Groups"
-    },
-    {
-        "term": "keyValue_properties",
-        "definition": "Key Definition"
-    },
-    {
-        "term": "keyvalue_mbx_entergroup_title",
-        "definition": "New Group"
-    },
-    {
-        "term": "keyvalue_mbx_entergroup_prompt",
-        "definition": "Enter name"
-    },
-    {
-        "term": "keyvalue_mbx_enterkey_title",
-        "definition": "New Key"
-    },
-    {
-        "term": "keyvalue_mbx_enterkey_prompt",
-        "definition": "Enter name"
-    },
-    {
-        "term": "keyvalue_error_addgroup_title",
-        "definition": "Error"
-    },
-    {
-        "term": "keyvalue_error_addgroup_msg",
-        "definition": "Error adding group"
-    },
-    {
-        "term": "keyvalue_error_addkey_title",
-        "definition": "Error"
-    },
-    {
-        "term": "keyvalue_error_addkey_msg",
-        "definition": "Error adding Key"
-    },
-    {
-        "term": "keyvalue_configuration",
-        "definition": "Configuration"
-    },
-    {
-        "term": "keyvalue_invalidname",
-        "definition": "Invalid name"
-    },
-    {
-        "term": "keyvalue_no_keys",
-        "definition": "No keys found"
-    },
-    {
-        "term": "keyvalue_no_groups",
-        "definition": "No groups found"
-    },
-    {
-        "term": "keyvalue_detailed_configuration",
-        "definition": "Detailed Configuration"
-    },
-    {
-        "term": "keyvalue_unit",
-        "definition": "Unit"
-    },
-    {
-        "term": "keyvalue_find_group",
-        "definition": "Find Group"
-    },
-    {
-        "term": "keyvalue_select_group",
-        "definition": "Select Group"
-    },
-    {
-        "term": "keyvalue_define_select_values",
-        "definition": "Define possible values"
-    },
-    {
-        "term": "keyvalue_define_select_values_error",
-        "definition": "Only available for type 'select' and 'translated'"
-    },
-    {
-        "term": "keyvalue_dialog_keygroup_search",
-        "definition": "Key\/Group Search"
-    },
-    {
-        "term": "keyvalue_tag_title",
-        "definition": "Key\/Value"
-    },
-    {
-        "term": "keyvalue_tag_col_group",
-        "definition": "Group"
-    },
-    {
-        "term": "keyvalue_col_groupdescription",
-        "definition": "Group"
-    },
-    {
-        "term": "keyvalue_col_groupid",
-        "definition": "GID"
-    },
-    {
-        "term": "keyvalue_col_translator",
-        "definition": "Translator"
-    },
-    {
-        "term": "keyvalue_key_unique",
-        "definition": "<b>Key must be unique<\/b>"
-    },
-    {
-        "term": "keyvalue_keyvalue_empty",
-        "definition": "Key&Value must not be empty"
-    },
-    {
-        "term": "keyvalue_data_keywidth",
-        "definition": "Key column width"
-    },
-    {
-        "term": "keyvalue_data_groupwidth",
-        "definition": "Group column width"
-    },
-    {
-        "term": "keyvalue_data_groupdescwidth",
-        "definition": "Group Desc column width"
-    },
-    {
-        "term": "keyvalue_data_valuewidth",
-        "definition": "Value column width"
-    },
-    {
-        "term": "keyvalue_data_descwidth",
-        "definition": "Description column width"
-    },
-    {
-        "term": "keyvalue_data_maxheight",
-        "definition": "Max Height"
-    },
-    {
-        "term": "keyValue",
-        "definition": "Key\/Value"
-    },
-    {
-        "term": "keyValue_group",
-        "definition": "Group"
-    },
-    {
-        "term": "keyvalue_translators",
-        "definition": "Translators"
-    },
-    {
-        "term": "keyvalue_select_translator",
-        "definition": "Select Translator"
-    },
-    {
-        "term": "keyvalue_data_multivalent",
-        "definition": "Multivalent"
-    },
-    {
-        "term": "keyvalue_data_locked_title",
-        "definition": "Locked"
-    },
-    {
-        "term": "keyvalue_data_locked_msg",
-        "definition": "This is a multivalent property which cannot be edited in the grid view. Use the object editor instead"
-    },
-    {
-        "term": "keyvalue_data_metavisible",
-        "definition": "Metadata visible"
-    },
-    {
-        "term": "keyvalue_data_metawidth",
-        "definition": "Metadata column width"
-    },
-    {
         "term": "instance_identifier",
         "definition": "Instance identifier"
     },
@@ -6189,22 +6009,6 @@
         "definition": "Calculated Value"
     },
     {
-        "term": "keyvalue_tag_col_groupDesc",
-        "definition": "Group Description"
-    },
-    {
-        "term": "keyvalue_tag_col_keyName",
-        "definition": "Key"
-    },
-    {
-        "term": "keyvalue_tag_col_keyDesc",
-        "definition": "Key Description"
-    },
-    {
-        "term": "keyvalue_tag_col_value",
-        "definition": "Value"
-    },
-    {
         "term": "clear_filters",
         "definition": "Clear Filters"
     },
@@ -6243,5 +6047,98 @@
     {
         "term": "predefined_hotspot_data_templates",
         "definition": "Predefined data templates"
+    },
+    {
+        "term": "classificationstore_menu_config",
+        "definition": "Classification Store"
+    },
+    {
+        "term": "classificationstore_mbx_entergroup_title",
+        "definition": "New Group"
+    },
+    {
+        "term": "classificationstore_mbx_entergroup_prompt",
+        "definition": "Enter name"
+    },
+    {
+        "term": "classificationstore_mbx_enterkey_title",
+        "definition": "New Key"
+    },
+    {
+        "term": "classificationstore_mbx_enterkey_prompt",
+        "definition": "Enter name"
+    },
+    {
+        "term": "classificationstore_error_addgroup_title",
+        "definition": "Error"
+    },
+    {
+        "term": "classificationstore_error_addgroup_msg",
+        "definition": "Error adding group"
+    },
+    {
+        "term": "classificationstore_error_addkey_title",
+        "definition": "Error"
+    },
+    {
+        "term": "classificationstore_error_addkey_msg",
+        "definition": "Error adding Key"
+    },
+    {
+        "term": "classificationstore_configuration",
+        "definition": "Configuration"
+    },
+    {
+        "term": "classificationstore_invalidname",
+        "definition": "Invalid name"
+    },
+    {
+        "term": "classificationstore_no_keys",
+        "definition": "No keys found"
+    },
+    {
+        "term": "classificationstore_no_groups",
+        "definition": "No groups found"
+    },
+    {
+        "term": "classificationstore_detailed_configuration",
+        "definition": "Detailed Configuration"
+    },
+    {
+        "term": "classificationstore_dialog_keygroup_search",
+        "definition": "Key\/Group Search"
+    },
+    {
+        "term": "classificationstore_classificationstore_empty",
+        "definition": "Key&Value must not be empty"
+    },
+    {
+        "term": "classificationstore_group",
+        "definition": "Group"
+    },
+    {
+        "term": "classificationstore_tag_col_groupDesc",
+        "definition": "Group Description"
+    },
+    {
+        "term": "classificationstore_tag_col_keyName",
+        "definition": "Key"
+    },
+    {
+        "term": "classificationstore_tag_col_keyDesc",
+        "definition": "Key Description"
+    },
+    {
+        "term": "classificationstore_tag_col_value",
+        "definition": "Value"
+    },
+    {
+        "term": "classificationstore_tag_col_group",
+        "definition": "Group"
+    },
+    {
+        "term": "classificationstore_col_groupdescription",
+        "definition": "Group"
     }
+
 ]

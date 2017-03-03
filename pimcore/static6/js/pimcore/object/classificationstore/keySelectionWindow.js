@@ -52,7 +52,7 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
         });
 
         var resultPanel = this.getResultPanel();
-        var title = t('keyvalue_dialog_keygroup_search');
+        var title = t('classificationstore_dialog_keygroup_search');
         if (this.config.frameName) {
             title += " - " + t("frame") + " " + this.config.frameName;
         }
@@ -215,7 +215,7 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
         items.push(this.toolbarbuttons.collection);
 
         this.toolbarbuttons.group = new Ext.Button({
-            text: t("keyValue_group"),
+            text: t("classificationstore_group"),
             handler: this.searchGroup.bind(this),
             iconCls: "pimcore_icon_keys",
             enableToggle: true,
@@ -356,7 +356,7 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
 
         if (postFix == "properties") {
             gridColumns.push({
-                header: t("keyvalue_tag_col_group"),
+                header: t("classificationstore_tag_col_group"),
                 width: 150,
                 sortable: true,
                 dataIndex: 'groupName'

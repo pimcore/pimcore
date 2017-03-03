@@ -1201,24 +1201,7 @@ class ObjectHelperController extends AdminController
                 $name = $request->get("name");
                 $parts = explode("~", $name);
 
-                if (substr($name, 0, 1) == "~") {
-                    $type = $parts[1];
-                    $field = $parts[2];
-                    $keyid = $parts[3];
-
-                    $getter = "get" . ucfirst($field);
-                    $setter = "set" . ucfirst($field);
-                    $keyValuePairs = $object->$getter();
-
-                    if (!$keyValuePairs) {
-                        $keyValuePairs = new Object\Data\KeyValue();
-                        $keyValuePairs->setObjectId($object->getId());
-                        $keyValuePairs->setClass($object->getClass());
-                    }
-
-                    $keyValuePairs->setPropertyWithId($keyid, $value, true);
-                    $object->$setter($keyValuePairs);
-                } elseif (count($parts) > 1) {
+                if (count($parts) > 1) {
                     // check for bricks
                     $brickType = $parts[0];
                     $brickKey = $parts[1];

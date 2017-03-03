@@ -195,12 +195,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
 
                                     var ownerTree = this.selectionPanel;
 
-                                    if (record.data.dataType == "keyValue") {
-                                        window.setTimeout(function () {
-                                            var ccd = new pimcore.object.keyvalue.columnConfigDialog();
-                                            ccd.getConfigDialog(ownerTree, copy, this.selectionPanel);
-                                        }.bind(this), 100);
-                                    } else if (record.data.dataType == "classificationstore") {
+                                    if (record.data.dataType == "classificationstore") {
                                         window.setTimeout(function () {
                                             var ccd = new pimcore.object.classificationstore.columnConfigDialog();
                                             ccd.getConfigDialog(ownerTree, copy, this.selectionPanel);
@@ -309,10 +304,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
 
                     var ownerTree = this.selectionPanel;
 
-                    if (record.data.dataType == "keyValue") {
-                        var ccd = new pimcore.object.keyvalue.columnConfigDialog();
-                        ccd.getConfigDialog(ownerTree, copy, this.selectionPanel);
-                    } else if (record.data.dataType == "classificationstore") {
+                    if (record.data.dataType == "classificationstore") {
                         var ccd = new pimcore.object.classificationstore.columnConfigDialog();
                         ccd.getConfigDialog(ownerTree, copy, this.selectionPanel);
                     }
