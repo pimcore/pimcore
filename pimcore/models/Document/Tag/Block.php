@@ -44,7 +44,7 @@ class Block extends Model\Document\Tag
     public $suffixes = [];
 
     /**
-     * @see Document\Tag\TagInterface::getType
+     * @see TagInterface::getType
      * @return string
      */
     public function getType()
@@ -53,7 +53,7 @@ class Block extends Model\Document\Tag
     }
 
     /**
-     * @see Document\Tag\TagInterface::getData
+     * @see TagInterface::getData
      * @return mixed
      */
     public function getData()
@@ -62,7 +62,7 @@ class Block extends Model\Document\Tag
     }
 
     /**
-     * @see Document\Tag\TagInterface::admin
+     * @see TagInterface::admin
      */
     public function admin()
     {
@@ -70,7 +70,7 @@ class Block extends Model\Document\Tag
     }
 
     /**
-     * @see Document\Tag\TagInterface::frontend
+     * @see TagInterface::frontend
      */
     public function frontend()
     {
@@ -79,7 +79,7 @@ class Block extends Model\Document\Tag
     }
 
     /**
-     * @see Document\Tag\TagInterface::setDataFromResource
+     * @see TagInterface::setDataFromResource
      * @param mixed $data
      * @return $this
      */
@@ -91,7 +91,7 @@ class Block extends Model\Document\Tag
     }
 
     /**
-     * @see Document\Tag\TagInterface::setDataFromEditmode
+     * @see TagInterface::setDataFromEditmode
      * @param mixed $data
      * @return $this
      */

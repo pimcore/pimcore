@@ -33,7 +33,7 @@ class Checkbox extends Model\Document\Tag
 
 
     /**
-     * @see Document\Tag\TagInterface::getType
+     * @see TagInterface::getType
      * @return string
      */
     public function getType()
@@ -42,7 +42,7 @@ class Checkbox extends Model\Document\Tag
     }
 
     /**
-     * @see Document\Tag\TagInterface::getData
+     * @see TagInterface::getData
      * @return mixed
      */
     public function getData()
@@ -51,7 +51,7 @@ class Checkbox extends Model\Document\Tag
     }
 
     /**
-     * @see Document\Tag\TagInterface::frontend
+     * @see TagInterface::frontend
      * @return string
      */
     public function frontend()
@@ -60,7 +60,7 @@ class Checkbox extends Model\Document\Tag
     }
 
     /**
-     * @see Document\Tag\TagInterface::setDataFromResource
+     * @see TagInterface::setDataFromResource
      * @param mixed $data
      * @return $this
      */
@@ -72,7 +72,7 @@ class Checkbox extends Model\Document\Tag
     }
 
     /**
-     * @see Document\Tag\TagInterface::setDataFromEditmode
+     * @see TagInterface::setDataFromEditmode
      * @param mixed $data
      * @return $this
      */
