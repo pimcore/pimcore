@@ -74,7 +74,7 @@ class PimcoreNavigationController
         if (!$navigation || !$cacheEnabled) {
             $navigation = new \Zend_Navigation();
 
-            if ($navigationRootDocument->hasChilds()) {
+            if ($navigationRootDocument->hasChildren()) {
                 $rootPage = $this->buildNextLevel($navigationRootDocument, true, $pageCallback);
                 $navigation->addPages($rootPage);
             }
@@ -277,7 +277,7 @@ class PimcoreNavigationController
 
                     $page->setClass($page->getClass() . $classes);
 
-                    if ($child->hasChilds()) {
+                    if ($child->hasChildren()) {
                         $childPages = $this->buildNextLevel($child, false, $pageCallback);
                         $page->setPages($childPages);
                     }
