@@ -1,7 +1,10 @@
 class_name: RestTester
 modules:
     enabled:
-        - \Pimcore\Tests\Helper\Pimcore
+        - \Pimcore\Tests\Helper\Pimcore:
+            connect_db: true
+            initialize_db: true
+            purge_class_directory: true
         - \Pimcore\Tests\Helper\PimcoreRest:
             url: /webservice/rest
             depends: \Pimcore\Tests\Helper\Pimcore
