@@ -4,11 +4,14 @@ namespace Pimcore\Tests\Helper;
 
 use Codeception\Lib\ModuleContainer;
 use Codeception\Module;
+use Codeception\Step;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception\ConnectionException;
 use Pimcore\Cache;
 use Pimcore\Config;
 use Pimcore\Kernel;
+use Pimcore\Model\Document;
+use Pimcore\Model\Object;
 use Pimcore\Model\Tool\Setup;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -81,13 +84,34 @@ class Pimcore extends Module\Symfony
                     define('PIMCORE_TEST_DB_INITIALIZED', true);
                 }
             }
-        }
 
-        if ($this->config['purge_class_directory']) {
-            $this->purgeClassDirectory();
+            if ($this->config['purge_class_directory']) {
+                $this->purgeClassDirectory();
+            }
         }
     }
 
+    /**
+     * @inheritDoc
+     */
+    public function _before(\Codeception\TestInterface $test)
+    {
+        parent::_before($test);
+
+        $this->initPimcoreState();
+    }
+
+    /**
+     * Set default pimcore object state
+     */
+    protected function initPimcoreState()
+    {
+        \Pimcore::unsetAdminMode();
+        Document::setHideUnpublished(true);
+        Object\AbstractObject::setHideUnpublished(true);
+        Object\AbstractObject::setGetInheritedValues(true);
+        Object\Localizedfield::setGetFallbackValues(true);
+    }
 
     /**
      * Remove and re-create class directory

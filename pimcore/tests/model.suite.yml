@@ -4,5 +4,7 @@ modules:
         - \Pimcore\Tests\Helper\Pimcore:
             connect_db: true
             initialize_db: true
+            purge_class_directory: true
         - \Pimcore\Tests\Helper\ClassManager
-        - \Pimcore\Tests\Helper\Model
+        - \Pimcore\Tests\Helper\Model:
+            cleanup: true
