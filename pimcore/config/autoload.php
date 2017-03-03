@@ -19,11 +19,6 @@ set_include_path(implode(PATH_SEPARATOR, $includePaths) . PATH_SEPARATOR);
 // composer autoloader
 if (PIMCORE_SYMFONY_MODE) {
     $composerLoader = require_once PIMCORE_APP_ROOT . '/autoload.php';
-
-    // see https://github.com/symfony/symfony/issues/20668
-    if (PHP_VERSION_ID < 70000) {
-        include_once PIMCORE_VAR . '/bootstrap.php.cache';
-    }
 } else {
     $composerLoader = require_once PIMCORE_PROJECT_ROOT . '/vendor/autoload.php';
 }

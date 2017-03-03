@@ -69,10 +69,6 @@ abstract class Kernel extends \Symfony\Component\HttpKernel\Kernel
             return;
         }
 
-        if ($this->loadClassCache) {
-            $this->doLoadClassCache($this->loadClassCache[0], $this->loadClassCache[1]);
-        }
-
         // handle system requirements
         $this->setSystemRequirements();
 
@@ -121,7 +117,6 @@ abstract class Kernel extends \Symfony\Component\HttpKernel\Kernel
         @ini_set("max_execution_time", $maxExecutionTime);
         @set_time_limit($maxExecutionTime);
         ini_set('default_charset', "UTF-8");
-        mb_internal_encoding("UTF-8"); // only required for PHP 5.5, can be removed after 5.5 is unsupported by pimcore
 
         // this is for simple_dom_html
         ini_set('pcre.recursion-limit', 100000);
@@ -139,8 +134,9 @@ abstract class Kernel extends \Symfony\Component\HttpKernel\Kernel
         }
 
         // check some system variables
-        if (version_compare(PHP_VERSION, '5.6', "<")) {
-            $m = "pimcore requires at least PHP version 5.6.0 your PHP version is: " . PHP_VERSION;
+        $requiredVersion = "7.0";
+        if (version_compare(PHP_VERSION, $requiredVersion, "<")) {
+            $m = "pimcore requires at least PHP version $requiredVersion your PHP version is: " . PHP_VERSION;
             Tool::exitWithError($m);
         }
     }
