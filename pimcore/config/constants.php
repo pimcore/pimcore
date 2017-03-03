@@ -100,11 +100,5 @@ if (!defined('PIMCORE_LOG_MAIL_PERMANENT')) {
     define('PIMCORE_LOG_MAIL_PERMANENT', PIMCORE_PRIVATE_VAR . '/email');
 }
 
-// switch this to false to run legacy pimcore
-if (!defined('PIMCORE_SYMFONY_MODE')) {
-    define('PIMCORE_SYMFONY_MODE', true);
-}
-
-
 
 

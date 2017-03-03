@@ -3,12 +3,11 @@
 use Pimcore\Config;
 use Symfony\Component\Debug\Debug;
 
-$debug = Pimcore::inDebugMode();
-if ($debug && defined('PIMCORE_SYMFONY_MODE') && PIMCORE_SYMFONY_MODE) {
+if (Pimcore::inDebugMode()) {
     Debug::enable();
 }
 
-$kernel = new AppKernel(Config::getEnvironment(), $debug);
+$kernel = new AppKernel(Config::getEnvironment(), Pimcore::inDebugMode());
 Pimcore::setKernel($kernel);
 
 return $kernel;

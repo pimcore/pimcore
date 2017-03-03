@@ -19,7 +19,6 @@ use Symfony\Component\Console\Input\ArgvInput;
 
 // determines if we're in Pimcore\Console mode
 $pimcoreConsole = (defined('PIMCORE_CONSOLE') && true === PIMCORE_CONSOLE);
-$symfonyMode    = (defined('PIMCORE_SYMFONY_MODE') && PIMCORE_SYMFONY_MODE);
 
 $workingDirectory = getcwd();
 chdir(__DIR__);
@@ -44,7 +43,7 @@ $kernel->boot();
 
 chdir($workingDirectory);
 
-if (!$symfonyMode) {
+if(class_exists("Pimcore\\Legacy")) {
     // CLI \Zend_Controller_Front Setup, this is required to make it possible to make use of all rendering features
     // this includes $this->action() in templates, ...
     $front = \Zend_Controller_Front::getInstance();

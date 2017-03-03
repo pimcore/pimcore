@@ -87,19 +87,8 @@ class PimcoreNavigationController
         }
 
         // set active path
-
-        // HACK HACK - get request from global request stack
-        /** @var \Zend_Controller_Request_Http|Request $request */
-        $request = null;
-
-        if (PIMCORE_SYMFONY_MODE && $activeDocument->getProperty('symfony')) {
-            /** @var RequestStack $requestStack */
-            $requestStack = \Pimcore::getKernel()->getContainer()->get('request_stack');
-            $request = $requestStack->getCurrentRequest();
-        } else {
-            $front = \Zend_Controller_Front::getInstance();
-            $request = $front->getRequest();
-        }
+        $requestStack = \Pimcore::getKernel()->getContainer()->get('request_stack');
+        $request = $requestStack->getMasterRequest();
 
         // try to find a page matching exactly the request uri
         $activePages = $navigation->findAllBy("uri", $request->getRequestUri());

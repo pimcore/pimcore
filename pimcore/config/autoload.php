@@ -1,6 +1,8 @@
 <?php
 
+use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
+use Composer\Autoload\ClassLoader;
 
 // setup include paths
 // include paths defined in php.ini are ignored because they're causing problems with open_basedir, see PIMCORE-1233
@@ -17,18 +19,29 @@ $includePaths = [
 set_include_path(implode(PATH_SEPARATOR, $includePaths) . PATH_SEPARATOR);
 
 // composer autoloader
-if (PIMCORE_SYMFONY_MODE) {
-    $composerLoader = require_once PIMCORE_APP_ROOT . '/autoload.php';
-} else {
-    $composerLoader = require_once PIMCORE_PROJECT_ROOT . '/vendor/autoload.php';
+$composerLoader = require_once PIMCORE_PROJECT_ROOT . '/vendor/autoload.php';
+
+// the following code is out of `app/autoload.php`
+// see also: https://github.com/symfony/symfony-demo/blob/master/app/autoload.php
+AnnotationRegistry::registerLoader([$composerLoader, 'loadClass']);
+
+// ignore apiDoc params (see http://apidocjs.com/) as we use apiDoc in webservice
+$apiDocAnnotations = [
+    'api', 'apiDefine',
+    'apiDeprecated', 'apiDescription', 'apiError',  'apiErrorExample', 'apiExample', 'apiGroup', 'apiHeader',
+    'apiHeaderExample', 'apiIgnore', 'apiName', 'apiParam', 'apiParamExample', 'apiPermission', 'apiSampleRequest',
+    'apiSuccess', 'apiSuccessExample', 'apiUse', 'apiVersion',
+];
+
+foreach ($apiDocAnnotations as $apiDocAnnotation) {
+    AnnotationReader::addGlobalIgnoredName($apiDocAnnotation);
 }
 
-// helper functions
-include(dirname(__FILE__) . "/helper.php");
 
-// setup zend framework and pimcore
+// some pimcore specific generic includes
+// includes not covered by composer autoloader
+require_once PIMCORE_PATH . "/lib/helper-functions.php";
 require_once PIMCORE_PATH . "/lib/Pimcore.php";
-require_once PIMCORE_PATH . "/lib/Pimcore/Logger.php";
 
 if(!class_exists("Zend_Date")) {
     // if ZF is not loaded, we need to provide some compatibility stubs
