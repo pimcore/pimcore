@@ -455,20 +455,6 @@ class AnalyticsController extends ReportsControllerBase implements EventedContro
     }
 
     /**
-     * @param $sec
-     * @return string
-     *
-     * @todo: still needed?
-     */
-    private function formatDuration($sec)
-    {
-        $minutes = intval(($sec / 60) % 60);
-        $seconds = intval($sec % 60);
-
-        return str_pad($minutes, 2, "0", STR_PAD_LEFT).":".str_pad($seconds, 2, "0", STR_PAD_LEFT);
-    }
-
-    /**
      * @param FilterControllerEvent $event
      */
     public function onKernelController(FilterControllerEvent $event)
