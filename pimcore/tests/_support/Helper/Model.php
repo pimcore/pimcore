@@ -43,6 +43,9 @@ class Model extends Module
         TestHelper::cleanUp();
     }
 
+    /**
+     * Initialize mode class definitions
+     */
     public function initializeDefinitions()
     {
         $cm = $this->getClassManager();

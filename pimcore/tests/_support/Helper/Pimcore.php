@@ -10,6 +10,7 @@ use Pimcore\Cache;
 use Pimcore\Config;
 use Pimcore\Kernel;
 use Pimcore\Model\Tool\Setup;
+use Symfony\Component\Filesystem\Filesystem;
 
 class Pimcore extends Module\Symfony
 {
@@ -31,6 +32,7 @@ class Pimcore extends Module\Symfony
             'connect_db'            => false,
             'initialize_db'         => true,
             'force_reinitialize_db' => false,
+            'purge_class_directory' => true,
         ]);
 
         parent::__construct($moduleContainer, $config);
@@ -79,6 +81,25 @@ class Pimcore extends Module\Symfony
                     define('PIMCORE_TEST_DB_INITIALIZED', true);
                 }
             }
+        }
+
+        if ($this->config['purge_class_directory']) {
+            $this->purgeClassDirectory();
+        }
+    }
+
+
+    /**
+     * Remove and re-create class directory
+     */
+    protected function purgeClassDirectory()
+    {
+        $filesystem = new Filesystem();
+        if (file_exists(PIMCORE_CLASS_DIRECTORY)) {
+            $this->debug('[INIT] Purging class directory ' . PIMCORE_CLASS_DIRECTORY);
+
+            $filesystem->remove(PIMCORE_CLASS_DIRECTORY);
+            $filesystem->mkdir(PIMCORE_CLASS_DIRECTORY, 0755);
         }
     }
 
