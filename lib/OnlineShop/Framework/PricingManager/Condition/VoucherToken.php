@@ -42,12 +42,17 @@ class VoucherToken implements \OnlineShop\Framework\PricingManager\ICondition
 
         if (is_array($voucherTokenCodes)) {
             foreach ($voucherTokenCodes as $code) {
-                if (in_array(\OnlineShop\Framework\VoucherService\Token::getByCode($code)->getVoucherSeriesId(), $this->whiteListIds)) {
-                    return true;
-                }
+                return $this->checkVoucherCode($code);
             }
         }
 
+        return false;
+    }
+
+    public function checkVoucherCode($code) {
+        if (in_array(\OnlineShop\Framework\VoucherService\Token::getByCode($code)->getVoucherSeriesId(), $this->whiteListIds)) {
+            return true;
+        }
         return false;
     }
 
