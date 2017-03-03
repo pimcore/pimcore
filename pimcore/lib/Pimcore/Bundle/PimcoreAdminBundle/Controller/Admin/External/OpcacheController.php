@@ -14,9 +14,6 @@
 
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin\External;
 
-use \Linfo\Exceptions\FatalException;
-use \Linfo\Linfo;
-use \Linfo\Common;
 use Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminController;
 use Pimcore\Bundle\PimcoreBundle\Controller\EventedControllerInterface;
 use Symfony\Component\HttpFoundation\Request;

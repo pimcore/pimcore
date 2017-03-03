@@ -2,7 +2,6 @@
 
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin;
 
-use Pimcore\Bundle\PimcoreBundle\Configuration\TemplatePhp;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Mail;
 use Pimcore\Model\Element;
