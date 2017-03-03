@@ -358,10 +358,6 @@ pimcore.layout.toolbar = Class.create({
                             iconCls: "pimcore_icon_email pimcore_icon_overlay_delete",
                             handler: this.emailBlacklist
                         }, {
-                            text: t("bounce_mail_inbox"),
-                            iconCls: "pimcore_icon_email pimcore_icon_overlay_error",
-                            handler: this.showBounceMailInbox
-                        }, {
                             text: t("send_test_email"),
                             iconCls: "pimcore_icon_email",
                             handler: this.sendTestEmail
@@ -1207,16 +1203,6 @@ pimcore.layout.toolbar = Class.create({
                 }
             }
         });
-    },
-
-    showBounceMailInbox: function () {
-
-        try {
-            pimcore.globalmanager.get("bouncemailinbox").activate();
-        }
-        catch (e) {
-            pimcore.globalmanager.add("bouncemailinbox", new pimcore.settings.bouncemailinbox());
-        }
     },
 
     sendTestEmail: function () {

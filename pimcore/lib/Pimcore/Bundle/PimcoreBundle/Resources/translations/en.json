@@ -985,10 +985,6 @@
         "definition": "Message Parts"
     },
     {
-        "term": "bounce_mail_inbox",
-        "definition": "Bounce Mail Inbox"
-    },
-    {
         "term": "subject",
         "definition": "Subject"
     },

@@ -492,21 +492,6 @@ class SettingsController extends AdminController
             } else {
                 $settings[$type]["debug"] = null;
             }
-
-            if (array_key_exists($type . ".bounce.type", $values)) {
-                $settings[$type]["bounce"] = [
-                    "type" => $values[$type . ".bounce.type"],
-                    "maildir" => $values[$type . ".bounce.maildir"],
-                    "mbox" => $values[$type . ".bounce.mbox"],
-                    "imap" => [
-                        "host" => $values[$type . ".bounce.imap.host"],
-                        "port" => $values[$type . ".bounce.imap.port"],
-                        "username" => $values[$type . ".bounce.imap.username"],
-                        "password" => $values[$type . ".bounce.imap.password"],
-                        "ssl" => $values[$type . ".bounce.imap.ssl"]
-                    ]
-                ];
-            }
         }
         $settings["newsletter"]["usespecific"] = $values["newsletter.usespecific"];
 

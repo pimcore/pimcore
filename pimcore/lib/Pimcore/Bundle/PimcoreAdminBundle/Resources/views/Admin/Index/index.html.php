@@ -273,7 +273,6 @@ $scripts = array(
     "pimcore/settings/maintenance.js",
     "pimcore/settings/robotstxt.js",
     "pimcore/settings/httpErrorLog.js",
-    "pimcore/settings/bouncemailinbox.js",
     "pimcore/settings/email/log.js",
     "pimcore/settings/email/blacklist.js",
     "pimcore/settings/targeting/conditions.js",
