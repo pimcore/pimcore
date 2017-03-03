@@ -219,7 +219,7 @@ class Document extends Element\AbstractElement
 
     /**
      * get possible types
-     * @return string
+     * @return array
      */
     public static function getTypes()
     {
