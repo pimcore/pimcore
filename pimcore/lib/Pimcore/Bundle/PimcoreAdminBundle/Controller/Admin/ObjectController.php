@@ -547,7 +547,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
         if ($parent) {
             $value = $parent->$getter();
             if ($value) {
-                $result = new stdClass();
+                $result = new \stdClass();
                 $result->value = $value;
                 $result->id = $parent->getId();
 
