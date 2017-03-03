@@ -235,7 +235,7 @@ class GD extends Adapter
 
     /**
      * @param  $color
-     * @return Pimcore\Image\Adapter
+     * @return Adapter
      */
     public function setBackgroundColor($color)
     {
