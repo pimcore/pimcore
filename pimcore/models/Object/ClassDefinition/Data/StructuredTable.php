@@ -321,7 +321,7 @@ class StructuredTable extends Model\Object\ClassDefinition\Data
 
     /**
      * @see Model\Object\ClassDefinition\Data::getDataFromEditmode
-     * @param string $data
+     * @param array $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return string
