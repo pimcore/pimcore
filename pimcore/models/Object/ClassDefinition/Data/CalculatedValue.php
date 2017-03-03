@@ -381,7 +381,6 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data
     public function getGetterCodeFieldcollection($fieldcollectionDefinition)
     {
         $key = $this->getName();
-        $code = "";
 
         $code = "";
         $code .= '/**' . "\n";

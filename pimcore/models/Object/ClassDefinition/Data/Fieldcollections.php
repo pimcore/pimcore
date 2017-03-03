@@ -712,8 +712,6 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
                     continue;
                 }
 
-                $collectionData = [];
-
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
                     $title = !empty($fd->title) ? $fd->title : $fd->getName();
                     $html .= "<tr><td>&nbsp;</td><td>" . $title . "</td><td>";

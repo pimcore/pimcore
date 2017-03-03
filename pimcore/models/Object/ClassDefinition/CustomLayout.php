@@ -159,9 +159,7 @@ class CustomLayout extends Model\AbstractModel
      */
     public function save()
     {
-        $isUpdate = false;
         if ($this->getId()) {
-            $isUpdate = true;
             \Pimcore::getEventDispatcher()->dispatch(ObjectCustomLayoutEvents::PRE_UPDATE, new CustomLayoutEvent($this));
         } else {
             \Pimcore::getEventDispatcher()->dispatch(ObjectCustomLayoutEvents::PRE_ADD, new CustomLayoutEvent($this));

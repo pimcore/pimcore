@@ -94,7 +94,6 @@ class Dao extends Model\Element\Dao
                 "index" => 0
             ]);
 
-            $date = time();
             $this->model->setId($this->db->lastInsertId());
 
             if (!$this->model->getKey()) {

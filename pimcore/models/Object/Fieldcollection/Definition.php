@@ -256,7 +256,7 @@ class Definition extends Model\AbstractModel
         $cd .= "\n\n";
 
         if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
-            $relationTypes = [];
+
             foreach ($this->getFieldDefinitions() as $key => $def) {
 
                 /**

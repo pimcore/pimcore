@@ -269,7 +269,7 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
             $line = "";
             $isFirst = true;
             if (is_array($data)) {
-                $points = [];
+
                 foreach ($data as $point) {
                     if (!$isFirst) {
                         $line .= " ";

@@ -49,7 +49,6 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         // required by
-        $data = [];
         $data = $this->db->fetchAll("SELECT * FROM dependencies WHERE targetid = ? AND targettype = ?", [$this->model->getSourceId(), $this->model->getSourceType()]);
 
         if (is_array($data) && count($data) > 0) {
