@@ -12,7 +12,8 @@ class Model extends Module
      * @var array
      */
     protected $config = [
-        'initialize_definitions' => true
+        'initialize_definitions' => true,
+        'cleanup'                => true
     ];
 
     /**
@@ -40,7 +41,9 @@ class Model extends Module
      */
     public function _afterSuite()
     {
-        TestHelper::cleanUp();
+        if ($this->config['cleanup']) {
+            TestHelper::cleanUp();
+        }
     }
 
     /**
