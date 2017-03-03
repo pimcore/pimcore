@@ -24,7 +24,7 @@ class WebserviceAuthenticator extends AbstractGuardAuthenticator implements Logg
      */
     public function start(Request $request, AuthenticationException $authException = null)
     {
-        throw new AccessDeniedHttpException();
+        throw new AccessDeniedHttpException('API request needs either a valid API key or a valid session.');
     }
 
     /**

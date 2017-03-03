@@ -32,7 +32,16 @@ services:
             - { name: kernel.event_subscriber }
 
     #
+    # EXCEPTION HANDLING
     #
+
+    pimcore_admin.event_listener.webservice_exception:
+        class: Pimcore\Bundle\PimcoreAdminBundle\EventListener\WebserviceExceptionListener
+        tags:
+            - { name: kernel.event_subscriber }
+
+    #
+    # MISC
     #
 
     pimcore_admin.event_listener.http_cache:
