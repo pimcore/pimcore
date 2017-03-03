@@ -571,28 +571,4 @@ class MiscController extends AdminController
         die("done");
     }
 
-    /**
-     * Determines by the moduleName GET-parameter which controller directory
-     * to use; the default (param empty or "website") or of the corresponding
-     * module or plugin
-     *
-     * @param Request $request
-     * @return string
-     * @throws Zend_Controller_Exception
-     */
-    private function getControllerDir(Request $request)
-    {
-        $controllerDir = PIMCORE_WEBSITE_PATH . DIRECTORY_SEPARATOR . "controllers" . DIRECTORY_SEPARATOR;
-        if ($module = $request->get("moduleName")) {
-            if ($module != "" && $module != "website") { // => not the default
-                $front   = $this->getFrontController();
-                $modules = $front->getControllerDirectory();
-                if (array_key_exists($module, $modules)) {
-                    $controllerDir = $modules[$module] . DIRECTORY_SEPARATOR;
-                }
-            }
-        }
-
-        return $controllerDir;
-    }
 }
