@@ -38,7 +38,7 @@ pimcore.plugin.OnlineShop.pricing.config.item = Class.create({
             closable: true,
             deferredRender: false,
             forceLayout: true,
-            id: "pimcore_targeting_panel_" + this.data.id,
+            id: "pimcore_pricing_panel_" + this.data.id,
             buttons: [{
                 text: t("save"),
                 iconCls: "pimcore_icon_apply",
@@ -283,11 +283,11 @@ pimcore.plugin.OnlineShop.pricing.config.item = Class.create({
         // add logic for brackets
         var tab = this;
         item.on("afterrender", function (el) {
-            el.getEl().applyStyles({position: "relative", "min-height": "40px"});
+            el.getEl().applyStyles({position: "relative", "min-height": "40px", "border-bottom": "1px solid #d0d0d0"});
             var leftBracket = el.getEl().insertHtml("beforeEnd",
-                                '<div class="pimcore_targeting_bracket pimcore_targeting_bracket_left">(</div>', true);
+                '<div class="pimcore_targeting_bracket pimcore_targeting_bracket_left">(</div>', true);
             var rightBracket = el.getEl().insertHtml("beforeEnd",
-                                '<div class="pimcore_targeting_bracket pimcore_targeting_bracket_right">)</div>', true);
+                '<div class="pimcore_targeting_bracket pimcore_targeting_bracket_right">)</div>', true);
 
             if(data["bracketLeft"]){
                 leftBracket.addCls("pimcore_targeting_bracket_active");
@@ -341,7 +341,6 @@ pimcore.plugin.OnlineShop.pricing.config.item = Class.create({
 
     /**
      * save config
-     * @todo
      */
     save: function () {
         var saveData = {};
@@ -351,7 +350,7 @@ pimcore.plugin.OnlineShop.pricing.config.item = Class.create({
 
         // get defined conditions
         var conditionsData = [];
-        var tb, operator;
+        var operator;
         var conditions = this.conditionsContainer.items.getRange();
         for (var i=0; i<conditions.length; i++) {
             var condition = {};
@@ -451,13 +450,14 @@ pimcore.plugin.OnlineShop.pricing.config.item = Class.create({
      */
     recalculateBracketIdent: function(list) {
         var ident = 0, lastIdent = 0, margin = 20;
-        var colors = ["transparent","#007bff", "#0f9", "#ff006a", "#ff3c00", "#0f4"];
+        var colors = ["transparent","#007bff", "#00ff99", "#e1a6ff", "#ff3c00", "#000000"];
 
         list.each(function (condition) {
 
             // only rendered conditions
-            if(condition.rendered == false)
+            if(condition.rendered == false) {
                 return;
+            }
 
             // html from this condition
             var item = condition.getEl();
@@ -471,37 +471,37 @@ pimcore.plugin.OnlineShop.pricing.config.item = Class.create({
 
 
             // apply colors
-            if(ident > 0)
+            if(ident > 0) {
                 item.applyStyles({
                     "border-left": "1px solid " + colors[ident],
-                    "border-right": "1px solid " + colors[ident],
-                    "padding": "0px 1px"
+                    "border-right": "1px solid " + colors[ident]
                 });
-            else
+            } else {
                 item.applyStyles({
                     "border-left": "0px",
                     "border-right": "0px"
                 });
+            }
 
 
             // apply specials :-)
-            if(ident == 0)
+            if(ident == 0) {
                 item.applyStyles({
                     "margin-top": "10px"
                 });
-            else if(ident == lastIdent)
+            } else if(ident == lastIdent) {
                 item.applyStyles({
                     "margin-top": "0px",
-                    "margin-bottom": "0px",
-                    "padding": "1px"
+                    "margin-bottom": "0px"
                 });
-            else
+            } else {
                 item.applyStyles({
                     "margin-top": "5px"
                 });
+            }
 
 
-            // remeber current ident
+            // remember current ident
             lastIdent = ident;
 
 
@@ -513,10 +513,13 @@ pimcore.plugin.OnlineShop.pricing.config.item = Class.create({
             // check if a bracket is close
             else if(item.select('.pimcore_targeting_bracket_right.pimcore_targeting_bracket_active').getCount() == 1)
             {
-                if(ident > 0)
+                if(ident > 0) {
                     ident--;
+                }
             }
         });
+
+        this.conditionsContainer.updateLayout();
     }
 });
 
