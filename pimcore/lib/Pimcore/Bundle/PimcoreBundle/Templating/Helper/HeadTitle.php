@@ -102,6 +102,7 @@ class HeadTitle extends AbstractHelper
      * Set a default order to add titles
      *
      * @param string $setType
+     * @return $this
      */
     public function setDefaultAttachOrder($setType)
     {
