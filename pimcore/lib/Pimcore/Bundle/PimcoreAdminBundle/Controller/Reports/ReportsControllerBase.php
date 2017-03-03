@@ -26,7 +26,7 @@ class ReportsControllerBase extends AdminController
     public $conf;
 
     /**
-     * @return \Zend_Config
+     * @return \Pimcore\Config\Config
      */
     public function getConfig()
     {

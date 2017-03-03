@@ -175,10 +175,10 @@ class SearchController extends AdminController
 
             //string statements for divided filters
             $conditionFilters = count($unlocalizedFieldsFilters)
-                ? Object\Service::getFilterCondition(\Zend_Json::encode($unlocalizedFieldsFilters), $class)
+                ? Object\Service::getFilterCondition($this->encodeJson($unlocalizedFieldsFilters), $class)
                 : null;
             $localizedConditionFilters = count($localizedFieldsFilters)
-                ?  Object\Service::getFilterCondition(\Zend_Json::encode($localizedFieldsFilters), $class)
+                ?  Object\Service::getFilterCondition($this->encodeJson($localizedFieldsFilters), $class)
                 : null;
 
             $join = "";

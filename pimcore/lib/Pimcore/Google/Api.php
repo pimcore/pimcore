@@ -190,7 +190,7 @@ class Api
     /**
      * @return mixed
      * @throws \Exception
-     * @throws \Zend_Http_Client_Exception
+     * @throws \Exception
      */
     public static function getAnalyticsMetadata()
     {
@@ -205,7 +205,7 @@ class Api
     /**
      * @param $type
      * @return array
-     * @throws \Zend_Exception
+     * @throws \Exception
      */
     protected static function getAnalyticsMetadataByType($type)
     {
