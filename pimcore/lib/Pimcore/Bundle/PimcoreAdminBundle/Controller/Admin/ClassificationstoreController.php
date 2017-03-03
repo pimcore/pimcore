@@ -178,7 +178,7 @@ class ClassificationstoreController extends AdminController
 
         /** @var $item Object\Classificationstore\GroupConfig */
         foreach ($list as $item) {
-            $hasChilds = $item->hasChilds();
+            $hasChilds = $item->hasChildren();
 
             $itemConfig = [
                 "id" => $item->getId(),

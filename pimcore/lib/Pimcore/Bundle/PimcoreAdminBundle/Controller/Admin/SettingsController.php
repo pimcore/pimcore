@@ -311,7 +311,7 @@ class SettingsController extends AdminController
             "config" => [
                 "timezones" => $timezones,
                 "languages" => $languageOptions,
-                "client_ip" => Tool::getClientIp(),
+                "client_ip" => $request->getClientIp(),
                 "google_private_key_exists" => file_exists(\Pimcore\Google\Api::getPrivateKeyPath()),
                 "google_private_key_path" => \Pimcore\Google\Api::getPrivateKeyPath(),
                 "path_separator" => PATH_SEPARATOR

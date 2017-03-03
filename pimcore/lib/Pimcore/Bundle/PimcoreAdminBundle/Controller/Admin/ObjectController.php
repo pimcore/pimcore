@@ -51,7 +51,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
             $objectTypes = [Object\AbstractObject::OBJECT_TYPE_OBJECT, Object\AbstractObject::OBJECT_TYPE_FOLDER];
         }
 
-        if ($object->hasChilds($objectTypes)) {
+        if ($object->hasChildren($objectTypes)) {
             $limit = intval($request->get("limit"));
             if (!$request->get("limit")) {
                 $limit = 100000000;
@@ -158,7 +158,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
             "lockOwner" => $child->getLocked() ? true : false
         ];
 
-        $hasChildren = $child->hasChilds([Object\AbstractObject::OBJECT_TYPE_OBJECT, Object\AbstractObject::OBJECT_TYPE_FOLDER, Object\AbstractObject::OBJECT_TYPE_VARIANT]);
+        $hasChildren = $child->hasChildren([Object\AbstractObject::OBJECT_TYPE_OBJECT, Object\AbstractObject::OBJECT_TYPE_FOLDER, Object\AbstractObject::OBJECT_TYPE_VARIANT]);
 
         $tmpObject["isTarget"] = false;
         $tmpObject["allowDrop"] = false;
@@ -917,7 +917,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
                     ]
                 ]];
 
-                $hasChilds = $object->hasChilds();
+                $hasChilds = $object->hasChildren();
                 if (!$hasDependency) {
                     $hasDependency = $hasChilds;
                 }
@@ -1701,8 +1701,8 @@ class ObjectController extends ElementControllerBase implements EventedControlle
                 ]
             ]];
 
-            if ($object->hasChilds([Object\AbstractObject::OBJECT_TYPE_OBJECT, Object\AbstractObject::OBJECT_TYPE_FOLDER, Object\AbstractObject::OBJECT_TYPE_VARIANT])) {
-                // get amount of childs
+            if ($object->hasChildren([Object\AbstractObject::OBJECT_TYPE_OBJECT, Object\AbstractObject::OBJECT_TYPE_FOLDER, Object\AbstractObject::OBJECT_TYPE_VARIANT])) {
+                // get amount of children
                 $list = new Object\Listing();
                 $list->setCondition("o_path LIKE '" . $object->getRealFullPath() . "/%'");
                 $list->setOrderKey("LENGTH(o_path)", false);

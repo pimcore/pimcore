@@ -68,7 +68,7 @@ class UserController extends AdminController implements EventedControllerInterfa
             $tmpUser["expanded"] = true;
             $tmpUser["allowChildren"] = true;
 
-            if ($user->hasChilds()) {
+            if ($user->hasChildren()) {
                 $tmpUser["expanded"] = false;
             } else {
                 $tmpUser["loaded"] = true;
@@ -583,7 +583,7 @@ class UserController extends AdminController implements EventedControllerInterfa
             $tmpUser["expanded"] = true;
             $tmpUser["allowChildren"] = true;
 
-            if ($role->hasChilds()) {
+            if ($role->hasChildren()) {
                 $tmpUser["expanded"] = false;
             } else {
                 $tmpUser["loaded"] = true;

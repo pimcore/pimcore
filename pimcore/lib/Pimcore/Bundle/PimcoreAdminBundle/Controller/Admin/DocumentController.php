@@ -70,7 +70,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
         $documents = [];
         $cv = false;
-        if ($document->hasChilds()) {
+        if ($document->hasChildren()) {
             $limit = intval($request->get("limit"));
             if (!$request->get("limit")) {
                 $limit = 100000000;
@@ -340,7 +340,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 ]
             ]];
 
-            $hasChilds = $document->hasChilds();
+            $hasChilds = $document->hasChildren();
             if (!$hasDependency) {
                 $hasDependency = $hasChilds;
             }
@@ -709,7 +709,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
 
             $childIds = [];
-            if ($document->hasChilds()) {
+            if ($document->hasChildren()) {
                 // get amount of childs
                 $list = new Document\Listing();
                 $list->setCondition("path LIKE '" . $document->getRealFullPath() . "/%'");
@@ -968,8 +968,8 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
         // add icon
         $tmpDocument["iconCls"] = "pimcore_icon_" . $childDocument->getType();
-        $tmpDocument["expandable"] = $childDocument->hasChilds();
-        $tmpDocument["loaded"] = !$childDocument->hasChilds();
+        $tmpDocument["expandable"] = $childDocument->hasChildren();
+        $tmpDocument["loaded"] = !$childDocument->hasChildren();
 
         // set type specific settings
         if ($childDocument->getType() == "page") {
@@ -1097,7 +1097,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         $document = Document::getById($request->get("node"));
 
         $documents = [];
-        if ($document->hasChilds()) {
+        if ($document->hasChildren()) {
             $list = new Document\Listing();
             $list->setCondition("parentId = ?", $document->getId());
             $list->setOrderKey("index");

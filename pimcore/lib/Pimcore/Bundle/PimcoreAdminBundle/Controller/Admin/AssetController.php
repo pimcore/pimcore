@@ -1378,7 +1378,7 @@ class AssetController extends ElementControllerBase implements EventedController
             ]];
 
             if ($asset->hasChildren()) {
-                // get amount of childs
+                // get amount of children
                 $list = new Asset\Listing();
                 $list->setCondition("path LIKE '" . $asset->getRealFullPath() . "/%'");
                 $list->setOrderKey("LENGTH(path)", false);
