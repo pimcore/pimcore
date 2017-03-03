@@ -16,8 +16,6 @@ namespace Pimcore\Log\Handler;
 
 use Pimcore\Db as Database;
 use Monolog\Handler\AbstractProcessingHandler;
-use Pimcore\Tool;
-use Pimcore\Logger;
 
 class ApplicationLoggerDb extends AbstractProcessingHandler
 {

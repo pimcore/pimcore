@@ -14,7 +14,6 @@
 
 namespace Pimcore\Model\Dao;
 
-use Pimcore\Cache;
 use Pimcore\Config;
 use \Pimcore\Db\PhpArrayFileTable;
 

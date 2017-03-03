@@ -14,7 +14,6 @@
 
 namespace Pimcore\Image;
 
-use Pimcore\Config;
 use Pimcore\Tool\Console;
 
 class HtmlToImage

@@ -14,9 +14,6 @@
 
 namespace Pimcore\Image\Adapter;
 
-use Pimcore\Image\Adapter\Imagick;
-use Pimcore\Tool\Console;
-
 /**
  * @deprecated
  */

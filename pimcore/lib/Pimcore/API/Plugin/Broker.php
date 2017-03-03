@@ -14,7 +14,6 @@
 
 namespace Pimcore\API\Plugin;
 
-use Pimcore\Tool;
 use Pimcore\Logger;
 
 class Broker

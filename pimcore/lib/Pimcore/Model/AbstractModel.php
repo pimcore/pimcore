@@ -15,7 +15,6 @@
 namespace Pimcore\Model;
 
 use Pimcore\File;
-use Pimcore\Db;
 use Pimcore\Tool;
 use Pimcore\Logger;
 

@@ -17,7 +17,6 @@ namespace Pimcore\Video\Adapter;
 use Pimcore\Video\Adapter;
 use Pimcore\Tool\Console;
 use Pimcore\File;
-use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 use Pimcore\Logger;
 

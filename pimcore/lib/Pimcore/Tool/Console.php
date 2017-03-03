@@ -15,7 +15,6 @@
 namespace Pimcore\Tool;
 
 use Pimcore\Config;
-use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 use Pimcore\Logger;
 

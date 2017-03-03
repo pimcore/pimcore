@@ -15,7 +15,6 @@
 namespace Pimcore\Log;
 
 use Psr\Log\LoggerInterface;
-use Pimcore\Logger;
 use Psr\Log\LogLevel;
 
 class ApplicationLogger implements LoggerInterface

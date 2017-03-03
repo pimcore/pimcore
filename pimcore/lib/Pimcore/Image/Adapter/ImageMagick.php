@@ -3,7 +3,6 @@ namespace Pimcore\Image\Adapter;
 
 use Pimcore\File;
 use Pimcore\Image\Adapter;
-use Pimcore\Logger;
 use Pimcore\Tool\Console;
 use Symfony\Component\Process\Process;
 
