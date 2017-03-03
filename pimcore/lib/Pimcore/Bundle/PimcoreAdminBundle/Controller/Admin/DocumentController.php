@@ -123,8 +123,6 @@ class DocumentController extends ElementControllerBase implements EventedControl
         } else {
             return $this->json($documents);
         }
-
-        return $this->json(false);
     }
 
     /**

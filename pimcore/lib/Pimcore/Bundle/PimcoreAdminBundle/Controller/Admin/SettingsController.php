@@ -1595,7 +1595,6 @@ class SettingsController extends AdminController
             }
         } catch (\Exception $e) {
             throw $e;
-            return $this->json(false);
         }
 
         return $this->json(false);

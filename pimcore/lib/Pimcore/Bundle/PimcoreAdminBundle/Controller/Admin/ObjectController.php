@@ -1231,7 +1231,6 @@ class ObjectController extends ElementControllerBase implements EventedControlle
                             foreach ($childDefinitions as $childDef) {
                                 if ($childDef instanceof Object\ClassDefinition\Data\Localizedfields) {
                                     return $this->json(["success" => false, "message" => "Could be that someone messed around with the fieldcollection in the meantime. Please reload and try again"]);
-                                    ;
                                 }
                             }
                         }

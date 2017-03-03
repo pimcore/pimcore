@@ -166,8 +166,6 @@ class UserController extends AdminController implements EventedControllerInterfa
         } catch (\Exception $e) {
             return $this->json(["success" => false, "message" => $e->getMessage()]);
         }
-
-        return $this->json(false);
     }
 
     /**
