@@ -345,7 +345,7 @@ class Dao extends Model\Element\Dao
     /**
      * Returns the amount of children (not recursively),
      *
-     * @param User $user
+     * @param Model\User $user
      * @return integer
      */
     public function getChildAmount($user = null)

@@ -49,7 +49,7 @@ abstract class Concrete extends Model\Object\Listing
 
 
     /**
-     * @throws Model\Exception
+     * @throws \Exception
      */
     public function __construct()
     {

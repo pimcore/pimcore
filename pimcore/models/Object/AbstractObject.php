@@ -367,7 +367,7 @@ class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @param array $config
-     * @return total count
+     * @return int total count
      */
     public static function getTotalCount($config = [])
     {
@@ -834,7 +834,7 @@ class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @return path
+     * @return string path
      */
     public function getPath()
     {
