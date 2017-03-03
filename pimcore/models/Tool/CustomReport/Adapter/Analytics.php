@@ -279,16 +279,14 @@ class Analytics extends AbstractAdapter
             }
 
             if (sizeof($applyModifiers)) {
-                $date = new \Zend_Date();
+                $date = new \DateTime();
 
                 foreach ($applyModifiers as $modifier) {
                     if ($modifier['sign'] == '-') {
-                        $modifier['number'] *= -1;
+                        $date->sub(new \DateInterval("P" . $modifier['number'] . strtoupper($modifier['type'])));
+                    } else {
+                        $date->add(new \DateInterval("P" . $modifier['number'] . strtoupper($modifier['type'])));
                     }
-
-                    $typeMap = ['d' => \Zend_Date::DAY, 'm' => \Zend_Date::MONTH, 'y' => \Zend_Date::YEAR];
-
-                    $date->add($modifier['number'], $typeMap[$modifier['type']]);
                 }
 
                 return $date->getTimestamp();

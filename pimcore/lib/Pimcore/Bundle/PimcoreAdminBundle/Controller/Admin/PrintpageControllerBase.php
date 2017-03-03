@@ -175,7 +175,7 @@ class PrintpageControllerBase extends DocumentControllerBase
 
         $date = $document->getLastGeneratedDate();
         if ($date) {
-            $date = $date->get(\Zend_Date::DATETIME_SHORT);
+            $date = $date->format("Y-m-d H:i");
         }
 
         $inProgress = $document->getInProgress();

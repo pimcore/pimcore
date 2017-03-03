@@ -41,20 +41,22 @@ abstract class PrintAbstract extends Document\PageSnippet
     public $controller = "web2print";
 
     /**
-     * @param \Zend_Date $lastGenerated
+     * @param \DateTime $lastGenerated
      */
-    public function setLastGeneratedDate(\Zend_Date $lastGenerated)
+    public function setLastGeneratedDate(\DateTime $lastGenerated)
     {
-        $this->lastGenerated = $lastGenerated->get(\Zend_Date::TIMESTAMP);
+        $this->lastGenerated = $lastGenerated->getTimestamp();
     }
 
     /**
-     * @return null|\Zend_Date
+     * @return null|\DateTime
      */
     public function getLastGeneratedDate()
     {
         if ($this->lastGenerated) {
-            return new \Zend_Date($this->lastGenerated, \Zend_Date::TIMESTAMP);
+            $date = new \DateTime();
+            $date->setTimestamp($this->lastGenerated);
+            return $date;
         }
 
         return null;
