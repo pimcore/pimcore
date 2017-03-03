@@ -5,34 +5,13 @@ namespace Pimcore\Tests\Model\Inheritance;
 use Pimcore\Model\Object\AbstractObject;
 use Pimcore\Model\Object\Inheritance;
 use Pimcore\Tests\Test\ModelTestCase;
-use Pimcore\Tests\Util\TestHelper;
 
 class LocalizedFieldTest extends ModelTestCase
 {
-    /**
-     * @var bool
-     */
-    protected $inAdminMode;
-
     public function setUp()
     {
-        $this->inAdminMode = \Pimcore::inAdmin();
-
-        \Pimcore::setAdminMode();
-        TestHelper::cleanUp();
-
         parent::setUp();
-    }
-
-    public function tearDown()
-    {
-        if ($this->inAdminMode) {
-            \Pimcore::setAdminMode();
-        } else {
-            \Pimcore::unsetAdminMode();
-        }
-
-        parent::tearDown();
+        \Pimcore::setAdminMode();
     }
 
     /**
@@ -52,18 +31,18 @@ class LocalizedFieldTest extends ModelTestCase
         $one = new Inheritance();
         $one->setKey("one");
         $one->setParentId(1);
-        $one->setPublished(1);
+        $one->setPublished(true);
 
         $one->setInput("parenttextEN", "en");
         $one->setInput("parenttextDE", "de");
         $one->save();
-        $id1 = $one->getId();
 
         /** @var Inheritance $two */
         $two = new Inheritance();
         $two->setKey("two");
         $two->setParentId($one->getId());
-        $two->setPublished(1);
+        $two->setPublished(true);
+
         $two->setInput("childtextDE", "de");
         $two->save();
 
@@ -71,9 +50,10 @@ class LocalizedFieldTest extends ModelTestCase
         $three = new Inheritance();
         $three->setKey("three");
         $three->setParentId($two->getId());
-        $three->setPublished(1);
+        $three->setPublished(true);
         $three->save();
 
+        $id1 = $one->getId();
         $id2 = $two->getId();
         $id3 = $three->getId();
 

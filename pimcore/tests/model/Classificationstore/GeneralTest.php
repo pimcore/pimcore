@@ -8,31 +8,17 @@ use Pimcore\Tests\Util\TestHelper;
 
 class GeneralTest extends AbstractClassificationStoreTest
 {
-    /**
-     * @var bool
-     */
-    protected $inAdminMode;
-
     public function setUp()
     {
-        $this->inAdminMode = \Pimcore::inAdmin();
+        parent::setUp();
 
         \Pimcore::setAdminMode();
         TestHelper::cleanUp();
-
-        parent::setUp();
     }
 
     public function tearDown()
     {
-        if ($this->inAdminMode) {
-            \Pimcore::setAdminMode();
-        } else {
-            \Pimcore::unsetAdminMode();
-        }
-
         TestHelper::cleanUp();
-
         parent::tearDown();
     }
 
