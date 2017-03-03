@@ -494,7 +494,7 @@ class Block extends Model\Object\ClassDefinition\Data
     public function doGetFieldDefinitions($def = null, $fields = [])
     {
         if ($def === null) {
-            $def = $this->getChilds();
+            $def = $this->getChildren();
         }
 
         if (is_array($def)) {
@@ -504,8 +504,8 @@ class Block extends Model\Object\ClassDefinition\Data
         }
 
         if ($def instanceof Object\ClassDefinition\Layout) {
-            if ($def->hasChilds()) {
-                foreach ($def->getChilds() as $child) {
+            if ($def->hasChildren()) {
+                foreach ($def->getChildren() as $child) {
                     $fields = array_merge($fields, $this->doGetFieldDefinitions($child, $fields));
                 }
             }
@@ -527,7 +527,7 @@ class Block extends Model\Object\ClassDefinition\Data
             $definitions = $this->doGetFieldDefinitions();
             foreach ($this->getReferencedFields() as $rf) {
                 if ($rf instanceof Object\ClassDefinition\Data\Localizedfields) {
-                    $definitions = array_merge($definitions, $this->doGetFieldDefinitions($rf->getChilds()));
+                    $definitions = array_merge($definitions, $this->doGetFieldDefinitions($rf->getChildren()));
                 }
             }
 

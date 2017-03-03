@@ -854,13 +854,13 @@ class Asset extends Element\AbstractElement
         if ($this->getType() == "folder") {
             if (is_bool($this->hasChilds)) {
                 if (($this->hasChilds and empty($this->childs)) or (!$this->hasChilds and !empty($this->childs))) {
-                    return $this->getDao()->hasChilds();
+                    return $this->getDao()->hasChildren();
                 } else {
                     return $this->hasChilds;
                 }
             }
 
-            return $this->getDao()->hasChilds();
+            return $this->getDao()->hasChildren();
         }
 
         return false;
@@ -956,8 +956,8 @@ class Asset extends Element\AbstractElement
         $this->closeStream();
 
         // remove childs
-        if ($this->hasChilds()) {
-            foreach ($this->getChilds() as $child) {
+        if ($this->hasChildren()) {
+            foreach ($this->getChildren() as $child) {
                 $child->delete();
             }
         }
