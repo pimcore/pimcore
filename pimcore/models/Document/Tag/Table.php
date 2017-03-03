@@ -33,7 +33,7 @@ class Table extends Model\Document\Tag
 
 
     /**
-     * @see Document\Tag\TagInterface::getType
+     * @see TagInterface::getType
      * @return string
      */
     public function getType()
@@ -42,7 +42,7 @@ class Table extends Model\Document\Tag
     }
 
     /**
-     * @see Document\Tag\TagInterface::getData
+     * @see TagInterface::getData
      * @return mixed
      */
     public function getData()
@@ -51,7 +51,7 @@ class Table extends Model\Document\Tag
     }
 
     /**
-     * @see Document\Tag\TagInterface::frontend
+     * @see TagInterface::frontend
      * @return string
      */
     public function frontend()
@@ -77,7 +77,7 @@ class Table extends Model\Document\Tag
     }
 
     /**
-     * @see Document\Tag\TagInterface::setDataFromResource
+     * @see DTagInterface::setDataFromResource
      * @param mixed $data
      * @return $this
      */
@@ -89,7 +89,7 @@ class Table extends Model\Document\Tag
     }
 
     /**
-     * @see Document\Tag\TagInterface::setDataFromEditmode
+     * @see TagInterface::setDataFromEditmode
      * @param mixed $data
      * @return $this
      */

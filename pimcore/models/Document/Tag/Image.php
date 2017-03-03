@@ -84,7 +84,7 @@ class Image extends Model\Document\Tag
     public $marker = [];
 
     /**
-     * @see Document\Tag\TagInterface::getType
+     * @see TagInterface::getType
      * @return string
      */
     public function getType()
@@ -93,7 +93,7 @@ class Image extends Model\Document\Tag
     }
 
     /**
-     * @see Document\Tag\TagInterface::getData
+     * @see TagInterface::getData
      * @return mixed
      */
     public function getData()
@@ -181,7 +181,7 @@ class Image extends Model\Document\Tag
     }
 
     /**
-     * @see Document\Tag\TagInterface::frontend
+     * @see TagInterface::frontend
      * @return string
      */
     public function frontend()

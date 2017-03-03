@@ -43,7 +43,7 @@ class User extends Model\Object\ClassDefinition\Data\Select
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataFromResource
+     * @see Model\Object\ClassDefinition\Data::getDataFromResource
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
