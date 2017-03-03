@@ -35,4 +35,10 @@ include(dirname(__FILE__) . "/helper.php");
 require_once PIMCORE_PATH . "/lib/Pimcore.php";
 require_once PIMCORE_PATH . "/lib/Pimcore/Logger.php";
 
+if(!class_exists("Zend_Date")) {
+    // if ZF is not loaded, we need to provide some compatibility stubs
+    // for a detailed description see the included file
+    require_once PIMCORE_PATH . "/lib/compatibility-stubs.php";
+}
+
 return $composerLoader;

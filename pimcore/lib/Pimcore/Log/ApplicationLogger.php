@@ -405,15 +405,17 @@ class ApplicationLogger implements LoggerInterface
      */
     public static function getZendLoggerPsr3Mapping()
     {
+        // the index numer represents the Zend_Log level, e.g.: Zend_Log::EMERG
+        // we don't use the contants here, to avoid a dependency on ZF in v5-only mode
         return [
-            \Zend_Log::DEBUG => LogLevel::DEBUG,
-            \Zend_Log::INFO => LogLevel::INFO,
-            \Zend_Log::NOTICE => LogLevel::NOTICE,
-            \Zend_Log::WARN => LogLevel::WARNING,
-            \Zend_Log::ERR => LogLevel::ERROR,
-            \Zend_Log::CRIT => LogLevel::CRITICAL,
-            \Zend_Log::ALERT => LogLevel::ALERT,
-            \Zend_Log::EMERG => LogLevel::EMERGENCY
+            7 => LogLevel::DEBUG,
+            6 => LogLevel::INFO,
+            5 => LogLevel::NOTICE,
+            4 => LogLevel::WARNING,
+            3 => LogLevel::ERROR,
+            2 => LogLevel::CRITICAL,
+            1 => LogLevel::ALERT,
+            0 => LogLevel::EMERGENCY
         ];
     }
 }
