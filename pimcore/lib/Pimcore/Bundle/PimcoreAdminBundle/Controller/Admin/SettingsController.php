@@ -181,10 +181,10 @@ class SettingsController extends AdminController
                 $list->setFilter(function ($row) use ($filter) {
                     foreach ($row as $value) {
                         if ($value) {
-                            $values = is_array($value) ? $value : [$value];
+                            $cellValues = is_array($value) ? $value : [$value];
 
-                            foreach ($values as $value) {
-                                if (strpos($value, $filter) !== false) {
+                            foreach ($cellValues as $cellValue) {
+                                if (strpos($cellValue, $filter) !== false) {
                                     return true;
                                 }
                             }
