@@ -663,7 +663,7 @@ class Service extends Model\AbstractModel
     }
 
     /** Callback for array_filter function.
-     * @param $var value
+     * @param string $var value
      * @return bool true if value is accepted
      */
     private static function filterNullValues($var)

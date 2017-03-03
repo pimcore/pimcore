@@ -373,7 +373,7 @@ class Password extends Model\Object\ClassDefinition\Data
      * @param $data
      * @param null $object
      * @param mixed $params
-     * @return null|Pimcore_Date
+     * @return null|\Pimcore_Date
      */
 
     public function getDiffDataFromEditmode($data, $object = null, $params = [])

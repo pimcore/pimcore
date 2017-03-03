@@ -375,7 +375,7 @@ class Asset extends Element\AbstractElement
 
     /**
      * @param array $config
-     * @return total count
+     * @return int total count
      */
     public static function getTotalCount($config = [])
     {

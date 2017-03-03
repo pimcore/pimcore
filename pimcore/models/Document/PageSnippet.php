@@ -527,7 +527,7 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @return the $scheduledTasks
+     * @return array the $scheduledTasks
      */
     public function getScheduledTasks()
     {
