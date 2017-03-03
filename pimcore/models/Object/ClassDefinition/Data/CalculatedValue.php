@@ -199,7 +199,7 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data
      *
      * @param mixed $data
      * @param boolean $omitMandatoryCheck
-     * @throws Exception
+     * @throws \Exception
      */
     public function checkValidity($data, $omitMandatoryCheck = false)
     {

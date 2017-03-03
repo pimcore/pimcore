@@ -59,7 +59,7 @@ class Object extends Model\Webservice\Data
 
 
     /**
-     * @var Webservice\Data\Property[]
+     * @var Property[]
      */
     public $properties;
 

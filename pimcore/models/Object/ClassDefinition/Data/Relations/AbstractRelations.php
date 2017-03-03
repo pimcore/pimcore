@@ -138,7 +138,7 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
     /**
      *
      * Checks if an asset is an allowed relation
-     * @param Asset $asset
+     * @param Model\Asset $asset
      * @return boolean
      */
     protected function allowAssetRelation($asset)

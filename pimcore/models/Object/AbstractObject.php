@@ -1035,7 +1035,7 @@ class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @return Property[]
+     * @return Model\Property[]
      */
     public function getProperties()
     {

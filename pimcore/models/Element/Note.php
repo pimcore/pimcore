@@ -72,7 +72,7 @@ class Note extends Model\AbstractModel
     /**
      * @static
      * @param $id
-     * @return Element\Note
+     * @return Note
      */
     public static function getById($id)
     {

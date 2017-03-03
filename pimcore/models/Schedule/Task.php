@@ -50,18 +50,18 @@ class Task extends Model\AbstractModel
     public $action;
 
     /**
-     * @var version
+     * @var int
      */
     public $version;
 
     /**
-     * @var version
+     * @var bool
      */
     public $active;
 
     /**
      * @param integer $id
-     * @return Schedule\Task
+     * @return Task
      */
     public static function getById($id)
     {
@@ -84,7 +84,7 @@ class Task extends Model\AbstractModel
 
     /**
      * @param array $data
-     * @return Schedule\Task
+     * @return Task
      */
     public static function create($data)
     {
