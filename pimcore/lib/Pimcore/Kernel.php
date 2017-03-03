@@ -39,7 +39,6 @@ abstract class Kernel extends \Symfony\Component\HttpKernel\Kernel
             new SwiftmailerBundle(),
             new DoctrineBundle(),
             new SensioFrameworkExtraBundle(),
-            new DebrilRssAtomBundle(),
 
             // CMF bundles
             new CmfRoutingBundle(),

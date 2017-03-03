@@ -1,6 +1,8 @@
 <?php
 namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Admin;
 
+use FeedIo\Adapter\Guzzle\Client;
+use FeedIo\FeedIo;
 use Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminController;
 use Pimcore\Bundle\PimcoreBundle\Controller\EventedControllerInterface;
 use Pimcore\Model\Document;
@@ -234,7 +236,8 @@ class PortalController extends AdminController implements EventedControllerInter
         $feedUrl = $portlet['config'];
 
         // get feedio
-        $feedIo = $this->container->get('feedio');
+        $feedIoClient = new Client(new \GuzzleHttp\Client());
+        $feedIo = new FeedIo($feedIoClient, $this->container->get('logger'));
 
         $feed = null;
         if (!empty($feedUrl)) {
