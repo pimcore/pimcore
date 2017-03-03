@@ -487,7 +487,9 @@ class Image extends Model\Document\Tag
 
     /**
      * @param $ownerDocument
-     * @param array $blockedTags
+     * @param array $tags
+     * @return array|mixed
+     * @internal param array $blockedTags
      */
     public function getCacheTags($ownerDocument, $tags = [])
     {
@@ -573,8 +575,10 @@ class Image extends Model\Document\Tag
 
     /**
      * @param Model\Webservice\Data\Document\Element $wsElement
+     * @param null $document
      * @param mixed $params
      * @param null $idMapper
+     * @return Model\Webservice\Data\Document\Element|void
      * @throws \Exception
      */
     public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)

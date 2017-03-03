@@ -387,11 +387,11 @@ class Block extends Model\Document\Tag
 
     /**
      * @param Model\Webservice\Data\Document\Element $wsElement
-     * @oaram $document
+     * @param null $document
      * @param mixed $params
      * @param null $idMapper
+     * @return Model\Webservice\Data\Document\Element|void
      * @throws \Exception
-     *
      * @todo replace and with &&
      */
     public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
