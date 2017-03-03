@@ -370,6 +370,11 @@ pimcore.plugin.OnlineShop.pricing.config.objects = Class.create(pimcore.object.t
             return false;
         }
 
+        //check if allowed classes config is set and if it applies
+        if(this.fieldConfig.classes) {
+            return (this.fieldConfig.classes.indexOf(data.className) > -1);
+        }
+
         // allow all objects (temporary)
         return true;
     }

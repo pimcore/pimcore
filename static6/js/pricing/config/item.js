@@ -729,9 +729,6 @@ pimcore.plugin.OnlineShop.pricing.conditions = {
             tbar: this.getTopBar(niceName, myId, panel, data, "plugin_onlineshop_pricing_icon_conditionCatalogProduct"),
             items: [
                 new pimcore.plugin.OnlineShop.pricing.config.objects(data.products, {
-                    classes: [
-//                        {classes: "Product"}
-                    ],
                     name: "products",
                     title: "",
                     visibleFields: "path",
@@ -795,9 +792,6 @@ pimcore.plugin.OnlineShop.pricing.conditions = {
             tbar: this.getTopBar(niceName, myId, panel, data, "plugin_onlineshop_pricing_icon_conditionCatalogCategory"),
             items: [
                 new pimcore.plugin.OnlineShop.pricing.config.objects(data.categories, {
-                    classes: [
-//                        {classes: "ProductCategory"}
-                    ],
                     name: "categories",
                     title: "",
                     visibleFields: "path",
@@ -1076,7 +1070,7 @@ pimcore.plugin.OnlineShop.pricing.conditions = {
             items: [
                 new pimcore.plugin.OnlineShop.pricing.config.objects(data.whiteList, {
                     classes: [
-                        {classes: "VoucherSeries"}
+                        "OnlineShopVoucherSeries"
                     ],
                     name: "whiteList",
                     title: "White List",
