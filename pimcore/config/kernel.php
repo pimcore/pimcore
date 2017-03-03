@@ -8,6 +8,7 @@ if (Pimcore::inDebugMode()) {
 }
 
 $kernel = new AppKernel(Config::getEnvironment(), Pimcore::inDebugMode());
+$kernel->boot();
 Pimcore::setKernel($kernel);
 
 return $kernel;
