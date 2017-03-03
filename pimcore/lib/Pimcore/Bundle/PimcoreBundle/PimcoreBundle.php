@@ -7,7 +7,6 @@ use Pimcore\Bundle\PimcoreBundle\DependencyInjection\Compiler\ContextInitializer
 use Pimcore\Bundle\PimcoreBundle\DependencyInjection\Compiler\PimcoreContextResolverAwarePass;
 use Pimcore\Bundle\PimcoreBundle\DependencyInjection\Compiler\PimcoreGlobalTemplatingVariablesPass;
 use Pimcore\Bundle\PimcoreBundle\DependencyInjection\Compiler\PhpTemplatingPass;
-use Pimcore\Bundle\PimcoreBundle\DependencyInjection\Compiler\SecurityTokenLoaderUserProvidersPass;
 use Pimcore\Bundle\PimcoreBundle\DependencyInjection\Compiler\SessionConfiguratorPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;

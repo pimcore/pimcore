@@ -3,11 +3,9 @@
 namespace Pimcore\Bundle\PimcoreBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\PimcoreAdminBundle\Security\User\UserLoader;
-use Pimcore\Bundle\PimcoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Bundle\PimcoreBundle\Service\Request\DocumentResolver;
 use Pimcore\Bundle\PimcoreBundle\Service\Request\EditmodeResolver;
 use Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolver;
-use Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolverAwareInterface;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Asset\Dao;
 use Pimcore\Model\Document;

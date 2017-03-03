@@ -14,11 +14,8 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\EventListener\Frontend;
 
-use Pimcore\Bundle\PimcoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
-use Pimcore\Bundle\PimcoreBundle\Service\Document\DocumentService;
 use Pimcore\Bundle\PimcoreBundle\Service\Request\DocumentResolver as DocumentResolverService;
 use Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolver;
-use Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolverAwareInterface;
 use Pimcore\Bundle\PimcoreBundle\Templating\Helper\HeadMeta;
 use Pimcore\Model\Document\Page;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;

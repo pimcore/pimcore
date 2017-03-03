@@ -3,10 +3,7 @@
 namespace Pimcore\Bundle\PimcoreBundle\DependencyInjection;
 
 use Pimcore\Bundle\PimcoreBundle\Routing\Loader\AnnotatedRouteControllerLoader;
-use Pimcore\Config;
-use Pimcore\HttpKernel\Config\PimcoreConfigResource;
 use Symfony\Component\Config\FileLocator;
-use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Exception\RuntimeException;
 use Symfony\Component\DependencyInjection\Extension\Extension;

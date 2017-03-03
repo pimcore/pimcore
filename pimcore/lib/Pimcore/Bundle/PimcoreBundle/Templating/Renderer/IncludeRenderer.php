@@ -2,7 +2,7 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\Templating\Renderer;
 
-use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModelInterface;
+
 use Pimcore\Cache;
 use Pimcore\Model;
 use Pimcore\Model\Document\PageSnippet;

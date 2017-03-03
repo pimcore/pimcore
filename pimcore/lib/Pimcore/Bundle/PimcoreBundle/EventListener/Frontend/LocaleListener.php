@@ -2,15 +2,12 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\EventListener\Frontend;
 
-use Pimcore\Bundle\PimcoreBundle\Service\Request\PimcoreContextResolver;
-use Pimcore\Config;
-use Pimcore\Http\RequestHelper;
-use Pimcore\Model\Site;
-use Pimcore\Tool;
+
+
+
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+
+
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;

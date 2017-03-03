@@ -4,7 +4,6 @@ namespace Pimcore\Bundle\PimcoreBundle\Templating\Renderer;
 
 use Pimcore\Bundle\PimcoreBundle\Service\Request\EditmodeResolver;
 use Pimcore\Bundle\PimcoreBundle\Templating\Model\ViewModel;
-use PimcoreLegacyBundle\Zend\View\ViewProvider;
 use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Document\Tag;
 use Psr\Log\LoggerAwareInterface;

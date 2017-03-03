@@ -14,8 +14,6 @@
 
 namespace Pimcore\Bundle\PimcoreBundle\Templating\Renderer;
 
-
-use Pimcore\Bundle\PimcoreBundle\Templating\PhpEngine;
 use Pimcore\Model\Document;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Fragment\FragmentRendererInterface;
