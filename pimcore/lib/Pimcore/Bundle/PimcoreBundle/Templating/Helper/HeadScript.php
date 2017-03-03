@@ -45,6 +45,7 @@ use Pimcore\Bundle\PimcoreBundle\Templating\Helper\Placeholder\CacheBusterAware;
 use Pimcore\Bundle\PimcoreBundle\Templating\Helper\Placeholder\Container;
 use Pimcore\Bundle\PimcoreBundle\Templating\Helper\Placeholder\ContainerService;
 use Pimcore\Event\FrontendEvents;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
  * Helper for setting and retrieving script elements for HTML head section
