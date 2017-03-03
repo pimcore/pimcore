@@ -2,6 +2,8 @@
 
 namespace Pimcore;
 
+use Pimcore\Legacy\EventManager;
+
 class Legacy {
 
     /**
@@ -42,7 +44,7 @@ class Legacy {
         $front = static::prepareMvc($returnResponse, $conf);
         $throwExceptions = static::throwMvcExceptions($conf);
 
-        \Pimcore::getEventManager()->trigger("system.startup", $front);
+        self::getEventManager()->trigger("system.startup", $front);
 
         return self::runDispatcher($front, $throwExceptions, $request, $response);
     }
@@ -525,7 +527,7 @@ class Legacy {
     public static function getEventManager()
     {
         if (!self::$eventManager) {
-            self::$eventManager = new \Zend_EventManager_EventManager();
+            self::$eventManager = new EventManager();
         }
 
         return self::$eventManager;
