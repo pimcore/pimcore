@@ -2,6 +2,7 @@
 
 namespace Pimcore;
 
+use Debril\RssAtomBundle\DebrilRssAtomBundle;
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Pimcore\Bundle\PimcoreAdminBundle\PimcoreAdminBundle;
 use Pimcore\Bundle\PimcoreBundle\PimcoreBundle;
@@ -38,6 +39,7 @@ abstract class Kernel extends \Symfony\Component\HttpKernel\Kernel
             new SwiftmailerBundle(),
             new DoctrineBundle(),
             new SensioFrameworkExtraBundle(),
+            new DebrilRssAtomBundle(),
 
             // CMF bundles
             new CmfRoutingBundle(),

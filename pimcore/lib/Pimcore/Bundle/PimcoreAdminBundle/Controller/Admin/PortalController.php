@@ -222,12 +222,6 @@ class PortalController extends AdminController implements EventedControllerInter
         $dashboard = $this->getCurrentConfiguration($request);
         $id = $request->get("id");
 
-        $cache = \Pimcore\Cache::getInstance();
-        if ($cache) {
-            $cache->setLifetime(10);
-            \Zend_Feed_Reader::setCache($cache);
-        }
-
         $portlet = [];
         foreach ($dashboard["positions"] as $col) {
             foreach ($col as $row) {
@@ -239,10 +233,13 @@ class PortalController extends AdminController implements EventedControllerInter
 
         $feedUrl = $portlet['config'];
 
+        // get feedio
+        $feedIo = $this->container->get('feedio');
+
         $feed = null;
         if (!empty($feedUrl)) {
             try {
-                $feed = \Zend_Feed_Reader::import($feedUrl);
+                $feed = $feedIo->read($feedUrl)->getFeed();
             } catch (\Exception $e) {
                 Logger::error($e);
             }
@@ -263,9 +260,9 @@ class PortalController extends AdminController implements EventedControllerInter
                 $entry = [
                     "title" => $entry->getTitle(),
                     "description" => $entry->getDescription(),
-                    'authors' => $entry->getAuthors(),
+                    'authors' => $entry->getValue("author"),
                     'link' => $entry->getLink(),
-                    'content' => $entry->getContent()
+                    'content' => $entry->getDescription()
                 ];
 
                 foreach ($entry as &$content) {

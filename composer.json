@@ -87,6 +87,7 @@
     "maff/zf1-psr-7-bridge": "@dev",
     "symfony/psr-http-message-bridge": "^1.0",
     "php-di/symfony-bridge": "^2.0",
+    "debril/rss-atom-bundle": "^3.0",
 
     "zendframework/zendframework1": "~1.12",
     "zendframework/zend-diactoros": "^1.3",
@@ -130,7 +131,6 @@
       "@symfony-scripts"
     ],
     "symfony-scripts": [
-      "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
       "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
       "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
       "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile",
