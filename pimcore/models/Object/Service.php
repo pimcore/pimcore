@@ -1120,8 +1120,6 @@ class Service extends Model\Element\Service
         }
 
         foreach ($layoutDefinitions as $customLayoutDefinition) {
-            $layoutName = $customLayoutDefinition->getName();
-
             $layoutDefinitions = $customLayoutDefinition->getLayoutDefinitions();
             $dummyClass = new ClassDefinition();
             $dummyClass->setLayoutDefinitions($layoutDefinitions);
