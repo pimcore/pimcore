@@ -57,6 +57,14 @@ class Pimcore extends Module\Symfony
         return $this->kernel;
     }
 
+    /**
+     * @return \Symfony\Component\DependencyInjection\ContainerInterface
+     */
+    public function getContainer()
+    {
+        return $this->kernel->getContainer();
+    }
+
     public function _initialize()
     {
         // don't initialize the kernel multiple times if running multiple suites

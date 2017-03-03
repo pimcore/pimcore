@@ -1,28 +1,20 @@
 <?php
-/**
- * Created by IntelliJ IDEA.
- * User: josef.aichhorn@elements.at
- * Date: 11.11.2013
- */
 
+namespace Pimcore\Tests\Model\Inheritance;
 
-class TestSuite_Inheritance_GeneralTest extends Test_Base
+use Pimcore\Model\Object\AbstractObject;
+use Pimcore\Model\Object\Folder;
+use Pimcore\Model\Object\Inheritance;
+use Pimcore\Tests\Test\ModelTestCase;
+use Pimcore\Tests\Util\TestHelper;
+
+class GeneralTest extends ModelTestCase
 {
     public function setUp()
     {
-        $this->inAdminMode = Pimcore::inAdmin();
-        Pimcore::setAdminMode();
-        Test_Tool::cleanUp();
         parent::setUp();
-    }
-
-    public function tearDown()
-    {
-        if ($this->inAdminMode) {
-            Pimcore::setAdminMode();
-        } else {
-            Pimcore::unsetAdminMode();
-        }
+        TestHelper::cleanUp();
+        \Pimcore::setAdminMode();
     }
 
     /**
@@ -36,41 +28,42 @@ class TestSuite_Inheritance_GeneralTest extends Test_Base
      */
     public function testInheritance()
     {
-        $this->printTestName();
         // According to the bootstrap file en and de are valid website languages
 
-        $one = new Object_Inheritance();
+        /** @var Inheritance $one */
+        $one = new Inheritance();
         $one->setKey("one");
         $one->setParentId(1);
         $one->setPublished(1);
 
         $one->setNormalInput("parenttext");
         $one->save();
-        $id1 = $one->getId();
 
-        $two = new Object_Inheritance();
+        /** @var Inheritance $two */
+        $two = new Inheritance();
         $two->setKey("two");
         $two->setParentId($one->getId());
         $two->setPublished(1);
         $two->setNormalInput("childtext");
         $two->save();
 
+        $id1 = $one->getId();
         $id2 = $two->getId();
-        $one = Object_Abstract::getById($id1);
-        $two = Object_Abstract::getById($id2);
+
+        $one = AbstractObject::getById($id1);
+        $two = AbstractObject::getById($id2);
 
         $this->assertEquals("parenttext", $one->getNormalInput());
         // not inherited
         $this->assertEquals("childtext", $two->getNormalInput());
 
-
         // null it out
         $two->setNormalInput(null);
         $two->save();
-        $two = Object_Abstract::getById($id2);
+        $two = AbstractObject::getById($id2);
         $this->assertEquals("parenttext", $two->getNormalInput());
 
-        $list = new Object_Inheritance_List();
+        $list = new Inheritance\Listing();
         $list->setCondition("normalinput LIKE '%parenttext%'");
         $list->setLocale("de");
         $listItems = $list->load();
@@ -79,9 +72,9 @@ class TestSuite_Inheritance_GeneralTest extends Test_Base
         // set it back
         $two->setNormalInput("childtext");
         $two->save();
-        $two = Object_Abstract::getById($id2);
+        $two = AbstractObject::getById($id2);
 
-        $list = new Object_Inheritance_List();
+        $list = new Inheritance\Listing();
         $list->setCondition("normalinput LIKE '%parenttext%'");
         $list->setLocale("de");
         $listItems = $list->load();
@@ -90,19 +83,19 @@ class TestSuite_Inheritance_GeneralTest extends Test_Base
         // null it out
         $two->setNormalInput(null);
         $two->save();
-        $two = Object_Abstract::getById($id2);
+        $two = AbstractObject::getById($id2);
         $this->assertEquals("parenttext", $two->getNormalInput());
 
         // disable inheritance
-        $getInheritedValues = Object_Abstract::getGetInheritedValues();
-        Object_Abstract::setGetInheritedValues(false);
+        $getInheritedValues = AbstractObject::getGetInheritedValues();
+        AbstractObject::setGetInheritedValues(false);
 
-        $two = Object_Abstract::getById($id2);
+        $two = AbstractObject::getById($id2);
         $this->assertEquals(null, $two->getNormalInput());
 
         // enable inheritance
-        Object_Abstract::setGetInheritedValues($getInheritedValues);
-        $two = Object_Abstract::getById($id2);
+        AbstractObject::setGetInheritedValues($getInheritedValues);
+        $two = AbstractObject::getById($id2);
         $this->assertEquals("parenttext", $two->getNormalInput());
 
         // now move it out
@@ -124,19 +117,23 @@ class TestSuite_Inheritance_GeneralTest extends Test_Base
         $one->setNormalInput("parenttext2");
         $one->save();
 
-        $two = Object_Abstract::getById($id2);
+        $two = AbstractObject::getById($id2);
         // check that child objects has been updated as well
         $this->assertEquals("parenttext2", $two->getNormalInput());
 
+        // TODO the following doesn't work as the catch catches the exception thrown in fail
+        /*
         // invalid locale
-        $list = new Object_Inheritance_List();
+        $list = new Inheritance\Listing();
         $list->setCondition("normalinput LIKE '%parenttext%'");
         $list->setLocale("xx");
+
         try {
             $listItems = $list->load();
             $this->fail("Excpected exception");
         } catch (Exception $e) {
         }
+        */
     }
 
 
@@ -152,25 +149,22 @@ class TestSuite_Inheritance_GeneralTest extends Test_Base
      */
     public function testInheritanceWithFolder()
     {
-        $this->printTestName();
         // According to the bootstrap file en and de are valid website languages
 
-        $one = new Object_Inheritance();
+        $one = new Inheritance();
         $one->setKey("one");
         $one->setParentId(1);
         $one->setPublished(1);
 
         $one->setNormalInput("parenttext");
         $one->save();
-        $id1 = $one->getId();
 
-
-        $folder = new Object_Folder();
+        $folder = new Folder();
         $folder->setParent($one);
         $folder->setKey('folder');
         $folder->save();
 
-        $two = new Object_Inheritance();
+        $two = new Inheritance();
         $two->setKey("two");
         $two->setParentId($folder->getId());
         $two->setPublished(1);
@@ -181,26 +175,26 @@ class TestSuite_Inheritance_GeneralTest extends Test_Base
         $one->setRelationobjects([$one]);
         $one->save();
 
-        Pimcore::collectGarbage();
+        \Pimcore::collectGarbage();
 
-        $two = Object_Inheritance::getById($two->getId());
+        $two = Inheritance::getById($two->getId());
 
         $relationobjects = $two->getRelationObjects();
-        if (sizeof($relationobjects) != 1) {
-            $this->fail('inheritance for object relations failed');
-        } else {
-            if ($relationobjects[0]->getId() != $one->getId()) {
-                $this->fail('inheritance for object relations failed (wrong object)');
-            }
-        }
 
-        $table = 'object_'.$one->getClassId();
-        $db = Pimcore_Resource::get();
+        $this->assertEquals(1, count($relationobjects), 'inheritance for object relations failed');
+        $this->assertEquals($one->getId(), $relationobjects[0]->getId(), 'inheritance for object relations failed (wrong object)');
 
-        $relationobjectsString = $db->fetchOne("select relationobjects from {$table} where oo_id= ? ", $two->getId());
+        $db    = $this->tester->getContainer()->get('database_connection');
+        $table = 'object_' . $one->getClassId();
 
-        if ($relationobjectsString != ','.$one->getId().',') {
-            $this->fail("comma separated relation ids not written correctly in object_* view");
-        }
+        $relationobjectsString = $db->fetchColumn('SELECT relationobjects FROM ' . $table . ' WHERE oo_id = ?', [
+            $two->getId()
+        ]);
+
+        $this->assertEquals(
+            ',' . $one->getId() . ',',
+            $relationobjectsString,
+            'comma separated relation ids not written correctly in object_* view'
+        );
     }
 }

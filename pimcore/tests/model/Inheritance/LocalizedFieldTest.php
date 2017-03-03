@@ -5,12 +5,14 @@ namespace Pimcore\Tests\Model\Inheritance;
 use Pimcore\Model\Object\AbstractObject;
 use Pimcore\Model\Object\Inheritance;
 use Pimcore\Tests\Test\ModelTestCase;
+use Pimcore\Tests\Util\TestHelper;
 
 class LocalizedFieldTest extends ModelTestCase
 {
     public function setUp()
     {
         parent::setUp();
+        TestHelper::cleanUp();
         \Pimcore::setAdminMode();
     }
 
