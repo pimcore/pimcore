@@ -83,7 +83,7 @@ class MaintenancePageListener
         // this is to avoid problems with monitoring agents
         $serverIps = ["127.0.0.1"];
 
-        if ($maintenance && !in_array(\Pimcore\Tool::getClientIp(), $serverIps)) {
+        if ($maintenance && !in_array($event->getRequest()->getClientIp(), $serverIps)) {
             $response = new Response($this->getTemplateCode(), 503);
             $event->setResponse($response);
         }
