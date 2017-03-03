@@ -51,7 +51,7 @@ class BlogController extends AbstractController
 
         if (!$article instanceof Object\BlogArticle || !$article->isPublished()) {
             // this will trigger a 404 error response
-            throw new \Zend_Controller_Router_Exception("invalid request");
+            throw new \Exception("Invalid request - no such blog article");
         }
 
         $this->view->article = $article;

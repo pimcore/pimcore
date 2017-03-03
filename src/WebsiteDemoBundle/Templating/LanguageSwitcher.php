@@ -40,8 +40,7 @@ class LanguageSwitcher
                 }
             }
 
-            // TODO remove Zend_Locale
-            $links[$target] = \Zend_Locale::getTranslation($language, 'language');
+            $links[$target] = \Locale::getDisplayLanguage($language);
         }
 
         return $links;

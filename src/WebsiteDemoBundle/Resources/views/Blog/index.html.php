@@ -70,10 +70,8 @@
                     <li <?php if($this->getParam("archive") == $range) { ?> class="active"<?php } ?>>
                         <a href="?archive=<?= $range ?>">
                             <?php
-                                list($year, $month) = explode("-", $range);
-                                echo Zend_Locale::getTranslation($month, "Month", $this->language);
-                                echo " ";
-                                echo $year;
+                                $time = strtotime($range . "-20"); // always use the 20th
+                                echo strftime("%B %G", $time);
                             ?>
                         </a>
                     </li>
