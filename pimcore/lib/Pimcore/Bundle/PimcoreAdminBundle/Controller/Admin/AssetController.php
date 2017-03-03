@@ -139,7 +139,7 @@ class AssetController extends ElementControllerBase implements EventedController
         }
         $offset = intval($request->get("start"));
 
-        if ($asset->hasChilds()) {
+        if ($asset->hasChildren()) {
 
             if ($request->get("view")) {
                 $cv = \Pimcore\Model\Element\Service::getCustomViewById($request->get("view"));
@@ -480,7 +480,7 @@ class AssetController extends ElementControllerBase implements EventedController
                 ]];
 
 
-                $hasChilds = $asset->hasChilds();
+                $hasChilds = $asset->hasChildren();
                 if (!$hasDependency) {
                     $hasDependency = $hasChilds;
                 }
@@ -1377,7 +1377,7 @@ class AssetController extends ElementControllerBase implements EventedController
                 ]
             ]];
 
-            if ($asset->hasChilds()) {
+            if ($asset->hasChildren()) {
                 // get amount of childs
                 $list = new Asset\Listing();
                 $list->setCondition("path LIKE '" . $asset->getRealFullPath() . "/%'");
