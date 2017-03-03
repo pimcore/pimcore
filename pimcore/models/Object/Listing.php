@@ -16,7 +16,6 @@
 
 namespace Pimcore\Model\Object;
 
-use Pimcore\Document\Adapter;
 use Pimcore\Model;
 use Zend\Paginator\Adapter\AdapterInterface;
 use Zend\Paginator\AdapterAggregateInterface;

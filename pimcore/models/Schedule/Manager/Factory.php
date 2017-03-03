@@ -16,8 +16,6 @@
 
 namespace Pimcore\Model\Schedule\Manager;
 
-use Pimcore\Model;
-
 class Factory
 {
     /**

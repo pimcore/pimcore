@@ -18,7 +18,6 @@ namespace Pimcore\Model\Asset;
 
 use Pimcore\Cache;
 use Pimcore\Model;
-use Pimcore\Tool;
 use Pimcore\Logger;
 
 /**

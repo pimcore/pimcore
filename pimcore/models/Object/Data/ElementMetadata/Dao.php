@@ -16,7 +16,6 @@
 
 namespace Pimcore\Model\Object\Data\ElementMetadata;
 
-use Pimcore\Model;
 use Pimcore\Model\Object;
 
 /**

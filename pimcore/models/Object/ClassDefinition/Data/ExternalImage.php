@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
-use Pimcore\Model\Element;
 use Pimcore\Model\Object;
 
 class ExternalImage extends Model\Object\ClassDefinition\Data

@@ -16,7 +16,6 @@
 
 namespace Pimcore\Model\Schedule\Maintenance;
 
-use Pimcore\Model;
 use Pimcore\Model\Tool;
 
 class Job

@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Document\Tag;
 
 use Pimcore\Model;
-use Pimcore\Config;
 
 /**
  * @method \Pimcore\Model\Document\Tag\Dao getDao()

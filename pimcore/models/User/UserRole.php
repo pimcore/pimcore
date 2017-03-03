@@ -16,8 +16,6 @@
 
 namespace Pimcore\Model\User;
 
-use Pimcore\Model;
-
 /**
  * @method \Pimcore\Model\User\UserRole\Dao getDao()
  */

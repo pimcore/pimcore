@@ -16,7 +16,6 @@
 
 namespace Pimcore\Model\Schedule\Task;
 
-use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Object;

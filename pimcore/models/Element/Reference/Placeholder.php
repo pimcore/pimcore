@@ -16,8 +16,6 @@
 
 namespace Pimcore\Model\Element\Reference;
 
-use Pimcore\Model;
-
 class Placeholder
 {
 

@@ -16,8 +16,6 @@
 
 namespace Pimcore\Model\User;
 
-use Pimcore\Model;
-
 class Service
 {
 

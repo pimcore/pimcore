@@ -16,8 +16,6 @@
 
 namespace Pimcore\Model\Object\Fieldcollection\Definition;
 
-use Pimcore\Model;
-
 class Listing
 {
 

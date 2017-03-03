@@ -18,7 +18,6 @@ namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
 use Pimcore\Model\Object;
-use Pimcore\Tool\Serialize;
 
 class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
 {

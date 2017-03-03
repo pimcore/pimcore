@@ -20,7 +20,6 @@ use Pimcore\Event\AssetEvents;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Model\Asset\Image;
 use Pimcore\Model;
-use Pimcore\File;
 use Pimcore\Logger;
 use Symfony\Component\EventDispatcher\GenericEvent;
 

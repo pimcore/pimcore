@@ -18,8 +18,6 @@ namespace Pimcore\Model\Object\ClassDefinition;
 
 use Pimcore\Model;
 use Pimcore\Model\Object;
-use Pimcore\Tool\Serialize;
-use Pimcore\File;
 use Pimcore\Logger;
 
 /**

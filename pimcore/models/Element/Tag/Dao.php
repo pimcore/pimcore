@@ -17,10 +17,7 @@
 namespace Pimcore\Model\Element\Tag;
 
 use Pimcore\Model;
-use Pimcore\Model\Document;
-use Pimcore\Model\Asset;
 use Pimcore\Model\Element\Tag;
-use Pimcore\Model\Object;
 
 /**
  * @property \Pimcore\Model\Element\Tag $model

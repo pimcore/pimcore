@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Document\Page;
 
 use Pimcore\Model;
-use Pimcore\Tool\Serialize;
 
 /**
  * @property \Pimcore\Model\Document\Page $model

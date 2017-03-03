@@ -16,7 +16,6 @@
 
 namespace Pimcore\Model\Tool\CustomReport\Adapter;
 
-use Pimcore\Model;
 use Pimcore\Db;
 
 class Sql extends AbstractAdapter

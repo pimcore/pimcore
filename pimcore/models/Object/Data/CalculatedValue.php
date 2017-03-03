@@ -16,8 +16,6 @@
 
 namespace Pimcore\Model\Object\Data;
 
-use Pimcore\Model;
-
 class CalculatedValue
 {
     /** @var  string */

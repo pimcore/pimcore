@@ -22,7 +22,6 @@ use Pimcore\Model\Object;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
-use Pimcore\Tool;
 
 class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
 {

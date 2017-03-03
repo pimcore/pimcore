@@ -19,7 +19,6 @@ namespace Pimcore\Model\Object\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\Object;
 use Pimcore\Model\Element;
-use Pimcore\Tool;
 use Pimcore\Db;
 
 class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects

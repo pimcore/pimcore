@@ -16,8 +16,6 @@
 
 namespace Pimcore\Model\Object\ClassDefinition\Helper;
 
-use Pimcore\Model\Object;
-
 trait VarExport
 {
     /**

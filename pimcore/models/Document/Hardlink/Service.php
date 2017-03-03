@@ -16,7 +16,6 @@
 
 namespace Pimcore\Model\Document\Hardlink;
 
-use Pimcore\Model;
 use Pimcore\Tool\Serialize;
 use Pimcore\Model\Document;
 

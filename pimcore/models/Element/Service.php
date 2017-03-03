@@ -25,7 +25,6 @@ use Pimcore\Model\Dependency;
 use Pimcore\File;
 use Pimcore\Tool;
 use Pimcore\Logger;
-use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**

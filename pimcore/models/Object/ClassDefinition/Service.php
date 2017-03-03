@@ -16,7 +16,6 @@
 
 namespace Pimcore\Model\Object\ClassDefinition;
 
-use Pimcore\Model;
 use Pimcore\Model\Object;
 use Pimcore\Model\Webservice;
 

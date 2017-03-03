@@ -16,8 +16,6 @@
 
 namespace Pimcore\Model\Object\Objectbrick\Definition;
 
-use Pimcore\Model;
-
 class Listing
 {
 

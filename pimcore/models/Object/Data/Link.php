@@ -16,7 +16,6 @@
 
 namespace Pimcore\Model\Object\Data;
 
-use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
 

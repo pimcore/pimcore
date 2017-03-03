@@ -16,8 +16,6 @@
 
 namespace Pimcore\Model\Object;
 
-use Pimcore\Model;
-
 /**
  * @method \Pimcore\Model\Object\Folder\Dao getDao()
  */

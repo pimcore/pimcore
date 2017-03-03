@@ -16,8 +16,6 @@
 
 namespace Pimcore\Model\Element;
 
-use Pimcore\Model;
-
 class ValidationException extends \Exception
 {
 

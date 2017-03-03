@@ -16,7 +16,6 @@
 
 namespace Pimcore\Model\Element\Export;
 
-use Pimcore\Model;
 use Pimcore\Model\Webservice;
 use Pimcore\Model\Element;
 use Pimcore\Model\Asset;

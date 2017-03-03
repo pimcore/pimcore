@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Asset;
 
 use Pimcore\Event\FrontendEvents;
-use Pimcore\File;
 use Pimcore\Model;
 use Pimcore\Logger;
 use Symfony\Component\EventDispatcher\GenericEvent;
