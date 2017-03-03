@@ -46,7 +46,7 @@ class Pimcore extends Module\Symfony
      */
     public function getPimcoreModule()
     {
-        return $this->getModule(__CLASS__);
+        return $this->getModule('\\' . __CLASS__);
     }
 
     /**

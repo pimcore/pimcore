@@ -1,0 +1,7 @@
+class_name: RestTester
+modules:
+    enabled:
+        - \Pimcore\Tests\Helper\Pimcore
+        - REST:
+            url: /webservice/rest
+            depends: \Pimcore\Tests\Helper\Pimcore
