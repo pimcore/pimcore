@@ -16,11 +16,11 @@ namespace Pimcore\Bundle\PimcoreBundle\EventListener;
 
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\DocumentEvents;
-use Pimcore\Event\Model\AssetEvent;
 use Pimcore\Event\Model\ElementEventInterface;
+use Pimcore\Event\Model\Object\ClassDefinitionEvent;
 use Pimcore\Event\ObjectClassDefinitionEvents;
 use Pimcore\Event\ObjectEvents;
-use Pimcore\Model\Element\Service;
+use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class UUIDListener implements EventSubscriberInterface {
@@ -44,19 +44,47 @@ class UUIDListener implements EventSubscriberInterface {
     }
 
     /**
-     * @param ElementEventInterface $e
+     * @param Event $e
      */
-    public function onPostAdd(ElementEventInterface $e) {
-        \Pimcore\Model\Tool\UUID::create($e->getElement());
+    public function onPostAdd(Event $e) {
+
+        $element = $this->extractElement($e);
+
+        if($element) {
+            \Pimcore\Model\Tool\UUID::create($element);
+        }
     }
 
     /**
-     * @param ElementEventInterface $e
+     * @param Event $e
      */
-    public function onPostDelete(ElementEventInterface $e) {
-        $uuidObject = \Pimcore\Model\Tool\UUID::getByItem($e->getElement());
-        if ($uuidObject instanceof \Pimcore\Model\Tool\UUID) {
-            $uuidObject->delete();
+    public function onPostDelete(Event $e) {
+
+        $element = $this->extractElement($e);
+
+        if($element) {
+            $uuidObject = \Pimcore\Model\Tool\UUID::getByItem($element);
+            if ($uuidObject instanceof \Pimcore\Model\Tool\UUID) {
+                $uuidObject->delete();
+            }
         }
+    }
+
+    /**
+     * @param Event $event
+     * @return null|\Pimcore\Model\Element\ElementInterface|\Pimcore\Model\Object\ClassDefinition
+     */
+    protected function extractElement(Event $event) {
+        $element = null;
+
+        if($event instanceof ElementEventInterface) {
+            $element = $event->getElement();
+        }
+
+        if($event instanceof ClassDefinitionEvent) {
+            $element = $event->getClassDefinition();
+        }
+
+        return $element;
     }
 }
