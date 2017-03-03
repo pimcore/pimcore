@@ -425,13 +425,13 @@ class AbstractObject extends Model\Element\AbstractElement
     {
         if (is_bool($this->o_hasChilds)) {
             if (($this->o_hasChilds and empty($this->o_childs)) or (!$this->o_hasChilds and !empty($this->o_childs))) {
-                return $this->getDao()->hasChilds($objectTypes);
+                return $this->getDao()->hasChildren($objectTypes);
             } else {
                 return $this->o_hasChilds;
             }
         }
 
-        return $this->getDao()->hasChilds($objectTypes);
+        return $this->getDao()->hasChildren($objectTypes);
     }
 
     /**
@@ -503,11 +503,11 @@ class AbstractObject extends Model\Element\AbstractElement
         \Pimcore::getEventDispatcher()->dispatch(ObjectEvents::PRE_DELETE, new ObjectEvent($this));
 
         // delete childs
-        if ($this->hasChilds([self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER, self::OBJECT_TYPE_VARIANT])) {
+        if ($this->hasChildren([self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER, self::OBJECT_TYPE_VARIANT])) {
             // delete also unpublished children
             $unpublishedStatus = self::doHideUnpublished();
             self::setHideUnpublished(false);
-            foreach ($this->getChilds([self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER, self::OBJECT_TYPE_VARIANT], true) as $value) {
+            foreach ($this->getChildren([self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER, self::OBJECT_TYPE_VARIANT], true) as $value) {
                 $value->delete();
             }
             self::setHideUnpublished($unpublishedStatus);

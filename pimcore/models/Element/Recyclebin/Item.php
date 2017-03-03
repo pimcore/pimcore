@@ -174,7 +174,7 @@ class Item extends Model\AbstractModel
                     fclose($handle);
                 }
 
-                $children = $element->getChilds();
+                $children = $element->getChildren();
                 foreach ($children as $child) {
                     $rec($child, $rec, $scope);
                 }
@@ -228,7 +228,7 @@ class Item extends Model\AbstractModel
         if (method_exists($element, "getChilds")) {
             if ($element instanceof Object\AbstractObject) {
                 // because we also want variants
-                $childs = $element->getChilds([Object::OBJECT_TYPE_FOLDER, Object::OBJECT_TYPE_VARIANT, Object::OBJECT_TYPE_OBJECT]);
+                $childs = $element->getChildren([Object::OBJECT_TYPE_FOLDER, Object::OBJECT_TYPE_VARIANT, Object::OBJECT_TYPE_OBJECT]);
             } else {
                 $childs = $element->getChilds();
             }

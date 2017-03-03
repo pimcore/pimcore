@@ -91,7 +91,7 @@ class Service extends Model\Element\Service
             }
         }
 
-        foreach ($document->getChilds() as $child) {
+        foreach ($document->getChildren() as $child) {
             if (!$child->hasChilds()) {
                 $child->save();
                 $saved++;
@@ -130,7 +130,7 @@ class Service extends Model\Element\Service
 
         $new = clone $source;
         $new->id = null;
-        $new->setChilds(null);
+        $new->setChildren(null);
         $new->setKey(Element\Service::getSaveCopyName("document", $new->getKey(), $target));
         $new->setParentId($target->getId());
         $new->setUserOwner($this->_user->getId());
@@ -147,7 +147,7 @@ class Service extends Model\Element\Service
         // add to store
         $this->_copyRecursiveIds[] = $new->getId();
 
-        foreach ($source->getChilds() as $child) {
+        foreach ($source->getChildren() as $child) {
             $this->copyRecursive($new, $child);
         }
 

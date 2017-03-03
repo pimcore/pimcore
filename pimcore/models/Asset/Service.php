@@ -66,7 +66,7 @@ class Service extends Model\Element\Service
         $new = clone $source;
         $new->id = null;
         if ($new instanceof Asset\Folder) {
-            $new->setChilds(null);
+            $new->setChildren(null);
         }
 
         $new->setFilename(Element\Service::getSaveCopyName("asset", $new->getFilename(), $target));
@@ -82,7 +82,7 @@ class Service extends Model\Element\Service
         // add to store
         $this->_copyRecursiveIds[] = $new->getId();
 
-        foreach ($source->getChilds() as $child) {
+        foreach ($source->getChildren() as $child) {
             $this->copyRecursive($new, $child);
         }
 
@@ -111,7 +111,7 @@ class Service extends Model\Element\Service
         $new->id = null;
 
         if ($new instanceof Asset\Folder) {
-            $new->setChilds(null);
+            $new->setChildren(null);
         }
         $new->setFilename(Element\Service::getSaveCopyName("asset", $new->getFilename(), $target));
         $new->setParentId($target->getId());

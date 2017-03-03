@@ -220,7 +220,7 @@ class Hardlink extends Document
             $childs = parent::getChildren();
 
             $sourceChildren = [];
-            if ($this->getChildsFromSource() && $this->getSourceDocument() && !\Pimcore::inAdmin()) {
+            if ($this->getChildrenFromSource() && $this->getSourceDocument() && !\Pimcore::inAdmin()) {
                 $sourceChildren = $this->getSourceDocument()->getChildren();
                 foreach ($sourceChildren as &$c) {
                     $c = Document\Hardlink\Service::wrap($c);

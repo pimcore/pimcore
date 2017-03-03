@@ -47,8 +47,8 @@ class Folder extends DAV\Collection
     {
         $children = [];
 
-        if ($this->asset->hasChilds()) {
-            foreach ($this->asset->getChilds() as $child) {
+        if ($this->asset->hasChildren()) {
+            foreach ($this->asset->getChildren() as $child) {
                 if ($child->isAllowed("view")) {
                     try {
                         if ($child = $this->getChild($child)) {

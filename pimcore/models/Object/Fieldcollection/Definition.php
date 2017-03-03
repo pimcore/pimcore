@@ -152,8 +152,8 @@ class Definition extends Model\AbstractModel
     public function extractDataDefinitions($def)
     {
         if ($def instanceof Object\ClassDefinition\Layout) {
-            if ($def->hasChilds()) {
-                foreach ($def->getChilds() as $child) {
+            if ($def->hasChildren()) {
+                foreach ($def->getChildren() as $child) {
                     $this->extractDataDefinitions($child);
                 }
             }

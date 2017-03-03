@@ -671,13 +671,13 @@ class Document extends Element\AbstractElement
     {
         if (is_bool($this->hasChilds)) {
             if (($this->hasChilds and empty($this->childs)) or (!$this->hasChilds and !empty($this->childs))) {
-                return $this->getDao()->hasChilds();
+                return $this->getDao()->hasChildren();
             } else {
                 return $this->hasChilds;
             }
         }
 
-        return $this->getDao()->hasChilds();
+        return $this->getDao()->hasChildren();
     }
 
     /**
@@ -754,11 +754,11 @@ class Document extends Element\AbstractElement
         \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRE_DELETE, new DocumentEvent($this));
 
         // remove childs
-        if ($this->hasChilds()) {
+        if ($this->hasChildren()) {
             // delete also unpublished children
             $unpublishedStatus = self::doHideUnpublished();
             self::setHideUnpublished(false);
-            foreach ($this->getChilds(true) as $child) {
+            foreach ($this->getChildren(true) as $child) {
                 $child->delete();
             }
             self::setHideUnpublished($unpublishedStatus);

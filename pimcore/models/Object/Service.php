@@ -169,7 +169,7 @@ class Service extends Model\Element\Service
         $new = clone $source;
         $new->o_id = null;
 
-        $new->setChilds(null);
+        $new->setChildren(null);
         $new->setKey(Element\Service::getSaveCopyName("object", $new->getKey(), $target));
         $new->setParentId($target->getId());
         $new->setUserOwner($this->_user->getId());
@@ -942,7 +942,7 @@ class Service extends Model\Element\Service
         }
 
         if (method_exists($layout, "getChilds")) {
-            $children = $layout->getChilds();
+            $children = $layout->getChildren();
             $insideLocalizedField |= ($layout instanceof ClassDefinition\Data\Localizedfields);
             if (is_array($children)) {
                 foreach ($children as $child) {

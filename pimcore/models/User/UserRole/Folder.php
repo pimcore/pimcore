@@ -52,6 +52,6 @@ class Folder extends Model\User\AbstractUser
             return $this->hasChilds;
         }
 
-        return $this->getDao()->hasChilds();
+        return $this->getDao()->hasChildren();
     }
 }
