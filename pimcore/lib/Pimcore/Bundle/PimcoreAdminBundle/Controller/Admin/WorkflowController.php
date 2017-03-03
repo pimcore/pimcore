@@ -231,6 +231,7 @@ class WorkflowController extends AdminController implements EventedControllerInt
 
     /**
      * @param FilterControllerEvent $event
+     * @throws \Exception
      */
     public function onKernelController(FilterControllerEvent $event)
     {

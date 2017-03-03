@@ -75,6 +75,7 @@ class SnippetController extends DocumentControllerBase
      * @Route("/save")
      * @param Request $request
      * @return JsonResponse
+     * @throws \Exception
      */
     public function saveAction(Request $request)
     {

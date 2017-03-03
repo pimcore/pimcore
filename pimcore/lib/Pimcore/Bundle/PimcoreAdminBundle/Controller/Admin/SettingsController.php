@@ -1505,6 +1505,7 @@ class SettingsController extends AdminController
      * @Route("/website-settings")
      * @param Request $request
      * @return JsonResponse
+     * @throws \Exception
      */
     public function websiteSettingsAction(Request $request)
     {

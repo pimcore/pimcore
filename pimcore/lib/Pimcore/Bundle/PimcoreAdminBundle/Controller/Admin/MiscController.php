@@ -279,6 +279,7 @@ class MiscController extends AdminController
      * @Route("/fileexplorer-add")
      * @param Request $request
      * @return JsonResponse
+     * @throws \Exception
      */
     public function fileexplorerAddAction(Request $request)
     {
@@ -311,6 +312,7 @@ class MiscController extends AdminController
      * @Route("/fileexplorer-add-folder")
      * @param Request $request
      * @return JsonResponse
+     * @throws \Exception
      */
     public function fileexplorerAddFolderAction(Request $request)
     {
@@ -365,7 +367,7 @@ class MiscController extends AdminController
      * @param Request $request
      * @param string $paramName
      * @return mixed|string
-     * @throws Exception
+     * @throws \Exception
      */
     private function getFileexplorerPath(Request $request, $paramName = 'node')
     {
@@ -536,6 +538,7 @@ class MiscController extends AdminController
     /**
      * @Route("/phpinfo")
      * @param Request $request
+     * @throws \Exception
      */
     public function phpinfoAction(Request $request)
     {

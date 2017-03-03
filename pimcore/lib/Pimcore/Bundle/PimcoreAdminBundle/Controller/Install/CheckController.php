@@ -591,7 +591,7 @@ class CheckController extends Controller implements EventedControllerInterface
      * @param string $base
      * @param array $data
      * @return array
-     * @throws Exception
+     * @throws \Exception
      */
     protected function rscandir($base = '', &$data = [])
     {

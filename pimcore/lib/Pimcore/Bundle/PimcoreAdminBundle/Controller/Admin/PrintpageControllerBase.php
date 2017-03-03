@@ -162,6 +162,7 @@ class PrintpageControllerBase extends DocumentControllerBase
      * @Route("/active-generate-process")
      * @param Request $request
      * @return JsonResponse
+     * @throws \Exception
      */
     public function activeGenerateProcessAction(Request $request)
     {
@@ -198,6 +199,7 @@ class PrintpageControllerBase extends DocumentControllerBase
      * @Route("/pdf-download")
      * @param Request $request
      * @return JsonResponse
+     * @throws \Exception
      */
     public function pdfDownloadAction(Request $request)
     {
@@ -230,6 +232,7 @@ class PrintpageControllerBase extends DocumentControllerBase
      * @Route("/start-pdf-generation")
      * @param Request $request
      * @return JsonResponse
+     * @throws \Exception
      */
     public function startPdfGenerationAction(Request $request)
     {

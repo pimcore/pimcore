@@ -119,6 +119,7 @@ class ClassificationstoreController extends AdminController
      * @Route("/create-store")
      * @param Request $request
      * @return JsonResponse
+     * @throws \Exception
      */
     public function createStoreAction(Request $request)
     {
@@ -1283,6 +1284,7 @@ class ClassificationstoreController extends AdminController
      * @Route("/edit-store")
      * @param Request $request
      * @return JsonResponse
+     * @throws \Exception
      */
     public function editStoreAction(Request $request)
     {

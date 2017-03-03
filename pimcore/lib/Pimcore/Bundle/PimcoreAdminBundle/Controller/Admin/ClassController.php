@@ -291,6 +291,7 @@ class ClassController extends AdminController implements EventedControllerInterf
      * @Route("/save")
      * @param Request $request
      * @return JsonResponse
+     * @throws \Exception
      */
     public function saveAction(Request $request)
     {
@@ -1071,6 +1072,7 @@ class ClassController extends AdminController implements EventedControllerInterf
      * @Route("/bulk-commit")
      * @param Request $request
      * @return JsonResponse
+     * @throws \Exception
      */
     public function bulkCommitAction(Request $request)
     {
