@@ -32,7 +32,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function load()
     {
-        $items = $this->db->fetchCol("SELECT uuid FROM " . Resource::TABLE_NAME ." ". $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $items = $this->db->fetchCol("SELECT uuid FROM " . UUID\Dao::TABLE_NAME ." ". $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
         $result = [];
         foreach ($items as $uuid) {
             $result[] = UUID::getByUuid($uuid);
@@ -49,7 +49,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function getTotalCount()
     {
         try {
-            $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM " . Resource::TABLE_NAME ." " . $this->getCondition(), $this->model->getConditionVariables());
+            $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM " . UUID\Dao::TABLE_NAME ." " . $this->getCondition(), $this->model->getConditionVariables());
         } catch (\Exception $e) {
         }
 
