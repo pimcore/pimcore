@@ -206,7 +206,7 @@ class ObjectController extends ElementControllerBase implements EventedControlle
 
 
         $tmpObject["expanded"] = !$hasChildren;
-        $tmpObject["permissions"] = $child->getUserPermissions($this->getUser());
+        $tmpObject["permissions"] = $child->getUserPermissions();
 
 
         if ($child->isLocked()) {
