@@ -2,6 +2,6 @@ class_name: RestTester
 modules:
     enabled:
         - \Pimcore\Tests\Helper\Pimcore
-        - REST:
+        - \Pimcore\Tests\Helper\PimcoreRest:
             url: /webservice/rest
             depends: \Pimcore\Tests\Helper\Pimcore
