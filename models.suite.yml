@@ -1,0 +1,4 @@
+class_name: ModelsGuy
+modules:
+    enabled:
+        - \Helper\Models

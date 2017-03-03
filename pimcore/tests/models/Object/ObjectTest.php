@@ -1,5 +1,6 @@
 <?php
-namespace Pimcore\Tests;
+
+namespace Pimcore\Tests\Models\Object;
 
 use Pimcore\Tests\Test\DbTest;
 use Pimcore\Tests\Util\TestHelper;

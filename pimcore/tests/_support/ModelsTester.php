@@ -16,9 +16,9 @@ namespace Pimcore\Tests;
  *
  * @SuppressWarnings(PHPMD)
 */
-class BasicsTester extends \Codeception\Actor
+class ModelsTester extends \Codeception\Actor
 {
-    use _generated\BasicsTesterActions;
+    use _generated\ModelsTesterActions;
 
    /**
     * Define custom actions here
