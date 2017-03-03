@@ -1,39 +1,26 @@
 <?php
-/**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in
- * LICENSE.md which is distributed with this source code.
- *
- * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
- */
 
+namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Install;
+
+use Pimcore\Bundle\PimcoreBundle\Controller\EventedControllerInterface;
 use Pimcore\Model\User;
 use Pimcore\Update;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\Routing\Annotation\Route;
 
-class Install_CheckController extends \Pimcore\Controller\Action
+class CheckController extends Controller implements EventedControllerInterface
 {
-    public function init()
-    {
-        parent::init();
 
-        if (is_file(\Pimcore\Config::locateConfigFile("system.php"))) {
-            // session authentication, only possible if user is logged in
-            $user = \Pimcore\Tool\Authentication::authenticateSession();
-            if (!$user instanceof User) {
-                die("Authentication failed!<br />If you don't have access to the admin interface any more, and you want to find out if the server configuration matches the requirements you have to rename the the system.php for the time of the check.");
-            }
-        } elseif ($this->getParam("mysql_adapter")) {
-        } else {
-            die("Not possible... no database settings given.<br />Parameters: mysql_adapter,mysql_host,mysql_username,mysql_password,mysql_database");
-        }
-    }
-
-    public function indexAction()
+    /**
+     * @Route("/check")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function indexAction(Request $request)
     {
         $checksPHP = [];
         $checksMySQL = [];
@@ -179,24 +166,24 @@ class Install_CheckController extends \Pimcore\Controller\Action
 
         $db = null;
 
-        if ($this->getParam("mysql_adapter")) {
+        if ($request->get("mysql_adapter")) {
             // this is before installing
             try {
                 $dbConfig = [
-                    'username' => $this->getParam("mysql_username"),
-                    'password' => $this->getParam("mysql_password"),
-                    'dbname' => $this->getParam("mysql_database")
+                    'username' => $request->get("mysql_username"),
+                    'password' => $request->get("mysql_password"),
+                    'dbname' => $request->get("mysql_database")
                 ];
 
-                $hostSocketValue = $this->getParam("mysql_host_socket");
+                $hostSocketValue = $request->get("mysql_host_socket");
                 if (file_exists($hostSocketValue)) {
                     $dbConfig["unix_socket"] = $hostSocketValue;
                 } else {
                     $dbConfig["host"] = $hostSocketValue;
-                    $dbConfig["port"] = $this->getParam("mysql_port");
+                    $dbConfig["port"] = $request->get("mysql_port");
                 }
 
-                $db = \Zend_Db::factory($this->getParam("mysql_adapter"), $dbConfig);
+                $db = \Zend_Db::factory($request->get("mysql_adapter"), $dbConfig);
 
                 $db->getConnection();
             } catch (\Exception $e) {
@@ -590,10 +577,14 @@ class Install_CheckController extends \Pimcore\Controller\Action
             "state" => $pdftotextBin ? "ok" : "warning"
         ];
 
-        $this->view->checksApps = $checksApps;
-        $this->view->checksPHP = $checksPHP;
-        $this->view->checksMySQL = $checksMySQL;
-        $this->view->checksFS = $checksFS;
+        $viewParams = array(
+            "checksApps" => $checksApps,
+            "checksPHP"  => $checksPHP,
+            "checksMySQL" => $checksMySQL,
+            "checksFS" => $checksFS
+        );
+
+        return $this->render("PimcoreAdminBundle:Install/Check:index.html.php", $viewParams);
     }
 
     /**
@@ -623,5 +614,39 @@ class Install_CheckController extends \Pimcore\Controller\Action
         }
 
         return $data;
+    }
+
+    /**
+     * @param FilterControllerEvent $event
+     */
+    public function onKernelController(FilterControllerEvent $event)
+    {
+        $isMasterRequest = $event->isMasterRequest();
+        if (!$isMasterRequest) {
+            return;
+        }
+
+        $request = $event->getRequest();
+
+        if (is_file(\Pimcore\Config::locateConfigFile("system.php"))) {
+            // session authentication, only possible if user is logged in
+            $user = \Pimcore\Tool\Authentication::authenticateSession();
+            if (!$user instanceof User) {
+                die("Authentication failed!<br />If you don't have access to the admin interface any more, and you want to find out if the server configuration matches the requirements you have to rename the the system.php for the time of the check.");
+            }
+        } elseif ($request->get("mysql_adapter")) {
+
+        } else {
+            die("Not possible... no database settings given.<br />Parameters: mysql_adapter,mysql_host,mysql_username,mysql_password,mysql_database");
+        }
+
+    }
+
+    /**
+     * @param FilterResponseEvent $event
+     */
+    public function onKernelResponse(FilterResponseEvent $event)
+    {
+        // nothing to do
     }
 }
