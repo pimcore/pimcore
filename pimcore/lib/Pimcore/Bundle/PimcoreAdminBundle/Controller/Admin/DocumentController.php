@@ -920,8 +920,6 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 $viewParams["image2"] = base64_encode(file_get_contents($toFile));
             }
 
-            return $this->render("PimcoreAdminBundle:Admin/Document:diff-versions.html.php", $viewParams);
-
             // cleanup
             $image1->clear();
             $image1->destroy();
@@ -930,6 +928,8 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
             unlink($fromFile);
             unlink($toFile);
+
+            return $this->render("PimcoreAdminBundle:Admin/Document:diff-versions.html.php", $viewParams);
         } else {
             return $this->render("PimcoreAdminBundle:Admin/Document:diff-versions-unsupported.html.php", $viewParams);
         }
