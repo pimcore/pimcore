@@ -879,7 +879,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     /**
      * @Route("/diff-versions/from/{from}/to/{to}")
      * @param Request $request
-     * @return array
+     * @return Response
      */
     public function diffVersionsAction(Request $request)
     {

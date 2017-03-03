@@ -277,7 +277,7 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
     /**
      * @Route("/download-csv")
      * @param Request $request
-     * @return JsonResponse
+     * @return BinaryFileResponse
      */
     public function downloadCsvAction(Request $request)
     {
