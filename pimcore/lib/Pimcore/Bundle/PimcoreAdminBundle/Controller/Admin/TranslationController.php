@@ -653,7 +653,7 @@ class TranslationController extends AdminController
             $file->addAttribute('tool', "pimcore");
             $file->addAttribute('category', Element\Service::getElementType($element));
 
-            $header = $file->addChild('header');
+            $file->addChild('header');
 
             $body = $file->addChild('body');
             $addedElements = false;

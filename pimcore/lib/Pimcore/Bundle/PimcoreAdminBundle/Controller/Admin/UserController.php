@@ -370,7 +370,6 @@ class UserController extends AdminController implements EventedControllerInterfa
         $availableUserPermissions = $availableUserPermissionsList->load();
 
         // get available roles
-        $roles = [];
         $list = new User\Role\Listing();
         $list->setCondition("`type` = ?", ["role"]);
         $list->load();

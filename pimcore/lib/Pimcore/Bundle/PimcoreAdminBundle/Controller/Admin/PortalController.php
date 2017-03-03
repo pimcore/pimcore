@@ -383,7 +383,6 @@ class PortalController extends AdminController implements EventedControllerInter
 
         $days = 31;
         $startDate = mktime(23, 59, 59, date("m"), date("d"), date("Y"));
-        $currentDate = $startDate;
 
         $data = [];
 

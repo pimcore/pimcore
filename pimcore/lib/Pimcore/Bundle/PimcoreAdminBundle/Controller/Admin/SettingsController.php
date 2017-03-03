@@ -918,7 +918,6 @@ class SettingsController extends AdminController
 
                 if ($data["link"]) {
                     if ($doc = Document::getByPath($data["link"])) {
-                        $tmpLink = $data["link"];
                         $data["link"] = $doc->getId();
                     }
                 }
@@ -946,7 +945,6 @@ class SettingsController extends AdminController
 
                 if ($data["link"]) {
                     if ($doc = Document::getByPath($data["link"])) {
-                        $tmpLink = $data["link"];
                         $data["link"] = $doc->getId();
                     }
                 }
