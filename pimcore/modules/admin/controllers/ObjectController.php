@@ -358,7 +358,11 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             //master layout has id 0 so we check for is_null()
             if (is_null($currentLayoutId) && !empty($validLayouts)) {
                 foreach ($validLayouts as $checkDefaultLayout) {
-                    if ($checkDefaultLayout->getDefault()) {
+                    $conditionalLayout = false;
+                    if (method_exists($object, "isDefaultConditionalLayout")) {
+                        $conditionalLayout = $object->isDefaultConditionalLayout($checkDefaultLayout);
+                    }
+                    if ($checkDefaultLayout->getDefault() || $conditionalLayout) {
                         $currentLayoutId = $checkDefaultLayout->getId();
                     }
                 }
