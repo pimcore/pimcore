@@ -15,8 +15,6 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Stopwatch\Stopwatch;
 
 /**
- * @Route("/object")
- *
  * end point for object related data.
  *
  * - get object by id
@@ -48,7 +46,7 @@ class ObjectController extends AbstractRestController
     }
 
     /**
-     * @Route("/id/{id}", requirements={"id": "\d+"})
+     * @Route("/object/id/{id}", requirements={"id": "\d+"})
      * @Method("GET")
      *
      * @api {get} /object Get object data
@@ -143,11 +141,11 @@ class ObjectController extends AbstractRestController
             $data['profiling'] = $this->getProfilingData($profileName);
         }
 
-        return new JsonResponse($data);
+        return $this->json($data);
     }
 
     /**
-     * @Route("")
+     * @Route("/object")
      * @Method({"POST", "PUT"})
      *
      * @api {post} /object Create a new object
@@ -242,7 +240,7 @@ class ObjectController extends AbstractRestController
     }
 
     /**
-     * @Route("/id/{id}", requirements={"id": "\d+"})
+     * @Route("/object/id/{id}", requirements={"id": "\d+"})
      * @Method("PUT")
      *
      * @api {put} /object/id/{id} Update an object
@@ -337,7 +335,7 @@ class ObjectController extends AbstractRestController
     }
 
     /**
-     * @Route("/id/{id}", requirements={"id": "\d+"})
+     * @Route("/object/id/{id}", requirements={"id": "\d+"})
      * @Method("DELETE")
      *
      * @api {delete} /object/id/{id} Delete object
@@ -383,6 +381,43 @@ class ObjectController extends AbstractRestController
             // TODO what to do on delete error? is bad request appropiate?
             return $this->createErrorResponse();
         }
+    }
+
+    /**
+     * @Route("/object-list")
+     * @Method("GET")
+     *
+     * Returns a list of object id/type pairs matching the given criteria.
+     *  Example:
+     *  GET http://[YOUR-DOMAIN]/webservice/rest/object-list?apikey=[API-KEY]&order=DESC&offset=3&orderKey=id&limit=2&condition=type%3D%27folder%27
+     *
+     * Parameters:
+     *      - condition
+     *      - sort order (if supplied then also the key must be provided)
+     *      - sort order key
+     *      - offset
+     *      - limit
+     *      - group by key
+     *      - objectClass the name of the object class (without "Object_"). If the class does
+     *          not exist the filter criteria will be ignored!
+     */
+    public function listAction(Request $request)
+    {
+        $this->checkPermission('objects');
+
+        $condition   = urldecode($request->get('condition'));
+        $order       = $request->get('order');
+        $orderKey    = $request->get('orderKey');
+        $offset      = $request->get('offset');
+        $limit       = $request->get('limit');
+        $groupBy     = $request->get('groupBy');
+        $objectClass = $request->get('objectClass');
+
+        $result = $this->service->getObjectList($condition, $order, $orderKey, $offset, $limit, $groupBy, $objectClass);
+
+        return $this->createSuccessResponse([
+            'data' => $result
+        ]);
     }
 
     /**

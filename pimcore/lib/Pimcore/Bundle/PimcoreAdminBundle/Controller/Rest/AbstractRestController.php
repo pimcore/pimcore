@@ -5,7 +5,6 @@ namespace Pimcore\Bundle\PimcoreAdminBundle\Controller\Rest;
 use Pimcore\Bundle\PimcoreAdminBundle\Controller\AdminController;
 use Pimcore\Bundle\PimcoreBundle\Http\Exception\ResponseException;
 use Pimcore\Model\Element\AbstractElement;
-use Pimcore\Model\Webservice\Data;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -123,7 +122,7 @@ abstract class AbstractRestController extends AdminController
      */
     protected function createSuccessResponse($data = null, $status = Response::HTTP_OK)
     {
-        return new JsonResponse(
+        return $this->json(
             $this->createSuccessData($data),
             $status
         );
@@ -137,7 +136,7 @@ abstract class AbstractRestController extends AdminController
      */
     protected function createErrorResponse($data = null, $status = Response::HTTP_BAD_REQUEST)
     {
-        return new JsonResponse(
+        return $this->json(
             $this->createErrorData($data),
             $status
         );
