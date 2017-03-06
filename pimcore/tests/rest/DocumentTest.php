@@ -1,35 +1,34 @@
 <?php
-/**
- * Created by IntelliJ IDEA.
- * User: Michi
- * Date: 11.11.2010
- * Time: 10:35:07
- */
 
+namespace Pimcore\Tests\Rest;
 
-class TestSuite_Rest_DocumentTest extends Test_BaseRest
+use Pimcore\Tests\RestTester;
+use Pimcore\Tests\Test\RestTestCase;
+use Pimcore\Tests\Util\TestHelper;
+
+class DocumentTest extends RestTestCase
 {
     public function setUp()
     {
         //        // every single rest test assumes a clean database
-        Test_Tool::cleanUp();
+        TestHelper::cleanUp();
         parent::setUp();
     }
 
     public function testCreate()
     {
         $this->printTestName();
-        $this->assertEquals(1, Test_Tool::getDocoumentCount());
+        $this->assertEquals(1, TestHelper::getDocoumentCount());
 
-        $unsavedObject = Test_Tool::createEmptyDocumentPage("", false);
+        $unsavedObject = TestHelper::createEmptyDocumentPage("", false);
         // object not saved, object count must still be one
-        $this->assertEquals(1, Test_Tool::getDocoumentCount());
+        $this->assertEquals(1, TestHelper::getDocoumentCount());
 
         $time = time();
 
         $result = self::getRestClient()->createDocument($unsavedObject);
         $this->assertTrue($result->success, "request not successful");
-        $this->assertEquals(2, Test_Tool::getDocoumentCount());
+        $this->assertEquals(2, TestHelper::getDocoumentCount());
 
         $id = $result->id;
         $this->assertTrue($id > 1, "id must be greater than 1");
@@ -51,7 +50,7 @@ class TestSuite_Rest_DocumentTest extends Test_BaseRest
     public function testDelete()
     {
         $this->printTestName();
-        $document = Test_Tool::createEmptyDocumentPage();
+        $document = TestHelper::createEmptyDocumentPage();
 
         $savedDocument = Document::getById($document->getId());
         $this->assertNotNull($savedDocument);
@@ -74,7 +73,7 @@ class TestSuite_Rest_DocumentTest extends Test_BaseRest
         $this->printTestName();
 
         // create folder but don't save it
-        $folder = Test_Tool::createEmptyDocumentPage("myfolder", false);
+        $folder = TestHelper::createEmptyDocumentPage("myfolder", false);
         $folder->setType("folder");
 
         $fitem = Document::getById($folder->getId());
@@ -90,7 +89,7 @@ class TestSuite_Rest_DocumentTest extends Test_BaseRest
         $this->assertTrue($folderDirect->getType() == "folder");
 
         $folderRest = self::getRestClient()->getDocumentById($id);
-        $this->assertTrue(Test_Tool::documentsAreEqual($folderRest, $folderDirect, false), "documents are not equal");
+        $this->assertTrue(TestHelper::documentsAreEqual($folderRest, $folderDirect, false), "documents are not equal");
 
         self::getRestClient()->deleteDocument($id);
 

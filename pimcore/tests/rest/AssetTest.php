@@ -1,22 +1,36 @@
 <?php
-/**
- * Created by IntelliJ IDEA.
- * User: Michi
- * Date: 11.11.2010
- * Time: 10:35:07
- */
 
+namespace Pimcore\Tests\Rest;
 
-class TestSuite_Rest_AssetTest extends Test_BaseRest
+use Pimcore\Tests\RestTester;
+use Pimcore\Tests\Test\RestTestCase;
+use Pimcore\Tests\Util\TestHelper;
+
+class AssetTest extends RestTestCase
 {
+    /**
+     * @var RestTester
+     */
+    protected $tester;
+
+    /**
+     * @var RestClient
+     */
+    protected $restClient;
+
     public function setUp()
     {
-        // every single rest test assumes a clean database
-        Test_Tool::cleanUp();
         parent::setUp();
+
+        // every single rest test assumes a clean database
+        TestHelper::cleanUp();
+
+        // authenticate as rest user
+        $this->tester->addApiKeyParam('rest');
+
+        // setup test rest client
+        $this->restClient = new RestClient($this->tester);
     }
-
-
 
     public function testCreateAssetFile()
     {
@@ -26,23 +40,23 @@ class TestSuite_Rest_AssetTest extends Test_BaseRest
 
         $this->assertTrue(strlen($originalContent) > 0);
 
-        $this->assertEquals(1, Test_Tool::getAssetCount());
+        $this->assertEquals(1, TestHelper::getAssetCount());
 
 
-        $asset = Test_Tool::createImageAsset("", $originalContent, false);
+        $asset = TestHelper::createImageAsset("", $originalContent, false);
         // object not saved, asset count must still be one
-        $this->assertEquals(1, Test_Tool::getAssetCount());
+        $this->assertEquals(1, TestHelper::getAssetCount());
 
         $time = time();
 
         $result = self::getRestClient()->createAsset($asset);
         $this->assertTrue($result->id > 0, "request not successful");
-        $this->assertEquals(2, Test_Tool::getAssetCount());
+        $this->assertEquals(2, TestHelper::getAssetCount());
 
         $id = $result->id;
         $this->assertTrue($id > 1, "id must be greater than 1");
 
-        $assetDirect = Asset::getById($id);
+        $assetDirect  = Asset::getById($id);
         $creationDate = $assetDirect->getCreationDate();
         $this->assertTrue($creationDate >= $time, "wrong creation date");
         $properties = $asset->getProperties();
@@ -67,7 +81,7 @@ class TestSuite_Rest_AssetTest extends Test_BaseRest
         $this->printTestName();
 
         $originalContent = file_get_contents(TESTS_PATH . "/resources/assets/images/image5.jpg");
-        $savedAsset = Test_Tool::createImageAsset("", $originalContent, true);
+        $savedAsset      = TestHelper::createImageAsset("", $originalContent, true);
 
         $savedAsset = Asset::getById($savedAsset->getId());
         $this->assertNotNull($savedAsset);
@@ -87,7 +101,7 @@ class TestSuite_Rest_AssetTest extends Test_BaseRest
         $this->printTestName();
 
         // create folder but don't save it
-        $folder = Test_Tool::createImageAsset("myfolder", null, false);
+        $folder = TestHelper::createImageAsset("myfolder", null, false);
         $folder->setType("folder");
 
         $fitem = Asset::getById($folder->getId());
@@ -103,7 +117,7 @@ class TestSuite_Rest_AssetTest extends Test_BaseRest
         $this->assertTrue($folderDirect->getType() == "folder");
 
         $folderRest = self::getRestClient()->getAssetById($id);
-        $this->assertTrue(Test_Tool::assetsAreEqual($folderRest, $folderDirect, false), "assets are not equal");
+        $this->assertTrue(TestHelper::assetsAreEqual($folderRest, $folderDirect, false), "assets are not equal");
 
         self::getRestClient()->deleteAsset($id);
 
