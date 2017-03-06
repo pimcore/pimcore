@@ -13,7 +13,7 @@ class ApiKeyAuthenticationTest extends TestCase
 
     public function testUnauthenticatedConnection()
     {
-        $this->tester->sendGET('/info/user');
+        $this->tester->sendGET('/user');
         $this->tester->seeResponseCodeIs(403);
 
         $this->tester->canSeeResponseIsJson();
@@ -26,13 +26,18 @@ class ApiKeyAuthenticationTest extends TestCase
 
         $this->tester->addApiKeyParam($username);
 
-        $this->tester->sendGET('/info/user');
+        $this->tester->sendGET('/user');
         $this->tester->seeResponseCodeIs(200);
 
         $this->tester->canSeeResponseIsJson();
         $this->tester->canSeeResponseContainsJson([
             'success' => true,
-            'user'    => $username
+            'data' => [
+                'type'   => 'user',
+                'admin'  => true,
+                'active' => true,
+                'name'   => $username
+            ]
         ]);
     }
 }
