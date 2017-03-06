@@ -62,42 +62,6 @@ abstract class AbstractRestController extends AdminController
     }
 
     /**
-     * @param AbstractElement $element
-     * @param string $type
-     *
-     * @throws ResponseException
-     */
-    protected function checkElementPermission(AbstractElement $element, $type)
-    {
-        $map = [
-            'get'    => 'view',
-            'delete' => 'delete',
-            'update' => 'publish',
-            'create' => 'create'
-        ];
-
-        if (!isset($map[$type])) {
-            throw new \InvalidArgumentException(sprintf('Invalid permission type: %s', $type));
-        }
-
-        $permission = $map[$type];
-        if (!$element->isAllowed($permission)) {
-            $this->get('monolog.logger.security')->error(
-                'User {user} attempted to access {permission} on {elementType} {elementId}, but has no permission to do so', [
-                    'user'        => $this->getUser()->getName(),
-                    'permission'  => $permission,
-                    'elementType' => $element->getType(),
-                    'elementId'   => $element->getId(),
-                ]
-            );
-
-            throw new ResponseException($this->createErrorResponse([
-                'msg' => sprintf('Not allowed: permission %s is needed', $permission)
-            ]));
-        }
-    }
-
-    /**
      * @param array|string $data
      * @param bool         $wrapInDataProperty
      *
@@ -306,60 +270,5 @@ abstract class AbstractRestController extends AdminController
         }
 
         return $data;
-    }
-
-    /**
-     * @param $wsData
-     * @param $data
-     *
-     * @return \Pimcore\Model\Webservice\Data
-     */
-    protected function map($wsData, $data)
-    {
-        foreach ($data as $key => $value) {
-            if (is_array($value)) {
-                $tmp = [];
-
-                foreach ($value as $subkey => $subvalue) {
-                    if (is_array($subvalue)) {
-                        $object = new \stdClass();
-                        $object = $this->map($object, $subvalue);
-
-                        $tmp[$subkey] = $object;
-                    } else {
-                        $tmp[$subkey] = $subvalue;
-                    }
-                }
-                $value = $tmp;
-
-            }
-            $wsData->$key = $value;
-        }
-
-        if ($wsData instanceof \Pimcore\Model\Webservice\Data\Object) {
-            /** @var \Pimcore\Model\Webservice\Data\Object key */
-            $wsData->key = \Pimcore\Model\Element\Service::getValidKey($wsData->key, "object");
-        } elseif ($wsData instanceof \Pimcore\Model\Webservice\Data\Document) {
-            /** @var \Pimcore\Model\Webservice\Data\Document key */
-            $wsData->key = \Pimcore\Model\Element\Service::getValidKey($wsData->key, "document");
-        } elseif ($wsData instanceof \Pimcore\Model\Webservice\Data\Asset) {
-            /** @var \Pimcore\Model\Webservice\Data\Asset $wsData */
-            $wsData->filename = \Pimcore\Model\Element\Service::getValidKey($wsData->filename, "asset");
-        }
-
-        return $wsData;
-    }
-
-    /**
-     * @param $class
-     * @param $data
-     *
-     * @return \Pimcore\Model\Webservice\Data
-     */
-    protected function fillWebserviceData($class, $data)
-    {
-        $wsData = new $class();
-
-        return self::map($wsData, $data);
     }
 }
