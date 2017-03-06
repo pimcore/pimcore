@@ -43,20 +43,23 @@ class ObjectTest extends RestTestCase
 
     public function testObjectGet()
     {
-        $this->printTestName();
-        $object = self::getRestClient()->getObjectById(1);
+        $object = $this->restClient->getObjectById(1);
+
         $this->assertEquals("folder", $object->getType(), "expected type to be folder");
         $this->assertEquals(1, $object->getId(), "wrong id");
 
-        $originalCount = Test_Tool::getObjectCount();
+        $originalCount = TestHelper::getObjectCount();
 
-        $emptyObject = Test_Tool::createEmptyObject();
+        $emptyObject = TestHelper::createEmptyObject();
         $id          = $emptyObject->getId();
-        $this->assertTrue(Test_Tool::getObjectCount() == $originalCount + 1);
-        $object = self::getRestClient()->getObjectById($id);
-        $this->assertNotNull($object, "expected new object");
-    }
 
+        $this->assertTrue(TestHelper::getObjectCount() === ($originalCount + 1));
+        $object = $this->restClient->getObjectById($id);
+
+        $this->assertNotNull($object, "expected new object");
+        $this->assertEquals($emptyObject->getId(), $object->getId());
+        $this->assertEquals($emptyObject->getFullPath(), $object->getFullPath());
+    }
 
     public function testCreateObjectConcrete()
     {
